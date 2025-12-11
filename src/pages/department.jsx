@@ -1,12 +1,36 @@
+// src/pages/Department.jsx
 import React, { useState } from 'react';
-import { Container, Row, Col, Table, Form, Button, Modal } from 'react-bootstrap';
-import { Search, Plus, Upload } from 'react-bootstrap-icons';
+import { Container, Row, Col, Table, Form, Button, Modal, Badge } from 'react-bootstrap';
+import { Search, Plus, Upload, X as XIcon } from 'react-bootstrap-icons';
 import { validateDepartmentForm } from '../validators/department-validations';
 import '../css/user.css';
 import viewIcon from "../assets/view_icon.png";
 import deleteIcon from "../assets/delete_icon.png";
 import editIcon from "../assets/edit_icon.png";
 import ErrorMessage from '../components/ErrorMessage';
+
+const humanFileSize = (size) => {
+    if (!size && size !== 0) return '';
+    const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    return `${(size / Math.pow(1024, i)).toFixed((i === 0) ? 0 : (i < 2 ? 1 : 2))} ${sizes[i]}`;
+};
+
+const FileMeta = ({ file, onRemove }) => {
+    if (!file) return null;
+    return (
+        <div className="mt-2 d-flex align-items-center gap-2 file-meta">
+            <Badge bg="success" pill style={{ fontSize: 12, padding: '6px 8px' }}>✓</Badge>
+            <div style={{ fontSize: 13 }}>
+                <strong style={{ display: 'block' }}>{file.name}</strong>
+                <small className="text-muted">{humanFileSize(file.size)}</small>
+            </div>
+            <Button variant="outline-secondary" size="sm" className="ms-auto" onClick={onRemove} title="Remove selected file">
+                <XIcon size={14} />
+            </Button>
+        </div>
+    );
+};
 
 const Department = () => {
     // Sample department data
@@ -129,17 +153,30 @@ const Department = () => {
         }
     };
 
+    // helpers
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        // Clear field-specific error on change
+        // clear field-specific error on change
         setErrors(prev => {
             const copy = { ...prev };
             if (copy[name]) delete copy[name];
             return copy;
         });
+
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    // small helpers to show and clear selected files
+    const onSelectCSV = (file) => {
+        setSelectedCSVFile(file ?? null);
+    };
+    const onSelectXLSX = (file) => {
+        setSelectedXLSXFile(file ?? null);
+    };
+    const removeCSV = () => setSelectedCSVFile(null);
+    const removeXLSX = () => setSelectedXLSXFile(null);
+
+    // Open modal for Add
     const openAddModal = () => {
         setIsEditing(false);
         setEditingDeptId(null);
@@ -149,9 +186,12 @@ const Department = () => {
         });
         setErrors({});
         setActiveTab('manual');
+        setSelectedCSVFile(null);
+        setSelectedXLSXFile(null);
         setShowAddModal(true);
     };
 
+    // Open modal for Edit (populate form)
     const openEditModal = (dept) => {
         setIsEditing(true);
         setEditingDeptId(dept.id);
@@ -164,6 +204,7 @@ const Department = () => {
         setShowAddModal(true);
     };
 
+    // Save handler (both add & update) using validator
     const handleSave = (e) => {
         e.preventDefault();
 
@@ -199,27 +240,34 @@ const Department = () => {
             };
             setDepartments(prev => [...prev, newDept]);
         }
+
+        // Reset form & modal state
         setShowAddModal(false);
+        setIsEditing(false);
+        setEditingDeptId(null);
+        setFormData({
+            name: '',
+            description: ''
+        });
     };
 
+    // Delete confirmation state & handlers
     const openDeleteModal = (dept) => {
         setDeleteTarget({ id: dept.id, name: dept.name });
         setShowDeleteModal(true);
     };
-
     const confirmDelete = () => {
         if (!deleteTarget) return;
-        setDepartments(prev => prev.filter(dept => dept.id !== deleteTarget.id));
+        setDepartments(prev => prev.filter(u => u.id !== deleteTarget.id));
         setShowDeleteModal(false);
         setDeleteTarget(null);
     };
-
     const cancelDelete = () => {
         setShowDeleteModal(false);
         setDeleteTarget(null);
     };
 
-    // Filter and pagination logic
+    // Pagination & filtering
     const filteredDepts = departments.filter(dept =>
         Object.values(dept).some(v => v.toString().toLowerCase().includes(searchTerm.toLowerCase()))
     );
@@ -430,25 +478,27 @@ const Department = () => {
                                         }}>
                                             <Upload size={32} />
                                         </div>
-                                        <h5 className="mb-2">Upload File</h5>
+                                        <h5 className="mb-2 uploadfile">Upload File</h5>
                                         <p className="text-muted small">Support for CSV and XLSX formats</p>
                                     </div>
 
-                                    <div className="d-flex justify-content-center gap-3 mt-3">
+                                    <div className="d-flex justify-content-center gap-3 mt-3 flex-wrap">
                                         <div>
                                             <input
                                                 id="upload-csv"
                                                 type="file"
                                                 accept=".csv,text/csv"
-                                                className="user-modal"
                                                 style={{ display: 'none' }}
-                                                onChange={(e) => setSelectedCSVFile(e.target.files[0] ?? null)}
+                                                onChange={(e) => onSelectCSV(e.target.files[0] ?? null)}
                                             />
                                             <label htmlFor="upload-csv">
-                                                <Button variant="light" as="span">
+                                                <Button variant="light" as="span" className='btnfont'>
                                                     <i className="bi bi-upload me-1"></i> Upload CSV
                                                 </Button>
                                             </label>
+
+                                            {/* show selected CSV file metadata */}
+
                                         </div>
 
                                         <div>
@@ -456,23 +506,27 @@ const Department = () => {
                                                 id="upload-xlsx"
                                                 type="file"
                                                 accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                                className="user-modal"
                                                 style={{ display: 'none' }}
-                                                onChange={(e) => setSelectedXLSXFile(e.target.files[0] ?? null)}
+                                                onChange={(e) => onSelectXLSX(e.target.files[0] ?? null)}
                                             />
                                             <label htmlFor="upload-xlsx">
-                                                <Button variant="light" as="span">
+                                                <Button variant="light" as="span" className='btnfont'>
                                                     <i className="bi bi-upload me-1"></i> Upload XLSX
                                                 </Button>
                                             </label>
+
+                                            {/* show selected XLSX file metadata */}
                                         </div>
+                                        <FileMeta file={selectedCSVFile} onRemove={removeCSV} />
+                                        <FileMeta file={selectedXLSXFile} onRemove={removeXLSX} />
+
                                     </div>
 
                                     <div className="text-center mt-4 small">
                                         Download template:&nbsp;
-                                        <Button variant="link" onClick={() => downloadTemplate('csv')} className="p-0">CSV</Button>
+                                        <Button variant="link" className='btnfont' onClick={() => downloadTemplate('csv')} >CSV</Button>
                                         &nbsp;|&nbsp;
-                                        <Button variant="link" onClick={() => downloadTemplate('xlsx')} className="p-0">XLSX</Button>
+                                        <Button variant="link" className='btnfont' onClick={() => downloadTemplate('xlsx')} >XLSX</Button>
                                     </div>
                                 </div>
 

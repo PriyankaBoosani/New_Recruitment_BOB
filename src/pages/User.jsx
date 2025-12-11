@@ -516,7 +516,7 @@ const User = () => {
                                         </div>
                                     </div>
 
-                                    <h5 className="text-center">Upload File</h5>
+                                    <h5 className="text-center uploadfile">Upload File</h5>
                                     <p className="text-center small">Support for CSV and XLSX formats</p>
 
                                     <div className="d-flex justify-content-center gap-3 mt-3">
@@ -529,7 +529,7 @@ const User = () => {
                                                 onChange={(e) => setSelectedCSVFile(e.target.files[0] ?? null)}
                                             />
                                             <label htmlFor="upload-csv">
-                                                <Button variant="light" as="span">
+                                                <Button variant="light" as="span" className='btnfont'>
                                                     <i className="bi bi-upload me-1"></i> Upload CSV
                                                 </Button>
                                             </label>
@@ -544,7 +544,7 @@ const User = () => {
                                                 onChange={(e) => setSelectedXLSXFile(e.target.files[0] ?? null)}
                                             />
                                             <label htmlFor="upload-xlsx">
-                                                <Button variant="light" as="span">
+                                                <Button variant="light" as="span" className='btnfont'>
                                                     <i className="bi bi-upload me-1"></i> Upload XLSX
                                                 </Button>
                                             </label>
@@ -553,9 +553,9 @@ const User = () => {
 
                                     <div className="text-center mt-4 small">
                                         Download template:&nbsp;
-                                        <Button variant="link" onClick={() => downloadTemplate('csv')}>CSV</Button>
+                                        <Button variant="link" onClick={() => downloadTemplate('csv')} className='btnfont'>CSV</Button>
                                         |
-                                        <Button variant="link" onClick={() => downloadTemplate('xlsx')}>XLSX</Button>
+                                        <Button variant="link" onClick={() => downloadTemplate('xlsx')} className='btnfont'>XLSX</Button>
                                     </div>
                                 </div>
 

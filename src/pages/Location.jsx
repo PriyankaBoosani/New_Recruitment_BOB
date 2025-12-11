@@ -417,7 +417,7 @@ const Location = () => {
                     <div style={{ width: 72, height: 72, borderRadius: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', marginBottom: '1rem' }}>
                       <Upload size={32} />
                     </div>
-                    <h5 className="mb-2">Upload File</h5>
+                    <h5 className="mb-2 uploadfile">Upload File</h5>
                     <p className="text-muted small">Support for CSV and XLSX formats (CSV headers: city,location)</p>
                   </div>
 
@@ -425,23 +425,23 @@ const Location = () => {
                     <div>
                       <input id="upload-csv" type="file" accept=".csv,text/csv" style={{ display: 'none' }} onChange={(e) => setSelectedCSVFile(e.target.files[0] ?? null)} />
                       <label htmlFor="upload-csv">
-                        <Button variant="light" as="span"><i className="bi bi-upload me-1"></i> Upload CSV</Button>
+                        <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload CSV</Button>
                       </label>
                     </div>
 
                     <div>
                       <input id="upload-xlsx" type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style={{ display: 'none' }} onChange={(e) => setSelectedXLSXFile(e.target.files[0] ?? null)} />
                       <label htmlFor="upload-xlsx">
-                        <Button variant="light" as="span"><i className="bi bi-upload me-1"></i> Upload XLSX</Button>
+                        <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload XLSX</Button>
                       </label>
                     </div>
                   </div>
 
                   <div className="text-center mt-4 small">
                     Download template:&nbsp;
-                    <Button variant="link" onClick={() => downloadTemplate('csv')} className="p-0">CSV</Button>
+                    <Button variant="link" onClick={() => downloadTemplate('csv')} className="btnfont">CSV</Button>
                     &nbsp;|&nbsp;
-                    <Button variant="link" onClick={() => downloadTemplate('xlsx')} className="p-0">XLSX</Button>
+                    <Button variant="link" onClick={() => downloadTemplate('xlsx')} className="btnfont">XLSX</Button>
                   </div>
                 </div>
 

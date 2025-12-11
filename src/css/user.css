@@ -121,20 +121,59 @@
     background-color: rgba(0, 0, 0, 0.02);
 }
 
-/* ---------- Modal (Scoped to .user-modal class on Modal) ---------- */
+
 
 /* Dialog sizing */
 .user-modal .modal-dialog {
     max-width: 500px;
     margin: 1.75rem auto;
     width: 100%;
+
+}
+
+
+
+/* Medium screens */
+@media (min-width: 992px) and (max-width: 1399px) {
+    .user-modal .modal-dialog {
+        max-width: 860px;
+    }
+}
+
+/* Tablets / small laptops */
+@media (max-width: 991.98px) {
+    .user-modal .modal-dialog {
+        max-width: 720px;
+        margin: 1rem auto;
+    }
+
+    /* Keep the modal content scrollable & limited height */
+    .user-modal .modal-content {
+        max-height: calc(100vh - 80px);
+    }
+}
+
+/* Small screens: allow Bootstrap fullscreen behavior but keep radius and sticky header/footer */
+@media (max-width: 768px) {
+    .user-modal .modal-dialog {
+        max-width: calc(100% - 1rem);
+        /* leave small gutters */
+        margin: 0.5rem;
+    }
+
+    .user-modal .modal-content {
+        max-height: calc(100vh - 120px);
+        /* header + footer reserve space */
+        border-radius: 12px;
+    }
 }
 
 /* Content styling */
 .user-modal .modal-content {
-    border-radius: 8px;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
-    max-height: calc(100vh - 48px);
+	border-radius: 8px;
+	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+	max-height: calc(100vh - 48px);
+	height: auto;
 }
 
 /* Header & Title */
@@ -155,6 +194,7 @@
 .user-modal .modal-body {
     padding: 1.5rem;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-footer-custom {
@@ -166,14 +206,15 @@
     border-top: none;
     background: transparent;
 }
-.modal-footer-custom .btn{
+
+.modal-footer-custom .btn {
     font-size: 14px;
     font-weight: 500;
 }
 
 /* Sticky header/footer in fullscreen mobile (Bootstrap adds .modal-fullscreen-sm-down to body) */
 body.modal-open .modal-fullscreen-sm-down .modal-content {
-	border-radius: 12px;
+    border-radius: 12px;
 }
 
 body.modal-open .modal-fullscreen-sm-down .modal-header {
@@ -194,7 +235,19 @@ body.modal-open .modal-fullscreen-sm-down .modal-body {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     max-height: calc(100vh - 120px);
-    /* header + footer reserve */
+}
+
+/* Reduce layout jump when modal opens (optional):
+   Bootstrap may add padding-right to <body> to account for scrollbar removal.
+   Overriding here prevents page shift; remove if you notice horizontal shift in some browsers. */
+body.modal-open {
+    padding-right: 0 !important;
+}
+
+/* Ensure modal dialog inline style left/right don't shift layout */
+.modal-dialog[style] {
+    left: auto !important;
+    right: auto !important;
 }
 
 /* ---------- Form controls ---------- */
@@ -294,7 +347,6 @@ body.modal-open .modal-fullscreen-sm-down .modal-body {
     min-width: 0;
     text-align: center;
     border-radius: 8px;
-    /* padding: 8px 10px; */
     white-space: nowrap;
     /* background: #f2f3f5; */
     /* border: 1px solid transparent; */
@@ -329,7 +381,8 @@ body.modal-open .modal-fullscreen-sm-down .modal-body {
 
 /* Download links area */
 .import-area .small {
-    font-size: 0.85rem;
+    font-size: 14px;
+    color: #64748B;
 }
 
 /* ---------- Pagination ---------- */
@@ -470,8 +523,8 @@ body.modal-open .modal-fullscreen-sm-down .modal-body {
     }
 
     .delete-confirm-modal .modal-content {
-        width: auto;
-    }
+	width: 73%;
+}
 
     .delete-confirm-modal .modal-body {
         padding: 1.25rem;
@@ -644,11 +697,64 @@ body.modal-open .modal-fullscreen-sm-down .modal-body {
 .btn {
     white-space: nowrap;
 }
-.icon-16 {
-  width: 24px;
-  height: 24px;
+
+.btnfont {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1E1E2D;
 }
+
+.icon-16 {
+    width: 24px;
+    height: 24px;
+}
+
 .para {
     color: #6A7282 !important;
     font-size: 13px;
 }
+
+.uploadfile {
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
+}
+
+/* Strong modal/backdrop overrides - put at END of user.css */
+
+/* Make sure the backdrop covers the whole viewport */
+.modal-backdrop,
+.modal-backdrop.show {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0.5;
+    /* adjust if you want darker/lighter */
+    background-color: rgba(0, 0, 0, 0.45) !important;
+    z-index: 1040 !important;
+    /* sit above page content */
+}
+
+/* Ensure the modal dialog is above backdrop */
+.user-modal,
+.user-modal .modal,
+.user-modal .modal-dialog,
+.user-modal-dialog {
+    z-index: 1050 !important;
+}
+
+/* If you used delete-confirm modal class */
+.delete-confirm-modal,
+.delete-modal-dialog {
+    z-index: 1050 !important;
+}
+
+.modal,
+.modal-backdrop {
+    position: fixed !important;
+}
+

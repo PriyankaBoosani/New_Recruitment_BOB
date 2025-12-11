@@ -74,12 +74,12 @@ const Header = () => {
                 <NavDropdown.Item href="/department" onClick={() => closeMenu()}>Department</NavDropdown.Item>
                 <NavDropdown.Item href="/location" onClick={() => closeMenu()}>Location</NavDropdown.Item>
                 <NavDropdown.Item href="/jobgrade" onClick={() => closeMenu()}>Job Grade</NavDropdown.Item>
-                <NavDropdown.Item href="#admin/postion" onClick={() => closeMenu()}>Position</NavDropdown.Item>
-                <NavDropdown.Item href="#admin/category" onClick={() => closeMenu()}>Category</NavDropdown.Item>
-                <NavDropdown.Item href="#admin/specialcategory" onClick={() => closeMenu()}>Special Category</NavDropdown.Item>
-                <NavDropdown.Item href="#admin/relaxationtype" onClick={() => closeMenu()}>Relaxation Type</NavDropdown.Item>
-                <NavDropdown.Item href="#admin/document" onClick={() => closeMenu()}>Document</NavDropdown.Item>
-                <NavDropdown.Item href="#admin/interviewpanel" onClick={() => closeMenu()}>Interview Panel</NavDropdown.Item>
+                <NavDropdown.Item href="/position" onClick={() => closeMenu()}>Position</NavDropdown.Item>
+                <NavDropdown.Item href="/category" onClick={() => closeMenu()}>Category</NavDropdown.Item>
+                <NavDropdown.Item href="/specialcategory" onClick={() => closeMenu()}>Special Category</NavDropdown.Item>
+                <NavDropdown.Item href="relaxationtype" onClick={() => closeMenu()}>Relaxation Type</NavDropdown.Item>
+                <NavDropdown.Item href="/document" onClick={() => closeMenu()}>Document</NavDropdown.Item>
+                <NavDropdown.Item href="/interviewpanel" onClick={() => closeMenu()}>Interview Panel</NavDropdown.Item>
               </NavDropdown>
 
             </Nav>

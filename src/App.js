@@ -17,6 +17,12 @@ import "@fontsource/poppins/700.css";   // Bold
 import Department from './pages/department';
 import Location from './pages/Location';
 import JobGrade from './pages/JobGrade';
+import Position from './pages/Position';
+import Category from './pages/Category';
+import SpecialCategory from './pages/SpecialCategory';
+import RelaxationType from './pages/RelaxationType';
+import Document from './pages/Document';
+import InterviewPanel from './pages/InterviewPanel';
 
 function App() {
   return (
@@ -31,6 +37,12 @@ function App() {
             <Route path="/department" element={<Department />} />
             <Route path="/location" element={<Location />} />
             <Route path="/jobgrade" element={<JobGrade />} />
+            <Route path="/position" element={<Position />} />
+            <Route path ="/category" element={<Category />} />
+            <Route path="/specialcategory" element={<SpecialCategory/>} />
+            <Route path="/relaxationtype" element={<RelaxationType/>} />
+            <Route path="/document" element={<Document />} />
+            <Route path="/interviewpanel" element={<InterviewPanel />} />
             {/* Add more routes here as you create more pages */}
           </Routes>
         </main>

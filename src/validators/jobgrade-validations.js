@@ -32,6 +32,25 @@ export function validateScale(scale, options = {}) {
 
   return null;
 }
+// add near the top with the other helpers or after validateScale
+export function validateGradeCode(gradeCode, options = {}) {
+  const { existing = [], currentId = null } = options;
+  const g = String(gradeCode ?? '').trim();
+
+  if (isEmpty(g)) return 'Grade code is required';
+  if (g.length < 1) return 'Grade code must be at least 1 character';
+  if (g.length > 20) return 'Grade code must be at most 20 characters';
+
+  // uniqueness check (case-insensitive)
+  const lower = g.toLowerCase();
+  const duplicate = existing.find(it =>
+    String(it.gradeCode ?? '').trim().toLowerCase() === lower
+    && (currentId == null || it.id !== currentId)
+  );
+  if (duplicate) return 'Grade code must be unique';
+
+  return null;
+}
 
 /**
  * validateMinSalary / validateMaxSalary
@@ -82,6 +101,11 @@ export function validateJobGradeForm(formData = {}, options = {}) {
   // scale
   const scaleErr = validateScale(formData.scale, { existing, currentId });
   if (scaleErr) errors.scale = scaleErr;
+
+  // gradeCode
+  const codeErr = validateGradeCode(formData.gradeCode, { existing, currentId });
+  if (codeErr) errors.gradeCode = codeErr;
+
 
   // minSalary
   const minErr = validateMinSalary(formData.minSalary);
