@@ -1,33 +1,42 @@
 import React, { useState } from 'react';
-import { Navbar, Nav, Container, NavDropdown, Button, Image } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import {  Bell, Person } from 'react-bootstrap-icons';
-import logo from '../assets/logo.png'
+import { Navbar, Nav, Container, NavDropdown, Button, Image, Dropdown } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
+import { Bell, Person, BoxArrowRight } from 'react-bootstrap-icons';
+import logo from '../assets/logo.png';
+import { useDispatch } from 'react-redux';
+import { clearUser } from '../store/userSlice';
 
 const Header = () => {
   const [expanded, setExpanded] = useState(false);
   const closeMenu = () => setExpanded(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(clearUser());
+    navigate('/login');
+  };
 
 
   return (
-    <>
+    <header className="fixed-top">
       {/* Top Bar */}
-      <div className="background-header py-2">
+      <div className="background-header py-2" style={{ position: 'sticky', top: 0, zIndex: 1030 }}>
         <Container fluid className="d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center">
             <Image
               src={logo} // Replace with your actual logo path
               alt="Bank of Baroda"
               width={155}
-              className="me-2"
+              className="me-2 imgbob"
             />
 
           </div>
-          <div className="d-flex align-items-center">
+          <div className="d-flex align-items-center fonnav">
             <NavDropdown
               title="English (US)"
               id="language-dropdown"
-              className="text-white me-3"
+              className="text-white fonnav"
               menuVariant="light"
             >
               <NavDropdown.Item>English (US)</NavDropdown.Item>
@@ -39,12 +48,26 @@ const Header = () => {
                 3
               </span>
             </Button>
-            <div className="d-flex align-items-center text-white">
-              <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" style={{ width: '32px', height: '32px' }}>
-                <Person color="white" />
-              </div>
-              <span>Jagadeesh</span>
-            </div>
+            <Dropdown align="end" className="d-flex align-items-center">
+              <Dropdown.Toggle 
+                as={Button} 
+                variant="link" 
+                className="text-white text-decoration-none d-flex align-items-center p-0"
+                id="user-dropdown"
+              >
+                <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" style={{ width: '24px', height: '24px' }}>
+                  <Person color="white" />
+                </div>
+                <span className="text-white fonnav">Jagadeesh</span>
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={handleLogout}>
+                  <BoxArrowRight className="me-2" />
+                  Logout
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
         </Container>
       </div>
@@ -86,7 +109,7 @@ const Header = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-    </>
+    </header>
   );
 };
 

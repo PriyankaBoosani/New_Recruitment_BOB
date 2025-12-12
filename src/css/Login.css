@@ -1,0 +1,454 @@
+.login-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Left panel - Orange background */
+.left-panel {
+  flex: 1;
+  background-color: #ff6a00;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.left-panel img {
+  width: 70%;
+  max-width: 400px;
+  margin-bottom: 30px;
+}
+
+.left-panel h2 {
+  font-size: 30px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.left-panel h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+/* Right panel - Form */
+.right-panel {
+  flex: 1;
+  background-color: #fff;
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.logo img {
+  width: 200px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.logo h4 {
+  font-size: 18px;
+  color: #162b75;
+  font-weight: 600;
+}
+
+/* Form Styling */
+.login_form {
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.login_form label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  display: block;
+  color: #333;
+}
+
+.login_form input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 18px;
+  font-size: 14px;
+  outline: none;
+}
+
+.actions {
+  text-align: right;
+  margin-top: -10px;
+  margin-bottom: 15px;
+}
+
+.forgot-link {
+  font-size: 12px;
+  color: #666;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.login-button {
+  background-color: #ff6a00;
+  color: white;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.divider {
+  text-align: center;
+  color: #999;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.google-button {
+  background-color: white;
+  color: #333;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.google-button img {
+  width: 18px;
+  height: 18px;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.register-link a {
+  color: #ff6a00;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.back-button {
+  width: 80px;
+  font-size: 12px;
+  border: none;
+  background: none;
+  color: #414141;
+  /* margin-left: 9rem; */
+  margin-bottom: 1.5rem;
+  text-align: left;
+  padding-left: 0px;
+}
+
+/* Base layout */
+.login-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  align-items: stretch;
+}
+
+/* Left panel - Orange background */
+.left-panel {
+  flex: 1;
+  background-color: #ff6a00;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px;
+  text-align: center;
+  transition: all 0.25s ease;
+}
+
+.left-panel img {
+  width: 70%;
+  max-width: 420px;
+  height: auto;
+  margin-bottom: 28px;
+  object-fit: contain;
+}
+
+.left-panel h2 {
+  font-size: 30px;
+  font-weight: 700;
+  margin: 10px 0;
+}
+
+.left-panel h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+/* Right panel - Form */
+.right-panel {
+  flex: 1;
+  background-color: #fff;
+  padding: 60px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: padding 0.25s ease;
+  min-width: 320px;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 36px;
+}
+
+.logo img {
+  width: 180px;
+  height: auto;
+  margin-bottom: 14px;
+  object-fit: contain;
+}
+
+.logo h4 {
+  font-size: 18px;
+  color: #162b75;
+  font-weight: 600;
+}
+
+/* Form Styling */
+.login_form {
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.login_form label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+  color: #333;
+}
+
+.login_form input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d3d3d3;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* Eye icon wrapper so positioning is consistent across screen sizes */
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon input {
+  padding-right: 44px; /* space for icon */
+}
+
+.input-with-icon .eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  user-select: none;
+}
+
+/* Buttons & links */
+.login-button {
+  background-color: #ff6a00;
+  color: white;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 14px;
+}
+
+.resend-btn {
+  border-radius: 20px;
+  background-color: #fff;
+  border: 1px solid #ff6b00;
+  padding: 6px 14px;
+  color: #ff6b00;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.divider {
+  text-align: center;
+  color: #999;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.google-button {
+  background-color: white;
+  color: #333;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 14px;
+}
+
+.register-link a {
+  color: #ff6a00;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+/* Small helper for back button if used */
+.back-button {
+  width: 80px;
+  font-size: 12px;
+  border: none;
+  background: none;
+  color: #414141;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  padding-left: 0;
+}
+
+/* ---------------- Responsive rules ---------------- */
+
+/* Medium screens and below (tablet) - stack panels vertically */
+@media (max-width: 991px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .left-panel, .right-panel {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .left-panel {
+    padding: 40px 24px;
+  }
+
+  .right-panel {
+    padding: 36px 20px;
+  }
+
+  .logo img {
+    width: 160px;
+  }
+
+  .login_form {
+    max-width: 460px;
+    padding: 0 8px;
+  }
+}
+
+/* Small screens (mobile) - hide left panel to focus on form */
+@media (max-width: 768px) {
+  .left-panel {
+    display: none;
+  }
+
+  .right-panel {
+    padding: 28px 20px;
+    min-height: 100vh;
+    justify-content: center;
+  }
+
+  .logo img {
+    width: 140px;
+  }
+
+  .login_form {
+    max-width: 420px;
+    margin-top: 8px;
+  }
+
+  .login_form input {
+    padding: 12px 12px;
+    font-size: 15px;
+    border-radius: 10px;
+  }
+
+  .login-button {
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 15px;
+  }
+
+  .register-link {
+    font-size: 13px;
+    margin-top: 14px;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 420px) {
+  .right-panel {
+	padding: 22px 12px;
+	background: aliceblue;
+}
+
+  .login_form {
+    max-width: 340px;
+  }
+
+  .logo h4 {
+    font-size: 16px;
+  }
+
+  .input-with-icon .eye-icon {
+    right: 10px;
+    font-size: 14px;
+  }
+}
+
+/* Accessibility: focus state */
+.login_form input:focus,
+.login-button:focus,
+.resend-btn:focus {
+  box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.12);
+  outline: none;
+}

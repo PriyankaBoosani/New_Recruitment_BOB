@@ -155,6 +155,9 @@
 
 /* Small screens: allow Bootstrap fullscreen behavior but keep radius and sticky header/footer */
 @media (max-width: 768px) {
+    .user-content{
+        margin-top: 30px;
+    }
     .user-modal .modal-dialog {
         max-width: calc(100% - 1rem);
         /* leave small gutters */
@@ -611,7 +614,7 @@ body.modal-open {
 /* <= 768px: modal layout adjustments, stack form columns */
 @media (max-width: 768px) {
     .user-modal .modal-dialog {
-        max-width: 71%;
+        /* max-width: 71%; */
         margin: 0.5rem;
     }
 

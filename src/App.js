@@ -1,6 +1,6 @@
 // src/App.js
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -16,21 +16,26 @@ import "@fontsource/poppins/500.css";
 import "@fontsource/poppins/600.css";
 import "@fontsource/poppins/700.css";
 
-// Import centralized router
 import AppRoutes from './routes/AppRoutes';
 
-function App() {
+function AppWrapper() {
+  const location = useLocation();
+  const hideHeaderFor = ['/login', '/forgot-password', '/verify-otp'];
+  const shouldHideHeader = hideHeaderFor.some(p => location.pathname.toLowerCase().startsWith(p));
+
   return (
-    <Router>
+    <>
       <ToastContainer position="top-right" autoClose={5000} />
-      <div className="App d-flex flex-column min-vh-100">
-        <Header />
-        <main className="flex-grow-1">
+      <div className="app-container">
+        {!shouldHideHeader && <Header />}
+        <main className="main-content">
           <AppRoutes />
         </main>
       </div>
-    </Router>
+    </>
   );
 }
 
-export default App;
+export default function App() {
+  return <AppWrapper />;
+}

@@ -3,6 +3,16 @@ import axios from 'axios';
 import { store } from "../store"; // adjust path if needed
 import { clearUser } from "../store/userSlice";
 
+const REFRESH_PATH = "/recruiter-auth/recruiter-refresh-token";
+
+// helper that calls refresh bypassing our axios instances/interceptors
+async function callRefreshEndpoint() {
+  // Use axios directly so no interceptors run
+  const url = `${NODE_API_URL}${REFRESH_PATH}`;
+  return axios.post(url, null, { withCredentials: true });
+}
+
+
 // --- JWT Decoder helper ---
 function decodeJWT(token) {
   try {
@@ -95,22 +105,30 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config || {};
 
-    // If Java API returns 401, try refreshing via nodeApi and retry original
+    // If this request was the refresh endpoint, don't try to refresh again
+    if (originalRequest && originalRequest.url && originalRequest.url.includes(REFRESH_PATH)) {
+      // refresh endpoint itself failed -> bail out
+      store.dispatch(clearUser?.() ?? {});
+      window.location.href = "/login";
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       console.warn("⚠️ Java API session expired (api). Trying refresh...");
       originalRequest._retry = true;
       try {
-        await nodeApi.post("/recruiter-auth/recruiter-refresh-token", null, { withCredentials: true });
+        // call refresh bypassing axios instances (no interceptors) to avoid recursion
+        await callRefreshEndpoint();
+        // refresh succeeded — retry original request
         return api(originalRequest);
       } catch (err) {
-        console.error("⛔ Refresh failed (api). Redirecting to login");
+        console.error("⛔ Refresh failed (api). Redirecting to login", err);
         store.dispatch(clearUser?.() ?? {});
         window.location.href = "/login";
         return Promise.reject(err);
       }
     }
 
-    // Return backend JSON for client-handled 4xx responses
     if (error.response && error.response.status >= 400 && error.response.status < 500) {
       return error.response.data;
     }
@@ -131,19 +149,35 @@ apis.interceptors.response.use(
   (response) => response.data,
   async (error) => {
     const originalRequest = error.config || {};
+
+    // If this request was the refresh endpoint, don't try to refresh again
+    if (originalRequest && originalRequest.url && originalRequest.url.includes(REFRESH_PATH)) {
+      // refresh endpoint itself failed -> bail out
+      store.dispatch(clearUser?.() ?? {});
+      window.location.href = "/login";
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
-      console.warn("⚠️ Java API session expired (apis). Trying refresh...");
+      console.warn("⚠️ Java API session expired (api). Trying refresh...");
       originalRequest._retry = true;
       try {
-        await nodeApi.post("/recruiter-auth/recruiter-refresh-token", null, { withCredentials: true });
+        // call refresh bypassing axios instances (no interceptors) to avoid recursion
+        await callRefreshEndpoint();
+        // refresh succeeded — retry original request
         return apis(originalRequest);
       } catch (err) {
-        console.error("⛔ Refresh failed (apis). Redirecting to login");
+        console.error("⛔ Refresh failed (api). Redirecting to login", err);
         store.dispatch(clearUser?.() ?? {});
         window.location.href = "/login";
         return Promise.reject(err);
       }
     }
+
+    if (error.response && error.response.status >= 400 && error.response.status < 500) {
+      return error.response.data;
+    }
+
     return Promise.reject(error);
   }
 );
@@ -156,24 +190,33 @@ candidateApi.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+
 candidateApi.interceptors.response.use(
-  (response) => response, // candidate API in your original file returned response (not response.data)
+  (response) => response.data,
   async (error) => {
     const originalRequest = error.config || {};
+
+    // If this request was the refresh endpoint, don't try to refresh again
+    if (originalRequest && originalRequest.url && originalRequest.url.includes(REFRESH_PATH)) {
+      store.dispatch(clearUser?.() ?? {});
+      window.location.href = "/login";
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
-      console.warn("⚠️ Candidate API session expired. Trying refresh...");
       originalRequest._retry = true;
       try {
-        await nodeApi.post("/recruiter-auth/recruiter-refresh-token", null, { withCredentials: true });
-        // In original file you retried using apis(originalRequest) — keep consistent by retrying candidateApi
+        // call refresh without triggering interceptors
+        await callRefreshEndpoint();
         return candidateApi(originalRequest);
       } catch (err) {
-        console.error("⛔ Refresh failed (candidateApi). Redirecting to login");
+        console.error("⛔ Node refresh failed. Redirecting to login");
         store.dispatch(clearUser?.() ?? {});
         window.location.href = "/login";
         return Promise.reject(err);
       }
     }
+
     return Promise.reject(error);
   }
 );
@@ -191,10 +234,18 @@ nodeApi.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config || {};
 
+    // If this request was the refresh endpoint, don't try to refresh again
+    if (originalRequest && originalRequest.url && originalRequest.url.includes(REFRESH_PATH)) {
+      store.dispatch(clearUser?.() ?? {});
+      window.location.href = "/login";
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        await nodeApi.post("/recruiter-auth/recruiter-refresh-token", null, { withCredentials: true });
+        // call refresh without triggering interceptors
+        await callRefreshEndpoint();
         return nodeApi(originalRequest);
       } catch (err) {
         console.error("⛔ Node refresh failed. Redirecting to login");
