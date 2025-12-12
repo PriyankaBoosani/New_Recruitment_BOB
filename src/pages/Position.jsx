@@ -1,13 +1,14 @@
 // src/pages/Position.jsx
 import React, { useState } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal } from 'react-bootstrap';
-import { Search, Plus, Upload } from 'react-bootstrap-icons';
-import { validatePositionForm } from '../validators/position-validations';
+import { Search, Plus, Upload, X as XIcon } from 'react-bootstrap-icons';
+import { ValidateForm } from '../validators/common-validations';
 import '../css/user.css';
 import viewIcon from "../assets/view_icon.png";
 import deleteIcon from "../assets/delete_icon.png";
 import editIcon from "../assets/edit_icon.png";
 import ErrorMessage from '../components/ErrorMessage';
+import { FileMeta, downloadTemplate, importFromCSV } from '../components/FileUpload';
 
 const Position = () => {
   // sample departments & job grades (replace with API data if required)
@@ -46,105 +47,35 @@ const Position = () => {
 
   const [errors, setErrors] = useState({});
 
-  // CSV parser - tolerant to common header names
-  const parseCSVTextToPositions = (text) => {
-    const lines = text.split(/\r\n|\n/).map(l => l.trim()).filter(l => l !== '');
-    if (lines.length < 2) return [];
+  // --- File helpers (same as Department)
+  const onSelectCSV = (file) => setSelectedCSVFile(file ?? null);
+  const onSelectXLSX = (file) => setSelectedXLSXFile(file ?? null);
+  const removeCSV = () => setSelectedCSVFile(null);
+  const removeXLSX = () => setSelectedXLSXFile(null);
 
-    const header = lines[0].split(',').map(h => h.trim().toLowerCase());
-    const rows = lines.slice(1);
-
-    return rows.map(row => {
-      const cols = row.split(',').map(c => c.trim());
-      const item = {};
-      header.forEach((h, idx) => { item[h] = cols[idx] ?? ''; });
-
-      return {
-        title: item.positiontitle || item.title || item.name || '',
-        department: item.department || '',
-        jobGrade: item.jobgrade || item.gradecode || item.grade || '',
-        description: item.description || ''
-      };
+  // import wrapper using shared helper (mirrors Department: simple mapping, no validateRow)
+  const handleImport = async () => {
+    await importFromCSV({
+      selectedCSVFile,
+      selectedXLSXFile,
+      list: positions,
+      setList: setPositions,
+      // simple mapping - mirror possible header variants to Position fields
+      mapRow: (row) => ({
+        title: (row.positionTitle ?? row.positiontitle ?? row.title ?? row.name ?? '').trim(),
+        department: (row.department ?? row.dept ?? '').trim(),
+        jobGrade: (row.jobGrade ?? row.jobgrade ?? row.gradecode ?? row.grade ?? '').trim(),
+        description: (row.description ?? row.desc ?? '').trim()
+      }),
+      // no validateRow (same behaviour as Department)
+      setSelectedCSVFile,
+      setSelectedXLSXFile,
+      setShowAddModal,
+      setActiveTab
     });
   };
 
-  const downloadTemplate = (type) => {
-    const headers = ['positionTitle', 'department', 'jobGrade', 'description'];
-    const sample = ['Frontend Developer', 'Information Technology', 'JG2', 'React developer'];
-    const csvContent = [headers.join(','), sample.join(',')].join('\n');
-
-    let blob, filename;
-    if (type === 'csv') {
-      blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      filename = 'positions-template.csv';
-    } else {
-      blob = new Blob([csvContent], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      filename = 'positions-template.xlsx';
-    }
-
-    if (navigator.msSaveBlob) navigator.msSaveBlob(blob, filename);
-    else {
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }
-  };
-
-  const handleImport = async () => {
-    if (!selectedCSVFile && !selectedXLSXFile) {
-      alert('Please select a CSV or XLSX file to import.');
-      return;
-    }
-
-    if (selectedCSVFile) {
-      try {
-        const text = await selectedCSVFile.text();
-        const parsed = parseCSVTextToPositions(text);
-
-        const nextIdStart = Math.max(0, ...positions.map(p => p.id)) + 1;
-        const newItems = [];
-        let added = 0;
-
-        for (let i = 0; i < parsed.length; i++) {
-          const p = parsed[i];
-          const payload = {
-            title: String(p.title || '').trim(),
-            department: String(p.department || '').trim(),
-            jobGrade: String(p.jobGrade || '').trim(),
-            description: String(p.description || '').trim()
-          };
-
-          const { valid } = validatePositionForm(payload, { existing: positions.concat(newItems) });
-          if (!valid) continue;
-
-          newItems.push({ id: nextIdStart + newItems.length, ...payload });
-          added++;
-        }
-
-        if (newItems.length > 0) setPositions(prev => [...prev, ...newItems]);
-
-        alert(`Imported ${added} position(s). Skipped ${parsed.length - added}.`);
-        setSelectedCSVFile(null);
-        setShowAddModal(false);
-        setActiveTab('manual');
-      } catch (err) {
-        console.error(err);
-        alert('Failed to read CSV file.');
-      }
-      return;
-    }
-
-    if (selectedXLSXFile) {
-      alert('XLSX import selected. To parse XLSX files, install "xlsx" (SheetJS).');
-      return;
-    }
-  };
-
+  // --- Input handler (clears per-field error same pattern as Department)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setErrors(prev => {
@@ -176,7 +107,7 @@ const Position = () => {
       description: p.description || ''
     });
     setErrors({});
-    setActiveTab('manual'); // keep editing in manual tab
+    setActiveTab('manual');
     setShowAddModal(true);
   };
 
@@ -191,7 +122,7 @@ const Position = () => {
       description: String(formData.description || '').trim()
     };
 
-    const { valid, errors: vErrors } = validatePositionForm(payload, {
+    const { valid, errors: vErrors } = ValidateForm(payload, {
       existing: positions,
       currentId: isEditing ? editingId : null
     });
@@ -214,7 +145,11 @@ const Position = () => {
       setPositions(prev => [...prev, newItem]);
     }
 
+    // reset form & modal state (same as Department)
     setShowAddModal(false);
+    setIsEditing(false);
+    setEditingId(null);
+    setFormData({ title: '', department: '', jobGrade: '', description: '' });
   };
 
   const openDeleteModal = (p) => {
@@ -242,6 +177,7 @@ const Position = () => {
   const indexOfFirst = indexOfLast - itemsPerPage;
   const current = filtered.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginate = (num) => setCurrentPage(num);
 
   return (
     <Container fluid className="user-container">
@@ -312,17 +248,17 @@ const Position = () => {
             <nav>
               <ul className="pagination">
                 <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                  <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>&laquo;</button>
+                  <button className="page-link" onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>&laquo;</button>
                 </li>
 
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
                   <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
-                    <button onClick={() => setCurrentPage(number)} className="page-link">{number}</button>
+                    <button onClick={() => paginate(number)} className="page-link">{number}</button>
                   </li>
                 ))}
 
                 <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                  <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>&raquo;</button>
+                  <button className="page-link" onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages}>&raquo;</button>
                 </li>
               </ul>
             </nav>
@@ -335,11 +271,9 @@ const Position = () => {
           onHide={() => { setShowAddModal(false); setIsEditing(false); setEditingId(null); }}
           size="lg"
           centered
-          dialogClassName="user-modal-dialog"
           className="user-modal"
           fullscreen="sm-down"
           scrollable
-          container={typeof document !== 'undefined' ? document.body : undefined}
         >
           <Modal.Header closeButton className="modal-header-custom">
             <div>
@@ -391,7 +325,7 @@ const Position = () => {
 
                   <Col xs={12}>
                     <Form.Group controlId="formDescription" className="form-group">
-                      <Form.Label className="form-label">Description</Form.Label>
+                      <Form.Label className="form-label">Description <span className="text-danger">*</span></Form.Label>
                       <Form.Control as="textarea" rows={3} name="description" value={formData.description} onChange={handleInputChange} className="form-control-custom" placeholder="Add description ..." />
                       <ErrorMessage>{errors.description}</ErrorMessage>
                     </Form.Group>
@@ -414,27 +348,43 @@ const Position = () => {
                     <p className="text-muted small">Support for CSV and XLSX formats (CSV headers: positionTitle,department,jobGrade,description)</p>
                   </div>
 
-                  <div className="d-flex justify-content-center gap-3 mt-3">
+                  <div className="d-flex justify-content-center gap-3 mt-3 flex-wrap">
                     <div>
-                      <input id="upload-csv-pos" type="file" accept=".csv,text/csv" style={{ display: 'none' }} onChange={(e) => setSelectedCSVFile(e.target.files[0] ?? null)} />
+                      <input id="upload-csv-pos" type="file" accept=".csv,text/csv" style={{ display: 'none' }} onChange={(e) => onSelectCSV(e.target.files[0] ?? null)} />
                       <label htmlFor="upload-csv-pos">
                         <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload CSV</Button>
                       </label>
                     </div>
 
                     <div>
-                      <input id="upload-xlsx-pos" type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style={{ display: 'none' }} onChange={(e) => setSelectedXLSXFile(e.target.files[0] ?? null)} />
+                      <input id="upload-xlsx-pos" type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style={{ display: 'none' }} onChange={(e) => onSelectXLSX(e.target.files[0] ?? null)} />
                       <label htmlFor="upload-xlsx-pos">
                         <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload XLSX</Button>
                       </label>
                     </div>
+
+                    <FileMeta file={selectedCSVFile} onRemove={removeCSV} />
+                    <FileMeta file={selectedXLSXFile} onRemove={removeXLSX} />
                   </div>
 
                   <div className="text-center mt-4 small">
                     Download template:&nbsp;
-                    <Button variant="link" onClick={() => downloadTemplate('csv')} className="btnfont">CSV</Button>
+                    <Button variant="link" className='btnfont' onClick={() =>
+                      downloadTemplate(
+                        ['title', 'department', 'jobGrade', 'description'],
+                        ['Frontend Developer', 'Information Technology', 'JG2', 'React/JS developer'],
+                        'position-template',
+                        'csv'
+                      )}>CSV</Button>
                     &nbsp;|&nbsp;
-                    <Button variant="link" onClick={() => downloadTemplate('xlsx')} className="btnfont">XLSX</Button>
+                    <Button variant="link" className='btnfont' onClick={() =>
+                      downloadTemplate(
+                        ['title', 'department', 'jobGrade', 'description'],
+                        ['Frontend Developer', 'Information Technology', 'JG2', 'React/JS developer'],
+                        'position-template',
+                        'xlsx'
+                      )
+                    }>XLSX</Button>
                   </div>
                 </div>
 
@@ -448,7 +398,7 @@ const Position = () => {
         </Modal>
 
         {/* Delete Confirmation */}
-        <Modal show={showDeleteModal} onHide={cancelDelete} centered dialogClassName="delete-confirm-modal" container={typeof document !== 'undefined' ? document.body : undefined}>
+        <Modal show={showDeleteModal} onHide={cancelDelete} centered dialogClassName="delete-confirm-modal">
           <Modal.Header closeButton>
             <Modal.Title>Confirm Delete</Modal.Title>
           </Modal.Header>

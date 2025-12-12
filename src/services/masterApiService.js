@@ -1,15 +1,11 @@
 // src/services/masterApiService.js
-import { apis, nodeApi } from "./apiService";  // REUSE axios instances + interceptors
+import { apis, nodeApi } from "./apiService"; // reuse axios instances + interceptors
 
 const masterApi = {
   /* Users (Node API) */
-  getRegister: (token) =>
-    nodeApi.get('/getdetails/users/all', {
-      headers: { Authorization: `Bearer ${token}` }
-    }),
-
-  registerUser: (data) =>
-    nodeApi.post('/recruiter-auth/recruiter-register', data),
+  // Note: auth header is injected by nodeApi interceptor; no need to pass token manually
+  getRegister: () => nodeApi.get('/getdetails/users/all'),
+  registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data),
 
   /* Locations */
   getAllLocations: () => apis.get("/location/all"),

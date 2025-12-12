@@ -1,28 +1,23 @@
+// src/App.js
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.css';
+
 import Header from './components/Header';
-import Home from './pages/Home';
-import User from './pages/User';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import "@fontsource/poppins/300.css";   // Light
-import "@fontsource/poppins/400.css";   // Regular
-import "@fontsource/poppins/500.css";   // Medium
-import "@fontsource/poppins/600.css";   // Semi-bold
-import "@fontsource/poppins/700.css";   // Bold
-import Department from './pages/department';
-import Location from './pages/Location';
-import JobGrade from './pages/JobGrade';
-import Position from './pages/Position';
-import Category from './pages/Category';
-import SpecialCategory from './pages/SpecialCategory';
-import RelaxationType from './pages/RelaxationType';
-import Document from './pages/Document';
-import InterviewPanel from './pages/InterviewPanel';
+
+import "@fontsource/poppins/300.css";
+import "@fontsource/poppins/400.css";
+import "@fontsource/poppins/500.css";
+import "@fontsource/poppins/600.css";
+import "@fontsource/poppins/700.css";
+
+// Import centralized router
+import AppRoutes from './routes/AppRoutes';
 
 function App() {
   return (
@@ -31,24 +26,10 @@ function App() {
       <div className="App d-flex flex-column min-vh-100">
         <Header />
         <main className="flex-grow-1">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/users" element={<User />} />
-            <Route path="/department" element={<Department />} />
-            <Route path="/location" element={<Location />} />
-            <Route path="/jobgrade" element={<JobGrade />} />
-            <Route path="/position" element={<Position />} />
-            <Route path ="/category" element={<Category />} />
-            <Route path="/specialcategory" element={<SpecialCategory/>} />
-            <Route path="/relaxationtype" element={<RelaxationType/>} />
-            <Route path="/document" element={<Document />} />
-            <Route path="/interviewpanel" element={<InterviewPanel />} />
-            {/* Add more routes here as you create more pages */}
-          </Routes>
+          <AppRoutes />
         </main>
       </div>
     </Router>
-    
   );
 }
 

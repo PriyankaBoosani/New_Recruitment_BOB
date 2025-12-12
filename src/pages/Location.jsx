@@ -2,13 +2,15 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal } from 'react-bootstrap';
 import { Search, Plus, Upload } from 'react-bootstrap-icons';
-import { validateLocationForm } from '../validators/location-validations';
-import '../css/user.css'; // switched to user.css
+import '../css/user.css';
 import viewIcon from "../assets/view_icon.png";
 import deleteIcon from "../assets/delete_icon.png";
 import editIcon from "../assets/edit_icon.png";
 import ErrorMessage from '../components/ErrorMessage';
+import { ValidateForm } from '../validators/common-validations';
 
+// Shared upload utilities (FileMeta, downloadTemplate, importLocations)
+import { FileMeta, downloadTemplate, importFromCSV } from '../components/FileUpload';
 const Location = () => {
   // sample cities (you can fetch this from API later)
   const cityOptions = [
@@ -48,120 +50,34 @@ const Location = () => {
 
   const [errors, setErrors] = useState({});
 
-  const downloadTemplate = (type) => {
-    // CSV headers: city,location
-    const headers = ['city', 'location'];
-    const sample = ['Bengaluru', 'Whitefield'];
-    const csvContent = [headers.join(','), sample.join(',')].join('\n');
-
-    let blob, filename;
-    if (type === 'csv') {
-      blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      filename = 'locations-template.csv';
-    } else {
-      blob = new Blob([csvContent], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      filename = 'locations-template.xlsx';
-    }
-
-    if (navigator.msSaveBlob) {
-      navigator.msSaveBlob(blob, filename);
-    } else {
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }
-  };
-
-  // simple CSV parse (same style as Department); expects header containing 'city' and 'location'
-  const parseCSVTextToLocations = (text) => {
-    const lines = text.split(/\r\n|\n/).map(l => l.trim()).filter(l => l !== '');
-    if (lines.length < 2) return [];
-
-    const header = lines[0].split(',').map(h => h.trim().toLowerCase());
-    const rows = lines.slice(1);
-
-    return rows.map(row => {
-      const cols = row.split(',').map(c => c.trim());
-      const item = {};
-      header.forEach((h, idx) => { item[h] = cols[idx] ?? ''; });
-      return {
-        city: item.city || '',
-        name: item.location || item.name || 'Unnamed Location'
-      };
-    });
-  };
-
+  // Import wrapper — calls the shared importLocations (simple append)
   const handleImport = async () => {
-    if (!selectedCSVFile && !selectedXLSXFile) {
-      alert('Please select a CSV or XLSX file to import.');
-      return;
-    }
-
-    if (selectedCSVFile) {
-      try {
-        const text = await selectedCSVFile.text();
-        const parsed = parseCSVTextToLocations(text);
-
-        // map parsed to objects with cityId (if city exists) or cityName
-        const nextIdStart = Math.max(0, ...locations.map(d => d.id)) + 1;
-
-        // track counts
-        let added = 0;
-        let invalid = 0;
-
-        const newItems = [];
-        parsed.forEach((p) => {
-          // find cityId by name (case-insensitive)
-          const city = cityOptions.find(c => String(c.name).trim().toLowerCase() === String(p.city).trim().toLowerCase());
-          const cityId = city ? city.id : null;
-          const cityName = city ? city.name : p.city;
-
-          const candidate = {
-            id: nextIdStart + newItems.length,
-            cityId,
-            cityName,
-            name: p.name
-          };
-
-          // validate using validator (pass existing list to detect duplicates)
-          const { valid, errors: vErrors } = validateLocationForm(
-            { cityId, cityName, name: candidate.name },
-            { existing: locations.concat(newItems) } // include newItems to detect dupes within import
-          );
-
-          if (!valid) {
-            invalid++;
-            return;
+    await importFromCSV({
+      selectedCSVFile,
+      selectedXLSXFile,
+      list: locations,
+      setList: setLocations,
+      mapRow: (row) => {
+        // accept various header names
+        const get = (r, ...keys) => {
+          for (const k of keys) {
+            if (Object.prototype.hasOwnProperty.call(r, k) && String(r[k] ?? '').trim() !== '') return String(r[k]).trim();
           }
-
-          newItems.push(candidate);
-          added++;
-        });
-
-        if (newItems.length > 0) {
-          setLocations(prev => [...prev, ...newItems]);
-        }
-
-        alert(`Import finished — added: ${added}, invalid/skipped: ${parsed.length - added}`);
-        setSelectedCSVFile(null);
-        setShowAddModal(false);
-        setActiveTab('manual');
-      } catch (err) {
-        console.error(err);
-        alert('Failed to read CSV file.');
-      }
-      return;
-    }
-
-    if (selectedXLSXFile) {
-      alert('XLSX import selected. To parse XLSX files, install "xlsx" (SheetJS).');
-      return;
-    }
+          return '';
+        };
+        const cityRaw = get(row, 'city', 'cityname', 'city_name', 'town');
+        const locationRaw = get(row, 'location', 'name', 'loc', 'location_name');
+        return {
+          cityId: null,
+          cityName: cityRaw,
+          name: locationRaw || 'Unnamed Location'
+        };
+      },
+      setSelectedCSVFile,
+      setSelectedXLSXFile,
+      setShowAddModal,
+      setActiveTab
+    });
   };
 
   const handleInputChange = (e) => {
@@ -180,6 +96,8 @@ const Location = () => {
     setFormData({ cityId: '', name: '' });
     setErrors({});
     setActiveTab('manual');
+    setSelectedCSVFile(null);
+    setSelectedXLSXFile(null);
     setShowAddModal(true);
   };
 
@@ -196,47 +114,44 @@ const Location = () => {
   };
 
   const handleSave = (e) => {
-    e.preventDefault();
-    setErrors({});
+  e.preventDefault();
+  setErrors({});
 
-    const currentCityName = formData.cityId
-      ? (cityOptions.find(c => c.id === Number(formData.cityId)) || {}).name
-      : formData.cityName || '';
+  // validate using common validation function
+  const { valid, errors: vErrors } = ValidateForm(formData, {
+    existing: locations,
+    currentId: isEditing ? editingLocationId : null
+  });
 
-    // run validation (pass existing locations to check uniqueness)
-    const { valid, errors: vErrors } = validateLocationForm(
-      { cityId: formData.cityId ? Number(formData.cityId) : null, cityName: currentCityName, name: formData.name },
-      { existing: locations, currentId: isEditing ? editingLocationId : null }
+  if (!valid) {
+    setErrors(vErrors);
+    return;
+  }
+
+  // normalization and save (same as before)
+  const trimmedName = String(formData.name || '').trim();
+  const cityId = formData.cityId ? Number(formData.cityId) : null;
+  const cityName = cityId ? (cityOptions.find(c => c.id === cityId) || {}).name : (formData.cityName || '');
+
+  if (isEditing) {
+    setLocations(prev =>
+      prev.map(loc =>
+        loc.id === editingLocationId ? { ...loc, name: trimmedName, cityId, cityName } : loc
+      )
     );
+  } else {
+    const newLoc = {
+      id: Math.max(0, ...locations.map(d => d.id)) + 1,
+      cityId,
+      cityName,
+      name: trimmedName
+    };
+    setLocations(prev => [...prev, newLoc]);
+  }
 
-    if (!valid) {
-      setErrors(vErrors);
-      return;
-    }
+  setShowAddModal(false);
+};
 
-    // sanitize / trim
-    const trimmedName = String(formData.name || '').trim();
-    const cityId = formData.cityId ? Number(formData.cityId) : null;
-    const cityName = cityId ? (cityOptions.find(c => c.id === cityId) || {}).name : '';
-
-    if (isEditing) {
-      setLocations(prev =>
-        prev.map(loc =>
-          loc.id === editingLocationId ? { ...loc, name: trimmedName, cityId, cityName } : loc
-        )
-      );
-    } else {
-      const newLoc = {
-        id: Math.max(0, ...locations.map(d => d.id)) + 1,
-        cityId,
-        cityName,
-        name: trimmedName
-      };
-      setLocations(prev => [...prev, newLoc]);
-    }
-
-    setShowAddModal(false);
-  };
 
   const openDeleteModal = (loc) => {
     setDeleteTarget({ id: loc.id, name: loc.name });
@@ -435,13 +350,17 @@ const Location = () => {
                         <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload XLSX</Button>
                       </label>
                     </div>
+
+                    {/* show selected files */}
+                    <FileMeta file={selectedCSVFile} onRemove={() => setSelectedCSVFile(null)} />
+                    <FileMeta file={selectedXLSXFile} onRemove={() => setSelectedXLSXFile(null)} />
                   </div>
 
                   <div className="text-center mt-4 small">
                     Download template:&nbsp;
-                    <Button variant="link" onClick={() => downloadTemplate('csv')} className="btnfont">CSV</Button>
+                    <Button variant="link" onClick={() => downloadTemplate(['city', 'location'], ['Bengaluru', 'Whitefield'], 'locations-template')} className="btnfont">CSV</Button>
                     &nbsp;|&nbsp;
-                    <Button variant="link" onClick={() => downloadTemplate('xlsx')} className="btnfont">XLSX</Button>
+                    <Button variant="link" onClick={() => downloadTemplate(['city', 'location'], ['Bengaluru', 'Whitefield'], 'locations-template')} className="btnfont">XLSX</Button>
                   </div>
                 </div>
 

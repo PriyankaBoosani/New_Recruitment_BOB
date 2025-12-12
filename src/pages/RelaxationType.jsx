@@ -2,12 +2,14 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal } from 'react-bootstrap';
 import { Search, Plus, Upload } from 'react-bootstrap-icons';
-import { validateRelaxationTypeForm } from '../validators/relaxationtype-validations';
+import { ValidateForm } from '../validators/common-validations';
 import '../css/user.css';
 import viewIcon from "../assets/view_icon.png";
 import deleteIcon from "../assets/delete_icon.png";
 import editIcon from "../assets/edit_icon.png";
 import ErrorMessage from '../components/ErrorMessage';
+import { FileMeta, downloadTemplate, importFromCSV } from '../components/FileUpload';
+
 
 const RelaxationType = () => {
   const [items, setItems] = useState([
@@ -35,113 +37,40 @@ const RelaxationType = () => {
 
   const [formData, setFormData] = useState({
     code: '',
-    inputType: 'Number',
     operator: '<=',
     description: ''
   });
 
   const [errors, setErrors] = useState({});
 
-  const inputTypeOptions = ['Number', 'Text', 'Boolean'];
-  const operatorOptions = ['<=', '>=', '==', '!=', '<', '>'];
+  // only operator options are needed now
+  const operatorOptions = ['select an option', '<=', '>=', '==', '!=', '<', '>'];
 
-  // CSV parser tolerant to common headers
-  const parseCSVToItems = (text) => {
-    const lines = text.split(/\r\n|\n/).map(l => l.trim()).filter(l => l !== '');
-    if (lines.length < 2) return [];
+  // --- File helpers (same as Department)
+  const removeCSV = () => setSelectedCSVFile(null);
+  const removeXLSX = () => setSelectedXLSXFile(null);
 
-    const header = lines[0].split(',').map(h => h.trim().toLowerCase());
-    const rows = lines.slice(1);
-
-    return rows.map(row => {
-      const cols = row.split(',').map(c => c.trim());
-      const obj = {};
-      header.forEach((h, i) => { obj[h] = cols[i] ?? ''; });
-
-      return {
-        code: obj.code || obj.title || '',
-        inputType: obj.inputtype || obj.input || 'Number',
-        operator: obj.operator || obj.op || '',
-        description: obj.description || ''
-      };
-    });
-  };
-
-  const downloadTemplate = (type) => {
-    const headers = ['code', 'inputType', 'operator', 'description'];
-    const sample = ['Age Relaxation', 'Number', '<=', 'Additional years added to age limit'];
-    const csvContent = [headers.join(','), sample.join(',')].join('\n');
-
-    let blob, filename;
-    if (type === 'csv') {
-      blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      filename = 'relaxation-types-template.csv';
-    } else {
-      blob = new Blob([csvContent], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      filename = 'relaxation-types-template.xlsx';
-    }
-
-    if (navigator.msSaveBlob) navigator.msSaveBlob(blob, filename);
-    else {
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }
-  };
-
+  // import wrapper using shared helper (mirrors Department: simple mapping, no validateRow)
   const handleImport = async () => {
-    if (!selectedCSVFile && !selectedXLSXFile) {
-      alert('Please select a CSV or XLSX file to import.');
-      return;
-    }
-
-    if (selectedCSVFile) {
-      try {
-        const text = await selectedCSVFile.text();
-        const parsed = parseCSVToItems(text);
-
-        const nextIdStart = Math.max(0, ...items.map(i => i.id)) + 1;
-        const newItems = [];
-        let added = 0;
-
-        for (let i = 0; i < parsed.length; i++) {
-          const p = parsed[i];
-          const payload = {
-            code: String(p.code || '').trim(),
-            inputType: String(p.inputType || 'Number').trim(),
-            operator: String(p.operator || '').trim(),
-            description: String(p.description || '').trim()
-          };
-
-          const { valid } = validateRelaxationTypeForm(payload, { existing: items.concat(newItems) });
-          if (!valid) continue;
-
-          newItems.push({ id: nextIdStart + newItems.length, ...payload });
-          added++;
-        }
-
-        if (newItems.length > 0) setItems(prev => [...prev, ...newItems]);
-
-        alert(`Imported ${added} relaxation type(s). Skipped ${parsed.length - added}.`);
-        setSelectedCSVFile(null);
-        setShowAddModal(false);
-        setActiveTab('manual');
-      } catch (err) {
-        console.error(err);
-        alert('Failed to read CSV file.');
-      }
-      return;
-    }
-
-    if (selectedXLSXFile) {
-      alert('XLSX import selected. To parse XLSX files, install "xlsx" (SheetJS).');
-      return;
-    }
+    await importFromCSV({
+      selectedCSVFile,
+      selectedXLSXFile,
+      list: items,
+      setList: setItems,
+      // simple mapping - accept multiple header variants and map to fields
+      mapRow: (row) => ({
+        code: (row.code ?? row.title ?? row.name ?? '').trim(),
+        // force Number for inputType
+        inputType: 'Number',
+        operator: (row.operator ?? row.op ?? '').trim(),
+        description: (row.description ?? row.desc ?? '').trim()
+      }),
+      // no validateRow to match Department behavior
+      setSelectedCSVFile,
+      setSelectedXLSXFile,
+      setShowAddModal,
+      setActiveTab
+    });
   };
 
   const handleInputChange = (e) => {
@@ -155,7 +84,7 @@ const RelaxationType = () => {
   const openAddModal = () => {
     setIsEditing(false);
     setEditingId(null);
-    setFormData({ code: '', inputType: 'Number', operator: '<=', description: '' });
+    setFormData({ code: '', operator: '', description: '' });
     setErrors({});
     setActiveTab('manual');
     setSelectedCSVFile(null);
@@ -166,12 +95,7 @@ const RelaxationType = () => {
   const openEditModal = (it) => {
     setIsEditing(true);
     setEditingId(it.id);
-    setFormData({
-      code: it.code || '',
-      inputType: it.inputType || 'Number',
-      operator: it.operator || '<=',
-      description: it.description || ''
-    });
+    setFormData({ code: '', operator: '', description: '' });
     setErrors({});
     setActiveTab('manual');
     setShowAddModal(true);
@@ -183,12 +107,13 @@ const RelaxationType = () => {
 
     const payload = {
       code: String(formData.code || '').trim(),
-      inputType: String(formData.inputType || '').trim(),
+      // always Number
+      inputType: 'Number',
       operator: String(formData.operator || '').trim(),
       description: String(formData.description || '').trim()
     };
 
-    const { valid, errors: vErrors } = validateRelaxationTypeForm(payload, {
+    const { valid, errors: vErrors } = ValidateForm(payload, {
       existing: items,
       currentId: isEditing ? editingId : null
     });
@@ -244,7 +169,7 @@ const RelaxationType = () => {
               <Search className="search-icon" />
               <Form.Control
                 type="text"
-                placeholder="Search by code, input, operator or description"
+                placeholder="Search by code, input (Number), operator or description"
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                 className="search-input"
@@ -338,7 +263,7 @@ const RelaxationType = () => {
             {activeTab === 'manual' ? (
               <Form onSubmit={handleSave} noValidate>
                 <Row className="g-3">
-                  <Col xs={12} md={6}>
+                  <Col xs={12} md={12}>
                     <Form.Group controlId="formCode">
                       <Form.Label className="form-label">Code <span className="text-danger">*</span></Form.Label>
                       <Form.Control type="text" name="code" value={formData.code} onChange={handleInputChange} className="form-control-custom" placeholder="Enter code/title" aria-invalid={!!errors.code} aria-describedby="codeError" />
@@ -346,29 +271,36 @@ const RelaxationType = () => {
                     </Form.Group>
                   </Col>
 
-                  <Col xs={12} md={3}>
-                    <Form.Group controlId="formInputType">
-                      <Form.Label className="form-label">Input <span className="text-danger">*</span></Form.Label>
-                      <Form.Select name="inputType" value={formData.inputType} onChange={handleInputChange} className="form-control-custom" aria-invalid={!!errors.inputType} aria-describedby="inputTypeError">
-                        {inputTypeOptions.map(o => <option key={o} value={o}>{o}</option>)}
-                      </Form.Select>
-                      <ErrorMessage id="inputTypeError">{errors.inputType}</ErrorMessage>
+                  {/* Input is fixed to Number; no select shown */}
+                  <Col xs={12} md={6}>
+                    <Form.Group controlId="formInputFixed">
+                      <Form.Label className="form-label">Input</Form.Label>
+                      <Form.Control type="text" readOnly value="Number" className="form-control-custom" />
                     </Form.Group>
                   </Col>
 
-                  <Col xs={12} md={3}>
+                  <Col xs={12} md={6}>
                     <Form.Group controlId="formOperator">
                       <Form.Label className="form-label">Operator <span className="text-danger">*</span></Form.Label>
-                      <Form.Select name="operator" value={formData.operator} onChange={handleInputChange} className="form-control-custom" aria-invalid={!!errors.operator} aria-describedby="operatorError">
+                      <Form.Select
+                        name="operator"
+                        value={formData.operator}
+                        onChange={handleInputChange}
+                        className="form-control-custom"
+                        aria-invalid={!!errors.operator}
+                        aria-describedby="operatorError"
+                      >
+                        <option value="">Select operator</option>
                         {operatorOptions.map(o => <option key={o} value={o}>{o}</option>)}
                       </Form.Select>
                       <ErrorMessage id="operatorError">{errors.operator}</ErrorMessage>
                     </Form.Group>
                   </Col>
 
+
                   <Col xs={12}>
                     <Form.Group controlId="formDescription">
-                      <Form.Label className="form-label">Description</Form.Label>
+                      <Form.Label className="form-label">Description <span className="text-danger">*</span></Form.Label>
                       <Form.Control as="textarea" rows={3} name="description" value={formData.description} onChange={handleInputChange} className="form-control-custom" placeholder="Enter description" aria-invalid={!!errors.description} aria-describedby="descError" />
                       <ErrorMessage id="descError">{errors.description}</ErrorMessage>
                     </Form.Group>
@@ -388,7 +320,7 @@ const RelaxationType = () => {
                       <Upload size={32} />
                     </div>
                     <h5 className="text-center uploadfile">Upload File</h5>
-                    <p className="text-center small">Support for CSV and XLSX formats (CSV headers: code,inputType,operator,description)</p>
+                    <p className="text-center small">Support for CSV and XLSX formats (CSV headers: code,operator,description). inputType will default to "Number".</p>
                   </div>
 
                   <div className="d-flex justify-content-center gap-3 mt-3">
@@ -405,13 +337,40 @@ const RelaxationType = () => {
                         <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload XLSX</Button>
                       </label>
                     </div>
+                    <FileMeta file={selectedCSVFile} onRemove={removeCSV} />
+                    <FileMeta file={selectedXLSXFile} onRemove={removeXLSX} />
                   </div>
 
                   <div className="text-center mt-4 small">
                     Download template:&nbsp;
-                    <Button variant="link" onClick={() => downloadTemplate('csv')} className="btnfont">CSV</Button>
+                    <Button
+                      variant="link"
+                      onClick={() =>
+                        downloadTemplate(
+                          // removed inputType from headers because input is fixed to Number
+                          ['code', 'operator', 'description'],
+                          ['Age Relaxation', '<=', 'Additional years added to age limit'],
+                          'relaxation-types-template'
+                        )
+                      }
+                      className="btnfont"
+                    >
+                      CSV
+                    </Button>
                     &nbsp;|&nbsp;
-                    <Button variant="link" onClick={() => downloadTemplate('xlsx')} className="btnfont">XLSX</Button>
+                    <Button
+                      variant="link"
+                      onClick={() =>
+                        downloadTemplate(
+                          ['code', 'operator', 'description'],
+                          ['Age Relaxation', '<=', 'Additional years added to age limit'],
+                          'relaxation-types-template'
+                        )
+                      }
+                      className="btnfont"
+                    >
+                      XLSX
+                    </Button>
                   </div>
                 </div>
 

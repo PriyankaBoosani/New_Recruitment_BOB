@@ -2,12 +2,14 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal } from 'react-bootstrap';
 import { Search, Plus, Upload } from 'react-bootstrap-icons';
-import { validateSpecialCategoryForm } from '../validators/specialcategory-validations';
+import { ValidateForm } from '../validators/common-validations';
 import '../css/user.css';
 import viewIcon from "../assets/view_icon.png";
 import deleteIcon from "../assets/delete_icon.png";
 import editIcon from "../assets/edit_icon.png";
 import ErrorMessage from '../components/ErrorMessage';
+import { FileMeta, downloadTemplate, importFromCSV } from '../components/FileUpload';
+
 
 const SpecialCategory = () => {
   const [specials, setSpecials] = useState([
@@ -36,96 +38,34 @@ const SpecialCategory = () => {
   const [formData, setFormData] = useState({ code: '', name: '', description: '' });
   const [errors, setErrors] = useState({});
 
-  // CSV parser tolerant to headers
-  const parseCSVToSpecials = (text) => {
-    const lines = text.split(/\r\n|\n/).map(l => l.trim()).filter(l => l !== '');
-    if (lines.length < 2) return [];
 
-    const header = lines[0].split(',').map(h => h.trim().toLowerCase());
-    const rows = lines.slice(1);
-
-    return rows.map(row => {
-      const cols = row.split(',').map(c => c.trim());
-      const obj = {};
-      header.forEach((h, i) => { obj[h] = cols[i] ?? ''; });
-
-      return {
-        code: obj.code || obj.categorycode || '',
-        name: obj.name || obj.title || '',
-        description: obj.description || ''
-      };
-    });
-  };
-
-  const downloadTemplate = (type) => {
-    const headers = ['code', 'name', 'description'];
-    const sample = ['PWD', 'Persons with Disability', 'Reserved for PWD'];
-    const csvContent = [headers.join(','), sample.join(',')].join('\n');
-
-    let blob, filename;
-    if (type === 'csv') {
-      blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      filename = 'special-categories-template.csv';
-    } else {
-      blob = new Blob([csvContent], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      filename = 'special-categories-template.xlsx';
-    }
-
-    if (navigator.msSaveBlob) navigator.msSaveBlob(blob, filename);
-    else {
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }
-  };
 
   // === Updated: import behaves like Department (simple append, no per-row validation) ===
   const handleImport = async () => {
-    if (!selectedCSVFile && !selectedXLSXFile) {
-      alert('Please select a CSV or XLSX file to import.');
-      return;
-    }
+  await importFromCSV({
+    selectedCSVFile,
+    selectedXLSXFile,
+    list: specials,
+    setList: setSpecials,
+    // simple mapping — accept common header variants and map to the special category shape
+    mapRow: (row) => ({
+      code: (row.code ?? row.code_name ?? row.title ?? '').trim(),
+      name: (row.name ?? row.category ?? row.special_name ?? '').trim(),
+      description: (row.description ?? row.desc ?? '').trim()
+    }),
+    // match Department behaviour: no validateRow
+    setSelectedCSVFile,
+    setSelectedXLSXFile,
+    setShowAddModal,
+    setActiveTab
+  });
+};
+ // ----- File helpers (same as Department)
+  const onSelectCSV = (file) => setSelectedCSVFile(file ?? null);
+  const onSelectXLSX = (file) => setSelectedXLSXFile(file ?? null);
+  const removeCSV = () => setSelectedCSVFile(null);
+  const removeXLSX = () => setSelectedXLSXFile(null);
 
-    if (selectedCSVFile) {
-      try {
-        const text = await selectedCSVFile.text();
-        const parsed = parseCSVToSpecials(text);
-
-        const nextId = Math.max(0, ...specials.map(s => s.id)) + 1;
-        const newItems = parsed.map((p, i) => ({
-          id: nextId + i,
-          code: String(p.code || '').trim(),
-          name: String(p.name || '').trim(),
-          description: String(p.description || '').trim()
-        }));
-
-        if (newItems.length === 0) {
-          alert('No valid rows found in CSV.');
-        } else {
-          setSpecials(prev => [...prev, ...newItems]);
-          alert(`Imported ${newItems.length} special category(s) from CSV.`);
-          // reset state similarly to Department
-          setSelectedCSVFile(null);
-          setShowAddModal(false);
-          setActiveTab('manual');
-        }
-      } catch (err) {
-        console.error(err);
-        alert('Failed to read CSV file.');
-      }
-      return;
-    }
-
-    if (selectedXLSXFile) {
-      alert('XLSX import selected. To parse XLSX files, install "xlsx" (SheetJS).');
-      return;
-    }
-  };
   // === end updated import ===
 
   const handleInputChange = (e) => {
@@ -164,7 +104,7 @@ const SpecialCategory = () => {
       description: String(formData.description || '').trim()
     };
 
-    const { valid, errors: vErrors } = validateSpecialCategoryForm(payload, {
+    const { valid, errors: vErrors } = ValidateForm(payload, {
       existing: specials,
       currentId: isEditing ? editingId : null
     });
@@ -341,7 +281,7 @@ const SpecialCategory = () => {
 
                   <Col xs={12}>
                     <Form.Group controlId="formDescription" className="form-group">
-                      <Form.Label className="form-label">Description</Form.Label>
+                      <Form.Label className="form-label">Description <span className="text-danger">*</span></Form.Label>
                       <Form.Control as="textarea" rows={3} name="description" value={formData.description} onChange={handleInputChange} className="form-control-custom" placeholder="Enter description" aria-invalid={!!errors.description} aria-describedby="descError" />
                       <ErrorMessage id="descError">{errors.description}</ErrorMessage>
                     </Form.Group>
@@ -378,6 +318,9 @@ const SpecialCategory = () => {
                         <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload XLSX</Button>
                       </label>
                     </div>
+                                        <FileMeta file={selectedCSVFile} onRemove={removeCSV} />
+                                        <FileMeta file={selectedXLSXFile} onRemove={removeXLSX} />
+                    
                   </div>
 
                   <div className="text-center mt-4 small">

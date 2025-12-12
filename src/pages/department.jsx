@@ -2,35 +2,14 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal, Badge } from 'react-bootstrap';
 import { Search, Plus, Upload, X as XIcon } from 'react-bootstrap-icons';
-import { validateDepartmentForm } from '../validators/department-validations';
+import { ValidateForm } from '../validators/common-validations';
 import '../css/user.css';
 import viewIcon from "../assets/view_icon.png";
 import deleteIcon from "../assets/delete_icon.png";
 import editIcon from "../assets/edit_icon.png";
 import ErrorMessage from '../components/ErrorMessage';
+import { FileMeta, downloadTemplate, importFromCSV } from '../components/FileUpload';
 
-const humanFileSize = (size) => {
-    if (!size && size !== 0) return '';
-    const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    return `${(size / Math.pow(1024, i)).toFixed((i === 0) ? 0 : (i < 2 ? 1 : 2))} ${sizes[i]}`;
-};
-
-const FileMeta = ({ file, onRemove }) => {
-    if (!file) return null;
-    return (
-        <div className="mt-2 d-flex align-items-center gap-2 file-meta">
-            <Badge bg="success" pill style={{ fontSize: 12, padding: '6px 8px' }}>✓</Badge>
-            <div style={{ fontSize: 13 }}>
-                <strong style={{ display: 'block' }}>{file.name}</strong>
-                <small className="text-muted">{humanFileSize(file.size)}</small>
-            </div>
-            <Button variant="outline-secondary" size="sm" className="ms-auto" onClick={onRemove} title="Remove selected file">
-                <XIcon size={14} />
-            </Button>
-        </div>
-    );
-};
 
 const Department = () => {
     // Sample department data
@@ -67,90 +46,25 @@ const Department = () => {
 
     const [errors, setErrors] = useState({});
 
-    const downloadTemplate = (type) => {
-        const headers = ['name', 'description'];
-        const sample = ['Information Technology', 'Handles all IT related operations and infrastructure'];
-        const csvContent = [headers.join(','), sample.join(',')].join('\n');
 
-        let blob, filename;
-        if (type === 'csv') {
-            blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            filename = 'departments-template.csv';
-        } else {
-            blob = new Blob([csvContent], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            filename = 'departments-template.xlsx';
-        }
-
-        if (navigator.msSaveBlob) {
-            navigator.msSaveBlob(blob, filename);
-        } else {
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.href = url;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        }
-    };
-
-    const parseCSVTextToDepartments = (text) => {
-        const lines = text.split(/\r\n|\n/).map(l => l.trim()).filter(l => l !== '');
-        if (lines.length < 2) return [];
-
-        const header = lines[0].split(',').map(h => h.trim().toLowerCase());
-        const rows = lines.slice(1);
-
-        return rows.map(row => {
-            const cols = row.split(',').map(c => c.trim());
-            const item = {};
-            header.forEach((h, idx) => { item[h] = cols[idx] ?? ''; });
-            return {
-                name: item.name || 'Unnamed Department',
-                description: item.description || ''
-            };
-        });
-    };
 
     const handleImport = async () => {
-        if (!selectedCSVFile && !selectedXLSXFile) {
-            alert('Please select a CSV or XLSX file to import.');
-            return;
-        }
-
-        if (selectedCSVFile) {
-            try {
-                const text = await selectedCSVFile.text();
-                const parsed = parseCSVTextToDepartments(text);
-
-                const nextIdStart = Math.max(0, ...departments.map(d => d.id)) + 1;
-                const newDepartments = parsed.map((p, i) => ({
-                    id: nextIdStart + i,
-                    name: p.name,
-                    description: p.description
-                }));
-
-                if (newDepartments.length === 0) {
-                    alert('No valid rows found in CSV.');
-                } else {
-                    setDepartments(prev => [...prev, ...newDepartments]);
-                    alert(`Imported ${newDepartments.length} departments from CSV.`);
-                    setSelectedCSVFile(null);
-                    setShowAddModal(false);
-                    setActiveTab('manual');
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Failed to read CSV file.');
-            }
-            return;
-        }
-
-        if (selectedXLSXFile) {
-            alert('XLSX import selected. To parse XLSX files, install "xlsx" (SheetJS).');
-            return;
-        }
+        await importFromCSV({
+            selectedCSVFile,
+            selectedXLSXFile,
+            list: departments,
+            setList: setDepartments,
+            // map CSV parsed row -> department (matches your old mapping)
+            mapRow: (row) => ({
+                name: (row.name ?? row.department ?? row['dept_name'] ?? '').trim(),
+                description: (row.description ?? row.desc ?? '').trim()
+            }),
+            // no validation needed (same as previous department behavior) => omit validateRow
+            setSelectedCSVFile,
+            setSelectedXLSXFile,
+            setShowAddModal,
+            setActiveTab
+        });
     };
 
     // helpers
@@ -212,7 +126,7 @@ const Department = () => {
         setErrors({});
 
         // Validate form with current department ID for edit operations
-        const { valid, errors: vErrors } = validateDepartmentForm(formData, {
+        const { valid, errors: vErrors } = ValidateForm(formData, {
             existing: departments,                      // pass current list for uniqueness check
             currentId: isEditing ? editingDeptId : null
         });
@@ -524,10 +438,37 @@ const Department = () => {
 
                                     <div className="text-center mt-4 small">
                                         Download template:&nbsp;
-                                        <Button variant="link" className='btnfont' onClick={() => downloadTemplate('csv')} >CSV</Button>
+                                        <Button
+                                            variant="link"
+                                            className='btnfont'
+                                            onClick={() =>
+                                                downloadTemplate(
+                                                    ['name', 'description'],
+                                                    ['Information Technology', 'Handles all IT related operations and infrastructure'],
+                                                    'departments-template',
+                                                    'csv'
+                                                )
+                                            }
+                                        >
+                                            CSV
+                                        </Button>
                                         &nbsp;|&nbsp;
-                                        <Button variant="link" className='btnfont' onClick={() => downloadTemplate('xlsx')} >XLSX</Button>
+                                        <Button
+                                            variant="link"
+                                            className='btnfont'
+                                            onClick={() =>
+                                                downloadTemplate(
+                                                    ['name', 'description'],
+                                                    ['Information Technology', 'Handles all IT related operations and infrastructure'],
+                                                    'departments-template',
+                                                    'xlsx'
+                                                )
+                                            }
+                                        >
+                                            XLSX
+                                        </Button>
                                     </div>
+
                                 </div>
 
                                 <Modal.Footer className="modal-footer-custom px-0">

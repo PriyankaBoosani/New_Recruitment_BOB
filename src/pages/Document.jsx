@@ -2,12 +2,13 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal } from 'react-bootstrap';
 import { Search, Plus, Upload } from 'react-bootstrap-icons';
-import { validateDocumentForm } from '../validators/document-validations';
+import { ValidateForm } from '../validators/common-validations';
 import '../css/user.css';
 import viewIcon from "../assets/view_icon.png";
 import deleteIcon from "../assets/delete_icon.png";
 import editIcon from "../assets/edit_icon.png";
 import ErrorMessage from '../components/ErrorMessage';
+import { FileMeta, downloadTemplate, importFromCSV } from '../components/FileUpload';
 
 const Documents = () => {
   const [documents, setDocuments] = useState([
@@ -41,110 +42,49 @@ const Documents = () => {
   const [formData, setFormData] = useState({ name: '', description: '' });
   const [errors, setErrors] = useState({});
 
-  // CSV -> documents parser (simple, expects comma separated, headers: name,description)
-  const parseCSVToDocuments = (text) => {
-    const lines = text.split(/\r\n|\n/).map(l => l.trim()).filter(l => l !== '');
-    if (lines.length < 2) return [];
-
-    const header = lines[0].split(',').map(h => h.trim().toLowerCase());
-    const rows = lines.slice(1);
-
-    return rows.map(row => {
-      const cols = row.split(',').map(c => c.trim());
-      const obj = {};
-      header.forEach((h, i) => { obj[h] = cols[i] ?? ''; });
-
-      return {
-        name: obj.name || obj.documentname || '',
-        description: obj.description || ''
-      };
+  // wrapper for import that delegates to shared importFromCSV helper
+  const handleImport = async () => {
+    await importFromCSV({
+      selectedCSVFile,
+      selectedXLSXFile,
+      list: documents,
+      setList: setDocuments,
+      mapRow: (row) => ({
+        name: (row.name ?? row.documentname ?? row.document_name ?? '').trim(),
+        description: (row.description ?? row.desc ?? '').trim()
+      }),
+      // no per-row validation (same as Department behaviour)
+      setSelectedCSVFile,
+      setSelectedXLSXFile,
+      setShowAddModal,
+      setActiveTab
     });
   };
 
-  const downloadTemplate = (type) => {
-    const headers = ['name', 'description'];
-    const sample = ['Aadhar Card', 'Proof of identity'];
-    const csvContent = [headers.join(','), sample.join(',')].join('\n');
-
-    let blob, filename;
-    if (type === 'csv') {
-      blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      filename = 'documents-template.csv';
-    } else {
-      blob = new Blob([csvContent], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      filename = 'documents-template.xlsx';
-    }
-
-    if (navigator.msSaveBlob) {
-      navigator.msSaveBlob(blob, filename);
-    } else {
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }
-  };
-
-  const handleImport = async () => {
-    if (!selectedCSVFile && !selectedXLSXFile) {
-      alert('Please select a CSV or XLSX file to import.');
-      return;
-    }
-
-    if (selectedCSVFile) {
-      try {
-        const text = await selectedCSVFile.text();
-        const parsed = parseCSVToDocuments(text);
-
-        const nextIdStart = Math.max(0, ...documents.map(d => d.id)) + 1;
-        const newItems = [];
-        let added = 0;
-
-        for (let i = 0; i < parsed.length; i++) {
-          const p = parsed[i];
-          const payload = {
-            name: String(p.name || '').trim(),
-            description: String(p.description || '').trim()
-          };
-
-          const { valid } = validateDocumentForm(payload, { existing: documents.concat(newItems) });
-          if (!valid) continue;
-
-          newItems.push({ id: nextIdStart + newItems.length, ...payload });
-          added++;
-        }
-
-        if (newItems.length > 0) setDocuments(prev => [...prev, ...newItems]);
-
-        alert(`Imported ${added} document(s). Skipped ${parsed.length - added}.`);
-        setSelectedCSVFile(null);
-        setShowAddModal(false);
-        setActiveTab('manual');
-      } catch (err) {
-        console.error(err);
-        alert('Failed to read CSV file.');
-      }
-      return;
-    }
-
-    if (selectedXLSXFile) {
-      alert('XLSX import selected. To parse XLSX files, install "xlsx" (SheetJS).');
-      return;
-    }
-  };
-
+  // helpers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    // clear field-specific error on change
     setErrors(prev => {
-      const c = { ...prev }; if (c[name]) delete c[name]; return c;
+      const copy = { ...prev };
+      if (copy[name]) delete copy[name];
+      return copy;
     });
+
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  // small helpers to show and clear selected files (these state setters come from this file)
+  const onSelectCSV = (file) => {
+    setSelectedCSVFile(file ?? null);
+  };
+  const onSelectXLSX = (file) => {
+    setSelectedXLSXFile(file ?? null);
+  };
+  const removeCSV = () => setSelectedCSVFile(null);
+  const removeXLSX = () => setSelectedXLSXFile(null);
+
+  // Open modal for Add
   const openAddModal = () => {
     setIsEditing(false);
     setEditingId(null);
@@ -156,6 +96,7 @@ const Documents = () => {
     setShowAddModal(true);
   };
 
+  // Open modal for Edit (populate form)
   const openEditModal = (d) => {
     setIsEditing(true);
     setEditingId(d.id);
@@ -165,6 +106,7 @@ const Documents = () => {
     setShowAddModal(true);
   };
 
+  // Save handler (both add & update) using validator
   const handleSave = (e) => {
     e.preventDefault();
     setErrors({});
@@ -174,7 +116,7 @@ const Documents = () => {
       description: String(formData.description || '').trim()
     };
 
-    const { valid, errors: vErrors } = validateDocumentForm(payload, {
+    const { valid, errors: vErrors } = ValidateForm(payload, {
       existing: documents,
       currentId: isEditing ? editingId : null
     });
@@ -344,7 +286,7 @@ const Documents = () => {
 
                   <Col xs={12}>
                     <Form.Group controlId="formDescription" className="form-group">
-                      <Form.Label className="form-label">Description</Form.Label>
+                      <Form.Label className="form-label">Description <span className="text-danger">*</span></Form.Label>
                       <Form.Control as="textarea" rows={3} name="description" value={formData.description} onChange={handleInputChange} className="form-control-custom" placeholder="Enter description" aria-invalid={!!errors.description} aria-describedby="descError" />
                       <ErrorMessage id="descError">{errors.description}</ErrorMessage>
                     </Form.Group>
@@ -367,27 +309,30 @@ const Documents = () => {
                     <p className="text-center small">Support for CSV and XLSX formats (CSV headers: name,description)</p>
                   </div>
 
-                  <div className="d-flex justify-content-center gap-3 mt-3">
+                  <div className="d-flex justify-content-center gap-3 mt-3 flex-wrap">
                     <div>
-                      <input id="upload-csv-doc" type="file" accept=".csv,text/csv" style={{ display: 'none' }} onChange={(e) => setSelectedCSVFile(e.target.files[0] ?? null)} />
+                      <input id="upload-csv-doc" type="file" accept=".csv,text/csv" style={{ display: 'none' }} onChange={(e) => onSelectCSV(e.target.files[0] ?? null)} />
                       <label htmlFor="upload-csv-doc">
                         <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload CSV</Button>
                       </label>
                     </div>
 
                     <div>
-                      <input id="upload-xlsx-doc" type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={(e) => setSelectedXLSXFile(e.target.files[0] ?? null)} />
+                      <input id="upload-xlsx-doc" type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={(e) => onSelectXLSX(e.target.files[0] ?? null)} />
                       <label htmlFor="upload-xlsx-doc">
                         <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload XLSX</Button>
                       </label>
                     </div>
+
+                    <FileMeta file={selectedCSVFile} onRemove={removeCSV} />
+                    <FileMeta file={selectedXLSXFile} onRemove={removeXLSX} />
                   </div>
 
                   <div className="text-center mt-4 small">
                     Download template:&nbsp;
-                    <Button variant="link" onClick={() => downloadTemplate('csv')} className='btnfont'>CSV</Button>
+                    <Button variant="link" className='btnfont' onClick={() => downloadTemplate('csv')}>CSV</Button>
                     &nbsp;|&nbsp;
-                    <Button variant="link" onClick={() => downloadTemplate('xlsx')} className='btnfont'>XLSX</Button>
+                    <Button variant="link" className='btnfont' onClick={() => downloadTemplate('xlsx')}>XLSX</Button>
                   </div>
                 </div>
 

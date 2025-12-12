@@ -2,15 +2,17 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal } from 'react-bootstrap';
 import { Search, Plus, Upload } from 'react-bootstrap-icons';
-import { validateCategoryForm } from '../validators/category-validations';
+import { ValidateForm } from '../validators/common-validations';
 import '../css/user.css';
 import viewIcon from "../assets/view_icon.png";
 import deleteIcon from "../assets/delete_icon.png";
 import editIcon from "../assets/edit_icon.png";
 import ErrorMessage from '../components/ErrorMessage';
 
-const Category = () => {
+// Shared upload utilities
+import { FileMeta, downloadTemplate, importFromCSV } from '../components/FileUpload';
 
+const Category = () => {
     const [categories, setCategories] = useState([
         { id: 1, code: "UR", name: "Unreserved", description: "Candidates who do not fall under any reservation category and compete on open merit." },
         { id: 2, code: "OBC", name: "Other Backward Classes", description: "Socially and educationally backward groups eligible for government reservation benefits." },
@@ -29,6 +31,7 @@ const Category = () => {
     const [deleteTarget, setDeleteTarget] = useState(null);
 
     const [activeTab, setActiveTab] = useState('manual'); // manual | import
+    // file states (shared with FileUpload helpers)
     const [selectedCSVFile, setSelectedCSVFile] = useState(null);
     const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
 
@@ -40,107 +43,13 @@ const Category = () => {
 
     const [errors, setErrors] = useState({});
 
-    // CSV PARSER (same as before — simple comma-split)
-    const parseCSVToCategories = (text) => {
-        const lines = text.split(/\r\n|\n/).map(l => l.trim()).filter(l => l !== '');
-        if (lines.length < 2) return [];
-
-        const header = lines[0].split(',').map(h => h.trim().toLowerCase());
-        return lines.slice(1).map(row => {
-            const cols = row.split(',').map(c => c.trim());
-            const obj = {};
-            header.forEach((h, i) => obj[h] = cols[i] ?? "");
-
-            return {
-                code: obj.code || obj.categorycode || "",
-                name: obj.name || obj.categoryname || "",
-                description: obj.description || ""
-            };
-        });
-    };
-
-    const downloadTemplate = (type) => {
-        const headers = ["code", "name", "description"];
-        const sample = ["UR", "Unreserved", "Candidates who do not fall under any reservation category and compete on open merit."];
-
-        const csv = [headers.join(","), sample.join(",")].join("\n");
-
-        let blob, filename;
-        if (type === "csv") {
-            blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-            filename = "categories-template.csv";
-        } else {
-            blob = new Blob([csv], {
-                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            });
-            filename = "categories-template.xlsx";
-        }
-
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    };
-
-    // === Updated handleImport: matches Department logic ===
-    const handleImport = async () => {
-        if (!selectedCSVFile && !selectedXLSXFile) {
-            alert("Please upload a CSV or XLSX file.");
-            return;
-        }
-
-        // CSV path: read text, parse, map directly (no per-row validation), append
-        if (selectedCSVFile) {
-            try {
-                const text = await selectedCSVFile.text();
-                const parsed = parseCSVToCategories(text);
-
-                const nextIdStart = Math.max(0, ...categories.map(c => c.id)) + 1;
-                const newItems = parsed.map((p, i) => ({
-                    id: nextIdStart + i,
-                    code: (p.code || '').trim(),
-                    name: (p.name || '').trim(),
-                    description: (p.description || '').trim()
-                }));
-
-                if (newItems.length === 0) {
-                    alert('No valid rows found in CSV.');
-                } else {
-                    setCategories(prev => [...prev, ...newItems]);
-                    alert(`Imported ${newItems.length} categories from CSV.`);
-                    // reset import state like Department does
-                    setSelectedCSVFile(null);
-                    setShowAddModal(false);
-                    setActiveTab('manual');
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Failed to read CSV file.');
-            }
-            return;
-        }
-
-        // XLSX path: same Dept behavior — suggest SheetJS
-        if (selectedXLSXFile) {
-            alert('XLSX import selected. To parse XLSX files, install "xlsx" (SheetJS).');
-            return;
-        }
-    };
-    // === end updated handleImport ===
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-
         setErrors(prev => {
             const obj = { ...prev };
             delete obj[name];
             return obj;
         });
-
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
@@ -150,6 +59,8 @@ const Category = () => {
         setFormData({ code: '', name: '', description: '' });
         setErrors({});
         setActiveTab("manual");
+        setSelectedCSVFile(null);
+        setSelectedXLSXFile(null);
         setShowAddModal(true);
     };
 
@@ -171,12 +82,12 @@ const Category = () => {
         setErrors({});
 
         const payload = {
-            code: formData.code.trim(),
-            name: formData.name.trim(),
-            description: formData.description.trim()
+            code: (formData.code || '').trim(),
+            name: (formData.name || '').trim(),
+            description: (formData.description || '').trim()
         };
 
-        const { valid, errors: vErrors } = validateCategoryForm(payload, {
+        const { valid, errors: vErrors } = ValidateForm(payload, {
             existing: categories,
             currentId: isEditing ? editingId : null
         });
@@ -207,26 +118,55 @@ const Category = () => {
     };
 
     const confirmDelete = () => {
+        if (!deleteTarget) return;
         setCategories(prev => prev.filter(c => c.id !== deleteTarget.id));
         setShowDeleteModal(false);
         setDeleteTarget(null);
     };
 
-    // Pagination
+    // Wrapper to call shared importFromCSV with a mapRow that fits categories
+    const handleImport = async () => {
+        await importFromCSV({
+            selectedCSVFile,
+            selectedXLSXFile,
+            list: categories,
+            setList: setCategories,
+            // map parsed CSV row -> { code, name, description } (no id)
+            mapRow: (row) => {
+                // Accept multiple header variants
+                const get = (r, ...keys) => {
+                    for (const k of keys) {
+                        if (Object.prototype.hasOwnProperty.call(r, k) && String(r[k] ?? '').trim() !== '') return String(r[k]).trim();
+                    }
+                    return '';
+                };
+                return {
+                    code: get(row, 'code', 'categorycode', 'category_code'),
+                    name: get(row, 'name', 'categoryname', 'category_name'),
+                    description: get(row, 'description', 'desc', 'details')
+                };
+            },
+            // UI helpers so importer clears files/modal like your earlier code
+            setSelectedCSVFile,
+            setSelectedXLSXFile,
+            setShowAddModal,
+            setActiveTab
+        });
+    };
+
+    // Pagination & filtering
     const filtered = categories.filter(c =>
-        Object.values(c).some(v => String(v).toLowerCase().includes(searchTerm.toLowerCase()))
+        Object.values(c).some(v => String(v || '').toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     const indexLast = currentPage * itemsPerPage;
     const indexFirst = indexLast - itemsPerPage;
     const current = filtered.slice(indexFirst, indexLast);
-
     const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
     return (
         <Container fluid className="user-container">
             <div className="user-content">
-
                 {/* HEADER */}
                 <div className="user-header">
                     <h2>Categories</h2>
@@ -331,7 +271,6 @@ const Category = () => {
                     </Modal.Header>
 
                     <Modal.Body className="p-4">
-
                         {!isEditing && (
                             <div className="tab-buttons mb-4">
                                 <Button
@@ -356,7 +295,6 @@ const Category = () => {
                         {activeTab === "manual" ? (
                             <Form onSubmit={handleSave} noValidate>
                                 <Row className="g-3">
-
                                     <Col md={6}>
                                         <Form.Group>
                                             <Form.Label className="form-label">Code <span className="text-danger">*</span></Form.Label>
@@ -389,7 +327,7 @@ const Category = () => {
 
                                     <Col md={12}>
                                         <Form.Group>
-                                            <Form.Label className="form-label">Description</Form.Label>
+                                            <Form.Label className="form-label">Description <span className="text-danger">*</span></Form.Label>
                                             <Form.Control
                                                 as="textarea"
                                                 rows={3}
@@ -402,7 +340,6 @@ const Category = () => {
                                             <ErrorMessage>{errors.description}</ErrorMessage>
                                         </Form.Group>
                                     </Col>
-
                                 </Row>
 
                                 <Modal.Footer className="modal-footer-custom px-0 pt-4">
@@ -438,7 +375,7 @@ const Category = () => {
                                         </p>
                                     </div>
 
-                                    <div className="d-flex justify-content-center gap-3">
+                                    <div className="d-flex justify-content-center gap-3 mt-3 flex-wrap">
                                         <div>
                                             <input
                                                 id="upload-csv-cat"
@@ -468,13 +405,17 @@ const Category = () => {
                                                 </Button>
                                             </label>
                                         </div>
+
+                                        {/* show selected files using shared FileMeta */}
+                                        <FileMeta file={selectedCSVFile} onRemove={() => setSelectedCSVFile(null)} />
+                                        <FileMeta file={selectedXLSXFile} onRemove={() => setSelectedXLSXFile(null)} />
                                     </div>
 
                                     <div className="text-center mt-4 small">
                                         Download template:&nbsp;
-                                        <Button variant="link" onClick={() => downloadTemplate("csv")} className="btnfont">CSV</Button>
+                                        <Button variant="link" onClick={() => downloadTemplate(['code','name','description'], ['UR','Unreserved','Candidates who do not fall under any reservation category and compete on open merit.'], 'categories-template')} className="btnfont">CSV</Button>
                                         &nbsp;|&nbsp;
-                                        <Button variant="link" onClick={() => downloadTemplate("xlsx")} className="btnfont">XLSX</Button>
+                                        <Button variant="link" onClick={() => downloadTemplate(['code','name','description'], ['UR','Unreserved','Candidates who do not fall under any reservation category and compete on open merit.'], 'categories-template')} className="btnfont">XLSX</Button>
                                     </div>
                                 </div>
 
@@ -484,7 +425,6 @@ const Category = () => {
                                 </Modal.Footer>
                             </>
                         )}
-
                     </Modal.Body>
                 </Modal>
 
