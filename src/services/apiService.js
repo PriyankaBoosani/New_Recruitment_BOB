@@ -89,6 +89,7 @@ const parseResumeApi = axios.create({
 const addAuthHeader = (config) => {
   const token = getToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
+  config.headers["X-Client"] = "recruiter";
   return config;
 };
 

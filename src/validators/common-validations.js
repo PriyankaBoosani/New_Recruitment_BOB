@@ -1,57 +1,71 @@
-/* src/validators/common-validations.js */
+import i18n from '../i18n';
 
 /* ---------------- Basic Helpers ---------------- */
 
 export const requiredField = (value) => {
   // treat undefined / null as missing
-  if (value === undefined || value === null) return "This field is required";
+  if (value === undefined || value === null) return i18n.t('validation:required');
 
   // strings: trim and check
-  if (typeof value === "string") {
-    if (value.trim() === "") return "This field is required";
+  if (typeof value === 'string') {
+    if (value.trim() === '') return i18n.t('validation:required');
     return null;
   }
 
   // arrays: empty array => missing
   if (Array.isArray(value)) {
-    if (value.length === 0) return "This field is required";
+    if (value.length === 0) return i18n.t('validation:required');
     return null;
   }
 
   // numbers: NaN => missing (0 is a valid value)
-  if (typeof value === "number") {
-    if (Number.isNaN(value)) return "This field is required";
+  if (typeof value === 'number') {
+    if (Number.isNaN(value)) return i18n.t('validation:required');
     return null;
   }
+  
+  return null;
 
   // booleans: consider false a valid value (change if you want false -> required)
   if (typeof value === "boolean") return null;
 
   // fallback: convert to string and check
-  if (String(value).trim() === "") return "This field is required";
+  if (String(value).trim() === "") return i18n.t('validation:required');
 
   return null;
 };
 
+// Check min length (for strings/arrays)
 export const minLength = (value, min) => {
-  if (value && value.length < min) {
-    return `Minimum ${min} characters required`;
-  }
-  return null;
+  if (value === undefined || value === null) return null;
+  
+  const length = typeof value === 'string' 
+    ? value.trim().length 
+    : Array.isArray(value) 
+      ? value.length 
+      : 0;
+      
+  return length >= min ? null : i18n.t('validation:minLength', { min });
 };
 
+// Check max length (for strings/arrays)
 export const maxLength = (value, max) => {
-  if (value && value.length > max) {
-    return `Maximum ${max} characters allowed`;
-  }
-  return null;
+  if (!value) return null;
+  
+  const length = typeof value === 'string' 
+    ? value.trim().length 
+    : Array.isArray(value) 
+      ? value.length 
+      : 0;
+      
+  return length <= max ? null : i18n.t('validation:maxLength', { max });
 };
 
 export const emailFormat = (email) => {
   if (!email) return null;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    return "Invalid email";
+    return i18n.t('validation:email');
   }
   return null;
 };
@@ -60,7 +74,7 @@ export const phoneFormat = (phone) => {
   if (!phone) return null;
   const phoneRegex = /^[0-9]{10}$/;
   if (!phoneRegex.test(phone)) {
-    return "Invalid phone number";
+    return i18n.t('validation:phone');
   }
   return null;
 };
@@ -73,6 +87,7 @@ const normalizeName = (s = "") => s.trim().toLowerCase();
 export const ValidateForm = (formData = {}, options = {}) => {
   const errors = {};
   const { existing = [], currentId = null } = options;
+  const { t } = i18n;
 
   // name
   let err = requiredField(formData.name);
@@ -120,8 +135,6 @@ export const ValidateForm = (formData = {}, options = {}) => {
   let inputTypeErr = requiredField(formData.inputType);
   if (inputTypeErr) errors.inputType = inputTypeErr;
 
-   
-
   // uniqueness (only if name valid)
   if (!errors.name && formData.name) {
     const nameNorm = normalizeName(formData.name);
@@ -131,7 +144,7 @@ export const ValidateForm = (formData = {}, options = {}) => {
     });
 
     if (duplicate) {
-      errors.name = "This name already exists";
+      errors.name = t('validation:nameExists');
     }
   }
 
@@ -142,15 +155,40 @@ export const ValidateForm = (formData = {}, options = {}) => {
 };
 
 
-/* ---------------- Interview Panel Validation ---------------- */
+export const ValidateDepartment = (formData = {}, existing = [], currentId = null) => {
+  const errors = {};
+  const { t } = i18n;
 
-/**
- * ValidateInterviewPanel(formData)
- * - formData: { name: string, members: string | array }
- * - members can be passed as comma-separated string or as array; this function normalizes.
- *
- * Returns: { valid: boolean, errors: { name?: string, members?: string } }
- */
+  // name validation
+  let err = requiredField(formData.name);
+  if (!err) err = minLength(formData.name, 2);
+  if (!err) err = maxLength(formData.name, 100);
+  if (err) {
+    errors.name = err;
+  } else {
+    // Check for duplicate names only if name is valid
+    const nameNorm = formData.name.trim().toLowerCase();
+    const duplicate = existing.find(d => {
+      if (currentId && d.id === currentId) return false;
+      return d.name.trim().toLowerCase() === nameNorm;
+    });
+
+    if (duplicate) errors.name = t('validation:nameExists');
+  }
+
+  // description validation
+  const descErr = requiredField(formData.description) || 
+                 minLength(formData.description, 10) || 
+                 maxLength(formData.description, 500);
+  if (descErr) errors.description = descErr;
+
+  return {
+    valid: Object.keys(errors).length === 0,
+    errors
+  };
+};
+
+
 export const ValidateInterviewPanel = (formData = {}) => {
   const errors = {};
 

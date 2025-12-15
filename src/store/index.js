@@ -2,11 +2,14 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import languageReducer from './languageSlice';
+
  
 import userReducer from './userSlice';
 // 1) Combine all reducers
 const rootReducer = combineReducers({
   user: userReducer,
+  language: languageReducer,
 });
  
 // 2) Persist config

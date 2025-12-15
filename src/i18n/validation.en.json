@@ -1,0 +1,11 @@
+{
+  "required": "This field is required",
+  "minLength": "Must be at least {{min}} characters",
+  "maxLength": "Must be at most {{max}} characters",
+  "invalidEmail": "Please enter a valid email address",
+  "passwordsDontMatch": "Passwords do not match",
+  "invalidPhone": "Please enter a valid phone number",
+  "invalidPincode": "Please enter a valid pincode",
+  "nameExists": "This name already exists",
+  "descriptionExists": "This description already exists"
+}

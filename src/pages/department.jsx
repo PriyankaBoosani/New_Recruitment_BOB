@@ -2,16 +2,20 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal, Badge } from 'react-bootstrap';
 import { Search, Plus, Upload, X as XIcon } from 'react-bootstrap-icons';
-import { ValidateForm } from '../validators/common-validations';
+import { ValidateDepartment } from '../validators/common-validations';
 import '../css/user.css';
 import viewIcon from "../assets/view_icon.png";
 import deleteIcon from "../assets/delete_icon.png";
 import editIcon from "../assets/edit_icon.png";
 import ErrorMessage from '../components/ErrorMessage';
 import { FileMeta, downloadTemplate, importFromCSV } from '../components/FileUpload';
+import { useTranslation } from "react-i18next";
+
 
 
 const Department = () => {
+    const { t } = useTranslation(["department", "validation"]);
+
     // Sample department data
     const [departments, setDepartments] = useState([
         { id: 1, name: 'Information Technology', description: 'Handles all IT related operations and infrastructure' },
@@ -126,15 +130,18 @@ const Department = () => {
         setErrors({});
 
         // Validate form with current department ID for edit operations
-        const { valid, errors: vErrors } = ValidateForm(formData, {
-            existing: departments,                      // pass current list for uniqueness check
-            currentId: isEditing ? editingDeptId : null
-        });
+        const { valid, errors: vErrors } = ValidateDepartment(
+            formData,
+            departments,
+            isEditing ? editingDeptId : null
+        );
+        console.log("Validation:", valid, vErrors);
 
         if (!valid) {
             setErrors(vErrors);
             return;
         }
+
 
         // Clear errors if validation passes
         setErrors({});
@@ -195,13 +202,13 @@ const Department = () => {
         <Container fluid className="user-container">
             <div className="user-content">
                 <div className="user-header">
-                    <h2>Departments</h2>
+                    <h2>{t("department:departments")}</h2>
                     <div className="user-actions">
                         <div className="search-box">
                             <Search className="search-icon" />
                             <Form.Control
                                 type="text"
-                                placeholder="Search by Department"
+                                placeholder={t("search_by_department")}
                                 value={searchTerm}
                                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                                 className="search-input"
@@ -213,7 +220,7 @@ const Department = () => {
                             className="add-button"
                             onClick={openAddModal}
                         >
-                            <Plus size={20} className="me-1" /> Add
+                            <Plus size={20} className="me-1" /> {t("department:add")}
                         </Button>
                     </div>
                 </div>
@@ -222,10 +229,10 @@ const Department = () => {
                     <Table hover className="user-table">
                         <thead>
                             <tr>
-                                <th>S. No.</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th style={{ textAlign: "center" }}>Actions</th>
+                                <th>{t("department:s.no.")}</th>
+                                <th>{t("department:name")}</th>
+                                <th>{t("department:description")}</th>
+                                <th style={{ textAlign: "center" }}>{t("department:actions")}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -307,8 +314,8 @@ const Department = () => {
                 >
                     <Modal.Header closeButton className="modal-header-custom">
                         <div>
-                            <Modal.Title>{isEditing ? 'Edit Department' : 'Add Department'}</Modal.Title>
-                            <p className="mb-0 small text-muted para">Choose to add manually or import from CSV/XLSX file.</p>
+                            <Modal.Title>{isEditing ? t("editDepartment") : t("addDepartment")}</Modal.Title>
+                            <p className="mb-0 small text-muted para">{t("choose_add_method")}</p>
                         </div>
                     </Modal.Header>
 
@@ -320,14 +327,14 @@ const Department = () => {
                                     className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
                                     onClick={() => setActiveTab('manual')}
                                 >
-                                    Manual Entry
+                                    {t("manual_entry")}
                                 </Button>
                                 <Button
                                     variant={activeTab === 'import' ? 'light' : 'outline-light'}
                                     className={`tab-button ${activeTab === 'import' ? 'active' : ''}`}
                                     onClick={() => setActiveTab('import')}
                                 >
-                                    Import File
+                                    {t("import_file")}
                                 </Button>
                             </div>
                         )}
@@ -337,14 +344,14 @@ const Department = () => {
                                 <Row className="g-3">
                                     <Col xs={12} md={12}>
                                         <Form.Group controlId="formName" className="form-group">
-                                            <Form.Label className="form-label">Name <span className="text-danger">*</span></Form.Label>
+                                            <Form.Label className="form-label">{t("name")} <span className="text-danger">*</span></Form.Label>
                                             <Form.Control
                                                 type="text"
                                                 name="name"
                                                 value={formData.name}
                                                 onChange={handleInputChange}
                                                 className="form-control-custom"
-                                                placeholder="Enter department name"
+                                                placeholder={t("department:enterName")}
                                             />
                                             <ErrorMessage>{errors.name}</ErrorMessage>
                                         </Form.Group>
@@ -352,7 +359,7 @@ const Department = () => {
 
                                     <Col xs={12}>
                                         <Form.Group controlId="formDescription" className="form-group">
-                                            <Form.Label className="form-label">Description <span className="text-danger">*</span></Form.Label>
+                                            <Form.Label className="form-label">{t("description")} <span className="text-danger">*</span></Form.Label>
                                             <Form.Control
                                                 as="textarea"
                                                 rows={3}
@@ -360,8 +367,7 @@ const Department = () => {
                                                 value={formData.description}
                                                 onChange={handleInputChange}
                                                 className="form-control-custom"
-                                                placeholder="Enter department description"
-                                            />
+                                                placeholder={t("department:enterDescription")} />
                                             <ErrorMessage>{errors.description}</ErrorMessage>
                                         </Form.Group>
                                     </Col>
@@ -372,8 +378,8 @@ const Department = () => {
                                         setShowAddModal(false);
                                         setIsEditing(false);
                                         setEditingDeptId(null);
-                                    }}>Cancel</Button>
-                                    <Button variant="primary" type="submit">{isEditing ? 'Update' : 'Save'}</Button>
+                                    }}>{t("cancel")}</Button>
+                                    <Button variant="primary" type="submit">{isEditing ? t("updateDepartment") : t("save")}</Button>
                                 </Modal.Footer>
                             </Form>
                         ) : (
@@ -392,8 +398,8 @@ const Department = () => {
                                         }}>
                                             <Upload size={32} />
                                         </div>
-                                        <h5 className="mb-2 uploadfile">Upload File</h5>
-                                        <p className="text-muted small">Support for CSV and XLSX formats</p>
+                                        <h5 className="mb-2 uploadfile">{t("upload_file")}</h5>
+                                        <p className="text-muted small">{t("support_csv_xlsx")}</p>
                                     </div>
 
                                     <div className="d-flex justify-content-center gap-3 mt-3 flex-wrap">
@@ -407,7 +413,7 @@ const Department = () => {
                                             />
                                             <label htmlFor="upload-csv">
                                                 <Button variant="light" as="span" className='btnfont'>
-                                                    <i className="bi bi-upload me-1"></i> Upload CSV
+                                                    <i className="bi bi-upload me-1"></i> {t("upload_csv")}
                                                 </Button>
                                             </label>
 
@@ -425,7 +431,7 @@ const Department = () => {
                                             />
                                             <label htmlFor="upload-xlsx">
                                                 <Button variant="light" as="span" className='btnfont'>
-                                                    <i className="bi bi-upload me-1"></i> Upload XLSX
+                                                    <i className="bi bi-upload me-1"></i> {t("upload_xlsx")}
                                                 </Button>
                                             </label>
 
@@ -437,7 +443,7 @@ const Department = () => {
                                     </div>
 
                                     <div className="text-center mt-4 small">
-                                        Download template:&nbsp;
+                                        {t("download_template")}:&nbsp;
                                         <Button
                                             variant="link"
                                             className='btnfont'
@@ -475,8 +481,8 @@ const Department = () => {
                                     <Button variant="outline-secondary" onClick={() => {
                                         setShowAddModal(false);
                                         setActiveTab('manual');
-                                    }}>Cancel</Button>
-                                    <Button variant="primary" onClick={handleImport}>Import</Button>
+                                    }}>{t("cancel")}</Button>
+                                    <Button variant="primary" onClick={handleImport}>{t("import")}</Button>
                                 </Modal.Footer>
                             </>
                         )}
