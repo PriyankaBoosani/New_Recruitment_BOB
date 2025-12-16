@@ -1,143 +1,160 @@
-
 // src/validators/jobgrade-validations.js
+import { requiredField, minLength, maxLength } from './common-validations';
 
 /**
- * Basic small helpers used by multiple validators.
+ * Normalize string for uniqueness checks
  */
-const isEmpty = (v) => v === null || v === undefined || String(v).trim() === '';
+const normalize = (s = '') => String(s).trim().toLowerCase();
 
+/**
+ * Safe number conversion
+ */
 const toNumberSafe = (v) => {
   if (v === '' || v === null || v === undefined) return NaN;
-  // allow numeric strings and numbers
-  const n = Number(String(v).trim());
+  const n = Number(String(v).replace(/,/g, '').trim());
   return Number.isFinite(n) ? n : NaN;
 };
 
-/**
- * validateScale
- * - required
- * - length limits
- * - uniqueness against existing items (case-insensitive), skip currentId when editing
- */
-export function validateScale(scale, options = {}) {
-  const { existing = [], currentId = null } = options;
-  const s = String(scale ?? '').trim();
-
-  if (isEmpty(s)) return 'Scale is required';
-  if (s.length < 2) return 'Scale must be at least 2 characters';
-  if (s.length > 50) return 'Scale must be at most 50 characters';
-
-  const lower = s.toLowerCase();
-  const duplicate = existing.find(it => String(it.scale ?? '').trim().toLowerCase() === lower && (currentId == null || it.id !== currentId));
-  if (duplicate) return 'Scale must be unique';
-
-  return null;
-}
-// add near the top with the other helpers or after validateScale
-export function validateGradeCode(gradeCode, options = {}) {
-  const { existing = [], currentId = null } = options;
-  const g = String(gradeCode ?? '').trim();
-
-  if (isEmpty(g)) return 'Grade code is required';
-  if (g.length < 1) return 'Grade code must be at least 1 character';
-  if (g.length > 20) return 'Grade code must be at most 20 characters';
-
-  // uniqueness check (case-insensitive)
-  const lower = g.toLowerCase();
-  const duplicate = existing.find(it =>
-    String(it.gradeCode ?? '').trim().toLowerCase() === lower
-    && (currentId == null || it.id !== currentId)
-  );
-  if (duplicate) return 'Grade code must be unique';
-
-  return null;
-}
+/* =========================
+   Field-level validators
+========================= */
 
 /**
- * validateMinSalary / validateMaxSalary
- * - required
- * - numeric
- * - non-negative (min >= 0)
- * - optionally integer only (currently allow decimals)
+ * Scale
  */
-export function validateMinSalary(minSalary) {
-  if (isEmpty(minSalary) && minSalary !== 0) return 'Minimum salary is required';
+export const validateScale = (scale) => {
+  let error = requiredField(scale, 'Scale');
+  if (error) return error;
+
+  error = minLength(scale, 2, 'Scale');
+  if (error) return error;
+
+  error = maxLength(scale, 50, 'Scale');
+  if (error) return error;
+
+  return null;
+};
+
+/**
+ * Grade Code
+ */
+export const validateGradeCode = (gradeCode) => {
+  let error = requiredField(gradeCode, 'Grade code');
+  if (error) return error;
+
+  error = minLength(gradeCode, 1, 'Grade code');
+  if (error) return error;
+
+  error = maxLength(gradeCode, 20, 'Grade code');
+  if (error) return error;
+
+  return null;
+};
+
+/**
+ * Minimum Salary
+ */
+export const validateMinSalary = (minSalary) => {
+  let error = requiredField(minSalary, 'Minimum salary');
+  if (error) return error;
+
   const n = toNumberSafe(minSalary);
   if (Number.isNaN(n)) return 'Minimum salary must be a valid number';
   if (n < 0) return 'Minimum salary cannot be negative';
-  return null;
-}
 
-export function validateMaxSalary(maxSalary) {
-  if (isEmpty(maxSalary) && maxSalary !== 0) return 'Maximum salary is required';
+  return null;
+};
+
+/**
+ * Maximum Salary
+ */
+export const validateMaxSalary = (maxSalary) => {
+  let error = requiredField(maxSalary, 'Maximum salary');
+  if (error) return error;
+
   const n = toNumberSafe(maxSalary);
   if (Number.isNaN(n)) return 'Maximum salary must be a valid number';
   if (n < 0) return 'Maximum salary cannot be negative';
+
   return null;
-}
+};
 
 /**
- * validateDescription
- * - optional, but length limit
+ * Description
  */
-export function validateDescription(description) {
-  if (isEmpty(description)) return null;
-  const d = String(description);
-  if (d.length > 500) return 'Description must be at most 500 characters';
-  return null;
-}
+export const validateDescription = (description) => {
+  let error = requiredField(description, 'Description');
+  if (error) return error;
 
-/**
- * validateJobGradeForm
- * - formData: { scale, minSalary, maxSalary, description }
- * - options: { existing: [], currentId: null }
- *
- * Returns: { valid: boolean, errors: { field: message } }
- */
-export function validateJobGradeForm(formData = {}, options = {}) {
+  error = minLength(description, 10, 'Description');
+  if (error) return error;
+
+  error = maxLength(description, 500, 'Description');
+  if (error) return error;
+
+  return null;
+};
+
+/* =========================
+   Form-level validator
+========================= */
+
+export const validateJobGradeForm = (formData = {}, options = {}) => {
   const errors = {};
-  const existing = options.existing || [];
-  const currentId = options.currentId ?? null;
+  const { existing = [], currentId = null } = options;
 
-  // scale
-  const scaleErr = validateScale(formData.scale, { existing, currentId });
+  // ----- basic field validations -----
+  const scaleErr = validateScale(formData.scale);
   if (scaleErr) errors.scale = scaleErr;
 
-  // gradeCode
-  const codeErr = validateGradeCode(formData.gradeCode, { existing, currentId });
+  const codeErr = validateGradeCode(formData.gradeCode);
   if (codeErr) errors.gradeCode = codeErr;
 
-
-  // minSalary
   const minErr = validateMinSalary(formData.minSalary);
   if (minErr) errors.minSalary = minErr;
 
-  // maxSalary
   const maxErr = validateMaxSalary(formData.maxSalary);
   if (maxErr) errors.maxSalary = maxErr;
 
-  // if both min & max numeric, check min <= max
-  const minNum = toNumberSafe(formData.minSalary);
-  const maxNum = toNumberSafe(formData.maxSalary);
-  if (!Number.isNaN(minNum) && !Number.isNaN(maxNum)) {
-    if (minNum > maxNum) {
-      errors.minSalary = errors.minSalary || 'Minimum salary must be less than or equal to maximum salary';
-      errors.maxSalary = errors.maxSalary || 'Maximum salary must be greater than or equal to minimum salary';
-    }
-  }
-
-  // description
   const descErr = validateDescription(formData.description);
   if (descErr) errors.description = descErr;
+
+  // ----- salary cross-field check -----
+  const minNum = toNumberSafe(formData.minSalary);
+  const maxNum = toNumberSafe(formData.maxSalary);
+  if (!Number.isNaN(minNum) && !Number.isNaN(maxNum) && minNum > maxNum) {
+    errors.minSalary = errors.minSalary || 'Minimum salary must be ≤ maximum salary';
+    errors.maxSalary = errors.maxSalary || 'Maximum salary must be ≥ minimum salary';
+  }
+
+  // ----- uniqueness checks (only if base validation passed) -----
+  if (!errors.scale) {
+    const scaleNorm = normalize(formData.scale);
+    const duplicate = existing.find(e =>
+      normalize(e.scale) === scaleNorm &&
+      (currentId == null || e.id !== currentId)
+    );
+    if (duplicate) errors.scale = 'Scale already exists';
+  }
+
+  if (!errors.gradeCode) {
+    const codeNorm = normalize(formData.gradeCode);
+    const duplicate = existing.find(e =>
+      normalize(e.gradeCode) === codeNorm &&
+      (currentId == null || e.id !== currentId)
+    );
+    if (duplicate) errors.gradeCode = 'Grade code already exists';
+  }
 
   return {
     valid: Object.keys(errors).length === 0,
     errors
   };
-}
+};
 
 export default {
   validateScale,
+  validateGradeCode,
   validateMinSalary,
   validateMaxSalary,
   validateDescription,

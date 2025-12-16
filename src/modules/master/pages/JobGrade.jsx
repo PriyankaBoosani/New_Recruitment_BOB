@@ -63,31 +63,31 @@ const JobGrade = () => {
     const removeXLSX = () => setSelectedXLSXFile(null);
 
     // replace your existing handleImport with importFromCSV wrapper
-   const handleImport = async () => {
-    await importFromCSV({
-        selectedCSVFile,
-        selectedXLSXFile,
-        list: jobGrades,
-        setList: setJobGrades,
+    const handleImport = async () => {
+        await importFromCSV({
+            selectedCSVFile,
+            selectedXLSXFile,
+            list: jobGrades,
+            setList: setJobGrades,
 
-        // simple mapping EXACTLY like Department.jsx
-        mapRow: (row) => ({
-            scale: (row.scale ?? row.grade_scale ?? row.scale_name ?? '').trim(),
-            gradeCode: (row.gradeCode ?? row.grade_code ?? row.grade ?? row.code ?? '').trim(),
-            minSalary: (row.minSalary ?? row.min_salary ?? row.min ?? row.minimum ?? '').trim(),
-            maxSalary: (row.maxSalary ?? row.max_salary ?? row.max ?? row.maximum ?? '').trim(),
-            description: (row.description ?? row.desc ?? row.details ?? '').trim(),
-        }),
+            // simple mapping EXACTLY like Department.jsx
+            mapRow: (row) => ({
+                scale: (row.scale ?? row.grade_scale ?? row.scale_name ?? '').trim(),
+                gradeCode: (row.gradeCode ?? row.grade_code ?? row.grade ?? row.code ?? '').trim(),
+                minSalary: (row.minSalary ?? row.min_salary ?? row.min ?? row.minimum ?? '').trim(),
+                maxSalary: (row.maxSalary ?? row.max_salary ?? row.max ?? row.maximum ?? '').trim(),
+                description: (row.description ?? row.desc ?? row.details ?? '').trim(),
+            }),
 
-        // ❌ no validateRow (same as department)
-        // validateRow: undefined,
+            // ❌ no validateRow (same as department)
+            // validateRow: undefined,
 
-        setSelectedCSVFile,
-        setSelectedXLSXFile,
-        setShowAddModal,
-        setActiveTab
-    });
-};
+            setSelectedCSVFile,
+            setSelectedXLSXFile,
+            setShowAddModal,
+            setActiveTab
+        });
+    };
 
 
     const handleInputChange = (e) => {
@@ -157,6 +157,7 @@ const JobGrade = () => {
             setErrors(vErrors);
             return;
         }
+
 
         if (isEditing) {
             setJobGrades(prev => prev.map(j => j.id === editingId ? { ...j, ...payload } : j));
@@ -319,10 +320,18 @@ const JobGrade = () => {
                                     <Col xs={12} md={6}>
                                         <Form.Group controlId="formScale" className="form-group">
                                             <Form.Label className="form-label">Scale <span className="text-danger">*</span></Form.Label>
-                                            <Form.Select name="scale" value={formData.scale} onChange={handleInputChange} className="form-control-custom">
+                                            {/* <Form.Select name="scale" value={formData.scale} onChange={handleInputChange} className="form-control-custom">
                                                 <option value="">Select Scale</option>
                                                 {scaleOptions.map(s => <option key={s} value={s}>{s}</option>)}
-                                            </Form.Select>
+                                            </Form.Select> */}
+                                            <Form.Control
+                                                type="text"
+                                                name="scale"
+                                                value={formData.scale}
+                                                onChange={handleInputChange}
+                                                className="form-control-custom"
+                                                placeholder="Enter Grade Code"
+                                            />
                                             <ErrorMessage>{errors.scale}</ErrorMessage>
                                         </Form.Group>
                                     </Col>
