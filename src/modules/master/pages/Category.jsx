@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal } from 'react-bootstrap';
 import { Search, Plus, Upload } from 'react-bootstrap-icons';
-import { ValidateForm } from '../../../shared/utils/common-validations';
+import { validateCategoryForm } from '../../../shared/utils/category-validations';
 import '../../../style/css/user.css';
 import viewIcon from "../../../assets/view_icon.png";
 import deleteIcon from "../../../assets/delete_icon.png";
@@ -86,7 +86,7 @@ const Category = () => {
             description: (formData.description || '').trim()
         };
 
-        const { valid, errors: vErrors } = ValidateForm(payload, {
+        const { valid, errors: vErrors } = validateCategoryForm(payload, {
             existing: categories,
             currentId: isEditing ? editingId : null
         });

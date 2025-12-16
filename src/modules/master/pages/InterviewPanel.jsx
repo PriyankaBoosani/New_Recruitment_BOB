@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal, Dropdown } from 'react-bootstrap';
 import { Search, Plus, Upload } from 'react-bootstrap-icons';
-import { ValidateForm, ValidateInterviewPanel } from '../../../shared/utils/common-validations';
+import { validateInterviewPanelForm } from '../../../shared/utils/interviewpanel-validations';
 import '../../../style/css/user.css';
 import viewIcon from "../../../assets/view_icon.png";
 import deleteIcon from "../../../assets/delete_icon.png";
@@ -152,7 +152,11 @@ const InterviewPanel = () => {
       members: formData.members // can be array or comma-separated string
     };
 
-    const result = ValidateInterviewPanel(payloadForValidation);
+    const result = validateInterviewPanelForm(payloadForValidation, {
+      existing: panels,
+      currentId: isEditing ? editingId : null
+    });
+
 
     if (!result.valid) {
       setErrors(result.errors);
@@ -417,10 +421,10 @@ const InterviewPanel = () => {
                             );
                           })}
 
-                        
+
                         </Dropdown.Menu>
                       </Dropdown>
-                                            <ErrorMessage>{errors.members}</ErrorMessage>
+                      <ErrorMessage>{errors.members}</ErrorMessage>
 
                     </Form.Group>
                   </Col>

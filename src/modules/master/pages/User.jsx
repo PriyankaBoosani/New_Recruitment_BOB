@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal } from 'react-bootstrap';
 import { Search, Plus } from 'react-bootstrap-icons';
 import '../../../style/css/user.css';
-import { ValidateUser } from '../../../shared/utils/common-validations';
+import { validateUserForm } from '../../../shared/utils/user-validations';
 import ErrorMessage from '../../../shared/components/ErrorMessage';
 import viewIcon from "../../../assets/view_icon.png";
 import deleteIcon from "../../../assets/delete_icon.png";
@@ -109,7 +109,7 @@ const User = () => {
       existing: users,
       currentId: isEditing ? editingUserId : null
     };
-    const { valid, errors: vErrors } = ValidateUser(formData, options);
+    const { valid, errors: vErrors } = validateUserForm(formData, options);
 
     if (!valid) {
       setErrors(vErrors);

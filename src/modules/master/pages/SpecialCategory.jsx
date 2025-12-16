@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal } from 'react-bootstrap';
 import { Search, Plus, Upload } from 'react-bootstrap-icons';
-import { ValidateForm } from '../../../shared/utils/common-validations';
+import { validateSpecialCategoryForm } from '../../../shared/utils/specialcategory-validations';
 import '../../../style/css/user.css';
 import viewIcon from "../../../assets/view_icon.png";
 import deleteIcon from "../../../assets/delete_icon.png";
@@ -104,7 +104,7 @@ const SpecialCategory = () => {
       description: String(formData.description || '').trim()
     };
 
-    const { valid, errors: vErrors } = ValidateForm(payload, {
+    const { valid, errors: vErrors } = validateSpecialCategoryForm(payload, {
       existing: specials,
       currentId: isEditing ? editingId : null
     });

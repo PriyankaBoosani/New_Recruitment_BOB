@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal } from 'react-bootstrap';
 import { Search, Plus, Upload } from 'react-bootstrap-icons';
-import { ValidateForm } from '../../../shared/utils/common-validations';
+import { validateJobGradeForm } from '../../../shared/utils/jobgrade-validations';
 import '../../../style/css/user.css';
 import viewIcon from "../../../assets/view_icon.png";
 import deleteIcon from "../../../assets/delete_icon.png";
@@ -148,7 +148,7 @@ const JobGrade = () => {
             description: String(formData.description || '').trim()
         };
 
-        const { valid, errors: vErrors } = ValidateForm(payload, {
+        const { valid, errors: vErrors } = validateJobGradeForm(payload, {
             existing: jobGrades,
             currentId: isEditing ? editingId : null
         });

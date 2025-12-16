@@ -7,26 +7,22 @@ import viewIcon from "../../../assets/view_icon.png";
 import deleteIcon from "../../../assets/delete_icon.png";
 import editIcon from "../../../assets/edit_icon.png";
 import ErrorMessage from '../../../shared/components/ErrorMessage';
-import { ValidateForm } from '../../../shared/utils/common-validations';
+import { validateLocationForm } from '../../../shared/utils/location-validations';
+import { useEffect } from 'react';
+import masterApiService from "../services/masterApiService";
+import { mapLocationsFromApi, mapLocationToApi } from '../mappers/locationMapper';
+import { mapCitiesFromApi } from '../mappers/cityMapper';
 
 // Shared upload utilities (FileMeta, downloadTemplate, importLocations)
 import { FileMeta, downloadTemplate, importFromCSV } from '../../../shared/components/FileUpload';
 const Location = () => {
-  // sample cities (you can fetch this from API later)
-  const cityOptions = [
-    { id: 1, name: 'Bengaluru' },
-    { id: 2, name: 'Mumbai' },
-    { id: 3, name: 'Delhi' },
-    { id: 4, name: 'Hyderabad' },
-    { id: 5, name: 'Chennai' },
-  ];
 
-  const [locations, setLocations] = useState([
-    { id: 1, cityId: 1, cityName: 'Bengaluru', name: 'Whitefield' },
-    { id: 2, cityId: 1, cityName: 'Bengaluru', name: 'Electronic City' },
-    { id: 3, cityId: 2, cityName: 'Mumbai', name: 'Andheri' },
-    { id: 4, cityId: 3, cityName: 'Delhi', name: 'Connaught Place' },
-  ]);
+  const [cityOptions, setCityOptions] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [rawLocations, setRawLocations] = useState([]);
+
+
+
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -49,6 +45,56 @@ const Location = () => {
   });
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    fetchCities();
+    fetchLocationsRaw();
+  }, []);
+
+
+  const fetchCities = async () => {
+    try {
+      const res = await masterApiService.getallCities();
+
+      const apiData = Array.isArray(res.data)
+        ? res.data
+        : res.data?.data || [];
+
+      const mapped = mapCitiesFromApi(apiData);
+      setCityOptions(mapped);
+
+    } catch (err) {
+      console.error('City fetch failed', err);
+    }
+  };
+
+  const fetchLocationsRaw = async () => {
+    try {
+      const res = await masterApiService.getAllLocations();
+
+      const apiData = Array.isArray(res.data)
+        ? res.data
+        : res.data?.data || [];
+
+      // ✅ NEWEST FIRST (assuming higher location_id = newer)
+      const sorted = [...apiData].sort(
+        (a, b) => b.location_id - a.location_id
+      );
+
+      setRawLocations(sorted);
+    } catch (err) {
+      console.error('Location fetch failed', err);
+    }
+  };
+
+  useEffect(() => {
+    if (!rawLocations.length || !cityOptions.length) return;
+
+    const mapped = mapLocationsFromApi(rawLocations, cityOptions);
+    setLocations(mapped);
+  }, [rawLocations, cityOptions]);
+
+
 
   // Import wrapper — calls the shared importLocations (simple append)
   const handleImport = async () => {
@@ -113,44 +159,37 @@ const Location = () => {
     setShowAddModal(true);
   };
 
-  const handleSave = (e) => {
-  e.preventDefault();
-  setErrors({});
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setErrors({});
 
-  // validate using common validation function
-  const { valid, errors: vErrors } = ValidateForm(formData, {
-    existing: locations,
-    currentId: isEditing ? editingLocationId : null
-  });
-
-  if (!valid) {
-    setErrors(vErrors);
-    return;
-  }
-
-  // normalization and save (same as before)
-  const trimmedName = String(formData.name || '').trim();
-  const cityId = formData.cityId ? Number(formData.cityId) : null;
-  const cityName = cityId ? (cityOptions.find(c => c.id === cityId) || {}).name : (formData.cityName || '');
-
-  if (isEditing) {
-    setLocations(prev =>
-      prev.map(loc =>
-        loc.id === editingLocationId ? { ...loc, name: trimmedName, cityId, cityName } : loc
-      )
+    const { valid, errors: vErrors } = validateLocationForm(
+      formData,
+      locations,
+      isEditing ? editingLocationId : null
     );
-  } else {
-    const newLoc = {
-      id: Math.max(0, ...locations.map(d => d.id)) + 1,
-      cityId,
-      cityName,
-      name: trimmedName
-    };
-    setLocations(prev => [...prev, newLoc]);
-  }
 
-  setShowAddModal(false);
-};
+
+    try {
+      const payload = mapLocationToApi(formData);
+
+      if (isEditing) {
+        await masterApiService.updateLocation(editingLocationId, payload);
+      } else {
+        await masterApiService.addLocation(payload);
+      }
+
+      // ✅ refresh from server
+      await fetchLocationsRaw();
+
+      setShowAddModal(false);
+      setIsEditing(false);
+      setEditingLocationId(null);
+    } catch (err) {
+      console.error('Save location failed', err);
+    }
+  };
+
 
 
   const openDeleteModal = (loc) => {
@@ -158,12 +197,22 @@ const Location = () => {
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!deleteTarget) return;
-    setLocations(prev => prev.filter(loc => loc.id !== deleteTarget.id));
+
+    try {
+      await masterApiService.deleteLocation(deleteTarget.id);
+
+      // ✅ refresh list
+      await fetchLocationsRaw();
+    } catch (err) {
+      console.error('Delete failed', err);
+    }
+
     setShowDeleteModal(false);
     setDeleteTarget(null);
   };
+
 
   const cancelDelete = () => {
     setShowDeleteModal(false);

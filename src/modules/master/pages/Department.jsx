@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal } from 'react-bootstrap';
 import { Search, Plus, Upload } from 'react-bootstrap-icons';
-import { ValidateDepartment } from '../../../shared/utils/common-validations';
+import { validateDepartmentForm } from '../../../shared/utils/department-validations';
 import '../../../style/css/user.css';
 import viewIcon from "../../../assets/view_icon.png";
 import deleteIcon from "../../../assets/delete_icon.png";
@@ -11,7 +11,7 @@ import ErrorMessage from '../../../shared/components/ErrorMessage';
 import { FileMeta, downloadTemplate, importFromCSV } from '../../../shared/components/FileUpload';
 import { useTranslation } from "react-i18next";
 import masterApiService from '../services/masterApiService';
-import { mapDepartmentFromApi, mapDepartmentToApi } from "../mappers/departmentMapper";
+import { mapDepartmentsFromApi, mapDepartmentToApi } from "../mappers/departmentMapper";
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 
@@ -46,19 +46,21 @@ const Department = () => {
         try {
             const res = await masterApiService.getAllDepartments();
 
-            console.log("RAW API RESPONSE 👉", res.data);
+            const apiData = Array.isArray(res.data) ? res.data : [];
 
-            if (Array.isArray(res.data)) {
-                const mapped = res.data.map(mapDepartmentFromApi);
-                setDepartments(mapped);
-            } else {
-                setDepartments([]);
-            }
+            const mapped = mapDepartmentsFromApi(apiData);
+
+            // ✅ NEWEST FIRST (top of table)
+            mapped.sort((a, b) => b.id - a.id);
+
+            setDepartments(mapped);
+
         } catch (err) {
             console.error("Failed to fetch departments", err);
             setDepartments([]);
         }
     };
+
     const handleImport = async () => {
         await importFromCSV({
             selectedCSVFile,
@@ -132,11 +134,11 @@ const Department = () => {
         e.preventDefault();
 
         setErrors({});
-        const { valid, errors: vErrors } = ValidateDepartment(
-            formData,
-            departments,
-            isEditing ? editingDeptId : null
-        );
+        const { valid, errors: vErrors } = validateDepartmentForm(formData, {
+            existing: departments,
+            currentId: isEditing ? editingDeptId : null
+        });
+
 
         if (!valid) {
             setErrors(vErrors);
