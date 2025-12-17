@@ -4,7 +4,8 @@
 export const mapDepartmentFromApi = (apiDept) => ({
   id: apiDept.department_id,
   name: apiDept.department_name,
-  description: apiDept.department_desc
+  description: apiDept.department_desc,
+   createdDate: apiDept.created_date
 });
 
 // LIST (API → UI)

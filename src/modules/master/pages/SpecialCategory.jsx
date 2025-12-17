@@ -9,9 +9,12 @@ import deleteIcon from "../../../assets/delete_icon.png";
 import editIcon from "../../../assets/edit_icon.png";
 import ErrorMessage from '../../../shared/components/ErrorMessage';
 import { FileMeta, downloadTemplate, importFromCSV } from '../../../shared/components/FileUpload';
+import { useTranslation } from "react-i18next";
 
 
 const SpecialCategory = () => {
+  const { t } = useTranslation(["specialCategory", "validation"]);
+
   const [specials, setSpecials] = useState([
     { id: 1, code: 'PWD', name: 'Persons with Disability', description: 'Reserved for PWD' },
     { id: 2, code: 'EXS', name: 'Ex-Servicemen', description: 'Reserved for Ex-Servicemen' },
@@ -154,35 +157,38 @@ const SpecialCategory = () => {
     <Container fluid className="user-container">
       <div className="user-content">
         <div className="user-header">
-          <h2>Special Categories</h2>
+       <h2>{t("specialCategory:title")}</h2>
           <div className="user-actions">
             <div className="search-box">
               <Search className="search-icon" />
               <Form.Control
-                type="text"
-                placeholder="Search by code, name or description"
-                value={searchTerm}
-                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="search-input"
-              />
+              type="text"
+              placeholder={t("specialCategory:search_placeholder")}
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              className="search-input"
+            />
             </div>
             <Button variant="primary" className="add-button" onClick={openAddModal}>
-              <Plus size={20} className="me-1" /> Add
+                <Plus size={20} className="me-1" /> {t("specialCategory:add")}
             </Button>
           </div>
         </div>
 
         <div className="table-responsive">
           <Table hover className="user-table">
-            <thead>
-              <tr>
-                <th>S. No.</th>
-                <th>Code</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th style={{ textAlign: 'center' }}>Actions</th>
-              </tr>
-            </thead>
+           <thead>
+            <tr>
+              <th>{t("specialCategory:sno")}</th>
+              <th>{t("specialCategory:code")}</th>
+              <th>{t("specialCategory:name")}</th>
+              <th>{t("specialCategory:description")}</th>
+              <th style={{ textAlign: "center" }}>
+                {t("specialCategory:actions")}
+              </th>
+            </tr>
+          </thead>
+
             <tbody>
               {current.length > 0 ? current.map((s, idx) => (
                 <tr key={s.id}>
@@ -205,7 +211,7 @@ const SpecialCategory = () => {
                   </td>
                 </tr>
               )) : (
-                <tr><td colSpan="5" className="text-center">No special categories found</td></tr>
+                <tr><td colSpan="5" className="text-center">{t("specialCategory:noRecords")}</td></tr>
               )}
             </tbody>
           </Table>
@@ -247,113 +253,257 @@ const SpecialCategory = () => {
         >
           <Modal.Header closeButton className="modal-header-custom">
             <div>
-              <Modal.Title>{isEditing ? 'Edit Special Category' : 'Add Special Category'}</Modal.Title>
-              <p className="mb-0 small text-muted para">Choose to add manually or import from CSV/XLSX file.</p>
-            </div>
+            <Modal.Title>
+              {isEditing
+                ? t("specialCategory:edit")
+                : t("specialCategory:added")}
+            </Modal.Title>
+
+            <p className="mb-0 small text-muted para">
+              {t("specialCategory:choose_add_method")}
+            </p>
+ </div>
           </Modal.Header>
+<Modal.Body className="p-4">
+  {!isEditing && (
+    <div className="tab-buttons mb-4">
+      <Button
+        variant={activeTab === 'manual' ? 'light' : 'outline-light'}
+        className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
+        onClick={() => setActiveTab('manual')}
+      >
+        {t("specialCategory:manual_entry")}
+      </Button>
 
-          <Modal.Body className="p-4">
-            {!isEditing && (
-              <div className="tab-buttons mb-4">
-                <Button variant={activeTab === 'manual' ? 'light' : 'outline-light'} className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`} onClick={() => setActiveTab('manual')}>Manual Entry</Button>
-                <Button variant={activeTab === 'import' ? 'light' : 'outline-light'} className={`tab-button ${activeTab === 'import' ? 'active' : ''}`} onClick={() => setActiveTab('import')}>Import File</Button>
-              </div>
-            )}
+      <Button
+        variant={activeTab === 'import' ? 'light' : 'outline-light'}
+        className={`tab-button ${activeTab === 'import' ? 'active' : ''}`}
+        onClick={() => setActiveTab('import')}
+      >
+        {t("specialCategory:import_file")}
+      </Button>
+    </div>
+  )}
 
-            {activeTab === 'manual' ? (
-              <Form onSubmit={handleSave} noValidate>
-                <Row className="g-3">
-                  <Col xs={12} md={6}>
-                    <Form.Group controlId="formCode" className="form-group">
-                      <Form.Label className="form-label">Code <span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="text" name="code" value={formData.code} onChange={handleInputChange} className="form-control-custom" placeholder="Enter code (e.g. PWD)" aria-invalid={!!errors.code} aria-describedby="codeError" />
-                      <ErrorMessage id="codeError">{errors.code}</ErrorMessage>
-                    </Form.Group>
-                  </Col>
+  {activeTab === 'manual' ? (
+    <Form onSubmit={handleSave} noValidate>
+      <Row className="g-3">
+        <Col xs={12} md={6}>
+          <Form.Group controlId="formCode" className="form-group">
+            <Form.Label className="form-label">
+              {t("specialCategory:code")} <span className="text-danger">*</span>
+            </Form.Label>
+            <Form.Control
+              type="text"
+              name="code"
+              value={formData.code}
+              onChange={handleInputChange}
+              className="form-control-custom"
+              placeholder={t("specialCategory:enter_code")}
+              aria-invalid={!!errors.code}
+              aria-describedby="codeError"
+            />
+            <ErrorMessage id="codeError">{errors.code}</ErrorMessage>
+          </Form.Group>
+        </Col>
 
-                  <Col xs={12} md={6}>
-                    <Form.Group controlId="formName" className="form-group">
-                      <Form.Label className="form-label">Name <span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="text" name="name" value={formData.name} onChange={handleInputChange} className="form-control-custom" placeholder="Enter name" aria-invalid={!!errors.name} aria-describedby="nameError" />
-                      <ErrorMessage id="nameError">{errors.name}</ErrorMessage>
-                    </Form.Group>
-                  </Col>
+        <Col xs={12} md={6}>
+          <Form.Group controlId="formName" className="form-group">
+            <Form.Label className="form-label">
+              {t("specialCategory:name")} <span className="text-danger">*</span>
+            </Form.Label>
+            <Form.Control
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              className="form-control-custom"
+              placeholder={t("specialCategory:enter_name")}
+              aria-invalid={!!errors.name}
+              aria-describedby="nameError"
+            />
+            <ErrorMessage id="nameError">{errors.name}</ErrorMessage>
+          </Form.Group>
+        </Col>
 
-                  <Col xs={12}>
-                    <Form.Group controlId="formDescription" className="form-group">
-                      <Form.Label className="form-label">Description <span className="text-danger">*</span></Form.Label>
-                      <Form.Control as="textarea" rows={3} name="description" value={formData.description} onChange={handleInputChange} className="form-control-custom" placeholder="Enter description" aria-invalid={!!errors.description} aria-describedby="descError" />
-                      <ErrorMessage id="descError">{errors.description}</ErrorMessage>
-                    </Form.Group>
-                  </Col>
-                </Row>
+        <Col xs={12}>
+          <Form.Group controlId="formDescription" className="form-group">
+            <Form.Label className="form-label">
+              {t("specialCategory:description")} <span className="text-danger">*</span>
+            </Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              className="form-control-custom"
+              placeholder={t("specialCategory:enter_description")}
+              aria-invalid={!!errors.description}
+              aria-describedby="descError"
+            />
+            <ErrorMessage id="descError">{errors.description}</ErrorMessage>
+          </Form.Group>
+        </Col>
+      </Row>
 
-                <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
-                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setIsEditing(false); setEditingId(null); }}>Cancel</Button>
-                  <Button variant="primary" type="submit">{isEditing ? 'Update' : 'Save'}</Button>
-                </Modal.Footer>
-              </Form>
-            ) : (
-              <>
-                <div className="import-area p-4 rounded" style={{ background: '#fceee9' }}>
-                  <div className="text-center mb-3">
-                    <div style={{ width: 72, height: 72, borderRadius: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff' }}>
-                      <Upload size={32} />
-                    </div>
-                    <h5 className="text-center uploadfile">Upload File</h5>
-                    <p className="text-center small">Support for CSV and XLSX formats (CSV headers: code,name,description)</p>
-                  </div>
+      <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
+        <Button
+          variant="outline-secondary"
+          onClick={() => {
+            setShowAddModal(false);
+            setIsEditing(false);
+            setEditingId(null);
+          }}
+        >
+          {t("specialCategory:cancel")}
+        </Button>
 
-                  <div className="d-flex justify-content-center gap-3 mt-3">
-                    <div>
-                      <input id="upload-csv-special" type="file" accept=".csv,text/csv" style={{ display: 'none' }} onChange={(e) => setSelectedCSVFile(e.target.files[0] ?? null)} />
-                      <label htmlFor="upload-csv-special">
-                        <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload CSV</Button>
-                      </label>
-                    </div>
+        <Button variant="primary" type="submit">
+          {isEditing
+            ? t("specialCategory:update")
+            : t("specialCategory:save")}
+        </Button>
+      </Modal.Footer>
+    </Form>
+  ) : (
+    <>
+      <div className="import-area p-4 rounded" style={{ background: '#fceee9' }}>
+        <div className="text-center mb-3">
+          <div
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: 12,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: '#fff'
+            }}
+          >
+            <Upload size={32} />
+          </div>
 
-                    <div>
-                      <input id="upload-xlsx-special" type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={(e) => setSelectedXLSXFile(e.target.files[0] ?? null)} />
-                      <label htmlFor="upload-xlsx-special">
-                        <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload XLSX</Button>
-                      </label>
-                    </div>
-                                        <FileMeta file={selectedCSVFile} onRemove={removeCSV} />
-                                        <FileMeta file={selectedXLSXFile} onRemove={removeXLSX} />
-                    
-                  </div>
+          <h5 className="text-center uploadfile">
+            {t("specialCategory:upload_file")}
+          </h5>
 
-                  <div className="text-center mt-4 small">
-                    Download template:&nbsp;
-                    <Button variant="link" onClick={() => downloadTemplate('csv')} className='btnfont'>CSV</Button>
-                    &nbsp;|&nbsp;
-                    <Button variant="link" onClick={() => downloadTemplate('xlsx')} className='btnfont'>XLSX</Button>
-                  </div>
-                </div>
+          <p className="text-center small">
+            {t("specialCategory:support_csv_xlsx")}
+          </p>
+        </div>
 
-                <Modal.Footer className="modal-footer-custom px-0">
-                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setActiveTab('manual'); }}>Cancel</Button>
-                  <Button variant="primary" onClick={handleImport}>Import</Button>
-                </Modal.Footer>
-              </>
-            )}
-          </Modal.Body>
+        <div className="d-flex justify-content-center gap-3 mt-3">
+          <div>
+            <input
+              id="upload-csv-special"
+              type="file"
+              accept=".csv,text/csv"
+              style={{ display: 'none' }}
+              onChange={(e) => setSelectedCSVFile(e.target.files[0] ?? null)}
+            />
+            <label htmlFor="upload-csv-special">
+              <Button variant="light" as="span" className="btnfont">
+                <i className="bi bi-upload me-1"></i>
+                {t("specialCategory:upload_csv")}
+              </Button>
+            </label>
+          </div>
+
+          <div>
+            <input
+              id="upload-xlsx-special"
+              type="file"
+              accept=".xlsx,.xls"
+              style={{ display: 'none' }}
+              onChange={(e) => setSelectedXLSXFile(e.target.files[0] ?? null)}
+            />
+            <label htmlFor="upload-xlsx-special">
+              <Button variant="light" as="span" className="btnfont">
+                <i className="bi bi-upload me-1"></i>
+                {t("specialCategory:upload_xlsx")}
+              </Button>
+            </label>
+          </div>
+
+          <FileMeta file={selectedCSVFile} onRemove={removeCSV} />
+          <FileMeta file={selectedXLSXFile} onRemove={removeXLSX} />
+        </div>
+
+        <div className="text-center mt-4 small">
+          {t("specialCategory:download_template")}:&nbsp;
+          <Button variant="link" onClick={() => downloadTemplate('csv')} className="btnfont">
+            CSV
+          </Button>
+          &nbsp;|&nbsp;
+          <Button variant="link" onClick={() => downloadTemplate('xlsx')} className="btnfont">
+            XLSX
+          </Button>
+        </div>
+      </div>
+
+      <Modal.Footer className="modal-footer-custom px-0">
+        <Button
+          variant="outline-secondary"
+          onClick={() => {
+            setShowAddModal(false);
+            setActiveTab('manual');
+          }}
+        >
+          {t("specialCategory:cancel")}
+        </Button>
+
+        <Button variant="primary" onClick={handleImport}>
+          {t("specialCategory:import")}
+        </Button>
+      </Modal.Footer>
+    </>
+  )}
+</Modal.Body>
+
         </Modal>
 
-        {/* Delete Confirm */}
-        <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered dialogClassName="delete-confirm-modal" container={typeof document !== 'undefined' ? document.body : undefined}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirm Delete</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p>Are you sure you want to delete this special category?</p>
-            {deleteTarget && <div className="delete-confirm-user"><strong>{deleteTarget.name}</strong></div>}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="outline-secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
-            <Button variant="danger" onClick={confirmDelete}>Delete</Button>
-          </Modal.Footer>
-        </Modal>
+      {/* Delete Confirm */}
+<Modal
+  show={showDeleteModal}
+  onHide={() => setShowDeleteModal(false)}
+  centered
+  dialogClassName="delete-confirm-modal"
+  container={typeof document !== 'undefined' ? document.body : undefined}
+>
+  <Modal.Header closeButton>
+    <Modal.Title>
+      {t("specialCategory:confirm_delete")}
+    </Modal.Title>
+  </Modal.Header>
+
+  <Modal.Body>
+    <p>{t("specialCategory:delete_confirm_msg")}</p>
+
+    {deleteTarget && (
+      <div className="delete-confirm-user">
+        <strong>{deleteTarget.name}</strong>
+      </div>
+    )}
+  </Modal.Body>
+
+  <Modal.Footer>
+    <Button
+      variant="outline-secondary"
+      onClick={() => setShowDeleteModal(false)}
+    >
+      {t("specialCategory:cancel")}
+    </Button>
+
+    <Button
+      variant="danger"
+      onClick={confirmDelete}
+    >
+      {t("specialCategory:delete")}
+    </Button>
+  </Modal.Footer>
+</Modal>
+
 
       </div>
     </Container>

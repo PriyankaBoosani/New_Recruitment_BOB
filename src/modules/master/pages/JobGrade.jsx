@@ -9,8 +9,11 @@ import deleteIcon from "../../../assets/delete_icon.png";
 import editIcon from "../../../assets/edit_icon.png";
 import ErrorMessage from '../../../shared/components/ErrorMessage';
 import { FileMeta, downloadTemplate, importFromCSV } from '../../../shared/components/FileUpload';
+import { useTranslation } from "react-i18next";
 
 const JobGrade = () => {
+    const { t } = useTranslation(["jobGrade", "validation"]);
+
     const [jobGrades, setJobGrades] = useState([
         { id: 1, scale: 'Scale-I', gradeCode: 'JG1', minSalary: 45000, maxSalary: 60000, description: 'Entry level' },
         { id: 2, scale: 'Scale-II', gradeCode: 'JG2', minSalary: 55000, maxSalary: 70000, description: 'Junior level' },
@@ -201,13 +204,15 @@ const JobGrade = () => {
         <Container fluid className="user-container">
             <div className="user-content">
                 <div className="user-header">
-                    <h2>Job Grades</h2>
+                    <h2>{t("jobGrade:title")}</h2>
+
                     <div className="user-actions">
                         <div className="search-box">
                             <Search className="search-icon" />
                             <Form.Control
                                 type="text"
-                                placeholder="Search by scale, code, salary or description"
+                                placeholder={t("jobGrade:search_placeholder")}
+
                                 value={searchTerm}
                                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                                 className="search-input"
@@ -215,7 +220,8 @@ const JobGrade = () => {
                         </div>
 
                         <Button variant="primary" className="add-button" onClick={openAddModal}>
-                            <Plus size={20} className="me-1" /> Add
+                            <Plus size={20} className="me-1" /> {t("jobGrade:add")}
+
                         </Button>
                     </div>
                 </div>
@@ -224,13 +230,14 @@ const JobGrade = () => {
                     <Table hover className="user-table">
                         <thead>
                             <tr>
-                                <th>S. No.</th>
-                                <th>Scale</th>
-                                <th>Grade Code</th>
-                                <th>Minimum Salary</th>
-                                <th>Maximum Salary</th>
-                                <th>Description</th>
-                                <th style={{ textAlign: 'center' }}>Actions</th>
+                                <th>{t("jobGrade:sno")}</th>
+                                <th>{t("jobGrade:scale")}</th>
+                                <th>{t("jobGrade:gradeCode")}</th>
+                                <th>{t("jobGrade:minSalary")}</th>
+                                <th>{t("jobGrade:maxSalary")}</th>
+                                <th>{t("jobGrade:description")}</th>
+                                <th style={{ textAlign: "center" }}>{t("jobGrade:actions")}</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -260,7 +267,8 @@ const JobGrade = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="7" className="text-center">No job grades found</td>
+                                    <td colSpan="7" className="text-center">{t("jobGrade:noRecords")}
+                                    </td>
                                 </tr>
                             )}
                         </tbody>
@@ -301,16 +309,33 @@ const JobGrade = () => {
                 >
                     <Modal.Header closeButton className="modal-header-custom">
                         <div>
-                            <Modal.Title>{isEditing ? 'Edit Grade' : 'Add Grade'}</Modal.Title>
-                            <p className="mb-0 small text-muted para">Choose to add manually or import from CSV/XLSX file</p>
+                            <Modal.Title>
+                                {isEditing ? t("jobGrade:edit") : t("jobGrade:added")}
+                            </Modal.Title>
+                            <p className="mb-0 small text-muted para">
+                                {t("jobGrade:choose_add_method")}
+                            </p>
                         </div>
                     </Modal.Header>
 
                     <Modal.Body className="p-4">
                         {!isEditing && (
                             <div className="tab-buttons mb-4">
-                                <Button variant={activeTab === 'manual' ? 'light' : 'outline-light'} className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`} onClick={() => setActiveTab('manual')}>Manual Entry</Button>
-                                <Button variant={activeTab === 'import' ? 'light' : 'outline-light'} className={`tab-button ${activeTab === 'import' ? 'active' : ''}`} onClick={() => setActiveTab('import')}>Import File</Button>
+                                <Button
+                                    variant={activeTab === 'manual' ? 'light' : 'outline-light'}
+                                    className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
+                                    onClick={() => setActiveTab('manual')}
+                                >
+                                    {t("jobGrade:manual_entry")}
+                                </Button>
+
+                                <Button
+                                    variant={activeTab === 'import' ? 'light' : 'outline-light'}
+                                    className={`tab-button ${activeTab === 'import' ? 'active' : ''}`}
+                                    onClick={() => setActiveTab('import')}
+                                >
+                                    {t("jobGrade:import_file")}
+                                </Button>
                             </div>
                         )}
 
@@ -319,41 +344,53 @@ const JobGrade = () => {
                                 <Row className="g-3">
                                     <Col xs={12} md={6}>
                                         <Form.Group controlId="formScale" className="form-group">
-                                            <Form.Label className="form-label">Scale <span className="text-danger">*</span></Form.Label>
-                                            {/* <Form.Select name="scale" value={formData.scale} onChange={handleInputChange} className="form-control-custom">
-                                                <option value="">Select Scale</option>
-                                                {scaleOptions.map(s => <option key={s} value={s}>{s}</option>)}
-                                            </Form.Select> */}
+                                            <Form.Label className="form-label">
+                                                {t("jobGrade:scale")} <span className="text-danger">*</span>
+                                            </Form.Label>
+
                                             <Form.Control
                                                 type="text"
                                                 name="scale"
                                                 value={formData.scale}
                                                 onChange={handleInputChange}
+                                                placeholder={t("jobGrade:enter_scale")}
                                                 className="form-control-custom"
-                                                placeholder="Enter Grade Code"
                                             />
+
                                             <ErrorMessage>{errors.scale}</ErrorMessage>
                                         </Form.Group>
                                     </Col>
 
+
                                     <Col xs={12} md={6}>
                                         <Form.Group controlId="formGradeCode" className="form-group">
-                                            <Form.Label className="form-label">Grade Code <span className="text-danger">*</span></Form.Label>
-                                            <Form.Control type="text" name="gradeCode" value={formData.gradeCode} onChange={handleInputChange} className="form-control-custom" placeholder="Enter Grade Code" />
+                                            <Form.Label className="form-label">
+                                                {t("jobGrade:gradeCode")} <span className="text-danger">*</span>
+                                            </Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                name="gradeCode"
+                                                value={formData.gradeCode}
+                                                onChange={handleInputChange}
+                                                className="form-control-custom"
+                                                placeholder={t("jobGrade:enter_grade_code")}
+                                            />
                                             <ErrorMessage>{errors.gradeCode}</ErrorMessage>
                                         </Form.Group>
                                     </Col>
 
                                     <Col xs={12} md={6}>
                                         <Form.Group controlId="formMinSalary" className="form-group">
-                                            <Form.Label className="form-label">Min Salary <span className="text-danger">*</span></Form.Label>
+                                            <Form.Label className="form-label">
+                                                {t("jobGrade:minSalary")} <span className="text-danger">*</span>
+                                            </Form.Label>
                                             <Form.Control
                                                 type="text"
                                                 name="minSalary"
                                                 value={formatNumber(formData.minSalary)}
                                                 onChange={handleInputChange}
                                                 className="form-control-custom"
-                                                placeholder="Enter Min Salary"
+                                                placeholder={t("jobGrade:enter_min_salary")}
                                             />
                                             <ErrorMessage>{errors.minSalary}</ErrorMessage>
                                         </Form.Group>
@@ -361,14 +398,16 @@ const JobGrade = () => {
 
                                     <Col xs={12} md={6}>
                                         <Form.Group controlId="formMaxSalary" className="form-group">
-                                            <Form.Label className="form-label">Max Salary <span className="text-danger">*</span></Form.Label>
+                                            <Form.Label className="form-label">
+                                                {t("jobGrade:maxSalary")} <span className="text-danger">*</span>
+                                            </Form.Label>
                                             <Form.Control
                                                 type="text"
                                                 name="maxSalary"
                                                 value={formatNumber(formData.maxSalary)}
                                                 onChange={handleInputChange}
                                                 className="form-control-custom"
-                                                placeholder="Enter Max Salary"
+                                                placeholder={t("jobGrade:enter_max_salary")}
                                             />
                                             <ErrorMessage>{errors.maxSalary}</ErrorMessage>
                                         </Form.Group>
@@ -376,41 +415,97 @@ const JobGrade = () => {
 
                                     <Col xs={12}>
                                         <Form.Group controlId="formDescription" className="form-group">
-                                            <Form.Label className="form-label">Description <span className="text-danger">*</span></Form.Label>
-                                            <Form.Control as="textarea" rows={3} name="description" value={formData.description} onChange={handleInputChange} className="form-control-custom" placeholder="Add Description here ..." />
+                                            <Form.Label className="form-label">
+                                                {t("jobGrade:description")} <span className="text-danger">*</span>
+                                            </Form.Label>
+                                            <Form.Control
+                                                as="textarea"
+                                                rows={3}
+                                                name="description"
+                                                value={formData.description}
+                                                onChange={handleInputChange}
+                                                className="form-control-custom"
+                                                placeholder={t("jobGrade:enter_description")}
+                                            />
                                             <ErrorMessage>{errors.description}</ErrorMessage>
                                         </Form.Group>
                                     </Col>
                                 </Row>
 
                                 <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
-                                    <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setIsEditing(false); setEditingId(null); }}>Cancel</Button>
-                                    <Button variant="primary" type="submit">Save</Button>
+                                    <Button
+                                        variant="outline-secondary"
+                                        onClick={() => {
+                                            setShowAddModal(false);
+                                            setIsEditing(false);
+                                            setEditingId(null);
+                                        }}
+                                    >
+                                        {t("jobGrade:cancel")}
+                                    </Button>
+                                    <Button variant="primary" type="submit">
+                                        {t("jobGrade:save")}
+                                    </Button>
                                 </Modal.Footer>
                             </Form>
                         ) : (
                             <>
                                 <div className="import-area p-4 rounded">
                                     <div className="text-center mb-3">
-                                        <div style={{ width: 72, height: 72, borderRadius: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', marginBottom: '1rem' }}>
+                                        <div
+                                            style={{
+                                                width: 72,
+                                                height: 72,
+                                                borderRadius: 12,
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                background: '#fff',
+                                                marginBottom: '1rem'
+                                            }}
+                                        >
                                             <Upload size={32} />
                                         </div>
-                                        <h5 className="mb-2 uploadfile">Upload File</h5>
-                                        <p className="text-muted small">Support for CSV and XLSX formats (CSV headers: scale,gradeCode,minSalary,maxSalary,description)</p>
+
+                                        <h5 className="mb-2 uploadfile">
+                                            {t("jobGrade:upload_file")}
+                                        </h5>
+
+                                        <p className="text-muted small">
+                                            {t("jobGrade:support_csv_xlsx")}
+                                        </p>
                                     </div>
 
                                     <div className="d-flex justify-content-center gap-3 mt-3 flex-wrap">
                                         <div>
-                                            <input id="upload-csv" type="file" accept=".csv,text/csv" style={{ display: 'none' }} onChange={(e) => onSelectCSV(e.target.files[0] ?? null)} />
+                                            <input
+                                                id="upload-csv"
+                                                type="file"
+                                                accept=".csv,text/csv"
+                                                style={{ display: 'none' }}
+                                                onChange={(e) => onSelectCSV(e.target.files[0] ?? null)}
+                                            />
                                             <label htmlFor="upload-csv">
-                                                <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload CSV</Button>
+                                                <Button variant="light" as="span" className="btnfont">
+                                                    <i className="bi bi-upload me-1"></i>
+                                                    {t("jobGrade:upload_csv")}
+                                                </Button>
                                             </label>
                                         </div>
 
                                         <div>
-                                            <input id="upload-xlsx" type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style={{ display: 'none' }} onChange={(e) => onSelectXLSX(e.target.files[0] ?? null)} />
+                                            <input
+                                                id="upload-xlsx"
+                                                type="file"
+                                                accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                                style={{ display: 'none' }}
+                                                onChange={(e) => onSelectXLSX(e.target.files[0] ?? null)}
+                                            />
                                             <label htmlFor="upload-xlsx">
-                                                <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload XLSX</Button>
+                                                <Button variant="light" as="span" className="btnfont">
+                                                    <i className="bi bi-upload me-1"></i>
+                                                    {t("jobGrade:upload_xlsx")}
+                                                </Button>
                                             </label>
                                         </div>
 
@@ -419,60 +514,67 @@ const JobGrade = () => {
                                     </div>
 
                                     <div className="text-center mt-4 small">
-                                        Download template:&nbsp;
-                                        <Button
-                                            variant="link"
-                                            onClick={() =>
-                                                downloadTemplate(
-                                                    ['scale', 'gradeCode', 'minSalary', 'maxSalary', 'description'],
-                                                    ['Scale-I', 'JG1', '45000', '60000', 'Entry level'],
-                                                    'jobgrades-template'
-                                                )
-                                            }
-                                            className="btnfont"
-                                        >
-                                            CSV
-                                        </Button>
+                                        {t("jobGrade:download_template")}:&nbsp;
+                                        <Button variant="link" className="btnfont">CSV</Button>
                                         &nbsp;|&nbsp;
-                                        <Button
-                                            variant="link"
-                                            onClick={() =>
-                                                downloadTemplate(
-                                                    ['scale', 'gradeCode', 'minSalary', 'maxSalary', 'description'],
-                                                    ['Scale-I', 'JG1', '45000', '60000', 'Entry level'],
-                                                    'jobgrades-template'
-                                                )
-                                            }
-                                            className="btnfont"
-                                        >
-                                            XLSX
-                                        </Button>
+                                        <Button variant="link" className="btnfont">XLSX</Button>
                                     </div>
                                 </div>
 
                                 <Modal.Footer className="modal-footer-custom px-0">
-                                    <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setActiveTab('manual'); }}>Cancel</Button>
-                                    <Button variant="primary" onClick={handleImport}>Import</Button>
+                                    <Button
+                                        variant="outline-secondary"
+                                        onClick={() => {
+                                            setShowAddModal(false);
+                                            setActiveTab('manual');
+                                        }}
+                                    >
+                                        {t("jobGrade:cancel")}
+                                    </Button>
+                                    <Button variant="primary" onClick={handleImport}>
+                                        {t("jobGrade:import")}
+                                    </Button>
                                 </Modal.Footer>
                             </>
                         )}
                     </Modal.Body>
+
                 </Modal>
 
                 {/* Delete Confirmation */}
-                <Modal show={showDeleteModal} onHide={cancelDelete} centered dialogClassName="delete-confirm-modal">
+                <Modal
+                    show={showDeleteModal}
+                    onHide={cancelDelete}
+                    centered
+                    dialogClassName="delete-confirm-modal"
+                >
                     <Modal.Header closeButton>
-                        <Modal.Title>Confirm Delete</Modal.Title>
+                        <Modal.Title>
+                            {t("jobGrade:confirm_delete")}
+                        </Modal.Title>
                     </Modal.Header>
+
                     <Modal.Body>
-                        <p>Are you sure you want to delete this job grade?</p>
-                        {deleteTarget && <div className="delete-confirm-user"><strong>{deleteTarget.name}</strong></div>}
+                        <p>{t("jobGrade:delete_msg")}</p>
+
+                        {deleteTarget && (
+                            <div className="delete-confirm-user">
+                                <strong>{deleteTarget.name}</strong>
+                            </div>
+                        )}
                     </Modal.Body>
+
                     <Modal.Footer>
-                        <Button variant="outline-secondary" onClick={cancelDelete}>Cancel</Button>
-                        <Button variant="danger" onClick={confirmDelete}>Delete</Button>
+                        <Button variant="outline-secondary" onClick={cancelDelete}>
+                            {t("jobGrade:cancel")}
+                        </Button>
+
+                        <Button variant="danger" onClick={confirmDelete}>
+                            {t("jobGrade:delete")}
+                        </Button>
                     </Modal.Footer>
                 </Modal>
+
             </div>
         </Container>
     );

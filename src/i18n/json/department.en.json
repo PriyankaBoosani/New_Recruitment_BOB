@@ -23,5 +23,9 @@
   "upload_xlsx": "Upload XLSX",
   "download_template": "Download Template",
   "import": "Import",
-  "search_by_department": "Search by Department"
+  "search_by_department": "Search by Department",
+   "add_success": "Department added successfully",
+    "update_success": "Department updated successfully",
+    "delete_success": "Department deleted successfully",
+     "no_records": "No departments found"
 }

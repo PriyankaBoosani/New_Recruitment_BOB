@@ -9,7 +9,6 @@ import ForgotPassword from "../modules/auth/pages/ForgotPassword";
 import Tokenexp from "../modules/auth/services/Tokenexp";
 
 // Protected / pages (non-lazy)
-import Department from "../modules/master/pages/Department";
 import JobGrade from "../modules/master/pages/JobGrade";
 import Location from "../modules/master/pages/Location";
 import Position from "../modules/master/pages/Position";
@@ -23,7 +22,7 @@ import Home from "../modules/master/pages/Home"; // dashboard/home
 
 // Auth & layout helpers
 import PrivateRoute from "../modules/auth/services/PrivateRoute";
-
+import DepartmentPage from "../modules/master/pages/Department/DepartmentPage"
 // Lazy loaded components
 const Layout = React.lazy(() => import("../shared/components/Layout"));
 
@@ -56,7 +55,7 @@ const AppRoutes = () => {
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<Home />} />
               <Route path="/users" element={<User />} />
-              <Route path="/department" element={<Department />} />
+              <Route path="/department" element={<DepartmentPage />} />
               <Route path="/location" element={<Location />} />
               {/* If you want plural: <Route path="/locations" element={<Location />} /> */}
               <Route path="/jobgrade" element={<JobGrade />} />

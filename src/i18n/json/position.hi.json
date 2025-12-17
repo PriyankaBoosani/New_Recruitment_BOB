@@ -1,0 +1,40 @@
+{
+  "positions": "पद",
+  "search_placeholder": "पद, विभाग, ग्रेड या विवरण द्वारा खोजें",
+  "add": "जोड़ें",
+  "edit": "संपादित करें",
+  "s_no": "क्रम संख्या",
+  "position_title": "पद का शीर्षक",
+  "department": "विभाग",
+  "job_grade": "नौकरी ग्रेड",
+  "description": "विवरण",
+  "actions": "क्रियाएँ",
+
+  "add_position": "पद जोड़ें",
+  "edit_position": "पद संपादित करें",
+  "choose_add_method": "मैन्युअल रूप से जोड़ें या CSV/XLSX से आयात करें।",
+
+  "manual_entry": "मैनुअल प्रविष्टि",
+  "import_file": "फ़ाइल आयात करें",
+  "upload_file": "फ़ाइल अपलोड करें",
+  "support_csv_xlsx": "CSV और XLSX फ़ॉर्मेट समर्थित हैं",
+  "upload_csv": "CSV अपलोड करें",
+  "upload_xlsx": "XLSX अपलोड करें",
+  "download_template": "टेम्पलेट डाउनलोड करें",
+
+  "enter_position_title": "पद शीर्षक दर्ज करें",
+  "select_department": "विभाग चुनें",
+  "select_job_grade": "जॉब ग्रेड चुनें",
+  "enter_description": "विवरण दर्ज करें",
+
+  "cancel": "रद्द करें",
+  "save": "सहेजें",
+  "update": "अद्यतन करें",
+  "import": "आयात करें",
+
+  "confirm_delete": "हटाने की पुष्टि करें",
+  "delete_message": "क्या आप वाकई इस पद को हटाना चाहते हैं?",
+
+  "view": "देखें",
+  "delete": "हटाएं"
+}

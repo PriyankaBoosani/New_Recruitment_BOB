@@ -1,0 +1,34 @@
+{
+  "title": "विशेष श्रेणियाँ",
+  "search_placeholder": "कोड, नाम या विवरण से खोजें",
+  "add": "जोड़ें",
+  "added": "विशेष श्रेणी जोड़ें",
+
+  "edit": "विशेष श्रेणी संपादित करें",
+  "update": "अपडेट करें",
+  "save": "सहेजें",
+  "cancel": "रद्द करें",
+  "sno": "क्रम संख्या",
+  "code": "कोड",
+  "name": "नाम",
+  "description": "विवरण",
+  "actions": "क्रियाएँ",
+  "noRecords": "कोई विशेष श्रेणी नहीं मिली",
+  "choose_add_method": "मैन्युअल रूप से जोड़ें या CSV/XLSX फ़ाइल से आयात करें",
+  "manual_entry": "मैन्युअल एंट्री",
+  "import_file": "फ़ाइल आयात करें",
+  "enter_code": "कोड दर्ज करें",
+  "enter_name": "नाम दर्ज करें",
+  "enter_description": "विवरण दर्ज करें",
+  "upload_file": "फ़ाइल अपलोड करें",
+  "upload_csv": "CSV अपलोड करें",
+  "upload_xlsx": "XLSX अपलोड करें",
+ 
+  "download_template": "टेम्पलेट डाउनलोड करें",
+  "confirm_delete": "हटाने की पुष्टि करें",
+  "delete_confirm_msg": "क्या आप वाकई इस विशेष श्रेणी को हटाना चाहते हैं?",
+  "delete": "हटाएं",
+   "import": "आयात करें",
+   "support_csv_xlsx": "CSV और XLSX प्रारूप समर्थित हैं (CSV हेडर: कोड, नाम, विवरण)"
+
+}

@@ -9,8 +9,13 @@ import deleteIcon from "../../../assets/delete_icon.png";
 import editIcon from "../../../assets/edit_icon.png";
 import ErrorMessage from '../../../shared/components/ErrorMessage';
 import { FileMeta, downloadTemplate, importFromCSV } from '../../../shared/components/FileUpload';
+import { useTranslation } from "react-i18next";
+
 
 const Position = () => {
+
+  const { t } = useTranslation(["position"]);
+
   // sample departments & job grades (replace with API data if required)
   const [departments] = useState([
     'Information Technology', 'Human Resources', 'Finance', 'Marketing', 'Operations', 'Market Risk', 'Integrated Risk Management'
@@ -183,13 +188,15 @@ const Position = () => {
     <Container fluid className="user-container">
       <div className="user-content">
         <div className="user-header">
-          <h2>Positions</h2>
+       <h2>{t("positions")}</h2>
+
           <div className="user-actions">
             <div className="search-box">
               <Search className="search-icon" />
               <Form.Control
                 type="text"
-                placeholder="Search by title, department, grade or description"
+              placeholder={t("search_placeholder")}
+
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                 className="search-input"
@@ -197,7 +204,8 @@ const Position = () => {
             </div>
 
             <Button variant="primary" className="add-button" onClick={openAddModal}>
-              <Plus size={20} className="me-1" /> Add
+             <Plus size={20} className="me-1" /> {t("add")}
+
             </Button>
           </div>
         </div>
@@ -206,33 +214,46 @@ const Position = () => {
           <Table hover className="user-table">
             <thead>
               <tr>
-                <th>S. No.</th>
-                <th>Position Title</th>
-                <th>Department</th>
-                <th>Job Grade</th>
-                <th>Description</th>
-                <th style={{ textAlign: 'center' }}>Actions</th>
+               <th>{t("s_no")}</th>
+
+               <th>{t("position_title")}</th>
+
+              <th>{t("department")}</th>
+
+
+               <th>{t("job_grade")}</th>
+               <th>{t("description")}</th>
+
+               <th style={{ textAlign: 'center' }}>{t("actions")}</th>
+
               </tr>
             </thead>
             <tbody>
               {current.length > 0 ? current.map((p, idx) => (
                 <tr key={p.id}>
                   <td>{indexOfFirst + idx + 1}</td>
-                  <td data-label="Position Title: ">&nbsp;{p.title}</td>
-                  <td data-label="Department: ">&nbsp;{p.department}</td>
-                  <td data-label="Job Grade: ">&nbsp;{p.jobGrade}</td>
-                  <td data-label="Description: ">&nbsp;{p.description}</td>
+                 <td data-label={t("position_title") + ":"}>&nbsp;{p.title}</td>
+
+                <td data-label={t("department") + ":"}>&nbsp;{p.department}</td>
+
+                 <td data-label={t("job_grade") + ":"}>&nbsp;{p.jobGrade}</td>
+
+                 <td data-label={t("description") + ":"}>&nbsp;{p.description}</td>
+
                   <td>
                     <div className="action-buttons">
-                      <Button variant="link" className="action-btn view-btn" title="View">
-                        <img src={viewIcon} alt="View" className="icon-16" />
-                      </Button>
-                      <Button variant="link" className="action-btn edit-btn" title="Edit" onClick={() => openEditModal(p)}>
-                        <img src={editIcon} alt="Edit" className="icon-16" />
-                      </Button>
-                      <Button variant="link" className="action-btn delete-btn" title="Delete" onClick={() => openDeleteModal(p)}>
-                        <img src={deleteIcon} alt="Delete" className="icon-16" />
-                      </Button>
+                   <Button variant="link" className="action-btn view-btn" title={t("view")}>
+  <img src={viewIcon} alt={t("view")} className="icon-16" />
+</Button>
+
+<Button variant="link" className="action-btn edit-btn" title={t("edit")} onClick={() => openEditModal(p)}>
+  <img src={editIcon} alt={t("edit")} className="icon-16" />
+</Button>
+
+<Button variant="link" className="action-btn delete-btn" title={t("delete")} onClick={() => openDeleteModal(p)}>
+  <img src={deleteIcon} alt={t("delete")} className="icon-16" />
+</Button>
+
                     </div>
                   </td>
                 </tr>
@@ -277,16 +298,22 @@ const Position = () => {
         >
           <Modal.Header closeButton className="modal-header-custom">
             <div>
-              <Modal.Title>{isEditing ? 'Edit Position' : 'Add Position'}</Modal.Title>
-              <p className="mb-0 small text-muted para">Choose to add manually or import from CSV/XLSX file.</p>
+           <Modal.Title>
+  {isEditing ? t("edit_position") : t("add_position")}
+</Modal.Title>
+
+            <p className="mb-0 small text-muted para">{t("choose_add_method")}</p>
+
             </div>
           </Modal.Header>
 
           <Modal.Body className="p-4">
             {!isEditing && (
               <div className="tab-buttons mb-4">
-                <Button variant={activeTab === 'manual' ? 'light' : 'outline-light'} className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`} onClick={() => setActiveTab('manual')}>Manual Entry</Button>
-                <Button variant={activeTab === 'import' ? 'light' : 'outline-light'} className={`tab-button ${activeTab === 'import' ? 'active' : ''}`} onClick={() => setActiveTab('import')}>Import File</Button>
+                <Button variant={activeTab === 'manual' ? 'light' : 'outline-light'} className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`} onClick={() => setActiveTab('manual')}>{t("manual_entry")}
+</Button>
+                <Button variant={activeTab === 'import' ? 'light' : 'outline-light'} className={`tab-button ${activeTab === 'import' ? 'active' : ''}`} onClick={() => setActiveTab('import')}>{t("import_file")}
+</Button>
               </div>
             )}
 
@@ -295,8 +322,10 @@ const Position = () => {
                 <Row className="g-3">
                   <Col xs={12} md={12}>
                     <Form.Group controlId="formTitle" className="form-group">
-                      <Form.Label className="form-label">Position Title <span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="text" name="title" value={formData.title} onChange={handleInputChange} className="form-control-custom" placeholder="Enter position title" aria-invalid={!!errors.title} aria-describedby="titleError" />
+                      <Form.Label className="form-label">{t("position_title")}
+ <span className="text-danger">*</span></Form.Label>
+                      <Form.Control type="text" name="title" value={formData.title} onChange={handleInputChange} className="form-control-custom" placeholder={t("enter_position_title")}
+ aria-invalid={!!errors.title} aria-describedby="titleError" />
                       <ErrorMessage id="titleError">{errors.title}</ErrorMessage>
                     </Form.Group>
                   </Col>
@@ -305,7 +334,8 @@ const Position = () => {
                     <Form.Group controlId="formDepartment" className="form-group">
                       <Form.Label className="form-label">Department <span className="text-danger">*</span></Form.Label>
                       <Form.Select name="department" value={formData.department} onChange={handleInputChange} className="form-control-custom" aria-invalid={!!errors.department} aria-describedby="departmentError">
-                        <option value="">Select Department</option>
+                      <option value="">{t("select_department")}</option>
+
                         {departments.map(d => <option key={d} value={d}>{d}</option>)}
                       </Form.Select>
                       <ErrorMessage id="departmentError">{errors.department}</ErrorMessage>
@@ -314,9 +344,11 @@ const Position = () => {
 
                   <Col xs={12} md={6}>
                     <Form.Group controlId="formJobGrade" className="form-group">
-                      <Form.Label className="form-label">Job Grade <span className="text-danger">*</span></Form.Label>
+                      <Form.Label className="form-label">{t("job_grade")}
+ <span className="text-danger">*</span></Form.Label>
                       <Form.Select name="jobGrade" value={formData.jobGrade} onChange={handleInputChange} className="form-control-custom" aria-invalid={!!errors.jobGrade} aria-describedby="jobGradeError">
-                        <option value="">Select Job Grade</option>
+                       <option value="">{t("select_job_grade")}</option>
+
                         {jobGrades.map(g => <option key={g} value={g}>{g}</option>)}
                       </Form.Select>
                       <ErrorMessage id="jobGradeError">{errors.jobGrade}</ErrorMessage>
@@ -325,16 +357,20 @@ const Position = () => {
 
                   <Col xs={12}>
                     <Form.Group controlId="formDescription" className="form-group">
-                      <Form.Label className="form-label">Description <span className="text-danger">*</span></Form.Label>
-                      <Form.Control as="textarea" rows={3} name="description" value={formData.description} onChange={handleInputChange} className="form-control-custom" placeholder="Add description ..." />
+                      <Form.Label className="form-label">{t("description")}
+ <span className="text-danger">*</span></Form.Label>
+                      <Form.Control as="textarea" rows={3} name="description" value={formData.description} onChange={handleInputChange} className="form-control-custom" placeholder={t("enter_description")}
+/>
                       <ErrorMessage>{errors.description}</ErrorMessage>
                     </Form.Group>
                   </Col>
                 </Row>
 
                 <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
-                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setIsEditing(false); setEditingId(null); }}>Cancel</Button>
-                  <Button variant="primary" type="submit">{isEditing ? 'Update' : 'Save'}</Button>
+                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setIsEditing(false); setEditingId(null); }}>{t("cancel")}
+</Button>
+                  <Button variant="primary" type="submit">{isEditing ? t("update") : t("save")}
+</Button>
                 </Modal.Footer>
               </Form>
             ) : (
@@ -345,21 +381,22 @@ const Position = () => {
                       <Upload size={32} />
                     </div>
                     <h5 className="mb-2 uploadfile">Upload File</h5>
-                    <p className="text-muted small">Support for CSV and XLSX formats (CSV headers: positionTitle,department,jobGrade,description)</p>
+                    <p className="text-muted small">{t("support_csv_xlsx")}
+</p>
                   </div>
 
                   <div className="d-flex justify-content-center gap-3 mt-3 flex-wrap">
                     <div>
                       <input id="upload-csv-pos" type="file" accept=".csv,text/csv" style={{ display: 'none' }} onChange={(e) => onSelectCSV(e.target.files[0] ?? null)} />
                       <label htmlFor="upload-csv-pos">
-                        <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload CSV</Button>
+                        <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i>{t("upload_csv")}</Button>
                       </label>
                     </div>
 
                     <div>
                       <input id="upload-xlsx-pos" type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style={{ display: 'none' }} onChange={(e) => onSelectXLSX(e.target.files[0] ?? null)} />
                       <label htmlFor="upload-xlsx-pos">
-                        <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload XLSX</Button>
+                        <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> {t("upload_xlsx")}</Button>
                       </label>
                     </div>
 
@@ -368,7 +405,8 @@ const Position = () => {
                   </div>
 
                   <div className="text-center mt-4 small">
-                    Download template:&nbsp;
+                   {t("download_template")}:
+:&nbsp;
                     <Button variant="link" className='btnfont' onClick={() =>
                       downloadTemplate(
                         ['title', 'department', 'jobGrade', 'description'],
@@ -388,10 +426,16 @@ const Position = () => {
                   </div>
                 </div>
 
-                <Modal.Footer className="modal-footer-custom px-0">
-                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setActiveTab('manual'); }}>Cancel</Button>
-                  <Button variant="primary" onClick={handleImport}>Import</Button>
-                </Modal.Footer>
+           <Modal.Footer className="modal-footer-custom px-0">
+  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setActiveTab('manual'); }}>
+    {t("cancel")}
+  </Button>
+
+  <Button variant="primary" onClick={handleImport}>
+    {t("import")}
+  </Button>
+</Modal.Footer>
+
               </>
             )}
           </Modal.Body>
@@ -400,15 +444,19 @@ const Position = () => {
         {/* Delete Confirmation */}
         <Modal show={showDeleteModal} onHide={cancelDelete} centered dialogClassName="delete-confirm-modal">
           <Modal.Header closeButton>
-            <Modal.Title>Confirm Delete</Modal.Title>
+            <Modal.Title>{t("confirm_delete")}
+</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p>Are you sure you want to delete this position?</p>
+            <p>{t("delete_message")}
+</p>
             {deleteTarget && <div className="delete-confirm-user"><strong>{deleteTarget.name}</strong></div>}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="outline-secondary" onClick={cancelDelete}>Cancel</Button>
-            <Button variant="danger" onClick={confirmDelete}>Delete</Button>
+            <Button variant="outline-secondary" onClick={cancelDelete}>{t("cancel")}
+</Button>
+            <Button variant="danger" onClick={confirmDelete}>{t("delete")}
+</Button>
           </Modal.Footer>
         </Modal>
       </div>

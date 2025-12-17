@@ -50,20 +50,23 @@ const Header = () => {
           <div className="d-flex align-items-center fonnav">
 
             {/* LANG DROPDOWN */}
-            <NavDropdown
-              title={i18n.language === "hi" ? "हिंदी" : "English (US)"}
-              id="language-dropdown"
-              className="text-white fonnav"
-              menuVariant="light"
-            >
-              <NavDropdown.Item onClick={() => changeLang("en")}>
-                English (US)
-              </NavDropdown.Item>
-
-              <NavDropdown.Item onClick={() => changeLang("hi")}>
+            <div className="d-flex align-items-center text-white">
+              <span 
+                className={`me-2 cursor-pointer ${i18n.language === 'en' ? 'fw-bold' : 'opacity-75'}`}
+                onClick={() => changeLang("en")}
+                style={{ cursor: 'pointer' }}
+              >
+                English
+              </span>
+              <span className="me-2">|</span>
+              <span 
+                className={`cursor-pointer ${i18n.language === 'hi' ? 'fw-bold' : 'opacity-75'}`}
+                onClick={() => changeLang("hi")}
+                style={{ cursor: 'pointer' }}
+              >
                 हिंदी
-              </NavDropdown.Item>
-            </NavDropdown>
+              </span>
+            </div>
 
             {/* Notifications */}
             <Button variant="link" className="text-white position-relative me-2">
@@ -116,8 +119,8 @@ const Header = () => {
 
           <Navbar.Collapse id="main-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="#dashboard">Dashboard</Nav.Link>
-              <Nav.Link href="#job-postings">Job Postings</Nav.Link>
+              <Nav.Link as={Link} to="/dashboard" onClick={closeMenu}>Dashboard</Nav.Link>
+              <Nav.Link as={Link} to="/job-postings" onClick={closeMenu}>Job Postings</Nav.Link>
               <Nav.Link href="#candidate-shortlist">Candidate Shortlist</Nav.Link>
               <Nav.Link href="#interviews">Interviews</Nav.Link>
               <Nav.Link href="#relaxation">Relaxation</Nav.Link>

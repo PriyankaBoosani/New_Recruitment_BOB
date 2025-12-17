@@ -8,11 +8,14 @@ import ErrorMessage from '../../../shared/components/ErrorMessage';
 import viewIcon from "../../../assets/view_icon.png";
 import deleteIcon from "../../../assets/delete_icon.png";
 import editIcon from "../../../assets/edit_icon.png";
+import { useTranslation } from "react-i18next";
 
 // Shared upload utilities
 import { FileMeta, downloadTemplate, importFromCSV } from '../../../shared/components/FileUpload';
 
 const User = () => {
+  const { t } = useTranslation(["user", "validation"]);
+
   // Sample user data
   const [users, setUsers] = useState([
     { id: 1, role: 'Manager', name: 'John Doe', email: 'john.doe@example.com', mobile: '9876543210' },
@@ -220,13 +223,15 @@ const User = () => {
     <Container fluid className="user-container">
       <div className="user-content">
         <div className="user-header">
-          <h2>Users</h2>
+         <h2>{t("user:users")}</h2>
+
           <div className="user-actions">
             <div className="search-box">
               <Search className="search-icon" />
               <Form.Control
                 type="text"
-                placeholder="Search by User"
+              placeholder={t("user:search_by_user")}
+
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                 className="search-input"
@@ -234,7 +239,7 @@ const User = () => {
             </div>
 
             <Button variant="primary" className="add-button" onClick={openAddModal}>
-              <Plus size={20} className="me-1" /> Add
+              <Plus size={20} className="me-1" />  {t("add")}
             </Button>
           </div>
         </div>
@@ -243,12 +248,13 @@ const User = () => {
           <Table hover className="user-table">
             <thead>
               <tr>
-                <th>S. No.</th>
-                <th>Role</th>
-                <th>Name</th>
-                <th>Email Address</th>
-                <th>Mobile Number</th>
-                <th style={{ textAlign: "center" }}>Actions</th>
+                        <th>{t("user:s.no.")}</th>
+          <th>{t("user:role")}</th>
+          <th>{t("user:name")}</th>
+          <th>{t("user:email")}</th>
+          <th>{t("user:mobile")}</th>
+          <th style={{ textAlign: "center" }}>{t("user:actions")}</th>
+
               </tr>
             </thead>
             <tbody>
@@ -287,7 +293,7 @@ const User = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="text-center">No users found</td>
+                  <td colSpan="6" className="text-center">{t("user:noUsersFound")}</td>
                 </tr>
               )}
             </tbody>
@@ -332,8 +338,12 @@ const User = () => {
         >
           <Modal.Header closeButton className="modal-header-custom">
             <div>
-              <Modal.Title>{isEditing ? 'Edit User' : 'Add User'}</Modal.Title>
-              <p className="mb-0 small text-muted para">Choose to add manually or import from CSV/XLSX file.</p>
+             <Modal.Title>
+  {isEditing ? t("user:editUser") : t("user:addUser")}
+</Modal.Title>
+
+              <p className="mb-0 small text-muted para">{t("user:choose_add_method")}
+</p>
             </div>
           </Modal.Header>
 
@@ -344,86 +354,167 @@ const User = () => {
                 className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
                 onClick={() => setActiveTab('manual')}
               >
-                Manual Entry
+              {t("user:manual_entry")}
               </Button>
               <Button
                 variant={activeTab === 'import' ? 'light' : 'outline-light'}
                 className={`tab-button ${activeTab === 'import' ? 'active' : ''}`}
                 onClick={() => setActiveTab('import')}
               >
-                Import File
+               {t("user:import_file")}
               </Button>
             </div>
 
-            {activeTab === 'manual' ? (
-              <Form onSubmit={handleSave} noValidate>
-                <Row className="g-3">
-                  <Col xs={12} md={6}>
-                    <Form.Group controlId="formRole">
-                      <Form.Label>Select Role <span className="text-danger">*</span></Form.Label>
-                      <Form.Select
-                        name="role"
-                        value={formData.role}
-                        onChange={handleInputChange}
-                        className="form-control-custom"
-                      >
-                        <option value="">Select Role</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Manager">Manager</option>
-                        <option value="Recruiter">Recruiter</option>
-                        <option value="Interviewer">Interviewer</option>
-                      </Form.Select>
-                      <ErrorMessage>{errors.role}</ErrorMessage>
-                    </Form.Group>
-                  </Col>
+           {activeTab === 'manual' ? (
+  <Form onSubmit={handleSave} noValidate>
+    <Row className="g-3">
 
-                  <Col xs={12} md={6}>
-                    <Form.Group controlId="formFullName">
-                      <Form.Label>Full Name <span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="text" name="fullName" value={formData.fullName} onChange={handleInputChange} className="form-control-custom" placeholder="Enter full name" required />
-                      <ErrorMessage>{errors.fullName}</ErrorMessage>
-                    </Form.Group>
-                  </Col>
+      {/* ROLE */}
+      <Col xs={12} md={6}>
+        <Form.Group controlId="formRole">
+          <Form.Label>
+            {t("user:role")} <span className="text-danger">*</span>
+          </Form.Label>
 
-                  <Col xs={12} md={6}>
-                    <Form.Group controlId="formEmail">
-                      <Form.Label>Email Address <span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="email" name="email" value={formData.email} onChange={handleInputChange} className="form-control-custom" placeholder="Enter email address" required />
-                      <ErrorMessage>{errors.email}</ErrorMessage>
-                    </Form.Group>
-                  </Col>
+          <Form.Select
+            name="role"
+            value={formData.role}
+            onChange={handleInputChange}
+            className="form-control-custom"
+          >
+            <option value="">{t("user:select_role")}</option>
+            <option value="Admin">{t("user:admin")}</option>
+            <option value="Manager">{t("user:manager")}</option>
+            <option value="Recruiter">{t("user:recruiter")}</option>
+            <option value="Interviewer">{t("user:interviewer")}</option>
+          </Form.Select>
 
-                  <Col xs={12} md={6}>
-                    <Form.Group controlId="formMobile">
-                      <Form.Label>Mobile No <span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="tel" name="mobile" value={formData.mobile} onChange={handleInputChange} className="form-control-custom" placeholder="Enter mobile number" required />
-                      <ErrorMessage>{errors.mobile}</ErrorMessage>
-                    </Form.Group>
-                  </Col>
+          <ErrorMessage>{errors.role}</ErrorMessage>
+        </Form.Group>
+      </Col>
 
-                  <Col xs={12} md={6}>
-                    <Form.Group controlId="formPassword">
-                      <Form.Label>Password<span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="password" name="password" value={formData.password} onChange={handleInputChange} className="form-control-custom" placeholder="Enter password" />
-                      <ErrorMessage>{errors.password}</ErrorMessage>
-                    </Form.Group>
-                  </Col>
+      {/* FULL NAME */}
+      <Col xs={12} md={6}>
+        <Form.Group controlId="formFullName">
+          <Form.Label>
+            {t("user:fullName")} <span className="text-danger">*</span>
+          </Form.Label>
 
-                  <Col xs={12} md={6}>
-                    <Form.Group controlId="formConfirmPassword">
-                      <Form.Label>Confirm Password <span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} className="form-control-custom" placeholder="Confirm password" />
-                      <ErrorMessage>{errors.confirmPassword}</ErrorMessage>
-                    </Form.Group>
-                  </Col>
-                </Row>
+          <Form.Control
+            type="text"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleInputChange}
+            className="form-control-custom"
+            placeholder={t("user:enter_full_name")}
+          />
 
-                <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
-                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setIsEditing(false); setEditingUserId(null); }} className="btn-cancel">Cancel</Button>
-                  <Button variant="primary" type="submit" className="btn-save">{isEditing ? 'Update' : 'Save'}</Button>
-                </Modal.Footer>
-              </Form>
-            ) : (
+          <ErrorMessage>{errors.fullName}</ErrorMessage>
+        </Form.Group>
+      </Col>
+
+      {/* EMAIL */}
+      <Col xs={12} md={6}>
+        <Form.Group controlId="formEmail">
+          <Form.Label>
+            {t("user:email")} <span className="text-danger">*</span>
+          </Form.Label>
+
+          <Form.Control
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            className="form-control-custom"
+            placeholder={t("user:enter_email")}
+          />
+
+          <ErrorMessage>{errors.email}</ErrorMessage>
+        </Form.Group>
+      </Col>
+
+      {/* MOBILE */}
+      <Col xs={12} md={6}>
+        <Form.Group controlId="formMobile">
+          <Form.Label>
+            {t("user:mobile")} <span className="text-danger">*</span>
+          </Form.Label>
+
+          <Form.Control
+            type="tel"
+            name="mobile"
+            value={formData.mobile}
+            onChange={handleInputChange}
+            className="form-control-custom"
+            placeholder={t("user:enter_mobile")}
+          />
+
+          <ErrorMessage>{errors.mobile}</ErrorMessage>
+        </Form.Group>
+      </Col>
+
+      {/* PASSWORD */}
+      <Col xs={12} md={6}>
+        <Form.Group controlId="formPassword">
+          <Form.Label>
+            {t("user:password")} <span className="text-danger">*</span>
+          </Form.Label>
+
+          <Form.Control
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            className="form-control-custom"
+            placeholder={t("user:enter_password")}
+          />
+
+          <ErrorMessage>{errors.password}</ErrorMessage>
+        </Form.Group>
+      </Col>
+
+      {/* CONFIRM PASSWORD */}
+      <Col xs={12} md={6}>
+        <Form.Group controlId="formConfirmPassword">
+          <Form.Label>
+            {t("user:confirmPassword")} <span className="text-danger">*</span>
+          </Form.Label>
+
+          <Form.Control
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            className="form-control-custom"
+            placeholder={t("user:confirm_password")}
+          />
+
+          <ErrorMessage>{errors.confirmPassword}</ErrorMessage>
+        </Form.Group>
+      </Col>
+
+    </Row>
+
+    <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
+      <Button
+        variant="outline-secondary"
+        onClick={() => {
+          setShowAddModal(false);
+          setIsEditing(false);
+          setEditingUserId(null);
+        }}
+        className="btn-cancel"
+      >
+        {t("user:cancel")}
+      </Button>
+
+      <Button variant="primary" type="submit" className="btn-save">
+        {isEditing ? t("user:update") : t("user:save")}
+      </Button>
+    </Modal.Footer>
+  </Form>
+) : (
+
               <>
                 {/* IMPORT UI */}
                 <div className="import-area p-4 rounded" style={{ background: '#fceee9' }}>
@@ -441,8 +532,8 @@ const User = () => {
                     </div>
                   </div>
 
-                  <h5 className="text-center uploadfile">Upload File</h5>
-                  <p className="text-center small">Support for CSV and XLSX formats</p>
+                  <h5 className="text-center uploadfile">{t("user:upload_file")}</h5>
+                  <p className="text-center small">{t("user:support_csv_xlsx")}</p>
 
                   <div className="d-flex justify-content-center gap-3 mt-3">
                     <div>
@@ -455,7 +546,7 @@ const User = () => {
                       />
                       <label htmlFor="upload-csv">
                         <Button variant="light" as="span" className='btnfont'>
-                          <i className="bi bi-upload me-1"></i> Upload CSV
+                          <i className="bi bi-upload me-1"></i>{t("user:upload_csv")}
                         </Button>
                       </label>
                     </div>
@@ -470,7 +561,7 @@ const User = () => {
                       />
                       <label htmlFor="upload-xlsx">
                         <Button variant="light" as="span" className='btnfont'>
-                          <i className="bi bi-upload me-1"></i> Upload XLSX
+                          <i className="bi bi-upload me-1"></i>{t("user:upload_xlsx")}
                         </Button>
                       </label>
                     </div>
@@ -481,7 +572,7 @@ const User = () => {
                   </div>
 
                   <div className="text-center mt-4 small">
-                    Download template:&nbsp;
+                   {t("download_template")}:&nbsp;
                     <Button variant="link" onClick={() => downloadTemplate(['role','name','email','mobile','password'], ['Manager','Sample User','sample@example.com','9876500000','Password123'], 'users-template')} className='btnfont'>CSV</Button>
                     &nbsp;|&nbsp;
                     <Button variant="link" onClick={() => downloadTemplate(['role','name','email','mobile','password'], ['Manager','Sample User','sample@example.com','9876500000','Password123'], 'users-template')} className='btnfont'>XLSX</Button>
@@ -489,8 +580,9 @@ const User = () => {
                 </div>
 
                 <Modal.Footer className="modal-footer-custom px-0">
-                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setIsEditing(false); setEditingUserId(null); }}>Cancel</Button>
-                  <Button variant="primary" onClick={handleImport}>Import</Button>
+                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setIsEditing(false); setEditingUserId(null); }}>{t("cancel")}</Button>
+                  <Button variant="primary" onClick={handleImport}>{t("user:import")}
+</Button>
                 </Modal.Footer>
               </>
             )}
@@ -506,10 +598,10 @@ const User = () => {
           dialogClassName="delete-confirm-modal"
         >
           <Modal.Header closeButton>
-            <Modal.Title>Confirm Delete</Modal.Title>
+            <Modal.Title>{t("user:confirm_delete")}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p>Are you sure you want to delete this user?</p>
+            <p>{t("user:delete_confirm_msg")}</p>
             {deleteTarget && (
               <div style={{ fontSize: 14, color: '#333' }}>
                 <strong>{deleteTarget.name}</strong>
@@ -518,13 +610,12 @@ const User = () => {
             )}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="outline-secondary" onClick={cancelDelete}>Cancel</Button>
-            <Button variant="danger" onClick={confirmDelete}>Delete</Button>
+            <Button variant="outline-secondary" onClick={cancelDelete}>{t("user:cancel")}</Button>
+            <Button variant="danger" onClick={confirmDelete}>{t("user:delete")}</Button>
           </Modal.Footer>
         </Modal>
       </div>
     </Container>
   );
 };
-
 export default User;

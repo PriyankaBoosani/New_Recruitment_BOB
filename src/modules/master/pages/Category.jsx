@@ -9,9 +9,13 @@ import deleteIcon from "../../../assets/delete_icon.png";
 import editIcon from "../../../assets/edit_icon.png";
 import ErrorMessage from '../../../shared/components/ErrorMessage';
 import { FileMeta, downloadTemplate, importFromCSV } from '../../../shared/components/FileUpload';
+import { useTranslation } from "react-i18next";
 
 
 const Category = () => {
+
+    const { t } = useTranslation(["category"]);
+
     const [categories, setCategories] = useState([
         { id: 1, code: "UR", name: "Unreserved", description: "Candidates who do not fall under any reservation category and compete on open merit." },
         { id: 2, code: "OBC", name: "Other Backward Classes", description: "Socially and educationally backward groups eligible for government reservation benefits." },
@@ -168,13 +172,13 @@ const Category = () => {
             <div className="user-content">
                 {/* HEADER */}
                 <div className="user-header">
-                    <h2>Categories</h2>
+                    <h2>{t("categories")}</h2>
                     <div className="user-actions">
                         <div className="search-box">
                             <Search className="search-icon" />
                             <Form.Control
                                 type="text"
-                                placeholder="Search categories"
+                                placeholder={t("search_placeholder")}
                                 value={searchTerm}
                                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                                 className="search-input"
@@ -182,7 +186,7 @@ const Category = () => {
                         </div>
 
                         <Button variant="primary" className="add-button" onClick={openAddModal}>
-                            <Plus size={20} className="me-1" /> Add
+                            <Plus size={20} className="me-1" /> {t("add")}
                         </Button>
                     </div>
                 </div>
@@ -192,11 +196,11 @@ const Category = () => {
                     <Table hover className="user-table">
                         <thead>
                             <tr>
-                                <th>S. No.</th>
-                                <th>Code</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th style={{ textAlign: "center" }}>Actions</th>
+                                <th>{t("s_no")}</th>
+                                <th>{t("code")}</th>
+                                <th>{t("name")}</th>
+                                <th>{t("description")}</th>
+                                <th style={{ textAlign: "center" }}>{t("actions")}</th>
                             </tr>
                         </thead>
 
@@ -205,9 +209,12 @@ const Category = () => {
                                 current.map((c, idx) => (
                                     <tr key={c.id}>
                                         <td>{indexFirst + idx + 1}</td>
-                                        <td data-label="Code:">&nbsp;{c.code}</td>
-                                        <td data-label="Name:">&nbsp;{c.name}</td>
-                                        <td data-label="Description:">&nbsp;{c.description}</td>
+                                        <td data-label={t("code") + ":"}>
+                                            &nbsp;{c.code}</td>
+                                        <td data-label={t("name") + ":"}>
+                                            &nbsp;{c.name}</td>
+                                        <td data-label={t("description") + ":"}>
+                                            &nbsp;{c.description}</td>
 
                                         <td>
                                             <div className="action-buttons">
@@ -225,7 +232,8 @@ const Category = () => {
                                     </tr>
                                 ))
                             ) : (
-                                <tr><td colSpan="5" className="text-center">No categories found</td></tr>
+                                <tr><td colSpan="5" className="text-center">{t("no_categories")}</td>
+                                </tr>
                             )}
                         </tbody>
                     </Table>
@@ -264,8 +272,10 @@ const Category = () => {
                 >
                     <Modal.Header closeButton className="modal-header-custom">
                         <div>
-                            <Modal.Title>{isEditing ? "Edit Category" : "Add Category"}</Modal.Title>
-                            <p className="mb-0 small text-muted">Choose manual entry or import using CSV/XLSX</p>
+                            <Modal.Title>
+                                {isEditing ? t("edit_category") : t("add_category")}
+                            </Modal.Title>
+                            <p className="mb-0 small text-muted">{t("choose_add_method")}</p>
                         </div>
                     </Modal.Header>
 
@@ -277,7 +287,7 @@ const Category = () => {
                                     className={`tab-button ${activeTab === "manual" ? "active" : ""}`}
                                     onClick={() => setActiveTab("manual")}
                                 >
-                                    Manual Entry
+                                    {t("manual_entry")}
                                 </Button>
 
                                 <Button
@@ -285,7 +295,7 @@ const Category = () => {
                                     className={`tab-button ${activeTab === "import" ? "active" : ""}`}
                                     onClick={() => setActiveTab("import")}
                                 >
-                                    Import File
+                                    {t("import_file")}
                                 </Button>
                             </div>
                         )}
@@ -296,14 +306,14 @@ const Category = () => {
                                 <Row className="g-3">
                                     <Col md={6}>
                                         <Form.Group>
-                                            <Form.Label className="form-label">Code <span className="text-danger">*</span></Form.Label>
+                                            <Form.Label className="form-label">{t("code")} <span className="text-danger">*</span></Form.Label>
                                             <Form.Control
                                                 type="text"
                                                 name="code"
                                                 value={formData.code}
                                                 onChange={handleInputChange}
                                                 className="form-control-custom"
-                                                placeholder="Enter category code"
+                                                placeholder={t("enter_code")}
                                             />
                                             <ErrorMessage>{errors.code}</ErrorMessage>
                                         </Form.Group>
@@ -311,14 +321,15 @@ const Category = () => {
 
                                     <Col md={6}>
                                         <Form.Group>
-                                            <Form.Label className="form-label">Name <span className="text-danger">*</span></Form.Label>
+                                            <Form.Label className="form-label">  {t("name")}  <span className="text-danger">*</span></Form.Label>
                                             <Form.Control
                                                 type="text"
                                                 name="name"
                                                 value={formData.name}
                                                 onChange={handleInputChange}
                                                 className="form-control-custom"
-                                                placeholder="Enter category name"
+                                                placeholder={t("enter_name")}
+
                                             />
                                             <ErrorMessage>{errors.name}</ErrorMessage>
                                         </Form.Group>
@@ -326,7 +337,7 @@ const Category = () => {
 
                                     <Col md={12}>
                                         <Form.Group>
-                                            <Form.Label className="form-label">Description <span className="text-danger">*</span></Form.Label>
+                                            <Form.Label className="form-label"> {t("description")} <span className="text-danger">*</span></Form.Label>
                                             <Form.Control
                                                 as="textarea"
                                                 rows={3}
@@ -334,7 +345,7 @@ const Category = () => {
                                                 value={formData.description}
                                                 onChange={handleInputChange}
                                                 className="form-control-custom"
-                                                placeholder="Enter description"
+                                                placeholder={t("enter_description")}
                                             />
                                             <ErrorMessage>{errors.description}</ErrorMessage>
                                         </Form.Group>
@@ -342,8 +353,8 @@ const Category = () => {
                                 </Row>
 
                                 <Modal.Footer className="modal-footer-custom px-0 pt-4">
-                                    <Button variant="outline-secondary" onClick={() => setShowAddModal(false)}>Cancel</Button>
-                                    <Button variant="primary" type="submit">{isEditing ? "Update" : "Save"}</Button>
+                                    <Button variant="outline-secondary" onClick={() => setShowAddModal(false)}>{t("cancel")}</Button>
+                                    <Button variant="primary" type="submit">{isEditing ? t("update") : t("save")}</Button>
                                 </Modal.Footer>
                             </Form>
 
@@ -367,10 +378,10 @@ const Category = () => {
                                             <Upload size={32} />
                                         </div>
 
-                                        <h5 className="mt-3 uploadfile">Upload File</h5>
+                                        <h5 className="mt-3 uploadfile">{t("upload_file")}</h5>
                                         <p className="text-muted small">
-                                            Supports CSV and XLSX formats
-                                            (CSV headers: code,name,description)
+                                            {t("support_csv_xlsx")}
+                                            {/* (CSV headers: code,name,description) */}
                                         </p>
                                     </div>
 
@@ -385,7 +396,7 @@ const Category = () => {
                                             />
                                             <label htmlFor="upload-csv-cat">
                                                 <Button as="span" variant="light" className="btnfont">
-                                                    <i className="bi bi-upload me-1"></i> Upload CSV
+                                                    <i className="bi bi-upload me-1"></i> {t("upload_csv")}
                                                 </Button>
                                             </label>
                                         </div>
@@ -400,7 +411,7 @@ const Category = () => {
                                             />
                                             <label htmlFor="upload-xlsx-cat">
                                                 <Button as="span" variant="light" className="btnfont">
-                                                    <i className="bi bi-upload me-1"></i> Upload XLSX
+                                                    <i className="bi bi-upload me-1"></i> {t("upload_xlsx")}
                                                 </Button>
                                             </label>
                                         </div>
@@ -411,16 +422,45 @@ const Category = () => {
                                     </div>
 
                                     <div className="text-center mt-4 small">
-                                        Download template:&nbsp;
-                                        <Button variant="link" onClick={() => downloadTemplate(['code','name','description'], ['UR','Unreserved','Candidates who do not fall under any reservation category and compete on open merit.'], 'categories-template')} className="btnfont">CSV</Button>
+                                        {t("download_template")}:&nbsp;
+
+                                        <Button
+                                            variant="link"
+                                            onClick={() =>
+                                                downloadTemplate(
+                                                    ['code', 'name', 'description'],
+                                                    ['UR', 'Unreserved', 'Candidates who do not fall under any reservation category and compete on open merit.'],
+                                                    'categories-template'
+                                                )
+                                            }
+                                            className="btnfont"
+                                        >
+                                            {t("csv")}
+                                        </Button>
+
                                         &nbsp;|&nbsp;
-                                        <Button variant="link" onClick={() => downloadTemplate(['code','name','description'], ['UR','Unreserved','Candidates who do not fall under any reservation category and compete on open merit.'], 'categories-template')} className="btnfont">XLSX</Button>
+
+                                        <Button
+                                            variant="link"
+                                            onClick={() =>
+                                                downloadTemplate(
+                                                    ['code', 'name', 'description'],
+                                                    ['UR', 'Unreserved', 'Candidates who do not fall under any reservation category and compete on open merit.'],
+                                                    'categories-template'
+                                                )
+                                            }
+                                            className="btnfont"
+                                        >
+                                            {t("xlsx")}
+                                        </Button>
                                     </div>
+
                                 </div>
 
+
                                 <Modal.Footer className="modal-footer-custom px-0 pt-4">
-                                    <Button variant="outline-secondary" onClick={() => setShowAddModal(false)}>Cancel</Button>
-                                    <Button variant="primary" onClick={handleImport}>Import</Button>
+                                    <Button variant="outline-secondary" onClick={() => setShowAddModal(false)}>{t("cancel")}</Button>
+                                    <Button variant="primary" onClick={handleImport}>  {t("import")}</Button>
                                 </Modal.Footer>
                             </>
                         )}
@@ -430,17 +470,18 @@ const Category = () => {
                 {/* DELETE CONFIRM MODAL */}
                 <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered dialogClassName="delete-confirm-modal">
                     <Modal.Header closeButton>
-                        <Modal.Title>Confirm Delete</Modal.Title>
+                        <Modal.Title>{t("confirm_delete")}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <p>Are you sure you want to delete this category?</p>
+                        <p>{t("delete_message")}</p>
                         {deleteTarget && <strong>{deleteTarget.name}</strong>}
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="outline-secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
-                        <Button variant="danger" onClick={confirmDelete}>Delete</Button>
+                        <Button variant="outline-secondary" onClick={() => setShowDeleteModal(false)}>{t("cancel")}</Button>
+                        <Button variant="danger" onClick={confirmDelete}>{t("delete")}</Button>
                     </Modal.Footer>
                 </Modal>
+
 
             </div>
         </Container>

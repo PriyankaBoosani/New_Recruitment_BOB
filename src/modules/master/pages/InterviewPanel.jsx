@@ -9,8 +9,11 @@ import deleteIcon from "../../../assets/delete_icon.png";
 import editIcon from "../../../assets/edit_icon.png";
 import ErrorMessage from '../../../shared/components/ErrorMessage';
 import { FileMeta, downloadTemplate, importFromCSV } from '../../../shared/components/FileUpload';
+import { useTranslation } from "react-i18next";
 
 const InterviewPanel = () => {
+  const { t } = useTranslation(["interviewPanel"]);
+
   const [panels, setPanels] = useState([
     { id: 1, name: 'Application Screening Panel', members: 'Harsha Tatapudi, Manaswi Puttamarju' },
     { id: 2, name: 'Document Verification Panel', members: 'Mahesh Allvar, Sumanth Sangam, Vamshi Vaddempudi' },
@@ -152,11 +155,7 @@ const InterviewPanel = () => {
       members: formData.members // can be array or comma-separated string
     };
 
-    const result = validateInterviewPanelForm(payloadForValidation, {
-      existing: panels,
-      currentId: isEditing ? editingId : null
-    });
-
+    const result = validateInterviewPanelForm(payloadForValidation);
 
     if (!result.valid) {
       setErrors(result.errors);
@@ -242,36 +241,38 @@ const InterviewPanel = () => {
     <Container fluid className="user-container">
       <div className="user-content">
         <div className="user-header">
-          <h2>Interview Panels</h2>
+       <h2>{t("interviewPanel:title")}</h2>
+
 
           <div className="user-actions">
             <div className="search-box">
               <Search className="search-icon" />
               <Form.Control
-                type="text"
-                placeholder="Search Panel"
-                value={searchTerm}
-                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="search-input"
-              />
+              type="text"
+              placeholder={t("interviewPanel:search_placeholder")}
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              className="search-input"
+            />
             </div>
 
             <Button variant="primary" className="add-button" onClick={openAdd}>
-              <Plus size={20} className="me-1" /> Add
+             <Plus size={20} className="me-1" /> {t("interviewPanel:add")}
             </Button>
           </div>
         </div>
 
         <div className="table-responsive">
           <Table hover className="user-table">
-            <thead>
-              <tr>
-                <th>S. No.</th>
-                <th>Panel Name</th>
-                <th>Panel Members</th>
-                <th style={{ textAlign: 'center' }}>Actions</th>
-              </tr>
-            </thead>
+           <thead>
+            <tr>
+              <th>{t("interviewPanel:sno")}</th>
+              <th>{t("interviewPanel:panel_name")}</th>
+              <th>{t("interviewPanel:panel_members")}</th>
+              <th style={{ textAlign: "center" }}>{t("interviewPanel:actions")}</th>
+            </tr>
+          </thead>
+
 
             <tbody>
               {current.length ? current.map((p, i) => (
@@ -289,7 +290,9 @@ const InterviewPanel = () => {
                   </td>
                 </tr>
               )) : (
-                <tr><td colSpan="4" className="text-center">No Panels Found</td></tr>
+                <tr> <td colSpan="4" className="text-center">
+    {t("interviewPanel:no_records")}
+  </td></tr>
               )}
             </tbody>
           </Table>
@@ -330,172 +333,274 @@ const InterviewPanel = () => {
         >
           <Modal.Header closeButton className="modal-header-custom">
             <div>
-              <Modal.Title>{isEditing ? "Edit Panel" : "Add Panel"}</Modal.Title>
-              <p className="small text-muted para">Choose to add manually or import from CSV/XLSX file.</p>
-            </div>
+           <Modal.Title>
+  {isEditing ? t("interviewPanel:edit") : t("interviewPanel:added")}
+</Modal.Title>
+
+<p className="small text-muted para">
+  {t("interviewPanel:choose_add_method")}
+</p>
+ </div>
           </Modal.Header>
+<Modal.Body className="p-4">
+  {!isEditing && (
+    <div className="tab-buttons mb-4">
+      <Button
+        variant={activeTab === "manual" ? "light" : "outline-light"}
+        className={`tab-button ${activeTab === "manual" ? "active" : ""}`}
+        onClick={() => setActiveTab("manual")}
+      >
+        {t("interviewPanel:manual_entry")}
+      </Button>
 
-          <Modal.Body className="p-4">
-            {!isEditing && (
-              <div className="tab-buttons mb-4">
-                <Button
-                  variant={activeTab === "manual" ? "light" : "outline-light"}
-                  className={`tab-button ${activeTab === "manual" ? "active" : ""}`}
-                  onClick={() => setActiveTab("manual")}
-                >
-                  Manual Entry
-                </Button>
-                <Button
-                  variant={activeTab === "import" ? "light" : "outline-light"}
-                  className={`tab-button ${activeTab === "import" ? "active" : ""}`}
-                  onClick={() => setActiveTab("import")}
-                >
-                  Import File
-                </Button>
-              </div>
-            )}
+      <Button
+        variant={activeTab === "import" ? "light" : "outline-light"}
+        className={`tab-button ${activeTab === "import" ? "active" : ""}`}
+        onClick={() => setActiveTab("import")}
+      >
+        {t("interviewPanel:import_file")}
+      </Button>
+    </div>
+  )}
 
-            {activeTab === "manual" ? (
-              <Form onSubmit={handleSave} noValidate>
-                <Row className="g-3">
-                  <Col xs={12}>
-                    <Form.Group>
-                      <Form.Label>Panel Name <span className='text-danger'>*</span></Form.Label>
-                      <Form.Control name="name" value={formData.name} onChange={handleInput} placeholder="Enter Panel Name" className="form-control-custom" />
-                      <ErrorMessage>{errors.name}</ErrorMessage>
-                    </Form.Group>
-                  </Col>
+  {activeTab === "manual" ? (
+    <Form onSubmit={handleSave} noValidate>
+      <Row className="g-3">
+        <Col xs={12}>
+          <Form.Group>
+            <Form.Label>
+              {t("interviewPanel:panel_name")} <span className="text-danger">*</span>
+            </Form.Label>
 
-                  <Col xs={12}>
-                    <Form.Group>
-                      <Form.Label>Panel Members <span className='text-danger'>*</span></Form.Label>
+            <Form.Control
+              name="name"
+              value={formData.name}
+              onChange={handleInput}
+              placeholder={t("interviewPanel:enter_panel_name")}
+              className="form-control-custom"
+            />
 
-                      {/* DROPDOWN multi-select with pills + checkmarks */}
-                      <Dropdown autoClose="outside">
-                        <Dropdown.Toggle
-                          id="members-dropdown"
-                          className="form-control-custom d-flex align-items-center justify-content-between buttonnonebg"
-                          style={{ minHeight: 48, padding: '8px 12px', display: 'flex', flexWrap: 'wrap', gap: 6 }}
+            <ErrorMessage>{errors.name}</ErrorMessage>
+          </Form.Group>
+        </Col>
+
+        <Col xs={12}>
+          <Form.Group>
+            <Form.Label>
+              {t("interviewPanel:panel_members")} <span className="text-danger">*</span>
+            </Form.Label>
+
+            <Dropdown autoClose="outside">
+              <Dropdown.Toggle
+                id="members-dropdown"
+                className="form-control-custom d-flex align-items-center justify-content-between buttonnonebg"
+                style={{ minHeight: 48, padding: '8px 12px', display: 'flex', flexWrap: 'wrap', gap: 6 }}
+              >
+                <div style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 6, alignItems: 'center', flex: 1 }}>
+                  {Array.isArray(formData.members) && formData.members.length > 0 ? (
+                    formData.members.map(m => (
+                      <div key={m} style={pillStyle} className="hovbg" onClick={(e) => e.stopPropagation()}>
+                        <span style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', display: 'inline-block' }}>
+                          {m}
+                        </span>
+                        <span
+                          style={pillCloseStyle}
+                          onClick={(e) => removeMemberPill(e, m)}
+                          aria-hidden
                         >
-                          <div style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 6, alignItems: 'center', flex: 1 }}>
-                            {/* show pills for selected */}
-                            {Array.isArray(formData.members) && formData.members.length > 0 ? (
-                              formData.members.map(m => (
-                                <div key={m} style={pillStyle} className='hovbg' onClick={(e) => e.stopPropagation()}>
-                                  <span style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', display: 'inline-block' }}>{m}</span>
-                                  <span style={pillCloseStyle} onClick={(e) => removeMemberPill(e, m)} aria-hidden>×</span>
-                                </div>
-                              ))
-                            ) : (
-                              <div style={{ color: '#9aa0a6' }}>Please select...</div>
-                            )}
-                          </div>
-                        </Dropdown.Toggle>
-
-                        <Dropdown.Menu style={{ minWidth: 300, maxHeight: '86px', overflowY: 'auto', padding: '0.5rem' }}>
-                          <div className="small text-muted mb-2 px-1">Select one or more members</div>
-
-                          {membersOptions.map(m => {
-                            const selected = Array.isArray(formData.members) && formData.members.includes(m);
-                            return (
-                              <div
-                                key={m}
-                                role="button"
-                                onClick={() => toggleMember(m)}
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'space-between',
-                                  padding: '8px 10px',
-                                  borderRadius: 6,
-                                  cursor: 'pointer',
-                                  background: selected ? '#f5fbff' : 'transparent',
-                                  marginBottom: 6
-                                }}
-                              >
-                                <div>{m}</div>
-                                <div style={{ width: 20, textAlign: 'center' }}>
-                                  {selected ? <span>✓</span> : null}
-                                </div>
-                              </div>
-                            );
-                          })}
-
-
-                        </Dropdown.Menu>
-                      </Dropdown>
-                      <ErrorMessage>{errors.members}</ErrorMessage>
-
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
-                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setIsEditing(false); setEditingId(null); }}>Cancel</Button>
-                  <Button variant="primary" type="submit">{isEditing ? "Update" : "Save"}</Button>
-                </Modal.Footer>
-              </Form>
-            ) : (
-              <>
-                <div className="import-area p-4 rounded" style={{ background: "#fceee9" }}>
-                  <div className="text-center mb-3">
-                    <div style={{ width: 72, height: 72, borderRadius: 12, background: "#fff", display: "inline-flex", justifyContent: "center", alignItems: "center" }}>
-                      <Upload size={32} />
+                          ×
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ color: '#9aa0a6' }}>
+                      {t("interviewPanel:select_members")}
                     </div>
-                    <h5 className="uploadfile">Upload File</h5>
-                    <p className="small text-muted">CSV/XLSX supported (Headers: name, members)</p>
-                  </div>
+                  )}
+                </div>
+              </Dropdown.Toggle>
 
-                  <div className="d-flex justify-content-center gap-3 mt-3 flex-wrap">
-                    <div>
-                      <input id="panel-csv" type="file" accept=".csv,text/csv" style={{ display: 'none' }} onChange={(e) => onSelectCSV(e.target.files[0] ?? null)} />
-                      <label htmlFor="panel-csv">
-                        <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload CSV</Button>
-                      </label>
-                    </div>
-
-                    <div>
-                      <input id="panel-xlsx" type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style={{ display: 'none' }} onChange={(e) => onSelectXLSX(e.target.files[0] ?? null)} />
-                      <label htmlFor="panel-xlsx">
-                        <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload XLSX</Button>
-                      </label>
-                    </div>
-
-                    <FileMeta file={selectedCSVFile} onRemove={removeCSV} />
-                    <FileMeta file={selectedXLSXFile} onRemove={removeXLSX} />
-                  </div>
-
-                  <div className="text-center mt-4 small">
-                    Download template:&nbsp;
-                    <Button variant="link" className='btnfont' onClick={() => downloadTemplate('csv')}>CSV</Button>
-                    &nbsp;|&nbsp;
-                    <Button variant="link" className='btnfont' onClick={() => downloadTemplate('xlsx')}>XLSX</Button>
-                  </div>
+              <Dropdown.Menu style={{ minWidth: 300, maxHeight: '86px', overflowY: 'auto', padding: '0.5rem' }}>
+                <div className="small text-muted mb-2 px-1">
+                  {t("interviewPanel:select_members_hint")}
                 </div>
 
-                <Modal.Footer className="modal-footer-custom px-0">
-                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setActiveTab('manual'); }}>Cancel</Button>
-                  <Button variant="primary" onClick={handleImport}>Import</Button>
-                </Modal.Footer>
-              </>
-            )}
-          </Modal.Body>
+                {membersOptions.map(m => {
+                  const selected = Array.isArray(formData.members) && formData.members.includes(m);
+                  return (
+                    <div
+                      key={m}
+                      role="button"
+                      onClick={() => toggleMember(m)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '8px 10px',
+                        borderRadius: 6,
+                        cursor: 'pointer',
+                        background: selected ? '#f5fbff' : 'transparent',
+                        marginBottom: 6
+                      }}
+                    >
+                      <div>{m}</div>
+                      <div style={{ width: 20, textAlign: 'center' }}>
+                        {selected ? <span>✓</span> : null}
+                      </div>
+                    </div>
+                  );
+                })}
+              </Dropdown.Menu>
+            </Dropdown>
+
+            <ErrorMessage>{errors.members}</ErrorMessage>
+          </Form.Group>
+        </Col>
+      </Row>
+
+      <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
+        <Button
+          variant="outline-secondary"
+          onClick={() => {
+            setShowAddModal(false);
+            setIsEditing(false);
+            setEditingId(null);
+          }}
+        >
+          {t("interviewPanel:cancel")}
+        </Button>
+
+        <Button variant="primary" type="submit">
+          {isEditing ? t("interviewPanel:update") : t("interviewPanel:save")}
+        </Button>
+      </Modal.Footer>
+    </Form>
+  ) : (
+    <>
+      <div className="import-area p-4 rounded" style={{ background: "#fceee9" }}>
+        <div className="text-center mb-3">
+          <div
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: 12,
+              background: "#fff",
+              display: "inline-flex",
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <Upload size={32} />
+          </div>
+
+          <h5 className="uploadfile">
+            {t("interviewPanel:upload_file")}
+          </h5>
+
+          <p className="small text-muted">
+            {t("interviewPanel:supported_formats")}
+          </p>
+        </div>
+
+        <div className="d-flex justify-content-center gap-3 mt-3 flex-wrap">
+          <div>
+            <input
+              id="panel-csv"
+              type="file"
+              accept=".csv,text/csv"
+              style={{ display: 'none' }}
+              onChange={(e) => onSelectCSV(e.target.files[0] ?? null)}
+            />
+            <label htmlFor="panel-csv">
+              <Button variant="light" as="span" className="btnfont">
+                <i className="bi bi-upload me-1"></i>
+                {t("interviewPanel:upload_csv")}
+              </Button>
+            </label>
+          </div>
+
+          <div>
+            <input
+              id="panel-xlsx"
+              type="file"
+              accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              style={{ display: 'none' }}
+              onChange={(e) => onSelectXLSX(e.target.files[0] ?? null)}
+            />
+            <label htmlFor="panel-xlsx">
+              <Button variant="light" as="span" className="btnfont">
+                <i className="bi bi-upload me-1"></i>
+                {t("interviewPanel:upload_xlsx")}
+              </Button>
+            </label>
+          </div>
+
+          <FileMeta file={selectedCSVFile} onRemove={removeCSV} />
+          <FileMeta file={selectedXLSXFile} onRemove={removeXLSX} />
+        </div>
+
+        <div className="text-center mt-4 small">
+          {t("interviewPanel:download_template")}:&nbsp;
+          <Button variant="link" className="btnfont" onClick={() => downloadTemplate('csv')}>
+            CSV
+          </Button>
+          &nbsp;|&nbsp;
+          <Button variant="link" className="btnfont" onClick={() => downloadTemplate('xlsx')}>
+            XLSX
+          </Button>
+        </div>
+      </div>
+
+      <Modal.Footer className="modal-footer-custom px-0">
+        <Button
+          variant="outline-secondary"
+          onClick={() => {
+            setShowAddModal(false);
+            setActiveTab('manual');
+          }}
+        >
+          {t("interviewPanel:cancel")}
+        </Button>
+
+        <Button variant="primary" onClick={handleImport}>
+          {t("interviewPanel:import")}
+        </Button>
+      </Modal.Footer>
+    </>
+  )}
+</Modal.Body>
+
         </Modal>
 
-        {/* Delete confirmation */}
-        <Modal show={showDeleteModal} onHide={cancelDelete} centered dialogClassName="delete-confirm-modal">
-          <Modal.Header closeButton>
-            <Modal.Title>Confirm Delete</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p>Are you sure you want to delete this panel?</p>
-            {deleteTarget && <div className="delete-confirm-user"><strong>{deleteTarget.name}</strong></div>}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="outline-secondary" onClick={cancelDelete}>Cancel</Button>
-            <Button variant="danger" onClick={confirmDelete}>Delete</Button>
-          </Modal.Footer>
-        </Modal>
+     {/* Delete confirmation */}
+<Modal show={showDeleteModal} onHide={cancelDelete} centered dialogClassName="delete-confirm-modal">
+  <Modal.Header closeButton>
+    <Modal.Title>
+      {t("interviewPanel:confirm_delete")}
+    </Modal.Title>
+  </Modal.Header>
+
+  <Modal.Body>
+    <p>{t("interviewPanel:delete_confirm_msg")}</p>
+
+    {deleteTarget && (
+      <div className="delete-confirm-user">
+        <strong>{deleteTarget.name}</strong>
+      </div>
+    )}
+  </Modal.Body>
+
+  <Modal.Footer>
+    <Button variant="outline-secondary" onClick={cancelDelete}>
+      {t("interviewPanel:cancel")}
+    </Button>
+
+    <Button variant="danger" onClick={confirmDelete}>
+      {t("interviewPanel:delete")}
+    </Button>
+  </Modal.Footer>
+</Modal>
+
       </div>
     </Container>
   );

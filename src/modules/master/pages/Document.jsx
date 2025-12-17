@@ -9,8 +9,11 @@ import deleteIcon from "../../../assets/delete_icon.png";
 import editIcon from "../../../assets/edit_icon.png";
 import ErrorMessage from '../../../shared/components/ErrorMessage';
 import { FileMeta, downloadTemplate, importFromCSV } from '../../../shared/components/FileUpload';
+import { useTranslation } from "react-i18next";
 
 const Documents = () => {
+  const { t } = useTranslation(["documents", "validation"]);
+
   const [documents, setDocuments] = useState([
     { id: 1, name: 'Aadhar Card', description: 'Proof of identity' },
     { id: 2, name: 'Pan Card', description: 'Tax identity proof' },
@@ -168,21 +171,23 @@ const Documents = () => {
     <Container fluid className="user-container">
       <div className="user-content">
         <div className="user-header">
-          <h2>Documents</h2>
+         <h2>{t("documents:title")}</h2>
+
           <div className="user-actions">
             <div className="search-box">
               <Search className="search-icon" />
               <Form.Control
-                type="text"
-                placeholder="Search by document name or description"
-                value={searchTerm}
-                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="search-input"
-              />
+              type="text"
+              placeholder={t("documents:search_placeholder")}
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              className="search-input"
+            />
+
             </div>
 
             <Button variant="primary" className="add-button" onClick={openAddModal}>
-              <Plus size={20} className="me-1" /> Add
+              <Plus size={20} className="me-1" /> {t("documents:add")}
             </Button>
           </div>
         </div>
@@ -191,10 +196,11 @@ const Documents = () => {
           <Table hover className="user-table">
             <thead>
               <tr>
-                <th>S. No.</th>
-                <th>Document Name</th>
-                <th>Description</th>
-                <th style={{ textAlign: 'center' }}>Actions</th>
+              <th>{t("documents:sno")}</th>
+              <th>{t("documents:document_name")}</th>
+              <th>{t("documents:description")}</th>
+              <th style={{ textAlign: "center" }}>{t("documents:actions")}</th>
+
               </tr>
             </thead>
             <tbody>
@@ -218,7 +224,7 @@ const Documents = () => {
                   </td>
                 </tr>
               )) : (
-                <tr><td colSpan="4" className="text-center">No documents found</td></tr>
+                <tr><td colSpan="4" className="text-center"> {t("documents:noRecords")}</td></tr>
               )}
             </tbody>
           </Table>
@@ -260,109 +266,237 @@ const Documents = () => {
         >
           <Modal.Header closeButton className="modal-header-custom">
             <div>
-              <Modal.Title>{isEditing ? 'Edit Document' : 'Add Document'}</Modal.Title>
-              <p className="mb-0 small text-muted para">Choose to add manually or import from CSV/XLSX file.</p>
-            </div>
+             <Modal.Title>
+  {isEditing ? t("documents:edit") : t("documents:added")}
+</Modal.Title>
+
+<p className="mb-0 small text-muted para">
+  {t("documents:choose_add_method")}
+</p> </div>
           </Modal.Header>
+<Modal.Body className="p-4">
+  {!isEditing && (
+    <div className="tab-buttons mb-4">
+      <Button
+        variant={activeTab === 'manual' ? 'light' : 'outline-light'}
+        className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
+        onClick={() => setActiveTab('manual')}
+      >
+        {t("documents:manual_entry")}
+      </Button>
 
-          <Modal.Body className="p-4">
-            {!isEditing && (
-              <div className="tab-buttons mb-4">
-                <Button variant={activeTab === 'manual' ? 'light' : 'outline-light'} className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`} onClick={() => setActiveTab('manual')}>Manual Entry</Button>
-                <Button variant={activeTab === 'import' ? 'light' : 'outline-light'} className={`tab-button ${activeTab === 'import' ? 'active' : ''}`} onClick={() => setActiveTab('import')}>Import File</Button>
-              </div>
-            )}
+      <Button
+        variant={activeTab === 'import' ? 'light' : 'outline-light'}
+        className={`tab-button ${activeTab === 'import' ? 'active' : ''}`}
+        onClick={() => setActiveTab('import')}
+      >
+        {t("documents:import_file")}
+      </Button>
+    </div>
+  )}
 
-            {activeTab === 'manual' ? (
-              <Form onSubmit={handleSave} noValidate>
-                <Row className="g-3">
-                  <Col xs={12} md={12}>
-                    <Form.Group controlId="formName" className="form-group">
-                      <Form.Label className="form-label">Document Name <span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="text" name="name" value={formData.name} onChange={handleInputChange} className="form-control-custom" placeholder="Enter document name" aria-invalid={!!errors.name} aria-describedby="nameError" />
-                      <ErrorMessage id="nameError">{errors.name}</ErrorMessage>
-                    </Form.Group>
-                  </Col>
+  {activeTab === 'manual' ? (
+    <Form onSubmit={handleSave} noValidate>
+      <Row className="g-3">
+        <Col xs={12} md={12}>
+          <Form.Group controlId="formName" className="form-group">
+            <Form.Label className="form-label">
+              {t("documents:document_name")} <span className="text-danger">*</span>
+            </Form.Label>
+            <Form.Control
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              className="form-control-custom"
+              placeholder={t("documents:enter_document_name")}
+              aria-invalid={!!errors.name}
+              aria-describedby="nameError"
+            />
+            <ErrorMessage id="nameError">{errors.name}</ErrorMessage>
+          </Form.Group>
+        </Col>
 
-                  <Col xs={12}>
-                    <Form.Group controlId="formDescription" className="form-group">
-                      <Form.Label className="form-label">Description <span className="text-danger">*</span></Form.Label>
-                      <Form.Control as="textarea" rows={3} name="description" value={formData.description} onChange={handleInputChange} className="form-control-custom" placeholder="Enter description" aria-invalid={!!errors.description} aria-describedby="descError" />
-                      <ErrorMessage id="descError">{errors.description}</ErrorMessage>
-                    </Form.Group>
-                  </Col>
-                </Row>
+        <Col xs={12}>
+          <Form.Group controlId="formDescription" className="form-group">
+            <Form.Label className="form-label">
+              {t("documents:description")} <span className="text-danger">*</span>
+            </Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              className="form-control-custom"
+              placeholder={t("documents:enter_description")}
+              aria-invalid={!!errors.description}
+              aria-describedby="descError"
+            />
+            <ErrorMessage id="descError">{errors.description}</ErrorMessage>
+          </Form.Group>
+        </Col>
+      </Row>
 
-                <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
-                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setIsEditing(false); setEditingId(null); }}>Cancel</Button>
-                  <Button variant="primary" type="submit">{isEditing ? 'Update' : 'Save'}</Button>
-                </Modal.Footer>
-              </Form>
-            ) : (
-              <>
-                <div className="import-area p-4 rounded" style={{ background: '#fceee9' }}>
-                  <div className="text-center mb-3">
-                    <div style={{ width: 72, height: 72, borderRadius: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff' }}>
-                      <Upload size={32} />
-                    </div>
-                    <h5 className="text-center uploadfile">Upload File</h5>
-                    <p className="text-center small">Support for CSV and XLSX formats (CSV headers: name,description)</p>
-                  </div>
+      <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
+        <Button
+          variant="outline-secondary"
+          onClick={() => {
+            setShowAddModal(false);
+            setIsEditing(false);
+            setEditingId(null);
+          }}
+        >
+          {t("documents:cancel")}
+        </Button>
 
-                  <div className="d-flex justify-content-center gap-3 mt-3 flex-wrap">
-                    <div>
-                      <input id="upload-csv-doc" type="file" accept=".csv,text/csv" style={{ display: 'none' }} onChange={(e) => onSelectCSV(e.target.files[0] ?? null)} />
-                      <label htmlFor="upload-csv-doc">
-                        <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload CSV</Button>
-                      </label>
-                    </div>
+        <Button variant="primary" type="submit">
+          {isEditing ? t("documents:update") : t("documents:save")}
+        </Button>
+      </Modal.Footer>
+    </Form>
+  ) : (
+    <>
+      <div className="import-area p-4 rounded" style={{ background: '#fceee9' }}>
+        <div className="text-center mb-3">
+          <div
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: 12,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: '#fff'
+            }}
+          >
+            <Upload size={32} />
+          </div>
 
-                    <div>
-                      <input id="upload-xlsx-doc" type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={(e) => onSelectXLSX(e.target.files[0] ?? null)} />
-                      <label htmlFor="upload-xlsx-doc">
-                        <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload XLSX</Button>
-                      </label>
-                    </div>
+          <h5 className="text-center uploadfile">
+            {t("documents:upload_file")}
+          </h5>
 
-                    <FileMeta file={selectedCSVFile} onRemove={removeCSV} />
-                    <FileMeta file={selectedXLSXFile} onRemove={removeXLSX} />
-                  </div>
+          <p className="text-center small">
+            {t("documents:support_csv_xlsx")}
+          </p>
+        </div>
 
-                  <div className="text-center mt-4 small">
-                    Download template:&nbsp;
-                    <Button variant="link" className='btnfont' onClick={() => downloadTemplate('csv')}>CSV</Button>
-                    &nbsp;|&nbsp;
-                    <Button variant="link" className='btnfont' onClick={() => downloadTemplate('xlsx')}>XLSX</Button>
-                  </div>
-                </div>
+        <div className="d-flex justify-content-center gap-3 mt-3 flex-wrap">
+          <div>
+            <input
+              id="upload-csv-doc"
+              type="file"
+              accept=".csv,text/csv"
+              style={{ display: 'none' }}
+              onChange={(e) => onSelectCSV(e.target.files[0] ?? null)}
+            />
+            <label htmlFor="upload-csv-doc">
+              <Button variant="light" as="span" className="btnfont">
+                <i className="bi bi-upload me-1"></i>
+                {t("documents:upload_csv")}
+              </Button>
+            </label>
+          </div>
 
-                <Modal.Footer className="modal-footer-custom px-0">
-                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setActiveTab('manual'); }}>Cancel</Button>
-                  <Button variant="primary" onClick={handleImport}>Import</Button>
-                </Modal.Footer>
-              </>
-            )}
-          </Modal.Body>
+          <div>
+            <input
+              id="upload-xlsx-doc"
+              type="file"
+              accept=".xlsx,.xls"
+              style={{ display: 'none' }}
+              onChange={(e) => onSelectXLSX(e.target.files[0] ?? null)}
+            />
+            <label htmlFor="upload-xlsx-doc">
+              <Button variant="light" as="span" className="btnfont">
+                <i className="bi bi-upload me-1"></i>
+                {t("documents:upload_xlsx")}
+              </Button>
+            </label>
+          </div>
+
+          <FileMeta file={selectedCSVFile} onRemove={removeCSV} />
+          <FileMeta file={selectedXLSXFile} onRemove={removeXLSX} />
+        </div>
+
+        <div className="text-center mt-4 small">
+          {t("documents:download_template")}:&nbsp;
+          <Button variant="link" className="btnfont" onClick={() => downloadTemplate('csv')}>
+            CSV
+          </Button>
+          &nbsp;|&nbsp;
+          <Button variant="link" className="btnfont" onClick={() => downloadTemplate('xlsx')}>
+            XLSX
+          </Button>
+        </div>
+      </div>
+
+      <Modal.Footer className="modal-footer-custom px-0">
+        <Button
+          variant="outline-secondary"
+          onClick={() => {
+            setShowAddModal(false);
+            setActiveTab('manual');
+          }}
+        >
+          {t("documents:cancel")}
+        </Button>
+
+        <Button variant="primary" onClick={handleImport}>
+          {t("documents:import")}
+        </Button>
+      </Modal.Footer>
+    </>
+  )}
+</Modal.Body>
+
         </Modal>
+{/* Delete Confirmation Modal */}
+<Modal
+  show={showDeleteModal}
+  onHide={() => setShowDeleteModal(false)}
+  centered
+  dialogClassName="delete-confirm-modal"
+  container={typeof document !== 'undefined' ? document.body : undefined}
+>
+  <Modal.Header closeButton>
+    <Modal.Title>
+      {t("documents:confirm_delete")}
+    </Modal.Title>
+  </Modal.Header>
 
-        {/* Delete Confirmation Modal */}
-        <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered dialogClassName="delete-confirm-modal" container={typeof document !== 'undefined' ? document.body : undefined}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirm Delete</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p>Are you sure you want to delete this document?</p>
-            {deleteTarget && <div className="delete-confirm-user"><strong>{deleteTarget.name}</strong></div>}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="outline-secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
-            <Button variant="danger" onClick={confirmDelete}>Delete</Button>
-          </Modal.Footer>
-        </Modal>
+  <Modal.Body>
+    <p>{t("documents:delete_msg")}</p>
+
+    {deleteTarget && (
+      <div className="delete-confirm-user">
+        <strong>{deleteTarget.name}</strong>
+      </div>
+    )}
+  </Modal.Body>
+
+  <Modal.Footer>
+    <Button
+      variant="outline-secondary"
+      onClick={() => setShowDeleteModal(false)}
+    >
+      {t("documents:cancel")}
+    </Button>
+
+    <Button
+      variant="danger"
+      onClick={confirmDelete}
+    >
+      {t("documents:delete")}
+    </Button>
+  </Modal.Footer>
+</Modal>
+
 
       </div>
     </Container>
   );
 };
+
 
 export default Documents;

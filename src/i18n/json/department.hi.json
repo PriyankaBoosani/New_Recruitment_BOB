@@ -22,5 +22,9 @@
   "upload_xlsx": "XLSX अपलोड करें",
   "download_template": "टेम्पलेट डाउनलोड करें",
   "import": "इम्पोर्ट",
-   "search_by_department": "विभाग के अनुसार खोजें"
+   "search_by_department": "विभाग के अनुसार खोजें",
+   "add_success": "विभाग सफलतापूर्वक जोड़ा गया",
+    "update_success": "विभाग सफलतापूर्वक अपडेट किया गया",
+    "delete_success": "विभाग सफलतापूर्वक हटाया गया",
+    "no_records": "कोई विभाग नहीं मिला।"
 }

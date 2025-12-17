@@ -10,8 +10,14 @@ import editIcon from "../../../assets/edit_icon.png";
 import ErrorMessage from '../../../shared/components/ErrorMessage';
 import { FileMeta, downloadTemplate, importFromCSV } from '../../../shared/components/FileUpload';
 
+import { useTranslation } from "react-i18next";
+
+
 
 const RelaxationType = () => {
+const { t } = useTranslation(["relaxationType"])
+
+
   const [items, setItems] = useState([
     { id: 1, code: 'Age Relaxation', inputType: 'Number', operator: '<=', description: 'Additional years added to the maximum eligible age limit for certain categories' },
     { id: 2, code: 'Fee Relaxation', inputType: 'Number', operator: '==', description: 'Reduction or waiver in application fee for eligible categories' },
@@ -163,13 +169,14 @@ const RelaxationType = () => {
     <Container fluid className="user-container">
       <div className="user-content">
         <div className="user-header">
-          <h2>Relaxation Type</h2>
+        <h2>{t("relaxation_type")}</h2>
+
           <div className="user-actions">
             <div className="search-box">
               <Search className="search-icon" />
               <Form.Control
                 type="text"
-                placeholder="Search by code, input (Number), operator or description"
+              placeholder={t("search_placeholder")}
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                 className="search-input"
@@ -177,7 +184,8 @@ const RelaxationType = () => {
             </div>
 
             <Button variant="primary" className="add-button" onClick={openAddModal}>
-              <Plus size={20} className="me-1" /> Add
+          <Plus size={20} className="me-1" /> {t("add")}
+
             </Button>
           </div>
         </div>
@@ -186,12 +194,13 @@ const RelaxationType = () => {
           <Table hover className="user-table">
             <thead>
               <tr>
-                <th>S. No.</th>
-                <th>Code</th>
-                <th>Input</th>
-                <th>Operator</th>
-                <th>Description</th>
-                <th style={{ textAlign: 'center' }}>Actions</th>
+                <th>{t("s_no")}</th>
+<th>{t("code")}</th>
+<th>{t("input")}</th>
+<th>{t("operator")}</th>
+<th>{t("description")}</th>
+<th style={{ textAlign: 'center' }}>{t("actions")}</th>
+
               </tr>
             </thead>
             <tbody>
@@ -211,7 +220,8 @@ const RelaxationType = () => {
                   </td>
                 </tr>
               )) : (
-                <tr><td colSpan="6" className="text-center">No relaxation types found</td></tr>
+               <tr><td colSpan="6" className="text-center">{t("no_items")}</td></tr>
+
               )}
             </tbody>
           </Table>
@@ -247,16 +257,20 @@ const RelaxationType = () => {
         >
           <Modal.Header closeButton className="modal-header-custom">
             <div>
-              <Modal.Title>{isEditing ? 'Edit Relaxation Type' : 'Add Relaxation Type'}</Modal.Title>
-              <p className="mb-0 small text-muted para">Choose to add manually or import from CSV/XLSX file.</p>
+            <Modal.Title>
+  {isEditing ? t("edit_relaxation") : t("add_relaxation")}
+</Modal.Title>
+
+<p className="mb-0 small text-muted">{t("choose_add_method")}</p>
+
             </div>
           </Modal.Header>
 
           <Modal.Body className="p-4">
             {!isEditing && (
               <div className="tab-buttons mb-4">
-                <Button variant={activeTab === 'manual' ? 'light' : 'outline-light'} className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`} onClick={() => setActiveTab('manual')}>Manual Entry</Button>
-                <Button variant={activeTab === 'import' ? 'light' : 'outline-light'} className={`tab-button ${activeTab === 'import' ? 'active' : ''}`} onClick={() => setActiveTab('import')}>Import File</Button>
+                <Button variant={activeTab === 'manual' ? 'light' : 'outline-light'} className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`} onClick={() => setActiveTab('manual')}>{t("manual_entry")}</Button>
+                <Button variant={activeTab === 'import' ? 'light' : 'outline-light'} className={`tab-button ${activeTab === 'import' ? 'active' : ''}`} onClick={() => setActiveTab('import')}>{t("import_file")}</Button>
               </div>
             )}
 
@@ -265,8 +279,8 @@ const RelaxationType = () => {
                 <Row className="g-3">
                   <Col xs={12} md={12}>
                     <Form.Group controlId="formCode">
-                      <Form.Label className="form-label">Code <span className="text-danger">*</span></Form.Label>
-                      <Form.Control type="text" name="code" value={formData.code} onChange={handleInputChange} className="form-control-custom" placeholder="Enter code/title" aria-invalid={!!errors.code} aria-describedby="codeError" />
+                      <Form.Label className="form-label">{t("code")} <span className="text-danger">*</span></Form.Label>
+                      <Form.Control type="text" name="code" value={formData.code} onChange={handleInputChange} className="form-control-custom" placeholder={t("enter_code")} aria-invalid={!!errors.code} aria-describedby="codeError" />
                       <ErrorMessage id="codeError">{errors.code}</ErrorMessage>
                     </Form.Group>
                   </Col>
@@ -274,14 +288,14 @@ const RelaxationType = () => {
                   {/* Input is fixed to Number; no select shown */}
                   <Col xs={12} md={6}>
                     <Form.Group controlId="formInputFixed">
-                      <Form.Label className="form-label">Input</Form.Label>
+                      <Form.Label className="form-label">{t("input")}</Form.Label>
                       <Form.Control type="text" readOnly value="Number" className="form-control-custom" />
                     </Form.Group>
                   </Col>
 
                   <Col xs={12} md={6}>
                     <Form.Group controlId="formOperator">
-                      <Form.Label className="form-label">Operator <span className="text-danger">*</span></Form.Label>
+                      <Form.Label className="form-label">{t("operator")} <span className="text-danger">*</span></Form.Label>
                       <Form.Select
                         name="operator"
                         value={formData.operator}
@@ -290,7 +304,7 @@ const RelaxationType = () => {
                         aria-invalid={!!errors.operator}
                         aria-describedby="operatorError"
                       >
-                        <option value="">Select operator</option>
+                        <option value="">{t("select_operator")}</option>
                         {operatorOptions.map(o => <option key={o} value={o}>{o}</option>)}
                       </Form.Select>
                       <ErrorMessage id="operatorError">{errors.operator}</ErrorMessage>
@@ -300,83 +314,130 @@ const RelaxationType = () => {
 
                   <Col xs={12}>
                     <Form.Group controlId="formDescription">
-                      <Form.Label className="form-label">Description <span className="text-danger">*</span></Form.Label>
-                      <Form.Control as="textarea" rows={3} name="description" value={formData.description} onChange={handleInputChange} className="form-control-custom" placeholder="Enter description" aria-invalid={!!errors.description} aria-describedby="descError" />
+<Form.Label className="form-label">
+  {t("description")} <span className="text-danger">*</span>
+</Form.Label>
+                      <Form.Control as="textarea" rows={3} name={t("enter_description")} value={formData.description} onChange={handleInputChange} className="form-control-custom" placeholder={t("enter_description")}
+aria-invalid={!!errors.description} aria-describedby="descError" />
                       <ErrorMessage id="descError">{errors.description}</ErrorMessage>
                     </Form.Group>
                   </Col>
                 </Row>
 
                 <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
-                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setIsEditing(false); setEditingId(null); }}>Cancel</Button>
-                  <Button variant="primary" type="submit">{isEditing ? 'Update' : 'Save'}</Button>
+                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setIsEditing(false); setEditingId(null); }}>{t("cancel")}</Button>
+                  <Button variant="primary" type="submit">{isEditing ? t("update") : t("save")}</Button>
                 </Modal.Footer>
               </Form>
             ) : (
               <>
                 <div className="import-area p-4 rounded" style={{ background: '#fceee9' }}>
-                  <div className="text-center mb-3">
-                    <div style={{ width: 72, height: 72, borderRadius: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff' }}>
-                      <Upload size={32} />
-                    </div>
-                    <h5 className="text-center uploadfile">Upload File</h5>
-                    <p className="text-center small">Support for CSV and XLSX formats (CSV headers: code,operator,description). inputType will default to "Number".</p>
-                  </div>
+  <div className="text-center mb-3">
+    <div
+      style={{
+        width: 72,
+        height: 72,
+        borderRadius: 12,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#fff'
+      }}
+    >
+      <Upload size={32} />
+    </div>
 
-                  <div className="d-flex justify-content-center gap-3 mt-3">
-                    <div>
-                      <input id="upload-csv-relax" type="file" accept=".csv,text/csv" style={{ display: 'none' }} onChange={(e) => setSelectedCSVFile(e.target.files[0] ?? null)} />
-                      <label htmlFor="upload-csv-relax">
-                        <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload CSV</Button>
-                      </label>
-                    </div>
+    <h5 className="text-center uploadfile">{t("upload_file")}</h5>
 
-                    <div>
-                      <input id="upload-xlsx-relax" type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={(e) => setSelectedXLSXFile(e.target.files[0] ?? null)} />
-                      <label htmlFor="upload-xlsx-relax">
-                        <Button variant="light" as="span" className='btnfont'><i className="bi bi-upload me-1"></i> Upload XLSX</Button>
-                      </label>
-                    </div>
-                    <FileMeta file={selectedCSVFile} onRemove={removeCSV} />
-                    <FileMeta file={selectedXLSXFile} onRemove={removeXLSX} />
-                  </div>
+    <p className="text-center small">
+      {t("support_csv_xlsx")}
+    </p>
+  </div>
 
-                  <div className="text-center mt-4 small">
-                    Download template:&nbsp;
-                    <Button
-                      variant="link"
-                      onClick={() =>
-                        downloadTemplate(
-                          // removed inputType from headers because input is fixed to Number
-                          ['code', 'operator', 'description'],
-                          ['Age Relaxation', '<=', 'Additional years added to age limit'],
-                          'relaxation-types-template'
-                        )
-                      }
-                      className="btnfont"
-                    >
-                      CSV
-                    </Button>
-                    &nbsp;|&nbsp;
-                    <Button
-                      variant="link"
-                      onClick={() =>
-                        downloadTemplate(
-                          ['code', 'operator', 'description'],
-                          ['Age Relaxation', '<=', 'Additional years added to age limit'],
-                          'relaxation-types-template'
-                        )
-                      }
-                      className="btnfont"
-                    >
-                      XLSX
-                    </Button>
-                  </div>
-                </div>
+  <div className="d-flex justify-content-center gap-3 mt-3">
+    {/* CSV Upload */}
+    <div>
+      <input
+        id="upload-csv-relax"
+        type="file"
+        accept=".csv,text/csv"
+        style={{ display: 'none' }}
+        onChange={(e) => setSelectedCSVFile(e.target.files[0] ?? null)}
+      />
+      <label htmlFor="upload-csv-relax">
+        <Button variant="light" as="span" className="btnfont">
+          <i className="bi bi-upload me-1"></i> {t("upload_csv")}
+        </Button>
+      </label>
+    </div>
+
+    {/* XLSX Upload */}
+    <div>
+      <input
+        id="upload-xlsx-relax"
+        type="file"
+        accept=".xlsx,.xls"
+        style={{ display: 'none' }}
+        onChange={(e) => setSelectedXLSXFile(e.target.files[0] ?? null)}
+      />
+      <label htmlFor="upload-xlsx-relax">
+        <Button variant="light" as="span" className="btnfont">
+          <i className="bi bi-upload me-1"></i> {t("upload_xlsx")}
+        </Button>
+      </label>
+    </div>
+
+    <FileMeta file={selectedCSVFile} onRemove={removeCSV} />
+    <FileMeta file={selectedXLSXFile} onRemove={removeXLSX} />
+  </div>
+
+  <div className="text-center mt-4 small">
+    {t("download_template")}:&nbsp;
+    <Button
+      variant="link"
+      onClick={() =>
+        downloadTemplate(
+          ['code', 'operator', 'description'],
+          ['Age Relaxation', '<=', 'Additional years added to age limit'],
+          'relaxation-types-template'
+        )
+      }
+      className="btnfont"
+    >
+      {t("csv")}
+    </Button>
+    &nbsp;|&nbsp;
+    <Button
+      variant="link"
+      onClick={() =>
+        downloadTemplate(
+          ['code', 'operator', 'description'],
+          ['Age Relaxation', '<=', 'Additional years added to age limit'],
+          'relaxation-types-template'
+        )
+      }
+      className="btnfont"
+    >
+      {t("xlsx")}
+    </Button>
+  </div>
+</div>
 
                 <Modal.Footer className="modal-footer-custom px-0">
-                  <Button variant="outline-secondary" onClick={() => { setShowAddModal(false); setActiveTab('manual'); }}>Cancel</Button>
-                  <Button variant="primary" onClick={handleImport}>Import</Button>
+            <Button
+  variant="outline-secondary"
+  onClick={() => { setShowAddModal(false); setActiveTab('manual'); }}
+>
+  {t("cancel")}
+</Button>
+
+<Button
+  variant="primary"
+  onClick={handleImport}
+>
+  {t("import")}
+</Button>
+
                 </Modal.Footer>
               </>
             )}
@@ -385,14 +446,14 @@ const RelaxationType = () => {
 
         {/* Delete confirm modal */}
         <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered dialogClassName="delete-confirm-modal" container={typeof document !== 'undefined' ? document.body : undefined}>
-          <Modal.Header closeButton><Modal.Title>Confirm Delete</Modal.Title></Modal.Header>
+          <Modal.Header closeButton><Modal.Title>{t("confirm_delete")}</Modal.Title></Modal.Header>
           <Modal.Body>
-            <p>Are you sure you want to delete this relaxation type?</p>
+           <p>{t("delete_message")}</p>
             {deleteTarget && <div className="delete-confirm-user"><strong>{deleteTarget.name}</strong></div>}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="outline-secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
-            <Button variant="danger" onClick={confirmDelete}>Delete</Button>
+            <Button variant="outline-secondary" onClick={() => setShowDeleteModal(false)}>{t("cancel")}</Button>
+            <Button variant="danger" onClick={confirmDelete}>{t("delete")}</Button>
           </Modal.Footer>
         </Modal>
 
