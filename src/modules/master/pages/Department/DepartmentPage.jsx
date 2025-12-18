@@ -9,8 +9,6 @@ import DeleteConfirmModal from './components/DeleteConfirmModal';
 import { validateDepartmentForm } from '../../../../shared/utils/department-validations';
 import { mapDepartmentToApi } from "./mappers/departmentMapper";
 import { importFromCSV } from '../../../../shared/components/FileUpload';
-import masterApiService from '../../services/masterApiService';
-import { toast } from 'react-toastify';
 
 const DepartmentPage = () => {
   const { t } = useTranslation(["department", "validation"]);
@@ -82,7 +80,6 @@ const DepartmentPage = () => {
     }
   };
 
-
   const handleImport = async () => {
     await importFromCSV({
       selectedCSVFile, selectedXLSXFile, list: departments,
@@ -117,7 +114,6 @@ const DepartmentPage = () => {
         currentPage={currentPage}       // Pass this
         setCurrentPage={setCurrentPage} // Pass this
       />
-
       <DepartmentFormModal
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
