@@ -37,6 +37,7 @@ const DepartmentPage = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
+
   const openAddModal = () => {
     setIsEditing(false);
     setFormData({ name: '', description: '' });
@@ -122,15 +123,19 @@ const DepartmentPage = () => {
         setActiveTab={setActiveTab}
         formData={formData}
         errors={errors}
-        handleInputChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
+        handleInputChange={(e) =>
+          setFormData({ ...formData, [e.target.name]: e.target.value })
+        }
         handleSave={handleSave}
-        handleImport={handleImport}
-        selectedCSVFile={selectedCSVFile}
-        onSelectCSV={setSelectedCSVFile}
-        removeCSV={() => setSelectedCSVFile(null)}
-        // ... other props
         t={t}
+
+        // ✅ ADD THIS
+        onSuccess={() => {
+          fetchDepartments();     // refresh list immediately
+          setShowAddModal(false); // ensure modal closes
+        }}
       />
+
 
       <DeleteConfirmModal
         show={showDeleteModal}

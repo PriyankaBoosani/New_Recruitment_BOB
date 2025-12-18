@@ -35,7 +35,38 @@ export const useDepartments = () => {
     setDepartments([]);
   }
 };
+const bulkAddDepartments = async (file) => {
+    setLoading(true);
+    try {
+      await masterApiService.bulkAddDepartments(file);
+      toast.success(t("department:import_success") || "File uploaded successfully");
+      await fetchDepartments(); // Refresh the list automatically
+      return { success: true };
+    } catch (err) {
+      const message = err.response?.data?.message || "Failed to upload file";
+      return { success: false, error: message };
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const downloadDepartmentTemplate = async () => {
+    try {
+      const res = await masterApiService.downloadDepartmentTemplate();
+      const blob = res.data;
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'DepartmentsDTO_template.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Download failed:', err);
+      toast.error(t("department:download_error") || 'Failed to download template');
+    }
+  };
 
 
   useEffect(() => {
@@ -66,6 +97,8 @@ export const useDepartments = () => {
     fetchDepartments,
     addDepartment,
     updateDepartment,
-    deleteDepartment
+    deleteDepartment,
+    bulkAddDepartments,
+    downloadDepartmentTemplate
   };
 };

@@ -19,6 +19,9 @@ import Document from "../modules/master/pages/Document";
 import InterviewPanel from "../modules/master/pages/InterviewPanel";
 import User from "../modules/master/pages/User";
 import Home from "../modules/master/pages/Home"; // dashboard/home
+import JobPostingsList from "../modules/jobPosting/pages/JobPostingsList";
+import CreateRequisition from "../modules/jobPosting/pages/CreateRequisition";
+import UploadIndent from "../modules/jobPosting/pages/UploadIndent";
 
 // Auth & layout helpers
 import PrivateRoute from "../modules/auth/services/PrivateRoute";
@@ -65,6 +68,13 @@ const AppRoutes = () => {
               <Route path="/relaxationtype" element={<RelaxationType />} />
               <Route path="/document" element={<Document />} />
               <Route path="/interviewpanel" element={<InterviewPanel />} />
+              <Route path="/job-posting" element={<JobPostingsList />} />
+              <Route path="/create-requisition" element={<CreateRequisition />} />
+              <Route
+                path="/job-postings/upload-indent"
+                element={<UploadIndent />}
+              />
+
             </Route>
           </Route>
         </Route>

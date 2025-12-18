@@ -147,6 +147,12 @@ apis.interceptors.request.use(
 );
 
 apis.interceptors.response.use(
+  (response) => {
+  if (response.config?.responseType === 'blob') {
+    return response;   // keep full response
+  }
+  return response.data;
+},
   (response) => response.data,
   async (error) => {
     const originalRequest = error.config || {};

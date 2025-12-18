@@ -20,6 +20,16 @@ const masterApiService = {
   addDepartment: (data) => apis.post("/departments/add", data),
   updateDepartment: (id, data) => apis.put(`/departments/update/${id}`, data),
   deleteDepartment: (id) => apis.delete(`/departments/delete/${id}`),
+  downloadDepartmentTemplate: () => apis.get("/departments/download-template", { responseType: 'blob' }),
+  bulkAddDepartments: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return apis.post('/departments/bulk-add', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
 
   /* Skills */
   getAllSkills: () => apis.get("/skill/all"),
