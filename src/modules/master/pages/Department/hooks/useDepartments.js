@@ -15,19 +15,28 @@ export const useDepartments = () => {
     );
 
   const fetchDepartments = async () => {
-    setLoading(true);
-    try {
-      const res = await masterApiService.getAllDepartments();
-      const apiData = res.data?.data || [];
-      const mapped = mapDepartmentsFromApi(apiData);
-      setDepartments(sortByCreatedDate(mapped));
-    } catch (err) {
-      console.error("Failed to fetch departments", err);
-      setDepartments([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const res = await masterApiService.getAllDepartments();
+
+    const apiList = Array.isArray(res.data)
+      ? res.data
+      : res.data?.data || [];
+
+    const mapped = mapDepartmentsFromApi(apiList);
+
+    // 🔽 newest first
+    mapped.sort(
+      (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+    );
+
+    setDepartments(mapped);
+  } catch (err) {
+    console.error("Department fetch failed", err);
+    setDepartments([]);
+  }
+};
+
+
 
   useEffect(() => {
     fetchDepartments();
