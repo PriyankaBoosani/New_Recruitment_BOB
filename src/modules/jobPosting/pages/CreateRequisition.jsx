@@ -46,7 +46,7 @@ const CreateRequisition = () => {
         // In a real app, you would save the requisition first, then navigate
         // For now, we'll just navigate to the upload indent page
         // The ID '123' is a placeholder - in a real app, you'd use the actual requisition ID
-        navigate("/job-postings/upload-indent");
+        navigate("/job-posting/upload-indent");
     };
 
     return (
@@ -146,7 +146,12 @@ const CreateRequisition = () => {
 
             {/* Footer Actions */}
             <div className="footer-actions">
-                <Button variant="outline-secondary">← Back</Button>
+                 <Button
+                          variant="outline-secondary"
+                          onClick={() => navigate(`/job-posting`)}
+                        >
+                          ← Back
+                        </Button>
 
                 <div>
                     <Button

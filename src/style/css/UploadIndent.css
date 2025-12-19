@@ -54,15 +54,25 @@
 
 .submit-btn {
   margin-top: 24px;
-  width: 100%;
+  padding: 8px 20px;          /* 👈 smaller height & width */
+  font-size: 14px;            /* 👈 compact text */
+  border-radius: 6px;         /* 👈 subtle rounded corners */
   background: #cfcfcf;
   border: none;
   color: #fff;
+  width: auto;                /* 👈 IMPORTANT */
+  min-width: 220px;           /* 👈 matches screenshot */
 }
 
+/* Enabled state */
 .submit-btn:enabled {
   background: #2f4fd8;
 }
+.submit-btn-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
 
 .footer-actions {
   display: flex;
@@ -121,3 +131,42 @@
   margin-left: 8px;
   border-radius: 50%;
 }
+/* Make disabled button match the design */
+.disabled-submit {
+  background-color: #e9ecef !important;
+  border-color: #e9ecef !important;
+  color: #6c757d !important;
+  cursor: not-allowed;
+}
+
+/* Remove hover/active states for disabled button */
+.btn-outline-primary:disabled {
+	background-color: #c6c6c7 !important;
+	border-color: #e9ecef !important;
+	color: #6c757d !important;
+	/* opacity: 1; */
+}
+
+.pending-approval {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 16px;
+  color: #f36f21;
+}
+
+.pending-icon {
+  font-size: 16px;
+  margin-top: 2px;
+}
+
+.pending-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.pending-text {
+  font-size: 13px;
+  color: #495057;
+}
+

@@ -10,11 +10,11 @@ import Header from "../app/layouts/Header"
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import "@fontsource/poppins/300.css";
-import "@fontsource/poppins/400.css";
-import "@fontsource/poppins/500.css";
-import "@fontsource/poppins/600.css";
-import "@fontsource/poppins/700.css";
+import "@fontsource/poppins/300.css"; //Light
+import "@fontsource/poppins/400.css"; //Regular
+import "@fontsource/poppins/500.css"; // Medium
+import "@fontsource/poppins/600.css"; //Semi-Bold
+import "@fontsource/poppins/700.css"; //Bold
 
 import AppRoutes from './AppRoutes';
 

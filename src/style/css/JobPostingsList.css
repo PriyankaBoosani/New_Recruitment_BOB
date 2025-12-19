@@ -5,18 +5,31 @@
 }
 
 .page-title {
-  font-weight: 600;
-  color: #1f2b4d;
+	font-weight: 600;
+	color: #162B75;
+  font-size: 1em;
 }
 
 .create-btn {
   background: #f36f21;
   border: none;
 }
+.create .btn{
+  font-weight: 500;
+  font-size: 0.75em;
+}
+.yearfon{
+  color: #333333 !important;
+  font-weight: 500 !important;
+  font-size: 0.875em;
 
-.filters-row select,
-.search-boxpost input {
-  height: 42px;
+}
+
+.filters-row select, .search-boxpost input {
+	height: 42px;
+	font-size: 0.875em;
+	color: #162B75;
+	font-weight: 400;
 }
 
 .search-boxpost {
@@ -24,7 +37,24 @@
 	border: none;
 	background: none;
 }
+/* Add this to your JobPostingsList.css */
+.status-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('../../assets/Vector.png');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 30px;
+  width: 100%;
+  cursor: pointer;
+}
 
+/* Remove default dropdown arrow in IE */
+.status-select::-ms-expand {
+  display: none;
+}
 .search-boxpost svg {
   position: absolute;
   top: 50%;
@@ -34,22 +64,43 @@
 }
 
 .search-boxpost input {
-  padding-left: 36px;
+	padding-left: 36px;
+	color: rgba(65, 65, 65, 0.5);
+	font-size: 0.875em;
 }
-
 .bulk-actions {
   background: #fff;
   padding: 12px;
   border-radius: 8px;
 }
-
+.selectall{
+  font-size: 0.75em;
+  color: #162B75;
+  font-weight: 500;
+}
 .requisition-card {
   background: #fff;
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
+.subbtn{
+  background-color: #42579F;
+  font-size: 0.875em;
+  font-weight: 500;
+}
+.subbtn:hover{
+  background-color: #42579F !important;
+}
+.canbtn{
+   font-size: 0.875em;
+     font-weight: 500;
 
+}
+.job-postings-page .icon-16{
+  width: 16px;
+  height: 16px;
+}
 .req-header {
   display: flex;
   align-items: center;

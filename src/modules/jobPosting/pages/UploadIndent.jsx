@@ -10,10 +10,18 @@ import {
 } from "react-bootstrap-icons";
 import Stepper from "../component/Stepper";
 import "../../../style/css/UploadIndent.css";
+import { useNavigate, useParams } from "react-router-dom";
+
+
 
 const UploadIndent = () => {
+  const navigate = useNavigate();
+  const { requisitionId } = useParams(); // optional if you use IDs in URL
+
   const fileInputRef = useRef(null);
   const [file, setFile] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
 
   const handleFileSelect = (e) => {
     const selectedFile = e.target.files[0];
@@ -33,6 +41,7 @@ const UploadIndent = () => {
 
   const handleSubmit = () => {
     console.log("Submitting indent file:", file);
+    setIsSubmitted(true);
   };
 
   return (
@@ -85,31 +94,54 @@ const UploadIndent = () => {
                 <Button variant="light" size="sm">
                   <Download />
                 </Button>
-                <Button
-                  variant="light"
-                  size="sm"
-                  onClick={handleRemoveFile}
-                >
-                  <Trash />
-                </Button>
+                {!isSubmitted && (
+                  <Button
+                    variant="light"
+                    size="sm"
+                    onClick={handleRemoveFile}
+                  >
+                    <Trash />
+                  </Button>
+                )}
+
               </div>
             </div>
           )}
 
-          {/* Submit Button */}
-          <Button
-            className="submit-btn"
-            disabled={!file}
-            onClick={handleSubmit}
-          >
-            Submit Indent for Approval
-          </Button>
+          {!isSubmitted ? (
+            <div className="submit-btn-wrapper">
+              <Button
+                variant={file ? "primary" : "outline-primary"}
+                disabled={!file}
+                onClick={handleSubmit}
+                className="submit-btn"
+              >
+                Submit Indent for Approval
+              </Button>
+            </div>
+          ) : (
+            <div className="pending-approval">
+              <span className="pending-icon">⏳</span>
+              <div>
+                <div className="pending-title">Pending for Approval</div>
+                <div className="pending-text">
+                  Your indent has been submitted and is awaiting for approval.
+                </div>
+              </div>
+            </div>
+          )}
         </Card.Body>
       </Card>
 
       {/* Footer */}
       <div className="footer-actions">
-        <Button variant="outline-secondary">← Back</Button>
+        <Button
+          variant="outline-secondary"
+          onClick={() => navigate(`/job-posting/create-requisition`)}
+        >
+          ← Back
+        </Button>
+
         <Button variant="secondary" disabled>
           Next →
         </Button>

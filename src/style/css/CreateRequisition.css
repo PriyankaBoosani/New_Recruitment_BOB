@@ -1,16 +1,19 @@
 .create-requisition-page {
-  padding: 0px;
+  padding: 0 0 80px 0;
+  /* Add bottom padding to prevent content from being hidden behind fixed footer */
   min-height: 100vh;
+  position: relative;
+  box-sizing: border-box;
 }
 
 .requisition-card {
-	border-radius: 14px;
-	border: none;
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-	padding: 16px;
-	max-width: 1400px;
-	margin: 0 auto;
-	width: 100%;
+  border-radius: 14px;
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  max-width: 1400px;
+  margin: 0 auto 20px;
+  /* width: 100%; */
 }
 
 .section-title {
@@ -21,9 +24,25 @@
 }
 
 .section-title h6 {
-  margin: 0;
-  font-weight: 600;
-  color: #1f2b4d;
+	margin: 0;
+	font-weight: 500;
+	color: #162B75;
+	font-size: 1.125em;
+}
+.create-requisition-page .form-label {
+	color: #333333;
+	font-size: 0.875em;
+	font-weight: 500;
+}
+.create-requisition-page .form-control{
+  font-size: 0.875em;
+  color: #414141;
+  font-weight: 400;
+}
+.create-requisition-page .form-text{
+  color: #828282;
+  font-size: 0.75em;
+  font-weight: 400;
 }
 
 .section-title .indicator {
@@ -41,14 +60,16 @@
 
 .date-input input[type="date"] {
   flex: 1;
-  padding-right: 30px; /* Make room for the calendar icon */
+  padding-right: 30px;
+  /* Make room for the calendar icon */
 }
 
 /* Ensure the calendar icon is clickable */
 .date-input .bi-calendar {
   position: absolute;
   right: 10px;
-  pointer-events: none; /* Allow clicks to pass through to the input */
+  pointer-events: none;
+  /* Allow clicks to pass through to the input */
   color: #6c757d;
 }
 
@@ -87,10 +108,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1rem;
   background: #fff;
-  padding: 16px 24px;
-  border-top: 1px solid #e6e9f0;
-  margin-top: 32px;
+  border-top: 1px solid #e9ecef;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  height: 70px;
+  /* Fixed height for consistency */
 }
 
 .primary-btn {
@@ -104,13 +132,56 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .footer-actions {
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
+  .create-requisition-page {
+    padding-bottom: 180px;
+    /* Increased to accommodate stacked buttons */
   }
 
-  .footer-actions button {
+  .requisition-card {
+    margin: 0 10px 30px 10px;
+    padding: 12px;
+  }
+
+  .footer-actions {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+    height: auto;
+    padding: 12px 15px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .footer-actions>* {
     width: 100%;
+    margin: 0;
+  }
+
+  .footer-actions .btn {
+    padding: 10px 16px;
+    font-size: 14px;
+    width: 100%;
+    margin: 2px 0;
+  }
+
+  .footer-actions>div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  /* Ensure proper spacing between buttons */
+  .footer-actions .me-2 {
+    margin-right: 0 !important;
+    margin-bottom: 8px;
+  }
+
+  /* Adjust form elements for mobile */
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .section-title {
+    margin-bottom: 15px;
   }
 }

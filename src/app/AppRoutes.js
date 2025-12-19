@@ -69,9 +69,9 @@ const AppRoutes = () => {
               <Route path="/document" element={<Document />} />
               <Route path="/interviewpanel" element={<InterviewPanel />} />
               <Route path="/job-posting" element={<JobPostingsList />} />
-              <Route path="/create-requisition" element={<CreateRequisition />} />
+              <Route path="/job-posting/create-requisition" element={<CreateRequisition />} />
               <Route
-                path="/job-postings/upload-indent"
+                path="/job-posting/upload-indent"
                 element={<UploadIndent />}
               />
 

@@ -4,6 +4,7 @@ import { Container, Row, Col, Form, Button, Badge } from "react-bootstrap";
 import { Plus, Search, Pencil, Trash, Eye } from "react-bootstrap-icons";
 import "../../../style/css/JobPostingsList.css";
 import { useNavigate } from "react-router-dom";
+import submitIcon from "../../../assets/submitIcon.png";
 
 const JobPostingsList = () => {
     const navigate = useNavigate();
@@ -41,8 +42,8 @@ const JobPostingsList = () => {
                 <Col>
                     <h5 className="page-title">All Requisitions</h5>
                 </Col>
-                <Col className="text-end">
-                    <Button onClick={() => navigate("/create-requisition")}>
+                <Col className="text-end create">
+                    <Button onClick={() => navigate("/job-posting/create-requisition")}>
                         <Plus /> Create New Requisition
                     </Button>
                 </Col>
@@ -50,13 +51,13 @@ const JobPostingsList = () => {
 
             {/* Filters */}
             <Row className="filters-row g-2 mb-3">
-                <Col xs={12} md={3}>
-                    <Form.Select>
+                <Col xs={12} md={2} >
+                    <Form.Select className="yearfon">
                         <option>Year - 2025</option>
                     </Form.Select>
                 </Col>
 
-                <Col xs={12} md={6}>
+                <Col xs={12} md={9}>
                     <div className="search-boxpost">
                         <Search />
                         <Form.Control
@@ -66,23 +67,33 @@ const JobPostingsList = () => {
                     </div>
                 </Col>
 
-                <Col xs={12} md={3}>
-                    <Form.Select>
-                        <option>All Status</option>
-                    </Form.Select>
+                <Col xs={12} md={1}>
+                    <div className="status-dropdown">
+                        <Form.Select className="status-select">
+                            <option value="">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span>All Status</span>
+                                </div>
+                            </option>
+                            <option value="pending">Pending</option>
+                            <option value="submitted">Submitted</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </Form.Select>
+                    </div>
                 </Col>
             </Row>
 
             {/* Bulk Actions */}
             <Row className="bulk-actions align-items-center mb-3">
                 <Col xs={12} md={6}>
-                    <Form.Check type="checkbox" label="Select All" />
+                    <Form.Check type="checkbox" label="Select All" className="selectall"/>
                 </Col>
                 <Col xs={12} md={6} className="text-md-end mt-2 mt-md-0">
-                    <Button variant="primary" className="me-2">
-                        Submit
+                    <Button variant="primary" className="me-2 subbtn">
+                      <img src={submitIcon} alt="submitIcon" className='icon-16' /> Submit
                     </Button>
-                    <Button variant="outline-secondary">Cancel</Button>
+                    <Button variant="outline-secondary canbtn">Cancel</Button>
                 </Col>
             </Row>
 
