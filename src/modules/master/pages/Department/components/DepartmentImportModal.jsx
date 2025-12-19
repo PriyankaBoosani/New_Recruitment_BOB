@@ -50,8 +50,8 @@ const DepartmentImportView = ({
           <div style={{ width: 72, height: 72, borderRadius: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', marginBottom: '1rem' }}>
             <UploadIcon size={32} />
           </div>
-          <h5 className="mb-2">Upload Departments</h5>
-          <p className="text-muted small">Please upload an Excel file (.xlsx, .xls)</p>
+          <h5 className="mb-2 uploadfile">Upload Departments</h5>
+          <p className="text-muted small">Support for XLSX formats</p>
         </div>
 
         {error && <Alert variant="danger">{error}</Alert>}
@@ -60,8 +60,8 @@ const DepartmentImportView = ({
 
         <div className="text-center mb-3">
           <label htmlFor="upload-xlsx">
-            <Button variant="light" as="span" className="btnfont" disabled={loading}>
-              {selectedFile ? 'Reupload Xlsx' : 'Upload Xlsx'}
+            <Button variant="primary" as="span" className="btnupload" disabled={loading}>
+              {selectedFile ? 'Reupload XLSX' : 'Upload XLSX'}
             </Button>
           </label>
 
@@ -76,18 +76,17 @@ const DepartmentImportView = ({
         </div>
 
         {/* Replace the existing Download Template button with this text link */}
-        <div className="text-center mb-3">
+        <div className="text-center mb-3 import-area small">
+          Download template: 
           <a
             href="#"
             onClick={(e) => {
               e.preventDefault();
               downloadDepartmentTemplate();
             }}
-            className="text-primary text-decoration-none"
+            className="text-primary text-decoration-none btnfont"
             style={{ cursor: 'pointer' }}
-          >
-           
-           <span>Download template: </span> XLSX
+          > XLSX
           </a>
         </div>
       </div>
