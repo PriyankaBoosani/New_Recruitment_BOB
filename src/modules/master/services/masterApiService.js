@@ -78,6 +78,8 @@ const masterApiService = {
   addInterviewPanel: (data) => apis.post("/interview-panels/add", data),
   updateInterviewPanel: (id, data) => apis.put(`/interview-panels/update/${id}`, data),
   deleteInterviewPanel: (id) => apis.delete(`/interview-panels/delete/${id}`),
+  getActiveInterviewMembers: () =>apis.get("/interview-panels/active-members"),
+
 
   /* Optional master all */
   getMasterAll: () => apis.get("/all"),

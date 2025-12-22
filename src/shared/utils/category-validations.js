@@ -1,61 +1,121 @@
-// src/validators/category-validations.js
+import { requiredField, minLength, maxLength } from "./common-validations";
+import i18n from "i18next";
 
-const isEmpty = (v) => v === null || v === undefined || String(v).trim() === '';
+/* =========================
+   HELPERS
+========================= */
+const normalize = (v = "") => String(v).trim().toLowerCase();
 
-export function validateCode(code, { existing = [], currentId = null } = {}) {
-    const c = String(code || '').trim();
+/* =========================
+   FIELD VALIDATIONS
+========================= */
 
-    if (isEmpty(c)) return "Code is required";
-    if (c.length < 2) return "Code must be at least 2 characters";
-    if (c.length > 20) return "Code must be less than 20 characters";
+export const validateCategoryCode = (code) => {
+  let error = requiredField(code);
+  if (error) return error;
 
-    const exists = existing.find(
-        x => x.code.toLowerCase() === c.toLowerCase() && x.id !== currentId
-    );
-    if (exists) return "Code must be unique";
+  error = minLength(code, 2);
+  if (error) return error;
 
-    return null;
-}
+  error = maxLength(code, 20);
+  if (error) return error;
 
-export function validateName(name) {
-    const n = String(name || '').trim();
+  return null;
+};
 
-    if (isEmpty(n)) return "Name is required";
-    if (n.length < 2) return "Name must be at least 2 characters";
-    if (n.length > 100) return "Name must be under 100 characters";
+export const validateCategoryName = (name) => {
+  let error = requiredField(name);
+  if (error) return error;
 
-    return null;
-}
+  error = minLength(name, 2);
+  if (error) return error;
 
-export function validateDescription(desc) {
-    if (isEmpty(desc)) return null;
-    const d = String(desc);
+  error = maxLength(name, 100);
+  if (error) return error;
 
-    if (d.length > 500) return "Description must be under 500 characters";
-    return null;
-}
+  return null;
+};
 
-export function validateCategoryForm(formData, options = {}) {
-    const errors = {};
+export const validateCategoryDescription = (description) => {
+  let error = requiredField(description);
+  if (error) return error;
 
-    const codeErr = validateCode(formData.code, options);
-    if (codeErr) errors.code = codeErr;
+  error = minLength(description, 5);
+  if (error) return error;
 
-    const nameErr = validateName(formData.name);
-    if (nameErr) errors.name = nameErr;
+  error = maxLength(description, 500);
+  if (error) return error;
 
-    const descErr = validateDescription(formData.description);
-    if (descErr) errors.description = descErr;
+  return null;
+};
 
-    return {
-        valid: Object.keys(errors).length === 0,
-        errors
-    };
-}
+/* =========================
+   FORM VALIDATION
+========================= */
+
+export const validateCategoryForm = (formData = {}, options = {}) => {
+  const errors = {};
+  const { existing = [], currentId = null } = options;
+
+  /* ---- CODE ---- */
+  const codeError = validateCategoryCode(formData.code);
+  if (codeError) errors.code = codeError;
+
+  /* ---- NAME ---- */
+  const nameError = validateCategoryName(formData.name);
+  if (nameError) errors.name = nameError;
+
+  /* ---- DESCRIPTION ---- */
+  const descError = validateCategoryDescription(formData.description);
+  if (descError) errors.description = descError;
+
+  /* =========================
+     DUPLICATE CHECKS
+  ========================= */
+
+  // Duplicate CODE
+  if (!errors.code) {
+    const codeNorm = normalize(formData.code);
+
+    const duplicateCode = existing.find((c) => {
+      if (!c?.code) return false;
+      if (currentId != null && c.id === currentId) return false;
+      return normalize(c.code) === codeNorm;
+    });
+
+    if (duplicateCode) {
+      errors.code = i18n.t("validation:duplicate");
+    }
+  }
+
+  // Duplicate NAME
+  if (!errors.name) {
+    const nameNorm = normalize(formData.name);
+
+    const duplicateName = existing.find((c) => {
+      if (!c?.name) return false;
+      if (currentId != null && c.id === currentId) return false;
+      return normalize(c.name) === nameNorm;
+    });
+
+    if (duplicateName) {
+      errors.name = i18n.t("validation:duplicate");
+    }
+  }
+
+  return {
+    valid: Object.keys(errors).length === 0,
+    errors
+  };
+};
+
+/* =========================
+   DEFAULT EXPORT
+========================= */
 
 export default {
-    validateCategoryForm,
-    validateCode,
-    validateName,
-    validateDescription
+  validateCategoryForm,
+  validateCategoryCode,
+  validateCategoryName,
+  validateCategoryDescription
 };

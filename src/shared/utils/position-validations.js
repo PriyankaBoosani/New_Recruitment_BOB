@@ -1,88 +1,127 @@
-// src/validators/position-validations.js
+import { requiredField, minLength, maxLength } from "./common-validations";
+import i18n from "i18next";
 
-const isEmpty = (v) => v === null || v === undefined || String(v).trim() === '';
+/* =========================
+   HELPERS
+========================= */
+const normalize = (v = "") => String(v).trim().toLowerCase();
 
-const toStringSafe = (v) => (v === null || v === undefined ? '' : String(v));
+/* =========================
+   FIELD VALIDATIONS
+========================= */
 
 /**
  * validateTitle
  * - required
  * - length limits
- * - uniqueness (against existing positions, case-insensitive), skip currentId when editing
+ * - uniqueness (case-insensitive)
  */
-export function validateTitle(title, options = {}) {
+export const validateTitle = (title, options = {}) => {
   const { existing = [], currentId = null } = options;
-  const t = toStringSafe(title).trim();
 
-  if (isEmpty(t)) return 'Position title is required';
-  if (t.length < 2) return 'Position title must be at least 2 characters';
-  if (t.length > 100) return 'Position title must be at most 100 characters';
+  let error = requiredField(title);
+  if (error) return error;
 
-  const lower = t.toLowerCase();
-  const duplicate = existing.find(it => toStringSafe(it.title).trim().toLowerCase() === lower && (currentId == null || it.id !== currentId));
-  if (duplicate) return 'Position title must be unique';
+  error = minLength(title, 2);
+  if (error) return error;
+
+  error = maxLength(title, 100);
+  if (error) return error;
+
+  const titleNorm = normalize(title);
+  const duplicate = existing.find((it) => {
+    if (!it?.title) return false;
+    if (currentId != null && it.id === currentId) return false;
+    return normalize(it.title) === titleNorm;
+  });
+
+  if (duplicate) {
+    return i18n.t("validation:duplicate");
+  }
 
   return null;
-}
+};
 
 /**
  * validateDepartmentName
  * - required
- * - must be non-empty string (optionally could check existence in allowed list)
+ * - max length
  */
-export function validateDepartmentName(department) {
-  if (isEmpty(department)) return 'Department is required';
-  const d = toStringSafe(department).trim();
-  if (d.length > 100) return 'Department must be at most 100 characters';
+export const validateDepartmentName = (department) => {
+  let error = requiredField(department);
+  if (error) return error;
+
+  error = maxLength(department, 100);
+  if (error) return error;
+
   return null;
-}
+};
 
 /**
  * validateJobGrade
  * - required
+ * - max length
  */
-export function validateJobGrade(jobGrade) {
-  if (isEmpty(jobGrade)) return 'Job grade is required';
-  const g = toStringSafe(jobGrade).trim();
-  if (g.length > 20) return 'Job grade must be at most 20 characters';
+export const validateJobGrade = (jobGrade) => {
+  let error = requiredField(jobGrade);
+  if (error) return error;
+
+  error = maxLength(jobGrade, 20);
+  if (error) return error;
+
   return null;
-}
+};
 
 /**
  * validateDescription
- * - optional, max length
+ * - optional
+ * - max length
  */
-export function validateDescription(description) {
-  if (isEmpty(description)) return null;
-  const d = toStringSafe(description);
-  if (d.length > 500) return 'Description must be at most 500 characters';
+export const validateDescription = (description) => {
+  if (!description || String(description).trim() === "") return null;
+
+  const error = maxLength(description, 500);
+  if (error) return error;
+
   return null;
-}
+};
 
-/**
- * validatePositionForm
- * - returns { valid, errors }
- * options: { existing: [], currentId: null }
- */
-export function validatePositionForm(formData = {}, options = {}) {
+/* =========================
+   FORM VALIDATION
+========================= */
+
+export const validatePositionForm = (formData = {}, options = {}) => {
   const errors = {};
-  const existing = options.existing || [];
-  const currentId = options.currentId ?? null;
+  const { existing = [], currentId = null } = options;
 
-  const titleErr = validateTitle(formData.title, { existing, currentId });
+  /* ---- TITLE ---- */
+  const titleErr = validateTitle(formData.title, {
+    existing,
+    currentId
+  });
   if (titleErr) errors.title = titleErr;
 
+  /* ---- DEPARTMENT ---- */
   const deptErr = validateDepartmentName(formData.department);
   if (deptErr) errors.department = deptErr;
 
+  /* ---- JOB GRADE ---- */
   const gradeErr = validateJobGrade(formData.jobGrade);
   if (gradeErr) errors.jobGrade = gradeErr;
 
+  /* ---- DESCRIPTION ---- */
   const descErr = validateDescription(formData.description);
   if (descErr) errors.description = descErr;
 
-  return { valid: Object.keys(errors).length === 0, errors };
-}
+  return {
+    valid: Object.keys(errors).length === 0,
+    errors
+  };
+};
+
+/* =========================
+   DEFAULT EXPORT
+========================= */
 
 export default {
   validateTitle,

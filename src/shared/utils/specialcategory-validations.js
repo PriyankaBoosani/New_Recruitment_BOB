@@ -1,53 +1,121 @@
-// src/validators/specialcategory-validations.js
+import { requiredField, minLength, maxLength } from "./common-validations";
+import i18n from "i18next";
 
-const isEmpty = (v) => v === null || v === undefined || String(v).trim() === '';
+/* =========================
+   HELPERS
+========================= */
+const normalize = (v = "") => String(v).trim().toLowerCase();
 
-export function validateCode(code, { existing = [], currentId = null } = {}) {
-  const c = String(code || '').trim();
-  if (isEmpty(c)) return 'Code is required';
-  if (c.length < 1) return 'Code must be at least 1 character';
-  if (c.length > 20) return 'Code must be at most 20 characters';
+/* =========================
+   FIELD VALIDATIONS
+========================= */
 
-  const dup = existing.find(it => String(it.code || '').trim().toLowerCase() === c.toLowerCase() && (currentId == null || it.id !== currentId));
-  if (dup) return 'Code must be unique';
+export const validateSpecialCategoryCode = (code) => {
+  let error = requiredField(code);
+  if (error) return error;
+
+  error = minLength(code, 2);
+  if (error) return error;
+
+  error = maxLength(code, 20);
+  if (error) return error;
+
   return null;
-}
+};
 
-export function validateName(name) {
-  const n = String(name || '').trim();
-  if (isEmpty(n)) return 'Name is required';
-  if (n.length < 2) return 'Name must be at least 2 characters';
-  if (n.length > 150) return 'Name must be at most 150 characters';
+export const validateSpecialCategoryName = (name) => {
+  let error = requiredField(name);
+  if (error) return error;
+
+  error = minLength(name, 2);
+  if (error) return error;
+
+  error = maxLength(name, 150);
+  if (error) return error;
+
   return null;
-}
+};
 
-export function validateDescription(description) {
-  if (isEmpty(description)) return null;
-  const d = String(description);
-  if (d.length > 500) return 'Description must be at most 500 characters';
+export const validateSpecialCategoryDescription = (description) => {
+  let error = requiredField(description);
+  if (error) return error;
+
+  error = minLength(description, 5);
+  if (error) return error;
+
+  error = maxLength(description, 500);
+  if (error) return error;
+
   return null;
-}
+};
 
-export function validateSpecialCategoryForm(formData = {}, options = {}) {
+/* =========================
+   FORM VALIDATION
+========================= */
+
+export const validateSpecialCategoryForm = (formData = {}, options = {}) => {
   const errors = {};
-  const existing = options.existing || [];
-  const currentId = options.currentId ?? null;
+  const { existing = [], currentId = null } = options;
 
-  const codeErr = validateCode(formData.code, { existing, currentId });
-  if (codeErr) errors.code = codeErr;
+  /* ---- CODE ---- */
+  const codeError = validateSpecialCategoryCode(formData.code);
+  if (codeError) errors.code = codeError;
 
-  const nameErr = validateName(formData.name);
-  if (nameErr) errors.name = nameErr;
+  /* ---- NAME ---- */
+  const nameError = validateSpecialCategoryName(formData.name);
+  if (nameError) errors.name = nameError;
 
-  const descErr = validateDescription(formData.description);
-  if (descErr) errors.description = descErr;
+  /* ---- DESCRIPTION ---- */
+  const descError = validateSpecialCategoryDescription(formData.description);
+  if (descError) errors.description = descError;
 
-  return { valid: Object.keys(errors).length === 0, errors };
-}
+  /* =========================
+     DUPLICATE CHECKS
+  ========================= */
+
+  // Duplicate CODE
+  if (!errors.code) {
+    const codeNorm = normalize(formData.code);
+
+    const duplicateCode = existing.find((c) => {
+      if (!c?.code) return false;
+      if (currentId != null && c.id === currentId) return false;
+      return normalize(c.code) === codeNorm;
+    });
+
+    if (duplicateCode) {
+      errors.code = i18n.t("validation:duplicate");
+    }
+  }
+
+  // Duplicate NAME
+  if (!errors.name) {
+    const nameNorm = normalize(formData.name);
+
+    const duplicateName = existing.find((c) => {
+      if (!c?.name) return false;
+      if (currentId != null && c.id === currentId) return false;
+      return normalize(c.name) === nameNorm;
+    });
+
+    if (duplicateName) {
+      errors.name = i18n.t("validation:duplicate");
+    }
+  }
+
+  return {
+    valid: Object.keys(errors).length === 0,
+    errors
+  };
+};
+
+/* =========================
+   DEFAULT EXPORT
+========================= */
 
 export default {
-  validateCode,
-  validateName,
-  validateDescription,
-  validateSpecialCategoryForm
+  validateSpecialCategoryForm,
+  validateSpecialCategoryCode,
+  validateSpecialCategoryName,
+  validateSpecialCategoryDescription
 };
