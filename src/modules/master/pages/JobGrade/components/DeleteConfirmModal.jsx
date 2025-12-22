@@ -1,4 +1,4 @@
-// src/modules/master/pages/InterviewPanel/components/DeleteConfirmModal.jsx
+// src/modules/master/pages/JobGrade/components/DeleteConfirmModal.jsx
 
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
@@ -16,10 +16,10 @@ const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
       </Modal.Header>
 
       <Modal.Body>
-        <p>Are you sure you want to delete this interview panel?</p>
+        <p>Are you sure you want to delete this job grade?</p>
         {target && (
           <div className="delete-confirm-user">
-            <strong>{target.name}</strong>
+            <strong>{target.gradeCode || target.scale}</strong>
           </div>
         )}
       </Modal.Body>

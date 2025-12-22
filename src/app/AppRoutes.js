@@ -9,13 +9,13 @@ import ForgotPassword from "../modules/auth/pages/ForgotPassword";
 import Tokenexp from "../modules/auth/services/Tokenexp";
 
 // Protected / pages (non-lazy)
-import JobGrade from "../modules/master/pages/JobGrade";
-import Location from "../modules/master/pages/Location";
-import Position from "../modules/master/pages/Position/PositionPage";
+import JobGradePage from "../modules/master/pages/JobGrade/JobGradePage";
+import LocationPage from "../modules/master/pages/Location/LocationPage";
+import PositionPage from "../modules/master/pages/Position/PositionPage";
 // import SpecialCategory from "../modules/master/pages/SpecialCategory/SpecialCategoryPage";
-import Category from "../modules/master/pages/Category";
+import CategoryPage from "../modules/master/pages/Category/CategoryPage";
 import RelaxationType from "../modules/master/pages/RelaxationType";
-import Document from "../modules/master/pages/Document";
+import DocumentPage from "../modules/master/pages/Document/DocumentPage";
 // import InterviewPanel from "../modules/master/pages/InterviewPanel/InterviewPanelPage";
 import User from "../modules/master/pages/User";
 import Home from "../modules/master/pages/Home"; // dashboard/home
@@ -26,10 +26,10 @@ import UploadIndent from "../modules/jobPosting/pages/UploadIndent";
 // Auth & layout helpers
 import PrivateRoute from "../modules/auth/services/PrivateRoute";
 import DepartmentPage from "../modules/master/pages/Department/DepartmentPage"
-import CategoryPage from "../modules/master/pages/Category/CategoryPage";
+// import CategoryPage from "../modules/master/pages/Category/CategoryPage";
 import InterviewPanelPage from "../modules/master/pages/InterviewPanel/InterviewPanelPage";
 import SpecialCategoryPage from "../modules/master/pages/SpecialCategory/SpecialCategoryPage";
-import PositionPage from "../modules/master/pages/Position/PositionPage";
+// import PositionPage from "../modules/master/pages/Position/PositionPage";
 // Lazy loaded components
 const Layout = React.lazy(() => import("../shared/components/Layout"));
 
@@ -63,14 +63,14 @@ const AppRoutes = () => {
               <Route path="/dashboard" element={<Home />} />
               <Route path="/users" element={<User />} />
               <Route path="/department" element={<DepartmentPage />} />
-              <Route path="/location" element={<Location />} />
+              <Route path="/location" element={<LocationPage />} />
               {/* If you want plural: <Route path="/locations" element={<Location />} /> */}
-              <Route path="/jobgrade" element={<JobGrade />} />
+              <Route path="/jobgrade" element={<JobGradePage />} />
               <Route path="/position" element={<PositionPage />} />
               <Route path="/category" element={<CategoryPage />} />
               <Route path="/specialcategory" element={<SpecialCategoryPage />} />
               <Route path="/relaxationtype" element={<RelaxationType />} />
-              <Route path="/document" element={<Document />} />
+              <Route path="/document" element={<DocumentPage />} />
               <Route path="/interviewpanel" element={<InterviewPanelPage />} />
               <Route path="/job-posting" element={<JobPostingsList />} />
               <Route path="/job-posting/create-requisition" element={<CreateRequisition />} />

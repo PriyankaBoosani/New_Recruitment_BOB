@@ -1,4 +1,4 @@
-// src/modules/master/pages/InterviewPanel/components/DeleteConfirmModal.jsx
+// src/modules/master/pages/Document/components/DeleteConfirmModal.jsx
 
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
@@ -16,7 +16,7 @@ const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
       </Modal.Header>
 
       <Modal.Body>
-        <p>Are you sure you want to delete this interview panel?</p>
+        <p>Are you sure you want to delete this document?</p>
         {target && (
           <div className="delete-confirm-user">
             <strong>{target.name}</strong>
