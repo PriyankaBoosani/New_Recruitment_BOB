@@ -2,23 +2,25 @@
  * Common validation functions that can be reused across the application
  */
 
-export const requiredField = (value, fieldName) => {
+import i18n from 'i18next';
+
+export const requiredField = (value) => {
   if (!value || value.trim() === '') {
-    return `${fieldName} is required`;
+    return i18n.t('validation:required');
   }
   return null;
 };
 
-export const minLength = (value, min, fieldName) => {
+export const minLength = (value, min) => {
   if (value && value.length < min) {
-    return `${fieldName} must be at least ${min} characters`;
+    return i18n.t('validation:minLength', { min });
   }
   return null;
 };
 
-export const maxLength = (value, max, fieldName) => {
+export const maxLength = (value, max) => {
   if (value && value.length > max) {
-    return `${fieldName} must be at most ${max} characters`;
+    return i18n.t('validation:maxLength', { max });
   }
   return null;
 };
@@ -26,7 +28,7 @@ export const maxLength = (value, max, fieldName) => {
 export const emailFormat = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (email && !emailRegex.test(email)) {
-    return 'Please enter a valid email address';
+    return i18n.t('validation:invalidEmail');
   }
   return null;
 };
@@ -34,7 +36,7 @@ export const emailFormat = (email) => {
 export const phoneFormat = (phone) => {
   const phoneRegex = /^[0-9]{10}$/;
   if (phone && !phoneRegex.test(phone)) {
-    return 'Please enter a valid 10-digit phone number';
+    return i18n.t('validation:invalidPhone');
   }
   return null;
 };

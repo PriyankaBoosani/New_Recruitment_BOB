@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 import { Calendar } from "react-bootstrap-icons";
-import Stepper from "../component/Stepper";
+// import Stepper from "../component/Stepper";
 import "../../../style/css/CreateRequisition.css";
 import saveDraftIcon from "../../../assets/saveDraftIcon.png";
 
@@ -54,7 +54,7 @@ const CreateRequisition = () => {
     return (
         <Container fluid className="create-requisition-page">
             {/* Stepper */}
-            <Stepper currentStep="REQUISITION" />
+            {/* <Stepper currentStep="REQUISITION" /> */}
 
             {/* Card */}
             <Card className="requisition-card">

@@ -111,17 +111,22 @@ const JobPostingsList = () => {
                                 </Badge>
                             </div>
 
-                            <h6 className="req-code">{req.code}</h6>
-
-                            <div className="req-meta">
-                                <span>Department - {req.departments}</span>
-                                <span>Positions - {req.positions}</span>
-                                <span>Vacancies - {req.vacancies}</span>
-                            </div>
-
-                            <div className="req-dates">
-                                <span>Start: {req.startDate}</span>
-                                <span>End: {req.endDate}</span>
+                            <div className="d-flex justify-content-between align-items-start">
+                                <div className="d-flex align-items-start">
+                                    <Form.Check type="checkbox" className="me-2 mt-2" />
+                                    <div>
+                                        <h6 className="req-code mb-2">{req.code}</h6>
+                                        <div className="req-dates">
+                                            <div>Start: {req.startDate}</div> |
+                                            <div>End: {req.endDate}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="req-meta text-end">
+                                    <div>Department - {req.departments}</div>
+                                    <div>Positions - {req.positions}</div>
+                                    <div>Vacancies - {req.vacancies}</div>
+                                </div>
                             </div>
                         </Col>
 

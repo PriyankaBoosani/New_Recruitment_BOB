@@ -7,5 +7,6 @@
   "invalidPhone": "Please enter a valid phone number",
   "invalidPincode": "Please enter a valid pincode",
   "nameExists": "This name already exists",
-  "descriptionExists": "This description already exists"
+  "descriptionExists": "This description already exists",
+  "duplicate": "A name with this field already exists"
 }

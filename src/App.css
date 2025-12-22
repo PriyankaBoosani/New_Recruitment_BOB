@@ -21,7 +21,7 @@ body {
 .main-content {
   flex: 1;
   overflow-y: auto;
-  padding-top: 112px; /* Height of header (56px) + navbar (56px) */
+  padding-top: 107px; /* Height of header (56px) + navbar (56px) */
   background-color: #f8f9fa;
 }
 
