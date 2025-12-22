@@ -83,6 +83,11 @@ const masterApiService = {
 
   /* Optional master all */
   getMasterAll: () => apis.get("/all"),
+
+  //User 
+  getRegister: () => nodeApi.get('/getdetails/users/all'),
+  registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data), // Auth (Node API)
+
 };
 
 export default masterApiService;
