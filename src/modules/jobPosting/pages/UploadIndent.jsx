@@ -4,13 +4,18 @@ import { Container, Card, Button } from "react-bootstrap";
 import {
   Upload,
   CheckCircleFill,
-  Eye,
-  Download,
-  Trash
+  
+  Download
+  
 } from "react-bootstrap-icons";
 import Stepper from "../component/Stepper";
 import "../../../style/css/UploadIndent.css";
 import { useNavigate, useParams } from "react-router-dom";
+import viewIcon from "../../../assets/view_icon.png";
+import deleteIcon from "../../../assets/delete_icon.png";
+import tickIcon from "../../../assets/tickIcon.png";
+import downloadIcon from "../../../assets/downloadIcon.png";
+
 
 
 
@@ -78,7 +83,7 @@ const UploadIndent = () => {
           {file && (
             <div className="uploaded-file-box">
               <div className="file-info">
-                <CheckCircleFill className="success-icon" />
+                <img src={tickIcon} alt="tickIcon" className="tickIcon"/>
                 <div>
                   <div className="file-name">{file.name}</div>
                   <div className="file-size">
@@ -88,19 +93,24 @@ const UploadIndent = () => {
               </div>
 
               <div className="file-actions">
-                <Button variant="light" size="sm">
-                  <Eye />
+
+
+                <Button variant="link" className="action-btn view-btn">
+                  <img src={viewIcon} className="icon-16" alt="View" />
+
                 </Button>
-                <Button variant="light" size="sm">
-                  <Download />
+                <Button variant="link" className="action-btn download-btn">
+                  <img src={downloadIcon} className="icon-16" alt="Download" />
                 </Button>
                 {!isSubmitted && (
                   <Button
-                    variant="light"
-                    size="sm"
+                    variant="link"
+                    
                     onClick={handleRemoveFile}
+                    className="action-btn delete-btn"
                   >
-                    <Trash />
+                                                                        <img src={deleteIcon} className="icon-16" alt="Delete" />
+                    
                   </Button>
                 )}
 
@@ -135,14 +145,14 @@ const UploadIndent = () => {
 
       {/* Footer */}
       <div className="footer-actions">
-        <Button
+        <Button className="backbtn"
           variant="outline-secondary"
           onClick={() => navigate(`/job-posting/create-requisition`)}
         >
           ← Back
         </Button>
 
-        <Button variant="secondary" disabled>
+        <Button variant="secondary" disabled className="btnNext">
           Next →
         </Button>
       </div>

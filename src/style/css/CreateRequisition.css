@@ -185,3 +185,25 @@
     margin-bottom: 15px;
   }
 }
+.backbtn{
+  color: #4A5565;
+  font-size: 0.875em;
+  font-weight: 500;
+}
+.create-requisition-page .savebtn {
+	background: #fff;
+	color: #4A5565;
+	font-size: 0.875em;
+	font-weight: 500;
+	border: 1px solid #E5E7EB;
+}
+.create-requisition-page .createbtnsave{
+  background-color: #f36f21;
+  font-size: 0.875em;
+  font-weight: 500;
+  color: #fff;
+}
+.create-requisition-page .icon-16{
+  width: 16px;
+  height: 16px;
+}

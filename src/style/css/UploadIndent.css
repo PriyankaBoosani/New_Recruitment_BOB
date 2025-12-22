@@ -13,18 +13,22 @@
 }
 
 .upload-title {
-  font-weight: 600;
+  font-weight: 400;
   margin-bottom: 16px;
-  color: #1f2b4d;
+  color: #414141;
+  font-size: 1em;
 }
 
 .upload-box {
-  border: 2px dashed #cfd6e4;
+  border: 1px solid #D1D5DC;
   border-radius: 10px;
   padding: 40px 20px;
   text-align: center;
   cursor: pointer;
   transition: background 0.2s ease;
+}
+.upload-card .card-body {
+padding: 25px;
 }
 
 .upload-box:hover {
@@ -38,18 +42,23 @@
 
 .upload-text {
   margin: 8px 0 4px;
-  color: #6c757d;
+  color: #404040;
+  font-size: 0.813em;
+  font-weight: 400;
 }
 
 .upload-link {
-  color: #2f4fd8;
-  font-weight: 500;
+  color: #162B75;
+  font-weight: 400;
+   font-size: 0.813em;
 }
 
 .upload-hint {
   margin-top: 12px;
-  font-size: 13px;
-  color: #9aa4b2;
+  font-size: 0.688em;
+  color: #6A7282;
+  font-weight: 400;
+  
 }
 
 .submit-btn {
@@ -66,13 +75,20 @@
 
 /* Enabled state */
 .submit-btn:enabled {
-  background: #2f4fd8;
+	background: #42579F;
+	font-weight: 400;
+	font-size: 0.875em;
+}
+.submit-btn:hover{
+  background: #42579F !important;
 }
 .submit-btn-wrapper {
   display: flex;
   justify-content: center;
 }
-
+.action-btn:hover {
+	background: none !important;
+}
 
 .footer-actions {
   display: flex;
@@ -118,8 +134,9 @@
 }
 
 .file-name {
-  font-weight: 500;
-  color: #1f2b4d;
+	font-weight: 400;
+	color: #404040;
+	font-size: 1em;
 }
 
 .file-size {
@@ -141,10 +158,12 @@
 
 /* Remove hover/active states for disabled button */
 .btn-outline-primary:disabled {
-	background-color: #c6c6c7 !important;
+	background-color: #C6C6C7 !important;
 	border-color: #e9ecef !important;
-	color: #6c757d !important;
+	color: #fff !important;
+	font-size: 0.875em;
 	/* opacity: 1; */
+	font-weight: 400;
 }
 
 .pending-approval {
@@ -169,4 +188,14 @@
   font-size: 13px;
   color: #495057;
 }
-
+.backbtn{
+  color: #4A5565;
+  font-size: 0.875em;
+  font-weight: 500;
+}
+.upload-indent-page .btnNext {
+	background: #D1D5DC !important;
+	font-size: 0.875em;
+	font-weight: 700;
+	color: #6A7282 !important;
+}

@@ -5,6 +5,8 @@ import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 import { Calendar } from "react-bootstrap-icons";
 import Stepper from "../component/Stepper";
 import "../../../style/css/CreateRequisition.css";
+import saveDraftIcon from "../../../assets/saveDraftIcon.png";
+
 
 const CreateRequisition = () => {
   const navigate = useNavigate();
@@ -146,7 +148,7 @@ const CreateRequisition = () => {
 
             {/* Footer Actions */}
             <div className="footer-actions">
-                 <Button
+                 <Button className="backbtn"
                           variant="outline-secondary"
                           onClick={() => navigate(`/job-posting`)}
                         >
@@ -156,12 +158,12 @@ const CreateRequisition = () => {
                 <div>
                     <Button
                         variant="outline-primary"
-                        className="me-2"
+                        className="me-2 savebtn"
                         onClick={handleSaveDraft}
                     >
-                        Save Draft
+                       <img src={saveDraftIcon} alt="saveDraftIcon" className='icon-16' /> Save Draft
                     </Button>
-                    <Button className="primary-btn" onClick={handleNext}>
+                    <Button className="primary-btn createbtnsave" onClick={handleNext}>
                         Create Requisition & Next →
                     </Button>
                 </div>
