@@ -16,7 +16,6 @@ import PositionPage from "../modules/master/pages/Position/PositionPage";
 import CategoryPage from "../modules/master/pages/Category/CategoryPage";
 import RelaxationType from "../modules/master/pages/RelaxationType";
 import DocumentPage from "../modules/master/pages/Document/DocumentPage";
-// import InterviewPanel from "../modules/master/pages/InterviewPanel/InterviewPanelPage";
 import User from "../modules/master/pages/User";
 import Home from "../modules/master/pages/Home"; // dashboard/home
 import JobPostingsList from "../modules/jobPosting/pages/JobPostingsList";
@@ -27,7 +26,7 @@ import UploadIndent from "../modules/jobPosting/pages/UploadIndent";
 import PrivateRoute from "../modules/auth/services/PrivateRoute";
 import DepartmentPage from "../modules/master/pages/Department/DepartmentPage"
 // import CategoryPage from "../modules/master/pages/Category/CategoryPage";
-import InterviewPanelPage from "../modules/master/pages/InterviewPanel/InterviewPanelPage";
+import InterviewPanel from "../modules/master/pages/InterviewPanel";
 import SpecialCategoryPage from "../modules/master/pages/SpecialCategory/SpecialCategoryPage";
 // import PositionPage from "../modules/master/pages/Position/PositionPage";
 // Lazy loaded components
@@ -71,7 +70,7 @@ const AppRoutes = () => {
               <Route path="/specialcategory" element={<SpecialCategoryPage />} />
               <Route path="/relaxationtype" element={<RelaxationType />} />
               <Route path="/document" element={<DocumentPage />} />
-              <Route path="/interviewpanel" element={<InterviewPanelPage />} />
+              <Route path="/interviewpanel" element={<InterviewPanel />} />
               <Route path="/job-posting" element={<JobPostingsList />} />
               <Route path="/job-posting/create-requisition" element={<CreateRequisition />} />
               <Route

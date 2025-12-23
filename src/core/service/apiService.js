@@ -84,7 +84,22 @@ const parseResumeApi = axios.create({
   baseURL: PARSE_RESUME_URL,
   headers: { 'Content-Type': 'multipart/form-data' },
 });
-
+const masterDropdownApi = axios.create({
+  baseURL: process.env.REACT_APP_MASTER_DROPDOWN_URL,
+  headers: { 'Content-Type': 'application/json' },
+});
+// Add interceptors if needed (similar to other API instances)
+masterDropdownApi.interceptors.request.use(
+  (config) => addAuthHeader(config),
+  (error) => Promise.reject(error)
+);
+masterDropdownApi.interceptors.response.use(
+  (response) => response.data,
+  async (error) => {
+    // Add your error handling logic here
+    return Promise.reject(error);
+  }
+);
 // Shared helper to add Authorization header
 const addAuthHeader = (config) => {
   const token = getToken();
@@ -315,5 +330,5 @@ templateApi.interceptors.response.use(
 /* ---------------------------
    Exports
    --------------------------- */
-export { api, apis, candidateApi, nodeApi, templateApi, parseResumeApi };
-export default { api, apis, candidateApi, nodeApi, templateApi, parseResumeApi };
+export { api, apis, candidateApi, nodeApi, templateApi, parseResumeApi, masterDropdownApi };
+export default { api, apis, candidateApi, nodeApi, templateApi, parseResumeApi , masterDropdownApi};

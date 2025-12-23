@@ -1,5 +1,5 @@
 // src/services/masterApiService.js
-import { apis, nodeApi } from "../../../core/service/apiService"; // reuse axios instances + interceptors
+import { apis, nodeApi, masterDropdownApi } from "../../../core/service/apiService"; // reuse axios instances + interceptors
 
 const masterApiService = {
   /* Users (Node API) */
@@ -87,7 +87,7 @@ const masterApiService = {
   //User 
   getRegister: () => nodeApi.get('/getdetails/users/all'),
   registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data), // Auth (Node API)
-
+getMasterDropdownData: () => masterDropdownApi.get('/master-dd-data/get/committees'),
 };
 
 export default masterApiService;
