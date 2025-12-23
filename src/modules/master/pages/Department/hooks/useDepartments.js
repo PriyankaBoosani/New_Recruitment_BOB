@@ -76,7 +76,7 @@ const bulkAddDepartments = async (file) => {
   const addDepartment = async (payload) => {
     await masterApiService.addDepartment(payload);
     await fetchDepartments();
-    toast.success("Department added successfully");
+    toast.success(t("department:add_success"));
   };
 
   const updateDepartment = async (id, payload) => {
