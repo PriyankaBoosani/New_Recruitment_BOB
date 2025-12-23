@@ -1,15 +1,16 @@
 // src/modules/jobPostings/pages/CreateRequisition.jsx
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 import { Calendar } from "react-bootstrap-icons";
-// import Stepper from "../component/Stepper";
 import "../../../style/css/CreateRequisition.css";
-import saveDraftIcon from "../../../assets/saveDraftIcon.png";
-
+import ErrorMessage from '../../../shared/components/ErrorMessage';
+import { validateRequisitionForm } from '../validations/requisition-validation';
 
 const CreateRequisition = () => {
-  const navigate = useNavigate();
+    const [errors, setErrors] = useState({});
+
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         title: "",
         description: "",
@@ -19,88 +20,152 @@ const CreateRequisition = () => {
 
     const formatDate = (date) => {
         const d = new Date(date);
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+        return d.toISOString().split("T")[0];
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        const newFormData = { ...formData, [name]: value };
+        const updated = { ...formData, [name]: value };
 
-        // If start date changes, update end date to be 21 days later
-        if (name === 'startDate' && value) {
-            const startDate = new Date(value);
-            const endDate = new Date(startDate);
-            endDate.setDate(startDate.getDate() + 21);
-            newFormData.endDate = formatDate(endDate);
+        if (name === "startDate" && value) {
+            const d = new Date(value);
+            d.setDate(d.getDate() + 21);
+            updated.endDate = formatDate(d);
         }
-
-        setFormData(newFormData);
+        setFormData(updated);
     };
+    const [indentFile, setIndentFile] = useState(null);
+    const fileInputRef = useRef(null);
+    const handleSave = (e) => {
+  e?.preventDefault();
+  
+  // Validate the form using the validation function
+  const { valid, errors } = validateRequisitionForm(formData, indentFile);
+  
+  // Update errors state
+  setErrors(errors);
 
-    const handleSaveDraft = () => {
-        console.log("Save draft", formData);
-    };
+  if (valid) {
+    console.log('Form is valid, submitting...', {
+      ...formData,
+      file: indentFile
+    });
+    // TODO: Add your form submission logic here
+  } else {
+    // Scroll to the first error
+    const firstError = Object.keys(errors)[0];
+    if (firstError) {
+      const element = document.querySelector(`[name="${firstError}"]`) || 
+                     document.querySelector('.upload-box');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }
+};
 
-    const handleNext = () => {
-        // In a real app, you would save the requisition first, then navigate
-        // For now, we'll just navigate to the upload indent page
-        // The ID '123' is a placeholder - in a real app, you'd use the actual requisition ID
-        navigate("/job-posting/upload-indent");
-    };
 
     return (
         <Container fluid className="create-requisition-page">
-            {/* Stepper */}
-            {/* <Stepper currentStep="REQUISITION" /> */}
-
-            {/* Card */}
             <Card className="requisition-card">
                 <Card.Body>
+
+                    {/* Title */}
                     <div className="section-title">
                         <span className="indicator" />
-                        <h6>Requisition Details</h6>
+                        <h6>Create New Requisition</h6>
                     </div>
 
-                    <Form>
-                        {/* Title */}
+                    <Form onSubmit={handleSave}>
                         <Form.Group className="mb-3">
                             <Form.Label>
                                 Requisition Title <span className="text-danger">*</span>
                             </Form.Label>
                             <Form.Control
-                                type="text"
-                                name="title"
                                 placeholder="BOB/HRM/REC/ADVT/2025/12"
+                                name="title"
                                 value={formData.title}
                                 onChange={handleChange}
+                                isInvalid={!!errors.title}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.title}
+                            </Form.Control.Feedback>
                             <Form.Text muted>
                                 Use a clear, searchable title used across the portal and job boards.
                             </Form.Text>
                         </Form.Group>
 
-                        {/* Description */}
-                        <Form.Group className="mb-4">
-                            <Form.Label>
-                                Description <span className="text-danger">*</span>
-                            </Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={4}
-                                name="description"
-                                placeholder="Enter overall description / objective for this hiring drive..."
-                                value={formData.description}
-                                onChange={handleChange}
-                            />
-                        </Form.Group>
-
-                        {/* Dates */}
                         <Row>
-                            <Col xs={12} md={6}>
-                                <Form.Group className="mb-3">
+                            <Col md={6}>
+                                <Form.Group className="mb-4">
+                                    <Form.Label>
+                                        Description <span className="text-danger">*</span>
+                                    </Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={5}
+                                        name="description"
+                                        placeholder="Enter overall description / objective for this hiring drive..."
+                                        value={formData.description}
+                                        onChange={handleChange}
+                                        isInvalid={!!errors.description}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.description}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                            </Col>
+
+                            <Col md={6}>
+                                <Form.Group>
+    <Form.Label>Upload Indent <span className="text-danger">*</span></Form.Label>
+    <div
+        className={`upload-box ${errors.indentFile ? 'is-invalid' : ''}`}
+        onClick={() => fileInputRef.current.click()}
+    >
+        <div className="upload-icon">⬆</div>
+        <p>
+            Drag & drop your file here, or
+            <span className="upload-link"> Click to Upload</span>
+        </p>
+        <small>Supported formats: PDF, DOC, PNG, JPG (Max 5 MB)</small>
+        {indentFile && (
+            <div className="selected-file">
+                📄 {indentFile.name}
+            </div>
+        )}
+    </div>
+    {errors.indentFile && (
+        <div className="invalid-feedback d-block">
+            {errors.indentFile}
+        </div>
+    )}
+    <input
+        type="file"
+        ref={fileInputRef}
+        hidden
+        accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+        onChange={(e) => {
+            const file = e.target.files[0];
+            setIndentFile(file);
+            // Clear file error when new file is selected
+            if (errors.indentFile) {
+                setErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors.indentFile;
+                    return newErrors;
+                });
+            }
+        }}
+    />
+</Form.Group>
+                            </Col>
+                        </Row>
+
+                        <Row>
+                            <Col md={6}>
+                                <Form.Group>
                                     <Form.Label>
                                         Start Date <span className="text-danger">*</span>
                                     </Form.Label>
@@ -110,63 +175,56 @@ const CreateRequisition = () => {
                                             name="startDate"
                                             value={formData.startDate}
                                             onChange={handleChange}
-                                            min={new Date().toISOString().split('T')[0]}
+                                            isInvalid={!!errors.startDate}
                                         />
-                                        <Calendar />
+                                      
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors.startDate}
+                                        </Form.Control.Feedback>
                                     </div>
-                                    <Form.Text muted>
-                                        Date from which candidates can start applying.
-                                    </Form.Text>
                                 </Form.Group>
                             </Col>
 
-                            <Col xs={12} md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>
-                                        End Date <span className="text-danger">*</span>
-                                    </Form.Label>
-                                    <div className="date-input">
-                                        <Form.Control
-                                            type="date"
-                                            name="endDate"
-                                            value={formData.endDate}
-                                            onChange={handleChange}
-                                            min={formData.startDate} // Ensures end date is not before start date
-                                            className="date-input-field"
-                                        />
-                                        <Calendar />
-                                    </div>
-                                    <Form.Text muted>
-                                        ⓘ Standard duration: 21 days.
-                                    </Form.Text>
-                                </Form.Group>
+                            <Col md={6}>
+                                <Form.Group>
+    <Form.Label>
+        End Date <span className="text-danger">*</span>
+    </Form.Label>
+    <div className="date-input">
+        <Form.Control
+            type="date"
+            name="endDate"
+            value={formData.endDate}
+            onChange={handleChange}
+            min={formData.startDate}
+            isInvalid={!!errors.endDate}
+        />
+   
+        <Form.Control.Feedback type="invalid">
+            {errors.endDate}
+        </Form.Control.Feedback>
+    </div>
+</Form.Group>
                             </Col>
                         </Row>
                     </Form>
                 </Card.Body>
             </Card>
 
-            {/* Footer Actions */}
+            {/* Footer */}
             <div className="footer-actions">
-                 <Button className="backbtn"
-                          variant="outline-secondary"
-                          onClick={() => navigate(`/job-posting`)}
-                        >
-                          ← Back
-                        </Button>
+                <Button variant="outline-secondary" onClick={() => navigate("/job-posting")}>
+                    Cancel
+                </Button>
+                <Button
+                    type="button"
+                    className="primary-btn"
+                    onClick={handleSave}
+                >
+                    Save
+                </Button>
 
-                <div>
-                    <Button
-                        variant="outline-primary"
-                        className="me-2 savebtn"
-                        onClick={handleSaveDraft}
-                    >
-                       <img src={saveDraftIcon} alt="saveDraftIcon" className='icon-16' /> Save Draft
-                    </Button>
-                    <Button className="primary-btn createbtnsave" onClick={handleNext}>
-                        Create Requisition & Next →
-                    </Button>
-                </div>
+
             </div>
         </Container>
     );

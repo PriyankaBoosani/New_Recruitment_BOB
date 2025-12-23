@@ -1,209 +1,96 @@
 .create-requisition-page {
-  padding: 0 0 80px 0;
-  /* Add bottom padding to prevent content from being hidden behind fixed footer */
+  background: #f6f7fb;
   min-height: 100vh;
-  position: relative;
-  box-sizing: border-box;
+  padding: 24px;
 }
 
-.requisition-card {
-  border-radius: 14px;
+/* Card */
+.create-requisition-page .requisition-card {
+  border-radius: 12px;
   border: none;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  padding: 16px;
-  max-width: 1400px;
-  margin: 0 auto 20px;
-  /* width: 100%; */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.section-title {
+/* Section title */
+.create-requisition-page .section-title {
   display: flex;
   align-items: center;
-  gap: 10px;
   margin-bottom: 20px;
 }
 
-.section-title h6 {
-	margin: 0;
-	font-weight: 500;
-	color: #162B75;
-	font-size: 1.125em;
-}
-.create-requisition-page .form-label {
-	color: #333333;
-	font-size: 0.875em;
-	font-weight: 500;
-}
-.create-requisition-page .form-control{
-  font-size: 0.875em;
-  color: #414141;
-  font-weight: 400;
-}
-.create-requisition-page .form-text{
-  color: #828282;
-  font-size: 0.75em;
-  font-weight: 400;
+.create-requisition-page .section-title h6 {
+  font-weight: 600;
+  color: #1f2b4d;
+  margin: 0;
 }
 
-.section-title .indicator {
+.create-requisition-page .indicator {
   width: 4px;
   height: 20px;
   background: #f36f21;
-  border-radius: 4px;
+  margin-right: 10px;
+  border-radius: 2px;
 }
 
-.date-input {
-  position: relative;
+/* Upload box */
+.create-requisition-page .upload-box {
+  border: 1px dashed #cfd4dc;
+  border-radius: 8px;
+  height: 140px;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-}
-
-.date-input input[type="date"] {
-  flex: 1;
-  padding-right: 30px;
-  /* Make room for the calendar icon */
-}
-
-/* Ensure the calendar icon is clickable */
-.date-input .bi-calendar {
-  position: absolute;
-  right: 10px;
-  pointer-events: none;
-  /* Allow clicks to pass through to the input */
   color: #6c757d;
-}
-
-/* Style the date input to show the calendar icon properly */
-.form-control[type="date"] {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  position: relative;
-  z-index: 1;
-}
-
-/* Hide the default calendar icon in WebKit browsers */
-.form-control[type="date"]::-webkit-calendar-picker-indicator {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
   cursor: pointer;
-  z-index: 2;
 }
 
-.date-input svg {
+.create-requisition-page .upload-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.create-requisition-page .upload-link {
+  color: #42579f;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Date input */
+.create-requisition-page .date-input {
+  position: relative;
+}
+
+.create-requisition-page .date-input svg {
   position: absolute;
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #2f4fd8;
+  color: #6c757d;
 }
 
-.footer-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
+/* Footer */
+.create-requisition-page .footer-actions {
   background: #fff;
-  border-top: 1px solid #e9ecef;
-  position: fixed;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  position: sticky;
   bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-  height: 70px;
-  /* Fixed height for consistency */
+  border-top: 1px solid #e6e6e6;
 }
 
-.primary-btn {
+.create-requisition-page .primary-btn {
   background: #f36f21;
   border: none;
-}
-
-.primary-btn:hover {
-  background: #e65f14;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .create-requisition-page {
-    padding-bottom: 180px;
-    /* Increased to accommodate stacked buttons */
-  }
-
-  .requisition-card {
-    margin: 0 10px 30px 10px;
-    padding: 12px;
-  }
-
-  .footer-actions {
-    flex-direction: column;
-    gap: 8px;
-    align-items: stretch;
-    height: auto;
-    padding: 12px 15px;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .footer-actions>* {
-    width: 100%;
-    margin: 0;
-  }
-
-  .footer-actions .btn {
-    padding: 10px 16px;
-    font-size: 14px;
-    width: 100%;
-    margin: 2px 0;
-  }
-
-  .footer-actions>div {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-  }
-
-  /* Ensure proper spacing between buttons */
-  .footer-actions .me-2 {
-    margin-right: 0 !important;
-    margin-bottom: 8px;
-  }
-
-  /* Adjust form elements for mobile */
-  .form-group {
-    margin-bottom: 15px;
-  }
-
-  .section-title {
-    margin-bottom: 15px;
-  }
-}
-.backbtn{
-  color: #4A5565;
-  font-size: 0.875em;
+  padding: 6px 20px;
   font-weight: 500;
 }
-.create-requisition-page .savebtn {
-	background: #fff;
-	color: #4A5565;
-	font-size: 0.875em;
-	font-weight: 500;
-	border: 1px solid #E5E7EB;
+
+.create-requisition-page .primary-btn:hover {
+  background: #e85f10;
 }
-.create-requisition-page .createbtnsave{
-  background-color: #f36f21;
-  font-size: 0.875em;
-  font-weight: 500;
-  color: #fff;
-}
-.create-requisition-page .icon-16{
-  width: 16px;
-  height: 16px;
+.upload-box.is-invalid {
+    border: 1px solid #dc3545;
 }
