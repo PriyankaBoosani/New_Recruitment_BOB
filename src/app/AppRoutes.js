@@ -27,6 +27,7 @@ import AddPosition from "../modules/jobPosting/pages/AddPosition";
 import PrivateRoute from "../modules/auth/services/PrivateRoute";
 import DepartmentPage from "../modules/master/pages/Department/DepartmentPage"
 // import CategoryPage from "../modules/master/pages/Category/CategoryPage";
+//import InterviewPanel from "../modules/master/pages/InterviewPanel123/pages/InterviewPanel";
 import InterviewPanel from "../modules/master/pages/InterviewPanel";
 import SpecialCategoryPage from "../modules/master/pages/SpecialCategory/SpecialCategoryPage";
 // import PositionPage from "../modules/master/pages/Position/PositionPage";

@@ -1,5 +1,5 @@
 // src/pages/InterviewPanel.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Table, Form, Button, Modal, Dropdown } from 'react-bootstrap';
 import { Search, Plus, Upload } from 'react-bootstrap-icons';
 import { validateInterviewPanelForm } from '../../../shared/utils/interviewpanel-validations';
@@ -10,24 +10,17 @@ import editIcon from "../../../assets/edit_icon.png";
 import ErrorMessage from '../../../shared/components/ErrorMessage';
 import { FileMeta, downloadTemplate, importFromCSV } from '../../../shared/components/FileUpload';
 import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
 import masterApiService from "../services/masterApiService";
+import { mapInterviewMembersApi } from "../mappers/interviewMembersMapper";
+import { toast } from 'react-toastify';
 const InterviewPanel = () => {
   const { t } = useTranslation(["interviewPanel"]);
 
-  
-const [panels, setPanels] = useState([]);
-const [communityOptions, setCommunityOptions] = useState([]);
-const [membersOptions, setMembersOptions] = useState([]);
-const [loading, setLoading] = useState(false);
-  
+  const [panels, setPanels] = useState([]);
+  const [communityOptions, setCommunityOptions] = useState([]);
+  const [membersOptions, setMembersOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-
-  // derive a default list of members from initial panels (unique)
-  const defaultMembersSet = Array.from(new Set(
-    panels.flatMap(p => (String(p.members || '').split(',').map(x => x.trim()).filter(Boolean)))
-  ));
-  
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
@@ -42,13 +35,18 @@ const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('manual');
   const [selectedCSVFile, setSelectedCSVFile] = useState(null);
   const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
-const [committeeMap, setCommitteeMap] = useState({});
-  // while editing, members is an array; will convert to string on save
+
+  const [committeeMap, setCommitteeMap] = useState({});
+
+  const [editAssignedMembers, setEditAssignedMembers] = useState([]);
+
+  // ✅ members = array of STRING NAMES only
   const [formData, setFormData] = useState({
     name: '',
     community: '',
     members: []
   });
+
   const [errors, setErrors] = useState({});
 
   // ----- File helpers (same as Department)
@@ -57,16 +55,39 @@ const [committeeMap, setCommitteeMap] = useState({});
   const removeCSV = () => setSelectedCSVFile(null);
   const removeXLSX = () => setSelectedXLSXFile(null);
 
+ const fetchInterviewMembers = async () => {
+    const res = await masterApiService.getActiveInterviewMembers();
+    const mapped = mapInterviewMembersApi(res);
+    setMembersOptions(mapped);
+  };
+
+  const fetchPanels = async (committeeMapObj) => {
+    const panelRes = await masterApiService.getInterviewPanels();
+    const apiList = Array.isArray(panelRes?.data) ? panelRes.data : [];
+
+    const mappedPanels = apiList.map(item => {
+      const panel = item.interviewPanelsDTO || {};
+      const interviewers = item.interviewerDTOs || [];
+
+      return {
+        id: panel.interviewPanelId,
+        name: panel.panelName || "-",
+        community: committeeMapObj[panel.committeeId] || "-",
+        members: interviewers.length
+          ? interviewers.map(i => i.name).join(", ")
+          : "-"
+      };
+    });
+
+    setPanels(mappedPanels);
+  };
 
   useEffect(() => {
-  const fetchCommittees = async () => {
-    try {
-      const res = await masterApiService.getMasterDropdownData();
+    const init = async () => {
+      setLoading(true);
 
-      // ✅ CORRECT for your service
-      const list = Array.isArray(res?.data)
-        ? res.data
-        : [];
+      const committeeRes = await masterApiService.getMasterDropdownData();
+      const list = Array.isArray(committeeRes?.data) ? committeeRes.data : [];
 
       const map = {};
       list.forEach(c => {
@@ -74,53 +95,20 @@ const [committeeMap, setCommitteeMap] = useState({});
       });
 
       setCommitteeMap(map);
+      setCommunityOptions(list.map(c => ({
+        id: c.interviewCommitteeId,
+        name: c.committeeName
+      })));
 
-    } catch (err) {
-      console.error("Failed to fetch committees", err);
-    }
-  };
+      await fetchPanels(map);
+      await fetchInterviewMembers();
 
-  fetchCommittees();
-}, []);
-
-useEffect(() => {
-  if (!Object.keys(committeeMap).length) return;
-
-  const fetchInterviewPanels = async () => {
-    try {
-      setLoading(true);
-
-      const res = await masterApiService.getInterviewPanels();
-
-      const apiList = Array.isArray(res?.data)
-        ? res?.data
-        : [];
-
-      const mappedPanels = apiList.map(item => {
-        const panel = item.interviewPanelsDTO || {};
-        const interviewers = item.interviewerDTOs || [];
-
-        return {
-          id: panel.interviewPanelId,
-          name: panel.panelName || "-",
-          community: committeeMap[panel.committeeId] || "-",
-          members: interviewers.length
-            ? interviewers.map(i => i.name).join(", ")
-            : "-"
-        };
-      });
-
-      setPanels(mappedPanels);
-
-    } catch (error) {
-      console.error("Error fetching interview panels", error);
-    } finally {
       setLoading(false);
-    }
-  };
+    };
 
-  fetchInterviewPanels();
-}, [committeeMap]);
+    init();
+  }, []);
+
 
   // import wrapper using shared helper (mirrors Department: simple mapping, no validation)
   const handleImport = async () => {
@@ -152,35 +140,117 @@ useEffect(() => {
   };
 
   // toggle selection for a member (keeps formData.members as an array)
+  // ✅ FIX: toggle by NAME not object
   const toggleMember = (member) => {
-    setErrors(prev => {
-      const copy = { ...prev };
-      if (copy.members) delete copy.members;
-      return copy;
-    });
+    const name = member.name;
 
     setFormData(prev => {
-      const cur = Array.isArray(prev.members) ? [...prev.members] : [];
-      const idx = cur.indexOf(member);
-      if (idx === -1) cur.push(member);
-      else cur.splice(idx, 1);
-      return { ...prev, members: cur };
+      const exists = prev.members.includes(name);
+      return {
+        ...prev,
+        members: exists
+          ? prev.members.filter(m => m !== name)
+          : [...prev.members, name]
+      };
     });
   };
 
-  // remove a single member (used by pill 'x' button)
-  const removeMemberPill = (e, member) => {
-    e.stopPropagation(); // prevent dropdown toggle from closing/opening
-    setFormData(prev => {
-      const cur = Array.isArray(prev.members) ? [...prev.members] : [];
-      return { ...prev, members: cur.filter(m => m !== member) };
-    });
+  const removeMemberPill = (e, name) => {
+    e.stopPropagation();
+    setFormData(prev => ({
+      ...prev,
+      members: prev.members.filter(m => m !== name)
+    }));
   };
+
+  /* ============================
+     SAVE
+  ============================ */
+ const handleSave = async (e) => {
+  e.preventDefault();
+  setErrors({});
+  setLoading(true);
+
+  try {
+    // 1️⃣ Validation
+    const result = validateInterviewPanelForm({
+      name: formData.name,
+      members: formData.members,
+      community:formData.community
+    });
+
+    if (!result.valid) {
+      setErrors(result.errors);
+      return;
+    }
+
+    // 2️⃣ Convert member names → IDs
+    const interviewerIds = membersOptions
+      .filter(m => formData.members.includes(m.name))
+      .map(m => m.id);
+
+    if (!interviewerIds.length) {
+      toast.error("Selected interviewers are invalid.");
+      return;
+    }
+
+    // 3️⃣ Payload (SAME for add & update)
+    const payload = {
+      interviewPanelsDTO: {
+        isActive: true,
+        panelName: formData.name,
+        description: "",
+        committeeId: formData.community,
+        interviewPanelId: isEditing ? editingId : ""
+      },
+      interviewerIds
+    };
+
+    // 4️⃣ ADD vs UPDATE API
+    let res;
+    if (isEditing) {
+      // ✅ UPDATE (PUT)
+      res = await masterApiService.updateInterviewPanel(editingId,payload);
+    } else {
+      // ✅ ADD (POST)
+      res = await masterApiService.addInterviewPanel(payload);
+    }
+
+    // 5️⃣ Handle API failure
+    if (!res?.success) {
+      toast.error(res?.message || "Failed to save interview panel");
+      return;
+    }
+
+    // 6️⃣ Success toast
+    toast.success(
+      isEditing
+        ? "Interview panel updated successfully"
+        : "Interview panel created successfully"
+    );
+
+    // 7️⃣ Close & reset
+    setShowAddModal(false);
+    setFormData({ name: "", community: "", members: [] });
+    setIsEditing(false);
+    setEditingId(null);
+
+    // 8️⃣ Refresh list
+    await fetchPanels(committeeMap);
+
+  } catch (error) {
+    console.error("Save interview panel failed", error);
+    toast.error("Something went wrong. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const openAdd = () => {
     setIsEditing(false);
     setEditingId(null);
-setFormData({ name: '', community: '', members: [] });
+    setFormData({ name: '', community: '', members: [] });
     setErrors({});
     setActiveTab('manual');
     setSelectedCSVFile(null);
@@ -188,72 +258,124 @@ setFormData({ name: '', community: '', members: [] });
     setShowAddModal(true);
   };
 
-  const openEdit = (p) => {
+ const openEdit = async (p) => {
+  try {
+    setLoading(true);
     setIsEditing(true);
     setEditingId(p.id);
-    const membersArray = String(p.members || '')
-      .split(',')
-      .map(x => x.trim())
-      .filter(Boolean);
-setFormData({
-  name: p.name,
-  community: p.community || '',
-  members: membersArray
-});
-    setErrors({});
-    setActiveTab('manual');
-    setShowAddModal(true);
-  };
+    setActiveTab("manual");
 
-  const handleSave = (e) => {
-    e.preventDefault();
-    setErrors({});
+    // 1️⃣ Call GET API
+    const res = await masterApiService.getInterviewPanelById(p.id);
 
-    // Convert members array (in UI) to array/string as the validator accepts both
-    const payloadForValidation = {
-      name: formData.name,
-      members: formData.members // can be array or comma-separated string
-    };
-
-    const result = validateInterviewPanelForm(payloadForValidation);
-
-    if (!result.valid) {
-      setErrors(result.errors);
-      // focus first invalid field
-      const first = Object.keys(result.errors)[0];
-      if (first) {
-        const el = document.querySelector(`[name="${first}"]`);
-        if (el && el.focus) el.focus();
-      }
+    if (!res?.success) {
+      toast.error("Failed to fetch panel details");
       return;
     }
 
-    // normalized values returned from validator (trimmed name + members array)
-    const normalized = result.normalized;
+    const panelDTO = res.data?.interviewPanelsDTO || {};
+    const interviewers = res.data?.interviewerDTOs || [];
 
-   const payloadToSave = {
-  name: normalized.name,
-  community: formData.community,
-  members: Array.isArray(normalized.members)
-    ? normalized.members.join(', ')
-    : String(normalized.members || '').trim()
-};
+    // 2️⃣ Convert interviewerDTOs → member names
+    const membersArray = interviewers
+      .map(i => i.name)
+      .filter(Boolean);
 
+        // ✅ STORE CURRENTLY ASSIGNED MEMBERS
+    setEditAssignedMembers(membersArray);
 
-    if (isEditing) {
-      setPanels(prev => prev.map(p => p.id === editingId ? { ...p, ...payloadToSave } : p));
-    } else {
-      const newItem = { id: Math.max(0, ...panels.map(p => p.id)) + 1, ...payloadToSave };
-      setPanels(prev => [...prev, newItem]);
-    }
+    // 3️⃣ Populate form
+    setFormData({
+      name: panelDTO.panelName || "",
+      community: panelDTO.committeeId || "",
+      members: membersArray
+    });
 
-    // reset form & modal state
-    setShowAddModal(false);
-    setIsEditing(false);
-    setEditingId(null);
-    setFormData({ name: '', members: [] });
     setErrors({});
-  };
+    setShowAddModal(true);
+
+  } catch (error) {
+    console.error("Edit panel load failed", error);
+    toast.error("Something went wrong while loading panel");
+  } finally {
+    setLoading(false);
+  }
+};
+const availableMembersOptions = membersOptions.filter(m => {
+  // ADD MODE → only unassigned
+  if (!isEditing) {
+    return m.assigned === false;
+  }
+
+  // EDIT MODE →
+  // allow unassigned OR already assigned to this panel
+  return (
+    m.assigned === false ||
+    editAssignedMembers.includes(m.name)
+  );
+});
+//   const handleSave = async (e) => {
+//   e.preventDefault();
+//   setErrors({});
+//   setLoading(true);
+
+//   try {
+//     // 1️⃣ Validation
+//     const payloadForValidation = {
+//       name: formData.name,
+//       members: formData.members
+//     };
+
+//     const result = validateInterviewPanelForm(payloadForValidation);
+
+//     if (!result.valid) {
+//       setErrors(result.errors);
+//       return;
+//     }
+
+//     const normalized = result.normalized;
+
+//     // 2️⃣ Convert members → IDs
+//     const interviewerIds = membersOptions
+//       .filter(m => normalized.members.includes(m.name))
+//       .map(m => m.id);
+
+//     // 3️⃣ Backend payload
+//     const payload = {
+//       interviewPanelsDTO: {
+//         isActive: true,
+//         panelName: normalized.name,
+//         description: "",
+//         committeeId: formData.community,
+//         interviewPanelId: ""
+//       },
+//       interviewerIds
+//     };
+
+//     // 4️⃣ SAVE API CALL
+//     const res = await masterApiService.addInterviewPanel(payload);
+
+//     if (!res?.success) {
+//       throw new Error(res?.message || "Save failed");
+//     }
+
+//     // 5️⃣ Close modal
+//     setShowAddModal(false);
+
+//     // 6️⃣ Reset form
+//     setFormData({ name: "", community: "", members: [] });
+//     setIsEditing(false);
+//     setEditingId(null);
+
+//     // 7️⃣ Re-fetch panels list
+//     await fetchPanels(committeeMap);
+
+//   } catch (error) {
+//     console.error("Save interview panel failed", error);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
 
 
   //delete handlers
@@ -261,12 +383,42 @@ setFormData({
     setDeleteTarget({ id: p.id, name: p.name });
     setShowDeleteModal(true);
   };
-  const confirmDelete = () => {
-    if (!deleteTarget) return;
+ const confirmDelete = async () => {
+  if (!deleteTarget?.id) return;
+
+  setLoading(true);
+
+  try {
+    // 1️⃣ Call DELETE API
+    const res = await masterApiService.deleteInterviewPanel(deleteTarget.id);
+
+    // 2️⃣ Handle API failure
+    if (!res?.success) {
+      toast.error(res?.message || "Failed to delete interview panel");
+      return;
+    }
+
+    // 3️⃣ Success toast
+    toast.success("Interview panel deleted successfully");
+
+    // 4️⃣ Update UI (remove deleted row)
     setPanels(prev => prev.filter(p => p.id !== deleteTarget.id));
+
+    // OR (recommended if backend has logic)
+    // await fetchPanels(committeeMap);
+
+    // 5️⃣ Close modal
     setShowDeleteModal(false);
     setDeleteTarget(null);
-  };
+
+  } catch (error) {
+    console.error("Delete interview panel failed", error);
+    toast.error("Something went wrong while deleting panel");
+  } finally {
+    setLoading(false);
+  }
+};
+
   const cancelDelete = () => {
     setShowDeleteModal(false);
     setDeleteTarget(null);
@@ -331,10 +483,10 @@ setFormData({
             <thead>
               <tr>
                 <th>{t("interviewPanel:sno")}</th>
-               
+
 
                 <th>{t("interviewPanel:panel_name")}</th>
-                 <th>{t("interviewPanel:community")}</th>
+                <th>{t("interviewPanel:community")}</th>
                 <th>{t("interviewPanel:panel_members")}</th>
                 <th style={{ textAlign: "center" }}>{t("interviewPanel:actions")}</th>
               </tr>
@@ -436,28 +588,28 @@ setFormData({
               <Form onSubmit={handleSave} noValidate>
                 <Row className="g-3">
                   <Col xs={12}>
-  <Form.Group>
-    <Form.Label>
-      Community <span className="text-danger">*</span>
-    </Form.Label>
+                    <Form.Group>
+                      <Form.Label>
+                        committe   <span className="text-danger">*</span>
+                      </Form.Label>
 
-    <Form.Select
-      name="community"
-      value={formData.community}
-      onChange={handleInput}
-      className="form-control-custom"
-    >
-      <option value="">Select Community</option>
-      {communityOptions.map(c => (
-        <option key={c} value={c}>
-          {c}
-        </option>
-      ))}
-    </Form.Select>
+                      <Form.Select
+                        name="community"
+                        value={formData.community}
+                        onChange={handleInput}
+                        className="form-control-custom"
+                      >
+                        <option value="">Select Community</option>
+                        {communityOptions.map(c => (
+                          <option key={c.id} value={c.id}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </Form.Select>
 
-    <ErrorMessage>{errors.community}</ErrorMessage>
-  </Form.Group>
-</Col>
+                      <ErrorMessage>{errors.community}</ErrorMessage>
+                    </Form.Group>
+                  </Col>
 
                   <Col xs={12}>
                     <Form.Group>
@@ -518,8 +670,8 @@ setFormData({
                             {t("interviewPanel:select_members_hint")}
                           </div>
 
-                          {membersOptions.map(m => {
-                            const selected = Array.isArray(formData.members) && formData.members.includes(m);
+                          {availableMembersOptions.map(m => {
+                            const selected = Array.isArray(formData.members) && formData.members.includes(m.name);
                             return (
                               <div
                                 key={m}
@@ -536,7 +688,7 @@ setFormData({
                                   marginBottom: 6
                                 }}
                               >
-                                <div>{m}</div>
+                                <div>{m.name}</div>
                                 <div style={{ width: 20, textAlign: 'center' }}>
                                   {selected ? <span>✓</span> : null}
                                 </div>

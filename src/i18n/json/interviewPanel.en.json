@@ -9,7 +9,7 @@
   "panel_members": "Panel Members",
   "actions": "Actions",
   "no_records": "No Panels Found",
-
+  "community":"committe",
   "choose_add_method": "Choose to add manually or import from CSV/XLSX file",
   "manual_entry": "Manual Entry",
   "import_file": "Import File",

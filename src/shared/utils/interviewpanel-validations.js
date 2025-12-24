@@ -34,7 +34,12 @@ export function validatePanelMembers(members) {
 
   return null;
 }
-
+function validateCommunity(community) {
+  if (!community) {
+    return "committe is required";
+  }
+  return null;
+}
 
 export function validateInterviewPanelForm(formData = {}, options = {}) {
   const errors = {};
@@ -44,6 +49,9 @@ export function validateInterviewPanelForm(formData = {}, options = {}) {
   // --- normalize name ---
   const name = String(formData.name || '').trim();
 
+  // --- normalize community ---
+  const community = String(formData.community || '').trim();
+
   // --- normalize members to array ---
   let membersArray = [];
   if (Array.isArray(formData.members)) {
@@ -52,11 +60,15 @@ export function validateInterviewPanelForm(formData = {}, options = {}) {
     membersArray = formData.members.split(',').map(m => m.trim()).filter(Boolean);
   }
 
-  // name validation + uniqueness
+  // --- name validation + uniqueness ---
   const nameErr = validatePanelName(name, { existing, currentId });
   if (nameErr) errors.name = nameErr;
 
-  // members validation
+  // --- community validation ---
+  const communityErr = validateCommunity(community);
+  if (communityErr) errors.community = communityErr;
+
+  // --- members validation ---
   const memErr = validatePanelMembers(membersArray);
   if (memErr) errors.members = memErr;
 
@@ -65,11 +77,11 @@ export function validateInterviewPanelForm(formData = {}, options = {}) {
     errors,
     normalized: {
       name,
+      community,
       members: membersArray
     }
   };
 }
-
 
 export default {
   validatePanelName,
