@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+
 import masterApiService from "../../../services/masterApiService";
 import {
   mapCategoriesFromApi,
@@ -7,28 +9,31 @@ import {
 } from "../mappers/categoryMapper";
 
 export const useCategories = () => {
+  const { t } = useTranslation(["category"]);
   const [categories, setCategories] = useState([]);
 
   /* ================= FETCH ================= */
-const fetchCategories = async () => {
-  try {
-    const res = await masterApiService.getAllCategories();
+  const fetchCategories = async () => {
+    try {
+      const res = await masterApiService.getAllCategories();
 
-    const list = Array.isArray(res.data)
-      ? res.data
-      : res.data?.data || [];
+      const list = Array.isArray(res.data)
+        ? res.data
+        : res.data?.data || [];
 
-    const mapped = mapCategoriesFromApi(list);
+      const mapped = mapCategoriesFromApi(list);
 
-    // ✅ ALWAYS SHOW NEWLY ADDED ITEMS ON TOP
-    setCategories([...mapped].reverse());
-
-  } catch (error) {
-    toast.error("Failed to load categories");
-    setCategories([]);
-  }
-};
-
+      // ✅ newest first (persist after refresh)
+      setCategories(
+        [...mapped].sort(
+          (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+        )
+      );
+    } catch (error) {
+      toast.error(t("category:fetch_error"));
+      setCategories([]);
+    }
+  };
 
   useEffect(() => {
     fetchCategories();
@@ -41,24 +46,21 @@ const fetchCategories = async () => {
         mapCategoryToApi(payload)
       );
 
-      toast.success("Category added successfully");
-
-      // ✅ BUILD UI ITEM FROM API RESPONSE
+      toast.success(t("category:add_success"));
       const newItem = {
-        id: res?.data?.data?.reservationCategoriesId,
+        id: res?.data?.reservationCategoriesId,
         code: payload.code,
         name: payload.name,
         description: payload.description,
         createdDate: new Date().toISOString()
       };
 
-      // ✅ ADD TO TOP INSTANTLY
+      // ✅ add on top instantly
       setCategories(prev => [newItem, ...prev]);
-
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-        "Failed to add category"
+        t("category:add_error")
       );
     }
   };
@@ -68,18 +70,24 @@ const fetchCategories = async () => {
     try {
       await masterApiService.updateCategory(
         id,
-        mapCategoryToApi(payload)
+        mapCategoryToApi(payload, { id })
       );
 
-      toast.success("Category updated successfully");
+      toast.success(t("category:update_success"));
 
-      // refetch keeps correct order
-      fetchCategories();
+      // ✅ update in same position
+      setCategories(prev =>
+  prev.map(c =>
+    String(c.id) === String(id)
+      ? { ...c, ...payload, id: c.id }
+      : c
+  )
+);
 
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-        "Failed to update category"
+        t("category:update_error")
       );
     }
   };
@@ -89,22 +97,15 @@ const fetchCategories = async () => {
     try {
       await masterApiService.deleteCategory(id);
 
-      toast.success("Category deleted successfully");
+      toast.success(t("category:delete_success"));
 
-      // ✅ INSTANT UI UPDATE
       setCategories(prev => prev.filter(c => c.id !== id));
-
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-        "Failed to delete category"
+        t("category:delete_error")
       );
     }
-  };
-
-  /* ================= IMPORT ================= */
-  const importCategories = async (args) => {
-    console.warn("Import API not integrated yet", args);
   };
 
   return {
@@ -112,6 +113,6 @@ const fetchCategories = async () => {
     addCategory,
     updateCategory,
     deleteCategory,
-    importCategories
+    importCategories: () => {}
   };
 };

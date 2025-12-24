@@ -1,5 +1,7 @@
 // src/validators/jobgrade-validations.js
 import { requiredField, minLength, maxLength } from './common-validations';
+import i18n from 'i18next';
+
  
 /**
  * Normalize string for uniqueness checks
@@ -50,34 +52,69 @@ export const validateGradeCode = (gradeCode) => {
  
   return null;
 };
+
+
+
+export const validateMinSalary = (minSalary) => {
+  let error = requiredField(minSalary, 'Minimum salary');
+  if (error) return error;
+
+  const n = toNumberSafe(minSalary);
+  if (Number.isNaN(n)) {
+    return i18n.t('jobGrade:min_invalid_number');
+  }
+  if (n < 0) {
+    return i18n.t('jobGrade:min_negative_not_allowed');
+  }
+
+  return null;
+};
+
+export const validateMaxSalary = (maxSalary) => {
+  let error = requiredField(maxSalary, 'Maximum salary');
+  if (error) return error;
+
+  const n = toNumberSafe(maxSalary);
+  if (Number.isNaN(n)) {
+    return i18n.t('jobGrade:max_invalid_number');
+  }
+  if (n < 0) {
+    return i18n.t('jobGrade:max_negative_not_allowed');
+  }
+
+  return null;
+};
+
  
 /**
  * Minimum Salary
  */
-export const validateMinSalary = (minSalary) => {
-  let error = requiredField(minSalary, 'Minimum salary');
-  if (error) return error;
+// export const validateMinSalary = (minSalary) => {
+//   let error = requiredField(minSalary, 'Minimum salary');
+//   if (error) return error;
  
-  const n = toNumberSafe(minSalary);
-  if (Number.isNaN(n)) return 'Minimum salary must be a valid number';
-  if (n < 0) return 'Minimum salary cannot be negative';
+//   const n = toNumberSafe(minSalary);
+//   if (Number.isNaN(n)) return 'Minimum salary must be a valid number';
+//   if (n < 0) return 'Minimum salary cannot be negative';
  
-  return null;
-};
+//   return null;
+// };
  
+
+
 /**
  * Maximum Salary
  */
-export const validateMaxSalary = (maxSalary) => {
-  let error = requiredField(maxSalary, 'Maximum salary');
-  if (error) return error;
+// export const validateMaxSalary = (maxSalary) => {
+//   let error = requiredField(maxSalary, 'Maximum salary');
+//   if (error) return error;
  
-  const n = toNumberSafe(maxSalary);
-  if (Number.isNaN(n)) return 'Maximum salary must be a valid number';
-  if (n < 0) return 'Maximum salary cannot be negative';
+//   const n = toNumberSafe(maxSalary);
+//   if (Number.isNaN(n)) return 'Maximum salary must be a valid number';
+//   if (n < 0) return 'Maximum salary cannot be negative';
  
-  return null;
-};
+//   return null;
+// };
  
 /**
  * Description
@@ -123,8 +160,11 @@ export const validateJobGradeForm = (formData = {}, options = {}) => {
   const minNum = toNumberSafe(formData.minSalary);
   const maxNum = toNumberSafe(formData.maxSalary);
   if (!Number.isNaN(minNum) && !Number.isNaN(maxNum) && minNum > maxNum) {
-    errors.minSalary = errors.minSalary || 'Minimum salary must be ≤ maximum salary';
-    errors.maxSalary = errors.maxSalary || 'Maximum salary must be ≥ minimum salary';
+    errors.minSalary =
+    errors.minSalary || i18n.t('jobGrade:min_less_than_max');
+
+  errors.maxSalary =
+    errors.maxSalary || i18n.t('jobGrade:max_greater_than_min');
   }
  
   // ----- uniqueness checks (only if base validation passed) -----
@@ -134,17 +174,20 @@ export const validateJobGradeForm = (formData = {}, options = {}) => {
       normalize(e.scale) === scaleNorm &&
       (currentId == null || e.id !== currentId)
     );
-    if (duplicate) errors.scale = 'Scale already exists';
+     if (duplicate) {
+    errors.scale = i18n.t('jobGrade:scale_exists');
   }
- 
+}
   if (!errors.gradeCode) {
     const codeNorm = normalize(formData.gradeCode);
     const duplicate = existing.find(e =>
       normalize(e.gradeCode) === codeNorm &&
       (currentId == null || e.id !== currentId)
     );
-    if (duplicate) errors.gradeCode = 'Grade code already exists';
+     if (duplicate) {
+    errors.gradeCode = i18n.t('jobGrade:grade_code_exists');
   }
+}
  
   return {
     valid: Object.keys(errors).length === 0,

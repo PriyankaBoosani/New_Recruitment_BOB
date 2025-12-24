@@ -26,5 +26,18 @@
    "add_success": "विभाग सफलतापूर्वक जोड़ा गया",
     "update_success": "विभाग सफलतापूर्वक अपडेट किया गया",
     "delete_success": "विभाग सफलतापूर्वक हटाया गया",
-    "no_records": "कोई विभाग नहीं मिला।"
+    "no_records": "कोई विभाग नहीं मिला।",
+    "confirm_delete": "हटाने की पुष्टि",
+    "delete_message": "क्या आप इस विभाग को हटाना चाहते हैं?",
+    "delete": "हटाएँ",
+    "upload_categories": "श्रेणियाँ अपलोड करें",
+  "support_xlsx": "XLSX फ़ॉर्मैट का समर्थन",
+  "invalid_file": "कृपया एक मान्य Excel फ़ाइल अपलोड करें (.xlsx, .xls)",
+  "no_file_selected": "कृपया अपलोड करने के लिए फ़ाइल चुनें",
+ 
+  "reupload_xlsx": "XLSX पुनः अपलोड करें",
+  "remove": "हटाएँ",
+ 
+  "importing": "इम्पोर्ट हो रहा है...",
+  "import_error": "श्रेणियाँ इम्पोर्ट करने में विफल"
 }

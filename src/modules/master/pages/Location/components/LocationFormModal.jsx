@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import ErrorMessage from "../../../../../shared/components/ErrorMessage";
 import LocationImportModal from "./LocationImportModal";
+import i18n from "i18next";
+
 
 const LocationFormModal = ({
   show,
@@ -51,7 +53,7 @@ const handleInputChange = (e) => {
       <Modal.Header closeButton className="modal-header-custom">
         <div>
           <Modal.Title>
-            {isEditing ? t("edit") : t("add")}
+            {isEditing ? t("edit") : t("addd")}
           </Modal.Title>
           {!isEditing && (
             <p className="mb-0 small text-muted para">
@@ -138,23 +140,16 @@ const handleInputChange = (e) => {
               </Button>
             </Modal.Footer>
           </Form>
-        ) : (
-          <>
-            <LocationImportModal t={t} />
-
-            <Modal.Footer className="modal-footer-custom px-0">
-              <Button
-                variant="outline-secondary"
-                onClick={() => setActiveTab("manual")}
-              >
-                {t("cancel")}
-              </Button>
-              <Button variant="primary">
-                {t("import")}
-              </Button>
-            </Modal.Footer>
-          </>
-        )}
+      ) : (
+  <>
+    {/* Import view handles upload internally */}
+    <LocationImportModal
+      t={t}
+      onClose={onHide}
+    />
+  </>
+)
+}
       </Modal.Body>
     </Modal>
   );

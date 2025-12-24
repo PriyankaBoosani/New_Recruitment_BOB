@@ -53,35 +53,40 @@ const DepartmentFormModal = ({
         {activeTab === 'manual' ? (
           <Form onSubmit={handleSave}>
             <Row className="g-3">
-              <Col xs={12}>
-                <Form.Group className="form-group">
-                  <Form.Label>{t("name")} *</Form.Label>
-                  <Form.Control
-                    name="name"
-                    className="form-control-custom"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    placeholder={t("department:enterName")}
-                  />
-                  <ErrorMessage>{errors.name}</ErrorMessage>
-                </Form.Group>
-              </Col>
+             <Col xs={12}>
+  <Form.Group className="form-group">
+    <Form.Label>
+      {t("name")} <span className="text-danger">*</span>
+    </Form.Label>
+    <Form.Control
+      name="name"
+      className="form-control-custom"
+      value={formData.name}
+      onChange={handleInputChange}
+      placeholder={t("department:enterName")}
+    />
+    <ErrorMessage>{errors.name}</ErrorMessage>
+  </Form.Group>
+</Col>
 
-              <Col xs={12}>
-                <Form.Group className="form-group">
-                  <Form.Label>{t("description")} *</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    name="description"
-                    className="form-control-custom"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    placeholder={t("department:enterDescription")}
-                  />
-                  <ErrorMessage>{errors.description}</ErrorMessage>
-                </Form.Group>
-              </Col>
+<Col xs={12}>
+  <Form.Group className="form-group">
+    <Form.Label>
+      {t("description")} <span className="text-danger">*</span>
+    </Form.Label>
+    <Form.Control
+      as="textarea"
+      rows={3}
+      name="description"
+      className="form-control-custom"
+      value={formData.description}
+      onChange={handleInputChange}
+      placeholder={t("department:enterDescription")}
+    />
+    <ErrorMessage>{errors.description}</ErrorMessage>
+  </Form.Group>
+</Col>
+
             </Row>
 
             <Modal.Footer className="px-0 pt-3 pb-0 modal-footer-custom">

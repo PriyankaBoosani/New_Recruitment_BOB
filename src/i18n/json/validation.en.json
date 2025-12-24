@@ -8,5 +8,8 @@
   "invalidPincode": "Please enter a valid pincode",
   "nameExists": "This name already exists",
   "descriptionExists": "This description already exists",
-  "duplicate": "A name with this field already exists"
+  "duplicate": "A name with this field already exists",
+   "required": "This field is required",
+  "minLength": "Must be at least {{min}} characters",
+  "maxLength": "Must be at most {{max}} characters"
 }

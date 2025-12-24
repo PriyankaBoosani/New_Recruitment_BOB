@@ -59,12 +59,18 @@ const JobGradeFormModal = ({
             <Row className="g-3">
               <Col md={6}>
                 <Form.Group>
-                  <Form.Label>{t("scale")} *</Form.Label>
+                   <Form.Label>
+                     {t("scale")} <span className="text-danger">*</span>
+                   </Form.Label>
+                  
                   <Form.Control
                     name="scale"
                     value={formData.scale}
                     onChange={handleInputChange}
                     className="form-control-custom"
+                    placeholder={t("jobGrade:enter_scale")}
+
+                    
                   />
                   <ErrorMessage>{errors.scale}</ErrorMessage>
                 </Form.Group>
@@ -72,12 +78,17 @@ const JobGradeFormModal = ({
 
               <Col md={6}>
                 <Form.Group>
-                  <Form.Label>{t("gradeCode")} *</Form.Label>
+                   <Form.Label>
+                      {t("gradeCode")} <span className="text-danger">*</span>
+                   </Form.Label>
+                  
                   <Form.Control
                     name="gradeCode"
                     value={formData.gradeCode}
                     onChange={handleInputChange}
                     className="form-control-custom"
+                    placeholder={t("jobGrade:enter_grade_code")}
+
                   />
                   <ErrorMessage>{errors.gradeCode}</ErrorMessage>
                 </Form.Group>
@@ -85,12 +96,17 @@ const JobGradeFormModal = ({
 
               <Col md={6}>
                 <Form.Group>
-                  <Form.Label>{t("minSalary")} *</Form.Label>
+                   <Form.Label>
+                      {t("minSalary")} <span className="text-danger">*</span>
+                   </Form.Label>
+                    
                   <Form.Control
                     name="minSalary"
                     value={formData.minSalary}
                     onChange={handleInputChange}
                     className="form-control-custom"
+                    placeholder={t("jobGrade:enter_min_salary")}
+
                   />
                   <ErrorMessage>{errors.minSalary}</ErrorMessage>
                 </Form.Group>
@@ -98,12 +114,17 @@ const JobGradeFormModal = ({
 
               <Col md={6}>
                 <Form.Group>
-                  <Form.Label>{t("maxSalary")} *</Form.Label>
+                   <Form.Label>
+                     {t("maxSalary")} <span className="text-danger">*</span>
+                   </Form.Label>
+                  
                   <Form.Control
                     name="maxSalary"
                     value={formData.maxSalary}
                     onChange={handleInputChange}
                     className="form-control-custom"
+                    placeholder={t("jobGrade:enter_max_salary")}
+
                   />
                   <ErrorMessage>{errors.maxSalary}</ErrorMessage>
                 </Form.Group>
@@ -111,7 +132,10 @@ const JobGradeFormModal = ({
 
               <Col xs={12}>
                 <Form.Group>
-                  <Form.Label>{t("description")} *</Form.Label>
+                   <Form.Label>
+                    {t("description")} <span className="text-danger">*</span>
+                   </Form.Label>
+             
                   <Form.Control
                     as="textarea"
                     rows={3}
@@ -119,6 +143,8 @@ const JobGradeFormModal = ({
                     value={formData.description}
                     onChange={handleInputChange}
                     className="form-control-custom"
+                    placeholder={t("jobGrade:enter_description")}
+
                   />
                   <ErrorMessage>{errors.description}</ErrorMessage>
                 </Form.Group>
@@ -136,9 +162,9 @@ const JobGradeFormModal = ({
           </Form>
         ) : (
           <>
-            <JobGradeImportModal t={t} {...importProps} />
+            <JobGradeImportModal t={t} {...importProps} />  
             <Modal.Footer className="px-0 modal-footer-custom">
-              <Button variant="outline-secondary" onClick={onHide}>
+              <Button variant="outline-secondary" onCli ck={onHide}>
                 {t("cancel")}
               </Button>
               <Button variant="primary" onClick={handleImport}>

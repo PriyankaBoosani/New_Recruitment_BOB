@@ -49,27 +49,44 @@ const JobGradePage = () => {
   const [selectedCSVFile, setSelectedCSVFile] = useState(null);
   const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
 
-  const openAddModal = () => {
-    setIsEditing(false);
-    setFormData({
-      scale: '',
-      gradeCode: '',
-      minSalary: '',
-      maxSalary: '',
-      description: ''
-    });
-    setErrors({});
-    setActiveTab('manual');
-    setShowAddModal(true);
-  };
+ const openAddModal = () => {
+  setIsEditing(false);
+  setFormData({
+    scale: '',
+    gradeCode: '',
+    minSalary: '',
+    maxSalary: '',
+    description: ''
+  });
+  setErrors({});              // ✅ CLEAR OLD ERRORS
+  setActiveTab('manual');
+  setShowAddModal(true);
+};
+
+  // const openEditModal = (row) => {
+
+  //   setIsEditing(true);
+  //   setEditingId(row.id);
+  //   setFormData(row);
+  //   setActiveTab('manual');
+  //   setShowAddModal(true);
+  // };
 
   const openEditModal = (row) => {
-    setIsEditing(true);
-    setEditingId(row.id);
-    setFormData(row);
-    setActiveTab('manual');
-    setShowAddModal(true);
-  };
+  setIsEditing(true);
+  setEditingId(row.id);
+  setFormData({
+    scale: row.scale ?? '',
+    gradeCode: row.gradeCode ?? '',
+    minSalary: row.minSalary ?? '',
+    maxSalary: row.maxSalary ?? '',
+    description: row.description ?? ''
+  });
+  setErrors({});              // ✅ CLEAR OLD ERRORS
+  setActiveTab('manual');
+  setShowAddModal(true);
+};
+
 
   const handleSave = async (e) => {
     e.preventDefault();

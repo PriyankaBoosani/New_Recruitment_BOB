@@ -1,65 +1,73 @@
-// location-validations.js
+import i18n from "i18next";
+
 /**
- * Simple helpers similar to your common-validations
+ * Required field
  */
-export const requiredField = (val, label = 'Field') => {
-  if (val == null || String(val).trim() === '') return `${label} is required`;
+export const requiredField = (val) => {
+  if (val == null || String(val).trim() === "") {
+    return i18n.t("validation:required");
+  }
   return null;
 };
 
-export const minLength = (val, n, label = 'Field') => {
+/**
+ * Minimum length
+ */
+export const minLength = (val, n) => {
   if (val == null) return null;
-  if (String(val).trim().length < n) return `${label} must be at least ${n} characters`;
+  if (String(val).trim().length < n) {
+    return i18n.t("validation:minLength", { min: n });
+  }
   return null;
 };
 
-export const maxLength = (val, n, label = 'Field') => {
+/**
+ * Maximum length
+ */
+export const maxLength = (val, n) => {
   if (val == null) return null;
-  if (String(val).trim().length > n) return `${label} cannot exceed ${n} characters`;
+  if (String(val).trim().length > n) {
+    return i18n.t("validation:maxLength", { max: n });
+  }
   return null;
 };
 
-const normalize = (s = '') => String(s).trim().toLowerCase();
+const normalize = (s = "") => String(s).trim().toLowerCase();
 
 /**
  * Validate location name
- * @param {string} name
- * @returns {string|null}
  */
 export const validateLocationName = (name) => {
-  let err = requiredField(name, 'Location name');
+  let err = requiredField(name);
   if (err) return err;
-  err = minLength(name, 2, 'Location name');
+
+  err = minLength(name, 2);
   if (err) return err;
-  err = maxLength(name, 200, 'Location name');
+
+  err = maxLength(name, 200);
   if (err) return err;
+
   return null;
 };
 
 /**
- * Validate city (either cityId or cityName must be present)
- * @param {number|null} cityId
- * @param {string} cityName
- * @returns {string|null}
+ * Validate city
  */
 export const validateCity = (cityId, cityName) => {
-  if (cityId || (cityName && String(cityName).trim() !== '')) return null;
-  return 'City is required';
+  if (cityId || (cityName && String(cityName).trim() !== "")) return null;
+  return i18n.t("validation:required");
 };
 
 /**
- * Validate location form with uniqueness by (city, name)
- * options:
- *  - existing: array of existing locations [{id, cityId, cityName, name}]
- *  - currentId: id to exclude when editing
+ * Validate location form
  */
 export const validateLocationForm = (formData = {}, options = {}) => {
   const errors = {};
   const { existing = [], currentId = null } = options;
 
   const cityId = formData.cityId ?? null;
-  const cityName = formData.cityName ?? '';
-  const name = formData.name ?? '';
+  const cityName = formData.cityName ?? "";
+  const name = formData.name ?? "";
 
   const cErr = validateCity(cityId, cityName);
   if (cErr) errors.cityId = cErr;
@@ -67,19 +75,20 @@ export const validateLocationForm = (formData = {}, options = {}) => {
   const nErr = validateLocationName(name);
   if (nErr) errors.name = nErr;
 
-  // uniqueness: same cityName (case-insensitive) and same location name => duplicate
   if (!errors.name && !errors.cityId) {
     const nameNorm = normalize(name);
-    const cityNorm = normalize(cityName || ('' + cityId)); // cityName preferable
+    const cityNorm = normalize(cityName || String(cityId));
+
     const duplicate = existing.find(item => {
       if (!item || !item.name) return false;
-      if (currentId != null && item.id === currentId) return false;
-      const itemCity = normalize(item.cityName || (item.cityId || ''));
+      if (currentId && item.id === currentId) return false;
+
+      const itemCity = normalize(item.cityName || item.cityId);
       return itemCity === cityNorm && normalize(item.name) === nameNorm;
     });
 
     if (duplicate) {
-      errors.name = 'A location with this name already exists for the selected city';
+      errors.name = i18n.t("validation:duplicate");
     }
   }
 

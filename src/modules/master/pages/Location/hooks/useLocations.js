@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import i18n from "i18next";
 import { toast } from "react-toastify";
 import masterApiService from "../../../services/masterApiService";
 import {
@@ -55,27 +56,29 @@ export const useLocations = () => {
       fetchLocations(cities);
     }
   }, [cities]);
-
+  
   // ➕ Add
-  const addLocation = async (payload) => {
-    await masterApiService.addLocation(mapLocationToApi(payload));
-    await fetchLocations();
-    toast.success("Location added successfully");
-  };
+const addLocation = async (payload) => {
+  await masterApiService.addLocation(mapLocationToApi(payload));
+  await fetchLocations();
+  toast.success(i18n.t("add_success", { ns: "location" }));
+};
 
-  // ✏ Update
-  const updateLocation = async (id, payload) => {
-    await masterApiService.updateLocation(id, mapLocationToApi(payload));
-    await fetchLocations();
-    toast.success("Location updated successfully");
-  };
+// ✏ Update
+const updateLocation = async (id, payload) => {
+  await masterApiService.updateLocation(id, mapLocationToApi(payload));
+  await fetchLocations();
+  toast.success(i18n.t("update_success", { ns: "location" }));
+};
 
-  // ❌ Delete
-  const deleteLocation = async (id) => {
-    await masterApiService.deleteLocation(id);
-    await fetchLocations();
-    toast.success("Location deleted successfully");
-  };
+// ❌ Delete
+const deleteLocation = async (id) => {
+  await masterApiService.deleteLocation(id);
+  await fetchLocations();
+  toast.success(i18n.t("delete_success", { ns: "location" }));
+};
+
+
 
   return {
     locations,

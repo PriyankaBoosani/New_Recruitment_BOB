@@ -2,57 +2,67 @@
 
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
+
 import masterApiService from '../../../services/masterApiService';
 import { mapJobGradesFromApi } from '../mappers/jobGradeMapper';
 
 export const useJobGrades = () => {
+  const { t } = useTranslation(['jobGrade']);
   const [jobGrades, setJobGrades] = useState([]);
 
-const fetchJobGrades = async () => {
-  const res = await masterApiService.getAllJobGrades();
-  const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
+  const fetchJobGrades = async () => {
+    try {
+      const res = await masterApiService.getAllJobGrades();
+      const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
 
-  // ✅ Sort newest first
-  const sorted = [...list].sort((a, b) => {
-    const da = new Date(a.createdDate || 0).getTime();
-    const db = new Date(b.createdDate || 0).getTime();
-    return db - da;
-  });
+      const sorted = [...list].sort((a, b) => {
+        const da = new Date(a.createdDate || 0).getTime();
+        const db = new Date(b.createdDate || 0).getTime();
+        return db - da;
+      });
 
-  // ✅ ONLY SET ONCE
-  setJobGrades(mapJobGradesFromApi(sorted));
-};
-
+      setJobGrades(mapJobGradesFromApi(sorted));
+    } catch {
+      toast.error(t("fetch_error"));
+    }
+  };
 
   useEffect(() => {
     fetchJobGrades();
   }, []);
 
+  /* ================= ADD ================= */
   const addJobGrade = async (payload) => {
-  try {
-    await masterApiService.addJobGrade(payload);
-    await fetchJobGrades();
-    toast.success("Job Grade added successfully");
-  } catch (error) {
-    toast.error(
-      error?.response?.data?.message ||
-      error?.response?.data?.error ||
-      "Failed to add Job Grade"
-    );
-  }
-};
-
-
-  const updateJobGrade = async (id, payload) => {
-    await masterApiService.updateJobGrade(id, payload);
-    await fetchJobGrades();
-    toast.success("Job Grade updated successfully");
+    try {
+      await masterApiService.addJobGrade(payload);
+      await fetchJobGrades();
+      toast.success(t("add_success"));
+    } catch (error) {
+      toast.error(error?.response?.data?.message || t("add_error"));
+    }
   };
 
+  /* ================= UPDATE ================= */
+  const updateJobGrade = async (id, payload) => {
+    try {
+      await masterApiService.updateJobGrade(id, payload);
+      await fetchJobGrades();
+      toast.success(t("update_success"));
+    } catch (error) {
+      toast.error(error?.response?.data?.message || t("update_error"));
+    }
+  };
+
+  /* ================= DELETE ================= */
   const deleteJobGrade = async (id) => {
-    await masterApiService.deleteJobGrade(id);
-    await fetchJobGrades();
-    toast.success("Job Grade deleted successfully");
+    try {
+      await masterApiService.deleteJobGrade(id);
+      await fetchJobGrades();
+      toast.success(t("delete_success"));
+    } catch (error) {
+      toast.error(error?.response?.data?.message || t("delete_error"));
+    }
   };
 
   return {

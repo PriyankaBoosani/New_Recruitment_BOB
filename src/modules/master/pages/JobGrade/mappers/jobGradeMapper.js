@@ -1,5 +1,8 @@
 // src/modules/master/pages/JobGrade/mappers/jobGradeMapper.js
 
+// ------------------------------
+// API → UI
+// ------------------------------
 export const mapJobGradeFromApi = (api) => ({
   id: api.jobGradeId,
   scale: api.jobScale,
@@ -15,24 +18,27 @@ export const mapJobGradesFromApi = (apiData = []) => {
   return apiData.map(mapJobGradeFromApi);
 };
 
-export const mapJobGradeToApi = (ui) => ({
+// ------------------------------
+// helpers
+// ------------------------------
+const parseNumber = (value) => {
+  if (value === null || value === undefined) return 0;
+  return Number(String(value).replace(/,/g, ''));
+};
+
+const todayDate = () => new Date().toISOString().split('T')[0];
+
+// ------------------------------
+// UI → API (ADD / UPDATE)
+// ------------------------------
+export const mapJobGradeToApi = (ui, isEditing = false) => ({
+  ...(isEditing && { jobGradeId: ui.id }),
+  isActive: true,
   jobScale: ui.scale,
   jobGradeCode: ui.gradeCode,
-  minSalary: ui.minSalary,
-  maxSalary: ui.maxSalary,
-  jobGradeDesc: ui.description
+  jobGradeDesc: ui.description,
+  minSalary: parseNumber(ui.minSalary),
+  maxSalary: parseNumber(ui.maxSalary),
+  effectiveStateDate: todayDate(),
+  effectiveEndDate: todayDate()
 });
-
-
-
-// {
-//   "isActive": true,
-//   "jobGradeCode": "string",
-//   "jobGradeDesc": "string",
-//   "jobScale": "string",
-//   "minSalary": 0,
-//   "maxSalary": 0,
-//   "effectiveStateDate": "2025-12-19",
-//   "effectiveEndDate": "2025-12-19",
-//   "jobGradeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-// }

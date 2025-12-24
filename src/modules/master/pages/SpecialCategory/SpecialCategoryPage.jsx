@@ -88,17 +88,28 @@ const handleSave = (e) => {
     });
 
   if (!valid) {
-    setErrors(vErrors);   // ← this enables error messages
+    setErrors(vErrors);
     return;
   }
 
   setErrors({});
 
-  const payload = mapSpecialCategoryToApi(formData);
-  addCategory(payload);
+  const payload = mapSpecialCategoryToApi(
+    formData,
+    { id: editingId }
+  );
+
+  if (isEditing) {
+    // ✅ EDIT → update existing row
+    updateCategory(editingId, payload);
+  } else {
+    // ✅ ADD → create new row
+    addCategory(payload);
+  }
 
   setShowModal(false);
 };
+
 
 
   /* =====================

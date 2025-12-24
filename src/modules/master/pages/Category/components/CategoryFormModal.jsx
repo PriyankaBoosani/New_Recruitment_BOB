@@ -49,14 +49,16 @@ const CategoryFormModal = ({
   /* ---------------- SUBMIT ---------------- */
 const handleSubmit = (e) => {
   e.preventDefault();
-
+  console.log('isEditing:', isEditing);
+  console.log('editingCategory:', editingCategory);
+  console.log('categories:', categories);
   const { valid, errors: vErrors } = validateCategoryForm(formData, {
-    existing: categories,        // ✅ correct
-    currentId: editingCategory?.id
+    existing: categories,
+    currentId: isEditing ? editingCategory?.id : null   // 🔥 THIS LINE FIXES IT
   });
 
   if (!valid) {
-    setErrors(vErrors);          // ✅ correct
+    setErrors(vErrors);
     return;
   }
 
@@ -132,9 +134,13 @@ const handleSubmit = (e) => {
                   name="code"
                   value={formData.code}
                   placeholder={t("enter_code")}
-                  onChange={(e) =>
-                    setFormData({ ...formData, code: e.target.value })
-                  }
+                onChange={(e) => {
+  setFormData({ ...formData, code: e.target.value });
+  if (errors.code) {
+    setErrors(prev => ({ ...prev, code: null }));
+  }
+}}
+
                   className="form-control-custom"
                 />
                 <ErrorMessage>{errors.code}</ErrorMessage>
@@ -148,9 +154,13 @@ const handleSubmit = (e) => {
                   name="name"
                   value={formData.name}
                   placeholder={t("enter_name")}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
+                 onChange={(e) => {
+  setFormData({ ...formData, name: e.target.value });
+  if (errors.name) {
+    setErrors(prev => ({ ...prev, name: null }));
+  }
+}}
+
                   className="form-control-custom"
                 />
                 <ErrorMessage>{errors.name}</ErrorMessage>
@@ -167,12 +177,13 @@ const handleSubmit = (e) => {
                   name="description"
                   value={formData.description}
                   placeholder={t("enter_description")}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      description: e.target.value
-                    })
-                  }
+                 onChange={(e) => {
+  setFormData({ ...formData, description: e.target.value });
+  if (errors.description) {
+    setErrors(prev => ({ ...prev, description: null }));
+  }
+}}
+
                   className="form-control-custom"
                 />
                 <ErrorMessage>{errors.description}</ErrorMessage>

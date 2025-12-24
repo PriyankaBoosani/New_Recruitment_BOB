@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Button, Alert } from 'react-bootstrap';
-import { Upload as UploadIcon, Download } from 'react-bootstrap-icons';
-import { useDepartments } from '../hooks/useDepartments'; // Adjust path
+import { Upload as UploadIcon } from 'react-bootstrap-icons';
+import { useDepartments } from '../hooks/useDepartments';
 
 const DepartmentImportView = ({
   t,
-  onClose = () => { },
-  onSuccess = () => { }
+  onClose = () => {},
+  onSuccess = () => {}
 }) => {
   const { bulkAddDepartments, downloadDepartmentTemplate, loading } = useDepartments();
   const [selectedFile, setSelectedFile] = useState(null);
@@ -23,13 +23,13 @@ const DepartmentImportView = ({
       setSelectedFile(file);
       setError('');
     } else {
-      setError('Please upload a valid Excel file (.xlsx, .xls)');
+      setError(t("department:invalid_file"));
     }
   };
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      setError('Please select a file to upload');
+      setError(t("department:no_file_selected"));
       return;
     }
 
@@ -47,37 +47,68 @@ const DepartmentImportView = ({
     <div>
       <div className="import-area p-4 rounded" style={{ background: '#fceee9' }}>
         <div className="text-center mb-3">
-          <div style={{ width: 72, height: 72, borderRadius: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', marginBottom: '1rem' }}>
+          <div
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: 12,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: '#fff',
+              marginBottom: '1rem'
+            }}
+          >
             <UploadIcon size={32} />
           </div>
-          <h5 className="mb-2 uploadfile">Upload Departments</h5>
-          <p className="text-muted small">Support for XLSX formats</p>
+
+          <h5 className="mb-2 uploadfile">
+            {t("department:upload_departments")}
+          </h5>
+
+          <p className="text-muted small">
+            {t("department:support_xlsx")}
+          </p>
         </div>
 
         {error && <Alert variant="danger">{error}</Alert>}
 
-        <input id="upload-xlsx" type="file" accept=".xlsx,.xls" hidden onChange={handleFileChange} disabled={loading} />
+        <input
+          id="upload-xlsx"
+          type="file"
+          accept=".xlsx,.xls"
+          hidden
+          onChange={handleFileChange}
+          disabled={loading}
+        />
 
         <div className="text-center mb-3">
           <label htmlFor="upload-xlsx">
             <Button variant="primary" as="span" className="btnupload" disabled={loading}>
-              {selectedFile ? 'Reupload XLSX' : 'Upload XLSX'}
+              {selectedFile
+                ? t("department:reupload_xlsx")
+                : t("department:upload_xlsx")}
             </Button>
           </label>
 
           {selectedFile && (
             <div className="mt-2">
               <small className="text-muted d-block">{selectedFile.name}</small>
-              <Button variant="outline-danger" size="sm" className="mt-2" onClick={() => setSelectedFile(null)} disabled={loading}>
-                Remove
+              <Button
+                variant="outline-danger"
+                size="sm"
+                className="mt-2"
+                onClick={() => setSelectedFile(null)}
+                disabled={loading}
+              >
+                {t("department:remove")}
               </Button>
             </div>
           )}
         </div>
 
-        {/* Replace the existing Download Template button with this text link */}
         <div className="text-center mb-3 import-area small">
-          Download template: 
+          {t("department:download_template")}:
           <a
             href="#"
             onClick={(e) => {
@@ -86,17 +117,19 @@ const DepartmentImportView = ({
             }}
             className="text-primary text-decoration-none btnfont"
             style={{ cursor: 'pointer' }}
-          > XLSX
+          >
+            {" "}XLSX
           </a>
         </div>
       </div>
 
       <div className="d-flex justify-content-end gap-2 modal-footer-custom">
         <Button variant="outline-secondary" onClick={onClose} disabled={loading}>
-          {t ? t("cancel") : 'Cancel'}
+          {t("department:cancel")}
         </Button>
+
         <Button variant="primary" onClick={handleUpload} disabled={loading}>
-          {loading ? 'Importing...' : (t ? t("import") : 'Import')}
+          {loading ? t("department:importing") : t("department:import")}
         </Button>
       </div>
     </div>

@@ -8,7 +8,7 @@ import { useLocations } from "./hooks/useLocations";
 import { validateLocationForm } from "../../../../shared/utils/location-validations";
 import LocationTable from "./components/LocationTable";
 import LocationFormModal from "./components/LocationFormModal";
-import DeleteConfirmModal from "../Department/components/DeleteConfirmModal";
+import DeleteConfirmModal from "../Location/components/DeleteConfirmModal";
 
 
 const LocationPage = () => {
@@ -96,29 +96,28 @@ const handleSave = async (e) => {
   }
 };
 
+return (
+  <Container fluid className="user-container">
+    <div className="user-header">
+      <h2>{t("locations")}</h2>
 
-
-
-  return (
-    <Container fluid className="user-container">
-      <div className="user-header">
-        <h2>{t("locations")}</h2>
-
-        <div className="user-actions">
-          <div className="search-box">
-            <Search />
-            <Form.Control
-              placeholder={t("search_placeholder")}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-
-          <Button className="add-button" onClick={openAdd}>
-            <Plus /> {t("add")}
-          </Button>
+      <div className="user-actions">
+        <div className="search-box">
+          <Search className="search-icon" />
+          <Form.Control
+            placeholder={t("search_placeholder")}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
         </div>
+
+        <Button className="add-button" onClick={openAdd}>
+          <Plus size={20} /> {t("add")}
+        </Button>
       </div>
+    </div>
+
 
       <LocationTable
         data={locations}

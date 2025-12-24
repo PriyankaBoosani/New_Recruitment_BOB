@@ -79,7 +79,13 @@ export const validateCategoryForm = (formData = {}, options = {}) => {
 
     const duplicateCode = existing.find((c) => {
       if (!c?.code) return false;
-      if (currentId != null && c.id === currentId) return false;
+     if (
+  currentId != null &&
+  String(c.id) === String(currentId)
+) {
+  return false;
+}
+
       return normalize(c.code) === codeNorm;
     });
 
@@ -94,7 +100,13 @@ export const validateCategoryForm = (formData = {}, options = {}) => {
 
     const duplicateName = existing.find((c) => {
       if (!c?.name) return false;
-      if (currentId != null && c.id === currentId) return false;
+     if (
+  currentId != null &&
+  String(c.id) === String(currentId)
+) {
+  return false;
+}
+
       return normalize(c.name) === nameNorm;
     });
 

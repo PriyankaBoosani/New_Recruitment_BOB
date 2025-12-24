@@ -27,5 +27,18 @@
    "add_success": "Department added successfully",
     "update_success": "Department updated successfully",
     "delete_success": "Department deleted successfully",
-     "no_records": "No departments found"
+     "no_records": "No departments found",
+     "confirm_delete": "Confirm Delete",
+  "delete_message": "Are you sure you want to delete this department?",
+  "delete": "Delete",
+  "upload_categories": "Upload Categories",
+  "support_xlsx": "Support for XLSX formats",
+  "invalid_file": "Please upload a valid Excel file (.xlsx, .xls)",
+  "no_file_selected": "Please select a file to upload",
+ 
+  "reupload_xlsx": "Reupload XLSX",
+  "remove": "Remove",
+ 
+  "importing": "Importing...",
+  "import_error": "Failed to import categories"
 }

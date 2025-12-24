@@ -1,31 +1,42 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import { useTranslation } from "react-i18next";
 
 const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
-    return (
-        <Modal
-            show={show}
-            onHide={onHide}
-            centered
-            dialogClassName="delete-confirm-modal"
-        >
-            <Modal.Header closeButton>
-                <Modal.Title>Confirm Delete</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <p>Are you sure you want to delete this department?</p>
-                {target && (
-                    <div className="delete-confirm-user">
-                        <strong>{target.name}</strong>
-                    </div>
-                )}
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="outline-secondary" onClick={onHide}>Cancel</Button>
-                <Button variant="danger" onClick={onConfirm}>Delete</Button>
-            </Modal.Footer>
-        </Modal>
-    );
+  const { t } = useTranslation(["department"]);
+
+  return (
+    <Modal
+      show={show}
+      onHide={onHide}
+      centered
+      dialogClassName="delete-confirm-modal"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>{t("department:confirm_delete")}</Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+        <p>{t("department:delete_message")}</p>
+
+        {target && (
+          <div className="delete-confirm-user">
+            <strong>{target.name}</strong>
+          </div>
+        )}
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="outline-secondary" onClick={onHide}>
+          {t("department:cancel")}
+        </Button>
+
+        <Button variant="danger" onClick={onConfirm}>
+          {t("department:delete")}
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
 };
 
 export default DeleteConfirmModal;

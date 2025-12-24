@@ -1,6 +1,7 @@
 // components/LocationTable.jsx
 import React from "react";
-import { Table, Button, Pagination} from "react-bootstrap";
+import { useTranslation } from "react-i18next";
+import { Table, Button} from "react-bootstrap";
 import viewIcon from "../../../../../assets/view_icon.png";
 import editIcon from "../../../../../assets/edit_icon.png";
 import deleteIcon from "../../../../../assets/delete_icon.png";
@@ -14,6 +15,8 @@ import deleteIcon from "../../../../../assets/delete_icon.png";
       String(v || "").toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
+  const { t } = useTranslation(["location", "validation"]);
+
 
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
@@ -23,14 +26,17 @@ import deleteIcon from "../../../../../assets/delete_icon.png";
   return (
     <>
       <Table hover className="user-table">
-        <thead>
-          <tr>
-            <th>S.No</th>
-            <th>City</th>
-            <th>Location</th>
-            <th style={{ textAlign: "center" }}>Actions</th>
-          </tr>
-        </thead>
+     <thead>
+  <tr>
+    <th>{t("sno")}</th>
+    <th>{t("cityy")}</th>
+    <th>{t("location_name")}</th>
+    <th style={{ textAlign: "center" }}>
+      {t("actions")}
+    </th>
+  </tr>
+</thead>
+
         <tbody>
           {current.length ? (
             current.map((loc, idx) => (
@@ -78,31 +84,53 @@ import deleteIcon from "../../../../../assets/delete_icon.png";
       </Table>
       
 
-      {totalPages > 1 && (
-  <div className="d-flex justify-content-end mt-3">
-    <Pagination>
-      <Pagination.Prev
-        disabled={currentPage === 1}
-        onClick={() => setCurrentPage(currentPage - 1)}
-      />
+  {filtered.length > 0 && totalPages > 1 && (
+  <div className="pagination-container">
+    <nav>
+      <ul className="pagination">
 
-      {[...Array(totalPages)].map((_, i) => (
-        <Pagination.Item
-          key={i}
-          active={currentPage === i + 1}
-          onClick={() => setCurrentPage(i + 1)}
-        >
-          {i + 1}
-        </Pagination.Item>
-      ))}
+        {/* << Previous */}
+        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+          <button
+            className="page-link"
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            &laquo;
+          </button>
+        </li>
 
-      <Pagination.Next
-        disabled={currentPage === totalPages}
-        onClick={() => setCurrentPage(currentPage + 1)}
-      />
-    </Pagination>
+        {/* Page numbers */}
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
+          <li
+            key={number}
+            className={`page-item ${currentPage === number ? "active" : ""}`}
+          >
+            <button
+              className="page-link"
+              onClick={() => setCurrentPage(number)}
+            >
+              {number}
+            </button>
+          </li>
+        ))}
+
+        {/* >> Next */}
+        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+          <button
+            className="page-link"
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            &raquo;
+          </button>
+        </li>
+
+      </ul>
+    </nav>
   </div>
 )}
+
 
       
     </>
