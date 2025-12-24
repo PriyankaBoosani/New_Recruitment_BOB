@@ -1,29 +1,34 @@
 // src/modules/master/pages/Position/components/DeleteConfirmModal.jsx
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
+
 
 const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
+    const { t } = useTranslation(["position"]);
+  
   return (
     <Modal show={show} onHide={onHide} centered dialogClassName="delete-confirm-modal">
       <Modal.Header closeButton>
-        <Modal.Title>Confirm Delete</Modal.Title>
+        <Modal.Title>{t("position:confirm_delete")}</Modal.Title>
       </Modal.Header>
 
-      <Modal.Body>
-        <p>Are you sure you want to delete this record?</p>
+    
+       <Modal.Body>
+          <p>{t("position:delete_message")}</p>
         {target && (
-          <div className="delete-confirm-user">
-            <strong>{target.name}</strong>
-          </div>
-        )}
+                    <div className="delete-confirm-user">
+                        <strong>{target.title}</strong>
+                    </div>
+                )}
       </Modal.Body>
 
       <Modal.Footer>
         <Button variant="outline-secondary" onClick={onHide}>
-          Cancel
+           {t("position:cancel")}
         </Button>
         <Button variant="danger" onClick={onConfirm}>
-          Delete
+          {t("position:delete")}
         </Button>
       </Modal.Footer>
     </Modal>

@@ -4,8 +4,6 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import ErrorMessage from "../../../../../shared/components/ErrorMessage";
 import LocationImportModal from "./LocationImportModal";
-import i18n from "i18next";
-
 
 const LocationFormModal = ({
   show,
@@ -15,6 +13,7 @@ const LocationFormModal = ({
   setFormData,
   errors,
   cities,
+  setErrors,
   handleSave,
   t
 }) => {
@@ -35,10 +34,26 @@ const handleInputChange = (e) => {
       cityId: value,
       cityName: selectedCity?.name || ''
     }));
+
+    // ✅ clear cityId error
+    setErrors(prev => ({
+      ...prev,
+      cityId: ''
+    }));
   } else {
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // ✅ clear field-specific error
+    setErrors(prev => ({
+      ...prev,
+      [name]: ''
+    }));
   }
 };
+
 
 
   return (

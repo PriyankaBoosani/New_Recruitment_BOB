@@ -139,6 +139,7 @@ return (
   setFormData={setFormData}
   errors={errors}
   cities={cities}
+  setErrors={setErrors}
   handleSave={handleSave}
   t={t}
 />

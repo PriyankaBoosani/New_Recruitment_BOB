@@ -45,31 +45,48 @@ const CategoryFormModal = ({
     setErrors({});
     setActiveTab("manual");
   }, [editingCategory, show]);
+  const handleInputChange = (e) => {
+  const { name, value } = e.target;
+
+  setFormData(prev => ({
+    ...prev,
+    [name]: value
+  }));
+
+  // ✅ clear error for this field only
+  if (errors[name]) {
+    setErrors(prev => ({
+      ...prev,
+      [name]: null
+    }));
+  }
+};
+
 
   /* ---------------- SUBMIT ---------------- */
-const handleSubmit = (e) => {
-  e.preventDefault();
-  console.log('isEditing:', isEditing);
-  console.log('editingCategory:', editingCategory);
-  console.log('categories:', categories);
-  const { valid, errors: vErrors } = validateCategoryForm(formData, {
-    existing: categories,
-    currentId: isEditing ? editingCategory?.id : null   // 🔥 THIS LINE FIXES IT
-  });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('isEditing:', isEditing);
+    console.log('editingCategory:', editingCategory);
+    console.log('categories:', categories);
+    const { valid, errors: vErrors } = validateCategoryForm(formData, {
+      existing: categories,
+      currentId: isEditing ? editingCategory?.id : null   // 🔥 THIS LINE FIXES IT
+    });
 
-  if (!valid) {
-    setErrors(vErrors);
-    return;
-  }
+    if (!valid) {
+      setErrors(vErrors);
+      return;
+    }
 
-  if (isEditing) {
-    onUpdate(editingCategory.id, formData);
-  } else {
-    onSave(formData);
-  }
+    if (isEditing) {
+      onUpdate(editingCategory.id, formData);
+    } else {
+      onSave(formData);
+    }
 
-  onHide();
-};
+    onHide();
+  };
 
 
   return (
@@ -102,9 +119,8 @@ const handleSubmit = (e) => {
           <div className="tab-buttons mb-4">
             <Button
               variant={activeTab === "manual" ? "light" : "outline-light"}
-              className={`tab-button ${
-                activeTab === "manual" ? "active" : ""
-              }`}
+              className={`tab-button ${activeTab === "manual" ? "active" : ""
+                }`}
               onClick={() => setActiveTab("manual")}
             >
               {t("manual_entry")}
@@ -112,9 +128,8 @@ const handleSubmit = (e) => {
 
             <Button
               variant={activeTab === "import" ? "light" : "outline-light"}
-              className={`tab-button ${
-                activeTab === "import" ? "active" : ""
-              }`}
+              className={`tab-button ${activeTab === "import" ? "active" : ""
+                }`}
               onClick={() => setActiveTab("import")}
             >
               {t("import_file")}
@@ -134,12 +149,7 @@ const handleSubmit = (e) => {
                   name="code"
                   value={formData.code}
                   placeholder={t("enter_code")}
-                onChange={(e) => {
-  setFormData({ ...formData, code: e.target.value });
-  if (errors.code) {
-    setErrors(prev => ({ ...prev, code: null }));
-  }
-}}
+                  onChange={handleInputChange}
 
                   className="form-control-custom"
                 />
@@ -154,12 +164,7 @@ const handleSubmit = (e) => {
                   name="name"
                   value={formData.name}
                   placeholder={t("enter_name")}
-                 onChange={(e) => {
-  setFormData({ ...formData, name: e.target.value });
-  if (errors.name) {
-    setErrors(prev => ({ ...prev, name: null }));
-  }
-}}
+                  onChange={handleInputChange}
 
                   className="form-control-custom"
                 />
@@ -177,12 +182,7 @@ const handleSubmit = (e) => {
                   name="description"
                   value={formData.description}
                   placeholder={t("enter_description")}
-                 onChange={(e) => {
-  setFormData({ ...formData, description: e.target.value });
-  if (errors.description) {
-    setErrors(prev => ({ ...prev, description: null }));
-  }
-}}
+                  onChange={handleInputChange}
 
                   className="form-control-custom"
                 />

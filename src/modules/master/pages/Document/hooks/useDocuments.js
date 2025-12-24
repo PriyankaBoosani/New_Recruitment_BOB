@@ -4,8 +4,11 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import masterApiService from '../../../services/masterApiService';
 import { mapDocumentsFromApi } from '../mappers/documentMapper';
+import { useTranslation } from 'react-i18next';
 
 export const useDocuments = () => {
+    const { t } = useTranslation(["documents", "validation"]);
+
   const [documents, setDocuments] = useState([]);
 
 const fetchDocuments = async () => {
@@ -30,19 +33,19 @@ const fetchDocuments = async () => {
   const addDocument = async (payload) => {
     await masterApiService.addDocumentType(payload);
     await fetchDocuments();
-    toast.success("Document added successfully");
+    toast.success(t("documents:document_added_successfully"));
   };
 
   const updateDocument = async (id, payload) => {
     await masterApiService.updateDocumentType(id, payload);
     await fetchDocuments();
-    toast.success("Document updated successfully");
+    toast.success(t("documents:document_updated_successfully"));
   };
 
   const deleteDocument = async (id) => {
     await masterApiService.deleteDocumentType(id);
     await fetchDocuments();
-    toast.success("Document deleted successfully");
+    toast.success(t("documents:document_deleted_successfully"));
   };
 
   return {

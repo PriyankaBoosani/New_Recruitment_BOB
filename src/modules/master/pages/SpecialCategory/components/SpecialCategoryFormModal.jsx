@@ -14,13 +14,29 @@ const SpecialCategoryFormModal = ({
   formData,
   setFormData,
   errors,
+  setErrors,
   handleSave,
   handleImport,
   t,
   ...importProps
 }) => {
-  const handleChange = (e) =>
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e) => {
+  const { name, value } = e.target;
+
+  setFormData(prev => ({
+    ...prev,
+    [name]: value
+  }));
+
+  // ✅ clear error for this field only
+  if (errors[name]) {
+    setErrors(prev => ({
+      ...prev,
+      [name]: null
+    }));
+  }
+};
+
 
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">

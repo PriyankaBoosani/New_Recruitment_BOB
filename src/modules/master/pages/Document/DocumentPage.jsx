@@ -151,6 +151,7 @@ const DocumentPage = () => {
         formData={formData}
         setFormData={setFormData}
         errors={errors}
+        setErrors={setErrors}
         handleSave={handleSave}
         handleImport={handleImport}
         selectedCSVFile={selectedCSVFile}

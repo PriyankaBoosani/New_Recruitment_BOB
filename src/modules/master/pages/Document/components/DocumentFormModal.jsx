@@ -14,11 +14,29 @@ const DocumentFormModal = ({
   formData,
   setFormData,
   errors,
+  setErrors,
   handleSave,
   handleImport,
   t,
   ...importProps
 }) => {
+  const handleChange = (e) => {
+  const { name, value } = e.target;
+
+  setFormData(prev => ({
+    ...prev,
+    [name]: value
+  }));
+
+  // ✅ clear error for this field only
+  if (errors[name]) {
+    setErrors(prev => ({
+      ...prev,
+      [name]: null
+    }));
+  }
+};
+
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
       <Modal.Header closeButton className="modal-header-custom">
@@ -64,9 +82,7 @@ const DocumentFormModal = ({
                   <Form.Control
                     name="name"
                     value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
+                     onChange={handleChange}
                     className="form-control-custom"
                   />
                   <ErrorMessage>{errors.name}</ErrorMessage>
@@ -83,9 +99,7 @@ const DocumentFormModal = ({
                     rows={3}
                     name="description"
                     value={formData.description}
-                    onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
-                    }
+                     onChange={handleChange}
                     className="form-control-custom"
                   />
                   <ErrorMessage>{errors.description}</ErrorMessage>
@@ -103,17 +117,11 @@ const DocumentFormModal = ({
             </Modal.Footer>
           </Form>
         ) : (
-          <>
-            <DocumentImportModal t={t} {...importProps} />
-            <Modal.Footer className="modal-footer-custom px-0">
-              <Button variant="outline-secondary" onClick={onHide}>
-                {t("cancel")}
-              </Button>
-              <Button variant="primary" onClick={handleImport}>
-                {t("import")}
-              </Button>
-            </Modal.Footer>
-          </>
+          <DocumentImportModal
+            t={t}
+            onClose={onHide}
+            onSuccess={importProps.onSuccess}
+          />
         )}
       </Modal.Body>
     </Modal>

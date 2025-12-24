@@ -61,10 +61,7 @@ export const validateRequisitionForm = (formData, file) => {
 
   // Validate description
   error = requiredField(formData.description, 'This feild');
-  if (!error) {
-    error = minLength(formData.description, 10, 'This feild') || 
-            maxLength(formData.description, 1000, 'This feild');
-  }
+ 
   if (error) errors.description = error;
 
   // Validate dates

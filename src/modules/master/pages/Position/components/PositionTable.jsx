@@ -109,23 +109,41 @@ const PositionTable = ({
 
       {filtered.length > 0 && (
         <div className="pagination-container">
-          <ul className="pagination">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <li
-                key={i}
-                className={`page-item ${
-                  currentPage === i + 1 ? "active" : ""
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(i + 1)}
+          <nav>
+            <ul className="pagination">
+              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                <button 
+                  className="page-link" 
+                  onClick={() => setCurrentPage(currentPage - 1)} 
+                  disabled={currentPage === 1}
                 >
-                  {i + 1}
+                  &laquo;
                 </button>
               </li>
-            ))}
-          </ul>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
+                <li 
+                  key={number} 
+                  className={`page-item ${currentPage === number ? 'active' : ''}`}
+                >
+                  <button 
+                    className="page-link" 
+                    onClick={() => setCurrentPage(number)}
+                  >
+                    {number}
+                  </button>
+                </li>
+              ))}
+              <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                <button 
+                  className="page-link" 
+                  onClick={() => setCurrentPage(currentPage + 1)} 
+                  disabled={currentPage === totalPages}
+                >
+                  &raquo;
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
       )}
     </>

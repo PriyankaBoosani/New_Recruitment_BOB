@@ -169,9 +169,20 @@ const JobGradePage = () => {
         setActiveTab={setActiveTab}
         formData={formData}
         errors={errors}
-        handleInputChange={(e) =>
-          setFormData({ ...formData, [e.target.name]: e.target.value })
-        }
+        handleInputChange={(e) => {
+          const { name, value } = e.target;
+
+          setFormData(prev => ({
+            ...prev,
+            [name]: value
+          }));
+
+          // ✅ clear error for this field only
+          setErrors(prev => ({
+            ...prev,
+            [name]: ''
+          }));
+        }}
         handleSave={handleSave}
         handleImport={handleImport}
         selectedCSVFile={selectedCSVFile}

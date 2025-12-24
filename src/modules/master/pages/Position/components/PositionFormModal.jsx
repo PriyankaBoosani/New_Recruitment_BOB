@@ -109,20 +109,20 @@ const PositionFormModal = ({
 
 
                   <Form.Select
-  name="departmentId"
-  value={formData.departmentId}
-  onChange={handleInputChange}
-  className="form-control-custom"
->
-  <option value="">{t("select_department")}</option>
-  {departments.map(d => (
-    <option key={d.id} value={d.id}>
-      {d.name}
-    </option>
-  ))}
-</Form.Select>
+                    name="departmentId"
+                    value={formData.departmentId}
+                    onChange={handleInputChange}
+                    className="form-control-custom"
+                  >
+                    <option value="">{t("select_department")}</option>
+                    {departments.map(d => (
+                      <option key={d.id} value={d.id}>
+                        {d.name}
+                      </option>
+                    ))}
+                  </Form.Select>
 
-                <ErrorMessage>{errors.departmentId}</ErrorMessage>
+                  <ErrorMessage>{errors.departmentId}</ErrorMessage>
 
 
                 </Form.Group>
@@ -133,23 +133,23 @@ const PositionFormModal = ({
                   <Form.Label>
                     {t("job_grade")} <span className="text-danger">*</span>
                   </Form.Label>
-                 <Form.Select
-  name="jobGradeId"
-  value={formData.jobGradeId}
-  onChange={handleInputChange}
-  className="form-control-custom"
->
-  <option value="">{t("select_job_grade")}</option>
- {jobGrades.map(g => (
-  <option key={g.id} value={g.id}>
-  {g.gradeCode}
-</option>
+                  <Form.Select
+                    name="jobGradeId"
+                    value={formData.jobGradeId}
+                    onChange={handleInputChange}
+                    className="form-control-custom"
+                  >
+                    <option value="">{t("select_job_grade")}</option>
+                    {jobGrades.map(g => (
+                      <option key={g.id} value={g.id}>
+                        {g.gradeCode}
+                      </option>
 
-))}
+                    ))}
 
-</Form.Select>
+                  </Form.Select>
 
-<ErrorMessage>{errors.jobGradeId}</ErrorMessage>
+                  <ErrorMessage>{errors.jobGradeId}</ErrorMessage>
                 </Form.Group>
               </Col>
 

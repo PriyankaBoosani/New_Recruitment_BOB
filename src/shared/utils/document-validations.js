@@ -1,41 +1,93 @@
-// src/validators/document-validations.js
+import { requiredField, minLength, maxLength } from './common-validations';
+import i18n from 'i18next';
 
-const isEmpty = (v) => v === null || v === undefined || String(v).trim() === '';
+/**
+ * Normalize string for uniqueness comparison
+ */
+const normalizeName = (s = '') => String(s).trim().toLowerCase();
 
-export function validateName(name, { existing = [], currentId = null } = {}) {
-  const n = String(name || '').trim();
-  if (isEmpty(n)) return 'Document name is required';
-  if (n.length < 2) return 'Document name must be at least 2 characters';
-  if (n.length > 150) return 'Document name must be at most 150 characters';
+/**
+ * Validate document name
+ */
+export const validateDocumentName = (name) => {
+  let error = requiredField(name, i18n.t('validation:document_name_required'));
+  if (error) return error;
 
-  const dup = existing.find(it => String(it.name || '').trim().toLowerCase() === n.toLowerCase() && (currentId == null || it.id !== currentId));
-  if (dup) return 'Document name must be unique';
+  error = minLength(name, 2, i18n.t('validation:document_name_min'));
+  if (error) return error;
+
+  error = maxLength(name, 150, i18n.t('validation:document_name_max'));
+  if (error) return error;
+
   return null;
-}
+};
 
-export function validateDescription(desc) {
-  if (isEmpty(desc)) return null;
-  const d = String(desc);
-  if (d.length > 500) return 'Description must be at most 500 characters';
+/**
+ * Validate document description (optional)
+ */
+export const validateDocumentDescription = (description) => {
+  let error = requiredField(
+    description,
+    i18n.t('validation:document_description_required')
+  );
+  if (error) return error;
+
+  error = minLength(
+    description,
+    5,
+    i18n.t('validation:document_description_min')
+  );
+  if (error) return error;
+
+  error = maxLength(
+    description,
+    500,
+    i18n.t('validation:document_description_max')
+  );
+  if (error) return error;
+
   return null;
-}
+};
 
-export function validateDocumentForm(formData = {}, options = {}) {
+
+/**
+ * Validate complete document form
+ */
+export const validateDocumentForm = (formData = {}, options = {}) => {
   const errors = {};
-  const existing = options.existing || [];
-  const currentId = options.currentId ?? null;
+  const { existing = [], currentId = null } = options;
 
-  const nameErr = validateName(formData.name, { existing, currentId });
-  if (nameErr) errors.name = nameErr;
+  // Name validation
+  const nameError = validateDocumentName(formData.name);
+  if (nameError) errors.name = nameError;
 
-  const descErr = validateDescription(formData.description);
-  if (descErr) errors.description = descErr;
+  // Description validation
+  const descError = validateDocumentDescription(formData.description);
+  if (descError) errors.description = descError;
 
-  return { valid: Object.keys(errors).length === 0, errors };
-}
+  // Uniqueness check
+  if (!errors.name && formData.name) {
+    const nameNorm = normalizeName(formData.name);
+
+    const duplicate = existing.find(doc => {
+      if (!doc?.name) return false;
+      if (currentId != null && doc.id === currentId) return false;
+      return normalizeName(doc.name) === nameNorm;
+    });
+
+    if (duplicate) {
+      errors.name = i18n.t('validation:duplicate');
+    }
+  }
+
+  return {
+    valid: Object.keys(errors).length === 0,
+    errors
+  };
+};
 
 export default {
   validateDocumentForm,
-  validateName,
-  validateDescription
+  validateDocumentName,
+  validateDocumentDescription
 };

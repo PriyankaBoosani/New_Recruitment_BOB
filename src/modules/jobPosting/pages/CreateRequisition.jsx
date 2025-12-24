@@ -31,38 +31,38 @@ const CreateRequisition = () => {
             const d = new Date(value);
             d.setDate(d.getDate() + 21);
             updated.endDate = formatDate(d);
+
         }
+
         setFormData(updated);
     };
     const [indentFile, setIndentFile] = useState(null);
     const fileInputRef = useRef(null);
     const handleSave = (e) => {
-  e?.preventDefault();
-  
-  // Validate the form using the validation function
-  const { valid, errors } = validateRequisitionForm(formData, indentFile);
-  
-  // Update errors state
-  setErrors(errors);
+        e?.preventDefault();
 
-  if (valid) {
-    console.log('Form is valid, submitting...', {
-      ...formData,
-      file: indentFile
-    });
-    // TODO: Add your form submission logic here
-  } else {
-    // Scroll to the first error
-    const firstError = Object.keys(errors)[0];
-    if (firstError) {
-      const element = document.querySelector(`[name="${firstError}"]`) || 
-                     document.querySelector('.upload-box');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }
-  }
-};
+        const { valid, errors } = validateRequisitionForm(formData, indentFile);
+        setErrors(errors);
+
+        if (valid) {
+            console.log('Form is valid, submitting...', {
+                ...formData,
+                file: indentFile
+            });
+            // TODO: Add your form submission logic here
+        } else {
+            // Scroll to the first error
+            const firstError = Object.keys(errors)[0];
+            if (firstError) {
+                const element = document.querySelector(`[name="${firstError}"]`) ||
+                    document.querySelector('.upload-box');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }
+    };
+
 
 
     return (
@@ -119,47 +119,47 @@ const CreateRequisition = () => {
 
                             <Col md={6}>
                                 <Form.Group>
-    <Form.Label>Upload Indent <span className="text-danger">*</span></Form.Label>
-    <div
-        className={`upload-box ${errors.indentFile ? 'is-invalid' : ''}`}
-        onClick={() => fileInputRef.current.click()}
-    >
-        <div className="upload-icon">⬆</div>
-        <p>
-            Drag & drop your file here, or
-            <span className="upload-link"> Click to Upload</span>
-        </p>
-        <small>Supported formats: PDF, DOC, PNG, JPG (Max 5 MB)</small>
-        {indentFile && (
-            <div className="selected-file">
-                📄 {indentFile.name}
-            </div>
-        )}
-    </div>
-    {errors.indentFile && (
-        <div className="invalid-feedback d-block">
-            {errors.indentFile}
-        </div>
-    )}
-    <input
-        type="file"
-        ref={fileInputRef}
-        hidden
-        accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-        onChange={(e) => {
-            const file = e.target.files[0];
-            setIndentFile(file);
-            // Clear file error when new file is selected
-            if (errors.indentFile) {
-                setErrors(prev => {
-                    const newErrors = { ...prev };
-                    delete newErrors.indentFile;
-                    return newErrors;
-                });
-            }
-        }}
-    />
-</Form.Group>
+                                    <Form.Label>Upload Indent <span className="text-danger">*</span></Form.Label>
+                                    <div
+                                        className={`upload-box ${errors.indentFile ? 'is-invalid' : ''}`}
+                                        onClick={() => fileInputRef.current.click()}
+                                    >
+                                        <div className="upload-icon">⬆</div>
+                                        <p>
+                                            Drag & drop your file here, or
+                                            <span className="upload-link"> Click to Upload</span>
+                                        </p>
+                                        <small>Supported formats: PDF, DOC, PNG, JPG (Max 5 MB)</small>
+                                        {indentFile && (
+                                            <div className="selected-file">
+                                                📄 {indentFile.name}
+                                            </div>
+                                        )}
+                                    </div>
+                                    {errors.indentFile && (
+                                        <div className="invalid-feedback d-block">
+                                            {errors.indentFile}
+                                        </div>
+                                    )}
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        hidden
+                                        accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                                        onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            setIndentFile(file);
+                                            // Clear file error when new file is selected
+                                            if (errors.indentFile) {
+                                                setErrors(prev => {
+                                                    const newErrors = { ...prev };
+                                                    delete newErrors.indentFile;
+                                                    return newErrors;
+                                                });
+                                            }
+                                        }}
+                                    />
+                                </Form.Group>
                             </Col>
                         </Row>
 
@@ -176,35 +176,41 @@ const CreateRequisition = () => {
                                             value={formData.startDate}
                                             onChange={handleChange}
                                             isInvalid={!!errors.startDate}
+                                            min={new Date().toISOString().split('T')[0]}
                                         />
-                                      
+
                                         <Form.Control.Feedback type="invalid">
                                             {errors.startDate}
                                         </Form.Control.Feedback>
                                     </div>
+                                    <Form.Text muted>
+                                        Date from which candidates can start applying.
+                                    </Form.Text>
                                 </Form.Group>
                             </Col>
 
                             <Col md={6}>
                                 <Form.Group>
-    <Form.Label>
-        End Date <span className="text-danger">*</span>
-    </Form.Label>
-    <div className="date-input">
-        <Form.Control
-            type="date"
-            name="endDate"
-            value={formData.endDate}
-            onChange={handleChange}
-            min={formData.startDate}
-            isInvalid={!!errors.endDate}
-        />
-   
-        <Form.Control.Feedback type="invalid">
-            {errors.endDate}
-        </Form.Control.Feedback>
-    </div>
-</Form.Group>
+                                    <Form.Label>
+                                        End Date <span className="text-danger">*</span>
+                                    </Form.Label>
+                                    <div className="date-input">
+                                        <Form.Control
+                                            type="date"
+                                            name="endDate"
+                                            value={formData.endDate}
+                                            onChange={handleChange}
+                                            min={formData.startDate}
+                                            isInvalid={!!errors.endDate}
+                                        />
+
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors.endDate}
+                                        </Form.Control.Feedback>
+                                    </div>
+                                    <Form.Text muted>
+                                        ⓘ Standard duration: 21 days.
+                                    </Form.Text>                                </Form.Group>
                             </Col>
                         </Row>
                     </Form>

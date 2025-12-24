@@ -60,58 +60,55 @@ const SpecialCategoryPage = () => {
   /* =====================
      EDIT (IMPORTANT FIX)
   ====================== */
-const openEdit = (row) => {
-  setIsEditing(true);
-  setEditingId(row.id);
+  const openEdit = (row) => {
+    setIsEditing(true);
+    setEditingId(row.id);
 
-  setFormData({
-    code: row.code || '',
-    name: row.name || '',
-    description: row.description || ''
-  });
+    setFormData({
+      code: row.code || '',
+      name: row.name || '',
+      description: row.description || ''
+    });
 
-  setErrors({});
-  setActiveTab('manual');
-  setShowModal(true);
-};
+    setErrors({});
+    setActiveTab('manual');
+    setShowModal(true);
+  };
 
   /* =====================
      SAVE
   ====================== */
-const handleSave = (e) => {
-  e.preventDefault();
+  const handleSave = (e) => {
+    e.preventDefault();
 
-  const { valid, errors: vErrors } =
-    validateSpecialCategoryForm(formData, {
-      existing: categories,
-      currentId: isEditing ? editingId : null
-    });
+    const { valid, errors: vErrors } =
+      validateSpecialCategoryForm(formData, {
+        existing: categories,
+        currentId: isEditing ? editingId : null
+      });
 
-  if (!valid) {
-    setErrors(vErrors);
-    return;
-  }
+    if (!valid) {
+      setErrors(vErrors);
+      return;
+    }
 
-  setErrors({});
+    setErrors({});
 
-  const payload = mapSpecialCategoryToApi(
-    formData,
-    { id: editingId }
-  );
+    const payload = mapSpecialCategoryToApi(
+      formData,
+      { id: editingId }
+    );
 
-  if (isEditing) {
-    // ✅ EDIT → update existing row
-    updateCategory(editingId, payload);
-  } else {
-    // ✅ ADD → create new row
-    addCategory(payload);
-  }
+    if (isEditing) {
+      // ✅ EDIT → update existing row
+      updateCategory(editingId, payload);
+    } else {
+      // ✅ ADD → create new row
+      addCategory(payload);
+    }
 
-  setShowModal(false);
-};
-
-
-
+    setShowModal(false);
+  };
   /* =====================
      IMPORT
   ====================== */
@@ -179,6 +176,7 @@ const handleSave = (e) => {
         formData={formData}
         setFormData={setFormData}
         errors={errors}
+        setErrors={setErrors}
         handleSave={handleSave}
         handleImport={handleImport}
         selectedCSVFile={selectedCSVFile}

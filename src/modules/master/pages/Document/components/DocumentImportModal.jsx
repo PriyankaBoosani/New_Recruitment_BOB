@@ -1,84 +1,127 @@
-// src/modules/master/pages/Document/components/DocumentImportModal.jsx
-
-import React from 'react';
-import { Button } from 'react-bootstrap';
-import { Upload as UploadIcon } from 'react-bootstrap-icons';
-import { FileMeta, downloadTemplate } from '../../../../../shared/components/FileUpload';
+import React, { useState } from 'react';
+import { Button, Alert } from 'react-bootstrap';
+import { Upload as UploadIcon, Download } from 'react-bootstrap-icons';
+import { useDocuments } from '../hooks/useDocuments';
+import { downloadTemplate } from '../../../../../shared/components/FileUpload';
 
 const DocumentImportModal = ({
-  t,
-  selectedCSVFile,
-  selectedXLSXFile,
-  onSelectCSV,
-  onSelectXLSX,
-  removeCSV,
-  removeXLSX
+  t = (key) => key, // Default translation function
+  onClose = () => {},
+  onSuccess = () => {}
 }) => {
+  const { bulkAddDocuments, downloadDocumentTemplate, loading } = useDocuments();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [error, setError] = useState('');
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    const isExcel = file && (
+      file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+      file.type === 'application/vnd.ms-excel' ||
+      file.name.endsWith('.xlsx') ||
+      file.name.endsWith('.xls')
+    );
+
+    if (isExcel) {
+      setSelectedFile(file);
+      setError('');
+    } else {
+      setError('Please upload a valid Excel file (.xlsx, .xls)');
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      setError('Please select a file to upload');
+      return;
+    }
+
+    const result = await bulkAddDocuments(selectedFile);
+
+    if (result.success) {
+      onSuccess();
+      onClose();
+    } else {
+      setError(result.error || 'Failed to import documents');
+    }
+  };
+
   return (
-    <div className="import-area p-4 rounded" style={{ background: '#fceee9' }}>
-      <div className="text-center mb-3">
-        <div className="upload-icon-box">
-          <UploadIcon size={32} />
+    <div>
+      <div className="import-area p-4 rounded" style={{ background: '#fceee9' }}>
+        <div className="text-center mb-3">
+          <div style={{ 
+            width: 72, 
+            height: 72, 
+            borderRadius: 12, 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            background: '#fff', 
+            marginBottom: '1rem' 
+          }}>
+            <UploadIcon size={32} />
+          </div>
+          <h5 className="mb-2">{t('upload_documents') || 'Upload Documents'}</h5>
+          <p className="text-muted small">Support for XLSX formats</p>
         </div>
-        <h5 className="uploadfile">{t("upload_file")}</h5>
-        <p className="text-muted small">{t("support_csv_xlsx")}</p>
+
+        {error && <Alert variant="danger" className="text-center">{error}</Alert>}
+
+        <input 
+          id="upload-xlsx" 
+          type="file" 
+          accept=".xlsx,.xls" 
+          hidden 
+          onChange={handleFileChange} 
+          disabled={loading} 
+        />
+
+        <div className="text-center mb-3">
+          <label htmlFor="upload-xlsx">
+            <Button variant="primary" as="span" className="btnupload" disabled={loading}>
+              {selectedFile ? 'Reupload XLSX' : 'Upload XLSX'}
+            </Button>
+          </label>
+
+          {selectedFile && (
+            <div className="mt-2">
+              <small className="text-muted d-block">{selectedFile.name}</small>
+              <Button 
+                variant="outline-danger" 
+                size="sm" 
+                className="mt-2" 
+                onClick={() => setSelectedFile(null)} 
+                disabled={loading}
+              >
+                Remove
+              </Button>
+            </div>
+          )}
+        </div>
+
+        <div className="text-center mb-3 import-area small">
+          {t('download_template') || 'Download template:'}
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              downloadDocumentTemplate();
+            }}
+            className="text-primary text-decoration-none btnfont ms-1"
+            style={{ cursor: 'pointer' }}
+          >
+            XLSX
+          </a>
+        </div>
       </div>
 
-      <div className="d-flex justify-content-center gap-3 flex-wrap">
-        <input
-          id="doc-csv"
-          type="file"
-          accept=".csv"
-          hidden
-          onChange={(e) => onSelectCSV(e.target.files[0])}
-        />
-        <label htmlFor="doc-csv">
-          <Button variant="light" as="span">{t("upload_csv")}</Button>
-        </label>
-
-        <input
-          id="doc-xlsx"
-          type="file"
-          accept=".xlsx,.xls"
-          hidden
-          onChange={(e) => onSelectXLSX(e.target.files[0])}
-        />
-        <label htmlFor="doc-xlsx">
-          <Button variant="light" as="span">{t("upload_xlsx")}</Button>
-        </label>
-
-        <FileMeta file={selectedCSVFile} onRemove={removeCSV} />
-        <FileMeta file={selectedXLSXFile} onRemove={removeXLSX} />
-      </div>
-
-      <div className="text-center mt-4 small">
-        {t("download_template")} :
-        <Button
-          variant="link"
-          onClick={() =>
-            downloadTemplate(
-              ['name', 'description'],
-              ['Aadhar Card', 'Proof of identity'],
-              'document-template',
-              'csv'
-            )
-          }
-        >
-          CSV
+      <div className="d-flex justify-content-end gap-2 modal-footer-custom mt-3">
+        <Button variant="outline-secondary" onClick={onClose} disabled={loading}>
+          {t('cancel') || 'Cancel'}
         </Button>
-        |
-        <Button
-          variant="link"
-          onClick={() =>
-            downloadTemplate(
-              ['name', 'description'],
-              ['Aadhar Card', 'Proof of identity'],
-              'document-template',
-              'xlsx'
-            )
-          }
-        >
-          XLSX
+        <Button variant="primary" onClick={handleUpload}>
+          {loading ? (t('importing') || 'Importing...') : (t('import') || 'Import')}
         </Button>
       </div>
     </div>
