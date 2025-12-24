@@ -78,6 +78,53 @@ const deleteLocation = async (id) => {
   toast.success(i18n.t("delete_success", { ns: "location" }));
 };
 
+/* =========================
+   DOWNLOAD TEMPLATE
+========================= */
+const downloadLocationTemplate = async () => {
+  try {
+    const res = await masterApiService.downloadLocationTemplate();
+
+    const blob = new Blob([res.data], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Location_Template.xlsx";
+    a.click();
+    window.URL.revokeObjectURL(url);
+  } catch {
+    toast.error(
+      i18n.t("download_error", { ns: "location" }) ||
+      "Download failed"
+    );
+  }
+};
+
+/* =========================
+   BULK IMPORT
+========================= */
+const bulkAddLocations = async (file) => {
+  try {
+    const res = await masterApiService.bulkAddLocations(file);
+
+    toast.success(
+      res?.data?.message ||
+      i18n.t("import_success", { ns: "location" })
+    );
+
+    await fetchLocations(cities);
+    return { success: true };
+  } catch (error) {
+    toast.error(
+      error?.response?.data?.message ||
+      i18n.t("import_error", { ns: "location" })
+    );
+    return { success: false };
+  }
+};
 
 
   return {
@@ -86,6 +133,8 @@ const deleteLocation = async (id) => {
     loading,
     addLocation,
     updateLocation,
-    deleteLocation
+    deleteLocation,
+    downloadLocationTemplate,
+    bulkAddLocations
   };
 };

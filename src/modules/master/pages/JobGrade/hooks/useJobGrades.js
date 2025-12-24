@@ -65,11 +65,61 @@ export const useJobGrades = () => {
     }
   };
 
+    /* =========================
+     DOWNLOAD TEMPLATE
+  ========================= */
+  const downloadJobGradeTemplate = async () => {
+    try {
+      const res = await masterApiService.downloadJobGradeTemplate();
+
+      const blob = new Blob([res.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "JobGrade_Template.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      toast.error(
+        t("jobGrade:download_error") || "Download failed"
+      );
+    }
+  };
+
+  /* =========================
+     BULK IMPORT
+  ========================= */
+  const bulkAddJobGrades = async (file) => {
+    try {
+      const res = await masterApiService.bulkAddJobGrades(file);
+
+      toast.success(
+        res?.data?.message ||
+        t("jobGrade:import_success")
+      );
+
+      await fetchJobGrades();
+      return { success: true };
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+        t("jobGrade:import_error")
+      );
+      return { success: false };
+    }
+  };
+
+
   return {
     jobGrades,
     fetchJobGrades,
     addJobGrade,
     updateJobGrade,
-    deleteJobGrade
+    deleteJobGrade,
+     bulkAddJobGrades,
+  downloadJobGradeTemplate
   };
 };

@@ -14,6 +14,29 @@ const masterApiService = {
   addLocation: (data) => apis.post("/location/add", data),
   updateLocation: (id, data) => apis.put(`/location/update/${id}`, data),
   deleteLocation: (id) => apis.delete(`/location/delete/${id}`),
+  // ✅ DOWNLOAD LOCATION TEMPLATE
+downloadLocationTemplate: () =>
+  apis.get("/location/download-template", {
+    responseType: "blob",
+  }),
+
+// ✅ BULK ADD LOCATIONS
+bulkAddLocations: (file) => {
+  const formData = new FormData();
+
+  // 🔥 backend expects "attachment"
+  formData.append("attachment", file);
+
+  return apis.post("/location/bulk-add", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+},
+
+
+
+
 
   /* Departments */
   getAllDepartments: () => apis.get("/departments/all"),
@@ -42,18 +65,68 @@ const masterApiService = {
   addCategory: (data) => apis.post("/categories/add", data),
   updateCategory: (id, data) => apis.put(`/categories/update/${id}`, data),
   deleteCategory: (id) => apis.delete(`/categories/delete/${id}`),
+   downloadCategoryTemplate: () =>apis.get("/categories/download-template", { responseType: "blob",}),
+ bulkAddCategories: (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return apis.post("/categories/bulk-add", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
 
   /* Special Categories */
   getAllSpecialCategories: () => apis.get("/special-categories/all"),
   addSpecialCategory: (data) => apis.post("/special-categories/add", data),
   updateSpecialCategory: (id, data) => apis.put(`/special-categories/update/${id}`, data),
   deleteSpecialCategory: (id) => apis.delete(`/special-categories/delete/${id}`),
+    // ✅ DOWNLOAD SPECIAL CATEGORY TEMPLATE
+  downloadSpecialCategoryTemplate: () =>
+    apis.get("/special-categories/download-template", {
+      responseType: "blob",
+    }),
+
+  // ✅ BULK ADD SPECIAL CATEGORIES
+  bulkAddSpecialCategories: (file) => {
+    const formData = new FormData();
+   formData.append("attachment", file);
+
+
+    return apis.post("/special-categories/bulk-add", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+
 
   /* Job Grades */
   getAllJobGrades: () => apis.get("/jobgrade/all"),
   addJobGrade: (data) => apis.post("/jobgrade/add", data),
   updateJobGrade: (id, data) => apis.put(`/jobgrade/update/${id}`, data),
   deleteJobGrade: (id) => apis.delete(`/jobgrade/delete/${id}`),
+    // ✅ DOWNLOAD JOB GRADE TEMPLATE
+  downloadJobGradeTemplate: () =>
+    apis.get("/jobgrade/download-template", {
+      responseType: "blob",
+    }),
+
+  // ✅ BULK ADD JOB GRADES
+  bulkAddJobGrades: (file) => {
+    const formData = new FormData();
+
+    // 🔥 IMPORTANT: backend expects "attachment"
+    formData.append("attachment", file);
+
+    return apis.post("/jobgrade/bulk-add", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+
 
   /* Master positions */
   getAllPositions: () => apis.get("/master-positions/all"),

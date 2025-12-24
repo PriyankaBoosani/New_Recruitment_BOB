@@ -38,6 +38,10 @@
   "upload_xlsx": "Upload XLSX",
   "download_template": "Download template",
   "enter_password": "Enter password",
-  "confirm_password": "Confirm password"
+  "confirm_password": "Confirm password",
+    "add_success": "User added successfully",
+  "delete_success": "User deleted successfully"
+  
+
   
 }

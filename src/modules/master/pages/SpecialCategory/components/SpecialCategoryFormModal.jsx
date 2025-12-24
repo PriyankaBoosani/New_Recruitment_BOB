@@ -138,14 +138,14 @@ const SpecialCategoryFormModal = ({
         ) : (
           <>
             <SpecialCategoryImportModal t={t} {...importProps} />
-            <Modal.Footer className="modal-footer-custom px-0">
+            {/* <Modal.Footer className="modal-footer-custom px-0">
               <Button variant="outline-secondary" onClick={onHide}>
                 {t("cancel")}
               </Button>
               <Button variant="primary" onClick={handleImport}>
                 {t("import")}
               </Button>
-            </Modal.Footer>
+            </Modal.Footer> */}
           </>
         )}
       </Modal.Body>

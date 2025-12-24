@@ -136,7 +136,15 @@ const SpecialCategoryImportModal = ({
           </a>
         </div>
       </div>
+<div className="d-flex justify-content-end gap-2 modal-footer-custom">
+        <Button variant="outline-secondary" onClick={onClose} disabled={loading}>
+          {t("category:cancel")}
+        </Button>
 
+        <Button variant="primary" onClick={handleUpload} disabled={loading}>
+          {loading ? t("category:importing") : t("category:import")}
+        </Button>
+      </div>
      
     </div>
   );

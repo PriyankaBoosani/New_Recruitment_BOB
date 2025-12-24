@@ -1,37 +1,45 @@
-import React, { useState } from "react";
-import { Button, Alert } from "react-bootstrap";
-import { Upload as UploadIcon } from "react-bootstrap-icons";
-import { useLocations } from "../hooks/useLocations";
+import React, { useState } from 'react';
+import { Button, Alert } from 'react-bootstrap';
+import { Upload as UploadIcon } from 'react-bootstrap-icons';
+import { useTranslation } from "react-i18next";
+
+import { useLocations } from '../hooks/useLocations';
 
 const LocationImportModal = ({
-  t,
   onClose = () => {},
   onSuccess = () => {}
 }) => {
-  const { bulkAddLocations, loading } = useLocations();
+  const { t } = useTranslation(["location"]);
+  const {
+    bulkAddLocations,
+    downloadLocationTemplate,
+    loading
+  } = useLocations();
 
   const [selectedFile, setSelectedFile] = useState(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const isExcel =
       file &&
-      (file.type ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-        file.type === "application/vnd.ms-excel");
+      (
+        file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+        file.type === 'application/vnd.ms-excel'
+      );
 
-    if (isExcel) {
-      setSelectedFile(file);
-      setError("");
-    } else {
-      setError(t("support_xlsx_only"));
+    if (!isExcel) {
+      setError(t("location:invalid_file"));
+      return;
     }
+
+    setSelectedFile(file);
+    setError('');
   };
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      setError(t("validation:required"));
+      setError(t("location:no_file_selected"));
       return;
     }
 
@@ -41,44 +49,42 @@ const LocationImportModal = ({
       onSuccess();
       onClose();
     } else {
-      setError(result?.error || t("import_failed"));
+      setError(t("location:import_error"));
     }
   };
 
   return (
     <div>
-      <div
-        className="import-area p-4 rounded"
-        style={{ background: "#fceee9" }}
-      >
+      <div className="import-area p-4 rounded" style={{ background: '#fceee9' }}>
         <div className="text-center mb-3">
           <div
             style={{
               width: 72,
               height: 72,
               borderRadius: 12,
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "#fff",
-              marginBottom: "1rem"
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: '#fff',
+              marginBottom: '1rem'
             }}
           >
             <UploadIcon size={32} />
           </div>
 
           <h5 className="mb-2 uploadfile">
-            {t("upload_file")}
+            {t("location:upload_locations")}
           </h5>
+
           <p className="text-muted small">
-            {t("support_xlsx")}
+            {t("location:support_xlsx")}
           </p>
         </div>
 
         {error && <Alert variant="danger">{error}</Alert>}
 
         <input
-          id="upload-location-xlsx"
+          id="upload-xlsx-location"
           type="file"
           accept=".xlsx,.xls"
           hidden
@@ -87,14 +93,11 @@ const LocationImportModal = ({
         />
 
         <div className="text-center mb-3">
-          <label htmlFor="upload-location-xlsx">
-            <Button
-              variant="primary"
-              as="span"
-              className="btnupload"
-              disabled={loading}
-            >
-              {selectedFile ? t("reupload_xlsx") : t("upload_xlsx")}
+          <label htmlFor="upload-xlsx-location">
+            <Button variant="primary" as="span" className="btnupload" disabled={loading}>
+              {selectedFile
+                ? t("location:reupload_xlsx")
+                : t("location:upload_xlsx")}
             </Button>
           </label>
 
@@ -110,42 +113,33 @@ const LocationImportModal = ({
                 onClick={() => setSelectedFile(null)}
                 disabled={loading}
               >
-                {t("remove")}
+                {t("location:remove")}
               </Button>
             </div>
           )}
         </div>
 
-        <div className="text-center mb-3 import-area small">
-          {t("download_template")}:{" "}
+        <div className="text-center mb-3 small">
+          {t("location:download_template")} :
           <a
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              // call your location template API here
+              downloadLocationTemplate();
             }}
-            className="text-primary text-decoration-none btnfont"
           >
-            XLSX
+            {" "}XLSX
           </a>
         </div>
       </div>
 
-      {/* ✅ SAME FOOTER AS DEPARTMENT */}
       <div className="d-flex justify-content-end gap-2 modal-footer-custom">
-        <Button
-          variant="outline-secondary"
-          onClick={onClose}
-          disabled={loading}
-        > 
-          {t("cancel")}
+        <Button variant="outline-secondary" onClick={onClose} disabled={loading}>
+          {t("location:cancel")}
         </Button>
-        <Button
-          variant="primary"
-          onClick={handleUpload}
-          disabled={loading}
-        >
-          {loading ? t("importing") : t("import")}
+
+        <Button variant="primary" onClick={handleUpload} disabled={loading}>
+          {loading ? t("location:importing") : t("location:import")}
         </Button>
       </div>
     </div>

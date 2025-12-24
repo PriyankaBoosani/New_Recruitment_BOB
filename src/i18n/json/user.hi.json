@@ -38,6 +38,8 @@
   "upload_xlsx": "XLSX अपलोड करें",
   "download_template": "टेम्पलेट डाउनलोड करें",
    "enter_password": "पासवर्ड दर्ज करें",
-  "confirm_password": "पासवर्ड की पुष्टि करें"
+  "confirm_password": "पासवर्ड की पुष्टि करें",
+   "add_success": "User added successfully",
+  "delete_success": "User deleted successfully"
   
 }

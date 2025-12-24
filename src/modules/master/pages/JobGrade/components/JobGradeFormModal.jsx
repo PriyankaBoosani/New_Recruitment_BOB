@@ -163,14 +163,14 @@ const JobGradeFormModal = ({
         ) : (
           <>
             <JobGradeImportModal t={t} {...importProps} />  
-            <Modal.Footer className="px-0 modal-footer-custom">
+            {/* <Modal.Footer className="px-0 modal-footer-custom">
               <Button variant="outline-secondary" onCli ck={onHide}>
                 {t("cancel")}
               </Button>
               <Button variant="primary" onClick={handleImport}>
                 {t("import")}
               </Button>
-            </Modal.Footer>
+            </Modal.Footer> */}
           </>
         )}
       </Modal.Body>

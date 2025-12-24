@@ -16,7 +16,7 @@ import PositionPage from "../modules/master/pages/Position/PositionPage";
 import CategoryPage from "../modules/master/pages/Category/CategoryPage";
 import RelaxationType from "../modules/master/pages/RelaxationType";
 import DocumentPage from "../modules/master/pages/Document/DocumentPage";
-import User from "../modules/master/pages/User";
+import UserPage from "../modules/master/pages/User/UserPage";
 import Home from "../modules/master/pages/Home"; // dashboard/home
 import JobPostingsList from "../modules/jobPosting/pages/JobPostingsList";
 import CreateRequisition from "../modules/jobPosting/pages/CreateRequisition";
@@ -62,7 +62,7 @@ const AppRoutes = () => {
           <Route element={<PrivateRoute />}>
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<Home />} />
-              <Route path="/users" element={<User />} />
+              <Route path="/users" element={<UserPage />} />
               <Route path="/department" element={<DepartmentPage />} />
               <Route path="/location" element={<LocationPage />} />
               {/* If you want plural: <Route path="/locations" element={<Location />} /> */}
