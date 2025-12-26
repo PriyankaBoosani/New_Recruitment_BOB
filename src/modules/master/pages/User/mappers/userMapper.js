@@ -21,7 +21,6 @@ export const mapUserFromApi = (api) => ({
   role: api.role,
   name: api.name,
   email: api.email,
-  phone: api.phone
 });
 
 export const mapUsersFromApi = (apiData = []) => {
@@ -36,6 +35,5 @@ export const mapUserToApi = (ui) => ({
   role: ui.role,
   name: ui.fullName,
   email: ui.email,
-  phone: ui.mobile,
   password: encryptPassword(ui.password)
 });

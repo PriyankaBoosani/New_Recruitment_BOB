@@ -54,13 +54,20 @@ const PositionPage = () => {
   const [activeTab, setActiveTab] = useState("manual");
 
   /* ---------------- FORM STATE ---------------- */
-const [formData, setFormData] = useState({
-  title: "",
-  description: "",
-  departmentId: "",   // ✅ UUID
-  jobGradeId: "",     // ✅ UUID
-  code: ""            // optional
-});
+  const [formData, setFormData] = useState({
+    title: "",
+    departmentId: "",
+    jobGradeId: "",
+
+    mandatoryExperience: "",
+    preferredExperience: "",
+
+    mandatoryEducation: "",
+    preferredEducation: "",
+
+    rolesResponsibilities: ""
+  });
+
 
 
   const [errors, setErrors] = useState({});
@@ -74,13 +81,19 @@ const [formData, setFormData] = useState({
   const openAddModal = () => {
     setIsEditing(false);
     setEditingId(null);
-setFormData({
-  title: "",
-  description: "",
-  departmentId: "",
-  jobGradeId: "",
-  code: ""
-});
+    setFormData({
+      title: "",
+      departmentId: "",
+      jobGradeId: "",
+
+      mandatoryEducation: "",
+      preferredEducation: "",
+      mandatoryExperience: "",
+      preferredExperience: "",
+
+      rolesResponsibilities: "",
+      code: "",
+    });
     setErrors({});
     setActiveTab("manual");
     setSelectedCSVFile(null);
@@ -97,77 +110,84 @@ setFormData({
     setIsEditing(true);
     setEditingId(p.id);
     setFormData({
-  title: p.title || "",
-  description: p.description || "",
-  departmentId: p.departmentId || "",
-  jobGradeId: p.jobGradeId || "",
-  code: p.code || ""
-});
+      title: p.title || "",
+      departmentId: p.departmentId || "",
+      jobGradeId: p.jobGradeId || "",
+
+      mandatoryEducation: p.mandatoryEducation || "",
+      preferredEducation: p.preferredEducation || "",
+      mandatoryExperience: p.mandatoryExperience || "",
+      preferredExperience: p.preferredExperience || "",
+
+      rolesResponsibilities: p.rolesResponsibilities || "",
+      code: p.code || "",
+    });
+
 
     setErrors({});
     setActiveTab("manual");
     setShowAddModal(true);
   };
 
-const handleSave = async (e) => {
-  e.preventDefault();
+  const handleSave = async (e) => {
+    e.preventDefault();
 
-  const { valid, errors: vErrors } = validatePositionForm(formData, {
-    existing: positions,
-    currentId: isEditing ? editingId : null,
-  });
+    const { valid, errors: vErrors } = validatePositionForm(formData, {
+      existing: positions,
+      currentId: isEditing ? editingId : null,
+    });
 
-  if (!valid) {
-    setErrors(vErrors);
-    return;
-  }
+    if (!valid) {
+      setErrors(vErrors);
+      return;
+    }
 
-  // ✅ IMPORTANT: formData MUST contain departmentId & jobGradeId
-const payload = mapPositionToApi(
-  { ...formData, id: editingId },
-  isEditing
-);
-
-
-  if (isEditing) {
-    await updatePosition(editingId, payload);
-  } else {
-    await addPosition(payload);
-    setCurrentPage(1); // newest on top
-  }
-
-  setShowAddModal(false);
-};
+    // ✅ IMPORTANT: formData MUST contain departmentId & jobGradeId
+    const payload = mapPositionToApi(
+      { ...formData, id: editingId },
+      isEditing
+    );
 
 
-const handleImport = async () => {
-  await importFromCSV({
-    selectedCSVFile,
-    selectedXLSXFile,
-    list: positions,
-    mapRow: (row) => {
-      const dept = departments.find(
-        d => d.name.toLowerCase() === String(row.department).toLowerCase()
-      );
+    if (isEditing) {
+      await updatePosition(editingId, payload);
+    } else {
+      await addPosition(payload);
+      setCurrentPage(1); // newest on top
+    }
 
-      const grade = jobGrades.find(
-        g => g.code.toLowerCase() === String(row.jobGrade).toLowerCase()
-      );
+    setShowAddModal(false);
+  };
 
-      return {
-        title: (row.title || row.positionTitle || "").trim(),
-        description: (row.description || "").trim(),
-        departmentId: dept?.id || "",
-        jobGradeId: grade?.id || "",
-        code: row.positionCode || ""
-      };
-    },
-    setSelectedCSVFile,
-    setSelectedXLSXFile,
-    setShowAddModal,
-    setActiveTab,
-  });
-};
+
+  const handleImport = async () => {
+    await importFromCSV({
+      selectedCSVFile,
+      selectedXLSXFile,
+      list: positions,
+      mapRow: (row) => {
+        const dept = departments.find(
+          d => d.name.toLowerCase() === String(row.department).toLowerCase()
+        );
+
+        const grade = jobGrades.find(
+          g => g.code.toLowerCase() === String(row.jobGrade).toLowerCase()
+        );
+
+        return {
+          title: (row.title || row.positionTitle || "").trim(),
+          description: (row.description || "").trim(),
+          departmentId: dept?.id || "",
+          jobGradeId: grade?.id || "",
+          code: row.positionCode || ""
+        };
+      },
+      setSelectedCSVFile,
+      setSelectedXLSXFile,
+      setShowAddModal,
+      setActiveTab,
+    });
+  };
 
 
   /* ---------------- RENDER ---------------- */
@@ -195,18 +215,18 @@ const handleImport = async () => {
         </div>
       </div>
 
-     <PositionTable
-  data={positions}
-  searchTerm={searchTerm}
-  currentPage={currentPage}
-  setCurrentPage={setCurrentPage}
-  onEdit={openEditModal}
-  onDelete={(p) => {
-    setDeleteTarget(p);
-    setShowDeleteModal(true);
-  }}
-  t={t}
-/>
+      <PositionTable
+        data={positions}
+        searchTerm={searchTerm}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        onEdit={openEditModal}
+        onDelete={(p) => {
+          setDeleteTarget(p);
+          setShowDeleteModal(true);
+        }}
+        t={t}
+      />
 
 
       <PositionFormModal
@@ -217,7 +237,7 @@ const handleImport = async () => {
         setActiveTab={setActiveTab}
         formData={formData}
         errors={errors}
-         handleInputChange={(e) => {
+        handleInputChange={(e) => {
           const { name, value } = e.target;
 
           setFormData(prev => ({

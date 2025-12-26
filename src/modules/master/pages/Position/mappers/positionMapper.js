@@ -2,13 +2,19 @@
    API → UI (GET)
 ========================= */
 export const mapPositionFromApi = (api) => ({
-  id: api.positionId,
+  id: api.masterPositionsId || api.positionId,
+
   title: api.positionName,
   description: api.positionDescription,
 
-  // store UUIDs coming from backend
   departmentId: api.deptId,
-  jobGradeId: api.jobGradeId,
+  jobGradeId: api.gradeId,
+
+  mandatoryEducation: api.mandatoryEducation || "",
+  preferredEducation: api.preferredEducation || "",
+  mandatoryExperience: api.mandatoryExperience || "",
+  preferredExperience: api.preferredExperience || "",
+  rolesResponsibilities: api.rolesResponsibilities || "",
 
   code: api.positionCode,
   isActive: api.isActive
@@ -25,17 +31,26 @@ export const mapPositionsFromApi = (apiData = []) => {
 /* =========================
    UI → API (ADD / UPDATE)
 ========================= */
+/* =========================
+   UI → API (ADD / UPDATE)
+========================= */
 export const mapPositionToApi = (ui, isEditing = false) => ({
   isActive: true,
 
-  // 🔥 send positionId ONLY if editing
-  ...(isEditing && { positionId: ui.id }),
+  ...(isEditing && { masterPositionsId: ui.id }),
 
   positionCode: ui.code || undefined,
   positionName: ui.title,
-  positionDescription: ui.description,
+  positionDescription: ui.description || "",
 
-  // 🔥 MUST be UUIDs
+  // 🔥 REQUIRED UUIDs
   deptId: ui.departmentId,
-  jobGradeId: ui.jobGradeId
+  gradeId: ui.jobGradeId,
+
+  // 🔥 NEW FIELDS (YOU MISSED THESE)
+  mandatoryEducation: ui.mandatoryEducation,
+  preferredEducation: ui.preferredEducation,
+  mandatoryExperience: ui.mandatoryExperience,
+  preferredExperience: ui.preferredExperience,
+  rolesResponsibilities: ui.rolesResponsibilities
 });

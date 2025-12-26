@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../../style/css/AddPosition.css";
+import import_Icon  from '../../../assets/import_Icon.png'
 
 const AddPosition = () => {
     const navigate = useNavigate();
@@ -12,6 +13,7 @@ const AddPosition = () => {
         department: "",
         position: "",
         vacancies: "",
+        totalExperience: "",
         minAge: "",
         maxAge: "",
         employmentType: "",
@@ -157,7 +159,7 @@ const AddPosition = () => {
         <Container fluid className="add-position-page">
             <div className="req_top-bar">
                 <div className="d-flex align-items-center gap-3">
-                    <Button variant="link" className="back-btn p-0" onClick={() => navigate(-1)}>
+                    <Button variant="link" className="back-btn p-2" onClick={() => navigate(-1)}>
                         ← Back
                     </Button>
                     <div>
@@ -165,7 +167,8 @@ const AddPosition = () => {
                         <div className="req-code">BOB/HRM/REC/ADVT/2025/12</div>
                     </div>
                 </div>
-                <Button variant="outline-primary">⬆ Import Positions</Button>
+                <Button className="imprcls" variant="none">
+                    <img src={import_Icon} alt="import_Icon" className="icon-14" /> Import Positions</Button>
             </div>
 
             <Card className="position-card">
@@ -203,6 +206,24 @@ const AddPosition = () => {
                                 <Form.Label>Total Vacancies *</Form.Label>
                                 <Form.Control name="vacancies" placeholder="Enter Vacancies" type="number" value={formData.vacancies} onChange={handleInputChange} />
                             </Col>
+                            <Col xs={2} md={4}>
+                <Form.Group className="form-group">
+                  <Form.Label>
+                    Total Experience<span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    type="number"
+                    min="0"
+                    step="0.5"
+                    name="totalExperience"
+                    value={formData.totalExperience}
+                    onChange={handleInputChange}
+                   
+                    placeholder="Enter Total Experience"
+                  />
+               
+                </Form.Group>
+              </Col>
 
                             <Col md={4}>
                                 <Form.Label>Min Age *</Form.Label>

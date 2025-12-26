@@ -8,7 +8,6 @@ const EMPTY_FORM = {
   role: "",
   fullName: "",
   email: "",
-  mobile: "",
   password: "",
   confirmPassword: ""
 };
@@ -113,15 +112,7 @@ const handleSubmit = (e) => {
               <ErrorMessage>{errors.email}</ErrorMessage>
             </Col>
 
-            <Col md={6}>
-              <Form.Label>{t("mobile")} *</Form.Label>
-              <Form.Control
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleInputChange}
-              />
-              <ErrorMessage>{errors.mobile}</ErrorMessage>
-            </Col>
+           
 
             <Col md={6}>
               <Form.Label>{t("password")} *</Form.Label>

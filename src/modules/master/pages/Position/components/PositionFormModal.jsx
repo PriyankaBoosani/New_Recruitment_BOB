@@ -14,18 +14,11 @@ const PositionFormModal = ({
   errors,
   handleInputChange,
   handleSave,
-  handleImport,
 
   /* ✅ DEFAULTS ADDED */
   departments = [],
   jobGrades = [],
 
-  selectedCSVFile,
-  selectedXLSXFile,
-  onSelectCSV,
-  onSelectXLSX,
-  removeCSV,
-  removeXLSX,
   t
 }) => {
 
@@ -35,7 +28,7 @@ const PositionFormModal = ({
       onHide={onHide}
       size="lg"
       centered
-      className="user-modal"
+      className="user-modal pos"
       fullscreen="sm-down"
       scrollable
     >
@@ -74,7 +67,7 @@ const PositionFormModal = ({
         {activeTab === "manual" ? (
           <Form onSubmit={handleSave} noValidate>
             <Row className="g-3">
-              <Col xs={12}>
+              <Col xs={4}>
                 <Form.Group className="form-group">
                   <Form.Label>
                     {t("position_title")} <span className="text-danger">*</span>
@@ -90,24 +83,11 @@ const PositionFormModal = ({
                 </Form.Group>
               </Col>
 
-              <Col xs={12} md={6}>
+              <Col xs={4} md={4}>
                 <Form.Group className="form-group">
                   <Form.Label>
                     {t("department")} <span className="text-danger">*</span>
                   </Form.Label>
-                  {/* <Form.Select
-                    name="department"
-                    value={formData.department}
-                    onChange={handleInputChange}
-                    className="form-control-custom"
-                  >
-                    <option value="">{t("select_department")}</option>
-                    {departments.map((d) => (
-                      <option key={d} value={d}>{d}</option>
-                    ))}
-                  </Form.Select> */}
-
-
                   <Form.Select
                     name="departmentId"
                     value={formData.departmentId}
@@ -128,7 +108,7 @@ const PositionFormModal = ({
                 </Form.Group>
               </Col>
 
-              <Col xs={12} md={6}>
+              <Col xs={4} md={4}>
                 <Form.Group className="form-group">
                   <Form.Label>
                     {t("job_grade")} <span className="text-danger">*</span>
@@ -152,26 +132,101 @@ const PositionFormModal = ({
                   <ErrorMessage>{errors.jobGradeId}</ErrorMessage>
                 </Form.Group>
               </Col>
+              
+              <Col xs={6} md={6}>
+                <Form.Group className="form-group">
+                  <Form.Label>
+                    {t("mandatory_experience")} <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={2}
+                    name="mandatoryExperience"
+                    value={formData.mandatoryExperience}
+                    onChange={handleInputChange}
+                    className="form-control-custom"
+                    placeholder={t("enter_mandatory_experience")}
+                  />
+                  <ErrorMessage>{errors.mandatoryExperience}</ErrorMessage>
+                </Form.Group>
+              </Col>
+
+              <Col xs={12} md={6}>
+                <Form.Group className="form-group">
+                  <Form.Label>
+                    {t("preferred_experience")}
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={2}
+                    name="preferredExperience"
+                    value={formData.preferredExperience}
+                    onChange={handleInputChange}
+                    className="form-control-custom"
+                    placeholder={t("enter_preferred_experience")}
+                  />
+                  <ErrorMessage>{errors.preferredExperience}</ErrorMessage>
+                </Form.Group>
+              </Col>
+
+              <Col xs={6} md={6}>
+                <Form.Group className="form-group">
+                  <Form.Label>
+                    {t("mandatory_education")} <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={2}
+                    name="mandatoryEducation"
+                    value={formData.mandatoryEducation}
+                    onChange={handleInputChange}
+                    className="form-control-custom"
+                    placeholder={t("enter_mandatory_education")}
+                  />
+                  <ErrorMessage>{errors.mandatoryEducation}</ErrorMessage>
+                </Form.Group>
+              </Col>
+
+              <Col xs={6} md={6}>
+                <Form.Group className="form-group">
+                  <Form.Label>
+                    {t("preferred_education")}
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={2}
+                    name="preferredEducation"
+                    value={formData.preferredEducation}
+                    onChange={handleInputChange}
+                    className="form-control-custom"
+                    placeholder={t("enter_preferred_education")}
+                  />
+                  <ErrorMessage>{errors.preferredEducation}</ErrorMessage>
+                </Form.Group>
+              </Col>
+
+
+
 
               <Col xs={12}>
                 <Form.Group className="form-group">
                   <Form.Label>
-                    {t("description")} <span className="text-danger">*</span>
+                    {t("roles_responsibilities")} <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     as="textarea"
-                    rows={3}
-                    name="description"
-                    value={formData.description}
+                    rows={4}
+                    name="rolesResponsibilities"
+                    value={formData.rolesResponsibilities}
                     onChange={handleInputChange}
                     className="form-control-custom"
-                    placeholder={t("enter_description")}
+                    placeholder={t("enter_roles_responsibilities")}
                   />
-                  <ErrorMessage>{errors.description}</ErrorMessage>
+                  <ErrorMessage>{errors.rolesResponsibilities}</ErrorMessage>
                 </Form.Group>
               </Col>
-            </Row>
 
+            </Row>
             <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
               <Button variant="outline-secondary" onClick={onHide}>
                 {t("cancel")}
@@ -180,27 +235,19 @@ const PositionFormModal = ({
                 {isEditing ? t("update") : t("save")}
               </Button>
             </Modal.Footer>
+
           </Form>
+
         ) : (
           <>
             <PositionImportModal
               t={t}
-              selectedCSVFile={selectedCSVFile}
-              selectedXLSXFile={selectedXLSXFile}
-              onSelectCSV={onSelectCSV}
-              onSelectXLSX={onSelectXLSX}
-              removeCSV={removeCSV}
-              removeXLSX={removeXLSX}
+              onClose={onHide}
+              onSuccess={() => {
+                setActiveTab("manual");
+              }}
             />
-
-            <Modal.Footer className="modal-footer-custom px-0">
-              <Button variant="outline-secondary" onClick={onHide}>
-                {t("cancel")}
-              </Button>
-              <Button variant="primary" onClick={handleImport}>
-                {t("import")}
-              </Button>
-            </Modal.Footer>
+            
           </>
         )}
       </Modal.Body>

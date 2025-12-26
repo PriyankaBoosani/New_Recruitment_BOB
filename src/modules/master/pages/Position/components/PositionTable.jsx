@@ -39,7 +39,7 @@ const PositionTable = ({
               <th>{t("position_title")}</th>
               <th>{t("department")}</th>
               <th>{t("job_grade")}</th>
-              <th>{t("description")}</th>
+              <th>{t("roles_responsibilities")}</th>
               <th style={{ textAlign: "center" }}>{t("actions")}</th>
             </tr>
           </thead>
@@ -52,7 +52,7 @@ const PositionTable = ({
                   <td>{p.title}</td>
                   <td>{p.department}</td>
                   <td>{p.jobGrade}</td>
-                  <td>{p.description}</td>
+                  <td>{p.rolesResponsibilities }</td>
                   <td>
                     <div className="action-buttons">
                       <Button

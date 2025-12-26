@@ -22,11 +22,26 @@
 }
 
 .back-btn {
-    color: #6c757d;
-    text-decoration: none;
-    font-weight: 500;
+	color: #6c757d;
+	text-decoration: none;
+	font-weight: 500;
+	border: 1px solid lightgray;
 }
-
+.imprcls{
+    color: #162B75;
+  font-size: 0.875em;
+  border: 1px solid #162B75;
+  background-color: #fff;
+}
+.imprcls:hover{
+     background-color: none !important;
+      border: 1px solid #162B75;
+       color: #162B75;
+}
+.icon-14{
+    width: 14px;
+    height: 14px;
+}
 .req-id {
     background-color: #e9ecef;
     padding: 4px 10px;

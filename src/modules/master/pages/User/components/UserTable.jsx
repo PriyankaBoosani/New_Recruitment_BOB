@@ -27,7 +27,7 @@ const UserTable = ({ data, searchTerm, currentPage, setCurrentPage }) => {
               <th>{t("role")}</th>
               <th>{t("name")}</th>
               <th>{t("email")}</th>
-              <th>{t("mobile")}</th>
+             
             </tr>
           </thead>
           <tbody>
@@ -38,7 +38,7 @@ const UserTable = ({ data, searchTerm, currentPage, setCurrentPage }) => {
                   <td>{u.role}</td>
                   <td>{u.name}</td>
                   <td>{u.email}</td>
-                  <td>{u.phone}</td>
+                 
                 </tr>
               ))
             ) : (

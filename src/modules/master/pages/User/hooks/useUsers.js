@@ -44,7 +44,6 @@ const addUser = async (payload) => {
     role: payload.role,
     name: payload.fullName,
     email: payload.email,
-    phone: payload.mobile
   };
 
   // 3️⃣ Put NEW USER AT TOP immediately

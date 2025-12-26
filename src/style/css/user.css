@@ -138,6 +138,9 @@
     width: 100%;
 
 }
+.pos.user-modal .modal-dialog{
+    max-width: 750px !important; 
+}
 
 
 
@@ -620,10 +623,11 @@ body.modal-open {
 
 /* <= 768px: modal layout adjustments, stack form columns */
 @media (max-width: 768px) {
-    .user-modal .modal-dialog {
-        /* max-width: 71%; */
-        margin: 0.5rem;
-    }
+.user-modal .modal-dialog {
+	/* max-width: 71%; */
+	margin: 0.5rem;
+	width: auto;
+}
 
     .user-modal .modal-body {
         padding: 1rem;

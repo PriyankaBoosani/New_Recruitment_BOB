@@ -17,7 +17,7 @@
   "manual_entry": "मैनुअल प्रविष्टि",
   "import_file": "फ़ाइल आयात करें",
   "upload_file": "फ़ाइल अपलोड करें",
-  "support_csv_xlsx": "CSV और XLSX फ़ॉर्मेट समर्थित हैं",
+  "support_xlsx": "XLSX फ़ॉर्मेट समर्थित हैं",
   "upload_csv": "CSV अपलोड करें",
   "upload_xlsx": "XLSX अपलोड करें",
   "download_template": "टेम्पलेट डाउनलोड करें",
@@ -36,5 +36,17 @@
   "delete_message": "क्या आप वाकई इस पद को हटाना चाहते हैं?",
 
   "view": "देखें",
-  "delete": "हटाएं"
+  "delete": "हटाएं",
+  "mandatory_education": "आवश्यक शैक्षिक विज्ञान",
+  "preferred_education": "पसंदीदा शैक्षिक विज्ञान",
+  "mandatory_experience": "आवश्यक सामान्यता",
+  "preferred_experience": "पसंदीदा सामान्यता",
+  "roles_responsibilities": "पदवीय भूमिका",
+  "enter_mandatory_experience": "आवश्यक सामान्यता",
+  "enter_preferred_experience": "पसंदीदा सामान्यता",
+  "enter_mandatory_education": "आवश्यक शैक्षिक विज्ञान",
+  "enter_preferred_education": "पसंदीदा शैक्षिक विज्ञान",
+  "enter_roles_responsibilities": "पदवीय भूमिका",
+  "total_experience_years": "सामान्यता",
+  "enter_total_experience": "सामान्यता"
 }
