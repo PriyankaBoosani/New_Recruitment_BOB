@@ -85,12 +85,33 @@ const bulkAddDocuments = async (file) => {
     toast.success(t("documents:document_deleted_successfully"));
   };
 
+    /* ================= DOWNLOAD TEMPLATE ================= */
+  const downloadDocumentTemplate = async () => {
+    try {
+      const res = await masterApiService.downloadDocumentTemplate();
+
+      const blob = new Blob([res.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Document_Template.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error(t("document:download_error", "Download failed"));
+    }
+  };
+
   return {
     documents,
     fetchDocuments,
     addDocument,
     updateDocument,
     deleteDocument,
-    bulkAddDocuments
+    bulkAddDocuments,
+       downloadDocumentTemplate
   };
 };

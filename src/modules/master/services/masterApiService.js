@@ -139,7 +139,19 @@ bulkAddLocations: (file) => {
   addDocumentType: (data) => apis.post("/document-types/add", data),
   updateDocumentType: (id, data) => apis.put(`/document-types/update/${id}`, data),
   deleteDocumentType: (id) => apis.delete(`/document-types/delete/${id}`),
+  downloadDocumentTemplate: () =>apis.get("/document-types/download-template", { responseType: "blob",}),
+bulkAddDocuments: (file) => {
+  const formData = new FormData();
 
+  // 🔥 backend expects "attachment"
+  formData.append("file", file);
+
+  return apis.post("/document-types/bulk-add", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+},
   /* Relaxation Types */
   getAllRelaxationTypes: () => apis.get("/relaxation-type/all"),
   addRelaxationType: (data) => apis.post("/relaxation-type/add", data),
