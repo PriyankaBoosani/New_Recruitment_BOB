@@ -5,8 +5,6 @@ const isEmpty = (v) => v === null || v === undefined || String(v).trim() === '';
 export function validatePanelName(name, { existing = [], currentId = null } = {}) {
   const n = String(name || '').trim();
   if (isEmpty(n)) return 'Panel name is required';
-  if (n.length < 3) return 'Panel name must be at least 3 characters';
-  if (n.length > 200) return 'Panel name must be at most 200 characters';
 
   const dup = existing.find(
     it =>
@@ -28,9 +26,6 @@ export function validatePanelMembers(members) {
   }
 
   if (arr.length === 0) return 'Panel members are required';
-
-  const totalLength = arr.join(', ').length;
-  if (totalLength > 500) return 'Panel members must be at most 500 characters';
 
   return null;
 }

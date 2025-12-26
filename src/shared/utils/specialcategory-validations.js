@@ -1,51 +1,24 @@
 import { requiredField, minLength, maxLength } from "./common-validations";
 import i18n from "i18next";
 
-/* =========================
-   HELPERS
-========================= */
 const normalize = (v = "") => String(v).trim().toLowerCase();
 
-/* =========================
-   FIELD VALIDATIONS
-========================= */
 
 export const validateSpecialCategoryCode = (code) => {
   let error = requiredField(code);
   if (error) return error;
-
-  error = minLength(code, 2);
-  if (error) return error;
-
-  error = maxLength(code, 20);
-  if (error) return error;
-
   return null;
 };
 
 export const validateSpecialCategoryName = (name) => {
   let error = requiredField(name);
   if (error) return error;
-
-  error = minLength(name, 2);
-  if (error) return error;
-
-  error = maxLength(name, 150);
-  if (error) return error;
-
   return null;
 };
 
 export const validateSpecialCategoryDescription = (description) => {
   let error = requiredField(description);
   if (error) return error;
-
-  error = minLength(description, 5);
-  if (error) return error;
-
-  error = maxLength(description, 500);
-  if (error) return error;
-
   return null;
 };
 
@@ -68,11 +41,6 @@ export const validateSpecialCategoryForm = (formData = {}, options = {}) => {
   /* ---- DESCRIPTION ---- */
   const descError = validateSpecialCategoryDescription(formData.description);
   if (descError) errors.description = descError;
-
-  /* =========================
-     DUPLICATE CHECKS
-  ========================= */
-
   // Duplicate CODE
   if (!errors.code) {
     const codeNorm = normalize(formData.code);
@@ -109,9 +77,6 @@ export const validateSpecialCategoryForm = (formData = {}, options = {}) => {
   };
 };
 
-/* =========================
-   DEFAULT EXPORT
-========================= */
 
 export default {
   validateSpecialCategoryForm,

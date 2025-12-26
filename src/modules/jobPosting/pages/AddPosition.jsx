@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../../style/css/AddPosition.css";
-// Using text instead of react-icons/ai
 
 const AddPosition = () => {
     const navigate = useNavigate();
     const { requisitionId } = useParams();
+
+    /* ---------------- MAIN FORM ---------------- */
     const [formData, setFormData] = useState({
         department: "",
         position: "",
@@ -23,42 +24,120 @@ const AddPosition = () => {
         preferredExperience: "",
         documents: [],
         responsibilities: "",
-        enableStateDistribution: false,
-        // General Category
-        sc: "",
-        st: "",
-        obc: "",
-        ews: "",
-        gen: "",
-        total: "",
-        // Disability Category
-        oc: "",
-        vi: "",
-        hi: "",
-        id: ""
+        enableStateDistribution: false
     });
+    const GENERAL_FIELDS = [
+        { key: "sc", label: "SC" },
+        { key: "st", label: "ST" },
+        { key: "obc", label: "OBC" },
+        { key: "ews", label: "EWS" },
+        { key: "gen", label: "GEN" },
+        { key: "total", label: "Total" }
+    ];
 
+    const DISABILITY_FIELDS = [
+        { key: "oc", label: "OC" },
+        { key: "vi", label: "VI" },
+        { key: "hi", label: "HI" },
+        { key: "id", label: "ID" }
+    ];
+
+    /* ---------------- STATE WISE ---------------- */
+    // const [stateDistribution, setStateDistribution] = useState([]);
+    // const [currentStateData, setCurrentStateData] = useState({
+    //     state: "",
+    //     vacancies: "",
+    //     language: "",
+    //     sc: "",
+    //     st: "",
+    //     obc: "",
+    //     ews: "",
+    //     gen: "",
+    //     total: "",
+    //     oc: "",
+    //     vi: "",
+    //     hi: "",
+    //     id: ""
+    // });
+
+
+    // const handleEditState = (index) => {
+    //     const selectedRow = stateDistribution[index];
+
+    //     // Load row data back into form
+    //     setCurrentStateData(selectedRow);
+
+    //     // Remove row from table (so it updates instead of duplicating)
+    //     setStateDistribution(prev =>
+    //         prev.filter((_, i) => i !== index)
+    //     );
+    // };
+    // const handleDeleteState = (index) => {
+    //     setStateDistribution(prev =>
+    //         prev.filter((_, i) => i !== index)
+    //     );
+    // };
+
+
+    /* ---------------- HANDLERS ---------------- */
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: type === "checkbox" ? checked : value
         }));
     };
 
     const handleDocumentChange = (doc) => {
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
             documents: prev.documents.includes(doc)
-                ? prev.documents.filter(d => d !== doc)
+                ? prev.documents.filter((d) => d !== doc)
                 : [...prev.documents, doc]
         }));
     };
 
+
+
+    // useEffect(() => {
+    //     const total =
+    //         Number(currentStateData.sc || 0) +
+    //         Number(currentStateData.st || 0) +
+    //         Number(currentStateData.obc || 0) +
+    //         Number(currentStateData.ews || 0) +
+    //         Number(currentStateData.gen || 0);
+
+    //     setCurrentStateData((prev) => ({ ...prev, total }));
+    // }, [
+    //     currentStateData.sc,
+    //     currentStateData.st,
+    //     currentStateData.obc,
+    //     currentStateData.ews,
+    //     currentStateData.gen
+    // ]);
+    const STATIC_STATE_TABLE = [
+        {
+            state: "ANDHRA",
+            vacancies: 10,
+            language: "Telugu",
+            sc: 2,
+            st: 1,
+            ews: 1,
+            gen: 4,
+            obc: 2,
+            total: 10,
+            hi: 1,
+            id: 0,
+            vi: 1,
+            oc: 0
+        }
+    ];
+
+
+
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle form submission
-        console.log(formData);
     };
 
     const documents = [
@@ -73,446 +152,385 @@ const AddPosition = () => {
         "Birth Certificate"
     ];
 
+    /* ---------------- UI ---------------- */
     return (
         <Container fluid className="add-position-page">
-            <div className="top-bar">
-                <Button variant="link" className="back-btn" onClick={() => navigate(-1)}>
-                    ← Back
-                </Button>
-                <div>
-                    <span className="req-id">REQ-{requisitionId}</span>
-                    <div className="req-code">BOB/HRM/REC/ADVT/2025/12</div>
+            <div className="req_top-bar">
+                <div className="d-flex align-items-center gap-3">
+                    <Button variant="link" className="back-btn p-0" onClick={() => navigate(-1)}>
+                        ← Back
+                    </Button>
+                    <div>
+                        <span className="req-id">REQ-{requisitionId}</span>
+                        <div className="req-code">BOB/HRM/REC/ADVT/2025/12</div>
+                    </div>
                 </div>
-                <Button variant="outline-primary" className="import-btn">
-                    ⬆ Import Positions
-                </Button>
+                <Button variant="outline-primary">⬆ Import Positions</Button>
             </div>
 
             <Card className="position-card">
                 <Card.Body>
-                    <h6 className="section-title">Add New Position</h6>
-                    <hr />
+                    <div className="section-title">
+                        <span className="indicator"></span>
+                        <h6>Add New Position</h6>
+                    </div>
 
                     <Form onSubmit={handleSubmit}>
                         <Row className="g-4">
-                            {/* Basic Information */}
+
+                            {/* BASIC FIELDS */}
                             <Col md={4}>
-                                <Form.Group>
-                                    <Form.Label>Department <span className="text-danger">*</span></Form.Label>
-                                    <Form.Select 
-                                        name="department"
-                                        value={formData.department}
-                                        onChange={handleInputChange}
-                                        required
-                                    >
-                                        <option value="">Select</option>
-                                        <option value="IT">IT</option>
-                                        <option value="HR">HR</option>
-                                        <option value="Finance">Finance</option>
-                                    </Form.Select>
-                                </Form.Group>
+                                <Form.Label>Position *</Form.Label>
+                                <Form.Select name="position" value={formData.position} onChange={handleInputChange}>
+                                    <option value="">Select</option>
+                                    <option>Developer</option>
+                                    <option>Manager</option>
+                                    <option>Analyst</option>
+                                </Form.Select>
                             </Col>
 
                             <Col md={4}>
-                                <Form.Group>
-                                    <Form.Label>Position <span className="text-danger">*</span></Form.Label>
-                                    <Form.Select 
-                                        name="position"
-                                        value={formData.position}
-                                        onChange={handleInputChange}
-                                        required
-                                    >
-                                        <option value="">Select</option>
-                                        <option value="Developer">Developer</option>
-                                        <option value="Manager">Manager</option>
-                                        <option value="Analyst">Analyst</option>
-                                    </Form.Select>
-                                </Form.Group>
+                                <Form.Label>Department *</Form.Label>
+                                <Form.Select name="department" value={formData.department} onChange={handleInputChange}>
+                                    <option value="">Select</option>
+                                    <option>IT</option>
+                                    <option>HR</option>
+                                    <option>Finance</option>
+                                </Form.Select>
                             </Col>
 
                             <Col md={4}>
-                                <Form.Group>
-                                    <Form.Label>Total Vacancies <span className="text-danger">*</span></Form.Label>
-                                    <Form.Control 
-                                        type="number" 
-                                        name="vacancies"
-                                        value={formData.vacancies}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter Vacancies"
-                                        required
-                                    />
-                                </Form.Group>
+                                <Form.Label>Total Vacancies *</Form.Label>
+                                <Form.Control name="vacancies" placeholder="Enter Vacancies" type="number" value={formData.vacancies} onChange={handleInputChange} />
                             </Col>
 
                             <Col md={4}>
-                                <Form.Group>
-                                    <Form.Label>Min Age <span className="text-danger">*</span></Form.Label>
-                                    <Form.Control 
-                                        type="number" 
-                                        name="minAge"
-                                        value={formData.minAge}
-                                        onChange={handleInputChange}
-                                        placeholder="Min Age"
-                                        required
-                                    />
-                                </Form.Group>
+                                <Form.Label>Min Age *</Form.Label>
+                                <Form.Control name="minAge" placeholder="Min Age" type="number" value={formData.minAge} onChange={handleInputChange} />
                             </Col>
 
                             <Col md={4}>
-                                <Form.Group>
-                                    <Form.Label>Max Age <span className="text-danger">*</span></Form.Label>
-                                    <Form.Control 
-                                        type="number" 
-                                        name="maxAge"
-                                        value={formData.maxAge}
-                                        onChange={handleInputChange}
-                                        placeholder="Max Age"
-                                        required
-                                    />
-                                </Form.Group>
+                                <Form.Label>Max Age *</Form.Label>
+                                <Form.Control name="maxAge" placeholder="Max Age" type="number" value={formData.maxAge} onChange={handleInputChange} />
                             </Col>
 
                             <Col md={4}>
-                                <Form.Group>
-                                    <Form.Label>Type of Employment</Form.Label>
-                                    <Form.Select 
-                                        name="employmentType"
-                                        value={formData.employmentType}
-                                        onChange={handleInputChange}
-                                    >
-                                        <option value="">Select</option>
-                                        <option value="Permanent">Permanent</option>
-                                        <option value="Contract">Contract</option>
-                                        <option value="Temporary">Temporary</option>
-                                    </Form.Select>
-                                </Form.Group>
+                                <Form.Label>Type of Employment</Form.Label>
+                                <Form.Select name="employmentType" value={formData.employmentType} onChange={handleInputChange}>
+                                    <option value="">Select</option>
+                                    <option>Permanent</option>
+                                    <option>Contract</option>
+                                    <option>Temporary</option>
+                                </Form.Select>
                             </Col>
 
                             <Col md={4}>
-                                <Form.Group>
-                                    <Form.Label>CIBIL Score <span className="text-danger">*</span></Form.Label>
-                                    <Form.Control 
-                                        type="number" 
-                                        name="cibilScore"
-                                        value={formData.cibilScore}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter Cibil Score"
-                                        required
-                                    />
-                                </Form.Group>
+                                <Form.Label>CIBIL Score *</Form.Label>
+                                <Form.Control name="cibilScore" placeholder="Enter CIBIL Score" type="number" value={formData.cibilScore} onChange={handleInputChange} />
                             </Col>
+
 
                             <Col md={4}>
-                                <Form.Group>
-                                    <Form.Label>Grade / Scale</Form.Label>
-                                    <Form.Select 
-                                        name="grade"
-                                        value={formData.grade}
-                                        onChange={handleInputChange}
-                                    >
-                                        <option value="">Select Grade</option>
-                                        <option value="A">Grade A</option>
-                                        <option value="B">Grade B</option>
-                                        <option value="C">Grade C</option>
-                                    </Form.Select>
-                                </Form.Group>
+                                <Form.Label>Grade / Scale</Form.Label>
+                                <Form.Select name="grade" value={formData.grade} onChange={handleInputChange}>
+                                    <option value="">Select</option>
+                                    <option>A</option>
+                                    <option>B</option>
+                                    <option>C</option>
+                                </Form.Select>
                             </Col>
 
-                            <Col md={4} className="d-flex align-items-center">
+                            <Col md={4} className="">
+
+                                <Form.Label>Enable Location Preference</Form.Label>
                                 <Form.Check
                                     type="switch"
                                     id="enable-location"
-                                    label="Enable Location Preferences"
                                     checked={formData.enableLocation}
                                     onChange={handleInputChange}
                                     name="enableLocation"
+                                    className="mb-3"
                                 />
                             </Col>
 
                             {/* Education and Experience */}
                             <Col md={6}>
-                                <Form.Group>
-                                    <div className="d-flex justify-content-between align-items-center mb-2">
-                                        <Form.Label className="mb-0">Mandatory Education <span className="text-danger">*</span></Form.Label>
-                                        <Button variant="link" size="sm" className="p-0">
-💡 AI Suggestions
-                                        </Button>
-                                    </div>
+                                <Form.Group className="mb-4">
+                                    <Form.Label>Mandatory Education *</Form.Label>
                                     <Form.Control
                                         as="textarea"
                                         rows={2}
                                         name="mandatoryEducation"
                                         value={formData.mandatoryEducation}
                                         onChange={handleInputChange}
-                                        placeholder="Enter Mandatory Education..."
-                                        required
+                                        placeholder="Enter Mandatory Education"
                                     />
                                 </Form.Group>
-                            </Col>
+                                <Form.Group className="mb-4">
+                                    <Form.Label>Mandatory Experience *</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        name="mandatoryExperience"
+                                        value={formData.mandatoryExperience}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter Minimum experience"
 
+                                    />
+                                </Form.Group>
+
+                            </Col>
                             <Col md={6}>
-                                <Form.Group>
-                                    <div className="d-flex justify-content-between align-items-center mb-2">
-                                        <Form.Label className="mb-0">Preferred Education <span className="text-danger">*</span></Form.Label>
-                                        <Button variant="link" size="sm" className="p-0">
-💡 AI Suggestions
-                                        </Button>
-                                    </div>
+                                <Form.Group className="mb-4">
+                                    <Form.Label>Preferred Education *</Form.Label>
                                     <Form.Control
                                         as="textarea"
                                         rows={2}
                                         name="preferredEducation"
                                         value={formData.preferredEducation}
                                         onChange={handleInputChange}
-                                        placeholder="Enter Preferred Education..."
-                                        required
+                                        placeholder="Enter Preferred Education"
                                     />
                                 </Form.Group>
-                            </Col>
 
-                            <Col md={6}>
-                                <Form.Group>
-                                    <div className="d-flex justify-content-between align-items-center mb-2">
-                                        <Form.Label className="mb-0">Mandatory Experience <span className="text-danger">*</span></Form.Label>
-                                        <Button variant="link" size="sm" className="p-0">
-💡 AI Suggestions
-                                        </Button>
-                                    </div>
+                                <Form.Group className="mb-4">
+                                    <Form.Label>Preferred Experience *</Form.Label>
                                     <Form.Control
                                         as="textarea"
-                                        rows={2}
-                                        name="mandatoryExperience"
-                                        value={formData.mandatoryExperience}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter Mandatory Experience..."
-                                        required
-                                    />
-                                </Form.Group>
-                            </Col>
-
-                            <Col md={6}>
-                                <Form.Group>
-                                    <div className="d-flex justify-content-between align-items-center mb-2">
-                                        <Form.Label className="mb-0">Preferred Experience <span className="text-danger">*</span></Form.Label>
-                                        <Button variant="link" size="sm" className="p-0">
-💡 AI Suggestions
-                                        </Button>
-                                    </div>
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={2}
                                         name="preferredExperience"
                                         value={formData.preferredExperience}
                                         onChange={handleInputChange}
-                                        placeholder="Enter Preferred Experience..."
-                                        required
+                                        placeholder="Enter Preferred experience"
+
                                     />
                                 </Form.Group>
                             </Col>
 
-                            {/* Documents Required */}
+                            {/* DOCUMENTS */}
                             <Col md={6}>
-                                <Form.Group>
-                                    <Form.Label>Documents Required <span className="text-danger">*</span></Form.Label>
-                                    <div className="document-grid">
-                                        {documents.map((doc) => (
-                                            <Form.Check
-                                                key={doc}
-                                                type="checkbox"
-                                                id={`doc-${doc}`}
-                                                label={doc}
-                                                checked={formData.documents.includes(doc)}
-                                                onChange={() => handleDocumentChange(doc)}
-                                            />
-                                        ))}
-                                    </div>
-                                </Form.Group>
+                                <Form.Label>Documents Required *</Form.Label>
+                                <div className="document-grid">
+                                    {documents.map((doc) => (
+                                        <Form.Check
+                                            key={doc}
+                                            label={doc}
+                                            checked={formData.documents.includes(doc)}
+                                            onChange={() => handleDocumentChange(doc)}
+                                        />
+                                    ))}
+                                </div>
                             </Col>
 
-                            {/* Roles & Responsibilities */}
+                            {/* ROLES */}
                             <Col md={6}>
-                                <Form.Group>
-                                    <div className="d-flex justify-content-between align-items-center mb-2">
-                                        <Form.Label className="mb-0">Roles & Responsibilities <span className="text-danger">*</span></Form.Label>
-                                        <Button variant="link" size="sm" className="p-0">
-💡 AI Suggestions
-                                        </Button>
-                                    </div>
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={5}
-                                        name="responsibilities"
-                                        value={formData.responsibilities}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter key responsibilities..."
-                                        required
-                                    />
-                                </Form.Group>
+                                <Form.Label>Roles & Responsibilities *</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows={5}
+                                    name="responsibilities"
+                                    value={formData.responsibilities}
+                                    onChange={handleInputChange}
+                                />
                             </Col>
 
-                            {/* Location Wise Distribution */}
+                            {/* LOCATION WISE DISTRIBUTION */}
                             <Col xs={12}>
-                                <div className="location-distribution">
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <h6 className="mb-0">Location Wise Distribution</h6>
+                                        <small className="text-muted">Enable to distribute vacancies across states</small>
+                                    </div>
                                     <Form.Check
                                         type="switch"
-                                        id="enable-state-distribution"
-                                        label="Enable to distribute vacancies across states"
+                                        name="enableStateDistribution"
                                         checked={formData.enableStateDistribution}
                                         onChange={handleInputChange}
-                                        name="enableStateDistribution"
-                                        className="mb-3"
                                     />
+                                </div>
 
-                                    <div className={formData.enableStateDistribution ? '' : 'opacity-50'}>
-                                        <Row className="mt-3">
-                                            <Col md={6} className="gencat">
-                                                <h6>General Category</h6>
+                                {/* OFF */}
+                                {!formData.enableStateDistribution && (
+                                    <Row className="g-4">
+                                        {/* General Category */}
+                                        <Col md={7}>
+                                            <Card className="p-3">
+                                                <h6 className="text-primary mb-3">General Category</h6>
                                                 <Row className="g-3">
-                                                    <Col xs={4} md={2}>
-                                                        <Form.Group>
-                                                            <Form.Label>SC</Form.Label>
-                                                            <Form.Control 
-                                                                type="number" 
-                                                                name="sc"
-                                                                value={formData.sc}
-                                                                onChange={handleInputChange}
-                                                            />
-                                                        </Form.Group>
-                                                    </Col>
-                                                    <Col xs={4} md={2}>
-                                                        <Form.Group>
-                                                            <Form.Label>ST</Form.Label>
-                                                            <Form.Control 
-                                                                type="number" 
-                                                                name="st"
-                                                                value={formData.st}
-                                                                onChange={handleInputChange}
-                                                            />
-                                                        </Form.Group>
-                                                    </Col>
-                                                    <Col xs={4} md={2}>
-                                                        <Form.Group>
-                                                            <Form.Label>OBC</Form.Label>
-                                                            <Form.Control 
-                                                                type="number" 
-                                                                name="obc"
-                                                                value={formData.obc}
-                                                                onChange={handleInputChange}
-                                                            />
-                                                        </Form.Group>
-                                                    </Col>
-                                                    <Col xs={4} md={2}>
-                                                        <Form.Group>
-                                                            <Form.Label>EWS</Form.Label>
-                                                            <Form.Control 
-                                                                type="number" 
-                                                                name="ews"
-                                                                value={formData.ews}
-                                                                onChange={handleInputChange}
-                                                            />
-                                                        </Form.Group>
-                                                    </Col>
-                                                    <Col xs={4} md={2}>
-                                                        <Form.Group>
-                                                            <Form.Label>GEN</Form.Label>
-                                                            <Form.Control 
-                                                                type="number" 
-                                                                name="gen"
-                                                                value={formData.gen}
-                                                                onChange={handleInputChange}
-                                                            />
-                                                        </Form.Group>
-                                                    </Col>
-                                                    <Col xs={4} md={2}>
-                                                        <Form.Group>
-                                                            <Form.Label>Total</Form.Label>
-                                                            <Form.Control 
-                                                                type="number" 
-                                                                name="total"
-                                                                value={formData.total}
-                                                                onChange={handleInputChange}
-                                                                readOnly
-                                                            />
-                                                        </Form.Group>
-                                                    </Col>
+                                                    {GENERAL_FIELDS.map(({ key, label }) => (
+                                                        <Col md={2} key={key}>
+                                                            <Form.Label className="small fw-semibold">{label}</Form.Label>
+                                                            <Form.Control type="number" disabled />
+                                                        </Col>
+                                                    ))}
                                                 </Row>
+                                            </Card>
+                                        </Col>
+
+                                        {/* Disability Category */}
+                                        <Col md={5}>
+                                            <Card className="p-3">
+                                                <h6 className="text-primary mb-3">Disability Category</h6>
+                                                <Row className="g-3">
+                                                    {DISABILITY_FIELDS.map(({ key, label }) => (
+                                                        <Col md={3} key={key}>
+                                                            <Form.Label className="small fw-semibold">{label}</Form.Label>
+                                                            <Form.Control type="number" disabled />
+                                                        </Col>
+                                                    ))}
+                                                </Row>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                )}
+
+                                {/* ON */}
+                                {formData.enableStateDistribution && (
+                                    <>
+                                        <Row className="g-3 mb-3">
+                                            <Col md={4}>
+                                                <Form.Label>State *</Form.Label>
+                                                <Form.Select defaultValue="">
+                                                    <option value="">Select State</option>
+                                                    <option value="ANDHRA">ANDHRA</option>
+                                                    <option value="GUJARAT">GUJARAT</option>
+                                                    <option value="JAMMU & KASHMIR">JAMMU & KASHMIR</option>
+                                                </Form.Select>
+
                                             </Col>
 
-                                            <Col md={4} className="discat">
-                                                <h6>Disability Category</h6>
-                                                <Row className="g-2">
-                                                    <Col xs={3}>
-                                                        <Form.Group>
-                                                            <Form.Label className="small">OC</Form.Label>
-                                                            <Form.Control 
-                                                                size="sm"
-                                                                type="number" 
-                                                                name="oc"
-                                                                value={formData.oc}
-                                                                onChange={handleInputChange}
-                                                                className="p-1"
-                                                            />
-                                                        </Form.Group>
-                                                    </Col>
-                                                    <Col xs={3}>
-                                                        <Form.Group>
-                                                            <Form.Label className="small">VI</Form.Label>
-                                                            <Form.Control 
-                                                                size="sm"
-                                                                type="number" 
-                                                                name="vi"
-                                                                value={formData.vi}
-                                                                onChange={handleInputChange}
-                                                                className="p-1"
-                                                            />
-                                                        </Form.Group>
-                                                    </Col>
-                                                    <Col xs={3}>
-                                                        <Form.Group>
-                                                            <Form.Label className="small">HI</Form.Label>
-                                                            <Form.Control 
-                                                                size="sm"
-                                                                type="number" 
-                                                                name="hi"
-                                                                value={formData.hi}
-                                                                onChange={handleInputChange}
-                                                                className="p-1"
-                                                            />
-                                                        </Form.Group>
-                                                    </Col>
-                                                    <Col xs={3}>
-                                                        <Form.Group>
-                                                            <Form.Label className="small">ID</Form.Label>
-                                                            <Form.Control 
-                                                                size="sm"
-                                                                type="number" 
-                                                                name="id"
-                                                                value={formData.id}
-                                                                onChange={handleInputChange}
-                                                                className="p-1"
-                                                            />
-                                                        </Form.Group>
-                                                    </Col>
-                                                </Row>
+                                            <Col md={4}>
+                                                <Form.Label>Vacancies *</Form.Label>
+                                                <Form.Control
+                                                    type="number"
+                                                    placeholder="Enter Vacancies"
+                                                />
+
+                                            </Col>
+
+                                            <Col md={4}>
+                                                <Form.Group>
+                                                    <Form.Label>Local Language</Form.Label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        placeholder="Enter local language"
+                                                    />
+
+                                                </Form.Group>
                                             </Col>
                                         </Row>
-                                    </div>
-                                </div>
+
+                                        <Row className="g-4 mt-3">
+                                            {/* General Category */}
+                                            <Col md={7}>
+                                                <Card className="p-3">
+                                                    <h6 className="text-primary mb-3">General Category</h6>
+                                                    <Row className="g-3">
+                                                        {GENERAL_FIELDS.map(({ key, label }) => (
+                                                            <Col md={2} key={key}>
+                                                                <Form.Label className="small fw-semibold">{label}</Form.Label>
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    disabled={key === "total"}
+                                                                />
+
+                                                            </Col>
+                                                        ))}
+                                                    </Row>
+                                                </Card>
+                                            </Col>
+
+                                            {/* Disability Category */}
+                                            <Col md={5}>
+                                                <Card className="p-3">
+                                                    <h6 className="text-primary mb-3">Disability Category</h6>
+                                                    <Row className="g-3">
+                                                        {DISABILITY_FIELDS.map(({ key, label }) => (
+                                                            <Col md={3} key={key}>
+                                                                <Form.Label className="small fw-semibold">{label}</Form.Label>
+                                                                <Form.Control type="number" />
+
+                                                            </Col>
+                                                        ))}
+                                                    </Row>
+                                                </Card>
+                                            </Col>
+                                        </Row>
+
+
+                                        <Button className="mt-3">
+                                            Submit
+                                        </Button>
+
+                                        <table className="table table-bordered mt-4">
+                                            <thead>
+                                                <tr>
+                                                    <th rowSpan="2">S No.</th>
+                                                    <th rowSpan="2">State Name</th>
+                                                    <th rowSpan="2">Vacancies</th>
+                                                    <th rowSpan="2">Local Language of State</th>
+
+                                                    <th rowSpan="2">SC</th>
+                                                    <th rowSpan="2">ST</th>
+                                                    <th rowSpan="2">EWS</th>
+                                                    <th rowSpan="2">GEN</th>
+                                                    <th rowSpan="2">OBC</th>
+                                                    <th rowSpan="2">TOTAL</th>
+
+                                                    <th colSpan="5" className="text-center">Out of Which</th>
+                                                    <th rowSpan="2">Actions</th>
+                                                </tr>
+
+                                                <tr>
+                                                    <th>HI</th>
+                                                    <th>ID</th>
+                                                    <th>VI</th>
+                                                    <th>OC</th>
+                                                    <th>Total</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                {STATIC_STATE_TABLE.map((row, index) => {
+                                                    const disabilityTotal =
+                                                        row.hi + row.id + row.vi + row.oc;
+
+                                                    return (
+                                                        <tr key={index}>
+                                                            <td>{index + 1}</td>
+                                                            <td>{row.state}</td>
+                                                            <td>{row.vacancies}</td>
+                                                            <td>{row.language}</td>
+
+                                                            <td>{row.sc}</td>
+                                                            <td>{row.st}</td>
+                                                            <td>{row.ews}</td>
+                                                            <td>{row.gen}</td>
+                                                            <td>{row.obc}</td>
+                                                            <td>{row.total}</td>
+
+                                                            <td>{row.hi}</td>
+                                                            <td>{row.id}</td>
+                                                            <td>{row.vi}</td>
+                                                            <td>{row.oc}</td>
+                                                            <td>{disabilityTotal}</td>
+
+                                                            <td className="text-center">—</td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+
+
+                                        </table>
+                                    </>
+                                )}
                             </Col>
                         </Row>
 
-                        <div className="form-footer">
-                            <Button 
-                                variant="outline-secondary" 
-                                onClick={() => navigate(-1)}
-                                className="me-2"
-                            >
+                        <div className="form-footer mt-4">
+                            <Button variant="outline-secondary" onClick={() => navigate(-1)}>
                                 Cancel
                             </Button>
-                            <Button 
-                                type="submit" 
-                                className="save-btn"
-                            >
+                            <Button type="submit" className="ms-2 save-btn">
                                 Save
                             </Button>
                         </div>

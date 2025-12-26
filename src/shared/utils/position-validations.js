@@ -12,12 +12,6 @@ export const validatePositionTitle = (title, options = {}) => {
   let error = requiredField(title);
   if (error) return error;
 
-  error = minLength(title, 2);
-  if (error) return error;
-
-  error = maxLength(title, 100);
-  if (error) return error;
-
   // Check for duplicate titles
   if (existing.length > 0) {
     const titleNorm = normalizeTitle(title);
@@ -49,14 +43,6 @@ export const validatePositionDescription = (description) => {
   // Make description required
   let error = requiredField(description);
   if (error) return error;
-
-  // Then check length
-  error = minLength(description, 10);
-  if (error) return error;
-
-  error = maxLength(description, 500);
-  if (error) return error;
-
   return null;
 };
  

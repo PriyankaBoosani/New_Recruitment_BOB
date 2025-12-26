@@ -12,6 +12,8 @@ import pos_plus_icon from '../../../assets/pos_plus_icon.png';
 import mingcute_department_line from '../../../assets/mingcute_department-line.png';
 import vacancy_icon from '../../../assets/vacancy_icon.png';
 import position_Icon from '../../../assets/position_Icon.png';
+import { ChevronDown, ChevronUp } from "react-bootstrap-icons";
+
 
 const JobPostingsList = () => {
     const navigate = useNavigate();
@@ -42,6 +44,12 @@ const JobPostingsList = () => {
             editable: false
         }
     ]);
+    const [openReqId, setOpenReqId] = useState(null);
+    const toggleAccordion = (reqId) => {
+        setOpenReqId(prev => (prev === reqId ? null : reqId));
+    };
+
+
     useEffect(() => {
         if (location.state?.newRequisition) {
             setRequisitions(prev => [
@@ -117,7 +125,12 @@ const JobPostingsList = () => {
             {/* Requisition Cards */}
             {requisitions.map((req) => (
                 <div key={req.id} className="requisition-card mb-3">
-                    <Row className="align-items-center">
+                    <Row
+                        className="align-items-center req-clickable"
+                        onClick={() => toggleAccordion(req.id)}
+                    >
+
+
                         <Col xs={12} md={8}>
                             <div className="req-header">
                                 <Badge bg="light" text="primary" className="req-id">
@@ -150,27 +163,112 @@ const JobPostingsList = () => {
                         <Col
                             xs={12}
                             md={4}
-                            className="text-md-end mt-3 mt-md-0 actions"
+                            className="text-md-end mt-3 mt-md-0 actions d-flex justify-content-end align-items-center gap-2"
                         >
                             {req.editable ? (
                                 <>
-                                    <Button variant="light" className="icon-btn" title="Add Position"
-                                        onClick={() => navigate(`/job-posting/${req.id}/add-position`)}>
-                                        <img src={pos_plus_icon} alt="pos_plus_icon" className='icon-16' />
+                                    <Button
+                                        variant="light"
+                                        className="icon-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigate(`/job-posting/${req.id}/add-position`);
+                                        }}
+                                    >
+                                        <img src={pos_plus_icon} alt="add" className="icon-16" />
                                     </Button>
-                                    <Button variant="light" className="icon-btn">
-                                        <img src={pos_edit_icon} alt="pos_edit_icon" className='icon-20' />
+
+                                    <Button
+                                        variant="light"
+                                        className="icon-btn"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <img src={pos_edit_icon} alt="edit" className="icon-20" />
                                     </Button>
-                                    <Button variant="light" className="icon-btn">
-                                        <img src={pos_delete_icon} alt="pos_delete_icon" className="icon-20" />
+
+                                    <Button
+                                        variant="light"
+                                        className="icon-btn"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <img src={pos_delete_icon} alt="delete" className="icon-20" />
                                     </Button>
                                 </>
                             ) : (
-                                <Button variant="light" className="icon-btn">
+                                <Button
+                                    variant="light"
+                                    className="icon-btn"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
                                     <Eye />
                                 </Button>
                             )}
+
+                            {/* 🔽 Accordion Arrow */}
+                            <Button
+                                variant="none"
+                                className="accordion-arrow"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleAccordion(req.id);
+                                }}
+                            >
+                                {openReqId === req.id ? <ChevronUp /> : <ChevronDown />}
+                            </Button>
                         </Col>
+                        {openReqId === req.id && (
+                            <div className="accordion-body mt-3">
+
+                                {/* Department Block */}
+                                <div className="department-card mb-3">
+                                    <div className="department-header d-flex align-items-center gap-2">
+                                        <img src={mingcute_department_line} alt="dept" className="icon-16" />
+                                        <strong>Digital</strong>
+                                        <Badge bg="light" text="primary">1 Position</Badge>
+                                    </div>
+
+                                    {/* Position Card */}
+                                   <div className="position-card-inner">
+
+  {/* HEADER ROW */}
+  <div className="position-header-row">
+    <div className="position-title">
+      Deputy Manager: Product - Mass Transit System
+    </div>
+
+    <div className="position-meta-inline">
+      <span>Vacancies: 10</span>
+      <span>Age: 24 – 34 Years</span>
+
+      
+    </div>
+    <Button variant="light" className="icon-btn">
+        <img src={pos_edit_icon} alt="edit" className="icon-16" />
+      </Button>
+
+      <Button variant="light" className="icon-btn">
+        <img src={pos_delete_icon} alt="delete" className="icon-16" />
+      </Button>
+  </div>
+
+  {/* DETAILS */}
+  <div className="position-details">
+    <div>
+      <strong>Mandatory Education:</strong> Bachelor’s Degree in Computer Science /
+      Information Technology or related field.
+    </div>
+    <div>
+      <strong>Preferred Education:</strong> MBA / Finance or related field.
+    </div>
+  </div>
+
+</div>
+
+                                </div>
+
+                            </div>
+                        )}
+
                     </Row>
                 </div>
             ))}

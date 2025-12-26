@@ -2,10 +2,11 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
-import { Calendar } from "react-bootstrap-icons";
 import "../../../style/css/CreateRequisition.css";
 import ErrorMessage from '../../../shared/components/ErrorMessage';
 import { validateRequisitionForm } from '../validations/requisition-validation';
+import upload_Icon from '../../../assets/upload_Icon.png'
+import { mapRequisitionToApi } from '../mappers/requisitionMapper';
 
 const CreateRequisition = () => {
     const [errors, setErrors] = useState({});
@@ -23,19 +24,37 @@ const CreateRequisition = () => {
         return d.toISOString().split("T")[0];
     };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        const updated = { ...formData, [name]: value };
+   const handleChange = (e) => {
+  const { name, value } = e.target;
 
-        if (name === "startDate" && value) {
-            const d = new Date(value);
-            d.setDate(d.getDate() + 21);
-            updated.endDate = formatDate(d);
+  setFormData(prev => {
+    const updated = { ...prev, [name]: value };
 
-        }
+    if (name === "startDate" && value) {
+      const d = new Date(value);
+      d.setDate(d.getDate() + 21);
+      updated.endDate = formatDate(d);
+    }
 
-        setFormData(updated);
-    };
+    return updated;
+  });
+
+  // ✅ CLEAR ERRORS
+  setErrors(prev => {
+    const copy = { ...prev };
+
+    // clear current field error
+    if (copy[name]) delete copy[name];
+
+    // 🚀 IMPORTANT: clear endDate error when startDate changes
+    if (name === "startDate" && copy.endDate) {
+      delete copy.endDate;
+    }
+
+    return copy;
+  });
+};
+
     const [indentFile, setIndentFile] = useState(null);
     const fileInputRef = useRef(null);
     const handleSave = (e) => {
@@ -45,11 +64,9 @@ const CreateRequisition = () => {
         setErrors(errors);
 
         if (valid) {
-            console.log('Form is valid, submitting...', {
-                ...formData,
-                file: indentFile
-            });
-            // TODO: Add your form submission logic here
+            const payload = mapRequisitionToApi(formData, indentFile);
+
+            console.log('Submitting payload', payload);
         } else {
             // Scroll to the first error
             const firstError = Object.keys(errors)[0];
@@ -62,8 +79,6 @@ const CreateRequisition = () => {
             }
         }
     };
-
-
 
     return (
         <Container fluid className="create-requisition-page">
@@ -81,20 +96,21 @@ const CreateRequisition = () => {
                             <Form.Label>
                                 Requisition Title <span className="text-danger">*</span>
                             </Form.Label>
+
                             <Form.Control
-                                placeholder="BOB/HRM/REC/ADVT/2025/12"
+                                placeholder="Enter requisition title"
                                 name="title"
                                 value={formData.title}
                                 onChange={handleChange}
-                                isInvalid={!!errors.title}
                             />
-                            <Form.Control.Feedback type="invalid">
-                                {errors.title}
-                            </Form.Control.Feedback>
+
+                            <ErrorMessage>{errors.title}</ErrorMessage>
+
                             <Form.Text muted>
                                 Use a clear, searchable title used across the portal and job boards.
                             </Form.Text>
                         </Form.Group>
+
 
                         <Row>
                             <Col md={6}>
@@ -106,14 +122,11 @@ const CreateRequisition = () => {
                                         as="textarea"
                                         rows={5}
                                         name="description"
-                                        placeholder="Enter overall description / objective for this hiring drive..."
+                                        placeholder="Enter description"
                                         value={formData.description}
                                         onChange={handleChange}
-                                        isInvalid={!!errors.description}
                                     />
-                                    <Form.Control.Feedback type="invalid">
-                                        {errors.description}
-                                    </Form.Control.Feedback>
+                                    <ErrorMessage>{errors.description}</ErrorMessage>
                                 </Form.Group>
                             </Col>
 
@@ -124,7 +137,9 @@ const CreateRequisition = () => {
                                         className={`upload-box ${errors.indentFile ? 'is-invalid' : ''}`}
                                         onClick={() => fileInputRef.current.click()}
                                     >
-                                        <div className="upload-icon">⬆</div>
+                                        <div className="upload-icon">
+                                            <img src={upload_Icon} alt="upload_Icon" className="icon-40" />
+                                        </div>
                                         <p>
                                             Drag & drop your file here, or
                                             <span className="upload-link"> Click to Upload</span>
@@ -137,9 +152,10 @@ const CreateRequisition = () => {
                                         )}
                                     </div>
                                     {errors.indentFile && (
-                                        <div className="invalid-feedback d-block">
-                                            {errors.indentFile}
-                                        </div>
+
+                                        <ErrorMessage>{errors.indentFile}</ErrorMessage>
+
+
                                     )}
                                     <input
                                         type="file"
@@ -175,13 +191,11 @@ const CreateRequisition = () => {
                                             name="startDate"
                                             value={formData.startDate}
                                             onChange={handleChange}
-                                            isInvalid={!!errors.startDate}
+
                                             min={new Date().toISOString().split('T')[0]}
                                         />
+                                        <ErrorMessage>{errors.startDate}</ErrorMessage>
 
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.startDate}
-                                        </Form.Control.Feedback>
                                     </div>
                                     <Form.Text muted>
                                         Date from which candidates can start applying.
@@ -201,16 +215,16 @@ const CreateRequisition = () => {
                                             value={formData.endDate}
                                             onChange={handleChange}
                                             min={formData.startDate}
-                                            isInvalid={!!errors.endDate}
+
                                         />
 
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.endDate}
-                                        </Form.Control.Feedback>
+                                        <ErrorMessage>{errors.endDate}</ErrorMessage>
+
                                     </div>
                                     <Form.Text muted>
                                         ⓘ Standard duration: 21 days.
-                                    </Form.Text>                                </Form.Group>
+                                    </Form.Text>
+                                </Form.Group>
                             </Col>
                         </Row>
                     </Form>

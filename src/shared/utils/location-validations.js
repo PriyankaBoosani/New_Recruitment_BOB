@@ -1,8 +1,5 @@
 import i18n from "i18next";
 
-/**
- * Required field
- */
 export const requiredField = (val) => {
   if (val == null || String(val).trim() === "") {
     return i18n.t("validation:required");
@@ -10,27 +7,6 @@ export const requiredField = (val) => {
   return null;
 };
 
-/**
- * Minimum length
- */
-export const minLength = (val, n) => {
-  if (val == null) return null;
-  if (String(val).trim().length < n) {
-    return i18n.t("validation:minLength", { min: n });
-  }
-  return null;
-};
-
-/**
- * Maximum length
- */
-export const maxLength = (val, n) => {
-  if (val == null) return null;
-  if (String(val).trim().length > n) {
-    return i18n.t("validation:maxLength", { max: n });
-  }
-  return null;
-};
 
 const normalize = (s = "") => String(s).trim().toLowerCase();
 
@@ -40,13 +16,6 @@ const normalize = (s = "") => String(s).trim().toLowerCase();
 export const validateLocationName = (name) => {
   let err = requiredField(name);
   if (err) return err;
-
-  err = minLength(name, 2);
-  if (err) return err;
-
-  err = maxLength(name, 200);
-  if (err) return err;
-
   return null;
 };
 

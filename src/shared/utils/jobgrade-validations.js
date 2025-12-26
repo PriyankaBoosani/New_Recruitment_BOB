@@ -2,38 +2,17 @@
 import { requiredField, minLength, maxLength } from './common-validations';
 import i18n from 'i18next';
 
- 
-/**
- * Normalize string for uniqueness checks
- */
 const normalize = (s = '') => String(s).trim().toLowerCase();
  
-/**
- * Safe number conversion
- */
 const toNumberSafe = (v) => {
   if (v === '' || v === null || v === undefined) return NaN;
   const n = Number(String(v).replace(/,/g, '').trim());
   return Number.isFinite(n) ? n : NaN;
 };
- 
-/* =========================
-   Field-level validators
-========================= */
- 
-/**
- * Scale
- */
+
 export const validateScale = (scale) => {
   let error = requiredField(scale, 'Scale');
-  if (error) return error;
- 
-  error = minLength(scale, 2, 'Scale');
-  if (error) return error;
- 
-  error = maxLength(scale, 50, 'Scale');
-  if (error) return error;
- 
+  if (error) return error; 
   return null;
 };
  
@@ -43,14 +22,7 @@ export const validateScale = (scale) => {
 export const validateGradeCode = (gradeCode) => {
   let error = requiredField(gradeCode, 'Grade code');
   if (error) return error;
- 
-  error = minLength(gradeCode, 1, 'Grade code');
-  if (error) return error;
- 
-  error = maxLength(gradeCode, 20, 'Grade code');
-  if (error) return error;
- 
-  return null;
+   return null;
 };
 
 
@@ -85,56 +57,13 @@ export const validateMaxSalary = (maxSalary) => {
   return null;
 };
 
- 
-/**
- * Minimum Salary
- */
-// export const validateMinSalary = (minSalary) => {
-//   let error = requiredField(minSalary, 'Minimum salary');
-//   if (error) return error;
- 
-//   const n = toNumberSafe(minSalary);
-//   if (Number.isNaN(n)) return 'Minimum salary must be a valid number';
-//   if (n < 0) return 'Minimum salary cannot be negative';
- 
-//   return null;
-// };
- 
 
-
-/**
- * Maximum Salary
- */
-// export const validateMaxSalary = (maxSalary) => {
-//   let error = requiredField(maxSalary, 'Maximum salary');
-//   if (error) return error;
- 
-//   const n = toNumberSafe(maxSalary);
-//   if (Number.isNaN(n)) return 'Maximum salary must be a valid number';
-//   if (n < 0) return 'Maximum salary cannot be negative';
- 
-//   return null;
-// };
- 
-/**
- * Description
- */
 export const validateDescription = (description) => {
   let error = requiredField(description, 'Description');
   if (error) return error;
- 
-  error = minLength(description, 10, 'Description');
-  if (error) return error;
- 
-  error = maxLength(description, 500, 'Description');
-  if (error) return error;
- 
-  return null;
+   return null;
 };
- 
-/* =========================
-   Form-level validator
-========================= */
+
  
 export const validateJobGradeForm = (formData = {}, options = {}) => {
   const errors = {};

@@ -20,15 +20,15 @@ import UserPage from "../modules/master/pages/User/UserPage";
 import Home from "../modules/master/pages/Home"; // dashboard/home
 import JobPostingsList from "../modules/jobPosting/pages/JobPostingsList";
 import CreateRequisition from "../modules/jobPosting/pages/CreateRequisition";
-import UploadIndent from "../modules/jobPosting/pages/UploadIndent";
+
 import AddPosition from "../modules/jobPosting/pages/AddPosition";
 
 // Auth & layout helpers
 import PrivateRoute from "../modules/auth/services/PrivateRoute";
 import DepartmentPage from "../modules/master/pages/Department/DepartmentPage"
 // import CategoryPage from "../modules/master/pages/Category/CategoryPage";
-//import InterviewPanel from "../modules/master/pages/InterviewPanel123/pages/InterviewPanel";
-import InterviewPanel from "../modules/master/pages/InterviewPanel";
+import InterviewPanel from "../modules/master/pages/InterviewPanel123/InterviewPanelPage";
+//import InterviewPanel from "../modules/master/pages/InterviewPanel";
 import SpecialCategoryPage from "../modules/master/pages/SpecialCategory/SpecialCategoryPage";
 // import PositionPage from "../modules/master/pages/Position/PositionPage";
 // Lazy loaded components
@@ -75,10 +75,6 @@ const AppRoutes = () => {
               <Route path="/interviewpanel" element={<InterviewPanel />} />
               <Route path="/job-posting" element={<JobPostingsList />} />
               <Route path="/job-posting/create-requisition" element={<CreateRequisition />} />
-              <Route
-                path="/job-posting/upload-indent"
-                element={<UploadIndent />}
-              />
               <Route path="/job-posting/:requisitionId/add-position" element={<AddPosition />} />
 
             </Route>

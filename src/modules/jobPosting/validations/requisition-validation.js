@@ -8,19 +8,6 @@ const requiredField = (value, fieldName) => {
   return null;
 };
 
-const minLength = (value, min, fieldName) => {
-  if (value && value.length < min) {
-    return `${fieldName} must be at least ${min} characters`;
-  }
-  return null;
-};
-
-const maxLength = (value, max, fieldName) => {
-  if (value && value.length > max) {
-    return `${fieldName} must be less than ${max} characters`;
-  }
-  return null;
-};
 
 const validateFile = (file) => {
   if (!file) {

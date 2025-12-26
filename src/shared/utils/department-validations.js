@@ -6,26 +6,12 @@ const normalizeName = (s = '') => String(s).trim().toLowerCase();
 export const validateDepartmentName = (name) => {
   let error = requiredField(name);
   if (error) return error;
-
-  error = minLength(name, 2);
-  if (error) return error;
-
-  error = maxLength(name, 100);
-  if (error) return error;
-
   return null;
 };
 
 export const validateDepartmentDescription = (description) => {
   let error = requiredField(description);
   if (error) return error;
-
-  error = minLength(description, 10);
-  if (error) return error;
-
-  error = maxLength(description, 500);
-  if (error) return error;
-
   return null;
 };
 

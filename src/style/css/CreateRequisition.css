@@ -22,7 +22,7 @@
 	margin: 0;
 	color: #162B75;
 	font-weight: 500;
-	font-size: 1em;
+	font-size: 1.125em;
 }
 
 .create-requisition-page .indicator {
@@ -91,7 +91,4 @@
 
 .create-requisition-page .primary-btn:hover {
   background: #e85f10;
-}
-.upload-box.is-invalid {
-    border: 1px solid #dc3545;
 }
