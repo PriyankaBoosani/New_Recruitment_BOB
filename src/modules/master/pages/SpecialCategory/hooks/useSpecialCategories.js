@@ -136,7 +136,6 @@ export const useSpecialCategories = () => {
           error: res.message
         };
       }
-      await fetchCategories();
       // ✅ success
       toast.success(res.message || "File uploaded successfully");
 

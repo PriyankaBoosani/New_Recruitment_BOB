@@ -18,7 +18,8 @@ const LocationPage = () => {
     cities,
     addLocation,
     updateLocation,
-    deleteLocation
+    deleteLocation,
+    fetchLocations
   } = useLocations();
 
 
@@ -142,6 +143,10 @@ return (
   setErrors={setErrors}
   handleSave={handleSave}
   t={t}
+    onSuccess={() => {
+          fetchLocations();     // refresh list immediately
+          setShowModal(false); // ensure modal closes
+        }}
 />
 
 

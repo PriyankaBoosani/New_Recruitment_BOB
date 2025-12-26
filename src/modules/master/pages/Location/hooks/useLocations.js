@@ -24,13 +24,13 @@ export const useLocations = () => {
   };
 
   // 🔹 Fetch locations
-  const fetchLocations = async (citiesList = cities) => {
+  const fetchLocations = async () => {
     const res = await masterApiService.getAllLocations();
     const apiList = Array.isArray(res.data)
       ? res.data
       : res.data?.data || [];
 
-    const mapped = mapLocationsFromApi(apiList, citiesList);
+    const mapped = mapLocationsFromApi(apiList, cities);
 
     // newest first (same as Department)
     mapped.sort(
@@ -53,7 +53,7 @@ export const useLocations = () => {
   // once cities are loaded → load locations
   useEffect(() => {
     if (cities.length) {
-      fetchLocations(cities);
+      fetchLocations();
     }
   }, [cities]);
   
@@ -107,23 +107,42 @@ const downloadLocationTemplate = async () => {
    BULK IMPORT
 ========================= */
 const bulkAddLocations = async (file) => {
-  try {
-    const res = await masterApiService.bulkAddLocations(file);
+  setLoading(true);
+    try {
+      const res = await masterApiService.bulkAddLocations(file);
 
-    toast.success(
-      res?.data?.message ||
-      i18n.t("import_success", { ns: "location" })
-    );
+      console.log("API RESPONSE:", res); // logs for 200 & 422
 
-    await fetchLocations(cities);
-    return { success: true };
-  } catch (error) {
-    toast.error(
-      error?.response?.data?.message ||
-      i18n.t("import_error", { ns: "location" })
-    );
-    return { success: false };
-  }
+      // ❌ business failure
+      if (res.success === false) {
+        toast.error(res.message);
+        return {
+          success: false,
+          error: res.message
+        };
+      }
+      // ✅ success
+      toast.success(res.message || "File uploaded successfully");
+
+      return {
+        success: true
+      };
+
+    } catch (err) {
+      // ❌ network / server error
+      console.log("NETWORK ERROR:", err);
+
+      const message = "Something went wrong";
+      toast.error(message);
+
+      return {
+        success: false,
+        error: message
+      };
+
+    } finally {
+      setLoading(false);
+    }
 };
 
 
@@ -135,6 +154,7 @@ const bulkAddLocations = async (file) => {
     updateLocation,
     deleteLocation,
     downloadLocationTemplate,
-    bulkAddLocations
+    bulkAddLocations,
+    fetchLocations
   };
 };

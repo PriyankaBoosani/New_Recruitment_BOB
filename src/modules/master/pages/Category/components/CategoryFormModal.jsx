@@ -18,7 +18,8 @@ const CategoryFormModal = ({
   onImport,
 
   // ✅ IMPORTANT: pass categories list from parent
-  categories = []
+  categories = [],
+    ...importProps
 }) => {
   const { t } = useTranslation(["category"]);
 
@@ -201,7 +202,7 @@ const CategoryFormModal = ({
           </Form>
         ) : (
           /* -------- IMPORT TAB -------- */
-          <CategoryImportModal onImport={onImport} />
+          <CategoryImportModal onImport={onImport}    onClose={onHide} onSuccess={importProps.onSuccess} />
         )}
       </Modal.Body>
     </Modal>

@@ -186,6 +186,11 @@ const SpecialCategoryPage = () => {
         removeCSV={() => setSelectedCSVFile(null)}
         removeXLSX={() => setSelectedXLSXFile(null)}
         t={t}
+              // ✅ ADD THIS
+        onSuccess={() => {
+          fetchCategories();     // refresh list immediately
+          setShowModal(false); // ensure modal closes
+        }}
       />
 
       {/* Delete Confirm Modal */}

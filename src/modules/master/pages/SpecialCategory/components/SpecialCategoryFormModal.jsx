@@ -137,7 +137,7 @@ const SpecialCategoryFormModal = ({
           </Form>
         ) : (
           <>
-            <SpecialCategoryImportModal t={t} {...importProps} />
+            <SpecialCategoryImportModal t={t} onClose={onHide} onSuccess={importProps.onSuccess}   />
             {/* <Modal.Footer className="modal-footer-custom px-0">
               <Button variant="outline-secondary" onClick={onHide}>
                 {t("cancel")}

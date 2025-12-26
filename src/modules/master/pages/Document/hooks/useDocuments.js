@@ -10,7 +10,7 @@ export const useDocuments = () => {
     const { t } = useTranslation(["documents", "validation"]);
 
   const [documents, setDocuments] = useState([]);
-
+ const [loading, setLoading] = useState(false);
 const fetchDocuments = async () => {
   const res = await masterApiService.getAllDocumentTypes();
   const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
@@ -24,7 +24,44 @@ const fetchDocuments = async () => {
 
   setDocuments(mapDocumentsFromApi(sorted));
 };
+const bulkAddDocuments = async (file) => {
+     setLoading(true);
+      try {
+        const res = await masterApiService.bulkAddDocuments(file);
 
+        console.log("API RESPONSE:", res); // logs for 200 & 422
+
+      // ❌ business failure
+      if (res.success === false) {
+        toast.error(res.message);
+        return {
+          success: false,
+          error: res.message
+        };
+      }
+      // ✅ success
+      toast.success(res.message || "File uploaded successfully");
+
+      return {
+        success: true
+      };
+
+    } catch (err) {
+      // ❌ network / server error
+      console.log("NETWORK ERROR:", err);
+
+      const message = "Something went wrong";
+      toast.error(message);
+
+      return {
+        success: false,
+        error: message
+      };
+
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchDocuments();
@@ -53,6 +90,7 @@ const fetchDocuments = async () => {
     fetchDocuments,
     addDocument,
     updateDocument,
-    deleteDocument
+    deleteDocument,
+    bulkAddDocuments
   };
 };

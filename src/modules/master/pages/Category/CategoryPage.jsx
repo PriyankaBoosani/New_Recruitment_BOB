@@ -20,7 +20,8 @@ const CategoryPage = () => {
     addCategory,
     updateCategory,
     deleteCategory,
-    importCategories
+    importCategories,
+    fetchCategories
   } = useCategories();
 
   // UI state
@@ -92,6 +93,12 @@ const CategoryPage = () => {
         onUpdate={updateCategory}
         onImport={importCategories}
         categories={categories}
+
+           // ✅ ADD THIS
+        onSuccess={() => {
+          fetchCategories();     // refresh list immediately
+          setShowModal(false); // ensure modal closes
+        }}
       />
 
       <DeleteConfirmModal

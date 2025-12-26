@@ -120,7 +120,7 @@ const DocumentFormModal = ({
           <DocumentImportModal
             t={t}
             onClose={onHide}
-            onSuccess={importProps.onSuccess}
+            onSuccess={importProps.onSuccess} 
           />
         )}
       </Modal.Body>

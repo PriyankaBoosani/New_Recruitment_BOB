@@ -147,7 +147,6 @@ export const useCategories = () => {
           error: res.message
         };
       }
-      await fetchCategories(); 
       // ✅ success
       toast.success(res.message || "File uploaded successfully");
 
@@ -180,6 +179,7 @@ export const useCategories = () => {
     deleteCategory,
      bulkAddCategories,
     downloadCategoryTemplate,
-    importCategories: () => {}
+    importCategories: () => {},
+    fetchCategories
   };
 };

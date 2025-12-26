@@ -161,6 +161,10 @@ const DocumentPage = () => {
         removeCSV={() => setSelectedCSVFile(null)}
         removeXLSX={() => setSelectedXLSXFile(null)}
         t={t}
+           onSuccess={() => {
+          fetchDocuments();     // refresh list immediately
+          setShowAddModal(false); // ensure modal closes
+        }}
       />
 
       <DeleteConfirmModal

@@ -15,7 +15,8 @@ const LocationFormModal = ({
   cities,
   setErrors,
   handleSave,
-  t
+  t,
+   ...importProps
 }) => {
   const [activeTab, setActiveTab] = useState("manual");
 
@@ -161,6 +162,7 @@ const handleInputChange = (e) => {
     <LocationImportModal
       t={t}
       onClose={onHide}
+      onSuccess={importProps.onSuccess} 
     />
   </>
 )
