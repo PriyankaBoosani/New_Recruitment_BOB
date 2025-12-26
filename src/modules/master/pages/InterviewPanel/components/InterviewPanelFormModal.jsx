@@ -5,7 +5,8 @@ import InterviewPanelImportModal from './InterviewPanelImportModal';
 
 const InterviewPanelFormModal = ({ 
   show, onHide, formData, setFormData, errors, 
-  communityOptions, membersOptions, editAssignedMembers, isEditing, onSave, t 
+  communityOptions, membersOptions, panels,   // 👈 add panels
+  editAssignedMembers, isEditing, onSave, t 
 }) => {
   const [activeTab, setActiveTab] = useState('manual');
 
@@ -24,10 +25,30 @@ const InterviewPanelFormModal = ({
       };
     });
   };
+const globallyAssignedMembers = new Set();
 
-  const availableMembers = membersOptions.filter(m => 
-    !isEditing ? !m.assigned : (!m.assigned || editAssignedMembers.includes(m.name))
-  );
+panels.forEach(panel => {
+  (panel.memberNames || []).forEach(name => {
+    globallyAssignedMembers.add(name);
+  });
+});
+  // const availableMembers = membersOptions.filter(m => 
+  //   !isEditing ? !m.assigned : (!m.assigned || editAssignedMembers.includes(m.name))
+  // );
+const availableMembers = membersOptions.filter(member => {
+  if (isEditing) {
+    // EDIT MODE:
+    // allow unassigned + members already in this panel
+    return (
+      !globallyAssignedMembers.has(member.name) ||
+      editAssignedMembers.includes(member.name)
+    );
+  }
+
+  // ADD MODE:
+  // allow only unassigned members
+  return !globallyAssignedMembers.has(member.name);
+});
 
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">

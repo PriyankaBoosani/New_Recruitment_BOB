@@ -53,9 +53,30 @@ const InterviewPanelPage = () => {
                 onChange={(e) => setSearchTerm(e.target.value)} 
               />
             </div>
-            <Button className='add-button' onClick={() => { setIsEditing(false); logic.setFormData({name:'', community:'', members:[]}); setShowFormModal(true); }}>
+            {/* <Button className='add-button' onClick={() => { setIsEditing(false); logic.setFormData({name:'', community:'', members:[]}); setShowFormModal(true); }}>
               <Plus size={20} /> {t("add")}
-            </Button>
+            </Button> */}
+
+            <Button
+              className='add-button'
+              onClick={() => {
+                setIsEditing(false);
+                setSelectedPanel(null);
+
+                // ✅ RESET EVERYTHING RELATED TO FORM
+                logic.setFormData({
+                  name: '',
+                  community: '',
+                  members: []
+                });
+
+                logic.setEditAssignedMembers([]); // 🔥 THIS IS THE KEY FIX
+                logic.setErrors({});               // optional but recommended
+
+                setShowFormModal(true);
+              }}
+              
+            > <Plus size={20} /> {t("add")}</Button>
           </div>
         </div>
 
@@ -75,6 +96,7 @@ const InterviewPanelPage = () => {
           errors={logic.errors}
           communityOptions={logic.communityOptions}
           membersOptions={logic.membersOptions}
+            panels={logic.panels}    
           editAssignedMembers={logic.editAssignedMembers}
           isEditing={isEditing}
           onSave={handleSavePanel}
