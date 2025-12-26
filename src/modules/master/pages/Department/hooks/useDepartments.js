@@ -36,19 +36,47 @@ export const useDepartments = () => {
   }
 };
 const bulkAddDepartments = async (file) => {
-    setLoading(true);
-    try {
-      await masterApiService.bulkAddDepartments(file);
-      toast.success(t("department:import_success") || "File uploaded successfully");
-      await fetchDepartments(); // Refresh the list automatically
-      return { success: true };
-    } catch (err) {
-      const message = err.response?.data?.message || "Failed to upload file";
-      return { success: false, error: message };
-    } finally {
-      setLoading(false);
+  setLoading(true);
+
+  try {
+    const res = await masterApiService.bulkAddDepartments(file);
+
+    console.log("API RESPONSE:", res); // logs for 200 & 422
+
+    // ❌ business failure
+    if (res.success === false) {
+      toast.error(res.message);
+      return {
+        success: false,
+        error: res.message
+      };
     }
-  };
+  await fetchDepartments(); 
+    // ✅ success
+    toast.success(res.message || "File uploaded successfully");
+
+    return {
+      success: true
+    };
+
+  } catch (err) {
+    // ❌ network / server error
+    console.log("NETWORK ERROR:", err);
+
+    const message = "Something went wrong";
+    toast.error(message);
+
+    return {
+      success: false,
+      error: message
+    };
+
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   const downloadDepartmentTemplate = async () => {
     try {

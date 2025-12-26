@@ -94,9 +94,9 @@ export const useSpecialCategories = () => {
   };
 
 
-    /* =========================
-     DOWNLOAD TEMPLATE
-  ========================= */
+  /* =========================
+   DOWNLOAD TEMPLATE
+========================= */
   const downloadSpecialCategoryTemplate = async () => {
     try {
       const res = await masterApiService.downloadSpecialCategoryTemplate();
@@ -122,22 +122,42 @@ export const useSpecialCategories = () => {
      BULK IMPORT
   ========================= */
   const bulkAddSpecialCategories = async (file) => {
+    setLoading(true);
     try {
       const res = await masterApiService.bulkAddSpecialCategories(file);
 
-      toast.success(
-        res?.data?.message ||
-        t("specialCategory:import_success")
-      );
+      console.log("API RESPONSE:", res); // logs for 200 & 422
 
+      // ❌ business failure
+      if (res.success === false) {
+        toast.error(res.message);
+        return {
+          success: false,
+          error: res.message
+        };
+      }
       await fetchCategories();
-      return { success: true };
-    } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-        t("specialCategory:import_error")
-      );
-      return { success: false };
+      // ✅ success
+      toast.success(res.message || "File uploaded successfully");
+
+      return {
+        success: true
+      };
+
+    } catch (err) {
+      // ❌ network / server error
+      console.log("NETWORK ERROR:", err);
+
+      const message = "Something went wrong";
+      toast.error(message);
+
+      return {
+        success: false,
+        error: message
+      };
+
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -148,7 +168,7 @@ export const useSpecialCategories = () => {
     addCategory,
     updateCategory,
     deleteCategory,
-       bulkAddSpecialCategories,
+    bulkAddSpecialCategories,
     downloadSpecialCategoryTemplate
   };
 };

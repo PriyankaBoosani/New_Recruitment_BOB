@@ -25,7 +25,7 @@ bulkAddLocations: (file) => {
   const formData = new FormData();
 
   // 🔥 backend expects "attachment"
-  formData.append("attachment", file);
+  formData.append("file", file);
 
   return apis.post("/location/bulk-add", formData, {
     headers: {
@@ -91,7 +91,7 @@ bulkAddLocations: (file) => {
   // ✅ BULK ADD SPECIAL CATEGORIES
   bulkAddSpecialCategories: (file) => {
     const formData = new FormData();
-   formData.append("attachment", file);
+   formData.append("file", file);
 
 
     return apis.post("/special-categories/bulk-add", formData, {
@@ -118,7 +118,7 @@ bulkAddLocations: (file) => {
     const formData = new FormData();
 
     // 🔥 IMPORTANT: backend expects "attachment"
-    formData.append("attachment", file);
+    formData.append("file", file);
 
     return apis.post("/jobgrade/bulk-add", formData, {
       headers: {

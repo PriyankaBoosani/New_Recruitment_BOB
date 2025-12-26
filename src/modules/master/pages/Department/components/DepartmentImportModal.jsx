@@ -32,7 +32,6 @@ const DepartmentImportView = ({
       setError(t("department:no_file_selected"));
       return;
     }
-
     const result = await bulkAddDepartments(selectedFile);
 
     if (result.success) {

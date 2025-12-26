@@ -7,7 +7,8 @@ import { useJobGrades } from '../hooks/useJobGrades';
 
 const JobGradeImportModal = ({
   onClose = () => {},
-  onSuccess = () => {}
+  onSuccess = () => {},
+      fetchJobGrades
 }) => {
   const { t } = useTranslation(["jobGrade"]);
 
@@ -49,6 +50,7 @@ const JobGradeImportModal = ({
     const result = await bulkAddJobGrades(selectedFile);
 
     if (result?.success) {
+       await fetchJobGrades();
       onSuccess();
       onClose();
     } else {

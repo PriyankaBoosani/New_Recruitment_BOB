@@ -10,7 +10,7 @@ import { mapJobGradesFromApi } from '../mappers/jobGradeMapper';
 export const useJobGrades = () => {
   const { t } = useTranslation(['jobGrade']);
   const [jobGrades, setJobGrades] = useState([]);
-
+  const [loading, setLoading] = useState(false);
   const fetchJobGrades = async () => {
     try {
       const res = await masterApiService.getAllJobGrades();
@@ -93,23 +93,42 @@ export const useJobGrades = () => {
      BULK IMPORT
   ========================= */
   const bulkAddJobGrades = async (file) => {
+     setLoading(true);
     try {
       const res = await masterApiService.bulkAddJobGrades(file);
 
-      toast.success(
-        res?.data?.message ||
-        t("jobGrade:import_success")
-      );
+       console.log("API RESPONSE:", res); // logs for 200 & 422
 
-      await fetchJobGrades();
-      return { success: true };
-    } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-        t("jobGrade:import_error")
-      );
-      return { success: false };
+    // ❌ business failure
+    if (res.success === false) {
+      toast.error(res.message);
+      return {
+        success: false,
+        error: res.message
+      };
     }
+    // ✅ success
+    toast.success(res.message || "File uploaded successfully");
+
+    return {
+      success: true
+    };
+
+  } catch (err) {
+    // ❌ network / server error
+    console.log("NETWORK ERROR:", err);
+
+    const message = "Something went wrong";
+    toast.error(message);
+
+    return {
+      success: false,
+      error: message
+    };
+
+  } finally {
+    setLoading(false);
+  }
   };
 
 

@@ -162,7 +162,8 @@ const JobGradeFormModal = ({
           </Form>
         ) : (
           <>
-            <JobGradeImportModal t={t} {...importProps} />  
+            <JobGradeImportModal t={t} {...importProps}  
+              onClose={onHide}  />  
             {/* <Modal.Footer className="px-0 modal-footer-custom">
               <Button variant="outline-secondary" onCli ck={onHide}>
                 {t("cancel")}

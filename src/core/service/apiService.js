@@ -162,47 +162,46 @@ apis.interceptors.request.use(
 );
 
 apis.interceptors.response.use(
+  // ✅ SUCCESS HANDLER (2xx)
   (response) => {
-  if (response.config?.responseType === 'blob') {
-    return response;   // keep full response
-  }
-  return response.data;
-},
-  (response) => response.data,
+    if (response.config?.responseType === "blob") {
+      return response; // keep full response for downloads
+    }
+    return response.data; // normal APIs return backend JSON
+  },
+
+  // ❌ ERROR HANDLER (non-2xx)
   async (error) => {
     const originalRequest = error.config || {};
 
-    // If this request was the refresh endpoint, don't try to refresh again
-    if (originalRequest && originalRequest.url && originalRequest.url.includes(REFRESH_PATH)) {
-      // refresh endpoint itself failed -> bail out
-      store.dispatch(clearUser?.() ?? {});
-      window.location.href = "/login";
-      return Promise.reject(error);
-    }
-
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      console.warn("⚠️ Java API session expired (api). Trying refresh...");
+    // 🔁 Refresh token handling (401)
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes(REFRESH_PATH)
+    ) {
       originalRequest._retry = true;
       try {
-        // call refresh bypassing axios instances (no interceptors) to avoid recursion
         await callRefreshEndpoint();
-        // refresh succeeded — retry original request
-        return apis(originalRequest);
+        return apis(originalRequest); // retry original request
       } catch (err) {
-        console.error("⛔ Refresh failed (api). Redirecting to login", err);
         store.dispatch(clearUser?.() ?? {});
         window.location.href = "/login";
         return Promise.reject(err);
       }
     }
 
+    // ✅ BUSINESS / VALIDATION ERRORS (422, other 4xx)
     if (error.response && error.response.status >= 400 && error.response.status < 500) {
-      return error.response.data;
+      // 🔑 Resolve with backend data → goes to `try`
+      return Promise.resolve(error.response.data);
     }
 
+    // ❌ SERVER / NETWORK ERRORS (5xx)
     return Promise.reject(error);
   }
 );
+
 
 /* ---------------------------
    Interceptors - candidateApi

@@ -189,6 +189,7 @@ const JobGradePage = () => {
         onSelectCSV={setSelectedCSVFile}
         removeCSV={() => setSelectedCSVFile(null)}
         t={t}
+        fetchJobGrades={fetchJobGrades} 
       />
 
       <DeleteConfirmModal
