@@ -45,6 +45,52 @@ export const validateJobGradeId = (jobGradeId) => {
   return null;
 };
 
+/* ---------------- AGE HELPERS / VALIDATIONS ---------------- */
+const toInt = (v) => {
+  const n = Number(v);
+  return Number.isFinite(n) ? Math.trunc(n) : NaN;
+};
+
+export const validateMinAge = (minAge) => {
+  if (isEmpty(minAge)) {
+    return i18n.t('validation:required', { field: 'Min age' });
+  }
+  const n = toInt(minAge);
+  if (Number.isNaN(n)) {
+    return i18n.t('validation:invalid_number', { field: 'Min age' }) || 'Min age must be a valid number';
+  }
+  if (n < 18) {
+    return i18n.t('validation:min_age_too_low', { min: 18 }) || `Min age must be at least 18`;
+  }
+  if (n > 60) {
+    return i18n.t('validation:min_age_too_high', { max: 60 }) || `Min age must be 60 or less`;
+  }
+  return null;
+};
+
+export const validateMaxAge = (maxAge, minAge) => {
+  if (isEmpty(maxAge)) {
+    return i18n.t('validation:required', { field: 'Max age' });
+  }
+  const m = toInt(maxAge);
+  if (Number.isNaN(m)) {
+    return i18n.t('validation:invalid_number', { field: 'Max age' }) || 'Max age must be a valid number';
+  }
+  if (m < 18) {
+    return i18n.t('validation:max_age_too_low', { min: 18 }) || `Max age must be at least 18`;
+  }
+  if (m > 120) {
+    return i18n.t('validation:max_age_too_high', { max: 120 }) || `Max age must be 120 or less`;
+  }
+  if (!isEmpty(minAge)) {
+    const min = toInt(minAge);
+    if (!Number.isNaN(min) && m < min) {
+      return i18n.t('validation:max_less_than_min') || 'Max age must be greater than or equal to Min age';
+    }
+  }
+  return null;
+};
+
 
 
 /* ---------------- MANDATORY EXPERIENCE ---------------- */
@@ -96,6 +142,12 @@ export const validatePositionForm = (formData = {}, options = {}) => {
   const gradeError = validateJobGradeId(formData.jobGradeId);
   if (gradeError) errors.jobGradeId = gradeError;
 
+  // ages (use eligibilityAgeMin / eligibilityAgeMax)
+  const minAgeError = validateMinAge(formData.eligibilityAgeMin);
+  if (minAgeError) errors.eligibilityAgeMin = minAgeError;
+
+  const maxAgeError = validateMaxAge(formData.eligibilityAgeMax, formData.eligibilityAgeMin);
+  if (maxAgeError) errors.eligibilityAgeMax = maxAgeError;
 
   const mandExpError = validateMandatoryExperience(formData.mandatoryExperience);
   if (mandExpError) errors.mandatoryExperience = mandExpError;
@@ -122,6 +174,8 @@ export default {
   validatePositionTitle,
   validateDepartmentId,
   validateJobGradeId,
+  validateMinAge,
+  validateMaxAge,
   
   validateMandatoryExperience,
   validatePreferredExperience,

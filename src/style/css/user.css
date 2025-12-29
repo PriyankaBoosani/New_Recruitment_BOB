@@ -238,10 +238,10 @@ body.modal-open .modal-fullscreen-sm-down .modal-header {
 }
 
 body.modal-open .modal-fullscreen-sm-down .modal-footer {
-    position: sticky;
-    bottom: 0;
-    z-index: 6;
-    background: #fff;
+	/* position: sticky; */
+	/* bottom: 0; */
+	z-index: 6;
+	background: #fff;
 }
 
 body.modal-open .modal-fullscreen-sm-down .modal-body {

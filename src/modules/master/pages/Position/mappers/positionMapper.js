@@ -15,6 +15,8 @@ export const mapPositionFromApi = (api) => ({
   mandatoryExperience: api.mandatoryExperience || "",
   preferredExperience: api.preferredExperience || "",
   rolesResponsibilities: api.rolesResponsibilities || "",
+  eligibilityAgeMin: api.eligibilityAgeMin ||  "",
+  eligibilityAgeMax: api.eligibilityAgeMax ||  "",
 
   code: api.positionCode,
   isActive: api.isActive
@@ -52,5 +54,7 @@ export const mapPositionToApi = (ui, isEditing = false) => ({
   preferredEducation: ui.preferredEducation,
   mandatoryExperience: ui.mandatoryExperience,
   preferredExperience: ui.preferredExperience,
-  rolesResponsibilities: ui.rolesResponsibilities
+  rolesResponsibilities: ui.rolesResponsibilities,
+  eligibilityAgeMin: ui.eligibilityAgeMin,
+  eligibilityAgeMax: ui.eligibilityAgeMax
 });

@@ -65,7 +65,11 @@ const PositionPage = () => {
     mandatoryEducation: "",
     preferredEducation: "",
 
-    rolesResponsibilities: ""
+    rolesResponsibilities: "",
+
+    // eligibility ages used by UI + mapper
+    eligibilityAgeMin: "",
+    eligibilityAgeMax: ""
   });
 
 
@@ -93,6 +97,8 @@ const PositionPage = () => {
 
       rolesResponsibilities: "",
       code: "",
+      eligibilityAgeMin: "",
+      eligibilityAgeMax: ""
     });
     setErrors({});
     setActiveTab("manual");
@@ -121,6 +127,8 @@ const PositionPage = () => {
 
       rolesResponsibilities: p.rolesResponsibilities || "",
       code: p.code || "",
+      eligibilityAgeMin: p.eligibilityAgeMin ?? "",
+      eligibilityAgeMax: p.eligibilityAgeMax ?? ""
     });
 
 
@@ -179,7 +187,10 @@ const PositionPage = () => {
           description: (row.description || "").trim(),
           departmentId: dept?.id || "",
           jobGradeId: grade?.id || "",
-          code: row.positionCode || ""
+          code: row.positionCode || "",
+          // accept multiple common CSV headers for ages
+          eligibilityAgeMin: (row.eligibilityAgeMin || row.minAge || row.min_age || "").toString(),
+          eligibilityAgeMax: (row.eligibilityAgeMax || row.maxAge || row.max_age || "").toString()
         };
       },
       setSelectedCSVFile,

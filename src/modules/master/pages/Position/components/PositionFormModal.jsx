@@ -132,6 +132,43 @@ const PositionFormModal = ({
                   <ErrorMessage>{errors.jobGradeId}</ErrorMessage>
                 </Form.Group>
               </Col>
+
+              {/* Min / Max Age */}
+              <Col xs={6} md={3}>
+                <Form.Group className="form-group">
+                  <Form.Label>
+                    {t("min_age")} <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    type="number"
+                    min="0"
+                    name="eligibilityAgeMin"
+                    value={formData.eligibilityAgeMin ?? ""}
+                    onChange={handleInputChange}
+                    className="form-control-custom"
+                    placeholder={t("enter_min_age")}
+                  />
+                  <ErrorMessage>{errors.eligibilityAgeMin}</ErrorMessage>
+                </Form.Group>
+              </Col>
+
+              <Col xs={6} md={3}>
+                <Form.Group className="form-group">
+                  <Form.Label>
+                    {t("max_age")} <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    type="number"
+                    min="0"
+                    name="eligibilityAgeMax"
+                    value={formData.eligibilityAgeMax ?? ""}
+                    onChange={handleInputChange}
+                    className="form-control-custom"
+                    placeholder={t("enter_max_age")}
+                  />
+                  <ErrorMessage>{errors.eligibilityAgeMax}</ErrorMessage>
+                </Form.Group>
+              </Col>
               
               <Col xs={6} md={6}>
                 <Form.Group className="form-group">
@@ -154,7 +191,7 @@ const PositionFormModal = ({
               <Col xs={12} md={6}>
                 <Form.Group className="form-group">
                   <Form.Label>
-                    {t("preferred_experience")}
+                    {t("preferred_experience")} <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     as="textarea"
@@ -190,7 +227,7 @@ const PositionFormModal = ({
               <Col xs={6} md={6}>
                 <Form.Group className="form-group">
                   <Form.Label>
-                    {t("preferred_education")}
+                    {t("preferred_education")} <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     as="textarea"
@@ -208,14 +245,14 @@ const PositionFormModal = ({
 
 
 
-              <Col xs={12}>
+              <Col xs={6}>
                 <Form.Group className="form-group">
                   <Form.Label>
                     {t("roles_responsibilities")} <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     as="textarea"
-                    rows={4}
+                    rows={2}
                     name="rolesResponsibilities"
                     value={formData.rolesResponsibilities}
                     onChange={handleInputChange}
