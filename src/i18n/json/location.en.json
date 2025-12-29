@@ -3,8 +3,6 @@
   "search_placeholder": "Search by city or location",
    "sno": "S. No.",
   "cityy": "City",
-  "location_name": "Location",
-  "actions": "Actions",
   "add": "Add ",
   "addd": "Add Location",
   "edit": "Edit",
@@ -32,7 +30,16 @@
     "add_success": "Location added successfully",
   "update_success": "Location updated successfully",
   "delete_success": "Location deleted successfully",
-
+ 
+  "support_xlsx": "Support for XLSX formats",
+  "invalid_file": "Please upload a valid Excel file (.xlsx, .xls)",
+  "no_file_selected": "Please select a file to upload",
+ 
+  "reupload_xlsx": "Reupload XLSX",
+  "remove": "Remove",
+ 
+  "importing": "Importing...",
+  "import_error": "Failed to import Locations",
 
 
 "location_names": {

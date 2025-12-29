@@ -51,7 +51,18 @@
   "min_negative_not_allowed": "Minimum salary cannot be negative",
   "max_negative_not_allowed": "Maximum salary cannot be negative",
   "scale_exists": "Scale already exists",
-  "grade_code_exists": "Grade code already exists"
+  "grade_code_exists": "Grade code already exists",
+
+   "support_xlsx": "Support for XLSX formats",
+  "invalid_file": "Please upload a valid Excel file (.xlsx, .xls)",
+  "no_file_selected": "Please select a file to upload",
+ 
+  "reupload_xlsx": "Reupload XLSX",
+  "remove": "Remove",
+ 
+  "importing": "Importing...",
+  "import_error": "Failed to import Job Grades"
+
   
   
   

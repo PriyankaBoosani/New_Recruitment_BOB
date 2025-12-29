@@ -52,7 +52,17 @@
    "min_negative_not_allowed": "न्यूनतम वेतन ऋणात्मक नहीं हो सकता",
   "max_negative_not_allowed": "अधिकतम वेतन ऋणात्मक नहीं हो सकता",
   "scale_exists": "स्केल पहले से मौजूद है",
-  "grade_code_exists": "ग्रेड कोड पहले से मौजूद है"
+  "grade_code_exists": "ग्रेड कोड पहले से मौजूद है",
+
+   "support_xlsx": "XLSX फ़ॉर्मेट का समर्थन करता है",
+  "invalid_file": "कृपया एक वैध Excel फ़ाइल अपलोड करें (.xlsx, .xls)",
+  "no_file_selected": "कृपया अपलोड करने के लिए फ़ाइल चुनें",
+
+  "reupload_xlsx": "XLSX दोबारा अपलोड करें",
+  "remove": "हटाएँ",
+
+  "importing": "आयात किया जा रहा है...",
+  "import_error": "जॉब ग्रेड आयात करने में विफल"
 
 
 }

@@ -32,11 +32,21 @@
     "add_success": "स्थान सफलतापूर्वक जोड़ा गया",
   "update_success": "स्थान सफलतापूर्वक अपडेट किया गया",
   "delete_success": "स्थान सफलतापूर्वक हटाया गया",
+   "support_xlsx": "XLSX फ़ॉर्मेट का समर्थन करता है",
+  "invalid_file": "कृपया एक वैध Excel फ़ाइल अपलोड करें (.xlsx, .xls)",
+  "no_file_selected": "कृपया अपलोड करने के लिए फ़ाइल चुनें",
+
+  "reupload_xlsx": "XLSX दोबारा अपलोड करें",
+  "remove": "हटाएँ",
+
+  "importing": "आयात किया जा रहा है...",
+  "import_error": "लोकेशन आयात करने में विफल",
 "location_names": {
   "whitefield": "व्हाइटफील्ड",
   "electronic_city": "इलेक्ट्रॉनिक सिटी",
   "andheri": "अंधेरी",
   "connaught_place": "कनॉट प्लेस"
+  
 },
 
   "city": {

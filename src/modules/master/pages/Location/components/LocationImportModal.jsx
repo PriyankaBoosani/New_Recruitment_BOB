@@ -49,7 +49,7 @@ const LocationImportModal = ({
       onSuccess();
       onClose();
     } else {
-      setError(t("location:import_error"));
+      setError(result.error);
     }
   };
 
