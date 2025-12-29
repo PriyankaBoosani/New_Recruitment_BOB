@@ -221,4 +221,22 @@ body {
 }
 .fonnav .dropdown-item{
   font-size: 12px;
+}.app-footer {
+  background-color: #fff;
+  border-top: 1px solid #e9ecef;
+  margin-top: auto;
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+/* Ensure the footer stays at the bottom */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make sure main content pushes the footer down */
+main {
+  flex: 1;
 }

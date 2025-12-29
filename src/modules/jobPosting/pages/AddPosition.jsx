@@ -2,12 +2,28 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../../style/css/AddPosition.css";
-import import_Icon  from '../../../assets/import_Icon.png'
+import import_Icon from '../../../assets/import_Icon.png'
+import { useTranslation } from 'react-i18next';
+import ImportModal from "../component/ImportModal";
 
 const AddPosition = () => {
     const navigate = useNavigate();
     const { requisitionId } = useParams();
+    const [showImportModal, setShowImportModal] = useState(false);
+    const handleImport = async (file) => {
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
 
+            // Replace with your actual API call
+            // await api.post('/positions/import', formData);
+
+            // Show success message
+            // toast.success("Positions imported successfully");
+        } catch (error) {
+            throw new Error("Failed to import positions");
+        }
+    };
     /* ---------------- MAIN FORM ---------------- */
     const [formData, setFormData] = useState({
         department: "",
@@ -167,9 +183,13 @@ const AddPosition = () => {
                         <div className="req-code">BOB/HRM/REC/ADVT/2025/12</div>
                     </div>
                 </div>
-                <Button className="imprcls" variant="none">
-                    <img src={import_Icon} alt="import_Icon" className="icon-14" /> Import Positions</Button>
-            </div>
+                <Button className="imprcls"
+                    variant="none"
+                    onClick={() => setShowImportModal(true)}
+                >
+                    <img src={import_Icon} alt="import_Icon" className="icon-14" />
+                    Import Positions
+                </Button>            </div>
 
             <Card className="position-card">
                 <Card.Body>
@@ -207,23 +227,23 @@ const AddPosition = () => {
                                 <Form.Control name="vacancies" placeholder="Enter Vacancies" type="number" value={formData.vacancies} onChange={handleInputChange} />
                             </Col>
                             <Col xs={2} md={4}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    Total Experience<span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    step="0.5"
-                    name="totalExperience"
-                    value={formData.totalExperience}
-                    onChange={handleInputChange}
-                   
-                    placeholder="Enter Total Experience"
-                  />
-               
-                </Form.Group>
-              </Col>
+                                <Form.Group className="form-group">
+                                    <Form.Label>
+                                        Total Experience<span className="text-danger">*</span>
+                                    </Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        min="0"
+                                        step="0.5"
+                                        name="totalExperience"
+                                        value={formData.totalExperience}
+                                        onChange={handleInputChange}
+
+                                        placeholder="Enter Total Experience"
+                                    />
+
+                                </Form.Group>
+                            </Col>
 
                             <Col md={4}>
                                 <Form.Label>Min Age *</Form.Label>
@@ -245,7 +265,7 @@ const AddPosition = () => {
                                 </Form.Select>
                             </Col>
 
-                            <Col md={4}>
+                            <Col md={2}>
                                 <Form.Label>CIBIL Score *</Form.Label>
                                 <Form.Control name="cibilScore" placeholder="Enter CIBIL Score" type="number" value={formData.cibilScore} onChange={handleInputChange} />
                             </Col>
@@ -261,7 +281,7 @@ const AddPosition = () => {
                                 </Form.Select>
                             </Col>
 
-                            <Col md={4} className="">
+                            <Col md={2} className="">
 
                                 <Form.Label>Enable Location Preference</Form.Label>
                                 <Form.Check
@@ -558,6 +578,15 @@ const AddPosition = () => {
                     </Form>
                 </Card.Body>
             </Card>
+            <ImportModal
+                show={showImportModal}
+                onHide={() => setShowImportModal(false)}
+                onSuccess={() => {
+                    // optionally refresh positions table
+                }}
+            />
+
+
         </Container>
     );
 };

@@ -11,6 +11,7 @@ export const mapRequisitionsFromApi = (apiData = []) => {
   return apiData.map(mapRequisitionFromApi);
 };
 
+// src/modules/jobPostings/mappers/requisitionMapper.js
 export const mapRequisitionToApi = (uiData, indentFile) => {
   const formData = new FormData();
 

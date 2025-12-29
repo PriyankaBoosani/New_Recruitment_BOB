@@ -7,6 +7,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../App.css';
 
 import Header from "../app/layouts/Header"
+import Footer from './layouts/Footer';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -30,7 +31,9 @@ function AppWrapper() {
         {!shouldHideHeader && <Header />}
         <main className="main-content">
           <AppRoutes />
+          <Footer />
         </main>
+        
       </div>
     </>
   );

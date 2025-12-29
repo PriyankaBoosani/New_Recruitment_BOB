@@ -241,5 +241,82 @@
     margin-right: 0px;
   }
 }
+.requisition-card {
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.requisition-card .card-body {
+  padding: 1.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+  .requisition-card {
+    margin-left: -15px;
+    margin-right: -15px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .requisition-card .card-body {
+    padding: 1rem;
+  }
+}
+
+/* For the card content layout */
+.requisition-card .row {
+  margin-left: -0.75rem;
+  margin-right: -0.75rem;
+}
+
+.requisition-card [class^="col-"] {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+/* Responsive table-like layout for smaller screens */
+@media (max-width: 991.98px) {
+  .requisition-card .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .requisition-card [class^="col-"] {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .requisition-card .d-flex {
+    justify-content: space-between;
+  }
+
+  .requisition-card .d-flex > div:first-child {
+    font-weight: 500;
+    color: #6c757d;
+    margin-right: 1rem;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 400px) {
+  .requisition-card {
+    font-size: 0.9rem;
+  }
+
+  .requisition-card h5 {
+    font-size: 1.1rem;
+  }
+
+  .requisition-card .btn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
 
 

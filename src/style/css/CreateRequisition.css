@@ -1,7 +1,7 @@
 .create-requisition-page {
   background: #f6f7fb;
+  padding: 34px;
   min-height: 100vh;
-  padding: 24px;
 }
 
 /* Card */
@@ -72,14 +72,15 @@
 
 /* Footer */
 .create-requisition-page .footer-actions {
-  background: #fff;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  position: sticky;
-  bottom: 0;
-  border-top: 1px solid #e6e6e6;
+	background: #fff;
+	padding: 16px 24px;
+	display: flex;
+	justify-content: flex-end;
+	gap: 12px;
+	/* position: sticky; */
+	/* bottom: 0; */
+	/* border-top: 1px solid #e6e6e6; */
+	border-radius: 10px;
 }
 
 .create-requisition-page .primary-btn {

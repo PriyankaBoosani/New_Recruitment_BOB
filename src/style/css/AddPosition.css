@@ -11,14 +11,15 @@
 }
 
 .req_top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 15px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;  /* Stack items vertically on mobile */
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: #fff;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 1.5rem;
+  gap: 1rem;  /* Space between stacked items on mobile */
 }
 
 .back-btn {
@@ -157,4 +158,64 @@
     .document-grid {
         grid-template-columns: 1fr;
     }
+}
+@media (min-width: 768px) {
+  .req_top-bar {
+    flex-direction: row;  /* Side by side on larger screens */
+    align-items: center;
+    gap: 0;  /* Reset gap for horizontal layout */
+  }
+}
+/* For the back button and title section */
+.req_top-bar > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap; /* Allow items to wrap on small screens */
+}
+/* For the import button */
+.req_top-bar .imprcls {
+  white-space: nowrap; /* Prevent button text from breaking */
+  margin-top: 0.5rem; /* Add some space when stacked */
+}
+/* Remove top margin on larger screens */
+@media (min-width: 768px) {
+  .req_top-bar .imprcls {
+    margin-top: 0;
+  }
+}
+/* For the title and code */
+.req_top-bar .req-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+.req_top-bar .req-code {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+/* Make sure the back button is properly aligned */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+/* Responsive adjustments for very small screens */
+@media (max-width: 400px) {
+  .req_top-bar .req-title {
+    font-size: 1.1rem;
+  }
+  
+  .req_top-bar .req-code {
+    font-size: 0.8rem;
+  }
+  
+  .back-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
 }
