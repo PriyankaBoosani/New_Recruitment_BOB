@@ -1,32 +1,91 @@
-// src/modules/jobPostings/hooks/useCreateRequisition.js
-import { useState } from "react";
+// src/modules/jobPostings/hooks/useRequisition.js
+import { useState, useEffect } from "react";
 import requisitionApiService from "../services/requisitionApiService";
+import { REQUISITION_CONFIG } from "../config/requisitionConfig";
 
-export const useCreateRequisition = () => {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+export const useCreateRequisition = (editId) => {
+  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
+  const [error, setError] = useState(null);
+  const [indentFile, setIndentFile] = useState(null);
+  const [existingIndentPath, setExistingIndentPath] = useState(null);
+  
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+  });
 
-    const createRequisition = async (payload) => {
-        setLoading(true);
-        setError(null);
+  // Fetch data if in Edit Mode
+  useEffect(() => {
+    if (!editId) return;
 
-        try {
-            const response =
-                await requisitionApiService.createRequisition(payload);
-            return response.data;
-        } catch (err) {
-            setError(
-                err?.response?.data?.message || "Failed to create requisition"
-            );
-            throw err;
-        } finally {
-            setLoading(false);
-        }
+    const loadData = async () => {
+      setFetching(true);
+      try {
+        const res = await requisitionApiService.getRequisitionById(editId);
+        const data = res?.data || {};
+
+        setFormData({
+          title: data.requisitionTitle || "",
+          description: data.requisitionDescription || "",
+          startDate: data.startDate ? data.startDate.split("T")[0] : "",
+          endDate: data.endDate ? data.endDate.split("T")[0] : "",
+        });
+        setExistingIndentPath(data.indentPath || null);
+      } catch (err) {
+        setError("Failed to load requisition data.");
+      } finally {
+        setFetching(false);
+      }
     };
 
-    return {
-        createRequisition,
-        loading,
-        error,
-    };
+    loadData();
+  }, [editId]);
+
+  // Handle Input Changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: value };
+      if (name === "startDate" && value) {
+        const d = new Date(value);
+        d.setDate(d.getDate() + REQUISITION_CONFIG.DEFAULT_DURATION_DAYS);
+        updated.endDate = d.toISOString().split("T")[0];
+      }
+      return updated;
+    });
+  };
+
+  // Save/Update Logic
+  const saveRequisition = async (payload) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = editId 
+        ? await requisitionApiService.updateRequisition(editId, payload)
+        : await requisitionApiService.createRequisition(payload);
+      return response.data;
+    } catch (err) {
+      const msg = err?.response?.data?.message || "Failed to save requisition";
+      setError(msg);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    formData,
+    setFormData,
+    handleInputChange,
+    indentFile,
+    setIndentFile,
+    existingIndentPath,
+    saveRequisition,
+    loading,
+    fetching,
+    error,
+  };
 };

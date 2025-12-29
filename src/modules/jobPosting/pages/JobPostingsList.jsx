@@ -20,6 +20,8 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import "../../../style/css/JobPostingsList.css";
+import DeleteRequisitionModal from "../component/DeleteConfirmationModal";
+
 
 import submitIcon from "../../../assets/submitIcon.png";
 import pos_edit_icon from "../../../assets/pos_edit_icon.png";
@@ -33,6 +35,16 @@ import { useJobRequisitions } from "../hooks/useJobRequisitions";
 
 const JobPostingsList = () => {
     const navigate = useNavigate();
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedReq, setSelectedReq] = useState(null);
+    const handleConfirmDelete = async () => {
+  if (!selectedReq) return;
+
+  await deleteRequisition(selectedReq.id);
+  setShowDeleteModal(false);
+  setSelectedReq(null);
+};
+
 
     // 🔹 Backend-driven filters
     const [year, setYear] = useState("2025");
@@ -47,17 +59,17 @@ const JobPostingsList = () => {
     };
 
     // 🔹 API Hook
-    const { requisitions, loading, pageInfo } = useJobRequisitions({
-  year,
-  status,
-  search,
-  page,
-  size: 10
-});
+    const { requisitions, loading, pageInfo, deleteRequisition } = useJobRequisitions({
+        year,
+        status,
+        search,
+        page,
+        size: 10
+    });
 
-useEffect(() => {
-    setPage(0);
-}, [year, status, search]);
+    useEffect(() => {
+        setPage(0);
+    }, [year, status, search]);
 
     return (
         <Container fluid className="job-postings-page">
@@ -170,15 +182,15 @@ useEffect(() => {
 
                                 <div className="req-meta text-end">
                                     <div>
-                                        <img src={mingcute_department_line} className="icon-16" />{" "}
+                                        <img src={mingcute_department_line} alt="department" className="icon-16" />{" "}
                                         Department - {req.departments}
                                     </div>
                                     <div>
-                                        <img src={position_Icon} className="icon-16" /> Positions -{" "}
+                                        <img src={position_Icon} alt="position" className="icon-16" /> Positions -{" "}
                                         {req.positions}
                                     </div>
                                     <div>
-                                        <img src={vacancy_icon} className="icon-23" /> Vacancies -{" "}
+                                        <img src={vacancy_icon} alt="vacancy" className="icon-23" /> Vacancies -{" "}
                                         {req.vacancies}
                                     </div>
                                 </div>
@@ -198,28 +210,37 @@ useEffect(() => {
                                         className="icon-btn"
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            navigate(`/job-posting/${req.id}/add-position`);
+                                            navigate(`/job-posting/create-requisition?id=${req.id}`);
                                         }}
                                     >
-                                        <img src={pos_plus_icon} className="icon-16" />
+                                        <img src={pos_plus_icon} alt="add" className="icon-16" />
                                     </Button>
 
-                                <Button
+                                    <Button
                                         variant="light"
                                         className="icon-btn"
-                                        onClick={(e) => e.stopPropagation()}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigate(`/job-posting/create-requisition?id=${req.id}`);
+                                        }}
                                     >
                                         <img src={pos_edit_icon} alt="edit" className="icon-20" />
                                     </Button>
 
 
-                                    <Button
-                                        variant="light"
-                                        className="icon-btn"
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
-                                        <img src={pos_delete_icon} className="icon-20" />
-                                    </Button>
+                                   <Button
+  variant="light"
+  className="icon-btn"
+  onClick={(e) => {
+    e.stopPropagation();
+    setSelectedReq(req);
+    setShowDeleteModal(true);
+  }}
+>
+  <img src={pos_delete_icon} alt="delete" className="icon-20" />
+</Button>
+
+
                                 </>
                             ) : (
                                 <Button
@@ -248,10 +269,7 @@ useEffect(() => {
                             <div className="accordion-body mt-3">
                                 <div className="department-card mb-3">
                                     <div className="department-header d-flex align-items-center gap-2">
-                                        <img
-                                            src={mingcute_department_line}
-                                            className="icon-16"
-                                        />
+                                        <img src={mingcute_department_line} className="icon-16" alt="department" />
                                         <strong>Digital</strong>
                                         <Badge bg="light" text="primary">
                                             1 Position
@@ -270,11 +288,11 @@ useEffect(() => {
                                             </div>
 
                                             <Button variant="light" className="icon-btn">
-                                                <img src={pos_edit_icon} className="icon-16" />
+                                                <img src={pos_edit_icon} className="icon-16" alt="edit" />
                                             </Button>
 
                                             <Button variant="light" className="icon-btn">
-                                                <img src={pos_delete_icon} className="icon-16" />
+                                                <img src={pos_delete_icon} className="icon-16" alt="delete" />
                                             </Button>
                                         </div>
 
@@ -295,55 +313,65 @@ useEffect(() => {
                 </div>
             ))}
             {/* ================= PAGINATION ================= */}
-{pageInfo && pageInfo.totalPages > 1 && (
-  <Row className="mt-4 mb-4">
-    <Col className="d-flex justify-content-end">
-      <nav aria-label="Page navigation">
-        <ul className="pagination mb-0">
-          {/* Previous Button */}
-          <li className={`page-item ${page === 0 || loading ? 'disabled' : ''}`}>
-            <button
-              className="page-link"
-              onClick={() => setPage(prev => Math.max(prev - 1, 0))}
-              disabled={page === 0 || loading}
-              aria-label="Previous"
-            >
-              <span aria-hidden="true">&laquo;</span>
-            </button>
-          </li>
+            {pageInfo && pageInfo.totalPages > 1 && (
+                <Row className="mt-4 mb-4">
+                    <Col className="d-flex justify-content-end">
+                        <nav aria-label="Page navigation">
+                            <ul className="pagination mb-0">
+                                {/* Previous Button */}
+                                <li className={`page-item ${page === 0 || loading ? 'disabled' : ''}`}>
+                                    <button
+                                        className="page-link"
+                                        onClick={() => setPage(prev => Math.max(prev - 1, 0))}
+                                        disabled={page === 0 || loading}
+                                        aria-label="Previous"
+                                    >
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </button>
+                                </li>
 
-          {/* Page Numbers */}
-          {Array.from({ length: pageInfo.totalPages }).map((_, index) => (
-            <li 
-              key={index} 
-              className={`page-item ${page === index ? 'active' : ''}`}
-            >
-              <button
-                className="page-link"
-                onClick={() => setPage(index)}
-                disabled={loading}
-              >
-                {index + 1}
-              </button>
-            </li>
-          ))}
+                                {/* Page Numbers */}
+                                {Array.from({ length: pageInfo.totalPages }).map((_, index) => (
+                                    <li
+                                        key={index}
+                                        className={`page-item ${page === index ? 'active' : ''}`}
+                                    >
+                                        <button
+                                            className="page-link"
+                                            onClick={() => setPage(index)}
+                                            disabled={loading}
+                                        >
+                                            {index + 1}
+                                        </button>
+                                    </li>
+                                ))}
 
-          {/* Next Button */}
-          <li className={`page-item ${page >= pageInfo.totalPages - 1 || loading ? 'disabled' : ''}`}>
-            <button
-              className="page-link"
-              onClick={() => setPage(prev => prev + 1)}
-              disabled={page >= pageInfo.totalPages - 1 || loading}
-              aria-label="Next"
-            >
-              <span aria-hidden="true">&raquo;</span>
-            </button>
-          </li>
-        </ul>
-      </nav>
-    </Col>
-  </Row>
-)}
+                                {/* Next Button */}
+                                <li className={`page-item ${page >= pageInfo.totalPages - 1 || loading ? 'disabled' : ''}`}>
+                                    <button
+                                        className="page-link"
+                                        onClick={() => setPage(prev => prev + 1)}
+                                        disabled={page >= pageInfo.totalPages - 1 || loading}
+                                        aria-label="Next"
+                                    >
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </Col>
+                </Row>
+            )}
+            <DeleteRequisitionModal
+  show={showDeleteModal}
+  onClose={() => {
+    setShowDeleteModal(false);
+    setSelectedReq(null);
+  }}
+  onConfirm={handleConfirmDelete}
+  requisitionCode={selectedReq?.code}
+/>
+
         </Container>
     );
 };

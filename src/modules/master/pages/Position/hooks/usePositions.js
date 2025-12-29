@@ -126,10 +126,10 @@ const bulkAddPositions = async (file) => {
 
     // ❌ business failure
     if (res.success === false) {
-      toast.error(res.message);
+      toast.error(res.data);
       return {
         success: false,
-        error: res.message
+        error: res.data
       };
     }
   await fetchPositions(); 

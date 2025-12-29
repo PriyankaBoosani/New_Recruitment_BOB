@@ -40,6 +40,15 @@ export const useJobRequisitions = ({
       setLoading(false);
     }
   };
+  const deleteRequisition = async (id) => {
+    try {
+      await requisitionApiService.deleteRequisition(id);
+      toast.success("Requisition deleted successfully");
+      fetchRequisitions(); // refresh list
+    } catch {
+      toast.error("Failed to delete requisition");
+    }
+  };
 
   useEffect(() => {
     fetchRequisitions();
@@ -49,6 +58,7 @@ export const useJobRequisitions = ({
     requisitions,
     loading,
     pageInfo,
+    deleteRequisition,
     refetch: fetchRequisitions
   };
 };
