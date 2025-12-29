@@ -24,7 +24,8 @@ const PositionPage = () => {
     positions,
     addPosition,
     updatePosition,
-    deletePosition,
+    deletePosition, 
+    fetchPositions
   } = usePositions();
 
   /* SAME STATIC DATA AS ORIGINAL */
@@ -273,6 +274,7 @@ const PositionPage = () => {
         removeCSV={() => setSelectedCSVFile(null)}
         removeXLSX={() => setSelectedXLSXFile(null)}
         t={t}
+         fetchPositions={fetchPositions}
       />
 
       <DeleteConfirmModal

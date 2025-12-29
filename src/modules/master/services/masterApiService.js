@@ -15,24 +15,24 @@ const masterApiService = {
   updateLocation: (id, data) => apis.put(`/location/update/${id}`, data),
   deleteLocation: (id) => apis.delete(`/location/delete/${id}`),
   // ✅ DOWNLOAD LOCATION TEMPLATE
-downloadLocationTemplate: () =>
-  apis.get("/location/download-template", {
-    responseType: "blob",
-  }),
+  downloadLocationTemplate: () =>
+    apis.get("/location/download-template", {
+      responseType: "blob",
+    }),
 
-// ✅ BULK ADD LOCATIONS
-bulkAddLocations: (file) => {
-  const formData = new FormData();
+  // ✅ BULK ADD LOCATIONS
+  bulkAddLocations: (file) => {
+    const formData = new FormData();
 
-  // 🔥 backend expects "attachment"
-  formData.append("file", file);
+    // 🔥 backend expects "attachment"
+    formData.append("file", file);
 
-  return apis.post("/location/bulk-add", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-},
+    return apis.post("/location/bulk-add", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
 
 
 
@@ -65,8 +65,8 @@ bulkAddLocations: (file) => {
   addCategory: (data) => apis.post("/categories/add", data),
   updateCategory: (id, data) => apis.put(`/categories/update/${id}`, data),
   deleteCategory: (id) => apis.delete(`/categories/delete/${id}`),
-   downloadCategoryTemplate: () =>apis.get("/categories/download-template", { responseType: "blob",}),
- bulkAddCategories: (file) => {
+  downloadCategoryTemplate: () => apis.get("/categories/download-template", { responseType: "blob", }),
+  bulkAddCategories: (file) => {
     const formData = new FormData();
     formData.append("file", file);
 
@@ -82,7 +82,7 @@ bulkAddLocations: (file) => {
   addSpecialCategory: (data) => apis.post("/special-categories/add", data),
   updateSpecialCategory: (id, data) => apis.put(`/special-categories/update/${id}`, data),
   deleteSpecialCategory: (id) => apis.delete(`/special-categories/delete/${id}`),
-    // ✅ DOWNLOAD SPECIAL CATEGORY TEMPLATE
+  // ✅ DOWNLOAD SPECIAL CATEGORY TEMPLATE
   downloadSpecialCategoryTemplate: () =>
     apis.get("/special-categories/download-template", {
       responseType: "blob",
@@ -91,7 +91,7 @@ bulkAddLocations: (file) => {
   // ✅ BULK ADD SPECIAL CATEGORIES
   bulkAddSpecialCategories: (file) => {
     const formData = new FormData();
-   formData.append("file", file);
+    formData.append("file", file);
 
 
     return apis.post("/special-categories/bulk-add", formData, {
@@ -107,7 +107,7 @@ bulkAddLocations: (file) => {
   addJobGrade: (data) => apis.post("/jobgrade/add", data),
   updateJobGrade: (id, data) => apis.put(`/jobgrade/update/${id}`, data),
   deleteJobGrade: (id) => apis.delete(`/jobgrade/delete/${id}`),
-    // ✅ DOWNLOAD JOB GRADE TEMPLATE
+  // ✅ DOWNLOAD JOB GRADE TEMPLATE
   downloadJobGradeTemplate: () =>
     apis.get("/jobgrade/download-template", {
       responseType: "blob",
@@ -133,25 +133,36 @@ bulkAddLocations: (file) => {
   addPosition: (data) => apis.post("/master-positions/add", data),
   updatePosition: (id, data) => apis.put(`/master-positions/update/${id}`, data),
   deletePosition: (id) => apis.delete(`/master-positions/delete/${id}`),
+  downloadPositionTemplate: () => apis.get("/master-positions/download-template", { responseType: 'blob' }),
+ 
 
+  bulkAddPositions: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return apis.post('/master-positions/bulk-add', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
   /* Document Types */
   getAllDocumentTypes: () => apis.get("/document-types/all"),
   addDocumentType: (data) => apis.post("/document-types/add", data),
   updateDocumentType: (id, data) => apis.put(`/document-types/update/${id}`, data),
   deleteDocumentType: (id) => apis.delete(`/document-types/delete/${id}`),
-  downloadDocumentTemplate: () =>apis.get("/document-types/download-template", { responseType: "blob",}),
-bulkAddDocuments: (file) => {
-  const formData = new FormData();
+  downloadDocumentTemplate: () => apis.get("/document-types/download-template", { responseType: "blob", }),
+  bulkAddDocuments: (file) => {
+    const formData = new FormData();
 
-  // 🔥 backend expects "attachment"
-  formData.append("file", file);
+    // 🔥 backend expects "attachment"
+    formData.append("file", file);
 
-  return apis.post("/document-types/bulk-add", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-},
+    return apis.post("/document-types/bulk-add", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
   /* Relaxation Types */
   getAllRelaxationTypes: () => apis.get("/relaxation-type/all"),
   addRelaxationType: (data) => apis.post("/relaxation-type/add", data),
@@ -163,8 +174,8 @@ bulkAddDocuments: (file) => {
   addInterviewPanel: (data) => apis.post("/interview-panels/add", data),
   updateInterviewPanel: (id, data) => apis.put(`/interview-panels/update/${id}`, data),
   deleteInterviewPanel: (id) => apis.delete(`/interview-panels/delete/${id}`),
-  getActiveInterviewMembers: () =>apis.get("/interview-panels/active-members"),
-   getInterviewPanelById: (id) => apis.get(`/interview-panels/${id}`),
+  getActiveInterviewMembers: () => apis.get("/interview-panels/active-members"),
+  getInterviewPanelById: (id) => apis.get(`/interview-panels/${id}`),
 
 
   /* Optional master all */
@@ -173,7 +184,7 @@ bulkAddDocuments: (file) => {
   //User 
   getRegister: () => nodeApi.get('/getdetails/users/all'),
   registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data), // Auth (Node API)
-getMasterDropdownData: () => masterDropdownApi.get('/master-dd-data/get/committees'),
+  getMasterDropdownData: () => masterDropdownApi.get('/master-dd-data/get/committees'),
 };
 
 export default masterApiService;

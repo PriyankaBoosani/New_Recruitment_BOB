@@ -48,5 +48,11 @@
   "enter_preferred_education": "Enter preferred education",
   "enter_roles_responsibilities": "Enter roles & responsibilities",
   "total_experience_years": "Total Experience Years",
-  "enter_total_experience": "Enter total experience"
+  "enter_total_experience": "Enter total experience",
+    "no_file_selected": "Please select a file to upload",
+    "min_age": "Minimum Age",
+    "enter_min_age": "Enter minimum age",
+    "max_age": "Maximum Age",
+    "enter_max_age": "Enter maximum age"
+
 }

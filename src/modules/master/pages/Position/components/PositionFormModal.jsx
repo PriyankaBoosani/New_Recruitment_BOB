@@ -18,7 +18,7 @@ const PositionFormModal = ({
   /* ✅ DEFAULTS ADDED */
   departments = [],
   jobGrades = [],
-
+ fetchPositions,
   t
 }) => {
 
@@ -169,7 +169,7 @@ const PositionFormModal = ({
                   <ErrorMessage>{errors.eligibilityAgeMax}</ErrorMessage>
                 </Form.Group>
               </Col>
-              
+
               <Col xs={6} md={6}>
                 <Form.Group className="form-group">
                   <Form.Label>
@@ -280,11 +280,13 @@ const PositionFormModal = ({
             <PositionImportModal
               t={t}
               onClose={onHide}
-              onSuccess={() => {
+              onSuccess={async () => {
+                await fetchPositions();   // 🔥 THIS is the key
                 setActiveTab("manual");
               }}
             />
-            
+
+
           </>
         )}
       </Modal.Body>

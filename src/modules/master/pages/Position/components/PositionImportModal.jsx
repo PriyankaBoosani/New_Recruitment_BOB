@@ -10,43 +10,43 @@ const PositionImportModal = ({
   onSuccess = () => { }
 }) => {
   const { bulkAddPositions, downloadPositionTemplate, loading } = usePositions();
-
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState("");
 
   /* ---------------- FILE VALIDATION ---------------- */
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-
-    const isExcel =
-      file &&
-      (
-        file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-        file.type === "application/vnd.ms-excel"
-      );
+    const isExcel = file && (
+      file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+      file.type === 'application/vnd.ms-excel'
+    );
 
     if (isExcel) {
       setSelectedFile(file);
-      setError("");
+      setError('');
     } else {
-      setError(t("position:invalid_file"));
+      setError(t("department:invalid_file"));
     }
   };
 
   /* ---------------- UPLOAD ---------------- */
   const handleUpload = async () => {
+    setError("");
     if (!selectedFile) {
       setError(t("position:no_file_selected"));
       return;
     }
 
-    const result = await bulkAddPositions(selectedFile);
+    // bulkAddPositions returns data (res.data) from masterApiService
+    const res = await bulkAddPositions(selectedFile);
 
-    if (result?.success) {
+    // API returns success flag inside res
+    if (res?.success === true) {
       onSuccess();
       onClose();
     } else {
-      setError(result?.error || t("position:import_failed"));
+      // show server message if present
+      setError(res?.message || res?.error || t("position:import_failed"));
     }
   };
 

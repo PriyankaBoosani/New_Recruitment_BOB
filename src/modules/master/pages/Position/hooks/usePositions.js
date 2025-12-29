@@ -94,6 +94,70 @@ const mappedPositions = mapPositionsFromApi(positionApiData).reverse();
     toast.success("Position deleted successfully");
   };
 
+  // ✅ Download positions template (xlsx)
+  const downloadPositionTemplate = async () => {
+    try {
+      const res = await masterApiService.downloadPositionTemplate();
+      const blob = res.data;
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "MasterPositionsDTO_template.xlsx";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Download failed:", err);
+      toast.error("Failed to download template");
+    }
+  };
+
+  // ✅ Bulk add positions (xlsx)
+
+
+const bulkAddPositions = async (file) => {
+  setLoading(true);
+
+  try {
+    const res = await masterApiService.bulkAddPositions(file);
+
+    console.log("API RESPONSE:", res); // logs for 200 & 422
+
+    // ❌ business failure
+    if (res.success === false) {
+      toast.error(res.message);
+      return {
+        success: false,
+        error: res.message
+      };
+    }
+  await fetchPositions(); 
+    // ✅ success
+    toast.success(res.message || "File uploaded successfully");
+
+    return {
+      success: true
+    };
+
+  } catch (err) {
+    // ❌ network / server error
+    console.log("NETWORK ERROR:", err);
+
+    const message = "Something went wrong";
+    toast.error(message);
+
+    return {
+      success: false,
+      error: message
+    };
+
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   return {
     positions,
     loading,
@@ -101,5 +165,7 @@ const mappedPositions = mapPositionsFromApi(positionApiData).reverse();
     addPosition,
     updatePosition,
     deletePosition,
+   downloadPositionTemplate,
+   bulkAddPositions,
   };
 };

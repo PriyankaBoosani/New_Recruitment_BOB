@@ -48,5 +48,10 @@
   "enter_preferred_education": "पसंदीदा शैक्षिक विज्ञान",
   "enter_roles_responsibilities": "पदवीय भूमिका",
   "total_experience_years": "सामान्यता",
-  "enter_total_experience": "सामान्यता"
+  "enter_total_experience": "सामान्यता",
+    "no_file_selected": "कृपया अपलोड करने के लिए एक फ़ाइल चुनें",
+    "min_age": "न्यूनतम आयु",
+    "enter_min_age": "न्यूनतम आयु दर्ज करें",
+    "max_age": "अधिकतम आयु",
+    "enter_max_age": "अधिकतम आयु दर्ज करें"
 }
