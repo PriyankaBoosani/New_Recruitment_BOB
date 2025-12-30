@@ -210,8 +210,7 @@ const JobPostingsList = () => {
                                         className="icon-btn"
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            navigate(`/job-posting/create-requisition?id=${req.id}`);
-                                        }}
+   navigate(`/job-posting/${req.id}/add-position`);                                        }}
                                     >
                                         <img src={pos_plus_icon} alt="add" className="icon-16" />
                                     </Button>

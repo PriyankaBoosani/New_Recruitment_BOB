@@ -8,7 +8,6 @@ import DepartmentFormModal from './components/DepartmentFormModal';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
 import { validateDepartmentForm } from '../../../../shared/utils/department-validations';
 import { mapDepartmentToApi } from "./mappers/departmentMapper";
-import { importFromCSV } from '../../../../shared/components/FileUpload';
 
 const DepartmentPage = () => {
   const { t } = useTranslation(["department", "validation"]);
@@ -24,6 +23,7 @@ const DepartmentPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isViewing, setIsViewing] = useState(false);
   const [activeTab, setActiveTab] = useState('manual');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -32,14 +32,11 @@ const DepartmentPage = () => {
   const [formData, setFormData] = useState({ name: '', description: '' });
   const [editingDeptId, setEditingDeptId] = useState(null);
   const [errors, setErrors] = useState({});
-  const [selectedCSVFile, setSelectedCSVFile] = useState(null);
-  const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
-
   const [currentPage, setCurrentPage] = useState(1);
-
 
   const openAddModal = () => {
     setIsEditing(false);
+    setIsViewing(false);
     setFormData({ name: '', description: '' });
     setErrors({});
     setActiveTab('manual');
@@ -48,46 +45,57 @@ const DepartmentPage = () => {
 
   const openEditModal = (dept) => {
     setIsEditing(true);
+    setIsViewing(false);
     setEditingDeptId(dept.id);
     setFormData({ name: dept.name, description: dept.description || '' });
     setActiveTab('manual');
     setShowAddModal(true);
   };
 
+  const openViewModal = (dept) => {
+    setIsViewing(true);
+    setIsEditing(false);
+    setFormData({ name: dept.name, description: dept.description || '' });
+    setShowAddModal(true);
+  };
+
   const handleSave = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const { valid, errors: vErrors } =
-      validateDepartmentForm(formData, {
-        existing: departments,
-        currentId: isEditing ? editingDeptId : null
-      });
+  // ✅ TRIM ALL STRING FIELDS (ltrim + rtrim)
+  const trimmedFormData = Object.fromEntries(
+    Object.entries(formData).map(([key, value]) => [
+      key,
+      typeof value === "string" ? value.trim() : value
+    ])
+  );
 
-    if (!valid) return setErrors(vErrors);
-
-    try {
-      const payload = mapDepartmentToApi(formData);
-
-      if (isEditing) {
-        await updateDepartment(editingDeptId, payload);
-      } else {
-        await addDepartment(payload);
-        setCurrentPage(1); // show newest row
-      }
-
-      setShowAddModal(false);
-    } catch (err) {
-      console.error("Save failed", err);
-    }
-  };
-
-  const handleImport = async () => {
-    await importFromCSV({
-      selectedCSVFile, selectedXLSXFile, list: departments,
-      mapRow: (row) => ({ name: (row.name || '').trim(), description: (row.description || '').trim() }),
-      setSelectedCSVFile, setSelectedXLSXFile, setShowAddModal, setActiveTab, setList: fetchDepartments
+  const { valid, errors: vErrors } =
+    validateDepartmentForm(trimmedFormData, {
+      existing: departments,
+      currentId: isEditing ? editingDeptId : null
     });
-  };
+
+  if (!valid) {
+    setErrors(vErrors);
+    return;
+  }
+
+  try {
+    const payload = mapDepartmentToApi(trimmedFormData);
+
+    if (isEditing) {
+      await updateDepartment(editingDeptId, payload);
+    } else {
+      await addDepartment(payload);
+      setCurrentPage(1);
+    }
+
+    setShowAddModal(false);
+  } catch (err) {
+    console.error("Save failed", err);
+  }
+};
 
   return (
     <Container fluid className="user-container">
@@ -111,14 +119,16 @@ const DepartmentPage = () => {
         data={departments}
         searchTerm={searchTerm}
         onEdit={openEditModal}
+        onView={openViewModal}
         onDelete={(dept) => { setDeleteTarget(dept); setShowDeleteModal(true); }}
-        currentPage={currentPage}       // Pass this
-        setCurrentPage={setCurrentPage} // Pass this
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
       />
       <DepartmentFormModal
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
         isEditing={isEditing}
+        isViewing={isViewing}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         formData={formData}

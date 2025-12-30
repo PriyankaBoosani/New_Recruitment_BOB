@@ -5,8 +5,8 @@ import { useDepartments } from '../hooks/useDepartments';
 
 const DepartmentImportView = ({
   t,
-  onClose = () => {},
-  onSuccess = () => {}
+  onClose = () => { },
+  onSuccess = () => { }
 }) => {
   const { bulkAddDepartments, downloadDepartmentTemplate, loading } = useDepartments();
   const [selectedFile, setSelectedFile] = useState(null);

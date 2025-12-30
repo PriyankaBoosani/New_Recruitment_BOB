@@ -3,8 +3,11 @@ import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import ErrorMessage from "../../../../../shared/components/ErrorMessage";
 import { validateUserForm } from "../../../../../shared/utils/user-validations";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
-const EMPTY_FORM = {
+
+const EMPTY_FORM = {  
   role: "",
   fullName: "",
   email: "",
@@ -12,11 +15,13 @@ const EMPTY_FORM = {
   confirmPassword: ""
 };
 
-const UserFormModal = ({ show, onHide, onSave,  existingUsers = []  }) => {
+const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
   const { t } = useTranslation(["user", "validation"]);
 
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   /* =========================
      🔄 RESET FORM ON OPEN
@@ -49,22 +54,22 @@ const UserFormModal = ({ show, onHide, onSave,  existingUsers = []  }) => {
   /* =========================
      SUBMIT
   ========================= */
-const handleSubmit = (e) => {
-  e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  const { valid, errors: vErrors } = validateUserForm(formData, {
-    requirePassword: true,
-    existing: existingUsers
-  });
+    const { valid, errors: vErrors } = validateUserForm(formData, {
+      requirePassword: true,
+      existing: existingUsers
+    });
 
-  if (!valid) {
-    setErrors(vErrors);
-    return;
-  }
+    if (!valid) {
+      setErrors(vErrors);
+      return;
+    }
 
-  onSave(formData);
-  onHide();
-};
+    onSave(formData);
+    onHide();
+  };
 
 
   return (
@@ -112,29 +117,67 @@ const handleSubmit = (e) => {
               <ErrorMessage>{errors.email}</ErrorMessage>
             </Col>
 
-           
+
 
             <Col md={6}>
               <Form.Label>{t("password")} *</Form.Label>
-              <Form.Control
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-              />
+
+              <div className="position-relative">
+                <Form.Control
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="pe-5"
+                />
+
+                <span
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    right: "12px",
+                    transform: "translateY(-50%)",
+                    cursor: "pointer"
+                  }}
+                >
+                  {showPassword ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
+                </span>
+              </div>
+
               <ErrorMessage>{errors.password}</ErrorMessage>
             </Col>
 
+
             <Col md={6}>
               <Form.Label>{t("confirmPassword")} *</Form.Label>
-              <Form.Control
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-              />
+
+              <div className="position-relative">
+                <Form.Control
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  className="pe-5"
+                />
+
+                <span
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    right: "12px",
+                    transform: "translateY(-50%)",
+                    cursor: "pointer"
+                  }}
+                >
+                  {showConfirmPassword ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
+                </span>
+              </div>
+
               <ErrorMessage>{errors.confirmPassword}</ErrorMessage>
             </Col>
+
           </Row>
 
           <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">

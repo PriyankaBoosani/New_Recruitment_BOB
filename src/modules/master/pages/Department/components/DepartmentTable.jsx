@@ -5,7 +5,7 @@ import viewIcon from "../../../../../assets/view_icon.png";
 import editIcon from "../../../../../assets/edit_icon.png";
 import deleteIcon from "../../../../../assets/delete_icon.png";
 
-const DepartmentTable = ({ data, searchTerm, onEdit, onDelete, currentPage, setCurrentPage }) => {
+const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPage, setCurrentPage }) => {
     const { t } = useTranslation(["department"]);
     const itemsPerPage = 7;
 
@@ -45,7 +45,7 @@ const DepartmentTable = ({ data, searchTerm, onEdit, onDelete, currentPage, setC
                                     <td data-label="Description:">&nbsp;{dept.description}</td>
                                     <td>
                                         <div className="action-buttons">
-                                            <Button variant="link" className="action-btn view-btn" title="View">
+                                            <Button variant="link" className="action-btn view-btn" title="View" onClick={() => onView(dept)}>
                                                 <img src={viewIcon} alt="View" className="icon-16" />
                                             </Button>
                                             <Button variant="link" className="action-btn edit-btn" title="Edit" onClick={() => onEdit(dept)}>

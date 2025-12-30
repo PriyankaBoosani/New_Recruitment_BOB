@@ -9,11 +9,6 @@ export const useDepartments = () => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const sortByCreatedDate = (list) =>
-    [...list].sort(
-      (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
-    );
-
   const fetchDepartments = async () => {
   try {
     const res = await masterApiService.getAllDepartments();
@@ -22,13 +17,7 @@ export const useDepartments = () => {
       ? res.data
       : res.data?.data || [];
 
-    const mapped = mapDepartmentsFromApi(apiList);
-
-    // 🔽 newest first
-    mapped.sort(
-      (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
-    );
-
+    const mapped = mapDepartmentsFromApi(apiList).reverse();
     setDepartments(mapped);
   } catch (err) {
     console.error("Department fetch failed", err);
@@ -43,7 +32,6 @@ const bulkAddDepartments = async (file) => {
 
     console.log("API RESPONSE:", res); // logs for 200 & 422
 
-    // ❌ business failure
     if (res.success === false) {
       toast.error(res.message);
       return {
@@ -52,7 +40,6 @@ const bulkAddDepartments = async (file) => {
       };
     }
   await fetchDepartments(); 
-    // ✅ success
     toast.success(res.message || "File uploaded successfully");
 
     return {
@@ -60,7 +47,6 @@ const bulkAddDepartments = async (file) => {
     };
 
   } catch (err) {
-    // ❌ network / server error
     console.log("NETWORK ERROR:", err);
 
     const message = "Something went wrong";
@@ -75,9 +61,6 @@ const bulkAddDepartments = async (file) => {
     setLoading(false);
   }
 };
-
-
-
   const downloadDepartmentTemplate = async () => {
     try {
       const res = await masterApiService.downloadDepartmentTemplate();

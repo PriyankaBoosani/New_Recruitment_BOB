@@ -43,15 +43,7 @@ export const validateUserEmail = (email) => {
   return null;
 };
 
-export const validateUserMobile = (mobile) => {
-  let error = requiredField(mobile, i18n.t("validation:mobile"));
-  if (error) return error;
 
-  error = phoneFormat(mobile);
-  if (error) return error;
-
-  return null;
-};
 
 export const validateUserPassword = (password, isRequired = true) => {
   if (!isRequired && !password) return null;
@@ -114,23 +106,7 @@ export const validateUserForm = (formData = {}, options = {}) => {
     }
   }
 
-  // Mobile
-  const mobileError = validateUserMobile(formData.mobile);
-  if (mobileError) {
-    errors.mobile = mobileError;
-  } else {
-    const mobileNorm = formData.mobile.replace(/\D/g, "");
-    const duplicateMobile = existing.find(
-      (user) =>
-        user.phone &&
-        user.phone.replace(/\D/g, "") === mobileNorm &&
-        user.id !== currentId
-    );
 
-    if (duplicateMobile) {
-      errors.mobile = i18n.t("validation:mobile_exists");
-    }
-  }
 
   // Password + confirm password
   if (requirePassword || formData.password) {
@@ -162,7 +138,6 @@ export default {
   validateUserRole,
   validateFullName,
   validateUserEmail,
-  validateUserMobile,
   validateUserPassword,
   validatePasswordConfirmation,
   validateUserForm
