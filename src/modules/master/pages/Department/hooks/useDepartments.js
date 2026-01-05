@@ -9,7 +9,7 @@ export const useDepartments = () => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchDepartments = async () => {
+const fetchDepartments = async () => {
   try {
     const res = await masterApiService.getAllDepartments();
 
@@ -17,13 +17,14 @@ export const useDepartments = () => {
       ? res.data
       : res.data?.data || [];
 
-    const mapped = mapDepartmentsFromApi(apiList).reverse();
+    const mapped = mapDepartmentsFromApi(apiList);
     setDepartments(mapped);
   } catch (err) {
     console.error("Department fetch failed", err);
     setDepartments([]);
   }
 };
+
 const bulkAddDepartments = async (file) => {
   setLoading(true);
 

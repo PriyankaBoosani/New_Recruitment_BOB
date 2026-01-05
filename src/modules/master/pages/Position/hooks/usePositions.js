@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import masterApiService from "../../../services/masterApiService";
 import { mapPositionsFromApi } from "../mappers/positionMapper";
+import i18n from "i18next";
+
 
 
 
@@ -79,19 +81,19 @@ const mappedPositions = mapPositionsFromApi(positionApiData).reverse();
   const addPosition = async (payload) => {
     await masterApiService.addPosition(payload);
     await fetchPositions();
-    toast.success("Position added successfully");
+     toast.success(i18n.t("position:add_success"));
   };
 
   const updatePosition = async (id, payload) => {
     await masterApiService.updatePosition(id, payload);
     await fetchPositions();
-    toast.success("Position updated successfully");
+    toast.success(i18n.t("position:update_success"));
   };
 
   const deletePosition = async (id) => {
     await masterApiService.deletePosition(id);
     await fetchPositions();
-    toast.success("Position deleted successfully");
+    toast.success(i18n.t("position:delete_success"));
   };
 
   // ✅ Download positions template (xlsx)
@@ -109,7 +111,9 @@ const mappedPositions = mapPositionsFromApi(positionApiData).reverse();
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Download failed:", err);
-      toast.error("Failed to download template");
+      toast.error(
+      i18n.t("position:download_error", "Failed to download template")
+      );
     }
   };
 

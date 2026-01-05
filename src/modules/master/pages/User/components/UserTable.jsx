@@ -23,7 +23,7 @@ const UserTable = ({ data, searchTerm, currentPage, setCurrentPage }) => {
         <Table hover className="user-table">
           <thead>
             <tr>
-              <th>{t("sno")}</th>
+              <th>{t("s_no")}</th>
               <th>{t("role")}</th>
               <th>{t("name")}</th>
               <th>{t("email")}</th>

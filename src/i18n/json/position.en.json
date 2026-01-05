@@ -54,6 +54,15 @@
     "min_age": "Minimum Age",
     "enter_min_age": "Enter minimum age",
     "max_age": "Maximum Age",
-    "enter_max_age": "Enter maximum age"
+    "enter_max_age": "Enter maximum age",
+     "add_success": "Position added successfully",
+  "update_success": "Position updated successfully",
+  "delete_success": "Position deleted successfully",
+
+  "add_error": "Failed to add position",
+  "update_error": "Failed to update position",
+  "delete_error": "Failed to delete position",
+  "download_error": "Failed to download template"
+
 
 }
