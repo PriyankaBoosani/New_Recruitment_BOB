@@ -36,6 +36,7 @@
   "delete": "Delete",
   "upload_categories": "Upload Categories",
   "support_xlsx": "Support for XLSX formats",
+  "upload_departments": "upload file",
   "invalid_file": "Please upload a valid Excel file (.xlsx, .xls)",
   "no_file_selected": "Please select a file to upload",
  

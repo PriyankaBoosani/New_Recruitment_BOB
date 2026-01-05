@@ -34,6 +34,7 @@
     "delete_message": "क्या आप इस विभाग को हटाना चाहते हैं?",
     "delete": "हटाएँ",
     "upload_categories": "श्रेणियाँ अपलोड करें",
+     "upload_departments": "फ़ाइल अपलोड करें",
   "support_xlsx": "XLSX फ़ॉर्मैट का समर्थन",
   "invalid_file": "कृपया एक मान्य Excel फ़ाइल अपलोड करें (.xlsx, .xls)",
   "no_file_selected": "कृपया अपलोड करने के लिए फ़ाइल चुनें",

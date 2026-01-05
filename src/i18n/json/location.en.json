@@ -31,7 +31,7 @@
     "add_success": "Location added successfully",
   "update_success": "Location updated successfully",
   "delete_success": "Location deleted successfully",
- 
+ "upload_locations": "Upload file",
   "support_xlsx": "Support for XLSX formats",
   "invalid_file": "Please upload a valid Excel file (.xlsx, .xls)",
   "no_file_selected": "Please select a file to upload",

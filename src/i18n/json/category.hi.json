@@ -40,7 +40,7 @@
   "update_error": "श्रेणी अपडेट करने में विफल",
   "delete_success": "श्रेणी सफलतापूर्वक हटाई गई",
   "delete_error": "श्रेणी हटाने में विफल",
-  "upload_categories": "श्रेणियाँ अपलोड करें",
+  "upload_categories": "फ़ाइल अपलोड करें",
   "support_xlsx": "XLSX फ़ॉर्मैट का समर्थन",
   "invalid_file": "कृपया एक मान्य Excel फ़ाइल अपलोड करें (.xlsx, .xls)",
   "no_file_selected": "कृपया अपलोड करने के लिए फ़ाइल चुनें",

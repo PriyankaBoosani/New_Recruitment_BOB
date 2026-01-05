@@ -52,8 +52,8 @@
   "max_invalid_number": "Maximum salary must be a valid number",
   "min_negative_not_allowed": "Minimum salary cannot be negative",
   "max_negative_not_allowed": "Maximum salary cannot be negative",
-  "scale_exists": "Scale already exists",
-  "grade_code_exists": "Grade code already exists",
+  "scale_exists": "A record with this value already exists",
+  "grade_code_exists": "A record with this value already exists",
   "upload_jobgrades": "Upload File",
   
 

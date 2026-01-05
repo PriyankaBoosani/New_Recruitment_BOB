@@ -118,8 +118,7 @@ const bulkAddLocations = async (file) => {
         toast.error(res.message);
         return {
           success: false,
-          error: res.message,
-           details: res.data || []
+          error: res.message
         };
       }
       // ✅ success

@@ -51,8 +51,11 @@ const SpecialCategoryFormModal = ({
           : t("added")}
       </Modal.Title>
 
+
           <p className="small text-muted para">
-            {t("choose_add_method")}
+              {isViewing
+           ? null
+           :  t("choose_add_method")}
           </p>
         </div>
       </Modal.Header>

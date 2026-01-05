@@ -40,7 +40,7 @@
   "update_error": "Failed to update category",
   "delete_success": "Category deleted successfully",
   "delete_error": "Failed to delete category",
-  "upload_categories": "Upload Categories",
+  "upload_categories": "Upload File",
   "support_xlsx": "Support for XLSX formats",
   "invalid_file": "Please upload a valid Excel file (.xlsx, .xls)",
   "no_file_selected": "Please select a file to upload",
