@@ -36,35 +36,26 @@ const fetchItems = async () => {
   /* ================= ADD ================= */
 const addItem = async (payload) => {
   try {
-    const res = await masterApiService.saveGenericDocument(
-      payload.type,   // e.g. RESUME
+    setLoading(true);
+
+    await masterApiService.saveGenericDocument(
+      payload.type,   // Generic / Annexures
       payload.file    // PDF
     );
 
-    if (!res?.data?.success) {
-      toast.error(res?.data?.message || "Upload failed");
-      return;
-    }
+    // ✅ ALWAYS refresh list from API
+    await fetchItems();
 
-    const d = res.data.data;
-
-    setItems(prev => [
-      {
-        id: d.id,
-        type: d.type,
-        fileName: d.fileName,
-        fileUrl: d.fileUrl,
-        version: d.versionNo
-      },
-      ...prev
-    ]);
-
-    toast.success("File uploaded successfully");
+    toast.success("File added successfully");
   } catch (e) {
     console.error(e);
     toast.error("Upload failed");
+  } finally {
+    setLoading(false);
   }
 };
+
+
 
 
   /* ================= DELETE ================= */

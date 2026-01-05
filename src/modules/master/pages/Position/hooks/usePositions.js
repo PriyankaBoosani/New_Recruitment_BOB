@@ -26,7 +26,7 @@ const fetchPositions = async () => {
     // 1️⃣ Fetch positions
     const posRes = await masterApiService.getAllPositions();
     const positionApiData = posRes?.data || [];
-const mappedPositions = mapPositionsFromApi(positionApiData).reverse();
+const mappedPositions = mapPositionsFromApi(positionApiData);
 
     // 2️⃣ Fetch departments
     const deptRes = await masterApiService.getAllDepartments();

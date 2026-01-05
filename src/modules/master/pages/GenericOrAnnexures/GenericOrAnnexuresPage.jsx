@@ -28,6 +28,8 @@ const GenericOrAnnexuresPage = () => {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
 
   const [formData, setFormData] = useState({
     type: "",
@@ -132,12 +134,15 @@ const GenericOrAnnexuresPage = () => {
       </div>
 
       {/* ===== TABLE ===== */}
-      <GenericOrAnnexuresTable
-        data={items}
-        onView={openView}
-        onDownload={handleDownload}
-        onDelete={openDeleteConfirm}
-      />
+    <GenericOrAnnexuresTable
+  data={items}
+  onView={openView}
+  onDownload={handleDownload}
+  onDelete={openDeleteConfirm}
+  currentPage={currentPage}
+  setCurrentPage={setCurrentPage}
+/>
+
 
       {/* ===== ADD / VIEW MODAL ===== */}
       <GenericOrAnnexuresFormModal
