@@ -6,6 +6,15 @@ const masterApiService = {
   // Note: auth header is injected by nodeApi interceptor; no need to pass token manually
   getRegister: () => nodeApi.get('/getdetails/users/all'),
   registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data),
+  /* Auth */
+  logout: () =>
+    nodeApi.post(
+      "/candidate-auth/logout",
+      {},
+      {
+        withCredentials: true,
+      }
+    ),
 
   // city
   getallCities: () => apis.get('/city/all'),
@@ -134,7 +143,7 @@ const masterApiService = {
   updatePosition: (id, data) => apis.put(`/master-positions/update/${id}`, data),
   deletePosition: (id) => apis.delete(`/master-positions/delete/${id}`),
   downloadPositionTemplate: () => apis.get("/master-positions/download-template", { responseType: 'blob' }),
- 
+
 
   bulkAddPositions: (file) => {
     const formData = new FormData();
@@ -190,33 +199,33 @@ const masterApiService = {
 
   /* Generic / Annexures Documents */
 
-// GET all
-getAllGenericDocuments: () =>
-  apis.get("/rec-generic-documents/all"),
+  // GET all
+  getAllGenericDocuments: () =>
+    apis.get("/rec-generic-documents/all"),
 
-// ADD
-/* Generic / Annexures Documents */
+  // ADD
+  /* Generic / Annexures Documents */
 
-// SAVE (UPLOAD)
-saveGenericDocument: (type, file) => {
-  const formData = new FormData();
-  formData.append("file", file);
+  // SAVE (UPLOAD)
+  saveGenericDocument: (type, file) => {
+    const formData = new FormData();
+    formData.append("file", file);
 
-  return apis.post(
-    `/rec-generic-documents/save-generic-document/${type}`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
-},
+    return apis.post(
+      `/rec-generic-documents/save-generic-document/${type}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+  },
 
 
-// DELETE
-deleteGenericDocument: (id) =>
-  apis.delete(`/rec-generic-documents/delete/${id}`),
+  // DELETE
+  deleteGenericDocument: (id) =>
+    apis.delete(`/rec-generic-documents/delete/${id}`),
 
 };
 
