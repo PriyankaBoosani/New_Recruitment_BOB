@@ -834,3 +834,14 @@ body.modal-open {
 .hovbg:hover{
     background-color: #ced4da !important;
 }
+.multipleselect {
+	position: relative;
+	top: -1px;
+	font-size: 1em;
+	font-weight: 500;
+    color: #64748B;
+}
+.view-only-members {
+	background-color: var(--bs-secondary-bg);
+	opacity: 1;
+}

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import masterApiService from "../../../services/masterApiService";
-import { mapInterviewMembersApi } from "../../../mappers/interviewMembersMapper";
+import { mapInterviewMembersApi } from "../mappers/interviewMembersMapper";
 import { mapInterviewPanelsApiToUI, preparePanelPayload } from "../mappers/InterviewPanelMapper";
 import { validateInterviewPanelForm } from '../../../../../shared/utils/interviewpanel-validations';
+import { t } from 'i18next';
 
 export const useInterviewPanel = () => {
   const [panels, setPanels] = useState([]);
@@ -79,11 +80,11 @@ const handleSave = async (isEditing, editingId) => {
             : p
         )
       );
-      toast.success("Updated successfully");
+      toast.success(t("interviewPanel:interviewPanelUpdated"));
     } else {
       // ✅ ADD ON TOP
       setPanels(prev => [uiItem, ...prev]);
-      toast.success("Created successfully");
+      toast.success(t("interviewPanel:interviewPanelAdded"));
     }
 
     return true;
@@ -96,7 +97,9 @@ const handleSave = async (isEditing, editingId) => {
   const handleDelete = async (id) => {
     const res = await masterApiService.deleteInterviewPanel(id);
     if (res?.success) {
-      toast.success("Deleted successfully");
+      toast.success(t("interviewPanel:interviewPanelDeleted"));
+
+
       setPanels(prev => prev.filter(p => p.id !== id));
       return true;
     }
