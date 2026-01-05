@@ -133,7 +133,8 @@ export const useSpecialCategories = () => {
         toast.error(res.message);
         return {
           success: false,
-          error: res.message
+          error: res.message,
+          details: res.data || []
         };
       }
       // ✅ success

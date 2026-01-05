@@ -47,14 +47,14 @@ import deleteIcon from "../../../../../assets/delete_icon.png";
               <td>
   <div className="action-buttons">
 
-     <Button
-      variant="link"
-      className="action-btn view-btn"
-      title="View"
-      onClick={() => onView && onView(loc)}
-    >
-      <img src={viewIcon} alt="View" className="icon-16" />
-    </Button>
+   <Button
+  variant="link"
+  className="action-btn view-btn"
+  title="View"
+  onClick={() => onView && onView(loc)}
+>
+  <img src={viewIcon} alt="View" className="icon-16" />
+</Button>
     <Button
       variant="link"
       className="action-btn edit-btn"

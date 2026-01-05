@@ -21,6 +21,8 @@ const JobGradeImportModal = ({
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState('');
+  const [errorDetails, setErrorDetails] = useState([]);
+
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -55,6 +57,7 @@ const JobGradeImportModal = ({
       onClose();
     } else {
       setError(result?.error || t("jobGrade:import_error"));
+      setErrorDetails(result?.details || []);
     }
   };
 
@@ -86,7 +89,20 @@ const JobGradeImportModal = ({
           </p>
         </div>
 
-        {error && <Alert variant="danger">{error}</Alert>}
+       {error && (
+  <Alert variant="danger">
+    <div>{error}</div>
+
+    {errorDetails.length > 0 && (
+      <ul className="mt-2 mb-0">
+        {errorDetails.map((msg, idx) => (
+          <li key={idx}>{msg}</li>
+        ))}
+      </ul>
+    )}
+  </Alert>
+)}
+
 
         {/* FILE INPUT */}
         <input

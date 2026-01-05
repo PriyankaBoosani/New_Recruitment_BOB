@@ -12,6 +12,7 @@ const PositionImportModal = ({
   const { bulkAddPositions, downloadPositionTemplate, loading } = usePositions();
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState("");
+  const [errorDetails, setErrorDetails] = useState([]);
 
   /* ---------------- FILE VALIDATION ---------------- */
   const handleFileChange = (e) => {
@@ -47,6 +48,7 @@ const PositionImportModal = ({
     } else {
       // show server message if present
       setError(res?.message || res?.error || t("position:import_failed"));
+       setErrorDetails(res?.details || []);
     }
   };
 
@@ -80,8 +82,19 @@ const PositionImportModal = ({
         </div>
 
         {/* ===== Error ===== */}
-        {error && <Alert variant="danger">{error}</Alert>}
+{error && (
+  <Alert variant="danger">
+    <div>{error}</div>
 
+    {errorDetails.length > 0 && (
+      <ul className="mt-2 mb-0">
+        {errorDetails.map((msg, idx) => (
+          <li key={idx}>{msg}</li>
+        ))}
+      </ul>
+    )}
+  </Alert>
+)}
         {/* ===== File Input ===== */}
         <input
           id="upload-xlsx-position"

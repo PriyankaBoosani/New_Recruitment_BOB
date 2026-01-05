@@ -129,7 +129,8 @@ const bulkAddPositions = async (file) => {
       toast.error(res.data);
       return {
         success: false,
-        error: res.data
+        error: res.data,
+         details: res.data || []
       };
     }
   await fetchPositions(); 

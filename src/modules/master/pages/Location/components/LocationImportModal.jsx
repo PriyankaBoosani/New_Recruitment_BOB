@@ -10,6 +10,8 @@ const LocationImportModal = ({
   onSuccess = () => {}
 }) => {
   const { t } = useTranslation(["location"]);
+  const [errorDetails, setErrorDetails] = useState([]);
+
   const {
     bulkAddLocations,
     downloadLocationTemplate,
@@ -50,6 +52,7 @@ const LocationImportModal = ({
       onClose();
     } else {
       setError(result.error);
+       setErrorDetails(result.details || []);
     }
   };
 
@@ -81,7 +84,19 @@ const LocationImportModal = ({
           </p>
         </div>
 
-        {error && <Alert variant="danger">{error}</Alert>}
+{error && (
+  <Alert variant="danger">
+    <div>{error}</div>
+
+    {errorDetails.length > 0 && (
+      <ul className="mt-2 mb-0">
+        {errorDetails.map((msg, idx) => (
+          <li key={idx}>{msg}</li>
+        ))}
+      </ul>
+    )}
+  </Alert>
+)}
 
         <input
           id="upload-xlsx-location"

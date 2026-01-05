@@ -1,5 +1,3 @@
-// src/modules/master/pages/Location/components/LocationFormModal.jsx
-
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import ErrorMessage from "../../../../../shared/components/ErrorMessage";
@@ -9,6 +7,7 @@ const LocationFormModal = ({
   show,
   onHide,
   isEditing,
+  isViewing,            // ✅ VIEW MODE
   formData,
   setFormData,
   errors,
@@ -16,7 +15,7 @@ const LocationFormModal = ({
   setErrors,
   handleSave,
   t,
-   ...importProps
+  ...importProps
 }) => {
   const [activeTab, setActiveTab] = useState("manual");
 
@@ -24,38 +23,30 @@ const LocationFormModal = ({
     setActiveTab("manual");
   }, [show]);
 
-const handleInputChange = (e) => {
-  const { name, value } = e.target;
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
 
-  if (name === "cityId") {
-    const selectedCity = cities.find(c => String(c.id) === String(value));
+    if (name === "cityId") {
+      const selectedCity = cities.find(
+        (c) => String(c.id) === String(value)
+      );
 
-    setFormData(prev => ({
-      ...prev,
-      cityId: value,
-      cityName: selectedCity?.name || ''
-    }));
+      setFormData((prev) => ({
+        ...prev,
+        cityId: value,
+        cityName: selectedCity?.name || "",
+      }));
 
-    // ✅ clear cityId error
-    setErrors(prev => ({
-      ...prev,
-      cityId: ''
-    }));
-  } else {
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+      setErrors((prev) => ({ ...prev, cityId: "" }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
 
-    // ✅ clear field-specific error
-    setErrors(prev => ({
-      ...prev,
-      [name]: ''
-    }));
-  }
-};
-
-
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
 
   return (
     <Modal
@@ -66,12 +57,14 @@ const handleInputChange = (e) => {
       className="user-modal"
       scrollable
     >
+      {/* ===== HEADER ===== */}
       <Modal.Header closeButton className="modal-header-custom">
         <div>
           <Modal.Title>
-            {isEditing ? t("edit") : t("addd")}
+            {isViewing ? t("view") : isEditing ? t("edit") : t("addd")}
           </Modal.Title>
-          {!isEditing && (
+
+          {!isEditing && !isViewing && (
             <p className="mb-0 small text-muted para">
               {t("choose_add_method")}
             </p>
@@ -79,12 +72,16 @@ const handleInputChange = (e) => {
         </div>
       </Modal.Header>
 
+      {/* ===== BODY ===== */}
       <Modal.Body className="p-4">
-        {!isEditing && (
+        {/* Tabs hidden in View */}
+        {!isEditing && !isViewing && (
           <div className="tab-buttons mb-4">
             <Button
               variant={activeTab === "manual" ? "light" : "outline-light"}
-              className={`tab-button ${activeTab === "manual" ? "active" : ""}`}
+              className={`tab-button ${
+                activeTab === "manual" ? "active" : ""
+              }`}
               onClick={() => setActiveTab("manual")}
             >
               {t("manual_entry")}
@@ -92,7 +89,9 @@ const handleInputChange = (e) => {
 
             <Button
               variant={activeTab === "import" ? "light" : "outline-light"}
-              className={`tab-button ${activeTab === "import" ? "active" : ""}`}
+              className={`tab-button ${
+                activeTab === "import" ? "active" : ""
+              }`}
               onClick={() => setActiveTab("import")}
             >
               {t("import_file")}
@@ -100,73 +99,103 @@ const handleInputChange = (e) => {
           </div>
         )}
 
+        {/* ===== MANUAL TAB ===== */}
         {activeTab === "manual" ? (
-          <Form onSubmit={handleSave}>
+          <Form
+            onSubmit={
+              isViewing
+                ? (e) => {
+                    e.preventDefault();
+                    onHide();
+                  }
+                : handleSave
+            }
+          >
             <Row className="g-3">
+              {/* CITY */}
               <Col xs={12} md={6}>
                 <Form.Group className="form-group">
                   <Form.Label>
-                    {t("city_name")} <span className="text-danger">*</span>
+                    {t("city_name")} {!isViewing && <span className="text-danger">*</span>}
                   </Form.Label>
 
-                  <Form.Select
-                    name="cityId"
-                    value={formData.cityId || ""}
-                    onChange={handleInputChange}
-                    className="form-control-custom"
-                  >
-                    <option value="">{t("select_city")}</option>
-                    {cities.map(city => (
-                      <option key={city.id} value={city.id}>
-                        {city.name}
-                      </option>
-                    ))}
-                  </Form.Select>
+                  {isViewing ? (
+                    <div className="form-control-view">
+                      {formData.cityName || "-"}
+                    </div>
+                  ) : (
+                    <Form.Select
+                      name="cityId"
+                      value={formData.cityId || ""}
+                      onChange={handleInputChange}
+                      className="form-control-custom"
+                    >
+                      <option value="">{t("select_city")}</option>
+                      {cities.map((city) => (
+                        <option key={city.id} value={city.id}>
+                          {city.name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  )}
 
-                  <ErrorMessage>{errors.cityId}</ErrorMessage>
+                  {!isViewing && <ErrorMessage>{errors.cityId}</ErrorMessage>}
                 </Form.Group>
               </Col>
 
+              {/* LOCATION NAME */}
               <Col xs={12} md={6}>
                 <Form.Group className="form-group">
                   <Form.Label>
-                    {t("location_name")} <span className="text-danger">*</span>
+                    {t("location_name")} {!isViewing && <span className="text-danger">*</span>}
                   </Form.Label>
 
-                  <Form.Control
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    placeholder={t("enter_location_name")}
-                    className="form-control-custom"
-                  />
+                  {isViewing ? (
+                    <div className="form-control-view">
+                      {formData.name || "-"}
+                    </div>
+                  ) : (
+                    <Form.Control
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder={t("enter_location_name")}
+                      className="form-control-custom"
+                    />
+                  )}
 
-                  <ErrorMessage>{errors.name}</ErrorMessage>
+                  {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
                 </Form.Group>
               </Col>
             </Row>
 
+            {/* ===== FOOTER ===== */}
             <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
-              <Button variant="outline-secondary" onClick={onHide}>
-                {t("cancel")}
-              </Button>
-              <Button variant="primary" type="submit">
-                {isEditing ? t("update") : t("save")}
-              </Button>
+              {isViewing ? (
+                <Button variant="outline-secondary" onClick={onHide}>
+                  {t("close")}
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline-secondary" onClick={onHide}>
+                    {t("cancel")}
+                  </Button>
+                  <Button variant="primary" type="submit">
+                    {isEditing ? t("update") : t("save")}
+                  </Button>
+                </>
+              )}
             </Modal.Footer>
           </Form>
-      ) : (
-  <>
-    {/* Import view handles upload internally */}
-    <LocationImportModal
-      t={t}
-      onClose={onHide}
-      onSuccess={importProps.onSuccess} 
-    />
-  </>
-)
-}
+        ) : (
+          /* ===== IMPORT TAB ===== */
+          <LocationImportModal
+            t={t}
+            onClose={onHide}
+            onSuccess={importProps.onSuccess}
+          />
+        )}
       </Modal.Body>
     </Modal>
   );

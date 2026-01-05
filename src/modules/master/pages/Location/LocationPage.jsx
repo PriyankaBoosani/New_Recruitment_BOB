@@ -44,8 +44,25 @@ const [errors, setErrors] = useState({});
 
   const [showDelete, setShowDelete] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+const [isViewing, setIsViewing] = useState(false);
 
-  
+
+ const openView = (loc) => {
+  setIsEditing(false);
+  setIsViewing(true);        // ✅ view mode ON
+  setEditingLocation(loc);
+
+  setFormData({
+    name: loc.name ?? '',
+    cityId: loc.cityId ?? null,
+    cityName: loc.cityName ?? ''
+  });
+
+  setErrors({});
+  setShowModal(true);
+};
+
+
   
 
 const openAdd = () => {
@@ -58,15 +75,19 @@ const openAdd = () => {
 
 const openEdit = (loc) => {
   setIsEditing(true);
+  setIsViewing(false);       // ✅ edit mode
   setEditingLocation(loc);
+
   setFormData({
     name: loc.name ?? '',
     cityId: loc.cityId ?? null,
     cityName: loc.cityName ?? ''
   });
+
   setErrors({});
   setShowModal(true);
 };
+
 
 
 const handleSave = async (e) => {
@@ -126,6 +147,7 @@ return (
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         onEdit={openEdit}
+         onView={openView}   
         onDelete={(loc) => {
           setDeleteTarget(loc);
           setShowDelete(true);
@@ -136,6 +158,7 @@ return (
   show={showModal}
   onHide={() => setShowModal(false)}
   isEditing={isEditing}
+  isViewing={isViewing}    // ✅ ONLY THIS
   formData={formData}
   setFormData={setFormData}
   errors={errors}
@@ -143,11 +166,12 @@ return (
   setErrors={setErrors}
   handleSave={handleSave}
   t={t}
-    onSuccess={() => {
-          fetchLocations();     // refresh list immediately
-          setShowModal(false); // ensure modal closes
-        }}
+  onSuccess={() => {
+    fetchLocations();
+    setShowModal(false);
+  }}
 />
+
 
 
 
