@@ -10,13 +10,12 @@
   "panel_members": "Panel Members",
   "actions": "Actions",
   "no_records": "No Panels Found",
-  "community":"committe",
   "choose_add_method": "Choose to add manually or import from CSV/XLSX file",
   "manual_entry": "Manual Entry",
   "import_file": "Import File",
   "close":"Close",
   
-  "committee": "Committee",
+  "committee": "Committee", 
 
 
 
@@ -40,6 +39,9 @@
   "delete_confirm_msg": "Are you sure you want to delete this panel?",
   "delete": "Delete",
  "atLeastOneMember": "At least one member must be selected",
- "support_csv_xlsx": "CSV and XLSX formats are supported (Headers: name, members)"
+ "support_csv_xlsx": "CSV and XLSX formats are supported (Headers: name, members)",
+ "interviewPanelAdded": "Interview Panel added successfully",
+ "interviewPanelUpdated": "Interview Panel updated successfully",
+ "interviewPanelDeleted": "Interview Panel deleted successfully"
 
 }

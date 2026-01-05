@@ -10,7 +10,7 @@ const InterviewPanelTable = ({ data, onEdit, onView, onDelete, startIndex, t }) 
       <tr>
         <th>{t("sno")}</th>
         <th>{t("panel_name")}</th>
-        <th>{t("community")}</th>
+        <th>{t("committee")}</th>
         <th>{t("panel_members")}</th>
         <th className="text-center">{t("actions")}</th>
       </tr>

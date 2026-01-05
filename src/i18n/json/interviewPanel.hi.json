@@ -39,6 +39,9 @@
   "confirm_delete": "हटाने की पुष्टि करें",
   "delete_confirm_msg": "क्या आप वाकई इस पैनल को हटाना चाहते हैं?",
   "delete": "हटाएं",
-  "supported_formats": "CSV/XLSX समर्थित (हेडर: नाम, सदस्य)"
+  "supported_formats": "CSV/XLSX समर्थित (हेडर: नाम, सदस्य)",
+  "interviewPanelAdded": "साक्षात्कार पैनल सफलतापूर्वक जोड़ा गया",
+  "interviewPanelUpdated": "साक्षात्कार पैनल सफलतापूर्वक अपडेट किया गया",
+  "interviewPanelDeleted": "साक्षात्कार पैनल सफलतापूर्वक हटाया गया"
 
 }

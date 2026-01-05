@@ -119,13 +119,14 @@ const Header = () => {
 
           <Navbar.Collapse id="main-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link as={Link} to="/dashboard" onClick={closeMenu}>Dashboard</Nav.Link>
+              {/* <Nav.Link as={Link} to="/dashboard" onClick={closeMenu}>Dashboard</Nav.Link>
               <Nav.Link as={Link} to="/job-posting" onClick={closeMenu}>Job Postings</Nav.Link>
               <Nav.Link href="#candidate-shortlist">Candidate Shortlist</Nav.Link>
               <Nav.Link href="#interviews">Interviews</Nav.Link>
               <Nav.Link href="#relaxation">Relaxation</Nav.Link>
               <Nav.Link href="#bulk-upload">Bulk Upload</Nav.Link>
-
+              <Nav.Link href="/interviewpanel"> Interview Panel</Nav.Link> */}
+             
               {/* Admin Menu */}
               <NavDropdown title="Admin" id="admin-dropdown">
                 <NavDropdown.Item as={Link} to="/users" onClick={closeMenu}>
@@ -149,15 +150,13 @@ const Header = () => {
                 <NavDropdown.Item href="/specialcategory" onClick={closeMenu}>
                   Special Category
                 </NavDropdown.Item>
-                <NavDropdown.Item href="relaxationtype" onClick={closeMenu}>
+                {/* <NavDropdown.Item href="relaxationtype" onClick={closeMenu}>
                   Relaxation Type
-                </NavDropdown.Item>
+                </NavDropdown.Item> */}
                 <NavDropdown.Item href="/document" onClick={closeMenu}>
                   Document
                 </NavDropdown.Item>
-                <NavDropdown.Item href="/interviewpanel" onClick={closeMenu}>
-                  Interview Panel
-                </NavDropdown.Item>
+               
                 <NavDropdown.Item href="/generic-or-annexures" onClick={closeMenu}>
                   Generic or Annexures
                 </NavDropdown.Item>
