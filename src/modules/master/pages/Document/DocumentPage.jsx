@@ -43,10 +43,29 @@ const DocumentPage = () => {
 
   const [selectedCSVFile, setSelectedCSVFile] = useState(null);
   const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
+  const [isViewing, setIsViewing] = useState(false);
+
 
   /* ---------- handlers ---------- */
 
+  const openViewModal = (doc) => {
+  setIsViewing(true);
+  setIsEditing(false);
+  setEditingId(null);
+
+  setFormData({
+    name: doc.name,
+    description: doc.description || ''
+  });
+
+  setErrors({});
+  setActiveTab('manual');
+  setShowAddModal(true);
+};
+
+
   const openAddModal = () => {
+    setIsViewing(false);
     setIsEditing(false);
     setEditingId(null);
     setFormData({ name: '', description: '' });
@@ -56,7 +75,8 @@ const DocumentPage = () => {
   };
 
   const openEditModal = (doc) => {
-    setIsEditing(true);
+    setIsViewing(false);     // ✅ RESET VIEW MODE
+  setIsEditing(true);      // ✅ ENABLE EDIT MODE
     setEditingId(doc.id);
     setFormData({ name: doc.name, description: doc.description });
     setErrors({});
@@ -137,6 +157,7 @@ const DocumentPage = () => {
         data={documents}
         searchTerm={searchTerm}
         onEdit={openEditModal}
+        onView={openViewModal}
         onDelete={(d) => { setDeleteTarget(d); setShowDeleteModal(true); }}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
@@ -146,6 +167,7 @@ const DocumentPage = () => {
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
         isEditing={isEditing}
+         isViewing={isViewing} 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         formData={formData}

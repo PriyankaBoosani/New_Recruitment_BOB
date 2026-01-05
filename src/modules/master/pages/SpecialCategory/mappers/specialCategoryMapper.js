@@ -1,3 +1,5 @@
+import { cleanData } from "../../../../../shared/utils/common-validations";
+
 export const mapSpecialCategoryFromApi = (api) => ({
   id: api.specialCategoryId,
   code: api.specialCategoryCode,
@@ -16,8 +18,8 @@ export const mapSpecialCategoryToApi = (ui, options = {}) => {
   return {
     specialCategoryId: id,
     isActive: true,
-    specialCategoryCode: ui.code,
-    specialCategoryName: ui.name,
-    specialCategoryDesc: ui.description
+    specialCategoryCode: cleanData(ui.code),
+    specialCategoryName: cleanData(ui.name),
+    specialCategoryDesc: cleanData(ui.description)
   };
 };

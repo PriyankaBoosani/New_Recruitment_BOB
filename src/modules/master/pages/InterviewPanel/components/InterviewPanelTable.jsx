@@ -4,7 +4,7 @@ import viewIcon from "../../../../../assets/view_icon.png";
 import editIcon from "../../../../../assets/edit_icon.png";
 import deleteIcon from "../../../../../assets/delete_icon.png";
 
-const InterviewPanelTable = ({ data, onEdit, onDelete, startIndex, t }) => (
+const InterviewPanelTable = ({ data, onEdit, onView, onDelete, startIndex, t }) => (
   <Table hover className="user-table">
     <thead>
       <tr>
@@ -24,7 +24,14 @@ const InterviewPanelTable = ({ data, onEdit, onDelete, startIndex, t }) => (
           <td>{p.members}</td>
           <td>
             <div className="action-buttons">
-              <Button variant="link" className="action-btn"><img src={viewIcon} className="icon-16" alt="view" /></Button>
+             <Button
+              variant="link"
+              className="action-btn"
+              onClick={() => onView(p)}
+            >
+              <img src={viewIcon} className="icon-16" alt="view" />
+            </Button>
+
               <Button variant="link" className="action-btn" onClick={() => onEdit(p)}><img src={editIcon} className="icon-16" alt="edit" /></Button>
               <Button variant="link" className="action-btn" onClick={() => onDelete(p)}><img src={deleteIcon} className="icon-16" alt="delete" /></Button>
             </div>

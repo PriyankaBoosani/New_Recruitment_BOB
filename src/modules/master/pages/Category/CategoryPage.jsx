@@ -36,16 +36,30 @@ const CategoryPage = () => {
   const [deleteTarget, setDeleteTarget] = useState(null);
 
   const openAddModal = () => {
+     setIsViewing(false);
     setIsEditing(false);
     setEditingCategory(null);
     setShowModal(true);
   };
 
   const openEditModal = (cat) => {
+      setIsViewing(false);
     setIsEditing(true);
     setEditingCategory(cat);
     setShowModal(true);
   };
+
+  const openViewModal = (cat) => {
+  setIsViewing(true);
+  setIsEditing(false);
+  setEditingCategory(cat);
+  setShowModal(true);
+};
+
+
+
+  const [isViewing, setIsViewing] = useState(false);
+
 
   return (
     <Container fluid className="user-container">
@@ -78,6 +92,7 @@ const CategoryPage = () => {
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         onEdit={openEditModal}
+        onView={openViewModal}
         onDelete={(cat) => {
           setDeleteTarget(cat);
           setShowDeleteModal(true);
@@ -88,6 +103,7 @@ const CategoryPage = () => {
         show={showModal}
         onHide={() => setShowModal(false)}
         isEditing={isEditing}
+        isViewing={isViewing}
         editingCategory={editingCategory}
         onSave={addCategory}
         onUpdate={updateCategory}
@@ -96,7 +112,9 @@ const CategoryPage = () => {
 
            // ✅ ADD THIS
         onSuccess={() => {
-          fetchCategories();     // refresh list immediately
+        
+          fetchCategories(); 
+              // refresh list immediately
           setShowModal(false); // ensure modal closes
         }}
       />

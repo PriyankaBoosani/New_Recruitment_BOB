@@ -9,6 +9,9 @@
   "job_grade": "नौकरी ग्रेड",
   "description": "विवरण",
   "actions": "क्रियाएँ",
+  "close": "बंद करें",
+   "view": "पद दृश्य",
+
 
   "add_position": "पद जोड़ें",
   "edit_position": "पद संपादित करें",
@@ -35,7 +38,7 @@
   "confirm_delete": "हटाने की पुष्टि करें",
   "delete_message": "क्या आप वाकई इस पद को हटाना चाहते हैं?",
 
-  "view": "देखें",
+
   "delete": "हटाएं",
   "mandatory_education": "आवश्यक शैक्षिक विज्ञान",
   "preferred_education": "पसंदीदा शैक्षिक विज्ञान",

@@ -9,6 +9,8 @@
   "job_grade": "Job Grade",
   "description": "Description",
   "actions": "Actions",
+  "close": "Close",
+  "view": "View Position",
 
   "add_position": "Add Position",
   "edit_position": "Edit Position",
@@ -35,7 +37,6 @@
   "confirm_delete": "Confirm Delete",
   "delete_message": "Are you sure you want to delete this position?",
 
-  "view": "View",
   "delete": "Delete",
   "mandatory_education" : "Mandatory Education",
   "preferred_education" : "Preferred Education",

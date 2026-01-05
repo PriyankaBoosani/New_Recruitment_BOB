@@ -12,6 +12,7 @@ const JobGradeTable = ({
   data,
   searchTerm,
   onEdit,
+  onView,
   onDelete,
   currentPage,
   setCurrentPage
@@ -58,7 +59,10 @@ const JobGradeTable = ({
                   <td>{g.description}</td>
                   <td>
                     <div className="action-buttons">
-                      <Button variant="link" className="action-btn view-btn">
+                      <Button variant="link" 
+                      className="action-btn view-btn"
+                      onClick={() => onView(g)}
+                      >
                         <img src={viewIcon} alt="View" className="icon-16" />
                       </Button>
 

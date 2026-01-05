@@ -1,5 +1,5 @@
 // src/modules/master/pages/Document/mappers/documentMapper.js
-
+import { cleanData } from "../../../../../shared/utils/common-validations";
 // API → UI
 export const mapDocumentFromApi = (api) => ({
   id: api.documentTypeId,
@@ -16,6 +16,6 @@ export const mapDocumentsFromApi = (apiData = []) => {
 
 // UI → API
 export const mapDocumentToApi = (ui) => ({
-  documentName: ui.name,
-  documentDesc: ui.description
+  documentName:  cleanData(ui.name),
+  documentDesc: cleanData(ui.description)
 });

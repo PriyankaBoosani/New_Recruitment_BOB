@@ -10,6 +10,7 @@ const PositionTable = ({
   currentPage,
   setCurrentPage,
   onEdit,
+  onView,
   onDelete,
   t
 }) => {
@@ -55,17 +56,15 @@ const PositionTable = ({
                   <td>{p.rolesResponsibilities }</td>
                   <td>
                     <div className="action-buttons">
-                      <Button
-                        variant="link"
-                        className="action-btn"
-                        title="View"
-                      >
-                        <img
-                          src={viewIcon}
-                          alt="view"
-                          className="icon-16"
-                        />
-                      </Button>
+                     <Button
+                    variant="link"
+                    className="action-btn"
+                    title="View"
+                    onClick={() => onView(p)}
+                  >
+                    <img src={viewIcon} alt="view" className="icon-16" />
+                  </Button>
+
 
                       <Button
                         variant="link"

@@ -1,65 +1,40 @@
 // src/modules/master/pages/Document/hooks/useDocuments.js
 
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import masterApiService from '../../../services/masterApiService';
-import { mapDocumentsFromApi } from '../mappers/documentMapper';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+
+import masterApiService from "../../../services/masterApiService";
+import {
+  mapDocumentsFromApi,
+  mapDocumentFromApi
+} from "../mappers/documentMapper";
 
 export const useDocuments = () => {
-    const { t } = useTranslation(["documents", "validation"]);
+  const { t } = useTranslation(["documents", "validation"]);
 
   const [documents, setDocuments] = useState([]);
- const [loading, setLoading] = useState(false);
-const fetchDocuments = async () => {
-  const res = await masterApiService.getAllDocumentTypes();
-  const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
+  const [loading, setLoading] = useState(false);
 
-  // 🔥 Sort newest first
-  const sorted = [...list].sort((a, b) => {
-    const da = new Date(a.createdDate || 0).getTime();
-    const db = new Date(b.createdDate || 0).getTime();
-    return db - da;
-  });
+  /* ================= FETCH ================= */
+  const fetchDocuments = async () => {
+    try {
+      const res = await masterApiService.getAllDocumentTypes();
+      const list = Array.isArray(res.data)
+        ? res.data
+        : res.data?.data || [];
 
-  setDocuments(mapDocumentsFromApi(sorted));
-};
-const bulkAddDocuments = async (file) => {
-     setLoading(true);
-      try {
-        const res = await masterApiService.bulkAddDocuments(file);
+      const mapped = mapDocumentsFromApi(list);
 
-        console.log("API RESPONSE:", res); // logs for 200 & 422
+      // 🔥 newest first
+      const sorted = [...mapped].sort(
+        (a, b) => Number(b.id) - Number(a.id)
+      );
 
-      // ❌ business failure
-      if (res.success === false) {
-        toast.error(res.message);
-        return {
-          success: false,
-          error: res.message
-        };
-      }
-      // ✅ success
-      toast.success(res.message || "File uploaded successfully");
-
-      return {
-        success: true
-      };
-
-    } catch (err) {
-      // ❌ network / server error
-      console.log("NETWORK ERROR:", err);
-
-      const message = "Something went wrong";
-      toast.error(message);
-
-      return {
-        success: false,
-        error: message
-      };
-
-    } finally {
-      setLoading(false);
+      setDocuments(sorted);
+    } catch (error) {
+      toast.error(t("documents:fetch_error"));
+      setDocuments([]);
     }
   };
 
@@ -67,25 +42,92 @@ const bulkAddDocuments = async (file) => {
     fetchDocuments();
   }, []);
 
+  /* ================= ADD ================= */
   const addDocument = async (payload) => {
-    await masterApiService.addDocumentType(payload);
-    await fetchDocuments();
-    toast.success(t("documents:document_added_successfully"));
+    try {
+      const res = await masterApiService.addDocumentType(payload);
+
+      const newItem = mapDocumentFromApi(res.data);
+
+      // ✅ add on top instantly (NO refetch)
+      setDocuments(prev => [newItem, ...prev]);
+
+      toast.success(t("documents:document_added_successfully"));
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+        t("documents:add_error")
+      );
+    }
   };
 
+  /* ================= UPDATE ================= */
   const updateDocument = async (id, payload) => {
-    await masterApiService.updateDocumentType(id, payload);
-    await fetchDocuments();
-    toast.success(t("documents:document_updated_successfully"));
+    try {
+      const res = await masterApiService.updateDocumentType(id, payload);
+      const updatedItem = mapDocumentFromApi(res.data);
+
+      toast.success(t("documents:document_updated_successfully"));
+
+      // ✅ update in same position
+      setDocuments(prev =>
+        prev.map(d =>
+          String(d.id) === String(id)
+            ? { ...d, ...updatedItem }
+            : d
+        )
+      );
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+        t("documents:update_error")
+      );
+    }
   };
 
+  /* ================= DELETE ================= */
   const deleteDocument = async (id) => {
-    await masterApiService.deleteDocumentType(id);
-    await fetchDocuments();
-    toast.success(t("documents:document_deleted_successfully"));
+    try {
+      await masterApiService.deleteDocumentType(id);
+
+      toast.success(t("documents:document_deleted_successfully"));
+
+      // ✅ remove instantly
+      setDocuments(prev => prev.filter(d => d.id !== id));
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+        t("documents:delete_error")
+      );
+    }
   };
 
-    /* ================= DOWNLOAD TEMPLATE ================= */
+  /* ================= BULK IMPORT ================= */
+  const bulkAddDocuments = async (file) => {
+    setLoading(true);
+    try {
+      const res = await masterApiService.bulkAddDocuments(file);
+
+      if (res.success === false) {
+        toast.error(res.message);
+        return { success: false };
+      }
+
+      toast.success(res.message || "File uploaded successfully");
+
+      // 🔥 refresh after bulk import ONLY
+      await fetchDocuments();
+
+      return { success: true };
+    } catch (err) {
+      toast.error("Something went wrong");
+      return { success: false };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ================= DOWNLOAD TEMPLATE ================= */
   const downloadDocumentTemplate = async () => {
     try {
       const res = await masterApiService.downloadDocumentTemplate();
@@ -101,7 +143,7 @@ const bulkAddDocuments = async (file) => {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      toast.error(t("document:download_error", "Download failed"));
+      toast.error(t("document:download_error"));
     }
   };
 
@@ -112,6 +154,7 @@ const bulkAddDocuments = async (file) => {
     updateDocument,
     deleteDocument,
     bulkAddDocuments,
-       downloadDocumentTemplate
+    downloadDocumentTemplate,
+    loading
   };
 };

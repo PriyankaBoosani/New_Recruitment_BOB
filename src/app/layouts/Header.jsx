@@ -158,6 +158,9 @@ const Header = () => {
                 <NavDropdown.Item href="/interviewpanel" onClick={closeMenu}>
                   Interview Panel
                 </NavDropdown.Item>
+                <NavDropdown.Item href="/generic-or-annexures" onClick={closeMenu}>
+                  Generic or Annexures
+                </NavDropdown.Item>
               </NavDropdown>
             </Nav>
           </Navbar.Collapse>

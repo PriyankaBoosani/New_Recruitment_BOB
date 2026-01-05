@@ -1,10 +1,15 @@
 // src/validators/interviewpanel-validations.js
+import { requiredField, minLength, maxLength } from './common-validations';
+import i18n from "i18next";
 
 const isEmpty = (v) => v === null || v === undefined || String(v).trim() === '';
 
 export function validatePanelName(name, { existing = [], currentId = null } = {}) {
+  
   const n = String(name || '').trim();
-  if (isEmpty(n)) return 'Panel name is required';
+  if (isEmpty(n)) {
+    return i18n.t("validation:required");
+  }
 
   const dup = existing.find(
     it =>
@@ -12,7 +17,10 @@ export function validatePanelName(name, { existing = [], currentId = null } = {}
       (currentId == null || it.id !== currentId)
   );
 
-  if (dup) return 'Panel name must be unique';
+    if (dup) {
+    return i18n.t("validation:duplicate");
+  }
+
   return null;
 }
 
@@ -25,13 +33,15 @@ export function validatePanelMembers(members) {
     arr = members.split(',').map(m => m.trim()).filter(Boolean);
   }
 
-  if (arr.length === 0) return 'Panel members are required';
+   if (arr.length === 0) {
+    return i18n.t("validation:required");   // ✅ COMMON
+  }
 
   return null;
 }
 function validateCommunity(community) {
-  if (!community) {
-    return "committe is required";
+   if (!community) {
+    return i18n.t("validation:required");   // ✅ COMMON
   }
   return null;
 }

@@ -8,6 +8,7 @@ const PositionFormModal = ({
   show,
   onHide,
   isEditing,
+  isViewing,
   activeTab,
   setActiveTab,
   formData,
@@ -34,17 +35,25 @@ const PositionFormModal = ({
     >
       <Modal.Header closeButton className="modal-header-custom">
         <div>
-          <Modal.Title>
-            {isEditing ? t("edit_position") : t("add_position")}
-          </Modal.Title>
-          <p className="mb-0 small text-muted para">
-            {t("choose_add_method")}
-          </p>
+              <Modal.Title>
+        {isViewing
+          ? t("view")
+          : isEditing
+          ? t("edit_position")
+          : t("add_position")}
+      </Modal.Title>
+
+              {!isViewing && (
+        <p className="mb-0 small text-muted para">
+          {t("choose_add_method")}
+        </p>
+      )}
+
         </div>
       </Modal.Header>
 
       <Modal.Body className="p-4">
-        {!isEditing && (
+        {!isViewing && (
           <div className="tab-buttons mb-4">
             <Button
               variant={activeTab === "manual" ? "light" : "outline-light"}
@@ -65,213 +74,311 @@ const PositionFormModal = ({
         )}
 
         {activeTab === "manual" ? (
-          <Form onSubmit={handleSave} noValidate>
+             <Form
+              onSubmit={
+                isViewing
+                  ? (e) => {
+                      e.preventDefault();
+                      onHide();
+                    }
+                  : handleSave
+              }
+              noValidate
+            >
+
+
             <Row className="g-3">
               <Col xs={4}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("position_title")} <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                    className="form-control-custom"
-                    placeholder={t("enter_position_title")}
-                  />
-                  <ErrorMessage>{errors.title}</ErrorMessage>
-                </Form.Group>
+               <Form.Group className="form-group">
+  <Form.Label>
+    {t("position_title")} <span className="text-danger">*</span>
+  </Form.Label>
+
+  {isViewing ? (
+    <div className="form-control-view">
+      {formData.title || "-"}
+    </div>
+  ) : (
+    <Form.Control
+      name="title"
+      value={formData.title}
+      onChange={handleInputChange}
+      className="form-control-custom"
+      placeholder={t("enter_position_title")}
+    />
+  )}
+
+  {!isViewing && <ErrorMessage>{errors.title}</ErrorMessage>}
+</Form.Group>
+
               </Col>
 
               <Col xs={4} md={4}>
                 <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("department")} <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Select
-                    name="departmentId"
-                    value={formData.departmentId}
-                    onChange={handleInputChange}
-                    className="form-control-custom"
-                  >
-                    <option value="">{t("select_department")}</option>
-                    {departments.map(d => (
-                      <option key={d.id} value={d.id}>
-                        {d.name}
-                      </option>
-                    ))}
-                  </Form.Select>
+  <Form.Label>
+    {t("department")} <span className="text-danger">*</span>
+  </Form.Label>
 
-                  <ErrorMessage>{errors.departmentId}</ErrorMessage>
+  {isViewing ? (
+    <div className="form-control-view">
+      {departments.find(d => d.id === formData.departmentId)?.name || "-"}
+    </div>
+  ) : (
+    <Form.Select
+      name="departmentId"
+      value={formData.departmentId}
+      onChange={handleInputChange}
+      className="form-control-custom"
+    >
+      <option value="">{t("select_department")}</option>
+      {departments.map(d => (
+        <option key={d.id} value={d.id}>
+          {d.name}
+        </option>
+      ))}
+    </Form.Select>
+  )}
 
+  {!isViewing && <ErrorMessage>{errors.departmentId}</ErrorMessage>}
+</Form.Group>
 
-                </Form.Group>
               </Col>
 
               <Col xs={4} md={4}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("job_grade")} <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Select
-                    name="jobGradeId"
-                    value={formData.jobGradeId}
-                    onChange={handleInputChange}
-                    className="form-control-custom"
-                  >
-                    <option value="">{t("select_job_grade")}</option>
-                    {jobGrades.map(g => (
-                      <option key={g.id} value={g.id}>
-                        {g.gradeCode}
-                      </option>
+               <Form.Group className="form-group">
+  <Form.Label>
+    {t("job_grade")} <span className="text-danger">*</span>
+  </Form.Label>
 
-                    ))}
+  {isViewing ? (
+    <div className="form-control-view">
+      {jobGrades.find(g => g.id === formData.jobGradeId)?.gradeCode || "-"}
+    </div>
+  ) : (
+    <Form.Select
+      name="jobGradeId"
+      value={formData.jobGradeId}
+      onChange={handleInputChange}
+      className="form-control-custom"
+    >
+      <option value="">{t("select_job_grade")}</option>
+      {jobGrades.map(g => (
+        <option key={g.id} value={g.id}>
+          {g.gradeCode}
+        </option>
+      ))}
+    </Form.Select>
+  )}
 
-                  </Form.Select>
+  {!isViewing && <ErrorMessage>{errors.jobGradeId}</ErrorMessage>}
+</Form.Group>
 
-                  <ErrorMessage>{errors.jobGradeId}</ErrorMessage>
-                </Form.Group>
               </Col>
 
               {/* Min / Max Age */}
               <Col xs={6} md={3}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("min_age")} <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    name="eligibilityAgeMin"
-                    value={formData.eligibilityAgeMin ?? ""}
-                    onChange={handleInputChange}
-                    className="form-control-custom"
-                    placeholder={t("enter_min_age")}
-                  />
-                  <ErrorMessage>{errors.eligibilityAgeMin}</ErrorMessage>
-                </Form.Group>
+               <Form.Group className="form-group">
+  <Form.Label>
+    {t("min_age")} <span className="text-danger">*</span>
+  </Form.Label>
+
+  {isViewing ? (
+    <div className="form-control-view">
+      {formData.eligibilityAgeMin || "-"}
+    </div>
+  ) : (
+    <Form.Control
+      type="number"
+      name="eligibilityAgeMin"
+      value={formData.eligibilityAgeMin ?? ""}
+      onChange={handleInputChange}
+      className="form-control-custom"
+      placeholder={t("enter_min_age")}
+    />
+  )}
+
+  {!isViewing && <ErrorMessage>{errors.eligibilityAgeMin}</ErrorMessage>}
+</Form.Group>
+
               </Col>
 
               <Col xs={6} md={3}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("max_age")} <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    name="eligibilityAgeMax"
-                    value={formData.eligibilityAgeMax ?? ""}
-                    onChange={handleInputChange}
-                    className="form-control-custom"
-                    placeholder={t("enter_max_age")}
-                  />
-                  <ErrorMessage>{errors.eligibilityAgeMax}</ErrorMessage>
-                </Form.Group>
+               <Form.Group className="form-group">
+  <Form.Label>
+    {t("max_age")} <span className="text-danger">*</span>
+  </Form.Label>
+
+  {isViewing ? (
+    <div className="form-control-view">
+      {formData.eligibilityAgeMax || "-"}
+    </div>
+  ) : (
+    <Form.Control
+      type="number"
+      name="eligibilityAgeMax"
+      value={formData.eligibilityAgeMax ?? ""}
+      onChange={handleInputChange}
+      className="form-control-custom"
+      placeholder={t("enter_max_age")}
+    />
+  )}
+
+  {!isViewing && <ErrorMessage>{errors.eligibilityAgeMax}</ErrorMessage>}
+</Form.Group>
+
               </Col>
 
               <Col xs={6} md={6}>
                 <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("mandatory_experience")} <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={2}
-                    name="mandatoryExperience"
-                    value={formData.mandatoryExperience}
-                    onChange={handleInputChange}
-                    className="form-control-custom"
-                    placeholder={t("enter_mandatory_experience")}
-                  />
-                  <ErrorMessage>{errors.mandatoryExperience}</ErrorMessage>
-                </Form.Group>
+  <Form.Label>
+    {t("mandatory_experience")} <span className="text-danger">*</span>
+  </Form.Label>
+
+  {isViewing ? (
+    <div className="form-control-view" style={{ whiteSpace: "pre-line" }}>
+      {formData.mandatoryExperience || "-"}
+    </div>
+  ) : (
+    <Form.Control
+      as="textarea"
+      rows={2}
+      name="mandatoryExperience"
+      value={formData.mandatoryExperience}
+      onChange={handleInputChange}
+      className="form-control-custom"
+      placeholder={t("enter_mandatory_experience")}
+    />
+  )}
+
+  {!isViewing && <ErrorMessage>{errors.mandatoryExperience}</ErrorMessage>}
+</Form.Group>
+
               </Col>
 
               <Col xs={12} md={6}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("preferred_experience")} <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={2}
-                    name="preferredExperience"
-                    value={formData.preferredExperience}
-                    onChange={handleInputChange}
-                    className="form-control-custom"
-                    placeholder={t("enter_preferred_experience")}
-                  />
-                  <ErrorMessage>{errors.preferredExperience}</ErrorMessage>
-                </Form.Group>
+               <Form.Group className="form-group">
+  <Form.Label>
+    {t("preferred_experience")} <span className="text-danger">*</span>
+  </Form.Label>
+
+  {isViewing ? (
+    <div className="form-control-view" style={{ whiteSpace: "pre-line" }}>
+      {formData.preferredExperience || "-"}
+    </div>
+  ) : (
+    <Form.Control
+      as="textarea"
+      rows={2}
+      name="preferredExperience"
+      value={formData.preferredExperience}
+      onChange={handleInputChange}
+      className="form-control-custom"
+      placeholder={t("enter_preferred_experience")}
+    />
+  )}
+
+  {!isViewing && <ErrorMessage>{errors.preferredExperience}</ErrorMessage>}
+</Form.Group>
+
               </Col>
 
               <Col xs={6} md={6}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("mandatory_education")} <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={2}
-                    name="mandatoryEducation"
-                    value={formData.mandatoryEducation}
-                    onChange={handleInputChange}
-                    className="form-control-custom"
-                    placeholder={t("enter_mandatory_education")}
-                  />
-                  <ErrorMessage>{errors.mandatoryEducation}</ErrorMessage>
-                </Form.Group>
+               <Form.Group className="form-group">
+  <Form.Label>
+    {t("mandatory_education")} <span className="text-danger">*</span>
+  </Form.Label>
+
+  {isViewing ? (
+    <div className="form-control-view" style={{ whiteSpace: "pre-line" }}>
+      {formData.mandatoryEducation || "-"}
+    </div>
+  ) : (
+    <Form.Control
+      as="textarea"
+      rows={2}
+      name="mandatoryEducation"
+      value={formData.mandatoryEducation}
+      onChange={handleInputChange}
+      className="form-control-custom"
+      placeholder={t("enter_mandatory_education")}
+    />
+  )}
+
+  {!isViewing && <ErrorMessage>{errors.mandatoryEducation}</ErrorMessage>}
+</Form.Group>
+
               </Col>
 
               <Col xs={6} md={6}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("preferred_education")} <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={2}
-                    name="preferredEducation"
-                    value={formData.preferredEducation}
-                    onChange={handleInputChange}
-                    className="form-control-custom"
-                    placeholder={t("enter_preferred_education")}
-                  />
-                  <ErrorMessage>{errors.preferredEducation}</ErrorMessage>
-                </Form.Group>
+               <Form.Group className="form-group">
+  <Form.Label>
+    {t("preferred_education")} <span className="text-danger">*</span>
+  </Form.Label>
+
+  {isViewing ? (
+    <div className="form-control-view" style={{ whiteSpace: "pre-line" }}>
+      {formData.preferredEducation || "-"}
+    </div>
+  ) : (
+    <Form.Control
+      as="textarea"
+      rows={2}
+      name="preferredEducation"
+      value={formData.preferredEducation}
+      onChange={handleInputChange}
+      className="form-control-custom"
+      placeholder={t("enter_preferred_education")}
+    />
+  )}
+
+  {!isViewing && <ErrorMessage>{errors.preferredEducation}</ErrorMessage>}
+</Form.Group>
+
               </Col>
 
 
 
 
               <Col xs={6}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("roles_responsibilities")} <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={2}
-                    name="rolesResponsibilities"
-                    value={formData.rolesResponsibilities}
-                    onChange={handleInputChange}
-                    className="form-control-custom"
-                    placeholder={t("enter_roles_responsibilities")}
-                  />
-                  <ErrorMessage>{errors.rolesResponsibilities}</ErrorMessage>
-                </Form.Group>
+               <Form.Group className="form-group">
+  <Form.Label>
+    {t("roles_responsibilities")} <span className="text-danger">*</span>
+  </Form.Label>
+
+  {isViewing ? (
+    <div className="form-control-view" style={{ whiteSpace: "pre-line" }}>
+      {formData.rolesResponsibilities || "-"}
+    </div>
+  ) : (
+    <Form.Control
+      as="textarea"
+      rows={2}
+      name="rolesResponsibilities"
+      value={formData.rolesResponsibilities}
+      onChange={handleInputChange}
+      className="form-control-custom"
+      placeholder={t("enter_roles_responsibilities")}
+    />
+  )}
+
+  {!isViewing && <ErrorMessage>{errors.rolesResponsibilities}</ErrorMessage>}
+</Form.Group>
+
               </Col>
 
             </Row>
-            <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
-              <Button variant="outline-secondary" onClick={onHide}>
-                {t("cancel")}
-              </Button>
+                 <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
+            <Button variant="outline-secondary" onClick={onHide}>
+              {isViewing ? t("close") : t("cancel")}
+            </Button>
+
+            {!isViewing && (
               <Button variant="primary" type="submit">
                 {isEditing ? t("update") : t("save")}
               </Button>
-            </Modal.Footer>
+            )}
+          </Modal.Footer>
+
 
           </Form>
 

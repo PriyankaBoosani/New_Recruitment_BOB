@@ -3,8 +3,10 @@
   "search_placeholder": "पैनल खोजें",
   "add": "जोड़ें",
   "added": "पैनल जोड़ें"
+
 ,
   "edit": "पैनल संपादित करें",
+  "view": "दृश्य पैनल",
   "sno": "क्रम संख्या",
   "panel_name": "पैनल का नाम",
   "panel_members": "पैनल सदस्य",
@@ -18,10 +20,13 @@
   "enter_panel_name": "पैनल का नाम दर्ज करें",
   "select_members": "कृपया चयन करें...",
   "select_members_hint": "एक या अधिक सदस्यों का चयन करें",
+  "select_community": "समुदाय चुनें",
 
   "save": "सहेजें",
   "update": "अपडेट करें",
   "cancel": "रद्द करें",
+  "close": "बंद करें",
+  "committee": "समिति",
 
   "upload_file": "फ़ाइल अपलोड करें",
 

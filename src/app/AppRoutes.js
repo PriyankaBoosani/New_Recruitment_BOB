@@ -20,6 +20,8 @@ import UserPage from "../modules/master/pages/User/UserPage";
 import Home from "../modules/master/pages/Home"; // dashboard/home
 import JobPostingsList from "../modules/jobPosting/pages/JobPostingsList";
 import CreateRequisition from "../modules/jobPosting/pages/CreateRequisition";
+import GenericOrAnnexuresPage from "../modules/master/pages/GenericOrAnnexures/GenericOrAnnexuresPage";
+
 
 import AddPosition from "../modules/jobPosting/pages/AddPosition";
 
@@ -76,6 +78,8 @@ const AppRoutes = () => {
               <Route path="/job-posting" element={<JobPostingsList />} />
               <Route path="/job-posting/create-requisition" element={<CreateRequisition />} />
               <Route path="/job-posting/:requisitionId/add-position" element={<AddPosition />} />
+              <Route path="/generic-or-annexures" element={<GenericOrAnnexuresPage />} />
+
 
             </Route>
           </Route>

@@ -17,6 +17,8 @@
   "import_file": "Import File",
   "save": "Save",
   "cancel": "Cancel",
+  "close": "Close",
+  "view": "View Job Grade",
   "import": "Import",
   "confirm_delete": "Confirm Delete",
   "delete_msg": "Are you sure you want to delete this job grade?",
@@ -52,6 +54,8 @@
   "max_negative_not_allowed": "Maximum salary cannot be negative",
   "scale_exists": "Scale already exists",
   "grade_code_exists": "Grade code already exists",
+  "upload_jobgrades": "Upload File",
+  
 
    "support_xlsx": "Support for XLSX formats",
   "invalid_file": "Please upload a valid Excel file (.xlsx, .xls)",

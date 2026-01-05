@@ -1,3 +1,5 @@
+import { cleanData } from "../../../../../shared/utils/common-validations";
+
 /* =========================
    API → UI (GET)
 ========================= */
@@ -50,11 +52,11 @@ export const mapPositionToApi = (ui, isEditing = false) => ({
   gradeId: ui.jobGradeId,
 
   // 🔥 NEW FIELDS (YOU MISSED THESE)
-  mandatoryEducation: ui.mandatoryEducation,
-  preferredEducation: ui.preferredEducation,
-  mandatoryExperience: ui.mandatoryExperience,
-  preferredExperience: ui.preferredExperience,
-  rolesResponsibilities: ui.rolesResponsibilities,
-  eligibilityAgeMin: ui.eligibilityAgeMin,
-  eligibilityAgeMax: ui.eligibilityAgeMax
+  mandatoryEducation: cleanData(ui.mandatoryEducation),
+  preferredEducation: cleanData(ui.preferredEducation),
+  mandatoryExperience: cleanData(ui.mandatoryExperience),
+  preferredExperience: cleanData(ui.preferredExperience),
+  rolesResponsibilities: cleanData(ui.rolesResponsibilities),
+  eligibilityAgeMin: cleanData(ui.eligibilityAgeMin),
+  eligibilityAgeMax: cleanData(ui.eligibilityAgeMax)
 });

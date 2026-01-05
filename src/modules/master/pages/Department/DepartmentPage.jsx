@@ -56,6 +56,7 @@ const DepartmentPage = () => {
     setIsViewing(true);
     setIsEditing(false);
     setFormData({ name: dept.name, description: dept.description || '' });
+    setActiveTab('manual');  
     setShowAddModal(true);
   };
 

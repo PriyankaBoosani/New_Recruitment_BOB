@@ -1,3 +1,5 @@
+import { cleanData } from "../../../../../shared/utils/common-validations";
+
 // SINGLE
 export const mapLocationFromApi = (apiLoc, cityMap = {}) => ({
   id: apiLoc.locationId,          // UUID
@@ -22,6 +24,6 @@ export const mapLocationsFromApi = (apiData = [], cities = []) => {
 
 // UI → API
 export const mapLocationToApi = (uiLoc) => ({
-  cityId: uiLoc.cityId,          // UUID string (DO NOT Number())
-  locationName: uiLoc.name
+  cityId: cleanData(uiLoc.cityId),          // UUID string (DO NOT Number())
+  locationName: cleanData(uiLoc.name)
 });

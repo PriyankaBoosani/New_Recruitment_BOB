@@ -4,6 +4,7 @@
   "add": "Add",
   "added": "Add Panel",
   "edit": "Edit Panel",
+  "view": "View Panel",
   "sno": "S. No.",
   "panel_name": "Panel Name",
   "panel_members": "Panel Members",
@@ -13,10 +14,16 @@
   "choose_add_method": "Choose to add manually or import from CSV/XLSX file",
   "manual_entry": "Manual Entry",
   "import_file": "Import File",
+  "close":"Close",
+  
+  "committee": "Committee",
+
+
 
   "enter_panel_name": "Enter Panel Name",
   "select_members": "Please select...",
   "select_members_hint": "Select one or more members",
+   "select_community": "Select Community",
 
   "save": "Save",
   "update": "Update",

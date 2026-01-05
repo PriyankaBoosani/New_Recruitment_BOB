@@ -53,3 +53,10 @@ export const phoneFormat = (phone) => {
   }
   return null;
 };
+
+export const cleanData = (value) => {
+  if (value !== null && typeof value === "string") {
+    return value.trim();
+  }
+  return value;
+}

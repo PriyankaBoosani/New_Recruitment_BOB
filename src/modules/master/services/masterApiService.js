@@ -61,16 +61,16 @@ const masterApiService = {
   deleteSkill: (id) => apis.delete(`/skill/delete/${id}`),
 
   /* Categories */
-  getAllCategories: () => apis.get("/categories/all"),
-  addCategory: (data) => apis.post("/categories/add", data),
-  updateCategory: (id, data) => apis.put(`/categories/update/${id}`, data),
-  deleteCategory: (id) => apis.delete(`/categories/delete/${id}`),
-  downloadCategoryTemplate: () => apis.get("/categories/download-template", { responseType: "blob", }),
+  getAllCategories: () => apis.get("/reservation-categories/all"),
+  addCategory: (data) => apis.post("/reservation-categories/add", data),
+  updateCategory: (id, data) => apis.put(`/reservation-categories/update/${id}`, data),
+  deleteCategory: (id) => apis.delete(`/reservation-categories/delete/${id}`),
+  downloadCategoryTemplate: () => apis.get("/reservation-categories/download-template", { responseType: "blob", }),
   bulkAddCategories: (file) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    return apis.post("/categories/bulk-add", formData, {
+    return apis.post("/reservation-categories/bulk-add", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -184,7 +184,40 @@ const masterApiService = {
   //User 
   getRegister: () => nodeApi.get('/getdetails/users/all'),
   registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data), // Auth (Node API)
-  getMasterDropdownData: () => masterDropdownApi.get('/master-dd-data/get/committees'),
+  getMasterDropdownData: () => apis.get('/master-dd-data/get/committees'),
+
+
+
+  /* Generic / Annexures Documents */
+
+// GET all
+getAllGenericDocuments: () =>
+  apis.get("/rec-generic-documents/all"),
+
+// ADD
+/* Generic / Annexures Documents */
+
+// SAVE (UPLOAD)
+saveGenericDocument: (type, file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return apis.post(
+    `/rec-generic-documents/save-generic-document/${type}`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+},
+
+
+// DELETE
+deleteGenericDocument: (id) =>
+  apis.delete(`/rec-generic-documents/delete/${id}`),
+
 };
 
 export default masterApiService;

@@ -30,6 +30,8 @@ const JobGradePage = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('manual');
+  const [isViewing, setIsViewing] = useState(false);
+
 
   const [formData, setFormData] = useState({
     scale: '',
@@ -50,6 +52,7 @@ const JobGradePage = () => {
   const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
 
  const openAddModal = () => {
+   setIsViewing(false);  
   setIsEditing(false);
   setFormData({
     scale: '',
@@ -72,7 +75,26 @@ const JobGradePage = () => {
   //   setShowAddModal(true);
   // };
 
+
+  const openViewModal = (row) => {
+  setIsViewing(true);
+  setIsEditing(false);
+
+  setFormData({
+    scale: row.scale ?? '',
+    gradeCode: row.gradeCode ?? '',
+    minSalary: row.minSalary ?? '',
+    maxSalary: row.maxSalary ?? '',
+    description: row.description ?? ''
+  });
+
+  setActiveTab('manual');
+  setShowAddModal(true);
+};
+
+
   const openEditModal = (row) => {
+     setIsViewing(false);
   setIsEditing(true);
   setEditingId(row.id);
   setFormData({
@@ -156,6 +178,7 @@ const JobGradePage = () => {
         data={jobGrades}
         searchTerm={searchTerm}
         onEdit={openEditModal}
+         onView={openViewModal}
         onDelete={(row) => { setDeleteTarget(row); setShowDeleteModal(true); }}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
@@ -165,6 +188,7 @@ const JobGradePage = () => {
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
         isEditing={isEditing}
+         isViewing={isViewing} 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         formData={formData}

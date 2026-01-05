@@ -30,6 +30,8 @@ const SpecialCategoryPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [isViewing, setIsViewing] = useState(false);
+
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -45,10 +47,28 @@ const SpecialCategoryPage = () => {
   const [selectedCSVFile, setSelectedCSVFile] = useState(null);
   const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
 
+  const openView = (row) => {
+  setIsViewing(true);
+  setIsEditing(false);
+  setEditingId(null);
+
+  setFormData({
+    code: row.code || '',
+    name: row.name || '',
+    description: row.description || ''
+  });
+
+  setErrors({});
+  setActiveTab('manual');
+  setShowModal(true);
+};
+
+
   /* =====================
      ADD
   ====================== */
   const openAdd = () => {
+     setIsViewing(false);
     setIsEditing(false);
     setEditingId(null);
     setFormData({ code: '', name: '', description: '' });
@@ -62,6 +82,7 @@ const SpecialCategoryPage = () => {
   ====================== */
   const openEdit = (row) => {
     setIsEditing(true);
+     setIsViewing(false);
     setEditingId(row.id);
 
     setFormData({
@@ -159,6 +180,7 @@ const SpecialCategoryPage = () => {
         searchTerm={searchTerm}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+         onView={openView}
         onEdit={openEdit}
         onDelete={(row) => {
           setDeleteTarget(row);
@@ -171,6 +193,7 @@ const SpecialCategoryPage = () => {
         show={showModal}
         onHide={() => setShowModal(false)}
         isEditing={isEditing}
+        isViewing={isViewing}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         formData={formData}

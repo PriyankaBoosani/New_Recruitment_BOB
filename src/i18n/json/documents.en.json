@@ -4,9 +4,11 @@
   "add": "Add",
   "added": "Add Document",
   "edit": "Edit Document",
+"view": "View Document",
   "update": "Update",
   "save": "Save",
   "cancel": "Cancel",
+   "close": "Close",
 
   "sno": "S. No.",
   "document_name": "Document Name",

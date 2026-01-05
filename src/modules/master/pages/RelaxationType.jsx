@@ -40,6 +40,9 @@ const { t } = useTranslation(["relaxationType"])
   const [activeTab, setActiveTab] = useState('manual'); // manual | import
   const [selectedCSVFile, setSelectedCSVFile] = useState(null);
   const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
+  const [isViewing, setIsViewing] = useState(false);
+
+
 
   const [formData, setFormData] = useState({
     code: '',

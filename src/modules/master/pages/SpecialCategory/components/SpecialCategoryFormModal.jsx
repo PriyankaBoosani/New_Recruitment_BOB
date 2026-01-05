@@ -9,6 +9,7 @@ const SpecialCategoryFormModal = ({
   show,
   onHide,
   isEditing,
+  isViewing,
   activeTab,
   setActiveTab,
   formData,
@@ -42,9 +43,14 @@ const SpecialCategoryFormModal = ({
     <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
       <Modal.Header closeButton className="modal-header-custom">
         <div>
-          <Modal.Title>
-            {isEditing ? t("edit") : t("added")}
-          </Modal.Title>
+              <Modal.Title>
+        {isViewing
+          ? t("view")
+          : isEditing
+          ? t("edit")
+          : t("added")}
+      </Modal.Title>
+
           <p className="small text-muted para">
             {t("choose_add_method")}
           </p>
@@ -52,7 +58,7 @@ const SpecialCategoryFormModal = ({
       </Modal.Header>
 
       <Modal.Body className="p-4">
-        {!isEditing && (
+       {!isEditing && !isViewing && (
           <div className="tab-buttons mb-4">
             <Button
               className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
@@ -73,67 +79,111 @@ const SpecialCategoryFormModal = ({
         )}
 
         {activeTab === 'manual' ? (
-          <Form onSubmit={handleSave}>
+         <Form
+  onSubmit={
+    isViewing
+      ? (e) => {
+          e.preventDefault();
+          onHide();
+        }
+      : handleSave
+  }
+>
+
             <Row className="g-3">
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label>
-                    {t("code")} <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    name="code"
-                    value={formData.code}
-                    onChange={handleChange}
-                    placeholder={t("enter_code")}
-                    className="form-control-custom"
-                  />
-                  <ErrorMessage>{errors.code}</ErrorMessage>
-                </Form.Group>
-              </Col>
+            <Col md={6}>
+  <Form.Group>
+    <Form.Label>
+      {t("code")} <span className="text-danger">*</span>
+    </Form.Label>
 
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label>
-                    {t("name")} <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder={t("enter_name")}
-                    className="form-control-custom"
-                  />
-                  <ErrorMessage>{errors.name}</ErrorMessage>
-                </Form.Group>
-              </Col>
+    {isViewing ? (
+      <div className="form-control-view">
+        {formData.code || "-"}
+      </div>
+    ) : (
+      <Form.Control
+        name="code"
+        value={formData.code}
+        onChange={handleChange}
+        placeholder={t("enter_code")}
+        className="form-control-custom"
+      />
+    )}
 
-              <Col xs={12}>
-                <Form.Group>
-                  <Form.Label>
-                    {t("description")} <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    placeholder={t("enter_description")}
-                    className="form-control-custom"
-                  />
-                  <ErrorMessage>{errors.description}</ErrorMessage>
-                </Form.Group>
-              </Col>
+    {!isViewing && <ErrorMessage>{errors.code}</ErrorMessage>}
+  </Form.Group>
+</Col>
+
+
+            <Col md={6}>
+  <Form.Group>
+    <Form.Label>
+      {t("name")} <span className="text-danger">*</span>
+    </Form.Label>
+
+    {isViewing ? (
+      <div className="form-control-view">
+        {formData.name || "-"}
+      </div>
+    ) : (
+      <Form.Control
+        name="name"
+        value={formData.name}
+        onChange={handleChange}
+        placeholder={t("enter_name")}
+        className="form-control-custom"
+      />
+    )}
+
+    {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
+  </Form.Group>
+</Col>
+
+
+             <Col xs={12}>
+  <Form.Group>
+    <Form.Label>
+      {t("description")} <span className="text-danger">*</span>
+    </Form.Label>
+
+    {isViewing ? (
+      <div
+        className="form-control-view"
+        style={{ whiteSpace: "pre-line" }}
+      >
+        {formData.description || "-"}
+      </div>
+    ) : (
+      <Form.Control
+        as="textarea"
+        rows={3}
+        name="description"
+        value={formData.description}
+        onChange={handleChange}
+        placeholder={t("enter_description")}
+        className="form-control-custom"
+      />
+    )}
+
+    {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
+  </Form.Group>
+</Col>
+
             </Row>
 
-            <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
-              <Button variant="outline-secondary" onClick={onHide}>
-                {t("cancel")}
-              </Button>
-              <Button variant="primary" type="submit">
-                {isEditing ? t("update") : t("save")}
-              </Button>
-            </Modal.Footer>
+           <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
+  <Button variant="outline-secondary" onClick={onHide}>
+    {isViewing ? t("close") : t("cancel")}
+  </Button>
+
+  {!isViewing && (
+    <Button variant="primary" type="submit">
+      {isEditing ? t("update") : t("save")}
+    </Button>
+  )}
+</Modal.Footer>
+
           </Form>
         ) : (
           <>

@@ -1,8 +1,10 @@
+import { cleanData } from "../../../../../shared/utils/common-validations";
+
 export const mapCitiesFromApi = (apiData = []) => {
   if (!Array.isArray(apiData)) return [];
 
   return apiData.map(city => ({
-    id: city.cityId,        // UUID
-    name: city.cityName
+    id: cleanData(city.cityId),        // UUID
+    name: cleanData(city.cityName)
   }));
 };

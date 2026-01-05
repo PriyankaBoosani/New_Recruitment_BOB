@@ -18,6 +18,8 @@ const InterviewPanelPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedPanel, setSelectedPanel] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isViewing, setIsViewing] = useState(false);
+
 
   useEffect(() => { logic.initData(); }, []);
 
@@ -25,7 +27,11 @@ const InterviewPanelPage = () => {
     [p.name, p.members].some(v => String(v || '').toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
+
+
+
   const handleOpenEdit = (panel) => {
+    setIsViewing(false); 
     setIsEditing(true);
     setSelectedPanel(panel);
     logic.setEditAssignedMembers(panel.memberNames);
@@ -38,6 +44,24 @@ const InterviewPanelPage = () => {
     const success = await logic.handleSave(isEditing, selectedPanel?.id);
     if (success) setShowFormModal(false);
   };
+
+
+  const handleOpenView = (panel) => {
+  setIsViewing(true);
+  setIsEditing(false);
+  setSelectedPanel(panel);
+
+  logic.setEditAssignedMembers(panel.memberNames || []);
+  logic.setFormData({
+    name: panel.name,
+    community: panel.communityId,
+    members: panel.memberNames || []
+  });
+
+  logic.setErrors({});
+  setShowFormModal(true);
+};
+
 
   return (
     <Container fluid className="user-container">
@@ -60,6 +84,7 @@ const InterviewPanelPage = () => {
             <Button
               className='add-button'
               onClick={() => {
+                setIsViewing(false);
                 setIsEditing(false);
                 setSelectedPanel(null);
 
@@ -82,6 +107,7 @@ const InterviewPanelPage = () => {
 
         <InterviewPanelTable 
           data={filtered.slice((currentPage-1)*7, currentPage*7)} 
+          onView={handleOpenView}
           onEdit={handleOpenEdit}
           onDelete={(p) => { setSelectedPanel(p); setShowDeleteModal(true); }}
           startIndex={(currentPage-1)*7}
@@ -98,6 +124,7 @@ const InterviewPanelPage = () => {
           membersOptions={logic.membersOptions}
             panels={logic.panels}    
           editAssignedMembers={logic.editAssignedMembers}
+          isViewing={isViewing}
           isEditing={isEditing}
           onSave={handleSavePanel}
           t={t}

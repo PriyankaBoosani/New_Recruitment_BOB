@@ -44,9 +44,33 @@ const LocationFormModal = ({
         [name]: value,
       }));
 
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-  };
+    // ✅ clear field-specific error
+    setErrors(prev => ({
+      ...prev,
+      [name]: ''
+    }));
+  }
+
+//   } else {
+//   const trimmedValue =
+//     typeof value === "string"
+//       ? value.trimStart()   
+//       : value;
+
+//   setFormData(prev => ({
+//     ...prev,
+//     [name]: trimmedValue
+//   }));
+
+//   setErrors(prev => ({
+//     ...prev,
+//     [name]: ''
+//   }));
+// }
+
+};
+
+
 
   return (
     <Modal

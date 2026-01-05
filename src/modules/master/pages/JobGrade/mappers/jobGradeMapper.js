@@ -1,5 +1,5 @@
 // src/modules/master/pages/JobGrade/mappers/jobGradeMapper.js
-
+import { cleanData } from "../../../../../shared/utils/common-validations";
 // ------------------------------
 // API → UI
 // ------------------------------
@@ -34,11 +34,11 @@ const todayDate = () => new Date().toISOString().split('T')[0];
 export const mapJobGradeToApi = (ui, isEditing = false) => ({
   ...(isEditing && { jobGradeId: ui.id }),
   isActive: true,
-  jobScale: ui.scale,
-  jobGradeCode: ui.gradeCode,
-  jobGradeDesc: ui.description,
-  minSalary: parseNumber(ui.minSalary),
-  maxSalary: parseNumber(ui.maxSalary),
+  jobScale: cleanData(ui.scale),
+  jobGradeCode: cleanData(ui.gradeCode),
+  jobGradeDesc: cleanData(ui.description),
+  minSalary: cleanData(parseNumber(ui.minSalary)),
+  maxSalary: cleanData(parseNumber(ui.maxSalary)),
   effectiveStateDate: todayDate(),
   effectiveEndDate: todayDate()
 });

@@ -41,28 +41,57 @@ export const useInterviewPanel = () => {
       setLoading(false);
     }
   };
+const handleSave = async (isEditing, editingId) => {
+  const result = validateInterviewPanelForm(formData);
+  if (!result.valid) {
+    setErrors(result.errors);
+    return false;
+  }
 
-  const handleSave = async (isEditing, editingId) => {
-    const result = validateInterviewPanelForm(formData);
-    if (!result.valid) {
-      setErrors(result.errors);
-      return false;
-    }
+  const payload = preparePanelPayload(
+    formData,
+    membersOptions,
+    isEditing,
+    editingId
+  );
 
-    const payload = preparePanelPayload(formData, membersOptions, isEditing, editingId);
-    const res = isEditing 
+  try {
+    const res = isEditing
       ? await masterApiService.updateInterviewPanel(editingId, payload)
       : await masterApiService.addInterviewPanel(payload);
 
-    if (res?.success) {
-      toast.success(isEditing ? "Updated successfully" : "Created successfully");
-      await fetchPanels();
-      return true;
-    } else {
+    if (!res?.success) {
       toast.error(res?.message || "Save failed");
       return false;
     }
-  };
+
+    const uiItem = mapInterviewPanelsApiToUI(
+      [res.data],
+      committeeMap
+    )[0];
+
+    if (isEditing) {
+      // ✅ UPDATE IN PLACE
+      setPanels(prev =>
+        prev.map(p =>
+          String(p.id) === String(editingId)
+            ? { ...p, ...uiItem }
+            : p
+        )
+      );
+      toast.success("Updated successfully");
+    } else {
+      // ✅ ADD ON TOP
+      setPanels(prev => [uiItem, ...prev]);
+      toast.success("Created successfully");
+    }
+
+    return true;
+  } catch (err) {
+    toast.error("Something went wrong");
+    return false;
+  }
+};
 
   const handleDelete = async (id) => {
     const res = await masterApiService.deleteInterviewPanel(id);

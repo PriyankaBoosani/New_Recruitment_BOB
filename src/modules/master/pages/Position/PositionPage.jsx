@@ -53,6 +53,8 @@ const PositionPage = () => {
   const [deleteTarget, setDeleteTarget] = useState(null);
 
   const [activeTab, setActiveTab] = useState("manual");
+  const [isViewing, setIsViewing] = useState(false);
+
 
   /* ---------------- FORM STATE ---------------- */
   const [formData, setFormData] = useState({
@@ -83,8 +85,33 @@ const PositionPage = () => {
 
   /* ---------------- HANDLERS ---------------- */
 
+  const openViewModal = (p) => {
+  setIsViewing(true);
+  setIsEditing(false);
+  setEditingId(p.id);
+
+  setFormData({
+    title: p.title || "",
+    departmentId: p.departmentId || "",
+    jobGradeId: p.jobGradeId || "",
+    mandatoryEducation: p.mandatoryEducation || "",
+    preferredEducation: p.preferredEducation || "",
+    mandatoryExperience: p.mandatoryExperience || "",
+    preferredExperience: p.preferredExperience || "",
+    rolesResponsibilities: p.rolesResponsibilities || "",
+    eligibilityAgeMin: p.eligibilityAgeMin ?? "",
+    eligibilityAgeMax: p.eligibilityAgeMax ?? ""
+  });
+
+  setErrors({});
+  setActiveTab("manual");
+  setShowAddModal(true);
+};
+
+
   const openAddModal = () => {
     setIsEditing(false);
+    setShowAddModal(true);
     setEditingId(null);
     setFormData({
       title: "",
@@ -114,6 +141,7 @@ const PositionPage = () => {
 
 
   const openEditModal = (p) => {
+    setIsViewing(false);
     setIsEditing(true);
     setEditingId(p.id);
     setFormData({
@@ -232,6 +260,7 @@ const PositionPage = () => {
         searchTerm={searchTerm}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        onView={openViewModal}
         onEdit={openEditModal}
         onDelete={(p) => {
           setDeleteTarget(p);
@@ -243,7 +272,9 @@ const PositionPage = () => {
 
       <PositionFormModal
         show={showAddModal}
+        
         onHide={() => setShowAddModal(false)}
+        isViewing={isViewing} 
         isEditing={isEditing}
         activeTab={activeTab}
         setActiveTab={setActiveTab}

@@ -1,5 +1,7 @@
 // src/modules/master/pages/Category/mappers/categoryMapper.js
 
+import { cleanData } from "../../../../../shared/utils/common-validations";
+
 /* =========================
    API → UI
 ========================= */
@@ -29,8 +31,8 @@ export const mapCategoryToApi = (ui, options = {}) => {
   return {
     reservationCategoriesId: id,
     isActive: true,
-    categoryCode: ui.code,
-    categoryName: ui.name,
-    categoryDesc: ui.description
+    categoryCode: cleanData(ui.code),
+    categoryName: cleanData(ui.name),
+    categoryDesc: cleanData(ui.description)
   };
 };

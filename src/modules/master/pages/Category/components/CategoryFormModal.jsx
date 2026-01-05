@@ -12,6 +12,7 @@ const CategoryFormModal = ({
   show,
   onHide,
   isEditing,
+  isViewing,
   editingCategory,
   onSave,
   onUpdate,
@@ -101,11 +102,19 @@ const CategoryFormModal = ({
       {/* ---------------- HEADER ---------------- */}
       <Modal.Header closeButton className="modal-header-custom">
         <div>
-          <Modal.Title>
+          {/* <Modal.Title>
             {isEditing ? t("edit_category") : t("add_category")}
-          </Modal.Title>
+          </Modal.Title> */}
+          <Modal.Title>
+  {isViewing
+    ? t("view_category")
+    : isEditing
+    ? t("edit_category")
+    : t("add_category")}
+</Modal.Title>
 
-          {!isEditing && (
+
+         {!isEditing && !isViewing &&  (
             <p className="mb-0 small text-muted">
               {t("choose_add_method")}
             </p>
@@ -116,7 +125,7 @@ const CategoryFormModal = ({
       {/* ---------------- BODY ---------------- */}
       <Modal.Body className="p-4">
         {/* -------- Tabs (Add Only) -------- */}
-        {!isEditing && (
+       {!isEditing && !isViewing && (
           <div className="tab-buttons mb-4">
             <Button
               variant={activeTab === "manual" ? "light" : "outline-light"}
@@ -140,36 +149,59 @@ const CategoryFormModal = ({
 
         {/* -------- MANUAL ENTRY -------- */}
         {activeTab === "manual" ? (
-          <Form onSubmit={handleSubmit} noValidate>
+         <Form
+              onSubmit={
+                isViewing
+                  ? (e) => {
+                      e.preventDefault();
+                      onHide();
+                    }
+                  : handleSubmit
+              }
+              noValidate
+            >
+
             <Row className="g-3">
               <Col md={6}>
                 <Form.Label>
                   {t("code")} <span className="text-danger">*</span>
                 </Form.Label>
+                            {isViewing ? (
+                <div className="form-control-view">
+                  {formData.code || "-"}
+                </div>
+              ) : (
                 <Form.Control
                   name="code"
                   value={formData.code}
                   placeholder={t("enter_code")}
                   onChange={handleInputChange}
-
                   className="form-control-custom"
                 />
-                <ErrorMessage>{errors.code}</ErrorMessage>
+              )}
+              {!isViewing && <ErrorMessage>{errors.code}</ErrorMessage>}
+
               </Col>
 
               <Col md={6}>
                 <Form.Label>
                   {t("name")} <span className="text-danger">*</span>
                 </Form.Label>
-                <Form.Control
-                  name="name"
-                  value={formData.name}
-                  placeholder={t("enter_name")}
-                  onChange={handleInputChange}
+               {isViewing ? (
+              <div className="form-control-view">
+                {formData.name || "-"}
+              </div>
+            ) : (
+              <Form.Control
+                name="name"
+                value={formData.name}
+                placeholder={t("enter_name")}
+                onChange={handleInputChange}
+                className="form-control-custom"
+              />
+            )}
+            {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
 
-                  className="form-control-custom"
-                />
-                <ErrorMessage>{errors.name}</ErrorMessage>
               </Col>
 
               <Col md={12}>
@@ -177,6 +209,14 @@ const CategoryFormModal = ({
                   {t("description")}{" "}
                   <span className="text-danger">*</span>
                 </Form.Label>
+               {isViewing ? (
+                <div
+                  className="form-control-view"
+                  style={{ whiteSpace: "pre-line" }}
+                >
+                  {formData.description || "-"}
+                </div>
+              ) : (
                 <Form.Control
                   as="textarea"
                   rows={3}
@@ -184,21 +224,26 @@ const CategoryFormModal = ({
                   value={formData.description}
                   placeholder={t("enter_description")}
                   onChange={handleInputChange}
-
                   className="form-control-custom"
                 />
-                <ErrorMessage>{errors.description}</ErrorMessage>
+              )}
+              {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
+
               </Col>
             </Row>
 
-            <Modal.Footer className="px-0 pt-4 modal-footer-custom">
-              <Button variant="outline-secondary" onClick={onHide}>
-                {t("cancel")}
-              </Button>
-              <Button variant="primary" type="submit">
-                {isEditing ? t("update") : t("save")}
-              </Button>
-            </Modal.Footer>
+                          <Modal.Footer className="px-0 pt-4 modal-footer-custom">
+                <Button variant="outline-secondary" onClick={onHide}>
+                  {isViewing ? t("close") : t("cancel")}
+                </Button>
+
+                {!isViewing && (
+                  <Button variant="primary" type="submit">
+                    {isEditing ? t("update") : t("save")}
+                  </Button>
+                )}
+              </Modal.Footer>
+
           </Form>
         ) : (
           /* -------- IMPORT TAB -------- */

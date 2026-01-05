@@ -12,6 +12,7 @@ const DocumentTable = ({
   data,
   searchTerm,
   onEdit,
+  onView,
   onDelete,
   currentPage,
   setCurrentPage
@@ -52,7 +53,12 @@ const DocumentTable = ({
                   <td>{d.description}</td>
                   <td>
                     <div className="action-buttons">
-                      <Button variant="link" className="action-btn view-btn">
+                    <Button
+                        variant="link"
+                        className="action-btn view-btn"
+                        onClick={() => onView(d)}
+                      >
+
                         <img src={viewIcon} alt="view" className="icon-16" />
                       </Button>
 

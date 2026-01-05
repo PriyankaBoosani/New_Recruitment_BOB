@@ -4,6 +4,7 @@
   "add": "जोड़ें",
   "edit_category": "श्रेणी संपादित करें",
   "add_category": "श्रेणी जोड़ें",
+   "view_category": "श्रेणी देखें",
   "s_no": "क्रमांक",
   "code": "कोड",
   "name": "नाम",
@@ -16,6 +17,7 @@
   "import_file": "फ़ाइल आयात करें",
   "upload_file": "फ़ाइल अपलोड",
   "upload_csv": "CSV अपलोड",
+  "close": "बंद करें",
  
   "csv": "CSV",
   "xlsx": "XLSX",

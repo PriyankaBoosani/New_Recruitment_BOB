@@ -4,6 +4,7 @@
   "add": "Add",
   "edit_category": "Edit Category",
   "add_category": "Add Category",
+  "view_category": "View Category",
   "s_no": "S. No.",
   "code": "Code",
   "name": "Name",
@@ -16,6 +17,7 @@
   "import_file": "Import File",
   "upload_file": "Upload File",
   "upload_csv": "Upload CSV",
+  "close": "Close",
 
   "csv": "CSV",
   "xlsx": "XLSX",

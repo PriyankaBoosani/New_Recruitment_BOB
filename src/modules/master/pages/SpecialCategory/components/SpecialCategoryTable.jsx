@@ -11,6 +11,7 @@ import deleteIcon from "../../../../../assets/delete_icon.png";
 const SpecialCategoryTable = ({
   data,
   searchTerm,
+  onView,
   onEdit,
   onDelete,
   currentPage,
@@ -56,9 +57,14 @@ const filtered = data.filter(s =>
                   <td>{s.description}</td>
                   <td>
                     <div className="action-buttons">
-                      <Button variant="link" className="action-btn view-btn">
+                     <Button
+                        variant="link"
+                        className="action-btn view-btn"
+                        onClick={() => onView(s)}
+                      >
                         <img src={viewIcon} alt="view" className="icon-16" />
                       </Button>
+
 
                       <Button
                         variant="link"

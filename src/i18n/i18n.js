@@ -32,6 +32,8 @@ import jobGradeHi from "../i18n/json/jobGrade.hi.json";
 import userEn from "../i18n/json/user.en.json";
 import userHi from "../i18n/json/user.hi.json";
 
+import genericOrAnnexuresEn from "../i18n/json/genericOrAnnexures.en.json";
+import genericOrAnnexuresHi from "../i18n/json/genericOrAnnexures.hi.json";  
 
 // ⬅ Read persisted Redux language value
 let savedLang = "en";
@@ -61,7 +63,8 @@ i18n
         position: positionEn,
         category: categoryEn,
         relaxationType: relaxationtypeEn  , 
-        validation: validationEn
+        validation: validationEn,
+        genericOrAnnexures: genericOrAnnexuresEn
       },
       hi: {
         department: departmentHi,
@@ -74,7 +77,8 @@ i18n
         position: positionHi,
         category: categoryHi,
         relaxationType: relaxationtypeHi,
-        validation: validationHi
+        validation: validationHi,
+        genericOrAnnexures: genericOrAnnexuresHi
       }
     },
     lng: savedLang,       // default language

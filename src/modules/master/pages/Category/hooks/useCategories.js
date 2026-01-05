@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import masterApiService from "../../../services/masterApiService";
 import {
   mapCategoriesFromApi,
+  mapCategoryFromApi,
   mapCategoryToApi
 } from "../mappers/categoryMapper";
 
@@ -14,27 +15,48 @@ export const useCategories = () => {
 
   const [loading, setLoading] = useState(false);
   /* ================= FETCH ================= */
-  const fetchCategories = async () => {
-    try {
-      const res = await masterApiService.getAllCategories();
+  // const fetchCategories = async () => {
+  //   try {
+  //     const res = await masterApiService.getAllCategories();
+ 
+  //     const list = Array.isArray(res.data)
+  //       ? res.data
+  //       : res.data?.data || [];
 
-      const list = Array.isArray(res.data)
-        ? res.data
-        : res.data?.data || [];
+  //     const mapped = mapCategoriesFromApi(list);
 
-      const mapped = mapCategoriesFromApi(list);
+  //     // ✅ newest first (persist after refresh)
+  //     setCategories(
+  //       [...mapped].sort(
+  //         (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+  //       )
+  //     );
+  //   } catch (error) {
+  //     toast.error(t("category:fetch_error"));
+  //     setCategories([]);
+  //   }
+  // };
+const fetchCategories = async () => {
+  try {
+    const res = await masterApiService.getAllCategories();
 
-      // ✅ newest first (persist after refresh)
-      setCategories(
-        [...mapped].sort(
-          (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
-        )
-      );
-    } catch (error) {
-      toast.error(t("category:fetch_error"));
-      setCategories([]);
-    }
-  };
+    const list = Array.isArray(res.data)
+      ? res.data
+      : res.data?.data || [];
+
+    const mapped = mapCategoriesFromApi(list);
+
+    // 🔥 FORCE newest first ALWAYS (by ID)
+    const sorted = [...mapped].sort(
+      (a, b) => Number(b.id) - Number(a.id)
+    );
+
+    setCategories(sorted);
+  } catch (error) {
+    toast.error(t("category:fetch_error"));
+    setCategories([]);
+  }
+};
 
   useEffect(() => {
     fetchCategories();
@@ -45,17 +67,18 @@ export const useCategories = () => {
     try {
       const res = await masterApiService.addCategory(
         mapCategoryToApi(payload)
-      );
+      ); 
+      console.log(" dfda", res) 
 
       toast.success(t("category:add_success"));
-      const newItem = {
-        id: res?.data?.reservationCategoriesId,
-        code: payload.code,
-        name: payload.name,
-        description: payload.description,
-        createdDate: new Date().toISOString()
-      };
-
+      // const newItem = {
+      //   id: res?.data?.reservationCategoriesId,
+      //   code: res?.data?.categoryCode,
+      //   name: res?.data?.categoryName,
+      //   description: res?.data?.categoryDesc,
+      //   createdDate: new Date().toISOString()
+      // };
+      const newItem = mapCategoryFromApi(res.data);
       // ✅ add on top instantly
       setCategories(prev => [newItem, ...prev]);
     } catch (error) {
@@ -69,21 +92,22 @@ export const useCategories = () => {
   /* ================= UPDATE ================= */
   const updateCategory = async (id, payload) => {
     try {
-      await masterApiService.updateCategory(
+      const res = await masterApiService.updateCategory(
         id,
         mapCategoryToApi(payload, { id })
       );
+      const updatedItem = mapCategoryFromApi(res.data);
 
       toast.success(t("category:update_success"));
 
       // ✅ update in same position
       setCategories(prev =>
-  prev.map(c =>
-    String(c.id) === String(id)
-      ? { ...c, ...payload, id: c.id }
-      : c
-  )
-);
+        prev.map(c =>
+          String(c.id) === String(id)
+            ? { ...c, ...updatedItem }
+            : c
+        )
+      );
 
     } catch (error) {
       toast.error(

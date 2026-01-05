@@ -9,6 +9,7 @@ const DocumentFormModal = ({
   show,
   onHide,
   isEditing,
+   isViewing,
   activeTab,
   setActiveTab,
   formData,
@@ -40,27 +41,45 @@ const DocumentFormModal = ({
   return (
    <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
       <Modal.Header closeButton className="modal-header-custom">
-        <Modal.Title>
-          {isEditing ? t("edit") : t("added")}
-        </Modal.Title>
+                  <Modal.Title>
+              {isViewing ? t("view") : isEditing ? t("edit") : t("added")}
+            </Modal.Title>
+
       </Modal.Header>
 
       <Modal.Body className="p-4">
         {/* ✅ Manual Entry Form – shown by default */}
-        <Form onSubmit={handleSave}>
+       <Form
+  onSubmit={
+    isViewing
+      ? (e) => { e.preventDefault(); onHide(); }
+      : handleSave
+  }
+>
+
           <Row className="g-3">
             <Col xs={12}>
               <Form.Group>
                 <Form.Label>
                   {t("document_name")} <span className="text-danger">*</span>
                 </Form.Label>
-                <Form.Control
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="form-control-custom"
-                />
-                <ErrorMessage>{errors.name}</ErrorMessage>
+
+               {isViewing ? (
+  <div className="form-control-view">
+    {formData.name || '-'}
+  </div>
+) : (
+  <Form.Control
+    name="name"
+    value={formData.name}
+    onChange={handleChange}
+    className="form-control-custom"
+      placeholder={t("enter_document_name")}
+  />
+)}
+
+{!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
+
               </Form.Group>
             </Col>
 
@@ -69,27 +88,41 @@ const DocumentFormModal = ({
                 <Form.Label>
                   {t("description")} <span className="text-danger">*</span>
                 </Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  className="form-control-custom"
-                />
-                <ErrorMessage>{errors.description}</ErrorMessage>
+                {isViewing ? (
+  <div className="form-control-view" style={{ whiteSpace: 'pre-line' }}>
+    {formData.description || '-'}
+  </div>
+) : (
+  <Form.Control
+    as="textarea"
+    rows={3}
+    name="description"
+    value={formData.description}
+    onChange={handleChange}
+    className="form-control-custom"
+    placeholder={t("enter_description")}
+
+  />
+)}
+
+{!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
+
               </Form.Group>
             </Col>
           </Row>
 
           <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
-            <Button variant="outline-secondary" onClick={onHide}>
-              {t("cancel")}
-            </Button>
-            <Button variant="primary" type="submit">
-              {isEditing ? t("update") : t("save")}
-            </Button>
-          </Modal.Footer>
+  <Button variant="outline-secondary" onClick={onHide}>
+    {isViewing ? t("close") : t("cancel")}
+  </Button>
+
+  {!isViewing && (
+    <Button variant="primary" type="submit">
+      {isEditing ? t("update") : t("save")}
+    </Button>
+  )}
+</Modal.Footer>
+
         </Form>
       </Modal.Body>
     </Modal>

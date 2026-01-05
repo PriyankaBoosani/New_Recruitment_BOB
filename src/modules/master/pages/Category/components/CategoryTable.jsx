@@ -12,6 +12,7 @@ const CategoryTable = ({
   currentPage,
   setCurrentPage,
   onEdit,
+  onView,
   onDelete
 }) => {
   const { t } = useTranslation(["category"]);
@@ -51,13 +52,14 @@ const CategoryTable = ({
                   <td>{c.name}</td>
                   <td>{c.description}</td>
 
-                  {/* ✅ ACTIONS – SAME AS DEPARTMENT */}
+                  {/*  ACTIONS – SAME AS DEPARTMENT */}
                   <td>
                     <div className="action-buttons">
                       <Button
                         variant="link"
                         className="action-btn view-btn"
                         title="View"
+                        onClick={() => onView(c)}
                       >
                         <img src={viewIcon} alt="View" className="icon-16" />
                       </Button>

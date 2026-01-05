@@ -1,3 +1,4 @@
+import { cleanData } from "../../../../../shared/utils/common-validations";
 export const mapInterviewPanelsApiToUI = (apiData, committeeMap) => {
   const apiList = Array.isArray(apiData) ? apiData : [];
   return apiList.map(item => {
@@ -23,9 +24,9 @@ export const preparePanelPayload = (formData, membersOptions, isEditing, editing
   return {
     interviewPanelsDTO: {
       isActive: true,
-      panelName: formData.name,
-      description: "",
-      committeeId: formData.community,
+      panelName: cleanData(formData.name),
+      description: cleanData(formData.description),
+      committeeId:  cleanData(formData.community),
       interviewPanelId: isEditing ? editingId : ""
     },
     interviewerIds
