@@ -10,7 +10,7 @@ import { clearUser } from '../providers/userSlice';
 import { setLanguage } from '../../i18n/store/languageSlice';
 import { useTranslation } from "react-i18next";
 import i18n from '../../i18n/i18n';
-import masterApiService from '../../modules/master/services/masterApiService';
+// ❌ REMOVED: masterApiService import (no API logout needed)
 
 const Header = () => {
   const { t } = useTranslation();
@@ -55,15 +55,9 @@ const Header = () => {
   };
 
   /* ===================== LOGOUT ===================== */
-  const handleLogout = async () => {
-    try {
-      await masterApiService.logout();
-    } catch (e) {
-      console.error("Logout failed", e);
-    } finally {
-      dispatch(clearUser());
-      navigate('/login');
-    }
+  const handleLogout = () => {
+    dispatch(clearUser());
+    navigate('/login');
   };
 
   /* ===================== OUTSIDE CLICK ===================== */
@@ -113,9 +107,6 @@ const Header = () => {
                 हिंदी
               </span>
             </div>
-
-   
-           
 
             {/* ===================== USER DROPDOWN ===================== */}
             <div className="position-relative" ref={dropdownRef}>

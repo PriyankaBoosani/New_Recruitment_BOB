@@ -6,15 +6,7 @@ const masterApiService = {
   // Note: auth header is injected by nodeApi interceptor; no need to pass token manually
   getRegister: () => nodeApi.get('/getdetails/users/all'),
   registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data),
-  /* Auth */
-  logout: () =>
-    nodeApi.post(
-      "/candidate-auth/logout",
-      {},
-      {
-        withCredentials: true,
-      }
-    ),
+  
 
   // city
   getallCities: () => apis.get('/city/all'),
