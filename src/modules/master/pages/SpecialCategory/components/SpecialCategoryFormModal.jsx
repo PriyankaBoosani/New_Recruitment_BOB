@@ -1,4 +1,6 @@
 // src/modules/master/pages/SpecialCategory/components/SpecialCategoryFormModal.jsx
+import { handleGlobalInputChange } from "../../../../../shared/utils/inputHandlers";
+
 
 import React from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
@@ -21,22 +23,32 @@ const SpecialCategoryFormModal = ({
   t,
   ...importProps
 }) => {
-  const handleChange = (e) => {
-  const { name, value } = e.target;
+//   const handleChange = (e) => {
+//   const { name, value } = e.target;
 
-  setFormData(prev => ({
-    ...prev,
-    [name]: value
-  }));
+//   setFormData(prev => ({
+//     ...prev,
+//     [name]: value
+//   }));
 
-  // ✅ clear error for this field only
-  if (errors[name]) {
-    setErrors(prev => ({
-      ...prev,
-      [name]: null
-    }));
-  }
+//   // ✅ clear error for this field only
+//   if (errors[name]) {
+//     setErrors(prev => ({
+//       ...prev,
+//       [name]: null
+//     }));
+//   }
+// };
+const handleChange = (e) => {
+  handleGlobalInputChange({
+    e,
+    setFormData,
+    errors,
+    setErrors,
+    t
+  });
 };
+
 
 
   return (

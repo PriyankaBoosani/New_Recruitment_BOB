@@ -46,7 +46,7 @@ const addItem = async (payload) => {
     // ✅ ALWAYS refresh list from API
     await fetchItems();
 
-    toast.success("File added successfully");
+    // toast.success("File added successfully");
   } catch (e) {
     console.error(e);
     toast.error("Upload failed");

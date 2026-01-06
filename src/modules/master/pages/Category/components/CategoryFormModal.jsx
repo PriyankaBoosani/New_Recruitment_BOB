@@ -1,4 +1,5 @@
 // src/modules/master/pages/Category/components/CategoryFormModal.jsx
+import { handleGlobalInputChange } from "../../../../../shared/utils/inputHandlers";
 
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
@@ -47,22 +48,36 @@ const CategoryFormModal = ({
     setErrors({});
     setActiveTab("manual");
   }, [editingCategory, show]);
-  const handleInputChange = (e) => {
-  const { name, value } = e.target;
 
-  setFormData(prev => ({
-    ...prev,
-    [name]: value
-  }));
 
-  // ✅ clear error for this field only
-  if (errors[name]) {
-    setErrors(prev => ({
-      ...prev,
-      [name]: null
-    }));
-  }
+
+//   const handleInputChange = (e) => {
+//   const { name, value } = e.target;
+
+//   setFormData(prev => ({
+//     ...prev,
+//     [name]: value
+//   }));
+
+//   // ✅ clear error for this field only
+//   if (errors[name]) {
+//     setErrors(prev => ({
+//       ...prev,
+//       [name]: null
+//     }));
+//   }
+// };
+
+const handleInputChange = (e) => {
+  handleGlobalInputChange({
+    e,
+    setFormData,
+    errors,
+    setErrors,
+    t
+  });
 };
+
 
 
   /* ---------------- SUBMIT ---------------- */
