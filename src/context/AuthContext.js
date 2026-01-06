@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser, setAuthUser, logout as logoutAction } from "../store/userSlice";
+import { setUser, setAuthUser, clearUser  } from "../../app/providers/userSlice";
 import { apiService } from "../services/apiService";
 
 const AuthContext = createContext();
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    dispatch(logoutAction()); // ✅ clears redux-persist automatically
+    dispatch(clearUser()); // ✅ clears redux-persist automatically
   };
 
   const value = {

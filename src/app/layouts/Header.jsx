@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Navbar, Nav, Container, NavDropdown, Button, Image } from 'react-bootstrap';
+import { Navbar, Nav, Container, NavDropdown, Image } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { Bell } from 'react-bootstrap-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../assets/logo.png';
@@ -10,7 +9,6 @@ import { clearUser } from '../providers/userSlice';
 import { setLanguage } from '../../i18n/store/languageSlice';
 import { useTranslation } from "react-i18next";
 import i18n from '../../i18n/i18n';
-// ❌ REMOVED: masterApiService import (no API logout needed)
 
 const Header = () => {
   const { t } = useTranslation();
@@ -21,7 +19,7 @@ const Header = () => {
   /* ===================== USER FROM REDUX ===================== */
   const userSlice = useSelector((state) => state.user);
   const user = userSlice?.user;
-  console.log("User in Header:", userSlice);
+  console.log("Header User from Redux:", user);
 
   /* ===================== USER DROPDOWN STATE ===================== */
   const [showDropdown, setShowDropdown] = useState(false);

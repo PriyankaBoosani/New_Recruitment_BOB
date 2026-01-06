@@ -5,4 +5,5 @@ export const mapUserApiToState = (api = {}) => ({
   email: api.email ?? "",
   role: api.role ?? "",
   mobile: api.mobile ?? "",
+  name: api.name ?? "",
 });
