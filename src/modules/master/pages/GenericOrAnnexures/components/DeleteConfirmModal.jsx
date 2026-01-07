@@ -3,7 +3,7 @@ import { Modal, Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
 const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
-  // ✅ CHANGE NAMESPACE
+  //  CHANGE NAMESPACE
   const { t } = useTranslation(["genericOrAnnexures"]);
 
   return (
@@ -24,7 +24,7 @@ const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
       <Modal.Body>
         <p>{t("delete_message", "Are you sure you want to delete this file?")}</p>
 
-        {/* ✅ FILE NAME SHOWN */}
+        {/*  FILE NAME SHOWN */}
         {target?.name && (
           <div className="delete-confirm-user">
             <strong>{target.name}</strong>

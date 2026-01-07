@@ -25,7 +25,7 @@ export const useCategories = () => {
 
   //     const mapped = mapCategoriesFromApi(list);
 
-  //     // ✅ newest first (persist after refresh)
+  //     //  newest first (persist after refresh)
   //     setCategories(
   //       [...mapped].sort(
   //         (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
@@ -79,7 +79,7 @@ const fetchCategories = async () => {
       //   createdDate: new Date().toISOString()
       // };
       const newItem = mapCategoryFromApi(res.data);
-      // ✅ add on top instantly
+      //  add on top instantly
       setCategories(prev => [newItem, ...prev]);
     } catch (error) {
       toast.error(
@@ -100,7 +100,7 @@ const fetchCategories = async () => {
 
       toast.success(t("category:update_success"));
 
-      // ✅ update in same position
+      //  update in same position
       setCategories(prev =>
         prev.map(c =>
           String(c.id) === String(id)
@@ -163,7 +163,7 @@ const fetchCategories = async () => {
 
         console.log("API RESPONSE:", res); // logs for 200 & 422
 
-      // ❌ business failure
+      //  business failure
       if (res.success === false) {
         toast.error(res.message);
         return {
@@ -172,7 +172,7 @@ const fetchCategories = async () => {
           details: res.data || [] 
         };
       }
-      // ✅ success
+      //  success
       toast.success(res.message || "File uploaded successfully");
 
       return {
@@ -180,7 +180,7 @@ const fetchCategories = async () => {
       };
 
     } catch (err) {
-      // ❌ network / server error
+      //  network / server error
       console.log("NETWORK ERROR:", err);
 
       const message = "Something went wrong";

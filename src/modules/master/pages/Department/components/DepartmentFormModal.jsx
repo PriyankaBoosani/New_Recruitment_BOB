@@ -121,7 +121,7 @@ const DepartmentFormModal = ({
 //   onChange={(e) => {
 //     const value = e.target.value;
 
-//     // ❌ block non-alphabets
+//     //  block non-alphabets
 //     if (!/^[A-Za-z\s]*$/.test(value)) {
 //       setErrors(prev => ({
 //         ...prev,
@@ -130,7 +130,7 @@ const DepartmentFormModal = ({
 //       return;
 //     }
 
-//     // ✅ clear error when valid
+//     //  clear error when valid
 //     setErrors(prev => {
 //       const copy = { ...prev };
 //       delete copy.description;

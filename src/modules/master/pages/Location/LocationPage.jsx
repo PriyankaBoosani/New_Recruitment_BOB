@@ -49,7 +49,7 @@ const [isViewing, setIsViewing] = useState(false);
 
  const openView = (loc) => {
   setIsEditing(false);
-  setIsViewing(true);        // ✅ view mode ON
+  setIsViewing(true);        //  view mode ON
   setEditingLocation(loc);
 
   setFormData({
@@ -75,7 +75,7 @@ const openAdd = () => {
 
 const openEdit = (loc) => {
   setIsEditing(true);
-  setIsViewing(false);       // ✅ edit mode
+  setIsViewing(false);       //  edit mode
   setEditingLocation(loc);
 
   setFormData({
@@ -132,7 +132,7 @@ return (
   onChange={(e) => {
     const value = e.target.value;
 
-    // ✅ allow alphabets, numbers, @, and space
+    //  allow alphabets, numbers, @, and space
     if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
       return; // block invalid characters
     }
@@ -168,7 +168,7 @@ return (
   show={showModal}
   onHide={() => setShowModal(false)}
   isEditing={isEditing}
-  isViewing={isViewing}    // ✅ ONLY THIS
+  isViewing={isViewing}    //  ONLY THIS
   formData={formData}
   setFormData={setFormData}
   errors={errors}

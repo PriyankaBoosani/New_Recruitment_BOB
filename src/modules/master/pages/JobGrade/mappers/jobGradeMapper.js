@@ -1,8 +1,7 @@
 // src/modules/master/pages/JobGrade/mappers/jobGradeMapper.js
 import { cleanData } from "../../../../../shared/utils/common-validations";
-// ------------------------------
-// API → UI
-// ------------------------------
+
+
 export const mapJobGradeFromApi = (api) => ({
   id: api.jobGradeId,
   scale: api.jobScale,
@@ -18,9 +17,7 @@ export const mapJobGradesFromApi = (apiData = []) => {
   return apiData.map(mapJobGradeFromApi);
 };
 
-// ------------------------------
-// helpers
-// ------------------------------
+
 const parseNumber = (value) => {
   if (value === null || value === undefined) return 0;
   return Number(String(value).replace(/,/g, ''));
@@ -28,9 +25,7 @@ const parseNumber = (value) => {
 
 const todayDate = () => new Date().toISOString().split('T')[0];
 
-// ------------------------------
-// UI → API (ADD / UPDATE)
-// ------------------------------
+
 export const mapJobGradeToApi = (ui, isEditing = false) => ({
   ...(isEditing && { jobGradeId: ui.id }),
   isActive: true,

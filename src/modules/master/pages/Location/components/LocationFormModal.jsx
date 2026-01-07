@@ -13,7 +13,7 @@ const LocationFormModal = ({
   show,
   onHide,
   isEditing,
-  isViewing,            // ✅ VIEW MODE
+  isViewing,            //  VIEW MODE
   formData,
   setFormData,
   errors,
@@ -50,7 +50,7 @@ const LocationFormModal = ({
         [name]: value,
       }));
 
-    // ✅ clear field-specific error
+    //  clear field-specific error
     setErrors(prev => ({
       ...prev,
       [name]: ''

@@ -179,7 +179,7 @@ const PositionPage = () => {
       return;
     }
 
-    // ✅ IMPORTANT: formData MUST contain departmentId & jobGradeId
+    //  IMPORTANT: formData MUST contain departmentId & jobGradeId
     const payload = mapPositionToApi(
       { ...formData, id: editingId },
       isEditing
@@ -238,7 +238,7 @@ const PositionPage = () => {
         <h2>{t("positions")}</h2>
 
         <div className="user-actions">
-          {/* ✅ SEARCH BAR – SAME AS DEPARTMENT */}
+          {/*  SEARCH BAR – SAME AS DEPARTMENT */}
           <div className="search-box">
             <Search className="search-icon" />
          <Form.Control
@@ -248,7 +248,7 @@ const PositionPage = () => {
   onChange={(e) => {
     const value = e.target.value;
 
-    // ✅ allow alphabets, numbers, space and @
+    //  allow alphabets, numbers, space and @
     if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
       return; // block invalid characters
     }
@@ -299,7 +299,7 @@ const PositionPage = () => {
             [name]: value
           }));
 
-          // ✅ clear error for this field only
+          //  clear error for this field only
           setErrors(prev => ({
             ...prev,
             [name]: ''

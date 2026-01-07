@@ -50,7 +50,7 @@ const handleInputChange = (e) => {
         : value
   }));
 
-  // ❗ DO NOT auto-clear file errors here
+  // DO NOT auto-clear file errors here
   if (name !== "file") {
     setErrors(prev => ({
       ...prev,
@@ -93,7 +93,7 @@ const handleInputChange = (e) => {
 
     addItem(formData);
 
-    // ✅ TOAST (EN + HI)
+    //  TOAST (EN + HI)
     toast.success(
       t("add_success", "File added successfully")
     );
@@ -124,7 +124,7 @@ const handleInputChange = (e) => {
 
     deleteItem(deleteTarget.id);
 
-    // ✅ TOAST (EN + HI)
+    //  TOAST (EN + HI)
     toast.success(
       t("delete_success", "File deleted successfully")
     );

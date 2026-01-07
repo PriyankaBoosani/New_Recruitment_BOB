@@ -52,7 +52,7 @@ const UserPage = () => {
   onChange={(e) => {
     const value = e.target.value;
 
-    // ✅ allow alphabets, numbers, @, and space
+    //  allow alphabets, numbers, @, and space
     if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
       return; // block invalid characters
     }

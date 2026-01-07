@@ -88,14 +88,14 @@ const InterviewPanelPage = () => {
                 setIsEditing(false);
                 setSelectedPanel(null);
 
-                // ✅ RESET EVERYTHING RELATED TO FORM
+                //  RESET EVERYTHING RELATED TO FORM
                 logic.setFormData({
                   name: '',
                   community: '',
                   members: []
                 });
 
-                logic.setEditAssignedMembers([]); // 🔥 THIS IS THE KEY FIX
+                logic.setEditAssignedMembers([]); //  THIS IS THE KEY FIX
                 logic.setErrors({});               // optional but recommended
 
                 setShowFormModal(true);

@@ -14,7 +14,7 @@ export const usePositions = () => {
   const buildJobGradeMap = (jobGrades = []) => {
   const map = {};
   jobGrades.forEach(jg => {
-    map[jg.jobGradeId] = jg.jobGradeCode; // 👈 what you want to display
+    map[jg.jobGradeId] = jg.jobGradeCode; //  what you want to display
   });
   return map;
 };
@@ -23,12 +23,12 @@ export const usePositions = () => {
 const fetchPositions = async () => {
   setLoading(true);
   try {
-    // 1️⃣ Fetch positions
+    //  Fetch positions
     const posRes = await masterApiService.getAllPositions();
     const positionApiData = posRes?.data || [];
 const mappedPositions = mapPositionsFromApi(positionApiData);
 
-    // 2️⃣ Fetch departments
+    //  Fetch departments
     const deptRes = await masterApiService.getAllDepartments();
     const deptApiData = Array.isArray(deptRes.data)
       ? deptRes.data
@@ -39,7 +39,7 @@ const mappedPositions = mapPositionsFromApi(positionApiData);
       deptMap[d.departmentId] = d.departmentName;
     });
 
-    // 3️⃣ Fetch job grades
+    //  Fetch job grades
     const jobGradeRes = await masterApiService.getAllJobGrades();
     const jobGradeApiData = Array.isArray(jobGradeRes.data)
       ? jobGradeRes.data
@@ -47,7 +47,7 @@ const mappedPositions = mapPositionsFromApi(positionApiData);
 
     const jobGradeMap = buildJobGradeMap(jobGradeApiData);
 
-    // 4️⃣ Enrich positions
+    //  Enrich positions
     const enrichedPositions = mappedPositions.map(p => ({
       ...p,
       department: deptMap[p.departmentId] || "—",
@@ -96,7 +96,7 @@ const mappedPositions = mapPositionsFromApi(positionApiData);
     toast.success(i18n.t("position:delete_success"));
   };
 
-  // ✅ Download positions template (xlsx)
+  // Download positions template (xlsx)
   const downloadPositionTemplate = async () => {
     try {
       const res = await masterApiService.downloadPositionTemplate();
@@ -117,7 +117,7 @@ const mappedPositions = mapPositionsFromApi(positionApiData);
     }
   };
 
-  // ✅ Bulk add positions (xlsx)
+  //  Bulk add positions (xlsx)
 
 
 const bulkAddPositions = async (file) => {
@@ -128,7 +128,7 @@ const bulkAddPositions = async (file) => {
 
     console.log("API RESPONSE:", res); // logs for 200 & 422
 
-    // ❌ business failure
+    //  business failure
     if (res.success === false) {
       toast.error(res.data);
       return {
@@ -138,7 +138,7 @@ const bulkAddPositions = async (file) => {
       };
     }
   await fetchPositions(); 
-    // ✅ success
+    //  success
     toast.success(res.message || "File uploaded successfully");
 
     return {
@@ -146,7 +146,7 @@ const bulkAddPositions = async (file) => {
     };
 
   } catch (err) {
-    // ❌ network / server error
+    //  network / server error
     console.log("NETWORK ERROR:", err);
 
     const message = "Something went wrong";

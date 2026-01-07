@@ -49,7 +49,7 @@ const openEditModal = (dept) => {
   setIsViewing(false);
   setEditingDeptId(dept.id);
   setFormData({ name: dept.name, description: dept.description || '' });
-  setErrors({});                 // ✅ CLEAR OLD ERRORS
+  setErrors({});                 //  CLEAR OLD ERRORS
   setActiveTab('manual');
   setShowAddModal(true);
 };
@@ -58,7 +58,7 @@ const openViewModal = (dept) => {
   setIsViewing(true);
   setIsEditing(false);
   setFormData({ name: dept.name, description: dept.description || '' });
-  setErrors({});                 // ✅ CLEAR OLD ERRORS
+  setErrors({});                 //  CLEAR OLD ERRORS
   setActiveTab('manual');  
   setShowAddModal(true);
 };
@@ -67,7 +67,7 @@ const openViewModal = (dept) => {
   const handleSave = async (e) => {
   e.preventDefault();
 
-  // ✅ TRIM ALL STRING FIELDS (ltrim + rtrim)
+  //  TRIM ALL STRING FIELDS (ltrim + rtrim)
   const trimmedFormData = Object.fromEntries(
     Object.entries(formData).map(([key, value]) => [
       key,
@@ -116,7 +116,7 @@ const openViewModal = (dept) => {
   onChange={(e) => {
     const value = e.target.value;
 
-    // ✅ allow alphabets, numbers, @, and space
+    //  allow alphabets, numbers, @, and space
     if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
       return; // block invalid characters
     }
@@ -163,7 +163,7 @@ const openViewModal = (dept) => {
             [name]: value
           }));
 
-          // ✅ clear error for this field only
+          //  clear error for this field only
           setErrors(prev => ({
             ...prev,
             [name]: ''
@@ -173,7 +173,7 @@ const openViewModal = (dept) => {
         handleSave={handleSave}
         t={t}
 
-        // ✅ ADD THIS
+        //  ADD THIS
         onSuccess={() => {
           fetchDepartments();     // refresh list immediately
           setShowAddModal(false); // ensure modal closes

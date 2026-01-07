@@ -123,7 +123,7 @@ const GenericOrAnnexuresFormModal = ({
   const file = e.target.files?.[0];
   if (!file) return;
 
-  // ❌ file too large
+  //  file too large
   if (file.size > MAX_PDF_SIZE) {
     setErrors(prev => ({
       ...prev,
@@ -145,7 +145,7 @@ const GenericOrAnnexuresFormModal = ({
     return;
   }
 
-  // ✅ valid file
+  //  valid file
   handleInputChange({
     target: {
       name: "file",

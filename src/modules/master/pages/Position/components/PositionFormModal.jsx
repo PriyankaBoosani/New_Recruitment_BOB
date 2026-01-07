@@ -46,7 +46,7 @@ const PositionFormModal = ({
   handleInputChange,
   handleSave,
 
-  /* ✅ DEFAULTS ADDED */
+  /*  DEFAULTS ADDED */
   departments = [],
   jobGrades = [],
  fetchPositions,
@@ -518,7 +518,7 @@ const PositionFormModal = ({
               t={t}
               onClose={onHide}
               onSuccess={async () => {
-                await fetchPositions();   // 🔥 THIS is the key
+                await fetchPositions();   //  THIS is the key
                 setActiveTab("manual");
               }}
             />

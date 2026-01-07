@@ -62,7 +62,7 @@ const DocumentFormModal = ({
       </Modal.Header>
 
       <Modal.Body className="p-4">
-        {/* ✅ Manual Entry Form – shown by default */}
+        {/*  Manual Entry Form – shown by default */}
        <Form
   onSubmit={
     isViewing

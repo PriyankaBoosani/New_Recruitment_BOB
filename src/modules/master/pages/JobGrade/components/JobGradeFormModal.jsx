@@ -11,6 +11,12 @@ import {
 
 
 
+const formatSalary = (value) => {
+  if (!value) return "";
+  const raw = String(value).replace(/,/g, "");
+  if (isNaN(raw)) return "";
+  return Number(raw).toLocaleString("en-IN"); // Indian format
+};
 
 
 const JobGradeFormModal = ({
@@ -172,23 +178,25 @@ onChange={(e) =>
       {formData.minSalary || "-"}
     </div>
   ) : (
-   <Form.Control
+<Form.Control
   name="minSalary"
-  value={formData.minSalary || ""}
+  value={formatSalary(formData.minSalary)}
   className="form-control-custom"
   placeholder={t("jobGrade:enter_min_salary")}
- onChange={(e) =>
-  handleValidatedInput({
-    e,
-    fieldName: "minSalary",
-    setFormData,
-    setErrors,
-    pattern: INPUT_PATTERNS.NUMBERS_ONLY,
-    errorMessage: t("validation:invalid_salary")
-  })
-}
+  onChange={(e) => {
+    const rawValue = e.target.value.replace(/,/g, "").replace(/\D/g, "");
 
+    handleValidatedInput({
+      e: { target: { value: rawValue } },
+      fieldName: "minSalary",
+      setFormData,
+      setErrors,
+      pattern: INPUT_PATTERNS.NUMBERS_ONLY,
+      errorMessage: t("validation:invalid_salary")
+    });
+  }}
 />
+
 
   )}
 
@@ -208,41 +216,23 @@ onChange={(e) =>
       {formData.maxSalary || "-"}
     </div>
   ) : (
-   <Form.Control
+ <Form.Control
   name="maxSalary"
-  value={formData.maxSalary || ""}
+  value={formatSalary(formData.maxSalary)}
   className="form-control-custom"
   placeholder={t("jobGrade:enter_max_salary")}
-  onChange={(e) =>
-  handleValidatedInput({
-    e,
-    fieldName: "maxSalary",
-    setFormData,
-    setErrors,
-    pattern: INPUT_PATTERNS.NUMBERS_ONLY,
-    errorMessage: t("validation:invalid_salary"),
-    onValidChange: (value) => {
-      // update value
-      setFormData(prev => ({
-        ...prev,
-        maxSalary: value
-      }));
+  onChange={(e) => {
+    const rawValue = e.target.value.replace(/,/g, "").replace(/\D/g, "");
 
-      // additional validation
-      // if (
-      //   formData.minSalary &&
-      //   value &&
-      //   Number(value) <= Number(formData.minSalary)
-      // ) {
-      //   setErrors(prev => ({
-      //     ...prev,
-      //     maxSalary: t("validation:max_salary_greater")
-      //   }));
-      // }
-    }
-  })
-}
-
+    handleValidatedInput({
+      e: { target: { value: rawValue } },
+      fieldName: "maxSalary",
+      setFormData,
+      setErrors,
+      pattern: INPUT_PATTERNS.NUMBERS_ONLY,
+      errorMessage: t("validation:invalid_salary")
+    });
+  }}
 />
 
   )}

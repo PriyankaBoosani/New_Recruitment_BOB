@@ -5,7 +5,7 @@ import ErrorMessage from '../../../../../shared/components/ErrorMessage';
 
 const InterviewPanelFormModal = ({
   show, onHide, formData, setFormData, errors,
-  communityOptions, membersOptions, panels,   // 👈 add panels
+  communityOptions, membersOptions, panels,   //  add panels
   editAssignedMembers, isEditing, isViewing, onSave, t
 }) => {
   const [activeTab, setActiveTab] = useState('manual');

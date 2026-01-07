@@ -15,7 +15,7 @@ const fetchUsers = async () => {
     const res = await masterApiService.getRegister();
     const list = mapUsersFromApi(res || []);
 
-    // ✅ Newest first (highest id on top)
+    // Newest first (highest id on top)
     list.sort((a, b) => Number(b.id) - Number(a.id));
 
     setUsers(list);

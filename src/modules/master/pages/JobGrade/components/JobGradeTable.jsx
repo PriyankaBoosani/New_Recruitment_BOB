@@ -26,6 +26,14 @@ const JobGradeTable = ({
     )
   );
 
+  const formatSalary = (value) => {
+  if (value === null || value === undefined || value === "") return "-";
+  const raw = String(value).replace(/,/g, "");
+  if (isNaN(raw)) return "-";
+  return Number(raw).toLocaleString("en-IN"); // Indian format
+};
+
+
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
   const current = filtered.slice(indexOfFirst, indexOfLast);
@@ -54,8 +62,9 @@ const JobGradeTable = ({
                   <td>{indexOfFirst + idx + 1}</td>
                   <td>{g.scale}</td>
                   <td>{g.gradeCode}</td>
-                  <td>{g.minSalary}</td>
-                  <td>{g.maxSalary}</td>
+                 <td>{formatSalary(g.minSalary)}</td>
+<td>{formatSalary(g.maxSalary)}</td>
+
                   <td>{g.description}</td>
                   <td>
                     <div className="action-buttons">

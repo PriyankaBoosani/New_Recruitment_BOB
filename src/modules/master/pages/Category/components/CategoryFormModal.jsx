@@ -22,7 +22,7 @@ const CategoryFormModal = ({
   onUpdate,
   onImport,
 
-  // ✅ IMPORTANT: pass categories list from parent
+  //  IMPORTANT: pass categories list from parent
   categories = [],
     ...importProps
 }) => {
@@ -62,7 +62,7 @@ const CategoryFormModal = ({
 //     [name]: value
 //   }));
 
-//   // ✅ clear error for this field only
+//   //  clear error for this field only
 //   if (errors[name]) {
 //     setErrors(prev => ({
 //       ...prev,
@@ -91,7 +91,7 @@ const CategoryFormModal = ({
     console.log('categories:', categories);
     const { valid, errors: vErrors } = validateCategoryForm(formData, {
       existing: categories,
-      currentId: isEditing ? editingCategory?.id : null   // 🔥 THIS LINE FIXES IT
+      currentId: isEditing ? editingCategory?.id : null   //  THIS LINE FIXES IT
     });
 
     if (!valid) {

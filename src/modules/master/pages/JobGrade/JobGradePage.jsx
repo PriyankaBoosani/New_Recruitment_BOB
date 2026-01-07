@@ -61,7 +61,7 @@ const JobGradePage = () => {
     maxSalary: '',
     description: ''
   });
-  setErrors({});              // ✅ CLEAR OLD ERRORS
+  setErrors({});              //  CLEAR OLD ERRORS
   setActiveTab('manual');
   setShowAddModal(true);
 };
@@ -104,7 +104,7 @@ const JobGradePage = () => {
     maxSalary: row.maxSalary ?? '',
     description: row.description ?? ''
   });
-  setErrors({});              // ✅ CLEAR OLD ERRORS
+  setErrors({});              //  CLEAR OLD ERRORS
   setActiveTab('manual');
   setShowAddModal(true);
 };
@@ -166,7 +166,7 @@ const JobGradePage = () => {
   onChange={(e) => {
     const value = e.target.value;
 
-    // ✅ allow alphabets, numbers, @, and space
+    //  allow alphabets, numbers, @, and space
     if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
       return; // block invalid characters
     }
@@ -213,7 +213,7 @@ const JobGradePage = () => {
             [name]: value
           }));
 
-          // ✅ clear error for this field only
+          //  clear error for this field only
           setErrors(prev => ({
             ...prev,
             [name]: ''

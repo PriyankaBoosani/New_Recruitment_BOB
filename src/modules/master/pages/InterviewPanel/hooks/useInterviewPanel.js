@@ -72,7 +72,7 @@ const handleSave = async (isEditing, editingId) => {
     )[0];
 
     if (isEditing) {
-      // ✅ UPDATE IN PLACE
+      //  UPDATE IN PLACE
       setPanels(prev =>
         prev.map(p =>
           String(p.id) === String(editingId)
@@ -82,7 +82,7 @@ const handleSave = async (isEditing, editingId) => {
       );
       toast.success(t("interviewPanel:interviewPanelUpdated"));
     } else {
-      // ✅ ADD ON TOP
+      //  ADD ON TOP
       setPanels(prev => [uiItem, ...prev]);
       toast.success(t("interviewPanel:interviewPanelAdded"));
     }

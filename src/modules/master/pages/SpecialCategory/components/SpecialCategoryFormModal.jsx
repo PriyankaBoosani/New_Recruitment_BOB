@@ -34,7 +34,7 @@ const SpecialCategoryFormModal = ({
 //     [name]: value
 //   }));
 
-//   // ✅ clear error for this field only
+//   //  clear error for this field only
 //   if (errors[name]) {
 //     setErrors(prev => ({
 //       ...prev,

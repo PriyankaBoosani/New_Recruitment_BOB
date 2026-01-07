@@ -28,7 +28,7 @@ export const useSpecialCategories = () => {
 
       const mapped = mapSpecialCategoriesFromApi(apiList);
 
-      // ✅ THIS LINE FIXES REFRESH ORDER
+      //  THIS LINE FIXES REFRESH ORDER
       setCategories(
         mapped.sort(
           (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
@@ -60,7 +60,7 @@ export const useSpecialCategories = () => {
       res?.data?.data ?? res?.data
     );
 
-    // ✅ ADD TO TOP (NO WAIT)
+    //  ADD TO TOP (NO WAIT)
     setCategories(prev => [newItem, ...prev]);
 
     toast.success(
@@ -128,7 +128,7 @@ export const useSpecialCategories = () => {
 
       console.log("API RESPONSE:", res); // logs for 200 & 422
 
-      // ❌ business failure
+      //  business failure
       if (res.success === false) {
         toast.error(res.message);
         return {
@@ -137,7 +137,7 @@ export const useSpecialCategories = () => {
           details: res.data || []
         };
       }
-      // ✅ success
+      //  success
       toast.success(res.message || "File uploaded successfully");
 
       return {
@@ -145,7 +145,7 @@ export const useSpecialCategories = () => {
       };
 
     } catch (err) {
-      // ❌ network / server error
+      //  network / server error
       console.log("NETWORK ERROR:", err);
 
       const message = "Something went wrong";

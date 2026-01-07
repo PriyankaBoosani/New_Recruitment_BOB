@@ -121,10 +121,10 @@ const SpecialCategoryPage = () => {
     );
 
     if (isEditing) {
-      // ✅ EDIT → update existing row
+      //  EDIT → update existing row
       updateCategory(editingId, payload);
     } else {
-      // ✅ ADD → create new row
+      //  ADD → create new row
       addCategory(payload);
     }
 
@@ -209,7 +209,7 @@ const SpecialCategoryPage = () => {
         removeCSV={() => setSelectedCSVFile(null)}
         removeXLSX={() => setSelectedXLSXFile(null)}
         t={t}
-              // ✅ ADD THIS
+              //  ADD THIS
         onSuccess={() => {
           fetchCategories();     // refresh list immediately
           setShowModal(false); // ensure modal closes

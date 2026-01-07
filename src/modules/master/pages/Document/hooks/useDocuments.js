@@ -26,7 +26,7 @@ export const useDocuments = () => {
 
       const mapped = mapDocumentsFromApi(list);
 
-      // 🔥 newest first
+      //  newest first
       const sorted = [...mapped].sort(
         (a, b) => Number(b.id) - Number(a.id)
       );
@@ -49,7 +49,7 @@ export const useDocuments = () => {
 
       const newItem = mapDocumentFromApi(res.data);
 
-      // ✅ add on top instantly (NO refetch)
+      //  add on top instantly (NO refetch)
       setDocuments(prev => [newItem, ...prev]);
 
       toast.success(t("documents:document_added_successfully"));
@@ -69,7 +69,7 @@ export const useDocuments = () => {
 
       toast.success(t("documents:document_updated_successfully"));
 
-      // ✅ update in same position
+      //  update in same position
       setDocuments(prev =>
         prev.map(d =>
           String(d.id) === String(id)
@@ -92,7 +92,7 @@ export const useDocuments = () => {
 
       toast.success(t("documents:document_deleted_successfully"));
 
-      // ✅ remove instantly
+      //  remove instantly
       setDocuments(prev => prev.filter(d => d.id !== id));
     } catch (error) {
       toast.error(
@@ -115,7 +115,7 @@ export const useDocuments = () => {
 
       toast.success(res.message || "File uploaded successfully");
 
-      // 🔥 refresh after bulk import ONLY
+      //  refresh after bulk import ONLY
       await fetchDocuments();
 
       return { success: true };

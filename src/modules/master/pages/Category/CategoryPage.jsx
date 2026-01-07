@@ -110,7 +110,7 @@ const CategoryPage = () => {
         onImport={importCategories}
         categories={categories}
 
-           // ✅ ADD THIS
+           //  ADD THIS
         onSuccess={() => {
         
           fetchCategories(); 

@@ -75,8 +75,8 @@ const DocumentPage = () => {
   };
 
   const openEditModal = (doc) => {
-    setIsViewing(false);     // ✅ RESET VIEW MODE
-  setIsEditing(true);      // ✅ ENABLE EDIT MODE
+    setIsViewing(false);     //  RESET VIEW MODE
+  setIsEditing(true);      //  ENABLE EDIT MODE
     setEditingId(doc.id);
     setFormData({ name: doc.name, description: doc.description });
     setErrors({});

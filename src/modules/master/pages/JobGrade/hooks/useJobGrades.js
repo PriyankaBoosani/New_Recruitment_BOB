@@ -32,7 +32,6 @@ export const useJobGrades = () => {
     fetchJobGrades();
   }, []);
 
-  /* ================= ADD ================= */
   const addJobGrade = async (payload) => {
     try {
       await masterApiService.addJobGrade(payload);
@@ -43,7 +42,6 @@ export const useJobGrades = () => {
     }
   };
 
-  /* ================= UPDATE ================= */
   const updateJobGrade = async (id, payload) => {
     try {
       await masterApiService.updateJobGrade(id, payload);
@@ -54,7 +52,7 @@ export const useJobGrades = () => {
     }
   };
 
-  /* ================= DELETE ================= */
+ 
   const deleteJobGrade = async (id) => {
     try {
       await masterApiService.deleteJobGrade(id);
@@ -65,9 +63,7 @@ export const useJobGrades = () => {
     }
   };
 
-    /* =========================
-     DOWNLOAD TEMPLATE
-  ========================= */
+
   const downloadJobGradeTemplate = async () => {
     try {
       const res = await masterApiService.downloadJobGradeTemplate();
@@ -89,9 +85,7 @@ export const useJobGrades = () => {
     }
   };
 
-  /* =========================
-     BULK IMPORT
-  ========================= */
+
   const bulkAddJobGrades = async (file) => {
      setLoading(true);
     try {
@@ -99,7 +93,7 @@ export const useJobGrades = () => {
 
        console.log("API RESPONSE:", res); // logs for 200 & 422
 
-    // ❌ business failure
+    //  business failure
     if (res.success === false) {
       toast.error(res.message);
       return {
@@ -108,7 +102,7 @@ export const useJobGrades = () => {
         details: res.data || []
       };
     }
-    // ✅ success
+    // success
     toast.success(res.message || "File uploaded successfully");
 
     return {
@@ -116,7 +110,7 @@ export const useJobGrades = () => {
     };
 
   } catch (err) {
-    // ❌ network / server error
+    //  network / server error
     console.log("NETWORK ERROR:", err);
 
     const message = "Something went wrong";

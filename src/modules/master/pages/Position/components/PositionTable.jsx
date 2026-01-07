@@ -16,7 +16,7 @@ const PositionTable = ({
 }) => {
   const itemsPerPage = 7;
 
-  /* ✅ FILTER (NO UUID FILTERING) */
+  /*  FILTER (NO UUID FILTERING) */
   const filtered = !searchTerm
     ? data
     : data.filter(

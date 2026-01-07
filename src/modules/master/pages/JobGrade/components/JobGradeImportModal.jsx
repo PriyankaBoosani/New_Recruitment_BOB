@@ -12,7 +12,7 @@ const JobGradeImportModal = ({
 }) => {
   const { t } = useTranslation(["jobGrade"]);
 
-  // ✅ SAME PATTERN AS CATEGORY
+  //  SAME PATTERN AS CATEGORY
   const {
     bulkAddJobGrades,
     downloadJobGradeTemplate,

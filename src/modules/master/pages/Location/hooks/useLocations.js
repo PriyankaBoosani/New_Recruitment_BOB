@@ -57,21 +57,21 @@ export const useLocations = () => {
     }
   }, [cities]);
   
-  // ➕ Add
+  //  Add
 const addLocation = async (payload) => {
   await masterApiService.addLocation(mapLocationToApi(payload));
   await fetchLocations();
   toast.success(i18n.t("add_success", { ns: "location" }));
 };
 
-// ✏ Update
+//  Update
 const updateLocation = async (id, payload) => {
   await masterApiService.updateLocation(id, mapLocationToApi(payload));
   await fetchLocations();
   toast.success(i18n.t("update_success", { ns: "location" }));
 };
 
-// ❌ Delete
+//  Delete
 const deleteLocation = async (id) => {
   await masterApiService.deleteLocation(id);
   await fetchLocations();
@@ -113,7 +113,7 @@ const bulkAddLocations = async (file) => {
 
       console.log("API RESPONSE:", res); // logs for 200 & 422
 
-      // ❌ business failure
+      //  business failure
       if (res.success === false) {
         toast.error(res.message);
         return {
@@ -121,7 +121,7 @@ const bulkAddLocations = async (file) => {
           error: res.message
         };
       }
-      // ✅ success
+      //  success
       toast.success(res.message || "File uploaded successfully");
 
       return {
@@ -129,7 +129,7 @@ const bulkAddLocations = async (file) => {
       };
 
     } catch (err) {
-      // ❌ network / server error
+      //  network / server error
       console.log("NETWORK ERROR:", err);
 
       const message = "Something went wrong";
