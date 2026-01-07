@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import ErrorMessage from "../../../../../shared/components/ErrorMessage";
 import LocationImportModal from "./LocationImportModal";
-import { handleAlphaNumericSpaceInput } 
-  from "../../../../../shared/utils/inputHandlers";
+import {
+  handleValidatedInput,
+  INPUT_PATTERNS
+} from "../../../../../shared/utils/inputHandlers";
+
 
 
 const LocationFormModal = ({
@@ -189,15 +192,17 @@ const LocationFormModal = ({
   placeholder={t("enter_location_name")}
   className="form-control-custom"
   onChange={(e) =>
-    handleAlphaNumericSpaceInput({
+    handleValidatedInput({
       e,
       fieldName: "name",
       setFormData,
       setErrors,
+      pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
       errorMessage: t("validation:invalid_location_name")
     })
   }
 />
+
 
 
 

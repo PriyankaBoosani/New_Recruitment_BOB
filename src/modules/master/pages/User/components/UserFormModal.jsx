@@ -7,6 +7,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { handleAlphaSpaceInput } from '../../../../../shared/utils/inputHandlers';
 
+import {
+  handleValidatedInput,
+  INPUT_PATTERNS
+} from "../../../../../shared/utils/inputHandlers";
+
+
 
 
 const EMPTY_FORM = {  
@@ -101,20 +107,24 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
 
        <Col md={6}>
   <Form.Label>{t("fullName")} *</Form.Label>
-
 <Form.Control
   name="fullName"
   value={formData.fullName}
   onChange={(e) =>
-    handleAlphaSpaceInput({
+    handleValidatedInput({
       e,
       fieldName: "fullName",
-      setFormData,
       setErrors,
-      errorMessage: t("validation:no_special_chars")
+      pattern: INPUT_PATTERNS.ALPHA_SPACE,
+      errorMessage: t("validation:no_special_chars"),
+      onValidChange: (value) =>
+        handleInputChange({
+          target: { name: "fullName", value }
+        })
     })
   }
 />
+
 
 
 

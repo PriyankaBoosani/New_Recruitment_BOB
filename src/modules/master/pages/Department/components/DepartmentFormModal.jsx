@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import ErrorMessage from '../../../../../shared/components/ErrorMessage';
 import DepartmentImportView from '../components/DepartmentImportModal';
-import { handleAlphaNumericSpaceInput, handleTextAreaInput } 
+import { handleValidatedInput, INPUT_PATTERNS } 
 from '../../../../../shared/utils/inputHandlers';
 
 
@@ -73,22 +73,23 @@ const DepartmentFormModal = ({
       {formData.name || "-"}
     </div>
   ) : (
- <Form.Control
+<Form.Control
   name="name"
   value={formData.name}
   className="form-control-custom"
   placeholder={t("department:enterName")}
-onChange={(e) =>
-  handleAlphaNumericSpaceInput({
-    e,
-    fieldName: "name",
-    setFormData,
-    setErrors,
-    errorMessage: t("validation:no_special_charss")
-  })
-}
-
+  onChange={(e) =>
+    handleValidatedInput({
+      e,
+      fieldName: "name",
+      setFormData,
+      setErrors,
+      pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at,
+      errorMessage: t("validation:no_special_charss")
+    })
+  }
 />
+
 
 
 

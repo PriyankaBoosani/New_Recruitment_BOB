@@ -8,6 +8,11 @@ import {
   handleTextAreaInput,
   handleNumberOnlyInput
 } from "../../../../../shared/utils/inputHandlers";
+import {
+  handleValidatedInput,
+  INPUT_PATTERNS
+} from "../../../../../shared/utils/inputHandlers";
+
 
 
 const PositionFormModal = ({
@@ -106,24 +111,26 @@ const PositionFormModal = ({
     {formData.title || "-"}
   </div>
 ) : (
-  <Form.Control
-    name="title"
-    value={formData.title}
-    placeholder={t("enter_position_title")}
-    className="form-control-custom"
- onChange={(e) =>
-  handleAlphaNumericSpaceInput({
-    e,
-    fieldName: "title",
-    setFormData: (updater) => handleInputChange({
-      target: { name: "title", value: updater().title }
-    }),
-    setErrors,
-    errorMessage: t("validation:only_alpha_numeric")
-  })
-}
+<Form.Control
+  name="title"
+  value={formData.title}
+  placeholder={t("enter_position_title")}
+  className="form-control-custom"
+  onChange={(e) =>
+    handleValidatedInput({
+      e,
+      fieldName: "title",
+      setErrors,
+      pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_DASH_AMP,
+      errorMessage: t("validation:only_alpha_numeric"),
+      onValidChange: (value) =>
+        handleInputChange({
+          target: { name: "title", value }
+        })
+    })
+  }
+/>
 
-  />
 )}
 
 {!isViewing && <ErrorMessage>{errors.title}</ErrorMessage>}
@@ -258,26 +265,28 @@ const PositionFormModal = ({
       {formData.mandatoryExperience || "-"}
     </div>
   ) : (
-    <Form.Control
-      as="textarea"
-      rows={2}
-      name="mandatoryExperience"
-      value={formData.mandatoryExperience}
-      placeholder={t("enter_mandatory_experience")}
-      className="form-control-custom"
+   <Form.Control
+  as="textarea"
+  rows={2}
+  name="mandatoryExperience"
+  value={formData.mandatoryExperience}
+  placeholder={t("enter_mandatory_experience")}
+  className="form-control-custom"
   onChange={(e) =>
-  handleTextAreaInput({
-    e,
-    fieldName: "mandatoryExperience",
-    setFormData: (updater) => handleInputChange({
-      target: { name: "mandatoryExperience", value: updater().mandatoryExperience }
-    }),
-    setErrors,
-    errorMessage: t("validation:invalid_mandatory_experience")
-  })
-}
+    handleValidatedInput({
+      e,
+      fieldName: "mandatoryExperience",
+      setErrors,
+      pattern: INPUT_PATTERNS.TEXTAREA_BASIC,
+      errorMessage: t("validation:invalid_mandatory_experience"),
+      onValidChange: (value) =>
+        handleInputChange({
+          target: { name: "mandatoryExperience", value }
+        })
+    })
+  }
+/>
 
-    />
   )}
 
   {!isViewing && <ErrorMessage>{errors.mandatoryExperience}</ErrorMessage>}
@@ -303,19 +312,21 @@ const PositionFormModal = ({
   value={formData.preferredExperience}
   placeholder={t("enter_preferred_experience")}
   className="form-control-custom"
-onChange={(e) =>
-  handleTextAreaInput({
-    e,
-    fieldName: "preferredExperience",
-    setFormData: (updater) => handleInputChange({
-      target: { name: "preferredExperience", value: updater().preferredExperience }
-    }),
-    setErrors,
-    errorMessage: t("validation:invalid_preferred_experience")
-  })
-}
-
+  onChange={(e) =>
+    handleValidatedInput({
+      e,
+      fieldName: "preferredExperience",
+      setErrors,
+      pattern: INPUT_PATTERNS.TEXTAREA_BASIC,
+      errorMessage: t("validation:invalid_preferred_experience"),
+      onValidChange: (value) =>
+        handleInputChange({
+          target: { name: "preferredExperience", value }
+        })
+    })
+  }
 />
+
 
   )}
 
@@ -335,26 +346,28 @@ onChange={(e) =>
       {formData.mandatoryEducation || "-"}
     </div>
   ) : (
-   <Form.Control
+ <Form.Control
   as="textarea"
   rows={2}
   name="mandatoryEducation"
   value={formData.mandatoryEducation}
   placeholder={t("enter_mandatory_education")}
   className="form-control-custom"
-onChange={(e) =>
-  handleTextAreaInput({
-    e,
-    fieldName: "mandatoryEducation",
-    setFormData: (updater) => handleInputChange({
-      target: { name: "mandatoryEducation", value: updater().mandatoryEducation }
-    }),
-    setErrors,
-    errorMessage: t("validation:invalid_mandatory_education")
-  })
-}
-
+  onChange={(e) =>
+    handleValidatedInput({
+      e,
+      fieldName: "mandatoryEducation",
+      setErrors,
+      pattern: INPUT_PATTERNS.TEXTAREA_BASIC,
+      errorMessage: t("validation:invalid_mandatory_education"),
+      onValidChange: (value) =>
+        handleInputChange({
+          target: { name: "mandatoryEducation", value }
+        })
+    })
+  }
 />
+
 
   )}
 
@@ -374,26 +387,28 @@ onChange={(e) =>
       {formData.preferredEducation || "-"}
     </div>
   ) : (
-    <Form.Control
-      as="textarea"
-      rows={2}
-      name="preferredEducation"
-      value={formData.preferredEducation}
-      placeholder={t("enter_preferred_education")}
-      className="form-control-custom"
-   onChange={(e) =>
-  handleTextAreaInput({
-    e,
-    fieldName: "preferredEducation",
-    setFormData: (updater) => handleInputChange({
-      target: { name: "preferredEducation", value: updater().preferredEducation }
-    }),
-    setErrors,
-    errorMessage: t("validation:invalid_preferred_education")
-  })
-}
+   <Form.Control
+  as="textarea"
+  rows={2}
+  name="preferredEducation"
+  value={formData.preferredEducation}
+  placeholder={t("enter_preferred_education")}
+  className="form-control-custom"
+  onChange={(e) =>
+    handleValidatedInput({
+      e,
+      fieldName: "preferredEducation",
+      setErrors,
+      pattern: INPUT_PATTERNS.TEXTAREA_BASIC,
+      errorMessage: t("validation:invalid_preferred_education"),
+      onValidChange: (value) =>
+        handleInputChange({
+          target: { name: "preferredEducation", value }
+        })
+    })
+  }
+/>
 
-    />
   )}
 
   {!isViewing && <ErrorMessage>{errors.preferredEducation}</ErrorMessage>}
@@ -416,26 +431,28 @@ onChange={(e) =>
       {formData.rolesResponsibilities || "-"}
     </div>
   ) : (
-    <Form.Control
-      as="textarea"
-      rows={2}
-      name="rolesResponsibilities"
-      value={formData.rolesResponsibilities}
-      placeholder={t("enter_roles_responsibilities")}
-      className="form-control-custom"
-      onChange={(e) =>
-  handleTextAreaInput({
-    e,
-    fieldName: "rolesResponsibilities",
-    setFormData: (updater) => handleInputChange({
-      target: { name: "rolesResponsibilities", value: updater().rolesResponsibilities }
-    }),
-    setErrors,
-    errorMessage: t("validation:invalid_roles_responsibilities")
-  })
-}
+   <Form.Control
+  as="textarea"
+  rows={2}
+  name="rolesResponsibilities"
+  value={formData.rolesResponsibilities}
+  placeholder={t("enter_roles_responsibilities")}
+  className="form-control-custom"
+  onChange={(e) =>
+    handleValidatedInput({
+      e,
+      fieldName: "rolesResponsibilities",
+      setErrors,
+      pattern: INPUT_PATTERNS.TEXTAREA_BASIC,
+      errorMessage: t("validation:invalid_roles_responsibilities"),
+      onValidChange: (value) =>
+        handleInputChange({
+          target: { name: "rolesResponsibilities", value }
+        })
+    })
+  }
+/>
 
-    />
   )}
 
   {!isViewing && (

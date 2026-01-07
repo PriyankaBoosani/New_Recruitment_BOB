@@ -1,5 +1,8 @@
 // src/modules/master/pages/Category/components/CategoryFormModal.jsx
-import { handleGlobalInputChange } from "../../../../../shared/utils/inputHandlers";
+import {
+  handleValidatedInput,
+  INPUT_PATTERNS
+} from "../../../../../shared/utils/inputHandlers";
 
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
@@ -68,15 +71,15 @@ const CategoryFormModal = ({
 //   }
 // };
 
-const handleInputChange = (e) => {
-  handleGlobalInputChange({
-    e,
-    setFormData,
-    errors,
-    setErrors,
-    t
-  });
-};
+// const handleInputChange = (e) => {
+//   handleGlobalInputChange({
+//     e,
+//     setFormData,
+//     errors,
+//     setErrors,
+//     t
+//   });
+// };
 
 
 
@@ -186,13 +189,23 @@ const handleInputChange = (e) => {
                   {formData.code || "-"}
                 </div>
               ) : (
-                <Form.Control
-                  name="code"
-                  value={formData.code}
-                  placeholder={t("enter_code")}
-                  onChange={handleInputChange}
-                  className="form-control-custom"
-                />
+              <Form.Control
+  name="code"
+  value={formData.code}
+  placeholder={t("enter_code")}
+  className="form-control-custom"
+  onChange={(e) =>
+    handleValidatedInput({
+      e,
+      fieldName: "code",
+      setFormData,
+      setErrors,
+      pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
+      errorMessage: t("validation:no_special_chars")
+    })
+  }
+/>
+
               )}
               {!isViewing && <ErrorMessage>{errors.code}</ErrorMessage>}
 
@@ -207,13 +220,23 @@ const handleInputChange = (e) => {
                 {formData.name || "-"}
               </div>
             ) : (
-              <Form.Control
-                name="name"
-                value={formData.name}
-                placeholder={t("enter_name")}
-                onChange={handleInputChange}
-                className="form-control-custom"
-              />
+             <Form.Control
+  name="name"
+  value={formData.name}
+  placeholder={t("enter_name")}
+  className="form-control-custom"
+  onChange={(e) =>
+    handleValidatedInput({
+      e,
+      fieldName: "name",
+      setFormData,
+      setErrors,
+      pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at,
+      errorMessage: t("validation:no_special_chars")
+    })
+  }
+/>
+
             )}
             {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
 
@@ -232,15 +255,25 @@ const handleInputChange = (e) => {
                   {formData.description || "-"}
                 </div>
               ) : (
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  name="description"
-                  value={formData.description}
-                  placeholder={t("enter_description")}
-                  onChange={handleInputChange}
-                  className="form-control-custom"
-                />
+               <Form.Control
+  as="textarea"
+  rows={3}
+  name="description"
+  value={formData.description}
+  placeholder={t("enter_description")}
+  className="form-control-custom"
+  onChange={(e) =>
+    handleValidatedInput({
+      e,
+      fieldName: "description",
+      setFormData,
+      setErrors,
+      pattern: INPUT_PATTERNS.TEXTAREA_BASIC,
+      errorMessage: t("validation:no_special_chars")
+    })
+  }
+/>
+
               )}
               {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
 

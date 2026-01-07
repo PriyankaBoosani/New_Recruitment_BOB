@@ -5,11 +5,10 @@ import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import ErrorMessage from '../../../../../shared/components/ErrorMessage';
 import JobGradeImportModal from './JobGradeImportModal';
 import {
-  handleAlphaSpaceInput,
-  handleAlphaNumericSpaceInput,
-  handleTextAreaInput,
-  handleNumberOnlyInput
-} from '../../../../../shared/utils/inputHandlers';
+  handleValidatedInput,
+  INPUT_PATTERNS
+} from "../../../../../shared/utils/inputHandlers";
+
 
 
 
@@ -104,14 +103,16 @@ const JobGradeFormModal = ({
   className="form-control-custom"
   placeholder={t("jobGrade:enter_scale")}
 onChange={(e) =>
-  handleAlphaNumericSpaceInput({
+  handleValidatedInput({
     e,
     fieldName: "scale",
     setFormData,
     setErrors,
+    pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
     errorMessage: t("validation:invalid_scale")
   })
 }
+
 
 />
 
@@ -139,15 +140,17 @@ onChange={(e) =>
   value={formData.gradeCode || ""}
   className="form-control-custom"
   placeholder={t("jobGrade:enter_grade_code")}
-  onChange={(e) =>
-    handleAlphaNumericSpaceInput({
-      e,
-      fieldName: "gradeCode",
-      setFormData,
-      setErrors,
-      errorMessage: t("validation:invalid_grade_code")
-    })
-  }
+ onChange={(e) =>
+  handleValidatedInput({
+    e,
+    fieldName: "gradeCode",
+    setFormData,
+    setErrors,
+    pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
+    errorMessage: t("validation:invalid_grade_code")
+  })
+}
+
 />
 
 
@@ -174,16 +177,17 @@ onChange={(e) =>
   value={formData.minSalary || ""}
   className="form-control-custom"
   placeholder={t("jobGrade:enter_min_salary")}
-  onChange={(e) =>
-   handleNumberOnlyInput({
-  e,
-  fieldName: "minSalary",
-  setFormData,
-  setErrors,
-  errorMessage: t("validation:invalid_salary")
-})
+ onChange={(e) =>
+  handleValidatedInput({
+    e,
+    fieldName: "minSalary",
+    setFormData,
+    setErrors,
+    pattern: INPUT_PATTERNS.NUMBERS_ONLY,
+    errorMessage: t("validation:invalid_salary")
+  })
+}
 
-  }
 />
 
   )}
@@ -209,28 +213,36 @@ onChange={(e) =>
   value={formData.maxSalary || ""}
   className="form-control-custom"
   placeholder={t("jobGrade:enter_max_salary")}
-  onChange={(e) => {
-   handleNumberOnlyInput({
-  e,
-  fieldName: "maxSalary",
-  setFormData,
-  setErrors,
-  errorMessage: t("validation:invalid_salary")
-})
-
-
-    const value = e.target.value;
-    if (
-      formData.minSalary &&
-      value &&
-      Number(value) <= Number(formData.minSalary)
-    ) {
-      setErrors(prev => ({
+  onChange={(e) =>
+  handleValidatedInput({
+    e,
+    fieldName: "maxSalary",
+    setFormData,
+    setErrors,
+    pattern: INPUT_PATTERNS.NUMBERS_ONLY,
+    errorMessage: t("validation:invalid_salary"),
+    onValidChange: (value) => {
+      // update value
+      setFormData(prev => ({
         ...prev,
-        maxSalary: t("validation:max_salary_greater")
+        maxSalary: value
       }));
+
+      // additional validation
+      // if (
+      //   formData.minSalary &&
+      //   value &&
+      //   Number(value) <= Number(formData.minSalary)
+      // ) {
+      //   setErrors(prev => ({
+      //     ...prev,
+      //     maxSalary: t("validation:max_salary_greater")
+      //   }));
+      // }
     }
-  }}
+  })
+}
+
 />
 
   )}

@@ -4,7 +4,10 @@ import React from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import ErrorMessage from '../../../../../shared/components/ErrorMessage';
 import DocumentImportModal from './DocumentImportModal';
-import { handleGlobalInputChange } from "../../../../../shared/utils/inputHandlers";
+import {
+  handleValidatedInput,
+  INPUT_PATTERNS
+} from "../../../../../shared/utils/inputHandlers";
 
 const DocumentFormModal = ({
   show,
@@ -30,7 +33,7 @@ const DocumentFormModal = ({
 //     [name]: value
 //   }));
 
-//   // ✅ clear error for this field only
+//   //  clear error for this field only
 //   if (errors[name]) {
 //     setErrors(prev => ({
 //       ...prev,
@@ -38,16 +41,16 @@ const DocumentFormModal = ({
 //     }));
 //   }
 // };
-const handleChange = (e) => {
-  handleGlobalInputChange({
-    e,
-    setFormData,
-    errors,
-    setErrors,
-    t,
-    context: "document" // 👈 THIS LINE
-  });
-};
+// const handleChange = (e) => {
+//   handleGlobalInputChange({
+//     e,
+//     setFormData,
+//     errors,
+//     setErrors,
+//     t,
+//     context: "document" // 👈 THIS LINE
+//   });
+// };
 
   return (
    <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
@@ -80,13 +83,23 @@ const handleChange = (e) => {
     {formData.name || '-'}
   </div>
 ) : (
-  <Form.Control
-    name="name"
-    value={formData.name}
-    onChange={handleChange}
-    className="form-control-custom"
-      placeholder={t("enter_document_name")}
-  />
+ <Form.Control
+  name="name"
+  value={formData.name}
+  className="form-control-custom"
+  placeholder={t("enter_document_name")}
+  onChange={(e) =>
+    handleValidatedInput({
+      e,
+      fieldName: "name",
+      setFormData,
+      setErrors,
+      pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
+      errorMessage: t("validation:no_special_chars")
+    })
+  }
+/>
+
 )}
 
 {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
@@ -104,16 +117,30 @@ const handleChange = (e) => {
     {formData.description || '-'}
   </div>
 ) : (
-  <Form.Control
-    as="textarea"
-    rows={3}
-    name="description"
-    value={formData.description}
-    onChange={handleChange}
-    className="form-control-custom"
-    placeholder={t("enter_description")}
+<Form.Control
+  as="textarea"
+  rows={3}
+  name="description"
+  value={formData.description}
+  className="form-control-custom"
+  placeholder={t("enter_description")}
+  onChange={(e) => {
+    const { name, value } = e.target;
 
-  />
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // optional: clear only this field error
+    setErrors(prev => {
+      const copy = { ...prev };
+      delete copy[name];
+      return copy;
+    });
+  }}
+/>
+
 )}
 
 {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
