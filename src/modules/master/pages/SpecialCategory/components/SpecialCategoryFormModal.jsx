@@ -3,13 +3,13 @@ import {
   handleValidatedInput,
   INPUT_PATTERNS
 } from "../../../../../shared/utils/inputHandlers";
-
-
+ 
+ 
 import React from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import ErrorMessage from '../../../../../shared/components/ErrorMessage';
 import SpecialCategoryImportModal from './SpecialCategoryImportModal';
-
+ 
 const SpecialCategoryFormModal = ({
   show,
   onHide,
@@ -28,12 +28,12 @@ const SpecialCategoryFormModal = ({
 }) => {
 //   const handleChange = (e) => {
 //   const { name, value } = e.target;
-
+ 
 //   setFormData(prev => ({
 //     ...prev,
 //     [name]: value
 //   }));
-
+ 
 //   //  clear error for this field only
 //   if (errors[name]) {
 //     setErrors(prev => ({
@@ -51,9 +51,9 @@ const SpecialCategoryFormModal = ({
 //     t
 //   });
 // };
-
-
-
+ 
+ 
+ 
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
       <Modal.Header closeButton className="modal-header-custom">
@@ -65,8 +65,8 @@ const SpecialCategoryFormModal = ({
           ? t("edit")
           : t("added")}
       </Modal.Title>
-
-
+ 
+ 
           <p className="small text-muted para">
               {isViewing
            ? null
@@ -74,7 +74,7 @@ const SpecialCategoryFormModal = ({
           </p>
         </div>
       </Modal.Header>
-
+ 
       <Modal.Body className="p-4">
        {!isEditing && !isViewing && (
           <div className="tab-buttons mb-4">
@@ -85,7 +85,7 @@ const SpecialCategoryFormModal = ({
             >
               {t("manual_entry")}
             </Button>
-
+ 
             <Button
               className={`tab-button ${activeTab === 'import' ? 'active' : ''}`}
               variant={activeTab === 'import' ? 'light' : 'outline-light'}
@@ -95,7 +95,7 @@ const SpecialCategoryFormModal = ({
             </Button>
           </div>
         )}
-
+ 
         {activeTab === 'manual' ? (
          <Form
   onSubmit={
@@ -107,14 +107,14 @@ const SpecialCategoryFormModal = ({
       : handleSave
   }
 >
-
+ 
             <Row className="g-3">
             <Col md={6}>
   <Form.Group>
     <Form.Label>
       {t("code")} <span className="text-danger">*</span>
     </Form.Label>
-
+ 
     {isViewing ? (
       <div className="form-control-view">
         {formData.code || "-"}
@@ -136,20 +136,20 @@ const SpecialCategoryFormModal = ({
     })
   }
 />
-
+ 
     )}
-
+ 
     {!isViewing && <ErrorMessage>{errors.code}</ErrorMessage>}
   </Form.Group>
 </Col>
-
-
+ 
+ 
             <Col md={6}>
   <Form.Group>
     <Form.Label>
       {t("name")} <span className="text-danger">*</span>
     </Form.Label>
-
+ 
     {isViewing ? (
       <div className="form-control-view">
         {formData.name || "-"}
@@ -171,20 +171,20 @@ const SpecialCategoryFormModal = ({
     })
   }
 />
-
+ 
     )}
-
+ 
     {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
   </Form.Group>
 </Col>
-
-
+ 
+ 
              <Col xs={12}>
   <Form.Group>
     <Form.Label>
       {t("description")} <span className="text-danger">*</span>
     </Form.Label>
-
+ 
     {isViewing ? (
       <div
         className="form-control-view"
@@ -202,12 +202,12 @@ const SpecialCategoryFormModal = ({
   className="form-control-custom"
   onChange={(e) => {
     const { name, value } = e.target;
-
+ 
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
-
+ 
     // optional: clear only this field error
     setErrors(prev => {
       const copy = { ...prev };
@@ -216,27 +216,27 @@ const SpecialCategoryFormModal = ({
     });
   }}
 />
-
+ 
     )}
-
+ 
     {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
   </Form.Group>
 </Col>
-
+ 
             </Row>
-
+ 
            <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
   <Button variant="outline-secondary" onClick={onHide}>
     {isViewing ? t("close") : t("cancel")}
   </Button>
-
+ 
   {!isViewing && (
     <Button variant="primary" type="submit">
       {isEditing ? t("update") : t("save")}
     </Button>
   )}
 </Modal.Footer>
-
+ 
           </Form>
         ) : (
           <>
@@ -255,5 +255,5 @@ const SpecialCategoryFormModal = ({
     </Modal>
   );
 };
-
+ 
 export default SpecialCategoryFormModal;

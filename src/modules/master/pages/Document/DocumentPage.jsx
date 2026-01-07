@@ -11,7 +11,7 @@ import DocumentFormModal from './components/DocumentFormModal';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
 
 import { validateDocumentForm } from '../../../../shared/utils/document-validations';
-import { mapDocumentToApi } from './mappers/documentMapper';
+import {mapDocumentToApi } from './mappers/documentMapper';
 import { importFromCSV } from '../../../../shared/components/FileUpload';
 
 const DocumentPage = () => {
@@ -38,7 +38,7 @@ const DocumentPage = () => {
 
   const [activeTab, setActiveTab] = useState('manual');
 
-  const [formData, setFormData] = useState({ name: '', description: '' });
+  const [formData, setFormData] = useState({ name: '', description: '',isRequiredConfirmed: false  });
   const [errors, setErrors] = useState({});
 
   const [selectedCSVFile, setSelectedCSVFile] = useState(null);
@@ -55,7 +55,8 @@ const DocumentPage = () => {
 
   setFormData({
     name: doc.name,
-    description: doc.description || ''
+    description: doc.description || '',
+    isRequiredConfirmed: doc.isRequiredConfirmed ?? false
   });
 
   setErrors({});
@@ -68,51 +69,66 @@ const DocumentPage = () => {
     setIsViewing(false);
     setIsEditing(false);
     setEditingId(null);
-    setFormData({ name: '', description: '' });
+    setFormData({ name: '', description: '', isRequiredConfirmed: false });
     setErrors({});
     setActiveTab('manual');
     setShowAddModal(true);
   };
+
+  
 
   const openEditModal = (doc) => {
     setIsViewing(false);     //  RESET VIEW MODE
   setIsEditing(true);      //  ENABLE EDIT MODE
     setEditingId(doc.id);
-    setFormData({ name: doc.name, description: doc.description });
+    setFormData({
+    name: doc.name,
+    description: doc.description || '',
+    isRequiredConfirmed: doc.isRequiredConfirmed ?? false
+  });
+
     setErrors({});
     setActiveTab('manual');
     setShowAddModal(true);
   };
 
-  const handleSave = async (e) => {
-    e.preventDefault();
 
-    const payload = {
-      name: String(formData.name || '').trim(),
-      description: String(formData.description || '').trim()
-    };
 
-    const { valid, errors: vErrors } = validateDocumentForm(payload, {
-      existing: documents,
-      currentId: isEditing ? editingId : null
-    });
+const handleSave = async (e) => {
+  e.preventDefault();
 
-    if (!valid) {
-      setErrors(vErrors);
-      return;
-    }
 
-    const apiPayload = mapDocumentToApi(payload);
+  
 
-    if (isEditing) {
-      await updateDocument(editingId, apiPayload);
-    } else {
-      await addDocument(apiPayload);
-      setCurrentPage(1);
-    }
-
-    setShowAddModal(false);
+  // 2️⃣ Other validations
+  const payload = {
+    name: formData.name.trim(),
+    description: formData.description.trim(),
+    isRequired: formData.isRequiredConfirmed,
+    isEditable: true,
+    isActive: true
   };
+
+  const { valid, errors: vErrors } = validateDocumentForm(payload, {
+    existing: documents,
+    currentId: isEditing ? editingId : null
+  });
+
+  if (!valid) {
+    setErrors(vErrors);
+    return;
+  }
+  const apiPayload = mapDocumentToApi(payload);
+
+  // 3️⃣ Save
+  if (isEditing) {
+    await updateDocument(editingId, apiPayload);
+  } else {
+    await addDocument(apiPayload);
+  }
+
+  setShowAddModal(false);
+};
 
   const handleImport = async () => {
     await importFromCSV({

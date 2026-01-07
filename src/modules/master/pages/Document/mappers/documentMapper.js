@@ -1,10 +1,17 @@
 // src/modules/master/pages/Document/mappers/documentMapper.js
 import { cleanData } from "../../../../../shared/utils/common-validations";
 // API → UI
+// export const mapDocumentFromApi = (api) => ({
+//   id: api.documentTypeId,
+//   name: api.documentName,
+//   description: api.documentDesc,
+//   isActive: api.isActive
+// });
 export const mapDocumentFromApi = (api) => ({
   id: api.documentTypeId,
   name: api.documentName,
   description: api.documentDesc,
+  isRequiredConfirmed: api.isRequired,
   isActive: api.isActive
 });
 
@@ -14,8 +21,15 @@ export const mapDocumentsFromApi = (apiData = []) => {
   return apiData.map(mapDocumentFromApi);
 };
 
-// UI → API
-export const mapDocumentToApi = (ui) => ({
-  documentName:  cleanData(ui.name),
-  documentDesc: cleanData(ui.description)
+
+
+export const mapDocumentToApi = (formData) => ({
+  documentName: cleanData(formData. name ),
+  documentDesc: cleanData(formData. description ),
+  isRequired: formData.isRequired,
+  isEditable: true,
+  isActive: true
 });
+
+
+

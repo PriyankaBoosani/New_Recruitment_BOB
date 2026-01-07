@@ -40,6 +40,7 @@ const DocumentTable = ({
               <th>{t("sno")}</th>
               <th>{t("document_name")}</th>
               <th>{t("description")}</th>
+              <th>{t("confirm_required")}</th>
               <th style={{ textAlign: "center" }}>{t("actions")}</th>
             </tr>
           </thead>
@@ -51,6 +52,9 @@ const DocumentTable = ({
                   <td>{indexOfFirst + idx + 1}</td>
                   <td>{d.name}</td>
                   <td>{d.description}</td>
+                <td>{d.isRequiredConfirmed ? "True" : "False"}</td>
+
+
                   <td>
                     <div className="action-buttons">
                     <Button

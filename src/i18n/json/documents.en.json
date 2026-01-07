@@ -37,7 +37,8 @@
   "support_csv_xlsx": "Support for CSV and XLSX formats (CSV headers: name, description)",
   "document_added_successfully": "Document added successfully",
   "document_updated_successfully": "Document updated successfully",
-  "document_deleted_successfully": "Document deleted successfully"
+  "document_deleted_successfully": "Document deleted successfully",
+  "confirm_required":"Is Required"
 
  
 }

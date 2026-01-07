@@ -37,5 +37,7 @@
   "delete_confirm_msg": "क्या आप वाकई इस उपयोगकर्ता को हटाना चाहते हैं?",
   "document_added_successfully": "दस्तावेज़ जोड़ा गया",
   "document_updated_successfully": "दस्तावेज़ संपादित कर दिया गया",
-  "document_deleted_successfully": "दस्तावेज़ हटा दिया गया"
+  "document_deleted_successfully": "दस्तावेज़ हटा दिया गया",
+  "confirm_required": "आवश्यक है"
+
 }
