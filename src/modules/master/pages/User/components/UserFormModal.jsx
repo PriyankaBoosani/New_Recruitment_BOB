@@ -5,6 +5,8 @@ import ErrorMessage from "../../../../../shared/components/ErrorMessage";
 import { validateUserForm } from "../../../../../shared/utils/user-validations";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { handleAlphaSpaceInput } from '../../../../../shared/utils/inputHandlers';
+
 
 
 const EMPTY_FORM = {  
@@ -97,15 +99,28 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
               <ErrorMessage>{errors.role}</ErrorMessage>
             </Col>
 
-            <Col md={6}>
-              <Form.Label>{t("fullName")} *</Form.Label>
-              <Form.Control
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleInputChange}
-              />
-              <ErrorMessage>{errors.fullName}</ErrorMessage>
-            </Col>
+       <Col md={6}>
+  <Form.Label>{t("fullName")} *</Form.Label>
+
+<Form.Control
+  name="fullName"
+  value={formData.fullName}
+  onChange={(e) =>
+    handleAlphaSpaceInput({
+      e,
+      fieldName: "fullName",
+      setFormData,
+      setErrors,
+      errorMessage: t("validation:no_special_chars")
+    })
+  }
+/>
+
+
+
+  <ErrorMessage>{errors.fullName}</ErrorMessage>
+</Col>
+
 
             <Col md={6}>
               <Form.Label>{t("email")} *</Form.Label>

@@ -3,6 +3,12 @@ import React from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import ErrorMessage from "../../../../../shared/components/ErrorMessage";
 import PositionImportModal from "./PositionImportModal";
+import {
+  handleAlphaNumericSpaceInput,
+  handleTextAreaInput,
+  handleNumberOnlyInput
+} from "../../../../../shared/utils/inputHandlers";
+
 
 const PositionFormModal = ({
   show,
@@ -13,6 +19,7 @@ const PositionFormModal = ({
   setActiveTab,
   formData,
   errors,
+   setErrors,   
   handleInputChange,
   handleSave,
 
@@ -90,25 +97,37 @@ const PositionFormModal = ({
             <Row className="g-3">
               <Col xs={4}>
                <Form.Group className="form-group">
-  <Form.Label>
-    {t("position_title")} <span className="text-danger">*</span>
-  </Form.Label>
+<Form.Label>
+  {t("position_title")} <span className="text-danger">*</span>
+</Form.Label>
 
-  {isViewing ? (
-    <div className="form-control-view">
-      {formData.title || "-"}
-    </div>
-  ) : (
-    <Form.Control
-      name="title"
-      value={formData.title}
-      onChange={handleInputChange}
-      className="form-control-custom"
-      placeholder={t("enter_position_title")}
-    />
-  )}
+{isViewing ? (
+  <div className="form-control-view">
+    {formData.title || "-"}
+  </div>
+) : (
+  <Form.Control
+    name="title"
+    value={formData.title}
+    placeholder={t("enter_position_title")}
+    className="form-control-custom"
+ onChange={(e) =>
+  handleAlphaNumericSpaceInput({
+    e,
+    fieldName: "title",
+    setFormData: (updater) => handleInputChange({
+      target: { name: "title", value: updater().title }
+    }),
+    setErrors,
+    errorMessage: t("validation:only_alpha_numeric")
+  })
+}
 
-  {!isViewing && <ErrorMessage>{errors.title}</ErrorMessage>}
+  />
+)}
+
+{!isViewing && <ErrorMessage>{errors.title}</ErrorMessage>}
+
 </Form.Group>
 
               </Col>
@@ -229,7 +248,7 @@ const PositionFormModal = ({
               </Col>
 
               <Col xs={6} md={6}>
-                <Form.Group className="form-group">
+               <Form.Group className="form-group">
   <Form.Label>
     {t("mandatory_experience")} <span className="text-danger">*</span>
   </Form.Label>
@@ -244,9 +263,20 @@ const PositionFormModal = ({
       rows={2}
       name="mandatoryExperience"
       value={formData.mandatoryExperience}
-      onChange={handleInputChange}
-      className="form-control-custom"
       placeholder={t("enter_mandatory_experience")}
+      className="form-control-custom"
+  onChange={(e) =>
+  handleTextAreaInput({
+    e,
+    fieldName: "mandatoryExperience",
+    setFormData: (updater) => handleInputChange({
+      target: { name: "mandatoryExperience", value: updater().mandatoryExperience }
+    }),
+    setErrors,
+    errorMessage: t("validation:invalid_mandatory_experience")
+  })
+}
+
     />
   )}
 
@@ -266,15 +296,27 @@ const PositionFormModal = ({
       {formData.preferredExperience || "-"}
     </div>
   ) : (
-    <Form.Control
-      as="textarea"
-      rows={2}
-      name="preferredExperience"
-      value={formData.preferredExperience}
-      onChange={handleInputChange}
-      className="form-control-custom"
-      placeholder={t("enter_preferred_experience")}
-    />
+   <Form.Control
+  as="textarea"
+  rows={2}
+  name="preferredExperience"
+  value={formData.preferredExperience}
+  placeholder={t("enter_preferred_experience")}
+  className="form-control-custom"
+onChange={(e) =>
+  handleTextAreaInput({
+    e,
+    fieldName: "preferredExperience",
+    setFormData: (updater) => handleInputChange({
+      target: { name: "preferredExperience", value: updater().preferredExperience }
+    }),
+    setErrors,
+    errorMessage: t("validation:invalid_preferred_experience")
+  })
+}
+
+/>
+
   )}
 
   {!isViewing && <ErrorMessage>{errors.preferredExperience}</ErrorMessage>}
@@ -293,15 +335,27 @@ const PositionFormModal = ({
       {formData.mandatoryEducation || "-"}
     </div>
   ) : (
-    <Form.Control
-      as="textarea"
-      rows={2}
-      name="mandatoryEducation"
-      value={formData.mandatoryEducation}
-      onChange={handleInputChange}
-      className="form-control-custom"
-      placeholder={t("enter_mandatory_education")}
-    />
+   <Form.Control
+  as="textarea"
+  rows={2}
+  name="mandatoryEducation"
+  value={formData.mandatoryEducation}
+  placeholder={t("enter_mandatory_education")}
+  className="form-control-custom"
+onChange={(e) =>
+  handleTextAreaInput({
+    e,
+    fieldName: "mandatoryEducation",
+    setFormData: (updater) => handleInputChange({
+      target: { name: "mandatoryEducation", value: updater().mandatoryEducation }
+    }),
+    setErrors,
+    errorMessage: t("validation:invalid_mandatory_education")
+  })
+}
+
+/>
+
   )}
 
   {!isViewing && <ErrorMessage>{errors.mandatoryEducation}</ErrorMessage>}
@@ -310,7 +364,7 @@ const PositionFormModal = ({
               </Col>
 
               <Col xs={6} md={6}>
-               <Form.Group className="form-group">
+             <Form.Group className="form-group">
   <Form.Label>
     {t("preferred_education")} <span className="text-danger">*</span>
   </Form.Label>
@@ -325,14 +379,26 @@ const PositionFormModal = ({
       rows={2}
       name="preferredEducation"
       value={formData.preferredEducation}
-      onChange={handleInputChange}
-      className="form-control-custom"
       placeholder={t("enter_preferred_education")}
+      className="form-control-custom"
+   onChange={(e) =>
+  handleTextAreaInput({
+    e,
+    fieldName: "preferredEducation",
+    setFormData: (updater) => handleInputChange({
+      target: { name: "preferredEducation", value: updater().preferredEducation }
+    }),
+    setErrors,
+    errorMessage: t("validation:invalid_preferred_education")
+  })
+}
+
     />
   )}
 
   {!isViewing && <ErrorMessage>{errors.preferredEducation}</ErrorMessage>}
 </Form.Group>
+
 
               </Col>
 
@@ -340,7 +406,7 @@ const PositionFormModal = ({
 
 
               <Col xs={6}>
-               <Form.Group className="form-group">
+           <Form.Group className="form-group">
   <Form.Label>
     {t("roles_responsibilities")} <span className="text-danger">*</span>
   </Form.Label>
@@ -355,13 +421,26 @@ const PositionFormModal = ({
       rows={2}
       name="rolesResponsibilities"
       value={formData.rolesResponsibilities}
-      onChange={handleInputChange}
-      className="form-control-custom"
       placeholder={t("enter_roles_responsibilities")}
+      className="form-control-custom"
+      onChange={(e) =>
+  handleTextAreaInput({
+    e,
+    fieldName: "rolesResponsibilities",
+    setFormData: (updater) => handleInputChange({
+      target: { name: "rolesResponsibilities", value: updater().rolesResponsibilities }
+    }),
+    setErrors,
+    errorMessage: t("validation:invalid_roles_responsibilities")
+  })
+}
+
     />
   )}
 
-  {!isViewing && <ErrorMessage>{errors.rolesResponsibilities}</ErrorMessage>}
+  {!isViewing && (
+    <ErrorMessage>{errors.rolesResponsibilities}</ErrorMessage>
+  )}
 </Form.Group>
 
               </Col>

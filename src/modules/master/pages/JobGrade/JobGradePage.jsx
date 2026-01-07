@@ -160,12 +160,22 @@ const JobGradePage = () => {
         <div className="user-actions">
           <div className="search-box">
             <Search className="search-icon" />
-            <Form.Control
-              placeholder={t("jobGrade:search_placeholder")}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
+          <Form.Control
+  placeholder={t("jobGrade:search_placeholder")}
+  value={searchTerm}
+  onChange={(e) => {
+    const value = e.target.value;
+
+    // ✅ allow alphabets, numbers, @, and space
+    if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
+      return; // block invalid characters
+    }
+
+    setSearchTerm(value);
+  }}
+  className="search-input"
+/>
+
           </div>
 
           <Button className="add-button" onClick={openAddModal}>
@@ -192,7 +202,9 @@ const JobGradePage = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         formData={formData}
+         setFormData={setFormData}
         errors={errors}
+         setErrors={setErrors}
         handleInputChange={(e) => {
           const { name, value } = e.target;
 

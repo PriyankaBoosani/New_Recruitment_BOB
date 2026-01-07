@@ -2,6 +2,10 @@ import React from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import ErrorMessage from '../../../../../shared/components/ErrorMessage';
 import DepartmentImportView from '../components/DepartmentImportModal';
+import { handleAlphaNumericSpaceInput, handleTextAreaInput } 
+from '../../../../../shared/utils/inputHandlers';
+
+
 
 const DepartmentFormModal = ({
   show,
@@ -11,8 +15,10 @@ const DepartmentFormModal = ({
   activeTab,
   setActiveTab,
   formData,
+  setFormData,
   handleInputChange,
   errors,
+  setErrors,
   handleSave,
   t,
   ...importProps
@@ -58,23 +64,39 @@ const DepartmentFormModal = ({
             <Row className="g-3">
               <Col xs={12}>
                 <Form.Group className="form-group">
-                  <Form.Label className={isViewing ? '' : ''}>
-                    {t("name")} {!isViewing && <span className="text-danger">*</span>}
-                  </Form.Label>
-                  {isViewing ? (
-                    <div className="form-control-view">{formData.name || '-'}</div>
-                  ) : (
-                    <Form.Control
-                      name="name"
-                      className="form-control-custom"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder={t("department:enterName")}
-                      readOnly={isViewing}
-                    />
-                  )}
-                  {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
-                </Form.Group>
+  <Form.Label>
+    {t("name")} {!isViewing && <span className="text-danger">*</span>}
+  </Form.Label>
+
+  {isViewing ? (
+    <div className="form-control-view">
+      {formData.name || "-"}
+    </div>
+  ) : (
+ <Form.Control
+  name="name"
+  value={formData.name}
+  className="form-control-custom"
+  placeholder={t("department:enterName")}
+onChange={(e) =>
+  handleAlphaNumericSpaceInput({
+    e,
+    fieldName: "name",
+    setFormData,
+    setErrors,
+    errorMessage: t("validation:no_special_charss")
+  })
+}
+
+/>
+
+
+
+  )}
+
+  {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
+</Form.Group>
+
               </Col>
 
               <Col xs={12}>
@@ -87,7 +109,46 @@ const DepartmentFormModal = ({
                       {formData.description || '-'}
                     </div>
                   ) : (
-                    <Form.Control
+//                   <Form.Control
+//   as="textarea"
+//   rows={3}
+//   name="description"
+//   className="form-control-custom"
+//   value={formData.description}
+//   placeholder={t("department:enterDescription")}
+//   readOnly={isViewing}
+//   onChange={(e) => {
+//     const value = e.target.value;
+
+//     // ❌ block non-alphabets
+//     if (!/^[A-Za-z\s]*$/.test(value)) {
+//       setErrors(prev => ({
+//         ...prev,
+//         description: t("validation:no_special_chars")
+//       }));
+//       return;
+//     }
+
+//     // ✅ clear error when valid
+//     setErrors(prev => {
+//       const copy = { ...prev };
+//       delete copy.description;
+//       return copy;
+//     });
+
+//     handleInputChange(e);
+//   }}
+// />
+
+//                   )}
+//                   {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
+//                 </Form.Group>
+//               </Col>
+//             </Row>
+
+
+
+  <Form.Control
                       as="textarea"
                       rows={3}
                       name="description"

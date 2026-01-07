@@ -4,6 +4,15 @@ import React from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import ErrorMessage from '../../../../../shared/components/ErrorMessage';
 import JobGradeImportModal from './JobGradeImportModal';
+import {
+  handleAlphaSpaceInput,
+  handleAlphaNumericSpaceInput,
+  handleTextAreaInput,
+  handleNumberOnlyInput
+} from '../../../../../shared/utils/inputHandlers';
+
+
+
 
 const JobGradeFormModal = ({
   show,
@@ -13,8 +22,10 @@ const JobGradeFormModal = ({
   activeTab,
   setActiveTab,
   formData,
+   setFormData,
   handleInputChange,
   errors,
+  setErrors,  
   handleSave,
   handleImport,
   editingId,      
@@ -87,13 +98,24 @@ const JobGradeFormModal = ({
     {formData.scale || "-"}
   </div>
 ) : (
-  <Form.Control
-    name="scale"
-    value={formData.scale}
-    onChange={handleInputChange}
-    className="form-control-custom"
-    placeholder={t("jobGrade:enter_scale")}
-  />
+<Form.Control
+  name="scale"
+  value={formData.scale}
+  className="form-control-custom"
+  placeholder={t("jobGrade:enter_scale")}
+onChange={(e) =>
+  handleAlphaNumericSpaceInput({
+    e,
+    fieldName: "scale",
+    setFormData,
+    setErrors,
+    errorMessage: t("validation:invalid_scale")
+  })
+}
+
+/>
+
+
 )}
 
 {!isViewing && <ErrorMessage>{errors.scale}</ErrorMessage>}
@@ -102,75 +124,120 @@ const JobGradeFormModal = ({
               </Col>
 
               <Col md={6}>
-                <Form.Group>
-                   <Form.Label>
-                      {t("gradeCode")} <span className="text-danger">*</span>
-                   </Form.Label>
-                  
-               {isViewing ? (
-  <div className="form-control-view">
-    {formData.gradeCode || "-"}
-  </div>
-) : (
-  <Form.Control
-    name="gradeCode"
-    value={formData.gradeCode}
-    onChange={handleInputChange}
-    className="form-control-custom"
-    placeholder={t("jobGrade:enter_grade_code")}
-  />
-)}
-{!isViewing && <ErrorMessage>{errors.gradeCode}</ErrorMessage>}
+               <Form.Group>
+  <Form.Label>
+    {t("gradeCode")} <span className="text-danger">*</span>
+  </Form.Label>
 
-                </Form.Group>
+  {isViewing ? (
+    <div className="form-control-view">
+      {formData.gradeCode || "-"}
+    </div>
+  ) : (
+  <Form.Control
+  name="gradeCode"
+  value={formData.gradeCode || ""}
+  className="form-control-custom"
+  placeholder={t("jobGrade:enter_grade_code")}
+  onChange={(e) =>
+    handleAlphaNumericSpaceInput({
+      e,
+      fieldName: "gradeCode",
+      setFormData,
+      setErrors,
+      errorMessage: t("validation:invalid_grade_code")
+    })
+  }
+/>
+
+
+  )}
+
+  {!isViewing && <ErrorMessage>{errors.gradeCode}</ErrorMessage>}
+</Form.Group>
+
               </Col>
 
               <Col md={6}>
-                <Form.Group>
-                   <Form.Label>
-                      {t("minSalary")} <span className="text-danger">*</span>
-                   </Form.Label>
-                    
-                {isViewing ? (
-  <div className="form-control-view">
-    {formData.minSalary || "-"}
-  </div>
-) : (
-  <Form.Control
-    name="minSalary"
-    value={formData.minSalary}
-    onChange={handleInputChange}
-    className="form-control-custom"
-    placeholder={t("jobGrade:enter_min_salary")}
-  />
-)}
-{!isViewing && <ErrorMessage>{errors.minSalary}</ErrorMessage>}
+               <Form.Group>
+  <Form.Label>
+    {t("minSalary")} <span className="text-danger">*</span>
+  </Form.Label>
 
-                </Form.Group>
+  {isViewing ? (
+    <div className="form-control-view">
+      {formData.minSalary || "-"}
+    </div>
+  ) : (
+   <Form.Control
+  name="minSalary"
+  value={formData.minSalary || ""}
+  className="form-control-custom"
+  placeholder={t("jobGrade:enter_min_salary")}
+  onChange={(e) =>
+   handleNumberOnlyInput({
+  e,
+  fieldName: "minSalary",
+  setFormData,
+  setErrors,
+  errorMessage: t("validation:invalid_salary")
+})
+
+  }
+/>
+
+  )}
+
+  {!isViewing && <ErrorMessage>{errors.minSalary}</ErrorMessage>}
+</Form.Group>
+
               </Col>
 
               <Col md={6}>
-                <Form.Group>
-                   <Form.Label>
-                     {t("maxSalary")} <span className="text-danger">*</span>
-                   </Form.Label>
-                  
-                 {isViewing ? (
-  <div className="form-control-view">
-    {formData.maxSalary || "-"}
-  </div>
-) : (
-  <Form.Control
-    name="maxSalary"
-    value={formData.maxSalary}
-    onChange={handleInputChange}
-    className="form-control-custom"
-    placeholder={t("jobGrade:enter_max_salary")}
-  />
-)}
-{!isViewing && <ErrorMessage>{errors.maxSalary}</ErrorMessage>}
+               <Form.Group>
+  <Form.Label>
+    {t("maxSalary")} <span className="text-danger">*</span>
+  </Form.Label>
 
-                </Form.Group>
+  {isViewing ? (
+    <div className="form-control-view">
+      {formData.maxSalary || "-"}
+    </div>
+  ) : (
+   <Form.Control
+  name="maxSalary"
+  value={formData.maxSalary || ""}
+  className="form-control-custom"
+  placeholder={t("jobGrade:enter_max_salary")}
+  onChange={(e) => {
+   handleNumberOnlyInput({
+  e,
+  fieldName: "maxSalary",
+  setFormData,
+  setErrors,
+  errorMessage: t("validation:invalid_salary")
+})
+
+
+    const value = e.target.value;
+    if (
+      formData.minSalary &&
+      value &&
+      Number(value) <= Number(formData.minSalary)
+    ) {
+      setErrors(prev => ({
+        ...prev,
+        maxSalary: t("validation:max_salary_greater")
+      }));
+    }
+  }}
+/>
+
+  )}
+
+  {!isViewing && <ErrorMessage>{errors.maxSalary}</ErrorMessage>}
+</Form.Group>
+
               </Col>
 
               <Col xs={12}>

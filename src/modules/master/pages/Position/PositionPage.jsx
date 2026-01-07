@@ -241,12 +241,22 @@ const PositionPage = () => {
           {/* ✅ SEARCH BAR – SAME AS DEPARTMENT */}
           <div className="search-box">
             <Search className="search-icon" />
-            <Form.Control
-              placeholder={t("search_placeholder")}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
+         <Form.Control
+  placeholder={t("search_placeholder")}
+  value={searchTerm}
+  className="search-input"
+  onChange={(e) => {
+    const value = e.target.value;
+
+    // ✅ allow alphabets, numbers, space and @
+    if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
+      return; // block invalid characters
+    }
+
+    setSearchTerm(value);
+  }}
+/>
+
           </div>
 
           <Button className="add-button" onClick={openAddModal}>
@@ -280,6 +290,7 @@ const PositionPage = () => {
         setActiveTab={setActiveTab}
         formData={formData}
         errors={errors}
+         setErrors={setErrors}
         handleInputChange={(e) => {
           const { name, value } = e.target;
 

@@ -22,6 +22,8 @@ const UserPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [searchError, setSearchError] = useState("");
+
 
   const openAdd = () => {
     setShowModal(true);
@@ -35,7 +37,7 @@ const UserPage = () => {
         <div className="user-actions">
           <div className="search-box">
             <Search className="search-icon" />
-            <Form.Control
+            {/* <Form.Control
               placeholder={t("search_by_user")}
               value={searchTerm}
               onChange={(e) => {
@@ -43,7 +45,25 @@ const UserPage = () => {
                 setCurrentPage(1);
               }}
               className="search-input"
-            />
+            /> */}
+            <Form.Control
+  placeholder={t("search_by_user")}
+  value={searchTerm}
+  onChange={(e) => {
+    const value = e.target.value;
+
+    // ✅ allow alphabets, numbers, @, and space
+    if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
+      return; // block invalid characters
+    }
+
+    setSearchTerm(value);
+    setCurrentPage(1);
+  }}
+  className="search-input"
+/>
+
+
           </div>
 
           <Button className="add-button" onClick={openAdd}>

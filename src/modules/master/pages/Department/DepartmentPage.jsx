@@ -33,6 +33,7 @@ const DepartmentPage = () => {
   const [editingDeptId, setEditingDeptId] = useState(null);
   const [errors, setErrors] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
+  
 
   const openAddModal = () => {
     setIsEditing(false);
@@ -43,22 +44,25 @@ const DepartmentPage = () => {
     setShowAddModal(true);
   };
 
-  const openEditModal = (dept) => {
-    setIsEditing(true);
-    setIsViewing(false);
-    setEditingDeptId(dept.id);
-    setFormData({ name: dept.name, description: dept.description || '' });
-    setActiveTab('manual');
-    setShowAddModal(true);
-  };
+const openEditModal = (dept) => {
+  setIsEditing(true);
+  setIsViewing(false);
+  setEditingDeptId(dept.id);
+  setFormData({ name: dept.name, description: dept.description || '' });
+  setErrors({});                 // ✅ CLEAR OLD ERRORS
+  setActiveTab('manual');
+  setShowAddModal(true);
+};
 
-  const openViewModal = (dept) => {
-    setIsViewing(true);
-    setIsEditing(false);
-    setFormData({ name: dept.name, description: dept.description || '' });
-    setActiveTab('manual');  
-    setShowAddModal(true);
-  };
+const openViewModal = (dept) => {
+  setIsViewing(true);
+  setIsEditing(false);
+  setFormData({ name: dept.name, description: dept.description || '' });
+  setErrors({});                 // ✅ CLEAR OLD ERRORS
+  setActiveTab('manual');  
+  setShowAddModal(true);
+};
+
 
   const handleSave = async (e) => {
   e.preventDefault();
@@ -77,6 +81,7 @@ const DepartmentPage = () => {
       currentId: isEditing ? editingDeptId : null
     });
 
+    
   if (!valid) {
     setErrors(vErrors);
     return;
@@ -105,12 +110,23 @@ const DepartmentPage = () => {
         <div className="user-actions">
           <div className="search-box">
             <Search className="search-icon" />
-            <Form.Control
-              placeholder={t("search_by_department")}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
+          <Form.Control
+  placeholder={t("search_by_department")}
+  value={searchTerm}
+  onChange={(e) => {
+    const value = e.target.value;
+
+    // ✅ allow alphabets, numbers, @, and space
+    if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
+      return; // block invalid characters
+    }
+
+    setSearchTerm(value);
+    setCurrentPage(1);
+  }}
+  className="search-input"
+/>
+
           </div>
           <Button className="add-button" onClick={openAddModal}><Plus size={20} /> {t("department:add")}</Button>
         </div>
@@ -127,13 +143,18 @@ const DepartmentPage = () => {
       />
       <DepartmentFormModal
         show={showAddModal}
-        onHide={() => setShowAddModal(false)}
+       onHide={() => {
+  setShowAddModal(false);
+  setErrors({});                
+}}
         isEditing={isEditing}
         isViewing={isViewing}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         formData={formData}
+        setFormData={setFormData}
         errors={errors}
+        setErrors={setErrors}
         handleInputChange={(e) => {
           const { name, value } = e.target;
 

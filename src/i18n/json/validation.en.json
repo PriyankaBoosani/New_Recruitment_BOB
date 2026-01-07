@@ -20,7 +20,26 @@
   "min_age_too_low": "Minimum age must be at least {{min}}",
   "min_age_too_high": "Minimum age must not exceed {{max}}",
   "max_age_too_low": "Maximum age must be greater than minimum age",
-  "max_age_too_high": "Maximum age must not exceed {{max}}"
+  "max_age_too_high": "Maximum age must not exceed {{max}}",
+  "no_special_chars": "Please enter valid Full Name",
+  "no_special_charss": "Please enter valid  Name",
+  "invalid_search": "Only alphabets, numbers, @ and space are allowed",
+  "invalid_location_name": "Please enter a valid location name",
+  "invalid_scale": "Please enter a valid scale",
+"invalid_grade_code": "Please enter a valid grade code",
+"invalid_salary": "Please enter a valid salary amount",
+"max_salary_too_low": "Maximum salary must be greater than minimum salary",
+"only_alpha_numeric": "Please enter a valid position title",
+"invalid_mandatory_experience": "Please enter a valid mandatory experience",
+"invalid_preferred_experience": "Please enter a valid preferred experience",
+"invalid_mandatory_education": "Please enter a valid mandatory education",
+"invalid_preferred_education": "Please enter valid preferred education details",
+"invalid_roles_responsibilities": "Please enter valid roles and responsibilities",
+"only_characters": "Please enter valid Full Name",
+   "invalid_code_chars": "Please enter a valid code",
+   "invalid_code_char": "Please enter a valid document name",
+    "invalid_title_chars": "Please enter a valid position title"
+
   
 }
 

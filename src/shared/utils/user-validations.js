@@ -12,6 +12,10 @@ import {
  */
 const normalizeString = (str = "") => String(str).trim().toLowerCase();
 
+const onlyAlphabetsAndSpaces = (value) =>
+  /^[A-Za-z\s]+$/.test(value);
+
+
 /* =========================
    FIELD VALIDATIONS
 ========================= */
@@ -23,6 +27,10 @@ export const validateUserRole = (role) => {
 export const validateFullName = (name) => {
   let error = requiredField(name, i18n.t("validation:full_name"));
   if (error) return error;
+
+  if (!onlyAlphabetsAndSpaces(name)) {
+    return i18n.t("validation:no_special_chars");
+  }
 
   error = minLength(name, 2, i18n.t("validation:full_name"));
   if (error) return error;
