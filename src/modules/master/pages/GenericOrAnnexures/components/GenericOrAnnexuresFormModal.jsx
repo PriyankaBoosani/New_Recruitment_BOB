@@ -119,7 +119,7 @@ const GenericOrAnnexuresFormModal = ({
                       accept="application/pdf"
                       hidden
                       disabled={!isTypeSelected}
-                   onChange={(e) => {
+                 onChange={(e) => {
   const file = e.target.files?.[0];
   if (!file) return;
 
@@ -127,7 +127,10 @@ const GenericOrAnnexuresFormModal = ({
   if (file.size > MAX_PDF_SIZE) {
     setErrors(prev => ({
       ...prev,
-      file: "PDF size must be less than or equal to 5 MB"
+      file: t(
+        "pdf_size_5mb",
+        "PDF size must be less than or equal to 5 MB"
+      )
     }));
 
     // clear file from formData
@@ -157,6 +160,7 @@ const GenericOrAnnexuresFormModal = ({
     return copy;
   });
 }}
+
 
 
                     />

@@ -47,4 +47,5 @@
   "invalid_file": "Please upload a valid PDF file",
   "no_file_selected": "Please select a file to upload",
    "pdf_size_5mb": "PDF size must be less than or equal to 5 MB"
+   
 }
