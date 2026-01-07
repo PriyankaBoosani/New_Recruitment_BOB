@@ -13,6 +13,24 @@ import {
   INPUT_PATTERNS
 } from "../../../../../shared/utils/inputHandlers";
 
+const handleTwoDigitNumberInput = ({ e, fieldName, handleInputChange }) => {
+  let value = e.target.value;
+
+  // Allow only digits
+  value = value.replace(/\D/g, "");
+
+  // Limit to 2 characters
+  if (value.length > 2) {
+    value = value.slice(0, 2);
+  }
+
+  handleInputChange({
+    target: {
+      name: fieldName,
+      value
+    }
+  });
+};
 
 
 const PositionFormModal = ({
@@ -213,14 +231,22 @@ const PositionFormModal = ({
       {formData.eligibilityAgeMin || "-"}
     </div>
   ) : (
-    <Form.Control
-      type="number"
-      name="eligibilityAgeMin"
-      value={formData.eligibilityAgeMin ?? ""}
-      onChange={handleInputChange}
-      className="form-control-custom"
-      placeholder={t("enter_min_age")}
-    />
+   <Form.Control
+  type="text"
+  inputMode="numeric"
+  name="eligibilityAgeMin"
+  value={formData.eligibilityAgeMin ?? ""}
+  placeholder={t("enter_min_age")}
+  className="form-control-custom"
+  onChange={(e) =>
+    handleTwoDigitNumberInput({
+      e,
+      fieldName: "eligibilityAgeMin",
+      handleInputChange
+    })
+  }
+/>
+
   )}
 
   {!isViewing && <ErrorMessage>{errors.eligibilityAgeMin}</ErrorMessage>}
@@ -239,14 +265,22 @@ const PositionFormModal = ({
       {formData.eligibilityAgeMax || "-"}
     </div>
   ) : (
-    <Form.Control
-      type="number"
-      name="eligibilityAgeMax"
-      value={formData.eligibilityAgeMax ?? ""}
-      onChange={handleInputChange}
-      className="form-control-custom"
-      placeholder={t("enter_max_age")}
-    />
+   <Form.Control
+  type="text"
+  inputMode="numeric"
+  name="eligibilityAgeMax"
+  value={formData.eligibilityAgeMax ?? ""}
+  placeholder={t("enter_max_age")}
+  className="form-control-custom"
+  onChange={(e) =>
+    handleTwoDigitNumberInput({
+      e,
+      fieldName: "eligibilityAgeMax",
+      handleInputChange
+    })
+  }
+/>
+
   )}
 
   {!isViewing && <ErrorMessage>{errors.eligibilityAgeMax}</ErrorMessage>}

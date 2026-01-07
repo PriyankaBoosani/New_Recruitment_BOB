@@ -39,16 +39,27 @@ const GenericOrAnnexuresPage = () => {
   const [errors, setErrors] = useState({});
 
   /* ================= INPUT CHANGE ================= */
-  const handleInputChange = (e) => {
-    const { name, value, files } = e.target;
+const handleInputChange = (e) => {
+  const { name, value, files } = e.target;
 
-    setFormData(prev => ({
+  setFormData(prev => ({
+    ...prev,
+    [name]:
+      name === "file"
+        ? files?.[0] ?? value ?? null
+        : value
+  }));
+
+  // ❗ DO NOT auto-clear file errors here
+  if (name !== "file") {
+    setErrors(prev => ({
       ...prev,
-      [name]: name === "file" ? files[0] : value
+      [name]: ""
     }));
+  }
+};
 
-    setErrors(prev => ({ ...prev, [name]: "" }));
-  };
+
 
   /* ================= ADD ================= */
   const openAdd = () => {
@@ -152,6 +163,7 @@ const GenericOrAnnexuresPage = () => {
         formData={formData}
         handleInputChange={handleInputChange}
         errors={errors}
+         setErrors={setErrors} 
         handleSave={handleSave}
       />
 

@@ -12,10 +12,13 @@ const GenericOrAnnexuresFormModal = ({
   formData,
   handleInputChange,
   errors,
+  setErrors,  
   handleSave
 }) => {
   const { t } = useTranslation(["genericOrAnnexures"]);
   const isTypeSelected = !!formData?.type;
+  const MAX_PDF_SIZE = 5 * 1024 * 1024; // 5 MB
+
 
   return (
     <Modal
@@ -116,7 +119,46 @@ const GenericOrAnnexuresFormModal = ({
                       accept="application/pdf"
                       hidden
                       disabled={!isTypeSelected}
-                      onChange={handleInputChange}
+                   onChange={(e) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  // ❌ file too large
+  if (file.size > MAX_PDF_SIZE) {
+    setErrors(prev => ({
+      ...prev,
+      file: "PDF size must be less than or equal to 5 MB"
+    }));
+
+    // clear file from formData
+    handleInputChange({
+      target: {
+        name: "file",
+        value: null
+      }
+    });
+
+    e.target.value = "";
+    return;
+  }
+
+  // ✅ valid file
+  handleInputChange({
+    target: {
+      name: "file",
+      value: file
+    }
+  });
+
+  // clear file error
+  setErrors(prev => {
+    const copy = { ...prev };
+    delete copy.file;
+    return copy;
+  });
+}}
+
+
                     />
 
                     {/* visible text-field style uploader */}

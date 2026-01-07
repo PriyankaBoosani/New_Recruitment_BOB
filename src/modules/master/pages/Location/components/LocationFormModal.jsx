@@ -197,7 +197,7 @@ const LocationFormModal = ({
       fieldName: "name",
       setFormData,
       setErrors,
-      pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
+      pattern: INPUT_PATTERNS.NUMERIC_SPACE,
       errorMessage: t("validation:invalid_location_name")
     })
   }
