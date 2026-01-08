@@ -15,7 +15,7 @@
 .create-requisition-page .section-title {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  padding-bottom: 10px;
 }
 
 .create-requisition-page .section-title h6 {

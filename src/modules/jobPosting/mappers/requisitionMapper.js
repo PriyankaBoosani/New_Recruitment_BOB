@@ -17,7 +17,7 @@ export const mapRequisitionToApi = (uiData, indentFile) => {
     vacancyCount: 0,
 
     requisitionComments: null,
-    indentPath: null,
+   // indentPath: null,
     requisitionCode: null,
     id: null
   };
@@ -31,9 +31,9 @@ export const mapRequisitionToApi = (uiData, indentFile) => {
   );
 
   // 🔥 MUST be exact field name
-  if (indentFile) {
-    formData.append("indentFile", indentFile);
-  }
+  // if (indentFile) {
+  //   formData.append("indentFile", indentFile);
+  // }
 
   return formData;
 };

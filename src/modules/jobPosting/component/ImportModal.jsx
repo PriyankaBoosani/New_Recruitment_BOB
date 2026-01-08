@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { usePositionsImport } from "../hooks/usePositionsImport";
 
 const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
-  const { t } = useTranslation(["jobPosting", "common"]);
+  const { t } = useTranslation(["position", "common"]);
   const { bulkAddPositions, downloadPositionTemplate, loading } =
     usePositionsImport();
 
@@ -23,7 +23,7 @@ const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
       );
 
     if (!isExcel) {
-      setError(t("jobPosting:invalid_file"));
+      setError(t("position:invalid_file"));
       return;
     }
 
@@ -33,7 +33,7 @@ const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      setError(t("jobPosting:no_file_selected"));
+      setError(t("position:no_file_selected"));
       return;
     }
 
@@ -50,7 +50,7 @@ const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title>{t("jobPosting:import_positions")}</Modal.Title>
+        <Modal.Title>Import Positions</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
@@ -72,11 +72,11 @@ const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
             </div>
 
             <h5 className="mb-2 uploadfile">
-              {t("jobPosting:upload_positions")}
+              Upload File
             </h5>
 
             <p className="text-muted small">
-              {t("jobPosting:support_xlsx")}
+             Support for XLSX formats
             </p>
           </div>
 
@@ -100,8 +100,8 @@ const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
                 disabled={loading}
               >
                 {selectedFile
-                  ? t("jobPosting:reupload_xlsx")
-                  : t("jobPosting:upload_xlsx")}
+                  ? "Reupload XLSX"
+                  : "Upload XLSX"}
               </Button>
             </label>
 
@@ -117,14 +117,14 @@ const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
                   onClick={() => setSelectedFile(null)}
                   disabled={loading}
                 >
-                  {t("jobPosting:remove")}
-                </Button>
+                   Remove
+                </Button>   
               </div>
             )}
           </div>
 
           <div className="text-center mb-3 import-area small">
-            {t("jobPosting:download_template")}{" "}
+           Download Template{" "}
             <a
               href="#"
               onClick={(e) => {
@@ -141,13 +141,13 @@ const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
 
       <Modal.Footer>
         <Button variant="outline-secondary" onClick={onHide} disabled={loading}>
-          {t("common:cancel")}
+          Cancel
         </Button>
 
         <Button variant="primary" onClick={handleUpload} disabled={loading}>
           {loading
-            ? t("jobPosting:importing")
-            : t("jobPosting:import")}
+            ? "Importing..."
+            : "Import"}
         </Button>
       </Modal.Footer>
     </Modal>

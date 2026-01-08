@@ -1,15 +1,45 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../../style/css/AddPosition.css";
 import import_Icon from '../../../assets/import_Icon.png'
-import { useTranslation } from 'react-i18next';
 import ImportModal from "../component/ImportModal";
-
+import EducationModal from "../component/EducationModal";
+import { validateAddPosition } from "../validations/validateAddPosition";
+import ErrorMessage from "../../../shared/components/ErrorMessage";
+import upload_icon from '../../../assets/upload_Icon.png'
 const AddPosition = () => {
     const navigate = useNavigate();
+    const [errors, setErrors] = useState({});
     const { requisitionId } = useParams();
     const [showImportModal, setShowImportModal] = useState(false);
+    const [showEduModal, setShowEduModal] = useState(false);
+    const [eduMode, setEduMode] = useState("mandatory"); // mandatory | preferred
+
+    const [educationData, setEducationData] = useState({
+        mandatory: {
+            rows: [],
+            certs: [],
+            text: ""
+        },
+        preferred: {
+            rows: [],
+            certs: [],
+            text: ""
+        }
+    });
+    const [indentFile, setIndentFile] = useState(null);
+    const [approvedBy, setApprovedBy] = useState("");
+    const [approvedOn, setApprovedOn] = useState("");
+
+    const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx"];
+    const MAX_FILE_SIZE_MB = 2;
+    const YEAR_OPTIONS = Array.from({ length: 31 }, (_, i) => i); // 0–30 years
+    const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => i + 1); // 1–12 months
+
+
+
+
     const handleImport = async (file) => {
         try {
             const formData = new FormData();
@@ -29,19 +59,27 @@ const AddPosition = () => {
         department: "",
         position: "",
         vacancies: "",
-        totalExperience: "",
         minAge: "",
         maxAge: "",
         employmentType: "",
-        cibilScore: "",
+        contractualPeriod: "",
         grade: "",
         enableLocation: false,
         mandatoryEducation: "",
         preferredEducation: "",
-        mandatoryExperience: "",
-        preferredExperience: "",
+        mandatoryExperience: {
+            years: "",
+            months: "",
+            description: ""
+        },
+        preferredExperience: {
+            years: "",
+            months: "",
+            description: ""
+        },
         documents: [],
         responsibilities: "",
+        medicalRequired: "",
         enableStateDistribution: false
     });
     const GENERAL_FIELDS = [
@@ -100,21 +138,20 @@ const AddPosition = () => {
     /* ---------------- HANDLERS ---------------- */
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
+
         setFormData((prev) => ({
             ...prev,
             [name]: type === "checkbox" ? checked : value
         }));
-    };
 
-    const handleDocumentChange = (doc) => {
-        setFormData((prev) => ({
-            ...prev,
-            documents: prev.documents.includes(doc)
-                ? prev.documents.filter((d) => d !== doc)
-                : [...prev.documents, doc]
-        }));
+        // ✅ clear error for this field
+        setErrors((prev) => {
+            if (!prev[name]) return prev;
+            const updated = { ...prev };
+            delete updated[name];
+            return updated;
+        });
     };
-
 
 
     // useEffect(() => {
@@ -156,19 +193,33 @@ const AddPosition = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        const validationErrors = validateAddPosition({
+            formData,
+            educationData,
+            indentFile,
+            approvedBy,
+            approvedOn
+        });
+
+
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        setErrors({});
+
+
+        // ✅ Safe to submit
+        console.log("SUBMIT PAYLOAD", {
+            ...formData,
+            mandatoryEducation: educationData.mandatory,
+            preferredEducation: educationData.preferred
+        });
     };
 
-    const documents = [
-        "Aadhaar Card",
-        "PAN Card",
-        "10th Marksheet",
-        "12th Marksheet",
-        "Graduation Certificate",
-        "PG Certificate",
-        "Caste Certificate",
-        "Income Certificate",
-        "Birth Certificate"
-    ];
+
 
     /* ---------------- UI ---------------- */
     return (
@@ -187,9 +238,9 @@ const AddPosition = () => {
                     variant="none"
                     onClick={() => setShowImportModal(true)}
                 >
-                    <img src={import_Icon} alt="import_Icon" className="icon-14" />
-                    Import Positions
-                </Button>            </div>
+                    <img src={import_Icon} alt="import_Icon" className="icon-14" /> Import Positions
+                </Button>
+            </div>
 
             <Card className="position-card">
                 <Card.Body>
@@ -199,34 +250,163 @@ const AddPosition = () => {
                     </div>
 
                     <Form onSubmit={handleSubmit}>
+                        <Row className="g-4 mb-4 upload-indent-section">
+                            {/* LEFT: Upload Indent */}
+                            <Col md={8} className="mt-3">
+                                <Form.Group>
+                                    <Form.Label>
+                                        Upload Indent <span className="text-danger">*</span>
+                                    </Form.Label>
+
+                                    <div
+                                        className={`upload-indent-box ${errors.indentFile ? "is-invalid" : ""}`}
+                                        onClick={() => document.getElementById("indentFileInput").click()}
+                                    >
+                                        {indentFile ? (
+                                            <div className="d-flex align-items-center gap-3">
+                                                <span className="file-icon">📄</span>
+                                                <div>
+                                                    <div className="fw-semibold">{indentFile.name}</div>
+                                                    <small className="text-muted">
+                                                        {(indentFile.size / 1024).toFixed(2)} KB
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="text-center text-muted">
+                                                <img src={upload_icon} alt="upload_icon" className="icon-40" />
+
+                                                <div>
+                                                    Drag & drop your file here, or{" "}<br />
+                                                    <span className="text-primary">Click to Upload</span>
+                                                </div>
+                                                <small>
+                                                    Supported formats: PDF, DOC, DOCX (Max 2 MB)
+                                                </small>
+                                            </div>
+
+                                        )}
+                                    </div>
+
+                                    <input
+                                        id="indentFileInput"
+                                        type="file"
+                                        hidden
+                                        accept=".pdf,.doc,.docx"
+                                        onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (!file) return;
+
+                                            const extension = "." + file.name.split(".").pop().toLowerCase();
+                                            const fileSizeMB = file.size / (1024 * 1024);
+
+                                            // ❌ Invalid type
+                                            if (!ALLOWED_EXTENSIONS.includes(extension)) {
+                                                setErrors(prev => ({
+                                                    ...prev,
+                                                    indentFile: "Only PDF, DOC, and DOCX files are allowed"
+                                                }));
+                                                e.target.value = "";
+                                                return;
+                                            }
+
+                                            // ❌ Invalid size
+                                            if (fileSizeMB > MAX_FILE_SIZE_MB) {
+                                                setErrors(prev => ({
+                                                    ...prev,
+                                                    indentFile: "File size must not exceed 2 MB"
+                                                }));
+                                                e.target.value = "";
+                                                return;
+                                            }
+
+                                            // ✅ Valid file
+                                            setIndentFile(file);
+                                            setErrors(prev => {
+                                                const updated = { ...prev };
+                                                delete updated.indentFile;
+                                                return updated;
+                                            });
+                                        }}
+                                    />
+
+
+                                    <ErrorMessage>{errors.indentFile}</ErrorMessage>
+                                </Form.Group>
+                            </Col>
+
+                            {/* RIGHT: Approved By / Approved On */}
+                            <Col md={4}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>
+                                        Approved By <span className="text-danger">*</span>
+                                    </Form.Label>
+
+                                    <Form.Select
+                                        value={approvedBy}
+                                        onChange={(e) => {
+                                            setApprovedBy(e.target.value);
+                                            setErrors(prev => ({ ...prev, approvedBy: "" }));
+                                        }}
+                                    >
+                                        <option value="">Select</option>
+                                        <option value="CGMHR">CGMHR</option>
+                                        <option value="GMHR">GMHR</option>
+                                    </Form.Select>
+
+                                    <ErrorMessage>{errors.approvedBy}</ErrorMessage>
+                                </Form.Group>
+
+                                <Form.Group>
+                                    <Form.Label>
+                                        Approved On <span className="text-danger">*</span>
+                                    </Form.Label>
+
+                                    <Form.Control
+                                        type="date"
+                                        value={approvedOn}
+                                        onChange={(e) => {
+                                            setApprovedOn(e.target.value);
+                                            setErrors(prev => ({ ...prev, approvedOn: "" }));
+                                        }}
+                                    />
+
+                                    <ErrorMessage>{errors.approvedOn}</ErrorMessage>
+                                </Form.Group>
+                            </Col>
+                        </Row>
+
                         <Row className="g-4">
 
                             {/* BASIC FIELDS */}
                             <Col md={4}>
-                                <Form.Label>Position *</Form.Label>
+                                <Form.Label>Position <span className="text-danger">*</span></Form.Label>
                                 <Form.Select name="position" value={formData.position} onChange={handleInputChange}>
                                     <option value="">Select</option>
                                     <option>Developer</option>
                                     <option>Manager</option>
                                     <option>Analyst</option>
                                 </Form.Select>
+                                <ErrorMessage>{errors.position}</ErrorMessage>
                             </Col>
 
                             <Col md={4}>
-                                <Form.Label>Department *</Form.Label>
+                                <Form.Label>Department <span className="text-danger">*</span></Form.Label>
                                 <Form.Select name="department" value={formData.department} onChange={handleInputChange}>
                                     <option value="">Select</option>
                                     <option>IT</option>
                                     <option>HR</option>
                                     <option>Finance</option>
                                 </Form.Select>
+                                <ErrorMessage>{errors.department}</ErrorMessage>
                             </Col>
 
                             <Col md={4}>
-                                <Form.Label>Total Vacancies *</Form.Label>
+                                <Form.Label>Total Vacancies <span className="text-danger">*</span></Form.Label>
                                 <Form.Control name="vacancies" placeholder="Enter Vacancies" type="number" value={formData.vacancies} onChange={handleInputChange} />
+                                <ErrorMessage>{errors.vacancies}</ErrorMessage>
                             </Col>
-                            <Col xs={2} md={4}>
+                            {/* <Col xs={2} md={4}>
                                 <Form.Group className="form-group">
                                     <Form.Label>
                                         Total Experience<span className="text-danger">*</span>
@@ -243,16 +423,18 @@ const AddPosition = () => {
                                     />
 
                                 </Form.Group>
-                            </Col>
+                            </Col> */}
 
                             <Col md={4}>
-                                <Form.Label>Min Age *</Form.Label>
+                                <Form.Label>Min Age <span className="text-danger">*</span></Form.Label>
                                 <Form.Control name="minAge" placeholder="Min Age" type="number" value={formData.minAge} onChange={handleInputChange} />
+                                <ErrorMessage>{errors.minAge}</ErrorMessage>
                             </Col>
 
                             <Col md={4}>
-                                <Form.Label>Max Age *</Form.Label>
+                                <Form.Label>Max Age <span className="text-danger">*</span></Form.Label>
                                 <Form.Control name="maxAge" placeholder="Max Age" type="number" value={formData.maxAge} onChange={handleInputChange} />
+                                <ErrorMessage>{errors.maxAge}</ErrorMessage>
                             </Col>
 
                             <Col md={4}>
@@ -263,13 +445,14 @@ const AddPosition = () => {
                                     <option>Contract</option>
                                     <option>Temporary</option>
                                 </Form.Select>
+                                <ErrorMessage>{errors.employmentType}</ErrorMessage>
                             </Col>
 
-                            <Col md={2}>
-                                <Form.Label>CIBIL Score *</Form.Label>
-                                <Form.Control name="cibilScore" placeholder="Enter CIBIL Score" type="number" value={formData.cibilScore} onChange={handleInputChange} />
+                            <Col md={4}>
+                                <Form.Label>Contractual Period(Years)</Form.Label>
+                                <Form.Control name="contractualPeriod" placeholder="Enter Contractual Period" type="number" value={formData.contractualPeriod} onChange={handleInputChange} />
+                                <ErrorMessage>{errors.contractualPeriod}</ErrorMessage>
                             </Col>
-
 
                             <Col md={4}>
                                 <Form.Label>Grade / Scale</Form.Label>
@@ -279,9 +462,10 @@ const AddPosition = () => {
                                     <option>B</option>
                                     <option>C</option>
                                 </Form.Select>
+                                <ErrorMessage>{errors.grade}</ErrorMessage>
                             </Col>
 
-                            <Col md={2} className="">
+                            <Col md={4} className="">
 
                                 <Form.Label>Enable Location Preference</Form.Label>
                                 <Form.Check
@@ -296,74 +480,241 @@ const AddPosition = () => {
 
                             {/* Education and Experience */}
                             <Col md={6}>
-                                <Form.Group className="mb-4">
-                                    <Form.Label>Mandatory Education *</Form.Label>
+                                <Form.Group>
+                                    <div className="d-flex justify-content-between align-items-center mb-1">
+                                        <Form.Label className="mb-0">
+                                            Mandatory Education <span className="text-danger">*</span>
+                                        </Form.Label>
+
+                                        <Button
+                                            size="sm"
+                                            className="ms-2"
+                                            onClick={() => {
+                                                setEduMode("mandatory");
+                                                setShowEduModal(true);
+                                            }}
+                                        >
+                                            + Add
+                                        </Button>
+                                    </div>
+
                                     <Form.Control
                                         as="textarea"
-                                        rows={2}
-                                        name="mandatoryEducation"
-                                        value={formData.mandatoryEducation}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter Mandatory Education"
+                                        rows={4}
+                                        readOnly
+                                        value={educationData.mandatory.text || ""}
                                     />
                                 </Form.Group>
-                                <Form.Group className="mb-4">
-                                    <Form.Label>Mandatory Experience *</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        name="mandatoryExperience"
-                                        value={formData.mandatoryExperience}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter Minimum experience"
-
-                                    />
-                                </Form.Group>
-
+                                <ErrorMessage>{errors.mandatoryEducation}</ErrorMessage>
                             </Col>
                             <Col md={6}>
-                                <Form.Group className="mb-4">
-                                    <Form.Label>Preferred Education *</Form.Label>
+                                <Form.Group>
+                                    <div className="d-flex justify-content-between align-items-center mb-1">
+                                        <Form.Label className="mb-0">
+                                            Preferred Education <span className="text-danger">*</span>
+                                        </Form.Label>
+
+                                        <Button
+                                            size="sm"
+                                            className="ms-2"
+                                            onClick={() => {
+                                                setEduMode("preferred");
+                                                setShowEduModal(true);
+                                            }}
+                                        >
+                                            + Add
+                                        </Button>
+                                    </div>
+
                                     <Form.Control
                                         as="textarea"
-                                        rows={2}
-                                        name="preferredEducation"
-                                        value={formData.preferredEducation}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter Preferred Education"
+                                        rows={4}
+                                        readOnly
+                                        value={educationData.preferred.text || ""}
                                     />
                                 </Form.Group>
+                                <ErrorMessage>{errors.preferredEducation}</ErrorMessage>
+                            </Col>
 
-                                <Form.Group className="mb-4">
-                                    <Form.Label>Preferred Experience *</Form.Label>
+
+                            <Col md={6}>
+                                <Form.Group>
+                                    <Form.Label>
+                                        Mandatory Experience <span className="text-danger">*</span>
+                                    </Form.Label>
+
+                                    <Row className="g-2 mb-2">
+                                        {/* Years */}
+                                        <Col md={6}>
+                                            <Form.Select
+                                                value={formData.mandatoryExperience.years}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        mandatoryExperience: {
+                                                            ...prev.mandatoryExperience,
+                                                            years: value
+                                                        }
+                                                    }));
+                                                    setErrors(prev => {
+                                                        const updated = { ...prev };
+                                                        delete updated.mandatoryExperience;
+                                                        return updated;
+                                                    });
+                                                }}
+                                            >
+                                                <option value="">Select Years</option>
+                                                {YEAR_OPTIONS.map(y => (
+                                                    <option key={y} value={y}>{y}</option>
+                                                ))}
+                                            </Form.Select>
+                                        </Col>
+
+                                        {/* Months */}
+                                        <Col md={6}>
+                                            <Form.Select
+                                                value={formData.mandatoryExperience.months}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        mandatoryExperience: {
+                                                            ...prev.mandatoryExperience,
+                                                            months: value
+                                                        }
+                                                    }));
+                                                    setErrors(prev => {
+                                                        const updated = { ...prev };
+                                                        delete updated.mandatoryExperience;
+                                                        return updated;
+                                                    });
+                                                }}
+                                            >
+                                                <option value="">Select Months</option>
+                                                {MONTH_OPTIONS.map(m => (
+                                                    <option key={m} value={m}>{m}</option>
+                                                ))}
+                                            </Form.Select>
+                                        </Col>
+                                    </Row>
+
                                     <Form.Control
                                         as="textarea"
-                                        name="preferredExperience"
-                                        value={formData.preferredExperience}
-                                        onChange={handleInputChange}
-                                        placeholder="Enter Preferred experience"
-
+                                        rows={3}
+                                        placeholder="Enter mandatory experience details"
+                                        value={formData.mandatoryExperience.description}
+                                        onChange={(e) => {
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                mandatoryExperience: {
+                                                    ...prev.mandatoryExperience,
+                                                    description: e.target.value
+                                                }
+                                            }));
+                                            setErrors(prev => {
+                                                const updated = { ...prev };
+                                                delete updated.mandatoryExperience;
+                                                return updated;
+                                            });
+                                        }}
                                     />
+
+                                    <ErrorMessage>{errors.mandatoryExperience}</ErrorMessage>
                                 </Form.Group>
                             </Col>
 
-                            {/* DOCUMENTS */}
+
                             <Col md={6}>
-                                <Form.Label>Documents Required *</Form.Label>
-                                <div className="document-grid">
-                                    {documents.map((doc) => (
-                                        <Form.Check
-                                            key={doc}
-                                            label={doc}
-                                            checked={formData.documents.includes(doc)}
-                                            onChange={() => handleDocumentChange(doc)}
-                                        />
-                                    ))}
-                                </div>
+                                <Form.Group>
+                                    <Form.Label>
+                                        Preferred Experience <span className="text-danger">*</span>
+                                    </Form.Label>
+
+                                    <Row className="g-2 mb-2">
+                                        {/* Years */}
+                                        <Col md={6}>
+                                            <Form.Select
+                                                value={formData.preferredExperience.years}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        preferredExperience: {
+                                                            ...prev.preferredExperience,
+                                                            years: value
+                                                        }
+                                                    }));
+                                                    setErrors(prev => {
+                                                        const updated = { ...prev };
+                                                        delete updated.preferredExperience;
+                                                        return updated;
+                                                    });
+                                                }}
+                                            >
+                                                <option value="">Select Years</option>
+                                                {YEAR_OPTIONS.map(y => (
+                                                    <option key={y} value={y}>{y}</option>
+                                                ))}
+                                            </Form.Select>
+                                        </Col>
+
+                                        {/* Months */}
+                                        <Col md={6}>
+                                            <Form.Select
+                                                value={formData.preferredExperience.months}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        preferredExperience: {
+                                                            ...prev.preferredExperience,
+                                                            months: value
+                                                        }
+                                                    }));
+                                                    setErrors(prev => {
+                                                        const updated = { ...prev };
+                                                        delete updated.preferredExperience;
+                                                        return updated;
+                                                    });
+                                                }}
+                                            >
+                                                <option value="">Select Months</option>
+                                                {MONTH_OPTIONS.map(m => (
+                                                    <option key={m} value={m}>{m}</option>
+                                                ))}
+                                            </Form.Select>
+                                        </Col>
+                                    </Row>
+
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={3}
+                                        placeholder="Enter preferred experience details"
+                                        value={formData.preferredExperience.description}
+                                        onChange={(e) => {
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                preferredExperience: {
+                                                    ...prev.preferredExperience,
+                                                    description: e.target.value
+                                                }
+                                            }));
+                                            setErrors(prev => {
+                                                const updated = { ...prev };
+                                                delete updated.preferredExperience;
+                                                return updated;
+                                            });
+                                        }}
+                                    />
+
+                                    <ErrorMessage>{errors.preferredExperience}</ErrorMessage>
+                                </Form.Group>
                             </Col>
 
                             {/* ROLES */}
                             <Col md={6}>
-                                <Form.Label>Roles & Responsibilities *</Form.Label>
+                                <Form.Label>Roles & Responsibilities <span className="text-danger">*</span></Form.Label>
                                 <Form.Control
                                     as="textarea"
                                     rows={5}
@@ -371,13 +722,28 @@ const AddPosition = () => {
                                     value={formData.responsibilities}
                                     onChange={handleInputChange}
                                 />
+                                <ErrorMessage>{errors.responsibilities}</ErrorMessage>
+                            </Col>
+                            <Col md={2}>
+                                <Form.Label>Medical Required<span className="text-danger">*</span></Form.Label>
+                                <Form.Select
+                                    as="select"
+                                    name="medicalRequired"
+                                    value={formData.medicalRequired}
+                                    onChange={handleInputChange}
+                                >
+                                    <option value="">Select...</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </Form.Select>
+                                <ErrorMessage>{errors.medicalRequired}</ErrorMessage>
                             </Col>
 
-                            {/* LOCATION WISE DISTRIBUTION */}
+                            {/* Category WISE Reservation */}
                             <Col xs={12}>
                                 <div className="d-flex justify-content-between align-items-center mb-2">
                                     <div>
-                                        <h6 className="mb-0">Location Wise Distribution</h6>
+                                        <h6 className="mb-0">Category Wise Reservation</h6>
                                         <small className="text-muted">Enable to distribute vacancies across states</small>
                                     </div>
                                     <Form.Check
@@ -439,7 +805,7 @@ const AddPosition = () => {
                                             </Col>
 
                                             <Col md={4}>
-                                                <Form.Label>Vacancies *</Form.Label>
+                                                <Form.Label>Vacancies <span className="text-danger">*</span></Form.Label>
                                                 <Form.Control
                                                     type="number"
                                                     placeholder="Enter Vacancies"
@@ -585,8 +951,25 @@ const AddPosition = () => {
                     // optionally refresh positions table
                 }}
             />
+            <EducationModal
+                show={showEduModal}
+                mode={eduMode}
+                initialData={educationData[eduMode]}   // 🔥 THIS is required
+                onHide={() => setShowEduModal(false)}
+                onSave={({ rows, certs, text }) => {
+                    setEducationData(prev => ({
+                        ...prev,
+                        [eduMode]: { rows, certs, text }
+                    }));
 
-
+                    setErrors(prev => {
+                        const updated = { ...prev };
+                        if (eduMode === "mandatory") delete updated.mandatoryEducation;
+                        if (eduMode === "preferred") delete updated.preferredEducation;
+                        return updated;
+                    });
+                }}
+            />
         </Container>
     );
 };

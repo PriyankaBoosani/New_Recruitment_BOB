@@ -1,0 +1,26 @@
+.edu-modal-header {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+.edu-modal-footer {
+    padding-top: 0;
+    border-top: none;
+}
+.edu-btn{
+    background-color: #fff ;
+    border: 1px solid #F26522 ;
+    color: #F26522 ;
+    font-weight: 400;
+    font-size: 0.875em;
+}
+.edu-modal .form-control, .edu-modal .form-select {
+	border-radius: 6px;
+	padding: 10px 12px;
+	font-size: 0.785em;
+
+}
+.edu-btn:hover {
+	background: #fff;
+	border: 1px solid #F26522;
+	color: #f26522;
+}

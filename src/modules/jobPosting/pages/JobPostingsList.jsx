@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 import "../../../style/css/JobPostingsList.css";
 import DeleteRequisitionModal from "../component/DeleteConfirmationModal";
 
-
+import view_icon from "../../../assets/view_icon.png";
 import submitIcon from "../../../assets/submitIcon.png";
 import pos_edit_icon from "../../../assets/pos_edit_icon.png";
 import pos_delete_icon from "../../../assets/pos_delete_icon.png";
@@ -38,16 +38,16 @@ const JobPostingsList = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedReq, setSelectedReq] = useState(null);
     const handleConfirmDelete = async () => {
-  if (!selectedReq) return;
+        if (!selectedReq) return;
 
-  await deleteRequisition(selectedReq.id);
-  setShowDeleteModal(false);
-  setSelectedReq(null);
-};
+        await deleteRequisition(selectedReq.id);
+        setShowDeleteModal(false);
+        setSelectedReq(null);
+    };
 
 
     // 🔹 Backend-driven filters
-    const [year, setYear] = useState("2025");
+    const [year, setYear] = useState("2026");
     const [status, setStatus] = useState("ALL");
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(0); // backend is 0-based
@@ -93,6 +93,7 @@ const JobPostingsList = () => {
                         value={year}
                         onChange={(e) => setYear(e.target.value)}
                     >
+                        <option value="2026">Year - 2026</option>
                         <option value="2025">Year - 2025</option>
                         <option value="2024">Year - 2024</option>
                     </Form.Select>
@@ -210,7 +211,8 @@ const JobPostingsList = () => {
                                         className="icon-btn"
                                         onClick={(e) => {
                                             e.stopPropagation();
-   navigate(`/job-posting/${req.id}/add-position`);                                        }}
+                                            navigate(`/job-posting/${req.id}/add-position`);
+                                        }}
                                     >
                                         <img src={pos_plus_icon} alt="add" className="icon-16" />
                                     </Button>
@@ -226,30 +228,31 @@ const JobPostingsList = () => {
                                         <img src={pos_edit_icon} alt="edit" className="icon-20" />
                                     </Button>
 
-
-                                   <Button
-  variant="light"
-  className="icon-btn"
-  onClick={(e) => {
-    e.stopPropagation();
-    setSelectedReq(req);
-    setShowDeleteModal(true);
-  }}
->
-  <img src={pos_delete_icon} alt="delete" className="icon-20" />
-</Button>
-
-
+                                    <Button
+                                        variant="light"
+                                        className="icon-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setSelectedReq(req);
+                                            setShowDeleteModal(true);
+                                        }}
+                                    >
+                                        <img src={pos_delete_icon} alt="delete" className="icon-20" />
+                                    </Button>
                                 </>
                             ) : (
                                 <Button
                                     variant="light"
                                     className="icon-btn"
-                                    onClick={(e) => e.stopPropagation()}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/job-posting/create-requisition?id=${req.id}&mode=view`);
+                                    }}
                                 >
-                                    <Eye />
+                                    <img src={view_icon} alt="view" className="icon-16" />
                                 </Button>
                             )}
+
 
                             <Button
                                 variant="none"
@@ -362,14 +365,14 @@ const JobPostingsList = () => {
                 </Row>
             )}
             <DeleteRequisitionModal
-  show={showDeleteModal}
-  onClose={() => {
-    setShowDeleteModal(false);
-    setSelectedReq(null);
-  }}
-  onConfirm={handleConfirmDelete}
-  requisitionCode={selectedReq?.code}
-/>
+                show={showDeleteModal}
+                onClose={() => {
+                    setShowDeleteModal(false);
+                    setSelectedReq(null);
+                }}
+                onConfirm={handleConfirmDelete}
+                requisitionCode={selectedReq?.code}
+            />
 
         </Container>
     );

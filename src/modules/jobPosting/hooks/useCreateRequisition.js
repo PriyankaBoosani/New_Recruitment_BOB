@@ -7,9 +7,11 @@ export const useCreateRequisition = (editId) => {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState(null);
-  const [indentFile, setIndentFile] = useState(null);
-  const [existingIndentPath, setExistingIndentPath] = useState(null);
-  
+  const [requisitionData, setRequisitionData] = useState(null);
+
+  // const [indentFile, setIndentFile] = useState(null);
+  // const [existingIndentPath, setExistingIndentPath] = useState(null);
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -27,13 +29,16 @@ export const useCreateRequisition = (editId) => {
         const res = await requisitionApiService.getRequisitionById(editId);
         const data = res?.data || {};
 
+        // 🔥 STORE FULL OBJECT
+        setRequisitionData(data);
+
+        // existing logic
         setFormData({
           title: data.requisitionTitle || "",
           description: data.requisitionDescription || "",
           startDate: data.startDate ? data.startDate.split("T")[0] : "",
           endDate: data.endDate ? data.endDate.split("T")[0] : "",
         });
-        setExistingIndentPath(data.indentPath || null);
       } catch (err) {
         setError("Failed to load requisition data.");
       } finally {
@@ -43,6 +48,7 @@ export const useCreateRequisition = (editId) => {
 
     loadData();
   }, [editId]);
+
 
   // Handle Input Changes
   const handleInputChange = (e) => {
@@ -63,7 +69,7 @@ export const useCreateRequisition = (editId) => {
     setLoading(true);
     setError(null);
     try {
-      const response = editId 
+      const response = editId
         ? await requisitionApiService.updateRequisition(editId, payload)
         : await requisitionApiService.createRequisition(payload);
       return response.data;
@@ -80,12 +86,13 @@ export const useCreateRequisition = (editId) => {
     formData,
     setFormData,
     handleInputChange,
-    indentFile,
-    setIndentFile,
-    existingIndentPath,
+    // indentFile,
+    // setIndentFile,
+    // existingIndentPath,
     saveRequisition,
     loading,
     fetching,
     error,
+    requisitionData   
   };
 };
