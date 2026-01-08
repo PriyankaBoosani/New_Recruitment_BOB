@@ -148,27 +148,31 @@ const DocumentFormModal = ({
               </Form.Group>
             </Col>
 <Col xs={12}>
-  {!isViewing && (
+
     <Form.Group>
       <div className="d-flex align-items-center gap-2">
         {/* ✅ Checkbox */}
-        <Form.Check
-          type="checkbox"
-          checked={formData.isRequiredConfirmed}
-          onChange={(e) => {
-            setFormData(prev => ({
-              ...prev,
-              isRequiredConfirmed: e.target.checked
-            }));
+       <Form.Check
+  type="checkbox"
+  disabled={isViewing}
+  checked={!!formData.isRequiredConfirmed}
+  onChange={(e) => {
+    if (isViewing) return;
 
-            if (errors.isRequiredConfirmed) {
-              setErrors(prev => ({
-                ...prev,
-                isRequiredConfirmed: null
-              }));
-            }
-          }}
-        />
+    setFormData(prev => ({
+      ...prev,
+      isRequiredConfirmed: e.target.checked
+    }));
+
+    if (errors.isRequiredConfirmed) {
+      setErrors(prev => ({
+        ...prev,
+        isRequiredConfirmed: null
+      }));
+    }
+  }}
+/>
+
 
         {/* ✅ Label text (same style as other labels) */}
         <Form.Label className="mb-0">
@@ -179,9 +183,12 @@ const DocumentFormModal = ({
       </div>
 
       {/* ✅ Error message */}
-      <ErrorMessage>{errors.isRequiredConfirmed}</ErrorMessage>
+     {!isViewing && (
+  <ErrorMessage>{errors.isRequiredConfirmed}</ErrorMessage>
+)}
+
     </Form.Group>
-  )}
+  
 </Col>
 
           </Row>

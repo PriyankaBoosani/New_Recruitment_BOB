@@ -90,7 +90,10 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
         <Form onSubmit={handleSubmit}>
           <Row className="g-3">
             <Col md={6}>
-              <Form.Label>{t("role")} *</Form.Label>
+             <Form.Label>
+  {t("role")} <span className="text-danger">*</span>
+</Form.Label>
+
               <Form.Select
                 name="role"
                 value={formData.role}
@@ -106,7 +109,10 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
             </Col>
 
        <Col md={6}>
-  <Form.Label>{t("fullName")} *</Form.Label>
+ <Form.Label>
+  {t("fullName")} <span className="text-danger">*</span>
+</Form.Label>
+
 <Form.Control
   name="fullName"
   value={formData.fullName}
@@ -133,7 +139,10 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
 
 
             <Col md={6}>
-              <Form.Label>{t("email")} *</Form.Label>
+              <Form.Label>
+  {t("email")} <span className="text-danger">*</span>
+</Form.Label>
+
               <Form.Control
                 name="email"
                 value={formData.email}
@@ -145,7 +154,10 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
 
 
             <Col md={6}>
-              <Form.Label>{t("password")} *</Form.Label>
+             <Form.Label>
+  {t("password")} <span className="text-danger">*</span>
+</Form.Label>
+
 
               <div className="position-relative">
                 <Form.Control
@@ -175,7 +187,10 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
 
 
             <Col md={6}>
-              <Form.Label>{t("confirmPassword")} *</Form.Label>
+             <Form.Label>
+  {t("confirmPassword")} <span className="text-danger">*</span>
+</Form.Label>
+
 
               <div className="position-relative">
                 <Form.Control
