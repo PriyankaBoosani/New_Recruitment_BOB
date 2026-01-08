@@ -121,7 +121,7 @@ const SpecialCategoryImportModal = ({
     )}
   </Alert>
 )}
-
+  
 
         <input
           id="upload-xlsx-sc"
