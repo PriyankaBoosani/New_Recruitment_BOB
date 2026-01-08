@@ -72,7 +72,8 @@ const DepartmentImportView = ({
           </p>
         </div>
 
-{error && (
+
+        {/* {error && (
   <Alert variant="danger">
     <div>{error}</div>
 
@@ -84,7 +85,31 @@ const DepartmentImportView = ({
       </ul>
     )}
   </Alert>
+)} */}
+
+{error && (
+  <Alert variant="danger">
+    <div>{error}</div>
+
+    {errorDetails.length > 0 && (
+      <div
+        className="mt-2"
+        style={{
+          maxHeight: '150px',   // 👈 scroll height
+          overflowY: 'auto'     // 👈 enables scroll
+        }}
+      >
+        <ul className="mb-0">
+          {errorDetails.map((msg, idx) => (
+            <li key={idx}>{msg}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </Alert>
 )}
+
+
 
         <input
           id="upload-xlsx"

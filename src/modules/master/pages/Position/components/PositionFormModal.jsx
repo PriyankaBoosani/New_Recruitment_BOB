@@ -83,7 +83,7 @@ const PositionFormModal = ({
       </Modal.Header>
 
       <Modal.Body className="p-4">
-        {!isViewing && (
+       {!isViewing && !isEditing && (
           <div className="tab-buttons mb-4">
             <Button
               variant={activeTab === "manual" ? "light" : "outline-light"}
@@ -134,6 +134,16 @@ const PositionFormModal = ({
   value={formData.title}
   placeholder={t("enter_position_title")}
   className="form-control-custom"
+
+  // onBlur={(e) => {
+  //   handleInputChange({
+  //     target: {
+  //       name: "title",
+  //       value: e.target.value.trim()
+  //     }
+  //   });
+  // }}
+
   onChange={(e) =>
     handleValidatedInput({
       e,
@@ -148,6 +158,7 @@ const PositionFormModal = ({
     })
   }
 />
+
 
 )}
 

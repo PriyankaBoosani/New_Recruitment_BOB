@@ -114,13 +114,16 @@ const bulkAddLocations = async (file) => {
       console.log("API RESPONSE:", res); // logs for 200 & 422
 
       //  business failure
-      if (res.success === false) {
-        toast.error(res.message);
-        return {
-          success: false,
-          error: res.message
-        };
-      }
+    if (res.success === false) {
+  toast.error(res.message);
+
+  return {
+    success: false,
+    message: res.message, // summary
+    data: res.data        // row-wise errors
+  };
+}
+
       //  success
       toast.success(res.message || "File uploaded successfully");
 

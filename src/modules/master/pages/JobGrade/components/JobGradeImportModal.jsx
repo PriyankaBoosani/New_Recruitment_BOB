@@ -89,7 +89,7 @@ const JobGradeImportModal = ({
           </p>
         </div>
 
-       {error && (
+       {/* {error && (
   <Alert variant="danger">
     <div>{error}</div>
 
@@ -101,7 +101,31 @@ const JobGradeImportModal = ({
       </ul>
     )}
   </Alert>
+)} */}
+
+
+{error && (
+  <Alert variant="danger">
+    <div>{error}</div>
+
+    {errorDetails.length > 0 && (
+      <div
+        className="mt-2"
+        style={{
+          maxHeight: '150px',
+          overflowY: 'auto'
+        }}
+      >
+        <ul className="mb-0">
+          {errorDetails.map((msg, idx) => (
+            <li key={idx}>{msg}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </Alert>
 )}
+
 
 
         {/* FILE INPUT */}

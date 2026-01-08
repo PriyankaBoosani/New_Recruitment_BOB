@@ -47,8 +47,12 @@ const PositionImportModal = ({
       onClose();
     } else {
       // show server message if present
-      setError(res?.message || res?.error || t("position:import_failed"));
-       setErrorDetails(res?.details || []);
+      // setError(res?.message || res?.error || t("position:import_failed"));
+      //  setErrorDetails(res?.details || []);
+     setError(res?.message || t("position:import_failed"));
+setErrorDetails(res?.data || res?.details || []);
+
+
     }
   };
 
@@ -82,7 +86,7 @@ const PositionImportModal = ({
         </div>
 
         {/* ===== Error ===== */}
-{error && (
+{/* {error && (
   <Alert variant="danger">
     <div>{error}</div>
 
@@ -94,7 +98,39 @@ const PositionImportModal = ({
       </ul>
     )}
   </Alert>
+)} */}
+
+
+{error && (
+  <Alert variant="danger">
+    {/* Summary */}
+    <div className="fw-semibold">
+      {error}
+    </div>
+
+    {/* Scrollable details */}
+    {errorDetails.length > 0 && (
+      <div
+        className="mt-2"
+        style={{
+          maxHeight: "150px",
+          overflowY: "auto"
+        }}
+      >
+        <ul className="mb-0">
+          {errorDetails.map((msg, idx) => (
+            <li key={idx}>{msg}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </Alert>
 )}
+
+
+
+
+
         {/* ===== File Input ===== */}
         <input
           id="upload-xlsx-position"

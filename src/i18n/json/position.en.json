@@ -62,7 +62,9 @@
   "add_error": "Failed to add position",
   "update_error": "Failed to update position",
   "delete_error": "Failed to delete position",
-  "download_error": "Failed to download template"
+  "download_error": "Failed to download template",
+   "import_error": "Failed to import Job Grades"
+
 
 
 }

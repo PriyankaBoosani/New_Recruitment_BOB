@@ -21,6 +21,7 @@
   "min_age_too_high": "Minimum age must not exceed {{max}}",
   "max_age_too_low": "Maximum age must be greater than minimum age",
   "max_age_too_high": "Maximum age must not exceed {{max}}",
+  "max_less_than_min": "Max age must be greater than or equal to Min age",
   "no_special_chars": "Please enter valid Full Name",
   "no_special_charss": "Please enter valid  Name",
   "invalid_search": "Only alphabets, numbers, @ and space are allowed",

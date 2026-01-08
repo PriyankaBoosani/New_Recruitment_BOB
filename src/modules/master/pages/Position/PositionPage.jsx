@@ -166,35 +166,81 @@ const PositionPage = () => {
     setShowAddModal(true);
   };
 
+  // const handleSave = async (e) => {
+  //   e.preventDefault();
+
+  //   const { valid, errors: vErrors } = validatePositionForm(formData, {
+  //     existing: positions,
+  //     currentId: isEditing ? editingId : null,
+  //   });
+
+  //   if (!valid) {
+  //     setErrors(vErrors);
+  //     return;
+  //   }
+
+  //   //  IMPORTANT: formData MUST contain departmentId & jobGradeId
+  //   const payload = mapPositionToApi(
+  //     { ...formData, id: editingId },
+  //     isEditing
+  //   );
+
+
+  //   if (isEditing) {
+  //     await updatePosition(editingId, payload);
+  //   } else {
+  //     await addPosition(payload);
+  //     setCurrentPage(1); // newest on top
+  //   }
+
+  //   setShowAddModal(false);
+  // };
+
+
+
+
+
+
+
   const handleSave = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const { valid, errors: vErrors } = validatePositionForm(formData, {
-      existing: positions,
-      currentId: isEditing ? editingId : null,
-    });
-
-    if (!valid) {
-      setErrors(vErrors);
-      return;
-    }
-
-    //  IMPORTANT: formData MUST contain departmentId & jobGradeId
-    const payload = mapPositionToApi(
-      { ...formData, id: editingId },
-      isEditing
-    );
-
-
-    if (isEditing) {
-      await updatePosition(editingId, payload);
-    } else {
-      await addPosition(payload);
-      setCurrentPage(1); // newest on top
-    }
-
-    setShowAddModal(false);
+  // TRIM TEXT FIELDS HERE (single source of truth)
+  const cleanedFormData = {
+    ...formData,
+    title: formData.title?.trim(),
+    mandatoryExperience: formData.mandatoryExperience?.trim(),
+    preferredExperience: formData.preferredExperience?.trim(),
+    mandatoryEducation: formData.mandatoryEducation?.trim(),
+    preferredEducation: formData.preferredEducation?.trim(),
+    rolesResponsibilities: formData.rolesResponsibilities?.trim()
   };
+
+  const { valid, errors: vErrors } = validatePositionForm(cleanedFormData, {
+    existing: positions,
+    currentId: isEditing ? editingId : null,
+  });
+
+  if (!valid) {
+    setErrors(vErrors);
+    return;
+  }
+
+  const payload = mapPositionToApi(
+    { ...cleanedFormData, id: editingId },
+    isEditing
+  );
+
+  if (isEditing) {
+    await updatePosition(editingId, payload);
+  } else {
+    await addPosition(payload);
+    setCurrentPage(1);
+  }
+
+  setShowAddModal(false);
+};
+
 
 
   const handleImport = async () => {

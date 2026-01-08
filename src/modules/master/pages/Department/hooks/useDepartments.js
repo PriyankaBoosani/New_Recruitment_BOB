@@ -39,7 +39,7 @@ const bulkAddDepartments = async (file) => {
   return {
     success: false,
     error: res.message,
-    details: res.data || []   // 👈 ADD THIS
+    details: res.data || []   //  ADD THIS
   };
 }
 

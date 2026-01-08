@@ -845,3 +845,35 @@ body.modal-open {
 	background-color: var(--bs-secondary-bg);
 	opacity: 1;
 }
+
+/* Base checkbox */
+.form-check-input {
+  width: 1.1em;
+  height: 1.1em;
+  border: 2px solid #f26522 !important;
+  cursor: pointer;
+}
+
+/* Checked state */
+.form-check-input:checked {
+  background-color: #f26522 !important;
+  border-color: #f26522 !important;
+}
+/* 
+/* Focus state (remove blue ring, add orange glow) */
+.form-check-input:focus {
+  border-color: #f26522 !important;
+  box-shadow: 0 0 0 0.15rem rgba(242, 101, 34, 0.35) !important;
+} 
+
+scrollbar styling
+.import-scroll-wrapper::-webkit-scrollbar,
+.error-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.import-scroll-wrapper::-webkit-scrollbar-thumb,
+.error-scroll::-webkit-scrollbar-thumb {
+  background-color: #dc3545;
+  border-radius: 4px;
+}

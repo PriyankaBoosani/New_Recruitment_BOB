@@ -76,7 +76,7 @@ const CategoryImportModal = ({
             {t("category:support_xlsx")}
           </p>
         </div>
-
+{/* 
         {error && (
   <Alert variant="danger">
     <div>{error}</div>
@@ -89,7 +89,35 @@ const CategoryImportModal = ({
       </ul>
     )}
   </Alert>
+)} */}
+
+
+{error && (
+  <Alert variant="danger">
+    {/* Summary message */}
+    <div className="fw-semibold">
+      {error}
+    </div>
+
+    {/* Scrollable error list */}
+    {errorDetails.length > 0 && (
+      <div
+        className="mt-2"
+        style={{
+          maxHeight: "150px",
+          overflowY: "auto"
+        }}
+      >
+        <ul className="mb-0">
+          {errorDetails.map((msg, idx) => (
+            <li key={idx}>{msg}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </Alert>
 )}
+
 
 
         <input

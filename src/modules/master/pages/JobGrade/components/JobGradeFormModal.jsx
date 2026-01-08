@@ -60,7 +60,8 @@ const JobGradeFormModal = ({
       </Modal.Header>
 
       <Modal.Body className="p-4">
-       {!isViewing && (
+       {!isViewing && !isEditing && (
+
           <div className="tab-buttons mb-4">
             <Button
               className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
@@ -175,7 +176,7 @@ onChange={(e) =>
 
   {isViewing ? (
     <div className="form-control-view">
-      {formData.minSalary || "-"}
+       {formatSalary(formData.minSalary) || "-"}
     </div>
   ) : (
 <Form.Control
@@ -213,7 +214,9 @@ onChange={(e) =>
 
   {isViewing ? (
     <div className="form-control-view">
-      {formData.maxSalary || "-"}
+  
+{formatSalary(formData.maxSalary) || "-"}
+
     </div>
   ) : (
  <Form.Control

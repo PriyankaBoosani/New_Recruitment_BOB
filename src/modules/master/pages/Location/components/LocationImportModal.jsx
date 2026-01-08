@@ -51,8 +51,9 @@ const LocationImportModal = ({
       onSuccess();
       onClose();
     } else {
-      setError(result.error);
-       setErrorDetails(result.details || []);
+     setError(result?.message || t("location:import_failed"));
+setErrorDetails(result?.data || []);
+
     }
   };
 
@@ -84,7 +85,7 @@ const LocationImportModal = ({
           </p>
         </div>
 
-{error && (
+{/* {error && (
   <Alert variant="danger">
     <div>{error}</div>
 
@@ -96,7 +97,34 @@ const LocationImportModal = ({
       </ul>
     )}
   </Alert>
+)} */}
+
+{error && (
+  <Alert variant="danger">
+    {/* Summary */}
+    <div className="fw-semibold">
+      {error}
+    </div>
+
+    {/* Scrollable row errors */}
+    {errorDetails.length > 0 && (
+      <div
+        className="mt-2"
+        style={{
+          maxHeight: "150px",
+          overflowY: "auto"
+        }}
+      >
+        <ul className="mb-0">
+          {errorDetails.map((msg, idx) => (
+            <li key={idx}>{msg}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </Alert>
 )}
+
 
         <input
           id="upload-xlsx-location"
