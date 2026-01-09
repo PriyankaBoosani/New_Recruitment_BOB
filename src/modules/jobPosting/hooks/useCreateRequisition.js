@@ -60,6 +60,7 @@ export const useCreateRequisition = (editId) => {
         d.setDate(d.getDate() + REQUISITION_CONFIG.DEFAULT_DURATION_DAYS);
         updated.endDate = d.toISOString().split("T")[0];
       }
+
       return updated;
     });
   };
@@ -93,6 +94,6 @@ export const useCreateRequisition = (editId) => {
     loading,
     fetching,
     error,
-    requisitionData   
+    requisitionData
   };
 };

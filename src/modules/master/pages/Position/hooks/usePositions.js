@@ -29,15 +29,15 @@ const fetchPositions = async () => {
 const mappedPositions = mapPositionsFromApi(positionApiData);
 
     //  Fetch departments
-    const deptRes = await masterApiService.getAllDepartments();
-    const deptApiData = Array.isArray(deptRes.data)
-      ? deptRes.data
-      : deptRes.data?.data || [];
+    // const deptRes = await masterApiService.getAllDepartments();
+    // const deptApiData = Array.isArray(deptRes.data)
+    //   ? deptRes.data
+    //   : deptRes.data?.data || [];
 
-    const deptMap = {};
-    deptApiData.forEach(d => {
-      deptMap[d.departmentId] = d.departmentName;
-    });
+    // const deptMap = {};
+    // deptApiData.forEach(d => {
+    //   deptMap[d.departmentId] = d.departmentName;
+    // });
 
     //  Fetch job grades
     const jobGradeRes = await masterApiService.getAllJobGrades();
@@ -50,7 +50,7 @@ const mappedPositions = mapPositionsFromApi(positionApiData);
     //  Enrich positions
     const enrichedPositions = mappedPositions.map(p => ({
       ...p,
-      department: deptMap[p.departmentId] || "—",
+    //  department: deptMap[p.departmentId] || "—",
       jobGrade: jobGradeMap[p.jobGradeId] || "—"
     }));
 
@@ -65,13 +65,13 @@ const mappedPositions = mapPositionsFromApi(positionApiData);
 
 
 
-  const buildDepartmentMap = (departments = []) => {
-  const map = {};
-  departments.forEach(d => {
-    map[d.departmentId] = d.departmentName;
-  });
-  return map;
-};
+//   const buildDepartmentMap = (departments = []) => {
+//   const map = {};
+//   departments.forEach(d => {
+//     map[d.departmentId] = d.departmentName;
+//   });
+//   return map;
+// };
 
 
   useEffect(() => {

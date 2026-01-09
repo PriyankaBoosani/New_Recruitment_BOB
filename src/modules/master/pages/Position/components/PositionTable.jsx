@@ -38,7 +38,7 @@ const PositionTable = ({
             <tr>
               <th>{t("s_no")}</th>
               <th>{t("position_title")}</th>
-              <th>{t("department")}</th>
+              {/* <th>{t("department")}</th> */}
               <th>{t("job_grade")}</th>
               <th>{t("roles_responsibilities")}</th>
               <th style={{ textAlign: "center" }}>{t("actions")}</th>
@@ -51,7 +51,7 @@ const PositionTable = ({
                 <tr key={p.id}>
                   <td>{indexOfFirst + idx + 1}</td>
                   <td>{p.title}</td>
-                  <td>{p.department}</td>
+                  {/* <td>{p.department}</td> */}
                   <td>{p.jobGrade}</td>
                   <td>{p.rolesResponsibilities }</td>
                   <td>

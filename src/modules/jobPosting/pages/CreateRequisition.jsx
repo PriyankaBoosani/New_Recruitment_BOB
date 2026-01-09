@@ -4,68 +4,54 @@ import { Container, Row, Col, Form, Button, Card, Spinner } from "react-bootstra
 import "../../../style/css/CreateRequisition.css";
 
 import ErrorMessage from "../../../shared/components/ErrorMessage";
-// import upload_Icon from "../../../assets/upload_Icon.png";
-
 import { validateRequisitionForm } from "../validations/requisition-validation";
-import { mapRequisitionToApi } from "../mappers/requisitionMapper";
+import { mapRequisitionToApi } from "../mappers/createRequisitionMapper";
 import { useCreateRequisition } from "../hooks/useCreateRequisition";
 import { REQUISITION_CONFIG } from "../config/requisitionConfig";
-// import { FILE_BASE_URL } from "../config/fileConfig";
 
 const CreateRequisition = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  // const fileInputRef = useRef(null);
 
+  /* ===================== URL + MODE ===================== */
   const query = new URLSearchParams(location.search);
-  const editId = query.get("id");
-  const mode = query.get("mode"); // "view" | null
+  const editId = query.get("id"); // ✅ DEFINE FIRST
+  const mode = location.state?.mode; // "view" | "edit" | undefined
 
+  const isCreateMode = !editId;
+  const isViewMode = !!editId && mode === "view";
+  const isEditMode = !!editId && mode !== "view";
 
+  /* ===================== HOOK ===================== */
   const {
     formData,
     handleInputChange,
-    // indentFile,
-    // setIndentFile,
-    // existingIndentPath,
     saveRequisition,
     loading,
     fetching,
-    error: apiError,
-    requisitionData
+    error: apiError
   } = useCreateRequisition(editId);
-
-  const requestedMode = query.get("mode"); // view | edit | null
-  const isEditableFromApi = requisitionData?.editable === true;
-
-  const isViewMode = requestedMode === "view" || !isEditableFromApi;
-
 
   const [errors, setErrors] = useState({});
 
-  // const buildFileUrl = (path) => {
-  //   if (!path) return null;
-  //   return path.startsWith("http") ? path : `${FILE_BASE_URL}${path.replace("/var/www/html", "")}`;
-  // };
-
+  /* ===================== SAVE ===================== */
   const handleSave = async (e) => {
     e?.preventDefault?.();
 
     const { valid, errors: valErrors } = validateRequisitionForm(
       formData,
-      //  indentFile,
-      Boolean(editId),
-      // existingIndentPath
+      Boolean(editId)
     );
 
-    if (!valid) return setErrors(valErrors);
+    if (!valid) {
+      setErrors(valErrors);
+      return;
+    }
+
     if (isViewMode) return;
 
-
     try {
-      // const payload = mapRequisitionToApi(formData, indentFile, editId);
       const payload = mapRequisitionToApi(formData);
-
       await saveRequisition(payload);
       navigate(REQUISITION_CONFIG.SUCCESS_REDIRECT);
     } catch (err) {
@@ -73,14 +59,17 @@ const CreateRequisition = () => {
     }
   };
 
+  /* ===================== LOADER ===================== */
   if (fetching) {
     return (
       <Container className="text-center mt-5">
-        <Spinner animation="border" /> <p>Loading Requisition...</p>
+        <Spinner animation="border" />
+        <p>Loading Requisition...</p>
       </Container>
     );
   }
 
+  /* ===================== UI ===================== */
   return (
     <Container fluid className="create-requisition-page">
       <Card className="requisition-card">
@@ -91,12 +80,13 @@ const CreateRequisition = () => {
               {isViewMode
                 ? "View Requisition"
                 : editId
-                  ? "Edit Requisition"
-                  : "Create New Requisition"}
+                ? "Edit Requisition"
+                : "Create New Requisition"}
             </h6>
           </div>
 
           <Form onSubmit={handleSave}>
+            {/* ✅ THIS WAS MISSING */}
             <fieldset disabled={isViewMode}>
               <Form.Group className="mb-3">
                 <Form.Label>
@@ -108,21 +98,15 @@ const CreateRequisition = () => {
                   value={formData.title}
                   onChange={(e) => {
                     handleInputChange(e);
-                    setErrors({ ...errors, title: "" });
+                    setErrors((prev) => ({ ...prev, title: "" }));
                   }}
                   isInvalid={!!errors.title}
                 />
 
-                <Form.Text className="text-muted">
-                  Use a clear, searchable title used across the portal and job boards.
-                </Form.Text>
-
                 <ErrorMessage>{errors.title}</ErrorMessage>
               </Form.Group>
 
-
               <Row>
-                {/* LEFT COLUMN */}
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>
@@ -136,7 +120,7 @@ const CreateRequisition = () => {
                       value={formData.description}
                       onChange={(e) => {
                         handleInputChange(e);
-                        setErrors({ ...errors, description: "" });
+                        setErrors((prev) => ({ ...prev, description: "" }));
                       }}
                       isInvalid={!!errors.description}
                     />
@@ -145,7 +129,6 @@ const CreateRequisition = () => {
                   </Form.Group>
                 </Col>
 
-                {/* RIGHT COLUMN */}
                 <Col md={6}>
                   <Row>
                     <Col md={12}>
@@ -158,14 +141,17 @@ const CreateRequisition = () => {
                           type="date"
                           name="startDate"
                           value={formData.startDate}
-                          onChange={handleInputChange}
+                          onChange={(e) => {
+                            handleInputChange(e);
+                            setErrors((prev) => ({
+                              ...prev,
+                              startDate: "",
+                              endDate: ""
+                            }));
+                          }}
                           min={new Date().toISOString().split("T")[0]}
                           isInvalid={!!errors.startDate}
                         />
-
-                        <Form.Text className="text-muted">
-                          Date from which candidates can start applying.
-                        </Form.Text>
 
                         <ErrorMessage>{errors.startDate}</ErrorMessage>
                       </Form.Group>
@@ -181,14 +167,13 @@ const CreateRequisition = () => {
                           type="date"
                           name="endDate"
                           value={formData.endDate}
-                          onChange={handleInputChange}
+                          onChange={(e) => {
+                            handleInputChange(e);
+                            setErrors((prev) => ({ ...prev, endDate: "" }));
+                          }}
                           min={formData.startDate}
                           isInvalid={!!errors.endDate}
                         />
-
-                        <Form.Text className="text-muted">
-                          Standard duration: 21 days.
-                        </Form.Text>
 
                         <ErrorMessage>{errors.endDate}</ErrorMessage>
                       </Form.Group>
@@ -197,87 +182,27 @@ const CreateRequisition = () => {
                 </Col>
               </Row>
 
-
-              {/* <Col md={6}>
-                <Form.Group>
-                  <Form.Label>Upload Indent {!editId && <span className="text-danger">*</span>}</Form.Label>
-                  <div className={`upload-box ${errors.indentFile ? "is-invalid" : ""}`} onClick={() => fileInputRef.current.click()}>
-                    <img src={upload_Icon} alt="upload" className="icon-40" />
-                    <p>Drag & drop or <span className="upload-link"> Click to Upload</span></p>
-                    
-                    {indentFile ? (
-                      <div className="selected-file mt-2">📄 {indentFile.name}</div>
-                    ) : existingIndentPath && (
-                      <div className="mt-2 d-flex align-items-center gap-2">
-                        <span className="text-muted">📄 Current File</span>
-                        <Button size="sm" variant="link" onClick={(e) => { e.stopPropagation(); window.open(buildFileUrl(existingIndentPath), "_blank"); }}>View</Button>
-                      </div>
-                    )}
-                  </div>
-                  <ErrorMessage>{errors.indentFile}</ErrorMessage>
-                  <input type="file" hidden ref={fileInputRef} onChange={(e) => setIndentFile(e.target.files[0])} />
-                </Form.Group>
-              </Col> */}
-              {/* </Row> */}
-
-              {/* <Row className="mt-3">
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label>Start Date *</Form.Label>
-                  <Form.Control
-                    type="date"
-                    name="startDate"
-                    value={formData.startDate}
-                    onChange={handleInputChange}
-                    min={new Date().toISOString().split("T")[0]}
-                  />
-                  <Form.Text className="text-muted">
-                    Date from which candidates can start applying.
-                  </Form.Text>
-                  <ErrorMessage>{errors.startDate}</ErrorMessage>
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label>End Date *</Form.Label>
-                  <Form.Control
-                    type="date"
-                    name="endDate"
-                    value={formData.endDate}
-                    onChange={handleInputChange}
-                    min={formData.startDate}
-                  />
-                  <Form.Text className="text-muted">
-                    Standard duration: 21 days.
-                  </Form.Text>
-                  <ErrorMessage>{errors.endDate}</ErrorMessage>
-                </Form.Group>
-              </Col>
-            </Row> */}
-              {apiError && <div className="mt-3"><ErrorMessage>{apiError}</ErrorMessage></div>}
+              {apiError && (
+                <div className="mt-3">
+                  <ErrorMessage>{apiError}</ErrorMessage>
+                </div>
+              )}
             </fieldset>
           </Form>
         </Card.Body>
       </Card>
 
       <div className="footer-actions">
-        <Button variant="outline-secondary"  onClick={() => navigate("/job-posting")}>
+        <Button variant="outline-secondary" onClick={() => navigate("/job-posting")}>
           Cancel
         </Button>
 
-
-
         {!isViewMode && (
-          <Button
-            className="primary-btn"
-            onClick={handleSave}
-            disabled={loading}
-          >
-            {loading ? "Processing..." : editId ? "Update" : "Save"}
+          <Button onClick={handleSave} disabled={loading}>
+            {editId ? "Update" : "Save"}
           </Button>
         )}
       </div>
-
     </Container>
   );
 };

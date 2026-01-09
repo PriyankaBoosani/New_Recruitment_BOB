@@ -8,26 +8,42 @@ import EducationModal from "../component/EducationModal";
 import { validateAddPosition } from "../validations/validateAddPosition";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import upload_icon from '../../../assets/upload_Icon.png'
+import { useCreateJobPosition } from "../hooks/useCreateJobPosition";
+import { useMasterData } from "../hooks/useMasterData";
+
 const AddPosition = () => {
     const navigate = useNavigate();
     const [errors, setErrors] = useState({});
     const { requisitionId } = useParams();
     const [showImportModal, setShowImportModal] = useState(false);
     const [showEduModal, setShowEduModal] = useState(false);
+
+    const { departments, positions, jobGrades, employmentTypes, reservationCategories, disabilityCategories, users,
+        educationTypes,
+        qualifications,
+        specializations,
+    } = useMasterData();
+
+
     const [eduMode, setEduMode] = useState("mandatory"); // mandatory | preferred
 
     const [educationData, setEducationData] = useState({
         mandatory: {
-            rows: [],
-            certs: [],
+            educations: [],
+            certificationIds: [],
             text: ""
         },
+
         preferred: {
-            rows: [],
-            certs: [],
+            educations: [],
+            certificationIds: [],
             text: ""
         }
     });
+
+    
+
+
     const [indentFile, setIndentFile] = useState(null);
     const [approvedBy, setApprovedBy] = useState("");
     const [approvedOn, setApprovedOn] = useState("");
@@ -36,6 +52,7 @@ const AddPosition = () => {
     const MAX_FILE_SIZE_MB = 2;
     const YEAR_OPTIONS = Array.from({ length: 31 }, (_, i) => i); // 0–30 years
     const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => i + 1); // 1–12 months
+    const { createPosition, loading } = useCreateJobPosition();
 
 
 
@@ -82,21 +99,8 @@ const AddPosition = () => {
         medicalRequired: "",
         enableStateDistribution: false
     });
-    const GENERAL_FIELDS = [
-        { key: "sc", label: "SC" },
-        { key: "st", label: "ST" },
-        { key: "obc", label: "OBC" },
-        { key: "ews", label: "EWS" },
-        { key: "gen", label: "GEN" },
-        { key: "total", label: "Total" }
-    ];
 
-    const DISABILITY_FIELDS = [
-        { key: "oc", label: "OC" },
-        { key: "vi", label: "VI" },
-        { key: "hi", label: "HI" },
-        { key: "id", label: "ID" }
-    ];
+
 
     /* ---------------- STATE WISE ---------------- */
     // const [stateDistribution, setStateDistribution] = useState([]);
@@ -191,7 +195,7 @@ const AddPosition = () => {
 
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const validationErrors = validateAddPosition({
@@ -202,22 +206,25 @@ const AddPosition = () => {
             approvedOn
         });
 
-
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
         }
 
-        setErrors({});
-
-
-        // ✅ Safe to submit
-        console.log("SUBMIT PAYLOAD", {
-            ...formData,
-            mandatoryEducation: educationData.mandatory,
-            preferredEducation: educationData.preferred
+        const success = await createPosition({
+            formData,
+            educationData,
+            requisitionId,
+            indentFile,
+            approvedBy,
+            approvedOn
         });
+
+        if (success) {
+            navigate(-1);
+        }
     };
+
 
 
 
@@ -350,12 +357,17 @@ const AddPosition = () => {
                                         }}
                                     >
                                         <option value="">Select</option>
-                                        <option value="CGMHR">CGMHR</option>
-                                        <option value="GMHR">GMHR</option>
+
+                                        {users.map(user => (
+                                            <option key={user.id} value={user.id}>
+                                                {user.name}{user.role ? ` (${user.role})` : ""}
+                                            </option>
+                                        ))}
                                     </Form.Select>
 
                                     <ErrorMessage>{errors.approvedBy}</ErrorMessage>
                                 </Form.Group>
+
 
                                 <Form.Group>
                                     <Form.Label>
@@ -381,23 +393,65 @@ const AddPosition = () => {
                             {/* BASIC FIELDS */}
                             <Col md={4}>
                                 <Form.Label>Position <span className="text-danger">*</span></Form.Label>
-                                <Form.Select name="position" value={formData.position} onChange={handleInputChange}>
+                                <Form.Select
+                                    name="position"
+                                    value={formData.position}
+                                    onChange={(e) => {
+                                        const positionId = e.target.value;
+                                        const selected = positions.find(
+                                            (p) => String(p.id) === String(positionId)
+                                        );
+
+                                        if (!selected) return;
+
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            position: positionId,
+                                            department: String(selected.deptId),
+                                            minAge: selected.minAge ?? "",
+                                            maxAge: selected.maxAge ?? "",
+                                            grade: String(selected.gradeId ?? ""),
+                                            responsibilities: selected.rolesResponsibilities ?? "",
+                                            mandatoryEducation: selected.mandatoryEducation ?? "",
+                                            preferredEducation: selected.preferredEducation ?? "",
+                                            mandatoryExperience: {
+                                                ...prev.mandatoryExperience,
+                                                description: selected.mandatoryExperience ?? "",
+                                            },
+                                            preferredExperience: {
+                                                ...prev.preferredExperience,
+                                                description: selected.preferredExperience ?? "",
+                                            },
+                                        }));
+                                    }}
+                                >
                                     <option value="">Select</option>
-                                    <option>Developer</option>
-                                    <option>Manager</option>
-                                    <option>Analyst</option>
+                                    {positions.map((p) => (
+                                        <option key={p.id} value={p.id}>
+                                            {p.name}
+                                        </option>
+                                    ))}
                                 </Form.Select>
+
+
                                 <ErrorMessage>{errors.position}</ErrorMessage>
                             </Col>
 
                             <Col md={4}>
                                 <Form.Label>Department <span className="text-danger">*</span></Form.Label>
-                                <Form.Select name="department" value={formData.department} onChange={handleInputChange}>
+                                <Form.Select
+                                    name="department"
+                                    value={formData.department}
+                                    onChange={handleInputChange}
+                                >
                                     <option value="">Select</option>
-                                    <option>IT</option>
-                                    <option>HR</option>
-                                    <option>Finance</option>
+                                    {departments.map(d => (
+                                        <option key={d.id} value={d.id}>
+                                            {d.label}
+                                        </option>
+                                    ))}
                                 </Form.Select>
+
                                 <ErrorMessage>{errors.department}</ErrorMessage>
                             </Col>
 
@@ -439,12 +493,19 @@ const AddPosition = () => {
 
                             <Col md={4}>
                                 <Form.Label>Type of Employment</Form.Label>
-                                <Form.Select name="employmentType" value={formData.employmentType} onChange={handleInputChange}>
+                                <Form.Select
+                                    name="employmentType"
+                                    value={formData.employmentType}
+                                    onChange={handleInputChange}
+                                >
                                     <option value="">Select</option>
-                                    <option>Permanent</option>
-                                    <option>Contract</option>
-                                    <option>Temporary</option>
+                                    {employmentTypes.map(t => (
+                                        <option key={t.id} value={t.id}>
+                                            {t.label}
+                                        </option>
+                                    ))}
                                 </Form.Select>
+
                                 <ErrorMessage>{errors.employmentType}</ErrorMessage>
                             </Col>
 
@@ -456,12 +517,19 @@ const AddPosition = () => {
 
                             <Col md={4}>
                                 <Form.Label>Grade / Scale</Form.Label>
-                                <Form.Select name="grade" value={formData.grade} onChange={handleInputChange}>
+                                <Form.Select
+                                    name="grade"
+                                    value={formData.grade}
+                                    onChange={handleInputChange}
+                                >
                                     <option value="">Select</option>
-                                    <option>A</option>
-                                    <option>B</option>
-                                    <option>C</option>
+                                    {jobGrades.map(g => (
+                                        <option key={g.id} value={g.id}>
+                                            {g.code} {g.scale ? `- ${g.scale}` : ""}
+                                        </option>
+                                    ))}
                                 </Form.Select>
+
                                 <ErrorMessage>{errors.grade}</ErrorMessage>
                             </Col>
 
@@ -762,12 +830,13 @@ const AddPosition = () => {
                                             <Card className="p-3">
                                                 <h6 className="text-primary mb-3">General Category</h6>
                                                 <Row className="g-3">
-                                                    {GENERAL_FIELDS.map(({ key, label }) => (
-                                                        <Col md={2} key={key}>
-                                                            <Form.Label className="small fw-semibold">{label}</Form.Label>
+                                                    {reservationCategories.map(cat => (
+                                                        <Col md={2} key={cat.id}>
+                                                            <Form.Label className="small fw-semibold">{cat.code}</Form.Label>
                                                             <Form.Control type="number" disabled />
                                                         </Col>
                                                     ))}
+
                                                 </Row>
                                             </Card>
                                         </Col>
@@ -777,12 +846,16 @@ const AddPosition = () => {
                                             <Card className="p-3">
                                                 <h6 className="text-primary mb-3">Disability Category</h6>
                                                 <Row className="g-3">
-                                                    {DISABILITY_FIELDS.map(({ key, label }) => (
-                                                        <Col md={3} key={key}>
-                                                            <Form.Label className="small fw-semibold">{label}</Form.Label>
+                                                    {disabilityCategories.map(({ id, disabilityCode, disabilityName }) => (
+                                                        <Col md={3} key={id}>
+                                                            <Form.Label className="small fw-semibold">
+                                                                {disabilityCode}
+                                                            </Form.Label>
                                                             <Form.Control type="number" disabled />
+                                                            <small className="text-muted">{disabilityName}</small>
                                                         </Col>
                                                     ))}
+
                                                 </Row>
                                             </Card>
                                         </Col>
@@ -831,16 +904,13 @@ const AddPosition = () => {
                                                 <Card className="p-3">
                                                     <h6 className="text-primary mb-3">General Category</h6>
                                                     <Row className="g-3">
-                                                        {GENERAL_FIELDS.map(({ key, label }) => (
-                                                            <Col md={2} key={key}>
-                                                                <Form.Label className="small fw-semibold">{label}</Form.Label>
-                                                                <Form.Control
-                                                                    type="number"
-                                                                    disabled={key === "total"}
-                                                                />
-
+                                                        {reservationCategories.map(cat => (
+                                                            <Col md={2} key={cat.id}>
+                                                                <Form.Label className="small fw-semibold">{cat.code}</Form.Label>
+                                                                <Form.Control type="number" disabled />
                                                             </Col>
                                                         ))}
+
                                                     </Row>
                                                 </Card>
                                             </Col>
@@ -850,13 +920,16 @@ const AddPosition = () => {
                                                 <Card className="p-3">
                                                     <h6 className="text-primary mb-3">Disability Category</h6>
                                                     <Row className="g-3">
-                                                        {DISABILITY_FIELDS.map(({ key, label }) => (
-                                                            <Col md={3} key={key}>
-                                                                <Form.Label className="small fw-semibold">{label}</Form.Label>
+                                                        {disabilityCategories.map(({ id, disabilityCode, disabilityName }) => (
+                                                            <Col md={3} key={id}>
+                                                                <Form.Label className="small fw-semibold">
+                                                                    {disabilityCode}
+                                                                </Form.Label>
                                                                 <Form.Control type="number" />
-
+                                                                <small className="text-muted">{disabilityName}</small>
                                                             </Col>
                                                         ))}
+
                                                     </Row>
                                                 </Card>
                                             </Col>
@@ -954,12 +1027,19 @@ const AddPosition = () => {
             <EducationModal
                 show={showEduModal}
                 mode={eduMode}
-                initialData={educationData[eduMode]}   // 🔥 THIS is required
+                initialData={educationData[eduMode]}
+                educationTypes={educationTypes}
+                qualifications={qualifications}
+                specializations={specializations}
                 onHide={() => setShowEduModal(false)}
-                onSave={({ rows, certs, text }) => {
+                onSave={({ educations, certificationIds, text }) => {
                     setEducationData(prev => ({
                         ...prev,
-                        [eduMode]: { rows, certs, text }
+                        [eduMode]: {
+                            educations,
+                            certificationIds,
+                            text
+                        }
                     }));
 
                     setErrors(prev => {
@@ -969,6 +1049,8 @@ const AddPosition = () => {
                         return updated;
                     });
                 }}
+
+
             />
         </Container>
     );
