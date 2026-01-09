@@ -66,6 +66,9 @@ export const validateUserPassword = (password, isRequired = true) => {
 };
 
 export const validatePasswordConfirmation = (confirmPassword, password) => {
+  let error = requiredField(password, i18n.t("validation:password"));
+  if (error) return error;
+
   if (!confirmPassword)
     return i18n.t("validation:confirm_password_required");
 
@@ -133,6 +136,17 @@ export const validateUserForm = (formData = {}, options = {}) => {
       if (confirmError) {
         errors.confirmPassword = confirmError;
       }
+    }
+  }
+
+  // Password + confirm password
+  if (requirePassword || formData.confirmPassword) {
+    const confirmError = validatePasswordConfirmation(
+      formData.confirmPassword,
+      formData.password
+    );
+    if (confirmError) {
+      errors.confirmPassword = confirmError;
     }
   }
 
