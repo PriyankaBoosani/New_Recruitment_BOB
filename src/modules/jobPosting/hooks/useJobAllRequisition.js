@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import requisitionApiService from "../services/requisitionApiService";
-import { mapJobRequisitionFromApi } from "../mappers/jobRequisitionMapper";
+import { mapJobRequisitionFromApi } from "../mappers/jobReqDetailsMapper";
 import { toast } from "react-toastify";
 
 export const useJobRequisitions = ({

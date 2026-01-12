@@ -14,7 +14,7 @@
   "loading": "Loading...",
   "errorLoading": "Error loading departments",
   "s.no.": "S. No.",
-  "choose_add_method": "Choose to add manually or import from CSV/XLSX file.",
+  "choose_add_method": "Choose to add manually or import from XLSX file.",
    "manual_entry": "Manual Entry",
   "import_file": "Import File",
   "upload_file": "Upload File",
@@ -37,7 +37,7 @@
   "upload_categories": "Upload Categories",
   "support_xlsx": "Support for XLSX formats",
   "upload_departments": "Upload File",
-  "invalid_file": "Please upload a valid Excel file (.xlsx, .xls)",
+  "invalid_file": "Please upload a valid Excel file (.xlsx)",
   "no_file_selected": "Please select a file to upload",
  
   "reupload_xlsx": "Reupload XLSX",

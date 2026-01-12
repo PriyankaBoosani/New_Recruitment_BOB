@@ -68,7 +68,7 @@ const SpecialCategoryFormModal = ({
  
  
           <p className="small text-muted para">
-              {isViewing
+              {isViewing || isEditing
            ? null
            :  t("choose_add_method")}
           </p>
@@ -256,4 +256,4 @@ const SpecialCategoryFormModal = ({
   );
 };
  
-export default SpecialCategoryFormModal;
+export default SpecialCategoryFormModal;  

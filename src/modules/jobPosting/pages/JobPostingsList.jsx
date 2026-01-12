@@ -31,7 +31,8 @@ import mingcute_department_line from "../../../assets/mingcute_department-line.p
 import vacancy_icon from "../../../assets/vacancy_icon.png";
 import position_Icon from "../../../assets/position_Icon.png";
 
-import { useJobRequisitions } from "../hooks/useJobRequisitions";
+import { useJobRequisitions } from "../hooks/useJobAllRequisition";
+import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisition";
 
 const JobPostingsList = () => {
     const navigate = useNavigate();
@@ -52,11 +53,27 @@ const JobPostingsList = () => {
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(0); // backend is 0-based
 
+    const {
+        positionsByReq,
+        loadingReqId,
+        fetchPositions
+    } = useJobPositionsByRequisition();
+
+
     // 🔹 Accordion
     const [openReqId, setOpenReqId] = useState(null);
     const toggleAccordion = (reqId) => {
-        setOpenReqId((prev) => (prev === reqId ? null : reqId));
+        setOpenReqId((prev) => {
+            const next = prev === reqId ? null : reqId;
+
+            if (next) {
+                fetchPositions(reqId);
+            }
+
+            return next;
+        });
     };
+
 
     // 🔹 API Hook
     const { requisitions, loading, pageInfo, deleteRequisition } = useJobRequisitions({
@@ -70,6 +87,9 @@ const JobPostingsList = () => {
     useEffect(() => {
         setPage(0);
     }, [year, status, search]);
+
+   
+
 
     return (
         <Container fluid className="job-postings-page">
@@ -222,7 +242,10 @@ const JobPostingsList = () => {
                                         className="icon-btn"
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            navigate(`/job-posting/create-requisition?id=${req.id}`);
+                                            navigate(
+                                                `/job-posting/create-requisition?id=${req.id}`,
+                                                { state: { mode: "edit" } }
+                                            );
                                         }}
                                     >
                                         <img src={pos_edit_icon} alt="edit" className="icon-20" />
@@ -246,7 +269,10 @@ const JobPostingsList = () => {
                                     className="icon-btn"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        navigate(`/job-posting/create-requisition?id=${req.id}&mode=view`);
+                                        navigate(
+                                            `/job-posting/create-requisition?id=${req.id}`,
+                                            { state: { mode: "view" } }
+                                        );
                                     }}
                                 >
                                     <img src={view_icon} alt="view" className="icon-16" />
@@ -274,40 +300,67 @@ const JobPostingsList = () => {
                                         <img src={mingcute_department_line} className="icon-16" alt="department" />
                                         <strong>Digital</strong>
                                         <Badge bg="light" text="primary">
-                                            1 Position
+                                          {req.positions} Positions
                                         </Badge>
                                     </div>
 
-                                    <div className="position-card-inner">
-                                        <div className="position-header-row">
-                                            <div className="position-title">
-                                                Deputy Manager: Product - Mass Transit System
-                                            </div>
+                                    {openReqId === req.id && (
+                                        <div className="accordion-body mt-3">
+                                            {loadingReqId === req.id && (
+                                                <Spinner animation="border" size="sm" />
+                                            )}
 
-                                            <div className="position-meta-inline">
-                                                <span>Vacancies: 10</span>
-                                                <span>Age: 24 – 34 Years</span>
-                                            </div>
+                                            {!loadingReqId && positionsByReq[req.id]?.length === 0 && (
+                                                <div className="text-muted">No positions added</div>
+                                            )}
 
-                                            <Button variant="light" className="icon-btn">
-                                                <img src={pos_edit_icon} className="icon-16" alt="edit" />
-                                            </Button>
+                                            {positionsByReq[req.id]?.map((pos) => (
+                                                <div key={pos.positionId} className="position-card-inner mb-2">
+                                                    <div className="position-header-row">
+                                                        <div className="position-title">
+                                                            {pos.positionName}
+                                                        </div>
 
-                                            <Button variant="light" className="icon-btn">
-                                                <img src={pos_delete_icon} className="icon-16" alt="delete" />
-                                            </Button>
+                                                        <div className="position-meta-inline">
+                                                            <span>Vacancies: {pos.vacancies}</span>
+                                                            <span>
+                                                                Age: {pos.minAge} – {pos.maxAge} Years
+                                                            </span>
+                                                        </div>
+
+                                                        <Button
+                                                            variant="light"
+                                                            className="icon-btn"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                navigate(
+                                                                    `/job-posting/${req.id}/add-position?positionId=${pos.positionId}&mode=edit`
+                                                                );
+                                                            }}
+                                                        >
+                                                            <img src={pos_edit_icon} className="icon-16" alt="edit" />
+                                                        </Button>
+
+                                                        <Button variant="light" className="icon-btn">
+                                                            <img src={pos_delete_icon} className="icon-16" alt="delete" />
+                                                        </Button>
+                                                    </div>
+
+                                                    <div className="position-details">
+                                                        <div>
+                                                            <strong>Mandatory Education:</strong>{" "}
+                                                            {pos.mandatoryEducation}
+                                                        </div>
+                                                        <div>
+                                                            <strong>Preferred Education:</strong>{" "}
+                                                            {pos.preferredEducation}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
+                                    )}
 
-                                        <div className="position-details">
-                                            <div>
-                                                <strong>Mandatory Education:</strong> Bachelor’s Degree
-                                                in Computer Science / IT
-                                            </div>
-                                            <div>
-                                                <strong>Preferred Education:</strong> MBA / Finance
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         )}

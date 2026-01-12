@@ -4,36 +4,68 @@ import "../../../style/css/EducationModal.css";
 import { validateEducationModal } from "../validations/validateEducationModal";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 
-const DEGREE_TYPES = ["Full Time", "Part Time"];
-const DEGREES = ["BTech", "MCA", "MSc"];
-const SPECIALIZATIONS = ["Computer Science", "ECE", "IT"];
-
 
 const createRow = (isFirst = false) => ({
     operator: isFirst ? "" : "OR",
-    type: "Full Time",
-    degree: "",
-    specialization: ""
+    educationTypeId: "",
+    educationQualificationsId: "",
+    specializationId: "",
 });
 
 
-export default function EducationModal({ show, mode, initialData, onHide, onSave }) {
+
+export default function EducationModal({
+    show,
+    mode,
+    initialData,
+    onHide,
+    onSave,
+    educationTypes = [],
+    qualifications = [],
+    specializations = [],
+    certifications = [],
+}) {
     const [errors, setErrors] = useState({});
     const [rows, setRows] = useState([createRow(true)]);
-    const [certs, setCerts] = useState([""]);
+    const [certIds, setCertIds] = useState([""]);
+    console.log("CERTIFICATIONS IN MODAL:", certifications);
+
 
     useEffect(() => {
         if (!show) return;
 
+        if (initialData?.certificationIds?.length) {
+            setCertIds(initialData.certificationIds);
+        } else {
+            // ✅ Always show ONE dropdown by default
+            setCertIds([""]);
+        }
+
         if (initialData?.rows?.length) {
             setRows(initialData.rows);
-            setCerts(initialData.certs || []);
         } else {
             setRows([createRow(true)]);
-            setCerts([""]);
         }
     }, [show, mode, initialData]);
 
+
+    const getLabel = (list, id, key = "label") =>
+        list.find(i => i.id === id)?.[key] || "";
+
+    const degreeText = rows
+        .filter(r =>
+            r.educationTypeId &&
+            r.educationQualificationsId &&
+            r.specializationId
+        )
+        .map((r, i) => {
+            const type = getLabel(educationTypes, r.educationTypeId);
+            const degree = getLabel(qualifications, r.educationQualificationsId, "name");
+            const spec = getLabel(specializations, r.specializationId);
+
+            return `${i > 0 ? r.operator + " " : ""}${type} ${degree} in ${spec}`;
+        })
+        .join(" ");
 
 
     const addRow = () => {
@@ -57,30 +89,21 @@ export default function EducationModal({ show, mode, initialData, onHide, onSave
             return updated.length ? updated : [createRow(true)];
         });
     };
-    const removeCert = (index) => {
-        setCerts(prev => {
-            const updated = prev.filter((_, i) => i !== index);
-            return updated.length ? updated : [""];
-        });
-    };
 
 
-    const updateCert = (i, value) => {
-        const copy = [...certs];
-        copy[i] = value;
-        setCerts(copy);
-    };
 
-    const addCert = () => setCerts([...certs, ""]);
 
-    const degreeText = rows
-        .filter(r => r.degree && r.specialization)
-        .map((r, i) =>
-            `${i > 0 ? r.operator + " " : ""}${r.type} ${r.degree} in ${r.specialization}`
-        )
-        .join(" ");
 
-    const certText = certs.filter(Boolean).join(" OR ");
+
+
+
+
+
+    const certText = certIds
+        .map(id => certifications.find(c => c.id === id)?.name)
+        .filter(Boolean)
+        .join(" OR ");
+
 
     const finalText = `Degree Requirements:
 ${degreeText || "Not specified"}
@@ -119,47 +142,57 @@ Certifications: ${certText || "None"}
 
                         <Col md={3} className="ps-0">
                             <Form.Select
-                                value={row.type}
+                                value={row.educationTypeId}
                                 onChange={(e) =>
-                                    updateRow(idx, "type", e.target.value)
+                                    updateRow(idx, "educationTypeId", e.target.value)
                                 }
                             >
-                                {DEGREE_TYPES.map(t => (
-                                    <option key={t}>{t}</option>
+                                <option value="">Select Type</option>
+                                {educationTypes.map(t => (
+                                    <option key={t.id} value={t.id}>
+                                        {t.label}
+                                    </option>
                                 ))}
                             </Form.Select>
-                            <ErrorMessage>{errors.rows?.[idx]?.type}</ErrorMessage>
-                        </Col>
+
+
+                            <ErrorMessage>{errors.rows?.[idx]?.educationTypeId}</ErrorMessage>                        </Col>
 
                         <Col md={3} className="px-0">
                             <Form.Select
-                                value={row.degree}
+                                value={row.educationQualificationsId}
                                 onChange={(e) =>
-                                    updateRow(idx, "degree", e.target.value)
+                                    updateRow(idx, "educationQualificationsId", e.target.value)
                                 }
                             >
                                 <option value="">Select Degree</option>
-                                {DEGREES.map(d => (
-                                    <option key={d}>{d}</option>
+                                {qualifications.map(q => (
+                                    <option key={q.id} value={q.id}>
+                                        {q.name}
+                                    </option>
                                 ))}
                             </Form.Select>
-                            <ErrorMessage>{errors.rows?.[idx]?.degree}</ErrorMessage>
-                        </Col>
+
+
+                            <ErrorMessage>{errors.rows?.[idx]?.educationQualificationsId}</ErrorMessage>                        </Col>
 
                         <Col md={3}>
                             <Form.Select
-                                value={row.specialization}
+                                value={row.specializationId}
                                 onChange={(e) =>
-                                    updateRow(idx, "specialization", e.target.value)
+                                    updateRow(idx, "specializationId", e.target.value)
                                 }
                             >
                                 <option value="">Select Specialization</option>
-                                {SPECIALIZATIONS.map(s => (
-                                    <option key={s}>{s}</option>
+                                {specializations.map(s => (
+                                    <option key={s.id} value={s.id}>
+                                        {s.label}
+                                    </option>
                                 ))}
                             </Form.Select>
-                            <ErrorMessage>{errors.rows?.[idx]?.specialization}</ErrorMessage>
-                        </Col>
+
+
+                            <ErrorMessage>{errors.rows?.[idx]?.specializationId}</ErrorMessage>                        </Col>
                         <Col md={1} className="px-1">
                             {rows.length > 1 && (
                                 <Button
@@ -183,24 +216,34 @@ Certifications: ${certText || "None"}
                 <Col md={6} className="mt-4">
                     <h6>Certifications (Optional)</h6>
 
-                    {certs.map((c, i) => (
+                    {certIds.map((id, i) => (
                         <Row key={i} className="mb-2 align-items-center">
                             <Col md={10}>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Enter certification (e.g. CISSP, CISM)"
-                                    value={c}
-                                    onChange={(e) => updateCert(i, e.target.value)}
-                                />
+                                <Form.Select
+                                    value={id}
+                                    onChange={e => {
+                                        const copy = [...certIds];
+                                        copy[i] = e.target.value;
+                                        setCertIds(copy);
+                                    }}
+                                >
+                                    <option value="">Select Certification</option>
+                                    {certifications.map(c => (
+                                        <option key={c.id} value={c.id}>
+                                            {c.name}
+                                        </option>
+                                    ))}
+                                </Form.Select>
                             </Col>
 
                             <Col md={2} className="text-center">
-                                {certs.length > 1 && (
+                                {certIds.length > 1 && (
                                     <Button
                                         variant="link"
                                         className="p-0 text-danger"
-                                        onClick={() => removeCert(i)}
-                                        title="Remove"
+                                        onClick={() =>
+                                            setCertIds(prev => prev.filter((_, x) => x !== i))
+                                        }
                                     >
                                         🗑️
                                     </Button>
@@ -208,14 +251,13 @@ Certifications: ${certText || "None"}
                             </Col>
                         </Row>
                     ))}
-
-
-
                 </Col>
 
-                <Button variant="none" onClick={addCert} className="edu-btn">
+                <Button variant="none" onClick={() => setCertIds([...certIds, ""])}>
                     + Add Certification
                 </Button>
+
+
 
                 <div className="mt-4 p-3 bg-light border rounded">
                     <strong>Result (How it will look for candidate)</strong>
@@ -228,7 +270,10 @@ Certifications: ${certText || "None"}
                 <Button
                     variant="primary"
                     onClick={() => {
-                        const validationErrors = validateEducationModal({ rows, certs });
+                        const validationErrors = validateEducationModal({
+                            rows,
+                            certificationIds: certIds.filter(Boolean),
+                        });
 
                         if (Object.keys(validationErrors).length > 0) {
                             setErrors(validationErrors);
@@ -236,12 +281,23 @@ Certifications: ${certText || "None"}
                         }
 
                         setErrors({});
-                        onSave({ rows, certs, text: finalText });
+
+                        onSave({
+                            educations: rows.map(r => ({
+                                educationTypeId: r.educationTypeId,
+                                educationQualificationsId: r.educationQualificationsId,
+                                specializationId: r.specializationId,
+                            })),
+                            certificationIds: certIds.filter(Boolean), // ✅ UUIDs only
+                            text: finalText,
+                        });
+
                         onHide();
                     }}
                 >
                     Save
                 </Button>
+
 
 
             </Modal.Footer>

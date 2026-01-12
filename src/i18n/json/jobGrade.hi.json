@@ -12,7 +12,7 @@
   "description": "विवरण",
   "actions": "क्रियाएँ",
   "noRecords": "कोई जॉब ग्रेड नहीं मिला",
-  "choose_add_method": "मैन्युअल रूप से जोड़ें या CSV/XLSX फ़ाइल से आयात करें",
+  "choose_add_method": "मैन्युअल रूप से जोड़ें या XLSX फ़ाइल से आयात करें",
   "manual_entry": "मैन्युअल एंट्री",
   "import_file": "फ़ाइल आयात करें",
   "save": "सहेजें",
@@ -58,7 +58,7 @@
   "grade_code_exists": "इस मान का रिकॉर्ड पहले से मौजूद है",
 
    "support_xlsx": "XLSX फ़ॉर्मेट का समर्थन करता है",
-  "invalid_file": "कृपया एक वैध Excel फ़ाइल अपलोड करें (.xlsx, .xls)",
+  "invalid_file": "कृपया एक वैध Excel फ़ाइल अपलोड करें (.xlsx)",
   "no_file_selected": "कृपया अपलोड करने के लिए फ़ाइल चुनें",
 
   "reupload_xlsx": "XLSX दोबारा अपलोड करें",

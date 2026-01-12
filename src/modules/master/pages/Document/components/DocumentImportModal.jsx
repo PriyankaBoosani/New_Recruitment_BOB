@@ -26,7 +26,7 @@ const DocumentImportModal = ({
       setSelectedFile(file);
       setError('');
     } else {
-      setError('Please upload a valid Excel file (.xlsx, .xls)');
+      setError('Only Excel files (.xlsx, .xls) are allowed.');
     }
   };
 

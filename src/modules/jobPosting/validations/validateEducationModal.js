@@ -1,18 +1,21 @@
 export const validateEducationModal = ({ rows, certs }) => {
   const errors = {
     rows: [],
-    certs: []
   };
 
-  // ---- DEGREE ROW VALIDATION ----
+  // ---- AT LEAST ONE COMPLETE EDUCATION REQUIRED ----
   const validRows = rows.filter(
-    r => r.degree || r.specialization
+    r =>
+      r.educationTypeId &&
+      r.educationQualificationsId &&
+      r.specializationId
   );
 
   if (validRows.length === 0) {
-    errors.general = "At least one degree is required";
+    errors.general = "At least one education requirement is required";
   }
 
+  // ---- ROW LEVEL VALIDATION ----
   rows.forEach((row, index) => {
     const rowErrors = {};
 
@@ -20,34 +23,36 @@ export const validateEducationModal = ({ rows, certs }) => {
       rowErrors.operator = "Operator is required";
     }
 
-    if (!row.type) {
-      rowErrors.type = "Type is required";
+    if (!row.educationTypeId) {
+      rowErrors.educationTypeId = "Education type is required";
     }
 
-    if (!row.degree) {
-      rowErrors.degree = "Degree is required";
+    if (!row.educationQualificationsId) {
+      rowErrors.educationQualificationsId = "Qualification is required";
     }
 
-    if (!row.specialization) {
-      rowErrors.specialization = "Specialization is required";
+    if (!row.specializationId) {
+      rowErrors.specializationId = "Specialization is required";
     }
 
-    errors.rows[index] = rowErrors;
-  });
-
-  // ---- CERTIFICATION VALIDATION (OPTIONAL BUT NON-EMPTY) ----
-  certs.forEach((c, index) => {
-    if (c && !c.trim()) {
-      errors.certs[index] = "Certification cannot be empty";
+    if (Object.keys(rowErrors).length > 0) {
+      errors.rows[index] = rowErrors;
     }
   });
 
-  // ---- CLEAN EMPTY ERROR OBJECTS ----
-  const hasRowErrors = errors.rows.some(r => Object.keys(r).length);
-  const hasCertErrors = errors.certs.some(Boolean);
+  // ---- CERTIFICATIONS (UUIDs ONLY) ----
+  if (Array.isArray(certs)) {
+    const invalidCerts = certs.filter(
+      c => !c || typeof c !== "string"
+    );
 
-  if (!hasRowErrors) delete errors.rows;
-  if (!hasCertErrors) delete errors.certs;
+    if (invalidCerts.length > 0) {
+      errors.certs = "Invalid certification selected";
+    }
+  }
+
+  // ---- CLEANUP EMPTY STRUCTURES ----
+  if (!errors.rows.some(Boolean)) delete errors.rows;
   if (!errors.general) delete errors.general;
 
   return errors;

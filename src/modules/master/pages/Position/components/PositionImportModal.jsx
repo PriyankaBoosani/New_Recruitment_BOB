@@ -49,7 +49,7 @@ const PositionImportModal = ({
       // show server message if present
       // setError(res?.message || res?.error || t("position:import_failed"));
       //  setErrorDetails(res?.details || []);
-     setError(res?.message || t("position:import_failed"));
+     setError(res?.message || t("position:import_error"));
 setErrorDetails(res?.data || res?.details || []);
 
 

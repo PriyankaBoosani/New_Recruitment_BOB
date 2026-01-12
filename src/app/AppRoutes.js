@@ -21,6 +21,8 @@ import Home from "../modules/master/pages/Home"; // dashboard/home
 import JobPostingsList from "../modules/jobPosting/pages/JobPostingsList";
 import CreateRequisition from "../modules/jobPosting/pages/CreateRequisition";
 import GenericOrAnnexuresPage from "../modules/master/pages/GenericOrAnnexures/GenericOrAnnexuresPage";
+import CertificationPage from "../modules/master/pages/CertificationPage/CertificationPage";
+
 
 
 import AddPosition from "../modules/jobPosting/pages/AddPosition";
@@ -73,6 +75,7 @@ const AppRoutes = () => {
               <Route path="/category" element={<CategoryPage />} />
               <Route path="/specialcategory" element={<SpecialCategoryPage />} />
               <Route path="/relaxationtype" element={<RelaxationType />} />
+              <Route path="/certification" element={<CertificationPage />} />
               <Route path="/document" element={<DocumentPage />} />
               <Route path="/interviewpanel" element={<InterviewPanel />} />
               <Route path="/job-posting" element={<JobPostingsList />} />

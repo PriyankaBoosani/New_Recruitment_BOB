@@ -9,7 +9,7 @@ const loginApi = {
         ),
     resendVerification: (user_id) => nodeApi.post("/recruiter-auth/recruiter-resend-verification", { user_id }),
     forgotPassword: (email) =>
-        nodeApi.post(`/candidate-auth/candidate-forgot-password?email=${email}`),
+        nodeApi.post(`/recruiter-auth/recruiter-forgot-password?email=${email}`),
 
 };
 

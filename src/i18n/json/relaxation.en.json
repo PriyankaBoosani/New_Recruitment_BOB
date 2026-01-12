@@ -21,7 +21,7 @@
   "select_operator": "Select operator",
   "edit_relaxation": "Edit Relaxation Type",
   "add_relaxation": "Add Relaxation Type",
-  "choose_add_method": "Choose to add manually or import from CSV/XLSX file.",
+  "choose_add_method": "Choose to add manually or import from XLSX file.",
   "confirm_delete": "Confirm Delete",
   "delete_message": "Are you sure you want to delete this relaxation type?",
   "download_template": "Download Template",

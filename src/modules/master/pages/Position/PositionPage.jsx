@@ -24,7 +24,7 @@ const PositionPage = () => {
     positions,
     addPosition,
     updatePosition,
-    deletePosition, 
+    deletePosition,
     fetchPositions
   } = usePositions();
 
@@ -59,15 +59,11 @@ const PositionPage = () => {
   /* ---------------- FORM STATE ---------------- */
   const [formData, setFormData] = useState({
     title: "",
-    departmentId: "",
+    // departmentId: "",
     jobGradeId: "",
 
     mandatoryExperience: "",
     preferredExperience: "",
-
-    mandatoryEducation: "",
-    preferredEducation: "",
-
     rolesResponsibilities: "",
 
     // eligibility ages used by UI + mapper
@@ -86,40 +82,38 @@ const PositionPage = () => {
   /* ---------------- HANDLERS ---------------- */
 
   const openViewModal = (p) => {
-  setIsViewing(true);
-  setIsEditing(false);
-  setEditingId(p.id);
+    setIsViewing(true);
+    setIsEditing(false);
+    setEditingId(p.id);
 
-  setFormData({
-    title: p.title || "",
-    departmentId: p.departmentId || "",
-    jobGradeId: p.jobGradeId || "",
-    mandatoryEducation: p.mandatoryEducation || "",
-    preferredEducation: p.preferredEducation || "",
-    mandatoryExperience: p.mandatoryExperience || "",
-    preferredExperience: p.preferredExperience || "",
-    rolesResponsibilities: p.rolesResponsibilities || "",
-    eligibilityAgeMin: p.eligibilityAgeMin ?? "",
-    eligibilityAgeMax: p.eligibilityAgeMax ?? ""
-  });
+    setFormData({
+      title: p.title || "",
+      // departmentId: p.departmentId || "",
+      jobGradeId: p.jobGradeId || "",
+      mandatoryEducation: p.mandatoryEducation || "",
+      preferredEducation: p.preferredEducation || "",
+      mandatoryExperience: p.mandatoryExperience || "",
+      preferredExperience: p.preferredExperience || "",
+      rolesResponsibilities: p.rolesResponsibilities || "",
+      eligibilityAgeMin: p.eligibilityAgeMin ?? "",
+      eligibilityAgeMax: p.eligibilityAgeMax ?? ""
+    });
 
-  setErrors({});
-  setActiveTab("manual");
-  setShowAddModal(true);
-};
+    setErrors({});
+    setActiveTab("manual");
+    setShowAddModal(true);
+  };
 
 
   const openAddModal = () => {
     setIsEditing(false);
+    setIsViewing(false);  
     setShowAddModal(true);
     setEditingId(null);
     setFormData({
       title: "",
-      departmentId: "",
+      // departmentId: "",
       jobGradeId: "",
-
-      mandatoryEducation: "",
-      preferredEducation: "",
       mandatoryExperience: "",
       preferredExperience: "",
 
@@ -146,11 +140,9 @@ const PositionPage = () => {
     setEditingId(p.id);
     setFormData({
       title: p.title || "",
-      departmentId: p.departmentId || "",
+      // departmentId: p.departmentId || "",
       jobGradeId: p.jobGradeId || "",
 
-      mandatoryEducation: p.mandatoryEducation || "",
-      preferredEducation: p.preferredEducation || "",
       mandatoryExperience: p.mandatoryExperience || "",
       preferredExperience: p.preferredExperience || "",
 
@@ -166,80 +158,43 @@ const PositionPage = () => {
     setShowAddModal(true);
   };
 
-  // const handleSave = async (e) => {
-  //   e.preventDefault();
-
-  //   const { valid, errors: vErrors } = validatePositionForm(formData, {
-  //     existing: positions,
-  //     currentId: isEditing ? editingId : null,
-  //   });
-
-  //   if (!valid) {
-  //     setErrors(vErrors);
-  //     return;
-  //   }
-
-  //   //  IMPORTANT: formData MUST contain departmentId & jobGradeId
-  //   const payload = mapPositionToApi(
-  //     { ...formData, id: editingId },
-  //     isEditing
-  //   );
-
-
-  //   if (isEditing) {
-  //     await updatePosition(editingId, payload);
-  //   } else {
-  //     await addPosition(payload);
-  //     setCurrentPage(1); // newest on top
-  //   }
-
-  //   setShowAddModal(false);
-  // };
-
-
-
-
-
-
 
   const handleSave = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  // TRIM TEXT FIELDS HERE (single source of truth)
-  const cleanedFormData = {
-    ...formData,
-    title: formData.title?.trim(),
-    mandatoryExperience: formData.mandatoryExperience?.trim(),
-    preferredExperience: formData.preferredExperience?.trim(),
-    mandatoryEducation: formData.mandatoryEducation?.trim(),
-    preferredEducation: formData.preferredEducation?.trim(),
-    rolesResponsibilities: formData.rolesResponsibilities?.trim()
+    // TRIM TEXT FIELDS HERE (single source of truth)
+    const cleanedFormData = {
+      ...formData,
+      title: formData.title?.trim(),
+      mandatoryExperience: formData.mandatoryExperience?.trim(),
+      preferredExperience: formData.preferredExperience?.trim(),
+      rolesResponsibilities: formData.rolesResponsibilities?.trim()
+    };
+
+    const { valid, errors: vErrors } = validatePositionForm(cleanedFormData, {
+      existing: positions,
+      currentId: isEditing ? editingId : null,
+    });
+
+    if (!valid) {
+      setErrors(vErrors);
+      return;
+    }
+
+    const payload = mapPositionToApi(
+      { ...cleanedFormData, id: editingId },
+      isEditing
+    );
+
+    if (isEditing) {
+      await updatePosition(editingId, payload);
+    } else {
+      await addPosition(payload);
+      setCurrentPage(1);
+    }
+
+    setShowAddModal(false);
   };
-
-  const { valid, errors: vErrors } = validatePositionForm(cleanedFormData, {
-    existing: positions,
-    currentId: isEditing ? editingId : null,
-  });
-
-  if (!valid) {
-    setErrors(vErrors);
-    return;
-  }
-
-  const payload = mapPositionToApi(
-    { ...cleanedFormData, id: editingId },
-    isEditing
-  );
-
-  if (isEditing) {
-    await updatePosition(editingId, payload);
-  } else {
-    await addPosition(payload);
-    setCurrentPage(1);
-  }
-
-  setShowAddModal(false);
-};
 
 
 
@@ -260,7 +215,7 @@ const PositionPage = () => {
         return {
           title: (row.title || row.positionTitle || "").trim(),
           description: (row.description || "").trim(),
-          departmentId: dept?.id || "",
+          // departmentId: dept?.id || "",
           jobGradeId: grade?.id || "",
           code: row.positionCode || "",
           // accept multiple common CSV headers for ages
@@ -287,21 +242,21 @@ const PositionPage = () => {
           {/*  SEARCH BAR – SAME AS DEPARTMENT */}
           <div className="search-box">
             <Search className="search-icon" />
-         <Form.Control
-  placeholder={t("search_placeholder")}
-  value={searchTerm}
-  className="search-input"
-  onChange={(e) => {
-    const value = e.target.value;
+            <Form.Control
+              placeholder={t("search_placeholder")}
+              value={searchTerm}
+              className="search-input"
+              onChange={(e) => {
+                const value = e.target.value;
 
-    //  allow alphabets, numbers, space and @
-    if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
-      return; // block invalid characters
-    }
+                // //  allow alphabets, numbers, space and @
+                // if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
+                //   return; // block invalid characters
+                // }
 
-    setSearchTerm(value);
-  }}
-/>
+                setSearchTerm(value);
+              }}
+            />
 
           </div>
 
@@ -328,15 +283,15 @@ const PositionPage = () => {
 
       <PositionFormModal
         show={showAddModal}
-        
+
         onHide={() => setShowAddModal(false)}
-        isViewing={isViewing} 
+        isViewing={isViewing}
         isEditing={isEditing}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         formData={formData}
         errors={errors}
-         setErrors={setErrors}
+        setErrors={setErrors}
         handleInputChange={(e) => {
           const { name, value } = e.target;
 
@@ -362,7 +317,7 @@ const PositionPage = () => {
         removeCSV={() => setSelectedCSVFile(null)}
         removeXLSX={() => setSelectedXLSXFile(null)}
         t={t}
-         fetchPositions={fetchPositions}
+        fetchPositions={fetchPositions}
       />
 
       <DeleteConfirmModal

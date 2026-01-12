@@ -95,7 +95,7 @@ export const useJobGrades = () => {
 
     //  business failure
     if (res.success === false) {
-      toast.error(res.message);
+      // toast.error(res.message);
       return {
         success: false,
         error: res.message,
@@ -114,7 +114,7 @@ export const useJobGrades = () => {
     console.log("NETWORK ERROR:", err);
 
     const message = "Something went wrong";
-    toast.error(message);
+    // toast.error(message);
 
     return {
       success: false,

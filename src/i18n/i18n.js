@@ -35,6 +35,13 @@ import userHi from "../i18n/json/user.hi.json";
 import genericOrAnnexuresEn from "../i18n/json/genericOrAnnexures.en.json";
 import genericOrAnnexuresHi from "../i18n/json/genericOrAnnexures.hi.json";  
 
+import certificationEn from "../i18n/json/certification.en.json";
+import certificationHi from "../i18n/json/certification.hi.json";
+import commonEn from "../i18n/json/common.en.json";
+import commonHi from "../i18n/json/common.hi.json";
+
+
+
 // ⬅ Read persisted Redux language value
 let savedLang = "en";
 try {
@@ -53,6 +60,7 @@ i18n
   .init({
     resources: {
       en: {
+        common: commonEn,  
         department: departmentEn,
         user: userEn,
         jobGrade: jobGradeEn,
@@ -60,6 +68,7 @@ i18n
         documents: documentsEn,
         interviewPanel: interviewPanelEn, 
         location: locationEn,    
+        certification: certificationEn,
         position: positionEn,
         category: categoryEn,
         relaxationType: relaxationtypeEn  , 
@@ -67,6 +76,7 @@ i18n
         genericOrAnnexures: genericOrAnnexuresEn
       },
       hi: {
+        common: commonHi, 
         department: departmentHi,
         user: userHi,
         jobGrade: jobGradeHi,
@@ -74,6 +84,7 @@ i18n
         documents: documentsHi,
         interviewPanel: interviewPanelHi,
         location: locationHi,  
+        certification: certificationHi,
         position: positionHi,
         category: categoryHi,
         relaxationType: relaxationtypeHi,
@@ -83,6 +94,7 @@ i18n
     },
     lng: savedLang,       // default language
     fallbackLng: "en",
+    defaultNS: "common", 
     interpolation: {
       escapeValue: false,
       defaultVariables: {

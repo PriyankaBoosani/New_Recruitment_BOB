@@ -21,7 +21,7 @@
   "select_operator": "ऑपरेटर चुनें",
   "edit_relaxation": "रियायत प्रकार संपादित करें",
   "add_relaxation": "रियायत प्रकार जोड़ें",
-  "choose_add_method": "मैनुअली जोड़ें या CSV/XLSX फ़ाइल से आयात करें।",
+  "choose_add_method": "मैनुअली जोड़ें या XLSX फ़ाइल से आयात करें।",
   "confirm_delete": "हटाने की पुष्टि करें",
   "delete_message": "क्या आप वाकई इस रियायत प्रकार को हटाना चाहते हैं?",
   "download_template": "टेम्पलेट डाउनलोड करें",

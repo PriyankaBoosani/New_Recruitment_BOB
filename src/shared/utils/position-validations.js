@@ -30,12 +30,12 @@ export const validatePositionTitle = (title, options = {}) => {
 };
 
 /* ---------------- DEPARTMENT ---------------- */
-export const validateDepartmentId = (departmentId) => {
-  if (isEmpty(departmentId)) {
-    return i18n.t('validation:required', { field: 'Department' });
-  }
-  return null;
-};
+// export const validateDepartmentId = (departmentId) => {
+//   if (isEmpty(departmentId)) {
+//     return i18n.t('validation:required', { field: 'Department' });
+//   }
+//   return null;
+// };
 
 /* ---------------- JOB GRADE ---------------- */
 export const validateJobGradeId = (jobGradeId) => {
@@ -107,20 +107,6 @@ export const validatePreferredExperience = (value) => {
   return null;
 };
 
-/* ---------------- MANDATORY EDUCATION ---------------- */
-export const validateMandatoryEducation = (value) => {
-  let error = requiredField(value);
-  if (error) return error;
-  return null;
-};
-
-/* ---------------- PREFERRED EDUCATION ---------------- */
-export const validatePreferredEducation = (value) => {
- let error = requiredField(value);
-  if (error) return error;
-  return null;
-};
-
 /* ---------------- ROLES & RESPONSIBILITIES ---------------- */
 export const validateRolesResponsibilities = (value) => {
   let error = requiredField(value);
@@ -136,8 +122,8 @@ export const validatePositionForm = (formData = {}, options = {}) => {
   const titleError = validatePositionTitle(formData.title, { existing, currentId });
   if (titleError) errors.title = titleError;
 
-  const deptError = validateDepartmentId(formData.departmentId);
-  if (deptError) errors.departmentId = deptError;
+  // const deptError = validateDepartmentId(formData.departmentId);
+  // if (deptError) errors.departmentId = deptError;
 
   const gradeError = validateJobGradeId(formData.jobGradeId);
   if (gradeError) errors.jobGradeId = gradeError;
@@ -155,12 +141,6 @@ export const validatePositionForm = (formData = {}, options = {}) => {
   const prefExpError = validatePreferredExperience(formData.preferredExperience);
   if (prefExpError) errors.preferredExperience = prefExpError;
 
-  const mandEduError = validateMandatoryEducation(formData.mandatoryEducation);
-  if (mandEduError) errors.mandatoryEducation = mandEduError;
-
-  const prefEduError = validatePreferredEducation(formData.preferredEducation);
-  if (prefEduError) errors.preferredEducation = prefEduError;
-
   const rolesError = validateRolesResponsibilities(formData.rolesResponsibilities);
   if (rolesError) errors.rolesResponsibilities = rolesError;
 
@@ -172,15 +152,13 @@ export const validatePositionForm = (formData = {}, options = {}) => {
 
 export default {
   validatePositionTitle,
-  validateDepartmentId,
+  // validateDepartmentId,
   validateJobGradeId,
   validateMinAge,
   validateMaxAge,
   
   validateMandatoryExperience,
   validatePreferredExperience,
-  validateMandatoryEducation,
-  validatePreferredEducation,
   validateRolesResponsibilities,
   validatePositionForm
 };

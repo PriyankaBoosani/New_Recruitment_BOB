@@ -115,7 +115,7 @@ const bulkAddLocations = async (file) => {
 
       //  business failure
     if (res.success === false) {
-  toast.error(res.message);
+  // toast.error(res.message);
 
   return {
     success: false,

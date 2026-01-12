@@ -16,7 +16,7 @@
   "actions": "Actions",
   "noRecords": "No documents found",
 
-  "choose_add_method": "Choose to add manually or import from CSV/XLSX file",
+  "choose_add_method": "Choose to add manually or import from XLSX file",
   "manual_entry": "Manual Entry",
   "import_file": "Import File",
 

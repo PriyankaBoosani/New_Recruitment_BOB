@@ -27,7 +27,7 @@
   "s.no.": "S. No.",
   "search_by_user": "Search by User",
   "noUsersFound": "No users found",
-  "choose_add_method": "Choose to add manually or import from CSV/XLSX file.",
+  "choose_add_method": "Choose to add manually or import from XLSX file.",
   "manual_entry": "Manual Entry",
   "import_file": "Import File",
   "upload_file": "Upload File",

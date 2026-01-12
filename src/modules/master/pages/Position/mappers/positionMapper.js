@@ -9,11 +9,8 @@ export const mapPositionFromApi = (api) => ({
   title: api.positionName,
   description: api.positionDescription,
 
-  departmentId: api.deptId,
+ // departmentId: api.deptId,
   jobGradeId: api.gradeId,
-
-  mandatoryEducation: api.mandatoryEducation || "",
-  preferredEducation: api.preferredEducation || "",
   mandatoryExperience: api.mandatoryExperience || "",
   preferredExperience: api.preferredExperience || "",
   rolesResponsibilities: api.rolesResponsibilities || "",
@@ -48,12 +45,10 @@ export const mapPositionToApi = (ui, isEditing = false) => ({
   positionDescription: ui.description || "",
 
   // 🔥 REQUIRED UUIDs
-  deptId: ui.departmentId,
+  // deptId: ui.departmentId,
   gradeId: ui.jobGradeId,
 
   // 🔥 NEW FIELDS (YOU MISSED THESE)
-  mandatoryEducation: cleanData(ui.mandatoryEducation),
-  preferredEducation: cleanData(ui.preferredEducation),
   mandatoryExperience: cleanData(ui.mandatoryExperience),
   preferredExperience: cleanData(ui.preferredExperience),
   rolesResponsibilities: cleanData(ui.rolesResponsibilities),

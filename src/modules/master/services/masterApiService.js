@@ -6,7 +6,7 @@ const masterApiService = {
   // Note: auth header is injected by nodeApi interceptor; no need to pass token manually
   getRegister: () => nodeApi.get('/getdetails/users/all'),
   registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data),
-  
+
 
   // city
   getallCities: () => apis.get('/city/all'),
@@ -108,17 +108,17 @@ const masterApiService = {
   addJobGrade: (data) => apis.post("/jobgrade/add", data),
   updateJobGrade: (id, data) => apis.put(`/jobgrade/update/${id}`, data),
   deleteJobGrade: (id) => apis.delete(`/jobgrade/delete/${id}`),
-  // ✅ DOWNLOAD JOB GRADE TEMPLATE
+  //  DOWNLOAD JOB GRADE TEMPLATE
   downloadJobGradeTemplate: () =>
     apis.get("/jobgrade/download-template", {
       responseType: "blob",
     }),
 
-  // ✅ BULK ADD JOB GRADES
+  //  BULK ADD JOB GRADES
   bulkAddJobGrades: (file) => {
     const formData = new FormData();
 
-    // 🔥 IMPORTANT: backend expects "attachment"
+    //  IMPORTANT: backend expects "attachment"
     formData.append("file", file);
 
     return apis.post("/jobgrade/bulk-add", formData, {
@@ -127,6 +127,31 @@ const masterApiService = {
       },
     });
   },
+
+
+  
+
+  /* certification-master-controller */
+  getAllCertificates: () => apis.get("/certificates-master/all"),
+  addCertificates: (data) => apis.post("/certificates-master/add", data),
+  updateCertificates: (id, data) => apis.put(`/certificates-master/update/${id}`, data),
+  deleteCertificates: (id) => apis.delete(`/certificates-master/delete/${id}`),
+   //  DOWNLOAD JOB GRADE TEMPLATE
+  downloadCertificatesTemplate: () =>
+    apis.get("/certificates-master/download-template", {
+      responseType: "blob",
+    }),
+
+   bulkAddCertificates: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return apis.post('/certificates-master/bulk-add', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+ 
 
 
   /* Master positions */
@@ -219,6 +244,11 @@ const masterApiService = {
   deleteGenericDocument: (id) =>
     apis.delete(`/rec-generic-documents/delete/${id}`),
 
+ 
+
+
 };
+
+
 
 export default masterApiService;

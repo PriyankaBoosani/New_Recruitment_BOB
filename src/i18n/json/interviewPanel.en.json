@@ -10,7 +10,7 @@
   "panel_members": "Panel Members",
   "actions": "Actions",
   "no_records": "No Panels Found",
-  "choose_add_method": "Choose to add manually or import from CSV/XLSX file",
+  "choose_add_method": "Choose to add manually or import from XLSX file",
   "manual_entry": "Manual Entry",
   "import_file": "Import File",
   "close":"Close",
