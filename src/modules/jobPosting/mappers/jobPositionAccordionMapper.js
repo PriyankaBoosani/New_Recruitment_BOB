@@ -1,25 +1,17 @@
-export const mapJobPositionFromApi = (api = {}) => {
+export const mapJobPositionFromApi = (api = {}, positionMap = {}) => {
   return {
-    // common id field
     positionId: api.id ?? api.positionId ?? null,
 
-    // name/title
-    positionName: api.positionName ?? api.name ?? api.title ?? "",
+    // ✅ resolved via injected map
 
-    // counts
-    vacancies: api.vacancies ?? api.vacancyCount ?? api.noOfVacancies ?? 0,
+    vacancies: api.totalVacancies ?? api.vacancies ?? 0,
 
-    // age
-    minAge: api.minAge ?? api.minimumAge ?? null,
-    maxAge: api.maxAge ?? api.maximumAge ?? null,
+    minAge: api.eligibilityAgeMin ?? null,
+    maxAge: api.eligibilityAgeMax ?? null,
 
-    // education / description
-    mandatoryEducation: api.mandatoryEducation ?? api.mandatory_education ?? "",
-    preferredEducation: api.preferredEducation ?? api.preferred_education ?? "",
+    mandatoryEducation: api.mandatoryEducation ?? "",
+    preferredEducation: api.preferredEducation ?? "",
 
-    // keep raw response for any extra fields
     raw: api
   };
 };
-
-export default mapJobPositionFromApi;

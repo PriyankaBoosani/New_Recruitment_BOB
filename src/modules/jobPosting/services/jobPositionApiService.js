@@ -12,10 +12,9 @@ const jobPositionApiService = {
     ),
 
   /** ✅ multipart/form-data */
-   createPosition: ({ dto, indentFile }) => {
+  createPosition: ({ dto, indentFile }) => {
     const formData = new FormData();
 
-    // MUST match Swagger name exactly
     formData.append(
       "jobPositionsDTO",
       new Blob([JSON.stringify(dto)], { type: "application/json" })
@@ -29,12 +28,11 @@ const jobPositionApiService = {
       "/recruiter/job-positions/create-job-position",
       formData,
       {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       }
     );
   },
+
 
   updatePosition: (positionId, payload) =>
     api.put(

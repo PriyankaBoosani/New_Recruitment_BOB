@@ -88,6 +88,9 @@ const JobPostingsList = () => {
         setPage(0);
     }, [year, status, search]);
 
+   
+
+
     return (
         <Container fluid className="job-postings-page">
             {/* ================= HEADER ================= */}
@@ -297,7 +300,7 @@ const JobPostingsList = () => {
                                         <img src={mingcute_department_line} className="icon-16" alt="department" />
                                         <strong>Digital</strong>
                                         <Badge bg="light" text="primary">
-                                            1 Position
+                                          {req.positions} Positions
                                         </Badge>
                                     </div>
 

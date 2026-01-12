@@ -6,7 +6,7 @@ const masterApiService = {
   // Note: auth header is injected by nodeApi interceptor; no need to pass token manually
   getRegister: () => nodeApi.get('/getdetails/users/all'),
   registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data),
-  
+
 
   // city
   getallCities: () => apis.get('/city/all'),
@@ -244,6 +244,11 @@ const masterApiService = {
   deleteGenericDocument: (id) =>
     apis.delete(`/rec-generic-documents/delete/${id}`),
 
+ 
+
+
 };
+
+
 
 export default masterApiService;

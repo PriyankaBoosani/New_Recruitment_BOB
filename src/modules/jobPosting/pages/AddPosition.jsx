@@ -10,6 +10,8 @@ import ErrorMessage from "../../../shared/components/ErrorMessage";
 import upload_icon from '../../../assets/upload_Icon.png'
 import { useCreateJobPosition } from "../hooks/useCreateJobPosition";
 import { useMasterData } from "../hooks/useMasterData";
+import { useEffect } from "react";
+
 
 const AddPosition = () => {
     const navigate = useNavigate();
@@ -22,6 +24,8 @@ const AddPosition = () => {
         educationTypes,
         qualifications,
         specializations,
+        certifications,
+        states
     } = useMasterData();
 
 
@@ -41,7 +45,10 @@ const AddPosition = () => {
         }
     });
 
-    
+    const [stateDistributions, setStateDistributions] = useState([]);
+    const [editingIndex, setEditingIndex] = useState(null);
+
+
 
 
     const [indentFile, setIndentFile] = useState(null);
@@ -137,6 +144,74 @@ const AddPosition = () => {
     //         prev.filter((_, i) => i !== index)
     //     );
     // };
+    const handleAddOrUpdateState = () => {
+        if (!currentState.state || !currentState.vacancies) {
+            alert("State and Vacancies are required");
+            return;
+        }
+
+        const categoryTotal = Object.values(currentState.categories || {})
+            .reduce((a, b) => a + Number(b || 0), 0);
+
+        const disabilityTotal = Object.values(currentState.disabilities || {})
+            .reduce((a, b) => a + Number(b || 0), 0);
+
+        if (categoryTotal + disabilityTotal !== Number(currentState.vacancies)) {
+            alert("Category + Disability total must match vacancies");
+            return;
+        }
+
+        // ❌ prevent duplicate state
+        if (
+            editingIndex === null &&
+            stateDistributions.some(s => s.state === currentState.state)
+        ) {
+            alert("This state is already added");
+            return;
+        }
+
+        const updated = [...stateDistributions];
+
+        if (editingIndex !== null) {
+            // UPDATE
+            updated.splice(editingIndex, 0, { ...currentState });
+        } else {
+            // ADD
+            updated.push({ ...currentState });
+        }
+
+        setStateDistributions(updated);
+
+        setCurrentState({
+            state: "",
+            vacancies: "",
+            language: "",
+            categories: {},
+            disabilities: {},
+        });
+
+        setEditingIndex(null);
+    };
+
+    const handleEditState = (index) => {
+        const row = stateDistributions[index];
+
+        // Load row into form
+        setCurrentState({
+            state: row.state,
+            vacancies: row.vacancies,
+            language: row.language,
+            categories: { ...row.categories },
+            disabilities: { ...row.disabilities },
+        });
+
+        // Remove row so submit will replace it
+        setStateDistributions(prev =>
+            prev.filter((_, i) => i !== index)
+        );
+
+        setEditingIndex(index);
+    };
 
 
     /* ---------------- HANDLERS ---------------- */
@@ -157,6 +232,41 @@ const AddPosition = () => {
         });
     };
 
+    /* ---------- NATIONAL (toggle OFF) ---------- */
+    const [nationalCategories, setNationalCategories] = useState({});
+    const [nationalDisabilities, setNationalDisabilities] = useState({});
+
+    /* ---------- CURRENT STATE (toggle ON) ---------- */
+    const [currentState, setCurrentState] = useState({
+        state: "",
+        vacancies: "",
+        language: "",
+        categories: {},
+        disabilities: {}
+    });
+
+    useEffect(() => {
+        if (!reservationCategories.length) return;
+        const obj = {};
+        reservationCategories.forEach(c => (obj[c.code] = 0));
+        setNationalCategories(obj);
+    }, [reservationCategories]);
+
+    useEffect(() => {
+        if (!disabilityCategories.length) return;
+        const obj = {};
+        disabilityCategories.forEach(d => (obj[d.disabilityCode] = 0));
+        setNationalDisabilities(obj);
+    }, [disabilityCategories]);
+
+    const nationalCategoryTotal = Object.values(nationalCategories)
+        .reduce((a, b) => a + Number(b || 0), 0);
+
+    const stateCategoryTotal = Object.values(currentState.categories || {})
+        .reduce((a, b) => a + Number(b || 0), 0);
+
+
+
 
     // useEffect(() => {
     //     const total =
@@ -174,23 +284,7 @@ const AddPosition = () => {
     //     currentStateData.ews,
     //     currentStateData.gen
     // ]);
-    const STATIC_STATE_TABLE = [
-        {
-            state: "ANDHRA",
-            vacancies: 10,
-            language: "Telugu",
-            sc: 2,
-            st: 1,
-            ews: 1,
-            gen: 4,
-            obc: 2,
-            total: 10,
-            hi: 1,
-            id: 0,
-            vi: 1,
-            oc: 0
-        }
-    ];
+
 
 
 
@@ -217,8 +311,19 @@ const AddPosition = () => {
             requisitionId,
             indentFile,
             approvedBy,
-            approvedOn
+            approvedOn,
+
+            currentState,
+            reservationCategories,
+            disabilityCategories,
+            nationalCategories,
+            nationalDisabilities,
+
+            qualifications,
+            certifications,
+            stateDistributions
         });
+
 
         if (success) {
             navigate(-1);
@@ -825,7 +930,7 @@ const AddPosition = () => {
                                 {/* OFF */}
                                 {!formData.enableStateDistribution && (
                                     <Row className="g-4">
-                                        {/* General Category */}
+                                        {/* GENERAL */}
                                         <Col md={7}>
                                             <Card className="p-3">
                                                 <h6 className="text-primary mb-3">General Category</h6>
@@ -833,112 +938,171 @@ const AddPosition = () => {
                                                     {reservationCategories.map(cat => (
                                                         <Col md={2} key={cat.id}>
                                                             <Form.Label className="small fw-semibold">{cat.code}</Form.Label>
-                                                            <Form.Control type="number" disabled />
+                                                            <Form.Control
+                                                                type="number"
+                                                                min="0"
+                                                                value={nationalCategories[cat.code] ?? 0}
+                                                                onChange={e =>
+                                                                    setNationalCategories(prev => ({
+                                                                        ...prev,
+                                                                        [cat.code]: e.target.value
+                                                                    }))
+                                                                }
+                                                            />
                                                         </Col>
                                                     ))}
-
+                                                    <Col md={2}>
+                                                        <Form.Label className="small fw-semibold">Total</Form.Label>
+                                                        <Form.Control disabled value={nationalCategoryTotal} />
+                                                    </Col>
                                                 </Row>
                                             </Card>
                                         </Col>
 
-                                        {/* Disability Category */}
+                                        {/* DISABILITY — ENABLED */}
                                         <Col md={5}>
                                             <Card className="p-3">
                                                 <h6 className="text-primary mb-3">Disability Category</h6>
                                                 <Row className="g-3">
-                                                    {disabilityCategories.map(({ id, disabilityCode }) => (
-                                                        <Col md={3} key={id}>
+                                                    {disabilityCategories.map(d => (
+                                                        <Col md={3} key={d.id}>
                                                             <Form.Label className="small fw-semibold">
-                                                                {disabilityCode}
+                                                                {d.disabilityCode}
                                                             </Form.Label>
-                                                            <Form.Control type="number" disabled />
-                                                         
+                                                            <Form.Control
+                                                                type="number"
+                                                                min="0"
+                                                                value={nationalDisabilities[d.disabilityCode] ?? 0}
+                                                                onChange={e =>
+                                                                    setNationalDisabilities(prev => ({
+                                                                        ...prev,
+                                                                        [d.disabilityCode]: e.target.value
+                                                                    }))
+                                                                }
+                                                            />
                                                         </Col>
                                                     ))}
-
                                                 </Row>
                                             </Card>
                                         </Col>
                                     </Row>
                                 )}
 
+
+
                                 {/* ON */}
                                 {formData.enableStateDistribution && (
                                     <>
+                                        {/* STATE META */}
                                         <Row className="g-3 mb-3">
                                             <Col md={4}>
                                                 <Form.Label>State *</Form.Label>
-                                                <Form.Select defaultValue="">
+                                                <Form.Select
+                                                    value={currentState.state}
+                                                    onChange={e =>
+                                                        setCurrentState(prev => ({ ...prev, state: e.target.value }))
+                                                    }
+                                                >
                                                     <option value="">Select State</option>
-                                                    <option value="ANDHRA">ANDHRA</option>
-                                                    <option value="GUJARAT">GUJARAT</option>
-                                                    <option value="JAMMU & KASHMIR">JAMMU & KASHMIR</option>
+                                                    {states.map(s => (
+                                                        <option key={s.id} value={s.id}>
+                                                            {s.name}
+                                                        </option>
+                                                    ))}
                                                 </Form.Select>
 
                                             </Col>
 
                                             <Col md={4}>
-                                                <Form.Label>Vacancies <span className="text-danger">*</span></Form.Label>
+                                                <Form.Label>Vacancies *</Form.Label>
                                                 <Form.Control
                                                     type="number"
-                                                    placeholder="Enter Vacancies"
+                                                    value={currentState.vacancies}
+                                                    onChange={e =>
+                                                        setCurrentState(prev => ({ ...prev, vacancies: e.target.value }))
+                                                    }
                                                 />
-
                                             </Col>
 
                                             <Col md={4}>
-                                                <Form.Group>
-                                                    <Form.Label>Local Language</Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        placeholder="Enter local language"
-                                                    />
-
-                                                </Form.Group>
+                                                <Form.Label>Local Language of State</Form.Label>
+                                                <Form.Control
+                                                    value={currentState.language}
+                                                    onChange={e =>
+                                                        setCurrentState(prev => ({ ...prev, language: e.target.value }))
+                                                    }
+                                                />
                                             </Col>
                                         </Row>
 
+                                        {/* GENERAL */}
                                         <Row className="g-4 mt-3">
-                                            {/* General Category */}
+                                            {/* GENERAL CATEGORY */}
                                             <Col md={7}>
-                                                <Card className="p-3">
+                                                <Card className="p-3 h-100">
                                                     <h6 className="text-primary mb-3">General Category</h6>
                                                     <Row className="g-3">
                                                         {reservationCategories.map(cat => (
                                                             <Col md={2} key={cat.id}>
                                                                 <Form.Label className="small fw-semibold">{cat.code}</Form.Label>
-                                                                <Form.Control type="number" disabled />
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    value={currentState.categories?.[cat.code] ?? 0}
+                                                                    onChange={e =>
+                                                                        setCurrentState(prev => ({
+                                                                            ...prev,
+                                                                            categories: {
+                                                                                ...prev.categories,
+                                                                                [cat.code]: e.target.value
+                                                                            }
+                                                                        }))
+                                                                    }
+                                                                />
                                                             </Col>
                                                         ))}
-
+                                                        <Col md={2}>
+                                                            <Form.Label className="small fw-semibold">Total</Form.Label>
+                                                            <Form.Control disabled value={stateCategoryTotal} />
+                                                        </Col>
                                                     </Row>
                                                 </Card>
                                             </Col>
 
-                                            {/* Disability Category */}
+                                            {/* DISABILITY CATEGORY */}
                                             <Col md={5}>
-                                                <Card className="p-3">
+                                                <Card className="p-3 h-100">
                                                     <h6 className="text-primary mb-3">Disability Category</h6>
                                                     <Row className="g-3">
-                                                        {disabilityCategories.map(({ id, disabilityCode }) => (
-                                                            <Col md={3} key={id}>
+                                                        {disabilityCategories.map(d => (
+                                                            <Col md={3} key={d.id}>
                                                                 <Form.Label className="small fw-semibold">
-                                                                    {disabilityCode}
+                                                                    {d.disabilityCode}
                                                                 </Form.Label>
-                                                                <Form.Control type="number" />
-                                                               
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    value={currentState.disabilities?.[d.disabilityCode] ?? 0}
+                                                                    onChange={e =>
+                                                                        setCurrentState(prev => ({
+                                                                            ...prev,
+                                                                            disabilities: {
+                                                                                ...prev.disabilities,
+                                                                                [d.disabilityCode]: e.target.value
+                                                                            }
+                                                                        }))
+                                                                    }
+                                                                />
                                                             </Col>
                                                         ))}
-
                                                     </Row>
                                                 </Card>
                                             </Col>
                                         </Row>
 
 
-                                        <Button className="mt-3">
-                                            Submit
+                                        <Button className="mt-3" onClick={handleAddOrUpdateState}>
+                                            {editingIndex !== null ? "Update State" : "Add State"}
                                         </Button>
+
 
                                         <table className="table table-bordered mt-4">
                                             <thead>
@@ -969,40 +1133,71 @@ const AddPosition = () => {
                                             </thead>
 
                                             <tbody>
-                                                {STATIC_STATE_TABLE.map((row, index) => {
-                                                    const disabilityTotal =
-                                                        row.hi + row.id + row.vi + row.oc;
+                                                {stateDistributions.map((row, index) => {
+                                                    const disabilityTotal = Object.values(row.disabilities || {})
+                                                        .reduce((a, b) => a + Number(b || 0), 0);
+
+                                                    const categoryTotal = Object.values(row.categories || {})
+                                                        .reduce((a, b) => a + Number(b || 0), 0);
 
                                                     return (
                                                         <tr key={index}>
                                                             <td>{index + 1}</td>
-                                                            <td>{row.state}</td>
+                                                            <td>
+                                                                {states.find(s => s.id === row.state)?.name || "—"}
+                                                            </td>
                                                             <td>{row.vacancies}</td>
-                                                            <td>{row.language}</td>
+                                                            <td>{row.language || "—"}</td>
 
-                                                            <td>{row.sc}</td>
-                                                            <td>{row.st}</td>
-                                                            <td>{row.ews}</td>
-                                                            <td>{row.gen}</td>
-                                                            <td>{row.obc}</td>
-                                                            <td>{row.total}</td>
+                                                            {reservationCategories.map(cat => (
+                                                                <td key={cat.code}>
+                                                                    {row.categories?.[cat.code] ?? 0}
+                                                                </td>
+                                                            ))}
 
-                                                            <td>{row.hi}</td>
-                                                            <td>{row.id}</td>
-                                                            <td>{row.vi}</td>
-                                                            <td>{row.oc}</td>
+                                                            <td>{categoryTotal}</td>
+
+                                                            {disabilityCategories.map(dis => (
+                                                                <td key={dis.disabilityCode}>
+                                                                    {row.disabilities?.[dis.disabilityCode] ?? 0}
+                                                                </td>
+                                                            ))}
+
                                                             <td>{disabilityTotal}</td>
 
-                                                            <td className="text-center">—</td>
+                                                            <td className="text-center">
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="link"
+                                                                    onClick={() => handleEditState(index)}
+                                                                >
+                                                                    ✏️
+                                                                </Button>
+
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="link"
+                                                                    className="text-danger"
+                                                                    onClick={() =>
+                                                                        setStateDistributions(prev =>
+                                                                            prev.filter((_, i) => i !== index)
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    🗑️
+                                                                </Button>
+                                                            </td>
+
                                                         </tr>
                                                     );
                                                 })}
                                             </tbody>
 
 
-                                        </table>
-                                    </>
+
+                                        </table>                                    </>
                                 )}
+
                             </Col>
                         </Row>
 
@@ -1031,6 +1226,7 @@ const AddPosition = () => {
                 educationTypes={educationTypes}
                 qualifications={qualifications}
                 specializations={specializations}
+                certifications={certifications}
                 onHide={() => setShowEduModal(false)}
                 onSave={({ educations, certificationIds, text }) => {
                     setEducationData(prev => ({

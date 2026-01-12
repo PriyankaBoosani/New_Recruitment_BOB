@@ -15,6 +15,8 @@ export const useMasterData = () => {
     qualifications: [],
     specializations: [],
     users: [],
+    certifications: [],
+    states: [],
   });
 
   const [loading, setLoading] = useState(false);
@@ -25,15 +27,20 @@ export const useMasterData = () => {
       setLoading(true);
       try {
         // 🔥 CALL BOTH APIS IN PARALLEL
-        const [masterRes, userRes] = await Promise.all([
+        const [masterRes, userRes, certRes] = await Promise.all([
           masterApiService.getAllMasters(),
           masterApiService.getUser(),
+          masterApiService.getAllCertificates(),
+
         ]);
 
         const mapped = mapMasterResponse(
           masterRes.data,
-          userRes.data
+          userRes.data,
+          certRes.data,
+          
         );
+        console.log("MAPPED CERTS:", mapped.certifications);
 
         setData({
           departments: mapped.departments,
@@ -46,6 +53,8 @@ export const useMasterData = () => {
           qualifications: mapped.qualifications,
           specializations: mapped.specializations,
           users: mapped.users,
+          certifications: mapped.certifications,
+          states: mapped.state,
         });
 
       } catch (err) {
