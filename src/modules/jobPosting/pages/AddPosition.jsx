@@ -846,13 +846,13 @@ const AddPosition = () => {
                                             <Card className="p-3">
                                                 <h6 className="text-primary mb-3">Disability Category</h6>
                                                 <Row className="g-3">
-                                                    {disabilityCategories.map(({ id, disabilityCode, disabilityName }) => (
+                                                    {disabilityCategories.map(({ id, disabilityCode }) => (
                                                         <Col md={3} key={id}>
                                                             <Form.Label className="small fw-semibold">
                                                                 {disabilityCode}
                                                             </Form.Label>
                                                             <Form.Control type="number" disabled />
-                                                            <small className="text-muted">{disabilityName}</small>
+                                                         
                                                         </Col>
                                                     ))}
 
@@ -920,13 +920,13 @@ const AddPosition = () => {
                                                 <Card className="p-3">
                                                     <h6 className="text-primary mb-3">Disability Category</h6>
                                                     <Row className="g-3">
-                                                        {disabilityCategories.map(({ id, disabilityCode, disabilityName }) => (
+                                                        {disabilityCategories.map(({ id, disabilityCode }) => (
                                                             <Col md={3} key={id}>
                                                                 <Form.Label className="small fw-semibold">
                                                                     {disabilityCode}
                                                                 </Form.Label>
                                                                 <Form.Control type="number" />
-                                                                <small className="text-muted">{disabilityName}</small>
+                                                               
                                                             </Col>
                                                         ))}
 

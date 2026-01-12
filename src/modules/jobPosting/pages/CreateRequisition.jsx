@@ -80,8 +80,8 @@ const CreateRequisition = () => {
               {isViewMode
                 ? "View Requisition"
                 : editId
-                ? "Edit Requisition"
-                : "Create New Requisition"}
+                  ? "Edit Requisition"
+                  : "Create New Requisition"}
             </h6>
           </div>
 
@@ -96,13 +96,16 @@ const CreateRequisition = () => {
                 <Form.Control
                   name="title"
                   value={formData.title}
+                  placeholder="Enter Requisition Title"
                   onChange={(e) => {
                     handleInputChange(e);
                     setErrors((prev) => ({ ...prev, title: "" }));
                   }}
                   isInvalid={!!errors.title}
                 />
-
+                <Form.Text className="text-muted">
+                  Use a clear, searchable title used across the portal and job boards.
+                </Form.Text>
                 <ErrorMessage>{errors.title}</ErrorMessage>
               </Form.Group>
 
@@ -117,6 +120,7 @@ const CreateRequisition = () => {
                       as="textarea"
                       rows={6}
                       name="description"
+                      placeholder="Enter Requisition Description"
                       value={formData.description}
                       onChange={(e) => {
                         handleInputChange(e);
@@ -152,7 +156,9 @@ const CreateRequisition = () => {
                           min={new Date().toISOString().split("T")[0]}
                           isInvalid={!!errors.startDate}
                         />
-
+                        <Form.Text className="text-muted">
+                          Date from which the candidates can start applying.
+                        </Form.Text>
                         <ErrorMessage>{errors.startDate}</ErrorMessage>
                       </Form.Group>
                     </Col>
@@ -174,7 +180,9 @@ const CreateRequisition = () => {
                           min={formData.startDate}
                           isInvalid={!!errors.endDate}
                         />
-
+                        <Form.Text className="text-muted">
+                          Standard duration: 21 days.
+                        </Form.Text>
                         <ErrorMessage>{errors.endDate}</ErrorMessage>
                       </Form.Group>
                     </Col>
