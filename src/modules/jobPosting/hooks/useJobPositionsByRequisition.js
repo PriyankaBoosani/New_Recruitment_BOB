@@ -7,12 +7,14 @@ export const useJobPositionsByRequisition = () => {
   const [positionsByReq, setPositionsByReq] = useState({});
   const [loadingReqId, setLoadingReqId] = useState(null);
 
-  const { positions: masterPositions } = useMasterData();
+  const { positions: masterPositions, departments } = useMasterData();
 
   const positionMap = {};
+
   masterPositions.forEach(p => {
     positionMap[p.id] = p.name;
   });
+
 
   const fetchPositions = async (requisitionId) => {
     if (positionsByReq[requisitionId]) return;
@@ -25,15 +27,29 @@ export const useJobPositionsByRequisition = () => {
 
       const list = res?.data || [];
 
+
+      const departmentMap = {};
+      departments.forEach(d => {
+        departmentMap[d.id] = d.label;
+      });
+
       const enriched = list.map(api => ({
-        positionId: api.id,
-        positionName: positionMap[api.masterPositionId] || "—", // ✅ FIX
+        positionId: api.positionId || api.id,
+
+        // position
+        positionName: positionMap[api.masterPositionId] || "—",
+
+        // 🔥 THIS WAS MISSING
+        deptId: api.deptId,
+        departmentName: departmentMap[api.deptId] || "—",
+
         vacancies: api.totalVacancies ?? 0,
         minAge: api.eligibilityAgeMin,
         maxAge: api.eligibilityAgeMax,
         mandatoryEducation: api.mandatoryEducation ?? "",
         preferredEducation: api.preferredEducation ?? "",
       }));
+
 
       setPositionsByReq(prev => ({
         ...prev,

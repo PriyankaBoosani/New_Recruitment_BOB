@@ -11,7 +11,7 @@ import upload_icon from '../../../assets/upload_Icon.png'
 import { useCreateJobPosition } from "../hooks/useCreateJobPosition";
 import { useMasterData } from "../hooks/useMasterData";
 import { useEffect } from "react";
-
+import ConfirmUsePositionModal from "../component/ConfirmUsePositionModal";
 
 const AddPosition = () => {
     const navigate = useNavigate();
@@ -48,9 +48,8 @@ const AddPosition = () => {
     const [stateDistributions, setStateDistributions] = useState([]);
     const [editingIndex, setEditingIndex] = useState(null);
 
-
-
-
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [pendingPosition, setPendingPosition] = useState(null);
     const [indentFile, setIndentFile] = useState(null);
     const [approvedBy, setApprovedBy] = useState("");
     const [approvedOn, setApprovedOn] = useState("");
@@ -106,44 +105,38 @@ const AddPosition = () => {
         medicalRequired: "",
         enableStateDistribution: false
     });
+    const handleUsePositionData = () => {
+        if (!pendingPosition) return;
 
+        setFormData(prev => ({
+            ...prev,
+            department: String(pendingPosition.deptId),
+            minAge: pendingPosition.minAge ?? "",
+            maxAge: pendingPosition.maxAge ?? "",
+            grade: String(pendingPosition.gradeId ?? ""),
+            responsibilities: pendingPosition.rolesResponsibilities ?? "",
+            mandatoryEducation: pendingPosition.mandatoryEducation ?? "",
+            preferredEducation: pendingPosition.preferredEducation ?? "",
+            mandatoryExperience: {
+                ...prev.mandatoryExperience,
+                description: pendingPosition.mandatoryExperience ?? ""
+            },
+            preferredExperience: {
+                ...prev.preferredExperience,
+                description: pendingPosition.preferredExperience ?? ""
+            }
+        }));
 
+        setPendingPosition(null);
+        setShowConfirmModal(false);
+    };
 
-    /* ---------------- STATE WISE ---------------- */
-    // const [stateDistribution, setStateDistribution] = useState([]);
-    // const [currentStateData, setCurrentStateData] = useState({
-    //     state: "",
-    //     vacancies: "",
-    //     language: "",
-    //     sc: "",
-    //     st: "",
-    //     obc: "",
-    //     ews: "",
-    //     gen: "",
-    //     total: "",
-    //     oc: "",
-    //     vi: "",
-    //     hi: "",
-    //     id: ""
-    // });
+    const handleIgnorePositionData = () => {
+        // Do NOT populate anything
+        setPendingPosition(null);
+        setShowConfirmModal(false);
+    };
 
-
-    // const handleEditState = (index) => {
-    //     const selectedRow = stateDistribution[index];
-
-    //     // Load row data back into form
-    //     setCurrentStateData(selectedRow);
-
-    //     // Remove row from table (so it updates instead of duplicating)
-    //     setStateDistribution(prev =>
-    //         prev.filter((_, i) => i !== index)
-    //     );
-    // };
-    // const handleDeleteState = (index) => {
-    //     setStateDistribution(prev =>
-    //         prev.filter((_, i) => i !== index)
-    //     );
-    // };
     const handleAddOrUpdateState = () => {
         if (!currentState.state || !currentState.vacancies) {
             alert("State and Vacancies are required");
@@ -504,32 +497,25 @@ const AddPosition = () => {
                                     onChange={(e) => {
                                         const positionId = e.target.value;
                                         const selected = positions.find(
-                                            (p) => String(p.id) === String(positionId)
+                                            p => String(p.id) === String(positionId)
                                         );
 
                                         if (!selected) return;
 
-                                        setFormData((prev) => ({
+                                        // store temporarily
+                                        setPendingPosition(selected);
+
+                                        // set only position id for now
+                                        setFormData(prev => ({
                                             ...prev,
-                                            position: positionId,
-                                            department: String(selected.deptId),
-                                            minAge: selected.minAge ?? "",
-                                            maxAge: selected.maxAge ?? "",
-                                            grade: String(selected.gradeId ?? ""),
-                                            responsibilities: selected.rolesResponsibilities ?? "",
-                                            mandatoryEducation: selected.mandatoryEducation ?? "",
-                                            preferredEducation: selected.preferredEducation ?? "",
-                                            mandatoryExperience: {
-                                                ...prev.mandatoryExperience,
-                                                description: selected.mandatoryExperience ?? "",
-                                            },
-                                            preferredExperience: {
-                                                ...prev.preferredExperience,
-                                                description: selected.preferredExperience ?? "",
-                                            },
+                                            position: positionId
                                         }));
+
+                                        // show confirmation modal
+                                        setShowConfirmModal(true);
                                     }}
                                 >
+
                                     <option value="">Select</option>
                                     {positions.map((p) => (
                                         <option key={p.id} value={p.id}>
@@ -1248,6 +1234,13 @@ const AddPosition = () => {
 
 
             />
+
+            <ConfirmUsePositionModal
+  show={showConfirmModal}
+  onYes={handleUsePositionData}
+  onNo={handleIgnorePositionData}
+/>
+
         </Container>
     );
 };

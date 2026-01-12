@@ -88,7 +88,7 @@ const JobPostingsList = () => {
         setPage(0);
     }, [year, status, search]);
 
-   
+
 
 
     return (
@@ -172,71 +172,113 @@ const JobPostingsList = () => {
                 </div>
             )}
 
-            {requisitions.map((req) => (
-                <div key={req.id} className="requisition-card mb-3">
-                    <Row
-                        className="align-items-center req-clickable"
-                        onClick={() => toggleAccordion(req.id)}
-                    >
-                        {/* -------- LEFT -------- */}
-                        <Col xs={12} md={8}>
-                            <div className="req-header">
-                                <Badge bg="light" text="primary" className="req-id">
-                                    {req.requisitionId}
-                                </Badge>
-                                <Badge bg={req.statusType} className="ms-2">
-                                    {req.status}
-                                </Badge>
-                            </div>
+            {requisitions.map((req) => {
 
-                            <div className="d-flex justify-content-between align-items-start">
-                                <div className="d-flex align-items-start">
-                                    <Form.Check type="checkbox" className="me-2 mt-2" />
-                                    <div>
-                                        <h6 className="req-code mb-2">{req.code}</h6>
-                                        <div className="req-dates">
-                                            <div>Start: {req.startDate}</div> |
-                                            <div>End: {req.endDate}</div>
+                const positions = positionsByReq[req.id] || [];
+
+                const positionsGroupedByDept = positions.reduce((acc, pos) => {
+                    if (!acc[pos.deptId]) {
+                        acc[pos.deptId] = {
+                            departmentName: pos.departmentName,
+                            positions: []
+                        };
+                    }
+                    acc[pos.deptId].positions.push(pos);
+                    return acc;
+                }, {});
+
+                return (
+                    <div key={req.id} className="requisition-card mb-3">
+                        <Row
+                            className="align-items-center req-clickable"
+                            onClick={() => toggleAccordion(req.id)}
+                        >
+                            {/* -------- LEFT -------- */}
+                            <Col xs={12} md={8}>
+                                <div className="req-header">
+                                    <Badge bg="light" text="primary" className="req-id">
+                                        {req.requisitionId}
+                                    </Badge>
+                                    <Badge bg={req.statusType} className="ms-2">
+                                        {req.status}
+                                    </Badge>
+                                </div>
+
+                                <div className="d-flex justify-content-between align-items-start">
+                                    <div className="d-flex align-items-start">
+                                        <Form.Check type="checkbox" className="me-2 mt-2" />
+                                        <div>
+                                            <h6 className="req-code mb-2">{req.code}</h6>
+                                            <div className="req-dates">
+                                                <div>Start: {req.startDate}</div> |
+                                                <div>End: {req.endDate}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="req-meta text-end">
+                                        <div>
+                                            <img src={mingcute_department_line} alt="department" className="icon-16" />{" "}
+                                            Department - {req.departments}
+                                        </div>
+                                        <div>
+                                            <img src={position_Icon} alt="position" className="icon-16" /> Positions -{" "}
+                                            {req.positions}
+                                        </div>
+                                        <div>
+                                            <img src={vacancy_icon} alt="vacancy" className="icon-23" /> Vacancies -{" "}
+                                            {req.vacancies}
                                         </div>
                                     </div>
                                 </div>
+                            </Col>
 
-                                <div className="req-meta text-end">
-                                    <div>
-                                        <img src={mingcute_department_line} alt="department" className="icon-16" />{" "}
-                                        Department - {req.departments}
-                                    </div>
-                                    <div>
-                                        <img src={position_Icon} alt="position" className="icon-16" /> Positions -{" "}
-                                        {req.positions}
-                                    </div>
-                                    <div>
-                                        <img src={vacancy_icon} alt="vacancy" className="icon-23" /> Vacancies -{" "}
-                                        {req.vacancies}
-                                    </div>
-                                </div>
-                            </div>
-                        </Col>
+                            {/* -------- ACTIONS -------- */}
+                            <Col
+                                xs={12}
+                                md={4}
+                                className="text-md-end mt-3 mt-md-0 actions d-flex justify-content-end align-items-center gap-2"
+                            >
+                                {req.editable ? (
+                                    <>
+                                        <Button
+                                            variant="light"
+                                            className="icon-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/job-posting/${req.id}/add-position`);
+                                            }}
+                                        >
+                                            <img src={pos_plus_icon} alt="add" className="icon-16" />
+                                        </Button>
 
-                        {/* -------- ACTIONS -------- */}
-                        <Col
-                            xs={12}
-                            md={4}
-                            className="text-md-end mt-3 mt-md-0 actions d-flex justify-content-end align-items-center gap-2"
-                        >
-                            {req.editable ? (
-                                <>
-                                    <Button
-                                        variant="light"
-                                        className="icon-btn"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            navigate(`/job-posting/${req.id}/add-position`);
-                                        }}
-                                    >
-                                        <img src={pos_plus_icon} alt="add" className="icon-16" />
-                                    </Button>
+                                        <Button
+                                            variant="light"
+                                            className="icon-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(
+                                                    `/job-posting/create-requisition?id=${req.id}`,
+                                                    { state: { mode: "edit" } }
+                                                );
+                                            }}
+                                        >
+                                            <img src={pos_edit_icon} alt="edit" className="icon-20" />
+                                        </Button>
 
+                                        <Button
+                                            variant="light"
+                                            className="icon-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedReq(req);
+                                                setShowDeleteModal(true);
+                                            }}
+                                        >
+                                            <img src={pos_delete_icon} alt="delete" className="icon-20" />
+                                        </Button>
+                                    </>
+                                ) : (
                                     <Button
                                         variant="light"
                                         className="icon-btn"
@@ -244,77 +286,57 @@ const JobPostingsList = () => {
                                             e.stopPropagation();
                                             navigate(
                                                 `/job-posting/create-requisition?id=${req.id}`,
-                                                { state: { mode: "edit" } }
+                                                { state: { mode: "view" } }
                                             );
                                         }}
                                     >
-                                        <img src={pos_edit_icon} alt="edit" className="icon-20" />
+                                        <img src={view_icon} alt="view" className="icon-16" />
                                     </Button>
+                                )}
 
-                                    <Button
-                                        variant="light"
-                                        className="icon-btn"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setSelectedReq(req);
-                                            setShowDeleteModal(true);
-                                        }}
-                                    >
-                                        <img src={pos_delete_icon} alt="delete" className="icon-20" />
-                                    </Button>
-                                </>
-                            ) : (
+
                                 <Button
-                                    variant="light"
-                                    className="icon-btn"
+                                    variant="none"
+                                    className="accordion-arrow"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        navigate(
-                                            `/job-posting/create-requisition?id=${req.id}`,
-                                            { state: { mode: "view" } }
-                                        );
+                                        toggleAccordion(req.id);
                                     }}
                                 >
-                                    <img src={view_icon} alt="view" className="icon-16" />
+                                    {openReqId === req.id ? <ChevronUp /> : <ChevronDown />}
                                 </Button>
-                            )}
+                            </Col>
 
+                            {/* -------- ACCORDION BODY (STATIC FOR NOW) -------- */}
+                            {openReqId === req.id && (
+                                <div className="accordion-body mt-3">
 
-                            <Button
-                                variant="none"
-                                className="accordion-arrow"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleAccordion(req.id);
-                                }}
-                            >
-                                {openReqId === req.id ? <ChevronUp /> : <ChevronDown />}
-                            </Button>
-                        </Col>
+                                    {loadingReqId === req.id && (
+                                        <Spinner animation="border" size="sm" />
+                                    )}
 
-                        {/* -------- ACCORDION BODY (STATIC FOR NOW) -------- */}
-                        {openReqId === req.id && (
-                            <div className="accordion-body mt-3">
-                                <div className="department-card mb-3">
-                                    <div className="department-header d-flex align-items-center gap-2">
-                                        <img src={mingcute_department_line} className="icon-16" alt="department" />
-                                        <strong>Digital</strong>
-                                        <Badge bg="light" text="primary">
-                                          {req.positions} Positions
-                                        </Badge>
-                                    </div>
+                                    {!loadingReqId && positions.length === 0 && (
+                                        <div className="text-muted">No positions added</div>
+                                    )}
 
-                                    {openReqId === req.id && (
-                                        <div className="accordion-body mt-3">
-                                            {loadingReqId === req.id && (
-                                                <Spinner animation="border" size="sm" />
-                                            )}
+                                    {Object.values(positionsGroupedByDept).map((dept) => (
+                                        <div key={dept.departmentName} className="department-card mb-3">
 
-                                            {!loadingReqId && positionsByReq[req.id]?.length === 0 && (
-                                                <div className="text-muted">No positions added</div>
-                                            )}
+                                            {/* 🔹 Department Header */}
+                                            <div className="department-header d-flex align-items-center gap-2">
+                                                <img
+                                                    src={mingcute_department_line}
+                                                    className="icon-16"
+                                                    alt="department"
+                                                />
+                                                <strong>{dept.departmentName}</strong>
+                                                <Badge bg="light" text="primary">
+                                                    {dept.positions.length} Positions
+                                                </Badge>
+                                            </div>
 
-                                            {positionsByReq[req.id]?.map((pos) => (
+                                            {/* 🔹 SAME position UI you already had */}
+                                            {dept.positions.map((pos) => (
                                                 <div key={pos.positionId} className="position-card-inner mb-2">
                                                     <div className="position-header-row">
                                                         <div className="position-title">
@@ -358,15 +380,16 @@ const JobPostingsList = () => {
                                                     </div>
                                                 </div>
                                             ))}
-                                        </div>
-                                    )}
 
+                                        </div>
+                                    ))}
                                 </div>
-                            </div>
-                        )}
-                    </Row>
-                </div>
-            ))}
+                            )}
+
+                        </Row>
+                    </div>
+                );
+            })}
             {/* ================= PAGINATION ================= */}
             {pageInfo && pageInfo.totalPages > 1 && (
                 <Row className="mt-4 mb-4">
