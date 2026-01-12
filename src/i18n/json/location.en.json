@@ -11,7 +11,7 @@
   "city_name": "City Name",
   "location_name": "Location Name",
   "actions": "Actions",
-  "choose_add_method": "Choose to add manually or import from CSV/XLSX file.",
+  "choose_add_method": "Choose to add manually or import from XLSX file.",
   "manual_entry": "Manual Entry",
   "import_file": "Import File",
   "select_city": "Select city",
@@ -33,7 +33,7 @@
   "delete_success": "Location deleted successfully",
  "upload_locations": "Upload File",
   "support_xlsx": "Support for XLSX formats",
-  "invalid_file": "Please upload a valid Excel file (.xlsx, .xls)",
+  "invalid_file": "Please upload a valid Excel file (.xlsx)",
   "no_file_selected": "Please select a file to upload",
  
   "reupload_xlsx": "Reupload XLSX",

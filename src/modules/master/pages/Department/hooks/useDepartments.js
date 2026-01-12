@@ -34,7 +34,7 @@ const bulkAddDepartments = async (file) => {
     console.log("API RESPONSE:", res); // logs for 200 & 422
 
     if (res.success === false) {
-  toast.error(res.message);
+  // toast.error(res.message);
 
   return {
     success: false,

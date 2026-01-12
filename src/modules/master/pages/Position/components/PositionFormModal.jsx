@@ -73,7 +73,7 @@ const PositionFormModal = ({
                 : t("add_position")}
           </Modal.Title>
 
-          {!isViewing && (
+             {!isEditing && !isViewing && (
             <p className="mb-0 small text-muted para">
               {t("choose_add_method")}
             </p>

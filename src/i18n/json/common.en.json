@@ -1,0 +1,17 @@
+{
+    
+  "admin": "Admin",
+  "users": "Users",
+  "department": "Department",
+  "location": "Location",
+  "job_grade": "Job Grade",
+  "position": "Position",
+  "category": "Category",
+  "certification": "Certification",
+  "special_category": "Special Category",
+  "document": "Document",
+  "generic_or_annexures": "Generic or Annexures",
+  "job_postings": "Job Postings",
+  "logout": "Logout",
+  "job_postings": "Job Postings"
+}

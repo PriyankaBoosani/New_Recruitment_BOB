@@ -1,0 +1,16 @@
+{
+  "admin": "प्रशासन",
+  "users": "उपयोगकर्ता",
+  "department": "विभाग",
+  "location": "स्थान",
+  "job_grade": "जॉब ग्रेड",
+  "position": "पद",
+  "category": "श्रेणी",
+  "certification": "प्रमाणपत्र",
+  "special_category": "विशेष श्रेणी",
+  "document": "दस्तावेज़",
+  "generic_or_annexures": "सामान्य या परिशिष्ट",
+  "job_postings": "नौकरी पोस्टिंग",
+  "logout": "लॉगआउट",
+  "job_postings": "नौकरी पोस्टिंग"
+}

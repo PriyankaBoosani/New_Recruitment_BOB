@@ -30,7 +30,7 @@ const DepartmentFormModal = ({
           <Modal.Title>
             {isViewing ? t("viewDepartment") : isEditing ? t("editDepartment") : t("addDepartment")}
           </Modal.Title>
-          {!isViewing && (
+             {!isEditing && !isViewing && (
             <p className="mb-0 small text-muted para">
               {t("choose_add_method")}
             </p>

@@ -14,8 +14,8 @@
 
   "add_position": "Add Position",
   "edit_position": "Edit Position",
-  "choose_add_method": "Choose to add manually or import from CSV/XLSX file.",
-
+  "choose_add_method": "Choose to add manually or import from XLSX file.",
+ "reupload_xlsx": "Reupload XLSX",
   "manual_entry": "Manual Entry",
   "import_file": "Import File",
   "upload_file": "Upload File",

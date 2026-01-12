@@ -248,10 +248,10 @@ const PositionPage = () => {
               onChange={(e) => {
                 const value = e.target.value;
 
-                //  allow alphabets, numbers, space and @
-                if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
-                  return; // block invalid characters
-                }
+                // //  allow alphabets, numbers, space and @
+                // if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
+                //   return; // block invalid characters
+                // }
 
                 setSearchTerm(value);
               }}

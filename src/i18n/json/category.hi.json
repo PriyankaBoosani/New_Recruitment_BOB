@@ -23,7 +23,7 @@
   "xlsx": "XLSX",
   "upload_xlsx": "XLSX अपलोड",
   "download_template": "टेम्पलेट डाउनलोड करें",
-  "choose_add_method": "मैनुअल प्रविष्टि या CSV/XLSX से आयात चुनें",
+  "choose_add_method": "मैनुअल प्रविष्टि या XLSX से आयात चुनें",
    "support_csv_xlsx": "CSV और XLSX फ़ॉर्मैट समर्थित हैं (CSV हेडर: कोड, नाम, विवरण)",
   "cancel": "रद्द करें",
   "save": "सेव करें",
@@ -42,7 +42,7 @@
   "delete_error": "श्रेणी हटाने में विफल",
   "upload_categories": "फ़ाइल अपलोड करें",
   "support_xlsx": "XLSX फ़ॉर्मैट का समर्थन",
-  "invalid_file": "कृपया एक मान्य Excel फ़ाइल अपलोड करें (.xlsx, .xls)",
+  "invalid_file": "कृपया एक मान्य Excel फ़ाइल अपलोड करें (.xlsx)",
   "no_file_selected": "कृपया अपलोड करने के लिए फ़ाइल चुनें",
 
   "reupload_xlsx": "XLSX पुनः अपलोड करें",

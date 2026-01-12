@@ -15,7 +15,7 @@
 
   "add_position": "पद जोड़ें",
   "edit_position": "पद संपादित करें",
-  "choose_add_method": "मैन्युअल रूप से जोड़ें या CSV/XLSX से आयात करें।",
+  "choose_add_method": "मैन्युअल रूप से जोड़ें या XLSX से आयात करें।",
 
   "manual_entry": "मैनुअल प्रविष्टि",
   "import_file": "फ़ाइल आयात करें",
@@ -24,7 +24,7 @@
   "upload_csv": "CSV अपलोड करें",
   "upload_xlsx": "XLSX अपलोड करें",
   "download_template": "टेम्पलेट डाउनलोड करें",
-
+  "reupload_xlsx": "XLSX दोबारा अपलोड करें",
   "enter_position_title": "पद शीर्षक दर्ज करें",
   "select_department": "विभाग चुनें",
   "select_job_grade": "जॉब ग्रेड चुनें",
