@@ -67,6 +67,7 @@ const [isViewing, setIsViewing] = useState(false);
 
 const openAdd = () => {
   setIsEditing(false);
+   setIsViewing(false); 
   setEditingLocation(null);
   setFormData({ name: '', cityId: null, cityName: '' });
   setErrors({});

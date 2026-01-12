@@ -51,7 +51,7 @@ const LocationImportModal = ({
       onSuccess();
       onClose();
     } else {
-     setError(result?.message || t("location:import_failed"));
+     setError(result?.message || t("location:import_error"));
 setErrorDetails(result?.data || []);
 
     }

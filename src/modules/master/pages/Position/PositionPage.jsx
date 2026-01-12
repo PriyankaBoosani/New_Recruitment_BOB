@@ -107,6 +107,7 @@ const PositionPage = () => {
 
   const openAddModal = () => {
     setIsEditing(false);
+    setIsViewing(false);  
     setShowAddModal(true);
     setEditingId(null);
     setFormData({
