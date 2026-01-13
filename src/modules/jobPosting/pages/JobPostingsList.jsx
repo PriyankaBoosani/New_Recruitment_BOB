@@ -20,7 +20,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import "../../../style/css/JobPostingsList.css";
-import DeleteRequisitionModal from "../component/DeleteConfirmationModal";
+import DeleteConfirmationModal from "../component/DeleteConfirmationModal";
 
 import view_icon from "../../../assets/view_icon.png";
 import submitIcon from "../../../assets/submitIcon.png";
@@ -38,6 +38,10 @@ const JobPostingsList = () => {
     const navigate = useNavigate();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedReq, setSelectedReq] = useState(null);
+
+    const [showDeletePosModal, setShowDeletePosModal] = useState(false);
+    const [selectedPosition, setSelectedPosition] = useState(null);
+
     const handleConfirmDelete = async () => {
         if (!selectedReq) return;
 
@@ -45,6 +49,18 @@ const JobPostingsList = () => {
         setShowDeleteModal(false);
         setSelectedReq(null);
     };
+    const handleConfirmDeletePosition = async () => {
+        if (!selectedPosition) return;
+
+        await deletePosition(
+            selectedPosition.requisitionId,
+            selectedPosition.positionId
+        );
+
+        setShowDeletePosModal(false);
+        setSelectedPosition(null);
+    };
+
 
 
     // 🔹 Backend-driven filters
@@ -56,7 +72,8 @@ const JobPostingsList = () => {
     const {
         positionsByReq,
         loadingReqId,
-        fetchPositions
+        fetchPositions,
+        deletePosition
     } = useJobPositionsByRequisition();
 
 
@@ -363,9 +380,23 @@ const JobPostingsList = () => {
                                                             <img src={pos_edit_icon} className="icon-16" alt="edit" />
                                                         </Button>
 
-                                                        <Button variant="light" className="icon-btn">
+                                                        <Button
+                                                            variant="light"
+                                                            className="icon-btn"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setSelectedPosition({
+                                                                    requisitionId: req.id,
+                                                                    positionId: pos.positionId,
+                                                                    positionName: pos.positionName
+                                                                });
+                                                                setShowDeletePosModal(true);
+                                                            }}
+                                                        >
                                                             <img src={pos_delete_icon} className="icon-16" alt="delete" />
                                                         </Button>
+
+
                                                     </div>
 
                                                     <div className="position-details">
@@ -440,15 +471,33 @@ const JobPostingsList = () => {
                     </Col>
                 </Row>
             )}
-            <DeleteRequisitionModal
-                show={showDeleteModal}
-                onClose={() => {
-                    setShowDeleteModal(false);
-                    setSelectedReq(null);
-                }}
-                onConfirm={handleConfirmDelete}
-                requisitionCode={selectedReq?.code}
-            />
+            {/* Requisition Delete */}
+<DeleteConfirmationModal
+  show={showDeleteModal}
+  onClose={() => {
+    setShowDeleteModal(false);
+    setSelectedReq(null);
+  }}
+  onConfirm={handleConfirmDelete}
+  title="Delete Requisition"
+  message="Are you sure you want to delete this requisition?"
+  itemLabel={selectedReq?.code}
+/>
+
+{/* Position Delete */}
+<DeleteConfirmationModal
+  show={showDeletePosModal}
+  onClose={() => {
+    setShowDeletePosModal(false);
+    setSelectedPosition(null);
+  }}
+  onConfirm={handleConfirmDeletePosition}
+  title="Delete Position"
+  message="Are you sure you want to delete this position?"
+  itemLabel={selectedPosition?.positionName}
+/>
+
+
 
         </Container>
     );

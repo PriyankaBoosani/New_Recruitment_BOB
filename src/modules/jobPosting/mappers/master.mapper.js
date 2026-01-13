@@ -1,10 +1,10 @@
 // src/modules/jobPosting/mappers/master.mapper.js
 export const mapMasterResponse = (masterData, userData, certData) => {
   const certList = Array.isArray(certData)
-      ? certData
-      : Array.isArray(certData?.data)
-        ? certData.data
-        : [];
+    ? certData
+    : Array.isArray(certData?.data)
+      ? certData.data
+      : [];
   return {
     departments: (masterData.departments || []).map(d => ({
       id: String(d.departmentId),
@@ -78,10 +78,19 @@ export const mapMasterResponse = (masterData, userData, certData) => {
       description: c.certificationDesc,
     })),
 
-    state:(masterData.states || []).map(s => ({
+    states: (masterData.states || []).map(s => ({
       id: String(s.stateId),
       name: s.stateName,
+      localLanguage: s.localLanguage,
     })),
+
+
+    languages: (masterData.languageMasters || []).map(l => ({
+      id: String(l.languageId),
+      name: l.languageName,
+      stateId: l.stateId ? String(l.stateId) : null,
+    })),
+
 
 
 

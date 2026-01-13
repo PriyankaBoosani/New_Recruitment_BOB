@@ -17,10 +17,13 @@ export const useMasterData = () => {
     users: [],
     certifications: [],
     states: [],
+    languages: [],
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+
 
   useEffect(() => {
     const fetchMaster = async () => {
@@ -38,7 +41,7 @@ export const useMasterData = () => {
           masterRes.data,
           userRes.data,
           certRes.data,
-          
+
         );
         console.log("MAPPED CERTS:", mapped.certifications);
 
@@ -54,7 +57,8 @@ export const useMasterData = () => {
           specializations: mapped.specializations,
           users: mapped.users,
           certifications: mapped.certifications,
-          states: mapped.state,
+          states: mapped.states,
+          languages: mapped.languages,
         });
 
       } catch (err) {

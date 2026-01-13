@@ -9,6 +9,7 @@ import { validateAddPosition } from "../validations/validateAddPosition";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import upload_icon from '../../../assets/upload_Icon.png'
 import { useCreateJobPosition } from "../hooks/useCreateJobPosition";
+import { useRequisitionDetails } from "../hooks/useRequisitionDetails";
 import { useMasterData } from "../hooks/useMasterData";
 import { useEffect } from "react";
 import ConfirmUsePositionModal from "../component/ConfirmUsePositionModal";
@@ -17,6 +18,7 @@ const AddPosition = () => {
     const navigate = useNavigate();
     const [errors, setErrors] = useState({});
     const { requisitionId } = useParams();
+    const { requisition, loading: requisitionLoading } = useRequisitionDetails(requisitionId);
     const [showImportModal, setShowImportModal] = useState(false);
     const [showEduModal, setShowEduModal] = useState(false);
 
@@ -25,7 +27,8 @@ const AddPosition = () => {
         qualifications,
         specializations,
         certifications,
-        states
+        states,
+        languages
     } = useMasterData();
 
 
@@ -59,8 +62,6 @@ const AddPosition = () => {
     const YEAR_OPTIONS = Array.from({ length: 31 }, (_, i) => i); // 0–30 years
     const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => i + 1); // 1–12 months
     const { createPosition, loading } = useCreateJobPosition();
-
-
 
 
     const handleImport = async (file) => {
@@ -258,27 +259,11 @@ const AddPosition = () => {
     const stateCategoryTotal = Object.values(currentState.categories || {})
         .reduce((a, b) => a + Number(b || 0), 0);
 
-
-
-
-    // useEffect(() => {
-    //     const total =
-    //         Number(currentStateData.sc || 0) +
-    //         Number(currentStateData.st || 0) +
-    //         Number(currentStateData.obc || 0) +
-    //         Number(currentStateData.ews || 0) +
-    //         Number(currentStateData.gen || 0);
-
-    //     setCurrentStateData((prev) => ({ ...prev, total }));
-    // }, [
-    //     currentStateData.sc,
-    //     currentStateData.st,
-    //     currentStateData.obc,
-    //     currentStateData.ews,
-    //     currentStateData.gen
-    // ]);
-
-
+const filteredLanguages = currentState.state
+        ? languages.filter(
+            l => l.stateId === currentState.state || l.stateId === null
+        )
+        : [];
 
 
 
@@ -324,8 +309,6 @@ const AddPosition = () => {
     };
 
 
-
-
     /* ---------------- UI ---------------- */
     return (
         <Container fluid className="add-position-page">
@@ -335,9 +318,14 @@ const AddPosition = () => {
                         ← Back
                     </Button>
                     <div>
-                        <span className="req-id">REQ-{requisitionId}</span>
-                        <div className="req-code">BOB/HRM/REC/ADVT/2025/12</div>
+                        <span className="req-id">
+                            {requisitionLoading ? "Loading..." : requisition?.requisitionCode || "—"}
+                        </span>
+                        <div className="req-code">
+                            {requisition?.requisitionTitle || "—"}
+                        </div>
                     </div>
+
                 </div>
                 <Button className="imprcls"
                     variant="none"
@@ -1012,12 +1000,22 @@ const AddPosition = () => {
 
                                             <Col md={4}>
                                                 <Form.Label>Local Language of State</Form.Label>
-                                                <Form.Control
+                                                <Form.Select
                                                     value={currentState.language}
                                                     onChange={e =>
                                                         setCurrentState(prev => ({ ...prev, language: e.target.value }))
                                                     }
-                                                />
+                                                    disabled={!currentState.state}
+                                                >
+                                                    <option value="">Select Language</option>
+
+                                                    {filteredLanguages.map(lang => (
+                                                        <option key={lang.id} value={lang.id}>
+                                                            {lang.name}
+                                                        </option>
+                                                    ))}
+                                                </Form.Select>
+
                                             </Col>
                                         </Row>
 
@@ -1133,7 +1131,10 @@ const AddPosition = () => {
                                                                 {states.find(s => s.id === row.state)?.name || "—"}
                                                             </td>
                                                             <td>{row.vacancies}</td>
-                                                            <td>{row.language || "—"}</td>
+                                                            <td>
+                                                                {languages.find(l => l.id === row.language)?.name || "—"}
+                                                            </td>
+
 
                                                             {reservationCategories.map(cat => (
                                                                 <td key={cat.code}>
@@ -1236,10 +1237,10 @@ const AddPosition = () => {
             />
 
             <ConfirmUsePositionModal
-  show={showConfirmModal}
-  onYes={handleUsePositionData}
-  onNo={handleIgnorePositionData}
-/>
+                show={showConfirmModal}
+                onYes={handleUsePositionData}
+                onNo={handleIgnorePositionData}
+            />
 
         </Container>
     );

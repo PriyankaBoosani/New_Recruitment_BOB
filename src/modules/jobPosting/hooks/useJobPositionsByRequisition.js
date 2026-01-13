@@ -1,3 +1,4 @@
+// src/modules/jobPostings/hooks/useJobPositionsByRequisition.js
 import { useState } from "react";
 import { toast } from "react-toastify";
 import jobPositionApiService from "../services/jobPositionApiService";
@@ -10,11 +11,9 @@ export const useJobPositionsByRequisition = () => {
   const { positions: masterPositions, departments } = useMasterData();
 
   const positionMap = {};
-
   masterPositions.forEach(p => {
     positionMap[p.id] = p.name;
   });
-
 
   const fetchPositions = async (requisitionId) => {
     if (positionsByReq[requisitionId]) return;
@@ -27,7 +26,6 @@ export const useJobPositionsByRequisition = () => {
 
       const list = res?.data || [];
 
-
       const departmentMap = {};
       departments.forEach(d => {
         departmentMap[d.id] = d.label;
@@ -35,21 +33,15 @@ export const useJobPositionsByRequisition = () => {
 
       const enriched = list.map(api => ({
         positionId: api.positionId || api.id,
-
-        // position
         positionName: positionMap[api.masterPositionId] || "—",
-
-        // 🔥 THIS WAS MISSING
         deptId: api.deptId,
         departmentName: departmentMap[api.deptId] || "—",
-
         vacancies: api.totalVacancies ?? 0,
         minAge: api.eligibilityAgeMin,
         maxAge: api.eligibilityAgeMax,
         mandatoryEducation: api.mandatoryEducation ?? "",
         preferredEducation: api.preferredEducation ?? "",
       }));
-
 
       setPositionsByReq(prev => ({
         ...prev,
@@ -62,11 +54,28 @@ export const useJobPositionsByRequisition = () => {
     }
   };
 
+  // ✅ DELETE POSITION
+  const deletePosition = async (requisitionId, positionId) => {
+    try {
+      await jobPositionApiService.deletePositionById(positionId);
 
+      setPositionsByReq(prev => ({
+        ...prev,
+        [requisitionId]: prev[requisitionId].filter(
+          p => p.positionId !== positionId
+        )
+      }));
+
+      toast.success("Position deleted successfully");
+    } catch {
+      toast.error("Failed to delete position");
+    }
+  };
 
   return {
     positionsByReq,
     loadingReqId,
-    fetchPositions
+    fetchPositions,
+    deletePosition
   };
 };

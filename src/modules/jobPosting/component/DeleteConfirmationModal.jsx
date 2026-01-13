@@ -2,22 +2,19 @@ import React from "react";
 import { Modal, Button } from "react-bootstrap";
 import pos_delete_icon from "../../../assets/pos_delete_icon.png";
 
-const DeleteRequisitionModal = ({
+const DeleteConfirmationModal = ({
   show,
   onClose,
   onConfirm,
-  requisitionCode,
+  title = "Delete",
+  message = "Are you sure you want to delete this item?",
+  itemLabel,
   loading = false
 }) => {
   return (
-    <Modal
-      show={show}
-      onHide={onClose}
-      centered
-      backdrop="static"
-    >
+    <Modal show={show} onHide={onClose} centered backdrop="static">
       <Modal.Header closeButton>
-        <Modal.Title>Delete Requisition</Modal.Title>
+        <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body className="text-center">
@@ -28,12 +25,10 @@ const DeleteRequisitionModal = ({
           style={{ width: 40 }}
         />
 
-        <p className="mb-1">
-          Are you sure you want to delete this requisition?
-        </p>
+        <p className="mb-1">{message}</p>
 
-        {requisitionCode && (
-          <strong className="text-danger">{requisitionCode}</strong>
+        {itemLabel && (
+          <strong className="text-danger d-block">{itemLabel}</strong>
         )}
 
         <p className="text-muted mt-2">
@@ -62,4 +57,4 @@ const DeleteRequisitionModal = ({
   );
 };
 
-export default DeleteRequisitionModal;
+export default DeleteConfirmationModal;
