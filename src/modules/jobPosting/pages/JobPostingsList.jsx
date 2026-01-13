@@ -323,7 +323,7 @@ const JobPostingsList = () => {
                                         <div key={dept.departmentName} className="department-card mb-3">
 
                                             {/* 🔹 Department Header */}
-                                            <div className="department-header d-flex align-items-center gap-2">
+                                            <div className="department-header d-flex align-items-center gap-2 my-2">
                                                 <img
                                                     src={mingcute_department_line}
                                                     className="icon-16"
