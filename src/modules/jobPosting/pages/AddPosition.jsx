@@ -185,7 +185,7 @@ const AddPosition = () => {
 
         setFormData(prev => ({
             ...prev,
-           // department: String(pendingPosition.deptId),
+            // department: String(pendingPosition.deptId),
             minAge: pendingPosition.minAge ?? "",
             maxAge: pendingPosition.maxAge ?? "",
             grade: String(pendingPosition.gradeId ?? ""),
@@ -244,7 +244,15 @@ const AddPosition = () => {
 
         if (editingIndex !== null) {
             // UPDATE
-            updated[editingIndex] = { ...currentState };
+            if (editingIndex !== null) {
+                updated[editingIndex] = {
+                    ...updated[editingIndex],   // 🔑 keep IDs
+                    ...currentState             // overwrite values only
+                };
+            } else {
+                updated.push({ ...currentState });
+            }
+
         } else {
             // ADD
             updated.push({ ...currentState });
@@ -272,11 +280,15 @@ const AddPosition = () => {
             language: row.language,
             categories: { ...row.categories },
             disabilities: { ...row.disabilities },
+
+            // 🔑 PRESERVE IDS
+            positionStateDistributionId: row.positionStateDistributionId,
+            categoryDistributions: row.categoryDistributions
         });
 
         setEditingIndex(index);
-
     };
+
 
 
 
@@ -407,33 +419,37 @@ const AddPosition = () => {
             const categories = {};
             const disabilities = {};
 
-            // init all to 0
             reservationCategories.forEach(c => (categories[c.code] = 0));
             disabilityCategories.forEach(d => (disabilities[d.disabilityCode] = 0));
 
-            // map backend distributions
             sd.positionCategoryDistributions.forEach(d => {
                 if (d.isDisability) {
-                    const dis = disabilityCategories.find(
-                        x => x.id === d.disabilityCategoryId
-                    );
+                    const dis = disabilityCategories.find(x => x.id === d.disabilityCategoryId);
                     if (dis) disabilities[dis.disabilityCode] = d.vacancyCount;
                 } else {
-                    const cat = reservationCategories.find(
-                        x => x.id === d.reservationCategoryId
-                    );
+                    const cat = reservationCategories.find(x => x.id === d.reservationCategoryId);
                     if (cat) categories[cat.code] = d.vacancyCount;
                 }
             });
 
             return {
+                positionStateDistributionId: sd.positionStateDistributionId, // 🔑 REQUIRED
                 state: sd.stateId,
                 vacancies: sd.totalVacancies,
                 language: sd.localLanguage,
                 categories,
                 disabilities,
+                categoryDistributions: sd.positionCategoryDistributions.map(cd => ({
+                    positionCategoryDistributionId: cd.positionCategoryDistributionId, // 🔑
+                    reservationCategoryId: cd.reservationCategoryId,
+                    disabilityCategoryId: cd.disabilityCategoryId,
+                    isDisability: cd.isDisability
+                }))
             };
+
+
         });
+
 
         setStateDistributions(mappedStates);
     }, [
@@ -476,6 +492,21 @@ const AddPosition = () => {
             "FINAL PAYLOAD STATES",
             JSON.stringify(stateDistributions, null, 2)
         );
+        if (formData.enableStateDistribution) {
+            const stateTotal = stateDistributions.reduce(
+                (sum, s) => sum + Number(s.vacancies || 0),
+                0
+            );
+
+            if (stateTotal !== Number(formData.vacancies)) {
+                alert(
+                    `Total state vacancies (${stateTotal}) must equal total vacancies (${formData.vacancies})`
+                );
+                return;
+            }
+        }
+
+
         const success = isEditMode
             ? await updatePosition({
                 positionId,
@@ -518,7 +549,7 @@ const AddPosition = () => {
 
         if (success) {
             if (isEditMode) {
-                await refetchPosition();   // 🔑 pulls new indentPath
+
                 setIndentFile(null);       // 🔑 clear uploaded file state
             }
             navigate(-1); // or stay if you want

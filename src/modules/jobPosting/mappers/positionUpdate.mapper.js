@@ -1,3 +1,77 @@
+const buildCategoryDistributionsForUpdate = (
+  sd,
+  reservationCategories,
+  disabilityCategories
+) => {
+  const result = [];
+
+  // 1️⃣ Existing backend categories → UPDATE
+  sd.categoryDistributions?.forEach(existing => {
+    let newCount = 0;
+
+    if (!existing.isDisability) {
+      const cat = reservationCategories.find(
+        c => c.id === existing.reservationCategoryId
+      );
+      newCount = Number(sd.categories?.[cat?.code] || 0);
+    } else {
+      const dis = disabilityCategories.find(
+        d => d.id === existing.disabilityCategoryId
+      );
+      newCount = Number(sd.disabilities?.[dis?.disabilityCode] || 0);
+    }
+
+    if (newCount > 0) {
+      result.push({
+        positionCategoryDistributionId:
+          existing.positionCategoryDistributionId, // 🔑 KEEP ID
+        reservationCategoryId: existing.reservationCategoryId,
+        disabilityCategoryId: existing.disabilityCategoryId,
+        vacancyCount: newCount,
+        isDisability: existing.isDisability
+      });
+    }
+    // newCount === 0 → removed → don't send
+  });
+
+  // 2️⃣ Newly added categories → CREATE
+  reservationCategories.forEach(cat => {
+    const alreadyExists = sd.categoryDistributions?.some(
+      x => x.reservationCategoryId === cat.id && !x.isDisability
+    );
+    if (!alreadyExists) {
+      const count = Number(sd.categories?.[cat.code] || 0);
+      if (count > 0) {
+        result.push({
+          positionCategoryDistributionId: null,
+          reservationCategoryId: cat.id,
+          vacancyCount: count,
+          isDisability: false
+        });
+      }
+    }
+  });
+
+  disabilityCategories.forEach(dis => {
+    const alreadyExists = sd.categoryDistributions?.some(
+      x => x.disabilityCategoryId === dis.id && x.isDisability
+    );
+    if (!alreadyExists) {
+      const count = Number(sd.disabilities?.[dis.disabilityCode] || 0);
+      if (count > 0) {
+        result.push({
+          positionCategoryDistributionId: null,
+          disabilityCategoryId: dis.id,
+          vacancyCount: count,
+          isDisability: true
+        });
+      }
+    }
+  });
+
+  return result;
+};
+
 export const mapAddPositionToUpdateDto = ({
   positionId,
   requisitionId,
@@ -76,24 +150,24 @@ export const mapAddPositionToUpdateDto = ({
 
   // STATE
   if (formData.enableStateDistribution) {
-    dto.positionStateDistributions = stateDistributions.map(sd => ({
-      stateId: sd.state,
-      totalVacancies: Number(sd.vacancies),
-      localLanguage: sd.language,
-      positionCategoryDistributions: [
-        ...reservationCategories.map(cat => ({
-          reservationCategoryId: cat.id,
-          vacancyCount: Number(sd.categories?.[cat.code] || 0),
-          isDisability: false
-        })),
-        ...disabilityCategories.map(dis => ({
-          disabilityCategoryId: dis.id,
-          vacancyCount: Number(sd.disabilities?.[dis.disabilityCode] || 0),
-          isDisability: true
-        }))
-      ]
-    }));
+  dto.positionStateDistributions = stateDistributions.map(sd => ({
+  positionStateDistributionId: sd.positionStateDistributionId, // 🔑 MISSING TODAY
+  stateId: sd.state,
+  totalVacancies: Number(sd.vacancies),
+  localLanguage: sd.language,
+  positionCategoryDistributions: buildCategoryDistributionsForUpdate(
+    sd,
+    reservationCategories,
+    disabilityCategories
+  )
+}));
+
+
+
   }
+
+
+
 
   return dto;
 };
