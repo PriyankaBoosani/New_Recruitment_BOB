@@ -20,6 +20,17 @@ import { useUpdateJobPosition } from "../hooks/useUpdateJobPosition";
 
 
 const AddPosition = () => {
+    const POSITION_POPULATED_FIELDS = [
+        "Min Age",
+        "Max Age",
+        "Grade / Scale",
+        "Roles & Responsibilities",
+        "Mandatory Education",
+        "Preferred Education",
+        "Mandatory Experience",
+        "Preferred Experience"
+    ];
+
 
     const [searchParams] = useSearchParams();
 
@@ -1592,6 +1603,7 @@ const AddPosition = () => {
 
             <ConfirmUsePositionModal
                 show={showConfirmModal}
+                fields={POSITION_POPULATED_FIELDS}
                 onYes={handleUsePositionData}
                 onNo={handleIgnorePositionData}
             />
