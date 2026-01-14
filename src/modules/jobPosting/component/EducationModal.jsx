@@ -28,7 +28,6 @@ export default function EducationModal({
     const [errors, setErrors] = useState({});
     const [rows, setRows] = useState([createRow(true)]);
     const [certIds, setCertIds] = useState([""]);
-    console.log("CERTIFICATIONS IN MODAL:", certifications);
 
 
     useEffect(() => {

@@ -246,3 +246,23 @@
   border: 1px solid #c7cfe1;
   border-radius: 10px;
 }
+/* Desktop only */
+.state-table-desktop {
+  display: block;
+}
+
+/* Mobile hidden by default */
+.state-table-mobile {
+  display: none;
+}
+
+/* Mobile breakpoint */
+@media (max-width: 768px) {
+  .state-table-desktop {
+    display: none;
+  }
+
+  .state-table-mobile {
+    display: block;
+  }
+}

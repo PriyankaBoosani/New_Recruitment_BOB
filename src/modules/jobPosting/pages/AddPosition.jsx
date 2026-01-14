@@ -13,8 +13,80 @@ import { useRequisitionDetails } from "../hooks/useRequisitionDetails";
 import { useMasterData } from "../hooks/useMasterData";
 import { useEffect } from "react";
 import ConfirmUsePositionModal from "../component/ConfirmUsePositionModal";
+import { useSearchParams } from "react-router-dom";
+import { useJobPositionById } from "../hooks/useJobPositionById";
+import { useUpdateJobPosition } from "../hooks/useUpdateJobPosition";
+
+
 
 const AddPosition = () => {
+
+    const [searchParams] = useSearchParams();
+
+    const mode = searchParams.get("mode"); // "edit" | null
+    const positionId = searchParams.get("positionId");
+
+    const isEditMode = mode === "edit" && !!positionId;
+    const {
+        data: existingPosition,
+        loading: positionLoading,
+        refetch: refetchPosition,
+    } = useJobPositionById(isEditMode ? positionId : null);
+
+    useEffect(() => {
+        if (!existingPosition) return;
+
+        setFormData({
+            department: String(existingPosition.deptId),
+            position: String(existingPosition.masterPositionId),
+            vacancies: existingPosition.totalVacancies,
+            minAge: existingPosition.eligibilityAgeMin,
+            maxAge: existingPosition.eligibilityAgeMax,
+            employmentType: existingPosition.employmentType,
+            contractualPeriod: existingPosition.contractYears,
+            grade: existingPosition.gradeId,
+            enableLocation: existingPosition.isLocationPreferenceEnabled,
+            responsibilities: existingPosition.rolesResponsibilities,
+            medicalRequired: existingPosition.isMedicalRequired ? "yes" : "no",
+            enableStateDistribution: existingPosition.isLocationWise,
+            mandatoryExperience: {
+                years: Math.floor(existingPosition.mandatoryExperienceMonths / 12),
+                months: existingPosition.mandatoryExperienceMonths % 12,
+                description: existingPosition.mandatoryExperience,
+            },
+            preferredExperience: {
+                years: Math.floor(existingPosition.preferredExperienceMonths / 12),
+                months: existingPosition.preferredExperienceMonths % 12,
+                description: existingPosition.preferredExperience,
+            },
+        });
+        setApprovedBy(existingPosition.approvedBy || "");
+        setApprovedOn(existingPosition.approvedOn || "");
+        if (existingPosition.indentPath) {
+            setExistingIndentPath(existingPosition.indentPath);
+        }
+
+
+        setEducationData({
+            mandatory: {
+                text: existingPosition.mandatoryEducation,
+                educations: [],
+                certificationIds: [],
+            },
+            preferred: {
+                text: existingPosition.preferredEducation,
+                educations: [],
+                certificationIds: [],
+            },
+
+        });
+
+
+
+    }, [existingPosition]);
+
+
+
     const navigate = useNavigate();
     const [errors, setErrors] = useState({});
     const { requisitionId } = useParams();
@@ -30,6 +102,7 @@ const AddPosition = () => {
         states,
         languages
     } = useMasterData();
+
 
 
     const [eduMode, setEduMode] = useState("mandatory"); // mandatory | preferred
@@ -60,8 +133,9 @@ const AddPosition = () => {
     const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx"];
     const MAX_FILE_SIZE_MB = 2;
     const YEAR_OPTIONS = Array.from({ length: 31 }, (_, i) => i); // 0–30 years
-    const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => i + 1); // 1–12 months
+    const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => i); // 0–11 ✅
     const { createPosition, loading } = useCreateJobPosition();
+    const { updatePosition } = useUpdateJobPosition();
 
 
     const handleImport = async (file) => {
@@ -111,7 +185,7 @@ const AddPosition = () => {
 
         setFormData(prev => ({
             ...prev,
-            department: String(pendingPosition.deptId),
+           // department: String(pendingPosition.deptId),
             minAge: pendingPosition.minAge ?? "",
             maxAge: pendingPosition.maxAge ?? "",
             grade: String(pendingPosition.gradeId ?? ""),
@@ -157,18 +231,20 @@ const AddPosition = () => {
 
         // ❌ prevent duplicate state
         if (
-            editingIndex === null &&
-            stateDistributions.some(s => s.state === currentState.state)
+            stateDistributions.some(
+                (s, i) => s.state === currentState.state && i !== editingIndex
+            )
         ) {
             alert("This state is already added");
             return;
         }
 
+
         const updated = [...stateDistributions];
 
         if (editingIndex !== null) {
             // UPDATE
-            updated.splice(editingIndex, 0, { ...currentState });
+            updated[editingIndex] = { ...currentState };
         } else {
             // ADD
             updated.push({ ...currentState });
@@ -190,7 +266,6 @@ const AddPosition = () => {
     const handleEditState = (index) => {
         const row = stateDistributions[index];
 
-        // Load row into form
         setCurrentState({
             state: row.state,
             vacancies: row.vacancies,
@@ -199,13 +274,11 @@ const AddPosition = () => {
             disabilities: { ...row.disabilities },
         });
 
-        // Remove row so submit will replace it
-        setStateDistributions(prev =>
-            prev.filter((_, i) => i !== index)
-        );
-
         setEditingIndex(index);
+
     };
+
+
 
 
     /* ---------------- HANDLERS ---------------- */
@@ -225,6 +298,13 @@ const AddPosition = () => {
             return updated;
         });
     };
+    const [existingIndentPath, setExistingIndentPath] = useState(null);
+
+    useEffect(() => {
+        if (existingPosition?.indentPath) {
+            setExistingIndentPath(existingPosition.indentPath);
+        }
+    }, [existingPosition]);
 
     /* ---------- NATIONAL (toggle OFF) ---------- */
     const [nationalCategories, setNationalCategories] = useState({});
@@ -241,17 +321,21 @@ const AddPosition = () => {
 
     useEffect(() => {
         if (!reservationCategories.length) return;
+        if (isEditMode) return; // 🔴 DO NOT reset in edit mode
+
         const obj = {};
         reservationCategories.forEach(c => (obj[c.code] = 0));
         setNationalCategories(obj);
-    }, [reservationCategories]);
-
+    }, [reservationCategories, isEditMode]);
     useEffect(() => {
         if (!disabilityCategories.length) return;
+        if (isEditMode) return; // 🔴 DO NOT reset in edit mode
+
         const obj = {};
         disabilityCategories.forEach(d => (obj[d.disabilityCode] = 0));
         setNationalDisabilities(obj);
-    }, [disabilityCategories]);
+    }, [disabilityCategories, isEditMode]);
+
 
     const nationalCategoryTotal = Object.values(nationalCategories)
         .reduce((a, b) => a + Number(b || 0), 0);
@@ -259,52 +343,185 @@ const AddPosition = () => {
     const stateCategoryTotal = Object.values(currentState.categories || {})
         .reduce((a, b) => a + Number(b || 0), 0);
 
-const filteredLanguages = currentState.state
-        ? languages.filter(
-            l => l.stateId === currentState.state || l.stateId === null
-        )
-        : [];
+    const filteredLanguages = (() => {
+        if (!currentState.state) return [];
 
+        const state = states.find(s => s.id === currentState.state);
+        if (!state?.localLanguage) return [];
+
+        return languages.filter(l => l.name === state.localLanguage);
+    })();
+
+
+
+    useEffect(() => {
+        if (
+            !existingPosition ||
+            existingPosition.isLocationWise ||
+            !reservationCategories.length ||
+            !disabilityCategories.length
+        ) {
+            return;
+        }
+
+        const natCat = {};
+        const natDis = {};
+
+        // initialize all categories to 0
+        reservationCategories.forEach(c => (natCat[c.code] = 0));
+        disabilityCategories.forEach(d => (natDis[d.disabilityCode] = 0));
+
+        // map backend → UI
+        existingPosition.positionCategoryNationalDistributions.forEach(d => {
+            if (d.isDisability) {
+                const dis = disabilityCategories.find(
+                    x => x.id === d.disabilityCategoryId
+                );
+                if (dis) natDis[dis.disabilityCode] = d.vacancyCount;
+            } else {
+                const cat = reservationCategories.find(
+                    x => x.id === d.reservationCategoryId
+                );
+                if (cat) natCat[cat.code] = d.vacancyCount;
+            }
+        });
+
+        setNationalCategories(natCat);
+        setNationalDisabilities(natDis);
+    }, [
+        existingPosition,
+        reservationCategories,
+        disabilityCategories
+    ]);
+    useEffect(() => {
+        if (
+            !existingPosition ||
+            !existingPosition.isLocationWise ||
+            !reservationCategories.length ||
+            !disabilityCategories.length
+        ) {
+            return;
+        }
+
+        const mappedStates = existingPosition.positionStateDistributions.map(sd => {
+            const categories = {};
+            const disabilities = {};
+
+            // init all to 0
+            reservationCategories.forEach(c => (categories[c.code] = 0));
+            disabilityCategories.forEach(d => (disabilities[d.disabilityCode] = 0));
+
+            // map backend distributions
+            sd.positionCategoryDistributions.forEach(d => {
+                if (d.isDisability) {
+                    const dis = disabilityCategories.find(
+                        x => x.id === d.disabilityCategoryId
+                    );
+                    if (dis) disabilities[dis.disabilityCode] = d.vacancyCount;
+                } else {
+                    const cat = reservationCategories.find(
+                        x => x.id === d.reservationCategoryId
+                    );
+                    if (cat) categories[cat.code] = d.vacancyCount;
+                }
+            });
+
+            return {
+                state: sd.stateId,
+                vacancies: sd.totalVacancies,
+                language: sd.localLanguage,
+                categories,
+                disabilities,
+            };
+        });
+
+        setStateDistributions(mappedStates);
+    }, [
+        existingPosition,
+        reservationCategories,
+        disabilityCategories
+    ]);
+    useEffect(() => {
+        if (!formData.enableStateDistribution) {
+            setCurrentState({
+                state: "",
+                vacancies: "",
+                language: "",
+                categories: {},
+                disabilities: {},
+            });
+            setEditingIndex(null);
+        }
+    }, [formData.enableStateDistribution]);
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const validationErrors = validateAddPosition({
+            isEditMode,
             formData,
             educationData,
             indentFile,
             approvedBy,
-            approvedOn
+            approvedOn,
+            existingIndentPath
         });
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
         }
+        console.log(
+            "FINAL PAYLOAD STATES",
+            JSON.stringify(stateDistributions, null, 2)
+        );
+        const success = isEditMode
+            ? await updatePosition({
+                positionId,
+                requisitionId,
+                formData,
+                educationData,
+                indentFile,
+                approvedBy,
+                approvedOn,
+                existingPosition,
 
-        const success = await createPosition({
-            formData,
-            educationData,
-            requisitionId,
-            indentFile,
-            approvedBy,
-            approvedOn,
+                reservationCategories,
+                disabilityCategories,
+                nationalCategories,
+                nationalDisabilities,
+                qualifications,
+                certifications,
+                stateDistributions,
 
-            currentState,
-            reservationCategories,
-            disabilityCategories,
-            nationalCategories,
-            nationalDisabilities,
+            })
+            : await createPosition({
+                formData,
+                educationData,
+                requisitionId,
+                indentFile,
+                approvedBy,
+                approvedOn,
 
-            qualifications,
-            certifications,
-            stateDistributions
-        });
+                currentState,
+                reservationCategories,
+                disabilityCategories,
+                nationalCategories,
+                nationalDisabilities,
+
+                qualifications,
+                certifications,
+                stateDistributions
+            });
 
 
         if (success) {
-            navigate(-1);
+            if (isEditMode) {
+                await refetchPosition();   // 🔑 pulls new indentPath
+                setIndentFile(null);       // 🔑 clear uploaded file state
+            }
+            navigate(-1); // or stay if you want
         }
     };
 
@@ -339,7 +556,7 @@ const filteredLanguages = currentState.state
                 <Card.Body>
                     <div className="section-title">
                         <span className="indicator"></span>
-                        <h6>Add New Position</h6>
+                        <h6>{isEditMode ? "Edit Position" : "Add New Position"}</h6>
                     </div>
 
                     <Form onSubmit={handleSubmit}>
@@ -356,6 +573,7 @@ const filteredLanguages = currentState.state
                                         onClick={() => document.getElementById("indentFileInput").click()}
                                     >
                                         {indentFile ? (
+                                            // NEW FILE SELECTED
                                             <div className="d-flex align-items-center gap-3">
                                                 <span className="file-icon">📄</span>
                                                 <div>
@@ -365,21 +583,38 @@ const filteredLanguages = currentState.state
                                                     </small>
                                                 </div>
                                             </div>
+                                        ) : existingIndentPath ? (
+                                            // EXISTING FILE FROM BACKEND
+                                            <div className="d-flex align-items-center gap-3">
+                                                <span className="file-icon">📄</span>
+                                                <div>
+                                                    <div className="fw-semibold">Existing Indent</div>
+                                                    <a
+                                                        href={existingIndentPath}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-primary"
+                                                        onClick={(e) => e.stopPropagation()} // 🔑 prevent re-open file dialog
+                                                    >
+                                                        View / Download
+                                                    </a>
+                                                </div>
+                                            </div>
                                         ) : (
+                                            // NO FILE
                                             <div className="text-center text-muted">
                                                 <img src={upload_icon} alt="upload_icon" className="icon-40" />
-
                                                 <div>
-                                                    Drag & drop your file here, or{" "}<br />
+                                                    Drag & drop your file here, or <br />
                                                     <span className="text-primary">Click to Upload</span>
                                                 </div>
                                                 <small>
                                                     Supported formats: PDF, DOC, DOCX (Max 2 MB)
                                                 </small>
                                             </div>
-
                                         )}
                                     </div>
+
 
                                     <input
                                         id="indentFileInput"
@@ -422,6 +657,8 @@ const filteredLanguages = currentState.state
                                             });
                                         }}
                                     />
+
+
 
 
                                     <ErrorMessage>{errors.indentFile}</ErrorMessage>
@@ -740,8 +977,11 @@ const filteredLanguages = currentState.state
                                             >
                                                 <option value="">Select Months</option>
                                                 {MONTH_OPTIONS.map(m => (
-                                                    <option key={m} value={m}>{m}</option>
+                                                    <option key={m} value={m}>
+                                                        {m}
+                                                    </option>
                                                 ))}
+
                                             </Form.Select>
                                         </Col>
                                     </Row>
@@ -919,7 +1159,7 @@ const filteredLanguages = currentState.state
                                                                 onChange={e =>
                                                                     setNationalCategories(prev => ({
                                                                         ...prev,
-                                                                        [cat.code]: e.target.value
+                                                                        [cat.code]: Number(e.target.value || 0)
                                                                     }))
                                                                 }
                                                             />
@@ -1037,7 +1277,7 @@ const filteredLanguages = currentState.state
                                                                             ...prev,
                                                                             categories: {
                                                                                 ...prev.categories,
-                                                                                [cat.code]: e.target.value
+                                                                                [cat.code]: Number(e.target.value || 0)
                                                                             }
                                                                         }))
                                                                     }
@@ -1086,103 +1326,186 @@ const filteredLanguages = currentState.state
                                         <Button className="mt-3" onClick={handleAddOrUpdateState}>
                                             {editingIndex !== null ? "Update State" : "Add State"}
                                         </Button>
+                                        <div className="state-table-desktop">
+                                            <div className="table-responsive">
 
+                                                <table className="table table-bordered mt-4">
+                                                    <thead>
+                                                        <tr>
+                                                            <th rowSpan="2">S No.</th>
+                                                            <th rowSpan="2">State Name</th>
+                                                            <th rowSpan="2">Vacancies</th>
+                                                            <th rowSpan="2">Local Language of State</th>
 
-                                        <table className="table table-bordered mt-4">
-                                            <thead>
-                                                <tr>
-                                                    <th rowSpan="2">S No.</th>
-                                                    <th rowSpan="2">State Name</th>
-                                                    <th rowSpan="2">Vacancies</th>
-                                                    <th rowSpan="2">Local Language of State</th>
+                                                            <th rowSpan="2">SC</th>
+                                                            <th rowSpan="2">ST</th>
+                                                            <th rowSpan="2">EWS</th>
+                                                            <th rowSpan="2">GEN</th>
+                                                            <th rowSpan="2">OBC</th>
+                                                            <th rowSpan="2">TOTAL</th>
 
-                                                    <th rowSpan="2">SC</th>
-                                                    <th rowSpan="2">ST</th>
-                                                    <th rowSpan="2">EWS</th>
-                                                    <th rowSpan="2">GEN</th>
-                                                    <th rowSpan="2">OBC</th>
-                                                    <th rowSpan="2">TOTAL</th>
-
-                                                    <th colSpan="5" className="text-center">Out of Which</th>
-                                                    <th rowSpan="2">Actions</th>
-                                                </tr>
-
-                                                <tr>
-                                                    <th>HI</th>
-                                                    <th>ID</th>
-                                                    <th>VI</th>
-                                                    <th>OC</th>
-                                                    <th>Total</th>
-                                                </tr>
-                                            </thead>
-
-                                            <tbody>
-                                                {stateDistributions.map((row, index) => {
-                                                    const disabilityTotal = Object.values(row.disabilities || {})
-                                                        .reduce((a, b) => a + Number(b || 0), 0);
-
-                                                    const categoryTotal = Object.values(row.categories || {})
-                                                        .reduce((a, b) => a + Number(b || 0), 0);
-
-                                                    return (
-                                                        <tr key={index}>
-                                                            <td>{index + 1}</td>
-                                                            <td>
-                                                                {states.find(s => s.id === row.state)?.name || "—"}
-                                                            </td>
-                                                            <td>{row.vacancies}</td>
-                                                            <td>
-                                                                {languages.find(l => l.id === row.language)?.name || "—"}
-                                                            </td>
-
-
-                                                            {reservationCategories.map(cat => (
-                                                                <td key={cat.code}>
-                                                                    {row.categories?.[cat.code] ?? 0}
-                                                                </td>
-                                                            ))}
-
-                                                            <td>{categoryTotal}</td>
-
-                                                            {disabilityCategories.map(dis => (
-                                                                <td key={dis.disabilityCode}>
-                                                                    {row.disabilities?.[dis.disabilityCode] ?? 0}
-                                                                </td>
-                                                            ))}
-
-                                                            <td>{disabilityTotal}</td>
-
-                                                            <td className="text-center">
-                                                                <Button
-                                                                    size="sm"
-                                                                    variant="link"
-                                                                    onClick={() => handleEditState(index)}
-                                                                >
-                                                                    ✏️
-                                                                </Button>
-
-                                                                <Button
-                                                                    size="sm"
-                                                                    variant="link"
-                                                                    className="text-danger"
-                                                                    onClick={() =>
-                                                                        setStateDistributions(prev =>
-                                                                            prev.filter((_, i) => i !== index)
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    🗑️
-                                                                </Button>
-                                                            </td>
-
+                                                            <th colSpan="5" className="text-center">Out of Which</th>
+                                                            <th rowSpan="2">Actions</th>
                                                         </tr>
-                                                    );
-                                                })}
-                                            </tbody>
+
+                                                        <tr>
+                                                            <th>HI</th>
+                                                            <th>ID</th>
+                                                            <th>VI</th>
+                                                            <th>OC</th>
+                                                            <th>Total</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        {stateDistributions.map((row, index) => {
+                                                            const disabilityTotal = Object.values(row.disabilities || {})
+                                                                .reduce((a, b) => a + Number(b || 0), 0);
+
+                                                            const categoryTotal = Object.values(row.categories || {})
+                                                                .reduce((a, b) => a + Number(b || 0), 0);
+
+                                                            return (
+                                                                <tr key={index}>
+                                                                    <td>{index + 1}</td>
+                                                                    <td>
+                                                                        {states.find(s => s.id === row.state)?.name || "—"}
+                                                                    </td>
+                                                                    <td>{row.vacancies}</td>
+                                                                    <td>
+                                                                        {languages.find(l => l.id === row.language)?.name || "—"}
+                                                                    </td>
+
+
+                                                                    {reservationCategories.map(cat => (
+                                                                        <td key={cat.code}>
+                                                                            {row.categories?.[cat.code] ?? 0}
+                                                                        </td>
+                                                                    ))}
+
+                                                                    <td>{categoryTotal}</td>
+
+                                                                    {disabilityCategories.map(dis => (
+                                                                        <td key={dis.disabilityCode}>
+                                                                            {row.disabilities?.[dis.disabilityCode] ?? 0}
+                                                                        </td>
+                                                                    ))}
+
+                                                                    <td>{disabilityTotal}</td>
+
+                                                                    <td className="text-center">
+                                                                        <Button
+                                                                            size="sm"
+                                                                            variant="link"
+                                                                            onClick={() => handleEditState(index)}
+                                                                        >
+                                                                            ✏️
+                                                                        </Button>
+
+                                                                        <Button
+                                                                            size="sm"
+                                                                            variant="link"
+                                                                            className="text-danger"
+                                                                            onClick={() =>
+                                                                                setStateDistributions(prev =>
+                                                                                    prev.filter((_, i) => i !== index)
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            🗑️
+                                                                        </Button>
+                                                                    </td>
+
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
 
 
 
-                                        </table>                                    </>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div className="state-table-mobile">
+                                            {stateDistributions.map((row, index) => {
+                                                const categoryTotal = Object.values(row.categories || {})
+                                                    .reduce((a, b) => a + Number(b || 0), 0);
+
+                                                const disabilityTotal = Object.values(row.disabilities || {})
+                                                    .reduce((a, b) => a + Number(b || 0), 0);
+
+                                                return (
+                                                    <Card key={index} className="mb-3">
+                                                        <Card.Body>
+                                                            <div className="d-flex justify-content-between align-items-center mb-2">
+                                                                <strong>{index + 1}. {states.find(s => s.id === row.state)?.name}</strong>
+                                                                <div>
+                                                                    <Button
+                                                                        size="sm"
+                                                                        variant="link"
+                                                                        onClick={() => handleEditState(index)}
+                                                                    >
+                                                                        ✏️
+                                                                    </Button>
+                                                                    <Button
+                                                                        size="sm"
+                                                                        variant="link"
+                                                                        className="text-danger"
+                                                                        onClick={() =>
+                                                                            setStateDistributions(prev =>
+                                                                                prev.filter((_, i) => i !== index)
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        🗑️
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="mb-2">
+                                                                <strong>Vacancies:</strong> {row.vacancies}
+                                                            </div>
+
+                                                            <div className="mb-2">
+                                                                <strong>Language:</strong>{" "}
+                                                                {languages.find(l => l.id === row.language)?.name || "—"}
+                                                            </div>
+
+                                                            <hr />
+
+                                                            <strong>Category Distribution</strong>
+                                                            <div className="row">
+                                                                {reservationCategories.map(cat => (
+                                                                    <div className="col-6" key={cat.code}>
+                                                                        {cat.code}: {row.categories?.[cat.code] ?? 0}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+
+                                                            <div className="mt-2">
+                                                                <strong>Total:</strong> {categoryTotal}
+                                                            </div>
+
+                                                            <hr />
+
+                                                            <strong>Disability Distribution</strong>
+                                                            <div className="row">
+                                                                {disabilityCategories.map(dis => (
+                                                                    <div className="col-6" key={dis.disabilityCode}>
+                                                                        {dis.disabilityCode}: {row.disabilities?.[dis.disabilityCode] ?? 0}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+
+                                                            <div className="mt-2">
+                                                                <strong>Total:</strong> {disabilityTotal}
+                                                            </div>
+                                                        </Card.Body>
+                                                    </Card>
+                                                );
+                                            })}
+                                        </div>
+                                    </>
                                 )}
 
                             </Col>

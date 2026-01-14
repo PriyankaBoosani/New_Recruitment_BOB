@@ -1,15 +1,20 @@
 export const validateAddPosition = ({
+  isEditMode,
   formData,
   educationData,
   indentFile,
+  existingIndentPath,
   approvedBy,
   approvedOn
 }) => {
   const errors = {};
 
+  // ✅ INDENT VALIDATION (FIXED)
+  if (!indentFile && !(isEditMode && existingIndentPath)) {
+    errors.indentFile = "Indent file is required";
+  }
 
-  // Upload / Approval
-  if (!indentFile) errors.indentFile = "Indent file is required";
+  // Approval
   if (!approvedBy) errors.approvedBy = "This field is required";
   if (!approvedOn) errors.approvedOn = "This field is required";
 
@@ -18,7 +23,7 @@ export const validateAddPosition = ({
   if (!formData.department) errors.department = "This field is required";
   if (!formData.vacancies) errors.vacancies = "This field is required";
 
-  // AGE LOGIC (don’t mess this up)
+  // AGE
   if (!formData.minAge) errors.minAge = "This field is required";
   if (!formData.maxAge) errors.maxAge = "This field is required";
   if (
@@ -33,7 +38,7 @@ export const validateAddPosition = ({
   if (!formData.employmentType) errors.employmentType = "This field is required";
   if (!formData.grade) errors.grade = "This field is required";
 
-  // EDUCATION (correct fields)
+  // EDUCATION
   if (!educationData.mandatory.text)
     errors.mandatoryEducation = "This field is required";
 
@@ -49,24 +54,20 @@ export const validateAddPosition = ({
     errors.mandatoryExperience = "Please enter mandatory experience details";
   }
 
-  // Preferred Experience
   const preferredYears = Number(formData.preferredExperience.years || 0);
   const preferredMonths = Number(formData.preferredExperience.months || 0);
-
   if (preferredYears === 0 && preferredMonths === 0) {
     errors.preferredExperience = "Please select experience duration";
   } else if (!formData.preferredExperience.description?.trim()) {
     errors.preferredExperience = "Please enter preferred experience details";
   }
 
-
   // ROLES
   if (!formData.responsibilities)
     errors.responsibilities = "This field is required";
-  
-  if(!formData.medicalRequired) 
-    errors.medicalRequired = "This field is required";  
+
+  if (!formData.medicalRequired)
+    errors.medicalRequired = "This field is required";
 
   return errors;
-
 };
