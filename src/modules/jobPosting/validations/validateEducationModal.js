@@ -1,27 +1,23 @@
 export const validateEducationModal = ({ rows, certs }) => {
-  const errors = {
-    rows: [],
-  };
+  const errors = {};
 
-  // ---- AT LEAST ONE COMPLETE EDUCATION REQUIRED ----
-  const validRows = rows.filter(
+  // ---- KEEP ONLY COMPLETE ROWS ----
+  const filledRows = rows.filter(
     r =>
       r.educationTypeId &&
       r.educationQualificationsId &&
       r.specializationId
   );
 
-  if (validRows.length === 0) {
+  // ---- AT LEAST ONE DEGREE REQUIRED ----
+  if (filledRows.length === 0) {
     errors.general = "At least one education requirement is required";
+    return errors;
   }
 
-  // ---- ROW LEVEL VALIDATION ----
-  rows.forEach((row, index) => {
+  // ---- ROW LEVEL VALIDATION (ONLY FILLED ROWS) ----
+  filledRows.forEach((row, index) => {
     const rowErrors = {};
-
-    if (index > 0 && !row.operator) {
-      rowErrors.operator = "Operator is required";
-    }
 
     if (!row.educationTypeId) {
       rowErrors.educationTypeId = "Education type is required";
@@ -36,6 +32,7 @@ export const validateEducationModal = ({ rows, certs }) => {
     }
 
     if (Object.keys(rowErrors).length > 0) {
+      if (!errors.rows) errors.rows = {};
       errors.rows[index] = rowErrors;
     }
   });
@@ -50,10 +47,6 @@ export const validateEducationModal = ({ rows, certs }) => {
       errors.certs = "Invalid certification selected";
     }
   }
-
-  // ---- CLEANUP EMPTY STRUCTURES ----
-  if (!errors.rows.some(Boolean)) delete errors.rows;
-  if (!errors.general) delete errors.general;
 
   return errors;
 };

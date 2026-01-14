@@ -5,14 +5,11 @@ import { validateEducationModal } from "../validations/validateEducationModal";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 
 
-const createRow = (isFirst = false) => ({
-    operator: isFirst ? "" : "OR",
+const createRow = () => ({
     educationTypeId: "",
     educationQualificationsId: "",
     specializationId: "",
 });
-
-
 
 export default function EducationModal({
     show,
@@ -26,7 +23,7 @@ export default function EducationModal({
     certifications = [],
 }) {
     const [errors, setErrors] = useState({});
-    const [rows, setRows] = useState([createRow(true)]);
+    const [rows, setRows] = useState([createRow()]);
     const [certIds, setCertIds] = useState([""]);
 
 
@@ -40,11 +37,12 @@ export default function EducationModal({
             setCertIds([""]);
         }
 
-        if (initialData?.rows?.length) {
-            setRows(initialData.rows);
+        if (initialData?.educations?.length) {
+            setRows(initialData.educations);
         } else {
-            setRows([createRow(true)]);
+            setRows([createRow()]);
         }
+
     }, [show, mode, initialData]);
 
 
@@ -62,7 +60,7 @@ export default function EducationModal({
             const degree = getLabel(qualifications, r.educationQualificationsId, "name");
             const spec = getLabel(specializations, r.specializationId);
 
-            return `${i > 0 ? r.operator + " " : ""}${type} ${degree} in ${spec}`;
+            return `${i > 0 ? "OR " : ""}${type} ${degree} in ${spec}`;
         })
         .join(" ");
 
@@ -77,24 +75,12 @@ export default function EducationModal({
         setRows(copy);
     };
     const removeRow = (index) => {
-        setRows(prev => {
-            const updated = prev.filter((_, i) => i !== index);
-
-            // ensure first row has no operator
-            if (updated.length > 0) {
-                updated[0] = { ...updated[0], operator: "" };
-            }
-
-            return updated.length ? updated : [createRow(true)];
-        });
+        setRows(prev =>
+            prev.length > 1
+                ? prev.filter((_, i) => i !== index)
+                : [createRow()]
+        );
     };
-
-
-
-
-
-
-
 
 
 
@@ -122,24 +108,8 @@ Certifications: ${certText || "None"}
             <Modal.Body>
                 {rows.map((row, idx) => (
                     <Row key={idx} className="mb-3 align-items-center">
-                        <Col md={2} >
-                            <Form.Select
-                                disabled={idx === 0}
-                                value={row.operator}
-                                onChange={(e) => updateRow(idx, "operator", e.target.value)}
-                            >
-                                {idx === 0 && (
-                                    <option value="">
-                                        OR/AND
-                                    </option>
-                                )}
-                                <option value="OR">OR</option>
-                                <option value="AND">AND</option>
-                            </Form.Select>
-                            <ErrorMessage message={errors.rows?.[idx]?.operator} />
-                        </Col>
 
-                        <Col md={3} className="ps-0">
+                        <Col md={3}>
                             <Form.Select
                                 value={row.educationTypeId}
                                 onChange={(e) =>
@@ -157,7 +127,7 @@ Certifications: ${certText || "None"}
 
                             <ErrorMessage>{errors.rows?.[idx]?.educationTypeId}</ErrorMessage>                        </Col>
 
-                        <Col md={3} className="px-0">
+                        <Col md={3}>
                             <Form.Select
                                 value={row.educationQualificationsId}
                                 onChange={(e) =>
@@ -175,7 +145,7 @@ Certifications: ${certText || "None"}
 
                             <ErrorMessage>{errors.rows?.[idx]?.educationQualificationsId}</ErrorMessage>                        </Col>
 
-                        <Col md={3}>
+                        <Col md={5}>
                             <Form.Select
                                 value={row.specializationId}
                                 onChange={(e) =>
@@ -269,8 +239,15 @@ Certifications: ${certText || "None"}
                 <Button
                     variant="primary"
                     onClick={() => {
+                        const filledRows = rows.filter(
+                            r =>
+                                r.educationTypeId &&
+                                r.educationQualificationsId &&
+                                r.specializationId
+                        );
+
                         const validationErrors = validateEducationModal({
-                            rows,
+                            rows: filledRows,
                             certificationIds: certIds.filter(Boolean),
                         });
 
@@ -279,23 +256,33 @@ Certifications: ${certText || "None"}
                             return;
                         }
 
+                        if (filledRows.length === 0) {
+                            setErrors({
+                                rows: { _error: "At least one degree is required" }
+                            });
+                            return;
+                        }
+
                         setErrors({});
 
-                        onSave({
-                            educations: rows.map(r => ({
-                                educationTypeId: r.educationTypeId,
-                                educationQualificationsId: r.educationQualificationsId,
-                                specializationId: r.specializationId,
-                            })),
-                            certificationIds: certIds.filter(Boolean), // ✅ UUIDs only
+                        const payload = {
+                            educations: filledRows,
+                            certificationIds: certIds.filter(Boolean),
                             text: finalText,
-                        });
+                        };
 
+                        console.log(
+                            "EDUCATION MODAL SAVE PAYLOAD",
+                            JSON.stringify(payload, null, 2)
+                        );
+
+                        onSave(payload);
                         onHide();
                     }}
                 >
                     Save
                 </Button>
+
 
 
 
