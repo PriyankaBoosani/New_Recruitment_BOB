@@ -222,7 +222,7 @@ Certifications: ${certText || "None"}
                     ))}
                 </Col>
 
-                <Button variant="none" onClick={() => setCertIds([...certIds, ""])}>
+                <Button variant="none" onClick={() => setCertIds([...certIds, ""])} className="edu-btn">
                     + Add Certification
                 </Button>
 
