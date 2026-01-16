@@ -18,11 +18,18 @@ const CategoryTable = ({
   const { t } = useTranslation(["category"]);
   const itemsPerPage = 7;
 
-  const filtered = data.filter(s =>
-    Object.values(s).some(v =>
-      String(v ?? '').toLowerCase().includes(searchTerm.toLowerCase())
-    )
+  const filtered = data.filter(c => {
+  const term = searchTerm.toLowerCase().trim();
+
+  if (!term) return true;
+
+  return (
+    c.code?.toLowerCase().includes(term) ||
+    c.name?.toLowerCase().includes(term) ||
+    c.description?.toLowerCase().includes(term)
   );
+});
+
 
   const indexLast = currentPage * itemsPerPage;
   const indexFirst = indexLast - itemsPerPage;
