@@ -1,3 +1,41 @@
+const buildEducationRulesForDto = (
+  edu,
+  qualifications,
+  certifications
+) => {
+  if (!edu?.educations?.length) return [];
+
+  const degrees = edu.educations
+    .map(e =>
+      qualifications.find(q => q.id === e.educationQualificationsId)?.name
+    )
+    .filter(Boolean);
+
+  const educations = edu.educations.map(e => ({
+    educationTypeId: e.educationTypeId,
+    educationQualificationId: e.educationQualificationsId,
+    specializationId: e.specializationId
+  }));
+
+  const certNames = (edu.certificationIds || [])
+    .map(id => certifications.find(c => c.id === id)?.name)
+    .filter(Boolean);
+
+  if (!degrees.length) {
+    throw new Error("Education rules must contain at least one degree");
+  }
+
+  return [
+    {
+      operator: "OR",
+      degrees,
+      educations,
+      ...(certNames.length ? { certifications: certNames } : {})
+    }
+  ];
+};
+
+
 const buildCategoryDistributionsForUpdate = (
   sd,
   reservationCategories,
@@ -121,9 +159,20 @@ export const mapAddPositionToUpdateDto = ({
     approvedBy,
     approvedOn,
 
-    qualificationIds: qualifications.map(q => q.id),
-    certificationIds: certifications.map(c => c.id),
-
+    mandatoryEduRulesJson: {
+      rules: buildEducationRulesForDto(
+        educationData.mandatory,
+        qualifications,
+        certifications
+      )
+    },
+    preferredEduRulesJson: {
+      rules: buildEducationRulesForDto(
+        educationData.preferred,
+        qualifications,
+        certifications
+      )
+    },
     // IMPORTANT
     positionCategoryNationalDistributions: [],
     positionStateDistributions: []
@@ -150,17 +199,17 @@ export const mapAddPositionToUpdateDto = ({
 
   // STATE
   if (formData.enableStateDistribution) {
-  dto.positionStateDistributions = stateDistributions.map(sd => ({
-  positionStateDistributionId: sd.positionStateDistributionId, // 🔑 MISSING TODAY
-  stateId: sd.state,
-  totalVacancies: Number(sd.vacancies),
-  localLanguage: sd.language,
-  positionCategoryDistributions: buildCategoryDistributionsForUpdate(
-    sd,
-    reservationCategories,
-    disabilityCategories
-  )
-}));
+    dto.positionStateDistributions = stateDistributions.map(sd => ({
+      positionStateDistributionId: sd.positionStateDistributionId, // 🔑 MISSING TODAY
+      stateId: sd.state,
+      totalVacancies: Number(sd.vacancies),
+      localLanguage: sd.language,
+      positionCategoryDistributions: buildCategoryDistributionsForUpdate(
+        sd,
+        reservationCategories,
+        disabilityCategories
+      )
+    }));
 
 
 

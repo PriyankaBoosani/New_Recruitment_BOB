@@ -27,23 +27,41 @@ export default function EducationModal({
     const [certIds, setCertIds] = useState([""]);
 
 
+    // useEffect(() => {
+    //     if (!show) return;
+
+    //     if (initialData?.certificationIds?.length) {
+    //         setCertIds(initialData.certificationIds);
+    //     } else {
+    //         // ✅ Always show ONE dropdown by default
+    //         setCertIds([""]);
+    //     }
+
+    //     if (initialData?.educations?.length) {
+    //         setRows(initialData.educations);
+    //     } else {
+    //         setRows([createRow()]);
+    //     }
+
+    // }, [show, mode, initialData]);
     useEffect(() => {
         if (!show) return;
 
-        if (initialData?.certificationIds?.length) {
-            setCertIds(initialData.certificationIds);
-        } else {
-            // ✅ Always show ONE dropdown by default
-            setCertIds([""]);
-        }
+        setRows(
+            initialData?.educations?.length
+                ? initialData.educations
+                : [createRow()]
+        );
 
-        if (initialData?.educations?.length) {
-            setRows(initialData.educations);
-        } else {
-            setRows([createRow()]);
-        }
+        setCertIds(
+            initialData?.certificationIds?.length
+                ? initialData.certificationIds
+                : [""]
+        );
 
-    }, [show, mode, initialData]);
+        setErrors({});
+    }, [show]);
+
 
 
     const getLabel = (list, id, key = "label") =>
@@ -81,8 +99,6 @@ export default function EducationModal({
                 : [createRow()]
         );
     };
-
-
 
     const certText = certIds
         .map(id => certifications.find(c => c.id === id)?.name)

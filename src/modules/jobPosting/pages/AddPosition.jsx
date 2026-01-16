@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import "../../../style/css/AddPosition.css";
@@ -14,6 +14,9 @@ import ConfirmUsePositionModal from "../component/ConfirmUsePositionModal";
 import { useJobPositionById } from "../hooks/useJobPositionById";
 import { useUpdateJobPosition } from "../hooks/useUpdateJobPosition";
 import PositionForm from "../component/PositionForm";
+import { mapEduRulesToModalData } from "../mappers/mapEduRulesToModalData";
+import { buildEducationText } from "../hooks/buildEducationText";
+
 
 const AddPosition = () => {
     const POSITION_POPULATED_FIELDS = ["Min Age", "Max Age", "Grade / Scale", "Roles & Responsibilities", "Mandatory Education", "Preferred Education", "Mandatory Experience", "Preferred Experience"];
@@ -65,6 +68,7 @@ const AddPosition = () => {
         mandatory: { educations: [], certificationIds: [], text: "" },
         preferred: { educations: [], certificationIds: [], text: "" }
     });
+    const eduInitializedRef = useRef(false);
 
     // --- EFFECTS ---
     useEffect(() => {
@@ -96,11 +100,73 @@ const AddPosition = () => {
         setApprovedBy(existingPosition.approvedBy || "");
         setApprovedOn(existingPosition.approvedOn || "");
         if (existingPosition.indentPath) setExistingIndentPath(existingPosition.indentPath);
-        setEducationData({
-            mandatory: { text: existingPosition.mandatoryEducation, educations: [], certificationIds: [] },
-            preferred: { text: existingPosition.preferredEducation, educations: [], certificationIds: [] },
-        });
+
     }, [existingPosition]);
+
+    useEffect(() => {
+  if (!existingPosition) return;
+
+  if (
+    !educationTypes.length ||
+    !qualifications.length ||
+    !specializations.length ||
+    !certifications.length
+  ) {
+    return;
+  }
+
+  if (eduInitializedRef.current) return;
+
+  const mandatory = mapEduRulesToModalData(
+    existingPosition.mandatoryEduRulesJson,
+    educationTypes,
+    qualifications,
+    specializations,
+    certifications
+  );
+
+  const preferred = mapEduRulesToModalData(
+    existingPosition.preferredEduRulesJson,
+    educationTypes,
+    qualifications,
+    specializations,
+    certifications
+  );
+
+  setEducationData({
+    mandatory: {
+      ...mandatory,
+      text: buildEducationText(
+        mandatory.educations,
+        mandatory.certificationIds,
+        educationTypes,
+        qualifications,
+        specializations,
+        certifications
+      )
+    },
+    preferred: {
+      ...preferred,
+      text: buildEducationText(
+        preferred.educations,
+        preferred.certificationIds,
+        educationTypes,
+        qualifications,
+        specializations,
+        certifications
+      )
+    }
+  });
+
+  eduInitializedRef.current = true;
+}, [
+  existingPosition,
+  educationTypes,
+  qualifications,
+  specializations,
+  certifications
+]);
+
 
     // Handle National Distribution mapping
     useEffect(() => {
@@ -410,7 +476,9 @@ const AddPosition = () => {
             </Card>
 
             <ImportModal show={showImportModal} onHide={() => setShowImportModal(false)} />
-            <EducationModal show={showEduModal} mode={eduMode} initialData={educationData[eduMode]} educationTypes={educationTypes} qualifications={qualifications} specializations={specializations} certifications={certifications} onHide={() => setShowEduModal(false)} onSave={({ educations, certificationIds, text }) => { setEducationData(prev => ({ ...prev, [eduMode]: { educations, certificationIds, text } })); setErrors(prev => { const upd = { ...prev }; delete upd[`${eduMode}Education`]; return upd; }); }} />
+            <EducationModal key={`${eduMode}-${showEduModal}`}
+
+                show={showEduModal} mode={eduMode} initialData={educationData[eduMode]} educationTypes={educationTypes} qualifications={qualifications} specializations={specializations} certifications={certifications} onHide={() => setShowEduModal(false)} onSave={({ educations, certificationIds, text }) => { setEducationData(prev => ({ ...prev, [eduMode]: { educations, certificationIds, text } })); setErrors(prev => { const upd = { ...prev }; delete upd[`${eduMode}Education`]; return upd; }); }} />
             <ConfirmUsePositionModal show={showConfirmModal} fields={POSITION_POPULATED_FIELDS} onYes={handleUsePositionData} onNo={() => { setPendingPosition(null); setShowConfirmModal(false); }} />
         </Container>
     );
