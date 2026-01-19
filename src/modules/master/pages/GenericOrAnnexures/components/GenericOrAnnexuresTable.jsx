@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Button, Form } from "react-bootstrap";
+import { Table, Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
 import viewIcon from "../../../../../assets/view_icon.png";
@@ -12,20 +12,19 @@ const GenericOrAnnexuresTable = ({
   onDelete,
   currentPage,
   setCurrentPage,
-  pageSize,
-  setPageSize
+   itemsPerPage,
+  setItemsPerPage
 }) => {
-
   const { t } = useTranslation(["genericOrAnnexures"]);
   const rows = Array.isArray(data) ? data : [];
 
-const indexOfLastItem = currentPage * pageSize;
-const indexOfFirstItem = indexOfLastItem - pageSize;
-const currentRows = rows.slice(indexOfFirstItem, indexOfLastItem);
-
-const totalPages = Math.ceil(rows.length / pageSize);
-
  
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentRows = rows.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(rows.length / itemsPerPage);
   const paginate = (page) => setCurrentPage(page);
 
   return (
@@ -85,42 +84,31 @@ const totalPages = Math.ceil(rows.length / pageSize);
         </Table>
       </div>
 
+        {/* DROPDOWN LEFT + PAGINATION RIGHT */}
+      {rows.length > itemsPerPage && (
+        <div className="d-flex justify-content-between align-items-center mt-2">
 
-      {/* ===== PAGINATION ===== */}
-{rows.length > pageSize && (
+          {/* LEFT: rows per page */}
+          <select
+            className="form-select form-select-sm"
+            style={{ width: "90px" }}
+            value={itemsPerPage}
+            onChange={(e) => {
+              setItemsPerPage(Number(e.target.value));
+              setCurrentPage(1);
+            }}
+          >
+            {[5, 10, 15, 20, 25, 30].map(n => (
+              <option key={n} value={n}>{n}</option>
+            ))}
+          </select>
 
-
-
-
-
-
-
-      <div className="d-flex justify-content-between align-items-center mt-2">
-  
-    {/* <span className="me-2">Rows per page:</span> */}
-    <Form.Select
-      size="sm"
-      style={{ width: "90px" }}
-      value={pageSize}
-      onChange={(e) => {
-        setPageSize(Number(e.target.value));
-        setCurrentPage(1);
-      }}
-    >
-      <option value={5}>5</option>
-      <option value={10}>10</option>
-      <option value={15}>15</option>
-      <option value={20}>20</option>
-      <option value={25}>25</option>
-      <option value={30}>30</option>
-    </Form.Select>
-
-        <div className="pagination-container">
-          <ul className="pagination">
+          {/* RIGHT: pagination */}
+          <ul className="pagination mb-0">
             <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
               <button
                 className="page-link"
-                onClick={() => paginate(currentPage - 1)}
+                onClick={() => setCurrentPage(currentPage - 1)}
                 disabled={currentPage === 1}
               >
                 &laquo;
@@ -132,16 +120,23 @@ const totalPages = Math.ceil(rows.length / pageSize);
                 key={page}
                 className={`page-item ${currentPage === page ? "active" : ""}`}
               >
-                <button className="page-link" onClick={() => paginate(page)}>
+                <button
+                  className="page-link"
+                  onClick={() => setCurrentPage(page)}
+                >
                   {page}
                 </button>
               </li>
             ))}
 
-            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+            <li
+              className={`page-item ${
+                currentPage === totalPages ? "disabled" : ""
+              }`}
+            >
               <button
                 className="page-link"
-                onClick={() => paginate(currentPage + 1)}
+                onClick={() => setCurrentPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
               >
                 &raquo;
@@ -149,7 +144,6 @@ const totalPages = Math.ceil(rows.length / pageSize);
             </li>
           </ul>
         </div>
-           </div>
       )}
     </>
   );

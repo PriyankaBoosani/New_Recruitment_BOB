@@ -13,10 +13,12 @@ const CertificationTable = ({
   onView,
   onDelete,
   currentPage,
-  setCurrentPage
+  setCurrentPage,
+  itemsPerPage,
+  setItemsPerPage
 }) => {
   const { t } = useTranslation(["certification"]);
-  const itemsPerPage = 7;
+
 
   /* ---------- FILTER ---------- */
   const filteredCerts = data.filter(cert => {
@@ -109,52 +111,67 @@ const CertificationTable = ({
         </Table>
       </div>
 
-      {/* ---------- PAGINATION ---------- */}
+      {/* DROPDOWN LEFT + PAGINATION RIGHT */}
       {filteredCerts.length > 0 && (
-        <div className="pagination-container">
-          <nav>
-            <ul className="pagination">
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button
-                  className="page-link"
-                  onClick={() => paginate(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  &laquo;
-                </button>
-              </li>
+        <div className="d-flex justify-content-between align-items-center mt-2">
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
-                <li
-                  key={number}
-                  className={`page-item ${
-                    currentPage === number ? "active" : ""
-                  }`}
-                >
-                  <button
-                    onClick={() => paginate(number)}
-                    className="page-link"
-                  >
-                    {number}
-                  </button>
-                </li>
-              ))}
+          {/* LEFT */}
+          <select
+            className="form-select form-select-sm"
+            style={{ width: "90px" }}
+            value={itemsPerPage}
+            onChange={(e) => {
+              setItemsPerPage(Number(e.target.value));
+              setCurrentPage(1);
+            }}
+          >
+            {[5, 10, 15, 20, 25, 30].map(n => (
+              <option key={n} value={n}>{n}</option>
+            ))}
+          </select>
 
+          {/* RIGHT */}
+          <ul className="pagination mb-0">
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                &laquo;
+              </button>
+            </li>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
               <li
+                key={number}
                 className={`page-item ${
-                  currentPage === totalPages ? "disabled" : ""
+                  currentPage === number ? "active" : ""
                 }`}
               >
                 <button
+                  onClick={() => setCurrentPage(number)}
                   className="page-link"
-                  onClick={() => paginate(currentPage + 1)}
-                  disabled={currentPage === totalPages}
                 >
-                  &raquo;
+                  {number}
                 </button>
               </li>
-            </ul>
-          </nav>
+            ))}
+
+            <li
+              className={`page-item ${
+                currentPage === totalPages ? "disabled" : ""
+              }`}
+            >
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                &raquo;
+              </button>
+            </li>
+          </ul>
         </div>
       )}
     </>

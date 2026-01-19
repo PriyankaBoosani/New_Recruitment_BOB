@@ -11,12 +11,14 @@ const CategoryTable = ({
   searchTerm,
   currentPage,
   setCurrentPage,
+  itemsPerPage,
+  setItemsPerPage,
   onEdit,
   onView,
   onDelete
 }) => {
   const { t } = useTranslation(["category"]);
-  const itemsPerPage = 7;
+
 
   const filtered = data.filter(c => {
   const term = searchTerm.toLowerCase().trim();
@@ -103,9 +105,29 @@ const CategoryTable = ({
         </Table>
       </div>
 
+   {/* DROPDOWN LEFT + PAGINATION RIGHT */}
       {filtered.length > 0 && (
-        <div className="pagination-container">
-          <ul className="pagination">
+        <div className="d-flex justify-content-between align-items-center mt-2">
+
+          {/* LEFT: rows per page */}
+          <div>
+            <select
+              className="form-select form-select-sm"
+              style={{ width: "90px" }}
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+            >
+              {[5, 10, 15, 20, 25, 30].map(n => (
+                <option key={n} value={n}>{n}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* RIGHT: pagination */}
+          <ul className="pagination mb-0">
             <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
               <button
                 className="page-link"

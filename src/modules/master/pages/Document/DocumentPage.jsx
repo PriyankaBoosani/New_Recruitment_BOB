@@ -44,6 +44,8 @@ const DocumentPage = () => {
   const [selectedCSVFile, setSelectedCSVFile] = useState(null);
   const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
   const [isViewing, setIsViewing] = useState(false);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+
 
 
   /* ---------- handlers ---------- */
@@ -169,7 +171,7 @@ const handleSave = async (e) => {
         </div>
       </div>
 
-      <DocumentTable
+      {/* <DocumentTable
         data={documents}
         searchTerm={searchTerm}
         onEdit={openEditModal}
@@ -177,7 +179,20 @@ const handleSave = async (e) => {
         onDelete={(d) => { setDeleteTarget(d); setShowDeleteModal(true); }}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-      />
+      /> */}
+
+      <DocumentTable
+  data={documents}
+  searchTerm={searchTerm}
+  onEdit={openEditModal}
+  onView={openViewModal}
+  onDelete={(d) => { setDeleteTarget(d); setShowDeleteModal(true); }}
+  currentPage={currentPage}
+  setCurrentPage={setCurrentPage}
+  itemsPerPage={itemsPerPage}
+  setItemsPerPage={setItemsPerPage}
+/>
+
 
       <DocumentFormModal
         show={showAddModal}

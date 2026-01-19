@@ -8,6 +8,14 @@ import viewIcon from "../../../../../assets/view_icon.png";
 import editIcon from "../../../../../assets/edit_icon.png";
 import deleteIcon from "../../../../../assets/delete_icon.png";
 
+// const DocumentTable = ({
+//   data,
+//   searchTerm,
+//   onEdit,
+//   onView,
+//   onDelete,
+//   currentPage,
+//   setCurrentPage
 const DocumentTable = ({
   data,
   searchTerm,
@@ -15,10 +23,14 @@ const DocumentTable = ({
   onView,
   onDelete,
   currentPage,
-  setCurrentPage
+  setCurrentPage,
+  itemsPerPage,
+  setItemsPerPage
+
+
 }) => {
   const { t } = useTranslation(["documents"]);
-  const itemsPerPage = 7;
+ 
 
   const filtered = data.filter(d =>
     [d.name, d.description].some(v =>
@@ -96,45 +108,65 @@ const DocumentTable = ({
         </Table>
       </div>
 
+    
+
+         {/* DROPDOWN LEFT + PAGINATION RIGHT */}
       {filtered.length > 0 && (
-        <div className="pagination-container">
-          <nav>
-            <ul className="pagination">
-              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  &laquo;
-                </button>
-              </li>
+        <div className="d-flex justify-content-between align-items-center mt-2">
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
-                <li
-                  key={n}
-                  className={`page-item ${currentPage === n ? 'active' : ''}`}
-                >
-                  <button
-                    className="page-link"
-                    onClick={() => setCurrentPage(n)}
-                  >
-                    {n}
-                  </button>
-                </li>
+          {/* LEFT: rows per page */}
+          <div>
+            <select
+              className="form-select form-select-sm"
+              style={{ width: "90px" }}
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+            >
+              {[5, 10, 15, 20, 25, 30].map(n => (
+                <option key={n} value={n}>{n}</option>
               ))}
+            </select>
+          </div>
 
-              <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+          {/* RIGHT: pagination */}
+          <ul className="pagination mb-0">
+            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                &laquo;
+              </button>
+            </li>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+              <li
+                key={n}
+                className={`page-item ${currentPage === n ? 'active' : ''}`}
+              >
                 <button
                   className="page-link"
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(n)}
                 >
-                  &raquo;
+                  {n}
                 </button>
               </li>
-            </ul>
-          </nav>
+            ))}
+
+            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                &raquo;
+              </button>
+            </li>
+          </ul>
         </div>
       )}
     </>
