@@ -48,7 +48,7 @@ export const mapMasterResponse = (masterData, userData, certData) => {
       disabilityName: c.disabilityName,
     })),
 
-    /** 🔥 EDUCATION MASTER (NEW) */
+    /**  EDUCATION MASTER (NEW) */
     educationTypes: (masterData.educationTypeMaster || []).map(e => ({
       id: e.educationTypeId,
       label: e.educationType,
@@ -90,11 +90,5 @@ export const mapMasterResponse = (masterData, userData, certData) => {
       name: l.languageName,
       stateId: l.stateId ? String(l.stateId) : null,
     })),
-
-
-
-
-
-
   };
 };

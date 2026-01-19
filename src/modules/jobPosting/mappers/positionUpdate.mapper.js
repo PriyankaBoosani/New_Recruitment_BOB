@@ -43,7 +43,7 @@ const buildCategoryDistributionsForUpdate = (
 ) => {
   const result = [];
 
-  // 1️⃣ Existing backend categories → UPDATE
+  // 1️ Existing backend categories → UPDATE
   sd.categoryDistributions?.forEach(existing => {
     let newCount = 0;
 
@@ -72,7 +72,7 @@ const buildCategoryDistributionsForUpdate = (
     // newCount === 0 → removed → don't send
   });
 
-  // 2️⃣ Newly added categories → CREATE
+  // 2️ Newly added categories → CREATE
   reservationCategories.forEach(cat => {
     const alreadyExists = sd.categoryDistributions?.some(
       x => x.reservationCategoryId === cat.id && !x.isDisability
@@ -211,12 +211,6 @@ export const mapAddPositionToUpdateDto = ({
       )
     }));
 
-
-
   }
-
-
-
-
   return dto;
 };

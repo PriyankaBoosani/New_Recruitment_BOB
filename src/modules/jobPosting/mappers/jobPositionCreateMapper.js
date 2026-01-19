@@ -1,5 +1,3 @@
-// src/modules/jobPosting/mappers/positionPayload.mapper.js
-
 export const mapAddPositionToCreateDto = ({
   formData,
   educationData,
@@ -20,37 +18,6 @@ export const mapAddPositionToCreateDto = ({
   /* ================= SAFE NORMALIZATION ================= */
   const safeQualifications = Array.isArray(qualifications) ? qualifications : [];
   const safeCertifications = Array.isArray(certifications) ? certifications : [];
-
-  /* ================= EDUCATION RULE BUILDER ================= */
-  // const buildEducationRules = (edu) => {
-  //   if (!edu || !Array.isArray(edu.educations) || edu.educations.length === 0) {
-  //     return [];
-  //   }
-
-  //   const degrees = edu.educations
-  //     .map(e =>
-  //       safeQualifications.find(q => q.id === e.educationQualificationsId)?.name
-  //     )
-  //     .filter(Boolean);
-
-  //   const certNames = (edu.certificationIds || [])
-  //     .map(id => safeCertifications.find(c => c.id === id)?.name)
-  //     .filter(Boolean);
-
-  //   // 🔴 HARD STOP — backend WILL crash if degrees empty
-  //   if (degrees.length === 0) {
-  //     throw new Error("Education rules must contain at least one degree name");
-  //   }
-
-  //   return [
-  //     {
-  //       operator: "OR",
-  //       degrees,
-  //       ...(certNames.length ? { certifications: certNames } : {}),
-  //     },
-  //   ];
-  // };
-  
   const buildEducationRules = (edu) => {
   if (!edu || !Array.isArray(edu.educations) || edu.educations.length === 0) {
     return [];
@@ -75,11 +42,11 @@ export const mapAddPositionToCreateDto = ({
     {
       operator: "OR",
 
-      // ✅ BACKEND (unchanged)
+      //  BACKEND (unchanged)
       degrees,
       ...(certNames.length ? { certifications: certNames } : {}),
 
-      // ✅ FRONTEND (new, structured, lossless)
+      //  FRONTEND (new, structured, lossless)
       educations: edu.educations.map(e => ({
         educationTypeId: e.educationTypeId,
         educationQualificationId: e.educationQualificationsId,
@@ -110,8 +77,7 @@ export const mapAddPositionToCreateDto = ({
   /* ================= FINAL DTO ================= */
   return {
     requisitionId,
-
-    // ✅ DO NOT SEND positionId ON CREATE
+    //  DO NOT SEND positionId ON CREATE
     deptId: formData.department,
     masterPositionId: formData.position,
 
@@ -130,7 +96,7 @@ export const mapAddPositionToCreateDto = ({
     mandatoryEducation: educationData.mandatory.text,
     preferredEducation: educationData.preferred.text,
 
-    // ✅ OBJECT — NOT STRING
+    //  OBJECT — NOT STRING
     mandatoryEduRulesJson: {
       rules: buildEducationRules(educationData.mandatory),
     },
