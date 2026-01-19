@@ -8,7 +8,7 @@
   "addd": "Add Location",
   "edit": "Edit",
   "s_no": "S. No.",
-  "city_name": "City Name",
+  "city_name": "City",
   "location_name": "Location Name",
   "actions": "Actions",
   "choose_add_method": "Choose to add manually or import from XLSX file.",

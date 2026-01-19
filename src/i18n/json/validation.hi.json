@@ -38,9 +38,14 @@
 "invalid_preferred_education": "कृपया मान्य वांछनीय शैक्षणिक योग्यता दर्ज करें",
 "invalid_roles_responsibilities": "कृपया मान्य भूमिकाएँ और जिम्मेदारियाँ दर्ज करें",
 "only_characters": "कृपया मान्य पूरा नाम दर्ज करें",
-  "invalid_code_chars": "कृपया एक मान्य कोड दर्ज करें",
-  "invalid_code_char": "कृपया एक मान्य दस्तावेज़ नाम दर्ज करें",
-  "invalid_title_chars": "कृपया एक मान्य पद नाम दर्ज करें"
+"invalid_code_chars": "कृपया एक मान्य कोड दर्ज करें",
+"invalid_code_char": "कृपया एक मान्य दस्तावेज़ नाम दर्ज करें",
+"invalid_title_chars": "कृपया एक मान्य पद नाम दर्ज करें",
+"no_special_charses": "कृपया वैध कोड दर्ज करें",
+"no_special_charsess": "कृपया वैध नाम दर्ज करें",
+"no_special_charsees": "कृपया वैध दस्तावेज़ नाम दर्ज करें"
+
+
 
 
 
