@@ -34,11 +34,40 @@ const jobPositionApiService = {
   },
 
 
-  updatePosition: (positionId, payload) =>
-    api.put(
-      `/recruiter/job-positions/${positionId}`,
-      payload
+  updatePosition: ({ dto, indentFile }) => {
+    const formData = new FormData();
+
+    // REQUIRED by backend
+    formData.append(
+      "jobPositionsDTO",
+      new Blob([JSON.stringify(dto)], { type: "application/json" })
+    );
+
+    // optional
+    if (indentFile) {
+      formData.append("indentFile", indentFile);
+    }
+
+    return api.post(
+      "/recruiter/job-positions/update-job-position",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "X-Client": "recruiter",
+        },
+      }
+    );
+  },
+
+
+  deletePositionById: (positionId) =>
+    api.delete(
+      `/recruiter/job-positions/delete-job-position-by-id/${positionId}`
     ),
+
+
+  getRequisitionById: (id) => api.get(`/recruiter/job-requisitions/${id}`),
 };
 
 export default jobPositionApiService;

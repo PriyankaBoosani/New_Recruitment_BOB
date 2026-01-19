@@ -95,7 +95,7 @@ const DocumentFormModal = ({
       setFormData,
       setErrors,
       pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
-      errorMessage: t("validation:no_special_chars")
+      errorMessage: t("validation:no_special_charsees")
     })
   }
 />

@@ -1,3 +1,4 @@
+// src/modules/jobPostings/hooks/useJobPositionsByRequisition.js
 import { useState } from "react";
 import { toast } from "react-toastify";
 import jobPositionApiService from "../services/jobPositionApiService";
@@ -7,7 +8,7 @@ export const useJobPositionsByRequisition = () => {
   const [positionsByReq, setPositionsByReq] = useState({});
   const [loadingReqId, setLoadingReqId] = useState(null);
 
-  const { positions: masterPositions } = useMasterData();
+  const { positions: masterPositions, departments } = useMasterData();
 
   const positionMap = {};
   masterPositions.forEach(p => {
@@ -25,9 +26,16 @@ export const useJobPositionsByRequisition = () => {
 
       const list = res?.data || [];
 
+      const departmentMap = {};
+      departments.forEach(d => {
+        departmentMap[d.id] = d.label;
+      });
+
       const enriched = list.map(api => ({
-        positionId: api.id,
-        positionName: positionMap[api.masterPositionId] || "—", // ✅ FIX
+        positionId: api.positionId || api.id,
+        positionName: positionMap[api.masterPositionId] || "—",
+        deptId: api.deptId,
+        departmentName: departmentMap[api.deptId] || "—",
         vacancies: api.totalVacancies ?? 0,
         minAge: api.eligibilityAgeMin,
         maxAge: api.eligibilityAgeMax,
@@ -46,11 +54,28 @@ export const useJobPositionsByRequisition = () => {
     }
   };
 
+  // ✅ DELETE POSITION
+  const deletePosition = async (requisitionId, positionId) => {
+    try {
+      await jobPositionApiService.deletePositionById(positionId);
 
+      setPositionsByReq(prev => ({
+        ...prev,
+        [requisitionId]: prev[requisitionId].filter(
+          p => p.positionId !== positionId
+        )
+      }));
+
+      toast.success("Position deleted successfully");
+    } catch {
+      toast.error("Failed to delete position");
+    }
+  };
 
   return {
     positionsByReq,
     loadingReqId,
-    fetchPositions
+    fetchPositions,
+    deletePosition
   };
 };

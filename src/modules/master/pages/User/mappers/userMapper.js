@@ -35,5 +35,5 @@ export const mapUserToApi = (ui) => ({
   role: ui.role,
   name: ui.fullName,
   email: ui.email,
-  password: encryptPassword(ui.password)
+  password: ui.password
 });

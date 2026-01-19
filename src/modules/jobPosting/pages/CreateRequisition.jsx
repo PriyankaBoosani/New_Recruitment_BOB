@@ -8,6 +8,11 @@ import { validateRequisitionForm } from "../validations/requisition-validation";
 import { mapRequisitionToApi } from "../mappers/createRequisitionMapper";
 import { useCreateRequisition } from "../hooks/useCreateRequisition";
 import { REQUISITION_CONFIG } from "../config/requisitionConfig";
+import {
+  handleValidatedInput,
+  INPUT_PATTERNS
+} from "../../../shared/utils/inputHandlers";
+
 
 const CreateRequisition = () => {
   const navigate = useNavigate();
@@ -97,12 +102,33 @@ const CreateRequisition = () => {
                   name="title"
                   value={formData.title}
                   placeholder="Enter Requisition Title"
-                  onChange={(e) => {
-                    handleInputChange(e);
-                    setErrors((prev) => ({ ...prev, title: "" }));
-                  }}
-                  isInvalid={!!errors.title}
+                  onChange={(e) =>
+                    handleValidatedInput({
+                      e,
+                      fieldName: "title",
+                      onValidChange: (value) =>
+                        handleInputChange({
+                          target: { name: "title", value }
+                        }),
+                      setErrors,
+                      pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_DASH_AMP,
+                      errorMessage:
+                        "Only letters, numbers, spaces, -, _ and & are allowed"
+                    })
+                  }
+                    onBlur={(e) =>
+                    handleInputChange({
+                      target: {
+                        name: "title",
+                        value: e.target.value.trim()
+                      }
+                    })
+                  }
+                  
+                isInvalid={!!errors.title}
                 />
+
+
                 <Form.Text className="text-muted">
                   Use a clear, searchable title used across the portal and job boards.
                 </Form.Text>
@@ -126,6 +152,14 @@ const CreateRequisition = () => {
                         handleInputChange(e);
                         setErrors((prev) => ({ ...prev, description: "" }));
                       }}
+                      onBlur={(e) =>
+    handleInputChange({
+      target: {
+        name: "description",
+        value: e.target.value.trim()
+      }
+    })
+  }
                       isInvalid={!!errors.description}
                     />
 
@@ -181,7 +215,7 @@ const CreateRequisition = () => {
                           isInvalid={!!errors.endDate}
                         />
                         <Form.Text className="text-muted">
-                          Standard duration: 21 days.
+                          ⓘ Standard duration: 21 days.
                         </Form.Text>
                         <ErrorMessage>{errors.endDate}</ErrorMessage>
                       </Form.Group>

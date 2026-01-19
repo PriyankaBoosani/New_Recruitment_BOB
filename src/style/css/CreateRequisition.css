@@ -93,3 +93,19 @@
 .create-requisition-page .primary-btn:hover {
   background: #e85f10;
 }
+
+.create-requisition-page .form-control, .form-select {
+    border-radius: 6px;
+    font-size: 0.875em;
+    font-weight: 400;
+}
+.create-requisition-page .form-label {
+	font-weight: 500;
+	color: #333333;
+	margin-bottom: 0.5rem;
+	font-size: 0.875em;
+}
+.create-requisition-page .form-text {
+	font-size: 0.785em;
+	color: #828282 !important;
+}

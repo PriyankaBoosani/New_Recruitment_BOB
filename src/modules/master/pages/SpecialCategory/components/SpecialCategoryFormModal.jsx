@@ -132,7 +132,7 @@ const SpecialCategoryFormModal = ({
       setFormData,
       setErrors,
       pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
-      errorMessage: t("validation:no_special_chars")
+      errorMessage: t("validation:no_special_charses")
     })
   }
 />
@@ -167,7 +167,7 @@ const SpecialCategoryFormModal = ({
       setFormData,
       setErrors,
       pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at,
-      errorMessage: t("validation:no_special_chars")
+      errorMessage: t("validation:no_special_charsess")
     })
   }
 />

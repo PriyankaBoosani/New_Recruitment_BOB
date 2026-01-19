@@ -1,72 +1,105 @@
+import { validatePositiveInteger } from "./JobpostingcommonValidators";
+
 export const validateAddPosition = ({
+  isEditMode,
   formData,
   educationData,
   indentFile,
+  existingIndentPath,
   approvedBy,
-  approvedOn
+  approvedOn,
+  nationalCategories
 }) => {
   const errors = {};
 
+  // ---------- FILE ----------
+  if (!indentFile && !(isEditMode && existingIndentPath)) {
+    errors.indentFile = "Indent file is required";
+  }
 
-  // Upload / Approval
-  if (!indentFile) errors.indentFile = "Indent file is required";
+  // ---------- BASIC REQUIRED ----------
   if (!approvedBy) errors.approvedBy = "This field is required";
   if (!approvedOn) errors.approvedOn = "This field is required";
-
-  // BASIC FIELDS
   if (!formData.position) errors.position = "This field is required";
   if (!formData.department) errors.department = "This field is required";
-  if (!formData.vacancies) errors.vacancies = "This field is required";
+  if (!formData.employmentType) errors.employmentType = "This field is required";
+  if (!formData.grade) errors.grade = "This field is required";
+  if (!formData.medicalRequired) errors.medicalRequired = "This field is required";
 
-  // AGE LOGIC (don’t mess this up)
-  if (!formData.minAge) errors.minAge = "This field is required";
-  if (!formData.maxAge) errors.maxAge = "This field is required";
+  // ---------- NUMERIC FIELDS ----------
+  const numericChecks = [
+    ["vacancies", "Vacancies"],
+    ["minAge", "Min age"],
+    ["maxAge", "Max age"],
+  ];
+
+  numericChecks.forEach(([key, label]) => {
+    const err = validatePositiveInteger({
+      value: formData[key],
+      fieldName: label,
+    });
+    if (err) errors[key] = err;
+  });
+
+  // contractualPeriod is optional
+  const contractErr = validatePositiveInteger({
+    value: formData.contractualPeriod,
+    fieldName: "Contractual period",
+    required: false,
+    allowZero: true,
+  });
+  if (contractErr) errors.contractualPeriod = contractErr;
+
+  // ---------- AGE LOGIC ----------
   if (
-    formData.minAge &&
-    formData.maxAge &&
+    !errors.minAge &&
+    !errors.maxAge &&
     Number(formData.minAge) >= Number(formData.maxAge)
   ) {
     errors.maxAge = "Max age must be greater than Min age";
   }
 
-  // Employment / Grade
-  if (!formData.employmentType) errors.employmentType = "This field is required";
-  if (!formData.grade) errors.grade = "This field is required";
-
-  // EDUCATION (correct fields)
-  if (!educationData.mandatory.text)
+  // ---------- EDUCATION ----------
+  if (!educationData.mandatory.text?.trim()) {
     errors.mandatoryEducation = "This field is required";
+  }
 
-  if (!educationData.preferred.text)
+  if (!educationData.preferred.text?.trim()) {
     errors.preferredEducation = "This field is required";
-
-  // EXPERIENCE
-  const mandatoryYears = Number(formData.mandatoryExperience.years || 0);
-  const mandatoryMonths = Number(formData.mandatoryExperience.months || 0);
-  if (mandatoryYears === 0 && mandatoryMonths === 0) {
-    errors.mandatoryExperience = "Please select experience duration";
-  } else if (!formData.mandatoryExperience.description?.trim()) {
-    errors.mandatoryExperience = "Please enter mandatory experience details";
   }
 
-  // Preferred Experience
-  const preferredYears = Number(formData.preferredExperience.years || 0);
-  const preferredMonths = Number(formData.preferredExperience.months || 0);
+  // ---------- EXPERIENCE ----------
+  const validateExperience = (exp, key) => {
+    const years = Number(exp.years || 0);
+    const months = Number(exp.months || 0);
 
-  if (preferredYears === 0 && preferredMonths === 0) {
-    errors.preferredExperience = "Please select experience duration";
-  } else if (!formData.preferredExperience.description?.trim()) {
-    errors.preferredExperience = "Please enter preferred experience details";
-  }
+    if (years === 0 && months === 0) {
+      errors[key] = "Please select experience duration";
+    } else if (!exp.description?.trim()) {
+      errors[key] = "Please enter experience details";
+    }
+  };
 
+  validateExperience(formData.mandatoryExperience, "mandatoryExperience");
+  validateExperience(formData.preferredExperience, "preferredExperience");
 
-  // ROLES
-  if (!formData.responsibilities)
+  // ---------- RESPONSIBILITIES ----------
+  if (!formData.responsibilities?.trim()) {
     errors.responsibilities = "This field is required";
-  
-  if(!formData.medicalRequired) 
-    errors.medicalRequired = "This field is required";  
+  }
+
+  // ---------- NATIONAL DISTRIBUTION ----------
+  if (!formData.enableStateDistribution) {
+    const nationalTotal = Object.values(nationalCategories || {})
+      .reduce((sum, v) => sum + Number(v || 0), 0);
+
+    const totalVacancies = Number(formData.vacancies || 0);
+
+    if (nationalTotal !== totalVacancies) {
+      errors.nationalDistribution =
+        `National distribution total (${nationalTotal}) must equal total vacancies (${totalVacancies})`;
+    }
+  }
 
   return errors;
-
 };

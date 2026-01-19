@@ -19,13 +19,16 @@ const CertificationTable = ({
   const itemsPerPage = 7;
 
   /* ---------- FILTER ---------- */
-  const filteredCerts = data.filter(cert =>
-  Object.values(cert).some(v =>
-    String(v ?? "")
-      .toLowerCase()
-      .includes((searchTerm || "").toLowerCase())
-  )
-);
+  const filteredCerts = data.filter(cert => {
+  const term = (searchTerm || "").toLowerCase().trim();
+  if (!term) return true;
+
+  return (
+    cert.name?.toLowerCase().includes(term) ||
+    cert.description?.toLowerCase().includes(term)
+  );
+});
+
 
 
   /* ---------- PAGINATION ---------- */

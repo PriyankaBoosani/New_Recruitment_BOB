@@ -10,11 +10,17 @@ const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPa
     const itemsPerPage = 7;
 
     // Filter logic
-    const filteredDepts = data.filter(dept =>
-        Object.values(dept).some(v =>
-            String(v ?? '').toLowerCase().includes(searchTerm.toLowerCase())
-        )
-    );
+    const filteredDepts = data.filter(dept => {
+  const term = searchTerm.toLowerCase().trim();
+
+  if (!term) return true;
+
+  return (
+    dept.name?.toLowerCase().includes(term) ||
+    dept.description?.toLowerCase().includes(term)
+  );
+});
+
     const indexOfLastDept = currentPage * itemsPerPage;
     const indexOfFirstDept = indexOfLastDept - itemsPerPage;
     const currentDepts = filteredDepts.slice(indexOfFirstDept, indexOfLastDept);

@@ -201,7 +201,7 @@ const CategoryFormModal = ({
       setFormData,
       setErrors,
       pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
-      errorMessage: t("validation:no_special_chars")
+      errorMessage: t("validation:no_special_charses")
     })
   }
 />
@@ -232,7 +232,7 @@ const CategoryFormModal = ({
       setFormData,
       setErrors,
       pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at,
-      errorMessage: t("validation:no_special_chars")
+      errorMessage: t("validation:no_special_charsess")
     })
   }
 />
@@ -255,7 +255,7 @@ const CategoryFormModal = ({
                   {formData.description || "-"}
                 </div>
               ) : (
-               <Form.Control
+              <Form.Control
   as="textarea"
   rows={3}
   name="description"
@@ -263,16 +263,13 @@ const CategoryFormModal = ({
   placeholder={t("enter_description")}
   className="form-control-custom"
   onChange={(e) =>
-    handleValidatedInput({
-      e,
-      fieldName: "description",
-      setFormData,
-      setErrors,
-      pattern: INPUT_PATTERNS.TEXTAREA_BASIC,
-      errorMessage: t("validation:no_special_chars")
+    setFormData({
+      ...formData,
+      description: e.target.value,
     })
   }
 />
+
  
               )}
               {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}

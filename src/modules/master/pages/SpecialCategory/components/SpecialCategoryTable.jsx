@@ -20,11 +20,17 @@ const SpecialCategoryTable = ({
   const { t } = useTranslation(["specialCategory"]);
   const itemsPerPage = 7;
 
-const filtered = data.filter(s =>
-  Object.values(s).some(v =>
-    String(v ?? '').toLowerCase().includes(searchTerm.toLowerCase())
-  )
-);
+const filtered = data.filter(s => {
+  const term = searchTerm.toLowerCase().trim();
+  if (!term) return true;
+
+  return (
+    s.code?.toLowerCase().includes(term) ||
+    s.name?.toLowerCase().includes(term) ||
+    s.description?.toLowerCase().includes(term)
+  );
+});
+
 
 
 

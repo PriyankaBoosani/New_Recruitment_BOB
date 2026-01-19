@@ -37,9 +37,12 @@
 "invalid_preferred_education": "Please enter valid preferred education details",
 "invalid_roles_responsibilities": "Please enter valid roles and responsibilities",
 "only_characters": "Please enter valid Full Name",
-   "invalid_code_chars": "Please enter a valid code",
-   "invalid_code_char": "Please enter a valid document name",
-    "invalid_title_chars": "Please enter a valid position title"
+"invalid_code_chars": "Please enter a valid code",
+"invalid_code_char": "Please enter a valid document name",
+"invalid_title_chars": "Please enter a valid position title",
+"no_special_charses": "Please enter valid Code",
+"no_special_charsess": "Please enter valid Name",
+"no_special_charsees": "Please enter valid Document Name"
 
   
 }
