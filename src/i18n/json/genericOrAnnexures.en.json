@@ -1,7 +1,8 @@
 {
   "title": "Generic / Annexures",
   "search_placeholder": "Search annexures",
-  "add": "Add",
+  "addgenAnn": "Add Generic / Annexures",
+  "add" : "Add",
   "edit": "Edit Annexure",
   "add_item": "Add Annexure",
   "view": "View Annexure",

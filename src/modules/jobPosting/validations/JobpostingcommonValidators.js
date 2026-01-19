@@ -1,4 +1,4 @@
-// validations/commonValidators.js
+// validations/jobpostingcommonvalidators.js
 export const validatePositiveInteger = ({
   value,
   fieldName,
@@ -8,7 +8,7 @@ export const validatePositiveInteger = ({
   const trimmed = String(value ?? "").trim();
 
   if (required && trimmed === "") {
-    return `${fieldName} is required`;
+    return `This feild is required`;
   }
 
   if (trimmed === "") return null; // optional & empty is OK
@@ -25,3 +25,5 @@ export const validatePositiveInteger = ({
 
   return null;
 };
+
+

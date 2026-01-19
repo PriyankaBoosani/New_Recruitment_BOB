@@ -3,7 +3,9 @@ import { Row, Col, Form, Button } from "react-bootstrap";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import upload_icon from '../../../assets/upload_Icon.png';
 
+const TEXT_ALLOWED_REGEX = /^[A-Za-z0-9 .,\-()&:;/]*$/;
 const PositionForm = ({
+
     formData,
     errors,
     handleInputChange,
@@ -11,6 +13,7 @@ const PositionForm = ({
     existingIndentPath,
     setIndentFile,
     setErrors,
+    setFormData,
     approvedBy,
     setApprovedBy,
     approvedOn,
@@ -24,7 +27,9 @@ const PositionForm = ({
     ALLOWED_EXTENSIONS,
     MAX_FILE_SIZE_MB
 }) => {
+
     return (
+
         <>
             <Row className="g-4 mb-4 upload-indent-section">
                 <Col md={8} className="mt-3">
@@ -123,13 +128,13 @@ const PositionForm = ({
 
                 <Col md={4}>
                     <Form.Label>Total Vacancies <span className="text-danger">*</span></Form.Label>
-                    <Form.Control name="vacancies" placeholder="Enter Vacancies" type="number" value={formData.vacancies} onChange={handleInputChange} />
+                    <Form.Control name="vacancies" placeholder="Enter Vacancies" type="text" inputMode="numeric" pattern="[0-9]*" value={formData.vacancies} onChange={handleInputChange} />
                     <ErrorMessage>{errors.vacancies}</ErrorMessage>
                 </Col>
 
-                <Col md={4}><Form.Label>Min Age <span className="text-danger">*</span></Form.Label><Form.Control name="minAge" type="number" value={formData.minAge} onChange={handleInputChange} /><ErrorMessage>{errors.minAge}</ErrorMessage></Col>
-                <Col md={4}><Form.Label>Max Age <span className="text-danger">*</span></Form.Label><Form.Control name="maxAge" type="number" value={formData.maxAge} onChange={handleInputChange} /><ErrorMessage>{errors.maxAge}</ErrorMessage></Col>
-                
+                <Col md={4}><Form.Label>Min Age <span className="text-danger">*</span></Form.Label><Form.Control name="minAge" type="text" inputMode="numeric" pattern="[0-9]*" value={formData.minAge} onChange={handleInputChange} /><ErrorMessage>{errors.minAge}</ErrorMessage></Col>
+                <Col md={4}><Form.Label>Max Age <span className="text-danger">*</span></Form.Label><Form.Control name="maxAge" type="text" inputMode="numeric" pattern="[0-9]*" value={formData.maxAge} onChange={handleInputChange} /><ErrorMessage>{errors.maxAge}</ErrorMessage></Col>
+
                 <Col md={4}>
                     <Form.Label>Type of Employment <span className="text-danger">*</span></Form.Label>
                     <Form.Select name="employmentType" value={formData.employmentType} onChange={handleInputChange}>
@@ -139,7 +144,7 @@ const PositionForm = ({
                     <ErrorMessage>{errors.employmentType}</ErrorMessage>
                 </Col>
 
-                <Col md={4}><Form.Label>Contractual Period(Years)</Form.Label><Form.Control name="contractualPeriod" type="number" value={formData.contractualPeriod} onChange={handleInputChange} /></Col>
+                <Col md={4}><Form.Label>Contractual Period(Years)</Form.Label><Form.Control name="contractualPeriod" type="text" inputMode="numeric" pattern="[0-9]*" value={formData.contractualPeriod} onChange={handleInputChange} /></Col>
                 <Col md={4}>
                     <Form.Label>Grade / Scale <span className="text-danger">*</span></Form.Label>
                     <Form.Select name="grade" value={formData.grade} onChange={handleInputChange}>
@@ -178,27 +183,89 @@ const PositionForm = ({
                         <Form.Label>{expType === 'mandatoryExperience' ? 'Mandatory' : 'Preferred'} Experience <span className="text-danger">*</span></Form.Label>
                         <Row className="g-2 mb-2">
                             <Col md={6}>
-                                <Form.Select value={formData[expType].years} onChange={(e) => handleInputChange({target: {name: `${expType}.years`, value: e.target.value}})}>
+                                <Form.Select value={formData[expType].years} onChange={(e) => handleInputChange({ target: { name: `${expType}.years`, value: e.target.value } })}>
                                     <option value="">Select Years</option>
                                     {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
                                 </Form.Select>
                             </Col>
                             <Col md={6}>
-                                <Form.Select value={formData[expType].months} onChange={(e) => handleInputChange({target: {name: `${expType}.months`, value: e.target.value}})}>
+                                <Form.Select value={formData[expType].months} onChange={(e) => handleInputChange({ target: { name: `${expType}.months`, value: e.target.value } })}>
                                     <option value="">Select Months</option>
                                     {MONTH_OPTIONS.map(m => <option key={m} value={m}>{m}</option>)}
                                 </Form.Select>
                             </Col>
                         </Row>
-                        <Form.Control as="textarea" rows={3} value={formData[expType].description} onChange={(e) => handleInputChange({target: {name: `${expType}.description`, value: e.target.value}})} />
+                        <Form.Control
+                            as="textarea"
+                            rows={3}
+                            value={formData[expType].description}
+                            onChange={(e) => {
+                                const value = e.target.value;
+
+                                // ❌ Invalid characters
+                                if (!TEXT_ALLOWED_REGEX.test(value)) {
+                                    setErrors((prev) => ({
+                                        ...prev,
+                                        [expType]: "Only letters, numbers, spaces and . , - ( ) & : ; / are allowed"
+                                    }));
+                                    return;
+                                }
+
+                                // ✅ Valid input → update state
+                                setFormData((prev) => ({
+                                    ...prev,
+                                    [expType]: {
+                                        ...prev[expType],
+                                        description: value
+                                    }
+                                }));
+
+                                // ✅ Clear error when valid
+                                setErrors((prev) => ({
+                                    ...prev,
+                                    [expType]: ""
+                                }));
+                            }}
+                        />
+
+
                         <ErrorMessage>{errors[expType]}</ErrorMessage>
                     </Col>
                 ))}
 
                 <Col md={6}>
                     <Form.Label>Roles & Responsibilities <span className="text-danger">*</span></Form.Label>
-                    <Form.Control as="textarea" rows={5} name="responsibilities" value={formData.responsibilities} onChange={handleInputChange} />
+                    <Form.Control
+                        as="textarea"
+                        rows={5}
+                        name="responsibilities"
+                        value={formData.responsibilities}
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            // ❌ Invalid character typed
+                            if (!TEXT_ALLOWED_REGEX.test(value)) {
+                                setErrors((prev) => ({
+                                    ...prev,
+                                    responsibilities:
+                                        "Only letters, numbers, spaces and . , - ( ) & : ; / are allowed"
+                                }));
+                                return;
+                            }
+
+                            // ✅ Valid input
+                            handleInputChange(e);
+
+                            // ✅ Clear error
+                            setErrors((prev) => ({
+                                ...prev,
+                                responsibilities: ""
+                            }));
+                        }}
+                    />
+
                     <ErrorMessage>{errors.responsibilities}</ErrorMessage>
+
                 </Col>
                 <Col md={2}>
                     <Form.Label>Medical Required <span className="text-danger">*</span></Form.Label>
