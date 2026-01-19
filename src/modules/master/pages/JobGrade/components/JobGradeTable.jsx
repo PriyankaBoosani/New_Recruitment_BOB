@@ -1,7 +1,7 @@
 // src/modules/master/pages/JobGrade/components/JobGradeTable.jsx
 
 import React from 'react';
-import { Table, Button } from 'react-bootstrap';
+import { Table, Button, Form } from 'react-bootstrap';
 import { useTranslation } from "react-i18next";
 
 import viewIcon from "../../../../../assets/view_icon.png";
@@ -15,10 +15,12 @@ const JobGradeTable = ({
   onView,
   onDelete,
   currentPage,
-  setCurrentPage
+  setCurrentPage,
+  pageSize,
+  setPageSize
 }) => {
   const { t } = useTranslation(["jobGrade"]);
-  const itemsPerPage = 7;
+  // const itemsPerPage = 7;
 
   const filtered = data.filter(j =>
     Object.values(j).some(v =>
@@ -34,10 +36,11 @@ const JobGradeTable = ({
 };
 
 
-  const indexOfLast = currentPage * itemsPerPage;
-  const indexOfFirst = indexOfLast - itemsPerPage;
-  const current = filtered.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const indexOfLast = currentPage * pageSize;
+const indexOfFirst = indexOfLast - pageSize;
+const current = filtered.slice(indexOfFirst, indexOfLast);
+const totalPages = Math.ceil(filtered.length / pageSize);
+
 
   return (
     <>
@@ -105,7 +108,32 @@ const JobGradeTable = ({
         </Table>
       </div>
 
+
+    
+
       {filtered.length > 0 && (
+
+
+  <div className="d-flex justify-content-between align-items-center mt-2">
+
+    {/* <span className="me-2">Rows per page:</span> */}
+    <Form.Select
+      size="sm"
+      style={{ width: "90px" }}
+      value={pageSize}
+      onChange={(e) => {
+        setPageSize(Number(e.target.value));
+        setCurrentPage(1);
+      }}
+    >
+      <option value={5}>5</option>
+      <option value={10}>10</option>
+      <option value={15}>15</option>
+      <option value={20}>20</option>
+       <option value={25}>25</option>
+        <option value={30}>30</option>
+    </Form.Select>
+
         <div className="pagination-container">
           <nav>
             <ul className="pagination">
@@ -140,6 +168,7 @@ const JobGradeTable = ({
             </ul>
           </nav>
         </div>
+         </div>
       )}
     </>
   );

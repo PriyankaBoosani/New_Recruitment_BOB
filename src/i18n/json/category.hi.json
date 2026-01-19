@@ -23,7 +23,7 @@
   "xlsx": "XLSX",
   "upload_xlsx": "XLSX अपलोड",
   "download_template": "टेम्पलेट डाउनलोड करें",
-  "choose_add_method": "मैनुअल प्रविष्टि या XLSX से आयात चुनें",
+  "choose_add_method": "मैन्युअली जोड़ें या XLSX फ़ाइल से इम्पोर्ट करें।",
    "support_csv_xlsx": "CSV और XLSX फ़ॉर्मैट समर्थित हैं (CSV हेडर: कोड, नाम, विवरण)",
   "cancel": "रद्द करें",
   "save": "सेव करें",

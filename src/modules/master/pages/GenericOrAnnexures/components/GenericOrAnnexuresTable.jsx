@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Button } from "react-bootstrap";
+import { Table, Button, Form } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
 import viewIcon from "../../../../../assets/view_icon.png";
@@ -11,18 +11,21 @@ const GenericOrAnnexuresTable = ({
   onDownload,
   onDelete,
   currentPage,
-  setCurrentPage
+  setCurrentPage,
+  pageSize,
+  setPageSize
 }) => {
+
   const { t } = useTranslation(["genericOrAnnexures"]);
   const rows = Array.isArray(data) ? data : [];
 
-  const itemsPerPage = 7;
+const indexOfLastItem = currentPage * pageSize;
+const indexOfFirstItem = indexOfLastItem - pageSize;
+const currentRows = rows.slice(indexOfFirstItem, indexOfLastItem);
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentRows = rows.slice(indexOfFirstItem, indexOfLastItem);
+const totalPages = Math.ceil(rows.length / pageSize);
 
-  const totalPages = Math.ceil(rows.length / itemsPerPage);
+ 
   const paginate = (page) => setCurrentPage(page);
 
   return (
@@ -82,8 +85,36 @@ const GenericOrAnnexuresTable = ({
         </Table>
       </div>
 
+
       {/* ===== PAGINATION ===== */}
-      {rows.length > itemsPerPage && (
+{rows.length > pageSize && (
+
+
+
+
+
+
+
+      <div className="d-flex justify-content-between align-items-center mt-2">
+  
+    {/* <span className="me-2">Rows per page:</span> */}
+    <Form.Select
+      size="sm"
+      style={{ width: "90px" }}
+      value={pageSize}
+      onChange={(e) => {
+        setPageSize(Number(e.target.value));
+        setCurrentPage(1);
+      }}
+    >
+      <option value={5}>5</option>
+      <option value={10}>10</option>
+      <option value={15}>15</option>
+      <option value={20}>20</option>
+      <option value={25}>25</option>
+      <option value={30}>30</option>
+    </Form.Select>
+
         <div className="pagination-container">
           <ul className="pagination">
             <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
@@ -118,6 +149,7 @@ const GenericOrAnnexuresTable = ({
             </li>
           </ul>
         </div>
+           </div>
       )}
     </>
   );

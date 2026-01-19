@@ -44,6 +44,8 @@ const JobGradePage = () => {
   const [editingId, setEditingId] = useState(null);
   const [errors, setErrors] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -204,6 +206,8 @@ const filteredJobGrades = jobGrades.filter(j =>
         onDelete={(row) => { setDeleteTarget(row); setShowDeleteModal(true); }}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+          pageSize={pageSize}
+  setPageSize={setPageSize}
       />
 
       <JobGradeFormModal

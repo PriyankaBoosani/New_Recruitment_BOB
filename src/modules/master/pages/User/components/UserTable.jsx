@@ -1,10 +1,12 @@
 import React from "react";
-import { Table } from "react-bootstrap";
+import { Table, Form } from "react-bootstrap";
+
 import { useTranslation } from "react-i18next";
 
-const UserTable = ({ data, searchTerm, currentPage, setCurrentPage }) => {
+const UserTable = ({ data, searchTerm, currentPage, setCurrentPage, pageSize,
+  setPageSize }) => {
   const { t } = useTranslation(["user"]);
-  const itemsPerPage = 7;
+  // const itemsPerPage = 7;
 
   const filtered = data.filter(u =>
     Object.values(u).some(v =>
@@ -12,10 +14,16 @@ const UserTable = ({ data, searchTerm, currentPage, setCurrentPage }) => {
     )
   );
 
-  const indexOfLast = currentPage * itemsPerPage;
-  const indexOfFirst = indexOfLast - itemsPerPage;
-  const current = filtered.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
+  const indexOfLast = currentPage * pageSize;
+const indexOfFirst = indexOfLast - pageSize;
+const current = filtered.slice(indexOfFirst, indexOfLast);
+const totalPages = Math.ceil(filtered.length / pageSize);
+
+  // const indexOfLast = currentPage * itemsPerPage;
+  // const indexOfFirst = indexOfLast - itemsPerPage;
+  // const current = filtered.slice(indexOfFirst, indexOfLast);
+  // const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
   return (
     <>
@@ -52,7 +60,31 @@ const UserTable = ({ data, searchTerm, currentPage, setCurrentPage }) => {
         </Table>
       </div>
 
+   
+
+
       {totalPages > 1 && (
+
+           <div className="d-flex justify-content-between align-items-center mt-2">
+  {/* <div className="d-flex align-items-center"> */}
+    {/* <span className="me-2">Rows per page:</span> */}
+    <Form.Select
+      size="sm"
+      style={{ width: "90px" }}
+      value={pageSize}
+      onChange={(e) => {
+        setPageSize(Number(e.target.value));
+        setCurrentPage(1);
+      }}
+    >
+      <option value={5}>5</option>
+      <option value={10}>10</option>
+      <option value={15}>15</option>
+      <option value={20}>20</option>
+        <option value={25}>25</option>
+          <option value={30}>30</option>
+    </Form.Select>
+ 
         <div className="pagination-container">
           <ul className="pagination">
             <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
@@ -68,6 +100,10 @@ const UserTable = ({ data, searchTerm, currentPage, setCurrentPage }) => {
             </li>
           </ul>
         </div>
+         </div>
+
+ 
+// </div>
       )}
     </>
   );

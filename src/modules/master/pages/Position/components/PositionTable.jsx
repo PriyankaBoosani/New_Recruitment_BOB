@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Button } from "react-bootstrap";
+import { Table, Button, Form } from "react-bootstrap";
 import viewIcon from "../../../../../assets/view_icon.png";
 import editIcon from "../../../../../assets/edit_icon.png";
 import deleteIcon from "../../../../../assets/delete_icon.png";
@@ -9,12 +9,13 @@ const PositionTable = ({
   searchTerm,
   currentPage,
   setCurrentPage,
+    pageSize,
+  setPageSize,
   onEdit,
   onView,
   onDelete,
   t
 }) => {
-  const itemsPerPage = 7;
 
   /*  FILTER (NO UUID FILTERING) */
   const filtered = !searchTerm
@@ -25,10 +26,11 @@ const PositionTable = ({
           p.description?.toLowerCase().includes(searchTerm.toLowerCase())
       );
 
-  const indexOfLast = currentPage * itemsPerPage;
-  const indexOfFirst = indexOfLast - itemsPerPage;
-  const current = filtered.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const indexOfLast = currentPage * pageSize;
+const indexOfFirst = indexOfLast - pageSize;
+const current = filtered.slice(indexOfFirst, indexOfLast);
+const totalPages = Math.ceil(filtered.length / pageSize);
+
 
   return (
     <>
@@ -106,7 +108,35 @@ const PositionTable = ({
         </Table>
       </div>
 
+
+
+
       {filtered.length > 0 && (
+
+
+
+
+      <div className="d-flex justify-content-between align-items-center mt-2">
+ 
+    {/* <span className="me-2">Rows per page:</span> */}
+    <Form.Select
+      size="sm"
+      style={{ width: "90px" }}
+      value={pageSize}
+      onChange={(e) => {
+        setPageSize(Number(e.target.value));
+        setCurrentPage(1);
+      }}
+    >
+      <option value={5}>5</option>
+      <option value={10}>10</option>
+      <option value={15}>15</option>
+      <option value={25}>25</option>
+       <option value={30}>30</option>
+       
+    </Form.Select>
+
+
         <div className="pagination-container">
           <nav>
             <ul className="pagination">
@@ -144,6 +174,7 @@ const PositionTable = ({
             </ul>
           </nav>
         </div>
+          </div>
       )}
     </>
   );

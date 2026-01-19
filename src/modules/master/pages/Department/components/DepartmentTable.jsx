@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { Table, Button } from 'react-bootstrap';
+import React from 'react';
+import { Table, Button, Form } from 'react-bootstrap';
 import { useTranslation } from "react-i18next";
 import viewIcon from "../../../../../assets/view_icon.png";
 import editIcon from "../../../../../assets/edit_icon.png";
 import deleteIcon from "../../../../../assets/delete_icon.png";
 
-const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPage, setCurrentPage }) => {
+const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPage, setCurrentPage,  pageSize,
+  setPageSize }) => {
     const { t } = useTranslation(["department"]);
-    const itemsPerPage = 7;
+    // const itemsPerPage = 7;
 
     // Filter logic
     const filteredDepts = data.filter(dept => {
@@ -21,12 +22,15 @@ const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPa
   );
 });
 
-    const indexOfLastDept = currentPage * itemsPerPage;
-    const indexOfFirstDept = indexOfLastDept - itemsPerPage;
+    const indexOfLastDept = currentPage * pageSize;
+const indexOfFirstDept = indexOfLastDept - pageSize;
+const totalPages = Math.ceil(filteredDepts.length / pageSize);
+
+   
     const currentDepts = filteredDepts.slice(indexOfFirstDept, indexOfLastDept);
 
     // Pagination logic
-    const totalPages = Math.ceil(filteredDepts.length / itemsPerPage);
+  
 
     const paginate = (num) => setCurrentPage(num);
 
@@ -73,7 +77,31 @@ const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPa
                 </Table>
             </div>
 
+
+          
+
+
             {filteredDepts.length > 0 && (
+                  <div className="d-flex justify-content-between align-items-center mt-2">
+ 
+    {/* <span className="me-2">Rows per page:</span> */}
+    <Form.Select
+      size="sm"
+      style={{ width: "90px" }}
+      value={pageSize}
+      onChange={(e) => {
+        setPageSize(Number(e.target.value));
+        setCurrentPage(1);
+      }}
+    >
+      <option value={5}>5</option>
+      <option value={10}>10</option>
+      <option value={15}>15</option>
+      <option value={20}>20</option>
+      <option value={25}>25</option>
+      <option value={30}>30</option>
+    </Form.Select>
+ 
                 <div className="pagination-container">
                     <nav>
                         <ul className="pagination">
@@ -91,6 +119,7 @@ const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPa
                         </ul>
                     </nav>
                 </div>
+                 </div>
             )}
         </>
     );

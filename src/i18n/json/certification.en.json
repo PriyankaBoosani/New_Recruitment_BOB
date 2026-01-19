@@ -16,7 +16,7 @@
 
   "manual_entry": "Manual Entry",
   "import_file": "Import File",
-  "choose_add_method": "Choose manual entry or import using XLSX",
+  "choose_add_method": "Choose to add manually or import from XLSX file.",
 
   "cancel": "Cancel",
   "close": "Close",
