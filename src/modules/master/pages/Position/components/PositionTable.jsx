@@ -18,13 +18,18 @@ const PositionTable = ({
 }) => {
 
   /*  FILTER (NO UUID FILTERING) */
-  const filtered = !searchTerm
-    ? data
-    : data.filter(
-        (p) =>
-          p.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          p.description?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+const term = searchTerm.toLowerCase().trim();
+
+const filtered = !term
+  ? data
+  : data.filter(
+      (p) =>
+        p.title?.toLowerCase().includes(term) ||
+        p.jobGrade?.toLowerCase().includes(term) ||
+        p.rolesResponsibilities?.toLowerCase().includes(term) ||
+        p.description?.toLowerCase().includes(term)
+    );
+
 
   const indexOfLast = currentPage * pageSize;
 const indexOfFirst = indexOfLast - pageSize;
