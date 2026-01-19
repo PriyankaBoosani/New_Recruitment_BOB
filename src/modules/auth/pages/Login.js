@@ -14,6 +14,8 @@ import CryptoJS from "crypto-js";
 import { mapAuthApiToState } from "../mappers/auth.mapper";
 import { mapUserApiToState } from "../mappers/user.mapper";
 
+import { toast } from "react-toastify";
+
 
 const Login = () => {
   const SECRET_KEY = "fdf4-832b-b4fd-ccfb9258a6b3";
@@ -30,10 +32,14 @@ const Login = () => {
   //   return CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
   // };
 
+ const encryptPassword = (password) =>
+    CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
+      //var encryptedPassword=encryptPassword(password);
       const authApiRes = await loginApi.recruiterLogin(email, password);
 
       // MFA case
@@ -61,10 +67,10 @@ const Login = () => {
         )
       );
 
-      navigate("/dashboard");
+      navigate("/users");
     } catch (err) {
       const errorData = err.response?.data;
-      alert(errorData?.error_description || "Login failed");
+      toast.error(errorData?.error_description || "Login failed");
     }
   };
 

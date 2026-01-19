@@ -104,68 +104,68 @@ const AddPosition = () => {
     }, [existingPosition]);
 
     useEffect(() => {
-  if (!existingPosition) return;
+        if (!existingPosition) return;
 
-  if (
-    !educationTypes.length ||
-    !qualifications.length ||
-    !specializations.length ||
-    !certifications.length
-  ) {
-    return;
-  }
+        if (
+            !educationTypes.length ||
+            !qualifications.length ||
+            !specializations.length ||
+            !certifications.length
+        ) {
+            return;
+        }
 
-  if (eduInitializedRef.current) return;
+        if (eduInitializedRef.current) return;
 
-  const mandatory = mapEduRulesToModalData(
-    existingPosition.mandatoryEduRulesJson,
-    educationTypes,
-    qualifications,
-    specializations,
-    certifications
-  );
+        const mandatory = mapEduRulesToModalData(
+            existingPosition.mandatoryEduRulesJson,
+            educationTypes,
+            qualifications,
+            specializations,
+            certifications
+        );
 
-  const preferred = mapEduRulesToModalData(
-    existingPosition.preferredEduRulesJson,
-    educationTypes,
-    qualifications,
-    specializations,
-    certifications
-  );
+        const preferred = mapEduRulesToModalData(
+            existingPosition.preferredEduRulesJson,
+            educationTypes,
+            qualifications,
+            specializations,
+            certifications
+        );
 
-  setEducationData({
-    mandatory: {
-      ...mandatory,
-      text: buildEducationText(
-        mandatory.educations,
-        mandatory.certificationIds,
+        setEducationData({
+            mandatory: {
+                ...mandatory,
+                text: buildEducationText(
+                    mandatory.educations,
+                    mandatory.certificationIds,
+                    educationTypes,
+                    qualifications,
+                    specializations,
+                    certifications
+                )
+            },
+            preferred: {
+                ...preferred,
+                text: buildEducationText(
+                    preferred.educations,
+                    preferred.certificationIds,
+                    educationTypes,
+                    qualifications,
+                    specializations,
+                    certifications
+                )
+            }
+        });
+
+        eduInitializedRef.current = true;
+    }, [
+        existingPosition,
         educationTypes,
         qualifications,
         specializations,
         certifications
-      )
-    },
-    preferred: {
-      ...preferred,
-      text: buildEducationText(
-        preferred.educations,
-        preferred.certificationIds,
-        educationTypes,
-        qualifications,
-        specializations,
-        certifications
-      )
-    }
-  });
-
-  eduInitializedRef.current = true;
-}, [
-  existingPosition,
-  educationTypes,
-  qualifications,
-  specializations,
-  certifications
-]);
+    ]);
 
 
     // Handle National Distribution mapping
@@ -219,11 +219,19 @@ const AddPosition = () => {
     }, [existingPosition, reservationCategories, disabilityCategories]);
 
     // --- HANDLERS ---
+    const numericFields = [
+        "vacancies",
+        "minAge",
+        "maxAge",
+        "contractualPeriod"
+    ];
+
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
-        if (name.includes('.')) {
-            const [parent, child] = name.split('.');
 
+        // handle nested fields (experience)
+        if (name.includes(".")) {
+            const [parent, child] = name.split(".");
             setFormData(prev => ({
                 ...prev,
                 [parent]: {
@@ -231,16 +239,25 @@ const AddPosition = () => {
                     [child]: value
                 }
             }));
-
-            // ✅ CLEAR parent error (mandatoryExperience / preferredExperience)
             setErrors(prev => ({ ...prev, [parent]: "" }));
             return;
         }
-        else {
-            setFormData(prev => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+
+        let finalValue = value;
+
+        // 🔒 BLOCK TEXT COMPLETELY
+        if (numericFields.includes(name)) {
+            finalValue = value.replace(/\D/g, "");
         }
+
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : finalValue
+        }));
+
         setErrors(prev => ({ ...prev, [name]: "" }));
     };
+
 
     const onPositionSelect = (id) => {
         const selected = positions.find(p => String(p.id) === String(id));
@@ -304,7 +321,7 @@ const AddPosition = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const validationErrors = validateAddPosition({ isEditMode, formData, educationData, indentFile, approvedBy, approvedOn, existingIndentPath, nationalCategories });
+        const validationErrors = validateAddPosition({ isEditMode, formData, educationData, indentFile, approvedBy, approvedOn, existingIndentPath, nationalCategories, nationalDisabilities });
         if (Object.keys(validationErrors).length > 0) { setErrors(validationErrors); return; }
 
         if (formData.enableStateDistribution) {
@@ -344,7 +361,7 @@ const AddPosition = () => {
                     <div className="section-title"><span className="indicator"></span><h6>{isEditMode ? "Edit Position" : "Add New Position"}</h6></div>
                     <Form onSubmit={handleSubmit}>
                         <PositionForm
-                            formData={formData} errors={errors} handleInputChange={handleInputChange} indentFile={indentFile}
+                            formData={formData} errors={errors} handleInputChange={handleInputChange} indentFile={indentFile} setFormData={setFormData}
                             existingIndentPath={existingIndentPath} setIndentFile={setIndentFile} setErrors={setErrors}
                             approvedBy={approvedBy} setApprovedBy={setApprovedBy} approvedOn={approvedOn} setApprovedOn={setApprovedOn}
                             masterData={masterData} onPositionSelect={onPositionSelect} educationData={educationData}
@@ -411,9 +428,9 @@ const AddPosition = () => {
                             ) : (
                                 <>
                                     <Row className="g-3 mb-3">
-                                        <Col md={4}><Form.Label>State *</Form.Label><Form.Select value={currentState.state} onChange={e => setCurrentState(prev => ({ ...prev, state: e.target.value }))}><option value="">Select State</option>{states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}</Form.Select></Col>
-                                        <Col md={4}><Form.Label>Vacancies *</Form.Label><Form.Control type="number" value={currentState.vacancies} onChange={e => setCurrentState(prev => ({ ...prev, vacancies: e.target.value }))} /></Col>
-                                        <Col md={4}><Form.Label>Local Language</Form.Label><Form.Select value={currentState.language} onChange={e => setCurrentState(prev => ({ ...prev, language: e.target.value }))} disabled={!currentState.state}><option value="">Select Language</option>{filteredLanguages.map(lang => <option key={lang.id} value={lang.id}>{lang.name}</option>)}</Form.Select></Col>
+                                        <Col md={4}><Form.Label>State <span className="text-danger">*</span></Form.Label><Form.Select value={currentState.state} onChange={e => setCurrentState(prev => ({ ...prev, state: e.target.value }))}><option value="">Select State</option>{states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}</Form.Select></Col>
+                                        <Col md={4}><Form.Label>Vacancies <span className="text-danger">*</span></Form.Label><Form.Control type="number" value={currentState.vacancies} onChange={e => setCurrentState(prev => ({ ...prev, vacancies: e.target.value }))} /></Col>
+                                        <Col md={4}><Form.Label>Local Language <span className="text-danger">*</span></Form.Label><Form.Select value={currentState.language} onChange={e => setCurrentState(prev => ({ ...prev, language: e.target.value }))} disabled={!currentState.state}><option value="">Select Language</option>{filteredLanguages.map(lang => <option key={lang.id} value={lang.id}>{lang.name}</option>)}</Form.Select></Col>
                                     </Row>
                                     <Row className="g-4 mt-3">
                                         <Col md={7}>

@@ -51,20 +51,20 @@ const JobGradePage = () => {
   const [selectedCSVFile, setSelectedCSVFile] = useState(null);
   const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
 
- const openAddModal = () => {
-   setIsViewing(false);  
-  setIsEditing(false);
-  setFormData({
-    scale: '',
-    gradeCode: '',
-    minSalary: '',
-    maxSalary: '',
-    description: ''
-  });
-  setErrors({});              //  CLEAR OLD ERRORS
-  setActiveTab('manual');
-  setShowAddModal(true);
-};
+  const openAddModal = () => {
+    setIsViewing(false);
+    setIsEditing(false);
+    setFormData({
+      scale: '',
+      gradeCode: '',
+      minSalary: '',
+      maxSalary: '',
+      description: ''
+    });
+    setErrors({});              //  CLEAR OLD ERRORS
+    setActiveTab('manual');
+    setShowAddModal(true);
+  };
 
   // const openEditModal = (row) => {
 
@@ -77,37 +77,37 @@ const JobGradePage = () => {
 
 
   const openViewModal = (row) => {
-  setIsViewing(true);
-  setIsEditing(false);
+    setIsViewing(true);
+    setIsEditing(false);
 
-  setFormData({
-    scale: row.scale ?? '',
-    gradeCode: row.gradeCode ?? '',
-    minSalary: row.minSalary ?? '',
-    maxSalary: row.maxSalary ?? '',
-    description: row.description ?? ''
-  });
+    setFormData({
+      scale: row.scale ?? '',
+      gradeCode: row.gradeCode ?? '',
+      minSalary: row.minSalary ?? '',
+      maxSalary: row.maxSalary ?? '',
+      description: row.description ?? ''
+    });
 
-  setActiveTab('manual');
-  setShowAddModal(true);
-};
+    setActiveTab('manual');
+    setShowAddModal(true);
+  };
 
 
   const openEditModal = (row) => {
-     setIsViewing(false);
-  setIsEditing(true);
-  setEditingId(row.id);
-  setFormData({
-    scale: row.scale ?? '',
-    gradeCode: row.gradeCode ?? '',
-    minSalary: row.minSalary ?? '',
-    maxSalary: row.maxSalary ?? '',
-    description: row.description ?? ''
-  });
-  setErrors({});              //  CLEAR OLD ERRORS
-  setActiveTab('manual');
-  setShowAddModal(true);
-};
+    setIsViewing(false);
+    setIsEditing(true);
+    setEditingId(row.id);
+    setFormData({
+      scale: row.scale ?? '',
+      gradeCode: row.gradeCode ?? '',
+      minSalary: row.minSalary ?? '',
+      maxSalary: row.maxSalary ?? '',
+      description: row.description ?? ''
+    });
+    setErrors({});              //  CLEAR OLD ERRORS
+    setActiveTab('manual');
+    setShowAddModal(true);
+  };
 
 
   const handleSave = async (e) => {
@@ -151,6 +151,23 @@ const JobGradePage = () => {
       setList: fetchJobGrades
     });
   };
+ const searchableFields = [
+  'scale',
+  'gradeCode',
+  'minSalary',
+  'maxSalary',
+  'description'
+];
+
+const filteredJobGrades = jobGrades.filter(j =>
+  searchableFields.some(key =>
+    String(j[key] ?? '')
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  )
+);
+
+
 
   return (
     <Container fluid className="user-container">
@@ -160,21 +177,16 @@ const JobGradePage = () => {
         <div className="user-actions">
           <div className="search-box">
             <Search className="search-icon" />
-          <Form.Control
-  placeholder={t("jobGrade:search_placeholder")}
-  value={searchTerm}
-  onChange={(e) => {
-    const value = e.target.value;
+            <Form.Control
+              placeholder={t("jobGrade:search_placeholder")}
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
 
-    // //  allow alphabets, numbers, @, and space
-    // if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
-    //   return; // block invalid characters
-    // }
-
-    setSearchTerm(value);
-  }}
-  className="search-input"
-/>
+              className="search-input"
+            />
 
           </div>
 
@@ -185,10 +197,10 @@ const JobGradePage = () => {
       </div>
 
       <JobGradeTable
-        data={jobGrades}
+        data={filteredJobGrades}
         searchTerm={searchTerm}
         onEdit={openEditModal}
-         onView={openViewModal}
+        onView={openViewModal}
         onDelete={(row) => { setDeleteTarget(row); setShowDeleteModal(true); }}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
@@ -198,13 +210,13 @@ const JobGradePage = () => {
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
         isEditing={isEditing}
-         isViewing={isViewing} 
+        isViewing={isViewing}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         formData={formData}
-         setFormData={setFormData}
+        setFormData={setFormData}
         errors={errors}
-         setErrors={setErrors}
+        setErrors={setErrors}
         handleInputChange={(e) => {
           const { name, value } = e.target;
 
@@ -225,7 +237,7 @@ const JobGradePage = () => {
         onSelectCSV={setSelectedCSVFile}
         removeCSV={() => setSelectedCSVFile(null)}
         t={t}
-        fetchJobGrades={fetchJobGrades} 
+        fetchJobGrades={fetchJobGrades}
       />
 
       <DeleteConfirmModal

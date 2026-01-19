@@ -36,7 +36,7 @@ const GenericOrAnnexuresFormModal = ({
               ? t("view", "View Generic / Annexures")
               : isEditing
               ? t("edit", "Edit Generic / Annexures")
-              : t("add", "Add Generic / Annexures")}
+              : t("addgenAnn", "Add Generic / Annexures")}
           </Modal.Title>
 
           {!isViewing && (

@@ -8,7 +8,9 @@ export const validateAddPosition = ({
   existingIndentPath,
   approvedBy,
   approvedOn,
-  nationalCategories
+  nationalCategories,
+  nationalDisabilities,
+  stateDistributions
 }) => {
   const errors = {};
 
@@ -88,18 +90,45 @@ export const validateAddPosition = ({
     errors.responsibilities = "This field is required";
   }
 
-  // ---------- NATIONAL DISTRIBUTION ----------
-  if (!formData.enableStateDistribution) {
-    const nationalTotal = Object.values(nationalCategories || {})
-      .reduce((sum, v) => sum + Number(v || 0), 0);
-
-    const totalVacancies = Number(formData.vacancies || 0);
-
-    if (nationalTotal !== totalVacancies) {
-      errors.nationalDistribution =
-        `National distribution total (${nationalTotal}) must equal total vacancies (${totalVacancies})`;
-    }
+  // ---------- NATIONAL / STATE DISTRIBUTION (REQUIRED) ----------
+if (formData.enableStateDistribution) {
+  // STATE WISE
+  if (!stateDistributions || stateDistributions.length === 0) {
+    errors.nationalDistribution = "This field is required";
   }
+} else {
+  // NATIONAL WISE
+  const nationalCatTotal = Object.values(nationalCategories || {})
+    .reduce((sum, v) => sum + Number(v || 0), 0);
+
+  const nationalDisTotal = Object.values(nationalDisabilities || {})
+    .reduce((sum, v) => sum + Number(v || 0), 0);
+
+  if (nationalCatTotal === 0 && nationalDisTotal === 0) {
+    errors.nationalDistribution = "This field is required";
+  }
+}
+
+// ---------- NATIONAL DISTRIBUTION ----------
+if (!formData.enableStateDistribution) {
+  const generalTotal = Object.values(nationalCategories || {})
+    .reduce((sum, v) => sum + Number(v || 0), 0);
+
+  const disabilityTotal = Object.values(nationalDisabilities || {})
+    .reduce((sum, v) => sum + Number(v || 0), 0);
+
+  const total = generalTotal + disabilityTotal;
+  const vacancies = Number(formData.vacancies || 0);
+
+  if (total !== vacancies) {
+    errors.nationalDistribution =
+      `National distribution total (${total}) must equal total vacancies (${vacancies})`;
+  }
+}
+
+
+
+
 
   return errors;
 };

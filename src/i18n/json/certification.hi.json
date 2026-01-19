@@ -16,7 +16,7 @@
   "no_file_selected": "कृपया अपलोड करने के लिए फ़ाइल चुनें",
   "manual_entry": "मैनुअल प्रविष्टि",
   "import_file": "फ़ाइल आयात करें",
-  "choose_add_method": "मैनुअल प्रविष्टि या CSV/XLSX से आयात चुनें",
+  "choose_add_method": "मैनुअल प्रविष्टि या XLSX से आयात चुनें",
   "invalid_file": "कृपया एक मान्य Excel फ़ाइल अपलोड करें (.xlsx)",
   "cancel": "रद्द करें",
   "close": "बंद करें",
