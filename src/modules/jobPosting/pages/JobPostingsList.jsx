@@ -56,7 +56,8 @@ const JobPostingsList = () => {
             selectedPosition.requisitionId,
             selectedPosition.positionId
         );
-
+        fetchPositions(selectedPosition.requisitionId);
+        refetch();
         setShowDeletePosModal(false);
         setSelectedPosition(null);
     };
@@ -93,7 +94,7 @@ const JobPostingsList = () => {
 
 
     // 🔹 API Hook
-    const { requisitions, loading, pageInfo, deleteRequisition } = useJobRequisitions({
+    const { requisitions, loading, pageInfo, deleteRequisition, refetch } = useJobRequisitions({
         year,
         status,
         search,
@@ -239,8 +240,7 @@ const JobPostingsList = () => {
                                             Department - {req.departments}
                                         </div>
                                         <div>
-                                            <img src={position_Icon} alt="position" className="icon-16" /> Positions -{" "}
-                                            {req.positions}
+                                            <img src={position_Icon} alt="position" className="icon-16" /> Positions - {req.positions}
                                         </div>
                                         <div>
                                             <img src={vacancy_icon} alt="vacancy" className="icon-23" /> Vacancies -{" "}
@@ -472,30 +472,30 @@ const JobPostingsList = () => {
                 </Row>
             )}
             {/* Requisition Delete */}
-<DeleteConfirmationModal
-  show={showDeleteModal}
-  onClose={() => {
-    setShowDeleteModal(false);
-    setSelectedReq(null);
-  }}
-  onConfirm={handleConfirmDelete}
-  title="Delete Requisition"
-  message="Are you sure you want to delete this requisition?"
-  itemLabel={selectedReq?.code}
-/>
+            <DeleteConfirmationModal
+                show={showDeleteModal}
+                onClose={() => {
+                    setShowDeleteModal(false);
+                    setSelectedReq(null);
+                }}
+                onConfirm={handleConfirmDelete}
+                title="Delete Requisition"
+                message="Are you sure you want to delete this requisition?"
+                itemLabel={selectedReq?.code}
+            />
 
-{/* Position Delete */}
-<DeleteConfirmationModal
-  show={showDeletePosModal}
-  onClose={() => {
-    setShowDeletePosModal(false);
-    setSelectedPosition(null);
-  }}
-  onConfirm={handleConfirmDeletePosition}
-  title="Delete Position"
-  message="Are you sure you want to delete this position?"
-  itemLabel={selectedPosition?.positionName}
-/>
+            {/* Position Delete */}
+            <DeleteConfirmationModal
+                show={showDeletePosModal}
+                onClose={() => {
+                    setShowDeletePosModal(false);
+                    setSelectedPosition(null);
+                }}
+                onConfirm={handleConfirmDeletePosition}
+                title="Delete Position"
+                message="Are you sure you want to delete this position?"
+                itemLabel={selectedPosition?.positionName}
+            />
 
 
 
