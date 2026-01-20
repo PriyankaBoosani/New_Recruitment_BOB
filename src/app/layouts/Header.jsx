@@ -224,9 +224,9 @@ const Header = () => {
                     {t("certification")}
                   </NavDropdown.Item>
 
-                  <NavDropdown.Item as={Link} to="/specialcategory" onClick={closeMenu}>
+                  {/* <NavDropdown.Item as={Link} to="/specialcategory" onClick={closeMenu}>
                     {t("special_category")}
-                  </NavDropdown.Item>
+                  </NavDropdown.Item> */}
 
                   <NavDropdown.Item as={Link} to="/document" onClick={closeMenu}>
                     {t("document")}
