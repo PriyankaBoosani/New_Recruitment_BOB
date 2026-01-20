@@ -52,16 +52,18 @@ export default function EducationModal({
     const degreeText = rows
         .filter(r =>
             r.educationTypeId &&
-            r.educationQualificationsId &&
-            r.specializationId
+            r.educationQualificationsId
         )
         .map((r, i) => {
             const type = getLabel(educationTypes, r.educationTypeId);
             const degree = getLabel(qualifications, r.educationQualificationsId, "name");
             const spec = getLabel(specializations, r.specializationId);
 
-            return `${i > 0 ? "OR " : ""}${type} ${degree} in ${spec}`;
+            if (!type || !degree) return null;
+
+            return `${i > 0 ? "OR " : ""}${type} ${degree}${spec ? ` in ${spec}` : ""}`;
         })
+
         .join(" ");
 
 
