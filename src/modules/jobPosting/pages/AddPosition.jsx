@@ -137,27 +137,16 @@ const AddPosition = () => {
         setEducationData({
             mandatory: {
                 ...mandatory,
-                text: buildEducationText(
-                    mandatory.educations,
-                    mandatory.certificationIds,
-                    educationTypes,
-                    qualifications,
-                    specializations,
-                    certifications
-                )
+                // 🔴 USE BACKEND TEXT — DO NOT REBUILD
+                text: existingPosition.mandatoryEducation || ""
             },
             preferred: {
                 ...preferred,
-                text: buildEducationText(
-                    preferred.educations,
-                    preferred.certificationIds,
-                    educationTypes,
-                    qualifications,
-                    specializations,
-                    certifications
-                )
+                // 🔴 USE BACKEND TEXT — DO NOT REBUILD
+                text: existingPosition.preferredEducation || ""
             }
         });
+
 
         eduInitializedRef.current = true;
     }, [

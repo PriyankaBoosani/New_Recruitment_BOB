@@ -1,23 +1,31 @@
 export function buildEducationText(
-  educations,
-  certificationIds,
-  educationTypes,
-  qualifications,
-  specializations,
-  certifications
+  educations = [],
+  certificationIds = [],
+  educationTypes = [],
+  qualifications = [],
+  specializations = [],
+  certifications = []
 ) {
-  const getLabel = (list, id, key = "label") =>
-    list.find(i => i.id === id)?.[key] || "";
-
   const degreeText = educations
     .map((r, i) => {
-      const type = getLabel(educationTypes, r.educationTypeId);
-      const degree = getLabel(qualifications, r.educationQualificationsId, "name");
-      const spec = getLabel(specializations, r.specializationId);
+      const type = educationTypes.find(
+        t => t.id === r.educationTypeId
+      )?.name;
 
-      if (!type || !degree || !spec) return null;
+      const degree = qualifications.find(
+        q => q.id === r.educationQualificationsId
+      )?.name;
 
-      return `${i > 0 ? "OR " : ""}${type} ${degree} in ${spec}`;
+      const spec = specializations.find(
+        s => s.id === r.specializationId
+      )?.label; // OPTIONAL
+
+      // 🔴 ONLY THESE TWO ARE REQUIRED
+      if (!type || !degree) return null;
+
+      return `${i > 0 ? "OR " : ""}${type} ${degree}${
+        spec ? ` in ${spec}` : ""
+      }`;
     })
     .filter(Boolean)
     .join(" ");
