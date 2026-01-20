@@ -90,41 +90,47 @@ export const validateAddPosition = ({
     errors.responsibilities = "This field is required";
   }
 
-  // ---------- NATIONAL / STATE DISTRIBUTION (REQUIRED) ----------
-if (formData.enableStateDistribution) {
-  // STATE WISE
-  if (!stateDistributions || stateDistributions.length === 0) {
-    errors.nationalDistribution = "This field is required";
+  // ---------- STATE / NATIONAL DISTRIBUTION ----------
+
+  if (formData.enableStateDistribution) {
+    const activeStates = stateDistributions.filter(s => !s.__deleted);
+
+    if (activeStates.length === 0) {
+      errors.nationalDistribution = "This field is required";
+    } else {
+      const stateTotal = activeStates.reduce(
+        (sum, s) => sum + Number(s.vacancies || 0),
+        0
+      );
+
+      const vacancies = Number(formData.vacancies || 0);
+
+      if (stateTotal !== vacancies) {
+        errors.nationalDistribution =
+          `Total state vacancies (${stateTotal}) must equal total vacancies (${vacancies})`;
+      }
+    }
   }
-} else {
-  // NATIONAL WISE
-  const nationalCatTotal = Object.values(nationalCategories || {})
-    .reduce((sum, v) => sum + Number(v || 0), 0);
+  else {
+    // NATIONAL MODE
 
-  const nationalDisTotal = Object.values(nationalDisabilities || {})
-    .reduce((sum, v) => sum + Number(v || 0), 0);
+    const generalTotal = Object.values(nationalCategories || {})
+      .reduce((sum, v) => sum + Number(v || 0), 0);
 
-  if (nationalCatTotal === 0 && nationalDisTotal === 0) {
-    errors.nationalDistribution = "This field is required";
+    const disabilityTotal = Object.values(nationalDisabilities || {})
+      .reduce((sum, v) => sum + Number(v || 0), 0);
+
+    const total = generalTotal + disabilityTotal;
+    const vacancies = Number(formData.vacancies || 0);
+
+    if (total === 0) {
+      errors.nationalDistribution = "This field is required";
+    } else if (total !== vacancies) {
+      errors.nationalDistribution =
+        `National distribution total (${total}) must equal total vacancies (${vacancies})`;
+    }
   }
-}
 
-// ---------- NATIONAL DISTRIBUTION ----------
-if (!formData.enableStateDistribution) {
-  const generalTotal = Object.values(nationalCategories || {})
-    .reduce((sum, v) => sum + Number(v || 0), 0);
-
-  const disabilityTotal = Object.values(nationalDisabilities || {})
-    .reduce((sum, v) => sum + Number(v || 0), 0);
-
-  const total = generalTotal + disabilityTotal;
-  const vacancies = Number(formData.vacancies || 0);
-
-  if (total !== vacancies) {
-    errors.nationalDistribution =
-      `National distribution total (${total}) must equal total vacancies (${vacancies})`;
-  }
-}
 
 
 
@@ -132,3 +138,51 @@ if (!formData.enableStateDistribution) {
 
   return errors;
 };
+
+export const validateStateDistribution = ({
+  currentState,
+  stateDistributions,
+  editingIndex
+}) => {
+  const errors = {};
+
+  if (!currentState.state) {
+    errors.state = "This field is required";
+  }
+
+  if (!currentState.vacancies) {
+    errors.stateVacancies = "This field is required";
+  }
+
+  if (!currentState.language) {
+    errors.stateLanguage = "This field is required";
+  }
+
+  const catTotal = Object.values(currentState.categories || {})
+    .reduce((a, b) => a + Number(b || 0), 0);
+
+  const disTotal = Object.values(currentState.disabilities || {})
+    .reduce((a, b) => a + Number(b || 0), 0);
+
+  if (
+    currentState.vacancies &&
+    catTotal + disTotal !== Number(currentState.vacancies)
+  ) {
+    errors.stateDistribution =
+      "Category + Disability total must match vacancies";
+  }
+
+  const duplicate = stateDistributions.some(
+    (s, i) =>
+      s.state === currentState.state &&
+      !s.__deleted &&
+      i !== editingIndex
+  );
+
+  if (duplicate) {
+    errors.state = "This state is already added";
+  }
+
+  return errors;
+};
+

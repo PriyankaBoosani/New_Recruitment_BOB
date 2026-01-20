@@ -5,7 +5,7 @@ import "../../../style/css/AddPosition.css";
 import import_Icon from '../../../assets/import_Icon.png'
 import ImportModal from "../component/ImportModal";
 import EducationModal from "../component/EducationModal";
-import { validateAddPosition } from "../validations/validateAddPosition";
+import { validateAddPosition, validateStateDistribution } from "../validations/validateAddPosition";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import { useCreateJobPosition } from "../hooks/useCreateJobPosition";
 import { useRequisitionDetails } from "../hooks/useRequisitionDetails";
@@ -69,6 +69,7 @@ const AddPosition = () => {
         preferred: { educations: [], certificationIds: [], text: "" }
     });
     const eduInitializedRef = useRef(false);
+
 
     // --- EFFECTS ---
     useEffect(() => {
@@ -304,35 +305,74 @@ const AddPosition = () => {
     };
 
     const handleAddOrUpdateState = () => {
-        if (!currentState.state || !currentState.vacancies) { alert("State and Vacancies are required"); return; }
-        const catTotal = Object.values(currentState.categories || {}).reduce((a, b) => a + Number(b || 0), 0);
-        const disTotal = Object.values(currentState.disabilities || {}).reduce((a, b) => a + Number(b || 0), 0);
-        if (catTotal + disTotal !== Number(currentState.vacancies)) { alert("Category + Disability total must match vacancies"); return; }
-        if (stateDistributions.some((s, i) => s.state === currentState.state && i !== editingIndex)) { alert("This state is already added"); return; }
+
+        const newErrors = validateStateDistribution({
+            currentState,
+            stateDistributions,
+            editingIndex
+        });
+
+
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(prev => ({ ...prev, ...newErrors }));
+            return;
+        }
+        const deletedIndex = stateDistributions.findIndex(
+            s => s.state === currentState.state && s.__deleted
+        );
+
+        if (deletedIndex !== -1) {
+            const revived = [...stateDistributions];
+            revived[deletedIndex] = {
+                ...revived[deletedIndex], // keeps positionStateDistributionId
+                ...currentState,
+                __deleted: false
+            };
+
+            setStateDistributions(revived);
+            setCurrentState({
+                state: "",
+                vacancies: "",
+                language: "",
+                categories: {},
+                disabilities: {}
+            });
+            setEditingIndex(null);
+            return;
+        }
+
+
 
         const updated = [...stateDistributions];
         if (editingIndex !== null) updated[editingIndex] = { ...updated[editingIndex], ...currentState };
         else updated.push({ ...currentState });
 
         setStateDistributions(updated);
-        setCurrentState({ state: "", vacancies: "", language: "", categories: {}, disabilities: {} });
+
+        // ✅ CLEAR NATIONAL DISTRIBUTION ERROR
+        setErrors(prev => {
+            const { nationalDistribution, ...rest } = prev;
+            return rest;
+        });
+
+        setCurrentState({
+            state: "",
+            vacancies: "",
+            language: "",
+            categories: {},
+            disabilities: {}
+        });
         setEditingIndex(null);
+
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const validationErrors = validateAddPosition({ isEditMode, formData, educationData, indentFile, approvedBy, approvedOn, existingIndentPath, nationalCategories, nationalDisabilities });
+        const validationErrors = validateAddPosition({ isEditMode, formData, educationData, indentFile, approvedBy, approvedOn, existingIndentPath, nationalCategories, nationalDisabilities, stateDistributions });
         if (Object.keys(validationErrors).length > 0) { setErrors(validationErrors); return; }
 
-        if (formData.enableStateDistribution) {
-            const stateTotal = stateDistributions.reduce((sum, s) => sum + Number(s.vacancies || 0), 0);
-            if (stateTotal !== Number(formData.vacancies)) {
-                alert(`Total state vacancies (${stateTotal}) must equal total vacancies (${formData.vacancies})`);
-                return;
-            }
-        }
-
-        const payload = { formData, educationData, requisitionId, indentFile, approvedBy, approvedOn, reservationCategories, disabilityCategories, nationalCategories, nationalDisabilities, qualifications, certifications, stateDistributions };
+        const payload = { formData, educationData, requisitionId, indentFile, approvedBy, approvedOn, reservationCategories, disabilityCategories, nationalCategories, nationalDisabilities, qualifications, certifications, stateDistributions: stateDistributions.filter(s => !s.__deleted) };
         const success = isEditMode ? await updatePosition({ ...payload, positionId, existingPosition }) : await createPosition(payload);
         if (success) navigate(-1);
     };
@@ -428,9 +468,49 @@ const AddPosition = () => {
                             ) : (
                                 <>
                                     <Row className="g-3 mb-3">
-                                        <Col md={4}><Form.Label>State <span className="text-danger">*</span></Form.Label><Form.Select value={currentState.state} onChange={e => setCurrentState(prev => ({ ...prev, state: e.target.value }))}><option value="">Select State</option>{states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}</Form.Select></Col>
-                                        <Col md={4}><Form.Label>Vacancies <span className="text-danger">*</span></Form.Label><Form.Control type="number" value={currentState.vacancies} onChange={e => setCurrentState(prev => ({ ...prev, vacancies: e.target.value }))} /></Col>
-                                        <Col md={4}><Form.Label>Local Language <span className="text-danger">*</span></Form.Label><Form.Select value={currentState.language} onChange={e => setCurrentState(prev => ({ ...prev, language: e.target.value }))} disabled={!currentState.state}><option value="">Select Language</option>{filteredLanguages.map(lang => <option key={lang.id} value={lang.id}>{lang.name}</option>)}</Form.Select></Col>
+                                        <Col md={4}><Form.Label>State <span className="text-danger">*</span></Form.Label><Form.Select
+                                            value={currentState.state}
+                                            onChange={e => {
+                                                setCurrentState(prev => ({ ...prev, state: e.target.value }));
+                                                setErrors(prev => ({ ...prev, state: "" }));
+                                            }}
+
+                                        >
+
+
+                                            <option value="">Select State</option>{states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}</Form.Select>
+                                            <ErrorMessage>{errors.state}</ErrorMessage></Col>
+                                        <Col md={4}><Form.Label>Vacancies <span className="text-danger">*</span></Form.Label><Form.Control
+                                            type="number"
+                                            value={currentState.vacancies}
+                                            onChange={e => {
+                                                setCurrentState(prev => ({ ...prev, vacancies: e.target.value }));
+                                                setErrors(prev => ({ ...prev, stateVacancies: "" }));
+                                            }}
+                                        />
+                                            <ErrorMessage>{errors.stateVacancies}</ErrorMessage>
+                                        </Col>
+                                        <Col md={4}><Form.Label>Local Language <span className="text-danger">*</span></Form.Label>
+                                            <Form.Select
+                                                value={currentState.language}
+                                                disabled={!currentState.state}
+                                                onChange={e => {
+                                                    setCurrentState(prev => ({
+                                                        ...prev,
+                                                        language: e.target.value
+                                                    }));
+                                                    setErrors(prev => ({ ...prev, stateLanguage: "" }));
+                                                }}
+                                            >
+                                                <option value="">Select Language</option>
+                                                {filteredLanguages.map(lang => (
+                                                    <option key={lang.id} value={lang.id}>
+                                                        {lang.name}
+                                                    </option>
+                                                ))}
+                                            </Form.Select>
+
+                                            <ErrorMessage>{errors.stateLanguage}</ErrorMessage></Col>
                                     </Row>
                                     <Row className="g-4 mt-3">
                                         <Col md={7}>
@@ -465,16 +545,38 @@ const AddPosition = () => {
                                                 <tr><th>HI</th><th>ID</th><th>VI</th><th>OC</th><th>Total</th></tr>
                                             </thead>
                                             <tbody>
-                                                {stateDistributions.map((row, idx) => (
-                                                    <tr key={idx}>
-                                                        <td>{idx + 1}</td><td>{states.find(s => s.id === row.state)?.name}</td><td>{row.vacancies}</td><td>{languages.find(l => l.id === row.language)?.name}</td>
-                                                        {reservationCategories.map(c => <td key={c.code}>{row.categories?.[c.code] ?? 0}</td>)}
-                                                        <td>{Object.values(row.categories || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
-                                                        {disabilityCategories.map(d => <td key={d.disabilityCode}>{row.disabilities?.[d.disabilityCode] ?? 0}</td>)}
-                                                        <td>{Object.values(row.disabilities || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
-                                                        <td><Button size="sm" variant="link" onClick={() => { setEditingIndex(idx); setCurrentState({ ...row }); }}>✏️</Button><Button size="sm" variant="link" className="text-danger" onClick={() => setStateDistributions(prev => prev.filter((_, i) => i !== idx))}>🗑️</Button></td>
-                                                    </tr>
-                                                ))}
+                                                {stateDistributions
+                                                    .filter(row => !row.__deleted)
+                                                    .map((row, idx) => (
+
+                                                        <tr key={idx}>
+                                                            <td>{idx + 1}</td><td>{states.find(s => s.id === row.state)?.name}</td><td>{row.vacancies}</td><td>{languages.find(l => l.id === row.language)?.name}</td>
+                                                            {reservationCategories.map(c => <td key={c.code}>{row.categories?.[c.code] ?? 0}</td>)}
+                                                            <td>{Object.values(row.categories || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
+                                                            {disabilityCategories.map(d => <td key={d.disabilityCode}>{row.disabilities?.[d.disabilityCode] ?? 0}</td>)}
+                                                            <td>{Object.values(row.disabilities || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
+                                                            <td><Button size="sm" variant="link" onClick={() => { setEditingIndex(idx); setCurrentState({ ...row }); }}>✏️</Button><Button size="sm" variant="link" className="text-danger" onClick={() => {
+                                                                setStateDistributions(prev =>
+                                                                    prev.map((s, i) =>
+                                                                        i === idx ? { ...s, __deleted: true } : s
+                                                                    )
+                                                                );
+
+                                                                // if deleting the row being edited
+                                                                if (editingIndex === idx) {
+                                                                    setEditingIndex(null);
+                                                                    setCurrentState({
+                                                                        state: "",
+                                                                        vacancies: "",
+                                                                        language: "",
+                                                                        categories: {},
+                                                                        disabilities: {}
+                                                                    });
+                                                                }
+                                                            }}
+                                                            >🗑️</Button></td>
+                                                        </tr>
+                                                    ))}
                                             </tbody>
                                         </table>
                                     </div>

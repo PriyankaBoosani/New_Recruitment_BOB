@@ -73,6 +73,9 @@ const CreateRequisition = () => {
       </Container>
     );
   }
+  // Local pattern for Requisition Title (includes /)
+const TITLE_PATTERN = /^[A-Za-z0-9\s\-_/()&]+$/;
+
 
   /* ===================== UI ===================== */
   return (
@@ -111,9 +114,9 @@ const CreateRequisition = () => {
                           target: { name: "title", value }
                         }),
                       setErrors,
-                      pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_DASH_AMP,
+                    pattern: TITLE_PATTERN,
                       errorMessage:
-                        "Only letters, numbers, spaces, -, _ and & are allowed"
+                        "Only letters, numbers, spaces, -, _ / () and & are allowed"
                     })
                   }
                     onBlur={(e) =>

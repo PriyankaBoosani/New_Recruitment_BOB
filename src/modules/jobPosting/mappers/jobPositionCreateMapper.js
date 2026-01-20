@@ -18,42 +18,34 @@ export const mapAddPositionToCreateDto = ({
   /* ================= SAFE NORMALIZATION ================= */
   const safeQualifications = Array.isArray(qualifications) ? qualifications : [];
   const safeCertifications = Array.isArray(certifications) ? certifications : [];
-  const buildEducationRules = (edu) => {
-  if (!edu || !Array.isArray(edu.educations) || edu.educations.length === 0) {
-    return [];
+  const buildEduRulesJson = (edu, mode) => {
+  if (!edu) {
+    return mode === "mandatory"
+      ? { mandatoryEducations: [], mandatoryCertificationIds: [] }
+      : { preferredEducations: [], preferredCertificationIds: [] };
   }
 
-  // legacy — backend expects this
-  const degrees = edu.educations
-    .map(e =>
-      safeQualifications.find(q => q.id === e.educationQualificationsId)?.name
-    )
-    .filter(Boolean);
-
-  const certNames = (edu.certificationIds || [])
-    .map(id => safeCertifications.find(c => c.id === id)?.name)
-    .filter(Boolean);
-
-  if (degrees.length === 0) {
-    throw new Error("Education rules must contain at least one degree name");
-  }
-
-  return [
-    {
-      operator: "OR",
-
-      //  BACKEND (unchanged)
-      degrees,
-      ...(certNames.length ? { certifications: certNames } : {}),
-
-      //  FRONTEND (new, structured, lossless)
-      educations: edu.educations.map(e => ({
+  const educations = Array.isArray(edu.educations)
+    ? edu.educations.map(e => ({
         educationTypeId: e.educationTypeId,
-        educationQualificationId: e.educationQualificationsId,
-        specializationId: e.specializationId
+        educationQualificationsId: e.educationQualificationsId,
+        specializationId: e.specializationId,
       }))
-    }
-  ];
+    : [];
+
+  const certificationIds = Array.isArray(edu.certificationIds)
+    ? edu.certificationIds
+    : [];
+
+  return mode === "mandatory"
+    ? {
+        mandatoryEducations: educations,
+        mandatoryCertificationIds: certificationIds,
+      }
+    : {
+        preferredEducations: educations,
+        preferredCertificationIds: certificationIds,
+      };
 };
 
 
@@ -97,12 +89,16 @@ export const mapAddPositionToCreateDto = ({
     preferredEducation: educationData.preferred.text,
 
     //  OBJECT — NOT STRING
-    mandatoryEduRulesJson: {
-      rules: buildEducationRules(educationData.mandatory),
-    },
-    preferredEduRulesJson: {
-      rules: buildEducationRules(educationData.preferred),
-    },
+    mandatoryEduRulesJson: buildEduRulesJson(
+      educationData.mandatory,
+      "mandatory"
+    ),
+
+    preferredEduRulesJson: buildEduRulesJson(
+      educationData.preferred,
+      "preferred"
+    ),
+
 
     mandatoryExperienceMonths:
       Number(formData.mandatoryExperience.years || 0) * 12 +

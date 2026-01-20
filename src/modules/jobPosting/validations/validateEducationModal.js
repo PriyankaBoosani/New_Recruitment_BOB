@@ -1,22 +1,7 @@
-export const validateEducationModal = ({ rows, certs }) => {
-  const errors = {};
+export const validateEducationModal = ({ rows }) => {
+  const errors = { rows: [] };
 
-  // ---- KEEP ONLY COMPLETE ROWS ----
-  const filledRows = rows.filter(
-    r =>
-      r.educationTypeId &&
-      r.educationQualificationsId &&
-      r.specializationId
-  );
-
-  // ---- AT LEAST ONE DEGREE REQUIRED ----
-  if (filledRows.length === 0) {
-    errors.general = "At least one education requirement is required";
-    return errors;
-  }
-
-  // ---- ROW LEVEL VALIDATION (ONLY FILLED ROWS) ----
-  filledRows.forEach((row, index) => {
+  rows.forEach((row, i) => {
     const rowErrors = {};
 
     if (!row.educationTypeId) {
@@ -24,29 +9,14 @@ export const validateEducationModal = ({ rows, certs }) => {
     }
 
     if (!row.educationQualificationsId) {
-      rowErrors.educationQualificationsId = "Qualification is required";
+      rowErrors.educationQualificationsId = "Degree is required";
     }
 
-    if (!row.specializationId) {
-      rowErrors.specializationId = "Specialization is required";
-    }
-
-    if (Object.keys(rowErrors).length > 0) {
-      if (!errors.rows) errors.rows = {};
-      errors.rows[index] = rowErrors;
+    if (Object.keys(rowErrors).length) {
+      errors.rows[i] = rowErrors;
     }
   });
 
-  // ---- CERTIFICATIONS (UUIDs ONLY) ----
-  if (Array.isArray(certs)) {
-    const invalidCerts = certs.filter(
-      c => !c || typeof c !== "string"
-    );
-
-    if (invalidCerts.length > 0) {
-      errors.certs = "Invalid certification selected";
-    }
-  }
-
+  if (!errors.rows.length) return {};
   return errors;
 };

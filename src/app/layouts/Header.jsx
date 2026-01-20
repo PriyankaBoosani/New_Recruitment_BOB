@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import i18n from '../../i18n/i18n';
 
 const Header = () => {
+
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const dispatch = useDispatch();
@@ -57,6 +58,8 @@ const Header = () => {
     dispatch(clearUser());
     navigate('/login');
   };
+  const role = user?.role?.toLowerCase();
+  const isAdmin = role === "admin";
 
   /* ===================== OUTSIDE CLICK ===================== */
   useEffect(() => {
@@ -175,9 +178,9 @@ const Header = () => {
 
           <Navbar.Collapse id="main-navbar-nav">
             <Nav className="me-auto">
-                         <Nav.Link as={Link} to="/job-posting" onClick={closeMenu}>
-  {t("job_postings")}
-</Nav.Link>
+              <Nav.Link as={Link} to="/job-posting" onClick={closeMenu}>
+                {t("job_postings")}
+              </Nav.Link>
 
 
               {/* <Nav.Link as={Link} to="/dashboard" onClick={closeMenu}>Dashboard</Nav.Link>
@@ -188,47 +191,50 @@ const Header = () => {
               <Nav.Link href="/interviewpanel"> Interview Panel</Nav.Link> */}
 
               {/* Admin Menu */}
-            <NavDropdown title={t("admin")} id="admin-dropdown">
-  <NavDropdown.Item as={Link} to="/users" onClick={closeMenu}>
-    {t("users")}
-  </NavDropdown.Item>
+              {isAdmin && (
+                <NavDropdown title={t("admin")} id="admin-dropdown">
+                  <NavDropdown.Item as={Link} to="/users" onClick={closeMenu}>
+                    {t("users")}
+                  </NavDropdown.Item>
 
-  <NavDropdown.Item as={Link} to="/department" onClick={closeMenu}>
-    {t("department")}
-  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/department" onClick={closeMenu}>
+                    {t("department")}
+                  </NavDropdown.Item>
 
-  <NavDropdown.Item as={Link} to="/location" onClick={closeMenu}>
-    {t("location")}
-  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/location" onClick={closeMenu}>
+                    {t("location")}
+                  </NavDropdown.Item>
 
-  <NavDropdown.Item as={Link} to="/jobgrade" onClick={closeMenu}>
-    {t("job_grade")}
-  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/jobgrade" onClick={closeMenu}>
+                    {t("job_grade")}
+                  </NavDropdown.Item>
 
-  <NavDropdown.Item as={Link} to="/position" onClick={closeMenu}>
-    {t("position")}
-  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/position" onClick={closeMenu}>
+                    {t("position")}
+                  </NavDropdown.Item>
 
-  <NavDropdown.Item as={Link} to="/category" onClick={closeMenu}>
-    {t("category")}
-  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/category" onClick={closeMenu}>
+                    {t("category")}
+                  </NavDropdown.Item>
 
-  <NavDropdown.Item as={Link} to="/certification" onClick={closeMenu}>
-    {t("certification")}
-  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/certification" onClick={closeMenu}>
+                    {t("certification")}
+                  </NavDropdown.Item>
 
-  <NavDropdown.Item as={Link} to="/specialcategory" onClick={closeMenu}>
-    {t("special_category")}
-  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/specialcategory" onClick={closeMenu}>
+                    {t("special_category")}
+                  </NavDropdown.Item>
 
-  <NavDropdown.Item as={Link} to="/document" onClick={closeMenu}>
-    {t("document")}
-  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/document" onClick={closeMenu}>
+                    {t("document")}
+                  </NavDropdown.Item>
 
-  <NavDropdown.Item as={Link} to="/generic-or-annexures" onClick={closeMenu}>
-    {t("generic_or_annexures")}
-  </NavDropdown.Item>
-</NavDropdown>
+                  <NavDropdown.Item as={Link} to="/generic-or-annexures" onClick={closeMenu}>
+                    {t("generic_or_annexures")}
+                  </NavDropdown.Item>
+                </NavDropdown>
+              )}
+
 
             </Nav>
           </Navbar.Collapse>
