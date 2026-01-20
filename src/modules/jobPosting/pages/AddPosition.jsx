@@ -81,7 +81,10 @@ const AddPosition = () => {
             minAge: existingPosition.eligibilityAgeMin,
             maxAge: existingPosition.eligibilityAgeMax,
             employmentType: existingPosition.employmentType,
-            contractualPeriod: existingPosition.contractYears,
+            contractualPeriod:
+                existingPosition.employmentType?.toLowerCase().includes("contract")
+                    ? existingPosition.contractYears || ""
+                    : "",
             grade: existingPosition.gradeId,
             enableLocation: existingPosition.isLocationPreferenceEnabled,
             responsibilities: existingPosition.rolesResponsibilities,

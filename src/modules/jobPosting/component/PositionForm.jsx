@@ -2,6 +2,7 @@ import React from "react";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import upload_icon from '../../../assets/upload_Icon.png';
+import { useEffect } from "react";
 
 const TEXT_ALLOWED_REGEX = /^[A-Za-z0-9 .,\-()&:;/]*$/;
 const PositionForm = ({
@@ -27,6 +28,21 @@ const PositionForm = ({
     ALLOWED_EXTENSIONS,
     MAX_FILE_SIZE_MB
 }) => {
+ const isContractEmployment =
+  employmentTypes.find(
+    t =>
+      String(t.id) === String(formData.employmentType) &&
+      t.label?.toLowerCase().includes("contract")
+  ) !== undefined;
+
+useEffect(() => {
+  if (!isContractEmployment && formData.contractualPeriod) {
+    setFormData(prev => ({
+      ...prev,
+      contractualPeriod: ""
+    }));
+  }
+}, [isContractEmployment]);
 
     return (
 
@@ -132,8 +148,31 @@ const PositionForm = ({
                     <ErrorMessage>{errors.vacancies}</ErrorMessage>
                 </Col>
 
-                <Col md={4}><Form.Label>Min Age <span className="text-danger">*</span></Form.Label><Form.Control name="minAge" type="text" inputMode="numeric" pattern="[0-9]*" value={formData.minAge} onChange={handleInputChange} /><ErrorMessage>{errors.minAge}</ErrorMessage></Col>
-                <Col md={4}><Form.Label>Max Age <span className="text-danger">*</span></Form.Label><Form.Control name="maxAge" type="text" inputMode="numeric" pattern="[0-9]*" value={formData.maxAge} onChange={handleInputChange} /><ErrorMessage>{errors.maxAge}</ErrorMessage></Col>
+                <Col md={4}><Form.Label>Min Age <span className="text-danger">*</span></Form.Label><Form.Control name="minAge" type="text" inputMode="numeric" value={formData.minAge} onChange={(e) => {
+                    let value = e.target.value;
+
+                    // allow only digits
+                    value = value.replace(/\D/g, "");
+
+                    // limit to 2 digits
+                    if (value.length > 2) return;
+
+                    handleInputChange({
+                        target: { name: "minAge", value }
+                    });
+                }} />
+                    <ErrorMessage>{errors.minAge}</ErrorMessage></Col>
+                <Col md={4}><Form.Label>Max Age <span className="text-danger">*</span></Form.Label><Form.Control name="maxAge" type="text" inputMode="numeric" value={formData.maxAge} onChange={(e) => {
+                    let value = e.target.value;
+
+                    value = value.replace(/\D/g, "");
+                    if (value.length > 2) return;
+
+                    handleInputChange({
+                        target: { name: "maxAge", value }
+                    });
+                }} />
+                    <ErrorMessage>{errors.maxAge}</ErrorMessage></Col>
 
                 <Col md={4}>
                     <Form.Label>Type of Employment <span className="text-danger">*</span></Form.Label>
@@ -144,7 +183,7 @@ const PositionForm = ({
                     <ErrorMessage>{errors.employmentType}</ErrorMessage>
                 </Col>
 
-                <Col md={4}><Form.Label>Contractual Period(Years)</Form.Label><Form.Control name="contractualPeriod" type="text" inputMode="numeric" pattern="[0-9]*" value={formData.contractualPeriod} onChange={handleInputChange} /></Col>
+                <Col md={4}><Form.Label>Contractual Period(Years)</Form.Label><Form.Control name="contractualPeriod" type="text" inputMode="numeric"  value={formData.contractualPeriod} onChange={handleInputChange}  disabled={!isContractEmployment} /></Col>
                 <Col md={4}>
                     <Form.Label>Grade / Scale <span className="text-danger">*</span></Form.Label>
                     <Form.Select name="grade" value={formData.grade} onChange={handleInputChange}>
