@@ -4,14 +4,10 @@ import { Container, Row, Col, Form, Button, Card, Spinner } from "react-bootstra
 import "../../../style/css/CreateRequisition.css";
 
 import ErrorMessage from "../../../shared/components/ErrorMessage";
-import { validateRequisitionForm } from "../validations/requisition-validation";
+import { validateRequisitionForm, validateTitleOnType, normalizeTitle } from "../validations/requisition-validation";
 import { mapRequisitionToApi } from "../mappers/createRequisitionMapper";
 import { useCreateRequisition } from "../hooks/useCreateRequisition";
 import { REQUISITION_CONFIG } from "../config/requisitionConfig";
-import {
-  handleValidatedInput,
-  INPUT_PATTERNS
-} from "../../../shared/utils/inputHandlers";
 
 
 const CreateRequisition = () => {
@@ -38,6 +34,9 @@ const CreateRequisition = () => {
   } = useCreateRequisition(editId);
 
   const [errors, setErrors] = useState({});
+
+
+
 
   /* ===================== SAVE ===================== */
   const handleSave = async (e) => {
@@ -73,9 +72,6 @@ const CreateRequisition = () => {
       </Container>
     );
   }
-  // Local pattern for Requisition Title (includes /)
-const TITLE_PATTERN = /^[A-Za-z0-9\s\-_/()&]+$/;
-
 
   /* ===================== UI ===================== */
   return (
@@ -105,31 +101,42 @@ const TITLE_PATTERN = /^[A-Za-z0-9\s\-_/()&]+$/;
                   name="title"
                   value={formData.title}
                   placeholder="Enter Requisition Title"
-                  onChange={(e) =>
-                    handleValidatedInput({
-                      e,
-                      fieldName: "title",
-                      onValidChange: (value) =>
-                        handleInputChange({
-                          target: { name: "title", value }
-                        }),
-                      setErrors,
-                    pattern: TITLE_PATTERN,
-                      errorMessage:
-                        "Only letters, numbers, spaces, -, _ / () and & are allowed"
-                    })
-                  }
-                    onBlur={(e) =>
+                  onChange={(e) => {
+                    const result = validateTitleOnType(e.target.value);
+
+                    if (!result.valid) {
+                      setErrors(prev => ({
+                        ...prev,
+                        title: result.message
+                      }));
+                      return;
+                    }
+
                     handleInputChange({
                       target: {
                         name: "title",
-                        value: e.target.value.trim()
+                        value: result.value
+                      }
+                    });
+
+                    setErrors(prev => {
+                      const copy = { ...prev };
+                      delete copy.title;
+                      return copy;
+                    });
+                  }}
+                  onBlur={(e) =>
+                    handleInputChange({
+                      target: {
+                        name: "title",
+                        value: normalizeTitle(e.target.value).trim()
                       }
                     })
                   }
-                  
-                isInvalid={!!errors.title}
+                  isInvalid={!!errors.title}
                 />
+
+
 
 
                 <Form.Text className="text-muted">
@@ -156,13 +163,13 @@ const TITLE_PATTERN = /^[A-Za-z0-9\s\-_/()&]+$/;
                         setErrors((prev) => ({ ...prev, description: "" }));
                       }}
                       onBlur={(e) =>
-    handleInputChange({
-      target: {
-        name: "description",
-        value: e.target.value.trim()
-      }
-    })
-  }
+                        handleInputChange({
+                          target: {
+                            name: "description",
+                            value: e.target.value.trim()
+                          }
+                        })
+                      }
                       isInvalid={!!errors.description}
                     />
 

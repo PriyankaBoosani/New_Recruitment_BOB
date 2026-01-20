@@ -114,21 +114,26 @@ export const validateAddPosition = ({
   else {
     // NATIONAL MODE
 
-    const generalTotal = Object.values(nationalCategories || {})
+    const categoryTotal = Object.values(nationalCategories || {})
       .reduce((sum, v) => sum + Number(v || 0), 0);
 
     const disabilityTotal = Object.values(nationalDisabilities || {})
       .reduce((sum, v) => sum + Number(v || 0), 0);
 
-    const total = generalTotal + disabilityTotal;
     const vacancies = Number(formData.vacancies || 0);
 
-    if (total === 0) {
+    if (categoryTotal === 0) {
       errors.nationalDistribution = "This field is required";
-    } else if (total !== vacancies) {
-      errors.nationalDistribution =
-        `National distribution total (${total}) must equal total vacancies (${vacancies})`;
     }
+    else if (categoryTotal !== vacancies) {
+      errors.nationalDistribution =
+        `Category total (${categoryTotal}) must equal total vacancies (${vacancies})`;
+    }
+    else if (disabilityTotal > categoryTotal) {
+      errors.nationalDistribution =
+        "Disability vacancies cannot exceed category vacancies";
+    }
+
   }
 
 
@@ -164,13 +169,17 @@ export const validateStateDistribution = ({
   const disTotal = Object.values(currentState.disabilities || {})
     .reduce((a, b) => a + Number(b || 0), 0);
 
-  if (
-    currentState.vacancies &&
-    catTotal + disTotal !== Number(currentState.vacancies)
-  ) {
-    errors.stateDistribution =
-      "Category + Disability total must match vacancies";
+  const vacancies = Number(currentState.vacancies || 0);
+
+  if (catTotal !== vacancies) {
+    errors.stateDistribution = "Category total must match vacancies";
   }
+  else if (disTotal > vacancies) {
+    errors.stateDistribution =
+      "Disability vacancies cannot exceed total vacancies";
+  }
+
+
 
   const duplicate = stateDistributions.some(
     (s, i) =>
