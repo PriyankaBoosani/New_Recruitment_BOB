@@ -16,6 +16,7 @@
   "name": "Name",
   "description": "Description",
   "actions": "Actions",
+  "page_size": "Page size :",
 
   "noRecords": "No special categories found",
 

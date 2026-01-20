@@ -60,6 +60,7 @@
    "support_xlsx": "Support for XLSX formats",
   "invalid_file": "Please upload a valid Excel file (.xlsx)",
   "no_file_selected": "Please select a file to upload",
+  "page_size": "Page size :",
  
   "reupload_xlsx": "Reupload XLSX",
   "remove": "Remove",

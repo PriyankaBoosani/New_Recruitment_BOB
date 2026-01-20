@@ -39,5 +39,6 @@
  "support_xlsx": "XLSX फ़ॉर्मैट का समर्थन",
   "upload_certifications": "फ़ाइल अपलोड करें",
   "importing": "इम्पोर्ट हो रहा है...",
-  "import_error": "प्रमाणपत्र इम्पोर्ट करने में विफल"
+  "import_error": "प्रमाणपत्र इम्पोर्ट करने में विफल",
+     "page_size": "पेज साइज :"
 }

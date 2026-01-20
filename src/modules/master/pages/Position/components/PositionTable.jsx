@@ -116,71 +116,79 @@ const totalPages = Math.ceil(filtered.length / pageSize);
 
 
 
-      {filtered.length > 0 && (
+    {filtered.length > 0 && (
+  <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
 
+    {/* Page size */}
+    <div className="d-flex align-items-center gap-2 user-actions">
+      <span
+        className="fw-semibold"
+        style={{ color: "var(--bs-heading-color)" }}
+      >
+        {t("page_size")}
+      </span>
 
+      <Form.Select
+        size="sm"
+        style={{ width: "90px" }}
+        value={pageSize}
+        onChange={(e) => {
+          setPageSize(Number(e.target.value));
+          setCurrentPage(1);
+        }}
+      >
+        {[5, 10, 15, 25, 30].map(n => (
+          <option key={n} value={n}>{n}</option>
+        ))}
+      </Form.Select>
+    </div>
 
+    {/* Pagination */}
+    <ul className="pagination mb-0">
+      <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+        <button
+          className="page-link"
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          &laquo;
+        </button>
+      </li>
 
-      <div className="d-flex justify-content-between align-items-center mt-2">
- 
-    {/* <span className="me-2">Rows per page:</span> */}
-    <Form.Select
-      size="sm"
-      style={{ width: "90px" }}
-      value={pageSize}
-      onChange={(e) => {
-        setPageSize(Number(e.target.value));
-        setCurrentPage(1);
-      }}
-    >
-      <option value={5}>5</option>
-      <option value={10}>10</option>
-      <option value={15}>15</option>
-      <option value={25}>25</option>
-       <option value={30}>30</option>
-       
-    </Form.Select>
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
+        <li
+          key={number}
+          className={`page-item ${
+            currentPage === number ? "active" : ""
+          }`}
+        >
+          <button
+            className="page-link"
+            onClick={() => setCurrentPage(number)}
+          >
+            {number}
+          </button>
+        </li>
+      ))}
 
+      <li
+        className={`page-item ${
+          currentPage === totalPages ? "disabled" : ""
+        }`}
+      >
+        <button
+          className="page-link"
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          &raquo;
+        </button>
+      </li>
+    </ul>
 
-        <div className="pagination-container">
-          <nav>
-            <ul className="pagination">
-              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                <button 
-                  className="page-link" 
-                  onClick={() => setCurrentPage(currentPage - 1)} 
-                  disabled={currentPage === 1}
-                >
-                  &laquo;
-                </button>
-              </li>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
-                <li 
-                  key={number} 
-                  className={`page-item ${currentPage === number ? 'active' : ''}`}
-                >
-                  <button 
-                    className="page-link" 
-                    onClick={() => setCurrentPage(number)}
-                  >
-                    {number}
-                  </button>
-                </li>
-              ))}
-              <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                <button 
-                  className="page-link" 
-                  onClick={() => setCurrentPage(currentPage + 1)} 
-                  disabled={currentPage === totalPages}
-                >
-                  &raquo;
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </div>
-          </div>
-      )}
+  </div>
+)}
+
     </>
   );
 };

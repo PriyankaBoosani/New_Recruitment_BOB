@@ -12,6 +12,7 @@
   "file": "File",
   "version": "Version",
   "actions": "Actions",
+  "page_size": "Page size :",
 
   "select_type": "Select Type",
   "generic": "Generic",

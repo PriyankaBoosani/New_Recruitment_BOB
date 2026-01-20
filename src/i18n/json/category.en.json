@@ -18,6 +18,7 @@
   "upload_file": "Upload File",
   "upload_csv": "Upload CSV",
   "close": "Close",
+   "page_size": "Page size :",
 
   "csv": "CSV",
   "xlsx": "XLSX",
