@@ -16,7 +16,7 @@
   "no_file_selected": "कृपया अपलोड करने के लिए फ़ाइल चुनें",
   "manual_entry": "मैनुअल प्रविष्टि",
   "import_file": "फ़ाइल आयात करें",
-  "choose_add_method": "मैनुअल प्रविष्टि या XLSX से आयात चुनें",
+  "choose_add_method": "मैन्युअली जोड़ें या XLSX फ़ाइल से इम्पोर्ट करें।",
   "invalid_file": "कृपया एक मान्य Excel फ़ाइल अपलोड करें (.xlsx)",
   "cancel": "रद्द करें",
   "close": "बंद करें",
@@ -39,5 +39,6 @@
  "support_xlsx": "XLSX फ़ॉर्मैट का समर्थन",
   "upload_certifications": "फ़ाइल अपलोड करें",
   "importing": "इम्पोर्ट हो रहा है...",
-  "import_error": "प्रमाणपत्र इम्पोर्ट करने में विफल"
+  "import_error": "प्रमाणपत्र इम्पोर्ट करने में विफल",
+     "page_size": "पेज साइज :"
 }

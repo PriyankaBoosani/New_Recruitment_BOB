@@ -46,6 +46,8 @@ const SpecialCategoryPage = () => {
 
   const [selectedCSVFile, setSelectedCSVFile] = useState(null);
   const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+
 
   const openView = (row) => {
   setIsViewing(true);
@@ -180,6 +182,8 @@ const SpecialCategoryPage = () => {
         searchTerm={searchTerm}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+         itemsPerPage={itemsPerPage}
+    setItemsPerPage={setItemsPerPage}
          onView={openView}
         onEdit={openEdit}
         onDelete={(row) => {

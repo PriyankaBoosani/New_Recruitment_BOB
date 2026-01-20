@@ -29,6 +29,7 @@ const GenericOrAnnexuresPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
 
   const [formData, setFormData] = useState({
@@ -152,6 +153,8 @@ const handleInputChange = (e) => {
   onDelete={openDeleteConfirm}
   currentPage={currentPage}
   setCurrentPage={setCurrentPage}
+   itemsPerPage={itemsPerPage}
+  setItemsPerPage={setItemsPerPage}
 />
 
 

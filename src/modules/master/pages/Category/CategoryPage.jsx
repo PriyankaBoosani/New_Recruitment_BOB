@@ -34,6 +34,8 @@ const CategoryPage = () => {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+
 
   const openAddModal = () => {
      setIsViewing(false);
@@ -91,6 +93,8 @@ const CategoryPage = () => {
         searchTerm={searchTerm}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        itemsPerPage={itemsPerPage}
+        setItemsPerPage={setItemsPerPage}
         onEdit={openEditModal}
         onView={openViewModal}
         onDelete={(cat) => {

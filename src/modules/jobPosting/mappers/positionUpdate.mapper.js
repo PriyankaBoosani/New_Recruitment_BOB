@@ -160,19 +160,15 @@ export const mapAddPositionToUpdateDto = ({
     approvedOn,
 
     mandatoryEduRulesJson: {
-      rules: buildEducationRulesForDto(
-        educationData.mandatory,
-        qualifications,
-        certifications
-      )
+      mandatoryEducations: educationData.mandatory.educations,
+      mandatoryCertificationIds: educationData.mandatory.certificationIds
     },
+
     preferredEduRulesJson: {
-      rules: buildEducationRulesForDto(
-        educationData.preferred,
-        qualifications,
-        certifications
-      )
+      preferredEducations: educationData.preferred.educations,
+      preferredCertificationIds: educationData.preferred.certificationIds
     },
+
     // IMPORTANT
     positionCategoryNationalDistributions: [],
     positionStateDistributions: []

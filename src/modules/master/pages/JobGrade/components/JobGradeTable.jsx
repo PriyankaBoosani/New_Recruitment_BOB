@@ -1,7 +1,7 @@
 // src/modules/master/pages/JobGrade/components/JobGradeTable.jsx
 
 import React from 'react';
-import { Table, Button } from 'react-bootstrap';
+import { Table, Button, Form } from 'react-bootstrap';
 import { useTranslation } from "react-i18next";
 
 import viewIcon from "../../../../../assets/view_icon.png";
@@ -15,10 +15,12 @@ const JobGradeTable = ({
   onView,
   onDelete,
   currentPage,
-  setCurrentPage
+  setCurrentPage,
+  pageSize,
+  setPageSize
 }) => {
   const { t } = useTranslation(["jobGrade"]);
-  const itemsPerPage = 7;
+  // const itemsPerPage = 7;
 
   const filtered = data.filter(j =>
     Object.values(j).some(v =>
@@ -34,10 +36,11 @@ const JobGradeTable = ({
 };
 
 
-  const indexOfLast = currentPage * itemsPerPage;
-  const indexOfFirst = indexOfLast - itemsPerPage;
-  const current = filtered.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const indexOfLast = currentPage * pageSize;
+const indexOfFirst = indexOfLast - pageSize;
+const current = filtered.slice(indexOfFirst, indexOfLast);
+const totalPages = Math.ceil(filtered.length / pageSize);
+
 
   return (
     <>
@@ -105,42 +108,76 @@ const JobGradeTable = ({
         </Table>
       </div>
 
-      {filtered.length > 0 && (
-        <div className="pagination-container">
-          <nav>
-            <ul className="pagination">
-              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                >
-                  &laquo;
-                </button>
-              </li>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
-                <li
-                  key={n}
-                  className={`page-item ${currentPage === n ? 'active' : ''}`}
-                >
-                  <button className="page-link" onClick={() => setCurrentPage(n)}>
-                    {n}
-                  </button>
-                </li>
-              ))}
+    
 
-              <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                >
-                  &raquo;
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      )}
+     {filtered.length > 0 && (
+  <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
+
+    {/* Page size */}
+    <div className="d-flex align-items-center gap-2 user-actions">
+      <span
+        className="fw-semibold"
+        style={{ color: "var(--bs-heading-color)" }}
+      >
+        {t("page_size")}
+      </span>
+
+      <Form.Select
+        size="sm"
+        style={{ width: "90px" }}
+        value={pageSize}
+        onChange={(e) => {
+          setPageSize(Number(e.target.value));
+          setCurrentPage(1);
+        }}
+      >
+        {[5, 10, 15, 20, 25, 30].map(n => (
+          <option key={n} value={n}>{n}</option>
+        ))}
+      </Form.Select>
+    </div>
+
+    {/* Pagination */}
+    <ul className="pagination mb-0">
+      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+        <button
+          className="page-link"
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          &laquo;
+        </button>
+      </li>
+
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+        <li
+          key={n}
+          className={`page-item ${currentPage === n ? 'active' : ''}`}
+        >
+          <button
+            className="page-link"
+            onClick={() => setCurrentPage(n)}
+          >
+            {n}
+          </button>
+        </li>
+      ))}
+
+      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+        <button
+          className="page-link"
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          &raquo;
+        </button>
+      </li>
+    </ul>
+
+  </div>
+)}
+
     </>
   );
 };

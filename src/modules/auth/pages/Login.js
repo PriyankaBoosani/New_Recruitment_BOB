@@ -67,7 +67,7 @@ const Login = () => {
         )
       );
 
-      navigate("/users");
+      navigate("/job-posting");
     } catch (err) {
       const errorData = err.response?.data;
       toast.error(errorData?.error_description || "Login failed");

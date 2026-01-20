@@ -16,13 +16,14 @@
 
   "manual_entry": "Manual Entry",
   "import_file": "Import File",
-  "choose_add_method": "Choose manual entry or import using XLSX",
+  "choose_add_method": "Choose to add manually or import from XLSX file.",
 
   "cancel": "Cancel",
   "close": "Close",
   "save": "Save",
   "update": "Update",
   "no_file_selected": "Please select a file to upload",
+  "page_size": "Page size :",
 
   "confirm_delete": "Confirm Delete",
   "delete_message": "Are you sure you want to delete this certification?",

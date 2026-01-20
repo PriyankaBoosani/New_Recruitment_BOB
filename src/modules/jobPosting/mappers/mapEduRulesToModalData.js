@@ -1,52 +1,33 @@
 // utils/mapEduRulesToModalData.js
-export function mapEduRulesToModalData(
-  rulesJson,
-  educationTypes,
-  qualifications,
-  specializations,
-  certifications
-) {
-  if (!rulesJson?.rules?.length) {
-    return { educations: [], certificationIds: [], text: "" };
+export function mapEduRulesToModalData(eduRulesJson) {
+  if (!eduRulesJson) {
+    return { educations: [], certificationIds: [] };
   }
 
-  const rule = rulesJson.rules[0];
-
-  /* ================= NEW FORMAT (preferred) ================= */
-  if (Array.isArray(rule.educations) && rule.educations.length > 0) {
+  // Mandatory
+  if (Array.isArray(eduRulesJson.mandatoryEducations)) {
     return {
-      educations: rule.educations.map(e => ({
+      educations: eduRulesJson.mandatoryEducations.map(e => ({
         educationTypeId: e.educationTypeId,
-        educationQualificationsId: e.educationQualificationId,
+        educationQualificationsId: e.educationQualificationsId,
         specializationId: e.specializationId
       })),
-      certificationIds: (rule.certifications || [])
-        .map(name => certifications.find(c => c.name === name)?.id)
-        .filter(Boolean),
-      text: "" // text comes separately
+      certificationIds: eduRulesJson.mandatoryCertificationIds || []
     };
   }
 
-  /* ================= LEGACY FORMAT (fallback) ================= */
-  // old records that only had degrees[]
-  const educations = (rule.degrees || [])
-    .map(degName => {
-      const qualification = qualifications.find(q => q.name === degName);
-      if (!qualification) return null;
+  // Preferred
+  if (Array.isArray(eduRulesJson.preferredEducations)) {
+    return {
+      educations: eduRulesJson.preferredEducations.map(e => ({
+        educationTypeId: e.educationTypeId,
+        educationQualificationsId: e.educationQualificationsId,
+        specializationId: e.specializationId
+      })),
+      certificationIds: eduRulesJson.preferredCertificationIds || []
+    };
+  }
 
-      return {
-        educationTypeId: "", // cannot infer
-        educationQualificationsId: qualification.id,
-        specializationId: "" // cannot infer
-      };
-    })
-    .filter(Boolean);
-
-  return {
-    educations,
-    certificationIds: (rule.certifications || [])
-      .map(name => certifications.find(c => c.name === name)?.id)
-      .filter(Boolean),
-    text: ""
-  };
+  return { educations: [], certificationIds: [] };
 }
+

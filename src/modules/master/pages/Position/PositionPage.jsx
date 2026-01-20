@@ -44,6 +44,8 @@ const PositionPage = () => {
   /* ---------------- UI STATE ---------------- */
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -271,6 +273,8 @@ const PositionPage = () => {
         searchTerm={searchTerm}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+         pageSize={pageSize}
+  setPageSize={setPageSize}
         onView={openViewModal}
         onEdit={openEditModal}
         onDelete={(p) => {

@@ -35,6 +35,7 @@ const [errors, setErrors] = useState({});
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -157,6 +158,8 @@ return (
         searchTerm={searchTerm}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+          pageSize={pageSize}
+  setPageSize={setPageSize}
         onEdit={openEdit}
          onView={openView}   
         onDelete={(loc) => {

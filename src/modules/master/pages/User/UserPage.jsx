@@ -18,6 +18,7 @@ const UserPage = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+const [pageSize, setPageSize] = useState(5);
 
   const [showModal, setShowModal] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -72,16 +73,19 @@ const UserPage = () => {
         </div>
       </div>
 
-      <UserTable
-        data={users}
-        searchTerm={searchTerm}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        onDelete={(u) => {
-          setDeleteTarget(u);
-          setShowDelete(true);
-        }}
-      />
+    <UserTable
+  data={users}
+  searchTerm={searchTerm}
+  currentPage={currentPage}
+  setCurrentPage={setCurrentPage}
+  pageSize={pageSize}
+  setPageSize={setPageSize}
+  onDelete={(u) => {
+    setDeleteTarget(u);
+    setShowDelete(true);
+  }}
+/>
+
 
 <UserFormModal
   show={showModal}

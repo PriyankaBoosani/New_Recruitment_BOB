@@ -27,6 +27,8 @@ const DepartmentPage = () => {
   const [activeTab, setActiveTab] = useState('manual');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [pageSize, setPageSize] = useState(5); // default
+
 
   // Form States
   const [formData, setFormData] = useState({ name: '', description: '' });
@@ -132,15 +134,18 @@ const openViewModal = (dept) => {
         </div>
       </div>
 
-      <DepartmentTable
-        data={departments}
-        searchTerm={searchTerm}
-        onEdit={openEditModal}
-        onView={openViewModal}
-        onDelete={(dept) => { setDeleteTarget(dept); setShowDeleteModal(true); }}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-      />
+    <DepartmentTable
+  data={departments}
+  searchTerm={searchTerm}
+  onEdit={openEditModal}
+  onView={openViewModal}
+  onDelete={(dept) => { setDeleteTarget(dept); setShowDeleteModal(true); }}
+  currentPage={currentPage}
+  setCurrentPage={setCurrentPage}
+  pageSize={pageSize}
+  setPageSize={setPageSize}
+/>
+
       <DepartmentFormModal
         show={showAddModal}
        onHide={() => {

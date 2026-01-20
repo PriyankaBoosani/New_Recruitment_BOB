@@ -11,12 +11,14 @@ const CategoryTable = ({
   searchTerm,
   currentPage,
   setCurrentPage,
+  itemsPerPage,
+  setItemsPerPage,
   onEdit,
   onView,
   onDelete
 }) => {
   const { t } = useTranslation(["category"]);
-  const itemsPerPage = 7;
+
 
   const filtered = data.filter(c => {
   const term = searchTerm.toLowerCase().trim();
@@ -103,45 +105,74 @@ const CategoryTable = ({
         </Table>
       </div>
 
-      {filtered.length > 0 && (
-        <div className="pagination-container">
-          <ul className="pagination">
-            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-              <button
-                className="page-link"
-                onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                &laquo;
-              </button>
-            </li>
+   {/* DROPDOWN LEFT + PAGINATION RIGHT */}
+    {filtered.length > 0 && (
+  <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
 
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
-              <li
-                key={n}
-                className={`page-item ${n === currentPage ? 'active' : ''}`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(n)}
-                >
-                  {n}
-                </button>
-              </li>
-            ))}
+    {/* Page size */}
+    <div className="d-flex align-items-center gap-2 user-actions">
+      <span
+        className="fw-semibold"
+        style={{ color: "var(--bs-heading-color)" }}
+      >
+        {t("page_size")}
+      </span>
 
-            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-              <button
-                className="page-link"
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                &raquo;
-              </button>
-            </li>
-          </ul>
-        </div>
-      )}
+      <select
+        className="form-select form-select-sm"
+        style={{ width: "90px" }}
+        value={itemsPerPage}
+        onChange={(e) => {
+          setItemsPerPage(Number(e.target.value));
+          setCurrentPage(1);
+        }}
+      >
+        {[5, 10, 15, 20, 25, 30].map(n => (
+          <option key={n} value={n}>{n}</option>
+        ))}
+      </select>
+    </div>
+
+    {/* Pagination */}
+    <ul className="pagination mb-0">
+      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+        <button
+          className="page-link"
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          &laquo;
+        </button>
+      </li>
+
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+        <li
+          key={n}
+          className={`page-item ${n === currentPage ? 'active' : ''}`}
+        >
+          <button
+            className="page-link"
+            onClick={() => setCurrentPage(n)}
+          >
+            {n}
+          </button>
+        </li>
+      ))}
+
+      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+        <button
+          className="page-link"
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          &raquo;
+        </button>
+      </li>
+    </ul>
+
+  </div>
+)}
+
     </>
   );
 };

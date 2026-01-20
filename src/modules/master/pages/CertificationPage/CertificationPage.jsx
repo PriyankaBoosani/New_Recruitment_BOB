@@ -30,6 +30,8 @@ const [deleteTarget, setDeleteTarget] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
 const [currentPage, setCurrentPage] = useState(1);
+const [itemsPerPage, setItemsPerPage] = useState(5);
+
 
 /* ---------- ADD ---------- */
 const openAdd = () => {
@@ -86,6 +88,8 @@ const openView = (row) => {
   searchTerm={searchTerm}
   currentPage={currentPage}
   setCurrentPage={setCurrentPage}
+   itemsPerPage={itemsPerPage}
+  setItemsPerPage={setItemsPerPage}
   onEdit={openEdit}
   onView={openView}
   onDelete={(row) => {

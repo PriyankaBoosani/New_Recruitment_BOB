@@ -26,24 +26,6 @@ export default function EducationModal({
     const [rows, setRows] = useState([createRow()]);
     const [certIds, setCertIds] = useState([""]);
 
-
-    // useEffect(() => {
-    //     if (!show) return;
-
-    //     if (initialData?.certificationIds?.length) {
-    //         setCertIds(initialData.certificationIds);
-    //     } else {
-    //         // ✅ Always show ONE dropdown by default
-    //         setCertIds([""]);
-    //     }
-
-    //     if (initialData?.educations?.length) {
-    //         setRows(initialData.educations);
-    //     } else {
-    //         setRows([createRow()]);
-    //     }
-
-    // }, [show, mode, initialData]);
     useEffect(() => {
         if (!show) return;
 
@@ -58,9 +40,9 @@ export default function EducationModal({
                 ? initialData.certificationIds
                 : [""]
         );
+    }, [show, initialData]);
 
-        setErrors({});
-    }, [show]);
+
 
 
 
@@ -141,7 +123,9 @@ Certifications: ${certText || "None"}
                             </Form.Select>
 
 
-                            <ErrorMessage>{errors.rows?.[idx]?.educationTypeId}</ErrorMessage>                        </Col>
+                            <ErrorMessage>{errors.rows?.[idx]?.educationTypeId}</ErrorMessage>
+
+                        </Col>
 
                         <Col md={3}>
                             <Form.Select
@@ -177,7 +161,8 @@ Certifications: ${certText || "None"}
                             </Form.Select>
 
 
-                            <ErrorMessage>{errors.rows?.[idx]?.specializationId}</ErrorMessage>                        </Col>
+                            <ErrorMessage>{errors.rows?.[idx]?.specializationId}</ErrorMessage>
+                        </Col>
                         <Col md={1} className="px-1">
                             {rows.length > 1 && (
                                 <Button
@@ -255,15 +240,8 @@ Certifications: ${certText || "None"}
                 <Button
                     variant="primary"
                     onClick={() => {
-                        const filledRows = rows.filter(
-                            r =>
-                                r.educationTypeId &&
-                                r.educationQualificationsId &&
-                                r.specializationId
-                        );
-
                         const validationErrors = validateEducationModal({
-                            rows: filledRows,
+                            rows,
                             certificationIds: certIds.filter(Boolean),
                         });
 
@@ -271,6 +249,10 @@ Certifications: ${certText || "None"}
                             setErrors(validationErrors);
                             return;
                         }
+
+                        const filledRows = rows.filter(
+                            r => r.educationTypeId && r.educationQualificationsId
+                        );
 
                         if (filledRows.length === 0) {
                             setErrors({
@@ -282,15 +264,14 @@ Certifications: ${certText || "None"}
                         setErrors({});
 
                         const payload = {
-                            educations: filledRows,
+                            educations: filledRows.map(r => ({
+                                educationTypeId: r.educationTypeId,
+                                educationQualificationsId: r.educationQualificationsId,
+                                specializationId: r.specializationId || null
+                            })),
                             certificationIds: certIds.filter(Boolean),
                             text: finalText,
                         };
-
-                        console.log(
-                            "EDUCATION MODAL SAVE PAYLOAD",
-                            JSON.stringify(payload, null, 2)
-                        );
 
                         onSave(payload);
                         onHide();
@@ -298,6 +279,7 @@ Certifications: ${certText || "None"}
                 >
                     Save
                 </Button>
+
 
 
 

@@ -1,8 +1,9 @@
 const PATTERNS = {
   ALPHA_SPACE: /^[A-Za-z\s]*$/,
   ALPHA_NUMERIC_SPACE: /^[A-Za-z0-9\s]*$/,
-  ALPHA_NUMERIC_SPACE_DASH_AMP: /^[A-Za-z0-9 _\-&:]*$/,
-  TEXTAREA_BASIC: /^[A-Za-z0-9\s.,\-\/]*$/,
+  ALPHA_NUMERIC_SPACE_DASH_AMP: /^[A-Za-z0-9 _\-&\/\\():]*$/,
+  // TEXTAREA_BASIC: /^[A-Za-z0-9\s.,\-\/]*$/,
+  TEXTAREA_BASIC: /^[A-Za-z0-9\s.,\-\/()&’':]*$/,
   NUMBERS_ONLY: /^[0-9]*$/,
   ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at: /^[A-Za-z0-9 _\-&]*$/,
   NUMERIC_SPACE: /^[A-Za-z0-9\s]*$/,
