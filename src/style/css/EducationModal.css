@@ -24,3 +24,6 @@
 	border: 1px solid #F26522;
 	color: #f26522;
 }
+.edu-error-space {
+  min-height: 18px; /* match ErrorMessage height */
+}

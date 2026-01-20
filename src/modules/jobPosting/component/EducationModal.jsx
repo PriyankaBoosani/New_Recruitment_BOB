@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import "../../../style/css/EducationModal.css";
 import { validateEducationModal } from "../validations/validateEducationModal";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
+import delete_icon from "../../../assets/delete_icon.png"
 
 
 const createRow = () => ({
@@ -72,10 +73,27 @@ export default function EducationModal({
     };
 
     const updateRow = (i, field, value) => {
+        // update value
         const copy = [...rows];
         copy[i][field] = value;
         setRows(copy);
+
+        // clear error for that field
+        setErrors(prev => {
+            if (!prev.rows?.[i]?.[field]) return prev;
+
+            const updated = { ...prev };
+            updated.rows = [...updated.rows];
+
+            updated.rows[i] = {
+                ...updated.rows[i],
+                [field]: ""
+            };
+
+            return updated;
+        });
     };
+
     const removeRow = (index) => {
         setRows(prev =>
             prev.length > 1
@@ -124,8 +142,8 @@ Certifications: ${certText || "None"}
                                 ))}
                             </Form.Select>
 
-
-                            <ErrorMessage>{errors.rows?.[idx]?.educationTypeId}</ErrorMessage>
+                            <div className="edu-error-space">
+                                <ErrorMessage>{errors.rows?.[idx]?.educationTypeId}</ErrorMessage></div>
 
                         </Col>
 
@@ -144,8 +162,10 @@ Certifications: ${certText || "None"}
                                 ))}
                             </Form.Select>
 
-
-                            <ErrorMessage>{errors.rows?.[idx]?.educationQualificationsId}</ErrorMessage>                        </Col>
+                            <div className="edu-error-space">
+                                <ErrorMessage>{errors.rows?.[idx]?.educationQualificationsId}</ErrorMessage>
+                            </div>
+                        </Col>
 
                         <Col md={5}>
                             <Form.Select
@@ -162,10 +182,11 @@ Certifications: ${certText || "None"}
                                 ))}
                             </Form.Select>
 
-
-                            <ErrorMessage>{errors.rows?.[idx]?.specializationId}</ErrorMessage>
+                            <div className="edu-error-space">
+                                <ErrorMessage>{errors.rows?.[idx]?.specializationId}</ErrorMessage></div>
                         </Col>
                         <Col md={1} className="px-1">
+
                             {rows.length > 1 && (
                                 <Button
                                     variant="link"
@@ -173,9 +194,10 @@ Certifications: ${certText || "None"}
                                     onClick={() => removeRow(idx)}
                                     title="Remove"
                                 >
-                                    🗑️
+                                    <img src={delete_icon} alt="delete_icon" className="icon-16" />
                                 </Button>
                             )}
+                            <div class="edu-error-space"></div>
                         </Col>
                     </Row>
                 ))}
@@ -208,7 +230,7 @@ Certifications: ${certText || "None"}
                                 </Form.Select>
                             </Col>
 
-                            <Col md={2} className="text-center">
+                            <Col md={1} className="text-center">
                                 {certIds.length > 1 && (
                                     <Button
                                         variant="link"
@@ -217,7 +239,7 @@ Certifications: ${certText || "None"}
                                             setCertIds(prev => prev.filter((_, x) => x !== i))
                                         }
                                     >
-                                        🗑️
+                                        <img src={delete_icon} alt="delete_icon" className="icon-16" />
                                     </Button>
                                 )}
                             </Col>

@@ -67,7 +67,14 @@ const Login = () => {
         )
       );
 
-      navigate("/job-posting");
+      const role = userApiRes?.role?.toLowerCase();
+
+    if (role === "admin") {
+      navigate("/users", { replace: true });
+    } else {
+      navigate("/job-posting", { replace: true });
+    }
+
     } catch (err) {
       const errorData = err.response?.data;
       toast.error(errorData?.error_description || "Login failed");

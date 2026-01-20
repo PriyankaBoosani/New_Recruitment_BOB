@@ -22,6 +22,8 @@ import JobPostingsList from "../modules/jobPosting/pages/JobPostingsList";
 import CreateRequisition from "../modules/jobPosting/pages/CreateRequisition";
 import GenericOrAnnexuresPage from "../modules/master/pages/GenericOrAnnexures/GenericOrAnnexuresPage";
 import CertificationPage from "../modules/master/pages/CertificationPage/CertificationPage";
+import NonAdminRoute from "./NonAdminRoute";
+import AdminRoute from "./AdminRoute";
 
 
 
@@ -65,23 +67,28 @@ const AppRoutes = () => {
         <Route element={<Tokenexp />}>
           <Route element={<PrivateRoute />}>
             <Route element={<Layout />}>
-              <Route path="/dashboard" element={<Home />} />
-              <Route path="/users" element={<UserPage />} />
-              <Route path="/department" element={<DepartmentPage />} />
-              <Route path="/location" element={<LocationPage />} />
-              {/* If you want plural: <Route path="/locations" element={<Location />} /> */}
-              <Route path="/jobgrade" element={<JobGradePage />} />
-              <Route path="/position" element={<PositionPage />} />
-              <Route path="/category" element={<CategoryPage />} />
-              <Route path="/specialcategory" element={<SpecialCategoryPage />} />
-              <Route path="/relaxationtype" element={<RelaxationType />} />
-              <Route path="/certification" element={<CertificationPage />} />
-              <Route path="/document" element={<DocumentPage />} />
-              <Route path="/interviewpanel" element={<InterviewPanel />} />
-              <Route path="/job-posting" element={<JobPostingsList />} />
-              <Route path="/job-posting/create-requisition" element={<CreateRequisition />} />
-              <Route path="/job-posting/:requisitionId/add-position" element={<AddPosition />} />
-              <Route path="/generic-or-annexures" element={<GenericOrAnnexuresPage />} />
+              <Route element={<AdminRoute />}>
+                <Route path="/users" element={<UserPage />} />
+                <Route path="/department" element={<DepartmentPage />} />
+                <Route path="/location" element={<LocationPage />} />
+                <Route path="/jobgrade" element={<JobGradePage />} />
+                <Route path="/position" element={<PositionPage />} />
+                <Route path="/category" element={<CategoryPage />} />
+                <Route path="/specialcategory" element={<SpecialCategoryPage />} />
+                <Route path="/relaxationtype" element={<RelaxationType />} />
+                <Route path="/certification" element={<CertificationPage />} />
+                <Route path="/document" element={<DocumentPage />} />
+                <Route path="/interviewpanel" element={<InterviewPanel />} />
+                <Route path="/generic-or-annexures" element={<GenericOrAnnexuresPage />} />
+              </Route>              {/* ---------- NON-ADMIN ONLY ROUTES ---------- */}
+              <Route element={<NonAdminRoute />}>
+                <Route path="/job-posting" element={<JobPostingsList />} />
+                <Route path="/job-posting/create-requisition" element={<CreateRequisition />} />
+                <Route
+                  path="/job-posting/:requisitionId/add-position"
+                  element={<AddPosition />}
+                />
+              </Route>
 
 
             </Route>

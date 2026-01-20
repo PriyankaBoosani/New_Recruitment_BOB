@@ -178,9 +178,12 @@ const Header = () => {
 
           <Navbar.Collapse id="main-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link as={Link} to="/job-posting" onClick={closeMenu}>
-                {t("job_postings")}
-              </Nav.Link>
+              {!isAdmin && (
+                <Nav.Link as={Link} to="/job-posting" onClick={closeMenu}>
+                  {t("job_postings")}
+                </Nav.Link>
+              )}
+
 
 
               {/* <Nav.Link as={Link} to="/dashboard" onClick={closeMenu}>Dashboard</Nav.Link>
@@ -201,9 +204,9 @@ const Header = () => {
                     {t("department")}
                   </NavDropdown.Item>
 
-                  <NavDropdown.Item as={Link} to="/location" onClick={closeMenu}>
+                  {/* <NavDropdown.Item as={Link} to="/location" onClick={closeMenu}>
                     {t("location")}
-                  </NavDropdown.Item>
+                  </NavDropdown.Item> */}
 
                   <NavDropdown.Item as={Link} to="/jobgrade" onClick={closeMenu}>
                     {t("job_grade")}
