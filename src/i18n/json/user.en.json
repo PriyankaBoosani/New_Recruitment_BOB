@@ -26,6 +26,7 @@
   "actions": "Actions",
   "s.no.": "S. No.",
   "search_by_user": "Search by User",
+   "page_size": "Page size :",
   "noUsersFound": "No users found",
   "choose_add_method": "Choose to add manually or import from XLSX file.",
   "manual_entry": "Manual Entry",

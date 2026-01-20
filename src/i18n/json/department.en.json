@@ -13,6 +13,7 @@
   "cancel": "Cancel",
   "loading": "Loading...",
   "errorLoading": "Error loading departments",
+   "page_size": "Page size :",
   "s.no.": "S. No.",
   "choose_add_method": "Choose to add manually or import from XLSX file.",
    "manual_entry": "Manual Entry",

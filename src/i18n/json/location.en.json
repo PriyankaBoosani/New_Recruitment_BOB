@@ -13,6 +13,7 @@
   "actions": "Actions",
   "choose_add_method": "Choose to add manually or import from XLSX file.",
   "manual_entry": "Manual Entry",
+  "page_size": "Page size :",
   "import_file": "Import File",
   "select_city": "Select city",
   "enter_location_name": "Enter location name",
