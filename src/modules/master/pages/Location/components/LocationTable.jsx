@@ -93,7 +93,7 @@ const totalPages = Math.ceil(filtered.length / pageSize);
 
     
 
-      {filtered.length > 0 && totalPages > 1 && (
+     {filtered.length > 0 && (
   <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
 
     {/* Page size */}

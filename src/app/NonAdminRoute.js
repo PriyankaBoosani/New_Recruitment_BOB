@@ -1,16 +1,17 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-const AdminRoute = () => {
+const NonAdminRoute = () => {
   const role = useSelector(
     (state) => state.user?.user?.role?.toLowerCase()
   );
 
-  if (role !== "admin") {
+  // Admin should NEVER access job-posting
+  if (role === "admin") {
     return <Navigate to="/login" replace />;
   }
 
   return <Outlet />;
 };
 
-export default AdminRoute;
+export default NonAdminRoute;
