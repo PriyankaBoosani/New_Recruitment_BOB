@@ -11,7 +11,7 @@
     border: 1px solid #F26522 ;
     color: #F26522 ;
     font-weight: 400;
-    font-size: 0.875em;
+    font-size: 0.75em;
 }
 .edu-modal .form-control, .edu-modal .form-select {
 	border-radius: 6px;
@@ -26,4 +26,22 @@
 }
 .edu-error-space {
   min-height: 18px; /* match ErrorMessage height */
+}
+
+.f14{
+    font-size: 0.875em;
+}
+.bluecol{
+    color: #162B75;
+}
+.f16{
+    font-size: 1em;
+}
+.f12{
+    font-size: 0.75em;
+}
+
+.result .f14{
+    color: #333333;
+    font-weight: 600;
 }

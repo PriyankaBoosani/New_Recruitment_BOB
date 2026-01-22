@@ -3,6 +3,7 @@ import { Button, Alert, Modal } from "react-bootstrap";
 import { Upload as UploadIcon } from "react-bootstrap-icons";
 import { useTranslation } from "react-i18next";
 import { usePositionsImport } from "../hooks/usePositionsImport";
+import "../../../style/css/modalimport.css";
 
 const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
   const { t } = useTranslation(["position", "common"]);
@@ -48,9 +49,10 @@ const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
   };
 
   return (
-    <Modal show={show} onHide={onHide} centered>
+    <Modal show={show} onHide={onHide} centered className="modalimport">
       <Modal.Header closeButton>
-        <Modal.Title>Import Positions</Modal.Title>
+        <Modal.Title className="f16 bluecol">Import Positions</Modal.Title>
+        
       </Modal.Header>
 
       <Modal.Body>
@@ -123,7 +125,7 @@ const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
             )}
           </div>
 
-          <div className="text-center mb-3 import-area small">
+          <div className="text-center m-0 import-area small">
            Download Template{" "}
             <a
               href="#"

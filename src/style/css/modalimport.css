@@ -1,0 +1,25 @@
+.modalimport .modal-header {
+	border-bottom: none;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+.f14{
+    font-size: 0.875em;
+}
+.f16{
+   font-size: 1em
+}
+.f12{
+    font-size: 0.75em;
+}
+.bluecol{
+    color: #162B75;
+}
+.modalimport .modal-footer{
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+}
+.modalimport .modal-body{
+    padding-bottom: 0px;
+}

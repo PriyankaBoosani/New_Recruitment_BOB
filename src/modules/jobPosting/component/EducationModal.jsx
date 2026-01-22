@@ -119,7 +119,7 @@ Certifications: ${certText || "None"}
     return (
         <Modal show={show} onHide={onHide} size="lg" centered className="edu-modal">
             <Modal.Header closeButton className="edu-modal-header">
-                <Modal.Title>
+                <Modal.Title className="f16 bluecol">
                     {mode === "mandatory"
                         ? "Add Mandatory Education"
                         : "Add Preferred Education"}
@@ -212,7 +212,7 @@ Certifications: ${certText || "None"}
 
 
                 <Col md={6} className="mt-4">
-                    <h6>Certifications (Optional)</h6>
+                    <h6 className="f14 bluecol">Certifications (Optional)</h6>
 
                     {certIds.map((id, i) => (
                         <Row key={i} className="mb-2 align-items-center">
@@ -257,14 +257,14 @@ Certifications: ${certText || "None"}
 
 
 
-                <div className="mt-4 p-3 bg-light border rounded">
-                    <strong>Result (How it will look for candidate)</strong>
+                <div className="mt-4 p-3 bg-light border rounded result">
+                    <span className="f14">Result (How it will look for candidate)</span>
                     <pre className="mt-2 mb-0">{finalText}</pre>
                 </div>
             </Modal.Body>
 
             <Modal.Footer className="edu-modal-footer">
-                <Button variant="secondary" onClick={onHide}>Cancel</Button>
+                <Button variant="outline-secondary" className="cancelbtn" onClick={onHide}>Cancel</Button>
                 <Button
                     variant="primary"
                     onClick={() => {
