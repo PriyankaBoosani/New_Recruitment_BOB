@@ -183,16 +183,20 @@ const Header = () => {
                   {t("job_postings")}
                 </Nav.Link>
               )}
-              <Nav.Link
-  as={Link}
-  to="/candidate-preview"
-  onClick={closeMenu}
->
-  Candidate Preview
-</Nav.Link>
+              {/* <Nav.Link
+                as={Link}
+                to="/candidate-preview"
+                onClick={closeMenu}
+              >
+                Candidate Preview
+              </Nav.Link> */}
 
 
-
+              {!isAdmin && (
+                <Nav.Link as={Link} to="/candidate-workflow" onClick={closeMenu}>
+                  Candidate Workflow
+                </Nav.Link>
+              )}
 
               {/* <Nav.Link as={Link} to="/dashboard" onClick={closeMenu}>Dashboard</Nav.Link>
               <Nav.Link href="#candidate-shortlist">Candidate Shortlist</Nav.Link>

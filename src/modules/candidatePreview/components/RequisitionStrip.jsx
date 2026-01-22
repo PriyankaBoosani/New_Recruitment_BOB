@@ -1,47 +1,3 @@
-// import React from "react";
-// import "../../../style/css/RequisitionStrip.css";
-
-// const RequisitionStrip = ({ requisition, positionTitle }) => {
-//   if (!requisition) return null;
-
-//   return (
-//     <div className="requisition-strip">
-//       <div className="req-left">
-//         <div className="req-code">
-//           {requisition.requisition_code}
-//         </div>
-
-//         <div className="req-dates">
-//           <span>
-//             <i className="bi bi-calendar3"></i>{" "}
-//             Start: {requisition.start_date}
-//           </span>
-//           <span>
-//             <i className="bi bi-calendar3"></i>{" "}
-//             End: {requisition.end_date}
-//           </span>
-//         </div>
-
-//         <div className="req-title">
-//           {positionTitle}
-//         </div>
-//       </div>
-
-//       <div className="req-right">
-//         <button className="btn-view-position">
-//           View Position
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default RequisitionStrip;
-
-
-
-
-
 import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
 import NationalVacancyTable from "./NationalVacancyTable";
@@ -51,7 +7,9 @@ const RequisitionStrip = ({
   job,
   masterData,
   isSaved,
-  onSave
+  onSave,
+  isCardBg,
+  isSaveEnabled
 }) => {
   const [showPosition, setShowPosition] = useState(false);
  
@@ -92,10 +50,10 @@ const RequisitionStrip = ({
     <>
       {/* ================= REQUISITION STRIP ================= */}
       <div
-        className="d-flex justify-content-between align-items-center mb-3 px-3 py-2"
+        className="d-flex justify-content-between align-items-center px-3 py-2"
         style={{
-          background: "#ffffff",
-          border: "1px solid #e0e0e0",
+          background: isCardBg ? "#ffffff" : "none",
+          border: isCardBg ? "1px solid #e0e0e0" : "none",
           borderRadius: "8px"
         }}
       >
@@ -106,20 +64,20 @@ const RequisitionStrip = ({
               {job.requisitionCode}
             </span>
  
-            <span className="text-muted d-flex align-items-center gap-1">
+            <span className="d-flex align-items-center gap-1 date-text">
               <i className="bi bi-calendar3"></i>
               Start: {job.startDate}
             </span>
  
             <span className="text-muted">|</span>
  
-            <span className="text-muted d-flex align-items-center gap-1">
+            <span className="d-flex align-items-center gap-1 date-text">
               <i className="bi bi-calendar3"></i>
               End: {job.endDate}
             </span>
           </div>
  
-          <div style={{ color: "#0d6efd", fontWeight: 500 }}>
+          <div style={{ color: "#162B75", fontWeight: 500 }}>
             {job.positionTitle}
           </div>
         </div>
@@ -127,19 +85,21 @@ const RequisitionStrip = ({
         {/* RIGHT BUTTONS */}
         <div className="d-flex gap-2">
           <button
-            className="btn btn-outline-primary btn-sm"
+            className="btn btn-sm blue-border blue-color"
             onClick={() => setShowPosition(true)}
           >
             View Position
           </button>
  
-          <button
-            className={`save-btn ${isSaved ? "saved" : "unsaved"}`}
-            disabled={isSaved}
-            onClick={onSave}
-          >
-            {isSaved ? "Saved" : "Save"}
-          </button>
+          {isSaveEnabled && (
+            <button
+              className={`save-btn ${isSaved ? "saved" : "unsaved"}`}
+              disabled={isSaved}
+              onClick={onSave}
+            >
+              {isSaved ? "Saved" : "Save"}
+            </button>
+          )}
         </div>
       </div>
  
@@ -246,22 +206,16 @@ const RequisitionStrip = ({
  
           {/* CATEGORY WISE RESERVATION */}
           {job?.isLocationWise ? (
-            <LocationWiseVacancyTable
+            <NationalVacancyTable
+              positionStateDistributions={job.positionStateDistributions}
+            />
+          ) : (
+          <LocationWiseVacancyTable
               positionStateDistributions={job.positionStateDistributions}
               states={masterData?.states || []}
               reservationCategories={reservationCategories}
               disabilities={disabilities}
             />
-          ) : (
-          <NationalVacancyTable
-  positionCategoryNationalDistributions={
-    job.positionCategoryNationalDistributions?.length
-      ? job.positionCategoryNationalDistributions
-      : derivedNationalData
-  }
-  reservationCategories={reservationCategories}
-  disabilities={disabilities}
-/>
  
           )}
         </Modal.Body>

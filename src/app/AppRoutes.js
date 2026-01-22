@@ -37,6 +37,7 @@ import InterviewPanel from "../modules/master/pages/InterviewPanel/InterviewPane
 //import InterviewPanel from "../modules/master/pages/InterviewPanel";
 import SpecialCategoryPage from "../modules/master/pages/SpecialCategory/SpecialCategoryPage";
 import CandidatePreviewPage from "../modules/candidatePreview/candidatePreviewPage";
+import CandidateScreening from "../modules/candidatePreview/CandidateScreening";
 // import PositionPage from "../modules/master/pages/Position/PositionPage";
 // Lazy loaded components
 const Layout = React.lazy(() => import("../shared/components/Layout"));
@@ -91,6 +92,7 @@ const AppRoutes = () => {
                 />
              
                 <Route path="/candidate-preview" element={<CandidatePreviewPage />} />
+                <Route path="/candidate-workflow" element={<CandidateScreening />} />
               </Route>
 
 

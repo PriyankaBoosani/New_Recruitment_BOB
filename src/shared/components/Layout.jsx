@@ -12,7 +12,7 @@ const Loading = () => (
 
 const Layout = ({ children }) => (
   <Suspense fallback={<Loading />}>
-    <div className="d-flex flex-column vh-100">
+    <div className="d-flex flex-column">
       <div className="flex-grow-1 d-flex" style={{ overflow: 'hidden' }}>
         <main className="flex-grow-1" style={{ overflowY: 'auto', background: '#eee', overflowX: 'hidden' }}>
          

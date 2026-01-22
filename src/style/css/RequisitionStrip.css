@@ -10,6 +10,18 @@
   margin-bottom: 14px;
 }
 
+.requisition-strip-no-card {
+  /* background: #ffffff; */
+  /* border: 1px solid #e3e6ef; */
+  border-radius: 8px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* margin-top: 12px; */
+  /* margin-bottom: 14px; */
+}
+
 /* LEFT SIDE */
 .req-left {
   display: flex;
@@ -27,18 +39,18 @@
   display: flex;
   gap: 18px;
   font-size: 12px;
-  color: #445aa3;
+  color: #162B75;
 }
 
 .req-dates i {
-  color: #445aa3;
+  color: #162B75;
   font-size: 12px;
 }
 
 .req-title {
   font-size: 14px;
   font-weight: 600;
-  color: #162b75;
+  color: #162B75;
 }
 
 /* RIGHT SIDE */
@@ -49,8 +61,8 @@
 
 .btn-view-position {
   background: #ffffff;
-  color: #445aa3;
-  border: 1px solid #445aa3;
+  color: #162B75;
+  border: 1px solid #162B75;
   border-radius: 6px;
   padding: 6px 14px;
   font-size: 13px;
@@ -59,6 +71,6 @@
 }
 
 .btn-view-position:hover {
-  background: #445aa3;
+  background: #162B75;
   color: #ffffff;
 }

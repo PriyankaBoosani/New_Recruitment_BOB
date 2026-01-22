@@ -89,7 +89,9 @@ const CandidatePreviewPage = ({
         //   isSaved={isSaved}
         //   onSave={() => setIsSaved(true)}
         //   onViewPosition={() => setShowPosition(true)}
-        />
+        isCardBg={true}
+        isSaveEnabled={true}
+      />
 
       {/* Application Form (ALL ACCORDIONS INSIDE THIS) */}
       <ApplicationForm
