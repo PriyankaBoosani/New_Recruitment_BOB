@@ -64,7 +64,9 @@ export const mapMasterResponse = (masterData, userData, certData) => {
     specializations: (masterData.specializationMaster || []).map(s => ({
       id: s.specializationId,
       label: s.specializationName,
+      educationQualificationsId: s.educationQualificationsId, 
     })),
+
 
     users: (userData || []).map(u => ({
       id: String(u.userId ?? u.id),

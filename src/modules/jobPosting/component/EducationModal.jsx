@@ -43,10 +43,6 @@ export default function EducationModal({
         );
     }, [show, initialData]);
 
-
-
-
-
     const getLabel = (list, id, key = "label") =>
         list.find(i => i.id === id)?.[key] || "";
 
@@ -73,26 +69,26 @@ export default function EducationModal({
     };
 
     const updateRow = (i, field, value) => {
-        // update value
         const copy = [...rows];
         copy[i][field] = value;
+
+        // 🔥 if degree changes, wipe specialization
+        if (field === "educationQualificationsId") {
+            copy[i].specializationId = "";
+        }
+
         setRows(copy);
 
-        // clear error for that field
+        // clear errors (unchanged)
         setErrors(prev => {
             if (!prev.rows?.[i]?.[field]) return prev;
-
             const updated = { ...prev };
             updated.rows = [...updated.rows];
-
-            updated.rows[i] = {
-                ...updated.rows[i],
-                [field]: ""
-            };
-
+            updated.rows[i] = { ...updated.rows[i], [field]: "" };
             return updated;
         });
     };
+
 
     const removeRow = (index) => {
         setRows(prev =>
@@ -101,6 +97,13 @@ export default function EducationModal({
                 : [createRow()]
         );
     };
+    const getSpecializationsForDegree = (degreeId) => {
+        if (!degreeId) return [];
+        return specializations.filter(
+            s => s.educationQualificationsId === degreeId
+        );
+    };
+
 
     const certText = certIds
         .map(id => certifications.find(c => c.id === id)?.name)
@@ -175,11 +178,12 @@ Certifications: ${certText || "None"}
                                 }
                             >
                                 <option value="">Select Specialization</option>
-                                {specializations.map(s => (
+                                {getSpecializationsForDegree(row.educationQualificationsId).map(s => (
                                     <option key={s.id} value={s.id}>
                                         {s.label}
                                     </option>
                                 ))}
+
                             </Form.Select>
 
                             <div className="edu-error-space">
@@ -197,7 +201,7 @@ Certifications: ${certText || "None"}
                                     <img src={delete_icon} alt="delete_icon" className="icon-16" />
                                 </Button>
                             )}
-                            <div class="edu-error-space"></div>
+                            <div className="edu-error-space"></div>
                         </Col>
                     </Row>
                 ))}
@@ -303,10 +307,6 @@ Certifications: ${certText || "None"}
                 >
                     Save
                 </Button>
-
-
-
-
 
             </Modal.Footer>
         </Modal>

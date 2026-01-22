@@ -1,12 +1,12 @@
 .job-postings-page {
-	padding: 30px;
-	background: #f8f9fb;
-	min-height: 100vh;
+  padding: 30px;
+  background: #f8f9fb;
+  min-height: 100vh;
 }
 
 .page-title {
-	font-weight: 600;
-	color: #162B75;
+  font-weight: 600;
+  color: #162B75;
   font-size: 1em;
 }
 
@@ -14,29 +14,33 @@
   background: #f36f21;
   border: none;
 }
-.create .btn{
+
+.create .btn {
   font-weight: 500;
   font-size: 0.75em;
 }
-.yearfon{
+
+.yearfon {
   color: #333333 !important;
   font-weight: 500 !important;
   font-size: 0.875em;
 
 }
 
-.filters-row select, .search-boxpost input {
-	height: 42px;
-	font-size: 0.875em;
-	color: #162B75;
-	font-weight: 400;
+.filters-row select,
+.search-boxpost input {
+  height: 42px;
+  font-size: 0.875em;
+  color: #162B75;
+  font-weight: 400;
 }
 
 .search-boxpost {
-	position: relative;
-	border: none;
-	background: none;
+  position: relative;
+  border: none;
+  background: none;
 }
+
 /* Add this to your JobPostingsList.css */
 .status-select {
   appearance: none;
@@ -55,6 +59,7 @@
 .status-select::-ms-expand {
   display: none;
 }
+
 .search-boxpost svg {
   position: absolute;
   top: 50%;
@@ -64,91 +69,164 @@
 }
 
 .search-boxpost input {
-	padding-left: 36px;
-	color: rgba(65, 65, 65, 0.5);
-	font-size: 0.875em;
+  padding-left: 36px;
+  font-size: 0.875em;
 }
+
+.search-boxpost input::placeholder {
+  color: rgba(65, 65, 65, 0.5)
+}
+
 .bulk-actions {
-	background: #fff;
-	padding: 12px;
-	border-radius: 8px;
-	margin-left: 0px;
-	margin-right: 0px;
+  background: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  margin-left: 0px;
+  margin-right: 0px;
 }
-.selectall{
+
+.selectall {
   font-size: 0.75em;
   color: #162B75;
   font-weight: 500;
+  gap: 1em;
 }
+
+
+.selectall .form-check-input {
+  font-size: 1rem;
+  /* reset font scaling */
+  transform: scale(1);
+  /* ensure normal checkbox size */
+}
+
 .requisition-card {
   background: #fff;
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
-.subbtn{
-  background-color: #42579F;
+
+.subbtn {
+  background-color: #42579F !important;
   font-size: 0.875em;
   font-weight: 500;
+  opacity: 1 !important;
 }
-.subbtn:hover{
+
+.subbtn:hover {
   background-color: #42579F !important;
 }
-.canbtn{
-   font-size: 0.875em;
-     font-weight: 500;
+
+.canbtn {
+  font-size: 0.875em;
+  font-weight: 500;
 
 }
-.job-postings-page .icon-16{
+
+.job-postings-page .icon-16 {
   width: 16px;
   height: 16px;
 }
+
 .req-header {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
+.job-postings-page .bg-warning {
+  color: #42579F;
+  border: 1px solid #42579F;
+  background: #AFBDEB2E !important;
+  font-weight: 500;
+  font-size: 0.625em;
+}
+
+.job-postings-page .bg-success {
+  color: #0EB319;
+  border: 1px solid #0EB319;
+  background: #F5FFF6 !important;
+  font-weight: 500;
+  font-size: 0.625em;
+
+}
+
+.job-postings-page .bg-danger {
+  color: #DC3545;
+  /* Bootstrap danger red */
+  border: 1px solid #DC3545;
+  background: #FFF5F6 !important;
+  font-weight: 500;
+  font-size: 0.625em;
+}
+
+
 .req-id {
   font-weight: 500;
 }
 
-.req-code {
+.job-postings-page .req-code {
+  font-weight: 500;
   margin: 8px 0;
+  color: #162B75;
+  font-size: 1em;
+}
+
+.job-postings-page .depname {
+  color: #162B75;
+  font-size: 1em;
   font-weight: 600;
-  color: #1f2b4d;
+}
+
+.deppos {
+  color: #404040 !important;
+  background: #fff !important;
+  border: 1px solid #E5E7EB;
+  padding: 5px;
+  border-radius: 10px;
+  font-weight: 400;
+  font-size: 0.625em;
 }
 
 .req-meta,
 .req-dates {
   display: flex;
   gap: 16px;
-  font-size: 14px;
-  color: #6c757d;
+  font-size: 0.875em;
+  color: #404040;
   flex-wrap: wrap;
+  font-weight: 400;
 }
 
 .actions .icon-btn {
-	margin-left: 8px;
-	background: #EFF6FF;
+  margin-left: 8px;
+  background: #EFF6FF;
 }
 
-.icon-23{
+.icon-23 {
   width: 23px;
   height: 23px;
 }
-.icon-20{
+
+.icon-20 {
   width: 20px;
   height: 20px;
 }
-.icon-40{
+
+.icon-40 {
   width: 40px;
   height: 40px;
 }
 
+.icon-19 {
+  width: 19px;
+  height: 19px;
+}
 
 /* Responsive */
 @media (max-width: 768px) {
+
   .req-meta,
   .req-dates {
     flex-direction: column;
@@ -159,6 +237,7 @@
     text-align: left !important;
   }
 }
+
 .req-clickable {
   cursor: pointer;
 }
@@ -192,22 +271,25 @@
 
 /* Title grows, rest stays inline */
 .position-title {
-  font-weight: 600;
-  font-size: 16px;
+  font-size: 1em;
   flex: 1;
+  color: #162B75;
+  font-weight: 600;
+
 }
 
 /* Vacancies + Age + Icons in ONE LINE */
 .position-meta-inline {
-	display: flex;
-	align-items: center;
-	gap: 16px;
-	margin-right: 100px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-right: 100px;
 }
 
 .position-meta-inline span {
-  font-weight: 500;
-  font-size: 14px;
+	font-weight: 400;
+	font-size: 0.875em;
+	color: #404040;
 }
 
 .icon-btn {
@@ -218,17 +300,20 @@
 
 /* DETAILS BELOW */
 .position-details {
-  margin-top: 10px;
-  font-size: 14px;
-  color: #4b5563;
+	/* margin-top: 10px; */
+	font-size: 0.875em;
+	color: #404040;
+	font-weight: 400;
 }
 
 .position-details strong {
   font-weight: 600;
 }
+
 .position-card-inner .icon-btn {
-	background: #EFF6FF;
+  background: #EFF6FF;
 }
+
 @media (max-width: 768px) {
   .position-header-row {
     flex-wrap: wrap;
@@ -241,6 +326,7 @@
     margin-right: 0px;
   }
 }
+
 .requisition-card {
   margin-bottom: 1rem;
   border-radius: 8px;
@@ -250,6 +336,11 @@
 
 .requisition-card .card-body {
   padding: 1.25rem;
+}
+.accordion-body .text-muted{
+  font-size: 1em;
+  color: #404040 !important;
+  font-weight: 400;
 }
 
 /* Responsive adjustments */
@@ -296,7 +387,7 @@
     justify-content: space-between;
   }
 
-  .requisition-card .d-flex > div:first-child {
+  .requisition-card .d-flex>div:first-child {
     font-weight: 500;
     color: #6c757d;
     margin-right: 1rem;
@@ -318,6 +409,7 @@
     font-size: 0.875rem;
   }
 }
+
 /* Pagination Styles */
 .pagination {
   gap: 4px;
@@ -358,3 +450,20 @@
   background-color: #e9ecef;
 }
 
+
+
+.job-postings-page .form-check-input {
+  width: 1.1em;
+  height: 1.1em;
+  border: 2px solid #42579F !important;
+  cursor: pointer;
+}
+
+.job-postings-page .form-check-input:checked {
+  background-color: #42579F !important;
+  border-color: #42579F !important;
+}
+
+.job-postings-page .form-check-input:focus {
+  box-shadow: none !important;
+}

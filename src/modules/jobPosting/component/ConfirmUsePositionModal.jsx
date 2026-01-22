@@ -10,12 +10,12 @@ const ConfirmUsePositionModal = ({ show, fields = [], onYes, onNo }) => {
       keyboard={false}
       centered
     >
-      <Modal.Body className=" p-4">
+      <Modal.Body className=" p-4 text-center">
         <p className="mb-4 fw-semibold">
           We found relevant data for the selected position.
 
         </p>
-        <p className="mb-3 fw-semibold">
+        {/* <p className="mb-3 fw-semibold">
           The following fields will be populated:
         </p>
 
@@ -23,7 +23,7 @@ const ConfirmUsePositionModal = ({ show, fields = [], onYes, onNo }) => {
           {fields.map((field, index) => (
             <li key={index}>{field}</li>
           ))}
-        </ul>
+        </ul> */}
         <p className="text-center">Would you like to use it?</p>
 
         <div className="d-flex justify-content-center gap-3">

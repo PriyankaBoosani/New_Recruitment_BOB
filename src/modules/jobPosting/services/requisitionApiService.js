@@ -31,11 +31,6 @@ const requisitionApiService = {
       }
     ),
 
-  bulkImport: (data) =>
-    api.post("/positions/import", data),
-
-  downloadTemplate: () =>
-    api.get("/positions/template", { responseType: "blob" }),
 
   getJobRequisitions: ({ year, status, search, page, size }) =>
     api.get("/recruiter/job-requisitions", {
@@ -47,6 +42,11 @@ const requisitionApiService = {
         size
       }
     }),
+     submitForApproval: (payload) =>
+    api.post(
+      "/recruiter/job-requisitions/submit-for-approval",
+      payload
+    ),
 };
 
 export default requisitionApiService;

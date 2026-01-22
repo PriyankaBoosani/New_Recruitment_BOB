@@ -1,5 +1,12 @@
 import { validatePositiveInteger } from "./JobpostingcommonValidators";
 
+export const normalizeTitle = (value = "") =>
+  value
+    .replace(/\s+/g, " ")   // collapse multiple spaces
+    .replace(/^\s+/, "");  // remove leading spaces
+export const TITLE_ALLOWED_PATTERN = /^[A-Za-z0-9 _\-()/&]*$/;
+
+
 export const validateAddPosition = ({
   isEditMode,
   formData,
@@ -71,33 +78,34 @@ export const validateAddPosition = ({
   }
   // ---------- AGE BUSINESS RULES (BANK ELIGIBILITY) ----------
 
-const minAge = Number(formData.minAge);
-const maxAge = Number(formData.maxAge);
+  const minAge = Number(formData.minAge);
+  const maxAge = Number(formData.maxAge);
 
-// Minimum age rule
-if (!errors.minAge && minAge < 18) {
-  errors.minAge = "Minimum age must be 18 years";
-}
+  // Minimum age rule
+  if (!errors.minAge && minAge < 18) {
+    errors.minAge = "Minimum age must be 18 years";
+  }
 
-// Maximum age rule
-if (!errors.maxAge && maxAge > 60) {
-  errors.maxAge = "Maximum age must not exceed 60 years";
-}
+  // Maximum age rule
+  if (!errors.maxAge && maxAge > 60) {
+    errors.maxAge = "Maximum age must not exceed 60 years";
+  }
 
-// Logical relationship
-if (
-  !errors.minAge &&
-  !errors.maxAge &&
-  minAge >= maxAge
-) {
-  errors.maxAge = "Max age must be greater than Min age";
-}
+  // Logical relationship
+  if (
+    !errors.minAge &&
+    !errors.maxAge &&
+    minAge >= maxAge
+  ) {
+    errors.maxAge = "Max age must be greater than Min age";
+  }
 
 
   // ---------- EXPERIENCE ----------
   const validateExperience = (exp, key) => {
     const years = Number(exp.years || 0);
     const months = Number(exp.months || 0);
+    exp.description = normalizeTitle(exp.description);
 
     if (years === 0 && months === 0) {
       errors[key] = "Please select experience duration";
@@ -110,9 +118,12 @@ if (
   validateExperience(formData.preferredExperience, "preferredExperience");
 
   // ---------- RESPONSIBILITIES ----------
-  if (!formData.responsibilities?.trim()) {
+  formData.responsibilities = normalizeTitle(formData.responsibilities);
+
+  if (!formData.responsibilities) {
     errors.responsibilities = "This field is required";
   }
+
 
   // ---------- STATE / NATIONAL DISTRIBUTION ----------
 
@@ -216,7 +227,7 @@ export const validateStateDistribution = ({
     errors.state = "This state is already added";
   }
 
-  
+
   return errors;
 };
 

@@ -68,6 +68,19 @@ const jobPositionApiService = {
 
 
   getRequisitionById: (id) => api.get(`/recruiter/job-requisitions/${id}`),
+
+   downloadTemplate: () => api.get("/recruiter/job-positions/download-template", { responseType: 'blob' }),
+  
+  
+    bulkImport: (file) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      return api.post('/recruiter/job-positions/create-bulk-positions', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    },
 };
 
 export default jobPositionApiService;

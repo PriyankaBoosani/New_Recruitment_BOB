@@ -16,7 +16,7 @@ const CreateRequisition = () => {
 
   /* ===================== URL + MODE ===================== */
   const query = new URLSearchParams(location.search);
-  const editId = query.get("id"); // ✅ DEFINE FIRST
+  const editId = query.get("id"); //  DEFINE FIRST
   const mode = location.state?.mode; // "view" | "edit" | undefined
 
   const isCreateMode = !editId;
@@ -34,10 +34,6 @@ const CreateRequisition = () => {
   } = useCreateRequisition(editId);
 
   const [errors, setErrors] = useState({});
-
-
-
-
   /* ===================== SAVE ===================== */
   const handleSave = async (e) => {
     e?.preventDefault?.();
@@ -90,7 +86,7 @@ const CreateRequisition = () => {
           </div>
 
           <Form onSubmit={handleSave}>
-            {/* ✅ THIS WAS MISSING */}
+            {/*  THIS WAS MISSING */}
             <fieldset disabled={isViewMode}>
               <Form.Group className="mb-3">
                 <Form.Label>
@@ -135,9 +131,6 @@ const CreateRequisition = () => {
                   }
                   isInvalid={!!errors.title}
                 />
-
-
-
 
                 <Form.Text className="text-muted">
                   Use a clear, searchable title used across the portal and job boards.

@@ -117,28 +117,26 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  (response) => response.data,
+  (response) => {
+    // ✅ DO NOT TOUCH FILE DOWNLOADS
+    if (response.config?.responseType === "blob") {
+      return response;
+    }
+    return response.data;
+  },
   async (error) => {
     const originalRequest = error.config || {};
 
-    // If this request was the refresh endpoint, don't try to refresh again
-    if (originalRequest && originalRequest.url && originalRequest.url.includes(REFRESH_PATH)) {
-      // refresh endpoint itself failed -> bail out
-      store.dispatch(clearUser?.() ?? {});
-      window.location.href = "/login";
-      return Promise.reject(error);
-    }
-
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      console.warn("⚠️ Java API session expired (api). Trying refresh...");
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes(REFRESH_PATH)
+    ) {
       originalRequest._retry = true;
       try {
-        // call refresh bypassing axios instances (no interceptors) to avoid recursion
         await callRefreshEndpoint();
-        // refresh succeeded — retry original request
         return api(originalRequest);
       } catch (err) {
-        console.error("⛔ Refresh failed (api). Redirecting to login", err);
         store.dispatch(clearUser?.() ?? {});
         window.location.href = "/login";
         return Promise.reject(err);
@@ -152,6 +150,7 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
 
 /* ---------------------------
    Interceptors - apis (master)

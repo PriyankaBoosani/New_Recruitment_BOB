@@ -3,10 +3,9 @@ import { Row, Col, Form, Button } from "react-bootstrap";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import upload_icon from '../../../assets/upload_Icon.png';
 import { useEffect } from "react";
-
-const TEXT_ALLOWED_REGEX = /^[A-Za-z0-9 .,\-()&:;/]*$/;
+import { normalizeTitle, TITLE_ALLOWED_PATTERN } from "../validations/validateAddPosition";
 const PositionForm = ({
-
+isViewMode = false,
     formData,
     errors,
     handleInputChange,
@@ -28,21 +27,21 @@ const PositionForm = ({
     ALLOWED_EXTENSIONS,
     MAX_FILE_SIZE_MB
 }) => {
- const isContractEmployment =
-  employmentTypes.find(
-    t =>
-      String(t.id) === String(formData.employmentType) &&
-      t.label?.toLowerCase().includes("contract")
-  ) !== undefined;
+    const isContractEmployment =
+        employmentTypes.find(
+            t =>
+                String(t.id) === String(formData.employmentType) &&
+                t.label?.toLowerCase().includes("contract")
+        ) !== undefined;
 
-useEffect(() => {
-  if (!isContractEmployment && formData.contractualPeriod) {
-    setFormData(prev => ({
-      ...prev,
-      contractualPeriod: ""
-    }));
-  }
-}, [isContractEmployment]);
+    useEffect(() => {
+        if (!isContractEmployment && formData.contractualPeriod) {
+            setFormData(prev => ({
+                ...prev,
+                contractualPeriod: ""
+            }));
+        }
+    }, [isContractEmployment]);
 
     return (
 
@@ -76,8 +75,8 @@ useEffect(() => {
                             ) : (
                                 <div className="text-center text-muted">
                                     <img src={upload_icon} alt="upload_icon" className="icon-40" />
-                                    <div>Drag & drop your file here, or <br /><span className="text-primary">Click to Upload</span></div>
-                                    <small>Supported formats: PDF, DOC, DOCX (Max 2 MB)</small>
+                                    <div>Drag & drop your file here, or <br /><span className="textclick">Click to Upload</span></div>
+                                    <span className="support">Supported formats: PDF, DOC, DOCX (Max 2 MB)</span>
                                 </div>
                             )}
                         </div>
@@ -183,7 +182,7 @@ useEffect(() => {
                     <ErrorMessage>{errors.employmentType}</ErrorMessage>
                 </Col>
 
-                <Col md={4}><Form.Label>Contractual Period(Years)</Form.Label><Form.Control name="contractualPeriod" type="text" inputMode="numeric"  value={formData.contractualPeriod} onChange={handleInputChange}  disabled={!isContractEmployment} /></Col>
+                <Col md={4}><Form.Label>Contractual Period(Years)</Form.Label><Form.Control name="contractualPeriod" type="text" inputMode="numeric" value={formData.contractualPeriod} onChange={handleInputChange} disabled={!isContractEmployment} /></Col>
                 <Col md={4}>
                     <Form.Label>Grade / Scale <span className="text-danger">*</span></Form.Label>
                     <Form.Select name="grade" value={formData.grade} onChange={handleInputChange}>
@@ -201,7 +200,7 @@ useEffect(() => {
                 <Col md={6}>
                     <div className="d-flex justify-content-between align-items-center mb-1">
                         <Form.Label className="mb-0">Mandatory Education <span className="text-danger">*</span></Form.Label>
-                        <Button size="sm" onClick={() => onEducationClick("mandatory")}>+ Add</Button>
+                        <Button size="sm" onClick={() => onEducationClick("mandatory")} style={{borderRadius: "10px"}}>+ Add</Button>
                     </div>
                     <Form.Control as="textarea" rows={4} readOnly value={educationData.mandatory.text || ""} />
                     <ErrorMessage>{errors.mandatoryEducation}</ErrorMessage>
@@ -210,7 +209,7 @@ useEffect(() => {
                 <Col md={6}>
                     <div className="d-flex justify-content-between align-items-center mb-1">
                         <Form.Label className="mb-0">Preferred Education <span className="text-danger">*</span></Form.Label>
-                        <Button size="sm" onClick={() => onEducationClick("preferred")}>+ Add</Button>
+                        <Button size="sm" onClick={() => onEducationClick("preferred")} style={{borderRadius: "10px"}}>+ Add</Button>
                     </div>
                     <Form.Control as="textarea" rows={4} readOnly value={educationData.preferred.text || ""} />
                     <ErrorMessage>{errors.preferredEducation}</ErrorMessage>
@@ -239,19 +238,17 @@ useEffect(() => {
                             rows={3}
                             value={formData[expType].description}
                             onChange={(e) => {
-                                const value = e.target.value;
+                                let value = normalizeTitle(e.target.value);
 
-                                // ❌ Invalid characters
-                                if (!TEXT_ALLOWED_REGEX.test(value)) {
-                                    setErrors((prev) => ({
+                                if (!TITLE_ALLOWED_PATTERN.test(value)) {
+                                    setErrors(prev => ({
                                         ...prev,
                                         [expType]: "Only letters, numbers, spaces and . , - ( ) & : ; / are allowed"
                                     }));
                                     return;
                                 }
 
-                                // ✅ Valid input → update state
-                                setFormData((prev) => ({
+                                setFormData(prev => ({
                                     ...prev,
                                     [expType]: {
                                         ...prev[expType],
@@ -259,10 +256,16 @@ useEffect(() => {
                                     }
                                 }));
 
-                                // ✅ Clear error when valid
-                                setErrors((prev) => ({
+                                setErrors(prev => ({ ...prev, [expType]: "" }));
+                            }}
+
+                            onBlur={() => {
+                                setFormData(prev => ({
                                     ...prev,
-                                    [expType]: ""
+                                    [expType]: {
+                                        ...prev[expType],
+                                        description: normalizeTitle(prev[expType].description)
+                                    }
                                 }));
                             }}
                         />
@@ -280,11 +283,10 @@ useEffect(() => {
                         name="responsibilities"
                         value={formData.responsibilities}
                         onChange={(e) => {
-                            const value = e.target.value;
+                            const value = normalizeTitle(e.target.value);
 
-                            // ❌ Invalid character typed
-                            if (!TEXT_ALLOWED_REGEX.test(value)) {
-                                setErrors((prev) => ({
+                            if (!TITLE_ALLOWED_PATTERN.test(value)) {
+                                setErrors(prev => ({
                                     ...prev,
                                     responsibilities:
                                         "Only letters, numbers, spaces and . , - ( ) & : ; / are allowed"
@@ -292,16 +294,24 @@ useEffect(() => {
                                 return;
                             }
 
-                            // ✅ Valid input
-                            handleInputChange(e);
-
-                            // ✅ Clear error
-                            setErrors((prev) => ({
+                            setFormData(prev => ({
                                 ...prev,
-                                responsibilities: ""
+                                responsibilities: value
+                            }));
+
+                            setErrors(prev => ({ ...prev, responsibilities: "" }));
+                        }}
+                        onBlur={() => {
+                            setFormData(prev => ({
+                                ...prev,
+                                responsibilities: normalizeTitle(prev.responsibilities)
                             }));
                         }}
                     />
+
+
+
+
 
                     <ErrorMessage>{errors.responsibilities}</ErrorMessage>
 

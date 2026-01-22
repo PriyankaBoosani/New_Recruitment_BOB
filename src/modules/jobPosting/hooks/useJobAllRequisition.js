@@ -49,6 +49,27 @@ export const useJobRequisitions = ({
       toast.error("Failed to delete requisition");
     }
   };
+  const submitForApproval = async (jobRequisitionIds) => {
+    if (!jobRequisitionIds?.length) return;
+
+    try {
+      setLoading(true);
+
+      await requisitionApiService.submitForApproval({
+        jobRequisitionIds,
+        postingStatus: "Approved" // confirm backend enum
+        
+      });
+
+      toast.success("Requisition(s) submitted for approval");
+      fetchRequisitions(); // refresh list
+    } catch (err) {
+      toast.error("Failed to submit for approval");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   useEffect(() => {
     fetchRequisitions();
@@ -59,6 +80,7 @@ export const useJobRequisitions = ({
     loading,
     pageInfo,
     deleteRequisition,
+    submitForApproval,
     refetch: fetchRequisitions
   };
 };
