@@ -5,6 +5,7 @@ import logo_Bob from "../../../assets/bob-logo.png";
 import sign from "../../../assets/downloadIcon.png";
 import viewIcon from "../../../assets/view_icon.png";
 import downloadIcon from "../../../assets/downloadIcon.png";
+import DocumentViewerModal from "../components/DocumentViewerModal";
 
 const dummyDocuments = [
   { name: "ID Proof" },
@@ -38,7 +39,30 @@ const ApplicationForm = ({
   const photoUrl = data.documents?.photo?.[0]?.url || logo_Bob;
   const signatureUrl = data.documents?.signature?.[0]?.url || sign;
 
+  const [showViewer, setShowViewer] = useState(false);
+  const [selectedDoc, setSelectedDoc] = useState(null);
+  const [docStatus, setDocStatus] = useState({});
+  
+const handleVerify = (comment) => {
+  setDocStatus((prev) => ({
+    ...prev,
+    [selectedDoc.name]: "Verified",
+  }));
+  setShowViewer(false);
+};
+
+const handleReject = (comment) => {
+  setDocStatus((prev) => ({
+    ...prev,
+    [selectedDoc.name]: "Rejected",
+  }));
+  setShowViewer(false);
+};
+
+  
+
   return (
+    <>
      <Accordion
           activeKey={activeAccordion}
           onSelect={(key) => setActiveAccordion(key)}
@@ -352,7 +376,7 @@ const ApplicationForm = ({
   </Accordion.Body>
 </Accordion.Item>
 
-   <Accordion.Item eventKey="3">
+<Accordion.Item eventKey="3">
   <Accordion.Header>Documents Details</Accordion.Header>
   <Accordion.Body>
 
@@ -362,6 +386,7 @@ const ApplicationForm = ({
           <th>File Type</th>
           <th>Status</th>
           <th>Action</th>
+
           <th>File Type</th>
           <th>Status</th>
           <th>Action</th>
@@ -369,51 +394,108 @@ const ApplicationForm = ({
       </thead>
 
       <tbody>
-        {dummyDocuments.map((doc, index) => {
-          if (index % 2 !== 0) return null;
-          const right = dummyDocuments[index + 1];
+        {Array.from({ length: Math.ceil(dummyDocuments.length / 2) }).map(
+          (_, rowIndex) => {
+            const left = dummyDocuments[rowIndex * 2];
+            const right = dummyDocuments[rowIndex * 2 + 1];
 
-          return (
-            <tr key={index}>
-              {/* LEFT */}
-              <td>{doc.name}</td>
-              <td>
-                <span className="verified-pill">Verified</span>
-              </td>
-              <td className="action-cell">
-                <img src={viewIcon} alt="View" />
-                <img src={downloadIcon} alt="Download" />
-              </td>
+            return (
+              <tr key={rowIndex}>
+                {/* LEFT COLUMN */}
+                <td>{left?.name}</td>
+                <td>
+                  {left && (
+                    <span
+                      className={
+                        docStatus[left.name] === "Verified"
+                          ? "verified-pill"
+                          : docStatus[left.name] === "Rejected"
+                          ? "rejected-pill"
+                          : "pending-pill"
+                      }
+                    >
+                      {docStatus[left.name] || "Pending"}
+                    </span>
+                  )}
+                </td>
+                <td className="action-cell">
+                  {left && (
+                    <>
+                      <img
+                        src={viewIcon}
+                        alt="View"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          setSelectedDoc({
+                            name: left.name,
+                            url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                          });
+                          setShowViewer(true);
+                        }}
+                      />
+                      <img
+                        src={downloadIcon}
+                        alt="Download"
+                        style={{ cursor: "pointer" }}
+                      />
+                    </>
+                  )}
+                </td>
 
-              {/* RIGHT */}
-              {right ? (
-                <>
-                  <td>{right.name}</td>
-                  <td>
-                    <span className="verified-pill">Verified</span>
-                  </td>
-                  <td className="action-cell">
-                    <img src={viewIcon} alt="View" />
-                    <img src={downloadIcon} alt="Download" />
-                  </td>
-                </>
-              ) : (
-                <>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                </>
-              )}
-            </tr>
-          );
-        })}
+                {/* RIGHT COLUMN */}
+                <td>{right?.name || "-"}</td>
+                <td>
+                  {right ? (
+                    <span
+                      className={
+                        docStatus[right.name] === "Verified"
+                          ? "verified-pill"
+                          : docStatus[right.name] === "Rejected"
+                          ? "rejected-pill"
+                          : "pending-pill"
+                      }
+                    >
+                      {docStatus[right.name] || "Pending"}
+                    </span>
+                  ) : (
+                    "-"
+                  )}
+                </td>
+                <td className="action-cell">
+                  {right ? (
+                    <>
+                      <img
+                        src={viewIcon}
+                        alt="View"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          setSelectedDoc({
+                            name: right.name,
+                            url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                          });
+                          setShowViewer(true);
+                        }}
+                      />
+                      <img
+                        src={downloadIcon}
+                        alt="Download"
+                        style={{ cursor: "pointer" }}
+                      />
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </td>
+              </tr>
+            );
+          }
+        )}
       </tbody>
     </table>
 
-
-
   </Accordion.Body>
 </Accordion.Item>
+
 
 <Card className="criteria-main-card">
   <div className="criteria-wrapper">
@@ -472,6 +554,18 @@ const ApplicationForm = ({
 
        
         </Accordion>
+
+       <DocumentViewerModal
+  show={showViewer}
+  onHide={() => setShowViewer(false)}
+  document={selectedDoc}
+  onVerify={handleVerify}
+  onReject={handleReject}
+/>
+
+
+
+        </>
   );
 };
 

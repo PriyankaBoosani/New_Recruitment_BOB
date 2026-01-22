@@ -24,7 +24,7 @@ import GenericOrAnnexuresPage from "../modules/master/pages/GenericOrAnnexures/G
 import CertificationPage from "../modules/master/pages/CertificationPage/CertificationPage";
 import NonAdminRoute from "./NonAdminRoute";
 import AdminRoute from "./AdminRoute";
-
+import CandidatePreview from "../modules/candidatePreview/candidatePreviewPage";
 
 
 import AddPosition from "../modules/jobPosting/pages/AddPosition";
@@ -36,6 +36,7 @@ import DepartmentPage from "../modules/master/pages/Department/DepartmentPage"
 import InterviewPanel from "../modules/master/pages/InterviewPanel/InterviewPanelPage";
 //import InterviewPanel from "../modules/master/pages/InterviewPanel";
 import SpecialCategoryPage from "../modules/master/pages/SpecialCategory/SpecialCategoryPage";
+import CandidatePreviewPage from "../modules/candidatePreview/candidatePreviewPage";
 // import PositionPage from "../modules/master/pages/Position/PositionPage";
 // Lazy loaded components
 const Layout = React.lazy(() => import("../shared/components/Layout"));
@@ -88,6 +89,8 @@ const AppRoutes = () => {
                   path="/job-posting/:requisitionId/add-position"
                   element={<AddPosition />}
                 />
+             
+                <Route path="/candidate-preview" element={<CandidatePreviewPage />} />
               </Route>
 
 
