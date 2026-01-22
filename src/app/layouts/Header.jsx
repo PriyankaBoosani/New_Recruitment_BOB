@@ -183,6 +183,14 @@ const Header = () => {
                   {t("job_postings")}
                 </Nav.Link>
               )}
+              <Nav.Link
+  as={Link}
+  to="/candidate-preview"
+  onClick={closeMenu}
+>
+  Candidate Preview
+</Nav.Link>
+
 
 
 
