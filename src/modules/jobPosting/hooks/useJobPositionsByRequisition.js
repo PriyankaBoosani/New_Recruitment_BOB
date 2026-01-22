@@ -33,6 +33,7 @@ export const useJobPositionsByRequisition = () => {
 
       const enriched = list.map(api => ({
         positionId: api.positionId || api.id,
+         masterPositionId: api.masterPositionId,
         positionName: positionMap[api.masterPositionId] || "—",
         deptId: api.deptId,
         departmentName: departmentMap[api.deptId] || "—",

@@ -88,7 +88,7 @@ const CreateRequisition = () => {
           <Form onSubmit={handleSave}>
             {/*  THIS WAS MISSING */}
             <fieldset disabled={isViewMode}>
-              <Form.Group className="mb-3">
+              <Form.Group className="mb-3 mt-3">
                 <Form.Label>
                   Requisition Title <span className="text-danger">*</span>
                 </Form.Label>
@@ -129,7 +129,7 @@ const CreateRequisition = () => {
                       }
                     })
                   }
-                  isInvalid={!!errors.title}
+                  
                 />
 
                 <Form.Text className="text-muted">
@@ -163,7 +163,7 @@ const CreateRequisition = () => {
                           }
                         })
                       }
-                      isInvalid={!!errors.description}
+                      
                     />
 
                     <ErrorMessage>{errors.description}</ErrorMessage>
@@ -191,7 +191,7 @@ const CreateRequisition = () => {
                             }));
                           }}
                           min={new Date().toISOString().split("T")[0]}
-                          isInvalid={!!errors.startDate}
+                         
                         />
                         <Form.Text className="text-muted">
                           Date from which the candidates can start applying.
@@ -215,7 +215,7 @@ const CreateRequisition = () => {
                             setErrors((prev) => ({ ...prev, endDate: "" }));
                           }}
                           min={formData.startDate}
-                          isInvalid={!!errors.endDate}
+                         
                         />
                         <Form.Text className="text-muted">
                           ⓘ Standard duration: 21 days.

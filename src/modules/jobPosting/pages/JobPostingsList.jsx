@@ -22,7 +22,8 @@ import "../../../style/css/JobPostingsList.css";
 import DeleteConfirmationModal from "../component/DeleteConfirmationModal";
 import ConfirmationModal from "../component/ConfirmationModal"
 
-import view_icon from "../../../assets/view_icon.png";
+import start_icon from "../../../assets/start_icon.png";
+import end_icon from "../../../assets/end_icon.png"
 import submitIcon from "../../../assets/submitIcon.png";
 import pos_edit_icon from "../../../assets/pos_edit_icon.png";
 import pos_delete_icon from "../../../assets/pos_delete_icon.png";
@@ -329,8 +330,8 @@ const JobPostingsList = () => {
                                         <div>
                                             <h6 className="req-code mb-2">{req.code}</h6>
                                             <div className="req-dates">
-                                                <div>Start: {req.startDate}</div> |
-                                                <div>End: {req.endDate}</div>
+                                                <div><img src={start_icon} alt="start_icon" className="icon-12"/> Start: {req.startDate}</div> |
+                                                <div><img src={end_icon} alt="end_icon" className="icon-12" /> End: {req.endDate}</div>
                                             </div>
                                         </div>
                                     </div>

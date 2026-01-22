@@ -77,12 +77,13 @@ const PositionForm = ({
                     <Form.Group>
                         <Form.Label>Upload Indent <span className="text-danger">*</span></Form.Label>
                         <div
-                            className={`upload-indent-box ${errors.indentFile ? "is-invalid" : ""}`}
+                            className={`upload-indent-box ${errors.indentFile ? "" : ""}`}
                             onClick={() => {
                                 if (!existingIndentPath || indentFile) {
                                     document.getElementById("indentFileInput").click();
                                 }
                             }}
+                            
                         >
                             {indentFile ? (
                                 <div className="d-flex align-items-center gap-3">

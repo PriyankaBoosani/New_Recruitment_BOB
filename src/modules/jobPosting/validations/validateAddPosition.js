@@ -17,13 +17,15 @@ export const validateAddPosition = ({
   approvedOn,
   nationalCategories,
   nationalDisabilities,
-  stateDistributions
+  stateDistributions,
+  existingPositions,
+  positionId
 }) => {
   const errors = {};
 
   // ---------- FILE ----------
   if (!indentFile && !(isEditMode && existingIndentPath)) {
-    errors.indentFile = "Indent file is required";
+    errors.indentFile = "This feild is required";
   }
 
   // ---------- BASIC REQUIRED ----------
@@ -34,6 +36,40 @@ export const validateAddPosition = ({
   if (!formData.employmentType) errors.employmentType = "This field is required";
   if (!formData.grade) errors.grade = "This field is required";
   if (!formData.medicalRequired) errors.medicalRequired = "This field is required";
+
+ // ---------- DUPLICATE POSITION + DEPARTMENT ----------
+if (
+  formData.position &&
+  formData.department &&
+  Array.isArray(existingPositions)
+) {
+  const duplicate = existingPositions.some(p => {
+    const sameDepartment =
+      String(p.deptId) === String(formData.department);
+
+    const samePosition =
+      String(p.masterPositionId) === String(formData.position);
+
+    const notSameRecord =
+      !isEditMode || String(p.positionId) !== String(positionId);
+
+    return sameDepartment && samePosition && notSameRecord;
+  });
+
+  if (duplicate) {
+    errors.position =
+      "This position already exists for the selected department. Please select the other position";
+    errors.department =
+      "This department already has the selected position";
+  }
+}
+
+console.log("DUPLICATE CHECK DATA", {
+  formPosition: formData.position,
+  formDepartment: formData.department,
+  existingPositions
+});
+
 
   // ---------- NUMERIC FIELDS ----------
   const numericChecks = [

@@ -169,7 +169,7 @@
 .job-postings-page .req-code {
   font-weight: 500;
   margin: 8px 0;
-  color: #162B75;
+  color: #162B75 !important;
   font-size: 1em;
 }
 
@@ -341,6 +341,10 @@
   font-size: 1em;
   color: #404040 !important;
   font-weight: 400;
+}
+.icon-12{
+  width: 16px;
+  height: 16px;
 }
 
 /* Responsive adjustments */
