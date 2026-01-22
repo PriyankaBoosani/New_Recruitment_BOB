@@ -356,3 +356,111 @@
   font-weight: 600;
   color: #333333;
 }
+/* ===============================
+   Upload indent base
+================================ */
+.upload-indent-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  position: relative;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #c7d2fe;
+  background: #fafbff;
+  cursor: pointer;
+  text-align: center;
+}
+
+/* Drag & drop (empty state) */
+.upload-indent-box .text-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+/* When file / existing indent is present → row layout */
+.upload-indent-box:has(.file-icon) {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+/* Prevent drag UI from shrinking */
+.upload-indent-box:has(.text-center) {
+  min-height: 110px;
+}
+
+/* Ensure left content stays aligned */
+.upload-indent-box > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* ===============================
+   Action icons (View / Edit)
+================================ */
+.indent-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Shared icon button */
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  border-radius: 50%;
+  border: 1px solid #c7d2fe;
+  background: #ffffff;
+
+  padding: 0;
+  cursor: pointer;
+}
+
+.indent-actions .icon-btn img {
+  width: 32px;
+  height: 32px;
+}
+
+/* Hover feedback */
+.icon-btn:hover {
+  background: #eef2ff;
+}
+
+/* Prevent text overflow */
+.upload-indent-box .fw-semibold {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===============================
+   Mobile adjustments
+================================ */
+@media (max-width: 576px) {
+  .upload-indent-box {
+    padding: 12px;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .icon-btn img {
+    width: 18px;
+    height: 18px;
+  }
+}
+

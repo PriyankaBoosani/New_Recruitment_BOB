@@ -3,9 +3,11 @@ import { Row, Col, Form, Button } from "react-bootstrap";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import upload_icon from '../../../assets/upload_Icon.png';
 import { useEffect } from "react";
+import edit_icon from "../../../assets/edit_icon.png"
+import view_icon from "../../../assets/view_icon.png"
 import { normalizeTitle, TITLE_ALLOWED_PATTERN } from "../validations/validateAddPosition";
 const PositionForm = ({
-isViewMode = false,
+    isViewMode = false,
     formData,
     errors,
     handleInputChange,
@@ -42,6 +44,30 @@ isViewMode = false,
             }));
         }
     }, [isContractEmployment]);
+    const handleReplaceIndent = () => {
+        // clear backend file reference
+        setFormData(prev => ({
+            ...prev,
+            indentPath: null // or whatever key you send to backend
+        }));
+
+        // clear UI state
+        setIndentFile(null);
+
+        // clear errors
+        setErrors(prev => {
+            const { indentFile, ...rest } = prev;
+            return rest;
+        });
+
+        // reset file input so same file can be selected again
+        const input = document.getElementById("indentFileInput");
+        if (input) input.value = "";
+
+        // open file picker
+        input?.click();
+    };
+
 
     return (
 
@@ -52,7 +78,11 @@ isViewMode = false,
                         <Form.Label>Upload Indent <span className="text-danger">*</span></Form.Label>
                         <div
                             className={`upload-indent-box ${errors.indentFile ? "is-invalid" : ""}`}
-                            onClick={() => document.getElementById("indentFileInput").click()}
+                            onClick={() => {
+                                if (!existingIndentPath || indentFile) {
+                                    document.getElementById("indentFileInput").click();
+                                }
+                            }}
                         >
                             {indentFile ? (
                                 <div className="d-flex align-items-center gap-3">
@@ -67,9 +97,9 @@ isViewMode = false,
                                     <span className="file-icon">📄</span>
                                     <div>
                                         <div className="fw-semibold">Existing Indent</div>
-                                        <a href={existingIndentPath} target="_blank" rel="noopener noreferrer" className="text-primary" onClick={(e) => e.stopPropagation()}>
+                                        {/* <a href={existingIndentPath} target="_blank" rel="noopener noreferrer" className="text-primary" onClick={(e) => e.stopPropagation()}>
                                             View / Download
-                                        </a>
+                                        </a> */}
                                     </div>
                                 </div>
                             ) : (
@@ -79,6 +109,38 @@ isViewMode = false,
                                     <span className="support">Supported formats: PDF, DOC, DOCX (Max 2 MB)</span>
                                 </div>
                             )}
+                            {!indentFile && existingIndentPath && (
+                                
+                                <div className="indent-actions">
+                                    {/* View */}
+                                    <button
+                                        type="button"
+                                        className="icon-btn"
+                                        title="View"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            window.open(existingIndentPath, "_blank");
+                                        }}
+                                    >
+                                         <img src={view_icon} alt="edit_icon" className="icon-16" />
+                                    </button>
+
+                                    {/* Edit */}
+                                    <button
+                                        type="button"
+                                        className="icon-btn"
+                                        title="Replace"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleReplaceIndent();
+                                        }}
+                                    >
+                                         <img src={edit_icon} alt="edit_icon" className="icon-16" />
+                                    </button>
+                                </div>
+
+                            )}
+
                         </div>
                         <input
                             id="indentFileInput"
@@ -200,7 +262,7 @@ isViewMode = false,
                 <Col md={6}>
                     <div className="d-flex justify-content-between align-items-center mb-1">
                         <Form.Label className="mb-0">Mandatory Education <span className="text-danger">*</span></Form.Label>
-                        <Button size="sm" onClick={() => onEducationClick("mandatory")} style={{borderRadius: "10px"}}>+ Add</Button>
+                        <Button size="sm" onClick={() => onEducationClick("mandatory")} style={{ borderRadius: "10px" }}>+ Add</Button>
                     </div>
                     <Form.Control as="textarea" rows={4} readOnly value={educationData.mandatory.text || ""} />
                     <ErrorMessage>{errors.mandatoryEducation}</ErrorMessage>
@@ -209,7 +271,7 @@ isViewMode = false,
                 <Col md={6}>
                     <div className="d-flex justify-content-between align-items-center mb-1">
                         <Form.Label className="mb-0">Preferred Education <span className="text-danger">*</span></Form.Label>
-                        <Button size="sm" onClick={() => onEducationClick("preferred")} style={{borderRadius: "10px"}}>+ Add</Button>
+                        <Button size="sm" onClick={() => onEducationClick("preferred")} style={{ borderRadius: "10px" }}>+ Add</Button>
                     </div>
                     <Form.Control as="textarea" rows={4} readOnly value={educationData.preferred.text || ""} />
                     <ErrorMessage>{errors.preferredEducation}</ErrorMessage>
