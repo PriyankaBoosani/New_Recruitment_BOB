@@ -69,6 +69,30 @@ export const validateAddPosition = ({
   if (!educationData.preferred.text?.trim()) {
     errors.preferredEducation = "This field is required";
   }
+  // ---------- AGE BUSINESS RULES (BANK ELIGIBILITY) ----------
+
+const minAge = Number(formData.minAge);
+const maxAge = Number(formData.maxAge);
+
+// Minimum age rule
+if (!errors.minAge && minAge < 18) {
+  errors.minAge = "Minimum age must be 18 years";
+}
+
+// Maximum age rule
+if (!errors.maxAge && maxAge > 60) {
+  errors.maxAge = "Maximum age must not exceed 60 years";
+}
+
+// Logical relationship
+if (
+  !errors.minAge &&
+  !errors.maxAge &&
+  minAge >= maxAge
+) {
+  errors.maxAge = "Max age must be greater than Min age";
+}
+
 
   // ---------- EXPERIENCE ----------
   const validateExperience = (exp, key) => {
@@ -192,6 +216,7 @@ export const validateStateDistribution = ({
     errors.state = "This state is already added";
   }
 
+  
   return errors;
 };
 
