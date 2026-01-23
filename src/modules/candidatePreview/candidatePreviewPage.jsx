@@ -94,12 +94,14 @@ const CandidatePreviewPage = ({
       />
 
       {/* Application Form (ALL ACCORDIONS INSIDE THIS) */}
-      <ApplicationForm
-        previewData={previewData}
-        selectedJob={selectedJob}
-        formErrors={formErrors}
-        setFormErrors={setFormErrors}
-      />
+      <div className="mt-3">
+        <ApplicationForm
+          previewData={previewData}
+          selectedJob={selectedJob}
+          formErrors={formErrors}
+          setFormErrors={setFormErrors}
+        />
+      </div>
 
     </div>
   );
