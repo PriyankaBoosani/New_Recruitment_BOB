@@ -1,0 +1,133 @@
+/* Update these specific variables/styles in your CSS */
+.assign-page {
+  background-color: #fcfcfc;
+  padding: 24px;
+}
+
+/* Card Styling from Screenshot */
+.position-form, .history-section {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: none; /* Screenshot uses clean borders, not heavy shadows */
+}
+
+/* Form Styling */
+.form-group label {
+  color: #55587d; /* Darker blue-grey */
+  font-weight: 500;
+}
+
+.form-control {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  color: #9ca3af; /* Placeholder color */
+}
+
+/* The "Assign Committees" Button */
+.btn-primary {
+  background-color: #fdb68d; /* Soft orange from screenshot */
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #ff9e66;
+}
+
+/* History Card Styling */
+.history-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+/* Badge/Panel Type Styling */
+.panel-type {
+  border: 1px solid #5a78f0;
+  background: transparent;
+  color: #5a78f0;
+  padding: 2px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* Requisition Code Styling */
+.requisition-highlight {
+  color: #f36b21; /* Orange text for the code */
+  font-weight: 600;
+}
+
+.position-title {
+  color: #3b4cb8; /* Blue text for the position */
+  font-weight: 500;
+}
+
+
+/* 
+.assign-page { display: flex; flex-direction: column; gap: 16px; }
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.select-bar .row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.field { flex: 1; display: flex; flex-direction: column; }
+
+.actions { display: flex; gap: 12px; }
+
+.tabs { display: flex; background: #f2f2f2; border-radius: 20px; padding: 4px; }
+
+.tab {
+  flex: 1;
+  border: none;
+  padding: 8px;
+  border-radius: 16px;
+  background: transparent;
+}
+
+.tab.active { background: #fff; }
+
+.dual-box { display: flex; gap: 16px; margin-top: 16px; }
+
+.box {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.box.left { border-color: #5a6acf; }
+.box.right { border-color: #ff7043; }
+
+.panel-card {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #eee;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.chips span {
+  background: #f1f1f1;
+  padding: 4px 8px;
+  border-radius: 12px;
+  margin-right: 6px;
+  font-size: 12px;
+}
+
+.dates { display: flex; gap: 8px; margin-top: 8px; } */

@@ -1,0 +1,98 @@
+.committee-page {
+  padding: 24px;
+  background: #f6f7fb;
+}
+
+.committee-tabs {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  background: none;
+  border: none;
+  font-weight: 500;
+  padding-bottom: 8px;
+  cursor: pointer;
+}
+
+.tab.active {
+  color: #ff6a00;
+  border-bottom: 2px solid #ff6a00;
+}
+
+.committee-content {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 24px;
+}
+
+.panel-form-card,
+.panel-table-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.card-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.card-subtitle {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 16px;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.chips span {
+  display: inline-block;
+  background: #eef1f5;
+  padding: 6px 10px;
+  border-radius: 16px;
+  margin-right: 8px;
+  font-size: 13px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.panel-table th {
+  background: #3f51a3;
+  color: #fff;
+  font-weight: 500;
+}
+
+.actions {
+  text-align: center;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.pagination button.active {
+  background: #ff6a00;
+  color: #fff;
+}
+.committee-page .form-control {
+  appearance: auto !important;
+}
