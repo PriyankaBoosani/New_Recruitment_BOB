@@ -4,7 +4,7 @@ import InterviewPanelTable from "./components/InterviewPanelTable";
 import AssignPositionsPage from "./AssignPositionsPage"; // 👈 ADD
 import "../../style/css/InterviewPanelPage.css";
 import { useInterviewPanel } from "./hooks/useInterviewPanel";
-
+import { FiUsers, FiMapPin } from "react-icons/fi";
 const InterviewPanelPage = () => {
   const [activeTab, setActiveTab] = useState("MANAGE"); // 👈 TAB STATE
 
@@ -27,7 +27,7 @@ const InterviewPanelPage = () => {
   return (
     <div className="committee-page">
       {/* ===== Tabs ===== */}
-      <div className="committee-tabs">
+     <div className="committee-tabs">
         <button
           className={`tab ${activeTab === "MANAGE" ? "active" : ""}`}
           onClick={() => setActiveTab("MANAGE")}
@@ -42,7 +42,7 @@ const InterviewPanelPage = () => {
           Assign to Positions
         </button>
       </div>
-
+<hr/>
       {/* ===== Content ===== */}
       {activeTab === "MANAGE" && (
         <div className="committee-content">

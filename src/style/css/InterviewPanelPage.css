@@ -2,19 +2,26 @@
   padding: 24px;
   background: #f6f7fb;
 }
-
 .committee-tabs {
-  display: flex;
-  gap: 24px;
-  margin-bottom: 20px;
+  /* display: flex; */
+  align-items: center;
+  gap: 32px;                 /* space between tabs */
+  padding: 12px 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e6e6e6;
 }
 
 .tab {
   background: none;
   border: none;
   font-weight: 500;
-  padding-bottom: 8px;
+  font-size: 14px;
+  color: #8a8a8a;            /* inactive grey */
+  /* padding: 6px 0; */
   cursor: pointer;
+  display: inline-flex;      /* IMPORTANT */
+  align-items: center;
+  gap: 6px;                  /* icon spacing */
 }
 
 .tab.active {
@@ -96,3 +103,5 @@
 .committee-page .form-control {
   appearance: auto !important;
 }
+
+
