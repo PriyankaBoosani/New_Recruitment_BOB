@@ -79,11 +79,17 @@ const PositionForm = ({
                         <div
                             className={`upload-indent-box ${errors.indentFile ? "" : ""}`}
                             onClick={() => {
+
+                                if (isViewMode) return;   // 🔥 BLOCK IN VIEW MODE
+
                                 if (!existingIndentPath || indentFile) {
                                     document.getElementById("indentFileInput").click();
                                 }
+
                             }}
-                            
+
+
+
                         >
                             {indentFile ? (
                                 <div className="d-flex align-items-center gap-3">
@@ -111,33 +117,37 @@ const PositionForm = ({
                                 </div>
                             )}
                             {!indentFile && existingIndentPath && (
-                                
+
+
                                 <div className="indent-actions">
                                     {/* View */}
-                                    <button
-                                        type="button"
+                                    <a
+                                        href={existingIndentPath}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         className="icon-btn"
-                                        title="View"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            window.open(existingIndentPath, "_blank");
-                                        }}
+                                        onClick={(e) => e.stopPropagation()}
                                     >
-                                         <img src={view_icon} alt="edit_icon" className="icon-16" />
-                                    </button>
+                                        <img src={view_icon} alt="view_icon" className="icon-16" />
+                                    </a>
+
+
 
                                     {/* Edit */}
-                                    <button
-                                        type="button"
-                                        className="icon-btn"
-                                        title="Replace"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleReplaceIndent();
-                                        }}
-                                    >
-                                         <img src={edit_icon} alt="edit_icon" className="icon-16" />
-                                    </button>
+                                    {!isViewMode && (
+                                        <button
+                                            type="button"
+                                            className="icon-btn"
+                                            title="Replace"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleReplaceIndent();
+                                            }}
+                                        >
+                                            <img src={edit_icon} alt="edit_icon" className="icon-16" />
+                                        </button>
+                                    )}
+
                                 </div>
 
                             )}
@@ -147,6 +157,7 @@ const PositionForm = ({
                             id="indentFileInput"
                             type="file"
                             hidden
+                            disabled={isViewMode}
                             accept=".pdf,.doc,.docx"
                             onChange={(e) => {
                                 const file = e.target.files[0];
@@ -179,7 +190,7 @@ const PositionForm = ({
                     </Form.Group>
                     <Form.Group>
                         <Form.Label>Approved On <span className="text-danger">*</span></Form.Label>
-                        <Form.Control type="date" value={approvedOn}  min={new Date().toISOString().split("T")[0]} onChange={(e) => { setApprovedOn(e.target.value); setErrors(prev => ({ ...prev, approvedOn: "" })); }} />
+                        <Form.Control type="date" value={approvedOn} min={new Date().toISOString().split("T")[0]} onChange={(e) => { setApprovedOn(e.target.value); setErrors(prev => ({ ...prev, approvedOn: "" })); }} />
                         <ErrorMessage>{errors.approvedOn}</ErrorMessage>
                     </Form.Group>
                 </Col>
@@ -261,7 +272,7 @@ const PositionForm = ({
                 </Col>
 
                 <Col md={6}>
-                    <div className="d-flex justify-content-between align-items-center mb-1">
+                    <div className="d-flex justify-content-between align-items-center mb-1 mandedu">
                         <Form.Label className="mb-0">Mandatory Education <span className="text-danger">*</span></Form.Label>
                         <Button size="sm" onClick={() => onEducationClick("mandatory")} style={{ borderRadius: "10px" }}>+ Add</Button>
                     </div>
@@ -270,7 +281,7 @@ const PositionForm = ({
                 </Col>
 
                 <Col md={6}>
-                    <div className="d-flex justify-content-between align-items-center mb-1">
+                    <div className="d-flex justify-content-between align-items-center mb-1 mandedu">
                         <Form.Label className="mb-0">Preferred Education <span className="text-danger">*</span></Form.Label>
                         <Button size="sm" onClick={() => onEducationClick("preferred")} style={{ borderRadius: "10px" }}>+ Add</Button>
                     </div>

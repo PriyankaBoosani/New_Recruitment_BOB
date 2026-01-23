@@ -285,6 +285,19 @@ const AddPosition = () => {
                 [name]: ""
             }));
         }
+        if (name === "vacancies") {
+            setErrors(prev => ({
+                ...prev,
+                vacancies: "",
+                nationalDistribution: ""
+            }));
+        } else {
+            setErrors(prev => ({
+                ...prev,
+                [name]: ""
+            }));
+        }
+
     };
 
 
@@ -509,7 +522,19 @@ const AddPosition = () => {
                                                 <Row className="g-3">
                                                     {disabilityCategories.map(d => (
                                                         <Col md={3} key={d.id}><Form.Label className="small fw-semibold">{d.disabilityCode}</Form.Label>
-                                                            <Form.Control type="number" value={nationalDisabilities[d.disabilityCode] ?? 0} onChange={e => setNationalDisabilities(prev => ({ ...prev, [d.disabilityCode]: e.target.value }))} />
+                                                            <Form.Control type="number" value={nationalDisabilities[d.disabilityCode] ?? 0} onChange={e => {
+                                                                setNationalDisabilities(prev => ({
+                                                                    ...prev,
+                                                                    [d.disabilityCode]: Number(e.target.value || 0)
+                                                                }));
+
+                                                                // 🔥 CLEAR CROSS-FIELD ERROR
+                                                                setErrors(prev => ({
+                                                                    ...prev,
+                                                                    nationalDistribution: ""
+                                                                }));
+                                                            }}
+                                                            />
                                                         </Col>
                                                     ))}
                                                 </Row>
@@ -531,9 +556,18 @@ const AddPosition = () => {
                                                 type="number"
                                                 value={currentState.vacancies}
                                                 onChange={e => {
-                                                    setCurrentState(prev => ({ ...prev, vacancies: e.target.value }));
-                                                    setErrors(prev => ({ ...prev, stateVacancies: "" }));
+                                                    setCurrentState(prev => ({
+                                                        ...prev,
+                                                        vacancies: e.target.value
+                                                    }));
+
+                                                    setErrors(prev => ({
+                                                        ...prev,
+                                                        stateVacancies: "",
+                                                        stateDistribution: ""   // 🔥 CLEAR CROSS-FIELD ERROR
+                                                    }));
                                                 }}
+
                                             />
                                                 <ErrorMessage>{errors.stateVacancies}</ErrorMessage>
                                             </Col>
@@ -565,7 +599,25 @@ const AddPosition = () => {
                                                     <Row className="g-3">
                                                         {reservationCategories.map(cat => (
                                                             <Col md={2} key={cat.id}><Form.Label className="small fw-semibold">{cat.code}</Form.Label>
-                                                                <Form.Control type="number" value={currentState.categories?.[cat.code] ?? 0} onChange={e => setCurrentState(prev => ({ ...prev, categories: { ...prev.categories, [cat.code]: Number(e.target.value || 0) } }))} />
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    value={currentState.categories?.[cat.code] ?? 0}
+                                                                    onChange={e => {
+                                                                        setCurrentState(prev => ({
+                                                                            ...prev,
+                                                                            categories: {
+                                                                                ...prev.categories,
+                                                                                [cat.code]: Number(e.target.value || 0)
+                                                                            }
+                                                                        }));
+
+                                                                        // 🔥 CLEAR CROSS-FIELD ERROR
+                                                                        setErrors(prev => ({
+                                                                            ...prev,
+                                                                            stateDistribution: ""
+                                                                        }));
+                                                                    }}
+                                                                />
                                                             </Col>
                                                         ))}
                                                         <Col md={2}><Form.Label className="small fw-semibold">Total</Form.Label><Form.Control disabled value={stateCategoryTotal} /></Col>
@@ -577,13 +629,34 @@ const AddPosition = () => {
                                                     <Row className="g-3">
                                                         {disabilityCategories.map(d => (
                                                             <Col md={3} key={d.id}><Form.Label className="small fw-semibold">{d.disabilityCode}</Form.Label>
-                                                                <Form.Control type="number" value={currentState.disabilities?.[d.disabilityCode] ?? 0} onChange={e => setCurrentState(prev => ({ ...prev, disabilities: { ...prev.disabilities, [d.disabilityCode]: e.target.value } }))} />
+                                                               <Form.Control
+  type="number"
+  value={currentState.disabilities?.[d.disabilityCode] ?? 0}
+  onChange={e => {
+    setCurrentState(prev => ({
+      ...prev,
+      disabilities: {
+        ...prev.disabilities,
+        [d.disabilityCode]: Number(e.target.value || 0)
+      }
+    }));
+
+    // 🔥 CLEAR CROSS-FIELD ERROR
+    setErrors(prev => ({
+      ...prev,
+      stateDistribution: ""
+    }));
+  }}
+/>
+
                                                             </Col>
                                                         ))}
                                                     </Row>
                                                 </Card>
                                             </Col>
                                         </Row>
+                                        <ErrorMessage>{errors.stateDistribution}</ErrorMessage>
+
                                         <div className="addsubmitbtn">
                                             <Button className="mt-3 addstatefont" onClick={handleAddOrUpdateState}>{editingIndex !== null ? "Update State" : "Add State"}</Button>
                                         </div>

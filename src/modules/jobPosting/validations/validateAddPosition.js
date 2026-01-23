@@ -202,7 +202,7 @@ console.log("DUPLICATE CHECK DATA", {
     }
     else if (disabilityTotal > categoryTotal) {
       errors.nationalDistribution =
-        "Disability vacancies cannot exceed category vacancies";
+        `Disability vacancies (${disabilityTotal}) cannot exceed category vacancies (${categoryTotal})`;
     }
 
   }
@@ -235,20 +235,22 @@ export const validateStateDistribution = ({
   }
 
   const catTotal = Object.values(currentState.categories || {})
-    .reduce((a, b) => a + Number(b || 0), 0);
+  .reduce((a, b) => a + Number(b || 0), 0);
 
-  const disTotal = Object.values(currentState.disabilities || {})
-    .reduce((a, b) => a + Number(b || 0), 0);
+const disTotal = Object.values(currentState.disabilities || {})
+  .reduce((a, b) => a + Number(b || 0), 0);
 
-  const vacancies = Number(currentState.vacancies || 0);
+const vacancies = Number(currentState.vacancies || 0);
 
-  if (catTotal !== vacancies) {
-    errors.stateDistribution = "Category total must match vacancies";
-  }
-  else if (disTotal > vacancies) {
-    errors.stateDistribution =
-      "Disability vacancies cannot exceed total vacancies";
-  }
+if (catTotal !== vacancies) {
+  errors.stateDistribution = `Category total (${catTotal}) must equal state vacancies (${vacancies})`;
+
+}
+else if (disTotal > catTotal) {
+  errors.stateDistribution =
+    `Disability vacancies(${disTotal}) cannot exceed category vacancies (${catTotal})`;
+}
+console.log(catTotal !== vacancies)
 
 
 
