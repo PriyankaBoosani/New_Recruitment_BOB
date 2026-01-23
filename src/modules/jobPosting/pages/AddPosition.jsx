@@ -18,6 +18,8 @@ import { useUpdateJobPosition } from "../hooks/useUpdateJobPosition";
 import PositionForm from "../component/PositionForm";
 import { mapEduRulesToModalData } from "../mappers/mapEduRulesToModalData";
 import { useLocation } from "react-router-dom";
+import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisition";
+
 
 const AddPosition = () => {
     const POSITION_POPULATED_FIELDS = ["Min Age", "Max Age", "Grade / Scale", "Roles & Responsibilities", "Mandatory Education", "Preferred Education", "Mandatory Experience", "Preferred Experience"];
@@ -40,6 +42,16 @@ const AddPosition = () => {
     const isAddMode = !mode || mode === "add";
     const isViewMode = !!positionId && mode === "view";
     const isEditMode = !!positionId && mode !== "view";
+    const {
+        positionsByReq,
+        fetchPositions
+    } = useJobPositionsByRequisition();
+
+    useEffect(() => {
+        if (requisitionId) {
+            fetchPositions(requisitionId);
+        }
+    }, [requisitionId]);
 
 
 
@@ -235,7 +247,7 @@ const AddPosition = () => {
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
 
-        // handle nested fields (experience)
+        // handle nested fields
         if (name.includes(".")) {
             const [parent, child] = name.split(".");
             setFormData(prev => ({
@@ -251,7 +263,6 @@ const AddPosition = () => {
 
         let finalValue = value;
 
-        // 🔒 BLOCK TEXT COMPLETELY
         if (numericFields.includes(name)) {
             finalValue = value.replace(/\D/g, "");
         }
@@ -261,19 +272,43 @@ const AddPosition = () => {
             [name]: type === "checkbox" ? checked : finalValue
         }));
 
-        setErrors(prev => ({ ...prev, [name]: "" }));
+        // 🔥 SPECIAL CASE: department change clears position error
+        if (name === "department") {
+            setErrors(prev => ({
+                ...prev,
+                department: "",
+                position: ""
+            }));
+        } else {
+            setErrors(prev => ({
+                ...prev,
+                [name]: ""
+            }));
+        }
     };
+
 
 
     const onPositionSelect = (id) => {
         const selected = positions.find(p => String(p.id) === String(id));
         if (!selected) return;
-        setFormData(prev => ({ ...prev, position: id }));
-        setErrors(prev => ({ ...prev, position: "" }));
-        setPendingPosition(selected);
 
+        setFormData(prev => ({
+            ...prev,
+            position: id
+        }));
+
+        // 🔥 CLEAR BOTH ERRORS
+        setErrors(prev => ({
+            ...prev,
+            position: "",
+            department: ""
+        }));
+
+        setPendingPosition(selected);
         setShowConfirmModal(true);
     };
+
 
     const handleUsePositionData = () => {
         if (!pendingPosition) return;
@@ -287,10 +322,22 @@ const AddPosition = () => {
             preferredExperience: { ...prev.preferredExperience, description: pendingPosition.preferredExperience ?? "" }
         }));
         setEducationData(prev => ({
-            ...prev,
-            mandatory: { ...prev.mandatory, text: pendingPosition.mandatoryEducation ?? "" },
-            preferred: { ...prev.preferred, text: pendingPosition.preferredEducation ?? "" }
+            mandatory: {
+                ...prev.mandatory,
+                text:
+                    prev.mandatory.text?.trim()
+                        ? prev.mandatory.text // 🔒 KEEP USER INPUT
+                        : pendingPosition.mandatoryEducation ?? ""
+            },
+            preferred: {
+                ...prev.preferred,
+                text:
+                    prev.preferred.text?.trim()
+                        ? prev.preferred.text // 🔒 KEEP USER INPUT
+                        : pendingPosition.preferredEducation ?? ""
+            }
         }));
+
 
         setErrors(prev => ({
             ...prev,
@@ -369,7 +416,10 @@ const AddPosition = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const validationErrors = validateAddPosition({ isEditMode, formData, educationData, indentFile, approvedBy, approvedOn, existingIndentPath, nationalCategories, nationalDisabilities, stateDistributions });
+        const validationErrors = validateAddPosition({
+            isEditMode, formData, educationData, indentFile, approvedBy, approvedOn, existingIndentPath, nationalCategories, nationalDisabilities, stateDistributions, existingPositions: positionsByReq[requisitionId] || [],
+            positionId
+        });
         if (Object.keys(validationErrors).length > 0) { setErrors(validationErrors); return; }
 
         const payload = { formData, educationData, requisitionId, indentFile, approvedBy, approvedOn, reservationCategories, disabilityCategories, nationalCategories, nationalDisabilities, qualifications, certifications, stateDistributions: stateDistributions.filter(s => !s.__deleted) };
