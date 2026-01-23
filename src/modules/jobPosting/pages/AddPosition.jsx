@@ -454,9 +454,19 @@ const AddPosition = () => {
                         <div className="req-code">{requisition?.requisitionTitle || "—"}</div>
                     </div>
                 </div>
-                <Button className="imprcls" variant="none" onClick={() => setShowImportModal(true)}>
-                    <img src={import_Icon} alt="import_Icon" className="icon-14" /> Import Positions
+                <Button
+                    className="imprcls"
+                    variant="none"
+                    disabled={isViewMode}
+                    onClick={() => {
+                        if (isViewMode) return;
+                        setShowImportModal(true);
+                    }}
+                >
+                    <img src={import_Icon} alt="import_Icon" className="icon-14" />
+                    &nbsp;Import Positions
                 </Button>
+
             </div>
 
             <Card className="position-card">
@@ -629,25 +639,25 @@ const AddPosition = () => {
                                                     <Row className="g-3">
                                                         {disabilityCategories.map(d => (
                                                             <Col md={3} key={d.id}><Form.Label className="small fw-semibold">{d.disabilityCode}</Form.Label>
-                                                               <Form.Control
-  type="number"
-  value={currentState.disabilities?.[d.disabilityCode] ?? 0}
-  onChange={e => {
-    setCurrentState(prev => ({
-      ...prev,
-      disabilities: {
-        ...prev.disabilities,
-        [d.disabilityCode]: Number(e.target.value || 0)
-      }
-    }));
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    value={currentState.disabilities?.[d.disabilityCode] ?? 0}
+                                                                    onChange={e => {
+                                                                        setCurrentState(prev => ({
+                                                                            ...prev,
+                                                                            disabilities: {
+                                                                                ...prev.disabilities,
+                                                                                [d.disabilityCode]: Number(e.target.value || 0)
+                                                                            }
+                                                                        }));
 
-    // 🔥 CLEAR CROSS-FIELD ERROR
-    setErrors(prev => ({
-      ...prev,
-      stateDistribution: ""
-    }));
-  }}
-/>
+                                                                        // 🔥 CLEAR CROSS-FIELD ERROR
+                                                                        setErrors(prev => ({
+                                                                            ...prev,
+                                                                            stateDistribution: ""
+                                                                        }));
+                                                                    }}
+                                                                />
 
                                                             </Col>
                                                         ))}

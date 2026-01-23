@@ -350,6 +350,11 @@
  .mandedu .btn-primary{
   background-color: #f26522 !important;
  }
+
+ .add-position-page .btn.disabled, .add-position-page .btn:disabled, .add-position-page fieldset:disabled .btn {
+	/* background-color: background-color: var(--bs-secondary-bg); */
+	background-color: var(--bs-secondary-bg);
+}
 .genfonts .form-label {
 	color: #4A5565;
 	font-size: 0.875em;
