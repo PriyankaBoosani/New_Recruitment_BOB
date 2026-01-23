@@ -110,7 +110,7 @@ export default function InterviewPool({
               <td className="fs-14">{c.panel}</td>
 
               <td className="align-content-center">
-                <span className=" blue-bg px-3 py-1 fs-12 rounded text-white">
+                <span className="round_badge blue-bg px-3 py-1 fs-12 rounded text-white">
                   {c.status}
                 </span>
               </td>

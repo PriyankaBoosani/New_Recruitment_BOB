@@ -240,3 +240,11 @@ body {
 main {
   flex: 1;
 }
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+.round_badge {
+  border-radius: 20px !important;
+}

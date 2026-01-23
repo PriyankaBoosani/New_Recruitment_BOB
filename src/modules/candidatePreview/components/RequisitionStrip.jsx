@@ -85,8 +85,9 @@ const RequisitionStrip = ({
         {/* RIGHT BUTTONS */}
         <div className="d-flex gap-2">
           <button
-            className="btn btn-sm blue-border blue-color"
+            className="btn btn-sm blue-border blue-color px-3"
             onClick={() => setShowPosition(true)}
+            style={{ backgroundColor: 'rgba(66, 87, 159, 0.12)' }}
           >
             View Position
           </button>

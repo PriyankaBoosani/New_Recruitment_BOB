@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { Person, FileText } from "react-bootstrap-icons";
 
 export default function CandidatePool({ candidates, selectedIds, setSelectedIds, onView }) {
 	const STATUS_CLASS_MAP = {
@@ -109,7 +110,7 @@ export default function CandidatePool({ candidates, selectedIds, setSelectedIds,
                 Category {sortIcon("category")}
               </th>
 
-              <th className="text-center fs-14 fw-normal py-3">Action</th>
+              <th className="text-center fs-14 fw-normal py-3">Actions</th>
             </tr>
           </thead>
 
@@ -145,7 +146,7 @@ export default function CandidatePool({ candidates, selectedIds, setSelectedIds,
 
                 <td className="align-content-center">
                   <span
-										className={`px-3 py-1 fs-12 rounded text-white ${
+										className={`round_badge px-3 py-1 fs-12 rounded text-white ${
 											STATUS_CLASS_MAP[c.status] || "bg-secondary"
 										}`}
 									>
@@ -162,18 +163,15 @@ export default function CandidatePool({ candidates, selectedIds, setSelectedIds,
 								</td>
 
                 <td className="text-center align-content-center">
-                  <button className="btn btn-sm btn-outline-primary me-2"
+									<Person
+										className="me-3 cursor-pointer"
 										onClick={() =>
 											navigate("/candidate-preview", {
 												state: { candidate: c },
 											})
 										}
-									>
-                    View
-                  </button>
-                  <button className="btn btn-sm btn-outline-secondary">
-                    Docs
-                  </button>
+									/>
+									<FileText className="cursor-pointer" />
                 </td>
               </tr>
             ))}
@@ -197,7 +195,7 @@ export default function CandidatePool({ candidates, selectedIds, setSelectedIds,
               <div className="mb-1">
                 <strong>Status:</strong>{" "}
                 <span
-									className={`px-3 py-1 fs-12 rounded text-white ${
+									className={`round_badge px-3 py-1 fs-12 rounded text-white ${
 										STATUS_CLASS_MAP[c.status] || "bg-secondary"
 									}`}
 								>
@@ -212,18 +210,15 @@ export default function CandidatePool({ candidates, selectedIds, setSelectedIds,
               </div>
 
               <div className="d-flex gap-2">
-                <button className="btn btn-sm btn-outline-primary w-50"
+                <Person
+									className="me-3 cursor-pointer"
 									onClick={() =>
 										navigate("/candidate-preview", {
 											state: { candidate: c },
 										})
 									}
-								>
-                  View
-                </button>
-                <button className="btn btn-sm btn-outline-secondary w-50">
-                  Docs
-                </button>
+								/>
+								<FileText className="cursor-pointer" />
               </div>
             </div>
           </div>
