@@ -15,9 +15,9 @@ const ConfirmationModal = ({
   showWarning = false
 }) => {
   return (
-    <Modal show={show} onHide={onClose} centered backdrop="static">
-      <Modal.Header closeButton>
-        <Modal.Title>{title}</Modal.Title>
+    <Modal show={show} onHide={onClose} centered backdrop="static" className="modalimport">
+      <Modal.Header closeButton >
+        <Modal.Title className="f16 bluecol">{title}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body className="text-center">
@@ -30,7 +30,7 @@ const ConfirmationModal = ({
           />
         )}
 
-        <p className="mb-1">{message}</p>
+        <p className="mb-1 f14">{message}</p>
 
         {itemLabel && (
           <strong className="d-block">{itemLabel}</strong>
@@ -43,11 +43,12 @@ const ConfirmationModal = ({
         )}
       </Modal.Body>
 
-      <Modal.Footer>
+      <Modal.Footer className="mt-3">
         <Button
           variant="outline-secondary"
           onClick={onClose}
           disabled={loading}
+          className="f14"
         >
           Cancel
         </Button>
@@ -56,6 +57,7 @@ const ConfirmationModal = ({
           variant={confirmVariant}
           onClick={onConfirm}
           disabled={loading}
+          className="f14"
         >
           {loading ? "Processing..." : confirmText}
         </Button>

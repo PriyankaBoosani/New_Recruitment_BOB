@@ -12,17 +12,17 @@ const DeleteConfirmationModal = ({
   loading = false
 }) => {
   return (
-    <Modal show={show} onHide={onClose} centered backdrop="static">
+    <Modal show={show} onHide={onClose} centered backdrop="static" className="modalimport">
       <Modal.Header closeButton>
-        <Modal.Title>{title}</Modal.Title>
+        <Modal.Title className="f16 bluecol">{title}</Modal.Title>
       </Modal.Header>
 
-      <Modal.Body className="text-center">
+      <Modal.Body className="text-center f14">
         <img
           src={pos_delete_icon}
           alt="delete"
           className="mb-3"
-          style={{ width: 40 }}
+          style={{ width: 30 }}
         />
 
         <p className="mb-1">{message}</p>
@@ -41,6 +41,7 @@ const DeleteConfirmationModal = ({
           variant="outline-secondary"
           onClick={onClose}
           disabled={loading}
+          className="f14"
         >
           Cancel
         </Button>
@@ -49,6 +50,7 @@ const DeleteConfirmationModal = ({
           variant="danger"
           onClick={onConfirm}
           disabled={loading}
+           className="f14"
         >
           {loading ? "Deleting..." : "Delete"}
         </Button>
