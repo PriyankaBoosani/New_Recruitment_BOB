@@ -1,9 +1,14 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function CandidatePool({ candidates, onView }) {
+export default function CandidatePool({ candidates, selectedIds, setSelectedIds, onView }) {
+	const STATUS_CLASS_MAP = {
+		Applied: "bg-secondary",
+		Shortlisted: "bg-warning",
+		Discrepency: "bg-primary",
+		Rejected: "bg-danger",
+	};
 	const navigate = useNavigate();
-  const [selectedIds, setSelectedIds] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
   /* ---------- Selection logic ---------- */
@@ -68,7 +73,7 @@ export default function CandidatePool({ candidates, onView }) {
         <table className="table table-hover mb-0">
           <thead className="bg-light">
             <tr>
-              <th className="fs-14 fw-normal py-3" style={{ paddingLeft: '0.75rem' }}>
+              <th className="fs-14 fw-normal py-3" style={{ paddingLeft: '1rem' }}>
                 <input
                   type="checkbox"
                   checked={allSelected}
@@ -139,9 +144,13 @@ export default function CandidatePool({ candidates, onView }) {
 								</td>
 
                 <td className="align-content-center">
-                  <span className="bg-secondary bg-opacity-75 px-3 py-1 fs-12 rounded text-white">
-                    {c.status}
-                  </span>
+                  <span
+										className={`px-3 py-1 fs-12 rounded text-white ${
+											STATUS_CLASS_MAP[c.status] || "bg-secondary"
+										}`}
+									>
+										{c.status}
+									</span>
                 </td>
 
                 <td className="align-content-center">
@@ -187,9 +196,13 @@ export default function CandidatePool({ candidates, onView }) {
               </div>
               <div className="mb-1">
                 <strong>Status:</strong>{" "}
-                <span className="badge bg-secondary">
-                  {c.status}
-                </span>
+                <span
+									className={`px-3 py-1 fs-12 rounded text-white ${
+										STATUS_CLASS_MAP[c.status] || "bg-secondary"
+									}`}
+								>
+									{c.status}
+								</span>
               </div>
               <div className="mb-1">
                 <strong>Location:</strong> {c.location}

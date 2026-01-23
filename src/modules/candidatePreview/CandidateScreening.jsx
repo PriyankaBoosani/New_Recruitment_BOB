@@ -20,7 +20,7 @@ const candidates = [
     name: "Priya Sharma",
     regNo: "961967129",
     experience: "6 years",
-    status: "Applied",
+    status: "Shortlisted",
     location: "Bangalore, Karnataka",
     category: "OBC",
   },
@@ -29,7 +29,7 @@ const candidates = [
     name: "Amit Patel",
     regNo: "961963464",
     experience: "10 years",
-    status: "Applied",
+    status: "Discrepency",
     location: "Ahmedabad, Gujarat",
     category: "General",
   },
@@ -38,7 +38,7 @@ const candidates = [
     name: "Jagadeesh Shukla",
     regNo: "961965467",
     experience: "5 years",
-    status: "Applied",
+    status: "Rejected",
     location: "Hyderabad, Telangana",
     category: "SC",
   },
@@ -105,6 +105,7 @@ export default function CandidateScreening({ selectedJob }) {
 
 	const [activeTab, setActiveTab] = useState("CANDIDATE_POOL");
 	const [selectedCandidate, setSelectedCandidate] = useState(null);
+	const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
 
   return (
     <div className="container-fluid px-5 py-4">
@@ -233,11 +234,20 @@ export default function CandidateScreening({ selectedJob }) {
 								/>
 							</div>
 						</div>
+						<div className="col-md-6 col-12 text-md-end px-2 mb-2">
+							{selectedCandidateIds.length > 0 && (
+								<button className="btn blue-bg text-white fs-14">
+									Schedule Interview
+								</button>
+							)}
+						</div>
 					</div>
 				</div>
 				{activeTab === "CANDIDATE_POOL" && !selectedCandidate && (
 					<CandidatePool
 						candidates={candidates}
+						selectedIds={selectedCandidateIds}
+						setSelectedIds={setSelectedCandidateIds}
 						onView={(candidate) => setSelectedCandidate(candidate)}
 					/>
 				)}
