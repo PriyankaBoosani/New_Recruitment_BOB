@@ -33,7 +33,7 @@ import AddPosition from "../modules/jobPosting/pages/AddPosition";
 import PrivateRoute from "../modules/auth/services/PrivateRoute";
 import DepartmentPage from "../modules/master/pages/Department/DepartmentPage"
 // import CategoryPage from "../modules/master/pages/Category/CategoryPage";
-import InterviewPanel from "../modules/master/pages/InterviewPanel/InterviewPanelPage";
+import InterviewPanel from "../modules/committeeManagement/InterviewPanelPage";
 //import InterviewPanel from "../modules/master/pages/InterviewPanel";
 import SpecialCategoryPage from "../modules/master/pages/SpecialCategory/SpecialCategoryPage";
 import CandidatePreviewPage from "../modules/candidatePreview/candidatePreviewPage";
@@ -64,7 +64,7 @@ const AppRoutes = () => {
 
         {/* Root redirect: go to dashboard if authed, else login */}
         <Route path="/" element={<Navigate to="/login" />} />
-
+  <Route path="/interviewpanel" element={<InterviewPanel />} />
         {/* Protected routes */}
         <Route element={<Tokenexp />}>
           <Route element={<PrivateRoute />}>
@@ -80,7 +80,7 @@ const AppRoutes = () => {
                 <Route path="/relaxationtype" element={<RelaxationType />} />
                 <Route path="/certification" element={<CertificationPage />} />
                 <Route path="/document" element={<DocumentPage />} />
-                <Route path="/interviewpanel" element={<InterviewPanel />} />
+              
                 <Route path="/generic-or-annexures" element={<GenericOrAnnexuresPage />} />
               </Route>              {/* ---------- NON-ADMIN ONLY ROUTES ---------- */}
               <Route element={<NonAdminRoute />}>

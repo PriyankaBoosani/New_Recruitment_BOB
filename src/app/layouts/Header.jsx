@@ -204,7 +204,9 @@ const Header = () => {
               <Nav.Link href="#relaxation">Relaxation</Nav.Link>
               <Nav.Link href="#bulk-upload">Bulk Upload</Nav.Link>
               <Nav.Link href="/interviewpanel"> Interview Panel</Nav.Link> */}
-
+                {/* <Nav.Link as={Link} to="/interviewpanel" onClick={closeMenu}>
+                  Committee Management
+                </Nav.Link> */}
               {/* Admin Menu */}
               {isAdmin && (
                 <NavDropdown title={t("admin")} id="admin-dropdown">
