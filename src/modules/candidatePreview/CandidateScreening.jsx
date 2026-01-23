@@ -169,7 +169,7 @@ export default function CandidateScreening({ selectedJob }) {
 									type="button"
 								>
 									{tab.label}
-									<span className="ms-2 badge rounded-pill bg-light text-dark p-2" style={{ fontSize: '0.675rem' }}>
+									<span className="ms-2 badge rounded-pill bg-light text-muted p-2" style={{ fontSize: '0.675rem', fontWeight: '500' }}>
 										{tab.count}
 									</span>
 								</button>
@@ -178,7 +178,7 @@ export default function CandidateScreening({ selectedJob }) {
 					</ul>
 
 					{/* Filters */}
-					<div className="row g-2 mt-2 px-2 py-1 align-items-center">
+					<div className="row g-2 mt-1 px-2 py-1 align-items-center">
 						<div className="col-md-2 col-6 d-flex align-items-center">
 							<p className="text-muted fs-14 mb-1">FILTER BY:</p>
 							<button className="btn fs-14 mb-1 error-text">Clear all</button>
