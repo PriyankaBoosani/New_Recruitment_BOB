@@ -76,7 +76,7 @@
 }
 
 .section-title {
-	margin-bottom: 20px;
+	margin-bottom: 20px !important;
 	display: flex;
 	border-bottom: 1px solid #dee2e6;
 }

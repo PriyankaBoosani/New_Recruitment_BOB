@@ -13,9 +13,10 @@
 
 /* Section title */
 .create-requisition-page .section-title {
-  display: flex;
-  align-items: center;
-  padding-bottom: 10px;
+	display: flex;
+	align-items: center;
+	padding-bottom: 10px;
+	margin-bottom: 0px !important;
 }
 
 .create-requisition-page .section-title h6 {

@@ -179,7 +179,7 @@ const PositionForm = ({
                     </Form.Group>
                     <Form.Group>
                         <Form.Label>Approved On <span className="text-danger">*</span></Form.Label>
-                        <Form.Control type="date" value={approvedOn} onChange={(e) => { setApprovedOn(e.target.value); setErrors(prev => ({ ...prev, approvedOn: "" })); }} />
+                        <Form.Control type="date" value={approvedOn}  min={new Date().toISOString().split("T")[0]} onChange={(e) => { setApprovedOn(e.target.value); setErrors(prev => ({ ...prev, approvedOn: "" })); }} />
                         <ErrorMessage>{errors.approvedOn}</ErrorMessage>
                     </Form.Group>
                 </Col>

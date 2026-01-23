@@ -71,6 +71,7 @@ const JobPostingsList = () => {
     const [year, setYear] = useState("2026");
     const [status, setStatus] = useState("ALL");
     const [search, setSearch] = useState("");
+    const [searchInput, setSearchInput] = useState("");
     const [page, setPage] = useState(0); // backend is 0-based
     const [showSubmitModal, setShowSubmitModal] = useState(false);
 
@@ -115,6 +116,14 @@ const JobPostingsList = () => {
     const selectableRequisitions = requisitions.filter(
         r => r.status !== "Approved"
     );
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setSearch(searchInput);
+            setPage(0); // reset pagination on new search
+        }, 500); // ⏱️ 400–600ms is ideal
+
+        return () => clearTimeout(timeout);
+    }, [searchInput]);
 
     const allSelected =
         selectableRequisitions.length > 0 &&
@@ -128,24 +137,34 @@ const JobPostingsList = () => {
         setSelectedReqIds(new Set());
     };
     const handleSubmitForApproval = () => {
-        const selectedRequisitions = requisitions.filter(r =>
+        // ONLY requisitions currently rendered (current year / filters)
+        const visibleRequisitions = requisitions;
+
+        const selectedVisibleRequisitions = visibleRequisitions.filter(r =>
             selectedReqIds.has(r.id)
         );
 
-        // 🔴 BLOCK if any selected requisition has 0 positions
-        const hasZeroPositions = selectedRequisitions.some(
+        if (selectedVisibleRequisitions.length === 0) {
+            toast.error("No requisitions selected for the current year.");
+            return;
+        }
+
+        const requisitionsWithNoPositions = selectedVisibleRequisitions.filter(
             r => Number(r.positions) === 0
         );
 
-        if (hasZeroPositions) {
+        if (requisitionsWithNoPositions.length > 0) {
+            const labels = requisitionsWithNoPositions
+                .map(r => r.code || r.requisitionId)
+                .join(", ");
+
             toast.error(
-                "One or more selected requisitions have no positions. Submission is not allowed."
+                `Submission blocked. No positions found for requisition(s): ${labels}`
             );
             return;
         }
 
-        // ✅ existing logic continues
-        const ids = selectedRequisitions
+        const ids = selectedVisibleRequisitions
             .filter(r => r.status !== "Approved")
             .map(r => r.id);
 
@@ -155,6 +174,10 @@ const JobPostingsList = () => {
         setSelectedReqIds(new Set());
     };
 
+
+    useEffect(() => {
+        setSelectedReqIds(new Set());
+    }, [year]);
 
 
 
@@ -193,8 +216,8 @@ const JobPostingsList = () => {
                         <Form.Control
                             type="text"
                             placeholder="Search requisitions by code or title..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
                         />
                     </div>
                 </Col>
@@ -330,14 +353,14 @@ const JobPostingsList = () => {
                                         <div>
                                             <h6 className="req-code mb-2">{req.code}</h6>
                                             <div className="req-dates">
-                                                <div><img src={start_icon} alt="start_icon" className="icon-12"/> Start: {req.startDate}</div> |
+                                                <div><img src={start_icon} alt="start_icon" className="icon-12" /> Start: {req.startDate}</div> |
                                                 <div><img src={end_icon} alt="end_icon" className="icon-12" /> End: {req.endDate}</div>
                                             </div>
                                         </div>
                                     </div>
-                                    </div>
+                                </div>
                             </Col>
-                            <Col  xs={12} md={4}>
+                            <Col xs={12} md={4}>
                                 <div className="req-meta text-end">
                                     <div>
                                         <img src={mingcute_department_line} alt="department" className="icon-16" />{" "}
@@ -351,28 +374,55 @@ const JobPostingsList = () => {
                                         {req.vacancies}
                                     </div>
                                 </div>
-                            
-                        </Col>
 
-                        {/* -------- ACTIONS -------- */}
-                        <Col
-                            xs={12}
-                            md={2}
-                            className="text-md-end mt-3 mt-md-0 actions d-flex justify-content-end align-items-center gap-2"
-                        >
-                            {req.editable ? (
-                                <>
-                                    <Button
-                                        variant="light"
-                                        className="icon-btn"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            navigate(`/job-posting/${req.id}/add-position`);
-                                        }}
-                                    >
-                                        <img src={pos_plus_icon} alt="add" className="icon-16" />
-                                    </Button>
+                            </Col>
 
+                            {/* -------- ACTIONS -------- */}
+                            <Col
+                                xs={12}
+                                md={2}
+                                className="text-md-end mt-3 mt-md-0 actions d-flex justify-content-end align-items-center gap-2"
+                            >
+                                {req.editable ? (
+                                    <>
+                                        <Button
+                                            variant="light"
+                                            className="icon-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/job-posting/${req.id}/add-position`);
+                                            }}
+                                        >
+                                            <img src={pos_plus_icon} alt="add" className="icon-16" />
+                                        </Button>
+
+                                        <Button
+                                            variant="light"
+                                            className="icon-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(
+                                                    `/job-posting/create-requisition?id=${req.id}`,
+                                                    { state: { mode: "edit" } }
+                                                );
+                                            }}
+                                        >
+                                            <img src={pos_edit_icon} alt="edit" className="icon-20" />
+                                        </Button>
+
+                                        <Button
+                                            variant="light"
+                                            className="icon-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedReq(req);
+                                                setShowDeleteModal(true);
+                                            }}
+                                        >
+                                            <img src={pos_delete_icon} alt="delete" className="icon-20" />
+                                        </Button>
+                                    </>
+                                ) : (
                                     <Button
                                         variant="light"
                                         className="icon-btn"
@@ -380,100 +430,107 @@ const JobPostingsList = () => {
                                             e.stopPropagation();
                                             navigate(
                                                 `/job-posting/create-requisition?id=${req.id}`,
-                                                { state: { mode: "edit" } }
+                                                { state: { mode: "view" } }
                                             );
                                         }}
                                     >
-                                        <img src={pos_edit_icon} alt="edit" className="icon-20" />
+                                        <img src={view_jobpost} alt="view" className="icon-19" />
                                     </Button>
+                                )}
 
-                                    <Button
-                                        variant="light"
-                                        className="icon-btn"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setSelectedReq(req);
-                                            setShowDeleteModal(true);
-                                        }}
-                                    >
-                                        <img src={pos_delete_icon} alt="delete" className="icon-20" />
-                                    </Button>
-                                </>
-                            ) : (
+
                                 <Button
-                                    variant="light"
-                                    className="icon-btn"
+                                    variant="none"
+                                    className="accordion-arrow"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        navigate(
-                                            `/job-posting/create-requisition?id=${req.id}`,
-                                            { state: { mode: "view" } }
-                                        );
+                                        toggleAccordion(req.id);
                                     }}
                                 >
-                                    <img src={view_jobpost} alt="view" className="icon-19" />
+                                    {openReqId === req.id ? <ChevronUp /> : <ChevronDown />}
                                 </Button>
-                            )}
+                            </Col>
 
+                            {/* -------- ACCORDION BODY (STATIC FOR NOW) -------- */}
+                            {openReqId === req.id && (
+                                <div className="accordion-body mt-3">
 
-                            <Button
-                                variant="none"
-                                className="accordion-arrow"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleAccordion(req.id);
-                                }}
-                            >
-                                {openReqId === req.id ? <ChevronUp /> : <ChevronDown />}
-                            </Button>
-                        </Col>
+                                    {loadingReqId === req.id && (
+                                        <Spinner animation="border" size="sm" />
+                                    )}
 
-                        {/* -------- ACCORDION BODY (STATIC FOR NOW) -------- */}
-                        {openReqId === req.id && (
-                            <div className="accordion-body mt-3">
+                                    {!loadingReqId && positions.length === 0 && (
+                                        <div className="text-muted">No positions added</div>
+                                    )}
 
-                                {loadingReqId === req.id && (
-                                    <Spinner animation="border" size="sm" />
-                                )}
+                                    {Object.values(positionsGroupedByDept).map((dept) => (
+                                        <div key={dept.departmentName} className="department-card mb-3">
 
-                                {!loadingReqId && positions.length === 0 && (
-                                    <div className="text-muted">No positions added</div>
-                                )}
+                                            {/* 🔹 Department Header */}
+                                            <div className="department-header d-flex align-items-center gap-2 my-2">
+                                                <img
+                                                    src={mingcute_department_line}
+                                                    className="icon-16"
+                                                    alt="department"
+                                                />
+                                                <span className="depname">{dept.departmentName}</span>
+                                                <Badge bg="light" text="primary" className="deppos">
+                                                    {dept.positions.length} Positions
+                                                </Badge>
+                                            </div>
 
-                                {Object.values(positionsGroupedByDept).map((dept) => (
-                                    <div key={dept.departmentName} className="department-card mb-3">
+                                            {/* 🔹 SAME position UI you already had */}
+                                            {dept.positions.map((pos) => (
+                                                <div key={pos.positionId} className="position-card-inner mb-2">
+                                                    <div className="position-header-row">
+                                                        <div className="position-title">
+                                                            {pos.positionName}
+                                                        </div>
 
-                                        {/* 🔹 Department Header */}
-                                        <div className="department-header d-flex align-items-center gap-2 my-2">
-                                            <img
-                                                src={mingcute_department_line}
-                                                className="icon-16"
-                                                alt="department"
-                                            />
-                                            <span className="depname">{dept.departmentName}</span>
-                                            <Badge bg="light" text="primary" className="deppos">
-                                                {dept.positions.length} Positions
-                                            </Badge>
-                                        </div>
+                                                        <div className="position-meta-inline">
+                                                            <span>Vacancies: {pos.vacancies}</span>
+                                                            <span>
+                                                                Age: {pos.minAge} – {pos.maxAge} Years
+                                                            </span>
+                                                        </div>
 
-                                        {/* 🔹 SAME position UI you already had */}
-                                        {dept.positions.map((pos) => (
-                                            <div key={pos.positionId} className="position-card-inner mb-2">
-                                                <div className="position-header-row">
-                                                    <div className="position-title">
-                                                        {pos.positionName}
-                                                    </div>
+                                                        {req.editable ? (
+                                                            <>
+                                                                {/* EDIT POSITION */}
+                                                                <Button
+                                                                    variant="light"
+                                                                    className="icon-btn"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        navigate(
+                                                                            `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
+                                                                            { state: { mode: "edit" } }
+                                                                        );
 
-                                                    <div className="position-meta-inline">
-                                                        <span>Vacancies: {pos.vacancies}</span>
-                                                        <span>
-                                                            Age: {pos.minAge} – {pos.maxAge} Years
-                                                        </span>
-                                                    </div>
+                                                                    }}
+                                                                >
+                                                                    <img src={pos_edit_icon} className="icon-16" alt="edit" />
+                                                                </Button>
 
-                                                    {req.editable ? (
-                                                        <>
-                                                            {/* EDIT POSITION */}
+                                                                {/* DELETE POSITION */}
+                                                                <Button
+                                                                    variant="light"
+                                                                    className="icon-btn"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setSelectedPosition({
+                                                                            requisitionId: req.id,
+                                                                            positionId: pos.positionId,
+                                                                            positionName: pos.positionName
+                                                                        });
+                                                                        setShowDeletePosModal(true);
+                                                                    }}
+                                                                >
+                                                                    <img src={pos_delete_icon} className="icon-16" alt="delete" />
+                                                                </Button>
+                                                            </>
+                                                        ) : (
+                                                            /* VIEW POSITION */
                                                             <Button
                                                                 variant="light"
                                                                 className="icon-btn"
@@ -481,138 +538,104 @@ const JobPostingsList = () => {
                                                                     e.stopPropagation();
                                                                     navigate(
                                                                         `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
-                                                                        { state: { mode: "edit" } }
+                                                                        { state: { mode: "view" } }
                                                                     );
 
                                                                 }}
                                                             >
-                                                                <img src={pos_edit_icon} className="icon-16" alt="edit" />
+                                                                <img src={view_jobpost} className="icon-19" alt="view" />
                                                             </Button>
-
-                                                            {/* DELETE POSITION */}
-                                                            <Button
-                                                                variant="light"
-                                                                className="icon-btn"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    setSelectedPosition({
-                                                                        requisitionId: req.id,
-                                                                        positionId: pos.positionId,
-                                                                        positionName: pos.positionName
-                                                                    });
-                                                                    setShowDeletePosModal(true);
-                                                                }}
-                                                            >
-                                                                <img src={pos_delete_icon} className="icon-16" alt="delete" />
-                                                            </Button>
-                                                        </>
-                                                    ) : (
-                                                        /* VIEW POSITION */
-                                                        <Button
-                                                            variant="light"
-                                                            className="icon-btn"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                navigate(
-                                                                    `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
-                                                                    { state: { mode: "view" } }
-                                                                );
-
-                                                            }}
-                                                        >
-                                                            <img src={view_jobpost} className="icon-19" alt="view" />
-                                                        </Button>
-                                                    )}
-                                                </div>
-
-                                                <div className="position-details">
-                                                    <div>
-                                                        Mandatory Education:{" "}
-                                                        {pos.mandatoryEducation}
+                                                        )}
                                                     </div>
-                                                    <div>
-                                                        Preferred Education:{" "}
-                                                        {pos.preferredEducation}
+
+                                                    <div className="position-details">
+                                                        <div>
+                                                            Mandatory Education:{" "}
+                                                            {pos.mandatoryEducation}
+                                                        </div>
+                                                        <div>
+                                                            Preferred Education:{" "}
+                                                            {pos.preferredEducation}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))}
 
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
 
-                    </Row>
+                        </Row>
                     </div>
-    );
-})}
-{/* ================= PAGINATION ================= */ }
-{
-    pageInfo && pageInfo.totalPages > 1 && (
-        <Row className="mt-4 mb-4">
-            <Col className="d-flex justify-content-end">
-                <nav aria-label="Page navigation">
-                    <ul className="pagination mb-0">
-                        {/* Previous Button */}
-                        <li className={`page-item ${page === 0 || loading ? 'disabled' : ''}`}>
-                            <button
-                                className="page-link"
-                                onClick={() => setPage(prev => Math.max(prev - 1, 0))}
-                                disabled={page === 0 || loading}
-                                aria-label="Previous"
-                            >
-                                <span aria-hidden="true">&laquo;</span>
-                            </button>
-                        </li>
+                );
+            })}
+            {/* ================= PAGINATION ================= */}
+            {
+                pageInfo && pageInfo.totalPages > 1 && (
+                    <Row className="mt-4 mb-4">
+                        <Col className="d-flex justify-content-end">
+                            <nav aria-label="Page navigation">
+                                <ul className="pagination mb-0">
+                                    {/* Previous Button */}
+                                    <li className={`page-item ${page === 0 || loading ? 'disabled' : ''}`}>
+                                        <button
+                                            className="page-link"
+                                            onClick={() => setPage(prev => Math.max(prev - 1, 0))}
+                                            disabled={page === 0 || loading}
+                                            aria-label="Previous"
+                                        >
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </button>
+                                    </li>
 
-                        {/* Page Numbers */}
-                        {Array.from({ length: pageInfo.totalPages }).map((_, index) => (
-                            <li
-                                key={index}
-                                className={`page-item ${page === index ? 'active' : ''}`}
-                            >
-                                <button
-                                    className="page-link"
-                                    onClick={() => setPage(index)}
-                                    disabled={loading}
-                                >
-                                    {index + 1}
-                                </button>
-                            </li>
-                        ))}
+                                    {/* Page Numbers */}
+                                    {Array.from({ length: pageInfo.totalPages }).map((_, index) => (
+                                        <li
+                                            key={index}
+                                            className={`page-item ${page === index ? 'active' : ''}`}
+                                        >
+                                            <button
+                                                className="page-link"
+                                                onClick={() => setPage(index)}
+                                                disabled={loading}
+                                            >
+                                                {index + 1}
+                                            </button>
+                                        </li>
+                                    ))}
 
-                        {/* Next Button */}
-                        <li className={`page-item ${page >= pageInfo.totalPages - 1 || loading ? 'disabled' : ''}`}>
-                            <button
-                                className="page-link"
-                                onClick={() => setPage(prev => prev + 1)}
-                                disabled={page >= pageInfo.totalPages - 1 || loading}
-                                aria-label="Next"
-                            >
-                                <span aria-hidden="true">&raquo;</span>
-                            </button>
-                        </li>
-                    </ul>
-                </nav>
-            </Col>
-        </Row>
-    )
-}
-{/* Requisition Delete */ }
-<DeleteConfirmationModal
-    show={showDeleteModal}
-    onClose={() => {
-        setShowDeleteModal(false);
-        setSelectedReq(null);
-    }}
-    onConfirm={handleConfirmDelete}
-    title="Delete Requisition"
-    message="Are you sure you want to delete this requisition?"
-    itemLabel={selectedReq?.code}
-/>
+                                    {/* Next Button */}
+                                    <li className={`page-item ${page >= pageInfo.totalPages - 1 || loading ? 'disabled' : ''}`}>
+                                        <button
+                                            className="page-link"
+                                            onClick={() => setPage(prev => prev + 1)}
+                                            disabled={page >= pageInfo.totalPages - 1 || loading}
+                                            aria-label="Next"
+                                        >
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </Col>
+                    </Row>
+                )
+            }
+            {/* Requisition Delete */}
+            <DeleteConfirmationModal
+                show={showDeleteModal}
+                onClose={() => {
+                    setShowDeleteModal(false);
+                    setSelectedReq(null);
+                }}
+                onConfirm={handleConfirmDelete}
+                title="Delete Requisition"
+                message="Are you sure you want to delete this requisition?"
+                itemLabel={selectedReq?.code}
+            />
 
-{/* Position Delete */ }
+            {/* Position Delete */}
             <DeleteConfirmationModal
                 show={showDeletePosModal}
                 onClose={() => {
