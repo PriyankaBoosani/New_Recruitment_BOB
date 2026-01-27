@@ -195,8 +195,8 @@ const CreateRequisition = () => {
                               endDate: ""
                             }));
                           }}
-                          min={new Date().toISOString().split("T")[0]}
-                          max={new Date().toISOString().split("T")[0]}
+                        max={new Date().toISOString().split("T")[0]}
+                        
 
                         />
                         <Form.Text className="text-muted">
@@ -221,7 +221,7 @@ const CreateRequisition = () => {
                             setErrors((prev) => ({ ...prev, endDate: "" }));
                           }}
                           min={formData.startDate}
-                          max={new Date().toISOString().split("T")[0]}
+                         max={new Date().toISOString().split("T")[0]}
 
                         />
                         <Form.Text className="text-muted">
