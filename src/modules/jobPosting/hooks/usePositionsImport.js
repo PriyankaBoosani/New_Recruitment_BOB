@@ -16,7 +16,7 @@ export const usePositionsImport = () => {
       if (res?.success === false) {
         return {
           success: false,
-          error: res.message,
+          error: res.data,
           details: res.data || [],
         };
       }

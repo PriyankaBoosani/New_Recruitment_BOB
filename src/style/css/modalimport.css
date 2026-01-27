@@ -23,3 +23,8 @@
 .modalimport .modal-body{
     padding-bottom: 0px;
 }
+.alertoverlay {
+    overflow-y: auto;
+    height: auto;
+    max-height: 185px;
+}
