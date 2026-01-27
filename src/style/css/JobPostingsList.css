@@ -165,7 +165,10 @@
 .req-id {
   font-weight: 500;
 }
-
+.icon-22{
+  width: 22px;
+  height: 22px;
+}
 .job-postings-page .req-code {
   font-weight: 500;
   margin: 8px 0;

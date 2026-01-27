@@ -42,6 +42,7 @@ const AddPosition = () => {
     const isAddMode = !mode || mode === "add";
     const isViewMode = !!positionId && mode === "view";
     const isEditMode = !!positionId && mode !== "view";
+    const isImportDisabled = isViewMode || isEditMode;
     const {
         positionsByReq,
         fetchPositions
@@ -466,11 +467,8 @@ const AddPosition = () => {
                 <Button
                     className="imprcls"
                     variant="none"
-                    disabled={isViewMode}
-                    onClick={() => {
-                        if (isViewMode) return;
-                        setShowImportModal(true);
-                    }}
+                    disabled={isImportDisabled}
+                    onClick={() => setShowImportModal(true)}
                 >
                     <img src={import_Icon} alt="import_Icon" className="icon-14" />
                     &nbsp;Import Positions
@@ -720,7 +718,7 @@ const AddPosition = () => {
                                                                 <td>{Object.values(row.categories || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
                                                                 {disabilityCategories.map(d => <td key={d.disabilityCode}>{row.disabilities?.[d.disabilityCode] ?? 0}</td>)}
                                                                 <td>{Object.values(row.disabilities || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
-                                                                <td><Button size="sm" variant="link" onClick={() => { setEditingIndex(idx); setCurrentState({ ...row }); }}><img src={edit_icon} alt="edit_icon" className="icon-16" /></Button><Button size="sm" variant="link" className="text-danger" onClick={() => {
+                                                                <td className="text-center"><Button size="sm" variant="link" className="p-0" onClick={() => { setEditingIndex(idx); setCurrentState({ ...row }); }}><img src={edit_icon} alt="edit_icon" className="icon-16" /></Button><Button size="sm" variant="link" className="text-danger" onClick={() => {
                                                                     setStateDistributions(prev =>
                                                                         prev.map((s, i) =>
                                                                             i === idx ? { ...s, __deleted: true } : s

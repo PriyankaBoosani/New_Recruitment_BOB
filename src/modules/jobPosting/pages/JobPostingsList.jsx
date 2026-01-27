@@ -23,6 +23,7 @@ import DeleteConfirmationModal from "../component/DeleteConfirmationModal";
 import ConfirmationModal from "../component/ConfirmationModal"
 
 import start_icon from "../../../assets/start_icon.png";
+import dept_icon from "../../../assets/dept_icon.png"
 import end_icon from "../../../assets/end_icon.png"
 import submitIcon from "../../../assets/submitIcon.png";
 import pos_edit_icon from "../../../assets/pos_edit_icon.png";
@@ -469,9 +470,9 @@ const JobPostingsList = () => {
                                             {/* 🔹 Department Header */}
                                             <div className="department-header d-flex align-items-center gap-2 my-2">
                                                 <img
-                                                    src={mingcute_department_line}
-                                                    className="icon-16"
-                                                    alt="department"
+                                                    src={dept_icon}
+                                                    className="icon-22"
+                                                    alt="dept_icon"
                                                 />
                                                 <span className="depname">{dept.departmentName}</span>
                                                 <Badge bg="light" text="primary" className="deppos">
