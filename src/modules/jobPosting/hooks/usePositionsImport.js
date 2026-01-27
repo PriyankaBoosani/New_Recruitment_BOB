@@ -6,12 +6,18 @@ export const usePositionsImport = () => {
   const [loading, setLoading] = useState(false);
 
   /* ================= UPLOAD ================= */
-  const bulkAddPositions = async (file) => {
-    setLoading(true);
+  const bulkImport = async (requisitionId, file) => {
+    if (!requisitionId) {
+      throw new Error("requisitionId is required to import positions");
+    }
 
+    setLoading(true);
+    console.log("IMPORT requisitionId:", requisitionId);
     try {
-      //  PASS FILE DIRECTLY
-      const res = await jobPositionApiService.bulkImport(file);
+      const res = await jobPositionApiService.bulkImport(
+        requisitionId,
+        file
+      );
 
       if (res?.success === false) {
         return {
@@ -34,7 +40,6 @@ export const usePositionsImport = () => {
     }
   };
 
-
   /* ================= DOWNLOAD ================= */
   const downloadPositionTemplate = async () => {
     try {
@@ -55,9 +60,8 @@ export const usePositionsImport = () => {
     }
   };
 
-
   return {
-    bulkAddPositions,
+    bulkImport,
     downloadPositionTemplate,
     loading,
   };

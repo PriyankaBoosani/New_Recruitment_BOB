@@ -4,14 +4,22 @@ import { Upload as UploadIcon } from "react-bootstrap-icons";
 import { useTranslation } from "react-i18next";
 import { usePositionsImport } from "../hooks/usePositionsImport";
 import "../../../style/css/modalimport.css";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-const ImportModal = ({ show, onHide, onSuccess = () => { } }) => {
+const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
+}) => {
+  if (!requisitionId) {
+    throw new Error("ImportModal requires requisitionId");
+  }
   const { t } = useTranslation(["position", "common"]);
-  const { bulkAddPositions, downloadPositionTemplate, loading } =
+  const navigate = useNavigate();
+  const { bulkImport, downloadPositionTemplate, loading } =
     usePositionsImport();
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [errors, setErrors] = useState([]);
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const isExcel =
@@ -40,18 +48,30 @@ const ImportModal = ({ show, onHide, onSuccess = () => { } }) => {
       return;
     }
 
-    const result = await bulkAddPositions(selectedFile);
+    const result = await bulkImport(requisitionId, selectedFile);
 
     if (result.success) {
-      onSuccess();
+      toast.success("Positions imported successfully");
+
+      resetModalState();
       onHide();
+
+      // ✅ REDIRECT TO JOB LISTING PAGE
+      navigate("/job-posting");
+      // ⬆️ replace with your actual listing route if different
+
     } else {
+      const errorMsg =
+        Array.isArray(result.details) && result.details.length > 0
+          ? "Import failed"
+          : result.error || "Import failed";
+
+      toast.error(errorMsg);
+
       if (Array.isArray(result.details)) {
         setErrors(result.details);
-      } else if (result.error) {
-        setErrors([result.error]);
       } else {
-        setErrors(["Import failed"]);
+        setErrors([errorMsg]);
       }
     }
   };
