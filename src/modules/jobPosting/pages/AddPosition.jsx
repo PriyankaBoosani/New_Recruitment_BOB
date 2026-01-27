@@ -749,7 +749,7 @@ const AddPosition = () => {
 
                             </Col>
                         </fieldset>
-                        <div className="form-footer mt-4">
+                        <div className="form-footer mt-4 mb-4">
                             <Button variant="outline-secondary" className="cancelbtn" onClick={() => navigate(-1)}>Cancel</Button>
                             {!isViewMode && (
                                 <Button
