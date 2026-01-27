@@ -66,7 +66,16 @@ const PositionForm = ({
 
         // open file picker
         input?.click();
+
+
     };
+    const isDoc =
+        existingIndentPath?.endsWith(".doc") ||
+        existingIndentPath?.endsWith(".docx");
+
+    const viewUrl = isDoc
+        ? `https://docs.google.com/gview?url=${encodeURIComponent(existingIndentPath)}&embedded=true`
+        : existingIndentPath;
     return (
 
         <>
@@ -108,11 +117,14 @@ const PositionForm = ({
                                     <span className="support">Supported formats: PDF, DOC, DOCX (Max 2 MB)</span>
                                 </div>
                             )}
+
                             {!indentFile && existingIndentPath && (
+
                                 <div className="indent-actions">
+
                                     {/* View */}
                                     <a
-                                        href={existingIndentPath}
+                                        href={viewUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="icon-btn"
@@ -135,7 +147,7 @@ const PositionForm = ({
                                         </button>
                                     )}
 
-                                </div> 
+                                </div>
                             )}
 
                         </div>
