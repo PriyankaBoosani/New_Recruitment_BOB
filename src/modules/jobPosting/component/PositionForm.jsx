@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import edit_icon from "../../../assets/edit_icon.png"
 import view_icon from "../../../assets/view_icon.png"
 import { normalizeTitle, TITLE_ALLOWED_PATTERN } from "../validations/validateAddPosition";
-const PositionForm = ({
+import useViewIndent from "../hooks/useViewIndent"; const PositionForm = ({
     isViewMode = false,
     formData,
     errors,
@@ -29,6 +29,7 @@ const PositionForm = ({
     ALLOWED_EXTENSIONS,
     MAX_FILE_SIZE_MB
 }) => {
+    const viewIndent = useViewIndent(existingIndentPath);
     const isContractEmployment =
         employmentTypes.find(
             t =>
@@ -66,16 +67,7 @@ const PositionForm = ({
 
         // open file picker
         input?.click();
-
-
     };
-    const isDoc =
-        existingIndentPath?.endsWith(".doc") ||
-        existingIndentPath?.endsWith(".docx");
-
-    const viewUrl = isDoc
-        ? `https://docs.google.com/gview?url=${encodeURIComponent(existingIndentPath)}&embedded=true`
-        : existingIndentPath;
     return (
 
         <>
@@ -117,21 +109,19 @@ const PositionForm = ({
                                     <span className="support">Supported formats: PDF, DOC, DOCX (Max 2 MB)</span>
                                 </div>
                             )}
-
                             {!indentFile && existingIndentPath && (
-
                                 <div className="indent-actions">
-
                                     {/* View */}
-                                    <a
-                                        href={viewUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
+                                    <button
+                                        type="button"
                                         className="icon-btn"
-                                        onClick={(e) => e.stopPropagation()}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // UI concern stays in component
+                                            viewIndent();
+                                        }}
                                     >
                                         <img src={view_icon} alt="view_icon" className="icon-16" />
-                                    </a>
+                                    </button>
                                     {/* Edit */}
                                     {!isViewMode && (
                                         <button
