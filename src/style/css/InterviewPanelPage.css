@@ -111,24 +111,24 @@
   margin: 0 0 20px 0;
 }
 
-.card-title {
+.interview-panel-container .card-title {
   font-size: 16px;
   font-weight: 600;
   color: #333;
   margin: 0 0 5px 0;
 }
 
-.card-subtitle {
+.interview-panel-container .card-subtitle {
   font-size: 13px;
   color: #666;
   margin: 0 0 20px 0;
 }
 
-.form-group {
+.interview-panel-container .form-group {
   margin-bottom: 20px;
 }
 
-.form-group label {
+.interview-panel-container .form-group label {
   display: block;
   font-size: 13px;
   font-weight: 500;
@@ -136,7 +136,7 @@
   margin-bottom: 8px;
 }
 
-.form-control {
+.interview-panel-container .form-control {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid #ddd;
@@ -145,7 +145,7 @@
   transition: border-color 0.2s;
 }
 
-.form-control:focus {
+.interview-panel-container .form-control:focus {
   border-color: #ff6a00;
   outline: none;
   box-shadow: 0 0 0 2px rgba(255, 106, 0, 0.1);
@@ -220,7 +220,7 @@
 }
 
 /* Action Buttons */
-.action-btn {
+.interview-panel-container .action-btn {
   background: none;
   border: none;
   color: #666;
@@ -238,7 +238,7 @@
 }
 
 /* Buttons */
-.btn {
+.interview-panel-container .btn {
   padding: 8px 16px;
   border-radius: 4px;
   font-size: 13px;
@@ -269,7 +269,7 @@
 }
 
 /* Pagination */
-.pagination {
+.interview-panel-container .pagination {
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -314,11 +314,11 @@
 
 /* Responsive Adjustments */
 @media (max-width: 1024px) {
-  .panel-layout {
+  .interview-panel-container .panel-layout {
     grid-template-columns: 1fr;
   }
   
-  .panel-form-card {
+  .interview-panel-container .panel-form-card {
     position: static;
     margin-bottom: 24px;
   }
