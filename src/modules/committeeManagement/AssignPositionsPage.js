@@ -97,7 +97,7 @@ const AssignPositionsPage = () => {
           </select>
         </Col>
 
-        <Col md={4}>
+        <Col>
           <label className="form-label">Position</label>
           <select className="form-select">
             <option>
@@ -106,7 +106,7 @@ const AssignPositionsPage = () => {
           </select>
         </Col>
 
-        <Col md={2} className="d-flex gap-2">
+        <Col className="d-flex gap-2">
           <Button variant="secondary" disabled className="w-100">
             <FiPlus className="me-1" />
             Assign Committees
@@ -116,7 +116,7 @@ const AssignPositionsPage = () => {
           </Button>
         </Col>
       </Row>
-         <hr />
+        
 
         {/* CARD 2: COMMITTEES */}
         <Card>

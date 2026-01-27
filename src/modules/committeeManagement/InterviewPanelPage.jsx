@@ -27,54 +27,62 @@ const InterviewPanelPage = () => {
 
   return (
     <div className="interview-panel-container">
-      <div className="panel-header">
-        <div className="tabs-container">
-          <div className="tabs">
-            <button
-              className={`tab ${activeTab === "MANAGE" ? "active" : ""}`}
-              onClick={() => setActiveTab("MANAGE")}
-            >
-              <FiUsers className="tab-icon" />
-              <span>Manage Panels</span>
-            </button>
-            <button
-              className={`tab ${activeTab === "ASSIGN" ? "active" : ""}`}
-              onClick={() => setActiveTab("ASSIGN")}
-            >
-              <FiMapPin className="tab-icon" />
-              <span>Assign to Positions</span>
-            </button>
+      <div className="panel-card">
+        <div className="panel-header">
+          {/* <h2>Committee Management</h2> */}
+          <div className="tabs-container">
+            <div className="tabs">
+              <button
+                className={`tab ${activeTab === "MANAGE" ? "active" : ""}`}
+                onClick={() => setActiveTab("MANAGE")}
+              >
+                <FiUsers className="tab-icon" />
+                <span>Manage Panels</span>
+              </button>
+              <button
+                className={`tab ${activeTab === "ASSIGN" ? "active" : ""}`}
+                onClick={() => setActiveTab("ASSIGN")}
+              >
+                <FiMapPin className="tab-icon" />
+                <span>Assign to Positions</span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="panel-content">
-        {activeTab === "MANAGE" && (
-          <div className="panel-layout">
-            <div className="panel-form-section">
-              <div className="panel-form-card">
-                <InterviewPanelFormModal
-                  communityOptions={communityOptions}
-                  membersOptions={membersOptions}
-                  formData={formData}
-                  setFormData={setFormData}
-                  onSave={handleSave}
-                />
+        <div className="panel-content">
+          {activeTab === "MANAGE" && (
+            <div className="panel-layout">
+              <div className="panel-form-section">
+                <div className="panel-form-card">
+                 
+                  <InterviewPanelFormModal
+                    communityOptions={communityOptions}
+                    membersOptions={membersOptions}
+                    formData={formData}
+                    setFormData={setFormData}
+                    onSave={handleSave}
+                  />
+                </div>
+              </div>
+              <div className="panel-table-section">
+                <div className="panel-table-card">
+                  <InterviewPanelTable
+                    panels={panels}
+                    loading={loading}
+                    onDelete={handleDelete}
+                  />
+                </div>
               </div>
             </div>
-            <div className="panel-table-section">
-              <div className="panel-table-card">
-                <InterviewPanelTable
-                  panels={panels}
-                  loading={loading}
-                  onDelete={handleDelete}
-                />
-              </div>
-            </div>
-          </div>
-        )}
+          )}
 
-        {activeTab === "ASSIGN" && <AssignPositionsPage />}
+          {activeTab === "ASSIGN" && (
+            <div className="assign-positions-container">
+              <AssignPositionsPage />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

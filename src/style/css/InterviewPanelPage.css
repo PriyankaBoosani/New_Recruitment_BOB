@@ -1,35 +1,41 @@
 /* Main Container */
-.interview-panel-container .interview-panel-container {
-  padding: 0;
+.interview-panel-container {
+  padding: 24px;
   background: #f5f7fa;
   min-height: 100vh;
 }
 
-/* Header Styles */
-.interview-panel-container .panel-header {
+/* Panel Card */
+.interview-panel-container .panel-card {
   background: #fff;
-  padding: 20px 30px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  position: relative;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
+/* Header Styles */
+/* .interview-panel-container .panel-header {
+  padding: 20px 30px;
+  border-bottom: 1px solid #eaeef5;
+} */
+
 .interview-panel-container .panel-header h2 {
-  margin: 0;
-  color: #333;
-  font-size: 24px;
+  margin: 0 0 20px 0;
+  color: #1a1a1a;
+  font-size: 20px;
   font-weight: 600;
-  margin-bottom: 20px;
 }
 
 /* Tabs Container */
-/* .interview-panel-container .tabs-container {
-  border-bottom: 1px solid #e0e0e0;
-  margin-bottom: 20px;
-} */
+.interview-panel-container .tabs-container {
+  margin-top: 20px;
+}
 
 .interview-panel-container .tabs {
   display: flex;
   gap: 30px;
+  padding: 0 30px;
+  margin: 0;
 }
 
 /* Tab Styles */
@@ -74,7 +80,7 @@
 
 /* Panel Content */
 .interview-panel-container .panel-content {
-  padding: 20px 30px;
+  padding: 20px 30px 30px 30px;
 }
 
 .interview-panel-container .panel-layout {
@@ -87,11 +93,22 @@
 /* Form Card */
 .interview-panel-container .panel-form-card {
   background: #fff;
-  border-radius: 8px;
+  border: 1px solid #eaeef5;
+  border-radius: 6px;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  position: sticky;
-  top: 20px;
+}
+
+.interview-panel-container .panel-form-card h3 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.interview-panel-container .card-subtitle {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 20px 0;
 }
 
 .card-title {
@@ -137,10 +154,38 @@
 /* Table Card */
 .interview-panel-container .panel-table-card {
   background: #fff;
-  border-radius: 8px;
+  border: 1px solid #eaeef5;
+  border-radius: 6px;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.interview-panel-container .panel-table-card h3 {
+  margin: 0 0 20px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .interview-panel-container .panel-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .interview-panel-container .panel-form-card {
+    position: static;
+    margin-bottom: 24px;
+  }
+  
+  .interview-panel-container .panel-content {
+    padding: 0 20px 20px 20px;
+  }
+  
+  .interview-panel-container .tabs {
+    padding: 0 20px;
+  }
 }
 
 /* Table Styles */
