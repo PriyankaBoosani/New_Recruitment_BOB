@@ -1,0 +1,347 @@
+/* ===================================================== */
+/* DATE SELECTOR WRAPPER                                 */
+/* ===================================================== */
+ 
+.verification-date-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+ 
+/* Arrow buttons */
+.date-nav-btn {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  background-color: #f0f0f0;
+  color: #162b75;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+ 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+ 
+.date-nav-btn:hover {
+  background-color: #e6e6e6;
+}
+ 
+/* ===================================================== */
+/* DATE PILL                                             */
+/* ===================================================== */
+ 
+.verification-date-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+ 
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 8px;
+ 
+  border: 1px solid #d9d9d9;
+  background-color: #ffffff;
+ 
+  color: #f36f21;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+ 
+.calendar-icon {
+  display: flex;
+  align-items: center;
+}
+ 
+/* ===================================================== */
+/* DATEPICKER POSITIONING                                */
+/* ===================================================== */
+ 
+.verification-datepicker-wrapper {
+  display: inline-flex;
+  align-items: center;
+}
+ 
+.react-datepicker-popper {
+  margin-top: 6px !important;
+}
+ 
+/* caret */
+.react-datepicker-popper::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 42px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #ffffff;
+  z-index: 2;
+}
+ 
+/* ===================================================== */
+/* CALENDAR POPUP                                        */
+/* ===================================================== */
+ 
+.react-datepicker {
+  border-radius: 12px !important;
+  border: 1px solid #e5e5e5 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+}
+ 
+.react-datepicker__header {
+  background-color: #ffffff !important;
+  border-bottom: none !important;
+}
+ 
+.react-datepicker__current-month {
+  font-weight: 700;
+  font-size: 16px;
+}
+ 
+.react-datepicker__day-name {
+  width: 36px;
+  line-height: 36px;
+  font-weight: 500;
+  color: #6c757d;
+}
+ 
+/* Date boxes */
+.react-datepicker__day {
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  margin: 2px !important;
+  border-radius: 6px !important;
+  border: 1px solid #e6e6e6;
+  font-weight: 500;
+}
+ 
+/* Selected date */
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #f36f21 !important;
+  color: #ffffff !important;
+  border-color: #f36f21 !important;
+}
+ 
+/* Disabled dates (future dates) */
+.react-datepicker__day--disabled {
+  background-color: #f5f5f5 !important;
+  color: #c0c0c0 !important;
+  cursor: not-allowed;
+}
+ 
+/* Hover */
+.react-datepicker__day:hover {
+  background-color: #fff3e8 !important;
+}
+ 
+/* ===================================================== */
+/* FILTER BY STAGE – LIKE 1st SCREENSHOT                  */
+/* ===================================================== */
+ 
+.stage-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+ 
+  padding: 6px 14px;
+  border-radius: 20px;
+ 
+  background-color: #f1f3f5;
+  color: #6c757d;
+ 
+  font-size: 14px;
+  font-weight: 500;
+ 
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+ 
+.stage-pill:hover {
+  background-color: #e9ecef;
+}
+ 
+/* Active pill */
+.stage-pill.active {
+  background-color: #e9ecef;
+  color: #212529;
+}
+ 
+/* Count bubble */
+.stage-count {
+  min-width: 20px;
+  height: 20px;
+ 
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+ 
+  border-radius: 50%;
+  background-color: #dee2e6;
+  color: #495057;
+ 
+  font-size: 12px;
+  font-weight: 600;
+}
+ 
+/* Active count */
+.stage-pill.active .stage-count {
+  background-color: #ced4da;
+  color: #212529;
+}
+ 
+/* ===================================================== */
+/* STATUS PILLS – EXACT SCREENSHOT COLORS                */
+/* ===================================================== */
+ 
+.status-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+ 
+/* Pending */
+.status-pill.pending {
+  background-color: #fff3cd;
+  color: #f59f00;
+}
+ 
+/* Verified */
+.status-pill.verified {
+  background-color: #d3f9d8;
+  color: #2f9e44;
+}
+ 
+/* Rejected */
+.status-pill.rejected {
+  background-color: #ffe3e3;
+  color: #e03131;
+}
+ 
+/* Provisionally Approved */
+.status-pill.provisionallyapproved {
+  background-color: #e7f5ff;
+  color: #2f9e44;
+}
+ 
+/* ===================================================== */
+/* ACTION ICONS                                          */
+/* ===================================================== */
+ 
+.cursor-pointer {
+  cursor: pointer;
+}
+ 
+ 
+.clear-all-btn {
+  background: none;
+  border: none;
+  color: #e03131; /* red like screenshot */
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+}
+ 
+.clear-all-btn:hover {
+  text-decoration: underline;
+}
+ 
+ 
+/* =============================== */
+/* Requisition strip – ATTACHED    */
+/* =============================== */
+ 
+.requisition-section {
+  background-color: #f6f8fc;        /* light grey-blue (NOT white) */
+ 
+ 
+  padding: 12px 24px;               /* ONLY horizontal padding feel */
+  margin: 0;                        /* ❌ no gaps */
+}
+ 
+ 
+ /* ===================================================== */
+/* CATEGORY WISE RESERVATION TABLE – FINAL               */
+/* ===================================================== */
+
+.category-reservation-card {
+  background-color: #f6f8fb;
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+/* Title */
+.category-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #3f51b5;
+  margin-bottom: 14px;
+}
+
+/* Table wrapper */
+.category-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Group headers (General / Disability) */
+.category-table thead tr:first-child th {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6c757d;
+  background-color: #ffffff;
+  padding: 10px 8px;
+  border-bottom: 1px solid #e2e6ee;
+}
+
+/* Column headers */
+.category-table thead tr:nth-child(2) th {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6c757d;
+  padding: 10px 6px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e6ee;
+}
+
+/* Vertical dividers (light) */
+.category-table th,
+.category-table td {
+  border-right: 1px solid #e2e6ee;
+}
+
+.category-table th:last-child,
+.category-table td:last-child {
+  border-right: none;
+}
+
+/* Data row */
+.category-table tbody td {
+  font-size: 14px;
+  font-weight: 500;
+  color: #212529;
+  padding: 12px 6px;
+  text-align: center;
+  border-top: none;
+}
+
+/* Total column highlight */
+.category-table th:nth-child(6),
+.category-table td:nth-child(6) {
+  background-color: #f1f3f9;
+  font-weight: 600;
+}
