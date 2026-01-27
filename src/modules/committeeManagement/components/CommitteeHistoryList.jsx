@@ -8,7 +8,24 @@ const formatDate = (dateString) => {
 };
 
 const CommitteeHistoryList = ({ 
-  history = [], 
+  history = [ {
+      id: 1,
+      reference: 'BOB/HRM/REC/ADVT/2025/06',
+      product: 'Product - ONDC',
+      panelType: 'Interview',
+      panelName: 'Interview Panel 1',
+      startDate: '10-01-2026',
+      endDate: '21-01-2026',
+      members: ['Veeresh V', 'Naresh P', 'Vijay V']
+    },{id: 2,
+      reference: 'BOB/HRM/REC/ADVT/2025/06',
+      product: 'Product - ONDC',
+      panelType: 'Interview',
+      panelName: 'Interview Panel 1',
+      startDate: '10-01-2026',
+      endDate: '21-01-2026',
+      members: ['Veeresh V', 'Naresh P', 'Vijay V']
+    }], 
   loading = false, 
   onEdit = () => {}, 
   onDelete = () => {} 

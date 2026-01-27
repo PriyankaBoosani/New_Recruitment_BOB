@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Card, Button, Row, Col } from "react-bootstrap";
+import { Card, Button, Row, Form ,Col } from "react-bootstrap";
 import { FiFilter, FiDownload, FiPlus, FiX } from "react-icons/fi";
 import "../../style/css/Committee.css";
-
+import CommitteeHistoryList from './components/CommitteeHistoryList';
 // Mock data for demonstration
 const COMMITTEES = {
   SCREENING: [
@@ -20,6 +20,8 @@ const COMMITTEES = {
 
 const AssignPositionsPage = () => {
   const [activeTab, setActiveTab] = useState("SCREENING");
+  const [showHistory, setShowHistory] = useState(true);
+
   const [selectedCommittees, setSelectedCommittees] = useState({
     SCREENING: [],
     INTERVIEW: [],
@@ -201,7 +203,14 @@ const AssignPositionsPage = () => {
 
           </Card.Body>
         </Card>
-
+<Card>
+        <Card.Body>
+         
+          {showHistory && <CommitteeHistoryList />}
+          {/* Existing content */}
+          
+        </Card.Body>
+      </Card>
       </Card>
     </div>
   );
