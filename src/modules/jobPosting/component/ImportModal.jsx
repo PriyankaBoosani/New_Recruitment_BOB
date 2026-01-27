@@ -5,36 +5,38 @@ import { useTranslation } from "react-i18next";
 import { usePositionsImport } from "../hooks/usePositionsImport";
 import "../../../style/css/modalimport.css";
 
-const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
+const ImportModal = ({ show, onHide, onSuccess = () => { } }) => {
   const { t } = useTranslation(["position", "common"]);
   const { bulkAddPositions, downloadPositionTemplate, loading } =
     usePositionsImport();
 
   const [selectedFile, setSelectedFile] = useState(null);
-  const [error, setError] = useState("");
-
+  const [errors, setErrors] = useState([]);
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const isExcel =
       file &&
       (
         file.type ===
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
         file.type === "application/vnd.ms-excel"
       );
 
     if (!isExcel) {
-      setError(t("position:invalid_file"));
+      setErrors(t("position:invalid_file"));
       return;
     }
 
     setSelectedFile(file);
-    setError("");
+    setErrors("");
   };
-
+  const resetModalState = () => {
+    setSelectedFile(null);
+    setErrors([]);
+  };
   const handleUpload = async () => {
     if (!selectedFile) {
-      setError(t("position:no_file_selected"));
+      setErrors([t("position:no_file_selected")]);
       return;
     }
 
@@ -44,15 +46,24 @@ const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
       onSuccess();
       onHide();
     } else {
-      setError(result.error);
+      if (Array.isArray(result.details)) {
+        setErrors(result.details);
+      } else if (result.error) {
+        setErrors([result.error]);
+      } else {
+        setErrors(["Import failed"]);
+      }
     }
   };
 
   return (
-    <Modal show={show} onHide={onHide} centered className="modalimport">
+    <Modal show={show} onHide={() => {
+      resetModalState();
+      onHide();
+    }} centered className="modalimport">
       <Modal.Header closeButton>
         <Modal.Title className="f16 bluecol">Import Positions</Modal.Title>
-        
+
       </Modal.Header>
 
       <Modal.Body>
@@ -78,12 +89,19 @@ const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
             </h5>
 
             <p className="text-muted small">
-             Support for XLSX formats
+              Support for XLSX formats
             </p>
           </div>
 
-          {error && <Alert variant="danger">{error}</Alert>}
-
+          {errors.length > 0 && (
+            <Alert variant="danger" className="alertoverlay">
+              <ul className="mb-0 ps-3">
+                {errors.map((err, idx) => (
+                  <li key={idx}>{err}</li>
+                ))}
+              </ul>
+            </Alert>
+          )}
           <input
             id="upload-xlsx"
             type="file"
@@ -119,14 +137,14 @@ const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
                   onClick={() => setSelectedFile(null)}
                   disabled={loading}
                 >
-                   Remove
-                </Button>   
+                  Remove
+                </Button>
               </div>
             )}
           </div>
 
           <div className="text-center m-0 import-area small">
-           Download Template{" "}
+            Download Template{" "}
             <a
               href="#"
               onClick={(e) => {
@@ -142,7 +160,14 @@ const ImportModal = ({ show, onHide, onSuccess = () => {} }) => {
       </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="outline-secondary" onClick={onHide} disabled={loading}>
+        <Button
+          variant="outline-secondary"
+          onClick={() => {
+            resetModalState();
+            onHide();
+          }}
+          disabled={loading}
+        >
           Cancel
         </Button>
 

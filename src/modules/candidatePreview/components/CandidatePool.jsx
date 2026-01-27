@@ -11,6 +11,7 @@ export default function CandidatePool({ candidates, selectedIds, setSelectedIds,
 	};
 	const navigate = useNavigate();
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
+	console.log(candidates)
 
   /* ---------- Selection logic ---------- */
 

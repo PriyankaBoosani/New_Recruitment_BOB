@@ -8,6 +8,7 @@ import searchIcon from "../../assets/search-icon.png"
 import RequisitionStrip from "./components/RequisitionStrip";
 import CandidatePool from "./components/CandidatePool";
 import InterviewPool from "./components/InterviewPool";
+import ScheduleInterviewModal from "./components/ScheduleInterviewModal";
 // import CandidatePreviewPage from "./candidatePreviewPage";
 
 const candidates = [
@@ -120,6 +121,7 @@ export default function CandidateScreening({ selectedJob }) {
 	const [selectedCandidate, setSelectedCandidate] = useState(null);
 	const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
 	const [selectedInterviewCandidateIds, setSelectedInterviewCandidateIds] = useState([]);
+	const [showScheduleModal, setShowScheduleModal] = useState(false);
 
 	const selectedCandidates = candidates.filter(c =>
 		selectedCandidateIds.includes(c.id)
@@ -179,7 +181,7 @@ export default function CandidateScreening({ selectedJob }) {
       </div>
 
       {/* Desktop Table */}
-      <div className="card rounded border-0 d-none d-md-block">
+      <div className="card rounded border-0 d-none d-md-block mb-5">
 				<div className="card-header bg-white border-bottom-0 p-0 px-1 candidate-screening-tabs-header">
 					{/* Tabs */}
 					<ul className="nav nav-tabs border-0 pt-2 pb-3 px-2 border-bottom">
@@ -260,7 +262,7 @@ export default function CandidateScreening({ selectedJob }) {
 						</div>
 						<div className="col-md-7 col-12 text-md-end px-2 mb-2">
 							{activeTab === "CANDIDATE_POOL" && canScheduleInterview && (
-                <button className="btn blue-bg text-white fs-14">
+                <button className="btn blue-bg text-white fs-14" onClick={() => setShowScheduleModal(true)}>
                   Schedule Interview
                 </button>
               )}
@@ -302,6 +304,7 @@ export default function CandidateScreening({ selectedJob }) {
         )}
 				{/* {activeTab === "OFFER_POOL" && <OfferPool />} */}
 				{/* {activeTab === "ONBOARDING_POOL" && <OnboardingPool />} */}
+				<ScheduleInterviewModal showScheduleModal={showScheduleModal} setShowScheduleModal={setShowScheduleModal} />
       </div>
     </div>
   );
