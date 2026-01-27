@@ -219,6 +219,9 @@ const RequisitionStrip = ({
             />
  
           )}
+
+
+          
         </Modal.Body>
  
         {/* FOOTER */}

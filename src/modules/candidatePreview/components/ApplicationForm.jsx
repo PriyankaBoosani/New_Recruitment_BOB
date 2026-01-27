@@ -7,18 +7,25 @@ import viewIcon from "../../../assets/view_icon.png";
 import downloadIcon from "../../../assets/downloadIcon.png";
 import DocumentViewerModal from "../components/DocumentViewerModal";
 
-const dummyDocuments = [
-  { name: "ID Proof" },
-  { name: "SSC Certificate" },
-  { name: "Resume" },
-  { name: "Inter Certificate" },
-  { name: "Caste Certificate" },
-  { name: "Experience Certificate" },
-  { name: "Salary Slip 1" },
-  { name: "Aadhaar card" },
-  { name: "Salary Slip 2" },
-  { name: "Pan Card" },
-];
+// const dummyDocuments = [
+//   { name: "ID Proof" },
+//   { name: "SSC Certificate" },
+//   { name: "Resume" },
+//   { name: "Inter Certificate" },
+//   { name: "Caste Certificate" },
+//   { name: "Experience Certificate" },
+//   { name: "Salary Slip 1" },
+//   { name: "Aadhaar card" },
+//   { name: "Salary Slip 2" },
+//   { name: "Pan Card" },
+// ];
+
+// const documentStatus = [
+//   { DOCID: 1, COMMENTS: "", STATUS: "PENDIMNG", name: "ID Proof" },
+//   { DOCID: 2, COMMENTS: "", STATUS: "PENDIMNG", name: "SSC Certificate" },
+//   { DOCID: 3, COMMENTS: "", STATUS: "PENDIMNG", name: "Resume" },
+// ];
+
 
 const ApplicationForm = ({
   previewData,
@@ -27,14 +34,26 @@ const ApplicationForm = ({
   setFormErrors,
 }) => {
 
-  const [activeAccordion, setActiveAccordion] = useState(["0"]);
+  const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
   const [criteria, setCriteria] = useState({});
 
   const data = previewData || {
     personalDetails: {},
     experienceSummary: {},
     documents: {},
+    education: [],
+    experience: []
   };
+
+
+   const documentRows = [
+    ...(data.documents?.identityProofs || []),
+    ...(data.documents?.educationCertificates || []),
+    ...(data.documents?.communityCertificates || []),
+    ...(data.documents?.disabilityCertificates || []),
+    ...(data.documents?.payslips || []),
+    ...(data.documents?.resume || [])
+  ];
 
   const photoUrl = data.documents?.photo?.[0]?.url || logo_Bob;
   const signatureUrl = data.documents?.signature?.[0]?.url || sign;
@@ -260,40 +279,29 @@ const handleReject = (comment) => {
       </tr>
     </thead>
 
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td>State Board of Secondary Education</td>
-        <td>Jsm High School</td>
-        <td>10th/SSC/Matriculation</td>
-        <td>-</td>
-        <td>11-06-2019</td>
-        <td>11-06-2020</td>
-        <td>85%</td>
-      </tr>
+   <tbody>
+  {(data.education || []).map((edu, index) => (
+    <tr key={index}>
+      <td>{index + 1}</td>
+      <td>{edu.educationLevel_name || "-"}</td>
+      <td>{edu.institution || "-"}</td>
+      <td>{edu.mandatoryQualification_name || "-"}</td>
+      <td>{edu.specialization_name || "-"}</td>
+      <td>{edu.startDate || "-"}</td>
+      <td>{edu.endDate || "-"}</td>
+      <td>{edu.percentage ? `${edu.percentage}%` : "-"}</td>
+    </tr>
+  ))}
 
-      <tr>
-        <td>2</td>
-        <td>State Board of Intermediate Education</td>
-        <td>Sri Chaitanya</td>
-        <td>Intermediate</td>
-        <td>-</td>
-        <td>11-06-2020</td>
-        <td>11-06-2022</td>
-        <td>95%</td>
-      </tr>
+  {(!data.education || data.education.length === 0) && (
+    <tr>
+      <td colSpan="8" className="text-center">
+        No education details available
+      </td>
+    </tr>
+  )}
+</tbody>
 
-      <tr>
-        <td>3</td>
-        <td>Computer Science and Engineering</td>
-        <td>NIT Warangal</td>
-        <td>Bachelor of Technology</td>
-        <td>-</td>
-        <td>11-06-2022</td>
-        <td>11-06-2025</td>
-        <td>89%</td>
-      </tr>
-    </tbody>
   </table>
 </div>
 
@@ -321,57 +329,29 @@ const handleReject = (comment) => {
         </tr>
       </thead>
 
-      <tbody>
-        {[
-          {
-            org: "Tech Solutions Pvt. Ltd.",
-            post: "Software Engineer",
-            role: "IT Development",
-            from: "July 2015",
-            to: "March 2017",
-            duration: "1 Yr 8 Months",
-            desc: "Full-stack development, API design, database management",
-          },
-          {
-            org: "Digital Innovations Inc.",
-            post: "Product Analyst",
-            role: "Product Management",
-            from: "April 2017",
-            to: "August 2019",
-            duration: "2 Yrs 4 Months",
-            desc: "Market research, product roadmap planning, stakeholder management",
-          },
-          {
-            org: "FinTech Global Solutions",
-            post: "Product Manager",
-            role: "Digital Banking",
-            from: "September 2019",
-            to: "December 2021",
-            duration: "2 Yrs 3 Months",
-            desc: "Digital product strategy, UX optimization, agile project management",
-          },
-          {
-            org: "PayTech Innovations",
-            post: "Senior Product Manager",
-            role: "Digital Commerce",
-            from: "January 2022",
-            to: "Present",
-            duration: "2 Yrs 11 Months",
-            desc: "Leading ONDC integration, digital payment solutions, cross-functional team leadership",
-          },
-        ].map((exp, idx) => (
-          <tr key={idx}>
-            <td>{idx + 1}</td>
-            <td>{exp.org}</td>
-            <td>{exp.post}</td>
-            <td>{exp.role}</td>
-            <td>{exp.from}</td>
-            <td>{exp.to}</td>
-            <td>{exp.duration}</td>
-            <td>{exp.desc}</td>
-          </tr>
-        ))}
-      </tbody>
+    <tbody>
+  {(data.experience || []).map((exp, idx) => (
+    <tr key={idx}>
+      <td>{idx + 1}</td>
+      <td>{exp.org}</td>
+      <td>{exp.designation}</td>
+      <td>{exp.department}</td>
+      <td>{exp.from}</td>
+      <td>{exp.to}</td>
+      <td>{exp.duration}</td>
+      <td>{exp.nature}</td>
+    </tr>
+  ))}
+
+  {(!data.experience || data.experience.length === 0) && (
+    <tr>
+      <td colSpan="8" className="text-center">
+        No experience details available
+      </td>
+    </tr>
+  )}
+</tbody>
+
     </table>
   </Accordion.Body>
 </Accordion.Item>
@@ -394,10 +374,12 @@ const handleReject = (comment) => {
       </thead>
 
       <tbody>
-        {Array.from({ length: Math.ceil(dummyDocuments.length / 2) }).map(
+        {Array.from({ length: Math.ceil(documentRows.length / 2) })
+.map(
           (_, rowIndex) => {
-            const left = dummyDocuments[rowIndex * 2];
-            const right = dummyDocuments[rowIndex * 2 + 1];
+           const left = documentRows[rowIndex * 2];
+           const right = documentRows[rowIndex * 2 + 1];
+
 
             return (
               <tr key={rowIndex}>
