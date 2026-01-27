@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import InterviewPanelFormModal from "./components/InterviewPanelFormModal";
 import InterviewPanelTable from "./components/InterviewPanelTable";
-import AssignPositionsPage from "./AssignPositionsPage"; // 👈 ADD
+import AssignPositionsPage from "./AssignPositionsPage";
 import "../../style/css/InterviewPanelPage.css";
 import { useInterviewPanel } from "./hooks/useInterviewPanel";
 import { FiUsers, FiMapPin } from "react-icons/fi";
+
 const InterviewPanelPage = () => {
-  const [activeTab, setActiveTab] = useState("MANAGE"); // 👈 TAB STATE
+  const [activeTab, setActiveTab] = useState("MANAGE");
 
   const {
     panels,
@@ -25,48 +26,56 @@ const InterviewPanelPage = () => {
   }, []);
 
   return (
-    <div className="committee-page">
-      {/* ===== Tabs ===== */}
-     <div className="committee-tabs">
-        <button
-          className={`tab ${activeTab === "MANAGE" ? "active" : ""}`}
-          onClick={() => setActiveTab("MANAGE")}
-        >
-          Manage Panels
-        </button>
-
-        <button
-          className={`tab ${activeTab === "ASSIGN" ? "active" : ""}`}
-          onClick={() => setActiveTab("ASSIGN")}
-        >
-          Assign to Positions
-        </button>
-      </div>
-<hr/>
-      {/* ===== Content ===== */}
-      {activeTab === "MANAGE" && (
-        <div className="committee-content">
-          <div className="panel-form-card">
-            <InterviewPanelFormModal
-              communityOptions={communityOptions}
-              membersOptions={membersOptions}
-              formData={formData}
-              setFormData={setFormData}
-              onSave={handleSave}
-            />
-          </div>
-
-          <div className="panel-table-card">
-            <InterviewPanelTable
-              panels={panels}
-              loading={loading}
-              onDelete={handleDelete}
-            />
+    <div className="interview-panel-container">
+      <div className="panel-header">
+        <div className="tabs-container">
+          <div className="tabs">
+            <button
+              className={`tab ${activeTab === "MANAGE" ? "active" : ""}`}
+              onClick={() => setActiveTab("MANAGE")}
+            >
+              <FiUsers className="tab-icon" />
+              <span>Manage Panels</span>
+            </button>
+            <button
+              className={`tab ${activeTab === "ASSIGN" ? "active" : ""}`}
+              onClick={() => setActiveTab("ASSIGN")}
+            >
+              <FiMapPin className="tab-icon" />
+              <span>Assign to Positions</span>
+            </button>
           </div>
         </div>
-      )}
+      </div>
 
-      {activeTab === "ASSIGN" && <AssignPositionsPage />}
+      <div className="panel-content">
+        {activeTab === "MANAGE" && (
+          <div className="panel-layout">
+            <div className="panel-form-section">
+              <div className="panel-form-card">
+                <InterviewPanelFormModal
+                  communityOptions={communityOptions}
+                  membersOptions={membersOptions}
+                  formData={formData}
+                  setFormData={setFormData}
+                  onSave={handleSave}
+                />
+              </div>
+            </div>
+            <div className="panel-table-section">
+              <div className="panel-table-card">
+                <InterviewPanelTable
+                  panels={panels}
+                  loading={loading}
+                  onDelete={handleDelete}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "ASSIGN" && <AssignPositionsPage />}
+      </div>
     </div>
   );
 };

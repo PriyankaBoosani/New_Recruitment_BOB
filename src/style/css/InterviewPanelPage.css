@@ -1,107 +1,285 @@
-.committee-page {
-  padding: 24px;
-  background: #f6f7fb;
-}
-.committee-tabs {
-  /* display: flex; */
-  align-items: center;
-  gap: 32px;                 /* space between tabs */
-  padding: 12px 20px;
-  background: #ffffff;
-  border-bottom: 1px solid #e6e6e6;
+/* Main Container */
+.interview-panel-container .interview-panel-container {
+  padding: 0;
+  background: #f5f7fa;
+  min-height: 100vh;
 }
 
-.tab {
+/* Header Styles */
+.interview-panel-container .panel-header {
+  background: #fff;
+  padding: 20px 30px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.interview-panel-container .panel-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* Tabs Container */
+/* .interview-panel-container .tabs-container {
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+} */
+
+.interview-panel-container .tabs {
+  display: flex;
+  gap: 30px;
+}
+
+/* Tab Styles */
+.interview-panel-container .tab {
   background: none;
   border: none;
-  font-weight: 500;
+  padding: 12px 0;
   font-size: 14px;
-  color: #8a8a8a;            /* inactive grey */
-  /* padding: 6px 0; */
+  font-weight: 500;
+  color: #666;
   cursor: pointer;
-  display: inline-flex;      /* IMPORTANT */
+  display: flex;
   align-items: center;
-  gap: 6px;                  /* icon spacing */
+  gap: 8px;
+  position: relative;
+  transition: all 0.2s ease;
 }
 
-.tab.active {
+.interview-panel-container .tab .tab-icon {
+  font-size: 18px;
+}
+
+.interview-panel-container .tab:hover {
   color: #ff6a00;
-  border-bottom: 2px solid #ff6a00;
 }
 
-.committee-content {
+.interview-panel-container .tab.active {
+  color: #ff6a00;
+  font-weight: 600;
+}
+
+.interview-panel-container .tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #ff6a00;
+  border-radius: 3px 3px 0 0;
+}
+
+/* Panel Content */
+.interview-panel-container .panel-content {
+  padding: 20px 30px;
+}
+
+.interview-panel-container .panel-layout {
   display: grid;
-  grid-template-columns: 360px 1fr;
+  grid-template-columns: 350px 1fr;
   gap: 24px;
+  align-items: flex-start;
 }
 
-.panel-form-card,
-.panel-table-card {
+/* Form Card */
+.interview-panel-container .panel-form-card {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 20px;
 }
 
 .card-title {
+  font-size: 16px;
   font-weight: 600;
-  margin-bottom: 4px;
+  color: #333;
+  margin: 0 0 5px 0;
 }
 
 .card-subtitle {
   font-size: 13px;
-  color: #777;
-  margin-bottom: 16px;
+  color: #666;
+  margin: 0 0 20px 0;
 }
 
 .form-group {
-  margin-bottom: 14px;
+  margin-bottom: 20px;
 }
 
-.chips span {
-  display: inline-block;
-  background: #eef1f5;
-  padding: 6px 10px;
-  border-radius: 16px;
-  margin-right: 8px;
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-control:focus {
+  border-color: #ff6a00;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 106, 0, 0.1);
+}
+
+/* Table Card */
+.interview-panel-container .panel-table-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* Table Styles */
+.interview-panel-container .panel-table {
+  width: 100%;
+  border-collapse: collapse;
   font-size: 13px;
 }
 
-.form-actions {
+.interview-panel-container .panel-table th {
+  background-color: #f8f9fa;
+  color: #555;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.interview-panel-container .panel-table td {
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #444;
+  vertical-align: middle;
+}
+
+.interview-panel-container .panel-table tr:last-child td {
+  border-bottom: none;
+}
+
+.interview-panel-container .panel-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Action Buttons */
+.action-btn {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 0 5px;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.interview-panel-container .action-btn:hover {
+  background: #f0f0f0;
+  color: #ff6a00;
+}
+
+/* Buttons */
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.interview-panel-container .btn-outline-secondary {
+  background: #fff;
+  border-color: #ddd;
+  color: #666;
+}
+
+.interview-panel-container .btn-outline-secondary:hover {
+  background: #f5f5f5;
+}
+
+.interview-panel-container .btn-primary {
+  background: #ff6a00;
+  color: white;
+  border: none;
+}
+
+.interview-panel-container .btn-primary:hover {
+  background: #e05d00;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.interview-panel-container .pagination button {
+  background: #fff;
+  border: 1px solid #ddd;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.interview-panel-container .pagination button:hover {
+  background: #f5f5f5;
+}
+
+.interview-panel-container .pagination button.active {
+  background: #ff6a00;
+  color: white;
+  border-color: #ff6a00;
+}
+
+/* Form Actions */
+.interview-panel-container.form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 16px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
 }
 
-.table-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .panel-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .panel-form-card {
+    position: static;
+    margin-bottom: 24px;
+  }
 }
 
-.panel-table th {
-  background: #3f51a3;
-  color: #fff;
-  font-weight: 500;
-}
-
-.actions {
-  text-align: center;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 16px;
-}
-
-.pagination button.active {
-  background: #ff6a00;
-  color: #fff;
-}
-.committee-page .form-control {
+.interview-panel-container .form-control {
   appearance: auto !important;
 }
-
 
