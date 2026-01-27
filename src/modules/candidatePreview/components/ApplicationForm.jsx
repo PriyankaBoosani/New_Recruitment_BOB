@@ -6,26 +6,7 @@ import sign from "../../../assets/downloadIcon.png";
 import viewIcon from "../../../assets/view_icon.png";
 import downloadIcon from "../../../assets/downloadIcon.png";
 import DocumentViewerModal from "../components/DocumentViewerModal";
-
-// const dummyDocuments = [
-//   { name: "ID Proof" },
-//   { name: "SSC Certificate" },
-//   { name: "Resume" },
-//   { name: "Inter Certificate" },
-//   { name: "Caste Certificate" },
-//   { name: "Experience Certificate" },
-//   { name: "Salary Slip 1" },
-//   { name: "Aadhaar card" },
-//   { name: "Salary Slip 2" },
-//   { name: "Pan Card" },
-// ];
-
-// const documentStatus = [
-//   { DOCID: 1, COMMENTS: "", STATUS: "PENDIMNG", name: "ID Proof" },
-//   { DOCID: 2, COMMENTS: "", STATUS: "PENDIMNG", name: "SSC Certificate" },
-//   { DOCID: 3, COMMENTS: "", STATUS: "PENDIMNG", name: "Resume" },
-// ];
-
+import { useLocation } from "react-router-dom";
 
 const ApplicationForm = ({
   previewData,
@@ -36,6 +17,12 @@ const ApplicationForm = ({
 
   const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
   const [criteria, setCriteria] = useState({});
+  const location = useLocation();
+  const candidate = location.state?.candidate;
+
+  useEffect(() => {
+    console.log("Loaded Candidate:", candidate);
+  }, [candidate]);
 
   const data = previewData || {
     personalDetails: {},
@@ -62,23 +49,21 @@ const ApplicationForm = ({
   const [selectedDoc, setSelectedDoc] = useState(null);
   const [docStatus, setDocStatus] = useState({});
   
-const handleVerify = (comment) => {
-  setDocStatus((prev) => ({
-    ...prev,
-    [selectedDoc.name]: "Verified",
-  }));
-  setShowViewer(false);
-};
+  const handleVerify = (comment) => {
+    setDocStatus((prev) => ({
+      ...prev,
+      [selectedDoc.name]: "Verified",
+    }));
+    setShowViewer(false);
+  };
 
-const handleReject = (comment) => {
-  setDocStatus((prev) => ({
-    ...prev,
-    [selectedDoc.name]: "Rejected",
-  }));
-  setShowViewer(false);
-};
-
-  
+  const handleReject = (comment) => {
+    setDocStatus((prev) => ({
+      ...prev,
+      [selectedDoc.name]: "Rejected",
+    }));
+    setShowViewer(false);
+  };
 
   return (
     <>
@@ -264,47 +249,45 @@ const handleReject = (comment) => {
             <Accordion.Header>Education Details</Accordion.Header>
             <Accordion.Body>
              <div className="edu-table-wrapper">
+              <table className="edu-table">
+                <thead>
+                  <tr>
+                    <th>S. No</th>
+                    <th>Onboard/University</th>
+                    <th>School/college</th>
+                    <th>Degree</th>
+                    <th>Specialization</th>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                    <th>Percentage</th>
+                  </tr>
+                </thead>
 
-  <table className="edu-table">
-    <thead>
-      <tr>
-        <th>S. No</th>
-        <th>Onboard/University</th>
-        <th>School/college</th>
-        <th>Degree</th>
-        <th>Specialization</th>
-        <th>From Date</th>
-        <th>To Date</th>
-        <th>Percentage</th>
-      </tr>
-    </thead>
+              <tbody>
+              {(data.education || []).map((edu, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{edu.educationLevel_name || "-"}</td>
+                  <td>{edu.institution || "-"}</td>
+                  <td>{edu.mandatoryQualification_name || "-"}</td>
+                  <td>{edu.specialization_name || "-"}</td>
+                  <td>{edu.startDate || "-"}</td>
+                  <td>{edu.endDate || "-"}</td>
+                  <td>{edu.percentage ? `${edu.percentage}%` : "-"}</td>
+                </tr>
+              ))}
 
-   <tbody>
-  {(data.education || []).map((edu, index) => (
-    <tr key={index}>
-      <td>{index + 1}</td>
-      <td>{edu.educationLevel_name || "-"}</td>
-      <td>{edu.institution || "-"}</td>
-      <td>{edu.mandatoryQualification_name || "-"}</td>
-      <td>{edu.specialization_name || "-"}</td>
-      <td>{edu.startDate || "-"}</td>
-      <td>{edu.endDate || "-"}</td>
-      <td>{edu.percentage ? `${edu.percentage}%` : "-"}</td>
-    </tr>
-  ))}
+              {(!data.education || data.education.length === 0) && (
+                <tr>
+                  <td colSpan="8" className="text-center">
+                    No education details available
+                  </td>
+                </tr>
+              )}
+            </tbody>
 
-  {(!data.education || data.education.length === 0) && (
-    <tr>
-      <td colSpan="8" className="text-center">
-        No education details available
-      </td>
-    </tr>
-  )}
-</tbody>
-
-  </table>
-</div>
-
+              </table>
+            </div>
             </Accordion.Body>
           </Accordion.Item>
 

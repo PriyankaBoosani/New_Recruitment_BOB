@@ -21,13 +21,13 @@ body {
 .main-content {
   flex: 1;
   overflow-y: auto;
-  padding-top: 107px; /* Height of header (56px) + navbar (56px) */
+  margin-top: 91px;
   background-color: #f8f9fa;
 }
 
 /* For pages where header is hidden (login, forgot-password, etc) */
 .app-container:has(.main-content:only-child) .main-content {
-  padding-top: 0;
+  margin-top: 0;
   height: 100vh;
 }
 
@@ -88,11 +88,11 @@ body {
     width: 80px;
   }
   .main-content {
-    padding-top: 56px; /* Height of the header on mobile */
+    margin-top: 91px; /* Height of the header on mobile */
   }
   
   .app-container:has(.main-content:only-child) .main-content {
-    padding-top: 0;
+    margin-top: 0;
   }
 }
 
@@ -102,7 +102,7 @@ body {
 
 /* Add spacing between navigation items */
 .navbar-nav .nav-link {
-  padding: 1rem 1.25rem;
+  /* padding: 1rem 1.25rem; */
   margin: 0 2px;
   position: relative;
   transition: all 0.3s ease;
@@ -227,6 +227,9 @@ body {
   margin-top: auto;
   font-size: 0.875rem;
   color: #6c757d;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
 /* Ensure the footer stays at the bottom */

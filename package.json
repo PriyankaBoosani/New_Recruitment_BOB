@@ -18,6 +18,8 @@
     "bootstrap-icons": "^1.13.1",
     "crypto-js": "^4.2.0",
     "i18next": "^22.5.1",
+    "install": "^0.13.0",
+    "npm": "^11.8.0",
     "react": "^19.2.1",
     "react-bootstrap": "^2.10.10",
     "react-bootstrap-icons": "^1.11.6",
