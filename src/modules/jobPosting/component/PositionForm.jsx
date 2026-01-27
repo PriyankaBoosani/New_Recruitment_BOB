@@ -67,8 +67,6 @@ const PositionForm = ({
         // open file picker
         input?.click();
     };
-
-
     return (
 
         <>
@@ -87,9 +85,6 @@ const PositionForm = ({
                                 }
 
                             }}
-
-
-
                         >
                             {indentFile ? (
                                 <div className="d-flex align-items-center gap-3">
@@ -104,9 +99,6 @@ const PositionForm = ({
                                     <span className="file-icon">📄</span>
                                     <div>
                                         <div className="fw-semibold">Existing Indent</div>
-                                        {/* <a href={existingIndentPath} target="_blank" rel="noopener noreferrer" className="text-primary" onClick={(e) => e.stopPropagation()}>
-                                            View / Download
-                                        </a> */}
                                     </div>
                                 </div>
                             ) : (
@@ -117,8 +109,6 @@ const PositionForm = ({
                                 </div>
                             )}
                             {!indentFile && existingIndentPath && (
-
-
                                 <div className="indent-actions">
                                     {/* View */}
                                     <a
@@ -130,9 +120,6 @@ const PositionForm = ({
                                     >
                                         <img src={view_icon} alt="view_icon" className="icon-16" />
                                     </a>
-
-
-
                                     {/* Edit */}
                                     {!isViewMode && (
                                         <button
@@ -148,8 +135,7 @@ const PositionForm = ({
                                         </button>
                                     )}
 
-                                </div>
-
+                                </div> 
                             )}
 
                         </div>
@@ -190,7 +176,7 @@ const PositionForm = ({
                     </Form.Group>
                     <Form.Group>
                         <Form.Label>Approved On <span className="text-danger">*</span></Form.Label>
-                        <Form.Control type="date" value={approvedOn} onChange={(e) => { setApprovedOn(e.target.value); setErrors(prev => ({ ...prev, approvedOn: "" })); }} />
+                        <Form.Control type="date" value={approvedOn} max={new Date().toISOString().split("T")[0]} onChange={(e) => { setApprovedOn(e.target.value); setErrors(prev => ({ ...prev, approvedOn: "" })); }} />
                         <ErrorMessage>{errors.approvedOn}</ErrorMessage>
                     </Form.Group>
                 </Col>
@@ -382,15 +368,10 @@ const PositionForm = ({
                             }));
                         }}
                     />
-
-
-
-
-
                     <ErrorMessage>{errors.responsibilities}</ErrorMessage>
 
                 </Col>
-                <Col md={2}>
+                <Col md={3}>
                     <Form.Label>Medical Required <span className="text-danger">*</span></Form.Label>
                     <Form.Select name="medicalRequired" value={formData.medicalRequired} onChange={handleInputChange}>
                         <option value="">Select...</option>

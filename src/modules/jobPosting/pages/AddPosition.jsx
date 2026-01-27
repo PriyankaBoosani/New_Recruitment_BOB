@@ -19,7 +19,7 @@ import PositionForm from "../component/PositionForm";
 import { mapEduRulesToModalData } from "../mappers/mapEduRulesToModalData";
 import { useLocation } from "react-router-dom";
 import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisition";
-
+import { toast } from "react-toastify";
 
 const AddPosition = () => {
     const POSITION_POPULATED_FIELDS = ["Min Age", "Max Age", "Grade / Scale", "Roles & Responsibilities", "Mandatory Education", "Preferred Education", "Mandatory Experience", "Preferred Experience"];
@@ -437,7 +437,16 @@ const AddPosition = () => {
 
         const payload = { formData, educationData, requisitionId, indentFile, approvedBy, approvedOn, reservationCategories, disabilityCategories, nationalCategories, nationalDisabilities, qualifications, certifications, stateDistributions: stateDistributions.filter(s => !s.__deleted) };
         const success = isEditMode ? await updatePosition({ ...payload, positionId, existingPosition }) : await createPosition(payload);
-        if (success) navigate(-1);
+        if (success) {
+            toast.success(
+                isEditMode
+                    ? "Position updated successfully"
+                    : "Position added successfully"
+            );
+
+            navigate(-1);
+        }
+
     };
 
     const nationalCategoryTotal = Object.values(nationalCategories).reduce((a, b) => a + Number(b || 0), 0);

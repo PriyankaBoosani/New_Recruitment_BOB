@@ -43,7 +43,6 @@ export const useMasterData = () => {
           certRes.data,
 
         );
-        console.log("MAPPED CERTS:", mapped.certifications);
 
         setData({
           departments: mapped.departments,

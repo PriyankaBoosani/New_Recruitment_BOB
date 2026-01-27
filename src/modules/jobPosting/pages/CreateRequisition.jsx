@@ -8,6 +8,7 @@ import { validateRequisitionForm, validateTitleOnType, normalizeTitle } from "..
 import { mapRequisitionToApi } from "../mappers/createRequisitionMapper";
 import { useCreateRequisition } from "../hooks/useCreateRequisition";
 import { REQUISITION_CONFIG } from "../config/requisitionConfig";
+import { toast } from "react-toastify";
 
 
 const CreateRequisition = () => {
@@ -19,9 +20,7 @@ const CreateRequisition = () => {
   const editId = query.get("id"); //  DEFINE FIRST
   const mode = location.state?.mode; // "view" | "edit" | undefined
 
-  const isCreateMode = !editId;
   const isViewMode = !!editId && mode === "view";
-  const isEditMode = !!editId && mode !== "view";
 
   /* ===================== HOOK ===================== */
   const {
@@ -53,6 +52,12 @@ const CreateRequisition = () => {
     try {
       const payload = mapRequisitionToApi(formData);
       await saveRequisition(payload);
+      toast.success(
+        editId
+          ? "Requisition updated successfully"
+          : "Requisition created successfully"
+      );
+
       navigate(REQUISITION_CONFIG.SUCCESS_REDIRECT);
     } catch (err) {
       console.error("Save failed", err);
@@ -129,7 +134,7 @@ const CreateRequisition = () => {
                       }
                     })
                   }
-                  
+
                 />
 
                 <Form.Text className="text-muted">
@@ -163,7 +168,7 @@ const CreateRequisition = () => {
                           }
                         })
                       }
-                      
+
                     />
 
                     <ErrorMessage>{errors.description}</ErrorMessage>
@@ -191,7 +196,8 @@ const CreateRequisition = () => {
                             }));
                           }}
                           min={new Date().toISOString().split("T")[0]}
-                         
+                          max={new Date().toISOString().split("T")[0]}
+
                         />
                         <Form.Text className="text-muted">
                           Date from which the candidates can start applying.
@@ -215,7 +221,8 @@ const CreateRequisition = () => {
                             setErrors((prev) => ({ ...prev, endDate: "" }));
                           }}
                           min={formData.startDate}
-                         
+                          max={new Date().toISOString().split("T")[0]}
+
                         />
                         <Form.Text className="text-muted">
                           ⓘ Standard duration: 21 days.
