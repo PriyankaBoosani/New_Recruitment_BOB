@@ -142,9 +142,9 @@ const AssignPositionsPage = () => {
                   </div>
                 </div>
             {/* Tabs */}
-            <div className="tabs mb-4">
+            <div className="com-tab mb-2">
               <button
-                className={`tab ${
+                className={`com-tab-item ${
                   activeTab === "SCREENING" ? "active" : ""
                 }`}
                 onClick={() => setActiveTab("SCREENING")}
@@ -153,7 +153,7 @@ const AssignPositionsPage = () => {
               </button>
 
               <button
-                className={`tab ${
+                className={`com-tab-item ${
                   activeTab === "INTERVIEW" ? "active" : ""
                 }`}
                 onClick={() => setActiveTab("INTERVIEW")}
@@ -162,7 +162,7 @@ const AssignPositionsPage = () => {
               </button>
 
               <button
-                className={`tab ${
+                className={`com-tab-item ${
                   activeTab === "COMPENSATION" ? "active" : ""
                 }`}
                 onClick={() => setActiveTab("COMPENSATION")}
