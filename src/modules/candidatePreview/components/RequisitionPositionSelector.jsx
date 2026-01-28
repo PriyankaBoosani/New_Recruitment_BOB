@@ -19,13 +19,10 @@ const RequisitionPositionSelector = ({
   const [loadingReq, setLoadingReq] = useState(false);
   const [loadingPos, setLoadingPos] = useState(false);
 
-
-    //  FETCH REQUISITIONS (API SEARCH)
-
+  /* ================= FETCH REQUISITIONS ================= */
   const fetchRequisitions = async (searchText = "") => {
     try {
       setLoadingReq(true);
-
       const res =
         await candidateWorkflowServices.getRequisitions(searchText);
 
@@ -45,20 +42,16 @@ const RequisitionPositionSelector = ({
     }
   };
 
- 
   useEffect(() => {
     fetchRequisitions();
   }, []);
 
- 
-    //  FETCH POSITIONS (API SEARCH)
-
+  /* ================= FETCH POSITIONS ================= */
   const fetchPositions = async (searchText = "") => {
     if (!selectedRequisition?.value) return;
 
     try {
       setLoadingPos(true);
-
       const res =
         await candidateWorkflowServices.getPositionsByRequisitionId(
           selectedRequisition.value,
@@ -81,44 +74,39 @@ const RequisitionPositionSelector = ({
     }
   };
 
-  /* LOAD POSITIONS WHEN REQUISITION CHANGES */
   useEffect(() => {
     setSelectedPosition(null);
     setPositions([]);
-    if (selectedRequisition) {
-      fetchPositions();
-    }
+    if (selectedRequisition) fetchPositions();
   }, [selectedRequisition]);
 
   return (
-    <>
-      {/*  REQUISITION DROPDOWN */}
-      <div className="col-md-3 col-12">
-        <label className="fs-14 blue-color">Requisition</label>
+    <div className="row g-3 align-items-end">
+      {/* REQUISITION */}
+      <div className="col-md-6 col-12">
+        <label className="fs-14 blue-color mb-1">Requisition</label>
         <Select
           isClearable
           isLoading={loadingReq}
           options={requisitions}
           value={selectedRequisition}
           placeholder="Select Requisition"
-        onInputChange={(inputValue, { action }) => {
-  if (action !== "input-change") return;
-   fetchRequisitions(inputValue);
-
-}}
+          onInputChange={(inputValue, { action }) => {
+            if (action === "input-change") {
+              fetchRequisitions(inputValue);
+            }
+          }}
           onChange={(option) => {
             setSelectedRequisition(option);
-
             onRequisitionChange?.(option?.raw || null);
             onPositionChange?.(null);
           }}
         />
       </div>
 
-      {/*  POSITION DROPDOWN */}
-      <div className="col-md-3 col-12">
-        <label className="fs-14 blue-color">Position</label>
-
+      {/* POSITION */}
+      <div className="col-md-6 col-12">
+        <label className="fs-14 blue-color mb-1">Position</label>
         <Select
           isClearable
           isLoading={loadingPos}
@@ -130,17 +118,18 @@ const RequisitionPositionSelector = ({
               : "Select Requisition first"
           }
           isDisabled={!selectedRequisition}
-       onInputChange={(inputValue, { action }) => {
-  if (action !== "input-change" || !selectedRequisition) return;
-    fetchPositions(inputValue);
-}}
+          onInputChange={(inputValue, { action }) => {
+            if (action === "input-change" && selectedRequisition) {
+              fetchPositions(inputValue);
+            }
+          }}
           onChange={(option) => {
             setSelectedPosition(option);
             onPositionChange?.(option?.raw || null);
           }}
         />
       </div>
-    </>
+    </div>
   );
 };
 

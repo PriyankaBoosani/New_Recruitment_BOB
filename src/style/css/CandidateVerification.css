@@ -8,6 +8,24 @@
   gap: 8px;
 }
  
+
+.date-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+.nav-arrow {
+  cursor: pointer;
+  font-size: 30px;
+  color: #6484ca; /* blue */
+  font-weight: 500;
+  padding: 0 6px;
+  user-select: none;
+}
+
+
 /* Arrow buttons */
 .date-nav-btn {
   width: 34px;
@@ -53,8 +71,7 @@
 }
  
 .calendar-icon {
-  display: flex;
-  align-items: center;
+  font-size: 14px;
 }
  
 /* ===================================================== */
@@ -351,4 +368,182 @@
 
 .card {
   border-radius: 12px;
+}
+
+
+
+/* Page background */
+.candidate-verification-page {
+  background: #f5f6f8;
+}
+
+.nav-arrow {
+  font-size: 30px;
+  color: #2563eb;
+  cursor: pointer;
+  user-select: none;
+}
+
+.nav-arrow:hover {
+  color: #1d4ed8;
+}
+
+/* Date pill remains same */
+.date-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: #ffffff;
+  border-radius: 20px;
+  font-weight: 500;
+  color: #ff6a00;
+  cursor: pointer;
+}
+
+/* Search */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+/* Stage pills */
+.stage-chip {
+  border: none;
+  background: #f1f3f5;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stage-chip.active {
+  background: #e7edff;
+  color: #1e3fa3;
+}
+
+.chip-count {
+  background: #dee2e6;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+/* Status */
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.pending {
+  background: #fff3cd;
+  color: #f39c12;
+}
+
+.status-badge.verified {
+  background: #d4f8d4;
+  color: #2ecc71;
+}
+
+.status-badge.rejected {
+  background: #fde2e2;
+  color: #e74c3c;
+}
+
+/* Table */
+.verification-table th {
+  background: #fafafa;
+  font-weight: 600;
+}
+
+
+/* REMOVE EXTRA CARD GAPS */
+.card {
+  margin-bottom: 0 !important;
+}
+
+/* TOP TOOLBAR */
+.verification-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: #f4f2f1;
+  border-radius: 12px;
+}
+
+/* SEARCH */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e0e0e0;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+/* STAGE FILTER */
+.stage-filter-row {
+  background: #fff;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+/* .clear-all {
+  color: red;
+  cursor: pointer;
+} */
+
+/* REQUISITION SELECTOR */
+.requisition-selector-row {
+  background: #fff;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+/* REMOVE PAGE BOTTOM GAP */
+.candidate-verification-page {
+  padding-bottom: 0;
+}
+
+.stage-filter-row {
+  padding: 12px 16px;
+  background: #fff;
+  border-radius: 10px;
+}
+
+.stage-chip {
+  padding: 6px 14px;
+  border-radius: 16px;
+  border: none;
+  background: #f1f3f5;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.stage-chip.active {
+  background: #e9efff;
+  color: #1d4ed8;
+  font-weight: 500;
+}
+
+.clear-all {
+color: red;
+  cursor: pointer;
 }
