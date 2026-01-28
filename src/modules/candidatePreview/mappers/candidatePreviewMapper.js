@@ -10,19 +10,17 @@ import {
 } from "../../../shared/utils/masterHelpers";
  
 import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
- 
-/* =================================================
-   MAP ONLY:
-   - Personal Details
-   - Education Details
-   - Experience Details
-================================================= */
+
+/* ===============================
+   SINGLE SOURCE OF TRUTH
+================================ */
 export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
   const profile = apiData?.basicDetails?.candidateProfile || {};
   const address = apiData?.addressDetails || {};
   const educations = apiData?.educationDetails || [];
   const experiences = apiData?.experienceDetails || [];
- 
+  const documents = apiData?.documentDetails || [];
+
   const yesNo = (v) => (v ? "Yes" : "No");
  
   /* ================= MASTER LOOKUPS ================= */
@@ -31,9 +29,44 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
   const nationality = getNationality(masters, profile.nationality);
   const maritalStatus = getMaritalStatus(masters, profile.maritalStatusId);
   const reservation = getReservation(masters, profile.reservationCategoryId);
+
+
+  /* ========= DOCUMENT GROUP ========= */
+  const groupDocs = (fn) =>
+    documents
+      .filter(d => fn((d.displayName || d.fileName || "").toLowerCase()))
+
+      .map(d => {
+  const rawName = d.displayName || d.fileName || "";
+
  
+  const cleanedName = rawName
+    .replace(/^candidate_[a-z0-9-]+_/i, "")
+    .replace(/_/g, " ")
+    .trim();
+
   return {
-    /* ================= PERSONAL DETAILS ================= */
+    id: d.id,
+    name: cleanedName || "Document",
+    fileName: d.fileName,
+    url: d.fileUrl,
+    status: d.documentScreeningStatus || "Pending"
+  };
+});
+
+//       .map(d => ({
+//   id: d.id,
+//  name: d.displayName || d.fileName,
+//  fileName: d.fileName,
+//  url: d.fileUrl,
+
+
+//   status: d.documentScreeningStatus || "Pending"
+// }));
+
+
+  return {
+    /* ================= PERSONAL ================= */
     personalDetails: {
       fullName: profile.fullNameAadhar || "-",
       mobile: profile.contactNo || "-",
@@ -41,21 +74,18 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
       motherName: profile.motherName || "-",
       fatherName: profile.fatherName || "-",
       spouseName: profile.spouseName || "-",
- 
       dob: formatDateDDMMYYYY(profile.dateOfBirth) || "-",
       age: apiData?.age || "-",
- 
-      gender_name: gender?.gender_name || "-",
-      religion_name: religion?.religion_name || "-",
-      nationality_name: nationality?.country_name || "-",
-      maritalStatus_name: maritalStatus?.marital_status || "-",
- 
+
+      gender_name: gender?.gender || "-",
+      religion_name: religion?.religion || "-",
+      nationality_name: nationality?.countryName || "-",
+      maritalStatus_name: maritalStatus?.maritalStatus || "-",
+
       caste: profile.community || "-",
-      reservationCategory_name: reservation?.category_code || "-",
- 
-      address:
-        `${address.addressLine1 || ""} ${address.addressLine2 || ""}`.trim() || "-",
- 
+      reservationCategory_name: reservation?.categoryName || "-",
+
+      address: `${address.addressLine1 || ""} ${address.addressLine2 || ""}`.trim() || "-",
       permanentAddress:
         `${address.permanentAddressLine1 || ""} ${address.permanentAddressLine2 || ""}`.trim() || "-",
  
@@ -65,18 +95,15 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
       servingLowerPost: yesNo(profile.employedInLowerPost),
       servingInGovt: yesNo(profile.isPublicSectorUndertaking),
       disciplinaryAction: yesNo(profile.anyDisciplinaryAction),
- 
-      disciplinaryDetails:
-        profile.anyDisciplinaryAction ? profile.disciplinaryDetails || "-" : "-",
- 
+      disciplinaryDetails: profile.disciplinaryDetails || "-",
+
       socialMediaProfileLink: profile.socialMediaProfileLink || "-",
       cibilScore: profile.cibilScore || "-"
     },
- 
-    /* ================= EDUCATION DETAILS ================= */
-    education: educations.map((item) => {
+
+    /* ================= EDUCATION ================= */
+    education: educations.map(item => {
       const edu = item.education || {};
- 
       const qualification = getMandatoryQualification(
         masters,
         edu.educationQualificationsId
@@ -84,7 +111,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
  
       const educationLevel = getEducationLevel(
         masters,
-        qualification?.level_id
+        qualification?.levelId
       );
  
       const specialization = edu.specializationId
@@ -96,44 +123,67 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
         startDate: formatDateDDMMYYYY(edu.startDate) || "-",
         endDate: formatDateDDMMYYYY(edu.endDate) || "-",
         percentage: edu.percentage ?? "-",
- 
-        educationLevel_name:
-          educationLevel?.education_level_name || "-",
- 
-        mandatoryQualification_name:
-          qualification?.qualification_name || "-",
- 
-        specialization_name:
-          specialization?.specialization_name || "-"
+        educationLevel_name: educationLevel?.documentName || "-",
+        mandatoryQualification_name: qualification?.qualificationName || "-",
+        specialization_name: specialization?.specializationName || "-"
       };
     }),
- 
-    /* ================= EXPERIENCE DETAILS ================= */
-    experience: experiences.map((item) => {
-      const exp = item.workExperience || {};
- 
-      return {
-        org: exp.organizationName || "-",
-        designation: exp.postHeld || "-",
-        department: exp.role || "-",
-        from: formatDateDDMMYYYY(exp.fromDate) || "-",
-        to: exp.isPresentlyWorking
-          ? "Present"
-          : formatDateDDMMYYYY(exp.toDate) || "-",
-        duration: `${exp.monthsOfExp || 0} Months`,
-        nature: exp.workDescription || "-"
-      };
-    }),
- 
+
+    /* ================= EXPERIENCE ================= */
+    experience: experiences.map(e => ({
+      org: e.workExperience.organizationName || "-",
+      designation: e.workExperience.postHeld || "-",
+      department: e.workExperience.role || "-",
+      from: formatDateDDMMYYYY(e.workExperience.fromDate) || "-",
+      to: e.workExperience.isPresentlyWorking
+        ? "Present"
+        : formatDateDDMMYYYY(e.workExperience.toDate) || "-",
+      duration: `${e.workExperience.monthsOfExp || 0} Months`,
+      nature: e.workExperience.workDescription || "-"
+    })),
+
     experienceSummary: {
       currentCtc: expSafeCurrency(
         experiences?.[0]?.workExperience?.currentCtc
       )
-    }
+    },
+
+    /* ================= DOCUMENTS ================= */
+documents: {
+  photo: groupDocs(l => l.includes("photo")),
+  signature: groupDocs(l => l.includes("signature")),
+  resume: groupDocs(l => l.includes("resume")),
+
+  payslips: groupDocs(l => l.includes("payslip")),
+
+  educationCertificates: groupDocs(l =>
+    l.includes("10") ||
+    l.includes("board") ||
+    l.includes("intermediate") ||
+    l.includes("graduation") ||
+    l.includes("post graduation") ||
+    l.includes("post-graduation")
+  ),
+
+  identityProofs: groupDocs(l =>
+    l.includes("aadhar") ||
+    l.includes("aadhaar") ||
+    l.includes("pan") ||
+    l.includes("identity") ||
+    l.includes("proof")
+  ),
+
+  communityCertificates: groupDocs(l =>
+    l.includes("community")
+  ),
+
+  disabilityCertificates: groupDocs(l =>
+    l.includes("disability")
+  )
+}
+
   };
 };
- 
-/* ================= SAFE CURRENCY ================= */
 const expSafeCurrency = (value) =>
   value ? `₹${Number(value).toLocaleString()}` : "-";
  

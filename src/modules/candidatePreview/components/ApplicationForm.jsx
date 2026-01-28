@@ -6,7 +6,6 @@ import sign from "../../../assets/downloadIcon.png";
 import viewIcon from "../../../assets/view_icon.png";
 import downloadIcon from "../../../assets/downloadIcon.png";
 import DocumentViewerModal from "../components/DocumentViewerModal";
-import { useLocation } from "react-router-dom";
 
 const ApplicationForm = ({
   previewData,
@@ -17,12 +16,6 @@ const ApplicationForm = ({
 
   const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
   const [criteria, setCriteria] = useState({});
-  const location = useLocation();
-  const candidate = location.state?.candidate;
-
-  useEffect(() => {
-    console.log("Loaded Candidate:", candidate);
-  }, [candidate]);
 
   const data = previewData || {
     personalDetails: {},
@@ -49,21 +42,23 @@ const ApplicationForm = ({
   const [selectedDoc, setSelectedDoc] = useState(null);
   const [docStatus, setDocStatus] = useState({});
   
-  const handleVerify = (comment) => {
-    setDocStatus((prev) => ({
-      ...prev,
-      [selectedDoc.name]: "Verified",
-    }));
-    setShowViewer(false);
-  };
+const handleVerify = (comment) => {
+  setDocStatus((prev) => ({
+    ...prev,
+    [selectedDoc.name]: "Verified",
+  }));
+  setShowViewer(false);
+};
 
-  const handleReject = (comment) => {
-    setDocStatus((prev) => ({
-      ...prev,
-      [selectedDoc.name]: "Rejected",
-    }));
-    setShowViewer(false);
-  };
+const handleReject = (comment) => {
+  setDocStatus((prev) => ({
+    ...prev,
+    [selectedDoc.name]: "Rejected",
+  }));
+  setShowViewer(false);
+};
+
+  
 
   return (
     <>
@@ -150,8 +145,11 @@ const ApplicationForm = ({
                     <tr>
                       <td className="fw-med">Date of Birth</td>
                       <td className="fw-reg" colSpan={2}>{data.personalDetails.dob}</td>
-                      <td className="fw-med">Nationality</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.nationality_name}</td>
+                       <td className="fw-med">Age (as on cut-off date)</td>
+                      <td className="fw-reg" colSpan={2}>{data.personalDetails.age || "-"}</td>
+
+                      {/* <td className="fw-med">Nationality</td>
+                      <td className="fw-reg" colSpan={2}>{data.personalDetails.nationality_name}</td> */}
 
 
                       {/* <td className="fw-med">Age (as on cut-off date)</td>
@@ -166,11 +164,21 @@ const ApplicationForm = ({
                     </tr>
 
                     <tr>
+                      <td className="fw-med">Exam Center</td>
+                      <td className="fw-reg" colSpan={2}>
+                        {data.personalDetails.examCenter}
+                      </td>
+                      <td className="fw-med">Nationality</td>
+                      <td className="fw-reg" colSpan={2}>{data.personalDetails.nationality_name}</td>
+                    </tr>
+
+
+                    {/* <tr>
                       <td className="fw-med">Age (as on cut-off date)</td>
                       <td className="fw-reg" colSpan={2}>{data.personalDetails.age || "-"}</td>
                       <td className="fw-med"></td>
                       <td className="fw-reg" colSpan={2}></td>
-                    </tr>
+                    </tr> */}
 
                     <tr>
                       <td className="fw-med">Marital Status</td>
@@ -191,8 +199,13 @@ const ApplicationForm = ({
                     <tr>
                       <td className="fw-med">Current CTC</td>
                       <td className="fw-reg" colSpan={2}>{data.experienceSummary?.currentCtc || "-"}</td>
-                      <td className="fw-med">Social Media Profile links</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td>
+                       <td className="fw-med">Expected CTC</td>
+                                <td className="fw-reg" colSpan={2}>
+                                  {data.personalDetails.expectedCtc}
+                                </td>
+
+                      {/* <td className="fw-med">Social Media Profile links</td>
+                      <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td> */}
                       {/* <td className="fw-med">Expected CTC</td>
                       <td className="fw-reg" colSpan={2}>{preferences.ctc ? `₹${Number(preferences.ctc).toLocaleString()}` : "-"}</td> */}
                     </tr>
@@ -210,6 +223,30 @@ const ApplicationForm = ({
                       <td className="fw-med">Social Media Profile links</td>
                       <td className="fw-reg" colSpan={2}>{previewData.personalDetails.socialMediaProfileLink}</td>
                     </tr>*/}
+
+                    <tr>
+
+                       <td className="fw-med">Social Media Profile links</td>
+                      <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td> 
+                                    <td className="fw-med">Location Preference 1</td>
+                                    <td className="fw-reg" colSpan={2}>
+                                      {data.personalDetails.locationPreference1}
+                                    </td>
+                                   
+                                  </tr>
+
+                                  <tr>
+                                     <td className="fw-med">Location Preference 2</td>
+                                    <td className="fw-reg" colSpan={2}>
+                                      {data.personalDetails.locationPreference2}
+                                    </td>
+                                    <td className="fw-med">Location Preference 3</td>
+                                    <td className="fw-reg" colSpan={2}>
+                                      {data.personalDetails.locationPreference3}
+                                    </td>
+                                   
+                                  </tr>
+
 
                     <tr>
                       <td className="fw-med">Already secured regular employment under the Central Govt. in civil post?</td>
@@ -237,7 +274,17 @@ const ApplicationForm = ({
                         <td className="fw-med">Details of disciplinary proceedings, if Any</td>
                         <td className="fw-reg" colSpan={5}>{data.personalDetails.disciplinaryDetails || "N/A"}</td>
                       </tr>
+
+                      
                     )}
+
+                    <tr>
+          <td className="fw-med">Details of disciplinary proceedings, if Any</td>
+          <td className="fw-reg" colSpan={5}>
+            {data.personalDetails.disciplinaryDetails}
+          </td>
+        </tr>
+
                   </tbody>
                 </table>
               </div>
@@ -249,45 +296,47 @@ const ApplicationForm = ({
             <Accordion.Header>Education Details</Accordion.Header>
             <Accordion.Body>
              <div className="edu-table-wrapper">
-              <table className="edu-table">
-                <thead>
-                  <tr>
-                    <th>S. No</th>
-                    <th>Onboard/University</th>
-                    <th>School/college</th>
-                    <th>Degree</th>
-                    <th>Specialization</th>
-                    <th>From Date</th>
-                    <th>To Date</th>
-                    <th>Percentage</th>
-                  </tr>
-                </thead>
 
-              <tbody>
-              {(data.education || []).map((edu, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{edu.educationLevel_name || "-"}</td>
-                  <td>{edu.institution || "-"}</td>
-                  <td>{edu.mandatoryQualification_name || "-"}</td>
-                  <td>{edu.specialization_name || "-"}</td>
-                  <td>{edu.startDate || "-"}</td>
-                  <td>{edu.endDate || "-"}</td>
-                  <td>{edu.percentage ? `${edu.percentage}%` : "-"}</td>
-                </tr>
-              ))}
+  <table className="edu-table">
+    <thead>
+      <tr>
+        <th>S. No</th>
+        <th>Onboard/University</th>
+        <th>School/college</th>
+        <th>Degree</th>
+        <th>Specialization</th>
+        <th>From Date</th>
+        <th>To Date</th>
+        <th>Percentage</th>
+      </tr>
+    </thead>
 
-              {(!data.education || data.education.length === 0) && (
-                <tr>
-                  <td colSpan="8" className="text-center">
-                    No education details available
-                  </td>
-                </tr>
-              )}
-            </tbody>
+   <tbody>
+  {(data.education || []).map((edu, index) => (
+    <tr key={index}>
+      <td>{index + 1}</td>
+      <td>{edu.educationLevel_name || "-"}</td>
+      <td>{edu.institution || "-"}</td>
+      <td>{edu.mandatoryQualification_name || "-"}</td>
+      <td>{edu.specialization_name || "-"}</td>
+      <td>{edu.startDate || "-"}</td>
+      <td>{edu.endDate || "-"}</td>
+      <td>{edu.percentage ? `${edu.percentage}%` : "-"}</td>
+    </tr>
+  ))}
 
-              </table>
-            </div>
+  {(!data.education || data.education.length === 0) && (
+    <tr>
+      <td colSpan="8" className="text-center">
+        No education details available
+      </td>
+    </tr>
+  )}
+</tbody>
+
+  </table>
+</div>
+
             </Accordion.Body>
           </Accordion.Item>
 
