@@ -2,7 +2,19 @@ import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Person, FileText } from "react-bootstrap-icons";
 
-export default function CandidatePool({ candidates, selectedIds, setSelectedIds, onView }) {
+export default function CandidatePool({
+  candidates,
+  selectedIds,
+  setSelectedIds,
+  onView,
+  loading,
+  page,
+  pageSize,
+  totalElements,
+  onPageChange,
+  onPageSizeChange,
+  selectedPositionId
+}) {
 	const STATUS_CLASS_MAP = {
 		Applied: "bg-secondary",
 		Shortlisted: "bg-warning",
@@ -87,13 +99,13 @@ export default function CandidatePool({ candidates, selectedIds, setSelectedIds,
                 Candidate {sortIcon("name")}
               </th>
 
-							<th className="fs-14 fw-normal py-3" onClick={() => requestSort("rank")} role="button">
+							{/* <th className="fs-14 fw-normal py-3" onClick={() => requestSort("rank")} role="button">
                 Rank {sortIcon("rank")}
               </th>
 
 							<th className="fs-14 fw-normal py-3" onClick={() => requestSort("score")} role="button">
                 Score {sortIcon("score")}
-              </th>
+              </th> */}
 
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("experience")} role="button">
                 Experience {sortIcon("experience")}
@@ -116,7 +128,20 @@ export default function CandidatePool({ candidates, selectedIds, setSelectedIds,
           </thead>
 
           <tbody>
-            {sortedCandidates.map((c) => (
+            {loading ? (
+              <tr>
+                <td colSpan="9" className="text-center py-4">
+                  Loading candidates...
+                </td>
+              </tr>
+            ) : sortedCandidates.length === 0 ? (
+              <tr>
+                <td colSpan="9" className="text-center py-4">
+                  No candidates found
+                </td>
+              </tr>
+            ) : (
+              sortedCandidates.map((c) => (
               <tr key={c.id}>
                 <td className="align-content-center" style={{ paddingLeft: '1rem' }}>
                   <input
@@ -129,17 +154,17 @@ export default function CandidatePool({ candidates, selectedIds, setSelectedIds,
                 <td className="align-content-center">
                   <p className="fw-normal fs-14 mb-0">{c.name}</p>
                   <p className="text-muted fs-12 mb-0">
-                    Reg No: {c.regNo}
+                    Reg No: {c.applicationNo}
                   </p>
                 </td>
 
-								<td className="align-content-center">
+								{/* <td className="align-content-center">
 									<p className="fw-normal fs-14 mb-0">{c?.rank || "-"}</p>
 								</td>
 
 								<td className="align-content-center">
 									<p className="fw-normal fs-14 mb-0">{c?.score || "-"}</p>
-								</td>
+								</td> */}
 
                 <td className="align-content-center">
 									<p className="fw-normal fs-14 mb-0">{c.experience}</p>
@@ -168,16 +193,57 @@ export default function CandidatePool({ candidates, selectedIds, setSelectedIds,
 										className="me-3 cursor-pointer"
 										onClick={() =>
 											navigate("/candidate-preview", {
-												state: { candidate: c },
+												state: { candidate: c, positionId: selectedPositionId },
 											})
 										}
 									/>
 									<FileText className="cursor-pointer" />
                 </td>
               </tr>
-            ))}
+            ))
+            )}
           </tbody>
         </table>
+
+        {/* Pagination */}
+        <div className="d-flex justify-content-between align-items-center px-3 py-3 border-top">
+          <div className="fs-14 text-muted">
+            Showing {page * pageSize + 1}–
+            {Math.min((page + 1) * pageSize, totalElements)} of {totalElements}
+          </div>
+
+          <div className="d-flex align-items-center gap-2">
+            <select
+              className="form-select fs-14"
+              style={{ width: "90px" }}
+              value={pageSize}
+              onChange={(e) => {
+                onPageSizeChange(Number(e.target.value));
+                onPageChange(0);
+              }}
+            >
+              {[10, 20, 50].map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+
+            <button
+              className="btn btn-sm btn-outline-secondary"
+              disabled={page === 0}
+              onClick={() => onPageChange(page - 1)}
+            >
+              Prev
+            </button>
+
+            <button
+              className="btn btn-sm btn-outline-secondary"
+              disabled={(page + 1) * pageSize >= totalElements}
+              onClick={() => onPageChange(page + 1)}
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Mobile Cards (NO checkboxes here on purpose) */}
@@ -215,7 +281,7 @@ export default function CandidatePool({ candidates, selectedIds, setSelectedIds,
 									className="me-3 cursor-pointer"
 									onClick={() =>
 										navigate("/candidate-preview", {
-											state: { candidate: c },
+											state: { candidate: c, positionId: selectedPositionId },
 										})
 									}
 								/>

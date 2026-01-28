@@ -86,7 +86,30 @@ const jobPositionApiService = {
         }
       }
     );
-  }
+  },
+
+  // CANDIDATE SCREENING APIs
+  getRequisitions: (name = "") =>
+  api.get("/recruiter/job-requisitions/get-requisitions", {
+    params: { name },
+    headers: { "X-Client": "recruiter" }
+  }),
+
+  getPositionsByReqId: ({ requisitionId, searchText = "" }) =>
+  api.get("/recruiter/job-positions/get-positions", {
+    params: { requisitionId, searchText },
+    headers: { "X-Client": "recruiter" },
+  }),
+
+  getCandidatesByPosition: (payload) =>
+  api.post(
+    "/recruiter/candidate-screening/get-candidate-details/",
+    payload,
+    {
+      headers: { "X-Client": "recruiter" },
+    }
+  ),
+
 };
 
 export default jobPositionApiService;

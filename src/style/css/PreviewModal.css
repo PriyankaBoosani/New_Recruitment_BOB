@@ -253,9 +253,9 @@ select.form-control {
 
 .bob-doc-table thead th {
   color: #fff;
-  font-weight: 600;
+  font-weight: 500;
   padding: 10px;
-  font-size: 14px;
+  font-size: 0.875rem;
   text-align: left;
 }
 
@@ -489,8 +489,9 @@ select.form-control {
   background: #445aa3;
   color: #fff;
   padding: 10px;
-  font-weight: 600;
+  font-weight: 500;
   border-right: 1px solid #ffffff33;
+  font-size: 0.875rem;
 }
 
 .exp-table thead th:last-child {
@@ -526,7 +527,7 @@ select.form-control {
 
 /* BODY */
 .edu-table tbody td {
-  padding: 8px;
+  padding: 10px;
   border: 1px solid #e3e6ef;
   color: #333;
 }
@@ -537,11 +538,11 @@ select.form-control {
 }
 
 .edu-table thead th {
-     background-color: #445aa3;
+  background-color: #445aa3;
   color: #fff;
-  font-weight: 600;
+  font-weight: 500;
   padding: 10px;
-  font-size: 14px;
+  font-size: 0.875rem;
   text-align: left;
 }
 

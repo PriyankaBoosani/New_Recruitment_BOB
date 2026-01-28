@@ -23,6 +23,7 @@ body {
   overflow-y: auto;
   margin-top: 91px;
   background-color: #f8f9fa;
+  margin-bottom: 35px;
 }
 
 /* For pages where header is hidden (login, forgot-password, etc) */
@@ -89,6 +90,7 @@ body {
   }
   .main-content {
     margin-top: 91px; /* Height of the header on mobile */
+    margin-bottom: 35px;
   }
   
   .app-container:has(.main-content:only-child) .main-content {

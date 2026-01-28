@@ -10,7 +10,8 @@ import candidateWorkflowServices from "../services/CandidateWorkflowServices";
 import { mapJobPositionToRequisitionStrip } from "../mappers/candidatePreviewMapper";
  
 const RequisitionStrip = ({
-  positionId,
+  job,
+  position,
   masterData,
   isSaved,
   onSave,
@@ -18,24 +19,27 @@ const RequisitionStrip = ({
   isSaveEnabled
 }) => {
   const [showPosition, setShowPosition] = useState(false);
-  const [job, setJob] = useState(null);
+  // const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(false);
  
   const reservationCategories = masterData?.reservation_categories || [];
   const disabilities = masterData?.disabilities || [];
+
+  console.log(" RequisitionStrip - position:", position);
+  console.log(" RequisitionStrip - job:", job);
  
   /* =====================================================
      FETCH JOB DATA AUTOMATICALLY (ON LOAD / ID CHANGE)
   ===================================================== */
   useEffect(() => {
-    if (!positionId) return;
+    if (!position) return;
  
     const fetchJob = async () => {
       try {
         setLoading(true);
  
         const res =
-          await candidateWorkflowServices.getJobPositionById(positionId);
+          await candidateWorkflowServices.getJobPositionById(position.id);
  
         console.log(" Job API response:", res?.data);
  
@@ -44,7 +48,7 @@ const RequisitionStrip = ({
  
         console.log(" Mapped Job:", mapped);
  
-        setJob(mapped);
+        // setJob(mapped);
       } catch (err) {
         console.error(" Failed to fetch job details", err);
       } finally {
@@ -53,7 +57,7 @@ const RequisitionStrip = ({
     };
  
     fetchJob();
-  }, [positionId, masterData]);
+  }, [position, masterData]);
  
   /* ================= VIEW POSITION ================= */
   const handleViewPosition = () => {
@@ -74,9 +78,9 @@ const RequisitionStrip = ({
       >
         {/* ===== SAME HEADER AS MODAL ===== */}
         <div>
-          <div className="d-flex align-items-center gap-3">
-            <span className="req-code">
-              {job?.requisition_code || "-"}
+          <div className="small mb-1 d-flex align-items-center gap-3 flex-wrap">
+            <span style={{ color: "#f36c21", fontWeight: 600 }}>
+              {job?.requisitionCode} - {job?.requisitionTitle}
             </span>
  
             <span className="date-text">
@@ -92,11 +96,8 @@ const RequisitionStrip = ({
             </span>
           </div>
  
-          <div
-            className="job-title mt-1"
-            style={{ color: "#162B75", fontWeight: 500 }}
-          >
-            {job?.position_title || "—"}
+          <div style={{ color: "#162B75", fontWeight: 500 }}>
+            {position?.masterPositions?.positionName}
           </div>
         </div>
  
