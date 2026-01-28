@@ -17,6 +17,28 @@ getRegister: () => nodeApi.get('/getdetails/users/all'),
     `/recruiter/job-positions/get-job-position-by-id/f6efff22-4b5e-4d53-8f40-226dd502df3f`
   ),
  
+
+
+    /* ================= REQUISITIONS ================= */
+
+  // GET ALL REQUISITIONS
+ getRequisitions: (name = "") =>
+  api.get(
+    "/recruiter/job-requisitions/get-requisitions",
+    {
+      params: { name }   // Swagger-supported
+    }
+  ),
+
+
+  /* ================= POSITIONS ================= */
+
+  // GET POSITIONS BY REQUISITION ID
+getPositionsByRequisitionId: (requisitionId, name = "") =>
+  api.get("/recruiter/job-positions/get-positions", {
+    params: { requisitionId, name }
+  }),
+
  
  
 };  

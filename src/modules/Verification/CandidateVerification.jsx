@@ -2,17 +2,21 @@ import React, { useEffect, useState } from "react";
 import "../../style/css/CandidateScreening.css";
 import "../../style/css/CandidateVerification.css";
 import "react-datepicker/dist/react-datepicker.css";
+
  
 import DatePicker from "react-datepicker";
 import { addDays, subDays } from "date-fns";
 import { useNavigate } from "react-router-dom";
- 
+ import uploadIcon from "../../assets/upload-blue-icon.png"
+
  
 import { Person, FileText } from "react-bootstrap-icons";
 import searchIcon from "../../assets/search-icon.png";
  
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import masterApiService from "../jobPosting/services/masterApiService";
+import RequisitionPositionSelector
+  from "../candidatePreview/components/RequisitionPositionSelector";
  
 /* ============================= */
 /* STATIC TABLE DATA (TEMP)      */
@@ -89,6 +93,8 @@ const [activeStage, setActiveStage] = useState(null);
 const [searchText, setSearchText] = useState("");
  
   const [candidates, setCandidates] = useState(INITIAL_CANDIDATES);
+  const [selectedRequisition, setSelectedRequisition] = useState(null);
+  const [selectedPosition, setSelectedPosition] = useState(null);
  
   const stages = [
     { key: "PENDING", label: "Pending", count: 2 },
@@ -195,65 +201,75 @@ const handleClearAll = () => {
         </div>
       </div>
  
-      {/* ================= FILTER BY STAGE ================= */}
-      <div className="card border-0 mb-0">
-        <div className="card-body py-3">
-          <div className="d-flex align-items-center flex-wrap gap-2">
-           <span className="fs-14 text-muted me-2">FILTER BY STAGE:</span>
- 
-                <button
-                  className="clear-all-btn"
-                  onClick={handleClearAll}
-                >
-                  Clear All
-                </button>
- 
-            {stages.map((stage) => (
-           <button
-  key={stage.key}
-  onClick={() => setActiveStage(stage.key)}
-  className={`stage-pill ${activeStage === stage.key ? "active" : ""}`}
->
-  <span>{stage.label}</span>
-  <span className="stage-count">{stage.count}</span>
-</button>
- 
-            ))}
-          </div>
+  
+
+
+
+{/* ================= FILTER + DROPDOWNS ================= */}
+<div className="card border-0 mb-0">
+  <div className="card-body">
+
+    {/* FILTER BY STAGE */}
+    <div className="d-flex align-items-center flex-wrap gap-2 mb-4">
+      <span className="fs-14 text-muted me-2">FILTER BY STAGE:</span>
+
+      <button
+        className="clear-all-btn"
+        onClick={handleClearAll}
+      >
+        Clear All
+      </button>
+
+      {stages.map((stage) => (
+        <button
+          key={stage.key}
+          onClick={() => setActiveStage(stage.key)}
+          className={`stage-pill ${activeStage === stage.key ? "active" : ""}`}
+        >
+          <span>{stage.label}</span>
+          <span className="stage-count">{stage.count}</span>
+        </button>
+      ))}
+    </div>
+
+    {/* REQUISITION + POSITION */}
+  <div className="card mb-4 border-0">
+        <div className="card-body">
+          <div className="row g-2 align-items-end border-bottom pb-4">
+          <div className="row g-2 align-items-end border-bottom pb-4">
+              <RequisitionPositionSelector
+                onRequisitionChange={setSelectedRequisition}
+                onPositionChange={setSelectedPosition}
+              />
+
+         
+            </div>
+
+              
+                </div>
+                {selectedRequisition && selectedPosition && (
+                  <div className="mt-3">
+                    <RequisitionStrip
+                      requisition={selectedRequisition}
+                      position={selectedPosition}
+                      masterData={masterData}
+                      isCardBg={false}
+                      isSaveEnabled={false}
+                    />
+                  </div>
+                )}
+
         </div>
       </div>
 
-
-
-
-
-      {/* Filters */}
-<div className="card mb-3 border-0">
-  <div className="card-body">
-    <div className="row gx-5 align-items-end border-bottom pb-4">
-      <div className="col-md-3 col-12">
-        <label className="fs-14 blue-color">Requisition</label>
-        <select className="form-select fs-14 mt-1 py-1">
-          <option>Select Requisition</option>
-          <option>BOB/HRM/REC/ADVT/2025/06</option>
-        </select>
-      </div>
-
-      <div className="col-md-3 col-12">
-        <label className="fs-14 blue-color">Position</label>
-        <select className="form-select fs-14 mt-1 py-1">
-          <option>Select Position</option>
-          <option>Deputy Manager</option>
-        </select>
-      </div>
-    </div>
   </div>
 </div>
 
 
 
+
  
-     
+{/*      
 <div className="requisition-section">
   <RequisitionStrip
     positionId={selectedJob?.positionId || "076d168c-c979-45e9-a19a-be656d9b210c"}
@@ -262,7 +278,7 @@ const handleClearAll = () => {
     isSaveEnabled={true}
   />
 </div>
- 
+  */}
  
  
  

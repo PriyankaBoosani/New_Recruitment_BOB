@@ -153,13 +153,32 @@ export default function CandidateScreening({ selectedJob }) {
 		selectedCandidates.length > 0 &&
 		selectedCandidates.every(c => c.status === "Shortlisted");
 
-  const selectedRequisition = requisitions.find(
-    (r) => r.id === selectedRequisitionId
-  );
+const selectedRequisition = requisitions.find(
+  (r) => r.id === selectedRequisitionId
+);
 
-  const selectedPosition = positions.find(
-    (p) => p.jobPositions?.positionId === selectedPositionId
-  );
+const rawRequisition = selectedRequisition
+  ? {
+      requisition_id: selectedRequisition.id,
+      requisition_code: selectedRequisition.requisitionCode,
+      requisition_title: selectedRequisition.requisitionTitle,
+      registration_start_date: selectedRequisition.startDate,
+      registration_end_date: selectedRequisition.endDate
+    }
+  : null;
+
+const selectedPosition = positions.find(
+  (p) => p.jobPositions?.positionId === selectedPositionId
+)
+  ? {
+      positionId: selectedPositionId,
+      positionName:
+        positions.find(
+          (p) => p.jobPositions?.positionId === selectedPositionId
+        )?.masterPositions?.positionName
+    }
+  : null;
+
 
   return (
     <div className="container-fluid px-5 py-4">
@@ -225,7 +244,7 @@ export default function CandidateScreening({ selectedJob }) {
 					<div className="mt-3">
             {selectedPosition &&
               <RequisitionStrip
-                job={selectedRequisition}
+                requisition={rawRequisition}
                 position={selectedPosition}
                 isCardBg={false}
                 isSaveEnabled={false}

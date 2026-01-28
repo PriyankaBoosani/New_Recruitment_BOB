@@ -345,3 +345,10 @@
   background-color: #f1f3f9;
   font-weight: 600;
 }
+.form-select {
+  border-radius: 8px;
+}
+
+.card {
+  border-radius: 12px;
+}

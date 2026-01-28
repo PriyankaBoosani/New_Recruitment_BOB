@@ -10,7 +10,7 @@ import candidateWorkflowServices from "../services/CandidateWorkflowServices";
 import { mapJobPositionToRequisitionStrip } from "../mappers/candidatePreviewMapper";
  
 const RequisitionStrip = ({
-  job,
+  requisition,
   position,
   masterData,
   isSaved,
@@ -19,45 +19,41 @@ const RequisitionStrip = ({
   isSaveEnabled
 }) => {
   const [showPosition, setShowPosition] = useState(false);
-  // const [job, setJob] = useState(null);
+  const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(false);
  
   const reservationCategories = masterData?.reservation_categories || [];
   const disabilities = masterData?.disabilities || [];
-
-  console.log(" RequisitionStrip - position:", position);
-  console.log(" RequisitionStrip - job:", job);
  
   /* =====================================================
      FETCH JOB DATA AUTOMATICALLY (ON LOAD / ID CHANGE)
   ===================================================== */
-  useEffect(() => {
-    if (!position) return;
- 
-    const fetchJob = async () => {
-      try {
-        setLoading(true);
- 
-        const res =
-          await candidateWorkflowServices.getJobPositionById(position.id);
- 
-        console.log(" Job API response:", res?.data);
- 
-        const mapped =
-          mapJobPositionToRequisitionStrip(res.data, masterData);
- 
-        console.log(" Mapped Job:", mapped);
- 
-        // setJob(mapped);
-      } catch (err) {
-        console.error(" Failed to fetch job details", err);
-      } finally {
-        setLoading(false);
-      }
-    };
- 
-    fetchJob();
-  }, [position, masterData]);
+useEffect(() => {
+  if (!position?.positionId) return;
+
+  const fetchJob = async () => {
+    try {
+      setLoading(true);
+
+      const res =
+        await candidateWorkflowServices.getJobPositionById(
+          position.positionId
+        );
+
+      const mapped =
+        mapJobPositionToRequisitionStrip(res.data, masterData);
+        console.log("Fetched job details:", mapped);
+      setJob(mapped);
+    } catch (err) {
+      console.error("Failed to fetch job details", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchJob();
+}, [position?.positionId, masterData]);
+
  
   /* ================= VIEW POSITION ================= */
   const handleViewPosition = () => {
@@ -77,36 +73,40 @@ const RequisitionStrip = ({
         }}
       >
         {/* ===== SAME HEADER AS MODAL ===== */}
-        <div>
-          <div className="small mb-1 d-flex align-items-center gap-3 flex-wrap">
-            <span style={{ color: "#f36c21", fontWeight: 600 }}>
-              {job?.requisitionCode} - {job?.requisitionTitle}
-            </span>
- 
-            <span className="date-text">
-              <i className="bi bi-calendar3 me-1"></i>
-              Start: {job?.registration_start_date || "-"}
-            </span>
- 
-            <span className="date-divider">|</span>
- 
-            <span className="date-text">
-              <i className="bi bi-calendar3 me-1"></i>
-              End: {job?.registration_end_date || "-"}
-            </span>
-          </div>
- 
-          <div style={{ color: "#162B75", fontWeight: 500 }}>
-            {position?.masterPositions?.positionName}
-          </div>
-        </div>
+<div>
+  <div className="d-flex align-items-center gap-3">
+    <span className="req-code">
+       {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
+    </span>
+
+    <span className="date-text">
+      <i className="bi bi-calendar3 me-1"></i>
+      Start: { requisition?.registration_start_date || "-"}
+    </span>
+
+    <span className="date-divider">|</span>
+
+    <span className="date-text">
+      <i className="bi bi-calendar3 me-1"></i>
+       End: {requisition?.registration_end_date || "-"}
+    </span>
+  </div>
+
+  <div
+    className="job-title mt-1"
+    style={{ color: "#162B75", fontWeight: 500 }}
+  >
+    {position?.positionName || position?.masterPositions?.positionName || "—"}
+  </div>
+</div>
+
  
         {/* ===== ACTION BUTTONS ===== */}
         <div className="d-flex gap-2">
           <button
             className="btn btn-sm blue-border blue-color px-3"
             onClick={handleViewPosition}
-            disabled={loading || !job}
+          disabled={loading || !position}
             style={{ backgroundColor: "rgba(66, 87, 159, 0.12)" }}
           >
             View Position
@@ -133,32 +133,35 @@ const RequisitionStrip = ({
         scrollable
       >
         {/* ===== MODAL HEADER (SAME DATA) ===== */}
-        <Modal.Header closeButton className="knowmore-header">
-          <div className="w-100">
-            <div className="d-flex align-items-center gap-3">
-              <span className="req-code">
-                {job?.requisition_code || "-"}
-              </span>
- 
-              <span className="date-text">
-                <i className="bi bi-calendar3 me-1"></i>
-                Start: {job?.registration_start_date || "-"}
-              </span>
- 
-              <span className="date-divider">|</span>
- 
-              <span className="date-text">
-                <i className="bi bi-calendar3 me-1"></i>
-                End: {job?.registration_end_date || "-"}
-              </span>
-            </div>
- 
-            <div className="job-title mt-1">
-              {job?.position_title || "-"}
-            </div>
-          </div>
-        </Modal.Header>
- 
+       <Modal.Header closeButton className="knowmore-header">
+  <div className="w-100">
+    <div className="d-flex align-items-center gap-3">
+      <span className="req-code">
+        {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
+      </span>
+
+      <span className="date-text">
+        <i className="bi bi-calendar3 me-1"></i>
+        Start: {requisition?.registration_start_date || "-"}
+      </span>
+
+      <span className="date-divider">|</span>
+
+      <span className="date-text">
+        <i className="bi bi-calendar3 me-1"></i>
+        End: {requisition?.registration_end_date || "-"}
+      </span>
+    </div>
+
+    <div
+      className="job-title mt-1"
+      style={{ color: "#162B75", fontWeight: 500 }}
+    >
+      {position?.positionName || position?.masterPositions?.positionName || "—"}
+    </div>
+  </div>
+</Modal.Header>
+
         {/* ================= BODY ================= */}
         <Modal.Body>
           {loading ? (
@@ -173,7 +176,7 @@ const RequisitionStrip = ({
                   <div className="col-md-4">
                     <span className="stat-label">Employment Type:</span>{" "}
                     <span className="stat-value">
-                      {job?.employment_type || "-"}
+                      {job?.employment_type || job?.employment_type || "-"}
                     </span>
                   </div>
  

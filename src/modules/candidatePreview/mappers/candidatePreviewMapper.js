@@ -337,6 +337,30 @@ export const mapJobPositionToRequisitionStrip = (
 };
 
 
+/* 
+   MAP REQUISITION → REQUISITION STRIP HEADER*/
+export const mapRequisitionToStripHeader = (requisition = {}) => {
+  return {
+    requisition_id: requisition.id,              //  UUID (for API)
+    requisition_code: requisition.requisitionCode, //  Display
+    requisition_title: requisition.requisitionTitle || "-",
+    registration_start_date: requisition.startDate || "-",
+    registration_end_date: requisition.endDate || "-"
+  };
+};
+
+
+
+/* 
+   MAP POSITION LIST ITEM (FOR DROPDOWN)
+ */
+export const mapPositionListItem = (apiItem = {}) => {
+  return {
+    positionId: apiItem.jobPositions?.positionId,
+    positionName: apiItem.masterPositions?.positionName || "-",
+    masterPositionId: apiItem.masterPositions?.masterPositionsId
+  };
+};
 
  
  
