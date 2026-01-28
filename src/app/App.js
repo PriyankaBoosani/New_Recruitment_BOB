@@ -26,7 +26,7 @@ function AppWrapper() {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={5000} />
+      <ToastContainer position="top-right" autoClose={1500} />
       <div className="app-container">
         {!shouldHideHeader && <Header />}
         <main className="main-content">

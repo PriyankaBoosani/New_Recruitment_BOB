@@ -63,6 +63,16 @@ const CreateRequisition = () => {
       console.error("Save failed", err);
     }
   };
+  function getTomorrowISO() {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().split("T")[0];
+  }
+  function addCalendarDays(startDate, days) {
+  const date = new Date(startDate);
+  date.setDate(date.getDate() + days);
+  return date.toISOString().split("T")[0];
+}
 
   /* ===================== LOADER ===================== */
   if (fetching) {
@@ -187,17 +197,33 @@ const CreateRequisition = () => {
                           type="date"
                           name="startDate"
                           value={formData.startDate}
+                          min={getTomorrowISO()} // ✅ tomorrow onwards
                           onChange={(e) => {
-                            handleInputChange(e);
-                            setErrors((prev) => ({
+                            const startDate = e.target.value;
+
+
+                            handleInputChange({
+                              target: {
+                                name: "startDate",
+                                value: startDate
+                              }
+                            });
+
+
+                            handleInputChange({
+                              target: {
+                                name: "endDate",
+                                value: addCalendarDays(startDate, 21)
+                              }
+                            });
+
+
+                            setErrors(prev => ({
                               ...prev,
                               startDate: "",
                               endDate: ""
                             }));
                           }}
-                        max={new Date().toISOString().split("T")[0]}
-                        
-
                         />
                         <Form.Text className="text-muted">
                           Date from which the candidates can start applying.
@@ -221,7 +247,6 @@ const CreateRequisition = () => {
                             setErrors((prev) => ({ ...prev, endDate: "" }));
                           }}
                           min={formData.startDate}
-                         max={new Date().toISOString().split("T")[0]}
 
                         />
                         <Form.Text className="text-muted">

@@ -64,13 +64,6 @@ if (
   }
 }
 
-console.log("DUPLICATE CHECK DATA", {
-  formPosition: formData.position,
-  formDepartment: formData.department,
-  existingPositions
-});
-
-
   // ---------- NUMERIC FIELDS ----------
   const numericChecks = [
     ["vacancies", "Vacancies"],
