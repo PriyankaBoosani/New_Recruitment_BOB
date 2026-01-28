@@ -70,8 +70,9 @@ const InterviewPanelFormModal = ({
         />
       </div>
 
-      <div className="form-actions">
+       <div className="panel-form-actions">
         <button
+          type="button"
           className="btn btn-outline-secondary"
           onClick={() =>
             setFormData({ name: "", community: "", members: [] })
@@ -80,7 +81,11 @@ const InterviewPanelFormModal = ({
           Cancel
         </button>
 
-        <button >
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={onSave}
+        >
           Save Panel
         </button>
       </div>
