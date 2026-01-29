@@ -33,7 +33,7 @@ const CommitteeHistoryList = ({
   return (
      <div className="history-section">
       <div className="history-header d-flex justify-content-between align-items-center mb-3">
-        <h6 className="mb-0">Committee History</h6>
+        <span className="committee-title">Committee History</span>
         {/* optional filter button */}
       </div>
 
@@ -42,11 +42,11 @@ const CommitteeHistoryList = ({
           {/* ===== TOP ROW ===== */}
           <div className="d-flex justify-content-between align-items-start">
             <div className="history-title">
-              <span className="requisition-code">
+              <span className="history-requisition-code">
                 {item.requisitionCode}
               </span>
               <span className="mx-1">-</span>
-              <span className="position-title">
+              <span className="history-position-title">
                 {item.positionName}
               </span>
             </div>
@@ -88,9 +88,8 @@ const CommitteeHistoryList = ({
 
           {/* ===== DATES ===== */}
           <div className="dates mt-2">
-            Start Date: <strong>{item.startDate}</strong>
-            <span className="mx-2">|</span>
-            End Date: <strong>{item.endDate}</strong>
+             <span>Start Date: {item.startDate}</span>
+            <span >End Date: {item.endDate}</span>
           </div>
         </div>
       ))}
