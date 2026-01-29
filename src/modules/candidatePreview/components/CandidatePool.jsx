@@ -22,7 +22,7 @@ export default function CandidatePool({
 	const STATUS_CLASS_MAP = {  
 		Applied: "bg-secondary",
 		Shortlisted: "bg-warning",
-		Discrepency: "bg-primary",
+		Discrepency: "bg-danger",
 		Rejected: "bg-danger",
 	};
 	const navigate = useNavigate();

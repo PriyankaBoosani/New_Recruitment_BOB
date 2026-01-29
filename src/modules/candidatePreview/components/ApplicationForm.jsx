@@ -39,7 +39,7 @@ const ApplicationForm = ({
     isWorkCriteriaMet: "",
     isAgeCriteriaMet: "",
     isEducationCriteriaMet: "",
-    isShortlisted: null,
+    isShortlisted: "",
 
     workCriteriaRemark: "",
     ageCriteriaRemark: "",
@@ -78,6 +78,8 @@ const ApplicationForm = ({
   console.log("photoUrl", photoUrl);
   const signatureUrl = data.documents?.signature?.[0]?.url || sign;
   console.log("signatureUrl", signatureUrl);
+
+  const normalizeCriteria = (val) => val === "DEFAULT" ? "" : val ?? "";
 
   useEffect(() => {
     if (!photoUrl) return;
@@ -172,10 +174,11 @@ const ApplicationForm = ({
         applicationId,
         candidateId,
 
-        isWorkCriteriaMet: data.isWorkCriteriaMet ?? "",
-        isAgeCriteriaMet: data.isAgeCriteriaMet ?? "",
-        isEducationCriteriaMet: data.isEducationCriteriaMet ?? "",
-        isShortlisted: data.isShortlisted ?? null,
+        isWorkCriteriaMet: normalizeCriteria(data.isWorkCriteriaMet),
+        isAgeCriteriaMet: normalizeCriteria(data.isAgeCriteriaMet),
+        isEducationCriteriaMet: normalizeCriteria(data.isEducationCriteriaMet),
+        isShortlisted: normalizeCriteria(data.isShortlisted),
+
         workCriteriaRemark: data.workCriteriaRemark ?? "",
         ageCriteriaRemark: data.ageCriteriaRemark ?? "",
         educationCriteriaRemark: data.educationCriteriaRemark ?? "",
@@ -290,7 +293,7 @@ const ApplicationForm = ({
       newErrors.isEducationCriteriaMet = "Please select an option";
     }
 
-    if (!disableShortlistedSection && screeningForm.isShortlisted === null) {
+    if (!disableShortlistedSection && !screeningForm.isShortlisted) {
       newErrors.isShortlisted = "Please select an option";
     }
 
@@ -340,24 +343,49 @@ const ApplicationForm = ({
     );
   };
 
+  const hasAnyRejectedDocument = () => {
+    return documentRows.some(doc => {
+      const status = docStatusMap[doc.candidateDocumentId]?.status;
+      return status === "REJECTED";
+    });
+  };
+
+  const countYesCriteria = () => {
+    return [
+      screeningForm.isWorkCriteriaMet,
+      screeningForm.isAgeCriteriaMet,
+      screeningForm.isEducationCriteriaMet,
+    ].filter(v => v === "YES").length;
+  };
+
   const disableShortlistedSection = !areAllDocumentsVerified() || !areAllCriteriaYes();
 
   useEffect(() => {
-    if (disableShortlistedSection && screeningForm.isShortlisted !== null) {
+    if (disableShortlistedSection && screeningForm.isShortlisted) {
       setScreeningForm(prev => ({
         ...prev,
-        isShortlisted: null,
+        isShortlisted: "",
         finalScreeningRemark: "",
       }));
     }
   }, [disableShortlistedSection]);
 
   const handleFinalSubmit = async () => {
+    if (!areAllDocumentsValidated()) {
+      toast.error("Please validate all the documents");
+      return;
+    }
+
     const isValid = validateForm();
     if (!isValid) return;
 
-    if (!areAllDocumentsValidated()) {
-      toast.error("Please validate all the documents");
+    const rejectedExists = hasAnyRejectedDocument();
+    const yesCount = countYesCriteria();
+
+    if (rejectedExists && yesCount === 3) {
+      toast.error(
+        "All criteria cannot be YES when any document is Rejected"
+      );
       return;
     }
 
@@ -1009,14 +1037,9 @@ const ApplicationForm = ({
                   <input
                     type="radio"
                     name="shortlisted"
-                    checked={
-                      screeningForm.isShortlisted === (option === "YES")
-                    }
+                    checked={screeningForm.isShortlisted === option}
                     onChange={() =>
-                      handleInputChange(
-                        "isShortlisted",
-                        option === "YES"
-                      )
+                      handleInputChange("isShortlisted", option)
                     }
                   />
                   <span className="custom-radio"></span>
