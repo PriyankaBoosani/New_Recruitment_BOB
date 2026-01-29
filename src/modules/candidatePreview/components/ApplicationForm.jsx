@@ -25,6 +25,8 @@ const ApplicationForm = ({
   const [criteria, setCriteria] = useState({});
   const location = useLocation();
   const candidate = location.state?.candidate;
+  console.log("candidateId: ", candidateId)
+  console.log("applicationId: ", applicationId)
 
   useEffect(() => {
     console.log("Loaded Candidate:", candidate);
@@ -87,7 +89,9 @@ const ApplicationForm = ({
           "candidate"
         );
 
-        setPhoto(res.data);
+        const trimmedUrl = res.trim();
+
+        setPhoto(trimmedUrl);
       } catch (err) {
         console.error("Failed to load candidate photo", err);
       }
@@ -106,7 +110,9 @@ const ApplicationForm = ({
           "candidate"
         );
 
-        setSignature(res.data);
+        const trimmedUrl = res.trim();
+
+        setSignature(trimmedUrl);
       } catch (err) {
         console.error("Failed to load candidate photo", err);
       }
@@ -161,18 +167,22 @@ const ApplicationForm = ({
 
         if (!data) return; // no record → fresh form
 
-        setScreeningForm({
-          isWorkCriteriaMet: data.isWorkCriteriaMet ?? "",
-          isAgeCriteriaMet: data.isAgeCriteriaMet ?? "",
-          isEducationCriteriaMet: data.isEducationCriteriaMet ?? "",
-          isShortlisted: data.isShortlisted ?? null,
-          workCriteriaRemark: data.workCriteriaRemark ?? "",
-          ageCriteriaRemark: data.ageCriteriaRemark ?? "",
-          educationCriteriaRemark: data.educationCriteriaRemark ?? "",
-          finalScreeningRemark: data.finalScreeningRemark ?? "",
-          submitBeforeDate: data.submitBeforeDate ?? "",
-          screeningId: data.screeningId ?? null,
-        });
+      setScreeningForm(prev => ({
+        ...prev,
+        applicationId,
+        candidateId,
+
+        isWorkCriteriaMet: data.isWorkCriteriaMet ?? "",
+        isAgeCriteriaMet: data.isAgeCriteriaMet ?? "",
+        isEducationCriteriaMet: data.isEducationCriteriaMet ?? "",
+        isShortlisted: data.isShortlisted ?? null,
+        workCriteriaRemark: data.workCriteriaRemark ?? "",
+        ageCriteriaRemark: data.ageCriteriaRemark ?? "",
+        educationCriteriaRemark: data.educationCriteriaRemark ?? "",
+        finalScreeningRemark: data.finalScreeningRemark ?? "",
+        submitBeforeDate: data.submitBeforeDate ?? "",
+        screeningId: data.screeningId ?? null,
+      }));
       } catch (err) {
         console.error("Failed to fetch discrepancy details", err);
       }
@@ -364,6 +374,56 @@ const ApplicationForm = ({
     } catch (err) {
       console.error("Screening submit failed", err);
       toast.error("Submission failed");
+    }
+  };
+
+  const getTomorrowDate = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().split("T")[0];
+  };
+
+  const minDate = getTomorrowDate();
+
+  const handleDateChange = (e) => {
+    let value = e.target.value;
+
+    // Hard-stop: max length for YYYY-MM-DD is 10
+    if (value.length > 10) {
+      value = value.slice(0, 10);
+    }
+
+    // Always update state so typing doesn't feel broken
+    setScreeningForm(prev => ({
+      ...prev,
+      submitBeforeDate: value,
+    }));
+
+    // Clear error while typing
+    setErrors(prev => ({ ...prev, submitBeforeDate: undefined }));
+
+    // ⛔ Do NOT validate until full date exists
+    if (value.length < 10) return;
+
+    // Enforce exact YYYY-MM-DD
+    const strictDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!strictDateRegex.test(value)) {
+      setErrors(prev => ({
+        ...prev,
+        submitBeforeDate: "Invalid date format (YYYY-MM-DD)",
+      }));
+      return;
+    }
+
+    const selectedDate = new Date(value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate <= today) {
+      setErrors(prev => ({
+        ...prev,
+        submitBeforeDate: "Date must be after today",
+      }));
     }
   };
 
@@ -723,16 +783,6 @@ const ApplicationForm = ({
                     const rightStatus =
                       docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
 
-                      console.log(
-  "CHECK",
-  left?.name,
-  left?.candidateDocumentId,
-  Object.keys(docStatusMap),
-  docStatusMap[left?.candidateDocumentId]
-);
-
-
-
                       return (
                         <tr key={rowIndex}>
                           {/* LEFT COLUMN */}
@@ -999,10 +1049,9 @@ const ApplicationForm = ({
             <input
               type="date"
               className="criteria-date"
+              min={minDate}
               value={screeningForm.submitBeforeDate}
-              onChange={(e) =>
-                handleInputChange("submitBeforeDate", e.target.value)
-              }
+              onChange={handleDateChange}
             />
             {errors.submitBeforeDate && (
               <small className="text-danger fs-12">

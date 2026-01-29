@@ -29,8 +29,10 @@ const DocumentViewerModal = ({
           "candidate"
         );
 
+        const trimmedUrl = res.trim()
+
         if (!cancelled) {
-          setSasUrl(res.data);
+          setSasUrl(trimmedUrl);
         }
       } catch (err) {
         console.error("Failed to fetch SAS URL", err);

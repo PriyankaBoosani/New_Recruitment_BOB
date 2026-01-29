@@ -16,7 +16,8 @@ export default function CandidatePool({
   onPageSizeChange,
   selectedPositionId,
   requisition,
-  position
+  position,
+  selectedRequisitionId
 }) {
 	const STATUS_CLASS_MAP = {  
 		Applied: "bg-secondary",
@@ -302,7 +303,7 @@ export default function CandidatePool({
 									className="me-3 cursor-pointer"
 									onClick={() =>
 										navigate("/candidate-preview", {
-											state: { candidate: c, positionId: selectedPositionId },
+											state: { candidate: c, positionId: selectedPositionId, requisitionId: selectedRequisitionId },
 										})
 									}
 								/>

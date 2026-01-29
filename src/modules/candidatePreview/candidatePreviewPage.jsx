@@ -23,10 +23,14 @@ const CandidatePreviewPage = ({ onHide }) => {
   const candidate = state?.candidate;
   const requisition = state?.requisition;
   const position = state?.position;
-  const positionId = state?.positionId;
 
   const candidateId = candidate?.candidateId;
-  const applicationId = candidate?.id;
+  const positionId = state?.positionId;
+  const applicationId = state?.candidate?.id;
+  console.log("candidateId: ", candidateId)
+  console.log("applicationId: ", applicationId)
+
+  // const applicationId = candidate?.id;
 
   /* =======================
      STATE
@@ -48,7 +52,7 @@ const CandidatePreviewPage = ({ onHide }) => {
         // const raw = masterRes?.data || {};
 
         const masterRes = await masterApiService.getAllMasters();
-const fullMasters = masterRes?.data || {};
+        const fullMasters = masterRes?.data || {};
 
         // const normalizedMasters = {
         //   genders: raw.genderMasters || [],
@@ -76,23 +80,21 @@ const fullMasters = masterRes?.data || {};
           //   normalizedMasters
           // );
 
-
           const candidateMasters = {
-  genders: fullMasters.genderMasters || [],
-  religions: fullMasters.religionMaster || [],
-  marital_statuses: fullMasters.maritalStatusMaster || [],
-  reservation_categories: fullMasters.reservationCategories || [],
-  education_levels: fullMasters.educationLevels || [],
-  mandatory_qualifications: fullMasters.mandatoryQualification || [],
-  specializations: fullMasters.specializationMaster || [],
-  countries: fullMasters.countries || [],
-};
+            genders: fullMasters.genderMasters || [],
+            religions: fullMasters.religionMaster || [],
+            marital_statuses: fullMasters.maritalStatusMaster || [],
+            reservation_categories: fullMasters.reservationCategories || [],
+            education_levels: fullMasters.educationLevels || [],
+            mandatory_qualifications: fullMasters.mandatoryQualification || [],
+            specializations: fullMasters.specializationMaster || [],
+            countries: fullMasters.countries || [],
+          };
 
-const mapped = mapCandidateToPreview(
-  candidateRes.data,
-  candidateMasters
-);
-
+          const mapped = mapCandidateToPreview(
+            candidateRes.data,
+            candidateMasters
+          );
 
           setPreviewData(mapped);
         }

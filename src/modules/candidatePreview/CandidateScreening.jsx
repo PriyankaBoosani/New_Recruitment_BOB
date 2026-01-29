@@ -228,11 +228,11 @@ const rawRequisition = selectedRequisition
         "candidate"
       );
 
-      const sasUrl = res?.data?.url || res?.data;
+      const sasUrl = res || res?.data;
 
       if (!sasUrl) throw new Error("Invalid SAS URL");
 
-      setPdfUrl(sasUrl);
+      setPdfUrl(sasUrl.trim());
       setShowPdfViewer(true);
     } catch (err) {
       console.error(err);
@@ -527,25 +527,25 @@ const normalizedRequisition = selectedRequisition
             </div>
           </div>
         </div>
-      {activeTab === "CANDIDATE_POOL" && !selectedCandidate && (
-  <CandidatePool
-    candidates={candidates}
-    selectedIds={selectedCandidateIds}
-    setSelectedIds={setSelectedCandidateIds}
-    onView={(candidate) => setSelectedCandidate(candidate)}
-    onViewFile={handleViewFile}
-    loading={loadingCandidates}
-    page={page}
-    pageSize={pageSize}
-    totalElements={totalElements}
-    onPageChange={setPage}
-    onPageSizeChange={setPageSize}
-    selectedPositionId={selectedPositionId}
-    requisition={normalizedRequisition}
-    position={selectedPosition}
-  />
-)}
-
+        {activeTab === "CANDIDATE_POOL" && !selectedCandidate && (
+          <CandidatePool
+            candidates={candidates}
+            selectedIds={selectedCandidateIds}
+            setSelectedIds={setSelectedCandidateIds}
+            onView={(candidate) => setSelectedCandidate(candidate)}
+            onViewFile={handleViewFile}
+            loading={loadingCandidates}
+            page={page}
+            pageSize={pageSize}
+            totalElements={totalElements}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+            selectedPositionId={selectedPositionId}
+            selectedRequisitionId={selectedRequisitionId}
+            requisition={normalizedRequisition}
+            position={selectedPosition}
+          />
+        )}
  
         {/* {selectedCandidate && (
           <CandidatePreviewPage
