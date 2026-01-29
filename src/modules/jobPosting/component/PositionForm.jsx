@@ -44,7 +44,10 @@ const PositionForm = ({
         if (!isContractEmployment && formData.contractualPeriod) {
             setFormData(prev => ({
                 ...prev,
-                contractualPeriod: ""
+                contractYears:
+                    isContractEmployment && formData.contractualPeriod !== ""
+                        ? Number(formData.contractualPeriod)
+                        : null,
             }));
         }
     }, [isContractEmployment]);
@@ -208,6 +211,8 @@ const PositionForm = ({
                                     setApprovedOn(value);
 
                                     const selectedDate = new Date(value);
+                                    selectedDate.setHours(0, 0, 0, 0);
+
                                     const today = new Date();
                                     today.setHours(0, 0, 0, 0);
 
@@ -290,7 +295,7 @@ const PositionForm = ({
                         <ErrorMessage>{errors.employmentType}</ErrorMessage>
                     </Col>
 
-                    <Col md={4}><Form.Label>Contractual Period(Years)</Form.Label><Form.Control name="contractualPeriod" type="text" inputMode="numeric" value={formData.contractualPeriod} onChange={handleInputChange} disabled={!isContractEmployment} /></Col>
+                    <Col md={4}><Form.Label>Contractual Period(Years)</Form.Label><Form.Control name="contractualPeriod" type="text" inputMode="numeric" value={formData.contractualPeriod} onChange={handleInputChange} disabled={!isContractEmployment || isViewMode} /></Col>
                     <Col md={4}>
                         <Form.Label>Grade / Scale <span className="text-danger">*</span></Form.Label>
                         <Form.Select name="grade" value={formData.grade} onChange={handleInputChange} disabled={isViewMode}>
