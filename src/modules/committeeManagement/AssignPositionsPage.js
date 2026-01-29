@@ -48,35 +48,55 @@ const AssignPositionsPage = () => {
       }
     });
   };
-
-  const renderCommitteeList = (committees, type) => {
-    return (
-      <div className="committee-list">
-        {committees.map(committee => {
-          const isSelected = selectedCommittees[type].some(c => c.id === committee.id);
-          return (
-            <div 
-              key={committee.id} 
-              className={`committee-item ${isSelected ? 'selected' : ''}`}
-              onClick={() => toggleCommittee(type, committee)}
-            >
-              <div className="committee-name">{committee.name}</div>
-              <div className="committee-members">
-                {committee.members.join(", ")}
-              </div>
-              <Button 
-                variant={isSelected ? 'outline-danger' : 'outline-primary'} 
-                size="sm"
-                className="ms-2"
-              >
-                {isSelected ? 'Remove' : 'Add'}
-              </Button>
-            </div>
-          );
-        })}
+const renderAvailableCommittee = (committee, type) => (
+  <div className="committee-row" key={committee.id}>
+    <div>
+      <div className="committee-title">{committee.name}</div>
+      <div className="committee-chips">
+        {committee.members.map(m => (
+          <span key={m} className="chip">{m}</span>
+        ))}
       </div>
-    );
-  };
+    </div>
+
+    <button
+      className="action-pill add"
+      onClick={() => toggleCommittee(type, committee)}
+    >
+      Add →
+    </button>
+  </div>
+);
+  const renderSelectedCommittee = (committee, type) => (
+  <div className="committee-row selected" key={committee.id}>
+    <div>
+      <div className="committee-title">{committee.name}</div>
+      <div className="committee-chips">
+        {committee.members.map(m => (
+          <span key={m} className="chip">{m}</span>
+        ))}
+      </div>
+
+      <div className="date-row">
+        <div>
+          <label>START DATE</label>
+          <input type="date" />
+        </div>
+        <div>
+          <label>END DATE</label>
+          <input type="date" />
+        </div>
+      </div>
+    </div>
+
+    <button
+      className="action-pill remove"
+      onClick={() => toggleCommittee(type, committee)}
+    >
+      ← Remove
+    </button>
+  </div>
+);
 
   return (
     <div className="assign-page">
@@ -84,10 +104,10 @@ const AssignPositionsPage = () => {
       {/* OUTER CARD */}
       <Card className="p-3">
  <div className="mb-3">
-        <h6 className="mb-1">Select Position</h6>
-        <small className="text-muted">
+        <div className="assign-position-title">Select Position</div>
+        <div className="assign-position-muted">
           Choose a requisition and position to assign committees to.
-        </small>
+        </div>
       </div>
 
      
@@ -109,11 +129,11 @@ const AssignPositionsPage = () => {
         </Col>
 
         <Col className="d-flex gap-2">
-          <Button variant="secondary" disabled className="w-100">
+          <Button variant="primary"  className="assign-btn w-100">
             <FiPlus className="me-1" />
             Assign Committees
           </Button>
-          <Button variant="primary" className="w-100">
+          <Button variant="secondary" className="assign-btn w-100">
             Import Committees
           </Button>
         </Col>
@@ -126,25 +146,25 @@ const AssignPositionsPage = () => {
             {/* HEADER (NEW) */}
                 <div className="d-flex justify-content-between align-items-start mb-3">
                   <div>
-                    <h6 className="mb-1">Configure Committees</h6>
-                    <small className="text-muted">
+                    <div className="config-title">Configure Committees</div>
+                    <div className="config-subtitle">
                       Assign panels to Product – ONDC
-                    </small>
+                    </div>
                   </div>
 
                   <div className="d-flex gap-2">
                     <Button variant="outline-secondary" size="sm">
                       Cancel
                     </Button>
-                    <Button variant="warning" size="sm">
+                    <Button variant="warning" className="save-configuration-btn" size="sm">
                       Save Configuration
                     </Button>
                   </div>
                 </div>
             {/* Tabs */}
-            <div className="tabs mb-4">
+            <div className="com-tab mb-2">
               <button
-                className={`tab ${
+                className={`com-tab-item ${
                   activeTab === "SCREENING" ? "active" : ""
                 }`}
                 onClick={() => setActiveTab("SCREENING")}
@@ -153,7 +173,7 @@ const AssignPositionsPage = () => {
               </button>
 
               <button
-                className={`tab ${
+                className={`com-tab-item ${
                   activeTab === "INTERVIEW" ? "active" : ""
                 }`}
                 onClick={() => setActiveTab("INTERVIEW")}
@@ -162,7 +182,7 @@ const AssignPositionsPage = () => {
               </button>
 
               <button
-                className={`tab ${
+                className={`com-tab-item ${
                   activeTab === "COMPENSATION" ? "active" : ""
                 }`}
                 onClick={() => setActiveTab("COMPENSATION")}
@@ -172,31 +192,32 @@ const AssignPositionsPage = () => {
             </div>
 
             {/* Dual Panels */}
-            <div className="dual-committee-box">
-              <div className="available-committees">
-                <h6>
-                  Available Panels ({COMMITTEES[activeTab].length})
-                </h6>
-                {renderCommitteeList(COMMITTEES[activeTab], activeTab)}
+            <div className="dual-committee-box new-ui">
+              <div className="available-committees blue">
+                <div className="available-panel-header-row">
+                  Available Screening Panels
+                  <span className="count">{COMMITTEES[activeTab].length}</span>
+                </div>
+                <div className="panel-divider"></div>
+                {COMMITTEES[activeTab].map(c =>
+                  renderAvailableCommittee(c, activeTab)
+                )}
               </div>
 
-              <div className="divider"></div>
+              <div className="swap-icon">⇄</div>
 
-              <div className="selected-committees">
-                <h6>
-                  Selected Panels (
-                  {selectedCommittees[activeTab].length})
-                </h6>
-
+              <div className="selected-committees orange">
+                <div className="selected-panel-header-row">
+                  Selected Screening Panels
+                  <span className="count">{selectedCommittees[activeTab].length}</span>
+                </div>
+               <div className="panel-divider"></div>
                 {selectedCommittees[activeTab].length > 0 ? (
-                  renderCommitteeList(
-                    selectedCommittees[activeTab],
-                    activeTab
+                  selectedCommittees[activeTab].map(c =>
+                    renderSelectedCommittee(c, activeTab)
                   )
                 ) : (
-                  <div className="text-muted text-center py-4">
-                    No panels selected
-                  </div>
+                  <div className="empty-state">No panels selected</div>
                 )}
               </div>
             </div>

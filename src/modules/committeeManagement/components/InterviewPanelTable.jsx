@@ -1,10 +1,11 @@
 import React from "react";
-
+import edit_icon from "../../../assets/edit_icon.png"
+import delete_icon from "../../../assets/delete_icon.png"
 const InterviewPanelTable = () => {
   return (
     <>
       <div className="table-header">
-        <h5>Panels History</h5>
+        <span className="table-title">Panels History</span>
         {/* <button className="filter-btn">Filters</button> */}
       </div>
 
@@ -25,17 +26,26 @@ const InterviewPanelTable = () => {
             <td>Interview</td>
             <td>Barat T, Naresh P, Jagadeesh S</td>
             <td className="actions">
-             <button onClick={() => {
-  // setFormData({
-  //   name: panel.name,
-  //   community: panel.communityId,
-  //   members: panel.memberIds
-  // });
-  //setEditingId(panel.id);
-}}>
-  Edit
-</button>
-            </td>
+                <button
+                  className="table-icon-btn edit"
+                  title="Edit Panel"
+                  onClick={() => {
+                    // TODO: hook edit logic later
+                  }}
+                >
+                  <img src={edit_icon} alt="Edit" />
+                </button>
+
+                <button
+                  className="table-icon-btn delete"
+                  title="Delete Panel"
+                  onClick={() => {
+                    // TODO: hook delete logic later
+                  }}
+                >
+                  <img src={delete_icon} alt="Delete" />
+                </button>
+              </td>
           </tr>
         </tbody>
       </table>
