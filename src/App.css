@@ -23,7 +23,7 @@ body {
   overflow-y: auto;
   margin-top: 91px;
   background-color: #f8f9fa;
-  margin-bottom: 35px;
+  /* margin-bottom: 35px; */
 }
 
 /* For pages where header is hidden (login, forgot-password, etc) */
@@ -55,11 +55,11 @@ body {
   .top-bar {
     padding: 0.5rem 0 !important;
   }
-  
+
   .navbar {
     padding: 0.5rem 1rem;
   }
-  
+
   .navbar-nav .nav-link {
     padding: 0.75rem 1rem;
     margin: 0;
@@ -85,14 +85,17 @@ body {
 
 /* Adjust main content padding for mobile */
 @media (max-width: 767.98px) {
-  .imgbob{
+  .imgbob {
     width: 80px;
   }
+
   .main-content {
+    margin-top: 91px;
+    /* Height of the header on mobile */
     margin-top: 91px; /* Height of the header on mobile */
     margin-bottom: 35px;
   }
-  
+
   .app-container:has(.main-content:only-child) .main-content {
     margin-top: 0;
   }
@@ -218,12 +221,16 @@ body {
     padding: 0.5rem 2rem;
   }
 }
-.fonnav{
+
+.fonnav {
   font-size: 12px;
 }
-.fonnav .dropdown-item{
+
+.fonnav .dropdown-item {
   font-size: 12px;
-}.app-footer {
+}
+
+/* .app-footer {
   background-color: #fff;
   border-top: 1px solid #e9ecef;
   margin-top: auto;
@@ -232,6 +239,15 @@ body {
   position: absolute;
   bottom: 0;
   width: 100%;
+} */
+.app-footer {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  z-index: 10;
+  font-size: 0.875rem;
+  color: #7B91B0;
+
 }
 
 /* Ensure the footer stays at the bottom */

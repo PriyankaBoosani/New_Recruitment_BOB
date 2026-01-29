@@ -2,12 +2,12 @@
 import React, { Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
- 
+
 // Public pages
 import Login from "../modules/auth/pages/Login";
 import ForgotPassword from "../modules/auth/pages/ForgotPassword";
 import Tokenexp from "../modules/auth/services/Tokenexp";
- 
+
 // Protected / pages (non-lazy)
 import JobGradePage from "../modules/master/pages/JobGrade/JobGradePage";
 import LocationPage from "../modules/master/pages/Location/LocationPage";
@@ -25,10 +25,10 @@ import CertificationPage from "../modules/master/pages/CertificationPage/Certifi
 import NonAdminRoute from "./NonAdminRoute";
 import AdminRoute from "./AdminRoute";
 import CandidatePreview from "../modules/candidatePreview/candidatePreviewPage";
- 
- 
+
+
 import AddPosition from "../modules/jobPosting/pages/AddPosition";
- 
+
 // Auth & layout helpers
 import PrivateRoute from "../modules/auth/services/PrivateRoute";
 import DepartmentPage from "../modules/master/pages/Department/DepartmentPage"
@@ -42,7 +42,7 @@ import CandidateScreening from "../modules/candidatePreview/CandidateScreening";
 // import PositionPage from "../modules/master/pages/Position/PositionPage";
 // Lazy loaded components
 const Layout = React.lazy(() => import("../shared/components/Layout"));
- 
+
 // Loading fallback
 const Loading = () => (
   <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
@@ -51,21 +51,20 @@ const Loading = () => (
     </div>
   </div>
 );
- 
+
 const AppRoutes = () => {
   // Use the same selector you use for auth in your app
   const token = useSelector((state) => state.user?.authUser?.access_token || state.user?.authUser?.accessToken || state.user?.auth?.access_token);
- 
+
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
         {/* Public */}
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
- 
+
         {/* Root redirect: go to dashboard if authed, else login */}
         <Route path="/" element={<Navigate to="/login" />} />
-  <Route path="/interviewpanel" element={<InterviewPanel />} />
         {/* Protected routes */}
         <Route element={<Tokenexp />}>
           <Route element={<PrivateRoute />}>
@@ -81,7 +80,7 @@ const AppRoutes = () => {
                 <Route path="/relaxationtype" element={<RelaxationType />} />
                 <Route path="/certification" element={<CertificationPage />} />
                 <Route path="/document" element={<DocumentPage />} />
-              
+
                 <Route path="/generic-or-annexures" element={<GenericOrAnnexuresPage />} />
               </Route>              {/* ---------- NON-ADMIN ONLY ROUTES ---------- */}
               <Route element={<NonAdminRoute />}>
@@ -91,26 +90,27 @@ const AppRoutes = () => {
                   path="/job-posting/:requisitionId/add-position"
                   element={<AddPosition />}
                 />
-             
+
                 <Route path="/candidate-preview" element={<CandidatePreviewPage />} />
                 <Route path="/candidate-workflow" element={<CandidateScreening />} />
                 <Route path="/candidate-verification" element={<CandidateVerification />} />
+                <Route path="/interviewpanel" element={<InterviewPanel />} />
+
               </Route>
- 
- 
+
+
             </Route>
           </Route>
         </Route>
- 
+
         {/* Catch-all → login */}
         <Route path="*" element={<Navigate to="/login" />} />
- 
- 
+
+
       </Routes>
     </Suspense>
   );
 };
- 
+
 export default AppRoutes;
- 
- 
+

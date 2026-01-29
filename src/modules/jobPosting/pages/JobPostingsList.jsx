@@ -362,7 +362,7 @@ const JobPostingsList = () => {
                                 </div>
                             </Col>
                             <Col xs={12} md={4}>
-                                <div className="req-meta text-end">
+                                <div className="req-meta">
                                     <div>
                                         <img src={mingcute_department_line} alt="department" className="icon-16" />{" "}
                                         Department - {req.departments}
