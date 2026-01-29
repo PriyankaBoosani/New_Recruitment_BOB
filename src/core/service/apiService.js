@@ -36,7 +36,7 @@ function getToken() {
       const expiry = new Date(decoded.exp * 1000);
       const timeLeft = expiry.getTime() - Date.now();
 
-      if (timeLeft < 3 * 60 * 1000) {
+      if (timeLeft < 15 * 60 * 1000) {
         console.warn("⚠️ Token expiring soon! Refresh flow will trigger soon.");
       }
     }
@@ -314,6 +314,7 @@ templateApi.interceptors.response.use(
       originalRequest._retry = true;
       try {
         await nodeApi.post("/recruiter-auth/recruiter-refresh-token", null, { withCredentials: true });
+        console.log()
         return templateApi(originalRequest);
       } catch (err) {
         store.dispatch(clearUser?.() ?? {});

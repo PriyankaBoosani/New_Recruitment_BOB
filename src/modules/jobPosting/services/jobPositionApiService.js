@@ -86,7 +86,73 @@ const jobPositionApiService = {
         }
       }
     );
-  }
+  },
+  
+
+  // CANDIDATE SCREENING APIs
+  getRequisitions: (name = "") =>
+  api.get("/recruiter/job-requisitions/get-requisitions", {
+    params: { name },
+    headers: { "X-Client": "recruiter" }
+  }),
+
+  getPositionsByReqId: ({ requisitionId, searchText = "" }) =>
+  api.get("/recruiter/job-positions/get-positions", {
+    params: { requisitionId, searchText },
+    headers: { "X-Client": "recruiter" },
+  }),
+
+  getCandidatesByPosition: (payload) =>
+  api.post(
+    "/recruiter/candidate-screening/get-candidate-details",
+    payload,
+    {
+      headers: { "X-Client": "recruiter" },
+    }
+  ),
+
+  getScreeningCommitteeStatus: (applicationId) =>
+  api.get(
+    `/recruiter/document-verification/get-screening-committee/${applicationId}`,
+    {
+      headers: {
+        "X-Client": "recruiter",
+      },
+    }
+  ),
+
+  saveScreeningDecision: (payload) =>
+    api.post(
+      "/recruiter/document-verification/save-screening-committee/verify",
+      payload,
+      {
+        headers: { "X-Client": "recruiter" },
+      }
+    ),
+
+  saveCandidateDiscrepancyDetails(payload) {
+    return api.post(
+      "/recruiter/candidate-screening/save-candidate-discrepancy-details",
+      payload,
+      {
+        headers: {
+          "X-Client": "recruiter",
+        },
+      }
+    );
+  },
+
+  getCandidateDiscrepancyDetails(applicationId) {
+    return api.get(
+      "/recruiter/candidate-screening/get-candidate-discrepancy-details",
+      {
+        params: { applicationId },
+        headers: {
+          "X-Client": "recruiter",
+        },
+      }
+    );
+  },
 };
 
 export default jobPositionApiService;

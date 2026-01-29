@@ -84,7 +84,7 @@ export const getNationality = (masters, countryId) =>
     masters,
     "countries",
     countryId,
-    "country_id"
+    "countryId"
   );
 
 /* =========================
@@ -96,7 +96,7 @@ export const getGender = (masters, genderId) =>
     masters,
     "genders",
     genderId,
-    "gender_id"
+    "genderId"
   );
 
 /* =========================
@@ -107,7 +107,7 @@ export const getMaritalStatus = (masters, maritalStatusId) =>
     masters,
     "marital_statuses",
     maritalStatusId,
-    "marital_status_id"
+    "maritalStatusId"
   );
 
 /* =========================
@@ -118,7 +118,7 @@ export const getReligion = (masters, religionId) =>
     masters,
     "religions",
     religionId,
-    "religion_id"
+    "religionId"
   );
 
 /* =========================
@@ -129,7 +129,7 @@ export const getReservation = (masters, reservationId) =>
     masters,
     "reservation_categories",
     reservationId,
-    "category_id"
+    "reservationCategoriesId"
   );
 /* =========================
    EDUCATION LEVEL
@@ -139,7 +139,7 @@ export const getEducationLevel = (masters, educationLevelId) =>
     masters,
     "education_levels",        // ✅ master key
     educationLevelId,
-    "education_level_id"       // ✅ id field
+    "documentTypeId"       // ✅ id field
   );
 
 /* =========================
@@ -150,7 +150,7 @@ export const getSpecialization = (masters, specializationId) =>
     masters,
     "specializations",         // ✅ master key
     specializationId,
-    "specialization_id"        // ✅ id field
+    "specializationId"        // ✅ id field
   );
 
 /* =========================
@@ -161,5 +161,5 @@ export const getMandatoryQualification = (masters, qualificationId) =>
     masters,
     "mandatory_qualifications", // ✅ master key
     qualificationId,
-    "qualification_id"          // ✅ id field
+    "educationQualificationsId"          // ✅ id field
   );

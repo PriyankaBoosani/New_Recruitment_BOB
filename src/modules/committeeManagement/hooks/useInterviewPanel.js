@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import masterApiService from "../../master/services/masterApiService";
+import committeeManagementService from "../services/committeeManagementService";
 import { mapInterviewMembersApi } from "../mappers/interviewMembersMapper";
 import { mapInterviewPanelsApiToUI, preparePanelPayload } from "../mappers/InterviewPanelMapper";
 import { validateInterviewPanelForm } from '../../../shared/utils/interviewpanel-validations';
@@ -27,7 +28,7 @@ export const useInterviewPanel = () => {
   setLoading(true);
   try {
     // 1️⃣ Committees (critical)
-    const commRes = await masterApiService.getMasterDropdownData();
+    const commRes = await committeeManagementService.getAllusers();
     console.log("commRes", commRes);
 
     const list = commRes?.data || [];
