@@ -47,6 +47,7 @@ export default function CandidateScreening({ selectedJob }) {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [loadingPdf, setLoadingPdf] = useState(false);
+  const searchTimeoutRef = useRef(null);
   const tabs = [
     { key: "CANDIDATE_POOL", label: "Candidate Pool", count: totalElements },
     { key: "INTERVIEW_POOL", label: "Interview Pool", count: 0 },
@@ -103,6 +104,21 @@ export default function CandidateScreening({ selectedJob }) {
     });
     return map;
   }, [masterData]);
+
+  useEffect(() => {
+    if (!selectedPositionId) return;
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      setPage(0);
+      fetchCandidates();
+    }, 400);
+
+    return () => clearTimeout(searchTimeoutRef.current);
+  }, [filters.searchText]);
  
   useEffect(() => {
     fetchRequisitions("");
@@ -184,15 +200,29 @@ export default function CandidateScreening({ selectedJob }) {
     }
   };
  
-  useEffect(() => {
-    if (!selectedPositionId) {
-      setCandidates([]);
-      setTotalElements(0);
-      return;
-    }
+  // useEffect(() => {
+  //   if (!selectedPositionId) {
+  //     setCandidates([]);
+  //     setTotalElements(0);
+  //     return;
+  //   }
  
+  //   fetchCandidates();
+  // }, [selectedPositionId, page, pageSize, filters, masterData]);
+
+  useEffect(() => {
+    if (!selectedPositionId) return;
+
     fetchCandidates();
-  }, [selectedPositionId, page, pageSize, filters, masterData]);
+  }, [
+    selectedPositionId,
+    page,
+    pageSize,
+    filters.status,
+    filters.stateId,
+    filters.categoryId,
+    masterData,
+  ]);
  
   const handleRequisitionChange = (e) => {
     const reqId = e.target.value;
@@ -314,9 +344,9 @@ const normalizedRequisition = selectedRequisition
     }));
   }, [candidates]);
  
-  useEffect(() => {
-    setPage(0);
-  }, [filters]);
+  // useEffect(() => {
+  //   setPage(0);
+  // }, [filters]);
  
   useEffect(() => {
     setFilters({
@@ -504,6 +534,13 @@ const normalizedRequisition = selectedRequisition
                   type="text"
                   className="form-control border-start-0 fs-14 py-2"
                   placeholder="Search candidates..."
+                  value={filters.searchText}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      searchText: e.target.value,
+                    }))
+                  }
                 />
               </div>
             </div>
