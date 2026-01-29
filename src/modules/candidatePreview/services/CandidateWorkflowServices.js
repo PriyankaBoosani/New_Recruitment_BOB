@@ -14,7 +14,7 @@ getRegister: () => nodeApi.get('/getdetails/users/all'),
  
   getJobPositionById: (positionId) =>
   api.get(
-    `/recruiter/job-positions/get-job-position-by-id/f6efff22-4b5e-4d53-8f40-226dd502df3f`
+    `/recruiter/job-positions/get-job-position-by-id/${positionId}`
   ),
  
 

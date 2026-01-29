@@ -14,9 +14,11 @@ export default function CandidatePool({
   totalElements,
   onPageChange,
   onPageSizeChange,
-  selectedPositionId
+  selectedPositionId,
+  requisition,
+  position
 }) {
-	const STATUS_CLASS_MAP = {
+	const STATUS_CLASS_MAP = {  
 		Applied: "bg-secondary",
 		Shortlisted: "bg-warning",
 		Discrepency: "bg-primary",
@@ -189,17 +191,35 @@ export default function CandidatePool({
 									<p className="fw-normal fs-14 mb-0">{c.categoryName}</p>
 								</td>
 
-                <td className="text-center align-content-center">
-									<Person
-										className="me-3 cursor-pointer"
-										onClick={() =>
-											navigate("/candidate-preview", {
-												state: { candidate: c, positionId: selectedPositionId },
-											})
-										}
-									/>
-									<FileText className="cursor-pointer" onClick={() => onViewFile(c)} />
-                </td>
+               <td className="text-center align-content-center">
+  <Person
+    className="me-3 cursor-pointer"
+    onClick={() =>
+      navigate("/candidate-preview", {
+        state: {
+          candidate: c,
+          positionId: selectedPositionId,
+          requisition: requisition
+            ? {
+                requisition_code: requisition.requisition_code,
+                requisition_title: requisition.requisition_title,
+                registration_start_date: requisition.registration_start_date,
+                registration_end_date: requisition.registration_end_date,
+              }
+            : null,
+          position: position
+            ? {
+                positionId: position.positionId,
+                positionName: position.positionName,
+              }
+            : null,
+        },
+      })
+    }
+  />
+  <FileText className="cursor-pointer" onClick={() => onViewFile(c)} />
+</td>
+
               </tr>
             ))
             )}

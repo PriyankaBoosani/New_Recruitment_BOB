@@ -527,22 +527,25 @@ const normalizedRequisition = selectedRequisition
             </div>
           </div>
         </div>
-        {activeTab === "CANDIDATE_POOL" && !selectedCandidate && (
-          <CandidatePool
-            candidates={candidates}
-            selectedIds={selectedCandidateIds}
-            setSelectedIds={setSelectedCandidateIds}
-            onView={(candidate) => setSelectedCandidate(candidate)}
-            onViewFile={handleViewFile}
-            loading={loadingCandidates}
-            page={page}
-            pageSize={pageSize}
-            totalElements={totalElements}
-            onPageChange={setPage}
-            onPageSizeChange={setPageSize}
-            selectedPositionId={selectedPositionId}
-          />
-        )}
+      {activeTab === "CANDIDATE_POOL" && !selectedCandidate && (
+  <CandidatePool
+    candidates={candidates}
+    selectedIds={selectedCandidateIds}
+    setSelectedIds={setSelectedCandidateIds}
+    onView={(candidate) => setSelectedCandidate(candidate)}
+    onViewFile={handleViewFile}
+    loading={loadingCandidates}
+    page={page}
+    pageSize={pageSize}
+    totalElements={totalElements}
+    onPageChange={setPage}
+    onPageSizeChange={setPageSize}
+    selectedPositionId={selectedPositionId}
+    requisition={normalizedRequisition}
+    position={selectedPosition}
+  />
+)}
+
  
         {/* {selectedCandidate && (
           <CandidatePreviewPage
