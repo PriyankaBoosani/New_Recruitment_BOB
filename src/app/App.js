@@ -31,9 +31,9 @@ function AppWrapper() {
         {!shouldHideHeader && <Header />}
         <main className="main-content">
           <AppRoutes />
-          
+            <Footer />
         </main>
-        <Footer />
+      
         
       </div>
     </>
