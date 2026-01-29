@@ -244,14 +244,22 @@ const masterApiService = {
   deleteGenericDocument: (id) =>
     apis.delete(`/rec-generic-documents/delete/${id}`),
 
+
   getMasterDisplayAll: () =>
   apis.get("/display/all"),
 
- 
-
+  getAzureBlobSasUrl(dir, client = "candidate") {
+    return apis.get(
+      "/azureblob/file/sas-url",
+      {
+        params: { dir },
+        headers: {
+          "X-Client": client,
+        },
+      }
+    );
+  },
 
 };
-
-
 
 export default masterApiService;

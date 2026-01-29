@@ -30,16 +30,16 @@ const RequisitionStrip = ({
   ===================================================== */
 useEffect(() => {
   if (!position?.positionId) return;
-
+ 
   const fetchJob = async () => {
     try {
       setLoading(true);
-
+ 
       const res =
         await candidateWorkflowServices.getJobPositionById(
           position.positionId
         );
-
+ 
       const mapped =
         mapJobPositionToRequisitionStrip(res.data, masterData);
         console.log("Fetched job details:", mapped);
@@ -50,16 +50,16 @@ useEffect(() => {
       setLoading(false);
     }
   };
-
+ 
   fetchJob();
 }, [position?.positionId, masterData]);
-
+ 
  
   /* ================= VIEW POSITION ================= */
   const handleViewPosition = () => {
-    if (!job) return;
-    setShowPosition(true);
-  };
+  setShowPosition(true);
+};
+ 
  
   return (
     <>
@@ -76,22 +76,22 @@ useEffect(() => {
 <div>
   <div className="d-flex align-items-center gap-3">
     <span className="req-code">
-       {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
+      {requisition?.requisition_code || requisition?.requisitionCode || "-"} - {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
     </span>
-
+ 
     <span className="date-text">
       <i className="bi bi-calendar3 me-1"></i>
       Start: { requisition?.registration_start_date || "-"}
     </span>
-
+ 
     <span className="date-divider">|</span>
-
+ 
     <span className="date-text">
       <i className="bi bi-calendar3 me-1"></i>
        End: {requisition?.registration_end_date || "-"}
     </span>
   </div>
-
+ 
   <div
     className="job-title mt-1"
     style={{ color: "#162B75", fontWeight: 500 }}
@@ -99,14 +99,14 @@ useEffect(() => {
     {position?.positionName || position?.masterPositions?.positionName || "—"}
   </div>
 </div>
-
+ 
  
         {/* ===== ACTION BUTTONS ===== */}
         <div className="d-flex gap-2">
           <button
             className="btn btn-sm blue-border blue-color px-3"
             onClick={handleViewPosition}
-          disabled={loading || !position}
+            disabled={loading || !position}
             style={{ backgroundColor: "rgba(66, 87, 159, 0.12)" }}
           >
             View Position
@@ -139,20 +139,20 @@ useEffect(() => {
       <span className="req-code">
         {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
       </span>
-
+ 
       <span className="date-text">
         <i className="bi bi-calendar3 me-1"></i>
         Start: {requisition?.registration_start_date || "-"}
       </span>
-
+ 
       <span className="date-divider">|</span>
-
+ 
       <span className="date-text">
         <i className="bi bi-calendar3 me-1"></i>
         End: {requisition?.registration_end_date || "-"}
       </span>
     </div>
-
+ 
     <div
       className="job-title mt-1"
       style={{ color: "#162B75", fontWeight: 500 }}
@@ -161,7 +161,7 @@ useEffect(() => {
     </div>
   </div>
 </Modal.Header>
-
+ 
         {/* ================= BODY ================= */}
         <Modal.Body>
           {loading ? (
@@ -238,11 +238,11 @@ useEffect(() => {
               </div>
  
 {/* ================= VACANCY DISTRIBUTION ================= */}
-
+ 
 {/* STATE-WISE (when location preference enabled) */}
 {/* ================= VACANCY DISTRIBUTION ================= */}
-
-
+ 
+ 
 {job?.positionStateDistributions?.length > 0 && (
   <LocationWiseVacancyTable
     positionStateDistributions={job.positionStateDistributions}
@@ -251,22 +251,22 @@ useEffect(() => {
     disabilities={masterData?.disabilities || []}
   />
 )}
-
-
+ 
+ 
 {job?.positionStateDistributions?.length === 0 &&
   job?.nationalCategoryDistribution && (
     <NationalVacancyTable
       nationalCategoryDistribution={job.nationalCategoryDistribution}
     />
 )}
-
-
-
+ 
+ 
+ 
             </>
           )}
  
  
-          
+         
         </Modal.Body>
  
         {/* ================= FOOTER ================= */}

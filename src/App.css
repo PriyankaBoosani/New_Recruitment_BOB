@@ -253,3 +253,13 @@ main {
 .round_badge {
   border-radius: 20px !important;
 }
+
+.criteria-disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.criteria-disabled * {
+  cursor: not-allowed;
+}

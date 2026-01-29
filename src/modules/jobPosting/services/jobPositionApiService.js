@@ -87,6 +87,7 @@ const jobPositionApiService = {
       }
     );
   },
+  
 
   // CANDIDATE SCREENING APIs
   getRequisitions: (name = "") =>
@@ -103,13 +104,55 @@ const jobPositionApiService = {
 
   getCandidatesByPosition: (payload) =>
   api.post(
-    "/recruiter/candidate-screening/get-candidate-details/",
+    "/recruiter/candidate-screening/get-candidate-details",
     payload,
     {
       headers: { "X-Client": "recruiter" },
     }
   ),
 
+  getScreeningCommitteeStatus: (applicationId) =>
+  api.get(
+    `/recruiter/document-verification/get-screening-committee/${applicationId}`,
+    {
+      headers: {
+        "X-Client": "recruiter",
+      },
+    }
+  ),
+
+  saveScreeningDecision: (payload) =>
+    api.post(
+      "/recruiter/document-verification/save-screening-committee/verify",
+      payload,
+      {
+        headers: { "X-Client": "recruiter" },
+      }
+    ),
+
+  saveCandidateDiscrepancyDetails(payload) {
+    return api.post(
+      "/recruiter/candidate-screening/save-candidate-discrepancy-details",
+      payload,
+      {
+        headers: {
+          "X-Client": "recruiter",
+        },
+      }
+    );
+  },
+
+  getCandidateDiscrepancyDetails(applicationId) {
+    return api.get(
+      "/recruiter/candidate-screening/get-candidate-discrepancy-details",
+      {
+        params: { applicationId },
+        headers: {
+          "X-Client": "recruiter",
+        },
+      }
+    );
+  },
 };
 
 export default jobPositionApiService;

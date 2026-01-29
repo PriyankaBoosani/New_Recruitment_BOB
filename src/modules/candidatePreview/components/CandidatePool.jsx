@@ -7,6 +7,7 @@ export default function CandidatePool({
   selectedIds,
   setSelectedIds,
   onView,
+  onViewFile,
   loading,
   page,
   pageSize,
@@ -111,16 +112,16 @@ export default function CandidatePool({
                 Experience {sortIcon("experience")}
               </th>
 
-              <th className="fs-14 fw-normal py-3" onClick={() => requestSort("status")} role="button">
-                Status {sortIcon("status")}
+              <th className="fs-14 fw-normal py-3">
+                Status
               </th>
 
-              <th className="fs-14 fw-normal py-3" onClick={() => requestSort("location")} role="button">
-                Location {sortIcon("location")}
+              <th className="fs-14 fw-normal py-3">
+                Location
               </th>
 
-              <th className="fs-14 fw-normal py-3" onClick={() => requestSort("category")} role="button">
-                Category {sortIcon("category")}
+              <th className="fs-14 fw-normal py-3">
+                Category
               </th>
 
               <th className="text-center fs-14 fw-normal py-3">Actions</th>
@@ -185,7 +186,7 @@ export default function CandidatePool({
 								</td>
 
                 <td className="align-content-center">
-									<p className="fw-normal fs-14 mb-0">{c.category}</p>
+									<p className="fw-normal fs-14 mb-0">{c.categoryName}</p>
 								</td>
 
                 <td className="text-center align-content-center">
@@ -197,7 +198,7 @@ export default function CandidatePool({
 											})
 										}
 									/>
-									<FileText className="cursor-pointer" />
+									<FileText className="cursor-pointer" onClick={() => onViewFile(c)} />
                 </td>
               </tr>
             ))
@@ -273,7 +274,7 @@ export default function CandidatePool({
                 <strong>Location:</strong> {c.location}
               </div>
               <div className="mb-2">
-                <strong>Category:</strong> {c.category}
+                <strong>Category:</strong> {c.categoryName}
               </div>
 
               <div className="d-flex gap-2">
@@ -285,7 +286,7 @@ export default function CandidatePool({
 										})
 									}
 								/>
-								<FileText className="cursor-pointer" />
+								<FileText className="cursor-pointer" onClick={() => onViewFile(c)} />
               </div>
             </div>
           </div>

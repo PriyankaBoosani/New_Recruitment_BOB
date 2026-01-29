@@ -6,16 +6,48 @@ import sign from "../../../assets/downloadIcon.png";
 import viewIcon from "../../../assets/view_icon.png";
 import downloadIcon from "../../../assets/downloadIcon.png";
 import DocumentViewerModal from "../components/DocumentViewerModal";
+import { useLocation } from "react-router-dom";
+import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
+import { toast } from "react-toastify";
+import masterApiService from "../../master/services/masterApiService";
 
 const ApplicationForm = ({
   previewData,
   selectedJob,
   formErrors,
   setFormErrors,
+  candidateId,
+  positionId,
+  applicationId
 }) => {
 
   const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
   const [criteria, setCriteria] = useState({});
+  const location = useLocation();
+  const candidate = location.state?.candidate;
+
+  useEffect(() => {
+    console.log("Loaded Candidate:", candidate);
+  }, [candidate]);
+
+  const [screeningForm, setScreeningForm] = useState({
+    applicationId,
+    candidateId,
+
+    isWorkCriteriaMet: "",
+    isAgeCriteriaMet: "",
+    isEducationCriteriaMet: "",
+    isShortlisted: null,
+
+    workCriteriaRemark: "",
+    ageCriteriaRemark: "",
+    educationCriteriaRemark: "",
+    finalScreeningRemark: "",
+
+    submitBeforeDate: "",
+    isScreeningCompleted: false,
+    screeningId: null,
+  });
 
   const data = previewData || {
     personalDetails: {},
@@ -24,7 +56,7 @@ const ApplicationForm = ({
     education: [],
     experience: []
   };
-
+  const CRITERIA_OPTIONS = ["YES", "NO", "DISCREPANCY"];
 
    const documentRows = [
     ...(data.documents?.identityProofs || []),
@@ -33,32 +65,307 @@ const ApplicationForm = ({
     ...(data.documents?.disabilityCertificates || []),
     ...(data.documents?.payslips || []),
     ...(data.documents?.resume || [])
-  ];
+  ].map(doc => ({
+  ...doc,
+  candidateDocumentId: doc.candidateDocumentId ?? doc.id
+}));
 
+  const [photo, setPhoto] = useState()
+  const [signature, setSignature] = useState()
   const photoUrl = data.documents?.photo?.[0]?.url || logo_Bob;
+  console.log("photoUrl", photoUrl);
   const signatureUrl = data.documents?.signature?.[0]?.url || sign;
+  console.log("signatureUrl", signatureUrl);
+
+  useEffect(() => {
+    if (!photoUrl) return;
+
+    const fetchPhoto = async () => {
+      try {
+        const res = await masterApiService.getAzureBlobSasUrl(
+          photoUrl,
+          "candidate"
+        );
+
+        setPhoto(res.data);
+      } catch (err) {
+        console.error("Failed to load candidate photo", err);
+      }
+    };
+
+    fetchPhoto();
+  }, [photoUrl]);
+
+  useEffect(() => {
+    if (!signatureUrl) return;
+
+    const fetchPhoto = async () => {
+      try {
+        const res = await masterApiService.getAzureBlobSasUrl(
+          signatureUrl,
+          "candidate"
+        );
+
+        setSignature(res.data);
+      } catch (err) {
+        console.error("Failed to load candidate photo", err);
+      }
+    };
+
+    fetchPhoto();
+  }, [signatureUrl]);
 
   const [showViewer, setShowViewer] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState(null);
-  const [docStatus, setDocStatus] = useState({});
-  
-const handleVerify = (comment) => {
-  setDocStatus((prev) => ({
-    ...prev,
-    [selectedDoc.name]: "Verified",
-  }));
-  setShowViewer(false);
-};
+  const [docStatusMap, setDocStatusMap] = useState({});
+  const [docStatusLoading, setDocStatusLoading] = useState(true);
+  const [errors, setErrors] = useState({});
 
-const handleReject = (comment) => {
-  setDocStatus((prev) => ({
-    ...prev,
-    [selectedDoc.name]: "Rejected",
-  }));
-  setShowViewer(false);
-};
 
+  const refreshDocStatuses = async () => {
+    try {
+      setDocStatusLoading(true);
+      const res =
+        await jobPositionApiService.getScreeningCommitteeStatus(
+          applicationId
+        );
+
+      const map = {};
+      (res.data || []).forEach((item) => {
+        map[item.candidateDocumentId] = {
+          status: item.docScreeningStatus?.toUpperCase() || "PENDING",
+          comments: item.docScreeningComments,
+          verificationId: item.verificationId,
+        };
+      });
+
+      setDocStatusMap(map);
+    } catch (e) {
+      console.error("Failed to fetch document screening status", e);
+    } finally {
+      setDocStatusLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!applicationId) return;
+
+    const fetchDiscrepancyDetails = async () => {
+      try {
+        const res =
+          await jobPositionApiService.getCandidateDiscrepancyDetails(
+            applicationId
+          );
+
+        const data = res?.data;
+
+        if (!data) return; // no record → fresh form
+
+        setScreeningForm({
+          isWorkCriteriaMet: data.isWorkCriteriaMet ?? "",
+          isAgeCriteriaMet: data.isAgeCriteriaMet ?? "",
+          isEducationCriteriaMet: data.isEducationCriteriaMet ?? "",
+          isShortlisted: data.isShortlisted ?? null,
+          workCriteriaRemark: data.workCriteriaRemark ?? "",
+          ageCriteriaRemark: data.ageCriteriaRemark ?? "",
+          educationCriteriaRemark: data.educationCriteriaRemark ?? "",
+          finalScreeningRemark: data.finalScreeningRemark ?? "",
+          submitBeforeDate: data.submitBeforeDate ?? "",
+          screeningId: data.screeningId ?? null,
+        });
+      } catch (err) {
+        console.error("Failed to fetch discrepancy details", err);
+      }
+    };
+
+    fetchDiscrepancyDetails();
+  }, [applicationId]);
+
+  useEffect(() => {
+    if (applicationId) {
+      refreshDocStatuses();
+    }
+  }, [applicationId]);
+
+  useEffect(() => {
+    setScreeningForm(prev => ({
+      ...prev,
+      applicationId,
+      candidateId,
+    }));
+  }, [applicationId, candidateId]);
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "VERIFIED":
+        return "verified-pill";
+      case "REJECTED":
+        return "rejected-pill";
+      default:
+        return "pending-pill";
+    }
+  };
+
+  const handleRadioChange = (field, value) => {
+    setScreeningForm(prev => ({ ...prev, [field]: value }));
+    setErrors(prev => ({ ...prev, [field]: undefined }));
+  };
+
+  const handleInputChange = (field, value) => {
+    setScreeningForm(prev => ({ ...prev, [field]: value }));
+    setErrors(prev => ({ ...prev, [field]: undefined }));
+  };
   
+  const handleVerify = async (comment) => {
+    console.log("selectedDoc", selectedDoc);
+    if (!selectedDoc) return;
+
+    try {
+      await jobPositionApiService.saveScreeningDecision({
+        candidateDocumentId: selectedDoc.candidateDocumentId,
+        candidateId: candidateId,
+        applicationId: applicationId,
+        docScreeningStatus: "VERIFIED",
+        docScreeningComments: comment || "",
+        verificationId: selectedDoc.verificationId,
+      });
+
+      setShowViewer(false);
+      setSelectedDoc(null);
+
+      // 🔁 REFRESH backend truth
+      await refreshDocStatuses();
+    } catch (err) {
+      console.error("Verify failed", err);
+    }
+  };
+
+  const handleReject = async (comment) => {
+    console.log("selectedDoc", selectedDoc);
+    if (!selectedDoc) return;
+
+    try {
+      await jobPositionApiService.saveScreeningDecision({
+        candidateDocumentId: selectedDoc.candidateDocumentId,
+        candidateId: candidateId,
+        applicationId: applicationId,
+        docScreeningStatus: "REJECTED",
+        docScreeningComments: comment || "",
+        verificationId: selectedDoc.verificationId,
+      });
+
+      setShowViewer(false);
+      setSelectedDoc(null);
+
+      // 🔁 REFRESH backend truth
+      await refreshDocStatuses();
+    } catch (err) {
+      console.error("Reject failed", err);
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Criteria validations
+    if (!screeningForm.isWorkCriteriaMet) {
+      newErrors.isWorkCriteriaMet = "Please select an option";
+    }
+
+    if (!screeningForm.isAgeCriteriaMet) {
+      newErrors.isAgeCriteriaMet = "Please select an option";
+    }
+
+    if (!screeningForm.isEducationCriteriaMet) {
+      newErrors.isEducationCriteriaMet = "Please select an option";
+    }
+
+    if (!disableShortlistedSection && screeningForm.isShortlisted === null) {
+      newErrors.isShortlisted = "Please select an option";
+    }
+
+    // Submit before date validation
+    if (!screeningForm.submitBeforeDate) {
+      newErrors.submitBeforeDate = "Please select a date";
+    } else {
+      const selectedDate = new Date(screeningForm.submitBeforeDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate < today) {
+        newErrors.submitBeforeDate = "Date cannot be in the past";
+      }
+    }
+
+    setErrors(newErrors);
+
+    // valid if no errors
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const areAllDocumentsValidated = () => {
+    return documentRows.every(doc => {
+      const status =
+        docStatusMap[doc.candidateDocumentId]?.status;
+
+      return status === "VERIFIED" || status === "REJECTED";
+    });
+  };
+
+  const areAllDocumentsVerified = () => {
+    if (!documentRows.length) return false;
+    if (docStatusLoading) return false;
+
+    return documentRows.every(doc => {
+      const status = docStatusMap[doc.candidateDocumentId]?.status;
+      return status === "VERIFIED";
+    });
+  };
+  
+  const areAllCriteriaYes = () => {
+    return (
+      screeningForm.isWorkCriteriaMet === "YES" &&
+      screeningForm.isAgeCriteriaMet === "YES" &&
+      screeningForm.isEducationCriteriaMet === "YES"
+    );
+  };
+
+  const disableShortlistedSection = !areAllDocumentsVerified() || !areAllCriteriaYes();
+
+  useEffect(() => {
+    if (disableShortlistedSection && screeningForm.isShortlisted !== null) {
+      setScreeningForm(prev => ({
+        ...prev,
+        isShortlisted: null,
+        finalScreeningRemark: "",
+      }));
+    }
+  }, [disableShortlistedSection]);
+
+  const handleFinalSubmit = async () => {
+    const isValid = validateForm();
+    if (!isValid) return;
+
+    if (!areAllDocumentsValidated()) {
+      toast.error("Please validate all the documents");
+      return;
+    }
+
+    const payload = {
+      ...screeningForm,
+      isScreeningCompleted: true,
+    };
+
+    console.log("FINAL SCREENING PAYLOAD", payload);
+
+    try {
+      await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
+      toast.success("Screening submitted successfully");
+    } catch (err) {
+      console.error("Screening submit failed", err);
+      toast.error("Submission failed");
+    }
+  };
 
   return (
     <>
@@ -90,13 +397,13 @@ const handleReject = (comment) => {
                       >
                         <div className="bob-photo-box">
                           <img
-                            src={photoUrl || logo_Bob}
+                            src={photo}
                             alt="Applicant Photo"
                             className="img-fluid img1"
                           />
 
                           <img
-                            src={signatureUrl || sign}
+                            src={signature}
                             alt="Signature"
                             className="img-fluid img2"
                           />
@@ -296,20 +603,19 @@ const handleReject = (comment) => {
             <Accordion.Header>Education Details</Accordion.Header>
             <Accordion.Body>
              <div className="edu-table-wrapper">
-
-  <table className="edu-table">
-    <thead>
-      <tr>
-        <th>S. No</th>
-        <th>Onboard/University</th>
-        <th>School/college</th>
-        <th>Degree</th>
-        <th>Specialization</th>
-        <th>From Date</th>
-        <th>To Date</th>
-        <th>Percentage</th>
-      </tr>
-    </thead>
+              <table className="edu-table">
+                <thead>
+                  <tr>
+                    <th>S. No</th>
+                    <th>Education Level</th>
+                    <th>School/College</th>
+                    <th>Degree</th>
+                    <th>Specialization</th>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                    <th>Percentage</th>
+                  </tr>
+                </thead>
 
    <tbody>
   {(data.education || []).map((edu, index) => (
@@ -386,200 +692,342 @@ const handleReject = (comment) => {
 
     </table>
   </Accordion.Body>
-</Accordion.Item>
+          </Accordion.Item>
 
-<Accordion.Item eventKey="3">
-  <Accordion.Header>Documents Details</Accordion.Header>
-  <Accordion.Body>
+          <Accordion.Item eventKey="3">
+            <Accordion.Header>Documents Details</Accordion.Header>
+            <Accordion.Body>
 
-    <table className="bob-doc-table">
-      <thead>
-        <tr>
-          <th>File Type</th>
-          <th>Status</th>
-          <th>Action</th>
+              <table className="bob-doc-table">
+                <thead>
+                  <tr>
+                    <th>File Type</th>
+                    <th>Status</th>
+                    <th>Action</th>
 
-          <th>File Type</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
+                    <th>File Type</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
 
-      <tbody>
-        {Array.from({ length: Math.ceil(documentRows.length / 2) })
-.map(
-          (_, rowIndex) => {
-           const left = documentRows[rowIndex * 2];
-           const right = documentRows[rowIndex * 2 + 1];
+                <tbody>
+                  {Array.from({ length: Math.ceil(documentRows.length / 2) })
+          .map(
+                    (_, rowIndex) => {
+                    const left = documentRows[rowIndex * 2];
+                    const right = documentRows[rowIndex * 2 + 1];
+                    const leftStatus =
+                      docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
+
+                    const rightStatus =
+                      docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
+
+                      console.log(
+  "CHECK",
+  left?.name,
+  left?.candidateDocumentId,
+  Object.keys(docStatusMap),
+  docStatusMap[left?.candidateDocumentId]
+);
 
 
-            return (
-              <tr key={rowIndex}>
-                {/* LEFT COLUMN */}
-                <td>{left?.name}</td>
-                <td>
-                  {left && (
-                    <span
-                      className={
-                        docStatus[left.name] === "Verified"
-                          ? "verified-pill"
-                          : docStatus[left.name] === "Rejected"
-                          ? "rejected-pill"
-                          : "pending-pill"
-                      }
-                    >
-                      {docStatus[left.name] || "Pending"}
-                    </span>
+
+                      return (
+                        <tr key={rowIndex}>
+                          {/* LEFT COLUMN */}
+                          <td>{left?.name}</td>
+                          <td>
+                            {left && (
+                              <span className={getStatusClass(leftStatus)}>
+                                {leftStatus}
+                              </span>
+                            )}
+                          </td>
+                          <td className="action-cell">
+                            {left && (
+                              <>
+                                <img
+                                  src={viewIcon}
+                                  alt="View"
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    console.log("VIEW CLICKED", left);
+                                    setSelectedDoc({
+                                      candidateDocumentId: left.candidateDocumentId,
+                                      candidateId: previewData.candidateId,
+                                      applicationId: previewData.applicationId,
+                                      verificationId: docStatusMap[left.candidateDocumentId]?.verificationId,
+                                      docScreeningComments:
+                                        docStatusMap[left.candidateDocumentId]?.comments || "",
+                                      name: left.name,
+                                      fileUrl: left.url,
+                                    });
+                                    setShowViewer(true);
+                                  }}
+                                />
+                                <img
+                                  src={downloadIcon}
+                                  alt="Download"
+                                  style={{ cursor: "pointer" }}
+                                />
+                              </>
+                            )}
+                          </td>
+
+                          {/* RIGHT COLUMN */}
+                          <td>{right?.name || "-"}</td>
+                          <td>
+                            {right ? (
+                              <span className={getStatusClass(rightStatus)}>
+                                {rightStatus}
+                              </span>
+                            ) : (
+                              "-"
+                            )}
+                          </td>
+                          <td className="action-cell">
+                            {right ? (
+                              <>
+                                <img
+                                  src={viewIcon}
+                                  alt="View"
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    setSelectedDoc({
+                                      candidateDocumentId: right.candidateDocumentId,
+                                      candidateId: previewData.candidateId,
+                                      applicationId: previewData.applicationId,
+                                      verificationId: docStatusMap[right.candidateDocumentId]?.verificationId,
+                                      docScreeningComments:
+                                        docStatusMap[right.candidateDocumentId]?.comments || "",
+                                      name: right.name,
+                                      fileUrl: right.url,
+                                    });
+                                    setShowViewer(true);
+                                  }}
+                                />
+                                <img
+                                  src={downloadIcon}
+                                  alt="Download"
+                                  style={{ cursor: "pointer" }}
+                                />
+                              </>
+                            ) : (
+                              "-"
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    }
                   )}
-                </td>
-                <td className="action-cell">
-                  {left && (
-                    <>
-                      <img
-                        src={viewIcon}
-                        alt="View"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          setSelectedDoc({
-                            name: left.name,
-                            url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                          });
-                          setShowViewer(true);
-                        }}
-                      />
-                      <img
-                        src={downloadIcon}
-                        alt="Download"
-                        style={{ cursor: "pointer" }}
-                      />
-                    </>
-                  )}
-                </td>
+                </tbody>
+              </table>
 
-                {/* RIGHT COLUMN */}
-                <td>{right?.name || "-"}</td>
-                <td>
-                  {right ? (
-                    <span
-                      className={
-                        docStatus[right.name] === "Verified"
-                          ? "verified-pill"
-                          : docStatus[right.name] === "Rejected"
-                          ? "rejected-pill"
-                          : "pending-pill"
-                      }
-                    >
-                      {docStatus[right.name] || "Pending"}
-                    </span>
-                  ) : (
-                    "-"
-                  )}
-                </td>
-                <td className="action-cell">
-                  {right ? (
-                    <>
-                      <img
-                        src={viewIcon}
-                        alt="View"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          setSelectedDoc({
-                            name: right.name,
-                            url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                          });
-                          setShowViewer(true);
-                        }}
-                      />
-                      <img
-                        src={downloadIcon}
-                        alt="Download"
-                        style={{ cursor: "pointer" }}
-                      />
-                    </>
-                  ) : (
-                    "-"
-                  )}
-                </td>
-              </tr>
-            );
-          }
-        )}
-      </tbody>
-    </table>
+            </Accordion.Body>
+          </Accordion.Item>
 
-  </Accordion.Body>
-</Accordion.Item>
+          {/* ================= CRITERIA SECTION ================= */}
+      <Card className="criteria-main-card">
+        <div className="criteria-wrapper">
 
+          {/* WORK CRITERIA */}
+          <div className="criteria-card">
+            <label className="criteria-title">Work criteria fulfilled?</label>
 
-<Card className="criteria-main-card">
-  <div className="criteria-wrapper">
-    {[
-      "Work criteria fulfilled?",
-      "Age criteria fulfilled?",
-      "Education criteria fulfilled?",
-      "Shortlisted?",
-    ].map((label) => (
-      <div className="criteria-card" key={label}>
-        <label className="criteria-title">{label}</label>
+            <div className="criteria-radio mb-0">
+              {CRITERIA_OPTIONS.map(option => (
+                <label key={option} className="radio-label">
+                  <input
+                    type="radio"
+                    name="workCriteria"
+                    checked={screeningForm.isWorkCriteriaMet === option}
+                    onChange={() =>
+                      handleRadioChange("isWorkCriteriaMet", option)
+                    }
+                  />
+                  <span className="custom-radio"></span>
+                  {option}
+                </label>
+              ))}
+            </div>
+            {errors.isWorkCriteriaMet && (
+              <small className="text-danger fs-12">
+                {errors.isWorkCriteriaMet}
+              </small>
+            )}
 
-        <div className="criteria-radio">
-          {["Yes", "No", "Discrepancy"].map((opt) => (
-            <label
-              key={opt}
-              className={`radio-label ${
-                label === "Shortlisted?" ? "disabled" : ""
-              }`}
-            >
-              <input
-                type="radio"
-                name={label}
-                disabled={label === "Shortlisted?"}
-              />
-              <span className="custom-radio"></span>
-              {opt}
-            </label>
-          ))}
+            <input
+              type="text"
+              className="criteria-remark mt-2"
+              placeholder="Work criteria remark"
+              value={screeningForm.workCriteriaRemark}
+              onChange={(e) =>
+                handleInputChange("workCriteriaRemark", e.target.value)
+              }
+              // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
+            />
+          </div>
+
+          {/* AGE CRITERIA */}
+          <div className="criteria-card">
+            <label className="criteria-title">Age criteria fulfilled?</label>
+
+            <div className="criteria-radio mb-0">
+              {CRITERIA_OPTIONS.map(option => (
+                <label key={option} className="radio-label">
+                  <input
+                    type="radio"
+                    name="ageCriteria"
+                    checked={screeningForm.isAgeCriteriaMet === option}
+                    onChange={() =>
+                      handleRadioChange("isAgeCriteriaMet", option)
+                    }
+                  />
+                  <span className="custom-radio"></span>
+                  {option}
+                </label>
+              ))}
+            </div>
+            {errors.isAgeCriteriaMet && (
+              <small className="text-danger fs-12">
+                {errors.isAgeCriteriaMet}
+              </small>
+            )}
+
+            <input
+              type="text"
+              className="criteria-remark mt-2"
+              placeholder="Age criteria remark"
+              value={screeningForm.ageCriteriaRemark}
+              onChange={(e) =>
+                handleInputChange("ageCriteriaRemark", e.target.value)
+              }
+              // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
+            />
+          </div>
+
+          {/* EDUCATION CRITERIA */}
+          <div className="criteria-card">
+            <label className="criteria-title">Education criteria fulfilled?</label>
+
+            <div className="criteria-radio mb-0">
+              {CRITERIA_OPTIONS.map(option => (
+                <label key={option} className="radio-label">
+                  <input
+                    type="radio"
+                    name="educationCriteria"
+                    checked={screeningForm.isEducationCriteriaMet === option}
+                    onChange={() =>
+                      handleRadioChange("isEducationCriteriaMet", option)
+                    }
+                  />
+                  <span className="custom-radio"></span>
+                  {option}
+                </label>
+              ))}
+            </div>
+            {errors.isEducationCriteriaMet && (
+              <small className="text-danger fs-12">
+                {errors.isEducationCriteriaMet}
+              </small>
+            )}
+
+            <input
+              type="text"
+              className="criteria-remark mt-2"
+              placeholder="Education criteria remark"
+              value={screeningForm.educationCriteriaRemark}
+              onChange={(e) =>
+                handleInputChange("educationCriteriaRemark", e.target.value)
+              }
+              // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
+            />
+          </div>
+
+          {/* FINAL REMARK */}
+          <div
+            className={`criteria-card ${
+              disableShortlistedSection ? "criteria-disabled" : ""
+            }`}
+          >
+            <label className="criteria-title">Shortlisted?</label>
+
+            <div className="criteria-radio mb-0">
+              {["YES", "NO"].map(option => (
+                <label key={option} className="radio-label">
+                  <input
+                    type="radio"
+                    name="shortlisted"
+                    checked={
+                      screeningForm.isShortlisted === (option === "YES")
+                    }
+                    onChange={() =>
+                      handleInputChange(
+                        "isShortlisted",
+                        option === "YES"
+                      )
+                    }
+                  />
+                  <span className="custom-radio"></span>
+                  {option}
+                </label>
+              ))}
+            </div>
+            {!disableShortlistedSection && errors.isShortlisted && (
+              <small className="text-danger fs-12">
+                {errors.isShortlisted}
+              </small>
+            )}
+
+            <input
+              type="text"
+              className="criteria-remark mt-2"
+              placeholder="Final remark"
+              value={screeningForm.finalScreeningRemark}
+              onChange={(e) =>
+                handleInputChange("finalScreeningRemark", e.target.value)
+              }
+            />
+          </div>
         </div>
 
-        <input
-          type="text"
-          className="criteria-remark"
-          placeholder="Remarks"
-          disabled={label === "Shortlisted?"}
-        />
-      </div>
-    ))}
-  </div>
+        {/* ================= SUBMIT ROW ================= */}
+        <div className="criteria-submit-row">
+          <div className="d-grid">
+            <label className="submit-label">Submit Before</label>
+            <input
+              type="date"
+              className="criteria-date"
+              value={screeningForm.submitBeforeDate}
+              onChange={(e) =>
+                handleInputChange("submitBeforeDate", e.target.value)
+              }
+            />
+            {errors.submitBeforeDate && (
+              <small className="text-danger fs-12">
+                {errors.submitBeforeDate}
+              </small>
+            )}
+          </div>
 
-  {/* ===== SUBMIT ROW ===== */}
-  <div className="criteria-submit-row">
-    <div>
-      <label className="submit-label">Submit Before</label>
-      <input
-        type="date"
-        className="criteria-date"
-      />
-    </div>
-
-    <button className="btn-submit-orange">Submit</button>
-  </div>
-</Card>
-
-
-       
+          <button
+            className="btn-submit-orange"
+            onClick={handleFinalSubmit}
+          >
+            Submit
+          </button>
+        </div>
+      </Card>
         </Accordion>
-
        <DocumentViewerModal
-  show={showViewer}
-  onHide={() => setShowViewer(false)}
-  document={selectedDoc}
-  onVerify={handleVerify}
-  onReject={handleReject}
-/>
-
-
-
-        </>
+          show={showViewer}
+          onHide={() => setShowViewer(false)}
+          document={selectedDoc}
+          onVerify={handleVerify}
+          onReject={handleReject}
+        />
+      </>
   );
 };
 

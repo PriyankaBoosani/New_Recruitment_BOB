@@ -16,7 +16,7 @@ const PageHeaderWithBack = ({ title, subtitle }) => {
           cursor: "pointer",
           color: "#6c757d",
           fontSize: "14px",
-          marginRight: "14px",
+          marginRight: "25px",
           marginTop: "2px"
         }}
         onClick={() => navigate(-1)}
