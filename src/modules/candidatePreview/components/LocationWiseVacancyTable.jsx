@@ -1,71 +1,67 @@
 import React from "react";
- 
+
 const LocationWiseVacancyTable = ({
   positionStateDistributions = [],
-  states = [],
-  reservationCategories = [],
-  disabilities = []
+  states = []
 }) => {
   if (!positionStateDistributions.length) return null;
- 
+
+  const stateMap = states.reduce((acc, s) => {
+    acc[s.stateId] = s.stateName;
+    return acc;
+  }, {});
+
   return (
-<div className="border rounded p-3 mt-3">
-<div className="fw-semibold mb-2">
+    <div className="info-card mt-3">
+      <div className="fw-semibold mb-3">
         Category Wise Reservation (State-wise)
-</div>
- 
+      </div>
+
       <div className="table-responsive">
-<table className="table table-bordered small">
-<thead>
-<tr>
-<th rowSpan="2">State</th>
-<th colSpan={reservationCategories.length + 1}>Category</th>
-<th colSpan={disabilities.length}>Disability</th>
-</tr>
-<tr>
-              {reservationCategories.map(c => (
-<th key={c.category_id}>{c.category_code}</th>
-              ))}
-<th>Total</th>
- 
-              {disabilities.map(d => (
-<th key={d.disability_id}>{d.disability_code}</th>
-              ))}
-</tr>
-</thead>
- 
+        <table className="table table-bordered small text-center">
+          <thead>
+            <tr>
+              <th rowSpan="2">State Name</th>
+              <th colSpan="6">Category</th>
+              <th colSpan="4">Disability</th>
+            </tr>
+            <tr>
+              <th>GEN</th>
+              <th>EWS</th>
+              <th>SC</th>
+              <th>ST</th>
+              <th>OBC</th>
+              <th>Total</th>
+              <th>HI</th>
+              <th>VI</th>
+              <th>OC</th>
+              <th>ID</th>
+            </tr>
+          </thead>
+
           <tbody>
-            {positionStateDistributions.map((row, i) => {
-              const categoryTotal = reservationCategories.reduce(
-                (s, c) => s + (row.categories?.[c.category_id] || 0),
-                0
-              );
- 
-              return (
-<tr key={i}>
-<td>{row.state_name}</td>
- 
-                  {reservationCategories.map(c => (
-<td key={c.category_id}>
-                      {row.categories?.[c.category_id] || 0}
-</td>
-                  ))}
- 
-                  <td>{categoryTotal}</td>
- 
-                  {disabilities.map(d => (
-<td key={d.disability_id}>
-                      {row.disability?.[d.disability_id] || 0}
-</td>
-                  ))}
-</tr>
-              );
-            })}
-</tbody>
-</table>
-</div>
-</div>
+            {positionStateDistributions.map((state, idx) => (
+              <tr key={idx}>
+                <td>{stateMap[state.stateId] || "Unknown"}</td>
+
+                <td>{state.categories.GEN}</td>
+                <td>{state.categories.EWS}</td>
+                <td>{state.categories.SC}</td>
+                <td>{state.categories.ST}</td>
+                <td>{state.categories.OBC}</td>
+                <td>{state.totalVacancies}</td>
+
+                <td>{state.disabilities.HI}</td>
+                <td>{state.disabilities.VI}</td>
+                <td>{state.disabilities.OC}</td>
+                <td>{state.disabilities.ID}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };
- 
+
 export default LocationWiseVacancyTable;

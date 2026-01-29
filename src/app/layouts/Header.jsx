@@ -9,25 +9,25 @@ import { clearUser } from '../providers/userSlice';
 import { setLanguage } from '../../i18n/store/languageSlice';
 import { useTranslation } from "react-i18next";
 import i18n from '../../i18n/i18n';
-
+ 
 const Header = () => {
-
+ 
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+ 
   /* ===================== USER FROM REDUX ===================== */
   const userSlice = useSelector((state) => state.user);
   const user = userSlice?.user;
   console.log("Header User from Redux:", user);
-
+ 
   /* ===================== USER DROPDOWN STATE ===================== */
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
-
+ 
   const closeMenu = () => setExpanded(false);
-
+ 
   /* ===================== INITIALS LOGIC ===================== */
   const getInitials = (fullName = "") => {
     if (!fullName.trim()) return "";
@@ -36,7 +36,7 @@ const Header = () => {
       ? parts[0][0].toUpperCase()
       : (parts[0][0] + parts[1][0]).toUpperCase();
   };
-
+ 
   /* ===================== DISPLAY NAME (ADDED – NO REMOVALS) ===================== */
   const displayName =
     user?.name ||
@@ -46,13 +46,13 @@ const Header = () => {
         .replace(/[._]/g, " ")
         .replace(/\b\w/g, c => c.toUpperCase())
       : "");
-
+ 
   /* ===================== LANGUAGE CHANGE ===================== */
   const changeLang = (lng) => {
     dispatch(setLanguage(lng));
     i18n.changeLanguage(lng);
   };
-
+ 
   /* ===================== LOGOUT ===================== */
   const handleLogout = () => {
     dispatch(clearUser());
@@ -60,7 +60,7 @@ const Header = () => {
   };
   const role = user?.role?.toLowerCase();
   const isAdmin = role === "admin";
-
+ 
   /* ===================== OUTSIDE CLICK ===================== */
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -71,14 +71,14 @@ const Header = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
+ 
   return (
     <header className="fixed-top">
-
+ 
       {/* ===================== TOP BAR ===================== */}
       <div className="background-header py-2" style={{ position: 'sticky', top: 0, zIndex: 1030 }}>
         <Container fluid className="d-flex justify-content-between align-items-center">
-
+ 
           {/* Logo */}
           <div className="d-flex align-items-center">
             <Image
@@ -88,10 +88,10 @@ const Header = () => {
               className="me-2 imgbob"
             />
           </div>
-
+ 
           {/* Right Section */}
           <div className="d-flex align-items-center fonnav">
-
+ 
             {/* LANGUAGE */}
             <div className="d-flex align-items-center text-white me-3">
               <span
@@ -108,7 +108,7 @@ const Header = () => {
                 हिंदी
               </span>
             </div>
-
+ 
             {/* ===================== USER DROPDOWN ===================== */}
             <div className="position-relative" ref={dropdownRef}>
               <div
@@ -132,7 +132,7 @@ const Header = () => {
                 >
                   {getInitials(displayName)}
                 </div>
-
+ 
                 <span className="text-white fonnav">
                   {displayName}
                   <FontAwesomeIcon
@@ -141,7 +141,7 @@ const Header = () => {
                   />
                 </span>
               </div>
-
+ 
               {showDropdown && (
                 <div
                   className="position-absolute end-0 mt-2 bg-white border rounded shadow p-2"
@@ -162,7 +162,7 @@ const Header = () => {
           </div>
         </Container>
       </div>
-
+ 
       {/* ===================== NAVBAR ===================== */}
       <Navbar
         bg="white"
@@ -175,7 +175,7 @@ const Header = () => {
             aria-controls="main-navbar-nav"
             onClick={() => setExpanded(expanded ? false : true)}
           />
-
+ 
           <Navbar.Collapse id="main-navbar-nav">
             <Nav className="me-auto">
               {!isAdmin && (
@@ -190,69 +190,80 @@ const Header = () => {
               >
                 Candidate Preview
               </Nav.Link> */}
-
-
+ 
+ 
               {!isAdmin && (
                 <Nav.Link as={Link} to="/candidate-workflow" onClick={closeMenu}>
                   Candidate Workflow
                 </Nav.Link>
               )}
-
+ 
+ 
+ 
+              {!isAdmin && (
+                <Nav.Link as={Link} to="/candidate-verification" onClick={closeMenu}>
+                  Verification
+                </Nav.Link>
+              )}
+               {!isAdmin && (
+                 <Nav.Link as={Link} to="/interviewpanel" onClick={closeMenu}>
+                  Committee Management
+                </Nav.Link>
+              )}
+ 
               {/* <Nav.Link as={Link} to="/dashboard" onClick={closeMenu}>Dashboard</Nav.Link>
               <Nav.Link href="#candidate-shortlist">Candidate Shortlist</Nav.Link>
               <Nav.Link href="#interviews">Interviews</Nav.Link>
               <Nav.Link href="#relaxation">Relaxation</Nav.Link>
               <Nav.Link href="#bulk-upload">Bulk Upload</Nav.Link>
               <Nav.Link href="/interviewpanel"> Interview Panel</Nav.Link> */}
-                <Nav.Link as={Link} to="/interviewpanel" onClick={closeMenu}>
-                  Committee Management
-                </Nav.Link>
+                
               {/* Admin Menu */}
               {isAdmin && (
                 <NavDropdown title={t("admin")} id="admin-dropdown">
                   <NavDropdown.Item as={Link} to="/users" onClick={closeMenu}>
                     {t("users")}
                   </NavDropdown.Item>
-
+ 
                   <NavDropdown.Item as={Link} to="/department" onClick={closeMenu}>
                     {t("department")}
                   </NavDropdown.Item>
-
+ 
                   {/* <NavDropdown.Item as={Link} to="/location" onClick={closeMenu}>
                     {t("location")}
                   </NavDropdown.Item> */}
-
+ 
                   <NavDropdown.Item as={Link} to="/jobgrade" onClick={closeMenu}>
                     {t("job_grade")}
                   </NavDropdown.Item>
-
+ 
                   <NavDropdown.Item as={Link} to="/position" onClick={closeMenu}>
                     {t("position")}
                   </NavDropdown.Item>
-
+ 
                   <NavDropdown.Item as={Link} to="/category" onClick={closeMenu}>
                     {t("category")}
                   </NavDropdown.Item>
-
+ 
                   <NavDropdown.Item as={Link} to="/certification" onClick={closeMenu}>
                     {t("certification")}
                   </NavDropdown.Item>
-
+ 
                   {/* <NavDropdown.Item as={Link} to="/specialcategory" onClick={closeMenu}>
                     {t("special_category")}
                   </NavDropdown.Item> */}
-
+ 
                   <NavDropdown.Item as={Link} to="/document" onClick={closeMenu}>
                     {t("document")}
                   </NavDropdown.Item>
-
+ 
                   <NavDropdown.Item as={Link} to="/generic-or-annexures" onClick={closeMenu}>
                     {t("generic_or_annexures")}
                   </NavDropdown.Item>
                 </NavDropdown>
               )}
-
-
+ 
+ 
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -260,5 +271,5 @@ const Header = () => {
     </header>
   );
 };
-
+ 
 export default Header;

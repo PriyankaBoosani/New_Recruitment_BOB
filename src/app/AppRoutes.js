@@ -37,6 +37,7 @@ import InterviewPanel from "../modules/committeeManagement/InterviewPanelPage";
 //import InterviewPanel from "../modules/master/pages/InterviewPanel";
 import SpecialCategoryPage from "../modules/master/pages/SpecialCategory/SpecialCategoryPage";
 import CandidatePreviewPage from "../modules/candidatePreview/candidatePreviewPage";
+import CandidateVerification from "../modules/Verification/CandidateVerification";
 import CandidateScreening from "../modules/candidatePreview/CandidateScreening";
 // import PositionPage from "../modules/master/pages/Position/PositionPage";
 // Lazy loaded components
@@ -64,7 +65,6 @@ const AppRoutes = () => {
 
         {/* Root redirect: go to dashboard if authed, else login */}
         <Route path="/" element={<Navigate to="/login" />} />
-  <Route path="/interviewpanel" element={<InterviewPanel />} />
         {/* Protected routes */}
         <Route element={<Tokenexp />}>
           <Route element={<PrivateRoute />}>
@@ -80,7 +80,7 @@ const AppRoutes = () => {
                 <Route path="/relaxationtype" element={<RelaxationType />} />
                 <Route path="/certification" element={<CertificationPage />} />
                 <Route path="/document" element={<DocumentPage />} />
-              
+
                 <Route path="/generic-or-annexures" element={<GenericOrAnnexuresPage />} />
               </Route>              {/* ---------- NON-ADMIN ONLY ROUTES ---------- */}
               <Route element={<NonAdminRoute />}>
@@ -90,9 +90,12 @@ const AppRoutes = () => {
                   path="/job-posting/:requisitionId/add-position"
                   element={<AddPosition />}
                 />
-             
+
                 <Route path="/candidate-preview" element={<CandidatePreviewPage />} />
                 <Route path="/candidate-workflow" element={<CandidateScreening />} />
+                <Route path="/candidate-verification" element={<CandidateVerification />} />
+                <Route path="/interviewpanel" element={<InterviewPanel />} />
+
               </Route>
 
 
@@ -110,3 +113,4 @@ const AppRoutes = () => {
 };
 
 export default AppRoutes;
+
