@@ -333,7 +333,7 @@ const AddPosition = () => {
             mandatoryExperience: { ...prev.mandatoryExperience, description: pendingPosition.mandatoryExperience ?? "" },
             preferredExperience: { ...prev.preferredExperience, description: pendingPosition.preferredExperience ?? "" }
         }));
-        setErrors(prev => ({    
+        setErrors(prev => ({
             ...prev,
             minAge: "",
             maxAge: "",
@@ -409,7 +409,7 @@ const AddPosition = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validateAddPosition({
-            isEditMode, formData, educationData, indentFile, approvedBy, approvedOn, existingIndentPath,existingIndentName, nationalCategories, nationalDisabilities, stateDistributions, existingPositions: positionsByReq[requisitionId] || [],
+            isEditMode, formData, educationData, indentFile, approvedBy, approvedOn, existingIndentPath, existingIndentName, nationalCategories, nationalDisabilities, stateDistributions, existingPositions: positionsByReq[requisitionId] || [],
             positionId
         });
         if (Object.keys(validationErrors).length > 0) { setErrors(validationErrors); return; }
@@ -458,7 +458,7 @@ const AddPosition = () => {
                     <div className="section-title"><span className="indicator"></span><h6> {isViewMode ? "View Position" : isEditMode ? "Edit Position" : "Add New Position"}</h6>
                     </div>
                     <Form onSubmit={handleSubmit}>
-                        {/* <fieldset disabled={isViewMode}> */}
+
                         <PositionForm
                             isViewMode={isViewMode} formData={formData} errors={errors} handleInputChange={handleInputChange} indentFile={indentFile} setFormData={setFormData}
                             existingIndentPath={existingIndentPath} existingIndentName={existingIndentName} setIndentFile={setIndentFile} setErrors={setErrors}
@@ -466,14 +466,14 @@ const AddPosition = () => {
                             masterData={masterData} onPositionSelect={onPositionSelect} educationData={educationData}
                             onEducationClick={(m) => { if (isViewMode) return; setEduMode(m); setShowEduModal(true); }} YEAR_OPTIONS={YEAR_OPTIONS} MONTH_OPTIONS={MONTH_OPTIONS} ALLOWED_EXTENSIONS={ALLOWED_EXTENSIONS} MAX_FILE_SIZE_MB={MAX_FILE_SIZE_MB}
                         />
-
+                        <fieldset disabled={isViewMode}>
                         {/* Reservation Section */}
                         <Col xs={12} className="mt-4">
                             <div className="d-flex justify-content-between align-items-center mb-2 catfonts">
                                 <div><h6 className="mb-0 catfont">Category Wise Reservation <span className="text-danger">*</span></h6><small className="text-muted">Enable to distribute vacancies across states</small></div>
                                 <Form.Check
                                     type="switch"
-                                    name="enableStateDistribution"
+                                    name="enableStateDistribution" 
                                     checked={formData.enableStateDistribution}
                                     onChange={e => {
                                         handleInputChange(e);
@@ -727,7 +727,7 @@ const AddPosition = () => {
                             <ErrorMessage>{errors.nationalDistribution}</ErrorMessage>
 
                         </Col>
-                        {/* </fieldset> */}
+                        </fieldset>
                         <div className="form-footer mt-4 mb-4">
                             <Button variant="outline-secondary" className="cancelbtn" onClick={() => navigate(-1)}>Cancel</Button>
                             {!isViewMode && (

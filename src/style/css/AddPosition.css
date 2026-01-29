@@ -487,3 +487,15 @@
   }
 }
 
+.upload-indent-box.disabled {
+  cursor: not-allowed;
+  background-color: var(--bs-secondary-bg);
+}
+
+.upload-indent-box.disabled * {
+  pointer-events: none;
+}
+
+.upload-indent-box.disabled .indent-actions button {
+  pointer-events: auto; /* 👈 allow view button */
+}

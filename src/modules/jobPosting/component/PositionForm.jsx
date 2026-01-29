@@ -8,7 +8,7 @@ import view_icon from "../../../assets/view_icon.png"
 import file_icon from "../../../assets/file_icon.png"
 import { normalizeTitle, TITLE_ALLOWED_PATTERN } from "../validations/validateAddPosition";
 import useViewIndent from "../hooks/useViewIndent";
- const PositionForm = ({
+const PositionForm = ({
     isViewMode = false,
     formData,
     errors,
@@ -49,27 +49,25 @@ import useViewIndent from "../hooks/useViewIndent";
         }
     }, [isContractEmployment]);
     const handleReplaceIndent = () => {
-        // clear backend file reference
+        if (isViewMode) return; // HARD STOP
+
         setFormData(prev => ({
             ...prev,
-            indentPath: null // or whatever key you send to backend
+            indentPath: null
         }));
 
-        // clear UI state
         setIndentFile(null);
 
-        // clear errors
         setErrors(prev => {
             const { indentFile, ...rest } = prev;
             return rest;
         });
 
-        // reset file input so same file can be selected again
         const input = document.getElementById("indentFileInput");
-        if (input) input.value = "";
-
-        // open file picker
-        input?.click();
+        if (input) {
+            input.value = "";
+            input.click();
+        }
     };
     return (
 
@@ -80,15 +78,13 @@ import useViewIndent from "../hooks/useViewIndent";
                         <Form.Group>
                             <Form.Label>Upload Indent <span className="text-danger">*</span></Form.Label>
                             <div
-                                className={`upload-indent-box ${errors.indentFile ? "" : ""}`}
+                                className={`upload-indent-box ${isViewMode ? "disabled" : ""}`}
                                 onClick={() => {
-
-                                    if (isViewMode) return;   // 🔥 BLOCK IN VIEW MODE
+                                    if (isViewMode) return;
 
                                     if (!existingIndentPath || indentFile) {
                                         document.getElementById("indentFileInput").click();
                                     }
-
                                 }}
                             >
                                 {indentFile ? (
@@ -119,10 +115,10 @@ import useViewIndent from "../hooks/useViewIndent";
 
                                     </div>
                                 ) : existingIndentPath ? (
-                                    <div className="d-flex align-items-center gap-3">
+                                    <div className="d-flex align-items-center gap-3" >
                                         <span className="file-icon"><img src={file_icon} alt="file_icon" className="icon-16" /></span>
                                         <div>
-                                           <div className="fw-semibold text-truncate" title={existingIndentName}>{existingIndentName}</div>
+                                            <div className="fw-semibold text-truncate" title={existingIndentName} >{existingIndentName}</div>
                                         </div>
                                     </div>
                                 ) : (
@@ -195,7 +191,7 @@ import useViewIndent from "../hooks/useViewIndent";
                     <Col md={4}>
                         <Form.Group className="mb-3">
                             <Form.Label>Approved By <span className="text-danger">*</span></Form.Label>
-                            <Form.Select value={approvedBy} onChange={(e) => { setApprovedBy(e.target.value); setErrors(prev => ({ ...prev, approvedBy: "" })); }}>
+                            <Form.Select value={approvedBy} onChange={(e) => { setApprovedBy(e.target.value); setErrors(prev => ({ ...prev, approvedBy: "" })); }} disabled={isViewMode}>
                                 <option value="">Select</option>
                                 {users.map(user => <option key={user.id} value={user.id}>{user.name}{user.role ? ` (${user.role})` : ""}</option>)}
                             </Form.Select>
@@ -203,7 +199,32 @@ import useViewIndent from "../hooks/useViewIndent";
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Approved On <span className="text-danger">*</span></Form.Label>
-                            <Form.Control type="date" value={approvedOn} max={new Date().toISOString().split("T")[0]} onChange={(e) => { setApprovedOn(e.target.value); setErrors(prev => ({ ...prev, approvedOn: "" })); }} />
+                            <Form.Control
+                                type="date"
+                                value={approvedOn}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+
+                                    setApprovedOn(value);
+
+                                    const selectedDate = new Date(value);
+                                    const today = new Date();
+                                    today.setHours(0, 0, 0, 0);
+
+                                    if (selectedDate > today) {
+                                        setErrors(prev => ({
+                                            ...prev,
+                                            approvedOn: "Approved date cannot be a future date"
+                                        }));
+                                    } else {
+                                        setErrors(prev => ({
+                                            ...prev,
+                                            approvedOn: ""
+                                        }));
+                                    }
+                                }}
+                                disabled={isViewMode}
+                            />
                             <ErrorMessage>{errors.approvedOn}</ErrorMessage>
                         </Form.Group>
                     </Col>
@@ -212,7 +233,7 @@ import useViewIndent from "../hooks/useViewIndent";
                 <Row className="g-4">
                     <Col md={4}>
                         <Form.Label>Position <span className="text-danger">*</span></Form.Label>
-                        <Form.Select name="position" value={formData.position} onChange={(e) => onPositionSelect(e.target.value)}>
+                        <Form.Select name="position" value={formData.position} onChange={(e) => onPositionSelect(e.target.value)} disabled={isViewMode}>
                             <option value="">Select</option>
                             {positions.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                         </Form.Select>
@@ -221,7 +242,7 @@ import useViewIndent from "../hooks/useViewIndent";
 
                     <Col md={4}>
                         <Form.Label>Department <span className="text-danger">*</span></Form.Label>
-                        <Form.Select name="department" value={formData.department} onChange={handleInputChange}>
+                        <Form.Select name="department" value={formData.department} onChange={handleInputChange} disabled={isViewMode}>
                             <option value="">Select</option>
                             {departments.map(d => <option key={d.id} value={d.id}>{d.label}</option>)}
                         </Form.Select>
@@ -230,11 +251,11 @@ import useViewIndent from "../hooks/useViewIndent";
 
                     <Col md={4}>
                         <Form.Label>Total Vacancies <span className="text-danger">*</span></Form.Label>
-                        <Form.Control name="vacancies" placeholder="Enter Vacancies" type="text" inputMode="numeric" pattern="[0-9]*" value={formData.vacancies} onChange={handleInputChange} />
+                        <Form.Control name="vacancies" placeholder="Enter Vacancies" type="text" inputMode="numeric" pattern="[0-9]*" value={formData.vacancies} onChange={handleInputChange} disabled={isViewMode} />
                         <ErrorMessage>{errors.vacancies}</ErrorMessage>
                     </Col>
 
-                    <Col md={4}><Form.Label>Min Age <span className="text-danger">*</span></Form.Label><Form.Control name="minAge" type="text" inputMode="numeric" value={formData.minAge} onChange={(e) => {
+                    <Col md={4}><Form.Label>Min Age <span className="text-danger">*</span></Form.Label><Form.Control name="minAge" type="text" inputMode="numeric" value={formData.minAge} disabled={isViewMode} onChange={(e) => {
                         let value = e.target.value;
 
                         // allow only digits
@@ -248,7 +269,7 @@ import useViewIndent from "../hooks/useViewIndent";
                         });
                     }} />
                         <ErrorMessage>{errors.minAge}</ErrorMessage></Col>
-                    <Col md={4}><Form.Label>Max Age <span className="text-danger">*</span></Form.Label><Form.Control name="maxAge" type="text" inputMode="numeric" value={formData.maxAge} onChange={(e) => {
+                    <Col md={4}><Form.Label>Max Age <span className="text-danger">*</span></Form.Label><Form.Control name="maxAge" type="text" inputMode="numeric" disabled={isViewMode} value={formData.maxAge} onChange={(e) => {
                         let value = e.target.value;
 
                         value = value.replace(/\D/g, "");
@@ -262,7 +283,7 @@ import useViewIndent from "../hooks/useViewIndent";
 
                     <Col md={4}>
                         <Form.Label>Type of Employment <span className="text-danger">*</span></Form.Label>
-                        <Form.Select name="employmentType" value={formData.employmentType} onChange={handleInputChange}>
+                        <Form.Select name="employmentType" value={formData.employmentType} onChange={handleInputChange} disabled={isViewMode}>
                             <option value="">Select</option>
                             {employmentTypes.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
                         </Form.Select>
@@ -272,7 +293,7 @@ import useViewIndent from "../hooks/useViewIndent";
                     <Col md={4}><Form.Label>Contractual Period(Years)</Form.Label><Form.Control name="contractualPeriod" type="text" inputMode="numeric" value={formData.contractualPeriod} onChange={handleInputChange} disabled={!isContractEmployment} /></Col>
                     <Col md={4}>
                         <Form.Label>Grade / Scale <span className="text-danger">*</span></Form.Label>
-                        <Form.Select name="grade" value={formData.grade} onChange={handleInputChange}>
+                        <Form.Select name="grade" value={formData.grade} onChange={handleInputChange} disabled={isViewMode}>
                             <option value="">Select</option>
                             {jobGrades.map(g => <option key={g.id} value={g.id}>{g.code} {g.scale ? `- ${g.scale}` : ""}</option>)}
                         </Form.Select>
@@ -281,24 +302,24 @@ import useViewIndent from "../hooks/useViewIndent";
 
                     <Col md={4}>
                         <Form.Label>Enable Location Preference</Form.Label>
-                        <Form.Check type="switch" id="enable-location" checked={formData.enableLocation} onChange={handleInputChange} name="enableLocation" />
+                        <Form.Check type="switch" id="enable-location" checked={formData.enableLocation} onChange={handleInputChange} name="enableLocation" disabled={isViewMode} />
                     </Col>
 
                     <Col md={6}>
                         <div className="d-flex justify-content-between align-items-center mb-1 mandedu">
                             <Form.Label className="mb-0">Mandatory Education <span className="text-danger">*</span></Form.Label>
-                            <Button size="sm" onClick={() => onEducationClick("mandatory")} style={{ borderRadius: "10px" }}>+ Add</Button>
+                            <Button size="sm" disabled={isViewMode} onClick={() => onEducationClick("mandatory")} style={{ borderRadius: "10px" }}>+ Add</Button>
                         </div>
-                        <Form.Control as="textarea" rows={4} readOnly value={educationData.mandatory.text || ""} />
+                        <Form.Control as="textarea" rows={4} readOnly value={educationData.mandatory.text || ""} disabled={isViewMode} />
                         <ErrorMessage>{errors.mandatoryEducation}</ErrorMessage>
                     </Col>
 
                     <Col md={6}>
                         <div className="d-flex justify-content-between align-items-center mb-1 mandedu">
                             <Form.Label className="mb-0">Preferred Education <span className="text-danger">*</span></Form.Label>
-                            <Button size="sm" onClick={() => onEducationClick("preferred")} style={{ borderRadius: "10px" }}>+ Add</Button>
+                            <Button size="sm" disabled={isViewMode} onClick={() => onEducationClick("preferred")} style={{ borderRadius: "10px" }}>+ Add</Button>
                         </div>
-                        <Form.Control as="textarea" rows={4} readOnly value={educationData.preferred.text || ""} />
+                        <Form.Control as="textarea" rows={4} readOnly value={educationData.preferred.text || ""} disabled={isViewMode} />
                         <ErrorMessage>{errors.preferredEducation}</ErrorMessage>
                     </Col>
 
@@ -308,13 +329,13 @@ import useViewIndent from "../hooks/useViewIndent";
                             <Form.Label>{expType === 'mandatoryExperience' ? 'Mandatory' : 'Preferred'} Experience <span className="text-danger">*</span></Form.Label>
                             <Row className="g-2 mb-2">
                                 <Col md={6}>
-                                    <Form.Select value={formData[expType].years} onChange={(e) => handleInputChange({ target: { name: `${expType}.years`, value: e.target.value } })}>
+                                    <Form.Select disabled={isViewMode} value={formData[expType].years} onChange={(e) => handleInputChange({ target: { name: `${expType}.years`, value: e.target.value } })}>
                                         <option value="">Select Years</option>
                                         {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
                                     </Form.Select>
                                 </Col>
                                 <Col md={6}>
-                                    <Form.Select value={formData[expType].months} onChange={(e) => handleInputChange({ target: { name: `${expType}.months`, value: e.target.value } })}>
+                                    <Form.Select disabled={isViewMode} value={formData[expType].months} onChange={(e) => handleInputChange({ target: { name: `${expType}.months`, value: e.target.value } })}>
                                         <option value="">Select Months</option>
                                         {MONTH_OPTIONS.map(m => <option key={m} value={m}>{m}</option>)}
                                     </Form.Select>
@@ -323,7 +344,7 @@ import useViewIndent from "../hooks/useViewIndent";
                             <Form.Control
                                 as="textarea"
                                 rows={3}
-                                value={formData[expType].description}
+                                value={formData[expType].description} disabled={isViewMode}
                                 onChange={(e) => {
                                     let value = normalizeTitle(e.target.value);
 
@@ -365,7 +386,7 @@ import useViewIndent from "../hooks/useViewIndent";
                     <Col md={6}>
                         <Form.Label>Roles & Responsibilities <span className="text-danger">*</span></Form.Label>
                         <Form.Control
-                            as="textarea"
+                            as="textarea" disabled={isViewMode}
                             rows={5}
                             name="responsibilities"
                             value={formData.responsibilities}
@@ -400,7 +421,7 @@ import useViewIndent from "../hooks/useViewIndent";
                     </Col>
                     <Col md={3}>
                         <Form.Label>Medical Required <span className="text-danger">*</span></Form.Label>
-                        <Form.Select name="medicalRequired" value={formData.medicalRequired} onChange={handleInputChange}>
+                        <Form.Select name="medicalRequired" value={formData.medicalRequired} onChange={handleInputChange} disabled={isViewMode}>
                             <option value="">Select...</option>
                             <option value="yes">Yes</option>
                             <option value="no">No</option>
