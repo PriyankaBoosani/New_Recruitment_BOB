@@ -14,6 +14,7 @@ export const useCreateJobPosition = () => {
     approvedOn,
     requisitionId,
     indentFile,
+    indentName,
 
     currentState,
     stateDistributions,
@@ -33,6 +34,7 @@ export const useCreateJobPosition = () => {
         requisitionId,
         approvedBy,
         approvedOn,
+        indentName,
         currentState,
         stateDistributions,
         reservationCategories,

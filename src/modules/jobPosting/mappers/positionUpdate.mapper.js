@@ -137,6 +137,7 @@ export const mapAddPositionToUpdateDto = ({
     employmentType: formData.employmentType,
     contractYears: Number(formData.contractualPeriod),
     gradeId: formData.grade,
+    indentName: formData.indentName,
     isLocationPreferenceEnabled: formData.enableLocation,
     isLocationWise: formData.enableStateDistribution,
     rolesResponsibilities: formData.responsibilities,

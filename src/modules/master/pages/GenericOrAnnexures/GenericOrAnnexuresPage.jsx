@@ -8,6 +8,7 @@ import { useGenericOrAnnexures } from "./hooks/useGenericOrAnnexures";
 import GenericOrAnnexuresTable from "./components/GenericOrAnnexuresTable";
 import GenericOrAnnexuresFormModal from "./components/GenericOrAnnexuresFormModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
+import masterApiService from "../../../jobPosting/services/masterApiService";
 
 import {
   validateGenericOrAnnexuresForm
@@ -40,25 +41,25 @@ const GenericOrAnnexuresPage = () => {
   const [errors, setErrors] = useState({});
 
   /* ================= INPUT CHANGE ================= */
-const handleInputChange = (e) => {
-  const { name, value, files } = e.target;
+  const handleInputChange = (e) => {
+    const { name, value, files } = e.target;
 
-  setFormData(prev => ({
-    ...prev,
-    [name]:
-      name === "file"
-        ? files?.[0] ?? value ?? null
-        : value
-  }));
-
-  // DO NOT auto-clear file errors here
-  if (name !== "file") {
-    setErrors(prev => ({
+    setFormData(prev => ({
       ...prev,
-      [name]: ""
+      [name]:
+        name === "file"
+          ? files?.[0] ?? value ?? null
+          : value
     }));
-  }
-};
+
+    // DO NOT auto-clear file errors here
+    if (name !== "file") {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ""
+      }));
+    }
+  };
 
 
 
@@ -102,18 +103,44 @@ const handleInputChange = (e) => {
     setShowModal(false);
   };
 
-  /* ================= DOWNLOAD ================= */
- const handleDownload = (item) => {
-  if (!item?.fileUrl) return;
+  //   /* ================= DOWNLOAD ================= */
+  //  const handleDownload = (item) => {
+  //   if (!item?.fileUrl) return;
 
-  const a = document.createElement("a");
-  a.href = item.fileUrl;
-  a.download = item.fileName;
-  a.target = "_blank";
-  a.click();
+  //   const a = document.createElement("a");
+  //   a.href = item.fileUrl;
+  //   a.download = item.fileName;
+  //   a.target = "_blank";
+  //   a.click();
+  // };
+
+  const handleDownload = async (item) => {
+  if (!item?.fileUrl) {
+    console.error("No fileUrl present");
+    return;
+  }
+
+  try {
+    // 1️⃣ Get SAS URL from backend
+    const sasUrl = await masterApiService.getSasUrl(item.fileUrl);
+
+    if (!sasUrl) {
+      throw new Error("SAS URL not returned");
+    }
+
+    // 2️⃣ Let the browser download it (NO fetch, NO CORS)
+    const a = document.createElement("a");
+    a.href = sasUrl;
+    a.download = item.fileName || "download.pdf";
+    a.target = "_blank"; // optional, helps some browsers
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+  } catch (err) {
+    console.error("Download failed:", err);
+  }
 };
-
-
   /* ================= DELETE ================= */
   const openDeleteConfirm = (item) => {
     setDeleteTarget(item);
@@ -146,16 +173,16 @@ const handleInputChange = (e) => {
       </div>
 
       {/* ===== TABLE ===== */}
-    <GenericOrAnnexuresTable
-  data={items}
-  onView={openView}
-  onDownload={handleDownload}
-  onDelete={openDeleteConfirm}
-  currentPage={currentPage}
-  setCurrentPage={setCurrentPage}
-   itemsPerPage={itemsPerPage}
-  setItemsPerPage={setItemsPerPage}
-/>
+      <GenericOrAnnexuresTable
+        data={items}
+        onView={openView}
+        onDownload={handleDownload}
+        onDelete={openDeleteConfirm}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        itemsPerPage={itemsPerPage}
+        setItemsPerPage={setItemsPerPage}
+      />
 
 
       {/* ===== ADD / VIEW MODAL ===== */}
@@ -166,7 +193,7 @@ const handleInputChange = (e) => {
         formData={formData}
         handleInputChange={handleInputChange}
         errors={errors}
-         setErrors={setErrors} 
+        setErrors={setErrors}
         handleSave={handleSave}
       />
 

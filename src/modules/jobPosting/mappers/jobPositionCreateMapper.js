@@ -4,6 +4,7 @@ export const mapAddPositionToCreateDto = ({
   requisitionId,
   approvedBy,
   approvedOn,
+  indentName,
 
   currentState,
   stateDistributions = [],
@@ -79,6 +80,7 @@ export const mapAddPositionToCreateDto = ({
 
     employmentType: formData.employmentType,
     gradeId: formData.grade,
+    indentName: formData.indentName,
 
     contractYears: Number(formData.contractualPeriod || 0),
 

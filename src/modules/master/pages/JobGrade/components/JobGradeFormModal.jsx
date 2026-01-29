@@ -23,17 +23,17 @@ const JobGradeFormModal = ({
   show,
   onHide,
   isEditing,
-   isViewing, 
+  isViewing,
   activeTab,
   setActiveTab,
   formData,
-   setFormData,
+  setFormData,
   handleInputChange,
   errors,
-  setErrors,  
+  setErrors,
   handleSave,
   handleImport,
-  editingId,      
+  editingId,
   t,
   ...importProps
 }) => {
@@ -41,26 +41,26 @@ const JobGradeFormModal = ({
     <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
       <Modal.Header closeButton className="modal-header-custom">
         <div>
-        <Modal.Title>
-  {isViewing
-    ? t("view")
-    : isEditing
-    ? t("edit")
-    : t("added")}
-</Modal.Title>
+          <Modal.Title>
+            {isViewing
+              ? t("view")
+              : isEditing
+                ? t("edit")
+                : t("added")}
+          </Modal.Title>
 
           {!isEditing && !isViewing && (
-  <p className="mb-0 small text-muted para">
-    {t("choose_add_method")}
-  </p>
-)}
+            <p className="mb-0 small text-muted para">
+              {t("choose_add_method")}
+            </p>
+          )}
 
 
         </div>
       </Modal.Header>
 
       <Modal.Body className="p-4">
-       {!isViewing && !isEditing && (
+        {!isViewing && !isEditing && (
 
           <div className="tab-buttons mb-4">
             <Button
@@ -82,223 +82,223 @@ const JobGradeFormModal = ({
         )}
 
         {activeTab === 'manual' ? (
-         <Form
-  onSubmit={
-    isViewing
-      ? (e) => {
-          e.preventDefault();
-          onHide();
-        }
-      : handleSave
-  }
->
+          <Form
+            onSubmit={
+              isViewing
+                ? (e) => {
+                  e.preventDefault();
+                  onHide();
+                }
+                : handleSave
+            }
+          >
 
             <Row className="g-3">
               <Col md={6}>
                 <Form.Group>
-                   <Form.Label>
-                     {t("scale")} <span className="text-danger">*</span>
-                   </Form.Label>
-                {isViewing ? (
-  <div className="form-control-view">
-    {formData.scale || "-"}
-  </div>
-) : (
-<Form.Control
-  name="scale"
-  value={formData.scale}
-  className="form-control-custom"
-  placeholder={t("jobGrade:enter_scale")}
-onChange={(e) =>
-  handleValidatedInput({
-    e,
-    fieldName: "scale",
-    setFormData,
-    setErrors,
-    pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
-    errorMessage: t("validation:invalid_scale")
-  })
-}
+                  <Form.Label>
+                    {t("scale")} <span className="text-danger">*</span>
+                  </Form.Label>
+                  {isViewing ? (
+                    <div className="form-control-view">
+                      {formData.scale || "-"}
+                    </div>
+                  ) : (
+                    <Form.Control
+                      name="scale"
+                      value={formData.scale}
+                      className="form-control-custom"
+                      placeholder={t("jobGrade:enter_scale")}
+                      onChange={(e) =>
+                        handleValidatedInput({
+                          e,
+                          fieldName: "scale",
+                          setFormData,
+                          setErrors,
+                          pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
+                          errorMessage: t("validation:invalid_scale")
+                        })
+                      }
 
 
-/>
+                    />
 
 
-)}
+                  )}
 
-{!isViewing && <ErrorMessage>{errors.scale}</ErrorMessage>}
+                  {!isViewing && <ErrorMessage>{errors.scale}</ErrorMessage>}
 
                 </Form.Group>
               </Col>
 
               <Col md={6}>
-               <Form.Group>
-  <Form.Label>
-    {t("gradeCode")} <span className="text-danger">*</span>
-  </Form.Label>
+                <Form.Group>
+                  <Form.Label>
+                    {t("gradeCode")} <span className="text-danger">*</span>
+                  </Form.Label>
 
-  {isViewing ? (
-    <div className="form-control-view">
-      {formData.gradeCode || "-"}
-    </div>
-  ) : (
-  <Form.Control
-  name="gradeCode"
-  value={formData.gradeCode || ""}
-  className="form-control-custom"
-  placeholder={t("jobGrade:enter_grade_code")}
- onChange={(e) =>
-  handleValidatedInput({
-    e,
-    fieldName: "gradeCode",
-    setFormData,
-    setErrors,
-    pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
-    errorMessage: t("validation:invalid_grade_code")
-  })
-}
+                  {isViewing ? (
+                    <div className="form-control-view">
+                      {formData.gradeCode || "-"}
+                    </div>
+                  ) : (
+                    <Form.Control
+                      name="gradeCode"
+                      value={formData.gradeCode || ""}
+                      className="form-control-custom"
+                      placeholder={t("jobGrade:enter_grade_code")}
+                      onChange={(e) =>
+                        handleValidatedInput({
+                          e,
+                          fieldName: "gradeCode",
+                          setFormData,
+                          setErrors,
+                          pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
+                          errorMessage: t("validation:invalid_grade_code")
+                        })
+                      }
 
-/>
-
-
-  )}
-
-  {!isViewing && <ErrorMessage>{errors.gradeCode}</ErrorMessage>}
-</Form.Group>
-
-              </Col>
-
-              <Col md={6}>
-               <Form.Group>
-  <Form.Label>
-    {t("minSalary")} <span className="text-danger">*</span>
-  </Form.Label>
-
-  {isViewing ? (
-    <div className="form-control-view">
-       {formatSalary(formData.minSalary) || "-"}
-    </div>
-  ) : (
-<Form.Control
-  name="minSalary"
-  value={formatSalary(formData.minSalary)}
-  className="form-control-custom"
-  placeholder={t("jobGrade:enter_min_salary")}
-  onChange={(e) => {
-    const rawValue = e.target.value.replace(/,/g, "").replace(/\D/g, "");
-
-    handleValidatedInput({
-      e: { target: { value: rawValue } },
-      fieldName: "minSalary",
-      setFormData,
-      setErrors,
-      pattern: INPUT_PATTERNS.NUMBERS_ONLY,
-      errorMessage: t("validation:invalid_salary")
-    });
-  }}
-/>
+                    />
 
 
-  )}
+                  )}
 
-  {!isViewing && <ErrorMessage>{errors.minSalary}</ErrorMessage>}
-</Form.Group>
+                  {!isViewing && <ErrorMessage>{errors.gradeCode}</ErrorMessage>}
+                </Form.Group>
 
               </Col>
 
               <Col md={6}>
-               <Form.Group>
-  <Form.Label>
-    {t("maxSalary")} <span className="text-danger">*</span>
-  </Form.Label>
+                <Form.Group>
+                  <Form.Label>
+                    {t("minSalary")} <span className="text-danger">*</span>
+                  </Form.Label>
 
-  {isViewing ? (
-    <div className="form-control-view">
-  
-{formatSalary(formData.maxSalary) || "-"}
+                  {isViewing ? (
+                    <div className="form-control-view">
+                      {formatSalary(formData.minSalary) || "-"}
+                    </div>
+                  ) : (
+                    <Form.Control
+                      name="minSalary"
+                      value={formatSalary(formData.minSalary)}
+                      className="form-control-custom"
+                      placeholder={t("jobGrade:enter_min_salary")}
+                      onChange={(e) => {
+                        const rawValue = e.target.value.replace(/,/g, "").replace(/\D/g, "");
 
-    </div>
-  ) : (
- <Form.Control
-  name="maxSalary"
-  value={formatSalary(formData.maxSalary)}
-  className="form-control-custom"
-  placeholder={t("jobGrade:enter_max_salary")}
-  onChange={(e) => {
-    const rawValue = e.target.value.replace(/,/g, "").replace(/\D/g, "");
+                        handleValidatedInput({
+                          e: { target: { value: rawValue } },
+                          fieldName: "minSalary",
+                          setFormData,
+                          setErrors,
+                          pattern: INPUT_PATTERNS.NUMBERS_ONLY,
+                          errorMessage: t("validation:invalid_salary")
+                        });
+                      }}
+                    />
 
-    handleValidatedInput({
-      e: { target: { value: rawValue } },
-      fieldName: "maxSalary",
-      setFormData,
-      setErrors,
-      pattern: INPUT_PATTERNS.NUMBERS_ONLY,
-      errorMessage: t("validation:invalid_salary")
-    });
-  }}
-/>
 
-  )}
+                  )}
 
-  {!isViewing && <ErrorMessage>{errors.maxSalary}</ErrorMessage>}
-</Form.Group>
+                  {!isViewing && <ErrorMessage>{errors.minSalary}</ErrorMessage>}
+                </Form.Group>
+
+              </Col>
+
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>
+                    {t("maxSalary")} <span className="text-danger">*</span>
+                  </Form.Label>
+
+                  {isViewing ? (
+                    <div className="form-control-view">
+
+                      {formatSalary(formData.maxSalary) || "-"}
+
+                    </div>
+                  ) : (
+                    <Form.Control
+                      name="maxSalary"
+                      value={formatSalary(formData.maxSalary)}
+                      className="form-control-custom"
+                      placeholder={t("jobGrade:enter_max_salary")}
+                      onChange={(e) => {
+                        const rawValue = e.target.value.replace(/,/g, "").replace(/\D/g, "");
+
+                        handleValidatedInput({
+                          e: { target: { value: rawValue } },
+                          fieldName: "maxSalary",
+                          setFormData,
+                          setErrors,
+                          pattern: INPUT_PATTERNS.NUMBERS_ONLY,
+                          errorMessage: t("validation:invalid_salary")
+                        });
+                      }}
+                    />
+
+                  )}
+
+                  {!isViewing && <ErrorMessage>{errors.maxSalary}</ErrorMessage>}
+                </Form.Group>
 
               </Col>
 
               <Col xs={12}>
                 <Form.Group>
-                   <Form.Label>
+                  <Form.Label>
                     {t("description")} <span className="text-danger">*</span>
-                   </Form.Label>
-             
-                 {isViewing ? (
-  <div
-    className="form-control-view"
-    style={{ whiteSpace: "pre-line" }}
-  >
-    {formData.description || "-"}
-  </div>
-) : (
-  <Form.Control
-    as="textarea"
-    rows={3}
-    name="description"
-    value={formData.description}
-    onChange={handleInputChange}
-    className="form-control-custom"
-    placeholder={t("jobGrade:enter_description")}
-  />
-)}
-{!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
+                  </Form.Label>
+
+                  {isViewing ? (
+                    <div
+                      className="form-control-view"
+                      style={{ whiteSpace: "pre-line" }}
+                    >
+                      {formData.description || "-"}
+                    </div>
+                  ) : (
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      className="form-control-custom"
+                      placeholder={t("jobGrade:enter_description")}
+                    />
+                  )}
+                  {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
 
                 </Form.Group>
               </Col>
             </Row>
 
-        <Modal.Footer className="px-0 pt-3 pb-0 modal-footer-custom">
-  {isViewing ? (
-    <Button variant="outline-secondary" onClick={onHide}>
-      {t("close")}
-    </Button>
-  ) : (
-    <>
-      <Button variant="outline-secondary" onClick={onHide}>
-        {t("cancel")}
-      </Button>
+            <Modal.Footer className="px-0 pt-3 pb-0 modal-footer-custom">
+              {isViewing ? (
+                <Button variant="outline-secondary" onClick={onHide}>
+                  {t("close")}
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline-secondary" onClick={onHide}>
+                    {t("cancel")}
+                  </Button>
 
-      <Button variant="primary" type="submit">
-        {t("save")}
-      </Button>
-    </>
-  )}
-</Modal.Footer>
+                  <Button variant="primary" type="submit">
+                    {t("save")}
+                  </Button>
+                </>
+              )}
+            </Modal.Footer>
 
 
           </Form>
         ) : (
           <>
-            <JobGradeImportModal t={t} {...importProps}  
-              onClose={onHide}  />  
+            <JobGradeImportModal t={t} {...importProps}
+              onClose={onHide} />
             {/* <Modal.Footer className="px-0 modal-footer-custom">
               <Button variant="outline-secondary" onCli ck={onHide}>
                 {t("cancel")}

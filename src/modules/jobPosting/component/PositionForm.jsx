@@ -7,7 +7,8 @@ import edit_icon from "../../../assets/edit_icon.png"
 import view_icon from "../../../assets/view_icon.png"
 import file_icon from "../../../assets/file_icon.png"
 import { normalizeTitle, TITLE_ALLOWED_PATTERN } from "../validations/validateAddPosition";
-import useViewIndent from "../hooks/useViewIndent"; const PositionForm = ({
+import useViewIndent from "../hooks/useViewIndent";
+ const PositionForm = ({
     isViewMode = false,
     formData,
     errors,
@@ -31,7 +32,7 @@ import useViewIndent from "../hooks/useViewIndent"; const PositionForm = ({
     ALLOWED_EXTENSIONS,
     MAX_FILE_SIZE_MB
 }) => {
-    const viewIndent = useViewIndent(existingIndentPath);
+    const viewIndent = useViewIndent(existingIndentPath, existingIndentName);
     const isContractEmployment =
         employmentTypes.find(
             t =>

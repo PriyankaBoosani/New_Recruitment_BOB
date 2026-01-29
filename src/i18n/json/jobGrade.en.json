@@ -66,7 +66,8 @@
   "remove": "Remove",
  
   "importing": "Importing...",
-  "import_error": "Failed to import Job Grades"
+  "import_error": "Failed to import Job Grades",
+  "digits_allowed": "Only 10 digits allowed"
 
   
   
