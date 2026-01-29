@@ -43,9 +43,9 @@
   background: none;
   border: none;
   padding: 12px 0;
-  font-size: 14px;
-  font-weight: 500;
-  color: #666;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #6A7282;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -59,12 +59,13 @@
 }
 
 .interview-panel-container .tab:hover {
-  color: #ff6a00;
+  color: #6A7282;
 }
 
 .interview-panel-container .tab.active {
-  color: #ff6a00;
-  font-weight: 600;
+  color: #F26522;
+  font-weight: 400;
+  font-size: 0.875rem;
 }
 
 .interview-panel-container .tab.active::after {
@@ -74,7 +75,7 @@
   left: 0;
   width: 100%;
   height: 3px;
-  background-color: #ff6a00;
+  background-color: #F26522;
   border-radius: 3px 3px 0 0;
 }
 
@@ -97,13 +98,13 @@
   border-radius: 6px;
   padding: 20px;
 }
-
+/* 
 .interview-panel-container .panel-form-card h3 {
   margin: 0 0 5px 0;
   font-size: 16px;
   font-weight: 600;
   color: #333;
-}
+} */
 
 .interview-panel-container .card-subtitle {
   font-size: 13px;
@@ -112,15 +113,16 @@
 }
 
 .interview-panel-container .card-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #42579F;
   margin: 0 0 5px 0;
 }
 
 .interview-panel-container .card-subtitle {
-  font-size: 13px;
-  color: #666;
+  font-size: 0.75rem;
+  color: #717182;
+  font-weight: 400;
   margin: 0 0 20px 0;
 }
 
@@ -130,9 +132,9 @@
 
 .interview-panel-container .form-group label {
   display: block;
-  font-size: 13px;
-  font-weight: 500;
-  color: #555;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #404040;
   margin-bottom: 8px;
 }
 
@@ -141,15 +143,15 @@
   padding: 10px 12px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 0.875rem;
   transition: border-color 0.2s;
 }
 
-.interview-panel-container .form-control:focus {
+/* .interview-panel-container .form-control:focus {
   border-color: #ff6a00;
   outline: none;
   box-shadow: 0 0 0 2px rgba(255, 106, 0, 0.1);
-}
+} */
 
 /* Table Card */
 .interview-panel-container .panel-table-card {
@@ -161,12 +163,62 @@
   box-sizing: border-box;
 }
 
-.interview-panel-container .panel-table-card h3 {
+/* .interview-panel-container .panel-table-card h3 {
   margin: 0 0 20px 0;
   font-size: 16px;
   font-weight: 600;
   color: #333;
+} */
+.interview-panel-container .panel-form-actions {
+  display: flex;
+  justify-content: end;     /* center like the design */
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 16px;
 }
+.table-title{
+  font-size: 1rem;
+  font-weight: 500;
+  color: #42579F;
+}
+/* Action icons */
+.interview-panel-container .actions {
+  display: flex;
+  gap: 10px;
+  
+  margin-top: 12px;
+}
+/* 
+.interview-panel-container .icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}*/
+
+.interview-panel-container .table-icon-btn img {
+  width: 16px;
+  height: 16px;
+   background: transparent;
+  display: flex;
+  border: none;
+}
+
+/* .interview-panel-container .icon-btn.edit:hover {
+  border-color: #ff6a00;
+  background: rgba(255, 106, 0, 0.08);
+}
+
+.interview-panel-container .icon-btn.delete:hover {
+  border-color: #dc3545;
+  background: rgba(220, 53, 69, 0.08);
+}  */
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {
@@ -192,13 +244,14 @@
 .interview-panel-container .panel-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  margin-top:10px;
 }
 
 .interview-panel-container .panel-table th {
-  background-color: #f8f9fa;
-  color: #555;
-  font-weight: 600;
+  background-color: #42579F;
+  font-size:0.813rem;
+  color: #FFFFFF;
+  font-weight: 500;
   text-align: left;
   padding: 12px 15px;
   border-bottom: 1px solid #e0e0e0;
@@ -207,7 +260,9 @@
 .interview-panel-container .panel-table td {
   padding: 15px;
   border-bottom: 1px solid #f0f0f0;
-  color: #444;
+  color: #000000;
+  font-weight: 400;
+  font-size:0.813rem;
   vertical-align: middle;
 }
 
