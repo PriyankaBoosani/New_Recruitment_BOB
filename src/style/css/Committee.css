@@ -282,29 +282,39 @@
 	gap: 35px;
 }
 /* ICON BUTTONS */
-.icon-btn {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 1px solid #d5d9e5;
+.history-section .history-icon-btn {
+
+  border: none;              /* ✅ remove border */
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  padding: 0;
 }
 
-.icon-btn.edit {
+.history-icon-btn img {
+	width: 24px;
+	height: 24px;
+}
+.card-actions{
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  align-items: center; /* optional */
+}
+/* 
+.history-section .icon-btn.edit {
   color: #4f6fd6;
-}
+} */
 
-.icon-btn.delete {
+/* .history-section .icon-btn.delete {
   color: #d9534f;
-}
+} */
 
-.icon-btn:hover {
+/* .history-section .icon-btn:hover {
   background: #f5f6fa;
-}
+} */
 .assign-position-title{
   font-size: 1rem;
   font-weight: 500;

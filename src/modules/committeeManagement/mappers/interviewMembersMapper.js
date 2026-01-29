@@ -12,18 +12,17 @@
 //   }));
 // };
 
-
 export const mapInterviewMembersApi = (apiResponse) => {
   const list = Array.isArray(apiResponse?.data)
     ? apiResponse.data
+    : Array.isArray(apiResponse)
+    ? apiResponse
     : [];
 
-  return list
-    .filter(item => !item.assigned)   // 👈 REMOVE assigned users
-    .map(item => ({
-      value: item.userDTO.userId,
-      label: item.userDTO.name,
-      email: item.userDTO.email,
-      role: item.userDTO.role
-    }));
+  return list.map(user => ({
+    value: user.userid,              // ✅ correct key
+    label: user.name, // nicer display
+    email: user.email,
+    role: user.role
+  }));
 };

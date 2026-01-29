@@ -1,6 +1,7 @@
 import React from 'react';
 import { FiCalendar, FiUsers, FiEdit2, FiTrash2, FiFilter } from 'react-icons/fi';
-
+import edit_icon from "../../../assets/edit_icon.png"
+import delete_icon from "../../../assets/delete_icon.png"
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -40,7 +41,7 @@ const CommitteeHistoryList = ({
       {history.map((item) => (
         <div key={item.id} className="history-card">
           {/* ===== TOP ROW ===== */}
-          <div className="d-flex justify-content-between align-items-start">
+          <div className="d-flex justify-content-between align-items-center">
             <div className="history-title">
               <span className="history-requisition-code">
                 {item.requisitionCode}
@@ -51,18 +52,18 @@ const CommitteeHistoryList = ({
               </span>
             </div>
 
-            <div className="card-actions d-flex gap-2">
+            <div className="card-actions">
               <button
-                className="icon-btn edit"
+                className="history-icon-btn edit"
                 onClick={() => onEdit(item)}
               >
-                <FiEdit2 />
+                {/* <FiEdit2 /> */}  <img src={edit_icon} alt="Edit" />
               </button>
               <button
-                className="icon-btn delete"
+                className="history-icon-btn delete"
                 onClick={() => onDelete(item)}
               >
-                <FiTrash2 />
+                {/* <FiTrash2 /> */}  <img src={delete_icon} alt="Delete" />
               </button>
             </div>
           </div>

@@ -28,16 +28,11 @@ export const useInterviewPanel = () => {
   setLoading(true);
   try {
     // 1️⃣ Committees (critical)
-    const commRes = await committeeManagementService.getAllusers();
+    const commRes = await masterApiService.getMasterDropdownData();
     console.log("commRes", commRes);
 
     const list = commRes?.data || [];
-    const map = {};
-    list.forEach(c => {
-      map[c.interviewCommitteeId] = c.committeeName;
-    });
-
-    setCommitteeMap(map);
+ 
     setCommunityOptions(
       list.map(c => ({
         id: c.interviewCommitteeId,
@@ -49,9 +44,14 @@ export const useInterviewPanel = () => {
 
     // 2️⃣ Members (non-blocking)
     try {
-      const memRes = await masterApiService.getActiveInterviewMembers();
-      console.log("memRes", memRes);
-      setMembersOptions(mapInterviewMembersApi(memRes));
+      const memRes = await committeeManagementService.getAllusers();
+        console.log("memRes", memRes);
+
+      const mappedMembers = mapInterviewMembersApi(memRes);
+
+      setMembersOptions(mappedMembers);
+
+      console.log("mappedMembers", mappedMembers);
     } catch (err) {
       console.error("Members API failed", err);
       setMembersOptions([]);
@@ -64,57 +64,84 @@ export const useInterviewPanel = () => {
 }, []);
 
 
-  const handleSave = useCallback(async (isEditing, editingId) => {
-    const result = validateInterviewPanelForm(formData);
-    if (!result.valid) {
-      setErrors(result.errors);
-      return false;
-    }
+  // const handleSave = useCallback(async (isEditing, editingId) => {
+  //   const result = validateInterviewPanelForm(formData);
+  //   if (!result.valid) {
+  //     setErrors(result.errors);
+  //     return false;
+  //   }
 
-    const payload = preparePanelPayload(
-      formData,
-      membersOptions,
-      isEditing,
-      editingId
-    );
+  //   const payload = preparePanelPayload(
+  //     formData,
+  //     membersOptions,
+  //     isEditing,
+  //     editingId
+  //   );
+
+  //   try {
+  //     const res = isEditing
+  //       ? await masterApiService.updateInterviewPanel(editingId, payload)
+  //       : await masterApiService.addInterviewPanel(payload);
+
+  //     if (!res?.success) {
+  //       toast.error(res?.message || "Save failed");
+  //       return false;
+  //     }
+
+  //     const uiItem = mapInterviewPanelsApiToUI(
+  //       [res.data],
+  //       committeeMap
+  //     )[0];
+
+  //     if (isEditing) {
+  //       //  UPDATE IN PLACE
+  //       setPanels(prev =>
+  //         prev.map(p =>
+  //           String(p.id) === String(editingId)
+  //             ? { ...p, ...uiItem }
+  //             : p
+  //         )
+  //       );
+  //       toast.success(t("interviewPanel:interviewPanelUpdated"));
+  //     } else {
+  //       //  ADD ON TOP
+  //       setPanels(prev => [uiItem, ...prev]);
+  //       toast.success(t("interviewPanel:interviewPanelAdded"));
+  //     }
+
+  //     return true;
+  //   } catch (err) {
+  //     toast.error("Something went wrong");
+  //     return false;
+  //   }
+  // }, [formData, membersOptions, committeeMap]);
+
+
+
+ const handleSave = async () => {
+  const payload = {
+    interviewPanelsDTO: {
+      panelName: formData.name,
+      description: "", // add if you have description field
+      committeeId: formData.community,
+      interviewPanelId: null // or existing ID if editing
+    },
+    interviewerIds: formData.members
+  };
+
+  console.log("SAVE PAYLOAD 👉", payload);
 
     try {
-      const res = isEditing
-        ? await masterApiService.updateInterviewPanel(editingId, payload)
-        : await masterApiService.addInterviewPanel(payload);
-
-      if (!res?.success) {
-        toast.error(res?.message || "Save failed");
-        return false;
-      }
-
-      const uiItem = mapInterviewPanelsApiToUI(
-        [res.data],
-        committeeMap
-      )[0];
-
-      if (isEditing) {
-        //  UPDATE IN PLACE
-        setPanels(prev =>
-          prev.map(p =>
-            String(p.id) === String(editingId)
-              ? { ...p, ...uiItem }
-              : p
-          )
-        );
-        toast.success(t("interviewPanel:interviewPanelUpdated"));
-      } else {
-        //  ADD ON TOP
-        setPanels(prev => [uiItem, ...prev]);
-        toast.success(t("interviewPanel:interviewPanelAdded"));
-      }
-
-      return true;
+      const res= await masterApiService.addInterviewPanel(payload);
+      console.log("res",res);
+      toast.success("Panel created successfully");
     } catch (err) {
-      toast.error("Something went wrong");
-      return false;
+      console.error(err);
+      toast.error("Failed to create panel");
     }
-  }, [formData, membersOptions, committeeMap]);
+};
+
+
 
   const handleDelete = useCallback(async (id) => {
     const res = await masterApiService.deleteInterviewPanel(id);
