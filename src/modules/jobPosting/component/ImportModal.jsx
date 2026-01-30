@@ -56,9 +56,8 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
       resetModalState();
       onHide();
 
-      // ✅ REDIRECT TO JOB LISTING PAGE
+      //  REDIRECT TO JOB LISTING PAGE
       navigate("/job-posting");
-      // ⬆️ replace with your actual listing route if different
 
     } else {
       const errorMsg =
@@ -165,16 +164,16 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
 
           <div className="text-center m-0 import-area small">
             Download Template{" "}
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                downloadPositionTemplate();
-              }}
-              className="text-primary text-decoration-none btnfont"
-            >
-              XLSX
-            </a>
+           
+            <button
+            type="button"
+            onClick={downloadPositionTemplate}
+            className="btn btn-link p-0 text-primary text-decoration-none btnfont"
+            style={{ cursor: 'pointer' }}
+            disabled={loading}
+          >
+            {" "}XLSX
+          </button>
           </div>
         </div>
       </Modal.Body>

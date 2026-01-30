@@ -5,7 +5,6 @@ import { validateEducationModal } from "../validations/validateEducationModal";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import delete_icon from "../../../assets/delete_icon.png"
 
-
 const createRow = () => ({
     educationTypeId: "",
     educationQualificationsId: "",
@@ -72,7 +71,7 @@ export default function EducationModal({
         const copy = [...rows];
         copy[i][field] = value;
 
-        // 🔥 if degree changes, wipe specialization
+        // if degree changes, wipe specialization
         if (field === "educationQualificationsId") {
             copy[i].specializationId = "";
         }
@@ -89,7 +88,6 @@ export default function EducationModal({
         });
     };
 
-
     const removeRow = (index) => {
         setRows(prev =>
             prev.length > 1
@@ -103,7 +101,6 @@ export default function EducationModal({
             s => s.educationQualificationsId === degreeId
         );
     };
-
 
     const certText = certIds
         .map(id => certifications.find(c => c.id === id)?.name)
