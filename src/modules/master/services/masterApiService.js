@@ -194,12 +194,12 @@ const masterApiService = {
   deleteRelaxationType: (id) => apis.delete(`/relaxation-type/delete/${id}`),
 
   /* Interview Panels */
-  getInterviewPanels: () => apis.get("/interview-panels/all"),
+  getInterviewPanels: () => apis.get("/interview-panels/get-all"),
   addInterviewPanel: (data) => apis.post("/interview-panels/add", data),
   updateInterviewPanel: (id, data) => apis.put(`/interview-panels/update/${id}`, data),
   deleteInterviewPanel: (id) => apis.delete(`/interview-panels/delete/${id}`),
   getActiveInterviewMembers: () => apis.get("/interview-panels/active-members"),
-  getInterviewPanelById: (id) => apis.get(`/interview-panels/${id}`),
+  getInterviewPanelById: (id) => apis.get(`/interview-panels/get-by-id/${id}`),
 
 
   /* Optional master all */

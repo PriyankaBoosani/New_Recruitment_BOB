@@ -1,7 +1,8 @@
 import React from "react";
 import edit_icon from "../../../assets/edit_icon.png"
 import delete_icon from "../../../assets/delete_icon.png"
-const InterviewPanelTable = () => {
+const InterviewPanelTable = ( { panels, onEdit, onDelete }) => {
+  console.log("panels", panels);
   return (
     <>
       <div className="table-header">
@@ -20,33 +21,29 @@ const InterviewPanelTable = () => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Interview Panel 1</td>
-            <td>Interview</td>
-            <td>Barat T, Naresh P, Jagadeesh S</td>
-            <td className="actions">
+           {panels.map((panel, index) => (
+            <tr key={panel.id}>
+              <td>{index + 1}</td>
+              <td>{panel.panelName}</td>
+              <td>{panel.panelType}</td>
+              <td>{panel.members}</td>
+              <td className="actions">
                 <button
                   className="table-icon-btn edit"
-                  title="Edit Panel"
-                  onClick={() => {
-                    // TODO: hook edit logic later
-                  }}
+                 onClick={() => onEdit(panel.id)}
                 >
                   <img src={edit_icon} alt="Edit" />
                 </button>
 
                 <button
                   className="table-icon-btn delete"
-                  title="Delete Panel"
-                  onClick={() => {
-                    // TODO: hook delete logic later
-                  }}
+                  onClick={() => onDelete(panel.id)}
                 >
                   <img src={delete_icon} alt="Delete" />
                 </button>
               </td>
-          </tr>
+            </tr>
+          ))}
         </tbody>
       </table>
 

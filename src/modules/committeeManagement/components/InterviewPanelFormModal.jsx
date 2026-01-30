@@ -11,7 +11,7 @@ const InterviewPanelFormModal = ({
   console.log("communityOptions", communityOptions);
   return (
     <>
-      <h5 className="card-title">Create New Panel</h5>
+      <span className="card-title">Create New Panel</span>
       <p className="card-subtitle">Create and manage panels</p>
 
       {/* Panel Name */}
@@ -86,7 +86,7 @@ const InterviewPanelFormModal = ({
           className="btn btn-primary"
           onClick={onSave}
         >
-          Save Panel
+          {formData.id ? "Update Panel" : "Save Panel"}
         </button>
       </div>
     </>

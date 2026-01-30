@@ -224,14 +224,13 @@ const renderAvailableCommittee = (committee, type) => (
 
           </Card.Body>
         </Card>
-<Card>
+      {/* <Card>
         <Card.Body>
          
           {showHistory && <CommitteeHistoryList />}
-          {/* Existing content */}
-          
+        
         </Card.Body>
-      </Card>
+      </Card> */}
       </Card>
     </div>
   );

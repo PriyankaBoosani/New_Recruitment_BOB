@@ -14,11 +14,18 @@ const InterviewPanelPage = () => {
     loading,
     communityOptions,
     membersOptions,
+    formData,
+    setFormData,
+    errors,
+    setErrors,
+    // editAssignedMembers,
+    // setEditAssignedMembers,
+
     initData,
+    fetchPanels, // ✅ RETURNED
     handleSave,
     handleDelete,
-    formData,
-    setFormData
+     handleEdit
   } = useInterviewPanel();
 
   useEffect(() => {
@@ -68,9 +75,9 @@ const InterviewPanelPage = () => {
               <div className="panel-table-section">
                 <div className="panel-table-card">
                   <InterviewPanelTable
-                    panels={panels}
-                    loading={loading}
-                    onDelete={handleDelete}
+                     panels={panels}
+                     onEdit={handleEdit}
+                      onDelete={handleDelete}
                   />
                 </div>
               </div>
