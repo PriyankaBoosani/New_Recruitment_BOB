@@ -6,17 +6,14 @@ import { useTranslation } from "react-i18next";
 import { useCategories } from '../hooks/useCategories';
 
 const CategoryImportModal = ({
-  onClose = () => {},
-  onSuccess = () => {}
+  onClose = () => { },
+  onSuccess = () => { }
 }) => {
   const { t } = useTranslation(["category"]);
   const { bulkAddCategories, downloadCategoryTemplate, loading } = useCategories();
-
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState('');
   const [errorDetails, setErrorDetails] = useState([]);
-
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const isExcel = file && (
@@ -55,16 +52,8 @@ const CategoryImportModal = ({
         <div className="text-center mb-3">
           <div
             style={{
-              width: 72,
-              height: 72,
-              borderRadius: 12,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: '#fff',
-              marginBottom: '1rem'
-            }}
-          >
+              width: 72, height: 72, borderRadius: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', marginBottom: '1rem'
+            }} >
             <UploadIcon size={32} />
           </div>
 
@@ -76,50 +65,32 @@ const CategoryImportModal = ({
             {t("category:support_xlsx")}
           </p>
         </div>
-{/* 
+      
         {error && (
-  <Alert variant="danger">
-    <div>{error}</div>
+          <Alert variant="danger">
+            {/* Summary message */}
+            <div className="fw-semibold">
+              {error}
+            </div>
 
-    {errorDetails.length > 0 && (
-      <ul className="mt-2 mb-0">
-        {errorDetails.map((msg, idx) => (
-          <li key={idx}>{msg}</li>
-        ))}
-      </ul>
-    )}
-  </Alert>
-)} */}
-
-
-{error && (
-  <Alert variant="danger">
-    {/* Summary message */}
-    <div className="fw-semibold">
-      {error}
-    </div>
-
-    {/* Scrollable error list */}
-    {errorDetails.length > 0 && (
-      <div
-        className="mt-2"
-        style={{
-          maxHeight: "150px",
-          overflowY: "auto"
-        }}
-      >
-        <ul className="mb-0">
-          {errorDetails.map((msg, idx) => (
-            <li key={idx}>{msg}</li>
-          ))}
-        </ul>
-      </div>
-    )}
-  </Alert>
-)}
-
-
-
+            {/* Scrollable error list */}
+            {errorDetails.length > 0 && (
+              <div
+                className="mt-2"
+                style={{
+                  maxHeight: "150px",
+                  overflowY: "auto"
+                }}
+              >
+                <ul className="mb-0">
+                  {errorDetails.map((msg, idx) => (
+                    <li key={idx}>{msg}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </Alert>
+        )}
         <input
           id="upload-xlsx-cat"
           type="file"
@@ -163,17 +134,15 @@ const CategoryImportModal = ({
 
         <div className="text-center mb-3 import-area small">
           {t("category:download_template")}:
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              downloadCategoryTemplate();
-            }}
-            className="text-primary text-decoration-none btnfont"
+          <button
+            type="button"
+            onClick={downloadCategoryTemplate}
+            className="btn btn-link p-0 text-primary text-decoration-none btnfont"
             style={{ cursor: 'pointer' }}
+            disabled={loading}
           >
             {" "}XLSX
-          </a>
+          </button>
         </div>
       </div>
 

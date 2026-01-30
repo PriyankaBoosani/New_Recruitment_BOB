@@ -9,6 +9,7 @@ import GenericOrAnnexuresTable from "./components/GenericOrAnnexuresTable";
 import GenericOrAnnexuresFormModal from "./components/GenericOrAnnexuresFormModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 import masterApiService from "../../../jobPosting/services/masterApiService";
+import '../../../../style/css/user.css';
 
 import {
   validateGenericOrAnnexuresForm

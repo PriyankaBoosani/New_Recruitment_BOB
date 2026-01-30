@@ -14,49 +14,27 @@ export const useCategories = () => {
   const [categories, setCategories] = useState([]);
 
   const [loading, setLoading] = useState(false);
-  /* ================= FETCH ================= */
-  // const fetchCategories = async () => {
-  //   try {
-  //     const res = await masterApiService.getAllCategories();
- 
-  //     const list = Array.isArray(res.data)
-  //       ? res.data
-  //       : res.data?.data || [];
+  const fetchCategories = async () => {
+    try {
+      const res = await masterApiService.getAllCategories();
 
-  //     const mapped = mapCategoriesFromApi(list);
+      const list = Array.isArray(res.data)
+        ? res.data
+        : res.data?.data || [];
 
-  //     //  newest first (persist after refresh)
-  //     setCategories(
-  //       [...mapped].sort(
-  //         (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
-  //       )
-  //     );
-  //   } catch (error) {
-  //     toast.error(t("category:fetch_error"));
-  //     setCategories([]);
-  //   }
-  // };
-const fetchCategories = async () => {
-  try {
-    const res = await masterApiService.getAllCategories();
+      const mapped = mapCategoriesFromApi(list);
 
-    const list = Array.isArray(res.data)
-      ? res.data
-      : res.data?.data || [];
+      //  FORCE newest first ALWAYS (by ID)
+      const sorted = [...mapped].sort(
+        (a, b) => Number(b.id) - Number(a.id)
+      );
 
-    const mapped = mapCategoriesFromApi(list);
-
-    // 🔥 FORCE newest first ALWAYS (by ID)
-    const sorted = [...mapped].sort(
-      (a, b) => Number(b.id) - Number(a.id)
-    );
-
-    setCategories(sorted);
-  } catch (error) {
-    toast.error(t("category:fetch_error"));
-    setCategories([]);
-  }
-};
+      setCategories(sorted);
+    } catch (error) {
+      toast.error(t("category:fetch_error"));
+      setCategories([]);
+    }
+  };
 
   useEffect(() => {
     fetchCategories();
@@ -67,17 +45,10 @@ const fetchCategories = async () => {
     try {
       const res = await masterApiService.addCategory(
         mapCategoryToApi(payload)
-      ); 
-      console.log(" dfda", res) 
+      );
+      console.log(" dfda", res)
 
       toast.success(t("category:add_success"));
-      // const newItem = {
-      //   id: res?.data?.reservationCategoriesId,
-      //   code: res?.data?.categoryCode,
-      //   name: res?.data?.categoryName,
-      //   description: res?.data?.categoryDesc,
-      //   createdDate: new Date().toISOString()
-      // };
       const newItem = mapCategoryFromApi(res.data);
       //  add on top instantly
       setCategories(prev => [newItem, ...prev]);
@@ -133,9 +104,7 @@ const fetchCategories = async () => {
     }
   };
 
-
-
-    /* ================= DOWNLOAD TEMPLATE ================= */
+  /* ================= DOWNLOAD TEMPLATE ================= */
   const downloadCategoryTemplate = async () => {
     try {
       const res = await masterApiService.downloadCategoryTemplate();
@@ -157,11 +126,11 @@ const fetchCategories = async () => {
 
   /* ================= BULK IMPORT ================= */
   const bulkAddCategories = async (file) => {
-     setLoading(true);
-      try {
-        const res = await masterApiService.bulkAddCategories(file);
+    setLoading(true);
+    try {
+      const res = await masterApiService.bulkAddCategories(file);
 
-        console.log("API RESPONSE:", res); // logs for 200 & 422
+      console.log("API RESPONSE:", res); // logs for 200 & 422
 
       //  business failure
       if (res.success === false) {
@@ -169,7 +138,7 @@ const fetchCategories = async () => {
         return {
           success: false,
           error: res.message,
-          details: res.data || [] 
+          details: res.data || []
         };
       }
       //  success
@@ -202,9 +171,9 @@ const fetchCategories = async () => {
     addCategory,
     updateCategory,
     deleteCategory,
-     bulkAddCategories,
+    bulkAddCategories,
     downloadCategoryTemplate,
-    importCategories: () => {},
+    importCategories: () => { },
     fetchCategories
   };
 };

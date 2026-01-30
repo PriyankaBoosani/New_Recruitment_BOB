@@ -6,6 +6,7 @@ import { useInterviewPanel } from './hooks/useInterviewPanel';
 import InterviewPanelTable from './components/InterviewPanelTable';
 import InterviewPanelFormModal from './components/InterviewPanelFormModal';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
+import '../../../../style/css/user.css';
 
 const InterviewPanelPage = () => {
   const { t } = useTranslation(["interviewPanel"]);

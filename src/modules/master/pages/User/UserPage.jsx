@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import { Search, Plus } from "react-bootstrap-icons";
 import { useTranslation } from "react-i18next";
-
+import '../../../../style/css/user.css';
 import { useUsers } from "./hooks/useUsers";
 import UserTable from "./components/UserTable";
 import UserFormModal from "./components/UserFormModal";

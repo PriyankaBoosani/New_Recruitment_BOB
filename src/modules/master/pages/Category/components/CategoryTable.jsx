@@ -1,7 +1,6 @@
 import React from 'react';
 import { Table, Button } from 'react-bootstrap';
 import { useTranslation } from "react-i18next";
-
 import viewIcon from "../../../../../assets/view_icon.png";
 import editIcon from "../../../../../assets/edit_icon.png";
 import deleteIcon from "../../../../../assets/delete_icon.png";
@@ -18,21 +17,15 @@ const CategoryTable = ({
   onDelete
 }) => {
   const { t } = useTranslation(["category"]);
-
-
   const filtered = data.filter(c => {
-  const term = searchTerm.toLowerCase().trim();
-
-  if (!term) return true;
-
-  return (
-    c.code?.toLowerCase().includes(term) ||
-    c.name?.toLowerCase().includes(term) ||
-    c.description?.toLowerCase().includes(term)
-  );
-});
-
-
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) return true;
+    return (
+      c.code?.toLowerCase().includes(term) ||
+      c.name?.toLowerCase().includes(term) ||
+      c.description?.toLowerCase().includes(term)
+    );
+  });
   const indexLast = currentPage * itemsPerPage;
   const indexFirst = indexLast - itemsPerPage;
   const current = filtered.slice(indexFirst, indexLast);
@@ -105,73 +98,73 @@ const CategoryTable = ({
         </Table>
       </div>
 
-   {/* DROPDOWN LEFT + PAGINATION RIGHT */}
-    {filtered.length > 0 && (
-  <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
+      {/* DROPDOWN LEFT + PAGINATION RIGHT */}
+      {filtered.length > 0 && (
+        <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
 
-    {/* Page size */}
-    <div className="d-flex align-items-center gap-2 user-actions">
-      <span
-        className="fw-semibold"
-        style={{ color: "var(--bs-heading-color)" }}
-      >
-        {t("page_size")}
-      </span>
+          {/* Page size */}
+          <div className="d-flex align-items-center gap-2 user-actions">
+            <span
+              className="fw-semibold"
+              style={{ color: "var(--bs-heading-color)" }}
+            >
+              {t("page_size")}
+            </span>
 
-      <select
-        className="form-select form-select-sm"
-        style={{ width: "90px" }}
-        value={itemsPerPage}
-        onChange={(e) => {
-          setItemsPerPage(Number(e.target.value));
-          setCurrentPage(1);
-        }}
-      >
-        {[5, 10, 15, 20, 25, 30].map(n => (
-          <option key={n} value={n}>{n}</option>
-        ))}
-      </select>
-    </div>
+            <select
+              className="form-select form-select-sm"
+              style={{ width: "90px" }}
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+            >
+              {[5, 10, 15, 20, 25, 30].map(n => (
+                <option key={n} value={n}>{n}</option>
+              ))}
+            </select>
+          </div>
 
-    {/* Pagination */}
-    <ul className="pagination mb-0">
-      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-        <button
-          className="page-link"
-          onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          &laquo;
-        </button>
-      </li>
+          {/* Pagination */}
+          <ul className="pagination mb-0">
+            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                &laquo;
+              </button>
+            </li>
 
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
-        <li
-          key={n}
-          className={`page-item ${n === currentPage ? 'active' : ''}`}
-        >
-          <button
-            className="page-link"
-            onClick={() => setCurrentPage(n)}
-          >
-            {n}
-          </button>
-        </li>
-      ))}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+              <li
+                key={n}
+                className={`page-item ${n === currentPage ? 'active' : ''}`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => setCurrentPage(n)}
+                >
+                  {n}
+                </button>
+              </li>
+            ))}
 
-      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-        <button
-          className="page-link"
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          &raquo;
-        </button>
-      </li>
-    </ul>
+            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                &raquo;
+              </button>
+            </li>
+          </ul>
 
-  </div>
-)}
+        </div>
+      )}
 
     </>
   );

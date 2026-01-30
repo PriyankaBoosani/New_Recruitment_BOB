@@ -151,8 +151,6 @@ const masterApiService = {
       },
     });
   },
- 
-
 
   /* Master positions */
   getAllPositions: () => apis.get("/master-positions/all"),

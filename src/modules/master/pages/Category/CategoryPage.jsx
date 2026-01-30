@@ -9,6 +9,7 @@ import CategoryTable from './components/CategoryTable';
 import CategoryFormModal from './components/CategoryFormModal';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
 import { validateCategoryForm } from "../../../../shared/utils/category-validations";
+import '../../../../style/css/user.css';
 
 
 

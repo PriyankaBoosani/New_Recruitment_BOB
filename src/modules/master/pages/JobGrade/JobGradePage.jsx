@@ -13,6 +13,7 @@ import DeleteConfirmModal from './components/DeleteConfirmModal';
 import { validateJobGradeForm } from '../../../../shared/utils/jobgrade-validations';
 import { mapJobGradeToApi } from './mappers/jobGradeMapper';
 import { importFromCSV } from '../../../../shared/components/FileUpload';
+import '../../../../style/css/user.css';
 
 const JobGradePage = () => {
   const { t } = useTranslation(["jobGrade", "validation"]);

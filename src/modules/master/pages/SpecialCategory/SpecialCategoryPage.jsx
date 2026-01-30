@@ -7,6 +7,7 @@ import { useSpecialCategories } from './hooks/useSpecialCategories';
 import SpecialCategoryTable from './components/SpecialCategoryTable';
 import SpecialCategoryFormModal from './components/SpecialCategoryFormModal';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
+import '../../../../style/css/user.css';
 
 import { validateSpecialCategoryForm } from "../../../../shared/utils/specialcategory-validations";
 import { mapSpecialCategoryToApi } from './mappers/specialCategoryMapper';

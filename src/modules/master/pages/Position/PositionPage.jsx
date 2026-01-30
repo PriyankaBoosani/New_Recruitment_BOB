@@ -12,6 +12,7 @@ import DeleteConfirmModal from "./components/DeleteConfirmModal";
 import { validatePositionForm } from "../../../../shared/utils/position-validations";
 import { mapPositionToApi } from "./mappers/positionMapper";
 import { importFromCSV } from "../../../../shared/components/FileUpload";
+import '../../../../style/css/user.css';
 
 
 import { useDepartments } from "../Department/hooks/useDepartments";

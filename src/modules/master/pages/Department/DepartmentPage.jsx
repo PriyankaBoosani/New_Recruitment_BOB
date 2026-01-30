@@ -8,6 +8,7 @@ import DepartmentFormModal from './components/DepartmentFormModal';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
 import { validateDepartmentForm } from '../../../../shared/utils/department-validations';
 import { mapDepartmentToApi } from "./mappers/departmentMapper";
+import '../../../../style/css/user.css';
 
 const DepartmentPage = () => {
   const { t } = useTranslation(["department", "validation"]);

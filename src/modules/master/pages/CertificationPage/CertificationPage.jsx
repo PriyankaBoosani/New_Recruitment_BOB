@@ -7,6 +7,7 @@ import { useCertifications } from "./hooks/useCertifications";
 import CertificationTable from "./components/CertificationTable";
 import CertificationFormModal from "./components/CertificationFormModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
+import '../../../../style/css/user.css';
 
 const CertificationPage = () => {
   const { t } = useTranslation(["certification"]);

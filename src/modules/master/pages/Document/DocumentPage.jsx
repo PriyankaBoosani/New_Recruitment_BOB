@@ -13,6 +13,7 @@ import DeleteConfirmModal from './components/DeleteConfirmModal';
 import { validateDocumentForm } from '../../../../shared/utils/document-validations';
 import {mapDocumentToApi } from './mappers/documentMapper';
 import { importFromCSV } from '../../../../shared/components/FileUpload';
+import '../../../../style/css/user.css';
 
 const DocumentPage = () => {
   const { t } = useTranslation(["documents", "validation"]);

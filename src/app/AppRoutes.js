@@ -14,7 +14,6 @@ import LocationPage from "../modules/master/pages/Location/LocationPage";
 import PositionPage from "../modules/master/pages/Position/PositionPage";
 // import SpecialCategory from "../modules/master/pages/SpecialCategory/SpecialCategoryPage";
 import CategoryPage from "../modules/master/pages/Category/CategoryPage";
-import RelaxationType from "../modules/master/pages/RelaxationType";
 import DocumentPage from "../modules/master/pages/Document/DocumentPage";
 import UserPage from "../modules/master/pages/User/UserPage";
 import Home from "../modules/master/pages/Home"; // dashboard/home
@@ -77,7 +76,6 @@ const AppRoutes = () => {
                 <Route path="/position" element={<PositionPage />} />
                 <Route path="/category" element={<CategoryPage />} />
                 <Route path="/specialcategory" element={<SpecialCategoryPage />} />
-                <Route path="/relaxationtype" element={<RelaxationType />} />
                 <Route path="/certification" element={<CertificationPage />} />
                 <Route path="/document" element={<DocumentPage />} />
 

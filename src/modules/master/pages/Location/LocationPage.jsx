@@ -9,7 +9,7 @@ import { validateLocationForm } from "../../../../shared/utils/location-validati
 import LocationTable from "./components/LocationTable";
 import LocationFormModal from "./components/LocationFormModal";
 import DeleteConfirmModal from "../Location/components/DeleteConfirmModal";
-
+import '../../../../style/css/user.css';
 
 const LocationPage = () => {
   const { t } = useTranslation(["location", "validation"]);
