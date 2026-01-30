@@ -1,13 +1,8 @@
-// src/modules/master/pages/Document/components/DeleteConfirmModal.jsx
-
-import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { useTranslation } from "react-i18next";
-
-
 const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
-      const { t } = useTranslation(["position"]);
-  
+  const { t } = useTranslation(["position"]);
+
   return (
     <Modal
       show={show}
@@ -20,7 +15,7 @@ const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
       </Modal.Header>
 
       <Modal.Body>
-         <p>{t("documents:delete_msg")}</p>
+        <p>{t("documents:delete_msg")}</p>
         {target && (
           <div className="delete-confirm-user">
             <strong>{target.name}</strong>
@@ -30,11 +25,11 @@ const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
 
       <Modal.Footer>
         <Button variant="outline-secondary" onClick={onHide}>
-           {t("documents:cancel")}
-  
+          {t("documents:cancel")}
+
         </Button>
         <Button variant="danger" onClick={onConfirm}>
-                   {t("documents:delete")}
+          {t("documents:delete")}
 
         </Button>
       </Modal.Footer>

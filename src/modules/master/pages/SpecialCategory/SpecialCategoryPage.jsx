@@ -51,27 +51,23 @@ const SpecialCategoryPage = () => {
 
 
   const openView = (row) => {
-  setIsViewing(true);
-  setIsEditing(false);
-  setEditingId(null);
+    setIsViewing(true);
+    setIsEditing(false);
+    setEditingId(null);
 
-  setFormData({
-    code: row.code || '',
-    name: row.name || '',
-    description: row.description || ''
-  });
+    setFormData({
+      code: row.code || '',
+      name: row.name || '',
+      description: row.description || ''
+    });
 
-  setErrors({});
-  setActiveTab('manual');
-  setShowModal(true);
-};
-
-
-  /* =====================
-     ADD
-  ====================== */
+    setErrors({});
+    setActiveTab('manual');
+    setShowModal(true);
+  };
+  /* ===================== ADD ====================== */
   const openAdd = () => {
-     setIsViewing(false);
+    setIsViewing(false);
     setIsEditing(false);
     setEditingId(null);
     setFormData({ code: '', name: '', description: '' });
@@ -80,12 +76,10 @@ const SpecialCategoryPage = () => {
     setShowModal(true);
   };
 
-  /* =====================
-     EDIT (IMPORTANT FIX)
-  ====================== */
+  /* ===================== EDIT (IMPORTANT FIX) ====================== */
   const openEdit = (row) => {
     setIsEditing(true);
-     setIsViewing(false);
+    setIsViewing(false);
     setEditingId(row.id);
 
     setFormData({
@@ -99,9 +93,7 @@ const SpecialCategoryPage = () => {
     setShowModal(true);
   };
 
-  /* =====================
-     SAVE
-  ====================== */
+  /* =====================  SAVE ====================== */
   const handleSave = (e) => {
     e.preventDefault();
 
@@ -133,9 +125,7 @@ const SpecialCategoryPage = () => {
 
     setShowModal(false);
   };
-  /* =====================
-     IMPORT
-  ====================== */
+  /* ===================== IMPORT ====================== */
   const handleImport = async () => {
     await importFromCSV({
       selectedCSVFile,
@@ -183,9 +173,9 @@ const SpecialCategoryPage = () => {
         searchTerm={searchTerm}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-         itemsPerPage={itemsPerPage}
-    setItemsPerPage={setItemsPerPage}
-         onView={openView}
+        itemsPerPage={itemsPerPage}
+        setItemsPerPage={setItemsPerPage}
+        onView={openView}
         onEdit={openEdit}
         onDelete={(row) => {
           setDeleteTarget(row);
@@ -214,7 +204,7 @@ const SpecialCategoryPage = () => {
         removeCSV={() => setSelectedCSVFile(null)}
         removeXLSX={() => setSelectedXLSXFile(null)}
         t={t}
-              //  ADD THIS
+        //  ADD THIS
         onSuccess={() => {
           fetchCategories();     // refresh list immediately
           setShowModal(false); // ensure modal closes

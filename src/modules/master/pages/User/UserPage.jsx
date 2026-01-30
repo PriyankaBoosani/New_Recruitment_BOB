@@ -18,7 +18,7 @@ const UserPage = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(5);
 
   const [showModal, setShowModal] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -38,33 +38,18 @@ const [pageSize, setPageSize] = useState(5);
         <div className="user-actions">
           <div className="search-box">
             <Search className="search-icon" />
-            {/* <Form.Control
+
+            <Form.Control
               placeholder={t("search_by_user")}
               value={searchTerm}
               onChange={(e) => {
-                setSearchTerm(e.target.value);
+                const value = e.target.value;
+
+                setSearchTerm(value);
                 setCurrentPage(1);
               }}
               className="search-input"
-            /> */}
-            <Form.Control
-  placeholder={t("search_by_user")}
-  value={searchTerm}
-  onChange={(e) => {
-    const value = e.target.value;
-
-    // //  allow alphabets, numbers, @, and space
-    // if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
-    //   return; // block invalid characters
-    // }
-
-    setSearchTerm(value);
-    setCurrentPage(1);
-  }}
-  className="search-input"
-/>
-
-
+            />
           </div>
 
           <Button className="add-button" onClick={openAdd}>
@@ -73,45 +58,27 @@ const [pageSize, setPageSize] = useState(5);
         </div>
       </div>
 
-    <UserTable
-  data={users}
-  searchTerm={searchTerm}
-  currentPage={currentPage}
-  setCurrentPage={setCurrentPage}
-  pageSize={pageSize}
-  setPageSize={setPageSize}
-  onDelete={(u) => {
-    setDeleteTarget(u);
-    setShowDelete(true);
-  }}
-/>
-
-
-<UserFormModal
-  show={showModal}
-  onHide={() => setShowModal(false)}
-  onSave={async (data) => {
-    await addUser(data);
-    setCurrentPage(1);  
-  }}
-  existingUsers={users}
-/>
-
-
-
-
-
-
-
-      {/* <DeleteConfirmModal
-        show={showDelete}
-        target={deleteTarget}
-        onHide={() => setShowDelete(false)}
-        onConfirm={() => {
-          deleteUser(deleteTarget.id);
-          setShowDelete(false);
+      <UserTable
+        data={users}
+        searchTerm={searchTerm}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        onDelete={(u) => {
+          setDeleteTarget(u);
+          setShowDelete(true);
         }}
-      /> */}
+      />
+      <UserFormModal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        onSave={async (data) => {
+          await addUser(data);
+          setCurrentPage(1);
+        }}
+        existingUsers={users}
+      />
     </Container>
   );
 };

@@ -1,40 +1,28 @@
 import { cleanData } from "../../../../../shared/utils/common-validations";
 
-/* =========================
-   API → UI (GET)
-========================= */
+/* ========================= API → UI (GET) ========================= */
 export const mapPositionFromApi = (api) => ({
   id: api.masterPositionsId || api.positionId,
 
   title: api.positionName,
   description: api.positionDescription,
-
- // departmentId: api.deptId,
   jobGradeId: api.gradeId,
   mandatoryExperience: api.mandatoryExperience || "",
   preferredExperience: api.preferredExperience || "",
   rolesResponsibilities: api.rolesResponsibilities || "",
   eligibilityAgeMin: api.eligibilityAgeMin ||  "",
   eligibilityAgeMax: api.eligibilityAgeMax ||  "",
-
   code: api.positionCode,
   isActive: api.isActive
 });
 
-/* =========================
-   LIST
-========================= */
+/* =========================  LIST ========================= */
 export const mapPositionsFromApi = (apiData = []) => {
   if (!Array.isArray(apiData)) return [];
   return apiData.map(mapPositionFromApi);
 };
 
-/* =========================
-   UI → API (ADD / UPDATE)
-========================= */
-/* =========================
-   UI → API (ADD / UPDATE)
-========================= */
+/* ========================= UI → API (ADD / UPDATE) ========================= */
 export const mapPositionToApi = (ui, isEditing = false) => ({
   isActive: true,
 
@@ -43,12 +31,7 @@ export const mapPositionToApi = (ui, isEditing = false) => ({
   positionCode: ui.code || undefined,
   positionName: ui.title,
   positionDescription: ui.description || "",
-
-  // 🔥 REQUIRED UUIDs
-  // deptId: ui.departmentId,
   gradeId: ui.jobGradeId,
-
-  // 🔥 NEW FIELDS (YOU MISSED THESE)
   mandatoryExperience: cleanData(ui.mandatoryExperience),
   preferredExperience: cleanData(ui.preferredExperience),
   rolesResponsibilities: cleanData(ui.rolesResponsibilities),

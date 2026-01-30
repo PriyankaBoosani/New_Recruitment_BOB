@@ -2,12 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import ErrorMessage from "../../../../../shared/components/ErrorMessage";
 import LocationImportModal from "./LocationImportModal";
-import {
-  handleValidatedInput,
-  INPUT_PATTERNS
-} from "../../../../../shared/utils/inputHandlers";
-
-
+import { handleValidatedInput, INPUT_PATTERNS } from "../../../../../shared/utils/inputHandlers";
 
 const LocationFormModal = ({
   show,
@@ -50,34 +45,14 @@ const LocationFormModal = ({
         [name]: value,
       }));
 
-    //  clear field-specific error
-    setErrors(prev => ({
-      ...prev,
-      [name]: ''
-    }));
-  }
+      //  clear field-specific error
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
 
-//   } else {
-//   const trimmedValue =
-//     typeof value === "string"
-//       ? value.trimStart()   
-//       : value;
-
-//   setFormData(prev => ({
-//     ...prev,
-//     [name]: trimmedValue
-//   }));
-
-//   setErrors(prev => ({
-//     ...prev,
-//     [name]: ''
-//   }));
-// }
-
-};
-
-
-
+  };
   return (
     <Modal
       show={show}
@@ -109,9 +84,8 @@ const LocationFormModal = ({
           <div className="tab-buttons mb-4">
             <Button
               variant={activeTab === "manual" ? "light" : "outline-light"}
-              className={`tab-button ${
-                activeTab === "manual" ? "active" : ""
-              }`}
+              className={`tab-button ${activeTab === "manual" ? "active" : ""
+                }`}
               onClick={() => setActiveTab("manual")}
             >
               {t("manual_entry")}
@@ -119,9 +93,8 @@ const LocationFormModal = ({
 
             <Button
               variant={activeTab === "import" ? "light" : "outline-light"}
-              className={`tab-button ${
-                activeTab === "import" ? "active" : ""
-              }`}
+              className={`tab-button ${activeTab === "import" ? "active" : ""
+                }`}
               onClick={() => setActiveTab("import")}
             >
               {t("import_file")}
@@ -135,9 +108,9 @@ const LocationFormModal = ({
             onSubmit={
               isViewing
                 ? (e) => {
-                    e.preventDefault();
-                    onHide();
-                  }
+                  e.preventDefault();
+                  onHide();
+                }
                 : handleSave
             }
           >
@@ -185,31 +158,27 @@ const LocationFormModal = ({
                       {formData.name || "-"}
                     </div>
                   ) : (
-             <Form.Control
-  type="text"
-  name="name"
-  value={formData.name || ""}
-  placeholder={t("enter_location_name")}
-  className="form-control-custom"
-  onChange={(e) =>
-    handleValidatedInput({
-      e,
-      fieldName: "name",
-      setFormData,
-      setErrors,
-      pattern: INPUT_PATTERNS.NUMERIC_SPACE,
-      errorMessage: t("validation:invalid_location_name")
-    })
-  }
-/>
-
-
-
-
+                    <Form.Control
+                      type="text"
+                      name="name"
+                      value={formData.name || ""}
+                      placeholder={t("enter_location_name")}
+                      className="form-control-custom"
+                      onChange={(e) =>
+                        handleValidatedInput({
+                          e,
+                          fieldName: "name",
+                          setFormData,
+                          setErrors,
+                          pattern: INPUT_PATTERNS.NUMERIC_SPACE,
+                          errorMessage: t("validation:invalid_location_name")
+                        })
+                      }
+                    />
                   )}
 
                   {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
-                </Form.Group> 
+                </Form.Group>
               </Col>
             </Row>
 

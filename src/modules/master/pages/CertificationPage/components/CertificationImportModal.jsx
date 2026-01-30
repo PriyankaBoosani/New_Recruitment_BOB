@@ -153,17 +153,15 @@ const CertificationImportModal = ({
         {/* ---------- TEMPLATE DOWNLOAD ---------- */}
         <div className="text-center mb-3 import-area small">
           {t("certification:download_template")}:
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              downloadCertificationTemplate();
-            }}
-            className="text-primary text-decoration-none btnfont"
-            style={{ cursor: "pointer" }}
+          <button
+            type="button"
+            onClick={downloadCertificationTemplate}
+            className="btn btn-link p-0 text-primary text-decoration-none btnfont"
+            style={{ cursor: 'pointer' }}
+            disabled={loading}
           >
             {" "}XLSX
-          </a>
+          </button>
         </div>
       </div>
 

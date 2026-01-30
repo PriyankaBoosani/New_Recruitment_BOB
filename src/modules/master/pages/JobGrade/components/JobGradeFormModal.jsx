@@ -4,12 +4,7 @@ import React from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import ErrorMessage from '../../../../../shared/components/ErrorMessage';
 import JobGradeImportModal from './JobGradeImportModal';
-import {
-  handleValidatedInput,
-  INPUT_PATTERNS
-} from "../../../../../shared/utils/inputHandlers";
-
-
+import {  handleValidatedInput, INPUT_PATTERNS } from "../../../../../shared/utils/inputHandlers";
 
 const formatSalary = (value) => {
   if (!value) return "";
@@ -17,7 +12,6 @@ const formatSalary = (value) => {
   if (isNaN(raw)) return "";
   return Number(raw).toLocaleString("en-IN"); // Indian format
 };
-
 
 const JobGradeFormModal = ({
   show,
@@ -54,8 +48,6 @@ const JobGradeFormModal = ({
               {t("choose_add_method")}
             </p>
           )}
-
-
         </div>
       </Modal.Header>
 
@@ -119,15 +111,9 @@ const JobGradeFormModal = ({
                           errorMessage: t("validation:invalid_scale")
                         })
                       }
-
-
                     />
-
-
                   )}
-
                   {!isViewing && <ErrorMessage>{errors.scale}</ErrorMessage>}
-
                 </Form.Group>
               </Col>
 
@@ -157,15 +143,11 @@ const JobGradeFormModal = ({
                           errorMessage: t("validation:invalid_grade_code")
                         })
                       }
-
                     />
-
-
                   )}
 
                   {!isViewing && <ErrorMessage>{errors.gradeCode}</ErrorMessage>}
                 </Form.Group>
-
               </Col>
 
               <Col md={6}>
@@ -197,13 +179,9 @@ const JobGradeFormModal = ({
                         });
                       }}
                     />
-
-
                   )}
-
                   {!isViewing && <ErrorMessage>{errors.minSalary}</ErrorMessage>}
                 </Form.Group>
-
               </Col>
 
               <Col md={6}>
@@ -237,12 +215,9 @@ const JobGradeFormModal = ({
                         });
                       }}
                     />
-
                   )}
-
                   {!isViewing && <ErrorMessage>{errors.maxSalary}</ErrorMessage>}
                 </Form.Group>
-
               </Col>
 
               <Col xs={12}>
@@ -299,14 +274,7 @@ const JobGradeFormModal = ({
           <>
             <JobGradeImportModal t={t} {...importProps}
               onClose={onHide} />
-            {/* <Modal.Footer className="px-0 modal-footer-custom">
-              <Button variant="outline-secondary" onCli ck={onHide}>
-                {t("cancel")}
-              </Button>
-              <Button variant="primary" onClick={handleImport}>
-                {t("import")}
-              </Button>
-            </Modal.Footer> */}
+         
           </>
         )}
       </Modal.Body>

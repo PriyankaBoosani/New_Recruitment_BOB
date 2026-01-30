@@ -2,11 +2,8 @@ import React from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import ErrorMessage from '../../../../../shared/components/ErrorMessage';
 import DepartmentImportView from '../components/DepartmentImportModal';
-import { handleValidatedInput, INPUT_PATTERNS } 
-from '../../../../../shared/utils/inputHandlers';
-
-
-
+import { handleValidatedInput, INPUT_PATTERNS }
+  from '../../../../../shared/utils/inputHandlers';
 const DepartmentFormModal = ({
   show,
   onHide,
@@ -30,7 +27,7 @@ const DepartmentFormModal = ({
           <Modal.Title>
             {isViewing ? t("viewDepartment") : isEditing ? t("editDepartment") : t("addDepartment")}
           </Modal.Title>
-             {!isEditing && !isViewing && (
+          {!isEditing && !isViewing && (
             <p className="mb-0 small text-muted para">
               {t("choose_add_method")}
             </p>
@@ -64,39 +61,34 @@ const DepartmentFormModal = ({
             <Row className="g-3">
               <Col xs={12}>
                 <Form.Group className="form-group">
-  <Form.Label>
-    {t("name")} {!isViewing && <span className="text-danger">*</span>}
-  </Form.Label>
+                  <Form.Label>
+                    {t("name")} {!isViewing && <span className="text-danger">*</span>}
+                  </Form.Label>
 
-  {isViewing ? (
-    <div className="form-control-view">
-      {formData.name || "-"}
-    </div>
-  ) : (
-<Form.Control
-  name="name"
-  value={formData.name}
-  className="form-control-custom"
-  placeholder={t("department:enterName")}
-  onChange={(e) =>
-    handleValidatedInput({
-      e,
-      fieldName: "name",
-      setFormData,
-      setErrors,
-      pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at,
-      errorMessage: t("validation:no_special_charss")
-    })
-  }
-/>
-
-
-
-
-  )}
-
-  {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
-</Form.Group>
+                  {isViewing ? (
+                    <div className="form-control-view">
+                      {formData.name || "-"}
+                    </div>
+                  ) : (
+                    <Form.Control
+                      name="name"
+                      value={formData.name}
+                      className="form-control-custom"
+                      placeholder={t("department:enterName")}
+                      onChange={(e) =>
+                        handleValidatedInput({
+                          e,
+                          fieldName: "name",
+                          setFormData,
+                          setErrors,
+                          pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at,
+                          errorMessage: t("validation:no_special_charss")
+                        })
+                      }
+                    />
+                  )}
+                  {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
+                </Form.Group>
 
               </Col>
 
@@ -110,46 +102,7 @@ const DepartmentFormModal = ({
                       {formData.description || '-'}
                     </div>
                   ) : (
-//                   <Form.Control
-//   as="textarea"
-//   rows={3}
-//   name="description"
-//   className="form-control-custom"
-//   value={formData.description}
-//   placeholder={t("department:enterDescription")}
-//   readOnly={isViewing}
-//   onChange={(e) => {
-//     const value = e.target.value;
-
-//     //  block non-alphabets
-//     if (!/^[A-Za-z\s]*$/.test(value)) {
-//       setErrors(prev => ({
-//         ...prev,
-//         description: t("validation:no_special_chars")
-//       }));
-//       return;
-//     }
-
-//     //  clear error when valid
-//     setErrors(prev => {
-//       const copy = { ...prev };
-//       delete copy.description;
-//       return copy;
-//     });
-
-//     handleInputChange(e);
-//   }}
-// />
-
-//                   )}
-//                   {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
-//                 </Form.Group>
-//               </Col>
-//             </Row>
-
-
-
-  <Form.Control
+                    <Form.Control
                       as="textarea"
                       rows={3}
                       name="description"

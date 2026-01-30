@@ -6,8 +6,8 @@ import { useTranslation } from "react-i18next";
 import { useSpecialCategories } from '../hooks/useSpecialCategories';
 
 const SpecialCategoryImportModal = ({
-  onClose = () => {},
-  onSuccess = () => {}
+  onClose = () => { },
+  onSuccess = () => { }
 }) => {
   const { t } = useTranslation(["specialCategory"]);
   const {
@@ -81,47 +81,32 @@ const SpecialCategoryImportModal = ({
           </p>
         </div>
 
-       {/* {error && (
-  <Alert variant="danger">
-    <div>{error}</div>
+        {error && (
+          <Alert variant="danger">
+            {/* Summary */}
+            <div className="fw-semibold">
+              {error}
+            </div>
 
-    {errorDetails.length > 0 && (
-      <ul className="mt-2 mb-0">
-        {errorDetails.map((msg, idx) => (
-          <li key={idx}>{msg}</li>
-        ))}
-      </ul>
-    )}
-  </Alert>
-)} */}
+            {/* Scrollable details */}
+            {errorDetails.length > 0 && (
+              <div
+                className="mt-2"
+                style={{
+                  maxHeight: "150px",
+                  overflowY: "auto"
+                }}
+              >
+                <ul className="mb-0">
+                  {errorDetails.map((msg, idx) => (
+                    <li key={idx}>{msg}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </Alert>
+        )}
 
-
-{error && (
-  <Alert variant="danger">
-    {/* Summary */}
-    <div className="fw-semibold">
-      {error}
-    </div>
-
-    {/* Scrollable details */}
-    {errorDetails.length > 0 && (
-      <div
-        className="mt-2"
-        style={{
-          maxHeight: "150px",
-          overflowY: "auto"
-        }}
-      >
-        <ul className="mb-0">
-          {errorDetails.map((msg, idx) => (
-            <li key={idx}>{msg}</li>
-          ))}
-        </ul>
-      </div>
-    )}
-  </Alert>
-)}
-  
 
         <input
           id="upload-xlsx-sc"
@@ -166,20 +151,19 @@ const SpecialCategoryImportModal = ({
 
         <div className="text-center mb-3 import-area small">
           {t("specialCategory:download_template")}:
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              downloadSpecialCategoryTemplate();
-            }}
-            className="text-primary text-decoration-none btnfont"
+         
+          <button
+            type="button"
+            onClick={downloadSpecialCategoryTemplate}
+            className="btn btn-link p-0 text-primary text-decoration-none btnfont"
             style={{ cursor: 'pointer' }}
+            disabled={loading}
           >
             {" "}XLSX
-          </a>
+          </button>
         </div>
       </div>
-<div className="d-flex justify-content-end gap-2 modal-footer-custom">
+      <div className="d-flex justify-content-end gap-2 modal-footer-custom">
         <Button variant="outline-secondary" onClick={onClose} disabled={loading}>
           {t("category:cancel")}
         </Button>
@@ -188,7 +172,7 @@ const SpecialCategoryImportModal = ({
           {loading ? t("category:importing") : t("category:import")}
         </Button>
       </div>
-     
+
     </div>
   );
 };

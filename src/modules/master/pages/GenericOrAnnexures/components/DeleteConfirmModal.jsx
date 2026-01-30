@@ -1,9 +1,7 @@
-import React from "react";
 import { Modal, Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
 const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
-  //  CHANGE NAMESPACE
   const { t } = useTranslation(["genericOrAnnexures"]);
 
   return (

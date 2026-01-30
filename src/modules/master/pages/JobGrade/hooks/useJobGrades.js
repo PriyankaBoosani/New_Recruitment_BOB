@@ -52,7 +52,7 @@ export const useJobGrades = () => {
     }
   };
 
- 
+
   const deleteJobGrade = async (id) => {
     try {
       await masterApiService.deleteJobGrade(id);
@@ -87,43 +87,43 @@ export const useJobGrades = () => {
 
 
   const bulkAddJobGrades = async (file) => {
-     setLoading(true);
+    setLoading(true);
     try {
       const res = await masterApiService.bulkAddJobGrades(file);
 
-       console.log("API RESPONSE:", res); // logs for 200 & 422
+      console.log("API RESPONSE:", res); // logs for 200 & 422
 
-    //  business failure
-    if (res.success === false) {
-      // toast.error(res.message);
+      //  business failure
+      if (res.success === false) {
+        // toast.error(res.message);
+        return {
+          success: false,
+          error: res.message,
+          details: res.data || []
+        };
+      }
+      // success
+      toast.success(res.message || "File uploaded successfully");
+
+      return {
+        success: true
+      };
+
+    } catch (err) {
+      //  network / server error
+      console.log("NETWORK ERROR:", err);
+
+      const message = "Something went wrong";
+      // toast.error(message);
+
       return {
         success: false,
-        error: res.message,
-        details: res.data || []
+        error: message
       };
+
+    } finally {
+      setLoading(false);
     }
-    // success
-    toast.success(res.message || "File uploaded successfully");
-
-    return {
-      success: true
-    };
-
-  } catch (err) {
-    //  network / server error
-    console.log("NETWORK ERROR:", err);
-
-    const message = "Something went wrong";
-    // toast.error(message);
-
-    return {
-      success: false,
-      error: message
-    };
-
-  } finally {
-    setLoading(false);
-  }
   };
 
 
@@ -133,7 +133,7 @@ export const useJobGrades = () => {
     addJobGrade,
     updateJobGrade,
     deleteJobGrade,
-     bulkAddJobGrades,
-  downloadJobGradeTemplate
+    bulkAddJobGrades,
+    downloadJobGradeTemplate
   };
 };

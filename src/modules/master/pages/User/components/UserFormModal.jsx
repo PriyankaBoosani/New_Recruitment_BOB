@@ -5,17 +5,10 @@ import ErrorMessage from "../../../../../shared/components/ErrorMessage";
 import { validateUserForm } from "../../../../../shared/utils/user-validations";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { handleAlphaSpaceInput } from '../../../../../shared/utils/inputHandlers';
 
-import {
-  handleValidatedInput,
-  INPUT_PATTERNS
-} from "../../../../../shared/utils/inputHandlers";
+import { handleValidatedInput, INPUT_PATTERNS } from "../../../../../shared/utils/inputHandlers";
 
-
-
-
-const EMPTY_FORM = {  
+const EMPTY_FORM = {
   role: "",
   fullName: "",
   email: "",
@@ -31,9 +24,7 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  /* =========================
-     RESET FORM ON OPEN
-  ========================= */
+  /* ========================= RESET FORM ON OPEN  ========================= */
   useEffect(() => {
     if (show) {
       setFormData(EMPTY_FORM);
@@ -41,9 +32,7 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
     }
   }, [show]);
 
-  /* =========================
-     INPUT HANDLER
-  ========================= */
+  /* ========================= INPUT HANDLER ========================= */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
@@ -59,9 +48,7 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
     }));
   };
 
-  /* =========================
-     SUBMIT
-  ========================= */
+  /* ========================= SUBMIT ========================= */
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -90,9 +77,9 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
         <Form onSubmit={handleSubmit}>
           <Row className="g-3">
             <Col md={6}>
-             <Form.Label>
-  {t("role")} <span className="text-danger">*</span>
-</Form.Label>
+              <Form.Label>
+                {t("role")} <span className="text-danger">*</span>
+              </Form.Label>
 
               <Form.Select
                 name="role"
@@ -108,40 +95,36 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
               <ErrorMessage>{errors.role}</ErrorMessage>
             </Col>
 
-       <Col md={6}>
- <Form.Label>
-  {t("fullName")} <span className="text-danger">*</span>
-</Form.Label>
+            <Col md={6}>
+              <Form.Label>
+                {t("fullName")} <span className="text-danger">*</span>
+              </Form.Label>
 
-<Form.Control
-  name="fullName"
-  value={formData.fullName}
-  onChange={(e) =>
-    handleValidatedInput({
-      e,
-      fieldName: "fullName",
-      setErrors,
-      pattern: INPUT_PATTERNS.ALPHA_SPACE,
-      errorMessage: t("validation:no_special_chars"),
-      onValidChange: (value) =>
-        handleInputChange({
-          target: { name: "fullName", value }
-        })
-    })
-  }
-/>
-
-
-
-
-  <ErrorMessage>{errors.fullName}</ErrorMessage>
-</Col>
+              <Form.Control
+                name="fullName"
+                value={formData.fullName}
+                onChange={(e) =>
+                  handleValidatedInput({
+                    e,
+                    fieldName: "fullName",
+                    setErrors,
+                    pattern: INPUT_PATTERNS.ALPHA_SPACE,
+                    errorMessage: t("validation:no_special_chars"),
+                    onValidChange: (value) =>
+                      handleInputChange({
+                        target: { name: "fullName", value }
+                      })
+                  })
+                }
+              />
+              <ErrorMessage>{errors.fullName}</ErrorMessage>
+            </Col>
 
 
             <Col md={6}>
               <Form.Label>
-  {t("email")} <span className="text-danger">*</span>
-</Form.Label>
+                {t("email")} <span className="text-danger">*</span>
+              </Form.Label>
 
               <Form.Control
                 name="email"
@@ -151,12 +134,10 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
               <ErrorMessage>{errors.email}</ErrorMessage>
             </Col>
 
-
-
             <Col md={6}>
-             <Form.Label>
-  {t("password")} <span className="text-danger">*</span>
-</Form.Label>
+              <Form.Label>
+                {t("password")} <span className="text-danger">*</span>
+              </Form.Label>
 
 
               <div className="position-relative">
@@ -167,7 +148,6 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
                   onChange={handleInputChange}
                   className="pe-5"
                 />
-
                 <span
                   onClick={() => setShowPassword(!showPassword)}
                   style={{
@@ -185,13 +165,10 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
               <ErrorMessage>{errors.password}</ErrorMessage>
             </Col>
 
-
             <Col md={6}>
-             <Form.Label>
-  {t("confirmPassword")} <span className="text-danger">*</span>
-</Form.Label>
-
-
+              <Form.Label>
+                {t("confirmPassword")} <span className="text-danger">*</span>
+              </Form.Label>
               <div className="position-relative">
                 <Form.Control
                   type={showConfirmPassword ? "text" : "password"}
@@ -200,7 +177,6 @@ const UserFormModal = ({ show, onHide, onSave, existingUsers = [] }) => {
                   onChange={handleInputChange}
                   className="pe-5"
                 />
-
                 <span
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   style={{

@@ -1,14 +1,9 @@
-// src/modules/master/pages/Document/hooks/useDocuments.js
-
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
 import masterApiService from "../../../services/masterApiService";
-import {
-  mapDocumentsFromApi,
-  mapDocumentFromApi
-} from "../mappers/documentMapper";
+import { mapDocumentsFromApi, mapDocumentFromApi } from "../mappers/documentMapper";
 
 export const useDocuments = () => {
   const { t } = useTranslation(["documents", "validation"]);

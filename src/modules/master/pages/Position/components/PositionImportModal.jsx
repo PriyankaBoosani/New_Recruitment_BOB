@@ -46,11 +46,8 @@ const PositionImportModal = ({
       onSuccess();
       onClose();
     } else {
-      // show server message if present
-      // setError(res?.message || res?.error || t("position:import_failed"));
-      //  setErrorDetails(res?.details || []);
-     setError(res?.message || t("position:import_error"));
-setErrorDetails(res?.data || res?.details || []);
+      setError(res?.message || t("position:import_error"));
+      setErrorDetails(res?.data || res?.details || []);
 
 
     }
@@ -85,51 +82,31 @@ setErrorDetails(res?.data || res?.details || []);
           </p>
         </div>
 
-        {/* ===== Error ===== */}
-{/* {error && (
-  <Alert variant="danger">
-    <div>{error}</div>
+        {error && (
+          <Alert variant="danger">
+            {/* Summary */}
+            <div className="fw-semibold">
+              {error}
+            </div>
 
-    {errorDetails.length > 0 && (
-      <ul className="mt-2 mb-0">
-        {errorDetails.map((msg, idx) => (
-          <li key={idx}>{msg}</li>
-        ))}
-      </ul>
-    )}
-  </Alert>
-)} */}
-
-
-{error && (
-  <Alert variant="danger">
-    {/* Summary */}
-    <div className="fw-semibold">
-      {error}
-    </div>
-
-    {/* Scrollable details */}
-    {errorDetails.length > 0 && (
-      <div
-        className="mt-2"
-        style={{
-          maxHeight: "150px",
-          overflowY: "auto"
-        }}
-      >
-        <ul className="mb-0">
-          {errorDetails.map((msg, idx) => (
-            <li key={idx}>{msg}</li>
-          ))}
-        </ul>
-      </div>
-    )}
-  </Alert>
-)}
-
-
-
-
+            {/* Scrollable details */}
+            {errorDetails.length > 0 && (
+              <div
+                className="mt-2"
+                style={{
+                  maxHeight: "150px",
+                  overflowY: "auto"
+                }}
+              >
+                <ul className="mb-0">
+                  {errorDetails.map((msg, idx) => (
+                    <li key={idx}>{msg}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </Alert>
+        )}
 
         {/* ===== File Input ===== */}
         <input
@@ -176,17 +153,15 @@ setErrorDetails(res?.data || res?.details || []);
         {/* ===== Template Download ===== */}
         <div className="text-center mb-3 import-area small">
           {t("position:download_template")}:
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              downloadPositionTemplate();
-            }}
-            className="text-primary text-decoration-none btnfont"
-            style={{ cursor: "pointer" }}
+          <button
+            type="button"
+            onClick={downloadPositionTemplate}
+            className="btn btn-link p-0 text-primary text-decoration-none btnfont"
+            style={{ cursor: 'pointer' }}
+            disabled={loading}
           >
             {" "}XLSX
-          </a>
+          </button>
         </div>
       </div>
 

@@ -1,5 +1,3 @@
-// src/modules/master/pages/JobGrade/components/JobGradeTable.jsx
-
 import React from 'react';
 import { Table, Button, Form } from 'react-bootstrap';
 import { useTranslation } from "react-i18next";
@@ -20,7 +18,6 @@ const JobGradeTable = ({
   setPageSize
 }) => {
   const { t } = useTranslation(["jobGrade"]);
-  // const itemsPerPage = 7;
 
   const filtered = data.filter(j =>
     Object.values(j).some(v =>
@@ -29,17 +26,15 @@ const JobGradeTable = ({
   );
 
   const formatSalary = (value) => {
-  if (value === null || value === undefined || value === "") return "-";
-  const raw = String(value).replace(/,/g, "");
-  if (isNaN(raw)) return "-";
-  return Number(raw).toLocaleString("en-IN"); // Indian format
-};
-
-
+    if (value === null || value === undefined || value === "") return "-";
+    const raw = String(value).replace(/,/g, "");
+    if (isNaN(raw)) return "-";
+    return Number(raw).toLocaleString("en-IN"); // Indian format
+  };
   const indexOfLast = currentPage * pageSize;
-const indexOfFirst = indexOfLast - pageSize;
-const current = filtered.slice(indexOfFirst, indexOfLast);
-const totalPages = Math.ceil(filtered.length / pageSize);
+  const indexOfFirst = indexOfLast - pageSize;
+  const current = filtered.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(filtered.length / pageSize);
 
 
   return (
@@ -65,15 +60,15 @@ const totalPages = Math.ceil(filtered.length / pageSize);
                   <td>{indexOfFirst + idx + 1}</td>
                   <td>{g.scale}</td>
                   <td>{g.gradeCode}</td>
-                 <td>{formatSalary(g.minSalary)}</td>
-<td>{formatSalary(g.maxSalary)}</td>
+                  <td>{formatSalary(g.minSalary)}</td>
+                  <td>{formatSalary(g.maxSalary)}</td>
 
                   <td>{g.description}</td>
                   <td>
                     <div className="action-buttons">
-                      <Button variant="link" 
-                      className="action-btn view-btn"
-                      onClick={() => onView(g)}
+                      <Button variant="link"
+                        className="action-btn view-btn"
+                        onClick={() => onView(g)}
                       >
                         <img src={viewIcon} alt="View" className="icon-16" />
                       </Button>
@@ -107,76 +102,72 @@ const totalPages = Math.ceil(filtered.length / pageSize);
           </tbody>
         </Table>
       </div>
+      {filtered.length > 0 && (
+        <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
 
+          {/* Page size */}
+          <div className="d-flex align-items-center gap-2 user-actions">
+            <span
+              className="fw-semibold"
+              style={{ color: "var(--bs-heading-color)" }}
+            >
+              {t("page_size")}
+            </span>
 
-    
+            <Form.Select
+              size="sm"
+              style={{ width: "90px" }}
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+            >
+              {[5, 10, 15, 20, 25, 30].map(n => (
+                <option key={n} value={n}>{n}</option>
+              ))}
+            </Form.Select>
+          </div>
 
-     {filtered.length > 0 && (
-  <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
+          {/* Pagination */}
+          <ul className="pagination mb-0">
+            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                &laquo;
+              </button>
+            </li>
 
-    {/* Page size */}
-    <div className="d-flex align-items-center gap-2 user-actions">
-      <span
-        className="fw-semibold"
-        style={{ color: "var(--bs-heading-color)" }}
-      >
-        {t("page_size")}
-      </span>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+              <li
+                key={n}
+                className={`page-item ${currentPage === n ? 'active' : ''}`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => setCurrentPage(n)}
+                >
+                  {n}
+                </button>
+              </li>
+            ))}
 
-      <Form.Select
-        size="sm"
-        style={{ width: "90px" }}
-        value={pageSize}
-        onChange={(e) => {
-          setPageSize(Number(e.target.value));
-          setCurrentPage(1);
-        }}
-      >
-        {[5, 10, 15, 20, 25, 30].map(n => (
-          <option key={n} value={n}>{n}</option>
-        ))}
-      </Form.Select>
-    </div>
+            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                &raquo;
+              </button>
+            </li>
+          </ul>
 
-    {/* Pagination */}
-    <ul className="pagination mb-0">
-      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-        <button
-          className="page-link"
-          onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          &laquo;
-        </button>
-      </li>
-
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
-        <li
-          key={n}
-          className={`page-item ${currentPage === n ? 'active' : ''}`}
-        >
-          <button
-            className="page-link"
-            onClick={() => setCurrentPage(n)}
-          >
-            {n}
-          </button>
-        </li>
-      ))}
-
-      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-        <button
-          className="page-link"
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          &raquo;
-        </button>
-      </li>
-    </ul>
-
-  </div>
-)}
+        </div>
+      )}
 
     </>
   );

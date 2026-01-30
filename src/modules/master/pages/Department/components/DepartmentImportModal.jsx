@@ -39,7 +39,7 @@ const DepartmentImportView = ({
       onSuccess();
       onClose();
     } else {
-      setError(result.error); 
+      setError(result.error);
       setErrorDetails(result.details || []);
     }
   };
@@ -72,45 +72,24 @@ const DepartmentImportView = ({
           </p>
         </div>
 
+        {error && (
+          <Alert variant="danger">
+            <div>{error}</div>
 
-        {/* {error && (
-  <Alert variant="danger">
-    <div>{error}</div>
-
-    {errorDetails.length > 0 && (
-      <ul className="mt-2 mb-0">
-        {errorDetails.map((msg, idx) => (
-          <li key={idx}>{msg}</li>
-        ))}
-      </ul>
-    )}
-  </Alert>
-)} */}
-
-{error && (
-  <Alert variant="danger">
-    <div>{error}</div>
-
-    {errorDetails.length > 0 && (
-      <div
-        className="mt-2"
-        style={{
-          maxHeight: '150px',   // 👈 scroll height
-          overflowY: 'auto'     // 👈 enables scroll
-        }}
-      >
-        <ul className="mb-0">
-          {errorDetails.map((msg, idx) => (
-            <li key={idx}>{msg}</li>
-          ))}
-        </ul>
-      </div>
-    )}
-  </Alert>
-)}
-
-
-
+            {errorDetails.length > 0 && (
+              <div
+                className="mt-2"
+                style={{ maxHeight: '150px', overflowY: 'auto' }}
+              >
+                <ul className="mb-0">
+                  {errorDetails.map((msg, idx) => (
+                    <li key={idx}>{msg}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </Alert>
+        )}
         <input
           id="upload-xlsx"
           type="file"
@@ -147,17 +126,15 @@ const DepartmentImportView = ({
 
         <div className="text-center mb-3 import-area small">
           {t("department:download_template")}:
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              downloadDepartmentTemplate();
-            }}
-            className="text-primary text-decoration-none btnfont"
+           <button
+            type="button"
+            onClick={downloadDepartmentTemplate}
+            className="btn btn-link p-0 text-primary text-decoration-none btnfont"
             style={{ cursor: 'pointer' }}
+            disabled={loading}
           >
             {" "}XLSX
-          </a>
+          </button>
         </div>
       </div>
 

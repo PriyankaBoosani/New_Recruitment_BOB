@@ -3,15 +3,7 @@ import React from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import ErrorMessage from "../../../../../shared/components/ErrorMessage";
 import PositionImportModal from "./PositionImportModal";
-import {
-  handleAlphaNumericSpaceInput,
-  handleTextAreaInput,
-  handleNumberOnlyInput
-} from "../../../../../shared/utils/inputHandlers";
-import {
-  handleValidatedInput,
-  INPUT_PATTERNS
-} from "../../../../../shared/utils/inputHandlers";
+import { handleValidatedInput, INPUT_PATTERNS } from "../../../../../shared/utils/inputHandlers";
 
 const handleTwoDigitNumberInput = ({ e, fieldName, handleInputChange }) => {
   let value = e.target.value;
@@ -73,7 +65,7 @@ const PositionFormModal = ({
                 : t("add_position")}
           </Modal.Title>
 
-             {!isEditing && !isViewing && (
+          {!isEditing && !isViewing && (
             <p className="mb-0 small text-muted para">
               {t("choose_add_method")}
             </p>
@@ -115,8 +107,6 @@ const PositionFormModal = ({
             }
             noValidate
           >
-
-
             <Row className="g-3">
               <Col xs={4}>
                 <Form.Group className="form-group">
@@ -134,16 +124,6 @@ const PositionFormModal = ({
                       value={formData.title}
                       placeholder={t("enter_position_title")}
                       className="form-control-custom"
-
-                      // onBlur={(e) => {
-                      //   handleInputChange({
-                      //     target: {
-                      //       name: "title",
-                      //       value: e.target.value.trim()
-                      //     }
-                      //   });
-                      // }}
-
                       onChange={(e) =>
                         handleValidatedInput({
                           e,
@@ -158,47 +138,11 @@ const PositionFormModal = ({
                         })
                       }
                     />
-
-
                   )}
 
                   {!isViewing && <ErrorMessage>{errors.title}</ErrorMessage>}
-
                 </Form.Group>
-
               </Col>
-
-              {/* <Col xs={4} md={4}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("department")} <span className="text-danger">*</span>
-                  </Form.Label>
-
-                  {isViewing ? (
-                    <div className="form-control-view">
-                      {departments.find(d => d.id === formData.departmentId)?.name || "-"}
-                    </div>
-                  ) : (
-                    <Form.Select
-                      name="departmentId"
-                      value={formData.departmentId}
-                      onChange={handleInputChange}
-                      className="form-control-custom"
-                    >
-                      <option value="">{t("select_department")}</option>
-                      {departments.map(d => (
-                        <option key={d.id} value={d.id}>
-                          {d.name}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  )}
-
-                  {!isViewing && <ErrorMessage>{errors.departmentId}</ErrorMessage>}
-                </Form.Group>
-
-              </Col> */}
-
               <Col xs={4} md={4}>
                 <Form.Group className="form-group">
                   <Form.Label>
@@ -372,7 +316,6 @@ const PositionFormModal = ({
                       }
                     />
 
-
                   )}
 
                   {!isViewing && <ErrorMessage>{errors.preferredExperience}</ErrorMessage>}
@@ -412,7 +355,6 @@ const PositionFormModal = ({
                         })
                       }
                     />
-
                   )}
 
                   {!isViewing && (
@@ -448,8 +390,6 @@ const PositionFormModal = ({
                 setActiveTab("manual");
               }}
             />
-
-
           </>
         )}
       </Modal.Body>

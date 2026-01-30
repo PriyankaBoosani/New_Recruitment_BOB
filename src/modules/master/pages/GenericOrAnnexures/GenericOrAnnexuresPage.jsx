@@ -3,17 +3,13 @@ import { Container, Button } from "react-bootstrap";
 import { Plus } from "react-bootstrap-icons";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-
 import { useGenericOrAnnexures } from "./hooks/useGenericOrAnnexures";
 import GenericOrAnnexuresTable from "./components/GenericOrAnnexuresTable";
 import GenericOrAnnexuresFormModal from "./components/GenericOrAnnexuresFormModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 import masterApiService from "../../../jobPosting/services/masterApiService";
 import '../../../../style/css/user.css';
-
-import {
-  validateGenericOrAnnexuresForm
-} from "../../../../shared/utils/genericOrAnnexures-validations";
+import { validateGenericOrAnnexuresForm } from "../../../../shared/utils/genericOrAnnexures-validations";
 
 const GenericOrAnnexuresPage = () => {
   const { t } = useTranslation(["genericOrAnnexures"]);
@@ -32,8 +28,6 @@ const GenericOrAnnexuresPage = () => {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
-
-
   const [formData, setFormData] = useState({
     type: "",
     file: null
@@ -61,9 +55,6 @@ const GenericOrAnnexuresPage = () => {
       }));
     }
   };
-
-
-
   /* ================= ADD ================= */
   const openAdd = () => {
     setIsViewing(false);
@@ -104,17 +95,6 @@ const GenericOrAnnexuresPage = () => {
     setShowModal(false);
   };
 
-  //   /* ================= DOWNLOAD ================= */
-  //  const handleDownload = (item) => {
-  //   if (!item?.fileUrl) return;
-
-  //   const a = document.createElement("a");
-  //   a.href = item.fileUrl;
-  //   a.download = item.fileName;
-  //   a.target = "_blank";
-  //   a.click();
-  // };
-
   const handleDownload = async (item) => {
   if (!item?.fileUrl) {
     console.error("No fileUrl present");
@@ -122,14 +102,14 @@ const GenericOrAnnexuresPage = () => {
   }
 
   try {
-    // 1️⃣ Get SAS URL from backend
+    // 1️ Get SAS URL from backend
     const sasUrl = await masterApiService.getSasUrl(item.fileUrl);
 
     if (!sasUrl) {
       throw new Error("SAS URL not returned");
     }
 
-    // 2️⃣ Let the browser download it (NO fetch, NO CORS)
+    // 2️ Let the browser download it (NO fetch, NO CORS)
     const a = document.createElement("a");
     a.href = sasUrl;
     a.download = item.fileName || "download.pdf";

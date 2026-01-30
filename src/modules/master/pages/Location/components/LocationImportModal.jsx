@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { Button, Alert } from 'react-bootstrap';
 import { Upload as UploadIcon } from 'react-bootstrap-icons';
 import { useTranslation } from "react-i18next";
-
 import { useLocations } from '../hooks/useLocations';
 
 const LocationImportModal = ({
-  onClose = () => {},
-  onSuccess = () => {}
+  onClose = () => { },
+  onSuccess = () => { }
 }) => {
   const { t } = useTranslation(["location"]);
   const [errorDetails, setErrorDetails] = useState([]);
@@ -51,8 +50,8 @@ const LocationImportModal = ({
       onSuccess();
       onClose();
     } else {
-     setError(result?.message || t("location:import_error"));
-setErrorDetails(result?.data || []);
+      setError(result?.message || t("location:import_error"));
+      setErrorDetails(result?.data || []);
 
     }
   };
@@ -85,47 +84,31 @@ setErrorDetails(result?.data || []);
           </p>
         </div>
 
-{/* {error && (
-  <Alert variant="danger">
-    <div>{error}</div>
+        {error && (
+          <Alert variant="danger">
+            {/* Summary */}
+            <div className="fw-semibold">
+              {error}
+            </div>
 
-    {errorDetails.length > 0 && (
-      <ul className="mt-2 mb-0">
-        {errorDetails.map((msg, idx) => (
-          <li key={idx}>{msg}</li>
-        ))}
-      </ul>
-    )}
-  </Alert>
-)} */}
-
-{error && (
-  <Alert variant="danger">
-    {/* Summary */}
-    <div className="fw-semibold">
-      {error}
-    </div>
-
-    {/* Scrollable row errors */}
-    {errorDetails.length > 0 && (
-      <div
-        className="mt-2"
-        style={{
-          maxHeight: "150px",
-          overflowY: "auto"
-        }}
-      >
-        <ul className="mb-0">
-          {errorDetails.map((msg, idx) => (
-            <li key={idx}>{msg}</li>
-          ))}
-        </ul>
-      </div>
-    )}
-  </Alert>
-)}
-
-
+            {/* Scrollable row errors */}
+            {errorDetails.length > 0 && (
+              <div
+                className="mt-2"
+                style={{
+                  maxHeight: "150px",
+                  overflowY: "auto"
+                }}
+              >
+                <ul className="mb-0">
+                  {errorDetails.map((msg, idx) => (
+                    <li key={idx}>{msg}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </Alert>
+        )}
         <input
           id="upload-xlsx-location"
           type="file"
@@ -164,15 +147,16 @@ setErrorDetails(result?.data || []);
 
         <div className="text-center mb-3 small">
           {t("location:download_template")} :
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              downloadLocationTemplate();
-            }}
+          
+          <button
+            type="button"
+            onClick={downloadLocationTemplate}
+            className="btn btn-link p-0 text-primary text-decoration-none btnfont"
+            style={{ cursor: 'pointer' }}
+            disabled={loading}
           >
             {" "}XLSX
-          </a>
+          </button>
         </div>
       </div>
 

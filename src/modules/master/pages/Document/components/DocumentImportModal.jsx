@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Alert } from 'react-bootstrap';
-import { Upload as UploadIcon, Download } from 'react-bootstrap-icons';
+import { Upload as UploadIcon } from 'react-bootstrap-icons';
 import { useDocuments } from '../hooks/useDocuments';
-import { downloadTemplate } from '../../../../../shared/components/FileUpload';
 
 const DocumentImportModal = ({
   t = (key) => key, // Default translation function
@@ -102,17 +101,16 @@ const DocumentImportModal = ({
 
         <div className="text-center mb-3 import-area small">
           {t('download_template') || 'Download template:'}
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              downloadDocumentTemplate();
-            }}
-            className="text-primary text-decoration-none btnfont ms-1"
+         
+           <button
+            type="button"
+            onClick={downloadDocumentTemplate}
+            className="btn btn-link p-0 text-primary text-decoration-none btnfont"
             style={{ cursor: 'pointer' }}
+            disabled={loading}
           >
-            XLSX
-          </a>
+            {" "}XLSX
+          </button>
         </div>
       </div>
 

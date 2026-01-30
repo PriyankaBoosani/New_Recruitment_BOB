@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import masterApiService from '../../../services/masterApiService';
-import {
-  mapSpecialCategoriesFromApi,
-  mapSpecialCategoryFromApi
-} from '../mappers/specialCategoryMapper';
+import { mapSpecialCategoriesFromApi, mapSpecialCategoryFromApi } from '../mappers/specialCategoryMapper';
 import { useTranslation } from 'react-i18next';
 
 export const useSpecialCategories = () => {
@@ -13,9 +10,7 @@ export const useSpecialCategories = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  /* =========================
-     FETCH (ALWAYS SORT NEWEST FIRST)
-  ========================= */
+  /* ========================= FETCH (ALWAYS SORT NEWEST FIRST)  ========================= */
   const fetchCategories = async () => {
     try {
       setLoading(true);
@@ -50,9 +45,7 @@ export const useSpecialCategories = () => {
     fetchCategories();
   }, []);
 
-  /* =========================
-     ADD → SHOW ON TOP INSTANTLY
-  ========================= */
+  /* ========================= ADD → SHOW ON TOP INSTANTLY ========================= */
   const addCategory = async (payload) => {
     const res = await masterApiService.addSpecialCategory(payload);
 
@@ -68,9 +61,7 @@ export const useSpecialCategories = () => {
     );
   };
 
-  /* =========================
-     UPDATE
-  ========================= */
+  /* ========================= UPDATE ========================= */
   const updateCategory = async (id, payload) => {
     await masterApiService.updateSpecialCategory(id, payload);
     await fetchCategories();
@@ -79,9 +70,7 @@ export const useSpecialCategories = () => {
     );
   };
 
-  /* =========================
-     DELETE
-  ========================= */
+  /* ========================= DELETE ========================= */
   const deleteCategory = async (id) => {
     await masterApiService.deleteSpecialCategory(id);
 
@@ -94,9 +83,7 @@ export const useSpecialCategories = () => {
   };
 
 
-  /* =========================
-   DOWNLOAD TEMPLATE
-========================= */
+  /* ========================= DOWNLOAD TEMPLATE ========================= */
   const downloadSpecialCategoryTemplate = async () => {
     try {
       const res = await masterApiService.downloadSpecialCategoryTemplate();
@@ -118,9 +105,7 @@ export const useSpecialCategories = () => {
     }
   };
 
-  /* =========================
-     BULK IMPORT
-  ========================= */
+  /* ========================= BULK IMPORT ========================= */
   const bulkAddSpecialCategories = async (file) => {
     setLoading(true);
     try {

@@ -68,17 +68,6 @@ const JobGradePage = () => {
     setActiveTab('manual');
     setShowAddModal(true);
   };
-
-  // const openEditModal = (row) => {
-
-  //   setIsEditing(true);
-  //   setEditingId(row.id);
-  //   setFormData(row);
-  //   setActiveTab('manual');
-  //   setShowAddModal(true);
-  // };
-
-
   const openViewModal = (row) => {
     setIsViewing(true);
     setIsEditing(false);
@@ -154,24 +143,21 @@ const JobGradePage = () => {
       setList: fetchJobGrades
     });
   };
- const searchableFields = [
-  'scale',
-  'gradeCode',
-  'minSalary',
-  'maxSalary',
-  'description'
-];
+  const searchableFields = [
+    'scale',
+    'gradeCode',
+    'minSalary',
+    'maxSalary',
+    'description'
+  ];
 
-const filteredJobGrades = jobGrades.filter(j =>
-  searchableFields.some(key =>
-    String(j[key] ?? '')
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  )
-);
-
-
-
+  const filteredJobGrades = jobGrades.filter(j =>
+    searchableFields.some(key =>
+      String(j[key] ?? '')
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    )
+  );
   return (
     <Container fluid className="user-container">
       <div className="user-header">
@@ -207,8 +193,8 @@ const filteredJobGrades = jobGrades.filter(j =>
         onDelete={(row) => { setDeleteTarget(row); setShowDeleteModal(true); }}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-          pageSize={pageSize}
-  setPageSize={setPageSize}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
       />
 
       <JobGradeFormModal

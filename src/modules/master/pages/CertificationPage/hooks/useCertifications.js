@@ -3,13 +3,8 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-
 import masterApiService from "../../../services/masterApiService";
-import {
-  mapCertificationsFromApi,
-  mapCertificationFromApi,
-  mapCertificationToApi
-} from "../mappers/certificationMapper";
+import { mapCertificationsFromApi, mapCertificationFromApi, mapCertificationToApi } from "../mappers/certificationMapper";
 
 export const useCertifications = () => {
   const { t } = useTranslation(["certification"]);
@@ -20,22 +15,17 @@ export const useCertifications = () => {
   const fetchCertifications = async () => {
     try {
       const res = await masterApiService.getAllCertificates();
-
       const list = Array.isArray(res.data)
         ? res.data
         : res.data?.data || [];
 
       const mapped = mapCertificationsFromApi(list);
-
-    
-
       setCertifications(mapped);
     } catch (error) {
       toast.error(t("fetch_error"));
       setCertifications([]);
     }
   };
-
   useEffect(() => {
     fetchCertifications();
   }, []);
@@ -51,7 +41,7 @@ export const useCertifications = () => {
 
       toast.success(t("add_success"));
 
-      // ➕ add instantly on top
+      //  add instantly on top
       setCertifications(prev => [newItem, ...prev]);
     } catch (error) {
       toast.error(
@@ -72,7 +62,7 @@ export const useCertifications = () => {
 
       toast.success(t("update_success"));
 
-      // ✏️ update in place
+      //  update in place
       setCertifications(prev =>
         prev.map(c =>
           String(c.id) === String(id)

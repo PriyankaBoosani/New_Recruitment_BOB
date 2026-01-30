@@ -2,10 +2,7 @@ import { useEffect, useState } from "react";
 import i18n from "i18next";
 import { toast } from "react-toastify";
 import masterApiService from "../../../services/masterApiService";
-import {
-  mapLocationsFromApi,
-  mapLocationToApi
-} from "../mappers/locationMapper";
+import { mapLocationsFromApi, mapLocationToApi } from "../mappers/locationMapper";
 import { mapCitiesFromApi } from "../mappers/cityMapper";
 
 export const useLocations = () => {
@@ -56,74 +53,67 @@ export const useLocations = () => {
       fetchLocations();
     }
   }, [cities]);
-  
+
   //  Add
-const addLocation = async (payload) => {
-  await masterApiService.addLocation(mapLocationToApi(payload));
-  await fetchLocations();
-  toast.success(i18n.t("add_success", { ns: "location" }));
-};
+  const addLocation = async (payload) => {
+    await masterApiService.addLocation(mapLocationToApi(payload));
+    await fetchLocations();
+    toast.success(i18n.t("add_success", { ns: "location" }));
+  };
 
-//  Update
-const updateLocation = async (id, payload) => {
-  await masterApiService.updateLocation(id, mapLocationToApi(payload));
-  await fetchLocations();
-  toast.success(i18n.t("update_success", { ns: "location" }));
-};
+  //  Update
+  const updateLocation = async (id, payload) => {
+    await masterApiService.updateLocation(id, mapLocationToApi(payload));
+    await fetchLocations();
+    toast.success(i18n.t("update_success", { ns: "location" }));
+  };
 
-//  Delete
-const deleteLocation = async (id) => {
-  await masterApiService.deleteLocation(id);
-  await fetchLocations();
-  toast.success(i18n.t("delete_success", { ns: "location" }));
-};
+  //  Delete
+  const deleteLocation = async (id) => {
+    await masterApiService.deleteLocation(id);
+    await fetchLocations();
+    toast.success(i18n.t("delete_success", { ns: "location" }));
+  };
 
-/* =========================
-   DOWNLOAD TEMPLATE
-========================= */
-const downloadLocationTemplate = async () => {
-  try {
-    const res = await masterApiService.downloadLocationTemplate();
+  const downloadLocationTemplate = async () => {
+    try {
+      const res = await masterApiService.downloadLocationTemplate();
 
-    const blob = new Blob([res.data], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
+      const blob = new Blob([res.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
 
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "Location_Template.xlsx";
-    a.click();
-    window.URL.revokeObjectURL(url);
-  } catch {
-    toast.error(
-      i18n.t("download_error", { ns: "location" }) ||
-      "Download failed"
-    );
-  }
-};
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Location_Template.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      toast.error(
+        i18n.t("download_error", { ns: "location" }) ||
+        "Download failed"
+      );
+    }
+  };
 
-/* =========================
-   BULK IMPORT
-========================= */
-const bulkAddLocations = async (file) => {
-  setLoading(true);
+  /* ========================= BULK IMPORT  ========================= */
+  const bulkAddLocations = async (file) => {
+    setLoading(true);
     try {
       const res = await masterApiService.bulkAddLocations(file);
 
       console.log("API RESPONSE:", res); // logs for 200 & 422
 
       //  business failure
-    if (res.success === false) {
-  // toast.error(res.message);
+      if (res.success === false) {
 
-  return {
-    success: false,
-    message: res.message, // summary
-    data: res.data        // row-wise errors
-  };
-}
-
+        return {
+          success: false,
+          message: res.message, // summary
+          data: res.data        // row-wise errors
+        };
+      }
       //  success
       toast.success(res.message || "File uploaded successfully");
 
@@ -146,7 +136,7 @@ const bulkAddLocations = async (file) => {
     } finally {
       setLoading(false);
     }
-};
+  };
 
 
   return {

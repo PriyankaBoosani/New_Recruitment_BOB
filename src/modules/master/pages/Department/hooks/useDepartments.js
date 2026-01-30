@@ -9,62 +9,57 @@ export const useDepartments = () => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
 
-const fetchDepartments = async () => {
-  try {
-    const res = await masterApiService.getAllDepartments();
+  const fetchDepartments = async () => {
+    try {
+      const res = await masterApiService.getAllDepartments();
 
-    const apiList = Array.isArray(res.data)
-      ? res.data
-      : res.data?.data || [];
+      const apiList = Array.isArray(res.data)
+        ? res.data
+        : res.data?.data || [];
 
-    const mapped = mapDepartmentsFromApi(apiList);
-    setDepartments(mapped);
-  } catch (err) {
-    console.error("Department fetch failed", err);
-    setDepartments([]);
-  }
-};
-
-const bulkAddDepartments = async (file) => {
-  setLoading(true);
-
-  try {
-    const res = await masterApiService.bulkAddDepartments(file);
-
-    console.log("API RESPONSE:", res); // logs for 200 & 422
-
-    if (res.success === false) {
-  // toast.error(res.message);
-
-  return {
-    success: false,
-    error: res.message,
-    details: res.data || []   //  ADD THIS
+      const mapped = mapDepartmentsFromApi(apiList);
+      setDepartments(mapped);
+    } catch (err) {
+      console.error("Department fetch failed", err);
+      setDepartments([]);
+    }
   };
-}
 
-  await fetchDepartments(); 
-    toast.success(res.message || "File uploaded successfully");
+  const bulkAddDepartments = async (file) => {
+    setLoading(true);
 
-    return {
-      success: true
-    };
+    try {
+      const res = await masterApiService.bulkAddDepartments(file);
+      if (res.success === false) {
+        return {
+          success: false,
+          error: res.message,
+          details: res.data || []   //  ADD THIS
+        };
+      }
 
-  } catch (err) {
-    console.log("NETWORK ERROR:", err);
+      await fetchDepartments();
+      toast.success(res.message || "File uploaded successfully");
 
-    const message = "Something went wrong";
-    toast.error(message);
+      return {
+        success: true
+      };
 
-    return {
-      success: false,
-      error: message
-    };
+    } catch (err) {
+      console.log("NETWORK ERROR:", err);
 
-  } finally {
-    setLoading(false);
-  }
-};
+      const message = "Something went wrong";
+      toast.error(message);
+
+      return {
+        success: false,
+        error: message
+      };
+
+    } finally {
+      setLoading(false);
+    }
+  };
   const downloadDepartmentTemplate = async () => {
     try {
       const res = await masterApiService.downloadDepartmentTemplate();
@@ -82,8 +77,6 @@ const bulkAddDepartments = async (file) => {
       toast.error(t("department:download_error") || 'Failed to download template');
     }
   };
-
-
   useEffect(() => {
     fetchDepartments();
   }, []);

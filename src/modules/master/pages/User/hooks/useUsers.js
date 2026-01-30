@@ -26,10 +26,6 @@ export const useUsers = () => {
       setLoading(false);
     }
   };
-
-
-
-
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -57,9 +53,6 @@ export const useUsers = () => {
       console.error("Add user failed:", err);
     }
   };
-
-
-
 
   const deleteUser = async (id) => {
     await masterApiService.deleteUser(id);

@@ -12,7 +12,7 @@ const GenericOrAnnexuresFormModal = ({
   formData,
   handleInputChange,
   errors,
-  setErrors,  
+  setErrors,
   handleSave
 }) => {
   const { t } = useTranslation(["genericOrAnnexures"]);
@@ -35,8 +35,8 @@ const GenericOrAnnexuresFormModal = ({
             {isViewing
               ? t("view", "View Generic / Annexures")
               : isEditing
-              ? t("edit", "Edit Generic / Annexures")
-              : t("addgenAnn", "Add Generic / Annexures")}
+                ? t("edit", "Edit Generic / Annexures")
+                : t("addgenAnn", "Add Generic / Annexures")}
           </Modal.Title>
 
           {!isViewing && (
@@ -53,9 +53,9 @@ const GenericOrAnnexuresFormModal = ({
           onSubmit={
             isViewing
               ? (e) => {
-                  e.preventDefault();
-                  onHide();
-                }
+                e.preventDefault();
+                onHide();
+              }
               : handleSave
           }
         >
@@ -119,57 +119,53 @@ const GenericOrAnnexuresFormModal = ({
                       accept="application/pdf"
                       hidden
                       disabled={!isTypeSelected}
-                 onChange={(e) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
 
-  //  file too large
-  if (file.size > MAX_PDF_SIZE) {
-    setErrors(prev => ({
-      ...prev,
-      file: t(
-        "pdf_size_5mb",
-        "PDF size must be less than or equal to 5 MB"
-      )
-    }));
+                        //  file too large
+                        if (file.size > MAX_PDF_SIZE) {
+                          setErrors(prev => ({
+                            ...prev,
+                            file: t(
+                              "pdf_size_5mb",
+                              "PDF size must be less than or equal to 5 MB"
+                            )
+                          }));
 
-    // clear file from formData
-    handleInputChange({
-      target: {
-        name: "file",
-        value: null
-      }
-    });
+                          // clear file from formData
+                          handleInputChange({
+                            target: {
+                              name: "file",
+                              value: null
+                            }
+                          });
 
-    e.target.value = "";
-    return;
-  }
+                          e.target.value = "";
+                          return;
+                        }
 
-  //  valid file
-  handleInputChange({
-    target: {
-      name: "file",
-      value: file
-    }
-  });
+                        //  valid file
+                        handleInputChange({
+                          target: {
+                            name: "file",
+                            value: file
+                          }
+                        });
 
-  // clear file error
-  setErrors(prev => {
-    const copy = { ...prev };
-    delete copy.file;
-    return copy;
-  });
-}}
-
-
-
+                        // clear file error
+                        setErrors(prev => {
+                          const copy = { ...prev };
+                          delete copy.file;
+                          return copy;
+                        });
+                      }}
                     />
 
                     {/* visible text-field style uploader */}
                     <div
-                      className={`form-control-custom d-flex align-items-center justify-content-between ${
-                        !isTypeSelected ? "disabled" : ""
-                      }`}
+                      className={`form-control-custom d-flex align-items-center justify-content-between ${!isTypeSelected ? "disabled" : ""
+                        }`}
                       style={{
                         cursor: isTypeSelected
                           ? "pointer"
@@ -188,8 +184,6 @@ const GenericOrAnnexuresFormModal = ({
                       </span>
                       <Upload size={18} />
                     </div>
-
-                   
                   </>
                 )}
 

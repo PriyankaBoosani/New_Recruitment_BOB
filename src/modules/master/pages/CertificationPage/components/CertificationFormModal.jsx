@@ -3,12 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-
-import {
-  handleValidatedInput,
-  INPUT_PATTERNS
-} from "../../../../../shared/utils/inputHandlers";
-
+import { handleValidatedInput, INPUT_PATTERNS } from "../../../../../shared/utils/inputHandlers";
 import ErrorMessage from "../../../../../shared/components/ErrorMessage";
 import CertificationImportModal from "./CertificationImportModal";
 import { validateCertificationForm } from "../../../../../shared/utils/certification-validations";
@@ -36,26 +31,23 @@ const CertificationFormModal = ({
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
 
-  /* ---------------- LOAD EDIT DATA ---------------- */
-/* ---------------- LOAD / RESET FORM DATA ---------------- */
-useEffect(() => {
-  if (!show) return;
+  /* ---------------- LOAD / RESET FORM DATA ---------------- */
+  useEffect(() => {
+    if (!show) return;
 
-  if (isEditing || isViewing) {
-    setFormData({
-      name: editingCertification?.name ?? "",
-      description: editingCertification?.description ?? ""
-    });
-  } else {
-    // ✅ ADD MODE → always reset
-    setFormData(EMPTY_FORM);
-  }
+    if (isEditing || isViewing) {
+      setFormData({
+        name: editingCertification?.name ?? "",
+        description: editingCertification?.description ?? ""
+      });
+    } else {
+      //  ADD MODE → always reset
+      setFormData(EMPTY_FORM);
+    }
 
-  setErrors({});
-  setActiveTab("manual");
-}, [show, isEditing, isViewing, editingCertification]);
-
-
+    setErrors({});
+    setActiveTab("manual");
+  }, [show, isEditing, isViewing, editingCertification]);
 
   /* ---------------- SUBMIT ---------------- */
   const handleSubmit = (e) => {
@@ -92,12 +84,12 @@ useEffect(() => {
       <Modal.Header closeButton className="modal-header-custom">
         <div>
           <Modal.Title>
-                {isViewing
-                ? t("view_certification")
-                : isEditing
+            {isViewing
+              ? t("view_certification")
+              : isEditing
                 ? t("edit_certification")
                 : t("add_certification")}
-            </Modal.Title>
+          </Modal.Title>
 
           {!isEditing && !isViewing && (
             <p className="mb-0 small text-muted">
@@ -115,9 +107,8 @@ useEffect(() => {
           <div className="tab-buttons mb-4">
             <Button
               variant={activeTab === "manual" ? "light" : "outline-light"}
-              className={`tab-button ${
-                activeTab === "manual" ? "active" : ""
-              }`}
+              className={`tab-button ${activeTab === "manual" ? "active" : ""
+                }`}
               onClick={() => setActiveTab("manual")}
             >
               {t("manual_entry")}
@@ -125,9 +116,8 @@ useEffect(() => {
 
             <Button
               variant={activeTab === "import" ? "light" : "outline-light"}
-              className={`tab-button ${
-                activeTab === "import" ? "active" : ""
-              }`}
+              className={`tab-button ${activeTab === "import" ? "active" : ""
+                }`}
               onClick={() => setActiveTab("import")}
             >
               {t("import_file")}
@@ -141,9 +131,9 @@ useEffect(() => {
             onSubmit={
               isViewing
                 ? (e) => {
-                    e.preventDefault();
-                    onHide();
-                  }
+                  e.preventDefault();
+                  onHide();
+                }
                 : handleSubmit
             }
             noValidate
@@ -182,45 +172,45 @@ useEffect(() => {
                 )}
               </Col>
 
-             <Col md={12}>
-  <Form.Label>
-    {t("description")} <span className="text-danger">*</span>
-  </Form.Label>
+              <Col md={12}>
+                <Form.Label>
+                  {t("description")} <span className="text-danger">*</span>
+                </Form.Label>
 
-  {isViewing ? (
-    <div
-      className="form-control-view"
-      style={{ whiteSpace: "pre-line" }}
-    >
-      {formData.description || "-"}
-    </div>
-  ) : (
-    <Form.Control
-      as="textarea"
-      rows={3}
-      name="description"
-      value={formData.description}
-      placeholder={t("enter_description")}
-      className="form-control-custom"
-      onChange={(e) => {
-        const value = e.target.value;
-        setFormData(prev => ({
-          ...prev,
-          description: value
-        }));
-        setErrors(prev => {
-          const copy = { ...prev };
-          delete copy.description;
-          return copy;
-        });
-      }}
-    />
-  )}
+                {isViewing ? (
+                  <div
+                    className="form-control-view"
+                    style={{ whiteSpace: "pre-line" }}
+                  >
+                    {formData.description || "-"}
+                  </div>
+                ) : (
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    name="description"
+                    value={formData.description}
+                    placeholder={t("enter_description")}
+                    className="form-control-custom"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setFormData(prev => ({
+                        ...prev,
+                        description: value
+                      }));
+                      setErrors(prev => {
+                        const copy = { ...prev };
+                        delete copy.description;
+                        return copy;
+                      });
+                    }}
+                  />
+                )}
 
-  {!isViewing && (
-    <ErrorMessage>{errors.description}</ErrorMessage>
-  )}
-</Col>
+                {!isViewing && (
+                  <ErrorMessage>{errors.description}</ErrorMessage>
+                )}
+              </Col>
 
             </Row>
 

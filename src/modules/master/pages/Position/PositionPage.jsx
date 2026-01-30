@@ -3,21 +3,16 @@ import React, { useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import { Search, Plus } from "react-bootstrap-icons";
 import { useTranslation } from "react-i18next";
-
 import { usePositions } from "./hooks/usePositions";
 import PositionTable from "./components/PositionTable";
 import PositionFormModal from "./components/PositionFormModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
-
 import { validatePositionForm } from "../../../../shared/utils/position-validations";
 import { mapPositionToApi } from "./mappers/positionMapper";
 import { importFromCSV } from "../../../../shared/components/FileUpload";
 import '../../../../style/css/user.css';
-
-
 import { useDepartments } from "../Department/hooks/useDepartments";
 import { useJobGrades } from "../JobGrade/hooks/useJobGrades";
-
 
 const PositionPage = () => {
   const { t } = useTranslation(["position"]);
@@ -28,19 +23,6 @@ const PositionPage = () => {
     deletePosition,
     fetchPositions
   } = usePositions();
-
-  /* SAME STATIC DATA AS ORIGINAL */
-  // const departments = [
-  //   "Information Technology",
-  //   "Human Resources",
-  //   "Finance",
-  //   "Marketing",
-  //   "Operations",
-  //   "Market Risk",
-  //   "Integrated Risk Management",
-  // ];
-
-  // const jobGrades = ["JG1", "JG2", "JG3", "JG4"];
 
   /* ---------------- UI STATE ---------------- */
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,20 +44,13 @@ const PositionPage = () => {
   /* ---------------- FORM STATE ---------------- */
   const [formData, setFormData] = useState({
     title: "",
-    // departmentId: "",
     jobGradeId: "",
-
     mandatoryExperience: "",
     preferredExperience: "",
     rolesResponsibilities: "",
-
-    // eligibility ages used by UI + mapper
     eligibilityAgeMin: "",
     eligibilityAgeMax: ""
   });
-
-
-
   const [errors, setErrors] = useState({});
 
   /* ---------------- IMPORT STATE ---------------- */
@@ -91,7 +66,6 @@ const PositionPage = () => {
 
     setFormData({
       title: p.title || "",
-      // departmentId: p.departmentId || "",
       jobGradeId: p.jobGradeId || "",
       mandatoryEducation: p.mandatoryEducation || "",
       preferredEducation: p.preferredEducation || "",
@@ -110,16 +84,14 @@ const PositionPage = () => {
 
   const openAddModal = () => {
     setIsEditing(false);
-    setIsViewing(false);  
+    setIsViewing(false);
     setShowAddModal(true);
     setEditingId(null);
     setFormData({
       title: "",
-      // departmentId: "",
       jobGradeId: "",
       mandatoryExperience: "",
       preferredExperience: "",
-
       rolesResponsibilities: "",
       code: "",
       eligibilityAgeMin: "",
@@ -132,10 +104,8 @@ const PositionPage = () => {
     setShowAddModal(true);
   };
 
-
   const { departments } = useDepartments();
   const { jobGrades } = useJobGrades();
-
 
   const openEditModal = (p) => {
     setIsViewing(false);
@@ -143,7 +113,6 @@ const PositionPage = () => {
     setEditingId(p.id);
     setFormData({
       title: p.title || "",
-      // departmentId: p.departmentId || "",
       jobGradeId: p.jobGradeId || "",
 
       mandatoryExperience: p.mandatoryExperience || "",
@@ -160,7 +129,6 @@ const PositionPage = () => {
     setActiveTab("manual");
     setShowAddModal(true);
   };
-
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -251,12 +219,6 @@ const PositionPage = () => {
               className="search-input"
               onChange={(e) => {
                 const value = e.target.value;
-
-                // //  allow alphabets, numbers, space and @
-                // if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
-                //   return; // block invalid characters
-                // }
-
                 setSearchTerm(value);
               }}
             />
@@ -274,8 +236,8 @@ const PositionPage = () => {
         searchTerm={searchTerm}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-         pageSize={pageSize}
-  setPageSize={setPageSize}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
         onView={openViewModal}
         onEdit={openEditModal}
         onDelete={(p) => {
@@ -284,7 +246,6 @@ const PositionPage = () => {
         }}
         t={t}
       />
-
 
       <PositionFormModal
         show={showAddModal}

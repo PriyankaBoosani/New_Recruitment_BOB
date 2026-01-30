@@ -6,9 +6,9 @@ import { useTranslation } from "react-i18next";
 import { useJobGrades } from '../hooks/useJobGrades';
 
 const JobGradeImportModal = ({
-  onClose = () => {},
-  onSuccess = () => {},
-      fetchJobGrades
+  onClose = () => { },
+  onSuccess = () => { },
+  fetchJobGrades
 }) => {
   const { t } = useTranslation(["jobGrade"]);
 
@@ -52,7 +52,7 @@ const JobGradeImportModal = ({
     const result = await bulkAddJobGrades(selectedFile);
 
     if (result?.success) {
-       await fetchJobGrades();
+      await fetchJobGrades();
       onSuccess();
       onClose();
     } else {
@@ -89,42 +89,27 @@ const JobGradeImportModal = ({
           </p>
         </div>
 
-       {/* {error && (
-  <Alert variant="danger">
-    <div>{error}</div>
+        {error && (
+          <Alert variant="danger">
+            <div>{error}</div>
 
-    {errorDetails.length > 0 && (
-      <ul className="mt-2 mb-0">
-        {errorDetails.map((msg, idx) => (
-          <li key={idx}>{msg}</li>
-        ))}
-      </ul>
-    )}
-  </Alert>
-)} */}
-
-
-{error && (
-  <Alert variant="danger">
-    <div>{error}</div>
-
-    {errorDetails.length > 0 && (
-      <div
-        className="mt-2"
-        style={{
-          maxHeight: '150px',
-          overflowY: 'auto'
-        }}
-      >
-        <ul className="mb-0">
-          {errorDetails.map((msg, idx) => (
-            <li key={idx}>{msg}</li>
-          ))}
-        </ul>
-      </div>
-    )}
-  </Alert>
-)}
+            {errorDetails.length > 0 && (
+              <div
+                className="mt-2"
+                style={{
+                  maxHeight: '150px',
+                  overflowY: 'auto'
+                }}
+              >
+                <ul className="mb-0">
+                  {errorDetails.map((msg, idx) => (
+                    <li key={idx}>{msg}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </Alert>
+        )}
 
 
 
@@ -172,16 +157,15 @@ const JobGradeImportModal = ({
 
         <div className="text-center mb-3 small">
           {t("jobGrade:download_template")} :
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              downloadJobGradeTemplate();
-            }}
-            className="text-primary text-decoration-none"
+           <button
+            type="button"
+            onClick={downloadJobGradeTemplate}
+            className="btn btn-link p-0 text-primary text-decoration-none btnfont"
+            style={{ cursor: 'pointer' }}
+            disabled={loading}
           >
             {" "}XLSX
-          </a>
+          </button>
         </div>
       </div>
 

@@ -29,14 +29,11 @@ const DepartmentPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [pageSize, setPageSize] = useState(5); // default
-
-
   // Form States
   const [formData, setFormData] = useState({ name: '', description: '' });
   const [editingDeptId, setEditingDeptId] = useState(null);
   const [errors, setErrors] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-  
 
   const openAddModal = () => {
     setIsEditing(false);
@@ -47,64 +44,64 @@ const DepartmentPage = () => {
     setShowAddModal(true);
   };
 
-const openEditModal = (dept) => {
-  setIsEditing(true);
-  setIsViewing(false);
-  setEditingDeptId(dept.id);
-  setFormData({ name: dept.name, description: dept.description || '' });
-  setErrors({});                 //  CLEAR OLD ERRORS
-  setActiveTab('manual');
-  setShowAddModal(true);
-};
+  const openEditModal = (dept) => {
+    setIsEditing(true);
+    setIsViewing(false);
+    setEditingDeptId(dept.id);
+    setFormData({ name: dept.name, description: dept.description || '' });
+    setErrors({});                 //  CLEAR OLD ERRORS
+    setActiveTab('manual');
+    setShowAddModal(true);
+  };
 
-const openViewModal = (dept) => {
-  setIsViewing(true);
-  setIsEditing(false);
-  setFormData({ name: dept.name, description: dept.description || '' });
-  setErrors({});                 //  CLEAR OLD ERRORS
-  setActiveTab('manual');  
-  setShowAddModal(true);
-};
+  const openViewModal = (dept) => {
+    setIsViewing(true);
+    setIsEditing(false);
+    setFormData({ name: dept.name, description: dept.description || '' });
+    setErrors({});                 //  CLEAR OLD ERRORS
+    setActiveTab('manual');
+    setShowAddModal(true);
+  };
 
 
   const handleSave = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  //  TRIM ALL STRING FIELDS (ltrim + rtrim)
-  const trimmedFormData = Object.fromEntries(
-    Object.entries(formData).map(([key, value]) => [
-      key,
-      typeof value === "string" ? value.trim() : value
-    ])
-  );
+    //  TRIM ALL STRING FIELDS (ltrim + rtrim)
+    const trimmedFormData = Object.fromEntries(
+      Object.entries(formData).map(([key, value]) => [
+        key,
+        typeof value === "string" ? value.trim() : value
+      ])
+    );
 
-  const { valid, errors: vErrors } =
-    validateDepartmentForm(trimmedFormData, {
-      existing: departments,
-      currentId: isEditing ? editingDeptId : null
-    });
+    const { valid, errors: vErrors } =
+      validateDepartmentForm(trimmedFormData, {
+        existing: departments,
+        currentId: isEditing ? editingDeptId : null
+      });
 
-    
-  if (!valid) {
-    setErrors(vErrors);
-    return;
-  }
 
-  try {
-    const payload = mapDepartmentToApi(trimmedFormData);
-
-    if (isEditing) {
-      await updateDepartment(editingDeptId, payload);
-    } else {
-      await addDepartment(payload);
-      setCurrentPage(1);
+    if (!valid) {
+      setErrors(vErrors);
+      return;
     }
 
-    setShowAddModal(false);
-  } catch (err) {
-    console.error("Save failed", err);
-  }
-};
+    try {
+      const payload = mapDepartmentToApi(trimmedFormData);
+
+      if (isEditing) {
+        await updateDepartment(editingDeptId, payload);
+      } else {
+        await addDepartment(payload);
+        setCurrentPage(1);
+      }
+
+      setShowAddModal(false);
+    } catch (err) {
+      console.error("Save failed", err);
+    }
+  };
 
   return (
     <Container fluid className="user-container">
@@ -113,46 +110,39 @@ const openViewModal = (dept) => {
         <div className="user-actions">
           <div className="search-box">
             <Search className="search-icon" />
-          <Form.Control
-  placeholder={t("search_by_department")}
-  value={searchTerm}
-  onChange={(e) => {
-    const value = e.target.value;
-
-    // //  allow alphabets, numbers, @, and space
-    // if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
-    //   return; // block invalid characters
-    // }
-
-    setSearchTerm(value);
-    setCurrentPage(1);
-  }}
-  className="search-input"
-/>
-
+            <Form.Control
+              placeholder={t("search_by_department")}
+              value={searchTerm}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearchTerm(value);
+                setCurrentPage(1);
+              }}
+              className="search-input"
+            />
           </div>
           <Button className="add-button" onClick={openAddModal}><Plus size={20} /> {t("department:add")}</Button>
         </div>
       </div>
 
-    <DepartmentTable
-  data={departments}
-  searchTerm={searchTerm}
-  onEdit={openEditModal}
-  onView={openViewModal}
-  onDelete={(dept) => { setDeleteTarget(dept); setShowDeleteModal(true); }}
-  currentPage={currentPage}
-  setCurrentPage={setCurrentPage}
-  pageSize={pageSize}
-  setPageSize={setPageSize}
-/>
+      <DepartmentTable
+        data={departments}
+        searchTerm={searchTerm}
+        onEdit={openEditModal}
+        onView={openViewModal}
+        onDelete={(dept) => { setDeleteTarget(dept); setShowDeleteModal(true); }}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+      />
 
       <DepartmentFormModal
         show={showAddModal}
-       onHide={() => {
-  setShowAddModal(false);
-  setErrors({});                
-}}
+        onHide={() => {
+          setShowAddModal(false);
+          setErrors({});
+        }}
         isEditing={isEditing}
         isViewing={isViewing}
         activeTab={activeTab}

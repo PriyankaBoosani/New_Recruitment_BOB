@@ -1,7 +1,5 @@
 // src/modules/master/pages/JobGrade/mappers/jobGradeMapper.js
 import { cleanData } from "../../../../../shared/utils/common-validations";
-
-
 export const mapJobGradeFromApi = (api) => ({
   id: api.jobGradeId,
   scale: api.jobScale,

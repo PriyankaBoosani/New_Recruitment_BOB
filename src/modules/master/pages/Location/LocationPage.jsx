@@ -22,172 +22,148 @@ const LocationPage = () => {
     fetchLocations
   } = useLocations();
 
-
-
   const [formData, setFormData] = useState({
-  name: '',
-  cityId: null,
-  cityName: ''
-});
+    name: '',
+    cityId: null,
+    cityName: ''
+  });
 
-const [errors, setErrors] = useState({});
-
-
+  const [errors, setErrors] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
 
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  // const [editingId, setEditingId] = useState(null);
   const [editingLocation, setEditingLocation] = useState(null);
-
-
   const [showDelete, setShowDelete] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
-const [isViewing, setIsViewing] = useState(false);
+  const [isViewing, setIsViewing] = useState(false);
+  const openView = (loc) => {
+    setIsEditing(false);
+    setIsViewing(true);        //  view mode ON
+    setEditingLocation(loc);
 
-
- const openView = (loc) => {
-  setIsEditing(false);
-  setIsViewing(true);        //  view mode ON
-  setEditingLocation(loc);
-
-  setFormData({
-    name: loc.name ?? '',
-    cityId: loc.cityId ?? null,
-    cityName: loc.cityName ?? ''
-  });
-
-  setErrors({});
-  setShowModal(true);
-};
-
-
-  
-
-const openAdd = () => {
-  setIsEditing(false);
-   setIsViewing(false); 
-  setEditingLocation(null);
-  setFormData({ name: '', cityId: null, cityName: '' });
-  setErrors({});
-  setShowModal(true);
-};
-
-const openEdit = (loc) => {
-  setIsEditing(true);
-  setIsViewing(false);       //  edit mode
-  setEditingLocation(loc);
-
-  setFormData({
-    name: loc.name ?? '',
-    cityId: loc.cityId ?? null,
-    cityName: loc.cityName ?? ''
-  });
-
-  setErrors({});
-  setShowModal(true);
-};
-
-
-
-const handleSave = async (e) => {
-  e.preventDefault();
-
-  const { valid, errors: vErrors } =
-    validateLocationForm(formData, {
-      existing: locations,
-      currentId: isEditing ? editingLocation?.id : null
+    setFormData({
+      name: loc.name ?? '',
+      cityId: loc.cityId ?? null,
+      cityName: loc.cityName ?? ''
     });
 
-  if (!valid) {
-    setErrors(vErrors);
-    return;
-  }
+    setErrors({});
+    setShowModal(true);
+  };
 
-  try {
-    if (isEditing) {
-      await updateLocation(editingLocation.id, formData);
-    } else {
-      await addLocation(formData);
-      setCurrentPage(1); // show newest record
+  const openAdd = () => {
+    setIsEditing(false);
+    setIsViewing(false);
+    setEditingLocation(null);
+    setFormData({ name: '', cityId: null, cityName: '' });
+    setErrors({});
+    setShowModal(true);
+  };
+
+  const openEdit = (loc) => {
+    setIsEditing(true);
+    setIsViewing(false);       //  edit mode
+    setEditingLocation(loc);
+
+    setFormData({
+      name: loc.name ?? '',
+      cityId: loc.cityId ?? null,
+      cityName: loc.cityName ?? ''
+    });
+
+    setErrors({});
+    setShowModal(true);
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+
+    const { valid, errors: vErrors } =
+      validateLocationForm(formData, {
+        existing: locations,
+        currentId: isEditing ? editingLocation?.id : null
+      });
+
+    if (!valid) {
+      setErrors(vErrors);
+      return;
     }
 
-    setShowModal(false);
-  } catch (err) {
-    console.error("Save failed", err);
-  }
-};
+    try {
+      if (isEditing) {
+        await updateLocation(editingLocation.id, formData);
+      } else {
+        await addLocation(formData);
+        setCurrentPage(1); // show newest record
+      }
 
-return (
-  <Container fluid className="user-container">
-    <div className="user-header">
-      <h2>{t("locations")}</h2>
+      setShowModal(false);
+    } catch (err) {
+      console.error("Save failed", err);
+    }
+  };
 
-      <div className="user-actions">
-        <div className="search-box">
-          <Search className="search-icon" />
-         <Form.Control
-  placeholder={t("search_placeholder")}
-  value={searchTerm}
-  onChange={(e) => {
-    const value = e.target.value;
+  return (
+    <Container fluid className="user-container">
+      <div className="user-header">
+        <h2>{t("locations")}</h2>
 
-    // //  allow alphabets, numbers, @, and space
-    // if (!/^[A-Za-z0-9@\s]*$/.test(value)) {
-    //   return; // block invalid characters
-    // }
+        <div className="user-actions">
+          <div className="search-box">
+            <Search className="search-icon" />
+            <Form.Control
+              placeholder={t("search_placeholder")}
+              value={searchTerm}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearchTerm(value);
+              }}
+              className="search-input"
+            />
 
-    setSearchTerm(value);
-  }}
-  className="search-input"
-/>
+          </div>
 
+          <Button className="add-button" onClick={openAdd}>
+            <Plus size={20} /> {t("add")}
+          </Button>
         </div>
-
-        <Button className="add-button" onClick={openAdd}>
-          <Plus size={20} /> {t("add")}
-        </Button>
       </div>
-    </div>
-
 
       <LocationTable
         data={locations}
         searchTerm={searchTerm}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-          pageSize={pageSize}
-  setPageSize={setPageSize}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
         onEdit={openEdit}
-         onView={openView}   
+        onView={openView}
         onDelete={(loc) => {
           setDeleteTarget(loc);
           setShowDelete(true);
         }}
       />
 
-<LocationFormModal
-  show={showModal}
-  onHide={() => setShowModal(false)}
-  isEditing={isEditing}
-  isViewing={isViewing}    //  ONLY THIS
-  formData={formData}
-  setFormData={setFormData}
-  errors={errors}
-  cities={cities}
-  setErrors={setErrors}
-  handleSave={handleSave}
-  t={t}
-  onSuccess={() => {
-    fetchLocations();
-    setShowModal(false);
-  }}
-/>
-
-
-
+      <LocationFormModal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        isEditing={isEditing}
+        isViewing={isViewing}    //  ONLY THIS
+        formData={formData}
+        setFormData={setFormData}
+        errors={errors}
+        cities={cities}
+        setErrors={setErrors}
+        handleSave={handleSave}
+        t={t}
+        onSuccess={() => {
+          fetchLocations();
+          setShowModal(false);
+        }}
+      />
 
       <DeleteConfirmModal
         show={showDelete}

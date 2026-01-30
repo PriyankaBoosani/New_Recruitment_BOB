@@ -1,17 +1,13 @@
-// src/modules/master/pages/Document/DocumentPage.jsx
-
 import React, { useState } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import { Search, Plus } from 'react-bootstrap-icons';
 import { useTranslation } from "react-i18next";
-
 import { useDocuments } from './hooks/useDocuments';
 import DocumentTable from './components/DocumentTable';
 import DocumentFormModal from './components/DocumentFormModal';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
-
 import { validateDocumentForm } from '../../../../shared/utils/document-validations';
-import {mapDocumentToApi } from './mappers/documentMapper';
+import { mapDocumentToApi } from './mappers/documentMapper';
 import { importFromCSV } from '../../../../shared/components/FileUpload';
 import '../../../../style/css/user.css';
 
@@ -39,7 +35,7 @@ const DocumentPage = () => {
 
   const [activeTab, setActiveTab] = useState('manual');
 
-  const [formData, setFormData] = useState({ name: '', description: '',isRequiredConfirmed: false  });
+  const [formData, setFormData] = useState({ name: '', description: '', isRequiredConfirmed: false });
   const [errors, setErrors] = useState({});
 
   const [selectedCSVFile, setSelectedCSVFile] = useState(null);
@@ -47,25 +43,22 @@ const DocumentPage = () => {
   const [isViewing, setIsViewing] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
-
-
   /* ---------- handlers ---------- */
-
   const openViewModal = (doc) => {
-  setIsViewing(true);
-  setIsEditing(false);
-  setEditingId(null);
+    setIsViewing(true);
+    setIsEditing(false);
+    setEditingId(null);
 
-  setFormData({
-    name: doc.name,
-    description: doc.description || '',
-    isRequiredConfirmed: doc.isRequiredConfirmed ?? false
-  });
+    setFormData({
+      name: doc.name,
+      description: doc.description || '',
+      isRequiredConfirmed: doc.isRequiredConfirmed ?? false
+    });
 
-  setErrors({});
-  setActiveTab('manual');
-  setShowAddModal(true);
-};
+    setErrors({});
+    setActiveTab('manual');
+    setShowAddModal(true);
+  };
 
 
   const openAddModal = () => {
@@ -78,60 +71,51 @@ const DocumentPage = () => {
     setShowAddModal(true);
   };
 
-  
-
   const openEditModal = (doc) => {
     setIsViewing(false);     //  RESET VIEW MODE
-  setIsEditing(true);      //  ENABLE EDIT MODE
+    setIsEditing(true);      //  ENABLE EDIT MODE
     setEditingId(doc.id);
     setFormData({
-    name: doc.name,
-    description: doc.description || '',
-    isRequiredConfirmed: doc.isRequiredConfirmed ?? false
-  });
+      name: doc.name,
+      description: doc.description || '',
+      isRequiredConfirmed: doc.isRequiredConfirmed ?? false
+    });
 
     setErrors({});
     setActiveTab('manual');
     setShowAddModal(true);
   };
+  const handleSave = async (e) => {
+    e.preventDefault();
+    // 2️ Other validations
+    const payload = {
+      name: formData.name.trim(),
+      description: formData.description.trim(),
+      isRequired: formData.isRequiredConfirmed,
+      isEditable: true,
+      isActive: true
+    };
 
+    const { valid, errors: vErrors } = validateDocumentForm(payload, {
+      existing: documents,
+      currentId: isEditing ? editingId : null
+    });
 
+    if (!valid) {
+      setErrors(vErrors);
+      return;
+    }
+    const apiPayload = mapDocumentToApi(payload);
 
-const handleSave = async (e) => {
-  e.preventDefault();
+    // 3️ Save
+    if (isEditing) {
+      await updateDocument(editingId, apiPayload);
+    } else {
+      await addDocument(apiPayload);
+    }
 
-
-  
-
-  // 2️⃣ Other validations
-  const payload = {
-    name: formData.name.trim(),
-    description: formData.description.trim(),
-    isRequired: formData.isRequiredConfirmed,
-    isEditable: true,
-    isActive: true
+    setShowAddModal(false);
   };
-
-  const { valid, errors: vErrors } = validateDocumentForm(payload, {
-    existing: documents,
-    currentId: isEditing ? editingId : null
-  });
-
-  if (!valid) {
-    setErrors(vErrors);
-    return;
-  }
-  const apiPayload = mapDocumentToApi(payload);
-
-  // 3️⃣ Save
-  if (isEditing) {
-    await updateDocument(editingId, apiPayload);
-  } else {
-    await addDocument(apiPayload);
-  }
-
-  setShowAddModal(false);
-};
 
   const handleImport = async () => {
     await importFromCSV({
@@ -171,8 +155,7 @@ const handleSave = async (e) => {
           </Button>
         </div>
       </div>
-
-      {/* <DocumentTable
+      <DocumentTable
         data={documents}
         searchTerm={searchTerm}
         onEdit={openEditModal}
@@ -180,26 +163,14 @@ const handleSave = async (e) => {
         onDelete={(d) => { setDeleteTarget(d); setShowDeleteModal(true); }}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-      /> */}
-
-      <DocumentTable
-  data={documents}
-  searchTerm={searchTerm}
-  onEdit={openEditModal}
-  onView={openViewModal}
-  onDelete={(d) => { setDeleteTarget(d); setShowDeleteModal(true); }}
-  currentPage={currentPage}
-  setCurrentPage={setCurrentPage}
-  itemsPerPage={itemsPerPage}
-  setItemsPerPage={setItemsPerPage}
-/>
-
-
+        itemsPerPage={itemsPerPage}
+        setItemsPerPage={setItemsPerPage}
+      />
       <DocumentFormModal
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
         isEditing={isEditing}
-         isViewing={isViewing} 
+        isViewing={isViewing}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         formData={formData}
@@ -215,12 +186,11 @@ const handleSave = async (e) => {
         removeCSV={() => setSelectedCSVFile(null)}
         removeXLSX={() => setSelectedXLSXFile(null)}
         t={t}
-           onSuccess={() => {
+        onSuccess={() => {
           fetchDocuments();     // refresh list immediately
           setShowAddModal(false); // ensure modal closes
         }}
       />
-
       <DeleteConfirmModal
         show={showDeleteModal}
         target={deleteTarget}
