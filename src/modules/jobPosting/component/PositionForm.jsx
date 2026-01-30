@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import upload_icon from '../../../assets/upload_Icon.png';
-import { useEffect } from "react";
 import edit_icon from "../../../assets/edit_icon.png"
 import view_icon from "../../../assets/view_icon.png"
 import file_icon from "../../../assets/file_icon.png"
-import { normalizeTitle, TITLE_ALLOWED_PATTERN } from "../validations/validateAddPosition";
+import { normalizeTitle, validateTitleOnType } from "../validations/validateAddPosition";
 import useViewIndent from "../hooks/useViewIndent";
+
 const PositionForm = ({
     isViewMode = false,
     formData,
@@ -33,26 +33,16 @@ const PositionForm = ({
     MAX_FILE_SIZE_MB
 }) => {
     const viewIndent = useViewIndent(existingIndentPath, existingIndentName);
-    const isContractEmployment =
-        employmentTypes.find(
-            t =>
-                String(t.id) === String(formData.employmentType) &&
-                t.label?.toLowerCase().includes("contract")
-        ) !== undefined;
+    const isContractEmployment = employmentTypes.some(
+        t =>
+            String(t.id) === String(formData.employmentType) &&
+            t.label?.toLowerCase().includes("contract")
+    );
 
-    useEffect(() => {
-        if (!isContractEmployment && formData.contractualPeriod) {
-            setFormData(prev => ({
-                ...prev,
-                contractYears:
-                    isContractEmployment && formData.contractualPeriod !== ""
-                        ? Number(formData.contractualPeriod)
-                        : null,
-            }));
-        }
-    }, [isContractEmployment]);
+    const indentInputRef = useRef(null);
+
     const handleReplaceIndent = () => {
-        if (isViewMode) return; // HARD STOP
+        if (isViewMode) return;
 
         setFormData(prev => ({
             ...prev,
@@ -61,12 +51,10 @@ const PositionForm = ({
 
         setIndentFile(null);
 
-        setErrors(prev => {
-            const { indentFile, ...rest } = prev;
-            return rest;
-        });
+        setErrors(prev => { const { indentFile, ...rest } = prev; return rest; });
 
-        const input = document.getElementById("indentFileInput");
+        const input = indentInputRef.current;
+
         if (input) {
             input.value = "";
             input.click();
@@ -86,9 +74,10 @@ const PositionForm = ({
                                     if (isViewMode) return;
 
                                     if (!existingIndentPath || indentFile) {
-                                        document.getElementById("indentFileInput").click();
+                                        indentInputRef.current?.click();
                                     }
                                 }}
+
                             >
                                 {indentFile ? (
                                     <div className="d-flex align-items-center justify-content-between w-100">
@@ -167,6 +156,7 @@ const PositionForm = ({
                             </div>
                             <input
                                 id="indentFileInput"
+                                ref={indentInputRef}
                                 type="file"
                                 hidden
                                 disabled={isViewMode}
@@ -202,32 +192,13 @@ const PositionForm = ({
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Approved On <span className="text-danger">*</span></Form.Label>
-                            <Form.Control
-                                type="date"
-                                value={approvedOn}
+                            <Form.Control type="date" value={approvedOn}
                                 onChange={(e) => {
                                     const value = e.target.value;
-
                                     setApprovedOn(value);
-
-                                    const selectedDate = new Date(value);
-                                    selectedDate.setHours(0, 0, 0, 0);
-
-                                    const today = new Date();
-                                    today.setHours(0, 0, 0, 0);
-
-                                    if (selectedDate > today) {
-                                        setErrors(prev => ({
-                                            ...prev,
-                                            approvedOn: "Approved date cannot be a future date"
-                                        }));
-                                    } else {
-                                        setErrors(prev => ({
-                                            ...prev,
-                                            approvedOn: ""
-                                        }));
-                                    }
+                                    setErrors(prev => ({ ...prev, approvedOn: "" }));
                                 }}
+
                                 disabled={isViewMode}
                             />
                             <ErrorMessage>{errors.approvedOn}</ErrorMessage>
@@ -295,7 +266,7 @@ const PositionForm = ({
                         <ErrorMessage>{errors.employmentType}</ErrorMessage>
                     </Col>
 
-                    <Col md={4}><Form.Label>Contractual Period(Years)</Form.Label><Form.Control name="contractualPeriod" type="text" inputMode="numeric" value={formData.contractualPeriod} onChange={handleInputChange} disabled={!isContractEmployment || isViewMode} /></Col>
+                    <Col md={4}><Form.Label>Contractual Period(Years)</Form.Label><Form.Control name="contractualPeriod" type="text" inputMode="numeric" value={isContractEmployment ? formData.contractualPeriod : ""} onChange={handleInputChange} disabled={!isContractEmployment || isViewMode} /></Col>
                     <Col md={4}>
                         <Form.Label>Grade / Scale <span className="text-danger">*</span></Form.Label>
                         <Form.Select name="grade" value={formData.grade} onChange={handleInputChange} disabled={isViewMode}>
@@ -350,24 +321,16 @@ const PositionForm = ({
                                 as="textarea"
                                 rows={3}
                                 value={formData[expType].description} disabled={isViewMode}
-                                onChange={(e) => {
-                                    let value = normalizeTitle(e.target.value);
 
-                                    if (!TITLE_ALLOWED_PATTERN.test(value)) {
-                                        setErrors(prev => ({
-                                            ...prev,
-                                            [expType]: "Only letters, numbers, spaces and . , - ( ) & : ; / are allowed"
-                                        }));
+                                onChange={(e) => {
+                                    const { valid, value } = validateTitleOnType(e.target.value);
+
+                                    if (!valid) {
+                                        setErrors(prev => ({ ...prev, [expType]: "Only letters, numbers, spaces and . , - ( ) & : ; / are allowed" }));
                                         return;
                                     }
 
-                                    setFormData(prev => ({
-                                        ...prev,
-                                        [expType]: {
-                                            ...prev[expType],
-                                            description: value
-                                        }
-                                    }));
+                                    setFormData(prev => ({ ...prev, [expType]: { ...prev[expType], description: value } }));
 
                                     setErrors(prev => ({ ...prev, [expType]: "" }));
                                 }}
@@ -396,13 +359,12 @@ const PositionForm = ({
                             name="responsibilities"
                             value={formData.responsibilities}
                             onChange={(e) => {
-                                const value = normalizeTitle(e.target.value);
+                                const { valid, value, message } = validateTitleOnType(e.target.value);
 
-                                if (!TITLE_ALLOWED_PATTERN.test(value)) {
+                                if (!valid) {
                                     setErrors(prev => ({
                                         ...prev,
-                                        responsibilities:
-                                            "Only letters, numbers, spaces and . , - ( ) & : ; / are allowed"
+                                        responsibilities: message
                                     }));
                                     return;
                                 }
@@ -412,8 +374,12 @@ const PositionForm = ({
                                     responsibilities: value
                                 }));
 
-                                setErrors(prev => ({ ...prev, responsibilities: "" }));
+                                setErrors(prev => ({
+                                    ...prev,
+                                    responsibilities: ""
+                                }));
                             }}
+
                             onBlur={() => {
                                 setFormData(prev => ({
                                     ...prev,

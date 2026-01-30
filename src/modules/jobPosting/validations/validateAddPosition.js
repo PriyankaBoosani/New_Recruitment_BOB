@@ -4,8 +4,25 @@ export const normalizeTitle = (value = "") =>
   value
     .replace(/\s+/g, " ")   // collapse multiple spaces
     .replace(/^\s+/, "");  // remove leading spaces
+
 export const TITLE_ALLOWED_PATTERN = /^[A-Za-z0-9 _\-()/&]*$/;
 
+export const validateTitleOnType = (value) => {
+  const normalized = normalizeTitle(value);
+
+  if (!TITLE_ALLOWED_PATTERN.test(normalized)) {
+    return {
+      valid: false,
+      message:
+        "Only letters, numbers, spaces and . , - ( ) & : ; / are allowed"
+    };
+  }
+
+  return {
+    valid: true,
+    value: normalized
+  };
+};
 
 export const validateAddPosition = ({
   isEditMode,
@@ -30,39 +47,42 @@ export const validateAddPosition = ({
 
   // ---------- BASIC REQUIRED ----------
   if (!approvedBy) errors.approvedBy = "This field is required";
-  if (!approvedOn) errors.approvedOn = "This field is required";
+  const approvedOnError = validateApprovedOn(approvedOn);
+  if (approvedOnError) {
+    errors.approvedOn = approvedOnError;
+  }
   if (!formData.position) errors.position = "This field is required";
   if (!formData.department) errors.department = "This field is required";
   if (!formData.employmentType) errors.employmentType = "This field is required";
   if (!formData.grade) errors.grade = "This field is required";
   if (!formData.medicalRequired) errors.medicalRequired = "This field is required";
 
- // ---------- DUPLICATE POSITION + DEPARTMENT ----------
-if (
-  formData.position &&
-  formData.department &&
-  Array.isArray(existingPositions)
-) {
-  const duplicate = existingPositions.some(p => {
-    const sameDepartment =
-      String(p.deptId) === String(formData.department);
+  // ---------- DUPLICATE POSITION + DEPARTMENT ----------
+  if (
+    formData.position &&
+    formData.department &&
+    Array.isArray(existingPositions)
+  ) {
+    const duplicate = existingPositions.some(p => {
+      const sameDepartment =
+        String(p.deptId) === String(formData.department);
 
-    const samePosition =
-      String(p.masterPositionId) === String(formData.position);
+      const samePosition =
+        String(p.masterPositionId) === String(formData.position);
 
-    const notSameRecord =
-      !isEditMode || String(p.positionId) !== String(positionId);
+      const notSameRecord =
+        !isEditMode || String(p.positionId) !== String(positionId);
 
-    return sameDepartment && samePosition && notSameRecord;
-  });
+      return sameDepartment && samePosition && notSameRecord;
+    });
 
-  if (duplicate) {
-    errors.position =
-      "This position already exists for the selected department. Please select the other position";
-    errors.department =
-      "This department already has the selected position";
+    if (duplicate) {
+      errors.position =
+        "This position already exists for the selected department. Please select the other position";
+      errors.department =
+        "This department already has the selected position";
+    }
   }
-}
 
   // ---------- NUMERIC FIELDS ----------
   const numericChecks = [
@@ -228,22 +248,22 @@ export const validateStateDistribution = ({
   }
 
   const catTotal = Object.values(currentState.categories || {})
-  .reduce((a, b) => a + Number(b || 0), 0);
+    .reduce((a, b) => a + Number(b || 0), 0);
 
-const disTotal = Object.values(currentState.disabilities || {})
-  .reduce((a, b) => a + Number(b || 0), 0);
+  const disTotal = Object.values(currentState.disabilities || {})
+    .reduce((a, b) => a + Number(b || 0), 0);
 
-const vacancies = Number(currentState.vacancies || 0);
+  const vacancies = Number(currentState.vacancies || 0);
 
-if (catTotal !== vacancies) {
-  errors.stateDistribution = `Category total (${catTotal}) must equal state vacancies (${vacancies})`;
+  if (catTotal !== vacancies) {
+    errors.stateDistribution = `Category total (${catTotal}) must equal state vacancies (${vacancies})`;
 
-}
-else if (disTotal > catTotal) {
-  errors.stateDistribution =
-    `Disability vacancies(${disTotal}) cannot exceed category vacancies (${catTotal})`;
-}
-console.log(catTotal !== vacancies)
+  }
+  else if (disTotal > catTotal) {
+    errors.stateDistribution =
+      `Disability vacancies(${disTotal}) cannot exceed category vacancies (${catTotal})`;
+  }
+  console.log(catTotal !== vacancies)
 
 
 
@@ -260,5 +280,20 @@ console.log(catTotal !== vacancies)
 
 
   return errors;
+};
+const validateApprovedOn = (value) => {
+  if (!value) return "This field is required";
+
+  const selected = new Date(value);
+  const today = new Date();
+
+  selected.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+
+  if (selected > today) {
+    return "Approved date cannot be a future date";
+  }
+
+  return "";
 };
 
