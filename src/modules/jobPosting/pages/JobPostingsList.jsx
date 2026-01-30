@@ -44,8 +44,6 @@ const JobPostingsList = () => {
     const [showDeletePosModal, setShowDeletePosModal] = useState(false);
     const [selectedPosition, setSelectedPosition] = useState(null);
 
-
-
     const handleConfirmDelete = async () => {
         if (!selectedReq) return;
 
@@ -65,9 +63,6 @@ const JobPostingsList = () => {
         setShowDeletePosModal(false);
         setSelectedPosition(null);
     };
-
-
-
     // 🔹 Backend-driven filters
     const [year, setYear] = useState("2026");
     const [status, setStatus] = useState("ALL");
@@ -75,8 +70,6 @@ const JobPostingsList = () => {
     const [searchInput, setSearchInput] = useState("");
     const [page, setPage] = useState(0); // backend is 0-based
     const [showSubmitModal, setShowSubmitModal] = useState(false);
-
-
     const {
         positionsByReq,
         loadingReqId,
@@ -98,8 +91,6 @@ const JobPostingsList = () => {
             return next;
         });
     };
-
-
     // 🔹 API Hook
     const { requisitions, loading, pageInfo, deleteRequisition, submitForApproval, refetch } = useJobRequisitions({
         year,
@@ -179,9 +170,6 @@ const JobPostingsList = () => {
     useEffect(() => {
         setSelectedReqIds(new Set());
     }, [year]);
-
-
-
 
     return (
         <Container fluid className="job-postings-page">
