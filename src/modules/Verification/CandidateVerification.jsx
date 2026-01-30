@@ -80,6 +80,8 @@ export default function CandidateVerification() {
   const [selectedRequisition, setSelectedRequisition] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
 
+  
+
   /* ================= LOAD MASTERS ================= */
   useEffect(() => {
     const loadMasters = async () => {
@@ -109,6 +111,10 @@ export default function CandidateVerification() {
       )
     );
   };
+
+
+  const isSelectionDone = selectedRequisition && selectedPosition;
+
 
 
 
@@ -197,69 +203,134 @@ export default function CandidateVerification() {
       </div>
 
       {/* ================= REQUISITION STRIP (INLINE) ================= */}
-      {selectedRequisition && selectedPosition && (
-        <RequisitionStrip
-          requisition={selectedRequisition}
-          position={selectedPosition}
-          masterData={masterData}
-          isCardBg={false}
-          isSaveEnabled={false}
-        />
-      )}
+      <div className="requisition-strip">
+ 
+
+     {selectedRequisition && selectedPosition && (
+  <div className="requisition-strip">
+    <RequisitionStrip
+      requisition={selectedRequisition}
+      position={selectedPosition}
+      masterData={masterData}
+      isCardBg={false}
+      isSaveEnabled={true}
+    />
+  </div>
+)}
+
+      </div>
 
       {/* ================= TABLE ================= */}
-      <div className="card shadow-sm border-0 mt-2">
-        <div className="table-responsive">
-          <table className="table align-middle mb-0 verification-table">
-            <thead>
-              <tr>
-                <th>Candidate</th>
-                <th>Category</th>
-                <th>Time</th>
-                <th>Zone</th>
-                <th>Absent</th>
-                <th>Status</th>
-                <th className="text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredCandidates.map((c) => (
-                <tr key={c.id}>
-                  <td>
-                    <div className="fw-semibold">{c.name}</div>
-                    <div className="text-muted fs-12">
-                      Reg No: {c.regNo}
-                    </div>
-                  </td>
-                  <td>{c.category}</td>
-                  <td>{c.time}</td>
-                  <td>{c.zone}</td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={c.absent}
-                      onChange={() => toggleAbsent(c.id)}
-                    />
-                  </td>
-                  <td>
-                    <span
-                      className={`status-badge ${c.status
-                        .toLowerCase()
-                        .replace(" ", "-")}`}
-                    >
-                      {c.status}
-                    </span>
-                  </td>
-                  <td className="text-center">
-                    <Person className="me-3 cursor-pointer" />
-                    <FileText className="cursor-pointer" />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+<div className="verification-table-wrapper">
+  <div>
+    <table className="table align-middle mb-0 verification-table">
+      <thead>
+        <tr>
+          <th>Candidate</th>
+          <th>Category</th>
+          <th>Time</th>
+          <th>Zone</th>
+          <th>Absent</th>
+          <th>Status</th>
+          <th className="text-center">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+  {/* 🔹 BEFORE selection → empty state */}
+  {!isSelectionDone && (
+    <>
+      <tr className="no-candidates-row">
+        <td colSpan="7" className="text-center py-4 text-muted">
+          No candidates found
+        </td>
+      </tr>
+
+      {/* divider line */}
+      <tr className="no-candidates-divider">
+        <td colSpan="7"></td>
+      </tr>
+    </>
+  )}
+
+  {/* 🔹 AFTER selection but no data */}
+  {isSelectionDone && filteredCandidates.length === 0 && (
+    <>
+      <tr className="no-candidates-row">
+        <td colSpan="7" className="text-center py-4 text-muted">
+          No candidates found
+        </td>
+      </tr>
+
+      {/*  divider line (ADDED) */}
+      <tr className="no-candidates-dividers">
+        <td colSpan="7"></td>
+      </tr>
+    </>
+  )}
+
+  {/*  AFTER selection with data */}
+  {isSelectionDone &&
+    filteredCandidates.length > 0 &&
+    filteredCandidates.map((c) => (
+      <tr key={c.id}>
+        <td>
+          <div className="fw-semibold">{c.name}</div>
+          <div className="text-muted fs-12">
+            Reg No: {c.regNo}
+          </div>
+        </td>
+        <td>{c.category}</td>
+        <td>{c.time}</td>
+        <td>{c.zone}</td>
+        <td>
+          <input
+            type="checkbox"
+            checked={c.absent}
+            onChange={() => toggleAbsent(c.id)}
+          />
+        </td>
+        <td>
+          <span
+            className={`status-badge ${c.status
+              .toLowerCase()
+              .replace(" ", "-")}`}
+          >
+            {c.status}
+          </span>
+        </td>
+        <td className="text-center">
+          <Person className="me-3 cursor-pointer" />
+          <FileText className="cursor-pointer" />
+        </td>
+      </tr>
+    ))}
+</tbody>
+
+    </table>
+
+    {/* 🔹 Pagination always visible (like screenshot 2) */}
+    <div className="d-flex justify-content-between align-items-center px-3 py-2">
+      <span className="text-muted fs-14">
+        Showing {isSelectionDone ? filteredCandidates.length : 0}–0 of 0
+      </span>
+
+      <div className="d-flex gap-2">
+        <select className="form-select form-select-sm" style={{ width: 70 }}>
+          <option>10</option>
+        </select>
+        <button className="btn btn-sm btn-outline-secondary" disabled>
+          Prev
+        </button>
+        <button className="btn btn-sm btn-outline-secondary" disabled>
+          Next
+        </button>
       </div>
+    </div>
+  </div>
+</div>
+
+
 
     </div>
   );

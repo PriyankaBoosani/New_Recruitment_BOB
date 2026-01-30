@@ -1,12 +1,12 @@
 /* ===================================================== */
 /* DATE SELECTOR WRAPPER                                 */
 /* ===================================================== */
- 
-.verification-date-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+  
+  .verification-date-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
  
 
 .date-nav {
@@ -293,7 +293,7 @@
 
 .category-reservation-card {
   background-color: #f6f8fb;
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 18px 20px;
 }
 
@@ -311,7 +311,7 @@
   border-collapse: separate;
   border-spacing: 0;
   background-color: #ffffff;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   overflow: hidden;
 }
 
@@ -367,15 +367,15 @@
 }
 
 .card {
-  border-radius: 12px;
+  border-radius: 2px;
 }
 
-
+/* 
 
 /* Page background */
-.candidate-verification-page {
+/* .candidate-verification-page {
   background: #f5f6f8;
-}
+} */ */
 
 .nav-arrow {
   font-size: 30px;
@@ -472,12 +472,13 @@
 
 /* TOP TOOLBAR */
 .verification-toolbar {
+  margin-left: -35px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 16px;
-  background: #f4f2f1;
-  border-radius: 12px;
+  padding: 10px 0px;
+  /* background: #91380c; */
+  border-radius: 0px;
 }
 
 /* SEARCH */
@@ -487,7 +488,7 @@
   gap: 6px;
   border: 1px solid #e0e0e0;
   padding: 6px 10px;
-  border-radius: 6px;
+  /* border-radius: 6px; */
 }
 
 .search-box input {
@@ -496,41 +497,33 @@
   font-size: 14px;
 }
 
-/* STAGE FILTER */
-.stage-filter-row {
-  background: #fff;
-  padding: 10px 12px;
-  border-radius: 8px;
-  margin-bottom: 6px;
-}
 
-/* .clear-all {
-  color: red;
-  cursor: pointer;
-} */
 
 /* REQUISITION SELECTOR */
 .requisition-selector-row {
+  margin-left: -35px;
   background: #fff;
   padding: 10px 12px;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   margin-bottom: 6px;
 }
 
 /* REMOVE PAGE BOTTOM GAP */
-.candidate-verification-page {
+/* .candidate-verification-page {
   padding-bottom: 0;
-}
+} */
 
 .stage-filter-row {
+  margin-left:-35px;
   padding: 12px 16px;
   background: #fff;
-  border-radius: 10px;
+  /* border-radius: 10px; */
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }
 
 .stage-chip {
-  padding: 6px 14px;
-  border-radius: 16px;
+
   border: none;
   background: #f1f3f5;
   font-size: 14px;
@@ -539,11 +532,131 @@
 
 .stage-chip.active {
   background: #e9efff;
-  color: #1d4ed8;
+  color: #ca7f41;
   font-weight: 500;
 }
 
 .clear-all {
-color: red;
+color: rgb(228, 116, 51);
   cursor: pointer;
+}
+
+
+
+/* .candidate-verification-page {
+  margin-top: 2px; 
+} */
+
+
+
+
+.candidate-verification-page {
+ 
+  max-width: 1800px;
+  margin: 0 auto;
+
+  min-height: calc(100vh - 140px); 
+  }
+
+
+
+.verification-table-wrapper {
+  padding-top: 10px;
+  margin-left: -35px;
+  background: #ffffff;
+  margin-top: 0;
+
+}
+
+.verification-table {
+  margin-top: 10 !important;
+  border-collapse: collapse;
+}
+
+/* Header */
+.verification-table th {
+  background: #ffffff;
+  font-weight: 500;
+  font-size: 16px;
+  color: #1f2937;
+  padding: 12px 14px; 
+  /* border-bottom: 1px solid #e5e7eb; */
+}
+
+.verification-table thead th {
+  border-top: none !important;   /* REMOVE extra top line */
+  padding-top: 0 !important;     /* REMOVE top space */
+}
+
+/* Divider line after "No candidates found" */
+.no-candidates-row td {
+  border-bottom: 1px solid #e5e7eb; /* light grey like screenshot */
+}
+
+.no-candidates-rows td {
+  border-bottom: 1px solid #e5e7eb; ; /* remove bottom border */
+}
+
+/* .no-candidates-divider td {
+  padding: 0;
+  height: 1px;
+  background-color: #e5e7eb;
+} */
+
+
+
+/* .table-responsive {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+} */
+/* UNDERLINE AFTER FILTER BY STAGE */
+.stage-filter-row {
+  border-bottom: 1px solid #e5e7eb; /* light grey line */
+  padding-bottom: 12px;
+  margin-bottom: 0; /* keep it tight */
+}
+
+
+/* REQUISITION STRIP – SUBTLE SIDE LINES */
+.requisition-strip {
+  margin-left: -18px;
+  position: relative;
+  background: #f3f3f3;
+  /* padding: 0px 20px; */
+}
+
+/* LEFT & RIGHT LINES */
+.requisition-strip::before,
+.requisition-strip::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #d1d5db;
+}
+
+
+.requisition-strip::before {
+  left: 0;
+}
+
+.requisition-strip::after {
+  right: 0;
+}
+
+
+
+
+
+/* Rows */
+.verification-table td {
+  padding: 12px 14px;
+  font-size: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Remove last row border */
+.verification-table tbody tr:last-child td {
+  border-bottom: none;
 }
