@@ -144,33 +144,13 @@ const AddPosition = () => {
         setFormData(prev => ({
             ...prev, // 🔥 THIS IS THE FIX
 
-            department: String(existingPosition.deptId),
-            position: String(existingPosition.masterPositionId),
-            vacancies: existingPosition.totalVacancies,
-            minAge: existingPosition.eligibilityAgeMin,
-            maxAge: existingPosition.eligibilityAgeMax,
-            employmentType: existingPosition.employmentType,
+           
 
             contractualPeriod: isContract
                 ? String(existingPosition.contractYears ?? "")
                 : "",
 
-            grade: existingPosition.gradeId,
-            enableLocation: existingPosition.isLocationPreferenceEnabled,
-            responsibilities: existingPosition.rolesResponsibilities,
-            medicalRequired: existingPosition.isMedicalRequired ? "yes" : "no",
-            enableStateDistribution: existingPosition.isLocationWise,
-
-            mandatoryExperience: {
-                years: Math.floor(existingPosition.mandatoryExperienceMonths / 12),
-                months: existingPosition.mandatoryExperienceMonths % 12,
-                description: existingPosition.mandatoryExperience,
-            },
-            preferredExperience: {
-                years: Math.floor(existingPosition.preferredExperienceMonths / 12),
-                months: existingPosition.preferredExperienceMonths % 12,
-                description: existingPosition.preferredExperience,
-            },
+            
         }));
     }, [existingPosition, employmentTypes]);
     useEffect(() => {
