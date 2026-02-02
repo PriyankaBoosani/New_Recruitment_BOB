@@ -36,6 +36,7 @@ import view_jobpost from "../../../assets/view_jobpost.png"
 import { useJobRequisitions } from "../hooks/useJobAllRequisition";
 import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisition";
 import { toast } from "react-toastify";
+import { validateRequisitionSubmission } from "../validations/validateRequisitionSubmission";
 const JobPostingsList = () => {
     const navigate = useNavigate();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -138,20 +139,16 @@ const JobPostingsList = () => {
             return;
         }
 
-        const requisitionsWithNoPositions = selectedVisibleRequisitions.filter(
-            r => Number(r.positions) === 0
-        );
+        const errors = validateRequisitionSubmission({
+            requisitions,
+            selectedReqIds,
+        });
 
-        if (requisitionsWithNoPositions.length > 0) {
-            const labels = requisitionsWithNoPositions
-                .map(r => r.code || r.requisitionId)
-                .join(", ");
-
-            toast.error(
-                `Submission blocked. No positions found for requisition(s): ${labels}`
-            );
+        if (errors.length > 0) {
+            errors.forEach(e => toast.error(e));
             return;
         }
+
 
         const ids = selectedVisibleRequisitions
             .filter(r => r.status !== "Approved")

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import masterApiService from "../jobPosting/services/masterApiService";
+import masterApiService from "../master/services/masterApiService";
 import "../../style/css/CandidateScreening.css";
 import uploadIcon from "../../assets/upload-blue-icon.png"
 import rankIcon from "../../assets/rank-icon.png"
@@ -82,7 +82,7 @@ export default function CandidateScreening({ selectedJob }) {
  
   useEffect(() => {
     const loadMasters = async () => {
-      const res = await masterApiService.getAllMasters();
+      const res = await masterApiService.getMasterDisplayAll();
       setMasterData(res.data);
       console.log(" MASTER DATA:", res.data)
     };

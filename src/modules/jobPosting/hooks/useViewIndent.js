@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import masterApiService from "../services/masterApiService";
+import masterApiService from "../../master/services/masterApiService";
 
 
 export default function useViewIndent(existingIndentPath) {
@@ -14,7 +14,7 @@ export default function useViewIndent(existingIndentPath) {
 
 
         try {
-            const response = await masterApiService.getSasUrl(existingIndentPath);
+            const response = await masterApiService.getAzureBlobSasUrl(existingIndentPath);
             const sasUrl = response;
 
 

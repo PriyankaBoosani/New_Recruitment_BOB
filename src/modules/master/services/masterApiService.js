@@ -1,12 +1,11 @@
 // src/services/masterApiService.js
-import { apis, nodeApi, masterDropdownApi } from "../../../core/service/apiService"; // reuse axios instances + interceptors
+import { apis, nodeApi } from "../../../core/service/apiService"; // reuse axios instances + interceptors
 
 const masterApiService = {
   /* Users (Node API) */
   // Note: auth header is injected by nodeApi interceptor; no need to pass token manually
   getRegister: () => nodeApi.get('/getdetails/users/all'),
   registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data),
-
 
   // city
   getallCities: () => apis.get('/city/all'),
@@ -15,17 +14,17 @@ const masterApiService = {
   addLocation: (data) => apis.post("/location/add", data),
   updateLocation: (id, data) => apis.put(`/location/update/${id}`, data),
   deleteLocation: (id) => apis.delete(`/location/delete/${id}`),
-  // ✅ DOWNLOAD LOCATION TEMPLATE
+  // DOWNLOAD LOCATION TEMPLATE
   downloadLocationTemplate: () =>
     apis.get("/location/download-template", {
       responseType: "blob",
     }),
 
-  // ✅ BULK ADD LOCATIONS
+  //  BULK ADD LOCATIONS
   bulkAddLocations: (file) => {
     const formData = new FormData();
 
-    // 🔥 backend expects "attachment"
+    //  backend expects "attachment"
     formData.append("file", file);
 
     return apis.post("/location/bulk-add", formData, {
@@ -34,10 +33,6 @@ const masterApiService = {
       },
     });
   },
-
-
-
-
 
   /* Departments */
   getAllDepartments: () => apis.get("/departments/all"),
@@ -83,13 +78,13 @@ const masterApiService = {
   addSpecialCategory: (data) => apis.post("/special-categories/add", data),
   updateSpecialCategory: (id, data) => apis.put(`/special-categories/update/${id}`, data),
   deleteSpecialCategory: (id) => apis.delete(`/special-categories/delete/${id}`),
-  // ✅ DOWNLOAD SPECIAL CATEGORY TEMPLATE
+  //  DOWNLOAD SPECIAL CATEGORY TEMPLATE
   downloadSpecialCategoryTemplate: () =>
     apis.get("/special-categories/download-template", {
       responseType: "blob",
     }),
 
-  // ✅ BULK ADD SPECIAL CATEGORIES
+  //  BULK ADD SPECIAL CATEGORIES
   bulkAddSpecialCategories: (file) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -118,7 +113,6 @@ const masterApiService = {
   bulkAddJobGrades: (file) => {
     const formData = new FormData();
 
-    //  IMPORTANT: backend expects "attachment"
     formData.append("file", file);
 
     return apis.post("/jobgrade/bulk-add", formData, {
@@ -127,9 +121,6 @@ const masterApiService = {
       },
     });
   },
-
-
-  
 
   /* certification-master-controller */
   getAllCertificates: () => apis.get("/certificates-master/all"),
@@ -205,21 +196,12 @@ const masterApiService = {
   /* Optional master all */
   getMasterAll: () => apis.get("/all"),
 
-  //User 
-  getRegister: () => nodeApi.get('/getdetails/users/all'),
-  registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data), // Auth (Node API)
   getMasterDropdownData: () => apis.get('/master-dd-data/get/committees'),
 
-
-
-  /* Generic / Annexures Documents */
 
   // GET all
   getAllGenericDocuments: () =>
     apis.get("/rec-generic-documents/all"),
-
-  // ADD
-  /* Generic / Annexures Documents */
 
   // SAVE (UPLOAD)
   saveGenericDocument: (type, file) => {
@@ -257,6 +239,11 @@ const masterApiService = {
       }
     );
   },
+  
+    getUser: () => apis.get('/user/all'),
+
+
+
 
 };
 

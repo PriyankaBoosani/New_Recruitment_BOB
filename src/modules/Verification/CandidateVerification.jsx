@@ -14,7 +14,7 @@ import { Person, FileText } from "react-bootstrap-icons";
 import searchIcon from "../../assets/search-icon.png";
  
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
-import masterApiService from "../jobPosting/services/masterApiService";
+import masterApiService from "../master/services/masterApiService";
 import RequisitionPositionSelector
   from "../candidatePreview/components/RequisitionPositionSelector";
  
@@ -126,7 +126,7 @@ const handleClearAll = () => {
  
   useEffect(() => {
     const loadMasters = async () => {
-      const res = await masterApiService.getAllMasters();
+      const res = await masterApiService.getMasterDisplayAll();
       setMasterData(res.data);
     };
     loadMasters();

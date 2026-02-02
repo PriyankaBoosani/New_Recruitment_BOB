@@ -7,7 +7,7 @@ import { useGenericOrAnnexures } from "./hooks/useGenericOrAnnexures";
 import GenericOrAnnexuresTable from "./components/GenericOrAnnexuresTable";
 import GenericOrAnnexuresFormModal from "./components/GenericOrAnnexuresFormModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
-import masterApiService from "../../../jobPosting/services/masterApiService";
+import masterApiService from "../../../master/services/masterApiService";
 import '../../../../style/css/user.css';
 import { validateGenericOrAnnexuresForm } from "../../../../shared/utils/genericOrAnnexures-validations";
 
@@ -103,7 +103,7 @@ const GenericOrAnnexuresPage = () => {
 
   try {
     // 1️ Get SAS URL from backend
-    const sasUrl = await masterApiService.getSasUrl(item.fileUrl);
+    const sasUrl = await masterApiService.getAzureBlobSasUrl(item.fileUrl);
 
     if (!sasUrl) {
       throw new Error("SAS URL not returned");

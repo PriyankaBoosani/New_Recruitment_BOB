@@ -1,6 +1,6 @@
 // src/modules/jobPosting/hooks/useMasterData.js
 import { useEffect, useState } from "react";
-import masterApiService from "../services/masterApiService";
+import masterApiService from "../../master/services/masterApiService";
 import { mapMasterResponse } from "../mappers/master.mapper";
 
 export const useMasterData = () => {
@@ -31,7 +31,7 @@ export const useMasterData = () => {
       try {
         // 🔥 CALL BOTH APIS IN PARALLEL
         const [masterRes, userRes, certRes] = await Promise.all([
-          masterApiService.getAllMasters(),
+          masterApiService.getMasterDisplayAll(),
           masterApiService.getUser(),
           masterApiService.getAllCertificates(),
 

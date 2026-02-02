@@ -4,7 +4,7 @@ import "../../style/css/PreviewModal.css";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import ApplicationForm from "../candidatePreview/components/ApplicationForm";
 
-import masterApiService from "../jobPosting/services/masterApiService";
+import masterApiService from "../master/services/masterApiService";
 import candidateWorkflowServices from "../candidatePreview/services/CandidateWorkflowServices";
 import { mapCandidateToPreview } from "../candidatePreview/mappers/candidatePreviewMapper";
 
@@ -48,10 +48,10 @@ const CandidatePreviewPage = ({ onHide }) => {
         setLoading(true);
 
         /* ---------- Load Masters ---------- */
-        // const masterRes = await masterApiService.getAllMasters();
+        // const masterRes = await masterApiService.getMasterDisplayAll();
         // const raw = masterRes?.data || {};
 
-        const masterRes = await masterApiService.getAllMasters();
+        const masterRes = await masterApiService.getMasterDisplayAll();
         const fullMasters = masterRes?.data || {};
 
         // const normalizedMasters = {
