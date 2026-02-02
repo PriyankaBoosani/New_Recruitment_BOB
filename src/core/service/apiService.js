@@ -1,95 +1,73 @@
 // src/services/apiClients.js
-import axios from 'axios';
+import axios from "axios";
 import { store } from "../../store";
 import { clearUser } from "../../app/providers/userSlice";
 
+/* ---------------------------
+   Constants & ENV
+--------------------------- */
 const REFRESH_PATH = "/recruiter-auth/recruiter-refresh-token";
 
-// helper that calls refresh bypassing our axios instances/interceptors
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_BASE_URLS = process.env.REACT_APP_API_BASE_URLS;
+const NODE_API_URL = process.env.REACT_APP_NODE_API_URL;
+const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL;
+const MASTER_DROPDOWN_URL = process.env.REACT_APP_MASTER_DROPDOWN_URL;
+
+/* ---------------------------
+   Refresh Token Control
+--------------------------- */
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+const subscribeTokenRefresh = (cb) => {
+  refreshSubscribers.push(cb);
+};
+
+const onRefreshed = () => {
+  refreshSubscribers.forEach((cb) => cb());
+  refreshSubscribers = [];
+};
+
+/* ---------------------------
+   Refresh API (no interceptors)
+--------------------------- */
 async function callRefreshEndpoint() {
-  // Use axios directly so no interceptors run
   const url = `${NODE_API_URL}${REFRESH_PATH}`;
   return axios.post(url, null, { withCredentials: true });
 }
 
-
-// --- JWT Decoder helper ---
+/* ---------------------------
+   JWT Helpers
+--------------------------- */
 function decodeJWT(token) {
   try {
-    const base64Url = token.split('.')[1]; // payload part
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const payload = JSON.parse(window.atob(base64));
-    return payload;
-  } catch (err) {
-    console.error("Failed to decode token", err);
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    return JSON.parse(window.atob(base64));
+  } catch {
     return null;
   }
 }
 
 function getToken() {
-  const state = store.getState();
-  const token = state.user?.authUser?.access_token || null;
+  const token = store.getState()?.user?.authUser?.access_token;
+  if (!token) return null;
 
-  if (token) {
-    const decoded = decodeJWT(token);
-    if (decoded?.exp) {
-      const expiry = new Date(decoded.exp * 1000);
-      const timeLeft = expiry.getTime() - Date.now();
-
-      if (timeLeft < 15 * 60 * 1000) {
-        console.warn("⚠️ Token expiring soon! Refresh flow will trigger soon.");
-      }
+  const decoded = decodeJWT(token);
+  if (decoded?.exp) {
+    const timeLeft = decoded.exp * 1000 - Date.now();
+    if (timeLeft < 15 * 60 * 1000) {
+      console.warn("⚠️ Token expiring soon");
     }
   }
 
   return token;
 }
 
-// Environment base URLs
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-const API_BASE_URLS = process.env.REACT_APP_API_BASE_URLS;
-const NODE_API_URL = process.env.REACT_APP_NODE_API_URL;
-const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL;
-
-// Create axios instances
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: { 'Content-Type': 'application/json' },
-});
-
-const apis = axios.create({
-  baseURL: API_BASE_URLS,
-  headers: { 'Content-Type': 'application/json' },
-});
-
-const candidateApi = axios.create({
-  baseURL: CANDIDATE_API_URL,
-  headers: { 'Content-Type': 'application/json' },
-});
-
-const nodeApi = axios.create({
-  baseURL: NODE_API_URL,
-  headers: { 'Content-Type': 'application/json' },
-  withCredentials: true,
-});
-
-const masterDropdownApi = axios.create({
-  baseURL: process.env.REACT_APP_MASTER_DROPDOWN_URL,
-  headers: { 'Content-Type': 'application/json' },
-});
-// Add interceptors if needed (similar to other API instances)
-masterDropdownApi.interceptors.request.use(
-  (config) => addAuthHeader(config),
-  (error) => Promise.reject(error)
-);
-masterDropdownApi.interceptors.response.use(
-  (response) => response.data,
-  async (error) => {
-    // Add your error handling logic here
-    return Promise.reject(error);
-  }
-);
-// Shared helper to add Authorization header
+/* ---------------------------
+   Auth Header Helper
+--------------------------- */
 const addAuthHeader = (config) => {
   const token = getToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -97,181 +75,122 @@ const addAuthHeader = (config) => {
   return config;
 };
 
-/* ---------------------------
-   Interceptors - api (primary)
-   --------------------------- */
-api.interceptors.request.use(
-  (config) => addAuthHeader(config),
-  (error) => Promise.reject(error)
-);
-
-api.interceptors.response.use(
-  (response) => {
-    //  DO NOT TOUCH FILE DOWNLOADS
-    if (response.config?.responseType === "blob") {
-      return response;
-    }
-    return response.data;
-  },
-  async (error) => {
-    const originalRequest = error.config || {};
-
-    if (
-      error.response?.status === 401 &&
-      !originalRequest._retry &&
-      !originalRequest.url?.includes(REFRESH_PATH)
-    ) {
-      originalRequest._retry = true;
-      try {
-        await callRefreshEndpoint();
-        return api(originalRequest);
-      } catch (err) {
-        store.dispatch(clearUser?.() ?? {});
-        window.location.href = "/login";
-        return Promise.reject(err);
-      }
-    }
-
-    if (error.response && error.response.status >= 400 && error.response.status < 500) {
-      return error.response.data;
-    }
-
-    return Promise.reject(error);
+const redirectToLogin = () => {
+  store.dispatch(clearUser());
+  if (window.location.pathname !== "/login") {
+    window.location.href = "/login";
   }
-);
-
+};
 
 /* ---------------------------
-   Interceptors - apis (master)
-   --------------------------- */
-apis.interceptors.request.use(
-  (config) => addAuthHeader(config),
-  (error) => Promise.reject(error)
-);
+   Axios Instances
+--------------------------- */
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: { "Content-Type": "application/json" }
+});
 
-apis.interceptors.response.use(
-  //  SUCCESS HANDLER (2xx)
-  (response) => {
-    if (response.config?.responseType === "blob") {
-      return response; // keep full response for downloads
-    }
-    return response.data; // normal APIs return backend JSON
-  },
+const apis = axios.create({
+  baseURL: API_BASE_URLS,
+  headers: { "Content-Type": "application/json" }
+});
 
-  //  ERROR HANDLER (non-2xx)
-  async (error) => {
-    const originalRequest = error.config || {};
+const candidateApi = axios.create({
+  baseURL: CANDIDATE_API_URL,
+  headers: { "Content-Type": "application/json" }
+});
 
-    // 🔁 Refresh token handling (401)
-    if (
-      error.response?.status === 401 &&
-      !originalRequest._retry &&
-      !originalRequest.url?.includes(REFRESH_PATH)
-    ) {
-      originalRequest._retry = true;
-      try {
-        await callRefreshEndpoint();
-        return apis(originalRequest); // retry original request
-      } catch (err) {
-        store.dispatch(clearUser?.() ?? {});
-        window.location.href = "/login";
-        return Promise.reject(err);
+const nodeApi = axios.create({
+  baseURL: NODE_API_URL,
+  headers: { "Content-Type": "application/json" },
+  withCredentials: true
+});
+
+const masterDropdownApi = axios.create({
+  baseURL: MASTER_DROPDOWN_URL,
+  headers: { "Content-Type": "application/json" }
+});
+
+/* ---------------------------
+   Shared Interceptor Logic
+--------------------------- */
+const attachInterceptors = (instance) => {
+  instance.interceptors.request.use(addAuthHeader);
+
+  instance.interceptors.response.use(
+    (response) => {
+      if (response.config?.responseType === "blob") return response;
+      return response.data;
+    },
+    async (error) => {
+      const originalRequest = error.config || {};
+
+      if (
+        error.response?.status === 401 &&
+        !originalRequest._retry &&
+        !originalRequest.url?.includes(REFRESH_PATH)
+      ) {
+        originalRequest._retry = true;
+
+        if (!isRefreshing) {
+          isRefreshing = true;
+          try {
+            await callRefreshEndpoint();
+            isRefreshing = false;
+            onRefreshed();
+          } catch (err) {
+            isRefreshing = false;
+            redirectToLogin();
+            return Promise.reject(err);
+          }
+        }
+
+        return new Promise((resolve) => {
+          subscribeTokenRefresh(() => {
+            resolve(instance(originalRequest));
+          });
+        });
       }
-    }
 
-    //  BUSINESS / VALIDATION ERRORS (422, other 4xx)
-    if (error.response && error.response.status >= 400 && error.response.status < 500) {
-      //  Resolve with backend data → goes to `try`
-      return Promise.resolve(error.response.data);
-    }
+      // Pass 4xx to caller (business validation)
+      if (error.response && error.response.status < 500) {
+        return Promise.resolve(error.response.data);
+      }
 
-    //  SERVER / NETWORK ERRORS (5xx)
-    return Promise.reject(error);
-  }
-);
-
-
-/* ---------------------------
-   Interceptors - candidateApi
-   --------------------------- */
-candidateApi.interceptors.request.use(
-  (config) => addAuthHeader(config),
-  (error) => Promise.reject(error)
-);
-
-
-candidateApi.interceptors.response.use(
-  (response) => response.data,
-  async (error) => {
-    const originalRequest = error.config || {};
-
-    // If this request was the refresh endpoint, don't try to refresh again
-    if (originalRequest && originalRequest.url && originalRequest.url.includes(REFRESH_PATH)) {
-      store.dispatch(clearUser?.() ?? {});
-      window.location.href = "/login";
       return Promise.reject(error);
     }
-
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        // call refresh without triggering interceptors
-        await callRefreshEndpoint();
-        return candidateApi(originalRequest);
-      } catch (err) {
-        console.error("Node refresh failed. Redirecting to login");
-        store.dispatch(clearUser?.() ?? {});
-        window.location.href = "/login";
-        return Promise.reject(err);
-      }
-    }
-
-    return Promise.reject(error);
-  }
-);
+  );
+};
 
 /* ---------------------------
-   Interceptors - nodeApi
-   --------------------------- */
-nodeApi.interceptors.request.use(
-  (config) => addAuthHeader(config),
-  (error) => Promise.reject(error)
+   Attach Interceptors
+--------------------------- */
+attachInterceptors(api);
+attachInterceptors(apis);
+attachInterceptors(candidateApi);
+attachInterceptors(nodeApi);
+
+masterDropdownApi.interceptors.request.use(addAuthHeader);
+masterDropdownApi.interceptors.response.use(
+  (res) => res.data,
+  (err) => Promise.reject(err)
 );
-
-nodeApi.interceptors.response.use(
-  (response) => response.data,
-  async (error) => {
-    const originalRequest = error.config || {};
-
-    // If this request was the refresh endpoint, don't try to refresh again
-    if (originalRequest && originalRequest.url && originalRequest.url.includes(REFRESH_PATH)) {
-      store.dispatch(clearUser?.() ?? {});
-      window.location.href = "/login";
-      return Promise.reject(error);
-    }
-
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        // call refresh without triggering interceptors
-        await callRefreshEndpoint();
-        return nodeApi(originalRequest);
-      } catch (err) {
-        console.error("Node refresh failed. Redirecting to login");
-        store.dispatch(clearUser?.() ?? {});
-        window.location.href = "/login";
-        return Promise.reject(err);
-      }
-    }
-
-    return Promise.reject(error);
-  }
-);
-
-
 
 /* ---------------------------
    Exports
-   --------------------------- */
-export { api, apis, candidateApi, nodeApi, masterDropdownApi };
-export default { api, apis, candidateApi, nodeApi , masterDropdownApi};
+--------------------------- */
+export {
+  api,
+  apis,
+  candidateApi,
+  nodeApi,
+  masterDropdownApi
+};
+
+export default {
+  api,
+  apis,
+  candidateApi,
+  nodeApi,
+  masterDropdownApi
+};
