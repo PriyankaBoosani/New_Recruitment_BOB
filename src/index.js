@@ -8,12 +8,14 @@ import { store, persistor } from './store';
 import './index.css';
 
 import App from './app/App';
+import LanguageSync from './i18n/LanguageSync';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       <Router>
+        <LanguageSync />
         <App />
       </Router>
     </PersistGate>

@@ -50,7 +50,6 @@ const Header = () => {
   /* ===================== LANGUAGE CHANGE ===================== */
   const changeLang = (lng) => {
     dispatch(setLanguage(lng));
-    i18n.changeLanguage(lng);
   };
  
   /* ===================== LOGOUT ===================== */

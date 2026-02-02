@@ -40,21 +40,6 @@ import certificationHi from "../i18n/json/certification.hi.json";
 import commonEn from "../i18n/json/common.en.json";
 import commonHi from "../i18n/json/common.hi.json";
 
-
-
-// ⬅ Read persisted Redux language value
-let savedLang = "en";
-try {
-  const root = localStorage.getItem("persist:root");
-  if (root) {
-    const parsed = JSON.parse(root);
-    const langState = JSON.parse(parsed.language);
-    savedLang = langState.lang || "en";
-  }
-} catch (e) {
-  console.log("Language parse error:", e);
-}
-
 i18n
   .use(initReactI18next)
   .init({
@@ -92,7 +77,7 @@ i18n
         genericOrAnnexures: genericOrAnnexuresHi
       }
     },
-    lng: savedLang,       // default language
+    lng: "en",       // default language
     fallbackLng: "en",
     defaultNS: "common", 
     interpolation: {
