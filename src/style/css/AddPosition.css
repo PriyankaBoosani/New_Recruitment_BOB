@@ -463,9 +463,10 @@
 
 /* Prevent text overflow */
 .upload-indent-box .fw-semibold {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+	white-space: wrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-wrap: anywhere;
 }
 
 /* ===============================

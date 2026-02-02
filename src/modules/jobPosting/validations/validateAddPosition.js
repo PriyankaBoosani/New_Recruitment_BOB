@@ -42,7 +42,7 @@ export const validateAddPosition = ({
 
   // ---------- FILE ----------
   if (!indentFile && !(isEditMode && existingIndentPath)) {
-    errors.indentFile = "This feild is required";
+    errors.indentFile = "This field is required";
   }
 
   // ---------- BASIC REQUIRED ----------

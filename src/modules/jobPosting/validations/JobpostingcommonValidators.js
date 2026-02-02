@@ -8,7 +8,7 @@ export const validatePositiveInteger = ({
   const trimmed = String(value ?? "").trim();
 
   if (required && trimmed === "") {
-    return `This feild is required`;
+    return `This field is required`;
   }
 
   if (trimmed === "") return null; // optional & empty is OK
