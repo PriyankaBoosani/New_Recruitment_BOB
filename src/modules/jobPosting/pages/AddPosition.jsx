@@ -91,7 +91,15 @@ const AddPosition = () => {
 
     // --- EFFECTS ---
     useEffect(() => {
-        if (!existingPosition) return;
+        if (!existingPosition || !employmentTypes.length) return;
+        const isContract =
+            employmentTypes.find(
+                t =>
+                    String(t.id) === String(existingPosition.employmentType) &&
+                    t.label?.toLowerCase().includes("contract")
+            ) !== undefined;
+
+       
         setFormData({
             department: String(existingPosition.deptId),
             position: String(existingPosition.masterPositionId),
@@ -118,6 +126,9 @@ const AddPosition = () => {
                 months: existingPosition.preferredExperienceMonths % 12,
                 description: existingPosition.preferredExperience,
             },
+             contractualPeriod: isContract
+                ? String(existingPosition.contractYears ?? "")
+                : "",
         });
         setApprovedBy(existingPosition.approvedBy || "");
         setApprovedOn(existingPosition.approvedOn || "");
@@ -125,27 +136,6 @@ const AddPosition = () => {
         setExistingIndentName(existingPosition.indentName);
 
 
-    }, [existingPosition]);
-
-    useEffect(() => {
-        if (!existingPosition || !employmentTypes.length) return;
-
-        const isContract =
-            employmentTypes.find(
-                t =>
-                    String(t.id) === String(existingPosition.employmentType) &&
-                    t.label?.toLowerCase().includes("contract")
-            ) !== undefined;
-
-        setFormData(prev => ({
-            ...prev,
-
-            contractualPeriod: isContract
-                ? String(existingPosition.contractYears ?? "")
-                : "",
-
-
-        }));
     }, [existingPosition, employmentTypes]);
 
     useEffect(() => {
