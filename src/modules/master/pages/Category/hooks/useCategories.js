@@ -168,6 +168,7 @@ export const useCategories = () => {
 
   return {
     categories,
+    loading,
     addCategory,
     updateCategory,
     deleteCategory,
