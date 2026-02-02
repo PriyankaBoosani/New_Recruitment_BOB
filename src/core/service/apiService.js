@@ -50,7 +50,6 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const API_BASE_URLS = process.env.REACT_APP_API_BASE_URLS;
 const NODE_API_URL = process.env.REACT_APP_NODE_API_URL;
 const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL;
-const PARSE_RESUME_URL = process.env.REACT_APP_PARSE_RESUME_URL || '';
 
 // Create axios instances
 const api = axios.create({
@@ -74,16 +73,6 @@ const nodeApi = axios.create({
   withCredentials: true,
 });
 
-const templateApi = axios.create({
-  baseURL: API_BASE_URL,
-  headers: { 'Content-Type': 'multipart/form-data' },
-  withCredentials: true,
-});
-
-const parseResumeApi = axios.create({
-  baseURL: PARSE_RESUME_URL,
-  headers: { 'Content-Type': 'multipart/form-data' },
-});
 const masterDropdownApi = axios.create({
   baseURL: process.env.REACT_APP_MASTER_DROPDOWN_URL,
   headers: { 'Content-Type': 'application/json' },
@@ -118,7 +107,7 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
-    // ✅ DO NOT TOUCH FILE DOWNLOADS
+    //  DO NOT TOUCH FILE DOWNLOADS
     if (response.config?.responseType === "blob") {
       return response;
     }
@@ -161,7 +150,7 @@ apis.interceptors.request.use(
 );
 
 apis.interceptors.response.use(
-  // ✅ SUCCESS HANDLER (2xx)
+  //  SUCCESS HANDLER (2xx)
   (response) => {
     if (response.config?.responseType === "blob") {
       return response; // keep full response for downloads
@@ -169,7 +158,7 @@ apis.interceptors.response.use(
     return response.data; // normal APIs return backend JSON
   },
 
-  // ❌ ERROR HANDLER (non-2xx)
+  //  ERROR HANDLER (non-2xx)
   async (error) => {
     const originalRequest = error.config || {};
 
@@ -190,13 +179,13 @@ apis.interceptors.response.use(
       }
     }
 
-    // ✅ BUSINESS / VALIDATION ERRORS (422, other 4xx)
+    //  BUSINESS / VALIDATION ERRORS (422, other 4xx)
     if (error.response && error.response.status >= 400 && error.response.status < 500) {
-      // 🔑 Resolve with backend data → goes to `try`
+      //  Resolve with backend data → goes to `try`
       return Promise.resolve(error.response.data);
     }
 
-    // ❌ SERVER / NETWORK ERRORS (5xx)
+    //  SERVER / NETWORK ERRORS (5xx)
     return Promise.reject(error);
   }
 );
@@ -230,7 +219,7 @@ candidateApi.interceptors.response.use(
         await callRefreshEndpoint();
         return candidateApi(originalRequest);
       } catch (err) {
-        console.error("⛔ Node refresh failed. Redirecting to login");
+        console.error("Node refresh failed. Redirecting to login");
         store.dispatch(clearUser?.() ?? {});
         window.location.href = "/login";
         return Promise.reject(err);
@@ -268,7 +257,7 @@ nodeApi.interceptors.response.use(
         await callRefreshEndpoint();
         return nodeApi(originalRequest);
       } catch (err) {
-        console.error("⛔ Node refresh failed. Redirecting to login");
+        console.error("Node refresh failed. Redirecting to login");
         store.dispatch(clearUser?.() ?? {});
         window.location.href = "/login";
         return Promise.reject(err);
@@ -279,55 +268,10 @@ nodeApi.interceptors.response.use(
   }
 );
 
-/* ---------------------------
-   Interceptors - parseResumeApi
-   --------------------------- */
-parseResumeApi.interceptors.request.use(
-  (config) => addAuthHeader(config),
-  (error) => Promise.reject(error)
-);
 
-parseResumeApi.interceptors.response.use(
-  (response) => response.data,
-  (error) => {
-    if (error.response?.status === 401) {
-      store.dispatch(clearUser?.() ?? {});
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
-
-/* ---------------------------
-   Interceptors - templateApi
-   --------------------------- */
-templateApi.interceptors.request.use(
-  (config) => addAuthHeader(config),
-  (error) => Promise.reject(error)
-);
-
-templateApi.interceptors.response.use(
-  (response) => response.data,
-  async (error) => {
-    const originalRequest = error.config || {};
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        await nodeApi.post("/recruiter-auth/recruiter-refresh-token", null, { withCredentials: true });
-        console.log()
-        return templateApi(originalRequest);
-      } catch (err) {
-        store.dispatch(clearUser?.() ?? {});
-        window.location.href = "/login";
-        return Promise.reject(err);
-      }
-    }
-    return Promise.reject(error);
-  }
-);
 
 /* ---------------------------
    Exports
    --------------------------- */
-export { api, apis, candidateApi, nodeApi, templateApi, parseResumeApi, masterDropdownApi };
-export default { api, apis, candidateApi, nodeApi, templateApi, parseResumeApi , masterDropdownApi};
+export { api, apis, candidateApi, nodeApi, masterDropdownApi };
+export default { api, apis, candidateApi, nodeApi , masterDropdownApi};

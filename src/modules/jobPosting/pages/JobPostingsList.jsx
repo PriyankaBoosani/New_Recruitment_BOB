@@ -122,9 +122,6 @@ const JobPostingsList = () => {
         selectableRequisitions.every(r => selectedReqIds.has(r.id));
 
 
-    const selectedRequisitions = requisitions.filter(r =>
-        selectedReqIds.has(r.id)
-    );
     const handleCancelSelection = () => {
         setSelectedReqIds(new Set());
     };
