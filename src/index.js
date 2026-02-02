@@ -9,6 +9,7 @@ import './index.css';
 
 import App from './app/App';
 import LanguageSync from './i18n/LanguageSync';
+import SessionManager from './modules/auth/services/SessionManager';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -16,7 +17,9 @@ root.render(
     <PersistGate loading={null} persistor={persistor}>
       <Router>
         <LanguageSync />
-        <App />
+        <SessionManager>
+          <App />
+        </SessionManager>
       </Router>
     </PersistGate>
   </Provider>

@@ -22,21 +22,17 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    const isExcel =
-      file &&
-      (
-        file.type ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-        file.type === "application/vnd.ms-excel"
-      );
+    const isExcel = file && (
+      file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+      file.type === 'application/vnd.ms-excel'
+    );
 
-    if (!isExcel) {
-      setErrors(t("position:invalid_file"));
-      return;
+    if (isExcel) {
+      setSelectedFile(file);
+      setErrors([]);
+    } else {
+      setErrors(["Please upload a valid Excel file (.xlsx)"]);
     }
-
-    setSelectedFile(file);
-    setErrors("");
   };
   const resetModalState = () => {
     setSelectedFile(null);
