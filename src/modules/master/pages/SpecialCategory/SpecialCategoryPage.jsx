@@ -11,7 +11,6 @@ import '../../../../style/css/user.css';
 
 import { validateSpecialCategoryForm } from "../../../../shared/utils/specialcategory-validations";
 import { mapSpecialCategoryToApi } from './mappers/specialCategoryMapper';
-import { importFromCSV } from '../../../../shared/components/FileUpload';
 
 const SpecialCategoryPage = () => {
   const { t } = useTranslation(["specialCategory"]);
@@ -44,9 +43,6 @@ const SpecialCategoryPage = () => {
     description: ''
   });
   const [errors, setErrors] = useState({});
-
-  const [selectedCSVFile, setSelectedCSVFile] = useState(null);
-  const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
 
@@ -126,23 +122,7 @@ const SpecialCategoryPage = () => {
     setShowModal(false);
   };
   /* ===================== IMPORT ====================== */
-  const handleImport = async () => {
-    await importFromCSV({
-      selectedCSVFile,
-      selectedXLSXFile,
-      list: categories,
-      mapRow: (row) => ({
-        code: (row.code ?? '').trim(),
-        name: (row.name ?? '').trim(),
-        description: (row.description ?? '').trim()
-      }),
-      setSelectedCSVFile,
-      setSelectedXLSXFile,
-      setShowAddModal: setShowModal,
-      setActiveTab,
-      setList: fetchCategories
-    });
-  };
+  
 
   return (
     <Container fluid className="user-container">
@@ -196,13 +176,6 @@ const SpecialCategoryPage = () => {
         errors={errors}
         setErrors={setErrors}
         handleSave={handleSave}
-        handleImport={handleImport}
-        selectedCSVFile={selectedCSVFile}
-        selectedXLSXFile={selectedXLSXFile}
-        onSelectCSV={setSelectedCSVFile}
-        onSelectXLSX={setSelectedXLSXFile}
-        removeCSV={() => setSelectedCSVFile(null)}
-        removeXLSX={() => setSelectedXLSXFile(null)}
         t={t}
         //  ADD THIS
         onSuccess={() => {

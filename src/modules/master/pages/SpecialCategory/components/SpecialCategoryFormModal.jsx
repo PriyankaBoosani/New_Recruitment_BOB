@@ -17,7 +17,6 @@ const SpecialCategoryFormModal = ({
   errors,
   setErrors,
   handleSave,
-  handleImport,
   t,
   ...importProps
 }) => {

@@ -26,7 +26,6 @@ const JobGradeFormModal = ({
   errors,
   setErrors,
   handleSave,
-  handleImport,
   editingId,
   t,
   ...importProps

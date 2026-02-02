@@ -9,7 +9,6 @@ import PositionFormModal from "./components/PositionFormModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 import { validatePositionForm } from "../../../../shared/utils/position-validations";
 import { mapPositionToApi } from "./mappers/positionMapper";
-import { importFromCSV } from "../../../../shared/components/FileUpload";
 import '../../../../style/css/user.css';
 import { useDepartments } from "../Department/hooks/useDepartments";
 import { useJobGrades } from "../JobGrade/hooks/useJobGrades";
@@ -53,9 +52,6 @@ const PositionPage = () => {
   });
   const [errors, setErrors] = useState({});
 
-  /* ---------------- IMPORT STATE ---------------- */
-  const [selectedCSVFile, setSelectedCSVFile] = useState(null);
-  const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
 
   /* ---------------- HANDLERS ---------------- */
 
@@ -99,8 +95,6 @@ const PositionPage = () => {
     });
     setErrors({});
     setActiveTab("manual");
-    setSelectedCSVFile(null);
-    setSelectedXLSXFile(null);
     setShowAddModal(true);
   };
 
@@ -169,37 +163,7 @@ const PositionPage = () => {
 
 
 
-  const handleImport = async () => {
-    await importFromCSV({
-      selectedCSVFile,
-      selectedXLSXFile,
-      list: positions,
-      mapRow: (row) => {
-        const dept = departments.find(
-          d => d.name.toLowerCase() === String(row.department).toLowerCase()
-        );
-
-        const grade = jobGrades.find(
-          g => g.code.toLowerCase() === String(row.jobGrade).toLowerCase()
-        );
-
-        return {
-          title: (row.title || row.positionTitle || "").trim(),
-          description: (row.description || "").trim(),
-          // departmentId: dept?.id || "",
-          jobGradeId: grade?.id || "",
-          code: row.positionCode || "",
-          // accept multiple common CSV headers for ages
-          eligibilityAgeMin: (row.eligibilityAgeMin || row.minAge || row.min_age || "").toString(),
-          eligibilityAgeMax: (row.eligibilityAgeMax || row.maxAge || row.max_age || "").toString()
-        };
-      },
-      setSelectedCSVFile,
-      setSelectedXLSXFile,
-      setShowAddModal,
-      setActiveTab,
-    });
-  };
+  
 
 
   /* ---------------- RENDER ---------------- */
@@ -273,15 +237,8 @@ const PositionPage = () => {
           }));
         }}
         handleSave={handleSave}
-        handleImport={handleImport}
         departments={departments}
         jobGrades={jobGrades}
-        selectedCSVFile={selectedCSVFile}
-        selectedXLSXFile={selectedXLSXFile}
-        onSelectCSV={setSelectedCSVFile}
-        onSelectXLSX={setSelectedXLSXFile}
-        removeCSV={() => setSelectedCSVFile(null)}
-        removeXLSX={() => setSelectedXLSXFile(null)}
         t={t}
         fetchPositions={fetchPositions}
       />

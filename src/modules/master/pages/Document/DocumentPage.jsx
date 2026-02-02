@@ -8,7 +8,6 @@ import DocumentFormModal from './components/DocumentFormModal';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
 import { validateDocumentForm } from '../../../../shared/utils/document-validations';
 import { mapDocumentToApi } from './mappers/documentMapper';
-import { importFromCSV } from '../../../../shared/components/FileUpload';
 import '../../../../style/css/user.css';
 
 const DocumentPage = () => {
@@ -38,8 +37,6 @@ const DocumentPage = () => {
   const [formData, setFormData] = useState({ name: '', description: '', isRequiredConfirmed: false });
   const [errors, setErrors] = useState({});
 
-  const [selectedCSVFile, setSelectedCSVFile] = useState(null);
-  const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
   const [isViewing, setIsViewing] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
@@ -117,22 +114,7 @@ const DocumentPage = () => {
     setShowAddModal(false);
   };
 
-  const handleImport = async () => {
-    await importFromCSV({
-      selectedCSVFile,
-      selectedXLSXFile,
-      list: documents,
-      mapRow: (row) => ({
-        name: (row.name || row.document_name || '').trim(),
-        description: (row.description || '').trim()
-      }),
-      setSelectedCSVFile,
-      setSelectedXLSXFile,
-      setShowAddModal,
-      setActiveTab,
-      setList: fetchDocuments
-    });
-  };
+  
 
   return (
     <Container fluid className="user-container">
@@ -178,13 +160,6 @@ const DocumentPage = () => {
         errors={errors}
         setErrors={setErrors}
         handleSave={handleSave}
-        handleImport={handleImport}
-        selectedCSVFile={selectedCSVFile}
-        selectedXLSXFile={selectedXLSXFile}
-        onSelectCSV={setSelectedCSVFile}
-        onSelectXLSX={setSelectedXLSXFile}
-        removeCSV={() => setSelectedCSVFile(null)}
-        removeXLSX={() => setSelectedXLSXFile(null)}
         t={t}
         onSuccess={() => {
           fetchDocuments();     // refresh list immediately

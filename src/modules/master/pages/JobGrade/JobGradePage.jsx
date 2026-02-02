@@ -1,5 +1,3 @@
-// src/modules/master/pages/JobGrade/JobGradePage.jsx
-
 import React, { useState } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import { Search, Plus } from 'react-bootstrap-icons';
@@ -12,7 +10,6 @@ import DeleteConfirmModal from './components/DeleteConfirmModal';
 
 import { validateJobGradeForm } from '../../../../shared/utils/jobgrade-validations';
 import { mapJobGradeToApi } from './mappers/jobGradeMapper';
-import { importFromCSV } from '../../../../shared/components/FileUpload';
 import '../../../../style/css/user.css';
 
 const JobGradePage = () => {
@@ -51,8 +48,6 @@ const JobGradePage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const [selectedCSVFile, setSelectedCSVFile] = useState(null);
-  const [selectedXLSXFile, setSelectedXLSXFile] = useState(null);
 
   const openAddModal = () => {
     setIsViewing(false);
@@ -124,25 +119,7 @@ const JobGradePage = () => {
     setShowAddModal(false);
   };
 
-  const handleImport = async () => {
-    await importFromCSV({
-      selectedCSVFile,
-      selectedXLSXFile,
-      list: jobGrades,
-      mapRow: (row) => ({
-        scale: (row.scale || '').trim(),
-        gradeCode: (row.gradeCode || row.grade_code || '').trim(),
-        minSalary: row.minSalary || row.min_salary,
-        maxSalary: row.maxSalary || row.max_salary,
-        description: (row.description || '').trim(),
-      }),
-      setSelectedCSVFile,
-      setSelectedXLSXFile,
-      setShowAddModal,
-      setActiveTab,
-      setList: fetchJobGrades
-    });
-  };
+  
   const searchableFields = [
     'scale',
     'gradeCode',
@@ -223,10 +200,6 @@ const JobGradePage = () => {
           }));
         }}
         handleSave={handleSave}
-        handleImport={handleImport}
-        selectedCSVFile={selectedCSVFile}
-        onSelectCSV={setSelectedCSVFile}
-        removeCSV={() => setSelectedCSVFile(null)}
         t={t}
         fetchJobGrades={fetchJobGrades}
       />

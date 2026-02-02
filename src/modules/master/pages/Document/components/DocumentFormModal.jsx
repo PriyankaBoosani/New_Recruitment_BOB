@@ -18,7 +18,6 @@ const DocumentFormModal = ({
   errors,
   setErrors,
   handleSave,
-  handleImport,
   t,
   ...importProps
 }) => {
