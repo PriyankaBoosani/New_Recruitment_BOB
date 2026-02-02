@@ -1,4 +1,3 @@
-import React from "react";
 import { Row, Col, Form, Card, Button } from "react-bootstrap";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import edit_icon from "../../../assets/edit_icon.png";
@@ -6,33 +5,26 @@ import delete_icon from "../../../assets/delete_icon.png";
 
 const ReservationSection = ({
     isViewMode,
-
     formData,
     errors,
     setErrors,
-
     reservationCategories,
     disabilityCategories,
     states,
     languages,
-
     nationalCategories,
     setNationalCategories,
     nationalDisabilities,
     setNationalDisabilities,
     nationalCategoryTotal,
-
     currentState,
     setCurrentState,
     stateCategoryTotal,
-
     filteredLanguages,
-
     stateDistributions,
     setStateDistributions,
     editingIndex,
     setEditingIndex,
-
     handleInputChange,
     handleAddOrUpdateState
 }) => {

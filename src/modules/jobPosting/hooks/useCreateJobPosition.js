@@ -7,55 +7,26 @@ import { mapAddPositionToCreateDto } from "../mappers/jobPositionCreateMapper";
 export const useCreateJobPosition = () => {
   const [loading, setLoading] = useState(false);
 
-  const createPosition = async ({
-    formData,
-    educationData,
-    approvedBy,
-    approvedOn,
-    requisitionId,
-    indentFile,
-    indentName,
-
-    currentState,
-    stateDistributions,
-    reservationCategories,
-    disabilityCategories,
-    nationalCategories,
-    nationalDisabilities,
-    qualifications,
-    certifications,
-  }) => {
+  const createPosition = async (payload) => {
     try {
       setLoading(true);
 
-      const dto = mapAddPositionToCreateDto({
-        formData,
-        educationData,
-        requisitionId,
-        approvedBy,
-        approvedOn,
-        indentName,
-        currentState,
-        stateDistributions,
-        reservationCategories,
-        disabilityCategories,
-        nationalCategories,
-        nationalDisabilities,
-        qualifications,
-        certifications,
-      });
+      const dto = mapAddPositionToCreateDto(payload);
 
-      console.log("FINAL CREATE DTO", dto);
-
-      await jobPositionApiService.createPosition({
+      const res = await jobPositionApiService.createPosition({
         dto,
-        indentFile,
+        indentFile: payload.indentFile,
       });
+      console.log("Final Create position response:", res);
 
-      return true;
+      if (!res?.success) {
+        throw new Error(res?.message || "Create position failed");
+      }
+
+      return res.data; // success path ONLY
     } catch (err) {
       console.error("Create position failed", err);
-      return false;
+      throw err; // 🔥 THIS IS THE FIX
     } finally {
       setLoading(false);
     }

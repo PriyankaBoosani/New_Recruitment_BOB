@@ -5,55 +5,28 @@ import { mapAddPositionToUpdateDto } from "../mappers/positionUpdate.mapper";
 export const useUpdateJobPosition = () => {
   const [loading, setLoading] = useState(false);
 
-  const updatePosition = async ({
-    positionId,
-    requisitionId,
-    formData,
-    educationData,
-    stateDistributions,
-    nationalCategories,
-    nationalDisabilities,
-    reservationCategories,
-    disabilityCategories,
-    qualifications,
-    certifications,
-    approvedBy,
-    approvedOn,
-    indentFile,
-    existingPosition
-  }) => {
-    setLoading(true);
-
+  const updatePosition = async (payload) => {
     try {
-      // 🔴 SINGLE SOURCE OF TRUTH
-      const dto = mapAddPositionToUpdateDto({
-        positionId,
-        requisitionId,
-        formData,
-        educationData,
-        stateDistributions,
-        nationalCategories,
-        nationalDisabilities,
-        reservationCategories,
-        disabilityCategories,
-        qualifications,
-        certifications,
-        approvedBy,
-        approvedOn,
-        existingPosition
-      });
+      setLoading(true);
 
-      console.log("UPDATE DTO", dto); // ✅ DEBUG ONCE
+      const dto = mapAddPositionToUpdateDto(payload);
 
-      await jobPositionApiService.updatePosition({
+      console.log("UPDATE DTO", dto);
+
+      const res = await jobPositionApiService.updatePosition({
         dto,
-        indentFile
+        indentFile: payload.indentFile
       });
 
-      return true;
+      //  MATCH ACTUAL RESPONSE SHAPE
+      if (!res?.success) {
+        throw new Error(res?.message || "Update position failed");
+      }
+
+      return res.data; // success path only
     } catch (err) {
       console.error("Update position failed", err);
-      return false;
+      throw err; //  DO NOT RETURN FALSE
     } finally {
       setLoading(false);
     }

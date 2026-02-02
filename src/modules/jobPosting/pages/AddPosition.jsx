@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
+import { Container, Form, Button, Card } from "react-bootstrap";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import "../../../style/css/AddPosition.css";
 import import_Icon from '../../../assets/import_Icon.png'
-import delete_icon from '../../../assets/delete_icon.png'
-import edit_icon from '../../../assets/edit_icon.png'
 import ImportModal from "../component/ImportModal";
 import EducationModal from "../component/EducationModal";
 import { validateAddPosition, validateStateDistribution } from "../validations/validateAddPosition";
-import ErrorMessage from "../../../shared/components/ErrorMessage";
 import { useCreateJobPosition } from "../hooks/useCreateJobPosition";
 import { useRequisitionDetails } from "../hooks/useRequisitionDetails";
 import { useMasterData } from "../hooks/useMasterData";
@@ -23,7 +20,6 @@ import { toast } from "react-toastify";
 import ReservationSection from "../component/ReservationSection";
 
 const AddPosition = () => {
-    const POSITION_POPULATED_FIELDS = ["Min Age", "Max Age", "Grade / Scale", "Roles & Responsibilities", "Mandatory Education", "Preferred Education", "Mandatory Experience", "Preferred Experience"];
     const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx"];
     const MAX_FILE_SIZE_MB = 2;
     const YEAR_OPTIONS = Array.from({ length: 31 }, (_, i) => i);
@@ -32,7 +28,6 @@ const AddPosition = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const location = useLocation();
-    const query = new URLSearchParams(location.search);
 
     const { requisitionId } = useParams();
     const positionId = searchParams.get("positionId");
@@ -54,12 +49,12 @@ const AddPosition = () => {
 
     const shouldFetchPosition = !!positionId && (isEditMode || isViewMode);
 
-    const { data: existingPosition, loading: positionLoading } = useJobPositionById(shouldFetchPosition ? positionId : null);
+    const { data: existingPosition } = useJobPositionById(shouldFetchPosition ? positionId : null);
     const { requisition, loading: requisitionLoading } = useRequisitionDetails(requisitionId);
     const { createPosition, loading } = useCreateJobPosition();
     const { updatePosition } = useUpdateJobPosition();
     const masterData = useMasterData();
-    const { departments, positions, jobGrades, employmentTypes, reservationCategories, disabilityCategories, users, educationTypes, qualifications, specializations, certifications, states, languages } = masterData;
+    const { positions, employmentTypes, reservationCategories, disabilityCategories, educationTypes, qualifications, specializations, certifications, states, languages } = masterData;
 
     const [errors, setErrors] = useState({});
     const [showImportModal, setShowImportModal] = useState(false);
@@ -143,9 +138,7 @@ const AddPosition = () => {
             ) !== undefined;
 
         setFormData(prev => ({
-            ...prev, // 🔥 THIS IS THE FIX
-
-
+            ...prev,
 
             contractualPeriod: isContract
                 ? String(existingPosition.contractYears ?? "")
@@ -154,6 +147,7 @@ const AddPosition = () => {
 
         }));
     }, [existingPosition, employmentTypes]);
+
     useEffect(() => {
         if (!employmentTypes.length) return;
 
@@ -172,6 +166,7 @@ const AddPosition = () => {
             }));
         }
     }, [formData.employmentType, employmentTypes]);
+
     useEffect(() => {
         if (!existingPosition) return;
 
@@ -340,8 +335,6 @@ const AddPosition = () => {
 
     };
 
-
-
     const onPositionSelect = (id) => {
         const selected = positions.find(p => String(p.id) === String(id));
         if (!selected) return;
@@ -449,24 +442,59 @@ const AddPosition = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         const validationErrors = validateAddPosition({
-            isEditMode, formData, educationData, indentFile, approvedBy, approvedOn, existingIndentPath, existingIndentName, nationalCategories, nationalDisabilities, stateDistributions, existingPositions: positionsByReq[requisitionId] || [],
+            isEditMode,
+            formData,
+            educationData,
+            indentFile,
+            approvedBy,
+            approvedOn,
+            existingIndentPath,
+            existingIndentName,
+            nationalCategories,
+            nationalDisabilities,
+            stateDistributions,
+            existingPositions: positionsByReq[requisitionId] || [],
             positionId
         });
-        if (Object.keys(validationErrors).length > 0) { setErrors(validationErrors); return; }
 
-        const payload = { formData, educationData, requisitionId, indentFile, approvedBy, approvedOn, reservationCategories, disabilityCategories, nationalCategories, nationalDisabilities, qualifications, certifications, stateDistributions: stateDistributions.filter(s => !s.__deleted) };
-        const success = isEditMode ? await updatePosition({ ...payload, positionId, existingPosition }) : await createPosition(payload);
-        if (success) {
-            toast.success(
-                isEditMode
-                    ? "Position updated successfully"
-                    : "Position added successfully"
-            );
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        const payload = {
+            formData,
+            educationData,
+            requisitionId,
+            indentFile,
+            approvedBy,
+            approvedOn,
+            reservationCategories,
+            disabilityCategories,
+            nationalCategories,
+            nationalDisabilities,
+            qualifications,
+            certifications,
+            stateDistributions: stateDistributions.filter(s => !s.__deleted)
+        };
+
+        try {
+            if (isEditMode) {
+                await updatePosition({ ...payload, positionId, existingPosition });
+                toast.success("Position updated successfully");
+            } else {
+                await createPosition(payload);
+                toast.success("Position added successfully");
+            }
 
             navigate(-1);
+        } catch (err) {
+            toast.error(err.message || "Operation failed");
         }
     };
+
 
     const nationalCategoryTotal = Object.values(nationalCategories).reduce((a, b) => a + Number(b || 0), 0);
     const stateCategoryTotal = Object.values(currentState.categories || {}).reduce((a, b) => a + Number(b || 0), 0);
@@ -538,7 +566,7 @@ const AddPosition = () => {
             <ImportModal show={showImportModal} onHide={() => setShowImportModal(false)} requisitionId={requisitionId} onSuccess={() => fetchPositions(requisitionId)} // optional but correct
             />
             <EducationModal key={`${eduMode}-${showEduModal}`} show={showEduModal} mode={eduMode} initialData={educationData[eduMode]} educationTypes={educationTypes} qualifications={qualifications} specializations={specializations} certifications={certifications} onHide={() => setShowEduModal(false)} onSave={({ educations, certificationIds, text }) => { setEducationData(prev => ({ ...prev, [eduMode]: { educations, certificationIds, text } })); setErrors(prev => { const upd = { ...prev }; delete upd[`${eduMode}Education`]; return upd; }); }} />
-            <ConfirmUsePositionModal show={showConfirmModal} fields={POSITION_POPULATED_FIELDS} onYes={handleUsePositionData} onNo={() => { setPendingPosition(null); setShowConfirmModal(false); }} />
+            <ConfirmUsePositionModal show={showConfirmModal} onYes={handleUsePositionData} onNo={() => { setPendingPosition(null); setShowConfirmModal(false); }} />
         </Container>
     );
 };
