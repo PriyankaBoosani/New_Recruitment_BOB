@@ -5,7 +5,7 @@ export const normalizeTitle = (value = "") =>
     .replace(/\s+/g, " ")   // collapse multiple spaces
     .replace(/^\s+/, "");  // remove leading spaces
 
-export const TITLE_ALLOWED_PATTERN = /^[A-Za-z0-9 _\-()/&]*$/;
+export const TITLE_ALLOWED_PATTERN = /^[A-Za-z0-9 _.,\-():;&/]*$/;
 
 export const validateTitleOnType = (value) => {
   const normalized = normalizeTitle(value);
