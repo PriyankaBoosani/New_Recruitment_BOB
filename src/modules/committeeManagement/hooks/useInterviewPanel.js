@@ -94,6 +94,12 @@ export const useInterviewPanel = () => {
 };
 
 
+const clearError = (field) => {
+  if (errors?.[field]) {
+    setErrors(prev => ({ ...prev, [field]: "" }));
+  }
+};
+
   /* ================= SAVE ================= */
 
   const handleSave = async () => {
@@ -229,6 +235,7 @@ export const useInterviewPanel = () => {
     fetchPanels, // ✅ RETURNED
     handleSave,
     handleDelete,
-    handleEdit
+    handleEdit,
+    clearError
   };
 };

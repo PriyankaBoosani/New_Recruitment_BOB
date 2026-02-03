@@ -4,7 +4,7 @@ import InterviewPanelTable from "./components/InterviewPanelTable";
 import AssignPositionsPage from "./AssignPositionsPage";
 import "../../style/css/InterviewPanelPage.css";
 import { useInterviewPanel } from "./hooks/useInterviewPanel";
-import { FiUsers, FiMapPin } from "react-icons/fi";
+import { FiUsers, FiFileText} from "react-icons/fi";
 
 const InterviewPanelPage = () => {
   const [activeTab, setActiveTab] = useState("MANAGE");
@@ -25,7 +25,8 @@ const InterviewPanelPage = () => {
     fetchPanels, // ✅ RETURNED
     handleSave,
     handleDelete,
-     handleEdit
+     handleEdit,
+     clearError
   } = useInterviewPanel();
 
   useEffect(() => {
@@ -50,7 +51,7 @@ const InterviewPanelPage = () => {
                 className={`tab ${activeTab === "ASSIGN" ? "active" : ""}`}
                 onClick={() => setActiveTab("ASSIGN")}
               >
-                <FiMapPin className="tab-icon" />
+                <FiFileText className="tab-icon" />
                 <span>Assign to Positions</span>
               </button>
             </div>
@@ -71,6 +72,7 @@ const InterviewPanelPage = () => {
                     onSave={handleSave}
                       errors={errors}
                       setErrors={setErrors}
+                      clearError={clearError}
                   />
                 </div>
               </div>
