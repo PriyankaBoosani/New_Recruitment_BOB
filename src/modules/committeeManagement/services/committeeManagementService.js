@@ -21,7 +21,12 @@ const committeeManagementService = {
           params: { requisitionId }, // ✅ query param
          
         }
-      )
+      ),
+      assignPanelToPosition: (payload) =>
+        api.post(
+          "/recruiter/position-panel/create",
+          payload
+        ),
     
 
 };

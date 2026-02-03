@@ -69,6 +69,8 @@ const InterviewPanelPage = () => {
                     formData={formData}
                     setFormData={setFormData}
                     onSave={handleSave}
+                      errors={errors}
+                      setErrors={setErrors}
                   />
                 </div>
               </div>

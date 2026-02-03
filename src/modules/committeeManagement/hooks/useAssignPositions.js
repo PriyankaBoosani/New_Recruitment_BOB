@@ -180,6 +180,89 @@ const handleRequisitionChange = async (e) => {
   //   }
   // };
 
+  const [activeTab, setActiveTab] = useState("SCREENING");
+  const [showHistory, setShowHistory] = useState(true);
+
+  const [selectedCommittees, setSelectedCommittees] = useState({
+    SCREENING: [],
+    INTERVIEW: [],
+    COMPENSATION: []
+  });
+  const [context, setContext] = useState({
+    requisitionId: "1",
+    positionId: "1"
+  });
+
+  const updateCommitteeDate = (type, id, field, value) => {
+  setSelectedCommittees(prev => ({
+    ...prev,
+    [type]: prev[type].map(c =>
+      c.id === id ? { ...c, [field]: value } : c
+    )
+  }));
+};
+const handleAssignCommittees = async () => {
+  if (!selectedPosition) {
+    toast.error("Please select a position");
+    return;
+  }
+
+  const payloads = [];
+
+  Object.values(selectedCommittees).forEach((panels, index) => {
+    panels.forEach((panel, seqIndex) => {
+      payloads.push({
+        positionId: selectedPosition,
+
+        interviewPanels: {
+          panelName: panel.name,
+          description: panel.description || "",
+          committee: {
+            committeeName: panel.committeeName,
+            committeeDesc: panel.committeeDesc || "",
+            interviewCommitteeId: panel.interviewCommitteeId
+          },
+          panelMembers: panel.members.map(m => ({
+            panelId: panel.id,
+            panelMember: {
+              name: m.name,
+              role: m.role,
+              email: m.email,
+              userId: m.userId
+            },
+            interviewPanelMemberId: m.interviewPanelMemberId
+          })),
+          interviewPanelId: panel.id
+        },
+
+        startDate: panel.startDate,
+        endDate: panel.endDate,
+        sequenceNo: seqIndex
+      });
+    });
+  });
+
+  console.log("PAYLOADS 👉", payloads);
+
+  try {
+    setLoading(true);
+
+    for (const payload of payloads) {
+      await committeeManagementService.assignPanelToPosition(payload);
+    }
+
+    toast.success("Committees assigned successfully");
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to assign committees");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
+
   return {
     history,
     loading,
@@ -196,7 +279,21 @@ selectedRequisition,
 selectedPosition,
 setSelectedPosition,
 availablePanels,
-setAvailablePanels
+setAvailablePanels,
+updateCommitteeDate,
+
+activeTab,
+setActiveTab,
+showHistory,
+setShowHistory,
+selectedCommittees,
+setSelectedCommittees,
+context,
+setContext,
+handleAssignCommittees
+
+
+
 
 
   };

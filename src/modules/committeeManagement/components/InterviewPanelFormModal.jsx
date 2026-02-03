@@ -6,7 +6,9 @@ const InterviewPanelFormModal = ({
   membersOptions = [],
   formData,
   setFormData,
-  onSave
+  onSave,
+  errors,
+  setErrors
 }) => {
   console.log("communityOptions", communityOptions);
   return (
@@ -16,7 +18,7 @@ const InterviewPanelFormModal = ({
 
       {/* Panel Name */}
       <div className="form-group">
-        <label>Panel Name *</label>
+        <label>Panel Name <span className="text-danger">*</span></label>
         <input
           className="form-control"
           placeholder="Enter Panel Name"
@@ -25,11 +27,14 @@ const InterviewPanelFormModal = ({
             setFormData({ ...formData, name: e.target.value })
           }
         />
+      {errors?.name && (
+          <div className="field-error">{errors.name}</div>
+        )}
       </div>
 
       {/* Panel Type */}
       <div className="form-group">
-        <label>Panel Type *</label>
+        <label>Panel Type <span className="text-danger">*</span></label>
         <select
   className="form-control"
   value={formData.community}
@@ -43,12 +48,16 @@ const InterviewPanelFormModal = ({
       {option.name}
     </option>
   ))}
+
 </select>
+{errors?.community && (
+  <div className="field-error">{errors.community}</div>
+)}
       </div>
 
       {/* Panel Members */}
       <div className="form-group">
-        <label>Panel Members *</label>
+        <label>Panel Members <span className="text-danger">*</span></label>
 
         <Select
           isMulti
@@ -66,8 +75,12 @@ const InterviewPanelFormModal = ({
                 : []
             })
           }
+          
           classNamePrefix="react-select"
         />
+     {errors?.members && (
+  <div className="field-error">{errors.members}</div>
+)}
       </div>
 
        <div className="panel-form-actions">

@@ -28,19 +28,21 @@ const InterviewPanelTable = ( { panels, onEdit, onDelete }) => {
               <td>{panel.panelType}</td>
               <td>{panel.members}</td>
               <td className="actions">
-                <button
-                  className="table-icon-btn edit"
-                 onClick={() => onEdit(panel.id)}
-                >
-                  <img src={edit_icon} alt="Edit" />
-                </button>
+                  <div className="icon-group">
+                    <button
+                      className="table-icon-btn edit"
+                    onClick={() => onEdit(panel.id)}
+                    >
+                      <img src={edit_icon} alt="Edit" />
+                    </button>
 
-                <button
-                  className="table-icon-btn delete"
-                  onClick={() => onDelete(panel.id)}
-                >
-                  <img src={delete_icon} alt="Delete" />
-                </button>
+                    <button
+                      className="table-icon-btn delete"
+                      onClick={() => onDelete(panel.id)}
+                    >
+                      <img src={delete_icon} alt="Delete" />
+                    </button>
+                </div>
               </td>
             </tr>
           ))}

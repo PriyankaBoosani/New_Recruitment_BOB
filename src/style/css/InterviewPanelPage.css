@@ -182,12 +182,12 @@
   color: #42579F;
 }
 /* Action icons */
-.interview-panel-container .actions {
+/* .interview-panel-container .actions {
   display: flex;
   gap: 10px;
   
   margin-top: 12px;
-}
+} */
 /* 
 .interview-panel-container .icon-btn {
   width: 32px;
@@ -201,13 +201,27 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }*/
-
-.interview-panel-container .table-icon-btn img {
-  width: 16px;
-  height: 16px;
-   background: transparent;
+/* group icons horizontally */
+.icon-group {
   display: flex;
-  border: none;
+  gap: 10px;
+  /* justify-content: flex-end; */
+}
+
+.interview-panel-container .table-icon-btn{
+
+ border: none;              /* ✅ remove border */
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+.interview-panel-container .table-icon-btn img{
+    width: 20px;
+  height: 20px;
+
 }
 
 /* .interview-panel-container .icon-btn.edit:hover {
@@ -383,3 +397,8 @@
   appearance: auto !important;
 }
 
+.interview-panel-container .field-error {
+  color: rgb(220, 53, 69);
+  font-size: 12px;
+  margin-top: 6px;
+}

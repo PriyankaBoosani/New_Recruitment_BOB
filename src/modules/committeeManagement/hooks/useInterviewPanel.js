@@ -70,9 +70,41 @@ export const useInterviewPanel = () => {
     }
   }, []);
 
+
+  const validatePanelForm = () => {
+  const newErrors = {};
+
+  if (!formData.name?.trim()) {
+    newErrors.name = "Panel name is required";
+  } else if (formData.name.trim().length < 3) {
+    newErrors.name = "Panel name must be at least 3 characters";
+  }
+
+  if (!formData.community) {
+    newErrors.community = "Panel type is required";
+  }
+
+  if (!formData.members || formData.members.length === 0) {
+    newErrors.members = "Select at least one panel member";
+  }
+
+  setErrors(newErrors);
+
+  return Object.keys(newErrors).length === 0;
+};
+
+
   /* ================= SAVE ================= */
 
   const handleSave = async () => {
+
+
+      // 🔴 VALIDATION CHECK
+      if (!validatePanelForm()) {
+        toast.error("Please fix the validation errors");
+        return;
+      }
+
       const payload = preparePanelPayload(
         formData,
         communityOptions,
@@ -112,6 +144,7 @@ export const useInterviewPanel = () => {
           community: "",
           members: []
         });
+        setErrors({});
 
       } else {
         toast.error("Save failed");

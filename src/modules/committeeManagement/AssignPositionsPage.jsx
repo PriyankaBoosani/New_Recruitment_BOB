@@ -32,39 +32,50 @@ const AssignPositionsPage = () => {
   setSelectedPosition,
   handleRequisitionChange,
   loading,
-  availablePanels
+  availablePanels,
+  setAvailablePanels,
+  updateCommitteeDate,
+  activeTab,
+setActiveTab,
+showHistory,
+setShowHistory,
+selectedCommittees,
+setSelectedCommittees,
+context,
+setContext,
+handleAssignCommittees
+
 } = useAssignPositions();
 
 
-  const [activeTab, setActiveTab] = useState("SCREENING");
-  const [showHistory, setShowHistory] = useState(true);
-
-  const [selectedCommittees, setSelectedCommittees] = useState({
-    SCREENING: [],
-    INTERVIEW: [],
-    COMPENSATION: []
-  });
-  const [context, setContext] = useState({
-    requisitionId: "1",
-    positionId: "1"
-  });
+  
 
   const toggleCommittee = (type, committee) => {
-    setSelectedCommittees(prev => {
-      const isSelected = prev[type].some(c => c.id === committee.id);
-      if (isSelected) {
-        return {
-          ...prev,
-          [type]: prev[type].filter(c => c.id !== committee.id)
-        };
-      } else {
-        return {
-          ...prev,
-          [type]: [...prev[type], committee]
-        };
-      }
-    });
-  };
+  setSelectedCommittees(prev => {
+    const isSelected = prev[type].some(c => c.id === committee.id);
+
+    if (isSelected) {
+      // REMOVE → move back to available
+      setAvailablePanels(ap => [...ap, committee]);
+
+      return {
+        ...prev,
+        [type]: prev[type].filter(c => c.id !== committee.id),
+      };
+    } else {
+      // ADD → remove from available
+      setAvailablePanels(ap =>
+        ap.filter(c => c.id !== committee.id)
+      );
+
+      return {
+        ...prev,
+        [type]: [...prev[type], committee],
+      };
+    }
+  });
+};
+
 const renderAvailableCommittee = (committee, type) => (
   <div className="committee-row" key={committee.id}>
     <div>
@@ -97,11 +108,23 @@ const renderAvailableCommittee = (committee, type) => (
       <div className="date-row">
         <div>
           <label>START DATE</label>
-          <input type="date" />
+        <input
+            type="date"
+            value={committee.startDate}
+            onChange={(e) =>
+              updateCommitteeDate(type, committee.id, "startDate", e.target.value)
+            }
+          />
         </div>
         <div>
           <label>END DATE</label>
-          <input type="date" />
+          <input
+              type="date"
+              value={committee.endDate}
+              onChange={(e) =>
+                updateCommitteeDate(type, committee.id, "endDate", e.target.value)
+              }
+            />
         </div>
       </div>
     </div>
@@ -176,7 +199,7 @@ const filteredPanels = availablePanels.filter(
         </Col>
 
         <Col className="d-flex gap-2">
-          <Button variant="primary"  className="assign-btn w-100">
+          <Button variant="primary"  className="assign-btn w-100"   onClick={handleAssignCommittees}>
             <FiPlus className="me-1" />
             Assign Committees
           </Button>
