@@ -36,7 +36,7 @@ export const useInterviewPanel = () => {
   committeeName: "",
   panelMemberName: ""
 });
-const [showFilters, setShowFilters] = useState(false);
+const [showFilters, setShowFilters] = useState(true);
 
   /* ================= FETCH PANELS ================= */
 useEffect(() => {
@@ -55,7 +55,9 @@ useEffect(() => {
       const res = await masterApiService.getInterviewPanelsSearch({
         page,
         size,
-         panelName: search.panelName
+         panelName: search.panelName,
+         committeeName: search.committeeName
+
       });
 
       console.log("fetchpanels",res);
@@ -157,13 +159,9 @@ useEffect(() => {
       } else {
         // ✅ CREATE
         const res = await masterApiService.addInterviewPanel(payload);
-
-        if (!res?.interviewPanelId) {
-          toast.error("Save failed");
-          return;
-        }
-
-        toast.success("Panel created successfully");
+          if(res?.success){
+            toast.success("Panel created successfully");
+          }
       }
 
       fetchPanels();

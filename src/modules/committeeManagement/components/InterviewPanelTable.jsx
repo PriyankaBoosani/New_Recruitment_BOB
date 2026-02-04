@@ -39,14 +39,33 @@ const InterviewPanelTable = ({
             }
           />
 
-          <button
-            className="filter-btn"
-            onClick={() => setShowFilters(prev => !prev)}
-          >
-            <span className="filter-icon">⏷</span>
-            Filters
-          </button>
+          <div className="table-filters">
+    <select
+      className="table-filter-select"
+      value={search.committeeName || ""}
+      onChange={(e) =>
+        setSearch(prev => ({
+          ...prev,
+          committeeName: e.target.value
+        }))
+      }
+    >
+      <option value="">All Committees</option>
+      <option value="Interview">Interview</option>
+      <option value="Screening">Screening</option>
+      <option value="Compensation">Compensation</option>
+    </select>
+  </div> 
+
+
+         
+   
+
+
         </div>
+
+
+        
       </div>
 
       
