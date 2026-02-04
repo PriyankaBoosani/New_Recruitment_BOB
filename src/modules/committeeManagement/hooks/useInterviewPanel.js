@@ -51,17 +51,21 @@ const [showFilters, setShowFilters] = useState(true);
 
 
 useEffect(() => {
-  const value = search.panelName?.trim();
+  const panelNameValue = search.panelName?.trim();
+  const committeeNameValue = search.committeeName?.trim();
 
-  // 🔴 If empty → load all data
-  if (!value) {
+  console.log("panelNameValue",panelNameValue);
+  console.log("committeeNameValue",committeeNameValue);
+
+  // 🔴 If both empty → load all data
+  if (!panelNameValue && !committeeNameValue) {
     setPage(0);
     fetchPanels();
     return;
   }
 
-  // 🟡 If less than 2 chars → do nothing
-  if (value.length < 2) return;
+  // 🟡 If panelName has less than 2 chars and no committee selected → do nothing
+  if (panelNameValue && panelNameValue.length < 2 && !committeeNameValue) return;
 
   const timer = setTimeout(() => {
     setPage(0);
@@ -69,7 +73,7 @@ useEffect(() => {
   }, 400);
 
   return () => clearTimeout(timer);
-}, [search.panelName]);
+}, [search.panelName, search.committeeName]);
 
 
 
