@@ -13,7 +13,7 @@ const PdfViewerModal = ({ show, onHide, fileUrl, loading, title }) => {
       keyboard={false}
     >
       <Modal.Header closeButton>
-        <Modal.Title>{title}</Modal.Title>
+        <Modal.Title className="blue-color" style={{ fontSize: '1rem' }}>{title}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body style={{ height: "80vh", padding: 0 }}>

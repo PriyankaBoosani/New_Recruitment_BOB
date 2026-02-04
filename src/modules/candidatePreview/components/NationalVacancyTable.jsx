@@ -9,7 +9,7 @@ const NationalVacancyTable = ({ nationalCategoryDistribution }) => {
 
   return (
    <div className="category-reservation-card mt-3">
-  <div className="category-title">
+  <div className="category-title fs-14" style={{ fontWeight: 600 }}>
     Category Wise Reservation
   </div>
 
@@ -17,24 +17,24 @@ const NationalVacancyTable = ({ nationalCategoryDistribution }) => {
     <table className="category-table">
       <thead>
         <tr>
-          <th colSpan="6" className="group-header">
+          <th colSpan="6" className="group-header text-center">
             General Category
           </th>
-          <th colSpan="4" className="group-header">
+          <th colSpan="4" className="group-header text-center">
             Disability Category
           </th>
         </tr>
         <tr>
-          <th>GEN</th>
-          <th>EWS</th>
-          <th>SC</th>
-          <th>ST</th>
-          <th>OBC</th>
-          <th>Total</th>
-          <th>HI</th>
-          <th>VI</th>
-          <th>OC</th>
-          <th>ID</th>
+          <th className="text-center">GEN</th>
+          <th className="text-center">EWS</th>
+          <th className="text-center">SC</th>
+          <th className="text-center">ST</th>
+          <th className="text-center">OBC</th>
+          <th className="text-center">Total</th>
+          <th className="text-center">HI</th>
+          <th className="text-center">VI</th>
+          <th className="text-center">OC</th>
+          <th className="text-center">ID</th>
         </tr>
       </thead>
 

@@ -322,3 +322,25 @@ main {
 .dropdown-item.active, .dropdown-item:active {
 	background-color: #42579f;
 }
+
+.fw-500 {
+  font-weight: 500;
+}
+
+.fw-600 {
+  font-weight: 600;
+}
+
+.fs-13 {
+  font-size: 13px;
+}
+
+.light_font {
+  color: #6c757d !important;
+}
+
+.search_input {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #dee2e6 !important;
+}

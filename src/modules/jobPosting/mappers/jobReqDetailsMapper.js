@@ -28,7 +28,6 @@ export const mapJobRequisitionFromApi = (item = {}) => {
   };
 };
 
-
 const getStatusBadge = (status = "") => {
   switch (status) {
     case "APPROVED":

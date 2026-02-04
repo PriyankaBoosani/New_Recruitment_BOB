@@ -22,8 +22,9 @@ export default function CandidatePool({
 	const STATUS_CLASS_MAP = {  
 		Applied: "bg-secondary",
 		Shortlisted: "bg-warning",
-		Discrepency: "bg-danger",
+		Discrepency: "bg-primary",
 		Rejected: "bg-danger",
+    Scheduled: "bg-secondary"
 	};
 	const navigate = useNavigate();
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
@@ -71,9 +72,18 @@ export default function CandidatePool({
       const aVal = a[sortConfig.key];
       const bVal = b[sortConfig.key];
 
-      if (aVal < bVal) return sortConfig.direction === "asc" ? -1 : 1;
-      if (aVal > bVal) return sortConfig.direction === "asc" ? 1 : -1;
-      return 0;
+      if (aVal == null) return 1;
+      if (bVal == null) return -1;
+
+      if (typeof aVal === "number" && typeof bVal === "number") {
+        return sortConfig.direction === "asc"
+          ? aVal - bVal
+          : bVal - aVal;
+      }
+
+      return sortConfig.direction === "asc"
+        ? String(aVal).localeCompare(String(bVal))
+        : String(bVal).localeCompare(String(aVal));
     });
   }, [candidates, sortConfig]);
 
@@ -111,8 +121,8 @@ export default function CandidatePool({
                 Score {sortIcon("score")}
               </th> */}
 
-              <th className="fs-14 fw-normal py-3" onClick={() => requestSort("experience")} role="button">
-                Experience {sortIcon("experience")}
+              <th className="fs-14 fw-normal py-3" onClick={() => requestSort("experienceMonths")} role="button">
+                Experience {sortIcon("experienceMonths")}
               </th>
 
               <th className="fs-14 fw-normal py-3">
@@ -171,7 +181,7 @@ export default function CandidatePool({
 								</td> */}
 
                 <td className="align-content-center">
-									<p className="fw-normal fs-14 mb-0">{c.experience}</p>
+									<p className="fw-normal fs-14 mb-0">{(c.experienceMonths / 12).toFixed(1)} years</p>
 								</td>
 
                 <td className="align-content-center">
@@ -200,6 +210,7 @@ export default function CandidatePool({
         state: {
           candidate: c,
           positionId: selectedPositionId,
+          requisitionId: selectedRequisitionId,
           requisition: requisition
             ? {
                 requisition_code: requisition.requisition_code,
@@ -279,7 +290,7 @@ export default function CandidatePool({
               </small>
 
               <div className="mb-1">
-                <strong>Experience:</strong> {c.experience}
+                <strong>Experience:</strong> {(c.experienceMonths / 12).toFixed(1)} years
               </div>
               <div className="mb-1">
                 <strong>Status:</strong>{" "}
@@ -303,7 +314,22 @@ export default function CandidatePool({
 									className="me-3 cursor-pointer"
 									onClick={() =>
 										navigate("/candidate-preview", {
-											state: { candidate: c, positionId: selectedPositionId, requisitionId: selectedRequisitionId },
+											state: { candidate: c, positionId: selectedPositionId, requisitionId: selectedRequisitionId,
+                        requisition: requisition
+                          ? {
+                              requisition_code: requisition.requisition_code,
+                              requisition_title: requisition.requisition_title,
+                              registration_start_date: requisition.registration_start_date,
+                              registration_end_date: requisition.registration_end_date,
+                            }
+                          : null,
+                        position: position
+                          ? {
+                              positionId: position.positionId,
+                              positionName: position.positionName,
+                            }
+                          : null,
+                       },
 										})
 									}
 								/>

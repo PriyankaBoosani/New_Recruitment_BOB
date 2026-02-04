@@ -14,10 +14,18 @@ import jobPositionApiService from "../jobPosting/services/jobPositionApiService"
 import DropdownStrip from "./components/DropdownStrip";
 import { toast } from "react-toastify";
 import PdfViewerModal from "./components/PdfViewerModal";
+import { useLocation } from "react-router-dom";
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
  
 export default function CandidateScreening({ selectedJob }) {
+  const STATUS_LABEL_MAP = {
+    SHORTLISTED: "Shortlisted",
+    APPLIED: "Applied",
+    REJECTED: "Rejected",
+    INTERVIEW_SCHEDULED: "Interview Scheduled",
+  };
+
   const [activeTab, setActiveTab] = useState("CANDIDATE_POOL");
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
@@ -92,7 +100,7 @@ export default function CandidateScreening({ selectedJob }) {
   const categoryMap = React.useMemo(() => {
     const map = {};
     (masterData?.reservationCategories || []).forEach(cat => {
-      map[cat.categoryId] = cat.categoryName;
+      map[cat.reservationCategoriesId] = cat.categoryName;
     });
     return map;
   }, [masterData]);
@@ -161,7 +169,6 @@ export default function CandidateScreening({ selectedJob }) {
       //   stateId: "",
       //   categoryId: "",
       // });
- 
       const res = await jobPositionApiService.getCandidatesByPosition({
         searchText: filters.searchText,
         page,
@@ -173,6 +180,8 @@ export default function CandidateScreening({ selectedJob }) {
       });
  
       const apiData = res?.data;
+
+      const formatStatus = (status = "") => status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
  
       // 🔑 Normalize API → UI model
       const mappedCandidates = (apiData?.content || []).map((c) => ({
@@ -180,15 +189,16 @@ export default function CandidateScreening({ selectedJob }) {
         name: c.fullName,
         rank: c.rank,
         score: c.score,
-        experience: `${Math.floor((c.totalMonths || 0) / 12)} years`,
-        status: c.candidateApplications.applicationStatus,
+        // experience: `${Math.floor((c.totalMonths || 0) / 12)} years`,
+        experienceMonths: c.totalMonths || 0,
+        status: formatStatus(c.candidateApplications.applicationStatus),
         location: stateMap[c.stateId] || "-",
         stateId: c.stateId,
         categoryId: c.categoryId,
         categoryName: categoryMap[c.categoryId] || "-",
         applicationNo: c.candidateApplications.applicationNo,
         candidateId: c.candidateApplications.candidateId,
-        fileUrl: c.fileUrl,
+        fileUrl: c.resumeUrl,
       }));
  
       setCandidates(mappedCandidates);
@@ -309,7 +319,9 @@ const normalizedRequisition = selectedRequisition
   const availableStatuses = React.useMemo(() => {
     const set = new Set();
     candidates.forEach((c) => {
-      if (c.status) set.add(c.status);
+      if (c.status) {
+        set.add(c.status.toUpperCase()); // FORCE enum
+      }
     });
     return Array.from(set);
   }, [candidates]);
@@ -349,13 +361,39 @@ const normalizedRequisition = selectedRequisition
   // }, [filters]);
  
   useEffect(() => {
-    setFilters({
-      status: [],
-      stateId: "",
-      categoryId: "",
-      searchText: "",
-    });
+    if (!navPositionId) {
+      setFilters({
+        status: [],
+        stateId: "",
+        categoryId: "",
+        searchText: "",
+      });
+    }
   }, [selectedPositionId]);
+
+  const location = useLocation();
+  const navRequisitionId = location.state?.requisitionId || null;
+  const navPositionId = location.state?.positionId || null;
+  console.log("navRequisitionId: ", navRequisitionId)
+  console.log("navPositionId: ", navPositionId)
+
+  useEffect(() => {
+    if (navRequisitionId && requisitions.length > 0) {
+      setSelectedRequisitionId(navRequisitionId);
+    }
+  }, [requisitions, navRequisitionId]);
+
+  useEffect(() => {
+    if (navPositionId && positions.length > 0) {
+      setSelectedPositionId(navPositionId);
+    }
+  }, [positions, navPositionId]);
+
+  useEffect(() => {
+    if (navRequisitionId || navPositionId) {
+      window.history.replaceState({}, document.title);
+    }
+  }, []);
  
   return (
     <div className="container-fluid px-5 py-4">
@@ -371,7 +409,7 @@ const normalizedRequisition = selectedRequisition
       <div className="card mb-4 border-0">
         <div className="card-body">
           <div className="row g-2 align-items-end border-bottom pb-4">
-								{/* <img src={uploadIcon} width={15} className="me-2" /> */}
+            {/* <img src={uploadIcon} width={15} className="me-2" /> */}
             <DropdownStrip
               requisitions={requisitions}
               positions={positions}
@@ -434,7 +472,7 @@ const normalizedRequisition = selectedRequisition
  
           {/* Filters */}
           <div className="row g-2 mt-1 px-2 py-1 align-items-center">
-            <div className="col-md-2 col-6 d-flex align-items-center">
+            <div className="col-md-2 col-6 d-flex align-items-center gap-2">
               <p className="text-muted fs-14 mb-1">FILTER BY:</p>
               <button
                 className="btn fs-14 mb-1 error-text"
@@ -453,7 +491,7 @@ const normalizedRequisition = selectedRequisition
             <div className="col-md-2 col-6 mt-0">
               <select
                 className="form-select fs-14 py-1 mt-0"
-                value={filters?.status}
+                value={filters?.status[0] || ""}
                 onChange={(e) =>
                   setFilters((prev) => ({
                     ...prev,
@@ -464,7 +502,7 @@ const normalizedRequisition = selectedRequisition
                 <option value="">All Statuses</option>
                 {availableStatuses?.map((status) => (
                   <option key={status} value={status}>
-                    {status}
+                    {STATUS_LABEL_MAP[status] || status}
                   </option>
                 ))}
               </select>
@@ -532,7 +570,7 @@ const normalizedRequisition = selectedRequisition
                 </span>
                 <input
                   type="text"
-                  className="form-control border-start-0 fs-14 py-2"
+                  className="form-control border-start-0 fs-14 py-2 search_input"
                   placeholder="Search candidates..."
                   value={filters.searchText}
                   onChange={(e) =>
@@ -609,7 +647,7 @@ const normalizedRequisition = selectedRequisition
         }}
         fileUrl={pdfUrl}
         loading={loadingPdf}
-        title="Candidate Document"
+        title="Candidate Resume"
       />
     </div>
   );

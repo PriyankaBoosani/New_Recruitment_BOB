@@ -26,6 +26,7 @@ const CandidatePreviewPage = ({ onHide }) => {
 
   const candidateId = candidate?.candidateId;
   const positionId = state?.positionId;
+  const requisitionId = state?.requisitionId;
   const applicationId = state?.candidate?.id;
   console.log("candidateId: ", candidateId)
   console.log("applicationId: ", applicationId)
@@ -127,6 +128,9 @@ const CandidatePreviewPage = ({ onHide }) => {
         title="Candidate Screening"
         subtitle="Manage and schedule interviews for candidates"
         onBack={() => navigate(-1)}
+        positionId={positionId}
+        requisitionId={requisitionId}
+        candidateScreening={true}
       />
 
       {/* Requisition Strip */}
@@ -152,6 +156,7 @@ const CandidatePreviewPage = ({ onHide }) => {
               candidateId={candidateId}
               positionId={positionId}
               applicationId={applicationId}
+              requisitionId={requisitionId}
             />
           )
         )}

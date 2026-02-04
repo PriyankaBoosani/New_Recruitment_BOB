@@ -421,7 +421,6 @@ select.form-control {
 /* ===== SUBMIT ROW ===== */
 .criteria-submit-row {
   display: flex;
-  justify-content: space-between;
   align-items: flex-end;
   margin-top: 14px;
 }
@@ -729,6 +728,10 @@ select.form-control {
    margin-top: 0 !important;
   padding-top: 0 !important;
   line-height: 1.4;
+  white-space: normal;        /* allow wrapping */
+  word-wrap: break-word;      /* legacy support */
+  overflow-wrap: break-word;  /* modern standard */
+  word-break: break-word;
 }
 
 /* ===== CATEGORY TITLE ===== */

@@ -6,7 +6,7 @@ import sign from "../../../assets/downloadIcon.png";
 import viewIcon from "../../../assets/view_icon.png";
 import downloadIcon from "../../../assets/downloadIcon.png";
 import DocumentViewerModal from "../components/DocumentViewerModal";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
 import { toast } from "react-toastify";
 import masterApiService from "../../master/services/masterApiService";
@@ -18,9 +18,10 @@ const ApplicationForm = ({
   setFormErrors,
   candidateId,
   positionId,
-  applicationId
+  applicationId,
+  requisitionId
 }) => {
-
+  const navigate = useNavigate();
   const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
   const [criteria, setCriteria] = useState({});
   const location = useLocation();
@@ -219,9 +220,28 @@ const ApplicationForm = ({
     }
   };
 
+  // const handleRadioChange = (field, value) => {
+  //   setScreeningForm(prev => ({ ...prev, [field]: value }));
+  //   setErrors(prev => ({ ...prev, [field]: undefined }));
+  // };
+
   const handleRadioChange = (field, value) => {
-    setScreeningForm(prev => ({ ...prev, [field]: value }));
-    setErrors(prev => ({ ...prev, [field]: undefined }));
+    setScreeningForm(prev => {
+      const updated = { ...prev, [field]: value };
+
+      if (value === "YES") {
+        if (field === "isWorkCriteriaMet") updated.workCriteriaRemark = "";
+        if (field === "isAgeCriteriaMet") updated.ageCriteriaRemark = "";
+        if (field === "isEducationCriteriaMet") updated.educationCriteriaRemark = "";
+      }
+
+      return updated;
+    });
+
+    setErrors(prev => ({
+      ...prev,
+      [field]: undefined,
+    }));
   };
 
   const handleInputChange = (field, value) => {
@@ -293,20 +313,58 @@ const ApplicationForm = ({
       newErrors.isEducationCriteriaMet = "Please select an option";
     }
 
+    // Work criteria remark mandatory if NO or DISCREPANCY
+    if (
+      screeningForm.isWorkCriteriaMet === "NO" ||
+      screeningForm.isWorkCriteriaMet === "DISCREPANCY"
+    ) {
+      if (!screeningForm.workCriteriaRemark?.trim()) {
+        newErrors.workCriteriaRemark = "Required";
+      }
+    }
+
+    // Age criteria remark mandatory if NO or DISCREPANCY
+    if (
+      screeningForm.isAgeCriteriaMet === "NO" ||
+      screeningForm.isAgeCriteriaMet === "DISCREPANCY"
+    ) {
+      if (!screeningForm.ageCriteriaRemark?.trim()) {
+        newErrors.ageCriteriaRemark = "Required";
+      }
+    }
+
+    // Education criteria remark mandatory if NO or DISCREPANCY
+    if (
+      screeningForm.isEducationCriteriaMet === "NO" ||
+      screeningForm.isEducationCriteriaMet === "DISCREPANCY"
+    ) {
+      if (!screeningForm.educationCriteriaRemark?.trim()) {
+        newErrors.educationCriteriaRemark = "Required";
+      }
+    }
+
     if (!disableShortlistedSection && !screeningForm.isShortlisted) {
       newErrors.isShortlisted = "Please select an option";
     }
 
-    // Submit before date validation
-    if (!screeningForm.submitBeforeDate) {
-      newErrors.submitBeforeDate = "Please select a date";
-    } else {
-      const selectedDate = new Date(screeningForm.submitBeforeDate);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+    if (screeningForm.isShortlisted === "NO") {
+      if (!screeningForm.finalScreeningRemark?.trim()) {
+        newErrors.finalScreeningRemark = "Required";
+      }
+    }
 
-      if (selectedDate < today) {
-        newErrors.submitBeforeDate = "Date cannot be in the past";
+    // Submit before date validation
+    if (disableShortlistedSection) {
+      if (!screeningForm.submitBeforeDate) {
+        newErrors.submitBeforeDate = "Please select a date";
+      } else {
+        const selectedDate = new Date(screeningForm.submitBeforeDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (selectedDate <= today) {
+          newErrors.submitBeforeDate = "Date must be after today";
+        }
       }
     }
 
@@ -399,6 +457,7 @@ const ApplicationForm = ({
     try {
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
       toast.success("Screening submitted successfully");
+      navigate("/candidate-workflow", {state: {requisitionId, positionId}})
     } catch (err) {
       console.error("Screening submit failed", err);
       toast.error("Submission failed");
@@ -454,6 +513,20 @@ const ApplicationForm = ({
       }));
     }
   };
+
+  useEffect(() => {
+    if (!disableShortlistedSection) {
+      setScreeningForm(prev => ({
+        ...prev,
+        submitBeforeDate: "",
+      }));
+
+      setErrors(prev => ({
+        ...prev,
+        submitBeforeDate: undefined,
+      }));
+    }
+  }, [disableShortlistedSection]);
 
   return (
     <>
@@ -943,8 +1016,14 @@ const ApplicationForm = ({
               onChange={(e) =>
                 handleInputChange("workCriteriaRemark", e.target.value)
               }
+              maxLength={2000}
               // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
             />
+            {errors.workCriteriaRemark && (
+              <small className="text-danger fs-12">
+                {errors.workCriteriaRemark}
+              </small>
+            )}
           </div>
 
           {/* AGE CRITERIA */}
@@ -981,8 +1060,14 @@ const ApplicationForm = ({
               onChange={(e) =>
                 handleInputChange("ageCriteriaRemark", e.target.value)
               }
+              maxLength={2000}
               // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
             />
+            {errors.ageCriteriaRemark && (
+              <small className="text-danger fs-12">
+                {errors.ageCriteriaRemark}
+              </small>
+            )}
           </div>
 
           {/* EDUCATION CRITERIA */}
@@ -1019,8 +1104,14 @@ const ApplicationForm = ({
               onChange={(e) =>
                 handleInputChange("educationCriteriaRemark", e.target.value)
               }
+              maxLength={2000}
               // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
             />
+            {errors.educationCriteriaRemark && (
+              <small className="text-danger fs-12">
+                {errors.educationCriteriaRemark}
+              </small>
+            )}
           </div>
 
           {/* FINAL REMARK */}
@@ -1061,27 +1152,30 @@ const ApplicationForm = ({
               onChange={(e) =>
                 handleInputChange("finalScreeningRemark", e.target.value)
               }
+              maxLength={2000}
             />
           </div>
         </div>
 
         {/* ================= SUBMIT ROW ================= */}
-        <div className="criteria-submit-row">
-          <div className="d-grid">
-            <label className="submit-label">Submit Before</label>
-            <input
-              type="date"
-              className="criteria-date"
-              min={minDate}
-              value={screeningForm.submitBeforeDate}
-              onChange={handleDateChange}
-            />
-            {errors.submitBeforeDate && (
-              <small className="text-danger fs-12">
-                {errors.submitBeforeDate}
-              </small>
-            )}
-          </div>
+        <div className={`criteria-submit-row ${disableShortlistedSection ? 'justify-content-between' : 'justify-content-end'}`}>
+          {disableShortlistedSection && (
+            <div className="d-grid">
+              <label className="submit-label">Submit Before</label>
+              <input
+                type="date"
+                className="criteria-date"
+                min={minDate}
+                value={screeningForm.submitBeforeDate}
+                onChange={handleDateChange}
+              />
+              {errors.submitBeforeDate && (
+                <small className="text-danger fs-12">
+                  {errors.submitBeforeDate}
+                </small>
+              )}
+            </div>
+          )}
 
           <button
             className="btn-submit-orange"

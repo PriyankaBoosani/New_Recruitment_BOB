@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const PageHeaderWithBack = ({ title, subtitle }) => {
+const PageHeaderWithBack = ({ title, subtitle, positionId, requisitionId, candidateScreening }) => {
   const navigate = useNavigate();
 
   return (
@@ -19,7 +19,7 @@ const PageHeaderWithBack = ({ title, subtitle }) => {
           marginRight: "25px",
           marginTop: "2px"
         }}
-        onClick={() => navigate(-1)}
+        onClick={() => navigate(candidateScreening ? "/candidate-workflow" : -1, {state: {requisitionId, positionId}})}
       >
         <i className="bi bi-arrow-left"></i>
         <span>Back</span>

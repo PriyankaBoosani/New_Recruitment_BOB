@@ -12,30 +12,30 @@ const LocationWiseVacancyTable = ({
   }, {});
 
   return (
-    <div className="info-card mt-3">
-      <div className="fw-semibold mb-3">
+    <div className="mt-3 p-3" style={{ backgroundColor: '#f5f7fb', borderRadius: '10px' }}>
+      <div className="category-title fs-14" style={{ fontWeight: 600 }}>
         Category Wise Reservation (State-wise)
       </div>
 
       <div className="table-responsive">
-        <table className="table table-bordered small text-center">
+        <table className="table table-bordered small text-center mb-0">
           <thead>
             <tr>
-              <th rowSpan="2">State Name</th>
-              <th colSpan="6">Category</th>
-              <th colSpan="4">Disability</th>
+              <th rowSpan="2" className="light_font fw-600 fs-13">State Name</th>
+              <th colSpan="6" className="light_font fw-600 fs-13" style={{ padding: '10px 8px' }}>Category</th>
+              <th colSpan="4" className="light_font fw-600 fs-13" style={{ padding: '10px 8px' }}>Disability</th>
             </tr>
             <tr>
-              <th>GEN</th>
-              <th>EWS</th>
-              <th>SC</th>
-              <th>ST</th>
-              <th>OBC</th>
-              <th>Total</th>
-              <th>HI</th>
-              <th>VI</th>
-              <th>OC</th>
-              <th>ID</th>
+              <th className="light_font fw-600 fs-12" style={{ padding: '10px 6px' }}>GEN</th>
+              <th className="light_font fw-600 fs-12" style={{ padding: '10px 6px' }}>EWS</th>
+              <th className="light_font fw-600 fs-12" style={{ padding: '10px 6px' }}>SC</th>
+              <th className="light_font fw-600 fs-12" style={{ padding: '10px 6px' }}>ST</th>
+              <th className="light_font fw-600 fs-12" style={{ padding: '10px 6px' }}>OBC</th>
+              <th className="light_font fw-600 fs-12" style={{ padding: '10px 6px' }}>Total</th>
+              <th className="light_font fw-600 fs-12" style={{ padding: '10px 6px' }}>HI</th>
+              <th className="light_font fw-600 fs-12" style={{ padding: '10px 6px' }}>VI</th>
+              <th className="light_font fw-600 fs-12" style={{ padding: '10px 6px' }}>OC</th>
+              <th className="light_font fw-600 fs-12" style={{ padding: '10px 6px' }}>ID</th>
             </tr>
           </thead>
 
@@ -44,17 +44,17 @@ const LocationWiseVacancyTable = ({
               <tr key={idx}>
                 <td>{stateMap[state.stateId] || "Unknown"}</td>
 
-                <td>{state.categories.GEN}</td>
-                <td>{state.categories.EWS}</td>
-                <td>{state.categories.SC}</td>
-                <td>{state.categories.ST}</td>
-                <td>{state.categories.OBC}</td>
-                <td>{state.totalVacancies}</td>
+                <td className="fw-500" style={{ padding: '12px 6px' }}>{state.categories.GEN}</td>
+                <td className="fw-500" style={{ padding: '12px 6px' }}>{state.categories.EWS}</td>
+                <td className="fw-500" style={{ padding: '12px 6px' }}>{state.categories.SC}</td>
+                <td className="fw-500" style={{ padding: '12px 6px' }}>{state.categories.ST}</td>
+                <td className="fw-500" style={{ padding: '12px 6px' }}>{state.categories.OBC}</td>
+                <td className="fw-600" style={{ backgroundColor: '#f1f3f9', padding: '12px 6px' }}>{state.totalVacancies}</td>
 
-                <td>{state.disabilities.HI}</td>
-                <td>{state.disabilities.VI}</td>
-                <td>{state.disabilities.OC}</td>
-                <td>{state.disabilities.ID}</td>
+                <td className="fw-500" style={{ padding: '12px 6px' }}>{state.disabilities.HI}</td>
+                <td className="fw-500" style={{ padding: '12px 6px' }}>{state.disabilities.VI}</td>
+                <td className="fw-500" style={{ padding: '12px 6px' }}>{state.disabilities.OC}</td>
+                <td className="fw-500" style={{ padding: '12px 6px' }}>{state.disabilities.ID}</td>
               </tr>
             ))}
           </tbody>
