@@ -5,7 +5,7 @@ import "../../../style/css/AddPosition.css";
 import import_Icon from '../../../assets/import_Icon.png'
 import ImportModal from "../component/ImportModal";
 import EducationModal from "../component/EducationModal";
-import { validateAddPosition, validateStateDistribution, validateApprovedOn  } from "../validations/validateAddPosition";
+import { validateAddPosition, validateStateDistribution, validateApprovedOn } from "../validations/validateAddPosition";
 import { useCreateJobPosition } from "../hooks/useCreateJobPosition";
 import { useRequisitionDetails } from "../hooks/useRequisitionDetails";
 import { useMasterData } from "../hooks/useMasterData";
@@ -22,7 +22,7 @@ const AddPosition = () => {
     const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx"];
     const MAX_FILE_SIZE_MB = 2;
     const YEAR_OPTIONS = Array.from({ length: 31 }, (_, i) => i);
-    const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => i);
+    const MONTH_OPTIONS = Array.from({ length: 11 }, (_, i) => i + 1);
 
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -71,6 +71,13 @@ const AddPosition = () => {
     const [nationalCategories, setNationalCategories] = useState({});
     const [nationalDisabilities, setNationalDisabilities] = useState({});
     const [currentState, setCurrentState] = useState({ state: "", vacancies: "", language: "", categories: {}, disabilities: {} });
+    const jobGradesWithSalary = (masterData.jobGrades || []).map(g => ({
+        id: g.jobGradeId,
+        code: g.jobGradeCode,
+        scale: g.jobScale,
+        minSalary: g.minSalary?.parsedValue ?? null,
+        maxSalary: g.maxSalary?.parsedValue ?? null,
+    }));
 
     const [formData, setFormData] = useState({
         department: "", position: "", vacancies: "", minAge: "", maxAge: "",
@@ -552,7 +559,7 @@ const AddPosition = () => {
                     <Form onSubmit={handleSubmit}>
 
                         <PositionForm
-                        
+
                             isViewMode={isViewMode} formData={formData} errors={errors} handleInputChange={handleInputChange} indentFile={indentFile} setFormData={setFormData}
                             existingIndentPath={existingIndentPath} existingIndentName={existingIndentName} setIndentFile={setIndentFile} setErrors={setErrors}
                             approvedBy={approvedBy} setApprovedBy={setApprovedBy} approvedOn={approvedOn} setApprovedOn={setApprovedOn} validateApprovedOn={validateApprovedOn}

@@ -29,6 +29,8 @@ export const mapMasterResponse = (masterData, userData, certData) => {
       id: String(g.jobGradeId),
       code: g.jobGradeCode,
       scale: g.jobScale,
+      minSalary: g.minSalary,
+      maxSalary: g.maxSalary,
     })),
 
     employmentTypes: (masterData.employementTypes || []).map(e => ({

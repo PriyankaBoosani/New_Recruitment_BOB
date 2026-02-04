@@ -23,7 +23,7 @@ export const mapJobRequisitionFromApi = (item = {}) => {
 
     startDate: item.startDate ?? "-",
     endDate: item.endDate ?? "-",
-
+    hasDraftPositions: item.hasDraftPositions === true,
     editable: normalizedStatus === "New"
   };
 };

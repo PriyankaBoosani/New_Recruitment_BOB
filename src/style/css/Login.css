@@ -452,3 +452,8 @@
   box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.12);
   outline: none;
 }
+/* Disable Edge's built-in password reveal icon */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}

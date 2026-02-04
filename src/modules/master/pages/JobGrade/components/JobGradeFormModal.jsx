@@ -4,14 +4,19 @@ import React from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import ErrorMessage from '../../../../../shared/components/ErrorMessage';
 import JobGradeImportModal from './JobGradeImportModal';
-import {  handleValidatedInput, INPUT_PATTERNS } from "../../../../../shared/utils/inputHandlers";
+import { handleValidatedInput, INPUT_PATTERNS } from "../../../../../shared/utils/inputHandlers";
 
 const formatSalary = (value) => {
-  if (!value) return "";
+  if (value === null || value === undefined || value === "" || Number(value) === 0) {
+    return "";
+  }
+
   const raw = String(value).replace(/,/g, "");
   if (isNaN(raw)) return "";
-  return Number(raw).toLocaleString("en-IN"); // Indian format
+
+  return Number(raw).toLocaleString("en-IN");
 };
+
 
 const JobGradeFormModal = ({
   show,
@@ -186,7 +191,7 @@ const JobGradeFormModal = ({
               <Col md={6}>
                 <Form.Group>
                   <Form.Label>
-                    {t("maxSalary")} <span className="text-danger">*</span>
+                    {t("maxSalary")}
                   </Form.Label>
 
                   {isViewing ? (
@@ -204,6 +209,21 @@ const JobGradeFormModal = ({
                       onChange={(e) => {
                         const rawValue = e.target.value.replace(/,/g, "").replace(/\D/g, "");
 
+                        // ✅ allow empty value
+                        if (rawValue === "") {
+                          setFormData(prev => ({
+                            ...prev,
+                            maxSalary: ""
+                          }));
+
+                          setErrors(prev => {
+                            const copy = { ...prev };
+                            delete copy.maxSalary;
+                            return copy;
+                          });
+                          return;
+                        }
+
                         handleValidatedInput({
                           e: { target: { value: rawValue } },
                           fieldName: "maxSalary",
@@ -215,7 +235,7 @@ const JobGradeFormModal = ({
                       }}
                     />
                   )}
-                  {!isViewing && <ErrorMessage>{errors.maxSalary}</ErrorMessage>}
+
                 </Form.Group>
               </Col>
 
@@ -273,7 +293,7 @@ const JobGradeFormModal = ({
           <>
             <JobGradeImportModal t={t} {...importProps}
               onClose={onHide} />
-         
+
           </>
         )}
       </Modal.Body>

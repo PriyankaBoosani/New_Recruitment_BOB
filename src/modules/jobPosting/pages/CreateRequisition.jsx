@@ -120,6 +120,7 @@ const CreateRequisition = () => {
                 <Form.Control
                   name="title"
                   value={formData.title}
+                  maxLength={200}
                   placeholder="Enter Requisition Title"
                   onChange={(e) => {
                     const result = validateTitleOnType(e.target.value);
@@ -172,6 +173,7 @@ const CreateRequisition = () => {
                     <Form.Control
                       as="textarea"
                       rows={6}
+                      maxLength={2000}
                       name="description"
                       placeholder="Enter Requisition Description"
                       value={formData.description}

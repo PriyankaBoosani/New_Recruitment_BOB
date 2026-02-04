@@ -37,6 +37,7 @@ import { useJobRequisitions } from "../hooks/useJobAllRequisition";
 import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisition";
 import { toast } from "react-toastify";
 import { validateRequisitionSubmission } from "../validations/validateRequisitionSubmission";
+import CreatePlus_Icon from "../../../assets/CreatePlus_Icon.png";
 const JobPostingsList = () => {
     const navigate = useNavigate();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -175,6 +176,7 @@ const JobPostingsList = () => {
     };
 
 
+
     return (
         <Container fluid className="job-postings-page">
             {/* ================= HEADER ================= */}
@@ -184,7 +186,7 @@ const JobPostingsList = () => {
                 </Col>
                 <Col className="text-end create">
                     <Button onClick={() => navigate("/job-posting/create-requisition")}>
-                        <Plus /> Create New Requisition
+                        <img src={CreatePlus_Icon} alt="Create New Requisition" className="icon-16" /> Create New Requisition
                     </Button>
                 </Col>
             </Row>
@@ -224,14 +226,13 @@ const JobPostingsList = () => {
                         <option value="ALL">All Status</option>
                         <option value="New">New</option>
                         <option value="Approved">Approved</option>
-                        <option value="Rejected">Rejected</option>
                     </Form.Select>
                 </Col>
             </Row>
 
             {/* ================= BULK ACTIONS ================= */}
             <Row className="bulk-actions align-items-center mb-3">
-                <Col xs={12} md={6}>
+                <Col xs={12} md={6} className="selectcheck">
                     <Form.Check
                         type="checkbox"
                         id="select-all-requisitions"
@@ -248,10 +249,6 @@ const JobPostingsList = () => {
                             }
                         }}
                     />
-
-
-
-
                 </Col>
                 <Col xs={12} md={6} className="text-md-end mt-2 mt-md-0">
                     <Button
@@ -269,9 +266,11 @@ const JobPostingsList = () => {
                         variant="outline-secondary"
                         className="canbtn"
                         onClick={handleCancelSelection}
+                        disabled={selectedReqIds.size === 0 || loading}
                     >
                         Cancel
                     </Button>
+
                 </Col>
             </Row>
 
@@ -328,7 +327,8 @@ const JobPostingsList = () => {
                                             type="checkbox"
                                             className="me-2 mt-2"
                                             checked={selectedReqIds.has(req.id)}
-                                            disabled={req.status === "Approved"}
+                                            disabled={req.status === "Approved" || req.hasDraftPositions}
+
                                             onClick={(e) => e.stopPropagation()}
                                             onChange={(e) => {
                                                 if (req.status === "Approved") return;
@@ -576,7 +576,7 @@ const JobPostingsList = () => {
 
                         {/* Page size */}
                         <div className="d-flex align-items-center gap-2">
-                            <span className="fw-semibold">Page size</span>
+                            <span className="fw-semibold pagesize">Page size:</span>
                             <Form.Select
                                 size="sm"
                                 style={{ width: "90px" }}

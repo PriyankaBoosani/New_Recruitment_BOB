@@ -7,6 +7,9 @@ import view_icon from "../../../assets/view_icon.png"
 import file_icon from "../../../assets/file_icon.png"
 import { normalizeTitle, validateTitleOnType, validateApprovedOn } from "../validations/validateAddPosition";
 import useViewIndent from "../hooks/useViewIndent";
+import { OverlayTrigger, Popover } from "react-bootstrap";
+import I_icon from '../../../assets/I_icon.png';
+
 
 const PositionForm = ({
     isViewMode = false,
@@ -32,6 +35,20 @@ const PositionForm = ({
     ALLOWED_EXTENSIONS,
     MAX_FILE_SIZE_MB
 }) => {
+
+    const selectedGrade = jobGrades.find(
+        g => String(g.id) === String(formData.grade)
+    );
+    const salaryPopover = (
+        <Popover id="salary-popover">
+            <Popover.Header as="h6">Salary Range</Popover.Header>
+            <Popover.Body>
+                <div><strong>Min Salary:</strong> {selectedGrade?.minSalary ?? "-"}</div>
+                <div><strong>Max Salary:</strong> {selectedGrade?.maxSalary ?? "-"}</div>
+            </Popover.Body>
+        </Popover>
+    );
+
 
 
     const viewIndent = useViewIndent(existingIndentPath, existingIndentName);
@@ -236,7 +253,7 @@ const PositionForm = ({
 
                     <Col md={4}>
                         <Form.Label>Total Vacancies <span className="text-danger">*</span></Form.Label>
-                        <Form.Control name="vacancies" placeholder="Enter Vacancies" type="text" inputMode="numeric" pattern="[0-9]*" value={formData.vacancies} onChange={handleInputChange} disabled={isViewMode} />
+                        <Form.Control name="vacancies" maxLength={10} placeholder="Enter Vacancies" type="text" inputMode="numeric" pattern="[0-9]*" value={formData.vacancies} onChange={handleInputChange} disabled={isViewMode} />
                         <ErrorMessage>{errors.vacancies}</ErrorMessage>
                     </Col>
 
@@ -277,13 +294,34 @@ const PositionForm = ({
 
                     <Col md={4}><Form.Label>Contractual Period(Years)</Form.Label><Form.Control name="contractualPeriod" type="text" inputMode="numeric" value={isContractEmployment ? formData.contractualPeriod : ""} onChange={handleInputChange} disabled={!isContractEmployment || isViewMode} /></Col>
                     <Col md={4}>
-                        <Form.Label>Grade / Scale <span className="text-danger">*</span></Form.Label>
-                        <Form.Select name="grade" value={formData.grade} onChange={handleInputChange} disabled={isViewMode}>
+                        <Form.Label className="d-flex align-items-center gap-2">
+                            Grade / Scale <span className="text-danger">*</span>
+
+                            {selectedGrade && (
+                                <OverlayTrigger
+                                    trigger="click"
+                                    placement="right"
+                                    overlay={salaryPopover}
+                                    rootClose
+                                >
+                                    <span
+                                        style={{ cursor: "pointer", color: "#0d6efd" }}
+                                        title="View salary range"
+                                    >
+                                        <img src={I_icon} alt="info_icon" className="icon-18" />
+                                    </span>
+                                </OverlayTrigger>
+                            )}
+                        </Form.Label>
+
+                         <Form.Select name="grade" value={formData.grade} onChange={handleInputChange} disabled={isViewMode}>
                             <option value="">Select</option>
                             {jobGrades.map(g => <option key={g.id} value={g.id}>{g.code} {g.scale ? `- ${g.scale}` : ""}</option>)}
                         </Form.Select>
+
                         <ErrorMessage>{errors.grade}</ErrorMessage>
                     </Col>
+
 
                     <Col md={4}>
                         <Form.Label>Enable Location Preference</Form.Label>
@@ -328,6 +366,7 @@ const PositionForm = ({
                             </Row>
                             <Form.Control
                                 as="textarea"
+                                maxLength={2000}
                                 placeholder="Enter Experience"
                                 rows={3}
                                 value={formData[expType].description} disabled={isViewMode}
@@ -366,6 +405,7 @@ const PositionForm = ({
                         <Form.Control
                             as="textarea" disabled={isViewMode}
                             rows={5}
+                            maxLength={2000}
                             name="responsibilities"
                             placeholder="Enter Roles & Responsibilities"
                             value={formData.responsibilities}

@@ -44,9 +44,9 @@
     width: 14px;
     height: 14px;
 }
-.icon-40{
-    width: 40px;
-    height: 40px;
+.icon-40 {
+	width: 33px;
+	height: 33px;
 }
 .req-id {
 	background-color: #DBEAFE !important;
@@ -376,10 +376,19 @@
   text-align: center;
   margin: 10px;
 }
-.add-position-page .table-bordered th{
-  font-size: 0.875em;
-  font-weight: 600;
-  color: #333333;
+.add-position-page .table-bordered th {
+	font-size: 0.875em;
+	font-weight: 600;
+	color: #333333;
+	background: #E5E7EB;
+	border: 1px solid #D1D5DC;
+}
+.bgcol{
+  background: #D1D5DC !important;
+}
+.icon-18{
+    width: 18px;
+    height: 18px;
 }
 /* ===============================
    Upload indent base
@@ -442,8 +451,8 @@
   align-items: center;
   justify-content: center;
 
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
 
   border-radius: 50%;
   border: 1px solid #c7d2fe;
@@ -504,4 +513,13 @@
 }
 .add-position-page .table-responsive {
   border: none;
+}
+.position-card .section-title{
+  padding-bottom: 6px;
+}
+.position-form {
+  margin-top:20px;
+}
+.form-control::placeholder {
+  color: rgba(65,65,65,0.5);
 }

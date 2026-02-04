@@ -26,11 +26,21 @@ const JobGradeTable = ({
   );
 
   const formatSalary = (value) => {
-    if (value === null || value === undefined || value === "") return "-";
+    if (
+      value === null ||
+      value === undefined ||
+      value === "" ||
+      Number(value) === 0
+    ) {
+      return "-";
+    }
+
     const raw = String(value).replace(/,/g, "");
     if (isNaN(raw)) return "-";
-    return Number(raw).toLocaleString("en-IN"); // Indian format
+
+    return Number(raw).toLocaleString("en-IN");
   };
+
   const indexOfLast = currentPage * pageSize;
   const indexOfFirst = indexOfLast - pageSize;
   const current = filtered.slice(indexOfFirst, indexOfLast);

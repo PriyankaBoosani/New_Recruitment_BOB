@@ -110,23 +110,30 @@ const ReservationSection = ({
                                 <option value="">Select State</option>{states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}</Form.Select>
                                 <ErrorMessage>{errors.state}</ErrorMessage></Col>
                             <Col md={4}><Form.Label>Vacancies <span className="text-danger">*</span></Form.Label><Form.Control
-                                type="number"
+                                type="text"
+                                inputMode="numeric"
+                                maxLength={10}
                                 placeholder="Enter vacancies"
                                 value={currentState.vacancies}
                                 onChange={e => {
+                                    let value = e.target.value;
+
+                                    // HARD FILTER: digits only
+                                    value = value.replace(/\D/g, "");
+
                                     setCurrentState(prev => ({
                                         ...prev,
-                                        vacancies: e.target.value
+                                        vacancies: value
                                     }));
 
                                     setErrors(prev => ({
                                         ...prev,
                                         stateVacancies: "",
-                                        stateDistribution: ""   // CLEAR CROSS-FIELD ERROR
+                                        stateDistribution: ""
                                     }));
                                 }}
-
                             />
+
                                 <ErrorMessage>{errors.stateVacancies}</ErrorMessage>
                             </Col>
                             <Col md={4}><Form.Label>Local Language <span className="text-danger">*</span></Form.Label>
@@ -220,34 +227,49 @@ const ReservationSection = ({
                         </div>
                         <div className="table-responsive mt-4">
                             <table className="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th rowSpan="2">S No.</th>
-                                        <th rowSpan="2">State Name</th>
-                                        <th rowSpan="2">Vacancies</th>
-                                        <th rowSpan="2">Local Language of State</th>
 
-                                        {/* Reservation categories */}
+                                <thead>
+                                    {/* ===== HEADER ROW 1 ===== */}
+                                    <tr>
+                                        <th>S No.</th>
+                                        <th>State Name</th>
+                                        <th>Vacancies</th>
+                                        <th>Local Language of State</th>
+
                                         {reservationCategories.map(c => (
-                                            <th key={c.code} rowSpan="2">{c.code}</th>
+                                            <th key={c.code}>{c.code}</th>
                                         ))}
 
-                                        <th rowSpan="2">TOTAL</th>
+                                        <th>TOTAL</th>
 
-                                        <th colSpan={disabilityCategories.length} className="text-center">
+                                        {/* GROUP HEADER */}
+                                        <th colSpan={disabilityCategories.length + 1} className="text-center bgcol">
                                             Out of Which
                                         </th>
-                                        <th rowSpan="2">TOTAL</th>
 
-                                        <th rowSpan="2" className="text-center">Actions</th>
+
+
+                                        <th className="text-center">Actions</th>
                                     </tr>
 
+                                    {/* ===== HEADER ROW 2 ===== */}
                                     <tr>
-                                        {/* Disability categories */}
+                                        {/* Skip earlier columns */}
+                                        <th colSpan={4 + reservationCategories.length + 1} />
+
                                         {disabilityCategories.map(d => (
-                                            <th key={d.disabilityCode}>{d.disabilityCode}</th>
+                                            <th key={d.disabilityCode} className="text-center">
+                                                {d.disabilityCode}
+                                            </th>
                                         ))}
+
+                                        {/* Disability TOTAL (belongs to Out of Which) */}
+                                        <th className="text-center">TOTAL</th>
+
+                                        {/* Actions column */}
+                                        <th />
                                     </tr>
+
                                 </thead>
 
                                 <tbody>

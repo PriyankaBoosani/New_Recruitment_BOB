@@ -19,6 +19,24 @@
 	font-size: 0.785em;
 
 }
+/* Fix long text overlapping select arrow */
+.edu-modal .form-select {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  /* IMPORTANT: give space for the arrow */
+  padding-right: 2.5rem;
+}
+.result pre {
+  white-space: pre-wrap;      /* preserve line breaks but allow wrapping */
+  word-break: break-word;     /* break long words */
+  overflow-x: hidden;         /* kill horizontal scroll */
+  overflow-y: auto;           /* allow vertical scroll */
+  max-height: 200px;          /* adjust as needed */
+}
+
+
 .edu-btn:hover {
 	background: #fff;
 	border: 1px solid #F26522;

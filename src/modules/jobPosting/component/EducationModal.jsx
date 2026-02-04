@@ -114,7 +114,7 @@ Certifications: ${certText || "None"}
             `.trim();
 
     return (
-        <Modal show={show} onHide={onHide} size="lg" centered className="edu-modal">
+        <Modal show={show} onHide={onHide} size="lg" scrollable centered className="edu-modal">
             <Modal.Header closeButton className="edu-modal-header">
                 <Modal.Title className="f16 bluecol">
                     {mode === "mandatory"

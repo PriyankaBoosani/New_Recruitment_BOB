@@ -54,7 +54,7 @@ export const validateMinSalary = (minSalary) => {
   if (digitsOnly.length > 10) {
     return i18n.t('jobGrade:digits_allowed');
   }
-  
+
 
   const n = toNumberSafe(minSalary);
   if (Number.isNaN(n)) {
@@ -70,8 +70,10 @@ export const validateMinSalary = (minSalary) => {
 
 
 export const validateMaxSalary = (maxSalary) => {
-  let error = requiredField(maxSalary, 'Maximum salary');
-  if (error) return error;
+  // ✅ OPTIONAL FIELD: allow empty
+  if (maxSalary === '' || maxSalary === null || maxSalary === undefined) {
+    return null;
+  }
 
   const digitsOnly = String(maxSalary).replace(/\D/g, '');
 
@@ -90,6 +92,7 @@ export const validateMaxSalary = (maxSalary) => {
 
   return null;
 };
+
 
 export const validateDescription = (description) => {
   let error = requiredField(description, 'Description');
@@ -121,7 +124,14 @@ export const validateJobGradeForm = (formData = {}, options = {}) => {
   // ----- salary cross-field check -----
   const minNum = toNumberSafe(formData.minSalary);
   const maxNum = toNumberSafe(formData.maxSalary);
-  if (!Number.isNaN(minNum) && !Number.isNaN(maxNum) && minNum > maxNum) {
+
+  //  Only validate if maxSalary is provided and > 0
+  if (
+    !Number.isNaN(minNum) &&
+    !Number.isNaN(maxNum) &&
+    maxNum > 0 &&
+    minNum > maxNum
+  ) {
     errors.minSalary =
       errors.minSalary || i18n.t('jobGrade:min_less_than_max');
 

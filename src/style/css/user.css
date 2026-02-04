@@ -22,6 +22,12 @@
     gap: 15px;
 }
 
+.user-actions .fw-semibold {
+    color: #162B75 !important;
+}
+.page-link:focus {
+	box-shadow: none;
+}
 .user-header h2 {
     color: #162B75;
     margin: 0;
@@ -67,12 +73,14 @@
     font-size: 0.75em;
     transition: background-color 0.2s ease;
 }
+
 .search-input:focus {
     outline: none !important;
     box-shadow: none !important;
     border-color: transparent !important;
     background-color: transparent !important;
 }
+
 .search-input:hover {
     border: none !important;
     background-color: transparent !important;
@@ -100,7 +108,7 @@
     transform: translateY(-1px);
 }
 
-.buttonnonebg{
+.buttonnonebg {
     background: none;
     border: none;
     color: #0d6efd;
@@ -112,33 +120,33 @@
 
 /* View Mode Styles */
 .form-control-view {
-  padding: 0.375rem 0.75rem;
-  margin-bottom: 0;
-  line-height: 1.5;
-  color: #212529;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 0.25rem;
-  min-height: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 0.75rem;
+    margin-bottom: 0;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    min-height: calc(1.5em + 0.75rem + 2px);
 }
 
 .form-group .form-label.fw-bold {
-  color: #495057;
-  margin-bottom: 0.25rem;
+    color: #495057;
+    margin-bottom: 0.25rem;
 }
 
 /* View mode container styles */
 .view-mode-container .form-control-view {
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 0.25rem;
-  padding: 0.5rem 0.75rem;
-  min-height: 38px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    min-height: 38px;
 }
 
 /* Description field in view mode */
 .view-mode-container .form-control-view[data-field="description"] {
-  white-space: pre-line;
+    white-space: pre-line;
 }
 
 /* ---------- Table ---------- */
@@ -186,8 +194,9 @@
     width: 100%;
 
 }
-.pos.user-modal .modal-dialog{
-    max-width: 750px !important; 
+
+.pos.user-modal .modal-dialog {
+    max-width: 750px !important;
 }
 
 
@@ -214,9 +223,10 @@
 
 /* Small screens: allow Bootstrap fullscreen behavior but keep radius and sticky header/footer */
 @media (max-width: 768px) {
-    .user-content{
+    .user-content {
         margin-top: 30px;
     }
+
     .user-modal .modal-dialog {
         max-width: calc(100% - 1rem);
         /* leave small gutters */
@@ -232,10 +242,10 @@
 
 /* Content styling */
 .user-modal .modal-content {
-	border-radius: 8px;
-	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
-	max-height: calc(100vh - 48px);
-	height: auto;
+    border-radius: 8px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+    max-height: calc(100vh - 48px);
+    height: auto;
 }
 
 /* Header & Title */
@@ -286,10 +296,10 @@ body.modal-open .modal-fullscreen-sm-down .modal-header {
 }
 
 body.modal-open .modal-fullscreen-sm-down .modal-footer {
-	/* position: sticky; */
-	/* bottom: 0; */
-	z-index: 6;
-	background: #fff;
+    /* position: sticky; */
+    /* bottom: 0; */
+    z-index: 6;
+    background: #fff;
 }
 
 body.modal-open .modal-fullscreen-sm-down .modal-body {
@@ -583,7 +593,7 @@ body.modal-open {
         max-width: calc(100% - 1rem);
     }
 
-   
+
 
     .delete-confirm-modal .modal-body {
         padding: 1.25rem;
@@ -669,11 +679,11 @@ body.modal-open {
 
 /* <= 768px: modal layout adjustments, stack form columns */
 @media (max-width: 768px) {
-.user-modal .modal-dialog {
-	/* max-width: 71%; */
-	margin: 0.5rem;
-	width: auto;
-}
+    .user-modal .modal-dialog {
+        /* max-width: 71%; */
+        margin: 0.5rem;
+        width: auto;
+    }
 
     .user-modal .modal-body {
         padding: 1rem;
@@ -759,12 +769,13 @@ body.modal-open {
 }
 
 .btnfont {
-	font-size: 1.1em;
-	font-weight: 500;
-	color: #162B75 !important;
+    font-size: 1.1em;
+    font-weight: 500;
+    color: #162B75 !important;
 }
-.btnupload{
-     font-size: 0.875em;
+
+.btnupload {
+    font-size: 0.875em;
     font-weight: 500;
     color: #fff !important;
 }
@@ -823,57 +834,61 @@ body.modal-open {
     position: fixed !important;
 }
 
-.buttonnonebg{
+.buttonnonebg {
     background-color: #fff !important;
     border: 1px solid #ced4da !important;
 }
-.buttonnonebg:hover{
+
+.buttonnonebg:hover {
     background-color: #fff !important;
     border: 1px solid #ced4da !important;
 }
-.hovbg:hover{
+
+.hovbg:hover {
     background-color: #ced4da !important;
 }
+
 .multipleselect {
-	position: relative;
-	top: -1px;
-	font-size: 1em;
-	font-weight: 500;
+    position: relative;
+    top: -1px;
+    font-size: 1em;
+    font-weight: 500;
     color: #64748B;
 }
+
 .view-only-members {
-	background-color: var(--bs-secondary-bg);
-	opacity: 1;
+    background-color: var(--bs-secondary-bg);
+    opacity: 1;
 }
 
 /* Base checkbox */
 .form-check-input {
-  width: 1.1em;
-  height: 1.1em;
-  border: 2px solid #f26522 !important;
-  cursor: pointer;
+    width: 1.1em;
+    height: 1.1em;
+    border: 2px solid #f26522 !important;
+    cursor: pointer;
 }
 
 /* Checked state */
 .form-check-input:checked {
-  background-color: #f26522 !important;
-  border-color: #f26522 !important;
+    background-color: #f26522 !important;
+    border-color: #f26522 !important;
 }
+
 /* 
 /* Focus state (remove blue ring, add orange glow) */
 .form-check-input:focus {
-  border-color: #f26522 !important;
-  box-shadow: 0 0 0 0.15rem rgba(242, 101, 34, 0.35) !important;
-} 
+    border-color: #f26522 !important;
+    box-shadow: 0 0 0 0.15rem rgba(242, 101, 34, 0.35) !important;
+}
 
-scrollbar styling
-.import-scroll-wrapper::-webkit-scrollbar,
+scrollbar styling .import-scroll-wrapper::-webkit-scrollbar,
 .error-scroll::-webkit-scrollbar {
-  width: 6px;
+    width: 6px;
 }
 
 .import-scroll-wrapper::-webkit-scrollbar-thumb,
 .error-scroll::-webkit-scrollbar-thumb {
-  background-color: #dc3545;
-  border-radius: 4px;
+    background-color: #dc3545;
+    border-radius: 4px;
 }
