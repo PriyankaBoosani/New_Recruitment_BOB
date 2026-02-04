@@ -41,6 +41,7 @@ const JobPostingsList = () => {
     const navigate = useNavigate();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedReq, setSelectedReq] = useState(null);
+    const [pageSize, setPageSize] = useState(10);
 
     const [showDeletePosModal, setShowDeletePosModal] = useState(false);
     const [selectedPosition, setSelectedPosition] = useState(null);
@@ -98,12 +99,13 @@ const JobPostingsList = () => {
         status,
         search,
         page,
-        size: 10
+        size: pageSize
     });
 
     useEffect(() => {
         setPage(0);
-    }, [year, status, search]);
+    }, [pageSize]);
+
 
     const [selectedReqIds, setSelectedReqIds] = useState(new Set());
     const selectableRequisitions = requisitions.filter(
@@ -165,6 +167,14 @@ const JobPostingsList = () => {
         setSelectedReqIds(new Set());
     }, [year]);
 
+    const formatDateDDMMYYYY = (isoDate) => {
+        if (!isoDate) return "";
+
+        const [year, month, day] = isoDate.split("-");
+        return `${day}-${month}-${year}`;
+    };
+
+
     return (
         <Container fluid className="job-postings-page">
             {/* ================= HEADER ================= */}
@@ -198,7 +208,7 @@ const JobPostingsList = () => {
                         <Search />
                         <Form.Control
                             type="text"
-                            placeholder="Search requisitions by code or title..."
+                            placeholder="Search requisitions by id,title,department..."
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                         />
@@ -238,6 +248,7 @@ const JobPostingsList = () => {
                             }
                         }}
                     />
+
 
 
 
@@ -305,39 +316,42 @@ const JobPostingsList = () => {
                                     <Badge bg="light" text="primary" className="req-id">
                                         {req.requisitionId}
                                     </Badge>
-                                    <Badge bg={req.statusType} className="ms-2">
+                                    <Badge bg={req.statusType} className="ms-2 capitalize-status">
                                         {req.status}
                                     </Badge>
+
                                 </div>
 
                                 <div className="d-flex justify-content-between align-items-start">
                                     <div className="d-flex align-items-start">
-                                        {req.status !== "Approved" && (
-                                            <Form.Check
-                                                type="checkbox"
-                                                className="me-2 mt-2"
-                                                checked={selectedReqIds.has(req.id)}
-                                                onClick={(e) => e.stopPropagation()}
-                                                onChange={(e) => {
-                                                    setSelectedReqIds(prev => {
-                                                        const next = new Set(prev);
-                                                        if (e.target.checked) {
-                                                            next.add(req.id);
-                                                        } else {
-                                                            next.delete(req.id);
-                                                        }
-                                                        return next;
-                                                    });
-                                                }}
-                                            />
-                                        )}
+                                        <Form.Check
+                                            type="checkbox"
+                                            className="me-2 mt-2"
+                                            checked={selectedReqIds.has(req.id)}
+                                            disabled={req.status === "Approved"}
+                                            onClick={(e) => e.stopPropagation()}
+                                            onChange={(e) => {
+                                                if (req.status === "Approved") return;
 
+                                                setSelectedReqIds(prev => {
+                                                    const next = new Set(prev);
+                                                    if (e.target.checked) {
+                                                        next.add(req.id);
+                                                    } else {
+                                                        next.delete(req.id);
+                                                    }
+                                                    return next;
+                                                });
+                                            }}
+                                        />
 
                                         <div>
                                             <h6 className="req-code mb-2">{req.code}</h6>
                                             <div className="req-dates">
-                                                <div><img src={start_icon} alt="start_icon" className="icon-12" /> Start: {req.startDate}</div> |
-                                                <div><img src={end_icon} alt="end_icon" className="icon-12" /> End: {req.endDate}</div>
+                                                <div>
+                                                    <img src={start_icon} alt="start_icon" className="icon-12" />{" "}Start: {formatDateDDMMYYYY(req.startDate)}
+                                                </div>
+                                                <div><img src={end_icon} alt="end_icon" className="icon-12" /> End: {formatDateDDMMYYYY(req.endDate)}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -458,8 +472,10 @@ const JobPostingsList = () => {
                                                 />
                                                 <span className="depname">{dept.departmentName}</span>
                                                 <Badge bg="light" text="primary" className="deppos">
-                                                    {dept.positions.length} Positions
+                                                    {dept.positions.length}{" "}
+                                                    {dept.positions.length === 1 ? "Position" : "Positions"}
                                                 </Badge>
+
                                             </div>
 
                                             {/* 🔹 SAME position UI you already had */}
@@ -554,25 +570,42 @@ const JobPostingsList = () => {
                 );
             })}
             {/* ================= PAGINATION ================= */}
-            {
-                pageInfo && pageInfo.totalPages > 1 && (
-                    <Row className="mt-4 mb-4">
-                        <Col className="d-flex justify-content-end">
+            {pageInfo && (
+                <Row className="mt-4 mb-4">
+                    <Col className="d-flex justify-content-end align-items-center gap-3">
+
+                        {/* Page size */}
+                        <div className="d-flex align-items-center gap-2">
+                            <span className="fw-semibold">Page size</span>
+                            <Form.Select
+                                size="sm"
+                                style={{ width: "90px" }}
+                                value={pageSize}
+                                onChange={(e) => {
+                                    setPageSize(Number(e.target.value));
+                                    setPage(0); // 🔑 mandatory
+                                }}
+                            >
+                                {[5, 10, 15, 20, 25, 30].map(n => (
+                                    <option key={n} value={n}>{n}</option>
+                                ))}
+                            </Form.Select>
+                        </div>
+
+                        {/* Pagination */}
+                        {pageInfo.totalPages > 1 && (
                             <nav aria-label="Page navigation">
                                 <ul className="pagination mb-0">
-                                    {/* Previous Button */}
                                     <li className={`page-item ${page === 0 || loading ? 'disabled' : ''}`}>
                                         <button
                                             className="page-link"
-                                            onClick={() => setPage(prev => Math.max(prev - 1, 0))}
+                                            onClick={() => setPage(p => Math.max(p - 1, 0))}
                                             disabled={page === 0 || loading}
-                                            aria-label="Previous"
                                         >
-                                            <span aria-hidden="true">&laquo;</span>
+                                            &laquo;
                                         </button>
                                     </li>
 
-                                    {/* Page Numbers */}
                                     {Array.from({ length: pageInfo.totalPages }).map((_, index) => (
                                         <li
                                             key={index}
@@ -588,23 +621,22 @@ const JobPostingsList = () => {
                                         </li>
                                     ))}
 
-                                    {/* Next Button */}
                                     <li className={`page-item ${page >= pageInfo.totalPages - 1 || loading ? 'disabled' : ''}`}>
                                         <button
                                             className="page-link"
-                                            onClick={() => setPage(prev => prev + 1)}
+                                            onClick={() => setPage(p => p + 1)}
                                             disabled={page >= pageInfo.totalPages - 1 || loading}
-                                            aria-label="Next"
                                         >
-                                            <span aria-hidden="true">&raquo;</span>
+                                            &raquo;
                                         </button>
                                     </li>
                                 </ul>
                             </nav>
-                        </Col>
-                    </Row>
-                )
-            }
+                        )}
+                    </Col>
+                </Row>
+            )}
+
             {/* Requisition Delete */}
             <DeleteConfirmationModal
                 show={showDeleteModal}

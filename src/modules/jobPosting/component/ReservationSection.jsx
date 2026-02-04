@@ -111,6 +111,7 @@ const ReservationSection = ({
                                 <ErrorMessage>{errors.state}</ErrorMessage></Col>
                             <Col md={4}><Form.Label>Vacancies <span className="text-danger">*</span></Form.Label><Form.Control
                                 type="number"
+                                placeholder="Enter vacancies"
                                 value={currentState.vacancies}
                                 onChange={e => {
                                     setCurrentState(prev => ({

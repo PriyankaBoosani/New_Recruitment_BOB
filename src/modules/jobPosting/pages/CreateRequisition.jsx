@@ -69,10 +69,19 @@ const CreateRequisition = () => {
     return d.toISOString().split("T")[0];
   }
   function addCalendarDays(startDate, days) {
-  const date = new Date(startDate);
-  date.setDate(date.getDate() + days);
-  return date.toISOString().split("T")[0];
-}
+    if (!startDate) return "";
+
+    const date = new Date(startDate);
+
+    // 🔒 guard clause — NEVER do math on invalid dates
+    if (isNaN(date.getTime())) {
+      return "";
+    }
+
+    date.setDate(date.getDate() + days);
+    return date.toISOString().split("T")[0];
+  }
+
 
   /* ===================== LOADER ===================== */
   if (fetching) {

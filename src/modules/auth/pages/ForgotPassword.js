@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import '../../../style/css/Login.css';
 import pana from "../../../assets/pana.png";
-import boblogo from "../../../assets/bob-logo.png";
+import boblogo from "../../../assets/bob-logo1.jpg";
 import { useNavigate } from "react-router-dom";
 import loginApi from "../services/loginService";
 

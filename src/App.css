@@ -279,3 +279,38 @@ main {
 .criteria-disabled * {
   cursor: not-allowed;
 }
+
+
+.navbar-nav .nav-link.active {
+  color: #162B75;
+  position: relative;
+}
+
+.navbar-nav .nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #162B75;
+  border-radius: 2px;
+}
+/* Admin dropdown active state */
+.active-admin > .nav-link {
+  color: #162B75 !important;
+  position: relative;
+}
+
+/* Underline */
+.active-admin > .nav-link::after {
+	content: "";
+	position: absolute;
+	bottom: 0px;
+	left: 0;
+	width: 100%;
+	height: 2px;
+	background-color: #162B75;
+	border-radius: 2px;
+	border-top: 0;
+}

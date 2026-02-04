@@ -10,7 +10,7 @@ export const useJobRequisitions = ({
   status,
   search,
   page = 0,
-  size = 10
+  size = 0
 }) => {
   const [requisitions, setRequisitions] = useState([]);
   const [loading, setLoading] = useState(false);

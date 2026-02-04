@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Navbar, Nav, Container, NavDropdown, Image } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../assets/logo.png';
@@ -10,6 +10,8 @@ import { setLanguage } from '../../i18n/store/languageSlice';
 import { useTranslation } from "react-i18next";
 import i18n from '../../i18n/i18n';
 import { persistor } from '../../store';
+import { NavLink } from "react-router-dom";
+
 
 const Header = () => {
 
@@ -74,6 +76,17 @@ const Header = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  const location = useLocation();
+
+  const isAdminRoute =
+    location.pathname.startsWith("/users") ||
+    location.pathname.startsWith("/department") ||
+    location.pathname.startsWith("/jobgrade") ||
+    location.pathname.startsWith("/position") ||
+    location.pathname.startsWith("/category") ||
+    location.pathname.startsWith("/certification") ||
+    location.pathname.startsWith("/document") ||
+    location.pathname.startsWith("/generic-or-annexures");
 
   return (
     <header className="fixed-top">
@@ -182,12 +195,12 @@ const Header = () => {
           <Navbar.Collapse id="main-navbar-nav">
             <Nav className="me-auto">
               {!isAdmin && (
-                <Nav.Link as={Link} to="/job-posting" onClick={closeMenu}>
+                <Nav.Link as={NavLink} to="/job-posting" onClick={closeMenu}>
                   {t("job_postings")}
                 </Nav.Link>
               )}
               {/* <Nav.Link
-                as={Link}
+                as={NavLink}
                 to="/candidate-preview"
                 onClick={closeMenu}
               >
@@ -196,7 +209,7 @@ const Header = () => {
 
 
               {!isAdmin && (
-                <Nav.Link as={Link} to="/candidate-workflow" onClick={closeMenu}>
+                <Nav.Link as={NavLink} to="/candidate-workflow" onClick={closeMenu}>
                   Candidate Workflow
                 </Nav.Link>
               )}
@@ -204,17 +217,17 @@ const Header = () => {
 
 
               {!isAdmin && (
-                <Nav.Link as={Link} to="/candidate-verification" onClick={closeMenu}>
+                <Nav.Link as={NavLink} to="/candidate-verification" onClick={closeMenu}>
                   Verification
                 </Nav.Link>
               )}
               {!isAdmin && (
-                <Nav.Link as={Link} to="/interviewpanel" onClick={closeMenu}>
+                <Nav.Link as={NavLink} to="/interviewpanel" onClick={closeMenu}>
                   Committee Management
                 </Nav.Link>
               )}
 
-              {/* <Nav.Link as={Link} to="/dashboard" onClick={closeMenu}>Dashboard</Nav.Link>
+              {/* <Nav.Link as={NavLink} to="/dashboard" onClick={closeMenu}>Dashboard</Nav.Link>
               <Nav.Link href="#candidate-shortlist">Candidate Shortlist</Nav.Link>
               <Nav.Link href="#interviews">Interviews</Nav.Link>
               <Nav.Link href="#relaxation">Relaxation</Nav.Link>
@@ -223,7 +236,7 @@ const Header = () => {
 
               {/* Admin Menu */}
               {isAdmin && (
-                <NavDropdown title={t("admin")} id="admin-dropdown">
+                <NavDropdown title={t("admin")} id="admin-dropdown"  className={isAdminRoute ? "active-admin" : ""}>
                   <NavDropdown.Item as={Link} to="/users" onClick={closeMenu}>
                     {t("users")}
                   </NavDropdown.Item>

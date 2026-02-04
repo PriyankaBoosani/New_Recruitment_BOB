@@ -124,9 +124,11 @@
 
 /* Make form controls consistent */
 .form-control, .form-select {
-    border-radius: 6px;
-    padding: 10px 12px;
+	border-radius: 6px;
+	padding: 10px 12px;
+	font-size: 0.875em;
 }
+
 
 /* Style for required field indicators */
 .text-danger {
@@ -499,4 +501,7 @@
 
 .upload-indent-box.disabled .indent-actions button {
   pointer-events: auto; /* 👈 allow view button */
+}
+.add-position-page .table-responsive {
+  border: none;
 }

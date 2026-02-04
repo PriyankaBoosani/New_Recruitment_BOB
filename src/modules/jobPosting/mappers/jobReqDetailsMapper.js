@@ -1,28 +1,41 @@
-export const mapJobRequisitionFromApi = (item = {}) => ({
-  id: item.id ?? "",
-  requisitionId: item.requisitionCode ?? "",
-  code: item.requisitionTitle ?? "",
+const normalizeStatus = (status = "") => {
+  if (!status) return "Unknown";
 
-  status: item.requisitionStatus ?? "Unknown",
-  statusType: getStatusBadge(item.requisitionStatus),
+  return status
+    .toLowerCase()
+    .replace(/^\w/, c => c.toUpperCase());
+};
 
-  departments: item.departmentCount ?? 0,
-  positions: item.positionCount ?? 0,
-  vacancies: item.vacancyCount ?? 0,
+export const mapJobRequisitionFromApi = (item = {}) => {
+  const normalizedStatus = normalizeStatus(item.requisitionStatus);
 
-  startDate: item.startDate ?? "-",
-  endDate: item.endDate ?? "-",
+  return {
+    id: item.id ?? "",
+    requisitionId: item.requisitionCode ?? "",
+    code: item.requisitionTitle ?? "",
 
-  editable: item.requisitionStatus === "New"
-});
+    status: normalizedStatus,
+    statusType: getStatusBadge(item.requisitionStatus),
+
+    departments: item.departmentCount ?? 0,
+    positions: item.positionCount ?? 0,
+    vacancies: item.vacancyCount ?? 0,
+
+    startDate: item.startDate ?? "-",
+    endDate: item.endDate ?? "-",
+
+    editable: normalizedStatus === "New"
+  };
+};
+
 
 const getStatusBadge = (status = "") => {
   switch (status) {
-    case "Approved":
+    case "APPROVED":
       return "success";
-    case "Rejected":
+    case "REJECTED":
       return "danger";
-    case "New":
+    case "NEW":
       return "warning";
     default:
       return "secondary";

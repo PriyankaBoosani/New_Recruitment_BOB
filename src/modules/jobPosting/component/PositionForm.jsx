@@ -5,7 +5,7 @@ import upload_icon from '../../../assets/upload_Icon.png';
 import edit_icon from "../../../assets/edit_icon.png"
 import view_icon from "../../../assets/view_icon.png"
 import file_icon from "../../../assets/file_icon.png"
-import { normalizeTitle, validateTitleOnType } from "../validations/validateAddPosition";
+import { normalizeTitle, validateTitleOnType, validateApprovedOn } from "../validations/validateAddPosition";
 import useViewIndent from "../hooks/useViewIndent";
 
 const PositionForm = ({
@@ -32,6 +32,8 @@ const PositionForm = ({
     ALLOWED_EXTENSIONS,
     MAX_FILE_SIZE_MB
 }) => {
+
+
     const viewIndent = useViewIndent(existingIndentPath, existingIndentName);
     const isContractEmployment = employmentTypes.some(
         t =>
@@ -116,7 +118,7 @@ const PositionForm = ({
                                 ) : (
                                     <div className="text-center text-muted">
                                         <img src={upload_icon} alt="upload_icon" className="icon-40" />
-                                        <div>Drag & drop your file here, or <br /><span className="textclick">Click to Upload</span></div>
+                                        <div>Click to browse files</div>
                                         <span className="support">Supported formats: PDF, DOC, DOCX (Max 2 MB)</span>
                                     </div>
                                 )}
@@ -192,15 +194,22 @@ const PositionForm = ({
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Approved On <span className="text-danger">*</span></Form.Label>
-                            <Form.Control type="date" value={approvedOn}
+                            <Form.Control
+                                type="date"
+                                value={approvedOn}
+                                max={new Date().toISOString().split("T")[0]}
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     setApprovedOn(value);
-                                    setErrors(prev => ({ ...prev, approvedOn: "" }));
-                                }}
 
+                                    setErrors(prev => ({
+                                        ...prev,
+                                        approvedOn: validateApprovedOn(value)
+                                    }));
+                                }}
                                 disabled={isViewMode}
                             />
+
                             <ErrorMessage>{errors.approvedOn}</ErrorMessage>
                         </Form.Group>
                     </Col>
@@ -231,7 +240,7 @@ const PositionForm = ({
                         <ErrorMessage>{errors.vacancies}</ErrorMessage>
                     </Col>
 
-                    <Col md={4}><Form.Label>Min Age <span className="text-danger">*</span></Form.Label><Form.Control name="minAge" type="text" inputMode="numeric" value={formData.minAge} disabled={isViewMode} onChange={(e) => {
+                    <Col md={4}><Form.Label>Min Age <span className="text-danger">*</span></Form.Label><Form.Control name="minAge" type="text" placeholder="Min Age" inputMode="numeric" value={formData.minAge} disabled={isViewMode} onChange={(e) => {
                         let value = e.target.value;
 
                         // allow only digits
@@ -245,7 +254,7 @@ const PositionForm = ({
                         });
                     }} />
                         <ErrorMessage>{errors.minAge}</ErrorMessage></Col>
-                    <Col md={4}><Form.Label>Max Age <span className="text-danger">*</span></Form.Label><Form.Control name="maxAge" type="text" inputMode="numeric" disabled={isViewMode} value={formData.maxAge} onChange={(e) => {
+                    <Col md={4}><Form.Label>Max Age <span className="text-danger">*</span></Form.Label><Form.Control name="maxAge" type="text" placeholder="Max Age" inputMode="numeric" disabled={isViewMode} value={formData.maxAge} onChange={(e) => {
                         let value = e.target.value;
 
                         value = value.replace(/\D/g, "");
@@ -286,7 +295,7 @@ const PositionForm = ({
                             <Form.Label className="mb-0">Mandatory Education <span className="text-danger">*</span></Form.Label>
                             <Button size="sm" disabled={isViewMode} onClick={() => onEducationClick("mandatory")} style={{ borderRadius: "10px" }}>+ Add</Button>
                         </div>
-                        <Form.Control as="textarea" rows={4} readOnly value={educationData.mandatory.text || ""} disabled={isViewMode} />
+                        <Form.Control as="textarea" placeholder="Enter Mandatory Education" rows={4} readOnly value={educationData.mandatory.text || ""} disabled={isViewMode} />
                         <ErrorMessage>{errors.mandatoryEducation}</ErrorMessage>
                     </Col>
 
@@ -295,7 +304,7 @@ const PositionForm = ({
                             <Form.Label className="mb-0">Preferred Education <span className="text-danger">*</span></Form.Label>
                             <Button size="sm" disabled={isViewMode} onClick={() => onEducationClick("preferred")} style={{ borderRadius: "10px" }}>+ Add</Button>
                         </div>
-                        <Form.Control as="textarea" rows={4} readOnly value={educationData.preferred.text || ""} disabled={isViewMode} />
+                        <Form.Control as="textarea" placeholder="Enter Preferred Education" rows={4} readOnly value={educationData.preferred.text || ""} disabled={isViewMode} />
                         <ErrorMessage>{errors.preferredEducation}</ErrorMessage>
                     </Col>
 
@@ -319,6 +328,7 @@ const PositionForm = ({
                             </Row>
                             <Form.Control
                                 as="textarea"
+                                placeholder="Enter Experience"
                                 rows={3}
                                 value={formData[expType].description} disabled={isViewMode}
 
@@ -357,6 +367,7 @@ const PositionForm = ({
                             as="textarea" disabled={isViewMode}
                             rows={5}
                             name="responsibilities"
+                            placeholder="Enter Roles & Responsibilities"
                             value={formData.responsibilities}
                             onChange={(e) => {
                                 const { valid, value, message } = validateTitleOnType(e.target.value);

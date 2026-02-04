@@ -5,7 +5,7 @@ import "../../../style/css/AddPosition.css";
 import import_Icon from '../../../assets/import_Icon.png'
 import ImportModal from "../component/ImportModal";
 import EducationModal from "../component/EducationModal";
-import { validateAddPosition, validateStateDistribution } from "../validations/validateAddPosition";
+import { validateAddPosition, validateStateDistribution, validateApprovedOn  } from "../validations/validateAddPosition";
 import { useCreateJobPosition } from "../hooks/useCreateJobPosition";
 import { useRequisitionDetails } from "../hooks/useRequisitionDetails";
 import { useMasterData } from "../hooks/useMasterData";
@@ -18,7 +18,6 @@ import { useLocation } from "react-router-dom";
 import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisition";
 import { toast } from "react-toastify";
 import ReservationSection from "../component/ReservationSection";
-
 const AddPosition = () => {
     const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx"];
     const MAX_FILE_SIZE_MB = 2;
@@ -99,7 +98,7 @@ const AddPosition = () => {
                     t.label?.toLowerCase().includes("contract")
             ) !== undefined;
 
-       
+
         setFormData({
             department: String(existingPosition.deptId),
             position: String(existingPosition.masterPositionId),
@@ -126,7 +125,7 @@ const AddPosition = () => {
                 months: existingPosition.preferredExperienceMonths % 12,
                 description: existingPosition.preferredExperience,
             },
-             contractualPeriod: isContract
+            contractualPeriod: isContract
                 ? String(existingPosition.contractYears ?? "")
                 : "",
         });
@@ -324,6 +323,40 @@ const AddPosition = () => {
         }
 
     };
+    const resetPositionDerivedFields = {
+        minAge: "",
+        maxAge: "",
+        grade: "",
+        responsibilities: "",
+        mandatoryExperience: { years: "", months: "", description: "" },
+        preferredExperience: { years: "", months: "", description: "" }
+    };
+    const handleRejectPositionData = () => {
+        setFormData(prev => ({
+            ...prev,
+            ...resetPositionDerivedFields
+        }));
+
+        // clear related errors
+        setErrors(prev => {
+            const {
+                minAge,
+                maxAge,
+                grade,
+                responsibilities,
+                mandatoryExperience,
+                preferredExperience,
+                mandatoryEducation,
+                preferredEducation,
+                ...rest
+            } = prev;
+            return rest;
+        });
+
+        setPendingPosition(null);
+        setShowConfirmModal(false);
+    };
+
 
     const onPositionSelect = (id) => {
         const selected = positions.find(p => String(p.id) === String(id));
@@ -519,9 +552,10 @@ const AddPosition = () => {
                     <Form onSubmit={handleSubmit}>
 
                         <PositionForm
+                        
                             isViewMode={isViewMode} formData={formData} errors={errors} handleInputChange={handleInputChange} indentFile={indentFile} setFormData={setFormData}
                             existingIndentPath={existingIndentPath} existingIndentName={existingIndentName} setIndentFile={setIndentFile} setErrors={setErrors}
-                            approvedBy={approvedBy} setApprovedBy={setApprovedBy} approvedOn={approvedOn} setApprovedOn={setApprovedOn}
+                            approvedBy={approvedBy} setApprovedBy={setApprovedBy} approvedOn={approvedOn} setApprovedOn={setApprovedOn} validateApprovedOn={validateApprovedOn}
                             masterData={masterData} onPositionSelect={onPositionSelect} educationData={educationData}
                             onEducationClick={(m) => { if (isViewMode) return; setEduMode(m); setShowEduModal(true); }} YEAR_OPTIONS={YEAR_OPTIONS} MONTH_OPTIONS={MONTH_OPTIONS} ALLOWED_EXTENSIONS={ALLOWED_EXTENSIONS} MAX_FILE_SIZE_MB={MAX_FILE_SIZE_MB}
                         />
@@ -556,7 +590,8 @@ const AddPosition = () => {
             <ImportModal show={showImportModal} onHide={() => setShowImportModal(false)} requisitionId={requisitionId} onSuccess={() => fetchPositions(requisitionId)} // optional but correct
             />
             <EducationModal key={`${eduMode}-${showEduModal}`} show={showEduModal} mode={eduMode} initialData={educationData[eduMode]} educationTypes={educationTypes} qualifications={qualifications} specializations={specializations} certifications={certifications} onHide={() => setShowEduModal(false)} onSave={({ educations, certificationIds, text }) => { setEducationData(prev => ({ ...prev, [eduMode]: { educations, certificationIds, text } })); setErrors(prev => { const upd = { ...prev }; delete upd[`${eduMode}Education`]; return upd; }); }} />
-            <ConfirmUsePositionModal show={showConfirmModal} onYes={handleUsePositionData} onNo={() => { setPendingPosition(null); setShowConfirmModal(false); }} />
+            <ConfirmUsePositionModal show={showConfirmModal} onYes={handleUsePositionData} onNo={handleRejectPositionData}
+            />
         </Container>
     );
 };

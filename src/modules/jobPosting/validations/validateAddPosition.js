@@ -281,7 +281,7 @@ export const validateStateDistribution = ({
 
   return errors;
 };
-const validateApprovedOn = (value) => {
+ export const validateApprovedOn = (value) => {
   if (!value) return "This field is required";
 
   const selected = new Date(value);
