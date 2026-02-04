@@ -423,3 +423,20 @@
   font-size: 12px;
   margin-top: 6px;
 }
+
+/* Info Icon Styles */
+.interview-panel-container .info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 6px;
+  color: #F26522;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.interview-panel-container .info-icon:hover {
+  color: #F26522;
+}
