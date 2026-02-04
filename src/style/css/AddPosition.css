@@ -205,7 +205,7 @@
 }
 .req_top-bar .req-code {
   font-size: 1rem;
-  color: #162B75;
+  color: #162B75 !important;
   margin-top: 0.25rem;
 }
 /* Make sure the back button is properly aligned */
