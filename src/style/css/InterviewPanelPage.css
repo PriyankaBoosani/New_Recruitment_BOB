@@ -385,7 +385,8 @@
   display: flex;
   justify-content: flex-end;
   margin-bottom: 10px;
-  gap:15px;
+  gap: 15px;
+  align-items: center;
 }
 
 .table-search-input {
@@ -397,6 +398,54 @@
 }
 
 .table-search-input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* Filter Button Styles */
+.interview-panel-container .filter-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.interview-panel-container .filter-button:hover {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
+.interview-panel-container .filter-icon {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Filter Dropdown Styles */
+.interview-panel-container .table-filters {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.interview-panel-container .table-filter-select {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #374151;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.interview-panel-container .table-filter-select:focus {
   outline: none;
   border-color: #2563eb;
 }

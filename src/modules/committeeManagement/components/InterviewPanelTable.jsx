@@ -1,6 +1,7 @@
 import React from "react";
 import edit_icon from "../../../assets/edit_icon.png";
 import delete_icon from "../../../assets/delete_icon.png";
+import { FiFilter } from "react-icons/fi";
 
 const InterviewPanelTable = ({
   panels,
@@ -40,22 +41,27 @@ const InterviewPanelTable = ({
           />
 
           <div className="table-filters">
-    <select
-      className="table-filter-select"
-      value={search.committeeName || ""}
-      onChange={(e) =>
-        setSearch(prev => ({
-          ...prev,
-          committeeName: e.target.value
-        }))
-      }
-    >
-      <option value="">All Committees</option>
-      <option value="Interview">Interview</option>
-      <option value="Screening">Screening</option>
-      <option value="Compensation">Compensation</option>
-    </select>
-  </div> 
+            {/* <button className="filter-button">
+              <FiFilter className="filter-icon" />
+              <span>Filters</span>
+            </button> */}
+            
+            <select
+              className="table-filter-select"
+              value={search.committeeName || ""}
+              onChange={(e) =>
+                setSearch(prev => ({
+                  ...prev,
+                  committeeName: e.target.value
+                }))
+              }
+            >
+              <option value="">All Committees</option>
+              <option value="Interview">Interview</option>
+              <option value="Screening">Screening</option>
+              <option value="Compensation">Compensation</option>
+            </select>
+          </div> 
 
 
          

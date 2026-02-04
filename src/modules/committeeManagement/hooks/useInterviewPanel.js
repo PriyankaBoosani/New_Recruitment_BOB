@@ -39,14 +39,40 @@ export const useInterviewPanel = () => {
 const [showFilters, setShowFilters] = useState(true);
 
   /* ================= FETCH PANELS ================= */
+// useEffect(() => {
+//   const timer = setTimeout(() => {
+//     setPage(0);      // reset to first page
+//     fetchPanels();
+//   }, 400);           // debounce
+
+//   return () => clearTimeout(timer);
+// }, [search.panelName]);
+
+
+
 useEffect(() => {
-  const timer = setTimeout(() => {
-    setPage(0);      // reset to first page
+  const value = search.panelName?.trim();
+
+  // 🔴 If empty → load all data
+  if (!value) {
+    setPage(0);
     fetchPanels();
-  }, 400);           // debounce
+    return;
+  }
+
+  // 🟡 If less than 2 chars → do nothing
+  if (value.length < 2) return;
+
+  const timer = setTimeout(() => {
+    setPage(0);
+    fetchPanels();
+  }, 400);
 
   return () => clearTimeout(timer);
 }, [search.panelName]);
+
+
+
   const fetchPanels = useCallback(async () => {
     try {
       setLoading(true);
@@ -217,8 +243,12 @@ useEffect(() => {
   }, [initData]);
 
   useEffect(() => {
-    fetchPanels();
-  }, [fetchPanels]);
+  fetchPanels();
+}, []);   
+
+  // useEffect(() => {
+  //   fetchPanels();
+  // }, [fetchPanels]);
 
   console.log("formData", formData);
   console.log("membersOptions", membersOptions);
