@@ -27,6 +27,12 @@ const committeeManagementService = {
         `/recruiter/position-panel/save-or-update/${jobPositionId}`,
         payload
       ),
+
+      getPanelsByPosition(positionId) {
+  return api.get(
+    `recruiter/position-panel/get-by-position-id/${positionId}`
+  );
+}
     
 
 };

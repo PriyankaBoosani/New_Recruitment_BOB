@@ -36,6 +36,65 @@ useEffect(() => {
   fetchPanels();
 }, []);
 
+useEffect(() => {
+  if (!selectedPosition) return;
+
+  fetchAssignedPanels(selectedPosition);
+}, [selectedPosition]);
+const fetchAssignedPanels = async (positionId) => {
+  try {
+    setLoading(true);
+
+    const res =
+      await committeeManagementService.getPanelsByPosition(positionId);
+      console.log("RES 👉", res);
+
+    const {
+      interviewPanelList = [],
+      screeningPanelList = [],
+      compensationPanelList = []
+    } = res?.data || {};
+
+    const mapAssigned = (list) =>
+      list.map(p => ({
+        id: p.interviewPanel.interviewPanelId,
+        positionPanelId: p.positionPanelId, 
+        name: p.interviewPanel.panelName,
+        committeeName: p.interviewPanel.committee.committeeName.toUpperCase(),
+        committeeId: p.interviewPanel.committee.interviewCommitteeId,
+        members: p.interviewPanel.panelMembers.map(m => ({
+          ...m.panelMember,
+          interviewPanelMemberId: m.interviewPanelMemberId
+        })),
+        startDate: p.startDate || "",
+        endDate: p.endDate || ""
+      }));
+
+    const assigned = {
+      SCREENING: mapAssigned(screeningPanelList),
+      INTERVIEW: mapAssigned(interviewPanelList),
+      COMPENSATION: mapAssigned(compensationPanelList)
+    };
+console.log("ASSIGNED 👉", assigned);
+    // 1️⃣ SET SELECTED COMMITTEES
+    setSelectedCommittees(assigned);
+
+    // 2️⃣ REMOVE FROM AVAILABLE PANELS
+    const assignedIds = Object.values(assigned)
+      .flat()
+      .map(p => p.id);
+
+    setAvailablePanels(prev =>
+      prev.filter(p => !assignedIds.includes(p.id))
+    );
+
+  } catch (err) {
+    console.error("Failed to fetch assigned panels", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 const fetchRequisitions = async () => {
   try {
     const res = await committeeManagementService.getRequisitions();
@@ -257,7 +316,7 @@ const handleAssignCommittees = async () => {
             startDate: panel.startDate,
             endDate: panel.endDate,
             sequenceNo: seqIndex,
-            positionPanelId: null
+            positionPanelId: panel.positionPanelId
           };
 
           if (committeeType === "INTERVIEW") {
