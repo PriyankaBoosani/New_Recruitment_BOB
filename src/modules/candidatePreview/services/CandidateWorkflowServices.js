@@ -4,9 +4,9 @@ const candidateWorkflowServices = {
   /* Users (Node API) */
   // Note: auth header is injected by nodeApi interceptor; no need to pass token manually
  
-  getCandidateAllDetails: (candidateId, applicationId) =>
-    candidateApi.get(
-      `/candidate/candidate/get-all-details/${candidateId}/${applicationId}`
+  getCandidateAllDetails: (candidateId, positionId) =>
+    api.get(
+      `/recruiter/candidate-details/get-all-details/${candidateId}/${positionId}`
     ),
  
 getRegister: () => nodeApi.get('/getdetails/users/all'),
