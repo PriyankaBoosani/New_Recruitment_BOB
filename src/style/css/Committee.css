@@ -489,6 +489,63 @@
   color:#42579F;
 
 }
+
+
+
+/* Dual panel wrapper */
+.dual-committee-box {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* Shared panel styles */
+.available-committees,
+.selected-committees {
+  flex: 1;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  max-height: 420px;       /* ✅ adjust as needed */
+}
+
+/* Scrollable content area */
+.available-committees .committee-row,
+.selected-committees .committee-row {
+  flex-shrink: 0;
+}
+
+/* Enable scrolling */
+.available-committees,
+.selected-committees {
+  overflow-y: auto;        /* ✅ scroll here */
+}
+
+/* Optional: nicer scrollbar */
+.available-committees::-webkit-scrollbar,
+.selected-committees::-webkit-scrollbar {
+  width: 6px;
+}
+
+.available-committees::-webkit-scrollbar-thumb,
+.selected-committees::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 6px;
+}
+
+
+
+.available-panel-header-row,
+.selected-panel-header-row {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+  padding-bottom: 8px;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 992px) {
   .assign-page .dual-committee-box {

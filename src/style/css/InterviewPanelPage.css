@@ -381,6 +381,26 @@
   border-top: 1px solid #eee;
 }
 
+.table-search-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.table-search-input {
+  width: 240px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 13px;
+}
+
+.table-search-input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+
 /* Responsive Adjustments */
 @media (max-width: 1024px) {
   .interview-panel-container .panel-layout {

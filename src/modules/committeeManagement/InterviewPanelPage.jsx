@@ -31,7 +31,11 @@ const InterviewPanelPage = () => {
 
   page,
   setPage,
-  totalPages
+  totalPages,
+  search,
+  setSearch,
+  showFilters,
+  setShowFilters,
   } = useInterviewPanel();
 
   useEffect(() => {
@@ -90,6 +94,10 @@ const InterviewPanelPage = () => {
                     page={page}
                     setPage={setPage}
                     totalPages={totalPages}
+                    search={search}
+                    setSearch={setSearch}
+                    showFilters={showFilters}
+                    setShowFilters={setShowFilters}
                   />
                 </div>
               </div>

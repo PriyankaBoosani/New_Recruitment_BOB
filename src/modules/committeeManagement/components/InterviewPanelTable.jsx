@@ -9,14 +9,47 @@ const InterviewPanelTable = ({
   page,
   setPage,
   totalPages,
-  pageSize = 10
+  pageSize = 10,
+  search,
+  setSearch,
+  showFilters,
+  setShowFilters
 }) => {
   return (
     <>
       {/* ===== HEADER ===== */}
       <div className="table-header">
         <span className="table-title">Panels History</span>
+
+
+
+        
+
+        <div className="table-search-row">
+          <input
+            type="text"
+            placeholder="Search by panel name..."
+            className="table-search-input"
+            value={search?.panelName || ""}
+            onChange={(e) =>
+              setSearch(prev => ({
+                ...prev,
+                panelName: e.target.value
+              }))
+            }
+          />
+
+          <button
+            className="filter-btn"
+            onClick={() => setShowFilters(prev => !prev)}
+          >
+            <span className="filter-icon">⏷</span>
+            Filters
+          </button>
+        </div>
       </div>
+
+      
 
       {/* ===== TABLE ===== */}
       <table className="table panel-table">

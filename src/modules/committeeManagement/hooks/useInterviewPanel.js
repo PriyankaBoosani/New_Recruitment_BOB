@@ -36,9 +36,17 @@ export const useInterviewPanel = () => {
   committeeName: "",
   panelMemberName: ""
 });
+const [showFilters, setShowFilters] = useState(false);
 
   /* ================= FETCH PANELS ================= */
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setPage(0);      // reset to first page
+    fetchPanels();
+  }, 400);           // debounce
 
+  return () => clearTimeout(timer);
+}, [search.panelName]);
   const fetchPanels = useCallback(async () => {
     try {
       setLoading(true);
@@ -46,7 +54,8 @@ export const useInterviewPanel = () => {
       // 👉 Pagination only (NO filters)
       const res = await masterApiService.getInterviewPanelsSearch({
         page,
-        size
+        size,
+         panelName: search.panelName
       });
 
       console.log("fetchpanels",res);
@@ -62,7 +71,7 @@ export const useInterviewPanel = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, size]);
+  }, [page, size,search]);
 
   /* ================= INIT DATA ================= */
 
@@ -240,6 +249,11 @@ export const useInterviewPanel = () => {
     page,
     setPage,
     totalPages,
+    search,
+    setSearch,
+    
+    setShowFilters,
+    showFilters
 
   };
 };
