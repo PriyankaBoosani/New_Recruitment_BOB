@@ -61,7 +61,7 @@ export const useJobRequisitions = ({
         
       });
 
-      toast.success("Requisition(s) submitted for approval");
+      toast.success("Requisition(s) Approved successfully");
       fetchRequisitions(); // refresh list
     } catch (err) {
       toast.error("Failed to submit for approval");

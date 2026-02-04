@@ -71,14 +71,6 @@ const AddPosition = () => {
     const [nationalCategories, setNationalCategories] = useState({});
     const [nationalDisabilities, setNationalDisabilities] = useState({});
     const [currentState, setCurrentState] = useState({ state: "", vacancies: "", language: "", categories: {}, disabilities: {} });
-    const jobGradesWithSalary = (masterData.jobGrades || []).map(g => ({
-        id: g.jobGradeId,
-        code: g.jobGradeCode,
-        scale: g.jobScale,
-        minSalary: g.minSalary?.parsedValue ?? null,
-        maxSalary: g.maxSalary?.parsedValue ?? null,
-    }));
-
     const [formData, setFormData] = useState({
         department: "", position: "", vacancies: "", minAge: "", maxAge: "",
         employmentType: "", contractualPeriod: "", grade: "", enableLocation: false,

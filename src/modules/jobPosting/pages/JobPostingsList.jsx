@@ -669,7 +669,7 @@ const JobPostingsList = () => {
                 title="Direct Approval Confirmation"
                 message="This action will directly approve the selected requisition(s). Are you sure you want to continue?"
                 itemLabel={`${selectedReqIds.size} requisition(s)`}
-                confirmText="Yes, Approve"
+                confirmText="Approve"
                 confirmVariant="primary"
             />
 
