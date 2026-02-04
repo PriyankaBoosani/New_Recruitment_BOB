@@ -110,8 +110,9 @@ const JobPostingsList = () => {
 
     const [selectedReqIds, setSelectedReqIds] = useState(new Set());
     const selectableRequisitions = requisitions.filter(
-        r => r.status !== "Approved"
+        r => r.status !== "Approved" && !r.hasDraftPositions
     );
+
     useEffect(() => {
         const timeout = setTimeout(() => {
             setSearch(searchInput);
