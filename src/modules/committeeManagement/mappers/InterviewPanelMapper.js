@@ -63,16 +63,48 @@ export const preparePanelPayload = (
 };
 
 
+// export const mapPanelsApi = (list = []) => {
+
+//   console.log("list",list)
+//   return list.map(panel => ({
+//     id: panel.interviewPanelId,
+//     name: panel.panelName,
+//     committeeId: panel.committee?.interviewCommitteeId,
+//     committeeName: panel.committee?.committeeName,
+
+//     members:
+//       panel.panelMembers?.map(
+//         m => m.panelMember?.name
+//       ) || []
+//   }));
+// };
+
+
+
+
+
 export const mapPanelsApi = (list = []) => {
+  console.log("RAW PANELS 👉", list);
+
   return list.map(panel => ({
+    /* ===== PANEL INFO ===== */
     id: panel.interviewPanelId,
     name: panel.panelName,
+    description: panel.description || "",
+
+    /* ===== COMMITTEE INFO ===== */
     committeeId: panel.committee?.interviewCommitteeId,
     committeeName: panel.committee?.committeeName,
+    committeeDesc: panel.committee?.committeeDesc || "",
 
-    members:
-      panel.panelMembers?.map(
-        m => m.panelMember?.name
-      ) || []
+    /* ===== MEMBERS (FULL OBJECTS) ===== */
+    members: panel.panelMembers?.map(m => ({
+      panelId: panel.interviewPanelId,
+      interviewPanelMemberId: m.interviewPanelMemberId,
+      name: m.panelMember?.name,
+      role: m.panelMember?.role,
+      email: m.panelMember?.email,
+      userId: m.panelMember?.userId
+    })) || []
   }));
 };

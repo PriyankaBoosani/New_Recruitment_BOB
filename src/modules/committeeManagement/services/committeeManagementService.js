@@ -22,11 +22,11 @@ const committeeManagementService = {
          
         }
       ),
-      assignPanelToPosition: (payload) =>
-        api.post(
-          "/recruiter/position-panel/create",
-          payload
-        ),
+     assignPanelToPosition: (jobPositionId, payload) =>
+      api.post(
+        `/recruiter/position-panel/save-or-update/${jobPositionId}`,
+        payload
+      ),
     
 
 };

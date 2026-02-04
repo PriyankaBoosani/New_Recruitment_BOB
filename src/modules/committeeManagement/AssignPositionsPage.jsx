@@ -70,7 +70,14 @@ handleAssignCommittees
 
       return {
         ...prev,
-        [type]: [...prev[type], committee],
+        [type]: [
+          ...prev[type],
+          {
+            ...committee,
+            startDate: committee.startDate || "",
+            endDate: committee.endDate || ""
+          }
+        ],
       };
     }
   });
@@ -82,7 +89,7 @@ const renderAvailableCommittee = (committee, type) => (
       <div className="committee-title">{committee.name}</div>
       <div className="committee-chips">
         {committee.members.map(m => (
-          <span key={m} className="chip">{m}</span>
+          <span key={m} className="chip">{m.name}</span>
         ))}
       </div>
     </div>
@@ -101,7 +108,7 @@ const renderAvailableCommittee = (committee, type) => (
       <div className="committee-title">{committee.name}</div>
       <div className="committee-chips">
         {committee.members.map(m => (
-          <span key={m} className="chip">{m}</span>
+          <span key={m} className="chip">{m.name}</span>
         ))}
       </div>
 
@@ -222,14 +229,14 @@ const filteredPanels = availablePanels.filter(
                     </div>
                   </div>
 
-                  <div className="d-flex gap-2">
+                  {/* <div className="d-flex gap-2">
                     <Button variant="outline-secondary" size="sm">
                       Cancel
                     </Button>
                     <Button variant="warning" className="save-configuration-btn" size="sm">
                       Save Configuration
                     </Button>
-                  </div>
+                  </div> */}
                 </div>
             {/* Tabs */}
             <div className="com-tab mb-2">
@@ -265,7 +272,7 @@ const filteredPanels = availablePanels.filter(
             <div className="dual-committee-box new-ui">
               <div className="available-committees blue">
                 <div className="available-panel-header-row">
-                  Available Screening Panelsssss
+                  Available Screening Panels
                   <span className="count">{filteredPanels.length}</span>
                 </div>
                 <div className="panel-divider"></div>

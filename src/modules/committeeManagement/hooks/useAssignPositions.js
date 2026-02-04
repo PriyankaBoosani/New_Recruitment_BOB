@@ -23,6 +23,14 @@ const [selectedPosition, setSelectedPosition] = useState("");
 const [availablePanels, setAvailablePanels] = useState([]);
 
 
+ /* ================= PAGINATION ================= */
+
+  const [page, setPage] = useState(0);
+  const [size] = useState(1000);
+  const [totalPages, setTotalPages] = useState(0);
+
+
+
 useEffect(() => {
   fetchRequisitions();
   fetchPanels();
@@ -134,9 +142,13 @@ const handleRequisitionChange = async (e) => {
     try {
       setLoading(true);
 
-      const res = await masterApiService.getInterviewPanels();
+      const res = await masterApiService.getInterviewPanelsSearch({
+        page,
+        size
+      });
+
       console.log("RES 👉", res);
-      const apiData = res || [];
+      const apiData = res?.data?.content || [];
       const mapped = mapPanelsApi(apiData);
       console.log("MAPPED 👉", mapped);
       setAvailablePanels(mapped);
@@ -207,60 +219,76 @@ const handleAssignCommittees = async () => {
     return;
   }
 
-  const payloads = [];
-
-  Object.values(selectedCommittees).forEach((panels, index) => {
-    panels.forEach((panel, seqIndex) => {
-      payloads.push({
-        positionId: selectedPosition,
-
-        interviewPanels: {
-          panelName: panel.name,
-          description: panel.description || "",
-          committee: {
-            committeeName: panel.committeeName,
-            committeeDesc: panel.committeeDesc || "",
-            interviewCommitteeId: panel.interviewCommitteeId
-          },
-          panelMembers: panel.members.map(m => ({
-            panelId: panel.id,
-            panelMember: {
-              name: m.name,
-              role: m.role,
-              email: m.email,
-              userId: m.userId
-            },
-            interviewPanelMemberId: m.interviewPanelMemberId
-          })),
-          interviewPanelId: panel.id
-        },
-
-        startDate: panel.startDate,
-        endDate: panel.endDate,
-        sequenceNo: seqIndex
-      });
-    });
-  });
-
-  console.log("PAYLOADS 👉", payloads);
-
   try {
     setLoading(true);
 
-    for (const payload of payloads) {
-      await committeeManagementService.assignPanelToPosition(payload);
-    }
+    const payload = {
+      interviewPanelList: [],
+      screeningPanelList: [],
+      compensationPanelList: []
+    };
+    console.log("SELECTED COMMITTEES 👉", selectedCommittees);
+
+    Object.entries(selectedCommittees).forEach(
+      ([committeeType, panels]) => {
+        panels.forEach((panel, seqIndex) => {
+          const panelPayload = {
+            positionId: null,
+            interviewPanel: {
+              panelName: panel.name,
+              description: panel.description || "",
+              committee: {
+                committeeName: panel.committeeName,
+                committeeDesc: panel.committeeDesc || "",
+                interviewCommitteeId: panel.committeeId
+              },
+              panelMembers: panel.members.map(m => ({
+                panelId: panel.id,
+                panelMember: {
+                  name: m.name,
+                  role: m.role,
+                  email: m.email,
+                  userId: m.userId
+                },
+                interviewPanelMemberId: m.interviewPanelMemberId
+              })),
+              interviewPanelId: panel.id
+            },
+            startDate: panel.startDate,
+            endDate: panel.endDate,
+            sequenceNo: seqIndex,
+            positionPanelId: null
+          };
+
+          if (committeeType === "INTERVIEW") {
+            payload.interviewPanelList.push(panelPayload);
+          } else if (committeeType === "SCREENING") {
+            payload.screeningPanelList.push(panelPayload);
+          } else if (committeeType === "COMPENSATION") {
+            payload.compensationPanelList.push(panelPayload);
+          }
+        });
+      }
+    );
+
+    console.log("FINAL PAYLOAD 👉", payload);
+
+    await committeeManagementService.assignPanelToPosition(
+      selectedPosition,
+      payload
+    );
 
     toast.success("Committees assigned successfully");
   } catch (err) {
-    console.error(err);
-    toast.error("Failed to assign committees");
+    console.error("ASSIGN ERROR 👉", err);
+    toast.error(
+      err?.response?.data?.message ||
+      "Failed to assign committees"
+    );
   } finally {
     setLoading(false);
   }
 };
-
-
 
 
   return {
