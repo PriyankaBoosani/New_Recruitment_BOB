@@ -1,12 +1,13 @@
-import { useState, useCallback, useEffect } from 'react';
-import { toast } from 'react-toastify';
+import { useState, useCallback, useEffect } from "react";
+import { toast } from "react-toastify";
 import masterApiService from "../../master/services/masterApiService";
 import committeeManagementService from "../services/committeeManagementService";
 import { mapInterviewMembersApi } from "../mappers/interviewMembersMapper";
-import { mapInterviewPanelsApiToUI, mapPanelToFormData,preparePanelPayload } from "../mappers/InterviewPanelMapper";
-
-
-
+import {
+  mapInterviewPanelsApiToUI,
+  mapPanelToFormData,
+  preparePanelPayload
+} from "../mappers/InterviewPanelMapper";
 
 export const useInterviewPanel = () => {
   const [panels, setPanels] = useState([]);
@@ -15,13 +16,26 @@ export const useInterviewPanel = () => {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: '',
-    community: '',
+    name: "",
+    community: "",
     members: []
   });
 
   const [errors, setErrors] = useState({});
-  const [editAssignedMembers, setEditAssignedMembers] = useState([]);
+
+  /* ================= PAGINATION ================= */
+
+  const [page, setPage] = useState(0);
+  const [size] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+
+
+  /* ================= search ================= */
+  const [search, setSearch] = useState({
+  panelName: "",
+  committeeName: "",
+  panelMemberName: ""
+});
 
   /* ================= FETCH PANELS ================= */
 
@@ -29,18 +43,26 @@ export const useInterviewPanel = () => {
     try {
       setLoading(true);
 
-      const res = await masterApiService.getInterviewPanels();
-      const apiData = res || [];
-      console.log("apiData", apiData);
-      setPanels(mapInterviewPanelsApiToUI(apiData));
+      // 👉 Pagination only (NO filters)
+      const res = await masterApiService.getInterviewPanelsSearch({
+        page,
+        size
+      });
 
-    } catch (error) {
-      console.error("Fetch Panels Error:", error);
+      console.log("fetchpanels",res);
+
+      const data = res?.data;
+
+      setPanels(mapInterviewPanelsApiToUI(data?.content || []));
+      setTotalPages(data?.totalPages || 0);
+
+    } catch (err) {
+      console.error("Fetch Panels Error:", err);
       toast.error("Failed to load panels");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, size]);
 
   /* ================= INIT DATA ================= */
 
@@ -70,172 +92,154 @@ export const useInterviewPanel = () => {
     }
   }, []);
 
+  /* ================= VALIDATION ================= */
 
   const validatePanelForm = () => {
-  const newErrors = {};
+    const newErrors = {};
 
-  if (!formData.name?.trim()) {
-    newErrors.name = "Panel name is required";
-  } else if (formData.name.trim().length < 3) {
-    newErrors.name = "Panel name must be at least 3 characters";
-  }
+    if (!formData.name?.trim()) {
+      newErrors.name = "Panel name is required";
+    } 
+    // else if (formData.name.trim().length < 3) {
+    //   newErrors.name = "Panel name must be at least 3 characters";
+    // }
 
-  if (!formData.community) {
-    newErrors.community = "Panel type is required";
-  }
+    if (!formData.community) {
+      newErrors.community = "Panel type is required";
+    }
 
-  if (!formData.members || formData.members.length === 0) {
-    newErrors.members = "Select at least one panel member";
-  }
+    if (!formData.members || formData.members.length === 0) {
+      newErrors.members = "Select at least one panel member";
+    }
 
-  setErrors(newErrors);
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-  return Object.keys(newErrors).length === 0;
-};
-
-
-const clearError = (field) => {
-  if (errors?.[field]) {
-    setErrors(prev => ({ ...prev, [field]: "" }));
-  }
-};
+  const clearError = (field) => {
+    if (errors?.[field]) {
+      setErrors(prev => ({ ...prev, [field]: "" }));
+    }
+  };
 
   /* ================= SAVE ================= */
 
   const handleSave = async () => {
+    if (!validatePanelForm()) {
+      toast.error("Please fix the validation errors");
+      return;
+    }
 
+    const payload = preparePanelPayload(
+      formData,
+      communityOptions,
+      membersOptions
+    );
 
-      // 🔴 VALIDATION CHECK
-      if (!validatePanelForm()) {
-        toast.error("Please fix the validation errors");
-        return;
-      }
+    try {
+      if (formData.id) {
+        // ✅ UPDATE
+        await masterApiService.updateInterviewPanel(
+          formData.id,
+          payload
+        );
 
-      const payload = preparePanelPayload(
-        formData,
-        communityOptions,
-        membersOptions
-      );
-
-      console.log("FINAL PAYLOAD 👉", payload);
-
-      try {
-
-           if (formData.id) {
-      // ✅ UPDATE MODE
-      await masterApiService.updateInterviewPanel(
-        formData.id,
-        payload
-      );
-
-      toast.success("Panel updated successfully");
-        fetchPanels();
-
-        setFormData({
-          name: "",
-          community: "",
-          members: []
-        });
-
-    } else {
+        toast.success("Panel updated successfully");
+      } else {
+        // ✅ CREATE
         const res = await masterApiService.addInterviewPanel(payload);
 
-      if (res?.interviewPanelId) {
+        if (!res?.interviewPanelId) {
+          toast.error("Save failed");
+          return;
+        }
+
         toast.success("Panel created successfully");
-
-        fetchPanels();
-
-        setFormData({
-          name: "",
-          community: "",
-          members: []
-        });
-        setErrors({});
-
-      } else {
-        toast.error("Save failed");
       }
 
-    } 
-  }catch (err) {
-      console.error("SAVE ERROR 👉", err);
+      fetchPanels();
+      setFormData({
+        name: "",
+        community: "",
+        members: []
+      });
+      setErrors({});
 
+    } catch (err) {
+      console.error("SAVE ERROR 👉", err);
       toast.error(
         err?.response?.data?.message ||
-        "Failed to create panel"
+        "Failed to save panel"
       );
-    };
-  }
-
+    }
+  };
 
   /* ================= DELETE ================= */
 
   const handleDelete = useCallback(async (id) => {
-  console.log("DELETE ID 👉", id);
+    try {
+      await masterApiService.deleteInterviewPanel(id);
+      toast.success("Panel deleted successfully");
+      fetchPanels();
+    } catch (err) {
+      console.error("DELETE ERROR 👉", err);
+      toast.error(
+        err?.response?.data?.message ||
+        "Failed to delete panel"
+      );
+    }
+  }, [fetchPanels]);
 
-  try {
-    const res = await masterApiService.deleteInterviewPanel(id);
+  /* ================= EDIT ================= */
 
-    console.log("DELETE RES 👉", res);
-
-    toast.success("Panel deleted successfully");
-
-    fetchPanels(); // refresh table
-
-  } catch (err) {
-    console.error("DELETE ERROR 👉", err);
-
-    toast.error(
-      err?.response?.data?.message ||
-      "Failed to delete panel"
-    );
-  }
-
-}, [fetchPanels]);
-
-
-
-//edit
   const handleEdit = async (panelId) => {
-  try {
-    const res = await masterApiService.getInterviewPanelById(panelId);
-
-    const panel = res;
-
-    const mappedForm = mapPanelToFormData(panel);
-
-    setFormData(mappedForm);
-
-  } catch (err) {
-    toast.error("Failed to load panel details");
-  }
-};
-
+    try {
+      const res = await masterApiService.getInterviewPanelById(panelId);
+      const mappedForm = mapPanelToFormData(res?.data);
+      console.log("mappedForm",mappedForm)
+      setFormData(mappedForm);
+    } catch (err) {
+      toast.error("Failed to load panel details");
+    }
+  };
 
   /* ================= EFFECT ================= */
 
   useEffect(() => {
     initData();
+  }, [initData]);
+
+  useEffect(() => {
     fetchPanels();
-  }, [initData, fetchPanels]); // ✅ FIXED
+  }, [fetchPanels]);
+
+  console.log("formData", formData);
+  console.log("membersOptions", membersOptions);
+
+  /* ================= RETURN ================= */
 
   return {
     panels,
     loading,
+
     communityOptions,
     membersOptions,
+
     formData,
     setFormData,
+
     errors,
     setErrors,
-    // editAssignedMembers,
-    // setEditAssignedMembers,
+    clearError,
 
-    initData,
-    fetchPanels, // ✅ RETURNED
     handleSave,
     handleDelete,
     handleEdit,
-    clearError
+    initData,
+
+    page,
+    setPage,
+    totalPages,
+
   };
 };

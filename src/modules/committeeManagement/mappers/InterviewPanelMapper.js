@@ -23,7 +23,7 @@ export const mapPanelToFormData = (panel) => {
     name: panel.panelName || "",
     community: panel.committee?.interviewCommitteeId || "",
     members:
-      panel.panelMembers?.map(m => m.panelMember?.userId) || []
+       panel.panelMembers?.map(m => m.panelMember?.userId) || []
   };
 };
 

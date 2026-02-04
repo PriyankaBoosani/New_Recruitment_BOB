@@ -20,7 +20,7 @@ export const mapInterviewMembersApi = (apiResponse) => {
     : [];
 
   return list.map(user => ({
-    value: user.userid,              // ✅ correct key
+    value: user.userId,              // ✅ correct key
     label: user.name, // nicer display
     email: user.email,
     role: user.role

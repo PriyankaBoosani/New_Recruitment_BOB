@@ -26,7 +26,12 @@ const InterviewPanelPage = () => {
     handleSave,
     handleDelete,
      handleEdit,
-     clearError
+     clearError,
+
+
+  page,
+  setPage,
+  totalPages
   } = useInterviewPanel();
 
   useEffect(() => {
@@ -80,8 +85,11 @@ const InterviewPanelPage = () => {
                 <div className="panel-table-card">
                   <InterviewPanelTable
                      panels={panels}
-                     onEdit={handleEdit}
-                      onDelete={handleDelete}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    page={page}
+                    setPage={setPage}
+                    totalPages={totalPages}
                   />
                 </div>
               </div>

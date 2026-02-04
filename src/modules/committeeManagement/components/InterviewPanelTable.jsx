@@ -1,15 +1,24 @@
 import React from "react";
-import edit_icon from "../../../assets/edit_icon.png"
-import delete_icon from "../../../assets/delete_icon.png"
-const InterviewPanelTable = ( { panels, onEdit, onDelete }) => {
-  console.log("panels", panels);
+import edit_icon from "../../../assets/edit_icon.png";
+import delete_icon from "../../../assets/delete_icon.png";
+
+const InterviewPanelTable = ({
+  panels,
+  onEdit,
+  onDelete,
+  page,
+  setPage,
+  totalPages,
+  pageSize = 10
+}) => {
   return (
     <>
+      {/* ===== HEADER ===== */}
       <div className="table-header">
         <span className="table-title">Panels History</span>
-        {/* <button className="filter-btn">Filters</button> */}
       </div>
 
+      {/* ===== TABLE ===== */}
       <table className="table panel-table">
         <thead>
           <tr>
@@ -20,18 +29,29 @@ const InterviewPanelTable = ( { panels, onEdit, onDelete }) => {
             <th>Actions</th>
           </tr>
         </thead>
+
         <tbody>
-           {panels.map((panel, index) => (
-            <tr key={panel.id}>
-              <td>{index + 1}</td>
-              <td>{panel.panelName}</td>
-              <td>{panel.panelType}</td>
-              <td>{panel.members}</td>
-              <td className="actions">
+          {panels.length === 0 ? (
+            <tr>
+              <td colSpan="5" style={{ textAlign: "center" }}>
+                No panels found
+              </td>
+            </tr>
+          ) : (
+            panels.map((panel, index) => (
+              <tr key={panel.id}>
+                {/* ✅ Correct serial number */}
+                <td>{page * pageSize + index + 1}</td>
+
+                <td>{panel.panelName}</td>
+                <td>{panel.panelType}</td>
+                <td>{panel.members}</td>
+
+                <td className="actions">
                   <div className="icon-group">
                     <button
                       className="table-icon-btn edit"
-                    onClick={() => onEdit(panel.id)}
+                      onClick={() => onEdit(panel.id)}
                     >
                       <img src={edit_icon} alt="Edit" />
                     </button>
@@ -42,21 +62,47 @@ const InterviewPanelTable = ( { panels, onEdit, onDelete }) => {
                     >
                       <img src={delete_icon} alt="Delete" />
                     </button>
-                </div>
-              </td>
-            </tr>
-          ))}
+                  </div>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
 
-      {/* Pagination */}
-      {/* <div className="pagination">
-        <button>{"<"}</button>
-        <button className="active">1</button>
-        <button>2</button>
-        <button>3</button>
-        <button>{">"}</button>
-      </div> */}
+      {/* ===== PAGINATION (MATCHES SCREENSHOT) ===== */}
+      {totalPages > 1 && (
+        <div className="pagination">
+          {/* Previous */}
+          <button
+            className="pagination-btn"
+            disabled={page === 0}
+            onClick={() => setPage(page - 1)}
+          >
+            ‹
+          </button>
+
+          {/* Page Numbers */}
+          {[...Array(totalPages)].map((_, i) => (
+            <button
+              key={i}
+              className={`pagination-btn ${page === i ? "active" : ""}`}
+              onClick={() => setPage(i)}
+            >
+              {i + 1}
+            </button>
+          ))}
+
+          {/* Next */}
+          <button
+            className="pagination-btn"
+            disabled={page === totalPages - 1}
+            onClick={() => setPage(page + 1)}
+          >
+            ›
+          </button>
+        </div>
+      )}
     </>
   );
 };

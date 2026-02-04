@@ -340,7 +340,7 @@
 /* Pagination */
 .interview-panel-container .pagination {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   margin-top: 20px;
   gap: 10px;

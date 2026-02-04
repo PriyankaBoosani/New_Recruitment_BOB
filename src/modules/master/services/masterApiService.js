@@ -192,6 +192,10 @@ const masterApiService = {
   getActiveInterviewMembers: () => apis.get("/interview-panels/active-members"),
   getInterviewPanelById: (id) => apis.get(`/interview-panels/get-by-id/${id}`),
 
+    getInterviewPanelsSearch: (params) => apis.get("interview-panels/search", { params }),
+            
+
+
 
   /* Optional master all */
   getMasterAll: () => apis.get("/all"),
