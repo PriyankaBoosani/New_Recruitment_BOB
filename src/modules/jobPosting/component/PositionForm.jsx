@@ -380,7 +380,11 @@ const PositionForm = ({
                             <Form.Control
                                 as="textarea"
                                 maxLength={2000}
-                                placeholder={t("addPosition:enter_experience")}
+                                placeholder={
+                                    expType === "mandatory"
+                                        ? t("addPosition:enter_mandatory_experience")
+                                        : t("addPosition:enter_preferred_experience")
+                                }
                                 rows={3}
                                 value={formData[expType].description} disabled={isViewMode}
 

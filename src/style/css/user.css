@@ -892,3 +892,8 @@ scrollbar styling .import-scroll-wrapper::-webkit-scrollbar,
     background-color: #dc3545;
     border-radius: 4px;
 }
+.manscroll{
+    overflow-y: auto;
+    max-height: 200px;
+    height: auto;
+}

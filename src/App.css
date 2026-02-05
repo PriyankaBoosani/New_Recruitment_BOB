@@ -286,7 +286,7 @@ main {
   position: relative;
 }
 
-.navbar-nav .nav-link.active::after {
+.navbar-nav .nav-link.active::after  {
 	background-color: #42579f;
   bottom: -1px;
   content: "";
@@ -294,6 +294,18 @@ main {
   left: 0;
   position: absolute;
   width: 100%;
+}
+.active-admin > .nav-link::after {
+  background-color: #42579f;
+  bottom: -1px;
+  content: "";
+  height: 3px;
+  left: 0;
+  position: absolute;
+  width: 100%;
+}
+.dropdown-toggle::after {
+  border-top: 0.25em solid;
 }
 /* Admin dropdown active state */
 .nav-link.active,
@@ -315,6 +327,14 @@ main {
   border-right: 6px solid transparent;
   border-bottom: 6px solid #42579f;
 }
+.nav-link {
+  position: relative;
+}
+
+
+/* kill underline everywhere */
+
+
 .dropdown-toggle{
   color: #162B75 !important;
   font-weight: 500;

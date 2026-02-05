@@ -108,7 +108,7 @@ const PositionFormModal = ({
             noValidate
           >
             <Row className="g-3">
-              <Col xs={4}>
+              <Col xs={6}>
                 <Form.Group className="form-group">
                   <Form.Label>
                     {t("position_title")} <span className="text-danger">*</span>
@@ -144,7 +144,7 @@ const PositionFormModal = ({
                   {!isViewing && <ErrorMessage>{errors.title}</ErrorMessage>}
                 </Form.Group>
               </Col>
-              <Col xs={4} md={4}>
+              <Col xs={4} md={6}>
                 <Form.Group className="form-group">
                   <Form.Label>
                     {t("job_grade")} <span className="text-danger">*</span>
@@ -176,7 +176,7 @@ const PositionFormModal = ({
               </Col>
 
               {/* Min / Max Age */}
-              <Col xs={6} md={3}>
+              <Col xs={6} md={6}>
                 <Form.Group className="form-group">
                   <Form.Label>
                     {t("min_age")} <span className="text-danger">*</span>
@@ -210,7 +210,7 @@ const PositionFormModal = ({
 
               </Col>
 
-              <Col xs={6} md={3}>
+              <Col xs={6} md={6}>
                 <Form.Group className="form-group">
                   <Form.Label>
                     {t("max_age")} <span className="text-danger">*</span>
@@ -251,7 +251,7 @@ const PositionFormModal = ({
                   </Form.Label>
 
                   {isViewing ? (
-                    <div className="form-control-view" style={{ whiteSpace: "pre-line" }}>
+                    <div className="form-control-view manscroll" style={{ whiteSpace: "pre-line" }}>
                       {formData.mandatoryExperience || "-"}
                     </div>
                   ) : (
@@ -292,7 +292,7 @@ const PositionFormModal = ({
                   </Form.Label>
 
                   {isViewing ? (
-                    <div className="form-control-view" style={{ whiteSpace: "pre-line" }}>
+                    <div className="form-control-view manscroll" style={{ whiteSpace: "pre-line" }}>
                       {formData.preferredExperience || "-"}
                     </div>
                   ) : (
@@ -333,7 +333,7 @@ const PositionFormModal = ({
                   </Form.Label>
 
                   {isViewing ? (
-                    <div className="form-control-view" style={{ whiteSpace: "pre-line" }}>
+                    <div className="form-control-view manscroll" style={{ whiteSpace: "pre-line" }}>
                       {formData.rolesResponsibilities || "-"}
                     </div>
                   ) : (

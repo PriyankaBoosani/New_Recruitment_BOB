@@ -33,6 +33,8 @@
     "select_years": "वर्ष चुनें",
     "select_months": "महीने चुनें",
     "enter_experience": "अनुभव दर्ज करें",
+    "enter_mandatory_experience": "अनिवार्य अनुभव दर्ज करें",
+    "enter_preferred_experience": "वांछित अनुभव दर्ज करें",
     "roles_responsibilities": "भूमिकाएँ और जिम्मेदारियाँ",
     "enter_roles": "भूमिकाएँ और जिम्मेदारियाँ दर्ज करें",
     "medical_required": "मेडिकल आवश्यक",

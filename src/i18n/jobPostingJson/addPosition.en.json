@@ -33,6 +33,8 @@
     "select_years": "Select Years",
     "select_months": "Select Months",
     "enter_experience": "Enter Experience",
+    "enter_mandatory_experience": "Enter Mandatory Experience",
+    "enter_preferred_experience": "Enter Preferred Experience",
     "roles_responsibilities": "Roles & Responsibilities",
     "enter_roles": "Enter Roles & Responsibilities",
     "medical_required": "Medical Required",
