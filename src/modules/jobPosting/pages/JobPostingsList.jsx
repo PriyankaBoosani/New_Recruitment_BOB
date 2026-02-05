@@ -72,7 +72,7 @@ const JobPostingsList = () => {
     };
     // 🔹 Backend-driven filters
     const [year, setYear] = useState("2026");
-    const [status, setStatus] = useState("ALL");
+    const [status, setStatus] = useState(null);
     const [search, setSearch] = useState("");
     const [searchInput, setSearchInput] = useState("");
     const [page, setPage] = useState(0); // backend is 0-based
@@ -158,15 +158,15 @@ const JobPostingsList = () => {
         // }
 
         if (errors.length > 0) {
-    errors.forEach(e => {
-        if (typeof e === "string") {
-            toast.error(t(e));
-        } else {
-            toast.error(t(e.key, e.params));
+            errors.forEach(e => {
+                if (typeof e === "string") {
+                    toast.error(t(e));
+                } else {
+                    toast.error(t(e.key, e.params));
+                }
+            });
+            return;
         }
-    });
-    return;
-}
 
 
 
@@ -238,7 +238,11 @@ const JobPostingsList = () => {
                     <Form.Select
                         className="status-select"
                         value={status}
-                        onChange={(e) => { setStatus(e.target.value); setPage(0); }}
+                        onChange={(e) => {
+                            const value = e.target.value || null;
+                            setStatus(value);
+                            setPage(0);
+                        }}
                     >
                         <option value="ALL">{t("jobPostingsList:status_all")}</option>
                         <option value="NEW">{t("jobPostingsList:status_new")}</option>
@@ -511,7 +515,7 @@ const JobPostingsList = () => {
                                                             </span>
 
                                                             <span>
-                                                               {t("jobPostingsList:age")}: {pos.minAge} – {pos.maxAge} {t("jobPostingsList:years")}
+                                                                {t("jobPostingsList:age")}: {pos.minAge} – {pos.maxAge} {t("jobPostingsList:years")}
                                                             </span>
                                                         </div>
 
