@@ -29,6 +29,50 @@ const [availablePanels, setAvailablePanels] = useState([]);
   const [size] = useState(1000);
   const [totalPages, setTotalPages] = useState(0);
 
+  const [panelErrors, setPanelErrors] = useState({});
+
+const validatePanels = () => {
+  const errors = {};
+  let isValid = true;
+
+  Object.entries(selectedCommittees).forEach(([type, panels]) => {
+    panels.forEach(panel => {
+      const key = `${type}_${panel.id}`;
+      errors[key] = {};
+
+      if (!panel.startDate) {
+        errors[key].startDate = "Start date is required";
+        isValid = false;
+      }
+
+      if (!panel.endDate) {
+        errors[key].endDate = "End date is required";
+        isValid = false;
+      }
+
+      if (
+        panel.startDate &&
+        panel.endDate &&
+        new Date(panel.endDate) < new Date(panel.startDate)
+      ) {
+        errors[key].endDate = "End date cannot be before start date";
+        isValid = false;
+      }
+
+      // Remove empty error objects
+      if (Object.keys(errors[key]).length === 0) {
+        delete errors[key];
+      }
+    });
+  });
+
+  setPanelErrors(errors);
+
+   if (!isValid) {
+    toast.error("Please fix the highlighted date errors before assigning committees");
+  }
+  return isValid;
+};
 
 
 useEffect(() => {
@@ -277,6 +321,8 @@ const handleAssignCommittees = async () => {
     toast.error("Please select a position");
     return;
   }
+   const isValid = validatePanels();
+  if (!isValid) return; // ❌ stop here
 
   try {
     setLoading(true);
@@ -377,7 +423,9 @@ selectedCommittees,
 setSelectedCommittees,
 context,
 setContext,
-handleAssignCommittees
+handleAssignCommittees,
+panelErrors,
+setPanelErrors
 
 
 

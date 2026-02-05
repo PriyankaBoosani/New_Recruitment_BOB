@@ -449,7 +449,11 @@
   outline: none;
   border-color: #2563eb;
 }
-
+.field-error {
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 4px;
+}
 
 /* Responsive Adjustments */
 @media (max-width: 1024px) {

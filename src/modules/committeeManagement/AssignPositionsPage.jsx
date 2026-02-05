@@ -43,7 +43,9 @@ selectedCommittees,
 setSelectedCommittees,
 context,
 setContext,
-handleAssignCommittees
+handleAssignCommittees,
+panelErrors,
+setPanelErrors
 
 } = useAssignPositions();
 
@@ -102,48 +104,62 @@ const renderAvailableCommittee = (committee, type) => (
     </button>
   </div>
 );
-  const renderSelectedCommittee = (committee, type) => (
-  <div className="committee-row selected" key={committee.id}>
-    <div>
-      <div className="committee-title">{committee.name}</div>
-      <div className="committee-chips">
-        {committee.members.map(m => (
-          <span key={m} className="chip">{m.name}</span>
-        ))}
-      </div>
+ const renderSelectedCommittee = (committee, type) => {
+  const errorKey = `${type}_${committee.id}`;
+  const errors = panelErrors?.[errorKey] || {};
 
-      <div className="date-row">
-        <div>
-          <label>START DATE</label>
-        <input
-            type="date"
-            value={committee.startDate}
-            onChange={(e) =>
-              updateCommitteeDate(type, committee.id, "startDate", e.target.value)
-            }
-          />
+  return (
+    <div className="committee-row selected" key={committee.id}>
+      <div>
+        <div className="committee-title">{committee.name}</div>
+
+        <div className="committee-chips">
+          {committee.members.map(m => (
+            <span key={m.name} className="chip">{m.name}</span>
+          ))}
         </div>
-        <div>
-          <label>END DATE</label>
-          <input
+
+        <div className="date-row">
+          <div>
+            <label>START DATE</label>
+            <input
+              type="date"
+              value={committee.startDate}
+              onChange={(e) =>
+                updateCommitteeDate(type, committee.id, "startDate", e.target.value)
+              }
+            />
+            {errors.startDate && (
+              <div className="field-error">{errors.startDate}</div>
+            )}
+          </div>
+
+          <div>
+            <label>END DATE</label>
+            <input
               type="date"
               value={committee.endDate}
               onChange={(e) =>
                 updateCommitteeDate(type, committee.id, "endDate", e.target.value)
               }
             />
+            {errors.endDate && (
+              <div className="field-error">{errors.endDate}</div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
 
-    <button
-      className="action-pill remove"
-      onClick={() => toggleCommittee(type, committee)}
-    >
-      ← Remove
-    </button>
-  </div>
-);
+      <button
+        className="action-pill remove"
+        onClick={() => toggleCommittee(type, committee)}
+      >
+        ← Remove
+      </button>
+    </div>
+  );
+};
+
 
 const filteredPanels = availablePanels.filter(
   p =>
@@ -206,13 +222,13 @@ const filteredPanels = availablePanels.filter(
         </Col>
 
         <Col className="d-flex gap-2">
-          <Button variant="primary"  className="assign-btn w-100"   onClick={handleAssignCommittees}>
+          <Button variant="primary"  className="assign-btn w-50"   onClick={handleAssignCommittees}>
             <FiPlus className="me-1" />
             Assign Committees
           </Button>
-          <Button variant="secondary" className="assign-btn w-100">
+          {/* <Button variant="secondary" className="assign-btn w-100">
             Import Committees
-          </Button>
+          </Button> */}
         </Col>
       </Row>
         
