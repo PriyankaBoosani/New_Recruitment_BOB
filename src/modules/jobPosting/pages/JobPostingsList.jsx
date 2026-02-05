@@ -272,7 +272,7 @@ const JobPostingsList = () => {
                             setPage(0);
                         }}
                     >
-                        <option value="ALL">{t("jobPostingsList:status_all")}</option>
+                        <option value="">{t("jobPostingsList:status_all")}</option>
                         <option value="NEW">{t("jobPostingsList:status_new")}</option>
                         <option value="APPROVED">{t("jobPostingsList:status_approved")}</option>
                     </Form.Select>
