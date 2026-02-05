@@ -222,11 +222,11 @@ const JobPostingsList = () => {
                     <Form.Select
                         className="status-select"
                         value={status}
-                        onChange={(e) => setStatus(e.target.value)}
+                        onChange={(e) => { setStatus(e.target.value); setPage(0); }}
                     >
                         <option value="ALL">All Status</option>
-                        <option value="New">New</option>
-                        <option value="Approved">Approved</option>
+                        <option value="NEW">New</option>
+                        <option value="APPROVED">Approved</option>
                     </Form.Select>
                 </Col>
             </Row>
