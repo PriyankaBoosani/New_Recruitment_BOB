@@ -48,15 +48,29 @@ const PositionForm = ({
     const selectedGrade = jobGrades.find(
         g => String(g.id) === String(formData.grade)
     );
-    const salaryPopover = (
-        <Popover id="salary-popover">
-            <Popover.Header as="h6"> {t("addPosition:salary_range")}</Popover.Header>
-            <Popover.Body>
-                <div><strong>{t("addPosition:min_salary")}:</strong> {selectedGrade?.minSalary ?? "-"}</div>
-                <div><strong>{t("addPosition:max_salary")}:</strong> {selectedGrade?.maxSalary ?? "-"}</div>
-            </Popover.Body>
-        </Popover>
-    );
+    const formatNumber = (value) => {
+  if (value === null || value === undefined || value === "") return "-";
+  return new Intl.NumberFormat("en-IN").format(Number(value));
+};
+
+   const salaryPopover = (
+  <Popover id="salary-popover">
+    <Popover.Header as="h6">
+      {t("addPosition:salary_range")}
+    </Popover.Header>
+    <Popover.Body>
+      <div>
+        <strong>{t("addPosition:min_salary")}:</strong>{" "}
+        {formatNumber(selectedGrade?.minSalary)}
+      </div>
+      <div>
+        <strong>{t("addPosition:max_salary")}:</strong>{" "}
+        {formatNumber(selectedGrade?.maxSalary)}
+      </div>
+    </Popover.Body>
+  </Popover>
+);
+
 
 
 
