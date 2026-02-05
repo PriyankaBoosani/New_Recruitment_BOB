@@ -1,146 +1,87 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
-import candidateWorkflowServices from "../services/CandidateWorkflowServices";
+
 import {
-  mapRequisitionToStripHeader,
-  mapPositionListItem
-} from "../mappers/candidatePreviewMapper";
+  mapUniqueRequisitionsToDropdown,
+  mapUniquePositionsToDropdown
+} from "../../Verification/mappers/CandidateVerificationMapper";
+
+/* ===== IMPORT SAME DUMMY DATA ===== */
+// import { DUMMY_DATA } from "../../Verification/components/mockData";
 
 const RequisitionPositionSelector = ({
+  apiList = [],
   onRequisitionChange,
-  onPositionChange
+  onPositionChange,
 }) => {
+
   const [requisitions, setRequisitions] = useState([]);
   const [positions, setPositions] = useState([]);
 
   const [selectedRequisition, setSelectedRequisition] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
 
-  const [loadingReq, setLoadingReq] = useState(false);
-  const [loadingPos, setLoadingPos] = useState(false);
 
-
-    //  FETCH REQUISITIONS (API SEARCH)
-
-  const fetchRequisitions = async (searchText = "") => {
-    try {
-      setLoadingReq(true);
-
-      const res =
-        await candidateWorkflowServices.getRequisitions(searchText);
-
-      const mapped = (res.data || []).map(mapRequisitionToStripHeader);
-
-      setRequisitions(
-        mapped.map((r) => ({
-          value: r.requisition_id,
-          label: String(r.requisition_title || ""),
-          raw: r
-        }))
-      );
-    } catch (err) {
-      console.error("Failed to load requisitions", err);
-    } finally {
-      setLoadingReq(false);
-    }
-  };
-
- 
   useEffect(() => {
-    fetchRequisitions();
-  }, []);
+  console.log("Selector apiList:", apiList.length);
+}, [apiList]);
 
- 
-    //  FETCH POSITIONS (API SEARCH)
 
-  const fetchPositions = async (searchText = "") => {
-    if (!selectedRequisition?.value) return;
+ useEffect(() => {
+  setRequisitions(
+    mapUniqueRequisitionsToDropdown(apiList)
+  );
+}, [apiList]);
 
-    try {
-      setLoadingPos(true);
 
-      const res =
-        await candidateWorkflowServices.getPositionsByRequisitionId(
-          selectedRequisition.value,
-          searchText
-        );
-
-      const mapped = (res.data || []).map(mapPositionListItem);
-
-      setPositions(
-        mapped.map((p) => ({
-          value: p.positionId,
-          label: String(p.positionName || ""),
-          raw: p
-        }))
-      );
-    } catch (err) {
-      console.error("Failed to load positions", err);
-    } finally {
-      setLoadingPos(false);
-    }
-  };
-
-  /* LOAD POSITIONS WHEN REQUISITION CHANGES */
   useEffect(() => {
     setSelectedPosition(null);
     setPositions([]);
-    if (selectedRequisition) {
-      fetchPositions();
-    }
-  }, [selectedRequisition]);
+
+    if (!selectedRequisition) return;
+
+   setPositions(
+  mapUniquePositionsToDropdown(
+    apiList,
+    selectedRequisition.value
+  )
+);
+
+}, [selectedRequisition, apiList]);
 
   return (
-    <>
-      {/*  REQUISITION DROPDOWN */}
-      <div className="col-md-3 col-12">
-        <label className="fs-14 blue-color">Requisition</label>
+    <div className="row g-3">
+
+      <div className="col-md-6">
+        <label>Requisition</label>
         <Select
           isClearable
-          isLoading={loadingReq}
           options={requisitions}
           value={selectedRequisition}
-          placeholder="Select Requisition"
-        onInputChange={(inputValue, { action }) => {
-  if (action !== "input-change") return;
-   fetchRequisitions(inputValue);
-
-}}
-          onChange={(option) => {
-            setSelectedRequisition(option);
-
-            onRequisitionChange?.(option?.raw || null);
+          onChange={(opt) => {
+            setSelectedRequisition(opt);
+            onRequisitionChange?.(opt?.raw || null);
+            setSelectedPosition(null);
             onPositionChange?.(null);
           }}
         />
       </div>
 
-      {/*  POSITION DROPDOWN */}
-      <div className="col-md-3 col-12">
-        <label className="fs-14 blue-color">Position</label>
-
+      <div className="col-md-6">
+        <label>Position</label>
         <Select
           isClearable
-          isLoading={loadingPos}
           options={positions}
           value={selectedPosition}
-          placeholder={
-            selectedRequisition
-              ? "Select Position"
-              : "Select Requisition first"
-          }
           isDisabled={!selectedRequisition}
-       onInputChange={(inputValue, { action }) => {
-  if (action !== "input-change" || !selectedRequisition) return;
-    fetchPositions(inputValue);
-}}
-          onChange={(option) => {
-            setSelectedPosition(option);
-            onPositionChange?.(option?.raw || null);
+          onChange={(opt) => {
+            setSelectedPosition(opt);
+            onPositionChange?.(opt?.raw || null);
           }}
         />
       </div>
-    </>
+
+    </div>
   );
 };
 

@@ -246,7 +246,10 @@ const masterApiService = {
   
     getUser: () => apis.get('/user/all'),
 
-
+  getAllMasters: () => apis.get("/display/all"),
+  getUser: () => apis.get('/user/all'),
+   getAllCertificates: () =>
+    apis.get("/certificates-master/all"),
 
 
 };

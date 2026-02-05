@@ -69,9 +69,11 @@ const Login = () => {
 
       const role = userApiRes?.role?.toLowerCase();
 
-    if (role === "admin") {
+   if (role === "admin") {
       navigate("/users", { replace: true });
-    } else {
+    } else if(role === "zonal_hr"){
+    navigate("/candidate-verification", { replace: true });
+    }else {
       navigate("/job-posting", { replace: true });
     }
 

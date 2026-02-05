@@ -10,26 +10,57 @@ import { mapCandidateToPreview } from "../candidatePreview/mappers/candidatePrev
 
 import { useLocation, useNavigate } from "react-router-dom";
 import HeaderWithBack from "../../../src/shared/components/HeaderWithBack";
+import { useSelector } from "react-redux";
+
 
 const CandidatePreviewPage = ({ onHide }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  /* =======================
-     DATA FROM NAVIGATION
-  ======================= */
+  //  DEFINE STATE FIRST
   const state = location.state || {};
+
+  const user = useSelector((state) => state.user.user);
+  const role = user?.role?.toLowerCase();
+  const isZonalHr = role === "zonal_hr";
+
+  
+  //  Now safe to use state
+  const interviewScheduleId = state?.interviewScheduleId;
 
   const candidate = state?.candidate;
   const requisition = state?.requisition;
+  const requisitionTitle = requisition?.requisition_title;
+  const positionName = state?.position?.positionName;
   const position = state?.position;
 
   const candidateId = candidate?.candidateId;
   const positionId = state?.positionId;
   const requisitionId = state?.requisitionId;
-  const applicationId = state?.candidate?.id;
+
+  const applicationId =
+    isZonalHr
+      ? state?.applicationId
+      : state?.applicationId ?? state?.candidate?.id;
+
+
+
+console.log("applicationId: ", applicationId)
+
+
   console.log("candidateId: ", candidateId)
   console.log("applicationId: ", applicationId)
+
+  
+
+
+
+
+
+
+
+
+  
 
   // const applicationId = candidate?.id;
 
@@ -67,9 +98,10 @@ const CandidatePreviewPage = ({ onHide }) => {
         // };
 
         setMasters(fullMasters);
-
+console.log("Full Masters Data:@@@@@", candidateId, positionId);
         /* ---------- Load Candidate ---------- */
         if (candidateId && positionId) {
+          console.log("Full Masters Data:@@@@@", candidateId, positionId);
           const candidateRes =
             await candidateWorkflowServices.getCandidateAllDetails(
               candidateId,
@@ -123,7 +155,8 @@ const CandidatePreviewPage = ({ onHide }) => {
         aria-label="Close"
       />
 
-      {/* Header */}
+       {/* Header */}
+      {!isZonalHr && (
       <HeaderWithBack
         title="Candidate Screening"
         subtitle="Manage and schedule interviews for candidates"
@@ -132,6 +165,14 @@ const CandidatePreviewPage = ({ onHide }) => {
         requisitionId={requisitionId}
         candidateScreening={true}
       />
+    )}
+       {isZonalHr && (
+      <HeaderWithBack
+        title="Candidate Profile"
+        subtitle="View candidate details application status"
+        onBack={() => navigate(-1)}
+      />
+    )}
 
       {/* Requisition Strip */}
       {requisition && position && (
@@ -157,6 +198,9 @@ const CandidatePreviewPage = ({ onHide }) => {
               positionId={positionId}
               applicationId={applicationId}
               requisitionId={requisitionId}
+              interviewScheduleId={interviewScheduleId}
+              requisitionTitle={requisitionTitle}
+              positionName={positionName}
             />
           )
         )}

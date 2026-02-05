@@ -857,3 +857,86 @@ select.form-control {
   pointer-events: none;      /* EXTRA SAFETY */
 }
 
+
+
+.criteria-remark {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px;
+  resize: none;
+}
+
+.remarks-row {
+  margin-top: 10px;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.remarks-box {
+  flex: 1;
+  min-height: 140px;
+  border: 1px solid #e6e9ef;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 14px;
+  background: #fafbfc;
+  outline: none;
+  resize: none;
+}
+
+.remarks-box::placeholder {
+  color: #9aa3b2;
+}
+
+.remarks-box:focus {
+  border-color: #ff7a2f;
+  background: #ffffff;
+}
+
+.btn-submit-orange {
+  background: #f47c2c;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+}
+
+/* Zonal HR compact layout */
+
+.zonal-card {
+  max-width: 820px;
+}
+
+/* submit before row inline */
+.submit-before-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* remarks + button side-by-side */
+.remarks-submit-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.remarks-box {
+  flex: 1;
+  resize: none;
+}
+
+/* keep button small */
+.btn-submit-orange {
+  height: 40px;
+  min-width: 110px;
+}
+
+.radio-label.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
