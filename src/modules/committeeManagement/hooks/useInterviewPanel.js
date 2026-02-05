@@ -26,7 +26,7 @@ export const useInterviewPanel = () => {
   /* ================= PAGINATION ================= */
 
   const [page, setPage] = useState(0);
-  const [size] = useState(10);
+ const [size, setSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
 
 
@@ -105,6 +105,11 @@ export const useInterviewPanel = () => {
 
     return () => clearTimeout(timer);
   }, [search.panelName, search.committeeName]);
+
+
+useEffect(() => {
+  setPage(0);
+}, [size]);
 
 
 
@@ -277,9 +282,9 @@ export const useInterviewPanel = () => {
     initData();
   }, [initData]);
 
-  useEffect(() => {
-    fetchPanels();
-  }, []);
+useEffect(() => {
+  fetchPanels();
+}, [page, size]);
 
   // useEffect(() => {
   //   fetchPanels();
@@ -312,7 +317,11 @@ export const useInterviewPanel = () => {
     page,
     setPage,
     totalPages,
+     size,
+    setSize,
+
     search,
+     
     setSearch,
 
     setShowFilters,

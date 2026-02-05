@@ -38,7 +38,9 @@ const InterviewPanelPage = () => {
     setShowFilters,
     sortConfig,
     handleSort,
-    sortedPanels
+    sortedPanels,
+    size,
+    setSize,
   } = useInterviewPanel();
 
   useEffect(() => {
@@ -104,6 +106,8 @@ const InterviewPanelPage = () => {
                     sortConfig={sortConfig}
                     handleSort={handleSort}
                     sortedPanels={sortedPanels}
+                    size={size}
+                    setSize={setSize}
                   />
                 </div>
               </div>

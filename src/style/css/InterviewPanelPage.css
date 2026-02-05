@@ -498,3 +498,15 @@
 .sortable:hover {
   color: #007bff;
 }
+
+.table-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.table-size-selector select {
+  padding: 4px 6px;
+  border-radius: 4px;
+}

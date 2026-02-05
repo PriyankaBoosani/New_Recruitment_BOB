@@ -9,6 +9,8 @@ const InterviewPanelTable = ({
   onDelete,
   page,
   setPage,
+   size,
+  setSize,
   totalPages,
   pageSize = 10,
   search,
@@ -109,7 +111,7 @@ const InterviewPanelTable = ({
             sortedPanels.map((panel, index) => (
               <tr key={panel.id}>
                 {/* ✅ Correct serial number */}
-                <td>{page * pageSize + index + 1}</td>
+                <td>{page * size + index + 1}</td>
 
                 <td>{panel.panelName}</td>
                 <td>{panel.panelType}</td>
@@ -137,6 +139,20 @@ const InterviewPanelTable = ({
           )}
         </tbody>
       </table>
+
+      <div className="table-size-selector">
+  <span>Show</span>
+  <select
+    value={size}
+    onChange={(e) => setSize(Number(e.target.value))}
+  >
+    <option value={5}>5</option>
+    <option value={10}>10</option>
+    <option value={20}>20</option>
+    <option value={50}>50</option>
+  </select>
+  <span>entries</span>
+</div>
 
       {/* ===== PAGINATION (MATCHES SCREENSHOT) ===== */}
       {totalPages > 1 && (
