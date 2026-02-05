@@ -33,8 +33,34 @@ const CertificationTable = ({
   const currentCerts = filteredCerts.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredCerts.length / itemsPerPage);
 
-  const paginate = (num) => setCurrentPage(num);
+  const getVisiblePages = (currentPage, totalPages) => {
+    const windowSize = 3;
 
+    let start = currentPage - 1;
+    let end = currentPage + 2;
+
+    // Clamp to bounds
+    if (start < 1) {
+      start = 1;
+      end = Math.min(totalPages + 1, start + windowSize);
+    }
+
+    if (end > totalPages + 1) {
+      end = totalPages + 1;
+      start = Math.max(1, end - windowSize);
+    }
+
+    const pages = [];
+    for (let i = start; i < end; i++) {
+      pages.push(i);
+    }
+
+    return {
+      pages,
+      showStartEllipsis: start > 1,
+      showEndEllipsis: end <= totalPages
+    };
+  };
   return (
     <>
       <div className="table-responsive">
@@ -145,20 +171,46 @@ const CertificationTable = ({
               </button>
             </li>
 
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
-              <li
-                key={number}
-                className={`page-item ${currentPage === number ? "active" : ""
-                  }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(number)}
-                >
-                  {number}
-                </button>
-              </li>
-            ))}
+            {(() => {
+              const {
+                pages,
+                showStartEllipsis,
+                showEndEllipsis
+              } = getVisiblePages(currentPage, totalPages);
+
+              return (
+                <>
+                  {/* Leading ellipsis */}
+                  {showStartEllipsis && (
+                    <li className="page-item disabled">
+                      <span className="page-link">…</span>
+                    </li>
+                  )}
+
+                  {/* Page numbers */}
+                  {pages.map(number => (
+                    <li
+                      key={number}
+                      className={`page-item ${currentPage === number ? "active" : ""}`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => setCurrentPage(number)}
+                      >
+                        {number}
+                      </button>
+                    </li>
+                  ))}
+
+                  {/* Trailing ellipsis */}
+                  {showEndEllipsis && (
+                    <li className="page-item disabled">
+                      <span className="page-link">…</span>
+                    </li>
+                  )}
+                </>
+              );
+            })()}
 
             <li
               className={`page-item ${currentPage === totalPages ? "disabled" : ""
