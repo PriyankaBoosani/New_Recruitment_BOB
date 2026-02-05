@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { toast } from "react-toastify";
 import masterApiService from "../../master/services/masterApiService";
 import committeeManagementService from "../services/committeeManagementService";
@@ -32,48 +32,79 @@ export const useInterviewPanel = () => {
 
   /* ================= search ================= */
   const [search, setSearch] = useState({
-  panelName: "",
-  committeeName: "",
-  panelMemberName: ""
-});
-const [showFilters, setShowFilters] = useState(true);
+    panelName: "",
+    committeeName: "",
+    panelMemberName: ""
+  });
+  const [showFilters, setShowFilters] = useState(true);
+
+
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "asc"
+  });
+
+  const handleSort = (key) => {
+    setSortConfig((prev) => {
+      if (prev.key === key) {
+        return {
+          key,
+          direction: prev.direction === "asc" ? "desc" : "asc"
+        };
+      }
+      return { key, direction: "asc" };
+    });
+  };
+
+  const sortedPanels = useMemo(() => {
+    if (!sortConfig.key) return panels;
+
+    return [...panels].sort((a, b) => {
+      const aVal = a[sortConfig.key]?.toString().toLowerCase();
+      const bVal = b[sortConfig.key]?.toString().toLowerCase();
+
+      if (aVal < bVal) return sortConfig.direction === "asc" ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [panels, sortConfig]);
 
   /* ================= FETCH PANELS ================= */
-// useEffect(() => {
-//   const timer = setTimeout(() => {
-//     setPage(0);      // reset to first page
-//     fetchPanels();
-//   }, 400);           // debounce
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setPage(0);      // reset to first page
+  //     fetchPanels();
+  //   }, 400);           // debounce
 
-//   return () => clearTimeout(timer);
-// }, [search.panelName]);
+  //   return () => clearTimeout(timer);
+  // }, [search.panelName]);
 
 
 
-useEffect(() => {
-  const panelNameValue = search.panelName?.trim();
-  const committeeNameValue = search.committeeName?.trim();
+  useEffect(() => {
+    const panelNameValue = search.panelName?.trim();
+    const committeeNameValue = search.committeeName?.trim();
 
-  console.log("panelNameValue",panelNameValue);
-  console.log("committeeNameValue",committeeNameValue);
+    console.log("panelNameValue", panelNameValue);
+    console.log("committeeNameValue", committeeNameValue);
 
-  // 🔴 If both empty → load all data
-  if (!panelNameValue && !committeeNameValue) {
-    setPage(0);
-    fetchPanels();
-    return;
-  }
+    // 🔴 If both empty → load all data
+    if (!panelNameValue && !committeeNameValue) {
+      setPage(0);
+      fetchPanels();
+      return;
+    }
 
-  // 🟡 If panelName has less than 2 chars and no committee selected → do nothing
-  if (panelNameValue && panelNameValue.length < 2 && !committeeNameValue) return;
+    // 🟡 If panelName has less than 2 chars and no committee selected → do nothing
+    if (panelNameValue && panelNameValue.length < 2 && !committeeNameValue) return;
 
-  const timer = setTimeout(() => {
-    setPage(0);
-    fetchPanels();
-  }, 400);
+    const timer = setTimeout(() => {
+      setPage(0);
+      fetchPanels();
+    }, 400);
 
-  return () => clearTimeout(timer);
-}, [search.panelName, search.committeeName]);
+    return () => clearTimeout(timer);
+  }, [search.panelName, search.committeeName]);
 
 
 
@@ -85,12 +116,12 @@ useEffect(() => {
       const res = await masterApiService.getInterviewPanelsSearch({
         page,
         size,
-         panelName: search.panelName,
-         committeeName: search.committeeName
+        panelName: search.panelName,
+        committeeName: search.committeeName
 
       });
 
-      console.log("fetchpanels",res);
+      console.log("fetchpanels", res);
 
       const data = res?.data;
 
@@ -103,7 +134,7 @@ useEffect(() => {
     } finally {
       setLoading(false);
     }
-  }, [page, size,search]);
+  }, [page, size, search]);
 
   /* ================= INIT DATA ================= */
 
@@ -140,7 +171,7 @@ useEffect(() => {
 
     if (!formData.name?.trim()) {
       newErrors.name = "Panel name is required";
-    } 
+    }
     // else if (formData.name.trim().length < 3) {
     //   newErrors.name = "Panel name must be at least 3 characters";
     // }
@@ -189,9 +220,9 @@ useEffect(() => {
       } else {
         // ✅ CREATE
         const res = await masterApiService.addInterviewPanel(payload);
-          if(res?.success){
-            toast.success("Panel created successfully");
-          }
+        if (res?.success) {
+          toast.success("Panel created successfully");
+        }
       }
 
       fetchPanels();
@@ -233,7 +264,7 @@ useEffect(() => {
     try {
       const res = await masterApiService.getInterviewPanelById(panelId);
       const mappedForm = mapPanelToFormData(res?.data);
-      console.log("mappedForm",mappedForm)
+      console.log("mappedForm", mappedForm)
       setFormData(mappedForm);
     } catch (err) {
       toast.error("Failed to load panel details");
@@ -247,8 +278,8 @@ useEffect(() => {
   }, [initData]);
 
   useEffect(() => {
-  fetchPanels();
-}, []);   
+    fetchPanels();
+  }, []);
 
   // useEffect(() => {
   //   fetchPanels();
@@ -283,9 +314,13 @@ useEffect(() => {
     totalPages,
     search,
     setSearch,
-    
+
     setShowFilters,
-    showFilters
+    showFilters,
+
+    sortConfig,
+    handleSort,
+    sortedPanels
 
   };
 };

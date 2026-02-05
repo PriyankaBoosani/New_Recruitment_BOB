@@ -490,3 +490,11 @@
 .interview-panel-container .info-icon:hover {
   color: #F26522;
 }
+.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortable:hover {
+  color: #007bff;
+}

@@ -4,7 +4,7 @@ import InterviewPanelTable from "./components/InterviewPanelTable";
 import AssignPositionsPage from "./AssignPositionsPage";
 import "../../style/css/InterviewPanelPage.css";
 import { useInterviewPanel } from "./hooks/useInterviewPanel";
-import { FiUsers, FiFileText} from "react-icons/fi";
+import { FiUsers, FiFileText } from "react-icons/fi";
 
 const InterviewPanelPage = () => {
   const [activeTab, setActiveTab] = useState("MANAGE");
@@ -25,17 +25,20 @@ const InterviewPanelPage = () => {
     fetchPanels, // ✅ RETURNED
     handleSave,
     handleDelete,
-     handleEdit,
-     clearError,
+    handleEdit,
+    clearError,
 
 
-  page,
-  setPage,
-  totalPages,
-  search,
-  setSearch,
-  showFilters,
-   setShowFilters,
+    page,
+    setPage,
+    totalPages,
+    search,
+    setSearch,
+    showFilters,
+    setShowFilters,
+    sortConfig,
+    handleSort,
+    sortedPanels
   } = useInterviewPanel();
 
   useEffect(() => {
@@ -72,23 +75,23 @@ const InterviewPanelPage = () => {
             <div className="panel-layout">
               <div className="panel-form-section">
                 <div className="panel-form-card">
-                 
+
                   <InterviewPanelFormModal
                     communityOptions={communityOptions}
                     membersOptions={membersOptions}
                     formData={formData}
                     setFormData={setFormData}
                     onSave={handleSave}
-                      errors={errors}
-                      setErrors={setErrors}
-                      clearError={clearError}
+                    errors={errors}
+                    setErrors={setErrors}
+                    clearError={clearError}
                   />
                 </div>
               </div>
               <div className="panel-table-section">
                 <div className="panel-table-card">
                   <InterviewPanelTable
-                     panels={panels}
+                    panels={panels}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                     page={page}
@@ -96,8 +99,11 @@ const InterviewPanelPage = () => {
                     totalPages={totalPages}
                     search={search}
                     setSearch={setSearch}
-                        showFilters={showFilters}
-                        setShowFilters={setShowFilters}
+                    showFilters={showFilters}
+                    setShowFilters={setShowFilters}
+                    sortConfig={sortConfig}
+                    handleSort={handleSort}
+                    sortedPanels={sortedPanels}
                   />
                 </div>
               </div>
