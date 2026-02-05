@@ -166,22 +166,34 @@ export const useAssignPositions = (userId) => {
   };
 
   const handleRequisitionChange = async (e) => {
-    const reqId = e.target.value;
+  const reqId = e.target.value;
 
-    setSelectedRequisition(reqId);
-    setSelectedPosition(""); // reset position
+  setSelectedRequisition(reqId);
+  setSelectedPosition(""); // reset position
 
-    if (!reqId) return;
+  // 🔥 RESET PANEL STATE
+  setSelectedCommittees({
+    SCREENING: [],
+    INTERVIEW: [],
+    COMPENSATION: []
+  });
 
-    try {
-      const res = await committeeManagementService.getPositionsByRequisition(reqId);
+  setAvailablePanels(allPanels); // reset from source of truth
+  setPanelErrors({});
+  setActiveTab("SCREENING");
 
-      setPositions(res?.data || []);
+  if (!reqId) {
+    setPositions([]);
+    return;
+  }
 
-    } catch (err) {
-      console.error("Failed to load positions", err);
-    }
-  };
+  try {
+    const res = await committeeManagementService.getPositionsByRequisition(reqId);
+    setPositions(res?.data || []);
+  } catch (err) {
+    console.error("Failed to load positions", err);
+  }
+};
 
   // Mock data for now - replace with actual API calls
   // useEffect(() => {
@@ -332,6 +344,22 @@ export const useAssignPositions = (userId) => {
         c.id === id ? { ...c, [field]: value } : c
       )
     }));
+
+     // 2️⃣ CLEAR validation error for this field
+  const errorKey = `${type}_${id}`;
+
+  setPanelErrors(prev => {
+    if (!prev?.[errorKey]?.[field]) return prev;
+
+    return {
+      ...prev,
+      [errorKey]: {
+        ...prev[errorKey],
+        [field]: ""
+      }
+    };
+  });
+
   };
   const handleAssignCommittees = async () => {
     if (!selectedPosition) {

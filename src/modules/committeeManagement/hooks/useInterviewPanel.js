@@ -202,50 +202,63 @@ useEffect(() => {
   /* ================= SAVE ================= */
 
   const handleSave = async () => {
-    if (!validatePanelForm()) {
-      toast.error("Please fix the validation errors");
-      return;
-    }
+  if (!validatePanelForm()) {
+    toast.error("Please fix the validation errors");
+    return;
+  }
 
-    const payload = preparePanelPayload(
-      formData,
-      communityOptions,
-      membersOptions
-    );
+  const payload = preparePanelPayload(
+    formData,
+    communityOptions,
+    membersOptions
+  );
 
-    try {
-      if (formData.id) {
-        // ✅ UPDATE
-        await masterApiService.updateInterviewPanel(
-          formData.id,
-          payload
-        );
+  try {
+    if (formData.id) {
+      // ✅ UPDATE
+      await masterApiService.updateInterviewPanel(
+        formData.id,
+        payload
+      );
 
-        toast.success("Panel updated successfully");
-      } else {
-        // ✅ CREATE
-        const res = await masterApiService.addInterviewPanel(payload);
-        if (res?.success) {
-          toast.success("Panel created successfully");
-        }
+      toast.success("Panel updated successfully");
+
+    } else {
+      // ✅ CREATE
+      const res = await masterApiService.addInterviewPanel(payload);
+
+      if (!res?.success) {
+        // 🔴 Field-level error
+        setErrors(prev => ({
+          ...prev,
+          name:  "Panel name already exists for selected committee"||res?.message
+        }));
+
+        toast.error(res?.message || "Failed to create panel");
+        return; // ⛔ VERY IMPORTANT
       }
 
-      fetchPanels();
-      setFormData({
-        name: "",
-        community: "",
-        members: []
-      });
-      setErrors({});
-
-    } catch (err) {
-      console.error("SAVE ERROR 👉", err);
-      toast.error(
-        err?.response?.data?.message ||
-        "Failed to save panel"
-      );
+      toast.success("Panel created successfully");
     }
-  };
+
+    // ✅ Only runs on SUCCESS
+    fetchPanels();
+    setFormData({
+      name: "",
+      community: "",
+      members: []
+    });
+    setErrors({});
+
+  } catch (err) {
+    console.error("SAVE ERROR 👉", err);
+    toast.error(
+      err?.response?.data?.message ||
+      "Failed to save panel"
+    );
+  }
+};
+
 
   /* ================= DELETE ================= */
 
