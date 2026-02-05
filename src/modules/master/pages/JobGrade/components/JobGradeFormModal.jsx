@@ -103,6 +103,7 @@ const JobGradeFormModal = ({
                     <Form.Control
                       name="scale"
                       value={formData.scale}
+                      maxLength={200}
                       className="form-control-custom"
                       placeholder={t("jobGrade:enter_scale")}
                       onChange={(e) =>
@@ -134,6 +135,7 @@ const JobGradeFormModal = ({
                   ) : (
                     <Form.Control
                       name="gradeCode"
+                      maxLength={200}
                       value={formData.gradeCode || ""}
                       className="form-control-custom"
                       placeholder={t("jobGrade:enter_grade_code")}
@@ -167,6 +169,7 @@ const JobGradeFormModal = ({
                   ) : (
                     <Form.Control
                       name="minSalary"
+                      maxLength={10}
                       value={formatSalary(formData.minSalary)}
                       className="form-control-custom"
                       placeholder={t("jobGrade:enter_min_salary")}
@@ -203,6 +206,7 @@ const JobGradeFormModal = ({
                   ) : (
                     <Form.Control
                       name="maxSalary"
+                      maxLength={10}
                       value={formatSalary(formData.maxSalary)}
                       className="form-control-custom"
                       placeholder={t("jobGrade:enter_max_salary")}
@@ -256,6 +260,7 @@ const JobGradeFormModal = ({
                     <Form.Control
                       as="textarea"
                       rows={3}
+                      maxLength={2000}
                       name="description"
                       value={formData.description}
                       onChange={handleInputChange}

@@ -121,6 +121,7 @@ const PositionFormModal = ({
                   ) : (
                     <Form.Control
                       name="title"
+                      maxLength={200}
                       value={formData.title}
                       placeholder={t("enter_position_title")}
                       className="form-control-custom"
@@ -256,6 +257,7 @@ const PositionFormModal = ({
                   ) : (
                     <Form.Control
                       as="textarea"
+                      maxLength={2000}
                       rows={2}
                       name="mandatoryExperience"
                       value={formData.mandatoryExperience}
@@ -296,6 +298,7 @@ const PositionFormModal = ({
                   ) : (
                     <Form.Control
                       as="textarea"
+                      maxLength={2000}
                       rows={2}
                       name="preferredExperience"
                       value={formData.preferredExperience}
@@ -337,6 +340,7 @@ const PositionFormModal = ({
                     <Form.Control
                       as="textarea"
                       rows={2}
+                      maxLength={2000}
                       name="rolesResponsibilities"
                       value={formData.rolesResponsibilities}
                       placeholder={t("enter_roles_responsibilities")}

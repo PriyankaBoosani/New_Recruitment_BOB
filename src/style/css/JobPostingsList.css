@@ -242,6 +242,9 @@
     flex-direction: column;
     gap: 4px;
   }
+  .req-meta{
+    margin-left: 25px;
+  }
 
   .actions {
     text-align: left !important;
@@ -497,4 +500,43 @@
   background-color: #42579F !important;
   opacity: 0.6 !important;
   cursor: not-allowed;
+}
+/* ================= Pagination Responsive ================= */
+@media (max-width: 768px) {
+  /* Stack page size + pagination */
+  .job-postings-page .pagination,
+  .job-postings-page .pagination.mb-0 {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Parent container becomes vertical */
+  .job-postings-page .mt-4.mb-4 .col {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 12px;
+  }
+
+  /* Page size row */
+  .job-postings-page .pagesize {
+    font-size: 0.875em;
+  }
+
+  /* Center page size dropdown */
+  .job-postings-page .mt-4.mb-4 .d-flex.align-items-center.gap-2 {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  /* Pagination nav full width */
+  .job-postings-page nav[aria-label="Page navigation"] {
+    width: 100%;
+  }
+
+  /* Pagination buttons bigger for touch */
+  .job-postings-page .page-link {
+    min-width: 42px;
+    min-height: 42px;
+    padding: 0.5rem;
+  }
 }

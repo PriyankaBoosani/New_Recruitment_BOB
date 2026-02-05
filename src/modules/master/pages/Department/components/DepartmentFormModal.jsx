@@ -72,6 +72,7 @@ const DepartmentFormModal = ({
                   ) : (
                     <Form.Control
                       name="name"
+                      maxLength={200}
                       value={formData.name}
                       className="form-control-custom"
                       placeholder={t("department:enterName")}
@@ -105,6 +106,7 @@ const DepartmentFormModal = ({
                     <Form.Control
                       as="textarea"
                       rows={3}
+                       maxLength={2000}
                       name="description"
                       className="form-control-custom"
                       value={formData.description}

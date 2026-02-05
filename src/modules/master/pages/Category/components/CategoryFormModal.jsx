@@ -149,6 +149,7 @@ const CategoryFormModal = ({
                 ) : (
                   <Form.Control
                     name="code"
+                    maxLength={200}
                     value={formData.code}
                     placeholder={t("enter_code")}
                     className="form-control-custom"
@@ -180,6 +181,7 @@ const CategoryFormModal = ({
                 ) : (
                   <Form.Control
                     name="name"
+                    maxLength={200}
                     value={formData.name}
                     placeholder={t("enter_name")}
                     className="form-control-custom"
@@ -216,6 +218,7 @@ const CategoryFormModal = ({
                   <Form.Control
                     as="textarea"
                     rows={3}
+                    maxLength={2000}
                     name="description"
                     value={formData.description}
                     placeholder={t("enter_description")}

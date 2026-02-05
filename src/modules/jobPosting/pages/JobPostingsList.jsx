@@ -191,6 +191,34 @@ const JobPostingsList = () => {
         const [year, month, day] = isoDate.split("-");
         return `${day}-${month}-${year}`;
     };
+    const getVisiblePages = (currentPage, totalPages) => {
+        const windowSize = 3;
+
+        let start = currentPage - 1;
+        let end = currentPage + 2;
+
+        // Clamp start & end
+        if (start < 0) {
+            start = 0;
+            end = windowSize;
+        }
+
+        if (end > totalPages) {
+            end = totalPages;
+            start = Math.max(0, end - windowSize);
+        }
+
+        const pages = [];
+        for (let i = start; i < end; i++) {
+            pages.push(i);
+        }
+
+        return {
+            pages,
+            showStartEllipsis: start > 0,
+            showEndEllipsis: end < totalPages,
+        };
+    };
 
 
 
@@ -596,20 +624,23 @@ const JobPostingsList = () => {
                 );
             })}
             {/* ================= PAGINATION ================= */}
-            {pageInfo && (
+            {/* ================= PAGINATION ================= */}
+            {pageInfo && pageInfo.totalPages > 1 && (
                 <Row className="mt-4 mb-4">
                     <Col className="d-flex justify-content-end align-items-center gap-3">
 
                         {/* Page size */}
                         <div className="d-flex align-items-center gap-2">
-                            <span className="fw-semibold pagesize">{t("jobPostingsList:page_size")}:</span>
+                            <span className="fw-semibold pagesize">
+                                {t("jobPostingsList:page_size")}:
+                            </span>
                             <Form.Select
                                 size="sm"
                                 style={{ width: "90px" }}
                                 value={pageSize}
                                 onChange={(e) => {
                                     setPageSize(Number(e.target.value));
-                                    setPage(0); // 🔑 mandatory
+                                    setPage(0);
                                 }}
                             >
                                 {[5, 10, 15, 20, 25, 30].map(n => (
@@ -619,49 +650,85 @@ const JobPostingsList = () => {
                         </div>
 
                         {/* Pagination */}
-                        {pageInfo.totalPages > 1 && (
-                            <nav aria-label="Page navigation">
-                                <ul className="pagination mb-0">
-                                    <li className={`page-item ${page === 0 || loading ? 'disabled' : ''}`}>
-                                        <button
-                                            className="page-link"
-                                            onClick={() => setPage(p => Math.max(p - 1, 0))}
-                                            disabled={page === 0 || loading}
-                                        >
-                                            &laquo;
-                                        </button>
-                                    </li>
+                        <nav aria-label="Page navigation">
+                            <ul className="pagination mb-0 justify-content-center">
 
-                                    {Array.from({ length: pageInfo.totalPages }).map((_, index) => (
-                                        <li
-                                            key={index}
-                                            className={`page-item ${page === index ? 'active' : ''}`}
-                                        >
-                                            <button
-                                                className="page-link"
-                                                onClick={() => setPage(index)}
-                                                disabled={loading}
-                                            >
-                                                {index + 1}
-                                            </button>
-                                        </li>
-                                    ))}
+                                {/* Prev */}
+                                <li className={`page-item ${page === 0 || loading ? "disabled" : ""}`}>
+                                    <button
+                                        className="page-link"
+                                        onClick={() => setPage(p => Math.max(p - 1, 0))}
+                                        disabled={page === 0 || loading}
+                                    >
+                                        &laquo;
+                                    </button>
+                                </li>
 
-                                    <li className={`page-item ${page >= pageInfo.totalPages - 1 || loading ? 'disabled' : ''}`}>
-                                        <button
-                                            className="page-link"
-                                            onClick={() => setPage(p => p + 1)}
-                                            disabled={page >= pageInfo.totalPages - 1 || loading}
-                                        >
-                                            &raquo;
-                                        </button>
-                                    </li>
-                                </ul>
-                            </nav>
-                        )}
+                                {/* Pages */}
+                                {(() => {
+                                    const {
+                                        pages,
+                                        showStartEllipsis,
+                                        showEndEllipsis,
+                                    } = getVisiblePages(page, pageInfo.totalPages);
+
+                                    return (
+                                        <>
+                                            {/* Leading ellipsis */}
+                                            {showStartEllipsis && (
+                                                <li className="page-item disabled">
+                                                    <span className="page-link">…</span>
+                                                </li>
+                                            )}
+
+                                            {/* Page numbers */}
+                                            {pages.map(p => (
+                                                <li
+                                                    key={p}
+                                                    className={`page-item ${page === p ? "active" : ""}`}
+                                                >
+                                                    <button
+                                                        className="page-link"
+                                                        onClick={() => setPage(p)}
+                                                        disabled={loading}
+                                                    >
+                                                        {p + 1}
+                                                    </button>
+                                                </li>
+                                            ))}
+
+                                            {/* Trailing ellipsis */}
+                                            {showEndEllipsis && (
+                                                <li className="page-item disabled">
+                                                    <span className="page-link">…</span>
+                                                </li>
+                                            )}
+                                        </>
+                                    );
+                                })()}
+
+
+                                {/* Next */}
+                                <li
+                                    className={`page-item ${page >= pageInfo.totalPages - 1 || loading ? "disabled" : ""
+                                        }`}
+                                >
+                                    <button
+                                        className="page-link"
+                                        onClick={() => setPage(p => p + 1)}
+                                        disabled={page >= pageInfo.totalPages - 1 || loading}
+                                    >
+                                        &raquo;
+                                    </button>
+                                </li>
+
+                            </ul>
+                        </nav>
+
                     </Col>
                 </Row>
             )}
+
 
             {/* Requisition Delete */}
             <DeleteConfirmationModal

@@ -54,6 +54,7 @@ const DocumentFormModal = ({
                 ) : (
                   <Form.Control
                     name="name"
+                    maxLength={200}
                     value={formData.name}
                     className="form-control-custom"
                     placeholder={t("enter_document_name")}
@@ -88,6 +89,7 @@ const DocumentFormModal = ({
                 ) : (
                   <Form.Control
                     as="textarea"
+                    maxLength={2000}
                     rows={3}
                     name="description"
                     value={formData.description}

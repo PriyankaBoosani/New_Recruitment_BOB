@@ -151,6 +151,7 @@ const CertificationFormModal = ({
                 ) : (
                   <Form.Control
                     name="name"
+                    maxLength={200}
                     value={formData.name}
                     placeholder={t("enter_name")}
                     className="form-control-custom"
@@ -188,6 +189,7 @@ const CertificationFormModal = ({
                   <Form.Control
                     as="textarea"
                     rows={3}
+                    maxLength={2000}
                     name="description"
                     value={formData.description}
                     placeholder={t("enter_description")}
