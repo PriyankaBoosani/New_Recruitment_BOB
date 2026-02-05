@@ -202,7 +202,7 @@ const AssignPositionsPage = () => {
             </select>
           </Col>
 
-          <Col>
+          <Col  md={4}>
             <label className="form-label">Position</label>
             <select
               className="form-select"
@@ -224,15 +224,15 @@ const AssignPositionsPage = () => {
 
           </Col>
 
-          <Col className="d-flex gap-2">
+          {/* <Col className="d-flex gap-2">
             <Button variant="primary" className="assign-btn w-50" onClick={handleAssignCommittees}>
               <FiPlus className="me-1" />
               Assign Committees
             </Button>
-            {/* <Button variant="secondary" className="assign-btn w-100">
+            <Button variant="secondary" className="assign-btn w-100">
             Import Committees
-          </Button> */}
-          </Col>
+          </Button>
+          </Col> */}
         </Row>
 
 
@@ -250,14 +250,16 @@ const AssignPositionsPage = () => {
                 </div>
               </div>
 
-              {/* <div className="d-flex gap-2">
-                    <Button variant="outline-secondary" size="sm">
+               <div className="d-flex gap-2">
+                    {/* <Button variant="outline-secondary" size="sm">
                       Cancel
+                    </Button> */}
+
+                    
+                    <Button variant="warning" className="save-configuration-btn" size="sm" onClick={handleAssignCommittees}>
+                         Assign Committees
                     </Button>
-                    <Button variant="warning" className="save-configuration-btn" size="sm">
-                      Save Configuration
-                    </Button>
-                  </div> */}
+                  </div> 
             </div>
             {/* Tabs */}
             <div className="com-tab mb-2">

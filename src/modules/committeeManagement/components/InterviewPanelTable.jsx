@@ -139,54 +139,54 @@ const InterviewPanelTable = ({
           )}
         </tbody>
       </table>
+<div className="table-footer">
+  {/* Pagination - CENTER */}
+  {totalPages > 1 && (
+    <div className="pagination">
+      <button
+        className="pagination-btn"
+        disabled={page === 0}
+        onClick={() => setPage(page - 1)}
+      >
+        ‹
+      </button>
 
-      <div className="table-size-selector">
-  <span>Show</span>
-  <select
-    value={size}
-    onChange={(e) => setSize(Number(e.target.value))}
-  >
-    <option value={5}>5</option>
-    <option value={10}>10</option>
-    <option value={20}>20</option>
-    <option value={50}>50</option>
-  </select>
-  <span>entries</span>
+      {[...Array(totalPages)].map((_, i) => (
+        <button
+          key={i}
+          className={`pagination-btn ${page === i ? "active" : ""}`}
+          onClick={() => setPage(i)}
+        >
+          {i + 1}
+        </button>
+      ))}
+
+      <button
+        className="pagination-btn"
+        disabled={page === totalPages - 1}
+        onClick={() => setPage(page + 1)}
+      >
+        ›
+      </button>
+    </div>
+  )}
+
+  {/* Page Size - RIGHT */}
+  <div className="table-size-selector">
+    <span>Show</span>
+    <select
+      value={size}
+      onChange={(e) => setSize(Number(e.target.value))}
+    >
+      <option value={5}>5</option>
+      <option value={10}>10</option>
+      <option value={20}>20</option>
+      <option value={50}>50</option>
+    </select>
+    <span>entries</span>
+  </div>
 </div>
 
-      {/* ===== PAGINATION (MATCHES SCREENSHOT) ===== */}
-      {totalPages > 1 && (
-        <div className="pagination">
-          {/* Previous */}
-          <button
-            className="pagination-btn"
-            disabled={page === 0}
-            onClick={() => setPage(page - 1)}
-          >
-            ‹
-          </button>
-
-          {/* Page Numbers */}
-          {[...Array(totalPages)].map((_, i) => (
-            <button
-              key={i}
-              className={`pagination-btn ${page === i ? "active" : ""}`}
-              onClick={() => setPage(i)}
-            >
-              {i + 1}
-            </button>
-          ))}
-
-          {/* Next */}
-          <button
-            className="pagination-btn"
-            disabled={page === totalPages - 1}
-            onClick={() => setPage(page + 1)}
-          >
-            ›
-          </button>
-        </div>
-      )}
     </>
   );
 };

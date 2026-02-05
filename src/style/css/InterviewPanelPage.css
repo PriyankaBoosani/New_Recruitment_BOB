@@ -507,6 +507,44 @@
 }
 
 .table-size-selector select {
+
+	padding: 6px 10px;
+	border: 1px solid #d1d5db;
+	border-radius: 6px;
+	font-size: 13px;
+	color: #374151;
+	background: #fff;
+	cursor: pointer;
+	transition: border-color 0.2s ease;
+
+}
+
+
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* pagination stays center */
+  position: relative;
+  margin-top: 16px;
+}
+
+/* Pagination stays centered */
+.pagination {
+  display: flex;
+  gap: 6px;
+}
+
+/* Page size sticks to right */
+.table-size-selector {
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.table-size-selector select {
   padding: 4px 6px;
   border-radius: 4px;
 }
