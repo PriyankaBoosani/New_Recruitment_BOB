@@ -23,8 +23,15 @@ export default function CandidateScreening({ selectedJob }) {
     SHORTLISTED: "Shortlisted",
     APPLIED: "Applied",
     REJECTED: "Rejected",
+    DISCREPANCY: "Discrepancy",
     INTERVIEW_SCHEDULED: "Interview Scheduled",
   };
+  const ALL_STATUSES = [
+    "APPLIED",
+    "SHORTLISTED",
+    "REJECTED",
+    "DISCREPANCY",
+  ];
 
   const [activeTab, setActiveTab] = useState("CANDIDATE_POOL");
   const [selectedCandidate, setSelectedCandidate] = useState(null);
@@ -62,9 +69,15 @@ export default function CandidateScreening({ selectedJob }) {
     { key: "OFFER_POOL", label: "Offer Pool", count: 0 },
     { key: "ONBOARDING_POOL", label: "Onboarding Pool", count: 0 },
   ];
+  const navInitRef = useRef({
+    requisitionId: null,
+    positionId: null,
+    initialized: false,
+  });
  
   // 🔍 Requisition search (debounced)
   const requisitionSearchTimeout = useRef(null);
+  const isNavModeRef = useRef(false);
  
   const fetchRequisitions = async (searchText = "") => {
     setLoadingRequisitions(true);
@@ -160,27 +173,19 @@ export default function CandidateScreening({ selectedJob }) {
   const fetchCandidates = async () => {
     setLoadingCandidates(true);
     try {
-      // const res = await jobPositionApiService.getCandidatesByPosition({
-      //   searchText: "",
-      //   page,
-      //   size: pageSize,
-      //   positionId: selectedPositionId,
-      //   status: "",
-      //   stateId: "",
-      //   categoryId: "",
-      // });
+      const normalizedStatus = filters.status.length === 0 ? ALL_STATUSES : filters.status.map((s) => s.toUpperCase());
+
       const res = await jobPositionApiService.getCandidatesByPosition({
         searchText: filters.searchText,
         page,
         size: pageSize,
         positionId: selectedPositionId,
-        status: filters.status,
+        status: normalizedStatus,
         stateId: filters.stateId,
         categoryId: filters.categoryId,
       });
  
       const apiData = res?.data;
-
       const formatStatus = (status = "") => status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
  
       // 🔑 Normalize API → UI model
@@ -236,9 +241,11 @@ export default function CandidateScreening({ selectedJob }) {
  
   const handleRequisitionChange = (e) => {
     const reqId = e.target.value;
+
+    // USER TAKES CONTROL — NAV IS DEAD
+    isNavModeRef.current = false;
+
     setSelectedRequisitionId(reqId);
- 
-    // 🔥 HARD RESET of dependent state
     setSelectedPositionId("");
     setPositions([]);
     setCandidates([]);
@@ -316,15 +323,17 @@ const normalizedRequisition = selectedRequisition
   : null;
  
  
-  const availableStatuses = React.useMemo(() => {
-    const set = new Set();
-    candidates.forEach((c) => {
-      if (c.status) {
-        set.add(c.status.toUpperCase()); // FORCE enum
-      }
-    });
-    return Array.from(set);
-  }, [candidates]);
+  // const availableStatuses = React.useMemo(() => {
+  //   const set = new Set();
+  //   candidates.forEach((c) => {
+  //     if (c.status) {
+  //       set.add(c.status.toUpperCase()); // FORCE enum
+  //     }
+  //   });
+  //   return Array.from(set);
+  // }, [candidates]);
+
+  const availableStatuses = ALL_STATUSES;
  
   const availableLocations = React.useMemo(() => {
     const map = new Map();
@@ -374,26 +383,50 @@ const normalizedRequisition = selectedRequisition
   const location = useLocation();
   const navRequisitionId = location.state?.requisitionId || null;
   const navPositionId = location.state?.positionId || null;
+
   console.log("navRequisitionId: ", navRequisitionId)
   console.log("navPositionId: ", navPositionId)
 
   useEffect(() => {
-    if (navRequisitionId && requisitions.length > 0) {
-      setSelectedRequisitionId(navRequisitionId);
-    }
-  }, [requisitions, navRequisitionId]);
+    if (
+      !navInitRef.current.initialized &&
+      location.state?.requisitionId
+    ) {
+      navInitRef.current = {
+        requisitionId: location.state.requisitionId,
+        positionId: location.state.positionId || null,
+        initialized: true,
+      };
 
-  useEffect(() => {
-    if (navPositionId && positions.length > 0) {
-      setSelectedPositionId(navPositionId);
-    }
-  }, [positions, navPositionId]);
+      isNavModeRef.current = true;
 
-  useEffect(() => {
-    if (navRequisitionId || navPositionId) {
+      // optional but clean
       window.history.replaceState({}, document.title);
     }
   }, []);
+
+  useEffect(() => {
+    if (
+      isNavModeRef.current &&
+      navInitRef.current.requisitionId &&
+      requisitions.length > 0
+    ) {
+      setSelectedRequisitionId(navInitRef.current.requisitionId);
+    }
+  }, [requisitions]);
+
+  useEffect(() => {
+    if (
+      isNavModeRef.current &&
+      navInitRef.current.positionId &&
+      positions.length > 0
+    ) {
+      setSelectedPositionId(navInitRef.current.positionId);
+
+      // 🔥 NAV MODE PERMANENTLY OFF
+      isNavModeRef.current = false;
+    }
+  }, [positions]);
  
   return (
     <div className="container-fluid px-5 py-4">

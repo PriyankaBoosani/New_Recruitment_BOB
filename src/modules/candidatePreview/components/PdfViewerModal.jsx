@@ -3,6 +3,25 @@ import { Modal, Spinner } from "react-bootstrap";
 // import "../../style/css/PdfViewerModal.css";
 
 const PdfViewerModal = ({ show, onHide, fileUrl, loading, title }) => {
+  const getFileExtension = (url = "") => {
+    const cleanUrl = url.split("?")[0]; // remove query params
+    return cleanUrl.split(".").pop()?.toLowerCase();
+  };
+
+  const extension = React.useMemo(() => {
+    if (!fileUrl) return null;
+    return getFileExtension(fileUrl);
+  }, [fileUrl]);
+
+  const isPdf = extension === "pdf";
+  const isDoc = extension === "doc" || extension === "docx";
+
+  React.useEffect(() => {
+    if (show && isDoc && fileUrl) {
+      window.open(fileUrl, "_blank"); // triggers download
+    }
+  }, [show, isDoc, fileUrl]);
+
   return (
     <Modal
       show={show}
@@ -21,7 +40,7 @@ const PdfViewerModal = ({ show, onHide, fileUrl, loading, title }) => {
           <div className="d-flex justify-content-center align-items-center h-100">
             <Spinner animation="border" />
           </div>
-        ) : fileUrl ? (
+        ) : isPdf ? (
           <iframe
             src={`${fileUrl}#toolbar=0&navpanes=0`}
             title="PDF Viewer"
@@ -29,9 +48,18 @@ const PdfViewerModal = ({ show, onHide, fileUrl, loading, title }) => {
             height="100%"
             style={{ border: "none" }}
           />
+        ) : isDoc ? (
+          <div className="d-flex flex-column justify-content-center align-items-center h-100 text-center px-4">
+            <h6 className="mb-2">Preview not available</h6>
+            <p className="text-muted fs-14 mb-0">
+              DOC and DOCX files cannot be previewed.
+              <br />
+              The file has been downloaded for you.
+            </p>
+          </div>
         ) : (
           <div className="text-center mt-5">
-            Unable to load document
+            Unsupported file format
           </div>
         )}
       </Modal.Body>

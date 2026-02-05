@@ -226,27 +226,52 @@ const ApplicationForm = ({
   // };
 
   const handleRadioChange = (field, value) => {
-    setScreeningForm(prev => {
-      const updated = { ...prev, [field]: value };
+    setScreeningForm(prev => ({
+      ...prev,
+      [field]: value,
+    }));
 
+    setErrors(prev => {
+      const updated = { ...prev };
+
+      // clear radio error
+      delete updated[field];
+
+      // clear ONLY the related remark error when YES
       if (value === "YES") {
-        if (field === "isWorkCriteriaMet") updated.workCriteriaRemark = "";
-        if (field === "isAgeCriteriaMet") updated.ageCriteriaRemark = "";
-        if (field === "isEducationCriteriaMet") updated.educationCriteriaRemark = "";
+        if (field === "isWorkCriteriaMet") delete updated.workCriteriaRemark;
+        if (field === "isAgeCriteriaMet") delete updated.ageCriteriaRemark;
+        if (field === "isEducationCriteriaMet") delete updated.educationCriteriaRemark;
       }
 
       return updated;
     });
-
-    setErrors(prev => ({
-      ...prev,
-      [field]: undefined,
-    }));
   };
 
+  // const handleInputChange = (field, value) => {
+  //   setScreeningForm(prev => ({ ...prev, [field]: value }));
+  //   setErrors(prev => ({ ...prev, [field]: undefined }));
+  // };
+
   const handleInputChange = (field, value) => {
-    setScreeningForm(prev => ({ ...prev, [field]: value }));
-    setErrors(prev => ({ ...prev, [field]: undefined }));
+    setScreeningForm(prev => ({
+      ...prev,
+      [field]: value,
+    }));
+
+    setErrors(prev => {
+      const updated = { ...prev };
+
+      // clear error for the field itself
+      delete updated[field];
+
+      // special rule: shortlisted YES → remark no longer required
+      if (field === "isShortlisted" && value === "YES") {
+        delete updated.finalScreeningRemark;
+      }
+
+      return updated;
+    });
   };
   
   const handleVerify = async (comment) => {
@@ -1154,6 +1179,11 @@ const ApplicationForm = ({
               }
               maxLength={2000}
             />
+            {errors.finalScreeningRemark && (
+              <small className="text-danger fs-12">
+                {errors.finalScreeningRemark}
+              </small>
+            )}
           </div>
         </div>
 
