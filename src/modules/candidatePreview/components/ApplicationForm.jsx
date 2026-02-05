@@ -1033,8 +1033,8 @@ const ApplicationForm = ({
               </small>
             )}
 
-            <input
-              type="text"
+            <textarea
+              // type="text"
               className="criteria-remark mt-2"
               placeholder="Work criteria remark"
               value={screeningForm.workCriteriaRemark}
@@ -1042,6 +1042,7 @@ const ApplicationForm = ({
                 handleInputChange("workCriteriaRemark", e.target.value)
               }
               maxLength={2000}
+              rows={4}
               // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
             />
             {errors.workCriteriaRemark && (
@@ -1077,8 +1078,8 @@ const ApplicationForm = ({
               </small>
             )}
 
-            <input
-              type="text"
+            <textarea
+              // type="text"
               className="criteria-remark mt-2"
               placeholder="Age criteria remark"
               value={screeningForm.ageCriteriaRemark}
@@ -1086,6 +1087,7 @@ const ApplicationForm = ({
                 handleInputChange("ageCriteriaRemark", e.target.value)
               }
               maxLength={2000}
+              rows={4}
               // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
             />
             {errors.ageCriteriaRemark && (
@@ -1121,8 +1123,8 @@ const ApplicationForm = ({
               </small>
             )}
 
-            <input
-              type="text"
+            <textarea
+              // type="text"
               className="criteria-remark mt-2"
               placeholder="Education criteria remark"
               value={screeningForm.educationCriteriaRemark}
@@ -1130,6 +1132,7 @@ const ApplicationForm = ({
                 handleInputChange("educationCriteriaRemark", e.target.value)
               }
               maxLength={2000}
+              rows={4}
               // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
             />
             {errors.educationCriteriaRemark && (
@@ -1169,8 +1172,8 @@ const ApplicationForm = ({
               </small>
             )}
 
-            <input
-              type="text"
+            <textarea
+              // type="text"
               className="criteria-remark mt-2"
               placeholder="Final remark"
               value={screeningForm.finalScreeningRemark}
@@ -1178,6 +1181,7 @@ const ApplicationForm = ({
                 handleInputChange("finalScreeningRemark", e.target.value)
               }
               maxLength={2000}
+              rows={4}
             />
             {errors.finalScreeningRemark && (
               <small className="text-danger fs-12">
