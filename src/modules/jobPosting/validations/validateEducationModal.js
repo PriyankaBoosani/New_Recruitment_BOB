@@ -5,11 +5,11 @@ export const validateEducationModal = ({ rows }) => {
     const rowErrors = {};
 
     if (!row.educationTypeId) {
-      rowErrors.educationTypeId = "This field is required";
+       rowErrors.educationTypeId = "validation:required";
     }
 
     if (!row.educationQualificationsId) {
-      rowErrors.educationQualificationsId = "This field is required";
+      rowErrors.educationQualificationsId = "validation:required";
     }
 
     if (Object.keys(rowErrors).length) {

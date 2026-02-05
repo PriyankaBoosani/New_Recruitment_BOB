@@ -12,5 +12,20 @@
   "generic_or_annexures": "सामान्य या परिशिष्ट",
   "job_postings": "नौकरी पोस्टिंग",
   "logout": "लॉगआउट",
-  "job_postings": "नौकरी पोस्टिंग"
+  "cancel": "रद्द करें",
+  "save": "सहेजें",
+  "update": "अपडेट करें",
+  "select": "चुनें",
+  "select_dots": "चुनें...",
+  "select_years": "वर्ष चुनें",
+  "select_months": "महीने चुनें",
+  "yes": "हाँ",
+  "no": "नहीं",
+  "replace": "बदलें",
+  "total": "कुल",
+  "actions": "कार्यवाही",
+  "select_type": "प्रकार चुनें",
+  "select_degree": "डिग्री चुनें",
+  "select_specialization": "विशेषज्ञता चुनें",
+  "select_certification": "प्रमाणन चुनें"
 }

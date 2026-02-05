@@ -9,7 +9,7 @@ export const validateRequisitionSubmission = ({
   );
 
   if (selected.length === 0) {
-    errors.push("No requisitions selected for the current year.");
+    errors.push("validation:no_requisitions_selected");
     return errors;
   }
 
@@ -22,9 +22,10 @@ export const validateRequisitionSubmission = ({
       .map(r => r.code || r.requisitionId)
       .join(", ");
 
-    errors.push(
-      `Submission blocked. No positions found for requisition(s): ${labels}`
-    );
+    errors.push({
+      key: "validation:no_positions_for_requisition",
+      params: { labels }
+    });
   }
 
   return errors;

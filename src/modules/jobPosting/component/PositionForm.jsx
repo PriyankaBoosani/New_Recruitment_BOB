@@ -9,6 +9,8 @@ import { normalizeTitle, validateTitleOnType, validateApprovedOn } from "../vali
 import useViewIndent from "../hooks/useViewIndent";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import I_icon from '../../../assets/I_icon.png';
+import { useTranslation } from "react-i18next";
+
 
 
 const PositionForm = ({
@@ -35,16 +37,23 @@ const PositionForm = ({
     ALLOWED_EXTENSIONS,
     MAX_FILE_SIZE_MB
 }) => {
+    const { t } = useTranslation(["addPosition", "common", "validation"]);
+    const renderError = (e) => {
+        if (!e) return "";
+        if (typeof e === "string") return t(e);
+        if (typeof e === "object" && e.key) return t(e.key, e.params);
+        return "";
+    };
 
     const selectedGrade = jobGrades.find(
         g => String(g.id) === String(formData.grade)
     );
     const salaryPopover = (
         <Popover id="salary-popover">
-            <Popover.Header as="h6">Salary Range</Popover.Header>
+            <Popover.Header as="h6"> {t("addPosition:salary_range")}</Popover.Header>
             <Popover.Body>
-                <div><strong>Min Salary:</strong> {selectedGrade?.minSalary ?? "-"}</div>
-                <div><strong>Max Salary:</strong> {selectedGrade?.maxSalary ?? "-"}</div>
+                <div><strong>{t("addPosition:min_salary")}:</strong> {selectedGrade?.minSalary ?? "-"}</div>
+                <div><strong>{t("addPosition:max_salary")}:</strong> {selectedGrade?.maxSalary ?? "-"}</div>
             </Popover.Body>
         </Popover>
     );
@@ -86,7 +95,7 @@ const PositionForm = ({
                 <Row className="g-4 mb-4 upload-indent-section">
                     <Col md={8} className="mt-3">
                         <Form.Group>
-                            <Form.Label>Upload Indent <span className="text-danger">*</span></Form.Label>
+                            <Form.Label>{t("addPosition:upload_indent")} <span className="text-danger">*</span></Form.Label>
                             <div
                                 className={`upload-indent-box ${isViewMode ? "disabled" : ""}`}
                                 onClick={() => {
@@ -114,7 +123,7 @@ const PositionForm = ({
                                             <button
                                                 type="button"
                                                 className="icon-btn"
-                                                title="Replace"
+                                                title={t("common:replace")}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleReplaceIndent();
@@ -135,8 +144,8 @@ const PositionForm = ({
                                 ) : (
                                     <div className="text-center text-muted">
                                         <img src={upload_icon} alt="upload_icon" className="icon-40" />
-                                        <div>Click to browse files</div>
-                                        <span className="support">Supported formats: PDF, DOC, DOCX (Max 2 MB)</span>
+                                        <div>{t("addPosition:click_to_browse")}</div>
+                                        <span className="support">{t("addPosition:supported_formats")}</span>
                                     </div>
                                 )}
                                 {!indentFile && existingIndentPath && (
@@ -159,7 +168,7 @@ const PositionForm = ({
                                             <button
                                                 type="button"
                                                 className="icon-btn"
-                                                title="Replace"
+                                                title={t("common:replace")}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleReplaceIndent();
@@ -185,32 +194,36 @@ const PositionForm = ({
                                     if (!file) return;
                                     const extension = "." + file.name.split(".").pop().toLowerCase();
                                     if (!ALLOWED_EXTENSIONS.includes(extension)) {
-                                        setErrors(prev => ({ ...prev, indentFile: "Only PDF, DOC, and DOCX files are allowed" }));
+                                        setErrors(prev => ({ ...prev, indentFile: "validation:file_invalid_type" }));
                                         return;
                                     }
                                     if (file.size / (1024 * 1024) > MAX_FILE_SIZE_MB) {
-                                        setErrors(prev => ({ ...prev, indentFile: "File size must not exceed 2 MB" }));
+                                        setErrors(prev => ({
+                                            ...prev,
+                                            indentFile: { key: "validation:file_too_large", params: { size: 2 } }
+                                        }));
                                         return;
                                     }
                                     setIndentFile(file);
                                     setErrors(prev => { const { indentFile, ...rest } = prev; return rest; });
                                 }}
                             />
-                            <ErrorMessage>{errors.indentFile}</ErrorMessage>
+                            <ErrorMessage>{renderError(errors.indentFile)}</ErrorMessage>
                         </Form.Group>
                     </Col>
 
                     <Col md={4}>
                         <Form.Group className="mb-3">
-                            <Form.Label>Approved By <span className="text-danger">*</span></Form.Label>
+                            <Form.Label>{t("addPosition:approved_by")} <span className="text-danger">*</span></Form.Label>
                             <Form.Select value={approvedBy} onChange={(e) => { setApprovedBy(e.target.value); setErrors(prev => ({ ...prev, approvedBy: "" })); }} disabled={isViewMode}>
-                                <option value="">Select</option>
+                                <option value="">{t("common:select")}</option>
                                 {users.map(user => <option key={user.id} value={user.id}>{user.name}{user.role ? ` (${user.role})` : ""}</option>)}
                             </Form.Select>
-                            <ErrorMessage>{errors.approvedBy}</ErrorMessage>
+                            <ErrorMessage>{renderError(errors.approvedBy)}</ErrorMessage>
+
                         </Form.Group>
                         <Form.Group>
-                            <Form.Label>Approved On <span className="text-danger">*</span></Form.Label>
+                            <Form.Label>{t("addPosition:approved_on")} <span className="text-danger">*</span></Form.Label>
                             <Form.Control
                                 type="date"
                                 value={approvedOn}
@@ -227,37 +240,37 @@ const PositionForm = ({
                                 disabled={isViewMode}
                             />
 
-                            <ErrorMessage>{errors.approvedOn}</ErrorMessage>
+                            <ErrorMessage>{renderError(errors.approvedOn)}</ErrorMessage>
                         </Form.Group>
                     </Col>
                 </Row>
 
                 <Row className="g-4">
                     <Col md={4}>
-                        <Form.Label>Position <span className="text-danger">*</span></Form.Label>
+                        <Form.Label>{t("addPosition:position")} <span className="text-danger">*</span></Form.Label>
                         <Form.Select name="position" value={formData.position} onChange={(e) => onPositionSelect(e.target.value)} disabled={isViewMode}>
-                            <option value="">Select</option>
+                            <option value="">{t("common:select")}</option>
                             {positions.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                         </Form.Select>
-                        <ErrorMessage>{errors.position}</ErrorMessage>
+                        <ErrorMessage>{renderError(errors.position)}</ErrorMessage>
                     </Col>
 
                     <Col md={4}>
-                        <Form.Label>Department <span className="text-danger">*</span></Form.Label>
+                        <Form.Label>{t("addPosition:department")} <span className="text-danger">*</span></Form.Label>
                         <Form.Select name="department" value={formData.department} onChange={handleInputChange} disabled={isViewMode}>
-                            <option value="">Select</option>
+                            <option value="">{t("common:select")}</option>
                             {departments.map(d => <option key={d.id} value={d.id}>{d.label}</option>)}
                         </Form.Select>
-                        <ErrorMessage>{errors.department}</ErrorMessage>
+                        <ErrorMessage>{renderError(errors.department)}</ErrorMessage>
                     </Col>
 
                     <Col md={4}>
-                        <Form.Label>Total Vacancies <span className="text-danger">*</span></Form.Label>
-                        <Form.Control name="vacancies" maxLength={10} placeholder="Enter Vacancies" type="text" inputMode="numeric" pattern="[0-9]*" value={formData.vacancies} onChange={handleInputChange} disabled={isViewMode} />
-                        <ErrorMessage>{errors.vacancies}</ErrorMessage>
+                        <Form.Label>{t("addPosition:total_vacancies")} <span className="text-danger">*</span></Form.Label>
+                        <Form.Control name="vacancies" maxLength={10} placeholder={t("addPosition:enter_vacancies")} type="text" inputMode="numeric" pattern="[0-9]*" value={formData.vacancies} onChange={handleInputChange} disabled={isViewMode} />
+                        <ErrorMessage>{renderError(errors.vacancies)}</ErrorMessage>
                     </Col>
 
-                    <Col md={4}><Form.Label>Min Age <span className="text-danger">*</span></Form.Label><Form.Control name="minAge" type="text" placeholder="Min Age" inputMode="numeric" value={formData.minAge} disabled={isViewMode} onChange={(e) => {
+                    <Col md={4}><Form.Label>{t("addPosition:min_age")} <span className="text-danger">*</span></Form.Label><Form.Control name="minAge" type="text" placeholder={t("addPosition:min_age")} inputMode="numeric" value={formData.minAge} disabled={isViewMode} onChange={(e) => {
                         let value = e.target.value;
 
                         // allow only digits
@@ -270,8 +283,8 @@ const PositionForm = ({
                             target: { name: "minAge", value }
                         });
                     }} />
-                        <ErrorMessage>{errors.minAge}</ErrorMessage></Col>
-                    <Col md={4}><Form.Label>Max Age <span className="text-danger">*</span></Form.Label><Form.Control name="maxAge" type="text" placeholder="Max Age" inputMode="numeric" disabled={isViewMode} value={formData.maxAge} onChange={(e) => {
+                        <ErrorMessage>{renderError(errors.minAge)}</ErrorMessage></Col>
+                    <Col md={4}><Form.Label>{t("addPosition:max_age")}<span className="text-danger">*</span></Form.Label><Form.Control name="maxAge" type="text" placeholder={t("addPosition:max_age")} inputMode="numeric" disabled={isViewMode} value={formData.maxAge} onChange={(e) => {
                         let value = e.target.value;
 
                         value = value.replace(/\D/g, "");
@@ -281,21 +294,21 @@ const PositionForm = ({
                             target: { name: "maxAge", value }
                         });
                     }} />
-                        <ErrorMessage>{errors.maxAge}</ErrorMessage></Col>
+                        <ErrorMessage>{renderError(errors.maxAge)}</ErrorMessage></Col>
 
                     <Col md={4}>
-                        <Form.Label>Type of Employment <span className="text-danger">*</span></Form.Label>
+                        <Form.Label>{t("addPosition:employment_type")} <span className="text-danger">*</span></Form.Label>
                         <Form.Select name="employmentType" value={formData.employmentType} onChange={handleInputChange} disabled={isViewMode}>
-                            <option value="">Select</option>
+                            <option value="">{t("common:select")}</option>
                             {employmentTypes.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
                         </Form.Select>
-                        <ErrorMessage>{errors.employmentType}</ErrorMessage>
+                        <ErrorMessage>{renderError(errors.employmentType)}</ErrorMessage>
                     </Col>
 
-                    <Col md={4}><Form.Label>Contractual Period(Years)</Form.Label><Form.Control name="contractualPeriod" type="text" inputMode="numeric" value={isContractEmployment ? formData.contractualPeriod : ""} onChange={handleInputChange} disabled={!isContractEmployment || isViewMode} /></Col>
+                    <Col md={4}><Form.Label>{t("addPosition:contractual_period")}</Form.Label><Form.Control name="contractualPeriod" type="text" inputMode="numeric" value={isContractEmployment ? formData.contractualPeriod : ""} onChange={handleInputChange} disabled={!isContractEmployment || isViewMode} /></Col>
                     <Col md={4}>
                         <Form.Label className="d-flex align-items-center gap-2">
-                            Grade / Scale <span className="text-danger">*</span>
+                            {t("addPosition:grade_scale")} <span className="text-danger">*</span>
 
                             {selectedGrade && (
                                 <OverlayTrigger
@@ -306,7 +319,7 @@ const PositionForm = ({
                                 >
                                     <span
                                         style={{ cursor: "pointer", color: "#0d6efd" }}
-                                        title="View salary range"
+                                        title={t("addPosition:view_salary_range")}
                                     >
                                         <img src={I_icon} alt="info_icon" className="icon-18" />
                                     </span>
@@ -314,52 +327,52 @@ const PositionForm = ({
                             )}
                         </Form.Label>
 
-                         <Form.Select name="grade" value={formData.grade} onChange={handleInputChange} disabled={isViewMode}>
-                            <option value="">Select</option>
+                        <Form.Select name="grade" value={formData.grade} onChange={handleInputChange} disabled={isViewMode}>
+                            <option value="">{t("common:select")}</option>
                             {jobGrades.map(g => <option key={g.id} value={g.id}>{g.code} {g.scale ? `- ${g.scale}` : ""}</option>)}
                         </Form.Select>
 
-                        <ErrorMessage>{errors.grade}</ErrorMessage>
+                        <ErrorMessage>{renderError(errors.grade)}</ErrorMessage>
                     </Col>
 
 
                     <Col md={4}>
-                        <Form.Label>Enable Location Preference</Form.Label>
+                        <Form.Label>{t("addPosition:enable_location_pref")}</Form.Label>
                         <Form.Check type="switch" id="enable-location" checked={formData.enableLocation} onChange={handleInputChange} name="enableLocation" disabled={isViewMode} />
                     </Col>
 
                     <Col md={6}>
                         <div className="d-flex justify-content-between align-items-center mb-1 mandedu">
-                            <Form.Label className="mb-0">Mandatory Education <span className="text-danger">*</span></Form.Label>
-                            <Button size="sm" disabled={isViewMode} onClick={() => onEducationClick("mandatory")} style={{ borderRadius: "10px" }}>+ Add</Button>
+                            <Form.Label className="mb-0">{t("addPosition:mandatory_education")} <span className="text-danger">*</span></Form.Label>
+                            <Button size="sm" disabled={isViewMode} onClick={() => onEducationClick("mandatory")} style={{ borderRadius: "10px" }}>{t("addPosition:add")}</Button>
                         </div>
-                        <Form.Control as="textarea" placeholder="Enter Mandatory Education" rows={4} readOnly value={educationData.mandatory.text || ""} disabled={isViewMode} />
-                        <ErrorMessage>{errors.mandatoryEducation}</ErrorMessage>
+                        <Form.Control as="textarea" placeholder={t("addPosition:enter_mandatory_education")} rows={4} readOnly value={educationData.mandatory.text || ""} disabled={isViewMode} />
+                        <ErrorMessage>{renderError(errors.mandatoryEducation)}</ErrorMessage>
                     </Col>
 
                     <Col md={6}>
                         <div className="d-flex justify-content-between align-items-center mb-1 mandedu">
-                            <Form.Label className="mb-0">Preferred Education <span className="text-danger">*</span></Form.Label>
-                            <Button size="sm" disabled={isViewMode} onClick={() => onEducationClick("preferred")} style={{ borderRadius: "10px" }}>+ Add</Button>
+                            <Form.Label className="mb-0">{t("addPosition:preferred_education")} <span className="text-danger">*</span></Form.Label>
+                            <Button size="sm" disabled={isViewMode} onClick={() => onEducationClick("preferred")} style={{ borderRadius: "10px" }}>{t("addPosition:add")}</Button>
                         </div>
-                        <Form.Control as="textarea" placeholder="Enter Preferred Education" rows={4} readOnly value={educationData.preferred.text || ""} disabled={isViewMode} />
-                        <ErrorMessage>{errors.preferredEducation}</ErrorMessage>
+                        <Form.Control as="textarea" placeholder={t("addPosition:enter_preferred_education")} rows={4} readOnly value={educationData.preferred.text || ""} disabled={isViewMode} />
+                        <ErrorMessage>{renderError(errors.preferredEducation)}</ErrorMessage>
                     </Col>
 
                     {/* Experience Row logic maintained for both mandatory/preferred */}
                     {['mandatoryExperience', 'preferredExperience'].map((expType) => (
                         <Col md={6} key={expType}>
-                            <Form.Label>{expType === 'mandatoryExperience' ? 'Mandatory' : 'Preferred'} Experience <span className="text-danger">*</span></Form.Label>
+                            <Form.Label>{expType === 'mandatoryExperience' ? t("addPosition:mandatory_experience") : t("addPosition:preferred_experience")} <span className="text-danger">*</span></Form.Label>
                             <Row className="g-2 mb-2">
                                 <Col md={6}>
                                     <Form.Select disabled={isViewMode} value={formData[expType].years} onChange={(e) => handleInputChange({ target: { name: `${expType}.years`, value: e.target.value } })}>
-                                        <option value="">Select Years</option>
+                                        <option value="">{t("common:select_years")}</option>
                                         {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
                                     </Form.Select>
                                 </Col>
                                 <Col md={6}>
                                     <Form.Select disabled={isViewMode} value={formData[expType].months} onChange={(e) => handleInputChange({ target: { name: `${expType}.months`, value: e.target.value } })}>
-                                        <option value="">Select Months</option>
+                                        <option value="">{t("common:select_months")}</option>
                                         {MONTH_OPTIONS.map(m => <option key={m} value={m}>{m}</option>)}
                                     </Form.Select>
                                 </Col>
@@ -367,7 +380,7 @@ const PositionForm = ({
                             <Form.Control
                                 as="textarea"
                                 maxLength={2000}
-                                placeholder="Enter Experience"
+                                placeholder={t("addPosition:enter_experience")}
                                 rows={3}
                                 value={formData[expType].description} disabled={isViewMode}
 
@@ -375,7 +388,7 @@ const PositionForm = ({
                                     const { valid, value } = validateTitleOnType(e.target.value);
 
                                     if (!valid) {
-                                        setErrors(prev => ({ ...prev, [expType]: "Only letters, numbers, spaces and . , - ( ) & : ; / are allowed" }));
+                                        setErrors(prev => ({ ...prev, [expType]: "validation:title_invalid_chars_extended" }));
                                         return;
                                     }
 
@@ -396,18 +409,19 @@ const PositionForm = ({
                             />
 
 
-                            <ErrorMessage>{errors[expType]}</ErrorMessage>
+                            <ErrorMessage>{renderError(errors[expType])}</ErrorMessage>
+
                         </Col>
                     ))}
 
                     <Col md={6}>
-                        <Form.Label>Roles & Responsibilities <span className="text-danger">*</span></Form.Label>
+                        <Form.Label>{t("addPosition:roles_responsibilities")} <span className="text-danger">*</span></Form.Label>
                         <Form.Control
                             as="textarea" disabled={isViewMode}
                             rows={5}
                             maxLength={2000}
                             name="responsibilities"
-                            placeholder="Enter Roles & Responsibilities"
+                            placeholder={t("addPosition:enter_roles")}
                             value={formData.responsibilities}
                             onChange={(e) => {
                                 const { valid, value, message } = validateTitleOnType(e.target.value);
@@ -438,17 +452,17 @@ const PositionForm = ({
                                 }));
                             }}
                         />
-                        <ErrorMessage>{errors.responsibilities}</ErrorMessage>
+                        <ErrorMessage>{renderError(errors.responsibilities)}</ErrorMessage>
 
                     </Col>
                     <Col md={3}>
-                        <Form.Label>Medical Required <span className="text-danger">*</span></Form.Label>
+                        <Form.Label>{t("addPosition:medical_required")} <span className="text-danger">*</span></Form.Label>
                         <Form.Select name="medicalRequired" value={formData.medicalRequired} onChange={handleInputChange} disabled={isViewMode}>
-                            <option value="">Select...</option>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
+                            <option value="">{t("common:select")}</option>
+                            <option value="yes">{t("common:yes")}</option>
+                            <option value="no">{t("common:no")}</option>
                         </Form.Select>
-                        <ErrorMessage>{errors.medicalRequired}</ErrorMessage>
+                        <ErrorMessage>{renderError(errors.medicalRequired)}</ErrorMessage>
                     </Col>
                 </Row>
             </div>

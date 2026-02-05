@@ -38,7 +38,11 @@ import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisit
 import { toast } from "react-toastify";
 import { validateRequisitionSubmission } from "../validations/validateRequisitionSubmission";
 import CreatePlus_Icon from "../../../assets/CreatePlus_Icon.png";
+import { useTranslation } from "react-i18next";
+
 const JobPostingsList = () => {
+    const { t } = useTranslation(["jobPostingsList", "common"]);
+
     const navigate = useNavigate();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedReq, setSelectedReq] = useState(null);
@@ -139,7 +143,7 @@ const JobPostingsList = () => {
         );
 
         if (selectedVisibleRequisitions.length === 0) {
-            toast.error("No requisitions selected for the current year.");
+            toast.error(t("jobPostingsList:no_selected"));
             return;
         }
 
@@ -148,10 +152,22 @@ const JobPostingsList = () => {
             selectedReqIds,
         });
 
+        // if (errors.length > 0) {
+        //     errors.forEach(e => toast.error(e));
+        //     return;
+        // }
+
         if (errors.length > 0) {
-            errors.forEach(e => toast.error(e));
-            return;
+    errors.forEach(e => {
+        if (typeof e === "string") {
+            toast.error(t(e));
+        } else {
+            toast.error(t(e.key, e.params));
         }
+    });
+    return;
+}
+
 
 
         const ids = selectedVisibleRequisitions
@@ -183,11 +199,11 @@ const JobPostingsList = () => {
             {/* ================= HEADER ================= */}
             <Row className="mb-3 align-items-center">
                 <Col>
-                    <h5 className="page-title">All Requisitions</h5>
+                    <h5 className="page-title">{t("jobPostingsList:page_title")}</h5>
                 </Col>
                 <Col className="text-end create">
                     <Button onClick={() => navigate("/job-posting/create-requisition")}>
-                        <img src={CreatePlus_Icon} alt="Create New Requisition" className="icon-16" /> Create New Requisition
+                        <img src={CreatePlus_Icon} alt="Create New Requisition" className="icon-16" /> {t("jobPostingsList:create_new_requisition")}
                     </Button>
                 </Col>
             </Row>
@@ -200,9 +216,9 @@ const JobPostingsList = () => {
                         value={year}
                         onChange={(e) => setYear(e.target.value)}
                     >
-                        <option value="2026">Year - 2026</option>
-                        <option value="2025">Year - 2025</option>
-                        <option value="2024">Year - 2024</option>
+                        <option value="2026">{t("jobPostingsList:year_label")} - 2026</option>
+                        <option value="2025">{t("jobPostingsList:year_label")} - 2025</option>
+                        <option value="2024">{t("jobPostingsList:year_label")} - 2024</option>
                     </Form.Select>
                 </Col>
 
@@ -211,7 +227,7 @@ const JobPostingsList = () => {
                         <Search />
                         <Form.Control
                             type="text"
-                            placeholder="Search requisitions by id,title,department..."
+                            placeholder={t("jobPostingsList:search_placeholder")}
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                         />
@@ -224,9 +240,9 @@ const JobPostingsList = () => {
                         value={status}
                         onChange={(e) => { setStatus(e.target.value); setPage(0); }}
                     >
-                        <option value="ALL">All Status</option>
-                        <option value="NEW">New</option>
-                        <option value="APPROVED">Approved</option>
+                        <option value="ALL">{t("jobPostingsList:status_all")}</option>
+                        <option value="NEW">{t("jobPostingsList:status_new")}</option>
+                        <option value="APPROVED">{t("jobPostingsList:status_approved")}</option>
                     </Form.Select>
                 </Col>
             </Row>
@@ -238,7 +254,7 @@ const JobPostingsList = () => {
                         type="checkbox"
                         id="select-all-requisitions"
                         className="selectall d-flex align-items-center"
-                        label="Select All"
+                        label={t("jobPostingsList:select_all")}
                         checked={allSelected}
                         onChange={(e) => {
                             if (e.target.checked) {
@@ -259,7 +275,7 @@ const JobPostingsList = () => {
                         onClick={() => setShowSubmitModal(true)}
 
                     >
-                        <img src={submitIcon} alt="submit" className="icon-16" /> Submit
+                        <img src={submitIcon} alt="submit" className="icon-16" /> {t("jobPostingsList:submit")}
                     </Button>
 
 
@@ -269,7 +285,7 @@ const JobPostingsList = () => {
                         onClick={handleCancelSelection}
                         disabled={selectedReqIds.size === 0 || loading}
                     >
-                        Cancel
+                        {t("common:cancel")}
                     </Button>
 
                 </Col>
@@ -285,7 +301,7 @@ const JobPostingsList = () => {
             {/* ================= LIST ================= */}
             {!loading && requisitions.length === 0 && (
                 <div className="text-center text-muted my-4">
-                    No requisitions found
+                    {t("jobPostingsList:no_requisitions")}
                 </div>
             )}
 
@@ -350,9 +366,9 @@ const JobPostingsList = () => {
                                             <h6 className="req-code mb-2">{req.code}</h6>
                                             <div className="req-dates">
                                                 <div>
-                                                    <img src={start_icon} alt="start_icon" className="icon-12" />{" "}Start: {formatDateDDMMYYYY(req.startDate)}
+                                                    <img src={start_icon} alt="start_icon" className="icon-12" />{" "}{t("jobPostingsList:start_date")}: {formatDateDDMMYYYY(req.startDate)}
                                                 </div>
-                                                <div><img src={end_icon} alt="end_icon" className="icon-12" /> End: {formatDateDDMMYYYY(req.endDate)}</div>
+                                                <div><img src={end_icon} alt="end_icon" className="icon-12" /> {t("jobPostingsList:end_date")}: {formatDateDDMMYYYY(req.endDate)}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -362,13 +378,13 @@ const JobPostingsList = () => {
                                 <div className="req-meta">
                                     <div>
                                         <img src={mingcute_department_line} alt="department" className="icon-16" />{" "}
-                                        Department - {req.departments}
+                                        {t("jobPostingsList:department")} - {req.departments}
                                     </div>
                                     <div>
-                                        <img src={position_Icon} alt="position" className="icon-16" /> Positions - {req.positions}
+                                        <img src={position_Icon} alt="position" className="icon-16" /> {t("jobPostingsList:positions")} - {req.positions}
                                     </div>
                                     <div>
-                                        <img src={vacancy_icon} alt="vacancy" className="icon-23" /> Vacancies -{" "}
+                                        <img src={vacancy_icon} alt="vacancy" className="icon-23" /> {t("jobPostingsList:vacancies")} -{" "}
                                         {req.vacancies}
                                     </div>
                                 </div>
@@ -458,7 +474,7 @@ const JobPostingsList = () => {
                                     )}
 
                                     {!loadingReqId && positions.length === 0 && (
-                                        <div className="text-muted">No positions added</div>
+                                        <div className="text-muted">{t("jobPostingsList:no_positions")}</div>
                                     )}
 
                                     {Object.values(positionsGroupedByDept).map((dept) => (
@@ -474,7 +490,9 @@ const JobPostingsList = () => {
                                                 <span className="depname">{dept.departmentName}</span>
                                                 <Badge bg="light" text="primary" className="deppos">
                                                     {dept.positions.length}{" "}
-                                                    {dept.positions.length === 1 ? "Position" : "Positions"}
+                                                    {dept.positions.length === 1
+                                                        ? t("jobPostingsList:position")
+                                                        : t("jobPostingsList:positions_plural")}
                                                 </Badge>
 
                                             </div>
@@ -488,9 +506,12 @@ const JobPostingsList = () => {
                                                         </div>
 
                                                         <div className="position-meta-inline">
-                                                            <span>Vacancies: {pos.vacancies}</span>
                                                             <span>
-                                                                Age: {pos.minAge} – {pos.maxAge} Years
+                                                                {t("jobPostingsList:vacancies")}: {pos.vacancies}
+                                                            </span>
+
+                                                            <span>
+                                                               {t("jobPostingsList:age")}: {pos.minAge} – {pos.maxAge} {t("jobPostingsList:years")}
                                                             </span>
                                                         </div>
 
@@ -550,11 +571,11 @@ const JobPostingsList = () => {
 
                                                     <div className="position-details">
                                                         <div>
-                                                            Mandatory Education:{" "}
+                                                            {t("jobPostingsList:mandatory_education")}:{" "}
                                                             {pos.mandatoryEducation}
                                                         </div>
                                                         <div>
-                                                            Preferred Education:{" "}
+                                                            {t("jobPostingsList:preferred_education")}:{" "}
                                                             {pos.preferredEducation}
                                                         </div>
                                                     </div>
@@ -577,7 +598,7 @@ const JobPostingsList = () => {
 
                         {/* Page size */}
                         <div className="d-flex align-items-center gap-2">
-                            <span className="fw-semibold pagesize">Page size:</span>
+                            <span className="fw-semibold pagesize">{t("jobPostingsList:page_size")}:</span>
                             <Form.Select
                                 size="sm"
                                 style={{ width: "90px" }}
@@ -646,8 +667,8 @@ const JobPostingsList = () => {
                     setSelectedReq(null);
                 }}
                 onConfirm={handleConfirmDelete}
-                title="Delete Requisition"
-                message="Are you sure you want to delete this requisition?"
+                title={t("jobPostingsList:delete_requisition_title")}
+                message={t("jobPostingsList:delete_requisition_message")}
                 itemLabel={selectedReq?.code}
             />
 
@@ -658,7 +679,7 @@ const JobPostingsList = () => {
                     setShowDeletePosModal(false);
                     setSelectedPosition(null);
                 }}
-                onConfirm={handleConfirmDeletePosition} title="Delete Position" message="Are you sure you want to delete this position?" itemLabel={selectedPosition?.positionName}
+                onConfirm={handleConfirmDeletePosition} title={t("jobPostingsList:delete_position_title")} message={t("jobPostingsList:delete_position_message")} itemLabel={selectedPosition?.positionName}
             />
             <ConfirmationModal
                 show={showSubmitModal}
@@ -667,11 +688,17 @@ const JobPostingsList = () => {
                     setShowSubmitModal(false);
                     handleSubmitForApproval();
                 }}
-                title="Direct Approval Confirmation"
-                message="This action will directly approve the selected requisition(s). Are you sure you want to continue?"
-                itemLabel={`${selectedReqIds.size} requisition(s)`}
-                confirmText="Approve"
-                confirmVariant="primary"
+                // title="Direct Approval Confirmation"
+                // message="This action will directly approve the selected requisition(s). Are you sure you want to continue?"
+                // itemLabel={`${selectedReqIds.size} requisition(s)`}
+                // confirmText="Approve"
+                // confirmVariant="primary"
+
+                title={t("jobPostingsList:submit_confirm_title")}
+                message={t("jobPostingsList:submit_confirm_message")}
+                confirmText={t("jobPostingsList:approve")}
+                itemLabel={t("jobPostingsList:requisition_count", { count: selectedReqIds.size })}
+
             />
 
 

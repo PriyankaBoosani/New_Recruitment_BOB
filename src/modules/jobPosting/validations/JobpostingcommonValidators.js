@@ -8,19 +8,25 @@ export const validatePositiveInteger = ({
   const trimmed = String(value ?? "").trim();
 
   if (required && trimmed === "") {
-    return `This field is required`;
+    return "validation:required";
   }
 
   if (trimmed === "") return null; // optional & empty is OK
 
   if (!/^\d+$/.test(trimmed)) {
-    return `${fieldName} must contain only numbers`;
+   return {
+      key: "validation:only_numbers",
+      params: { field: fieldName }
+    };
   }
 
   const num = Number(trimmed);
 
   if (!allowZero && num <= 0) {
-    return `${fieldName} must be greater than zero`;
+    return {
+      key: "validation:greater_than_zero",
+      params: { field: fieldName }
+    };
   }
 
   return null;

@@ -4,6 +4,7 @@ import "../../../style/css/EducationModal.css";
 import { validateEducationModal } from "../validations/validateEducationModal";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import delete_icon from "../../../assets/delete_icon.png"
+import { useTranslation } from "react-i18next";
 
 const createRow = () => ({
     educationTypeId: "",
@@ -22,6 +23,7 @@ export default function EducationModal({
     specializations = [],
     certifications = [],
 }) {
+    const { t } = useTranslation(["addPosition", "common", "validation"]);
     const [errors, setErrors] = useState({});
     const [rows, setRows] = useState([createRow()]);
     const [certIds, setCertIds] = useState([""]);
@@ -118,8 +120,8 @@ Certifications: ${certText || "None"}
             <Modal.Header closeButton className="edu-modal-header">
                 <Modal.Title className="f16 bluecol">
                     {mode === "mandatory"
-                        ? "Add Mandatory Education"
-                        : "Add Preferred Education"}
+                        ? t("addPosition:add_mandatory_education")
+                        : t("addPosition:add_preferred_education")}
                 </Modal.Title>
             </Modal.Header>
 
@@ -134,7 +136,7 @@ Certifications: ${certText || "None"}
                                     updateRow(idx, "educationTypeId", e.target.value)
                                 }
                             >
-                                <option value="">Select Type</option>
+                                <option value="">{t("common:select_type")}</option>
                                 {educationTypes.map(t => (
                                     <option key={t.id} value={t.id}>
                                         {t.label}
@@ -143,7 +145,10 @@ Certifications: ${certText || "None"}
                             </Form.Select>
 
                             <div className="edu-error-space">
-                                <ErrorMessage>{errors.rows?.[idx]?.educationTypeId}</ErrorMessage></div>
+                                <ErrorMessage>
+                                    {errors.rows?.[idx]?.educationTypeId && t(errors.rows[idx].educationTypeId)}
+                                </ErrorMessage>
+                            </div>
 
                         </Col>
 
@@ -154,7 +159,7 @@ Certifications: ${certText || "None"}
                                     updateRow(idx, "educationQualificationsId", e.target.value)
                                 }
                             >
-                                <option value="">Select Degree</option>
+                                <option value="">{t("common:select_degree")}</option>
                                 {qualifications.map(q => (
                                     <option key={q.id} value={q.id}>
                                         {q.name}
@@ -163,7 +168,10 @@ Certifications: ${certText || "None"}
                             </Form.Select>
 
                             <div className="edu-error-space">
-                                <ErrorMessage>{errors.rows?.[idx]?.educationQualificationsId}</ErrorMessage>
+                                <ErrorMessage>
+                                    {errors.rows?.[idx]?.educationQualificationsId && t(errors.rows[idx].educationQualificationsId)}
+                                </ErrorMessage>
+
                             </div>
                         </Col>
 
@@ -174,7 +182,7 @@ Certifications: ${certText || "None"}
                                     updateRow(idx, "specializationId", e.target.value)
                                 }
                             >
-                                <option value="">Select Specialization</option>
+                                <option value="">{t("common:select_specialization")}</option>
                                 {getSpecializationsForDegree(row.educationQualificationsId).map(s => (
                                     <option key={s.id} value={s.id}>
                                         {s.label}
@@ -184,7 +192,9 @@ Certifications: ${certText || "None"}
                             </Form.Select>
 
                             <div className="edu-error-space">
-                                <ErrorMessage>{errors.rows?.[idx]?.specializationId}</ErrorMessage></div>
+                                <ErrorMessage>
+                                    {errors.rows?.[idx]?.specializationId && t(errors.rows[idx].specializationId)}
+                                </ErrorMessage></div>
                         </Col>
                         <Col md={1} className="px-1">
 
@@ -193,7 +203,7 @@ Certifications: ${certText || "None"}
                                     variant="link"
                                     className="p-0 text-danger"
                                     onClick={() => removeRow(idx)}
-                                    title="Remove"
+                                    title={t("common:remove")}
                                 >
                                     <img src={delete_icon} alt="delete_icon" className="icon-16" />
                                 </Button>
@@ -204,12 +214,12 @@ Certifications: ${certText || "None"}
                 ))}
 
                 <Button variant="none" onClick={addRow} className="edu-btn">
-                    + Add Degree
+                    {t("addPosition:add_degree")}
                 </Button>
 
 
                 <Col md={6} className="mt-4">
-                    <h6 className="f14 bluecol">Certifications (Optional)</h6>
+                    <h6 className="f14 bluecol">{t("addPosition:certifications_optional")}</h6>
 
                     {certIds.map((id, i) => (
                         <Row key={i} className="mb-2 align-items-center">
@@ -222,7 +232,7 @@ Certifications: ${certText || "None"}
                                         setCertIds(copy);
                                     }}
                                 >
-                                    <option value="">Select Certification</option>
+                                    <option value="">{t("common:select_certification")}</option>
                                     {certifications.map(c => (
                                         <option key={c.id} value={c.id}>
                                             {c.name}
@@ -249,19 +259,19 @@ Certifications: ${certText || "None"}
                 </Col>
 
                 <Button variant="none" onClick={() => setCertIds([...certIds, ""])} className="edu-btn">
-                    + Add Certification
+                    {t("addPosition:add_certification")}
                 </Button>
 
 
 
                 <div className="mt-4 p-3 bg-light border rounded result">
-                    <span className="f14">Result (How it will look for candidate)</span>
+                    <span className="f14">{t("addPosition:result_preview")}</span>
                     <pre className="mt-2 mb-0">{finalText}</pre>
                 </div>
             </Modal.Body>
 
             <Modal.Footer className="edu-modal-footer">
-                <Button variant="outline-secondary" className="cancelbtn" onClick={onHide}>Cancel</Button>
+                <Button variant="outline-secondary" className="cancelbtn" onClick={onHide}>{t("common:cancel")}</Button>
                 <Button
                     variant="primary"
                     onClick={() => {
@@ -281,7 +291,7 @@ Certifications: ${certText || "None"}
 
                         if (filledRows.length === 0) {
                             setErrors({
-                                rows: { _error: "At least one degree is required" }
+                                rows: { _error: "validation:degree_required" }
                             });
                             return;
                         }
@@ -302,7 +312,7 @@ Certifications: ${certText || "None"}
                         onHide();
                     }}
                 >
-                    Save
+                    {t("common:save")}
                 </Button>
 
             </Modal.Footer>

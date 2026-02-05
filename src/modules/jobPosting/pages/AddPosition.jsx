@@ -18,7 +18,19 @@ import { useLocation } from "react-router-dom";
 import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisition";
 import { toast } from "react-toastify";
 import ReservationSection from "../component/ReservationSection";
+import { useTranslation } from "react-i18next";
 const AddPosition = () => {
+    const { t } = useTranslation(["addPosition", "common", "validation"]);
+    const renderError = (e) => {
+        if (!e) return "";
+        if (typeof e === "string") {
+            return t(e);
+        } if (typeof e === "object" && e.key) {
+            return t(e.key, e.params);
+        } return "";
+    };
+
+
     const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx"];
     const MAX_FILE_SIZE_MB = 2;
     const YEAR_OPTIONS = Array.from({ length: 31 }, (_, i) => i);
@@ -505,15 +517,15 @@ const AddPosition = () => {
         try {
             if (isEditMode) {
                 await updatePosition({ ...payload, positionId, existingPosition });
-                toast.success("Position updated successfully");
+                toast.success(t("position_updated_success"));
             } else {
                 await createPosition(payload);
-                toast.success("Position added successfully");
+                toast.success(t("position_added_success"));
             }
 
             navigate(-1);
         } catch (err) {
-            toast.error(err.message || "Operation failed");
+            toast.error(err.message || t("operation_failed"));
         }
     };
 
@@ -526,9 +538,9 @@ const AddPosition = () => {
         <Container fluid className="add-position-page">
             <div className="req_top-bar">
                 <div className="d-flex align-items-center gap-3">
-                    <Button variant="link" className="back-btn" onClick={() => navigate(-1)}>← Back</Button>
+                    <Button variant="link" className="back-btn" onClick={() => navigate(-1)}>← {t("back")}</Button>
                     <div>
-                        <span className="req-id">{requisitionLoading ? "Loading..." : requisition?.requisitionCode || "—"}</span>
+                        <span className="req-id">{requisitionLoading ? t("loading") : requisition?.requisitionCode || "—"}</span>
                         <div className="req-code">{requisition?.requisitionTitle || "—"}</div>
                     </div>
                 </div>
@@ -539,14 +551,18 @@ const AddPosition = () => {
                     onClick={() => setShowImportModal(true)}
                 >
                     <img src={import_Icon} alt="import_Icon" className="icon-14" />
-                    &nbsp;Import Positions
+                    &nbsp;{t("import_positions")}
                 </Button>
 
             </div>
 
             <Card className="position-card">
                 <Card.Body>
-                    <div className="section-title"><span className="indicator"></span><h6> {isViewMode ? "View Position" : isEditMode ? "Edit Position" : "Add New Position"}</h6>
+                    <div className="section-title"><span className="indicator"></span><h6> {isViewMode
+                        ? t("view_position")
+                        : isEditMode
+                            ? t("edit_position")
+                            : t("add_position")}</h6>
                     </div>
                     <Form onSubmit={handleSubmit}>
 
@@ -569,14 +585,14 @@ const AddPosition = () => {
 
 
                         <div className="form-footer mt-4 mb-4">
-                            <Button variant="outline-secondary" className="cancelbtn" onClick={() => navigate(-1)}>Cancel</Button>
+                            <Button variant="outline-secondary" className="cancelbtn" onClick={() => navigate(-1)}>{t("common:cancel")}</Button>
                             {!isViewMode && (
                                 <Button
                                     type="submit"
                                     className="ms-2 save-btn"
                                     disabled={loading}
                                 >
-                                    {isEditMode ? "Update" : "Save"}
+                                    {isEditMode ? t("common:update") : t("common:save")}
                                 </Button>
                             )}
 

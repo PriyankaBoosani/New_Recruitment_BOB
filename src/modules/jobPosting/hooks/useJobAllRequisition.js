@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import requisitionApiService from "../services/requisitionApiService";
 import { mapJobRequisitionFromApi } from "../mappers/jobReqDetailsMapper";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+
 
 export const useJobRequisitions = ({
   year,
@@ -12,6 +14,7 @@ export const useJobRequisitions = ({
   page = 0,
   size = 0
 }) => {
+   const { t } = useTranslation("jobPostingsList");
   const [requisitions, setRequisitions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pageInfo, setPageInfo] = useState(null);
@@ -35,7 +38,7 @@ export const useJobRequisitions = ({
       setRequisitions(content.map(mapJobRequisitionFromApi));
       setPageInfo(res.data.page);
     } catch (err) {
-      toast.error("Failed to fetch requisitions");
+      toast.error(t("requisitions_fetch_failed"));
     } finally {
       setLoading(false);
     }
@@ -43,10 +46,10 @@ export const useJobRequisitions = ({
   const deleteRequisition = async (id) => {
     try {
       await requisitionApiService.deleteRequisition(id);
-      toast.success("Requisition deleted successfully");
+      toast.success(t("requisition_delete_success"));
       fetchRequisitions(); // refresh list
     } catch {
-      toast.error("Failed to delete requisition");
+      toast.error(t("requisition_delete_failed"));
     }
   };
   const submitForApproval = async (jobRequisitionIds) => {
@@ -61,10 +64,10 @@ export const useJobRequisitions = ({
         
       });
 
-      toast.success("Requisition(s) Approved successfully");
+      toast.success(t("requisition_approve_success"));
       fetchRequisitions(); // refresh list
     } catch (err) {
-      toast.error("Failed to submit for approval");
+      toast.error(t("requisition_approve_failed"));
     } finally {
       setLoading(false);
     }

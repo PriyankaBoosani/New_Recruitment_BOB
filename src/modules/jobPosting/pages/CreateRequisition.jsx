@@ -9,9 +9,14 @@ import { mapRequisitionToApi } from "../mappers/createRequisitionMapper";
 import { useCreateRequisition } from "../hooks/useCreateRequisition";
 import { REQUISITION_CONFIG } from "../config/requisitionConfig";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 
 const CreateRequisition = () => {
+  const { t } = useTranslation(["CreateRequisition", "common"]);
+  const renderError = (err) => (err ? t(err) : "");
+
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -54,8 +59,8 @@ const CreateRequisition = () => {
       await saveRequisition(payload);
       toast.success(
         editId
-          ? "Requisition updated successfully"
-          : "Requisition created successfully"
+          ? t("update_success")
+          : t("create_success")
       );
 
       navigate(REQUISITION_CONFIG.SUCCESS_REDIRECT);
@@ -88,7 +93,7 @@ const CreateRequisition = () => {
     return (
       <Container className="text-center mt-5">
         <Spinner animation="border" />
-        <p>Loading Requisition...</p>
+        <p>{t("loading")}</p>
       </Container>
     );
   }
@@ -102,10 +107,10 @@ const CreateRequisition = () => {
             <span className="indicator" />
             <h6>
               {isViewMode
-                ? "View Requisition"
+                ? t("view_requisition")
                 : editId
-                  ? "Edit Requisition"
-                  : "Create New Requisition"}
+                  ? t("edit_requisition")
+                  : t("create_requisition")}
             </h6>
           </div>
 
@@ -114,14 +119,14 @@ const CreateRequisition = () => {
             <fieldset disabled={isViewMode}>
               <Form.Group className="mb-3 mt-3">
                 <Form.Label>
-                  Requisition Title <span className="text-danger">*</span>
+                  {t("requisition_title")} <span className="text-danger">*</span>
                 </Form.Label>
 
                 <Form.Control
                   name="title"
                   value={formData.title}
                   maxLength={200}
-                  placeholder="Enter Requisition Title"
+                  placeholder={t("enter_requisition_title")}
                   onChange={(e) => {
                     const result = validateTitleOnType(e.target.value);
 
@@ -158,16 +163,16 @@ const CreateRequisition = () => {
                 />
 
                 <Form.Text className="text-muted">
-                  Use a clear, searchable title used across the portal and job boards.
+                  {t("title_help")}
                 </Form.Text>
-                <ErrorMessage>{errors.title}</ErrorMessage>
+               <ErrorMessage>{renderError(errors.title)}</ErrorMessage>
               </Form.Group>
 
               <Row>
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>
-                      Description <span className="text-danger">*</span>
+                      {t("description")} <span className="text-danger">*</span>
                     </Form.Label>
 
                     <Form.Control
@@ -175,7 +180,7 @@ const CreateRequisition = () => {
                       rows={6}
                       maxLength={2000}
                       name="description"
-                      placeholder="Enter Requisition Description"
+                      placeholder={t("enter_description")}
                       value={formData.description}
                       onChange={(e) => {
                         handleInputChange(e);
@@ -192,7 +197,8 @@ const CreateRequisition = () => {
 
                     />
 
-                    <ErrorMessage>{errors.description}</ErrorMessage>
+                   <ErrorMessage>{renderError(errors.description)}</ErrorMessage>
+
                   </Form.Group>
                 </Col>
 
@@ -201,7 +207,7 @@ const CreateRequisition = () => {
                     <Col md={12}>
                       <Form.Group className="mb-3">
                         <Form.Label>
-                          Start Date <span className="text-danger">*</span>
+                          {t("start_date")} <span className="text-danger">*</span>
                         </Form.Label>
 
                         <Form.Control
@@ -237,16 +243,16 @@ const CreateRequisition = () => {
                           }}
                         />
                         <Form.Text className="text-muted">
-                          Date from which the candidates can start applying.
+                          {t("start_date_help")}
                         </Form.Text>
-                        <ErrorMessage>{errors.startDate}</ErrorMessage>
+                        <ErrorMessage>{renderError(errors.startDate)}</ErrorMessage>
                       </Form.Group>
                     </Col>
 
                     <Col md={12}>
                       <Form.Group>
                         <Form.Label>
-                          End Date <span className="text-danger">*</span>
+                          {t("end_date")} <span className="text-danger">*</span>
                         </Form.Label>
 
                         <Form.Control
@@ -261,9 +267,10 @@ const CreateRequisition = () => {
 
                         />
                         <Form.Text className="text-muted">
-                          ⓘ Standard duration: 21 days.
+                          {t("end_date_help")}
+
                         </Form.Text>
-                        <ErrorMessage>{errors.endDate}</ErrorMessage>
+                        <ErrorMessage>{renderError(errors.endDate)}</ErrorMessage>
                       </Form.Group>
                     </Col>
                   </Row>
@@ -282,12 +289,12 @@ const CreateRequisition = () => {
 
       <div className="footer-actions">
         <Button variant="outline-secondary" onClick={() => navigate("/job-posting")}>
-          Cancel
+         {t("common:cancel")}
         </Button>
 
         {!isViewMode && (
           <Button onClick={handleSave} disabled={loading}>
-            {editId ? "Update" : "Save"}
+            {editId ? t("common:update") : t("common:save")}
           </Button>
         )}
       </div>

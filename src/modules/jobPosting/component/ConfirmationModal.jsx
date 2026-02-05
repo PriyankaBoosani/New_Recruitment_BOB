@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 const ConfirmationModal = ({
   show,
@@ -14,10 +15,11 @@ const ConfirmationModal = ({
   loading = false,
   showWarning = false
 }) => {
+  const { t } = useTranslation(["importModal", "common"]);
   return (
     <Modal show={show} onHide={onClose} centered backdrop="static" className="modalimport">
       <Modal.Header closeButton >
-        <Modal.Title className="f16 bluecol">{title}</Modal.Title>
+        <Modal.Title className="f16 bluecol">{title || t("importModal:confirm_default_title")}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body className="text-center">
@@ -30,7 +32,7 @@ const ConfirmationModal = ({
           />
         )}
 
-        <p className="mb-1 f14">{message}</p>
+        <p className="mb-1 f14">{message || t("importModal:confirm_default_message")}</p>
 
         {itemLabel && (
           <strong className="d-block">{itemLabel}</strong>
@@ -38,7 +40,7 @@ const ConfirmationModal = ({
 
         {showWarning && (
           <p className="text-muted mt-2">
-            This action cannot be undone.
+            {t("importModal:cannot_undo")}
           </p>
         )}
       </Modal.Body>
@@ -50,7 +52,7 @@ const ConfirmationModal = ({
           disabled={loading}
           className="f14"
         >
-          Cancel
+          {t("common:cancel")}
         </Button>
 
         <Button
@@ -59,7 +61,9 @@ const ConfirmationModal = ({
           disabled={loading}
           className="f14"
         >
-          {loading ? "Processing..." : confirmText}
+          {loading
+            ? t("importModal:processing")
+            : (confirmText || t("importModal:confirm_button"))}
         </Button>
       </Modal.Footer>
     </Modal>

@@ -3,8 +3,11 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import jobPositionApiService from "../services/jobPositionApiService";
 import { useMasterData } from "../hooks/useMasterData";
+import { useTranslation } from "react-i18next";
+
 
 export const useJobPositionsByRequisition = () => {
+   const { t } = useTranslation("jobPostingsList");
   const [positionsByReq, setPositionsByReq] = useState({});
   const [loadingReqId, setLoadingReqId] = useState(null);
 
@@ -49,7 +52,7 @@ export const useJobPositionsByRequisition = () => {
         [requisitionId]: enriched
       }));
     } catch {
-      toast.error("Failed to load positions");
+     toast.error(t("positions_load_failed"));
     } finally {
       setLoadingReqId(null);
     }
@@ -67,9 +70,9 @@ export const useJobPositionsByRequisition = () => {
         )
       }));
 
-      toast.success("Position deleted successfully");
+      toast.success(t("position_deleted_success"));
     } catch {
-      toast.error("Failed to delete position");
+      toast.error(t("position_delete_failed"));
     }
   };
 

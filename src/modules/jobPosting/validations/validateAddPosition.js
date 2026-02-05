@@ -1,5 +1,7 @@
 import { validatePositiveInteger } from "./JobpostingcommonValidators";
 
+
+
 export const normalizeTitle = (value = "") =>
   value
     .replace(/\s+/g, " ")   // collapse multiple spaces
@@ -13,8 +15,8 @@ export const validateTitleOnType = (value) => {
   if (!TITLE_ALLOWED_PATTERN.test(normalized)) {
     return {
       valid: false,
-      message:
-        "Only letters, numbers, spaces and . , - ( ) & : ; / are allowed"
+      message: "validation:title_invalid_chars_extended"
+
     };
   }
 
@@ -42,20 +44,20 @@ export const validateAddPosition = ({
 
   // ---------- FILE ----------
   if (!indentFile && !(isEditMode && existingIndentPath)) {
-    errors.indentFile = "This field is required";
+    errors.indentFile = "validation:required";
   }
 
   // ---------- BASIC REQUIRED ----------
-  if (!approvedBy) errors.approvedBy = "This field is required";
+  if (!approvedBy) errors.approvedBy = "validation:required";
   const approvedOnError = validateApprovedOn(approvedOn);
   if (approvedOnError) {
     errors.approvedOn = approvedOnError;
   }
-  if (!formData.position) errors.position = "This field is required";
-  if (!formData.department) errors.department = "This field is required";
-  if (!formData.employmentType) errors.employmentType = "This field is required";
-  if (!formData.grade) errors.grade = "This field is required";
-  if (!formData.medicalRequired) errors.medicalRequired = "This field is required";
+  if (!formData.position) errors.position = "validation:required";
+  if (!formData.department) errors.department = "validation:required";
+  if (!formData.employmentType) errors.employmentType = "validation:required";
+  if (!formData.grade) errors.grade = "validation:required";
+  if (!formData.medicalRequired) errors.medicalRequired = "validation:required";
 
   // ---------- DUPLICATE POSITION + DEPARTMENT ----------
   if (
@@ -77,10 +79,8 @@ export const validateAddPosition = ({
     });
 
     if (duplicate) {
-      errors.position =
-        "This position already exists for the selected department. Please select the other position";
-      errors.department =
-        "This department already has the selected position";
+      errors.position = "validation:duplicate_position_department";
+      errors.department = "validation:duplicate_department_position";
     }
   }
 
@@ -114,16 +114,16 @@ export const validateAddPosition = ({
     !errors.maxAge &&
     Number(formData.minAge) >= Number(formData.maxAge)
   ) {
-    errors.maxAge = "Max age must be greater than Min age";
+    errors.maxAge = "validation:max_greater_than_min_age";
   }
 
   // ---------- EDUCATION ----------
   if (!educationData.mandatory.text?.trim()) {
-    errors.mandatoryEducation = "This field is required";
+    errors.mandatoryEducation = "validation:required";
   }
 
   if (!educationData.preferred.text?.trim()) {
-    errors.preferredEducation = "This field is required";
+    errors.preferredEducation = "validation:required";
   }
   // ---------- AGE BUSINESS RULES (BANK ELIGIBILITY) ----------
 
@@ -132,12 +132,12 @@ export const validateAddPosition = ({
 
   // Minimum age rule
   if (!errors.minAge && minAge < 18) {
-    errors.minAge = "Minimum age must be 18 years";
+    errors.minAge = "validation:min_age_18";
   }
 
   // Maximum age rule
   if (!errors.maxAge && maxAge > 60) {
-    errors.maxAge = "Maximum age must not exceed 60 years";
+    errors.maxAge = "validation:max_age_60";
   }
 
   // Logical relationship
@@ -146,7 +146,7 @@ export const validateAddPosition = ({
     !errors.maxAge &&
     minAge >= maxAge
   ) {
-    errors.maxAge = "Max age must be greater than Min age";
+    errors.maxAge = "validation:max_greater_than_min_age";
   }
 
 
@@ -157,9 +157,9 @@ export const validateAddPosition = ({
     exp.description = normalizeTitle(exp.description);
 
     if (years === 0 && months === 0) {
-      errors[key] = "Please select experience duration";
+      errors[key] = "validation:experience_duration_required";
     } else if (!exp.description?.trim()) {
-      errors[key] = "Please enter experience details";
+      errors[key] = "validation:experience_details_required";
     }
   };
 
@@ -170,7 +170,7 @@ export const validateAddPosition = ({
   formData.responsibilities = normalizeTitle(formData.responsibilities);
 
   if (!formData.responsibilities) {
-    errors.responsibilities = "This field is required";
+    errors.responsibilities = "validation:required";
   }
 
 
@@ -180,7 +180,7 @@ export const validateAddPosition = ({
     const activeStates = stateDistributions.filter(s => !s.__deleted);
 
     if (activeStates.length === 0) {
-      errors.nationalDistribution = "This field is required";
+      errors.nationalDistribution = "validation:required";
     } else {
       const stateTotal = activeStates.reduce(
         (sum, s) => sum + Number(s.vacancies || 0),
@@ -190,8 +190,10 @@ export const validateAddPosition = ({
       const vacancies = Number(formData.vacancies || 0);
 
       if (stateTotal !== vacancies) {
-        errors.nationalDistribution =
-          `Total state vacancies (${stateTotal}) must equal total vacancies (${vacancies})`;
+        errors.nationalDistribution = {
+          key: "validation:state_total_mismatch",
+          params: { stateTotal, vacancies }
+        };
       }
     }
   }
@@ -207,15 +209,19 @@ export const validateAddPosition = ({
     const vacancies = Number(formData.vacancies || 0);
 
     if (categoryTotal === 0) {
-      errors.nationalDistribution = "This field is required";
+      errors.nationalDistribution = "validation:required";
     }
     else if (categoryTotal !== vacancies) {
-      errors.nationalDistribution =
-        `Category total (${categoryTotal}) must equal total vacancies (${vacancies})`;
+      errors.nationalDistribution = {
+        key: "validation:category_total_mismatch",
+        params: { categoryTotal, vacancies }
+      };
     }
     else if (disabilityTotal > categoryTotal) {
-      errors.nationalDistribution =
-        `Disability vacancies (${disabilityTotal}) cannot exceed category vacancies (${categoryTotal})`;
+      errors.nationalDistribution = {
+        key: "validation:disability_exceeds_category",
+        params: { disabilityTotal, categoryTotal }
+      };
     }
 
   }
@@ -236,15 +242,15 @@ export const validateStateDistribution = ({
   const errors = {};
 
   if (!currentState.state) {
-    errors.state = "This field is required";
+    errors.state = "validation:required";
   }
 
   if (!currentState.vacancies) {
-    errors.stateVacancies = "This field is required";
+    errors.stateVacancies = "validation:required";
   }
 
   if (!currentState.language) {
-    errors.stateLanguage = "This field is required";
+    errors.stateLanguage = "validation:required";
   }
 
   const catTotal = Object.values(currentState.categories || {})
@@ -256,12 +262,17 @@ export const validateStateDistribution = ({
   const vacancies = Number(currentState.vacancies || 0);
 
   if (catTotal !== vacancies) {
-    errors.stateDistribution = `Category total (${catTotal}) must equal state vacancies (${vacancies})`;
+    errors.stateDistribution = {
+      key: "validation:category_total_mismatch",
+      params: { categoryTotal: catTotal, vacancies }
+    };
 
   }
   else if (disTotal > catTotal) {
-    errors.stateDistribution =
-      `Disability vacancies(${disTotal}) cannot exceed category vacancies (${catTotal})`;
+    errors.stateDistribution = {
+      key: "validation:disability_exceeds_category",
+      params: { disabilityTotal: disTotal, categoryTotal: catTotal }
+    };
   }
   console.log(catTotal !== vacancies)
 
@@ -275,14 +286,14 @@ export const validateStateDistribution = ({
   );
 
   if (duplicate) {
-    errors.state = "This state is already added";
+    errors.state = "validation:state_already_added";
   }
 
 
   return errors;
 };
- export const validateApprovedOn = (value) => {
-  if (!value) return "This field is required";
+export const validateApprovedOn = (value) => {
+  if (!value) return "validation:required"
 
   const selected = new Date(value);
   const today = new Date();
@@ -291,7 +302,7 @@ export const validateStateDistribution = ({
   today.setHours(0, 0, 0, 0);
 
   if (selected > today) {
-    return "Approved date cannot be a future date";
+    return "validation:approved_date_future";
   }
 
   return "";

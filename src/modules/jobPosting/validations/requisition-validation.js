@@ -24,8 +24,7 @@ export const validateTitleOnType = (value) => {
   if (!TITLE_ALLOWED_PATTERN.test(value)) {
     return {
       valid: false,
-      message:
-        "Only letters, numbers, spaces, -, _, /, (), and & are allowed"
+      message: "validation:title_invalid_chars"
     };
   }
 
@@ -43,36 +42,37 @@ export const validateRequisitionForm = (formData = {}) => {
   const title = normalizeTitle(formData.title || "");
 
   if (!title) {
-    errors.title = "This field is required";
+    errors.title = "validation:required";
+
     valid = false;
   } else if (!TITLE_ALLOWED_PATTERN.test(title)) {
-    errors.title =
-      "Only letters, numbers, spaces, -, _, /, (), and & are allowed";
+    errors.title = "validation:title_invalid_chars";
     valid = false;
   }
 
   if (!formData.description?.trim()) {
-    errors.description = "This field is required";
+    errors.description = "validation:required";
+
     valid = false;
   }
 
   const tomorrow = getTomorrowStart();
   if (!formData.startDate) {
-    errors.startDate = "This field is required";
+    errors.startDate = "validation:required";
     valid = false;
   } else {
     const startDate = new Date(formData.startDate);
     startDate.setHours(0, 0, 0, 0);
 
     if (startDate < tomorrow) {
-      errors.startDate = "Past dates are not allowed";
+      errors.startDate = "validation:past_dates_not_allowed";
       valid = false;
     }
   }
 
 
   if (!formData.endDate) {
-    errors.endDate = "This field is required";
+    errors.endDate = "validation:required";
     valid = false;
   }
 
@@ -81,7 +81,7 @@ export const validateRequisitionForm = (formData = {}) => {
     formData.endDate &&
     new Date(formData.endDate) < new Date(formData.startDate)
   ) {
-    errors.endDate = "End date cannot be before start date";
+    errors.endDate = "validation:end_before_start";
     valid = false;
   }
 

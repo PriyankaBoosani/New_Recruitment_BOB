@@ -9,10 +9,11 @@ import { useNavigate } from "react-router-dom";
 
 const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
 }) => {
+
   if (!requisitionId) {
     throw new Error("ImportModal requires requisitionId");
   }
-  const { t } = useTranslation(["position", "common"]);
+  const { t } = useTranslation(["importModal", "common"]);
   const navigate = useNavigate();
   const { bulkImport, downloadPositionTemplate, loading } =
     usePositionsImport();
@@ -31,7 +32,7 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
       setSelectedFile(file);
       setErrors([]);
     } else {
-      setErrors(["Please upload a valid Excel file (.xlsx)"]);
+      setErrors([t("importModal:invalid_excel")]);
     }
   };
   const resetModalState = () => {
@@ -40,14 +41,14 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
   };
   const handleUpload = async () => {
     if (!selectedFile) {
-      setErrors([t("position:no_file_selected")]);
+      setErrors([t("importModal:no_file_selected")]);
       return;
     }
 
     const result = await bulkImport(requisitionId, selectedFile);
 
     if (result.success) {
-      toast.success("Positions imported successfully");
+      toast.success(t("importModal:import_success"));
 
       resetModalState();
       onHide();
@@ -58,8 +59,9 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
     } else {
       const errorMsg =
         Array.isArray(result.details) && result.details.length > 0
-          ? "Import failed"
-          : result.error || "Import failed";
+          ? t("importModal:import_failed")
+          : result.error || t("importModal:import_failed");
+
 
       toast.error(errorMsg);
 
@@ -77,7 +79,7 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
       onHide();
     }} centered className="modalimport">
       <Modal.Header closeButton>
-        <Modal.Title className="f16 bluecol">Import Positions</Modal.Title>
+        <Modal.Title className="f16 bluecol">{t("importModal:import_positions")}</Modal.Title>
 
       </Modal.Header>
 
@@ -100,11 +102,11 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
             </div>
 
             <h5 className="mb-2 uploadfile">
-              Upload File
+              {t("importModal:upload_file")}
             </h5>
 
             <p className="text-muted small">
-              Support for XLSX formats
+              {t("importModal:support_xlsx")}
             </p>
           </div>
 
@@ -135,8 +137,8 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
                 disabled={loading}
               >
                 {selectedFile
-                  ? "Reupload XLSX"
-                  : "Upload XLSX"}
+                  ? t("importModal:reupload_xlsx")
+                  : t("importModal:upload_xlsx")}
               </Button>
             </label>
 
@@ -152,24 +154,24 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
                   onClick={() => setSelectedFile(null)}
                   disabled={loading}
                 >
-                  Remove
+                  {t("importModal:remove")}
                 </Button>
               </div>
             )}
           </div>
 
           <div className="text-center m-0 import-area small">
-            Download Template{" "}
-           
+            {t("importModal:download_template")}{" "}
+
             <button
-            type="button"
-            onClick={downloadPositionTemplate}
-            className="btn btn-link p-0 text-primary text-decoration-none btnfont"
-            style={{ cursor: 'pointer' }}
-            disabled={loading}
-          >
-            {" "}XLSX
-          </button>
+              type="button"
+              onClick={downloadPositionTemplate}
+              className="btn btn-link p-0 text-primary text-decoration-none btnfont"
+              style={{ cursor: 'pointer' }}
+              disabled={loading}
+            >
+              {" "}XLSX
+            </button>
           </div>
         </div>
       </Modal.Body>
@@ -183,13 +185,13 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
           }}
           disabled={loading}
         >
-          Cancel
+          {t("common:cancel")}
         </Button>
 
         <Button variant="primary" onClick={handleUpload} disabled={loading}>
           {loading
-            ? "Importing..."
-            : "Import"}
+            ? t("importModal:importing")
+            : t("importModal:import")}
         </Button>
       </Modal.Footer>
     </Modal>

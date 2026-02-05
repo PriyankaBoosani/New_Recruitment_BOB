@@ -1,5 +1,4 @@
 {
-    
   "admin": "Admin",
   "users": "Users",
   "department": "Department",
@@ -13,5 +12,20 @@
   "generic_or_annexures": "Generic or Annexures",
   "job_postings": "Job Postings",
   "logout": "Logout",
-  "job_postings": "Job Postings"
+  "cancel": "Cancel",
+  "save": "Save",
+  "update": "Update",
+  "select": "Select",
+  "select_dots": "Select...",
+  "select_years": "Select Years",
+  "select_months": "Select Months",
+  "yes": "Yes",
+  "no": "No",
+  "replace": "Replace",
+  "total": "Total",
+  "actions": "Actions",
+  "select_type": "Select Type",
+  "select_degree": "Select Degree",
+  "select_specialization": "Select Specialization",
+  "select_certification": "Select Certification"
 }
