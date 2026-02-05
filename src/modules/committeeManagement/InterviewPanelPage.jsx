@@ -7,7 +7,7 @@ import { useInterviewPanel } from "./hooks/useInterviewPanel";
 import { FiUsers, FiFileText } from "react-icons/fi";
 
 const InterviewPanelPage = () => {
-  const [activeTab, setActiveTab] = useState("MANAGE");
+
 
   const {
     panels,
@@ -41,11 +41,13 @@ const InterviewPanelPage = () => {
     sortedPanels,
     size,
     setSize,
+    activeTab,
+    setActiveTab
   } = useInterviewPanel();
 
-  useEffect(() => {
-    initData();
-  }, []);
+  // useEffect(() => {
+  //   initData();
+  // }, []);
 
   return (
     <div className="interview-panel-container">

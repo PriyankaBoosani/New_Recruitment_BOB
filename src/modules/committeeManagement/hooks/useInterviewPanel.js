@@ -28,7 +28,7 @@ export const useInterviewPanel = () => {
   const [page, setPage] = useState(0);
  const [size, setSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
-
+  const [activeTab, setActiveTab] = useState("MANAGE");
 
   /* ================= search ================= */
   const [search, setSearch] = useState({
@@ -299,6 +299,17 @@ useEffect(() => {
   fetchPanels();
 }, [page, size]);
 
+useEffect(() => {
+  if (activeTab === "MANAGE") {
+    setFormData({
+      name: "",
+      community: "",
+      members: []
+    });
+    setErrors({});
+  }
+}, [activeTab]);
+
   // useEffect(() => {
   //   fetchPanels();
   // }, [fetchPanels]);
@@ -342,7 +353,9 @@ useEffect(() => {
 
     sortConfig,
     handleSort,
-    sortedPanels
+    sortedPanels,
+    activeTab,
+    setActiveTab
 
   };
 };
