@@ -5,6 +5,8 @@ import AssignPositionsPage from "./AssignPositionsPage";
 import "../../style/css/InterviewPanelPage.css";
 import { useInterviewPanel } from "./hooks/useInterviewPanel";
 import { FiUsers, FiFileText } from "react-icons/fi";
+import { Modal, Button } from "react-bootstrap";
+
 
 const InterviewPanelPage = () => {
 
@@ -48,7 +50,8 @@ const InterviewPanelPage = () => {
   // useEffect(() => {
   //   initData();
   // }, []);
-
+const [showDeleteModal, setShowDeleteModal] = useState(false);
+const [deleteId, setDeleteId] = useState(null);
   return (
     <div className="interview-panel-container">
       <div className="panel-card">
@@ -97,7 +100,7 @@ const InterviewPanelPage = () => {
                   <InterviewPanelTable
                     panels={panels}
                     onEdit={handleEdit}
-                    onDelete={handleDelete}
+                    //onDelete={handleDelete}
                     page={page}
                     setPage={setPage}
                     totalPages={totalPages}
@@ -110,6 +113,10 @@ const InterviewPanelPage = () => {
                     sortedPanels={sortedPanels}
                     size={size}
                     setSize={setSize}
+                    onDelete={(id) => {
+                      setDeleteId(id);
+                      setShowDeleteModal(true);
+                    }}
                   />
                 </div>
               </div>
@@ -122,6 +129,43 @@ const InterviewPanelPage = () => {
             </div>
           )}
         </div>
+
+              <Modal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+        centered
+        >
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Delete</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          Are you sure you want to delete this interview panel?
+          
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowDeleteModal(false)}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            variant="danger"
+            onClick={() => {
+              handleDelete(deleteId);
+              setShowDeleteModal(false);
+              setDeleteId(null);
+            }}
+          >
+            Delete
+          </Button>
+        </Modal.Footer>
+        </Modal>
+
+
       </div>
     </div>
   );
