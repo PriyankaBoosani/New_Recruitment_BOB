@@ -1,7 +1,8 @@
 import React from "react";
 import Select from "react-select";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { FiInfo } from "react-icons/fi";
+import { OverlayTrigger, Popover } from "react-bootstrap";
+import I_icon from '../../../assets/I_icon.png';
+
 
 const InterviewPanelFormModal = ({
   communityOptions = [],
@@ -13,6 +14,22 @@ const InterviewPanelFormModal = ({
   setErrors,
   clearError
 }) => {
+  const panelConstitutionPopover = (
+    <Popover id="panel-constitution-popover">
+      <Popover.Header as="h6">
+        Panel Constitution Guidelines
+      </Popover.Header>
+      <Popover.Body>
+        <ul style={{ paddingLeft: "16px", margin: "6px 0" }}>
+          <li>At least one <b>Woman</b> member</li>
+          <li>At least one <b>Minority</b> member</li>
+          <li>At least one <b>SC/ST</b> member</li>
+          <li>At least one <b>OBC</b> member</li>
+        </ul>
+      </Popover.Body>
+    </Popover>
+  );
+
   return (
     <>
       <span className="card-title">Create New Panel</span>
@@ -61,26 +78,20 @@ const InterviewPanelFormModal = ({
 
       {/* Panel Members */}
       <div className="form-group">
-        <label>Panel Members <span className="text-danger">*</span><OverlayTrigger
-          placement="right"
-          overlay={
-            <Tooltip id="panel-constitution-tooltip">
-              <strong>Panel Constitution Guidelines</strong>
-              <ul style={{ paddingLeft: "16px", margin: "6px 0" }}>
-                <li>At least one <b>Woman</b> member</li>
-                <li>At least one <b>Minority</b> member</li>
-                <li>At least one <b>SC/ST</b> member</li>
-                <li>At least one <b>OBC</b> member</li>
-              </ul>
-            </Tooltip>
-          }
-        >
-          <span className="info-icon">
-            <FiInfo />
-          </span>
-        </OverlayTrigger></label>
+        <label>
+          Panel Members <span className="text-danger">*</span>
 
-
+          <OverlayTrigger
+            trigger="click"
+            placement="right"
+            overlay={panelConstitutionPopover}
+            rootClose
+          >
+            <span className="info-icon" style={{ cursor: "pointer" }}>
+              <img src={I_icon} alt="info_icon" className="infoicon-16" />
+            </span>
+          </OverlayTrigger>
+        </label>
 
         <Select
           isMulti
