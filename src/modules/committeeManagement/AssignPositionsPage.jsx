@@ -292,7 +292,7 @@ const AssignPositionsPage = () => {
             <div className="dual-committee-box new-ui">
               <div className="available-committees blue">
                 <div className="available-panel-header-row">
-                  Available Screening Panels
+                  Available Panels
                   <span className="count">{filteredPanels.length}</span>
                 </div>
                 <div className="panel-divider"></div>
@@ -305,7 +305,7 @@ const AssignPositionsPage = () => {
 
               <div className="selected-committees orange">
                 <div className="selected-panel-header-row">
-                  Selected Screening Panels
+                  Selected Panels
                   <span className="count">{selectedCommittees[activeTab].length}</span>
                 </div>
                 <div className="panel-divider"></div>
