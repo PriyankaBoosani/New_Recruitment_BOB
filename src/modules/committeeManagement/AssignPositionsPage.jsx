@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Button, Row, Form ,Col } from "react-bootstrap";
+import { Card, Button, Row, Form, Col } from "react-bootstrap";
 import { FiFilter, FiDownload, FiPlus, FiX } from "react-icons/fi";
 import "../../style/css/Committee.css";
 import CommitteeHistoryList from './components/CommitteeHistoryList';
@@ -25,186 +25,186 @@ import { useAssignPositions } from "./hooks/useAssignPositions";
 const AssignPositionsPage = () => {
 
   const {
-  requisitions,
-  positions,
-  selectedRequisition,
-  selectedPosition,
-  setSelectedPosition,
-  handleRequisitionChange,
-  loading,
-  availablePanels,
-  setAvailablePanels,
-  updateCommitteeDate,
-  activeTab,
-setActiveTab,
-showHistory,
-setShowHistory,
-selectedCommittees,
-setSelectedCommittees,
-context,
-setContext,
-handleAssignCommittees,
-panelErrors,
-setPanelErrors
+    requisitions,
+    positions,
+    selectedRequisition,
+    selectedPosition,
+    setSelectedPosition,
+    handleRequisitionChange,
+    loading,
+    availablePanels,
+    setAvailablePanels,
+    updateCommitteeDate,
+    activeTab,
+    setActiveTab,
+    showHistory,
+    setShowHistory,
+    selectedCommittees,
+    setSelectedCommittees,
+    context,
+    setContext,
+    handleAssignCommittees,
+    panelErrors,
+    setPanelErrors
 
-} = useAssignPositions();
+  } = useAssignPositions();
 
-const selectedPositionTitle =
-  positions.find(
-    p => p.jobPositions?.positionId === selectedPosition
-  )?.masterPositions?.positionName || "";
-  
+  const selectedPositionTitle =
+    positions.find(
+      p => p.jobPositions?.positionId === selectedPosition
+    )?.masterPositions?.positionName || "";
+
 
   const toggleCommittee = (type, committee) => {
-  setSelectedCommittees(prev => {
-    const isSelected = prev[type].some(c => c.id === committee.id);
+    setSelectedCommittees(prev => {
+      const isSelected = prev[type].some(c => c.id === committee.id);
 
-    if (isSelected) {
-      // REMOVE → move back to available
-      setAvailablePanels(ap => [...ap, committee]);
+      if (isSelected) {
+        // REMOVE → move back to available
+        setAvailablePanels(ap => [...ap, committee]);
 
-      return {
-        ...prev,
-        [type]: prev[type].filter(c => c.id !== committee.id),
-      };
-    } else {
-      // ADD → remove from available
-      setAvailablePanels(ap =>
-        ap.filter(c => c.id !== committee.id)
-      );
+        return {
+          ...prev,
+          [type]: prev[type].filter(c => c.id !== committee.id),
+        };
+      } else {
+        // ADD → remove from available
+        setAvailablePanels(ap =>
+          ap.filter(c => c.id !== committee.id)
+        );
 
-      return {
-        ...prev,
-        [type]: [
-          ...prev[type],
-          {
-            ...committee,
-            startDate: committee.startDate || "",
-            endDate: committee.endDate || ""
-          }
-        ],
-      };
-    }
-  });
-};
+        return {
+          ...prev,
+          [type]: [
+            ...prev[type],
+            {
+              ...committee,
+              startDate: committee.startDate || "",
+              endDate: committee.endDate || ""
+            }
+          ],
+        };
+      }
+    });
+  };
 
-const renderAvailableCommittee = (committee, type) => (
-  <div className="committee-row" key={committee.id}>
-    <div>
-      <div className="committee-title">{committee.name}</div>
-      <div className="committee-chips">
-        {committee.members.map(m => (
-          <span key={m} className="chip">{m.name}</span>
-        ))}
-      </div>
-    </div>
-
-    <button
-      className="action-pill add"
-      onClick={() => toggleCommittee(type, committee)}
-    >
-      Add →
-    </button>
-  </div>
-);
- const renderSelectedCommittee = (committee, type) => {
-  const errorKey = `${type}_${committee.id}`;
-  const errors = panelErrors?.[errorKey] || {};
-
-  return (
-    <div className="committee-row selected" key={committee.id}>
+  const renderAvailableCommittee = (committee, type) => (
+    <div className="committee-row" key={committee.id}>
       <div>
         <div className="committee-title">{committee.name}</div>
-
         <div className="committee-chips">
           {committee.members.map(m => (
-            <span key={m.name} className="chip">{m.name}</span>
+            <span key={m} className="chip">{m.name}</span>
           ))}
-        </div>
-
-        <div className="date-row">
-          <div>
-            <label>START DATE</label>
-            <input
-              type="date"
-              value={committee.startDate}
-              onChange={(e) =>
-                updateCommitteeDate(type, committee.id, "startDate", e.target.value)
-              }
-            />
-            {errors.startDate && (
-              <div className="field-error">{errors.startDate}</div>
-            )}
-          </div>
-
-          <div>
-            <label>END DATE</label>
-            <input
-              type="date"
-              value={committee.endDate}
-              onChange={(e) =>
-                updateCommitteeDate(type, committee.id, "endDate", e.target.value)
-              }
-            />
-            {errors.endDate && (
-              <div className="field-error">{errors.endDate}</div>
-            )}
-          </div>
         </div>
       </div>
 
       <button
-        className="action-pill remove"
+        className="action-pill add"
         onClick={() => toggleCommittee(type, committee)}
       >
-        ← Remove
+        Add →
       </button>
     </div>
   );
-};
+  const renderSelectedCommittee = (committee, type) => {
+    const errorKey = `${type}_${committee.id}`;
+    const errors = panelErrors?.[errorKey] || {};
+
+    return (
+      <div className="committee-row selected" key={committee.id}>
+        <div>
+          <div className="committee-title">{committee.name}</div>
+
+          <div className="committee-chips">
+            {committee.members.map(m => (
+              <span key={m.name} className="chip">{m.name}</span>
+            ))}
+          </div>
+
+          <div className="date-row">
+            <div>
+              <label>START DATE</label>
+              <input
+                type="date"
+                value={committee.startDate}
+                onChange={(e) =>
+                  updateCommitteeDate(type, committee.id, "startDate", e.target.value)
+                }
+              />
+              {errors.startDate && (
+                <div className="field-error">{errors.startDate}</div>
+              )}
+            </div>
+
+            <div>
+              <label>END DATE</label>
+              <input
+                type="date"
+                value={committee.endDate}
+                onChange={(e) =>
+                  updateCommitteeDate(type, committee.id, "endDate", e.target.value)
+                }
+              />
+              {errors.endDate && (
+                <div className="field-error">{errors.endDate}</div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <button
+          className="action-pill remove"
+          onClick={() => toggleCommittee(type, committee)}
+        >
+          ← Remove
+        </button>
+      </div>
+    );
+  };
 
 
-const filteredPanels = availablePanels.filter(
-  p =>
-    p.committeeName?.toUpperCase() === activeTab
-);
+  const filteredPanels = availablePanels.filter(
+    p =>
+      p.committeeName?.toUpperCase() === activeTab
+  );
   return (
     <div className="assign-page">
 
       {/* OUTER CARD */}
       <Card className="p-3">
- <div className="mb-3">
-        <div className="assign-position-title">Select Position</div>
-        <div className="assign-position-muted">
-          Choose a requisition and position to assign committees to.
+        <div className="mb-3">
+          <div className="assign-position-title">Select Position</div>
+          <div className="assign-position-muted">
+            Choose a requisition and position to assign committees to.
+          </div>
         </div>
-      </div>
 
-     
-      <Row className="g-3 align-items-end mb-4">
-        <Col md={4}>
-          <label className="form-label">Requisition</label>
-         <select
-            className="form-select"
-            value={selectedRequisition}
-            onChange={handleRequisitionChange}
-          >
-            <option value="">Select Requisition</option>
 
-            {requisitions.map(req => (
-              <option
-                key={req.id}
-                value={req.id}
-              >
-                {req.requisitionCode}
-              </option>
-            ))}
-          </select>
-        </Col>
+        <Row className="g-3 align-items-end mb-4">
+          <Col md={4}>
+            <label className="form-label">Requisition</label>
+            <select
+              className="form-select"
+              value={selectedRequisition}
+              onChange={handleRequisitionChange}
+            >
+              <option value="">Select Requisition</option>
 
-        <Col>
-          <label className="form-label">Position</label>
-          <select
+              {requisitions.map(req => (
+                <option
+                  key={req.id}
+                  value={req.id}
+                >
+                  {req.requisitionCode}
+                </option>
+              ))}
+            </select>
+          </Col>
+
+          <Col>
+            <label className="form-label">Position</label>
+            <select
               className="form-select"
               value={selectedPosition}
               onChange={(e) => setSelectedPosition(e.target.value)}
@@ -213,7 +213,7 @@ const filteredPanels = availablePanels.filter(
               <option value="">Select Position</option>
 
               {positions.map(pos => (
-               <option
+                <option
                   key={pos.jobPositions?.positionId}
                   value={pos.jobPositions?.positionId}
                 >
@@ -222,35 +222,35 @@ const filteredPanels = availablePanels.filter(
               ))}
             </select>
 
-        </Col>
+          </Col>
 
-        <Col className="d-flex gap-2">
-          <Button variant="primary"  className="assign-btn w-50"   onClick={handleAssignCommittees}>
-            <FiPlus className="me-1" />
-            Assign Committees
-          </Button>
-          {/* <Button variant="secondary" className="assign-btn w-100">
+          <Col className="d-flex gap-2">
+            <Button variant="primary" className="assign-btn w-50" onClick={handleAssignCommittees}>
+              <FiPlus className="me-1" />
+              Assign Committees
+            </Button>
+            {/* <Button variant="secondary" className="assign-btn w-100">
             Import Committees
           </Button> */}
-        </Col>
-      </Row>
-        
+          </Col>
+        </Row>
+
 
         {/* CARD 2: COMMITTEES */}
         <Card>
           <Card.Body>
             {/* HEADER (NEW) */}
-                <div className="d-flex justify-content-between align-items-start mb-3">
-                  <div>
-                    <div className="config-title">Configure Committees</div>
-                    <div className="config-subtitle">
-                        {selectedPositionTitle
-                          ? `Assign panels to ${selectedPositionTitle}`
-                          : "Select a position to assign panels"}
-                    </div>
-                  </div>
+            <div className="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <div className="config-title">Configure Committees</div>
+                <div className="config-subtitle">
+                  {selectedPositionTitle
+                    ? `Assign panels to ${selectedPositionTitle}`
+                    : "Select a position to assign panels"}
+                </div>
+              </div>
 
-                  {/* <div className="d-flex gap-2">
+              {/* <div className="d-flex gap-2">
                     <Button variant="outline-secondary" size="sm">
                       Cancel
                     </Button>
@@ -258,31 +258,28 @@ const filteredPanels = availablePanels.filter(
                       Save Configuration
                     </Button>
                   </div> */}
-                </div>
+            </div>
             {/* Tabs */}
             <div className="com-tab mb-2">
               <button
-                className={`com-tab-item ${
-                  activeTab === "SCREENING" ? "active" : ""
-                }`}
+                className={`com-tab-item ${activeTab === "SCREENING" ? "active" : ""
+                  }`}
                 onClick={() => setActiveTab("SCREENING")}
               >
                 Screening Committee
               </button>
 
               <button
-                className={`com-tab-item ${
-                  activeTab === "INTERVIEW" ? "active" : ""
-                }`}
+                className={`com-tab-item ${activeTab === "INTERVIEW" ? "active" : ""
+                  }`}
                 onClick={() => setActiveTab("INTERVIEW")}
               >
                 Interview Committee
               </button>
 
               <button
-                className={`com-tab-item ${
-                  activeTab === "COMPENSATION" ? "active" : ""
-                }`}
+                className={`com-tab-item ${activeTab === "COMPENSATION" ? "active" : ""
+                  }`}
                 onClick={() => setActiveTab("COMPENSATION")}
               >
                 Compensation Committee
@@ -309,7 +306,7 @@ const filteredPanels = availablePanels.filter(
                   Selected Screening Panels
                   <span className="count">{selectedCommittees[activeTab].length}</span>
                 </div>
-               <div className="panel-divider"></div>
+                <div className="panel-divider"></div>
                 {selectedCommittees[activeTab].length > 0 ? (
                   selectedCommittees[activeTab].map(c =>
                     renderSelectedCommittee(c, activeTab)
@@ -322,7 +319,7 @@ const filteredPanels = availablePanels.filter(
 
           </Card.Body>
         </Card>
-      {/* <Card>
+        {/* <Card>
         <Card.Body>
          
           {showHistory && <CommitteeHistoryList />}

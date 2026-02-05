@@ -8,31 +8,32 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString('en-US', options);
 };
 
-const CommitteeHistoryList = ({ 
-  history = [ {
-      id: 1,
-      requisitionCode: 'BOB/HRM/REC/ADVT/2025/06',
-      positionName: 'Product - ONDC',
-      panelType: 'Interview',
-      panelName: 'Interview Panel 1',
-      startDate: '10-01-2026',
-      endDate: '21-01-2026',
-      members: ['Veeresh V', 'Naresh P', 'Vijay V']
-    },{id: 2,
-      requisitionCode: 'BOB/HRM/REC/ADVT/2025/06',
-      positionName: 'Product - ONDC',
-      panelType: 'Interview',
-      panelName: 'Interview Panel 1',
-      startDate: '10-01-2026',
-      endDate: '21-01-2026',
-      members: ['Veeresh V', 'Naresh P', 'Vijay V']
-    }], 
-  loading = false, 
-  onEdit = () => {}, 
-  onDelete = () => {} 
+const CommitteeHistoryList = ({
+  history = [{
+    id: 1,
+    requisitionCode: 'BOB/HRM/REC/ADVT/2025/06',
+    positionName: 'Product - ONDC',
+    panelType: 'Interview',
+    panelName: 'Interview Panel 1',
+    startDate: '10-01-2026',
+    endDate: '21-01-2026',
+    members: ['Veeresh V', 'Naresh P', 'Vijay V']
+  }, {
+    id: 2,
+    requisitionCode: 'BOB/HRM/REC/ADVT/2025/06',
+    positionName: 'Product - ONDC',
+    panelType: 'Interview',
+    panelName: 'Interview Panel 1',
+    startDate: '10-01-2026',
+    endDate: '21-01-2026',
+    members: ['Veeresh V', 'Naresh P', 'Vijay V']
+  }],
+  loading = false,
+  onEdit = () => { },
+  onDelete = () => { }
 }) => {
   return (
-     <div className="history-section">
+    <div className="history-section">
       <div className="history-header d-flex justify-content-between align-items-center mb-3">
         <span className="committee-title">Committee History</span>
         {/* optional filter button */}
@@ -89,7 +90,7 @@ const CommitteeHistoryList = ({
 
           {/* ===== DATES ===== */}
           <div className="dates mt-2">
-             <span>Start Date: {item.startDate}</span>
+            <span>Start Date: {item.startDate}</span>
             <span >End Date: {item.endDate}</span>
           </div>
         </div>
