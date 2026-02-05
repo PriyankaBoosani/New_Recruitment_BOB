@@ -62,12 +62,6 @@ const InterviewPanelTable = ({
               <option value="Compensation">Compensation</option>
             </select>
           </div> 
-
-
-         
-   
-
-
         </div>
 
 

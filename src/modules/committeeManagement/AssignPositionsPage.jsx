@@ -49,7 +49,10 @@ setPanelErrors
 
 } = useAssignPositions();
 
-
+const selectedPositionTitle =
+  positions.find(
+    p => p.jobPositions?.positionId === selectedPosition
+  )?.masterPositions?.positionName || "";
   
 
   const toggleCommittee = (type, committee) => {
@@ -241,7 +244,9 @@ const filteredPanels = availablePanels.filter(
                   <div>
                     <div className="config-title">Configure Committees</div>
                     <div className="config-subtitle">
-                      Assign panels to Product – ONDC
+                        {selectedPositionTitle
+                          ? `Assign panels to ${selectedPositionTitle}`
+                          : "Select a position to assign panels"}
                     </div>
                   </div>
 

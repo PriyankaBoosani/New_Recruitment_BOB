@@ -20,6 +20,7 @@ const [positions, setPositions] = useState([]);
 
 const [selectedRequisition, setSelectedRequisition] = useState("");
 const [selectedPosition, setSelectedPosition] = useState("");
+const [allPanels, setAllPanels] = useState([]);
 const [availablePanels, setAvailablePanels] = useState([]);
 
 
@@ -69,7 +70,7 @@ const validatePanels = () => {
   setPanelErrors(errors);
 
    if (!isValid) {
-    toast.error("Please fix the highlighted date errors before assigning committees");
+    toast.error("Please fix the highlighted errors before assigning committees");
   }
   return isValid;
 };
@@ -80,6 +81,20 @@ useEffect(() => {
   fetchPanels();
 }, []);
 
+useEffect(() => {
+  if (!selectedPosition) return;
+
+  // 🔥 RESET EVERYTHING RELATED TO PREVIOUS POSITION
+  setSelectedCommittees({
+    SCREENING: [],
+    INTERVIEW: [],
+    COMPENSATION: []
+  });
+
+  setPanelErrors({});
+}, [selectedPosition]);
+
+// 2️⃣ Fetch assigned panels for new position
 useEffect(() => {
   if (!selectedPosition) return;
 
@@ -129,7 +144,7 @@ console.log("ASSIGNED 👉", assigned);
       .map(p => p.id);
 
     setAvailablePanels(prev =>
-      prev.filter(p => !assignedIds.includes(p.id))
+      allPanels.filter(p => !assignedIds.includes(p.id))
     );
 
   } catch (err) {
@@ -147,6 +162,7 @@ const fetchRequisitions = async () => {
   } catch (err) {
     console.error("Failed to load requisitions", err);
   }
+  
 };
 
 const handleRequisitionChange = async (e) => {
@@ -254,7 +270,8 @@ const handleRequisitionChange = async (e) => {
       const apiData = res?.data?.content || [];
       const mapped = mapPanelsApi(apiData);
       console.log("MAPPED 👉", mapped);
-      setAvailablePanels(mapped);
+       setAllPanels(mapped);
+    setAvailablePanels(mapped); // reset source of truth
 
     } catch (error) {
       console.error("Fetch Panels Error:", error);
