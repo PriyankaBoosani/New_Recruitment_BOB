@@ -10,6 +10,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
 import { toast } from "react-toastify";
 import masterApiService from "../../master/services/masterApiService";
+import { useSelector } from "react-redux";
+
 
 const ApplicationForm = ({
   previewData,
@@ -19,7 +21,10 @@ const ApplicationForm = ({
   candidateId,
   positionId,
   applicationId,
-  requisitionId
+  requisitionId,
+   interviewScheduleId,
+  requisitionTitle,
+  positionName,
 }) => {
   const navigate = useNavigate();
   const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
@@ -28,6 +33,8 @@ const ApplicationForm = ({
   const candidate = location.state?.candidate;
   console.log("candidateId: ", candidateId)
   console.log("applicationId: ", applicationId)
+
+  console.log("Selected Job in Application Form@#@#@#@#@#@#@##@#@#@#:", applicationId);
 
   useEffect(() => {
     console.log("Loaded Candidate:", candidate);
@@ -46,11 +53,96 @@ const ApplicationForm = ({
     ageCriteriaRemark: "",
     educationCriteriaRemark: "",
     finalScreeningRemark: "",
+     zonalSubmitDate: "",  
 
     submitBeforeDate: "",
     isScreeningCompleted: false,
     screeningId: null,
   });
+
+const [screeningRemarks, setScreeningRemarks] = useState("");
+
+
+
+
+const mapDecisionToStatus = (val) => {
+  if (val === "Yes") return "VERIFIED";
+  if (val === "No") return "REJECTED";
+  if (val === "Provisionally Approved") return "PROVISIONALLY_APPROVED";
+  return "PENDING";
+};
+
+
+const handleZonalSubmit = async () => {
+
+  if (!zonalDecision) {
+    toast.error("Please select decision");
+    return;
+  }
+
+  if (zonalDecision === "Provisionally Approved") {
+    if (!screeningForm.zonalSubmitDate) {
+      setErrors(prev => ({
+        ...prev,
+        zonalSubmitDate: "Submit Date is required"
+      }));
+      return;
+    }
+
+    const selected = new Date(screeningForm.zonalSubmitDate);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    if (selected <= today) {
+      setErrors(prev => ({
+        ...prev,
+        zonalSubmitDate: "Must be future date"
+      }));
+      return;
+    }
+  }
+
+  console.log("Submitting interviewScheduleId:", interviewScheduleId);
+
+  try {
+
+    const payload = {
+      candidateId,
+      applicationId,
+      interviewScheduleId,
+      zonalVerificationStatus: mapDecisionToStatus(zonalDecision),
+      zonalSubmitBeforeDate: screeningForm.zonalSubmitDate || null,
+      zonalHrComments: screeningRemarks || ""
+    };
+
+    console.log("ZONAL SUBMIT PAYLOAD:", payload);
+
+    await jobPositionApiService.submitOverallZonalVerification(payload);
+
+    toast.success("Zonal verification submitted successfully");
+
+ navigate("/candidate-verification", {
+  state: {
+    requisition: {
+      requisition_id: requisitionId,
+      requisition_title: requisitionTitle   // add this if available
+    },
+    position: {
+      positionId: positionId,
+      positionName: positionName           // add this if available
+    }
+  }
+});
+
+
+
+  } catch (err) {
+    console.error(err);
+    toast.error("Zonal submit failed");
+  }
+};
+
+
 
   const data = previewData || {
     personalDetails: {},
@@ -129,32 +221,85 @@ const ApplicationForm = ({
   const [docStatusMap, setDocStatusMap] = useState({});
   const [docStatusLoading, setDocStatusLoading] = useState(true);
   const [errors, setErrors] = useState({});
+    const [docStatus, setDocStatus] = useState({});
+    const [zonalDecision, setZonalDecision] = useState("");
+
+// const allDocsVerified =
+//   documentRows.length > 0 &&
+//   areAllDocumentsValidated();
 
 
-  const refreshDocStatuses = async () => {
-    try {
-      setDocStatusLoading(true);
-      const res =
-        await jobPositionApiService.getScreeningCommitteeStatus(
-          applicationId
-        );
+  
+  const user = useSelector((state) => state.user.user);
+const role = user?.role?.toLowerCase();
+const isZonalHr = role === "zonal_hr";
 
-      const map = {};
-      (res.data || []).forEach((item) => {
+
+
+const refreshDocStatuses = async () => {
+  try {
+    setDocStatusLoading(true);
+
+    let res;
+
+    if (isZonalHr) {
+      res = await jobPositionApiService.getZonalDocumentStatus(applicationId);
+    } else {
+      res = await jobPositionApiService.getScreeningCommitteeStatus(applicationId);
+    }
+
+    const map = {};
+
+    (res.data || []).forEach((item) => {
+      if (isZonalHr) {
+        map[item.candidateDocumentId] = {
+          status: item.zonalHrDocStatus?.toUpperCase() || "PENDING",
+          comments: item.zonalHrDocComments,
+        };
+      } else {
         map[item.candidateDocumentId] = {
           status: item.docScreeningStatus?.toUpperCase() || "PENDING",
           comments: item.docScreeningComments,
           verificationId: item.verificationId,
         };
-      });
+      }
+    });
 
-      setDocStatusMap(map);
-    } catch (e) {
-      console.error("Failed to fetch document screening status", e);
-    } finally {
-      setDocStatusLoading(false);
-    }
-  };
+    setDocStatusMap(map);
+
+  } catch (e) {
+    console.error("Failed to fetch document status", e);
+  } finally {
+    setDocStatusLoading(false);
+  }
+};
+
+
+
+  // const refreshDocStatuses = async () => {
+  //   try {
+  //     setDocStatusLoading(true);
+  //     const res =
+  //       await jobPositionApiService.getScreeningCommitteeStatus(
+  //         applicationId
+  //       );
+
+  //     const map = {};
+  //     (res.data || []).forEach((item) => {
+  //       map[item.candidateDocumentId] = {
+  //         status: item.docScreeningStatus?.toUpperCase() || "PENDING",
+  //         comments: item.docScreeningComments,
+  //         verificationId: item.verificationId,
+  //       };
+  //     });
+
+  //     setDocStatusMap(map);
+  //   } catch (e) {
+  //     console.error("Failed to fetch document screening status", e);
+  //   } finally {
+  //     setDocStatusLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     if (!applicationId) return;
@@ -274,53 +419,83 @@ const ApplicationForm = ({
     });
   };
   
-  const handleVerify = async (comment) => {
-    console.log("selectedDoc", selectedDoc);
-    if (!selectedDoc) return;
+ const handleVerify = async (comment) => {
+  if (!selectedDoc) return;
 
-    try {
+  try {
+
+    if (isZonalHr) {
+
+      await jobPositionApiService.verifyZonalDocument({
+        candidateDocumentId: selectedDoc.candidateDocumentId,
+        candidateId,
+        applicationId,
+        zonalHrDocStatus: "VERIFIED",
+        zonalHrDocComments: comment || ""
+      });
+
+    } else {
+
+      // 🔹 DO NOT TOUCH — existing flow
       await jobPositionApiService.saveScreeningDecision({
         candidateDocumentId: selectedDoc.candidateDocumentId,
-        candidateId: candidateId,
-        applicationId: applicationId,
+        candidateId,
+        applicationId,
         docScreeningStatus: "VERIFIED",
         docScreeningComments: comment || "",
         verificationId: selectedDoc.verificationId,
       });
 
-      setShowViewer(false);
-      setSelectedDoc(null);
-
-      // 🔁 REFRESH backend truth
-      await refreshDocStatuses();
-    } catch (err) {
-      console.error("Verify failed", err);
     }
-  };
 
-  const handleReject = async (comment) => {
-    console.log("selectedDoc", selectedDoc);
-    if (!selectedDoc) return;
+    setShowViewer(false);
+    setSelectedDoc(null);
+    await refreshDocStatuses();
 
-    try {
+  } catch (err) {
+    console.error("Verify failed", err);
+  }
+};
+
+
+ const handleReject = async (comment) => {
+  if (!selectedDoc) return;
+
+  try {
+
+    if (isZonalHr) {
+
+      await jobPositionApiService.verifyZonalDocument({
+        candidateDocumentId: selectedDoc.candidateDocumentId,
+        candidateId,
+        applicationId,
+        zonalHrDocStatus: "REJECTED",
+        zonalHrDocComments: comment || ""
+      });
+
+    } else {
+
+      // 🔹 existing screening API — untouched
       await jobPositionApiService.saveScreeningDecision({
         candidateDocumentId: selectedDoc.candidateDocumentId,
-        candidateId: candidateId,
-        applicationId: applicationId,
+        candidateId,
+        applicationId,
         docScreeningStatus: "REJECTED",
         docScreeningComments: comment || "",
         verificationId: selectedDoc.verificationId,
       });
 
-      setShowViewer(false);
-      setSelectedDoc(null);
-
-      // 🔁 REFRESH backend truth
-      await refreshDocStatuses();
-    } catch (err) {
-      console.error("Reject failed", err);
     }
-  };
+
+    setShowViewer(false);
+    setSelectedDoc(null);
+    await refreshDocStatuses();
+
+  } catch (err) {
+    console.error("Reject failed", err);
+  }
+};
+
 
   const validateForm = () => {
     const newErrors = {};
@@ -407,6 +582,12 @@ const ApplicationForm = ({
       return status === "VERIFIED" || status === "REJECTED";
     });
   };
+
+
+  const allDocsVerified =
+  documentRows.length > 0 &&
+  areAllDocumentsValidated();
+
 
   const areAllDocumentsVerified = () => {
     if (!documentRows.length) return false;
@@ -496,6 +677,8 @@ const ApplicationForm = ({
   };
 
   const minDate = getTomorrowDate();
+  const minFutureDate = minDate;
+
 
   const handleDateChange = (e) => {
     let value = e.target.value;
@@ -1004,13 +1187,14 @@ const ApplicationForm = ({
           </Accordion.Item>
 
           {/* ================= CRITERIA SECTION ================= */}
-      <Card className="criteria-main-card">
+       {!isZonalHr && (
+            <Card className="criteria-main-card">
         <div className="criteria-wrapper">
-
+ 
           {/* WORK CRITERIA */}
           <div className="criteria-card">
             <label className="criteria-title">Work criteria fulfilled?</label>
-
+ 
             <div className="criteria-radio mb-0">
               {CRITERIA_OPTIONS.map(option => (
                 <label key={option} className="radio-label">
@@ -1033,8 +1217,8 @@ const ApplicationForm = ({
               </small>
             )}
 
-            <input
-              type="text"
+            <textarea
+              // type="text"
               className="criteria-remark mt-2"
               placeholder="Work criteria remark"
               value={screeningForm.workCriteriaRemark}
@@ -1042,6 +1226,7 @@ const ApplicationForm = ({
                 handleInputChange("workCriteriaRemark", e.target.value)
               }
               maxLength={2000}
+              rows={4}
               // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
             />
             {errors.workCriteriaRemark && (
@@ -1050,11 +1235,11 @@ const ApplicationForm = ({
               </small>
             )}
           </div>
-
+ 
           {/* AGE CRITERIA */}
           <div className="criteria-card">
             <label className="criteria-title">Age criteria fulfilled?</label>
-
+ 
             <div className="criteria-radio mb-0">
               {CRITERIA_OPTIONS.map(option => (
                 <label key={option} className="radio-label">
@@ -1077,8 +1262,8 @@ const ApplicationForm = ({
               </small>
             )}
 
-            <input
-              type="text"
+            <textarea
+              // type="text"
               className="criteria-remark mt-2"
               placeholder="Age criteria remark"
               value={screeningForm.ageCriteriaRemark}
@@ -1086,6 +1271,7 @@ const ApplicationForm = ({
                 handleInputChange("ageCriteriaRemark", e.target.value)
               }
               maxLength={2000}
+              rows={4}
               // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
             />
             {errors.ageCriteriaRemark && (
@@ -1094,11 +1280,11 @@ const ApplicationForm = ({
               </small>
             )}
           </div>
-
+ 
           {/* EDUCATION CRITERIA */}
           <div className="criteria-card">
             <label className="criteria-title">Education criteria fulfilled?</label>
-
+ 
             <div className="criteria-radio mb-0">
               {CRITERIA_OPTIONS.map(option => (
                 <label key={option} className="radio-label">
@@ -1121,8 +1307,8 @@ const ApplicationForm = ({
               </small>
             )}
 
-            <input
-              type="text"
+            <textarea
+              // type="text"
               className="criteria-remark mt-2"
               placeholder="Education criteria remark"
               value={screeningForm.educationCriteriaRemark}
@@ -1130,6 +1316,7 @@ const ApplicationForm = ({
                 handleInputChange("educationCriteriaRemark", e.target.value)
               }
               maxLength={2000}
+              rows={4}
               // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
             />
             {errors.educationCriteriaRemark && (
@@ -1138,7 +1325,7 @@ const ApplicationForm = ({
               </small>
             )}
           </div>
-
+ 
           {/* FINAL REMARK */}
           <div
             className={`criteria-card ${
@@ -1146,7 +1333,7 @@ const ApplicationForm = ({
             }`}
           >
             <label className="criteria-title">Shortlisted?</label>
-
+ 
             <div className="criteria-radio mb-0">
               {["YES", "NO"].map(option => (
                 <label key={option} className="radio-label">
@@ -1169,8 +1356,8 @@ const ApplicationForm = ({
               </small>
             )}
 
-            <input
-              type="text"
+            <textarea
+              // type="text"
               className="criteria-remark mt-2"
               placeholder="Final remark"
               value={screeningForm.finalScreeningRemark}
@@ -1178,6 +1365,7 @@ const ApplicationForm = ({
                 handleInputChange("finalScreeningRemark", e.target.value)
               }
               maxLength={2000}
+              rows={4}
             />
             {errors.finalScreeningRemark && (
               <small className="text-danger fs-12">
@@ -1186,27 +1374,24 @@ const ApplicationForm = ({
             )}
           </div>
         </div>
-
+ 
         {/* ================= SUBMIT ROW ================= */}
         <div className={`criteria-submit-row ${disableShortlistedSection ? 'justify-content-between' : 'justify-content-end'}`}>
-          {disableShortlistedSection && (
-            <div className="d-grid">
-              <label className="submit-label">Submit Before</label>
-              <input
-                type="date"
-                className="criteria-date"
-                min={minDate}
-                value={screeningForm.submitBeforeDate}
-                onChange={handleDateChange}
-              />
-              {errors.submitBeforeDate && (
-                <small className="text-danger fs-12">
-                  {errors.submitBeforeDate}
-                </small>
-              )}
-            </div>
-          )}
+         {!isZonalHr && disableShortlistedSection && (
+  <div className="d-grid">
+    <label className="submit-label">Submit Before</label>
+    <input
+      type="date"
+      className="criteria-date"
+      min={minDate}
+      value={screeningForm.submitBeforeDate}
+      onChange={handleDateChange}
+      disabled   //  always disabled for non-zonal
+    />
+  </div>
+)}
 
+ 
           <button
             className="btn-submit-orange"
             onClick={handleFinalSubmit}
@@ -1215,6 +1400,113 @@ const ApplicationForm = ({
           </button>
         </div>
       </Card>
+       )}
+
+
+          
+{isZonalHr && (
+  <Card className="criteria-main-card p-3">
+
+    <label className="criteria-title mb-2">
+      Have All Documents Been Verified?
+    </label>
+
+   
+
+    {/* RADIO OPTIONS — same pattern as Shortlisted */}
+  <div className="criteria-radio mb-3">
+  {["Yes", "No", "Provisionally Approved"].map((opt) => (
+    <label
+      key={opt}
+      className={`radio-label me-4 ${
+        !allDocsVerified ? "disabled" : ""
+      }`}
+    >
+      <input
+        type="radio"
+        name="docVerified"
+        value={opt}
+        checked={zonalDecision === opt}
+        disabled={!allDocsVerified}
+        onChange={(e) => {
+          setZonalDecision(e.target.value);
+
+          // clear date error when changed
+          setErrors(prev => ({
+            ...prev,
+            zonalSubmitDate: undefined
+          }));
+        }}
+      />
+      <span className="custom-radio"></span>
+      {opt}
+    </label>
+  ))}
+</div>
+
+
+    {/* DATE */}
+   <div className="submit-date-group">
+  <label className="submit-label">Submit Before</label>
+
+<input
+  type="date"
+  className="criteria-date"
+  min={minFutureDate}
+  value={screeningForm.zonalSubmitDate}
+
+   disabled={
+  !allDocsVerified ||
+  !zonalDecision
+}
+
+    onChange={(e) => {
+      setScreeningForm(prev => ({
+        ...prev,
+        zonalSubmitDate: e.target.value
+      }));
+
+      setErrors(prev => ({
+        ...prev,
+        zonalSubmitDate: undefined
+      }));
+    }}
+  />
+
+  {errors.zonalSubmitDate && (
+    <small className="text-danger fs-12">
+      {errors.zonalSubmitDate}
+    </small>
+  )}
+</div>
+
+
+    {/* REMARKS */}
+    <div className="remarks-row">
+     <textarea
+  className="remarks-box"
+  placeholder="Remarks"
+  rows={5}
+  disabled={!allDocsVerified}
+  value={screeningRemarks}
+  onChange={(e) => setScreeningRemarks(e.target.value)}
+/>
+
+
+    <button
+  className="btn-submit-orange ms-3"
+  disabled={!allDocsVerified}
+  onClick={handleZonalSubmit}
+>
+  Submit
+</button>
+
+    </div>
+
+  </Card>
+)}
+
+
         </Accordion>
        <DocumentViewerModal
           show={showViewer}

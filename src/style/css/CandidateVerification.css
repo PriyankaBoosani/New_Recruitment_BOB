@@ -1,14 +1,30 @@
-/* ===================================================== */
-/* DATE SELECTOR WRAPPER                                 */
-/* ===================================================== */
+
+  
+  .verification-date-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
  
-.verification-date-wrapper {
+
+.date-nav {
   display: flex;
   align-items: center;
   gap: 8px;
 }
- 
-/* Arrow buttons */
+
+
+.nav-arrow {
+  cursor: pointer;
+  font-size: 30px;
+  color: #6484ca; 
+  font-weight: 500;
+  padding: 0 6px;
+  user-select: none;
+}
+
+
+
 .date-nav-btn {
   width: 34px;
   height: 34px;
@@ -29,9 +45,7 @@
   background-color: #e6e6e6;
 }
  
-/* ===================================================== */
-/* DATE PILL                                             */
-/* ===================================================== */
+
  
 .verification-date-pill {
   display: flex;
@@ -53,13 +67,10 @@
 }
  
 .calendar-icon {
-  display: flex;
-  align-items: center;
+  font-size: 14px;
 }
  
-/* ===================================================== */
-/* DATEPICKER POSITIONING                                */
-/* ===================================================== */
+
  
 .verification-datepicker-wrapper {
   display: inline-flex;
@@ -70,7 +81,7 @@
   margin-top: 6px !important;
 }
  
-/* caret */
+
 .react-datepicker-popper::before {
   content: "";
   position: absolute;
@@ -82,9 +93,7 @@
   z-index: 2;
 }
  
-/* ===================================================== */
-/* CALENDAR POPUP                                        */
-/* ===================================================== */
+
  
 .react-datepicker {
   border-radius: 12px !important;
@@ -121,13 +130,21 @@
   font-weight: 500;
 }
  
-/* Selected date */
-.react-datepicker__day--selected,
-.react-datepicker__day--keyboard-selected {
+
+/* selected date only */
+.react-datepicker__day--selected {
   background-color: #f36f21 !important;
   color: #ffffff !important;
   border-color: #f36f21 !important;
 }
+
+/* keyboard hover — keep normal */
+.react-datepicker__day--keyboard-selected {
+  background-color: transparent !important;
+  color: inherit !important;
+  border-color: #e6e6e6 !important;
+}
+
  
 /* Disabled dates (future dates) */
 .react-datepicker__day--disabled {
@@ -135,15 +152,32 @@
   color: #c0c0c0 !important;
   cursor: not-allowed;
 }
- 
-/* Hover */
+
+
+
+/* Hover — keep SAME style as normal day */
 .react-datepicker__day:hover {
-  background-color: #fff3e8 !important;
+  background-color: #ffffff !important;   /* same as default */
+  border: 1px solid #e6e6e6 !important;
+  color: inherit !important;
 }
+
+/* do NOT override selected */
+.react-datepicker__day--selected:hover {
+  background-color: #f36f21 !important;
+  color: #ffffff !important;
+  border-color: #f36f21 !important;
+}
+
+/* do NOT override disabled */
+.react-datepicker__day--disabled:hover {
+  background-color: #f5f5f5 !important;
+  color: #c0c0c0 !important;
+}
+
+
  
-/* ===================================================== */
-/* FILTER BY STAGE – LIKE 1st SCREENSHOT                  */
-/* ===================================================== */
+
  
 .stage-pill {
   display: inline-flex;
@@ -197,9 +231,7 @@
   color: #212529;
 }
  
-/* ===================================================== */
-/* STATUS PILLS – EXACT SCREENSHOT COLORS                */
-/* ===================================================== */
+
  
 .status-pill {
   display: inline-block;
@@ -233,9 +265,7 @@
   color: #2f9e44;
 }
  
-/* ===================================================== */
-/* ACTION ICONS                                          */
-/* ===================================================== */
+
  
 .cursor-pointer {
   cursor: pointer;
@@ -255,28 +285,22 @@
 .clear-all-btn:hover {
   text-decoration: underline;
 }
- 
- 
-/* =============================== */
-/* Requisition strip – ATTACHED    */
-/* =============================== */
+
  
 .requisition-section {
-  background-color: #f6f8fc;        /* light grey-blue (NOT white) */
+  background-color: #f6f8fc;      
  
  
-  padding: 12px 24px;               /* ONLY horizontal padding feel */
-  margin: 0;                        /* ❌ no gaps */
+  padding: 12px 24px;            
+  margin: 0;                      
 }
  
  
- /* ===================================================== */
-/* CATEGORY WISE RESERVATION TABLE – FINAL               */
-/* ===================================================== */
+
 
 .category-reservation-card {
   background-color: #f6f8fb;
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 18px 20px;
 }
 
@@ -294,7 +318,7 @@
   border-collapse: separate;
   border-spacing: 0;
   background-color: #ffffff;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   overflow: hidden;
 }
 
@@ -350,5 +374,457 @@
 }
 
 .card {
-  border-radius: 12px;
+  border-radius: 2px;
 }
+
+/* 
+
+/* Page background */
+/* .candidate-verification-page {
+  background: #f5f6f8;
+} */ */
+
+.nav-arrow {
+  font-size: 30px;
+  color: #2563eb;
+  cursor: pointer;
+  user-select: none;
+}
+
+.nav-arrow:hover {
+  color: #1d4ed8;
+}
+
+/* Date pill remains same */
+.date-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: #ffffff;
+  border-radius: 10px;
+  font-weight: 500;
+  color: #ff6a00;
+  cursor: pointer;
+}
+
+/* Search */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+/* Stage pills */
+.stage-chip {
+  border: none;
+  background: #f1f3f5;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stage-chip.active {
+  background: #e7edff;
+  color: #1e3fa3;
+}
+
+.chip-count {
+  background: #dee2e6;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+/* Pending */
+.status-badge.pending {
+  background: #fff4e5;
+  color: #ef6c00;
+  border-color: #ffd7a8;
+}
+
+/* Verified */
+.status-badge.verified {
+  background: #e7f6ea;
+  color: #2e7d32;
+  border-color: #b7dfbd;
+}
+
+/* Rejected */
+.status-badge.rejected {
+  background: #fdecea;
+  color: #c62828;
+  border-color: #f5b5ad;
+}
+
+/* Provisionally Approved */
+.status-badge.provisionally-approved {
+  background: #e7f6ea;
+  color: #2e7d32;
+  border-color: #b7dfbd;
+}
+
+
+
+
+/* REMOVE EXTRA CARD GAPS */
+.card {
+  margin-bottom: 0 !important;
+}
+
+/* TOP TOOLBAR */
+.verification-toolbar {
+  /* margin-left: -35px;
+  margin-right: -35px; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0px;
+  /* background: #91380c; */
+  border-radius: 0px;
+}
+
+/* SEARCH */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e0e0e0;
+  padding: 6px 10px;
+  /* border-radius: 6px; */
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+
+
+/* REQUISITION SELECTOR */
+.requisition-selector-row {
+  /* margin-left: -35px;
+  margin-right: -35px; */
+  background: #fff;
+  padding: 10px 12px;
+  /* border-radius: 8px; */
+  margin-bottom: 6px;
+}
+
+/* REMOVE PAGE BOTTOM GAP */
+/* .candidate-verification-page {
+  padding-bottom: 0;
+} */
+
+.stage-filter-row {
+  /* margin-left:-35px;
+  margin-right: -35px; */
+  padding: 12px 16px;
+  background: #fff;
+  /* border-radius: 10px; */
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.stage-chip {
+
+  border: none;
+  background: #f1f3f5;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.stage-chip.active {
+  background: #e9efff;
+  color: #ca7f41;
+  font-weight: 500;
+}
+
+.clear-all {
+color: rgb(228, 116, 51);
+  cursor: pointer;
+}
+
+
+
+/* .candidate-verification-page {
+  margin-top: 2px; 
+} */
+
+
+
+
+.candidate-verification-page {
+ 
+  max-width: 1800px;
+  margin: 0 auto;
+
+  min-height: calc(100vh - 140px); 
+  }
+
+
+
+.verification-table-wrapper {
+  padding-top: 10px;
+  /* margin-left: -35px;
+  margin-right: -35px; */
+  background: #ffffff;
+  margin-top: 0;
+
+}
+
+.verification-table {
+  margin-top: 10 !important;
+  border-collapse: collapse;
+}
+
+/* Header */
+.verification-table th {
+  background: #ffffff;
+  font-weight: 500;
+  font-size: 16px;
+  color: #1f2937;
+  padding: 12px 14px; 
+  /* border-bottom: 1px solid #e5e7eb; */
+}
+
+.verification-table thead th {
+  border-top: none !important;   /* REMOVE extra top line */
+  padding-top: 0 !important;     /* REMOVE top space */
+}
+
+/* remove divider from empty row */
+.no-candidates-row td {
+  border-bottom: none !important;
+}
+
+
+
+/* UNDERLINE AFTER FILTER BY STAGE */
+.stage-filter-row {
+  border-bottom: 1px solid #e5e7eb; /* light grey line */
+  padding-bottom: 12px;
+  margin-bottom: 0; /* keep it tight */
+}
+
+
+/* REQUISITION STRIP – SUBTLE SIDE LINES */
+.requisition-strip {
+  /* margin-left: -18px;
+  margin-right: -18px; */
+  background: #f3f3f3;
+  position: relative;   /* ADD THIS */
+}
+
+
+/* LEFT & RIGHT LINES */
+.requisition-strip::before,
+.requisition-strip::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #d1d5db;
+}
+
+
+.requisition-strip::before {
+  left: 0;
+}
+
+.requisition-strip::after {
+  right: 0;
+}
+
+
+
+
+
+/* Rows */
+.verification-table td {
+  padding: 12px 14px;
+  font-size: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Remove last row border */
+.verification-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+
+
+/* ===== SAVE BUTTON ===== */
+.save-btn {
+  min-width: 90px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 0 18px;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+/* ENABLED (Save) — FILLED FIRST */
+.save-btn.unsaved {
+  background-color: #f36c21;   /*  filled */
+  color: #ffffff;
+  border: 1.5px solid #f36c21;
+  cursor: pointer;
+}
+
+.save-btn.unsaved:hover {
+  background-color: #d85a16;
+  border-color: #d85a16;
+}
+
+/* DISABLED (Saved) — FILLED BUT MUTED */
+.save-btn.saved {
+  background-color: #f36c21;
+  border: 1.5px solid #f36c21;
+  color: #ffffff;
+  cursor: not-allowed;
+  opacity: 0.75;   /*  slightly faded after save */
+}
+
+/* REAL DISABLED STATE */
+.save-btn:disabled {
+  pointer-events: none;
+}
+
+/* .table-footer {
+  border-top: 1px solid #e5e7eb;
+} */
+
+.verification-table-wrapper .table-footer {
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ================= MOBILE RESPONSIVE FIX ================= */
+
+@media (max-width: 576px) {
+
+  .verification-toolbar,
+  .stage-filter-row,
+  .requisition-selector-row,
+  .verification-table-wrapper,
+  .requisition-strip {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .verification-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .date-nav {
+    justify-content: center;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .stage-filter-row {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 10px;
+  }
+
+  .verification-table th,
+  .verification-table td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .req-actions {
+    width: 100%;
+  }
+
+  .req-actions button {
+    width: 100%;
+  }
+
+
+  .candidate-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 10px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.card-grid label {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.card-actions {
+  margin-top: 10px;
+  text-align: right;
+}
+
+  
+
+
+.save-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background-color: #f36c21;
+  border-color: #f36c21;
+  color: #ffffff;
+}
+
+
+/* ===== PROVISIONALLY APPROVED — MATCH SCREENSHOT ===== */
+
+.status-badge.provisionally-approved {
+  background: #e7f6ea;
+  color: #2e7d32;
+  border: 1px solid #b7dfbd;
+}
+
+
+
+}
+
+
+

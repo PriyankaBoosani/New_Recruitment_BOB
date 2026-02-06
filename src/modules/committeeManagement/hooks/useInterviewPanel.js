@@ -264,17 +264,25 @@ useEffect(() => {
 
   const handleDelete = useCallback(async (id) => {
     try {
-      await masterApiService.deleteInterviewPanel(id);
-      toast.success("Panel deleted successfully");
-      fetchPanels();
-    } catch (err) {
-      console.error("DELETE ERROR 👉", err);
-      toast.error(
-        err?.response?.data?.message ||
-        "Failed to delete panel"
-      );
-    }
-  }, [fetchPanels]);
+       const res =  await masterApiService.deleteInterviewPanel(id);
+        if (res?.success === false) {
+          toast.error(
+            res?.message ||
+            "Panel is assigned to a position and cannot be deleted"
+          );
+          return;
+        }
+
+        toast.success("Panel deleted successfully");
+        fetchPanels();
+      } catch (err) {
+        console.error("DELETE ERROR 👉", err);
+        toast.error(
+          err?.response?.data?.message ||
+          "Failed to delete panel"
+        );
+      }
+   }, [fetchPanels]);
 
   /* ================= EDIT ================= */
 

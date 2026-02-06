@@ -63,8 +63,11 @@ const Header = () => {
 
     navigate('/login');
   };
-  const role = user?.role?.toLowerCase();
-  const isAdmin = role === "admin";
+const role = user?.role?.toLowerCase();
+
+const isAdmin = role === "admin";
+const isZonalHr = role === "zonal_hr";
+const isRecruiter = role === "recruiter";
 
   /* ===================== OUTSIDE CLICK ===================== */
   useEffect(() => {
@@ -194,8 +197,8 @@ const Header = () => {
 
           <Navbar.Collapse id="main-navbar-nav">
             <Nav className="me-auto">
-              {!isAdmin && (
-                <Nav.Link as={NavLink} to="/job-posting" onClick={closeMenu}>
+              {isRecruiter && (
+                <Nav.Link as={Link} to="/job-posting" onClick={closeMenu}>
                   {t("job_postings")}
                 </Nav.Link>
               )}
@@ -208,20 +211,26 @@ const Header = () => {
               </Nav.Link> */}
 
 
-              {!isAdmin && (
-                <Nav.Link as={NavLink} to="/candidate-workflow" onClick={closeMenu}>
+               {isRecruiter && (
+                <Nav.Link as={Link} to="/candidate-workflow" onClick={closeMenu}>
                   Candidate Workflow
                 </Nav.Link>
               )}
 
 
-
-              {!isAdmin && (
-                <Nav.Link as={NavLink} to="/candidate-verification" onClick={closeMenu}>
-                  Verification
+               {/* {isRecruiter && (
+                <Nav.Link as={Link} to="/candidate-interview" onClick={closeMenu}>
+                   Interview
                 </Nav.Link>
-              )}
-              {!isAdmin && (
+              )} */}
+
+
+              {isZonalHr && (
+  <Nav.Link as={Link} to="/candidate-verification" onClick={closeMenu}>
+    Verification
+  </Nav.Link>
+)}
+              {!isAdmin &&  (
                 <Nav.Link as={NavLink} to="/interviewpanel" onClick={closeMenu}>
                   Committee Management
                 </Nav.Link>

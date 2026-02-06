@@ -121,6 +121,18 @@ const jobPositionApiService = {
     }
   ),
 
+
+  getZonalDocumentStatus: (applicationId) =>
+  api.get(
+    `/recruiter/zonal-verification/documents/${applicationId}`,
+    {
+      headers: {
+        "X-Client": "recruiter",
+      },
+    }
+  ),
+
+
   saveScreeningDecision: (payload) =>
     api.post(
       "/recruiter/document-verification/save-screening-committee/verify",
@@ -141,6 +153,54 @@ const jobPositionApiService = {
       }
     );
   },
+
+
+
+
+
+
+
+
+
+
+
+submitOverallZonalVerification(payload) {
+  return api.post(
+    "/recruiter/zonal-verification/submit-overall-verification",
+    payload
+  );
+},
+
+
+
+verifyZonalDocument(payload) {
+  return api.post(
+    "/recruiter/zonal-verification/verify-document",
+    payload,
+    {
+      headers: {
+        "X-Client": "recruiter" 
+      }
+    }
+  );
+},
+
+
+updateZonalAbsent(applicationId, isAbsent) {
+  return api.post(
+    `/recruiter/zonal-verification/update-absent-status`,
+    null,
+    {
+      params: { applicationId, isAbsent },
+      headers: {
+        "X-Client": "recruiter"
+      }
+    }
+  );
+},
+
+
+
 
   getCandidateDiscrepancyDetails(applicationId) {
     return api.get(
