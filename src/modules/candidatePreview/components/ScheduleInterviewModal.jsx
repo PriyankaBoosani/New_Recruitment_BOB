@@ -2,12 +2,15 @@ import React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import fileIcon from "../../../assets/upload-filled-file.png"
 import uploadIcon from "../../../assets/upload-blue-icon.png"
+import deleteIcon from "../../../assets/delete_icon.png"
 import { t } from 'i18next';
 import { toast } from 'react-toastify';
 import jobPositionApiService from '../../jobPosting/services/jobPositionApiService';
+import Loader from '../../../shared/components/Loader'
 
 const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, applicationIds, onBulkScheduleSuccess }) => {
   const [activeTab, setActiveTab] = React.useState("import");
+	const [loading, setLoading] = React.useState(false)
 	const fileInputRef = React.useRef(null);
 	const [file, setFile] = React.useState(null);
 
@@ -26,6 +29,7 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 
 	const handleDownloadTemplate = async () => {
 		try {
+			setLoading(true)
 			const res = await jobPositionApiService.downloadInterviewScheduleTemplate();
 
 			const blob = new Blob([res.data], {
@@ -47,6 +51,8 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 		} catch (err) {
 			console.error(err);
 			toast.error("Failed to download template");
+		} finally {
+			setLoading(false)
 		}
 	};
 
@@ -62,6 +68,7 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 		}
 
 		try {
+			setLoading(true)
 			await jobPositionApiService.bulkScheduleInterviews({
 				file,
 				applicationIds,
@@ -76,6 +83,16 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 		} catch (err) {
 			console.error(err);
 			toast.error("Bulk scheduling failed");
+		} finally {
+			setLoading(false)
+		}
+	};
+
+	const handleRemoveFile = () => {
+		setFile(null);
+
+		if (fileInputRef.current) {
+			fileInputRef.current.value = "";
 		}
 	};
 
@@ -144,18 +161,25 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 						<button className="btn orange-bg text-white fs-13 rounded shadow px-3" onClick={() => fileInputRef.current.click()}>
 							Upload XLSX
 						</button>
-
-						{file && (
-							<div className="mt-1">
-								<input
-									type="text"
-									className="form-control fs-13 blue-border p-3"
-									value={file.name}
-									readOnly
-								/>
-							</div>
-						)}
 					</div>
+
+					{file && (
+						<div className="form-control blue-border mt-1 d-flex align-items-center gap-2 p-3 justify-content-between mt-4">
+							<input
+								type="text"
+								className="fs-13 border-0"
+								value={file.name}
+								readOnly
+							/>
+							<img
+								src={deleteIcon}
+								alt="Remove file"
+								width={22}
+								className="cursor-pointer"
+								onClick={handleRemoveFile}
+							/>
+						</div>
+					)}
 					
 					<div className='d-flex align-items-center gap-1 justify-content-center mt-4'>
 						<small className="d-block text-muted d-flex justify-content-center gap-1 fs-12">
@@ -174,6 +198,9 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 					style={{ display: "none" }}
 					onChange={handleFileSelect}
 				/>
+				{loading && (
+					<Loader />
+				)}
 			</Modal.Body>
 
 			<Modal.Footer>
