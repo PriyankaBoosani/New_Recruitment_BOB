@@ -364,3 +364,7 @@ main {
   box-shadow: none !important;
   border-color: #dee2e6 !important;
 }
+
+.btn-light-grey {
+  background-color: #f5f7fa !important;
+}

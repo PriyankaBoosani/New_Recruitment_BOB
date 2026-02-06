@@ -16,7 +16,8 @@ const RequisitionStrip = ({
   isSaved,
   onSave,
   isCardBg,
-  isSaveEnabled
+  isSaveEnabled,
+  saveButton
 }) => {
   const [showPosition, setShowPosition] = useState(false);
   const [job, setJob] = useState(null);
@@ -56,77 +57,70 @@ const RequisitionStrip = ({
   return (
     <>
       {/* ================= STRIP ================= */}
-   <div
-  className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center px-3 py-2"
-  style={{
-    background: isCardBg ? "#ffffff" : "none",
-    border: isCardBg ? "1px solid #e0e0e0" : "none",
-    borderRadius: "8px"
-  }}
->
-
-
+      <div
+        className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center px-3 py-2"
+        style={{
+          background: isCardBg ? "#ffffff" : "none",
+          border: isCardBg ? "1px solid #e0e0e0" : "none",
+          borderRadius: "8px"
+        }}
+      >
         {/* ===== LEFT CONTENT — RESPONSIVE ===== */}
         <div className="w-100">
-<div className="d-flex flex-column flex-md-row flex-wrap align-items-center gap-2">
+          <div className="d-flex flex-column flex-md-row flex-wrap align-items-center gap-2">
 
-  <span className="req-code">
-    {requisition?.requisition_code || requisition?.requisitionCode || ""}
-    {" "}
-    {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
-  </span>
+            <span className="req-code">
+              {requisition?.requisition_code || requisition?.requisitionCode || ""}
+              {" "}
+              {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
+            </span>
 
-  {/* START DATE */}
-  <span className="date-text">
-    <i className="bi bi-calendar3 me-1"></i>
-    Start: {requisition?.registration_start_date || "-"}
-  </span>
+            {/* START DATE */}
+            <span className="date-text">
+              <i className="bi bi-calendar3 me-1"></i>
+              Start: {requisition?.registration_start_date || "-"}
+            </span>
 
-  {/* VERTICAL DIVIDER */}
-  <span className="date-divider">|</span>
+            {/* VERTICAL DIVIDER */}
+            <span className="date-divider">|</span>
 
-  {/* END DATE — CLOCK ICON */}
-  <span className="date-text">
-    <i className="bi bi-clock me-1"></i>
-    End: {requisition?.registration_end_date || "-"}
-  </span>
+            {/* END DATE — CLOCK ICON */}
+            <span className="date-text">
+              <i className="bi bi-clock me-1"></i>
+              End: {requisition?.registration_end_date || "-"}
+            </span>
 
-</div>
-
-
+          </div>
           <div
             className="job-title mt-1"
             style={{ color: "#162B75", fontWeight: 500 }}
           >
             {position?.positionName || position?.masterPositions?.positionName || "—"}
           </div>
-
         </div>
 
         {/* ===== BUTTONS — RESPONSIVE ===== */}
-      <div className="d-flex flex-row gap-2 mt-2 mt-md-0 ms-md-auto">
+        <div className="d-flex flex-row gap-2 mt-2 mt-md-0 ms-md-auto">
 
-  <button
-    className="btn btn-sm blue-border blue-color px-3"
-    onClick={handleViewPosition}
-    disabled={loading || !position}
-    style={{ backgroundColor: "rgba(66, 87, 159, 0.12)" }}
-  >
-    View Position
-  </button>
+        <button
+          className="btn btn-sm blue-border blue-color px-3"
+          onClick={handleViewPosition}
+          disabled={loading || !position}
+          style={{ backgroundColor: "rgba(66, 87, 159, 0.12)" }}
+        >
+          View Position
+        </button>
 
-<button
-  className={`save-btn ${isSaveEnabled ? "unsaved" : "saved"}`}
-  disabled={!isSaveEnabled}
-  onClick={onSave}
->
-  Save
-</button>
-
-
-
-</div>
-
+        {saveButton && (
+          <button
+            className={`save-btn ${isSaveEnabled ? "unsaved" : "saved"}`}
+            disabled={!isSaveEnabled}
+            onClick={onSave}
+          >
+            Save
+          </button>
+        )}
+        </div>
       </div>
 
       {/* ================= MODAL ================= */}

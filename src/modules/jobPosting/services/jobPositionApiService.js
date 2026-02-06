@@ -199,9 +199,6 @@ updateZonalAbsent(applicationId, isAbsent) {
   );
 },
 
-
-
-
   getCandidateDiscrepancyDetails(applicationId) {
     return api.get(
       "/recruiter/candidate-screening/get-candidate-discrepancy-details",
@@ -213,6 +210,49 @@ updateZonalAbsent(applicationId, isAbsent) {
       }
     );
   },
+
+  downloadInterviewScheduleTemplate: () =>
+    api.get(
+      "/recruiter/interview-scheduling/download-template",
+      {
+        responseType: "blob",
+        headers: {
+          "X-Client": "recruiter",
+        },
+      }
+    ),
+
+  bulkScheduleInterviews: ({ file, applicationIds }) => {
+    const formData = new FormData();
+
+    // file (xlsx)
+    formData.append("file", file);
+
+    // model object → must be JSON blob
+    formData.append(
+      "model",
+      new Blob(
+        [
+          JSON.stringify({
+            applicationIds,
+          }),
+        ],
+        { type: "application/json" }
+      )
+    );
+
+    return api.post(
+      "/recruiter/interview-scheduling/bulk-schedule",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "X-Client": "recruiter",
+        },
+      }
+    );
+  },
+
 };
 
 export default jobPositionApiService;

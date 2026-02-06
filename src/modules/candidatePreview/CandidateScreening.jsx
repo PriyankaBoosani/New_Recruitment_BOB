@@ -26,7 +26,7 @@ export default function CandidateScreening({ selectedJob }) {
     DISCREPANCY: "Discrepancy",
     INTERVIEW_SCHEDULED: "Interview Scheduled",
   };
-  const ALL_STATUSES = [
+  const CANDIDATE_POOL_STATUSES = [
     "APPLIED",
     "SHORTLISTED",
     "REJECTED",
@@ -173,7 +173,7 @@ export default function CandidateScreening({ selectedJob }) {
   const fetchCandidates = async () => {
     setLoadingCandidates(true);
     try {
-      const normalizedStatus = filters.status.length === 0 ? ALL_STATUSES : filters.status.map((s) => s.toUpperCase());
+      const normalizedStatus = filters.status.length === 0 ? CANDIDATE_POOL_STATUSES : filters.status.map((s) => s.toUpperCase());
 
       const res = await jobPositionApiService.getCandidatesByPosition({
         searchText: filters.searchText,
@@ -321,19 +321,8 @@ const normalizedRequisition = selectedRequisition
         )?.masterPositions?.positionName,
     }
   : null;
- 
- 
-  // const availableStatuses = React.useMemo(() => {
-  //   const set = new Set();
-  //   candidates.forEach((c) => {
-  //     if (c.status) {
-  //       set.add(c.status.toUpperCase()); // FORCE enum
-  //     }
-  //   });
-  //   return Array.from(set);
-  // }, [candidates]);
 
-  const availableStatuses = ALL_STATUSES;
+  const availableStatuses = CANDIDATE_POOL_STATUSES;
  
   const availableLocations = React.useMemo(() => {
     const map = new Map();
@@ -427,6 +416,15 @@ const normalizedRequisition = selectedRequisition
       isNavModeRef.current = false;
     }
   }, [positions]);
+
+  const refreshCandidatesAfterSchedule = async () => {
+    // reset pagination if needed
+    setPage(0);
+    // clear selection (important UX)
+    setSelectedCandidateIds([]);
+    // refetch list
+    await fetchCandidates();
+  };
  
   return (
     <div className="container-fluid px-5 py-4">
@@ -440,8 +438,8 @@ const normalizedRequisition = selectedRequisition
  
       {/* Filters */}
       <div className="card mb-4 border-0">
-        <div className="card-body">
-          <div className="row g-2 align-items-end border-bottom pb-4">
+        <div className="card-body p-0">
+          <div className="row g-2 align-items-end border-bottom pb-4 px-3 py-3">
             {/* <img src={uploadIcon} width={15} className="me-2" /> */}
             <DropdownStrip
               requisitions={requisitions}
@@ -465,7 +463,7 @@ const normalizedRequisition = selectedRequisition
             </div>
           </div>
  
-          <div className="mt-3">
+          <div className="mt-2 pt-1 pb-3">
             {normalizedRequisition && selectedPosition && (
               <RequisitionStrip
                 requisition={normalizedRequisition}
@@ -473,6 +471,7 @@ const normalizedRequisition = selectedRequisition
                 isCardBg={false}
                 isSaveEnabled={false}
                 masterData={masterData}
+                saveButton={false}
               />
             )}
           </div>
@@ -481,7 +480,7 @@ const normalizedRequisition = selectedRequisition
       </div>
  
       {/* Desktop Table */}
-      <div className="card rounded border-0 d-none d-md-block mb-5">
+      <div className="card rounded border-0 d-none d-md-block mb-5 mt-4">
         <div className="card-header bg-white border-bottom-0 p-0 px-1 candidate-screening-tabs-header">
           {/* Tabs */}
           <ul className="nav nav-tabs border-0 pt-2 pb-3 px-2 border-bottom">
@@ -670,7 +669,12 @@ const normalizedRequisition = selectedRequisition
         )}
           {/* {activeTab === "OFFER_POOL" && <OfferPool />} */}
           {/* {activeTab === "ONBOARDING_POOL" && <OnboardingPool />} */}
-          <ScheduleInterviewModal showScheduleModal={showScheduleModal} setShowScheduleModal={setShowScheduleModal} />
+          <ScheduleInterviewModal
+            showScheduleModal={showScheduleModal}
+            setShowScheduleModal={setShowScheduleModal}
+            applicationIds={selectedCandidateIds}
+            onBulkScheduleSuccess={refreshCandidatesAfterSchedule}
+          />
       </div>
       <PdfViewerModal
         show={showPdfViewer}
