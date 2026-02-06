@@ -4,7 +4,7 @@ import { FiFilter, FiDownload, FiPlus, FiX } from "react-icons/fi";
 import "../../style/css/Committee.css";
 import CommitteeHistoryList from './components/CommitteeHistoryList';
 import { useAssignPositions } from "./hooks/useAssignPositions";
-
+import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 
 
 // Mock data for demonstration
@@ -235,6 +235,17 @@ const AssignPositionsPage = () => {
           </Col> */}
         </Row>
 
+
+
+      {/* Requisition Strip */}
+      {selectedRequisition && selectedPosition && (
+        <RequisitionStrip
+          requisition={selectedRequisition}
+          position={selectedPosition}
+          isCardBg
+          isSaveEnabled={false}
+        />
+      )}
 
         {/* CARD 2: COMMITTEES */}
         <Card>
