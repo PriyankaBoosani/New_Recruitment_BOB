@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import "../../style/css/CandidateScreening.css";
 import "../../style/css/CandidateVerification.css";
 import "react-datepicker/dist/react-datepicker.css";
@@ -6,7 +5,7 @@ import DatePicker from "react-datepicker";
 import { toast } from "react-toastify";
 import { addDays, subDays } from "date-fns";
 import searchIcon from "../../assets/search-icon.png";
-
+import React, { useEffect, useState, useRef } from "react";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import masterApiService from "../master/services/masterApiService";
 import RequisitionPositionSelector from "../candidatePreview/components/RequisitionPositionSelector";
@@ -14,6 +13,9 @@ import CandidateTable from "./components/CandidateTable";
 import CandidateVerificationService from "./services/CandidateVerification";
 import { DUMMY_DATA } from "./components/mockData";
 import { mapCandidatesToTableRows } from "./mappers/CandidateVerificationMapper";
+import { useLocation } from "react-router-dom";
+
+
 
 
 
@@ -37,7 +39,7 @@ const DatePill = React.forwardRef(({ value, onClick }, ref) => (
 
 export default function CandidateVerification() {
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  // const [selectedDate, setSelectedDate] = useState(new Date());
   const [activeStage, setActiveStage] = useState(null);
   const [masterData, setMasterData] = useState(null);
   const [searchText, setSearchText] = useState("");
@@ -47,10 +49,30 @@ export default function CandidateVerification() {
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [allCandidatesRaw, setAllCandidatesRaw] = useState([]);
 
+  const [usedNavData, setUsedNavData] = useState(false);
+
+  const navInitRef = useRef(true);
+
+
+const location = useLocation();
+
+
+const navSelectedDate = location.state?.selectedDate
+  ? new Date(location.state.selectedDate)
+  : null;
+
+
+
+  const [selectedDate, setSelectedDate] = useState(
+  navSelectedDate || new Date()
+);
 
 
 
 
+// const navCandidates = location.state?.preloadedCandidates || [];
+const navRequisition = location.state?.requisition || null;
+const navPosition = location.state?.position || null;
   
 
   /* ================= LOAD MASTER ================= */
@@ -63,6 +85,9 @@ export default function CandidateVerification() {
 
 
 
+useEffect(() => {
+  console.log("NAV STATE:", location.state);
+}, []);
 
 
 
@@ -82,32 +107,41 @@ useEffect(() => {
   console.log("RAW API LIST SIZE:", allCandidatesRaw.length);
 }, [allCandidatesRaw]);
 
+const hasNavCandidates = !!location.state?.preloadedCandidates?.length;
+const navCandidates = location.state?.preloadedCandidates || [];
 
 
 useEffect(() => {
-  if (!selectedDate) return;
 
+  // restore selection from nav
+if (!usedNavData && navCandidates.length && navInitRef.current) {
+    console.log("Using nav candidates once");
+
+    setAllCandidatesRaw(navCandidates);
+    setAllCandidates(mapCandidatesToTableRows(navCandidates));
+
+    if (navRequisition) setSelectedRequisition(navRequisition);
+    if (navPosition) setSelectedPosition(navPosition);
+
+    setUsedNavData(true);
+    //  DO NOT RETURN HERE
+  }
+
+  //  ALWAYS call API
   const loadCandidates = async () => {
     try {
-      const dateStr = formatApiDate(selectedDate);
-
       const res =
-        await CandidateVerificationService
-          .getCandidatesByDate(dateStr);
+        await CandidateVerificationService.getCandidatesByDate(
+          formatApiDate(selectedDate)
+        );
 
-      console.log("FULL API RESPONSE:", res);
-
-      const apiList = res.data || [];   //  FIX
-
-      console.log("RAW API LIST SIZE:", apiList.length);
+      const apiList = res.data || [];
 
       setAllCandidatesRaw(apiList);
-      setAllCandidates(
-        mapCandidatesToTableRows(apiList)
-      );
+      setAllCandidates(mapCandidatesToTableRows(apiList));
 
     } catch (err) {
-      console.error("Candidate API failed", err);
+      console.error(err);
       setAllCandidatesRaw([]);
       setAllCandidates([]);
     }
@@ -116,6 +150,27 @@ useEffect(() => {
   loadCandidates();
 
 }, [selectedDate]);
+
+
+useEffect(() => {
+
+  // First render after navigation → keep auto-populated selection
+  if (navInitRef.current) {
+    navInitRef.current = false;
+    return;
+  }
+
+  // User changed date manually → reset selection
+  setSelectedRequisition(null);
+  setSelectedPosition(null);
+  setActiveStage(null);
+
+}, [selectedDate]);
+
+
+
+
+
 
 
 
@@ -207,6 +262,21 @@ const anyAbsentChanged =
 };
 
 
+useEffect(() => {
+  const loadMasters = async () => {
+    try {
+      const res = await masterApiService.getMasterDisplayAll();
+      setMasterData(res.data || {});
+    } catch (e) {
+      console.error("Master load failed", e);
+      setMasterData({});
+    }
+  };
+
+  loadMasters();
+}, []);
+
+
 
   /* ================= UI ================= */
 
@@ -290,11 +360,20 @@ const anyAbsentChanged =
       {/* ================= SELECTORS ================= */}
 
     <div className="requisition-selector-row">
-       <RequisitionPositionSelector
+<RequisitionPositionSelector
   apiList={allCandidatesRaw}
-  onRequisitionChange={setSelectedRequisition}
+  selectedRequisitionRaw={selectedRequisition}
+  selectedPositionRaw={selectedPosition}
+  onRequisitionChange={(req) => {
+    setSelectedRequisition(req);
+    setSelectedPosition(null);   //  reset position when req changes
+  }}
   onPositionChange={setSelectedPosition}
 />
+
+
+
+
 
       </div>
 
@@ -305,7 +384,7 @@ const anyAbsentChanged =
           <RequisitionStrip
             requisition={selectedRequisition}
             position={selectedPosition}
-            masterData={masterData}
+           // masterData={masterData}
             isCardBg={false}
 isSaveEnabled={anyAbsentChanged}
              onSave={handleSaveAbsent}  
@@ -321,6 +400,8 @@ isSaveEnabled={anyAbsentChanged}
         isSelectionDone={isSelectionDone}
         filteredCandidates={filteredCandidates}
         toggleAbsent={toggleAbsent}
+        selectedDate={selectedDate}
+        allCandidatesRaw={allCandidatesRaw} 
       />
 
     </div>

@@ -25,6 +25,7 @@ const ApplicationForm = ({
    interviewScheduleId,
   requisitionTitle,
   positionName,
+  selectedDate
 }) => {
   const navigate = useNavigate();
   const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
@@ -121,18 +122,18 @@ const handleZonalSubmit = async () => {
 
     toast.success("Zonal verification submitted successfully");
 
- navigate("/candidate-verification", {
+navigate("/candidate-verification", {
   state: {
-    requisition: {
-      requisition_id: requisitionId,
-      requisition_title: requisitionTitle   // add this if available
-    },
-    position: {
-      positionId: positionId,
-      positionName: positionName           // add this if available
-    }
+    requisition: location.state?.requisition,
+    position: location.state?.position,
+    preloadedCandidates: location.state?.candidates || [],
+    selectedDate
   }
 });
+
+
+
+
 
 
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import Select from "react-select";
 
 import {
@@ -6,48 +6,56 @@ import {
   mapUniquePositionsToDropdown
 } from "../../Verification/mappers/CandidateVerificationMapper";
 
-/* ===== IMPORT SAME DUMMY DATA ===== */
-// import { DUMMY_DATA } from "../../Verification/components/mockData";
-
 const RequisitionPositionSelector = ({
   apiList = [],
   onRequisitionChange,
   onPositionChange,
+  selectedRequisitionRaw,
+  selectedPositionRaw
 }) => {
 
-  const [requisitions, setRequisitions] = useState([]);
-  const [positions, setPositions] = useState([]);
+  /* ===== Build requisition options ===== */
 
-  const [selectedRequisition, setSelectedRequisition] = useState(null);
-  const [selectedPosition, setSelectedPosition] = useState(null);
-
-
-  useEffect(() => {
-  console.log("Selector apiList:", apiList.length);
-}, [apiList]);
-
-
- useEffect(() => {
-  setRequisitions(
-    mapUniqueRequisitionsToDropdown(apiList)
+  const requisitions = useMemo(
+    () => mapUniqueRequisitionsToDropdown(apiList),
+    [apiList]
   );
-}, [apiList]);
 
+  /* ===== derive selected requisition option from parent ===== */
 
-  useEffect(() => {
-    setSelectedPosition(null);
-    setPositions([]);
+  const selectedRequisitionOption = useMemo(() => {
+    if (!selectedRequisitionRaw) return null;
 
-    if (!selectedRequisition) return;
+    return requisitions.find(
+      r => r.value === selectedRequisitionRaw.requisition_id
+    ) || null;
 
-   setPositions(
-  mapUniquePositionsToDropdown(
-    apiList,
-    selectedRequisition.value
-  )
-);
+  }, [requisitions, selectedRequisitionRaw]);
 
-}, [selectedRequisition, apiList]);
+  /* ===== Build positions based on selected requisition ===== */
+
+  const positions = useMemo(() => {
+    if (!selectedRequisitionOption) return [];
+
+    return mapUniquePositionsToDropdown(
+      apiList,
+      selectedRequisitionOption.value
+    );
+
+  }, [apiList, selectedRequisitionOption]);
+
+  /* ===== derive selected position option from parent ===== */
+
+  const selectedPositionOption = useMemo(() => {
+    if (!selectedPositionRaw) return null;
+
+    return positions.find(
+      p => p.value === selectedPositionRaw.positionId
+    ) || null;
+
+  }, [positions, selectedPositionRaw]);
+
+  /* ===== UI ===== */
 
   return (
     <div className="row g-3">
@@ -57,11 +65,9 @@ const RequisitionPositionSelector = ({
         <Select
           isClearable
           options={requisitions}
-          value={selectedRequisition}
+          value={selectedRequisitionOption}
           onChange={(opt) => {
-            setSelectedRequisition(opt);
             onRequisitionChange?.(opt?.raw || null);
-            setSelectedPosition(null);
             onPositionChange?.(null);
           }}
         />
@@ -72,10 +78,9 @@ const RequisitionPositionSelector = ({
         <Select
           isClearable
           options={positions}
-          value={selectedPosition}
-          isDisabled={!selectedRequisition}
+          value={selectedPositionOption}
+          isDisabled={!selectedRequisitionOption}
           onChange={(opt) => {
-            setSelectedPosition(opt);
             onPositionChange?.(opt?.raw || null);
           }}
         />

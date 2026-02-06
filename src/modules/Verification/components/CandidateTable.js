@@ -8,6 +8,8 @@ const CandidateTable = ({
   isSelectionDone,
   filteredCandidates,
   toggleAbsent,
+  selectedDate,
+  allCandidatesRaw 
 }) => {
 
 
@@ -24,23 +26,13 @@ const goToPreview = (c) => {
        applicationId: c.raw.applicationId,
         interviewScheduleId: c.raw.interviewScheduleId,
       positionId: position?.positionId,
-      
+       selectedDate, 
 
-      requisition: requisition
-        ? {
-            requisition_id: requisition.requisition_id,
-            requisition_title: requisition.requisition_title,
-            registration_start_date: requisition.registration_start_date,
-            registration_end_date: requisition.registration_end_date,
-          }
-        : null,
+        candidates: allCandidatesRaw,
 
-      position: position
-        ? {
-            positionId: position.positionId,
-            positionName: position.positionName,
-          }
-        : null,
+     requisition,
+position,
+
     },
   });
 };

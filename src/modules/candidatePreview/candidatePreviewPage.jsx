@@ -23,6 +23,8 @@ const CandidatePreviewPage = ({ onHide }) => {
   const user = useSelector((state) => state.user.user);
   const role = user?.role?.toLowerCase();
   const isZonalHr = role === "zonal_hr";
+  const selectedDate = state?.selectedDate;
+
 
   
   //  Now safe to use state
@@ -160,7 +162,17 @@ console.log("Full Masters Data:@@@@@", candidateId, positionId);
       <HeaderWithBack
         title="Candidate Screening"
         subtitle="Manage and schedule interviews for candidates"
-        onBack={() => navigate(-1)}
+      onBack={() =>
+  navigate("/candidate-verification", {
+    state: {
+      requisition: state.requisition,
+      position: state.position,
+      preloadedCandidates: state.candidates,
+      selectedDate: state.selectedDate
+    }
+  })
+}
+
         positionId={positionId}
         requisitionId={requisitionId}
         candidateScreening={true}
@@ -175,13 +187,13 @@ console.log("Full Masters Data:@@@@@", candidateId, positionId);
     )}
 
       {/* Requisition Strip */}
-      {requisition && position && (
+      {requisition && position && ( 
         <RequisitionStrip
           requisition={requisition}
           position={position}
           isCardBg
           isSaveEnabled={false}
-          masterData={masters}
+           masterData={masters}
         />
       )}
 
@@ -201,6 +213,7 @@ console.log("Full Masters Data:@@@@@", candidateId, positionId);
               interviewScheduleId={interviewScheduleId}
               requisitionTitle={requisitionTitle}
               positionName={positionName}
+              selectedDate={selectedDate}
             />
           )
         )}
