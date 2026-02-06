@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import masterApiService from "../master/services/masterApiService";
 import "../../style/css/CandidateScreening.css";
 import uploadIcon from "../../assets/upload-blue-icon.png"
@@ -15,9 +15,11 @@ import DropdownStrip from "./components/DropdownStrip";
 import { toast } from "react-toastify";
 import PdfViewerModal from "./components/PdfViewerModal";
 import { useLocation } from "react-router-dom";
+import InterviewFeedbackHistoryModal from "./components/InterviewFeedbackHistoryModal";
+import SendToOfferPoolModal from "./components/SendToOfferPoolModal";
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
- 
+
 export default function CandidateScreening({ selectedJob }) {
   const STATUS_LABEL_MAP = {
     SHORTLISTED: "Shortlisted",
@@ -32,21 +34,86 @@ export default function CandidateScreening({ selectedJob }) {
     "REJECTED",
     "DISCREPANCY",
   ];
+  const INTERVIEW_STATUS_LABEL_MAP = {
+    SCHEDULED: "Scheduled",
+    QUALIFIED: "Qualified",
+    NOT_QUALIFIED: "Not Qualified",
+  };
+
+  const INTERVIEW_STATUSES = [
+    "SCHEDULED",
+    "QUALIFIED",
+    "NOT_QUALIFIED",
+  ];
+
+
+  const interviewCandidates = [
+    {
+      id: 1,
+      name: "Rajesh Kumar",
+      regNo: "961344689",
+      date: "12-09-2025",
+      time: "09:00 AM - 09:30 AM",
+      zone: "Zone 1",
+      panel: "Panel 1",
+      status: "SCHEDULED",
+      score: "",
+    },
+    {
+      id: 2,
+      name: "Priya Sharma",
+      regNo: "961987129",
+      date: "12-09-2025",
+      time: "09:30 AM - 10:00 AM",
+      zone: "Zone 2",
+      panel: "Panel 2",
+      status: "QUALIFIED",
+      score: "",
+    },
+    {
+      id: 3,
+      name: "Amit Patel",
+      regNo: "961963464",
+      date: "12-09-2025",
+      time: "10:00 AM - 10:30 AM",
+      zone: "Zone 3",
+      panel: "Panel 3",
+      status: "QUALIFIED",
+      score: "",
+    },
+  ];
+
+
+  const mapInterviewCandidates = (data = []) =>
+    data.map((c) => ({
+      id: c.id,
+      name: c.name,
+      regNo: c.regNo,
+      date: c.date,
+      time: c.time,
+      zone: c.zone,
+      panel: c.panel,
+      status: c.status, // keep enum (SCHEDULED, QUALIFIED…)
+      score: c.score,
+    }));
+  const [interviewPage, setInterviewPage] = useState(0);
+  const [interviewPageSize, setInterviewPageSize] = useState(10);
+
 
   const [activeTab, setActiveTab] = useState("CANDIDATE_POOL");
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
   const [selectedInterviewCandidateIds, setSelectedInterviewCandidateIds] = useState([]);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
- 
+
   const [requisitions, setRequisitions] = useState([]);
   const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
   const [loadingRequisitions, setLoadingRequisitions] = useState(false);
- 
+
   const [positions, setPositions] = useState([]);
   const [selectedPositionId, setSelectedPositionId] = useState("");
   const [loadingPositions, setLoadingPositions] = useState(false);
- 
+
   const [candidates, setCandidates] = useState([]);
   const [loadingCandidates, setLoadingCandidates] = useState(false);
   const [page, setPage] = useState(0);
@@ -63,22 +130,48 @@ export default function CandidateScreening({ selectedJob }) {
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [loadingPdf, setLoadingPdf] = useState(false);
   const searchTimeoutRef = useRef(null);
+  const filteredInterviewCandidates = useMemo(() => {
+    const base =
+      filters.status.length === 0
+        ? interviewCandidates
+        : interviewCandidates.filter((c) =>
+          filters.status.includes(c.status)
+        );
+
+    return mapInterviewCandidates(base);
+  }, [filters.status]);
   const tabs = [
     { key: "CANDIDATE_POOL", label: "Candidate Pool", count: totalElements },
-    { key: "INTERVIEW_POOL", label: "Interview Pool", count: 0 },
+    { key: "INTERVIEW_POOL", label: "Interview Pool", count: filteredInterviewCandidates.length },
     { key: "OFFER_POOL", label: "Offer Pool", count: 0 },
     { key: "ONBOARDING_POOL", label: "Onboarding Pool", count: 0 },
   ];
+
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [selectedFeedback, setSelectedFeedback] = useState([]);
+  const [showOfferModal, setShowOfferModal] = useState(false);
+
+
   const navInitRef = useRef({
     requisitionId: null,
     positionId: null,
     initialized: false,
   });
- 
+
   // 🔍 Requisition search (debounced)
   const requisitionSearchTimeout = useRef(null);
   const isNavModeRef = useRef(false);
- 
+
+
+
+  const pagedInterviewCandidates = useMemo(() => {
+    const start = interviewPage * interviewPageSize;
+    const end = start + interviewPageSize;
+    return filteredInterviewCandidates.slice(start, end);
+  }, [filteredInterviewCandidates, interviewPage, interviewPageSize]);
+
+
+
   const fetchRequisitions = async (searchText = "") => {
     setLoadingRequisitions(true);
     try {
@@ -90,17 +183,17 @@ export default function CandidateScreening({ selectedJob }) {
       setLoadingRequisitions(false);
     }
   };
- 
+
   const handleRequisitionSearch = useCallback((inputValue) => {
     if (requisitionSearchTimeout.current) {
       clearTimeout(requisitionSearchTimeout.current);
     }
- 
+
     requisitionSearchTimeout.current = setTimeout(() => {
       fetchRequisitions(inputValue);
     }, 400);
   }, []);
- 
+
   useEffect(() => {
     const loadMasters = async () => {
       const res = await masterApiService.getMasterDisplayAll();
@@ -109,7 +202,7 @@ export default function CandidateScreening({ selectedJob }) {
     };
     loadMasters();
   }, []);
- 
+
   const categoryMap = React.useMemo(() => {
     const map = {};
     (masterData?.reservationCategories || []).forEach(cat => {
@@ -140,18 +233,18 @@ export default function CandidateScreening({ selectedJob }) {
 
     return () => clearTimeout(searchTimeoutRef.current);
   }, [filters.searchText]);
- 
+
   useEffect(() => {
     fetchRequisitions("");
   }, []);
- 
+
   useEffect(() => {
     if (!selectedRequisitionId) {
       setPositions([]);
       setSelectedPositionId("");
       return;
     }
- 
+
     const fetchPositions = async () => {
       setLoadingPositions(true);
       try {
@@ -166,14 +259,14 @@ export default function CandidateScreening({ selectedJob }) {
         setLoadingPositions(false);
       }
     };
- 
+
     fetchPositions();
   }, [selectedRequisitionId]);
- 
+
   const fetchCandidates = async () => {
     setLoadingCandidates(true);
     try {
-      const normalizedStatus = filters.status.length === 0 ? CANDIDATE_POOL_STATUSES : filters.status.map((s) => s.toUpperCase());
+      const normalizedStatus = filters.status.length === 0 ? availableStatuses : filters.status.map((s) => s.toUpperCase());
 
       const res = await jobPositionApiService.getCandidatesByPosition({
         searchText: filters.searchText,
@@ -184,10 +277,10 @@ export default function CandidateScreening({ selectedJob }) {
         stateId: filters.stateId,
         categoryId: filters.categoryId,
       });
- 
+
       const apiData = res?.data;
       const formatStatus = (status = "") => status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
- 
+
       // 🔑 Normalize API → UI model
       const mappedCandidates = (apiData?.content || []).map((c) => ({
         id: c.candidateApplications.id, // REQUIRED for selection
@@ -205,7 +298,7 @@ export default function CandidateScreening({ selectedJob }) {
         candidateId: c.candidateApplications.candidateId,
         fileUrl: c.resumeUrl,
       }));
- 
+
       setCandidates(mappedCandidates);
       setTotalElements(apiData?.page?.totalElements || 0);
     } catch (err) {
@@ -214,14 +307,14 @@ export default function CandidateScreening({ selectedJob }) {
       setLoadingCandidates(false);
     }
   };
- 
+
   // useEffect(() => {
   //   if (!selectedPositionId) {
   //     setCandidates([]);
   //     setTotalElements(0);
   //     return;
   //   }
- 
+
   //   fetchCandidates();
   // }, [selectedPositionId, page, pageSize, filters, masterData]);
 
@@ -238,7 +331,7 @@ export default function CandidateScreening({ selectedJob }) {
     filters.categoryId,
     masterData,
   ]);
- 
+
   const handleRequisitionChange = (e) => {
     const reqId = e.target.value;
 
@@ -254,7 +347,7 @@ export default function CandidateScreening({ selectedJob }) {
     setPage(0);
     setTotalElements(0);
   };
- 
+
   const handleViewFile = async (candidate) => {
     if (!candidate.fileUrl) {
       toast.error("No document available");
@@ -265,11 +358,11 @@ export default function CandidateScreening({ selectedJob }) {
       setLoadingPdf(true);
 
 
-const selectedRequisition = requisitions.find(
-  (r) => r.id === selectedRequisitionId
-);
+      const selectedRequisition = requisitions.find(
+        (r) => r.id === selectedRequisitionId
+      );
 
-const rawRequisition = selectedRequisition
+      const rawRequisition = selectedRequisition
       const res = await masterApiService.getAzureBlobSasUrl(
         candidate.fileUrl,
         "candidate"
@@ -288,42 +381,77 @@ const rawRequisition = selectedRequisition
       setLoadingPdf(false);
     }
   };
- 
+
   const selectedCandidates = candidates.filter(c =>
     selectedCandidateIds.includes(c.id)
   );
- 
+
   const canScheduleInterview =
     selectedCandidates.length > 0 &&
     selectedCandidates.every(c => c.status === "Shortlisted");
- 
- const selectedRequisition = requisitions.find(
-  (r) => r.id === selectedRequisitionId
-);
-const normalizedRequisition = selectedRequisition
-  ? {
+
+  const selectedRequisition = requisitions.find(
+    (r) => r.id === selectedRequisitionId
+  );
+  const normalizedRequisition = selectedRequisition
+    ? {
       requisition_id: selectedRequisition.id,
       requisition_code: selectedRequisition.requisitionCode,
       requisition_title: selectedRequisition.requisitionTitle,
       registration_start_date: selectedRequisition.startDate,
       registration_end_date: selectedRequisition.endDate,
     }
-  : null;
- 
- const selectedPosition = positions.find(
-  (p) => p.jobPositions?.positionId === selectedPositionId
-)
-  ? {
+    : null;
+
+  const selectedPosition = positions.find(
+    (p) => p.jobPositions?.positionId === selectedPositionId
+  )
+    ? {
       positionId: selectedPositionId,
       positionName:
         positions.find(
           (p) => p.jobPositions?.positionId === selectedPositionId
         )?.masterPositions?.positionName,
     }
-  : null;
+    : null;
 
-  const availableStatuses = CANDIDATE_POOL_STATUSES;
- 
+
+
+  // const availableStatuses = CANDIDATE_POOL_STATUSES;
+  const availableStatuses = React.useMemo(() => {
+    return activeTab === "INTERVIEW_POOL"
+      ? INTERVIEW_STATUSES
+      : CANDIDATE_POOL_STATUSES;
+  }, [activeTab]);
+
+  const getStatusLabel = (status) => {
+    if (activeTab === "INTERVIEW_POOL") {
+      return INTERVIEW_STATUS_LABEL_MAP[status] || status;
+    }
+    return STATUS_LABEL_MAP[status] || status;
+  };
+
+  const selectedInterviewCandidates = useMemo(() => {
+    return filteredInterviewCandidates.filter((c) =>
+      selectedInterviewCandidateIds.includes(c.id)
+    );
+  }, [filteredInterviewCandidates, selectedInterviewCandidateIds]);
+
+  const canSendToOfferPool =
+    selectedInterviewCandidates.length > 0 &&
+    selectedInterviewCandidates.every((c) => c.status === "QUALIFIED");
+
+  const qualifiedInterviewIds = selectedInterviewCandidates
+    .filter(c => c.status === "QUALIFIED")
+    .map(c => c.id);
+
+  useEffect(() => {
+    if (activeTab === "INTERVIEW_POOL") {
+      setInterviewPage(0);
+    }
+  }, [activeTab, filters.status]);
+
+
   const availableLocations = React.useMemo(() => {
     const map = new Map();
 
@@ -338,26 +466,26 @@ const normalizedRequisition = selectedRequisition
       name,
     }));
   }, [candidates]);
- 
+
   const availableCategories = React.useMemo(() => {
     const map = new Map();
- 
+
     candidates.forEach((c) => {
       if (c.categoryId && c.categoryName) {
         map.set(c.categoryId, c.categoryName);
       }
     });
- 
+
     return Array.from(map.entries()).map(([id, name]) => ({
       id,
       name,
     }));
   }, [candidates]);
- 
+
   // useEffect(() => {
   //   setPage(0);
   // }, [filters]);
- 
+
   useEffect(() => {
     if (!navPositionId) {
       setFilters({
@@ -368,6 +496,18 @@ const normalizedRequisition = selectedRequisition
       });
     }
   }, [selectedPositionId]);
+
+  useEffect(() => {
+    setFilters({
+      status: [],
+      stateId: "",
+      categoryId: "",
+      searchText: "",
+    });
+    setPage(0);
+  }, [activeTab]);
+
+
 
   const location = useLocation();
   const navRequisitionId = location.state?.requisitionId || null;
@@ -416,7 +556,6 @@ const normalizedRequisition = selectedRequisition
       isNavModeRef.current = false;
     }
   }, [positions]);
-
   const refreshCandidatesAfterSchedule = async () => {
     // reset pagination if needed
     setPage(0);
@@ -425,7 +564,31 @@ const normalizedRequisition = selectedRequisition
     // refetch list
     await fetchCandidates();
   };
- 
+
+  const mapInterviewFeedback = (candidateId) => {
+    // STATIC for now — API later
+    return [
+      {
+        name: "Anand G",
+        comment: "Good to go",
+        time: "28-07-2025 02:00 PM",
+        score: 82,
+      },
+      {
+        name: "Manohar K",
+        comment: "Good to go",
+        time: "28-07-2025 02:00 PM",
+        score: 89,
+      },
+      {
+        name: "Ramesh M",
+        comment: "Good to go",
+        time: "28-07-2025 02:00 PM",
+        score: 78,
+      },
+    ];
+  };
+
   return (
     <div className="container-fluid px-5 py-4">
       {/* Header */}
@@ -435,7 +598,7 @@ const normalizedRequisition = selectedRequisition
           Manage and schedule interviews for candidates
         </small>
       </div>
- 
+
       {/* Filters */}
       <div className="card mb-4 border-0">
         <div className="card-body p-0">
@@ -462,7 +625,7 @@ const normalizedRequisition = selectedRequisition
               </button>
             </div>
           </div>
- 
+
           <div className="mt-2 pt-1 pb-3">
             {normalizedRequisition && selectedPosition && (
               <RequisitionStrip
@@ -475,10 +638,10 @@ const normalizedRequisition = selectedRequisition
               />
             )}
           </div>
- 
+
         </div>
       </div>
- 
+
       {/* Desktop Table */}
       <div className="card rounded border-0 d-none d-md-block mb-5 mt-4">
         <div className="card-header bg-white border-bottom-0 p-0 px-1 candidate-screening-tabs-header">
@@ -487,9 +650,8 @@ const normalizedRequisition = selectedRequisition
             {tabs.map((tab) => (
               <li className="nav-item" key={tab.key}>
                 <button
-                  className={`nav-link fs-14 ${
-                    activeTab === tab.key ? "orange-color orange-bottom-border" : "text-muted"
-                  }`}
+                  className={`nav-link fs-14 ${activeTab === tab.key ? "orange-color orange-bottom-border" : "text-muted"
+                    }`}
                   onClick={() => setActiveTab(tab.key)}
                   type="button"
                 >
@@ -501,7 +663,7 @@ const normalizedRequisition = selectedRequisition
               </li>
             ))}
           </ul>
- 
+
           {/* Filters */}
           <div className="row g-2 mt-1 px-2 py-1 align-items-center">
             <div className="col-md-2 col-6 d-flex align-items-center gap-2">
@@ -532,71 +694,88 @@ const normalizedRequisition = selectedRequisition
                 }
               >
                 <option value="">All Statuses</option>
-                {availableStatuses?.map((status) => (
+                {/* {availableStatuses?.map((status) => (
                   <option key={status} value={status}>
                     {STATUS_LABEL_MAP[status] || status}
                   </option>
-                ))}
-              </select>
-            </div>
- 
-            <div className="col-md-2 col-6 mt-0">
-              <select
-                className="form-select fs-14 py-1 mt-0"
-                value={filters?.stateId}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    stateId: e.target.value,
-                  }))
-                }
-              >
-                <option value="">All Locations</option>
-                {availableLocations?.map((loc) => (
-                  <option key={loc.id} value={loc.id}>
-                    {loc.name}
+                ))} */}
+
+                {availableStatuses.map((status) => (
+                  <option key={status} value={status}>
+                    {getStatusLabel(status)}
                   </option>
                 ))}
+
               </select>
             </div>
- 
-            <div className="col-md-2 col-6 mt-0">
-              <select
-                className="form-select fs-14 py-1 mt-0"
-                value={filters.categoryId}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    categoryId: e.target.value,
-                  }))
-                }
-              >
-                <option value="">All Categories</option>
-                {availableCategories?.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
- 
+
+            {activeTab === "CANDIDATE_POOL" && (
+              <div className="col-md-2 col-6 mt-0">
+                <select
+                  className="form-select fs-14 py-1 mt-0"
+                  value={filters?.stateId}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      stateId: e.target.value,
+                    }))
+                  }
+                >
+                  <option value="">All Locations</option>
+                  {availableLocations?.map((loc) => (
+                    <option key={loc.id} value={loc.id}>
+                      {loc.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+
+            {activeTab === "CANDIDATE_POOL" && (
+              <div className="col-md-2 col-6 mt-0">
+                <select
+                  className="form-select fs-14 py-1 mt-0"
+                  value={filters.categoryId}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      categoryId: e.target.value,
+                    }))
+                  }
+                >
+                  <option value="">All Categories</option>
+                  {availableCategories?.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* 👇 spacer ONLY for Interview Pool */}
+            {activeTab === "INTERVIEW_POOL" && (
+              <div className="col-md-4 d-none d-md-block" />
+            )}
+
             <div className="col-md-4 col-12 text-md-end mt-2 mt-md-0">
               {/* <button className="btn orange-bg text-white fs-14 me-3 py-1 px-3">
                 <img src={rankIcon} className="me-2" width={15}/>
                 Rank
               </button> */}
               <button className="btn fs-14 me-3 blue-color blue-border">
-                <img src={pdfIcon} className="" width={20}/>
+                <img src={pdfIcon} className="" width={20} />
               </button>
               <button className="btn fs-14 blue-color blue-border">
-                <img src={excelIcon} className="" width={20}/>
+                <img src={excelIcon} className="" width={20} />
               </button>
             </div>
           </div>
- 
+
           <div className="row g-2 mt-1 align-items-center" style={{ backgroundColor: '#F9FAFB' }}>
             <div className="col-md-5 col-12 px-3 mb-2 py-2">
-               <div className="input-group">
+              <div className="input-group">
                 <span className="input-group-text bg-white border-end-0 py-1">
                   <img src={searchIcon} width={15} />
                 </span>
@@ -620,17 +799,41 @@ const normalizedRequisition = selectedRequisition
                   Schedule Interview
                 </button>
               )}
- 
-              {activeTab === "INTERVIEW_POOL" && selectedInterviewCandidateIds.length > 0 && (
+
+              {/* {activeTab === "INTERVIEW_POOL" && selectedInterviewCandidateIds.length > 0 && (
                 <>
-                  <button className="btn blue-color blue-border fs-14 me-2">
-                    Reschedule Interview
-                  </button>
-                  <button className="btn btn-danger fs-14">
-                    Cancel Interview
-                  </button>
+                  {canSendToOfferPool ? (
+                    <button className="btn blue-bg text-white fs-14 me-2">
+                      Send to Offer Pool
+                    </button>
+                  ) : (
+                    <>
+                      <button className="btn blue-color blue-border fs-14 me-2">
+                        Reschedule Interview
+                      </button>
+                      <button className="btn btn-danger fs-14">
+                        Cancel Interview
+                      </button>
+                    </>
+                  )}
                 </>
               )}
+              
+              */}
+
+              {activeTab === "INTERVIEW_POOL" && canSendToOfferPool && (
+                <button
+                  className="btn blue-bg text-white fs-14"
+                  onClick={() => setShowOfferModal(true)}
+                >
+                  Send to Offer Pool
+                </button>
+
+              )}
+
+
+
+
             </div>
           </div>
         </div>
@@ -653,28 +856,45 @@ const normalizedRequisition = selectedRequisition
             position={selectedPosition}
           />
         )}
- 
+
         {/* {selectedCandidate && (
           <CandidatePreviewPage
             candidate={selectedCandidate}
             onBack={() => setSelectedCandidate(null)}
           />
         )} */}
- 
+
         {activeTab === "INTERVIEW_POOL" && (
           <InterviewPool
+            candidates={pagedInterviewCandidates}
             selectedIds={selectedInterviewCandidateIds}
             setSelectedIds={setSelectedInterviewCandidateIds}
+            page={interviewPage}
+            pageSize={interviewPageSize}
+            totalElements={filteredInterviewCandidates.length}
+            onPageChange={setInterviewPage}
+            onPageSizeChange={setInterviewPageSize}
+            selectedPositionId={selectedPositionId}
+            selectedRequisitionId={selectedRequisitionId}
+            requisition={normalizedRequisition}
+            position={selectedPosition}
+            onViewFile={handleViewFile}
+            onOpenFeedback={(candidateId) => {
+              setSelectedFeedback(mapInterviewFeedback(candidateId));
+              setShowFeedbackModal(true);
+            }}
           />
         )}
-          {/* {activeTab === "OFFER_POOL" && <OfferPool />} */}
-          {/* {activeTab === "ONBOARDING_POOL" && <OnboardingPool />} */}
-          <ScheduleInterviewModal
-            showScheduleModal={showScheduleModal}
-            setShowScheduleModal={setShowScheduleModal}
-            applicationIds={selectedCandidateIds}
-            onBulkScheduleSuccess={refreshCandidatesAfterSchedule}
-          />
+
+        {/* {activeTab === "OFFER_POOL" && <OfferPool />} */}
+        {/* {activeTab === "ONBOARDING_POOL" && <OnboardingPool />} */}
+        <ScheduleInterviewModal
+          showScheduleModal={showScheduleModal}
+          setShowScheduleModal={setShowScheduleModal}
+          applicationIds={selectedCandidateIds}
+          onBulkScheduleSuccess={refreshCandidatesAfterSchedule}
+        />
+
       </div>
       <PdfViewerModal
         show={showPdfViewer}
@@ -686,6 +906,27 @@ const normalizedRequisition = selectedRequisition
         loading={loadingPdf}
         title="Candidate Resume"
       />
+
+      <InterviewFeedbackHistoryModal
+        show={showFeedbackModal}
+        onHide={() => setShowFeedbackModal(false)}
+        feedbackList={selectedFeedback}
+      />
+
+     
+      <SendToOfferPoolModal
+        showSendOfferModal={showOfferModal}
+        setShowSendOfferModal={setShowOfferModal}
+        offerCandidateIds={qualifiedInterviewIds}
+        onBulkOfferSuccess={() => {
+          setSelectedInterviewCandidateIds([]);
+          setInterviewPage(0);
+        }}
+      />
+
+
+
+
     </div>
   );
 }

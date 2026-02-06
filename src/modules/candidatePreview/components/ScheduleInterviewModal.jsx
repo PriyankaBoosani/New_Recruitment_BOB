@@ -107,7 +107,7 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 			centered
 			backdrop="static"
 		>
-			<Modal.Header className='d-flex justify-content-between'>
+			<Modal.Header className='d-flex justify-content-between modalhead' closeButton>
 				<div className='d-grid'>
 					<h5 className="mb-1 blue-color fs-15">Schedule Interview</h5>
 					<p className='text-muted fs-14 mb-0'>Schedule interviews for selected candidates</p>
@@ -203,7 +203,7 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 				)}
 			</Modal.Body>
 
-			<Modal.Footer>
+			<Modal.Footer className='modalfoot'>
 				<button
 					className="btn btn-light-grey shadow border fs-13 px-3"
 					onClick={() => setShowScheduleModal(false)}
