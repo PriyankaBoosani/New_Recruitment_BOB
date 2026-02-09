@@ -169,20 +169,16 @@ const AssignPositionsPage = () => {
       p.committeeName?.toUpperCase() === activeTab
   );
   return (
-    <div className="assign-page">
+    <div className="assign-positions-page">
+      {/* ===== PAGE HEADER ===== */}
+    
+   
 
-      {/* OUTER CARD */}
-      <Card className="p-3">
-        <div className="mb-3">
-          <div className="assign-position-title">Select Position</div>
-          <div className="assign-position-muted">
-            Choose a requisition and position to assign committees to.
-          </div>
-        </div>
-
-
-        <Row className="g-3 align-items-end mb-4">
-          <Col md={4}>
+      {/* ===== SELECTION CONTROLS ===== */}
+      <div className="selection-section">
+        <div class="mb-3"><div class="assign-position-title">Select Position</div><div class="assign-position-muted">Choose a requisition and position to assign committees to.</div></div>
+        <div className="selection-grid">
+          <div className="form-group">
             <label className="form-label">Requisition</label>
             <select
               className="form-select"
@@ -190,19 +186,15 @@ const AssignPositionsPage = () => {
               onChange={handleRequisitionChange}
             >
               <option value="">Select Requisition</option>
-
               {requisitions.map(req => (
-                <option
-                  key={req.id}
-                  value={req.id}
-                >
+                <option key={req.id} value={req.id}>
                   {req.requisitionCode}
                 </option>
               ))}
             </select>
-          </Col>
+          </div>
 
-          <Col  md={4}>
+          <div className="form-group">
             <label className="form-label">Position</label>
             <select
               className="form-select"
@@ -211,135 +203,111 @@ const AssignPositionsPage = () => {
               disabled={!selectedRequisition}
             >
               <option value="">Select Position</option>
-
               {positions.map(pos => (
-                <option
-                  key={pos.jobPositions?.positionId}
-                  value={pos.jobPositions?.positionId}
-                >
+                <option key={pos.jobPositions?.positionId} value={pos.jobPositions?.positionId}>
                   {pos.masterPositions?.positionName}
                 </option>
               ))}
             </select>
+          </div>
+        </div>
 
-          </Col>
-
-          {/* <Col className="d-flex gap-2">
-            <Button variant="primary" className="assign-btn w-50" onClick={handleAssignCommittees}>
-              <FiPlus className="me-1" />
-              Assign Committees
-            </Button>
-            <Button variant="secondary" className="assign-btn w-100">
-            Import Committees
-          </Button>
-          </Col> */}
-        </Row>
-
-
-
-      {/* Requisition Strip */}
+        {/* ===== REQUISITION STRIP ===== */}
       {selectedRequisition && selectedPosition && (
-        <RequisitionStrip
-          requisition={selectedRequisition}
-          position={selectedPosition}
-          isCardBg
-          isSaveEnabled={false}
-        />
+        <div className="requisition-strip-section">
+          <RequisitionStrip
+            requisition={selectedRequisition}
+            position={selectedPosition}
+            isCardBg={false}
+            isSaveEnabled={false}
+          />
+        </div>
       )}
+      </div>
 
-        {/* CARD 2: COMMITTEES */}
-        <Card>
-          <Card.Body>
-            {/* HEADER (NEW) */}
-            <div className="d-flex justify-content-between align-items-start mb-3">
-              <div>
-                <div className="config-title">Configure Committees</div>
-                <div className="config-subtitle">
-                  {selectedPositionTitle
-                    ? `Assign panels to ${selectedPositionTitle}`
-                    : "Select a position to assign panels"}
-                </div>
-              </div>
+      
 
-               <div className="d-flex gap-2">
-                    {/* <Button variant="outline-secondary" size="sm">
-                      Cancel
-                    </Button> */}
+      {/* ===== COMMITTEE CONFIGURATION ===== */}
+      <div className="committee-config-section">
+        <div className="config-header">
+          <div className="config-title-section">
+            <h2 className="config-title">Configure Committees</h2>
+            <p className="config-subtitle">
+              {selectedPositionTitle
+                ? `Assign panels to ${selectedPositionTitle}`
+                : "Select a position to assign panels"}
+            </p>
+          </div>
+          <button 
+            className="assign-button" 
+            onClick={handleAssignCommittees}
+            disabled={!selectedPosition}
+          >
+            Assign Committees
+          </button>
+        </div>
 
-                    
-                    <Button variant="warning" className="save-configuration-btn" size="sm" onClick={handleAssignCommittees}>
-                         Assign Committees
-                    </Button>
-                  </div> 
+        {/* ===== TABS ===== */}
+        <div className="committee-tabs">
+          <button
+            className={`tab-item ${activeTab === "SCREENING" ? "active" : ""}`}
+            onClick={() => setActiveTab("SCREENING")}
+          >
+            Screening Committee
+          </button>
+          <button
+            className={`tab-item ${activeTab === "INTERVIEW" ? "active" : ""}`}
+            onClick={() => setActiveTab("INTERVIEW")}
+          >
+            Interview Committee
+          </button>
+          <button
+            className={`tab-item ${activeTab === "COMPENSATION" ? "active" : ""}`}
+            onClick={() => setActiveTab("COMPENSATION")}
+          >
+            Compensation Committee
+          </button>
+        </div>
+
+        {/* ===== DUAL PANELS ===== */}
+        <div className="panels-container">
+          {/* Available Panels */}
+          <div className="panel-box available">
+            <div className="panel-header">
+              <h3 className="panel-title">Available Panels</h3>
+              <span className="panel-count">{filteredPanels.length}</span>
             </div>
-            {/* Tabs */}
-            <div className="com-tab mb-2">
-              <button
-                className={`com-tab-item ${activeTab === "SCREENING" ? "active" : ""
-                  }`}
-                onClick={() => setActiveTab("SCREENING")}
-              >
-                Screening Committee
-              </button>
-
-              <button
-                className={`com-tab-item ${activeTab === "INTERVIEW" ? "active" : ""
-                  }`}
-                onClick={() => setActiveTab("INTERVIEW")}
-              >
-                Interview Committee
-              </button>
-
-              <button
-                className={`com-tab-item ${activeTab === "COMPENSATION" ? "active" : ""
-                  }`}
-                onClick={() => setActiveTab("COMPENSATION")}
-              >
-                Compensation Committee
-              </button>
+            <div className="panel-divider"></div>
+            <div className="panel-content">
+              {filteredPanels.map(c => renderAvailableCommittee(c, activeTab))}
             </div>
+          </div>
 
-            {/* Dual Panels */}
-            <div className="dual-committee-box new-ui">
-              <div className="available-committees blue">
-                <div className="available-panel-header-row">
-                  Available Panels
-                  <span className="count">{filteredPanels.length}</span>
-                </div>
-                <div className="panel-divider"></div>
-                {filteredPanels.map(c =>
-                  renderAvailableCommittee(c, activeTab)
-                )}
-              </div>
+          {/* Swap Icon */}
+          <div className="swap-divider">
+            <div className="swap-icon">⇄</div>
+          </div>
 
-              <div className="swap-icon">⇄</div>
-
-              <div className="selected-committees orange">
-                <div className="selected-panel-header-row">
-                  Selected Panels
-                  <span className="count">{selectedCommittees[activeTab].length}</span>
-                </div>
-                <div className="panel-divider"></div>
-                {selectedCommittees[activeTab].length > 0 ? (
-                  selectedCommittees[activeTab].map(c =>
-                    renderSelectedCommittee(c, activeTab)
-                  )
-                ) : (
-                  <div className="empty-state">No panels selected</div>
-                )}
-              </div>
+          {/* Selected Panels */}
+          <div className="panel-box selected">
+            <div className="panel-header">
+              <h3 className="panel-title">Selected Panels</h3>
+              <span className="panel-count">{selectedCommittees[activeTab].length}</span>
             </div>
-
-          </Card.Body>
-        </Card>
-        {/* <Card>
-        <Card.Body>
-         
-          {showHistory && <CommitteeHistoryList />}
-        
-        </Card.Body>
-      </Card> */}
-      </Card>
+            <div className="panel-divider"></div>
+            <div className="panel-content">
+              {selectedCommittees[activeTab].length > 0 ? (
+                selectedCommittees[activeTab].map(c => renderSelectedCommittee(c, activeTab))
+              ) : (
+                <div className="empty-state">
+                  <div className="empty-icon">📋</div>
+                  <div className="empty-text">No panels selected</div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
