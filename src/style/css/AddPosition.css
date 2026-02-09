@@ -62,6 +62,12 @@
     margin-top: 4px;
     color: #212529;
 }
+.wrap{
+  white-space: normal !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: anywhere;
+}
 
 .import-btn {
     display: flex;

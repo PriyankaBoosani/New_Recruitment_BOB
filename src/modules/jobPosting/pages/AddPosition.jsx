@@ -541,7 +541,7 @@ const AddPosition = () => {
                     <Button variant="link" className="back-btn" onClick={() => navigate(-1)}>← {t("back")}</Button>
                     <div>
                         <span className="req-id">{requisitionLoading ? t("loading") : requisition?.requisitionCode || "—"}</span>
-                        <div className="req-code">{requisition?.requisitionTitle || "—"}</div>
+                        <div className="req-code wrap">{requisition?.requisitionTitle || "—"}</div>
                     </div>
                 </div>
                 <Button
