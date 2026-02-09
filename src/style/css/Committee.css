@@ -68,6 +68,12 @@
   background: #ffffff;
   /* transition: all 0.2s ease; */
 }
+.assign-positions-page .form-select:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 1;
+}
 .assign-positions-page .form-select:not(:focus) {
   border: 2px solid #e5e7eb;
 }
