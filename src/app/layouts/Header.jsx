@@ -63,11 +63,11 @@ const Header = () => {
 
     navigate('/login');
   };
-const role = user?.role?.toLowerCase();
+  const role = user?.role?.toLowerCase();
 
-const isAdmin = role === "admin";
-const isZonalHr = role === "zonal_hr";
-const isRecruiter = role === "recruiter";
+  const isAdmin = role === "admin";
+  const isZonalHr = role === "zonal_hr";
+  const isRecruiter = role === "recruiter";
 
   /* ===================== OUTSIDE CLICK ===================== */
   useEffect(() => {
@@ -198,7 +198,7 @@ const isRecruiter = role === "recruiter";
           <Navbar.Collapse id="main-navbar-nav">
             <Nav className="me-auto">
               {isRecruiter && (
-                <Nav.Link as={Link} to="/job-posting" onClick={closeMenu}>
+                <Nav.Link as={NavLink} to="/job-posting" onClick={closeMenu}>
                   {t("job_postings")}
                 </Nav.Link>
               )}
@@ -211,14 +211,14 @@ const isRecruiter = role === "recruiter";
               </Nav.Link> */}
 
 
-               {isRecruiter && (
-                <Nav.Link as={Link} to="/candidate-workflow" onClick={closeMenu}>
+              {isRecruiter && (
+                <Nav.Link as={NavLink} to="/candidate-workflow" onClick={closeMenu}>
                   Candidate Workflow
                 </Nav.Link>
               )}
 
 
-               {/* {isRecruiter && (
+              {/* {isRecruiter && (
                 <Nav.Link as={Link} to="/candidate-interview" onClick={closeMenu}>
                    Interview
                 </Nav.Link>
@@ -226,11 +226,11 @@ const isRecruiter = role === "recruiter";
 
 
               {isZonalHr && (
-  <Nav.Link as={Link} to="/candidate-verification" onClick={closeMenu}>
-    Verification
-  </Nav.Link>
-)}
-              {!isAdmin &&  (
+                <Nav.Link as={Link} to="/candidate-verification" onClick={closeMenu}>
+                  Verification
+                </Nav.Link>
+              )}
+              {!isAdmin && (
                 <Nav.Link as={NavLink} to="/interviewpanel" onClick={closeMenu}>
                   Committee Management
                 </Nav.Link>
@@ -245,7 +245,7 @@ const isRecruiter = role === "recruiter";
 
               {/* Admin Menu */}
               {isAdmin && (
-                <NavDropdown title={t("admin")} id="admin-dropdown"  className={isAdminRoute ? "active-admin" : ""}>
+                <NavDropdown title={t("admin")} id="admin-dropdown" className={isAdminRoute ? "active-admin" : ""}>
                   <NavDropdown.Item as={Link} to="/users" onClick={closeMenu}>
                     {t("users")}
                   </NavDropdown.Item>
