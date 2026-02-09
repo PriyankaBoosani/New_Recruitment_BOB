@@ -91,6 +91,7 @@
   font-weight: 500;
   gap: 1em;
 }
+
 .selectall .form-check-label {
   margin-top: 5px;
   margin-left: -5px;
@@ -117,9 +118,11 @@
   font-weight: 500;
   opacity: 1 !important;
 }
-.selectcheck{
+
+.selectcheck {
   padding-left: 8px;
 }
+
 .subbtn:hover {
   background-color: #42579F !important;
 }
@@ -139,7 +142,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-left:26px;
+  margin-left: 26px;
 }
 
 .job-postings-page .bg-warning {
@@ -172,11 +175,13 @@
 .req-id {
   font-weight: 500;
 }
-.icon-22{
+
+.icon-22 {
   width: 22px;
   height: 22px;
 }
-.job-postings-page .req-code {
+
+/* .job-postings-page .req-code {
 	font-weight: 500;
 	margin: 12px 0;
 	color: #162B75 !important;
@@ -186,12 +191,27 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	word-wrap: anywhere;
+} */
+
+.job-postings-page .req-code {
+    font-weight: 500;
+    margin: 12px 0;
+    color: #162B75 !important;
+    font-size: 1em;
+
+    display: block;          /* important */
+    max-width: 600px !important;         /* required for ellipsis */
+    white-space: nowrap;     /* must be nowrap */
+    overflow: hidden;        /* hide extra text */
+    text-overflow: ellipsis; /* show ... */
 }
+
+
 .wrap {
   white-space: normal !important;
-  	overflow: hidden;
-	text-overflow: ellipsis;
-	word-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: anywhere;
 }
 
 .job-postings-page .depname {
@@ -253,7 +273,8 @@
     flex-direction: column;
     gap: 4px;
   }
-  .req-meta{
+
+  .req-meta {
     margin-left: 25px;
   }
 
@@ -311,9 +332,9 @@
 }
 
 .position-meta-inline span {
-	font-weight: 400;
-	font-size: 0.875em;
-	color: #404040;
+  font-weight: 400;
+  font-size: 0.875em;
+  color: #404040;
 }
 
 .icon-btn {
@@ -324,10 +345,10 @@
 
 /* DETAILS BELOW */
 .position-details {
-	/* margin-top: 10px; */
-	font-size: 0.875em;
-	color: #404040;
-	font-weight: 400;
+  /* margin-top: 10px; */
+  font-size: 0.875em;
+  color: #404040;
+  font-weight: 400;
 }
 
 .position-details strong {
@@ -361,12 +382,14 @@
 .requisition-card .card-body {
   padding: 1.25rem;
 }
-.accordion-body .text-muted{
+
+.accordion-body .text-muted {
   font-size: 1em;
   color: #404040 !important;
   font-weight: 400;
 }
-.icon-12{
+
+.icon-12 {
   width: 16px;
   height: 16px;
 }
@@ -495,25 +518,29 @@
 .job-postings-page .form-check-input:focus {
   box-shadow: none !important;
 }
+
 .badge.capitalize-status {
   text-transform: capitalize;
 }
 
 .job-postings-page .form-check-input:disabled {
-	cursor: not-allowed;
-	background: #AFBDEB4F;
+  cursor: not-allowed;
+  background: #AFBDEB4F;
 }
 
-.job-postings-page .pagesize{
+.job-postings-page .pagesize {
   color: #162B75;
 }
+
 .subbtn:disabled {
   background-color: #42579F !important;
   opacity: 0.6 !important;
   cursor: not-allowed;
 }
+
 /* ================= Pagination Responsive ================= */
 @media (max-width: 768px) {
+
   /* Stack page size + pagination */
   .job-postings-page .pagination,
   .job-postings-page .pagination.mb-0 {

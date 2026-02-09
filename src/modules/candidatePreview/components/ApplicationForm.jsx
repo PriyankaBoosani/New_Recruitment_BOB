@@ -22,7 +22,7 @@ const ApplicationForm = ({
   positionId,
   applicationId,
   requisitionId,
-   interviewScheduleId,
+  interviewScheduleId,
   requisitionTitle,
   positionName,
   selectedDate
@@ -31,6 +31,8 @@ const ApplicationForm = ({
   const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
   const [criteria, setCriteria] = useState({});
   const location = useLocation();
+  const isInterviewView = location.state?.fromInterviewPool;
+
   const candidate = location.state?.candidate;
   console.log("candidateId: ", candidateId)
   console.log("applicationId: ", applicationId)
@@ -54,94 +56,94 @@ const ApplicationForm = ({
     ageCriteriaRemark: "",
     educationCriteriaRemark: "",
     finalScreeningRemark: "",
-     zonalSubmitDate: "",  
+    zonalSubmitDate: "",
 
     submitBeforeDate: "",
     isScreeningCompleted: false,
     screeningId: null,
   });
 
-const [screeningRemarks, setScreeningRemarks] = useState("");
+  const [screeningRemarks, setScreeningRemarks] = useState("");
 
 
 
 
-const mapDecisionToStatus = (val) => {
-  if (val === "Yes") return "VERIFIED";
-  if (val === "No") return "REJECTED";
-  if (val === "Provisionally Approved") return "PROVISIONALLY_APPROVED";
-  return "PENDING";
-};
+  const mapDecisionToStatus = (val) => {
+    if (val === "Yes") return "VERIFIED";
+    if (val === "No") return "REJECTED";
+    if (val === "Provisionally Approved") return "PROVISIONALLY_APPROVED";
+    return "PENDING";
+  };
 
 
-const handleZonalSubmit = async () => {
+  const handleZonalSubmit = async () => {
 
-  if (!zonalDecision) {
-    toast.error("Please select decision");
-    return;
-  }
-
-  if (zonalDecision === "Provisionally Approved") {
-    if (!screeningForm.zonalSubmitDate) {
-      setErrors(prev => ({
-        ...prev,
-        zonalSubmitDate: "Submit Date is required"
-      }));
+    if (!zonalDecision) {
+      toast.error("Please select decision");
       return;
     }
 
-    const selected = new Date(screeningForm.zonalSubmitDate);
-    const today = new Date();
-    today.setHours(0,0,0,0);
+    if (zonalDecision === "Provisionally Approved") {
+      if (!screeningForm.zonalSubmitDate) {
+        setErrors(prev => ({
+          ...prev,
+          zonalSubmitDate: "Submit Date is required"
+        }));
+        return;
+      }
 
-    if (selected <= today) {
-      setErrors(prev => ({
-        ...prev,
-        zonalSubmitDate: "Must be future date"
-      }));
-      return;
+      const selected = new Date(screeningForm.zonalSubmitDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selected <= today) {
+        setErrors(prev => ({
+          ...prev,
+          zonalSubmitDate: "Must be future date"
+        }));
+        return;
+      }
     }
-  }
 
-  console.log("Submitting interviewScheduleId:", interviewScheduleId);
+    console.log("Submitting interviewScheduleId:", interviewScheduleId);
 
-  try {
+    try {
 
-    const payload = {
-      candidateId,
-      applicationId,
-      interviewScheduleId,
-      zonalVerificationStatus: mapDecisionToStatus(zonalDecision),
-      zonalSubmitBeforeDate: screeningForm.zonalSubmitDate || null,
-      zonalHrComments: screeningRemarks || ""
-    };
+      const payload = {
+        candidateId,
+        applicationId,
+        interviewScheduleId,
+        zonalVerificationStatus: mapDecisionToStatus(zonalDecision),
+        zonalSubmitBeforeDate: screeningForm.zonalSubmitDate || null,
+        zonalHrComments: screeningRemarks || ""
+      };
 
-    console.log("ZONAL SUBMIT PAYLOAD:", payload);
+      console.log("ZONAL SUBMIT PAYLOAD:", payload);
 
-    await jobPositionApiService.submitOverallZonalVerification(payload);
+      await jobPositionApiService.submitOverallZonalVerification(payload);
 
-    toast.success("Zonal verification submitted successfully");
+      toast.success("Zonal verification submitted successfully");
 
-navigate("/candidate-verification", {
-  state: {
-    requisition: location.state?.requisition,
-    position: location.state?.position,
-    preloadedCandidates: location.state?.candidates || [],
-    selectedDate
-  }
-});
-
+      navigate("/candidate-verification", {
+        state: {
+          requisition: location.state?.requisition,
+          position: location.state?.position,
+          preloadedCandidates: location.state?.candidates || [],
+          selectedDate
+        }
+      });
 
 
 
 
 
 
-  } catch (err) {
-    console.error(err);
-    toast.error("Zonal submit failed");
-  }
-};
+
+    } catch (err) {
+      console.error(err);
+      toast.error("Zonal submit failed");
+    }
+  };
 
 
 
@@ -154,7 +156,7 @@ navigate("/candidate-verification", {
   };
   const CRITERIA_OPTIONS = ["YES", "NO", "DISCREPANCY"];
 
-   const documentRows = [
+  const documentRows = [
     ...(data.documents?.identityProofs || []),
     ...(data.documents?.educationCertificates || []),
     ...(data.documents?.communityCertificates || []),
@@ -162,9 +164,9 @@ navigate("/candidate-verification", {
     ...(data.documents?.payslips || []),
     ...(data.documents?.resume || [])
   ].map(doc => ({
-  ...doc,
-  candidateDocumentId: doc.candidateDocumentId ?? doc.id
-}));
+    ...doc,
+    candidateDocumentId: doc.candidateDocumentId ?? doc.id
+  }));
 
   const [photo, setPhoto] = useState()
   const [signature, setSignature] = useState()
@@ -222,58 +224,58 @@ navigate("/candidate-verification", {
   const [docStatusMap, setDocStatusMap] = useState({});
   const [docStatusLoading, setDocStatusLoading] = useState(true);
   const [errors, setErrors] = useState({});
-    const [docStatus, setDocStatus] = useState({});
-    const [zonalDecision, setZonalDecision] = useState("");
+  const [docStatus, setDocStatus] = useState({});
+  const [zonalDecision, setZonalDecision] = useState("");
 
-// const allDocsVerified =
-//   documentRows.length > 0 &&
-//   areAllDocumentsValidated();
+  // const allDocsVerified =
+  //   documentRows.length > 0 &&
+  //   areAllDocumentsValidated();
 
 
-  
+
   const user = useSelector((state) => state.user.user);
-const role = user?.role?.toLowerCase();
-const isZonalHr = role === "zonal_hr";
+  const role = user?.role?.toLowerCase();
+  const isZonalHr = role === "zonal_hr";
 
 
 
-const refreshDocStatuses = async () => {
-  try {
-    setDocStatusLoading(true);
+  const refreshDocStatuses = async () => {
+    try {
+      setDocStatusLoading(true);
 
-    let res;
+      let res;
 
-    if (isZonalHr) {
-      res = await jobPositionApiService.getZonalDocumentStatus(applicationId);
-    } else {
-      res = await jobPositionApiService.getScreeningCommitteeStatus(applicationId);
-    }
-
-    const map = {};
-
-    (res.data || []).forEach((item) => {
       if (isZonalHr) {
-        map[item.candidateDocumentId] = {
-          status: item.zonalHrDocStatus?.toUpperCase() || "PENDING",
-          comments: item.zonalHrDocComments,
-        };
+        res = await jobPositionApiService.getZonalDocumentStatus(applicationId);
       } else {
-        map[item.candidateDocumentId] = {
-          status: item.docScreeningStatus?.toUpperCase() || "PENDING",
-          comments: item.docScreeningComments,
-          verificationId: item.verificationId,
-        };
+        res = await jobPositionApiService.getScreeningCommitteeStatus(applicationId);
       }
-    });
 
-    setDocStatusMap(map);
+      const map = {};
 
-  } catch (e) {
-    console.error("Failed to fetch document status", e);
-  } finally {
-    setDocStatusLoading(false);
-  }
-};
+      (res.data || []).forEach((item) => {
+        if (isZonalHr) {
+          map[item.candidateDocumentId] = {
+            status: item.zonalHrDocStatus?.toUpperCase() || "PENDING",
+            comments: item.zonalHrDocComments,
+          };
+        } else {
+          map[item.candidateDocumentId] = {
+            status: item.docScreeningStatus?.toUpperCase() || "PENDING",
+            comments: item.docScreeningComments,
+            verificationId: item.verificationId,
+          };
+        }
+      });
+
+      setDocStatusMap(map);
+
+    } catch (e) {
+      console.error("Failed to fetch document status", e);
+    } finally {
+      setDocStatusLoading(false);
+    }
+  };
 
 
 
@@ -316,23 +318,23 @@ const refreshDocStatuses = async () => {
 
         if (!data) return; // no record → fresh form
 
-      setScreeningForm(prev => ({
-        ...prev,
-        applicationId,
-        candidateId,
+        setScreeningForm(prev => ({
+          ...prev,
+          applicationId,
+          candidateId,
 
-        isWorkCriteriaMet: normalizeCriteria(data.isWorkCriteriaMet),
-        isAgeCriteriaMet: normalizeCriteria(data.isAgeCriteriaMet),
-        isEducationCriteriaMet: normalizeCriteria(data.isEducationCriteriaMet),
-        isShortlisted: normalizeCriteria(data.isShortlisted),
+          isWorkCriteriaMet: normalizeCriteria(data.isWorkCriteriaMet),
+          isAgeCriteriaMet: normalizeCriteria(data.isAgeCriteriaMet),
+          isEducationCriteriaMet: normalizeCriteria(data.isEducationCriteriaMet),
+          isShortlisted: normalizeCriteria(data.isShortlisted),
 
-        workCriteriaRemark: data.workCriteriaRemark ?? "",
-        ageCriteriaRemark: data.ageCriteriaRemark ?? "",
-        educationCriteriaRemark: data.educationCriteriaRemark ?? "",
-        finalScreeningRemark: data.finalScreeningRemark ?? "",
-        submitBeforeDate: data.submitBeforeDate ?? "",
-        screeningId: data.screeningId ?? null,
-      }));
+          workCriteriaRemark: data.workCriteriaRemark ?? "",
+          ageCriteriaRemark: data.ageCriteriaRemark ?? "",
+          educationCriteriaRemark: data.educationCriteriaRemark ?? "",
+          finalScreeningRemark: data.finalScreeningRemark ?? "",
+          submitBeforeDate: data.submitBeforeDate ?? "",
+          screeningId: data.screeningId ?? null,
+        }));
       } catch (err) {
         console.error("Failed to fetch discrepancy details", err);
       }
@@ -419,83 +421,83 @@ const refreshDocStatuses = async () => {
       return updated;
     });
   };
-  
- const handleVerify = async (comment) => {
-  if (!selectedDoc) return;
 
-  try {
+  const handleVerify = async (comment) => {
+    if (!selectedDoc) return;
 
-    if (isZonalHr) {
+    try {
 
-      await jobPositionApiService.verifyZonalDocument({
-        candidateDocumentId: selectedDoc.candidateDocumentId,
-        candidateId,
-        applicationId,
-        zonalHrDocStatus: "VERIFIED",
-        zonalHrDocComments: comment || ""
-      });
+      if (isZonalHr) {
 
-    } else {
+        await jobPositionApiService.verifyZonalDocument({
+          candidateDocumentId: selectedDoc.candidateDocumentId,
+          candidateId,
+          applicationId,
+          zonalHrDocStatus: "VERIFIED",
+          zonalHrDocComments: comment || ""
+        });
 
-      // 🔹 DO NOT TOUCH — existing flow
-      await jobPositionApiService.saveScreeningDecision({
-        candidateDocumentId: selectedDoc.candidateDocumentId,
-        candidateId,
-        applicationId,
-        docScreeningStatus: "VERIFIED",
-        docScreeningComments: comment || "",
-        verificationId: selectedDoc.verificationId,
-      });
+      } else {
 
+        // 🔹 DO NOT TOUCH — existing flow
+        await jobPositionApiService.saveScreeningDecision({
+          candidateDocumentId: selectedDoc.candidateDocumentId,
+          candidateId,
+          applicationId,
+          docScreeningStatus: "VERIFIED",
+          docScreeningComments: comment || "",
+          verificationId: selectedDoc.verificationId,
+        });
+
+      }
+
+      setShowViewer(false);
+      setSelectedDoc(null);
+      await refreshDocStatuses();
+
+    } catch (err) {
+      console.error("Verify failed", err);
     }
-
-    setShowViewer(false);
-    setSelectedDoc(null);
-    await refreshDocStatuses();
-
-  } catch (err) {
-    console.error("Verify failed", err);
-  }
-};
+  };
 
 
- const handleReject = async (comment) => {
-  if (!selectedDoc) return;
+  const handleReject = async (comment) => {
+    if (!selectedDoc) return;
 
-  try {
+    try {
 
-    if (isZonalHr) {
+      if (isZonalHr) {
 
-      await jobPositionApiService.verifyZonalDocument({
-        candidateDocumentId: selectedDoc.candidateDocumentId,
-        candidateId,
-        applicationId,
-        zonalHrDocStatus: "REJECTED",
-        zonalHrDocComments: comment || ""
-      });
+        await jobPositionApiService.verifyZonalDocument({
+          candidateDocumentId: selectedDoc.candidateDocumentId,
+          candidateId,
+          applicationId,
+          zonalHrDocStatus: "REJECTED",
+          zonalHrDocComments: comment || ""
+        });
 
-    } else {
+      } else {
 
-      // 🔹 existing screening API — untouched
-      await jobPositionApiService.saveScreeningDecision({
-        candidateDocumentId: selectedDoc.candidateDocumentId,
-        candidateId,
-        applicationId,
-        docScreeningStatus: "REJECTED",
-        docScreeningComments: comment || "",
-        verificationId: selectedDoc.verificationId,
-      });
+        // 🔹 existing screening API — untouched
+        await jobPositionApiService.saveScreeningDecision({
+          candidateDocumentId: selectedDoc.candidateDocumentId,
+          candidateId,
+          applicationId,
+          docScreeningStatus: "REJECTED",
+          docScreeningComments: comment || "",
+          verificationId: selectedDoc.verificationId,
+        });
 
+      }
+
+      setShowViewer(false);
+      setSelectedDoc(null);
+      await refreshDocStatuses();
+
+    } catch (err) {
+      console.error("Reject failed", err);
     }
-
-    setShowViewer(false);
-    setSelectedDoc(null);
-    await refreshDocStatuses();
-
-  } catch (err) {
-    console.error("Reject failed", err);
-  }
-};
+  };
 
 
   const validateForm = () => {
@@ -586,8 +588,8 @@ const refreshDocStatuses = async () => {
 
 
   const allDocsVerified =
-  documentRows.length > 0 &&
-  areAllDocumentsValidated();
+    documentRows.length > 0 &&
+    areAllDocumentsValidated();
 
 
   const areAllDocumentsVerified = () => {
@@ -599,7 +601,7 @@ const refreshDocStatuses = async () => {
       return status === "VERIFIED";
     });
   };
-  
+
   const areAllCriteriaYes = () => {
     return (
       screeningForm.isWorkCriteriaMet === "YES" &&
@@ -664,7 +666,7 @@ const refreshDocStatuses = async () => {
     try {
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
       toast.success("Screening submitted successfully");
-      navigate("/candidate-workflow", {state: {requisitionId, positionId}})
+      navigate("/candidate-workflow", { state: { requisitionId, positionId } })
     } catch (err) {
       console.error("Screening submit failed", err);
       toast.error("Submission failed");
@@ -739,240 +741,240 @@ const refreshDocStatuses = async () => {
 
   return (
     <>
-     <Accordion
-          activeKey={activeAccordion}
-          onSelect={(key) => setActiveAccordion(key)}
-          alwaysOpen
-          className="bob-accordion"
-        >
+      <Accordion
+        activeKey={activeAccordion}
+        onSelect={(key) => setActiveAccordion(key)}
+        alwaysOpen
+        className="bob-accordion"
+      >
 
-          {/* === PERSONAL DETAILS === */}
-          <Accordion.Item eventKey="0">
-            <Accordion.Header>Personal Details</Accordion.Header>
-            <Accordion.Body>
-              <div className="personal-details-wrapper">
-                <table className="table table-bordered bob-table w-100 mb-0">
-                  <tbody>
-                    <tr>
-                      <td className="fw-med" style={{ width: "20%" }}>Full Name</td>
-                      <td className="fw-reg" colSpan={4} style={{ width: "60%" }}>
-                        {data.personalDetails.fullName}
-                      </td>
+        {/* === PERSONAL DETAILS === */}
+        <Accordion.Item eventKey="0">
+          <Accordion.Header>Personal Details</Accordion.Header>
+          <Accordion.Body>
+            <div className="personal-details-wrapper">
+              <table className="table table-bordered bob-table w-100 mb-0">
+                <tbody>
+                  <tr>
+                    <td className="fw-med" style={{ width: "20%" }}>Full Name</td>
+                    <td className="fw-reg" colSpan={4} style={{ width: "60%" }}>
+                      {data.personalDetails.fullName}
+                    </td>
 
-                      {/* ✅ Make photo span the full height of the table */}
-                      <td
-                        rowSpan="3"
-                        className="bob-photo-cell align-top text-center"
-                        style={{ width: "20%", verticalAlign: "top" }}
-                      >
-                        <div className="bob-photo-box">
-                          <img
-                            src={photo}
-                            alt="Applicant Photo"
-                            className="img-fluid img1"
-                          />
+                    {/* ✅ Make photo span the full height of the table */}
+                    <td
+                      rowSpan="3"
+                      className="bob-photo-cell align-top text-center"
+                      style={{ width: "20%", verticalAlign: "top" }}
+                    >
+                      <div className="bob-photo-box">
+                        <img
+                          src={photo}
+                          alt="Applicant Photo"
+                          className="img-fluid img1"
+                        />
 
-                          <img
-                            src={signature}
-                            alt="Signature"
-                            className="img-fluid img2"
-                          />
-                        </div>
-                      </td>
-                    </tr>
+                        <img
+                          src={signature}
+                          alt="Signature"
+                          className="img-fluid img2"
+                        />
+                      </div>
+                    </td>
+                  </tr>
 
-                    <tr>
-                      <td className="fw-med">Address</td>
-                      <td className="fw-reg" colSpan={4}>{data.personalDetails.address}</td>
-                    </tr>
+                  <tr>
+                    <td className="fw-med">Address</td>
+                    <td className="fw-reg" colSpan={4}>{data.personalDetails.address}</td>
+                  </tr>
 
-                    <tr>
-                      <td className="fw-med">Permanent Address</td>
-                      <td className="fw-reg" colSpan={4}>{data.personalDetails.permanentAddress}</td>
-                    </tr>
+                  <tr>
+                    <td className="fw-med">Permanent Address</td>
+                    <td className="fw-reg" colSpan={4}>{data.personalDetails.permanentAddress}</td>
+                  </tr>
 
-                    <tr >
-                      <td className="fw-med" >Mobile</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.mobile}</td>
-                      <td className="fw-med">Email</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.email}</td>
-                    </tr>
+                  <tr >
+                    <td className="fw-med" >Mobile</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.mobile}</td>
+                    <td className="fw-med">Email</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.email}</td>
+                  </tr>
 
-                    <tr >
-                      <td className="fw-med">Mother’s Name</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.motherName || "-"}</td>
-                      <td className="fw-med">Father’s Name</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.fatherName}</td>
-                    </tr>
+                  <tr >
+                    <td className="fw-med">Mother’s Name</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.motherName || "-"}</td>
+                    <td className="fw-med">Father’s Name</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.fatherName}</td>
+                  </tr>
 
-                    <tr>
-                      <td className="fw-med">Gender</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.gender_name || "-"}</td>
-                      <td className="fw-med">Religion</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.religion_name || "-"}</td>
-                    </tr>
+                  <tr>
+                    <td className="fw-med">Gender</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.gender_name || "-"}</td>
+                    <td className="fw-med">Religion</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.religion_name || "-"}</td>
+                  </tr>
 
-                    <tr>
-                      <td className="fw-med">Category</td>
-                      <td className="fw-reg" colSpan={2}  >{data.personalDetails.reservationCategory_name || "-"}</td>
-                      <td className="fw-med">Caste/Community</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.caste || "-"}</td>
-                    </tr>
+                  <tr>
+                    <td className="fw-med">Category</td>
+                    <td className="fw-reg" colSpan={2}  >{data.personalDetails.reservationCategory_name || "-"}</td>
+                    <td className="fw-med">Caste/Community</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.caste || "-"}</td>
+                  </tr>
 
-                    <tr>
-                      <td className="fw-med">Date of Birth</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.dob}</td>
-                       <td className="fw-med">Age (as on cut-off date)</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.age || "-"}</td>
+                  <tr>
+                    <td className="fw-med">Date of Birth</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.dob}</td>
+                    <td className="fw-med">Age (as on cut-off date)</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.age || "-"}</td>
 
-                      {/* <td className="fw-med">Nationality</td>
+                    {/* <td className="fw-med">Nationality</td>
                       <td className="fw-reg" colSpan={2}>{data.personalDetails.nationality_name}</td> */}
 
 
-                      {/* <td className="fw-med">Age (as on cut-off date)</td>
+                    {/* <td className="fw-med">Age (as on cut-off date)</td>
                       <td className="fw-reg" colSpan={2}>{previewData.personalDetails.age || "-"}</td> */}
-                    </tr>
+                  </tr>
 
-                    <tr>
-                      <td className="fw-med">Ex-serviceman</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.exService || "N/A"}</td>
-                      <td className="fw-med">Physical Disability</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.physicalDisability || "N"}</td>
-                    </tr>
+                  <tr>
+                    <td className="fw-med">Ex-serviceman</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.exService || "N/A"}</td>
+                    <td className="fw-med">Physical Disability</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.physicalDisability || "N"}</td>
+                  </tr>
 
-                    <tr>
-                      <td className="fw-med">Exam Center</td>
-                      <td className="fw-reg" colSpan={2}>
-                        {data.personalDetails.examCenter}
-                      </td>
-                      <td className="fw-med">Nationality</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.nationality_name}</td>
-                    </tr>
+                  <tr>
+                    <td className="fw-med">Exam Center</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.examCenter}
+                    </td>
+                    <td className="fw-med">Nationality</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.nationality_name}</td>
+                  </tr>
 
 
-                    {/* <tr>
+                  {/* <tr>
                       <td className="fw-med">Age (as on cut-off date)</td>
                       <td className="fw-reg" colSpan={2}>{data.personalDetails.age || "-"}</td>
                       <td className="fw-med"></td>
                       <td className="fw-reg" colSpan={2}></td>
                     </tr> */}
 
-                    <tr>
-                      <td className="fw-med">Marital Status</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.maritalStatus_name}</td>
-                      <td className="fw-med">Name of Spouse</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.spouseName || "-"}</td>
-                    </tr>
-                    <tr>
-                      <td className="fw-med">Twin Sibling</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.isTwin}</td>
-                      {/* <td className="fw-med">Details</td>
+                  <tr>
+                    <td className="fw-med">Marital Status</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.maritalStatus_name}</td>
+                    <td className="fw-med">Name of Spouse</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.spouseName || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td className="fw-med">Twin Sibling</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.isTwin}</td>
+                    {/* <td className="fw-med">Details</td>
                       <td className="fw-reg" colSpan={2}>{previewData.personalDetails.isTwin === "YES"
                         ? `${previewData.personalDetails.twinName} (${previewData.personalDetails.twinGender_name})`
                         : "-"}</td> */}
-                      <td className="fw-med">CIBIL Score</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.cibilScore}</td>
-                    </tr>
-                    <tr>
-                      <td className="fw-med">Current CTC</td>
-                      <td className="fw-reg" colSpan={2}>{data.experienceSummary?.currentCtc || "-"}</td>
-                       <td className="fw-med">Expected CTC</td>
-                                <td className="fw-reg" colSpan={2}>
-                                  {data.personalDetails.expectedCtc}
-                                </td>
+                    <td className="fw-med">CIBIL Score</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.cibilScore}</td>
+                  </tr>
+                  <tr>
+                    <td className="fw-med">Current CTC</td>
+                    <td className="fw-reg" colSpan={2}>{data.experienceSummary?.currentCtc || "-"}</td>
+                    <td className="fw-med">Expected CTC</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.expectedCtc}
+                    </td>
 
-                      {/* <td className="fw-med">Social Media Profile links</td>
+                    {/* <td className="fw-med">Social Media Profile links</td>
                       <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td> */}
-                      {/* <td className="fw-med">Expected CTC</td>
+                    {/* <td className="fw-med">Expected CTC</td>
                       <td className="fw-reg" colSpan={2}>{preferences.ctc ? `₹${Number(preferences.ctc).toLocaleString()}` : "-"}</td> */}
-                    </tr>
+                  </tr>
 
-                    {/* <tr>
+                  {/* <tr>
                       <td className="fw-med">Location Preference 1</td>
                       <td className="fw-reg" colSpan={2}>{state1?.state_name || "-"}</td>
                       <td className="fw-med">Location Preference 2</td>
                       <td className="fw-reg" colSpan={2}>{state2?.state_name || "-"}</td>
                     </tr> */}
 
-                    {/*<tr>
+                  {/*<tr>
                        <td className="fw-med">Location Preference 3</td>
                       <td className="fw-reg" colSpan={2}>{state3?.state_name || "-"}</td> 
                       <td className="fw-med">Social Media Profile links</td>
                       <td className="fw-reg" colSpan={2}>{previewData.personalDetails.socialMediaProfileLink}</td>
                     </tr>*/}
 
+                  <tr>
+
+                    <td className="fw-med">Social Media Profile links</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td>
+                    <td className="fw-med">Location Preference 1</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.locationPreference1}
+                    </td>
+
+                  </tr>
+
+                  <tr>
+                    <td className="fw-med">Location Preference 2</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.locationPreference2}
+                    </td>
+                    <td className="fw-med">Location Preference 3</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.locationPreference3}
+                    </td>
+
+                  </tr>
+
+
+                  <tr>
+                    <td className="fw-med">Already secured regular employment under the Central Govt. in civil post?</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.centralGovtEmployment || "No"}</td>
+                    <td className="fw-med">Serving at a post lower than the one advertised?</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.servingLowerPost || "No"}</td>
+                  </tr>
+
+                  <tr>
+                    <td className="fw-med">Family member of those who died in 1984 riots?</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.familyMember1984 || "No"}</td>
+                    <td className="fw-med">Belong to Religious Minority Community?</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.religiousMinority || "No"}</td>
+                  </tr>
+
+                  <tr>
+                    <td className="fw-med">Whether serving in Govt./ quasi Govt./ Public Sector Undertaking?</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.servingInGovt || "No"}</td>
+                    <td className="fw-med">Disciplinary action in any of your previous/ Current Employment?</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.disciplinaryAction || "No"}</td>
+                  </tr>
+
+                  {data.personalDetails.disciplinaryAction === "Yes" && (
                     <tr>
-
-                       <td className="fw-med">Social Media Profile links</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td> 
-                                    <td className="fw-med">Location Preference 1</td>
-                                    <td className="fw-reg" colSpan={2}>
-                                      {data.personalDetails.locationPreference1}
-                                    </td>
-                                   
-                                  </tr>
-
-                                  <tr>
-                                     <td className="fw-med">Location Preference 2</td>
-                                    <td className="fw-reg" colSpan={2}>
-                                      {data.personalDetails.locationPreference2}
-                                    </td>
-                                    <td className="fw-med">Location Preference 3</td>
-                                    <td className="fw-reg" colSpan={2}>
-                                      {data.personalDetails.locationPreference3}
-                                    </td>
-                                   
-                                  </tr>
-
-
-                    <tr>
-                      <td className="fw-med">Already secured regular employment under the Central Govt. in civil post?</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.centralGovtEmployment || "No"}</td>
-                      <td className="fw-med">Serving at a post lower than the one advertised?</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.servingLowerPost || "No"}</td>
+                      <td className="fw-med">Details of disciplinary proceedings, if Any</td>
+                      <td className="fw-reg" colSpan={5}>{data.personalDetails.disciplinaryDetails || "N/A"}</td>
                     </tr>
 
-                    <tr>
-                      <td className="fw-med">Family member of those who died in 1984 riots?</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.familyMember1984 || "No"}</td>
-                      <td className="fw-med">Belong to Religious Minority Community?</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.religiousMinority || "No"}</td>
-                    </tr>
 
-                    <tr>
-                      <td className="fw-med">Whether serving in Govt./ quasi Govt./ Public Sector Undertaking?</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.servingInGovt || "No"}</td>
-                      <td className="fw-med">Disciplinary action in any of your previous/ Current Employment?</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.disciplinaryAction || "No"}</td>
-                    </tr>
+                  )}
 
-                    {data.personalDetails.disciplinaryAction === "Yes" && (
-                      <tr>
-                        <td className="fw-med">Details of disciplinary proceedings, if Any</td>
-                        <td className="fw-reg" colSpan={5}>{data.personalDetails.disciplinaryDetails || "N/A"}</td>
-                      </tr>
+                  <tr>
+                    <td className="fw-med">Details of disciplinary proceedings, if Any</td>
+                    <td className="fw-reg" colSpan={5}>
+                      {data.personalDetails.disciplinaryDetails}
+                    </td>
+                  </tr>
 
-                      
-                    )}
+                </tbody>
+              </table>
+            </div>
+          </Accordion.Body>
+        </Accordion.Item>
 
-                    <tr>
-          <td className="fw-med">Details of disciplinary proceedings, if Any</td>
-          <td className="fw-reg" colSpan={5}>
-            {data.personalDetails.disciplinaryDetails}
-          </td>
-        </tr>
-
-                  </tbody>
-                </table>
-              </div>
-            </Accordion.Body>
-          </Accordion.Item>
-
-          {/* === EDUCATION DETAILS === */}
-          <Accordion.Item eventKey="1">
-            <Accordion.Header>Education Details</Accordion.Header>
-            <Accordion.Body>
-             <div className="edu-table-wrapper">
+        {/* === EDUCATION DETAILS === */}
+        <Accordion.Item eventKey="1">
+          <Accordion.Header>Education Details</Accordion.Header>
+          <Accordion.Body>
+            <div className="edu-table-wrapper">
               <table className="edu-table">
                 <thead>
                   <tr>
@@ -987,111 +989,111 @@ const refreshDocStatuses = async () => {
                   </tr>
                 </thead>
 
-   <tbody>
-  {(data.education || []).map((edu, index) => (
-    <tr key={index}>
-      <td>{index + 1}</td>
-      <td>{edu.educationLevel_name || "-"}</td>
-      <td>{edu.institution || "-"}</td>
-      <td>{edu.mandatoryQualification_name || "-"}</td>
-      <td>{edu.specialization_name || "-"}</td>
-      <td>{edu.startDate || "-"}</td>
-      <td>{edu.endDate || "-"}</td>
-      <td>{edu.percentage ? `${edu.percentage}%` : "-"}</td>
-    </tr>
-  ))}
-
-  {(!data.education || data.education.length === 0) && (
-    <tr>
-      <td colSpan="8" className="text-center">
-        No education details available
-      </td>
-    </tr>
-  )}
-</tbody>
-
-  </table>
-</div>
-
-            </Accordion.Body>
-          </Accordion.Item>
-
-          {/* === EXPERIENCE DETAILS === */}
-         <Accordion.Item eventKey="2" className="exp-accordion">
-  <Accordion.Header >
-    Experience Details
-  </Accordion.Header>
-
-  <Accordion.Body>
-    <table className="exp-table">
-      <thead>
-        <tr className="exp-table-header">
-          <th>S. No</th>
-          <th>Organization</th>
-          <th>Post</th>
-          <th>Role</th>
-          <th>From Date</th>
-          <th>To Date</th>
-          <th>Duration</th>
-          <th>Brief Description of work profile</th>
-        </tr>
-      </thead>
-
-    <tbody>
-  {(data.experience || []).map((exp, idx) => (
-    <tr key={idx}>
-      <td>{idx + 1}</td>
-      <td>{exp.org}</td>
-      <td>{exp.designation}</td>
-      <td>{exp.department}</td>
-      <td>{exp.from}</td>
-      <td>{exp.to}</td>
-      <td>{exp.duration}</td>
-      <td>{exp.nature}</td>
-    </tr>
-  ))}
-
-  {(!data.experience || data.experience.length === 0) && (
-    <tr>
-      <td colSpan="8" className="text-center">
-        No experience details available
-      </td>
-    </tr>
-  )}
-</tbody>
-
-    </table>
-  </Accordion.Body>
-          </Accordion.Item>
-
-          <Accordion.Item eventKey="3">
-            <Accordion.Header>Documents Details</Accordion.Header>
-            <Accordion.Body>
-
-              <table className="bob-doc-table">
-                <thead>
-                  <tr>
-                    <th>File Type</th>
-                    <th>Status</th>
-                    <th>Action</th>
-
-                    <th>File Type</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-
                 <tbody>
-                  {Array.from({ length: Math.ceil(documentRows.length / 2) })
-          .map(
-                    (_, rowIndex) => {
-                    const left = documentRows[rowIndex * 2];
-                    const right = documentRows[rowIndex * 2 + 1];
-                    const leftStatus =
-                      docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
+                  {(data.education || []).map((edu, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{edu.educationLevel_name || "-"}</td>
+                      <td>{edu.institution || "-"}</td>
+                      <td>{edu.mandatoryQualification_name || "-"}</td>
+                      <td>{edu.specialization_name || "-"}</td>
+                      <td>{edu.startDate || "-"}</td>
+                      <td>{edu.endDate || "-"}</td>
+                      <td>{edu.percentage ? `${edu.percentage}%` : "-"}</td>
+                    </tr>
+                  ))}
 
-                    const rightStatus =
-                      docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
+                  {(!data.education || data.education.length === 0) && (
+                    <tr>
+                      <td colSpan="8" className="text-center">
+                        No education details available
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+
+              </table>
+            </div>
+
+          </Accordion.Body>
+        </Accordion.Item>
+
+        {/* === EXPERIENCE DETAILS === */}
+        <Accordion.Item eventKey="2" className="exp-accordion">
+          <Accordion.Header >
+            Experience Details
+          </Accordion.Header>
+
+          <Accordion.Body>
+            <table className="exp-table">
+              <thead>
+                <tr className="exp-table-header">
+                  <th>S. No</th>
+                  <th>Organization</th>
+                  <th>Post</th>
+                  <th>Role</th>
+                  <th>From Date</th>
+                  <th>To Date</th>
+                  <th>Duration</th>
+                  <th>Brief Description of work profile</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {(data.experience || []).map((exp, idx) => (
+                  <tr key={idx}>
+                    <td>{idx + 1}</td>
+                    <td>{exp.org}</td>
+                    <td>{exp.designation}</td>
+                    <td>{exp.department}</td>
+                    <td>{exp.from}</td>
+                    <td>{exp.to}</td>
+                    <td>{exp.duration}</td>
+                    <td>{exp.nature}</td>
+                  </tr>
+                ))}
+
+                {(!data.experience || data.experience.length === 0) && (
+                  <tr>
+                    <td colSpan="8" className="text-center">
+                      No experience details available
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+
+            </table>
+          </Accordion.Body>
+        </Accordion.Item>
+
+        <Accordion.Item eventKey="3">
+          <Accordion.Header>Documents Details</Accordion.Header>
+          <Accordion.Body>
+
+            <table className="bob-doc-table">
+              <thead>
+                <tr>
+                  <th>File Type</th>
+                  <th>Status</th>
+                  <th>Action</th>
+
+                  <th>File Type</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {Array.from({ length: Math.ceil(documentRows.length / 2) })
+                  .map(
+                    (_, rowIndex) => {
+                      const left = documentRows[rowIndex * 2];
+                      const right = documentRows[rowIndex * 2 + 1];
+                      const leftStatus =
+                        docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
+
+                      const rightStatus =
+                        docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
 
                       return (
                         <tr key={rowIndex}>
@@ -1110,8 +1112,13 @@ const refreshDocStatuses = async () => {
                                 <img
                                   src={viewIcon}
                                   alt="View"
-                                  style={{ cursor: "pointer" }}
+                                  style={{
+                                    cursor: isInterviewView ? "not-allowed" : "pointer",
+                                    opacity: isInterviewView ? 0.4 : 1,
+                                    pointerEvents: isInterviewView ? "none" : "auto"
+                                  }}
                                   onClick={() => {
+                                    if (isInterviewView) return;
                                     console.log("VIEW CLICKED", left);
                                     setSelectedDoc({
                                       candidateDocumentId: left.candidateDocumentId,
@@ -1129,7 +1136,11 @@ const refreshDocStatuses = async () => {
                                 <img
                                   src={downloadIcon}
                                   alt="Download"
-                                  style={{ cursor: "pointer" }}
+                                  style={{
+                                    cursor: isInterviewView ? "not-allowed" : "pointer",
+                                    opacity: isInterviewView ? 0.4 : 1,
+                                    pointerEvents: isInterviewView ? "none" : "auto"
+                                  }}
                                 />
                               </>
                             )}
@@ -1152,8 +1163,13 @@ const refreshDocStatuses = async () => {
                                 <img
                                   src={viewIcon}
                                   alt="View"
-                                  style={{ cursor: "pointer" }}
+                                  style={{
+                                    cursor: isInterviewView ? "not-allowed" : "pointer",
+                                    opacity: isInterviewView ? 0.4 : 1,
+                                    pointerEvents: isInterviewView ? "none" : "auto"
+                                  }}
                                   onClick={() => {
+                                    if (isInterviewView) return;
                                     setSelectedDoc({
                                       candidateDocumentId: right.candidateDocumentId,
                                       candidateId: previewData.candidateId,
@@ -1170,7 +1186,11 @@ const refreshDocStatuses = async () => {
                                 <img
                                   src={downloadIcon}
                                   alt="Download"
-                                  style={{ cursor: "pointer" }}
+                                  style={{
+                                    cursor: isInterviewView ? "not-allowed" : "pointer",
+                                    opacity: isInterviewView ? 0.4 : 1,
+                                    pointerEvents: isInterviewView ? "none" : "auto"
+                                  }}
                                 />
                               </>
                             ) : (
@@ -1181,342 +1201,339 @@ const refreshDocStatuses = async () => {
                       );
                     }
                   )}
-                </tbody>
-              </table>
+              </tbody>
+            </table>
 
-            </Accordion.Body>
-          </Accordion.Item>
+          </Accordion.Body>
+        </Accordion.Item>
 
-          {/* ================= CRITERIA SECTION ================= */}
-       {!isZonalHr && (
-            <Card className="criteria-main-card">
-        <div className="criteria-wrapper">
- 
-          {/* WORK CRITERIA */}
-          <div className="criteria-card">
-            <label className="criteria-title">Work criteria fulfilled?</label>
- 
-            <div className="criteria-radio mb-0">
-              {CRITERIA_OPTIONS.map(option => (
-                <label key={option} className="radio-label">
+        {/* ================= CRITERIA SECTION ================= */}
+        {!isZonalHr && !isInterviewView && (
+          <Card className="criteria-main-card">
+
+            <div className="criteria-wrapper">
+
+              {/* WORK CRITERIA */}
+              <div className="criteria-card">
+                <label className="criteria-title">Work criteria fulfilled?</label>
+
+                <div className="criteria-radio mb-0">
+                  {CRITERIA_OPTIONS.map(option => (
+                    <label key={option} className="radio-label">
+                      <input
+                        type="radio"
+                        name="workCriteria"
+                        checked={screeningForm.isWorkCriteriaMet === option}
+                        onChange={() =>
+                          handleRadioChange("isWorkCriteriaMet", option)
+                        }
+                      />
+                      <span className="custom-radio"></span>
+                      {option}
+                    </label>
+                  ))}
+                </div>
+                {errors.isWorkCriteriaMet && (
+                  <small className="text-danger fs-12">
+                    {errors.isWorkCriteriaMet}
+                  </small>
+                )}
+
+                <textarea
+                  // type="text"
+                  className="criteria-remark mt-2"
+                  placeholder="Work criteria remark"
+                  value={screeningForm.workCriteriaRemark}
+                  onChange={(e) =>
+                    handleInputChange("workCriteriaRemark", e.target.value)
+                  }
+                  maxLength={2000}
+                  rows={4}
+                // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
+                />
+                {errors.workCriteriaRemark && (
+                  <small className="text-danger fs-12">
+                    {errors.workCriteriaRemark}
+                  </small>
+                )}
+              </div>
+
+              {/* AGE CRITERIA */}
+              <div className="criteria-card">
+                <label className="criteria-title">Age criteria fulfilled?</label>
+
+                <div className="criteria-radio mb-0">
+                  {CRITERIA_OPTIONS.map(option => (
+                    <label key={option} className="radio-label">
+                      <input
+                        type="radio"
+                        name="ageCriteria"
+                        checked={screeningForm.isAgeCriteriaMet === option}
+                        onChange={() =>
+                          handleRadioChange("isAgeCriteriaMet", option)
+                        }
+                      />
+                      <span className="custom-radio"></span>
+                      {option}
+                    </label>
+                  ))}
+                </div>
+                {errors.isAgeCriteriaMet && (
+                  <small className="text-danger fs-12">
+                    {errors.isAgeCriteriaMet}
+                  </small>
+                )}
+
+                <textarea
+                  // type="text"
+                  className="criteria-remark mt-2"
+                  placeholder="Age criteria remark"
+                  value={screeningForm.ageCriteriaRemark}
+                  onChange={(e) =>
+                    handleInputChange("ageCriteriaRemark", e.target.value)
+                  }
+                  maxLength={2000}
+                  rows={4}
+                // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
+                />
+                {errors.ageCriteriaRemark && (
+                  <small className="text-danger fs-12">
+                    {errors.ageCriteriaRemark}
+                  </small>
+                )}
+              </div>
+
+              {/* EDUCATION CRITERIA */}
+              <div className="criteria-card">
+                <label className="criteria-title">Education criteria fulfilled?</label>
+
+                <div className="criteria-radio mb-0">
+                  {CRITERIA_OPTIONS.map(option => (
+                    <label key={option} className="radio-label">
+                      <input
+                        type="radio"
+                        name="educationCriteria"
+                        checked={screeningForm.isEducationCriteriaMet === option}
+                        onChange={() =>
+                          handleRadioChange("isEducationCriteriaMet", option)
+                        }
+                      />
+                      <span className="custom-radio"></span>
+                      {option}
+                    </label>
+                  ))}
+                </div>
+                {errors.isEducationCriteriaMet && (
+                  <small className="text-danger fs-12">
+                    {errors.isEducationCriteriaMet}
+                  </small>
+                )}
+
+                <textarea
+                  // type="text"
+                  className="criteria-remark mt-2"
+                  placeholder="Education criteria remark"
+                  value={screeningForm.educationCriteriaRemark}
+                  onChange={(e) =>
+                    handleInputChange("educationCriteriaRemark", e.target.value)
+                  }
+                  maxLength={2000}
+                  rows={4}
+                // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
+                />
+                {errors.educationCriteriaRemark && (
+                  <small className="text-danger fs-12">
+                    {errors.educationCriteriaRemark}
+                  </small>
+                )}
+              </div>
+
+              {/* FINAL REMARK */}
+              <div
+                className={`criteria-card ${disableShortlistedSection ? "criteria-disabled" : ""
+                  }`}
+              >
+                <label className="criteria-title">Shortlisted?</label>
+
+                <div className="criteria-radio mb-0">
+                  {["YES", "NO"].map(option => (
+                    <label key={option} className="radio-label">
+                      <input
+                        type="radio"
+                        name="shortlisted"
+                        checked={screeningForm.isShortlisted === option}
+                        onChange={() =>
+                          handleInputChange("isShortlisted", option)
+                        }
+                      />
+                      <span className="custom-radio"></span>
+                      {option}
+                    </label>
+                  ))}
+                </div>
+                {!disableShortlistedSection && errors.isShortlisted && (
+                  <small className="text-danger fs-12">
+                    {errors.isShortlisted}
+                  </small>
+                )}
+
+                <textarea
+                  // type="text"
+                  className="criteria-remark mt-2"
+                  placeholder="Final remark"
+                  value={screeningForm.finalScreeningRemark}
+                  onChange={(e) =>
+                    handleInputChange("finalScreeningRemark", e.target.value)
+                  }
+                  maxLength={2000}
+                  rows={4}
+                />
+                {errors.finalScreeningRemark && (
+                  <small className="text-danger fs-12">
+                    {errors.finalScreeningRemark}
+                  </small>
+                )}
+              </div>
+            </div>
+
+            {/* ================= SUBMIT ROW ================= */}
+            <div className={`criteria-submit-row ${disableShortlistedSection ? 'justify-content-between' : 'justify-content-end'}`}>
+              {!isZonalHr && disableShortlistedSection && (
+                <div className="d-grid">
+                  <label className="submit-label">Submit Before</label>
+                  <input
+                    type="date"
+                    className="criteria-date"
+                    min={minDate}
+                    value={screeningForm.submitBeforeDate}
+                    onChange={handleDateChange}
+                    disabled   //  always disabled for non-zonal
+                  />
+                </div>
+              )}
+
+
+              <button
+                className="btn-submit-orange"
+                onClick={handleFinalSubmit}
+              >
+                Submit
+              </button>
+            </div>
+          </Card>
+        )}
+
+        {isZonalHr && !isInterviewView && (
+          <Card className="criteria-main-card p-3">
+
+            <label className="criteria-title mb-2">
+              Have All Documents Been Verified?
+            </label>
+
+
+
+            {/* RADIO OPTIONS — same pattern as Shortlisted */}
+            <div className="criteria-radio mb-3">
+              {["Yes", "No", "Provisionally Approved"].map((opt) => (
+                <label
+                  key={opt}
+                  className={`radio-label me-4 ${!allDocsVerified ? "disabled" : ""
+                    }`}
+                >
                   <input
                     type="radio"
-                    name="workCriteria"
-                    checked={screeningForm.isWorkCriteriaMet === option}
-                    onChange={() =>
-                      handleRadioChange("isWorkCriteriaMet", option)
-                    }
+                    name="docVerified"
+                    value={opt}
+                    checked={zonalDecision === opt}
+                    disabled={!allDocsVerified}
+                    onChange={(e) => {
+                      setZonalDecision(e.target.value);
+
+                      // clear date error when changed
+                      setErrors(prev => ({
+                        ...prev,
+                        zonalSubmitDate: undefined
+                      }));
+                    }}
                   />
                   <span className="custom-radio"></span>
-                  {option}
+                  {opt}
                 </label>
               ))}
             </div>
-            {errors.isWorkCriteriaMet && (
-              <small className="text-danger fs-12">
-                {errors.isWorkCriteriaMet}
-              </small>
-            )}
 
-            <textarea
-              // type="text"
-              className="criteria-remark mt-2"
-              placeholder="Work criteria remark"
-              value={screeningForm.workCriteriaRemark}
-              onChange={(e) =>
-                handleInputChange("workCriteriaRemark", e.target.value)
-              }
-              maxLength={2000}
-              rows={4}
-              // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
-            />
-            {errors.workCriteriaRemark && (
-              <small className="text-danger fs-12">
-                {errors.workCriteriaRemark}
-              </small>
-            )}
-          </div>
- 
-          {/* AGE CRITERIA */}
-          <div className="criteria-card">
-            <label className="criteria-title">Age criteria fulfilled?</label>
- 
-            <div className="criteria-radio mb-0">
-              {CRITERIA_OPTIONS.map(option => (
-                <label key={option} className="radio-label">
-                  <input
-                    type="radio"
-                    name="ageCriteria"
-                    checked={screeningForm.isAgeCriteriaMet === option}
-                    onChange={() =>
-                      handleRadioChange("isAgeCriteriaMet", option)
-                    }
-                  />
-                  <span className="custom-radio"></span>
-                  {option}
-                </label>
-              ))}
+
+            {/* DATE */}
+            <div className="submit-date-group">
+              <label className="submit-label">Submit Before</label>
+
+              <input
+                type="date"
+                className="criteria-date"
+                min={minFutureDate}
+                value={screeningForm.zonalSubmitDate}
+
+                disabled={
+                  !allDocsVerified ||
+                  !zonalDecision
+                }
+
+                onChange={(e) => {
+                  setScreeningForm(prev => ({
+                    ...prev,
+                    zonalSubmitDate: e.target.value
+                  }));
+
+                  setErrors(prev => ({
+                    ...prev,
+                    zonalSubmitDate: undefined
+                  }));
+                }}
+              />
+
+              {errors.zonalSubmitDate && (
+                <small className="text-danger fs-12">
+                  {errors.zonalSubmitDate}
+                </small>
+              )}
             </div>
-            {errors.isAgeCriteriaMet && (
-              <small className="text-danger fs-12">
-                {errors.isAgeCriteriaMet}
-              </small>
-            )}
 
-            <textarea
-              // type="text"
-              className="criteria-remark mt-2"
-              placeholder="Age criteria remark"
-              value={screeningForm.ageCriteriaRemark}
-              onChange={(e) =>
-                handleInputChange("ageCriteriaRemark", e.target.value)
-              }
-              maxLength={2000}
-              rows={4}
-              // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
-            />
-            {errors.ageCriteriaRemark && (
-              <small className="text-danger fs-12">
-                {errors.ageCriteriaRemark}
-              </small>
-            )}
-          </div>
- 
-          {/* EDUCATION CRITERIA */}
-          <div className="criteria-card">
-            <label className="criteria-title">Education criteria fulfilled?</label>
- 
-            <div className="criteria-radio mb-0">
-              {CRITERIA_OPTIONS.map(option => (
-                <label key={option} className="radio-label">
-                  <input
-                    type="radio"
-                    name="educationCriteria"
-                    checked={screeningForm.isEducationCriteriaMet === option}
-                    onChange={() =>
-                      handleRadioChange("isEducationCriteriaMet", option)
-                    }
-                  />
-                  <span className="custom-radio"></span>
-                  {option}
-                </label>
-              ))}
+
+            {/* REMARKS */}
+            <div className="remarks-row">
+              <textarea
+                className="remarks-box"
+                placeholder="Remarks"
+                rows={5}
+                disabled={!allDocsVerified}
+                value={screeningRemarks}
+                onChange={(e) => setScreeningRemarks(e.target.value)}
+              />
+
+
+              <button
+                className="btn-submit-orange ms-3"
+                disabled={!allDocsVerified}
+                onClick={handleZonalSubmit}
+              >
+                Submit
+              </button>
+
             </div>
-            {errors.isEducationCriteriaMet && (
-              <small className="text-danger fs-12">
-                {errors.isEducationCriteriaMet}
-              </small>
-            )}
 
-            <textarea
-              // type="text"
-              className="criteria-remark mt-2"
-              placeholder="Education criteria remark"
-              value={screeningForm.educationCriteriaRemark}
-              onChange={(e) =>
-                handleInputChange("educationCriteriaRemark", e.target.value)
-              }
-              maxLength={2000}
-              rows={4}
-              // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
-            />
-            {errors.educationCriteriaRemark && (
-              <small className="text-danger fs-12">
-                {errors.educationCriteriaRemark}
-              </small>
-            )}
-          </div>
- 
-          {/* FINAL REMARK */}
-          <div
-            className={`criteria-card ${
-              disableShortlistedSection ? "criteria-disabled" : ""
-            }`}
-          >
-            <label className="criteria-title">Shortlisted?</label>
- 
-            <div className="criteria-radio mb-0">
-              {["YES", "NO"].map(option => (
-                <label key={option} className="radio-label">
-                  <input
-                    type="radio"
-                    name="shortlisted"
-                    checked={screeningForm.isShortlisted === option}
-                    onChange={() =>
-                      handleInputChange("isShortlisted", option)
-                    }
-                  />
-                  <span className="custom-radio"></span>
-                  {option}
-                </label>
-              ))}
-            </div>
-            {!disableShortlistedSection && errors.isShortlisted && (
-              <small className="text-danger fs-12">
-                {errors.isShortlisted}
-              </small>
-            )}
-
-            <textarea
-              // type="text"
-              className="criteria-remark mt-2"
-              placeholder="Final remark"
-              value={screeningForm.finalScreeningRemark}
-              onChange={(e) =>
-                handleInputChange("finalScreeningRemark", e.target.value)
-              }
-              maxLength={2000}
-              rows={4}
-            />
-            {errors.finalScreeningRemark && (
-              <small className="text-danger fs-12">
-                {errors.finalScreeningRemark}
-              </small>
-            )}
-          </div>
-        </div>
- 
-        {/* ================= SUBMIT ROW ================= */}
-        <div className={`criteria-submit-row ${disableShortlistedSection ? 'justify-content-between' : 'justify-content-end'}`}>
-         {!isZonalHr && disableShortlistedSection && (
-  <div className="d-grid">
-    <label className="submit-label">Submit Before</label>
-    <input
-      type="date"
-      className="criteria-date"
-      min={minDate}
-      value={screeningForm.submitBeforeDate}
-      onChange={handleDateChange}
-      disabled   //  always disabled for non-zonal
-    />
-  </div>
-)}
-
- 
-          <button
-            className="btn-submit-orange"
-            onClick={handleFinalSubmit}
-          >
-            Submit
-          </button>
-        </div>
-      </Card>
-       )}
+          </Card>
+        )}
 
 
-          
-{isZonalHr && (
-  <Card className="criteria-main-card p-3">
-
-    <label className="criteria-title mb-2">
-      Have All Documents Been Verified?
-    </label>
-
-   
-
-    {/* RADIO OPTIONS — same pattern as Shortlisted */}
-  <div className="criteria-radio mb-3">
-  {["Yes", "No", "Provisionally Approved"].map((opt) => (
-    <label
-      key={opt}
-      className={`radio-label me-4 ${
-        !allDocsVerified ? "disabled" : ""
-      }`}
-    >
-      <input
-        type="radio"
-        name="docVerified"
-        value={opt}
-        checked={zonalDecision === opt}
-        disabled={!allDocsVerified}
-        onChange={(e) => {
-          setZonalDecision(e.target.value);
-
-          // clear date error when changed
-          setErrors(prev => ({
-            ...prev,
-            zonalSubmitDate: undefined
-          }));
-        }}
+      </Accordion>
+      <DocumentViewerModal
+        show={showViewer}
+        onHide={() => setShowViewer(false)}
+        document={selectedDoc}
+        onVerify={handleVerify}
+        onReject={handleReject}
       />
-      <span className="custom-radio"></span>
-      {opt}
-    </label>
-  ))}
-</div>
-
-
-    {/* DATE */}
-   <div className="submit-date-group">
-  <label className="submit-label">Submit Before</label>
-
-<input
-  type="date"
-  className="criteria-date"
-  min={minFutureDate}
-  value={screeningForm.zonalSubmitDate}
-
-   disabled={
-  !allDocsVerified ||
-  !zonalDecision
-}
-
-    onChange={(e) => {
-      setScreeningForm(prev => ({
-        ...prev,
-        zonalSubmitDate: e.target.value
-      }));
-
-      setErrors(prev => ({
-        ...prev,
-        zonalSubmitDate: undefined
-      }));
-    }}
-  />
-
-  {errors.zonalSubmitDate && (
-    <small className="text-danger fs-12">
-      {errors.zonalSubmitDate}
-    </small>
-  )}
-</div>
-
-
-    {/* REMARKS */}
-    <div className="remarks-row">
-     <textarea
-  className="remarks-box"
-  placeholder="Remarks"
-  rows={5}
-  disabled={!allDocsVerified}
-  value={screeningRemarks}
-  onChange={(e) => setScreeningRemarks(e.target.value)}
-/>
-
-
-    <button
-  className="btn-submit-orange ms-3"
-  disabled={!allDocsVerified}
-  onClick={handleZonalSubmit}
->
-  Submit
-</button>
-
-    </div>
-
-  </Card>
-)}
-
-
-        </Accordion>
-       <DocumentViewerModal
-          show={showViewer}
-          onHide={() => setShowViewer(false)}
-          document={selectedDoc}
-          onVerify={handleVerify}
-          onReject={handleReject}
-        />
-      </>
+    </>
   );
 };
 

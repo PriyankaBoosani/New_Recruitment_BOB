@@ -39,6 +39,21 @@ getPositionsByRequisitionId: (requisitionId, name = "") =>
     params: { requisitionId, name }
   }),
 
+  //Interview Pool APIs
+getInterviewCandidates: (payload) => {
+  return api.post(
+    "recruiter/interview-pool/get/interviewed-candidates",
+    payload,
+    {
+      headers: {
+        "X-Client": "recruiter"
+      }
+    }
+  );
+},
+
+
+
  
  
 };  

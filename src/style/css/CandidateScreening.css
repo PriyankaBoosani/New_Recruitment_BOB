@@ -66,14 +66,31 @@
     border-right: none !important;
     outline: none !important;
 }
-.modalhead{
+
+.modalhead {
     border-bottom: none !important;
     padding-left: 20px !important;
 }
+
 .padding-20 {
-	padding: 20px;
-	padding-top: 0px;
+    padding: 20px;
+    padding-top: 0px;
 }
-.modalfoot{
+
+.modalfoot {
     border-top: none !important;
+}
+
+.scorebg {
+    min-width: 50px;
+    padding: 4px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #ffffff;
+    text-align: center;
+    display: inline-block;
+}
+.infoicon-16{
+    width: 16px;
+    height: 16px;
 }

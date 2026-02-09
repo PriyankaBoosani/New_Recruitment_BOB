@@ -251,6 +251,9 @@ const masterApiService = {
    getAllCertificates: () =>
     apis.get("/certificates-master/all"),
 
+   //Interview Pool related master data interview-center
+    getAllInterviewCenters: () => apis.get("/master-dd-data/get/interview-centres"),
+
 
 };
 

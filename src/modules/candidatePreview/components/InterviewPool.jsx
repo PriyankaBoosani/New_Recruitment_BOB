@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Person, FileText } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
-
+import I_icon from '../../../assets/I_icon.png';
 
 export default function InterviewPool({
   selectedIds,
@@ -21,10 +21,14 @@ export default function InterviewPool({
 }) {
   const navigate = useNavigate();
   const STATUS_CLASS_MAP = {
-    SCHEDULED: "bg-secondary",
+    SCHEDULED: "blue-bg",
     QUALIFIED: "bg-success",
     NOT_QUALIFIED: "bg-primary",
   };
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
+  const formatStatus = (status = "") => status.toLowerCase().split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+
+
 
   const allSelected =
     candidates.length > 0 && selectedIds.length === candidates.length;
@@ -37,6 +41,44 @@ export default function InterviewPool({
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
+  };
+  const requestSort = (key) => {
+    setSortConfig((prev) => {
+      if (prev.key === key) {
+        return {
+          key,
+          direction: prev.direction === "asc" ? "desc" : "asc",
+        };
+      }
+      return { key, direction: "asc" };
+    });
+  };
+
+  const sortedCandidates = useMemo(() => {
+    if (!sortConfig.key) return candidates;
+
+    return [...candidates].sort((a, b) => {
+      const aVal = a[sortConfig.key];
+      const bVal = b[sortConfig.key];
+
+      if (aVal == null) return 1;
+      if (bVal == null) return -1;
+
+      if (typeof aVal === "number" && typeof bVal === "number") {
+        return sortConfig.direction === "asc"
+          ? aVal - bVal
+          : bVal - aVal;
+      }
+
+      return sortConfig.direction === "asc"
+        ? String(aVal).localeCompare(String(bVal))
+        : String(bVal).localeCompare(String(aVal));
+    });
+  }, [candidates, sortConfig]);
+
+  const sortIcon = (key) => {
+    if (sortConfig.key !== key) return "↕";
+    return sortConfig.direction === "asc" ? "▲" : "▼";
   };
 
   return (
@@ -51,11 +93,13 @@ export default function InterviewPool({
                 onChange={toggleSelectAll}
               />
             </th>
-            <th className="fs-14 fw-normal py-3">Candidate</th>
+            <th className="fs-14 fw-normal py-3" onClick={() => requestSort("name")} role="button">
+              Candidate {sortIcon("name")}
+            </th>
             <th className="fs-14 fw-normal py-3">Date</th>
             <th className="fs-14 fw-normal py-3">Time</th>
             <th className="fs-14 fw-normal py-3">Zone</th>
-            <th className="fs-14 fw-normal py-3">Panel Details</th>
+            <th className="fs-14 fw-normal py-3" onClick={() => requestSort("name")} role="button">Panel Details {sortIcon("name")}</th>
             <th className="fs-14 fw-normal py-3">Interview Status</th>
             <th className="fs-14 fw-normal py-3">Score</th>
             <th className="text-center fs-14 fw-normal py-3">Actions</th>
@@ -70,7 +114,8 @@ export default function InterviewPool({
               </td>
             </tr>
           ) : (
-            candidates.map((c) => (
+            sortedCandidates.map((c) => (
+
               <tr key={c.id}>
                 <td style={{ paddingLeft: "1rem" }}>
                   <input
@@ -80,53 +125,54 @@ export default function InterviewPool({
                   />
                 </td>
 
-                <td>
+                <td className="align-content-center">
                   <p className="fw-normal fs-14 mb-0">{c.name}</p>
                   <p className="text-muted fs-12 mb-0">Reg No: {c.regNo}</p>
                 </td>
 
-                <td className="fs-14">{c.date}</td>
-                <td className="fs-14">{c.time}</td>
-                <td className="fs-14">{c.zone}</td>
-                <td className="fs-14">{c.panel}</td>
+                <td className="fs-14 align-content-center">{c.date}</td>
+                <td className="fs-14 align-content-center">{c.time}</td>
+                <td className="fs-14 align-content-center">{c.zone}</td>
+                <td className="fs-14 align-content-center">{c.panel}</td>
 
                 <td className="align-content-center">
                   <span
                     className={`round_badge px-3 py-1 fs-12 rounded text-white ${STATUS_CLASS_MAP[c.status] || "bg-secondary"
                       }`}
                   >
-                    {c.status.replace("_", " ")}
+                    {formatStatus(c.status)}
                   </span>
                 </td>
 
-                <td>
+                <td className="fs-14 align-content-center">
                   <div className="d-flex align-items-center gap-2">
-                    <input
-                      type="text"
-                      className="form-control form-control-sm"
-                      style={{ width: "70px" }}
-                    />
-                    <span
-                      className="cursor-pointer text-danger fw-bold"
-                      onClick={() => {
-                        onOpenFeedback(c.id);
-                      }}
-                    >
-                      !
+                    <span className="scorebg">
+                      {c.score || "-"}
                     </span>
 
+                    <span
+                      className="cursor-pointer text-danger fw-bold"
+                      onClick={() => onOpenFeedback(c.id)}
+                    >
+                      < img src={I_icon} alt="feedback" className="infoicon-16" />
+                    </span>
                   </div>
                 </td>
+
+
 
                 <td className="text-center align-content-center">
                   <Person
                     className="me-3 cursor-pointer"
                     onClick={() =>
+                      console.log("Navigating to preview", c) ||
                       navigate("/candidate-preview", {
                         state: {
                           candidate: c,
+                          applicationId: c.applicationId,
                           positionId: selectedPositionId,
                           requisitionId: selectedRequisitionId,
+                          fromInterviewPool: true,
                           requisition: requisition
                             ? {
                               requisition_code: requisition.requisition_code,

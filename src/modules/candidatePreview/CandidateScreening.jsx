@@ -17,6 +17,8 @@ import PdfViewerModal from "./components/PdfViewerModal";
 import { useLocation } from "react-router-dom";
 import InterviewFeedbackHistoryModal from "./components/InterviewFeedbackHistoryModal";
 import SendToOfferPoolModal from "./components/SendToOfferPoolModal";
+import useInterviewPool from "./hooks/useInterviewPool";
+
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
 
@@ -40,62 +42,6 @@ export default function CandidateScreening({ selectedJob }) {
     NOT_QUALIFIED: "Not Qualified",
   };
 
-  const INTERVIEW_STATUSES = [
-    "SCHEDULED",
-    "QUALIFIED",
-    "NOT_QUALIFIED",
-  ];
-
-
-  const interviewCandidates = [
-    {
-      id: 1,
-      name: "Rajesh Kumar",
-      regNo: "961344689",
-      date: "12-09-2025",
-      time: "09:00 AM - 09:30 AM",
-      zone: "Zone 1",
-      panel: "Panel 1",
-      status: "SCHEDULED",
-      score: "",
-    },
-    {
-      id: 2,
-      name: "Priya Sharma",
-      regNo: "961987129",
-      date: "12-09-2025",
-      time: "09:30 AM - 10:00 AM",
-      zone: "Zone 2",
-      panel: "Panel 2",
-      status: "QUALIFIED",
-      score: "",
-    },
-    {
-      id: 3,
-      name: "Amit Patel",
-      regNo: "961963464",
-      date: "12-09-2025",
-      time: "10:00 AM - 10:30 AM",
-      zone: "Zone 3",
-      panel: "Panel 3",
-      status: "QUALIFIED",
-      score: "",
-    },
-  ];
-
-
-  const mapInterviewCandidates = (data = []) =>
-    data.map((c) => ({
-      id: c.id,
-      name: c.name,
-      regNo: c.regNo,
-      date: c.date,
-      time: c.time,
-      zone: c.zone,
-      panel: c.panel,
-      status: c.status, // keep enum (SCHEDULED, QUALIFIED…)
-      score: c.score,
-    }));
   const [interviewPage, setInterviewPage] = useState(0);
   const [interviewPageSize, setInterviewPageSize] = useState(10);
 
@@ -130,19 +76,21 @@ export default function CandidateScreening({ selectedJob }) {
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [loadingPdf, setLoadingPdf] = useState(false);
   const searchTimeoutRef = useRef(null);
-  const filteredInterviewCandidates = useMemo(() => {
-    const base =
-      filters.status.length === 0
-        ? interviewCandidates
-        : interviewCandidates.filter((c) =>
-          filters.status.includes(c.status)
-        );
+  const {
+    interviewCandidates,
+    totalElements: interviewTotalElements,
+    loading: loadingInterview
+  } = useInterviewPool({
+    positionId: selectedPositionId,
+    filters,
+    page: interviewPage,
+    pageSize: interviewPageSize,
+    enabled: activeTab === "INTERVIEW_POOL"
+  });
 
-    return mapInterviewCandidates(base);
-  }, [filters.status]);
   const tabs = [
     { key: "CANDIDATE_POOL", label: "Candidate Pool", count: totalElements },
-    { key: "INTERVIEW_POOL", label: "Interview Pool", count: filteredInterviewCandidates.length },
+    { key: "INTERVIEW_POOL", label: "Interview Pool", count: interviewTotalElements },
     { key: "OFFER_POOL", label: "Offer Pool", count: 0 },
     { key: "ONBOARDING_POOL", label: "Onboarding Pool", count: 0 },
   ];
@@ -161,16 +109,6 @@ export default function CandidateScreening({ selectedJob }) {
   // 🔍 Requisition search (debounced)
   const requisitionSearchTimeout = useRef(null);
   const isNavModeRef = useRef(false);
-
-
-
-  const pagedInterviewCandidates = useMemo(() => {
-    const start = interviewPage * interviewPageSize;
-    const end = start + interviewPageSize;
-    return filteredInterviewCandidates.slice(start, end);
-  }, [filteredInterviewCandidates, interviewPage, interviewPageSize]);
-
-
 
   const fetchRequisitions = async (searchText = "") => {
     setLoadingRequisitions(true);
@@ -419,10 +357,12 @@ export default function CandidateScreening({ selectedJob }) {
 
   // const availableStatuses = CANDIDATE_POOL_STATUSES;
   const availableStatuses = React.useMemo(() => {
-    return activeTab === "INTERVIEW_POOL"
-      ? INTERVIEW_STATUSES
-      : CANDIDATE_POOL_STATUSES;
+    if (activeTab === "INTERVIEW_POOL") {
+      return Object.keys(INTERVIEW_STATUS_LABEL_MAP);
+    }
+    return CANDIDATE_POOL_STATUSES;
   }, [activeTab]);
+
 
   const getStatusLabel = (status) => {
     if (activeTab === "INTERVIEW_POOL") {
@@ -432,10 +372,11 @@ export default function CandidateScreening({ selectedJob }) {
   };
 
   const selectedInterviewCandidates = useMemo(() => {
-    return filteredInterviewCandidates.filter((c) =>
+    return interviewCandidates.filter((c) =>
       selectedInterviewCandidateIds.includes(c.id)
     );
-  }, [filteredInterviewCandidates, selectedInterviewCandidateIds]);
+  }, [interviewCandidates, selectedInterviewCandidateIds]);
+
 
   const canSendToOfferPool =
     selectedInterviewCandidates.length > 0 &&
@@ -866,12 +807,13 @@ export default function CandidateScreening({ selectedJob }) {
 
         {activeTab === "INTERVIEW_POOL" && (
           <InterviewPool
-            candidates={pagedInterviewCandidates}
+            candidates={interviewCandidates}
+            loading={loadingInterview}
             selectedIds={selectedInterviewCandidateIds}
             setSelectedIds={setSelectedInterviewCandidateIds}
             page={interviewPage}
             pageSize={interviewPageSize}
-            totalElements={filteredInterviewCandidates.length}
+            totalElements={interviewTotalElements}
             onPageChange={setInterviewPage}
             onPageSizeChange={setInterviewPageSize}
             selectedPositionId={selectedPositionId}
@@ -913,7 +855,7 @@ export default function CandidateScreening({ selectedJob }) {
         feedbackList={selectedFeedback}
       />
 
-     
+
       <SendToOfferPoolModal
         showSendOfferModal={showOfferModal}
         setShowSendOfferModal={setShowOfferModal}

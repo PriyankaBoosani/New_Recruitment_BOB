@@ -395,7 +395,13 @@ const JobPostingsList = () => {
                                         />
 
                                         <div>
-                                            <h6 className="req-code mb-2">{req.code}</h6>
+                                            <h6
+                                                className="req-code mb-2"
+                                                title={req.code}
+                                            >
+                                                {req.code}
+                                            </h6>
+
                                             <div className="req-dates">
                                                 <div>
                                                     <img src={start_icon} alt="start_icon" className="icon-12" />{" "}{t("jobPostingsList:start_date")}: {formatDateDDMMYYYY(req.startDate)}
