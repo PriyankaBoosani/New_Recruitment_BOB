@@ -90,30 +90,38 @@ border-radius: 0;       /* optional */
 
 /* Panel Content */
 .interview-panel-container .panel-content {
-  padding: 20px 30px 30px 30px;
+  padding: 20px 30px
 }
 
+/* Panel Layout */
 .interview-panel-container .panel-layout {
   display: grid;
-  grid-template-columns: 350px 1fr;
+  grid-template-columns: 1fr 2fr;
   gap: 24px;
-  align-items: flex-start;
+  margin-top: 24px;
 }
 
-/* Form Card */
-.interview-panel-container .panel-form-card {
-  background: #fff;
-  border: 1px solid #eaeef5;
-  border-radius: 6px;
-  padding: 20px;
+/* Form Section */
+.interview-panel-container .panel-form-section {
+  display: flex;
+  flex-direction: column;
 }
-/* 
+
+.interview-panel-container .panel-form-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  height: fit-content;
+}
+
 .interview-panel-container .panel-form-card h3 {
   margin: 0 0 5px 0;
   font-size: 16px;
   font-weight: 600;
   color: #333;
-} */
+}
 
 .interview-panel-container .card-subtitle {
   font-size: 13px;
@@ -164,20 +172,21 @@ border-radius: 0;       /* optional */
 
 /* Table Card */
 .interview-panel-container .panel-table-card {
-  background: #fff;
-  border: 1px solid #eaeef5;
-  border-radius: 6px;
-  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   height: 100%;
   box-sizing: border-box;
 }
 
-/* .interview-panel-container .panel-table-card h3 {
+.interview-panel-container .panel-table-card h3 {
   margin: 0 0 20px 0;
-  font-size: 16px;
+  font-size: 1.125rem;
   font-weight: 600;
-  color: #333;
-} */
+  color: #1f2937;
+}
 .interview-panel-container .panel-form-actions {
   display: flex;
   justify-content: end;     /* center like the design */
