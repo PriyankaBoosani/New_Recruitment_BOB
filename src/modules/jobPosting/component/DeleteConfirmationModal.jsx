@@ -23,7 +23,7 @@ const DeleteConfirmationModal = ({
         <img src={pos_delete_icon} alt="delete" className="mb-3" style={{ width: 30 }} />
         <p className="mb-1"> {message || t("importModal:delete_message")}</p>
         {itemLabel && (
-          <strong className="text-danger d-block">{itemLabel}</strong>
+          <strong className="text-danger d-block wrap">{itemLabel}</strong>
         )}
         <p className="text-muted mt-2"> {t("importModal:delete_cannot_undo")}</p>
       </Modal.Body>

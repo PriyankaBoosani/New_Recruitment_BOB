@@ -20,6 +20,7 @@
     "max_age": "Max Age",
     "employment_type": "Type of Employment",
     "contractual_period": "Contractual Period (Years)",
+    "enter_contractual_period": "Enter contractual period",
     "grade_scale": "Grade / Scale",
     "salary_range": "Salary Range",
     "min_salary": "Min Salary",
@@ -70,6 +71,4 @@
     "add_certification": "+ Add Certification",
     "certifications_optional": "Certifications (Optional)",
     "result_preview": "Result (How it will look for candidate)"
-    
-    
 }

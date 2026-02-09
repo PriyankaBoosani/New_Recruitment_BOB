@@ -49,27 +49,27 @@ const PositionForm = ({
         g => String(g.id) === String(formData.grade)
     );
     const formatNumber = (value) => {
-  if (value === null || value === undefined || value === "") return "-";
-  return new Intl.NumberFormat("en-IN").format(Number(value));
-};
+        if (value === null || value === undefined || value === "") return "-";
+        return new Intl.NumberFormat("en-IN").format(Number(value));
+    };
 
-   const salaryPopover = (
-  <Popover id="salary-popover">
-    <Popover.Header as="h6">
-      {t("addPosition:salary_range")}
-    </Popover.Header>
-    <Popover.Body>
-      <div>
-        <strong>{t("addPosition:min_salary")}:</strong>{" "}
-        {formatNumber(selectedGrade?.minSalary)}
-      </div>
-      <div>
-        <strong>{t("addPosition:max_salary")}:</strong>{" "}
-        {formatNumber(selectedGrade?.maxSalary)}
-      </div>
-    </Popover.Body>
-  </Popover>
-);
+    const salaryPopover = (
+        <Popover id="salary-popover">
+            <Popover.Header as="h6">
+                {t("addPosition:salary_range")}
+            </Popover.Header>
+            <Popover.Body>
+                <div>
+                    <strong>{t("addPosition:min_salary")}:</strong>{" "}
+                    {formatNumber(selectedGrade?.minSalary)}
+                </div>
+                <div>
+                    <strong>{t("addPosition:max_salary")}:</strong>{" "}
+                    {formatNumber(selectedGrade?.maxSalary)}
+                </div>
+            </Popover.Body>
+        </Popover>
+    );
 
 
 
@@ -319,7 +319,11 @@ const PositionForm = ({
                         <ErrorMessage>{renderError(errors.employmentType)}</ErrorMessage>
                     </Col>
 
-                    <Col md={4}><Form.Label>{t("addPosition:contractual_period")}</Form.Label><Form.Control name="contractualPeriod" type="text" inputMode="numeric" value={isContractEmployment ? formData.contractualPeriod : ""} onChange={handleInputChange} disabled={!isContractEmployment || isViewMode} /></Col>
+                    <Col md={4}><Form.Label>{t("addPosition:contractual_period")}</Form.Label><Form.Control name="contractualPeriod" placeholder={
+                        isContractEmployment
+                            ? t("addPosition:enter_contractual_period")
+                            : ""
+                    } type="text" inputMode="numeric" value={isContractEmployment ? formData.contractualPeriod : ""} onChange={handleInputChange} disabled={!isContractEmployment || isViewMode} /></Col>
                     <Col md={4}>
                         <Form.Label className="d-flex align-items-center gap-2">
                             {t("addPosition:grade_scale")} <span className="text-danger">*</span>
@@ -395,14 +399,17 @@ const PositionForm = ({
                                 as="textarea"
                                 maxLength={2000}
                                 placeholder={
-                                    expType === "mandatory"
+                                    expType === "mandatoryExperience"
                                         ? t("addPosition:enter_mandatory_experience")
                                         : t("addPosition:enter_preferred_experience")
                                 }
+
+
                                 rows={3}
                                 value={formData[expType].description} disabled={isViewMode}
 
                                 onChange={(e) => {
+
                                     const { valid, value } = validateTitleOnType(e.target.value);
 
                                     if (!valid) {
