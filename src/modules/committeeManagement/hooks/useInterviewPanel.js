@@ -216,10 +216,23 @@ useEffect(() => {
   try {
     if (formData.id) {
       // ✅ UPDATE
-      await masterApiService.updateInterviewPanel(
+      const res = await masterApiService.updateInterviewPanel(
         formData.id,
         payload
       );
+
+
+        if (!res?.success) {
+        // 🔴 Field-level error
+        setErrors(prev => ({
+          ...prev,
+          name:  "Panel name already exists for selected committee"||res?.message
+        }));
+
+        toast.error("Panel name already exists for selected committee"|| res?.message );
+        return; // ⛔ VERY IMPORTANT
+      }
+
 
       toast.success("Panel updated successfully");
 
