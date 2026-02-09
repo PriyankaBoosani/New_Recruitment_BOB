@@ -7,21 +7,6 @@ import { useAssignPositions } from "./hooks/useAssignPositions";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 
 
-// Mock data for demonstration
-// const COMMITTEES = {
-//   SCREENING: [
-//     { id: 1, name: "Screening Panel 1", members: ["Vijay V", "Satish J"] },
-//     { id: 2, name: "Screening Panel 2", members: ["Naresh P", "Veeresh V"] },
-//   ],
-//   INTERVIEW: [
-//     { id: 3, name: "Interview Panel 1", members: ["Bharat T", "Sathvik P"] },
-//     { id: 4, name: "Interview Panel 2", members: ["Rahul M", "Priya K"] },
-//   ],
-//   COMPENSATION: [
-//     { id: 5, name: "Compensation Panel 1", members: ["Anita R", "Rajesh K"] },
-//   ]
-// };
-
 const AssignPositionsPage = () => {
 
   const {
