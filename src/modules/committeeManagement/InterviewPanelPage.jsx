@@ -99,6 +99,7 @@ const [deleteId, setDeleteId] = useState(null);
                 <div className="panel-table-card">
                   <InterviewPanelTable
                     panels={panels}
+                    loading={loading}   
                     onEdit={handleEdit}
                     //onDelete={handleDelete}
                     page={page}

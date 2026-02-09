@@ -2,9 +2,10 @@ import React from "react";
 import edit_icon from "../../../assets/edit_icon.png";
 import delete_icon from "../../../assets/delete_icon.png";
 import { FiFilter } from "react-icons/fi";
-
+import Loader from '../../../shared/components/Loader'
 const InterviewPanelTable = ({
   panels,
+  loading,
   onEdit,
   onDelete,
   page,
@@ -22,9 +23,15 @@ const InterviewPanelTable = ({
   sortedPanels
 }) => {
   return (
+
+    
     <>
       {/* ===== HEADER ===== */}
       <div className="table-header">
+
+        {loading && (
+					<Loader />
+				)}
         <span className="table-title">Panels History</span>
 
 
