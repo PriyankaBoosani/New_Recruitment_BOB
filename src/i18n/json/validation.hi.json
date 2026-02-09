@@ -41,6 +41,7 @@
   "no_special_charsees": "कृपया वैध दस्तावेज़ नाम दर्ज करें",
   "title_invalid_chars": "केवल अक्षर, संख्या, स्पेस, -, _, /, (), और & मान्य हैं",
   "past_dates_not_allowed": "पिछली तिथियाँ मान्य नहीं हैं",
+  "requisition_date_future": "रिक्विज़िशन प्रारंभ तिथि भविष्य की होनी चाहिए।",
   "end_before_start": "समाप्ति तिथि प्रारंभ तिथि से पहले नहीं हो सकती",
   "title_invalid_chars_extended": "केवल अक्षर, संख्या, स्पेस और . , - ( ) & : ; / की अनुमति है",
   "duplicate_position_department": "यह पद चयनित विभाग में पहले से मौजूद है",

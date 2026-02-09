@@ -65,7 +65,7 @@ export const validateRequisitionForm = (formData = {}) => {
     startDate.setHours(0, 0, 0, 0);
 
     if (startDate < tomorrow) {
-      errors.startDate = "validation:past_dates_not_allowed";
+      errors.startDate = "validation:requisition_date_future";
       valid = false;
     }
   }
