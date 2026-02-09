@@ -7,10 +7,14 @@
 
 /* Panel Card */
 .interview-panel-container .panel-card {
-  /* background: #fff; */
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+border-radius: 0;       /* optional */
+  box-shadow: none !important;       /* remove shadow */
+  overflow: visible;      /* remove clipping */
+}
+
+/* Remove any box-shadow from panel-card */
+.interview-panel-container .panel-card * {
+  box-shadow: none !important;
 }
 
 /* Header Styles */
@@ -20,12 +24,17 @@
 } */
 
 .interview-panel-container .panel-header h2 {
-  margin: 0 0 20px 0;
-  color: #1a1a1a;
-  font-size: 20px;
-  font-weight: 600;
+  color: #162B75;;
+  font-size: 1.25rem;
+  font-weight: 500;
 }
 
+.interview-panel-container .page-subtitle {
+  margin: 0 0 20px 0;
+  color: var(--bs-secondary-color) !important;;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
 /* Tabs Container */
 .interview-panel-container .tabs-container {
   margin-top: 20px;
@@ -391,8 +400,8 @@
 
 .table-search-input {
   width: 240px;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 9px 10px;
+  border-radius: 8px;
   border: 1px solid #d1d5db;
   font-size: 13px;
 }
@@ -435,9 +444,9 @@
 }
 
 .interview-panel-container .table-filter-select {
-  padding: 6px 10px;
+  padding: 9px 10px;
   border: 1px solid #d1d5db;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 13px;
   color: #374151;
   background: #fff;
@@ -495,9 +504,9 @@
   user-select: none;
 }
 
-.interview-panel-container .sortable:hover {
+/* .interview-panel-container .sortable:hover {
   color: #007bff;
-}
+} */
 
 .interview-panel-container .table-size-selector {
   display: flex;

@@ -56,7 +56,10 @@ const [deleteId, setDeleteId] = useState(null);
     <div className="interview-panel-container">
       <div className="panel-card">
         <div className="panel-header">
-          {/* <h2>Committee Management</h2> */}
+          <div>
+            <h2>Committee Management</h2>
+            <span className="page-subtitle">Manage interview panels and assign them to positions</span>
+          </div>
           <div className="tabs-container">
             <div className="tabs">
               <button

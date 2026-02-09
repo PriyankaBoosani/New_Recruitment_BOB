@@ -395,12 +395,12 @@
 }
 
 .action-pill.add {
-  background: #3b82f6;
+  background: #F26522;
   color: #ffffff;
 }
 
 .action-pill.add:hover {
-  background: #2563eb;
+  background: #F26522;
 }
 
 .action-pill.remove {
