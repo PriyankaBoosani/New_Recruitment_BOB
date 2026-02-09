@@ -1,203 +1,23 @@
-import React, { useState } from "react";
-import { Card, Button, Row, Form, Col } from "react-bootstrap";
-import { FiFilter, FiDownload, FiPlus, FiX } from "react-icons/fi";
-import "../../style/css/Committee.css";
-import CommitteeHistoryList from './components/CommitteeHistoryList';
+import React from "react";
 import { useAssignPositions } from "./hooks/useAssignPositions";
+import SelectionSection from "./components/SelectionSection";
+import CommitteeConfigSection from "./components/CommitteeConfigSection";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
-
 
 const AssignPositionsPage = () => {
 
+  const assignHook = useAssignPositions();
+
   const {
-    requisitions,
-    positions,
     selectedRequisition,
-    selectedPosition,
-    setSelectedPosition,
-    handleRequisitionChange,
-    loading,
-    availablePanels,
-    setAvailablePanels,
-    updateCommitteeDate,
-    activeTab,
-    setActiveTab,
-    showHistory,
-    setShowHistory,
-    selectedCommittees,
-    setSelectedCommittees,
-    context,
-    setContext,
-    handleAssignCommittees,
-    panelErrors,
-    setPanelErrors
+    selectedPosition
+  } = assignHook;
 
-  } = useAssignPositions();
-
-  const selectedPositionTitle =
-    positions.find(
-      p => p.jobPositions?.positionId === selectedPosition
-    )?.masterPositions?.positionName || "";
-
-
-  const toggleCommittee = (type, committee) => {
-    setSelectedCommittees(prev => {
-      const isSelected = prev[type].some(c => c.id === committee.id);
-
-      if (isSelected) {
-        // REMOVE → move back to available
-        setAvailablePanels(ap => [...ap, committee]);
-
-        return {
-          ...prev,
-          [type]: prev[type].filter(c => c.id !== committee.id),
-        };
-      } else {
-        // ADD → remove from available
-        setAvailablePanels(ap =>
-          ap.filter(c => c.id !== committee.id)
-        );
-
-        return {
-          ...prev,
-          [type]: [
-            ...prev[type],
-            {
-              ...committee,
-              startDate: committee.startDate || "",
-              endDate: committee.endDate || ""
-            }
-          ],
-        };
-      }
-    });
-  };
-
-  const renderAvailableCommittee = (committee, type) => (
-    <div className="committee-row" key={committee.id}>
-      <div>
-        <div className="committee-title">{committee.name}</div>
-        <div className="committee-chips">
-          {committee.members.map(m => (
-            <span key={m} className="chip">{m.name}</span>
-          ))}
-        </div>
-      </div>
-
-      <button
-        className="action-pill add"
-        onClick={() => toggleCommittee(type, committee)}
-      >
-        Add →
-      </button>
-    </div>
-  );
-  const renderSelectedCommittee = (committee, type) => {
-    const errorKey = `${type}_${committee.id}`;
-    const errors = panelErrors?.[errorKey] || {};
-
-    return (
-      <div className="committee-row selected" key={committee.id}>
-        <div>
-          <div className="committee-title">{committee.name}</div>
-
-          <div className="committee-chips">
-            {committee.members.map(m => (
-              <span key={m.name} className="chip">{m.name}</span>
-            ))}
-          </div>
-
-          <div className="date-row">
-            <div>
-              <label>START DATE</label>
-              <input
-                type="date"
-                value={committee.startDate}
-                onChange={(e) =>
-                  updateCommitteeDate(type, committee.id, "startDate", e.target.value)
-                }
-              />
-              {errors.startDate && (
-                <div className="field-error">{errors.startDate}</div>
-              )}
-            </div>
-
-            <div>
-              <label>END DATE</label>
-              <input
-                type="date"
-                value={committee.endDate}
-                onChange={(e) =>
-                  updateCommitteeDate(type, committee.id, "endDate", e.target.value)
-                }
-              />
-              {errors.endDate && (
-                <div className="field-error">{errors.endDate}</div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <button
-          className="action-pill remove"
-          onClick={() => toggleCommittee(type, committee)}
-        >
-          ← Remove
-        </button>
-      </div>
-    );
-  };
-
-
-  const filteredPanels = availablePanels.filter(
-    p =>
-      p.committeeName?.toUpperCase() === activeTab
-  );
   return (
     <div className="assign-positions-page">
-      {/* ===== PAGE HEADER ===== */}
-    
-   
 
-      {/* ===== SELECTION CONTROLS ===== */}
-      <div className="selection-section">
-        <div class="mb-3"><div class="assign-position-title">Select Position</div><div class="assign-position-muted">Choose a requisition and position to assign committees to.</div></div>
-        <div className="selection-grid">
-          <div className="form-group">
-            <label className="form-label">Requisition</label>
-            <select
-              className="form-select"
-              value={selectedRequisition}
-              onChange={handleRequisitionChange}
-            >
-              <option value="">Select Requisition</option>
-              {requisitions.map(req => (
-                <option key={req.id} value={req.id}>
-                  {req.requisitionCode}
-                </option>
-              ))}
-            </select>
-          </div>
+      <SelectionSection {...assignHook} />
 
-          <div className="form-group">
-            <label className="form-label">Position</label>
-            <select
-              className="form-select"
-              value={selectedPosition}
-              onChange={(e) => setSelectedPosition(e.target.value)}
-              disabled={!selectedRequisition}
-            >
-              <option value="">Select Position</option>
-              {positions.map(pos => (
-                <option key={pos.jobPositions?.positionId} value={pos.jobPositions?.positionId}>
-                  {pos.masterPositions?.positionName}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* ===== REQUISITION STRIP ===== */}
       {selectedRequisition && selectedPosition && (
         <div className="requisition-strip-section">
           <RequisitionStrip
@@ -208,91 +28,9 @@ const AssignPositionsPage = () => {
           />
         </div>
       )}
-      </div>
 
-      
+      <CommitteeConfigSection {...assignHook} />
 
-      {/* ===== COMMITTEE CONFIGURATION ===== */}
-      <div className="committee-config-section">
-        <div className="config-header">
-          <div className="config-title-section">
-            <h2 className="config-title">Configure Committees</h2>
-            <p className="config-subtitle">
-              {selectedPositionTitle
-                ? `Assign panels to ${selectedPositionTitle}`
-                : "Select a position to assign panels"}
-            </p>
-          </div>
-          <button 
-            className="assign-button" 
-            onClick={handleAssignCommittees}
-            disabled={!selectedPosition}
-          >
-            Assign Committees
-          </button>
-        </div>
-
-        {/* ===== TABS ===== */}
-        <div className="committee-tabs">
-          <button
-            className={`tab-item ${activeTab === "SCREENING" ? "active" : ""}`}
-            onClick={() => setActiveTab("SCREENING")}
-          >
-            Screening Committee
-          </button>
-          <button
-            className={`tab-item ${activeTab === "INTERVIEW" ? "active" : ""}`}
-            onClick={() => setActiveTab("INTERVIEW")}
-          >
-            Interview Committee
-          </button>
-          <button
-            className={`tab-item ${activeTab === "COMPENSATION" ? "active" : ""}`}
-            onClick={() => setActiveTab("COMPENSATION")}
-          >
-            Compensation Committee
-          </button>
-        </div>
-
-        {/* ===== DUAL PANELS ===== */}
-        <div className="panels-container">
-          {/* Available Panels */}
-          <div className="panel-box available">
-            <div className="panel-header">
-              <h3 className="panel-title">Available Panels</h3>
-              <span className="panel-count">{filteredPanels.length}</span>
-            </div>
-            <div className="panel-divider"></div>
-            <div className="panel-content">
-              {filteredPanels.map(c => renderAvailableCommittee(c, activeTab))}
-            </div>
-          </div>
-
-          {/* Swap Icon */}
-          <div className="swap-divider">
-            <div className="swap-icon">⇄</div>
-          </div>
-
-          {/* Selected Panels */}
-          <div className="panel-box selected">
-            <div className="panel-header">
-              <h3 className="panel-title">Selected Panels</h3>
-              <span className="panel-count">{selectedCommittees[activeTab].length}</span>
-            </div>
-            <div className="panel-divider"></div>
-            <div className="panel-content">
-              {selectedCommittees[activeTab].length > 0 ? (
-                selectedCommittees[activeTab].map(c => renderSelectedCommittee(c, activeTab))
-              ) : (
-                <div className="empty-state">
-                  <div className="empty-icon">📋</div>
-                  <div className="empty-text">No panels selected</div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
