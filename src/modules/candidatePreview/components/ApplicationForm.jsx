@@ -156,13 +156,8 @@ const ApplicationForm = ({
   };
   const CRITERIA_OPTIONS = ["YES", "NO", "DISCREPANCY"];
 
-  const documentRows = [
-    ...(data.documents?.identityProofs || []),
-    ...(data.documents?.educationCertificates || []),
-    ...(data.documents?.communityCertificates || []),
-    ...(data.documents?.disabilityCertificates || []),
-    ...(data.documents?.payslips || []),
-    ...(data.documents?.resume || [])
+   const documentRows = [
+    ...(data.documents?.allDocs || [])
   ].map(doc => ({
     ...doc,
     candidateDocumentId: doc.candidateDocumentId ?? doc.id

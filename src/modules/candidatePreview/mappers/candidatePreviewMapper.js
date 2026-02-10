@@ -149,39 +149,9 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
     },
 
     /* ================= DOCUMENTS ================= */
-documents: {
-  photo: groupDocs(l => l.includes("photo")),
-  signature: groupDocs(l => l.includes("signature")),
-  resume: groupDocs(l => l.includes("resume")),
-
-  payslips: groupDocs(l => l.includes("payslip")),
-
-  educationCertificates: groupDocs(l =>
-    l.includes("10") ||
-    l.includes("board") ||
-    l.includes("intermediate") ||
-    l.includes("graduation") ||
-    l.includes("post graduation") ||
-    l.includes("post-graduation")
-  ),
-
-  identityProofs: groupDocs(l =>
-    l.includes("aadhar") ||
-    l.includes("aadhaar") ||
-    l.includes("pan") ||
-    l.includes("identity") ||
-    l.includes("proof")
-  ),
-
-  communityCertificates: groupDocs(l =>
-    l.includes("community")
-  ),
-
-  disabilityCertificates: groupDocs(l =>
-    l.includes("disability")
-  )
-}
-
+    documents: {
+      allDocs: groupDocs(() => true),
+    }
   };
 };
 const expSafeCurrency = (value) =>

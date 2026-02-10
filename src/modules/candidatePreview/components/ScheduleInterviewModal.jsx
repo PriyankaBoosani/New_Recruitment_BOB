@@ -74,12 +74,12 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 				applicationIds,
 			});
 
-			toast.success("Interviews scheduled successfully");
 			setShowScheduleModal(false);
 			setFile(null);
 			if (typeof onBulkScheduleSuccess === "function") {
 				onBulkScheduleSuccess();
 			}
+			toast.success("Interviews scheduled successfully");
 		} catch (err) {
 			console.error(err);
 			toast.error("Bulk scheduling failed");
