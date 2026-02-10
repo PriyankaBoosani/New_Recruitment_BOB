@@ -90,7 +90,7 @@ border-radius: 0;       /* optional */
 
 /* Panel Content */
 .interview-panel-container .panel-content {
-  padding: 20px 30px
+  padding: 20px 1px
 }
 
 /* Panel Layout */
@@ -98,7 +98,7 @@ border-radius: 0;       /* optional */
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 24px;
-  margin-top: 24px;
+  /* margin-top: 24px; */
 }
 
 /* Form Section */
