@@ -64,6 +64,7 @@ const RequisitionPositionSelector = ({
         <label>Requisition</label>
         <Select
           isClearable
+          placeholder="Select Requisition"
           options={requisitions}
           value={selectedRequisitionOption}
           onChange={(opt) => {
@@ -77,6 +78,7 @@ const RequisitionPositionSelector = ({
         <label>Position</label>
         <Select
           isClearable
+            placeholder="Select Position"
           options={positions}
           value={selectedPositionOption}
           isDisabled={!selectedRequisitionOption}

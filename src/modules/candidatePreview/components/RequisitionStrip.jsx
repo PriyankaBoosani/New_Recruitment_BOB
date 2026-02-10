@@ -9,6 +9,8 @@ import LocationWiseVacancyTable from "./LocationWiseVacancyTable";
 import candidateWorkflowServices from "../services/CandidateWorkflowServices";
 import masterApiService from "../../master/services/masterApiService";   // ADDED
 import { mapJobPositionToRequisitionStrip } from "../mappers/candidatePreviewMapper";
+import { format } from "date-fns";
+
  
 const RequisitionStrip = ({
   requisition,
@@ -24,6 +26,17 @@ const RequisitionStrip = ({
   const [loading, setLoading] = useState(false);
  
   const [masterData, setMasterData] = useState(null);   //  INTERNAL
+
+
+  const formatDMY = (dateStr) => {
+  if (!dateStr) return "-";
+  try {
+    return format(new Date(dateStr), "dd-MM-yyyy");
+  } catch {
+    return dateStr;
+  }
+};
+
  
   /* ================= LOAD MASTER DATA ================= */
  
@@ -101,14 +114,14 @@ const RequisitionStrip = ({
  
             <span className="date-text">
 <i className="bi bi-calendar3 me-1"></i>
-              Start: {requisition?.registration_start_date || "-"}
+Start: {formatDMY(requisition?.registration_start_date)}
 </span>
  
             <span className="date-divider">|</span>
  
             <span className="date-text">
 <i className="bi bi-clock me-1"></i>
-              End: {requisition?.registration_end_date || "-"}
+End: {formatDMY(requisition?.registration_end_date)}
 </span>
  
           </div>
@@ -165,12 +178,12 @@ const RequisitionStrip = ({
  
               <span className="date-text">
 <i className="bi bi-calendar3 me-1"></i>
-                Start: {requisition?.registration_start_date || "-"}
+Start: {formatDMY(requisition?.registration_start_date)}
 </span>
  
               <span className="date-text">
 <i className="bi bi-calendar3 me-1"></i>
-                End: {requisition?.registration_end_date || "-"}
+End: {formatDMY(requisition?.registration_end_date)}
 </span>
 </div>
  

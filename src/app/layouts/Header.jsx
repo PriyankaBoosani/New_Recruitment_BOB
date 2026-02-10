@@ -218,11 +218,11 @@ const Header = () => {
               )}
 
 
-              {/* {isRecruiter && (
-                <Nav.Link as={Link} to="/candidate-interview" onClick={closeMenu}>
+              {isZonalHr && (
+                <Nav.Link as={Link} to="/candidate-interviewer" onClick={closeMenu}>
                    Interview
                 </Nav.Link>
-              )} */}
+              )}
 
 
               {isZonalHr && (

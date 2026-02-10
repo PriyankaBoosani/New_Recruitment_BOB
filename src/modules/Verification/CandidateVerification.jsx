@@ -14,6 +14,8 @@ import CandidateVerificationService from "./services/CandidateVerification";
 import { DUMMY_DATA } from "./components/mockData";
 import { mapCandidatesToTableRows } from "./mappers/CandidateVerificationMapper";
 import { useLocation } from "react-router-dom";
+import PdfViewerModal from "../candidatePreview/components/PdfViewerModal"
+
 
 
 
@@ -48,6 +50,7 @@ export default function CandidateVerification() {
   const [selectedRequisition, setSelectedRequisition] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [allCandidatesRaw, setAllCandidatesRaw] = useState([]);
+  
 
   const [usedNavData, setUsedNavData] = useState(false);
 
@@ -55,17 +58,57 @@ export default function CandidateVerification() {
 
 
 const location = useLocation();
+const cameFromZonal =
+  sessionStorage.getItem("fromZonalSubmit") === "true";
+
+const cameFromPreviewBack =
+  sessionStorage.getItem("fromPreviewBack") === "true";
 
 
-const navSelectedDate = location.state?.selectedDate
-  ? new Date(location.state.selectedDate)
-  : null;
+  const [pdfUrl, setPdfUrl] = useState(null);
+const [showPdfViewer, setShowPdfViewer] = useState(false);
+const [loadingPdf, setLoadingPdf] = useState(false);
 
 
+const handleViewFile = async (candidateRaw) => {
+  if (!candidateRaw?.resumeUrl) {
+    toast.error("No document available");
+    return;
+  }
 
-  const [selectedDate, setSelectedDate] = useState(
-  navSelectedDate || new Date()
-);
+  try {
+    setLoadingPdf(true);
+
+    const res = await masterApiService.getAzureBlobSasUrl(
+      candidateRaw.resumeUrl,
+      "candidate"
+    );
+
+    const sasUrl = res?.trim();
+
+    if (!sasUrl) throw new Error("Invalid SAS URL");
+
+    setPdfUrl(sasUrl);
+    setShowPdfViewer(true);
+
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to open document");
+  } finally {
+    setLoadingPdf(false);
+  }
+};
+
+  
+const navSelectedDate =
+  (cameFromZonal || cameFromPreviewBack) &&
+  location.state?.selectedDate
+    ? new Date(location.state.selectedDate)
+    : null;
+
+const [selectedDate, setSelectedDate] =
+  useState(navSelectedDate || new Date());
+
 
 
 
@@ -114,18 +157,26 @@ const navCandidates = location.state?.preloadedCandidates || [];
 useEffect(() => {
 
   // restore selection from nav
-if (!usedNavData && navCandidates.length && navInitRef.current) {
-    console.log("Using nav candidates once");
+if (
+  (cameFromZonal || cameFromPreviewBack) &&
+  !usedNavData &&
+  navCandidates.length &&
+  navInitRef.current
+) {
+  console.log("Using nav candidates once");
 
-    setAllCandidatesRaw(navCandidates);
-    setAllCandidates(mapCandidatesToTableRows(navCandidates));
+  setAllCandidatesRaw(navCandidates);
+  setAllCandidates(mapCandidatesToTableRows(navCandidates));
 
-    if (navRequisition) setSelectedRequisition(navRequisition);
-    if (navPosition) setSelectedPosition(navPosition);
+  if (navRequisition) setSelectedRequisition(navRequisition);
+  if (navPosition) setSelectedPosition(navPosition);
 
-    setUsedNavData(true);
-    //  DO NOT RETURN HERE
-  }
+  setUsedNavData(true);
+
+  sessionStorage.removeItem("fromZonalSubmit");
+  sessionStorage.removeItem("fromPreviewBack");
+}
+
 
   //  ALWAYS call API
   const loadCandidates = async () => {
@@ -401,9 +452,24 @@ isSaveEnabled={anyAbsentChanged}
         filteredCandidates={filteredCandidates}
         toggleAbsent={toggleAbsent}
         selectedDate={selectedDate}
-        allCandidatesRaw={allCandidatesRaw} 
+        allCandidatesRaw={allCandidatesRaw}
+        onViewFile={handleViewFile} 
       />
 
+
+      <PdfViewerModal
+  show={showPdfViewer}
+  onHide={() => {
+    setShowPdfViewer(false);
+    setPdfUrl(null);
+  }}
+  fileUrl={pdfUrl}
+  loading={loadingPdf}
+  title="Candidate Resume"
+/>
+
+
     </div>
+    
   );
 }

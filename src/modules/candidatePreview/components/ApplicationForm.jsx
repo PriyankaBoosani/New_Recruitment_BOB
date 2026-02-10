@@ -76,6 +76,7 @@ const ApplicationForm = ({
   };
 
 
+
   const handleZonalSubmit = async () => {
 
     if (!zonalDecision) {
@@ -87,7 +88,7 @@ const ApplicationForm = ({
       if (!screeningForm.zonalSubmitDate) {
         setErrors(prev => ({
           ...prev,
-          zonalSubmitDate: "Submit Date is required"
+zonalSubmitDate: "This field is required"
         }));
         return;
       }
@@ -124,14 +125,17 @@ const ApplicationForm = ({
 
       toast.success("Zonal verification submitted successfully");
 
-      navigate("/candidate-verification", {
-        state: {
-          requisition: location.state?.requisition,
-          position: location.state?.position,
-          preloadedCandidates: location.state?.candidates || [],
-          selectedDate
-        }
-      });
+     sessionStorage.setItem("fromZonalSubmit", "true");
+
+navigate("/candidate-verification", {
+  state: {
+    requisition: location.state?.requisition,
+    position: location.state?.position,
+    preloadedCandidates: location.state?.candidates || [],
+    selectedDate
+  }
+});
+
 
 
 
@@ -1459,39 +1463,35 @@ const ApplicationForm = ({
 
 
             {/* DATE */}
-            <div className="submit-date-group">
-              <label className="submit-label">Submit Before</label>
+          <div className="submit-date-group d-flex flex-column">
+  <label className="submit-label">Submit Before</label>
 
-              <input
-                type="date"
-                className="criteria-date"
-                min={minFutureDate}
-                value={screeningForm.zonalSubmitDate}
+  <input
+    type="date"
+    className={`criteria-date ${errors.zonalSubmitDate ? "input-error" : ""}`}
+    min={minFutureDate}
+    value={screeningForm.zonalSubmitDate}
+    disabled={!allDocsVerified || !zonalDecision}
+    onChange={(e) => {
+      setScreeningForm(prev => ({
+        ...prev,
+        zonalSubmitDate: e.target.value
+      }));
 
-                disabled={
-                  !allDocsVerified ||
-                  !zonalDecision
-                }
+      setErrors(prev => ({
+        ...prev,
+        zonalSubmitDate: undefined
+      }));
+    }}
+  />
 
-                onChange={(e) => {
-                  setScreeningForm(prev => ({
-                    ...prev,
-                    zonalSubmitDate: e.target.value
-                  }));
+  {errors.zonalSubmitDate && (
+    <small className="text-danger mt-1">
+      {errors.zonalSubmitDate}
+    </small>
+  )}
+</div>
 
-                  setErrors(prev => ({
-                    ...prev,
-                    zonalSubmitDate: undefined
-                  }));
-                }}
-              />
-
-              {errors.zonalSubmitDate && (
-                <small className="text-danger fs-12">
-                  {errors.zonalSubmitDate}
-                </small>
-              )}
-            </div>
 
 
             {/* REMARKS */}

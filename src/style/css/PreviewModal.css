@@ -9,6 +9,45 @@
   overflow: hidden;
   padding: 0;
 }
+.input-error {
+  border: 1px solid #dc3545 !important;
+  box-shadow: 0 0 0 1px rgba(220,53,69,.15);
+}
+
+.comment-block {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.comment-input.input-error {
+  border: 1px solid #dc3545 !important;
+}
+.doc-viewer-footer {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.comment-block {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.comment-input.input-error {
+  border: 1px solid #dc3545 !important;
+}
+
+
+
+.submit-date-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+
 
 /* === Header Box === */
 .bob-header,

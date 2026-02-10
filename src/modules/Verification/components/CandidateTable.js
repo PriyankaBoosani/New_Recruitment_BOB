@@ -9,7 +9,8 @@ const CandidateTable = ({
   filteredCandidates,
   toggleAbsent,
   selectedDate,
-  allCandidatesRaw 
+  allCandidatesRaw,
+   onViewFile
 }) => {
 
 
@@ -114,10 +115,11 @@ position,
                       className="me-3 cursor-pointer"
                       onClick={() => goToPreview(c)}
                     />
-                    <FileText
-                      className="cursor-pointer"
-                      onClick={() => goToPreview(c)}
-                    />
+                   <FileText
+  className="cursor-pointer"
+  onClick={() => onViewFile(c.raw)}
+/>
+
                   </td>
                 </tr>
               ))}
@@ -184,10 +186,11 @@ position,
                   className="me-3 cursor-pointer"
                   onClick={() => goToPreview(c)}
                 />
-                <FileText
-                  className="cursor-pointer"
-                  onClick={() => goToPreview(c)}
-                />
+               <FileText
+  className="cursor-pointer"
+  onClick={() => onViewFile(c.raw)}
+/>
+
               </div>
 
             </div>

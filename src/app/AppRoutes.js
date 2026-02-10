@@ -29,6 +29,7 @@ import InterviewPanel from "../modules/committeeManagement/InterviewPanelPage";
 import CandidatePreviewPage from "../modules/candidatePreview/candidatePreviewPage";
 import CandidateVerification from "../modules/Verification/CandidateVerification";
 import CandidateScreening from "../modules/candidatePreview/CandidateScreening";
+import InterviewerSchedule from "../modules/Interviewer/InterviewerSchedule"
 // import CandidateInterview from "../modules/Interview/CandidateInterview";
 
 // Lazy loaded components
@@ -79,6 +80,7 @@ const AppRoutes = () => {
                 <Route path="/candidate-preview" element={<CandidatePreviewPage />} />
                 <Route path="/candidate-workflow" element={<CandidateScreening />} />
                 <Route path="/candidate-verification" element={<CandidateVerification />} />
+                  <Route path="/candidate-interviewer" element={<InterviewerSchedule />} />
                 <Route path="/interviewpanel" element={<InterviewPanel />} />
                 {/* <Route path="/candidate-interview" element={<CandidateInterview />} /> */}
 

@@ -10,6 +10,7 @@ import { mapCandidateToPreview } from "../candidatePreview/mappers/candidatePrev
 
 import { useLocation, useNavigate } from "react-router-dom";
 import HeaderWithBack from "../../../src/shared/components/HeaderWithBack";
+import HeaderWithBacks from "../../../src/shared/components/headerwithbacks";
 import { useSelector } from "react-redux";
 
 
@@ -178,13 +179,25 @@ console.log("Full Masters Data:@@@@@", candidateId, positionId);
         candidateScreening={true}
       />
     )}
-       {isZonalHr && (
-      <HeaderWithBack
-        title="Candidate Profile"
-        subtitle="View candidate details application status"
-        onBack={() => navigate(-1)}
-      />
-    )}
+      {isZonalHr && (
+      <HeaderWithBacks
+  title="Candidate Profile"
+  subtitle="View candidate details application status"
+  onBack={() => {
+    sessionStorage.setItem("fromPreviewBack", "true");
+
+    navigate("/candidate-verification", {
+      state: {
+        requisition,
+        position,
+        preloadedCandidates: state.candidates || [],
+        selectedDate
+      }
+    });
+  }}
+/>
+      )}
+
 
       {/* Requisition Strip */}
       {requisition && position && ( 
