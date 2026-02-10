@@ -278,7 +278,7 @@ const AssignPositionsPage = () => {
               <span className="panel-count">{filteredPanels.length}</span>
             </div>
             <div className="panel-divider"></div>
-            <div className="panel-content">
+            <div className="assignpanel-content">
               {filteredPanels.map(c => renderAvailableCommittee(c, activeTab))}
             </div>
           </div>
@@ -295,7 +295,7 @@ const AssignPositionsPage = () => {
               <span className="panel-count">{selectedCommittees[activeTab].length}</span>
             </div>
             <div className="panel-divider"></div>
-            <div className="panel-content">
+            <div className="assignpanel-content">
               {selectedCommittees[activeTab].length > 0 ? (
                 selectedCommittees[activeTab].map(c => renderSelectedCommittee(c, activeTab))
               ) : (

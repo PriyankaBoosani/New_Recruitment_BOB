@@ -243,7 +243,7 @@
   background: #e5e7eb;
 }
 
-.panel-content {
+.assignpanel-content {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
@@ -365,7 +365,7 @@
 }
 
 .committee-row.selected {
-  border-color: #F26522;
+  /* border-color: #F26522; */
   background: #fff7f3;
 }
 

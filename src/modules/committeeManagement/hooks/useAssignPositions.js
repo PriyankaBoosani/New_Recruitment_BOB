@@ -423,12 +423,16 @@ export const useAssignPositions = (userId) => {
 
       console.log("FINAL PAYLOAD 👉", payload);
 
-      await committeeManagementService.assignPanelToPosition(
+      const res= await committeeManagementService.assignPanelToPosition(
         selectedPosition,
         payload
       );
+      if(res?.success) {
+        toast.success("Committees assigned successfully");
+      } else {
+        toast.error("Failed to assign committees");
+      }
 
-      toast.success("Committees assigned successfully");
     } catch (err) {
       console.error("ASSIGN ERROR 👉", err);
       toast.error(
