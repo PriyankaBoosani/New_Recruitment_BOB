@@ -32,7 +32,8 @@ const InterviewPanelFormModal = ({
 
   return (
     <>
-      <span className="card-title">Create New Panel</span>
+ 
+      <span className="card-title">{formData.id ? "Update Panel" : "Create New Panel"}</span>
       <p className="card-subtitle">Create and manage panels</p>
 
       {/* Panel Name */}
