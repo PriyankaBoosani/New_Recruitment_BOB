@@ -14,7 +14,7 @@ export const mapInterviewCandidates = (
       id: schedule.interviewScheduleId,
       name: item.fullName || "-",
       regNo: item.applicationNo || "-",
-      fileUrl: item.fileUrl,
+     fileUrl: item.resumeUrl,
 
 
       date: schedule.interviewStartAt
