@@ -19,24 +19,29 @@ const CandidateTable = ({
     //    console.log("Fetching job details for position ID@@@@@@@@@@@@@@@@@@:", position.positionId);
 const goToPreview = (c) => {
 
-      console.log("RAW CANDIDATE:@@@@@@@@@@@@@@@@@@@@@@@@@@@@", c.raw);   //  ADD
+  console.log("RAW CANDIDATE:", c.raw);
+
   navigate("/candidate-preview", {
     state: {
-      candidate: c.raw,   //  send full original candidate
-      candidateId: c.raw.candidateId,   //  explicit id
-       applicationId: c.raw.applicationId,
-        interviewScheduleId: c.raw.interviewScheduleId,
-      positionId: position?.positionId,
-       selectedDate, 
+      candidate: c.raw,
+      candidateId: c.raw.candidateId,
+      applicationId: c.raw.applicationId,
+      interviewScheduleId: c.raw.interviewScheduleId,
 
-        candidates: allCandidatesRaw,
+      positionId:
+        position?.raw?.positionId ||
+        position?.positionId ||
+        position?.value ||
+        null,
 
-     requisition,
-position,
-
+      selectedDate,
+      candidates: allCandidatesRaw,
+      requisition,
+      position,
     },
   });
 };
+
 
 
 
@@ -92,13 +97,15 @@ position,
                   <td>{c.time}</td>
                   <td>{c.zone}</td>
 
-                  <td className="text-center">
-                    <input
-                      type="checkbox"
-                      checked={c.absent}
-                      onChange={() => toggleAbsent(c.id)}
-                    />
-                  </td>
+                <td className="text-center">
+  <input
+    type="checkbox"
+    checked={c.absent}
+    disabled={c.status === "Verified"}
+    onChange={() => toggleAbsent(c.id)}
+  />
+</td>
+
 
                   <td>
                     <span
@@ -173,11 +180,13 @@ position,
 
                 <div>
                   <label>Absent</label>
-                  <input
-                    type="checkbox"
-                    checked={c.absent}
-                    onChange={() => toggleAbsent(c.id)}
-                  />
+                 <input
+  type="checkbox"
+  checked={c.absent}
+  disabled={c.status === "Verified"}
+  onChange={() => toggleAbsent(c.id)}
+/>
+
                 </div>
               </div>
 

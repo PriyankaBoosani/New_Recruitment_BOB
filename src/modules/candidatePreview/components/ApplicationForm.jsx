@@ -169,10 +169,14 @@ navigate("/candidate-verification", {
 
   const [photo, setPhoto] = useState()
   const [signature, setSignature] = useState()
-  const photoUrl = data.documents?.photo?.[0]?.url || logo_Bob;
-  console.log("photoUrl", photoUrl);
-  const signatureUrl = data.documents?.signature?.[0]?.url || sign;
-  console.log("signatureUrl", signatureUrl);
+
+  const allDocs = data.documents.allDocs;
+
+  const photoDoc = allDocs.find(doc => doc.name === "Photo");
+  const signatureDoc = allDocs.find(doc => doc.name === "Signature");
+
+  const photoUrl = photoDoc?.url || "";
+  const signatureUrl = signatureDoc?.url || "";
 
   const normalizeCriteria = (val) => val === "DEFAULT" ? "" : val ?? "";
 
@@ -1433,32 +1437,44 @@ navigate("/candidate-verification", {
 
             {/* RADIO OPTIONS — same pattern as Shortlisted */}
             <div className="criteria-radio mb-3">
-              {["Yes", "No", "Provisionally Approved"].map((opt) => (
-                <label
-                  key={opt}
-                  className={`radio-label me-4 ${!allDocsVerified ? "disabled" : ""
-                    }`}
-                >
-                  <input
-                    type="radio"
-                    name="docVerified"
-                    value={opt}
-                    checked={zonalDecision === opt}
-                    disabled={!allDocsVerified}
-                    onChange={(e) => {
-                      setZonalDecision(e.target.value);
+{["Yes", "No", "Provisionally Approved"].map((opt) => {
 
-                      // clear date error when changed
-                      setErrors(prev => ({
-                        ...prev,
-                        zonalSubmitDate: undefined
-                      }));
-                    }}
-                  />
-                  <span className="custom-radio"></span>
-                  {opt}
-                </label>
-              ))}
+  const disableYes =
+    opt === "Yes" && hasAnyRejectedDocument();
+
+  const disableProvisionallyApproved =
+    opt === "Provisionally Approved" && areAllDocumentsVerified();
+
+  const isDisabled =
+    !allDocsVerified || disableProvisionallyApproved || disableYes;
+
+  return (
+    <label
+      key={opt}
+      className={`radio-label me-4 ${isDisabled ? "disabled" : ""}`}
+    >
+      <input
+        type="radio"
+        name="docVerified"
+        value={opt}
+        checked={zonalDecision === opt}
+        disabled={isDisabled}
+        onChange={(e) => {
+          setZonalDecision(e.target.value);
+
+          setErrors(prev => ({
+            ...prev,
+            zonalSubmitDate: undefined
+          }));
+        }}
+      />
+      <span className="custom-radio"></span>
+      {opt}
+    </label>
+  );
+})}
+
+
             </div>
 
 
@@ -1466,12 +1482,13 @@ navigate("/candidate-verification", {
           <div className="submit-date-group d-flex flex-column">
   <label className="submit-label">Submit Before</label>
 
-  <input
-    type="date"
-    className={`criteria-date ${errors.zonalSubmitDate ? "input-error" : ""}`}
-    min={minFutureDate}
-    value={screeningForm.zonalSubmitDate}
-    disabled={!allDocsVerified || !zonalDecision}
+ <input
+  type="date"
+  className={`criteria-date ${errors.zonalSubmitDate ? "input-error" : ""}`}
+  min={minFutureDate}
+  value={screeningForm.zonalSubmitDate}
+  disabled={!allDocsVerified}
+
     onChange={(e) => {
       setScreeningForm(prev => ({
         ...prev,

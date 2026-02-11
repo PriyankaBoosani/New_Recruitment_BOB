@@ -144,6 +144,24 @@ const formatApiDate = (d) => {
   return `${year}-${month}-${day}`;
 };
 
+const loadCandidates = async (dateParam = selectedDate) => {
+  try {
+    const res =
+      await CandidateVerificationService.getCandidatesByDate(
+        formatApiDate(dateParam)
+      );
+
+    const apiList = res.data || [];
+
+    setAllCandidatesRaw(apiList);
+    setAllCandidates(mapCandidatesToTableRows(apiList));
+
+  } catch (err) {
+    console.error(err);
+    setAllCandidatesRaw([]);
+    setAllCandidates([]);
+  }
+};
 
 
 useEffect(() => {
@@ -157,50 +175,31 @@ const navCandidates = location.state?.preloadedCandidates || [];
 useEffect(() => {
 
   // restore selection from nav
-if (
-  (cameFromZonal || cameFromPreviewBack) &&
-  !usedNavData &&
-  navCandidates.length &&
-  navInitRef.current
-) {
-  console.log("Using nav candidates once");
+  if (
+    (cameFromZonal || cameFromPreviewBack) &&
+    !usedNavData &&
+    navCandidates.length &&
+    navInitRef.current
+  ) {
+    console.log("Using nav candidates once");
 
-  setAllCandidatesRaw(navCandidates);
-  setAllCandidates(mapCandidatesToTableRows(navCandidates));
+    setAllCandidatesRaw(navCandidates);
+    setAllCandidates(mapCandidatesToTableRows(navCandidates));
 
-  if (navRequisition) setSelectedRequisition(navRequisition);
-  if (navPosition) setSelectedPosition(navPosition);
+    if (navRequisition) setSelectedRequisition(navRequisition);
+    if (navPosition) setSelectedPosition(navPosition);
 
-  setUsedNavData(true);
+    setUsedNavData(true);
 
-  sessionStorage.removeItem("fromZonalSubmit");
-  sessionStorage.removeItem("fromPreviewBack");
-}
-
+    sessionStorage.removeItem("fromZonalSubmit");
+    sessionStorage.removeItem("fromPreviewBack");
+  }
 
   //  ALWAYS call API
-  const loadCandidates = async () => {
-    try {
-      const res =
-        await CandidateVerificationService.getCandidatesByDate(
-          formatApiDate(selectedDate)
-        );
-
-      const apiList = res.data || [];
-
-      setAllCandidatesRaw(apiList);
-      setAllCandidates(mapCandidatesToTableRows(apiList));
-
-    } catch (err) {
-      console.error(err);
-      setAllCandidatesRaw([]);
-      setAllCandidates([]);
-    }
-  };
-
-  loadCandidates();
+  loadCandidates(selectedDate);
 
 }, [selectedDate]);
+
 
 
 useEffect(() => {
@@ -236,22 +235,37 @@ useEffect(() => {
 
 
 
-  const baseFiltered = allCandidates.filter(c => {
+const baseFiltered = allCandidates.filter(c => {
 
   if (!selectedRequisition || !selectedPosition) return false;
 
+  const selectedReqId =
+    selectedRequisition?.raw?.requisition_id ||
+    selectedRequisition?.requisition_id ||
+    selectedRequisition?.value ||
+    null;
+
+  const selectedPosId =
+    selectedPosition?.raw?.positionId ||
+    selectedPosition?.positionId ||
+    selectedPosition?.value ||
+    null;
+
   const reqMatch =
-    c.raw.requisitionId === selectedRequisition.requisition_id;
+    c.raw.requisitionId === selectedReqId;
 
   const posMatch =
-    c.raw.positionId === selectedPosition.positionId;
+    c.raw.positionId === selectedPosId;
 
   const searchMatch =
-    c.name.toLowerCase().includes(searchText.toLowerCase()) ||
-    c.regNo.includes(searchText);
+    c.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+    c.regNo?.includes(searchText);
 
   return reqMatch && posMatch && searchMatch;
 });
+
+
+
 
 
 
@@ -285,15 +299,18 @@ const stageCounts = Object.keys(STAGE_STATUS_MAP).reduce((acc, key) => {
     );
   };
 
-const anyAbsentChanged =
-  filteredCandidates.some(c => c.absent === true);
+const anyAbsentChecked =
+  baseFiltered.some(c => c.absent === true);
+
+
+
 
 
   const isSelectionDone =
     selectedRequisition && selectedPosition;
 
 
- const handleSaveAbsent = async () => {
+const handleSaveAbsent = async () => {
   try {
     if (!filteredCandidates.length) return;
 
@@ -306,11 +323,18 @@ const anyAbsentChanged =
 
     toast.success("Absent status updated");
 
+    sessionStorage.removeItem("fromZonalSubmit");
+    sessionStorage.removeItem("fromPreviewBack");
+
+    window.location.reload();
+
   } catch (err) {
     console.error("Absent update failed", err);
     toast.error("Save failed");
   }
 };
+
+
 
 
 useEffect(() => {
@@ -351,7 +375,7 @@ useEffect(() => {
   onChange={setSelectedDate}
   dateFormat="dd MMMM yyyy"
   customInput={<DatePill />}
-  maxDate={new Date()}
+ // maxDate={new Date()}
 />
 
 
@@ -432,14 +456,14 @@ useEffect(() => {
 
       {isSelectionDone && (
         <div className="requisition-strip">
-          <RequisitionStrip
-            requisition={selectedRequisition}
-            position={selectedPosition}
-           // masterData={masterData}
-            isCardBg={false}
-isSaveEnabled={anyAbsentChanged}
-             onSave={handleSaveAbsent}  
-          />
+       <RequisitionStrip
+  requisition={selectedRequisition}
+  position={selectedPosition}
+  isCardBg={false}
+  isSaveEnabled={anyAbsentChecked}
+  onSave={handleSaveAbsent}
+/>
+
         </div>
       )}
 

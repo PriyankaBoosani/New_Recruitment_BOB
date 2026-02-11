@@ -36,21 +36,27 @@ const formatTime = (s, e) => {
 };
 
 
-/* ================= REQUISITIONS ================= */
+
+
+/* ================= REQUISITIONS DROPDOWN ================= */
 
 export const mapUniqueRequisitionsToDropdown = (list = []) => {
   const map = new Map();
 
-  list.forEach((c) => {
-    if (!map.has(c.requisitionId)) {
-      map.set(c.requisitionId, {
-        value: c.requisitionId,
-        label: c.requisitionTitle,
+  list.forEach((row) => {
+    const req = row.requisition;
+    if (!req) return;
+
+    if (!map.has(req.id)) {
+      map.set(req.id, {
+        value: req.id,
+        label: req.requisitionTitle,
         raw: {
-          requisition_id: c.requisitionId,
-          requisition_title: c.requisitionTitle,
-          registration_start_date: c.requisitionStartDate,
-          registration_end_date: c.requisitionEndDate,
+          requisition_id: req.id,
+          requisition_title: req.requisitionTitle,
+          registration_start_date: req.startDate,
+          registration_end_date: req.endDate,
+          requisition_code: req.requisitionCode,
         },
       });
     }
@@ -59,42 +65,107 @@ export const mapUniqueRequisitionsToDropdown = (list = []) => {
   return Array.from(map.values());
 };
 
-/* ================= POSITIONS ================= */
+
+
+
+/* ================= POSITIONS DROPDOWN ================= */
 
 export const mapUniquePositionsToDropdown = (list = [], requisitionId) => {
   const map = new Map();
 
-  list
-    .filter((c) => c.requisitionId === requisitionId)
-    .forEach((c) => {
-      if (!map.has(c.positionId)) {
-        map.set(c.positionId, {
-          value: c.positionId,
-          label: c.positionTitle,
-          raw: {
-            positionId: c.positionId,
-            positionName: c.positionTitle,
-          },
-        });
-      }
-    });
+  list.forEach((row) => {
+    const req = row.requisition;
+    const pos = row.masterPosition;
+    const app = row.application;
+
+    if (!req || !pos || !app) return;
+    if (req.id !== requisitionId) return;
+
+    const appPosId = app.positionId;
+
+    if (!map.has(appPosId)) {
+      map.set(appPosId, {
+        value: appPosId,
+        label: pos.positionName,
+        raw: {
+          positionId: appPosId,
+          positionName: pos.positionName,
+        },
+      });
+    }
+  });
 
   return Array.from(map.values());
 };
 
-/* ================= TABLE ROWS ================= */
+
+
+
+
+/* ================= TABLE ROW MAPPING ================= */
 
 export const mapCandidatesToTableRows = (list = []) => {
-  return list.map((c) => ({
-    id: c.interviewScheduleId,
-    name: c.candidateName,
-    regNo: c.applicationNumber,
-    category: c.categoryCode || "-",
-    time: formatTime(c.interviewStartAt, c.interviewEndAt),
-    //zone : "Zone-1", 
-     zone: c.zonalOfficeName,
-    absent: c.isAbsent,
-    status: STATUS_MAP[c.zonalVerificationStatus] || c.zonalVerificationStatus,
-    raw: c,
-  }));
+  return list.map((row) => {
+    const sched = row.interviewSchedule || {};
+    const cand = row.candidate || {};
+    const app = row.application || {};
+    const cat = row.category || {};
+    const pos = row.masterPosition || {};
+    const req = row.requisition || {};
+    const zone = row.zonalOffice || {};
+
+    const status =
+      STATUS_MAP[sched.zonalVerificationStatus] ||
+      sched.zonalVerificationStatus ||
+      "-";
+
+    return {
+      /* ===== TABLE DISPLAY ===== */
+
+      id: sched.interviewScheduleId,
+      name: cand.fullName,
+      regNo: app.applicationNo,
+      category: cat.categoryCode || "-",
+      time: formatTime(
+        sched.interviewStartAt,
+        sched.interviewEndAt
+      ),
+      zone: zone.interviewCentre || "-",
+
+      /* ===== STATE TRACKING ===== */
+
+      absent: app.isAbsent,
+      originalAbsent: app.isAbsent,
+
+      status,
+      originalStatus: status,
+
+      /* ===== RAW FLATTENED — USED BY UI ===== */
+
+    raw: {
+  interviewScheduleId: sched.interviewScheduleId,
+  interviewStartAt: sched.interviewStartAt,
+  interviewEndAt: sched.interviewEndAt,
+  zonalVerificationStatus: sched.zonalVerificationStatus,
+
+  applicationId: sched.applicationId,
+  candidateId: sched.candidateId,
+
+  //  SAME ID SYSTEM AS DROPDOWN
+  positionId: app.positionId,
+
+  requisitionId: req.id,
+  requisitionTitle: req.requisitionTitle,
+  requisitionCode: req.requisitionCode,
+  requisitionStartDate: req.startDate,
+  requisitionEndDate: req.endDate,
+
+  positionTitle: pos.positionName,
+  zonalOfficeName: zone.interviewCentre,
+  categoryCode: cat.categoryCode,
+  resumeUrl: row.resumeUrl,
+}
+
+    };
+  });
 };

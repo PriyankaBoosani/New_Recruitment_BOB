@@ -18,11 +18,8 @@ const RequisitionStrip = ({
   isSaved,
   onSave,
   isCardBg,
-  isSaveEnabled
+  isSaveEnabled,
 }) => {
-
-  console.log("requisition", requisition);
-  console.log("position", position);
  
   const [showPosition, setShowPosition] = useState(false);
   const [job, setJob] = useState(null);
@@ -91,10 +88,6 @@ const RequisitionStrip = ({
   const handleViewPosition = () => {
     setShowPosition(true);
   };
-
-  console.log("position", position)
-   console.log("position", position?.positionName)
- 
  
   return (
 <>
@@ -154,13 +147,15 @@ End: {formatDMY(requisition?.registration_end_date)}
             View Position
 </button>
  
-          <button
-            className={`save-btn ${isSaveEnabled ? "unsaved" : "saved"}`}
-            disabled={!isSaveEnabled}
-            onClick={onSave}
->
-            Save
-</button>
+
+  <button
+    className={`save-btn ${isSaveEnabled ? "unsaved" : "saved"}`}
+    disabled={!isSaveEnabled}
+    onClick={onSave}
+  >
+    Save
+  </button>
+
  
         </div>
  

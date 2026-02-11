@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import "../../../style/css/PreviewModal.css";
 import masterApiService from "../../master/services/masterApiService";
+import { useSelector } from "react-redux";
 
 const DocumentViewerModal = ({
   show,
@@ -13,6 +14,15 @@ const DocumentViewerModal = ({
   const [comment, setComment] = useState("");
   const [sasUrl, setSasUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  /* ================= USER ROLE ================= */
+
+  const user = useSelector((state) => state.user.user);
+  const role = user?.role?.toLowerCase();
+  const isZonalHr = role === "zonal_hr";
+
+  /* ================= FETCH SAS URL ================= */
 
   useEffect(() => {
     if (!show || !document?.fileUrl) return;
@@ -29,11 +39,7 @@ const DocumentViewerModal = ({
           "candidate"
         );
 
-        const trimmedUrl = res.trim()
-
-        if (!cancelled) {
-          setSasUrl(trimmedUrl);
-        }
+        if (!cancelled) setSasUrl(res.trim());
       } catch (err) {
         console.error("Failed to fetch SAS URL", err);
       } finally {
@@ -48,14 +54,20 @@ const DocumentViewerModal = ({
     };
   }, [show, document]);
 
+  /* ================= RESET PER DOCUMENT ================= */
+
   useEffect(() => {
     if (show && document) {
       setComment(document.docScreeningComments || "");
+      setError("");
     } else {
       setComment("");
+      setError("");
       setSasUrl(null);
     }
   }, [show, document]);
+
+  /* ================= FILE TYPE ================= */
 
   const getFileType = (url) => {
     if (!url) return "";
@@ -65,6 +77,25 @@ const DocumentViewerModal = ({
   const fileType = getFileType(sasUrl);
 
   if (!document) return null;
+
+  /* ================= ACTION HANDLERS ================= */
+
+  const handleRejectClick = () => {
+    if (isZonalHr && !comment.trim()) {
+      setError("required");
+      return;
+    }
+
+    setError("");
+    onReject(comment.trim());
+  };
+
+  const handleVerifyClick = () => {
+    setError("");
+    onVerify(comment.trim());
+  };
+
+  /* ================= UI ================= */
 
   return (
     <Modal
@@ -77,7 +108,8 @@ const DocumentViewerModal = ({
       dialogClassName="doc-viewer-dialog"
     >
       <div className="doc-viewer-container">
-        {/* header */}
+
+        {/* ===== HEADER ===== */}
         <div className="doc-viewer-header">
           <span className="doc-viewer-title">{document.name}</span>
           <button className="doc-viewer-close" onClick={onHide}>
@@ -85,13 +117,15 @@ const DocumentViewerModal = ({
           </button>
         </div>
 
-        {/* content */}
+        {/* ===== CONTENT ===== */}
         <div className="doc-viewer-content">
-          {loading && <div className="text-center">Loading document...</div>}
+
+          {loading && (
+            <div className="text-center">Loading document...</div>
+          )}
 
           {!loading && sasUrl && (
             <>
-              {/* IMAGES */}
               {["png", "jpg", "jpeg"].includes(fileType) && (
                 <img
                   src={sasUrl}
@@ -100,16 +134,14 @@ const DocumentViewerModal = ({
                 />
               )}
 
-              {/* PDF */}
               {fileType === "pdf" && (
                 <iframe
-                  src={`${sasUrl}#toolbar=0&navpanes=0`}
+                  src={`${sasUrl}#toolbar=0`}
                   title={document.name}
                   className="doc-pdf-frame"
                 />
               )}
 
-              {/* DOC / DOCX / OTHERS */}
               {["doc", "docx"].includes(fileType) && (
                 <div className="text-center p-4">
                   <p>This file cannot be previewed in browser.</p>
@@ -127,35 +159,55 @@ const DocumentViewerModal = ({
           )}
         </div>
 
-        {/* footer */}
+        {/* ===== FOOTER ===== */}
         <div className="doc-viewer-footer">
-          <input
-            type="text"
-            placeholder="Enter comments..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-          />
 
-          <div className="doc-viewer-actions">
-            <button
-              className="btn-reject"
-              onClick={() => onReject(comment)}
-            >
-              Rejected
-            </button>
+          {/* one-line row */}
+          <div className="d-flex align-items-center gap-3 w-100">
 
-            <button
-              className="btn-verify"
-              onClick={() => onVerify(comment)}
-            >
-              Verified
-            </button>
+            {/* comment box same height as buttons */}
+            <div style={{ flex: 1 }}>
+              <textarea
+                placeholder="Enter comments..."
+                rows={1}
+                value={comment}
+                className={`doc-comment-input one-line ${error ? "input-error" : ""}`}
+                onChange={(e) => {
+                  setComment(e.target.value);
+                  setError("");
+                }}
+              />
+
+              {error && isZonalHr && (
+                <div className="field-error-text">
+                  This field is required
+                </div>
+              )}
+            </div>
+
+            {/* buttons */}
+            <div className="doc-viewer-actions d-flex gap-2">
+              <button
+                className="btn-reject"
+                onClick={handleRejectClick}
+              >
+                Rejected
+              </button>
+
+              <button
+                className="btn-verify"
+                onClick={handleVerifyClick}
+              >
+                Verified
+              </button>
+            </div>
+
           </div>
+
         </div>
       </div>
     </Modal>
   );
 };
-
 
 export default DocumentViewerModal;

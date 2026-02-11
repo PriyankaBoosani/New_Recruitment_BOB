@@ -200,13 +200,26 @@ console.log("Full Masters Data:@@@@@", candidateId, positionId);
 
 
       {/* Requisition Strip */}
-      {requisition && position && ( 
+      {isZonalHr && requisition && position && ( 
         <RequisitionStrip
           requisition={requisition}
           position={position}
           isCardBg
           isSaveEnabled={false}
-           masterData={masters}
+           showSaveButton={true} 
+          // masterData={masters}
+        />
+      )}
+
+
+
+  {!isZonalHr &&requisition && position && ( 
+        <RequisitionStrip
+          requisition={requisition}
+          position={position}
+          isCardBg
+          isSaveEnabled={false}
+         //  masterData={masters}
         />
       )}
 
