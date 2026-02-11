@@ -776,6 +776,11 @@ select.form-control {
   color: #F57C00 !important;   /* BOB Orange */
   font-weight: 600;
   font-size: 15px;
+  max-width: 300px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
 }
 
 
