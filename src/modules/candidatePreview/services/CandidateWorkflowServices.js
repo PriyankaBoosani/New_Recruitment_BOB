@@ -51,6 +51,16 @@ getInterviewCandidates: (payload) => {
     }
   );
 },
+getPanelScores: (scheduledInterviewId) => {
+  return api.get(
+    `/recruiter/interview-pool/get-panel-scores/${scheduledInterviewId}`,
+    {
+      headers: {
+        "X-Client": "recruiter"
+      }
+    }
+  );
+},
 
 
 

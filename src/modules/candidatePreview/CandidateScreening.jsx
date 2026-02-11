@@ -18,6 +18,7 @@ import { useLocation } from "react-router-dom";
 import InterviewFeedbackHistoryModal from "./components/InterviewFeedbackHistoryModal";
 import SendToOfferPoolModal from "./components/SendToOfferPoolModal";
 import useInterviewPool from "./hooks/useInterviewPool";
+import candidateWorkflowServices from "./services/CandidateWorkflowServices";
 
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
@@ -245,6 +246,22 @@ export default function CandidateScreening({ selectedJob }) {
       setLoadingCandidates(false);
     }
   };
+  const formatDateTime = (value) => {
+    if (!value) return "-";
+    const d = new Date(value);
+
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+
+    const time = d.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    return `${day}-${month}-${year} ${time}`;
+  };
+
 
   // useEffect(() => {
   //   if (!selectedPositionId) {
@@ -821,10 +838,40 @@ export default function CandidateScreening({ selectedJob }) {
             requisition={normalizedRequisition}
             position={selectedPosition}
             onViewFile={handleViewFile}
-            onOpenFeedback={(candidateId) => {
-              setSelectedFeedback(mapInterviewFeedback(candidateId));
-              setShowFeedbackModal(true);
+            onOpenFeedback={async (scheduledInterviewId) => {
+              try {
+                setShowFeedbackModal(true);
+                setSelectedFeedback([]);
+
+                const res = await candidateWorkflowServices.getPanelScores(
+                  scheduledInterviewId
+                );
+
+                const rawList = res?.data || [];
+
+                const mapped = rawList.map(item => {
+                  const scoreObj = item.panelMembersScore;
+                  const user = item.user;
+
+                  return {
+                    id: scoreObj.panelMembersScoreId,
+                    name: user?.name || "-",
+                    comment: scoreObj.panelComments || "-",
+                    time: formatDateTime(scoreObj.modifiedDate),
+                    score: scoreObj.panelScore ?? "-"
+                  };
+                });
+
+                setSelectedFeedback(mapped);
+
+              } catch (err) {
+                console.error(err);
+                toast.error("Failed to load feedback");
+                setShowFeedbackModal(false);
+              }
             }}
+
+
           />
         )}
 

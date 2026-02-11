@@ -5,8 +5,11 @@ export default function InterviewFeedbackHistoryModal({
   show,
   onHide,
   feedbackList = [],
-}) {
+  loading
+})
+ {
   return (
+    
     <Modal
       show={show}
       onHide={onHide}
@@ -21,6 +24,7 @@ export default function InterviewFeedbackHistoryModal({
       </Modal.Header>
 
       <Modal.Body className="padding-20">
+        
         <table className="table mb-0">
           <thead>
             <tr>
