@@ -65,7 +65,7 @@ const AddPosition = () => {
     const { createPosition, loading } = useCreateJobPosition();
     const { updatePosition } = useUpdateJobPosition();
     const masterData = useMasterData();
-    const { positions, employmentTypes, reservationCategories, disabilityCategories, educationTypes, qualifications, specializations, certifications, states, languages } = masterData;
+    const { positions, employmentTypes, reservationCategories, disabilityCategories, educationTypes, qualifications, specializations, certifications, states, languages, stateLanguages } = masterData;
 
     const [errors, setErrors] = useState({});
     const [showImportModal, setShowImportModal] = useState(false);
@@ -532,7 +532,15 @@ const AddPosition = () => {
 
     const nationalCategoryTotal = Object.values(nationalCategories).reduce((a, b) => a + Number(b || 0), 0);
     const stateCategoryTotal = Object.values(currentState.categories || {}).reduce((a, b) => a + Number(b || 0), 0);
-    const filteredLanguages = currentState.state ? languages.filter(l => l.name === states.find(s => s.id === currentState.state)?.localLanguage) : [];
+    const filteredLanguages = currentState.state
+        ? languages.filter(lang =>
+            stateLanguages.some(
+                sl =>
+                    sl.stateId === currentState.state &&
+                    sl.languageId === lang.id
+            )
+        )
+        : [];
 
     return (
         <Container fluid className="add-position-page">

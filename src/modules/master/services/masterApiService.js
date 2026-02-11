@@ -127,13 +127,13 @@ const masterApiService = {
   addCertificates: (data) => apis.post("/certificates-master/add", data),
   updateCertificates: (id, data) => apis.put(`/certificates-master/update/${id}`, data),
   deleteCertificates: (id) => apis.delete(`/certificates-master/delete/${id}`),
-   //  DOWNLOAD JOB GRADE TEMPLATE
+  //  DOWNLOAD JOB GRADE TEMPLATE
   downloadCertificatesTemplate: () =>
     apis.get("/certificates-master/download-template", {
       responseType: "blob",
     }),
 
-   bulkAddCertificates: (file) => {
+  bulkAddCertificates: (file) => {
     const formData = new FormData();
     formData.append('file', file);
     return apis.post('/certificates-master/bulk-add', formData, {
@@ -192,8 +192,8 @@ const masterApiService = {
   getActiveInterviewMembers: () => apis.get("/interview-panels/active-members"),
   getInterviewPanelById: (id) => apis.get(`/interview-panels/get-by-id/${id}`),
 
-    getInterviewPanelsSearch: (params) => apis.get("interview-panels/search", { params }),
-            
+  getInterviewPanelsSearch: (params) => apis.get("interview-panels/search", { params }),
+
 
 
 
@@ -230,7 +230,7 @@ const masterApiService = {
 
 
   getMasterDisplayAll: () =>
-  apis.get("/display/all"),
+    apis.get("/display/all"),
 
   getAzureBlobSasUrl(dir, client = "candidate") {
     return apis.get(
@@ -243,16 +243,25 @@ const masterApiService = {
       }
     );
   },
-  
-    getUser: () => apis.get('/user/all'),
+
+  getUser: () => apis.get('/user/all'),
 
   getAllMasters: () => apis.get("/display/all"),
   getUser: () => apis.get('/user/all'),
-   getAllCertificates: () =>
+  getAllCertificates: () =>
     apis.get("/certificates-master/all"),
+  getZonalStates: () => apis.get("/zonal-states/all"),
+  
 
-   //Interview Pool related master data interview-center
-    getAllInterviewCenters: () => apis.get("/master-dd-data/get/interview-centres"),
+  getAllLanguages: () =>
+    apis.get("/master-dd-data/get/languages"),
+
+  getStateLanguages: () =>
+    apis.get("/master-dd-data/get/state-languages"),
+
+
+  //Interview Pool related master data interview-center
+  getAllInterviewCenters: () => apis.get("/master-dd-data/get/interview-centres"),
 
 
 };

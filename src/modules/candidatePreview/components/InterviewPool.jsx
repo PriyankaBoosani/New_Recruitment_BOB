@@ -93,13 +93,11 @@ export default function InterviewPool({
                 onChange={toggleSelectAll}
               />
             </th>
-            <th className="fs-14 fw-normal py-3" onClick={() => requestSort("name")} role="button">
-              Candidate {sortIcon("name")}
-            </th>
+            <th className="fs-14 fw-normal py-3" >Candidate</th>
             <th className="fs-14 fw-normal py-3">Date</th>
             <th className="fs-14 fw-normal py-3">Time</th>
             <th className="fs-14 fw-normal py-3">Zone</th>
-            <th className="fs-14 fw-normal py-3" onClick={() => requestSort("name")} role="button">Panel Details {sortIcon("name")}</th>
+            <th className="fs-14 fw-normal py-3"> Panel Details</th>
             <th className="fs-14 fw-normal py-3">Interview Status</th>
             <th className="fs-14 fw-normal py-3">Score</th>
             <th className="text-center fs-14 fw-normal py-3">Actions</th>

@@ -18,6 +18,7 @@ export const useMasterData = () => {
     certifications: [],
     states: [],
     languages: [],
+    stateLanguages: [],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -29,12 +30,24 @@ export const useMasterData = () => {
       setLoading(true);
       try {
         // 🔥 CALL BOTH APIS IN PARALLEL
-        const [masterRes, userRes, certRes] = await Promise.all([
+        const [
+          masterRes,
+          userRes,
+          certRes,
+          zonalRes,
+          languagesRes,
+          stateLanguagesRes
+        ] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
           masterApiService.getUser(),
           masterApiService.getAllCertificates(),
-
+          masterApiService.getZonalStates(),
+          masterApiService.getAllLanguages(),
+          masterApiService.getStateLanguages(),
         ]);
+        console.log("Full zonalRes:", zonalRes);
+
+
 
         const mapped = mapMasterResponse(
           masterRes.data,
@@ -55,8 +68,24 @@ export const useMasterData = () => {
           specializations: mapped.specializations,
           users: mapped.users,
           certifications: mapped.certifications,
-          states: mapped.states,
-          languages: mapped.languages,
+          // NEW STATES
+          states: (zonalRes.data || []).map(s => ({
+            id: String(s.zonalStateID),
+            name: s.stateName,
+          })),
+
+          // NEW LANGUAGES
+          languages: (languagesRes.data || []).map(l => ({
+            id: String(l.languageId),
+            name: l.languageName,
+          })),
+
+          // NEW STATE-LANGUAGE MAPPING
+          stateLanguages: (stateLanguagesRes.data || []).map(sl => ({
+            stateId: String(sl.stateId),
+            languageId: String(sl.languageId),
+            isPrimary: sl.isPrimary,
+          })),
         });
 
       } catch (err) {
