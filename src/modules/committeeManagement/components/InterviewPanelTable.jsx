@@ -135,7 +135,7 @@ const InterviewPanelTable = ({
 
                     <button
                       className="table-icon-btn delete"
-                      onClick={() => onDelete(panel.id)}
+                      onClick={() => onDelete(panel.id, panel.panelName)}
                     >
                       <img src={delete_icon} alt="Delete" />
                     </button>

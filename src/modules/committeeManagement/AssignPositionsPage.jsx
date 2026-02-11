@@ -168,6 +168,34 @@ const AssignPositionsPage = () => {
     p =>
       p.committeeName?.toUpperCase() === activeTab
   );
+
+  const selectedRequisitionObj = requisitions.find(
+  r => r.id === selectedRequisition
+);
+
+const normalizedRequisition = {
+  ...selectedRequisitionObj,
+  registration_start_date: selectedRequisitionObj?.startDate,
+  registration_end_date: selectedRequisitionObj?.endDate,
+};
+
+console.log("selectedRequisitionObj", selectedRequisitionObj);
+
+const selectedPositionObj = positions.find(
+  p => p.jobPositions?.positionId === selectedPosition
+)?.jobPositions;
+
+console.log("selectedPositionObj", selectedPositionObj);
+
+
+const selectedPositionFull = positions.find(
+  p => p.jobPositions?.positionId === selectedPosition
+);
+const normalizedPosition = {
+  ...selectedPositionObj,
+  positionName: selectedPositionFull?.masterPositions?.positionName
+};
+
   return (
     <div className="assign-positions-page">
       {/* ===== PAGE HEADER ===== */}
@@ -188,7 +216,7 @@ const AssignPositionsPage = () => {
               <option value="">Select Requisition</option>
               {requisitions.map(req => (
                 <option key={req.id} value={req.id}>
-                  {req.requisitionCode}
+                  {req.requisitionCode} - {req.requisitionTitle}
                 </option>
               ))}
             </select>
@@ -216,10 +244,10 @@ const AssignPositionsPage = () => {
       {selectedRequisition && selectedPosition && (
         <div className="requisition-strip-section">
           <RequisitionStrip
-            requisition={selectedRequisition}
-            position={selectedPosition}
-            isCardBg={false}
-            isSaveEnabled={false}
+             requisition={normalizedRequisition}
+              position={normalizedPosition}
+              isCardBg={false}
+              isSaveEnabled={false}
           />
         </div>
       )}

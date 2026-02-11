@@ -6,7 +6,7 @@ import "../../style/css/InterviewPanelPage.css";
 import { useInterviewPanel } from "./hooks/useInterviewPanel";
 import { FiUsers, FiFileText } from "react-icons/fi";
 import { Modal, Button } from "react-bootstrap";
-
+import DeleteConfirmationModal from "./components/DeleteConfirmationModal";
 
 const InterviewPanelPage = () => {
 
@@ -52,6 +52,7 @@ const InterviewPanelPage = () => {
   // }, []);
 const [showDeleteModal, setShowDeleteModal] = useState(false);
 const [deleteId, setDeleteId] = useState(null);
+const [deletePanelName, setDeletePanelName] = useState("");
   return (
     <div className="interview-panel-container">
       <div className="panel-card">
@@ -117,8 +118,9 @@ const [deleteId, setDeleteId] = useState(null);
                     sortedPanels={sortedPanels}
                     size={size}
                     setSize={setSize}
-                    onDelete={(id) => {
+                    onDelete={(id, panelName) => {
                       setDeleteId(id);
+                      setDeletePanelName(panelName);
                       setShowDeleteModal(true);
                     }}
                   />
@@ -134,7 +136,7 @@ const [deleteId, setDeleteId] = useState(null);
           )}
         </div>
 
-              <Modal
+              {/* <Modal
         show={showDeleteModal}
         onHide={() => setShowDeleteModal(false)}
         centered
@@ -167,7 +169,24 @@ const [deleteId, setDeleteId] = useState(null);
             Delete
           </Button>
         </Modal.Footer>
-        </Modal>
+        </Modal> */}
+        <DeleteConfirmationModal
+          show={showDeleteModal}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setDeleteId(null);
+            setDeletePanelName("");
+          }}
+          onConfirm={() => {
+            handleDelete(deleteId);
+            setShowDeleteModal(false);
+            setDeleteId(null);
+            setDeletePanelName("");
+          }}
+          title="Confirm Delete"
+          message="Are you sure you want to delete this panel?"
+          itemLabel={deletePanelName}
+        />
 
 
       </div>

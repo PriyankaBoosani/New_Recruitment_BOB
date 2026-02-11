@@ -177,9 +177,9 @@ useEffect(() => {
     if (!formData.name?.trim()) {
       newErrors.name = "Panel name is required";
     }
-    // else if (formData.name.trim().length < 3) {
-    //   newErrors.name = "Panel name must be at least 3 characters";
-    // }
+      else if (formData.name.trim().length > 200) {
+      newErrors.name = "Panel name cannot exceed 200 characters";
+    }
 
     if (!formData.community) {
       newErrors.community = "Panel type is required";
@@ -203,7 +203,7 @@ useEffect(() => {
 
   const handleSave = async () => {
   if (!validatePanelForm()) {
-    toast.error("Please fix the validation errors");
+    //toast.error("Please fix the validation errors");
     return;
   }
 

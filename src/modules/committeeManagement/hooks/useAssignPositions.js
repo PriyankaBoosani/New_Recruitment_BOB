@@ -195,80 +195,6 @@ export const useAssignPositions = (userId) => {
   }
 };
 
-  // Mock data for now - replace with actual API calls
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       setLoading(true);
-  //       // Replace with actual API calls
-  //       // const res = await masterApiService.getCommitteeAssignments();
-  //       // setHistory(res.data || []);
-
-  //       // Mock data
-  //       setHistory([
-  //         {
-  //           id: 1,
-  //           requisitionCode: 'REQ-2023-001',
-  //           positionName: 'Senior Software Engineer',
-  //           panelType: 'Technical Interview',
-  //           members: ['John Doe', 'Jane Smith'],
-  //           assignedDate: '2023-06-15T10:30:00',
-  //           updatedDate: '2023-06-15T10:30:00'
-  //         }
-  //       ]);
-  //     } catch (error) {
-  //       console.error('Error fetching committee assignments:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [userId]);
-
-  const handleAssign = async () => {
-    if (!formData.requisitionId || !formData.positionId) return;
-
-    try {
-      setLoading(true);
-      // Replace with actual API call
-      // const response = await masterApiService.assignCommittee({
-      //   ...formData,
-      //   assignedBy: userId
-      // });
-
-      // Update local state with the new assignment
-      const newAssignment = {
-        id: Date.now(), // Temporary ID
-        requisitionCode: formData.requisitionCode || 'REQ-2023-XXX',
-        positionName: formData.positionName || 'Position Name',
-        panelType: formData.panelType || 'Interview Panel',
-        members: formData.members || [],
-        assignedDate: new Date().toISOString(),
-        updatedDate: new Date().toISOString()
-      };
-
-      setHistory(prev => [newAssignment, ...prev]);
-
-      // Reset form
-      setFormData({
-        requisitionId: "",
-        positionId: "",
-        panelType: "",
-        members: []
-      });
-
-      return true;
-    } catch (error) {
-      console.error('Error assigning committee:', error);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
-
   const fetchPanels = useCallback(async () => {
     try {
       setLoading(true);
@@ -363,7 +289,7 @@ export const useAssignPositions = (userId) => {
   };
   const handleAssignCommittees = async () => {
     if (!selectedPosition) {
-      toast.error("Please select a position");
+      toast.error("Please select a requisition and a position");
       return;
     }
     const isValid = validatePanels();
@@ -430,7 +356,7 @@ export const useAssignPositions = (userId) => {
       if(res?.success) {
         toast.success("Committees assigned successfully");
       } else {
-        toast.error("Failed to assign committees");
+        toast.error(res?.message || "Failed to assign committees");
       }
 
     } catch (err) {
@@ -450,7 +376,6 @@ export const useAssignPositions = (userId) => {
     loading,
     formData,
     setFormData,
-    handleAssign,
     // handleEdit,
     // handleDelete,
 

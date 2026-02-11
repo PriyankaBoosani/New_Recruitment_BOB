@@ -20,6 +20,9 @@ const RequisitionStrip = ({
   isCardBg,
   isSaveEnabled
 }) => {
+
+  console.log("requisition", requisition);
+  console.log("position", position);
  
   const [showPosition, setShowPosition] = useState(false);
   const [job, setJob] = useState(null);
@@ -88,6 +91,10 @@ const RequisitionStrip = ({
   const handleViewPosition = () => {
     setShowPosition(true);
   };
+
+  console.log("position", position)
+   console.log("position", position?.positionName)
+ 
  
   return (
 <>

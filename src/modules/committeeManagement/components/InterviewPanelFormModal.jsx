@@ -123,9 +123,10 @@ const InterviewPanelFormModal = ({
         <button
           type="button"
           className="btn btn-outline-secondary"
-          onClick={() =>
-            setFormData({ name: "", community: "", members: [] })
-          }
+          onClick={() => {
+            setFormData({ name: "", community: "", members: [] });
+            setErrors({});
+          }}
         >
           Cancel
         </button>

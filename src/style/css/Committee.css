@@ -84,36 +84,36 @@
 }
 
 /* ===== REQUISITION STRIP SECTION ===== */
-.requisition-strip-section {
+.assign-positions-page .requisition-strip-section {
   margin-bottom: 24px;
 }
 
 /* ===== COMMITTEE CONFIGURATION SECTION ===== */
-.committee-config-section {
+.assign-positions-page .committee-config-section {
   background: #ffffff;
   border-radius: 12px;
   padding: 32px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
-.config-header {
+.assign-positions-page .config-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 32px;
 }
 
-.config-title-section {
+.assign-positions-page .config-title-section {
   flex: 1;
 }
-.config-title {
+.assign-positions-page .config-title {
 	color: #0a0a0a;
 	font-size: 0.875rem;
 	font-weight: 400;
 	margin: 0 0 8px 0;
 }
 
-.config-subtitle {
+.assign-positions-page .config-subtitle {
 	color: #717182;
 	font-size: .75rem;
 	font-weight: 400;
@@ -411,7 +411,7 @@
   background: #F26522;
 }
 
-.action-pill.remove {
+.assign-positions-page .action-pill.remove {
   background: #ef4444;
   color: #ffffff;
 }
@@ -480,3 +480,7 @@
 	font-size: .75rem;
 	font-weight: 400;
 }
+/* .requisition-strip-section
+{
+  border-top: 2px solid #e5e7eb;
+} */
