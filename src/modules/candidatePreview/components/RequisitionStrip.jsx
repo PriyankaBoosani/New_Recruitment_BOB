@@ -19,6 +19,7 @@ const RequisitionStrip = ({
   onSave,
   isCardBg,
   isSaveEnabled,
+  isSaveBtn
 }) => {
  
   const [showPosition, setShowPosition] = useState(false);
@@ -102,29 +103,27 @@ const RequisitionStrip = ({
 >
  
         {/* ===== LEFT CONTENT ===== */}
-<div className="w-100">
+        <div className="w-100">
  
           <div className="d-flex flex-column flex-md-row flex-wrap align-items-center gap-2">
- 
-            <span className="req-code">
-              {requisition?.requisition_code || requisition?.requisitionCode || ""}
-              {" "}
-              {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
-</span>
+
+            <span className="req-code me-3">
+              {requisition?.requisition_code || requisition?.requisitionCode || ""} - {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
+            </span>
  
             <span className="date-text">
-<i className="bi bi-calendar3 me-1"></i>
-Start: {formatDMY(requisition?.registration_start_date)}
-</span>
+              <i className="bi bi-calendar3 me-1"></i>
+              Start: {formatDMY(requisition?.registration_start_date)}
+            </span>
  
             <span className="date-divider">|</span>
  
             <span className="date-text">
-<i className="bi bi-clock me-1"></i>
-End: {formatDMY(requisition?.registration_end_date)}
-</span>
- 
-          </div>
+              <i className="bi bi-clock me-1"></i>
+              End: {formatDMY(requisition?.registration_end_date)}
+            </span>
+
+           </div>
  
           <div
             className="job-title mt-1"
@@ -146,16 +145,15 @@ End: {formatDMY(requisition?.registration_end_date)}
 >
             View Position
 </button>
- 
-
-  <button
-    className={`save-btn ${isSaveEnabled ? "unsaved" : "saved"}`}
-    disabled={!isSaveEnabled}
-    onClick={onSave}
-  >
-    Save
-  </button>
-
+          {isSaveBtn && (
+            <button
+              className={`save-btn ${isSaveEnabled ? "unsaved" : "saved"}`}
+              disabled={!isSaveEnabled}
+              onClick={onSave}
+            >
+              Save
+            </button>
+          )}
  
         </div>
  

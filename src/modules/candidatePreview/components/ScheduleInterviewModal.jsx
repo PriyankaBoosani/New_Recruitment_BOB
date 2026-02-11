@@ -69,7 +69,7 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 
 		try {
 			setLoading(true)
-			await jobPositionApiService.bulkScheduleInterviews({
+			const res = await jobPositionApiService.bulkScheduleInterviews({
 				file,
 				applicationIds,
 			});
@@ -79,10 +79,10 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 			if (typeof onBulkScheduleSuccess === "function") {
 				onBulkScheduleSuccess();
 			}
-			toast.success("Interviews scheduled successfully");
+			toast.success(res.message || "Interviews scheduled successfully");
 		} catch (err) {
 			console.error(err);
-			toast.error("Bulk scheduling failed");
+			toast.error(err.message || "Bulk scheduling failed");
 		} finally {
 			setLoading(false)
 		}
@@ -167,7 +167,7 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 						<div className="form-control blue-border mt-1 d-flex align-items-center gap-2 p-3 justify-content-between mt-4">
 							<input
 								type="text"
-								className="fs-13 border-0"
+								className="fs-13 border-0 w-100"
 								value={file.name}
 								readOnly
 							/>

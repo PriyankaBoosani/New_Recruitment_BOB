@@ -462,6 +462,7 @@ useEffect(() => {
   isCardBg={false}
   isSaveEnabled={anyAbsentChecked}
   onSave={handleSaveAbsent}
+  isSaveBtn={true}
 />
 
         </div>

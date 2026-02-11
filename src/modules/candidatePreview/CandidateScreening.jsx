@@ -29,6 +29,7 @@ export default function CandidateScreening({ selectedJob }) {
     APPLIED: "Applied",
     REJECTED: "Rejected",
     DISCREPANCY: "Discrepancy",
+    PENDING: "Pending",
     INTERVIEW_SCHEDULED: "Interview Scheduled",
   };
   const CANDIDATE_POOL_STATUSES = [
@@ -36,6 +37,7 @@ export default function CandidateScreening({ selectedJob }) {
     "SHORTLISTED",
     "REJECTED",
     "DISCREPANCY",
+    "PENDING"
   ];
   const INTERVIEW_STATUS_LABEL_MAP = {
     SCHEDULED: "Scheduled",
@@ -592,7 +594,7 @@ export default function CandidateScreening({ selectedJob }) {
                 isCardBg={false}
                 isSaveEnabled={false}
                 masterData={masterData}
-                saveButton={false}
+                isSaveBtn={false}
               />
             )}
           </div>

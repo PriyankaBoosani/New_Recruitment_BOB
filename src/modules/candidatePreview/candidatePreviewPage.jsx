@@ -206,7 +206,8 @@ console.log("Full Masters Data:@@@@@", candidateId, positionId);
           position={position}
           isCardBg
           isSaveEnabled={false}
-           showSaveButton={true} 
+          showSaveButton={true}
+          isSaveBtn={false}
           // masterData={masters}
         />
       )}
