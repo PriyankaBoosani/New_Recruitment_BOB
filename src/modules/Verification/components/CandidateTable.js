@@ -97,14 +97,15 @@ const goToPreview = (c) => {
                   <td>{c.time}</td>
                   <td>{c.zone}</td>
 
-                <td className="text-center">
+              <td className="text-center">
   <input
     type="checkbox"
     checked={c.absent}
-    disabled={c.status === "Verified"}
+    disabled={c.status !== "Pending"}
     onChange={() => toggleAbsent(c.id)}
   />
 </td>
+
 
 
                   <td>
@@ -118,10 +119,19 @@ const goToPreview = (c) => {
                   </td>
 
                   <td className="text-center">
-                    <Person
-                      className="me-3 cursor-pointer"
-                      onClick={() => goToPreview(c)}
-                    />
+                   <Person
+  className={`me-3 ${c.status === "Rejected" ? "text-muted" : "cursor-pointer"}`}
+  style={{
+    cursor: c.status === "Rejected" ? "not-allowed" : "pointer",
+    opacity: c.status === "Rejected" ? 0.5 : 1
+  }}
+  onClick={() => {
+    if (c.status !== "Rejected") {
+      goToPreview(c);
+    }
+  }}
+/>
+
                    <FileText
   className="cursor-pointer"
   onClick={() => onViewFile(c.raw)}
@@ -180,21 +190,32 @@ const goToPreview = (c) => {
 
                 <div>
                   <label>Absent</label>
-                 <input
+              <input
   type="checkbox"
   checked={c.absent}
-  disabled={c.status === "Verified"}
+  disabled={c.status !== "Pending"}
   onChange={() => toggleAbsent(c.id)}
 />
+
+
 
                 </div>
               </div>
 
               <div className="card-actions">
-                <Person
-                  className="me-3 cursor-pointer"
-                  onClick={() => goToPreview(c)}
-                />
+              <Person
+  className={`me-3 ${c.status === "Rejected" ? "text-muted" : "cursor-pointer"}`}
+  style={{
+    cursor: c.status === "Rejected" ? "not-allowed" : "pointer",
+    opacity: c.status === "Rejected" ? 0.5 : 1
+  }}
+  onClick={() => {
+    if (c.status !== "Rejected") {
+      goToPreview(c);
+    }
+  }}
+/>
+
                <FileText
   className="cursor-pointer"
   onClick={() => onViewFile(c.raw)}

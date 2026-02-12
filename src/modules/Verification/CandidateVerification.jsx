@@ -50,7 +50,8 @@ export default function CandidateVerification() {
   const [selectedRequisition, setSelectedRequisition] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [allCandidatesRaw, setAllCandidatesRaw] = useState([]);
-  
+  const [originalAbsentMap, setOriginalAbsentMap] = useState({});
+
 
   const [usedNavData, setUsedNavData] = useState(false);
 
@@ -153,8 +154,17 @@ const loadCandidates = async (dateParam = selectedDate) => {
 
     const apiList = res.data || [];
 
-    setAllCandidatesRaw(apiList);
-    setAllCandidates(mapCandidatesToTableRows(apiList));
+setAllCandidatesRaw(apiList);
+
+const rows = mapCandidatesToTableRows(apiList);
+setAllCandidates(rows);
+
+const map = {};
+rows.forEach(r => {
+  map[r.id] = r.absent;
+});
+setOriginalAbsentMap(map);
+
 
   } catch (err) {
     console.error(err);
@@ -184,7 +194,14 @@ useEffect(() => {
     console.log("Using nav candidates once");
 
     setAllCandidatesRaw(navCandidates);
-    setAllCandidates(mapCandidatesToTableRows(navCandidates));
+const rows = mapCandidatesToTableRows(navCandidates);
+setAllCandidates(rows);
+
+const map = {};
+rows.forEach(r => {
+  map[r.id] = r.absent;
+});
+setOriginalAbsentMap(map);
 
     if (navRequisition) setSelectedRequisition(navRequisition);
     if (navPosition) setSelectedPosition(navPosition);
@@ -299,8 +316,9 @@ const stageCounts = Object.keys(STAGE_STATUS_MAP).reduce((acc, key) => {
     );
   };
 
-const anyAbsentChecked =
-  baseFiltered.some(c => c.absent === true);
+const anyAbsentChanged = baseFiltered.some(
+  c => originalAbsentMap[c.id] !== c.absent
+);
 
 
 
@@ -315,24 +333,24 @@ const handleSaveAbsent = async () => {
     if (!filteredCandidates.length) return;
 
     for (const c of filteredCandidates) {
-      await CandidateVerificationService.updateAbsentStatus(
-        c.raw.applicationId,
-        c.absent
-      );
+      if (originalAbsentMap[c.id] !== c.absent) {
+        await CandidateVerificationService.updateAbsentStatus(
+          c.raw.applicationId,
+          c.absent
+        );
+      }
     }
 
+    await loadCandidates(selectedDate);   //  refresh data
+
     toast.success("Absent status updated");
-
-    sessionStorage.removeItem("fromZonalSubmit");
-    sessionStorage.removeItem("fromPreviewBack");
-
-    window.location.reload();
 
   } catch (err) {
     console.error("Absent update failed", err);
     toast.error("Save failed");
   }
 };
+
 
 
 
@@ -460,7 +478,7 @@ useEffect(() => {
   requisition={selectedRequisition}
   position={selectedPosition}
   isCardBg={false}
-  isSaveEnabled={anyAbsentChecked}
+isSaveEnabled={anyAbsentChanged}
   onSave={handleSaveAbsent}
   isSaveBtn={true}
 />

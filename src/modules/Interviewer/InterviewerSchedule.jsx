@@ -11,14 +11,22 @@ import { toast } from "react-toastify";
 import searchIcon from "../../assets/search-icon.png";
 
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
-import RequisitionPositionSelector from "../candidatePreview/components/RequisitionPositionSelector";
+import InterviewerPositionSelector from "../candidatePreview/components/InterviewerPositionSelector";
+import InterviewerService from "./service/InterviewerService";
 import PdfViewerModal from "../candidatePreview/components/PdfViewerModal";
 
 import masterApiService from "../master/services/masterApiService";
 import CandidateVerificationService from "../Verification/services/CandidateVerification";
-import { mapCandidatesToTableRows } from "../Verification/mappers/CandidateVerificationMapper";
+
 
 import InterviewDayTable from "./components/InterviewDayTable";
+import { mapPanelPositions } from "./mapper/InterviewerScheduleMapper";
+import { mapInterviewerCandidates } from "./mapper/InterviewerScheduleMapper";
+
+
+
+
+
 
 /* ================= DATE PILL ================= */
 
@@ -42,6 +50,8 @@ export default function InterviewerSchedule() {
 
   const [selectedRequisition, setSelectedRequisition] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
+  const [panelPositions, setPanelPositions] = useState([]);
+
 
   /* ===== Pagination ===== */
 
@@ -61,55 +71,91 @@ export default function InterviewerSchedule() {
       .then(res => setMasterData(res.data || {}))
       .catch(() => setMasterData({}));
   }, []);
+  
 
   /* ================= LOAD CANDIDATES ================= */
+
+
+/* ================= LOAD PANEL POSITIONS ================= */
+
+useEffect(() => {
+  InterviewerService.getPanelPositions()
+    .then(res => {
+      console.log("RAW POSITIONS API:", res.data);
+    const mapped = mapPanelPositions(res.data || []);
+      console.log("MAPPED PANEL POSITIONS:", mapped);
+      setPanelPositions(mapped);
+    })
+    .catch(() => toast.error("Failed to load panel positions"));
+}, []);
+
+
+
+
 
   const formatApiDate = (d) =>
     `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 
+
+
+
+
+
+
+
   useEffect(() => {
-    const load = async () => {
-      try {
-        const res =
-          await CandidateVerificationService.getCandidatesByDate(
-            formatApiDate(selectedDate)
-          );
 
-        const apiList = res.data || [];
-        setAllCandidatesRaw(apiList);
+  if (!selectedPosition?.position?.positionId) return;
 
-        const mapped = mapCandidatesToTableRows(apiList).map(r => ({
-          ...r,
-          comment: "",
-          score: ""
-        }));
+  const load = async () => {
+    try {
+      const dateStr = formatApiDate(selectedDate || new Date());
 
-        setRows(mapped);
+      const res =
+        await InterviewerService.getCandidatesByPositionAndDate(
+          selectedPosition.position.positionId,
+          dateStr
+        );
 
-      } catch {
-        toast.error("Failed to load candidates");
-      }
-    };
+      const apiList = res.data?.data || [];
 
-    load();
-  }, [selectedDate]);
+      setAllCandidatesRaw(apiList);
+
+      const mapped = mapInterviewerCandidates(apiList);
+      setRows(mapped);
+
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load interviewer candidates");
+      setAllCandidatesRaw([]);
+      setRows([]);
+    }
+  };
+
+  load();
+
+}, [selectedPosition, selectedDate]);
+
+
+ 
 
   /* ================= FILTERING ================= */
 
-  const filteredRows = useMemo(() => {
+const filteredRows = useMemo(() => {
 
-    if (!selectedRequisition || !selectedPosition) return [];
+  if (!selectedRequisition || !selectedPosition) return [];
 
-    return rows.filter(r =>
-      r.raw.requisitionId === selectedRequisition.requisition_id &&
-      r.raw.positionId === selectedPosition.positionId &&
-      (
-        r.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        r.regNo.includes(searchText)
-      )
-    );
+  return rows.filter(r =>
+    r.raw.requisitionId === selectedRequisition.id &&
+    r.raw.positionId === selectedPosition.position.positionId &&
+    (
+      r.name.toLowerCase().includes(searchText.toLowerCase()) ||
+      r.regNo.includes(searchText)
+    )
+  );
 
-  }, [rows, selectedRequisition, selectedPosition, searchText]);
+}, [rows, selectedRequisition, selectedPosition, searchText]);
+
 
   /* ================= PAGINATION ================= */
 
@@ -230,16 +276,19 @@ export default function InterviewerSchedule() {
 
       <div className="requisition-selector-row">
 
-        <RequisitionPositionSelector
-          apiList={allCandidatesRaw}
-          selectedRequisitionRaw={selectedRequisition}
-          selectedPositionRaw={selectedPosition}
-          onRequisitionChange={(r)=>{
-            setSelectedRequisition(r);
-            setSelectedPosition(null);
-          }}
-          onPositionChange={setSelectedPosition}
-        />
+      <InterviewerPositionSelector
+  apiData={panelPositions}
+  selectedRequisition={selectedRequisition}
+  selectedPosition={selectedPosition}
+  onRequisitionChange={(r)=>{
+    setSelectedRequisition(r);
+    setSelectedPosition(null);
+  }}
+  onPositionChange={(p)=>{
+    setSelectedPosition(p);
+  }}
+/>
+
 
       </div>
 
@@ -247,9 +296,19 @@ export default function InterviewerSchedule() {
 
       {isSelectionDone && (
         <div className="requisition-strip">
-          <RequisitionStrip
-            requisition={selectedRequisition}
-            position={selectedPosition}
+       <RequisitionStrip
+  requisition={{
+    requisitionTitle: selectedRequisition?.requisition?.requisitionTitle,
+    requisitionCode: selectedRequisition?.requisition?.requisitionCode,
+    registration_start_date: selectedRequisition?.requisition?.startDate,
+    registration_end_date: selectedRequisition?.requisition?.endDate
+  }}
+
+  position={{
+    positionId: selectedPosition?.position?.positionId,
+    positionName: selectedPosition?.masterPosition?.positionName
+  }}
+
             isCardBg={false}
             isSaveEnabled={anyChanged}
             onSave={handleSave}

@@ -218,7 +218,7 @@ const Header = () => {
               )}
 
 
-              {isZonalHr && (
+              {isAdmin && (
                 <Nav.Link as={Link} to="/candidate-interviewer" onClick={closeMenu}>
                    Interview
                 </Nav.Link>

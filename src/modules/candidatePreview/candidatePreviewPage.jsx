@@ -241,6 +241,9 @@ console.log("Full Masters Data:@@@@@", candidateId, positionId);
               requisitionTitle={requisitionTitle}
               positionName={positionName}
               selectedDate={selectedDate}
+                zonalVerificationStatus={candidate?.zonalVerificationStatus}
+  zonalSubmitBeforeDate={candidate?.zonalSubmitBeforeDate}
+  zonalHrComments={candidate?.zonalHrComments}
             />
           )
         )}

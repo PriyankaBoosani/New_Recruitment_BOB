@@ -71,6 +71,7 @@ const AppRoutes = () => {
                 <Route path="/certification" element={<CertificationPage />} />
                 <Route path="/document" element={<DocumentPage />} />
                 <Route path="/generic-or-annexures" element={<GenericOrAnnexuresPage />} />
+                     <Route path="/candidate-interviewer" element={<InterviewerSchedule />} />
               </Route>            
                 {/* ---------- NON-ADMIN ONLY ROUTES ---------- */}
               <Route element={<NonAdminRoute />}>
@@ -80,7 +81,7 @@ const AppRoutes = () => {
                 <Route path="/candidate-preview" element={<CandidatePreviewPage />} />
                 <Route path="/candidate-workflow" element={<CandidateScreening />} />
                 <Route path="/candidate-verification" element={<CandidateVerification />} />
-                  <Route path="/candidate-interviewer" element={<InterviewerSchedule />} />
+             
                 <Route path="/interviewpanel" element={<InterviewPanel />} />
                 {/* <Route path="/candidate-interview" element={<CandidateInterview />} /> */}
 

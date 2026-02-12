@@ -25,7 +25,10 @@ const ApplicationForm = ({
   interviewScheduleId,
   requisitionTitle,
   positionName,
-  selectedDate
+  selectedDate,
+   zonalVerificationStatus,
+  zonalSubmitBeforeDate,
+  zonalHrComments
 }) => {
   const navigate = useNavigate();
   const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
@@ -65,7 +68,9 @@ const ApplicationForm = ({
 
   const [screeningRemarks, setScreeningRemarks] = useState("");
 
-
+  const user = useSelector((state) => state.user.user);
+  const role = user?.role?.toLowerCase();
+  const isZonalHr = role === "zonal_hr";
 
 
   const mapDecisionToStatus = (val) => {
@@ -75,6 +80,42 @@ const ApplicationForm = ({
     return "PENDING";
   };
 
+const mapStatusToDecision = (status) => {
+  if (status === "VERIFIED") return "Yes";
+  if (status === "REJECTED") return "No";
+  if (status === "PROVISIONALLY_APPROVED") return "Provisionally Approved";
+  return "";
+};
+
+
+
+
+
+
+useEffect(() => {
+  if (!isZonalHr) return;
+
+  if (zonalVerificationStatus) {
+    setZonalDecision(mapStatusToDecision(zonalVerificationStatus));
+  }
+
+  if (zonalSubmitBeforeDate) {
+    setScreeningForm(prev => ({
+      ...prev,
+      zonalSubmitDate: zonalSubmitBeforeDate.split("T")[0] // safe for input[type=date]
+    }));
+  }
+
+  if (zonalHrComments) {
+    setScreeningRemarks(zonalHrComments);
+  }
+
+}, [
+  zonalVerificationStatus,
+  zonalSubmitBeforeDate,
+  zonalHrComments,
+  isZonalHr
+]);
 
 
   const handleZonalSubmit = async () => {
@@ -236,9 +277,7 @@ navigate("/candidate-verification", {
 
 
 
-  const user = useSelector((state) => state.user.user);
-  const role = user?.role?.toLowerCase();
-  const isZonalHr = role === "zonal_hr";
+
 
 
 
