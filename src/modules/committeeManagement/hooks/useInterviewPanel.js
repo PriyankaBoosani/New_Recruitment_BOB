@@ -39,35 +39,35 @@ export const useInterviewPanel = () => {
   const [showFilters, setShowFilters] = useState(true);
 
 
-  const [sortConfig, setSortConfig] = useState({
-    key: null,
-    direction: "asc"
-  });
+  // const [sortConfig, setSortConfig] = useState({
+  //   key: null,
+  //   direction: "asc"
+  // });
 
-  const handleSort = (key) => {
-    setSortConfig((prev) => {
-      if (prev.key === key) {
-        return {
-          key,
-          direction: prev.direction === "asc" ? "desc" : "asc"
-        };
-      }
-      return { key, direction: "asc" };
-    });
-  };
+  // const handleSort = (key) => {
+  //   setSortConfig((prev) => {
+  //     if (prev.key === key) {
+  //       return {
+  //         key,
+  //         direction: prev.direction === "asc" ? "desc" : "asc"
+  //       };
+  //     }
+  //     return { key, direction: "asc" };
+  //   });
+  // };
 
-  const sortedPanels = useMemo(() => {
-    if (!sortConfig.key) return panels;
+  // const sortedPanels = useMemo(() => {
+  //   if (!sortConfig.key) return panels;
 
-    return [...panels].sort((a, b) => {
-      const aVal = a[sortConfig.key]?.toString().toLowerCase();
-      const bVal = b[sortConfig.key]?.toString().toLowerCase();
+  //   return [...panels].sort((a, b) => {
+  //     const aVal = a[sortConfig.key]?.toString().toLowerCase();
+  //     const bVal = b[sortConfig.key]?.toString().toLowerCase();
 
-      if (aVal < bVal) return sortConfig.direction === "asc" ? -1 : 1;
-      if (aVal > bVal) return sortConfig.direction === "asc" ? 1 : -1;
-      return 0;
-    });
-  }, [panels, sortConfig]);
+  //     if (aVal < bVal) return sortConfig.direction === "asc" ? -1 : 1;
+  //     if (aVal > bVal) return sortConfig.direction === "asc" ? 1 : -1;
+  //     return 0;
+  //   });
+  // }, [panels, sortConfig]);
 
   /* ================= FETCH PANELS ================= */
   // useEffect(() => {
@@ -372,9 +372,9 @@ useEffect(() => {
     setShowFilters,
     showFilters,
 
-    sortConfig,
-    handleSort,
-    sortedPanels,
+    // sortConfig,
+    // handleSort,
+    // sortedPanels,
     activeTab,
     setActiveTab
 

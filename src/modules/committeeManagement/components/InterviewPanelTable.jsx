@@ -18,9 +18,9 @@ const InterviewPanelTable = ({
   setSearch,
   showFilters,
   setShowFilters,
-  sortConfig,
-  handleSort,
-  sortedPanels
+  // sortConfig,
+  // handleSort,
+  // sortedPanels
 }) => {
   return (
 
@@ -87,35 +87,35 @@ const InterviewPanelTable = ({
         <thead>
           <tr>
             <th>S. No.</th>
-            <th onClick={() => handleSort("panelName")} className="sortable">
+            <th>
               Panel Name
-              {sortConfig.key === "panelName" &&
-                (sortConfig.direction === "asc" ? " ▲" : " ▼")}
+              {/* {sortConfig.key === "panelName" &&
+                (sortConfig.direction === "asc" ? " ▲" : " ▼")} */}
             </th>
-            <th onClick={() => handleSort("panelType")} className="sortable">
+            <th>
               Panel Type
-              {sortConfig.key === "panelType" &&
-                (sortConfig.direction === "asc" ? " ▲" : " ▼")}
+              {/* {sortConfig.key === "panelType" &&
+                (sortConfig.direction === "asc" ? " ▲" : " ▼")} */}
             </th>
 
-            <th onClick={() => handleSort("members")} className="sortable">
+            <th>
               Panel Members
-              {sortConfig.key === "members" &&
-                (sortConfig.direction === "asc" ? " ▲" : " ▼")}
+              {/* {sortConfig.key === "members" &&
+                (sortConfig.direction === "asc" ? " ▲" : " ▼")} */}
             </th>
             <th>Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          {sortedPanels.length === 0 ? (
+          {panels.length === 0 ? (
             <tr>
               <td colSpan="5" style={{ textAlign: "center" }}>
                 No panels found
               </td>
             </tr>
           ) : (
-            sortedPanels.map((panel, index) => (
+            panels.map((panel, index) => (
               <tr key={panel.id}>
                 {/* ✅ Correct serial number */}
                 <td>{page * size + index + 1}</td>

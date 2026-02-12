@@ -38,9 +38,9 @@ const InterviewPanelPage = () => {
     setSearch,
     showFilters,
     setShowFilters,
-    sortConfig,
-    handleSort,
-    sortedPanels,
+      // sortConfig,
+      // handleSort,
+      // sortedPanels,
     size,
     setSize,
     activeTab,
@@ -113,9 +113,9 @@ const [deletePanelName, setDeletePanelName] = useState("");
                     setSearch={setSearch}
                     showFilters={showFilters}
                     setShowFilters={setShowFilters}
-                    sortConfig={sortConfig}
-                    handleSort={handleSort}
-                    sortedPanels={sortedPanels}
+                    // sortConfig={sortConfig}
+                    // handleSort={handleSort}
+                    // sortedPanels={sortedPanels}
                     size={size}
                     setSize={setSize}
                     onDelete={(id, panelName) => {
