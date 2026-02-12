@@ -48,18 +48,18 @@ const PositionForm = ({
     const selectedGrade = jobGrades.find(
         g => String(g.id) === String(formData.grade)
     );
-   const formatNumber = (value) => {
-    if (
-        value === null ||
-        value === undefined ||
-        value === "" ||
-        Number(value) === 0
-    ) {
-        return "-";
-    }
+    const formatNumber = (value) => {
+        if (
+            value === null ||
+            value === undefined ||
+            value === "" ||
+            Number(value) === 0
+        ) {
+            return "-";
+        }
 
-    return new Intl.NumberFormat("en-IN").format(Number(value));
-};
+        return new Intl.NumberFormat("en-IN").format(Number(value));
+    };
 
 
     const salaryPopover = (
