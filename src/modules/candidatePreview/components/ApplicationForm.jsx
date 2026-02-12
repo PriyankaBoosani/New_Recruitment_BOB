@@ -87,16 +87,16 @@ const ApplicationForm = ({
 
 
   const mapDecisionToStatus = (val) => {
-    if (val === "Yes") return "VERIFIED";
-    if (val === "No") return "REJECTED";
-    if (val === "Provisionally Approved") return "PROVISIONALLY_APPROVED";
+    if (val === "YES") return "VERIFIED";
+    if (val === "NO") return "REJECTED";
+    if (val === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
     return "PENDING";
   };
 
 const mapStatusToDecision = (status) => {
-  if (status === "VERIFIED") return "Yes";
-  if (status === "REJECTED") return "No";
-  if (status === "PROVISIONALLY_APPROVED") return "Provisionally Approved";
+  if (status === "VERIFIED") return "YES";
+  if (status === "REJECTED") return "NO";
+  if (status === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
   return "";
 };
 
@@ -131,10 +131,10 @@ useEffect(() => {
 ]);
 
 
-  const handleZonalSubmit = async () => {
+ const handleZonalSubmit = async () => {
 
     if (!zonalDecision) {
-     toast.error(t("select_decision"));
+      toast.error("Please select decision");
       return;
     }
 
@@ -142,7 +142,7 @@ useEffect(() => {
       if (!screeningForm.zonalSubmitDate) {
         setErrors(prev => ({
           ...prev,
-zonalSubmitDate: t("required")
+zonalSubmitDate: "This field is required"
         }));
         return;
       }
@@ -154,7 +154,7 @@ zonalSubmitDate: t("required")
       if (selected <= today) {
         setErrors(prev => ({
           ...prev,
-          zonalSubmitDate:t("date_after_today")
+          zonalSubmitDate: "Must be future date"
         }));
         return;
       }
@@ -177,7 +177,7 @@ zonalSubmitDate: t("required")
 
       await jobPositionApiService.submitOverallZonalVerification(payload);
 
-      toast.success(t("zonal_submit_success"));
+      toast.success("Zonal verification submitted successfully");
 
      sessionStorage.setItem("fromZonalSubmit", "true");
 
@@ -199,9 +199,11 @@ navigate("/candidate-verification", {
 
     } catch (err) {
       console.error(err);
-     toast.error(t("zonal_submit_failed"));
+      toast.error("Zonal submit failed");
     }
   };
+
+
 
 
 
