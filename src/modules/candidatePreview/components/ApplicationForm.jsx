@@ -39,12 +39,20 @@ const ApplicationForm = ({
   const [criteria, setCriteria] = useState({});
   const location = useLocation();
   const isInterviewView = location.state?.fromInterviewPool;
-
   const candidate = location.state?.candidate;
-  console.log("candidateId: ", candidateId)
-  console.log("applicationId: ", applicationId)
 
-  console.log("Selected Job in Application Form@#@#@#@#@#@#@##@#@#@#:", applicationId);
+  const deriveShortlistStatus = () => {
+    const values = [
+      screeningForm.isWorkCriteriaMet,
+      screeningForm.isAgeCriteriaMet,
+      screeningForm.isEducationCriteriaMet,
+    ];
+
+    if (values.includes("NO")) return "NO";                  // Highest priority
+    if (values.includes("DISCREPANCY")) return "DEFAULT";    // Second priority
+    if (values.every(v => v === "YES")) return "YES";        // All YES
+    return "";
+  };
 
   useEffect(() => {
     console.log("Loaded Candidate:", candidate);
@@ -421,18 +429,19 @@ navigate("/candidate-verification", {
   // };
 
   const handleRadioChange = (field, value) => {
-    setScreeningForm(prev => ({
-      ...prev,
-      [field]: value,
-    }));
+    setScreeningForm(prev => {
+      const updated = {
+        ...prev,
+        [field]: value,
+      };
+
+      return updated;
+    });
 
     setErrors(prev => {
       const updated = { ...prev };
-
-      // clear radio error
       delete updated[field];
 
-      // clear ONLY the related remark error when YES
       if (value === "YES") {
         if (field === "isWorkCriteriaMet") delete updated.workCriteriaRemark;
         if (field === "isAgeCriteriaMet") delete updated.ageCriteriaRemark;
@@ -457,7 +466,6 @@ navigate("/candidate-verification", {
     setErrors(prev => {
       const updated = { ...prev };
 
-      // clear error for the field itself
       delete updated[field];
 
       // special rule: shortlisted YES → remark no longer required
@@ -597,7 +605,23 @@ navigate("/candidate-verification", {
       newErrors.isShortlisted = t("please_select_option");
     }
 
-    if (screeningForm.isShortlisted === "NO") {
+    if (hasAnyRejectedDocument()) {
+      const allYes =
+        screeningForm.isWorkCriteriaMet === "YES" &&
+        screeningForm.isAgeCriteriaMet === "YES" &&
+        screeningForm.isEducationCriteriaMet === "YES";
+
+      if (allYes) {
+        toast.error(
+          "All criteria cannot be YES when any document is REJECTED"
+        );
+        return false;
+      }
+    }
+
+    const derivedStatus = deriveShortlistStatus();
+
+    if (derivedStatus === "NO") {
       if (!screeningForm.finalScreeningRemark?.trim()) {
         newErrors.finalScreeningRemark = t("validation:required");
       }
@@ -672,52 +696,54 @@ navigate("/candidate-verification", {
     ].filter(v => v === "YES").length;
   };
 
-  const disableShortlistedSection = !areAllDocumentsVerified() || !areAllCriteriaYes();
+  const baseDerived = deriveShortlistStatus();
+  const derivedShortlist = baseDerived;
 
-  useEffect(() => {
-    if (disableShortlistedSection && screeningForm.isShortlisted) {
-      setScreeningForm(prev => ({
-        ...prev,
-        isShortlisted: "",
-        finalScreeningRemark: "",
-      }));
-    }
-  }, [disableShortlistedSection]);
+  const areAllCriteriaSelected =
+    screeningForm.isWorkCriteriaMet &&
+    screeningForm.isAgeCriteriaMet &&
+    screeningForm.isEducationCriteriaMet;
+
+  const disableShortlistedSection =
+    !areAllCriteriaSelected || baseDerived === "DEFAULT";
+
+  const disableYesOption =
+    disableShortlistedSection || derivedShortlist === "NO";
+
+  const disableNoOption =
+    disableShortlistedSection || derivedShortlist === "YES";
 
   const handleFinalSubmit = async () => {
-    if (!areAllDocumentsValidated()) {
-      toast.error(t("validate_documents"));
-      return;
-    }
 
-    const isValid = validateForm();
-    if (!isValid) return;
+  // 🔴 1️⃣ Hard stop: documents cannot be pending
+  if (!areAllDocumentsValidated()) {
+    toast.error("Please validate all documents");
+    return;
+  }
 
-    const rejectedExists = hasAnyRejectedDocument();
-    const yesCount = countYesCriteria();
+  const isValid = validateForm();
+  if (!isValid) return;
 
-    if (rejectedExists && yesCount === 3) {
-      toast.error(t("criteria_conflict"));
-      return;
-    }
+  // 🔴 2️⃣ Auto derive shortlist status
+  const derivedShortlist = deriveShortlistStatus();
 
-    const payload = {
-      ...screeningForm,
-      isShortlisted: screeningForm.isShortlisted || "NO",
-      isScreeningCompleted: true,
-    };
-
-    console.log("FINAL SCREENING PAYLOAD", payload);
-
-    try {
-      await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
-      toast.success(t("screening_success"));
-      navigate("/candidate-workflow", { state: { requisitionId, positionId } })
-    } catch (err) {
-      console.error("Screening submit failed", err);
-      toast.error(t("submission_failed"));
-    }
+  const payload = {
+    ...screeningForm,
+    isShortlisted: derivedShortlist || "NO",
+    isScreeningCompleted: true,
   };
+
+  console.log("FINAL SCREENING PAYLOAD", payload);
+
+  try {
+    await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
+    toast.success("Screening submitted successfully");
+    navigate("/candidate-workflow", { state: { requisitionId, positionId } })
+  } catch (err) {
+    console.error("Screening submit failed", err);
+    toast.error("Submission failed");
+  }
+};
 
   const getTomorrowDate = () => {
     const d = new Date();
@@ -784,6 +810,51 @@ navigate("/candidate-verification", {
       }));
     }
   }, [disableShortlistedSection]);
+
+  useEffect(() => {
+    const derived = deriveShortlistStatus();
+
+    if (derived === "YES") {
+      setScreeningForm(prev => ({
+        ...prev,
+        isShortlisted: "YES",
+        finalScreeningRemark: "",   // 🔥 CLEAR HERE
+      }));
+
+      setErrors(prev => ({
+        ...prev,
+        finalScreeningRemark: undefined,
+      }));
+    }
+
+    if (derived === "NO") {
+      setScreeningForm(prev => ({
+        ...prev,
+        isShortlisted: "NO",
+      }));
+    }
+
+    if (derived === "DEFAULT") {
+      setScreeningForm(prev => ({
+        ...prev,
+        isShortlisted: "",
+        finalScreeningRemark: "",
+        submitBeforeDate: "",
+      }));
+
+      setErrors(prev => ({
+        ...prev,
+        finalScreeningRemark: undefined,
+        submitBeforeDate: undefined,
+        isShortlisted: undefined,
+      }));
+    }
+
+  }, [
+    screeningForm.isWorkCriteriaMet,
+    screeningForm.isAgeCriteriaMet,
+    screeningForm.isEducationCriteriaMet
+  ]);
 
   return (
     <>
@@ -1405,20 +1476,26 @@ navigate("/candidate-verification", {
                 <label className="criteria-title">{t("shortlisted")}</label>
 
                 <div className="criteria-radio mb-0">
-                  {["YES", "NO"].map(option => (
-                    <label key={option} className="radio-label">
-                      <input
-                        type="radio"
-                        name="shortlisted"
-                        checked={screeningForm.isShortlisted === option}
-                        onChange={() =>
-                          handleInputChange("isShortlisted", option)
-                        }
-                      />
-                      <span className="custom-radio"></span>
-                      {t(option)}
-                    </label>
-                  ))}
+                  {["YES", "NO"].map(option => {
+                    const isDisabled =
+                      (option === "YES" && disableYesOption) ||
+                      (option === "NO" && disableNoOption);
+
+                    return (
+                      <label key={option} className={`radio-label ${isDisabled ? "disabled" : ""}`}>
+                        <input
+                          type="radio"
+                          name="shortlisted"
+                          value={option}
+                          checked={screeningForm.isShortlisted === option}
+                          disabled={isDisabled}
+                          onChange={() => handleInputChange("isShortlisted", option)}
+                        />
+                        <span className="custom-radio"></span>
+                        {option}
+                      </label>
+                    );
+                  })}
                 </div>
                 {!disableShortlistedSection && errors.isShortlisted && (
                   <small className="text-danger fs-12">
