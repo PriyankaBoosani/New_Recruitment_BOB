@@ -13,6 +13,7 @@
   "job_postings": "नौकरी पोस्टिंग",
   "logout": "लॉगआउट",
   "cancel": "रद्द करें",
+  "delete": "हटाएं",
   "save": "सहेजें",
   "update": "अपडेट करें",
   "select": "चुनें",
@@ -27,5 +28,6 @@
   "select_type": "प्रकार चुनें",
   "select_degree": "डिग्री चुनें",
   "select_specialization": "विशेषज्ञता चुनें",
-  "select_certification": "प्रमाणन चुनें"
+  "select_certification": "प्रमाणन चुनें",
+  "footer_text": "कॉपीराइट © {{year}} बैंक ऑफ बड़ौदा। सर्वाधिकार सुरक्षित | संचालित: सागर सॉफ्ट"
 }

@@ -1,12 +1,14 @@
 import React from 'react';
 import { Container } from 'react-bootstrap';
+import { useTranslation } from "react-i18next";
 
 const Footer = () => {
+  const { t } = useTranslation("common");
   return (
     <footer className="app-footer py-3">
       <Container fluid>
         <div className="text-center">
-          <p className="mb-0">Copyright © {new Date().getFullYear()} Bank of Baroda. All rights reserved | Powered by Sagarsoft</p>
+          <p className="mb-0"> {t("footer_text", { year: new Date().getFullYear() })}</p>
         </div>
       </Container>
     </footer>

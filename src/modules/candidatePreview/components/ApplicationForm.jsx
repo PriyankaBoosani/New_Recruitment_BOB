@@ -11,6 +11,7 @@ import jobPositionApiService from "../../jobPosting/services/jobPositionApiServi
 import { toast } from "react-toastify";
 import masterApiService from "../../master/services/masterApiService";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 
 const ApplicationForm = ({
@@ -30,6 +31,9 @@ const ApplicationForm = ({
   zonalSubmitBeforeDate,
   zonalHrComments
 }) => {
+  
+  const { t } = useTranslation(["preview", "common", "validation"]);
+
   const navigate = useNavigate();
   const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
   const [criteria, setCriteria] = useState({});
@@ -122,7 +126,7 @@ useEffect(() => {
   const handleZonalSubmit = async () => {
 
     if (!zonalDecision) {
-      toast.error("Please select decision");
+     toast.error(t("select_decision"));
       return;
     }
 
@@ -130,7 +134,7 @@ useEffect(() => {
       if (!screeningForm.zonalSubmitDate) {
         setErrors(prev => ({
           ...prev,
-zonalSubmitDate: "This field is required"
+zonalSubmitDate: t("required")
         }));
         return;
       }
@@ -142,7 +146,7 @@ zonalSubmitDate: "This field is required"
       if (selected <= today) {
         setErrors(prev => ({
           ...prev,
-          zonalSubmitDate: "Must be future date"
+          zonalSubmitDate:t("date_after_today")
         }));
         return;
       }
@@ -165,7 +169,7 @@ zonalSubmitDate: "This field is required"
 
       await jobPositionApiService.submitOverallZonalVerification(payload);
 
-      toast.success("Zonal verification submitted successfully");
+      toast.success(t("zonal_submit_success"));
 
      sessionStorage.setItem("fromZonalSubmit", "true");
 
@@ -187,7 +191,7 @@ navigate("/candidate-verification", {
 
     } catch (err) {
       console.error(err);
-      toast.error("Zonal submit failed");
+     toast.error(t("zonal_submit_failed"));
     }
   };
 
@@ -548,15 +552,15 @@ navigate("/candidate-verification", {
 
     // Criteria validations
     if (!screeningForm.isWorkCriteriaMet) {
-      newErrors.isWorkCriteriaMet = "Please select an option";
+      newErrors.isWorkCriteriaMet =  t("please_select_option");
     }
 
     if (!screeningForm.isAgeCriteriaMet) {
-      newErrors.isAgeCriteriaMet = "Please select an option";
+      newErrors.isAgeCriteriaMet = t("please_select_option");
     }
 
     if (!screeningForm.isEducationCriteriaMet) {
-      newErrors.isEducationCriteriaMet = "Please select an option";
+      newErrors.isEducationCriteriaMet =  t("please_select_option");
     }
 
     // Work criteria remark mandatory if NO or DISCREPANCY
@@ -565,7 +569,7 @@ navigate("/candidate-verification", {
       screeningForm.isWorkCriteriaMet === "DISCREPANCY"
     ) {
       if (!screeningForm.workCriteriaRemark?.trim()) {
-        newErrors.workCriteriaRemark = "Required";
+        newErrors.workCriteriaRemark = t("required");
       }
     }
 
@@ -575,7 +579,7 @@ navigate("/candidate-verification", {
       screeningForm.isAgeCriteriaMet === "DISCREPANCY"
     ) {
       if (!screeningForm.ageCriteriaRemark?.trim()) {
-        newErrors.ageCriteriaRemark = "Required";
+        newErrors.ageCriteriaRemark = t("required");
       }
     }
 
@@ -585,31 +589,31 @@ navigate("/candidate-verification", {
       screeningForm.isEducationCriteriaMet === "DISCREPANCY"
     ) {
       if (!screeningForm.educationCriteriaRemark?.trim()) {
-        newErrors.educationCriteriaRemark = "Required";
+        newErrors.educationCriteriaRemark = t("required");
       }
     }
 
     if (!disableShortlistedSection && !screeningForm.isShortlisted) {
-      newErrors.isShortlisted = "Please select an option";
+      newErrors.isShortlisted = t("please_select_option");
     }
 
     if (screeningForm.isShortlisted === "NO") {
       if (!screeningForm.finalScreeningRemark?.trim()) {
-        newErrors.finalScreeningRemark = "Required";
+        newErrors.finalScreeningRemark = t("validation:required");
       }
     }
 
     // Submit before date validation
     if (disableShortlistedSection) {
       if (!screeningForm.submitBeforeDate) {
-        newErrors.submitBeforeDate = "Please select a date";
+        newErrors.submitBeforeDate = t("please_select_date");
       } else {
         const selectedDate = new Date(screeningForm.submitBeforeDate);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
         if (selectedDate <= today) {
-          newErrors.submitBeforeDate = "Date must be after today";
+          newErrors.submitBeforeDate =  t("date_after_today");
         }
       }
     }
@@ -682,7 +686,7 @@ navigate("/candidate-verification", {
 
   const handleFinalSubmit = async () => {
     if (!areAllDocumentsValidated()) {
-      toast.error("Please validate all the documents");
+      toast.error(t("validate_documents"));
       return;
     }
 
@@ -693,9 +697,7 @@ navigate("/candidate-verification", {
     const yesCount = countYesCriteria();
 
     if (rejectedExists && yesCount === 3) {
-      toast.error(
-        "All criteria cannot be YES when any document is Rejected"
-      );
+      toast.error(t("criteria_conflict"));
       return;
     }
 
@@ -709,11 +711,11 @@ navigate("/candidate-verification", {
 
     try {
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
-      toast.success("Screening submitted successfully");
+      toast.success(t("screening_success"));
       navigate("/candidate-workflow", { state: { requisitionId, positionId } })
     } catch (err) {
       console.error("Screening submit failed", err);
-      toast.error("Submission failed");
+      toast.error(t("submission_failed"));
     }
   };
 
@@ -752,7 +754,7 @@ navigate("/candidate-verification", {
     if (!strictDateRegex.test(value)) {
       setErrors(prev => ({
         ...prev,
-        submitBeforeDate: "Invalid date format (YYYY-MM-DD)",
+        submitBeforeDate: t("invalid_date"),
       }));
       return;
     }
@@ -764,7 +766,7 @@ navigate("/candidate-verification", {
     if (selectedDate <= today) {
       setErrors(prev => ({
         ...prev,
-        submitBeforeDate: "Date must be after today",
+        submitBeforeDate: t("date_after_today"),
       }));
     }
   };
@@ -794,13 +796,13 @@ navigate("/candidate-verification", {
 
         {/* === PERSONAL DETAILS === */}
         <Accordion.Item eventKey="0">
-          <Accordion.Header>Personal Details</Accordion.Header>
+          <Accordion.Header>{t("personal_details")}</Accordion.Header>
           <Accordion.Body>
             <div className="personal-details-wrapper">
               <table className="table table-bordered bob-table w-100 mb-0">
                 <tbody>
                   <tr>
-                    <td className="fw-med" style={{ width: "20%" }}>Full Name</td>
+                    <td className="fw-med" style={{ width: "20%" }}>{t("full_name")}</td>
                     <td className="fw-reg" colSpan={4} style={{ width: "60%" }}>
                       {data.personalDetails.fullName}
                     </td>
@@ -828,47 +830,47 @@ navigate("/candidate-verification", {
                   </tr>
 
                   <tr>
-                    <td className="fw-med">Address</td>
+                    <td className="fw-med">{t("address")}</td>
                     <td className="fw-reg" colSpan={4}>{data.personalDetails.address}</td>
                   </tr>
 
                   <tr>
-                    <td className="fw-med">Permanent Address</td>
+                    <td className="fw-med">{t("permanent_address")}</td>
                     <td className="fw-reg" colSpan={4}>{data.personalDetails.permanentAddress}</td>
                   </tr>
 
                   <tr >
-                    <td className="fw-med" >Mobile</td>
+                    <td className="fw-med" >{t("mobile")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.mobile}</td>
-                    <td className="fw-med">Email</td>
+                    <td className="fw-med">{t("email")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.email}</td>
                   </tr>
 
                   <tr >
-                    <td className="fw-med">Mother’s Name</td>
+                    <td className="fw-med">{t("mother_name")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.motherName || "-"}</td>
-                    <td className="fw-med">Father’s Name</td>
+                    <td className="fw-med">{t("father_name")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.fatherName}</td>
                   </tr>
 
                   <tr>
-                    <td className="fw-med">Gender</td>
+                    <td className="fw-med">{t("gender")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.gender_name || "-"}</td>
-                    <td className="fw-med">Religion</td>
+                    <td className="fw-med">{t("religion")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.religion_name || "-"}</td>
                   </tr>
 
                   <tr>
-                    <td className="fw-med">Category</td>
+                    <td className="fw-med">{t("category")}</td>
                     <td className="fw-reg" colSpan={2}  >{data.personalDetails.reservationCategory_name || "-"}</td>
-                    <td className="fw-med">Caste/Community</td>
+                    <td className="fw-med">{t("caste")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.caste || "-"}</td>
                   </tr>
 
                   <tr>
-                    <td className="fw-med">Date of Birth</td>
+                    <td className="fw-med">{t("dob")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.dob}</td>
-                    <td className="fw-med">Age (as on cut-off date)</td>
+                    <td className="fw-med">{t("age_cutoff")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.age || "-"}</td>
 
                     {/* <td className="fw-med">Nationality</td>
@@ -880,18 +882,18 @@ navigate("/candidate-verification", {
                   </tr>
 
                   <tr>
-                    <td className="fw-med">Ex-serviceman</td>
+                    <td className="fw-med">{t("ex_serviceman")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.exService || "N/A"}</td>
-                    <td className="fw-med">Physical Disability</td>
+                    <td className="fw-med">{t("physical_disability")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.physicalDisability || "N"}</td>
                   </tr>
 
                   <tr>
-                    <td className="fw-med">Exam Center</td>
+                    <td className="fw-med">{t("exam_center")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.examCenter}
                     </td>
-                    <td className="fw-med">Nationality</td>
+                    <td className="fw-med">{t("nationality")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.nationality_name}</td>
                   </tr>
 
@@ -904,25 +906,25 @@ navigate("/candidate-verification", {
                     </tr> */}
 
                   <tr>
-                    <td className="fw-med">Marital Status</td>
+                    <td className="fw-med">{t("marital_status")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.maritalStatus_name}</td>
-                    <td className="fw-med">Name of Spouse</td>
+                    <td className="fw-med">{t("spouse_name")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.spouseName || "-"}</td>
                   </tr>
                   <tr>
-                    <td className="fw-med">Twin Sibling</td>
+                    <td className="fw-med">{t("twin_sibling")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.isTwin}</td>
                     {/* <td className="fw-med">Details</td>
                       <td className="fw-reg" colSpan={2}>{previewData.personalDetails.isTwin === "YES"
                         ? `${previewData.personalDetails.twinName} (${previewData.personalDetails.twinGender_name})`
                         : "-"}</td> */}
-                    <td className="fw-med">CIBIL Score</td>
+                    <td className="fw-med">{t("cibil_score")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.cibilScore}</td>
                   </tr>
                   <tr>
-                    <td className="fw-med">Current CTC</td>
+                    <td className="fw-med">{t("current_ctc")}</td>
                     <td className="fw-reg" colSpan={2}>{data.experienceSummary?.currentCtc || "-"}</td>
-                    <td className="fw-med">Expected CTC</td>
+                    <td className="fw-med">{t("expected_ctc")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.expectedCtc}
                     </td>
@@ -949,9 +951,9 @@ navigate("/candidate-verification", {
 
                   <tr>
 
-                    <td className="fw-med">Social Media Profile links</td>
+                    <td className="fw-med">{t("social_media_links")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td>
-                    <td className="fw-med">Location Preference 1</td>
+                    <td className="fw-med">{t("location_pref1")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.locationPreference1}
                     </td>
@@ -959,11 +961,11 @@ navigate("/candidate-verification", {
                   </tr>
 
                   <tr>
-                    <td className="fw-med">Location Preference 2</td>
+                    <td className="fw-med">{t("location_pref2")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.locationPreference2}
                     </td>
-                    <td className="fw-med">Location Preference 3</td>
+                    <td className="fw-med">{t("location_pref3")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.locationPreference3}
                     </td>
@@ -972,37 +974,37 @@ navigate("/candidate-verification", {
 
 
                   <tr>
-                    <td className="fw-med">Already secured regular employment under the Central Govt. in civil post?</td>
+                    <td className="fw-med">{t("central_govt_employment")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.centralGovtEmployment || "No"}</td>
-                    <td className="fw-med">Serving at a post lower than the one advertised?</td>
+                    <td className="fw-med">{t("lower_post")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.servingLowerPost || "No"}</td>
                   </tr>
 
                   <tr>
-                    <td className="fw-med">Family member of those who died in 1984 riots?</td>
+                    <td className="fw-med">{t("family_1984")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.familyMember1984 || "No"}</td>
-                    <td className="fw-med">Belong to Religious Minority Community?</td>
+                    <td className="fw-med">{t("religious_minority")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.religiousMinority || "No"}</td>
                   </tr>
 
                   <tr>
-                    <td className="fw-med">Whether serving in Govt./ quasi Govt./ Public Sector Undertaking?</td>
+                    <td className="fw-med">{t("serving_govt")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.servingInGovt || "No"}</td>
-                    <td className="fw-med">Disciplinary action in any of your previous/ Current Employment?</td>
+                    <td className="fw-med">{t("disciplinary_action")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.disciplinaryAction || "No"}</td>
                   </tr>
 
-                  {data.personalDetails.disciplinaryAction === "Yes" && (
-                    <tr>
-                      <td className="fw-med">Details of disciplinary proceedings, if Any</td>
-                      <td className="fw-reg" colSpan={5}>{data.personalDetails.disciplinaryDetails || "N/A"}</td>
-                    </tr>
+                  {/* {data.personalDetails.disciplinaryAction === "Yes" && (
+                      <tr>
+                        <td className="fw-med">Details of disciplinary proceedings, if Any</td>
+                        <td className="fw-reg" colSpan={5}>{data.personalDetails.disciplinaryDetails || "N/A"}</td>
+                      </tr>
 
-
-                  )}
+                      
+                    )} */}
 
                   <tr>
-                    <td className="fw-med">Details of disciplinary proceedings, if Any</td>
+                    <td className="fw-med">{t("disciplinary_details")}</td>
                     <td className="fw-reg" colSpan={5}>
                       {data.personalDetails.disciplinaryDetails}
                     </td>
@@ -1016,20 +1018,20 @@ navigate("/candidate-verification", {
 
         {/* === EDUCATION DETAILS === */}
         <Accordion.Item eventKey="1">
-          <Accordion.Header>Education Details</Accordion.Header>
+          <Accordion.Header>{t("education_details")}</Accordion.Header>
           <Accordion.Body>
             <div className="edu-table-wrapper">
               <table className="edu-table">
                 <thead>
                   <tr>
-                    <th>S. No</th>
-                    <th>Education Level</th>
-                    <th>School/College</th>
-                    <th>Degree</th>
-                    <th>Specialization</th>
-                    <th>From Date</th>
-                    <th>To Date</th>
-                    <th>Percentage</th>
+                    <th>{t("s_no")}</th>
+                    <th>{t("education_level")}</th>
+                    <th>{t("school_college")}</th>
+                    <th>{t("degree")}</th>
+                    <th>{t("specialization")}</th>
+                    <th>{t("from_date")}</th>
+                    <th>{t("to_date")}</th>
+                    <th>{t("percentage")}</th>
                   </tr>
                 </thead>
 
@@ -1050,7 +1052,7 @@ navigate("/candidate-verification", {
                   {(!data.education || data.education.length === 0) && (
                     <tr>
                       <td colSpan="8" className="text-center">
-                        No education details available
+                        {t("no_education")}
                       </td>
                     </tr>
                   )}
@@ -1065,21 +1067,21 @@ navigate("/candidate-verification", {
         {/* === EXPERIENCE DETAILS === */}
         <Accordion.Item eventKey="2" className="exp-accordion">
           <Accordion.Header >
-            Experience Details
+            {t("experience_details")}
           </Accordion.Header>
 
           <Accordion.Body>
             <table className="exp-table">
               <thead>
                 <tr className="exp-table-header">
-                  <th>S. No</th>
-                  <th>Organization</th>
-                  <th>Post</th>
-                  <th>Role</th>
-                  <th>From Date</th>
-                  <th>To Date</th>
-                  <th>Duration</th>
-                  <th>Brief Description of work profile</th>
+                  <th>{t("s_no")}</th>
+                  <th>{t("organization")}</th>
+                  <th>{t("post")}</th>
+                  <th>{t("role")}</th>
+                  <th>{t("from_date")}</th>
+                  <th>{t("to_date")}</th>
+                  <th>{t("duration")}</th>
+                  <th>{t("work_profile")}</th>
                 </tr>
               </thead>
 
@@ -1100,7 +1102,7 @@ navigate("/candidate-verification", {
                 {(!data.experience || data.experience.length === 0) && (
                   <tr>
                     <td colSpan="8" className="text-center">
-                      No experience details available
+                      {t("no_experience")}
                     </td>
                   </tr>
                 )}
@@ -1111,19 +1113,20 @@ navigate("/candidate-verification", {
         </Accordion.Item>
 
         <Accordion.Item eventKey="3">
-          <Accordion.Header>Documents Details</Accordion.Header>
+          <Accordion.Header>{t("documents_details")}</Accordion.Header>
           <Accordion.Body>
 
             <table className="bob-doc-table">
               <thead>
                 <tr>
-                  <th>File Type</th>
-                  <th>Status</th>
-                  <th>Action</th>
+                  <th>{t("file_type")}</th>
+                  <th>{t("status")}</th>
+                  <th>{t("action")}</th>
 
-                  <th>File Type</th>
-                  <th>Status</th>
-                  <th>Action</th>
+                  <th>{t("file_type")}</th>
+                  <th>{t("status")}</th>
+                  <th>{t("action")}</th>
+
                 </tr>
               </thead>
 
@@ -1146,7 +1149,7 @@ navigate("/candidate-verification", {
                           <td>
                             {left && (
                               <span className={getStatusClass(leftStatus)}>
-                                {leftStatus}
+                                {t(leftStatus)}
                               </span>
                             )}
                           </td>
@@ -1155,7 +1158,7 @@ navigate("/candidate-verification", {
                               <>
                                 <img
                                   src={viewIcon}
-                                  alt="View"
+                                 alt={t("view")}
                                   style={{
                                     cursor: isInterviewView ? "not-allowed" : "pointer",
                                     opacity: isInterviewView ? 0.4 : 1,
@@ -1180,7 +1183,7 @@ navigate("/candidate-verification", {
                                 />
                                 {/* <img
                                   src={downloadIcon}
-                                  alt="Download"
+                                  alt={t("download")}
                                   style={{
                                     cursor: isInterviewView ? "not-allowed" : "pointer",
                                     opacity: isInterviewView ? 0.4 : 1,
@@ -1196,7 +1199,7 @@ navigate("/candidate-verification", {
                           <td>
                             {right ? (
                               <span className={getStatusClass(rightStatus)}>
-                                {rightStatus}
+                                {t(rightStatus)}
                               </span>
                             ) : (
                               "-"
@@ -1207,7 +1210,7 @@ navigate("/candidate-verification", {
                               <>
                                 <img
                                   src={viewIcon}
-                                  alt="View"
+                                  alt={t("view")}
                                   style={{
                                     cursor: isInterviewView ? "not-allowed" : "pointer",
                                     opacity: isInterviewView ? 0.4 : 1,
@@ -1231,7 +1234,7 @@ navigate("/candidate-verification", {
                                 />
                                 {/* <img
                                   src={downloadIcon}
-                                  alt="Download"
+                                  alt={t("download")}
                                   style={{
                                     cursor: isInterviewView ? "not-allowed" : "pointer",
                                     opacity: isInterviewView ? 0.4 : 1,
@@ -1261,7 +1264,7 @@ navigate("/candidate-verification", {
 
               {/* WORK CRITERIA */}
               <div className="criteria-card">
-                <label className="criteria-title">Work criteria fulfilled?</label>
+                <label className="criteria-title">{t("work_criteria")}</label>
 
                 <div className="criteria-radio mb-0">
                   {CRITERIA_OPTIONS.map(option => (
@@ -1275,7 +1278,7 @@ navigate("/candidate-verification", {
                         }
                       />
                       <span className="custom-radio"></span>
-                      {option}
+                     {t(option)}
                     </label>
                   ))}
                 </div>
@@ -1288,7 +1291,7 @@ navigate("/candidate-verification", {
                 <textarea
                   // type="text"
                   className="criteria-remark mt-2"
-                  placeholder="Work criteria remark"
+                  placeholder={t("work_remark")}
                   value={screeningForm.workCriteriaRemark}
                   onChange={(e) =>
                     handleInputChange("workCriteriaRemark", e.target.value)
@@ -1306,7 +1309,7 @@ navigate("/candidate-verification", {
 
               {/* AGE CRITERIA */}
               <div className="criteria-card">
-                <label className="criteria-title">Age criteria fulfilled?</label>
+                <label className="criteria-title">{t("age_criteria")}</label>
 
                 <div className="criteria-radio mb-0">
                   {CRITERIA_OPTIONS.map(option => (
@@ -1320,7 +1323,7 @@ navigate("/candidate-verification", {
                         }
                       />
                       <span className="custom-radio"></span>
-                      {option}
+                     {t(option)}
                     </label>
                   ))}
                 </div>
@@ -1333,7 +1336,7 @@ navigate("/candidate-verification", {
                 <textarea
                   // type="text"
                   className="criteria-remark mt-2"
-                  placeholder="Age criteria remark"
+                  placeholder={t("age_remark")}
                   value={screeningForm.ageCriteriaRemark}
                   onChange={(e) =>
                     handleInputChange("ageCriteriaRemark", e.target.value)
@@ -1351,7 +1354,7 @@ navigate("/candidate-verification", {
 
               {/* EDUCATION CRITERIA */}
               <div className="criteria-card">
-                <label className="criteria-title">Education criteria fulfilled?</label>
+                <label className="criteria-title"> {t("education_criteria")}</label>
 
                 <div className="criteria-radio mb-0">
                   {CRITERIA_OPTIONS.map(option => (
@@ -1365,7 +1368,7 @@ navigate("/candidate-verification", {
                         }
                       />
                       <span className="custom-radio"></span>
-                      {option}
+                     {t(option)}
                     </label>
                   ))}
                 </div>
@@ -1378,7 +1381,7 @@ navigate("/candidate-verification", {
                 <textarea
                   // type="text"
                   className="criteria-remark mt-2"
-                  placeholder="Education criteria remark"
+                  placeholder={t("education_remark")}
                   value={screeningForm.educationCriteriaRemark}
                   onChange={(e) =>
                     handleInputChange("educationCriteriaRemark", e.target.value)
@@ -1399,7 +1402,7 @@ navigate("/candidate-verification", {
                 className={`criteria-card ${disableShortlistedSection ? "criteria-disabled" : ""
                   }`}
               >
-                <label className="criteria-title">Shortlisted?</label>
+                <label className="criteria-title">{t("shortlisted")}</label>
 
                 <div className="criteria-radio mb-0">
                   {["YES", "NO"].map(option => (
@@ -1413,7 +1416,7 @@ navigate("/candidate-verification", {
                         }
                       />
                       <span className="custom-radio"></span>
-                      {option}
+                      {t(option)}
                     </label>
                   ))}
                 </div>
@@ -1426,7 +1429,7 @@ navigate("/candidate-verification", {
                 <textarea
                   // type="text"
                   className="criteria-remark mt-2"
-                  placeholder="Final remark"
+                  placeholder={t("final_remark")}
                   value={screeningForm.finalScreeningRemark}
                   onChange={(e) =>
                     handleInputChange("finalScreeningRemark", e.target.value)
@@ -1446,7 +1449,7 @@ navigate("/candidate-verification", {
             <div className={`criteria-submit-row ${disableShortlistedSection ? 'justify-content-between' : 'justify-content-end'}`}>
               {!isZonalHr && disableShortlistedSection && (
                 <div className="d-grid">
-                  <label className="submit-label">Submit Before</label>
+                  <label className="submit-label">{t("submit_before")}</label>
                   <input
                     type="date"
                     className="criteria-date"
@@ -1466,7 +1469,7 @@ navigate("/candidate-verification", {
                 className="btn-submit-orange"
                 onClick={handleFinalSubmit}
               >
-                Submit
+               {t("submit")}
               </button>
             </div>
           </Card>
@@ -1476,14 +1479,14 @@ navigate("/candidate-verification", {
           <Card className="criteria-main-card p-3">
 
             <label className="criteria-title mb-2">
-              Have All Documents Been Verified?
+              {t("all_docs_verified_q")}
             </label>
 
 
 
             {/* RADIO OPTIONS — same pattern as Shortlisted */}
             <div className="criteria-radio mb-3">
-{["Yes", "No", "Provisionally Approved"].map((opt) => {
+{["YES", "NO", "PROVISIONALLY_APPROVED"].map((opt) => {
 
   const disableYes =
     opt === "Yes" && hasAnyRejectedDocument();
@@ -1515,7 +1518,8 @@ navigate("/candidate-verification", {
         }}
       />
       <span className="custom-radio"></span>
-      {opt}
+    {t(opt)}
+
     </label>
   );
 })}
@@ -1526,7 +1530,7 @@ navigate("/candidate-verification", {
 
             {/* DATE */}
           <div className="submit-date-group d-flex flex-column">
-  <label className="submit-label">Submit Before</label>
+  <label className="submit-label">{t("submit_before")}</label>
 
  <input
   type="date"
@@ -1561,7 +1565,7 @@ navigate("/candidate-verification", {
             <div className="remarks-row">
               <textarea
                 className="remarks-box"
-                placeholder="Remarks"
+                placeholder={t("enter_comments")}
                 rows={5}
                 disabled={!allDocsVerified}
                 value={screeningRemarks}
@@ -1574,7 +1578,7 @@ navigate("/candidate-verification", {
                 disabled={!allDocsVerified}
                 onClick={handleZonalSubmit}
               >
-                Submit
+                {t("submit")}
               </button>
 
             </div>

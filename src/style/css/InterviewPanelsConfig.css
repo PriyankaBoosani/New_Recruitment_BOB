@@ -1,0 +1,703 @@
+/* ===== CARD ===== */
+.ipc-card {
+  background: white;
+  border-radius: 14px;
+  padding: 18px 22px;
+}
+
+/* ===== HEADER TITLE ===== */
+.ipc-title {
+  font-size: 15px;
+  font-weight: 450;
+  color: #374151;
+}
+
+/* ===== BLUE BUTTON ===== */
+.ipc-btn-blue {
+  background: #42579f;
+  color: white;
+  border: none;
+  border-radius: 9px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 300;
+}
+
+.ipc-btn-blue:hover {
+  background: #34448a;
+  color: white;
+}
+
+/* ===== ORANGE BUTTON ===== */
+.ipc-btn-orange {
+  background: #f26522;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.ipc-btn-orange:hover {
+  background: #d9551b;
+  color: white;
+}
+
+/* ===== LABEL ===== */
+.ipc-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.ipc-chip-popover {
+  position: absolute;
+  top: calc(100% + 8px);   /* ⭐ always below chip */
+  left: 0;
+
+  background: #2f3e6f;
+  color: rgb(255, 255, 255);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  min-width: 200px;
+
+  z-index: 9999;
+  box-shadow: 0 8px 18px rgba(0,0,0,.18);
+}
+
+
+.ipc-chip-popover::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 20px;   /* adjust if needed */
+  width: 12px;
+  height: 12px;
+  background: #2f3e6f;
+  transform: rotate(45deg);
+}
+
+
+.ipc-pop-head {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+
+.ipc-pop-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ipc-pop-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.ipc-pop-actions i {
+  cursor: pointer;
+}
+
+
+/* ===== PANEL BOX ===== */
+.ipc-panel-box {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  min-height: 70px;
+  padding: 10px;
+   display: flex;
+  flex-wrap: wrap;
+}
+
+
+/* CHIP */
+
+.ipc-panel-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #eef2f8;
+  border: 1px solid #d9e0ec;
+  margin: 6px;
+  font-size: 13px;
+}
+
+.ipc-panel-name {
+  color: #2f3e6f;
+  font-weight: 500;
+}
+
+
+.ipc-chip-icon {
+  cursor: pointer;
+  color: #6b7a99;
+}
+
+/* ACTION ICONS */
+
+.ipc-chip-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.ipc-chip-edit {
+  color: #f97316;
+  cursor: pointer;
+}
+
+.ipc-chip-delete {
+  color: #9aa3b2;
+  cursor: pointer;
+}
+
+/* TOOLTIP */
+
+.ipc-chip-tooltip {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: #2f3e6f;
+  color: white;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  display: none;
+  min-width: 180px;
+}
+
+.ipc-panel-chip:hover .ipc-chip-tooltip {
+  display: block;
+}
+
+.ipc-tip-head {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 4px;
+  opacity: .8;
+}
+
+.ipc-tip-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+/* ===== COUNT TEXT ===== */
+.ipc-count {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* ===== INPUT ===== */
+.ipc-time-input {
+  border-radius: 8px;
+  font-size: 13px;
+  height: 38px;
+}
+
+
+
+.schedule-ready-bar {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px 18px;
+}
+
+.schedule-ready-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* cancel button */
+.sr-btn-cancel {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.sr-btn-cancel:hover {
+  background: #e5e7eb;
+}
+
+/* primary button */
+.sr-btn-primary {
+  background: #42579f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.sr-btn-primary:hover {
+  background: #34448a;
+  color: white;
+}
+
+
+.schedule-card {
+  background:white;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-top: 20px;
+}
+
+.schedule-title {
+  font-size: 15px;
+  font-weight: 430;
+  color: #5e5e7f;
+  margin-bottom: 12px;
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.schedule-table thead th {
+  text-align: left;
+  font-weight: 410;
+  color: 
+#494955;
+  padding: 12px 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.schedule-table tbody td {
+  padding: 16px 8px;
+  border-bottom: 1px solid #eef0f3;
+  color: #374151;
+}
+
+.cand-name {
+  font-weight: 420;
+  color: 
+#2d2d2d;
+}
+
+.cand-reg {
+  font-size: 12px;
+  color: 
+#7e7e7e;
+  margin-top: 4px;
+}
+
+
+.ap-modal .modal-content {
+  border-radius: 16px;
+  border: none;
+}
+
+.ap-body {
+  padding: 20px;
+  background: #ffffff;
+   border-radius: 16px;
+}
+
+/* HEADER */
+
+.ap-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.ap-title {
+  font-size: 18px;
+  font-weight: 400;
+  color: #2f3e6f;
+}
+
+.ap-sub {
+  font-size: 13px;
+  color: #8b95a7;
+  margin-top: 4px;
+}
+
+.ap-close {
+  border: none;
+  background: none;
+  color: #9aa3b2;
+  font-size: 18px;
+}
+
+/* LABEL */
+
+.ap-label {
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 6px;
+  font-weight: 400;
+}
+
+.ap-label span {
+  color: #ef4444;
+}
+
+/* INPUT LOOK */
+
+.ap-input {
+  height: 44px;
+  border-radius: 12px;
+  border: 1.5px solid #cfd6e2;
+  background: #f7f8fb;
+  padding: 0 14px;
+  width: 100%;
+  font-size: 14px;
+}
+.ap-inputs {
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #d7dce6;
+  background: #ffffff;   /* ✅ make fields white */
+  padding: 0 14px;
+  width: 100%;
+  font-size: 14px;
+}
+
+
+.ap-input:focus {
+  background: #ffffff;
+  border-color: #f97316;
+  outline: none;
+}
+
+/* REMOVE DEFAULT ICONS */
+
+.ap-no-arrow {
+  appearance: none;
+}
+
+.ap-no-date::-webkit-calendar-picker-indicator {
+  opacity: 0;
+}
+
+/* SELECT ICON */
+
+.ap-select-wrap {
+  position: relative;
+}
+
+.ap-select-icon {
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  color: #6b7280;
+}
+
+/* DATE ICON */
+
+.ap-icon-input {
+  position: relative;
+}
+
+.ap-calendar {
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  color: #2f3e6f;
+}
+
+/* ROW GRID */
+
+/* .ap-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 56px;
+  gap: 18px;
+  margin-bottom: 18px;
+} */
+
+/* SIDE BUTTONS */
+
+.ap-plus {
+  width: 46px;
+  height: 44px;
+  border-radius: 12px;
+  border: 2px solid #f97316;
+  background: #fff;
+  color: #f97316;
+  font-size: 18px;
+}
+
+.ap-trash {
+  width: 46px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1.5px solid #cfd6e2;
+  background: #fff;
+  color: #9aa3b2;
+}
+
+/* FOOTER */
+
+.ap-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.ap-cancel {
+  background: #ebf0f7;
+  border: 1px solid #e3e6ec;
+  height: 35px;
+  padding: 0 24px;
+  border-radius: 12px;
+  color: #6b7280;
+  
+}
+
+.ap-save {
+  background: #f97316;
+  border: none;
+  height: 35px;
+  padding: 0 28px;
+  border-radius: 12px;
+  color: white;
+  
+}
+
+.ap-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 56px;
+  gap: 18px;
+  margin-bottom: 18px;
+  align-items: start;   /* ⭐ KEY FIX */
+}
+
+
+/* DATE PICKER */
+
+.ap-date-wrap {
+  position: relative;
+}
+
+.ap-date-wrap .react-datepicker-wrapper {
+  width: 100%;
+}
+
+.ap-calendar {
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  color: #2f3e6f;
+  pointer-events: none;
+}
+
+/* BUTTON ALIGNMENT */
+
+.ap-btn-col {
+  display: flex;
+  align-items: center;    
+  justify-content: center;
+  padding-top: 28px;      
+}
+
+.ap-plus,
+.ap-trash {
+  width: 46px;
+  height: 44px;
+  border-radius: 12px;
+}
+
+.field-error {
+  font-size: 12px;
+  color: #ef4444;
+  margin-top: 4px;
+}
+
+.ap-error {
+  border-color: #ef4444 !important;
+  background: #fff5f5;
+}
+
+/* HEADER ROW */
+
+.ipc-pop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+/* DATE / INTERVIEW TEXT */
+
+.ipc-pop-head-text {
+  display: flex;
+  gap: 24px;
+  font-weight: 600;
+  opacity: .9;
+  font-size: 12px;
+}
+
+/* EDIT DELETE ICONS */
+
+.ipc-pop-head-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.ipc-pop-head-actions i {
+  cursor: pointer;
+  font-size: 13px;
+  opacity: .95;
+}
+
+
+
+.del-modal .modal-content {
+  border-radius: 14px;
+  border: none;
+}
+
+.del-body {
+  padding: 22px 26px;
+}
+
+/* HEADER */
+
+.del-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.del-title {
+  font-size: 15px;
+  font-weight: 350;
+  color:
+#596cab;
+}
+
+.del-close {
+  border: none;
+  background: none;
+  color:#7a7a7a;
+  font-size: 14px;
+}
+
+/* MESSAGE */
+
+.del-message {
+  font-size: 14px;
+  font-weight: 400;
+  color: 
+
+#162b75;
+  margin-bottom: 22px;
+}
+
+/* FOOTER */
+
+.del-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.del-cancel {
+  background:
+#f8f8f8;
+  border: 1px solid #e3e6ec;
+  border-radius: 10px;
+  height: 36px;
+  padding: 0 18px;
+  color:#818181;
+  font-size: 13px;
+}
+
+.del-delete {
+  background: #f26522;
+  border: none;
+  border-radius: 10px;
+  height: 36px;
+  padding: 0 20px;
+  color: white;
+  font-size: 13px;
+  font-weight: 400;
+}
+/* ===== APPLY TO ALL BUTTON ===== */
+
+.ipc-apply-btn {
+  background: #f26522;
+  color: #ffffff;
+  border: none;
+  border-radius: 9px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 400;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 30px;
+  line-height: 1;
+  transition: all .15s ease;
+}
+
+.ipc-apply-btn:hover {
+  background: #d9551b;
+  color: #ffffff;
+}
+
+.ipc-apply-btn:active {
+  transform: translateY(1px);
+}
+
+.field-error {
+  font-size: 12px;
+  color: #ef4444;
+  margin-top: 4px;
+  min-height: 18px;   /* ⭐ prevents jumping */
+}
+
+/* ===== APPLY SUCCESS MODAL ===== */
+
+.apply-modal .modal-content {
+  border-radius: 12px;
+  padding: 10px 0;
+}
+
+.apply-body {
+  padding: 30px 20px;
+}
+
+.apply-icon {
+  font-size: 42px;
+  color: #22c55e;   /* green */
+  margin-bottom: 8px;
+}
+
+.apply-text {
+  font-size: 15px;
+  font-weight: 430;
+  color: #2d2d2d;
+  margin-bottom: 18px;
+}
+
+.apply-ok-btn {
+  background: #f97316;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 26px;
+  font-weight: 500;
+}

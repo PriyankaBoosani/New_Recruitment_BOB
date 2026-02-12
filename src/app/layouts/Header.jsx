@@ -11,6 +11,10 @@ import { useTranslation } from "react-i18next";
 import i18n from '../../i18n/i18n';
 import { persistor } from '../../store';
 import { NavLink } from "react-router-dom";
+import "../../style/css/header-pill.css";
+
+
+
 
 
 const Header = () => {
@@ -19,6 +23,8 @@ const Header = () => {
   const [expanded, setExpanded] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [langOpen, setLangOpen] = useState(false);
+
 
   /* ===================== USER FROM REDUX ===================== */
   const userSlice = useSelector((state) => state.user);
@@ -81,6 +87,13 @@ const isInterviewer = role === "interviewer";
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    const closeLangMenu = () => setLangOpen(false);
+    document.addEventListener("click", closeLangMenu);
+    return () => document.removeEventListener("click", closeLangMenu);
+  }, []);
+
   const location = useLocation();
 
   const isAdminRoute =
@@ -111,10 +124,11 @@ const isInterviewer = role === "interviewer";
           </div>
 
           {/* Right Section */}
-          <div className="d-flex align-items-center fonnav">
+          {/* <div className="d-flex align-items-center fonnav"> */}
+          <div className="d-flex align-items-center fonnav gap-3">
 
             {/* LANGUAGE */}
-            <div className="d-flex align-items-center text-white me-3">
+            {/* <div className="d-flex align-items-center text-white me-3">
               <span
                 className={`me-2 cursor-pointer ${i18n.language === 'en' ? 'fw-bold' : 'opacity-75'}`}
                 onClick={() => changeLang("en")}
@@ -128,7 +142,52 @@ const isInterviewer = role === "interviewer";
               >
                 हिंदी
               </span>
+            </div> */}
+            {/* LANGUAGE PILL — CUSTOM */}
+            <div
+              className="lang-pill"
+              onClick={(e) => {
+                e.stopPropagation();
+                setLangOpen(v => !v);
+              }}
+            >
+              <span className="lang-globe">🌐</span>
+
+              <span className="lang-label">
+                {i18n.language === "hi" ? "हिंदी" : "English (US)"}
+              </span>
+
+              <FontAwesomeIcon icon={faChevronDown} className="lang-caret" />
+
+              {langOpen && (
+                <div className="lang-menu">
+                  <div
+                    className="lang-item"
+                    onClick={(e) => {
+                      e.stopPropagation();          // ✅ important
+                      dispatch(setLanguage("en"));
+                      i18n.changeLanguage("en");
+                      setLangOpen(false);
+                    }}
+                  >
+                    English (US)
+                  </div>
+
+                  <div
+                    className="lang-item"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(setLanguage("hi"));
+                      i18n.changeLanguage("hi");
+                      setLangOpen(false);
+                    }}
+                  >
+                    हिंदी
+                  </div>
+                </div>
+              )}
             </div>
+
 
             {/* ===================== USER DROPDOWN ===================== */}
             <div className="position-relative" ref={dropdownRef}>
@@ -237,6 +296,17 @@ const isInterviewer = role === "interviewer";
                   Committee Management
                 </Nav.Link>
               )}
+              {!isAdmin && (
+                <Nav.Link
+                  as={NavLink}
+                  to="/schedule-interviews"
+                  onClick={closeMenu}
+                >
+                  Schedule Interviews
+                </Nav.Link>
+              )}
+
+
 
               {/* <Nav.Link as={NavLink} to="/dashboard" onClick={closeMenu}>Dashboard</Nav.Link>
               <Nav.Link href="#candidate-shortlist">Candidate Shortlist</Nav.Link>

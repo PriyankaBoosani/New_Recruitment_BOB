@@ -6,10 +6,20 @@ const LocationWiseVacancyTable = ({
 }) => {
   if (!positionStateDistributions.length) return null;
 
+  // const stateMap = states.reduce((acc, s) => {
+  //   acc[s.stateId] = s.stateName;
+  //   return acc;
+  // }, {});
+
+
   const stateMap = states.reduce((acc, s) => {
-    acc[s.stateId] = s.stateName;
-    return acc;
-  }, {});
+  const id = String(s.id || s.stateId || s.zonalStateID).toLowerCase();
+  const name = s.name || s.stateName;
+
+  acc[id] = name;
+  return acc;
+}, {});
+
 
   return (
     <div className="mt-3 p-3" style={{ backgroundColor: '#f5f7fb', borderRadius: '10px' }}>
@@ -42,7 +52,12 @@ const LocationWiseVacancyTable = ({
           <tbody>
             {positionStateDistributions.map((state, idx) => (
               <tr key={idx}>
-                <td>{stateMap[state.stateId] || "Unknown"}</td>
+               <td>
+  {stateMap[
+    String(state.stateId || state.zonalStateID).toLowerCase()
+  ] || "Unknown"}
+</td>
+
 
                 <td className="fw-500" style={{ padding: '12px 6px' }}>{state.categories.GEN}</td>
                 <td className="fw-500" style={{ padding: '12px 6px' }}>{state.categories.EWS}</td>

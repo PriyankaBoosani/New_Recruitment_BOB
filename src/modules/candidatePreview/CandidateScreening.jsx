@@ -593,8 +593,8 @@ export default function CandidateScreening({ selectedJob }) {
                 position={selectedPosition}
                 isCardBg={false}
                 isSaveEnabled={false}
-                masterData={masterData}
                 isSaveBtn={false}
+                saveButton={false}
               />
             )}
           </div>

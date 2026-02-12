@@ -41,19 +41,49 @@ const RequisitionStrip = ({
 
   /* ================= LOAD MASTER DATA ================= */
 
-  useEffect(() => {
-    const loadMasters = async () => {
-      try {
-        const res = await masterApiService.getMasterDisplayAll();
-        setMasterData(res.data || {});
-      } catch (err) {
-        console.error("Failed to load master data", err);
-        setMasterData({});
-      }
-    };
+  // useEffect(() => {
+  //   const loadMasters = async () => {
+  //     try {
+  //       const res = await masterApiService.getMasterDisplayAll();
+  //       setMasterData(res.data || {});
+  //     } catch (err) {
+  //       console.error("Failed to load master data", err);
+  //       setMasterData({});
+  //     }
+  //   };
 
-    loadMasters();
-  }, []);
+  //   loadMasters();
+  // }, []);
+
+
+
+  useEffect(() => {
+  const loadMasters = async () => {
+    try {
+      const [masterRes, zonalRes] = await Promise.all([
+        masterApiService.getMasterDisplayAll(),
+        masterApiService.getZonalStates()
+      ]);
+
+      setMasterData({
+        ...masterRes.data,
+
+        // ✅ use ZONAL states (correct IDs)
+        states: (zonalRes.data || []).map(s => ({
+          id: String(s.zonalStateID),
+          name: s.stateName,
+        }))
+      });
+
+    } catch (err) {
+      console.error("Failed to load master data", err);
+      setMasterData({});
+    }
+  };
+
+  loadMasters();
+}, []);
+
 
   /* ================= FETCH JOB ================= */
 

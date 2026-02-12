@@ -3,6 +3,8 @@ import { Modal } from "react-bootstrap";
 import "../../../style/css/PreviewModal.css";
 import masterApiService from "../../master/services/masterApiService";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
+
 
 const DocumentViewerModal = ({
   show,
@@ -11,6 +13,8 @@ const DocumentViewerModal = ({
   onVerify,
   onReject,
 }) => {
+  const { t } = useTranslation(["preview", "common", "validation"]);
+
   const [comment, setComment] = useState("");
   const [sasUrl, setSasUrl] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -123,7 +127,7 @@ const DocumentViewerModal = ({
         <div className="doc-viewer-content">
 
           {loading && (
-            <div className="text-center">Loading document...</div>
+            <div className="text-center">{t("loading_document")}</div>
           )}
 
           {!loading && sasUrl && (
@@ -146,14 +150,14 @@ const DocumentViewerModal = ({
 
               {["doc", "docx"].includes(fileType) && (
                 <div className="text-center p-4">
-                  <p>This file cannot be previewed in browser.</p>
+                  <p>{t("cannot_preview")}</p>
                   <a
                     href={sasUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn btn-primary"
                   >
-                    Download File
+                    {t("download_file")}
                   </a>
                 </div>
               )}
@@ -170,7 +174,7 @@ const DocumentViewerModal = ({
             {/* comment box same height as buttons */}
             <div style={{ flex: 1 }}>
               <textarea
-                placeholder="Enter comments..."
+                placeholder={t("enter_comments")}
                 rows={1}
                 value={comment}
                 disabled={isInterviewer}
@@ -183,7 +187,7 @@ const DocumentViewerModal = ({
 
               {error && isZonalHr && (
                 <div className="field-error-text">
-                  This field is required
+                 {t("validation:required")}
                 </div>
               )}
             </div>
@@ -199,7 +203,7 @@ const DocumentViewerModal = ({
     cursor: isInterviewer ? "not-allowed" : "pointer"
   }}
 >
-  Rejected
+  {t("REJECTED")}
 </button>
 
 <button
@@ -211,7 +215,7 @@ const DocumentViewerModal = ({
     cursor: isInterviewer ? "not-allowed" : "pointer"
   }}
 >
-  Verified
+  {t("VERIFIED")}
 </button>
 
             </div>

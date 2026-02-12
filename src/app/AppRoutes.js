@@ -31,6 +31,7 @@ import CandidateVerification from "../modules/Verification/CandidateVerification
 import CandidateScreening from "../modules/candidatePreview/CandidateScreening";
 import InterviewerSchedule from "../modules/Interviewer/InterviewerSchedule"
 // import CandidateInterview from "../modules/Interview/CandidateInterview";
+import ScheduleInterviews from "../modules/interviews/ScheduleInterviews";
 
 // Lazy loaded components
 const Layout = React.lazy(() => import("../shared/components/Layout"));
@@ -85,6 +86,7 @@ const AppRoutes = () => {
                       <Route path="/candidate-preview" element={<CandidatePreviewPage />} />
                 <Route path="/interviewpanel" element={<InterviewPanel />} />
                 {/* <Route path="/candidate-interview" element={<CandidateInterview />} /> */}
+                <Route path="/schedule-interviews" element={<ScheduleInterviews />} />
 
 
               </Route>

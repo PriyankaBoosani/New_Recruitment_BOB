@@ -244,6 +244,7 @@ console.log("Full Masters Data:@@@@@", candidateId, positionId);
           isCardBg
           isSaveEnabled={false}
          //  masterData={masters}
+          //  masterData={masters}
         />
       )}
 

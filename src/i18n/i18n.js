@@ -52,6 +52,16 @@ import importModalHi from "../i18n/jobPostingJson/importModal.hi.json";
 import jobPostingsListEn from "../i18n/jobPostingJson/jobPostingsList.en.json";
 import jobPostingsListHi from "../i18n/jobPostingJson/jobPostingsList.hi.json";
 
+import previewEn from "../i18n/previewJson/preview.en.json";
+import previewHi from "../i18n/previewJson/preview.hi.json";
+
+import interviewScheduleEn from "../i18n/interviewScheduleJson/interviewSchedule.en.json";
+import interviewScheduleHi from "../i18n/interviewScheduleJson/interviewSchedule.hi.json";
+
+
+
+
+
 
 
 i18n
@@ -76,7 +86,9 @@ i18n
         CreateRequisition: createRequisitionEn,
         addPosition: addPositionEn,
         importModal: importModalEn,
-        jobPostingsList: jobPostingsListEn
+        jobPostingsList: jobPostingsListEn,
+        preview: previewEn,
+        interviewSchedule: interviewScheduleEn
       },
       hi: {
         common: commonHi,
@@ -96,10 +108,12 @@ i18n
         CreateRequisition: createRequisitionHi,
         addPosition: addPositionHi,
         importModal: importModalHi,
-        jobPostingsList: jobPostingsListHi
+        jobPostingsList: jobPostingsListHi,
+        preview: previewHi,
+         interviewSchedule: interviewScheduleHi
       }
     },
-    lng: "en",       // default language
+    lng: "en",       
     fallbackLng: "en",
     defaultNS: "common",
     interpolation: {

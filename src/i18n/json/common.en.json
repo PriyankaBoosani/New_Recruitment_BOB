@@ -19,6 +19,7 @@
   "select_dots": "Select...",
   "select_years": "Select Years",
   "select_months": "Select Months",
+  "delete": "Delete",
   "yes": "Yes",
   "no": "No",
   "replace": "Replace",
@@ -27,5 +28,6 @@
   "select_type": "Select Type",
   "select_degree": "Select Degree",
   "select_specialization": "Select Specialization",
-  "select_certification": "Select Certification"
+  "select_certification": "Select Certification",
+  "footer_text": "Copyright © {{year}} Bank of Baroda. All rights reserved | Powered by Sagarsoft"
 }
