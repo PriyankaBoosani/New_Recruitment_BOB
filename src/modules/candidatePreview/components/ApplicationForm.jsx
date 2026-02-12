@@ -138,7 +138,7 @@ useEffect(() => {
       return;
     }
 
-    if (zonalDecision === "Provisionally Approved") {
+if (zonalDecision === "PROVISIONALLY_APPROVED") {
       if (!screeningForm.zonalSubmitDate) {
         setErrors(prev => ({
           ...prev,
@@ -659,6 +659,8 @@ navigate("/candidate-verification", {
     });
   };
 
+
+  
 
   const allDocsVerified =
     documentRows.length > 0 &&
@@ -1568,13 +1570,20 @@ navigate("/candidate-verification", {
 {["YES", "NO", "PROVISIONALLY_APPROVED"].map((opt) => {
 
   const disableYes =
-    opt === "Yes" && hasAnyRejectedDocument();
+    opt === "YES" && !areAllDocumentsVerified();
 
   const disableProvisionallyApproved =
-    opt === "Provisionally Approved" && areAllDocumentsVerified();
+    opt === "PROVISIONALLY_APPROVED" && areAllDocumentsVerified();
 
   const isDisabled =
     !allDocsVerified || disableProvisionallyApproved || disableYes;
+
+  console.log("🔘 Zonal option check:", {
+    opt,
+    disableYes,
+    disableProvisionallyApproved,
+    allDocsVerified
+  });
 
   return (
     <label
@@ -1589,7 +1598,6 @@ navigate("/candidate-verification", {
         disabled={isDisabled}
         onChange={(e) => {
           setZonalDecision(e.target.value);
-
           setErrors(prev => ({
             ...prev,
             zonalSubmitDate: undefined
@@ -1597,11 +1605,11 @@ navigate("/candidate-verification", {
         }}
       />
       <span className="custom-radio"></span>
-    {t(opt)}
-
+      {t(opt)}
     </label>
   );
 })}
+
 
 
             </div>

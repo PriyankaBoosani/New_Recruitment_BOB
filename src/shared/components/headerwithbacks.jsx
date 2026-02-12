@@ -10,23 +10,15 @@ const PageHeaderWithBacks = ({ title, subtitle }) => {
 
   const user = useSelector((s) => s.user.user);
   const role = user?.role?.toLowerCase();
-
   const isZonalHr = role === "zonal_hr";
-  const isInterviewer = role === "interviewer";
-  
 
   const handleBack = () => {
+    // allow one-time restore
     sessionStorage.setItem("fromPreviewBack", "true");
 
-    let targetRoute = "/candidate-workflow";
-
-    if (isZonalHr) {
-      targetRoute = "/candidate-verification";
-    } else if (isInterviewer) {
-      targetRoute = "/candidate-interviewer";   //  FIX
-    }
-
-    console.log("⬅️ Back navigate to:", targetRoute);
+    const targetRoute = isZonalHr
+      ? "/candidate-verification"
+      : "/candidate-workflow";
 
     navigate(targetRoute, {
       state: {
@@ -39,7 +31,11 @@ const PageHeaderWithBacks = ({ title, subtitle }) => {
   };
 
   return (
-    <div className="d-flex align-items-start" style={{ marginBottom: "12px" }}>
+    <div
+      className="d-flex align-items-start"
+      style={{ marginBottom: "12px" }}
+    >
+      {/* BACK BUTTON */}
       <div
         className="d-flex align-items-center gap-1"
         style={{
@@ -55,21 +51,26 @@ const PageHeaderWithBacks = ({ title, subtitle }) => {
         <span>Back</span>
       </div>
 
+      {/* TITLE */}
       <div>
-        <div style={{
-          fontSize: "18px",
-          fontWeight: 600,
-          color: "#162B75",
-          lineHeight: "1.2"
-        }}>
+        <div
+          style={{
+            fontSize: "18px",
+            fontWeight: 600,
+            color: "#162B75",
+            lineHeight: "1.2"
+          }}
+        >
           {title}
         </div>
 
-        <div style={{
-          fontSize: "13px",
-          color: "#6c757d",
-          marginTop: "2px"
-        }}>
+        <div
+          style={{
+            fontSize: "13px",
+            color: "#6c757d",
+            marginTop: "2px"
+          }}
+        >
           {subtitle}
         </div>
       </div>

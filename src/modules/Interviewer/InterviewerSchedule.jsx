@@ -145,11 +145,6 @@ useEffect(() => {
 
 useEffect(() => {
 
-  if (usedRestoreData) {
-  console.log("⛔ Skip API load — using restored data");
-  sessionStorage.removeItem("fromPreviewBack");
-  return;
-}
 
 
   const posId = selectedPosition?.position?.positionId;
@@ -182,30 +177,41 @@ useEffect(() => {
 
 
 
-
 useEffect(() => {
   if (!cameFromPreviewBack) return;
-  if (!panelPositions.length) return;
-  if (!navReqId || !navPosId) return;
+  if (!navState.requisition || !navState.position) return;
 
-  console.log("🔁 Restore interviewer selector", { navReqId, navPosId });
+  console.log("🔁 Restore selector objects from nav");
 
-  const matched = panelPositions.find(p =>
-    p.requisition?.id === navReqId &&
-    p.position?.positionId === navPosId
-  );
+  const normalizedReq = {
+    ...navState.requisition,
+    startDate:
+      navState.requisition.startDate ??
+      navState.requisition.registration_start_date,
+    endDate:
+      navState.requisition.endDate ??
+      navState.requisition.registration_end_date
+  };
 
-  if (!matched) {
-    console.log("❌ No panel match found");
-    return;
-  }
+  const restored = {
+    requisition: normalizedReq,
+    position: navState.position,
+    masterPosition: {
+      positionName: navState.position.positionName
+    }
+  };
 
-  console.log("✅ Restored panel selector:", matched);
+  setSelectedRequisition(restored);
+  setSelectedPosition(restored);
 
-  setSelectedRequisition(matched);
-  setSelectedPosition(matched);
+  // ✅ IMPORTANT — clear restore flag after use
+  sessionStorage.removeItem("fromPreviewBack");
+  console.log("🧹 Cleared fromPreviewBack flag");
 
-}, [panelPositions, cameFromPreviewBack]);
+}, [cameFromPreviewBack]);
+
+
+
 
 
 
@@ -343,6 +349,15 @@ const handleSave = async () => {
   const isSelectionDone =
     selectedRequisition && selectedPosition;
 
+
+    console.log("📅 Strip dates:",
+  selectedRequisition?.requisition?.startDate,
+  selectedRequisition?.requisition?.registration_start_date,
+  selectedRequisition?.requisition?.endDate,
+  selectedRequisition?.requisition?.registration_end_date
+);
+
+
   /* ================= UI ================= */
 
   return (
@@ -408,20 +423,32 @@ const handleSave = async () => {
 
       {/* ===== STRIP — SAME AS VERIFICATION ===== */}
 
+
+
+      
+
       {isSelectionDone && (
         <div className="requisition-strip">
-       <RequisitionStrip
+      <RequisitionStrip
   requisition={{
     requisitionTitle: selectedRequisition?.requisition?.requisitionTitle,
     requisitionCode: selectedRequisition?.requisition?.requisitionCode,
-    registration_start_date: selectedRequisition?.requisition?.startDate,
-    registration_end_date: selectedRequisition?.requisition?.endDate
+
+   registration_start_date:
+  selectedRequisition?.requisition?.startDate ??
+  selectedRequisition?.requisition?.registration_start_date,
+
+registration_end_date:
+  selectedRequisition?.requisition?.endDate ??
+  selectedRequisition?.requisition?.registration_end_date,
+
   }}
 
   position={{
     positionId: selectedPosition?.position?.positionId,
     positionName: selectedPosition?.masterPosition?.positionName
   }}
+
 
             isCardBg={false}
             isSaveEnabled={anyChanged}

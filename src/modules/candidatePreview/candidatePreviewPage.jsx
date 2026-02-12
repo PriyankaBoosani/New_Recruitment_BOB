@@ -11,6 +11,7 @@ import { mapCandidateToPreview } from "../candidatePreview/mappers/candidatePrev
 import { useLocation, useNavigate } from "react-router-dom";
 import HeaderWithBack from "../../../src/shared/components/HeaderWithBack";
 import HeaderWithBacks from "../../../src/shared/components/headerwithbacks";
+import HeaderWithBackss from "../../../src/shared/components/headerwithbackss";
 import { useSelector } from "react-redux";
 
 
@@ -27,6 +28,7 @@ const CandidatePreviewPage = ({ onHide }) => {
   const isZonalHr = role === "zonal_hr";
   const isInterviewer = role === "interviewer";
   const selectedDate = state?.selectedDate;
+  const isRecruiter = role === "recruiter";
 
 
   
@@ -203,20 +205,23 @@ console.log("Full Masters Data:@@@@@", candidateId, positionId);
 
 
         {isInterviewer && (
-      <HeaderWithBacks
+      <HeaderWithBackss
   title="Candidate Profile"
   subtitle="View candidate details application status"
   onBack={() => {
     sessionStorage.setItem("fromPreviewBack", "true");
 
-    navigate("/candidate-interviewer", {
-      state: {
-        requisition,
-        position,
-        preloadedCandidates: state.candidates || [],
-        selectedDate
-      }
-    });
+navigate("/candidate-interviewer", {
+  state: {
+    requisition,
+    position,
+    preloadedCandidates:
+      state.preloadedCandidates || state.candidates || [],
+    selectedDate
+  }
+});
+
+
   }}
 />
       )}
