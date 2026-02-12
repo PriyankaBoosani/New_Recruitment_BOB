@@ -24,6 +24,7 @@ export default function CandidatePool({
 		Shortlisted: "bg-warning",
 		Discrepancy: "bg-primary",
 		Rejected: "bg-danger",
+    Pending: "bg-info",
 	};
 	const navigate = useNavigate();
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });

@@ -222,7 +222,7 @@ updateZonalAbsent(applicationId, isAbsent) {
       }
     ),
 
-  bulkScheduleInterviews: ({ file, applicationIds }) => {
+  bulkScheduleInterviews: ({ file, applicationIds, positionId }) => {
     const formData = new FormData();
 
     // file (xlsx)
@@ -235,6 +235,7 @@ updateZonalAbsent(applicationId, isAbsent) {
         [
           JSON.stringify({
             applicationIds,
+            positionId,
           }),
         ],
         { type: "application/json" }

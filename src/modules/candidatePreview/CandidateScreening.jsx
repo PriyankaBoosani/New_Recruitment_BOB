@@ -883,6 +883,7 @@ export default function CandidateScreening({ selectedJob }) {
           showScheduleModal={showScheduleModal}
           setShowScheduleModal={setShowScheduleModal}
           applicationIds={selectedCandidateIds}
+          positionId={navPositionId || selectedPositionId}
           onBulkScheduleSuccess={refreshCandidatesAfterSchedule}
         />
 

@@ -700,6 +700,7 @@ navigate("/candidate-verification", {
 
     const payload = {
       ...screeningForm,
+      isShortlisted: screeningForm.isShortlisted || "NO",
       isScreeningCompleted: true,
     };
 
@@ -1157,7 +1158,8 @@ navigate("/candidate-verification", {
                                   style={{
                                     cursor: isInterviewView ? "not-allowed" : "pointer",
                                     opacity: isInterviewView ? 0.4 : 1,
-                                    pointerEvents: isInterviewView ? "none" : "auto"
+                                    pointerEvents: isInterviewView ? "none" : "auto",
+                                    marginLeft: '12px'
                                   }}
                                   onClick={() => {
                                     if (isInterviewView) return;
@@ -1175,7 +1177,7 @@ navigate("/candidate-verification", {
                                     setShowViewer(true);
                                   }}
                                 />
-                                <img
+                                {/* <img
                                   src={downloadIcon}
                                   alt="Download"
                                   style={{
@@ -1183,7 +1185,7 @@ navigate("/candidate-verification", {
                                     opacity: isInterviewView ? 0.4 : 1,
                                     pointerEvents: isInterviewView ? "none" : "auto"
                                   }}
-                                />
+                                /> */}
                               </>
                             )}
                           </td>
@@ -1208,7 +1210,8 @@ navigate("/candidate-verification", {
                                   style={{
                                     cursor: isInterviewView ? "not-allowed" : "pointer",
                                     opacity: isInterviewView ? 0.4 : 1,
-                                    pointerEvents: isInterviewView ? "none" : "auto"
+                                    pointerEvents: isInterviewView ? "none" : "auto",
+                                    marginLeft: '12px'
                                   }}
                                   onClick={() => {
                                     if (isInterviewView) return;
@@ -1225,7 +1228,7 @@ navigate("/candidate-verification", {
                                     setShowViewer(true);
                                   }}
                                 />
-                                <img
+                                {/* <img
                                   src={downloadIcon}
                                   alt="Download"
                                   style={{
@@ -1233,7 +1236,7 @@ navigate("/candidate-verification", {
                                     opacity: isInterviewView ? 0.4 : 1,
                                     pointerEvents: isInterviewView ? "none" : "auto"
                                   }}
-                                />
+                                /> */}
                               </>
                             ) : (
                               "-"
@@ -1449,11 +1452,14 @@ navigate("/candidate-verification", {
                     min={minDate}
                     value={screeningForm.submitBeforeDate}
                     onChange={handleDateChange}
-                    disabled   //  always disabled for non-zonal
                   />
+                  {errors.submitBeforeDate && (
+                    <small className="text-danger mt-1 fs-12">
+                      {errors.submitBeforeDate}
+                    </small>
+                  )}
                 </div>
               )}
-
 
               <button
                 className="btn-submit-orange"

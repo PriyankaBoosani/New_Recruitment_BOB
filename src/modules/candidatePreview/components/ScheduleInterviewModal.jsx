@@ -8,11 +8,13 @@ import { toast } from 'react-toastify';
 import jobPositionApiService from '../../jobPosting/services/jobPositionApiService';
 import Loader from '../../../shared/components/Loader'
 
-const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, applicationIds, onBulkScheduleSuccess }) => {
+const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, applicationIds, positionId, onBulkScheduleSuccess }) => {
   const [activeTab, setActiveTab] = React.useState("import");
 	const [loading, setLoading] = React.useState(false)
 	const fileInputRef = React.useRef(null);
 	const [file, setFile] = React.useState(null);
+	const [validationErrors, setValidationErrors] = React.useState([]);
+	// console.log("Selected position ID for scheduling:", positionId);
 
 	const handleFileSelect = (e) => {
 		const selectedFile = e.target.files[0];
@@ -25,6 +27,7 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 		}
 
 		setFile(selectedFile);
+		setValidationErrors([]);
 	};
 
 	const handleDownloadTemplate = async () => {
@@ -72,17 +75,28 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 			const res = await jobPositionApiService.bulkScheduleInterviews({
 				file,
 				applicationIds,
+				positionId
 			});
 
-			setShowScheduleModal(false);
-			setFile(null);
-			if (typeof onBulkScheduleSuccess === "function") {
-				onBulkScheduleSuccess();
+			
+			if (res.success === true) {
+				if (typeof onBulkScheduleSuccess === "function") {
+					onBulkScheduleSuccess();
+				}
+				setShowScheduleModal(false);
+				setFile(null);
+				setValidationErrors([]);
+				toast.success(res.message || "Interviews scheduled successfully");
+			} else {
+				const apiErrors =
+					res?.data && Array.isArray(res.data)
+					? res.data
+					: [res?.data.map(row => row) || "Bulk scheduling failed"];
+				setValidationErrors(apiErrors);
+				toast.error(res.message || "Please check the validations");
 			}
-			toast.success(res.message || "Interviews scheduled successfully");
 		} catch (err) {
 			console.error(err);
-			toast.error(err.message || "Bulk scheduling failed");
 		} finally {
 			setLoading(false)
 		}
@@ -90,11 +104,18 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 
 	const handleRemoveFile = () => {
 		setFile(null);
+		setValidationErrors([]);
 
 		if (fileInputRef.current) {
 			fileInputRef.current.value = "";
 		}
 	};
+
+	const closeModal = () => {
+		setShowScheduleModal(false);
+		setFile(null);
+		setValidationErrors([]);
+	}
 
   return (
     <div>
@@ -180,6 +201,16 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 							/>
 						</div>
 					)}
+
+					{validationErrors.length > 0 && (
+						<div className="mt-2 text-start">
+							{validationErrors.map((errMsg, index) => (
+							<p key={index} className="text-danger fs-13 mb-1 text-center">
+								{errMsg}
+							</p>
+							))}
+						</div>
+					)}
 					
 					<div className='d-flex align-items-center gap-1 justify-content-center mt-4'>
 						<small className="d-block text-muted d-flex justify-content-center gap-1 fs-12">
@@ -206,7 +237,7 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 			<Modal.Footer className='modalfoot'>
 				<button
 					className="btn btn-light-grey shadow border fs-13 px-3"
-					onClick={() => setShowScheduleModal(false)}
+					onClick={closeModal}
 				>
 					Cancel
 				</button>
