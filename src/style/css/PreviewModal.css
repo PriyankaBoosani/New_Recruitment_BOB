@@ -9,9 +9,10 @@
   overflow: hidden;
   padding: 0;
 }
+
 .input-error {
   border: 1px solid #dc3545 !important;
-  box-shadow: 0 0 0 1px rgba(220,53,69,.15);
+  box-shadow: 0 0 0 1px rgba(220, 53, 69, .15);
 }
 
 .comment-block {
@@ -23,6 +24,7 @@
 .comment-input.input-error {
   border: 1px solid #dc3545 !important;
 }
+
 .doc-viewer-footer {
   display: flex;
   align-items: flex-start;
@@ -57,7 +59,8 @@
 /* === comment box = same height as buttons === */
 .doc-comment-input.one-line {
   width: 100%;
-  height: 38px;          /* ← matches button height */
+  height: 38px;
+  /* ← matches button height */
   min-height: 38px;
   max-height: 38px;
   padding: 6px 12px;
@@ -71,7 +74,7 @@
 /* === red error border === */
 .doc-comment-input.input-error {
   border: 1.5px solid #dc3545 !important;
-  box-shadow: 0 0 0 1px rgba(220,53,69,.15);
+  box-shadow: 0 0 0 1px rgba(220, 53, 69, .15);
 }
 
 /* === error text below field === */
@@ -91,7 +94,8 @@
 /* button height fixed */
 .btn-reject,
 .btn-verify {
-  height: 38px;          /* ← same as comment box */
+  height: 38px;
+  /* ← same as comment box */
   padding: 0 16px;
   border-radius: 4px;
   font-weight: 600;
@@ -176,15 +180,16 @@
 .bob-table th {
   padding: 6px 8px !important;
   font-size: 0.8rem;
-  font-weight:300;
+  font-weight: 300;
   vertical-align: middle !important;
   color: #000 !important;
   border: 1px solid #ddd !important;
   line-height: 1.4;
   word-wrap: break-word;
 }
-.textCenter{
-  text-align:center;
+
+.textCenter {
+  text-align: center;
 }
 
 /* === Table Header === */
@@ -205,14 +210,15 @@
 
 /* === Bold Labels === */
 .bob-table td.fw-med {
-	font-weight: 500;
-	color: #000;
-	font-size: 0.698rem;
+  font-weight: 500;
+  color: #000;
+  font-size: 0.698rem;
 }
+
 .bob-table td.fw-reg {
-	font-weight: 400;
-	color: #333333;
-	font-size: 0.698rem;
+  font-weight: 400;
+  color: #333333;
+  font-size: 0.698rem;
 }
 
 /* === PHOTO + SIGNATURE SECTION === */
@@ -276,9 +282,9 @@
 .bob-accordion .accordion-header button {
   background: #f8f9fa !important;
   padding: 10px 14px;
-color: #162B75 ;
+  color: #162B75;
   /* font-size: 1.125rem; */
-  font-size:0.9rem;
+  font-size: 0.9rem;
   font-weight: 500;
   border: none;
   box-shadow: none !important;
@@ -286,8 +292,8 @@ color: #162B75 ;
 
 .bob-accordion .accordion-header button:not(.collapsed) {
   /* background: #004e9a !important; */
-  color: #162B75 ;
-  font-size:0.9rem;
+  color: #162B75;
+  font-size: 0.9rem;
   /* font-size: 1.125rem; */
   font-weight: 500;
 }
@@ -296,12 +302,14 @@ color: #162B75 ;
   background: #fff;
   padding: 15px;
 }
+
 /* Restore dropdown appearance ONLY for select */
 select.form-control {
   appearance: auto;
   -webkit-appearance: auto;
   -moz-appearance: auto;
 }
+
 /* === Responsive === */
 @media (max-width: 991px) {
 
@@ -332,7 +340,7 @@ select.form-control {
 
 
 
-  
+
 }
 
 .bob-header .title_pre {
@@ -395,7 +403,7 @@ select.form-control {
   width: 20px;
   height: 20px;
 
- 
+
   cursor: pointer;
 }
 
@@ -491,7 +499,7 @@ select.form-control {
 }
 
 /* ===== TICK INSIDE CIRCLE ===== */
-.radio-label input:checked + .custom-radio::after {
+.radio-label input:checked+.custom-radio::after {
   content: "✓";
   position: absolute;
   top: -3px;
@@ -500,7 +508,7 @@ select.form-control {
   color: white;
 }
 
-.radio-label input:checked + .custom-radio {
+.radio-label input:checked+.custom-radio {
   background: #2f3a8f;
   border-color: #2f3a8f;
 }
@@ -573,7 +581,7 @@ select.form-control {
 }
 
 .exp-accordion-header button {
-  color: #445aa3  !important;
+  color: #445aa3 !important;
 }
 
 .exp-accordion-header .accordion-button::after {
@@ -585,7 +593,7 @@ select.form-control {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
-} 
+}
 
 .exp-table thead th {
   background: #445aa3;
@@ -773,16 +781,20 @@ select.form-control {
 
 
 .req-code {
-  color: #F57C00 !important;   /* BOB Orange */
+  color: #F57C00 !important;
+  /* BOB Orange */
   font-weight: 600;
   font-size: 15px;
-  max-width: 300px !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
 }
 
+.wraps .req-code {
+  max-width: 300px !important;
+
+}
 
 /* ===== TOP STATS ===== */
 .stats-container {
@@ -815,7 +827,7 @@ select.form-control {
   font-weight: 600;
   font-size: 14px;
   margin: 0;
-   margin-bottom: 0 !important;
+  margin-bottom: 0 !important;
   padding-bottom: 10 !important;
   line-height: 2;
 }
@@ -825,7 +837,8 @@ select.form-control {
   padding-left: 18px;
   font-size: 13px;
   color: #212529;
-   margin-top: 0 !important;     /* THIS IS THE MAIN FIX */
+  margin-top: 0 !important;
+  /* THIS IS THE MAIN FIX */
   margin-bottom: 10 !important;
   padding-left: 18px;
 }
@@ -833,12 +846,15 @@ select.form-control {
 .section-list li {
   margin-top: 2px;
   margin-bottom: 10;
-   margin-top: 0 !important;
+  margin-top: 0 !important;
   padding-top: 0 !important;
   line-height: 1.4;
-  white-space: normal;        /* allow wrapping */
-  word-wrap: break-word;      /* legacy support */
-  overflow-wrap: break-word;  /* modern standard */
+  white-space: normal;
+  /* allow wrapping */
+  word-wrap: break-word;
+  /* legacy support */
+  overflow-wrap: break-word;
+  /* modern standard */
   word-break: break-word;
 }
 
@@ -917,19 +933,24 @@ select.form-control {
 
 /* ===== REMOVE BOLD FROM CATEGORY RESERVATION TABLE ===== */
 .info-card table th {
-  font-weight: 400 !important;   /* normal */
+  font-weight: 400 !important;
+  /* normal */
 }
 
 .info-card table td {
   font-weight: 400;
 }
+
 /* ===== SAVE BUTTON ===== */
 .save-btn {
   min-width: 90px;
   height: 36px;
-  display: flex;              /* CENTER FIX */
-  align-items: center;        /* vertical */
-  justify-content: center;    /* horizontal */
+  display: flex;
+  /* CENTER FIX */
+  align-items: center;
+  /* vertical */
+  justify-content: center;
+  /* horizontal */
   font-size: 14px;
   font-weight: 600;
   border-radius: 6px;
@@ -941,7 +962,8 @@ select.form-control {
 /* ENABLED (Save) */
 .save-btn.unsaved {
   background-color: transparent;
-  color: #f36c21;            /* BOB Orange */
+  color: #f36c21;
+  /* BOB Orange */
   border: 1.5px solid #f36c21;
   cursor: pointer;
 }
@@ -962,7 +984,8 @@ select.form-control {
 
 /* REAL DISABLED STATE */
 .save-btn:disabled {
-  pointer-events: none;      /* EXTRA SAFETY */
+  pointer-events: none;
+  /* EXTRA SAFETY */
 }
 
 .remarks-row {

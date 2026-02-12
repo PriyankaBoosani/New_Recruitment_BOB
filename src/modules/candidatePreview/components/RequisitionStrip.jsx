@@ -94,13 +94,13 @@ const RequisitionStrip = ({
     <>
       {/* ================= STRIP ================= */}
       <div
-        className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center px-3 py-2"
+        className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center px-3 py-2 wraps"
         style={{
           background: isCardBg ? "#ffffff" : "none",
           border: isCardBg ? "1px solid #e0e0e0" : "none",
           borderRadius: "8px"
         }}
-      >
+       >
 
         {/* ===== LEFT CONTENT ===== */}
         <div className="w-100">
