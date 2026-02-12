@@ -23,7 +23,7 @@ export default function InterviewPool({
   const STATUS_CLASS_MAP = {
     SCHEDULED: "blue-bg",
     QUALIFIED: "bg-success",
-    NOT_QUALIFIED: "bg-primary",
+    DISQUALIFIED: "bg-primary",
   };
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const formatStatus = (status = "") => status.toLowerCase().split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");

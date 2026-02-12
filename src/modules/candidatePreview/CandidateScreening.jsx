@@ -42,7 +42,7 @@ export default function CandidateScreening({ selectedJob }) {
   const INTERVIEW_STATUS_LABEL_MAP = {
     SCHEDULED: "Scheduled",
     QUALIFIED: "Qualified",
-    NOT_QUALIFIED: "Not Qualified",
+    DISQUALIFIED: "Disqualified",
   };
 
   const [interviewPage, setInterviewPage] = useState(0);

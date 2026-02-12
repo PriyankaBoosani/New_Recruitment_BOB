@@ -28,7 +28,7 @@ export default function InterviewFeedbackHistoryModal({
         <table className="table mb-0">
           <thead>
             <tr>
-              <th className="text-white fs-14 fw-normal ps-3 blue-bg">Name</th>
+              <th className="text-white fs-14 fw-normal blue-bg">Name</th>
               <th className="text-white fs-14 fw-normal blue-bg">Comments</th>
               <th className="text-white fs-14 fw-normal blue-bg">Time</th>
               <th className="text-white fs-14 fw-normal blue-bg">Score</th>
