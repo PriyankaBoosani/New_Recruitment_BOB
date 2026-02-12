@@ -22,8 +22,10 @@ const CandidatePreviewPage = ({ onHide }) => {
   const state = location.state || {};
 
   const user = useSelector((state) => state.user.user);
+  
   const role = user?.role?.toLowerCase();
   const isZonalHr = role === "zonal_hr";
+  const isInterviewer = role === "interviewer";
   const selectedDate = state?.selectedDate;
 
 
@@ -159,7 +161,7 @@ console.log("Full Masters Data:@@@@@", candidateId, positionId);
       />
 
        {/* Header */}
-      {!isZonalHr && (
+      {!isZonalHr && !isInterviewer && (
       <HeaderWithBack
         title="Candidate Screening"
         subtitle="Manage and schedule interviews for candidates"
@@ -187,6 +189,27 @@ console.log("Full Masters Data:@@@@@", candidateId, positionId);
     sessionStorage.setItem("fromPreviewBack", "true");
 
     navigate("/candidate-verification", {
+      state: {
+        requisition,
+        position,
+        preloadedCandidates: state.candidates || [],
+        selectedDate
+      }
+    });
+  }}
+/>
+      )}
+
+
+
+        {isInterviewer && (
+      <HeaderWithBacks
+  title="Candidate Profile"
+  subtitle="View candidate details application status"
+  onBack={() => {
+    sessionStorage.setItem("fromPreviewBack", "true");
+
+    navigate("/candidate-interviewer", {
       state: {
         requisition,
         position,

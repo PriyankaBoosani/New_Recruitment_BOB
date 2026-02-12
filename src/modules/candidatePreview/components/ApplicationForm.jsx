@@ -71,6 +71,7 @@ const ApplicationForm = ({
   const user = useSelector((state) => state.user.user);
   const role = user?.role?.toLowerCase();
   const isZonalHr = role === "zonal_hr";
+  const isInterviewer = role === "interviewer";
 
 
   const mapDecisionToStatus = (val) => {
@@ -1253,7 +1254,7 @@ navigate("/candidate-verification", {
         </Accordion.Item>
 
         {/* ================= CRITERIA SECTION ================= */}
-        {!isZonalHr && !isInterviewView && (
+        {!isZonalHr && !isInterviewView && !isInterviewer && (
           <Card className="criteria-main-card">
 
             <div className="criteria-wrapper">

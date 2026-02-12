@@ -22,7 +22,7 @@ import CandidateVerificationService from "../Verification/services/CandidateVeri
 import InterviewDayTable from "./components/InterviewDayTable";
 import { mapPanelPositions } from "./mapper/InterviewerScheduleMapper";
 import { mapInterviewerCandidates } from "./mapper/InterviewerScheduleMapper";
-
+import { useLocation } from "react-router-dom";
 
 
 
@@ -51,6 +51,7 @@ export default function InterviewerSchedule() {
   const [selectedRequisition, setSelectedRequisition] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [panelPositions, setPanelPositions] = useState([]);
+const [usedRestoreData, setUsedRestoreData] = useState(false);
 
 
   /* ===== Pagination ===== */
@@ -59,6 +60,14 @@ export default function InterviewerSchedule() {
   const [pageSize, setPageSize] = useState(10);
 
   /* ===== PDF ===== */
+
+const location = useLocation();
+const navState = location.state || {};
+
+
+const cameFromPreviewBack =
+  sessionStorage.getItem("fromPreviewBack") === "true";
+
 
   const [pdfUrl, setPdfUrl] = useState(null);
   const [showPdfViewer, setShowPdfViewer] = useState(false);
@@ -72,6 +81,24 @@ export default function InterviewerSchedule() {
       .catch(() => setMasterData({}));
   }, []);
   
+
+const navReqId =
+  navState.requisition?.requisition?.id ||
+  navState.requisition?.id ||
+  null;
+
+const navPosId =
+  navState.position?.position?.positionId ||
+  navState.position?.positionId ||
+  null;
+
+
+
+  useEffect(() => {
+  if (navState.selectedDate) {
+    setSelectedDate(new Date(navState.selectedDate));
+  }
+}, []);
 
   /* ================= LOAD CANDIDATES ================= */
 
@@ -91,6 +118,20 @@ useEffect(() => {
 
 
 
+useEffect(() => {
+  if (!cameFromPreviewBack) return;
+  if (!navState.preloadedCandidates?.length) return;
+
+  console.log("🔁 Using preloaded interviewer candidates");
+
+  setAllCandidatesRaw(navState.preloadedCandidates);
+  setRows(mapInterviewerCandidates(navState.preloadedCandidates));
+
+  setUsedRestoreData(true);
+
+}, []);
+
+
 
 
   const formatApiDate = (d) =>
@@ -102,39 +143,74 @@ useEffect(() => {
 
 
 
+useEffect(() => {
 
-  useEffect(() => {
+  if (usedRestoreData) {
+  console.log("⛔ Skip API load — using restored data");
+  sessionStorage.removeItem("fromPreviewBack");
+  return;
+}
 
-  if (!selectedPosition?.position?.positionId) return;
+
+  const posId = selectedPosition?.position?.positionId;
+
+  if (!posId) {
+    setRows([]);
+    setAllCandidatesRaw([]);
+    setPage(0);
+    return;
+  }
 
   const load = async () => {
-    try {
-      const dateStr = formatApiDate(selectedDate || new Date());
+    const dateStr = formatApiDate(selectedDate || new Date());
+    const res = await InterviewerService.getCandidatesByPositionAndDate(
+      posId,
+      dateStr
+    );
 
-      const res =
-        await InterviewerService.getCandidatesByPositionAndDate(
-          selectedPosition.position.positionId,
-          dateStr
-        );
-
-      const apiList = res.data?.data || [];
-
-      setAllCandidatesRaw(apiList);
-
-      const mapped = mapInterviewerCandidates(apiList);
-      setRows(mapped);
-
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to load interviewer candidates");
-      setAllCandidatesRaw([]);
-      setRows([]);
-    }
+    const apiList = res.data || [];
+    setAllCandidatesRaw(apiList);
+    setRows(mapInterviewerCandidates(apiList));
   };
 
   load();
 
-}, [selectedPosition, selectedDate]);
+}, [selectedPosition, selectedDate, usedRestoreData]);
+
+
+
+
+
+
+
+useEffect(() => {
+  if (!cameFromPreviewBack) return;
+  if (!panelPositions.length) return;
+  if (!navReqId || !navPosId) return;
+
+  console.log("🔁 Restore interviewer selector", { navReqId, navPosId });
+
+  const matched = panelPositions.find(p =>
+    p.requisition?.id === navReqId &&
+    p.position?.positionId === navPosId
+  );
+
+  if (!matched) {
+    console.log("❌ No panel match found");
+    return;
+  }
+
+  console.log("✅ Restored panel selector:", matched);
+
+  setSelectedRequisition(matched);
+  setSelectedPosition(matched);
+
+}, [panelPositions, cameFromPreviewBack]);
+
+
+
+
+
 
 
  
@@ -143,18 +219,28 @@ useEffect(() => {
 
 const filteredRows = useMemo(() => {
 
-  if (!selectedRequisition || !selectedPosition) return [];
+  const text = searchText.toLowerCase();
+
+  if (!text) return rows;
 
   return rows.filter(r =>
-    r.raw.requisitionId === selectedRequisition.id &&
-    r.raw.positionId === selectedPosition.position.positionId &&
-    (
-      r.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      r.regNo.includes(searchText)
-    )
+    r.name.toLowerCase().includes(text) ||
+    r.regNo.toLowerCase().includes(text)
   );
 
-}, [rows, selectedRequisition, selectedPosition, searchText]);
+}, [rows, searchText]);
+
+
+useEffect(() => {
+  if (!selectedPosition) {
+    console.log("🧹 CLEARING TABLE — no position selected");
+    setRows([]);
+    setAllCandidatesRaw([]);
+    setPage(0);
+  }
+}, [selectedPosition]);
+
+
 
 
   /* ================= PAGINATION ================= */
@@ -209,19 +295,47 @@ const filteredRows = useMemo(() => {
 
   /* ================= SAVE ================= */
 
-  const handleSave = async () => {
-    try {
-      for (const r of filteredRows) {
-        await CandidateVerificationService.updateAbsentStatus(
-          r.raw.applicationId,
-          r.absent
-        );
-      }
-      toast.success("Saved successfully");
-    } catch {
-      toast.error("Save failed");
+const handleSave = async () => {
+  try {
+
+    if (!rows.length) {
+      toast.warn("No candidates to save");
+      return;
     }
-  };
+
+    const payloads = rows.map(r => {
+      const raw = r.raw;
+
+      return {
+        applicationId: raw.applicationId,
+        scheduledInterviewId: raw.interviewScheduleId,
+        candidateId: raw.candidateId,
+        panelId: raw.panelId,
+        panelScore: Number(r.score) || 0,
+        panelComments: r.comment || "",
+        interviewCenterId: raw.interviewCenterId,
+        isAbsent: !!r.absent
+      };
+    });
+
+    console.log("📦 ALL SCORE PAYLOADS:", payloads);
+
+    // parallel calls (faster)
+    await Promise.all(
+      payloads.map(p =>
+        InterviewerService.setCandidateScore(p)
+      )
+    );
+
+    toast.success(`Saved ${payloads.length} candidates`);
+
+  } catch (err) {
+    console.error("🔥 SAVE SCORE ERROR:", err);
+    toast.error("Save failed");
+  }
+};
+
+
 
   const anyChanged =
     filteredRows.some(r => r.absent || r.comment || r.score);
@@ -312,6 +426,7 @@ const filteredRows = useMemo(() => {
             isCardBg={false}
             isSaveEnabled={anyChanged}
             onSave={handleSave}
+              isSaveBtn={true}
           />
         </div>
       )}
@@ -329,9 +444,16 @@ const filteredRows = useMemo(() => {
   updateComment={updateComment}
   updateScore={updateScore}
   onViewFile={handleViewFile}
-
-  requisition={selectedRequisition}
-  position={selectedPosition}
+ requisition={{
+    requisitionTitle: selectedRequisition?.requisition?.requisitionTitle,
+    requisitionCode: selectedRequisition?.requisition?.requisitionCode,
+    registration_start_date: selectedRequisition?.requisition?.startDate,
+    registration_end_date: selectedRequisition?.requisition?.endDate
+  }}
+  position={{
+    positionId: selectedPosition?.position?.positionId,
+    positionName: selectedPosition?.masterPosition?.positionName
+  }}
   selectedDate={selectedDate}
   allCandidatesRaw={allCandidatesRaw}
 />

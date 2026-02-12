@@ -24,23 +24,40 @@ const InterviewDayTable = ({
   const navigate = useNavigate();
 
   /* ✅ NAVIGATION */
-  const goToPreview = (row) => {
-    navigate("/candidate-preview", {
-      state: {
-        candidate: row.raw,
-        candidateId: row.raw.candidateId,
-        applicationId: row.raw.applicationId,
-        interviewScheduleId: row.raw.interviewScheduleId,
+const goToPreview = (row) => {
+  console.log("👉 NAVIGATING WITH:", row);
 
-        positionId: position?.positionId,
-        selectedDate,
+  const posId =
+    position?.raw?.positionId ||
+    position?.position?.positionId ||
+    position?.positionId ||
+    position?.value ||
+    null;
 
-        candidates: allCandidatesRaw,
-        requisition,
-        position,
-      },
-    });
-  };
+  console.log("👉 NAV POS ID:", posId);
+
+  navigate("/candidate-preview", {
+    state: {
+      candidate: row.raw,
+      candidateId: row.raw.candidateId,
+      applicationId: row.raw.applicationId,
+      interviewScheduleId: row.raw.interviewScheduleId,
+      positionId: posId,
+      selectedDate,
+      candidates: allCandidatesRaw,
+      requisition,
+      position,
+    },
+  });
+};
+
+
+
+
+
+  console.log("📊 TABLE ROWS RECEIVED:", rows);
+console.log("📊 TOTAL ELEMENTS:", totalElements);
+
 
   const totalPages = Math.ceil(totalElements / pageSize);
   const start = totalElements === 0 ? 0 : page * pageSize + 1;

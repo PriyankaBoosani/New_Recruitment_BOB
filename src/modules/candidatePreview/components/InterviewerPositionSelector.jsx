@@ -39,11 +39,13 @@ const positionOptions = useMemo(() => {
 
   return apiData
     .filter(r => r.requisition.id === selectedRequisition.requisition.id)
-    .map(r => ({
-      value: r.position.positionId,
-      label: r.masterPosition.positionName,
-      raw: r
-    }));
+   .map(r => ({
+  value: r.position.positionId,
+  label: r.masterPosition.positionName,
+  raw: r,
+  requisitionId: r.requisition.id
+}));
+
 
 }, [apiData, selectedRequisition]);
 console.log("SELECTOR apiData:", apiData);
@@ -57,9 +59,16 @@ console.log("requisitionOptions:", requisitionOptions);
         <label>Requisition</label>
         <Select
           options={requisitionOptions}
-value={requisitionOptions.find(
-  o => o.value === selectedRequisition?.requisition?.id
-)}
+value={
+  selectedRequisition
+    ? {
+        value: selectedRequisition.requisition.id,
+        label: `${selectedRequisition.requisition.requisitionCode} — ${selectedRequisition.requisition.requisitionTitle}`,
+        raw: selectedRequisition
+      }
+    : null
+}
+
           isClearable
           placeholder="Select Requisition"
        onChange={(opt) => {
@@ -74,9 +83,16 @@ onRequisitionChange(opt?.raw || null);
         <label>Position</label>
         <Select
           options={positionOptions}
-value={positionOptions.find(o =>
-  o.value === selectedPosition?.position?.positionId
-)}
+value={
+  selectedPosition
+    ? {
+        value: selectedPosition.position.positionId,
+        label: selectedPosition.masterPosition.positionName,
+        raw: selectedPosition
+      }
+    : null
+}
+
 
           isClearable
           isDisabled={!selectedRequisition}

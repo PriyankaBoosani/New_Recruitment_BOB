@@ -21,6 +21,8 @@ const DocumentViewerModal = ({
   const user = useSelector((state) => state.user.user);
   const role = user?.role?.toLowerCase();
   const isZonalHr = role === "zonal_hr";
+  const isInterviewer = role === "interviewer";
+
 
   /* ================= FETCH SAS URL ================= */
 
@@ -171,6 +173,7 @@ const DocumentViewerModal = ({
                 placeholder="Enter comments..."
                 rows={1}
                 value={comment}
+                disabled={isInterviewer}
                 className={`doc-comment-input one-line ${error ? "input-error" : ""}`}
                 onChange={(e) => {
                   setComment(e.target.value);
@@ -187,19 +190,30 @@ const DocumentViewerModal = ({
 
             {/* buttons */}
             <div className="doc-viewer-actions d-flex gap-2">
-              <button
-                className="btn-reject"
-                onClick={handleRejectClick}
-              >
-                Rejected
-              </button>
+            <button
+  className="btn-reject"
+  onClick={handleRejectClick}
+  disabled={isInterviewer}
+  style={{
+    opacity: isInterviewer ? 0.5 : 1,
+    cursor: isInterviewer ? "not-allowed" : "pointer"
+  }}
+>
+  Rejected
+</button>
 
-              <button
-                className="btn-verify"
-                onClick={handleVerifyClick}
-              >
-                Verified
-              </button>
+<button
+  className="btn-verify"
+  onClick={handleVerifyClick}
+  disabled={isInterviewer}
+  style={{
+    opacity: isInterviewer ? 0.5 : 1,
+    cursor: isInterviewer ? "not-allowed" : "pointer"
+  }}
+>
+  Verified
+</button>
+
             </div>
 
           </div>

@@ -20,25 +20,73 @@ export const mapPanelPositions = (list = []) =>
 
 /* ================= INTERVIEWER CANDIDATES ================= */
 
-export const mapInterviewerCandidates = (list = []) =>
-  list.map((item, idx) => ({
-    id: item.application?.id || idx,
+/* ================= INTERVIEWER CANDIDATES ================= */
 
-    name: item.candidate?.fullName || "",
-    regNo: item.application?.applicationNo || "",
+/* ================= INTERVIEWER CANDIDATES ================= */
 
-    absent: item.application?.isAbsent || false,
+export const mapInterviewerCandidates = (list = []) => {
+  console.log("🗺️ MAPPING INPUT LIST:", list);
 
-    score: item.panelScore ?? "",
-    comment: item.panelComments ?? "",
+  return list.map((item, idx) => {
 
-    raw: {
-      applicationId: item.application?.id,
-      positionId: item.application?.positionId,
-      resumeUrl: item.resumeUrl,
-      interview: item.interviewSchedule,
-      candidate: item.candidate,
-      application: item.application,
-      full: item
-    }
-  }));
+    console.log("➡️ Mapping item:", item);
+    console.log("✅ SAVE FIELDS:", {
+  panelId: item.interviewSchedule?.panelId,
+  centerId: item.interviewCentre?.interviewCentreId
+});
+
+
+    const start = item.interviewSchedule?.interviewStartAt;
+
+    return {
+      id: item.application?.id || idx,
+
+      name: item.candidate?.fullName || "-",
+      regNo: item.application?.applicationNo || "-",
+
+      category:
+        item.category?.categoryCode ||
+        item.category?.categoryName ||
+        "-",
+
+      time: start
+        ? new Date(start).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit"
+          })
+        : "-",
+
+      zone:
+        item.interviewCentre?.zone ||
+        item.interviewCentre?.interviewCentre ||
+        "-",
+
+      absent: item.application?.isAbsent ?? false,
+      score: item.panelScore ?? "",
+      comment: item.panelComments ?? "",
+
+      raw: {
+        applicationId: item.application?.id,
+        candidateId: item.candidate?.candidateId,
+         interviewScheduleId:
+    item.interviewSchedule?.interviewScheduleId,
+
+     panelId:
+    item.interviewSchedule?.panelId,   //  FIXED
+
+  interviewCenterId:
+    item.interviewCentre?.interviewCentreId,
+
+
+
+  interviewCenterId:
+    item.interviewCentre?.interviewCentreId,
+        positionId: item.application?.positionId,
+        resumeUrl: item.resumeUrl,
+        full: item
+      }
+    };
+  });
+};
+
+

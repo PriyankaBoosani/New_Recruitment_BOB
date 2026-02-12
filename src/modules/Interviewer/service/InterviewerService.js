@@ -4,20 +4,21 @@ const BASE = "/recruiter/interviewer";
 
 const InterviewerService = {
 
-  /* ===== PANEL POSITIONS ===== */
   getPanelPositions: () =>
-    api.get(`${BASE}/positions`),
+    api.get(`${BASE}/get-panel-positions`),
 
-  /* ===== CANDIDATES BY POSITION + DATE ===== */
   getCandidatesByPositionAndDate: (positionId, dateStr) =>
-    api.get(`${BASE}/candidates`, {
+    api.get(`${BASE}/get-candidates-by-position`, {
       params: {
         positionId,
         date: dateStr
       }
-    })
+    }),
+
+  /* ✅ NEW */
+  setCandidateScore: (payload) =>
+    api.post(`${BASE}/set-candidate-score`, payload)
 
 };
 
 export default InterviewerService;
-    

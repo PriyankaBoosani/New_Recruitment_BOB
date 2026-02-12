@@ -63,11 +63,13 @@ const Header = () => {
 
     navigate('/login');
   };
-  const role = user?.role?.toLowerCase();
+ const role = user?.role?.trim().toLowerCase();
 
-  const isAdmin = role === "admin";
-  const isZonalHr = role === "zonal_hr";
-  const isRecruiter = role === "recruiter";
+const isAdmin = role === "admin";
+const isZonalHr = role === "zonal_hr";
+const isRecruiter = role === "recruiter";
+const isInterviewer = role === "interviewer";
+
 
   /* ===================== OUTSIDE CLICK ===================== */
   useEffect(() => {
@@ -218,7 +220,7 @@ const Header = () => {
               )}
 
 
-              {isAdmin && (
+              {isInterviewer && (
                 <Nav.Link as={Link} to="/candidate-interviewer" onClick={closeMenu}>
                    Interview
                 </Nav.Link>

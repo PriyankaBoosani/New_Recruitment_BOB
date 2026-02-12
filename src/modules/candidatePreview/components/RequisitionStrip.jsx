@@ -113,14 +113,21 @@ const RequisitionStrip = ({
 
             <span className="date-text">
               <i className="bi bi-calendar3 me-1"></i>
-              Start: {formatDMY(requisition?.registration_start_date)}
+             Start: {formatDMY(
+  requisition?.startDate || requisition?.registration_start_date
+)}
+
+
+
             </span>
 
             <span className="date-divider">|</span>
 
             <span className="date-text">
               <i className="bi bi-clock me-1"></i>
-              End: {formatDMY(requisition?.registration_end_date)}
+            End: {formatDMY(
+  requisition?.endDate || requisition?.registration_end_date
+)}
             </span>
 
           </div>

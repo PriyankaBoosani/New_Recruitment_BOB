@@ -67,15 +67,18 @@ const Login = () => {
         )
       );
 
-      const role = userApiRes?.role?.toLowerCase();
+   const role = userApiRes?.role?.trim().toLowerCase();
 
-   if (role === "admin") {
-      navigate("/users", { replace: true });
-    } else if(role === "zonal_hr"){
-    navigate("/candidate-verification", { replace: true });
-    }else {
-      navigate("/job-posting", { replace: true });
-    }
+if (role === "admin") {
+  navigate("/users", { replace: true });
+} else if (role === "zonal_hr") {
+  navigate("/candidate-verification", { replace: true });
+} else if (role === "interviewer") {
+  navigate("/candidate-interviewer", { replace: true });
+} else {
+  navigate("/job-posting", { replace: true });
+}
+
 
     } catch (err) {
       const errorData = err.response?.data;
