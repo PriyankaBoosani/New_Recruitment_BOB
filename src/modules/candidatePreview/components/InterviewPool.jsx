@@ -24,6 +24,8 @@ export default function InterviewPool({
     SCHEDULED: "blue-bg",
     QUALIFIED: "bg-success",
     DISQUALIFIED: "bg-primary",
+    PROVISIONALLY_APPROVED: "bg-secondary",
+
   };
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const formatStatus = (status = "") => status.toLowerCase().split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");

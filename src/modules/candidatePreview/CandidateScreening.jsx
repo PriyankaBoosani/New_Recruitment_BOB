@@ -43,6 +43,7 @@ export default function CandidateScreening({ selectedJob }) {
     SCHEDULED: "Scheduled",
     QUALIFIED: "Qualified",
     DISQUALIFIED: "Disqualified",
+    PROVISIONALLY_APPROVED: "Provisionally Approved",
   };
 
   const [interviewPage, setInterviewPage] = useState(0);
