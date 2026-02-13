@@ -254,6 +254,18 @@ updateZonalAbsent(applicationId, isAbsent) {
     );
   },
 
+  downloadCandidateDetails: (payload) =>
+  api.post(
+    "/recruiter/candidate-details/download",
+    payload,
+    {
+      responseType: "blob",
+      headers: {
+        "X-Client": "recruiter",
+      },
+    }
+  ),
+
 };
 
 export default jobPositionApiService;

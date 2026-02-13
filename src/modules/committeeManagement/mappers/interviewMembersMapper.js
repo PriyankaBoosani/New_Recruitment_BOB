@@ -1,16 +1,3 @@
-// export const mapInterviewMembersApi = (apiResponse) => {
-//   const list = Array.isArray(apiResponse?.data)
-//     ? apiResponse.data
-//     : [];
-
-//   return list.map(item => ({
-//     value: item.userDTO.userId,   // REQUIRED by react-select
-//     label: item.userDTO.name,     // REQUIRED by react-select
-//     email: item.userDTO.email,
-//     role: item.userDTO.role,
-//     isDisabled: item.assigned     // disables already assigned members
-//   }));
-// };
 
 export const mapInterviewMembersApi = (apiResponse) => {
   const list = Array.isArray(apiResponse?.data)
@@ -21,7 +8,7 @@ export const mapInterviewMembersApi = (apiResponse) => {
 
   return list.map(user => ({
     value: user.userId,              // ✅ correct key
-    label: user.name, // nicer display
+    label: `${user.name} - ${user.role}`, // Show both name and role
     email: user.email,
     role: user.role
   }));

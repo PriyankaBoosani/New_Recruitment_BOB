@@ -136,40 +136,6 @@ const [deletePanelName, setDeletePanelName] = useState("");
           )}
         </div>
 
-              {/* <Modal
-        show={showDeleteModal}
-        onHide={() => setShowDeleteModal(false)}
-        centered
-        >
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Delete</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
-          Are you sure you want to delete this interview panel?
-          
-        </Modal.Body>
-
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={() => setShowDeleteModal(false)}
-          >
-            Cancel
-          </Button>
-
-          <Button
-            variant="danger"
-            onClick={() => {
-              handleDelete(deleteId);
-              setShowDeleteModal(false);
-              setDeleteId(null);
-            }}
-          >
-            Delete
-          </Button>
-        </Modal.Footer>
-        </Modal> */}
         <DeleteConfirmationModal
           show={showDeleteModal}
           onClose={() => {
