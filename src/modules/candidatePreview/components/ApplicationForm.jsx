@@ -86,19 +86,28 @@ const ApplicationForm = ({
   const isInterviewer = role === "interviewer";
 
 
-  const mapDecisionToStatus = (val) => {
-    if (val === "YES") return "VERIFIED";
-    if (val === "NO") return "REJECTED";
-    if (val === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
-    return "PENDING";
-  };
+const mapDecisionToStatus = (val) => {
+  const v = String(val || "").toUpperCase().trim();
+
+  if (v === "YES") return "VERIFIED";
+  if (v === "NO") return "REJECTED";
+  if (v === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
+
+  console.warn("⚠️ Unknown zonalDecision:", val);
+  return "PENDING";
+};
+
+
 
 const mapStatusToDecision = (status) => {
-  if (status === "VERIFIED") return "YES";
-  if (status === "REJECTED") return "NO";
-  if (status === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
+  const s = String(status || "").toUpperCase().trim();
+
+  if (s === "VERIFIED") return "YES";
+  if (s === "REJECTED") return "NO";
+  if (s === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
   return "";
 };
+
 
 
 
@@ -161,6 +170,9 @@ zonalSubmitDate: "This field is required"
     }
 
     console.log("Submitting interviewScheduleId:", interviewScheduleId);
+    console.log("ZONAL DECISION:", zonalDecision);
+console.log("MAPPED STATUS:", mapDecisionToStatus(zonalDecision));
+
 
     try {
 

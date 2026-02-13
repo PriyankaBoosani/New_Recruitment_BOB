@@ -52,6 +52,7 @@ export default function InterviewerSchedule() {
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [panelPositions, setPanelPositions] = useState([]);
 const [usedRestoreData, setUsedRestoreData] = useState(false);
+const [originalRows, setOriginalRows] = useState([]);
 
 
   /* ===== Pagination ===== */
@@ -124,8 +125,13 @@ useEffect(() => {
 
   console.log("🔁 Using preloaded interviewer candidates");
 
-  setAllCandidatesRaw(navState.preloadedCandidates);
-  setRows(mapInterviewerCandidates(navState.preloadedCandidates));
+ setAllCandidatesRaw(navState.preloadedCandidates);
+const mapped = mapInterviewerCandidates(navState.preloadedCandidates);
+setRows(mapped);
+setOriginalRows(mapped.map(r => ({ ...r })));
+
+
+
 
   setUsedRestoreData(true);
 
@@ -164,8 +170,12 @@ useEffect(() => {
     );
 
     const apiList = res.data || [];
-    setAllCandidatesRaw(apiList);
-    setRows(mapInterviewerCandidates(apiList));
+  setAllCandidatesRaw(apiList);
+const mapped = mapInterviewerCandidates(apiList);
+setRows(mapped);
+setOriginalRows(mapped.map(r => ({ ...r })));
+
+
   };
 
   load();
@@ -299,17 +309,34 @@ useEffect(() => {
     }
   };
 
+
+
+  const isRowChanged = (r) => {
+  const orig = originalRows.find(o => o.id === r.id);
+  if (!orig) return true;
+
+  return (
+    orig.absent !== r.absent ||
+    (orig.comment || "") !== (r.comment || "") ||
+    Number(orig.score || 0) !== Number(r.score || 0)
+  );
+};
+
   /* ================= SAVE ================= */
 
 const handleSave = async () => {
   try {
 
-    if (!rows.length) {
-      toast.warn("No candidates to save");
+    const changedRows = rows.filter(isRowChanged);
+
+    console.log("🧾 Changed rows:", changedRows.length);
+
+    if (!changedRows.length) {
+      toast.info("No changes to save");
       return;
     }
 
-    const payloads = rows.map(r => {
+    const payloads = changedRows.map(r => {
       const raw = r.raw;
 
       return {
@@ -324,16 +351,18 @@ const handleSave = async () => {
       };
     });
 
-    console.log("📦 ALL SCORE PAYLOADS:", payloads);
+    console.log("📦 CHANGED SCORE PAYLOADS:", payloads);
 
-    // parallel calls (faster)
     await Promise.all(
       payloads.map(p =>
         InterviewerService.setCandidateScore(p)
       )
     );
 
-    toast.success(`Saved ${payloads.length} candidates`);
+    toast.success(`Saved ${payloads.length} candidate(s)`);
+
+    // refresh snapshot after save
+setOriginalRows(rows.map(r => ({ ...r })));
 
   } catch (err) {
     console.error("🔥 SAVE SCORE ERROR:", err);
@@ -343,8 +372,9 @@ const handleSave = async () => {
 
 
 
-  const anyChanged =
-    filteredRows.some(r => r.absent || r.comment || r.score);
+
+const anyChanged = rows.some(isRowChanged);
+
 
   const isSelectionDone =
     selectedRequisition && selectedPosition;

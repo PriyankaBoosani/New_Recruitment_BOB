@@ -59,6 +59,17 @@ export default function CandidateVerification() {
 
 
 const location = useLocation();
+
+
+
+console.log("📍 CandidateVerification mounted");
+console.log("📍 Location state:", location.state);
+
+console.log("🧭 fromZonalSubmit:", sessionStorage.getItem("fromZonalSubmit"));
+console.log("🧭 fromPreviewBack:", sessionStorage.getItem("fromPreviewBack"));
+
+
+
 const cameFromZonal =
   sessionStorage.getItem("fromZonalSubmit") === "true";
 
@@ -69,6 +80,9 @@ const cameFromPreviewBack =
   const [pdfUrl, setPdfUrl] = useState(null);
 const [showPdfViewer, setShowPdfViewer] = useState(false);
 const [loadingPdf, setLoadingPdf] = useState(false);
+const [page, setPage] = useState(0);
+const [pageSize, setPageSize] = useState(10);
+const [totalElements, setTotalElements] = useState(0);
 
 
 const handleViewFile = async (candidateRaw) => {
@@ -107,9 +121,16 @@ const navSelectedDate =
     ? new Date(location.state.selectedDate)
     : null;
 
+
+    console.log("📅 navSelectedDate:", navSelectedDate);
+
 const [selectedDate, setSelectedDate] =
   useState(navSelectedDate || new Date());
 
+
+useEffect(() => {
+  console.log("📅 SelectedDate changed:", selectedDate);
+}, [selectedDate]);
 
 
 
@@ -147,12 +168,17 @@ const formatApiDate = (d) => {
 
 const loadCandidates = async (dateParam = selectedDate) => {
   try {
+    console.log("🌐 Calling API getCandidatesByDate with:", formatApiDate(dateParam));
+
     const res =
       await CandidateVerificationService.getCandidatesByDate(
         formatApiDate(dateParam)
       );
 
     const apiList = res.data || [];
+
+    console.log("📦 API candidates received:", apiList.length);
+
 
 setAllCandidatesRaw(apiList);
 
@@ -183,6 +209,16 @@ const navCandidates = location.state?.preloadedCandidates || [];
 
 
 useEffect(() => {
+
+
+
+  console.log("🔁 Restore effect running");
+console.log("🔁 cameFromZonal:", cameFromZonal);
+console.log("🔁 cameFromPreviewBack:", cameFromPreviewBack);
+console.log("🔁 usedNavData:", usedNavData);
+console.log("🔁 navInitRef.current:", navInitRef.current);
+console.log("🔁 navCandidates length:", navCandidates.length);
+
 
   // restore selection from nav
   if (
@@ -217,6 +253,13 @@ setOriginalAbsentMap(map);
 
 }, [selectedDate]);
 
+useEffect(() => {
+  console.log("🎯 SelectedRequisition changed:", selectedRequisition);
+}, [selectedRequisition]);
+
+useEffect(() => {
+  console.log("🎯 SelectedPosition changed:", selectedPosition);
+}, [selectedPosition]);
 
 
 useEffect(() => {
@@ -421,23 +464,29 @@ useEffect(() => {
 
       <div className="stage-filter-row d-flex align-items-center gap-4">
 
-        <div className="d-flex align-items-center gap-3">
-          <span className="fw-semibold">FILTER BY STAGE:</span>
-          <span
-            className="clear-all"
-            onClick={() => setActiveStage(null)}
-          >
-            Clear All
-          </span>
-        </div>
+       <div className="d-flex align-items-center gap-2">
+  <span className="fs-14 text-muted">
+    FILTER BY STAGE:
+  </span>
+
+  <button
+    className="btn fs-14 error-text p-0"
+    onClick={() => setActiveStage(null)}
+    type="button"
+  >
+    Clear all
+  </button>
+</div>
+
 
         <div className="d-flex gap-2 flex-wrap">
           {Object.keys(STAGE_STATUS_MAP).map(key => (
             <button
               key={key}
-              className={`stage-chip d-flex align-items-center gap-2 ${
-                activeStage === key ? "active" : ""
-              }`}
+            className={`stage-chip fs-13 d-flex align-items-center gap-1 ${
+  activeStage === key ? "active" : ""
+}`}
+
               onClick={() => setActiveStage(key)}
             >
               <span>{STAGE_STATUS_MAP[key]}</span>

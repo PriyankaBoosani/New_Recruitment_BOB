@@ -68,7 +68,7 @@ const RequisitionStrip = ({
       setMasterData({
         ...masterRes.data,
 
-        // ✅ use ZONAL states (correct IDs)
+        // use ZONAL states (correct IDs)
         states: (zonalRes.data || []).map(s => ({
           id: String(s.zonalStateID),
           name: s.stateName,

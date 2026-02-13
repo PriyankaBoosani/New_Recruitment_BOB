@@ -60,9 +60,12 @@ const RequisitionPositionSelector = ({
   return (
     <div className="row g-3">
 
-      <div className="col-md-6">
-        <label>Requisition</label>
-        <Select
+<div className="col-md-4">
+  <label className="fs-14 blue-color">Requisition</label>
+  <Select
+    className="mt-1 fs-14"
+    classNamePrefix="react-select"
+
           isClearable
           placeholder="Select Requisition"
           options={requisitions}
@@ -74,9 +77,12 @@ const RequisitionPositionSelector = ({
         />
       </div>
 
-      <div className="col-md-6">
-        <label>Position</label>
-        <Select
+<div className="col-md-4">
+  <label className="fs-14 blue-color">Position</label>
+  <Select
+    className="mt-1 fs-14"
+    classNamePrefix="react-select"
+
           isClearable
             placeholder="Select Position"
           options={positions}

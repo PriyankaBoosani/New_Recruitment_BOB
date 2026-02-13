@@ -279,7 +279,7 @@ const isInterviewer = role === "interviewer";
               )}
 
 
-             {isRecruiter && (
+             {isInterviewer && (
   <Nav.Link
     as={NavLink}
     to="/candidate-interviewer"

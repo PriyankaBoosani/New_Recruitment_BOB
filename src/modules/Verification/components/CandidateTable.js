@@ -53,49 +53,52 @@ const goToPreview = (c) => {
       {/* ================= DESKTOP TABLE ================= */}
       <div className="d-none d-md-block">
         <table className="table align-middle mb-0 verification-table">
-          <thead>
+         <thead className="fs-14">
+
             <tr>
-              <th>Candidate</th>
-              <th>Category</th>
-              <th>Time</th>
-              <th>Zone</th>
-              <th className="text-center">Absent</th>
-              <th>Status</th>
-              <th className="text-center">Actions</th>
+             <th className="fs-14">Candidate</th>
+<th className="fs-14">Category</th>
+<th className="fs-14">Time</th>
+<th className="fs-14">Zone</th>
+<th className="fs-14 text-center">Absent</th>
+<th className="fs-14">Status</th>
+<th className="fs-14 text-center">Actions</th>
+
             </tr>
           </thead>
 
-          <tbody>
-            {!isSelectionDone && (
-              <tr className="no-candidates-row">
-                <td colSpan="7" className="text-center py-4 text-muted">
-                  No candidates found
-                </td>
-              </tr>
-            )}
+        <tbody>
+  {!isSelectionDone && (
+    <tr className="no-candidates-row">
+      <td colSpan="7" className="text-center py-4 text-muted fs-15">
+        No candidates found
+      </td>
+    </tr>
+  )}
 
-            {isSelectionDone && filteredCandidates.length === 0 && (
-              <tr className="no-candidates-row">
-                <td colSpan="7" className="text-center py-4 text-muted">
-                  No candidates found
-                </td>
-              </tr>
-            )}
+  {isSelectionDone && filteredCandidates.length === 0 && (
+    <tr className="no-candidates-row">
+      <td colSpan="7" className="text-center py-4 text-muted fs-15">
+        No candidates found
+      </td>
+    </tr>
+  )}
+
 
             {isSelectionDone &&
               filteredCandidates.length > 0 &&
               filteredCandidates.map((c) => (
                 <tr key={c.id}>
                   <td>
-                    <div className="fw-semibold">{c.name}</div>
+<div className="fw-semibold fs-14">{c.name}</div>
                     <div className="text-muted fs-12">
                       Reg No: {c.regNo}
                     </div>
                   </td>
 
-                  <td>{c.category}</td>
-                  <td>{c.time}</td>
-                  <td>{c.zone}</td>
+                 <td className="fs-14">{c.category}</td>
+<td className="fs-14">{c.time}</td>
+<td className="fs-14">{c.zone}</td>
 
               <td className="text-center">
   <input
@@ -119,7 +122,7 @@ const goToPreview = (c) => {
                   </td>
 
                   <td className="text-center">
-                   <Person
+                   <Person size={16}
   className={`me-3 ${c.status === "Rejected" ? "text-muted" : "cursor-pointer"}`}
   style={{
     cursor: c.status === "Rejected" ? "not-allowed" : "pointer",
@@ -132,7 +135,8 @@ const goToPreview = (c) => {
   }}
 />
 
-                   <FileText
+                  <FileText size={16}
+
   className="cursor-pointer"
   onClick={() => onViewFile(c.raw)}
 />
@@ -157,7 +161,7 @@ const goToPreview = (c) => {
 
               <div className="card-top">
                 <div>
-                  <div className="fw-semibold">{c.name}</div>
+<div className="fw-semibold fs-14">{c.name}</div>
                   <div className="text-muted fs-12">
                     Reg No: {c.regNo}
                   </div>
@@ -174,22 +178,28 @@ const goToPreview = (c) => {
 
               <div className="card-grid">
                 <div>
-                  <label>Category</label>
-                  <div>{c.category}</div>
+               <label className="fs-12 text-muted">Category</label>
+
+
+<div className="fs-14">{c.category}</div>
                 </div>
 
                 <div>
-                  <label>Time</label>
-                  <div>{c.time}</div>
+              <label className="fs-12 text-muted">Time</label>
+<div className="fs-14">{c.time}</div>
+
+                
                 </div>
 
                 <div>
-                  <label>Zone</label>
-                  <div>{c.zone}</div>
+                <label className="fs-12 text-muted">Zone</label>
+<div className="fs-14">{c.zone}</div>
+
+                 
                 </div>
 
                 <div>
-                  <label>Absent</label>
+                <label className="fs-12 text-muted">Absent</label>
               <input
   type="checkbox"
   checked={c.absent}
@@ -203,7 +213,8 @@ const goToPreview = (c) => {
               </div>
 
               <div className="card-actions">
-              <Person
+             <Person size={16}
+
   className={`me-3 ${c.status === "Rejected" ? "text-muted" : "cursor-pointer"}`}
   style={{
     cursor: c.status === "Rejected" ? "not-allowed" : "pointer",
@@ -216,7 +227,8 @@ const goToPreview = (c) => {
   }}
 />
 
-               <FileText
+              <FileText size={16}
+
   className="cursor-pointer"
   onClick={() => onViewFile(c.raw)}
 />
@@ -231,7 +243,7 @@ const goToPreview = (c) => {
 
       {/* ================= FOOTER ================= */}
       <div className="d-flex justify-content-between align-items-center px-3 py-2 table-footer">
-        <span className="text-muted fs-14">
+      <span className="text-muted fs-13">
           Showing {isSelectionDone ? filteredCandidates.length : 0}
         </span>
 

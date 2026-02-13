@@ -55,9 +55,14 @@ console.log("requisitionOptions:", requisitionOptions);
   return (
     <div className="row g-3">
 
-      <div className="col-md-6">
-        <label>Requisition</label>
+    <div className="col-md-3 col-12">
+
+   <label className="fs-14 blue-color">Requisition</label>
+
+
         <Select
+          className="mt-1 fs-14"
+  classNamePrefix="react-select"
           options={requisitionOptions}
 value={
   selectedRequisition
@@ -79,9 +84,11 @@ onRequisitionChange(opt?.raw || null);
         />
       </div>
 
-      <div className="col-md-6">
-        <label>Position</label>
+    <div className="col-md-3 col-12">
+      <label className="fs-14 blue-color">Position</label>
         <Select
+        className="mt-1 fs-14"
+  classNamePrefix="react-select"
           options={positionOptions}
 value={
   selectedPosition

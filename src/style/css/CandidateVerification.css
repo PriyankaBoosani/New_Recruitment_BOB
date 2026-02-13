@@ -23,6 +23,22 @@
   user-select: none;
 }
 
+.stage-chip {
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 16px;
+}
+
+.stage-chip .stage-count {
+  font-size: 12px;
+  padding: 2px 6px;
+}
+.status-badge {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
 
 
 .date-nav-btn {

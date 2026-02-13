@@ -69,40 +69,44 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
       {/* DESKTOP */}
       <div className="d-none d-md-block">
         <table className="table align-middle mb-0 verification-table">
-          <thead>
+        <thead className="fs-14">
+
             <tr>
-              <th>Candidate</th>
-              <th>Category</th>
-              <th>Time</th>
-              <th>Zone</th>
-              <th className="text-center">Absent</th>
-              <th>Comment</th>
-              <th style={{ width: 120 }}>Score</th>
-              <th className="text-center">Actions</th>
+            <th className="fs-14">Candidate</th>
+<th className="fs-14">Category</th>
+<th className="fs-14">Time</th>
+<th className="fs-14">Zone</th>
+<th className="fs-14 text-center">Absent</th>
+<th className="fs-14">Comment</th>
+<th className="fs-14" style={{ width: 120 }}>Score</th>
+<th className="fs-14 text-center">Actions</th>
+
             </tr>
           </thead>
 
           <tbody>
             {rows.length === 0 && (
-              <tr>
-                <td colSpan="8" className="text-center py-4 text-muted">
-                  No candidates found
-                </td>
-              </tr>
+             <tr>
+  <td colSpan="8" className="text-center py-4 text-muted fs-15">
+    No candidates found
+  </td>
+</tr>
+
             )}
 
             {rows.map(row => (
               <tr key={row.id}>
                 <td>
-                  <div className="fw-semibold">{row.name}</div>
+                <div className="fw-semibold fs-14">{row.name}</div>
                   <div className="text-muted fs-12">
                     Reg No: {row.regNo}
                   </div>
                 </td>
 
-                <td>{row.category || "-"}</td>
-                <td>{row.time}</td>
-                <td>{row.zone}</td>
+              <td className="fs-14">{row.category || "-"}</td>
+<td className="fs-14">{row.time}</td>
+<td className="fs-14">{row.zone}</td>
+
 
                 <td className="text-center">
                   <input
@@ -113,8 +117,8 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
                 </td>
 
                 <td>
-                  <input
-                    className="form-control form-control-sm"
+                <input
+  className="form-control form-control-sm fs-14"
                     value={row.comment || ""}
                     onChange={(e) =>
                       updateComment(row.id, e.target.value)
@@ -123,27 +127,35 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
                 </td>
 
                 <td>
-                  <input
-                    type="number"
-                    className="form-control form-control-sm"
-                    value={row.score || ""}
-                    onChange={(e) =>
-                      updateScore(row.id, e.target.value)
-                    }
-                  />
+           <input
+  type="number"
+  className="form-control form-control-sm fs-14"
+  value={row.score || ""}
+  disabled={row.absent}
+  min={0}
+  max={100}
+  step={1}
+  onChange={(e) =>
+    updateScore(row.id, e.target.value)
+  }
+/>
+
+
                 </td>
 
                 {/* ✅ ACTIONS */}
                 <td className="text-center">
                   <Person
                     className="me-3 cursor-pointer"
-                    size={18}
+                   size={16}
+
                     onClick={() => goToPreview(row)}
                   />
 
                   <FileText
                     className="cursor-pointer"
-                    size={18}
+                  size={16}
+
                     onClick={() => onViewFile(row.raw)}
                   />
                 </td>
@@ -155,14 +167,14 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
 
       {/* FOOTER */}
       <div className="d-flex justify-content-between align-items-center px-3 py-2 table-footer">
-        <span className="text-muted fs-14">
+        <span className="text-muted fs-13">
           Showing {start}-{end} of {totalElements}
         </span>
 
         <div className="d-flex gap-2">
           <select
             className="form-select form-select-sm"
-            style={{ width: 80 }}
+            style={{ width: 70 }}
             value={pageSize}
             onChange={(e) => onPageSizeChange(+e.target.value)}
           >
