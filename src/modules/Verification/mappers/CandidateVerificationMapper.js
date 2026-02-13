@@ -147,6 +147,7 @@ export const mapCandidatesToTableRows = (list = []) => {
   interviewStartAt: sched.interviewStartAt,
   interviewEndAt: sched.interviewEndAt,
   zonalVerificationStatus: sched.zonalVerificationStatus,
+    zonalSubmitBeforeDate: sched.zonalSubmitBeforeDate,
 
   applicationId: sched.applicationId,
   candidateId: sched.candidateId,

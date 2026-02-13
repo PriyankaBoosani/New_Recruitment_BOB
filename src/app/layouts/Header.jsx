@@ -279,18 +279,28 @@ const isInterviewer = role === "interviewer";
               )}
 
 
-              {isInterviewer && (
-                <Nav.Link as={Link} to="/candidate-interviewer" onClick={closeMenu}>
-                   Interview
-                </Nav.Link>
-              )}
+             {isRecruiter && (
+  <Nav.Link
+    as={NavLink}
+    to="/candidate-interviewer"
+    onClick={closeMenu}
+  >
+    Interview
+  </Nav.Link>
+)}
 
 
-              {isZonalHr && (
-                <Nav.Link as={Link} to="/candidate-verification" onClick={closeMenu}>
-                  Verification
-                </Nav.Link>
-              )}
+
+           {isZonalHr && (
+  <Nav.Link
+    as={NavLink}
+    to="/candidate-verification"
+    onClick={closeMenu}
+  >
+    Verification
+  </Nav.Link>
+)}
+
               {!isAdmin && (
                 <Nav.Link as={NavLink} to="/interviewpanel" onClick={closeMenu}>
                   Committee Management
