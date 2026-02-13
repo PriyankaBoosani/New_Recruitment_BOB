@@ -801,19 +801,21 @@ navigate("/candidate-verification", {
     }
   };
 
-  useEffect(() => {
-    if (!disableShortlistedSection) {
-      setScreeningForm(prev => ({
-        ...prev,
-        submitBeforeDate: "",
-      }));
+useEffect(() => {
+  if (!disableShortlistedSection) return;
+  if (screeningForm.isScreeningCompleted) return; // 🔒 preserve backend value
 
-      setErrors(prev => ({
-        ...prev,
-        submitBeforeDate: undefined,
-      }));
-    }
-  }, [disableShortlistedSection]);
+  setScreeningForm(prev => ({
+    ...prev,
+    submitBeforeDate: "",
+  }));
+
+  setErrors(prev => ({
+    ...prev,
+    submitBeforeDate: undefined,
+  }));
+
+}, [disableShortlistedSection, screeningForm.isScreeningCompleted]);
 
   useEffect(() => {
     const derived = deriveShortlistStatus();
@@ -839,12 +841,15 @@ navigate("/candidate-verification", {
     }
 
     if (derived === "DEFAULT") {
-      setScreeningForm(prev => ({
-        ...prev,
-        isShortlisted: "",
-        finalScreeningRemark: "",
-        submitBeforeDate: "",
-      }));
+      setScreeningForm(prev => {
+        if (prev.isScreeningCompleted) return prev; // 🔒 preserve backend data
+
+        return {
+          ...prev,
+          isShortlisted: "",
+          finalScreeningRemark: "",
+        };
+      });
 
       setErrors(prev => ({
         ...prev,

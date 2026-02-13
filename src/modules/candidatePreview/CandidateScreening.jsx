@@ -249,6 +249,7 @@ export default function CandidateScreening({ selectedJob }) {
       setLoadingCandidates(false);
     }
   };
+
   const formatDateTime = (value) => {
     if (!value) return "-";
     const d = new Date(value);
@@ -526,6 +527,65 @@ export default function CandidateScreening({ selectedJob }) {
     await fetchCandidates();
   };
 
+  const buildDownloadPayload = (documentType) => {
+    const normalizedStatus =
+      filters.status.length === 0
+        ? availableStatuses
+        : filters.status.map((s) => s.toUpperCase());
+
+    return {
+      documentType,
+      positionId: selectedPositionId,
+      screenName:
+        activeTab === "CANDIDATE_POOL"
+          ? "CandidatePool"
+          : activeTab === "INTERVIEW_POOL"
+          ? "InterviewPool"
+          : null,
+      status: normalizedStatus,
+      categoryId: filters.categoryId || null,
+      // cityId: filters.stateId || null,
+    };
+  };
+
+  const handleDownload = async (type) => {
+  if (!selectedPositionId) {
+    toast.error("Please select a position first");
+    return;
+  }
+
+  try {
+    const payload = buildDownloadPayload(type);
+
+    const res = await jobPositionApiService.downloadCandidateDetails(payload);
+
+    const blob = new Blob([res.data], {
+      type:
+        type === "PDF"
+          ? "application/pdf"
+          : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download =
+      type === "PDF"
+        ? "candidate-details.pdf"
+        : "candidate-details.xlsx";
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error(err);
+    toast.error("Download failed");
+  }
+};
+
   const mapInterviewFeedback = (candidateId) => {
     // STATIC for now — API later
     return [
@@ -720,18 +780,20 @@ export default function CandidateScreening({ selectedJob }) {
               <div className="col-md-4 d-none d-md-block" />
             )}
 
-            <div className="col-md-4 col-12 text-md-end mt-2 mt-md-0">
-              {/* <button className="btn orange-bg text-white fs-14 me-3 py-1 px-3">
-                <img src={rankIcon} className="me-2" width={15}/>
-                Rank
-              </button> */}
-              <button className="btn fs-14 me-3 blue-color blue-border">
-                <img src={pdfIcon} className="" width={20} />
-              </button>
-              <button className="btn fs-14 blue-color blue-border">
-                <img src={excelIcon} className="" width={20} />
-              </button>
-            </div>
+            {selectedPositionId && selectedRequisitionId && (
+              <div className="col-md-4 col-12 text-md-end mt-2 mt-md-0">
+                {/* <button className="btn orange-bg text-white fs-14 me-3 py-1 px-3">
+                  <img src={rankIcon} className="me-2" width={15}/>
+                  Rank
+                </button> */}
+                <button className="btn fs-14 me-3 blue-color blue-border" onClick={() => handleDownload("pdf")}>
+                  <img src={pdfIcon} className="" width={20} />
+                </button>
+                <button className="btn fs-14 blue-color blue-border" onClick={() => handleDownload("xlsx")}>
+                  <img src={excelIcon} className="" width={20} />
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="row g-2 mt-1 align-items-center" style={{ backgroundColor: '#F9FAFB' }}>
