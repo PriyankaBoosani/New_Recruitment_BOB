@@ -63,26 +63,6 @@ export const preparePanelPayload = (
 };
 
 
-// export const mapPanelsApi = (list = []) => {
-
-//   console.log("list",list)
-//   return list.map(panel => ({
-//     id: panel.interviewPanelId,
-//     name: panel.panelName,
-//     committeeId: panel.committee?.interviewCommitteeId,
-//     committeeName: panel.committee?.committeeName,
-
-//     members:
-//       panel.panelMembers?.map(
-//         m => m.panelMember?.name
-//       ) || []
-//   }));
-// };
-
-
-
-
-
 export const mapPanelsApi = (list = []) => {
   console.log("RAW PANELS 👉", list);
 
