@@ -26,7 +26,7 @@
   "total": "कुल",
   "actions": "कार्यवाही",
   "select_type": "प्रकार चुनें",
-  "select_degree": "डिग्री चुनें",
+  "select_education": "डिग्री चुनें",
   "select_specialization": "विशेषज्ञता चुनें",
   "select_certification": "प्रमाणन चुनें",
   "footer_text": "कॉपीराइट © {{year}} बैंक ऑफ बड़ौदा। सर्वाधिकार सुरक्षित | संचालित: सागर सॉफ्ट"

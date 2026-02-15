@@ -5,10 +5,10 @@ import { useTranslation } from "react-i18next";
 const Footer = () => {
   const { t } = useTranslation("common");
   return (
-    <footer className="app-footer py-3">
+    <footer className="app-footer py-2">
       <Container fluid>
         <div className="text-center">
-          <p className="mb-0"> {t("footer_text", { year: new Date().getFullYear() })}</p>
+          <p className="mb-0 fs-12"> {t("footer_text", { year: new Date().getFullYear() })}</p>
         </div>
       </Container>
     </footer>

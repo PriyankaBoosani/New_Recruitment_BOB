@@ -110,7 +110,7 @@ export default function EducationModal({
         .join(" OR ");
 
 
-    const finalText = `Degree Requirements:
+    const finalText = `Education Requirements:
 ${degreeText || "Not specified"}
 Certifications: ${certText || "None"}
             `.trim();
@@ -159,7 +159,7 @@ Certifications: ${certText || "None"}
                                     updateRow(idx, "educationQualificationsId", e.target.value)
                                 }
                             >
-                                <option value="">{t("common:select_degree")}</option>
+                                <option value="">{t("common:select_education")}</option>
                                 {qualifications.map(q => (
                                     <option key={q.id} value={q.id}>
                                         {q.name}

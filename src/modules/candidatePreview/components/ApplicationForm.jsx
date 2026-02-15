@@ -877,6 +877,27 @@ useEffect(() => {
     screeningForm.isEducationCriteriaMet
   ]);
 
+  const allDocsAreVerified = areAllDocumentsVerified();
+
+  const isOptionDisabled = (option) => {
+    if (option === "DISCREPANCY" && allDocsAreVerified) return true;
+    return false;
+  };
+
+  useEffect(() => {
+    if (!allDocsAreVerified) return;
+
+    setScreeningForm(prev => ({
+      ...prev,
+      isWorkCriteriaMet:
+        prev.isWorkCriteriaMet === "DISCREPANCY" ? "" : prev.isWorkCriteriaMet,
+      isAgeCriteriaMet:
+        prev.isAgeCriteriaMet === "DISCREPANCY" ? "" : prev.isAgeCriteriaMet,
+      isEducationCriteriaMet:
+        prev.isEducationCriteriaMet === "DISCREPANCY" ? "" : prev.isEducationCriteriaMet,
+    }));
+  }, [allDocsAreVerified]);
+
   return (
     <>
       <Accordion
@@ -1360,7 +1381,7 @@ useEffect(() => {
 
                 <div className="criteria-radio mb-0">
                   {CRITERIA_OPTIONS.map(option => (
-                    <label key={option} className="radio-label">
+                    <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
                       <input
                         type="radio"
                         name="workCriteria"
@@ -1368,6 +1389,7 @@ useEffect(() => {
                         onChange={() =>
                           handleRadioChange("isWorkCriteriaMet", option)
                         }
+                        disabled={isOptionDisabled(option)}
                       />
                       <span className="custom-radio"></span>
                      {t(option)}
@@ -1405,7 +1427,7 @@ useEffect(() => {
 
                 <div className="criteria-radio mb-0">
                   {CRITERIA_OPTIONS.map(option => (
-                    <label key={option} className="radio-label">
+                    <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
                       <input
                         type="radio"
                         name="ageCriteria"
@@ -1413,6 +1435,7 @@ useEffect(() => {
                         onChange={() =>
                           handleRadioChange("isAgeCriteriaMet", option)
                         }
+                        disabled={isOptionDisabled(option)}
                       />
                       <span className="custom-radio"></span>
                      {t(option)}
@@ -1450,7 +1473,7 @@ useEffect(() => {
 
                 <div className="criteria-radio mb-0">
                   {CRITERIA_OPTIONS.map(option => (
-                    <label key={option} className="radio-label">
+                    <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
                       <input
                         type="radio"
                         name="educationCriteria"
@@ -1458,6 +1481,7 @@ useEffect(() => {
                         onChange={() =>
                           handleRadioChange("isEducationCriteriaMet", option)
                         }
+                        disabled={isOptionDisabled(option)}
                       />
                       <span className="custom-radio"></span>
                      {t(option)}
