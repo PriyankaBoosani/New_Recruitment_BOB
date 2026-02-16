@@ -76,7 +76,7 @@ const AssignPositionsPage = () => {
   const renderAvailableCommittee = (committee, type) => (
     <div className="committee-row" key={committee.id}>
       <div>
-        <div className="committee-title">{committee.name}</div>
+        <div className="committee-title" style={{width: "350px"}} >{committee.name}</div>
         <div className="committee-chips">
           {committee.members.map(m => (
             <span key={m} className="chip">{m.name}</span>
@@ -99,7 +99,7 @@ const AssignPositionsPage = () => {
     return (
       <div className="committee-row selected" key={committee.id}>
         <div>
-          <div className="committee-title">{committee.name}</div>
+          <div className="committee-title" style={{width: "350px"}}>{committee.name}</div>
 
           <div className="committee-chips">
             {committee.members.map(m => (

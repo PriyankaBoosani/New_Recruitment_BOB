@@ -42,6 +42,7 @@ const InterviewPanelFormModal = ({
         <input
           className="form-control"
           placeholder="Enter Panel Name"
+            maxLength={200}
           value={formData.name}
           onChange={e => {
             setFormData({ ...formData, name: e.target.value });

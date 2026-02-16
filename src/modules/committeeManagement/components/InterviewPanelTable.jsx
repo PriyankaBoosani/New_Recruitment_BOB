@@ -120,7 +120,7 @@ const InterviewPanelTable = ({
                 {/* ✅ Correct serial number */}
                 <td>{page * size + index + 1}</td>
 
-                <td>{panel.panelName}</td>
+                <td className="panel-name-cell" title={panel.panelName}>{panel.panelName}</td>
                 <td>{panel.panelType}</td>
                 <td>{panel.members}</td>
 

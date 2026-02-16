@@ -78,81 +78,90 @@ export const useAssignPositions = (userId) => {
 
   useEffect(() => {
     fetchRequisitions();
-    fetchPanels();
   }, []);
 
-  useEffect(() => {
-    if (!selectedPosition) return;
+  //   useEffect(() => {
+  //   fetchPanels();
+  // }, [selectedPosition]);
 
-    // 🔥 RESET EVERYTHING RELATED TO PREVIOUS POSITION
-    setSelectedCommittees({
-      SCREENING: [],
-      INTERVIEW: [],
-      COMPENSATION: []
-    });
+  // useEffect(() => {
+  //    if (!selectedPosition) {
+  //       setSelectedCommittees({
+  //         SCREENING: [],
+  //         INTERVIEW: [],
+  //         COMPENSATION: []
+  //     });
+  //     setAvailablePanels([]);
+  //     setPanelErrors({});
+  //     return;
+  //     }
 
-    setPanelErrors({});
-  }, [selectedPosition]);
+  //     fetchPanels();
+  //     fetchAssignedPanels(selectedPosition);
+  // }, [selectedPosition]);
+
+
+  
 
   // 2️⃣ Fetch assigned panels for new position
-  useEffect(() => {
-    if (!selectedPosition) return;
+  // useEffect(() => {
+  //   if (!selectedPosition) return;
 
-    fetchAssignedPanels(selectedPosition);
-  }, [selectedPosition]);
-  const fetchAssignedPanels = async (positionId) => {
-    try {
-      setLoading(true);
+  //   fetchAssignedPanels(selectedPosition);
+  // }, [selectedPosition]);
+  // const fetchAssignedPanels = async (positionId) => {
+  //   try {
+  //     setLoading(true);
 
-      const res =
-        await committeeManagementService.getPanelsByPosition(positionId);
-      console.log("RES 👉", res);
+  //     const res =
+  //       await committeeManagementService.getPanelsByPosition(positionId);
+  //     console.log("RES 👉", res);
 
-      const {
-        interviewPanelList = [],
-        screeningPanelList = [],
-        compensationPanelList = []
-      } = res?.data || {};
+  //     const {
+  //       interviewPanelList = [],
+  //       screeningPanelList = [],
+  //       compensationPanelList = []
+  //     } = res?.data || {};
 
-      const mapAssigned = (list) =>
-        list.map(p => ({
-          id: p.interviewPanel.interviewPanelId,
-          positionPanelId: p.positionPanelId,
-          name: p.interviewPanel.panelName,
-          committeeName: p.interviewPanel.committee.committeeName.toUpperCase(),
-          committeeId: p.interviewPanel.committee.interviewCommitteeId,
-          members: p.interviewPanel.panelMembers.map(m => ({
-            ...m.panelMember,
-            interviewPanelMemberId: m.interviewPanelMemberId
-          })),
-          startDate: p.startDate || "",
-          endDate: p.endDate || ""
-        }));
+  //     const mapAssigned = (list) =>
+  //       list.map(p => ({
+  //         id: p.interviewPanel.interviewPanelId,
+  //         positionPanelId: p.positionPanelId,
+  //         name: p.interviewPanel.panelName,
+  //         committeeName: p.interviewPanel.committee.committeeName.toUpperCase(),
+  //         committeeId: p.interviewPanel.committee.interviewCommitteeId,
+  //         members: p.interviewPanel.panelMembers.map(m => ({
+  //           ...m.panelMember,
+  //           interviewPanelMemberId: m.interviewPanelMemberId
+  //         })),
+  //         startDate: p.startDate || "",
+  //         endDate: p.endDate || ""
+  //       }));
 
-      const assigned = {
-        SCREENING: mapAssigned(screeningPanelList),
-        INTERVIEW: mapAssigned(interviewPanelList),
-        COMPENSATION: mapAssigned(compensationPanelList)
-      };
-      console.log("ASSIGNED 👉", assigned);
-      // 1️⃣ SET SELECTED COMMITTEES
-      setSelectedCommittees(assigned);
+  //     const assigned = {
+  //       SCREENING: mapAssigned(screeningPanelList),
+  //       INTERVIEW: mapAssigned(interviewPanelList),
+  //       COMPENSATION: mapAssigned(compensationPanelList)
+  //     };
+  //     console.log("ASSIGNED 👉", assigned);
+  //     // 1️⃣ SET SELECTED COMMITTEES
+  //     setSelectedCommittees(assigned);
 
-      // 2️⃣ REMOVE FROM AVAILABLE PANELS
-      const assignedIds = Object.values(assigned)
-        .flat()
-        .map(p => p.id);
+  //     // 2️⃣ REMOVE FROM AVAILABLE PANELS
+  //     const assignedIds = Object.values(assigned)
+  //       .flat()
+  //       .map(p => p.id);
 
-      setAvailablePanels(prev =>
-        allPanels.filter(p => !assignedIds.includes(p.id))
-      );
+  //     setAvailablePanels(prev =>
+  //       allPanels.filter(p => !assignedIds.includes(p.id))
+  //     );
 
-    } catch (err) {
-      console.error("Failed to fetch assigned panels", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //   } catch (err) {
+  //     console.error("Failed to fetch assigned panels", err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const fetchRequisitions = async () => {
     try {
@@ -195,29 +204,114 @@ export const useAssignPositions = (userId) => {
   }
 };
 
-  const fetchPanels = useCallback(async () => {
+
+useEffect(() => {
+  const loadPositionData = async () => {
+    if (!selectedPosition) {
+      setSelectedCommittees({
+        SCREENING: [],
+        INTERVIEW: [],
+        COMPENSATION: []
+      });
+      setAvailablePanels([]);
+       setAllPanels([]); // ✅ add this
+      setPanelErrors({});
+      return;
+    }
+
     try {
       setLoading(true);
 
-      const res = await masterApiService.getInterviewPanelsSearch({
+      // 1️⃣ Load all panels first
+      const panelsRes = await masterApiService.getInterviewPanelsSearch({
         page,
         size
       });
 
-      console.log("RES 👉", res);
-      const apiData = res?.data?.content || [];
-      const mapped = mapPanelsApi(apiData);
-      console.log("MAPPED 👉", mapped);
-      setAllPanels(mapped);
-      setAvailablePanels(mapped); // reset source of truth
+      const apiData = panelsRes?.data?.content || [];
+      const mappedPanels = mapPanelsApi(apiData);
+      setAllPanels(mappedPanels);
 
-    } catch (error) {
-      console.error("Fetch Panels Error:", error);
+      // 2️⃣ Load assigned panels
+      const assignedRes =
+        await committeeManagementService.getPanelsByPosition(selectedPosition);
+
+      const {
+        interviewPanelList = [],
+        screeningPanelList = [],
+        compensationPanelList = []
+      } = assignedRes?.data || {};
+
+      const mapAssigned = (list) =>
+        list.map(p => ({
+          id: p.interviewPanel.interviewPanelId,
+          positionPanelId: p.positionPanelId,
+          name: p.interviewPanel.panelName,
+          committeeName: p.interviewPanel.committee.committeeName.toUpperCase(),
+          committeeId: p.interviewPanel.committee.interviewCommitteeId,
+          members: p.interviewPanel.panelMembers.map(m => ({
+            ...m.panelMember,
+            interviewPanelMemberId: m.interviewPanelMemberId
+          })),
+          startDate: p.startDate || "",
+          endDate: p.endDate || ""
+        }));
+
+      const assigned = {
+        SCREENING: mapAssigned(screeningPanelList),
+        INTERVIEW: mapAssigned(interviewPanelList),
+        COMPENSATION: mapAssigned(compensationPanelList)
+      };
+
+      setSelectedCommittees(assigned);
+
+      // 3️⃣ Calculate available panels properly
+      const assignedIds = Object.values(assigned)
+        .flat()
+        .map(p => p.id);
+
+      const available = mappedPanels.filter(
+        p => !assignedIds.includes(p.id)
+      );
+
+      setAvailablePanels(available);
+
+    } catch (err) {
+      console.error("Load Position Data Error:", err);
       toast.error("Failed to load panels");
     } finally {
       setLoading(false);
     }
-  });
+  };
+
+  loadPositionData();
+
+}, [selectedPosition]);
+
+
+  // const fetchPanels = useCallback(async () => {
+  //   try {
+  //     setLoading(true);
+
+  //     const res = await masterApiService.getInterviewPanelsSearch({
+  //       page,
+  //       size
+  //     });
+
+  //     console.log("RES 👉", res);
+  //     const apiData = res?.data?.content || [];
+  //     const mapped = mapPanelsApi(apiData);
+  //     console.log("MAPPED 👉", mapped);
+  //     setAllPanels(mapped);
+  //     setAvailablePanels(mapped); // reset source of truth
+
+  //   } catch (error) {
+  //     console.error("Fetch Panels Error:", error);
+  //     toast.error("Failed to load panels");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // });
 
   // const handleEdit = (item) => {
   //   // Set form data for editing
