@@ -328,7 +328,20 @@ useEffect(() => {
       members: []
     });
     setErrors({});
+
+
+      // 🔹 Reset filters
+    setSearch({
+      panelName: "",
+      committeeName: "",
+      panelMemberName: ""
+    });
+
+    // 🔹 Reset pagination
+    setPage(0);
   }
+
+
 }, [activeTab]);
 
   // useEffect(() => {
