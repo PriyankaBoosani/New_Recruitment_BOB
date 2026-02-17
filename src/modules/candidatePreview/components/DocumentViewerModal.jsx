@@ -198,14 +198,14 @@ const DocumentViewerModal = ({
                 className="btn-reject"
                 onClick={handleRejectClick}
               >
-                {t("VERIFIED")}
+                {t("REJECTED")}
               </button>
 
               <button
                 className="btn-verify"
                 onClick={handleVerifyClick}
               >
-                {t("REJECTED")}
+                {t("VERIFIED")}
               </button>
             </div>
 
