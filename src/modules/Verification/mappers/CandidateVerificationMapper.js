@@ -155,6 +155,8 @@ export const mapCandidatesToTableRows = (list = []) => {
   //  SAME ID SYSTEM AS DROPDOWN
   positionId: app.positionId,
 
+   zonalHrComments: sched.zonalHrComments, 
+
   requisitionId: req.id,
   requisitionTitle: req.requisitionTitle,
   requisitionCode: req.requisitionCode,

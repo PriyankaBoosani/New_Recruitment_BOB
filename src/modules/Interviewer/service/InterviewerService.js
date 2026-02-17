@@ -15,9 +15,9 @@ const InterviewerService = {
       }
     }),
 
-  /* ✅ NEW */
+  /*  NEW */
   setCandidateScore: (payload) =>
-    api.post(`${BASE}/set-candidate-score`, payload)
+    api.post(`${BASE}/save-candidate-score`, payload)
 
 };
 

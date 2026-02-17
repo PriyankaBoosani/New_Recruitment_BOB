@@ -127,7 +127,7 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
                 </td>
 
                 <td>
-           <input
+        <input
   type="number"
   className="form-control form-control-sm fs-14"
   value={row.score || ""}
@@ -135,10 +135,28 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
   min={0}
   max={100}
   step={1}
-  onChange={(e) =>
-    updateScore(row.id, e.target.value)
-  }
+  onChange={(e) => {
+    let v = e.target.value;
+
+    if (v === "") {
+      updateScore(row.id, "");
+      return;
+    }
+
+    v = parseInt(v, 10);
+
+    if (v > 100) v = 100;
+    if (v < 0) v = 0;
+
+    updateScore(row.id, v);
+  }}
+  onKeyDown={(e) => {
+    if (e.key === "e" || e.key === "-" || e.key === "+") {
+      e.preventDefault();
+    }
+  }}
 />
+
 
 
                 </td>

@@ -151,8 +151,6 @@ setOriginalRows(mapped.map(r => ({ ...r })));
 
 useEffect(() => {
 
-
-
   const posId = selectedPosition?.position?.positionId;
 
   if (!posId) {
@@ -163,24 +161,40 @@ useEffect(() => {
   }
 
   const load = async () => {
-    const dateStr = formatApiDate(selectedDate || new Date());
-    const res = await InterviewerService.getCandidatesByPositionAndDate(
-      posId,
-      dateStr
-    );
+    try {
+      const dateStr = formatApiDate(selectedDate || new Date());
 
-    const apiList = res.data || [];
-  setAllCandidatesRaw(apiList);
-const mapped = mapInterviewerCandidates(apiList);
-setRows(mapped);
-setOriginalRows(mapped.map(r => ({ ...r })));
+      const res =
+        await InterviewerService.getCandidatesByPositionAndDate(
+          posId,
+          dateStr
+        );
 
+      const apiList = res.data || [];
 
+      //  SHOW BACKEND MESSAGE WHEN EMPTY
+      if (apiList.length === 0 && res.message) {
+        toast.info(res.message);
+      }
+
+      setAllCandidatesRaw(apiList);
+
+      const mapped = mapInterviewerCandidates(apiList);
+      setRows(mapped);
+      setOriginalRows(mapped.map(r => ({ ...r })));
+
+    } catch (err) {
+      console.error("Load interviewer candidates failed", err);
+      toast.error("Failed to load candidates");
+      setRows([]);
+      setAllCandidatesRaw([]);
+    }
   };
 
   load();
 
 }, [selectedPosition, selectedDate, usedRestoreData]);
+
 
 
 
@@ -345,6 +359,7 @@ const handleSave = async () => {
         candidateId: raw.candidateId,
         panelId: raw.panelId,
         panelScore: Number(r.score) || 0,
+        //  panelScore: r.score,
         panelComments: r.comment || "",
         interviewCenterId: raw.interviewCenterId,
         isAbsent: !!r.absent

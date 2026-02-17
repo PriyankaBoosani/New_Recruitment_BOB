@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef} from "react";
 import { Accordion, Card } from "react-bootstrap";
 import "../../../style/css/PreviewModal.css";
 import logo_Bob from "../../../assets/bob-logo.png";
@@ -40,6 +40,9 @@ const ApplicationForm = ({
   const location = useLocation();
   const isInterviewView = location.state?.fromInterviewPool;
   const candidate = location.state?.candidate;
+
+  const zonalInitRef = useRef(true);
+
 
   const deriveShortlistStatus = () => {
     const values = [
@@ -580,7 +583,8 @@ const hasPendingDocument = documentRows.some(doc => {
           candidateId,
           applicationId,
           zonalHrDocStatus: "VERIFIED",
-          zonalHrDocComments: comment || ""
+          // zonalHrDocComments: comment || ""
+           zonalHrDocComments: ""
         });
 
       } else {
@@ -974,6 +978,30 @@ useEffect(() => {
         prev.isEducationCriteriaMet === "DISCREPANCY" ? "" : prev.isEducationCriteriaMet,
     }));
   }, [allDocsAreVerified]);
+
+
+
+
+useEffect(() => {
+  if (zonalInitRef.current) {
+    zonalInitRef.current = false;
+    return;
+  }
+
+  if (zonalDecision !== "PROVISIONALLY_APPROVED") {
+    setScreeningForm(prev => ({
+      ...prev,
+      zonalSubmitDate: ""
+    }));
+
+    setErrors(prev => ({
+      ...prev,
+      zonalSubmitDate: undefined
+    }));
+  }
+}, [zonalDecision]);
+
+
 
   return (
     <>
@@ -1369,8 +1397,10 @@ useEffect(() => {
                                   onClick={() => {
                                     if (isInterviewView) return;
                                     console.log("VIEW CLICKED", left);
-                                    setSelectedDoc({
-                                      candidateDocumentId: left.candidateDocumentId,
+                                  setSelectedDoc({
+  candidateDocumentId: left.candidateDocumentId,
+  status: leftStatus,   //  add this
+
                                       candidateId: previewData.candidateId,
                                       applicationId: previewData.applicationId,
                                       verificationId: docStatusMap[left.candidateDocumentId]?.verificationId,
@@ -1748,12 +1778,16 @@ useEffect(() => {
             <div className="submit-date-group d-flex flex-column">
               <label className="submit-label">{t("submit_before")}</label>
 
-              <input
-                type="date"
-                className={`criteria-date ${errors.zonalSubmitDate ? "input-error" : ""}`}
-                min={minFutureDate}
-                value={screeningForm.zonalSubmitDate}
-                disabled={!allDocsVerified}
+<input
+  type="date"
+  className={`criteria-date ${errors.zonalSubmitDate ? "input-error" : ""}`}
+  min={minFutureDate}
+  value={screeningForm.zonalSubmitDate}
+  disabled={
+    !allDocsVerified ||
+    zonalDecision !== "PROVISIONALLY_APPROVED"
+  }
+
 
                 onChange={(e) => {
                   setScreeningForm(prev => ({

@@ -29,14 +29,33 @@ export const mapInterviewerCandidates = (list = []) => {
 
   return list.map((item, idx) => {
 
-    console.log("➡️ Mapping item:", item);
-    console.log("✅ SAVE FIELDS:", {
+    console.log(" Mapping item:", item);
+    console.log(" SAVE FIELDS:", {
   panelId: item.interviewSchedule?.panelId,
   centerId: item.interviewCentre?.interviewCentreId
 });
 
 
-    const start = item.interviewSchedule?.interviewStartAt;
+   const start = item.interviewSchedule?.interviewStartAt;
+const end = item.interviewSchedule?.interviewEndAt;
+
+const formatTime = (t) =>
+  t
+    ? new Date(t).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+         hour12: true  
+      })
+       .toUpperCase() 
+    : null;
+
+const timeRange =
+  start && end
+    ? `${formatTime(start)} – ${formatTime(end)}`
+    : start
+      ? formatTime(start)
+      : "-";
+
 
     return {
       id: item.application?.id || idx,
@@ -49,12 +68,7 @@ export const mapInterviewerCandidates = (list = []) => {
         item.category?.categoryName ||
         "-",
 
-      time: start
-        ? new Date(start).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit"
-          })
-        : "-",
+      time: timeRange,
 
       zone:
         item.interviewCentre?.zone ||

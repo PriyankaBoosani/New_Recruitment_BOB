@@ -168,8 +168,6 @@ const formatApiDate = (d) => {
 
 const loadCandidates = async (dateParam = selectedDate) => {
   try {
-    console.log("🌐 Calling API getCandidatesByDate with:", formatApiDate(dateParam));
-
     const res =
       await CandidateVerificationService.getCandidatesByDate(
         formatApiDate(dateParam)
@@ -177,27 +175,52 @@ const loadCandidates = async (dateParam = selectedDate) => {
 
     const apiList = res.data || [];
 
-    console.log("📦 API candidates received:", apiList.length);
+    //  SHOW BACKEND MESSAGE WHEN EMPTY
+    if (apiList.length === 0 && res.message) {
+      toast.info(res.message);
+    }
 
+    setAllCandidatesRaw(apiList);
 
-setAllCandidatesRaw(apiList);
+    const rows = mapCandidatesToTableRows(apiList);
+    setAllCandidates(rows);
 
-const rows = mapCandidatesToTableRows(apiList);
-setAllCandidates(rows);
+    const map = {};
+    rows.forEach(r => {
+      map[r.id] = r.absent;
+    });
+    setOriginalAbsentMap(map);
 
-const map = {};
-rows.forEach(r => {
-  map[r.id] = r.absent;
-});
-setOriginalAbsentMap(map);
+    /* ✅ RESTORE HERE — AFTER DATA ARRIVES */
 
+    if (
+      apiList.length > 0 &&
+      (cameFromZonal || cameFromPreviewBack) &&
+      !usedNavData &&
+      location.state?.preloadedCandidates?.length
+    ) {
+      console.log("✅ Restoring after API load");
+
+      if (location.state?.requisition)
+        setSelectedRequisition(location.state.requisition);
+
+      if (location.state?.position)
+        setSelectedPosition(location.state.position);
+
+      setUsedNavData(true);
+
+      sessionStorage.removeItem("fromZonalSubmit");
+      sessionStorage.removeItem("fromPreviewBack");
+    }
 
   } catch (err) {
-    console.error(err);
     setAllCandidatesRaw([]);
     setAllCandidates([]);
+    toast.error("Failed to load candidates");
   }
 };
+
+
 
 
 useEffect(() => {

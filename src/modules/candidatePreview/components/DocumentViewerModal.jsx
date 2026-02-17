@@ -62,16 +62,24 @@ const DocumentViewerModal = ({
 
   /* ================= RESET PER DOCUMENT ================= */
 
-  useEffect(() => {
-    if (show && document) {
-      setComment(document.docScreeningComments || "");
-      setError("");
-    } else {
+useEffect(() => {
+  if (show && document) {
+
+    // ✅ If already VERIFIED → do not preload comment
+    if (document.status === "VERIFIED") {
       setComment("");
-      setError("");
-      setSasUrl(null);
+    } else {
+      setComment(document.docScreeningComments || "");
     }
-  }, [show, document]);
+
+    setError("");
+  } else {
+    setComment("");
+    setError("");
+    setSasUrl(null);
+  }
+}, [show, document]);
+
 
   /* ================= FILE TYPE ================= */
 
