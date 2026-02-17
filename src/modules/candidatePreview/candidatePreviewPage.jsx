@@ -23,7 +23,7 @@ const CandidatePreviewPage = ({ onHide }) => {
   const state = location.state || {};
 
   const user = useSelector((state) => state.user.user);
-  
+
   const role = user?.role?.toLowerCase();
   const isZonalHr = role === "zonal_hr";
   const isInterviewer = role === "interviewer";
@@ -31,7 +31,7 @@ const CandidatePreviewPage = ({ onHide }) => {
   const isRecruiter = role === "recruiter";
 
 
-  
+
   //  Now safe to use state
   const interviewScheduleId = state?.interviewScheduleId;
 
@@ -52,13 +52,12 @@ const CandidatePreviewPage = ({ onHide }) => {
 
 
 
-console.log("applicationId: ", applicationId)
+  console.log("applicationId: ", applicationId)
 
 
   console.log("candidateId: ", candidateId)
   console.log("applicationId: ", applicationId)
 
-  
 
 
 
@@ -67,7 +66,8 @@ console.log("applicationId: ", applicationId)
 
 
 
-  
+
+
 
   // const applicationId = candidate?.id;
 
@@ -93,6 +93,11 @@ console.log("applicationId: ", applicationId)
         const masterRes = await masterApiService.getMasterDisplayAll();
         const fullMasters = masterRes?.data || {};
 
+        const InterviewCenters = await masterApiService.getAllInterviewCenters()
+        const  ZonalStats =await masterApiService.getZonalStates()
+    
+        console.log('ZonalStats',InterviewCenters.data)
+
         // const normalizedMasters = {
         //   genders: raw.genderMasters || [],
         //   religions: raw.religionMaster || [],
@@ -105,7 +110,7 @@ console.log("applicationId: ", applicationId)
         // };
 
         setMasters(fullMasters);
-console.log("Full Masters Data:@@@@@", candidateId, positionId);
+        console.log("Full Masters Data:@@@@@", candidateId, positionId);
         /* ---------- Load Candidate ---------- */
         if (candidateId && positionId) {
           console.log("Full Masters Data:@@@@@", candidateId, positionId);
@@ -128,7 +133,12 @@ console.log("Full Masters Data:@@@@@", candidateId, positionId);
             education_levels: fullMasters.educationLevels || [],
             mandatory_qualifications: fullMasters.mandatoryQualification || [],
             specializations: fullMasters.specializationMaster || [],
-            countries: fullMasters.countries || [],
+            countries: fullMasters.countries || [], states: fullMasters.states,
+            districts: fullMasters.districts,
+            cities: fullMasters.cities,
+            pincodes: fullMasters.pincodes,
+            interviewCenters: InterviewCenters.data || [],
+            zonalStats: ZonalStats.data || []
           };
 
           const mapped = mapCandidateToPreview(
@@ -162,73 +172,73 @@ console.log("Full Masters Data:@@@@@", candidateId, positionId);
         aria-label="Close"
       />
 
-       {/* Header */}
+      {/* Header */}
       {!isZonalHr && !isInterviewer && (
-      <HeaderWithBack
-        title="Candidate Screening"
-        subtitle="Manage and schedule interviews for candidates"
-      onBack={() =>
-  navigate("/candidate-verification", {
-    state: {
-      requisition: state.requisition,
-      position: state.position,
-      preloadedCandidates: state.candidates,
-      selectedDate: state.selectedDate
-    }
-  })
-}
+        <HeaderWithBack
+          title="Candidate Screening"
+          subtitle="Manage and schedule interviews for candidates"
+          onBack={() =>
+            navigate("/candidate-verification", {
+              state: {
+                requisition: state.requisition,
+                position: state.position,
+                preloadedCandidates: state.candidates,
+                selectedDate: state.selectedDate
+              }
+            })
+          }
 
-        positionId={positionId}
-        requisitionId={requisitionId}
-        candidateScreening={true}
-      />
-    )}
+          positionId={positionId}
+          requisitionId={requisitionId}
+          candidateScreening={true}
+        />
+      )}
       {isZonalHr && (
-      <HeaderWithBacks
-  title="Candidate Profile"
-  subtitle="View candidate details application status"
-  onBack={() => {
-    sessionStorage.setItem("fromPreviewBack", "true");
+        <HeaderWithBacks
+          title="Candidate Profile"
+          subtitle="View candidate details application status"
+          onBack={() => {
+            sessionStorage.setItem("fromPreviewBack", "true");
 
-    navigate("/candidate-verification", {
-      state: {
-        requisition,
-        position,
-        preloadedCandidates: state.candidates || [],
-        selectedDate
-      }
-    });
-  }}
-/>
+            navigate("/candidate-verification", {
+              state: {
+                requisition,
+                position,
+                preloadedCandidates: state.candidates || [],
+                selectedDate
+              }
+            });
+          }}
+        />
       )}
 
 
 
-        {isInterviewer && (
-      <HeaderWithBackss
-  title="Candidate Profile"
-  subtitle="View candidate details application status"
-  onBack={() => {
-    sessionStorage.setItem("fromPreviewBack", "true");
+      {isInterviewer && (
+        <HeaderWithBackss
+          title="Candidate Profile"
+          subtitle="View candidate details application status"
+          onBack={() => {
+            sessionStorage.setItem("fromPreviewBack", "true");
 
-navigate("/candidate-interviewer", {
-  state: {
-    requisition,
-    position,
-    preloadedCandidates:
-      state.preloadedCandidates || state.candidates || [],
-    selectedDate
-  }
-});
+            navigate("/candidate-interviewer", {
+              state: {
+                requisition,
+                position,
+                preloadedCandidates:
+                  state.preloadedCandidates || state.candidates || [],
+                selectedDate
+              }
+            });
 
 
-  }}
-/>
+          }}
+        />
       )}
 
 
       {/* Requisition Strip */}
-      {isZonalHr && requisition && position && ( 
+      {isZonalHr && requisition && position && (
         <RequisitionStrip
           requisition={requisition}
           position={position}
@@ -236,20 +246,20 @@ navigate("/candidate-interviewer", {
           isSaveEnabled={false}
           showSaveButton={true}
           isSaveBtn={false}
-          // masterData={masters}
+        // masterData={masters}
         />
       )}
 
 
 
-  {!isZonalHr &&requisition && position && ( 
+      {!isZonalHr && requisition && position && (
         <RequisitionStrip
           requisition={requisition}
           position={position}
           isCardBg
           isSaveEnabled={false}
-         //  masterData={masters}
-          //  masterData={masters}
+        //  masterData={masters}
+        //  masterData={masters}
         />
       )}
 
@@ -270,9 +280,9 @@ navigate("/candidate-interviewer", {
               requisitionTitle={requisitionTitle}
               positionName={positionName}
               selectedDate={selectedDate}
-                zonalVerificationStatus={candidate?.zonalVerificationStatus}
-  zonalSubmitBeforeDate={candidate?.zonalSubmitBeforeDate}
-  zonalHrComments={candidate?.zonalHrComments}
+              zonalVerificationStatus={candidate?.zonalVerificationStatus}
+              zonalSubmitBeforeDate={candidate?.zonalSubmitBeforeDate}
+              zonalHrComments={candidate?.zonalHrComments}
             />
           )
         )}

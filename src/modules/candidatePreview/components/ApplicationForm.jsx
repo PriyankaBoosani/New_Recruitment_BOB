@@ -27,11 +27,11 @@ const ApplicationForm = ({
   requisitionTitle,
   positionName,
   selectedDate,
-   zonalVerificationStatus,
+  zonalVerificationStatus,
   zonalSubmitBeforeDate,
   zonalHrComments
 }) => {
-  
+
   const { t } = useTranslation(["preview", "common", "validation"]);
 
   const navigate = useNavigate();
@@ -78,6 +78,12 @@ const ApplicationForm = ({
     screeningId: null,
   });
 
+  const formatLocation = (a, b) => {
+    const values = [a, b].filter(v => v && v !== "-");
+    return values.length ? values.join(", ") : "-";
+  };
+
+
   const [screeningRemarks, setScreeningRemarks] = useState("");
 
   const user = useSelector((state) => state.user.user);
@@ -117,27 +123,27 @@ const mapStatusToDecision = (status) => {
 useEffect(() => {
   if (!isZonalHr) return;
 
-  if (zonalVerificationStatus) {
-    setZonalDecision(mapStatusToDecision(zonalVerificationStatus));
-  }
+    if (zonalVerificationStatus) {
+      setZonalDecision(mapStatusToDecision(zonalVerificationStatus));
+    }
 
-  if (zonalSubmitBeforeDate) {
-    setScreeningForm(prev => ({
-      ...prev,
-      zonalSubmitDate: zonalSubmitBeforeDate.split("T")[0] // safe for input[type=date]
-    }));
-  }
+    if (zonalSubmitBeforeDate) {
+      setScreeningForm(prev => ({
+        ...prev,
+        zonalSubmitDate: zonalSubmitBeforeDate.split("T")[0] // safe for input[type=date]
+      }));
+    }
 
-  if (zonalHrComments) {
-    setScreeningRemarks(zonalHrComments);
-  }
+    if (zonalHrComments) {
+      setScreeningRemarks(zonalHrComments);
+    }
 
-}, [
-  zonalVerificationStatus,
-  zonalSubmitBeforeDate,
-  zonalHrComments,
-  isZonalHr
-]);
+  }, [
+    zonalVerificationStatus,
+    zonalSubmitBeforeDate,
+    zonalHrComments,
+    isZonalHr
+  ]);
 
 
 const handleZonalSubmit = async () => {
@@ -299,7 +305,7 @@ const hasPendingDocument = documentRows.some(doc => {
   };
   const CRITERIA_OPTIONS = ["YES", "NO", "DISCREPANCY"];
 
-   const documentRows = [
+  const documentRows = [
     ...(data.documents?.allDocs || [])
   ].map(doc => ({
     ...doc,
@@ -645,7 +651,7 @@ const hasPendingDocument = documentRows.some(doc => {
 
     // Criteria validations
     if (!screeningForm.isWorkCriteriaMet) {
-      newErrors.isWorkCriteriaMet =  t("please_select_option");
+      newErrors.isWorkCriteriaMet = t("please_select_option");
     }
 
     if (!screeningForm.isAgeCriteriaMet) {
@@ -653,7 +659,7 @@ const hasPendingDocument = documentRows.some(doc => {
     }
 
     if (!screeningForm.isEducationCriteriaMet) {
-      newErrors.isEducationCriteriaMet =  t("please_select_option");
+      newErrors.isEducationCriteriaMet = t("please_select_option");
     }
 
     // Work criteria remark mandatory if NO or DISCREPANCY
@@ -722,7 +728,7 @@ const hasPendingDocument = documentRows.some(doc => {
         today.setHours(0, 0, 0, 0);
 
         if (selectedDate <= today) {
-          newErrors.submitBeforeDate =  t("date_after_today");
+          newErrors.submitBeforeDate = t("date_after_today");
         }
       }
     }
@@ -743,7 +749,7 @@ const hasPendingDocument = documentRows.some(doc => {
   };
 
 
-  
+
 
   const allDocsVerified =
     documentRows.length > 0 &&
@@ -802,35 +808,35 @@ const hasPendingDocument = documentRows.some(doc => {
 
   const handleFinalSubmit = async () => {
 
-  // 🔴 1️⃣ Hard stop: documents cannot be pending
-  if (!areAllDocumentsValidated()) {
-    toast.error("Please validate all documents");
-    return;
-  }
+    // 🔴 1️⃣ Hard stop: documents cannot be pending
+    if (!areAllDocumentsValidated()) {
+      toast.error("Please validate all documents");
+      return;
+    }
 
-  const isValid = validateForm();
-  if (!isValid) return;
+    const isValid = validateForm();
+    if (!isValid) return;
 
-  // 🔴 2️⃣ Auto derive shortlist status
-  const derivedShortlist = deriveShortlistStatus();
+    // 🔴 2️⃣ Auto derive shortlist status
+    const derivedShortlist = deriveShortlistStatus();
 
-  const payload = {
-    ...screeningForm,
-    isShortlisted: derivedShortlist || "NO",
-    isScreeningCompleted: true,
+    const payload = {
+      ...screeningForm,
+      isShortlisted: derivedShortlist || "NO",
+      isScreeningCompleted: true,
+    };
+
+    console.log("FINAL SCREENING PAYLOAD", payload);
+
+    try {
+      await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
+      toast.success("Screening submitted successfully");
+      navigate("/candidate-workflow", { state: { requisitionId, positionId } })
+    } catch (err) {
+      console.error("Screening submit failed", err);
+      toast.error("Submission failed");
+    }
   };
-
-  console.log("FINAL SCREENING PAYLOAD", payload);
-
-  try {
-    await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
-    toast.success("Screening submitted successfully");
-    navigate("/candidate-workflow", { state: { requisitionId, positionId } })
-  } catch (err) {
-    console.error("Screening submit failed", err);
-    toast.error("Submission failed");
-  }
-};
 
   const getTomorrowDate = () => {
     const d = new Date();
@@ -1139,7 +1145,11 @@ useEffect(() => {
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td>
                     <td className="fw-med">{t("location_pref1")}</td>
                     <td className="fw-reg" colSpan={2}>
-                      {data.personalDetails.locationPreference1}
+                      {formatLocation(
+                        data.personalDetails.locationPreference1,
+                        data.personalDetails.statePreference1
+                      )}
+
                     </td>
 
                   </tr>
@@ -1147,11 +1157,18 @@ useEffect(() => {
                   <tr>
                     <td className="fw-med">{t("location_pref2")}</td>
                     <td className="fw-reg" colSpan={2}>
-                      {data.personalDetails.locationPreference2}
+                      {formatLocation(
+                        data.personalDetails.locationPreference2,
+                        data.personalDetails.statePreference2
+                      )}
+
                     </td>
                     <td className="fw-med">{t("location_pref3")}</td>
                     <td className="fw-reg" colSpan={2}>
-                      {data.personalDetails.locationPreference3}
+                      {formatLocation(
+                        data.personalDetails.locationPreference3,
+                        data.personalDetails.statePreference3
+                      )}
                     </td>
 
                   </tr>
@@ -1342,7 +1359,7 @@ useEffect(() => {
                               <>
                                 <img
                                   src={viewIcon}
-                                 alt={t("view")}
+                                  alt={t("view")}
                                   style={{
                                     cursor: isInterviewView ? "not-allowed" : "pointer",
                                     opacity: isInterviewView ? 0.4 : 1,
@@ -1463,7 +1480,7 @@ useEffect(() => {
                         disabled={isOptionDisabled(option)}
                       />
                       <span className="custom-radio"></span>
-                     {t(option)}
+                      {t(option)}
                     </label>
                   ))}
                 </div>
@@ -1509,7 +1526,7 @@ useEffect(() => {
                         disabled={isOptionDisabled(option)}
                       />
                       <span className="custom-radio"></span>
-                     {t(option)}
+                      {t(option)}
                     </label>
                   ))}
                 </div>
@@ -1555,7 +1572,7 @@ useEffect(() => {
                         disabled={isOptionDisabled(option)}
                       />
                       <span className="custom-radio"></span>
-                     {t(option)}
+                      {t(option)}
                     </label>
                   ))}
                 </div>
@@ -1662,7 +1679,7 @@ useEffect(() => {
                 className="btn-submit-orange"
                 onClick={handleFinalSubmit}
               >
-               {t("submit")}
+                {t("submit")}
               </button>
             </div>
           </Card>
@@ -1679,48 +1696,48 @@ useEffect(() => {
 
             {/* RADIO OPTIONS — same pattern as Shortlisted */}
             <div className="criteria-radio mb-3">
-{["YES", "NO", "PROVISIONALLY_APPROVED"].map((opt) => {
+              {["YES", "NO", "PROVISIONALLY_APPROVED"].map((opt) => {
 
-  const disableYes =
-    opt === "YES" && !areAllDocumentsVerified();
+                const disableYes =
+                  opt === "YES" && !areAllDocumentsVerified();
 
-  const disableProvisionallyApproved =
-    opt === "PROVISIONALLY_APPROVED" && areAllDocumentsVerified();
+                const disableProvisionallyApproved =
+                  opt === "PROVISIONALLY_APPROVED" && areAllDocumentsVerified();
 
-  const isDisabled =
-    !allDocsVerified || disableProvisionallyApproved || disableYes;
+                const isDisabled =
+                  !allDocsVerified || disableProvisionallyApproved || disableYes;
 
-  console.log("🔘 Zonal option check:", {
-    opt,
-    disableYes,
-    disableProvisionallyApproved,
-    allDocsVerified
-  });
+                console.log("🔘 Zonal option check:", {
+                  opt,
+                  disableYes,
+                  disableProvisionallyApproved,
+                  allDocsVerified
+                });
 
-  return (
-    <label
-      key={opt}
-      className={`radio-label me-4 ${isDisabled ? "disabled" : ""}`}
-    >
-      <input
-        type="radio"
-        name="docVerified"
-        value={opt}
-        checked={zonalDecision === opt}
-        disabled={isDisabled}
-        onChange={(e) => {
-          setZonalDecision(e.target.value);
-          setErrors(prev => ({
-            ...prev,
-            zonalSubmitDate: undefined
-          }));
-        }}
-      />
-      <span className="custom-radio"></span>
-      {t(opt)}
-    </label>
-  );
-})}
+                return (
+                  <label
+                    key={opt}
+                    className={`radio-label me-4 ${isDisabled ? "disabled" : ""}`}
+                  >
+                    <input
+                      type="radio"
+                      name="docVerified"
+                      value={opt}
+                      checked={zonalDecision === opt}
+                      disabled={isDisabled}
+                      onChange={(e) => {
+                        setZonalDecision(e.target.value);
+                        setErrors(prev => ({
+                          ...prev,
+                          zonalSubmitDate: undefined
+                        }));
+                      }}
+                    />
+                    <span className="custom-radio"></span>
+                    {t(opt)}
+                  </label>
+                );
+              })}
 
 
 
@@ -1728,35 +1745,35 @@ useEffect(() => {
 
 
             {/* DATE */}
-          <div className="submit-date-group d-flex flex-column">
-  <label className="submit-label">{t("submit_before")}</label>
+            <div className="submit-date-group d-flex flex-column">
+              <label className="submit-label">{t("submit_before")}</label>
 
- <input
-  type="date"
-  className={`criteria-date ${errors.zonalSubmitDate ? "input-error" : ""}`}
-  min={minFutureDate}
-  value={screeningForm.zonalSubmitDate}
-  disabled={!allDocsVerified}
+              <input
+                type="date"
+                className={`criteria-date ${errors.zonalSubmitDate ? "input-error" : ""}`}
+                min={minFutureDate}
+                value={screeningForm.zonalSubmitDate}
+                disabled={!allDocsVerified}
 
-    onChange={(e) => {
-      setScreeningForm(prev => ({
-        ...prev,
-        zonalSubmitDate: e.target.value
-      }));
+                onChange={(e) => {
+                  setScreeningForm(prev => ({
+                    ...prev,
+                    zonalSubmitDate: e.target.value
+                  }));
 
-      setErrors(prev => ({
-        ...prev,
-        zonalSubmitDate: undefined
-      }));
-    }}
-  />
+                  setErrors(prev => ({
+                    ...prev,
+                    zonalSubmitDate: undefined
+                  }));
+                }}
+              />
 
-  {errors.zonalSubmitDate && (
-    <small className="text-danger mt-1">
-      {errors.zonalSubmitDate}
-    </small>
-  )}
-</div>
+              {errors.zonalSubmitDate && (
+                <small className="text-danger mt-1">
+                  {errors.zonalSubmitDate}
+                </small>
+              )}
+            </div>
 
 
 

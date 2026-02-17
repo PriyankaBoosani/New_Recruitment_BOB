@@ -8,8 +8,49 @@ import {
   getSpecialization,
   getMandatoryQualification
 } from "../../../shared/utils/masterHelpers";
- 
+
 import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
+
+
+// const findById = (arr, key, id) =>
+//   arr?.find(x => String(x[key]) === String(id));
+
+const findById = (arr = [], key, id) =>
+  arr.find(x => String(x[key]) === String(id));
+
+
+const getStateName = (masters, id) =>
+  findById(masters.states, "stateId", id)?.stateName || "-";
+
+const getDistrictName = (masters, id) =>
+  findById(masters.districts, "districtId", id)?.districtName || "-";
+
+const getCityName = (masters, id) =>
+  findById(masters.cities, "cityId", id)?.cityName || "-";
+
+const getPincode = (masters, id) =>
+  findById(masters.pincodes, "pincodeId", id)?.pin || "-";
+
+// const getZonalState = (master, id)=>{
+//   console.log("zzdas",master.zonalStats)
+//   findById(master.zonalStats,"zonalStateID",id)
+// }
+
+const getZonalState = (masters, id) =>
+  findById(masters?.zonalStats || [], "zonalStateID", id)?.stateName || "-";
+
+const getInterviewCentreName = (masters, id) =>
+  findById(
+    masters?.interviewCenters || [],
+    "interviewCentreId",
+    id
+  )?.interviewCentre || "-";
+
+
+
+
+
+
 
 /* ===============================
    SINGLE SOURCE OF TRUTH
@@ -17,12 +58,60 @@ import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
   const profile = apiData?.basicDetails?.candidateProfile || {};
   const address = apiData?.addressDetails || {};
+  // const locationprefApiData = apiData?.locationPreference
+const locationprefApiData = apiData?.locationPreference || {};
+
+
+  /* ================= ADDRESS NAME RESOLVE ================= */
+
+  const presentCity = getCityName(masters, address.cityId);
+  const presentDistrict = getDistrictName(masters, address.districtId);
+  const presentState = getStateName(masters, address.stateId);
+  const presentPin = getPincode(masters, address.pincodeId);
+  console.log("sdasf", getZonalState(masters, locationprefApiData.statePreference1))
+  console.log("sdasf", locationprefApiData)
+
+  const statePreference1 = getZonalState(masters, locationprefApiData.statePreference1);
+  const statePreference2 = getZonalState(masters, locationprefApiData.statePreference2);
+  const statePreference3 = getZonalState(masters, locationprefApiData.statePreference3);
+
+  const locationPreference1 = getInterviewCentreName(masters, locationprefApiData.locationPreference1);
+  const locationPreference2 = getInterviewCentreName(masters, locationprefApiData.locationPreference2);
+  const locationPreference3 = getInterviewCentreName(masters, locationprefApiData.locationPreference3);
+
+  const examCenterName =
+    getInterviewCentreName(masters, locationprefApiData.interviewCenter);
+
+
+  const permanentCity = getCityName(masters, address.permanentCityId);
+  const permanentDistrict = getDistrictName(masters, address.permanentDistrictId);
+  const permanentState = getStateName(masters, address.permanentStateId);
+  const permanentPin = getPincode(masters, address.permanentPincodeId);
+
+  const presentAddressFull = [
+    address.addressLine1,
+    address.addressLine2,
+    presentCity,
+    presentDistrict,
+    presentState,
+    presentPin
+  ].filter(Boolean).join(", ");
+
+  const permanentAddressFull = [
+    address.permanentAddressLine1,
+    address.permanentAddressLine2,
+    permanentCity,
+    permanentDistrict,
+    permanentState,
+    permanentPin
+  ].filter(Boolean).join(", ");
+
   const educations = apiData?.educationDetails || [];
   const experiences = apiData?.experienceDetails || [];
   const documents = apiData?.documentDetails || [];
 
   const yesNo = (v) => (v ? "Yes" : "No");
- 
+
   /* ================= MASTER LOOKUPS ================= */
   const gender = getGender(masters, profile.genderId);
   const religion = getReligion(masters, profile.religionId);
@@ -37,32 +126,32 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
       .filter(d => fn((d.displayName || d.fileName || "").toLowerCase()))
 
       .map(d => {
-  const rawName = d.displayName || d.fileName || "";
-
- 
-  const cleanedName = rawName
-    .replace(/^candidate_[a-z0-9-]+_/i, "")
-    .replace(/_/g, " ")
-    .trim();
-
-  return {
-    id: d.id,
-    name: cleanedName || "Document",
-    fileName: d.fileName,
-    url: d.fileUrl,
-    status: d.documentScreeningStatus || "Pending"
-  };
-});
-
-//       .map(d => ({
-//   id: d.id,
-//  name: d.displayName || d.fileName,
-//  fileName: d.fileName,
-//  url: d.fileUrl,
+        const rawName = d.displayName || d.fileName || "";
 
 
-//   status: d.documentScreeningStatus || "Pending"
-// }));
+        const cleanedName = rawName
+          .replace(/^candidate_[a-z0-9-]+_/i, "")
+          .replace(/_/g, " ")
+          .trim();
+
+        return {
+          id: d.id,
+          name: cleanedName || "Document",
+          fileName: d.fileName,
+          url: d.fileUrl,
+          status: d.documentScreeningStatus || "Pending"
+        };
+      });
+
+  //       .map(d => ({
+  //   id: d.id,
+  //  name: d.displayName || d.fileName,
+  //  fileName: d.fileName,
+  //  url: d.fileUrl,
+
+
+  //   status: d.documentScreeningStatus || "Pending"
+  // }));
 
 
   return {
@@ -85,10 +174,13 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
       caste: profile.community || "-",
       reservationCategory_name: reservation?.categoryName || "-",
 
-      address: `${address.addressLine1 || ""} ${address.addressLine2 || ""}`.trim() || "-",
-      permanentAddress:
-        `${address.permanentAddressLine1 || ""} ${address.permanentAddressLine2 || ""}`.trim() || "-",
- 
+      // address: `${address.addressLine1 || ""} ${address.addressLine2 || ""}`.trim() || "-",
+      // permanentAddress:
+      //   `${address.permanentAddressLine1 || ""} ${address.permanentAddressLine2 || ""}`.trim() || "-",
+      address: presentAddressFull || "-",
+      permanentAddress: permanentAddressFull || "-",
+
+
       exService: yesNo(profile.exServiceman),
       physicalDisability: yesNo(profile.disability),
       centralGovtEmployment: yesNo(profile.centralGovtEmployed),
@@ -98,7 +190,18 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
       disciplinaryDetails: profile.disciplinaryDetails || "-",
 
       socialMediaProfileLink: profile.socialMediaProfileLink || "-",
-      cibilScore: profile.cibilScore || "-"
+      cibilScore: profile.cibilScore || "-",
+
+      statePreference1: statePreference1,
+      statePreference2: statePreference2,
+      statePreference3: statePreference3,
+
+      locationPreference1: locationPreference1,
+      locationPreference2: locationPreference2,
+      locationPreference3: locationPreference3,
+      examCenter: examCenterName,
+
+
     },
 
     /* ================= EDUCATION ================= */
@@ -108,16 +211,16 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
         masters,
         edu.educationQualificationsId
       );
- 
+
       const educationLevel = getEducationLevel(
         masters,
         qualification?.levelId
       );
- 
+
       const specialization = edu.specializationId
         ? getSpecialization(masters, edu.specializationId)
         : null;
- 
+
       return {
         institution: edu.institutionName || "-",
         startDate: formatDateDDMMYYYY(edu.startDate) || "-",
@@ -156,7 +259,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
 };
 const expSafeCurrency = (value) =>
   value ? `₹${Number(value).toLocaleString()}` : "-";
- 
+
 // src/modules/candidatePreview/mappers/candidatePreviewMapper.js
 
 
@@ -332,14 +435,14 @@ export const mapPositionListItem = (apiItem = {}) => {
   };
 };
 
- 
- 
+
+
 // shared/utils/dateUtils.js
 export const formatToIST = (isoDate) => {
   if (!isoDate) return "-";
- 
+
   const date = new Date(isoDate);
- 
+
   return date.toLocaleString("en-IN", {
     timeZone: "Asia/Kolkata",
     day: "2-digit",
