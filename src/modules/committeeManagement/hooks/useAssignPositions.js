@@ -4,6 +4,7 @@ import masterApiService from "../../master/services/masterApiService";
 import committeeManagementService from "../services/committeeManagementService";
 import { mapPanelsApi } from "../mappers/InterviewPanelMapper";
 import { toast } from "react-toastify";
+
 export const useAssignPositions = (userId) => {
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
@@ -22,7 +23,8 @@ export const useAssignPositions = (userId) => {
   const [selectedPosition, setSelectedPosition] = useState("");
   const [allPanels, setAllPanels] = useState([]);
   const [availablePanels, setAvailablePanels] = useState([]);
-
+const [showErrorModal, setShowErrorModal] = useState(false);
+const [errorMessage, setErrorMessage] = useState("");
 
   /* ================= PAGINATION ================= */
 
@@ -33,47 +35,73 @@ export const useAssignPositions = (userId) => {
   const [panelErrors, setPanelErrors] = useState({});
 
   const validatePanels = () => {
-    const errors = {};
-    let isValid = true;
+  const errors = {};
+  let isValid = true;
 
-    Object.entries(selectedCommittees).forEach(([type, panels]) => {
-      panels.forEach(panel => {
-        const key = `${type}_${panel.id}`;
-        errors[key] = {};
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-        if (!panel.startDate) {
-          errors[key].startDate = "Start date is required";
+  Object.entries(selectedCommittees).forEach(([type, panels]) => {
+    panels.forEach(panel => {
+      const key = `${type}_${panel.id}`;
+      errors[key] = {};
+
+        const isNewPanel = !panel.positionPanelId;
+
+
+      if (!panel.startDate) {
+        errors[key].startDate = "Start date is required";
+        isValid = false;
+      }
+
+      if (!panel.endDate) {
+        errors[key].endDate = "End date is required";
+        isValid = false;
+      }
+
+      if (
+        panel.startDate &&
+        panel.endDate &&
+        new Date(panel.endDate) < new Date(panel.startDate)
+      ) {
+        errors[key].endDate = "End date cannot be before start date";
+        isValid = false;
+      }
+
+      if (isNewPanel) {
+
+        if (panel.endDate && new Date(panel.endDate) <= today) {
+          errors[key].endDate = "End date must be a future date";
           isValid = false;
         }
+      }
 
-        if (!panel.endDate) {
-          errors[key].endDate = "End date is required";
-          isValid = false;
-        }
+      // if (panel.startDate && new Date(panel.startDate) < today) {
+      //   errors[key].startDate = "Start date cannot be in the past";
+      //   isValid = false;
+      // }
 
-        if (
-          panel.startDate &&
-          panel.endDate &&
-          new Date(panel.endDate) < new Date(panel.startDate)
-        ) {
-          errors[key].endDate = "End date cannot be before start date";
-          isValid = false;
-        }
+      if (!panel.members || panel.members.length === 0) {
+        errors[key].members = "At least one panel member is required";
+        isValid = false;
+      }
 
-        // Remove empty error objects
-        if (Object.keys(errors[key]).length === 0) {
-          delete errors[key];
-        }
-      });
+      if (Object.keys(errors[key]).length === 0) {
+        delete errors[key];
+      }
     });
+  });
 
-    setPanelErrors(errors);
+  setPanelErrors(errors);
 
-    if (!isValid) {
-      toast.error("Please fix the highlighted errors before assigning committees");
-    }
-    return isValid;
-  };
+  if (!isValid) {
+    
+    toast.error("Please fix the highlighted errors in all committees.");
+  }
+
+  return isValid;
+};
+
 
 
   useEffect(() => {
@@ -381,6 +409,11 @@ useEffect(() => {
   });
 
   };
+  const showError = (message) => {
+   
+  setErrorMessage(message);
+  setShowErrorModal(true);
+};
   const handleAssignCommittees = async () => {
     if (!selectedPosition) {
       toast.error("Please select a requisition and a position");
@@ -450,7 +483,8 @@ useEffect(() => {
       if(res?.success) {
         toast.success("Committees assigned successfully");
       } else {
-        toast.error(res?.message || "Failed to assign committees");
+       // toast.error(res?.message || "Failed to assign committees");
+        showError(res?.message || "Failed to assign committees");
       }
 
     } catch (err) {
@@ -493,7 +527,11 @@ useEffect(() => {
     setContext,
     handleAssignCommittees,
     panelErrors,
-    setPanelErrors
+    setPanelErrors,
+    showErrorModal,
+    setShowErrorModal,
+    errorMessage,
+    setErrorMessage
 
 
 

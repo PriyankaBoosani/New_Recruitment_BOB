@@ -4,6 +4,8 @@ import "../../style/css/Committee.css";
 import CommitteeHistoryList from './components/CommitteeHistoryList';
 import { useAssignPositions } from "./hooks/useAssignPositions";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
+import ErrorModal from "./components/ErrorModal";
+import Select from "react-select";
 
 
 
@@ -30,7 +32,11 @@ const AssignPositionsPage = () => {
     setContext,
     handleAssignCommittees,
     panelErrors,
-    setPanelErrors
+    setPanelErrors,
+     showErrorModal,
+    setShowErrorModal,
+    errorMessage,
+    setErrorMessage
 
   } = useAssignPositions();
 
@@ -180,7 +186,15 @@ const normalizedPosition = {
   ...selectedPositionObj,
   positionName: selectedPositionFull?.masterPositions?.positionName
 };
-
+  const requisitionOptions = requisitions.map(req => ({
+  value: req.id,
+  label: `${req.requisitionCode} - ${req.requisitionTitle}`
+}));
+ 
+const positionOptions = positions.map(pos => ({
+  value: pos.jobPositions?.positionId,
+  label: pos.masterPositions?.positionName
+}));
   return (
     <div className="assign-positions-page">
       {/* ===== PAGE HEADER ===== */}
@@ -191,38 +205,46 @@ const normalizedPosition = {
       <div className="selection-section">
         <div class="mb-3"><div class="assign-position-title">Select Position</div><div class="assign-position-muted">Choose a requisition and position to assign committees to.</div></div>
         <div className="selection-grid">
+ 
+          {/* Requisition */}
           <div className="form-group">
             <label className="form-label">Requisition</label>
-            <select
-              className="form-select"
-              value={selectedRequisition}
-              onChange={handleRequisitionChange}
-            >
-              <option value="">Select Requisition</option>
-              {requisitions.map(req => (
-                <option key={req.id} value={req.id}>
-                  {req.requisitionCode} - {req.requisitionTitle}
-                </option>
-              ))}
-            </select>
+            <Select
+              placeholder="Select Requisition"
+              options={requisitionOptions}
+              value={
+                requisitionOptions.find(
+                  option => option.value === selectedRequisition
+                ) || null
+              }
+              onChange={(selectedOption) =>
+                handleRequisitionChange({
+                  target: { value: selectedOption?.value || "" }
+                })
+              }
+              classNamePrefix="custom-select"
+            />
           </div>
-
+ 
+          {/* Position */}
           <div className="form-group">
             <label className="form-label">Position</label>
-            <select
-              className="form-select"
-              value={selectedPosition}
-              onChange={(e) => setSelectedPosition(e.target.value)}
-              disabled={!selectedRequisition}
-            >
-              <option value="">Select Position</option>
-              {positions.map(pos => (
-                <option key={pos.jobPositions?.positionId} value={pos.jobPositions?.positionId}>
-                  {pos.masterPositions?.positionName}
-                </option>
-              ))}
-            </select>
+            <Select
+              placeholder="Select Position"
+              options={positionOptions}
+              value={
+                positionOptions.find(
+                  option => option.value === selectedPosition
+                ) || null
+              }
+              onChange={(selectedOption) =>
+                setSelectedPosition(selectedOption?.value || "")
+              }
+              isDisabled={!selectedRequisition}
+              classNamePrefix="custom-select"
+            />
           </div>
+ 
         </div>
 
         {/* ===== REQUISITION STRIP ===== */}
@@ -321,6 +343,12 @@ const normalizedPosition = {
           </div>
         </div>
       </div>
+
+      <ErrorModal
+  show={showErrorModal}
+  message={errorMessage}
+  onClose={() => setShowErrorModal(false)}
+/>
     </div>
   );
 };
