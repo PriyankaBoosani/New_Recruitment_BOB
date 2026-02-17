@@ -23,14 +23,24 @@ const RequisitionPositionSelector = ({
 
   /* ===== derive selected requisition option from parent ===== */
 
-  const selectedRequisitionOption = useMemo(() => {
-    if (!selectedRequisitionRaw) return null;
+ const selectedRequisitionOption = useMemo(() => {
+  if (!selectedRequisitionRaw) return null;
 
-    return requisitions.find(
-      r => r.value === selectedRequisitionRaw.requisition_id
-    ) || null;
+  const found = requisitions.find(
+    r => r.value === selectedRequisitionRaw.requisition_id
+  );
 
-  }, [requisitions, selectedRequisitionRaw]);
+  // ✅ fallback when API list no longer contains it
+  if (found) return found;
+
+  return {
+    value: selectedRequisitionRaw.requisition_id,
+    label: selectedRequisitionRaw.requisition_title,
+    raw: selectedRequisitionRaw
+  };
+
+}, [requisitions, selectedRequisitionRaw]);
+
 
   /* ===== Build positions based on selected requisition ===== */
 
@@ -46,14 +56,23 @@ const RequisitionPositionSelector = ({
 
   /* ===== derive selected position option from parent ===== */
 
-  const selectedPositionOption = useMemo(() => {
-    if (!selectedPositionRaw) return null;
+const selectedPositionOption = useMemo(() => {
+  if (!selectedPositionRaw) return null;
 
-    return positions.find(
-      p => p.value === selectedPositionRaw.positionId
-    ) || null;
+  const found = positions.find(
+    p => p.value === selectedPositionRaw.positionId
+  );
 
-  }, [positions, selectedPositionRaw]);
+  if (found) return found;
+
+  return {
+    value: selectedPositionRaw.positionId,
+    label: selectedPositionRaw.positionName,
+    raw: selectedPositionRaw
+  };
+
+}, [positions, selectedPositionRaw]);
+
 
   /* ===== UI ===== */
 

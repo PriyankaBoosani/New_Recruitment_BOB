@@ -140,80 +140,151 @@ useEffect(() => {
 ]);
 
 
- const handleZonalSubmit = async () => {
+const handleZonalSubmit = async () => {
 
-    if (!zonalDecision) {
-      toast.error("Please select decision");
-      return;
-    }
-
-if (zonalDecision === "PROVISIONALLY_APPROVED") {
-      if (!screeningForm.zonalSubmitDate) {
-        setErrors(prev => ({
-          ...prev,
-zonalSubmitDate: "This field is required"
-        }));
-        return;
-      }
-
-      const selected = new Date(screeningForm.zonalSubmitDate);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      if (selected <= today) {
-        setErrors(prev => ({
-          ...prev,
-          zonalSubmitDate: "Must be future date"
-        }));
-        return;
-      }
-    }
-
-    console.log("Submitting interviewScheduleId:", interviewScheduleId);
-    console.log("ZONAL DECISION:", zonalDecision);
-console.log("MAPPED STATUS:", mapDecisionToStatus(zonalDecision));
-
-
-    try {
-
-      const payload = {
-        candidateId,
-        applicationId,
-        interviewScheduleId,
-        zonalVerificationStatus: mapDecisionToStatus(zonalDecision),
-        zonalSubmitBeforeDate: screeningForm.zonalSubmitDate || null,
-        zonalHrComments: screeningRemarks || ""
-      };
-
-      console.log("ZONAL SUBMIT PAYLOAD:", payload);
-
-      await jobPositionApiService.submitOverallZonalVerification(payload);
-
-      toast.success("Zonal verification submitted successfully");
-
-     sessionStorage.setItem("fromZonalSubmit", "true");
-
-navigate("/candidate-verification", {
-  state: {
-    requisition: location.state?.requisition,
-    position: location.state?.position,
-    preloadedCandidates: location.state?.candidates || [],
-    selectedDate
-  }
+  // -----------------------------------------
+  // Helper Conditions
+  // -----------------------------------------
+  const allVerified = areAllDocumentsVerified();   // returns true/false
+  const anyRejected = hasAnyRejectedDocument();    // returns true/false
+const hasPendingDocument = documentRows.some(doc => {
+  const status = docStatusMap[doc.candidateDocumentId]?.status;
+  return !status || status === "PENDING";
 });
 
 
+  // -----------------------------------------
+  // 1️⃣ Decision not selected
+  // -----------------------------------------
+  if (!zonalDecision) {
+    toast.error("Please select decision");
+    return;
+  }
 
 
+    if (hasPendingDocument) {
+    toast.warning(
+      "All documents must be verified before submission."
+    );
+    return;
+  }
 
+  // -----------------------------------------
+  // 2️⃣ All documents VERIFIED but decision = NO
+  // -----------------------------------------
+  if (zonalDecision === "NO" && allVerified) {
+    toast.warning(
+      "All documents are verified. Please select other decision instead."
+    );
+    return;
+  }
 
+  // -----------------------------------------
+  // 3️⃣ Decision = YES but any document REJECTED
+  // -----------------------------------------
+  if (zonalDecision === "YES" && anyRejected) {
+    toast.error(
+      "Cannot approve. One or more documents are rejected."
+    );
+    return;
+  }
 
+  // -----------------------------------------
+  // 4️⃣ Decision = PROVISIONAL but all VERIFIED
+  // -----------------------------------------
+  if (zonalDecision === "PROVISIONALLY_APPROVED" && allVerified) {
+    toast.warning(
+      "All documents are verified. Please select other decision instead."
+    );
+    return;
+  }
 
-    } catch (err) {
-      console.error(err);
-      toast.error("Zonal submit failed");
+  // -----------------------------------------
+  // 5️⃣ PROVISIONAL requires future date
+  // -----------------------------------------
+  if (zonalDecision === "PROVISIONALLY_APPROVED") {
+
+    if (!screeningForm.zonalSubmitDate) {
+      setErrors(prev => ({
+        ...prev,
+        zonalSubmitDate: "This field is required"
+      }));
+      toast.error("Please select submit before date");
+      return;
     }
-  };
+
+    const selected = new Date(screeningForm.zonalSubmitDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selected <= today) {
+      setErrors(prev => ({
+        ...prev,
+        zonalSubmitDate: "Must be future date"
+      }));
+      toast.error("Submit date must be a future date");
+      return;
+    }
+  }
+
+  // -----------------------------------------
+  // 6️⃣ Show Loading Toast
+  // -----------------------------------------
+  const toastId = toast.loading("Submitting zonal verification...");
+
+  try {
+
+    const payload = {
+      candidateId,
+      applicationId,
+      interviewScheduleId,
+      zonalVerificationStatus: mapDecisionToStatus(zonalDecision),
+      zonalSubmitBeforeDate: screeningForm.zonalSubmitDate || null,
+      zonalHrComments: screeningRemarks || ""
+    };
+
+    await jobPositionApiService.submitOverallZonalVerification(payload);
+
+    // -----------------------------------------
+    // 7️⃣ Success Toast
+    // -----------------------------------------
+    toast.update(toastId, {
+      render: "Zonal verification submitted successfully",
+      type: "success",
+      isLoading: false,
+      autoClose: 2000,
+    });
+
+    sessionStorage.setItem("fromZonalSubmit", "true");
+
+    navigate("/candidate-verification", {
+      state: {
+        requisition: location.state?.requisition,
+        position: location.state?.position,
+        preloadedCandidates: location.state?.candidates || [],
+        selectedDate
+      }
+    });
+
+  } catch (err) {
+
+    // -----------------------------------------
+    // 8️⃣ Error Toast
+    // -----------------------------------------
+    toast.update(toastId, {
+      render: "Zonal submit failed. Please try again.",
+      type: "error",
+      isLoading: false,
+      autoClose: 3000,
+    });
+
+    console.error(err);
+  }
+};
+
+
+
+
 
 
 
