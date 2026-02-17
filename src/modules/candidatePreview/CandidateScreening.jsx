@@ -534,7 +534,7 @@ export default function CandidateScreening({ selectedJob }) {
         : filters.status.map((s) => s.toUpperCase());
 
     return {
-      documentType,
+      documentType, // now ".pdf" or ".xlsx"
       positionId: selectedPositionId,
       screenName:
         activeTab === "CANDIDATE_POOL"
@@ -544,47 +544,49 @@ export default function CandidateScreening({ selectedJob }) {
           : null,
       status: normalizedStatus,
       categoryId: filters.categoryId || null,
-      // cityId: filters.stateId || null,
     };
   };
 
   const handleDownload = async (type) => {
-  if (!selectedPositionId) {
-    toast.error("Please select a position first");
-    return;
-  }
+    if (!selectedPositionId) {
+      toast.error("Please select a position first");
+      return;
+    }
 
-  try {
-    const payload = buildDownloadPayload(type);
+    // Normalize to extension format
+    const extension = type === "pdf" ? ".pdf" : ".xlsx";
 
-    const res = await jobPositionApiService.downloadCandidateDetails(payload);
+    try {
+      const payload = buildDownloadPayload(extension);
 
-    const blob = new Blob([res.data], {
-      type:
-        type === "PDF"
-          ? "application/pdf"
-          : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
+      const res = await jobPositionApiService.downloadCandidateDetails(payload);
 
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
+      const blob = new Blob([res.data], {
+        type:
+          extension === ".pdf"
+            ? "application/pdf"
+            : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
 
-    link.href = url;
-    link.download =
-      type === "PDF"
-        ? "candidate-details.pdf"
-        : "candidate-details.xlsx";
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
 
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+      link.href = url;
+      link.download =
+        extension === ".pdf"
+          ? "candidate-details.pdf"
+          : "candidate-details.xlsx";
 
-    window.URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error(err);
-    toast.error("Download failed");
-  }
-};
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      toast.error("Download failed");
+    }
+  };
 
   const mapInterviewFeedback = (candidateId) => {
     // STATIC for now — API later
