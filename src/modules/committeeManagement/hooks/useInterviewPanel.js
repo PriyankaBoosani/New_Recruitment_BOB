@@ -39,47 +39,6 @@ export const useInterviewPanel = () => {
   const [showFilters, setShowFilters] = useState(true);
 
 
-  // const [sortConfig, setSortConfig] = useState({
-  //   key: null,
-  //   direction: "asc"
-  // });
-
-  // const handleSort = (key) => {
-  //   setSortConfig((prev) => {
-  //     if (prev.key === key) {
-  //       return {
-  //         key,
-  //         direction: prev.direction === "asc" ? "desc" : "asc"
-  //       };
-  //     }
-  //     return { key, direction: "asc" };
-  //   });
-  // };
-
-  // const sortedPanels = useMemo(() => {
-  //   if (!sortConfig.key) return panels;
-
-  //   return [...panels].sort((a, b) => {
-  //     const aVal = a[sortConfig.key]?.toString().toLowerCase();
-  //     const bVal = b[sortConfig.key]?.toString().toLowerCase();
-
-  //     if (aVal < bVal) return sortConfig.direction === "asc" ? -1 : 1;
-  //     if (aVal > bVal) return sortConfig.direction === "asc" ? 1 : -1;
-  //     return 0;
-  //   });
-  // }, [panels, sortConfig]);
-
-  /* ================= FETCH PANELS ================= */
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setPage(0);      // reset to first page
-  //     fetchPanels();
-  //   }, 400);           // debounce
-
-  //   return () => clearTimeout(timer);
-  // }, [search.panelName]);
-
-
 
   useEffect(() => {
     const panelNameValue = search.panelName?.trim();
@@ -224,12 +183,12 @@ useEffect(() => {
 
         if (!res?.success) {
         // 🔴 Field-level error
-        setErrors(prev => ({
-          ...prev,
-          name:  "Panel name already exists for selected committee"||res?.message
-        }));
+        // setErrors(prev => ({
+        //   ...prev,
+        //   name:  res?.message||"Panel name already exists for selected committee"
+        // }));
 
-        toast.error("Panel name already exists for selected committee"|| res?.message );
+        toast.error( res?.message || "Panel name already exists for selected committee");
         return; // ⛔ VERY IMPORTANT
       }
 
@@ -242,10 +201,10 @@ useEffect(() => {
 
       if (!res?.success) {
         // 🔴 Field-level error
-        setErrors(prev => ({
-          ...prev,
-          name:  "Panel name already exists for selected committee"||res?.message
-        }));
+        // setErrors(prev => ({
+        //   ...prev,
+        //   name:  "Panel name already exists for selected committee"||res?.message
+        // }));
 
         toast.error(res?.message || "Failed to create panel");
         return; // ⛔ VERY IMPORTANT

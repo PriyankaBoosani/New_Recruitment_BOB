@@ -25,6 +25,7 @@ export const useAssignPositions = (userId) => {
   const [availablePanels, setAvailablePanels] = useState([]);
 const [showErrorModal, setShowErrorModal] = useState(false);
 const [errorMessage, setErrorMessage] = useState("");
+const [errorList, setErrorList] = useState([]);
 
   /* ================= PAGINATION ================= */
 
@@ -108,88 +109,7 @@ const [errorMessage, setErrorMessage] = useState("");
     fetchRequisitions();
   }, []);
 
-  //   useEffect(() => {
-  //   fetchPanels();
-  // }, [selectedPosition]);
-
-  // useEffect(() => {
-  //    if (!selectedPosition) {
-  //       setSelectedCommittees({
-  //         SCREENING: [],
-  //         INTERVIEW: [],
-  //         COMPENSATION: []
-  //     });
-  //     setAvailablePanels([]);
-  //     setPanelErrors({});
-  //     return;
-  //     }
-
-  //     fetchPanels();
-  //     fetchAssignedPanels(selectedPosition);
-  // }, [selectedPosition]);
-
-
   
-
-  // 2️⃣ Fetch assigned panels for new position
-  // useEffect(() => {
-  //   if (!selectedPosition) return;
-
-  //   fetchAssignedPanels(selectedPosition);
-  // }, [selectedPosition]);
-  // const fetchAssignedPanels = async (positionId) => {
-  //   try {
-  //     setLoading(true);
-
-  //     const res =
-  //       await committeeManagementService.getPanelsByPosition(positionId);
-  //     console.log("RES 👉", res);
-
-  //     const {
-  //       interviewPanelList = [],
-  //       screeningPanelList = [],
-  //       compensationPanelList = []
-  //     } = res?.data || {};
-
-  //     const mapAssigned = (list) =>
-  //       list.map(p => ({
-  //         id: p.interviewPanel.interviewPanelId,
-  //         positionPanelId: p.positionPanelId,
-  //         name: p.interviewPanel.panelName,
-  //         committeeName: p.interviewPanel.committee.committeeName.toUpperCase(),
-  //         committeeId: p.interviewPanel.committee.interviewCommitteeId,
-  //         members: p.interviewPanel.panelMembers.map(m => ({
-  //           ...m.panelMember,
-  //           interviewPanelMemberId: m.interviewPanelMemberId
-  //         })),
-  //         startDate: p.startDate || "",
-  //         endDate: p.endDate || ""
-  //       }));
-
-  //     const assigned = {
-  //       SCREENING: mapAssigned(screeningPanelList),
-  //       INTERVIEW: mapAssigned(interviewPanelList),
-  //       COMPENSATION: mapAssigned(compensationPanelList)
-  //     };
-  //     console.log("ASSIGNED 👉", assigned);
-  //     // 1️⃣ SET SELECTED COMMITTEES
-  //     setSelectedCommittees(assigned);
-
-  //     // 2️⃣ REMOVE FROM AVAILABLE PANELS
-  //     const assignedIds = Object.values(assigned)
-  //       .flat()
-  //       .map(p => p.id);
-
-  //     setAvailablePanels(prev =>
-  //       allPanels.filter(p => !assignedIds.includes(p.id))
-  //     );
-
-  //   } catch (err) {
-  //     console.error("Failed to fetch assigned panels", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const fetchRequisitions = async () => {
     try {
@@ -264,11 +184,11 @@ useEffect(() => {
       const assignedRes =
         await committeeManagementService.getPanelsByPosition(selectedPosition);
 
-      const {
-        interviewPanelList = [],
-        screeningPanelList = [],
-        compensationPanelList = []
-      } = assignedRes?.data || {};
+      const responseData = assignedRes?.data ?? {};
+
+      const interviewPanelList = responseData?.interviewPanelList ?? [];
+      const screeningPanelList = responseData?.screeningPanelList ?? [];
+      const compensationPanelList = responseData?.compensationPanelList ?? [];
 
       const mapAssigned = (list) =>
         list.map(p => ({
@@ -282,7 +202,8 @@ useEffect(() => {
             interviewPanelMemberId: m.interviewPanelMemberId
           })),
           startDate: p.startDate || "",
-          endDate: p.endDate || ""
+          endDate: p.endDate || "",
+          canEdit: p.canEdit !== false
         }));
 
       const assigned = {
@@ -305,6 +226,7 @@ useEffect(() => {
       setAvailablePanels(available);
 
     } catch (err) {
+      alert(err);
       console.error("Load Position Data Error:", err);
       toast.error("Failed to load panels");
     } finally {
@@ -409,11 +331,12 @@ useEffect(() => {
   });
 
   };
-  const showError = (message) => {
-   
+const showError = (message, errors = []) => {
   setErrorMessage(message);
+  setErrorList(Array.isArray(errors) ? errors : []);
   setShowErrorModal(true);
 };
+
   const handleAssignCommittees = async () => {
     if (!selectedPosition) {
       toast.error("Please select a requisition and a position");
@@ -484,7 +407,7 @@ useEffect(() => {
         toast.success("Committees assigned successfully");
       } else {
        // toast.error(res?.message || "Failed to assign committees");
-        showError(res?.message || "Failed to assign committees");
+        showError( res?.message || "Validation failed",res?.data || []);
       }
 
     } catch (err) {
@@ -531,7 +454,9 @@ useEffect(() => {
     showErrorModal,
     setShowErrorModal,
     errorMessage,
-    setErrorMessage
+    setErrorMessage,
+    errorList,
+    setErrorList
 
 
 

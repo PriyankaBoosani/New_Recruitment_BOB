@@ -36,7 +36,9 @@ const AssignPositionsPage = () => {
      showErrorModal,
     setShowErrorModal,
     errorMessage,
-    setErrorMessage
+    setErrorMessage,
+    errorList,
+    setErrorList
 
   } = useAssignPositions();
 
@@ -71,7 +73,8 @@ const AssignPositionsPage = () => {
             {
               ...committee,
               startDate: committee.startDate || "",
-              endDate: committee.endDate || ""
+              endDate: committee.endDate || "",
+              canEdit: true   
             }
           ],
         };
@@ -119,6 +122,7 @@ const AssignPositionsPage = () => {
               <input
                 type="date"
                 value={committee.startDate}
+                disabled={!committee.canEdit}
                 onChange={(e) =>
                   updateCommitteeDate(type, committee.id, "startDate", e.target.value)
                 }
@@ -133,6 +137,7 @@ const AssignPositionsPage = () => {
               <input
                 type="date"
                 value={committee.endDate}
+                disabled={!committee.canEdit}
                 onChange={(e) =>
                   updateCommitteeDate(type, committee.id, "endDate", e.target.value)
                 }
@@ -146,7 +151,9 @@ const AssignPositionsPage = () => {
 
         <button
           className="action-pill remove"
-          onClick={() => toggleCommittee(type, committee)}
+           onClick={() => toggleCommittee(type, committee)}
+            //onClick={() => committee.canEdit && toggleCommittee(type, committee)}
+           disabled={!committee.canEdit}
         >
           ← Remove
         </button>
@@ -344,9 +351,10 @@ const positionOptions = positions.map(pos => ({
         </div>
       </div>
 
-      <ErrorModal
+<ErrorModal
   show={showErrorModal}
   message={errorMessage}
+  errors={errorList}
   onClose={() => setShowErrorModal(false)}
 />
     </div>
