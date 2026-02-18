@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { Person, FileText } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import I_icon from '../../../assets/I_icon.png';
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 export default function InterviewPool({
   selectedIds,
@@ -163,6 +164,10 @@ export default function InterviewPool({
 
 
                 <td className="text-center align-content-center">
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={<Tooltip id={`tooltip-${c.id}`}>View Profile</Tooltip>}
+                  >
                   <Person
                     className="me-3 cursor-pointer"
                     onClick={() =>
@@ -192,7 +197,13 @@ export default function InterviewPool({
                       })
                     }
                   />
-                  <FileText className="cursor-pointer" onClick={() => onViewFile(c)} />
+                  </OverlayTrigger>
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={<Tooltip id={`tooltip-${c.id}`}>View Resume</Tooltip>}
+                  >
+                    <FileText className="cursor-pointer" onClick={() => onViewFile(c)} />
+                  </OverlayTrigger>
                 </td>
               </tr>
             ))
