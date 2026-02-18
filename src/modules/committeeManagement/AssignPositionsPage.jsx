@@ -206,6 +206,10 @@ const positionOptions = positions.map(pos => ({
   value: pos.jobPositions?.positionId,
   label: pos.masterPositions?.positionName
 }));
+const hasAnySelectedPanels =
+  selectedCommittees.SCREENING.length > 0 ||
+  selectedCommittees.INTERVIEW.length > 0 ||
+  selectedCommittees.COMPENSATION.length > 0;
   return (
     <div className="assign-positions-page">
       {/* ===== PAGE HEADER ===== */}
@@ -289,7 +293,9 @@ const positionOptions = positions.map(pos => ({
           <button 
             className="assign-button" 
             onClick={handleAssignCommittees}
-            disabled={!selectedPosition}
+           // disabled={!selectedPosition}
+            disabled={!selectedPosition || !hasAnySelectedPanels}
+
           >
             Assign Committees
           </button>

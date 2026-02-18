@@ -342,6 +342,7 @@ const showError = (message, errors = []) => {
 };
 
   const handleAssignCommittees = async () => {
+      if (loading) return; 
     if (!selectedPosition) {
       toast.error("Please select a requisition and a position");
       return;

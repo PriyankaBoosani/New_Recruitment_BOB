@@ -169,8 +169,13 @@ const [errorMessage, setErrorMessage] = useState("");
       return;
     }
 
+    const cleanedFormData = {
+      ...formData,
+      name: formData.name?.trim()
+    };
+
     const payload = preparePanelPayload(
-      formData,
+      cleanedFormData,
       communityOptions,
       membersOptions
     );
