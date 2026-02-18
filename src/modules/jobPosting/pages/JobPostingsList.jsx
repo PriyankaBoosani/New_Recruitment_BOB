@@ -263,7 +263,7 @@ const JobPostingsList = () => {
                     </div>
                 </Col>
 
-                <Col xs={12} md="auto">
+                <Col xs={12} md="1">
                     <Form.Select
                         className="status-select"
                         value={status}

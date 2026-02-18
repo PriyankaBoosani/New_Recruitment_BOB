@@ -517,7 +517,8 @@
   pointer-events: auto; /* 👈 allow view button */
 }
 .add-position-page .table-responsive {
-  border: none;
+	border: none;
+	border-radius: 0;
 }
 .position-card .section-title{
   padding-bottom: 6px;

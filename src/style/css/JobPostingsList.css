@@ -578,3 +578,10 @@
     padding: 0.5rem;
   }
 }
+.status-select {
+  min-width: 120px;
+  white-space: normal;
+}
+.filters-row {
+  flex-wrap: wrap;
+}
