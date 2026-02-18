@@ -70,5 +70,8 @@
     "add_degree": "+ डिग्री जोड़ें",
     "add_certification": "+ प्रमाणन जोड़ें",
     "certifications_optional": "प्रमाणपत्र (वैकल्पिक)",
-    "result_preview": "परिणाम (उम्मीदवार को कैसे दिखाई देगा)"
+    "result_preview": "परिणाम (उम्मीदवार को कैसे दिखाई देगा)",
+    "replace_indent": "इंडेंट बदलें",
+    "delete_position": "पद हटाएं",
+    "view_indent": "इंडेंट देखें"
 }

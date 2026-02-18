@@ -39,5 +39,17 @@
     "requisition_delete_success": "Requisition deleted successfully",
     "requisition_delete_failed": "Failed to delete requisition",
     "requisition_approve_success": "Requisition(s) approved successfully",
-    "requisition_approve_failed": "Failed to submit for approval"
+    "requisition_approve_failed": "Failed to submit for approval",
+    "requisition_submit_success": "Requisition(s) submitted for approval successfully",
+    "requisition_submit_failed": "Failed to submit for approval",
+    "status_l1_approved": "L1 Approved",
+    "status_rejected": "Rejected",
+    "status_submitted": "Submitted",
+    "add_position": "Add Position",
+    "edit_requisition": "Edit Requisition",
+    "delete_requisition": "Delete Requisition",
+    "delete_position": "Delete Position", 
+    "view_position": "View Position",
+    "edit_position": "Edit Position",
+    "view_requisition": "View Requisition"
 }

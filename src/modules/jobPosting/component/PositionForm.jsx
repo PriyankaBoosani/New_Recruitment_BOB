@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Row, Col, Form, Button } from "react-bootstrap";
+import { Row, Col, Form, Button, Tooltip } from "react-bootstrap";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import upload_icon from '../../../assets/upload_Icon.png';
 import edit_icon from "../../../assets/edit_icon.png"
@@ -143,17 +143,26 @@ const PositionForm = ({
 
                                         {/* RIGHT: edit icon */}
                                         <div className="indent-actions">
-                                            <button
-                                                type="button"
-                                                className="icon-btn"
-                                                title={t("common:replace")}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleReplaceIndent();
-                                                }}
+                                            <OverlayTrigger
+                                                placement="top"
+                                                overlay={
+                                                    <Tooltip id={`tooltip-edit-${indentFile.name}`}>
+                                                        {t("addPosition:replace_indent")}
+                                                    </Tooltip>
+                                                }
                                             >
-                                                <img src={edit_icon} alt="edit_icon" className="icon-16" />
-                                            </button>
+                                                <button
+                                                    type="button"
+                                                    className="icon-btn"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleReplaceIndent();
+                                                    }}
+                                                >
+                                                    <img src={edit_icon} alt="edit_indent" className="icon-16" />
+                                                </button>
+                                            </OverlayTrigger>
+
                                         </div>
 
                                     </div>
@@ -174,31 +183,39 @@ const PositionForm = ({
                                 {!indentFile && existingIndentPath && (
                                     <div className="indent-actions">
                                         {/* View */}
-                                        <button
-                                            type="button"
-                                            className="icon-btn"
-                                            onClick={(e) => {
-
-                                                e.stopPropagation(); // UI concern stays in component
-                                                viewIndent();
-                                            }}
-
-                                        >
-                                            <img src={view_icon} alt="view_icon" className="icon-16" />
-                                        </button>
-                                        {/* Edit */}
-                                        {!isViewMode && (
+                                        <OverlayTrigger
+                                            placement="top"
+                                            overlay={<Tooltip id={`tooltip-view-${existingIndentName}`}>{t("addPosition:view_indent")}</Tooltip>} >
                                             <button
                                                 type="button"
                                                 className="icon-btn"
-                                                title={t("common:replace")}
                                                 onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleReplaceIndent();
+
+                                                    e.stopPropagation(); // UI concern stays in component
+                                                    viewIndent();
                                                 }}
+
                                             >
-                                                <img src={edit_icon} alt="edit_icon" className="icon-16" />
+                                                <img src={view_icon} alt="view_icon" className="icon-16" />
                                             </button>
+                                        </OverlayTrigger>
+                                        {/* Edit */}
+                                        {!isViewMode && (
+                                            <OverlayTrigger
+                                                placement="top"
+                                                overlay={<Tooltip id={`tooltip-edit-${existingIndentName}`}>{t("addPosition:replace_indent")}</Tooltip>} >
+                                                <button
+                                                    type="button"
+                                                    className="icon-btn"
+                                                 
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleReplaceIndent();
+                                                    }}
+                                                >
+                                                    <img src={edit_icon} alt="edit_icon" className="icon-16" />
+                                                </button>
+                                            </OverlayTrigger>
                                         )}
 
                                     </div>

@@ -285,16 +285,29 @@ const AddPosition = () => {
         // handle nested fields
         if (name.includes(".")) {
             const [parent, child] = name.split(".");
-            setFormData(prev => ({
-                ...prev,
-                [parent]: {
+
+            setFormData(prev => {
+                const updated = {
                     ...prev[parent],
                     [child]: value
+                };
+
+                // 🔥 If one dropdown cleared, clear both
+                if (value === "") {
+                    updated.years = "";
+                    updated.months = "";
                 }
-            }));
+
+                return {
+                    ...prev,
+                    [parent]: updated
+                };
+            });
+
             setErrors(prev => ({ ...prev, [parent]: "" }));
             return;
         }
+
 
         let finalValue = value;
 

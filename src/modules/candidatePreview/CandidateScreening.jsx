@@ -44,6 +44,7 @@ export default function CandidateScreening({ selectedJob }) {
     QUALIFIED: "Qualified",
     DISQUALIFIED: "Disqualified",
     PROVISIONALLY_APPROVED: "Provisionally Approved",
+    PENDING: "Pending",
   };
 
   const [interviewPage, setInterviewPage] = useState(0);
@@ -540,8 +541,8 @@ export default function CandidateScreening({ selectedJob }) {
         activeTab === "CANDIDATE_POOL"
           ? "CandidatePool"
           : activeTab === "INTERVIEW_POOL"
-          ? "InterviewPool"
-          : null,
+            ? "InterviewPool"
+            : null,
       status: normalizedStatus,
       categoryId: filters.categoryId || null,
     };

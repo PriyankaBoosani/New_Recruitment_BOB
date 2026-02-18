@@ -47,6 +47,11 @@ const requisitionApiService = {
       "/recruiter/job-requisitions/submit-for-approval",
       payload
     ),
+     submitForApprovalFlow: (payload) =>
+    api.post(
+      "/recruiter/job-requisitions/submit-for-approval-new",
+      payload
+    ),
 };
 
 export default requisitionApiService;

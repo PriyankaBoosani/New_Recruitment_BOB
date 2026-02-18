@@ -23,8 +23,9 @@ export default function InterviewPool({
   const STATUS_CLASS_MAP = {
     SCHEDULED: "blue-bg",
     QUALIFIED: "bg-success",
-    DISQUALIFIED: "bg-primary",
+    DISQUALIFIED: "bg-danger",
     PROVISIONALLY_APPROVED: "bg-secondary",
+    PENDING: "bg-warning",
 
   };
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
