@@ -242,32 +242,63 @@ const RequisitionStrip = ({
             </div>
           ) : (
             <>
-              <div className="stats-container mb-3">
-                <div className="row g-2 small">
+             <div className="stats-container mb-3">
+  <div className="row g-2 small">
 
-                  <div className="col-12 col-md-4">
-                    <span className="stat-label">Employment Type:</span>{" "}
-                    <span className="stat-value">
-                      {job?.employment_type || "-"}
-                    </span>
-                  </div>
+    {/* Employment */}
+    <div className="col-12 col-md-4">
+      <span className="stat-label">Employment Type:</span>{" "}
+      <span className="stat-value">
+        {job?.employment_type || "-"}
+      </span>
+    </div>
 
-                  <div className="col-12 col-md-4">
-                    <span className="stat-label">Eligibility Age:</span>{" "}
-                    <span className="stat-value">
-                      {job?.eligibility_age_min} - {job?.eligibility_age_max} yrs
-                    </span>
-                  </div>
+    {/* Contract — show only if employment type is Contract */}
+{job?.employment_type?.toLowerCase() === "contract" && (
+  <div className="col-12 col-md-4">
+    <span className="stat-label">Contract Period:</span>{" "}
+    <span className="stat-value">
+      {job?.contract_years ?? 0} Years
+    </span>
+  </div>
+)}
 
-                  <div className="col-12 col-md-4">
-                    <span className="stat-label">Vacancies:</span>{" "}
-                    <span className="stat-value">
-                      {job?.no_of_vacancies ?? 0}
-                    </span>
-                  </div>
 
-                </div>
-              </div>
+    {/* Experience */}
+    <div className="col-12 col-md-4">
+      <span className="stat-label">Experience:</span>{" "}
+      <span className="stat-value">
+        {job?.mandatory_experience_months ?? 0} Months
+      </span>
+    </div>
+
+    {/* Eligibility */}
+    <div className="col-12 col-md-4">
+      <span className="stat-label">Eligibility Age:</span>{" "}
+      <span className="stat-value">
+        {job?.eligibility_age_min} - {job?.eligibility_age_max} yrs
+      </span>
+    </div>
+
+    {/* Department */}
+    <div className="col-12 col-md-4">
+      <span className="stat-label">Department:</span>{" "}
+      <span className="stat-value">
+        {job?.dept_name || "-"}
+      </span>
+    </div>
+
+    {/* Vacancies */}
+    <div className="col-12 col-md-4">
+      <span className="stat-label">Vacancies:</span>{" "}
+      <span className="stat-value">
+        {job?.no_of_vacancies ?? 0}
+      </span>
+    </div>
+
+  </div>
+</div>
+
 
               <div className="info-card">
                 <div className="section-title">Mandatory Education:</div>

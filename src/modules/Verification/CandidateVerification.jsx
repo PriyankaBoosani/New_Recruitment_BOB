@@ -15,97 +15,97 @@ import { DUMMY_DATA } from "./components/mockData";
 import { mapCandidatesToTableRows } from "./mappers/CandidateVerificationMapper";
 import { useLocation } from "react-router-dom";
 import PdfViewerModal from "../candidatePreview/components/PdfViewerModal"
-
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
+ 
 /* ================= STATUS MAP ================= */
-
+ 
 const STAGE_STATUS_MAP = {
   PENDING: "Pending",
   VERIFIED: "Verified",
   REJECTED: "Rejected",
   PROVISIONALLY_APPROVED: "Provisionally Approved",
 };
-
+ 
 /* ================= DATE PILL ================= */
-
+ 
 const DatePill = React.forwardRef(({ value, onClick }, ref) => (
   <div className="date-pill" onClick={onClick} ref={ref}>
     {value}
     <span className="calendar-icon">📅</span>
   </div>
 ));
-
+ 
 export default function CandidateVerification() {
-
+ 
   // const [selectedDate, setSelectedDate] = useState(new Date());
   const [activeStage, setActiveStage] = useState(null);
   const [masterData, setMasterData] = useState(null);
   const [searchText, setSearchText] = useState("");
-
+ 
   const [allCandidates, setAllCandidates] = useState([]);
   const [selectedRequisition, setSelectedRequisition] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [allCandidatesRaw, setAllCandidatesRaw] = useState([]);
   const [originalAbsentMap, setOriginalAbsentMap] = useState({});
-
-
+ 
+ 
   const [usedNavData, setUsedNavData] = useState(false);
-
+ 
   const navInitRef = useRef(true);
-
-
+ 
+ 
 const location = useLocation();
-
-
-
+ 
+ 
+ 
 console.log("📍 CandidateVerification mounted");
 console.log("📍 Location state:", location.state);
-
+ 
 console.log("🧭 fromZonalSubmit:", sessionStorage.getItem("fromZonalSubmit"));
 console.log("🧭 fromPreviewBack:", sessionStorage.getItem("fromPreviewBack"));
-
-
-
+ 
+ 
+ 
 const cameFromZonal =
   sessionStorage.getItem("fromZonalSubmit") === "true";
-
+ 
 const cameFromPreviewBack =
   sessionStorage.getItem("fromPreviewBack") === "true";
-
-
+ 
+ 
   const [pdfUrl, setPdfUrl] = useState(null);
 const [showPdfViewer, setShowPdfViewer] = useState(false);
 const [loadingPdf, setLoadingPdf] = useState(false);
 const [page, setPage] = useState(0);
 const [pageSize, setPageSize] = useState(10);
 const [totalElements, setTotalElements] = useState(0);
-
-
+ 
+ 
 const handleViewFile = async (candidateRaw) => {
   if (!candidateRaw?.resumeUrl) {
     toast.error("No document available");
     return;
   }
-
+ 
   try {
     setLoadingPdf(true);
-
+ 
     const res = await masterApiService.getAzureBlobSasUrl(
       candidateRaw.resumeUrl,
       "candidate"
     );
-
+ 
     const sasUrl = res?.trim();
-
+ 
     if (!sasUrl) throw new Error("Invalid SAS URL");
-
+ 
     setPdfUrl(sasUrl);
     setShowPdfViewer(true);
-
+ 
   } catch (err) {
     console.error(err);
     toast.error("Failed to open document");
@@ -113,86 +113,86 @@ const handleViewFile = async (candidateRaw) => {
     setLoadingPdf(false);
   }
 };
-
+ 
   
 const navSelectedDate =
   (cameFromZonal || cameFromPreviewBack) &&
   location.state?.selectedDate
     ? new Date(location.state.selectedDate)
     : null;
-
-
+ 
+ 
     console.log("📅 navSelectedDate:", navSelectedDate);
-
+ 
 const [selectedDate, setSelectedDate] =
   useState(navSelectedDate || new Date());
-
-
+ 
+ 
 useEffect(() => {
   console.log("📅 SelectedDate changed:", selectedDate);
 }, [selectedDate]);
-
-
-
-
+ 
+ 
+ 
+ 
 // const navCandidates = location.state?.preloadedCandidates || [];
 const navRequisition = location.state?.requisition || null;
 const navPosition = location.state?.position || null;
   
-
+ 
   /* ================= LOAD MASTER ================= */
-
+ 
   // useEffect(() => {
   //   masterApiService.getAllMasters().then(res => {
   //     setMasterData(res.data);
   //   });
   // }, []);
-
-
-
+ 
+ 
+ 
 useEffect(() => {
   console.log("NAV STATE:", location.state);
 }, []);
-
-
-
+ 
+ 
+ 
 const formatApiDate = (d) => {
   if (!d) return null;
-
+ 
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
-
+ 
   return `${year}-${month}-${day}`;
 };
-
+ 
 const loadCandidates = async (dateParam = selectedDate) => {
   try {
     const res =
       await CandidateVerificationService.getCandidatesByDate(
         formatApiDate(dateParam)
       );
-
+ 
     const apiList = res.data || [];
-
+ 
     //  SHOW BACKEND MESSAGE WHEN EMPTY
     if (apiList.length === 0 && res.message) {
       toast.info(res.message);
     }
-
+ 
     setAllCandidatesRaw(apiList);
-
+ 
     const rows = mapCandidatesToTableRows(apiList);
     setAllCandidates(rows);
-
+ 
     const map = {};
     rows.forEach(r => {
       map[r.id] = r.absent;
     });
     setOriginalAbsentMap(map);
-
+ 
     /* ✅ RESTORE HERE — AFTER DATA ARRIVES */
-
+ 
     if (
       apiList.length > 0 &&
       (cameFromZonal || cameFromPreviewBack) &&
@@ -200,49 +200,49 @@ const loadCandidates = async (dateParam = selectedDate) => {
       location.state?.preloadedCandidates?.length
     ) {
       console.log("✅ Restoring after API load");
-
+ 
       if (location.state?.requisition)
         setSelectedRequisition(location.state.requisition);
-
+ 
       if (location.state?.position)
         setSelectedPosition(location.state.position);
-
+ 
       setUsedNavData(true);
-
+ 
       sessionStorage.removeItem("fromZonalSubmit");
       sessionStorage.removeItem("fromPreviewBack");
     }
-
+ 
   } catch (err) {
     setAllCandidatesRaw([]);
     setAllCandidates([]);
     toast.error("Failed to load candidates");
   }
 };
-
-
-
-
+ 
+ 
+ 
+ 
 useEffect(() => {
   console.log("RAW API LIST SIZE:", allCandidatesRaw.length);
 }, [allCandidatesRaw]);
-
+ 
 const hasNavCandidates = !!location.state?.preloadedCandidates?.length;
 const navCandidates = location.state?.preloadedCandidates || [];
-
-
+ 
+ 
 useEffect(() => {
-
-
-
+ 
+ 
+ 
   console.log("🔁 Restore effect running");
 console.log("🔁 cameFromZonal:", cameFromZonal);
 console.log("🔁 cameFromPreviewBack:", cameFromPreviewBack);
 console.log("🔁 usedNavData:", usedNavData);
 console.log("🔁 navInitRef.current:", navInitRef.current);
 console.log("🔁 navCandidates length:", navCandidates.length);
-
-
+ 
+ 
   // restore selection from nav
   if (
     (cameFromZonal || cameFromPreviewBack) &&
@@ -251,129 +251,129 @@ console.log("🔁 navCandidates length:", navCandidates.length);
     navInitRef.current
   ) {
     console.log("Using nav candidates once");
-
+ 
     setAllCandidatesRaw(navCandidates);
 const rows = mapCandidatesToTableRows(navCandidates);
 setAllCandidates(rows);
-
+ 
 const map = {};
 rows.forEach(r => {
   map[r.id] = r.absent;
 });
 setOriginalAbsentMap(map);
-
+ 
     if (navRequisition) setSelectedRequisition(navRequisition);
     if (navPosition) setSelectedPosition(navPosition);
-
+ 
     setUsedNavData(true);
-
+ 
     sessionStorage.removeItem("fromZonalSubmit");
     sessionStorage.removeItem("fromPreviewBack");
   }
-
+ 
   //  ALWAYS call API
   loadCandidates(selectedDate);
-
+ 
 }, [selectedDate]);
-
+ 
 useEffect(() => {
   console.log("🎯 SelectedRequisition changed:", selectedRequisition);
 }, [selectedRequisition]);
-
+ 
 useEffect(() => {
   console.log("🎯 SelectedPosition changed:", selectedPosition);
 }, [selectedPosition]);
-
-
+ 
+ 
 useEffect(() => {
-
+ 
   // First render after navigation → keep auto-populated selection
   if (navInitRef.current) {
     navInitRef.current = false;
     return;
   }
-
+ 
   // User changed date manually → reset selection
   setSelectedRequisition(null);
   setSelectedPosition(null);
   setActiveStage(null);
-
+ 
 }, [selectedDate]);
-
-
-
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
   /* ================= LOAD DUMMY → TABLE MAP ================= */
-
+ 
   // useEffect(() => {
   //   setAllCandidates(mapCandidatesToTableRows(DUMMY_DATA));
   // }, []);
-
+ 
   /* ================= FILTER ================= */
-
-
-
-
+ 
+ 
+ 
+ 
 const baseFiltered = allCandidates.filter(c => {
-
+ 
   if (!selectedRequisition || !selectedPosition) return false;
-
+ 
   const selectedReqId =
     selectedRequisition?.raw?.requisition_id ||
     selectedRequisition?.requisition_id ||
     selectedRequisition?.value ||
     null;
-
+ 
   const selectedPosId =
     selectedPosition?.raw?.positionId ||
     selectedPosition?.positionId ||
     selectedPosition?.value ||
     null;
-
+ 
   const reqMatch =
     c.raw.requisitionId === selectedReqId;
-
+ 
   const posMatch =
     c.raw.positionId === selectedPosId;
-
+ 
   const searchMatch =
     c.name?.toLowerCase().includes(searchText.toLowerCase()) ||
     c.regNo?.includes(searchText);
-
+ 
   return reqMatch && posMatch && searchMatch;
 });
-
-
-
-
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 const filteredCandidates = baseFiltered.filter(c =>
   activeStage
     ? c.status === STAGE_STATUS_MAP[activeStage]
     : true
 );
-
-
+ 
+ 
   /* ================= STAGE COUNTS ================= */
-
+ 
 const stageCounts = Object.keys(STAGE_STATUS_MAP).reduce((acc, key) => {
   acc[key] = baseFiltered.filter(
     c => c.status === STAGE_STATUS_MAP[key]
   ).length;
   return acc;
 }, {});
-
-
+ 
+ 
   /* ================= ABSENT TOGGLE ================= */
-
+ 
   const toggleAbsent = (id) => {
     setAllCandidates(prev =>
       prev.map(c =>
@@ -381,46 +381,82 @@ const stageCounts = Object.keys(STAGE_STATUS_MAP).reduce((acc, key) => {
       )
     );
   };
-
+ 
 const anyAbsentChanged = baseFiltered.some(
   c => originalAbsentMap[c.id] !== c.absent
 );
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
   const isSelectionDone =
     selectedRequisition && selectedPosition;
-
-
+ 
+ 
+// const handleSaveAbsent = async () => {
+//   try {
+//     if (!filteredCandidates.length) return;
+ 
+//     for (const c of filteredCandidates) {
+//       if (originalAbsentMap[c.id] !== c.absent) {
+//         await CandidateVerificationService.updateAbsentStatus(
+//           c.raw.applicationId,
+//           c.absent
+//         );
+//       }
+//     }
+ 
+//     await loadCandidates(selectedDate);   //  refresh data
+ 
+//     toast.success("Absent status updated");
+ 
+//   } catch (err) {
+//     console.error("Absent update failed", err);
+//     toast.error("Save failed");
+//   }
+// };
+ 
+ 
+ 
 const handleSaveAbsent = async () => {
   try {
-    if (!filteredCandidates.length) return;
-
-    for (const c of filteredCandidates) {
-      if (originalAbsentMap[c.id] !== c.absent) {
-        await CandidateVerificationService.updateAbsentStatus(
-          c.raw.applicationId,
-          c.absent
-        );
-      }
+ 
+    const updates = filteredCandidates
+      .filter(c => originalAbsentMap[c.id] !== c.absent)
+      .map(c => ({
+        applicationId: c.raw.applicationId,
+        isAbsent: c.absent
+      }));
+ 
+    if (updates.length === 0) {
+      toast.info("No changes to save");
+      return;
     }
-
-    await loadCandidates(selectedDate);   //  refresh data
-
+ 
+    const payload = {
+      absentStatusUpdates: updates
+    };
+ 
+    console.log("📦 Batch absent payload:", payload);
+ 
+    await CandidateVerificationService.updateAbsentStatusBatch(payload);
+ 
+    await loadCandidates(selectedDate); // refresh table
+ 
     toast.success("Absent status updated");
-
+ 
   } catch (err) {
-    console.error("Absent update failed", err);
+    console.error("Absent batch update failed", err);
     toast.error("Save failed");
   }
 };
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
+ 
 useEffect(() => {
   const loadMasters = async () => {
     try {
@@ -431,29 +467,29 @@ useEffect(() => {
       setMasterData({});
     }
   };
-
+ 
   loadMasters();
 }, []);
-
-
-
+ 
+ 
+ 
   /* ================= UI ================= */
-
+ 
   return (
     <div className="container-fluid px-4 py-3 candidate-verification-page">
-
+ 
       {/* ================= DATE + SEARCH ================= */}
-
+ 
       <div className="verification-toolbar">
         <div className="date-nav">
-
+ 
           <span
             className="nav-arrow"
             onClick={() =>
               setSelectedDate(d => subDays(d, 1))
             }
           >‹</span>
-
+ 
         <DatePicker
   selected={selectedDate}
   onChange={setSelectedDate}
@@ -461,8 +497,8 @@ useEffect(() => {
   customInput={<DatePill />}
   maxDate={new Date()}
 />
-
-
+ 
+ 
           <span
             className="nav-arrow"
             onClick={() => {
@@ -470,9 +506,9 @@ useEffect(() => {
               if (next <= new Date()) setSelectedDate(next);
             }}
           >›</span>
-
+ 
         </div>
-
+ 
         <div className="search-box">
           <img src={searchIcon} width={14} alt="search" />
           <input
@@ -482,16 +518,16 @@ useEffect(() => {
           />
         </div>
       </div>
-
+ 
       {/* ================= STAGE FILTER ================= */}
-
+ 
       <div className="stage-filter-row d-flex align-items-center gap-4">
-
+ 
        <div className="d-flex align-items-center gap-2">
   <span className="fs-14 text-muted">
     FILTER BY STAGE:
   </span>
-
+ 
   <button
     className="btn fs-14 error-text p-0"
     onClick={() => setActiveStage(null)}
@@ -500,8 +536,8 @@ useEffect(() => {
     Clear all
   </button>
 </div>
-
-
+ 
+ 
         <div className="d-flex gap-2 flex-wrap">
           {Object.keys(STAGE_STATUS_MAP).map(key => (
             <button
@@ -509,7 +545,7 @@ useEffect(() => {
             className={`stage-chip fs-13 d-flex align-items-center gap-1 ${
   activeStage === key ? "active" : ""
 }`}
-
+ 
               onClick={() => setActiveStage(key)}
             >
               <span>{STAGE_STATUS_MAP[key]}</span>
@@ -519,11 +555,11 @@ useEffect(() => {
             </button>
           ))}
         </div>
-
+ 
       </div>
-
+ 
       {/* ================= SELECTORS ================= */}
-
+ 
     <div className="requisition-selector-row">
 <RequisitionPositionSelector
   apiList={allCandidatesRaw}
@@ -535,15 +571,15 @@ useEffect(() => {
   }}
   onPositionChange={setSelectedPosition}
 />
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
       </div>
-
+ 
       {/* ================= STRIP ================= */}
-
+ 
       {isSelectionDone && (
         <div className="requisition-strip">
        <RequisitionStrip
@@ -554,12 +590,12 @@ isSaveEnabled={anyAbsentChanged}
   onSave={handleSaveAbsent}
   isSaveBtn={true}
 />
-
+ 
         </div>
       )}
-
+ 
       {/* ================= TABLE ================= */}
-
+ 
       <CandidateTable
         requisition={selectedRequisition}
         position={selectedPosition}
@@ -568,10 +604,10 @@ isSaveEnabled={anyAbsentChanged}
         toggleAbsent={toggleAbsent}
         selectedDate={selectedDate}
         allCandidatesRaw={allCandidatesRaw}
-        onViewFile={handleViewFile} 
+        onViewFile={handleViewFile}
       />
-
-
+ 
+ 
       <PdfViewerModal
   show={showPdfViewer}
   onHide={() => {
@@ -582,8 +618,8 @@ isSaveEnabled={anyAbsentChanged}
   loading={loadingPdf}
   title="Candidate Resume"
 />
-
-
+ 
+ 
     </div>
     
   );

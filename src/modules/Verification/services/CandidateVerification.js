@@ -1,7 +1,7 @@
 import { api } from "../../../core/service/apiService";
-
+ 
 const CandidateVerificationService = {
-
+ 
   /* ================= GET BY DATE ================= */
   getCandidatesByDate: (dateStr) =>
     api.get(
@@ -10,20 +10,28 @@ const CandidateVerificationService = {
         params: { date: dateStr }
       }
     ),
-
+ 
   /* ================= UPDATE ABSENT ================= */
-updateAbsentStatus: (applicationId, isAbsent) =>
-  api.post(
-    "/recruiter/zonal-verification/update-absent-status",
-    null,
-    {
-      params: {
-        applicationId,
-        isAbsent
-      }
-    }
-  ),
-
+// updateAbsentStatus: (applicationId, isAbsent) =>
+//   api.post(
+//     "/recruiter/zonal-verification/update-absent-status",
+//     null,
+//     {
+//       params: {
+//         applicationId,
+//         isAbsent
+//       }
+//     }
+//   ),
+ 
+ 
+ 
+updateAbsentStatusBatch: (payload) =>
+    api.post(
+      "/recruiter/zonal-verification/update-absent-statuses",
+      payload
+    ),
+ 
 };
-
+ 
 export default CandidateVerificationService;

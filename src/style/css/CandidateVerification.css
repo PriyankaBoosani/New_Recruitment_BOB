@@ -12,6 +12,32 @@
   align-items: center;
   gap: 8px;
 }
+/* ===== Custom Blue Tooltip ===== */
+
+.tooltip-inner {
+  background-color: #2f4ea2 !important; /* blue like screenshot */
+  color: #fff !important;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+
+/* Arrow color — match blue */
+.tooltip.bs-tooltip-top .tooltip-arrow::before {
+  border-top-color: #2f4ea2 !important;
+}
+
+.tooltip.bs-tooltip-bottom .tooltip-arrow::before {
+  border-bottom-color: #2f4ea2 !important;
+}
+
+.tooltip.bs-tooltip-start .tooltip-arrow::before {
+  border-left-color: #2f4ea2 !important;
+}
+
+.tooltip.bs-tooltip-end .tooltip-arrow::before {
+  border-right-color: #2f4ea2 !important;
+}
 
 
 .nav-arrow {

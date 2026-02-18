@@ -1,6 +1,8 @@
 import React from "react";
 import { Person, FileText } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+
 
 const CandidateTable = ({
   requisition,
@@ -121,27 +123,44 @@ const goToPreview = (c) => {
                     </span>
                   </td>
 
-                  <td className="text-center">
-                   <Person size={16}
-  className={`me-3 ${c.status === "Rejected" ? "text-muted" : "cursor-pointer"}`}
-  style={{
-    cursor: c.status === "Rejected" ? "not-allowed" : "pointer",
-    opacity: c.status === "Rejected" ? 0.5 : 1
-  }}
-  onClick={() => {
-    if (c.status !== "Rejected") {
-      goToPreview(c);
-    }
-  }}
-/>
+                <td className="text-center">
 
-                  <FileText size={16}
+  {/* View Profile */}
+  <OverlayTrigger
+    placement="bottom"
+    overlay={<Tooltip>View Profile</Tooltip>}
+  >
+    <span>
+      <Person
+        size={16}
+        className={`me-3 ${c.status === "Rejected" ? "text-muted" : "cursor-pointer"}`}
+        style={{
+          cursor: c.status === "Rejected" ? "not-allowed" : "pointer",
+          opacity: c.status === "Rejected" ? 0.5 : 1
+        }}
+        onClick={() => {
+          if (c.status !== "Rejected") goToPreview(c);
+        }}
+      />
+    </span>
+  </OverlayTrigger>
 
-  className="cursor-pointer"
-  onClick={() => onViewFile(c.raw)}
-/>
+  {/* View Resume */}
+  <OverlayTrigger
+    placement="bottom"
+    overlay={<Tooltip>View Resume</Tooltip>}
+  >
+    <span>
+      <FileText
+        size={16}
+        className="cursor-pointer"
+        onClick={() => onViewFile(c.raw)}
+      />
+    </span>
+  </OverlayTrigger>
 
-                  </td>
+</td>
+
                 </tr>
               ))}
           </tbody>

@@ -336,6 +336,15 @@ export const mapJobPositionToRequisitionStrip = (
     employment_type: employmentTypeObj?.typeName || "-",
     dept_name: departmentObj?.departmentName || "-",
 
+
+
+
+
+
+      /*  ADD THESE */
+  contract_years: apiData.contractYears ?? 0,
+  mandatory_experience_months: apiData.mandatoryExperienceMonths ?? 0,
+
     registration_start_date: formatToIST(apiData.createdDate),
     registration_end_date: formatToIST(apiData.modifiedDate),
 

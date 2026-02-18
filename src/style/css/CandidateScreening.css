@@ -32,9 +32,23 @@
   color: #9aa0a6;
 }
 
-.react-select__single-value {
-  font-size: 14px;
+.react-select__value-container {
+  pointer-events: auto !important;
 }
+
+
+
+.react-select__single-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  pointer-events: auto !important;
+}
+
+
+
+
 
 .react-select__menu {
   font-size: 14px;

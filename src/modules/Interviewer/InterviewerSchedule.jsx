@@ -3,109 +3,109 @@ import "../../style/css/CandidateVerification.css";
 import "../../style/css/CandidateScreening.css";
 import "../../style/css/InterviewerSchedule.css";
 import "react-datepicker/dist/react-datepicker.css";
-
+ 
 import DatePicker from "react-datepicker";
 import { addDays, subDays } from "date-fns";
 import { toast } from "react-toastify";
-
+ 
 import searchIcon from "../../assets/search-icon.png";
-
+ 
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import InterviewerPositionSelector from "../candidatePreview/components/InterviewerPositionSelector";
 import InterviewerService from "./service/InterviewerService";
 import PdfViewerModal from "../candidatePreview/components/PdfViewerModal";
-
+ 
 import masterApiService from "../master/services/masterApiService";
 import CandidateVerificationService from "../Verification/services/CandidateVerification";
-
-
+ 
+ 
 import InterviewDayTable from "./components/InterviewDayTable";
 import { mapPanelPositions } from "./mapper/InterviewerScheduleMapper";
 import { mapInterviewerCandidates } from "./mapper/InterviewerScheduleMapper";
 import { useLocation } from "react-router-dom";
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
 /* ================= DATE PILL ================= */
-
+ 
 const DatePill = React.forwardRef(({ value, onClick }, ref) => (
   <div className="date-pill" onClick={onClick} ref={ref}>
     {value}
     <span className="calendar-icon">📅</span>
   </div>
 ));
-
+ 
 /* ================= SCREEN ================= */
-
+ 
 export default function InterviewerSchedule() {
-
+ 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [searchText, setSearchText] = useState("");
-
+ 
   const [masterData, setMasterData] = useState(null);
   const [allCandidatesRaw, setAllCandidatesRaw] = useState([]);
   const [rows, setRows] = useState([]);
-
+ 
   const [selectedRequisition, setSelectedRequisition] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [panelPositions, setPanelPositions] = useState([]);
 const [usedRestoreData, setUsedRestoreData] = useState(false);
 const [originalRows, setOriginalRows] = useState([]);
-
-
+ 
+ 
   /* ===== Pagination ===== */
-
+ 
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-
+ 
   /* ===== PDF ===== */
-
+ 
 const location = useLocation();
 const navState = location.state || {};
-
-
+ 
+ 
 const cameFromPreviewBack =
   sessionStorage.getItem("fromPreviewBack") === "true";
-
-
+ 
+ 
   const [pdfUrl, setPdfUrl] = useState(null);
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [loadingPdf, setLoadingPdf] = useState(false);
-
+ 
   /* ================= LOAD MASTERS ================= */
-
+ 
   useEffect(() => {
     masterApiService.getMasterDisplayAll()
       .then(res => setMasterData(res.data || {}))
       .catch(() => setMasterData({}));
   }, []);
   
-
+ 
 const navReqId =
   navState.requisition?.requisition?.id ||
   navState.requisition?.id ||
   null;
-
+ 
 const navPosId =
   navState.position?.position?.positionId ||
   navState.position?.positionId ||
   null;
-
-
-
+ 
+ 
+ 
   useEffect(() => {
   if (navState.selectedDate) {
     setSelectedDate(new Date(navState.selectedDate));
   }
 }, []);
-
+ 
   /* ================= LOAD CANDIDATES ================= */
-
-
+ 
+ 
 /* ================= LOAD PANEL POSITIONS ================= */
-
+ 
 useEffect(() => {
   InterviewerService.getPanelPositions()
     .then(res => {
@@ -116,73 +116,73 @@ useEffect(() => {
     })
     .catch(() => toast.error("Failed to load panel positions"));
 }, []);
-
-
-
+ 
+ 
+ 
 useEffect(() => {
   if (!cameFromPreviewBack) return;
   if (!navState.preloadedCandidates?.length) return;
-
+ 
   console.log("🔁 Using preloaded interviewer candidates");
-
- setAllCandidatesRaw(navState.preloadedCandidates);
+ 
+setAllCandidatesRaw(navState.preloadedCandidates);
 const mapped = mapInterviewerCandidates(navState.preloadedCandidates);
 setRows(mapped);
 setOriginalRows(mapped.map(r => ({ ...r })));
-
-
-
-
+ 
+ 
+ 
+ 
   setUsedRestoreData(true);
-
+ 
 }, []);
-
-
-
-
+ 
+ 
+ 
+ 
   const formatApiDate = (d) =>
     `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-
-
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 useEffect(() => {
-
+ 
   const posId = selectedPosition?.position?.positionId;
-
+ 
   if (!posId) {
     setRows([]);
     setAllCandidatesRaw([]);
     setPage(0);
     return;
   }
-
+ 
   const load = async () => {
     try {
       const dateStr = formatApiDate(selectedDate || new Date());
-
+ 
       const res =
         await InterviewerService.getCandidatesByPositionAndDate(
           posId,
           dateStr
         );
-
+ 
       const apiList = res.data || [];
-
+ 
       //  SHOW BACKEND MESSAGE WHEN EMPTY
       if (apiList.length === 0 && res.message) {
         toast.info(res.message);
       }
-
+ 
       setAllCandidatesRaw(apiList);
-
+ 
       const mapped = mapInterviewerCandidates(apiList);
       setRows(mapped);
       setOriginalRows(mapped.map(r => ({ ...r })));
-
+ 
     } catch (err) {
       console.error("Load interviewer candidates failed", err);
       toast.error("Failed to load candidates");
@@ -190,23 +190,23 @@ useEffect(() => {
       setAllCandidatesRaw([]);
     }
   };
-
+ 
   load();
-
+ 
 }, [selectedPosition, selectedDate, usedRestoreData]);
-
-
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 useEffect(() => {
   if (!cameFromPreviewBack) return;
   if (!navState.requisition || !navState.position) return;
-
+ 
   console.log("🔁 Restore selector objects from nav");
-
+ 
   const normalizedReq = {
     ...navState.requisition,
     startDate:
@@ -216,7 +216,7 @@ useEffect(() => {
       navState.requisition.endDate ??
       navState.requisition.registration_end_date
   };
-
+ 
   const restored = {
     requisition: normalizedReq,
     position: navState.position,
@@ -224,43 +224,43 @@ useEffect(() => {
       positionName: navState.position.positionName
     }
   };
-
+ 
   setSelectedRequisition(restored);
   setSelectedPosition(restored);
-
+ 
   // ✅ IMPORTANT — clear restore flag after use
   sessionStorage.removeItem("fromPreviewBack");
   console.log("🧹 Cleared fromPreviewBack flag");
-
-}, [cameFromPreviewBack]);
-
-
-
-
-
-
-
-
-
-
  
-
+}, [cameFromPreviewBack]);
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
   /* ================= FILTERING ================= */
-
+ 
 const filteredRows = useMemo(() => {
-
+ 
   const text = searchText.toLowerCase();
-
+ 
   if (!text) return rows;
-
+ 
   return rows.filter(r =>
     r.name.toLowerCase().includes(text) ||
     r.regNo.toLowerCase().includes(text)
   );
-
+ 
 }, [rows, searchText]);
-
-
+ 
+ 
 useEffect(() => {
   if (!selectedPosition) {
     console.log("🧹 CLEARING TABLE — no position selected");
@@ -269,44 +269,44 @@ useEffect(() => {
     setPage(0);
   }
 }, [selectedPosition]);
-
-
-
-
+ 
+ 
+ 
+ 
   /* ================= PAGINATION ================= */
-
+ 
   const paginatedRows = useMemo(() => {
     const start = page * pageSize;
     return filteredRows.slice(start, start + pageSize);
   }, [filteredRows, page, pageSize]);
-
+ 
   useEffect(() => {
     setPage(0);
   }, [filteredRows.length]);
-
+ 
   /* ================= ROW UPDATES ================= */
-
+ 
   const toggleAbsent = id =>
     setRows(prev => prev.map(r =>
       r.id === id ? {...r, absent: !r.absent} : r
     ));
-
+ 
   const updateComment = (id,val) =>
     setRows(prev => prev.map(r =>
       r.id === id ? {...r, comment: val} : r
     ));
-
+ 
   const updateScore = (id,val) =>
     setRows(prev => prev.map(r =>
       r.id === id ? {...r, score: val} : r
     ));
-
+ 
   /* ================= VIEW RESUME ================= */
-
+ 
   const handleViewFile = async (raw) => {
     if (!raw?.resumeUrl)
       return toast.error("No document available");
-
+ 
     try {
       setLoadingPdf(true);
       const sas =
@@ -322,102 +322,202 @@ useEffect(() => {
       setLoadingPdf(false);
     }
   };
-
-
-
+ 
+ 
+ 
   const isRowChanged = (r) => {
   const orig = originalRows.find(o => o.id === r.id);
   if (!orig) return true;
-
+ 
   return (
     orig.absent !== r.absent ||
     (orig.comment || "") !== (r.comment || "") ||
     Number(orig.score || 0) !== Number(r.score || 0)
   );
 };
-
+ 
   /* ================= SAVE ================= */
-
-const handleSave = async () => {
+ 
+// const handleSave = async () => {
+//   try {
+ 
+//     const changedRows = rows.filter(isRowChanged);
+ 
+//     console.log("🧾 Changed rows:", changedRows.length);
+ 
+//     if (!changedRows.length) {
+//       toast.info("No changes to save");
+//       return;
+//     }
+ 
+//     const payloads = changedRows.map(r => {
+//       const raw = r.raw;
+ 
+//       return {
+//         applicationId: raw.applicationId,
+//         scheduledInterviewId: raw.interviewScheduleId,
+//         candidateId: raw.candidateId,
+//         panelId: raw.panelId,
+//         panelScore: Number(r.score) || 0,
+//         //  panelScore: r.score,
+//         panelComments: r.comment || "",
+//         interviewCenterId: raw.interviewCenterId,
+//         isAbsent: !!r.absent
+//       };
+//     });
+ 
+//     console.log("📦 CHANGED SCORE PAYLOADS:", payloads);
+ 
+//     await Promise.all(
+//       payloads.map(p =>
+//         InterviewerService.setCandidateScore(p)
+//       )
+//     );
+ 
+//     toast.success(`Saved ${payloads.length} candidate(s)`);
+ 
+//     // refresh snapshot after save
+// setOriginalRows(rows.map(r => ({ ...r })));
+ 
+//   } catch (err) {
+//     console.error("🔥 SAVE SCORE ERROR:", err);
+//     toast.error("Save failed");
+//   }
+// };
+ 
+// const handleSave = async () => {
+//   try {
+ 
+//     const changedRows = rows.filter(isRowChanged);
+ 
+//     console.log("🧾 Changed rows:", changedRows.length);
+ 
+//     if (!changedRows.length) {
+//       toast.info("No changes to save");
+//       return;
+//     }
+ 
+//     const payloads = changedRows.map(r => {
+//       const raw = r.raw;
+ 
+//       return {
+//         applicationId: raw.applicationId,
+//         scheduledInterviewId: raw.interviewScheduleId,
+//         candidateId: raw.candidateId,
+//         panelId: raw.panelId,
+//         panelScore:
+//           r.absent ? null : (r.score === "" ? null : Number(r.score)),
+//         panelComments: r.comment || "",
+//         interviewCenterId: raw.interviewCenterId,
+//         isAbsent: !!r.absent
+//       };
+//     });
+ 
+//     console.log("📦 BATCH SCORE PAYLOAD:", payloads);
+ 
+//     await InterviewerService.setCandidateScoreBatch(payloads);
+ 
+//     toast.success(`Saved ${payloads.length} candidate(s)`);
+ 
+//     // refresh snapshot after save
+//     setOriginalRows(rows.map(r => ({ ...r })));
+ 
+//   } catch (err) {
+//     console.error("🔥 SAVE SCORE ERROR:", err);
+//     toast.error("Save failed");
+//   }
+// };
+ 
+ 
+// score mandatory
+ 
+ 
+ const handleSave = async () => {
   try {
-
+ 
     const changedRows = rows.filter(isRowChanged);
-
-    console.log("🧾 Changed rows:", changedRows.length);
-
+ 
     if (!changedRows.length) {
       toast.info("No changes to save");
       return;
     }
-
+ 
+    /* ================= VALIDATION ================= */
+ 
+    const invalidRows = changedRows.filter(r =>
+      !r.absent && (r.score === "" || r.score === null || r.score === undefined)
+    );
+ 
+    if (invalidRows.length > 0) {
+      toast.error("Score is mandatory for all non-absent candidates");
+      return;
+    }
+ 
+    /* ================= BUILD PAYLOAD ================= */
+ 
     const payloads = changedRows.map(r => {
       const raw = r.raw;
-
+ 
       return {
         applicationId: raw.applicationId,
         scheduledInterviewId: raw.interviewScheduleId,
         candidateId: raw.candidateId,
         panelId: raw.panelId,
-        panelScore: Number(r.score) || 0,
-        //  panelScore: r.score,
+        panelScore: r.absent ? null : Number(r.score),
         panelComments: r.comment || "",
         interviewCenterId: raw.interviewCenterId,
         isAbsent: !!r.absent
       };
     });
-
-    console.log("📦 CHANGED SCORE PAYLOADS:", payloads);
-
-    await Promise.all(
-      payloads.map(p =>
-        InterviewerService.setCandidateScore(p)
-      )
-    );
-
+ 
+    console.log("📦 BATCH SCORE PAYLOAD:", payloads);
+ 
+    /* ================= SINGLE API CALL ================= */
+ 
+    await InterviewerService.setCandidateScoreBatch(payloads);
+ 
     toast.success(`Saved ${payloads.length} candidate(s)`);
-
-    // refresh snapshot after save
-setOriginalRows(rows.map(r => ({ ...r })));
-
+ 
+    setOriginalRows(rows.map(r => ({ ...r })));
+ 
   } catch (err) {
     console.error("🔥 SAVE SCORE ERROR:", err);
     toast.error("Save failed");
   }
 };
-
-
-
-
+ 
+ 
+ 
 const anyChanged = rows.some(isRowChanged);
-
-
+ 
+ 
   const isSelectionDone =
     selectedRequisition && selectedPosition;
-
-
+ 
+ 
     console.log("📅 Strip dates:",
   selectedRequisition?.requisition?.startDate,
   selectedRequisition?.requisition?.registration_start_date,
   selectedRequisition?.requisition?.endDate,
   selectedRequisition?.requisition?.registration_end_date
 );
-
-
+ 
+ 
   /* ================= UI ================= */
-
+ 
   return (
     <div className="container-fluid px-4 py-3 candidate-verification-page">
-
+ 
       {/* ===== DATE + SEARCH TOOLBAR ===== */}
-
+ 
       <div className="verification-toolbar">
-
+ 
         <div className="date-nav">
           <span
             className="nav-arrow"
             onClick={() => setSelectedDate(d => subDays(d,1))}
           >‹</span>
-
+ 
           <DatePicker
             selected={selectedDate}
             onChange={setSelectedDate}
@@ -425,7 +525,7 @@ const anyChanged = rows.some(isRowChanged);
             customInput={<DatePill />}
             maxDate={new Date()}
           />
-
+ 
           <span
             className="nav-arrow"
             onClick={()=>{
@@ -434,7 +534,7 @@ const anyChanged = rows.some(isRowChanged);
             }}
           >›</span>
         </div>
-
+ 
         <div className="search-box">
           <img src={searchIcon} width={14} alt="" />
           <input
@@ -443,13 +543,13 @@ const anyChanged = rows.some(isRowChanged);
             onChange={e=>setSearchText(e.target.value)}
           />
         </div>
-
+ 
       </div>
-
+ 
       {/* ===== SELECTOR CARD — SAME AS VERIFICATION ===== */}
-
+ 
       <div className="requisition-selector-row">
-
+ 
       <InterviewerPositionSelector
   apiData={panelPositions}
   selectedRequisition={selectedRequisition}
@@ -462,39 +562,39 @@ const anyChanged = rows.some(isRowChanged);
     setSelectedPosition(p);
   }}
 />
-
-
+ 
+ 
       </div>
-
+ 
       {/* ===== STRIP — SAME AS VERIFICATION ===== */}
-
-
-
+ 
+ 
+ 
       
-
+ 
       {isSelectionDone && (
         <div className="requisition-strip">
       <RequisitionStrip
   requisition={{
     requisitionTitle: selectedRequisition?.requisition?.requisitionTitle,
     requisitionCode: selectedRequisition?.requisition?.requisitionCode,
-
+ 
    registration_start_date:
   selectedRequisition?.requisition?.startDate ??
   selectedRequisition?.requisition?.registration_start_date,
-
+ 
 registration_end_date:
   selectedRequisition?.requisition?.endDate ??
   selectedRequisition?.requisition?.registration_end_date,
-
+ 
   }}
-
+ 
   position={{
     positionId: selectedPosition?.position?.positionId,
     positionName: selectedPosition?.masterPosition?.positionName
   }}
-
-
+ 
+ 
             isCardBg={false}
             isSaveEnabled={anyChanged}
             onSave={handleSave}
@@ -502,9 +602,9 @@ registration_end_date:
           />
         </div>
       )}
-
+ 
       {/* ===== TABLE ===== */}
-
+ 
      <InterviewDayTable
   rows={paginatedRows}
   totalElements={filteredRows.length}
@@ -516,7 +616,7 @@ registration_end_date:
   updateComment={updateComment}
   updateScore={updateScore}
   onViewFile={handleViewFile}
- requisition={{
+requisition={{
     requisitionTitle: selectedRequisition?.requisition?.requisitionTitle,
     requisitionCode: selectedRequisition?.requisition?.requisitionCode,
     registration_start_date: selectedRequisition?.requisition?.startDate,
@@ -529,10 +629,10 @@ registration_end_date:
   selectedDate={selectedDate}
   allCandidatesRaw={allCandidatesRaw}
 />
-
-
+ 
+ 
       {/* ===== PDF VIEWER ===== */}
-
+ 
       <PdfViewerModal
         show={showPdfViewer}
         onHide={()=>{
@@ -543,7 +643,7 @@ registration_end_date:
         loading={loadingPdf}
         title="Candidate Resume"
       />
-
+ 
     </div>
   );
 }

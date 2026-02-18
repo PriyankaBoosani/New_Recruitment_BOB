@@ -1,7 +1,9 @@
 import React from "react";
 import { Person, FileText } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
+ 
 const InterviewDayTable = ({
   rows = [],
   totalElements = 0,
@@ -13,29 +15,29 @@ const InterviewDayTable = ({
   updateComment,
   updateScore,
   onViewFile,
-
-  // ✅ ADD THESE
+ 
+  //  ADD THESE
   requisition,
   position,
   selectedDate,
   allCandidatesRaw
 }) => {
-
+ 
   const navigate = useNavigate();
-
-  /* ✅ NAVIGATION */
+ 
+  /*  NAVIGATION */
 const goToPreview = (row) => {
-  console.log("👉 NAVIGATING WITH:", row);
-
+  console.log(" NAVIGATING WITH:", row);
+ 
   const posId =
     position?.raw?.positionId ||
     position?.position?.positionId ||
     position?.positionId ||
     position?.value ||
     null;
-
-  console.log("👉 NAV POS ID:", posId);
-
+ 
+  console.log(" NAV POS ID:", posId);
+ 
   navigate("/candidate-preview", {
     state: {
       candidate: row.raw,
@@ -50,27 +52,27 @@ const goToPreview = (row) => {
     },
   });
 };
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
   console.log("📊 TABLE ROWS RECEIVED:", rows);
 console.log("📊 TOTAL ELEMENTS:", totalElements);
-
-
+ 
+ 
   const totalPages = Math.ceil(totalElements / pageSize);
   const start = totalElements === 0 ? 0 : page * pageSize + 1;
   const end = Math.min((page + 1) * pageSize, totalElements);
-
+ 
   return (
     <div className="verification-table-wrapper">
-
+ 
       {/* DESKTOP */}
       <div className="d-none d-md-block">
         <table className="table align-middle mb-0 verification-table">
         <thead className="fs-14">
-
+ 
             <tr>
             <th className="fs-14">Candidate</th>
 <th className="fs-14">Category</th>
@@ -80,10 +82,10 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
 <th className="fs-14">Comment</th>
 <th className="fs-14" style={{ width: 120 }}>Score</th>
 <th className="fs-14 text-center">Actions</th>
-
+ 
             </tr>
           </thead>
-
+ 
           <tbody>
             {rows.length === 0 && (
              <tr>
@@ -91,9 +93,9 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
     No candidates found
   </td>
 </tr>
-
+ 
             )}
-
+ 
             {rows.map(row => (
               <tr key={row.id}>
                 <td>
@@ -102,12 +104,12 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
                     Reg No: {row.regNo}
                   </div>
                 </td>
-
+ 
               <td className="fs-14">{row.category || "-"}</td>
 <td className="fs-14">{row.time}</td>
 <td className="fs-14">{row.zone}</td>
-
-
+ 
+ 
                 <td className="text-center">
                   <input
                     type="checkbox"
@@ -115,7 +117,7 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
                     onChange={() => toggleAbsent(row.id)}
                   />
                 </td>
-
+ 
                 <td>
                 <input
   className="form-control form-control-sm fs-14"
@@ -125,9 +127,9 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
                     }
                   />
                 </td>
-
+ 
                 <td>
-        <input
+        {/* <input
   type="number"
   className="form-control form-control-sm fs-14"
   value={row.score || ""}
@@ -137,17 +139,17 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
   step={1}
   onChange={(e) => {
     let v = e.target.value;
-
+ 
     if (v === "") {
       updateScore(row.id, "");
       return;
     }
-
+ 
     v = parseInt(v, 10);
-
+ 
     if (v > 100) v = 100;
     if (v < 0) v = 0;
-
+ 
     updateScore(row.id, v);
   }}
   onKeyDown={(e) => {
@@ -155,40 +157,93 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
       e.preventDefault();
     }
   }}
-/>
-
-
-
+/> */}
+ 
+ 
+ 
+ 
+ 
+ 
+ <input
+  type="text"
+  inputMode="numeric"
+  pattern="[0-9]*"
+  className="form-control form-control-sm fs-14"
+  value={row.score ?? ""}
+  disabled={row.absent}
+  maxLength={3}
+  onChange={(e) => {
+    let v = e.target.value;
+ 
+    // allow empty
+    if (v === "") {
+      updateScore(row.id, "");
+      return;
+    }
+ 
+    // keep only digits
+    v = v.replace(/\D/g, "");
+ 
+    // clamp 0–100
+    const num = Math.min(100, Math.max(0, parseInt(v, 10)));
+ 
+    updateScore(row.id, num);
+  }}
+  onPaste={(e) => {
+    const text = e.clipboardData.getData("text");
+    if (!/^\d+$/.test(text)) {
+      e.preventDefault();
+    }
+  }}
+/> 
+ 
+ 
+ 
                 </td>
-
+ 
                 {/* ✅ ACTIONS */}
-                <td className="text-center">
-                  <Person
-                    className="me-3 cursor-pointer"
-                   size={16}
+              <td className="text-center">
 
-                    onClick={() => goToPreview(row)}
-                  />
+  <OverlayTrigger
+    placement="bottom"
+    overlay={<Tooltip>View Profile</Tooltip>}
+  >
+    <span>
+      <Person
+        className="me-3 cursor-pointer"
+        size={16}
+        onClick={() => goToPreview(row)}
+      />
+    </span>
+  </OverlayTrigger>
 
-                  <FileText
-                    className="cursor-pointer"
-                  size={16}
+  <OverlayTrigger
+    placement="bottom"
+    overlay={<Tooltip>View Resume</Tooltip>}
+  >
+    <span>
+      <FileText
+        className="cursor-pointer"
+        size={16}
+        onClick={() => onViewFile(row.raw)}
+      />
+    </span>
+  </OverlayTrigger>
 
-                    onClick={() => onViewFile(row.raw)}
-                  />
-                </td>
+</td>
+
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-
+ 
       {/* FOOTER */}
       <div className="d-flex justify-content-between align-items-center px-3 py-2 table-footer">
         <span className="text-muted fs-13">
           Showing {start}-{end} of {totalElements}
         </span>
-
+ 
         <div className="d-flex gap-2">
           <select
             className="form-select form-select-sm"
@@ -200,7 +255,7 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
             <option value={20}>20</option>
             <option value={50}>50</option>
           </select>
-
+ 
           <button
             className="btn btn-sm btn-outline-secondary"
             disabled={page === 0}
@@ -208,7 +263,7 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
           >
             Prev
           </button>
-
+ 
           <button
             className="btn btn-sm btn-outline-secondary"
             disabled={page >= totalPages - 1}
@@ -218,9 +273,9 @@ console.log("📊 TOTAL ELEMENTS:", totalElements);
           </button>
         </div>
       </div>
-
+ 
     </div>
   );
 };
-
+ 
 export default InterviewDayTable;

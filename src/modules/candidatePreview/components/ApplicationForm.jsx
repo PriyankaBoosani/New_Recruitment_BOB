@@ -165,16 +165,18 @@ const hasPendingDocument = documentRows.some(doc => {
   // -----------------------------------------
   // 1️⃣ Decision not selected
   // -----------------------------------------
-  if (!zonalDecision) {
-    toast.error("Please select decision");
-    return;
-  }
+  
 
 
     if (hasPendingDocument) {
     toast.warning(
       "All documents must be verified before submission."
     );
+    return;
+  }
+
+  if (!zonalDecision) {
+    toast.error("Please select decision");
     return;
   }
 
@@ -1817,19 +1819,20 @@ useEffect(() => {
                 className="remarks-box"
                 placeholder={t("enter_comments")}
                 rows={5}
-                disabled={!allDocsVerified}
+               disabled={docStatusLoading}
                 value={screeningRemarks}
                 onChange={(e) => setScreeningRemarks(e.target.value)}
               />
 
 
-              <button
-                className="btn-submit-orange ms-3"
-                disabled={!allDocsVerified}
-                onClick={handleZonalSubmit}
-              >
-                {t("submit")}
-              </button>
+          <button
+  className="btn-submit-orange ms-3"
+  disabled={docStatusLoading}
+  onClick={handleZonalSubmit}
+>
+  {t("submit")}
+</button>
+
 
             </div>
 

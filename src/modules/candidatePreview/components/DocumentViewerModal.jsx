@@ -202,19 +202,30 @@ useEffect(() => {
 
             {/* buttons */}
             <div className="doc-viewer-actions d-flex gap-2">
-              <button
-                className="btn-reject"
-                onClick={handleRejectClick}
-              >
-                {t("REJECTED")}
-              </button>
+            <button
+  className="btn-reject"
+  onClick={handleRejectClick}
+  disabled={isInterviewer}
+  style={{
+    opacity: isInterviewer ? 0.5 : 1,
+    cursor: isInterviewer ? "not-allowed" : "pointer"
+  }}
+>
+  {t("REJECTED")}
+</button>
 
-              <button
-                className="btn-verify"
-                onClick={handleVerifyClick}
-              >
-                {t("VERIFIED")}
-              </button>
+<button
+  className="btn-verify"
+  onClick={handleVerifyClick}
+  disabled={isInterviewer}
+  style={{
+    opacity: isInterviewer ? 0.5 : 1,
+    cursor: isInterviewer ? "not-allowed" : "pointer"
+  }}
+>
+  {t("VERIFIED")}
+</button>
+
             </div>
 
           </div>
