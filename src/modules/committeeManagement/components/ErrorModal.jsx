@@ -8,7 +8,7 @@ const ErrorModal = ({ show, message, errors = [], onClose }) => {
     <Modal size="lg" show={show} onHide={onClose} centered>
       <Modal.Header closeButton>
         <Modal.Title className="text-danger">
-            {hasErrors ? (message || "Validation Failed") : "Error"}
+            {hasErrors ? (message || "Validation Failed") : "Alert"}
         </Modal.Title>
       </Modal.Header>
 

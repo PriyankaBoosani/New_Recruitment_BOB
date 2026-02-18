@@ -203,11 +203,11 @@ useEffect(() => {
           })),
           startDate: p.startDate || "",
           endDate: p.endDate || "",
-         // canEdit: p.canEdit !== false
-           canEdit:
-      committeeType === "INTERVIEW"
-        ? p.canEdit !== false
-        : false
+          canEdit: p.canEdit !== false,
+      //      canEdit:
+      // committeeType === "INTERVIEW"
+      //   ? p.canEdit !== false
+      //   : false
         }));
 
       const assigned = {

@@ -42,6 +42,8 @@ const AssignPositionsPage = () => {
 
   } = useAssignPositions();
 
+  const today = new Date().toISOString().split("T")[0];
+
   const selectedPositionTitle =
     positions.find(
       p => p.jobPositions?.positionId === selectedPosition
@@ -121,6 +123,7 @@ const AssignPositionsPage = () => {
               <label>START DATE</label>
               <input
                 type="date"
+                 min={today}
                 value={committee.startDate}
                 disabled={!committee.canEdit}
                 onChange={(e) =>
@@ -136,6 +139,7 @@ const AssignPositionsPage = () => {
               <label>END DATE</label>
               <input
                 type="date"
+                  min={committee.startDate || today}
                 value={committee.endDate}
                 disabled={!committee.canEdit}
                 onChange={(e) =>
@@ -217,6 +221,7 @@ const positionOptions = positions.map(pos => ({
           <div className="form-group">
             <label className="form-label">Requisition</label>
             <Select
+             isSearchable
               placeholder="Select Requisition"
               options={requisitionOptions}
               value={
@@ -237,6 +242,7 @@ const positionOptions = positions.map(pos => ({
           <div className="form-group">
             <label className="form-label">Position</label>
             <Select
+             isSearchable
               placeholder="Select Position"
               options={positionOptions}
               value={
