@@ -26,9 +26,12 @@ export const useInterviewPanel = () => {
   /* ================= PAGINATION ================= */
 
   const [page, setPage] = useState(0);
- const [size, setSize] = useState(10);
+  const [size, setSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [activeTab, setActiveTab] = useState("MANAGE");
+
+  const [showErrorModal, setShowErrorModal] = useState(false);
+const [errorMessage, setErrorMessage] = useState("");
 
   /* ================= search ================= */
   const [search, setSearch] = useState({
@@ -66,9 +69,9 @@ export const useInterviewPanel = () => {
   }, [search.panelName, search.committeeName]);
 
 
-useEffect(() => {
-  setPage(0);
-}, [size]);
+  useEffect(() => {
+    setPage(0);
+  }, [size]);
 
 
 
@@ -136,7 +139,7 @@ useEffect(() => {
     if (!formData.name?.trim()) {
       newErrors.name = "Panel name is required";
     }
-      else if (formData.name.trim().length > 200) {
+    else if (formData.name.trim().length > 200) {
       newErrors.name = "Panel name cannot exceed 200 characters";
     }
 
@@ -161,100 +164,101 @@ useEffect(() => {
   /* ================= SAVE ================= */
 
   const handleSave = async () => {
-  if (!validatePanelForm()) {
-    //toast.error("Please fix the validation errors");
-    return;
-  }
+    if (!validatePanelForm()) {
+      //toast.error("Please fix the validation errors");
+      return;
+    }
 
-  const payload = preparePanelPayload(
-    formData,
-    communityOptions,
-    membersOptions
-  );
+    const payload = preparePanelPayload(
+      formData,
+      communityOptions,
+      membersOptions
+    );
 
-  try {
-    if (formData.id) {
-      // ✅ UPDATE
-      const res = await masterApiService.updateInterviewPanel(
-        formData.id,
-        payload
-      );
+    try {
+      if (formData.id) {
+        // ✅ UPDATE
+        const res = await masterApiService.updateInterviewPanel(
+          formData.id,
+          payload
+        );
 
 
         if (!res?.success) {
-        // 🔴 Field-level error
-        // setErrors(prev => ({
-        //   ...prev,
-        //   name:  res?.message||"Panel name already exists for selected committee"
-        // }));
+          
+         // toast.error(res?.message || "Panel name already exists for selected committee");
+         setErrorMessage(
+            res?.message || "Panel name already exists for selected committee"
+          );
+          setShowErrorModal(true);
+          return; // ⛔ VERY IMPORTANT
+        }
 
-        toast.error( res?.message || "Panel name already exists for selected committee");
-        return; // ⛔ VERY IMPORTANT
+
+        toast.success("Panel updated successfully");
+
+      } else {
+        // ✅ CREATE
+        const res = await masterApiService.addInterviewPanel(payload);
+
+        if (!res?.success) {
+         // toast.error(res?.message || "Failed to create panel");
+         setErrorMessage(
+            res?.message || "Failed to create panel"
+          );
+          setShowErrorModal(true);
+          return; // ⛔ VERY IMPORTANT
+        }
+
+        toast.success("Panel created successfully");
       }
 
+      // ✅ Only runs on SUCCESS
+      fetchPanels();
+      setFormData({
+        name: "",
+        community: "",
+        members: []
+      });
+      setErrors({});
 
-      toast.success("Panel updated successfully");
-
-    } else {
-      // ✅ CREATE
-      const res = await masterApiService.addInterviewPanel(payload);
-
-      if (!res?.success) {
-        // 🔴 Field-level error
-        // setErrors(prev => ({
-        //   ...prev,
-        //   name:  "Panel name already exists for selected committee"||res?.message
-        // }));
-
-        toast.error(res?.message || "Failed to create panel");
-        return; // ⛔ VERY IMPORTANT
-      }
-
-      toast.success("Panel created successfully");
+    } catch (err) {
+      console.error("SAVE ERROR 👉", err);
+      toast.error(
+        err?.response?.data?.message ||
+        "Failed to save panel"
+      );
     }
-
-    // ✅ Only runs on SUCCESS
-    fetchPanels();
-    setFormData({
-      name: "",
-      community: "",
-      members: []
-    });
-    setErrors({});
-
-  } catch (err) {
-    console.error("SAVE ERROR 👉", err);
-    toast.error(
-      err?.response?.data?.message ||
-      "Failed to save panel"
-    );
-  }
-};
+  };
 
 
   /* ================= DELETE ================= */
 
   const handleDelete = useCallback(async (id) => {
     try {
-       const res =  await masterApiService.deleteInterviewPanel(id);
-        if (res?.success === false) {
-          toast.error(
-            res?.message ||
-            "Panel is assigned to a position and cannot be deleted"
-          );
-          return;
-        }
-
-        toast.success("Panel deleted successfully");
-        fetchPanels();
-      } catch (err) {
-        console.error("DELETE ERROR 👉", err);
-        toast.error(
-          err?.response?.data?.message ||
-          "Failed to delete panel"
+      const res = await masterApiService.deleteInterviewPanel(id);
+      if (res?.success === false) {
+        // toast.error(
+        //   res?.message ||
+        //   "Panel is assigned to a position and cannot be deleted"
+        // );
+        setErrorMessage(
+          res?.message || "Panel is assigned to a position and cannot be deleted"
         );
+        setShowErrorModal(true);
+        return;
       }
-   }, [fetchPanels]);
+
+      toast.success("Panel deleted successfully");
+      fetchPanels();
+    } catch (err) {
+      console.error("DELETE ERROR 👉", err);
+      toast.error(
+        err?.response?.message ||
+        "Failed to delete panel"
+      );
+    }
+  }, [fetchPanels]);
 
   /* ================= EDIT ================= */
 
@@ -275,33 +279,33 @@ useEffect(() => {
     initData();
   }, [initData]);
 
-useEffect(() => {
-  fetchPanels();
-}, [page, size]);
+  useEffect(() => {
+    fetchPanels();
+  }, [page, size]);
 
-useEffect(() => {
-  if (activeTab === "MANAGE") {
-    setFormData({
-      name: "",
-      community: "",
-      members: []
-    });
-    setErrors({});
+  useEffect(() => {
+    if (activeTab === "MANAGE") {
+      setFormData({
+        name: "",
+        community: "",
+        members: []
+      });
+      setErrors({});
 
 
       // 🔹 Reset filters
-    setSearch({
-      panelName: "",
-      committeeName: "",
-      panelMemberName: ""
-    });
+      setSearch({
+        panelName: "",
+        committeeName: "",
+        panelMemberName: ""
+      });
 
-    // 🔹 Reset pagination
-    setPage(0);
-  }
+      // 🔹 Reset pagination
+      setPage(0);
+    }
 
 
-}, [activeTab]);
+  }, [activeTab]);
 
   // useEffect(() => {
   //   fetchPanels();
@@ -334,11 +338,11 @@ useEffect(() => {
     page,
     setPage,
     totalPages,
-     size,
+    size,
     setSize,
 
     search,
-     
+
     setSearch,
 
     setShowFilters,
@@ -348,7 +352,10 @@ useEffect(() => {
     // handleSort,
     // sortedPanels,
     activeTab,
-    setActiveTab
+    setActiveTab,
+    showErrorModal,
+    setShowErrorModal,
+    errorMessage
 
   };
 };

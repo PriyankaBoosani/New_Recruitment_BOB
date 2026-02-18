@@ -506,3 +506,6 @@ border-color: hsl(0, 0%, 80%);
   opacity: 0.5;
   cursor: not-allowed;
 }
+.error-display {
+  white-space: pre-line;
+}

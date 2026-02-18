@@ -7,6 +7,7 @@ import { useInterviewPanel } from "./hooks/useInterviewPanel";
 import { FiUsers, FiFileText } from "react-icons/fi";
 import { Modal, Button } from "react-bootstrap";
 import DeleteConfirmationModal from "./components/DeleteConfirmationModal";
+import ErrorModal from "./components/ErrorModal";
 
 const InterviewPanelPage = () => {
 
@@ -44,7 +45,10 @@ const InterviewPanelPage = () => {
     size,
     setSize,
     activeTab,
-    setActiveTab
+    setActiveTab,
+    showErrorModal,
+    setShowErrorModal,
+    errorMessage
   } = useInterviewPanel();
 
   // useEffect(() => {
@@ -156,6 +160,12 @@ const [deletePanelName, setDeletePanelName] = useState("");
 
 
       </div>
+        <ErrorModal
+          show={showErrorModal}
+          message={errorMessage}
+          errors={[]}   // no list needed here
+          onClose={() => setShowErrorModal(false)}
+        />
     </div>
   );
 };

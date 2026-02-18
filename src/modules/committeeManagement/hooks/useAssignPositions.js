@@ -190,7 +190,7 @@ useEffect(() => {
       const screeningPanelList = responseData?.screeningPanelList ?? [];
       const compensationPanelList = responseData?.compensationPanelList ?? [];
 
-      const mapAssigned = (list) =>
+      const mapAssigned = (list, committeeType) =>
         list.map(p => ({
           id: p.interviewPanel.interviewPanelId,
           positionPanelId: p.positionPanelId,
@@ -203,13 +203,17 @@ useEffect(() => {
           })),
           startDate: p.startDate || "",
           endDate: p.endDate || "",
-          canEdit: p.canEdit !== false
+         // canEdit: p.canEdit !== false
+           canEdit:
+      committeeType === "INTERVIEW"
+        ? p.canEdit !== false
+        : false
         }));
 
       const assigned = {
-        SCREENING: mapAssigned(screeningPanelList),
-        INTERVIEW: mapAssigned(interviewPanelList),
-        COMPENSATION: mapAssigned(compensationPanelList)
+        SCREENING: mapAssigned(screeningPanelList, "SCREENING"),
+        INTERVIEW: mapAssigned(interviewPanelList, "INTERVIEW"),
+        COMPENSATION: mapAssigned(compensationPanelList, "COMPENSATION")
       };
 
       setSelectedCommittees(assigned);
