@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Person, FileText } from "react-bootstrap-icons";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 export default function CandidatePool({
   candidates,
@@ -203,34 +204,44 @@ export default function CandidatePool({
 								</td>
 
                <td className="text-center align-content-center">
-  <Person
-    className="me-3 cursor-pointer"
-    onClick={() =>
-      navigate("/candidate-preview", {
-        state: {
-          candidate: c,
-          positionId: selectedPositionId,
-          requisitionId: selectedRequisitionId,
-          requisition: requisition
-            ? {
-                requisition_code: requisition.requisition_code,
-                requisition_title: requisition.requisition_title,
-                registration_start_date: requisition.registration_start_date,
-                registration_end_date: requisition.registration_end_date,
-              }
-            : null,
-          position: position
-            ? {
-                positionId: position.positionId,
-                positionName: position.positionName,
-              }
-            : null,
-        },
-      })
-    }
-  />
-  <FileText className="cursor-pointer" onClick={() => onViewFile(c)} />
-</td>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip id={`tooltip-${c.id}`}>View Profile</Tooltip>}
+                >
+                  <Person
+                    className="me-3 cursor-pointer"
+                    onClick={() =>
+                      navigate("/candidate-preview", {
+                        state: {
+                        candidate: c,
+                        positionId: selectedPositionId,
+                        requisitionId: selectedRequisitionId,
+                        requisition: requisition
+                          ? {
+                              requisition_code: requisition.requisition_code,
+                              requisition_title: requisition.requisition_title,
+                              registration_start_date: requisition.registration_start_date,
+                              registration_end_date: requisition.registration_end_date,
+                            }
+                          : null,
+                        position: position
+                          ? {
+                              positionId: position.positionId,
+                              positionName: position.positionName,
+                            }
+                          : null,
+                      },
+                    })
+                  }
+                />
+              </OverlayTrigger>
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip id={`tooltip-${c.id}`}>View Resume</Tooltip>}
+              >
+                <FileText className="cursor-pointer" onClick={() => onViewFile(c)} />
+              </OverlayTrigger>
+              </td>
 
               </tr>
             ))

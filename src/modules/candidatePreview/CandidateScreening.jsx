@@ -19,6 +19,7 @@ import InterviewFeedbackHistoryModal from "./components/InterviewFeedbackHistory
 import SendToOfferPoolModal from "./components/SendToOfferPoolModal";
 import useInterviewPool from "./hooks/useInterviewPool";
 import candidateWorkflowServices from "./services/CandidateWorkflowServices";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
@@ -71,6 +72,7 @@ export default function CandidateScreening({ selectedJob }) {
   const [pageSize, setPageSize] = useState(10);
   const [totalElements, setTotalElements] = useState(0);
   const [masterData, setMasterData] = useState(null);
+  const [allCandidatesForFilters, setAllCandidatesForFilters] = useState([]);
   const [filters, setFilters] = useState({
     status: [],
     stateId: "",
@@ -206,6 +208,50 @@ export default function CandidateScreening({ selectedJob }) {
     fetchPositions();
   }, [selectedRequisitionId]);
 
+  const formatCandidateData = (apiData) => {
+    const formatStatus = (status = "") => status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+
+    return (apiData?.content || []).map((c) => ({
+      id: c.candidateApplications.id, // REQUIRED for selection
+      name: c.fullName,
+      rank: c.rank,
+      score: c.score,
+      // experience: `${Math.floor((c.totalMonths || 0) / 12)} years`,
+      experienceMonths: c.totalMonths || 0,
+      status: formatStatus(c.candidateApplications.applicationStatus),
+      location: stateMap[c.stateId] || "-",
+      stateId: c.stateId,
+      categoryId: c.categoryId,
+      categoryName: categoryMap[c.categoryId] || "-",
+      applicationNo: c.candidateApplications.applicationNo,
+      candidateId: c.candidateApplications.candidateId,
+      fileUrl: c.resumeUrl,
+    }));
+  };
+
+  // 🔍 Fetch all candidates WITHOUT location/category filters for dropdown options
+  const fetchAllCandidatesForFilters = async () => {
+    try {
+      const normalizedStatus = filters.status.length === 0 ? availableStatuses : filters.status.map((s) => s.toUpperCase());
+
+      const res = await jobPositionApiService.getCandidatesByPosition({
+        searchText: filters.searchText,
+        page: 0,
+        size: 1000, // Large size to get all candidates
+        positionId: selectedPositionId,
+        status: normalizedStatus,
+        stateId: "", // NO location filter
+        categoryId: "", // NO category filter
+      });
+
+      const apiData = res?.data;
+      const mappedCandidates = formatCandidateData(apiData);
+      setAllCandidatesForFilters(mappedCandidates);
+    } catch (err) {
+      console.error("Failed to load all candidates for filters", err);
+    }
+  };
+
   const fetchCandidates = async () => {
     setLoadingCandidates(true);
     try {
@@ -222,25 +268,7 @@ export default function CandidateScreening({ selectedJob }) {
       });
 
       const apiData = res?.data;
-      const formatStatus = (status = "") => status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
-
-      // 🔑 Normalize API → UI model
-      const mappedCandidates = (apiData?.content || []).map((c) => ({
-        id: c.candidateApplications.id, // REQUIRED for selection
-        name: c.fullName,
-        rank: c.rank,
-        score: c.score,
-        // experience: `${Math.floor((c.totalMonths || 0) / 12)} years`,
-        experienceMonths: c.totalMonths || 0,
-        status: formatStatus(c.candidateApplications.applicationStatus),
-        location: stateMap[c.stateId] || "-",
-        stateId: c.stateId,
-        categoryId: c.categoryId,
-        categoryName: categoryMap[c.categoryId] || "-",
-        applicationNo: c.candidateApplications.applicationNo,
-        candidateId: c.candidateApplications.candidateId,
-        fileUrl: c.resumeUrl,
-      }));
+      const mappedCandidates = formatCandidateData(apiData);
 
       setCandidates(mappedCandidates);
       setTotalElements(apiData?.page?.totalElements || 0);
@@ -291,6 +319,16 @@ export default function CandidateScreening({ selectedJob }) {
     filters.categoryId,
     masterData,
   ]);
+
+  // 🔍 Fetch all candidates for filter dropdowns when position/status changes
+  useEffect(() => {
+    if (!selectedPositionId) {
+      setAllCandidatesForFilters([]);
+      return;
+    }
+
+    fetchAllCandidatesForFilters();
+  }, [selectedPositionId, filters.status, filters.searchText, masterData]);
 
   const handleRequisitionChange = (e) => {
     const reqId = e.target.value;
@@ -418,7 +456,7 @@ export default function CandidateScreening({ selectedJob }) {
   const availableLocations = React.useMemo(() => {
     const map = new Map();
 
-    candidates.forEach((c) => {
+    allCandidatesForFilters.forEach((c) => {
       if (c.stateId && c.location) {
         map.set(c.stateId, c.location);
       }
@@ -428,12 +466,12 @@ export default function CandidateScreening({ selectedJob }) {
       id,
       name,
     }));
-  }, [candidates]);
+  }, [allCandidatesForFilters]);
 
   const availableCategories = React.useMemo(() => {
     const map = new Map();
 
-    candidates.forEach((c) => {
+    allCandidatesForFilters.forEach((c) => {
       if (c.categoryId && c.categoryName) {
         map.set(c.categoryId, c.categoryName);
       }
@@ -443,7 +481,7 @@ export default function CandidateScreening({ selectedJob }) {
       id,
       name,
     }));
-  }, [candidates]);
+  }, [allCandidatesForFilters]);
 
   // useEffect(() => {
   //   setPage(0);
@@ -789,12 +827,22 @@ export default function CandidateScreening({ selectedJob }) {
                   <img src={rankIcon} className="me-2" width={15}/>
                   Rank
                 </button> */}
-                <button className="btn fs-14 me-3 blue-color blue-border" onClick={() => handleDownload("pdf")}>
-                  <img src={pdfIcon} className="" width={20} />
-                </button>
-                <button className="btn fs-14 blue-color blue-border" onClick={() => handleDownload("xlsx")}>
-                  <img src={excelIcon} className="" width={20} />
-                </button>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip >Download PDF</Tooltip>}
+                >
+                  <button className="btn fs-14 me-3 blue-color blue-border" onClick={() => handleDownload("pdf")}>
+                    <img src={pdfIcon} className="" width={20} />
+                  </button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip >Download Excel</Tooltip>}
+                >
+                  <button className="btn fs-14 blue-color blue-border" onClick={() => handleDownload("xlsx")}>
+                    <img src={excelIcon} className="" width={20} />
+                  </button>
+                </OverlayTrigger>
               </div>
             )}
           </div>
