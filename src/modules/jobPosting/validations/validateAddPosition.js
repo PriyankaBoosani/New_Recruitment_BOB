@@ -7,7 +7,7 @@ export const normalizeTitle = (value = "") =>
     .replace(/\s+/g, " ")   // collapse multiple spaces
     .replace(/^\s+/, "");  // remove leading spaces
 
-export const TITLE_ALLOWED_PATTERN = /^[A-Za-z0-9 _.,\-():;&/]*$/;
+export const TITLE_ALLOWED_PATTERN = /^[A-Za-z0-9 _.,\-():;'&/]*$/;
 
 export const validateTitleOnType = (value) => {
   const normalized = normalizeTitle(value);
@@ -152,16 +152,20 @@ export const validateAddPosition = ({
 
   // ---------- EXPERIENCE ----------
   const validateExperience = (exp, key) => {
-    const years = Number(exp.years || 0);
-    const months = Number(exp.months || 0);
-    exp.description = normalizeTitle(exp.description);
+    const years = exp.years === "" ? null : Number(exp.years);
+    const months = exp.months === "" ? null : Number(exp.months);
 
-    if (years === 0 && months === 0) {
+    // Only error if BOTH are not selected (empty)
+    if (years === null && months === null) {
       errors[key] = "validation:experience_duration_required";
-    } else if (!exp.description?.trim()) {
+      return;
+    }
+
+    if (!exp.description?.trim()) {
       errors[key] = "validation:experience_details_required";
     }
   };
+
 
   validateExperience(formData.mandatoryExperience, "mandatoryExperience");
   validateExperience(formData.preferredExperience, "preferredExperience");

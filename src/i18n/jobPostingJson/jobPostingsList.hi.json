@@ -39,5 +39,17 @@
     "requisition_delete_success": "अनुरोध सफलतापूर्वक हटाया गया",
     "requisition_delete_failed": "अनुरोध हटाने में विफल",
     "requisition_approve_success": "अनुरोध सफलतापूर्वक स्वीकृत किया गया",
-    "requisition_approve_failed": "स्वीकृति के लिए भेजने में विफल"
+    "requisition_approve_failed": "स्वीकृति के लिए भेजने में विफल",
+    "requisition_submit_success": "अनुरोध सफलतापूर्वक स्वीकृति के लिए भेजा गया",
+    "requisition_submit_failed": "स्वीकृति के लिए भेजने में विफल",
+    "status_l1_approved": "L1 स्वीकृत",
+    "status_rejected": "अस्वीकृत",
+    "status_submitted": "जमा किया गया",
+    "add_position": "पद जोड़ें",
+    "edit_requisition": "अनुरोध संपादित करें",
+    "delete_requisition": "अनुरोध हटाएँ",
+    "delete_position": "पद हटाएँ",
+    "view_position": "पद देखें",
+    "edit_position": "पद संपादित करें",
+    "view_requisition": "अनुरोध देखें"
 }

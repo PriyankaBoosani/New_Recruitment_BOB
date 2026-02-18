@@ -70,5 +70,8 @@
     "add_degree": "+ Add Degree",
     "add_certification": "+ Add Certification",
     "certifications_optional": "Certifications (Optional)",
-    "result_preview": "Result (How it will look for candidate)"
+    "result_preview": "Result (How it will look for candidate)",
+    "replace_indent": "Replace Indent",
+    "delete_position": "Delete Position",
+    "view_indent": "View Indent"
 }
