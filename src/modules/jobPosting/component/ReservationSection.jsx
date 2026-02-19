@@ -269,13 +269,13 @@ const ReservationSection = ({
                                         <th colSpan={4 + reservationCategories.length + 1} />
 
                                         {disabilityCategories.map(d => (
-                                            <th key={d.disabilityCode} className="text-center">
+                                            <th key={d.disabilityCode} className="text-left">
                                                 {d.disabilityCode}
                                             </th>
                                         ))}
 
                                         {/* Disability TOTAL (belongs to Out of Which) */}
-                                        <th className="text-center">{t("common:total")}</th>
+                                        <th className="text-left">{t("common:total")}</th>
 
                                         {/* Actions column */}
                                         <th />
