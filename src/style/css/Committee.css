@@ -100,7 +100,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 32px;
+  margin-bottom: 10px;
 }
 
 .assign-positions-page .config-title-section {
@@ -149,14 +149,14 @@
   /* background: #9ca3af; */
   border-radius: 12px;
   padding: 8px;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   gap: 12px;
 }
 
 .tab-item {
   flex: 1;
-  padding: 14px 24px;
+  padding: 10px 24px;
   border: 2px solid transparent;
   /* background: #ffffff; */
   border-radius: 8px;

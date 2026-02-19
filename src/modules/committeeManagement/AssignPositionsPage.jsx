@@ -6,8 +6,7 @@ import { useAssignPositions } from "./hooks/useAssignPositions";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import ErrorModal from "./components/ErrorModal";
 import Select from "react-select";
-
-
+import Loader from "../../shared/components/Loader";
 
 const AssignPositionsPage = () => {
 
@@ -295,9 +294,10 @@ const hasAnySelectedPanels =
             onClick={handleAssignCommittees}
            // disabled={!selectedPosition}
             disabled={!selectedPosition || !hasAnySelectedPanels}
+            
 
           >
-            Assign Committees
+            {loading ? "Assigning..." : "Assign Committees"}
           </button>
         </div>
 
@@ -369,6 +369,7 @@ const hasAnySelectedPanels =
   errors={errorList}
   onClose={() => setShowErrorModal(false)}
 />
+{loading && <Loader />}
     </div>
   );
 };

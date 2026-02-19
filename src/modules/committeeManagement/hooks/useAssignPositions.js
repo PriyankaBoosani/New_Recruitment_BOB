@@ -416,6 +416,7 @@ const showError = (message, errors = []) => {
       }
 
     } catch (err) {
+       setLoading(false);
       console.error("ASSIGN ERROR 👉", err);
       toast.error(
         err?.response?.data?.message ||
