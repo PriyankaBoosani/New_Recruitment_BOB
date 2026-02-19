@@ -405,18 +405,20 @@ const hasPendingDocument = documentRows.some(doc => {
       const map = {};
 
       (res.data || []).forEach((item) => {
-        if (isZonalHr) {
-          map[item.candidateDocumentId] = {
-            status: item.zonalHrDocStatus?.toUpperCase() || "PENDING",
-            comments: item.zonalHrDocComments,
-          };
-        } else {
-          map[item.candidateDocumentId] = {
-            status: item.docScreeningStatus?.toUpperCase() || "PENDING",
-            comments: item.docScreeningComments,
-            verificationId: item.verificationId,
-          };
-        }
+      if (isZonalHr || isInterviewer) {
+  map[item.candidateDocumentId] = {
+    status: item.zonalHrDocStatus?.toUpperCase() || "PENDING",
+    comments: item.zonalHrDocComments,
+    verificationId: item.verificationId,
+  };
+} else {
+  map[item.candidateDocumentId] = {
+    status: item.docScreeningStatus?.toUpperCase() || "PENDING",
+    comments: item.docScreeningComments,
+    verificationId: item.verificationId,
+  };
+}
+
       });
 
       setDocStatusMap(map);

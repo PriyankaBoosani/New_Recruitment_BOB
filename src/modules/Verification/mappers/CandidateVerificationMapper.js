@@ -123,7 +123,7 @@ export const mapCandidatesToTableRows = (list = []) => {
       /* ===== TABLE DISPLAY ===== */
 
       id: sched.interviewScheduleId,
-      name: cand.fullName,
+      name: row.candidateFullName || cand.fullName || "-",
       regNo: app.applicationNo,
       category: cat.categoryCode || "-",
       time: formatTime(

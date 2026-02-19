@@ -59,7 +59,7 @@ const timeRange =
     return {
       id: item.application?.id || idx,
  
-      name: item.candidate?.fullName || "-",
+      name: item.candidateFullName || item.candidate?.fullName || "-",
       regNo: item.application?.applicationNo || "-",
  
       category:
