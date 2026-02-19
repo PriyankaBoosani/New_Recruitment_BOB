@@ -1,192 +1,143 @@
-import React, { useState } from "react";
-import { Container, Button } from "react-bootstrap";
-import { Plus } from "react-bootstrap-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
+import React, { useRef, useEffect, useState } from "react";
+import { Container, Card } from "react-bootstrap";
+import FileStatusCard from "./components/UploadField";
 import { useGenericOrAnnexures } from "./hooks/useGenericOrAnnexures";
-import GenericOrAnnexuresTable from "./components/GenericOrAnnexuresTable";
-import GenericOrAnnexuresFormModal from "./components/GenericOrAnnexuresFormModal";
-import DeleteConfirmModal from "./components/DeleteConfirmModal";
-import masterApiService from "../../../master/services/masterApiService";
-import '../../../../style/css/user.css';
-import { validateGenericOrAnnexuresForm } from "../../../../shared/utils/genericOrAnnexures-validations";
+import masterApiService from "../../services/masterApiService";
+import bulbIcon from "../../../../assets/bulb-icon.png";
+import { toast } from "react-toastify";
+
+
 
 const GenericOrAnnexuresPage = () => {
-  const { t } = useTranslation(["genericOrAnnexures"]);
 
-  const {
-    items,
-    addItem,
-    deleteItem
-  } = useGenericOrAnnexures();
+  const { items, addItem } = useGenericOrAnnexures();
 
-  /* ================= STATE ================= */
-  const [showModal, setShowModal] = useState(false);
-  const [isViewing, setIsViewing] = useState(false);
+  const [localItems, setLocalItems] = useState([]);
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
-  const [formData, setFormData] = useState({
-    type: "",
-    file: null
-  });
+  useEffect(() => {
+    setLocalItems(items);
+  }, [items]);
 
-  const [errors, setErrors] = useState({});
+  const genericRef = useRef();
+  const annexureRef = useRef();
 
-  /* ================= INPUT CHANGE ================= */
-  const handleInputChange = (e) => {
-    const { name, value, files } = e.target;
+  const genericDoc = localItems.find(i => i.type === "Generic");
+  const annexureDoc = localItems.find(i => i.type === "Annexures");
 
-    setFormData(prev => ({
-      ...prev,
-      [name]:
-        name === "file"
-          ? files?.[0] ?? value ?? null
-          : value
-    }));
+  const handleUpload = (type, file) => {
+    if (!file) return;
 
-    // DO NOT auto-clear file errors here
-    if (name !== "file") {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ""
-      }));
-    }
-  };
-  /* ================= ADD ================= */
-  const openAdd = () => {
-    setIsViewing(false);
-    setFormData({ type: "", file: null });
-    setErrors({});
-    setShowModal(true);
-  };
-
-  /* ================= VIEW ================= */
-  const openView = (item) => {
-    setIsViewing(true);
-    setFormData({
-      type: item.type,
-      file: { name: item.fileName }
-
-    });
-    setShowModal(true);
-  };
-
-  /* ================= SAVE (ADD ONLY) ================= */
-  const handleSave = (e) => {
-    e.preventDefault();
-
-    const { valid, errors } = validateGenericOrAnnexuresForm(formData);
-
-    if (!valid) {
-      setErrors(errors);
+    if (file.type !== "application/pdf") {
+      toast.error("Only PDF files are allowed");
       return;
     }
 
-    addItem(formData);
-
-    //  TOAST (EN + HI)
-    toast.success(
-      t("add_success", "File added successfully")
-    );
-
-    setShowModal(false);
+    addItem({ type, file });
   };
 
-  const handleDownload = async (item) => {
-  if (!item?.fileUrl) {
-    console.error("No fileUrl present");
-    return;
-  }
+  const handleView = async (fileUrl) => {
+    if (!fileUrl) return;
 
-  try {
-    // 1️ Get SAS URL from backend
-    const sasUrl = await masterApiService.getAzureBlobSasUrl(item.fileUrl);
+    try {
+      const sasUrl = await masterApiService.getAzureBlobSasUrl(fileUrl);
+      if (!sasUrl) return;
 
-    if (!sasUrl) {
-      throw new Error("SAS URL not returned");
+      window.open(sasUrl, "_blank");
+    } catch (error) {
+      console.error("View failed:", error);
     }
-
-    // 2️ Let the browser download it (NO fetch, NO CORS)
-    const a = document.createElement("a");
-    a.href = sasUrl;
-    a.download = item.fileName || "download.pdf";
-    a.target = "_blank"; // optional, helps some browsers
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-
-  } catch (err) {
-    console.error("Download failed:", err);
-  }
-};
-  /* ================= DELETE ================= */
-  const openDeleteConfirm = (item) => {
-    setDeleteTarget(item);
-    setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
-    if (!deleteTarget) return;
-
-    deleteItem(deleteTarget.id);
-
-    //  TOAST (EN + HI)
-    toast.success(
-      t("delete_success", "File deleted successfully")
-    );
-
-    setShowDeleteModal(false);
-    setDeleteTarget(null);
+  const handleLocalDelete = (type) => {
+    setLocalItems(prev => prev.filter(i => i.type !== type));
   };
 
   return (
-    <Container fluid className="user-container">
-      {/* ===== HEADER ===== */}
-      <div className="user-header d-flex justify-content-between">
-        <h2>{t("title", "Generic / Annexures")}</h2>
+    <Container
+      className="mt-4"
+      style={{
+        minHeight: "calc(100vh - 120px)"
+      }}
+    >
+      <Card className="shadow-sm border-0 mb-4">
 
-        <Button className="add-button" onClick={openAdd}>
-          <Plus size={20} /> {t("add", "Add")}
-        </Button>
-      </div>
+        <Card.Body>
 
-      {/* ===== TABLE ===== */}
-      <GenericOrAnnexuresTable
-        data={items}
-        onView={openView}
-        onDownload={handleDownload}
-        onDelete={openDeleteConfirm}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        itemsPerPage={itemsPerPage}
-        setItemsPerPage={setItemsPerPage}
-      />
+          <div className="d-flex align-items-start mb-4">
+            <img
+              src={bulbIcon}
+              alt="Info"
+              style={{
+                width: "22px",
+                height: "22px",
+                marginRight: "8px",
+                marginTop: "2px"
+              }}
+            />
+
+            <p className="orange_text mb-0">
+              Please ensure all uploaded documents are clear and eligible.
+              File size should not exceed 2MB per document.
+            </p>
+          </div>
 
 
-      {/* ===== ADD / VIEW MODAL ===== */}
-      <GenericOrAnnexuresFormModal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        isViewing={isViewing}
-        formData={formData}
-        handleInputChange={handleInputChange}
-        errors={errors}
-        setErrors={setErrors}
-        handleSave={handleSave}
-      />
+          <div className="row">
 
-      {/* ===== DELETE CONFIRM MODAL ===== */}
-      <DeleteConfirmModal
-        show={showDeleteModal}
-        onHide={() => setShowDeleteModal(false)}
-        onConfirm={confirmDelete}
-        target={{
-          name: deleteTarget?.file?.name || "-"
-        }}
-      />
+            <FileStatusCard
+              label="Generic Document"
+              required
+              file={
+                genericDoc
+                  ? {
+                    name: genericDoc.fileName,
+                    url: genericDoc.fileUrl
+                  }
+                  : null
+              }
+              ref={genericRef}
+              onBrowse={() => genericRef.current.click()}
+              onChange={(e) =>
+                handleUpload("Generic", e.target.files[0])
+              }
+              onView={() =>
+                handleView(genericDoc?.fileUrl)
+              }
+              onDelete={() =>
+                handleLocalDelete("Generic")
+              }
+            />
+
+            <FileStatusCard
+              label="Annexures Document"
+              required
+              file={
+                annexureDoc
+                  ? {
+                    name: annexureDoc.fileName,
+                    url: annexureDoc.fileUrl
+                  }
+                  : null
+              }
+              ref={annexureRef}
+              onBrowse={() => annexureRef.current.click()}
+              onChange={(e) =>
+                handleUpload("Annexures", e.target.files[0])
+              }
+              onView={() =>
+                handleView(annexureDoc?.fileUrl)
+              }
+              onDelete={() =>
+                handleLocalDelete("Annexures")
+              }
+            />
+
+          </div>
+
+        </Card.Body>
+
+      </Card>
+
     </Container>
   );
 };

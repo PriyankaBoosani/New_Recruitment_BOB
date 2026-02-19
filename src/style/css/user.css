@@ -897,3 +897,73 @@ scrollbar styling .import-scroll-wrapper::-webkit-scrollbar,
     max-height: 200px;
     height: auto;
 }
+
+
+.doc-label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+  color: #4b5563;
+}
+
+.doc-upload-box {
+  border: 1.5px solid #b7c2d9;
+  border-radius: 10px;
+  background: #f5f7fb;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.doc-upload-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.doc-check {
+  color: #22c55e;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.doc-file-name {
+  color: #3b5bcc;
+  font-weight: 500;
+}
+
+.doc-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.doc-icon-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #c7d2e5;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.doc-icon-btn:hover {
+  background: #eef2ff;
+}
+
+
+.orange_text {
+  color: rgb(255, 112, 67);
+  font-size: 0.875rem;
+  font-weight: 400;   /* normal weight */
+}
+
+.grey-label {
+  font-size: 0.875rem;
+  color: #6e6e6e;
+  font-weight: 500;
+}
