@@ -1,15 +1,25 @@
-export const validateEducationModal = ({ rows }) => {
+export const validateEducationModal = ({ rows, mode }) => {
   const errors = { rows: [] };
+
+  const filledRows = rows.filter(
+    r => r.educationTypeId || r.educationQualificationsId
+  );
 
   rows.forEach((row, i) => {
     const rowErrors = {};
 
-    if (!row.educationTypeId) {
-       rowErrors.educationTypeId = "validation:required";
-    }
+    const isPartiallyFilled =
+      row.educationTypeId || row.educationQualificationsId;
 
-    if (!row.educationQualificationsId) {
-      rowErrors.educationQualificationsId = "validation:required";
+    // Only validate if user started filling
+    if (isPartiallyFilled) {
+      if (!row.educationTypeId) {
+        rowErrors.educationTypeId = "validation:required";
+      }
+
+      if (!row.educationQualificationsId) {
+        rowErrors.educationQualificationsId = "validation:required";
+      }
     }
 
     if (Object.keys(rowErrors).length) {
@@ -17,6 +27,15 @@ export const validateEducationModal = ({ rows }) => {
     }
   });
 
-  if (!errors.rows.length) return {};
+  // Mandatory must have at least one fully filled row
+  const fullyFilledRows = rows.filter(
+    r => r.educationTypeId && r.educationQualificationsId
+  );
+
+  if (mode === "mandatory" && fullyFilledRows.length === 0) {
+    errors.rows._error = "validation:degree_required";
+  }
+
+  if (!errors.rows.length && !errors.rows._error) return {};
   return errors;
 };

@@ -42,16 +42,19 @@ const requisitionApiService = {
         size
       }
     }),
-     submitForApproval: (payload) =>
+  submitForApproval: (payload) =>
     api.post(
       "/recruiter/job-requisitions/submit-for-approval",
       payload
     ),
-     submitForApprovalFlow: (payload) =>
+  submitForApprovalFlow: (payload) =>
     api.post(
       "/recruiter/job-requisitions/submit-for-approval-new",
       payload
     ),
+  getAvailableYears: () =>
+    api.get("/recruiter/job-requisitions/get-years"),
+
 };
 
 export default requisitionApiService;

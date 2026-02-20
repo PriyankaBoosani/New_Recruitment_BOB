@@ -51,6 +51,7 @@ const JobPostingsList = () => {
 
     const [showDeletePosModal, setShowDeletePosModal] = useState(false);
     const [selectedPosition, setSelectedPosition] = useState(null);
+    const [year, setYear] = useState("");
 
     const handleConfirmDelete = async () => {
         if (!selectedReq) return;
@@ -72,7 +73,6 @@ const JobPostingsList = () => {
         setSelectedPosition(null);
     };
     // 🔹 Backend-driven filters
-    const [year, setYear] = useState("2026");
     const [status, setStatus] = useState(null);
     const [search, setSearch] = useState("");
     const [searchInput, setSearchInput] = useState("");
@@ -100,7 +100,7 @@ const JobPostingsList = () => {
         });
     };
     // 🔹 API Hook
-    const { requisitions, loading, pageInfo, deleteRequisition, submitForApproval, refetch } = useJobRequisitions({
+    const { requisitions, loading, pageInfo, yearOptions, deleteRequisition, submitForApproval, refetch } = useJobRequisitions({
         year,
         status,
         search,
@@ -117,6 +117,19 @@ const JobPostingsList = () => {
     const selectableRequisitions = requisitions.filter(
         r => r.status !== "Approved" && !r.hasDraftPositions
     );
+    useEffect(() => {
+        if (!yearOptions?.length || year) return;
+
+        const currentYear = new Date().getFullYear();
+
+        if (yearOptions.includes(currentYear)) {
+            setYear(currentYear);
+        } else {
+            // fallback to highest year
+            const latestYear = Math.max(...yearOptions);
+            setYear(latestYear);
+        }
+    }, [yearOptions]);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -240,15 +253,30 @@ const JobPostingsList = () => {
             {/* ================= FILTERS ================= */}
             <Row className="filters-row g-2 mb-3">
                 <Col xs={12} md={2}>
-                    <Form.Select
+                    {/* <Form.Select
                         className="yearfon"
                         value={year}
                         onChange={(e) => setYear(e.target.value)}
                     >
-                        <option value="2026">{t("jobPostingsList:year_label")} - 2026</option>
-                        <option value="2025">{t("jobPostingsList:year_label")} - 2025</option>
-                        <option value="2024">{t("jobPostingsList:year_label")} - 2024</option>
+                        {yearOptions.map((yr) => (
+                            <option key={yr} value={yr}>
+                                {t("jobPostingsList:year_label")} - {yr}
+                            </option>
+                        ))}
+                    </Form.Select> */}
+                    <Form.Select
+                        value={year}
+                        className="yearfon"
+                        onChange={(e) => setYear(e.target.value)}
+                    >
+                        {yearOptions.map((yr) => (
+                            <option key={yr} value={yr}>
+                                {t("jobPostingsList:year_label")} - {yr}
+                            </option>
+                        ))}
                     </Form.Select>
+
+
                 </Col>
 
                 <Col xs={12} md={9}>
@@ -585,15 +613,15 @@ const JobPostingsList = () => {
                                                                         className="icon-btn"
                                                                         onClick={(e) => {
                                                                             e.stopPropagation();
-                                                                        navigate(
-                                                                            `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
-                                                                            { state: { mode: "edit" } }
-                                                                        );
+                                                                            navigate(
+                                                                                `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
+                                                                                { state: { mode: "edit" } }
+                                                                            );
 
-                                                                    }}
-                                                                >
-                                                                    <img src={pos_edit_icon} className="icon-16" alt="edit" />
-                                                                </Button>
+                                                                        }}
+                                                                    >
+                                                                        <img src={pos_edit_icon} className="icon-16" alt="edit" />
+                                                                    </Button>
                                                                 </OverlayTrigger>
 
                                                                 {/* DELETE POSITION */}
@@ -605,17 +633,17 @@ const JobPostingsList = () => {
                                                                         variant="light"
                                                                         className="icon-btn"
                                                                         onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        setSelectedPosition({
-                                                                            requisitionId: req.id,
-                                                                            positionId: pos.positionId,
-                                                                            positionName: pos.positionName
-                                                                        });
-                                                                        setShowDeletePosModal(true);
-                                                                    }}
-                                                                >
-                                                                    <img src={pos_delete_icon} className="icon-16" alt="delete" />
-                                                                </Button>
+                                                                            e.stopPropagation();
+                                                                            setSelectedPosition({
+                                                                                requisitionId: req.id,
+                                                                                positionId: pos.positionId,
+                                                                                positionName: pos.positionName
+                                                                            });
+                                                                            setShowDeletePosModal(true);
+                                                                        }}
+                                                                    >
+                                                                        <img src={pos_delete_icon} className="icon-16" alt="delete" />
+                                                                    </Button>
                                                                 </OverlayTrigger>
                                                             </>
                                                         ) : (

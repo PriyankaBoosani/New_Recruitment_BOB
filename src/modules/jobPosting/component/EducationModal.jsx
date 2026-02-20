@@ -110,10 +110,16 @@ export default function EducationModal({
         .join(" OR ");
 
 
-    const finalText = `Education Requirements:
-${degreeText || "Not specified"}
-Certifications: ${certText || "None"}
-            `.trim();
+    let finalText = "";
+
+    if (degreeText) {
+        finalText += `Education Requirements:\n${degreeText}\n`;
+        finalText += `Certifications: ${certText || "None"}`;
+    } else if (certText) {
+        finalText += `Certifications: ${certText}`;
+    }
+
+
 
     return (
         <Modal show={show} onHide={onHide} size="lg" scrollable centered className="edu-modal">
@@ -277,6 +283,7 @@ Certifications: ${certText || "None"}
                     onClick={() => {
                         const validationErrors = validateEducationModal({
                             rows,
+                            mode,
                             certificationIds: certIds.filter(Boolean),
                         });
 
@@ -289,12 +296,13 @@ Certifications: ${certText || "None"}
                             r => r.educationTypeId && r.educationQualificationsId
                         );
 
-                        if (filledRows.length === 0) {
+                        if (mode === "mandatory" && filledRows.length === 0) {
                             setErrors({
                                 rows: { _error: "validation:degree_required" }
                             });
                             return;
                         }
+
 
                         setErrors({});
 

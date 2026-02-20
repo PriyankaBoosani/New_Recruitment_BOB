@@ -92,7 +92,7 @@ export default function CandidateScreening({ selectedJob }) {
     filters,
     page: interviewPage,
     pageSize: interviewPageSize,
-    enabled: activeTab === "INTERVIEW_POOL"
+    enabled: !!selectedPositionId
   });
 
   const tabs = [

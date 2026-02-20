@@ -14,11 +14,12 @@ export const useJobRequisitions = ({
   page = 0,
   size = 0
 }) => {
-   const { t } = useTranslation("jobPostingsList");
+  const { t } = useTranslation("jobPostingsList");
   const [requisitions, setRequisitions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pageInfo, setPageInfo] = useState(null);
-  
+  const [yearOptions, setYearOptions] = useState([]);
+
 
   const fetchRequisitions = async () => {
     try {
@@ -43,6 +44,7 @@ export const useJobRequisitions = ({
       setLoading(false);
     }
   };
+
   const deleteRequisition = async (id) => {
     try {
       await requisitionApiService.deleteRequisition(id);
@@ -61,7 +63,7 @@ export const useJobRequisitions = ({
       await requisitionApiService.submitForApproval({
         jobRequisitionIds,
         postingStatus: "Approved" // confirm backend enum
-        
+
       });
 
       toast.success(t("requisition_approve_success"));
@@ -72,7 +74,19 @@ export const useJobRequisitions = ({
       setLoading(false);
     }
   };
-  
+  const fetchAvailableYears = async () => {
+    try {
+      const res = await requisitionApiService.getAvailableYears();
+      setYearOptions(res.data || []);
+    } catch {
+      toast.error(t("years_fetch_failed"));
+    }
+  };
+  useEffect(() => {
+    fetchAvailableYears();
+  }, []);
+
+
 
   useEffect(() => {
     fetchRequisitions();
@@ -82,6 +96,7 @@ export const useJobRequisitions = ({
     requisitions,
     loading,
     pageInfo,
+    yearOptions,
     deleteRequisition,
     submitForApproval,
     refetch: fetchRequisitions

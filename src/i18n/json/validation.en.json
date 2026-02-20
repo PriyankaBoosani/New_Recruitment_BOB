@@ -43,7 +43,7 @@
   "past_dates_not_allowed": "Past dates are not allowed",
   "requisition_date_future": "Requisition start date must be a future date.",
   "end_before_start": "End date cannot be before start date",
-  "title_invalid_chars_extended": "Only letters, numbers, spaces and . , - ( ) & : ; / are allowed",
+  "title_invalid_chars_extended": "Only letters, numbers, spaces and . , - ( ) & : ; ' / are allowed",
   "duplicate_position_department": "This position already exists for the selected department. Please select another position",
   "duplicate_department_position": "This department already has the selected position",
   "min_age_18": "Minimum age must be 18 years",

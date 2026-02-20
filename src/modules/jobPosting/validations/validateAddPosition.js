@@ -4,10 +4,10 @@ import { validatePositiveInteger } from "./JobpostingcommonValidators";
 
 export const normalizeTitle = (value = "") =>
   value
-    .replace(/\s+/g, " ")   // collapse multiple spaces
-    .replace(/^\s+/, "");  // remove leading spaces
+    .replace(/[ \t]+/g, " ")   // collapse only spaces & tabs
+    .replace(/^\s+/, "");
 
-export const TITLE_ALLOWED_PATTERN = /^[A-Za-z0-9 _.,\-():;'&/]*$/;
+export const TITLE_ALLOWED_PATTERN = /^[A-Za-z0-9 _.,\-():;'&/\n\r]*$/;
 
 export const validateTitleOnType = (value) => {
   const normalized = normalizeTitle(value);
@@ -122,9 +122,7 @@ export const validateAddPosition = ({
     errors.mandatoryEducation = "validation:required";
   }
 
-  if (!educationData.preferred.text?.trim()) {
-    errors.preferredEducation = "validation:required";
-  }
+ 
   // ---------- AGE BUSINESS RULES (BANK ELIGIBILITY) ----------
 
   const minAge = Number(formData.minAge);
@@ -167,8 +165,16 @@ export const validateAddPosition = ({
   };
 
 
-  validateExperience(formData.mandatoryExperience, "mandatoryExperience");
+validateExperience(formData.mandatoryExperience, "mandatoryExperience");
+
+if (
+  formData.preferredExperience.years ||
+  formData.preferredExperience.months ||
+  formData.preferredExperience.description?.trim()
+) {
   validateExperience(formData.preferredExperience, "preferredExperience");
+}
+  // validateExperience(formData.preferredExperience, "preferredExperience");
 
   // ---------- RESPONSIBILITIES ----------
   formData.responsibilities = normalizeTitle(formData.responsibilities);

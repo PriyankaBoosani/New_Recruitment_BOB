@@ -207,7 +207,7 @@ const PositionForm = ({
                                                 <button
                                                     type="button"
                                                     className="icon-btn"
-                                                 
+
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         handleReplaceIndent();
@@ -396,7 +396,7 @@ const PositionForm = ({
 
                     <Col md={6}>
                         <div className="d-flex justify-content-between align-items-center mb-1 mandedu">
-                            <Form.Label className="mb-0">{t("addPosition:preferred_education")} <span className="text-danger">*</span></Form.Label>
+                            <Form.Label className="mb-0">{t("addPosition:preferred_education")}</Form.Label>
                             <Button size="sm" disabled={isViewMode} onClick={() => onEducationClick("preferred")} style={{ borderRadius: "10px" }}>{t("addPosition:add")}</Button>
                         </div>
                         <Form.Control as="textarea" placeholder={t("addPosition:enter_preferred_education")} rows={4} readOnly value={educationData.preferred.text || ""} disabled={isViewMode} />
@@ -406,7 +406,19 @@ const PositionForm = ({
                     {/* Experience Row logic maintained for both mandatory/preferred */}
                     {['mandatoryExperience', 'preferredExperience'].map((expType) => (
                         <Col md={6} key={expType}>
-                            <Form.Label>{expType === 'mandatoryExperience' ? t("addPosition:mandatory_experience") : t("addPosition:preferred_experience")} <span className="text-danger">*</span></Form.Label>
+                            <Form.Label>
+                                {expType === 'mandatoryExperience'
+                                    ? t("addPosition:mandatory_experience")
+                                    : t("addPosition:preferred_experience")}
+
+                                {(expType === 'mandatoryExperience' ||
+                                    (expType === 'preferredExperience' &&
+                                        formData.preferredExperience.description?.trim())
+                                ) && (
+                                        <span className="text-danger">*</span>
+                                    )}
+                            </Form.Label>
+
                             <Row className="g-2 mb-2">
                                 <Col md={6}>
                                     <Form.Select disabled={isViewMode} value={formData[expType].years} onChange={(e) => handleInputChange({ target: { name: `${expType}.years`, value: e.target.value } })}>
