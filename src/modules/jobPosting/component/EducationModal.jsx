@@ -119,7 +119,9 @@ export default function EducationModal({
         finalText += `Certifications: ${certText}`;
     }
 
-
+    const sortedCertifications = [...certifications].sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+    );
 
     return (
         <Modal show={show} onHide={onHide} size="lg" scrollable centered className="edu-modal">
@@ -239,7 +241,7 @@ export default function EducationModal({
                                     }}
                                 >
                                     <option value="">{t("common:select_certification")}</option>
-                                    {certifications.map(c => (
+                                    {sortedCertifications.map(c => (
                                         <option key={c.id} value={c.id}>
                                             {c.name}
                                         </option>
