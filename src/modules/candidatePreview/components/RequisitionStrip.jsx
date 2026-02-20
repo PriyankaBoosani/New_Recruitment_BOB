@@ -231,22 +231,24 @@ const renderBullets = (text) => {
         <Modal.Header closeButton className="knowmore-header">
           <div className="w-100">
 
-           <div className="d-flex align-items-center gap-3 header-row">
+         <div className="modal-header-row">
+  <span className="modal-req-title">
+    {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
+  </span>
 
-              <span className="req-code">
-                {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
-              </span>
+  <span className="modal-date">
+    <i className="bi bi-calendar3 me-1"></i>
+    Start: {formatDMY(requisition?.registration_start_date)}
+  </span>
 
-              <span className="date-text">
-                <i className="bi bi-calendar3 me-1"></i>
-                Start: {formatDMY(requisition?.registration_start_date)}
-              </span>
+  <span className="modal-divider">|</span>
 
-              <span className="date-text">
-                <i className="bi bi-calendar3 me-1"></i>
-                End: {formatDMY(requisition?.registration_end_date)}
-              </span>
-            </div>
+  <span className="modal-date">
+   <i className="bi bi-clock me-1"></i>
+    End: {formatDMY(requisition?.registration_end_date)}
+  </span>
+</div>
+
 
             <div
               className="job-title mt-1"
