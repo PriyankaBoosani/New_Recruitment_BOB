@@ -91,19 +91,17 @@ const locationprefApiData = apiData?.locationPreference || {};
   const presentAddressFull = [
     address.addressLine1,
     address.addressLine2,
-    presentCity,
+    address.city,
     presentDistrict,
     presentState,
-    presentPin
   ].filter(Boolean).join(", ");
 
   const permanentAddressFull = [
     address.permanentAddressLine1,
     address.permanentAddressLine2,
-    permanentCity,
+    address.permanentCity,
     permanentDistrict,
     permanentState,
-    permanentPin
   ].filter(Boolean).join(", ");
 
   const educations = apiData?.educationDetails || [];
@@ -177,8 +175,8 @@ const locationprefApiData = apiData?.locationPreference || {};
       // address: `${address.addressLine1 || ""} ${address.addressLine2 || ""}`.trim() || "-",
       // permanentAddress:
       //   `${address.permanentAddressLine1 || ""} ${address.permanentAddressLine2 || ""}`.trim() || "-",
-      address: presentAddressFull || "-",
-      permanentAddress: permanentAddressFull || "-",
+      address: presentAddressFull + " - " + address.pincode || "-",
+      permanentAddress: permanentAddressFull + " - " + address.permanentPincode || "-",
 
 
       exService: yesNo(profile.exServiceman),
