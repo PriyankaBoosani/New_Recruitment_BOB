@@ -211,9 +211,9 @@ updateZonalAbsent(applicationId, isAbsent) {
     );
   },
 
-  downloadInterviewScheduleTemplate: () =>
+  downloadInterviewScheduleTemplate: (positionId) =>
     api.get(
-      "/recruiter/interview-scheduling/download-template",
+      `/recruiter/interview-scheduling/download-template/${positionId}`,
       {
         responseType: "blob",
         headers: {

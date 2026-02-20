@@ -33,7 +33,7 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 	const handleDownloadTemplate = async () => {
 		try {
 			setLoading(true)
-			const res = await jobPositionApiService.downloadInterviewScheduleTemplate();
+			const res = await jobPositionApiService.downloadInterviewScheduleTemplate(positionId);
 
 			const blob = new Blob([res.data], {
 				type: res.headers["content-type"] ||
