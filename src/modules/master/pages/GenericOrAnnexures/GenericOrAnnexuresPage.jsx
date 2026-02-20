@@ -5,13 +5,12 @@ import { useGenericOrAnnexures } from "./hooks/useGenericOrAnnexures";
 import masterApiService from "../../services/masterApiService";
 import bulbIcon from "../../../../assets/bulb-icon.png";
 import { toast } from "react-toastify";
-
-
+import { useTranslation } from "react-i18next";
 
 const GenericOrAnnexuresPage = () => {
+  const { t } = useTranslation(["genericOrAnnexures"]);
 
   const { items, addItem } = useGenericOrAnnexures();
-
   const [localItems, setLocalItems] = useState([]);
 
   useEffect(() => {
@@ -24,45 +23,62 @@ const GenericOrAnnexuresPage = () => {
   const genericDoc = localItems.find(i => i.type === "Generic");
   const annexureDoc = localItems.find(i => i.type === "Annexures");
 
+  /* ================= UPLOAD ================= */
   const handleUpload = (type, file) => {
-    if (!file) return;
-
-    if (file.type !== "application/pdf") {
-      toast.error("Only PDF files are allowed");
+    if (!file) {
+      toast.error(t("no_file_selected"));
       return;
     }
 
-    addItem({ type, file });
+    if (file.type !== "application/pdf") {
+      toast.error(t("only_pdf_allowed"));
+      return;
+    }
+
+    try {
+      addItem({ type, file });
+      toast.success(t("upload_success"));   // ✅ SUCCESS
+    } catch (error) {
+      toast.error(t("upload_failed"));      // ❌ FAIL
+    }
   };
 
+  /* ================= VIEW ================= */
   const handleView = async (fileUrl) => {
     if (!fileUrl) return;
 
     try {
       const sasUrl = await masterApiService.getAzureBlobSasUrl(fileUrl);
-      if (!sasUrl) return;
+      if (!sasUrl) {
+        toast.error(t("view_failed"));
+        return;
+      }
 
       window.open(sasUrl, "_blank");
     } catch (error) {
-      console.error("View failed:", error);
+      toast.error(t("view_failed"));
     }
   };
 
+  /* ================= DELETE ================= */
   const handleLocalDelete = (type) => {
-    setLocalItems(prev => prev.filter(i => i.type !== type));
+    try {
+      setLocalItems(prev => prev.filter(i => i.type !== type));
+      toast.success(t("delete_success"));   // ✅ SUCCESS
+    } catch (error) {
+      toast.error(t("delete_error"));       // ❌ FAIL
+    }
   };
 
   return (
     <Container
       className="mt-4"
-      style={{
-        minHeight: "calc(100vh - 120px)"
-      }}
+      style={{ minHeight: "calc(100vh - 120px)" }}
     >
       <Card className="shadow-sm border-0 mb-4">
-
         <Card.Body>
 
+          {/* Info Section */}
           <div className="d-flex align-items-start mb-4">
             <img
               src={bulbIcon}
@@ -74,25 +90,22 @@ const GenericOrAnnexuresPage = () => {
                 marginTop: "2px"
               }}
             />
-
             <p className="orange_text mb-0">
-              Please ensure all uploaded documents are clear and eligible.
-              File size should not exceed 2MB per document.
+              {t("upload_instruction")}
             </p>
           </div>
 
-
-          <div className="row">
-
+          {/* Generic Upload */}
+          <div className="row justify-content-center mb-4">
             <FileStatusCard
-              label="Generic Document"
+              label={t("generic")}
               required
               file={
                 genericDoc
                   ? {
-                    name: genericDoc.fileName,
-                    url: genericDoc.fileUrl
-                  }
+                      name: genericDoc.fileName,
+                      url: genericDoc.fileUrl
+                    }
                   : null
               }
               ref={genericRef}
@@ -107,16 +120,19 @@ const GenericOrAnnexuresPage = () => {
                 handleLocalDelete("Generic")
               }
             />
+          </div>
 
+          {/* Annexures Upload */}
+          <div className="row justify-content-center mb-4">
             <FileStatusCard
-              label="Annexures Document"
+              label={t("annexures")}
               required
               file={
                 annexureDoc
                   ? {
-                    name: annexureDoc.fileName,
-                    url: annexureDoc.fileUrl
-                  }
+                      name: annexureDoc.fileName,
+                      url: annexureDoc.fileUrl
+                    }
                   : null
               }
               ref={annexureRef}
@@ -131,13 +147,10 @@ const GenericOrAnnexuresPage = () => {
                 handleLocalDelete("Annexures")
               }
             />
-
           </div>
 
         </Card.Body>
-
       </Card>
-
     </Container>
   );
 };

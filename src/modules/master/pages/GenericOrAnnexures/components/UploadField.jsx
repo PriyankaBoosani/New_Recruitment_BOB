@@ -3,6 +3,9 @@ import deleteIcon from "../../../../../assets/delete_icon.png";
 import viewIcon from "../../../../../assets/view_icon.png";
 import uploadIcon from "../../../../../assets/upload_Icon.png";
 import greenCheck from "../../../../../assets/green-check.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUpload } from "@fortawesome/free-solid-svg-icons";
+
 
 const UploadField = forwardRef(({
   label,
@@ -28,8 +31,7 @@ const UploadField = forwardRef(({
   };
 
   return (
-    <div className="col-md-12 col-sm-12 mt-3">
-
+    <div className="col-md-6 col-sm-12 mt-3">
       <div className="d-flex align-items-center mb-2">
         <label className="grey-label mb-0">
           {label} {required && <span className="text-danger">*</span>}
@@ -50,8 +52,8 @@ const UploadField = forwardRef(({
           }}
           onClick={!disabled ? onBrowse : undefined}
         >
-          <img
-            src={uploadIcon}
+          <FontAwesomeIcon
+            icon={faUpload}
             alt="Upload"
             style={{ width: "24px", height: "24px" }}
           />

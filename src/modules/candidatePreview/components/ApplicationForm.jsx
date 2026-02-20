@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Accordion, Card } from "react-bootstrap";
 import "../../../style/css/PreviewModal.css";
 import logo_Bob from "../../../assets/bob-logo.png";
@@ -95,36 +95,36 @@ const ApplicationForm = ({
   const isInterviewer = role === "interviewer";
 
 
-const mapDecisionToStatus = (val) => {
-  const v = String(val || "").toUpperCase().trim();
+  const mapDecisionToStatus = (val) => {
+    const v = String(val || "").toUpperCase().trim();
 
-  if (v === "YES") return "VERIFIED";
-  if (v === "NO") return "REJECTED";
-  if (v === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
+    if (v === "YES") return "VERIFIED";
+    if (v === "NO") return "REJECTED";
+    if (v === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
 
-  console.warn("⚠️ Unknown zonalDecision:", val);
-  return "PENDING";
-};
-
-
-
-const mapStatusToDecision = (status) => {
-  const s = String(status || "").toUpperCase().trim();
-
-  if (s === "VERIFIED") return "YES";
-  if (s === "REJECTED") return "NO";
-  if (s === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
-  return "";
-};
+    console.warn("⚠️ Unknown zonalDecision:", val);
+    return "PENDING";
+  };
 
 
+
+  const mapStatusToDecision = (status) => {
+    const s = String(status || "").toUpperCase().trim();
+
+    if (s === "VERIFIED") return "YES";
+    if (s === "REJECTED") return "NO";
+    if (s === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
+    return "";
+  };
 
 
 
 
 
-useEffect(() => {
-  if (!isZonalHr) return;
+
+
+  useEffect(() => {
+    if (!isZonalHr) return;
 
     if (zonalVerificationStatus) {
       setZonalDecision(mapStatusToDecision(zonalVerificationStatus));
@@ -149,149 +149,149 @@ useEffect(() => {
   ]);
 
 
-const handleZonalSubmit = async () => {
+  const handleZonalSubmit = async () => {
 
-  // -----------------------------------------
-  // Helper Conditions
-  // -----------------------------------------
-  const allVerified = areAllDocumentsVerified();   // returns true/false
-  const anyRejected = hasAnyRejectedDocument();    // returns true/false
-const hasPendingDocument = documentRows.some(doc => {
-  const status = docStatusMap[doc.candidateDocumentId]?.status;
-  return !status || status === "PENDING";
-});
+    // -----------------------------------------
+    // Helper Conditions
+    // -----------------------------------------
+    const allVerified = areAllDocumentsVerified();   // returns true/false
+    const anyRejected = hasAnyRejectedDocument();    // returns true/false
+    const hasPendingDocument = documentRows.some(doc => {
+      const status = docStatusMap[doc.candidateDocumentId]?.status;
+      return !status || status === "PENDING";
+    });
 
 
-  // -----------------------------------------
-  // 1️⃣ Decision not selected
-  // -----------------------------------------
-  
+    // -----------------------------------------
+    // 1️⃣ Decision not selected
+    // -----------------------------------------
+
 
 
     if (hasPendingDocument) {
-    toast.warning(
-      "All documents must be verified before submission."
-    );
-    return;
-  }
-
-  if (!zonalDecision) {
-    toast.error("Please select decision");
-    return;
-  }
-
-  // -----------------------------------------
-  // 2️⃣ All documents VERIFIED but decision = NO
-  // -----------------------------------------
-  if (zonalDecision === "NO" && allVerified) {
-    toast.warning(
-      "All documents are verified. Please select other decision instead."
-    );
-    return;
-  }
-
-  // -----------------------------------------
-  // 3️⃣ Decision = YES but any document REJECTED
-  // -----------------------------------------
-  if (zonalDecision === "YES" && anyRejected) {
-    toast.error(
-      "Cannot approve. One or more documents are rejected."
-    );
-    return;
-  }
-
-  // -----------------------------------------
-  // 4️⃣ Decision = PROVISIONAL but all VERIFIED
-  // -----------------------------------------
-  if (zonalDecision === "PROVISIONALLY_APPROVED" && allVerified) {
-    toast.warning(
-      "All documents are verified. Please select other decision instead."
-    );
-    return;
-  }
-
-  // -----------------------------------------
-  // 5️⃣ PROVISIONAL requires future date
-  // -----------------------------------------
-  if (zonalDecision === "PROVISIONALLY_APPROVED") {
-
-    if (!screeningForm.zonalSubmitDate) {
-      setErrors(prev => ({
-        ...prev,
-        zonalSubmitDate: "This field is required"
-      }));
-      toast.error("Please select submit before date");
+      toast.warning(
+        "All documents must be verified before submission."
+      );
       return;
     }
 
-    const selected = new Date(screeningForm.zonalSubmitDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (selected <= today) {
-      setErrors(prev => ({
-        ...prev,
-        zonalSubmitDate: "Must be future date"
-      }));
-      toast.error("Submit date must be a future date");
+    if (!zonalDecision) {
+      toast.error("Please select decision");
       return;
     }
-  }
-
-  // -----------------------------------------
-  // 6️⃣ Show Loading Toast
-  // -----------------------------------------
-  const toastId = toast.loading("Submitting zonal verification...");
-
-  try {
-
-    const payload = {
-      candidateId,
-      applicationId,
-      interviewScheduleId,
-      zonalVerificationStatus: mapDecisionToStatus(zonalDecision),
-      zonalSubmitBeforeDate: screeningForm.zonalSubmitDate || null,
-      zonalHrComments: screeningRemarks || ""
-    };
-
-    await jobPositionApiService.submitOverallZonalVerification(payload);
 
     // -----------------------------------------
-    // 7️⃣ Success Toast
+    // 2️⃣ All documents VERIFIED but decision = NO
     // -----------------------------------------
-    toast.update(toastId, {
-      render: "Zonal verification submitted successfully",
-      type: "success",
-      isLoading: false,
-      autoClose: 2000,
-    });
+    if (zonalDecision === "NO" && allVerified) {
+      toast.warning(
+        "All documents are verified. Please select other decision instead."
+      );
+      return;
+    }
 
-    sessionStorage.setItem("fromZonalSubmit", "true");
+    // -----------------------------------------
+    // 3️⃣ Decision = YES but any document REJECTED
+    // -----------------------------------------
+    if (zonalDecision === "YES" && anyRejected) {
+      toast.error(
+        "Cannot approve. One or more documents are rejected."
+      );
+      return;
+    }
 
-    navigate("/candidate-verification", {
-      state: {
-        requisition: location.state?.requisition,
-        position: location.state?.position,
-        preloadedCandidates: location.state?.candidates || [],
-        selectedDate
+    // -----------------------------------------
+    // 4️⃣ Decision = PROVISIONAL but all VERIFIED
+    // -----------------------------------------
+    if (zonalDecision === "PROVISIONALLY_APPROVED" && allVerified) {
+      toast.warning(
+        "All documents are verified. Please select other decision instead."
+      );
+      return;
+    }
+
+    // -----------------------------------------
+    // 5️⃣ PROVISIONAL requires future date
+    // -----------------------------------------
+    if (zonalDecision === "PROVISIONALLY_APPROVED") {
+
+      if (!screeningForm.zonalSubmitDate) {
+        setErrors(prev => ({
+          ...prev,
+          zonalSubmitDate: "This field is required"
+        }));
+        toast.error("Please select submit before date");
+        return;
       }
-    });
 
-  } catch (err) {
+      const selected = new Date(screeningForm.zonalSubmitDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selected <= today) {
+        setErrors(prev => ({
+          ...prev,
+          zonalSubmitDate: "Must be future date"
+        }));
+        toast.error("Submit date must be a future date");
+        return;
+      }
+    }
 
     // -----------------------------------------
-    // 8️⃣ Error Toast
+    // 6️⃣ Show Loading Toast
     // -----------------------------------------
-    toast.update(toastId, {
-      render: "Zonal submit failed. Please try again.",
-      type: "error",
-      isLoading: false,
-      autoClose: 3000,
-    });
+    const toastId = toast.loading("Submitting zonal verification...");
 
-    console.error(err);
-  }
-};
+    try {
+
+      const payload = {
+        candidateId,
+        applicationId,
+        interviewScheduleId,
+        zonalVerificationStatus: mapDecisionToStatus(zonalDecision),
+        zonalSubmitBeforeDate: screeningForm.zonalSubmitDate || null,
+        zonalHrComments: screeningRemarks || ""
+      };
+
+      await jobPositionApiService.submitOverallZonalVerification(payload);
+
+      // -----------------------------------------
+      // 7️⃣ Success Toast
+      // -----------------------------------------
+      toast.update(toastId, {
+        render: "Zonal verification submitted successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+
+      sessionStorage.setItem("fromZonalSubmit", "true");
+
+      navigate("/candidate-verification", {
+        state: {
+          requisition: location.state?.requisition,
+          position: location.state?.position,
+          preloadedCandidates: location.state?.candidates || [],
+          selectedDate
+        }
+      });
+
+    } catch (err) {
+
+      // -----------------------------------------
+      // 8️⃣ Error Toast
+      // -----------------------------------------
+      toast.update(toastId, {
+        render: "Zonal submit failed. Please try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      console.error(err);
+    }
+  };
 
 
 
@@ -588,7 +588,7 @@ const hasPendingDocument = documentRows.some(doc => {
           applicationId,
           zonalHrDocStatus: "VERIFIED",
           // zonalHrDocComments: comment || ""
-           zonalHrDocComments: ""
+          zonalHrDocComments: ""
         });
 
       } else {
@@ -898,21 +898,21 @@ const hasPendingDocument = documentRows.some(doc => {
     }
   };
 
-useEffect(() => {
-  if (!disableShortlistedSection) return;
-  if (screeningForm.isScreeningCompleted) return; // 🔒 preserve backend value
+  useEffect(() => {
+    if (!disableShortlistedSection) return;
+    if (screeningForm.isScreeningCompleted) return; // 🔒 preserve backend value
 
-  setScreeningForm(prev => ({
-    ...prev,
-    submitBeforeDate: "",
-  }));
+    setScreeningForm(prev => ({
+      ...prev,
+      submitBeforeDate: "",
+    }));
 
-  setErrors(prev => ({
-    ...prev,
-    submitBeforeDate: undefined,
-  }));
+    setErrors(prev => ({
+      ...prev,
+      submitBeforeDate: undefined,
+    }));
 
-}, [disableShortlistedSection, screeningForm.isScreeningCompleted]);
+  }, [disableShortlistedSection, screeningForm.isScreeningCompleted]);
 
   useEffect(() => {
     const derived = deriveShortlistStatus();
@@ -986,24 +986,24 @@ useEffect(() => {
 
 
 
-useEffect(() => {
-  if (zonalInitRef.current) {
-    zonalInitRef.current = false;
-    return;
-  }
+  useEffect(() => {
+    if (zonalInitRef.current) {
+      zonalInitRef.current = false;
+      return;
+    }
 
-  if (zonalDecision !== "PROVISIONALLY_APPROVED") {
-    setScreeningForm(prev => ({
-      ...prev,
-      zonalSubmitDate: ""
-    }));
+    if (zonalDecision !== "PROVISIONALLY_APPROVED") {
+      setScreeningForm(prev => ({
+        ...prev,
+        zonalSubmitDate: ""
+      }));
 
-    setErrors(prev => ({
-      ...prev,
-      zonalSubmitDate: undefined
-    }));
-  }
-}, [zonalDecision]);
+      setErrors(prev => ({
+        ...prev,
+        zonalSubmitDate: undefined
+      }));
+    }
+  }, [zonalDecision]);
 
 
 
@@ -1135,7 +1135,14 @@ useEffect(() => {
                   </tr>
                   <tr>
                     <td className="fw-med">{t("twin_sibling")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.isTwin}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.isTwin === "Yes"
+                        ? `Yes (${data.personalDetails.twinName})`
+                        : "No"}
+                    </td>
+
+                    {/* <td className="fw-med">{t("twin_sibling")}</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.isTwin}</td> */}
                     {/* <td className="fw-med">Details</td>
                       <td className="fw-reg" colSpan={2}>{previewData.personalDetails.isTwin === "YES"
                         ? `${previewData.personalDetails.twinName} (${previewData.personalDetails.twinGender_name})`
@@ -1401,9 +1408,9 @@ useEffect(() => {
                                   onClick={() => {
                                     if (isInterviewView) return;
                                     console.log("VIEW CLICKED", left);
-                                  setSelectedDoc({
-  candidateDocumentId: left.candidateDocumentId,
-  status: leftStatus,   //  add this
+                                    setSelectedDoc({
+                                      candidateDocumentId: left.candidateDocumentId,
+                                      status: leftStatus,   //  add this
 
                                       candidateId: previewData.candidateId,
                                       applicationId: previewData.applicationId,
@@ -1782,15 +1789,15 @@ useEffect(() => {
             <div className="submit-date-group d-flex flex-column">
               <label className="submit-label">{t("submit_before")}</label>
 
-<input
-  type="date"
-  className={`criteria-date ${errors.zonalSubmitDate ? "input-error" : ""}`}
-  min={minFutureDate}
-  value={screeningForm.zonalSubmitDate}
-  disabled={
-    !allDocsVerified ||
-    zonalDecision !== "PROVISIONALLY_APPROVED"
-  }
+              <input
+                type="date"
+                className={`criteria-date ${errors.zonalSubmitDate ? "input-error" : ""}`}
+                min={minFutureDate}
+                value={screeningForm.zonalSubmitDate}
+                disabled={
+                  !allDocsVerified ||
+                  zonalDecision !== "PROVISIONALLY_APPROVED"
+                }
 
 
                 onChange={(e) => {
@@ -1821,19 +1828,19 @@ useEffect(() => {
                 className="remarks-box"
                 placeholder={t("enter_comments")}
                 rows={5}
-               disabled={docStatusLoading}
+                disabled={docStatusLoading}
                 value={screeningRemarks}
                 onChange={(e) => setScreeningRemarks(e.target.value)}
               />
 
 
-          <button
-  className="btn-submit-orange ms-3"
-  disabled={docStatusLoading}
-  onClick={handleZonalSubmit}
->
-  {t("submit")}
-</button>
+              <button
+                className="btn-submit-orange ms-3"
+                disabled={docStatusLoading}
+                onClick={handleZonalSubmit}
+              >
+                {t("submit")}
+              </button>
 
 
             </div>

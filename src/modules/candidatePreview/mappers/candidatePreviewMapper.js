@@ -59,7 +59,10 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
   const profile = apiData?.basicDetails?.candidateProfile || {};
   const address = apiData?.addressDetails || {};
   // const locationprefApiData = apiData?.locationPreference
-const locationprefApiData = apiData?.locationPreference || {};
+  const locationprefApiData = apiData?.locationPreference || {};
+  const expectedCtcFormatted = safeCurrency(
+    locationprefApiData?.expectedCtc
+  );
 
 
   /* ================= ADDRESS NAME RESOLVE ================= */
@@ -155,7 +158,7 @@ const locationprefApiData = apiData?.locationPreference || {};
   return {
     /* ================= PERSONAL ================= */
     personalDetails: {
-      fullName: profile.fullNameAadhar || "-",
+      fullName: profile.firstName + " " + profile.middleName + " " + profile.lastName || "-",
       mobile: profile.contactNo || "-",
       email: profile.email || "-",
       motherName: profile.motherName || "-",
@@ -189,6 +192,9 @@ const locationprefApiData = apiData?.locationPreference || {};
 
       socialMediaProfileLink: profile.socialMediaProfileLink || "-",
       cibilScore: profile.cibilScore || "-",
+      expectedCtc: expectedCtcFormatted,
+      isTwin: profile.isTwin ? "Yes" : "No",
+      twinName: profile.twinName || "-",
 
       statePreference1: statePreference1,
       statePreference2: statePreference2,
@@ -244,19 +250,23 @@ const locationprefApiData = apiData?.locationPreference || {};
     })),
 
     experienceSummary: {
-      currentCtc: expSafeCurrency(
-        experiences?.[0]?.workExperience?.currentCtc
-      )
-    },
-
+  currentCtc: safeCurrency(
+    experiences?.[0]?.workExperience?.currentCtc
+  )
+},
     /* ================= DOCUMENTS ================= */
     documents: {
       allDocs: groupDocs(() => true),
     }
   };
 };
-const expSafeCurrency = (value) =>
-  value ? `₹${Number(value).toLocaleString()}` : "-";
+
+
+const safeCurrency = (value) =>
+  value && Number(value) > 0
+    ? `₹${Number(value).toLocaleString("en-IN")}`
+    : "-";
+
 
 // src/modules/candidatePreview/mappers/candidatePreviewMapper.js
 
@@ -339,9 +349,9 @@ export const mapJobPositionToRequisitionStrip = (
 
 
 
-      /*  ADD THESE */
-  contract_years: apiData.contractYears ?? 0,
-  mandatory_experience_months: apiData.mandatoryExperienceMonths ?? 0,
+    /*  ADD THESE */
+    contract_years: apiData.contractYears ?? 0,
+    mandatory_experience_months: apiData.mandatoryExperienceMonths ?? 0,
 
     registration_start_date: formatToIST(apiData.createdDate),
     registration_end_date: formatToIST(apiData.modifiedDate),
