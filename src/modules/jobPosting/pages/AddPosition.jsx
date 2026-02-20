@@ -510,6 +510,9 @@ const AddPosition = () => {
             setErrors(validationErrors);
             return;
         }
+        if (!errors.vacancies && Number(formData.vacancies) <= 0) {
+  errors.vacancies = "validation:vacancies_must_be_greater_than_zero";
+}
 
         const payload = {
             formData,

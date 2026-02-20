@@ -122,7 +122,7 @@ export const validateAddPosition = ({
     errors.mandatoryEducation = "validation:required";
   }
 
- 
+
   // ---------- AGE BUSINESS RULES (BANK ELIGIBILITY) ----------
 
   const minAge = Number(formData.minAge);
@@ -165,15 +165,15 @@ export const validateAddPosition = ({
   };
 
 
-validateExperience(formData.mandatoryExperience, "mandatoryExperience");
+  validateExperience(formData.mandatoryExperience, "mandatoryExperience");
 
-if (
-  formData.preferredExperience.years ||
-  formData.preferredExperience.months ||
-  formData.preferredExperience.description?.trim()
-) {
-  validateExperience(formData.preferredExperience, "preferredExperience");
-}
+  if (
+    formData.preferredExperience.years ||
+    formData.preferredExperience.months ||
+    formData.preferredExperience.description?.trim()
+  ) {
+    validateExperience(formData.preferredExperience, "preferredExperience");
+  }
   // validateExperience(formData.preferredExperience, "preferredExperience");
 
   // ---------- RESPONSIBILITIES ----------
@@ -255,8 +255,10 @@ export const validateStateDistribution = ({
     errors.state = "validation:required";
   }
 
-  if (!currentState.vacancies) {
+  if (currentState.vacancies === "" || currentState.vacancies === null) {
     errors.stateVacancies = "validation:required";
+  } else if (Number(currentState.vacancies) <= 0) {
+    errors.stateVacancies = "validation:vacancies_must_be_greater_than_zero";
   }
 
   if (!currentState.language) {

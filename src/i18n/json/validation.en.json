@@ -63,5 +63,6 @@
   "no_positions_for_requisition": "Submission blocked. No positions found for requisition(s): {{labels}}",
   "file_invalid_type": "Only PDF, DOC, and DOCX files are allowed",
   "file_too_large": "File size must not exceed {{size}} MB",
-  "degree_required": "At least one degree is required"
+  "degree_required": "At least one degree is required",
+  "vacancies_must_be_greater_than_zero": "Vacancies must be greater than zero."
 }
