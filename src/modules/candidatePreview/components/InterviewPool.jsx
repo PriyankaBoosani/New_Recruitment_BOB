@@ -27,6 +27,8 @@ export default function InterviewPool({
     DISQUALIFIED: "bg-danger",
     PROVISIONALLY_APPROVED: "bg-secondary",
     PENDING: "bg-warning",
+    REJECTED: "bg-danger",
+   
 
   };
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });

@@ -32,6 +32,7 @@ export default function CandidateScreening({ selectedJob }) {
     DISCREPANCY: "Discrepancy",
     PENDING: "Pending",
     INTERVIEW_SCHEDULED: "Interview Scheduled",
+    REJECTED: "Rejected",
   };
   const CANDIDATE_POOL_STATUSES = [
     "APPLIED",
