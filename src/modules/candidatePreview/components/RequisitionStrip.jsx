@@ -28,6 +28,29 @@ const RequisitionStrip = ({
 
   const [masterData, setMasterData] = useState(null);   //  INTERNAL
 
+const renderBullets = (text) => {
+  if (!text) return <li>-</li>;
+
+  const lines = text
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(line => line.length > 0);
+
+  return lines.map((line, idx) => {
+    const cleaned = line.replace(/\.+$/, "");
+
+    return (
+      <li key={idx}>
+        {cleaned + "."}
+      </li>
+    );
+  });
+};
+
+
+
+
+
 
   const formatDMY = (dateStr) => {
     if (!dateStr) return "-";
@@ -313,22 +336,32 @@ const RequisitionStrip = ({
               </div>
 
               <div className="info-card">
-                <div className="section-title">Mandatory Experience:</div>
-                <ul className="section-list">
-                  <li>{job?.mandatory_experience || "-"}</li>
-                </ul>
+             
+               <div className="section-title">Mandatory Experience:</div>
+<ul className="section-lists">
+  {renderBullets(job?.mandatory_experience)}
+</ul>
 
-                <div className="section-title mt-2">Preferred Experience:</div>
-                <ul className="section-list">
-                  <li>{job?.preferred_experience || "-"}</li>
-                </ul>
+
+
+
+            <div className="section-title mt-2">Preferred Experience:</div>
+<ul className="section-lists">
+  {renderBullets(job?.preferred_experience)}
+</ul>
+
+
+
               </div>
 
               <div className="info-card">
                 <div className="section-title">Key Responsibilities:</div>
-                <ul className="section-list">
-                  <li>{job?.roles_responsibilities || "-"}</li>
-                </ul>
+          <ul className="section-lists">
+  {renderBullets(job?.roles_responsibilities)}
+</ul>
+
+
+
               </div>
 
               {job?.positionStateDistributions?.length > 0 && (
