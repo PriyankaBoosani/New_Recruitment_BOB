@@ -511,8 +511,8 @@ const AddPosition = () => {
             return;
         }
         if (!errors.vacancies && Number(formData.vacancies) <= 0) {
-  errors.vacancies = "validation:vacancies_must_be_greater_than_zero";
-}
+            errors.vacancies = "validation:vacancies_must_be_greater_than_zero";
+        }
 
         const payload = {
             formData,
@@ -596,7 +596,19 @@ const AddPosition = () => {
                             existingIndentPath={existingIndentPath} existingIndentName={existingIndentName} setIndentFile={setIndentFile} setErrors={setErrors}
                             approvedBy={approvedBy} setApprovedBy={setApprovedBy} approvedOn={approvedOn} setApprovedOn={setApprovedOn} validateApprovedOn={validateApprovedOn}
                             masterData={masterData} onPositionSelect={onPositionSelect} educationData={educationData}
-                            onEducationClick={(m) => { if (isViewMode) return; setEduMode(m); setShowEduModal(true); }} YEAR_OPTIONS={YEAR_OPTIONS} MONTH_OPTIONS={MONTH_OPTIONS} ALLOWED_EXTENSIONS={ALLOWED_EXTENSIONS} MAX_FILE_SIZE_MB={MAX_FILE_SIZE_MB}
+                            onEducationClick={(m) => {
+                                if (isViewMode) return;
+
+                                setEduMode(m);
+                                setShowEduModal(true);
+
+                                if (m === "preferred") {
+                                    setErrors(prev => {
+                                        const { mandatoryEducation, ...rest } = prev;
+                                        return rest;
+                                    });
+                                }
+                            }} YEAR_OPTIONS={YEAR_OPTIONS} MONTH_OPTIONS={MONTH_OPTIONS} ALLOWED_EXTENSIONS={ALLOWED_EXTENSIONS} MAX_FILE_SIZE_MB={MAX_FILE_SIZE_MB}
                         />
                         <ReservationSection
                             isViewMode={isViewMode} formData={formData} errors={errors} setErrors={setErrors} reservationCategories={reservationCategories}

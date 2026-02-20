@@ -220,6 +220,11 @@ export default function EducationModal({
                         </Col>
                     </Row>
                 ))}
+                {errors.rows?._error && (
+                    <div className="mt-2">
+                        <ErrorMessage>{t(errors.rows._error)}</ErrorMessage>
+                    </div>
+                )}
 
                 <Button variant="none" onClick={addRow} className="edu-btn">
                     {t("addPosition:add_degree")}
@@ -286,7 +291,6 @@ export default function EducationModal({
                         const validationErrors = validateEducationModal({
                             rows,
                             mode,
-                            certificationIds: certIds.filter(Boolean),
                         });
 
                         if (Object.keys(validationErrors).length > 0) {
@@ -298,13 +302,13 @@ export default function EducationModal({
                             r => r.educationTypeId && r.educationQualificationsId
                         );
 
+                        // 🚨 Only enforce required rule in mandatory mode
                         if (mode === "mandatory" && filledRows.length === 0) {
                             setErrors({
                                 rows: { _error: "validation:degree_required" }
                             });
                             return;
                         }
-
 
                         setErrors({});
 
