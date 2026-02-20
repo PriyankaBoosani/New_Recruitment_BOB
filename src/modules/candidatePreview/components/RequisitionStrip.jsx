@@ -231,7 +231,8 @@ const renderBullets = (text) => {
         <Modal.Header closeButton className="knowmore-header">
           <div className="w-100">
 
-            <div className="d-flex flex-column flex-md-row gap-2 flex-wrap">
+           <div className="d-flex align-items-center gap-3 header-row">
+
               <span className="req-code">
                 {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
               </span>
