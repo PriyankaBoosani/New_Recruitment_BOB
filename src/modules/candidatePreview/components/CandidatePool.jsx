@@ -230,6 +230,7 @@ export default function CandidatePool({
                               positionName: position.positionName,
                             }
                           : null,
+                          activeTab: "CANDIDATE_POOL",
                       },
                     })
                   }
@@ -341,6 +342,7 @@ export default function CandidatePool({
                             }
                           : null,
                        },
+                       
 										})
 									}
 								/>

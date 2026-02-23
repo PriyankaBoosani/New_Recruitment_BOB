@@ -181,6 +181,7 @@ export default function InterviewPool({
                           positionId: selectedPositionId,
                           requisitionId: selectedRequisitionId,
                           fromInterviewPool: true,
+                          activeTab: "INTERVIEW_POOL",
                           requisition: requisition
                             ? {
                               requisition_code: requisition.requisition_code,
@@ -196,6 +197,7 @@ export default function InterviewPool({
                             }
                             : null,
                         },
+
                       })
                     }
                   />

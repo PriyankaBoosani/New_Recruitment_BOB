@@ -21,6 +21,7 @@ const CandidatePreviewPage = ({ onHide }) => {
 
   //  DEFINE STATE FIRST
   const state = location.state || {};
+  const activeTab = state?.activeTab;
 
   const user = useSelector((state) => state.user.user);
 
@@ -192,6 +193,7 @@ const CandidatePreviewPage = ({ onHide }) => {
           positionId={positionId}
           requisitionId={requisitionId}
           candidateScreening={true}
+          activeTab={activeTab}
         />
       )}
       {isZonalHr && (

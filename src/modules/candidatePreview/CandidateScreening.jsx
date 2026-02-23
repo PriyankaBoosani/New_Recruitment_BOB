@@ -51,10 +51,13 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [interviewPage, setInterviewPage] = useState(0);
   const [interviewPageSize, setInterviewPageSize] = useState(10);
+  const location = useLocation();
 
+  const navActiveTab = location.state?.activeTab;
 
-  const [activeTab, setActiveTab] = useState("CANDIDATE_POOL");
-  const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [activeTab, setActiveTab] = useState(
+    navActiveTab || "CANDIDATE_POOL"
+  ); const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
   const [selectedInterviewCandidateIds, setSelectedInterviewCandidateIds] = useState([]);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
@@ -511,7 +514,6 @@ export default function CandidateScreening({ selectedJob }) {
 
 
 
-  const location = useLocation();
   const navRequisitionId = location.state?.requisitionId || null;
   const navPositionId = location.state?.positionId || null;
 

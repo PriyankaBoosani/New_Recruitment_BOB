@@ -161,6 +161,13 @@
   font-size: 0.625em;
 
 }
+.job-postings-page .bg-secondary {
+  color: #6C757D;
+  border: 1px solid #6C757D;
+  background: #E9ECEF !important;
+  font-weight: 500;
+  font-size: 0.625em;
+}
 
 .job-postings-page .bg-danger {
   color: #DC3545;
@@ -579,7 +586,7 @@
   }
 }
 .status-select {
-  min-width: 120px;
+  text-overflow: ellipsis;
   white-space: normal;
 }
 .filters-row {

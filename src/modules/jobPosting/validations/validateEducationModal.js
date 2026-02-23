@@ -4,36 +4,34 @@ export const validateEducationModal = ({ rows, mode }) => {
   rows.forEach((row, i) => {
     const rowErrors = {};
 
-    const isPartiallyFilled =
-      row.educationTypeId || row.educationQualificationsId;
+    const hasType = !!row.educationTypeId;
+    const hasDegree = !!row.educationQualificationsId;
+    const isPartiallyFilled = hasType || hasDegree;
 
-    // If user started filling row → validate normally
-    if (isPartiallyFilled) {
-      if (!row.educationTypeId) {
+    // 🔹 Mandatory mode → always validate
+    if (mode === "mandatory") {
+      if (!hasType) {
         rowErrors.educationTypeId = "validation:required";
       }
-
-      if (!row.educationQualificationsId) {
+      if (!hasDegree) {
         rowErrors.educationQualificationsId = "validation:required";
       }
     }
 
-    if (Object.keys(rowErrors).length) {
+    // 🔹 Preferred mode → validate only if user started filling
+    if (mode === "preferred" && isPartiallyFilled) {
+      if (!hasType) {
+        rowErrors.educationTypeId = "validation:required";
+      }
+      if (!hasDegree) {
+        rowErrors.educationQualificationsId = "validation:required";
+      }
+    }
+
+    if (Object.keys(rowErrors).length > 0) {
       errors.rows[i] = rowErrors;
     }
   });
-
-  const fullyFilledRows = rows.filter(
-    r => r.educationTypeId && r.educationQualificationsId
-  );
-
-  // 🚨 If mandatory and nothing selected at all
-  if (mode === "mandatory" && fullyFilledRows.length === 0) {
-    errors.rows[0] = {
-      educationTypeId: "validation:required",
-      educationQualificationsId: "validation:required"
-    };
-  }
 
   if (!errors.rows.length) return {};
   return errors;
