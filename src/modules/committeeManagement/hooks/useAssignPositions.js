@@ -230,7 +230,6 @@ useEffect(() => {
       setAvailablePanels(available);
 
     } catch (err) {
-      alert(err);
       console.error("Load Position Data Error:", err);
       toast.error("Failed to load panels");
     } finally {
