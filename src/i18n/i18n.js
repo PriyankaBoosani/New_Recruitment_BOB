@@ -58,8 +58,8 @@ import previewHi from "../i18n/previewJson/preview.hi.json";
 import interviewScheduleEn from "../i18n/interviewScheduleJson/interviewSchedule.en.json";
 import interviewScheduleHi from "../i18n/interviewScheduleJson/interviewSchedule.hi.json";
 
-import committeeInterviewPanelEn from "../i18n/committeeManagementJson/committeeInterviewPanel.en.json";
-import committeeInterviewPanelHi from "../i18n/committeeManagementJson/committeeinterviewPanel.hi.json";
+// import committeeInterviewPanelEn from "../i18n/committeeManagementJson/committeeInterviewPanel.en.json";
+// import committeeInterviewPanelHi from "../i18n/committeeManagementJson/committeeinterviewPanel.hi.json";
 
 
 import interviewDayEn from "../i18n/interviewDayJson/interviewDay.en.json";
@@ -94,7 +94,7 @@ i18n
         jobPostingsList: jobPostingsListEn,
         preview: previewEn,
         interviewSchedule: interviewScheduleEn,
-        interviewPanelCommittee: committeeInterviewPanelEn,
+        // interviewPanelCommittee: committeeInterviewPanelEn,
          interviewDay: interviewDayEn 
       },
       hi: {
@@ -118,7 +118,7 @@ i18n
         jobPostingsList: jobPostingsListHi,
         preview: previewHi,
          interviewSchedule: interviewScheduleHi,
-         interviewPanelCommittee: committeeInterviewPanelHi,
+        //  interviewPanelCommittee: committeeInterviewPanelHi,
          interviewDay: interviewDayHi
       }
     },
