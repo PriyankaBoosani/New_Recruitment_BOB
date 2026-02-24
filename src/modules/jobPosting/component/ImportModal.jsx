@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Button, Alert, Modal } from "react-bootstrap";
 import { Upload as UploadIcon } from "react-bootstrap-icons";
 import { useTranslation } from "react-i18next";
@@ -20,7 +20,7 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [errors, setErrors] = useState([]);
-
+  const fileInputRef = useRef(null);
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const isExcel = file && (
@@ -36,9 +36,13 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
     }
   };
   const resetModalState = () => {
-    setSelectedFile(null);
-    setErrors([]);
-  };
+  setSelectedFile(null);
+  setErrors([]);
+
+  if (fileInputRef.current) {
+    fileInputRef.current.value = "";
+  }
+};
   const handleUpload = async () => {
     if (!selectedFile) {
       setErrors([t("importModal:no_file_selected")]);
@@ -120,6 +124,7 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
             </Alert>
           )}
           <input
+            ref={fileInputRef}
             id="upload-xlsx"
             type="file"
             accept=".xlsx,.xls"
@@ -151,7 +156,7 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
                   variant="outline-danger"
                   size="sm"
                   className="mt-2"
-                  onClick={() => setSelectedFile(null)}
+                 onClick={resetModalState}
                   disabled={loading}
                 >
                   {t("importModal:remove")}
