@@ -1410,7 +1410,7 @@ const ApplicationForm = ({
                               </span>
                             )}
                           </td>
-                          <td className="action-cell">
+                          <td className="action-cell" style={{ borderRight: '1px solid #dee2e6', }}>
                             {left && (
                               <>
                                 <img
@@ -1420,7 +1420,7 @@ const ApplicationForm = ({
                                     cursor: isInterviewView ? "not-allowed" : "pointer",
                                     opacity: isInterviewView ? 0.4 : 1,
                                     pointerEvents: isInterviewView ? "none" : "auto",
-                                    marginLeft: '12px'
+                                    marginLeft: '12px',
                                   }}
                                   onClick={() => {
                                     if (isInterviewView) return;
