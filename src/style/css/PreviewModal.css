@@ -780,13 +780,16 @@ select.form-control {
   display: flex;
   align-items: center;
   gap: 18px;
-  white-space: nowrap;       /* force single line */
+  /* white-space: nowrap;        */
 }
 
 .modal-req-title {
   color: #f57c00;            /* BOB orange */
   font-weight: 600;
   font-size: 15px;
+  word-break: break-word;
+  width: 50%;
+ 
 }
 
 .modal-date {
@@ -801,6 +804,9 @@ select.form-control {
   font-weight: 500;
 }
 
+.knowmore-header .btn-close{
+ margin-top: -5%;
+}
 
 
 
