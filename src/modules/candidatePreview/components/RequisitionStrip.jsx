@@ -9,6 +9,7 @@ import LocationWiseVacancyTable from "./LocationWiseVacancyTable";
 import candidateWorkflowServices from "../services/CandidateWorkflowServices";
 import masterApiService from "../../master/services/masterApiService";   // ADDED
 import { mapJobPositionToRequisitionStrip } from "../mappers/candidatePreviewMapper";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { format } from "date-fns";
 
 
@@ -160,9 +161,22 @@ const renderBullets = (text) => {
 
           <div className="d-flex flex-column flex-md-row flex-wrap align-items-center gap-2">
 
-            <span className="req-code me-3" title={requisition?.requisition_title || requisition?.requisition_title || ""}>
-              {requisition?.requisition_code || requisition?.requisitionCode || ""} - {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
-            </span>
+      <OverlayTrigger
+  placement="bottom"
+  overlay={
+    <Tooltip>
+      {requisition?.requisitionCode || requisition?.requisition_code || ""} -{" "}
+      {requisition?.requisitionTitle || requisition?.requisition_title || "-"}
+    </Tooltip>
+  }
+>
+  <span className="req-code me-3 cursor-pointer">
+    {requisition?.requisitionCode || requisition?.requisition_code || ""} -{" "}
+    {requisition?.requisitionTitle || requisition?.requisition_title || "-"}
+  </span>
+</OverlayTrigger>
+
+
 
             <span className="date-text">
               <i className="bi bi-calendar3 me-1"></i>
@@ -291,18 +305,18 @@ const renderBullets = (text) => {
 
 
     {/* Experience */}
-    <div className="col-12 col-md-4">
-      <span className="stat-label">Experience:</span>{" "}
-      <span className="stat-value">
-        {job?.mandatory_experience_months ?? 0} Months
-      </span>
-    </div>
+ <div className="col-12 col-md-4">
+  <span className="stat-label">Experience:</span>{" "}
+  <span className="stat-value">
+    {job?.mandatory_experience_years ?? 0} years
+  </span>
+</div>
 
     {/* Eligibility */}
     <div className="col-12 col-md-4">
       <span className="stat-label">Eligibility Age:</span>{" "}
       <span className="stat-value">
-        {job?.eligibility_age_min} - {job?.eligibility_age_max} yrs
+        {job?.eligibility_age_min} - {job?.eligibility_age_max} years
       </span>
     </div>
 

@@ -111,7 +111,7 @@ export default function InterviewerSchedule() {
 
   useEffect(() => {
     InterviewerService.getPanelPositions()
-      .then(res => {
+      .then(res => {  
         console.log("RAW POSITIONS API:", res.data);
         const mapped = mapPanelPositions(res.data || []);
         console.log("MAPPED PANEL POSITIONS:", mapped);
@@ -289,10 +289,24 @@ export default function InterviewerSchedule() {
 
   /* ================= ROW UPDATES ================= */
 
-  const toggleAbsent = id =>
-    setRows(prev => prev.map(r =>
-      r.id === id ? { ...r, absent: !r.absent } : r
-    ));
+ 
+
+
+const toggleAbsent = (id) =>
+  setRows(prev =>
+    prev.map(r => {
+      if (r.id !== id) return r;
+ 
+      const newAbsent = !r.absent;
+ 
+      return {
+        ...r,
+        absent: newAbsent,
+        score: newAbsent ? "" : r.score  // clear score when absent
+      };
+    })
+  );
+
 
   const updateComment = (id, val) =>
     setRows(prev => prev.map(r =>
@@ -435,61 +449,57 @@ export default function InterviewerSchedule() {
   // score mandatory
 
 
-  const handleSave = async () => {
-    try {
+const handleSave = async () => {
+  try {
 
-      const changedRows = rows.filter(isRowChanged);
+    const changedRows = rows.filter(isRowChanged);
 
-      if (!changedRows.length) {
-        toast.info(t("no_changes_to_save"));
-        return;
-      }
-
-      /* ================= VALIDATION ================= */
-
-      const invalidRows = changedRows.filter(r =>
-        !r.absent && (r.score === "" || r.score === null || r.score === undefined)
-      );
-
-      if (invalidRows.length > 0) {
-        toast.error(t("score_mandatory"));
-        return;
-      }
-
-      /* ================= BUILD PAYLOAD ================= */
-
-      const payloads = changedRows.map(r => {
-        const raw = r.raw;
-
-        return {
-          applicationId: raw.applicationId,
-          scheduledInterviewId: raw.interviewScheduleId,
-          candidateId: raw.candidateId,
-          panelId: raw.panelId,
-          panelScore: r.absent ? null : Number(r.score),
-          panelComments: r.comment || "",
-          interviewCenterId: raw.interviewCenterId,
-          isAbsent: !!r.absent
-        };
-      });
-
-      console.log("📦 BATCH SCORE PAYLOAD:", payloads);
-
-      /* ================= SINGLE API CALL ================= */
-
-      await InterviewerService.setCandidateScoreBatch(payloads);
-
-      toast.success(
-        t("saved_candidates", { count: payloads.length })
-      );
-
-      setOriginalRows(rows.map(r => ({ ...r })));
-
-    } catch (err) {
-      console.error("🔥 SAVE SCORE ERROR:", err);
-     toast.error(t("save_failed"));
+    if (!changedRows.length) {
+      toast.info(t("no_changes_to_save"));
+      return;
     }
-  };
+
+    /* ================= BUILD PAYLOAD ================= */
+
+    const payloads = changedRows.map(r => {
+      const raw = r.raw;
+
+      return {
+        applicationId: raw.applicationId,
+        scheduledInterviewId: raw.interviewScheduleId,
+        candidateId: raw.candidateId,
+        panelId: raw.panelId,
+
+        // ✅ SCORE NOT MANDATORY
+        panelScore:
+          r.absent
+            ? null
+            : (r.score === "" || r.score === null || r.score === undefined
+                ? null
+                : Number(r.score)),
+
+        panelComments: r.comment || "",
+        interviewCenterId: raw.interviewCenterId,
+        isAbsent: !!r.absent
+      };
+    });
+
+    console.log("📦 BATCH SCORE PAYLOAD:", payloads);
+
+    await InterviewerService.setCandidateScoreBatch(payloads);
+
+    toast.success(
+      t("saved_candidates", { count: payloads.length })
+    );
+
+    setOriginalRows(rows.map(r => ({ ...r })));
+
+  } catch (err) {
+    console.error("🔥 SAVE SCORE ERROR:", err);
+    toast.error(t("save_failed"));
+  }
+};
+
 
 
 

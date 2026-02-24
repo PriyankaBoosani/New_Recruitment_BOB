@@ -351,7 +351,10 @@ export const mapJobPositionToRequisitionStrip = (
 
     /*  ADD THESE */
     contract_years: apiData.contractYears ?? 0,
-    mandatory_experience_months: apiData.mandatoryExperienceMonths ?? 0,
+mandatory_experience_years:
+  apiData.mandatoryExperienceMonths
+    ? (apiData.mandatoryExperienceMonths / 12)
+    : 0,
 
     registration_start_date: formatToIST(apiData.createdDate),
     registration_end_date: formatToIST(apiData.modifiedDate),

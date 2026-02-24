@@ -112,22 +112,32 @@ const InterviewDayTable = ({
                 <td className="fs-14">{row.zone}</td>
 
 
-                <td className="text-center">
-                  <input
-                    type="checkbox"
-                    checked={row.absent}
-                    onChange={() => toggleAbsent(row.id)}
-                  />
-                </td>
+           <td className="text-center">
+  <input
+    type="checkbox"
+    checked={row.absent}
+   disabled={
+  row.isZonalAbsent ||
+  (row.score !== "" &&
+   row.score !== null &&
+   row.score !== undefined)
+}
+
+    onChange={() => toggleAbsent(row.id)}
+  />
+</td>
+
 
                 <td>
-                  <input
-                    className="form-control form-control-sm fs-14"
-                    value={row.comment || ""}
-                    onChange={(e) =>
-                      updateComment(row.id, e.target.value)
-                    }
-                  />
+                 <input
+  className="form-control form-control-sm fs-14"
+  value={row.comment || ""}
+  disabled={row.isZonalAbsent}
+  onChange={(e) =>
+    updateComment(row.id, e.target.value)
+  }
+/>
+
                 </td>
 
                 <td>
@@ -166,58 +176,72 @@ const InterviewDayTable = ({
 
 
 
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    className="form-control form-control-sm fs-14"
-                    value={row.score ?? ""}
-                    disabled={row.absent}
-                    maxLength={3}
-                    onChange={(e) => {
-                      let v = e.target.value;
-
-                      // allow empty
-                      if (v === "") {
-                        updateScore(row.id, "");
-                        return;
-                      }
-
-                      // keep only digits
-                      v = v.replace(/\D/g, "");
-
-                      // clamp 0–100
-                      const num = Math.min(100, Math.max(0, parseInt(v, 10)));
-
-                      updateScore(row.id, num);
-                    }}
-                    onPaste={(e) => {
-                      const text = e.clipboardData.getData("text");
-                      if (!/^\d+$/.test(text)) {
-                        e.preventDefault();
-                      }
-                    }}
-                  />
-
-
-
+              
+ 
+<input
+  type="text"
+  inputMode="numeric"
+  pattern="[0-9]*"
+  className="form-control form-control-sm fs-14"
+  value={row.score ?? ""}
+disabled={row.absent || row.isZonalAbsent}
+  maxLength={3}
+  onChange={(e) => {
+  let v = e.target.value;
+ 
+  // Allow empty
+  if (v === "") {
+    updateScore(row.id, "");
+    return;
+  }
+ 
+  // Keep digits only
+  v = v.replace(/\D/g, "");
+ 
+  if (v === "") {
+    updateScore(row.id, "");
+    return;
+  }
+ 
+  const num = parseInt(v, 10);
+ 
+  if (isNaN(num)) {
+    updateScore(row.id, "");
+    return;
+  }
+ 
+  updateScore(row.id, Math.min(100, Math.max(0, num)));
+}}
+  onPaste={(e) => {
+    const text = e.clipboardData.getData("text");
+    if (!/^\d+$/.test(text)) {
+      e.preventDefault();
+    }
+  }}
+/>
+ 
+ 
+ 
                 </td>
-
+ 
                 {/* ✅ ACTIONS */}
-                <td className="text-center">
+              <td className="text-center">
 
-                  <OverlayTrigger
-                    placement="bottom"
-                    overlay={<Tooltip>{t("view_profile")}</Tooltip>}
-                  >
-                    <span>
-                      <Person
-                        className="me-3 cursor-pointer"
-                        size={16}
-                        onClick={() => goToPreview(row)}
-                      />
-                    </span>
-                  </OverlayTrigger>
+  <OverlayTrigger
+    placement="bottom"
+    overlay={<Tooltip>View Profile</Tooltip>}
+  >
+    <span>
+      <Person
+        className="me-3 cursor-pointer"
+        size={16}
+        onClick={() => goToPreview(row)}
+      />
+    </span>
+  </OverlayTrigger>
+
+
+
 
                   <OverlayTrigger
                     placement="bottom"

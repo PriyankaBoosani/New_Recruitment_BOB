@@ -10,10 +10,17 @@
   padding: 0;
 }
 
+
 .input-error {
   border: 1px solid #dc3545 !important;
   box-shadow: 0 0 0 1px rgba(220, 53, 69, .15);
 }
+
+.input-error {
+  border: 1px solid #dc3545 !important;
+}
+
+
 
 .comment-block {
   display: flex;
@@ -1041,8 +1048,20 @@ select.form-control {
 .remarks-row {
   margin-top: 10px;
   display: flex;
-  align-items: flex-end;
   gap: 16px;
+  align-items: stretch;   /* 🔥 key fix */
+ 
+}
+.remarks-button {
+  display: flex;
+  align-items: flex-end;   /* 🔥 aligns button with textarea bottom */
+   padding-bottom: 22px;
+}
+
+.remarks-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .remarks-box {
@@ -1057,6 +1076,12 @@ select.form-control {
   resize: none;
 }
 
+
+.remarks-error-space {
+  min-height: 20px;  
+  margin-top: 4px;
+}
+
 .remarks-box::placeholder {
   color: #9aa3b2;
 }
@@ -1067,6 +1092,8 @@ select.form-control {
 }
 
 .btn-submit-orange {
+    height: 40px;
+  min-width: 110px;
   background: #f47c2c;
   border: none;
   padding: 10px 22px;

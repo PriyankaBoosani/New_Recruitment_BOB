@@ -213,30 +213,44 @@ const ApplicationForm = ({
     // -----------------------------------------
     // 5️⃣ PROVISIONAL requires future date
     // -----------------------------------------
-    if (zonalDecision === "PROVISIONALLY_APPROVED") {
+if (zonalDecision === "PROVISIONALLY_APPROVED") {
 
-      if (!screeningForm.zonalSubmitDate) {
-        setErrors(prev => ({
-          ...prev,
-          zonalSubmitDate: "This field is required"
-        }));
-        toast.error("Please select submit before date");
-        return;
-      }
+  let hasError = false;
 
-      const selected = new Date(screeningForm.zonalSubmitDate);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+  // 🔴 Comments mandatory
+  if (!screeningRemarks?.trim()) {
+    setErrors(prev => ({
+      ...prev,
+      zonalComments: "This field is required"
+    }));
+    hasError = true;
+  }
 
-      if (selected <= today) {
-        setErrors(prev => ({
-          ...prev,
-          zonalSubmitDate: "Must be future date"
-        }));
-        toast.error("Submit date must be a future date");
-        return;
-      }
+  // 🔴 Date mandatory
+  if (!screeningForm.zonalSubmitDate) {
+    setErrors(prev => ({
+      ...prev,
+      zonalSubmitDate: "This field is required"
+    }));
+    hasError = true;
+  } else {
+    const selected = new Date(screeningForm.zonalSubmitDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selected <= today) {
+      setErrors(prev => ({
+        ...prev,
+        zonalSubmitDate: "Must be future date"
+      }));
+      hasError = true;
     }
+  }
+
+  if (hasError) return;
+}
+
+
 
     // -----------------------------------------
     // 6️⃣ Show Loading Toast
@@ -1047,7 +1061,7 @@ const ApplicationForm = ({
                     </td>
 
                     {/* ✅ Make photo span the full height of the table */}
-                    <td
+                    {/* <td
                       rowSpan="3"
                       className="bob-photo-cell align-top text-center"
                       style={{ width: "20%", verticalAlign: "top" }}
@@ -1065,7 +1079,45 @@ const ApplicationForm = ({
                           className="img-fluid img2"
                         />
                       </div>
-                    </td>
+                    </td> */}
+
+
+
+                                          <td
+                        rowSpan="3"
+                        className="bob-photo-cell align-top text-center"
+                        style={{ width: "20%", verticalAlign: "top" }}
+                      >
+                        <div className="photo-signature-wrapper">
+ 
+                          {/* PHOTO BOX */}
+                          <div className="photo-box">
+                            {photo ? (
+                              <img
+                                src={photo}
+                                alt="Applicant Photo"
+                                className="photo-img"
+                              />
+                            ) : (
+                              <div className="no-image">No Photo</div>
+                            )}
+                          </div>
+ 
+                          {/* SIGNATURE BOX */}
+                          <div className="signature-box">
+                            {signature ? (
+                              <img
+                                src={signature}
+                                alt="Signature"
+                                className="signature-img"
+                              />
+                            ) : (
+                              <div className="no-image">No Signature</div>
+                            )}
+                          </div>
+ 
+                        </div>
+                      </td>
                   </tr>
 
                   <tr>
@@ -1274,10 +1326,10 @@ const ApplicationForm = ({
         </Accordion.Item>
 
         {/* === EDUCATION DETAILS === */}
-        <Accordion.Item eventKey="1">
+          <Accordion.Item eventKey="1" className="edu-accordion">
           <Accordion.Header>{t("education_details")}</Accordion.Header>
           <Accordion.Body>
-            <div className="edu-table-wrapper">
+            <div>
               <table className="edu-table">
                 <thead>
                   <tr>
@@ -1288,10 +1340,10 @@ const ApplicationForm = ({
                     <th>{t("specialization")}</th>
                     <th>{t("from_date")}</th>
                     <th>{t("to_date")}</th>
-                    <th>{t("percentage")}</th>
+                    <th>{t("percentage_cgpa")}</th>
                   </tr>
                 </thead>
-
+ 
                 <tbody>
                   {(data.education || []).map((edu, index) => (
                     <tr key={index}>
@@ -1302,9 +1354,10 @@ const ApplicationForm = ({
                       <td>{edu.specialization_name || "-"}</td>
                       <td>{edu.startDate || "-"}</td>
                       <td>{edu.endDate || "-"}</td>
-                      <td>{edu.percentage ? `${edu.percentage}%` : "-"}</td>
+                     <td>{edu.percentage || "-"}</td>
                     </tr>
                   ))}
+ 
 
                   {(!data.education || data.education.length === 0) && (
                     <tr>
@@ -1839,28 +1892,58 @@ const ApplicationForm = ({
 
 
 
-            {/* REMARKS */}
-            <div className="remarks-row">
-              <textarea
-                className="remarks-box"
-                placeholder={t("enter_comments")}
-                rows={5}
-                disabled={docStatusLoading}
-                value={screeningRemarks}
-                onChange={(e) => setScreeningRemarks(e.target.value)}
-              />
+
+{/* REMARKS */}
+
+<div className="remarks-row">
+
+  {/* LEFT SIDE */}
+  <div className="remarks-left">
+
+    <textarea
+      className={`remarks-box ${errors.zonalComments ? "input-error" : ""}`}
+      placeholder={t("enter_comments")}
+      rows={5}
+      disabled={docStatusLoading}
+      value={screeningRemarks}
+      onChange={(e) => {
+        setScreeningRemarks(e.target.value);
+        setErrors(prev => ({
+          ...prev,
+          zonalComments: undefined
+        }));
+      }}
+    />
+
+    {/* Reserved error space */}
+    <div className="remarks-error-space">
+      {errors.zonalComments && (
+        <small className="text-danger">
+          {errors.zonalComments}
+        </small>
+      )}
+    </div>
+
+  </div>
+
+  {/* RIGHT SIDE */}
+  <div className="remarks-button">
+    <button
+      className="btn-submit-orange"
+      disabled={docStatusLoading}
+      onClick={handleZonalSubmit}
+    >
+      {t("submit")}
+    </button>
+  </div>
+
+</div>
 
 
-              <button
-                className="btn-submit-orange ms-3"
-                disabled={docStatusLoading}
-                onClick={handleZonalSubmit}
-              >
-                {t("submit")}
-              </button>
 
 
-            </div>
+
+
 
           </Card>
         )}

@@ -77,6 +77,9 @@ const timeRange =
       absent: item.application?.isAbsent ?? false,
       score: item.panelScore ?? "",
       comment: item.panelComments ?? "",
+
+
+       isZonalAbsent: item.iszonal_absent ?? false,
  
       raw: {
         applicationId: item.application?.id,
