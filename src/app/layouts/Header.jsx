@@ -348,7 +348,7 @@ const Header = () => {
                   Committee Management
                 </Nav.Link>
               )}
-              {isRecruiter && (
+              {/* {isRecruiter && (
                 <Nav.Link
                   as={NavLink}
                   to="/schedule-interviews"
@@ -356,7 +356,7 @@ const Header = () => {
                 >
                   Schedule Interviews
                 </Nav.Link>
-              )}
+              )} */}
 
 
 

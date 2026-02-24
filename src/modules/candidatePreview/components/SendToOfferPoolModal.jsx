@@ -27,13 +27,18 @@ const SendToOfferPoolModal = ({
   };
 
   const handleDownloadTemplate = async () => {
+    if (!offerCandidateIds?.length) {
+      toast.error("No qualified candidates selected");
+      return;
+    }
+
     try {
-      // 🔴 Replace API when backend is ready
-      const res = await jobPositionApiService.downloadOfferPoolTemplate();
+      const res = await jobPositionApiService.downloadOfferPoolTemplate(
+        offerCandidateIds
+      );
 
       const blob = new Blob([res.data], {
         type:
-          res.headers["content-type"] ||
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
 
@@ -42,6 +47,7 @@ const SendToOfferPoolModal = ({
 
       link.href = url;
       link.download = "Offer_Pool_Template.xlsx";
+
       document.body.appendChild(link);
       link.click();
 

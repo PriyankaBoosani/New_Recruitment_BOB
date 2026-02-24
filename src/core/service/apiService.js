@@ -90,6 +90,11 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" }
 });
 
+const formDataApi = axios.create({
+  baseURL: API_BASE_URL,
+  headers: { "Content-Type": "multipart/form-data" }
+});
+
 const apis = axios.create({
   baseURL: API_BASE_URLS,
   headers: { "Content-Type": "application/json" }
@@ -166,6 +171,7 @@ const attachInterceptors = (instance) => {
    Attach Interceptors
 --------------------------- */
 attachInterceptors(api);
+attachInterceptors(formDataApi);
 attachInterceptors(apis);
 attachInterceptors(candidateApi);
 attachInterceptors(nodeApi);
@@ -181,6 +187,7 @@ masterDropdownApi.interceptors.response.use(
 --------------------------- */
 export {
   api,
+  formDataApi,
   apis,
   candidateApi,
   nodeApi,
@@ -189,6 +196,7 @@ export {
 
 export default {
   api,
+  formDataApi,
   apis,
   candidateApi,
   nodeApi,

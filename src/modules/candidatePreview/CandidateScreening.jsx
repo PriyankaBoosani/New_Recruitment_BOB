@@ -16,10 +16,13 @@ import { toast } from "react-toastify";
 import PdfViewerModal from "./components/PdfViewerModal";
 import { useLocation } from "react-router-dom";
 import InterviewFeedbackHistoryModal from "./components/InterviewFeedbackHistoryModal";
-import SendToOfferPoolModal from "./components/SendToOfferPoolModal";
 import useInterviewPool from "./hooks/useInterviewPool";
 import candidateWorkflowServices from "./services/CandidateWorkflowServices";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import OfferPool from "./components/OfferPool";
+import offerIcon from "../../assets/send-offer-icon.png";
+import locationIcon from "../../assets/location-icon.png";
+import RankListModal from "./components/RankListModal";
 
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
@@ -47,6 +50,20 @@ export default function CandidateScreening({ selectedJob }) {
     DISQUALIFIED: "Disqualified",
     PROVISIONALLY_APPROVED: "Provisionally Approved",
     PENDING: "Pending",
+  };
+
+  const OFFER_POOL_STATUSES = [
+    "OFFER_AWAITED",
+    "OFFER_SENT",
+    "OFFER_REJECTED",
+    "OFFER_ACCEPTED",
+  ];
+
+  const OFFER_STATUS_LABEL_MAP = {
+    OFFER_AWAITED: "Offer Awaited",
+    OFFER_SENT: "Offer Sent",
+    OFFER_REJECTED: "Offer Rejected",
+    OFFER_ACCEPTED: "Offer Accepted",
   };
 
   const [interviewPage, setInterviewPage] = useState(0);
@@ -90,7 +107,8 @@ export default function CandidateScreening({ selectedJob }) {
   const {
     interviewCandidates,
     totalElements: interviewTotalElements,
-    loading: loadingInterview
+    loading: loadingInterview,
+    refetch: refetchInterviewPool
   } = useInterviewPool({
     positionId: selectedPositionId,
     filters,
@@ -108,8 +126,25 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState([]);
-  const [showOfferModal, setShowOfferModal] = useState(false);
+  const [showRankListModal, setShowRankListModal] = useState(false);
+  const [offerSelectedIds, setOfferSelectedIds] = useState([]);
+  const [offerRefreshKey, setOfferRefreshKey] = useState(0);
+  const [offerTemplateId, setOfferTemplateId] = useState("");
+  const [joiningDate, setJoiningDate] = useState("");
+  const [acceptBeforeDate, setAcceptBeforeDate] = useState("");
+  const [offerData, setOfferData] = useState([]);
+  const [formErrors, setFormErrors] = useState({
+    acceptBeforeDate: "",
+    joiningDate: "",
+  });
 
+  const todayString = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const navInitRef = useRef({
     requisitionId: null,
@@ -424,6 +459,11 @@ export default function CandidateScreening({ selectedJob }) {
     if (activeTab === "INTERVIEW_POOL") {
       return Object.keys(INTERVIEW_STATUS_LABEL_MAP);
     }
+
+    if (activeTab === "OFFER_POOL") {
+      return OFFER_POOL_STATUSES;
+    }
+
     return CANDIDATE_POOL_STATUSES;
   }, [activeTab]);
 
@@ -654,6 +694,121 @@ export default function CandidateScreening({ selectedJob }) {
     ];
   };
 
+  const handleSendToOfferPool = async () => {
+    if (qualifiedInterviewIds.length === 0) {
+      toast.error("Select at least one qualified candidate");
+      return;
+    }
+
+    try {
+      await jobPositionApiService.sendToOfferPool(qualifiedInterviewIds);
+
+      toast.success("Candidates moved to Offer Pool successfully");
+
+      // Clear selection
+      setSelectedInterviewCandidateIds([]);
+
+      // Optional: refresh interview pool
+      setInterviewPage(0);
+      await refetchInterviewPool();
+    } catch (err) {
+      console.error(err);
+      toast.error(
+        err?.response?.data?.message || "Failed to send candidates to Offer Pool"
+      );
+    }
+  };
+
+  const handleSendOffer = async () => {
+    if (offerSelectedIds.length === 0) {
+      toast.error("Select at least one candidate");
+      return;
+    }
+
+    if (!offerTemplateId) {
+      toast.error("Please select an offer template");
+      return;
+    }
+
+    if (!joiningDate || !acceptBeforeDate) {
+      toast.error("Please select joining and accept before dates");
+      return;
+    }
+
+    try {
+      const payload = {
+        offerTemplateId,
+        joiningDate,
+        acceptBeforeDate,
+        offerIds: offerSelectedIds,
+      };
+
+      const response = await jobPositionApiService.sendOffer(payload);
+
+      if (response?.data?.success === false) {
+        toast.error(response?.data?.message || "Failed to send offer");
+        return;
+      }
+
+      toast.success("Offer sent successfully");
+
+      // Clear selections + form
+      setOfferSelectedIds([]);
+      setOfferTemplateId("");
+      setJoiningDate("");
+      setAcceptBeforeDate("");
+
+      // Refresh Offer Pool
+      setOfferRefreshKey((prev) => prev + 1);
+
+    } catch (err) {
+      console.error(err);
+      toast.error(
+        err?.response?.data?.message || "Failed to send offer"
+      );
+    }
+  };
+
+  const selectedOfferObjects = useMemo(() => {
+    return offerData.filter(o => offerSelectedIds.includes(o.id));
+  }, [offerData, offerSelectedIds]);
+
+  const allAwaited =
+    selectedOfferObjects.length > 0 &&
+    selectedOfferObjects.every(o => o.status === "OFFER_AWAITED");
+
+  const allHaveSelectListValue =
+    selectedOfferObjects.length > 0 &&
+    selectedOfferObjects.every(
+      (o) =>
+        o.selectList &&
+        o.selectList.trim() !== ""
+    );
+
+  const isSendOfferEnabled =
+    offerSelectedIds.length > 0 &&
+    offerTemplateId &&
+    joiningDate &&
+    acceptBeforeDate &&
+    allAwaited &&
+    allHaveSelectListValue &&
+    !formErrors.acceptBeforeDate &&
+    !formErrors.joiningDate;
+
+  useEffect(() => {
+    if (activeTab !== "OFFER_POOL") {
+      // User left Offer Pool → reset everything
+      setOfferTemplateId("");
+      setAcceptBeforeDate("");
+      setJoiningDate("");
+      setFormErrors({
+        acceptBeforeDate: "",
+        joiningDate: "",
+      });
+      setOfferSelectedIds([]);
+    }
+  }, [activeTab]);
+
   return (
     <div className="container-fluid px-5 py-4">
       {/* Header */}
@@ -721,198 +876,353 @@ export default function CandidateScreening({ selectedJob }) {
                   type="button"
                 >
                   {tab.label}
-                  <span className="ms-2 badge rounded-pill bg-light text-muted p-2" style={{ fontSize: '0.675rem', fontWeight: '500' }}>
+                  {/* <span className="ms-2 badge rounded-pill bg-light text-muted p-2" style={{ fontSize: '0.675rem', fontWeight: '500' }}>
                     {tab.count}
-                  </span>
+                  </span> */}
                 </button>
               </li>
             ))}
           </ul>
 
           {/* Filters */}
-          <div className="row g-2 mt-1 px-2 py-1 align-items-center">
-            <div className="col-md-2 col-6 d-flex align-items-center gap-2">
-              <p className="text-muted fs-14 mb-1">FILTER BY:</p>
-              <button
-                className="btn fs-14 mb-1 error-text"
-                onClick={() =>
-                  setFilters({
-                    status: [],
-                    stateId: "",
-                    categoryId: "",
-                    searchText: "",
-                  })
-                }
-              >
-                Clear all
-              </button>
-            </div>
-            <div className="col-md-2 col-6 mt-0">
-              <select
-                className="form-select fs-14 py-1 mt-0"
-                value={filters?.status[0] || ""}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    status: e.target.value ? [e.target.value] : [],
-                  }))
-                }
-              >
-                <option value="">All Statuses</option>
-                {/* {availableStatuses?.map((status) => (
-                  <option key={status} value={status}>
-                    {STATUS_LABEL_MAP[status] || status}
-                  </option>
-                ))} */}
-
-                {availableStatuses.map((status) => (
-                  <option key={status} value={status}>
-                    {getStatusLabel(status)}
-                  </option>
-                ))}
-
-              </select>
-            </div>
-
-            {activeTab === "CANDIDATE_POOL" && (
-              <div className="col-md-2 col-6 mt-0">
-                <select
-                  className="form-select fs-14 py-1 mt-0"
-                  value={filters?.stateId}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      stateId: e.target.value,
-                    }))
-                  }
-                >
-                  <option value="">All Locations</option>
-                  {availableLocations?.map((loc) => (
-                    <option key={loc.id} value={loc.id}>
-                      {loc.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-
-            {activeTab === "CANDIDATE_POOL" && (
-              <div className="col-md-2 col-6 mt-0">
-                <select
-                  className="form-select fs-14 py-1 mt-0"
-                  value={filters.categoryId}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      categoryId: e.target.value,
-                    }))
-                  }
-                >
-                  <option value="">All Categories</option>
-                  {availableCategories?.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            {/* 👇 spacer ONLY for Interview Pool */}
-            {activeTab === "INTERVIEW_POOL" && (
-              <div className="col-md-4 d-none d-md-block" />
-            )}
-
-            {selectedPositionId && selectedRequisitionId && (
-              <div className="col-md-4 col-12 text-md-end mt-2 mt-md-0">
-                {/* <button className="btn orange-bg text-white fs-14 me-3 py-1 px-3">
-                  <img src={rankIcon} className="me-2" width={15}/>
-                  Rank
-                </button> */}
-                <OverlayTrigger
-                  placement="bottom"
-                  overlay={<Tooltip >Download PDF</Tooltip>}
-                >
-                  <button className="btn fs-14 me-3 blue-color blue-border" onClick={() => handleDownload("pdf")}>
-                    <img src={pdfIcon} className="" width={20} />
-                  </button>
-                </OverlayTrigger>
-                <OverlayTrigger
-                  placement="bottom"
-                  overlay={<Tooltip >Download Excel</Tooltip>}
-                >
-                  <button className="btn fs-14 blue-color blue-border" onClick={() => handleDownload("xlsx")}>
-                    <img src={excelIcon} className="" width={20} />
-                  </button>
-                </OverlayTrigger>
-              </div>
-            )}
-          </div>
-
-          <div className="row g-2 mt-1 align-items-center" style={{ backgroundColor: '#F9FAFB' }}>
-            <div className="col-md-5 col-12 px-3 mb-2 py-2">
-              <div className="input-group">
-                <span className="input-group-text bg-white border-end-0 py-1">
-                  <img src={searchIcon} width={15} />
-                </span>
-                <input
-                  type="text"
-                  className="form-control border-start-0 fs-14 py-2 search_input"
-                  placeholder="Search candidates..."
-                  value={filters.searchText}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      searchText: e.target.value,
-                    }))
-                  }
-                />
-              </div>
-            </div>
-            <div className="col-md-7 col-12 text-md-end px-2 mb-2">
-              {activeTab === "CANDIDATE_POOL" && canScheduleInterview && (
-                <button className="btn blue-bg text-white fs-14" onClick={() => setShowScheduleModal(true)}>
-                  Schedule Interview
-                </button>
-              )}
-
-              {/* {activeTab === "INTERVIEW_POOL" && selectedInterviewCandidateIds.length > 0 && (
-                <>
-                  {canSendToOfferPool ? (
-                    <button className="btn blue-bg text-white fs-14 me-2">
-                      Send to Offer Pool
-                    </button>
-                  ) : (
-                    <>
-                      <button className="btn blue-color blue-border fs-14 me-2">
-                        Reschedule Interview
-                      </button>
-                      <button className="btn btn-danger fs-14">
-                        Cancel Interview
-                      </button>
-                    </>
-                  )}
-                </>
-              )}
-              
-              */}
-
-              {activeTab === "INTERVIEW_POOL" && canSendToOfferPool && (
+          {activeTab !== "OFFER_POOL" && (
+            <div className="row g-2 mt-1 px-2 py-1 align-items-center">
+              <div className="col-md-2 col-6 d-flex align-items-center gap-2">
+                <p className="text-muted fs-14 mb-1">FILTER BY:</p>
                 <button
-                  className="btn blue-bg text-white fs-14"
-                  onClick={() => setShowOfferModal(true)}
+                  className="btn fs-14 mb-1 error-text"
+                  onClick={() =>
+                    setFilters({
+                      status: [],
+                      stateId: "",
+                      categoryId: "",
+                      searchText: "",
+                    })
+                  }
                 >
-                  Send to Offer Pool
+                  Clear all
                 </button>
+              </div>
+              <div className="col-md-2 col-6 mt-0">
+                <select
+                  className="form-select fs-14 py-1 mt-0"
+                  value={filters?.status[0] || ""}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      status: e.target.value ? [e.target.value] : [],
+                    }))
+                  }
+                >
+                  <option value="">All Statuses</option>
+                  {/* {availableStatuses?.map((status) => (
+                    <option key={status} value={status}>
+                      {STATUS_LABEL_MAP[status] || status}
+                    </option>
+                  ))} */}
 
+                  {availableStatuses.map((status) => (
+                    <option key={status} value={status}>
+                      {getStatusLabel(status)}
+                    </option>
+                  ))}
+
+                </select>
+              </div>
+
+              {activeTab === "CANDIDATE_POOL" && (
+                <div className="col-md-2 col-6 mt-0">
+                  <select
+                    className="form-select fs-14 py-1 mt-0"
+                    value={filters?.stateId}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        stateId: e.target.value,
+                      }))
+                    }
+                  >
+                    <option value="">All Locations</option>
+                    {availableLocations?.map((loc) => (
+                      <option key={loc.id} value={loc.id}>
+                        {loc.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               )}
 
 
+              {activeTab === "CANDIDATE_POOL" && (
+                <div className="col-md-2 col-6 mt-0">
+                  <select
+                    className="form-select fs-14 py-1 mt-0"
+                    value={filters.categoryId}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        categoryId: e.target.value,
+                      }))
+                    }
+                  >
+                    <option value="">All Categories</option>
+                    {availableCategories?.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
+              {/* 👇 spacer ONLY for Interview Pool */}
+              {activeTab === "INTERVIEW_POOL" && (
+                <div className="col-md-4 d-none d-md-block" />
+              )}
 
+              {selectedPositionId && selectedRequisitionId && (
+                <div className="col-md-4 col-12 text-md-end mt-2 mt-md-0">
+                  {/* <button className="btn orange-bg text-white fs-14 me-3 py-1 px-3">
+                    <img src={rankIcon} className="me-2" width={15}/>
+                    Rank
+                  </button> */}
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={<Tooltip >Download PDF</Tooltip>}
+                  >
+                    <button className="btn fs-14 me-3 blue-color blue-border" onClick={() => handleDownload("pdf")}>
+                      <img src={pdfIcon} className="" width={20} />
+                    </button>
+                  </OverlayTrigger>
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={<Tooltip >Download Excel</Tooltip>}
+                  >
+                    <button className="btn fs-14 blue-color blue-border" onClick={() => handleDownload("xlsx")}>
+                      <img src={excelIcon} className="" width={20} />
+                    </button>
+                  </OverlayTrigger>
+                </div>
+              )}
             </div>
-          </div>
+          )}
+
+          {activeTab === "OFFER_POOL" && (
+            <div className="row g-2 mt-1 px-2 py-1 align-items-center border-bottom">
+              <div className="col-md-2 col-6 d-flex align-items-center gap-2">
+                <p className="text-muted fs-14 mb-1">FILTER BY STAGE:</p>
+                <button
+                  className="btn fs-14 mb-1 error-text"
+                  onClick={() =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      status: [],
+                    }))
+                  }
+                >
+                  Clear all
+                </button>
+              </div>
+
+              <div className="col-md-10 d-flex flex-wrap gap-2 mt-0">
+                {OFFER_POOL_STATUSES.map((status) => {
+                  const isSelected = filters.status.includes(status);
+
+                  return (
+                    <span
+                      key={status}
+                      onClick={() =>
+                        setFilters((prev) => {
+                          const alreadySelected = prev.status.includes(status);
+
+                          return {
+                            ...prev,
+                            status: alreadySelected
+                              ? prev.status.filter((s) => s !== status)
+                              : [...prev.status, status],
+                          };
+                        })
+                      }
+                      className={`badge px-3 py-2 border-0 rounded fw-normal fs-12 ${
+                        isSelected
+                          ? "bg-primary text-white"
+                          : "bg-light text-muted border"
+                      }`}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {OFFER_STATUS_LABEL_MAP[status]}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "OFFER_POOL" && (
+            <div className="row g-2 mt-1 px-2 py-2 align-items-end">
+
+              {/* LEFT SECTION */}
+              <div className="col-md-8 col-12">
+                <div className="d-flex flex-wrap gap-4 justify-content-between align-items-end">
+                  <div className="d-flex gap-3 flex-wrap align-items-end pb-3">
+                    {/* Offer Template */}
+                    <div>
+                      <p className="mb-1 fw-normal fs-13 blue-color">Offer Template</p>
+                      <select
+                        className="form-select fs-13 py-1"
+                        style={{ width: "180px" }}
+                        value={offerTemplateId}
+                        onChange={(e) => setOfferTemplateId(e.target.value)}
+                      >
+                        <option value="">Select Template</option>
+                        <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Template 1</option>
+                      </select>
+                    </div>
+
+                    {/* Accept Before Date */}
+                    <div>
+                      <p className="mb-1 fw-normal fs-13 blue-color">Accept Before</p>
+                      <input
+                        type="date"
+                        className="form-control fs-13 py-1"
+                        style={{ width: "160px" }}
+                        value={acceptBeforeDate}
+                        min={todayString()}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setAcceptBeforeDate(value);
+
+                          if (!value) {
+                            setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
+                            return;
+                          }
+
+                          if (value <= todayString()) {
+                            setFormErrors(prev => ({
+                              ...prev,
+                              acceptBeforeDate: "Must be greater than today",
+                            }));
+                          } else {
+                            setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
+                          }
+                        }}
+                      />
+                      {formErrors.acceptBeforeDate && (
+                        <small className="text-danger d-block mt-1 fs-12">
+                          {formErrors.acceptBeforeDate}
+                        </small>
+                      )}
+                    </div>
+
+                    {/* Joining Date */}
+                    <div>
+                      <p className="mb-1 fw-normal fs-13 blue-color">Joining Date</p>
+                      <input
+                        type="date"
+                        className="form-control fs-13 py-1"
+                        style={{ width: "160px" }}
+                        value={joiningDate}
+                        min={acceptBeforeDate || todayString()}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setJoiningDate(value);
+
+                          if (!value) {
+                            setFormErrors(prev => ({ ...prev, joiningDate: "" }));
+                            return;
+                          }
+
+                          if (!acceptBeforeDate) {
+                            setFormErrors(prev => ({
+                              ...prev,
+                              joiningDate: "Select Accept Before date first",
+                            }));
+                            return;
+                          }
+
+                          if (value <= acceptBeforeDate) {
+                            setFormErrors(prev => ({
+                              ...prev,
+                              joiningDate: "Must be greater than Accept Before date",
+                            }));
+                          } else {
+                            setFormErrors(prev => ({ ...prev, joiningDate: "" }));
+                          }
+                        }}
+                      />
+                      {formErrors.joiningDate && (
+                        <small className="text-danger d-block mt-1 fs-12">
+                          {formErrors.joiningDate}
+                        </small>
+                      )}
+                    </div>
+
+                    {/* Send Offers Button */}
+                    <div>
+                      <button className="btn orange-bg text-white fs-13 px-3 py-1" onClick={handleSendOffer} disabled={!isSendOfferEnabled}>
+                        <img className="me-2" src={offerIcon} width={14} />
+                        Send Offers
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* RIGHT SECTION */}
+              <div className="col-md-4 col-12">
+                <div className="d-flex justify-content-end gap-2 align-items-center pb-3">
+                  <button className="btn orange-color orange-border fs-13 px-3 py-1">
+                    <img className="me-2" src={locationIcon} width={16} />
+                    Assign Locations
+                  </button>
+                  <button className="btn blue-border blue-color fs-13 px-3 py-1" onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}>
+                    <img src={excelIcon} className="me-1" width={18} /> Rank List
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {activeTab !== "OFFER_POOL" && (
+            <div className="row g-2 mt-1 align-items-center" style={{ backgroundColor: '#F9FAFB' }}>
+              <div className="col-md-5 col-12 px-3 mb-2 py-2">
+                <div className="input-group">
+                  <span className="input-group-text bg-white border-end-0 py-1">
+                    <img src={searchIcon} width={15} />
+                  </span>
+                  <input
+                    type="text"
+                    className="form-control border-start-0 fs-14 py-2 search_input"
+                    placeholder="Search candidates..."
+                    value={filters.searchText}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        searchText: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
+              </div>
+              <div className="col-md-7 col-12 text-md-end px-2 mb-2">
+                {activeTab === "CANDIDATE_POOL" && canScheduleInterview && (
+                  <button className="btn blue-bg text-white fs-14" onClick={() => setShowScheduleModal(true)}>
+                    Schedule Interview
+                  </button>
+                )}
+
+                {activeTab === "INTERVIEW_POOL" && canSendToOfferPool && (
+                  <button
+                    className="btn blue-bg text-white fs-14"
+                    onClick={handleSendToOfferPool}
+                  >
+                    Send to Offer Pool
+                  </button>
+                )}
+
+              </div>
+            </div>
+          )}
         </div>
         {activeTab === "CANDIDATE_POOL" && !selectedCandidate && (
           <CandidatePool
@@ -933,13 +1243,6 @@ export default function CandidateScreening({ selectedJob }) {
             position={selectedPosition}
           />
         )}
-
-        {/* {selectedCandidate && (
-          <CandidatePreviewPage
-            candidate={selectedCandidate}
-            onBack={() => setSelectedCandidate(null)}
-          />
-        )} */}
 
         {activeTab === "INTERVIEW_POOL" && (
           <InterviewPool
@@ -994,7 +1297,18 @@ export default function CandidateScreening({ selectedJob }) {
           />
         )}
 
-        {/* {activeTab === "OFFER_POOL" && <OfferPool />} */}
+        {activeTab === "OFFER_POOL" && (
+          <OfferPool 
+            selectedPositionId={selectedPositionId}
+            selectedRequisitionId={selectedRequisitionId}
+            filters={filters}
+            selectedIds={offerSelectedIds}
+            setSelectedIds={setOfferSelectedIds}
+            refreshKey={offerRefreshKey}
+            onOffersLoaded={(data) => setOfferData(data)}
+          />
+        )}
+
         {/* {activeTab === "ONBOARDING_POOL" && <OnboardingPool />} */}
         <ScheduleInterviewModal
           showScheduleModal={showScheduleModal}
@@ -1003,8 +1317,8 @@ export default function CandidateScreening({ selectedJob }) {
           positionId={navPositionId || selectedPositionId}
           onBulkScheduleSuccess={refreshCandidatesAfterSchedule}
         />
-
       </div>
+
       <PdfViewerModal
         show={showPdfViewer}
         onHide={() => {
@@ -1022,20 +1336,13 @@ export default function CandidateScreening({ selectedJob }) {
         feedbackList={selectedFeedback}
       />
 
-
-      <SendToOfferPoolModal
-        showSendOfferModal={showOfferModal}
-        setShowSendOfferModal={setShowOfferModal}
-        offerCandidateIds={qualifiedInterviewIds}
-        onBulkOfferSuccess={() => {
-          setSelectedInterviewCandidateIds([]);
-          setInterviewPage(0);
-        }}
+      <RankListModal
+        showRankListModal={showRankListModal}
+        setShowRankListModal={setShowRankListModal}
+        selectedIds={offerSelectedIds}
+        setSelectedIds={setOfferSelectedIds}
+        onUploadSuccess={() => setOfferRefreshKey(prev => prev + 1)}
       />
-
-
-
-
     </div>
   );
 }

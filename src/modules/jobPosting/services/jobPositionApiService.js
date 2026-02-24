@@ -1,4 +1,4 @@
-import { api } from "../../../core/service/apiService";
+import { api, formDataApi } from "../../../core/service/apiService";
 
 const jobPositionApiService = {
   getPositionsByRequisition: (requisitionId) =>
@@ -286,6 +286,57 @@ const jobPositionApiService = {
       }
     ),
 
+  sendToOfferPool(applicationIds) {
+    return api.post(
+      "/recruiter/candidate-offer/send-to-offer-pool",
+      applicationIds,
+      {
+        headers: {
+          "X-Client": "recruiter",
+        },
+      }
+    );
+  },
+
+  getOffersByPosition(positionId) {
+    return api.get(`/recruiter/candidate-offer/get-offers/${positionId}`, {
+      headers: {
+        "X-Client": "recruiter"
+      }
+    });
+  },
+
+  downloadRankListExcel: (offerIds) => {
+    return api.post(
+      "/recruiter/candidate-offer/download-offers-excel",
+      offerIds,
+      {
+        headers: {
+          "X-Client": "recruiter",
+        },
+        responseType: "blob", // VERY IMPORTANT
+      }
+    );
+  },
+
+  uploadRanksExcel: (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return formDataApi.post(
+      "/recruiter/candidate-offer/upload-ranks-excel",
+      formData,
+      {
+        headers: {
+          "X-Client": "recruiter",
+        },
+      }
+    );
+  },
+
+  sendOffer(payload) {
+    return api.post("/recruiter/candidate-offer/send-offer", payload);
+  },
 };
 
 export default jobPositionApiService;

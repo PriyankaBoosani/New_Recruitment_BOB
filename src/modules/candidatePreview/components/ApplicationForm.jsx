@@ -522,8 +522,27 @@ const ApplicationForm = ({
   };
 
   // const handleRadioChange = (field, value) => {
-  //   setScreeningForm(prev => ({ ...prev, [field]: value }));
-  //   setErrors(prev => ({ ...prev, [field]: undefined }));
+  //   setScreeningForm(prev => {
+  //     const updated = {
+  //       ...prev,
+  //       [field]: value,
+  //     };
+
+  //     return updated;
+  //   });
+
+  //   setErrors(prev => {
+  //     const updated = { ...prev };
+  //     delete updated[field];
+
+  //     if (value === "YES") {
+  //       if (field === "isWorkCriteriaMet") delete updated.workCriteriaRemark;
+  //       if (field === "isAgeCriteriaMet") delete updated.ageCriteriaRemark;
+  //       if (field === "isEducationCriteriaMet") delete updated.educationCriteriaRemark;
+  //     }
+
+  //     return updated;
+  //   });
   // };
 
   const handleRadioChange = (field, value) => {
@@ -533,27 +552,25 @@ const ApplicationForm = ({
         [field]: value,
       };
 
+      // Always clear respective remark when radio changes
+      if (field === "isWorkCriteriaMet") updated.workCriteriaRemark = "";
+      if (field === "isAgeCriteriaMet") updated.ageCriteriaRemark = "";
+      if (field === "isEducationCriteriaMet") updated.educationCriteriaRemark = "";
+
       return updated;
     });
 
     setErrors(prev => {
       const updated = { ...prev };
-      delete updated[field];
 
-      if (value === "YES") {
-        if (field === "isWorkCriteriaMet") delete updated.workCriteriaRemark;
-        if (field === "isAgeCriteriaMet") delete updated.ageCriteriaRemark;
-        if (field === "isEducationCriteriaMet") delete updated.educationCriteriaRemark;
-      }
+      delete updated[field];
+      delete updated.workCriteriaRemark;
+      delete updated.ageCriteriaRemark;
+      delete updated.educationCriteriaRemark;
 
       return updated;
     });
   };
-
-  // const handleInputChange = (field, value) => {
-  //   setScreeningForm(prev => ({ ...prev, [field]: value }));
-  //   setErrors(prev => ({ ...prev, [field]: undefined }));
-  // };
 
   const handleInputChange = (field, value) => {
     setScreeningForm(prev => ({
