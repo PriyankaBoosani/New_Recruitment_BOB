@@ -58,7 +58,12 @@ import previewHi from "../i18n/previewJson/preview.hi.json";
 import interviewScheduleEn from "../i18n/interviewScheduleJson/interviewSchedule.en.json";
 import interviewScheduleHi from "../i18n/interviewScheduleJson/interviewSchedule.hi.json";
 
+import committeeInterviewPanelEn from "../i18n/committeeManagementJson/committeeInterviewPanel.en.json";
+import committeeInterviewPanelHi from "../i18n/committeeManagementJson/committeeinterviewPanel.hi.json";
 
+
+import interviewDayEn from "../i18n/interviewDayJson/interviewDay.en.json";
+import interviewDayHi from "../i18n/interviewDayJson/interviewDay.hi.json";
 
 
 
@@ -88,7 +93,9 @@ i18n
         importModal: importModalEn,
         jobPostingsList: jobPostingsListEn,
         preview: previewEn,
-        interviewSchedule: interviewScheduleEn
+        interviewSchedule: interviewScheduleEn,
+        interviewPanelCommittee: committeeInterviewPanelEn,
+         interviewDay: interviewDayEn 
       },
       hi: {
         common: commonHi,
@@ -110,7 +117,9 @@ i18n
         importModal: importModalHi,
         jobPostingsList: jobPostingsListHi,
         preview: previewHi,
-         interviewSchedule: interviewScheduleHi
+         interviewSchedule: interviewScheduleHi,
+         interviewPanelCommittee: committeeInterviewPanelHi,
+         interviewDay: interviewDayHi
       }
     },
     lng: "en",       
