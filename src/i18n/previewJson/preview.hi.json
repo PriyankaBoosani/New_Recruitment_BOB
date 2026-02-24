@@ -90,5 +90,6 @@
     "select_decision": "कृपया निर्णय चुनें",
     "zonal_submit_success": "ज़ोनल सत्यापन सफलतापूर्वक जमा हुआ",
     "zonal_submit_failed": "ज़ोनल सबमिट विफल रहा",
-    "please_select_date": "कृपया तिथि चुनें"
+    "please_select_date": "कृपया तिथि चुनें",
+    "percentage_cgpa": "प्रतिशत / CGPA"
 }

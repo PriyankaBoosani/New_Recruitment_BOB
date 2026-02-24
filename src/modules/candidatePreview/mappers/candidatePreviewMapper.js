@@ -229,7 +229,13 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
         institution: edu.institutionName || "-",
         startDate: formatDateDDMMYYYY(edu.startDate) || "-",
         endDate: formatDateDDMMYYYY(edu.endDate) || "-",
-        percentage: edu.percentage ?? "-",
+        percentage:
+          edu.percentage != null
+            ? Number(edu.percentage) < 10
+              ? `${edu.percentage} CGPA`
+              : `${edu.percentage}%`
+            : "-",
+        // percentage: edu.percentage ?? "-",
         educationLevel_name: educationLevel?.documentName || "-",
         mandatoryQualification_name: qualification?.qualificationName || "-",
         specialization_name: specialization?.specializationName || "-"
@@ -250,10 +256,10 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
     })),
 
     experienceSummary: {
-  currentCtc: safeCurrency(
-    experiences?.[0]?.workExperience?.currentCtc
-  )
-},
+      currentCtc: safeCurrency(
+        experiences?.[0]?.workExperience?.currentCtc
+      )
+    },
     /* ================= DOCUMENTS ================= */
     documents: {
       allDocs: groupDocs(() => true),

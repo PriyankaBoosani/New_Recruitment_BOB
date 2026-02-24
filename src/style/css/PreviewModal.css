@@ -595,74 +595,90 @@ select.form-control {
   filter: brightness(0) invert(1);
 }
 
+
 /* ================= EXPERIENCE TABLE ================= */
 .exp-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
+  border: 1px solid #dcdfe6; /* outer border only */
 }
 
+/* ===== HEADER (NO LINES) ===== */
 .exp-table thead th {
-  background: #445aa3;
+  background: #4b5fa8;
   color: #fff;
-  padding: 10px;
+  padding: 12px 10px;
   font-weight: 500;
-  border-right: 1px solid #ffffff33;
   font-size: 0.875rem;
+  text-align: left;
+  border: 1px solid #4b5fa8; /* same structure */
 }
 
-.exp-table thead th:last-child {
-  border-right: none;
-}
-
-.exp-table tbody tr {
-  border-bottom: 1px solid #e6e9f0;
-}
-
+/* ===== BODY ROWS ===== */
 .exp-table tbody tr:nth-child(even) {
-  background: #f6f7f9;
+  background: #f4f6fa;
 }
 
+/* ===== BODY CELLS (GRID LINES) ===== */
 .exp-table tbody td {
-  padding: 10px;
+  padding: 12px 10px;
   vertical-align: top;
   color: #333;
-  line-height: 1.4;
+  line-height: 1.5;
+  border: 1px solid #e3e6ef;
+}
+
+/* remove double outer border */
+.exp-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 /* ===== TABLE ===== */
 .edu-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;   /* 🔥 change this */
+  border-spacing: 0;           /* 🔥 important */
+  table-layout: fixed;
   font-size: 13px;
+  border: 1px solid #e3e6ef;
 }
 
+/* Make width calculation identical */
+.edu-table th,
+.edu-table td {
+  box-sizing: border-box;
+}
 
-.edu-table thead th:last-child {
-  border-right: none;
+/* HEADER */
+.edu-table thead th {
+  background-color: #4b5fa8;
+  color: #fff;
+  font-weight: 500;
+  padding: 12px 10px;
+  font-size: 0.875rem;
+  text-align: left;
+  border-bottom: 1px solid #4b5fa8;
 }
 
 /* BODY */
+
+
 .edu-table tbody td {
-  padding: 10px;
-  border: 1px solid #e3e6ef;
+  padding: 12px 10px;
   color: #333;
+  border-bottom: 1px solid #e6e9f0;
 }
 
-/* ROW HOVER (OPTIONAL BUT MATCHES UI) */
-.edu-table tbody tr:hover {
-  background-color: #f7f8fc;
+/* Remove last border */
+.edu-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-.edu-table thead th {
-  background-color: #445aa3;
-  color: #fff;
-  font-weight: 500;
-  padding: 10px;
-  font-size: 0.875rem;
-  text-align: left;
+/* Zebra */
+.edu-table tbody tr:nth-child(even) {
+  background-color: #f4f6fa;
 }
-
 /* ===== DOCUMENT VIEWER ===== */
 
 .doc-viewer-dialog {
@@ -1137,4 +1153,45 @@ select.form-control {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+
+.photo-signature-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* PHOTO BOX */
+.photo-box {
+  width: 130px;
+  height: 160px;
+  border: 1px solid #d6d6d6;
+  border-radius: 14px;
+  overflow: hidden;   /* 🔥 required */
+  background: #f5f5f5;
+}
+
+.photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.signature-box {
+  width: 130px;
+  height: 65px;
+  border: 1px solid #d6d6d6;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.signature-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* 🔥 makes it fully fill */
+  display: block;
 }
