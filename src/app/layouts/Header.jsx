@@ -69,12 +69,17 @@ const Header = () => {
 
     navigate('/login');
   };
- const role = user?.role?.trim().toLowerCase();
+  const role = user?.role?.trim().toLowerCase();
 
-const isAdmin = role === "admin";
-const isZonalHr = role === "zonal_hr";
-const isRecruiter = role === "recruiter";
-const isInterviewer = role === "interviewer";
+  const isAdmin = role === "admin";
+  const isZonalHr = role === "zonal_hr";
+  const isRecruiter = role === "recruiter";
+  const isInterviewer = role === "interviewer";
+
+  const isL1 = role === "l1";
+  const isL2 = role === "l2";
+  console.log("ROLE FROM BACKEND:", user?.role);
+  console.log("ROLE NORMALIZED:", role);
 
 
   /* ===================== OUTSIDE CLICK ===================== */
@@ -279,34 +284,71 @@ const isInterviewer = role === "interviewer";
               )}
 
 
-             {isInterviewer && (
-  <Nav.Link
-    as={NavLink}
-    to="/candidate-interviewer"
-    onClick={closeMenu}
-  >
-    Interview
-  </Nav.Link>
-)}
+              {isInterviewer && (
+                <Nav.Link
+                  as={NavLink}
+                  to="/candidate-interviewer"
+                  onClick={closeMenu}
+                >
+                  Interview
+                </Nav.Link>
+              )}
 
 
 
-           {isZonalHr && (
-  <Nav.Link
-    as={NavLink}
-    to="/candidate-verification"
-    onClick={closeMenu}
-  >
-    Verification
-  </Nav.Link>
-)}
+              {isZonalHr && (
+                <Nav.Link
+                  as={NavLink}
+                  to="/candidate-verification"
+                  onClick={closeMenu}
+                >
+                  Verification
+                </Nav.Link>
+              )}
+              {(isL1 || isL2) && (
+                <NavDropdown
+                  title="Approvals"
+                  id="approvals-dropdown"
+                  className={`approvals-dropdown ${location.pathname.startsWith("/requisition-requests") ||
+                    location.pathname.startsWith("/extension-requests") ||
+                    location.pathname.startsWith("/committee-requests")
+                    ? "active-admin"
+                    : ""
+                    }`}
+                >
+                  <NavDropdown.Item
+                    as={NavLink}
+                    to="/requisition-requests"
+                    onClick={closeMenu}
+                  >
+                    Requisition Requests
+                  </NavDropdown.Item>
 
-              {!isAdmin && (
+                  <NavDropdown.Item
+                    as={NavLink}
+                    to="/extension-requests"
+                    onClick={closeMenu}
+                  >
+                    Extension Requests
+                  </NavDropdown.Item>
+
+                  <NavDropdown.Item
+                    as={NavLink}
+                    to="/committee-requests"
+                    onClick={closeMenu}
+                  >
+                    Committee Requests
+                  </NavDropdown.Item>
+                </NavDropdown>
+              )}
+
+
+              {isRecruiter && (
                 <Nav.Link as={NavLink} to="/interviewpanel" onClick={closeMenu}>
                   Committee Management
                 </Nav.Link>
               )}
-              {!isAdmin && (
+              {isRecruiter && (
                 <Nav.Link
                   as={NavLink}
                   to="/schedule-interviews"

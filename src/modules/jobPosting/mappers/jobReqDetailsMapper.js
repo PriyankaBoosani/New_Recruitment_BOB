@@ -1,21 +1,14 @@
-const normalizeStatus = (status = "") => {
-  if (!status) return "Unknown";
-
-  return status
-    .toLowerCase()
-    .replace(/^\w/, c => c.toUpperCase());
-};
-
 export const mapJobRequisitionFromApi = (item = {}) => {
-  const normalizedStatus = normalizeStatus(item.requisitionStatus);
+  const rawStatus = item.requisitionStatus ?? "";
 
   return {
     id: item.id ?? "",
     requisitionId: item.requisitionCode ?? "",
     code: item.requisitionTitle ?? "",
 
-    status: normalizedStatus,
-    statusType: getStatusBadge(item.requisitionStatus),
+    // ✅ KEEP RAW VALUE FOR LOGIC
+    status: rawStatus,
+    statusType: getStatusBadge(rawStatus),
 
     departments: item.departmentCount ?? 0,
     positions: item.positionCount ?? 0,
@@ -24,7 +17,9 @@ export const mapJobRequisitionFromApi = (item = {}) => {
     startDate: item.startDate ?? "-",
     endDate: item.endDate ?? "-",
     hasDraftPositions: item.hasDraftPositions === true,
-    editable: normalizedStatus === "New"
+
+    // ✅ Business logic uses RAW status
+    editable: rawStatus === "NEW"
   };
 };
 
@@ -36,6 +31,8 @@ const getStatusBadge = (status = "") => {
       return "danger";
     case "NEW":
       return "warning";
+    case "L1_PENDING":
+      return "secondary";
     default:
       return "secondary";
   }

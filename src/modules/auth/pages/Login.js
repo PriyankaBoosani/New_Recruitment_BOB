@@ -32,7 +32,7 @@ const Login = () => {
   //   return CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
   // };
 
- const encryptPassword = (password) =>
+  const encryptPassword = (password) =>
     CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
 
   const handleLogin = async (e) => {
@@ -67,18 +67,26 @@ const Login = () => {
         )
       );
 
-   const role = userApiRes?.role?.trim().toLowerCase();
+      const role = userApiRes?.role?.trim().toLowerCase();
 
-if (role === "admin") {
-  navigate("/users", { replace: true });
-} else if (role === "zonal_hr") {
-  navigate("/candidate-verification", { replace: true });
-} else if (role === "interviewer") {
-  navigate("/candidate-interviewer", { replace: true });
-} else {
-  navigate("/job-posting", { replace: true });
-}
+      if (role === "admin") {
+        navigate("/users", { replace: true });
 
+      } else if (role === "l1" || role === "l2") {
+        navigate("/requisition-requests", { replace: true });
+
+      } else if (role === "zonal_hr") {
+        navigate("/candidate-verification", { replace: true });
+
+      } else if (role === "interviewer") {
+        navigate("/candidate-interviewer", { replace: true });
+
+      } else if (role === "recruiter") {
+        navigate("/job-posting", { replace: true });
+
+      } else {
+        navigate("/login", { replace: true });
+      }
 
     } catch (err) {
       const errorData = err.response?.data;

@@ -1,0 +1,251 @@
+
+/* Approvals History Modal */
+.approval-history-modal .modal-content {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.approval-history-modal .modal-header {
+  background-color: #ffffff !important;
+  border-bottom: none !important;
+  padding: 24px 28px 20px 28px !important;
+  position: relative !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+}
+
+/* Close button styling */
+.approval-history-modal .modal-header .btn-close {
+  opacity: 0.6 !important;
+  font-size: 1.3rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat !important;
+  border: none !important;
+  cursor: pointer !important;
+  width: 0.8em !important;
+  height: 0.8em !important;
+  flex-shrink: 0 !important;
+  margin-left: auto !important;
+  display: block !important;
+  visibility: visible !important;
+}
+
+.approval-history-modal .modal-header .btn-close:hover {
+  opacity: 1 !important;
+}
+
+.approval-history-modal .modal-header .btn-close:focus {
+  opacity: 1 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.approval-history-title {
+  font-size: 22px;
+  font-weight: 500;
+  color:#162b75;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.approval-history-subtitle {
+  font-size: 15px;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.approval-history-modal .modal-body {
+  background-color: #ffffff;
+   padding: 20px;
+    padding-top: 0px;
+}
+
+/* Remove table-responsive wrapper padding */
+.approval-history-modal .table-responsive {
+  background-color: #fff;
+    border-radius: 0px;
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+/* Table Styling */
+.approval-history-table {
+      --bs-table-color-type: initial;
+    --bs-table-bg-type: initial;
+    --bs-table-color-state: initial;
+    --bs-table-bg-state: initial;
+    --bs-table-color: var(--bs-emphasis-color);
+    --bs-table-bg: var(--bs-body-bg);
+    --bs-table-border-color: var(--bs-border-color);
+    --bs-table-accent-bg: transparent;
+    --bs-table-striped-color: var(--bs-emphasis-color);
+    --bs-table-striped-bg: rgba(var(--bs-emphasis-color-rgb), 0.05);
+    --bs-table-active-color: var(--bs-emphasis-color);
+    --bs-table-active-bg: rgba(var(--bs-emphasis-color-rgb), 0.1);
+    --bs-table-hover-color: var(--bs-emphasis-color);
+    --bs-table-hover-bg: rgba(var(--bs-emphasis-color-rgb), 0.075);
+    width: 100%;
+    margin-bottom: 1rem;
+    vertical-align: top;
+    border-color: var(--bs-table-border-color);
+        margin-bottom: 0 !important;
+
+}
+
+/* Blue Header Row */
+.approval-history-table thead {
+  background-color:#162b75!important;
+  display: table-header-group !important;
+}
+
+.approval-history-table thead tr {
+  display: table-row !important;
+}
+
+.approval-history-table thead tr th {
+  /* padding: 16px 24px !important; */
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+  text-align: left !important;
+  --bs-text-opacity: 1;
+    color: rgba(var(--bs-white-rgb), var(--bs-text-opacity)) !important;
+
+  white-space: nowrap !important;
+  background-color: #162b75 !important;
+}
+
+.approval-history-table thead tr th:first-child {
+  padding-left: 28px !important;
+}
+
+.approval-history-table thead tr th:last-child {
+  padding-right: 28px !important;
+}
+
+/* Table Body */
+.approval-history-table tbody {
+  display: table-row-group !important;
+  background-color: #ffffff;
+}
+
+.approval-history-table tbody tr {
+  display: table-row !important;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s ease;
+}
+
+.approval-history-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.approval-history-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.approval-history-table tbody td {
+  padding: 18px 24px !important;
+  font-size: 0.875rem !important;
+  color: #374151 !important;
+  vertical-align: middle !important;
+  border: none !important;
+  line-height: 1.5 !important;
+  display: table-cell !important;
+}
+
+.approval-history-table tbody td:first-child {
+  padding-left: 28px !important;
+}
+
+.approval-history-table tbody td:last-child {
+  padding-right: 28px !important;
+}
+
+/* Empty state */
+.approval-history-table tbody td.text-center {
+  color: #9ca3af !important;
+  font-style: italic;
+  text-align: center !important;
+  padding: 40px 28px !important;
+}
+
+/* Modal size */
+.approval-history-modal .modal-lg {
+  max-width: 920px;
+}
+
+/* Scrollbar styling */
+.approval-history-modal .modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.approval-history-modal .modal-body::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.approval-history-modal .modal-body::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.approval-history-modal .modal-body::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+@media (max-width: 992px) {
+  .approval-history-modal .modal-lg {
+    max-width: 95%;
+  }
+  
+  .approval-history-table thead tr th,
+  .approval-history-table tbody td {
+    padding: 14px 20px !important;
+    font-size: 0.8125rem !important;
+  }
+  
+  .approval-history-table thead tr th:first-child,
+  .approval-history-table tbody td:first-child {
+    padding-left: 20px !important;
+  }
+  
+  .approval-history-table thead tr th:last-child,
+  .approval-history-table tbody td:last-child {
+    padding-right: 20px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .approval-history-modal .modal-lg {
+    max-width: 95%;
+    margin: 10px auto;
+  }
+  
+  .approval-history-modal .modal-header {
+    padding: 20px 16px 16px 16px !important;
+
+  }
+  
+  .approval-history-table thead tr th,
+  .approval-history-table tbody td {
+    padding: 12px 16px !important;
+    font-size:  0.75rem !important;
+  }
+  
+  .approval-history-table thead tr th:first-child,
+  .approval-history-table tbody td:first-child {
+    padding-left: 16px !important;
+  }
+  
+  .approval-history-table thead tr th:last-child,
+  .approval-history-table tbody td:last-child {
+    padding-right: 16px !important;
+  }
+  
+  
+}

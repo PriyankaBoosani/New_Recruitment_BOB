@@ -1,0 +1,618 @@
+.requisition-page {
+    padding: 30px;
+    background: #f8f9fb;
+    min-height: 100vh;
+}
+
+.requisition-page .page-title {
+    font-weight: 600;
+    color: #162B75;
+    font-size: 1em;
+}
+
+.requisition-page .page-subtitle {
+    margin: 0 0 20px 0;
+    color: var(--bs-secondary-color) !important;
+    font-size: 0.875rem;
+    font-weight: 400;
+}
+
+.requisition-page .create-btn {
+    background: #f36f21;
+    border: none;
+}
+
+.requisition-page .create .btn {
+    font-weight: 500;
+    font-size: 0.75em;
+}
+
+.requisition-page .yearfon {
+    color: #333333 !important;
+    font-weight: 500 !important;
+    font-size: 0.875em;
+
+}
+
+.requisition-page .filters-row select,
+.requisition-page .search-boxpost input {
+    height: 42px;
+    font-size: 0.875em;
+    color: #162B75;
+    font-weight: 400;
+}
+
+.requisition-page .search-boxpost {
+    position: relative;
+    border: none;
+    background: none;
+}
+
+/* Add this to your JobPostingsList.css */
+.requisition-page .status-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAgCAYAAACcuBHKAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAJUSURBVHgB7ZdBUtswFIZ/Kw7T7nKE9Ab0BvQGGKbLNnjRCUwXhBNgTkCy6GSAztimy3ZqcoJwAzhCjpB1Q6S+F5AtewiRqV2GmfwrSZGevjzLv54dkC5+JMdSokfNFv6fpnAQdT97R87ZZXIKtQB4EUnIE0EAe3hBCYhDNzcgEHz55J2gZl3Eo2PKQJDuS2dhoDvUDr7How5q1Hk8OjQBFFQs3gB9at/qwTlkNAx/bqEGnYW/thVkX/cd2ne/s9MTvu9NNyQ+0NhE/yiEm3wLk01UqEU80QiNoUnzfl86FyQGkXmQliuQDMOkjQrEcTgeMguY8H68L3ec4mQ6nGNqts3JB743wTNlE9MpLuK0ufeLUmp6XO81dRmFYdL6I3BjAEzvCOCr792a80RxIU8gUs8Yas8IigOipGb5DLAz+UWARyFYlKprAvF1XwGbswZOUULnl0nI6wyAo67vXT02VywLQiARgaTGpchZFxZvITYjZTgxWzMB9JfNF08FI5DABOE7hi87rAAwzYgBDjq7wVNrHFhoGP+OBJzMSaWk1O72VwGQGw7YjLBCVhAsesZjSvFWxnFHr9nHa91/eKtukBFcdfc8zya2gKWa88Ubk57sRsPNPZamcXDZjjdUdrArg3hw1fSfUVZytm5maU7zyviKNQSr4Jwty3nVQtSlNYTWGkJrDaH1aiFSJ+T7pIrKvDSE+Z3CVk2V+Zhh8A8qDcE1hpJqYI6Z9waMS642CNa+v9OjjLyT9PVU+IkLWevbU8u6nlgmLumpltzm9lsgek5V/hfs4gmJv5QTQAAAAABJRU5ErkJggg==);
+    background-repeat: no-repeat;
+    background-position: right 5px center;
+    background-size: 16px;
+    width: 100%;
+    cursor: pointer;
+    /* padding-right: 28px; */
+    font-weight: 400;
+    font-size: 0.875em;
+    color: #162B75;
+}
+
+/* Remove default dropdown arrow in IE */
+.requisition-page .status-select::-ms-expand {
+    display: none;
+}
+
+.requisition-page .search-boxpost svg {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+.requisition-page .search-boxpost input {
+    padding-left: 36px;
+    font-size: 0.875em;
+}
+
+.requisition-page .search-boxpost input::placeholder {
+    color: rgba(65, 65, 65, 0.5)
+}
+
+.requisition-page .bulk-actions {
+    background: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.requisition-page .selectall {
+    font-size: 0.875em;
+    color: #162B75;
+    font-weight: 500;
+    gap: 1em;
+}
+
+.requisition-page .selectall .form-check-label {
+    margin-top: 5px;
+    margin-left: -5px;
+}
+
+
+.requisition-page .selectall .form-check-input {
+    font-size: 1rem;
+    /* reset font scaling */
+    transform: scale(1);
+    /* ensure normal checkbox size */
+}
+
+.requisition-page .requisition-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.requisition-page .subbtn {
+    background-color: #42579F !important;
+    font-size: 0.875em;
+    font-weight: 500;
+    opacity: 1 !important;
+}
+
+.requisition-page .selectcheck {
+    padding-left: 8px;
+}
+
+.requisition-page .subbtn:hover {
+    background-color: #42579F !important;
+}
+
+.requisition-page .canbtn {
+    font-size: 0.875em;
+    font-weight: 500;
+
+}
+
+.requisition-page .icon-16 {
+    width: 13px;
+    height: 13px;
+}
+
+.requisition-page .req-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 26px;
+}
+
+.requisition-page .bg-warning {
+    color: #42579F;
+    border: 1px solid #42579F;
+    background: #AFBDEB2E !important;
+    font-weight: 500;
+    font-size: 0.625em;
+}
+
+.requisition-page .bg-success {
+    color: #0EB319;
+    border: 1px solid #0EB319;
+    background: #F5FFF6 !important;
+    font-weight: 500;
+    font-size: 0.625em;
+
+}
+
+.requisition-page .bg-danger {
+    color: #DC3545;
+    /* Bootstrap danger red */
+    border: 1px solid #DC3545;
+    background: #FFF5F6 !important;
+    font-weight: 500;
+    font-size: 0.625em;
+}
+
+
+.requisition-page .req-id {
+    font-weight: 500;
+    background-color: #DBEAFE !important;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.625em;
+    color: #162B75 !important;
+
+}
+
+.requisition-page .icon-22 {
+    width: 22px;
+    height: 22px;
+}
+
+/* .job-postings-page .req-code {
+	font-weight: 500;
+	margin: 12px 0;
+	color: #162B75 !important;
+	font-size: 1em;
+	width: 100%;
+	white-space: wrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-wrap: anywhere;
+} */
+
+.requisition-page .req-code {
+    font-weight: 500;
+    margin: 12px 0;
+    color: #162B75 !important;
+    font-size: 1em;
+
+    display: block;
+    /* important */
+    max-width: 600px !important;
+    /* required for ellipsis */
+    white-space: nowrap;
+    /* must be nowrap */
+    overflow: hidden;
+    /* hide extra text */
+    text-overflow: ellipsis;
+    /* show ... */
+}
+
+
+.requisition-page .wrap {
+    white-space: normal !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: anywhere;
+}
+
+.requisition-page .depname {
+    color: #162B75;
+    font-size: 1em;
+    font-weight: 600;
+}
+
+.requisition-page .deppos {
+    color: #404040 !important;
+    background: #fff !important;
+    border: 1px solid #E5E7EB;
+    padding: 5px;
+    border-radius: 10px;
+    font-weight: 400;
+    font-size: 0.625em;
+}
+
+.requisition-page .req-meta,
+.requisition-page .req-dates {
+    display: flex;
+    gap: 16px;
+    font-size: 0.875em;
+    color: #404040;
+    flex-wrap: wrap;
+    font-weight: 400;
+}
+
+.requisition-page.actions .icon-btn {
+    margin-left: 8px;
+    background: #EFF6FF;
+}
+
+.requisition-page .icon-23 {
+    width: 23px;
+    height: 23px;
+}
+
+.requisition-page .icon-20 {
+    width: 18px;
+    height: 18px;
+}
+
+.requisition-page .icon-40 {
+    width: 40px;
+    height: 40px;
+}
+
+.requisition-page .icon-19 {
+    width: 19px;
+    height: 19px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+    .requisition-page .req-meta,
+    .requisition-page .req-dates {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .requisition-page .req-meta {
+        margin-left: 25px;
+    }
+
+    .requisition-page .actions {
+        text-align: left !important;
+    }
+}
+
+.requisition-page .req-clickable {
+    cursor: pointer;
+}
+
+.requisition-page .accordion-body {
+    background: #f9fbff;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.requisition-page .department-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid #e6ecf5;
+}
+
+.requisition-page .position-card-inner {
+    border: 1px solid #eef2f7;
+    border-radius: 12px;
+    padding: 16px 20px;
+    background: #fff;
+}
+
+/* 🔑 SINGLE LINE HEADER */
+.requisition-page .position-header-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Title grows, rest stays inline */
+.requisition-page .position-title {
+    font-size: 1em;
+    flex: 1;
+    color: #162B75;
+    font-weight: 600;
+
+}
+
+/* Vacancies + Age + Icons in ONE LINE */
+.requisition-page .position-meta-inline {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-right: 100px;
+}
+
+.requisition-page .position-meta-inline span {
+    font-weight: 400;
+    font-size: 0.875em;
+    color: #404040;
+}
+
+.requisition-page .icon-btn {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+}
+
+/* DETAILS BELOW */
+.requisition-page .position-details {
+    /* margin-top: 10px; */
+    font-size: 0.875em;
+    color: #404040;
+    font-weight: 400;
+}
+
+.requisition-page .position-details strong {
+    font-weight: 600;
+}
+
+.requisition-page .position-card-inner .icon-btn {
+    background: #EFF6FF;
+}
+
+@media (max-width: 768px) {
+    .requisition-page .position-header-row {
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+
+    .requisition-page .position-meta-inline {
+        width: 100%;
+        justify-content: flex-start;
+        margin-right: 0px;
+    }
+}
+
+.requisition-page .requisition-card {
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.requisition-page .requisition-card .card-body {
+    padding: 1.25rem;
+}
+
+.requisition-page .accordion-body .text-muted {
+    font-size: 1em;
+    color: #404040 !important;
+    font-weight: 400;
+}
+
+.requisition-page .icon-12 {
+    width: 16px;
+    height: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .requisition-page .requisition-card {
+        margin-left: -15px;
+        margin-right: -15px;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+
+    .requisition-page .requisition-card .card-body {
+        padding: 1rem;
+    }
+}
+
+/* For the card content layout */
+.requisition-page .requisition-card .row {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+}
+
+.requisition-page .requisition-card [class^="col-"] {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+/* Responsive table-like layout for smaller screens */
+@media (max-width: 991.98px) {
+    .requisition-page .requisition-card .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .requisition-page .requisition-card [class^="col-"] {
+        flex: 0 0 100%;
+        max-width: 100%;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .requisition-page .requisition-card .d-flex {
+        justify-content: space-between;
+    }
+
+    .requisition-page .requisition-card .d-flex>div:first-child {
+        font-weight: 500;
+        color: #6c757d;
+        margin-right: 1rem;
+    }
+}
+
+/* For very small screens */
+@media (max-width: 400px) {
+    .requisition-page .requisition-card {
+        font-size: 0.9rem;
+    }
+
+    .requisition-page .requisition-card h5 {
+        font-size: 1.1rem;
+    }
+
+    .requisition-page .requisition-card .btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Pagination Styles */
+.requisition-page .pagination {
+    gap: 4px;
+}
+
+.requisition-page .page-item {
+    margin: 0 2px;
+}
+
+.requisition-page .page-link {
+    color: #495057;
+    border: 1px solid #dee2e6;
+    padding: 0.375rem 0.75rem;
+    border-radius: 4px;
+    min-width: 38px;
+    text-align: center;
+}
+
+.requisition-page .page-item.active .page-link {
+    background-color: #162B75;
+    border-color: #162B75;
+    color: white;
+}
+
+.requisition-page .page-link:hover {
+    background-color: #162B75;
+    color: #fff;
+}
+
+.requisition-page .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+.requisition-page .page-item:not(.disabled):hover .page-link {
+    background-color: none;
+}
+
+.requisition-page .form-check-input {
+    width: 1.1em;
+    height: 1.1em;
+    border: 2px solid #42579F !important;
+    cursor: pointer;
+}
+
+.requisition-page .form-check-input:checked {
+    background-color: #42579F !important;
+    border-color: #42579F !important;
+}
+
+
+.requisition-page .form-check-input:focus {
+    box-shadow: none !important;
+}
+
+.requisition-page.badge.capitalize-status {
+    text-transform: capitalize;
+}
+
+.requisition-page .form-check-input:disabled {
+    cursor: not-allowed;
+    background: #AFBDEB4F;
+}
+
+.requisition-page.pagesize {
+    color: #162B75;
+}
+
+.requisition-page .subbtn:disabled {
+    background-color: #42579F !important;
+    opacity: 0.6 !important;
+    cursor: not-allowed;
+}
+
+/* ================= Pagination Responsive ================= */
+@media (max-width: 768px) {
+
+    /* Stack page size + pagination */
+    .requisition-page .pagination,
+    .requisition-page .pagination.mb-0 {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* Parent container becomes vertical */
+    .requisition-page .mt-4.mb-4 .col {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 12px;
+    }
+
+    /* Page size row */
+    .requisition-page .pagesize {
+        font-size: 0.875em;
+    }
+
+    /* Center page size dropdown */
+    .requisition-page .mt-4.mb-4 .d-flex.align-items-center.gap-2 {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    /* Pagination nav full width */
+    .requisition-page nav[aria-label="Page navigation"] {
+        width: 100%;
+    }
+
+    /* Pagination buttons bigger for touch */
+    .requisition-page .page-link {
+        min-width: 42px;
+        min-height: 42px;
+        padding: 0.5rem;
+    }
+
+}
+
+.requisition-page .reject-btn {
+    font-size: 0.875rem;
+    font-weight: 400;
+    border-radius: 8px;
+    background-color: #fdf5f5;
+    color: #D73C40;
+
+}
+
+.requisition-page .approve-btn {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: #25ba2f !important;
+    padding: 6px 18px;
+    background-color: #f4faf6;
+}

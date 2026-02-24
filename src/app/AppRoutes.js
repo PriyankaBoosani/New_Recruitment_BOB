@@ -32,6 +32,10 @@ import CandidateScreening from "../modules/candidatePreview/CandidateScreening";
 import InterviewerSchedule from "../modules/Interviewer/InterviewerSchedule"
 // import CandidateInterview from "../modules/Interview/CandidateInterview";
 import ScheduleInterviews from "../modules/interviews/ScheduleInterviews";
+import Approvals from "../modules/Approvals/pages/RequisitionRequests";
+import ExtensionsRequests from "../modules/Approvals/pages/ExtensionsRequests";
+import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";// Lazy loaded components
+
 
 // Lazy loaded components
 const Layout = React.lazy(() => import("../shared/components/Layout"));
@@ -87,6 +91,11 @@ const AppRoutes = () => {
                 <Route path="/interviewpanel" element={<InterviewPanel />} />
                 {/* <Route path="/candidate-interview" element={<CandidateInterview />} /> */}
                 <Route path="/schedule-interviews" element={<ScheduleInterviews />} />
+                <Route path="/requisition-requests" element={<Approvals />} />
+                <Route path="/extension-requests" element={<ExtensionsRequests />} />
+
+                <Route path="/committee-requests" element={<CommitteeRequests />} />
+                
 
 
               </Route>

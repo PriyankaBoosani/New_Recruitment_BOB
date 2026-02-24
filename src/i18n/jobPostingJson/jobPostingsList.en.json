@@ -51,5 +51,6 @@
     "delete_position": "Delete Position", 
     "view_position": "View Position",
     "edit_position": "Edit Position",
-    "view_requisition": "View Requisition"
+    "view_requisition": "View Requisition",
+    "status_l1_pending": "L1 Pending"
 }

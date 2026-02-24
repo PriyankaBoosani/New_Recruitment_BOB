@@ -60,16 +60,21 @@ export const useJobRequisitions = ({
     try {
       setLoading(true);
 
-      await requisitionApiService.submitForApproval({
+      const res = await requisitionApiService.submitForApprovalFlow({
         jobRequisitionIds,
-        postingStatus: "Approved" // confirm backend enum
-
+        postingStatus: "L1_PENDING"
       });
 
-      toast.success(t("requisition_approve_success"));
-      fetchRequisitions(); // refresh list
+      if (res?.success === false) {
+        toast.error(t("requisition_submit_failed"));
+        return;
+      }
+
+      toast.success(t("requisition_submit_success"));
+      fetchRequisitions();
+
     } catch (err) {
-      toast.error(t("requisition_approve_failed"));
+      toast.error(t("requisition_submit_failed"));
     } finally {
       setLoading(false);
     }

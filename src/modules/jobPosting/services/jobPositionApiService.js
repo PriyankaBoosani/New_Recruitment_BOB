@@ -87,50 +87,50 @@ const jobPositionApiService = {
       }
     );
   },
-  
+
 
   // CANDIDATE SCREENING APIs
   getRequisitions: (name = "") =>
-  api.get("/recruiter/job-requisitions/get-requisitions", {
-    params: { name },
-    headers: { "X-Client": "recruiter" }
-  }),
+    api.get("/recruiter/job-requisitions/get-requisitions", {
+      params: { name },
+      headers: { "X-Client": "recruiter" }
+    }),
 
   getPositionsByReqId: ({ requisitionId, searchText = "" }) =>
-  api.get("/recruiter/job-positions/get-positions", {
-    params: { requisitionId, searchText },
-    headers: { "X-Client": "recruiter" },
-  }),
+    api.get("/recruiter/job-positions/get-positions", {
+      params: { requisitionId, searchText },
+      headers: { "X-Client": "recruiter" },
+    }),
 
   getCandidatesByPosition: (payload) =>
-  api.post(
-    "/recruiter/candidate-screening/get-candidate-details",
-    payload,
-    {
-      headers: { "X-Client": "recruiter" },
-    }
-  ),
+    api.post(
+      "/recruiter/candidate-screening/get-candidate-details",
+      payload,
+      {
+        headers: { "X-Client": "recruiter" },
+      }
+    ),
 
   getScreeningCommitteeStatus: (applicationId) =>
-  api.get(
-    `/recruiter/document-verification/get-screening-committee/${applicationId}`,
-    {
-      headers: {
-        "X-Client": "recruiter",
-      },
-    }
-  ),
+    api.get(
+      `/recruiter/document-verification/get-screening-committee/${applicationId}`,
+      {
+        headers: {
+          "X-Client": "recruiter",
+        },
+      }
+    ),
 
 
   getZonalDocumentStatus: (applicationId) =>
-  api.get(
-    `/recruiter/zonal-verification/documents/${applicationId}`,
-    {
-      headers: {
-        "X-Client": "recruiter",
-      },
-    }
-  ),
+    api.get(
+      `/recruiter/zonal-verification/documents/${applicationId}`,
+      {
+        headers: {
+          "X-Client": "recruiter",
+        },
+      }
+    ),
 
 
   saveScreeningDecision: (payload) =>
@@ -164,40 +164,40 @@ const jobPositionApiService = {
 
 
 
-submitOverallZonalVerification(payload) {
-  return api.post(
-    "/recruiter/zonal-verification/submit-overall-verification",
-    payload
-  );
-},
+  submitOverallZonalVerification(payload) {
+    return api.post(
+      "/recruiter/zonal-verification/submit-overall-verification",
+      payload
+    );
+  },
 
 
 
-verifyZonalDocument(payload) {
-  return api.post(
-    "/recruiter/zonal-verification/verify-document",
-    payload,
-    {
-      headers: {
-        "X-Client": "recruiter" 
+  verifyZonalDocument(payload) {
+    return api.post(
+      "/recruiter/zonal-verification/verify-document",
+      payload,
+      {
+        headers: {
+          "X-Client": "recruiter"
+        }
       }
-    }
-  );
-},
+    );
+  },
 
 
-updateZonalAbsent(applicationId, isAbsent) {
-  return api.post(
-    `/recruiter/zonal-verification/update-absent-status`,
-    null,
-    {
-      params: { applicationId, isAbsent },
-      headers: {
-        "X-Client": "recruiter"
+  updateZonalAbsent(applicationId, isAbsent) {
+    return api.post(
+      `/recruiter/zonal-verification/update-absent-status`,
+      null,
+      {
+        params: { applicationId, isAbsent },
+        headers: {
+          "X-Client": "recruiter"
+        }
       }
-    }
-  );
-},
+    );
+  },
 
   getCandidateDiscrepancyDetails(applicationId) {
     return api.get(
@@ -255,16 +255,36 @@ updateZonalAbsent(applicationId, isAbsent) {
   },
 
   downloadCandidateDetails: (payload) =>
-  api.post(
-    "/recruiter/candidate-details/download",
-    payload,
-    {
-      responseType: "blob",
-      headers: {
-        "X-Client": "recruiter",
+    api.post(
+      "/recruiter/candidate-details/download",
+      payload,
+      {
+        responseType: "blob",
+        headers: {
+          "X-Client": "recruiter",
+        },
+      }
+    ),
+
+  getL1Requisitions: ({ year, search, page, size, statuses }) =>
+    api.get("/recruiter/job-requisitions/l1-requisitions", {
+      params: { year, search, page, size, statuses },
+      headers: { "X-Client": "recruiter" }
+    }),
+  approveRequisitions: ({ ids, postingStatus, comments }) =>
+    api.post(
+      "/recruiter/job-requisitions/approve-job-requisitions",
+      {
+        jobRequisitionIds: ids,
+        postingStatus,
+        comments
       },
-    }
-  ),
+      {
+        headers: {
+          "X-Client": "recruiter"
+        }
+      }
+    ),
 
 };
 

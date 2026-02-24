@@ -44,6 +44,12 @@ import { useTranslation } from "react-i18next";
 const JobPostingsList = () => {
     const { t } = useTranslation(["jobPostingsList", "common"]);
 
+    const formatStatusLabel = (status = "") =>
+        status
+            .toLowerCase()
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, c => c.toUpperCase());
+
     const navigate = useNavigate();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedReq, setSelectedReq] = useState(null);
@@ -115,7 +121,9 @@ const JobPostingsList = () => {
 
     const [selectedReqIds, setSelectedReqIds] = useState(new Set());
     const selectableRequisitions = requisitions.filter(
-        r => r.status !== "Approved" && !r.hasDraftPositions
+        r => r.status !== "APPROVED" &&
+            r.status !== "L1_PENDING" &&
+            !r.hasDraftPositions
     );
     useEffect(() => {
         if (!yearOptions?.length || year) return;
@@ -304,6 +312,7 @@ const JobPostingsList = () => {
                         <option value="">{t("jobPostingsList:status_all")}</option>
                         <option value="NEW">{t("jobPostingsList:status_new")}</option>
                         <option value="APPROVED">{t("jobPostingsList:status_approved")}</option>
+                        <option value="L1_PENDING">{t("jobPostingsList:status_l1_pending")}</option>
                     </Form.Select>
                 </Col>
             </Row>
@@ -393,8 +402,11 @@ const JobPostingsList = () => {
                                     <Badge bg="light" text="primary" className="req-id">
                                         {req.requisitionId}
                                     </Badge>
-                                    <Badge bg={req.statusType} className="ms-2 capitalize-status">
+                                    {/* <Badge bg={req.statusType} className="ms-2 capitalize-status">
                                         {req.status}
+                                    </Badge> */}
+                                    <Badge bg={req.statusType} className="ms-2">
+                                        {formatStatusLabel(req.status)}
                                     </Badge>
 
                                 </div>
@@ -405,11 +417,17 @@ const JobPostingsList = () => {
                                             type="checkbox"
                                             className="me-2 mt-2"
                                             checked={selectedReqIds.has(req.id)}
-                                            disabled={req.status === "Approved" || req.hasDraftPositions}
-
+                                            disabled={
+                                                req.status === "APPROVED" ||
+                                                req.status === "L1_PENDING" ||
+                                                req.hasDraftPositions
+                                            }
                                             onClick={(e) => e.stopPropagation()}
                                             onChange={(e) => {
-                                                if (req.status === "Approved") return;
+                                                if (
+                                                    req.status === "APPROVED" ||
+                                                    req.status === "L1_PENDING"
+                                                ) return;
 
                                                 setSelectedReqIds(prev => {
                                                     const next = new Set(prev);

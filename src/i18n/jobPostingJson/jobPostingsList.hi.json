@@ -51,5 +51,6 @@
     "delete_position": "पद हटाएँ",
     "view_position": "पद देखें",
     "edit_position": "पद संपादित करें",
-    "view_requisition": "अनुरोध देखें"
+    "view_requisition": "अनुरोध देखें",
+    "status_l1_pending": "L1 लंबित"
 }

@@ -241,13 +241,14 @@ body {
   width: 100%;
 } */
 .app-footer {
-  position: sticky;
+  position: fixed;
   bottom: 0;
   background: #fff;
   z-index: 10;
   font-size: 0.875rem;
   color: #7B91B0;
   box-shadow: 0 -4px 12px #00000014;
+  width: 100%;
 }
 
 /* Ensure the footer stays at the bottom */
@@ -367,4 +368,20 @@ main {
 
 .btn-light-grey {
   background-color: #f5f7fa !important;
+}
+
+.approvals-dropdown .dropdown-item {
+  background-color: white;
+  font-size: 0.8125em;   /* 13px */
+  color: #333333;
+  font-weight: 400;
+}
+
+/* Active item (orange background) */
+.approvals-dropdown .dropdown-item.active,
+.approvals-dropdown .dropdown-item:active {
+  background-color: #F2652226 !important;
+  color: #333333 !important;
+  font-size: 0.8125em;
+  font-weight: 400;
 }
