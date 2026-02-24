@@ -485,7 +485,7 @@ const JobPostingsList = () => {
                                 {req.editable ? (
                                     <>
                                         <OverlayTrigger
-                                            placement="top"
+                                            placement="bottom"
                                             overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:add_position")}</Tooltip>}
                                         >
                                             <Button
@@ -500,7 +500,7 @@ const JobPostingsList = () => {
                                             </Button>
                                         </OverlayTrigger>
                                         <OverlayTrigger
-                                            placement="top"
+                                            placement="bottom"
                                             overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:edit_requisition")}</Tooltip>}
                                         >
                                             <Button
@@ -518,7 +518,7 @@ const JobPostingsList = () => {
                                             </Button>
                                         </OverlayTrigger>
                                         <OverlayTrigger
-                                            placement="top"
+                                            placement="bottom"
                                             overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:delete_requisition")}</Tooltip>}
                                         >
                                             <Button
@@ -537,7 +537,7 @@ const JobPostingsList = () => {
                                     </>
                                 ) : (
                                     <OverlayTrigger
-                                        placement="top"
+                                        placement="bottom"
                                         overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:view_requisition")}</Tooltip>}
                                     >
                                         <Button
@@ -623,7 +623,7 @@ const JobPostingsList = () => {
                                                             <>
                                                                 {/* EDIT POSITION */}
                                                                 <OverlayTrigger
-                                                                    placement="top"
+                                                                    placement="bottom"
                                                                     overlay={<Tooltip id={`tooltip-edit-${req.id}`}>{t("jobPostingsList:edit_position")}</Tooltip>}
                                                                 >
                                                                     <Button
@@ -644,7 +644,7 @@ const JobPostingsList = () => {
 
                                                                 {/* DELETE POSITION */}
                                                                 <OverlayTrigger
-                                                                    placement="top"
+                                                                    placement="bottom"
                                                                     overlay={<Tooltip id={`tooltip-delete-${req.id}`}>{t("jobPostingsList:delete_position")}</Tooltip>}
                                                                 >
                                                                     <Button
@@ -667,7 +667,7 @@ const JobPostingsList = () => {
                                                         ) : (
                                                             /* VIEW POSITION */
                                                             <OverlayTrigger
-                                                                placement="top"
+                                                                placement="bottom"
                                                                 overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:view_position")}</Tooltip>}
                                                             >
                                                                 <Button
@@ -695,7 +695,9 @@ const JobPostingsList = () => {
                                                         </div>
                                                         <div>
                                                             {t("jobPostingsList:preferred_education")}:{" "}
-                                                            {pos.preferredEducation}
+                                                            {pos.preferredEducation && pos.preferredEducation.trim()
+                                                                ? pos.preferredEducation
+                                                                : "NA"}
                                                         </div>
                                                     </div>
                                                 </div>

@@ -144,7 +144,7 @@ const PositionForm = ({
                                         {/* RIGHT: edit icon */}
                                         <div className="indent-actions">
                                             <OverlayTrigger
-                                                placement="top"
+                                                placement="bottom"
                                                 overlay={
                                                     <Tooltip id={`tooltip-edit-${indentFile.name}`}>
                                                         {t("addPosition:replace_indent")}
@@ -184,7 +184,7 @@ const PositionForm = ({
                                     <div className="indent-actions">
                                         {/* View */}
                                         <OverlayTrigger
-                                            placement="top"
+                                            placement="bottom"
                                             overlay={<Tooltip id={`tooltip-view-${existingIndentName}`}>{t("addPosition:view_indent")}</Tooltip>} >
                                             <button
                                                 type="button"
@@ -202,7 +202,7 @@ const PositionForm = ({
                                         {/* Edit */}
                                         {!isViewMode && (
                                             <OverlayTrigger
-                                                placement="top"
+                                                placement="bottom"
                                                 overlay={<Tooltip id={`tooltip-edit-${existingIndentName}`}>{t("addPosition:replace_indent")}</Tooltip>} >
                                                 <button
                                                     type="button"
