@@ -538,7 +538,7 @@ const handleSave = async () => {
             onChange={setSelectedDate}
             dateFormat="dd MMMM yyyy"
             customInput={<DatePill />}
-            maxDate={new Date()}
+           // maxDate={new Date()}
           />
 
           <span

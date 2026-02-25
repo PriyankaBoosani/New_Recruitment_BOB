@@ -233,11 +233,17 @@ disabled={row.absent || row.isZonalAbsent}
     overlay={<Tooltip>View Profile</Tooltip>}
   >
     <span>
-      <Person
-        className="me-3 cursor-pointer"
-        size={16}
-        onClick={() => goToPreview(row)}
-      />
+     <Person
+  className={`me-3 ${row.absent ? "text-muted" : "cursor-pointer"}`}
+  size={16}
+  style={{ pointerEvents: row.absent ? "none" : "auto" }}
+  onClick={() => {
+    if (!row.absent) {
+      goToPreview(row);
+    }
+  }}
+/>
+
     </span>
   </OverlayTrigger>
 

@@ -108,14 +108,18 @@ const CandidateTable = ({
                   <td className="fs-14">{c.time}</td>
                   <td className="fs-14">{c.zone}</td>
 
-                  <td className="text-center">
-                    <input
-                      type="checkbox"
-                      checked={c.absent}
-                      disabled={c.status !== "Pending"}
-                      onChange={() => toggleAbsent(c.id)}
-                    />
-                  </td>
+              <td className="text-center">
+  <input
+    type="checkbox"
+    checked={c.absent}
+   disabled={
+  c.status !== "Pending" &&
+  c.status !== "Zonal Absent"
+}
+
+    onChange={() => toggleAbsent(c.id)}
+  />
+</td>
 
 
 
@@ -224,13 +228,17 @@ const CandidateTable = ({
                 </div>
 
                 <div>
-                  <label className="fs-12 text-muted">Absent</label>
-                  <input
-                    type="checkbox"
-                    checked={c.absent}
-                    disabled={c.status !== "Pending"}
-                    onChange={() => toggleAbsent(c.id)}
-                  />
+                <label className="fs-12 text-muted">Absent</label>
+              <input
+  type="checkbox"
+  checked={c.absent}
+ disabled={
+  c.status !== "Pending" &&
+  c.status !== "Zonal Absent"
+}
+
+  onChange={() => toggleAbsent(c.id)}
+/>
 
 
 
