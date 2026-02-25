@@ -141,7 +141,11 @@ const PositionImportModal = ({
                 variant="outline-danger"
                 size="sm"
                 className="mt-2"
-                onClick={() => setSelectedFile(null)}
+                onClick={() => {
+                  setSelectedFile(null);
+                  setError("");
+                  setErrorDetails([]);
+                }}
                 disabled={loading}
               >
                 {t("position:remove")}

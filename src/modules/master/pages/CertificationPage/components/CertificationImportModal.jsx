@@ -6,8 +6,8 @@ import { useTranslation } from "react-i18next";
 import { useCertifications } from "../hooks/useCertifications";
 
 const CertificationImportModal = ({
-  onClose = () => {},
-  onSuccess = () => {}
+  onClose = () => { },
+  onSuccess = () => { }
 }) => {
   const { t } = useTranslation(["certification"]);
   const { bulkAddCertifications, downloadCertificationTemplate, loading } =
@@ -141,7 +141,11 @@ const CertificationImportModal = ({
                 variant="outline-danger"
                 size="sm"
                 className="mt-2"
-                onClick={() => setSelectedFile(null)}
+                onClick={() => {
+                  setSelectedFile(null);
+                  setError("");
+                  setErrorDetails([]);
+                }}
                 disabled={loading}
               >
                 {t("certification:remove")}

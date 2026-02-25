@@ -146,7 +146,11 @@ const JobGradeImportModal = ({
                 variant="outline-danger"
                 size="sm"
                 className="mt-2"
-                onClick={() => setSelectedFile(null)}
+                onClick={() => {
+                  setSelectedFile(null);
+                  setError("");
+                  setErrorDetails([]);
+                }}
                 disabled={loading}
               >
                 {t("jobGrade:remove")}
@@ -157,7 +161,7 @@ const JobGradeImportModal = ({
 
         <div className="text-center mb-3 small">
           {t("jobGrade:download_template")} :
-           <button
+          <button
             type="button"
             onClick={downloadJobGradeTemplate}
             className="btn btn-link p-0 text-primary text-decoration-none btnfont"

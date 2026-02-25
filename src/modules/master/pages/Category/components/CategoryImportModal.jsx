@@ -65,7 +65,7 @@ const CategoryImportModal = ({
             {t("category:support_xlsx")}
           </p>
         </div>
-      
+
         {error && (
           <Alert variant="danger">
             {/* Summary message */}
@@ -123,7 +123,11 @@ const CategoryImportModal = ({
                 variant="outline-danger"
                 size="sm"
                 className="mt-2"
-                onClick={() => setSelectedFile(null)}
+                onClick={() => {
+                  setSelectedFile(null);
+                  setError('');
+                  setErrorDetails([]);
+                }}
                 disabled={loading}
               >
                 {t("category:remove")}

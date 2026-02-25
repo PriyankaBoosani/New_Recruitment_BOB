@@ -140,7 +140,11 @@ const SpecialCategoryImportModal = ({
                 variant="outline-danger"
                 size="sm"
                 className="mt-2"
-                onClick={() => setSelectedFile(null)}
+                onClick={() => {
+                  setSelectedFile(null);
+                  setError('');
+                  setErrorDetails([]);
+                }}
                 disabled={loading}
               >
                 {t("specialCategory:remove")}
@@ -151,7 +155,7 @@ const SpecialCategoryImportModal = ({
 
         <div className="text-center mb-3 import-area small">
           {t("specialCategory:download_template")}:
-         
+
           <button
             type="button"
             onClick={downloadSpecialCategoryTemplate}

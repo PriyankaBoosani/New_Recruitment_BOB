@@ -115,7 +115,11 @@ const DepartmentImportView = ({
                 variant="outline-danger"
                 size="sm"
                 className="mt-2"
-                onClick={() => setSelectedFile(null)}
+                onClick={() => {
+                  setSelectedFile(null);
+                  setError('');
+                  setErrorDetails([]);
+                }}
                 disabled={loading}
               >
                 {t("department:remove")}
@@ -126,7 +130,7 @@ const DepartmentImportView = ({
 
         <div className="text-center mb-3 import-area small">
           {t("department:download_template")}:
-           <button
+          <button
             type="button"
             onClick={downloadDepartmentTemplate}
             className="btn btn-link p-0 text-primary text-decoration-none btnfont"
