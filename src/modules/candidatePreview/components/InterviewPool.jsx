@@ -26,9 +26,11 @@ export default function InterviewPool({
     QUALIFIED: "bg-success",
     DISQUALIFIED: "bg-danger",
     PROVISIONALLY_APPROVED: "bg-secondary",
+    ZONAL_ABSENT: "bg-info",
+    INTERVIEW_ABSENT: "bg-info",
     PENDING: "bg-warning",
     REJECTED: "bg-danger",
-   
+    OFFER_AWAITED: "bg-dark"
 
   };
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
@@ -170,37 +172,37 @@ export default function InterviewPool({
                     placement="bottom"
                     overlay={<Tooltip id={`tooltip-${c.id}`}>View Profile</Tooltip>}
                   >
-                  <Person
-                    className="me-3 cursor-pointer"
-                    onClick={() =>
-                      console.log("Navigating to preview", c) ||
-                      navigate("/candidate-preview", {
-                        state: {
-                          candidate: c,
-                          applicationId: c.applicationId,
-                          positionId: selectedPositionId,
-                          requisitionId: selectedRequisitionId,
-                          fromInterviewPool: true,
-                          activeTab: "INTERVIEW_POOL",
-                          requisition: requisition
-                            ? {
-                              requisition_code: requisition.requisition_code,
-                              requisition_title: requisition.requisition_title,
-                              registration_start_date: requisition.registration_start_date,
-                              registration_end_date: requisition.registration_end_date,
-                            }
-                            : null,
-                          position: position
-                            ? {
-                              positionId: position.positionId,
-                              positionName: position.positionName,
-                            }
-                            : null,
-                        },
+                    <Person
+                      className="me-3 cursor-pointer"
+                      onClick={() =>
+                        console.log("Navigating to preview", c) ||
+                        navigate("/candidate-preview", {
+                          state: {
+                            candidate: c,
+                            applicationId: c.applicationId,
+                            positionId: selectedPositionId,
+                            requisitionId: selectedRequisitionId,
+                            fromInterviewPool: true,
+                            activeTab: "INTERVIEW_POOL",
+                            requisition: requisition
+                              ? {
+                                requisition_code: requisition.requisition_code,
+                                requisition_title: requisition.requisition_title,
+                                registration_start_date: requisition.registration_start_date,
+                                registration_end_date: requisition.registration_end_date,
+                              }
+                              : null,
+                            position: position
+                              ? {
+                                positionId: position.positionId,
+                                positionName: position.positionName,
+                              }
+                              : null,
+                          },
 
-                      })
-                    }
-                  />
+                        })
+                      }
+                    />
                   </OverlayTrigger>
                   <OverlayTrigger
                     placement="bottom"

@@ -23,32 +23,32 @@ const CandidateTable = ({
 
 
   const navigate = useNavigate();
-  
-    //    console.log("Fetching job details for position ID@@@@@@@@@@@@@@@@@@:", position.positionId);
-const goToPreview = (c) => {
 
-  console.log("RAW CANDIDATE:", c.raw);
+  //    console.log("Fetching job details for position ID@@@@@@@@@@@@@@@@@@:", position.positionId);
+  const goToPreview = (c) => {
 
-  navigate("/candidate-preview", {
-    state: {
-      candidate: c.raw,
-      candidateId: c.raw.candidateId,
-      applicationId: c.raw.applicationId,
-      interviewScheduleId: c.raw.interviewScheduleId,
+    console.log("RAW CANDIDATE:", c.raw);
 
-      positionId:
-        position?.raw?.positionId ||
-        position?.positionId ||
-        position?.value ||
-        null,
+    navigate("/candidate-preview", {
+      state: {
+        candidate: c.raw,
+        candidateId: c.raw.candidateId,
+        applicationId: c.raw.applicationId,
+        interviewScheduleId: c.raw.interviewScheduleId,
 
-      selectedDate,
-      candidates: allCandidatesRaw,
-      requisition,
-      position,
-    },
-  });
-};
+        positionId:
+          position?.raw?.positionId ||
+          position?.positionId ||
+          position?.value ||
+          null,
+
+        selectedDate,
+        candidates: allCandidatesRaw,
+        requisition,
+        position,
+      },
+    });
+  };
 
 
 
@@ -61,7 +61,7 @@ const goToPreview = (c) => {
       {/* ================= DESKTOP TABLE ================= */}
       <div className="d-none d-md-block">
         <table className="table align-middle mb-0 verification-table">
-         <thead className="fs-14">
+          <thead className="fs-14">
 
             <tr>
              <th className="fs-14">Candidate</th>
@@ -75,22 +75,22 @@ const goToPreview = (c) => {
             </tr>
           </thead>
 
-        <tbody>
-  {!isSelectionDone && (
-    <tr className="no-candidates-row">
-      <td colSpan="7" className="text-center py-4 text-muted fs-15">
-        No candidates found
-      </td>
-    </tr>
-  )}
+          <tbody>
+            {!isSelectionDone && (
+              <tr className="no-candidates-row">
+                <td colSpan="7" className="text-center py-4 text-muted fs-15">
+                  No candidates found
+                </td>
+              </tr>
+            )}
 
-  {isSelectionDone && filteredCandidates.length === 0 && (
-    <tr className="no-candidates-row">
-      <td colSpan="7" className="text-center py-4 text-muted fs-15">
-        No candidates found
-      </td>
-    </tr>
-  )}
+            {isSelectionDone && filteredCandidates.length === 0 && (
+              <tr className="no-candidates-row">
+                <td colSpan="7" className="text-center py-4 text-muted fs-15">
+                  No candidates found
+                </td>
+              </tr>
+            )}
 
 
             {isSelectionDone &&
@@ -98,24 +98,24 @@ const goToPreview = (c) => {
               filteredCandidates.map((c) => (
                 <tr key={c.id}>
                   <td>
-<div className="fw-semibold fs-14">{c.name}</div>
+                    <div className="fw-semibold fs-14">{c.name}</div>
                     <div className="text-muted fs-12">
-                      Reg No: {c.regNo}
+                      Application Number: {c.regNo}
                     </div>
                   </td>
 
-                 <td className="fs-14">{c.category}</td>
-<td className="fs-14">{c.time}</td>
-<td className="fs-14">{c.zone}</td>
+                  <td className="fs-14">{c.category}</td>
+                  <td className="fs-14">{c.time}</td>
+                  <td className="fs-14">{c.zone}</td>
 
-              <td className="text-center">
-  <input
-    type="checkbox"
-    checked={c.absent}
-    disabled={c.status !== "Pending"}
-    onChange={() => toggleAbsent(c.id)}
-  />
-</td>
+                  <td className="text-center">
+                    <input
+                      type="checkbox"
+                      checked={c.absent}
+                      disabled={c.status !== "Pending"}
+                      onChange={() => toggleAbsent(c.id)}
+                    />
+                  </td>
 
 
 
@@ -129,43 +129,43 @@ const goToPreview = (c) => {
                     </span>
                   </td>
 
-                <td className="text-center">
+                  <td className="text-center">
 
-  {/* View Profile */}
-  <OverlayTrigger
-    placement="bottom"
-    overlay={<Tooltip>View Profile</Tooltip>}
-  >
-    <span>
-      <Person
-        size={16}
-        className={`me-3 ${c.status === "Rejected" ? "text-muted" : "cursor-pointer"}`}
-        style={{
-          cursor: c.status === "Rejected" ? "not-allowed" : "pointer",
-          opacity: c.status === "Rejected" ? 0.5 : 1
-        }}
-        onClick={() => {
-          if (c.status !== "Rejected") goToPreview(c);
-        }}
-      />
-    </span>
-  </OverlayTrigger>
+                    {/* View Profile */}
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={<Tooltip>View Profile</Tooltip>}
+                    >
+                      <span>
+                        <Person
+                          size={16}
+                          className={`me-3 ${c.status === "Rejected" ? "text-muted" : "cursor-pointer"}`}
+                          style={{
+                            cursor: c.status === "Rejected" ? "not-allowed" : "pointer",
+                            opacity: c.status === "Rejected" ? 0.5 : 1
+                          }}
+                          onClick={() => {
+                            if (c.status !== "Rejected") goToPreview(c);
+                          }}
+                        />
+                      </span>
+                    </OverlayTrigger>
 
-  {/* View Resume */}
-  <OverlayTrigger
-    placement="bottom"
-    overlay={<Tooltip>View Resume</Tooltip>}
-  >
-    <span>
-      <FileText
-        size={16}
-        className="cursor-pointer"
-        onClick={() => onViewFile(c.raw)}
-      />
-    </span>
-  </OverlayTrigger>
+                    {/* View Resume */}
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={<Tooltip>View Resume</Tooltip>}
+                    >
+                      <span>
+                        <FileText
+                          size={16}
+                          className="cursor-pointer"
+                          onClick={() => onViewFile(c.raw)}
+                        />
+                      </span>
+                    </OverlayTrigger>
 
-</td>
+                  </td>
 
                 </tr>
               ))}
@@ -186,9 +186,9 @@ const goToPreview = (c) => {
 
               <div className="card-top">
                 <div>
-<div className="fw-semibold fs-14">{c.name}</div>
+                  <div className="fw-semibold fs-14">{c.name}</div>
                   <div className="text-muted fs-12">
-                    Reg No: {c.regNo}
+                    Application Number: {c.regNo}
                   </div>
                 </div>
 
@@ -203,34 +203,34 @@ const goToPreview = (c) => {
 
               <div className="card-grid">
                 <div>
-               <label className="fs-12 text-muted">Category</label>
+                  <label className="fs-12 text-muted">Category</label>
 
 
-<div className="fs-14">{c.category}</div>
+                  <div className="fs-14">{c.category}</div>
                 </div>
 
                 <div>
-              <label className="fs-12 text-muted">Time</label>
-<div className="fs-14">{c.time}</div>
+                  <label className="fs-12 text-muted">Time</label>
+                  <div className="fs-14">{c.time}</div>
 
-                
+
                 </div>
 
                 <div>
-                <label className="fs-12 text-muted">Zone</label>
-<div className="fs-14">{c.zone}</div>
+                  <label className="fs-12 text-muted">Zone</label>
+                  <div className="fs-14">{c.zone}</div>
 
-                 
+
                 </div>
 
                 <div>
-                <label className="fs-12 text-muted">Absent</label>
-              <input
-  type="checkbox"
-  checked={c.absent}
-  disabled={c.status !== "Pending"}
-  onChange={() => toggleAbsent(c.id)}
-/>
+                  <label className="fs-12 text-muted">Absent</label>
+                  <input
+                    type="checkbox"
+                    checked={c.absent}
+                    disabled={c.status !== "Pending"}
+                    onChange={() => toggleAbsent(c.id)}
+                  />
 
 
 
@@ -238,25 +238,25 @@ const goToPreview = (c) => {
               </div>
 
               <div className="card-actions">
-             <Person size={16}
+                <Person size={16}
 
-  className={`me-3 ${c.status === "Rejected" ? "text-muted" : "cursor-pointer"}`}
-  style={{
-    cursor: c.status === "Rejected" ? "not-allowed" : "pointer",
-    opacity: c.status === "Rejected" ? 0.5 : 1
-  }}
-  onClick={() => {
-    if (c.status !== "Rejected") {
-      goToPreview(c);
-    }
-  }}
-/>
+                  className={`me-3 ${c.status === "Rejected" ? "text-muted" : "cursor-pointer"}`}
+                  style={{
+                    cursor: c.status === "Rejected" ? "not-allowed" : "pointer",
+                    opacity: c.status === "Rejected" ? 0.5 : 1
+                  }}
+                  onClick={() => {
+                    if (c.status !== "Rejected") {
+                      goToPreview(c);
+                    }
+                  }}
+                />
 
-              <FileText size={16}
+                <FileText size={16}
 
-  className="cursor-pointer"
-  onClick={() => onViewFile(c.raw)}
-/>
+                  className="cursor-pointer"
+                  onClick={() => onViewFile(c.raw)}
+                />
 
               </div>
 
@@ -321,4 +321,3 @@ const goToPreview = (c) => {
 };
 
 export default CandidateTable;
-    

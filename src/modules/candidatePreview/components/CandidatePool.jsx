@@ -169,7 +169,7 @@ export default function CandidatePool({
                 <td className="align-content-center">
                   <p className="fw-normal fs-14 mb-0">{c.name}</p>
                   <p className="text-muted fs-12 mb-0">
-                    Reg No: {c.applicationNo}
+                    Application Number: {c.applicationNo}
                   </p>
                 </td>
 
@@ -298,7 +298,7 @@ export default function CandidatePool({
             <div className="card-body">
               <h6 className="fw-bold mb-1">{c.name}</h6>
               <small className="text-muted d-block mb-2">
-                Reg No: {c.regNo}
+                Application Number: {c.regNo}
               </small>
 
               <div className="mb-1">

@@ -50,6 +50,9 @@ export default function CandidateScreening({ selectedJob }) {
     DISQUALIFIED: "Disqualified",
     PROVISIONALLY_APPROVED: "Provisionally Approved",
     PENDING: "Pending",
+    ZONAL_ABSENT: "Zonal Absent",
+    INTERVIEW_ABSENT: "Interview Absent",
+    OFFER_AWAITED: "Offer Awaited"
   };
 
   const OFFER_POOL_STATUSES = [
