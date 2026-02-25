@@ -35,7 +35,7 @@ export default function CandidateScreening({ selectedJob }) {
     DISCREPANCY: "Discrepancy",
     PENDING: "Pending",
     INTERVIEW_SCHEDULED: "Interview Scheduled",
-    REJECTED: "Rejected",
+    // REJECTED: "Rejected",
   };
   const CANDIDATE_POOL_STATUSES = [
     "APPLIED",
@@ -50,9 +50,9 @@ export default function CandidateScreening({ selectedJob }) {
     DISQUALIFIED: "Disqualified",
     PROVISIONALLY_APPROVED: "Provisionally Approved",
     PENDING: "Pending",
+    ZONAL_REJECTED: "Zonal Rejected",
     ZONAL_ABSENT: "Zonal Absent",
     INTERVIEW_ABSENT: "Interview Absent",
-    OFFER_AWAITED: "Offer Awaited"
   };
 
   const OFFER_POOL_STATUSES = [
@@ -627,7 +627,7 @@ export default function CandidateScreening({ selectedJob }) {
           : activeTab === "INTERVIEW_POOL"
             ? "InterviewPool"
             : null,
-      status: normalizedStatus,
+      candidateApplicationStatuses: normalizedStatus,
       categoryId: filters.categoryId || null,
     };
   };
