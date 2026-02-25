@@ -28,7 +28,9 @@ const STAGE_STATUS_MAP = {
   VERIFIED: "Verified",
   REJECTED: "Rejected",
   PROVISIONALLY_APPROVED: "Provisionally Approved",
+  ZONAL_ABSENT: "Zonal Absent",   //  ADD THIS
 };
+
  
 /* ================= DATE PILL ================= */
  
@@ -526,7 +528,7 @@ useEffect(() => {
   onChange={setSelectedDate}
   dateFormat="dd MMMM yyyy"
   customInput={<DatePill />}
-  maxDate={new Date()}
+ // maxDate={new Date()}
 />
  
  

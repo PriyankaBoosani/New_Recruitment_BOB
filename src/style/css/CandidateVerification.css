@@ -65,6 +65,12 @@
   border-radius: 12px;
 }
 
+.status-badge.zonal-absent {
+  border: 1.5px solid #dc3545;
+  background-color: #fff5f5;
+  color: #dc3545;
+  font-weight: 500;
+}
 
 
 .date-nav-btn {

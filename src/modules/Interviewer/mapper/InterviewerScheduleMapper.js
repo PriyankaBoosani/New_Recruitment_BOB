@@ -54,7 +54,14 @@ const timeRange =
     : start
       ? formatTime(start)
       : "-";
- 
+
+ console.log(
+  "ZONAL STATUS:",
+  item.zonalVerificationStatus,
+  "IS ZONAL ABSENT:",
+  item.zonalVerificationStatus?.toUpperCase() === "VERIFIED"
+);
+
  
     return {
       id: item.application?.id || idx,
@@ -79,7 +86,12 @@ const timeRange =
       comment: item.panelComments ?? "",
 
 
-       isZonalAbsent: item.iszonal_absent ?? false,
+   isZonalAbsent:
+  item.interviewSchedule?.zonalVerificationStatus?.toUpperCase() === "ZONAL_ABSENT",
+
+
+
+
  
       raw: {
         applicationId: item.application?.id,

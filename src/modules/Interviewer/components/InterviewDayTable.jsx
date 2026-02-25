@@ -116,11 +116,12 @@ const InterviewDayTable = ({
   <input
     type="checkbox"
     checked={row.absent}
-   disabled={
+disabled={
   row.isZonalAbsent ||
   (row.score !== "" &&
    row.score !== null &&
    row.score !== undefined)
+
 }
 
     onChange={() => toggleAbsent(row.id)}
