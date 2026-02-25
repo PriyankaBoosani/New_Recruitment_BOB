@@ -82,7 +82,9 @@ const [showPdfViewer, setShowPdfViewer] = useState(false);
 const [loadingPdf, setLoadingPdf] = useState(false);
 const [page, setPage] = useState(0);
 const [pageSize, setPageSize] = useState(10);
-const [totalElements, setTotalElements] = useState(0);
+
+
+
  
  
 const handleViewFile = async (candidateRaw) => {
@@ -154,7 +156,10 @@ useEffect(() => {
   console.log("NAV STATE:", location.state);
 }, []);
  
- 
+ useEffect(() => {
+  setPage(0);
+}, [activeStage, searchText, selectedRequisition, selectedPosition]);
+
  
 const formatApiDate = (d) => {
   if (!d) return null;
@@ -360,6 +365,32 @@ const filteredCandidates = baseFiltered.filter(c =>
     ? c.status === STAGE_STATUS_MAP[activeStage]
     : true
 );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const totalElements = filteredCandidates.length;
+
+const totalPages = Math.ceil(totalElements / pageSize);
+
+const startIndex = page * pageSize;
+const endIndex = startIndex + pageSize;
+
+const paginatedCandidates = filteredCandidates.slice(
+  startIndex,
+  endIndex
+);
+
  
  
   /* ================= STAGE COUNTS ================= */
@@ -521,42 +552,41 @@ useEffect(() => {
  
       {/* ================= STAGE FILTER ================= */}
  
-      <div className="stage-filter-row d-flex align-items-center gap-4">
- 
-       <div className="d-flex align-items-center gap-2">
+<div className="stage-filter-row d-flex align-items-center gap-3">
+
   <span className="fs-14 text-muted">
     FILTER BY STAGE:
   </span>
- 
+
   <button
-    className="btn fs-14 error-text p-0"
-    onClick={() => setActiveStage(null)}
+    className="btn p-0 text-danger fs-14"
     type="button"
+    onClick={() => setActiveStage(null)}
   >
     Clear all
   </button>
+
+  <div style={{ width: 200 }}>
+    <select
+      className="form-select form-select-sm"
+      value={activeStage || ""}
+      onChange={(e) =>
+        setActiveStage(e.target.value || null)
+      }
+    >
+      <option value="">All Statuses</option>
+
+      {Object.keys(STAGE_STATUS_MAP).map(key => (
+        <option key={key} value={key}>
+          {STAGE_STATUS_MAP[key]}
+        </option>
+      ))}
+    </select>
+  </div>
+
 </div>
- 
- 
-        <div className="d-flex gap-2 flex-wrap">
-          {Object.keys(STAGE_STATUS_MAP).map(key => (
-            <button
-              key={key}
-            className={`stage-chip fs-13 d-flex align-items-center gap-1 ${
-  activeStage === key ? "active" : ""
-}`}
- 
-              onClick={() => setActiveStage(key)}
-            >
-              <span>{STAGE_STATUS_MAP[key]}</span>
-              <span className="stage-count">
-                {stageCounts[key] || 0}
-              </span>
-            </button>
-          ))}
-        </div>
- 
-      </div>
+
+
  
       {/* ================= SELECTORS ================= */}
  
@@ -600,7 +630,13 @@ isSaveEnabled={anyAbsentChanged}
         requisition={selectedRequisition}
         position={selectedPosition}
         isSelectionDone={isSelectionDone}
-        filteredCandidates={filteredCandidates}
+        filteredCandidates={paginatedCandidates}
+        totalElements={totalElements}
+        page={page}
+        pageSize={pageSize}
+        totalPages={totalPages}
+        setPage={setPage}
+        setPageSize={setPageSize}
         toggleAbsent={toggleAbsent}
         selectedDate={selectedDate}
         allCandidatesRaw={allCandidatesRaw}

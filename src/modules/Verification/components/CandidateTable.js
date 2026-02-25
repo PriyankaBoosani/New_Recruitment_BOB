@@ -12,7 +12,13 @@ const CandidateTable = ({
   toggleAbsent,
   selectedDate,
   allCandidatesRaw,
-   onViewFile
+  onViewFile,
+  totalElements,
+  page,
+  pageSize,
+  totalPages,
+  setPage,
+  setPageSize
 }) => {
 
 
@@ -59,12 +65,12 @@ const goToPreview = (c) => {
 
             <tr>
              <th className="fs-14">Candidate</th>
-<th className="fs-14">Category</th>
-<th className="fs-14">Time</th>
-<th className="fs-14">Zone</th>
-<th className="fs-14 text-center">Absent</th>
-<th className="fs-14">Status</th>
-<th className="fs-14 text-center">Actions</th>
+            <th className="fs-14">Category</th>
+            <th className="fs-14">Time</th>
+            <th className="fs-14">Zone</th>
+            <th className="fs-14 text-center">Absent</th>
+            <th className="fs-14">Status</th>
+            <th className="fs-14 text-center">Actions</th>
 
             </tr>
           </thead>
@@ -261,34 +267,54 @@ const goToPreview = (c) => {
       </div>
 
       {/* ================= FOOTER ================= */}
-      <div className="d-flex justify-content-between align-items-center px-3 py-2 table-footer">
-      <span className="text-muted fs-13">
-          Showing {isSelectionDone ? filteredCandidates.length : 0}
-        </span>
+    <div className="d-flex justify-content-between align-items-center px-3 py-2 table-footer">
 
-        <div className="d-flex gap-2">
-          <select
-            className="form-select form-select-sm"
-            style={{ width: 70 }}
-          >
-            <option>10</option>
-          </select>
+  {/* Showing text */}
+  <span className="text-muted fs-13">
+    {totalElements > 0
+      ? `Showing ${page * pageSize + 1}–${Math.min(
+          (page + 1) * pageSize,
+          totalElements
+        )} of ${totalElements}`
+      : "Showing 0"}
+  </span>
 
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            disabled
-          >
-            Prev
-          </button>
+  {/* Pagination controls */}
+  <div className="d-flex gap-2 align-items-center">
 
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            disabled
-          >
-            Next
-          </button>
-        </div>
-      </div>
+    <select
+      className="form-select form-select-sm"
+      style={{ width: 80 }}
+      value={pageSize}
+      onChange={(e) => {
+        setPageSize(Number(e.target.value));
+        setPage(0);
+      }}
+    >
+      <option value={10}>10</option>
+      <option value={20}>20</option>
+      <option value={50}>50</option>
+    </select>
+
+    <button
+      className="btn btn-sm btn-outline-secondary"
+      disabled={page === 0}
+      onClick={() => setPage(prev => prev - 1)}
+    >
+      Prev
+    </button>
+
+    <button
+      className="btn btn-sm btn-outline-secondary"
+      disabled={page + 1 >= totalPages}
+      onClick={() => setPage(prev => prev + 1)}
+    >
+      Next
+    </button>
+
+  </div>
+</div>
+
 
     </div>
   );
