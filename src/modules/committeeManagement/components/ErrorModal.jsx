@@ -1,14 +1,16 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 const ErrorModal = ({ show, message, errors = [], onClose }) => {
+  const { t } = useTranslation("common");
   const hasErrors = Array.isArray(errors) && errors.length > 0;
 
   return (
     <Modal size="lg" show={show} onHide={onClose} centered>
       <Modal.Header closeButton>
         <Modal.Title className="text-danger">
-            {hasErrors ? (message || "Validation Failed") : "Alert"}
+          {hasErrors ? (message || t("validation_failed")) : t("alert")}
         </Modal.Title>
       </Modal.Header>
 
@@ -25,14 +27,14 @@ const ErrorModal = ({ show, message, errors = [], onClose }) => {
         ) : (
           // Fallback single message display
           <p className="mb-0">
-            {message || "Something went wrong."}
+            {message || t("something_went_wrong")}
           </p>
         )}
       </Modal.Body>
 
       <Modal.Footer>
         <Button variant="primary" onClick={onClose}>
-          Close
+          {t("close")}
         </Button>
       </Modal.Footer>
     </Modal>

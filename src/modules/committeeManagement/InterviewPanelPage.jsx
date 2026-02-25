@@ -8,6 +8,7 @@ import { FiUsers, FiFileText } from "react-icons/fi";
 import { Modal, Button } from "react-bootstrap";
 import DeleteConfirmationModal from "./components/DeleteConfirmationModal";
 import ErrorModal from "./components/ErrorModal";
+import { useTranslation } from "react-i18next";
 
 const InterviewPanelPage = () => {
 
@@ -39,9 +40,9 @@ const InterviewPanelPage = () => {
     setSearch,
     showFilters,
     setShowFilters,
-      // sortConfig,
-      // handleSort,
-      // sortedPanels,
+    // sortConfig,
+    // handleSort,
+    // sortedPanels,
     size,
     setSize,
     activeTab,
@@ -54,16 +55,17 @@ const InterviewPanelPage = () => {
   // useEffect(() => {
   //   initData();
   // }, []);
-const [showDeleteModal, setShowDeleteModal] = useState(false);
-const [deleteId, setDeleteId] = useState(null);
-const [deletePanelName, setDeletePanelName] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [deletePanelName, setDeletePanelName] = useState("");
+  const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   return (
     <div className="interview-panel-container">
       <div className="panel-card">
         <div className="panel-header">
           <div>
-            <h2>Committee Management</h2>
-            <span className="page-subtitle">Manage interview panels and assign them to positions</span>
+            <h2>{t("interviewPanelCommittee:committee_management")}</h2>
+            <span className="page-subtitle"> {t("interviewPanelCommittee:committee_subtitle")}</span>
           </div>
           <div className="tabs-container">
             <div className="tabs">
@@ -72,14 +74,14 @@ const [deletePanelName, setDeletePanelName] = useState("");
                 onClick={() => setActiveTab("MANAGE")}
               >
                 <FiUsers className="tab-icon" />
-                <span>Manage Panels</span>
+                <span>{t("interviewPanelCommittee:manage_panels")}</span>
               </button>
               <button
                 className={`tab ${activeTab === "ASSIGN" ? "active" : ""}`}
                 onClick={() => setActiveTab("ASSIGN")}
               >
                 <FiFileText className="tab-icon" />
-                <span>Assign to Positions</span>
+                <span>{t("interviewPanelCommittee:assign_to_positions")}</span>
               </button>
             </div>
           </div>
@@ -107,7 +109,7 @@ const [deletePanelName, setDeletePanelName] = useState("");
                 <div className="panel-table-card">
                   <InterviewPanelTable
                     panels={panels}
-                    loading={loading}   
+                    loading={loading}
                     onEdit={handleEdit}
                     //onDelete={handleDelete}
                     page={page}
@@ -153,19 +155,19 @@ const [deletePanelName, setDeletePanelName] = useState("");
             setDeleteId(null);
             setDeletePanelName("");
           }}
-          title="Confirm Delete"
-          message="Are you sure you want to delete this panel?"
+          title={t("interviewPanelCommittee:confirm_delete")}
+          message={t("interviewPanelCommittee:delete_panel_message")}
           itemLabel={deletePanelName}
         />
 
 
       </div>
-        <ErrorModal
-          show={showErrorModal}
-          message={errorMessage}
-          errors={[]}   // no list needed here
-          onClose={() => setShowErrorModal(false)}
-        />
+      <ErrorModal
+        show={showErrorModal}
+        message={errorMessage}
+        errors={[]}   // no list needed here
+        onClose={() => setShowErrorModal(false)}
+      />
     </div>
   );
 };

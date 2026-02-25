@@ -8,8 +8,10 @@ import {
   mapPanelToFormData,
   preparePanelPayload
 } from "../mappers/InterviewPanelMapper";
+import { useTranslation } from "react-i18next";
 
 export const useInterviewPanel = () => {
+    const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   const [panels, setPanels] = useState([]);
   const [communityOptions, setCommunityOptions] = useState([]);
   const [membersOptions, setMembersOptions] = useState([]);
@@ -97,11 +99,11 @@ const [errorMessage, setErrorMessage] = useState("");
 
     } catch (err) {
       console.error("Fetch Panels Error:", err);
-      toast.error("Failed to load panels");
+      toast.error(t("failed_load_panels"));
     } finally {
       setLoading(false);
     }
-  }, [page, size, search]);
+  }, [page, size, search, t]);
 
   /* ================= INIT DATA ================= */
 
@@ -125,11 +127,11 @@ const [errorMessage, setErrorMessage] = useState("");
 
     } catch (error) {
       console.error("Init Data Error:", error);
-      toast.error("Failed to load initial data");
+      toast.error(t("failed_load_initial"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   /* ================= VALIDATION ================= */
 
@@ -137,18 +139,18 @@ const [errorMessage, setErrorMessage] = useState("");
     const newErrors = {};
 
     if (!formData.name?.trim()) {
-      newErrors.name = "Panel name is required";
+     newErrors.name = "panel_name_required";
     }
     else if (formData.name.trim().length > 200) {
-      newErrors.name = "Panel name cannot exceed 200 characters";
+      newErrors.name = "panel_name_max";
     }
 
     if (!formData.community) {
-      newErrors.community = "Panel type is required";
+      newErrors.community = "panel_type_required";
     }
 
     if (!formData.members || formData.members.length === 0) {
-      newErrors.members = "Select at least one panel member";
+      newErrors.members = "member_required";
     }
 
     setErrors(newErrors);
@@ -193,15 +195,14 @@ const [errorMessage, setErrorMessage] = useState("");
           
          // toast.error(res?.message || "Panel name already exists for selected committee");
          setErrorMessage(
-            res?.message || "Panel name already exists for selected committee"
+            res?.message || t("panel_exists_for_committee")
           );
           setShowErrorModal(true);
           return; // ⛔ VERY IMPORTANT
         }
 
 
-        toast.success("Panel updated successfully");
-
+        toast.success(t("panel_updated"));
       } else {
         // ✅ CREATE
         const res = await masterApiService.addInterviewPanel(payload);
@@ -209,13 +210,13 @@ const [errorMessage, setErrorMessage] = useState("");
         if (!res?.success) {
          // toast.error(res?.message || "Failed to create panel");
          setErrorMessage(
-            res?.message || "Failed to create panel"
+            res?.message || t("failed_create_panel")
           );
           setShowErrorModal(true);
           return; // ⛔ VERY IMPORTANT
         }
 
-        toast.success("Panel created successfully");
+        toast.success(t("panel_created"));
       }
 
       // ✅ Only runs on SUCCESS
@@ -231,7 +232,7 @@ const [errorMessage, setErrorMessage] = useState("");
       console.error("SAVE ERROR 👉", err);
       toast.error(
         err?.response?.data?.message ||
-        "Failed to save panel"
+        t("failed_save_panel")
       );
     }
   };
@@ -248,22 +249,22 @@ const [errorMessage, setErrorMessage] = useState("");
         //   "Panel is assigned to a position and cannot be deleted"
         // );
         setErrorMessage(
-          res?.message || "Panel is assigned to a position and cannot be deleted"
+          res?.message || t("panel_assigned_cannot_delete")
         );
         setShowErrorModal(true);
         return;
       }
 
-      toast.success("Panel deleted successfully");
+      toast.success(t("panel_deleted"));
       fetchPanels();
     } catch (err) {
       console.error("DELETE ERROR 👉", err);
       toast.error(
         err?.response?.message ||
-        "Failed to delete panel"
+        t("failed_delete_panel")
       );
     }
-  }, [fetchPanels]);
+  }, [fetchPanels, t]);
 
   /* ================= EDIT ================= */
 
@@ -274,7 +275,7 @@ const [errorMessage, setErrorMessage] = useState("");
       console.log("mappedForm", mappedForm)
       setFormData(mappedForm);
     } catch (err) {
-      toast.error("Failed to load panel details");
+      toast.error(t("failed_load_panel_details"));
     }
   };
 

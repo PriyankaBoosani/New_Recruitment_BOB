@@ -7,8 +7,11 @@ import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import ErrorModal from "./components/ErrorModal";
 import Select from "react-select";
 import Loader from "../../shared/components/Loader";
+import { useTranslation } from "react-i18next";
+
 
 const AssignPositionsPage = () => {
+  const { t } = useTranslation(["interviewPanelCommittee", "common"]);
 
   const {
     requisitions,
@@ -98,7 +101,7 @@ const AssignPositionsPage = () => {
         className="action-pill add"
         onClick={() => toggleCommittee(type, committee)}
       >
-        Add →
+       {t("add_button")} →
       </button>
     </div>
   );
@@ -119,7 +122,7 @@ const AssignPositionsPage = () => {
 
           <div className="date-row">
             <div>
-              <label>START DATE</label>
+              <label>{t("start_date_label")}</label>
               <input
                 type="date"
                  min={today}
@@ -130,12 +133,12 @@ const AssignPositionsPage = () => {
                 }
               />
               {errors.startDate && (
-                <div className="field-error">{errors.startDate}</div>
+                  <div className="field-error">{t(errors.startDate)}</div>
               )}
             </div>
 
             <div>
-              <label>END DATE</label>
+              <label>{t("end_date_label")}</label>
               <input
                 type="date"
                   min={committee.startDate || today}
@@ -146,7 +149,7 @@ const AssignPositionsPage = () => {
                 }
               />
               {errors.endDate && (
-                <div className="field-error">{errors.endDate}</div>
+                <div className="field-error">{t(errors.endDate)}</div>
               )}
             </div>
           </div>
@@ -158,7 +161,7 @@ const AssignPositionsPage = () => {
             //onClick={() => committee.canEdit && toggleCommittee(type, committee)}
            disabled={!committee.canEdit}
         >
-          ← Remove
+        ← {t("remove_button")}
         </button>
       </div>
     );
@@ -217,15 +220,15 @@ const hasAnySelectedPanels =
 
       {/* ===== SELECTION CONTROLS ===== */}
       <div className="selection-section">
-        <div class="mb-3"><div class="assign-position-title">Select Position</div><div class="assign-position-muted">Choose a requisition and position to assign committees to.</div></div>
+        <div class="mb-3"><div class="assign-position-title">{t("select_position_title")}</div><div class="assign-position-muted">{t("choose_requisition_position_desc")}</div></div>
         <div className="selection-grid">
  
           {/* Requisition */}
           <div className="form-group">
-            <label className="form-label">Requisition</label>
+            <label className="form-label">{t("requisition_label")}</label>
             <Select
              isSearchable
-              placeholder="Select Requisition"
+              placeholder={t("select_requisition_placeholder")}
               options={requisitionOptions}
               value={
                 requisitionOptions.find(
@@ -243,10 +246,10 @@ const hasAnySelectedPanels =
  
           {/* Position */}
           <div className="form-group">
-            <label className="form-label">Position</label>
+            <label className="form-label">{t("position_label")}</label>
             <Select
-             isSearchable
-              placeholder="Select Position"
+              isSearchable
+              placeholder={t("select_position_placeholder")}
               options={positionOptions}
               value={
                 positionOptions.find(
@@ -282,11 +285,11 @@ const hasAnySelectedPanels =
       <div className="committee-config-section">
         <div className="config-header">
           <div className="config-title-section">
-            <h2 className="config-title">Configure Committees</h2>
+            <h2 className="config-title">{t("configure_committees")}</h2>
             <p className="config-subtitle">
               {selectedPositionTitle
-                ? `Assign panels to ${selectedPositionTitle}`
-                : "Select a position to assign panels"}
+                ? t("assign_to_position", { position: selectedPositionTitle })
+                : t("select_position_to_assign")}
             </p>
           </div>
           <button 
@@ -297,7 +300,7 @@ const hasAnySelectedPanels =
             
 
           >
-            {loading ? "Assigning..." : "Assign Committees"}
+           {loading ? t("assigning") : t("assign_committees")}
           </button>
         </div>
 
@@ -307,19 +310,19 @@ const hasAnySelectedPanels =
             className={`tab-item ${activeTab === "SCREENING" ? "active" : ""}`}
             onClick={() => setActiveTab("SCREENING")}
           >
-            Screening Committee
+           {t("screening_committee")}
           </button>
           <button
             className={`tab-item ${activeTab === "INTERVIEW" ? "active" : ""}`}
             onClick={() => setActiveTab("INTERVIEW")}
           >
-            Interview Committee
+            {t("interview_committee")}
           </button>
           <button
             className={`tab-item ${activeTab === "COMPENSATION" ? "active" : ""}`}
             onClick={() => setActiveTab("COMPENSATION")}
           >
-            Compensation Committee
+            {t("compensation_committee")}
           </button>
         </div>
 
@@ -328,7 +331,7 @@ const hasAnySelectedPanels =
           {/* Available Panels */}
           <div className="panel-box available">
             <div className="panel-header">
-              <h3 className="panel-title">Available Panels</h3>
+              <h3 className="panel-title">{t("available_panels")}</h3>
               <span className="panel-count">{filteredPanels.length}</span>
             </div>
             <div className="panel-divider"></div>
@@ -345,7 +348,7 @@ const hasAnySelectedPanels =
           {/* Selected Panels */}
           <div className="panel-box selected">
             <div className="panel-header">
-              <h3 className="panel-title">Selected Panels</h3>
+              <h3 className="panel-title">{t("selected_panels")}</h3>
               <span className="panel-count">{selectedCommittees[activeTab].length}</span>
             </div>
             <div className="panel-divider"></div>
@@ -355,7 +358,7 @@ const hasAnySelectedPanels =
               ) : (
                 <div className="empty-state">
                   <div className="empty-icon">📋</div>
-                  <div className="empty-text">No panels selected</div>
+                  <div className="empty-text">{t("no_panels_selected")}</div>
                 </div>
               )}
             </div>

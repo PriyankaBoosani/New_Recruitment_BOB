@@ -3,6 +3,7 @@ import edit_icon from "../../../assets/edit_icon.png";
 import delete_icon from "../../../assets/delete_icon.png";
 import { FiFilter } from "react-icons/fi";
 import Loader from '../../../shared/components/Loader'
+import { useTranslation } from "react-i18next";
 const InterviewPanelTable = ({
   panels,
   loading,
@@ -10,7 +11,7 @@ const InterviewPanelTable = ({
   onDelete,
   page,
   setPage,
-   size,
+  size,
   setSize,
   totalPages,
   pageSize = 10,
@@ -22,17 +23,18 @@ const InterviewPanelTable = ({
   // handleSort,
   // sortedPanels
 }) => {
+  const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   return (
 
-    
+
     <>
       {/* ===== HEADER ===== */}
       <div className="table-header">
 
         {loading && (
-					<Loader />
-				)}
-        <span className="table-title">Panels History</span>
+          <Loader />
+        )}
+        <span className="table-title"> {t("interviewPanelCommittee:panels_history")}</span>
 
 
 
@@ -41,7 +43,7 @@ const InterviewPanelTable = ({
         <div className="table-search-row">
           <input
             type="text"
-            placeholder="Search by panel name..."
+            placeholder={t("interviewPanelCommittee:search_panel_name")}
             className="table-search-input"
             value={search?.panelName || ""}
             onChange={(e) =>
@@ -68,10 +70,10 @@ const InterviewPanelTable = ({
                 }))
               }
             >
-              <option value="">All Committees</option>
-              <option value="Interview">Interview</option>
-              <option value="Screening">Screening</option>
-              <option value="Compensation">Compensation</option>
+              <option value=""> {t("interviewPanelCommittee:all_committees")}</option>
+              <option value="Interview">{t("interviewPanelCommittee:interview")}</option>
+              <option value="Screening">{t("interviewPanelCommittee:screening")}</option>
+              <option value="Compensation">{t("interviewPanelCommittee:compensation")}</option>
             </select>
           </div>
         </div>
@@ -86,24 +88,24 @@ const InterviewPanelTable = ({
       <table className="table panel-table">
         <thead>
           <tr>
-            <th>S. No.</th>
+            <th>{t("interviewPanelCommittee:s_no")}</th>
             <th>
-              Panel Name
+              {t("interviewPanelCommittee:panel_name")}
               {/* {sortConfig.key === "panelName" &&
                 (sortConfig.direction === "asc" ? " ▲" : " ▼")} */}
             </th>
             <th>
-              Panel Type
+              {t("interviewPanelCommittee:panel_type")}
               {/* {sortConfig.key === "panelType" &&
                 (sortConfig.direction === "asc" ? " ▲" : " ▼")} */}
             </th>
 
             <th>
-              Panel Members
+              {t("interviewPanelCommittee:panel_members")}
               {/* {sortConfig.key === "members" &&
                 (sortConfig.direction === "asc" ? " ▲" : " ▼")} */}
             </th>
-            <th>Actions</th>
+            <th>{t("common:actions")}</th>
           </tr>
         </thead>
 
@@ -111,7 +113,7 @@ const InterviewPanelTable = ({
           {panels.length === 0 ? (
             <tr>
               <td colSpan="5" style={{ textAlign: "center" }}>
-                No panels found
+                {t("interviewPanelCommittee:no_panels_found")}
               </td>
             </tr>
           ) : (
@@ -146,53 +148,53 @@ const InterviewPanelTable = ({
           )}
         </tbody>
       </table>
-<div className="table-footer">
-  {/* Pagination - CENTER */}
-  {totalPages > 1 && (
-    <div className="pagination">
-      <button
-        className="pagination-btn"
-        disabled={page === 0}
-        onClick={() => setPage(page - 1)}
-      >
-        ‹
-      </button>
+      <div className="table-footer">
+        {/* Pagination - CENTER */}
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button
+              className="pagination-btn"
+              disabled={page === 0}
+              onClick={() => setPage(page - 1)}
+            >
+              ‹
+            </button>
 
-      {[...Array(totalPages)].map((_, i) => (
-        <button
-          key={i}
-          className={`pagination-btn ${page === i ? "active" : ""}`}
-          onClick={() => setPage(i)}
-        >
-          {i + 1}
-        </button>
-      ))}
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                className={`pagination-btn ${page === i ? "active" : ""}`}
+                onClick={() => setPage(i)}
+              >
+                {i + 1}
+              </button>
+            ))}
 
-      <button
-        className="pagination-btn"
-        disabled={page === totalPages - 1}
-        onClick={() => setPage(page + 1)}
-      >
-        ›
-      </button>
-    </div>
-  )}
+            <button
+              className="pagination-btn"
+              disabled={page === totalPages - 1}
+              onClick={() => setPage(page + 1)}
+            >
+              ›
+            </button>
+          </div>
+        )}
 
-  {/* Page Size - RIGHT */}
-  <div className="table-size-selector">
-    <span>Show</span>
-    <select
-      value={size}
-      onChange={(e) => setSize(Number(e.target.value))}
-    >
-      <option value={5}>5</option>
-      <option value={10}>10</option>
-      <option value={20}>20</option>
-      <option value={50}>50</option>
-    </select>
-    <span>entries</span>
-  </div>
-</div>
+        {/* Page Size - RIGHT */}
+        <div className="table-size-selector">
+          <span>{t("interviewPanelCommittee:show")}</span>
+          <select
+            value={size}
+            onChange={(e) => setSize(Number(e.target.value))}
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
+          <span>{t("interviewPanelCommittee:entries")}</span>
+        </div>
+      </div>
 
     </>
   );

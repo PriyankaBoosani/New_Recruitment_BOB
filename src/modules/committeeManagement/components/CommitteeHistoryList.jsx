@@ -2,6 +2,7 @@ import React from 'react';
 import { FiCalendar, FiUsers, FiEdit2, FiTrash2, FiFilter } from 'react-icons/fi';
 import edit_icon from "../../../assets/edit_icon.png"
 import delete_icon from "../../../assets/delete_icon.png"
+import { useTranslation } from "react-i18next";
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -32,10 +33,11 @@ const CommitteeHistoryList = ({
   onEdit = () => { },
   onDelete = () => { }
 }) => {
+  const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   return (
     <div className="history-section">
       <div className="history-header d-flex justify-content-between align-items-center mb-3">
-        <span className="committee-title">Committee History</span>
+        <span className="committee-title">{t("interviewPanelCommittee:committee_history")}</span>
         {/* optional filter button */}
       </div>
 
@@ -90,15 +92,15 @@ const CommitteeHistoryList = ({
 
           {/* ===== DATES ===== */}
           <div className="dates mt-2">
-            <span>Start Date: {item.startDate}</span>
-            <span >End Date: {item.endDate}</span>
+            <span> {t("interviewPanelCommittee:start_date")}: {item.startDate}</span>
+            <span >{t("interviewPanelCommittee:end_date")}: {item.endDate}</span>
           </div>
         </div>
       ))}
 
       {history.length === 0 && (
         <div className="text-center py-4 text-muted">
-          No committee assignment history found
+          {t("interviewPanelCommittee:no_committee_history")}
         </div>
       )}
     </div>

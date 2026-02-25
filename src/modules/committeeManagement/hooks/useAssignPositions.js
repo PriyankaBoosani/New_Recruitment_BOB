@@ -4,8 +4,10 @@ import masterApiService from "../../master/services/masterApiService";
 import committeeManagementService from "../services/committeeManagementService";
 import { mapPanelsApi } from "../mappers/InterviewPanelMapper";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 export const useAssignPositions = (userId) => {
+  const { t } = useTranslation(["interviewPanelCommittee"]);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
   const [formData, setFormData] = useState({
@@ -51,12 +53,12 @@ const [errorList, setErrorList] = useState([]);
 
 
       if (!panel.startDate) {
-        errors[key].startDate = "Start date is required";
+        errors[key].startDate = "start_date_required";
         isValid = false;
       }
 
       if (!panel.endDate) {
-        errors[key].endDate = "End date is required";
+        errors[key].endDate = "end_date_required";
         isValid = false;
       }
 
@@ -65,14 +67,14 @@ const [errorList, setErrorList] = useState([]);
         panel.endDate &&
         new Date(panel.endDate) < new Date(panel.startDate)
       ) {
-        errors[key].endDate = "End date cannot be before start date";
+        errors[key].endDate = "end_before_start";
         isValid = false;
       }
 
       if (isNewPanel) {
 
         if (panel.endDate && new Date(panel.endDate) <= today) {
-          errors[key].endDate = "End date must be a future date";
+          errors[key].endDate = "end_future_required";
           isValid = false;
         }
       }
@@ -83,7 +85,7 @@ const [errorList, setErrorList] = useState([]);
       // }
 
       if (!panel.members || panel.members.length === 0) {
-        errors[key].members = "At least one panel member is required";
+        errors[key].members = "member_required";
         isValid = false;
       }
 
@@ -97,7 +99,7 @@ const [errorList, setErrorList] = useState([]);
 
   if (!isValid) {
     
-    toast.error("Please fix the highlighted errors in all committees.");
+    toast.error(t("fix_committee_errors"));
   }
 
   return isValid;
@@ -231,7 +233,7 @@ useEffect(() => {
 
     } catch (err) {
       console.error("Load Position Data Error:", err);
-      toast.error("Failed to load panels");
+      toast.error(t("failed_load_panels"));
     } finally {
       setLoading(false);
     }
@@ -343,7 +345,7 @@ const showError = (message, errors = []) => {
   const handleAssignCommittees = async () => {
       if (loading) return; 
     if (!selectedPosition) {
-      toast.error("Please select a requisition and a position");
+      toast.error(t("select_requisition_position"));
       return;
     }
     const isValid = validatePanels();
@@ -408,10 +410,10 @@ const showError = (message, errors = []) => {
         payload
       );
       if(res?.success) {
-        toast.success("Committees assigned successfully");
+        toast.success(t("assign_success"));
       } else {
        // toast.error(res?.message || "Failed to assign committees");
-        showError( res?.message || "Validation failed",res?.data || []);
+        showError( res?.message || t("validation_failed"),res?.data || []);
       }
 
     } catch (err) {
@@ -419,7 +421,7 @@ const showError = (message, errors = []) => {
       console.error("ASSIGN ERROR 👉", err);
       toast.error(
         err?.response?.data?.message ||
-        "Failed to assign committees"
+        t("assign_failed")
       );
     } finally {
       setLoading(false);

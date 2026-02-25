@@ -159,7 +159,9 @@ const Header = () => {
               <span className="lang-globe">🌐</span>
 
               <span className="lang-label">
-                {i18n.language === "hi" ? "हिंदी" : "English (US)"}
+                {i18n.language === "hi"
+                  ? t("hindi")
+                  : t("english_us")}
               </span>
 
               <FontAwesomeIcon icon={faChevronDown} className="lang-caret" />
@@ -175,7 +177,7 @@ const Header = () => {
                       setLangOpen(false);
                     }}
                   >
-                    English (US)
+                  {t("english_us")}
                   </div>
 
                   <div
@@ -187,7 +189,7 @@ const Header = () => {
                       setLangOpen(false);
                     }}
                   >
-                    हिंदी
+                    {t("hindi")}
                   </div>
                 </div>
               )}
@@ -239,7 +241,7 @@ const Header = () => {
                     className="text-danger"
                     onClick={handleLogout}
                   >
-                    Logout
+                  {t("logout")}
                   </div>
                 </div>
               )}
@@ -279,7 +281,7 @@ const Header = () => {
 
               {isRecruiter && (
                 <Nav.Link as={NavLink} to="/candidate-workflow" onClick={closeMenu}>
-                  Candidate Workflow
+                  {t("candidate_workflow")}
                 </Nav.Link>
               )}
 
@@ -345,7 +347,7 @@ const Header = () => {
 
               {isRecruiter && (
                 <Nav.Link as={NavLink} to="/interviewpanel" onClick={closeMenu}>
-                  Committee Management
+                  {t("committee_management")}
                 </Nav.Link>
               )}
               {/* {isRecruiter && (
@@ -354,7 +356,7 @@ const Header = () => {
                   to="/schedule-interviews"
                   onClick={closeMenu}
                 >
-                  Schedule Interviews
+                  {t("schedule_interviews")}
                 </Nav.Link>
               )} */}
 

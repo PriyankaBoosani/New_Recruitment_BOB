@@ -2,9 +2,12 @@ import React from "react";
 import Select from "react-select";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import I_icon from '../../../assets/I_icon.png';
+import { useTranslation } from "react-i18next";
+
 
 
 const InterviewPanelFormModal = ({
+
   communityOptions = [],
   membersOptions = [],
   formData,
@@ -14,35 +17,48 @@ const InterviewPanelFormModal = ({
   setErrors,
   clearError
 }) => {
+  const { t } = useTranslation(["interviewPanelCommittee", "common"]);
+
   const panelConstitutionPopover = (
     <Popover id="panel-constitution-popover">
       <Popover.Header as="h6">
-        Panel Constitution Guidelines
+        {t("interviewPanelCommittee:panel_constitution_guidelines")}
       </Popover.Header>
       <Popover.Body>
         <ul style={{ paddingLeft: "16px", margin: "6px 0" }}>
-          <li>At least one <b>Woman</b> member</li>
-          <li>At least one <b>Minority</b> member</li>
-          <li>At least one <b>SC/ST</b> member</li>
-          <li>At least one <b>OBC</b> member</li>
+          <li>
+            {t("interviewPanelCommittee:at_least_one")} <b>{t("interviewPanelCommittee:woman")}</b> {t("interviewPanelCommittee:member")}
+          </li>
+          <li>
+            {t("interviewPanelCommittee:at_least_one")} <b>{t("interviewPanelCommittee:minority")}</b> {t("interviewPanelCommittee:member")}
+          </li>
+          <li>
+            {t("interviewPanelCommittee:at_least_one")} <b>{t("interviewPanelCommittee:scst")}</b> {t("interviewPanelCommittee:member")}
+          </li>
+          <li>
+            {t("interviewPanelCommittee:at_least_one")} <b>{t("interviewPanelCommittee:obc")}</b> {t("interviewPanelCommittee:member")}
+          </li>
         </ul>
+
       </Popover.Body>
     </Popover>
   );
 
   return (
     <>
- 
-      <span className="card-title">{formData.id ? "Update Panel" : "Create New Panel"}</span>
-      <p className="card-subtitle">Create and manage panels</p>
+
+      <span className="card-title">{formData.id
+        ? t("interviewPanelCommittee:update_panel_title")
+        : t("interviewPanelCommittee:create_panel_title")}</span>
+      <p className="card-subtitle">{t("interviewPanelCommittee:subtitle")}</p>
 
       {/* Panel Name */}
       <div className="form-group">
-        <label>Panel Name <span className="text-danger">*</span></label>
+        <label>{t("interviewPanelCommittee:panel_name")} <span className="text-danger">*</span></label>
         <input
           className="form-control"
-          placeholder="Enter Panel Name"
-            maxLength={200}
+          placeholder={t("interviewPanelCommittee:enter_panel_name")}
+          maxLength={200}
           value={formData.name}
           onChange={e => {
             setFormData({ ...formData, name: e.target.value });
@@ -50,13 +66,15 @@ const InterviewPanelFormModal = ({
           }}
         />
         {errors?.name && (
-          <div className="field-error">{errors.name}</div>
+          <div className="field-error">
+            {t(errors.name)}
+          </div>
         )}
       </div>
 
       {/* Panel Type */}
       <div className="form-group">
-        <label>Panel Type <span className="text-danger">*</span></label>
+        <label>{t("interviewPanelCommittee:panel_type")} <span className="text-danger">*</span></label>
         <select
           className="form-control"
           value={formData.community}
@@ -65,7 +83,7 @@ const InterviewPanelFormModal = ({
             clearError("community");
           }}
         >
-          <option value="">Select Panel Type</option>
+          <option value="">{t("interviewPanelCommittee:select_panel_type")}</option>
           {communityOptions.map(option => (
             <option key={option.id} value={option.id}>
               {option.name}
@@ -74,14 +92,14 @@ const InterviewPanelFormModal = ({
 
         </select>
         {errors?.community && (
-          <div className="field-error">{errors.community}</div>
+          <div className="field-error">{t(errors.community)}</div>
         )}
       </div>
 
       {/* Panel Members */}
       <div className="form-group">
         <label>
-          Panel Members <span className="text-danger">*</span>
+          {t("interviewPanelCommittee:panel_members")} <span className="text-danger">*</span>
 
           <OverlayTrigger
             trigger="click"
@@ -98,7 +116,7 @@ const InterviewPanelFormModal = ({
         <Select
           isMulti
           options={membersOptions}
-          placeholder="Select members"
+          placeholder={t("interviewPanelCommittee:select_members")}
           closeMenuOnSelect={false}
           value={membersOptions.filter(option =>
             formData.members.includes(option.value)
@@ -116,7 +134,7 @@ const InterviewPanelFormModal = ({
           classNamePrefix="react-select"
         />
         {errors?.members && (
-          <div className="field-error">{errors.members}</div>
+          <div className="field-error">{t(errors.members)}</div>
         )}
       </div>
 
@@ -129,7 +147,7 @@ const InterviewPanelFormModal = ({
             setErrors({});
           }}
         >
-          Cancel
+          {t("common:cancel")}
         </button>
 
         <button
@@ -137,7 +155,7 @@ const InterviewPanelFormModal = ({
           className="btn btn-primary"
           onClick={onSave}
         >
-          {formData.id ? "Update Panel" : "Save Panel"}
+          {formData.id ? t("interviewPanelCommittee:update_panel_button") : t("interviewPanelCommittee:save_panel")}
         </button>
       </div>
     </>
