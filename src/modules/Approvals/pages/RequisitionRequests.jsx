@@ -58,35 +58,37 @@ const RequisitionRequests = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyData, setHistoryData] = useState([]);
   const [selectedHistoryReq, setSelectedHistoryReq] = useState(null);
- const handleApprovalAction = async (comment) => {
-  const ids = Array.from(selectedReqIds);
-  if (ids.length === 0) return;
 
-  try {
-    let result;
 
-    if (actionType === "approve") {
-      result = await approve(ids, comment);
-    } else if (actionType === "reject") {
-      result = await reject(ids, comment);
+  const handleApprovalAction = async (comment) => {
+    const ids = Array.from(selectedReqIds);
+    if (ids.length === 0) return;
+
+    try {
+      let result;
+
+      if (actionType === "approve") {
+        result = await approve(ids, comment);
+      } else if (actionType === "reject") {
+        result = await reject(ids, comment);
+      }
+
+      // 🔥 THIS IS THE IMPORTANT CHECK
+      if (!result || result.success !== true) {
+        toast.error("Failed to Approve");
+        return;
+      }
+
+      toast.success("Approved successfully");
+
+      setShowCommentModal(false);
+      setSelectedReqIds(new Set());
+
+    } catch (error) {
+      console.error("Approval error:", error);
+      toast.error("Approved failed");
     }
-
-    // 🔥 THIS IS THE IMPORTANT CHECK
-    if (!result || result.success !== true) {
-      toast.error("Failed to Approve");
-      return;
-    }
-
-    toast.success("Approved successfully");
-
-    setShowCommentModal(false);
-    setSelectedReqIds(new Set());
-
-  } catch (error) {
-    console.error("Approval error:", error);
-    toast.error("Approved failed");
-  }
-};
+  };
   const handleOpenHistory = (req) => {
     setSelectedHistoryReq(req);
 
@@ -139,6 +141,25 @@ const RequisitionRequests = () => {
   const role = user?.role;
   console.log("User Role:", role);
   const [statuses, setStatuses] = useState([]);
+  const formatStatusLabel = (status) => {
+    if (!status) return "";
+
+    return status
+      .toLowerCase()
+      .split("_")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+  const statusOptions =
+    role === "L1"
+      ? ["L1_PENDING", "L1_APPROVED", "L1_REJECTED", "APPROVED", "L2_REJECTED"]
+      : role === "L2"
+        ? ["L1_APPROVED", "APPROVED", "L2_REJECTED"]
+        : [];
+  useEffect(() => {
+    setStatuses([]);
+    setSelectedReqIds(new Set());
+  }, [role]);
 
   // 🔹 Accordion
   const [openReqId, setOpenReqId] = useState(null);
@@ -269,11 +290,12 @@ const RequisitionRequests = () => {
             }}
           >
             <option value="">All Status</option>
-            <option value="L1_PENDING">L1_PENDING</option>
-            <option value="L1_APPROVED">L1_APPROVED</option>
-            <option value="APPROVED">APPROVED</option>
-            <option value="L1_REJECTED">L1_REJECTED</option>
-            <option value="L2_REJECTED">L2_REJECTED</option>
+
+            {statusOptions.map((status) => (
+              <option key={status} value={status}>
+                {formatStatusLabel(status)}
+              </option>
+            ))}
           </Form.Select>
         </Col>
 
@@ -384,7 +406,7 @@ const RequisitionRequests = () => {
                     {req.requisitionId}
                   </Badge>
                   <Badge bg={req.statusType} className="ms-2 capitalize-status">
-                    {req.status}
+                    {formatStatusLabel(req.status)}
                   </Badge>
 
                 </div>

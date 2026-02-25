@@ -271,6 +271,11 @@ const jobPositionApiService = {
       params: { year, search, page, size, statuses },
       headers: { "X-Client": "recruiter" }
     }),
+  getL2Requisitions: ({ year, search, page, size, statuses }) =>
+    api.get("/recruiter/job-requisitions/l2-requisitions", {
+      params: { year, search, page, size, statuses },
+      headers: { "X-Client": "recruiter" }
+    }),
   approveRequisitions: ({ ids, postingStatus, comments }) =>
     api.post(
       "/recruiter/job-requisitions/approve-job-requisitions",

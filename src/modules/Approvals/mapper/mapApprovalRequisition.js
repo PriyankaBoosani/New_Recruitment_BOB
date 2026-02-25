@@ -1,11 +1,18 @@
 const getStatusBadge = (status = "") => {
   switch (status) {
-    case "APPROVED":
-      return "success";
     case "L1_PENDING":
       return "warning";
-    case "REJECTED":
+
+    case "L1_APPROVED":
+      return "info";
+
+    case "APPROVED":
+      return "success";
+
+    case "L1_REJECTED":
+    case "L2_REJECTED":
       return "danger";
+
     default:
       return "secondary";
   }
