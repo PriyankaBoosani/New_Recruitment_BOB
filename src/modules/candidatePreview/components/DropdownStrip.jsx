@@ -39,7 +39,7 @@ export default function DropdownStrip({
 					classNamePrefix="react-select"
 					options={requisitionOptions}
 					isLoading={loadingRequisitions}
-					isClearable
+				
 					placeholder="Select Requisition"
 					value={requisitionOptions.find(
 						(opt) => opt.value === selectedRequisitionId
@@ -65,7 +65,7 @@ export default function DropdownStrip({
           options={positionOptions}
           isLoading={loadingPositions}
           isDisabled={!selectedRequisitionId}
-          isClearable
+          
           placeholder={
             loadingPositions ? "Loading positions..." : "Select Position"
           }
