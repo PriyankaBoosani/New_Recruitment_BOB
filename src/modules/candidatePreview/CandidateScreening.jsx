@@ -742,7 +742,7 @@ export default function CandidateScreening({ selectedJob }) {
         acceptBeforeDate,
         offerIds: offerSelectedIds,
       };
-
+      console.log("Offer Payload:", payload);
       const response = await jobPositionApiService.sendOffer(payload);
 
       if (response?.data?.success === false) {
