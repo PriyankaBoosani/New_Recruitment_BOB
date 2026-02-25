@@ -124,6 +124,7 @@ export const mapAddPositionToUpdateDto = ({
   certifications,
   approvedBy,
   approvedOn,
+  indentOthers,
   existingPosition
 }) => {
   const dto = {
@@ -159,6 +160,7 @@ export const mapAddPositionToUpdateDto = ({
 
     approvedBy,
     approvedOn,
+    indentOthers: indentOthers?.trim() || null,
 
     mandatoryEduRulesJson: {
       mandatoryEducations: educationData.mandatory.educations,

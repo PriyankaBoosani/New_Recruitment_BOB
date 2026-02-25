@@ -263,6 +263,8 @@ const masterApiService = {
   //Interview Pool related master data interview-center
   getAllInterviewCenters: () => apis.get("/master-dd-data/get/interview-centres"),
 
+  getApprovingAuthorities: () =>apis.get("/approving-authority/all"),
+
 
 };
 

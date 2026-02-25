@@ -19,6 +19,8 @@ export const useMasterData = () => {
     states: [],
     languages: [],
     stateLanguages: [],
+    approvingAuthorities: []
+
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -32,14 +34,14 @@ export const useMasterData = () => {
         // 🔥 CALL BOTH APIS IN PARALLEL
         const [
           masterRes,
-          userRes,
+          approvingRes,
           certRes,
           zonalRes,
           languagesRes,
           stateLanguagesRes
         ] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
-          masterApiService.getUser(),
+          masterApiService.getApprovingAuthorities(),
           masterApiService.getAllCertificates(),
           masterApiService.getZonalStates(),
           masterApiService.getAllLanguages(),
@@ -51,7 +53,6 @@ export const useMasterData = () => {
 
         const mapped = mapMasterResponse(
           masterRes.data,
-          userRes.data,
           certRes.data,
 
         );
@@ -66,8 +67,12 @@ export const useMasterData = () => {
           educationTypes: mapped.educationTypes,
           qualifications: mapped.qualifications,
           specializations: mapped.specializations,
-          users: mapped.users,
           certifications: mapped.certifications,
+
+          approvingAuthorities: (approvingRes.data || []).map(a => ({
+            id: a.approvingAuthorityId,
+            name: a.authorityName,
+          })),
           // NEW STATES
           states: (zonalRes.data || []).map(s => ({
             id: String(s.zonalStateID),

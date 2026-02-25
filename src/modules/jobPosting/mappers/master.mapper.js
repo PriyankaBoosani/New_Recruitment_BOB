@@ -1,5 +1,5 @@
 // src/modules/jobPosting/mappers/master.mapper.js
-export const mapMasterResponse = (masterData, userData, certData) => {
+export const mapMasterResponse = (masterData, certData) => {
   const certList = Array.isArray(certData)
     ? certData
     : Array.isArray(certData?.data)
@@ -66,14 +66,7 @@ export const mapMasterResponse = (masterData, userData, certData) => {
     specializations: (masterData.specializationMaster || []).map(s => ({
       id: s.specializationId,
       label: s.specializationName,
-      educationQualificationsId: s.educationQualificationsId, 
-    })),
-
-
-    users: (userData || []).map(u => ({
-      id: String(u.userId ?? u.id),
-      name: u.userName ?? u.fullName ?? u.name,
-      role: u.roleName ?? "",
+      educationQualificationsId: s.educationQualificationsId,
     })),
 
     certifications: certList.map(c => ({

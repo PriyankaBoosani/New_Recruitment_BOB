@@ -5,7 +5,7 @@ export const mapAddPositionToCreateDto = ({
   approvedBy,
   approvedOn,
   indentName,
-
+  indentOthers,
   currentState,
   stateDistributions = [],
   reservationCategories = [],
@@ -20,34 +20,34 @@ export const mapAddPositionToCreateDto = ({
   const safeQualifications = Array.isArray(qualifications) ? qualifications : [];
   const safeCertifications = Array.isArray(certifications) ? certifications : [];
   const buildEduRulesJson = (edu, mode) => {
-  if (!edu) {
-    return mode === "mandatory"
-      ? { mandatoryEducations: [], mandatoryCertificationIds: [] }
-      : { preferredEducations: [], preferredCertificationIds: [] };
-  }
+    if (!edu) {
+      return mode === "mandatory"
+        ? { mandatoryEducations: [], mandatoryCertificationIds: [] }
+        : { preferredEducations: [], preferredCertificationIds: [] };
+    }
 
-  const educations = Array.isArray(edu.educations)
-    ? edu.educations.map(e => ({
+    const educations = Array.isArray(edu.educations)
+      ? edu.educations.map(e => ({
         educationTypeId: e.educationTypeId,
         educationQualificationsId: e.educationQualificationsId,
         specializationId: e.specializationId,
       }))
-    : [];
+      : [];
 
-  const certificationIds = Array.isArray(edu.certificationIds)
-    ? edu.certificationIds
-    : [];
+    const certificationIds = Array.isArray(edu.certificationIds)
+      ? edu.certificationIds
+      : [];
 
-  return mode === "mandatory"
-    ? {
+    return mode === "mandatory"
+      ? {
         mandatoryEducations: educations,
         mandatoryCertificationIds: certificationIds,
       }
-    : {
+      : {
         preferredEducations: educations,
         preferredCertificationIds: certificationIds,
       };
-};
+  };
 
 
   /* ================= NATIONAL TOTAL VALIDATION ================= */
@@ -119,6 +119,7 @@ export const mapAddPositionToCreateDto = ({
 
     approvedBy,
     approvedOn,
+    indentOthers: indentOthers?.trim() || null,
 
     // backend expects this
     cibilScore: 0,

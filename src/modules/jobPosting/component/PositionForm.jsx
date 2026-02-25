@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { Row, Col, Form, Button, Tooltip } from "react-bootstrap";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import upload_icon from '../../../assets/upload_Icon.png';
@@ -26,9 +26,11 @@ const PositionForm = ({
     setFormData,
     approvedBy,
     setApprovedBy,
+    indentOthers,
+    setIndentOthers,
     approvedOn,
     setApprovedOn,
-    masterData: { positions, departments, employmentTypes, jobGrades, users },
+    masterData: { positions, departments, employmentTypes, jobGrades, approvingAuthorities },
     onPositionSelect,
     onEducationClick,
     educationData,
@@ -44,6 +46,18 @@ const PositionForm = ({
         if (typeof e === "object" && e.key) return t(e.key, e.params);
         return "";
     };
+    const othersOption = useMemo(
+        () =>
+            approvingAuthorities.find(
+                a => a.name?.toLowerCase() === "others"
+            ),
+        [approvingAuthorities]
+    );
+
+    const isOthersSelected =
+        othersOption && approvedBy === othersOption.id;
+
+
 
     const selectedGrade = jobGrades.find(
         g => String(g.id) === String(formData.grade)
@@ -257,8 +271,42 @@ const PositionForm = ({
                             <Form.Label>{t("addPosition:approved_by")} <span className="text-danger">*</span></Form.Label>
                             <Form.Select value={approvedBy} onChange={(e) => { setApprovedBy(e.target.value); setErrors(prev => ({ ...prev, approvedBy: "" })); }} disabled={isViewMode}>
                                 <option value="">{t("common:select")}</option>
-                                {users.map(user => <option key={user.id} value={user.id}>{user.name}{user.role ? ` (${user.role})` : ""}</option>)}
+                                {approvingAuthorities.map(auth => (
+                                    <option key={auth.id} value={auth.id}>
+                                        {auth.name}
+                                    </option>
+                                ))}
                             </Form.Select>
+                            {isOthersSelected && (
+                                <Form.Group className="mt-2">
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter approving authority"
+                                        value={indentOthers}
+                                        maxLength={200}
+                                        onChange={(e) => {
+                                            let value = e.target.value;
+
+                                            // ❌ Block leading space
+                                            if (value.length === 1 && value === " ") return;
+
+                                            // collapse multiple spaces inside
+                                            value = value.replace(/[ \t]+/g, " ");
+
+                                            setIndentOthers(value);
+                                        }}
+                                        onBlur={() => {
+                                            // remove trailing space only
+                                            setIndentOthers(prev => prev.replace(/\s+$/, ""));
+                                        }}
+                                    />
+                                    {!indentOthers.trim() && (
+                                        <div className="error-message">
+                                            This feild is required
+                                        </div>
+                                    )}
+                                </Form.Group>
+                            )}
                             <ErrorMessage>{renderError(errors.approvedBy)}</ErrorMessage>
 
                         </Form.Group>

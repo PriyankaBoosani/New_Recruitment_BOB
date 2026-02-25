@@ -79,6 +79,7 @@ const AddPosition = () => {
     const [approvedBy, setApprovedBy] = useState("");
     const [approvedOn, setApprovedOn] = useState("");
     const [stateDistributions, setStateDistributions] = useState([]);
+    const [indentOthers, setIndentOthers] = useState("");
     const [editingIndex, setEditingIndex] = useState(null);
     const [nationalCategories, setNationalCategories] = useState({});
     const [nationalDisabilities, setNationalDisabilities] = useState({});
@@ -141,6 +142,7 @@ const AddPosition = () => {
                 : "",
         });
         setApprovedBy(existingPosition.approvedBy || "");
+        setIndentOthers(existingPosition.indentOthers || "");
         setApprovedOn(existingPosition.approvedOn || "");
         if (existingPosition.indentPath) setExistingIndentPath(existingPosition.indentPath);
         setExistingIndentName(existingPosition.indentName);
@@ -527,6 +529,7 @@ const AddPosition = () => {
             nationalDisabilities,
             qualifications,
             certifications,
+            indentOthers,
             stateDistributions: stateDistributions.filter(s => !s.__deleted)
         };
 
@@ -595,7 +598,7 @@ const AddPosition = () => {
                             isViewMode={isViewMode} formData={formData} errors={errors} handleInputChange={handleInputChange} indentFile={indentFile} setFormData={setFormData}
                             existingIndentPath={existingIndentPath} existingIndentName={existingIndentName} setIndentFile={setIndentFile} setErrors={setErrors}
                             approvedBy={approvedBy} setApprovedBy={setApprovedBy} approvedOn={approvedOn} setApprovedOn={setApprovedOn} validateApprovedOn={validateApprovedOn}
-                            masterData={masterData} onPositionSelect={onPositionSelect} educationData={educationData}
+                            masterData={masterData} indentOthers={indentOthers} setIndentOthers={setIndentOthers} onPositionSelect={onPositionSelect} educationData={educationData}
                             onEducationClick={(m) => {
                                 if (isViewMode) return;
 

@@ -529,3 +529,8 @@
 .form-control::placeholder {
   color: rgba(65,65,65,0.5);
 }
+.error-message{
+  color: rgb(220, 53, 69);
+  font-size: 12px;
+  margin-top: 6px;
+}
