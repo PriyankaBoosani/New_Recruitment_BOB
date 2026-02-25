@@ -37,6 +37,12 @@ const [errorList, setErrorList] = useState([]);
 
   const [panelErrors, setPanelErrors] = useState({});
 
+  const [originalCommittees, setOriginalCommittees] = useState({
+  SCREENING: [],
+  INTERVIEW: [],
+  COMPENSATION: []
+});
+
   const validatePanels = () => {
   const errors = {};
   let isValid = true;
@@ -153,11 +159,8 @@ const [errorList, setErrorList] = useState([]);
     console.error("Failed to load positions", err);
   }
 };
-
-
-useEffect(() => {
-  const loadPositionData = async () => {
-    if (!selectedPosition) {
+const loadPositionData = async (positionId) => {
+    if (!positionId) {
       setSelectedCommittees({
         SCREENING: [],
         INTERVIEW: [],
@@ -219,6 +222,7 @@ useEffect(() => {
       };
 
       setSelectedCommittees(assigned);
+      setOriginalCommittees(assigned);
 
       // 3️⃣ Calculate available panels properly
       const assignedIds = Object.values(assigned)
@@ -239,9 +243,16 @@ useEffect(() => {
     }
   };
 
-  loadPositionData();
+useEffect(() => {
+  
+
+  loadPositionData(selectedPosition);
 
 }, [selectedPosition]);
+
+const isDirty = () => {
+  return JSON.stringify(selectedCommittees) !== JSON.stringify(originalCommittees);
+};
 
 
   // const fetchPanels = useCallback(async () => {
@@ -411,6 +422,9 @@ const showError = (message, errors = []) => {
       );
       if(res?.success) {
         toast.success(t("assign_success"));
+
+         // ✅ Reload updated data
+      await loadPositionData(selectedPosition);
       } else {
        // toast.error(res?.message || "Failed to assign committees");
         showError( res?.message || t("validation_failed"),res?.data || []);
@@ -463,7 +477,8 @@ const showError = (message, errors = []) => {
     errorMessage,
     setErrorMessage,
     errorList,
-    setErrorList
+    setErrorList,
+    isDirty
 
 
 

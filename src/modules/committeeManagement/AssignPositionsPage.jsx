@@ -40,7 +40,8 @@ const AssignPositionsPage = () => {
     errorMessage,
     setErrorMessage,
     errorList,
-    setErrorList
+    setErrorList,
+    isDirty
 
   } = useAssignPositions();
 
@@ -296,7 +297,7 @@ const hasAnySelectedPanels =
             className="assign-button" 
             onClick={handleAssignCommittees}
            // disabled={!selectedPosition}
-            disabled={!selectedPosition || !hasAnySelectedPanels}
+            disabled={!selectedPosition || !isDirty()}
             
 
           >
