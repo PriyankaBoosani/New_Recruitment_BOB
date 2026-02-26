@@ -29,8 +29,8 @@ export default function InterviewPool({
     ZONAL_ABSENT: "bg-info",
     INTERVIEW_ABSENT: "bg-info",
     PENDING: "bg-warning",
-    REJECTED: "bg-danger",
-    OFFER_AWAITED: "bg-dark"
+    ZONAL_REJECTED: "bg-danger",
+    // OFFER_AWAITED: "bg-dark"
 
   };
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });

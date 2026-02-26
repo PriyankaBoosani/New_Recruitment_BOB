@@ -275,7 +275,6 @@ export default function CandidateScreening({ selectedJob }) {
   const fetchAllCandidatesForFilters = async () => {
     try {
       const normalizedStatus = filters.status.length === 0 ? availableStatuses : filters.status.map((s) => s.toUpperCase());
-
       const res = await jobPositionApiService.getCandidatesByPosition({
         searchText: filters.searchText,
         page: 0,
@@ -611,25 +610,39 @@ export default function CandidateScreening({ selectedJob }) {
     // refetch list
     await fetchCandidates();
   };
-
+  const getNormalizedStatuses = () => {
+    return filters.status?.length
+      ? filters.status.map((s) => s.toUpperCase())
+      : availableStatuses;
+  };
   const buildDownloadPayload = (documentType) => {
-    const normalizedStatus =
-      filters.status.length === 0
-        ? availableStatuses
-        : filters.status.map((s) => s.toUpperCase());
+    const normalizedStatuses = getNormalizedStatuses();
 
-    return {
-      documentType, // now ".pdf" or ".xlsx"
+    const basePayload = {
+      documentType,
       positionId: selectedPositionId,
       screenName:
-        activeTab === "CANDIDATE_POOL"
-          ? "CandidatePool"
-          : activeTab === "INTERVIEW_POOL"
-            ? "InterviewPool"
-            : null,
-      candidateApplicationStatuses: normalizedStatus,
+        activeTab === "INTERVIEW_POOL"
+          ? "InterviewPool"
+          : "CandidatePool",
       categoryId: filters.categoryId || null,
     };
+
+    if (activeTab === "CANDIDATE_POOL") {
+      return {
+        ...basePayload,
+        candidateApplicationStatuses: normalizedStatuses,
+      };
+    }
+
+    if (activeTab === "INTERVIEW_POOL") {
+      return {
+        ...basePayload,
+        interviewSchedulingStatuses: normalizedStatuses,
+      };
+    }
+
+    return basePayload;
   };
 
   const handleDownload = async (type) => {
@@ -1046,11 +1059,10 @@ export default function CandidateScreening({ selectedJob }) {
                           };
                         })
                       }
-                      className={`badge px-3 py-2 border-0 rounded fw-normal fs-12 ${
-                        isSelected
-                          ? "bg-primary text-white"
-                          : "bg-light text-muted border"
-                      }`}
+                      className={`badge px-3 py-2 border-0 rounded fw-normal fs-12 ${isSelected
+                        ? "bg-primary text-white"
+                        : "bg-light text-muted border"
+                        }`}
                       style={{ cursor: "pointer" }}
                     >
                       {OFFER_STATUS_LABEL_MAP[status]}
@@ -1185,7 +1197,7 @@ export default function CandidateScreening({ selectedJob }) {
               </div>
             </div>
           )}
-          
+
           {activeTab !== "OFFER_POOL" && (
             <div className="row g-2 mt-1 align-items-center" style={{ backgroundColor: '#F9FAFB' }}>
               <div className="col-md-5 col-12 px-3 mb-2 py-2">
@@ -1263,6 +1275,7 @@ export default function CandidateScreening({ selectedJob }) {
             requisition={normalizedRequisition}
             position={selectedPosition}
             onViewFile={handleViewFile}
+            getStatusLabel={getStatusLabel}
             onOpenFeedback={async (scheduledInterviewId) => {
               try {
                 setShowFeedbackModal(true);
@@ -1301,7 +1314,7 @@ export default function CandidateScreening({ selectedJob }) {
         )}
 
         {activeTab === "OFFER_POOL" && (
-          <OfferPool 
+          <OfferPool
             selectedPositionId={selectedPositionId}
             selectedRequisitionId={selectedRequisitionId}
             filters={filters}
