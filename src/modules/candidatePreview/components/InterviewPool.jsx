@@ -133,7 +133,7 @@ export default function InterviewPool({
 
                 <td className="align-content-center">
                   <p className="fw-normal fs-14 mb-0">{c.name}</p>
-                  <p className="text-muted fs-12 mb-0">Reg No: {c.regNo}</p>
+                  <p className="text-muted fs-12 mb-0">Application Number: {c.regNo}</p>
                 </td>
 
                 <td className="fs-14 align-content-center">{c.date}</td>
