@@ -48,9 +48,11 @@
     "add_position": "Add Position",
     "edit_requisition": "Edit Requisition",
     "delete_requisition": "Delete Requisition",
-    "delete_position": "Delete Position", 
+    "delete_position": "Delete Position",
     "view_position": "View Position",
     "edit_position": "Edit Position",
     "view_requisition": "View Requisition",
-    "status_l1_pending": "L1 Pending"
+    "status_l1_pending": "L1 Pending",
+    "status_l1_rejected": "L1 Rejected",
+    "status_l2_rejected": "L2 Rejected"
 }

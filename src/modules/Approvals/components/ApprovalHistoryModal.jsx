@@ -1,8 +1,30 @@
 import React from "react";
-import { Modal, Table } from "react-bootstrap";
+import { Modal, Table, Spinner } from "react-bootstrap";
 import "../../../style/css/ApprovalHistoryModal.css";
 
-const ApprovalHistoryModal = ({ show, onClose, historyData }) => {
+const formatDateTime = (iso) => {
+  if (!iso) return "-";
+  const d = new Date(iso);
+  return d.toLocaleString("en-GB");
+};
+
+const formatStatusLabel = (status = "") =>
+  status
+    .toLowerCase()
+    .split("_")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+
+const ApprovalHistoryModal = ({
+  show,
+  onClose,
+  historyData = [],
+  loading = false,
+}) => {
+  const historyArray = Array.isArray(historyData)
+    ? historyData
+    : [];
+
   return (
     <Modal
       show={show}
@@ -14,7 +36,7 @@ const ApprovalHistoryModal = ({ show, onClose, historyData }) => {
       <Modal.Header closeButton>
         <div>
           <Modal.Title className="approval-history-title">
-            Approvals History
+            Approval History
           </Modal.Title>
           <p className="approval-history-subtitle">
             Track approvals and decisions
@@ -23,40 +45,56 @@ const ApprovalHistoryModal = ({ show, onClose, historyData }) => {
       </Modal.Header>
 
       <Modal.Body>
-        <div className="table-responsive">
-          <Table className="approval-history-table">
-            <thead>
-              <tr>
-                <th>Requester</th>
-                <th>Request Date</th>
-                <th>Approver</th>
-                <th>Approval Date</th>
-                <th>Status</th>
-                <th>Comments</th>
-              </tr>
-            </thead>
-            <tbody>
-              {historyData?.length > 0 ? (
-                historyData.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.requester}</td>
-                    <td>{item.requestDate}</td>
-                    <td>{item.approver}</td>
-                    <td>{item.approvalDate}</td>
-                    <td>{item.status}</td>
-                    <td>{item.comments}</td>
-                  </tr>
-                ))
-              ) : (
+        {loading ? (
+          <div className="text-center py-4">
+            <Spinner animation="border" />
+          </div>
+        ) : (
+          <div className="table-responsive">
+            <Table className="approval-history-table">
+              <thead>
                 <tr>
-                  <td colSpan="6" className="text-center py-4">
-                    No history available
-                  </td>
+
+                  <th>Requester</th>
+                  <th>Request Date</th>
+                  <th>Approver</th>
+                  <th>Approval Date</th>
+                  <th>Status</th>
+                  <th>Comments</th>
                 </tr>
-              )}
-            </tbody>
-          </Table>
-        </div>
+
+              </thead>
+
+              <tbody>
+                {historyArray.length > 0 ? (
+                  [...historyArray]
+                    .sort(
+                      (a, b) =>
+                        new Date(b.actionDate) -
+                        new Date(a.actionDate)
+                    )
+                    .map((item) => (
+                      <tr key={item.approvalId}>
+                        {/* <td>{item.approverRole}</td> */}
+                        <td>{item.requester}</td>
+                        <td>{formatDateTime(item.actionDate)}</td>
+                        <td></td>
+                        <td></td>
+                        <td>{formatStatusLabel(item.status)}</td>
+                        <td>{item.comments || "-"}</td>
+                      </tr>
+                    ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="text-center py-4">
+                      No history available
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </div>
+        )}
       </Modal.Body>
     </Modal>
   );

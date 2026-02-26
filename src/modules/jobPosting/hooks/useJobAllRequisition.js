@@ -54,31 +54,53 @@ export const useJobRequisitions = ({
       toast.error(t("requisition_delete_failed"));
     }
   };
+  // const submitForApproval = async (jobRequisitionIds) => {
+  //   if (!jobRequisitionIds?.length) return;
+
+  //   try {
+  //     setLoading(true);
+
+  //     const res = await requisitionApiService.submitForApprovalFlow({
+  //       jobRequisitionIds,
+  //       postingStatus: "L1_PENDING"
+  //     });
+
+  //     if (res?.success === false) {
+  //       toast.error(t("requisition_submit_failed"));
+  //       return;
+  //     }
+
+  //     toast.success(t("requisition_submit_success"));
+  //     fetchRequisitions();
+
+  //   } catch (err) {
+  //     toast.error(t("requisition_submit_failed"));
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const submitForApproval = async (jobRequisitionIds) => {
     if (!jobRequisitionIds?.length) return;
 
     try {
       setLoading(true);
 
-      const res = await requisitionApiService.submitForApprovalFlow({
+      await requisitionApiService.submitForApproval({
         jobRequisitionIds,
-        postingStatus: "L1_PENDING"
+        postingStatus: "Approved" // confirm backend enum
+
       });
 
-      if (res?.success === false) {
-        toast.error(t("requisition_submit_failed"));
-        return;
-      }
-
-      toast.success(t("requisition_submit_success"));
-      fetchRequisitions();
-
+      toast.success(t("requisition_approve_success"));
+      fetchRequisitions(); // refresh list
     } catch (err) {
-      toast.error(t("requisition_submit_failed"));
+      toast.error(t("requisition_approve_failed"));
     } finally {
       setLoading(false);
     }
   };
+  
   const fetchAvailableYears = async () => {
     try {
       const res = await requisitionApiService.getAvailableYears();

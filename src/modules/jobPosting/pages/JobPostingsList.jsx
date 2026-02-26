@@ -123,6 +123,8 @@ const JobPostingsList = () => {
     const selectableRequisitions = requisitions.filter(
         r => r.status !== "APPROVED" &&
             r.status !== "L1_PENDING" &&
+            r.status !== "L1_APPROVED" &&
+            r.status !== "L1_REJECTED" &&
             !r.hasDraftPositions
     );
     useEffect(() => {
@@ -287,7 +289,7 @@ const JobPostingsList = () => {
 
                 </Col>
 
-                <Col xs={12} md={9}>
+                <Col xs={12} md={8}>
                     <div className="search-boxpost">
                         <Search />
                         <Form.Control
@@ -299,7 +301,7 @@ const JobPostingsList = () => {
                     </div>
                 </Col>
 
-                <Col xs={12} md="1">
+                <Col xs={12} md="2">
                     <Form.Select
                         className="status-select"
                         value={status}
@@ -311,8 +313,13 @@ const JobPostingsList = () => {
                     >
                         <option value="">{t("jobPostingsList:status_all")}</option>
                         <option value="NEW">{t("jobPostingsList:status_new")}</option>
-                        <option value="APPROVED">{t("jobPostingsList:status_approved")}</option>
+                        {/* <option value="L1_APPROVED">{t("jobPostingsList:status_l1_approved")}</option>
                         <option value="L1_PENDING">{t("jobPostingsList:status_l1_pending")}</option>
+                        <option value="L1_REJECTED">{t("jobPostingsList:status_l1_rejected")}</option>
+                        <option value="L2_REJECTED">{t("jobPostingsList:status_l2_rejected")}</option> */}
+                        <option value="APPROVED">{t("jobPostingsList:status_approved")}</option>
+
+
                     </Form.Select>
                 </Col>
             </Row>
@@ -420,13 +427,15 @@ const JobPostingsList = () => {
                                             disabled={
                                                 req.status === "APPROVED" ||
                                                 req.status === "L1_PENDING" ||
+                                                 req.status === "L1_APPROVED" ||
                                                 req.hasDraftPositions
                                             }
                                             onClick={(e) => e.stopPropagation()}
                                             onChange={(e) => {
                                                 if (
                                                     req.status === "APPROVED" ||
-                                                    req.status === "L1_PENDING"
+                                                    req.status === "L1_PENDING" ||
+                                                    req.status === "L1_APPROVED" 
                                                 ) return;
 
                                                 setSelectedReqIds(prev => {

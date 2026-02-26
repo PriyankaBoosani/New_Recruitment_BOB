@@ -29,10 +29,15 @@ const getStatusBadge = (status = "") => {
       return "success";
     case "REJECTED":
       return "danger";
+    case "L1_REJECTED":
+    case "L2_REJECTED":
+      return "danger";
     case "NEW":
       return "warning";
     case "L1_PENDING":
-      return "secondary";
+      return "yellowwarning";
+    case "L1_APPROVED":
+      return "info";
     default:
       return "secondary";
   }

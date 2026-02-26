@@ -45,11 +45,11 @@
 }
 
 .approval-history-title {
-  font-size: 22px;
-  font-weight: 500;
-  color:#162b75;
-  margin-bottom: 6px;
-  line-height: 1.2;
+	font-size: 1em;
+	font-weight: 500;
+	color: #162b75;
+	margin-bottom: 6px;
+	/* line-height: 1.2; */
 }
 
 .approval-history-subtitle {
@@ -62,17 +62,16 @@
 
 .approval-history-modal .modal-body {
   background-color: #ffffff;
-   padding: 20px;
+   padding: 30px;
     padding-top: 0px;
 }
 
-/* Remove table-responsive wrapper padding */
 .approval-history-modal .table-responsive {
-  background-color: #fff;
-    border-radius: 0px;
-    border: 1px solid #e9ecef;
-    overflow: hidden;
-    margin: 20px 0;
+	background-color: #fff;
+	border-radius: 0px;
+	border: 1px solid #e9ecef;
+	overflow: hidden;
+	margin: 0 !important;
 }
 
 /* Table Styling */
@@ -121,13 +120,7 @@
   background-color: #162b75 !important;
 }
 
-.approval-history-table thead tr th:first-child {
-  padding-left: 28px !important;
-}
 
-.approval-history-table thead tr th:last-child {
-  padding-right: 28px !important;
-}
 
 /* Table Body */
 .approval-history-table tbody {
@@ -150,7 +143,6 @@
 }
 
 .approval-history-table tbody td {
-  padding: 18px 24px !important;
   font-size: 0.875rem !important;
   color: #374151 !important;
   vertical-align: middle !important;

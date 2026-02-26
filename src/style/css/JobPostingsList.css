@@ -592,3 +592,12 @@
 .filters-row {
   flex-wrap: wrap;
 }
+.job-postings-page .bg-yellowwarning{
+  color: #856404;
+  border: 1px solid #ffc107;
+  background: #fff3cd !important;
+  font-weight: 500;
+  font-size: 0.625em;
+
+
+}

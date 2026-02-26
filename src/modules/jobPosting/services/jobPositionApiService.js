@@ -276,6 +276,15 @@ const jobPositionApiService = {
       params: { year, search, page, size, statuses },
       headers: { "X-Client": "recruiter" }
     }),
+  getRequisitionApprovalHistory: (requisitionId) =>
+    api.get(
+      `/recruiter/workflow-approval/get-requisition-approval-history/${requisitionId}`,
+      {
+        headers: {
+          "X-Client": "recruiter",
+        },
+      }
+    ),
   approveRequisitions: ({ ids, postingStatus, comments }) =>
     api.post(
       "/recruiter/job-requisitions/approve-job-requisitions",

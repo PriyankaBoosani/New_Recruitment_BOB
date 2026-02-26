@@ -36,6 +36,7 @@ import { validateSelectedRequisitions } from "../validations/requisitionValidati
 
 // Job Posting hooks (NO extra "modules")
 import { useJobPositionsByRequisition } from "../../jobPosting/hooks/useJobPositionsByRequisition";
+import { useRequisitionApprovalHistory } from "../hooks/useRequisitionApprovalHistory";
 
 //  Utilities
 import { toast } from "react-toastify";
@@ -89,22 +90,17 @@ const RequisitionRequests = () => {
       toast.error("Approved failed");
     }
   };
-  const handleOpenHistory = (req) => {
+  const {
+    history,
+    loading: historyLoading,
+    fetchHistory,
+  } = useRequisitionApprovalHistory();
+
+  const handleOpenHistory = async (req) => {
     setSelectedHistoryReq(req);
-
-    // 🔹 Replace this with API call if needed
-    setHistoryData([
-      {
-        requester: "John",
-        requestDate: "16-11-2025",
-        approver: "Manager",
-        approvalDate: "18-11-2025",
-        status: req.status,
-        comments: "Approved successfully"
-      }
-    ]);
-
     setShowHistoryModal(true);
+
+    await fetchHistory(req.id);
   };
 
   // const handleConfirmDelete = async () => {
@@ -707,9 +703,9 @@ const RequisitionRequests = () => {
       <ApprovalHistoryModal
         show={showHistoryModal}
         onClose={() => setShowHistoryModal(false)}
-        historyData={historyData}
+        historyData={history}
+        loading={historyLoading}
       />
-
 
     </Container >
   );

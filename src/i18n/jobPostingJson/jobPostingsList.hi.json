@@ -42,7 +42,6 @@
     "requisition_approve_failed": "स्वीकृति के लिए भेजने में विफल",
     "requisition_submit_success": "अनुरोध सफलतापूर्वक स्वीकृति के लिए भेजा गया",
     "requisition_submit_failed": "स्वीकृति के लिए भेजने में विफल",
-    "status_l1_approved": "L1 स्वीकृत",
     "status_rejected": "अस्वीकृत",
     "status_submitted": "जमा किया गया",
     "add_position": "पद जोड़ें",
@@ -52,5 +51,8 @@
     "view_position": "पद देखें",
     "edit_position": "पद संपादित करें",
     "view_requisition": "अनुरोध देखें",
-    "status_l1_pending": "L1 लंबित"
+    "status_l1_pending": "एल1 लंबित",
+    "status_l1_rejected": "एल1 द्वारा अस्वीकृत",
+    "status_l1_approved": "एल1 स्तर पर स्वीकृत",
+    "status_l2_rejected": "एल2 स्तर पर अस्वीकृत"
 }
