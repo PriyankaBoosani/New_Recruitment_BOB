@@ -167,7 +167,7 @@ const RequisitionPositionSelector = ({
           }}
           className="mt-1 fs-14"
           classNamePrefix="react-select"
-          isClearable
+          
           placeholder="Select Requisition"
           options={requisitions}
           value={selectedRequisitionOption}
@@ -193,7 +193,7 @@ const RequisitionPositionSelector = ({
           }}
           className="mt-1 fs-14"
           classNamePrefix="react-select"
-          isClearable
+         
           placeholder="Select Position"
           options={positions}
           value={selectedPositionOption}
