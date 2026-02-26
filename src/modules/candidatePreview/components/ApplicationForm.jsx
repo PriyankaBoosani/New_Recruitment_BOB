@@ -1336,7 +1336,7 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
                     <th>{t("s_no")}</th>
                     <th>{t("education_level")}</th>
                     <th>{t("school_college")}</th>
-                    <th>{t("degree")}</th>
+                    <th>{t("board")}</th>
                     <th>{t("specialization")}</th>
                     <th>{t("from_date")}</th>
                     <th>{t("to_date")}</th>
