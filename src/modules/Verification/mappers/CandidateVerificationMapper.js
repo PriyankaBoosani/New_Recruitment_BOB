@@ -6,6 +6,7 @@ const STATUS_MAP = {
   REJECTED: "Rejected",
   PROVISIONALLY_APPROVED: "Provisionally Approved",
   ZONAL_ABSENT: "Zonal Absent",
+  ZONAL_REJECTED: "Zonal Rejected", 
 };
 
 /* ================= TIME FORMAT ================= */

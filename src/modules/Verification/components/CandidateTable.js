@@ -64,13 +64,13 @@ const CandidateTable = ({
           <thead className="fs-14">
 
             <tr>
-             <th className="fs-14">Candidate</th>
-            <th className="fs-14">Category</th>
-            <th className="fs-14">Time</th>
-            <th className="fs-14">Zone</th>
-            <th className="fs-14 text-center">Absent</th>
-            <th className="fs-14">Status</th>
-            <th className="fs-14 text-center">Actions</th>
+              <th className="fs-14">Candidate</th>
+              <th className="fs-14">Category</th>
+              <th className="fs-14">Time</th>
+              <th className="fs-14">Zone</th>
+              <th className="fs-14 text-center">Absent</th>
+              <th className="fs-14">Status</th>
+              <th className="fs-14 text-center">Actions</th>
 
             </tr>
           </thead>
@@ -95,84 +95,97 @@ const CandidateTable = ({
 
             {isSelectionDone &&
               filteredCandidates.length > 0 &&
-              filteredCandidates.map((c) => (
-                <tr key={c.id}>
-                  <td>
-                    <div className="fw-semibold fs-14">{c.name}</div>
-                    <div className="text-muted fs-12">
-                      Application Number: {c.regNo}
-                    </div>
-                  </td>
+              filteredCandidates.map((c) => {
 
-                  <td className="fs-14">{c.category}</td>
-                  <td className="fs-14">{c.time}</td>
-                  <td className="fs-14">{c.zone}</td>
-
-              <td className="text-center">
-  <input
-    type="checkbox"
-    checked={c.absent}
-   disabled={
-  c.status !== "Pending" &&
-  c.status !== "Zonal Absent"
-}
-
-    onChange={() => toggleAbsent(c.id)}
-  />
-</td>
+                const isRejected =
+                  c.status === "Rejected" ||
+                  c.status === "Zonal Rejected" ||
+                  c.status === "Zonal Absent";
 
 
 
-                  <td>
-                    <span
-                      className={`status-badge ${c.status
-                        .toLowerCase()
-                        .replace(" ", "-")}`}
-                    >
-                      {c.status}
-                    </span>
-                  </td>
+                return (
 
-                  <td className="text-center">
+                  <tr key={c.id}>
+                    <td>
+                      <div className="fw-semibold fs-14">{c.name}</div>
+                      <div className="text-muted fs-12">
+                        Application Number: {c.regNo}
+                      </div>
+                    </td>
 
-                    {/* View Profile */}
-                    <OverlayTrigger
-                      placement="bottom"
-                      overlay={<Tooltip>View Profile</Tooltip>}
-                    >
-                      <span>
-                        <Person
-                          size={16}
-                          className={`me-3 ${c.status === "Rejected" ? "text-muted" : "cursor-pointer"}`}
-                          style={{
-                            cursor: c.status === "Rejected" ? "not-allowed" : "pointer",
-                            opacity: c.status === "Rejected" ? 0.5 : 1
-                          }}
-                          onClick={() => {
-                            if (c.status !== "Rejected") goToPreview(c);
-                          }}
-                        />
+                    <td className="fs-14">{c.category}</td>
+                    <td className="fs-14">{c.time}</td>
+                    <td className="fs-14">{c.zone}</td>
+
+                    <td className="text-center">
+                      <input
+                        type="checkbox"
+                        checked={c.absent}
+                        disabled={
+                          c.status !== "Pending" &&
+                          c.status !== "Zonal Absent"
+                        }
+
+                        onChange={() => toggleAbsent(c.id)}
+                      />
+                    </td>
+
+
+
+                    <td>
+                      <span
+                        className={`status-badge ${c.status
+                          .toLowerCase()
+                          .replace(" ", "-")}`}
+                      >
+                        {c.status}
                       </span>
-                    </OverlayTrigger>
+                    </td>
 
-                    {/* View Resume */}
-                    <OverlayTrigger
-                      placement="bottom"
-                      overlay={<Tooltip>View Resume</Tooltip>}
-                    >
-                      <span>
-                        <FileText
-                          size={16}
-                          className="cursor-pointer"
-                          onClick={() => onViewFile(c.raw)}
-                        />
-                      </span>
-                    </OverlayTrigger>
+                    <td className="text-center">
 
-                  </td>
+                      {/* View Profile */}
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={<Tooltip>View Profile</Tooltip>}
+                      >
+                        <span>
+                          <Person
+                            size={16}
+                            className={`me-3 ${isRejected ? "text-muted" : "cursor-pointer"}`}
+                            style={{
+                              cursor: isRejected ? "not-allowed" : "pointer",
+                              opacity: isRejected ? 0.5 : 1
+                            }}
+                            onClick={() => {
+                              if (!isRejected) goToPreview(c);
+                            }}
+                          />
 
-                </tr>
-              ))}
+                        </span>
+                      </OverlayTrigger>
+
+                      {/* View Resume */}
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={<Tooltip>View Resume</Tooltip>}
+                      >
+                        <span>
+                          <FileText
+                            size={16}
+                            className="cursor-pointer"
+                            onClick={() => onViewFile(c.raw)}
+                          />
+                        </span>
+                      </OverlayTrigger>
+
+                    </td>
+
+                  </tr>
+                );
+              }
+              )}
           </tbody>
         </table>
       </div>
@@ -185,143 +198,155 @@ const CandidateTable = ({
             No candidates found
           </div>
         ) : (
-          filteredCandidates.map((c) => (
-            <div key={c.id} className="candidate-card">
+          filteredCandidates.map((c) => {
 
-              <div className="card-top">
-                <div>
-                  <div className="fw-semibold fs-14">{c.name}</div>
-                  <div className="text-muted fs-12">
-                    Application Number: {c.regNo}
+            const isRejected =
+              c.status === "Rejected" ||
+              c.status === "Zonal Rejected" ||
+              c.status === "Zonal Absent";
+
+
+
+            return (
+
+              <div key={c.id} className="candidate-card">
+
+                <div className="card-top">
+                  <div>
+                    <div className="fw-semibold fs-14">{c.name}</div>
+                    <div className="text-muted fs-12">
+                      Application Number: {c.regNo}
+                    </div>
+                  </div>
+
+                  <span
+                    className={`status-badge ${c.status
+                      .toLowerCase()
+                      .replace(" ", "-")}`}
+                  >
+                    {c.status}
+                  </span>
+                </div>
+
+                <div className="card-grid">
+                  <div>
+                    <label className="fs-12 text-muted">Category</label>
+
+
+                    <div className="fs-14">{c.category}</div>
+                  </div>
+
+                  <div>
+                    <label className="fs-12 text-muted">Time</label>
+                    <div className="fs-14">{c.time}</div>
+
+
+                  </div>
+
+                  <div>
+                    <label className="fs-12 text-muted">Zone</label>
+                    <div className="fs-14">{c.zone}</div>
+
+
+                  </div>
+
+                  <div>
+                    <label className="fs-12 text-muted">Absent</label>
+                    <input
+                      type="checkbox"
+                      checked={c.absent}
+                      disabled={
+                        c.status !== "Pending" &&
+                        c.status !== "Zonal Absent"
+                      }
+
+                      onChange={() => toggleAbsent(c.id)}
+                    />
+
+
+
                   </div>
                 </div>
 
-                <span
-                  className={`status-badge ${c.status
-                    .toLowerCase()
-                    .replace(" ", "-")}`}
-                >
-                  {c.status}
-                </span>
-              </div>
-
-              <div className="card-grid">
-                <div>
-                  <label className="fs-12 text-muted">Category</label>
-
-
-                  <div className="fs-14">{c.category}</div>
-                </div>
-
-                <div>
-                  <label className="fs-12 text-muted">Time</label>
-                  <div className="fs-14">{c.time}</div>
+                <div className="card-actions">
+                  <Person
+                    size={16}
+                    className={`me-3 ${isRejected ? "text-muted" : "cursor-pointer"}`}
+                    style={{
+                      cursor: isRejected ? "not-allowed" : "pointer",
+                      opacity: isRejected ? 0.5 : 1
+                    }}
+                    onClick={() => {
+                      if (!isRejected) goToPreview(c);
+                    }}
+                  />
 
 
-                </div>
 
-                <div>
-                  <label className="fs-12 text-muted">Zone</label>
-                  <div className="fs-14">{c.zone}</div>
+                  <FileText size={16}
 
+                    className="cursor-pointer"
+                    onClick={() => onViewFile(c.raw)}
+                  />
 
                 </div>
-
-                <div>
-                <label className="fs-12 text-muted">Absent</label>
-              <input
-  type="checkbox"
-  checked={c.absent}
- disabled={
-  c.status !== "Pending" &&
-  c.status !== "Zonal Absent"
-}
-
-  onChange={() => toggleAbsent(c.id)}
-/>
-
-
-
-                </div>
-              </div>
-
-              <div className="card-actions">
-                <Person size={16}
-
-                  className={`me-3 ${c.status === "Rejected" ? "text-muted" : "cursor-pointer"}`}
-                  style={{
-                    cursor: c.status === "Rejected" ? "not-allowed" : "pointer",
-                    opacity: c.status === "Rejected" ? 0.5 : 1
-                  }}
-                  onClick={() => {
-                    if (c.status !== "Rejected") {
-                      goToPreview(c);
-                    }
-                  }}
-                />
-
-                <FileText size={16}
-
-                  className="cursor-pointer"
-                  onClick={() => onViewFile(c.raw)}
-                />
 
               </div>
+            );
+          })
 
-            </div>
-          ))
         )}
 
       </div>
 
       {/* ================= FOOTER ================= */}
-    <div className="d-flex justify-content-between align-items-center px-3 py-2 table-footer">
+      <div className="d-flex justify-content-between align-items-center px-3 py-2 table-footer">
 
-  {/* Showing text */}
-  <span className="text-muted fs-13">
-    {totalElements > 0
-      ? `Showing ${page * pageSize + 1}–${Math.min(
-          (page + 1) * pageSize,
-          totalElements
-        )} of ${totalElements}`
-      : "Showing 0"}
-  </span>
+        {/* Showing text */}
+        <span className="text-muted fs-13">
+          {totalElements > 0
+            ? `Showing ${page * pageSize + 1}–${Math.min(
+              (page + 1) * pageSize,
+              totalElements
+            )} of ${totalElements}`
+            : "Showing 0"}
+        </span>
 
-  {/* Pagination controls */}
-  <div className="d-flex gap-2 align-items-center">
+        {/* Pagination controls */}
+        <div className="d-flex gap-2 align-items-center">
 
-    <select
-      className="form-select form-select-sm"
-      style={{ width: 80 }}
-      value={pageSize}
-      onChange={(e) => {
-        setPageSize(Number(e.target.value));
-        setPage(0);
-      }}
-    >
-      <option value={10}>10</option>
-      <option value={20}>20</option>
-      <option value={50}>50</option>
-    </select>
+          <select
+            className="form-select form-select-sm"
+            style={{ width: 80 }}
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setPage(0);
+            }}
+          >
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
 
-    <button
-      className="btn btn-sm btn-outline-secondary"
-      disabled={page === 0}
-      onClick={() => setPage(prev => prev - 1)}
-    >
-      Prev
-    </button>
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            disabled={page === 0}
+            onClick={() => setPage(prev => prev - 1)}
+          >
+            Prev
+          </button>
 
-    <button
-      className="btn btn-sm btn-outline-secondary"
-      disabled={page + 1 >= totalPages}
-      onClick={() => setPage(prev => prev + 1)}
-    >
-      Next
-    </button>
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            disabled={page + 1 >= totalPages}
+            onClick={() => setPage(prev => prev + 1)}
+          >
+            Next
+          </button>
 
-  </div>
-</div>
+        </div>
+      </div>
 
 
     </div>

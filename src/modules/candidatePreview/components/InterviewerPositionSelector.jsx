@@ -34,7 +34,8 @@ export default function InterviewerPositionSelector({
   selectedRequisition,
   selectedPosition,
   onRequisitionChange,
-  onPositionChange
+  onPositionChange,
+   closeCalendar
 }) {
 
   const selectStyles = {
@@ -152,6 +153,7 @@ export default function InterviewerPositionSelector({
             onRequisitionChange(opt?.raw || null);
             onPositionChange(null);
           }}
+          onMenuOpen={() => closeCalendar?.()} 
         />
       </div>
 
@@ -181,6 +183,7 @@ export default function InterviewerPositionSelector({
           isClearable
           isDisabled={!selectedRequisition}
           onChange={(opt) => onPositionChange(opt?.raw || null)}
+          onMenuOpen={() => closeCalendar?.()} 
         />
       </div>
 

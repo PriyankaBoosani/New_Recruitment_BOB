@@ -501,6 +501,7 @@ const handleSave = async () => {
 };
 
 
+const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
 
   const anyChanged = rows.some(isRowChanged);
@@ -533,13 +534,30 @@ const handleSave = async () => {
             onClick={() => setSelectedDate(d => subDays(d, 1))}
           >‹</span>
 
-          <DatePicker
+          {/* <DatePicker
             selected={selectedDate}
             onChange={setSelectedDate}
             dateFormat="dd MMMM yyyy"
             customInput={<DatePill />}
            // maxDate={new Date()}
-          />
+          /> */}
+
+
+
+
+<DatePicker
+  selected={selectedDate}
+  onChange={(date) => {
+    setSelectedDate(date);
+    setIsCalendarOpen(false);
+  }}
+  open={isCalendarOpen}
+  onClickOutside={() => setIsCalendarOpen(false)}
+  onInputClick={() => setIsCalendarOpen(true)}
+  dateFormat="dd MMMM yyyy"
+  customInput={<DatePill />}
+   maxDate={new Date()}
+/>
 
           <span
             className="nav-arrow"
@@ -576,6 +594,7 @@ const handleSave = async () => {
           onPositionChange={(p) => {
             setSelectedPosition(p);
           }}
+          closeCalendar={() => setIsCalendarOpen(false)}
         />
 
 

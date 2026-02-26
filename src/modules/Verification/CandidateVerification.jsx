@@ -28,7 +28,8 @@ const STAGE_STATUS_MAP = {
   VERIFIED: "Verified",
   REJECTED: "Rejected",
   PROVISIONALLY_APPROVED: "Provisionally Approved",
-  ZONAL_ABSENT: "Zonal Absent",   //  ADD THIS
+  ZONAL_ABSENT: "Zonal Absent",   
+  ZONAL_REJECTED: "Zonal Rejected",
 };
 
  
@@ -380,7 +381,8 @@ const filteredCandidates = baseFiltered.filter(c =>
 
 
 
-
+const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+ 
 const totalElements = filteredCandidates.length;
 
 const totalPages = Math.ceil(totalElements / pageSize);
@@ -523,13 +525,20 @@ useEffect(() => {
             }
           >‹</span>
  
-        <DatePicker
+       <DatePicker
   selected={selectedDate}
-  onChange={setSelectedDate}
+  onChange={(date) => {
+    setSelectedDate(date);
+    setIsCalendarOpen(false);
+  }}
+  onClickOutside={() => setIsCalendarOpen(false)}
+  open={isCalendarOpen}
+  onInputClick={() => setIsCalendarOpen(true)}
   dateFormat="dd MMMM yyyy"
   customInput={<DatePill />}
-  maxDate={new Date()}
+   maxDate={new Date()}
 />
+
  
  
           <span
@@ -542,7 +551,7 @@ useEffect(() => {
  
         </div>
  
-        <div className="search-box">
+        <div className="search-box">  
           <img src={searchIcon} width={14} alt="search" />
           <input
             placeholder="Search candidates..."
@@ -602,6 +611,7 @@ useEffect(() => {
     setSelectedPosition(null);   //  reset position when req changes
   }}
   onPositionChange={setSelectedPosition}
+   closeCalendar={() => setIsCalendarOpen(false)}
 />
  
  

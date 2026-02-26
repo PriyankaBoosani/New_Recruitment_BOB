@@ -6,7 +6,6 @@ import {
   mapUniquePositionsToDropdown
 } from "../../Verification/mappers/CandidateVerificationMapper";
 
-
 /* ================= CONTROL TOOLTIP ================= */
 
 const TooltipControl = (props) => {
@@ -23,7 +22,6 @@ const TooltipControl = (props) => {
   );
 };
 
-
 /* ================= OPTION TOOLTIP ================= */
 
 const TooltipOption = (props) => (
@@ -34,7 +32,6 @@ const TooltipOption = (props) => (
   </components.Option>
 );
 
-
 /* ================= MAIN ================= */
 
 const RequisitionPositionSelector = ({
@@ -42,10 +39,11 @@ const RequisitionPositionSelector = ({
   onRequisitionChange,
   onPositionChange,
   selectedRequisitionRaw,
-  selectedPositionRaw
+  selectedPositionRaw,
+  closeCalendar // ✅ added
 }) => {
 
-  /* ===== SELECT STYLES — SAME AS INTERVIEWER SELECTOR ===== */
+  /* ===== SELECT STYLES ===== */
 
   const selectStyles = {
     control: (b) => ({
@@ -64,7 +62,6 @@ const RequisitionPositionSelector = ({
       fontSize: "12px"
     }),
 
-    /* selected value — single line with ellipsis */
     singleValue: (b) => ({
       ...b,
       fontSize: "14px",
@@ -74,7 +71,6 @@ const RequisitionPositionSelector = ({
       maxWidth: "100%"
     }),
 
-    /* dropdown options — allow wrap */
     option: (b) => ({
       ...b,
       fontSize: "14px",
@@ -91,9 +87,13 @@ const RequisitionPositionSelector = ({
     menu: (b) => ({
       ...b,
       fontSize: "12px"
+    }),
+
+    menuPortal: (base) => ({
+      ...base,
+      zIndex: 9999   // ✅ prevents overlap issue
     })
   };
-
 
   /* ===== Build requisition options ===== */
 
@@ -102,8 +102,7 @@ const RequisitionPositionSelector = ({
     [apiList]
   );
 
-
-  /* ===== derive selected requisition option ===== */
+  /* ===== Selected requisition ===== */
 
   const selectedRequisitionOption = useMemo(() => {
     if (!selectedRequisitionRaw) return null;
@@ -114,17 +113,14 @@ const RequisitionPositionSelector = ({
 
     if (found) return found;
 
-    // fallback if not in list
     return {
       value: selectedRequisitionRaw.requisition_id,
       label: selectedRequisitionRaw.requisition_title,
       raw: selectedRequisitionRaw
     };
-
   }, [requisitions, selectedRequisitionRaw]);
 
-
-  /* ===== Build positions based on selected requisition ===== */
+  /* ===== Positions ===== */
 
   const positions = useMemo(() => {
     if (!selectedRequisitionOption) return [];
@@ -133,11 +129,9 @@ const RequisitionPositionSelector = ({
       apiList,
       selectedRequisitionOption.value
     );
-
   }, [apiList, selectedRequisitionOption]);
 
-
-  /* ===== derive selected position option ===== */
+  /* ===== Selected position ===== */
 
   const selectedPositionOption = useMemo(() => {
     if (!selectedPositionRaw) return null;
@@ -153,9 +147,7 @@ const RequisitionPositionSelector = ({
       label: selectedPositionRaw.positionName,
       raw: selectedPositionRaw
     };
-
   }, [positions, selectedPositionRaw]);
-
 
   /* ================= UI ================= */
 
@@ -179,13 +171,14 @@ const RequisitionPositionSelector = ({
           placeholder="Select Requisition"
           options={requisitions}
           value={selectedRequisitionOption}
+          menuPortalTarget={document.body}     // ✅ fix overlay
+          onMenuOpen={() => closeCalendar?.()} // ✅ close datepicker
           onChange={(opt) => {
             onRequisitionChange?.(opt?.raw || null);
             onPositionChange?.(null);
           }}
         />
       </div>
-
 
       {/* ===== Position ===== */}
 
@@ -205,6 +198,8 @@ const RequisitionPositionSelector = ({
           options={positions}
           value={selectedPositionOption}
           isDisabled={!selectedRequisitionOption}
+          menuPortalTarget={document.body}     // ✅ fix overlay
+          onMenuOpen={() => closeCalendar?.()} // ✅ close datepicker
           onChange={(opt) => {
             onPositionChange?.(opt?.raw || null);
           }}

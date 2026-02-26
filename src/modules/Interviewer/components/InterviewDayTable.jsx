@@ -117,6 +117,7 @@ const InterviewDayTable = ({
     type="checkbox"
     checked={row.absent}
 disabled={
+    row.absent ||      
   row.isZonalAbsent ||
   (row.score !== "" &&
    row.score !== null &&
@@ -133,7 +134,7 @@ disabled={
                  <input
   className="form-control form-control-sm fs-14"
   value={row.comment || ""}
-  disabled={row.isZonalAbsent}
+   disabled={row.absent || row.isZonalAbsent} 
   onChange={(e) =>
     updateComment(row.id, e.target.value)
   }

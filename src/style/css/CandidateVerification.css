@@ -73,6 +73,8 @@
 }
 
 
+
+
 .date-nav-btn {
   width: 34px;
   height: 34px;
@@ -306,6 +308,19 @@
   background-color: #ffe3e3;
   color: #e03131;
 }
+
+
+
+/* ================= STATUS BADGES ================= */
+
+
+
+.status-badge.zonal-rejected {
+  background-color: #ffe3e3;
+  color: #e03131;
+ 
+}
+
  
 /* Provisionally Approved */
 .status-pill.provisionallyapproved {
