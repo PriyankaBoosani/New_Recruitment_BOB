@@ -229,13 +229,23 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
         institution: edu.institutionName || "-",
         startDate: formatDateDDMMYYYY(edu.startDate) || "-",
         endDate: formatDateDDMMYYYY(edu.endDate) || "-",
-        percentage:
-          edu.percentage != null
-            ? Number(edu.percentage) < 10
-              ? `${edu.percentage} CGPA`
-              : `${edu.percentage}%`
-            : "-",
+        // percentage:
+        //   edu.percentage != null
+        //     ? Number(edu.percentage) < 10
+        //       ? `${edu.percentage} CGPA`
+        //       : `${edu.percentage}%`
+        //     : "-",
         // percentage: edu.percentage ?? "-",
+
+        percentage:
+  edu.percentage != null
+    ? (() => {
+        const value = Number(edu.percentage).toFixed(2);
+        return Number(edu.percentage) < 10
+          ? `${value} CGPA`
+          : `${value}%`;
+      })()
+    : "-",
         educationLevel_name: educationLevel?.documentName || "-",
         mandatoryQualification_name: qualification?.qualificationName || "-",
         specialization_name: specialization?.specializationName || "-"
