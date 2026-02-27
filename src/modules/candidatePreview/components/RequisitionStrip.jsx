@@ -29,24 +29,33 @@ const RequisitionStrip = ({
 
   const [masterData, setMasterData] = useState(null);   //  INTERNAL
 
-const renderBullets = (text) => {
-  if (!text) return <li>-</li>;
+  const orderedPattern =
+    /^\s*(\(?\d+[\).\]]|\(?[ivxlcdm]+[\).\]])\s*/i;
 
-  const lines = text
-    .split(/\r?\n/)
-    .map(line => line.trim())
-    .filter(line => line.length > 0);
+  const renderBullets = (text) => {
+    if (!text) return <li>-</li>;
 
-  return lines.map((line, idx) => {
-    const cleaned = line.replace(/\.+$/, "");
+    const lines = text
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .filter(Boolean);
 
-    return (
-      <li key={idx}>
-        {cleaned + "."}
-      </li>
-    );
-  });
-};
+    return lines.map((line, idx) => {
+      const cleaned = line.replace(/\.+$/, "");
+
+      // ✅ If already numbered → DO NOT ADD BULLET
+      if (orderedPattern.test(cleaned)) {
+        return (
+          <div key={idx} className="no-bullet-line">
+            {cleaned}
+          </div>
+        );
+      }
+
+      // ✅ Otherwise normal bullet
+      return <li key={idx}>{cleaned}.</li>;
+    });
+  };
 
 
 
@@ -82,31 +91,31 @@ const renderBullets = (text) => {
 
 
   useEffect(() => {
-  const loadMasters = async () => {
-    try {
-      const [masterRes, zonalRes] = await Promise.all([
-        masterApiService.getMasterDisplayAll(),
-        masterApiService.getZonalStates()
-      ]);
+    const loadMasters = async () => {
+      try {
+        const [masterRes, zonalRes] = await Promise.all([
+          masterApiService.getMasterDisplayAll(),
+          masterApiService.getZonalStates()
+        ]);
 
-      setMasterData({
-        ...masterRes.data,
+        setMasterData({
+          ...masterRes.data,
 
-        // use ZONAL states (correct IDs)
-        states: (zonalRes.data || []).map(s => ({
-          id: String(s.zonalStateID),
-          name: s.stateName,
-        }))
-      });
+          // use ZONAL states (correct IDs)
+          states: (zonalRes.data || []).map(s => ({
+            id: String(s.zonalStateID),
+            name: s.stateName,
+          }))
+        });
 
-    } catch (err) {
-      console.error("Failed to load master data", err);
-      setMasterData({});
-    }
-  };
+      } catch (err) {
+        console.error("Failed to load master data", err);
+        setMasterData({});
+      }
+    };
 
-  loadMasters();
-}, []);
+    loadMasters();
+  }, []);
 
 
   /* ================= FETCH JOB ================= */
@@ -154,35 +163,35 @@ const renderBullets = (text) => {
           border: isCardBg ? "1px solid #e0e0e0" : "none",
           borderRadius: "8px"
         }}
-       >
+      >
 
         {/* ===== LEFT CONTENT ===== */}
         <div className="w-100">
 
           <div className="d-flex flex-column flex-md-row flex-wrap align-items-center gap-2">
 
-      <OverlayTrigger
-  placement="bottom"
-  overlay={
-    <Tooltip>
-      {requisition?.requisitionCode || requisition?.requisition_code || ""} -{" "}
-      {requisition?.requisitionTitle || requisition?.requisition_title || "-"}
-    </Tooltip>
-  }
->
-  <span className="req-code me-3 cursor-pointer">
-    {requisition?.requisitionCode || requisition?.requisition_code || ""} -{" "}
-    {requisition?.requisitionTitle || requisition?.requisition_title || "-"}
-  </span>
-</OverlayTrigger>
+            <OverlayTrigger
+              placement="bottom"
+              overlay={
+                <Tooltip>
+                  {requisition?.requisitionCode || requisition?.requisition_code || ""} -{" "}
+                  {requisition?.requisitionTitle || requisition?.requisition_title || "-"}
+                </Tooltip>
+              }
+            >
+              <span className="req-code me-3 cursor-pointer">
+                {requisition?.requisitionCode || requisition?.requisition_code || ""} -{" "}
+                {requisition?.requisitionTitle || requisition?.requisition_title || "-"}
+              </span>
+            </OverlayTrigger>
 
 
 
             <span className="date-text">
               <i className="bi bi-calendar3 me-1"></i>
-             Start: {formatDMY(
-  requisition?.startDate || requisition?.registration_start_date
-)}
+              Start: {formatDMY(
+                requisition?.startDate || requisition?.registration_start_date
+              )}
 
 
 
@@ -192,9 +201,9 @@ const renderBullets = (text) => {
 
             <span className="date-text">
               <i className="bi bi-clock me-1"></i>
-            End: {formatDMY(
-  requisition?.endDate || requisition?.registration_end_date
-)}
+              End: {formatDMY(
+                requisition?.endDate || requisition?.registration_end_date
+              )}
             </span>
 
           </div>
@@ -245,23 +254,23 @@ const renderBullets = (text) => {
         <Modal.Header closeButton className="knowmore-header">
           <div className="w-100">
 
-         <div className="modal-header-row">
-  <span className="modal-req-title">
-    {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
-  </span>
+            <div className="modal-header-row">
+              <span className="modal-req-title">
+                {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
+              </span>
 
-  <span className="modal-date">
-    <i className="bi bi-calendar3 me-1"></i>
-    Start: {formatDMY(requisition?.registration_start_date)}
-  </span>
+              <span className="modal-date">
+                <i className="bi bi-calendar3 me-1"></i>
+                Start: {formatDMY(requisition?.registration_start_date)}
+              </span>
 
-  <span className="modal-divider">|</span>
+              <span className="modal-divider">|</span>
 
-  <span className="modal-date">
-   <i className="bi bi-clock me-1"></i>
-    End: {formatDMY(requisition?.registration_end_date)}
-  </span>
-</div>
+              <span className="modal-date">
+                <i className="bi bi-clock me-1"></i>
+                End: {formatDMY(requisition?.registration_end_date)}
+              </span>
+            </div>
 
 
             <div
@@ -282,62 +291,62 @@ const renderBullets = (text) => {
             </div>
           ) : (
             <>
-             <div className="stats-container mb-3">
-  <div className="row g-2 small">
+              <div className="stats-container mb-3">
+                <div className="row g-2 small">
 
-    {/* Employment */}
-    <div className="col-12 col-md-4">
-      <span className="stat-label">Employment Type:</span>{" "}
-      <span className="stat-value">
-        {job?.employment_type || "-"}
-      </span>
-    </div>
+                  {/* Employment */}
+                  <div className="col-12 col-md-4">
+                    <span className="stat-label">Employment Type:</span>{" "}
+                    <span className="stat-value">
+                      {job?.employment_type || "-"}
+                    </span>
+                  </div>
 
-    {/* Contract — show only if employment type is Contract */}
-{job?.employment_type?.toLowerCase() === "contract" && (
-  <div className="col-12 col-md-4">
-    <span className="stat-label">Contract Period:</span>{" "}
-    <span className="stat-value">
-      {job?.contract_years ?? 0} Years
-    </span>
-  </div>
-)}
+                  {/* Contract — show only if employment type is Contract */}
+                  {job?.employment_type?.toLowerCase() === "contract" && (
+                    <div className="col-12 col-md-4">
+                      <span className="stat-label">Contract Period:</span>{" "}
+                      <span className="stat-value">
+                        {job?.contract_years ?? 0} Years
+                      </span>
+                    </div>
+                  )}
 
 
-    {/* Experience */}
- <div className="col-12 col-md-4">
-  <span className="stat-label">Experience:</span>{" "}
-  <span className="stat-value">
-    {job?.mandatory_experience_years ?? 0} years
-  </span>
-</div>
+                  {/* Experience */}
+                  <div className="col-12 col-md-4">
+                    <span className="stat-label">Experience:</span>{" "}
+                    <span className="stat-value">
+                      {job?.mandatory_experience_years ?? 0} years
+                    </span>
+                  </div>
 
-    {/* Eligibility */}
-    <div className="col-12 col-md-4">
-      <span className="stat-label">Eligibility Age:</span>{" "}
-      <span className="stat-value">
-        {job?.eligibility_age_min} - {job?.eligibility_age_max} years
-      </span>
-    </div>
+                  {/* Eligibility */}
+                  <div className="col-12 col-md-4">
+                    <span className="stat-label">Eligibility Age:</span>{" "}
+                    <span className="stat-value">
+                      {job?.eligibility_age_min} - {job?.eligibility_age_max} years
+                    </span>
+                  </div>
 
-    {/* Department */}
-    <div className="col-12 col-md-4">
-      <span className="stat-label">Department:</span>{" "}
-      <span className="stat-value">
-        {job?.dept_name || "-"}
-      </span>
-    </div>
+                  {/* Department */}
+                  <div className="col-12 col-md-4">
+                    <span className="stat-label">Department:</span>{" "}
+                    <span className="stat-value">
+                      {job?.dept_name || "-"}
+                    </span>
+                  </div>
 
-    {/* Vacancies */}
-    <div className="col-12 col-md-4">
-      <span className="stat-label">Vacancies:</span>{" "}
-      <span className="stat-value">
-        {job?.no_of_vacancies ?? 0}
-      </span>
-    </div>
+                  {/* Vacancies */}
+                  <div className="col-12 col-md-4">
+                    <span className="stat-label">Vacancies:</span>{" "}
+                    <span className="stat-value">
+                      {job?.no_of_vacancies ?? 0}
+                    </span>
+                  </div>
 
-  </div>
-</div>
+                </div>
+              </div>
 
 
               <div className="info-card">
@@ -353,19 +362,19 @@ const renderBullets = (text) => {
               </div>
 
               <div className="info-card">
-             
-               <div className="section-title">Mandatory Experience:</div>
-<ul className="section-lists">
-  {renderBullets(job?.mandatory_experience)}
-</ul>
+
+                <div className="section-title">Mandatory Experience:</div>
+                <ul className="section-lists">
+                  {renderBullets(job?.mandatory_experience)}
+                </ul>
 
 
 
 
-            <div className="section-title mt-2">Preferred Experience:</div>
-<ul className="section-lists">
-  {renderBullets(job?.preferred_experience)}
-</ul>
+                <div className="section-title mt-2">Preferred Experience:</div>
+                <ul className="section-lists">
+                  {renderBullets(job?.preferred_experience)}
+                </ul>
 
 
 
@@ -373,9 +382,9 @@ const renderBullets = (text) => {
 
               <div className="info-card">
                 <div className="section-title">Key Responsibilities:</div>
-          <ul className="section-lists">
-  {renderBullets(job?.roles_responsibilities)}
-</ul>
+                <ul className="section-lists">
+                  {renderBullets(job?.roles_responsibilities)}
+                </ul>
 
 
 
