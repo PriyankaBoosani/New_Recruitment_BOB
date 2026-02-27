@@ -176,12 +176,12 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 							className="sticky-col-checkbox border-top"
 							style={{ width: "50px", minWidth: "50px", paddingLeft: '1.5rem' }}
 						>
-							<input
+							{/* <input
 								type="checkbox"
 								style={{ marginBottom: '0.75rem' }}
 								checked={allSelected}
 								onChange={toggleSelectAll}
-							/>
+							/> */}
 						</th>
 						<th className="fs-14 fw-normal py-3 border-top sticky-col-1" scope="col" style={{ paddingLeft: '1rem', width: "200px", minWidth: "200px" }}>Name</th>
 						<th className="fs-14 fw-normal py-3 border-top" style={{ paddingLeft: '1rem', width: "160px", minWidth: "160px" }} scope="col">Registration Number</th>
@@ -332,7 +332,7 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 								
 								{/* Header */}
 								<div className="modal-header border-0 pb-0">
-									<p className="modal-title fs-14 fw-500 mb-0 blue-color py-2">
+									<p className="modal-title fs-16 fw-500 mb-0 blue-color py-2">
 										Candidate Rank Details
 									</p>
 									<button
@@ -344,38 +344,59 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 
 								{/* Body */}
 								<div className="modal-body pt-2">
-									<div className="container-fluid rounded" style={{ backgroundColor: '#f7f8fb' }}>
+									<div className="container-fluid rounded p-4 pb-1 shadow-sm" style={{ backgroundColor: '#f7f8fb' }}>
 
 										{/* Row 1 */}
-										<div className="row pt-3">
+										<div className="row pt-2">
 											<InfoField label="Registration Number" value={selectedOffer.applicationNo} />
 											<InfoField label="Name" value={selectedOffer.name} />
 											<InfoField label="Caste" value={selectedOffer.categoryName} />
 										</div>
 
 										{/* Row 2 */}
-										<div className="row">
-											<InfoField label="Combined Score" value={selectedOffer.score} />
-											<InfoField label="Q / NQ" value={selectedOffer.qnq} />
-											<InfoField 
-												label="Status" 
-												value={OFFER_STATUS_LABEL_MAP[selectedOffer.status] || selectedOffer.status}
-											/>
+										<div className="row pt-3">
+											<InfoField label="Date of Birth" value={selectedOffer.dateOfBirth} />
+											<InfoField label="Cut-Off Date" value={selectedOffer.cutOffDate} />
+											<InfoField label="Age" value={selectedOffer.age} />
 										</div>
 
 										{/* Row 3 */}
 										<div className="row">
-											<InfoField label="Select List" value={selectedOffer.selectList} />
-											<InfoField label="Wait List" value={selectedOffer.waitList} />
-											<InfoField label="Location" value={selectedOffer.location} />
+											<InfoField label="Age Concession" value={selectedOffer.ageConcession} />
+											<InfoField label="Q/NQ" value={selectedOffer.qnq} />
+											<InfoField label="Shortlisted" value={selectedOffer.shortlisted} />
 										</div>
 
 										{/* Row 4 */}
 										<div className="row">
-											<InfoField label="Offer Release Date" value={selectedOffer.offerReleaseDate} />
-											<InfoField label="Accept Before Date" value={selectedOffer.acceptBeforeDate} />
-											<InfoField label="Joining Date" value={selectedOffer.joiningDate} />
+											<InfoField label="Written Mark (out of 50)" value={selectedOffer.writtenMarks} />
+											<InfoField label="Mark in Viva (out of 25)" value={selectedOffer.vivaMarks} />
+											<InfoField label="Interview Conversion (to 100)" value={selectedOffer.interviewConversion} />
 										</div>
+
+										{/* Row 5 */}
+										<div className="row">
+											<InfoField label="Interview Score (out of 100)" value={selectedOffer.interviewScore} />
+											<InfoField label="GD Score (out of 100)" value={selectedOffer.gdScore} />
+											<InfoField label="Marks Conversion to Interview" value={selectedOffer.marksConversionToInterview} />
+										</div>
+
+										{/* Row 6 */}
+										<div className="row">
+											<InfoField label="Combined Score (OE + Written 60 and Interview 40)" value={selectedOffer.combinedScore} />
+											<InfoField 
+												label="Status" 
+												value={OFFER_STATUS_LABEL_MAP[selectedOffer.status] || selectedOffer.status}
+											/>
+											<InfoField label="Select List" value={selectedOffer.selectList} />
+										</div>
+
+										{/* Row 7 */}
+										<div className="row">
+											<InfoField label="Wait List" value={selectedOffer.waitList} />
+											<InfoField label="Location" value={selectedOffer.location} />
+										</div>
+								
 									</div>
 								</div>
 							</div>

@@ -18,10 +18,10 @@ const NationalVacancyTable = ({ nationalCategoryDistribution }) => {
       <thead>
         <tr>
           <th colSpan="6" className="group-header text-center">
-            General Category
+            Category
           </th>
           <th colSpan="4" className="group-header text-center">
-            Disability Category
+            Disability
           </th>
         </tr>
         <tr>
