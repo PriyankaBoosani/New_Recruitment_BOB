@@ -286,6 +286,7 @@ const CandidatePreviewPage = ({ onHide }) => {
               zonalVerificationStatus={candidate?.zonalVerificationStatus}
               zonalSubmitBeforeDate={candidate?.zonalSubmitBeforeDate}
               zonalHrComments={candidate?.zonalHrComments}
+              candidateStatus={candidate?.status}
             />
           )
         )}

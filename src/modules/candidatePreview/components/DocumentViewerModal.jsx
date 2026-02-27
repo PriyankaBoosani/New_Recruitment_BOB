@@ -12,6 +12,7 @@ const DocumentViewerModal = ({
   document,
   onVerify,
   onReject,
+  isZonalAbsent   
 }) => {
   const { t } = useTranslation(["preview", "common", "validation"]);
 
@@ -26,6 +27,24 @@ const DocumentViewerModal = ({
   const role = user?.role?.toLowerCase();
   const isZonalHr = role === "zonal_hr";
   const isInterviewer = role === "interviewer";
+const disableActions =
+  isInterviewer || (isZonalHr && isZonalAbsent);
+
+console.log("disableActions:", disableActions);
+
+
+
+
+
+
+
+
+
+console.log("==== DocumentViewerModal Debug ====");
+console.log("ROLE:", role);
+console.log("isZonalHr:", isZonalHr);
+console.log("isInterviewer:", isInterviewer);
+console.log("isZonalAbsent (prop):", isZonalAbsent);
 
 
   /* ================= FETCH SAS URL ================= */
@@ -95,6 +114,8 @@ useEffect(() => {
   /* ================= ACTION HANDLERS ================= */
 
   const handleRejectClick = () => {
+      if (disableActions) return;
+
     if (isZonalHr && !comment.trim()) {
       setError("required");
       return;
@@ -105,6 +126,7 @@ useEffect(() => {
   };
 
   const handleVerifyClick = () => {
+     if (disableActions) return;
     setError("");
     onVerify(comment.trim());
   };
@@ -185,7 +207,7 @@ useEffect(() => {
                 placeholder={t("enter_comments")}
                 rows={1}
                 value={comment}
-                disabled={isInterviewer}
+              disabled={disableActions}
                 className={`doc-comment-input one-line ${error ? "input-error" : ""}`}
                 onChange={(e) => {
                   setComment(e.target.value);
@@ -205,11 +227,11 @@ useEffect(() => {
             <button
   className="btn-reject"
   onClick={handleRejectClick}
-  disabled={isInterviewer}
+  disabled={disableActions}
   style={{
-    opacity: isInterviewer ? 0.5 : 1,
-    cursor: isInterviewer ? "not-allowed" : "pointer"
-  }}
+  opacity: disableActions ? 0.5 : 1,
+  cursor: disableActions ? "not-allowed" : "pointer"
+}}
 >
   {t("REJECTED")}
 </button>
@@ -217,11 +239,11 @@ useEffect(() => {
 <button
   className="btn-verify"
   onClick={handleVerifyClick}
-  disabled={isInterviewer}
-  style={{
-    opacity: isInterviewer ? 0.5 : 1,
-    cursor: isInterviewer ? "not-allowed" : "pointer"
-  }}
+  disabled={disableActions}
+ style={{
+  opacity: disableActions ? 0.5 : 1,
+  cursor: disableActions ? "not-allowed" : "pointer"
+}}
 >
   {t("VERIFIED")}
 </button>

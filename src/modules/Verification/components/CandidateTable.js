@@ -98,9 +98,7 @@ const CandidateTable = ({
               filteredCandidates.map((c) => {
 
                 const isRejected =
-                  c.status === "Rejected" ||
-                  c.status === "Zonal Rejected" ||
-                  c.status === "Zonal Absent";
+                  c.status === ""
 
 
 
@@ -153,14 +151,10 @@ const CandidateTable = ({
                         <span>
                           <Person
                             size={16}
-                            className={`me-3 ${isRejected ? "text-muted" : "cursor-pointer"}`}
-                            style={{
-                              cursor: isRejected ? "not-allowed" : "pointer",
-                              opacity: isRejected ? 0.5 : 1
-                            }}
-                            onClick={() => {
-                              if (!isRejected) goToPreview(c);
-                            }}
+                           className="me-3 cursor-pointer"
+style={{ cursor: "pointer" }}
+onClick={() => goToPreview(c)}
+
                           />
 
                         </span>
@@ -201,9 +195,7 @@ const CandidateTable = ({
           filteredCandidates.map((c) => {
 
             const isRejected =
-              c.status === "Rejected" ||
-              c.status === "Zonal Rejected" ||
-              c.status === "Zonal Absent";
+              c.status === ""
 
 
 
@@ -271,14 +263,10 @@ const CandidateTable = ({
                 <div className="card-actions">
                   <Person
                     size={16}
-                    className={`me-3 ${isRejected ? "text-muted" : "cursor-pointer"}`}
-                    style={{
-                      cursor: isRejected ? "not-allowed" : "pointer",
-                      opacity: isRejected ? 0.5 : 1
-                    }}
-                    onClick={() => {
-                      if (!isRejected) goToPreview(c);
-                    }}
+                   className="me-3 cursor-pointer"
+style={{ cursor: "pointer" }}
+onClick={() => goToPreview(c)}
+
                   />
 
 

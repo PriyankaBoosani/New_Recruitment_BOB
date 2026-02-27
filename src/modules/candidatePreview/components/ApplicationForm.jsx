@@ -29,7 +29,8 @@ const ApplicationForm = ({
   selectedDate,
   zonalVerificationStatus,
   zonalSubmitBeforeDate,
-  zonalHrComments
+  zonalHrComments,
+  candidateStatus
 }) => {
 
   const { t } = useTranslation(["preview", "common", "validation"]);
@@ -42,6 +43,10 @@ const ApplicationForm = ({
   const candidate = location.state?.candidate;
 
   const zonalInitRef = useRef(true);
+const isZonalAbsent =
+  String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
+
+
 
 
   const deriveShortlistStatus = () => {
@@ -95,6 +100,12 @@ const ApplicationForm = ({
   const isInterviewer = role === "interviewer";
 
 
+
+    console.log("ROLE:", role);
+
+console.log("isZonalAbsent:", isZonalAbsent);
+
+
   const mapDecisionToStatus = (val) => {
     const v = String(val || "").toUpperCase().trim();
 
@@ -112,8 +123,8 @@ const ApplicationForm = ({
     const s = String(status || "").toUpperCase().trim();
 
     if (s === "VERIFIED") return "YES";
-    if (s === "REJECTED") return "NO";
-    if (s === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
+    if (s === "REJECTED" || s === "ZONAL_REJECTED") return "NO";
+  if (s === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
     return "";
   };
 
@@ -166,7 +177,10 @@ const ApplicationForm = ({
     // 1️⃣ Decision not selected
     // -----------------------------------------
 
-
+if (isZonalAbsent) {
+  toast.info("Zonal Absent candidates cannot be processed.");
+  return;
+}
 
     if (hasPendingDocument) {
       toast.warning(
@@ -787,8 +801,7 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
     });
   };
 
-
-
+ const disableDocAction = isInterviewView;  
 
   const allDocsVerified =
     documentRows.length > 0 &&
@@ -920,6 +933,7 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
     const selectedDate = new Date(value);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    
 
     if (selectedDate <= today) {
       setErrors(prev => ({
@@ -1470,13 +1484,13 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
                                   src={viewIcon}
                                   alt={t("view")}
                                   style={{
-                                    cursor: isInterviewView ? "not-allowed" : "pointer",
-                                    opacity: isInterviewView ? 0.4 : 1,
-                                    pointerEvents: isInterviewView ? "none" : "auto",
+                                  cursor: disableDocAction ? "not-allowed" : "pointer",
+opacity: disableDocAction ? 0.4 : 1,
+pointerEvents: disableDocAction ? "none" : "auto",
                                     marginLeft: '12px',
                                   }}
                                   onClick={() => {
-                                    if (isInterviewView) return;
+                                 if (disableDocAction) return;
                                     console.log("VIEW CLICKED", left);
                                     setSelectedDoc({
                                       candidateDocumentId: left.candidateDocumentId,
@@ -1524,13 +1538,13 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
                                   src={viewIcon}
                                   alt={t("view")}
                                   style={{
-                                    cursor: isInterviewView ? "not-allowed" : "pointer",
-                                    opacity: isInterviewView ? 0.4 : 1,
-                                    pointerEvents: isInterviewView ? "none" : "auto",
+                                  cursor: disableDocAction ? "not-allowed" : "pointer",
+opacity: disableDocAction ? 0.4 : 1,
+pointerEvents: disableDocAction ? "none" : "auto",
                                     marginLeft: '12px'
                                   }}
                                   onClick={() => {
-                                    if (isInterviewView) return;
+                                   if (disableDocAction) return;
                                     setSelectedDoc({
                                       candidateDocumentId: right.candidateDocumentId,
                                       candidateId: previewData.candidateId,
@@ -1796,8 +1810,12 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
           </Card>
         )}
 
-        {isZonalHr && !isInterviewView && (
-          <Card className="criteria-main-card p-3">
+      {isZonalHr && !isInterviewView && (
+  <Card
+    className={`criteria-main-card p-3 ${
+      isZonalAbsent ? "criteria-disabled" : ""
+    }`}
+  >
 
             <label className="criteria-title mb-2">
               {t("all_docs_verified_q")}
@@ -1815,8 +1833,12 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
                 const disableProvisionallyApproved =
                   opt === "PROVISIONALLY_APPROVED" && areAllDocumentsVerified();
 
-                const isDisabled =
-                  !allDocsVerified || disableProvisionallyApproved || disableYes;
+               const isDisabled =
+  isZonalAbsent ||
+  !allDocsVerified ||
+  disableProvisionallyApproved ||
+  disableYes;
+
 
                 console.log("🔘 Zonal option check:", {
                   opt,
@@ -1864,10 +1886,12 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
                 className={`criteria-date ${errors.zonalSubmitDate ? "input-error" : ""}`}
                 min={minFutureDate}
                 value={screeningForm.zonalSubmitDate}
-                disabled={
-                  !allDocsVerified ||
-                  zonalDecision !== "PROVISIONALLY_APPROVED"
-                }
+              disabled={
+  isZonalAbsent ||
+  !allDocsVerified ||
+  zonalDecision !== "PROVISIONALLY_APPROVED"
+}
+
 
 
                 onChange={(e) => {
@@ -1904,7 +1928,8 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
       className={`remarks-box ${errors.zonalComments ? "input-error" : ""}`}
       placeholder={t("enter_comments")}
       rows={5}
-      disabled={docStatusLoading}
+    disabled={docStatusLoading || isZonalAbsent}
+
       value={screeningRemarks}
       onChange={(e) => {
         setScreeningRemarks(e.target.value);
@@ -1930,7 +1955,7 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
   <div className="remarks-button">
     <button
       className="btn-submit-orange"
-      disabled={docStatusLoading}
+     disabled={docStatusLoading || isZonalAbsent}
       onClick={handleZonalSubmit}
     >
       {t("submit")}
@@ -1956,6 +1981,7 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
         document={selectedDoc}
         onVerify={handleVerify}
         onReject={handleReject}
+        isZonalAbsent={isZonalAbsent}
       />
     </>
   );
