@@ -54,5 +54,6 @@
     "view_requisition": "View Requisition",
     "status_l1_pending": "L1 Pending",
     "status_l1_rejected": "L1 Rejected",
-    "status_l2_rejected": "L2 Rejected"
+    "status_l2_rejected": "L2 Rejected",
+    "years_fetch_failed": "Failed to fetch years."
 }
