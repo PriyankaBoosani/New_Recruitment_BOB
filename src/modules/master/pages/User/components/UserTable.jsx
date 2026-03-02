@@ -1,10 +1,14 @@
 import React from "react";
-import { Table, Form } from "react-bootstrap";
+import { Table, Button, Form } from 'react-bootstrap';
 
 import { useTranslation } from "react-i18next";
-
-const UserTable = ({ data, searchTerm, currentPage, setCurrentPage, pageSize,
-  setPageSize }) => {
+import viewIcon from "../../../../../assets/view_icon.png";
+import editIcon from "../../../../../assets/edit_icon.png";
+import deleteIcon from "../../../../../assets/delete_icon.png";
+const UserTable = ({
+  data, searchTerm, currentPage, setCurrentPage, pageSize,setPageSize,onEdit,onView,onDelete 
+}) => {
+  console.log("data",data);
   const { t } = useTranslation(["user"]);
   const filtered = data.filter(u =>
     Object.values(u).some(v =>
@@ -15,6 +19,7 @@ const UserTable = ({ data, searchTerm, currentPage, setCurrentPage, pageSize,
   const indexOfLast = currentPage * pageSize;
   const indexOfFirst = indexOfLast - pageSize;
   const current = filtered.slice(indexOfFirst, indexOfLast);
+  console.log("current",current);
   const totalPages = Math.ceil(filtered.length / pageSize);
   const getVisiblePages = (currentPage, totalPages) => {
     const windowSize = 3;
@@ -44,6 +49,14 @@ const UserTable = ({ data, searchTerm, currentPage, setCurrentPage, pageSize,
       showEndEllipsis: end <= totalPages
     };
   };
+const formatRole = (role) => {
+  if (!role) return "-";
+
+  return role
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+};
 
 
   return (
@@ -56,17 +69,46 @@ const UserTable = ({ data, searchTerm, currentPage, setCurrentPage, pageSize,
               <th>{t("role")}</th>
               <th>{t("name")}</th>
               <th>{t("email")}</th>
+              <th>{t("interviewCentre")}</th>
+               <th style={{ textAlign: "center" }}>{t("actions")}</th>
 
             </tr>
           </thead>
           <tbody>
             {current.length ? (
               current.map((u, idx) => (
-                <tr key={u.id}>
+                <tr key={u.userId}>
                   <td>{indexOfFirst + idx + 1}</td>
-                  <td>{u.role}</td>
+                  <td>{formatRole(u.role)}</td>
                   <td>{u.name}</td>
                   <td>{u.email}</td>
+                    <td>{u.interviewCentre || "-"}</td>
+                  <td>
+                    <div className="action-buttons">
+                      <Button variant="link"
+                        className="action-btn view-btn"
+                        onClick={() => onView(u)}
+                      >
+                        <img src={viewIcon} alt="View" className="icon-16" />
+                      </Button>
+
+                      <Button
+                        variant="link"
+                        className="action-btn edit-btn"
+                        onClick={() => onEdit(u)}
+                      >
+                        <img src={editIcon} alt="Edit" className="icon-16" />
+                      </Button>
+
+                      <Button
+                        variant="link"
+                        className="action-btn delete-btn"
+                        onClick={() => onDelete(u)}
+                      >
+                        <img src={deleteIcon} alt="Delete" className="icon-16" />
+                      </Button>
+                    </div>
+                  </td>
 
                 </tr>
               ))

@@ -3,6 +3,7 @@
   "add": "जोड़ें",
   "addUser": "उपयोगकर्ता जोड़ें",
   "editUser": "उपयोगकर्ता संपादित करें",
+  "viewUser": "उपयोगकर्ता देखें",
   "s_no": "क्रमांक",
   "role": "भूमिका",
   "name": "नाम",
@@ -12,6 +13,7 @@
   "password": "पासवर्ड",
   "confirmPassword": "पासवर्ड की पुष्टि करें",
   "select_role": "भूमिका चुनें",
+  "interviewCentre": "साक्षात्कार केंद्र",
   "admin": "प्रशासक",
   "manager": "प्रबंधक",
   "recruiter": "भर्तीकर्ता",
@@ -22,6 +24,7 @@
   "save": "सहेजें",
   "update": "अपडेट करें",
   "cancel": "रद्द करें",
+  "delete_msg": "क्या आप वाकई इस उपयोगकर्ता को हटाना चाहते हैं?",
   "delete": "हटाएँ",
   "actions": "क्रियाएँ",
   "s.no.": "क्रमांक",
@@ -41,7 +44,11 @@
   "download_template": "टेम्पलेट डाउनलोड करें",
    "enter_password": "पासवर्ड दर्ज करें",
   "confirm_password": "पासवर्ड की पुष्टि करें",
-   "add_success": "User added successfully",
-  "delete_success": "User deleted successfully"
+   "add_success": "उपयोगकर्ता सफलतापूर्वक जोड़ा गया",
+   "delete_success": "उपयोगकर्ता सफलतापूर्वक हटाया गया।",
+  "update_success": "उपयोगकर्ता सफलतापूर्वक अपडेट किया गया।",
+  "update_error": "उपयोगकर्ता को अपडेट करने में विफल।",
+  "add_error": "उपयोगकर्ता जोड़ने में विफल।",
+  "delete_error": "उपयोगकर्ता को हटाने में विफल।"
   
 }

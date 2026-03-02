@@ -7,10 +7,11 @@ export const encryptPassword = (password) =>
 
 
 export const mapUserFromApi = (api) => ({
-  id: api.id,
+  userId: api.userId,
   role: api.role,
   name: api.name,
   email: api.email,
+  interviewCentreId: api.interviewCentreId,
 });
 
 export const mapUsersFromApi = (apiData = []) => {
@@ -19,8 +20,10 @@ export const mapUsersFromApi = (apiData = []) => {
 };
 
 export const mapUserToApi = (ui) => ({
+   userId: ui.userId,
   role: ui.role,
   name: ui.fullName,
   email: ui.email,
-  password: ui.password
+  password: ui.password,
+  interviewCentreId: ui.interviewCentreId
 });

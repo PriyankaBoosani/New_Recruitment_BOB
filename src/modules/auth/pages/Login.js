@@ -6,7 +6,7 @@ import '../../../style/css/Login.css';
 import pana from "../../../assets/pana.png";
 import BobLogo from "../../../assets/bob-logo1.jpg";
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser, setAuthUser } from '../../../app/providers/userSlice';
+import { setUser, setAuthUser, setPrivileges } from '../../../app/providers/userSlice';
 import loginApi from "../services/loginService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -60,6 +60,8 @@ const Login = () => {
         )
       );
 
+      dispatch(setPrivileges(authApiRes.preveileges));
+
       const userApiRes = await loginApi.getRecruiterDetails(email);
       dispatch(
         setUser(
@@ -67,25 +69,62 @@ const Login = () => {
         )
       );
 
-      const role = userApiRes?.role?.trim().toLowerCase();
+      // const role = userApiRes?.role?.trim().toLowerCase();
 
-      if (role === "admin") {
+      // if (role === "admin") {
+      //   navigate("/users", { replace: true });
+
+      // } else if (role === "l1" || role === "l2") {
+      //   navigate("/requisition-requests", { replace: true });
+
+      // } else if (role === "zonal_hr") {
+      //   navigate("/candidate-verification", { replace: true });
+
+      // } else if (role === "interviewer") {
+      //   navigate("/candidate-interviewer", { replace: true });
+
+      // } else if (role === "recruiter") {
+      //   navigate("/job-posting", { replace: true });
+
+      // } else {
+      //   navigate("/login", { replace: true });
+      // }
+// {
+//   "Admin": false,
+//   "Verification": false,
+//   "JobPostings": false,
+//   "Candidate Pool": false,
+//   "Interview Pool": false,
+//   "Offer Pool": false,
+//   "Compensation Pool": false,
+//   "Committee Management": false,
+//   "Interview": false
+// }
+      const privileges = authApiRes.preveileges || {};
+
+      console.log("privileges,", privileges);
+
+      if (privileges.Admin) {
         navigate("/users", { replace: true });
 
-      } else if (role === "l1" || role === "l2") {
-        navigate("/requisition-requests", { replace: true });
-
-      } else if (role === "zonal_hr") {
-        navigate("/candidate-verification", { replace: true });
-
-      } else if (role === "interviewer") {
-        navigate("/candidate-interviewer", { replace: true });
-
-      } else if (role === "recruiter") {
+      } else if (privileges["JobPostings"]) {
         navigate("/job-posting", { replace: true });
 
-      } else {
-        navigate("/login", { replace: true });
+      } else if (privileges["Candidate Pool"] || privileges["Compensation Pool"]) {
+        navigate("/candidate-workflow", { replace: true });
+
+      } else if (privileges.Verification) {
+        navigate("/candidate-verification", { replace: true });
+
+      } else if (privileges.Interview) {
+        navigate("/candidate-interviewer", { replace: true });
+
+      } else if (privileges["Committee Management"]) {
+        navigate("/interviewpanel", { replace: true });
+
+      } 
+      else {
+        toast.error("No access assigned to this user");
       }
 
     } catch (err) {

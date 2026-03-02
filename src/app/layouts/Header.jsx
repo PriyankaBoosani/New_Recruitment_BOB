@@ -71,16 +71,41 @@ const Header = () => {
   };
   const role = user?.role?.trim().toLowerCase();
 
-  const isAdmin = role === "admin";
-  const isZonalHr = role === "zonal_hr";
-  const isRecruiter = role === "recruiter";
-  const isInterviewer = role === "interviewer";
+  // const isAdmin = role === "admin";
+  // const isZonalHr = role === "zonal_hr";
+  // const isRecruiter = role === "recruiter";
+  // const isInterviewer = role === "interviewer";
 
   const isL1 = role === "l1";
   const isL2 = role === "l2";
   console.log("ROLE FROM BACKEND:", user?.role);
   console.log("ROLE NORMALIZED:", role);
 
+  //Privileges
+  const privileges = useSelector((state) => state.user.privileges);
+
+  console.log("PRIVILEGES:", privileges);
+
+const canJobPost = privileges?.JobPostings;
+const canCandidateWorkflow = privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"];
+const canCommittee = privileges?.["Committee Management"];
+const canVerification = privileges?.Verification;
+const canAdmin = privileges?.Admin;
+const canInterview = privileges?.["Interview"];
+
+// {
+// 	"preveileges": {
+// 		"Committee Management": true,
+// 		"Interview Pool": true,
+// 		"JobPostings": true,
+// 		"Candidate Pool": true,
+// 		"Verification": false,
+// 		"Admin": false,
+// 		"Offer Pool": true,
+// 		"Compensation Pool": true,
+// 		"Interview": false
+// 	}
+// }
 
   /* ===================== OUTSIDE CLICK ===================== */
   useEffect(() => {
@@ -100,6 +125,16 @@ const Header = () => {
   }, []);
 
   const location = useLocation();
+
+  const formatRole = (role) => {
+  if (!role) return "-";
+
+  return role
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
 
   const isAdminRoute =
     location.pathname.startsWith("/users") ||
@@ -235,7 +270,7 @@ const Header = () => {
                   style={{ minWidth: "200px", zIndex: 1050 }}
                 >
                   <p className="mb-1 fw-semibold">{displayName}</p>
-                  <p className="mb-2 text-muted small">{user?.role}</p>
+                  <p className="mb-2 text-muted small">{formatRole(user?.role)}</p>
                   <div
                     style={{ cursor: "pointer" }}
                     className="text-danger"
@@ -265,7 +300,7 @@ const Header = () => {
 
           <Navbar.Collapse id="main-navbar-nav">
             <Nav className="me-auto">
-              {isRecruiter && (
+              {canJobPost && (
                 <Nav.Link as={NavLink} to="/job-posting" onClick={closeMenu}>
                   {t("job_postings")}
                 </Nav.Link>
@@ -279,14 +314,14 @@ const Header = () => {
               </Nav.Link> */}
 
 
-              {isRecruiter && (
+              {canCandidateWorkflow && (
                 <Nav.Link as={NavLink} to="/candidate-workflow" onClick={closeMenu}>
                   {t("candidate_workflow")}
                 </Nav.Link>
               )}
 
 
-              {isInterviewer && (
+              {canInterview && (
                 <Nav.Link
                   as={NavLink}
                   to="/candidate-interviewer"
@@ -298,7 +333,7 @@ const Header = () => {
 
 
 
-              {isZonalHr && (
+              {canVerification && (
                 <Nav.Link
                   as={NavLink}
                   to="/candidate-verification"
@@ -345,7 +380,7 @@ const Header = () => {
               )}
 
 
-              {isRecruiter && (
+              {canCommittee && (
                 <Nav.Link as={NavLink} to="/interviewpanel" onClick={closeMenu}>
                   {t("committee_management")}
                 </Nav.Link>
@@ -370,7 +405,7 @@ const Header = () => {
               <Nav.Link href="/interviewpanel"> Interview Panel</Nav.Link> */}
 
               {/* Admin Menu */}
-              {isAdmin && (
+              {canAdmin && (
                 <NavDropdown title={t("admin")} id="admin-dropdown" className={isAdminRoute ? "active-admin" : ""}>
                   <NavDropdown.Item as={Link} to="/users" onClick={closeMenu}>
                     {t("users")}

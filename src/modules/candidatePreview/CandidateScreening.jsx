@@ -23,7 +23,7 @@ import OfferPool from "./components/OfferPool";
 import offerIcon from "../../assets/send-offer-icon.png";
 import locationIcon from "../../assets/location-icon.png";
 import RankListModal from "./components/RankListModal";
-
+import { useSelector } from "react-redux";
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
 
@@ -119,13 +119,32 @@ export default function CandidateScreening({ selectedJob }) {
     pageSize: interviewPageSize,
     enabled: !!selectedPositionId
   });
-
+const TAB_PRIVILEGE_MAP = {
+  CANDIDATE_POOL: "Candidate Pool",
+  INTERVIEW_POOL: "Interview Pool",
+  OFFER_POOL: "Offer Pool",
+  ONBOARDING_POOL: "Compensation Pool", // assuming onboarding is compensation
+};
   const tabs = [
     { key: "CANDIDATE_POOL", label: "Candidate Pool", count: totalElements },
     { key: "INTERVIEW_POOL", label: "Interview Pool", count: interviewTotalElements },
     { key: "OFFER_POOL", label: "Offer Pool", count: 0 },
     { key: "ONBOARDING_POOL", label: "Onboarding Pool", count: 0 },
   ];
+const privileges = useSelector(
+  (state) => state.user.privileges || {}
+);
+
+console.log("privileges", privileges);
+
+const hasPrivilege = (key) => {
+ return privileges?.[key] === true;
+};
+  const accessibleTabs = useMemo(() => {
+  return tabs.filter(tab =>
+    hasPrivilege(TAB_PRIVILEGE_MAP[tab.key])
+  );
+}, [tabs, privileges]);
 
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState([]);
@@ -883,7 +902,7 @@ export default function CandidateScreening({ selectedJob }) {
         <div className="card-header bg-white border-bottom-0 p-0 px-1 candidate-screening-tabs-header">
           {/* Tabs */}
           <ul className="nav nav-tabs border-0 pt-2 pb-3 px-2 border-bottom">
-            {tabs.map((tab) => (
+            {accessibleTabs.map((tab) => (
               <li className="nav-item" key={tab.key}>
                 <button
                   className={`nav-link fs-14 ${activeTab === tab.key ? "orange-color orange-bottom-border" : "text-muted"
@@ -1220,13 +1239,17 @@ export default function CandidateScreening({ selectedJob }) {
                 </div>
               </div>
               <div className="col-md-7 col-12 text-md-end px-2 mb-2">
-                {activeTab === "CANDIDATE_POOL" && canScheduleInterview && (
+                {activeTab === "CANDIDATE_POOL" 
+                  && hasPrivilege("Interview Pool")
+                  && canScheduleInterview && (
                   <button className="btn blue-bg text-white fs-14" onClick={() => setShowScheduleModal(true)}>
                     Schedule Interview
                   </button>
                 )}
 
-                {activeTab === "INTERVIEW_POOL" && canSendToOfferPool && (
+                {activeTab === "INTERVIEW_POOL" 
+                  && hasPrivilege("SEND_TO_OFFER_POOL")
+                  && canSendToOfferPool && (
                   <button
                     className="btn blue-bg text-white fs-14"
                     onClick={handleSendToOfferPool}

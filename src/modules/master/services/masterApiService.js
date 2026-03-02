@@ -7,6 +7,27 @@ const masterApiService = {
   getRegister: () => nodeApi.get('/getdetails/users/all'),
   registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data),
 
+  saveUser: (data) => apis.post('/user/add', data),
+  updateUser: (id, data) => apis.put(`/user/update/${id}`, data),
+
+  downloadUserTemplate: () =>
+    apis.get("/user/download-template", {
+      responseType: "blob",
+    }),
+
+     bulkAddUsers: (file) => {
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    return apis.post("/user/bulk-add", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+   deleteUser: (id) => apis.delete(`/user/delete/${id}`),
+
   // city
   getallCities: () => apis.get('/city/all'),
   /* Locations */
@@ -260,11 +281,12 @@ const masterApiService = {
     apis.get("/master-dd-data/get/state-languages"),
 
 
-  //Interview Pool related master data interview-center
-  getAllInterviewCenters: () => apis.get("/master-dd-data/get/interview-centres"),
+    //Interview Pool related master data interview-center
+    getAllInterviewCenters: () => apis.get("/master-dd-data/get/interview-centres"),
 
   getApprovingAuthorities: () =>apis.get("/approving-authority/all"),
 
+    
 
 };
 

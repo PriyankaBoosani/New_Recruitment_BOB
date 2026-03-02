@@ -84,12 +84,18 @@ export const validatePasswordConfirmation = (confirmPassword, password) => {
 
 export const validateUserForm = (formData = {}, options = {}) => {
   const {
-    requirePassword = true,
+   // requirePassword = true,
     existing = [],
-    currentId = null
+    currentId = null,
+    skipEmailCheck = false
   } = options;
+console.log("formData",formData)
+console.log("currentId",currentId)
 
   const errors = {};
+  if (formData.role === "Zonal_HR" && !formData.interviewCentreId) {
+    errors.interviewCentreId = "This filed is required";
+  }
 
   // Role
   const roleError = validateUserRole(formData.role);
@@ -100,6 +106,7 @@ export const validateUserForm = (formData = {}, options = {}) => {
   if (nameError) errors.fullName = nameError;
 
   // Email
+  if (!skipEmailCheck) {
   const emailError = validateUserEmail(formData.email);
   if (emailError) {
     errors.email = emailError;
@@ -109,46 +116,47 @@ export const validateUserForm = (formData = {}, options = {}) => {
       (user) =>
         user.email &&
         normalizeString(user.email) === emailNorm &&
-        user.id !== currentId
+        user.userId !== currentId
     );
 
     if (duplicateEmail) {
       errors.email = i18n.t("validation:email_exists");
     }
   }
+}
 
 
 
   // Password + confirm password
-  if (requirePassword || formData.password) {
-    const passwordError = validateUserPassword(
-      formData.password,
-      requirePassword
-    );
+  // if (requirePassword || formData.password) {
+  //   const passwordError = validateUserPassword(
+  //     formData.password,
+  //     requirePassword
+  //   );
 
-    if (passwordError) {
-      errors.password = passwordError;
-    } else if (formData.password) {
-      const confirmError = validatePasswordConfirmation(
-        formData.confirmPassword,
-        formData.password
-      );
-      if (confirmError) {
-        errors.confirmPassword = confirmError;
-      }
-    }
-  }
+  //   if (passwordError) {
+  //     errors.password = passwordError;
+  //   } else if (formData.password) {
+  //     const confirmError = validatePasswordConfirmation(
+  //       formData.confirmPassword,
+  //       formData.password
+  //     );
+  //     if (confirmError) {
+  //       errors.confirmPassword = confirmError;
+  //     }
+  //   }
+  // }
 
-  // Password + confirm password
-  if (requirePassword || formData.confirmPassword) {
-    const confirmError = validatePasswordConfirmation(
-      formData.confirmPassword,
-      formData.password
-    );
-    if (confirmError) {
-      errors.confirmPassword = confirmError;
-    }
-  }
+  // // Password + confirm password
+  // if (requirePassword || formData.confirmPassword) {
+  //   const confirmError = validatePasswordConfirmation(
+  //     formData.confirmPassword,
+  //     formData.password
+  //   );
+  //   if (confirmError) {
+  //     errors.confirmPassword = confirmError;
+  //   }
+  // }
 
   return {
     valid: Object.keys(errors).length === 0,
