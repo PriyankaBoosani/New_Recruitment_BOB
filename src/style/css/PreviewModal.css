@@ -1198,3 +1198,9 @@ select.form-control {
   object-fit: cover;   /* 🔥 makes it fully fill */
   display: block;
 }
+.no-bullet-line {
+	line-height: 1.4;
+	margin-bottom: 0 !important;
+	margin-top: 0 !important;
+	padding-bottom: 8px;
+}
