@@ -534,3 +534,21 @@
   font-size: 12px;
   margin-top: 6px;
 }
+.fixed-select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Prevent selected text from stretching layout */
+.fixed-select {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding-right: 2.5rem;
+}
+
+/* Dropdown text handling */
+.fixed-select option {
+  white-space: normal;
+}

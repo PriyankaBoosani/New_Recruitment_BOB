@@ -336,7 +336,7 @@ const PositionForm = ({
                 <Row className="g-4">
                     <Col md={4}>
                         <Form.Label>{t("addPosition:position")} <span className="text-danger">*</span></Form.Label>
-                        <Form.Select name="position" value={formData.position} onChange={(e) => onPositionSelect(e.target.value)} disabled={isViewMode}>
+                        <Form.Select className="fixed-select"name="position" value={formData.position} onChange={(e) => onPositionSelect(e.target.value)} disabled={isViewMode}>
                             <option value="">{t("common:select")}</option>
                             {positions.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                         </Form.Select>
@@ -345,7 +345,7 @@ const PositionForm = ({
 
                     <Col md={4}>
                         <Form.Label>{t("addPosition:department")} <span className="text-danger">*</span></Form.Label>
-                        <Form.Select name="department" value={formData.department} onChange={handleInputChange} disabled={isViewMode}>
+                        <Form.Select className="fixed-select" name="department" value={formData.department} onChange={handleInputChange} disabled={isViewMode}>
                             <option value="">{t("common:select")}</option>
                             {departments.map(d => <option key={d.id} value={d.id}>{d.label}</option>)}
                         </Form.Select>
@@ -419,7 +419,7 @@ const PositionForm = ({
                             )}
                         </Form.Label>
 
-                        <Form.Select name="grade" value={formData.grade} onChange={handleInputChange} disabled={isViewMode}>
+                        <Form.Select className="fixed-select" name="grade" value={formData.grade} onChange={handleInputChange} disabled={isViewMode}>
                             <option value="">{t("common:select")}</option>
                             {jobGrades.map(g => <option key={g.id} value={g.id}>{g.code} {g.scale ? `- ${g.scale}` : ""}</option>)}
                         </Form.Select>
