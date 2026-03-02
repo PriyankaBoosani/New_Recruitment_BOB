@@ -53,7 +53,7 @@ const RequisitionStrip = ({
       }
 
       // ✅ Otherwise normal bullet
-      return <li key={idx}>{cleaned}.</li>;
+      return <li key={idx}>{cleaned}</li>;
     });
   };
 

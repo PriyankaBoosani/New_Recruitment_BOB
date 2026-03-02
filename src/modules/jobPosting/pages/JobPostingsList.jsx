@@ -22,6 +22,8 @@ import { useNavigate } from "react-router-dom";
 import "../../../style/css/JobPostingsList.css";
 import DeleteConfirmationModal from "../component/DeleteConfirmationModal";
 import ConfirmationModal from "../component/ConfirmationModal"
+import ApprovalHistoryModal from "../../Approvals/components/ApprovalHistoryModal";
+import { useRequisitionApprovalHistory } from "../../Approvals/hooks/useRequisitionApprovalHistory";
 
 import start_icon from "../../../assets/start_icon.png";
 import dept_icon from "../../../assets/dept_icon.png"
@@ -34,6 +36,7 @@ import mingcute_department_line from "../../../assets/mingcute_department-line.p
 import vacancy_icon from "../../../assets/vacancy_icon.png";
 import position_Icon from "../../../assets/position_Icon.png";
 import view_jobpost from "../../../assets/view_jobpost.png"
+import history_icon from "../../../assets/history_icon.png"
 import { useJobRequisitions } from "../hooks/useJobAllRequisition";
 import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisition";
 import { toast } from "react-toastify";
@@ -58,6 +61,18 @@ const JobPostingsList = () => {
     const [showDeletePosModal, setShowDeletePosModal] = useState(false);
     const [selectedPosition, setSelectedPosition] = useState(null);
     const [year, setYear] = useState("");
+    const [showHistoryModal, setShowHistoryModal] = useState(false);
+
+    const {
+        history,
+        loading: historyLoading,
+        fetchHistory,
+    } = useRequisitionApprovalHistory();
+
+    const handleOpenHistory = (req) => {
+        setShowHistoryModal(true);
+        fetchHistory(req.id);
+    };
 
     const handleConfirmDelete = async () => {
         if (!selectedReq) return;
@@ -125,6 +140,8 @@ const JobPostingsList = () => {
             r.status !== "L1_PENDING" &&
             r.status !== "L1_APPROVED" &&
             r.status !== "L1_REJECTED" &&
+            r.status !== "L2_REJECTED" &&
+
             !r.hasDraftPositions
     );
     useEffect(() => {
@@ -313,10 +330,10 @@ const JobPostingsList = () => {
                     >
                         <option value="">{t("jobPostingsList:status_all")}</option>
                         <option value="NEW">{t("jobPostingsList:status_new")}</option>
-                        {/* <option value="L1_APPROVED">{t("jobPostingsList:status_l1_approved")}</option>
+                        <option value="L1_APPROVED">{t("jobPostingsList:status_l1_approved")}</option>
                         <option value="L1_PENDING">{t("jobPostingsList:status_l1_pending")}</option>
                         <option value="L1_REJECTED">{t("jobPostingsList:status_l1_rejected")}</option>
-                        <option value="L2_REJECTED">{t("jobPostingsList:status_l2_rejected")}</option> */}
+                        <option value="L2_REJECTED">{t("jobPostingsList:status_l2_rejected")}</option>
                         <option value="APPROVED">{t("jobPostingsList:status_approved")}</option>
 
 
@@ -427,7 +444,9 @@ const JobPostingsList = () => {
                                             disabled={
                                                 req.status === "APPROVED" ||
                                                 req.status === "L1_PENDING" ||
-                                                 req.status === "L1_APPROVED" ||
+                                                req.status === "L1_APPROVED" ||
+                                                req.status === "L1_REJECTED" ||
+                                                req.status === "L2_REJECTED" ||
                                                 req.hasDraftPositions
                                             }
                                             onClick={(e) => e.stopPropagation()}
@@ -435,7 +454,9 @@ const JobPostingsList = () => {
                                                 if (
                                                     req.status === "APPROVED" ||
                                                     req.status === "L1_PENDING" ||
-                                                    req.status === "L1_APPROVED" 
+                                                    req.status === "L1_APPROVED" ||
+                                                    req.status === "L1_REJECTED" ||
+                                                    req.status === "L2_REJECTED"
                                                 ) return;
 
                                                 setSelectedReqIds(prev => {
@@ -451,12 +472,23 @@ const JobPostingsList = () => {
                                         />
 
                                         <div>
-                                            <h6
-                                                className="req-code mb-2"
-                                                title={req.code}
-                                            >
-                                                {req.code}
-                                            </h6>
+                                            <div className="d-flex align-items-center gap-2 mb-2">
+                                                <h6 className="req-code mb-0" title={req.code}>
+                                                    {req.code}
+                                                </h6>
+
+                                                {req.status !== "NEW" && (
+                                                    <img
+                                                        src={history_icon}
+                                                        alt="history"
+                                                        className="icon-16his cursor-pointer"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleOpenHistory(req);
+                                                        }}
+                                                    />
+                                                )}
+                                            </div>
 
                                             <div className="req-dates">
                                                 <div>
@@ -871,7 +903,12 @@ const JobPostingsList = () => {
             />
 
 
-
+            <ApprovalHistoryModal
+                show={showHistoryModal}
+                onClose={() => setShowHistoryModal(false)}
+                historyData={history}
+                loading={historyLoading}
+            />
 
         </Container >
     );

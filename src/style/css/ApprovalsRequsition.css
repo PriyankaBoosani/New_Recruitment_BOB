@@ -658,3 +658,26 @@
 	border: 1px solid #0EB319;
 	background: #F5FFF6 !important;
 }
+.icon-20his{
+    width: 20px;
+    height: 20px;
+}
+.requisition-page .status-filter {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('../../assets/Vector.png');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 30px;
+  width: 100%;
+  cursor: pointer;
+}
+.requisition-page .filters-row select {
+  height: 42px;
+  font-size: 0.875em;
+  color: #162B75;
+  font-weight: 400;
+
+}

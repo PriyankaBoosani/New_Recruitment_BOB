@@ -86,26 +86,27 @@ const Header = () => {
 
   console.log("PRIVILEGES:", privileges);
 
-const canJobPost = privileges?.JobPostings;
-const canCandidateWorkflow = privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"];
-const canCommittee = privileges?.["Committee Management"];
-const canVerification = privileges?.Verification;
-const canAdmin = privileges?.Admin;
-const canInterview = privileges?.["Interview"];
+  const canJobPost = privileges?.JobPostings;
+  const canCandidateWorkflow = privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"];
+  const canCommittee = privileges?.["Committee Management"];
+  const canVerification = privileges?.Verification;
+  const canAdmin = privileges?.Admin;
+  const canInterview = privileges?.["Interview"];
+  const canApprovals = privileges?.["Requisition Approval"] || privileges?.["Extension Approval"] || privileges?.["Committee Approval"];
 
-// {
-// 	"preveileges": {
-// 		"Committee Management": true,
-// 		"Interview Pool": true,
-// 		"JobPostings": true,
-// 		"Candidate Pool": true,
-// 		"Verification": false,
-// 		"Admin": false,
-// 		"Offer Pool": true,
-// 		"Compensation Pool": true,
-// 		"Interview": false
-// 	}
-// }
+  // {
+  // 	"preveileges": {
+  // 		"Committee Management": true,
+  // 		"Interview Pool": true,
+  // 		"JobPostings": true,
+  // 		"Candidate Pool": true,
+  // 		"Verification": false,
+  // 		"Admin": false,
+  // 		"Offer Pool": true,
+  // 		"Compensation Pool": true,
+  // 		"Interview": false
+  // 	}
+  // }
 
   /* ===================== OUTSIDE CLICK ===================== */
   useEffect(() => {
@@ -127,13 +128,13 @@ const canInterview = privileges?.["Interview"];
   const location = useLocation();
 
   const formatRole = (role) => {
-  if (!role) return "-";
+    if (!role) return "-";
 
-  return role
-    .replace(/_/g, " ")
-    .toLowerCase()
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-};
+    return role
+      .replace(/_/g, " ")
+      .toLowerCase()
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+  };
 
 
   const isAdminRoute =
@@ -212,7 +213,7 @@ const canInterview = privileges?.["Interview"];
                       setLangOpen(false);
                     }}
                   >
-                  {t("english_us")}
+                    {t("english_us")}
                   </div>
 
                   <div
@@ -276,7 +277,7 @@ const canInterview = privileges?.["Interview"];
                     className="text-danger"
                     onClick={handleLogout}
                   >
-                  {t("logout")}
+                    {t("logout")}
                   </div>
                 </div>
               )}
@@ -342,7 +343,7 @@ const canInterview = privileges?.["Interview"];
                   Verification
                 </Nav.Link>
               )}
-              {(isL1 || isL2) && (
+              {canApprovals && (
                 <NavDropdown
                   title="Approvals"
                   id="approvals-dropdown"

@@ -59,6 +59,7 @@ const RequisitionRequests = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyData, setHistoryData] = useState([]);
   const [selectedHistoryReq, setSelectedHistoryReq] = useState(null);
+  
 
 
   const handleApprovalAction = async (comment) => {
@@ -260,20 +261,22 @@ const RequisitionRequests = () => {
           </p>
         </Col>
 
-        <Col xs={12} md={3}>
+        <Col xs={12} md={4}>
           <div className="search-boxpost">
             <Search />
             <Form.Control
               type="text"
-              placeholder="search"
+              placeholder="Search by requisition by id, title, department..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />
+
           </div>
         </Col>
-        <Col xs={12} md={2}>
+        <Col xs={12} md={2} className="filters-row">
           <Form.Select
             value={statuses[0] || ""}
+            className="status-filter"
             onChange={(e) => {
               const value = e.target.value;
               setPage(0);
@@ -322,7 +325,7 @@ const RequisitionRequests = () => {
           <Button
             variant="outline-danger"
             className="px-4 reject-btn"
-            disabled={loading}
+            disabled={loading || selectedReqIds.size === 0}
             onClick={() => {
               const errors = validateSelectedRequisitions(selectedReqIds);
 
@@ -341,7 +344,7 @@ const RequisitionRequests = () => {
           <Button
             variant="outline-success"
             className="px-4 approve-btn"
-            disabled={loading}
+            disabled={loading || selectedReqIds.size === 0}
             onClick={() => {
               const errors = validateSelectedRequisitions(selectedReqIds);
 
@@ -437,7 +440,7 @@ const RequisitionRequests = () => {
                         <img
                           src={history_icon}
                           alt="history_icon"
-                          className="icon-14"
+                          className="icon-20his"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleOpenHistory(req);
@@ -483,8 +486,8 @@ const RequisitionRequests = () => {
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(
-                      `/requisition-requests/view/${req.id}?id=${req.id}`,
-                      { state: { mode: "view", from: "requisition" } }
+                      `/job-posting/create-requisition?id=${req.id}`,
+                      { state: { mode: "view", from: "approval" } }
                     );
                   }}
                 >
@@ -559,8 +562,8 @@ const RequisitionRequests = () => {
                               onClick={(e) => {
                                 e.stopPropagation();
                                 navigate(
-                                  `/requisition-requests/view-position/${req.id}?positionId=${pos.positionId}`,
-                                  { state: { mode: "view", from: "requisition" } }
+                                  `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
+                                  { state: { mode: "view", from: "approval" } }
                                 );
 
                               }}

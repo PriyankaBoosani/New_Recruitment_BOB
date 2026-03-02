@@ -1,36 +1,42 @@
 import { useState } from "react";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
+import masterApiService from "../../master/services/masterApiService";
 
 export const useRequisitionApprovalHistory = () => {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
 
     const fetchHistory = async (requisitionId) => {
         try {
             setLoading(true);
 
-            const res =
-                await jobPositionApiService.getRequisitionApprovalHistory(
-                    requisitionId
-                );
+            const [historyRes, usersRes] = await Promise.all([
+                jobPositionApiService.getRequisitionApprovalHistory(requisitionId),
+                masterApiService.getUser(),
+            ]);
 
-            console.log("FULL RESPONSE:", res);
-            console.log("RESPONSE DATA:", res?.data);
+            const historyData = historyRes?.data || [];
+             const users = usersRes?.data || [];
 
-            setHistory(res?.data || []);
+            // ✅ userId → name map
+            const userMap = {};
 
-        } catch (err) {
-            console.error("History fetch error:", err);
+            users.forEach((user) => {
+                userMap[user.userId] = user.name;
+            });
+
+            // ✅ attach name
+            const updatedHistory = historyData.map((item) => ({
+                ...item,
+                approverName: userMap[item.approverId] || "-",
+            }));
+
+            setHistory(updatedHistory);
+
         } finally {
             setLoading(false);
         }
     };
 
-    return {
-        history,
-        loading,
-        error,
-        fetchHistory,
-    };
+    return { history, loading, fetchHistory };
 };

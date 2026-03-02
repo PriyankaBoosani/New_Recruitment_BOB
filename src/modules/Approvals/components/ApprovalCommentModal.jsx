@@ -45,6 +45,7 @@ const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
       show={show}
       onHide={onClose}
       centered
+      size="lg"
       dialogClassName="approval-modal"
     >
       <Modal.Header closeButton className="modal-header-custom">

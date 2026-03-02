@@ -19,6 +19,7 @@ const CreateRequisition = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const from = location.state?.from;
 
   /* ===================== URL + MODE ===================== */
   const query = new URLSearchParams(location.search);
@@ -26,6 +27,14 @@ const CreateRequisition = () => {
   const mode = location.state?.mode; // "view" | "edit" | undefined
 
   const isViewMode = !!editId && mode === "view";
+
+  const handleCancel = () => {
+    if (from === "approval") {
+      navigate("/requisition-requests");
+    } else {
+      navigate("/job-posting");
+    }
+  };
 
   /* ===================== HOOK ===================== */
   const {
@@ -165,7 +174,7 @@ const CreateRequisition = () => {
                 <Form.Text className="text-muted">
                   {t("title_help")}
                 </Form.Text>
-               <ErrorMessage>{renderError(errors.title)}</ErrorMessage>
+                <ErrorMessage>{renderError(errors.title)}</ErrorMessage>
               </Form.Group>
 
               <Row>
@@ -197,7 +206,7 @@ const CreateRequisition = () => {
 
                     />
 
-                   <ErrorMessage>{renderError(errors.description)}</ErrorMessage>
+                    <ErrorMessage>{renderError(errors.description)}</ErrorMessage>
 
                   </Form.Group>
                 </Col>
@@ -288,8 +297,8 @@ const CreateRequisition = () => {
       </Card>
 
       <div className="footer-actions">
-        <Button variant="outline-secondary" onClick={() => navigate("/job-posting")}>
-         {t("common:cancel")}
+        <Button variant="outline-secondary"  onClick={handleCancel}>
+          {t("common:cancel")}
         </Button>
 
         {!isViewMode && (

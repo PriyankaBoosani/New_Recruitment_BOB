@@ -89,17 +89,17 @@ const Login = () => {
       // } else {
       //   navigate("/login", { replace: true });
       // }
-// {
-//   "Admin": false,
-//   "Verification": false,
-//   "JobPostings": false,
-//   "Candidate Pool": false,
-//   "Interview Pool": false,
-//   "Offer Pool": false,
-//   "Compensation Pool": false,
-//   "Committee Management": false,
-//   "Interview": false
-// }
+      // {
+      //   "Admin": false,
+      //   "Verification": false,
+      //   "JobPostings": false,
+      //   "Candidate Pool": false,
+      //   "Interview Pool": false,
+      //   "Offer Pool": false,
+      //   "Compensation Pool": false,
+      //   "Committee Management": false,
+      //   "Interview": false
+      // }
       const privileges = authApiRes.preveileges || {};
 
       console.log("privileges,", privileges);
@@ -122,7 +122,9 @@ const Login = () => {
       } else if (privileges["Committee Management"]) {
         navigate("/interviewpanel", { replace: true });
 
-      } 
+      } else if (privileges["Requisition Approval"]) {
+        navigate("/requisition-requests", { replace: true });
+      }
       else {
         toast.error("No access assigned to this user");
       }

@@ -4,10 +4,21 @@ import "../../../style/css/ApprovalHistoryModal.css";
 
 const formatDateTime = (iso) => {
   if (!iso) return "-";
-  const d = new Date(iso);
-  return d.toLocaleString("en-GB");
-};
 
+  const d = new Date(iso);
+
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+
+  let hours = d.getHours();
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+
+  const ampm = hours >= 12 ? "pm" : "am";
+  hours = hours % 12 || 12;
+
+  return `${day}-${month}-${year} ${hours}.${minutes}${ampm}`;
+};
 const formatStatusLabel = (status = "") =>
   status
     .toLowerCase()
@@ -55,12 +66,12 @@ const ApprovalHistoryModal = ({
               <thead>
                 <tr>
 
-                  <th>Requester</th>
-                  <th>Request Date</th>
-                  <th>Approver</th>
-                  <th>Approval Date</th>
-                  <th>Status</th>
-                  <th>Comments</th>
+                  {/* <th className="text-white fs-14 fw-normal blue-bg">Requester</th>
+                  <th className="text-white fs-14 fw-normal blue-bg">Request Date</th> */}
+                  <th className="text-white fs-14 fw-normal blue-bg">Approver</th>
+                  <th className="text-white fs-14 fw-normal blue-bg">Approval Date</th>
+                  <th className="text-white fs-14 fw-normal blue-bg">Status</th>
+                  <th className="text-white fs-14 fw-normal blue-bg">Comments</th>
                 </tr>
 
               </thead>
@@ -75,18 +86,26 @@ const ApprovalHistoryModal = ({
                     )
                     .map((item) => (
                       <tr key={item.approvalId}>
-                        {/* <td>{item.approverRole}</td> */}
-                        <td>{item.requester}</td>
-                        <td>{formatDateTime(item.actionDate)}</td>
-                        <td></td>
-                        <td></td>
-                        <td>{formatStatusLabel(item.status)}</td>
-                        <td>{item.comments || "-"}</td>
+                        <td className="fw-normal fs-14 mb-0">
+                          {item.approverName || "-"}
+                        </td>
+
+                        <td className="fw-normal fs-14 mb-0">
+                          {formatDateTime(item.actionDate)}
+                        </td>
+
+                        <td className="fw-normal fs-14 mb-0">
+                          {formatStatusLabel(item.status)}
+                        </td>
+
+                        <td className="fw-normal fs-14 mb-0">
+                          {item.comments || "-"}
+                        </td>
                       </tr>
                     ))
                 ) : (
                   <tr>
-                    <td colSpan="4" className="text-center py-4">
+                    <td colSpan="6" className="text-center py-4 text-muted fs-14">
                       No history available
                     </td>
                   </tr>
