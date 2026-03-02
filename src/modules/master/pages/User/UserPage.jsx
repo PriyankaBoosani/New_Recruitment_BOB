@@ -122,6 +122,7 @@ const openEditModal = (row) => {
         setCurrentPage={setCurrentPage}
         pageSize={pageSize}
         setPageSize={setPageSize}
+          interviewCentres={interviewCentres} 
         // onDelete={(u) => {
         //   setDeleteTarget(u);
         //   setShowDelete(true);

@@ -11,7 +11,7 @@ export const mapUserFromApi = (api) => ({
   role: api.role,
   name: api.name,
   email: api.email,
-  interviewCentreId: api.interviewCentreId,
+  interviewCenterId: api.interviewCenterId,
 });
 
 export const mapUsersFromApi = (apiData = []) => {
@@ -25,5 +25,5 @@ export const mapUserToApi = (ui) => ({
   name: ui.fullName,
   email: ui.email,
   password: ui.password,
-  interviewCentreId: ui.interviewCentreId
+  interviewCenterId: ui.interviewCenterId
 });

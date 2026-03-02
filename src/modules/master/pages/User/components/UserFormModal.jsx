@@ -51,7 +51,7 @@ useEffect(() => {
       role: selectedUser?.role || "",
       fullName: selectedUser?.name || "",
       email: selectedUser?.email || "",
-      interviewCentreId: selectedUser?.interviewCentreId || ""
+      interviewCentreId: selectedUser?.interviewCenterId || ""
     });
   } else {
     setFormData(EMPTY_FORM);

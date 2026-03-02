@@ -6,8 +6,9 @@ import viewIcon from "../../../../../assets/view_icon.png";
 import editIcon from "../../../../../assets/edit_icon.png";
 import deleteIcon from "../../../../../assets/delete_icon.png";
 const UserTable = ({
-  data, searchTerm, currentPage, setCurrentPage, pageSize,setPageSize,onEdit,onView,onDelete 
+  data, searchTerm, currentPage, setCurrentPage, pageSize,setPageSize,onEdit,onView,onDelete,interviewCentres
 }) => {
+  console.log("inter",interviewCentres)
   console.log("data",data);
   const { t } = useTranslation(["user"]);
   const filtered = data.filter(u =>
@@ -82,7 +83,11 @@ const formatRole = (role) => {
                   <td>{formatRole(u.role)}</td>
                   <td>{u.name}</td>
                   <td>{u.email}</td>
-                    <td>{u.interviewCentre || "-"}</td>
+                  <td>
+                    {interviewCentres.find(
+                      c => String(c.interviewCentreId) === String(u.interviewCenterId)
+                    )?.interviewCentre || "-"}
+                  </td>
                   <td>
                     <div className="action-buttons">
                       <Button variant="link"
