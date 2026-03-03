@@ -3,9 +3,12 @@ import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const PrivilegeRoute = ({ children, privilege, privilegesRequired }) => {
-  const privileges = useSelector((state) => state.user?.privileges);
+   const privileges = useSelector((state) => state.user?.privileges);
 
-  if (!privileges) return null;
+  // Wait until privileges load
+  if (!privileges) {
+    return <div>Loading...</div>;
+  }
 
   // Single privilege
   if (privilege && !privileges[privilege]) {
