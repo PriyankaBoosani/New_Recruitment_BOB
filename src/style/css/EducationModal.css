@@ -63,3 +63,10 @@
     color: #333333;
     font-weight: 600;
 }
+.edu-modal .react-select__single-value {
+    font-size: 13px;
+}
+.edu-modal .react-select__option {
+    font-size: 13px;
+}
+

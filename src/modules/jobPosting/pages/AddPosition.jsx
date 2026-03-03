@@ -385,6 +385,29 @@ const AddPosition = () => {
 
 
     const onPositionSelect = (id) => {
+        // 🔥 If user selects "Select"
+        if (!id) {
+            setFormData(prev => ({
+                ...prev,
+                position: "",
+                minAge: "",
+                maxAge: "",
+                grade: "",
+                responsibilities: "",
+                mandatoryExperience: { years: "", months: "", description: "" },
+                preferredExperience: { years: "", months: "", description: "" }
+            }));
+
+            setErrors(prev => ({
+                ...prev,
+                position: ""
+            }));
+
+            setPendingPosition(null);
+            setShowConfirmModal(false);
+            return;
+        }
+
         const selected = positions.find(p => String(p.id) === String(id));
         if (!selected) return;
 
@@ -393,7 +416,6 @@ const AddPosition = () => {
             position: id
         }));
 
-        // CLEAR BOTH ERRORS
         setErrors(prev => ({
             ...prev,
             position: "",

@@ -3,7 +3,7 @@ import ErrorMessage from "../../../shared/components/ErrorMessage";
 import edit_icon from "../../../assets/edit_icon.png";
 import delete_icon from "../../../assets/delete_icon.png";
 import { useTranslation } from "react-i18next";
-
+import Select from "react-select";
 const ReservationSection = ({
     isViewMode,
     formData,
@@ -109,14 +109,32 @@ const ReservationSection = ({
                 ) : (
                     <>
                         <Row className="g-3 mb-3">
-                            <Col md={4}><Form.Label>{t("addPosition:state")} <span className="text-danger">*</span></Form.Label><Form.Select
-                                value={currentState.state}
-                                onChange={e => {
-                                    setCurrentState(prev => ({ ...prev, state: e.target.value }));
-                                    setErrors(prev => ({ ...prev, state: "" }));
-                                }} >
-                                <option value="">{t("addPosition:select_state")}</option>{states.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}</Form.Select>
-                              <ErrorMessage>{renderError(errors.state)}</ErrorMessage></Col>
+                            <Col md={4}><Form.Label>{t("addPosition:state")} <span className="text-danger">*</span></Form.Label>
+                                <Select
+                                    classNamePrefix="react-select"
+                                    value={[
+                                        { value: "", label: t("addPosition:select_state") },
+                                        ...states.map(s => ({
+                                            value: s.id,
+                                            label: s.name
+                                        }))
+                                    ].find(option => String(option.value) === String(currentState.state))}
+                                    onChange={(selected) => {
+                                        setCurrentState(prev => ({
+                                            ...prev,
+                                            state: selected ? selected.value : ""
+                                        }));
+                                        setErrors(prev => ({ ...prev, state: "" }));
+                                    }}
+                                    options={[
+                                        { value: "", label: t("addPosition:select_state") },
+                                        ...states.map(s => ({
+                                            value: s.id,
+                                            label: s.name
+                                        }))
+                                    ]}
+                                />
+                                <ErrorMessage>{renderError(errors.state)}</ErrorMessage></Col>
                             <Col md={4}><Form.Label>{t("addPosition:vacancies")} <span className="text-danger">*</span></Form.Label><Form.Control
                                 type="text"
                                 inputMode="numeric"
@@ -142,27 +160,34 @@ const ReservationSection = ({
                                 }}
                             />
 
-                               <ErrorMessage>{renderError(errors.stateVacancies)}</ErrorMessage>
+                                <ErrorMessage>{renderError(errors.stateVacancies)}</ErrorMessage>
                             </Col>
                             <Col md={4}><Form.Label>{t("addPosition:local_language")} <span className="text-danger">*</span></Form.Label>
-                                <Form.Select
-                                    value={currentState.language}
-                                    disabled={!currentState.state}
-                                    onChange={e => {
+                                <Select
+                                    classNamePrefix="react-select"
+                                    isDisabled={!currentState.state}
+                                    value={[
+                                        { value: "", label: t("addPosition:select_language") },
+                                        ...filteredLanguages.map(lang => ({
+                                            value: lang.id,
+                                            label: lang.name
+                                        }))
+                                    ].find(option => String(option.value) === String(currentState.language))}
+                                    onChange={(selected) => {
                                         setCurrentState(prev => ({
                                             ...prev,
-                                            language: e.target.value
+                                            language: selected ? selected.value : ""
                                         }));
                                         setErrors(prev => ({ ...prev, stateLanguage: "" }));
                                     }}
-                                >
-                                    <option value="">{t("addPosition:select_language")}</option>
-                                    {filteredLanguages.map(lang => (
-                                        <option key={lang.id} value={lang.id}>
-                                            {lang.name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
+                                    options={[
+                                        { value: "", label: t("addPosition:select_language") },
+                                        ...filteredLanguages.map(lang => ({
+                                            value: lang.id,
+                                            label: lang.name
+                                        }))
+                                    ]}
+                                />
 
                                 <ErrorMessage>{renderError(errors.stateLanguage)}</ErrorMessage></Col>
                         </Row>
@@ -228,7 +253,7 @@ const ReservationSection = ({
                                 </Card>
                             </Col>
                         </Row>
-                       <ErrorMessage>{renderError(errors.stateDistribution)}</ErrorMessage>
+                        <ErrorMessage>{renderError(errors.stateDistribution)}</ErrorMessage>
 
 
                         <div className="addsubmitbtn">
@@ -321,7 +346,7 @@ const ReservationSection = ({
                         </div>
                     </>
                 )}
-               <ErrorMessage>{renderError(errors.nationalDistribution)}</ErrorMessage>
+                <ErrorMessage>{renderError(errors.nationalDistribution)}</ErrorMessage>
 
             </Col>
         </fieldset>

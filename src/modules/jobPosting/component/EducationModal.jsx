@@ -5,6 +5,7 @@ import { validateEducationModal } from "../validations/validateEducationModal";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import delete_icon from "../../../assets/delete_icon.png"
 import { useTranslation } from "react-i18next";
+import Select from "react-select";
 
 const createRow = () => ({
     educationTypeId: "",
@@ -138,19 +139,26 @@ export default function EducationModal({
                     <Row key={idx} className="mb-3 align-items-center">
 
                         <Col md={3}>
-                            <Form.Select
-                                value={row.educationTypeId}
-                                onChange={(e) =>
-                                    updateRow(idx, "educationTypeId", e.target.value)
+                            <Select
+                                classNamePrefix="react-select"
+                                value={[
+                                    { value: "", label: t("common:select_type") },
+                                    ...educationTypes.map(t => ({
+                                        value: t.id,
+                                        label: t.label
+                                    }))
+                                ].find(option => String(option.value) === String(row.educationTypeId))}
+                                onChange={(selected) =>
+                                    updateRow(idx, "educationTypeId", selected ? selected.value : "")
                                 }
-                            >
-                                <option value="">{t("common:select_type")}</option>
-                                {educationTypes.map(t => (
-                                    <option key={t.id} value={t.id}>
-                                        {t.label}
-                                    </option>
-                                ))}
-                            </Form.Select>
+                                options={[
+                                    { value: "", label: t("common:select_type") },
+                                    ...educationTypes.map(t => ({
+                                        value: t.id,
+                                        label: t.label
+                                    }))
+                                ]}
+                            />
 
                             <div className="edu-error-space">
                                 <ErrorMessage>
@@ -160,20 +168,27 @@ export default function EducationModal({
 
                         </Col>
 
-                        <Col md={3}>
-                            <Form.Select
-                                value={row.educationQualificationsId}
-                                onChange={(e) =>
-                                    updateRow(idx, "educationQualificationsId", e.target.value)
+                        <Col md={4}>
+                            <Select
+                                classNamePrefix="react-select"
+                                value={[
+                                    { value: "", label: t("common:select_education") },
+                                    ...qualifications.map(q => ({
+                                        value: q.id,
+                                        label: q.name
+                                    }))
+                                ].find(option => String(option.value) === String(row.educationQualificationsId))}
+                                onChange={(selected) =>
+                                    updateRow(idx, "educationQualificationsId", selected ? selected.value : "")
                                 }
-                            >
-                                <option value="">{t("common:select_education")}</option>
-                                {qualifications.map(q => (
-                                    <option key={q.id} value={q.id}>
-                                        {q.name}
-                                    </option>
-                                ))}
-                            </Form.Select>
+                                options={[
+                                    { value: "", label: t("common:select_education") },
+                                    ...qualifications.map(q => ({
+                                        value: q.id,
+                                        label: q.name
+                                    }))
+                                ]}
+                            />
 
                             <div className="edu-error-space">
                                 <ErrorMessage>
@@ -183,21 +198,27 @@ export default function EducationModal({
                             </div>
                         </Col>
 
-                        <Col md={5}>
-                            <Form.Select
-                                value={row.specializationId}
-                                onChange={(e) =>
-                                    updateRow(idx, "specializationId", e.target.value)
+                        <Col md={4}>
+                            <Select
+                                classNamePrefix="react-select"
+                                value={[
+                                    { value: "", label: t("common:select_specialization") },
+                                    ...getSpecializationsForDegree(row.educationQualificationsId).map(s => ({
+                                        value: s.id,
+                                        label: s.label
+                                    }))
+                                ].find(option => String(option.value) === String(row.specializationId))}
+                                onChange={(selected) =>
+                                    updateRow(idx, "specializationId", selected ? selected.value : "")
                                 }
-                            >
-                                <option value="">{t("common:select_specialization")}</option>
-                                {getSpecializationsForDegree(row.educationQualificationsId).map(s => (
-                                    <option key={s.id} value={s.id}>
-                                        {s.label}
-                                    </option>
-                                ))}
-
-                            </Form.Select>
+                                options={[
+                                    { value: "", label: t("common:select_specialization") },
+                                    ...getSpecializationsForDegree(row.educationQualificationsId).map(s => ({
+                                        value: s.id,
+                                        label: s.label
+                                    }))
+                                ]}
+                            />
 
                             <div className="edu-error-space">
                                 <ErrorMessage>
@@ -237,21 +258,28 @@ export default function EducationModal({
                     {certIds.map((id, i) => (
                         <Row key={i} className="mb-2 align-items-center">
                             <Col md={10}>
-                                <Form.Select
-                                    value={id}
-                                    onChange={e => {
+                                <Select
+                                    classNamePrefix="react-select"
+                                    value={[
+                                        { value: "", label: t("common:select_certification") },
+                                        ...sortedCertifications.map(c => ({
+                                            value: c.id,
+                                            label: c.name
+                                        }))
+                                    ].find(option => String(option.value) === String(id))}
+                                    onChange={(selected) => {
                                         const copy = [...certIds];
-                                        copy[i] = e.target.value;
+                                        copy[i] = selected ? selected.value : "";
                                         setCertIds(copy);
                                     }}
-                                >
-                                    <option value="">{t("common:select_certification")}</option>
-                                    {sortedCertifications.map(c => (
-                                        <option key={c.id} value={c.id}>
-                                            {c.name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
+                                    options={[
+                                        { value: "", label: t("common:select_certification") },
+                                        ...sortedCertifications.map(c => ({
+                                            value: c.id,
+                                            label: c.name
+                                        }))
+                                    ]}
+                                />
                             </Col>
 
                             <Col md={1} className="text-center">

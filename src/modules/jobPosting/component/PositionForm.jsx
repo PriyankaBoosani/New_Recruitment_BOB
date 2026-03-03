@@ -10,7 +10,7 @@ import useViewIndent from "../hooks/useViewIndent";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import I_icon from '../../../assets/I_icon.png';
 import { useTranslation } from "react-i18next";
-
+import Select from "react-select";
 
 
 const PositionForm = ({
@@ -53,6 +53,10 @@ const PositionForm = ({
             ),
         [approvingAuthorities]
     );
+    const withSelectOption = (options, label = t("common:select")) => [
+        { value: "", label },
+        ...options
+    ];
 
     const isOthersSelected =
         othersOption && approvedBy === othersOption.id;
@@ -125,6 +129,49 @@ const PositionForm = ({
             input.click();
         }
     };
+    const yearOptions = withSelectOption(
+        YEAR_OPTIONS.map(y => ({ value: y, label: y })),
+        "Select Years"
+    );
+
+    const monthOptions = withSelectOption(
+        MONTH_OPTIONS.map(m => ({ value: m, label: m })),
+        "Select Months"
+    );
+    const approvedByOptions = withSelectOption(
+        approvingAuthorities.map(a => ({
+            value: a.id,
+            label: a.name
+        }))
+    );
+
+    const positionOptions = withSelectOption(
+        positions.map(p => ({
+            value: p.id,
+            label: p.name
+        }))
+    );
+
+    const departmentOptions = withSelectOption(
+        departments.map(d => ({
+            value: d.id,
+            label: d.label
+        }))
+    );
+
+    const employmentTypeOptions = withSelectOption(
+        employmentTypes.map(t => ({
+            value: t.id,
+            label: t.label
+        }))
+    );
+
+    const gradeOptions = withSelectOption(
+        jobGrades.map(g => ({
+            value: g.id,
+            label: `${g.code} ${g.scale ? `- ${g.scale}` : ""}`
+        }))
+    );
     return (
 
         <>
@@ -269,14 +316,18 @@ const PositionForm = ({
                     <Col md={4}>
                         <Form.Group className="mb-3">
                             <Form.Label>{t("addPosition:approved_by")} <span className="text-danger">*</span></Form.Label>
-                            <Form.Select value={approvedBy} onChange={(e) => { setApprovedBy(e.target.value); setErrors(prev => ({ ...prev, approvedBy: "" })); }} disabled={isViewMode}>
-                                <option value="">{t("common:select")}</option>
-                                {approvingAuthorities.map(auth => (
-                                    <option key={auth.id} value={auth.id}>
-                                        {auth.name}
-                                    </option>
-                                ))}
-                            </Form.Select>
+                            <Select
+                                isDisabled={isViewMode}
+                                classNamePrefix="react-select"
+                                value={approvedByOptions.find(
+                                    option => String(option.value) === String(approvedBy)
+                                )}
+                                onChange={(selected) => {
+                                    setApprovedBy(selected ? selected.value : "");
+                                    setErrors(prev => ({ ...prev, approvedBy: "" }));
+                                }}
+                                options={approvedByOptions}
+                            />
                             {isOthersSelected && (
                                 <Form.Group className="mt-2">
                                     <Form.Control
@@ -336,19 +387,40 @@ const PositionForm = ({
                 <Row className="g-4">
                     <Col md={4}>
                         <Form.Label>{t("addPosition:position")} <span className="text-danger">*</span></Form.Label>
-                        <Form.Select className="fixed-select"name="position" value={formData.position} onChange={(e) => onPositionSelect(e.target.value)} disabled={isViewMode}>
-                            <option value="">{t("common:select")}</option>
-                            {positions.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-                        </Form.Select>
+                        <Select
+                            className="react-select-fixed"
+                            classNamePrefix="react-select"
+                            isDisabled={isViewMode}
+                            value={positionOptions.find(
+                                option => String(option.value) === String(formData.position)
+                            )}
+                            onChange={(selected) =>
+                                onPositionSelect(selected ? selected.value : "")
+                            }
+                            options={positionOptions}
+                        />
                         <ErrorMessage>{renderError(errors.position)}</ErrorMessage>
                     </Col>
 
                     <Col md={4}>
                         <Form.Label>{t("addPosition:department")} <span className="text-danger">*</span></Form.Label>
-                        <Form.Select className="fixed-select" name="department" value={formData.department} onChange={handleInputChange} disabled={isViewMode}>
-                            <option value="">{t("common:select")}</option>
-                            {departments.map(d => <option key={d.id} value={d.id}>{d.label}</option>)}
-                        </Form.Select>
+                        <Select
+                            className="react-select-fixed"
+                            classNamePrefix="react-select"
+                            isDisabled={isViewMode}
+                            value={departmentOptions.find(
+                                option => String(option.value) === String(formData.department)
+                            )}
+                            onChange={(selected) =>
+                                handleInputChange({
+                                    target: {
+                                        name: "department",
+                                        value: selected ? selected.value : ""
+                                    }
+                                })
+                            }
+                            options={departmentOptions}
+                        />
                         <ErrorMessage>{renderError(errors.department)}</ErrorMessage>
                     </Col>
 
@@ -386,10 +458,22 @@ const PositionForm = ({
 
                     <Col md={4}>
                         <Form.Label>{t("addPosition:employment_type")} <span className="text-danger">*</span></Form.Label>
-                        <Form.Select name="employmentType" value={formData.employmentType} onChange={handleInputChange} disabled={isViewMode}>
-                            <option value="">{t("common:select")}</option>
-                            {employmentTypes.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
-                        </Form.Select>
+                        <Select
+                            classNamePrefix="react-select"
+                            isDisabled={isViewMode}
+                            value={employmentTypeOptions.find(
+                                option => String(option.value) === String(formData.employmentType)
+                            )}
+                            onChange={(selected) =>
+                                handleInputChange({
+                                    target: {
+                                        name: "employmentType",
+                                        value: selected ? selected.value : ""
+                                    }
+                                })
+                            }
+                            options={employmentTypeOptions}
+                        />
                         <ErrorMessage>{renderError(errors.employmentType)}</ErrorMessage>
                     </Col>
 
@@ -419,11 +503,23 @@ const PositionForm = ({
                             )}
                         </Form.Label>
 
-                        <Form.Select className="fixed-select" name="grade" value={formData.grade} onChange={handleInputChange} disabled={isViewMode}>
-                            <option value="">{t("common:select")}</option>
-                            {jobGrades.map(g => <option key={g.id} value={g.id}>{g.code} {g.scale ? `- ${g.scale}` : ""}</option>)}
-                        </Form.Select>
-
+                        <Select
+                            className="react-select-fixed"
+                            classNamePrefix="react-select"
+                            isDisabled={isViewMode}
+                            value={gradeOptions.find(
+                                option => String(option.value) === String(formData.grade)
+                            )}
+                            onChange={(selected) =>
+                                handleInputChange({
+                                    target: {
+                                        name: "grade",
+                                        value: selected ? selected.value : ""
+                                    }
+                                })
+                            }
+                            options={gradeOptions}
+                        />
                         <ErrorMessage>{renderError(errors.grade)}</ErrorMessage>
                     </Col>
 
@@ -469,16 +565,42 @@ const PositionForm = ({
 
                             <Row className="g-2 mb-2">
                                 <Col md={6}>
-                                    <Form.Select disabled={isViewMode} value={formData[expType].years} onChange={(e) => handleInputChange({ target: { name: `${expType}.years`, value: e.target.value } })}>
-                                        <option value="">{t("common:select_years")}</option>
-                                        {YEAR_OPTIONS.map(y => <option key={y} value={y}>{y}</option>)}
-                                    </Form.Select>
+                                    <Select
+                                        className="react-select-fixed"
+                                        classNamePrefix="react-select"
+                                        isDisabled={isViewMode}
+                                        value={yearOptions.find(
+                                            option => String(option.value) === String(formData[expType].years)
+                                        )}
+                                        onChange={(selected) =>
+                                            handleInputChange({
+                                                target: {
+                                                    name: `${expType}.years`,
+                                                    value: selected ? selected.value : ""
+                                                }
+                                            })
+                                        }
+                                        options={yearOptions}
+                                    />
                                 </Col>
                                 <Col md={6}>
-                                    <Form.Select disabled={isViewMode} value={formData[expType].months} onChange={(e) => handleInputChange({ target: { name: `${expType}.months`, value: e.target.value } })}>
-                                        <option value="">{t("common:select_months")}</option>
-                                        {MONTH_OPTIONS.map(m => <option key={m} value={m}>{m}</option>)}
-                                    </Form.Select>
+                                    <Select
+                                        className="react-select-fixed"
+                                        classNamePrefix="react-select"
+                                        isDisabled={isViewMode}
+                                        value={monthOptions.find(
+                                            option => String(option.value) === String(formData[expType].months)
+                                        )}
+                                        onChange={(selected) =>
+                                            handleInputChange({
+                                                target: {
+                                                    name: `${expType}.months`,
+                                                    value: selected ? selected.value : ""
+                                                }
+                                            })
+                                        }
+                                        options={monthOptions}
+                                    />
                                 </Col>
                             </Row>
                             <Form.Control
@@ -568,11 +690,26 @@ const PositionForm = ({
                     </Col>
                     <Col md={3}>
                         <Form.Label>{t("addPosition:medical_required")} <span className="text-danger">*</span></Form.Label>
-                        <Form.Select name="medicalRequired" value={formData.medicalRequired} onChange={handleInputChange} disabled={isViewMode}>
-                            <option value="">{t("common:select")}</option>
-                            <option value="yes">{t("common:yes")}</option>
-                            <option value="no">{t("common:no")}</option>
-                        </Form.Select>
+                        <Select
+                            classNamePrefix="react-select"
+                            isDisabled={isViewMode}
+                            value={
+                                [
+                                    { value: "yes", label: t("common:yes") },
+                                    { value: "no", label: t("common:no") }
+                                ].find(option => option.value === formData.medicalRequired) || null
+                            }
+                            onChange={(selected) => {
+                                handleInputChange({
+                                    target: { name: "medicalRequired", value: selected ? selected.value : "" }
+                                });
+                            }}
+                            options={[
+                                { value: "yes", label: t("common:yes") },
+                                { value: "no", label: t("common:no") }
+                            ]}
+                            placeholder={t("common:select")}
+                        />
                         <ErrorMessage>{renderError(errors.medicalRequired)}</ErrorMessage>
                     </Col>
                 </Row>
