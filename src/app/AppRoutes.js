@@ -19,8 +19,8 @@ import JobPostingsList from "../modules/jobPosting/pages/JobPostingsList";
 import CreateRequisition from "../modules/jobPosting/pages/CreateRequisition";
 import GenericOrAnnexuresPage from "../modules/master/pages/GenericOrAnnexures/GenericOrAnnexuresPage";
 import CertificationPage from "../modules/master/pages/CertificationPage/CertificationPage";
-import NonAdminRoute from "./NonAdminRoute";
-import AdminRoute from "./AdminRoute";
+// import NonAdminRoute from "./NonAdminRoute";
+// import AdminRoute from "./AdminRoute";
 import AddPosition from "../modules/jobPosting/pages/AddPosition";
 // Auth & layout helpers
 import PrivateRoute from "../modules/auth/services/PrivateRoute";
@@ -35,8 +35,8 @@ import ScheduleInterviews from "../modules/interviews/ScheduleInterviews";
 import Approvals from "../modules/Approvals/pages/RequisitionRequests";
 import ExtensionsRequests from "../modules/Approvals/pages/ExtensionsRequests";
 import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";// Lazy loaded components
-
-
+import UnauthorizedPage from "./UnauthorizedPage"
+import PrivilegeRoute from "./PrivilegeRoute";
 // Lazy loaded components
 const Layout = React.lazy(() => import("../shared/components/Layout"));
 
@@ -57,6 +57,7 @@ const AppRoutes = () => {
     <Suspense fallback={<Loading />}>
       <Routes>
         {/* Public */}
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
@@ -66,39 +67,195 @@ const AppRoutes = () => {
         <Route element={<Tokenexp />}>
           <Route element={<PrivateRoute />}>
             <Route element={<Layout />}>
-              <Route element={<AdminRoute />}>
-                <Route path="/users" element={<UserPage />} />
-                <Route path="/department" element={<DepartmentPage />} />
-                <Route path="/location" element={<LocationPage />} />
-                <Route path="/jobgrade" element={<JobGradePage />} />
-                <Route path="/position" element={<PositionPage />} />
-                <Route path="/category" element={<CategoryPage />} />
-                <Route path="/certification" element={<CertificationPage />} />
-                <Route path="/document" element={<DocumentPage />} />
-                <Route path="/generic-or-annexures" element={<GenericOrAnnexuresPage />} />
-             
-              </Route>            
+              <Route
+                  path="/users"
+                  element={
+                    <PrivilegeRoute privilege="Admin">
+                      <UserPage />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/department"
+                  element={
+                    <PrivilegeRoute privilege="Admin">
+                      <DepartmentPage />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/location"
+                  element={
+                    <PrivilegeRoute privilege="Admin">
+                      <LocationPage />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/jobgrade"
+                  element={
+                    <PrivilegeRoute privilege="Admin">
+                      <JobGradePage />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/position"
+                  element={
+                    <PrivilegeRoute privilege="Admin">
+                      <PositionPage />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/category"
+                  element={
+                    <PrivilegeRoute privilege="Admin">
+                      <CategoryPage />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/certification"
+                  element={
+                    <PrivilegeRoute privilege="Admin">
+                      <CertificationPage />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/document"
+                  element={
+                    <PrivilegeRoute privilege="Admin">
+                      <DocumentPage />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/generic-or-annexures"
+                  element={
+                    <PrivilegeRoute privilege="Admin">
+                      <GenericOrAnnexuresPage />
+                    </PrivilegeRoute>
+                  }
+                />          
                 {/* ---------- NON-ADMIN ONLY ROUTES ---------- */}
-              <Route element={<NonAdminRoute />}>
-                <Route path="/job-posting" element={<JobPostingsList />} />
-                <Route path="/job-posting/create-requisition" element={<CreateRequisition />} />
-                <Route path="/job-posting/:requisitionId/add-position" element={<AddPosition />} />
-                <Route path="/candidate-preview" element={<CandidatePreviewPage />} />
-                <Route path="/candidate-workflow" element={<CandidateScreening />} />
-                <Route path="/candidate-verification" element={<CandidateVerification />} />
-              <Route path="/candidate-interviewer" element={<InterviewerSchedule />} />
-                      <Route path="/candidate-preview" element={<CandidatePreviewPage />} />
-                <Route path="/interviewpanel" element={<InterviewPanel />} />
-                {/* <Route path="/candidate-interview" element={<CandidateInterview />} /> */}
-                <Route path="/schedule-interviews" element={<ScheduleInterviews />} />
-                <Route path="/requisition-requests" element={<Approvals />} />
-                <Route path="/extension-requests" element={<ExtensionsRequests />} />
+                <Route
+                  path="/job-posting"
+                  element={
+                    <PrivilegeRoute privilege="JobPostings">
+                      <JobPostingsList />
+                    </PrivilegeRoute>
+                  }
+                />
 
-                <Route path="/committee-requests" element={<CommitteeRequests />} />
-                
+                <Route
+                  path="/job-posting/create-requisition"
+                  element={
+                    <PrivilegeRoute privilege="JobPostings">
+                      <CreateRequisition />
+                    </PrivilegeRoute>
+                  }
+                />
 
+                <Route
+                  path="/job-posting/:requisitionId/add-position"
+                  element={
+                    <PrivilegeRoute privilege="JobPostings">
+                      <AddPosition />
+                    </PrivilegeRoute>
+                  }
+                />
 
-              </Route>
+                <Route
+                  path="/candidate-preview"
+                  element={
+                    <PrivilegeRoute privilege="Candidate Pool">
+                      <CandidatePreviewPage />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/candidate-workflow"
+                  element={
+                    <PrivilegeRoute privilege="Candidate Pool">
+                      <CandidateScreening />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/candidate-verification"
+                  element={
+                    <PrivilegeRoute privilege="Verification">
+                      <CandidateVerification />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/candidate-interviewer"
+                  element={
+                    <PrivilegeRoute privilege="Interview">
+                      <InterviewerSchedule />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/interviewpanel"
+                  element={
+                    <PrivilegeRoute privilege="Committee Management">
+                      <InterviewPanel />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/schedule-interviews"
+                  element={
+                    <PrivilegeRoute privilege="Interview">
+                      <ScheduleInterviews />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/requisition-requests"
+                  element={
+                    <PrivilegeRoute privilege="Requisition Approval">
+                      <Approvals />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/extension-requests"
+                  element={
+                    <PrivilegeRoute privilege="Extension Approval">
+                      <ExtensionsRequests />
+                    </PrivilegeRoute>
+                  }
+                />
+
+                <Route
+                  path="/committee-requests"
+                  element={
+                    <PrivilegeRoute privilege="Committee Approval">
+                      <CommitteeRequests />
+                    </PrivilegeRoute>
+                  }
+                />
+
 
 
             </Route>
