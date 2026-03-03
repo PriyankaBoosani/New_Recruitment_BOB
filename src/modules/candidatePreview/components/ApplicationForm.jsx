@@ -85,6 +85,7 @@ const isZonalAbsent =
     isScreeningCompleted: false,
     screeningId: null,
   });
+  const [screeningDocuments, setScreeningDocuments] = useState([]);
 
   const formatLocation = (a, b) => {
     const values = [a, b].filter(v => v && v !== "-");
@@ -339,7 +340,7 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
   const CRITERIA_OPTIONS = ["YES", "NO", "DISCREPANCY"];
 
   const documentRows = [
-    ...(data.documents?.allDocs || [])
+    ...(screeningDocuments.length > 0 ? screeningDocuments : data.documents?.allDocs || [])
   ].map(doc => ({
     ...doc,
     candidateDocumentId: doc.candidateDocumentId ?? doc.id
@@ -348,7 +349,7 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
   const [photo, setPhoto] = useState()
   const [signature, setSignature] = useState()
 
-  const allDocs = data.documents.allDocs;
+  const allDocs = screeningDocuments.length > 0 ? screeningDocuments : data.documents.allDocs;
 
   const photoDoc = allDocs.find(doc => doc.name === "Photo");
   const signatureDoc = allDocs.find(doc => doc.name === "Signature");
@@ -431,25 +432,38 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
       }
 
       const map = {};
+      const documents = [];
 
       (res.data || []).forEach((item) => {
-      if (isZonalHr || isInterviewer) {
-  map[item.candidateDocumentId] = {
-    status: item.zonalHrDocStatus?.toUpperCase() || "PENDING",
-    comments: item.zonalHrDocComments,
-    verificationId: item.verificationId,
-  };
-} else {
-  map[item.candidateDocumentId] = {
-    status: item.docScreeningStatus?.toUpperCase() || "PENDING",
-    comments: item.docScreeningComments,
-    verificationId: item.verificationId,
-  };
-}
+        if (isZonalHr || isInterviewer) {
+          map[item.candidateDocumentId] = {
+            status: item.zonalHrDocStatus?.toUpperCase() || "PENDING",
+            comments: item.zonalHrDocComments,
+            verificationId: item.verificationId,
+          };
+        } else {
+          map[item.candidateDocumentId] = {
+            status: item.docScreeningStatus?.toUpperCase() || "PENDING",
+            comments: item.docScreeningComments,
+            verificationId: item.verificationId,
+          };
+        }
 
+        // Map document from screening committee status
+        documents.push({
+          id: item.candidateDocumentId,
+          candidateDocumentId: item.candidateDocumentId,
+          name: item.displayName || item.fileName || "Document",
+          fileName: item.fileName,
+          url: item.fileUrl,
+          status: isZonalHr || isInterviewer 
+            ? (item.zonalHrDocStatus?.toUpperCase() || "PENDING")
+            : (item.docScreeningStatus?.toUpperCase() || "PENDING")
+        });
       });
 
       setDocStatusMap(map);
+      setScreeningDocuments(documents);
 
     } catch (e) {
       console.error("Failed to fetch document status", e);
@@ -600,19 +614,47 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
     });
   };
 
+  // const handleInputChange = (field, value) => {
+  //   setScreeningForm(prev => ({
+  //     ...prev,
+  //     [field]: value,
+  //   }));
+
+  //   setErrors(prev => {
+  //     const updated = { ...prev };
+
+  //     delete updated[field];
+
+  //     // special rule: shortlisted YES → remark no longer required
+  //     if (field === "isShortlisted" && value === "YES") {
+  //       delete updated.finalScreeningRemark;
+  //     }
+
+  //     return updated;
+  //   });
+  // };
+
   const handleInputChange = (field, value) => {
-    setScreeningForm(prev => ({
-      ...prev,
-      [field]: value,
-    }));
+    setScreeningForm(prev => {
+      const updated = {
+        ...prev,
+        [field]: value,
+      };
+
+      // 🔥 Clear remark when shortlist changes
+      if (field === "isShortlisted") {
+        updated.finalScreeningRemark = "";
+      }
+
+      return updated;
+    });
 
     setErrors(prev => {
       const updated = { ...prev };
 
       delete updated[field];
 
-      // special rule: shortlisted YES → remark no longer required
-      if (field === "isShortlisted" && value === "YES") {
+      if (field === "isShortlisted") {
         delete updated.finalScreeningRemark;
       }
 
@@ -763,9 +805,15 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
       }
     }
 
-    const derivedStatus = deriveShortlistStatus();
+    // const derivedStatus = deriveShortlistStatus();
 
-    if (derivedStatus === "NO") {
+    // if (derivedStatus === "NO") {
+    //   if (!screeningForm.finalScreeningRemark?.trim()) {
+    //     newErrors.finalScreeningRemark = t("validation:required");
+    //   }
+    // }
+
+    if (screeningForm.isShortlisted === "NO") {
       if (!screeningForm.finalScreeningRemark?.trim()) {
         newErrors.finalScreeningRemark = t("validation:required");
       }
@@ -852,11 +900,14 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
   const disableShortlistedSection =
     !areAllCriteriaSelected || baseDerived === "DEFAULT";
 
-  const disableYesOption =
-    disableShortlistedSection || derivedShortlist === "NO";
+  // const disableYesOption =
+  //   disableShortlistedSection || derivedShortlist === "NO";
 
-  const disableNoOption =
-    disableShortlistedSection || derivedShortlist === "YES";
+  // const disableNoOption =
+  //   disableShortlistedSection || derivedShortlist === "YES";
+
+  const disableYesOption = disableShortlistedSection;
+  const disableNoOption = disableShortlistedSection;
 
   const handleFinalSubmit = async () => {
 
@@ -874,7 +925,7 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
 
     const payload = {
       ...screeningForm,
-      isShortlisted: derivedShortlist || "NO",
+      // isShortlisted: derivedShortlist || "NO",
       isScreeningCompleted: true,
     };
 
@@ -962,25 +1013,25 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
   useEffect(() => {
     const derived = deriveShortlistStatus();
 
-    if (derived === "YES") {
-      setScreeningForm(prev => ({
-        ...prev,
-        isShortlisted: "YES",
-        finalScreeningRemark: "",   // 🔥 CLEAR HERE
-      }));
+    // if (derived === "YES") {
+    //   setScreeningForm(prev => ({
+    //     ...prev,
+    //     isShortlisted: "YES",
+    //     finalScreeningRemark: "",   // 🔥 CLEAR HERE
+    //   }));
 
-      setErrors(prev => ({
-        ...prev,
-        finalScreeningRemark: undefined,
-      }));
-    }
+    //   setErrors(prev => ({
+    //     ...prev,
+    //     finalScreeningRemark: undefined,
+    //   }));
+    // }
 
-    if (derived === "NO") {
-      setScreeningForm(prev => ({
-        ...prev,
-        isShortlisted: "NO",
-      }));
-    }
+    // if (derived === "NO") {
+    //   setScreeningForm(prev => ({
+    //     ...prev,
+    //     isShortlisted: "NO",
+    //   }));
+    // }
 
     if (derived === "DEFAULT") {
       setScreeningForm(prev => {
@@ -1460,6 +1511,7 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
                     (_, rowIndex) => {
                       const left = documentRows[rowIndex * 2];
                       const right = documentRows[rowIndex * 2 + 1];
+                      console.log("ROW", rowIndex, { left, right });
                       const leftStatus =
                         docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
 
