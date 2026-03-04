@@ -93,7 +93,7 @@ const Header = () => {
   const canAdmin = privileges?.Admin;
   const canInterview = privileges?.["Interview"];
   const canApprovals = privileges?.["Requisition Approval"] || privileges?.["Extension Approval"] || privileges?.["Committee Approval"];
-
+  const canViewPosition= privileges?.["View Position"];
   // {
   // 	"preveileges": {
   // 		"Committee Management": true,

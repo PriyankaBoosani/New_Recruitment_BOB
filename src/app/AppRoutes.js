@@ -160,7 +160,7 @@ const AppRoutes = () => {
                 <Route
                   path="/job-posting/create-requisition"
                   element={
-                    <PrivilegeRoute privilege="JobPostings">
+                    <PrivilegeRoute privilegesRequired={["JobPostings", "View Position"]}>
                       <CreateRequisition />
                     </PrivilegeRoute>
                   }
@@ -169,9 +169,9 @@ const AppRoutes = () => {
                 <Route
                   path="/job-posting/:requisitionId/add-position"
                   element={
-                    <PrivilegeRoute privilege="JobPostings">
-                      <AddPosition />
-                    </PrivilegeRoute>
+                      <PrivilegeRoute privilegesRequired={["JobPostings", "View Position"]}>
+                        <AddPosition />
+                      </PrivilegeRoute>
                   }
                 />
 
