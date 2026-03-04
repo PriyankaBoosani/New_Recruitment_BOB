@@ -183,7 +183,7 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 								onChange={toggleSelectAll}
 							/> */}
 						</th>
-						<th className="fs-14 fw-normal py-3 border-top sticky-col-1" scope="col" style={{ paddingLeft: '1rem', width: "200px", minWidth: "200px" }}>Name</th>
+						<th className="fs-14 fw-normal py-3 border-top sticky-col-1" scope="col" style={{ paddingLeft: '1rem', width: "200px", minWidth: "200px" }}>Candidate</th>
 						<th className="fs-14 fw-normal py-3 border-top" style={{ paddingLeft: '1rem', width: "160px", minWidth: "160px" }} scope="col">Registration Number</th>
 						<th className="fs-14 fw-normal py-3 border-top" style={{ paddingLeft: '2rem' }} scope="col">Caste</th>
 						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>Combined Score</th>
@@ -202,13 +202,13 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 					{loading ? (
 						<tr>
 							<td colSpan="14" className="text-center py-4">
-								Loading offers...
+								Loading candidates...
 							</td>
 						</tr>
 					) : paginatedOffers.length === 0 ? (
 						<tr>
 							<td colSpan="14" className="text-center py-4">
-								No offers found
+								No candidates found
 							</td>
 						</tr>
 					) : (
