@@ -414,7 +414,7 @@ const RequisitionRequests = () => {
                   <div className="d-flex align-items-start">
                     <Form.Check
                       type="checkbox"
-                      className="me-2 mt-2"
+                      className="me-3 mt-2"
                       checked={selectedReqIds.has(req.id)}
                       disabled={req.status !== selectableStatus}
                       onClick={(e) => e.stopPropagation()}

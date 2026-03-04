@@ -104,7 +104,7 @@
 
 .requisition-page .selectall .form-check-label {
     margin-top: 5px;
-    margin-left: -5px;
+    margin-left: 0px;
 }
 
 
@@ -149,10 +149,10 @@
 }
 
 .requisition-page .req-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: 26px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-left: 34px;
 }
 
 .requisition-page .bg-warning {
@@ -658,9 +658,10 @@
 	border: 1px solid #0EB319;
 	background: #F5FFF6 !important;
 }
-.icon-20his{
-    width: 20px;
-    height: 20px;
+.icon-20his {
+	width: 16px;
+	height: 16px;
+	margin-top: 10px;
 }
 .requisition-page .status-filter {
   appearance: none;

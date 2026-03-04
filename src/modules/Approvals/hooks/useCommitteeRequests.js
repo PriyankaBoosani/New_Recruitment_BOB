@@ -94,28 +94,77 @@ const useCommitteeRequests = () => {
             compensationPanelList: []
         });
     };
-    const approveOrRejectPanels = async (ids, type, comment) => {
+    const approvePanels = async (ids, positionId) => {
         try {
 
-            for (const id of ids) {
+            const res = await committeeManagementService.approvePanels(ids);
 
-                await committeeManagementService.approveOrRejectCommittee(id, {
-                    status: type === "approve" ? "APPROVED" : "REJECTED",
-                    comments: comment
-                });
-
+            if (!res?.success) {
+                throw new Error(res?.message || "Approval failed");
             }
 
-            toast.success(`Panels ${type}d successfully`);
+            toast.success("Panels approved successfully");
+
+            // REFRESH PANELS
+            await fetchPanels(positionId);
+
             return true;
 
         } catch (error) {
 
-            toast.error(error.response?.data?.message || "Approval failed");
-            return false;
+            toast.error(
+                error.response?.data?.message ||
+                error.message ||
+                "Approval failed"
+            );
 
+            return false;
         }
     };
+    const rejectPanels = async (ids, positionId) => {
+        try {
+
+            const res = await committeeManagementService.rejectPanels(ids);
+
+            if (!res?.success) {
+                throw new Error(res?.message || "Rejection failed");
+            }
+
+            toast.success("Panels rejected successfully");
+
+            await fetchPanels(positionId);
+
+            return true;
+
+        } catch (error) {
+
+            toast.error(
+                error.response?.data?.message ||
+                error.message ||
+                "Rejection failed"
+            );
+
+            return false;
+        }
+    };
+    const fetchApprovalHistory = async (panelId) => {
+    try {
+
+        const res =
+            await committeeManagementService.getRequisitionApprovalHistory(panelId);
+
+        const data = res?.data || [];
+
+        return data;
+
+    } catch (error) {
+
+        toast.error("Failed to load approval history");
+        return [];
+
+    }
+};
+
 
     return {
         requisitionOptions,
@@ -131,7 +180,10 @@ const useCommitteeRequests = () => {
         fetchPanels,
         clearPanels,
         setPositionOptions,
-        approveOrRejectPanels
+        approvePanels,
+        rejectPanels,
+
+        fetchApprovalHistory
     };
 };
 

@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "../../../style/css/ApprovalCommitee.css";
 import history_icon from "../../../assets/history_icon.png";
+import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 
 import ApprovalCommentModal from "../components/ApprovalCommentModal";
 import ApprovalHistoryModal from "../components/ApprovalHistoryModal";
@@ -42,7 +43,9 @@ const CommitteeRequests = () => {
         fetchPanels,
         clearPanels,
         setPositionOptions,
-        approveOrRejectPanels
+        approvePanels,
+        rejectPanels,
+        fetchApprovalHistory
     } = useCommitteeRequests();
     const [pageSize, setPageSize] = useState(5);
 
@@ -67,7 +70,7 @@ const CommitteeRequests = () => {
 
     const statusOptionsByRole = {
         L1: [
-            { value: "SUBMITTED", label: "Submitted" },
+            { value: "L1_PENDING", label: "L1 Pending" },
             { value: "L1_APPROVED", label: "L1 Approved" },
             { value: "L1_REJECTED", label: "L1 Rejected" },
             { value: "L2_REJECTED", label: "L2 Rejected" },
@@ -128,36 +131,59 @@ const CommitteeRequests = () => {
     };
 
 
-    const handleApprovalAction = async (comment, type) => {
+    const handleApprovalAction = async () => {
 
         const ids = Array.from(selectedReqIds);
-        console.log("Selected IDs:", ids);
-        console.log("Selected Position:", selectedPosition);
-        console.log("Panel Data:", panelData);
+
         if (ids.length === 0) return;
 
-        const success = await approveOrRejectPanels(ids, type, comment);
+        let success = false;
+
+        if (actionType === "approve") {
+            success = await approvePanels(
+                ids,
+                selectedPosition?.positionId
+            );
+        } else {
+            success = await rejectPanels(
+                ids,
+                selectedPosition?.positionId
+            );
+        }
 
         if (success) {
             setSelectedReqIds(new Set());
             setShowCommentModal(false);
         }
-
     };
 
-    const handleOpenHistory = (req) => {
-        setSelectedHistoryReq(req);
+    const getStatusBadge = (status = "") => {
+        switch (status) {
+            case "L1_PENDING":
+                return "warning";
 
-        setHistoryData([
-            {
-                requester: "HR Department",
-                requestDate: req.startDate,
-                approver: "Manager",
-                approvalDate: "18-11-2025",
-                status: req.status,
-                comments: req.status === "Approved" ? "Committee approved successfully" : "Pending review"
-            }
-        ]);
+            case "L1_APPROVED":
+                return "info";
+
+            case "APPROVED":
+                return "success";
+
+            case "L1_REJECTED":
+            case "L2_REJECTED":
+                return "danger";
+
+            default:
+                return "secondary";
+        }
+    };
+    const handleOpenHistory = async (panelItem) => {
+
+        const panelId = panelItem.positionPanelId;
+
+        const history = await fetchApprovalHistory(panelId);
+
+        setHistoryData(history);
+        setSelectedHistoryReq(panelItem);
 
         setShowHistoryModal(true);
     };
@@ -231,6 +257,14 @@ const CommitteeRequests = () => {
             showStartEllipsis: start > 0,
             showEndEllipsis: end < totalPages,
         };
+    };
+    const formatStatusLabel = (status) => {
+        if (!status) return "-";
+
+        return status
+            .toLowerCase()
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase());
     };
     // const getStatusBadgeVariant = (status) => {
     //     switch (status.toLowerCase()) {
@@ -415,10 +449,10 @@ const CommitteeRequests = () => {
                                     key={panelItem.positionPanelId}
                                     className="bulk-actions align-items-center mt-3 mb-1"
                                 >
-                                    <Row className="align-items-center gx-3">
+                                    <Row className="align-items-center gx-2">
 
                                         {/* Checkbox */}
-                                        <Col xs="auto" className="checkbox-col me-3">
+                                        <Col xs="auto" className="checkbox-col pe-1 ms-2">
                                             <Form.Check
                                                 type="checkbox"
                                                 className="select-checkbox"
@@ -437,15 +471,16 @@ const CommitteeRequests = () => {
                                             />
                                         </Col>
 
-                                        <Col xs={12} md={4} className="data-col">
-                                            <div className="field-label">Panel Name</div>
+                                        {/* Panel Name */}
+                                        <Col md={3} className="data-col">
+                                            <div className="field-label">Panel Name <img src={history_icon} alt="History" className="icon-history" onClick={() => handleOpenHistory(panelItem)} /></div>
                                             <div className="field-value">
                                                 {panel.panelName}
                                             </div>
                                         </Col>
 
                                         {/* Panel Type */}
-                                        <Col xs={12} md={1} className="data-col">
+                                        <Col md={2} className="data-col">
                                             <div className="field-label">Panel Type</div>
                                             <div className="field-value">
                                                 {panel.committee?.committeeName}
@@ -453,7 +488,7 @@ const CommitteeRequests = () => {
                                         </Col>
 
                                         {/* Panel Members */}
-                                        <Col xs={12} md={3} className="data-col">
+                                        <Col md={3} className="data-col">
                                             <div className="field-label">Panel Members</div>
                                             <div className="field-value">
                                                 {members.join(", ")}
@@ -461,7 +496,7 @@ const CommitteeRequests = () => {
                                         </Col>
 
                                         {/* Start Date */}
-                                        <Col xs={12} md={1} className="data-col">
+                                        <Col md={1} className="data-col">
                                             <div className="field-label">Start Date</div>
                                             <div className="field-value">
                                                 {panelItem.startDate}
@@ -469,7 +504,7 @@ const CommitteeRequests = () => {
                                         </Col>
 
                                         {/* End Date */}
-                                        <Col xs={12} md={1} className="data-col">
+                                        <Col md={1} className="data-col">
                                             <div className="field-label">End Date</div>
                                             <div className="field-value">
                                                 {panelItem.endDate}
@@ -477,12 +512,12 @@ const CommitteeRequests = () => {
                                         </Col>
 
                                         {/* Status */}
-                                        <Col xs={12} md={1} className="d-flex justify-content-end align-items-center">
+                                        <Col md={1} className="d-flex justify-content-end align-items-center">
                                             <Badge
-                                                bg="warning"
+                                                bg={getStatusBadge(panelItem.positionPanelStatus)}
                                                 className="status-badge"
                                             >
-                                                {panelItem.positionPanelStatus}
+                                                {formatStatusLabel(panelItem.positionPanelStatus)}
                                             </Badge>
                                         </Col>
 

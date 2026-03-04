@@ -33,13 +33,20 @@ const committeeManagementService = {
       `recruiter/position-panel/get-by-position-id/${positionId}`
     );
   },
-  approveOrRejectCommittee: (positionPanelId, payload) =>
+  approvePanels: (panelIds) =>
     api.post(
-      `/recruiter/position-panel/approve-committee/${positionPanelId}`,
-      payload
+      "/recruiter/position-panel/approve-committee",
+      panelIds
     ),
-
-
+  rejectPanels: (panelIds) =>
+    api.post(
+      "/recruiter/position-panel/reject-committee",
+      panelIds
+    ),
+  getRequisitionApprovalHistory: (panelId) =>
+    api.get(
+      `/recruiter/workflow-approval/get-panels-approval-history/${panelId}`
+    ),
 
 };
 
