@@ -241,7 +241,7 @@ const AppRoutes = () => {
                 <Route
                   path="/extension-requests"
                   element={
-                    <PrivilegeRoute privilege="Extension Approval">
+                    <PrivilegeRoute privilege="Requisition Approval">
                       <ExtensionsRequests />
                     </PrivilegeRoute>
                   }
@@ -250,7 +250,7 @@ const AppRoutes = () => {
                 <Route
                   path="/committee-requests"
                   element={
-                    <PrivilegeRoute privilege="Committee Approval">
+                    <PrivilegeRoute privilege="Requisition Approval">
                       <CommitteeRequests />
                     </PrivilegeRoute>
                   }

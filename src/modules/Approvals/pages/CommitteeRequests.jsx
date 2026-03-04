@@ -9,8 +9,7 @@ import {
 } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
-import { CommitteeRequestsData } from "../hooks/committee.static";
-
+import { useSelector } from "react-redux";
 import "../../../style/css/ApprovalCommitee.css";
 import history_icon from "../../../assets/history_icon.png";
 
@@ -20,19 +19,33 @@ import { useTranslation } from "react-i18next";
 import Select from "react-select";
 
 import { toast } from "react-toastify";
+import useCommitteeRequests from "../hooks/useCommitteeRequests";
 
 //  Utilities
 import { validateSelectedRequisitions } from "../validations/requisitionValidation";
 
 //  Mapper
-import { mapCommitteeRequests } from "../mapper/committeeRequestMapper";
-
 
 const CommitteeRequests = () => {
     const { t } = useTranslation(["jobPostingsList", "common"]);
-
+    const userRole = useSelector((state) => state.user.user?.role);
     const navigate = useNavigate();
-    const [pageSize, setPageSize] = useState(10);
+    const {
+        requisitionOptions,
+        positionOptions,
+        panelData,
+        loadingRequisitions,
+        loadingPositions,
+        loadingPanels,
+        fetchRequisitions,
+        fetchPositions,
+        fetchPanels,
+        clearPanels,
+        setPositionOptions,
+        approveOrRejectPanels
+    } = useCommitteeRequests();
+    const [pageSize, setPageSize] = useState(5);
+
 
     const [showCommentModal, setShowCommentModal] = useState(false);
     const [actionType, setActionType] = useState(null);
@@ -40,26 +53,38 @@ const CommitteeRequests = () => {
     const [historyData, setHistoryData] = useState([]);
     const [selectedHistoryReq, setSelectedHistoryReq] = useState(null);
 
+
     // Filters
     const [status, setStatus] = useState("ALL");
     const [searchInput, setSearchInput] = useState("");
     const [page, setPage] = useState(0);
 
     const [selectedReqIds, setSelectedReqIds] = useState(new Set());
-    const [committeeRequests, setCommitteeRequests] = useState(() => 
-        mapCommitteeRequests(CommitteeRequestsData)
-    );
+
     // Requisition & Position state
     const [selectedRequisition, setSelectedRequisition] = useState(null);
     const [selectedPosition, setSelectedPosition] = useState(null);
 
-    // Options (reuse same shape as existing selector)
-    const requisitions = [];
-    const positions = [];
+    const statusOptionsByRole = {
+        L1: [
+            { value: "SUBMITTED", label: "Submitted" },
+            { value: "L1_APPROVED", label: "L1 Approved" },
+            { value: "L1_REJECTED", label: "L1 Rejected" },
+            { value: "L2_REJECTED", label: "L2 Rejected" },
+            { value: "APPROVED", label: "Approved" }
+        ],
+        L2: [
+            { value: "L1_APPROVED", label: "L1 Approved" },
+            { value: "L2_REJECTED", label: "L2 Rejected" },
+            { value: "APPROVED", label: "Approved" }
+        ]
+    };
+
+    const allowedStatuses = statusOptionsByRole[userRole] || [];
 
     const selectedRequisitionOption = selectedRequisition
         ? {
-            label: selectedRequisition.requisitionCode,
+            label: selectedRequisition.requisitionTitle,
             value: selectedRequisition.id,
             raw: selectedRequisition
         }
@@ -72,85 +97,52 @@ const CommitteeRequests = () => {
             raw: selectedPosition
         }
         : null;
-    const onRequisitionChange = (req) => {
+    const onRequisitionChange = async (req) => {
+
         setSelectedRequisition(req);
         setSelectedPosition(null);
-        setPage(0);
-    };
 
-    const onPositionChange = (pos) => {
-        setSelectedPosition(pos);
-        setPage(0);
-    };
+        setPositionOptions([]);
 
-
-    // Filter and paginate data
-    const getFilteredData = () => {
-        let filtered = [...committeeRequests];
-
-        // Filter by status
-        if (status && status !== "ALL") {
-            filtered = filtered.filter(
-                req => req.status.toUpperCase() === status.toUpperCase()
-            );
-        }
-
-        // Filter by search
-        if (searchInput.trim() !== "") {
-            const searchLower = searchInput.toLowerCase();
-            filtered = filtered.filter(
-                req =>
-                    req.positionName.toLowerCase().includes(searchLower) ||
-                    req.requisitionId.toLowerCase().includes(searchLower) ||
-                    req.panelType.toLowerCase().includes(searchLower) ||
-                    req.panelMembers.some(member =>
-                        member.toLowerCase().includes(searchLower)
-                    )
-            );
-        }
-
-        return filtered;
-    };
-
-    const getPaginatedData = () => {
-        const filtered = getFilteredData();
-        const start = page * pageSize;
-        const end = start + pageSize;
-        return filtered.slice(start, end);
-    };
-
-    const getTotalPages = () => {
-        const filtered = getFilteredData();
-        return Math.ceil(filtered.length / pageSize);
-    };
-
-    const handleApprovalAction = (comment, type) => {
-        const ids = Array.from(selectedReqIds);
-
-        if (ids.length === 0) return;
-
-        if (type === "approve") {
-            console.log("Approving:", ids, "Comment:", comment);
-            setCommitteeRequests(prev =>
-                prev.map(req =>
-                    ids.includes(req.id) ? { ...req, status: "Approved" } : req
-                )
-            );
-            toast.success("Committee requests approved successfully");
-        }
-
-        if (type === "reject") {
-            console.log("Rejecting:", ids, "Comment:", comment);
-            setCommitteeRequests(prev =>
-                prev.map(req =>
-                    ids.includes(req.id) ? { ...req, status: "Rejected" } : req
-                )
-            );
-            toast.success("Committee requests rejected successfully");
-        }
+        clearPanels();
 
         setSelectedReqIds(new Set());
-        setShowCommentModal(false);
+        setSearchInput("");
+        setPage(0);
+
+        if (!req?.id) return;
+
+        await fetchPositions(req.id);
+    };
+    const onPositionChange = async (pos) => {
+
+        setSelectedPosition(pos);
+        setPage(0);
+
+        if (!pos?.positionId) {
+            clearPanels();
+            return;
+        }
+
+        await fetchPanels(pos.positionId);
+    };
+
+
+    const handleApprovalAction = async (comment, type) => {
+
+        const ids = Array.from(selectedReqIds);
+        console.log("Selected IDs:", ids);
+        console.log("Selected Position:", selectedPosition);
+        console.log("Panel Data:", panelData);
+        if (ids.length === 0) return;
+
+        const success = await approveOrRejectPanels(ids, type, comment);
+
+        if (success) {
+            setSelectedReqIds(new Set());
+            setShowCommentModal(false);
+        }
+
     };
 
     const handleOpenHistory = (req) => {
@@ -169,36 +161,50 @@ const CommitteeRequests = () => {
 
         setShowHistoryModal(true);
     };
+    useEffect(() => {
+        fetchRequisitions();
+    }, []);
 
     // Reset page when filters change
     useEffect(() => {
         setPage(0);
     }, [status, searchInput, pageSize]);
 
-    const paginatedData = getPaginatedData();
-    const totalPages = getTotalPages();
+    const allPanels = [
+        ...panelData.interviewPanelList,
+        ...panelData.screeningPanelList,
+        ...panelData.compensationPanelList
+    ];
 
-    const selectableRequests = paginatedData.filter(
-        r => r.status !== "Approved"
+    const filteredPanels = allPanels.filter(panelItem => {
+
+        const panelName = panelItem.interviewPanel?.panelName?.toLowerCase() || "";
+        const panelStatus = panelItem.positionPanelStatus;
+
+        // role based allowed statuses
+        const roleStatuses = allowedStatuses.map(s => s.value);
+
+        const roleMatch = roleStatuses.includes(panelStatus);
+
+        const searchMatch = panelName.includes(searchInput.toLowerCase());
+
+        const statusMatch =
+            status === "ALL" || panelStatus === status;
+
+        return roleMatch && searchMatch && statusMatch;
+    });
+    const totalPages = Math.ceil(filteredPanels.length / pageSize);
+
+    const paginatedPanels = filteredPanels.slice(
+        page * pageSize,
+        page * pageSize + pageSize
     );
 
     const allSelected =
-        selectableRequests.length > 0 &&
-        selectableRequests.every(r => selectedReqIds.has(r.id));
-
-    // const getStatusBadgeVariant = (status) => {
-    //     switch (status.toLowerCase()) {
-    //         case "approved":
-    //             return "success";
-    //         case "pending":
-    //             return "warning";
-    //         case "rejected":
-    //             return "danger";
-    //         default:
-    //             return "secondary";
-    //     }
-    // };
-
+        filteredPanels.length > 0 &&
+        filteredPanels.every(p =>
+            selectedReqIds.has(p.positionPanelId)
+        );
     const getVisiblePages = (currentPage, totalPages) => {
         const windowSize = 3;
 
@@ -226,6 +232,20 @@ const CommitteeRequests = () => {
             showEndEllipsis: end < totalPages,
         };
     };
+    // const getStatusBadgeVariant = (status) => {
+    //     switch (status.toLowerCase()) {
+    //         case "approved":
+    //             return "success";
+    //         case "pending":
+    //             return "warning";
+    //         case "rejected":
+    //             return "danger";
+    //         default:
+    //             return "secondary";
+    //     }
+    // };
+
+
 
     return (
         <Container fluid className="committee-page">
@@ -242,7 +262,7 @@ const CommitteeRequests = () => {
                         <Search />
                         <Form.Control
                             type="text"
-                            placeholder="Search"
+                            placeholder="Search by Panel name..."
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                         />
@@ -253,39 +273,40 @@ const CommitteeRequests = () => {
             <Row className="mb-3 align-items-end filters-row">
 
                 {/* Requisition */}
-                <Col xs={12} md={5}>
+                <Col xs={12} md={4}>
                     <div className="filter-label">Requisition</div>
                     <Select
                         classNamePrefix="filter-select"
-                        isClearable
-                        options={requisitions}
+                        placeholder="Select Requisition"
+                        options={requisitionOptions}
+                        isLoading={loadingRequisitions}
                         value={selectedRequisitionOption}
                         onChange={(opt) => {
-                            onRequisitionChange?.(opt?.raw || null);
-                            onPositionChange?.(null);
+                            onRequisitionChange(opt?.raw || null);
                             setPage(0);
                         }}
                     />
                 </Col>
 
                 {/* Position */}
-                <Col xs={12} md={5}>
+                <Col xs={12} md={4}>
                     <div className="filter-label">Position</div>
                     <Select
                         classNamePrefix="filter-select"
-                        isClearable
-                        options={positions}
+                        placeholder="Select Position"
+                        options={positionOptions}
+                        isLoading={loadingPositions}
                         value={selectedPositionOption}
                         isDisabled={!selectedRequisitionOption}
                         onChange={(opt) => {
-                            onPositionChange?.(opt?.raw || null);
+                            onPositionChange(opt?.raw || null);
                             setPage(0);
                         }}
                     />
                 </Col>
 
                 {/* Status (right aligned like screenshot) */}
-                <Col xs={12} md={1} className="ms-auto">
+                <Col xs={12} md={2} className="ms-auto">
                     {/* <div className="filter-label">Status</div> */}
                     <Form.Select
                         className="status-select"
@@ -296,9 +317,13 @@ const CommitteeRequests = () => {
                             setPage(0);
                         }}
                     >
-                        <option value="ALL">{t("jobPostingsList:status_all")}</option>
-                        <option value="NEW">{t("jobPostingsList:status_new")}</option>
-                        <option value="APPROVED">{t("jobPostingsList:status_approved")}</option>
+                        <option value="ALL">All</option>
+
+                        {allowedStatuses.map((status) => (
+                            <option key={status.value} value={status.value}>
+                                {status.label}
+                            </option>
+                        ))}
                     </Form.Select>
                 </Col>
 
@@ -317,7 +342,7 @@ const CommitteeRequests = () => {
                         onChange={(e) => {
                             if (e.target.checked) {
                                 setSelectedReqIds(
-                                    new Set(selectableRequests.map(r => r.id))
+                                    new Set(filteredPanels.map(p => p.positionPanelId))
                                 );
                             } else {
                                 setSelectedReqIds(new Set());
@@ -366,188 +391,174 @@ const CommitteeRequests = () => {
             </Row>
 
             {/* ================= COMMITTEE REQUEST CARDS ================= */}
-            {paginatedData.length === 0 ? (
-                <div className="text-center text-muted my-4">
-                    No committee requests found
-                </div>
+            {/* ================= PANELS ================= */}
+            {loadingPanels ? (
+                <div className="text-center my-4">Loading panels...</div>
             ) : (
-                paginatedData.map((req) => (
-                    <div key={req.id} className="bulk-actions align-items-center mt-3 mb-1">
-                        <Row className="align-items-center gx-3">
-                            {/* Checkbox */}
-                            <Col xs="auto" className="checkbox-col me-3">
-                                <Form.Check 
-                                    type="checkbox"
-                                    className="select-checkbox"
-                                    checked={selectedReqIds.has(req.id)}
-                                    disabled={req.status === "Approved"}
-                                    onChange={(e) => {
-                                        if (req.status === "Approved") return;
+                <>
+                    {filteredPanels.length === 0 ? (
+                        <div className="text-center text-muted my-4">
+                            No panels found
+                        </div>
+                    ) : (
+                        paginatedPanels.map((panelItem) => {
+                            const panel =
+                                panelItem.interviewPanel ||
+                                panelItem.screeningPanel ||
+                                panelItem.compensationPanel;
+                            const members = panel.panelMembers.map(
+                                m => m.panelMember.name
+                            );
 
-                                        setSelectedReqIds(prev => {
-                                            const next = new Set(prev);
-                                            if (e.target.checked) {
-                                                next.add(req.id);
-                                            } else {
-                                                next.delete(req.id);
-                                            }
-                                            return next;
-                                        });
-                                    }}
-                                />
-                            </Col>
-
-                            {/* Requisition */}
-                            <Col xs="auto" md={2} className="data-col">
-                                <div className="field-label">Requisition  <img
-                                    src={history_icon} alt="history_icon"
-                                    className="icon-14"
-                                    onClick={() => handleOpenHistory(req)}
-                                /></div>
-                                <div className="d-flex align-items-center gap-1">
-
-                                    <span className="field-value requisition-text">
-                                        {req.requisitionId}
-                                    </span>
-
-                                </div>
-
-                            </Col>
-
-                            {/* Position */}
-                            <Col xs={12} md={2} className="data-col">
-                                <div className="field-label">Position</div>
-                                <div className="field-value">{req.positionName}</div>
-                            </Col>
-
-                            {/* Panel Type */}
-                            <Col xs={12} md={1} className="data-col">
-                                <div className="field-label">Panel Type</div>
-                                <div className="field-value">{req.panelType}</div>
-                            </Col>
-
-                            {/* Panel Members */}
-                            <Col xs={12} md={2} className="data-col">
-                                <div className="field-label">Panel Members</div>
-                                <div className="field-value">
-                                    {req.panelMembers.join(", ")}
-                                </div>
-                            </Col>
-
-                            {/* Start Date */}
-                            <Col xs={12} md={1} className="data-col">
-                                <div className="field-label">Start Date</div>
-                                <div className="field-value">{req.startDate}</div>
-                            </Col>
-
-                            {/* End Date */}
-                            <Col xs={12} md={1} className="data-col">
-                                <div className="field-label">End Date</div>
-                                <div className="field-value">{req.endDate}</div>
-                            </Col>
-
-                            {/* Status */}
-<Col xs={12} md={2} className="d-flex justify-content-end align-items-center"><Badge
-                                    bg={req.statusType}
-                                    className={`status-badge status-${req.status.toLowerCase()}`}
+                            return (
+                                <div
+                                    key={panelItem.positionPanelId}
+                                    className="bulk-actions align-items-center mt-3 mb-1"
                                 >
-                                    {req.status}
-                                </Badge>
+                                    <Row className="align-items-center gx-3">
 
+                                        {/* Checkbox */}
+                                        <Col xs="auto" className="checkbox-col me-3">
+                                            <Form.Check
+                                                type="checkbox"
+                                                className="select-checkbox"
+                                                checked={selectedReqIds.has(panelItem.positionPanelId)}
+                                                onChange={(e) => {
+                                                    setSelectedReqIds(prev => {
+                                                        const next = new Set(prev);
+                                                        if (e.target.checked) {
+                                                            next.add(panelItem.positionPanelId);
+                                                        } else {
+                                                            next.delete(panelItem.positionPanelId);
+                                                        }
+                                                        return next;
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+
+                                        <Col xs={12} md={4} className="data-col">
+                                            <div className="field-label">Panel Name</div>
+                                            <div className="field-value">
+                                                {panel.panelName}
+                                            </div>
+                                        </Col>
+
+                                        {/* Panel Type */}
+                                        <Col xs={12} md={1} className="data-col">
+                                            <div className="field-label">Panel Type</div>
+                                            <div className="field-value">
+                                                {panel.committee?.committeeName}
+                                            </div>
+                                        </Col>
+
+                                        {/* Panel Members */}
+                                        <Col xs={12} md={3} className="data-col">
+                                            <div className="field-label">Panel Members</div>
+                                            <div className="field-value">
+                                                {members.join(", ")}
+                                            </div>
+                                        </Col>
+
+                                        {/* Start Date */}
+                                        <Col xs={12} md={1} className="data-col">
+                                            <div className="field-label">Start Date</div>
+                                            <div className="field-value">
+                                                {panelItem.startDate}
+                                            </div>
+                                        </Col>
+
+                                        {/* End Date */}
+                                        <Col xs={12} md={1} className="data-col">
+                                            <div className="field-label">End Date</div>
+                                            <div className="field-value">
+                                                {panelItem.endDate}
+                                            </div>
+                                        </Col>
+
+                                        {/* Status */}
+                                        <Col xs={12} md={1} className="d-flex justify-content-end align-items-center">
+                                            <Badge
+                                                bg="warning"
+                                                className="status-badge"
+                                            >
+                                                {panelItem.positionPanelStatus}
+                                            </Badge>
+                                        </Col>
+
+                                    </Row>
+                                </div>
+                            );
+                        })
+
+                    )}
+                    {totalPages > 1 && (
+                        <Row className="mt-4 mb-4">
+                            <Col className="d-flex justify-content-end align-items-center gap-3">
+
+                                {/* Page size */}
+                                <div className="d-flex align-items-center gap-2">
+                                    <span className="fw-semibold pagesize">Page Size:</span>
+                                    <Form.Select
+                                        size="sm"
+                                        style={{ width: "90px" }}
+                                        value={pageSize}
+                                        onChange={(e) => setPageSize(Number(e.target.value))}
+                                    >
+                                        {[5, 10, 15, 20].map(n => (
+                                            <option key={n} value={n}>{n}</option>
+                                        ))}
+                                    </Form.Select>
+                                </div>
+
+                                {/* Pagination */}
+                                <nav>
+                                    <ul className="pagination mb-0">
+
+                                        {/* Prev */}
+                                        <li className={`page-item ${page === 0 ? "disabled" : ""}`}>
+                                            <button
+                                                className="page-link"
+                                                onClick={() => setPage(p => Math.max(p - 1, 0))}
+                                            >
+                                                &laquo;
+                                            </button>
+                                        </li>
+
+                                        {getVisiblePages(page, totalPages).pages.map(p => (
+                                            <li
+                                                key={p}
+                                                className={`page-item ${page === p ? "active" : ""}`}
+                                            >
+                                                <button
+                                                    className="page-link"
+                                                    onClick={() => setPage(p)}
+                                                >
+                                                    {p + 1}
+                                                </button>
+                                            </li>
+                                        ))}
+
+                                        {/* Next */}
+                                        <li className={`page-item ${page >= totalPages - 1 ? "disabled" : ""}`}>
+                                            <button
+                                                className="page-link"
+                                                onClick={() => setPage(p => p + 1)}
+                                            >
+                                                &raquo;
+                                            </button>
+                                        </li>
+
+                                    </ul>
+                                </nav>
 
                             </Col>
                         </Row>
-                    </div>
-                ))
+                    )}
+                </>
             )}
 
-            {/* ================= PAGINATION ================= */}
-            {totalPages > 1 && (
-                <Row className="mt-4 mb-4">
-                    <Col className="d-flex justify-content-end align-items-center gap-3">
-                        {/* Page size */}
-                        <div className="d-flex align-items-center gap-2">
-                            <span className="fw-semibold pagesize">Page Size:</span>
-                            <Form.Select
-                                size="sm"
-                                style={{ width: "90px" }}
-                                value={pageSize}
-                                onChange={(e) => setPageSize(Number(e.target.value))}
-                            >
-                                {[5, 10, 15, 20, 25, 30].map(n => (
-                                    <option key={n} value={n}>{n}</option>
-                                ))}
-                            </Form.Select>
-                        </div>
 
-                        {/* Pagination */}
-                        <nav aria-label="Page navigation">
-                            <ul className="pagination mb-0 justify-content-center">
-                                {/* Prev */}
-                                <li className={`page-item ${page === 0 ? "disabled" : ""}`}>
-                                    <button
-                                        className="page-link"
-                                        onClick={() => setPage(p => Math.max(p - 1, 0))}
-                                        disabled={page === 0}
-                                    >
-                                        &laquo;
-                                    </button>
-                                </li>
-
-                                {/* Pages */}
-                                {(() => {
-                                    const {
-                                        pages,
-                                        showStartEllipsis,
-                                        showEndEllipsis,
-                                    } = getVisiblePages(page, totalPages);
-
-                                    return (
-                                        <>
-                                            {showStartEllipsis && (
-                                                <li className="page-item disabled">
-                                                    <span className="page-link">…</span>
-                                                </li>
-                                            )}
-
-                                            {pages.map(p => (
-                                                <li
-                                                    key={p}
-                                                    className={`page-item ${page === p ? "active" : ""}`}
-                                                >
-                                                    <button
-                                                        className="page-link"
-                                                        onClick={() => setPage(p)}
-                                                    >
-                                                        {p + 1}
-                                                    </button>
-                                                </li>
-                                            ))}
-
-                                            {showEndEllipsis && (
-                                                <li className="page-item disabled">
-                                                    <span className="page-link">…</span>
-                                                </li>
-                                            )}
-                                        </>
-                                    );
-                                })()}
-
-                                {/* Next */}
-                                <li className={`page-item ${page >= totalPages - 1 ? "disabled" : ""}`}>
-                                    <button
-                                        className="page-link"
-                                        onClick={() => setPage(p => p + 1)}
-                                        disabled={page >= totalPages - 1}
-                                    >
-                                        &raquo;
-                                    </button>
-                                </li>
-                            </ul>
-                        </nav>
-                    </Col>
-                </Row>
-            )}
 
             {/* Modals */}
             <ApprovalCommentModal

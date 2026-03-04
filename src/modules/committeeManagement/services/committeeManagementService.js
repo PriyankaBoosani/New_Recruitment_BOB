@@ -32,7 +32,13 @@ const committeeManagementService = {
     return api.get(
       `recruiter/position-panel/get-by-position-id/${positionId}`
     );
-  }
+  },
+  approveOrRejectCommittee: (positionPanelId, payload) =>
+    api.post(
+      `/recruiter/position-panel/approve-committee/${positionPanelId}`,
+      payload
+    ),
+
 
 
 };
