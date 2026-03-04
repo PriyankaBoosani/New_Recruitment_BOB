@@ -477,7 +477,7 @@ const JobPostingsList = () => {
                                                     {req.code}
                                                 </h6>
 
-                                                {req.status !== "NEW" && (
+                                                {/* {req.status !== "NEW" && (
                                                     <img
                                                         src={history_icon}
                                                         alt="history"
@@ -487,7 +487,7 @@ const JobPostingsList = () => {
                                                             handleOpenHistory(req);
                                                         }}
                                                     />
-                                                )}
+                                                )} */}
                                             </div>
 
                                             <div className="req-dates">
