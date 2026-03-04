@@ -94,7 +94,7 @@ export default function InterviewPool({
       <table className="table table-hover mb-0">
         <thead className="bg-light">
           <tr>
-            <th style={{ paddingLeft: "1rem" }}>
+            <th className="fs-14 fw-normal py-3" style={{ paddingLeft: '1rem' }}>
               <input
                 type="checkbox"
                 checked={allSelected}
@@ -123,7 +123,7 @@ export default function InterviewPool({
             sortedCandidates.map((c) => (
 
               <tr key={c.id}>
-                <td style={{ paddingLeft: "1rem" }}>
+                <td className="align-content-center" style={{ paddingLeft: '1rem' }}>
                   <input
                     type="checkbox"
                     checked={selectedIds.includes(c.id)}

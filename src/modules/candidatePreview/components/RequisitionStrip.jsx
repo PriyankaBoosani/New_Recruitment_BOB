@@ -357,7 +357,7 @@ const RequisitionStrip = ({
 
                 <div className="section-title mt-2">Preferred Education:</div>
                 <ul className="section-list">
-                  <li>{job?.preferred_qualification || "-"}</li>
+                  <li>{job?.preferred_qualification || "NA"}</li>
                 </ul>
               </div>
 

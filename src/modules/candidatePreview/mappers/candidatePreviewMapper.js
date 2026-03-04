@@ -238,14 +238,14 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
         // percentage: edu.percentage ?? "-",
 
         percentage:
-  edu.percentage != null
-    ? (() => {
-        const value = Number(edu.percentage).toFixed(2);
-        return Number(edu.percentage) < 10
-          ? `${value} CGPA`
-          : `${value}%`;
-      })()
-    : "-",
+          edu.percentage != null
+            ? (() => {
+              const value = Number(edu.percentage).toFixed(2);
+              return Number(edu.percentage) < 10
+                ? `${value} CGPA`
+                : `${value}%`;
+            })()
+            : "-",
         educationLevel_name: educationLevel?.documentName || "-",
         mandatoryQualification_name: qualification?.qualificationName || "-",
         specialization_name: specialization?.specializationName || "-"
@@ -367,10 +367,10 @@ export const mapJobPositionToRequisitionStrip = (
 
     /*  ADD THESE */
     contract_years: apiData.contractYears ?? 0,
-mandatory_experience_years:
-  apiData.mandatoryExperienceMonths
-    ? (apiData.mandatoryExperienceMonths / 12)
-    : 0,
+    mandatory_experience_years:
+      apiData.mandatoryExperienceMonths
+        ? (apiData.mandatoryExperienceMonths / 12)
+        : 0,
 
     registration_start_date: formatToIST(apiData.createdDate),
     registration_end_date: formatToIST(apiData.modifiedDate),
@@ -384,7 +384,7 @@ mandatory_experience_years:
     no_of_vacancies: apiData.totalVacancies ?? 0,
 
     mandatory_qualification: apiData.mandatoryEducation || "-",
-    preferred_qualification: apiData.preferredEducation || "-",
+    preferred_qualification: apiData.preferredEducation?.trim() || "NA",
 
     roles_responsibilities: apiData.rolesResponsibilities || "-",
 
