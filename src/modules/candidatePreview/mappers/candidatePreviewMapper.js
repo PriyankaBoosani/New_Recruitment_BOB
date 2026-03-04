@@ -335,6 +335,28 @@ export const mapJobPositionToRequisitionStrip = (
     ID: 0
   };
 
+
+  const formatExperience = (months) => {
+  if (months == null) return null;
+
+  const totalMonths = Number(months);
+
+  if (isNaN(totalMonths)) return null;
+
+  const years = Math.floor(totalMonths / 12);
+  const remainingMonths = totalMonths % 12;
+
+  if (years > 0 && remainingMonths > 0) {
+    return `${years} year${years > 1 ? "s" : ""} ${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
+  }
+
+  if (years > 0) {
+    return `${years} year${years > 1 ? "s" : ""}`;
+  }
+
+  return `${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
+};
+
   apiData.positionCategoryNationalDistributions?.forEach((c) => {
     // Reservation categories
     if (!c.isDisability && c.reservationCategoryId) {
@@ -367,10 +389,8 @@ export const mapJobPositionToRequisitionStrip = (
 
     /*  ADD THESE */
     contract_years: apiData.contractYears ?? 0,
-    mandatory_experience_years:
-      apiData.mandatoryExperienceMonths
-        ? (apiData.mandatoryExperienceMonths / 12)
-        : 0,
+mandatory_experience_years:
+  formatExperience(apiData.mandatoryExperienceMonths),
 
     registration_start_date: formatToIST(apiData.createdDate),
     registration_end_date: formatToIST(apiData.modifiedDate),

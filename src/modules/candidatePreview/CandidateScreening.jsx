@@ -1100,18 +1100,23 @@ const hasPrivilege = (key) => {
                 <div className="d-flex flex-wrap gap-4 justify-content-between align-items-end">
                   <div className="d-flex gap-3 flex-wrap align-items-end pb-3">
                     {/* Offer Template */}
-                    <div>
-                      <p className="mb-1 fw-normal fs-13 blue-color">Offer Template</p>
-                      <select
-                        className="form-select fs-13 py-1"
-                        style={{ width: "180px" }}
-                        value={offerTemplateId}
-                        onChange={(e) => setOfferTemplateId(e.target.value)}
-                      >
-                        <option value="">Select Template</option>
-                        <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Template 1</option>
-                      </select>
-                    </div>
+                  <div>
+                        <p className="mb-1 fw-normal fs-13 blue-color">Offer Template</p>
+                        <select
+                          className="form-select fs-13 py-1"
+                          style={{ width: "180px" }}
+                          value={offerTemplateId}
+                          onChange={(e) => setOfferTemplateId(e.target.value)}
+                        >
+                          <option value="">Select Template</option>
+                          <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Template 1</option>
+                        </select>
+
+                        {/* Reserve space for alignment consistency */}
+                        <small className="d-block mt-1 fs-12 invisible">
+                          placeholder
+                        </small>
+                      </div>
 
                     {/* Accept Before Date */}
                     <div>
@@ -1141,11 +1146,13 @@ const hasPrivilege = (key) => {
                           }
                         }}
                       />
-                      {formErrors.acceptBeforeDate && (
-                        <small className="text-danger d-block mt-1 fs-12">
-                          {formErrors.acceptBeforeDate}
-                        </small>
-                      )}
+                        <small
+        className={`d-block mt-1 fs-12 ${
+          formErrors.acceptBeforeDate ? "text-danger" : "invisible"
+        }`}
+      >
+        {formErrors.acceptBeforeDate || "placeholder"}
+      </small>
                     </div>
 
                     {/* Joining Date */}
@@ -1184,20 +1191,31 @@ const hasPrivilege = (key) => {
                           }
                         }}
                       />
-                      {formErrors.joiningDate && (
-                        <small className="text-danger d-block mt-1 fs-12">
-                          {formErrors.joiningDate}
+                                            <small
+                          className={`d-block mt-1 fs-12 ${
+                            formErrors.joiningDate ? "text-danger" : "invisible"
+                          }`}
+                        >
+                          {formErrors.joiningDate || "placeholder"}
                         </small>
-                      )}
                     </div>
 
                     {/* Send Offers Button */}
-                    <div>
-                      <button className="btn orange-bg text-white fs-13 px-3 py-1" onClick={handleSendOffer} disabled={!isSendOfferEnabled}>
-                        <img className="me-2" src={offerIcon} width={14} />
-                        Send Offers
-                      </button>
-                    </div>
+                  <div>
+  <button
+    className="btn orange-bg text-white fs-13 px-3 py-1"
+    onClick={handleSendOffer}
+    disabled={!isSendOfferEnabled}
+  >
+    <img className="me-2" src={offerIcon} width={14} />
+    Send Offers
+  </button>
+
+  {/* Reserve equal space like other fields */}
+  <small className="d-block mt-1 fs-12 invisible">
+    {"\u00A0"}
+  </small>
+</div>
                   </div>
                 </div>
               </div>

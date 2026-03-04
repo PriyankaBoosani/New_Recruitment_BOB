@@ -23,12 +23,31 @@ const DocumentViewerModal = ({
 
   /* ================= USER ROLE ================= */
 
-  const user = useSelector((state) => state.user.user);
-  const role = user?.role?.toLowerCase();
-  const isZonalHr = role === "zonal_hr";
-  const isInterviewer = role === "interviewer";
+  // const user = useSelector((state) => state.user.user);
+  // const role = user?.role?.toLowerCase();
+  // const isZonalHr = role === "zonal_hr";
+  // const isInterviewer = role === "interviewer";
+
+
+
+
+
+
+
+
+  const privileges = useSelector((state) => state.user.privileges);
+
+const isZonalHr = privileges?.Verification;
+const isInterviewer = privileges?.Interview;
+
 const disableActions =
   isInterviewer || (isZonalHr && isZonalAbsent);
+
+console.log("PRIVILEGES:", privileges);
+console.log("isZonalHr:", isZonalHr);
+console.log("isInterviewer:", isInterviewer);
+console.log("isZonalAbsent:", isZonalAbsent);
+
 
 console.log("disableActions:", disableActions);
 
@@ -40,11 +59,11 @@ console.log("disableActions:", disableActions);
 
 
 
-console.log("==== DocumentViewerModal Debug ====");
-console.log("ROLE:", role);
-console.log("isZonalHr:", isZonalHr);
-console.log("isInterviewer:", isInterviewer);
-console.log("isZonalAbsent (prop):", isZonalAbsent);
+// console.log("==== DocumentViewerModal Debug ====");
+// console.log("ROLE:", role);
+// console.log("isZonalHr:", isZonalHr);
+// console.log("isInterviewer:", isInterviewer);
+// console.log("isZonalAbsent (prop):", isZonalAbsent);
 
 
   /* ================= FETCH SAS URL ================= */

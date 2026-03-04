@@ -97,8 +97,18 @@ const isZonalAbsent =
 
   const user = useSelector((state) => state.user.user);
   const role = user?.role?.toLowerCase();
-  const isZonalHr = role === "zonal_hr";
-  const isInterviewer = role === "interviewer";
+  // const isZonalHr = role === "zonal_hr";
+  // const isInterviewer = role === "interviewer";
+
+
+  const privileges = useSelector((state) => state.user.privileges);
+
+const isZonalHr = privileges?.Verification;
+const isInterviewer = privileges?.Interview;
+
+console.log("PRIVILEGES:", privileges);
+console.log("isZonalHr:", isZonalHr);
+console.log("isInterviewer:", isInterviewer);
 
 
 
@@ -1930,41 +1940,38 @@ pointerEvents: disableDocAction ? "none" : "auto",
 
 
             {/* DATE */}
-            <div className="submit-date-group d-flex flex-column">
-              <label className="submit-label">{t("submit_before")}</label>
+           
+             {/* DATE - Show only for PROVISIONALLY APPROVED */}
+{zonalDecision === "PROVISIONALLY_APPROVED" && (
+  <div className="submit-date-group d-flex flex-column">
+    <label className="submit-label">{t("submit_before")}</label>
 
-              <input
-                type="date"
-                className={`criteria-date ${errors.zonalSubmitDate ? "input-error" : ""}`}
-                min={minFutureDate}
-                value={screeningForm.zonalSubmitDate}
-              disabled={
-  isZonalAbsent ||
-  !allDocsVerified ||
-  zonalDecision !== "PROVISIONALLY_APPROVED"
-}
+    <input
+      type="date"
+      className={`criteria-date ${errors.zonalSubmitDate ? "input-error" : ""}`}
+      min={minFutureDate}
+      value={screeningForm.zonalSubmitDate}
+      disabled={isZonalAbsent || !allDocsVerified}
+      onChange={(e) => {
+        setScreeningForm(prev => ({
+          ...prev,
+          zonalSubmitDate: e.target.value
+        }));
 
+        setErrors(prev => ({
+          ...prev,
+          zonalSubmitDate: undefined
+        }));
+      }}
+    />
 
-
-                onChange={(e) => {
-                  setScreeningForm(prev => ({
-                    ...prev,
-                    zonalSubmitDate: e.target.value
-                  }));
-
-                  setErrors(prev => ({
-                    ...prev,
-                    zonalSubmitDate: undefined
-                  }));
-                }}
-              />
-
-              {errors.zonalSubmitDate && (
-                <small className="text-danger mt-1">
-                  {errors.zonalSubmitDate}
-                </small>
-              )}
-            </div>
+    {errors.zonalSubmitDate && (
+      <small className="text-danger mt-1">
+        {errors.zonalSubmitDate}
+      </small>
+    )}
+  </div>
+)}
 
 
 

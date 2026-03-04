@@ -525,7 +525,7 @@ useEffect(() => {
             }
           >‹</span>
  
-       <DatePicker
+<DatePicker
   selected={selectedDate}
   onChange={(date) => {
     setSelectedDate(date);
@@ -536,7 +536,14 @@ useEffect(() => {
   onInputClick={() => setIsCalendarOpen(true)}
   dateFormat="dd MMMM yyyy"
   customInput={<DatePill />}
-   maxDate={new Date()}
+  maxDate={new Date()}
+
+  // ✅ ADD THESE
+  showMonthDropdown
+  showYearDropdown
+  dropdownMode="select"
+  yearDropdownItemNumber={15}
+  scrollableYearDropdown
 />
 
  

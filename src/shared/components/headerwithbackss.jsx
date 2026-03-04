@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const HeaderWithBackss = ({ title, subtitle }) => {
   const navigate = useNavigate();
@@ -7,7 +8,12 @@ const HeaderWithBackss = ({ title, subtitle }) => {
 
   const state = location.state || {};
 
-const handleBack = () => {
+  // ✅ Hooks must be here
+  const privileges = useSelector((state) => state.user.privileges);
+
+ const handleBack = () => {
+  console.log("🔵 BACK BUTTON CLICKED");
+
   sessionStorage.setItem("fromPreviewBack", "true");
 
   const payload = {
@@ -18,19 +24,35 @@ const handleBack = () => {
     selectedDate: state.selectedDate
   };
 
-  console.log("⬅️ Recruiter Back CLICKED");
-  console.log("📤 Sending to interviewer:", payload);
-  console.log(
-    "👥 preloadedCandidates size:",
-    payload.preloadedCandidates?.length
-  );
+  console.log("📦 Payload being sent:", payload);
+  console.log("🔐 Privileges from Redux:", privileges);
 
-  console.log("📤 Back nav requisition:", payload.requisition);
+  console.log("🔎 Checking privileges...");
+  console.log("Interview privilege:", privileges?.Interview);
+  console.log("Verification privilege:", privileges?.Verification);
+  console.log("Candidate Pool privilege:", privileges?.["Candidate Pool"]);
 
+  if (privileges?.Interview) {
+    console.log("✅ Navigating to /candidate-interviewer");
+    navigate("/candidate-interviewer", { state: payload });
+    return;
+  }
 
-  navigate("/candidate-interviewer", { state: payload });
+  if (privileges?.Verification) {
+    console.log("✅ Navigating to /candidate-verification");
+    navigate("/candidate-verification", { state: payload });
+    return;
+  }
+
+  if (privileges?.["Candidate Pool"]) {
+    console.log("✅ Navigating to /candidate-workflow");
+    navigate("/candidate-workflow", { state: payload });
+    return;
+  }
+
+  console.log("⚠️ No privilege matched → fallback navigate(-1)");
+  navigate(-1);
 };
-
 
   return (
     <div className="d-flex align-items-start" style={{ marginBottom: 12 }}>

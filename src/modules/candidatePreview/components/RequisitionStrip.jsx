@@ -317,7 +317,7 @@ const RequisitionStrip = ({
                   <div className="col-12 col-md-4">
                     <span className="stat-label">Experience:</span>{" "}
                     <span className="stat-value">
-                      {job?.mandatory_experience_years ?? 0} years
+                   {job?.mandatory_experience_years || "-"}
                     </span>
                   </div>
 

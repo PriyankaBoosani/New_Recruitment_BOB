@@ -25,13 +25,40 @@ const CandidatePreviewPage = ({ onHide }) => {
 
   const user = useSelector((state) => state.user.user);
 
-  const role = user?.role?.toLowerCase();
-  const isZonalHr = role === "zonal_hr";
-  const isInterviewer = role === "interviewer";
+  // const role = user?.role?.toLowerCase();
+  // const isZonalHr = role === "zonal_hr";
+  // const isInterviewer = role === "interviewer";
+  //   const isRecruiter = role === "recruiter";
+
+
+
+
+  const privileges = useSelector((state) => state.user.privileges);
+
+const isInterviewer = privileges?.Interview;
+const isZonalHr = privileges?.Verification;
+const isRecruiter = privileges?.JobPostings; // or whatever recruiter privilege is
+
+
   const selectedDate = state?.selectedDate;
-  const isRecruiter = role === "recruiter";
 
 
+
+
+
+
+  // const privileges = useSelector((state) => state.user.privileges);
+  
+    console.log("PRIVILEGES:", privileges);
+  
+    const canJobPost = privileges?.JobPostings;
+    const canCandidateWorkflow = privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"];
+    const canCommittee = privileges?.["Committee Management"];
+    const canVerification = privileges?.Verification;
+    const canAdmin = privileges?.Admin;
+    const canInterview = privileges?.["Interview"];
+    const canApprovals = privileges?.["Requisition Approval"] || privileges?.["Extension Approval"] || privileges?.["Committee Approval"];
+    const canViewPosition= privileges?.["View Position"];
 
   //  Now safe to use state
   const interviewScheduleId = state?.interviewScheduleId;
@@ -159,6 +186,9 @@ const CandidatePreviewPage = ({ onHide }) => {
 
     fetchData();
   }, [candidateId, positionId]);
+  // console.log("👤 Current User Role:", role);
+console.log("🔐 Redux Privileges:", privileges);
+console.log("🎯 isInterviewer:", isInterviewer);
 
   /* =======================
      RENDER
