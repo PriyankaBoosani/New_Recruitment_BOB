@@ -70,7 +70,7 @@ export const useUsers = () => {
       role: payload.role,
       name: payload.fullName,
       email: payload.email,
-      interviewCentreId: payload.interviewCentreId,
+      interviewCenterId: payload.interviewCenterId,
     };
 
     
@@ -184,7 +184,7 @@ const updateUser = async (id, payload) => {
       role: payload.role,
       name: payload.fullName,
       email: payload.email,
-      interviewCentreId: payload.interviewCentreId,
+      interviewCenterId: payload.interviewCenterId,
     };
 
     await masterApiService.updateUser(id, payloadData);
@@ -197,6 +197,7 @@ const updateUser = async (id, payload) => {
     console.error("Update failed:", err);
   }
 };
+console.log("interviewCentres", interviewCentres)
   return {
   users,
   loading,

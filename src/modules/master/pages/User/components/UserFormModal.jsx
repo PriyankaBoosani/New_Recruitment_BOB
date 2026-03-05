@@ -242,8 +242,8 @@ useEffect(() => {
 
                   {interviewCentres.map((centre) => (
                     <option
-                      key={centre.interviewCenterId}
-                      value={centre.interviewCenterId}
+                      key={centre.interviewCentreId}
+                      value={centre.interviewCentreId}
                     >
                       {centre.interviewCentre}
                     </option>

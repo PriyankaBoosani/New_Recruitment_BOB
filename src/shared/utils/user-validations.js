@@ -91,8 +91,8 @@ export const validateUserForm = (formData = {}, options = {}) => {
   } = options;
 
   const errors = {};
-  if (formData.role === "Zonal_HR" && !formData.interviewCentreId) {
-    errors.interviewCentreId = "This filed is required";
+  if (formData.role === "Zonal_HR" && !formData.interviewCenterId) {
+    errors.interviewCenterId = "This filed is required";
   }
 
   // Role
