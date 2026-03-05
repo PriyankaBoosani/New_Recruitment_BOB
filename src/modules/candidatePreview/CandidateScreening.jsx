@@ -1277,7 +1277,7 @@ const handleRequisitionChange = async (e) => {
                 )}
 
                 {activeTab === "INTERVIEW_POOL" 
-                  && hasPrivilege("SEND_TO_OFFER_POOL")
+                  && hasPrivilege("Offer Pool")
                   && canSendToOfferPool && (
                   <button
                     className="btn blue-bg text-white fs-14"
