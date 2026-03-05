@@ -595,3 +595,10 @@
 .css-hlgwow{
   min-height: 42px;
 }
+.modal-dialog-scrollable .modal-body {
+	overflow-y: inherit;
+}
+.modal-dialog-scrollable .modal-content {
+	/* max-height: 100%; */
+	overflow: inherit;
+}
