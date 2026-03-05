@@ -104,6 +104,10 @@ const ApplicationForm = ({
 
   const isZonalHr = privileges?.Verification;
   const isInterviewer = privileges?.Interview;
+  const isRecruiter = privileges?.canCandidateWorkflow; // or whatever recruiter privilege is
+  const canCandidatePool = privileges?.["Candidate Pool"];
+  const canInterviewPool = privileges?.["Interview Pool"];
+
 
   const mapDecisionToStatus = (val) => {
     const v = String(val || "").toUpperCase().trim();
@@ -432,33 +436,35 @@ const ApplicationForm = ({
       const map = {};
       const documents = [];
 
-      (res.data || []).forEach((item) => {
-        if (isZonalHr || isInterviewer) {
-          map[item.candidateDocumentId] = {
-            status: item.zonalHrDocStatus?.toUpperCase() || "PENDING",
-            comments: item.zonalHrDocComments,
-            verificationId: item.verificationId,
-          };
-        } else {
-          map[item.candidateDocumentId] = {
-            status: item.docScreeningStatus?.toUpperCase() || "PENDING",
-            comments: item.docScreeningComments,
-            verificationId: item.verificationId,
-          };
-        }
+    (res.data || []).forEach((item) => {
 
-        // Map document from screening committee status
-        documents.push({
-          id: item.candidateDocumentId,
-          candidateDocumentId: item.candidateDocumentId,
-          name: item.displayName || item.fileName || "Document",
-          fileName: item.fileName,
-          url: item.fileUrl,
-          status: isZonalHr || isInterviewer
-            ? (item.zonalHrDocStatus?.toUpperCase() || "PENDING")
-            : (item.docScreeningStatus?.toUpperCase() || "PENDING")
-        });
-      });
+  const isZonal = isZonalHr;
+ const status =
+  item.zonalHrDocStatus &&
+  item.zonalHrDocStatus !== "PENDING"
+    ? item.zonalHrDocStatus
+    : item.docScreeningStatus;
+
+  const comments = isZonal
+    ? item.zonalHrDocComments
+    : item.docScreeningComments;
+
+  map[item.candidateDocumentId] = {
+    status: status?.toUpperCase() || "PENDING",
+    comments: comments,
+    verificationId: item.verificationId,
+  };
+
+  documents.push({
+    id: item.candidateDocumentId,
+    candidateDocumentId: item.candidateDocumentId,
+    name: item.displayName || item.fileName || "Document",
+    fileName: item.fileName,
+    url: item.fileUrl,
+    status: status?.toUpperCase() || "PENDING",
+  });
+
+});
 
       setDocStatusMap(map);
       setScreeningDocuments(documents);
@@ -1630,8 +1636,8 @@ const ApplicationForm = ({
         </Accordion.Item>
 
         {/* ================= CRITERIA SECTION ================= */}
-        {!isZonalHr && !isInterviewView && !isInterviewer && (
-          <Card className="criteria-main-card">
+       {canCandidatePool && !disableDocAction && (
+  <Card className="criteria-main-card">
 
             <div className="criteria-wrapper">
 
@@ -2012,14 +2018,15 @@ const ApplicationForm = ({
 
 
       </Accordion>
-      <DocumentViewerModal
-        show={showViewer}
-        onHide={() => setShowViewer(false)}
-        document={selectedDoc}
-        onVerify={handleVerify}
-        onReject={handleReject}
-        isZonalAbsent={isZonalAbsent}
-      />
+    <DocumentViewerModal
+  show={showViewer}
+  onHide={() => setShowViewer(false)}
+  document={selectedDoc}
+  onVerify={handleVerify}
+  onReject={handleReject}
+  isZonalAbsent={isZonalAbsent}
+ 
+/>
     </>
   );
 };

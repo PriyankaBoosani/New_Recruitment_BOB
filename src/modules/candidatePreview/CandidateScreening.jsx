@@ -386,21 +386,39 @@ const hasPrivilege = (key) => {
     fetchAllCandidatesForFilters();
   }, [selectedPositionId, filters.status, filters.searchText, masterData]);
 
-  const handleRequisitionChange = (e) => {
-    const reqId = e.target.value;
+const handleRequisitionChange = async (e) => {
+  const reqId = e.target.value;
 
-    // USER TAKES CONTROL — NAV IS DEAD
-    isNavModeRef.current = false;
+  isNavModeRef.current = false;
 
-    setSelectedRequisitionId(reqId);
-    setSelectedPositionId("");
+  setSelectedRequisitionId(reqId);
+  setSelectedPositionId("");
+  setCandidates([]);
+  setSelectedCandidateIds([]);
+  setSelectedInterviewCandidateIds([]);
+  setPage(0);
+  setTotalElements(0);
+
+  if (!reqId) {
     setPositions([]);
-    setCandidates([]);
-    setSelectedCandidateIds([]);
-    setSelectedInterviewCandidateIds([]);
-    setPage(0);
-    setTotalElements(0);
-  };
+    return;
+  }
+
+  try {
+    setLoadingPositions(true);
+
+    const res = await jobPositionApiService.getPositionsByReqId({
+      requisitionId: reqId,
+    });
+
+    setPositions(res?.data || []);
+  } catch (err) {
+    console.error("Failed to load positions", err);
+    setPositions([]);
+  } finally {
+    setLoadingPositions(false);
+  }
+};
 
   const handleViewFile = async (candidate) => {
     if (!candidate.fileUrl) {

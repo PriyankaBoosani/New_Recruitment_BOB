@@ -248,7 +248,7 @@ const RequisitionStrip = ({
         onHide={() => setShowPosition(false)}
         centered
         size="lg"
-        scrollable
+        // scrollable
       >
 
         <Modal.Header closeButton className="knowmore-header">

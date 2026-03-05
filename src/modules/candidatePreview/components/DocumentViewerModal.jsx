@@ -12,7 +12,8 @@ const DocumentViewerModal = ({
   document,
   onVerify,
   onReject,
-  isZonalAbsent   
+  isZonalAbsent,
+  
 }) => {
   const { t } = useTranslation(["preview", "common", "validation"]);
 
@@ -35,13 +36,19 @@ const DocumentViewerModal = ({
 
 
 
-  const privileges = useSelector((state) => state.user.privileges);
+const privileges = useSelector((state) => state.user.privileges);
 
 const isZonalHr = privileges?.Verification;
 const isInterviewer = privileges?.Interview;
+const canCandidatePool = privileges?.["Candidate Pool"];
+
 
 const disableActions =
-  isInterviewer || (isZonalHr && isZonalAbsent);
+  !canCandidatePool && (
+    isInterviewer || (isZonalHr && isZonalAbsent)
+  );;
+
+
 
 
   /* ================= FETCH SAS URL ================= */

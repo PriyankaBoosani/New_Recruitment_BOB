@@ -25,8 +25,7 @@ const CandidatePreviewPage = ({ onHide }) => {
 
   const user = useSelector((state) => state.user.user);
 
-  // const role = user?.role?.toLowerCase();
-  // const isZonalHr = role === "zonal_hr";
+const role = user?.role ? user.role.toLowerCase() : "";  // const isZonalHr = role === "zonal_hr";
   // const isInterviewer = role === "interviewer";
   //   const isRecruiter = role === "recruiter";
 
@@ -37,8 +36,10 @@ const CandidatePreviewPage = ({ onHide }) => {
 
 const isInterviewer = privileges?.Interview;
 const isZonalHr = privileges?.Verification;
-const isRecruiter = privileges?.JobPostings; // or whatever recruiter privilege is
+// const isRecruiter = privileges?.JobPostings; // or whatever recruiter privilege is
 
+
+ const isRecruiter = role === "recruiter";
 
   const selectedDate = state?.selectedDate;
 
@@ -177,69 +178,61 @@ const isRecruiter = privileges?.JobPostings; // or whatever recruiter privilege 
       />
 
       {/* Header */}
-      {!isZonalHr && !isInterviewer && (
-        <HeaderWithBack
-          title="Candidate Screening"
-          subtitle="Manage and schedule interviews for candidates"
-          onBack={() =>
-            navigate("/candidate-verification", {
-              state: {
-                requisition: state.requisition,
-                position: state.position,
-                preloadedCandidates: state.candidates,
-                selectedDate: state.selectedDate
-              }
-            })
-          }
+ {isRecruiter ? (
+  <HeaderWithBack
+    title="Candidate Screening"
+    subtitle="Manage and schedule interviews for candidates"
+    onBack={() =>
+      navigate("/candidate-verification", {
+        state: {
+          requisition: state.requisition,
+          position: state.position,
+          preloadedCandidates: state.candidates,
+          selectedDate: state.selectedDate
+        }
+      })
+    }
+    positionId={positionId}
+    requisitionId={requisitionId}
+    candidateScreening={true}
+    activeTab={activeTab}
+  />
+) : isZonalHr ? (
+  <HeaderWithBacks
+    title="Candidate Profile"
+    subtitle="View candidate details application status"
+    onBack={() => {
+      sessionStorage.setItem("fromPreviewBack", "true");
 
-          positionId={positionId}
-          requisitionId={requisitionId}
-          candidateScreening={true}
-          activeTab={activeTab}
-        />
-      )}
-      {isZonalHr && (
-        <HeaderWithBacks
-          title="Candidate Profile"
-          subtitle="View candidate details application status"
-          onBack={() => {
-            sessionStorage.setItem("fromPreviewBack", "true");
+      navigate("/candidate-verification", {
+        state: {
+          requisition,
+          position,
+          preloadedCandidates: state.candidates || [],
+          selectedDate
+        }
+      });
+    }}
+  />
+) : isInterviewer ? (
+  <HeaderWithBackss
+    title="Candidate Profile"
+    subtitle="View candidate details application status"
+    onBack={() => {
+      sessionStorage.setItem("fromPreviewBack", "true");
 
-            navigate("/candidate-verification", {
-              state: {
-                requisition,
-                position,
-                preloadedCandidates: state.candidates || [],
-                selectedDate
-              }
-            });
-          }}
-        />
-      )}
-
-
-
-      {isInterviewer && (
-        <HeaderWithBackss
-          title="Candidate Profile"
-          subtitle="View candidate details application status"
-          onBack={() => {
-            sessionStorage.setItem("fromPreviewBack", "true");
-
-            navigate("/candidate-interviewer", {
-              state: {
-                requisition,
-                position,
-                preloadedCandidates:
-                  state.preloadedCandidates || state.candidates || [],
-                selectedDate
-              }
-            });
-
-
-          }}
-        />
-      )}
+      navigate("/candidate-interviewer", {
+        state: {
+          requisition,
+          position,
+          preloadedCandidates:
+            state.preloadedCandidates || state.candidates || [],
+          selectedDate
+        }
+      });
+    }}
+  />
+) : null}
 
 
       {/* Requisition Strip */}
