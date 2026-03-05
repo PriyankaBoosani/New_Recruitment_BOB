@@ -130,7 +130,6 @@ const CommitteeRequests = () => {
         if (ids.length === 0) return;
 
         if (type === "approve") {
-            console.log("Approving:", ids, "Comment:", comment);
             setCommitteeRequests(prev =>
                 prev.map(req =>
                     ids.includes(req.id) ? { ...req, status: "Approved" } : req
@@ -140,7 +139,6 @@ const CommitteeRequests = () => {
         }
 
         if (type === "reject") {
-            console.log("Rejecting:", ids, "Comment:", comment);
             setCommitteeRequests(prev =>
                 prev.map(req =>
                     ids.includes(req.id) ? { ...req, status: "Rejected" } : req

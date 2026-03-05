@@ -286,7 +286,6 @@ export const validateStateDistribution = ({
       params: { disabilityTotal: disTotal, categoryTotal: catTotal }
     };
   }
-  console.log(catTotal !== vacancies)
 
 
 

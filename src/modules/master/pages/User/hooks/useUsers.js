@@ -14,9 +14,7 @@ export const useUsers = () => {
     setLoading(true);
     try {
       const res = await masterApiService.getRegister();
-      console.log("res",res);
       const list = mapUsersFromApi(res || []);
-      console.log("list",list);
 
       // Newest first (highest id on top)
       //list.sort((a, b) => Number(b.id) - Number(a.id));
@@ -50,7 +48,6 @@ export const useUsers = () => {
 //   setLoading(true);
 //   try {
 //     const res = await masterApiService.getRoles();
-//     console.log("roles res",res)
 
 //     const roles = res?.data || [];  
     
@@ -68,7 +65,6 @@ export const useUsers = () => {
   }, []);
 
   const addUser = async (payload) => {
-    console.log("payload",payload);
 
     const payloadData = {
       role: payload.role,
@@ -144,10 +140,9 @@ export const useUsers = () => {
 
     } catch (err) {
       //  network / server error
-      console.log("NETWORK ERROR:", err);
 
       const message = "Something went wrong";
-      // toast.error(message);
+      toast.error(message);
 
       return {
         success: false,

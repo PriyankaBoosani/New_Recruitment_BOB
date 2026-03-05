@@ -22,7 +22,6 @@ const UserPage = () => {
   downloadUserTemplate
   } = useUsers();
 
-  console.log("users",users);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);

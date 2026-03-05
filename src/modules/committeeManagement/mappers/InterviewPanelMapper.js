@@ -64,7 +64,6 @@ export const preparePanelPayload = (
 
 
 export const mapPanelsApi = (list = []) => {
-  console.log("RAW PANELS 👉", list);
 
   return list.map(panel => ({
     /* ===== PANEL INFO ===== */

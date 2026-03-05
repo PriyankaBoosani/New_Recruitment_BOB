@@ -112,9 +112,7 @@ export default function InterviewerSchedule() {
   useEffect(() => {
     InterviewerService.getPanelPositions()
       .then(res => {  
-        console.log("RAW POSITIONS API:", res.data);
         const mapped = mapPanelPositions(res.data || []);
-        console.log("MAPPED PANEL POSITIONS:", mapped);
         setPanelPositions(mapped);
       })
       .catch(() => toast.error(t("failed_load_panel_positions")));
@@ -126,7 +124,6 @@ export default function InterviewerSchedule() {
     if (!cameFromPreviewBack) return;
     if (!navState.preloadedCandidates?.length) return;
 
-    console.log("🔁 Using preloaded interviewer candidates");
 
     setAllCandidatesRaw(navState.preloadedCandidates);
     const mapped = mapInterviewerCandidates(navState.preloadedCandidates);
@@ -208,7 +205,6 @@ export default function InterviewerSchedule() {
     if (!cameFromPreviewBack) return;
     if (!navState.requisition || !navState.position) return;
 
-    console.log("🔁 Restore selector objects from nav");
 
     const normalizedReq = {
       ...navState.requisition,
@@ -233,7 +229,6 @@ export default function InterviewerSchedule() {
 
     // ✅ IMPORTANT — clear restore flag after use
     sessionStorage.removeItem("fromPreviewBack");
-    console.log("🧹 Cleared fromPreviewBack flag");
 
   }, [cameFromPreviewBack]);
 
@@ -266,7 +261,6 @@ export default function InterviewerSchedule() {
 
   useEffect(() => {
     if (!selectedPosition) {
-      console.log("🧹 CLEARING TABLE — no position selected");
       setRows([]);
       setAllCandidatesRaw([]);
       setPage(0);
@@ -360,7 +354,6 @@ const toggleAbsent = (id) =>
 
   //     const changedRows = rows.filter(isRowChanged);
 
-  //     console.log("🧾 Changed rows:", changedRows.length);
 
   //     if (!changedRows.length) {
   //       toast.info("No changes to save");
@@ -383,7 +376,6 @@ const toggleAbsent = (id) =>
   //       };
   //     });
 
-  //     console.log("📦 CHANGED SCORE PAYLOADS:", payloads);
 
   //     await Promise.all(
   //       payloads.map(p =>
@@ -407,7 +399,6 @@ const toggleAbsent = (id) =>
 
   //     const changedRows = rows.filter(isRowChanged);
 
-  //     console.log("🧾 Changed rows:", changedRows.length);
 
   //     if (!changedRows.length) {
   //       toast.info("No changes to save");
@@ -430,7 +421,6 @@ const toggleAbsent = (id) =>
   //       };
   //     });
 
-  //     console.log("📦 BATCH SCORE PAYLOAD:", payloads);
 
   //     await InterviewerService.setCandidateScoreBatch(payloads);
 
@@ -484,7 +474,6 @@ const handleSave = async () => {
       };
     });
 
-    console.log("📦 BATCH SCORE PAYLOAD:", payloads);
 
     await InterviewerService.setCandidateScoreBatch(payloads);
 
@@ -510,13 +499,6 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const isSelectionDone =
     selectedRequisition && selectedPosition;
 
-
-  console.log("📅 Strip dates:",
-    selectedRequisition?.requisition?.startDate,
-    selectedRequisition?.requisition?.registration_start_date,
-    selectedRequisition?.requisition?.endDate,
-    selectedRequisition?.requisition?.registration_end_date
-  );
 
 
   /* ================= UI ================= */

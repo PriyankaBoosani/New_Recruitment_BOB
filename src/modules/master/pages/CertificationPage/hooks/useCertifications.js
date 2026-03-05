@@ -138,10 +138,9 @@ export const useCertifications = () => {
 
       return { success: true };
     } catch (err) {
-      console.log("NETWORK ERROR:", err);
 
       const message = t("bulk_error") || "Something went wrong";
-    //   toast.error(message);
+      toast.error(message);
 
       return {
         success: false,

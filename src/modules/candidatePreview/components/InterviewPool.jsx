@@ -175,7 +175,7 @@ export default function InterviewPool({
                     <Person
                       className="me-3 cursor-pointer"
                       onClick={() =>
-                        console.log("Navigating to preview", c) ||
+                       
                         navigate("/candidate-preview", {
                           state: {
                             candidate: c,

@@ -5,7 +5,6 @@ export const mapInterviewCandidates = (
 ) => {
   return apiData.map((item) => {
     const schedule = item.interviewSchedules || {};
-    console.log("Interview API item:", item);
 
     return {
 

@@ -5,7 +5,6 @@ import { Modal, Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
-  console.log("target",target);
   const { t } = useTranslation(['user']);
 
   return (

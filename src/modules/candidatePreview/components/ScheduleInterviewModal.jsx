@@ -14,7 +14,6 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 	const fileInputRef = React.useRef(null);
 	const [file, setFile] = React.useState(null);
 	const [validationErrors, setValidationErrors] = React.useState([]);
-	// console.log("Selected position ID for scheduling:", positionId);
 
 	const handleFileSelect = (e) => {
 		const selectedFile = e.target.files[0];

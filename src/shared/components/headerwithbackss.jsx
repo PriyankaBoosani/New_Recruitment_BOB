@@ -12,7 +12,6 @@ const HeaderWithBackss = ({ title, subtitle }) => {
   const privileges = useSelector((state) => state.user.privileges);
 
  const handleBack = () => {
-  console.log("🔵 BACK BUTTON CLICKED");
 
   sessionStorage.setItem("fromPreviewBack", "true");
 
@@ -24,33 +23,21 @@ const HeaderWithBackss = ({ title, subtitle }) => {
     selectedDate: state.selectedDate
   };
 
-  console.log("📦 Payload being sent:", payload);
-  console.log("🔐 Privileges from Redux:", privileges);
-
-  console.log("🔎 Checking privileges...");
-  console.log("Interview privilege:", privileges?.Interview);
-  console.log("Verification privilege:", privileges?.Verification);
-  console.log("Candidate Pool privilege:", privileges?.["Candidate Pool"]);
-
   if (privileges?.Interview) {
-    console.log("✅ Navigating to /candidate-interviewer");
     navigate("/candidate-interviewer", { state: payload });
     return;
   }
 
   if (privileges?.Verification) {
-    console.log("✅ Navigating to /candidate-verification");
     navigate("/candidate-verification", { state: payload });
     return;
   }
 
   if (privileges?.["Candidate Pool"]) {
-    console.log("✅ Navigating to /candidate-workflow");
     navigate("/candidate-workflow", { state: payload });
     return;
   }
 
-  console.log("⚠️ No privilege matched → fallback navigate(-1)");
   navigate(-1);
 };
 

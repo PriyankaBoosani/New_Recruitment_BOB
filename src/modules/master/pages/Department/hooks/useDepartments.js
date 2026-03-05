@@ -46,7 +46,6 @@ export const useDepartments = () => {
       };
 
     } catch (err) {
-      console.log("NETWORK ERROR:", err);
 
       const message = "Something went wrong";
       toast.error(message);

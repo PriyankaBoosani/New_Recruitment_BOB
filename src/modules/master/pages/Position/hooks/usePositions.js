@@ -97,11 +97,10 @@ export const usePositions = () => {
     try {
       const res = await masterApiService.bulkAddPositions(file);
 
-      console.log("API RESPONSE:", res); // logs for 200 & 422
 
       //  business failure
       if (res.success === false) {
-        // toast.error(res.message);
+       toast.error(res.message);
 
         return {
           success: false,
@@ -120,8 +119,6 @@ export const usePositions = () => {
 
     } catch (err) {
       //  network / server error
-      console.log("NETWORK ERROR:", err);
-
       const message = "Something went wrong";
       toast.error(message);
 

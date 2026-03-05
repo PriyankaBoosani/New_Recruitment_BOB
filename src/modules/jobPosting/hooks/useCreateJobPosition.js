@@ -17,7 +17,6 @@ export const useCreateJobPosition = () => {
         dto,
         indentFile: payload.indentFile,
       });
-      console.log("Final Create position response:", res);
 
       if (!res?.success) {
         throw new Error(res?.message || "Create position failed");

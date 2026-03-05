@@ -43,28 +43,6 @@ const isInterviewer = privileges?.Interview;
 const disableActions =
   isInterviewer || (isZonalHr && isZonalAbsent);
 
-console.log("PRIVILEGES:", privileges);
-console.log("isZonalHr:", isZonalHr);
-console.log("isInterviewer:", isInterviewer);
-console.log("isZonalAbsent:", isZonalAbsent);
-
-
-console.log("disableActions:", disableActions);
-
-
-
-
-
-
-
-
-
-// console.log("==== DocumentViewerModal Debug ====");
-// console.log("ROLE:", role);
-// console.log("isZonalHr:", isZonalHr);
-// console.log("isInterviewer:", isInterviewer);
-// console.log("isZonalAbsent (prop):", isZonalAbsent);
-
 
   /* ================= FETCH SAS URL ================= */
 

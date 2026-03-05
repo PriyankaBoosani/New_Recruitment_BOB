@@ -91,11 +91,9 @@ export const useJobGrades = () => {
     try {
       const res = await masterApiService.bulkAddJobGrades(file);
 
-      console.log("API RESPONSE:", res); // logs for 200 & 422
-
       //  business failure
       if (res.success === false) {
-        // toast.error(res.message);
+         toast.error(res.message);
         return {
           success: false,
           error: res.message,
@@ -111,10 +109,9 @@ export const useJobGrades = () => {
 
     } catch (err) {
       //  network / server error
-      console.log("NETWORK ERROR:", err);
 
       const message = "Something went wrong";
-      // toast.error(message);
+       toast.error(message);
 
       return {
         success: false,

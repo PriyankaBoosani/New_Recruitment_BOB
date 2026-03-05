@@ -34,7 +34,6 @@ export const useJobRequisitions = ({
       });
 
       const content = res?.data?.content || [];
-      console.log(content);
 
       setRequisitions(content.map(mapJobRequisitionFromApi));
       setPageInfo(res.data.page);

@@ -111,8 +111,6 @@ export const useSpecialCategories = () => {
     try {
       const res = await masterApiService.bulkAddSpecialCategories(file);
 
-      console.log("API RESPONSE:", res); // logs for 200 & 422
-
       //  business failure
       if (res.success === false) {
         // toast.error(res.message);
@@ -131,7 +129,6 @@ export const useSpecialCategories = () => {
 
     } catch (err) {
       //  network / server error
-      console.log("NETWORK ERROR:", err);
 
       const message = "Something went wrong";
       toast.error(message);

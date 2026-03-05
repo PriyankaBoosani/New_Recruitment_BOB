@@ -37,7 +37,6 @@ const ScheduleInterviews = () => {
 
   useEffect(() => {
     masterApiService.getMasterDisplayAll().then(res => {
-      console.log("MASTER DATA:", res.data);
 
       setMasterData(res.data || {});
 
@@ -93,11 +92,9 @@ const ScheduleInterviews = () => {
   };
 
   const handleImportPanel = () => {
-    console.log("import panels");
   };
 
   const handleApplyAll = () => {
-    console.log("apply start time to all", startTime);
   };
 
   /* ================= UI ================= */
@@ -164,7 +161,6 @@ const ScheduleInterviews = () => {
         <ScheduleReadyBar
           count={schedule.length}
           onCancel={() => navigate(-1)}
-          onSchedule={() => console.log("schedule clicked")}
         />
       </div>
 

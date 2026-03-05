@@ -11,8 +11,6 @@ export const useUpdateJobPosition = () => {
 
       const dto = mapAddPositionToUpdateDto(payload);
 
-      console.log("UPDATE DTO", dto);
-
       const res = await jobPositionApiService.updatePosition({
         dto,
         indentFile: payload.indentFile

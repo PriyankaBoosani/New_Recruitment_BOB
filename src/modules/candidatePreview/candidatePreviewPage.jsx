@@ -48,9 +48,6 @@ const isRecruiter = privileges?.JobPostings; // or whatever recruiter privilege 
 
 
   // const privileges = useSelector((state) => state.user.privileges);
-  
-    console.log("PRIVILEGES:", privileges);
-  
     const canJobPost = privileges?.JobPostings;
     const canCandidateWorkflow = privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"];
     const canCommittee = privileges?.["Committee Management"];
@@ -77,25 +74,6 @@ const isRecruiter = privileges?.JobPostings; // or whatever recruiter privilege 
     isZonalHr
       ? state?.applicationId
       : state?.applicationId ?? state?.candidate?.id;
-
-
-
-  console.log("applicationId: ", applicationId)
-
-
-  console.log("candidateId: ", candidateId)
-  console.log("applicationId: ", applicationId)
-
-
-
-
-
-
-
-
-
-
-
 
   // const applicationId = candidate?.id;
 
@@ -124,7 +102,6 @@ const isRecruiter = privileges?.JobPostings; // or whatever recruiter privilege 
         const InterviewCenters = await masterApiService.getAllInterviewCenters()
         const  ZonalStats =await masterApiService.getZonalStates()
     
-        console.log('ZonalStats',InterviewCenters.data)
 
         // const normalizedMasters = {
         //   genders: raw.genderMasters || [],
@@ -138,10 +115,8 @@ const isRecruiter = privileges?.JobPostings; // or whatever recruiter privilege 
         // };
 
         setMasters(fullMasters);
-        console.log("Full Masters Data:@@@@@", candidateId, positionId);
         /* ---------- Load Candidate ---------- */
         if (candidateId && positionId) {
-          console.log("Full Masters Data:@@@@@", candidateId, positionId);
           const candidateRes =
             await candidateWorkflowServices.getCandidateAllDetails(
               candidateId,
@@ -186,9 +161,6 @@ const isRecruiter = privileges?.JobPostings; // or whatever recruiter privilege 
 
     fetchData();
   }, [candidateId, positionId]);
-  // console.log("👤 Current User Role:", role);
-console.log("🔐 Redux Privileges:", privileges);
-console.log("🎯 isInterviewer:", isInterviewer);
 
   /* =======================
      RENDER

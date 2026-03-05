@@ -29,7 +29,6 @@ export default function CandidatePool({
 	};
 	const navigate = useNavigate();
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
-	console.log(candidates)
 
   /* ---------- Selection logic ---------- */
 

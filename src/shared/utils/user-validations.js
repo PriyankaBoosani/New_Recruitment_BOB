@@ -89,8 +89,6 @@ export const validateUserForm = (formData = {}, options = {}) => {
     currentId = null,
     skipEmailCheck = false
   } = options;
-console.log("formData",formData)
-console.log("currentId",currentId)
 
   const errors = {};
   if (formData.role === "Zonal_HR" && !formData.interviewCentreId) {

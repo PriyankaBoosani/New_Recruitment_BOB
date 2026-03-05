@@ -8,8 +8,6 @@ import deleteIcon from "../../../../../assets/delete_icon.png";
 const UserTable = ({
   data, searchTerm, currentPage, setCurrentPage, pageSize,setPageSize,onEdit,onView,onDelete,interviewCentres
 }) => {
-  console.log("inter",interviewCentres)
-  console.log("data",data);
   const { t } = useTranslation(["user"]);
   const filtered = data.filter(u =>
     Object.values(u).some(v =>
@@ -20,7 +18,6 @@ const UserTable = ({
   const indexOfLast = currentPage * pageSize;
   const indexOfFirst = indexOfLast - pageSize;
   const current = filtered.slice(indexOfFirst, indexOfLast);
-  console.log("current",current);
   const totalPages = Math.ceil(filtered.length / pageSize);
   const getVisiblePages = (currentPage, totalPages) => {
     const windowSize = 3;

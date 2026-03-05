@@ -35,7 +35,6 @@ export default function useInterviewPool({
 
         // Panels
         const panels = panelRes?.data || [];
-        console.log("Panels length:", panels);
         const panelLookup = {};
         panels.forEach((p) => {
           panelLookup[p.interviewPanelId] = p.panelName;

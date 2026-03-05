@@ -136,7 +136,6 @@ const RequisitionRequests = () => {
 
   const user = useSelector(state => state.user.user);
   const role = user?.role;
-  console.log("User Role:", role);
   const [statuses, setStatuses] = useState([]);
   const formatStatusLabel = (status) => {
     if (!status) return "";

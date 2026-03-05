@@ -63,16 +63,6 @@ export default function CandidateVerification() {
  
 const location = useLocation();
  
- 
- 
-console.log("📍 CandidateVerification mounted");
-console.log("📍 Location state:", location.state);
- 
-console.log("🧭 fromZonalSubmit:", sessionStorage.getItem("fromZonalSubmit"));
-console.log("🧭 fromPreviewBack:", sessionStorage.getItem("fromPreviewBack"));
- 
- 
- 
 const cameFromZonal =
   sessionStorage.getItem("fromZonalSubmit") === "true";
  
@@ -127,14 +117,12 @@ const navSelectedDate =
     : null;
  
  
-    console.log("📅 navSelectedDate:", navSelectedDate);
  
 const [selectedDate, setSelectedDate] =
   useState(navSelectedDate || new Date());
  
  
 useEffect(() => {
-  console.log("📅 SelectedDate changed:", selectedDate);
 }, [selectedDate]);
  
  
@@ -156,7 +144,6 @@ const navPosition = location.state?.position || null;
  
  
 useEffect(() => {
-  console.log("NAV STATE:", location.state);
 }, []);
  
  useEffect(() => {
@@ -207,7 +194,6 @@ const loadCandidates = async (dateParam = selectedDate) => {
       !usedNavData &&
       location.state?.preloadedCandidates?.length
     ) {
-      console.log("✅ Restoring after API load");
  
       if (location.state?.requisition)
         setSelectedRequisition(location.state.requisition);
@@ -232,7 +218,6 @@ const loadCandidates = async (dateParam = selectedDate) => {
  
  
 useEffect(() => {
-  console.log("RAW API LIST SIZE:", allCandidatesRaw.length);
 }, [allCandidatesRaw]);
  
 const hasNavCandidates = !!location.state?.preloadedCandidates?.length;
@@ -240,17 +225,6 @@ const navCandidates = location.state?.preloadedCandidates || [];
  
  
 useEffect(() => {
- 
- 
- 
-  console.log("🔁 Restore effect running");
-console.log("🔁 cameFromZonal:", cameFromZonal);
-console.log("🔁 cameFromPreviewBack:", cameFromPreviewBack);
-console.log("🔁 usedNavData:", usedNavData);
-console.log("🔁 navInitRef.current:", navInitRef.current);
-console.log("🔁 navCandidates length:", navCandidates.length);
- 
- 
   // restore selection from nav
   if (
     (cameFromZonal || cameFromPreviewBack) &&
@@ -258,7 +232,6 @@ console.log("🔁 navCandidates length:", navCandidates.length);
     navCandidates.length &&
     navInitRef.current
   ) {
-    console.log("Using nav candidates once");
  
     setAllCandidatesRaw(navCandidates);
 const rows = mapCandidatesToTableRows(navCandidates);
@@ -285,11 +258,9 @@ setOriginalAbsentMap(map);
 }, [selectedDate]);
  
 useEffect(() => {
-  console.log("🎯 SelectedRequisition changed:", selectedRequisition);
 }, [selectedRequisition]);
  
 useEffect(() => {
-  console.log("🎯 SelectedPosition changed:", selectedPosition);
 }, [selectedPosition]);
  
  
@@ -473,7 +444,6 @@ const handleSaveAbsent = async () => {
       absentStatusUpdates: updates
     };
  
-    console.log("📦 Batch absent payload:", payload);
  
     await CandidateVerificationService.updateAbsentStatusBatch(payload);
  

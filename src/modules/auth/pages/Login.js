@@ -26,7 +26,6 @@ const Login = () => {
   const [unverifiedUserId, setUnverifiedUserId] = useState(null);
   const navigate = useNavigate();
   const token = useSelector((state) => state.user.auth?.access_token);
-  // console.log("Token from Redux:", token);
 
   // const encryptPassword = (password) => {
   //   return CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
@@ -102,7 +101,6 @@ const Login = () => {
       // }
       const privileges = authApiRes.preveileges || {};
 
-      console.log("privileges,", privileges);
 
       if (privileges.Admin) {
         navigate("/users", { replace: true });

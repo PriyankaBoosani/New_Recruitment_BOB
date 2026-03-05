@@ -184,13 +184,11 @@ const normalizedRequisition = {
   registration_end_date: selectedRequisitionObj?.endDate,
 };
 
-console.log("selectedRequisitionObj", selectedRequisitionObj);
 
 const selectedPositionObj = positions.find(
   p => p.jobPositions?.positionId === selectedPosition
 )?.jobPositions;
 
-console.log("selectedPositionObj", selectedPositionObj);
 
 
 const selectedPositionFull = positions.find(

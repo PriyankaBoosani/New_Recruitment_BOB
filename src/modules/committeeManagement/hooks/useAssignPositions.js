@@ -264,10 +264,8 @@ const isDirty = () => {
   //       size
   //     });
 
-  //     console.log("RES 👉", res);
   //     const apiData = res?.data?.content || [];
   //     const mapped = mapPanelsApi(apiData);
-  //     console.log("MAPPED 👉", mapped);
   //     setAllPanels(mapped);
   //     setAvailablePanels(mapped); // reset source of truth
 
@@ -370,7 +368,6 @@ const showError = (message, errors = []) => {
         screeningPanelList: [],
         compensationPanelList: []
       };
-      console.log("SELECTED COMMITTEES 👉", selectedCommittees);
 
       Object.entries(selectedCommittees).forEach(
         ([committeeType, panels]) => {
@@ -414,7 +411,6 @@ const showError = (message, errors = []) => {
         }
       );
 
-      console.log("FINAL PAYLOAD 👉", payload);
 
       const res= await committeeManagementService.assignPanelToPosition(
         selectedPosition,

@@ -29,7 +29,6 @@ const InterviewDayTable = ({
 
   /*  NAVIGATION */
   const goToPreview = (row) => {
-    console.log(" NAVIGATING WITH:", row);
 
     const posId =
       position?.raw?.positionId ||
@@ -38,7 +37,6 @@ const InterviewDayTable = ({
       position?.value ||
       null;
 
-    console.log(" NAV POS ID:", posId);
 
     navigate("/candidate-preview", {
       state: {
@@ -54,14 +52,6 @@ const InterviewDayTable = ({
       },
     });
   };
-
-
-
-
-
-  console.log("📊 TABLE ROWS RECEIVED:", rows);
-  console.log("📊 TOTAL ELEMENTS:", totalElements);
-
 
   const totalPages = Math.ceil(totalElements / pageSize);
   const start = totalElements === 0 ? 0 : page * pageSize + 1;

@@ -53,7 +53,6 @@ const RankListModal = ({
 
 		try {
 				setLoading(true);
-				console.log("Downloading rank list for candidate IDs:", selectedIds);
 				const res = await jobPositionApiService.downloadRankListExcel(
 					selectedIds
 				);
@@ -114,7 +113,6 @@ const RankListModal = ({
 				const errors = Array.isArray(res?.data)
 					? res.data
 					: [];
-				console.log("Validation errors from API:", errors);
 				setValidationErrors(errors);
 			}
 

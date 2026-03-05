@@ -49,9 +49,6 @@ const CategoryFormModal = ({
   /* ---------------- SUBMIT ---------------- */
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('isEditing:', isEditing);
-    console.log('editingCategory:', editingCategory);
-    console.log('categories:', categories);
     const { valid, errors: vErrors } = validateCategoryForm(formData, {
       existing: categories,
       currentId: isEditing ? editingCategory?.id : null   //  THIS LINE FIXES IT

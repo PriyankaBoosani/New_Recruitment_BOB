@@ -43,8 +43,8 @@ const ApplicationForm = ({
   const candidate = location.state?.candidate;
 
   const zonalInitRef = useRef(true);
-const isZonalAbsent =
-  String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
+  const isZonalAbsent =
+    String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
 
 
 
@@ -63,7 +63,6 @@ const isZonalAbsent =
   };
 
   useEffect(() => {
-    console.log("Loaded Candidate:", candidate);
   }, [candidate]);
 
   const [screeningForm, setScreeningForm] = useState({
@@ -103,19 +102,8 @@ const isZonalAbsent =
 
   const privileges = useSelector((state) => state.user.privileges);
 
-const isZonalHr = privileges?.Verification;
-const isInterviewer = privileges?.Interview;
-
-console.log("PRIVILEGES:", privileges);
-console.log("isZonalHr:", isZonalHr);
-console.log("isInterviewer:", isInterviewer);
-
-
-
-    console.log("ROLE:", role);
-
-console.log("isZonalAbsent:", isZonalAbsent);
-
+  const isZonalHr = privileges?.Verification;
+  const isInterviewer = privileges?.Interview;
 
   const mapDecisionToStatus = (val) => {
     const v = String(val || "").toUpperCase().trim();
@@ -135,7 +123,7 @@ console.log("isZonalAbsent:", isZonalAbsent);
 
     if (s === "VERIFIED") return "YES";
     if (s === "REJECTED" || s === "ZONAL_REJECTED") return "NO";
-  if (s === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
+    if (s === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
     return "";
   };
 
@@ -188,10 +176,10 @@ console.log("isZonalAbsent:", isZonalAbsent);
     // 1️⃣ Decision not selected
     // -----------------------------------------
 
-if (isZonalAbsent) {
-  toast.info("Zonal Absent candidates cannot be processed.");
-  return;
-}
+    if (isZonalAbsent) {
+      toast.info("Zonal Absent candidates cannot be processed.");
+      return;
+    }
 
     if (hasPendingDocument) {
       toast.warning(
@@ -238,42 +226,42 @@ if (isZonalAbsent) {
     // -----------------------------------------
     // 5️⃣ PROVISIONAL requires future date
     // -----------------------------------------
-if (zonalDecision === "PROVISIONALLY_APPROVED") {
+    if (zonalDecision === "PROVISIONALLY_APPROVED") {
 
-  let hasError = false;
+      let hasError = false;
 
-  // 🔴 Comments mandatory
-  if (!screeningRemarks?.trim()) {
-    setErrors(prev => ({
-      ...prev,
-      zonalComments: "This field is required"
-    }));
-    hasError = true;
-  }
+      // 🔴 Comments mandatory
+      if (!screeningRemarks?.trim()) {
+        setErrors(prev => ({
+          ...prev,
+          zonalComments: "This field is required"
+        }));
+        hasError = true;
+      }
 
-  // 🔴 Date mandatory
-  if (!screeningForm.zonalSubmitDate) {
-    setErrors(prev => ({
-      ...prev,
-      zonalSubmitDate: "This field is required"
-    }));
-    hasError = true;
-  } else {
-    const selected = new Date(screeningForm.zonalSubmitDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+      // 🔴 Date mandatory
+      if (!screeningForm.zonalSubmitDate) {
+        setErrors(prev => ({
+          ...prev,
+          zonalSubmitDate: "This field is required"
+        }));
+        hasError = true;
+      } else {
+        const selected = new Date(screeningForm.zonalSubmitDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-    if (selected <= today) {
-      setErrors(prev => ({
-        ...prev,
-        zonalSubmitDate: "Must be future date"
-      }));
-      hasError = true;
+        if (selected <= today) {
+          setErrors(prev => ({
+            ...prev,
+            zonalSubmitDate: "Must be future date"
+          }));
+          hasError = true;
+        }
+      }
+
+      if (hasError) return;
     }
-  }
-
-  if (hasError) return;
-}
 
 
 
@@ -466,7 +454,7 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
           name: item.displayName || item.fileName || "Document",
           fileName: item.fileName,
           url: item.fileUrl,
-          status: isZonalHr || isInterviewer 
+          status: isZonalHr || isInterviewer
             ? (item.zonalHrDocStatus?.toUpperCase() || "PENDING")
             : (item.docScreeningStatus?.toUpperCase() || "PENDING")
         });
@@ -859,7 +847,7 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
     });
   };
 
- const disableDocAction = isInterviewView;  
+  const disableDocAction = isInterviewView;
 
   const allDocsVerified =
     documentRows.length > 0 &&
@@ -939,7 +927,6 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
       isScreeningCompleted: true,
     };
 
-    console.log("FINAL SCREENING PAYLOAD", payload);
 
     try {
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
@@ -994,7 +981,7 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
     const selectedDate = new Date(value);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
 
     if (selectedDate <= today) {
       setErrors(prev => ({
@@ -1158,41 +1145,41 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
 
 
 
-                                          <td
-                        rowSpan="3"
-                        className="bob-photo-cell align-top text-center"
-                        style={{ width: "20%", verticalAlign: "top" }}
-                      >
-                        <div className="photo-signature-wrapper">
- 
-                          {/* PHOTO BOX */}
-                          <div className="photo-box">
-                            {photo ? (
-                              <img
-                                src={photo}
-                                alt="Applicant Photo"
-                                className="photo-img"
-                              />
-                            ) : (
-                              <div className="no-image">No Photo</div>
-                            )}
-                          </div>
- 
-                          {/* SIGNATURE BOX */}
-                          <div className="signature-box">
-                            {signature ? (
-                              <img
-                                src={signature}
-                                alt="Signature"
-                                className="signature-img"
-                              />
-                            ) : (
-                              <div className="no-image">No Signature</div>
-                            )}
-                          </div>
- 
+                    <td
+                      rowSpan="3"
+                      className="bob-photo-cell align-top text-center"
+                      style={{ width: "20%", verticalAlign: "top" }}
+                    >
+                      <div className="photo-signature-wrapper">
+
+                        {/* PHOTO BOX */}
+                        <div className="photo-box">
+                          {photo ? (
+                            <img
+                              src={photo}
+                              alt="Applicant Photo"
+                              className="photo-img"
+                            />
+                          ) : (
+                            <div className="no-image">No Photo</div>
+                          )}
                         </div>
-                      </td>
+
+                        {/* SIGNATURE BOX */}
+                        <div className="signature-box">
+                          {signature ? (
+                            <img
+                              src={signature}
+                              alt="Signature"
+                              className="signature-img"
+                            />
+                          ) : (
+                            <div className="no-image">No Signature</div>
+                          )}
+                        </div>
+
+                      </div>
+                    </td>
                   </tr>
 
                   <tr>
@@ -1401,7 +1388,7 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
         </Accordion.Item>
 
         {/* === EDUCATION DETAILS === */}
-          <Accordion.Item eventKey="1" className="edu-accordion">
+        <Accordion.Item eventKey="1" className="edu-accordion">
           <Accordion.Header>{t("education_details")}</Accordion.Header>
           <Accordion.Body>
             <div>
@@ -1418,7 +1405,7 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
                     <th>{t("percentage_cgpa")}</th>
                   </tr>
                 </thead>
- 
+
                 <tbody>
                   {(data.education || []).map((edu, index) => (
                     <tr key={index}>
@@ -1429,10 +1416,10 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
                       <td>{edu.specialization_name || "-"}</td>
                       <td>{edu.startDate || "-"}</td>
                       <td>{edu.endDate || "-"}</td>
-                     <td>{edu.percentage || "-"}</td>
+                      <td>{edu.percentage || "-"}</td>
                     </tr>
                   ))}
- 
+
 
                   {(!data.education || data.education.length === 0) && (
                     <tr>
@@ -1521,7 +1508,6 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
                     (_, rowIndex) => {
                       const left = documentRows[rowIndex * 2];
                       const right = documentRows[rowIndex * 2 + 1];
-                      console.log("ROW", rowIndex, { left, right });
                       const leftStatus =
                         docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
 
@@ -1546,14 +1532,13 @@ if (zonalDecision === "PROVISIONALLY_APPROVED") {
                                   src={viewIcon}
                                   alt={t("view")}
                                   style={{
-                                  cursor: disableDocAction ? "not-allowed" : "pointer",
-opacity: disableDocAction ? 0.4 : 1,
-pointerEvents: disableDocAction ? "none" : "auto",
+                                    cursor: disableDocAction ? "not-allowed" : "pointer",
+                                    opacity: disableDocAction ? 0.4 : 1,
+                                    pointerEvents: disableDocAction ? "none" : "auto",
                                     marginLeft: '12px',
                                   }}
                                   onClick={() => {
-                                 if (disableDocAction) return;
-                                    console.log("VIEW CLICKED", left);
+                                    if (disableDocAction) return;
                                     setSelectedDoc({
                                       candidateDocumentId: left.candidateDocumentId,
                                       status: leftStatus,   //  add this
@@ -1600,13 +1585,13 @@ pointerEvents: disableDocAction ? "none" : "auto",
                                   src={viewIcon}
                                   alt={t("view")}
                                   style={{
-                                  cursor: disableDocAction ? "not-allowed" : "pointer",
-opacity: disableDocAction ? 0.4 : 1,
-pointerEvents: disableDocAction ? "none" : "auto",
+                                    cursor: disableDocAction ? "not-allowed" : "pointer",
+                                    opacity: disableDocAction ? 0.4 : 1,
+                                    pointerEvents: disableDocAction ? "none" : "auto",
                                     marginLeft: '12px'
                                   }}
                                   onClick={() => {
-                                   if (disableDocAction) return;
+                                    if (disableDocAction) return;
                                     setSelectedDoc({
                                       candidateDocumentId: right.candidateDocumentId,
                                       candidateId: previewData.candidateId,
@@ -1872,12 +1857,11 @@ pointerEvents: disableDocAction ? "none" : "auto",
           </Card>
         )}
 
-      {isZonalHr && !isInterviewView && (
-  <Card
-    className={`criteria-main-card p-3 ${
-      isZonalAbsent ? "criteria-disabled" : ""
-    }`}
-  >
+        {isZonalHr && !isInterviewView && (
+          <Card
+            className={`criteria-main-card p-3 ${isZonalAbsent ? "criteria-disabled" : ""
+              }`}
+          >
 
             <label className="criteria-title mb-2">
               {t("all_docs_verified_q")}
@@ -1895,19 +1879,13 @@ pointerEvents: disableDocAction ? "none" : "auto",
                 const disableProvisionallyApproved =
                   opt === "PROVISIONALLY_APPROVED" && areAllDocumentsVerified();
 
-               const isDisabled =
-  isZonalAbsent ||
-  !allDocsVerified ||
-  disableProvisionallyApproved ||
-  disableYes;
+                const isDisabled =
+                  isZonalAbsent ||
+                  !allDocsVerified ||
+                  disableProvisionallyApproved ||
+                  disableYes;
 
 
-                console.log("🔘 Zonal option check:", {
-                  opt,
-                  disableYes,
-                  disableProvisionallyApproved,
-                  allDocsVerified
-                });
 
                 return (
                   <label
@@ -1940,88 +1918,88 @@ pointerEvents: disableDocAction ? "none" : "auto",
 
 
             {/* DATE */}
-           
-             {/* DATE - Show only for PROVISIONALLY APPROVED */}
-{zonalDecision === "PROVISIONALLY_APPROVED" && (
-  <div className="submit-date-group d-flex flex-column">
-    <label className="submit-label">{t("submit_before")}</label>
 
-    <input
-      type="date"
-      className={`criteria-date ${errors.zonalSubmitDate ? "input-error" : ""}`}
-      min={minFutureDate}
-      value={screeningForm.zonalSubmitDate}
-      disabled={isZonalAbsent || !allDocsVerified}
-      onChange={(e) => {
-        setScreeningForm(prev => ({
-          ...prev,
-          zonalSubmitDate: e.target.value
-        }));
+            {/* DATE - Show only for PROVISIONALLY APPROVED */}
+            {zonalDecision === "PROVISIONALLY_APPROVED" && (
+              <div className="submit-date-group d-flex flex-column">
+                <label className="submit-label">{t("submit_before")}</label>
 
-        setErrors(prev => ({
-          ...prev,
-          zonalSubmitDate: undefined
-        }));
-      }}
-    />
+                <input
+                  type="date"
+                  className={`criteria-date ${errors.zonalSubmitDate ? "input-error" : ""}`}
+                  min={minFutureDate}
+                  value={screeningForm.zonalSubmitDate}
+                  disabled={isZonalAbsent || !allDocsVerified}
+                  onChange={(e) => {
+                    setScreeningForm(prev => ({
+                      ...prev,
+                      zonalSubmitDate: e.target.value
+                    }));
 
-    {errors.zonalSubmitDate && (
-      <small className="text-danger mt-1">
-        {errors.zonalSubmitDate}
-      </small>
-    )}
-  </div>
-)}
+                    setErrors(prev => ({
+                      ...prev,
+                      zonalSubmitDate: undefined
+                    }));
+                  }}
+                />
 
-
+                {errors.zonalSubmitDate && (
+                  <small className="text-danger mt-1">
+                    {errors.zonalSubmitDate}
+                  </small>
+                )}
+              </div>
+            )}
 
 
-{/* REMARKS */}
 
-<div className="remarks-row">
 
-  {/* LEFT SIDE */}
-  <div className="remarks-left">
+            {/* REMARKS */}
 
-    <textarea
-      className={`remarks-box ${errors.zonalComments ? "input-error" : ""}`}
-      placeholder={t("enter_comments")}
-      rows={5}
-    disabled={docStatusLoading || isZonalAbsent}
+            <div className="remarks-row">
 
-      value={screeningRemarks}
-      onChange={(e) => {
-        setScreeningRemarks(e.target.value);
-        setErrors(prev => ({
-          ...prev,
-          zonalComments: undefined
-        }));
-      }}
-    />
+              {/* LEFT SIDE */}
+              <div className="remarks-left">
 
-    {/* Reserved error space */}
-    <div className="remarks-error-space">
-      {errors.zonalComments && (
-        <small className="text-danger">
-          {errors.zonalComments}
-        </small>
-      )}
-    </div>
+                <textarea
+                  className={`remarks-box ${errors.zonalComments ? "input-error" : ""}`}
+                  placeholder={t("enter_comments")}
+                  rows={5}
+                  disabled={docStatusLoading || isZonalAbsent}
 
-  </div>
+                  value={screeningRemarks}
+                  onChange={(e) => {
+                    setScreeningRemarks(e.target.value);
+                    setErrors(prev => ({
+                      ...prev,
+                      zonalComments: undefined
+                    }));
+                  }}
+                />
 
-  {/* RIGHT SIDE */}
-  <div className="remarks-button">
-    <button
-      className="btn-submit-orange"
-     disabled={docStatusLoading || isZonalAbsent}
-      onClick={handleZonalSubmit}
-    >
-      {t("submit")}
-    </button>
-  </div>
+                {/* Reserved error space */}
+                <div className="remarks-error-space">
+                  {errors.zonalComments && (
+                    <small className="text-danger">
+                      {errors.zonalComments}
+                    </small>
+                  )}
+                </div>
 
-</div>
+              </div>
+
+              {/* RIGHT SIDE */}
+              <div className="remarks-button">
+                <button
+                  className="btn-submit-orange"
+                  disabled={docStatusLoading || isZonalAbsent}
+                  onClick={handleZonalSubmit}
+                >
+                  {t("submit")}
+                </button>
+              </div>
+
+            </div>
 
 
 

@@ -10,9 +10,6 @@ export default function useViewIndent(existingIndentPath) {
             return;
         }
 
-        console.log("DIR SENT TO API:", existingIndentPath);
-
-
         try {
             const response = await masterApiService.getAzureBlobSasUrl(existingIndentPath);
             const sasUrl = response;

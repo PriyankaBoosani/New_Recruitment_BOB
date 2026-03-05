@@ -12,7 +12,6 @@ export const useJobPositionById = (positionId) => {
     try {
       const res = await jobPositionApiService.getPositionById(positionId);
       setData(res.data); // ⚠️ IMPORTANT: use `.data.data`
-      console.log(res, "res")
     } catch (e) {
       console.error("Failed to fetch position", e);
     } finally {

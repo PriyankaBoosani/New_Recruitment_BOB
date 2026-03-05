@@ -135,8 +135,6 @@ const privileges = useSelector(
   (state) => state.user.privileges || {}
 );
 
-console.log("privileges", privileges);
-
 const hasPrivilege = (key) => {
  return privileges?.[key] === true;
 };
@@ -204,7 +202,6 @@ const hasPrivilege = (key) => {
     const loadMasters = async () => {
       const res = await masterApiService.getMasterDisplayAll();
       setMasterData(res.data);
-      console.log(" MASTER DATA:", res.data)
     };
     loadMasters();
   }, []);
@@ -257,7 +254,6 @@ const hasPrivilege = (key) => {
         const res = await jobPositionApiService.getPositionsByReqId({
           requisitionId: selectedRequisitionId,
         });
-        console.log("Positions response:", res.data);
         setPositions(res?.data || []);
       } catch (err) {
         console.error("Failed to load positions", err);
@@ -578,8 +574,6 @@ const hasPrivilege = (key) => {
   const navRequisitionId = location.state?.requisitionId || null;
   const navPositionId = location.state?.positionId || null;
 
-  console.log("navRequisitionId: ", navRequisitionId)
-  console.log("navPositionId: ", navPositionId)
 
   useEffect(() => {
     if (
@@ -777,7 +771,6 @@ const hasPrivilege = (key) => {
         acceptBeforeDate,
         offerIds: offerSelectedIds,
       };
-      console.log("Offer Payload:", payload);
       const response = await jobPositionApiService.sendOffer(payload);
 
       if (response?.data?.success === false) {

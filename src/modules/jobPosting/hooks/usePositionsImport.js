@@ -12,7 +12,6 @@ export const usePositionsImport = () => {
     }
 
     setLoading(true);
-    console.log("IMPORT requisitionId:", requisitionId);
     try {
       const res = await jobPositionApiService.bulkImport(
         requisitionId,

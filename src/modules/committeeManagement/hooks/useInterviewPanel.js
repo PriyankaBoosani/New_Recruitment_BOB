@@ -49,8 +49,6 @@ const [errorMessage, setErrorMessage] = useState("");
     const panelNameValue = search.panelName?.trim();
     const committeeNameValue = search.committeeName?.trim();
 
-    console.log("panelNameValue", panelNameValue);
-    console.log("committeeNameValue", committeeNameValue);
 
     // 🔴 If both empty → load all data
     if (!panelNameValue && !committeeNameValue) {
@@ -90,7 +88,6 @@ const [errorMessage, setErrorMessage] = useState("");
 
       });
 
-      console.log("fetchpanels", res);
 
       const data = res?.data;
 
@@ -272,7 +269,6 @@ const [errorMessage, setErrorMessage] = useState("");
     try {
       const res = await masterApiService.getInterviewPanelById(panelId);
       const mappedForm = mapPanelToFormData(res?.data);
-      console.log("mappedForm", mappedForm)
       setFormData(mappedForm);
     } catch (err) {
       toast.error(t("failed_load_panel_details"));
@@ -317,8 +313,6 @@ const [errorMessage, setErrorMessage] = useState("");
   //   fetchPanels();
   // }, [fetchPanels]);
 
-  console.log("formData", formData);
-  console.log("membersOptions", membersOptions);
 
   /* ================= RETURN ================= */
 

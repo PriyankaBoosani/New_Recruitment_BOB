@@ -24,7 +24,6 @@ const UserFormModal = ({ show, onHide, onSave, mode,selectedUser,existingUsers =
   loading}) => {
   const { t } = useTranslation(["user", "validation"]);
 
-  console.log("selectedUser",selectedUser);
 
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});

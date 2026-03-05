@@ -46,7 +46,6 @@ export const useCategories = () => {
       const res = await masterApiService.addCategory(
         mapCategoryToApi(payload)
       );
-      console.log(" dfda", res)
 
       toast.success(t("category:add_success"));
       const newItem = mapCategoryFromApi(res.data);
@@ -130,7 +129,6 @@ export const useCategories = () => {
     try {
       const res = await masterApiService.bulkAddCategories(file);
 
-      console.log("API RESPONSE:", res); // logs for 200 & 422
 
       //  business failure
       if (res.success === false) {
@@ -150,7 +148,6 @@ export const useCategories = () => {
 
     } catch (err) {
       //  network / server error
-      console.log("NETWORK ERROR:", err);
 
       const message = "Something went wrong";
       toast.error(message);

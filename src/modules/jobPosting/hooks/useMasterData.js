@@ -47,7 +47,6 @@ export const useMasterData = () => {
           masterApiService.getAllLanguages(),
           masterApiService.getStateLanguages(),
         ]);
-        console.log("Full zonalRes:", zonalRes);
 
 
 

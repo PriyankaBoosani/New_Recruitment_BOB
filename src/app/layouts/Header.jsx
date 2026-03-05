@@ -78,13 +78,10 @@ const Header = () => {
 
   const isL1 = role === "l1";
   const isL2 = role === "l2";
-  console.log("ROLE FROM BACKEND:", user?.role);
-  console.log("ROLE NORMALIZED:", role);
 
   //Privileges
   const privileges = useSelector((state) => state.user.privileges);
 
-  console.log("PRIVILEGES:", privileges);
 
   const canJobPost = privileges?.JobPostings;
   const canCandidateWorkflow = privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"];

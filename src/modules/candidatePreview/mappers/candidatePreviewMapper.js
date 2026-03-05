@@ -31,10 +31,6 @@ const getCityName = (masters, id) =>
 const getPincode = (masters, id) =>
   findById(masters.pincodes, "pincodeId", id)?.pin || "-";
 
-// const getZonalState = (master, id)=>{
-//   console.log("zzdas",master.zonalStats)
-//   findById(master.zonalStats,"zonalStateID",id)
-// }
 
 const getZonalState = (masters, id) =>
   findById(masters?.zonalStats || [], "zonalStateID", id)?.stateName || "-";
@@ -71,8 +67,6 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
   const presentDistrict = getDistrictName(masters, address.districtId);
   const presentState = getStateName(masters, address.stateId);
   const presentPin = getPincode(masters, address.pincodeId);
-  console.log("sdasf", getZonalState(masters, locationprefApiData.statePreference1))
-  console.log("sdasf", locationprefApiData)
 
   const statePreference1 = getZonalState(masters, locationprefApiData.statePreference1);
   const statePreference2 = getZonalState(masters, locationprefApiData.statePreference2);

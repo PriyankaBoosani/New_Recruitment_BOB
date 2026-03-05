@@ -24,10 +24,7 @@ const CandidateTable = ({
 
   const navigate = useNavigate();
 
-  //    console.log("Fetching job details for position ID@@@@@@@@@@@@@@@@@@:", position.positionId);
   const goToPreview = (c) => {
-
-    console.log("RAW CANDIDATE:", c.raw);
 
     navigate("/candidate-preview", {
       state: {
