@@ -438,12 +438,22 @@ const ApplicationForm = ({
 
     (res.data || []).forEach((item) => {
 
-  const isZonal = isZonalHr;
- const status =
-  item.zonalHrDocStatus &&
-  item.zonalHrDocStatus !== "PENDING"
-    ? item.zonalHrDocStatus
-    : item.docScreeningStatus;
+//   const isZonal = isZonalHr;
+//  const status =
+//   item.zonalHrDocStatus &&
+//   item.zonalHrDocStatus !== "PENDING"
+//     ? item.zonalHrDocStatus
+//     : item.docScreeningStatus;
+
+ const isZonal = isZonalHr;
+
+const status = isZonalHr
+  ? item.zonalHrDocStatus || "PENDING"
+  : isInterviewer
+    ? (item.zonalHrDocStatus && item.zonalHrDocStatus !== "PENDING"
+        ? item.zonalHrDocStatus
+        : item.docScreeningStatus || "PENDING")
+    : item.docScreeningStatus || "PENDING";
 
   const comments = isZonal
     ? item.zonalHrDocComments

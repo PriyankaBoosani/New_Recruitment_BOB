@@ -15,7 +15,7 @@ const EMPTY_FORM = {
   email: "",
   // password: "",
   // confirmPassword: "",
-   interviewCentreId: ""
+   interviewCenterId: ""
 };
 
 const UserFormModal = ({ show, onHide, onSave, mode,selectedUser,existingUsers = [],interviewCentres = [],fetchUsers,
@@ -50,7 +50,7 @@ useEffect(() => {
       role: selectedUser?.role || "",
       fullName: selectedUser?.name || "",
       email: selectedUser?.email || "",
-      interviewCentreId: selectedUser?.interviewCenterId || ""
+      interviewCenterId: selectedUser?.interviewCenterId || ""
     });
   } else {
     setFormData(EMPTY_FORM);
@@ -73,7 +73,7 @@ useEffect(() => {
     // ✅ CLEAR centre when role changes
     if (name === "role") {
       if (value !== "Zonal_HR") {
-        updated.interviewCentreId = "";
+        updated.interviewCenterId = "";
       }
     }
 
@@ -234,23 +234,23 @@ useEffect(() => {
                 </Form.Label>
 
                 <Form.Select
-                  name="interviewCentreId"
-                  value={formData.interviewCentreId}
+                  name="interviewCenterId"
+                  value={formData.interviewCenterId}
                   onChange={handleInputChange}
                 >
                   <option value="">Select Interview Centre</option>
 
                   {interviewCentres.map((centre) => (
                     <option
-                      key={centre.interviewCentreId}
-                      value={centre.interviewCentreId}
+                      key={centre.interviewCenterId}
+                      value={centre.interviewCenterId}
                     >
                       {centre.interviewCentre}
                     </option>
                   ))}
                 </Form.Select>
 
-                <ErrorMessage>{errors.interviewCentreId}</ErrorMessage>
+                <ErrorMessage>{errors.interviewCenterId}</ErrorMessage>
               </Col>
             )}
 
