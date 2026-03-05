@@ -1,6 +1,7 @@
 import { useState } from "react";
 import committeeManagementService from "../../committeeManagement/services/committeeManagementService";
 import { toast } from "react-toastify";
+import masterApiService from "../../master/services/masterApiService";
 
 const useCommitteeRequests = () => {
 
@@ -148,22 +149,36 @@ const useCommitteeRequests = () => {
         }
     };
     const fetchApprovalHistory = async (panelId) => {
-    try {
+        try {
 
-        const res =
-            await committeeManagementService.getRequisitionApprovalHistory(panelId);
+            const [historyRes, usersRes] = await Promise.all([
+                committeeManagementService.getRequisitionApprovalHistory(panelId),
+                masterApiService.getUser()
+            ]);
 
-        const data = res?.data || [];
+            const historyData = historyRes?.data || [];
+            const users = usersRes?.data || [];
 
-        return data;
+            // Build userId -> name map
+            const userMap = {};
 
-    } catch (error) {
+            users.forEach(user => {
+                userMap[user.userId] = user.name;
+            });
 
-        toast.error("Failed to load approval history");
-        return [];
+            // Attach approverName
+            const mappedHistory = historyData.map(item => ({
+                ...item,
+                approverName: userMap[item.approverId] || "Unknown User"
+            }));
 
-    }
-};
+            return mappedHistory;
+
+        } catch (error) {
+            toast.error("Failed to load approval history");
+            return [];
+        }
+    };
 
 
     return {

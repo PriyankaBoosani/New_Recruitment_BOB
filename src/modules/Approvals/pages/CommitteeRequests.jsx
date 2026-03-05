@@ -176,15 +176,11 @@ const CommitteeRequests = () => {
                 return "secondary";
         }
     };
-    const handleOpenHistory = async (panelItem) => {
-
-        const panelId = panelItem.positionPanelId;
+    const handleOpenHistory = async (panelId) => {
 
         const history = await fetchApprovalHistory(panelId);
 
         setHistoryData(history);
-        setSelectedHistoryReq(panelItem);
-
         setShowHistoryModal(true);
     };
     useEffect(() => {
@@ -473,7 +469,12 @@ const CommitteeRequests = () => {
 
                                         {/* Panel Name */}
                                         <Col md={3} className="data-col">
-                                            <div className="field-label">Panel Name <img src={history_icon} alt="History" className="icon-history" onClick={() => handleOpenHistory(panelItem)} /></div>
+                                            <div className="field-label">Panel Name <img
+                                                src={history_icon}
+                                                alt="History"
+                                                className="icon-history"
+                                                onClick={() => handleOpenHistory(panelItem.positionPanelId)}
+                                            /></div>
                                             <div className="field-value">
                                                 {panel.panelName}
                                             </div>
