@@ -265,7 +265,7 @@ const isZonalHr = privileges?.Verification;
       )}
 
       {/* Application Form */}
-      <div className="mt-3">
+      <div className="my-4">
         {loading ? (
           <div className="text-center py-4">{t("candidateWorkflow:loading_candidate_details")}</div>
         ) : (

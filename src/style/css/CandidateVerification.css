@@ -541,9 +541,7 @@
 
 
 /* REMOVE EXTRA CARD GAPS */
-.card {
-  margin-bottom: 0 !important;
-}
+
 
 /* TOP TOOLBAR */
 .verification-toolbar {

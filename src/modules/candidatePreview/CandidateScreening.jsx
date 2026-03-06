@@ -919,7 +919,7 @@ const handleRequisitionChange = async (e) => {
       </div>
 
       {/* Desktop Table */}
-      <div className="card rounded border-0 d-none d-md-block mb-5 mt-4">
+      <div className="card rounded border-0 d-none d-md-block mt-4" style={{ marginBottom: '2rem !important' }}>
         <div className="card-header bg-white border-bottom-0 p-0 px-1 candidate-screening-tabs-header">
           {/* Tabs */}
           <ul className="nav nav-tabs border-0 pt-2 pb-3 px-2 border-bottom">
