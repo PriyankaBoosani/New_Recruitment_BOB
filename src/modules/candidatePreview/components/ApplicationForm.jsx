@@ -1573,7 +1573,7 @@ const status = isZonalHr
                           opacity: disableDocAction ? 0.4 : 1,
                           pointerEvents: disableDocAction ? "none" : "auto",
                           marginLeft: "12px",
-                          marginTop: "12px",
+                          
                         }}
                         onClick={() => {
                           if (disableDocAction) return;
@@ -1622,7 +1622,8 @@ const status = isZonalHr
                           cursor: disableDocAction ? "not-allowed" : "pointer",
                           opacity: disableDocAction ? 0.4 : 1,
                           pointerEvents: disableDocAction ? "none" : "auto",
-                          marginLeft: "12px",
+                          marginLeft: "12px", 
+                          
                         }}
                         onClick={() => {
                           if (disableDocAction) return;
