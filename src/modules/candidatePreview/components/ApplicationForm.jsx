@@ -1506,150 +1506,158 @@ const status = isZonalHr
           </Accordion.Body>
         </Accordion.Item>
 
-        <Accordion.Item eventKey="3">
-          <Accordion.Header>{t("documents_details")}</Accordion.Header>
-          <Accordion.Body>
+     <Accordion.Item eventKey="3">
+  <Accordion.Header>{t("documents_details")}</Accordion.Header>
 
-            <table className="bob-doc-table">
-              <thead>
-                <tr>
-                  <th>{t("file_type")}</th>
-                  <th>{t("status")}</th>
-                  <th>{t("action")}</th>
+  <Accordion.Body>
 
-                  <th>{t("file_type")}</th>
-                  <th>{t("status")}</th>
-                  <th>{t("action")}</th>
+    <table className="bob-doc-table">
 
-                </tr>
-              </thead>
+      {/* COLUMN WIDTH CONTROL */}
+      <colgroup>
+        <col style={{ width: "16.66%" }} />
+        <col style={{ width: "16.66%" }} />
+        <col style={{ width: "16.66%" }} />
+        <col style={{ width: "16.66%" }} />
+        <col style={{ width: "16.66%" }} />
+        <col style={{ width: "16.66%" }} />
+      </colgroup>
 
-              <tbody>
-                {Array.from({ length: Math.ceil(documentRows.length / 2) })
-                  .map(
-                    (_, rowIndex) => {
-                      const left = documentRows[rowIndex * 2];
-                      const right = documentRows[rowIndex * 2 + 1];
-                      const leftStatus =
-                        docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
+      <thead>
+        <tr>
+          <th>{t("file_type")}</th>
+          <th>{t("status")}</th>
+          <th>{t("action")}</th>
 
-                      const rightStatus =
-                        docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
+          <th>{t("file_type")}</th>
+          <th>{t("status")}</th>
+          <th>{t("action")}</th>
+        </tr>
+      </thead>
 
-                      return (
-                        <tr key={rowIndex}>
-                          {/* LEFT COLUMN */}
-                          <td>{left?.name}</td>
-                          <td>
-                            {left && (
-                              <span className={getStatusClass(leftStatus)}>
-                                {t(leftStatus)}
-                              </span>
-                            )}
-                          </td>
-                          <td className="action-cell" style={{      width: 100, borderRight: '1px solid #dee2e6', }}>
-                            {left && (
-                              <>
-                                <img
-                                  src={viewIcon}
-                                  alt={t("view")}
-                                  style={{
-                                    cursor: disableDocAction ? "not-allowed" : "pointer",
-                                    opacity: disableDocAction ? 0.4 : 1,
-                                    pointerEvents: disableDocAction ? "none" : "auto",
-                                    marginLeft: '12px',
-                                  }}
-                                  onClick={() => {
-                                    if (disableDocAction) return;
-                                    setSelectedDoc({
-                                      candidateDocumentId: left.candidateDocumentId,
-                                      status: leftStatus,   //  add this
+      <tbody>
+        {Array.from({ length: Math.ceil(documentRows.length / 2) }).map(
+          (_, rowIndex) => {
 
-                                      candidateId: previewData.candidateId,
-                                      applicationId: previewData.applicationId,
-                                      verificationId: docStatusMap[left.candidateDocumentId]?.verificationId,
-                                      docScreeningComments:
-                                        docStatusMap[left.candidateDocumentId]?.comments || "",
-                                      name: left.name,
-                                      fileUrl: left.url,
-                                    });
-                                    setShowViewer(true);
-                                  }}
-                                />
-                                {/* <img
-                                  src={downloadIcon}
-                                  alt={t("download")}
-                                  style={{
-                                    cursor: isInterviewView ? "not-allowed" : "pointer",
-                                    opacity: isInterviewView ? 0.4 : 1,
-                                    pointerEvents: isInterviewView ? "none" : "auto"
-                                  }}
-                                /> */}
-                              </>
-                            )}
-                          </td>
+            const left = documentRows[rowIndex * 2];
+            const right = documentRows[rowIndex * 2 + 1];
 
-                          {/* RIGHT COLUMN */}
-                          <td>{right?.name || "-"}</td>
-                          <td>
-                            {right ? (
-                              <span className={getStatusClass(rightStatus)}>
-                                {t(rightStatus)}
-                              </span>
-                            ) : (
-                              "-"
-                            )}
-                          </td>
-                          <td className="action-cell">
-                            {right ? (
-                              <>
-                                <img
-                                  src={viewIcon}
-                                  alt={t("view")}
-                                  style={{
-                                    cursor: disableDocAction ? "not-allowed" : "pointer",
-                                    opacity: disableDocAction ? 0.4 : 1,
-                                    pointerEvents: disableDocAction ? "none" : "auto",
-                                    marginLeft: '12px'
-                                  }}
-                                  onClick={() => {
-                                    if (disableDocAction) return;
-                                    setSelectedDoc({
-                                      candidateDocumentId: right.candidateDocumentId,
-                                      candidateId: previewData.candidateId,
-                                      applicationId: previewData.applicationId,
-                                      verificationId: docStatusMap[right.candidateDocumentId]?.verificationId,
-                                      docScreeningComments:
-                                        docStatusMap[right.candidateDocumentId]?.comments || "",
-                                      name: right.name,
-                                      fileUrl: right.url,
-                                    });
-                                    setShowViewer(true);
-                                  }}
-                                />
-                                {/* <img
-                                  src={downloadIcon}
-                                  alt={t("download")}
-                                  style={{
-                                    cursor: isInterviewView ? "not-allowed" : "pointer",
-                                    opacity: isInterviewView ? 0.4 : 1,
-                                    pointerEvents: isInterviewView ? "none" : "auto"
-                                  }}
-                                /> */}
-                              </>
-                            ) : (
-                              "-"
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    }
+            const leftStatus =
+              docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
+
+            const rightStatus =
+              docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
+
+            return (
+              <tr key={rowIndex}>
+
+                {/* LEFT SIDE */}
+                <td>{left?.name}</td>
+
+                <td>
+                  {left && (
+                    <span className={getStatusClass(leftStatus)}>
+                      {t(leftStatus)}
+                    </span>
                   )}
-              </tbody>
-            </table>
+                </td>
 
-          </Accordion.Body>
-        </Accordion.Item>
+                <td className="action-cell divider1">
+                  {left && (
+                    <>
+                      <img
+                        src={viewIcon}
+                        alt={t("view")}
+                        style={{
+                          cursor: disableDocAction ? "not-allowed" : "pointer",
+                          opacity: disableDocAction ? 0.4 : 1,
+                          pointerEvents: disableDocAction ? "none" : "auto",
+                          marginLeft: "12px",
+                          marginTop: "12px",
+                        }}
+                        onClick={() => {
+                          if (disableDocAction) return;
+
+                          setSelectedDoc({
+                            candidateDocumentId: left.candidateDocumentId,
+                            status: leftStatus,
+                            candidateId: previewData.candidateId,
+                            applicationId: previewData.applicationId,
+                            verificationId:
+                              docStatusMap[left.candidateDocumentId]?.verificationId,
+                            docScreeningComments:
+                              docStatusMap[left.candidateDocumentId]?.comments || "",
+                            name: left.name,
+                            fileUrl: left.url,
+                          });
+
+                          setShowViewer(true);
+                        }}
+                      />
+                    </>
+                  )}
+                </td>
+
+
+                {/* RIGHT SIDE */}
+                <td>{right?.name || "-"}</td>
+
+                <td>
+                  {right ? (
+                    <span className={getStatusClass(rightStatus)}>
+                      {t(rightStatus)}
+                    </span>
+                  ) : (
+                    "-"
+                  )}
+                </td>
+
+                <td className="action-cell">
+                  {right ? (
+                    <>
+                      <img
+                        src={viewIcon}
+                        alt={t("view")}
+                        style={{
+                          cursor: disableDocAction ? "not-allowed" : "pointer",
+                          opacity: disableDocAction ? 0.4 : 1,
+                          pointerEvents: disableDocAction ? "none" : "auto",
+                          marginLeft: "12px",
+                        }}
+                        onClick={() => {
+                          if (disableDocAction) return;
+
+                          setSelectedDoc({
+                            candidateDocumentId: right.candidateDocumentId,
+                            candidateId: previewData.candidateId,
+                            applicationId: previewData.applicationId,
+                            verificationId:
+                              docStatusMap[right.candidateDocumentId]?.verificationId,
+                            docScreeningComments:
+                              docStatusMap[right.candidateDocumentId]?.comments || "",
+                            name: right.name,
+                            fileUrl: right.url,
+                          });
+
+                          setShowViewer(true);
+                        }}
+                      />
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </td>
+
+              </tr>
+            );
+          }
+        )}
+      </tbody>
+
+    </table>
+
+  </Accordion.Body>
+</Accordion.Item>
 
         {/* ================= CRITERIA SECTION ================= */}
        {canCandidatePool && !disableDocAction && (

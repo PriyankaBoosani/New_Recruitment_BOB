@@ -359,8 +359,20 @@ select.form-control {
 
 /* ================= DOCUMENT TABLE ================= */
 
+
+
+.bob-doc-table th,
+.bob-doc-table td {
+  padding: 5px;
+}
+
+.divider1 {
+  border-right: 1px solid #dee2e6;
+}
+
 .bob-doc-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   background: #fff;
 }
@@ -382,7 +394,7 @@ select.form-control {
 }
 
 .bob-doc-table td {
-  padding: 10px;
+  padding-left: 10px;
   font-size: 14px;
   vertical-align: middle;
 }
@@ -402,7 +414,7 @@ select.form-control {
 /* ================= ACTION ICONS ================= */
 
 .action-cell {
-  display: flex;
+ 
   gap: 10px;
 }
 
