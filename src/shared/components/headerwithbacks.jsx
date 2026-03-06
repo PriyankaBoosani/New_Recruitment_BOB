@@ -1,10 +1,12 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const PageHeaderWithBacks = ({ title, subtitle }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation("common");
 
   const state = location.state || {};
 
@@ -48,7 +50,7 @@ const PageHeaderWithBacks = ({ title, subtitle }) => {
         onClick={handleBack}
       >
         <i className="bi bi-arrow-left"></i>
-        <span>Back</span>
+        <span>{t("back")}</span>
       </div>
 
       {/* TITLE */}

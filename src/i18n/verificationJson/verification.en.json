@@ -28,6 +28,7 @@
   "failed_load_candidates": "Failed to load candidates",
   "no_changes_to_save": "No changes to save",
   "absent_status_updated": "Absent status updated",
-  "save_failed": "Save failed"
+  "save_failed": "Save failed",
+  "loading_candidates": "Loading candidates..."
   
 }

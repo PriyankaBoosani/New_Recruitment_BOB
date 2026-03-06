@@ -1,8 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
 
 const PageHeaderWithBack = ({ title, subtitle, positionId, requisitionId, candidateScreening, activeTab }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation("common");
 
   return (
     <div
@@ -22,7 +25,7 @@ const PageHeaderWithBack = ({ title, subtitle, positionId, requisitionId, candid
         onClick={() => navigate(candidateScreening ? "/candidate-workflow" : -1, {state: {requisitionId, positionId, activeTab}})}
       >
         <i className="bi bi-arrow-left"></i>
-        <span>Back</span>
+        <span>{t("back")}</span>
       </div>
 
       {/* TITLE + SUBTITLE */}

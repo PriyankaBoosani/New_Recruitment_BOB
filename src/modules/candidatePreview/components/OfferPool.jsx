@@ -185,7 +185,7 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 								onChange={toggleSelectAll}
 							/> */}
 						</th>
-						<th className="fs-14 fw-normal py-3 border-top sticky-col-1" scope="col" style={{ paddingLeft: '1rem', width: "200px", minWidth: "200px" }}>{t("common:name")}</th>
+						<th className="fs-14 fw-normal py-3 border-top sticky-col-1" scope="col" style={{ paddingLeft: '1rem', width: "200px", minWidth: "200px" }}>{t("candidateWorkflow:candidate")}</th>
 						<th className="fs-14 fw-normal py-3 border-top" style={{ paddingLeft: '1rem', width: "160px", minWidth: "160px" }} scope="col">{t("candidateWorkflow:registration_number")}</th>
 						<th className="fs-14 fw-normal py-3 border-top" style={{ paddingLeft: '2rem' }} scope="col">{t("candidateWorkflow:caste")}</th>
 						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>{t("candidateWorkflow:combined_score")}</th>
@@ -204,13 +204,13 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 					{loading ? (
 						<tr>
 							<td colSpan="14" className="text-center py-4">
-								Loading candidates...
+								{t("loading_candidates")}
 							</td>
 						</tr>
 					) : paginatedOffers.length === 0 ? (
 						<tr>
 							<td colSpan="14" className="text-center py-4">
-								No candidates found
+								{t("no_candidates_found")}
 							</td>
 						</tr>
 					) : (

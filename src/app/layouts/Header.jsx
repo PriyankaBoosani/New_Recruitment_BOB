@@ -333,7 +333,7 @@ const Header = () => {
                   to="/candidate-interviewer"
                   onClick={closeMenu}
                 >
-                  Interview
+                  {t("interview")}
                 </Nav.Link>
               )}
 
@@ -345,12 +345,12 @@ const Header = () => {
                   to="/candidate-verification"
                   onClick={closeMenu}
                 >
-                  Verification
+                  {t("verification")}
                 </Nav.Link>
               )}
               {canApprovals && (
                 <NavDropdown
-                  title="Approvals"
+                  title={t("approvals")}
                   id="approvals-dropdown"
                   className={`approvals-dropdown ${location.pathname.startsWith("/requisition-requests") ||
                     location.pathname.startsWith("/extension-requests") ||
@@ -364,7 +364,7 @@ const Header = () => {
                     to="/requisition-requests"
                     onClick={closeMenu}
                   >
-                    Requisition Requests
+                    {t("requisition_requests")}
                   </NavDropdown.Item>
 
                   <NavDropdown.Item
@@ -372,7 +372,7 @@ const Header = () => {
                     to="/extension-requests"
                     onClick={closeMenu}
                   >
-                    Extension Requests
+                    {t("extension_requests")}
                   </NavDropdown.Item>
 
                   <NavDropdown.Item
@@ -380,7 +380,7 @@ const Header = () => {
                     to="/committee-requests"
                     onClick={closeMenu}
                   >
-                    Committee Requests
+                    {t("committee_requests")}
                   </NavDropdown.Item>
                 </NavDropdown>
               )}

@@ -55,5 +55,10 @@
   "view_profile": "प्रोफ़ाइल देखें",
   "view_resume": "रिज़्यूमे देखें",
   "action": "कार्य",
-  "clear_all": "सभी साफ़ करें"
+  "clear_all": "सभी साफ़ करें",
+  "approvals": "अनुमोदन",
+  "requisition_requests": "अनुरोध अनुरोध",
+  "extension_requests": "विस्तार अनुरोध",
+  "committee_requests": "समिति अनुरोध",
+  "back": "वापस"
 }
