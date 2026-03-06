@@ -1,17 +1,19 @@
-// src/components/PrivateRoute.js
-import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useMsal } from "@azure/msal-react";
 
-const PrivateRoute = () => {
-  const { user } = useSelector((state) => state.user);
+export default function PrivateRoute() {
 
-  // ✅ Only allow if both exist
-  if (!user) {
+  const { accounts, inProgress } = useMsal();
+
+  // MSAL still restoring login state
+  if (inProgress === "startup" || inProgress === "handleRedirect") {
+    return <div>Loading...</div>;
+  }
+
+  // No user logged in
+  if (!accounts || accounts.length === 0) {
     return <Navigate to="/login" replace />;
   }
 
-  return <Outlet />; // 🔑 renders the nested route (Layout, Dashboard, etc.)
-};
-
-export default PrivateRoute;
+  return <Outlet />;
+}

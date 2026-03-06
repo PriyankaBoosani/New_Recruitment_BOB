@@ -37,6 +37,7 @@ import ExtensionsRequests from "../modules/Approvals/pages/ExtensionsRequests";
 import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";// Lazy loaded components
 import UnauthorizedPage from "./UnauthorizedPage"
 import PrivilegeRoute from "./PrivilegeRoute";
+import AuthCallback from "../modules/auth/pages/AuthCallback";
 // Lazy loaded components
 const Layout = React.lazy(() => import("../shared/components/Layout"));
 
@@ -60,6 +61,7 @@ const AppRoutes = () => {
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
 
         {/* Root redirect: go to dashboard if authed, else login */}
         <Route path="/" element={<Navigate to="/login" />} />
@@ -175,14 +177,14 @@ const AppRoutes = () => {
                   }
                 />
 
-             <Route
-  path="/candidate-preview"
-  element={
-    <PrivilegeRoute privilegesRequired={["Candidate Pool", "Verification", "Interview"]}>
-      <CandidatePreviewPage />
-    </PrivilegeRoute>
-  }
-/>
+                <Route
+                  path="/candidate-preview"
+                  element={
+                    <PrivilegeRoute privilegesRequired={["Candidate Pool", "Verification", "Interview"]}>
+                      <CandidatePreviewPage />
+                    </PrivilegeRoute>
+                  }
+                />
 
                 <Route
                   path="/candidate-workflow"
