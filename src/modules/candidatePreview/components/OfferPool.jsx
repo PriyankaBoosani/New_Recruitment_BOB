@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import jobPositionApiService from '../../jobPosting/services/jobPositionApiService';
 import { toast } from 'react-toastify';
+import { useTranslation } from "react-i18next";
 
 const OFFER_STATUS_CLASS_MAP = {
   OFFER_AWAITED: "bg-warning",
@@ -17,6 +18,7 @@ const OFFER_STATUS_LABEL_MAP = {
 };
 
 const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selectedIds, setSelectedIds, refreshKey, onOffersLoaded }) => {
+	const { t } = useTranslation(["candidateWorkflow","common"]);
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -183,19 +185,19 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 								onChange={toggleSelectAll}
 							/> */}
 						</th>
-						<th className="fs-14 fw-normal py-3 border-top sticky-col-1" scope="col" style={{ paddingLeft: '1rem', width: "200px", minWidth: "200px" }}>Candidate</th>
-						<th className="fs-14 fw-normal py-3 border-top" style={{ paddingLeft: '1rem', width: "160px", minWidth: "160px" }} scope="col">Registration Number</th>
-						<th className="fs-14 fw-normal py-3 border-top" style={{ paddingLeft: '2rem' }} scope="col">Caste</th>
-						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>Combined Score</th>
-						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>Q/NQ</th>
-						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>Status</th>
-						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>Select List</th>
-						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>Wait List</th>
-						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>Location</th>
-						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>Offer Release Date</th>
-						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>Accept Before Date</th>
-						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>Joining Date</th>
-						<th className="fs-14 fw-normal py-3 border-top sticky-col-action border-left" scope="col" style={{ paddingLeft: '1.25rem' }}>Action</th>
+						<th className="fs-14 fw-normal py-3 border-top sticky-col-1" scope="col" style={{ paddingLeft: '1rem', width: "200px", minWidth: "200px" }}>{t("common:name")}</th>
+						<th className="fs-14 fw-normal py-3 border-top" style={{ paddingLeft: '1rem', width: "160px", minWidth: "160px" }} scope="col">{t("candidateWorkflow:registration_number")}</th>
+						<th className="fs-14 fw-normal py-3 border-top" style={{ paddingLeft: '2rem' }} scope="col">{t("candidateWorkflow:caste")}</th>
+						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>{t("candidateWorkflow:combined_score")}</th>
+						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>{t("candidateWorkflow:qnq")}</th>
+						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>{t("candidateWorkflow:status")}</th>
+						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>{t("candidateWorkflow:select_list")}</th>
+						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>{t("candidateWorkflow:wait_list")}</th>
+						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>{t("common:location")}</th>
+						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>{t("candidateWorkflow:offer_release_date")}</th>
+						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>{t("candidateWorkflow:accept_before_date")}</th>
+						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>{t("candidateWorkflow:joining_date")}</th>
+						<th className="fs-14 fw-normal py-3 border-top sticky-col-action border-left" scope="col" style={{ paddingLeft: '1.25rem' }}>{t("common:action")}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -307,11 +309,11 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 						disabled={page === 0}
 						onClick={() => setPage((prev) => prev - 1)}
 					>
-						Prev
+						{t("candidateWorkflow:prev")}
 					</button>
 
 					<span className="fs-14">
-						Page {page + 1} of {Math.ceil(totalElements / pageSize) || 1}
+						{t("candidateWorkflow:page")} {page + 1} {t("candidateWorkflow:of")} {Math.ceil(totalElements / pageSize) || 1}
 					</span>
 
 					<button
@@ -319,7 +321,7 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 						disabled={(page + 1) * pageSize >= totalElements}
 						onClick={() => setPage((prev) => prev + 1)}
 					>
-						Next
+						{t("candidateWorkflow:next")}
 					</button>
 				</div>
 			</div>
@@ -333,7 +335,7 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 								{/* Header */}
 								<div className="modal-header border-0 pb-0">
 									<p className="modal-title fs-16 fw-500 mb-0 blue-color py-2">
-										Candidate Rank Details
+										{t("candidateWorkflow:candidate_rank_details")}
 									</p>
 									<button
 										type="button"
@@ -348,53 +350,53 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 
 										{/* Row 1 */}
 										<div className="row pt-2">
-											<InfoField label="Registration Number" value={selectedOffer.applicationNo} />
-											<InfoField label="Name" value={selectedOffer.name} />
-											<InfoField label="Caste" value={selectedOffer.categoryName} />
+											<InfoField label={t("candidateWorkflow:registration_number")} value={selectedOffer.applicationNo} />
+											<InfoField label={t("common:name")} value={selectedOffer.name} />
+											<InfoField label={t("candidateWorkflow:caste")} value={selectedOffer.categoryName} />
 										</div>
 
 										{/* Row 2 */}
 										<div className="row pt-3">
-											<InfoField label="Date of Birth" value={selectedOffer.dateOfBirth} />
-											<InfoField label="Cut-Off Date" value={selectedOffer.cutOffDate} />
-											<InfoField label="Age" value={selectedOffer.age} />
+											<InfoField label={t("candidateWorkflow:date_of_birth")} value={selectedOffer.dateOfBirth} />
+											<InfoField label={t("candidateWorkflow:cutoff_date")} value={selectedOffer.cutOffDate} />
+											<InfoField label={t("candidateWorkflow:age")} value={selectedOffer.age} />
 										</div>
 
 										{/* Row 3 */}
 										<div className="row">
-											<InfoField label="Age Concession" value={selectedOffer.ageConcession} />
-											<InfoField label="Q/NQ" value={selectedOffer.qnq} />
-											<InfoField label="Shortlisted" value={selectedOffer.shortlisted} />
+											<InfoField label={t("candidateWorkflow:age_concession")} value={selectedOffer.ageConcession} />
+											<InfoField label={t("candidateWorkflow:qnq")} value={selectedOffer.qnq} />
+											<InfoField label={t("candidateWorkflow:shortlisted")} value={selectedOffer.shortlisted} />
 										</div>
 
 										{/* Row 4 */}
 										<div className="row">
-											<InfoField label="Written Mark (out of 50)" value={selectedOffer.writtenMarks} />
-											<InfoField label="Mark in Viva (out of 25)" value={selectedOffer.vivaMarks} />
-											<InfoField label="Interview Conversion (to 100)" value={selectedOffer.interviewConversion} />
+											<InfoField label={t("candidateWorkflow:written_mark")} value={selectedOffer.writtenMarks} />
+											<InfoField label={t("candidateWorkflow:viva_mark")} value={selectedOffer.vivaMarks} />
+											<InfoField label={t("candidateWorkflow:interview_conversion")} value={selectedOffer.interviewConversion} />
 										</div>
 
 										{/* Row 5 */}
 										<div className="row">
-											<InfoField label="Interview Score (out of 100)" value={selectedOffer.interviewScore} />
-											<InfoField label="GD Score (out of 100)" value={selectedOffer.gdScore} />
-											<InfoField label="Marks Conversion to Interview" value={selectedOffer.marksConversionToInterview} />
+											<InfoField label={t("candidateWorkflow:interview_score")} value={selectedOffer.interviewScore} />
+											<InfoField label={t("candidateWorkflow:gd_score")} value={selectedOffer.gdScore} />
+											<InfoField label={t("candidateWorkflow:marks_conversion_to_interview")} value={selectedOffer.marksConversionToInterview} />
 										</div>
 
 										{/* Row 6 */}
 										<div className="row">
-											<InfoField label="Combined Score (OE + Written 60 and Interview 40)" value={selectedOffer.combinedScore} />
+											<InfoField label={t("candidateWorkflow:combined_score_details")} value={selectedOffer.combinedScore} />
 											<InfoField 
-												label="Status" 
+												label={t("candidateWorkflow:status")} 
 												value={OFFER_STATUS_LABEL_MAP[selectedOffer.status] || selectedOffer.status}
 											/>
-											<InfoField label="Select List" value={selectedOffer.selectList} />
+											<InfoField label={t("candidateWorkflow:select_list")} value={selectedOffer.selectList} />
 										</div>
 
 										{/* Row 7 */}
 										<div className="row">
-											<InfoField label="Wait List" value={selectedOffer.waitList} />
-											<InfoField label="Location" value={selectedOffer.location} />
+											<InfoField label={t("candidateWorkflow:wait_list")} value={selectedOffer.waitList} />
+											<InfoField label={t("common:location")} value={selectedOffer.location} />
 										</div>
 								
 									</div>

@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import Select from "react-select";
+import { useTranslation } from "react-i18next";
 
 export default function DropdownStrip({
   requisitions,
@@ -12,6 +13,7 @@ export default function DropdownStrip({
   onPositionChange,
 	onRequisitionSearch
 }) {
+  const { t } = useTranslation(["candidateWorkflow", "common"]);
 	const requisitionOptions = useMemo(
     () =>
       requisitions.map((req) => ({
@@ -33,14 +35,13 @@ export default function DropdownStrip({
   return (
     <>
       <div className="col-md-3 col-12">
-        <label className="fs-14 blue-color">Requisition</label>
+        <label className="fs-14 blue-color">{t("candidateWorkflow:requisition")}</label>
         <Select
 					className="mt-1 fs-14"
 					classNamePrefix="react-select"
 					options={requisitionOptions}
 					isLoading={loadingRequisitions}
-				
-					placeholder="Select Requisition"
+					placeholder={t("candidateWorkflow:select_requisition")}
 					value={requisitionOptions.find(
 						(opt) => opt.value === selectedRequisitionId
 					)}
@@ -58,7 +59,7 @@ export default function DropdownStrip({
       </div>
 
       <div className="col-md-3 col-12">
-        <label className="fs-14 blue-color">Position</label>
+        <label className="fs-14 blue-color">{t("common:position")}</label>
         <Select
           className="mt-1 fs-14"
           classNamePrefix="react-select"
@@ -67,7 +68,7 @@ export default function DropdownStrip({
           isDisabled={!selectedRequisitionId}
           
           placeholder={
-            loadingPositions ? "Loading positions..." : "Select Position"
+            loadingPositions ? t("candidateWorkflow:loading_positions") : t("candidateWorkflow:select_position")
           }
           value={
             selectedPositionId

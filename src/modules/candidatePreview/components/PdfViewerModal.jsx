@@ -1,8 +1,10 @@
 import React from "react";
 import { Modal, Spinner } from "react-bootstrap";
 // import "../../style/css/PdfViewerModal.css";
+import { useTranslation } from "react-i18next";
 
 const PdfViewerModal = ({ show, onHide, fileUrl, loading, title }) => {
+  const { t } = useTranslation(["candidateWorkflow"]);
   const getFileExtension = (url = "") => {
     const cleanUrl = url.split("?")[0]; // remove query params
     return cleanUrl.split(".").pop()?.toLowerCase();
@@ -50,16 +52,16 @@ const PdfViewerModal = ({ show, onHide, fileUrl, loading, title }) => {
           />
         ) : isDoc ? (
           <div className="d-flex flex-column justify-content-center align-items-center h-100 text-center px-4">
-            <h6 className="mb-2">Preview not available</h6>
+            <h6 className="mb-2">{t("candidateWorkflow:preview_not_available")}</h6>
             <p className="text-muted fs-14 mb-0">
-              DOC and DOCX files cannot be previewed.
+              {t("candidateWorkflow:doc_preview_line1")}
               <br />
-              The file has been downloaded for you.
+              {t("candidateWorkflow:doc_preview_line2")}
             </p>
           </div>
         ) : (
           <div className="text-center mt-5">
-            Unsupported file format
+            {t("candidateWorkflow:unsupported_file_format")}
           </div>
         )}
       </Modal.Body>

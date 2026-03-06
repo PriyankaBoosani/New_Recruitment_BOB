@@ -41,8 +41,19 @@
   "alert": "चेतावनी",
   "something_went_wrong": "कुछ गलत हो गया।",
   "close": "बंद करें",
-   "delete_title": "हटाने की पुष्टि",
+  "delete_title": "हटाने की पुष्टि",
   "delete_message": "क्या आप वाकई इस आइटम को हटाना चाहते हैं?",
   "delete_button": "हटाएं",
-  "deleting": "हटाया जा रहा है..."
+  "deleting": "हटाया जा रहा है...",
+  "ok": "ठीक है",
+  "name": "नाम",
+  "time": "समय",
+  "loading": "लोड हो रहा है...",
+  "comments": "टिप्पणियाँ",
+  "score": "स्कोर",
+  "date": "तिथि",
+  "view_profile": "प्रोफ़ाइल देखें",
+  "view_resume": "रिज़्यूमे देखें",
+  "action": "कार्य",
+  "clear_all": "सभी साफ़ करें"
 }

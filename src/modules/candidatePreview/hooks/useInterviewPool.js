@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { mapInterviewCandidates } from "../mappers/interviewMapper";
 import candidateWorkflowServices from "../services/CandidateWorkflowServices";
-import masterApiService from "../../master/services/masterApiService"
+import masterApiService from "../../master/services/masterApiService";
+import { useTranslation } from "react-i18next";
 
 export default function useInterviewPool({
   positionId,
@@ -10,6 +11,7 @@ export default function useInterviewPool({
   pageSize,
   enabled
 }) {
+  const { t } = useTranslation(["candidateWorkflow", "common"]);
   const [data, setData] = useState([]);
   const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -45,7 +47,7 @@ export default function useInterviewPool({
 
 
       } catch (err) {
-        console.error("Failed to fetch master data", err);
+        console.error(t("candidateWorkflow:failed_fetch_master_data"), err);
       }
     };
 
@@ -85,7 +87,7 @@ export default function useInterviewPool({
       setTotalElements(apiData?.page?.totalElements || 0);
 
     } catch (err) {
-      console.error("Interview fetch failed", err);
+      console.error(t("candidateWorkflow:failed_fetch_interview_candidates"), err);
     } finally {
       setLoading(false);
     }

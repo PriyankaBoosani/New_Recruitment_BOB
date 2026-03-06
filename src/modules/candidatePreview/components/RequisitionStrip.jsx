@@ -11,7 +11,7 @@ import masterApiService from "../../master/services/masterApiService";   // ADDE
 import { mapJobPositionToRequisitionStrip } from "../mappers/candidatePreviewMapper";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { format } from "date-fns";
-
+import { useTranslation } from "react-i18next";
 
 const RequisitionStrip = ({
   requisition,
@@ -139,7 +139,7 @@ const RequisitionStrip = ({
 
       } catch (err) {
         console.error("Failed to fetch job details", err);
-        toast.error("Failed to load position details");
+        toast.error(t("candidateWorkflow:failed_load_position_details"));
       } finally {
         setLoading(false);
       }
@@ -152,6 +152,8 @@ const RequisitionStrip = ({
   const handleViewPosition = () => {
     setShowPosition(true);
   };
+
+  const { t } = useTranslation(["candidateWorkflow", "common"]);
 
   return (
     <>
@@ -189,7 +191,7 @@ const RequisitionStrip = ({
 
             <span className="date-text">
               <i className="bi bi-calendar3 me-1"></i>
-              Start: {formatDMY(
+              {t("candidateWorkflow:start")}: {formatDMY(
                 requisition?.startDate || requisition?.registration_start_date
               )}
 
@@ -201,7 +203,7 @@ const RequisitionStrip = ({
 
             <span className="date-text">
               <i className="bi bi-clock me-1"></i>
-              End: {formatDMY(
+             {t("candidateWorkflow:end")}: {formatDMY(
                 requisition?.endDate || requisition?.registration_end_date
               )}
             </span>
@@ -226,7 +228,7 @@ const RequisitionStrip = ({
             disabled={loading || !position}
             style={{ backgroundColor: "rgba(66, 87, 159, 0.12)" }}
           >
-            View Position
+           {t("candidateWorkflow:view_position")}
           </button>
           {isSaveBtn && (
             <button
@@ -234,7 +236,7 @@ const RequisitionStrip = ({
               disabled={!isSaveEnabled}
               onClick={onSave}
             >
-              Save
+              {t("common:save")}
             </button>
           )}
 
@@ -261,14 +263,14 @@ const RequisitionStrip = ({
 
               <span className="modal-date">
                 <i className="bi bi-calendar3 me-1"></i>
-                Start: {formatDMY(requisition?.registration_start_date)}
+               {t("candidateWorkflow:start")}: {formatDMY(requisition?.registration_start_date)}
               </span>
 
               <span className="modal-divider">|</span>
 
               <span className="modal-date">
                 <i className="bi bi-clock me-1"></i>
-                End: {formatDMY(requisition?.registration_end_date)}
+                {t("candidateWorkflow:end")}: {formatDMY(requisition?.registration_end_date)}
               </span>
             </div>
 
@@ -287,7 +289,7 @@ const RequisitionStrip = ({
 
           {loading ? (
             <div className="text-center py-5">
-              Loading job details...
+             {t("candidateWorkflow:loading_job_details")}
             </div>
           ) : (
             <>
@@ -296,7 +298,7 @@ const RequisitionStrip = ({
 
                   {/* Employment */}
                   <div className="col-12 col-md-4">
-                    <span className="stat-label">Employment Type:</span>{" "}
+                    <span className="stat-label">{t("candidateWorkflow:employment_type")}:</span>{" "}
                     <span className="stat-value">
                       {job?.employment_type || "-"}
                     </span>
@@ -305,9 +307,9 @@ const RequisitionStrip = ({
                   {/* Contract — show only if employment type is Contract */}
                   {job?.employment_type?.toLowerCase() === "contract" && (
                     <div className="col-12 col-md-4">
-                      <span className="stat-label">Contract Period:</span>{" "}
+                      <span className="stat-label">{t("candidateWorkflow:contract_period")}:</span>{" "}
                       <span className="stat-value">
-                        {job?.contract_years ?? 0} Years
+                        {job?.contract_years ?? 0} {t("candidateWorkflow:years")}
                       </span>
                     </div>
                   )}
@@ -315,23 +317,23 @@ const RequisitionStrip = ({
 
                   {/* Experience */}
                   <div className="col-12 col-md-4">
-                    <span className="stat-label">Experience:</span>{" "}
+                    <span className="stat-label">{t("candidateWorkflow:experience")}:</span>{" "}
                     <span className="stat-value">
-                   {job?.mandatory_experience_years || "-"}
+                   {job?.mandatory_experience_years || "-"} {t("candidateWorkflow:years")}
                     </span>
                   </div>
 
                   {/* Eligibility */}
                   <div className="col-12 col-md-4">
-                    <span className="stat-label">Eligibility Age:</span>{" "}
+                    <span className="stat-label">{t("candidateWorkflow:eligibility_age")}:</span>{" "}
                     <span className="stat-value">
-                      {job?.eligibility_age_min} - {job?.eligibility_age_max} years
+                      {job?.eligibility_age_min} - {job?.eligibility_age_max} {t("candidateWorkflow:years")}
                     </span>
                   </div>
 
                   {/* Department */}
                   <div className="col-12 col-md-4">
-                    <span className="stat-label">Department:</span>{" "}
+                    <span className="stat-label">{t("candidateWorkflow:department")}:</span>{" "}
                     <span className="stat-value">
                       {job?.dept_name || "-"}
                     </span>
@@ -339,7 +341,7 @@ const RequisitionStrip = ({
 
                   {/* Vacancies */}
                   <div className="col-12 col-md-4">
-                    <span className="stat-label">Vacancies:</span>{" "}
+                    <span className="stat-label">{t("candidateWorkflow:vacancies")}:</span>{" "}
                     <span className="stat-value">
                       {job?.no_of_vacancies ?? 0}
                     </span>
@@ -350,12 +352,12 @@ const RequisitionStrip = ({
 
 
               <div className="info-card">
-                <div className="section-title">Mandatory Education:</div>
+                <div className="section-title">{t("candidateWorkflow:mandatory_education")}:</div>
                 <ul className="section-list">
                   <li>{job?.mandatory_qualification || "-"}</li>
                 </ul>
 
-                <div className="section-title mt-2">Preferred Education:</div>
+                <div className="section-title mt-2">{t("candidateWorkflow:preferred_education")}:</div>
                 <ul className="section-list">
                   <li>{job?.preferred_qualification || "NA"}</li>
                 </ul>
@@ -363,7 +365,7 @@ const RequisitionStrip = ({
 
               <div className="info-card">
 
-                <div className="section-title">Mandatory Experience:</div>
+                <div className="section-title">{t("candidateWorkflow:mandatory_experience")}:</div>
                 <ul className="section-lists">
                   {renderBullets(job?.mandatory_experience)}
                 </ul>
@@ -371,7 +373,7 @@ const RequisitionStrip = ({
 
 
 
-                <div className="section-title mt-2">Preferred Experience:</div>
+                <div className="section-title mt-2">{t("candidateWorkflow:preferred_experience")}:</div>
                 <ul className="section-lists">
                   {renderBullets(job?.preferred_experience)}
                 </ul>
@@ -381,7 +383,7 @@ const RequisitionStrip = ({
               </div>
 
               <div className="info-card">
-                <div className="section-title">Key Responsibilities:</div>
+                <div className="section-title">{t("candidateWorkflow:key_responsibilities")}:</div>
                 <ul className="section-lists">
                   {renderBullets(job?.roles_responsibilities)}
                 </ul>
@@ -415,7 +417,7 @@ const RequisitionStrip = ({
             className="ok-btn"
             onClick={() => setShowPosition(false)}
           >
-            OK
+            {t("common:ok")}
           </button>
         </Modal.Footer>
 

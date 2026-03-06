@@ -24,11 +24,14 @@ import offerIcon from "../../assets/send-offer-icon.png";
 import locationIcon from "../../assets/location-icon.png";
 import RankListModal from "./components/RankListModal";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
 
 export default function CandidateScreening({ selectedJob }) {
-  const STATUS_LABEL_MAP = {
+   const { t } = useTranslation(["candidateWorkflow","common"]);
+   
+   const STATUS_LABEL_MAP = {
     SHORTLISTED: "Shortlisted",
     APPLIED: "Applied",
     REJECTED: "Rejected",
@@ -37,6 +40,7 @@ export default function CandidateScreening({ selectedJob }) {
     INTERVIEW_SCHEDULED: "Interview Scheduled",
     // REJECTED: "Rejected",
   };
+
   const CANDIDATE_POOL_STATUSES = [
     "APPLIED",
     "SHORTLISTED",
@@ -44,7 +48,7 @@ export default function CandidateScreening({ selectedJob }) {
     "DISCREPANCY",
     "PENDING"
   ];
-  const INTERVIEW_STATUS_LABEL_MAP = {
+ const INTERVIEW_STATUS_LABEL_MAP = {
     SCHEDULED: "Scheduled",
     QUALIFIED: "Qualified",
     DISQUALIFIED: "Disqualified",
@@ -68,7 +72,6 @@ export default function CandidateScreening({ selectedJob }) {
     OFFER_REJECTED: "Offer Rejected",
     OFFER_ACCEPTED: "Offer Accepted",
   };
-
   const [interviewPage, setInterviewPage] = useState(0);
   const [interviewPageSize, setInterviewPageSize] = useState(10);
   const location = useLocation();
@@ -125,12 +128,19 @@ const TAB_PRIVILEGE_MAP = {
   OFFER_POOL: "Offer Pool",
   ONBOARDING_POOL: "Compensation Pool", // assuming onboarding is compensation
 };
+  // const tabs = [
+  //   { key: "CANDIDATE_POOL", label: "Candidate Pool", count: totalElements },
+  //   { key: "INTERVIEW_POOL", label: "Interview Pool", count: interviewTotalElements },
+  //   { key: "OFFER_POOL", label: "Offer Pool", count: 0 },
+  //   { key: "ONBOARDING_POOL", label: "Onboarding Pool", count: 0 },
+  // ];
+
   const tabs = [
-    { key: "CANDIDATE_POOL", label: "Candidate Pool", count: totalElements },
-    { key: "INTERVIEW_POOL", label: "Interview Pool", count: interviewTotalElements },
-    { key: "OFFER_POOL", label: "Offer Pool", count: 0 },
-    { key: "ONBOARDING_POOL", label: "Onboarding Pool", count: 0 },
-  ];
+  { key: "CANDIDATE_POOL", label: t("candidateWorkflow:candidate_pool"), count: totalElements },
+  { key: "INTERVIEW_POOL", label: t("candidateWorkflow:interview_pool"), count: interviewTotalElements },
+  { key: "OFFER_POOL", label: t("candidateWorkflow:offer_pool"), count: 0 },
+  { key: "ONBOARDING_POOL", label: t("candidateWorkflow:onboarding_pool"), count: 0 },
+];
 const privileges = useSelector(
   (state) => state.user.privileges || {}
 );
@@ -422,7 +432,7 @@ const handleRequisitionChange = async (e) => {
 
   const handleViewFile = async (candidate) => {
     if (!candidate.fileUrl) {
-      toast.error("No document available");
+      toast.error(t("candidateWorkflow:no_document_available"));
       return;
     }
 
@@ -448,7 +458,7 @@ const handleRequisitionChange = async (e) => {
       setShowPdfViewer(true);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to open document");
+      toast.error(t("candidateWorkflow:failed_open_document"));
     } finally {
       setLoadingPdf(false);
     }
@@ -678,7 +688,7 @@ const handleRequisitionChange = async (e) => {
 
   const handleDownload = async (type) => {
     if (!selectedPositionId) {
-      toast.error("Please select a position first");
+     toast.error(t("candidateWorkflow:select_position_first"));
       return;
     }
 
@@ -713,7 +723,7 @@ const handleRequisitionChange = async (e) => {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error(err);
-      toast.error("Download failed");
+     toast.error(t("candidateWorkflow:download_failed"));
     }
   };
 
@@ -743,14 +753,14 @@ const handleRequisitionChange = async (e) => {
 
   const handleSendToOfferPool = async () => {
     if (qualifiedInterviewIds.length === 0) {
-      toast.error("Select at least one qualified candidate");
+      toast.error(t("candidateWorkflow:select_qualified_candidate"));
       return;
     }
 
     try {
       await jobPositionApiService.sendToOfferPool(qualifiedInterviewIds);
 
-      toast.success("Candidates moved to Offer Pool successfully");
+      toast.success(t("candidateWorkflow:candidates_moved_to_offer_pool"));
 
       // Clear selection
       setSelectedInterviewCandidateIds([]);
@@ -761,24 +771,24 @@ const handleRequisitionChange = async (e) => {
     } catch (err) {
       console.error(err);
       toast.error(
-        err?.response?.data?.message || "Failed to send candidates to Offer Pool"
+        err?.response?.data?.message ||  t("candidateWorkflow:failed_to_send_offer_pool")
       );
     }
   };
 
   const handleSendOffer = async () => {
     if (offerSelectedIds.length === 0) {
-      toast.error("Select at least one candidate");
+      toast.error(t("candidateWorkflow:select_at_least_one_candidate"));
       return;
     }
 
     if (!offerTemplateId) {
-      toast.error("Please select an offer template");
+      toast.error(t("candidateWorkflow:select_offer_template"));
       return;
     }
 
     if (!joiningDate || !acceptBeforeDate) {
-      toast.error("Please select joining and accept before dates");
+      toast.error(t("candidateWorkflow:select_joining_date"));
       return;
     }
 
@@ -792,11 +802,11 @@ const handleRequisitionChange = async (e) => {
       const response = await jobPositionApiService.sendOffer(payload);
 
       if (response?.data?.success === false) {
-        toast.error(response?.data?.message || "Failed to send offer");
+        toast.error(response?.data?.message || t("candidateWorkflow:failed_send_offer"));
         return;
       }
 
-      toast.success("Offer sent successfully");
+      toast.success(t("candidateWorkflow:offer_sent_successfully"));
 
       // Clear selections + form
       setOfferSelectedIds([]);
@@ -810,8 +820,8 @@ const handleRequisitionChange = async (e) => {
     } catch (err) {
       console.error(err);
       toast.error(
-        err?.response?.data?.message || "Failed to send offer"
-      );
+        err?.response?.data?.message || t("candidateWorkflow:failed_send_offer")
+);
     }
   };
 
@@ -859,9 +869,9 @@ const handleRequisitionChange = async (e) => {
     <div className="container-fluid px-5 py-4">
       {/* Header */}
       <div className="mb-4">
-        <h5 className="mb-1 blue-color">Candidate Screening</h5>
+        <h5 className="mb-1 blue-color">{t("candidateWorkflow:candidate_screening")}</h5>
         <small className="text-muted">
-          Manage and schedule interviews for candidates
+          {t("candidateWorkflow:manage_schedule_interviews")}
         </small>
       </div>
 
@@ -884,10 +894,10 @@ const handleRequisitionChange = async (e) => {
             <div className="col-md-6 col-12 text-md-end">
               <button className="btn blue-color blue-border me-2 fs-14">
                 <img src={uploadIcon} width={15} className="me-2" />
-                Import Candidates
+                {t("candidateWorkflow:import_candidates")}
               </button>
               <button className="btn text-white orange-bg fs-14">
-                + Add Candidate
+                + {t("candidateWorkflow:add_candidate")}
               </button>
             </div>
           </div>
@@ -934,7 +944,7 @@ const handleRequisitionChange = async (e) => {
           {activeTab !== "OFFER_POOL" && (
             <div className="row g-2 mt-1 px-2 py-1 align-items-center">
               <div className="col-md-2 col-6 d-flex align-items-center gap-2">
-                <p className="text-muted fs-14 mb-1">FILTER BY:</p>
+                <p className="text-muted fs-14 mb-1"> {t("candidateWorkflow:filter_by")}:</p>
                 <button
                   className="btn fs-14 mb-1 error-text"
                   onClick={() =>
@@ -946,7 +956,7 @@ const handleRequisitionChange = async (e) => {
                     })
                   }
                 >
-                  Clear all
+                 {t("common:clear_all")}
                 </button>
               </div>
               <div className="col-md-2 col-6 mt-0">
@@ -960,7 +970,7 @@ const handleRequisitionChange = async (e) => {
                     }))
                   }
                 >
-                  <option value="">All Statuses</option>
+                  <option value="">{t("candidateWorkflow:all_statuses")}</option>
                   {/* {availableStatuses?.map((status) => (
                     <option key={status} value={status}>
                       {STATUS_LABEL_MAP[status] || status}
@@ -988,7 +998,7 @@ const handleRequisitionChange = async (e) => {
                       }))
                     }
                   >
-                    <option value="">All Locations</option>
+                    <option value="">{t("candidateWorkflow:all_locations")}</option>
                     {availableLocations?.map((loc) => (
                       <option key={loc.id} value={loc.id}>
                         {loc.name}
@@ -1011,7 +1021,7 @@ const handleRequisitionChange = async (e) => {
                       }))
                     }
                   >
-                    <option value="">All Categories</option>
+                    <option value="">{t("candidateWorkflow:all_categories")}</option>
                     {availableCategories?.map((cat) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.name}
@@ -1034,7 +1044,7 @@ const handleRequisitionChange = async (e) => {
                   </button> */}
                   <OverlayTrigger
                     placement="bottom"
-                    overlay={<Tooltip >Download PDF</Tooltip>}
+                    overlay={<Tooltip >{t("candidateWorkflow:download_pdf")}</Tooltip>}
                   >
                     <button className="btn fs-14 me-3 blue-color blue-border" onClick={() => handleDownload("pdf")}>
                       <img src={pdfIcon} className="" width={20} />
@@ -1042,7 +1052,7 @@ const handleRequisitionChange = async (e) => {
                   </OverlayTrigger>
                   <OverlayTrigger
                     placement="bottom"
-                    overlay={<Tooltip >Download Excel</Tooltip>}
+                    overlay={<Tooltip >{t("candidateWorkflow:download_excel")}</Tooltip>}
                   >
                     <button className="btn fs-14 blue-color blue-border" onClick={() => handleDownload("xlsx")}>
                       <img src={excelIcon} className="" width={20} />
@@ -1056,7 +1066,7 @@ const handleRequisitionChange = async (e) => {
           {activeTab === "OFFER_POOL" && (
             <div className="row g-2 mt-1 px-2 py-1 align-items-center border-bottom">
               <div className="col-md-2 col-6 d-flex align-items-center gap-2">
-                <p className="text-muted fs-14 mb-1">FILTER BY STAGE:</p>
+                <p className="text-muted fs-14 mb-1">{t("candidateWorkflow:filter_by_stage")}:</p>
                 <button
                   className="btn fs-14 mb-1 error-text"
                   onClick={() =>
@@ -1066,7 +1076,7 @@ const handleRequisitionChange = async (e) => {
                     }))
                   }
                 >
-                  Clear all
+                  {t("common:clear_all")}
                 </button>
               </div>
 
@@ -1112,14 +1122,14 @@ const handleRequisitionChange = async (e) => {
                   <div className="d-flex gap-3 flex-wrap align-items-end pb-3">
                     {/* Offer Template */}
                   <div>
-                        <p className="mb-1 fw-normal fs-13 blue-color">Offer Template</p>
+                        <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:offer_template")}</p>
                         <select
                           className="form-select fs-13 py-1"
                           style={{ width: "180px" }}
                           value={offerTemplateId}
                           onChange={(e) => setOfferTemplateId(e.target.value)}
                         >
-                          <option value="">Select Template</option>
+                          <option value="">{t("candidateWorkflow:select_template")}</option>
                           <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Template 1</option>
                         </select>
 
@@ -1131,7 +1141,7 @@ const handleRequisitionChange = async (e) => {
 
                     {/* Accept Before Date */}
                     <div>
-                      <p className="mb-1 fw-normal fs-13 blue-color">Accept Before</p>
+                      <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:accept_before")}</p>
                       <input
                         type="date"
                         className="form-control fs-13 py-1"
@@ -1150,7 +1160,7 @@ const handleRequisitionChange = async (e) => {
                           if (value <= todayString()) {
                             setFormErrors(prev => ({
                               ...prev,
-                              acceptBeforeDate: "Must be greater than today",
+                              acceptBeforeDate: t("candidateWorkflow:must_be_greater_than_today"),
                             }));
                           } else {
                             setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
@@ -1168,7 +1178,7 @@ const handleRequisitionChange = async (e) => {
 
                     {/* Joining Date */}
                     <div>
-                      <p className="mb-1 fw-normal fs-13 blue-color">Joining Date</p>
+                      <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:joining_date_label")}</p>
                       <input
                         type="date"
                         className="form-control fs-13 py-1"
@@ -1187,7 +1197,7 @@ const handleRequisitionChange = async (e) => {
                           if (!acceptBeforeDate) {
                             setFormErrors(prev => ({
                               ...prev,
-                              joiningDate: "Select Accept Before date first",
+                              joiningDate: t("candidateWorkflow:select_accept_before_first"),
                             }));
                             return;
                           }
@@ -1195,7 +1205,7 @@ const handleRequisitionChange = async (e) => {
                           if (value <= acceptBeforeDate) {
                             setFormErrors(prev => ({
                               ...prev,
-                              joiningDate: "Must be greater than Accept Before date",
+                              joiningDate: t("candidateWorkflow:must_be_greater_than_accept_before"),
                             }));
                           } else {
                             setFormErrors(prev => ({ ...prev, joiningDate: "" }));
@@ -1219,7 +1229,7 @@ const handleRequisitionChange = async (e) => {
     disabled={!isSendOfferEnabled}
   >
     <img className="me-2" src={offerIcon} width={14} />
-    Send Offers
+    {t("candidateWorkflow:send_offers")}
   </button>
 
   {/* Reserve equal space like other fields */}
@@ -1236,10 +1246,10 @@ const handleRequisitionChange = async (e) => {
                 <div className="d-flex justify-content-end gap-2 align-items-center pb-3">
                   <button className="btn orange-color orange-border fs-13 px-3 py-1">
                     <img className="me-2" src={locationIcon} width={16} />
-                    Assign Locations
+                    {t("candidateWorkflow:assign_locations")}
                   </button>
                   <button className="btn blue-border blue-color fs-13 px-3 py-1" onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}>
-                    <img src={excelIcon} className="me-1" width={18} /> Rank List
+                    <img src={excelIcon} className="me-1" width={18} /> {t("candidateWorkflow:rank_list")}
                   </button>
                 </div>
               </div>
@@ -1256,7 +1266,7 @@ const handleRequisitionChange = async (e) => {
                   <input
                     type="text"
                     className="form-control border-start-0 fs-14 py-2 search_input"
-                    placeholder="Search candidates..."
+                    placeholder={t("candidateWorkflow:search_candidates")}
                     value={filters.searchText}
                     onChange={(e) =>
                       setFilters((prev) => ({
@@ -1272,7 +1282,7 @@ const handleRequisitionChange = async (e) => {
                   && hasPrivilege("Interview Pool")
                   && canScheduleInterview && (
                   <button className="btn blue-bg text-white fs-14" onClick={() => setShowScheduleModal(true)}>
-                    Schedule Interview
+                    {t("candidateWorkflow:schedule_interview")}
                   </button>
                 )}
 
@@ -1283,7 +1293,7 @@ const handleRequisitionChange = async (e) => {
                     className="btn blue-bg text-white fs-14"
                     onClick={handleSendToOfferPool}
                   >
-                    Send to Offer Pool
+                    {t("candidateWorkflow:send_to_offer_pool")}
                   </button>
                 )}
 
@@ -1356,7 +1366,7 @@ const handleRequisitionChange = async (e) => {
 
               } catch (err) {
                 console.error(err);
-                toast.error("Failed to load feedback");
+                toast.error(t("candidateWorkflow:failed_load_feedback"));
                 setShowFeedbackModal(false);
               }
             }}
@@ -1395,7 +1405,7 @@ const handleRequisitionChange = async (e) => {
         }}
         fileUrl={pdfUrl}
         loading={loadingPdf}
-        title="Candidate Resume"
+        title={t("candidateWorkflow:candidate_resume")}
       />
 
       <InterviewFeedbackHistoryModal

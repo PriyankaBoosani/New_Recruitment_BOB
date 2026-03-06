@@ -15,6 +15,8 @@ import { DUMMY_DATA } from "./components/mockData";
 import { mapCandidatesToTableRows } from "./mappers/CandidateVerificationMapper";
 import { useLocation } from "react-router-dom";
 import PdfViewerModal from "../candidatePreview/components/PdfViewerModal"
+import { useTranslation } from "react-i18next";
+
  
  
  
@@ -43,6 +45,7 @@ const DatePill = React.forwardRef(({ value, onClick }, ref) => (
 ));
  
 export default function CandidateVerification() {
+  const { t } = useTranslation(["verification","common"]);
  
   // const [selectedDate, setSelectedDate] = useState(new Date());
   const [activeStage, setActiveStage] = useState(null);
@@ -82,7 +85,7 @@ const [pageSize, setPageSize] = useState(10);
  
 const handleViewFile = async (candidateRaw) => {
   if (!candidateRaw?.resumeUrl) {
-    toast.error("No document available");
+   toast.error(t("verification:no_document_available"));
     return;
   }
  
@@ -103,7 +106,7 @@ const handleViewFile = async (candidateRaw) => {
  
   } catch (err) {
     console.error(err);
-    toast.error("Failed to open document");
+    toast.error(t("verification:failed_open_document"));
   } finally {
     setLoadingPdf(false);
   }
@@ -210,7 +213,7 @@ const loadCandidates = async (dateParam = selectedDate) => {
   } catch (err) {
     setAllCandidatesRaw([]);
     setAllCandidates([]);
-    toast.error("Failed to load candidates");
+    toast.error(t("verification:failed_load_candidates"));
   }
 };
  
@@ -436,7 +439,7 @@ const handleSaveAbsent = async () => {
       }));
  
     if (updates.length === 0) {
-      toast.info("No changes to save");
+      toast.info(t("verification:no_changes_to_save"));
       return;
     }
  
@@ -449,11 +452,11 @@ const handleSaveAbsent = async () => {
  
     await loadCandidates(selectedDate); // refresh table
  
-    toast.success("Absent status updated");
+    toast.success(t("verification:absent_status_updated"));
  
   } catch (err) {
     console.error("Absent batch update failed", err);
-    toast.error("Save failed");
+    toast.error(t("verification:save_failed"));
   }
 };
  
@@ -531,7 +534,7 @@ useEffect(() => {
         <div className="search-box">  
           <img src={searchIcon} width={14} alt="search" />
           <input
-            placeholder="Search candidates..."
+            placeholder={t("verification:search_candidates")}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
@@ -543,7 +546,7 @@ useEffect(() => {
 <div className="stage-filter-row d-flex align-items-center gap-3">
 
   <span className="fs-14 text-muted">
-    FILTER BY STAGE:
+    {t("verification:filter_by_stage")}:
   </span>
 
   <button
@@ -551,7 +554,7 @@ useEffect(() => {
     type="button"
     onClick={() => setActiveStage(null)}
   >
-    Clear all
+    {t("common:clear_all")}
   </button>
 
   <div style={{ width: 200 }}>
@@ -562,7 +565,7 @@ useEffect(() => {
         setActiveStage(e.target.value || null)
       }
     >
-      <option value="">All Statuses</option>
+      <option value="">{t("verification:all_statuses")}</option>
 
       {Object.keys(STAGE_STATUS_MAP).map(key => (
         <option key={key} value={key}>
@@ -641,7 +644,7 @@ isSaveEnabled={anyAbsentChanged}
   }}
   fileUrl={pdfUrl}
   loading={loadingPdf}
-  title="Candidate Resume"
+  title={t("verification:candidate_resume")}
 />
  
  

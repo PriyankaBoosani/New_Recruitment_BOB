@@ -13,9 +13,12 @@ import HeaderWithBack from "../../../src/shared/components/HeaderWithBack";
 import HeaderWithBacks from "../../../src/shared/components/headerwithbacks";
 import HeaderWithBackss from "../../../src/shared/components/headerwithbackss";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
+
 
 
 const CandidatePreviewPage = ({ onHide }) => {
+  const { t } = useTranslation(["candidateWorkflow", "common"]);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -264,7 +267,7 @@ const isZonalHr = privileges?.Verification;
       {/* Application Form */}
       <div className="mt-3">
         {loading ? (
-          <div className="text-center py-4">Loading candidate details...</div>
+          <div className="text-center py-4">{t("candidateWorkflow:loading_candidate_details")}</div>
         ) : (
           previewData && (
             <ApplicationForm

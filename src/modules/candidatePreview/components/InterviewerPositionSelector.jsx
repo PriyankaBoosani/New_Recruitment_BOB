@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import Select, { components } from "react-select";
+import { useTranslation } from "react-i18next";
 
 /* ================= CONTROL TOOLTIP ================= */
 
@@ -119,6 +120,7 @@ export default function InterviewerPositionSelector({
         raw: r
       }));
   }, [apiData, selectedRequisition]);
+   const { t } = useTranslation(["candidateWorkflow", "common"]);
 
   /* ================= UI ================= */
 
@@ -128,12 +130,12 @@ export default function InterviewerPositionSelector({
       {/* ===== Requisition ===== */}
 
       <div className="col-md-4">
-        <label className="fs-14 blue-color">Requisition</label>
+        <label className="fs-14 blue-color">  {t("candidateWorkflow:requisition")}</label>
 
         <Select
           options={requisitionOptions}
           styles={selectStyles}
-          placeholder="Select Requisition"  
+          placeholder={t("candidateWorkflow:select_requisition")}
 
           components={{
             Control: TooltipControl,
@@ -160,12 +162,12 @@ export default function InterviewerPositionSelector({
       {/* ===== Position ===== */}
 
       <div className="col-md-4">
-        <label className="fs-14 blue-color">Position</label>
+        <label className="fs-14 blue-color">{t("common:position")}</label>
 
         <Select
           options={positionOptions}
           styles={selectStyles}
-          placeholder="Select Position"   
+          placeholder={t("candidateWorkflow:select_position")}
 
           components={{
             Control: TooltipControl,

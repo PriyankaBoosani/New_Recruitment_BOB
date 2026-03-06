@@ -1281,7 +1281,13 @@ const status = isZonalHr
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.spouseName || "-"}</td>
                   </tr>
                   <tr>
-                    <td className="fw-med">{t("twin_sibling")}</td>
+                    {/* <td className="fw-med">{t("twin_sibling")}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.isTwin === "Yes"
+                        ? `Yes (${data.personalDetails.twinName})`
+                        : "No"}
+                    </td> */}
+                     <td className="fw-med">{t("twin_sibling")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.isTwin === "Yes"
                         ? `Yes (${data.personalDetails.twinName})`
@@ -1411,7 +1417,7 @@ const status = isZonalHr
               <table className="edu-table">
                 <thead>
                   <tr>
-                    <th>{t("s_no")}</th>
+                    <th style={{ width: "4rem" }}>{t("s_no")}</th>
                     <th>{t("education_level")}</th>
                     <th>{t("school_college")}</th>
                     <th>{t("board")}</th>
@@ -1541,7 +1547,7 @@ const status = isZonalHr
                               </span>
                             )}
                           </td>
-                          <td className="action-cell" style={{ borderRight: '1px solid #dee2e6', }}>
+                          <td className="action-cell" style={{      width: 100, borderRight: '1px solid #dee2e6', }}>
                             {left && (
                               <>
                                 <img

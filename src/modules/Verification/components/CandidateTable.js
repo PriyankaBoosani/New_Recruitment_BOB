@@ -2,6 +2,9 @@ import React from "react";
 import { Person, FileText } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
+
+
 
 
 const CandidateTable = ({
@@ -20,6 +23,7 @@ const CandidateTable = ({
   setPage,
   setPageSize
 }) => {
+  const { t } = useTranslation(["verification", "common"]);
 
 
   const navigate = useNavigate();
@@ -61,13 +65,13 @@ const CandidateTable = ({
           <thead className="fs-14">
 
             <tr>
-              <th className="fs-14">Candidate</th>
-              <th className="fs-14">Category</th>
-              <th className="fs-14">Time</th>
-              <th className="fs-14">Zone</th>
-              <th className="fs-14 text-center">Absent</th>
-              <th className="fs-14">Status</th>
-              <th className="fs-14 text-center">Actions</th>
+              <th className="fs-14">{t("verification:candidate")}</th>
+              <th className="fs-14">{t("common:category")}</th>
+              <th className="fs-14">{t("common:time")}</th>
+              <th className="fs-14">{t("verification:zone")}</th>
+              <th className="fs-14 text-center">{t("verification:absent")}</th>
+              <th className="fs-14">{t("verification:status")}</th>
+              <th className="fs-14 text-center">{t("common:actions")}</th>
 
             </tr>
           </thead>
@@ -76,15 +80,7 @@ const CandidateTable = ({
             {!isSelectionDone && (
               <tr className="no-candidates-row">
                 <td colSpan="7" className="text-center py-4 text-muted fs-15">
-                  No candidates found
-                </td>
-              </tr>
-            )}
-
-            {isSelectionDone && filteredCandidates.length === 0 && (
-              <tr className="no-candidates-row">
-                <td colSpan="7" className="text-center py-4 text-muted fs-15">
-                  No candidates found
+                  {t("verification:no_candidates_found")}
                 </td>
               </tr>
             )}
@@ -105,7 +101,7 @@ const CandidateTable = ({
                     <td>
                       <div className="fw-semibold fs-14">{c.name}</div>
                       <div className="text-muted fs-12">
-                        Application Number: {c.regNo}
+                        {t("verification:application_number")}: {c.regNo}
                       </div>
                     </td>
 
@@ -143,14 +139,14 @@ const CandidateTable = ({
                       {/* View Profile */}
                       <OverlayTrigger
                         placement="bottom"
-                        overlay={<Tooltip>View Profile</Tooltip>}
+                        overlay={<Tooltip>{t("common:view_profile")}</Tooltip>}
                       >
                         <span>
                           <Person
                             size={16}
-                           className="me-3 cursor-pointer"
-style={{ cursor: "pointer" }}
-onClick={() => goToPreview(c)}
+                            className="me-3 cursor-pointer"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => goToPreview(c)}
 
                           />
 
@@ -160,7 +156,7 @@ onClick={() => goToPreview(c)}
                       {/* View Resume */}
                       <OverlayTrigger
                         placement="bottom"
-                        overlay={<Tooltip>View Resume</Tooltip>}
+                        overlay={<Tooltip>{t("common:view_resume")}</Tooltip>}
                       >
                         <span>
                           <FileText
@@ -186,7 +182,7 @@ onClick={() => goToPreview(c)}
 
         {!isSelectionDone || filteredCandidates.length === 0 ? (
           <div className="text-center py-4 text-muted">
-            No candidates found
+            {t("verification:no_candidates_found")}
           </div>
         ) : (
           filteredCandidates.map((c) => {
@@ -204,7 +200,7 @@ onClick={() => goToPreview(c)}
                   <div>
                     <div className="fw-semibold fs-14">{c.name}</div>
                     <div className="text-muted fs-12">
-                      Application Number: {c.regNo}
+                      {t("verification:application_number")}: {c.regNo}
                     </div>
                   </div>
 
@@ -219,28 +215,28 @@ onClick={() => goToPreview(c)}
 
                 <div className="card-grid">
                   <div>
-                    <label className="fs-12 text-muted">Category</label>
+                    <label className="fs-12 text-muted">{t("common:category")}</label>
 
 
                     <div className="fs-14">{c.category}</div>
                   </div>
 
                   <div>
-                    <label className="fs-12 text-muted">Time</label>
+                    <label className="fs-12 text-muted">{t("common:time")}</label>
                     <div className="fs-14">{c.time}</div>
 
 
                   </div>
 
                   <div>
-                    <label className="fs-12 text-muted">Zone</label>
+                    <label className="fs-12 text-muted">{t("verification:zone")}</label>
                     <div className="fs-14">{c.zone}</div>
 
 
                   </div>
 
                   <div>
-                    <label className="fs-12 text-muted">Absent</label>
+                    <label className="fs-12 text-muted">{t("verification:absent")}</label>
                     <input
                       type="checkbox"
                       checked={c.absent}
@@ -260,9 +256,9 @@ onClick={() => goToPreview(c)}
                 <div className="card-actions">
                   <Person
                     size={16}
-                   className="me-3 cursor-pointer"
-style={{ cursor: "pointer" }}
-onClick={() => goToPreview(c)}
+                    className="me-3 cursor-pointer"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => goToPreview(c)}
 
                   />
 
@@ -290,11 +286,11 @@ onClick={() => goToPreview(c)}
         {/* Showing text */}
         <span className="text-muted fs-13">
           {totalElements > 0
-            ? `Showing ${page * pageSize + 1}–${Math.min(
+            ? `${t("verification:showing")} ${page * pageSize + 1}–${Math.min(
               (page + 1) * pageSize,
               totalElements
-            )} of ${totalElements}`
-            : "Showing 0"}
+            )} ${t("verification:of")} ${totalElements}`
+            : `${t("verification:showing")} 0`}
         </span>
 
         {/* Pagination controls */}
@@ -319,7 +315,7 @@ onClick={() => goToPreview(c)}
             disabled={page === 0}
             onClick={() => setPage(prev => prev - 1)}
           >
-            Prev
+            {t("verification:prev")}
           </button>
 
           <button
@@ -327,7 +323,7 @@ onClick={() => goToPreview(c)}
             disabled={page + 1 >= totalPages}
             onClick={() => setPage(prev => prev + 1)}
           >
-            Next
+            {t("verification:next")}
           </button>
 
         </div>

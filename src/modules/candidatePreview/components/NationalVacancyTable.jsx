@@ -1,7 +1,9 @@
 // src/modules/candidatePreview/components/NationalVacancyTable.jsx
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const NationalVacancyTable = ({ nationalCategoryDistribution }) => {
+   const { t } = useTranslation(["candidateWorkflow", "common"]);
   if (!nationalCategoryDistribution) return null;
 
   const { categories, disabilities, totalVacancies } =
@@ -10,7 +12,7 @@ const NationalVacancyTable = ({ nationalCategoryDistribution }) => {
   return (
    <div className="category-reservation-card mt-3">
   <div className="category-title fs-14" style={{ fontWeight: 600 }}>
-    Category Wise Reservation
+    {t("candidateWorkflow:category_wise_reservation")}
   </div>
 
   <div className="table-responsive">
@@ -18,23 +20,23 @@ const NationalVacancyTable = ({ nationalCategoryDistribution }) => {
       <thead>
         <tr>
           <th colSpan="6" className="group-header text-center">
-            Category
+            {t("candidateWorkflow:category")}
           </th>
           <th colSpan="4" className="group-header text-center">
-            Disability
+            {t("candidateWorkflow:disability")}
           </th>
         </tr>
         <tr>
-          <th className="text-center">GEN</th>
-          <th className="text-center">EWS</th>
-          <th className="text-center">SC</th>
-          <th className="text-center">ST</th>
-          <th className="text-center">OBC</th>
-          <th className="text-center">Total</th>
-          <th className="text-center">HI</th>
-          <th className="text-center">VI</th>
-          <th className="text-center">OC</th>
-          <th className="text-center">ID</th>
+          <th className="text-center">{t("candidateWorkflow:gen")}</th>
+          <th className="text-center">{t("candidateWorkflow:ews")}</th>
+          <th className="text-center">{t("candidateWorkflow:sc")}</th>
+          <th className="text-center">{t("candidateWorkflow:st")}</th>
+          <th className="text-center">{t("candidateWorkflow:obc")}</th>
+           <th className="text-center">{t("common:total")}</th>
+          <th className="text-center">{t("candidateWorkflow:hi")}</th>
+          <th className="text-center">{t("candidateWorkflow:vi")}</th>
+          <th className="text-center">{t("candidateWorkflow:oc")}</th>
+          <th className="text-center">{t("candidateWorkflow:id")}</th>
         </tr>
       </thead>
 

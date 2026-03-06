@@ -3,6 +3,7 @@ import { Modal } from "react-bootstrap";
 import fileIcon from "../../../assets/upload-filled-file.png";
 import { toast } from "react-toastify";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
+import { useTranslation } from "react-i18next";
 
 const SendToOfferPoolModal = ({
   showSendOfferModal,
@@ -10,6 +11,7 @@ const SendToOfferPoolModal = ({
   offerCandidateIds,
   onBulkOfferSuccess,
 }) => {
+  const { t } = useTranslation(["candidateWorkflow","common"]);
   const fileInputRef = React.useRef(null);
   const [file, setFile] = React.useState(null);
 
@@ -18,7 +20,7 @@ const SendToOfferPoolModal = ({
     if (!selectedFile) return;
 
     if (!selectedFile.name.toLowerCase().endsWith(".xlsx")) {
-      toast.error("Only XLSX files are allowed");
+      toast.error(t("candidateWorkflow:only_xlsx_allowed"));
       e.target.value = "";
       return;
     }
@@ -28,7 +30,7 @@ const SendToOfferPoolModal = ({
 
   const handleDownloadTemplate = async () => {
     if (!offerCandidateIds?.length) {
-      toast.error("No qualified candidates selected");
+      toast.error(t("candidateWorkflow:no_qualified_candidates_selected"));
       return;
     }
 
@@ -54,21 +56,21 @@ const SendToOfferPoolModal = ({
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      toast.success("Template downloaded successfully");
+      toast.success(t("candidateWorkflow:template_downloaded_successfully"));
     } catch (err) {
       console.error(err);
-      toast.error("Failed to download template");
+      toast.error(t("candidateWorkflow:failed_to_download_template"));
     }
   };
 
   const handleBulkUpload = async () => {
     if (!file) {
-      toast.error("Please upload an XLSX file");
+      toast.error(t("candidateWorkflow:please_upload_xlsx_file"));
       return;
     }
 
     if (!offerCandidateIds?.length) {
-      toast.error("No qualified candidates selected");
+      toast.error(t("candidateWorkflow:no_qualified_candidates_selected"));
       return;
     }
 
@@ -79,7 +81,7 @@ const SendToOfferPoolModal = ({
         candidateIds: offerCandidateIds,
       });
 
-      toast.success("Candidates sent to Offer Pool");
+      toast.success(t("candidateWorkflow:candidates_sent_to_offer_pool"));
       setShowSendOfferModal(false);
       setFile(null);
 
@@ -88,7 +90,7 @@ const SendToOfferPoolModal = ({
       }
     } catch (err) {
       console.error(err);
-      toast.error("Failed to send candidates to Offer Pool");
+      toast.error(t("candidateWorkflow:failed_to_send_offer_pool"));
     }
   };
 
@@ -105,10 +107,10 @@ const SendToOfferPoolModal = ({
       <Modal.Header closeButton className="modalhead">
         <div className="d-grid">
           <h5 className="mb-1 blue-color fs-15">
-            Send to Offer Pool
+           {t("candidateWorkflow:send_to_offer_pool")}
           </h5>
           <p className="text-muted fs-14 mb-0">
-            Upload offer details for qualified candidates
+            {t("candidateWorkflow:upload_offer_details_for_candidates")}
           </p>
         </div>
       </Modal.Header>
@@ -119,9 +121,9 @@ const SendToOfferPoolModal = ({
           style={{ backgroundColor: "#FFF1E8" }}
         >
           <img src={fileIcon} width={60} className="mb-2" />
-          <p className="mb-1 fw-600 fs-15">Upload File</p>
+          <p className="mb-1 fw-600 fs-15">{t("candidateWorkflow:upload_file")}</p>
           <small className="text-muted fs-13">
-            Support for XLSX format
+            {t("candidateWorkflow:support_xlsx_format")}
           </small>
 
           <div className="d-grid justify-content-center gap-2 mt-3">
@@ -129,7 +131,7 @@ const SendToOfferPoolModal = ({
               className="btn orange-bg text-white fs-13 rounded shadow px-3"
               onClick={() => fileInputRef.current.click()}
             >
-              Upload XLSX
+              {t("candidateWorkflow:upload_xlsx")}
             </button>
 
             {file && (
@@ -146,7 +148,7 @@ const SendToOfferPoolModal = ({
 
           <div className="d-flex align-items-center gap-1 justify-content-center mt-4">
             <small className="text-muted fs-12">
-              Download template:
+              {t("candidateWorkflow:download_template")}:
             </small>
             <p
               className="blue-color cursor-pointer mb-0 fs-15 fw-500"
@@ -171,7 +173,7 @@ const SendToOfferPoolModal = ({
           className="btn btn-light-grey shadow border fs-13 px-3"
           onClick={() => setShowSendOfferModal(false)}
         >
-          Cancel
+          {t("common:cancel")}
         </button>
 
         <button
@@ -179,7 +181,7 @@ const SendToOfferPoolModal = ({
           onClick={handleBulkUpload}
           disabled={!file}
         >
-          Import
+         {t("candidateWorkflow:import")}
         </button>
       </Modal.Footer>
     </Modal>

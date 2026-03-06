@@ -2,8 +2,11 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
 import NationalVacancyTable from "./NationalVacancyTable";
+import { useTranslation } from "react-i18next";
+
 
 const KnowMoreModal = ({ show, onHide, selectedJob, masterData }) => {
+   const { t } = useTranslation(["candidateWorkflow", "common"]);
   if (!selectedJob) return null;
 
   const reservationCategories = masterData?.reservation_categories || [];
@@ -51,14 +54,14 @@ const KnowMoreModal = ({ show, onHide, selectedJob, masterData }) => {
 
       <span className="date-text">
         <i className="bi bi-calendar3 me-1"></i>
-        Start: {selectedJob.registration_start_date}
+        {t("candidateWorkflow:start")}: {selectedJob.registration_start_date}
       </span>
 
       <span className="date-divider">|</span>
 
       <span className="date-text">
         <i className="bi bi-calendar3 me-1"></i>
-        End: {selectedJob.registration_end_date}
+        {t("candidateWorkflow:end")}: {selectedJob.registration_end_date}
       </span>
     </div>
 
@@ -77,28 +80,28 @@ const KnowMoreModal = ({ show, onHide, selectedJob, masterData }) => {
         <div className="stats-container mb-3">
           <div className="row g-2 small">
             <div className="col-md-4">
-              <span className="stat-label">Employment Type:</span>{" "}
+              <span className="stat-label">{t("candidateWorkflow:employment_type")}:</span>{" "}
               <span className="stat-value">{selectedJob.employment_type}</span>
             </div>
             <div className="col-md-4">
-              <span className="stat-label">Eligibility Age:</span>{" "}
+              <span className="stat-label">{t("candidateWorkflow:eligibility_age")}:</span>{" "}
               <span className="stat-value">
                 {selectedJob.eligibility_age_min} -{" "}
-                {selectedJob.eligibility_age_max} yrs
+                {selectedJob.eligibility_age_max} {t("candidateWorkflow:years_short")}
               </span>
             </div>
             <div className="col-md-4">
-              <span className="stat-label">Experience:</span>{" "}
+              <span className="stat-label">{t("candidateWorkflow:experience")}:</span>{" "}
               <span className="stat-value">
-                {selectedJob.mandatory_experience} yrs
+                {selectedJob.mandatory_experience} {t("candidateWorkflow:years_short")}
               </span>
             </div>
             <div className="col-md-4">
-              <span className="stat-label">Department:</span>{" "}
+              <span className="stat-label">{t("candidateWorkflow:department")}:</span>{" "}
               <span className="stat-value">{selectedJob.dept_name}</span>
             </div>
             <div className="col-md-4">
-              <span className="stat-label">Vacancies:</span>{" "}
+              <span className="stat-label">{t("candidateWorkflow:vacancies")}:</span>{" "}
               <span className="stat-value">{selectedJob.no_of_vacancies}</span>
             </div>
           </div>
@@ -106,33 +109,33 @@ const KnowMoreModal = ({ show, onHide, selectedJob, masterData }) => {
 
         {/* ===== EDUCATION ===== */}
         <div className="info-card">
-          <div className="section-title">Mandatory Education:</div>
+          <div className="section-title">{t("candidateWorkflow:mandatory_education")}:</div>
           <ul className="section-list">
-            <li>{selectedJob.mandatory_qualification || "Not specified"}</li>
+            <li>{selectedJob.mandatory_qualification || t("candidateWorkflow:not_specified")}</li>
           </ul>
 
-          <div className="section-title mt-2">Preferred Education:</div>
+          <div className="section-title mt-2">{t("candidateWorkflow:preferred_education")}:</div>
           <ul className="section-list">
-            <li>{selectedJob.preferred_qualification || "Not specified"}</li>
+            <li>{selectedJob.preferred_qualification || t("candidateWorkflow:not_specified")}</li>
           </ul>
         </div>
 
         {/* ===== EXPERIENCE ===== */}
         <div className="info-card">
-          <div className="section-title">Mandatory Experience:</div>
+          <div className="section-title">{t("candidateWorkflow:mandatory_experience")}:</div>
           <ul className="section-list">
-            <li>{selectedJob.mandatory_experience} years</li>
+            <li>{selectedJob.mandatory_experience} {t("candidateWorkflow:years_short")}</li>
           </ul>
 
-          <div className="section-title mt-2">Preferred Experience:</div>
+          <div className="section-title mt-2">{t("candidateWorkflow:preferred_experience")}:</div>
           <ul className="section-list">
-            <li>{selectedJob.preferred_experience} years</li>
+            <li>{selectedJob.preferred_experience} {t("candidateWorkflow:years_short")}</li>
           </ul>
         </div>
 
         {/* ===== RESPONSIBILITIES ===== */}
         <div className="info-card">
-          <div className="section-title">Key Responsibilities:</div>
+          <div className="section-title">{t("candidateWorkflow:key_responsibilities")}:</div>
           <ul className="section-list">
             <li>{selectedJob.roles_responsibilities}</li>
           </ul>
@@ -153,7 +156,7 @@ const KnowMoreModal = ({ show, onHide, selectedJob, masterData }) => {
       {/* ===== FOOTER ===== */}
   <Modal.Footer className="justify-content-center">
   <button className="ok-btn" onClick={onHide}>
-    OK
+    {t("common:ok")}
   </button>
 </Modal.Footer>
 

@@ -66,6 +66,13 @@ import interviewDayEn from "../i18n/interviewDayJson/interviewDay.en.json";
 import interviewDayHi from "../i18n/interviewDayJson/interviewDay.hi.json";
 
 
+import candidateWorkflowEn from "../i18n/candidateWorkflowJson/candidateWorkflow.en.json";
+import candidateWorkflowHi from "../i18n/candidateWorkflowJson/candidateWorkflow.hi.json";
+
+import verificationEn from "../i18n/verificationJson/verification.en.json";
+import verificationHi from "../i18n/verificationJson/verification.hi.json";
+
+
 
 
 
@@ -95,7 +102,9 @@ i18n
         preview: previewEn,
         interviewSchedule: interviewScheduleEn,
         interviewPanelCommittee: committeeInterviewPanelEn,
-         interviewDay: interviewDayEn 
+         interviewDay: interviewDayEn,
+         candidateWorkflow: candidateWorkflowEn,
+         verification: verificationEn,
       },
       hi: {
         common: commonHi,
@@ -119,7 +128,9 @@ i18n
         preview: previewHi,
          interviewSchedule: interviewScheduleHi,
          interviewPanelCommittee: committeeInterviewPanelHi,
-         interviewDay: interviewDayHi
+         interviewDay: interviewDayHi,
+         candidateWorkflow: candidateWorkflowHi,
+         verification: verificationHi,
       }
     },
     lng: "en",       

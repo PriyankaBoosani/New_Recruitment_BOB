@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Person, FileText } from "react-bootstrap-icons";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 export default function CandidatePool({
   candidates,
@@ -20,14 +21,15 @@ export default function CandidatePool({
   position,
   selectedRequisitionId
 }) {
-	const STATUS_CLASS_MAP = {  
-		Applied: "bg-secondary",
-		Shortlisted: "bg-warning",
-		Discrepancy: "bg-primary",
-		Rejected: "bg-danger",
+  const { t } = useTranslation(["candidateWorkflow", "common"]);
+  const STATUS_CLASS_MAP = {
+    Applied: "bg-secondary",
+    Shortlisted: "bg-warning",
+    Discrepancy: "bg-primary",
+    Rejected: "bg-danger",
     Pending: "bg-info",
-	};
-	const navigate = useNavigate();
+  };
+  const navigate = useNavigate();
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
   /* ---------- Selection logic ---------- */
@@ -110,10 +112,10 @@ export default function CandidatePool({
               </th>
 
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("name")} role="button">
-                Candidate {sortIcon("name")}
+                {t("candidateWorkflow:candidate")} {sortIcon("name")}
               </th>
 
-							{/* <th className="fs-14 fw-normal py-3" onClick={() => requestSort("rank")} role="button">
+              {/* <th className="fs-14 fw-normal py-3" onClick={() => requestSort("rank")} role="button">
                 Rank {sortIcon("rank")}
               </th>
 
@@ -122,22 +124,22 @@ export default function CandidatePool({
               </th> */}
 
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("experienceMonths")} role="button">
-                Experience {sortIcon("experienceMonths")}
+                {t("candidateWorkflow:experience")} {sortIcon("experienceMonths")}
               </th>
 
               <th className="fs-14 fw-normal py-3">
-                Status
+                {t("candidateWorkflow:status")}
               </th>
 
               <th className="fs-14 fw-normal py-3">
-                Location
+                {t("common:location")}
               </th>
 
               <th className="fs-14 fw-normal py-3">
-                Category
+                {t("common:category")}
               </th>
 
-              <th className="text-center fs-14 fw-normal py-3">Actions</th>
+              <th className="text-center fs-14 fw-normal py-3">{t("common:actions")}</th>
             </tr>
           </thead>
 
@@ -145,34 +147,34 @@ export default function CandidatePool({
             {loading ? (
               <tr>
                 <td colSpan="9" className="text-center py-4">
-                  Loading candidates...
+                  {t("candidateWorkflow:loading_candidates")}
                 </td>
               </tr>
             ) : sortedCandidates.length === 0 ? (
               <tr>
                 <td colSpan="9" className="text-center py-4">
-                  No candidates found
+                  {t("candidateWorkflow:no_candidates_found")}
                 </td>
               </tr>
             ) : (
               sortedCandidates.map((c) => (
-              <tr key={c.id}>
-                <td className="align-content-center" style={{ paddingLeft: '1rem' }}>
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.includes(c.id)}
-                    onChange={() => toggleRow(c.id)}
-                  />
-                </td>
+                <tr key={c.id}>
+                  <td className="align-content-center" style={{ paddingLeft: '1rem' }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(c.id)}
+                      onChange={() => toggleRow(c.id)}
+                    />
+                  </td>
 
-                <td className="align-content-center">
-                  <p className="fw-normal fs-14 mb-0">{c.name}</p>
-                  <p className="text-muted fs-12 mb-0">
-                    Application Number: {c.applicationNo}
-                  </p>
-                </td>
+                  <td className="align-content-center">
+                    <p className="fw-normal fs-14 mb-0">{c.name}</p>
+                    <p className="text-muted fs-12 mb-0">
+                      {t("candidateWorkflow:application_number")}: {c.applicationNo}
+                    </p>
+                  </td>
 
-								{/* <td className="align-content-center">
+                  {/* <td className="align-content-center">
 									<p className="fw-normal fs-14 mb-0">{c?.rank || "-"}</p>
 								</td>
 
@@ -180,71 +182,77 @@ export default function CandidatePool({
 									<p className="fw-normal fs-14 mb-0">{c?.score || "-"}</p>
 								</td> */}
 
-                <td className="align-content-center">
-									<p className="fw-normal fs-14 mb-0">{(c.experienceMonths / 12).toFixed(1)} years</p>
-								</td>
+                  <td className="align-content-center">
+                    {/* <p className="fw-normal fs-14 mb-0">{(c.experienceMonths / 12).toFixed(1)} {t("candidateWorkflow:years")}</p> */}
+                    <p className="fw-normal fs-14 mb-0">
+                      {((c.experienceMonths ?? 0) / 12).toFixed(1)} {t("candidateWorkflow:years")}
+                    </p>
+                  </td>
 
-                <td className="align-content-center">
-                  <span
-										className={`round_badge px-3 py-1 fs-12 rounded text-white ${
-											STATUS_CLASS_MAP[c.status] || "bg-secondary"
-										}`}
-									>
-										{c.status}
-									</span>
-                </td>
+                  <td className="align-content-center">
+                    <span
+                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${STATUS_CLASS_MAP[c.status] || "bg-secondary"
+                        }`}
+                    >
+                      {c.status}
+                      {/* {t(
+                        `candidateWorkflow:status_${c.status?.toLowerCase()}`,
+                        { defaultValue: c.status }
+                      )} */}
+                    </span>
+                  </td>
 
-                <td className="align-content-center">
-									<p className="fw-normal fs-14 mb-0">{c.location}</p>
-								</td>
+                  <td className="align-content-center">
+                    <p className="fw-normal fs-14 mb-0">{c.location}</p>
+                  </td>
 
-                <td className="align-content-center">
-									<p className="fw-normal fs-14 mb-0">{c.categoryName}</p>
-								</td>
+                  <td className="align-content-center">
+                    <p className="fw-normal fs-14 mb-0">{c.categoryName}</p>
+                  </td>
 
-               <td className="text-center align-content-center">
-                <OverlayTrigger
-                  placement="bottom"
-                  overlay={<Tooltip id={`tooltip-${c.id}`}>View Profile</Tooltip>}
-                >
-                  <Person
-                    className="me-3 cursor-pointer"
-                    onClick={() =>
-                      navigate("/candidate-preview", {
-                        state: {
-                        candidate: c,
-                        positionId: selectedPositionId,
-                        requisitionId: selectedRequisitionId,
-                        requisition: requisition
-                          ? {
-                              requisition_code: requisition.requisition_code,
-                              requisition_title: requisition.requisition_title,
-                              registration_start_date: requisition.registration_start_date,
-                              registration_end_date: requisition.registration_end_date,
-                            }
-                          : null,
-                        position: position
-                          ? {
-                              positionId: position.positionId,
-                              positionName: position.positionName,
-                            }
-                          : null,
-                          activeTab: "CANDIDATE_POOL",
-                      },
-                    })
-                  }
-                />
-              </OverlayTrigger>
-              <OverlayTrigger
-                placement="bottom"
-                overlay={<Tooltip id={`tooltip-${c.id}`}>View Resume</Tooltip>}
-              >
-                <FileText className="cursor-pointer" onClick={() => onViewFile(c)} />
-              </OverlayTrigger>
-              </td>
+                  <td className="text-center align-content-center">
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={<Tooltip id={`tooltip-${c.id}`}>{t("candidateWorkflow:view_profile")}</Tooltip>}
+                    >
+                      <Person
+                        className="me-3 cursor-pointer"
+                        onClick={() =>
+                          navigate("/candidate-preview", {
+                            state: {
+                              candidate: c,
+                              positionId: selectedPositionId,
+                              requisitionId: selectedRequisitionId,
+                              requisition: requisition
+                                ? {
+                                  requisition_code: requisition.requisition_code,
+                                  requisition_title: requisition.requisition_title,
+                                  registration_start_date: requisition.registration_start_date,
+                                  registration_end_date: requisition.registration_end_date,
+                                }
+                                : null,
+                              position: position
+                                ? {
+                                  positionId: position.positionId,
+                                  positionName: position.positionName,
+                                }
+                                : null,
+                              activeTab: "CANDIDATE_POOL",
+                            },
+                          })
+                        }
+                      />
+                    </OverlayTrigger>
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={<Tooltip id={`tooltip-${c.id}`}>{t("candidateWorkflow:view_resume")}</Tooltip>}
+                    >
+                      <FileText className="cursor-pointer" onClick={() => onViewFile(c)} />
+                    </OverlayTrigger>
+                  </td>
 
-              </tr>
-            ))
+                </tr>
+              ))
             )}
           </tbody>
         </table>
@@ -252,8 +260,8 @@ export default function CandidatePool({
         {/* Pagination */}
         <div className="d-flex justify-content-between align-items-center px-3 py-3 border-top">
           <div className="fs-14 text-muted">
-            Showing {page * pageSize + 1}–
-            {Math.min((page + 1) * pageSize, totalElements)} of {totalElements}
+            {t("candidateWorkflow:showing")} {page * pageSize + 1}–
+            {Math.min((page + 1) * pageSize, totalElements)} {t("candidateWorkflow:of")} {totalElements}
           </div>
 
           <div className="d-flex align-items-center gap-2">
@@ -276,7 +284,7 @@ export default function CandidatePool({
               disabled={page === 0}
               onClick={() => onPageChange(page - 1)}
             >
-              Prev
+              {t("candidateWorkflow:prev")}
             </button>
 
             <button
@@ -284,7 +292,7 @@ export default function CandidatePool({
               disabled={(page + 1) * pageSize >= totalElements}
               onClick={() => onPageChange(page + 1)}
             >
-              Next
+              {t("candidateWorkflow:next")}
             </button>
           </div>
         </div>
@@ -297,55 +305,62 @@ export default function CandidatePool({
             <div className="card-body">
               <h6 className="fw-bold mb-1">{c.name}</h6>
               <small className="text-muted d-block mb-2">
-                Application Number: {c.regNo}
+                {t("candidateWorkflow:application_number")}: {c.regNo}
               </small>
 
               <div className="mb-1">
-                <strong>Experience:</strong> {(c.experienceMonths / 12).toFixed(1)} years
+                <strong>{t("candidateWorkflow:experience")}:</strong>
+                {((c.experienceMonths ?? 0) / 12).toFixed(1)} {t("candidateWorkflow:years")}
+
+                {/* <strong>{t("candidateWorkflow:experience")}:</strong> {(c.experienceMonths / 12).toFixed(1)} {t("candidateWorkflow:years")} */}
               </div>
               <div className="mb-1">
-                <strong>Status:</strong>{" "}
+                <strong>{t("candidateWorkflow:status")}:</strong>{" "}
                 <span
-									className={`round_badge px-3 py-1 fs-12 rounded text-white ${
-										STATUS_CLASS_MAP[c.status] || "bg-secondary"
-									}`}
-								>
-									{c.status}
-								</span>
+                  className={`round_badge px-3 py-1 fs-12 rounded text-white ${STATUS_CLASS_MAP[c.status] || "bg-secondary"
+                    }`}
+                >
+                  {/* {c.status} */}
+                  {t(
+                    `candidateWorkflow:status_${c.status?.toLowerCase()}`,
+                    { defaultValue: c.status }
+                  )}
+                </span>
               </div>
               <div className="mb-1">
-                <strong>Location:</strong> {c.location}
+                <strong>{t("common:location")}:</strong> {c.location}
               </div>
               <div className="mb-2">
-                <strong>Category:</strong> {c.categoryName}
+                <strong>{t("common:category")}:</strong> {c.categoryName}
               </div>
 
               <div className="d-flex gap-2">
                 <Person
-									className="me-3 cursor-pointer"
-									onClick={() =>
-										navigate("/candidate-preview", {
-											state: { candidate: c, positionId: selectedPositionId, requisitionId: selectedRequisitionId,
+                  className="me-3 cursor-pointer"
+                  onClick={() =>
+                    navigate("/candidate-preview", {
+                      state: {
+                        candidate: c, positionId: selectedPositionId, requisitionId: selectedRequisitionId,
                         requisition: requisition
                           ? {
-                              requisition_code: requisition.requisition_code,
-                              requisition_title: requisition.requisition_title,
-                              registration_start_date: requisition.registration_start_date,
-                              registration_end_date: requisition.registration_end_date,
-                            }
+                            requisition_code: requisition.requisition_code,
+                            requisition_title: requisition.requisition_title,
+                            registration_start_date: requisition.registration_start_date,
+                            registration_end_date: requisition.registration_end_date,
+                          }
                           : null,
                         position: position
                           ? {
-                              positionId: position.positionId,
-                              positionName: position.positionName,
-                            }
+                            positionId: position.positionId,
+                            positionName: position.positionName,
+                          }
                           : null,
-                       },
-                       
-										})
-									}
-								/>
-								<FileText className="cursor-pointer" onClick={() => onViewFile(c)} />
+                      },
+
+                    })
+                  }
+                />
+                <FileText className="cursor-pointer" onClick={() => onViewFile(c)} />
               </div>
             </div>
           </div>

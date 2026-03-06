@@ -3,12 +3,13 @@ import { Button, Modal } from 'react-bootstrap'
 import fileIcon from "../../../assets/upload-filled-file.png"
 import uploadIcon from "../../../assets/upload-blue-icon.png"
 import deleteIcon from "../../../assets/delete_icon.png"
-import { t } from 'i18next';
+import { useTranslation } from "react-i18next";
 import { toast } from 'react-toastify';
 import jobPositionApiService from '../../jobPosting/services/jobPositionApiService';
 import Loader from '../../../shared/components/Loader'
 
 const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, applicationIds, positionId, onBulkScheduleSuccess }) => {
+const { t } = useTranslation(["candidateWorkflow","common"]);
   const [activeTab, setActiveTab] = React.useState("import");
 	const [loading, setLoading] = React.useState(false)
 	const fileInputRef = React.useRef(null);
@@ -20,7 +21,7 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 		if (!selectedFile) return;
 
 		if (!selectedFile.name.toLowerCase().endsWith(".xlsx")) {
-			toast.error("Only XLSX files are allowed");
+			toast.error(t("candidateWorkflow:only_xlsx_allowed"));
 			e.target.value = "";
 			return;
 		}
@@ -49,10 +50,10 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 
 			document.body.removeChild(link);
 			window.URL.revokeObjectURL(url);
-			toast.success("Template downloaded successfully");
+			toast.success(t("candidateWorkflow:template_downloaded_successfully"));
 		} catch (err) {
 			console.error(err);
-			toast.error("Failed to download template");
+			toast.error(t("candidateWorkflow:failed_to_download_template"));
 		} finally {
 			setLoading(false)
 		}
@@ -60,12 +61,12 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 
 	const handleBulkUpload = async () => {
 		if (!file) {
-			toast.error("Please upload an XLSX file");
+			toast.error(t("candidateWorkflow:please_upload_xlsx_file"));
 			return;
 		}
 
 		if (!applicationIds?.length) {
-			toast.error("No candidates selected");
+			toast.error(t("candidateWorkflow:no_candidates_selected"));
 			return;
 		}
 
@@ -85,14 +86,14 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 				setShowScheduleModal(false);
 				setFile(null);
 				setValidationErrors([]);
-				toast.success(res.message || "Interviews scheduled successfully");
+				toast.success(res.message || t("candidateWorkflow:interviews_scheduled_successfully"));
 			} else {
 				const apiErrors =
 					res?.data && Array.isArray(res.data)
 					? res.data
-					: [res?.data.map(row => row) || "Bulk scheduling failed"];
+					: [res?.data.map(row => row) || t("candidateWorkflow:bulk_scheduling_failed")];
 				setValidationErrors(apiErrors);
-				toast.error(res.message || "Please check the validations");
+				toast.error(res.message || t("common:validation_failed"));
 			}
 		} catch (err) {
 			console.error(err);
@@ -129,8 +130,8 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 		>
 			<Modal.Header className='d-flex justify-content-between modalhead' closeButton>
 				<div className='d-grid'>
-					<h5 className="mb-1 blue-color fs-15">Schedule Interview</h5>
-					<p className='text-muted fs-14 mb-0'>Schedule interviews for selected candidates</p>
+					<h5 className="mb-1 blue-color fs-15">{t("common:schedule_interviews")}</h5>
+					<p className='text-muted fs-14 mb-0'>{t("candidateWorkflow:schedule_interview_selected_candidates")}</p>
 				</div>
 				{/* <div>
 					<button type="button" class="btn-close" aria-label="Close"></button>
@@ -169,9 +170,9 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 					style={{ backgroundColor: "#FFF1E8" }}
 				>
 					<img src={fileIcon} width={60} className="mb-2" />
-					<p className="mb-1 fw-600 fs-15">Upload File</p>
+					<p className="mb-1 fw-600 fs-15">{t("candidateWorkflow:upload_file")}</p>
 					<small className="text-muted fs-13">
-						Support for XLSX format
+						{t("candidateWorkflow:support_xlsx_format")}
 					</small>
 
 					<div className="d-grid justify-content-center gap-2 mt-3">
@@ -179,7 +180,7 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 							Upload CSV
 						</button> */}
 						<button className="btn orange-bg text-white fs-13 rounded shadow px-3" onClick={() => fileInputRef.current.click()}>
-							Upload XLSX
+							{t("candidateWorkflow:upload_xlsx")}
 						</button>
 					</div>
 
@@ -213,7 +214,7 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 					
 					<div className='d-flex align-items-center gap-1 justify-content-center mt-4'>
 						<small className="d-block text-muted d-flex justify-content-center gap-1 fs-12">
-							Download template: 
+							{t("candidateWorkflow:download_template")}: 
 						</small>
 						<p className='blue-color cursor-pointer mb-0 fs-15 fw-500'>
 							{/* <b>CSV</b> | */}
@@ -238,10 +239,10 @@ const ScheduleInterviewModal = ({ showScheduleModal, setShowScheduleModal, appli
 					className="btn btn-light-grey shadow border fs-13 px-3"
 					onClick={closeModal}
 				>
-					Cancel
+					{t("common:cancel")}
 				</button>
 				<button className="btn orange-bg text-white shadow fs-13 px-4" onClick={handleBulkUpload} disabled={!file}>
-					Import
+					{t("common:import")}
 				</button>
 			</Modal.Footer>
 		</Modal>

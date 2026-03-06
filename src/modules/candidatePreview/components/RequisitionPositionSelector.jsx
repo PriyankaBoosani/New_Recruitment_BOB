@@ -1,5 +1,7 @@
 import React, { useMemo } from "react";
 import Select, { components } from "react-select";
+import { useTranslation } from "react-i18next";
+
 
 import {
   mapUniqueRequisitionsToDropdown,
@@ -9,6 +11,7 @@ import {
 /* ================= CONTROL TOOLTIP ================= */
 
 const TooltipControl = (props) => {
+
   const selected = props.getValue()?.[0];
 
   return (
@@ -42,6 +45,7 @@ const RequisitionPositionSelector = ({
   selectedPositionRaw,
   closeCalendar // ✅ added
 }) => {
+    const { t } = useTranslation(["candidateWorkflow"]);
 
   /* ===== SELECT STYLES ===== */
 
@@ -157,7 +161,7 @@ const RequisitionPositionSelector = ({
       {/* ===== Requisition ===== */}
 
       <div className="col-md-4">
-        <label className="fs-14 blue-color">Requisition</label>
+        <label className="fs-14 blue-color">{t("candidateWorkflow:requisition")}</label>
 
         <Select
           styles={selectStyles}
@@ -168,7 +172,7 @@ const RequisitionPositionSelector = ({
           className="mt-1 fs-14"
           classNamePrefix="react-select"
           
-          placeholder="Select Requisition"
+          placeholder={t("candidateWorkflow:select_requisition")}
           options={requisitions}
           value={selectedRequisitionOption}
           menuPortalTarget={document.body}     // ✅ fix overlay
@@ -183,7 +187,7 @@ const RequisitionPositionSelector = ({
       {/* ===== Position ===== */}
 
       <div className="col-md-4">
-        <label className="fs-14 blue-color">Position</label>
+        <label className="fs-14 blue-color">{t("candidateWorkflow:position")}</label>
 
         <Select
           styles={selectStyles}
@@ -194,7 +198,7 @@ const RequisitionPositionSelector = ({
           className="mt-1 fs-14"
           classNamePrefix="react-select"
          
-          placeholder="Select Position"
+          placeholder={t("candidateWorkflow:select_position")}
           options={positions}
           value={selectedPositionOption}
           isDisabled={!selectedRequisitionOption}

@@ -3,6 +3,7 @@ import { Person, FileText } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import I_icon from '../../../assets/I_icon.png';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 export default function InterviewPool({
   selectedIds,
@@ -20,6 +21,7 @@ export default function InterviewPool({
   totalElements,
   onOpenFeedback
 }) {
+  const { t } = useTranslation(["candidateWorkflow", "common"]);
   const navigate = useNavigate();
   const STATUS_CLASS_MAP = {
     SCHEDULED: "blue-bg",
@@ -101,14 +103,14 @@ export default function InterviewPool({
                 onChange={toggleSelectAll}
               />
             </th>
-            <th className="fs-14 fw-normal py-3" >Candidate</th>
-            <th className="fs-14 fw-normal py-3">Date</th>
-            <th className="fs-14 fw-normal py-3">Time</th>
-            <th className="fs-14 fw-normal py-3">Zone</th>
-            <th className="fs-14 fw-normal py-3"> Panel Details</th>
-            <th className="fs-14 fw-normal py-3">Interview Status</th>
-            <th className="fs-14 fw-normal py-3">Score</th>
-            <th className="text-center fs-14 fw-normal py-3">Actions</th>
+            <th className="fs-14 fw-normal py-3" >{t("candidateWorkflow:candidate")}</th>
+            <th className="fs-14 fw-normal py-3">{t("common:date")}</th>
+            <th className="fs-14 fw-normal py-3">{t("common:time")}</th>
+            <th className="fs-14 fw-normal py-3">{t("candidateWorkflow:zone")}</th>
+            <th className="fs-14 fw-normal py-3">{t("candidateWorkflow:panel_details")}</th>
+            <th className="fs-14 fw-normal py-3">{t("candidateWorkflow:interview_status")}</th>
+            <th className="fs-14 fw-normal py-3">{t("common:score")}</th>
+            <th className="text-center fs-14 fw-normal py-3">{t("common:actions")}</th>
           </tr>
         </thead>
 
@@ -116,7 +118,7 @@ export default function InterviewPool({
           {candidates.length === 0 ? (
             <tr>
               <td colSpan="9" className="text-center py-4 text-muted fs-14">
-                No candidates in Interview Pool yet.
+               {t("candidateWorkflow:no_candidates_interview_pool")}
               </td>
             </tr>
           ) : (
@@ -133,7 +135,7 @@ export default function InterviewPool({
 
                 <td className="align-content-center">
                   <p className="fw-normal fs-14 mb-0">{c.name}</p>
-                  <p className="text-muted fs-12 mb-0">Application Number: {c.regNo}</p>
+                  <p className="text-muted fs-12 mb-0">{t("candidateWorkflow:application_number")}: {c.regNo}</p>
                 </td>
 
                 <td className="fs-14 align-content-center">{c.date}</td>
@@ -170,7 +172,7 @@ export default function InterviewPool({
                 <td className="text-center align-content-center">
                   <OverlayTrigger
                     placement="bottom"
-                    overlay={<Tooltip id={`tooltip-${c.id}`}>View Profile</Tooltip>}
+                    overlay={<Tooltip id={`tooltip-${c.id}`}>{t("common:view_profile")}</Tooltip>}
                   >
                     <Person
                       className="me-3 cursor-pointer"
@@ -206,7 +208,7 @@ export default function InterviewPool({
                   </OverlayTrigger>
                   <OverlayTrigger
                     placement="bottom"
-                    overlay={<Tooltip id={`tooltip-${c.id}`}>View Resume</Tooltip>}
+                    overlay={<Tooltip id={`tooltip-${c.id}`}>{t("common:view_resume")}</Tooltip>}
                   >
                     <FileText className="cursor-pointer" onClick={() => onViewFile(c)} />
                   </OverlayTrigger>
@@ -220,8 +222,8 @@ export default function InterviewPool({
 
       <div className="d-flex justify-content-between align-items-center px-3 py-3 border-top">
         <div className="fs-14 text-muted">
-          Showing {page * pageSize + 1}–
-          {Math.min((page + 1) * pageSize, totalElements)} of {totalElements}
+          {t("candidateWorkflow:showing")} {page * pageSize + 1}–
+          {Math.min((page + 1) * pageSize, totalElements)} {t("candidateWorkflow:of")} {totalElements}
         </div>
 
         <div className="d-flex align-items-center gap-2">
@@ -244,7 +246,7 @@ export default function InterviewPool({
             disabled={page === 0}
             onClick={() => onPageChange(page - 1)}
           >
-            Prev
+            {t("candidateWorkflow:prev")}
           </button>
 
           <button
@@ -252,7 +254,7 @@ export default function InterviewPool({
             disabled={(page + 1) * pageSize >= totalElements}
             onClick={() => onPageChange(page + 1)}
           >
-            Next
+            {t("candidateWorkflow:next")}
           </button>
         </div>
       </div>

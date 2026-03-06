@@ -1,13 +1,15 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 export default function InterviewFeedbackHistoryModal({
   show,
   onHide,
   feedbackList = [],
   loading
-})
- {
+}) {
+  const { t } = useTranslation(["candidateWorkflow", "common"]);
+
   return (
     
     <Modal
@@ -19,7 +21,7 @@ export default function InterviewFeedbackHistoryModal({
     >
       <Modal.Header closeButton className="modalhead">
         <Modal.Title className="fs-15 fw-normal">
-          Interviewer Feedback History
+          {t("candidateWorkflow:interviewer_feedback_history")}
         </Modal.Title>
       </Modal.Header>
 
@@ -28,10 +30,10 @@ export default function InterviewFeedbackHistoryModal({
         <table className="table mb-0">
           <thead>
             <tr>
-              <th className="text-white fs-14 fw-normal blue-bg">Name</th>
-              <th className="text-white fs-14 fw-normal blue-bg">Comments</th>
-              <th className="text-white fs-14 fw-normal blue-bg">Time</th>
-              <th className="text-white fs-14 fw-normal blue-bg">Score</th>
+              <th className="text-white fs-14 fw-normal blue-bg"> {t("common:name")}</th>
+              <th className="text-white fs-14 fw-normal blue-bg"> {t("common:comments")}</th>
+              <th className="text-white fs-14 fw-normal blue-bg">{t("common:time")}</th>
+              <th className="text-white fs-14 fw-normal blue-bg">{t("common:score")}</th>
             </tr>
           </thead>
 
@@ -39,7 +41,7 @@ export default function InterviewFeedbackHistoryModal({
             {feedbackList.length === 0 ? (
               <tr>
                 <td colSpan="4" className="text-center py-4 text-muted fs-14">
-                  No feedback available
+                  {t("candidateWorkflow:no_feedback_available")}
                 </td>
               </tr>
             ) : (
