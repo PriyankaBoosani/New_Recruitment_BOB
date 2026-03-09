@@ -919,7 +919,7 @@ const handleRequisitionChange = async (e) => {
       </div>
 
       {/* Desktop Table */}
-      <div className="card rounded border-0 d-none d-md-block mt-4" style={{ marginBottom: '2rem !important' }}>
+      <div className="card rounded border-0 d-none d-md-block mt-4 mb-5">
         <div className="card-header bg-white border-bottom-0 p-0 px-1 candidate-screening-tabs-header">
           {/* Tabs */}
           <ul className="nav nav-tabs border-0 pt-2 pb-3 px-2 border-bottom">
@@ -1100,7 +1100,7 @@ const handleRequisitionChange = async (e) => {
                         })
                       }
                       className={`badge px-3 py-2 border-0 rounded fw-normal fs-12 ${isSelected
-                        ? "bg-primary text-white"
+                        ? "orange-color orange-border"
                         : "bg-light text-muted border"
                         }`}
                       style={{ cursor: "pointer" }}
@@ -1114,7 +1114,7 @@ const handleRequisitionChange = async (e) => {
           )}
 
           {activeTab === "OFFER_POOL" && (
-            <div className="row g-2 mt-1 px-2 py-2 align-items-end">
+            <div className="row g-2 mt-1 px-2 py-2 align-items-center">
 
               {/* LEFT SECTION */}
               <div className="col-md-8 col-12">
