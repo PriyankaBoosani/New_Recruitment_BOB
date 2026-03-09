@@ -295,23 +295,27 @@
 }
 
 .accordion-body {
-  background: #f9fbff;
+  /* background: #f9fbff; */
   border-radius: 8px;
-  padding: 16px;
+  padding: 20px 15px;
+ border-top: 1px solid #ddd;
 }
 
 .department-card {
   background: #fff;
   border-radius: 10px;
-  padding: 12px;
-  border: 1px solid #e6ecf5;
+  padding: 15px 20px;
+  border: 1px solid #ddd;
+  
 }
 
 .position-card-inner {
-  border: 1px solid #eef2f7;
+  border: 1px solid #ddd;
   border-radius: 12px;
   padding: 16px 20px;
   background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
 }
 
 /* 🔑 SINGLE LINE HEADER */
@@ -326,7 +330,7 @@
   font-size: 1em;
   flex: 1;
   color: #162B75;
-  font-weight: 600;
+  font-weight: 400;
 
 }
 
@@ -604,4 +608,11 @@
 .icon-16his{
   width: 20px;
   height: 20px;
+}
+
+/* css wittern by Veeresh */
+.department-header{
+  border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    
 }

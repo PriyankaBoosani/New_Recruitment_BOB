@@ -464,7 +464,7 @@ body.modal-open {
 }
 
 .page-item .page-link {
-    color: #f26522;
+    color: #303030;
     border: 1px solid #dee2e6;
     padding: 6px 12px;
     border-radius: 4px;
@@ -473,10 +473,16 @@ body.modal-open {
 }
 
 .page-item.active .page-link {
-    background-color: #f26522;
-    color: #fff;
-    border-color: #f26522;
+    background-color: #f26522 !important;
+    color: #fff !important;
+    border-color: #f26522 !important;
 }
+.page-item:hover .page-link {
+    background-color: #f26522 !important;
+    color: #fff !important;
+    border-color: #f26522 !important;
+}
+
 
 .page-item.disabled .page-link {
     color: #6c757d;

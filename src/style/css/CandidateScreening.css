@@ -64,7 +64,10 @@
 }
 
 .orange-bottom-border {
-    border-bottom: 2px solid #f36f21 !important;
+    /* border-bottom: 2px solid #f36f21 !important; */
+    border: 1px solid #f36f21 !important;
+    background: #f36f21 !important;
+    color: #fff !important;
 }
 
 .fs-15 {
@@ -84,7 +87,7 @@
 }
 
 .candidate-screening-tabs-header ul li .nav-link:focus {
-    border-bottom: 2px solid #f36f21 !important;
+    /* border-bottom: 2px solid #f36f21 !important; */
     border-top: none !important;
     border-left: none !important;
     border-right: none !important;
@@ -95,9 +98,13 @@
     /* border: none !important; */
     outline: none !important;
 }
-
+.candidate-screening-tabs-header ul li .nav-link{
+  background: #eee;
+  border:1px solid #eee;
+      margin: 0 5px;
+}
 .candidate-screening-tabs-header ul li .nav-link:active {
-    border-bottom: 2px solid #f36f21 !important;
+    /* border-bottom: 2px solid #f36f21 !important; */
     border-top: none !important;
     border-left: none !important;
     border-right: none !important;

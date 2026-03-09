@@ -119,13 +119,19 @@ const ReservationSection = ({
                                             label: s.name
                                         }))
                                     ].find(option => String(option.value) === String(currentState.state))}
-                                    onChange={(selected) => {
-                                        setCurrentState(prev => ({
-                                            ...prev,
-                                            state: selected ? selected.value : ""
-                                        }));
-                                        setErrors(prev => ({ ...prev, state: "" }));
-                                    }}
+                                  onChange={(selected) => {
+                                    setCurrentState(prev => ({
+                                        ...prev,
+                                        state: selected ? selected.value : "",
+                                        language: ""   // reset language when state changes
+                                    }));
+
+                                    setErrors(prev => ({
+                                        ...prev,
+                                        state: "",
+                                        stateLanguage: ""
+                                    }));
+                                }}
                                     options={[
                                         { value: "", label: t("addPosition:select_state") },
                                         ...states.map(s => ({
@@ -270,7 +276,7 @@ const ReservationSection = ({
                                         <th>{t("addPosition:sno")}</th>
                                         <th>{t("addPosition:state_name")}</th>
                                         <th>{t("addPosition:vacancies")}</th>
-                                        <th>{t("addPosition:local_language_of_state")}</th>
+                                        <th>{t("addPosition:local_languae_of_state")}</th>
 
                                         {reservationCategories.map(c => (
                                             <th key={c.code}>{c.code}</th>
