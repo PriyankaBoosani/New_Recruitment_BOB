@@ -330,10 +330,10 @@ const JobPostingsList = () => {
                     >
                         <option value="">{t("jobPostingsList:status_all")}</option>
                         <option value="NEW">{t("jobPostingsList:status_new")}</option>
-                        <option value="L1_APPROVED">{t("jobPostingsList:status_l1_approved")}</option>
+                        {/* <option value="L1_APPROVED">{t("jobPostingsList:status_l1_approved")}</option>
                         <option value="L1_PENDING">{t("jobPostingsList:status_l1_pending")}</option>
                         <option value="L1_REJECTED">{t("jobPostingsList:status_l1_rejected")}</option>
-                        <option value="L2_REJECTED">{t("jobPostingsList:status_l2_rejected")}</option>
+                        <option value="L2_REJECTED">{t("jobPostingsList:status_l2_rejected")}</option> */}
                         <option value="APPROVED">{t("jobPostingsList:status_approved")}</option>
 
 

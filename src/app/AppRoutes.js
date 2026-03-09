@@ -211,14 +211,14 @@ const AppRoutes = () => {
                   }
                 />
 
-                <Route
+                {/* <Route
                   path="/interviewpanel"
                   element={
                     <PrivilegeRoute privilege="Committee Management">
                       <InterviewPanel />
                     </PrivilegeRoute>
                   }
-                />
+                /> */}
 
                 <Route
                   path="/schedule-interviews"
@@ -229,32 +229,32 @@ const AppRoutes = () => {
                   }
                 />
 
-                <Route
+                {/* <Route
                   path="/requisition-requests"
                   element={
                     <PrivilegeRoute privilege="Requisition Approval">
                       <Approvals />
                     </PrivilegeRoute>
                   }
-                />
+                /> */}
 
-                <Route
+                {/* <Route
                   path="/extension-requests"
                   element={
                     <PrivilegeRoute privilege="Extension Approval">
                       <ExtensionsRequests />
                     </PrivilegeRoute>
                   }
-                />
+                /> */}
 
-                <Route
+                {/* <Route
                   path="/committee-requests"
                   element={
                     <PrivilegeRoute privilege="Committee Approval">
                       <CommitteeRequests />
                     </PrivilegeRoute>
                   }
-                />
+                /> */}
 
 
 
