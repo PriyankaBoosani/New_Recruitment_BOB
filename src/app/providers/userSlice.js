@@ -14,9 +14,9 @@ const userSlice = createSlice({
     setUser(state, action) {
       state.user = action.payload;
     },
-    setAuthUser(state, action) {
-      state.authUser = action.payload;
-    },
+    // setAuthUser(state, action) {
+    //   state.authUser = action.payload;
+    // },
     setCandidate(state, action) {
       state.candidateId = action.payload; // Step 2: Handle candidateId
     },

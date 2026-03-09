@@ -6,11 +6,17 @@ import { loginRequest } from "../services/msalConfig";
 import { useEffect } from 'react';
 
 const Login = () => {
-  const { instance } = useMsal();
+  const { instance, accounts } = useMsal();
 
   const handleLogin = () => {
     instance.loginRedirect(loginRequest);
   };
+
+  // useEffect(() => {
+  //   if (accounts.length > 0) {
+  //     window.location.href = "/dashboard";
+  //   }
+  // }, [accounts]);
 
   return (
     <div className="login-container">
