@@ -655,8 +655,11 @@ const JobPostingsList = () => {
                                             </div> */}
 
                                             <div
-                                                className="department-header d-flex align-items-center gap-2 my-2"
-                                                onClick={(e) => e.stopPropagation()}
+                                                className="department-header d-flex align-items-center gap-2 my-2 cursor-pointer"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    toggleDeptAccordion(req.id, dept.departmentName);
+                                                }}
                                             >
                                                 <img src={dept_icon} className="icon-22" alt="dept_icon" />
 
@@ -677,7 +680,9 @@ const JobPostingsList = () => {
                                                         toggleDeptAccordion(req.id, dept.departmentName);
                                                     }}
                                                 >
-                                                    {openDept[`${req.id}-${dept.departmentName}`] ? <ChevronUp /> : <ChevronDown />}
+                                                    {openDept[`${req.id}-${dept.departmentName}`]
+                                                        ? <ChevronUp />
+                                                        : <ChevronDown />}
                                                 </Button>
                                             </div>
 

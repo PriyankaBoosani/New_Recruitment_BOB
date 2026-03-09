@@ -1386,14 +1386,14 @@ const status = isZonalHr
                   </tr>
 
                   <tr>
-                    <td className="fw-med">{t("family_1984")}</td>
+                    <td className="fw-med">{t("riot_family_member")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.familyMember1984 || "No"}</td>
                     <td className="fw-med">{t("religious_minority")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.religiousMinority || "No"}</td>
                   </tr>
 
                   <tr>
-                    <td className="fw-med">{t("serving_govt")}</td>
+                    <td className="fw-med">{t("govt_service")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.servingInGovt || "No"}</td>
                     <td className="fw-med">{t("disciplinary_action")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.disciplinaryAction || "No"}</td>
@@ -1408,12 +1408,12 @@ const status = isZonalHr
                       
                     )} */}
 
-                  <tr>
+                  {/* <tr>
                     <td className="fw-med">{t("disciplinary_details")}</td>
                     <td className="fw-reg" colSpan={5}>
                       {data.personalDetails.disciplinaryDetails}
                     </td>
-                  </tr>
+                  </tr> */}
 
                 </tbody>
               </table>
