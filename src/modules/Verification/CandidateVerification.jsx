@@ -16,6 +16,7 @@ import { mapCandidatesToTableRows } from "./mappers/CandidateVerificationMapper"
 import { useLocation } from "react-router-dom";
 import PdfViewerModal from "../candidatePreview/components/PdfViewerModal"
 import { useTranslation } from "react-i18next";
+import { FiCalendar } from "react-icons/fi";
 
  
  
@@ -478,6 +479,15 @@ useEffect(() => {
  
   loadMasters();
 }, []);
+
+const DatePill = React.forwardRef(({ value, onClick }, ref) => (
+  <div className="date-pill" onClick={onClick} ref={ref}>
+    {value}
+    <span className="calendar-icon">
+      <FiCalendar />
+    </span>
+  </div>
+));
  
  
  
@@ -511,7 +521,7 @@ useEffect(() => {
   customInput={<DatePill />}
   maxDate={new Date()}
 
-  // ✅ ADD THESE
+
   showMonthDropdown
   showYearDropdown
   dropdownMode="select"

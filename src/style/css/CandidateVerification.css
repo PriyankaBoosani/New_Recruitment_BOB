@@ -117,7 +117,11 @@
 }
  
 .calendar-icon {
-  font-size: 14px;
+  margin-left: 2px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #ff5a1f;
 }
  
 
@@ -473,6 +477,7 @@
   background: #ffffff;
   padding: 6px 12px;
   border-radius: 8px;
+  width: 250px; 
 }
 
 /* Stage pills */
@@ -562,6 +567,7 @@
   gap: 6px;
   border: 1px solid #e0e0e0;
   padding: 6px 10px;
+  width: 350px; 
   /* border-radius: 6px; */
 }
 

@@ -24,6 +24,8 @@ import { mapPanelPositions } from "./mapper/InterviewerScheduleMapper";
 import { mapInterviewerCandidates } from "./mapper/InterviewerScheduleMapper";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { FiCalendar } from "react-icons/fi";
+
 
 
 
@@ -501,6 +503,17 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
 
 
+    const DatePill = React.forwardRef(({ value, onClick }, ref) => (
+      <div className="date-pill" onClick={onClick} ref={ref}>
+        {value}
+        <span className="calendar-icon">
+          <FiCalendar />
+        </span>
+      </div>
+    ));
+
+
+
   /* ================= UI ================= */
 
   return (
@@ -558,7 +571,7 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
         </div>
 
         <div className="search-box">
-          <img src={searchIcon} width={14} alt="" />
+          <img src={searchIcon} width={15} alt="" />
           <input
             placeholder={t("search_placeholder")}
             value={searchText}

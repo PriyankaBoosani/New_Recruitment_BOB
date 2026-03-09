@@ -25,6 +25,7 @@ import locationIcon from "../../assets/location-icon.png";
 import RankListModal from "./components/RankListModal";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck } from "react-icons/fa";
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
 
@@ -922,7 +923,7 @@ const handleRequisitionChange = async (e) => {
       <div className="card rounded border-0 d-none d-md-block mt-4 mb-5">
         <div className="card-header bg-white border-bottom-0 p-0 px-1 candidate-screening-tabs-header">
           {/* Tabs */}
-          <ul className="nav nav-tabs border-0 pt-2 pb-3 px-2 border-bottom">
+          <ul className="nav nav-tabs border-0 pt-2 pb-3 px-2 border-bottom tabs">
             {accessibleTabs.map((tab) => (
               <li className="nav-item" key={tab.key}>
                 <button
