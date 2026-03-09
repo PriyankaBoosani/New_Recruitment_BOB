@@ -13,18 +13,12 @@ import { persistor } from '../../store';
 import { NavLink } from "react-router-dom";
 import "../../style/css/header-pill.css";
 
-
-
-
-
 const Header = () => {
-
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [langOpen, setLangOpen] = useState(false);
-
 
   /* ===================== USER FROM REDUX ===================== */
   const userSlice = useSelector((state) => state.user);
@@ -32,6 +26,7 @@ const Header = () => {
 
   /* ===================== USER DROPDOWN STATE ===================== */
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showAdminMenu, setShowAdminMenu] = useState(false);
   const dropdownRef = useRef(null);
 
   const closeMenu = () => setExpanded(false);
@@ -412,7 +407,20 @@ const Header = () => {
 
               {/* Admin Menu */}
               {canAdmin && (
-                <NavDropdown title={t("admin")} id="admin-dropdown" className={isAdminRoute ? "active-admin" : ""}>
+                // <NavDropdown title={t("admin")} id="admin-dropdown" className={isAdminRoute ? "active-admin" : ""}>
+                 <NavDropdown
+                  id="admin-dropdown"
+                  show={showAdminMenu}
+                  onMouseEnter={() => setShowAdminMenu(true)}
+                  onMouseLeave={() => setShowAdminMenu(false)}
+                  className={isAdminRoute ? "active-admin" : ""}
+                  title={
+                    <>
+                      {t("admin")}{" "}
+                      <FontAwesomeIcon icon={faChevronDown} className="ms-1" />
+                    </>
+                  }
+                >
                   <NavDropdown.Item as={Link} to="/users" onClick={closeMenu}>
                     {t("users")}
                   </NavDropdown.Item>
