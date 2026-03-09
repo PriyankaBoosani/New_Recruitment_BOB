@@ -920,7 +920,8 @@ const status = isZonalHr
   // const disableNoOption =
   //   disableShortlistedSection || derivedShortlist === "YES";
 
-  const disableYesOption = disableShortlistedSection;
+  // const disableYesOption = disableShortlistedSection;
+  const disableYesOption = disableShortlistedSection || !areAllCriteriaYes();
   const disableNoOption = disableShortlistedSection;
 
   const handleFinalSubmit = async () => {
@@ -1070,6 +1071,17 @@ const status = isZonalHr
     screeningForm.isAgeCriteriaMet,
     screeningForm.isEducationCriteriaMet
   ]);
+
+  useEffect(() => {
+    if (!areAllCriteriaYes() && screeningForm.isShortlisted === "YES") {
+      setScreeningForm(prev => ({
+        ...prev,
+        isShortlisted: ""
+      }));
+    }
+  }, [screeningForm.isWorkCriteriaMet,
+      screeningForm.isAgeCriteriaMet,
+      screeningForm.isEducationCriteriaMet]);
 
   const allDocsAreVerified = areAllDocumentsVerified();
 
