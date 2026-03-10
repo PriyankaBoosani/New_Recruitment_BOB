@@ -426,8 +426,7 @@ const JobPostingsList = () => {
                     <div key={req.id} className="requisition-card mb-3">
                         <Row
                             className="align-items-center req-clickable"
-                            onClick={() => toggleAccordion(req.id)}
-                        >
+                            onClick={() => toggleAccordion(req.id)} >
                             {/* -------- LEFT -------- */}
                             <Col xs={12} md={6}>
                                 <div className="req-header">
@@ -617,25 +616,25 @@ const JobPostingsList = () => {
                                     {openReqId === req.id ? <ChevronUp /> : <ChevronDown />}
                                 </Button>
                             </Col>
+                        </Row>
+                        {/* -------- ACCORDION BODY (STATIC FOR NOW) -------- */}
+                        {openReqId === req.id && (
+                            <div className="accordion-body mt-3">
 
-                            {/* -------- ACCORDION BODY (STATIC FOR NOW) -------- */}
-                            {openReqId === req.id && (
-                                <div className="accordion-body mt-3">
+                                {loadingReqId === req.id && (
+                                    <Spinner animation="border" size="sm" />
+                                )}
 
-                                    {loadingReqId === req.id && (
-                                        <Spinner animation="border" size="sm" />
-                                    )}
+                                {!loadingReqId && positions.length === 0 && (
+                                    <div className="text-muted">{t("jobPostingsList:no_positions")}</div>
+                                )}
 
-                                    {!loadingReqId && positions.length === 0 && (
-                                        <div className="text-muted">{t("jobPostingsList:no_positions")}</div>
-                                    )}
+                                {Object.values(positionsGroupedByDept).map((dept) => (
+                                    <div key={dept.departmentName} className="department-card mb-3">
 
-                                    {Object.values(positionsGroupedByDept).map((dept) => (
-                                        <div key={dept.departmentName} className="department-card mb-3">
-
-                                            {/* 🔹 Department Header */}
-                                            {/* <div className="department-header d-flex align-items-center gap-2 my-2"> */}
-                                            {/* <div
+                                        {/* 🔹 Department Header */}
+                                        {/* <div className="department-header d-flex align-items-center gap-2 my-2"> */}
+                                        {/* <div
                                                 className="department-header d-flex align-items-center gap-2 my-2 cursor-pointer"
                                                 onClick={() => toggleDeptAccordion(req.id, dept.departmentName)}
                                             >
@@ -654,108 +653,64 @@ const JobPostingsList = () => {
 
                                             </div> */}
 
-                                            <div
-                                                className="department-header d-flex align-items-center gap-2 my-2 cursor-pointer"
+                                        <div
+                                            className="department-header d-flex align-items-center gap-2 my-2 cursor-pointer"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleDeptAccordion(req.id, dept.departmentName);
+                                            }}
+                                        >
+                                            <img src={dept_icon} className="icon-22" alt="dept_icon" />
+
+                                            <span className="depname">{dept.departmentName}</span>
+
+                                            <Badge bg="light" text="primary" className="deppos">
+                                                {dept.positions.length}{" "}
+                                                {dept.positions.length === 1
+                                                    ? t("jobPostingsList:position")
+                                                    : t("jobPostingsList:positions_plural")}
+                                            </Badge>
+
+                                            <Button
+                                                variant="none"
+                                                className="accordion-arrow ms-auto"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     toggleDeptAccordion(req.id, dept.departmentName);
                                                 }}
                                             >
-                                                <img src={dept_icon} className="icon-22" alt="dept_icon" />
+                                                {openDept[`${req.id}-${dept.departmentName}`]
+                                                    ? <ChevronUp />
+                                                    : <ChevronDown />}
+                                            </Button>
+                                        </div>
 
-                                                <span className="depname">{dept.departmentName}</span>
+                                        {/* 🔹 SAME position UI you already had */}
+                                        {/* {dept.positions.map((pos) => ( */}
+                                        {openDept[`${req.id}-${dept.departmentName}`] &&
+                                            dept.positions.map((pos) => (
+                                                <div key={pos.positionId} className="position-card-inner mb-2">
+                                                    <div className="position-header-row">
+                                                        <div className="position-title">
+                                                            {pos.positionName}
+                                                        </div>
 
-                                                <Badge bg="light" text="primary" className="deppos">
-                                                    {dept.positions.length}{" "}
-                                                    {dept.positions.length === 1
-                                                        ? t("jobPostingsList:position")
-                                                        : t("jobPostingsList:positions_plural")}
-                                                </Badge>
+                                                        <div className="position-meta-inline">
+                                                            <span>
+                                                                {t("jobPostingsList:vacancies")}: {pos.vacancies}
+                                                            </span>
 
-                                                <Button
-                                                    variant="none"
-                                                    className="accordion-arrow ms-auto"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        toggleDeptAccordion(req.id, dept.departmentName);
-                                                    }}
-                                                >
-                                                    {openDept[`${req.id}-${dept.departmentName}`]
-                                                        ? <ChevronUp />
-                                                        : <ChevronDown />}
-                                                </Button>
-                                            </div>
+                                                            <span>
+                                                                {t("jobPostingsList:age")}: {pos.minAge} – {pos.maxAge} {t("jobPostingsList:years")}
+                                                            </span>
+                                                        </div>
 
-                                            {/* 🔹 SAME position UI you already had */}
-                                            {/* {dept.positions.map((pos) => ( */}
-                                            {openDept[`${req.id}-${dept.departmentName}`] &&
-                                                dept.positions.map((pos) => (
-                                                    <div key={pos.positionId} className="position-card-inner mb-2">
-                                                        <div className="position-header-row">
-                                                            <div className="position-title">
-                                                                {pos.positionName}
-                                                            </div>
-
-                                                            <div className="position-meta-inline">
-                                                                <span>
-                                                                    {t("jobPostingsList:vacancies")}: {pos.vacancies}
-                                                                </span>
-
-                                                                <span>
-                                                                    {t("jobPostingsList:age")}: {pos.minAge} – {pos.maxAge} {t("jobPostingsList:years")}
-                                                                </span>
-                                                            </div>
-
-                                                            {req.editable ? (
-                                                                <>
-                                                                    {/* EDIT POSITION */}
-                                                                    <OverlayTrigger
-                                                                        placement="bottom"
-                                                                        overlay={<Tooltip id={`tooltip-edit-${req.id}`}>{t("jobPostingsList:edit_position")}</Tooltip>}
-                                                                    >
-                                                                        <Button
-                                                                            variant="light"
-                                                                            className="icon-btn"
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation();
-                                                                                navigate(
-                                                                                    `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
-                                                                                    { state: { mode: "edit" } }
-                                                                                );
-
-                                                                            }}
-                                                                        >
-                                                                            <img src={pos_edit_icon} className="icon-16" alt="edit" />
-                                                                        </Button>
-                                                                    </OverlayTrigger>
-
-                                                                    {/* DELETE POSITION */}
-                                                                    <OverlayTrigger
-                                                                        placement="bottom"
-                                                                        overlay={<Tooltip id={`tooltip-delete-${req.id}`}>{t("jobPostingsList:delete_position")}</Tooltip>}
-                                                                    >
-                                                                        <Button
-                                                                            variant="light"
-                                                                            className="icon-btn"
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation();
-                                                                                setSelectedPosition({
-                                                                                    requisitionId: req.id,
-                                                                                    positionId: pos.positionId,
-                                                                                    positionName: pos.positionName
-                                                                                });
-                                                                                setShowDeletePosModal(true);
-                                                                            }}
-                                                                        >
-                                                                            <img src={pos_delete_icon} className="icon-16" alt="delete" />
-                                                                        </Button>
-                                                                    </OverlayTrigger>
-                                                                </>
-                                                            ) : (
-                                                                /* VIEW POSITION */
+                                                        {req.editable ? (
+                                                            <>
+                                                                {/* EDIT POSITION */}
                                                                 <OverlayTrigger
                                                                     placement="bottom"
-                                                                    overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:view_position")}</Tooltip>}
+                                                                    overlay={<Tooltip id={`tooltip-edit-${req.id}`}>{t("jobPostingsList:edit_position")}</Tooltip>}
                                                                 >
                                                                     <Button
                                                                         variant="light"
@@ -764,38 +719,82 @@ const JobPostingsList = () => {
                                                                             e.stopPropagation();
                                                                             navigate(
                                                                                 `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
-                                                                                { state: { mode: "view" } }
+                                                                                { state: { mode: "edit" } }
                                                                             );
 
                                                                         }}
                                                                     >
-                                                                        <img src={view_jobpost} className="icon-19" alt="view" />
+                                                                        <img src={pos_edit_icon} className="icon-20" alt="edit" />
                                                                     </Button>
                                                                 </OverlayTrigger>
-                                                            )}
-                                                        </div>
 
-                                                        <div className="position-details">
-                                                            <div>
-                                                                {t("jobPostingsList:mandatory_education")}:{" "}
-                                                                {pos.mandatoryEducation}
-                                                            </div>
-                                                            <div>
-                                                                {t("jobPostingsList:preferred_education")}:{" "}
-                                                                {pos.preferredEducation && pos.preferredEducation.trim()
-                                                                    ? pos.preferredEducation
-                                                                    : "NA"}
-                                                            </div>
+                                                                {/* DELETE POSITION */}
+                                                                <OverlayTrigger
+                                                                    placement="bottom"
+                                                                    overlay={<Tooltip id={`tooltip-delete-${req.id}`}>{t("jobPostingsList:delete_position")}</Tooltip>}
+                                                                >
+                                                                    <Button
+                                                                        variant="light"
+                                                                        className="icon-btn"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            setSelectedPosition({
+                                                                                requisitionId: req.id,
+                                                                                positionId: pos.positionId,
+                                                                                positionName: pos.positionName
+                                                                            });
+                                                                            setShowDeletePosModal(true);
+                                                                        }}
+                                                                    >
+                                                                        <img src={pos_delete_icon} className="icon-20" alt="delete" />
+                                                                    </Button>
+                                                                </OverlayTrigger>
+                                                            </>
+                                                        ) : (
+                                                            /* VIEW POSITION */
+                                                            <OverlayTrigger
+                                                                placement="bottom"
+                                                                overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:view_position")}</Tooltip>}
+                                                            >
+                                                                <Button
+                                                                    variant="light"
+                                                                    className="icon-btn"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        navigate(
+                                                                            `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
+                                                                            { state: { mode: "view" } }
+                                                                        );
+
+                                                                    }}
+                                                                >
+                                                                    <img src={view_jobpost} className="icon-19" alt="view" />
+                                                                </Button>
+                                                            </OverlayTrigger>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="position-details">
+                                                        <div>
+                                                            {t("jobPostingsList:mandatory_education")}:{" "}
+                                                            {pos.mandatoryEducation}
+                                                        </div>
+                                                        <div>
+                                                            {t("jobPostingsList:preferred_education")}:{" "}
+                                                            {pos.preferredEducation && pos.preferredEducation.trim()
+                                                                ? pos.preferredEducation
+                                                                : "NA"}
                                                         </div>
                                                     </div>
-                                                ))}
+                                                </div>
+                                            ))}
 
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
 
-                        </Row>
+
                     </div>
                 );
             })}
