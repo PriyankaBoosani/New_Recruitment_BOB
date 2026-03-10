@@ -131,32 +131,41 @@ const CommitteeRequests = () => {
     };
 
 
-    const handleApprovalAction = async () => {
+    const handleApprovalAction = async (modalComment) => {
 
         const ids = Array.from(selectedReqIds);
 
         if (ids.length === 0) return;
+
+        const commentText = modalComment?.trim();
+
+        if (!commentText) {
+            toast.error("Comment is required");
+            return;
+        }
 
         let success = false;
 
         if (actionType === "approve") {
             success = await approvePanels(
                 ids,
+                commentText,
                 selectedPosition?.positionId
             );
         } else {
             success = await rejectPanels(
                 ids,
+                commentText,
                 selectedPosition?.positionId
             );
         }
 
         if (success) {
             setSelectedReqIds(new Set());
+        
             setShowCommentModal(false);
         }
     };
-
     const getStatusBadge = (status = "") => {
         switch (status) {
             case "L1_PENDING":

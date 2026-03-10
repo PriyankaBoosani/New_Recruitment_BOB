@@ -33,16 +33,17 @@ const committeeManagementService = {
       `recruiter/position-panel/get-by-position-id/${positionId}`
     );
   },
-  approvePanels: (panelIds) =>
-    api.post(
-      "/recruiter/position-panel/approve-committee",
-      panelIds
-    ),
-  rejectPanels: (panelIds) =>
-    api.post(
-      "/recruiter/position-panel/reject-committee",
-      panelIds
-    ),
+  approvePanels: (ids, comments) =>
+    api.post("/recruiter/position-panel/approve-committee", {
+      positionPanelIds: ids,
+      comments: comments
+    }),
+
+  rejectPanels: (ids, comments) =>
+    api.post("/recruiter/position-panel/reject-committee", {
+      positionPanelIds: ids,
+      comments: comments
+    }),
   getRequisitionApprovalHistory: (panelId) =>
     api.get(
       `/recruiter/workflow-approval/get-panels-approval-history/${panelId}`

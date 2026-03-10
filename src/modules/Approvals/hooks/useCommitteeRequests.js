@@ -95,10 +95,13 @@ const useCommitteeRequests = () => {
             compensationPanelList: []
         });
     };
-    const approvePanels = async (ids, positionId) => {
+    const approvePanels = async (ids, comment, positionId) => {
         try {
 
-            const res = await committeeManagementService.approvePanels(ids);
+            const res = await committeeManagementService.approvePanels(
+                ids,
+                comment
+            );
 
             if (!res?.success) {
                 throw new Error(res?.message || "Approval failed");
@@ -122,10 +125,13 @@ const useCommitteeRequests = () => {
             return false;
         }
     };
-    const rejectPanels = async (ids, positionId) => {
+    const rejectPanels = async (ids, comment, positionId) => {
         try {
 
-            const res = await committeeManagementService.rejectPanels(ids);
+            const res = await committeeManagementService.rejectPanels(
+                ids,
+                comment
+            );
 
             if (!res?.success) {
                 throw new Error(res?.message || "Rejection failed");
