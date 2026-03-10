@@ -25,14 +25,15 @@ import locationIcon from "../../assets/location-icon.png";
 import RankListModal from "./components/RankListModal";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+
 import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck } from "react-icons/fa";
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
 
 export default function CandidateScreening({ selectedJob }) {
-   const { t } = useTranslation(["candidateWorkflow","common"]);
-   
-   const STATUS_LABEL_MAP = {
+  const { t } = useTranslation(["candidateWorkflow", "common"]);
+
+  const STATUS_LABEL_MAP = {
     SHORTLISTED: "Shortlisted",
     APPLIED: "Applied",
     REJECTED: "Rejected",
@@ -49,7 +50,7 @@ export default function CandidateScreening({ selectedJob }) {
     "DISCREPANCY",
     "PENDING"
   ];
- const INTERVIEW_STATUS_LABEL_MAP = {
+  const INTERVIEW_STATUS_LABEL_MAP = {
     SCHEDULED: "Scheduled",
     QUALIFIED: "Qualified",
     DISQUALIFIED: "Disqualified",
@@ -123,12 +124,12 @@ export default function CandidateScreening({ selectedJob }) {
     pageSize: interviewPageSize,
     enabled: !!selectedPositionId
   });
-const TAB_PRIVILEGE_MAP = {
-  CANDIDATE_POOL: "Candidate Pool",
-  INTERVIEW_POOL: "Interview Pool",
-  OFFER_POOL: "Offer Pool",
-  ONBOARDING_POOL: "Compensation Pool", // assuming onboarding is compensation
-};
+  const TAB_PRIVILEGE_MAP = {
+    CANDIDATE_POOL: "Candidate Pool",
+    INTERVIEW_POOL: "Interview Pool",
+    OFFER_POOL: "Offer Pool",
+    ONBOARDING_POOL: "Compensation Pool", // assuming onboarding is compensation
+  };
   // const tabs = [
   //   { key: "CANDIDATE_POOL", label: "Candidate Pool", count: totalElements },
   //   { key: "INTERVIEW_POOL", label: "Interview Pool", count: interviewTotalElements },
@@ -137,23 +138,23 @@ const TAB_PRIVILEGE_MAP = {
   // ];
 
   const tabs = [
-  { key: "CANDIDATE_POOL", label: t("candidateWorkflow:candidate_pool"), count: totalElements },
-  { key: "INTERVIEW_POOL", label: t("candidateWorkflow:interview_pool"), count: interviewTotalElements },
-  { key: "OFFER_POOL", label: t("candidateWorkflow:offer_pool"), count: 0 },
-  { key: "ONBOARDING_POOL", label: t("candidateWorkflow:onboarding_pool"), count: 0 },
-];
-const privileges = useSelector(
-  (state) => state.user.privileges || {}
-);
-
-const hasPrivilege = (key) => {
- return privileges?.[key] === true;
-};
-  const accessibleTabs = useMemo(() => {
-  return tabs.filter(tab =>
-    hasPrivilege(TAB_PRIVILEGE_MAP[tab.key])
+    { key: "CANDIDATE_POOL", label: t("candidateWorkflow:candidate_pool"), count: totalElements },
+    { key: "INTERVIEW_POOL", label: t("candidateWorkflow:interview_pool"), count: interviewTotalElements },
+    { key: "OFFER_POOL", label: t("candidateWorkflow:offer_pool"), count: 0 },
+    { key: "ONBOARDING_POOL", label: t("candidateWorkflow:onboarding_pool"), count: 0 },
+  ];
+  const privileges = useSelector(
+    (state) => state.user.privileges || {}
   );
-}, [tabs, privileges]);
+
+  const hasPrivilege = (key) => {
+    return privileges?.[key] === true;
+  };
+  const accessibleTabs = useMemo(() => {
+    return tabs.filter(tab =>
+      hasPrivilege(TAB_PRIVILEGE_MAP[tab.key])
+    );
+  }, [tabs, privileges]);
 
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState([]);
@@ -397,39 +398,39 @@ const hasPrivilege = (key) => {
     fetchAllCandidatesForFilters();
   }, [selectedPositionId, filters.status, filters.searchText, masterData]);
 
-const handleRequisitionChange = async (e) => {
-  const reqId = e.target.value;
+  const handleRequisitionChange = async (e) => {
+    const reqId = e.target.value;
 
-  isNavModeRef.current = false;
+    isNavModeRef.current = false;
 
-  setSelectedRequisitionId(reqId);
-  setSelectedPositionId("");
-  setCandidates([]);
-  setSelectedCandidateIds([]);
-  setSelectedInterviewCandidateIds([]);
-  setPage(0);
-  setTotalElements(0);
+    setSelectedRequisitionId(reqId);
+    setSelectedPositionId("");
+    setCandidates([]);
+    setSelectedCandidateIds([]);
+    setSelectedInterviewCandidateIds([]);
+    setPage(0);
+    setTotalElements(0);
 
-  if (!reqId) {
-    setPositions([]);
-    return;
-  }
+    if (!reqId) {
+      setPositions([]);
+      return;
+    }
 
-  try {
-    setLoadingPositions(true);
+    try {
+      setLoadingPositions(true);
 
-    const res = await jobPositionApiService.getPositionsByReqId({
-      requisitionId: reqId,
-    });
+      const res = await jobPositionApiService.getPositionsByReqId({
+        requisitionId: reqId,
+      });
 
-    setPositions(res?.data || []);
-  } catch (err) {
-    console.error("Failed to load positions", err);
-    setPositions([]);
-  } finally {
-    setLoadingPositions(false);
-  }
-};
+      setPositions(res?.data || []);
+    } catch (err) {
+      console.error("Failed to load positions", err);
+      setPositions([]);
+    } finally {
+      setLoadingPositions(false);
+    }
+  };
 
   const handleViewFile = async (candidate) => {
     if (!candidate.fileUrl) {
@@ -689,7 +690,7 @@ const handleRequisitionChange = async (e) => {
 
   const handleDownload = async (type) => {
     if (!selectedPositionId) {
-     toast.error(t("candidateWorkflow:select_position_first"));
+      toast.error(t("candidateWorkflow:select_position_first"));
       return;
     }
 
@@ -724,7 +725,7 @@ const handleRequisitionChange = async (e) => {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error(err);
-     toast.error(t("candidateWorkflow:download_failed"));
+      toast.error(t("candidateWorkflow:download_failed"));
     }
   };
 
@@ -772,7 +773,7 @@ const handleRequisitionChange = async (e) => {
     } catch (err) {
       console.error(err);
       toast.error(
-        err?.response?.data?.message ||  t("candidateWorkflow:failed_to_send_offer_pool")
+        err?.response?.data?.message || t("candidateWorkflow:failed_to_send_offer_pool")
       );
     }
   };
@@ -822,7 +823,7 @@ const handleRequisitionChange = async (e) => {
       console.error(err);
       toast.error(
         err?.response?.data?.message || t("candidateWorkflow:failed_send_offer")
-);
+      );
     }
   };
 
@@ -932,7 +933,40 @@ const handleRequisitionChange = async (e) => {
                   onClick={() => setActiveTab(tab.key)}
                   type="button"
                 >
-                  {tab.label}
+                  {tab.key === "CANDIDATE_POOL" && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4H6Zm7.25-2.095c.478-.86.75-1.85.75-2.905a5.973 5.973 0 0 0-.75-2.906 4 4 0 1 1 0 5.811ZM15.466 20c.34-.588.535-1.271.535-2v-1a5.978 5.978 0 0 0-1.528-4H18a4 4 0 0 1 4 4v1a2 2 0 0 1-2 2h-4.535Z"
+                      />
+                    </svg>
+                  )}
+                  {tab.key === "INTERVIEW_POOL" && (
+                    <svg class="w-[21px] h-[21px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z" />
+                    </svg>
+
+                  )}
+                  {tab.key === "OFFER_POOL" && (
+                    <svg class="w-[21px] h-[21px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5" />
+                    </svg>
+
+                  )}
+                  {tab.key === "ONBOARDING_POOL" && (
+                    <svg class="w-[21px] h-[21px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M6 2c-1.10457 0-2 .89543-2 2v4c0 .55228.44772 1 1 1s1-.44772 1-1V4h12v7h-2c-.5523 0-1 .4477-1 1v2h-1c-.5523 0-1 .4477-1 1s.4477 1 1 1h5c.5523 0 1-.4477 1-1V3.85714C20 2.98529 19.3667 2 18.268 2H6Z" />
+                      <path d="M6 11.5C6 9.567 7.567 8 9.5 8S13 9.567 13 11.5 11.433 15 9.5 15 6 13.433 6 11.5ZM4 20c0-2.2091 1.79086-4 4-4h3c2.2091 0 4 1.7909 4 4 0 1.1046-.8954 2-2 2H6c-1.10457 0-2-.8954-2-2Z" />
+                    </svg>
+
+                  )} {tab.label}
                   {/* <span className="ms-2 badge rounded-pill bg-light text-muted p-2" style={{ fontSize: '0.675rem', fontWeight: '500' }}>
                     {tab.count}
                   </span> */}
@@ -957,7 +991,7 @@ const handleRequisitionChange = async (e) => {
                     })
                   }
                 >
-                 {t("common:clear_all")}
+                  {t("common:clear_all")}
                 </button>
               </div>
               <div className="col-md-2 col-6 mt-0">
@@ -1122,23 +1156,23 @@ const handleRequisitionChange = async (e) => {
                 <div className="d-flex flex-wrap gap-4 justify-content-between align-items-end">
                   <div className="d-flex gap-3 flex-wrap align-items-end pb-3">
                     {/* Offer Template */}
-                  <div>
-                        <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:offer_template")}</p>
-                        <select
-                          className="form-select fs-13 py-1"
-                          style={{ width: "180px" }}
-                          value={offerTemplateId}
-                          onChange={(e) => setOfferTemplateId(e.target.value)}
-                        >
-                          <option value="">{t("candidateWorkflow:select_template")}</option>
-                          <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Template 1</option>
-                        </select>
+                    <div>
+                      <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:offer_template")}</p>
+                      <select
+                        className="form-select fs-13 py-1"
+                        style={{ width: "180px" }}
+                        value={offerTemplateId}
+                        onChange={(e) => setOfferTemplateId(e.target.value)}
+                      >
+                        <option value="">{t("candidateWorkflow:select_template")}</option>
+                        <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Template 1</option>
+                      </select>
 
-                        {/* Reserve space for alignment consistency */}
-                        <small className="d-block mt-1 fs-12 invisible">
-                          placeholder
-                        </small>
-                      </div>
+                      {/* Reserve space for alignment consistency */}
+                      <small className="d-block mt-1 fs-12 invisible">
+                        placeholder
+                      </small>
+                    </div>
 
                     {/* Accept Before Date */}
                     <div>
@@ -1168,13 +1202,12 @@ const handleRequisitionChange = async (e) => {
                           }
                         }}
                       />
-                        <small
-        className={`d-block mt-1 fs-12 ${
-          formErrors.acceptBeforeDate ? "text-danger" : "invisible"
-        }`}
-      >
-        {formErrors.acceptBeforeDate || "placeholder"}
-      </small>
+                      <small
+                        className={`d-block mt-1 fs-12 ${formErrors.acceptBeforeDate ? "text-danger" : "invisible"
+                          }`}
+                      >
+                        {formErrors.acceptBeforeDate || "placeholder"}
+                      </small>
                     </div>
 
                     {/* Joining Date */}
@@ -1213,31 +1246,30 @@ const handleRequisitionChange = async (e) => {
                           }
                         }}
                       />
-                                            <small
-                          className={`d-block mt-1 fs-12 ${
-                            formErrors.joiningDate ? "text-danger" : "invisible"
+                      <small
+                        className={`d-block mt-1 fs-12 ${formErrors.joiningDate ? "text-danger" : "invisible"
                           }`}
-                        >
-                          {formErrors.joiningDate || "placeholder"}
-                        </small>
+                      >
+                        {formErrors.joiningDate || "placeholder"}
+                      </small>
                     </div>
 
                     {/* Send Offers Button */}
-                  <div>
-  <button
-    className="btn orange-bg text-white fs-13 px-3 py-1"
-    onClick={handleSendOffer}
-    disabled={!isSendOfferEnabled}
-  >
-    <img className="me-2" src={offerIcon} width={14} />
-    {t("candidateWorkflow:send_offers")}
-  </button>
+                    <div>
+                      <button
+                        className="btn orange-bg text-white fs-13 px-3 py-1"
+                        onClick={handleSendOffer}
+                        disabled={!isSendOfferEnabled}
+                      >
+                        <img className="me-2" src={offerIcon} width={14} />
+                        {t("candidateWorkflow:send_offers")}
+                      </button>
 
-  {/* Reserve equal space like other fields */}
-  <small className="d-block mt-1 fs-12 invisible">
-    {"\u00A0"}
-  </small>
-</div>
+                      {/* Reserve equal space like other fields */}
+                      <small className="d-block mt-1 fs-12 invisible">
+                        {"\u00A0"}
+                      </small>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1279,24 +1311,24 @@ const handleRequisitionChange = async (e) => {
                 </div>
               </div>
               <div className="col-md-7 col-12 text-md-end px-2 mb-2">
-                {activeTab === "CANDIDATE_POOL" 
+                {activeTab === "CANDIDATE_POOL"
                   && hasPrivilege("Interview Pool")
                   && canScheduleInterview && (
-                  <button className="btn blue-bg text-white fs-14" onClick={() => setShowScheduleModal(true)}>
-                    {t("candidateWorkflow:schedule_interview")}
-                  </button>
-                )}
+                    <button className="btn blue-bg text-white fs-14" onClick={() => setShowScheduleModal(true)}>
+                      {t("candidateWorkflow:schedule_interview")}
+                    </button>
+                  )}
 
-                {activeTab === "INTERVIEW_POOL" 
+                {activeTab === "INTERVIEW_POOL"
                   && hasPrivilege("Offer Pool")
                   && canSendToOfferPool && (
-                  <button
-                    className="btn blue-bg text-white fs-14"
-                    onClick={handleSendToOfferPool}
-                  >
-                    {t("candidateWorkflow:send_to_offer_pool")}
-                  </button>
-                )}
+                    <button
+                      className="btn blue-bg text-white fs-14"
+                      onClick={handleSendToOfferPool}
+                    >
+                      {t("candidateWorkflow:send_to_offer_pool")}
+                    </button>
+                  )}
 
               </div>
             </div>
