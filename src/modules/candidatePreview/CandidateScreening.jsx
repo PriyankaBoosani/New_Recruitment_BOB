@@ -1257,7 +1257,9 @@ export default function CandidateScreening({ selectedJob }) {
                     {/* Send Offers Button */}
                     <div>
                       <button
-                        className="btn orange-bg text-white fs-13 px-3 py-1"
+                        className={`btn fs-13 px-3 py-1 orange-bg text-white ${
+                          isSendOfferEnabled ? "" : "disabled_button"
+                        }`}
                         onClick={handleSendOffer}
                         disabled={!isSendOfferEnabled}
                       >
