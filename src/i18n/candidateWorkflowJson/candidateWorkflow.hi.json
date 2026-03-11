@@ -177,5 +177,8 @@
     "failed_to_send_offer": "ऑफ़र भेजने में विफल",
     "must_be_greater_than_today": "आज की तारीख से बड़ी होनी चाहिए",
     "select_accept_before_first": "पहले 'Accept Before' तिथि चुनें",
-    "must_be_greater_than_accept_before": "'Accept Before' तिथि से बड़ी होनी चाहिए"
+    "must_be_greater_than_accept_before": "'Accept Before' तिथि से बड़ी होनी चाहिए",
+    "view_zonal_comments": "क्षेत्रीय टिप्पणियाँ देखें",
+    "zonal_rejection_comment": "क्षेत्रीय अस्वीकृति टिप्पणी",
+    "view_feedback_history": "प्रतिक्रिया इतिहास देखें"
 }

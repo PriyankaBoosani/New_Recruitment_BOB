@@ -25,7 +25,7 @@ import locationIcon from "../../assets/location-icon.png";
 import RankListModal from "./components/RankListModal";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-
+import ZonalRejectedCommentModal from "./components/ZonalRejectedCommentModal";
 import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck } from "react-icons/fa";
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
@@ -111,6 +111,12 @@ export default function CandidateScreening({ selectedJob }) {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [loadingPdf, setLoadingPdf] = useState(false);
+  const [showZonalCommentModal, setShowZonalCommentModal] = useState(false);
+  const [zonalComment, setZonalComment] = useState("");
+  const handleOpenZonalComments = (comment) => {
+    setZonalComment(comment || "-");
+    setShowZonalCommentModal(true);
+  };
   const searchTimeoutRef = useRef(null);
   const {
     interviewCandidates,
@@ -1405,6 +1411,9 @@ export default function CandidateScreening({ selectedJob }) {
                 setShowFeedbackModal(false);
               }
             }}
+            onOpenZonalComments={handleOpenZonalComments}
+
+
 
 
           />
@@ -1447,6 +1456,11 @@ export default function CandidateScreening({ selectedJob }) {
         show={showFeedbackModal}
         onHide={() => setShowFeedbackModal(false)}
         feedbackList={selectedFeedback}
+      />
+      <ZonalRejectedCommentModal
+        show={showZonalCommentModal}
+        onHide={() => setShowZonalCommentModal(false)}
+        comment={zonalComment}
       />
 
       <RankListModal

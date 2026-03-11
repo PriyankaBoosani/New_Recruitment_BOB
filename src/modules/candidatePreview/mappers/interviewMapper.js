@@ -54,6 +54,8 @@ export const mapInterviewCandidates = (
       status: schedule.interviewStatus || "SCHEDULED",
 
       score: schedule.finalScore ?? "",
+      zonalHrComments: schedule.zonalHrComments || ""
+
 
     };
   });

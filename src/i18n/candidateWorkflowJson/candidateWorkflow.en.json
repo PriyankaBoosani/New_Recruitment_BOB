@@ -173,6 +173,9 @@
     "failed_to_send_offer": "Failed to send offer",
     "must_be_greater_than_today": "Must be greater than today",
     "select_accept_before_first": "Select Accept Before date first",
-    "must_be_greater_than_accept_before": "Must be greater than Accept Before date"
-    
+    "must_be_greater_than_accept_before": "Must be greater than Accept Before date",
+    "view_zonal_comments": "View Zonal Comments",
+    "zonal_rejection_comment": "Zonal Rejection Comment",
+    "view_feedback_history": "View Feedback History"
+
 }
