@@ -331,25 +331,25 @@ export const mapJobPositionToRequisitionStrip = (
 
 
   const formatExperience = (months) => {
-  if (months == null) return null;
+    if (months == null) return null;
 
-  const totalMonths = Number(months);
+    const totalMonths = Number(months);
 
-  if (isNaN(totalMonths)) return null;
+    if (isNaN(totalMonths)) return null;
 
-  const years = Math.floor(totalMonths / 12);
-  const remainingMonths = totalMonths % 12;
+    const years = Math.floor(totalMonths / 12);
+    const remainingMonths = totalMonths % 12;
 
-  if (years > 0 && remainingMonths > 0) {
-    return `${years} year${years > 1 ? "s" : ""} ${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
-  }
+    if (years > 0 && remainingMonths > 0) {
+      return `${years} year${years > 1 ? "s" : ""} ${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
+    }
 
-  if (years > 0) {
-    return `${years} year${years > 1 ? "s" : ""}`;
-  }
+    if (years > 0) {
+      return `${years} year${years > 1 ? "s" : ""}`;
+    }
 
-  return `${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
-};
+    return `${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
+  };
 
   apiData.positionCategoryNationalDistributions?.forEach((c) => {
     // Reservation categories
@@ -368,6 +368,10 @@ export const mapJobPositionToRequisitionStrip = (
       }
     }
   });
+  const totalMonths = apiData.mandatoryExperienceMonths ?? 0;
+
+  const mandatoryYears = Math.floor(totalMonths / 12);
+  const mandatoryMonths = totalMonths % 12;
 
   return {
     requisition_code: apiData.requisitionId || "-",
@@ -383,9 +387,8 @@ export const mapJobPositionToRequisitionStrip = (
 
     /*  ADD THESE */
     contract_years: apiData.contractYears ?? 0,
-mandatory_experience_years:
-  formatExperience(apiData.mandatoryExperienceMonths),
-
+    mandatory_experience_years: mandatoryYears,
+    mandatory_experience_months: mandatoryMonths,
     registration_start_date: formatToIST(apiData.createdDate),
     registration_end_date: formatToIST(apiData.modifiedDate),
 

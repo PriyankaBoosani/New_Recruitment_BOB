@@ -154,6 +154,17 @@ const RequisitionStrip = ({
   };
 
   const { t } = useTranslation(["candidateWorkflow", "common"]);
+  const formatExperience = (years = 0, months = 0) => {
+    if (years === 0 && months === 0) return `0 ${t("candidateWorkflow:years")}`;
+
+    if (years > 0 && months === 0)
+      return `${years} ${t("candidateWorkflow:years")}`;
+
+    if (years === 0 && months > 0)
+      return `${months} ${t("candidateWorkflow:months")}`;
+
+    return `${years} ${t("candidateWorkflow:years")} ${months} ${t("candidateWorkflow:months")}`;
+  };
 
   return (
     <>
@@ -203,7 +214,7 @@ const RequisitionStrip = ({
 
             <span className="date-text">
               <i className="bi bi-clock me-1"></i>
-             {t("candidateWorkflow:end")}: {formatDMY(
+              {t("candidateWorkflow:end")}: {formatDMY(
                 requisition?.endDate || requisition?.registration_end_date
               )}
             </span>
@@ -228,7 +239,7 @@ const RequisitionStrip = ({
             disabled={loading || !position}
             style={{ backgroundColor: "rgba(66, 87, 159, 0.12)" }}
           >
-           {t("candidateWorkflow:view_position")}
+            {t("candidateWorkflow:view_position")}
           </button>
           {isSaveBtn && (
             <button
@@ -250,7 +261,7 @@ const RequisitionStrip = ({
         onHide={() => setShowPosition(false)}
         centered
         size="lg"
-        // scrollable
+      // scrollable
       >
 
         <Modal.Header closeButton className="knowmore-header">
@@ -263,7 +274,7 @@ const RequisitionStrip = ({
 
               <span className="modal-date">
                 <i className="bi bi-calendar3 me-1"></i>
-               {t("candidateWorkflow:start")}: {formatDMY(requisition?.registration_start_date)}
+                {t("candidateWorkflow:start")}: {formatDMY(requisition?.registration_start_date)}
               </span>
 
               <span className="modal-divider">|</span>
@@ -289,7 +300,7 @@ const RequisitionStrip = ({
 
           {loading ? (
             <div className="text-center py-5">
-             {t("candidateWorkflow:loading_job_details")}
+              {t("candidateWorkflow:loading_job_details")}
             </div>
           ) : (
             <>
@@ -319,7 +330,9 @@ const RequisitionStrip = ({
                   <div className="col-12 col-md-4">
                     <span className="stat-label">{t("candidateWorkflow:experience")}:</span>{" "}
                     <span className="stat-value">
-                   {job?.mandatory_experience_years || "-"} {t("candidateWorkflow:years")}
+                      {formatExperience(
+                        job?.mandatory_experience_years, job?.mandatory_experience_months
+                      )}
                     </span>
                   </div>
 

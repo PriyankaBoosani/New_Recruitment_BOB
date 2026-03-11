@@ -43,6 +43,7 @@ const CandidatePreviewPage = ({ onHide }) => {
 
 
   const isRecruiter = role === "recruiter";
+  const iscommitteeMember = role === "committee_member";
 
   const selectedDate = state?.selectedDate;
 
@@ -181,7 +182,7 @@ const CandidatePreviewPage = ({ onHide }) => {
       />
 
       {/* Header */}
-      {isRecruiter ? (
+      {(isRecruiter || privileges?.["Candidate Pool"]) ? (
         <HeaderWithBack
           title={t("candidateWorkflow:candidate_screening")}
           subtitle={t("candidateWorkflow:manage_schedule_interviews")}
@@ -219,7 +220,7 @@ const CandidatePreviewPage = ({ onHide }) => {
         />
       ) : isInterviewer ? (
         <HeaderWithBackss
-         title={t("candidateWorkflow:candidate_profile")}
+          title={t("candidateWorkflow:candidate_profile")}
           subtitle={t("candidateWorkflow:view_candidate_application_status")}
           onBack={() => {
             sessionStorage.setItem("fromPreviewBack", "true");

@@ -70,3 +70,7 @@
     font-size: 13px;
 }
 
+.modal-dialog-scrollable .modal-body {
+  overflow-y: auto;
+  max-height: 600px;
+}

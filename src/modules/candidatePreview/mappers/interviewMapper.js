@@ -13,7 +13,7 @@ export const mapInterviewCandidates = (
       id: schedule.interviewScheduleId,
       name: item.fullName || "-",
       regNo: item.applicationNo || "-",
-     fileUrl: item.resumeUrl,
+      fileUrl: item.resumeUrl,
 
 
       date: schedule.interviewStartAt
@@ -29,13 +29,19 @@ export const mapInterviewCandidates = (
 
       time:
         schedule.interviewStartAt && schedule.interviewEndAt
-          ? `${new Date(schedule.interviewStartAt).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })} - ${new Date(schedule.interviewEndAt).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}`
+          ? `${new Date(schedule.interviewStartAt)
+            .toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            })
+            .toUpperCase()} - ${new Date(schedule.interviewEndAt)
+              .toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })
+              .toUpperCase()}`
           : "-",
 
       zone:

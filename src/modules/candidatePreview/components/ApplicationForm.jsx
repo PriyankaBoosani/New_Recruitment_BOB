@@ -436,45 +436,45 @@ const ApplicationForm = ({
       const map = {};
       const documents = [];
 
-    (res.data || []).forEach((item) => {
+      (res.data || []).forEach((item) => {
 
-//   const isZonal = isZonalHr;
-//  const status =
-//   item.zonalHrDocStatus &&
-//   item.zonalHrDocStatus !== "PENDING"
-//     ? item.zonalHrDocStatus
-//     : item.docScreeningStatus;
+        //   const isZonal = isZonalHr;
+        //  const status =
+        //   item.zonalHrDocStatus &&
+        //   item.zonalHrDocStatus !== "PENDING"
+        //     ? item.zonalHrDocStatus
+        //     : item.docScreeningStatus;
 
- const isZonal = isZonalHr;
+        const isZonal = isZonalHr;
 
-const status = isZonalHr
-  ? item.zonalHrDocStatus || "PENDING"
-  : isInterviewer
-    ? (item.zonalHrDocStatus && item.zonalHrDocStatus !== "PENDING"
-        ? item.zonalHrDocStatus
-        : item.docScreeningStatus || "PENDING")
-    : item.docScreeningStatus || "PENDING";
+        const status = isZonalHr
+          ? item.zonalHrDocStatus || "PENDING"
+          : isInterviewer
+            ? (item.zonalHrDocStatus && item.zonalHrDocStatus !== "PENDING"
+              ? item.zonalHrDocStatus
+              : item.docScreeningStatus || "PENDING")
+            : item.docScreeningStatus || "PENDING";
 
-  const comments = isZonal
-    ? item.zonalHrDocComments
-    : item.docScreeningComments;
+        const comments = isZonal
+          ? item.zonalHrDocComments
+          : item.docScreeningComments;
 
-  map[item.candidateDocumentId] = {
-    status: status?.toUpperCase() || "PENDING",
-    comments: comments,
-    verificationId: item.verificationId,
-  };
+        map[item.candidateDocumentId] = {
+          status: status?.toUpperCase() || "PENDING",
+          comments: comments,
+          verificationId: item.verificationId,
+        };
 
-  documents.push({
-    id: item.candidateDocumentId,
-    candidateDocumentId: item.candidateDocumentId,
-    name: item.displayName || item.fileName || "Document",
-    fileName: item.fileName,
-    url: item.fileUrl,
-    status: status?.toUpperCase() || "PENDING",
-  });
+        documents.push({
+          id: item.candidateDocumentId,
+          candidateDocumentId: item.candidateDocumentId,
+          name: item.displayName || item.fileName || "Document",
+          fileName: item.fileName,
+          url: item.fileUrl,
+          status: status?.toUpperCase() || "PENDING",
+        });
 
-});
+      });
 
       setDocStatusMap(map);
       setScreeningDocuments(documents);
@@ -1080,8 +1080,8 @@ const status = isZonalHr
       }));
     }
   }, [screeningForm.isWorkCriteriaMet,
-      screeningForm.isAgeCriteriaMet,
-      screeningForm.isEducationCriteriaMet]);
+  screeningForm.isAgeCriteriaMet,
+  screeningForm.isEducationCriteriaMet]);
 
   const allDocsAreVerified = areAllDocumentsVerified();
 
@@ -1299,7 +1299,7 @@ const status = isZonalHr
                         ? `Yes (${data.personalDetails.twinName})`
                         : "No"}
                     </td> */}
-                     <td className="fw-med">{t("twin_sibling")}</td>
+                    <td className="fw-med">{t("twin_sibling")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.isTwin === "Yes"
                         ? `Yes (${data.personalDetails.twinName})`
@@ -1518,163 +1518,163 @@ const status = isZonalHr
           </Accordion.Body>
         </Accordion.Item>
 
-     <Accordion.Item eventKey="3">
-  <Accordion.Header>{t("documents_details")}</Accordion.Header>
+        <Accordion.Item eventKey="3">
+          <Accordion.Header>{t("documents_details")}</Accordion.Header>
 
-  <Accordion.Body>
+          <Accordion.Body>
 
-    <table className="bob-doc-table">
+            <table className="bob-doc-table">
 
-      {/* COLUMN WIDTH CONTROL */}
-      <colgroup>
-        <col style={{ width: "16.66%" }} />
-        <col style={{ width: "16.66%" }} />
-        <col style={{ width: "16.66%" }} />
-        <col style={{ width: "16.66%" }} />
-        <col style={{ width: "16.66%" }} />
-        <col style={{ width: "16.66%" }} />
-      </colgroup>
+              {/* COLUMN WIDTH CONTROL */}
+              <colgroup>
+                <col style={{ width: "16.66%" }} />
+                <col style={{ width: "16.66%" }} />
+                <col style={{ width: "16.66%" }} />
+                <col style={{ width: "16.66%" }} />
+                <col style={{ width: "16.66%" }} />
+                <col style={{ width: "16.66%" }} />
+              </colgroup>
 
-      <thead>
-        <tr>
-          <th>{t("file_type")}</th>
-          <th>{t("status")}</th>
-          <th>{t("action")}</th>
+              <thead>
+                <tr>
+                  <th>{t("file_type")}</th>
+                  <th>{t("status")}</th>
+                  <th>{t("action")}</th>
 
-          <th>{t("file_type")}</th>
-          <th>{t("status")}</th>
-          <th>{t("action")}</th>
-        </tr>
-      </thead>
+                  <th>{t("file_type")}</th>
+                  <th>{t("status")}</th>
+                  <th>{t("action")}</th>
+                </tr>
+              </thead>
 
-      <tbody>
-        {Array.from({ length: Math.ceil(documentRows.length / 2) }).map(
-          (_, rowIndex) => {
+              <tbody>
+                {Array.from({ length: Math.ceil(documentRows.length / 2) }).map(
+                  (_, rowIndex) => {
 
-            const left = documentRows[rowIndex * 2];
-            const right = documentRows[rowIndex * 2 + 1];
+                    const left = documentRows[rowIndex * 2];
+                    const right = documentRows[rowIndex * 2 + 1];
 
-            const leftStatus =
-              docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
+                    const leftStatus =
+                      docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
 
-            const rightStatus =
-              docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
+                    const rightStatus =
+                      docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
 
-            return (
-              <tr key={rowIndex}>
+                    return (
+                      <tr key={rowIndex}>
 
-                {/* LEFT SIDE */}
-                <td>{left?.name}</td>
+                        {/* LEFT SIDE */}
+                        <td>{left?.name}</td>
 
-                <td>
-                  {left && (
-                    <span className={getStatusClass(leftStatus)}>
-                      {t(leftStatus)}
-                    </span>
-                  )}
-                </td>
+                        <td>
+                          {left && (
+                            <span className={getStatusClass(leftStatus)}>
+                              {t(leftStatus)}
+                            </span>
+                          )}
+                        </td>
 
-                <td className="action-cell divider1">
-                  {left && (
-                    <>
-                      <img
-                        src={viewIcon}
-                        alt={t("view")}
-                        style={{
-                          cursor: disableDocAction ? "not-allowed" : "pointer",
-                          opacity: disableDocAction ? 0.4 : 1,
-                          pointerEvents: disableDocAction ? "none" : "auto",
-                          marginLeft: "12px",
-                          
-                        }}
-                        onClick={() => {
-                          if (disableDocAction) return;
+                        <td className="action-cell divider1">
+                          {left && (
+                            <>
+                              <img
+                                src={viewIcon}
+                                alt={t("view")}
+                                style={{
+                                  cursor: disableDocAction ? "not-allowed" : "pointer",
+                                  opacity: disableDocAction ? 0.4 : 1,
+                                  pointerEvents: disableDocAction ? "none" : "auto",
+                                  marginLeft: "12px",
 
-                          setSelectedDoc({
-                            candidateDocumentId: left.candidateDocumentId,
-                            status: leftStatus,
-                            candidateId: previewData.candidateId,
-                            applicationId: previewData.applicationId,
-                            verificationId:
-                              docStatusMap[left.candidateDocumentId]?.verificationId,
-                            docScreeningComments:
-                              docStatusMap[left.candidateDocumentId]?.comments || "",
-                            name: left.name,
-                            fileUrl: left.url,
-                          });
+                                }}
+                                onClick={() => {
+                                  if (disableDocAction) return;
 
-                          setShowViewer(true);
-                        }}
-                      />
-                    </>
-                  )}
-                </td>
+                                  setSelectedDoc({
+                                    candidateDocumentId: left.candidateDocumentId,
+                                    status: leftStatus,
+                                    candidateId: previewData.candidateId,
+                                    applicationId: previewData.applicationId,
+                                    verificationId:
+                                      docStatusMap[left.candidateDocumentId]?.verificationId,
+                                    docScreeningComments:
+                                      docStatusMap[left.candidateDocumentId]?.comments || "",
+                                    name: left.name,
+                                    fileUrl: left.url,
+                                  });
+
+                                  setShowViewer(true);
+                                }}
+                              />
+                            </>
+                          )}
+                        </td>
 
 
-                {/* RIGHT SIDE */}
-                <td>{right?.name || "-"}</td>
+                        {/* RIGHT SIDE */}
+                        <td>{right?.name || "-"}</td>
 
-                <td>
-                  {right ? (
-                    <span className={getStatusClass(rightStatus)}>
-                      {t(rightStatus)}
-                    </span>
-                  ) : (
-                    "-"
-                  )}
-                </td>
+                        <td>
+                          {right ? (
+                            <span className={getStatusClass(rightStatus)}>
+                              {t(rightStatus)}
+                            </span>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
 
-                <td className="action-cell">
-                  {right ? (
-                    <>
-                      <img
-                        src={viewIcon}
-                        alt={t("view")}
-                        style={{
-                          cursor: disableDocAction ? "not-allowed" : "pointer",
-                          opacity: disableDocAction ? 0.4 : 1,
-                          pointerEvents: disableDocAction ? "none" : "auto",
-                          marginLeft: "12px", 
-                          
-                        }}
-                        onClick={() => {
-                          if (disableDocAction) return;
+                        <td className="action-cell">
+                          {right ? (
+                            <>
+                              <img
+                                src={viewIcon}
+                                alt={t("view")}
+                                style={{
+                                  cursor: disableDocAction ? "not-allowed" : "pointer",
+                                  opacity: disableDocAction ? 0.4 : 1,
+                                  pointerEvents: disableDocAction ? "none" : "auto",
+                                  marginLeft: "12px",
 
-                          setSelectedDoc({
-                            candidateDocumentId: right.candidateDocumentId,
-                            candidateId: previewData.candidateId,
-                            applicationId: previewData.applicationId,
-                            verificationId:
-                              docStatusMap[right.candidateDocumentId]?.verificationId,
-                            docScreeningComments:
-                              docStatusMap[right.candidateDocumentId]?.comments || "",
-                            name: right.name,
-                            fileUrl: right.url,
-                          });
+                                }}
+                                onClick={() => {
+                                  if (disableDocAction) return;
 
-                          setShowViewer(true);
-                        }}
-                      />
-                    </>
-                  ) : (
-                    "-"
-                  )}
-                </td>
+                                  setSelectedDoc({
+                                    candidateDocumentId: right.candidateDocumentId,
+                                    candidateId: previewData.candidateId,
+                                    applicationId: previewData.applicationId,
+                                    verificationId:
+                                      docStatusMap[right.candidateDocumentId]?.verificationId,
+                                    docScreeningComments:
+                                      docStatusMap[right.candidateDocumentId]?.comments || "",
+                                    name: right.name,
+                                    fileUrl: right.url,
+                                  });
 
-              </tr>
-            );
-          }
-        )}
-      </tbody>
+                                  setShowViewer(true);
+                                }}
+                              />
+                            </>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
 
-    </table>
+                      </tr>
+                    );
+                  }
+                )}
+              </tbody>
 
-  </Accordion.Body>
-</Accordion.Item>
+            </table>
+
+          </Accordion.Body>
+        </Accordion.Item>
 
         {/* ================= CRITERIA SECTION ================= */}
-       {canCandidatePool && !disableDocAction && (
-  <Card className="criteria-main-card">
+        {canCandidatePool && !disableDocAction && (
+          <Card className="criteria-main-card">
 
             <div className="criteria-wrapper">
 
@@ -1942,11 +1942,16 @@ const status = isZonalHr
                       checked={zonalDecision === opt}
                       disabled={isDisabled}
                       onChange={(e) => {
-                        setZonalDecision(e.target.value);
+                        const value = e.target.value;
+                        setZonalDecision(value);
                         setErrors(prev => ({
                           ...prev,
-                          zonalSubmitDate: undefined
+                          zonalSubmitDate: undefined,
+                          zonalComments: undefined
                         }));
+                        if (value === "YES") {
+                          setScreeningRemarks("");
+                        }
                       }}
                     />
                     <span className="custom-radio"></span>
@@ -2055,15 +2060,15 @@ const status = isZonalHr
 
 
       </Accordion>
-    <DocumentViewerModal
-  show={showViewer}
-  onHide={() => setShowViewer(false)}
-  document={selectedDoc}
-  onVerify={handleVerify}
-  onReject={handleReject}
-  isZonalAbsent={isZonalAbsent}
- 
-/>
+      <DocumentViewerModal
+        show={showViewer}
+        onHide={() => setShowViewer(false)}
+        document={selectedDoc}
+        onVerify={handleVerify}
+        onReject={handleReject}
+        isZonalAbsent={isZonalAbsent}
+
+      />
     </>
   );
 };
