@@ -196,6 +196,16 @@ const ApplicationForm = ({
       toast.error("Please select decision");
       return;
     }
+    // 🔴 Comments mandatory when decision = NO
+    if (zonalDecision === "NO") {
+      if (!screeningRemarks?.trim()) {
+        setErrors(prev => ({
+          ...prev,
+          zonalComments: "This field is required"
+        }));
+        return;
+      }
+    }
 
     // -----------------------------------------
     // 2️⃣ All documents VERIFIED but decision = NO
