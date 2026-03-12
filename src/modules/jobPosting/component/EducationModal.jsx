@@ -141,6 +141,11 @@ export default function EducationModal({
                         <Col md={3}>
                             <Select
                                 classNamePrefix="react-select"
+                                menuPortalTarget={document.body}
+                                    menuPosition="fixed"
+                                    styles={{
+                                        menuPortal: base => ({ ...base, zIndex: 9999 })
+                                    }}
                                 value={[
                                     { value: "", label: t("common:select_type") },
                                     ...educationTypes.map(t => ({
@@ -171,6 +176,11 @@ export default function EducationModal({
                         <Col md={4}>
                             <Select
                                 classNamePrefix="react-select"
+                                menuPortalTarget={document.body}
+                                    menuPosition="fixed"
+                                    styles={{
+                                        menuPortal: base => ({ ...base, zIndex: 9999 })
+                                    }}
                                 value={[
                                     { value: "", label: t("common:select_education") },
                                     ...qualifications.map(q => ({
@@ -201,6 +211,11 @@ export default function EducationModal({
                         <Col md={4}>
                             <Select
                                 classNamePrefix="react-select"
+                                menuPortalTarget={document.body}
+                                    menuPosition="fixed"
+                                    styles={{
+                                        menuPortal: base => ({ ...base, zIndex: 9999 })
+                                    }}
                                 value={[
                                     { value: "", label: t("common:select_specialization") },
                                     ...getSpecializationsForDegree(row.educationQualificationsId).map(s => ({
@@ -260,6 +275,11 @@ export default function EducationModal({
                             <Col md={10}>
                                 <Select
                                     classNamePrefix="react-select"
+                                    menuPortalTarget={document.body}
+                                    menuPosition="fixed"
+                                    styles={{
+                                        menuPortal: base => ({ ...base, zIndex: 9999 })
+                                    }}
                                     value={[
                                         { value: "", label: t("common:select_certification") },
                                         ...sortedCertifications.map(c => ({

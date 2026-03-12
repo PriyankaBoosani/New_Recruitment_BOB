@@ -692,23 +692,16 @@ const PositionForm = ({
                         <Form.Label>{t("addPosition:medical_required")} <span className="text-danger">*</span></Form.Label>
                         <Select
                             classNamePrefix="react-select"
-                            isDisabled={isViewMode}
-                            value={
-                                [
-                                    { value: "yes", label: t("common:yes") },
-                                    { value: "no", label: t("common:no") }
-                                ].find(option => option.value === formData.medicalRequired) || null
-                            }
-                            onChange={(selected) => {
-                                handleInputChange({
-                                    target: { name: "medicalRequired", value: selected ? selected.value : "" }
-                                });
-                            }}
+                            isDisabled={true}
+                            value={[
+                                { value: "yes", label: t("common:yes") },
+                                { value: "no", label: t("common:no") }
+                            ].find(option => option.value === formData.medicalRequired)}
+
                             options={[
                                 { value: "yes", label: t("common:yes") },
                                 { value: "no", label: t("common:no") }
                             ]}
-                            placeholder={t("common:select")}
                         />
                         <ErrorMessage>{renderError(errors.medicalRequired)}</ErrorMessage>
                     </Col>

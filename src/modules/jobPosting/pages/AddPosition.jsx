@@ -90,7 +90,7 @@ const AddPosition = () => {
         mandatoryEducation: "", preferredEducation: "",
         mandatoryExperience: { years: "", months: "", description: "" },
         preferredExperience: { years: "", months: "", description: "" },
-        responsibilities: "", medicalRequired: "", enableStateDistribution: false
+        responsibilities: "", medicalRequired: "yes", enableStateDistribution: false
     });
 
     const [educationData, setEducationData] = useState({
