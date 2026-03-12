@@ -388,7 +388,7 @@ const RequisitionStrip = ({
 
                 <div className="section-title mt-2">{t("candidateWorkflow:preferred_experience")}:</div>
                 <ul className="section-lists">
-                  {renderBullets(job?.preferred_experience)}
+                  {renderBullets(job?.preferred_experience || "NA")}
                 </ul>
 
 

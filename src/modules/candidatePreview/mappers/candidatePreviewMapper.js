@@ -396,7 +396,7 @@ export const mapJobPositionToRequisitionStrip = (
     eligibility_age_max: apiData.eligibilityAgeMax ?? "-",
 
     mandatory_experience: apiData.mandatoryExperience || "-",
-    preferred_experience: apiData.preferredExperience || "-",
+    preferred_experience: apiData.preferredExperience || "NA",
 
     no_of_vacancies: apiData.totalVacancies ?? 0,
 
