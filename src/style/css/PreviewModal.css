@@ -858,14 +858,18 @@ select.form-control {
   /* BOB Orange */
   font-weight: 600;
   font-size: 15px;
-  white-space: nowrap;
+  /* white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis; */
+
 
 }
 
 .wraps .req-code {
-  max-width: 300px !important;
+  max-width: 75% !important;
+    float: left;
+    
+    overflow-wrap: break-word;
 
 }
 

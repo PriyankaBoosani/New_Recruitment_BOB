@@ -447,13 +447,13 @@
 
 .nav-arrow {
   font-size: 30px;
-  color: #2563eb;
+  color: #162B75;
   cursor: pointer;
   user-select: none;
 }
 
 .nav-arrow:hover {
-  color: #1d4ed8;
+  color: #162B75;
 }
 
 /* Date pill remains same */

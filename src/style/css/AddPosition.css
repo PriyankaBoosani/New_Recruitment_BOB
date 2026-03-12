@@ -141,7 +141,7 @@
 .form-control,
 .form-select {
   border-radius: 6px;
-  padding: 10px 12px;
+  padding: 6px 12px;
   font-size: 0.875em;
   border-width: 1px;
   border-color: hsl(0, 0%, 80%);
