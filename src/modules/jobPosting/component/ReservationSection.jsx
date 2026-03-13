@@ -199,7 +199,7 @@ const ReservationSection = ({
                         </Row>
                         <Row className="g-4 mt-3">
                             <Col md={7}>
-                                <Card className="p-3 h-100 genfonts"><h6 className="text-primary mb-3">{t("addPosition:general_category")}</h6>
+                                <Card className="p-3 h-100 genfonts"><h6 className="text-primary mb-3">{t("addPosition:category")}</h6>
                                     <Row className="g-3">
                                         {reservationCategories.map(cat => (
                                             <Col md={2} key={cat.id}><Form.Label className="small fw-semibold">{cat.code}</Form.Label>
@@ -229,7 +229,7 @@ const ReservationSection = ({
                                 </Card>
                             </Col>
                             <Col md={5}>
-                                <Card className="p-3 h-100 genfonts"><h6 className="text-primary mb-3"> {t("addPosition:disability_category")}</h6>
+                                <Card className="p-3 h-100 genfonts"><h6 className="text-primary mb-3"> {t("addPosition:disability")}</h6>
                                     <Row className="g-3">
                                         {disabilityCategories.map(d => (
                                             <Col md={3} key={d.id}><Form.Label className="small fw-semibold">{d.disabilityCode}</Form.Label>

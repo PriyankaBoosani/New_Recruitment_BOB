@@ -120,9 +120,9 @@ export default function EducationModal({
         finalText += `Certifications: ${certText}`;
     }
 
-    const sortedCertifications = [...certifications].sort((a, b) =>
-        a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
-    );
+    const filteredCertifications = certifications
+        .filter(c => c.name?.toLowerCase() !== "other")
+        .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
 
     return (
         <Modal show={show} onHide={onHide} size="lg" scrollable centered className="edu-modal">
@@ -142,10 +142,10 @@ export default function EducationModal({
                             <Select
                                 classNamePrefix="react-select"
                                 menuPortalTarget={document.body}
-                                    menuPosition="fixed"
-                                    styles={{
-                                        menuPortal: base => ({ ...base, zIndex: 9999 })
-                                    }}
+                                menuPosition="fixed"
+                                styles={{
+                                    menuPortal: base => ({ ...base, zIndex: 9999 })
+                                }}
                                 value={[
                                     { value: "", label: t("common:select_type") },
                                     ...educationTypes.map(t => ({
@@ -177,10 +177,10 @@ export default function EducationModal({
                             <Select
                                 classNamePrefix="react-select"
                                 menuPortalTarget={document.body}
-                                    menuPosition="fixed"
-                                    styles={{
-                                        menuPortal: base => ({ ...base, zIndex: 9999 })
-                                    }}
+                                menuPosition="fixed"
+                                styles={{
+                                    menuPortal: base => ({ ...base, zIndex: 9999 })
+                                }}
                                 value={[
                                     { value: "", label: t("common:select_education") },
                                     ...qualifications.map(q => ({
@@ -212,10 +212,10 @@ export default function EducationModal({
                             <Select
                                 classNamePrefix="react-select"
                                 menuPortalTarget={document.body}
-                                    menuPosition="fixed"
-                                    styles={{
-                                        menuPortal: base => ({ ...base, zIndex: 9999 })
-                                    }}
+                                menuPosition="fixed"
+                                styles={{
+                                    menuPortal: base => ({ ...base, zIndex: 9999 })
+                                }}
                                 value={[
                                     { value: "", label: t("common:select_specialization") },
                                     ...getSpecializationsForDegree(row.educationQualificationsId).map(s => ({
@@ -282,7 +282,7 @@ export default function EducationModal({
                                     }}
                                     value={[
                                         { value: "", label: t("common:select_certification") },
-                                        ...sortedCertifications.map(c => ({
+                                        ...filteredCertifications.map(c => ({
                                             value: c.id,
                                             label: c.name
                                         }))
@@ -294,7 +294,7 @@ export default function EducationModal({
                                     }}
                                     options={[
                                         { value: "", label: t("common:select_certification") },
-                                        ...sortedCertifications.map(c => ({
+                                        ...filteredCertifications.map(c => ({
                                             value: c.id,
                                             label: c.name
                                         }))
