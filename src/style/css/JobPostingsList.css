@@ -110,6 +110,7 @@
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #ACBED4;
 }
 
 .subbtn {
@@ -186,6 +187,7 @@
 .icon-22 {
   width: 22px;
   height: 22px;
+  border-radius: 5px;
 }
 
 /* .job-postings-page .req-code {
@@ -220,10 +222,13 @@
   text-overflow: ellipsis;
   word-wrap: anywhere;
 }
-
+.accordion-arrow-position{
+  color:#fff !important;
+  margin-right: -10px;
+}
 .job-postings-page .depname {
-  color: #162B75;
-  font-size: 1em;
+  color: #fff;
+  font-size: 0.85em;
   font-weight: 600;
 }
 
@@ -249,7 +254,9 @@
 
 .actions .icon-btn {
   margin-left: 8px;
-  background: #EFF6FF;
+  background: #fff;
+  border: 1px solid #6679BC;
+  border-radius: 20% !important;
 }
 
 .icon-23 {
@@ -269,7 +276,7 @@
 
 .icon-19 {
   width: 19px;
-  height: 19px;
+  /* height: 19px; */
 }
 
 /* Responsive */
@@ -297,25 +304,26 @@
 .accordion-body {
   /* background: #f9fbff; */
   /* border-radius: 8px; */
-  padding: 20px 15px;
+  padding: 20px 15px 0;
  border-top: 1px solid #ddd;
 }
 
 .department-card {
   background: #fff;
-  border-radius: 10px;
-  padding: 15px 20px;
+  /* border-radius: 10px; */
+  /* padding: 15px 20px; */
   border: 1px solid #ddd;
+  color:#fff;
   
 }
 
 .position-card-inner {
-  border: 1px solid #ddd;
+  border: 1px solid #ACBED4;
   border-radius: 12px;
   padding: 16px 20px;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      margin-top: 20px;
+  background: #F0F7FF;
+  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
+  margin: 15px 20px;
 }
 
 /* 🔑 SINGLE LINE HEADER */
@@ -330,7 +338,7 @@
   font-size: 1em;
   flex: 1;
   color: #162B75;
-  font-weight: 400;
+  font-weight: 500;
 
 }
 
@@ -338,12 +346,12 @@
 .position-meta-inline {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
   margin-right: 100px;
 }
 
 .position-meta-inline span {
-  font-weight: 400;
+  font-weight: normal;
   font-size: 0.875em;
   color: #404040;
 }
@@ -357,17 +365,23 @@
 /* DETAILS BELOW */
 .position-details {
   /* margin-top: 10px; */
-  font-size: 0.875em;
+  font-size: 0.85em;
   color: #404040;
-  font-weight: 400;
+  font-weight: normal;
 }
-
+.position-details span{
+  font-weight: 500;
+  color: #404040;
+}
 .position-details strong {
   font-weight: 600;
 }
 
 .position-card-inner .icon-btn {
-  background: #EFF6FF;
+  background: #fff;
+  margin-right: -8px;
+  border: 1px solid #6679BC;
+  border-radius:20% !important;
 }
 
 @media (max-width: 768px) {
@@ -382,7 +396,9 @@
     margin-right: 0px;
   }
 }
-
+.position-meta-inline span b{
+  font-weight: 500;;
+}
 .requisition-card {
   margin-bottom: 1rem;
   border-radius: 8px;
@@ -614,5 +630,8 @@
 .department-header{
   /* border-bottom: 1px solid #ddd; */
     /* padding-bottom: 10px; */
-    
+    padding: 5px 20px;
+    background: #6679BC;
+    /* border-radius: 10px 10px 0 0; */
+   
 }

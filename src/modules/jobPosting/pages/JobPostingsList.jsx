@@ -26,16 +26,16 @@ import ApprovalHistoryModal from "../../Approvals/components/ApprovalHistoryModa
 import { useRequisitionApprovalHistory } from "../../Approvals/hooks/useRequisitionApprovalHistory";
 
 import start_icon from "../../../assets/start_icon.png";
-import dept_icon from "../../../assets/dept_icon.png"
+import dept_icon from "../../../assets/dept_icon.jpg"
 import end_icon from "../../../assets/end_icon.png"
 import submitIcon from "../../../assets/submitIcon.png";
-import pos_edit_icon from "../../../assets/pos_edit_icon.png";
-import pos_delete_icon from "../../../assets/pos_delete_icon.png";
+import pos_edit_icon from "../../../assets/pos_edit_icon.jpg";
+import pos_delete_icon from "../../../assets/pos_delete_icon.jpg";
 import pos_plus_icon from "../../../assets/pos_plus_icon.png";
 import mingcute_department_line from "../../../assets/mingcute_department-line.png";
 import vacancy_icon from "../../../assets/vacancy_icon.png";
 import position_Icon from "../../../assets/position_Icon.png";
-import view_jobpost from "../../../assets/view_jobpost.png"
+import view_jobpost from "../../../assets/view_jobpost.jpg"
 import history_icon from "../../../assets/history_icon.png"
 import { useJobRequisitions } from "../hooks/useJobAllRequisition";
 import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisition";
@@ -654,7 +654,7 @@ const JobPostingsList = () => {
                                             </div> */}
 
                                         <div
-                                            className="department-header d-flex align-items-center gap-2 my-2 cursor-pointer"
+                                            className="department-header d-flex align-items-center gap-2 cursor-pointer"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 toggleDeptAccordion(req.id, dept.departmentName);
@@ -673,7 +673,7 @@ const JobPostingsList = () => {
 
                                             <Button
                                                 variant="none"
-                                                className="accordion-arrow ms-auto"
+                                                className="accordion-arrow-position ms-auto"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     toggleDeptAccordion(req.id, dept.departmentName);
@@ -689,7 +689,7 @@ const JobPostingsList = () => {
                                         {/* {dept.positions.map((pos) => ( */}
                                         {openDept[`${req.id}-${dept.departmentName}`] &&
                                             dept.positions.map((pos) => (
-                                                <div key={pos.positionId} className="position-card-inner mb-2">
+                                                <div key={pos.positionId} className="position-card-inner">
                                                     <div className="position-header-row">
                                                         <div className="position-title">
                                                             {pos.positionName}
@@ -697,11 +697,11 @@ const JobPostingsList = () => {
 
                                                         <div className="position-meta-inline">
                                                             <span>
-                                                                {t("jobPostingsList:vacancies")}: {pos.vacancies}
+                                                                <b>{t("jobPostingsList:vacancies")}:</b> {pos.vacancies}
                                                             </span>
 
                                                             <span>
-                                                                {t("jobPostingsList:age")}: {pos.minAge} – {pos.maxAge} {t("jobPostingsList:years")}
+                                                                <b>{t("jobPostingsList:age")}:</b> {pos.minAge} – {pos.maxAge} {t("jobPostingsList:years")}
                                                             </span>
                                                         </div>
 
@@ -776,11 +776,11 @@ const JobPostingsList = () => {
 
                                                     <div className="position-details">
                                                         <div>
-                                                            {t("jobPostingsList:mandatory_education")}:{" "}
+                                                            <span>{t("jobPostingsList:mandatory_education")}:</span>{" "}
                                                             {pos.mandatoryEducation}
                                                         </div>
                                                         <div>
-                                                            {t("jobPostingsList:preferred_education")}:{" "}
+                                                            <span>{t("jobPostingsList:preferred_education")}:</span>{" "}
                                                             {pos.preferredEducation && pos.preferredEducation.trim()
                                                                 ? pos.preferredEducation
                                                                 : "NA"}
