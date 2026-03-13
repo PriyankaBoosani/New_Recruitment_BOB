@@ -276,7 +276,7 @@ const ReservationSection = ({
                                         <th>{t("addPosition:sno")}</th>
                                         <th>{t("addPosition:state_name")}</th>
                                         <th>{t("addPosition:vacancies")}</th>
-                                        <th>{t("addPosition:local_languae_of_state")}</th>
+                                        <th>{t("addPosition:local_language_of_state")}</th>
 
                                         {reservationCategories.map(c => (
                                             <th key={c.code}>{c.code}</th>
