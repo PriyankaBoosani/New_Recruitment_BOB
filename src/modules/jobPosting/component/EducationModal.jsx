@@ -360,6 +360,13 @@ export default function EducationModal({
 
                         setErrors({});
 
+                        const cleanText = [
+                            degreeText,
+                            certText ? `Certifications: ${certText}` : ""
+                        ]
+                            .filter(Boolean)
+                            .join("\n");
+
                         const payload = {
                             educations: filledRows.map(r => ({
                                 educationTypeId: r.educationTypeId,
@@ -367,7 +374,7 @@ export default function EducationModal({
                                 specializationId: r.specializationId || null
                             })),
                             certificationIds: certIds.filter(Boolean),
-                            text: finalText,
+                            text: cleanText,
                         };
 
                         onSave(payload);

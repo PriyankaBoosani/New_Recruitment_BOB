@@ -367,12 +367,12 @@ const RequisitionStrip = ({
               <div className="info-card">
                 <div className="section-title">{t("candidateWorkflow:mandatory_education")}:</div>
                 <ul className="section-list">
-                  <li>{job?.mandatory_qualification || "-"}</li>
+                  <li style={{ whiteSpace: "pre-line" }}>{job?.mandatory_qualification || "-"}</li>
                 </ul>
 
                 <div className="section-title mt-2">{t("candidateWorkflow:preferred_education")}:</div>
                 <ul className="section-list">
-                  <li>{job?.preferred_qualification || "NA"}</li>
+                  <li style={{ whiteSpace: "pre-line" }}>{job?.preferred_qualification || "NA"}</li>
                 </ul>
               </div>
 

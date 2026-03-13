@@ -775,11 +775,11 @@ const JobPostingsList = () => {
                                                     </div>
 
                                                     <div className="position-details">
-                                                        <div>
+                                                        <div style={{ whiteSpace: "pre-line" }}>
                                                             <span>{t("jobPostingsList:mandatory_education")}:</span>{" "}
                                                             {pos.mandatoryEducation}
                                                         </div>
-                                                        <div>
+                                                        <div style={{ whiteSpace: "pre-line" }}>
                                                             <span>{t("jobPostingsList:preferred_education")}:</span>{" "}
                                                             {pos.preferredEducation && pos.preferredEducation.trim()
                                                                 ? pos.preferredEducation
