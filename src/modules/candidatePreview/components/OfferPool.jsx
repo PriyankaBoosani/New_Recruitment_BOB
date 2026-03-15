@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react'
 import jobPositionApiService from '../../jobPosting/services/jobPositionApiService';
 import { toast } from 'react-toastify';
 import { useTranslation } from "react-i18next";
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const OFFER_STATUS_CLASS_MAP = {
   OFFER_AWAITED: "bg-warning",
@@ -271,16 +272,25 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 									<p className="fw-normal fs-14 mb-0 py-2 text-muted">{c.joiningDate}</p>
 								</td>
 								<td className='align-content-center sticky-col-action' style={{ paddingLeft: '1.5rem' }}>
-									<button
-										className="btn btn-sm btn-outline-secondary border-0"
-										onClick={() => {
-											setSelectedOffer(c);
-											setShowModal(true);
+									<OverlayTrigger
+										placement="bottom"
+										overlay={
+											<Tooltip id={`tooltip-${c.id}`}>
+												{t("common:view_details")}
+											</Tooltip>
+										}
+									>
+										<button
+											className="btn btn-sm btn-outline-secondary border-0"
+											onClick={() => {
+												setSelectedOffer(c);
+												setShowModal(true);
 										}}
 										style={{ backgroundColor: '#eff6ff' }}
 									>
 										<i className="bi bi-eye" style={{ color: 'black' }}></i>
 									</button>
+									</OverlayTrigger>
 								</td>
 							</tr>
 						))

@@ -60,5 +60,6 @@
   "requisition_requests": "Requisition Requests",
   "extension_requests": "Extension Requests",
   "committee_requests": "Committee Requests",
-  "back": "Back"
+  "back": "Back",
+  "view_details": "View Details"
 }
