@@ -181,7 +181,10 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
       centralGovtEmployment: yesNo(profile.centralGovtEmployed),
       servingLowerPost: yesNo(profile.employedInLowerPost),
       servingInGovt: yesNo(profile.isPublicSectorUndertaking),
+      familyMember1984: yesNo(profile.familyMember1984),
+      riotVictimFamily: yesNo(profile.riotVictimFamily),
       disciplinaryAction: yesNo(profile.anyDisciplinaryAction),
+      minority: yesNo(profile.minority),
       disciplinaryDetails: profile.disciplinaryDetails || "-",
 
       socialMediaProfileLink: profile.socialMediaProfileLink || "-",

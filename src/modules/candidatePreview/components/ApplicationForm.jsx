@@ -1397,9 +1397,9 @@ const ApplicationForm = ({
 
                   <tr>
                     <td className="fw-med">{t("riot_family_member")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.familyMember1984 || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.riotVictimFamily || "No"}</td>
                     <td className="fw-med">{t("religious_minority")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.religiousMinority || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.minority || "No"}</td>
                   </tr>
 
                   <tr>
