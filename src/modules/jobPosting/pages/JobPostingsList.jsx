@@ -659,7 +659,7 @@ const JobPostingsList = () => {
                                                 e.stopPropagation();
                                                 toggleDeptAccordion(req.id, dept.departmentName);
                                             }}
-                                        >
+                                         >
                                             <img src={dept_icon} className="icon-22" alt="dept_icon" />
 
                                             <span className="depname">{dept.departmentName}</span>
@@ -798,8 +798,7 @@ const JobPostingsList = () => {
                     </div>
                 );
             })}
-            {/* ================= PAGINATION ================= */}
-            {/* ================= PAGINATION ================= */}
+\            {/* ================= PAGINATION ================= */}
             {pageInfo && pageInfo.totalPages > 1 && (
                 <Row className="mt-4 mb-4">
                     <Col className="d-flex justify-content-end align-items-center gap-3">

@@ -183,45 +183,45 @@
 
 /* Base badge style inside requisition page */
 .requisition-page .badge {
-  font-weight: 500;
+    font-weight: 500;
     font-size: 0.625em;
 }
 
 /* WARNING → Yellow */
 .requisition-page .bg-warning {
-  color: #856404;
-  border: 1px solid #ffc107;
-  background: #fff3cd !important;
+    color: #856404;
+    border: 1px solid #ffc107;
+    background: #fff3cd !important;
 }
 
 /* INFO → Blue */
 .requisition-page .bg-info {
-  color: #004085;
-  border: 1px solid #0dcaf0;
-  background: #cfefff !important;
+    color: #004085;
+    border: 1px solid #0dcaf0;
+    background: #cfefff !important;
 }
 
 /* SUCCESS → Green */
 .requisition-page .bg-success {
-  color: #0EB319;
-  border: 1px solid #0EB319;
+    color: #0EB319;
+    border: 1px solid #0EB319;
     background: #F5FFF6 !important;
 }
 
 /* DANGER → Red */
 .requisition-page .bg-danger {
-	color: #721c24;
-	border: 1px solid #dc3545;
-	background: #f8d7da !important;
-	background-color: #fdf5f5;
-	color: #D73C40;
+    color: #721c24;
+    border: 1px solid #dc3545;
+    background: #f8d7da !important;
+    background-color: #fdf5f5;
+    color: #D73C40;
 }
 
 /* SECONDARY → Grey */
 .requisition-page .bg-secondary {
-  color: #495057;
-  border: 1px solid #6c757d;
-  background: #e2e3e5 !important;
+    color: #495057;
+    border: 1px solid #6c757d;
+    background: #e2e3e5 !important;
 }
 
 .requisition-page .req-id {
@@ -278,8 +278,8 @@
 }
 
 .requisition-page .depname {
-    color: #162B75;
-    font-size: 1em;
+    color: #fff;
+    font-size: 0.85em;
     font-weight: 600;
 }
 
@@ -291,6 +291,7 @@
     border-radius: 10px;
     font-weight: 400;
     font-size: 0.625em;
+
 }
 
 .requisition-page .req-meta,
@@ -325,7 +326,7 @@
 
 .requisition-page .icon-19 {
     width: 19px;
-    height: 19px;
+    /* height: 19px; */
 }
 
 /* Responsive */
@@ -351,23 +352,24 @@
 }
 
 .requisition-page .accordion-body {
-    background: #f9fbff;
-    border-radius: 8px;
-    padding: 16px;
+    padding: 20px 15px 0;
+    border-top: 1px solid #ddd;
 }
 
 .requisition-page .department-card {
     background: #fff;
-    border-radius: 10px;
-    padding: 12px;
-    border: 1px solid #e6ecf5;
+    border: 1px solid #ddd;
+    color: #fff;
 }
 
 .requisition-page .position-card-inner {
-    border: 1px solid #eef2f7;
+    border: 1px solid #ACBED4;
     border-radius: 12px;
     padding: 16px 20px;
-    background: #fff;
+    background: #F0F7FF;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 15px 20px;
+
 }
 
 /* 🔑 SINGLE LINE HEADER */
@@ -382,7 +384,7 @@
     font-size: 1em;
     flex: 1;
     color: #162B75;
-    font-weight: 600;
+    font-weight: 500;
 
 }
 
@@ -395,23 +397,23 @@
 }
 
 .requisition-page .position-meta-inline span {
-    font-weight: 400;
+    font-weight: normal;
     font-size: 0.875em;
     color: #404040;
 }
 
-.requisition-page .icon-btn {
+/* .requisition-page .icon-btn {
     width: 34px;
     height: 34px;
     padding: 0;
-}
+} */
 
 /* DETAILS BELOW */
 .requisition-page .position-details {
     /* margin-top: 10px; */
     font-size: 0.875em;
     color: #404040;
-    font-weight: 400;
+    font-weight: normal;
 }
 
 .requisition-page .position-details strong {
@@ -419,7 +421,10 @@
 }
 
 .requisition-page .position-card-inner .icon-btn {
-    background: #EFF6FF;
+    background: #fff;
+    margin-right: -8px;
+    border: 1px solid #6679BC;
+    border-radius: 20% !important;
 }
 
 @media (max-width: 768px) {
@@ -652,32 +657,36 @@
 }
 
 .requisition-page .approve-btn {
-	font-size: 0.875rem;
-	font-weight: 400;
-	color: #0EB319;
-	border: 1px solid #0EB319;
-	background: #F5FFF6 !important;
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: #0EB319;
+    border: 1px solid #0EB319;
+    background: #F5FFF6 !important;
 }
-.icon-20his{
+
+.icon-20his {
     width: 20px;
     height: 20px;
+    margin-top: 10px;
 }
+
 .requisition-page .status-filter {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: url('../../assets/Vector.png');
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 16px;
-  padding-right: 30px;
-  width: 100%;
-  cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('../../assets/Vector.png');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 30px;
+    width: 100%;
+    cursor: pointer;
 }
+
 .requisition-page .filters-row select {
-  height: 42px;
-  font-size: 0.875em;
-  color: #162B75;
-  font-weight: 400;
+    height: 42px;
+    font-size: 0.875em;
+    color: #162B75;
+    font-weight: 400;
 
 }

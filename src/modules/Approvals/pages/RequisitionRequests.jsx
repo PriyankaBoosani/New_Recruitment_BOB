@@ -22,12 +22,12 @@ import "../../../style/css/ApprovalsRequsition.css";
 
 // Assets (go up to src first)
 import start_icon from "../../../assets/start_icon.png";
-import dept_icon from "../../../assets/dept_icon.png";
+import dept_icon from "../../../assets/dept_icon.jpg"
 import end_icon from "../../../assets/end_icon.png";
 import mingcute_department_line from "../../../assets/mingcute_department-line.png";
 import vacancy_icon from "../../../assets/vacancy_icon.png";
 import position_Icon from "../../../assets/position_Icon.png";
-import view_jobpost from "../../../assets/view_jobpost.png";
+import view_jobpost from "../../../assets/view_jobpost.jpg";
 import history_icon from "../../../assets/history_icon.png";
 // Approvals components & validations
 import ApprovalCommentModal from "../components/ApprovalCommentModal";
@@ -59,7 +59,7 @@ const RequisitionRequests = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyData, setHistoryData] = useState([]);
   const [selectedHistoryReq, setSelectedHistoryReq] = useState(null);
-  
+
 
 
   const handleApprovalAction = async (comment) => {
@@ -133,7 +133,7 @@ const RequisitionRequests = () => {
     loadingReqId,
     fetchPositions,
   } = useJobPositionsByRequisition();
-
+  const [openDept, setOpenDept] = useState({});
   const user = useSelector(state => state.user.user);
   const role = user?.role;
   const [statuses, setStatuses] = useState([]);
@@ -170,7 +170,12 @@ const RequisitionRequests = () => {
       return next;
     });
   };
-
+  const toggleDeptAccordion = (reqId, deptId) => {
+    setOpenDept(prev => ({
+      ...prev,
+      [`${reqId}-${deptId}`]: !prev[`${reqId}-${deptId}`]
+    }));
+  };
   // 🔹 API Hook
   const { requisitions, loading, pageInfo, approve, reject } =
     useApprovalRequisitions({
@@ -504,24 +509,25 @@ const RequisitionRequests = () => {
                   {openReqId === req.id ? <ChevronUp /> : <ChevronDown />}
                 </Button>
               </Col>
+            </Row>
 
-              {/* -------- ACCORDION BODY (STATIC FOR NOW) -------- */}
-              {openReqId === req.id && (
-                <div className="accordion-body mt-3">
+            {/* -------- ACCORDION BODY (STATIC FOR NOW) -------- */}
+            {openReqId === req.id && (
+              <div className="accordion-body mt-3">
 
-                  {loadingReqId === req.id && (
-                    <Spinner animation="border" size="sm" />
-                  )}
+                {loadingReqId === req.id && (
+                  <Spinner animation="border" size="sm" />
+                )}
 
-                  {!loadingReqId && positions.length === 0 && (
-                    <div className="text-muted">{t("jobPostingsList:no_positions")}</div>
-                  )}
+                {!loadingReqId && positions.length === 0 && (
+                  <div className="text-muted">{t("jobPostingsList:no_positions")}</div>
+                )}
 
-                  {Object.values(positionsGroupedByDept).map((dept) => (
-                    <div key={dept.departmentName} className="department-card mb-3">
+                {Object.values(positionsGroupedByDept).map((dept) => (
+                  <div key={dept.departmentName} className="department-card mb-3">
 
-                      {/* 🔹 Department Header */}
-                      <div className="department-header d-flex align-items-center gap-2 my-2">
+                    {/* 🔹 Department Header */}
+                    {/* <div className="department-header d-flex align-items-center gap-2 my-2">
                         <img
                           src={dept_icon}
                           className="icon-22"
@@ -535,11 +541,44 @@ const RequisitionRequests = () => {
                             : t("jobPostingsList:positions_plural")}
                         </Badge>
 
-                      </div>
+                      </div> */}
 
-                      {/* 🔹 SAME position UI you already had */}
-                      {dept.positions.map((pos) => (
-                        <div key={pos.positionId} className="position-card-inner mb-2">
+                    <div
+                      className="department-header d-flex align-items-center gap-2 cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleDeptAccordion(req.id, dept.departmentName);
+                      }}
+                    >
+                      <img src={dept_icon} className="icon-22" alt="dept_icon" />
+
+                      <span className="depname">{dept.departmentName}</span>
+
+                      <Badge bg="light" text="primary" className="deppos">
+                        {dept.positions.length}{" "}
+                        {dept.positions.length === 1
+                          ? t("jobPostingsList:position")
+                          : t("jobPostingsList:positions_plural")}
+                      </Badge>
+
+                      <Button
+                        variant="none"
+                        className="accordion-arrow-position ms-auto"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleDeptAccordion(req.id, dept.departmentName);
+                        }}
+                      >
+                        {openDept[`${req.id}-${dept.departmentName}`]
+                          ? <ChevronUp />
+                          : <ChevronDown />}
+                      </Button>
+                    </div>
+
+                    {/* 🔹 SAME position UI you already had */}
+                    {openDept[`${req.id}-${dept.departmentName}`] &&
+                      dept.positions.map((pos) => (
+                        <div key={pos.positionId} className="position-card-inner">
                           <div className="position-header-row">
                             <div className="position-title">
                               {pos.positionName}
@@ -547,11 +586,11 @@ const RequisitionRequests = () => {
 
                             <div className="position-meta-inline">
                               <span>
-                                {t("jobPostingsList:vacancies")}: {pos.vacancies}
+                                <b>{t("jobPostingsList:vacancies")}:</b> {pos.vacancies}
                               </span>
 
                               <span>
-                                {t("jobPostingsList:age")}: {pos.minAge} – {pos.maxAge} {t("jobPostingsList:years")}
+                                <b>{t("jobPostingsList:age")}:</b> {pos.minAge} - {pos.maxAge} {t("jobPostingsList:years")}
                               </span>
                             </div>
                             {/* /* VIEW POSITION */}
@@ -573,23 +612,25 @@ const RequisitionRequests = () => {
                           </div>
 
                           <div className="position-details">
-                            <div>
-                              {t("jobPostingsList:mandatory_education")}:{" "}
+                            <div style={{ whiteSpace: "pre-line" }}>
+                              <span>{t("jobPostingsList:mandatory_education")}:</span>{" "}
                               {pos.mandatoryEducation}
                             </div>
-                            <div>
-                              {t("jobPostingsList:preferred_education")}:{" "}
-                              {pos.preferredEducation}
+                            <div style={{ whiteSpace: "pre-line" }}>
+                              <span>{t("jobPostingsList:preferred_education")}:</span>{" "}
+                              {pos.preferredEducation && pos.preferredEducation.trim()
+                                ? pos.preferredEducation
+                                : "NA"}
                             </div>
                           </div>
                         </div>
                       ))}
 
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Row>
+                  </div>
+                ))}
+              </div>
+            )}
+
           </div>
         );
       })}
