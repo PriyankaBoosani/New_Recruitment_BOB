@@ -798,7 +798,7 @@ const JobPostingsList = () => {
                     </div>
                 );
             })}
-\            {/* ================= PAGINATION ================= */}
+           {/* ================= PAGINATION ================= */}
             {pageInfo && pageInfo.totalPages > 1 && (
                 <Row className="mt-4 mb-4">
                     <Col className="d-flex justify-content-end align-items-center gap-3">
