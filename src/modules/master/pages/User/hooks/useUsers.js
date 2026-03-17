@@ -186,7 +186,7 @@ const updateUser = async (id, payload) => {
       email: payload.email,
       interviewCenterId: payload.interviewCenterId,
     };
-
+//console.log("payload",payloadData);return false;
     await masterApiService.updateUser(id, payloadData);
 
     toast.success(t("update_success"));

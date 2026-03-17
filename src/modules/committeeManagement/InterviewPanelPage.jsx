@@ -4,10 +4,11 @@ import InterviewPanelTable from "./components/InterviewPanelTable";
 import AssignPositionsPage from "./AssignPositionsPage";
 import "../../style/css/InterviewPanelPage.css";
 import { useInterviewPanel } from "./hooks/useInterviewPanel";
-import { FiUsers, FiFileText } from "react-icons/fi";
+import { FiUsers, FiFileText, FiUpload } from "react-icons/fi";
 import { Modal, Button } from "react-bootstrap";
 import DeleteConfirmationModal from "./components/DeleteConfirmationModal";
 import ErrorModal from "./components/ErrorModal";
+import PanelImportModal from "./components/PanelImportModal";
 import { useTranslation } from "react-i18next";
 
 const InterviewPanelPage = () => {
@@ -49,7 +50,9 @@ const InterviewPanelPage = () => {
     setActiveTab,
     showErrorModal,
     setShowErrorModal,
-    errorMessage
+    errorMessage,
+    bulkAddPanels,
+    downloadPanelTemplate
   } = useInterviewPanel();
 
   // useEffect(() => {
@@ -58,6 +61,7 @@ const InterviewPanelPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [deletePanelName, setDeletePanelName] = useState("");
+  const [showBulkImportModal, setShowBulkImportModal] = useState(false);
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   return (
     <div className="interview-panel-container">
@@ -92,6 +96,20 @@ const InterviewPanelPage = () => {
             <div className="panel-layout">
               <div className="panel-form-section">
                 <div className="panel-form-card">
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <span className="card-title">{formData.id
+                      ? t("interviewPanelCommittee:update_panel_title")
+                      : t("interviewPanelCommittee:create_panel_title")}</span>
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => setShowBulkImportModal(true)}
+                      className="d-flex align-items-center gap-2"
+                    >
+                      <FiUpload />
+                      {t("interviewPanelCommittee:bulk_import")}
+                    </Button>
+                  </div>
 
                   <InterviewPanelFormModal
                     communityOptions={communityOptions}
@@ -168,6 +186,26 @@ const InterviewPanelPage = () => {
         errors={[]}   // no list needed here
         onClose={() => setShowErrorModal(false)}
       />
+
+      <Modal
+        show={showBulkImportModal}
+        onHide={() => setShowBulkImportModal(false)}
+        size="lg"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{t("interviewPanelCommittee:bulk_import_panels")}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PanelImportModal
+            t={t}
+            onClose={() => setShowBulkImportModal(false)}
+            onSuccess={() => {
+              setShowBulkImportModal(false);
+            }}
+          />
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

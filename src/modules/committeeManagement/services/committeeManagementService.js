@@ -1,4 +1,4 @@
-import { nodeApi, api } from "../../../core/service/apiService";
+import { nodeApi, api,apis } from "../../../core/service/apiService";
 
 const committeeManagementService = {
   getAllusers: () =>
@@ -32,7 +32,20 @@ const committeeManagementService = {
     return api.get(
       `recruiter/position-panel/get-by-position-id/${positionId}`
     );
-  }
+  },
+
+  // Bulk import methods for panels
+  bulkAddPanels: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return apis.post('/interview-panels/upload-excel', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  downloadPanelTemplate: () => apis.get('/interview-panels/download-panel-template', { responseType: 'blob' })
 
 
 };

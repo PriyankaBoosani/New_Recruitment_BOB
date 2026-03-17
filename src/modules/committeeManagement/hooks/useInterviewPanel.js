@@ -309,6 +309,58 @@ const [errorMessage, setErrorMessage] = useState("");
 
   }, [activeTab]);
 
+  /* ================= BULK IMPORT ================= */
+const bulkAddPanels = useCallback(async (file) => {
+  setLoading(true);
+
+  try {
+    const res = await committeeManagementService.bulkAddPanels(file) || {};
+
+    if (!res.success) {
+      return {
+        success: false,
+        error: res.message || "Validation failed",
+        details: res.data || []
+      };
+    }
+
+    await fetchPanels();
+    toast.success(res.message || "Panels imported successfully");
+
+    return { success: true };
+
+  } catch (err) {
+    toast.error("Unexpected server error");
+
+    return {
+      success: false,
+      error: "Unexpected server error"
+    };
+  } finally {
+    setLoading(false);
+  }
+}, [fetchPanels]);
+
+//////////////
+
+  const downloadPanelTemplate = async () => {
+    try {
+      const res = await committeeManagementService.downloadPanelTemplate();
+      const blob = res;
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'InterviewPanels_template.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Download failed:', err);
+      toast.error(t("interviewPanelCommittee:download_error") || 'Failed to download template');
+    }
+  };
+
   // useEffect(() => {
   //   fetchPanels();
   // }, [fetchPanels]);
@@ -355,7 +407,9 @@ const [errorMessage, setErrorMessage] = useState("");
     setActiveTab,
     showErrorModal,
     setShowErrorModal,
-    errorMessage
+    errorMessage,
+    bulkAddPanels,
+    downloadPanelTemplate
 
   };
 };
