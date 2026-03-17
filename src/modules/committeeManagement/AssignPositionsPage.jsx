@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import "../../style/css/Committee.css";
+import "./AssignPositionsPage.css";
 import CommitteeHistoryList from './components/CommitteeHistoryList';
 import { useAssignPositions } from "./hooks/useAssignPositions";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
@@ -8,10 +9,14 @@ import ErrorModal from "./components/ErrorModal";
 import Select from "react-select";
 import Loader from "../../shared/components/Loader";
 import { useTranslation } from "react-i18next";
+import { Modal } from "react-bootstrap";
+import { FiUpload } from "react-icons/fi";
+import PositionAssignmentImportModal from "./components/PositionAssignmentImportModal";
 
 
 const AssignPositionsPage = () => {
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
+  const [showBulkImportModal, setShowBulkImportModal] = useState(false);
 
   const {
     requisitions,
@@ -41,7 +46,9 @@ const AssignPositionsPage = () => {
     setErrorMessage,
     errorList,
     setErrorList,
-    isDirty
+    isDirty,
+    bulkImportPositionAssignments,
+    downloadPositionAssignmentTemplate
 
   } = useAssignPositions();
 
@@ -291,16 +298,26 @@ const hasAnySelectedPanels =
                 : t("select_position_to_assign")}
             </p>
           </div>
-          <button 
-            className="assign-button" 
-            onClick={handleAssignCommittees}
-           // disabled={!selectedPosition}
-            disabled={!selectedPosition || !isDirty()}
-            
+          <div className="d-flex gap-2">
+            <button 
+              className="assign-button" 
+              onClick={handleAssignCommittees}
+             // disabled={!selectedPosition}
+              disabled={!selectedPosition || !isDirty()}
+              
 
-          >
-           {loading ? t("assigning") : t("assign_committees")}
-          </button>
+            >
+             {loading ? t("assigning") : t("assign_committees")}
+            </button>
+            <button 
+              className="assign-button bulk-import-btn" 
+              onClick={() => setShowBulkImportModal(true)}
+              disabled={loading}
+            >
+              <FiUpload className="me-2" />
+              {t("interviewPanelCommittee:bulk_import")}
+            </button>
+          </div>
         </div>
 
         {/* ===== TABS ===== */}
@@ -371,6 +388,26 @@ const hasAnySelectedPanels =
   errors={errorList}
   onClose={() => setShowErrorModal(false)}
 />
+
+<Modal
+  show={showBulkImportModal}
+  onHide={() => setShowBulkImportModal(false)}
+  size="lg"
+  centered
+>
+  <Modal.Header closeButton>
+    <Modal.Title className="header-title">{t("interviewPanelCommittee:bulk_import_position_assignments")}</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <PositionAssignmentImportModal
+      t={t}
+      onClose={() => setShowBulkImportModal(false)}
+      onSuccess={() => {
+        setShowBulkImportModal(false);
+      }}
+    />
+  </Modal.Body>
+</Modal>
 {loading && <Loader />}
     </div>
   );

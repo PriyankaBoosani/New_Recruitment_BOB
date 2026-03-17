@@ -45,7 +45,20 @@ const committeeManagementService = {
     });
   },
 
-  downloadPanelTemplate: () => apis.get('/interview-panels/download-panel-template', { responseType: 'blob' })
+  downloadPanelTemplate: () => apis.get('/interview-panels/download-panel-template', { responseType: 'blob' }),
+
+  // Bulk import methods for position assignments
+  bulkImportPositionAssignments: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/recruiter/position-panel/upload-excel', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  downloadPositionAssignmentTemplate: () => api.get('/recruiter/position-panel/download-assignment-template', { responseType: 'blob' })
 
 
 };

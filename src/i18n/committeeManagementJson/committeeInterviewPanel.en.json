@@ -88,19 +88,19 @@
     "remove_button": "Remove",
     "failed_load_requisitions": "Failed to load requisitions",
     "failed_load_positions": "Failed to load positions",
-
-
-
-    
- "bulk_import": "Bulk Import",
- "bulk_import_panels": "Bulk Import Panels",
- "upload_panels": "Upload Panels",
- "support_xlsx": "XLSX files are supported",
- "reupload_xlsx": "Re-upload XLSX",
- "remove": "Remove",
- "invalid_file": "Please upload a valid Excel file",
- "no_file_selected": "No file selected",
- "importing": "Importing...",
- "download_error": "Failed to download template"
-
+    "upload_position_assignments": "Upload Position Assignments",
+    "bulk_import_position_assignments": "Bulk Position Assignments",
+    "support_xlsx": "XLSX files are supported",
+    "reupload_xlsx": "Re-upload XLSX",
+    "remove_file": "Remove",
+    "invalid_file": "Please upload a valid Excel file",
+    "no_file_selected": "No file selected",
+    "importing": "Importing...",
+    "download_template": "Download template",
+    "download_error": "Failed to download template",
+    "cancel": "Cancel",
+    "import": "Import",
+    "bulk_import": "Bulk Import",
+    "bulk_import_panels": "Bulk Import Panels",
+    "upload_panels": "Upload Panels"
 }

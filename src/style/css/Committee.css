@@ -509,3 +509,8 @@ border-color: hsl(0, 0%, 80%);
 .error-display {
   white-space: pre-line;
 }
+.header-title {
+  color: #162B75;
+  font-size: 1.25rem;
+  font-weight: 500;
+}

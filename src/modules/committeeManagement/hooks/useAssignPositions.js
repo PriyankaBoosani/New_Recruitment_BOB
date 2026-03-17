@@ -438,6 +438,67 @@ const showError = (message, errors = []) => {
     }
   };
 
+  /* ================= BULK IMPORT ================= */
+
+  const bulkImportPositionAssignments = async (file) => {
+    setLoading(true);
+
+    try {
+      const res = await committeeManagementService.bulkImportPositionAssignments(file);
+
+      if (res && res.success === false) {
+        toast.error(res.message || "Validation failed");
+        
+        // Show individual error details if available
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          res.data.forEach((err) => {
+            if (typeof err === 'string') {
+              toast.error(err);
+            }
+          });
+        }
+
+        return {
+          success: false,
+          error: res.message,
+          details: res.data || []
+        };
+      }
+
+      // Success case - refresh data
+      if (selectedPosition) {
+        await loadPositionData(selectedPosition);
+      }
+      toast.success(res?.message || "Position assignments imported successfully");
+      return { success: true };
+
+    } catch (err) {
+      console.error("Bulk Import Error:", err);
+      const errorMessage = err?.response?.data?.message || err?.message || "Unexpected server error";
+      toast.error(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const downloadPositionAssignmentTemplate = async () => {
+    try {
+      const res = await committeeManagementService.downloadPositionAssignmentTemplate();
+      const blob = res;
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'PositionAssignments_template.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Download failed:', err);
+      toast.error(t("interviewPanelCommittee:download_error") || 'Failed to download template');
+    }
+  };
 
   return {
     history,
@@ -474,10 +535,9 @@ const showError = (message, errors = []) => {
     setErrorMessage,
     errorList,
     setErrorList,
-    isDirty
-
-
-
+    isDirty,
+    bulkImportPositionAssignments,
+    downloadPositionAssignmentTemplate
 
 
   };

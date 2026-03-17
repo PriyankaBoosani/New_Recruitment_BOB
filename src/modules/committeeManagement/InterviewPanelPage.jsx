@@ -194,7 +194,7 @@ const InterviewPanelPage = () => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>{t("interviewPanelCommittee:bulk_import_panels")}</Modal.Title>
+          <Modal.Title className="header-title">{t("interviewPanelCommittee:bulk_import_panels")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <PanelImportModal

@@ -601,3 +601,8 @@ border-radius: 0;       /* optional */
 .panel-table td:nth-child(5) {
   width: 120px;  /* Actions */
 }
+.header-title {
+  color: #162B75;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
