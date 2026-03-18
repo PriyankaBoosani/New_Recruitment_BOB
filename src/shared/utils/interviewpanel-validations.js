@@ -1,5 +1,4 @@
 // src/validators/interviewpanel-validations.js
-import { requiredField, minLength, maxLength } from './common-validations';
 import i18n from "i18next";
 
 const isEmpty = (v) => v === null || v === undefined || String(v).trim() === '';

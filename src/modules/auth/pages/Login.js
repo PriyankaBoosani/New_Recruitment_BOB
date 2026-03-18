@@ -9,7 +9,6 @@ import { setUser, setAuthUser, setPrivileges } from '../../../app/providers/user
 import loginApi from "../services/loginService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import CryptoJS from "crypto-js";
 import { mapAuthApiToState } from "../mappers/auth.mapper";
 import { mapUserApiToState } from "../mappers/user.mapper";
 
@@ -17,7 +16,6 @@ import { toast } from "react-toastify";
 
 
 const Login = () => {
-  const SECRET_KEY = "fdf4-832b-b4fd-ccfb9258a6b3";
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

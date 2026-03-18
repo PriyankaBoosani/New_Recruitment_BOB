@@ -1,4 +1,4 @@
-import { requiredField, minLength, maxLength } from './common-validations';
+import { requiredField} from './common-validations';
 import i18n from 'i18next';
 const normalizeName = (s = '') => String(s).trim().toLowerCase();
 

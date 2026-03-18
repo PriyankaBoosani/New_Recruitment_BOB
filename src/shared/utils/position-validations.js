@@ -1,6 +1,6 @@
 // src/shared/utils/position-validations.js
 
-import { requiredField, minLength, maxLength } from './common-validations';
+import { requiredField} from './common-validations';
 import i18n from 'i18next';
 
 const normalizeTitle = (s = '') => String(s).trim().toLowerCase();

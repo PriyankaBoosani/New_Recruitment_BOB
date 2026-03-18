@@ -3,8 +3,7 @@ import {
   requiredField,
   minLength,
   maxLength,
-  emailFormat,
-  phoneFormat
+  emailFormat
 } from "./common-validations";
 
 /**

@@ -1,4 +1,4 @@
-import { nodeApi, api, candidateApi} from "../../../core/service/apiService";
+import { nodeApi, api} from "../../../core/service/apiService";
  
 const candidateWorkflowServices = {
   /* Users (Node API) */
