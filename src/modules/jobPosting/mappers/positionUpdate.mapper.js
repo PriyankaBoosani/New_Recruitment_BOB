@@ -201,6 +201,7 @@ export const mapAddPositionToUpdateDto = ({
     dto.positionStateDistributions = stateDistributions.map(sd => ({
       positionStateDistributionId: sd.positionStateDistributionId, // 🔑 MISSING TODAY
       stateId: sd.state,
+      cityId: sd.city,
       totalVacancies: Number(sd.vacancies),
       localLanguage: sd.language,
       positionCategoryDistributions: buildCategoryDistributionsForUpdate(

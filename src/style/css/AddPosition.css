@@ -138,14 +138,14 @@
 }
 
 /* Make form controls consistent */
-.form-control,
-.form-select {
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 0.875em;
-  border-width: 1px;
-  border-color: hsl(0, 0%, 80%);
-  border-style: solid;
+.form-control, .form-select {
+	border-radius: 6px;
+	padding: 6px 12px;
+	font-size: 0.875em;
+	border-width: 1px;
+	border-color: hsl(0, 0%, 80%);
+	border-style: solid;
+	min-height: 39px;
 }
 
 
@@ -592,9 +592,9 @@
   font-size: 12px;
   margin-top: 6px;
 }
-.css-hlgwow{
+/* .css-hlgwow{
   min-height: 42px;
-}
+} */
 .modal-dialog-scrollable .modal-body {
 	overflow-y: inherit;
 }

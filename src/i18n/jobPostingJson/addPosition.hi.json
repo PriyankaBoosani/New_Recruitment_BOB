@@ -73,5 +73,9 @@
     "result_preview": "परिणाम (उम्मीदवार को कैसे दिखाई देगा)",
     "replace_indent": "इंडेंट बदलें",
     "delete_position": "पद हटाएं",
-    "view_indent": "इंडेंट देखें"
+    "view_indent": "इंडेंट देखें",
+    "city": "शहर",
+    "select_city": "शहर चुनें",
+    "city_name": "शहर का नाम",
+    "enter_city_name": "शहर का नाम दर्ज करें"
 }

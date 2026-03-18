@@ -1,8 +1,9 @@
 /* ================= PAGE ================= */
 .committee-page {
-  padding: 30px;
-  background: #f5f6f8;
+  padding: 20px;
+  background: #fff;
   min-height: 100vh;
+border-radius: 20px !important;
 }
 
 .committee-page .page-title {
@@ -10,7 +11,10 @@
   color: #162B75;
   font-size: 1em;
 }
-
+.committee-page .filter-select__input-container{
+  padding-top:0px !important;
+  margin-top:0px !important;
+}
 .committee-page .assign-positions-page .page-subtitle {
   color: rgba(255, 255, 255, 0.8);
   font-size: 1rem;
@@ -471,7 +475,7 @@
   border-radius: 10px !important;
   border: 1px solid #d1d5db !important;
   box-shadow: none !important;
-  font-size: 0.8125rem!important;
+  font-size: 0.8125rem !important;
   background-color: #ffffff !important;
 }
 
@@ -536,21 +540,25 @@
   background-position: right 12px center;
   background-size: 14px;
   padding-right: 30px;
-  font-size:  0.8125rem;
+  font-size: 0.8125rem;
   border-radius: 10px;
   cursor: pointer;
 }
+
 .committee-page .status-select::-ms-expand {
   display: none;
 }
 
 /* ================= BULK ACTION BAR ================= */
 .committee-page .bulk-actions {
-  background: #fff;
-  padding: 12px;
-  border-radius: 8px;
-  margin-left: 0px;
-  margin-right: 0px;
+	background: #fff;
+	padding: 12px;
+	border-radius: 8px;
+	margin-left: 0px;
+	margin-right: 0px;
+	/* border: 1px solid #ddd; */
+	border: 1px solid #ACBED4;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* .bulk-actions:hover {
@@ -727,6 +735,7 @@
   color: #506097;
   border: 2px solid #43548f !important;
   cursor: pointer;
+  margin-right: 15px;
 }
 
 .committee-page .select-checkbox .form-check-input:checked {
@@ -742,4 +751,16 @@
   color: #717182;
   font-size: .75rem;
   font-weight: 400;
+}
+.committee-page .icon-history {
+  width: 16px;
+  height: 16px;
+  margin-left: 5px;
+}
+
+/* Css wirutten b y Veeresh */
+.committee-requests-page {
+	background: none;
+	margin: 30px;
+	padding-bottom: 30px;
 }

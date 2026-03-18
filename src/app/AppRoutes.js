@@ -226,32 +226,32 @@ const AppRoutes = () => {
                   }
                 />
 
-                {/* <Route
+                <Route
                   path="/requisition-requests"
                   element={
                     <PrivilegeRoute privilege="Requisition Approval">
                       <Approvals />
                     </PrivilegeRoute>
                   }
-                /> */}
+                />
 
-                {/* <Route
+                <Route
                   path="/extension-requests"
                   element={
-                    <PrivilegeRoute privilege="Extension Approval">
+                    <PrivilegeRoute privilege="Requisition Approval">
                       <ExtensionsRequests />
                     </PrivilegeRoute>
                   }
-                /> */}
+                />
 
-                {/* <Route
+                <Route
                   path="/committee-requests"
                   element={
-                    <PrivilegeRoute privilege="Committee Approval">
+                    <PrivilegeRoute privilege="Requisition Approval">
                       <CommitteeRequests />
                     </PrivilegeRoute>
                   }
-                /> */}
+                />
 
 
 

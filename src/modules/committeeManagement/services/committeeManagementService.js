@@ -1,4 +1,4 @@
-import { nodeApi, api,apis } from "../../../core/service/apiService";
+import { nodeApi, api, apis } from "../../../core/service/apiService";
 
 const committeeManagementService = {
   getAllusers: () =>
@@ -58,8 +58,23 @@ const committeeManagementService = {
     });
   },
 
-  downloadPositionAssignmentTemplate: () => api.get('/recruiter/position-panel/download-assignment-template', { responseType: 'blob' })
+  downloadPositionAssignmentTemplate: () => api.get('/recruiter/position-panel/download-assignment-template', { responseType: 'blob' }),
 
+  approvePanels: (ids, comments) =>
+    api.post("/recruiter/position-panel/approve-committee", {
+      positionPanelIds: ids,
+      comments: comments
+    }),
+
+  rejectPanels: (ids, comments) =>
+    api.post("/recruiter/position-panel/reject-committee", {
+      positionPanelIds: ids,
+      comments: comments
+    }),
+  getRequisitionApprovalHistory: (panelId) =>
+    api.get(
+      `/recruiter/workflow-approval/get-panels-approval-history/${panelId}`
+    ),
 
 };
 

@@ -131,6 +131,7 @@ const ExtensionsRequests = () => {
     if (ids.length === 0) return;
 
     if (type === "approve") {
+      console.log("Approving:", ids, "Comment:", comment);
       setExtensionsRequests(prev =>
         prev.map(req =>
           ids.includes(req.id) ? { ...req, status: "Approved" } : req
@@ -140,6 +141,7 @@ const ExtensionsRequests = () => {
     }
 
     if (type === "reject") {
+      console.log("Rejecting:", ids, "Comment:", comment);
       setExtensionsRequests(prev =>
         prev.map(req =>
           ids.includes(req.id) ? { ...req, status: "Rejected" } : req
@@ -214,6 +216,7 @@ const ExtensionsRequests = () => {
   };
 
   return (
+    <div className="extension_request">
     <Container fluid className="extensions-page">
       {/* ================= HEADER ================= */}
       <Row className="mb-3 align-items-center">
@@ -557,6 +560,7 @@ const ExtensionsRequests = () => {
         historyData={historyData}
       />
     </Container>
+    </div>
   );
 };
 

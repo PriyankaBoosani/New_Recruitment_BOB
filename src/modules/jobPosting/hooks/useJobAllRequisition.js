@@ -53,7 +53,7 @@ export const useJobRequisitions = ({
       toast.error(t("requisition_delete_failed"));
     }
   };
-  // const submitForApproval = async (jobRequisitionIds) => {
+  // const submitForApproval = async (jobRequisitionIds, postingStatus) => {
   //   if (!jobRequisitionIds?.length) return;
 
   //   try {
@@ -61,7 +61,7 @@ export const useJobRequisitions = ({
 
   //     const res = await requisitionApiService.submitForApprovalFlow({
   //       jobRequisitionIds,
-  //       postingStatus: "L1_PENDING"
+  //       postingStatus
   //     });
 
   //     if (res?.success === false) {

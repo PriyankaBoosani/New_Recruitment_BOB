@@ -93,9 +93,10 @@ const RequisitionStrip = ({
   useEffect(() => {
     const loadMasters = async () => {
       try {
-        const [masterRes, zonalRes] = await Promise.all([
+        const [masterRes, zonalRes, centersRes] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
-          masterApiService.getZonalStates()
+          masterApiService.getZonalStates(),
+          masterApiService.getInterviewCentresByState(),
         ]);
 
         setMasterData({
@@ -105,7 +106,10 @@ const RequisitionStrip = ({
           states: (zonalRes.data || []).map(s => ({
             id: String(s.zonalStateID),
             name: s.stateName,
-          }))
+          })),
+
+          // use INTERVIEW CENTRES (correct IDs)
+          interviewCenters: centersRes.data || []
         });
 
       } catch (err) {
@@ -409,8 +413,9 @@ const RequisitionStrip = ({
                 <LocationWiseVacancyTable
                   positionStateDistributions={job.positionStateDistributions}
                   states={masterData?.states || []}
-                  reservationCategories={masterData?.reservation_categories || []}
-                  disabilities={masterData?.disabilities || []}
+                  cities={masterData?.interviewCenters || []}
+                  reservationCategories={masterData?.reservationCategories || []}
+                  disabilityCategories={masterData?.disabilityCategories || []}
                 />
               )}
 
@@ -418,6 +423,8 @@ const RequisitionStrip = ({
                 job?.nationalCategoryDistribution && (
                   <NationalVacancyTable
                     nationalCategoryDistribution={job.nationalCategoryDistribution}
+                    reservationCategories={masterData?.reservationCategories || []}
+                    disabilityCategories={masterData?.disabilityCategories || []}
                   />
                 )}
             </>

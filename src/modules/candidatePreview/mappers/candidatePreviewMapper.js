@@ -305,33 +305,20 @@ export const mapJobPositionToRequisitionStrip = (
     );
 
   /* ========= MASTER LOOKUPS ========= */
-  const reservationMap =
-    masters?.reservationCategories?.reduce((acc, r) => {
-      acc[r.reservationCategoriesId] = r.categoryCode; // GEN / EWS / SC / ST / OBC
-      return acc;
-    }, {}) || {};
+  // const reservationMap =
+  //   masters?.reservationCategories?.reduce((acc, r) => {
+  //     acc[r.reservationCategoriesId] = r.categoryCode; // GEN / EWS / SC / ST / OBC
+  //     return acc;
+  //   }, {}) || {};
 
-  const disabilityCodeMap =
-    masters?.disabilityCategories?.reduce((acc, d) => {
-      acc[d.disabilityCategoryId] = d.disabilityCode; // HI / VI / OC / ID
-      return acc;
-    }, {}) || {};
+  // const disabilityCodeMap =
+  //   masters?.disabilityCategories?.reduce((acc, d) => {
+  //     acc[d.disabilityCategoryId] = d.disabilityCode; // HI / VI / OC / ID
+  //     return acc;
+  //   }, {}) || {};
 
   /* ========= NATIONAL CATEGORY + DISABILITY (PIVOTED) ========= */
-  const nationalCategoryCounts = {
-    GEN: 0,
-    EWS: 0,
-    SC: 0,
-    ST: 0,
-    OBC: 0
-  };
-
-  const nationalDisabilityCounts = {
-    HI: 0,
-    VI: 0,
-    OC: 0,
-    ID: 0
-  };
+ 
 
 
   const formatExperience = (months) => {
@@ -355,20 +342,29 @@ export const mapJobPositionToRequisitionStrip = (
     return `${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
   };
 
+  const nationalCategoryCounts = {};
+  const nationalDisabilityCounts = {};
+
+  // initialize
+  masters?.reservationCategories?.forEach(cat => {
+    nationalCategoryCounts[cat.reservationCategoriesId] = 0;
+  });
+
+  masters?.disabilityCategories?.forEach(dis => {
+    nationalDisabilityCounts[dis.disabilityCategoryId] = 0;
+  });
+
+  // populate
   apiData.positionCategoryNationalDistributions?.forEach((c) => {
-    // Reservation categories
     if (!c.isDisability && c.reservationCategoryId) {
-      const code = reservationMap[c.reservationCategoryId];
-      if (code) {
-        nationalCategoryCounts[code] += c.vacancyCount;
+      if (nationalCategoryCounts.hasOwnProperty(c.reservationCategoryId)) {
+        nationalCategoryCounts[c.reservationCategoryId] += c.vacancyCount;
       }
     }
 
-    // Disability categories
     if (c.isDisability && c.disabilityCategoryId) {
-      const dCode = disabilityCodeMap[c.disabilityCategoryId];
-      if (dCode) {
-        nationalDisabilityCounts[dCode] += c.vacancyCount;
+      if (nationalDisabilityCounts.hasOwnProperty(c.disabilityCategoryId)) {
+        nationalDisabilityCounts[c.disabilityCategoryId] += c.vacancyCount;
       }
     }
   });
@@ -421,41 +417,37 @@ export const mapJobPositionToRequisitionStrip = (
     /* ========= STATE + CATEGORY + DISABILITY (PIVOTED) ========= */
     positionStateDistributions:
       apiData.positionStateDistributions?.map((state) => {
-        const categoryCounts = {
-          GEN: 0,
-          EWS: 0,
-          SC: 0,
-          ST: 0,
-          OBC: 0
-        };
+        const categoryCounts = {};
+        const disabilityCounts = {};
 
-        const disabilityCounts = {
-          HI: 0,
-          VI: 0,
-          OC: 0,
-          ID: 0
-        };
+        // initialize using IDs
+        masters?.reservationCategories?.forEach(cat => {
+          categoryCounts[cat.reservationCategoriesId] = 0;
+        });
+
+        masters?.disabilityCategories?.forEach(dis => {
+          disabilityCounts[dis.disabilityCategoryId] = 0;
+        });
 
         state.positionCategoryDistributions?.forEach((c) => {
           // Reservation categories
           if (!c.isDisability && c.reservationCategoryId) {
-            const code = reservationMap[c.reservationCategoryId];
-            if (code) {
-              categoryCounts[code] += c.vacancyCount;
+            if (categoryCounts.hasOwnProperty(c.reservationCategoryId)) {
+              categoryCounts[c.reservationCategoryId] += c.vacancyCount;
             }
           }
 
           // Disability categories
           if (c.isDisability && c.disabilityCategoryId) {
-            const dCode = disabilityCodeMap[c.disabilityCategoryId];
-            if (dCode) {
-              disabilityCounts[dCode] += c.vacancyCount;
+            if (disabilityCounts.hasOwnProperty(c.disabilityCategoryId)) {
+              disabilityCounts[c.disabilityCategoryId] += c.vacancyCount;
             }
           }
         });
 
         return {
           stateId: state.stateId,
+          cityId: state.cityId,
           totalVacancies: state.totalVacancies,
           localLanguage: state.localLanguage,
 

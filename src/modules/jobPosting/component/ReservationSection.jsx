@@ -4,6 +4,8 @@ import edit_icon from "../../../assets/edit_icon.png";
 import delete_icon from "../../../assets/delete_icon.png";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
+import { useState } from "react";
+import masterApiService from "../../master/services/masterApiService";
 const ReservationSection = ({
     isViewMode,
     formData,
@@ -35,6 +37,26 @@ const ReservationSection = ({
         if (typeof e === "string") return t(e);
         if (typeof e === "object" && e.key) return t(e.key, e.params);
         return "";
+    };
+    const [cities, setCities] = useState([]);
+    const [loadingCities, setLoadingCities] = useState(false);
+    const fetchCitiesByState = async (stateId) => {
+        if (!stateId) return;
+        try {
+
+
+            const res = await masterApiService.getInterviewCentresByState(
+                ["Regional Office", "Zonal Office"],
+                stateId
+            );
+
+
+
+            setCities(Array.isArray(res.data) ? res.data : []);
+        } catch (err) {
+
+            console.error("ERROR RESPONSE", err?.response || err);
+        }
     };
     return (
         <fieldset disabled={isViewMode}>
@@ -109,7 +131,7 @@ const ReservationSection = ({
                 ) : (
                     <>
                         <Row className="g-3 mb-3">
-                            <Col md={4}><Form.Label>{t("addPosition:state")} <span className="text-danger">*</span></Form.Label>
+                            <Col md={3}><Form.Label>{t("addPosition:state")} <span className="text-danger">*</span></Form.Label>
                                 <Select
                                     classNamePrefix="react-select"
                                     value={[
@@ -119,19 +141,25 @@ const ReservationSection = ({
                                             label: s.name
                                         }))
                                     ].find(option => String(option.value) === String(currentState.state))}
-                                  onChange={(selected) => {
-                                    setCurrentState(prev => ({
-                                        ...prev,
-                                        state: selected ? selected.value : "",
-                                        language: ""   // reset language when state changes
-                                    }));
+                                    onChange={(selected) => {
+                                        const stateId = selected ? selected.value : "";
 
-                                    setErrors(prev => ({
-                                        ...prev,
-                                        state: "",
-                                        stateLanguage: ""
-                                    }));
-                                }}
+                                        setCurrentState(prev => ({
+                                            ...prev,
+                                            state: stateId,
+                                            city: "",        // 🔥 MUST RESET
+                                            language: ""
+                                        }));
+
+                                        setErrors(prev => ({
+                                            ...prev,
+                                            state: "",
+                                            city: "",
+                                            stateLanguage: ""
+                                        }));
+
+                                        fetchCitiesByState(stateId); // 🔥 THIS WAS MISSING
+                                    }}
                                     options={[
                                         { value: "", label: t("addPosition:select_state") },
                                         ...states.map(s => ({
@@ -141,7 +169,48 @@ const ReservationSection = ({
                                     ]}
                                 />
                                 <ErrorMessage>{renderError(errors.state)}</ErrorMessage></Col>
-                            <Col md={4}><Form.Label>{t("addPosition:vacancies")} <span className="text-danger">*</span></Form.Label><Form.Control
+                            <Col md={3}>
+                                <Form.Label>
+                                    {t("addPosition:city")}
+                                </Form.Label>
+
+                                <Select
+                                    classNamePrefix="react-select"
+                                    isDisabled={!currentState.state}
+                                    value={
+                                        cities
+                                            .map(c => ({
+                                                value: c.interviewCentreId,
+                                                label: c.interviewCentre
+                                            }))
+                                            .find(option => String(option.value) === String(currentState.city)) || null
+                                    }
+                                    placeholder={t("addPosition:select_city")}
+
+                                    onChange={(selected) => {
+                                        setCurrentState(prev => ({
+                                            ...prev,
+                                            city: selected ? selected.value : "",
+                                            cityName: selected ? selected.label : ""
+                                        }));
+
+                                        setErrors(prev => ({
+                                            ...prev,
+                                            city: ""
+                                        }));
+                                    }}
+
+                                    options={
+                                        loadingCities
+                                            ? [{ value: "", label: t("addPosition:loading") }]
+                                            : cities.map(c => ({
+                                                value: c.interviewCentreId,
+                                                label: c.interviewCentre
+                                            }))
+                                    }
+                                />
+                            </Col>
+                            <Col md={3}><Form.Label>{t("addPosition:vacancies")} <span className="text-danger">*</span></Form.Label><Form.Control
                                 type="text"
                                 inputMode="numeric"
                                 maxLength={10}
@@ -168,7 +237,7 @@ const ReservationSection = ({
 
                                 <ErrorMessage>{renderError(errors.stateVacancies)}</ErrorMessage>
                             </Col>
-                            <Col md={4}><Form.Label>{t("addPosition:local_language")} <span className="text-danger">*</span></Form.Label>
+                            <Col md={3}><Form.Label>{t("addPosition:local_language")} <span className="text-danger">*</span></Form.Label>
                                 <Select
                                     classNamePrefix="react-select"
                                     isDisabled={!currentState.state}
@@ -275,6 +344,7 @@ const ReservationSection = ({
                                     <tr>
                                         <th>{t("addPosition:sno")}</th>
                                         <th>{t("addPosition:state_name")}</th>
+                                        <th>{t("addPosition:city_name")}</th>
                                         <th>{t("addPosition:vacancies")}</th>
                                         <th>{t("addPosition:local_language_of_state")}</th>
 
@@ -297,7 +367,7 @@ const ReservationSection = ({
                                     {/* ===== HEADER ROW 2 ===== */}
                                     <tr>
                                         {/* Skip earlier columns */}
-                                        <th colSpan={4 + reservationCategories.length + 1} />
+                                        <th colSpan={5 + reservationCategories.length + 1} />
 
                                         {disabilityCategories.map(d => (
                                             <th key={d.disabilityCode} className="text-left">
@@ -320,12 +390,12 @@ const ReservationSection = ({
                                         .map((row, idx) => (
 
                                             <tr key={idx}>
-                                                <td>{idx + 1}</td><td>{states.find(s => s.id === row.state)?.name}</td><td>{row.vacancies}</td><td>{languages.find(l => l.id === row.language)?.name}</td>
+                                                <td>{idx + 1}</td><td>{states.find(s => s.id === row.state)?.name}</td><td>{row.cityName || "-"}</td><td>{row.vacancies}</td><td>{languages.find(l => l.id === row.language)?.name}</td>
                                                 {reservationCategories.map(c => <td key={c.code}>{row.categories?.[c.code] ?? 0}</td>)}
                                                 <td>{Object.values(row.categories || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
                                                 {disabilityCategories.map(d => <td key={d.disabilityCode}>{row.disabilities?.[d.disabilityCode] ?? 0}</td>)}
                                                 <td>{Object.values(row.disabilities || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
-                                                <td className="text-center"><Button size="sm" variant="link" className="p-0" onClick={() => { setEditingIndex(idx); setCurrentState({ ...row }); }}><img src={edit_icon} alt="edit_icon" className="icon-16" /></Button><Button size="sm" variant="link" className="text-danger" onClick={() => {
+                                                <td className="text-center"><Button size="sm" variant="link" onClick={() => { setEditingIndex(idx); setCurrentState({ ...row }); fetchCitiesByState(row.state); }}><img src={edit_icon} alt="edit_icon" className="icon-16" /></Button><Button size="sm" variant="link" className="text-danger" onClick={() => {
                                                     setStateDistributions(prev =>
                                                         prev.map((s, i) =>
                                                             i === idx ? { ...s, __deleted: true } : s

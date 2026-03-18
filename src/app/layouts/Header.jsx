@@ -27,6 +27,7 @@ const Header = () => {
   /* ===================== USER DROPDOWN STATE ===================== */
   const [showDropdown, setShowDropdown] = useState(false);
   const [showAdminMenu, setShowAdminMenu] = useState(false);
+  const [showApprovalsMenu, setShowApprovalsMenu] = useState(false);
   const dropdownRef = useRef(null);
 
   const closeMenu = () => setExpanded(false);
@@ -74,7 +75,7 @@ const Header = () => {
   const isL1 = role === "l1";
   const isL2 = role === "l2";
 
-  
+
 
   //Privileges  console.log("ROLE FROM BACKEND:", user?.role);
   console.log("ROLE NORMALIZED:", role);
@@ -92,8 +93,8 @@ const Header = () => {
   const canVerification = privileges?.Verification;
   const canAdmin = privileges?.Admin;
   const canInterview = privileges?.["Interview"];
-  const canApprovals = privileges?.["Requisition Approval"] || privileges?.["Extension Approval"] || privileges?.["Committee Approval"];
-  const canViewPosition= privileges?.["View Position"];
+  const canApprovals = privileges?.["Requisition Approval"];
+  const canViewPosition = privileges?.["View Position"];
   // {
   // 	"preveileges": {
   // 		"Committee Management": true,
@@ -343,16 +344,24 @@ const Header = () => {
                   {t("verification")}
                 </Nav.Link>
               )}
-              {/* {canApprovals && (
+              {canApprovals && (
                 <NavDropdown
-                  title={t("approvals")}
                   id="approvals-dropdown"
+                  show={showApprovalsMenu}
+                  onMouseEnter={() => setShowApprovalsMenu(true)}
+                  onMouseLeave={() => setShowApprovalsMenu(false)}
                   className={`approvals-dropdown ${location.pathname.startsWith("/requisition-requests") ||
-                    location.pathname.startsWith("/extension-requests") ||
-                    location.pathname.startsWith("/committee-requests")
-                    ? "active-admin"
-                    : ""
+                      location.pathname.startsWith("/extension-requests") ||
+                      location.pathname.startsWith("/committee-requests")
+                      ? "active-admin"
+                      : ""
                     }`}
+                  title={
+                    <>
+                      {t("approvals")}{" "}
+                      <FontAwesomeIcon icon={faChevronDown} className="ms-1" />
+                    </>
+                  }
                 >
                   <NavDropdown.Item
                     as={NavLink}
@@ -378,7 +387,7 @@ const Header = () => {
                     {t("committee_requests")}
                   </NavDropdown.Item>
                 </NavDropdown>
-              )} */}
+              )}
 
 
               {canCommittee && (
@@ -408,7 +417,7 @@ const Header = () => {
               {/* Admin Menu */}
               {canAdmin && (
                 // <NavDropdown title={t("admin")} id="admin-dropdown" className={isAdminRoute ? "active-admin" : ""}>
-                 <NavDropdown
+                <NavDropdown
                   id="admin-dropdown"
                   show={showAdminMenu}
                   onMouseEnter={() => setShowAdminMenu(true)}

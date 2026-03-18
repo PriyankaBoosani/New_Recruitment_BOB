@@ -1,12 +1,17 @@
+const isEditableStatus = ["NEW", "L1_REJECTED", "L2_REJECTED"];
+
 export const mapJobRequisitionFromApi = (item = {}) => {
   const rawStatus = item.requisitionStatus ?? "";
+
+  // ✅ DEFINE HERE (not outside)
+  const isRejected =
+    rawStatus === "L1_REJECTED" || rawStatus === "L2_REJECTED";
 
   return {
     id: item.id ?? "",
     requisitionId: item.requisitionCode ?? "",
     code: item.requisitionTitle ?? "",
 
-    // ✅ KEEP RAW VALUE FOR LOGIC
     status: rawStatus,
     statusType: getStatusBadge(rawStatus),
 
@@ -18,11 +23,12 @@ export const mapJobRequisitionFromApi = (item = {}) => {
     endDate: item.endDate ?? "-",
     hasDraftPositions: item.hasDraftPositions === true,
 
-    // ✅ Business logic uses RAW status
-    editable: rawStatus === "NEW"
+    editable: isEditableStatus.includes(rawStatus),
+
+    // ✅ now works
+    isRejected
   };
 };
-
 const getStatusBadge = (status = "") => {
   switch (status) {
     case "APPROVED":

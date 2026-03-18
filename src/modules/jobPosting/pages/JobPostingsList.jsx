@@ -183,7 +183,7 @@ const JobPostingsList = () => {
     const handleCancelSelection = () => {
         setSelectedReqIds(new Set());
     };
-    const handleSubmitForApproval = () => {
+    const handleSubmitForApproval = (postingStatus) => {
         // ONLY requisitions currently rendered (current year / filters)
         const visibleRequisitions = requisitions;
 
@@ -225,7 +225,7 @@ const JobPostingsList = () => {
 
         if (ids.length === 0) return;
 
-        submitForApproval(ids);
+      submitForApproval(ids, postingStatus);
         setSelectedReqIds(new Set());
     };
 
@@ -452,8 +452,8 @@ const JobPostingsList = () => {
                                                 req.status === "APPROVED" ||
                                                 req.status === "L1_PENDING" ||
                                                 req.status === "L1_APPROVED" ||
-                                                req.status === "L1_REJECTED" ||
-                                                req.status === "L2_REJECTED" ||
+                                                // req.status === "L1_REJECTED" ||
+                                                // req.status === "L2_REJECTED" ||
                                                 req.hasDraftPositions
                                             }
                                             onClick={(e) => e.stopPropagation()}
@@ -461,9 +461,9 @@ const JobPostingsList = () => {
                                                 if (
                                                     req.status === "APPROVED" ||
                                                     req.status === "L1_PENDING" ||
-                                                    req.status === "L1_APPROVED" ||
-                                                    req.status === "L1_REJECTED" ||
-                                                    req.status === "L2_REJECTED"
+                                                    req.status === "L1_APPROVED"
+                                                    // req.status === "L1_REJECTED" ||
+                                                    // req.status === "L2_REJECTED"
                                                 ) return;
 
                                                 setSelectedReqIds(prev => {
@@ -530,8 +530,10 @@ const JobPostingsList = () => {
                                 md={2}
                                 className="text-md-end mt-3 mt-md-0 actions d-flex justify-content-end align-items-center gap-2"
                             >
-                                {req.editable ? (
-                                    <>
+
+
+                                <>
+                                    {!req.isRejected && req.editable && (
                                         <OverlayTrigger
                                             placement="bottom"
                                             overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:add_position")}</Tooltip>}
@@ -547,6 +549,8 @@ const JobPostingsList = () => {
                                                 <img src={pos_plus_icon} alt="add" className="icon-16" />
                                             </Button>
                                         </OverlayTrigger>
+                                    )}
+                                    {req.editable && (
                                         <OverlayTrigger
                                             placement="bottom"
                                             overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:edit_requisition")}</Tooltip>}
@@ -565,6 +569,8 @@ const JobPostingsList = () => {
                                                 <img src={pos_edit_icon} alt="edit" className="icon-20" />
                                             </Button>
                                         </OverlayTrigger>
+                                    )}
+                                    {!req.isRejected && req.editable && (
                                         <OverlayTrigger
                                             placement="bottom"
                                             overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:delete_requisition")}</Tooltip>}
@@ -581,28 +587,33 @@ const JobPostingsList = () => {
                                                 <img src={pos_delete_icon} alt="delete" className="icon-20" />
                                             </Button>
                                         </OverlayTrigger>
+                                    )}
 
-                                    </>
-                                ) : (
-                                    <OverlayTrigger
-                                        placement="bottom"
-                                        overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:view_requisition")}</Tooltip>}
-                                    >
-                                        <Button
-                                            variant="light"
-                                            className="icon-btn"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                navigate(
-                                                    `/job-posting/create-requisition?id=${req.id}`,
-                                                    { state: { mode: "view" } }
-                                                );
-                                            }}
+                                </>
+
+                             
+                                   {!req.editable && (
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:view_requisition")}</Tooltip>}
                                         >
-                                            <img src={view_jobpost} alt="view" className="icon-19" />
-                                        </Button>
-                                    </OverlayTrigger>
-                                )}
+                                            <Button
+                                                variant="light"
+                                                className="icon-btn"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(
+                                                        `/job-posting/create-requisition?id=${req.id}`,
+                                                        { state: { mode: "view" } }
+                                                    );
+                                                }}
+                                            >
+                                                <img src={view_jobpost} alt="view" className="icon-19" />
+                                            </Button>
+                                        </OverlayTrigger>
+                                    )}
+                               
+
 
 
                                 <Button
@@ -659,7 +670,7 @@ const JobPostingsList = () => {
                                                 e.stopPropagation();
                                                 toggleDeptAccordion(req.id, dept.departmentName);
                                             }}
-                                         >
+                                        >
                                             <img src={dept_icon} className="icon-22" alt="dept_icon" />
 
                                             <span className="depname">{dept.departmentName}</span>
@@ -705,73 +716,81 @@ const JobPostingsList = () => {
                                                             </span>
                                                         </div>
 
-                                                        {req.editable ? (
+                                                        
                                                             <>
                                                                 {/* EDIT POSITION */}
-                                                                <OverlayTrigger
-                                                                    placement="bottom"
-                                                                    overlay={<Tooltip id={`tooltip-edit-${req.id}`}>{t("jobPostingsList:edit_position")}</Tooltip>}
-                                                                >
-                                                                    <Button
-                                                                        variant="light"
-                                                                        className="icon-btn"
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            navigate(
-                                                                                `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
-                                                                                { state: { mode: "edit" } }
-                                                                            );
-
-                                                                        }}
+                                                                {req.editable && (
+                                                                    <OverlayTrigger
+                                                                        placement="bottom"
+                                                                        overlay={<Tooltip id={`tooltip-edit-${req.id}`}>{t("jobPostingsList:edit_position")}</Tooltip>}
                                                                     >
-                                                                        <img src={pos_edit_icon} className="icon-20" alt="edit" />
-                                                                    </Button>
-                                                                </OverlayTrigger>
+                                                                        <Button
+                                                                            variant="light"
+                                                                            className="icon-btn"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                navigate(
+                                                                                    `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
+                                                                                    { state: { mode: "edit" } }
+                                                                                );
+
+                                                                            }}
+                                                                        >
+                                                                            <img src={pos_edit_icon} className="icon-20" alt="edit" />
+                                                                        </Button>
+                                                                    </OverlayTrigger>
+                                                                )}
 
                                                                 {/* DELETE POSITION */}
-                                                                <OverlayTrigger
-                                                                    placement="bottom"
-                                                                    overlay={<Tooltip id={`tooltip-delete-${req.id}`}>{t("jobPostingsList:delete_position")}</Tooltip>}
-                                                                >
-                                                                    <Button
-                                                                        variant="light"
-                                                                        className="icon-btn"
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            setSelectedPosition({
-                                                                                requisitionId: req.id,
-                                                                                positionId: pos.positionId,
-                                                                                positionName: pos.positionName
-                                                                            });
-                                                                            setShowDeletePosModal(true);
-                                                                        }}
+                                                                {!req.isRejected && req.editable && (
+                                                                    <OverlayTrigger
+                                                                        placement="bottom"
+                                                                        overlay={<Tooltip id={`tooltip-delete-${req.id}`}>{t("jobPostingsList:delete_position")}</Tooltip>}
                                                                     >
-                                                                        <img src={pos_delete_icon} className="icon-20" alt="delete" />
-                                                                    </Button>
-                                                                </OverlayTrigger>
+                                                                        <Button
+                                                                            variant="light"
+                                                                            className="icon-btn"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                setSelectedPosition({
+                                                                                    requisitionId: req.id,
+                                                                                    positionId: pos.positionId,
+                                                                                    positionName: pos.positionName
+                                                                                });
+                                                                                setShowDeletePosModal(true);
+                                                                            }}
+                                                                        >
+                                                                            <img src={pos_delete_icon} className="icon-20" alt="delete" />
+                                                                        </Button>
+                                                                    </OverlayTrigger>
+                                                                )}
                                                             </>
-                                                        ) : (
-                                                            /* VIEW POSITION */
-                                                            <OverlayTrigger
-                                                                placement="bottom"
-                                                                overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:view_position")}</Tooltip>}
-                                                            >
-                                                                <Button
-                                                                    variant="light"
-                                                                    className="icon-btn"
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        navigate(
-                                                                            `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
-                                                                            { state: { mode: "view" } }
-                                                                        );
+                                                       
+                                                            { /* VIEW POSITION */ }
+                                                          
+                                                               {!req.editable && (
+                                                                    <OverlayTrigger
+                                                                        placement="bottom"
+                                                                        overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:view_position")}</Tooltip>}
+                                                                    >
+                                                                        <Button
+                                                                            variant="light"
+                                                                            className="icon-btn"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                navigate(
+                                                                                    `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
+                                                                                    { state: { mode: "view" } }
+                                                                                );
 
-                                                                    }}
-                                                                >
-                                                                    <img src={view_jobpost} className="icon-19" alt="view" />
-                                                                </Button>
-                                                            </OverlayTrigger>
-                                                        )}
+                                                                            }}
+                                                                        >
+                                                                            <img src={view_jobpost} className="icon-19" alt="view" />
+                                                                        </Button>
+                                                                    </OverlayTrigger>
+                                                                )}
+                                                            
+                                                      
                                                     </div>
 
                                                     <div className="position-details">
@@ -798,7 +817,7 @@ const JobPostingsList = () => {
                     </div>
                 );
             })}
-           {/* ================= PAGINATION ================= */}
+            {/* ================= PAGINATION ================= */}
             {pageInfo && pageInfo.totalPages > 1 && (
                 <Row className="mt-4 mb-4">
                     <Col className="d-flex justify-content-end align-items-center gap-3">
@@ -931,7 +950,8 @@ const JobPostingsList = () => {
                 onClose={() => setShowSubmitModal(false)}
                 onConfirm={() => {
                     setShowSubmitModal(false);
-                    handleSubmitForApproval();
+
+                     handleSubmitForApproval("L1_PENDING");
                 }}
                 // title="Direct Approval Confirmation"
                 // message="This action will directly approve the selected requisition(s). Are you sure you want to continue?"

@@ -176,6 +176,7 @@
     "must_be_greater_than_accept_before": "Must be greater than Accept Before date",
     "view_zonal_comments": "View Zonal Comments",
     "zonal_rejection_comment": "Zonal Rejection Comment",
-    "view_feedback_history": "View Feedback History"
+    "view_feedback_history": "View Feedback History",
+    "city_name": "City Name"
 
 }

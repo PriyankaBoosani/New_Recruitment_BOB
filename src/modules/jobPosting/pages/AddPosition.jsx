@@ -19,6 +19,7 @@ import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisit
 import { toast } from "react-toastify";
 import ReservationSection from "../component/ReservationSection";
 import { useTranslation } from "react-i18next";
+import masterApiService from "../../master/services/masterApiService";
 const AddPosition = () => {
     const { t } = useTranslation(["addPosition", "common", "validation"]);
     const renderError = (e) => {
@@ -92,6 +93,7 @@ const AddPosition = () => {
         preferredExperience: { years: "", months: "", description: "" },
         responsibilities: "", medicalRequired: "yes", enableStateDistribution: false
     });
+
 
     const [educationData, setEducationData] = useState({
         mandatory: { educations: [], certificationIds: [], text: "" },
@@ -244,33 +246,75 @@ const AddPosition = () => {
 
     // Handle State Distribution mapping
     useEffect(() => {
-        if (!existingPosition || !existingPosition.isLocationWise || !reservationCategories.length || !disabilityCategories.length) return;
-        const mappedStates = existingPosition.positionStateDistributions.map(sd => {
-            const categories = {}; const disabilities = {};
-            reservationCategories.forEach(c => (categories[c.code] = 0));
-            disabilityCategories.forEach(d => (disabilities[d.disabilityCode] = 0));
-            sd.positionCategoryDistributions.forEach(d => {
-                if (d.isDisability) {
-                    const dis = disabilityCategories.find(x => x.id === d.disabilityCategoryId);
-                    if (dis) disabilities[dis.disabilityCode] = d.vacancyCount;
-                } else {
-                    const cat = reservationCategories.find(x => x.id === d.reservationCategoryId);
-                    if (cat) categories[cat.code] = d.vacancyCount;
-                }
-            });
-            return {
-                positionStateDistributionId: sd.positionStateDistributionId,
-                state: sd.stateId, vacancies: sd.totalVacancies, language: sd.localLanguage,
-                categories, disabilities,
-                categoryDistributions: sd.positionCategoryDistributions.map(cd => ({
-                    positionCategoryDistributionId: cd.positionCategoryDistributionId,
-                    reservationCategoryId: cd.reservationCategoryId,
-                    disabilityCategoryId: cd.disabilityCategoryId,
-                    isDisability: cd.isDisability
-                }))
-            };
-        });
-        setStateDistributions(mappedStates);
+        const mapStates = async () => {
+            if (
+                !existingPosition ||
+                !existingPosition.isLocationWise ||
+                !reservationCategories.length ||
+                !disabilityCategories.length
+            ) return;
+
+            const mappedStates = await Promise.all(
+                existingPosition.positionStateDistributions.map(async (sd) => {
+
+                    // 🔥 FETCH cities for this state
+                    let cityName = "";
+
+                    try {
+                        const res = await masterApiService.getInterviewCentresByState(
+                            ["Regional Office", "Zonal Office"],
+                            sd.stateId
+                        );
+
+                        const cityObj = res.data?.find(
+                            c => String(c.interviewCentreId) === String(sd.cityId)
+                        );
+
+                        cityName = cityObj?.interviewCentre || "";
+                    } catch (err) {
+                        console.error("City fetch failed", err);
+                    }
+
+                    // category mapping (same as your code)
+                    const categories = {};
+                    const disabilities = {};
+
+                    reservationCategories.forEach(c => (categories[c.code] = 0));
+                    disabilityCategories.forEach(d => (disabilities[d.disabilityCode] = 0));
+
+                    sd.positionCategoryDistributions.forEach(d => {
+                        if (d.isDisability) {
+                            const dis = disabilityCategories.find(x => x.id === d.disabilityCategoryId);
+                            if (dis) disabilities[dis.disabilityCode] = d.vacancyCount;
+                        } else {
+                            const cat = reservationCategories.find(x => x.id === d.reservationCategoryId);
+                            if (cat) categories[cat.code] = d.vacancyCount;
+                        }
+                    });
+
+                    return {
+                        positionStateDistributionId: sd.positionStateDistributionId,
+                        state: sd.stateId,
+                        city: sd.cityId,
+                        cityName, // ✅ NOW CORRECT
+                        vacancies: sd.totalVacancies,
+                        language: sd.localLanguage,
+                        categories,
+                        disabilities,
+                        categoryDistributions: sd.positionCategoryDistributions.map(cd => ({
+                            positionCategoryDistributionId: cd.positionCategoryDistributionId,
+                            reservationCategoryId: cd.reservationCategoryId,
+                            disabilityCategoryId: cd.disabilityCategoryId,
+                            isDisability: cd.isDisability
+                        }))
+                    };
+                })
+            );
+
+            setStateDistributions(mappedStates);
+        };
+
+        mapStates();
     }, [existingPosition, reservationCategories, disabilityCategories]);
 
     // --- HANDLERS ---

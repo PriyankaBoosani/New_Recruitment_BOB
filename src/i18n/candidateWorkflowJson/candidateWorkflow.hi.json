@@ -180,5 +180,6 @@
     "must_be_greater_than_accept_before": "'Accept Before' तिथि से बड़ी होनी चाहिए",
     "view_zonal_comments": "क्षेत्रीय टिप्पणियाँ देखें",
     "zonal_rejection_comment": "क्षेत्रीय अस्वीकृति टिप्पणी",
-    "view_feedback_history": "प्रतिक्रिया इतिहास देखें"
+    "view_feedback_history": "प्रतिक्रिया इतिहास देखें",
+    "city_name": "शहर का नाम"
 }

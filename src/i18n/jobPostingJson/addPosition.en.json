@@ -73,5 +73,10 @@
     "result_preview": "Result (How it will look for candidate)",
     "replace_indent": "Replace Indent",
     "delete_position": "Delete Position",
-    "view_indent": "View Indent"
+    "view_indent": "View Indent",
+    "city": "City",
+    "select_city": "Select City",
+    "city_name": "City Name",
+     "enter_city_name": "Enter City Name"
+    
 }

@@ -186,6 +186,7 @@ const mapStateDistribution = ({
 
   return {
     stateId: currentState.state,
+    cityId: currentState.city,
     totalVacancies: Number(currentState.vacancies),
     localLanguage: currentState.language,
     positionCategoryDistributions: distributions,

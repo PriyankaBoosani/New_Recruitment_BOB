@@ -372,7 +372,7 @@ main {
 
 .approvals-dropdown .dropdown-item {
   background-color: white;
-  font-size: 0.8125em;   /* 13px */
+  font-size: 1em;   /* 13px */
   color: #333333;
   font-weight: 400;
 }
@@ -382,7 +382,7 @@ main {
 .approvals-dropdown .dropdown-item:active {
   background-color: #F2652226 !important;
   color: #333333 !important;
-  font-size: 0.8125em;
+  font-size: 1em;
   font-weight: 400;
 }
 

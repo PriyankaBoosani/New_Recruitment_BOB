@@ -255,6 +255,7 @@ const RequisitionRequests = () => {
   };
 
   return (
+    <div className="requisition-request">
     <Container fluid className="requisition-page">
       {/* ================= HEADER ================= */}
       <Row className="mb-3 align-items-center">
@@ -641,7 +642,7 @@ const RequisitionRequests = () => {
 
             {/* Page size */}
             <div className="d-flex align-items-center gap-2">
-              <span className="fw-semibold pagesize">
+              <span className="pagesize">
                 {t("jobPostingsList:page_size")}:
               </span>
               <Form.Select
@@ -751,6 +752,7 @@ const RequisitionRequests = () => {
       />
 
     </Container >
+    </div>
   );
 };
 

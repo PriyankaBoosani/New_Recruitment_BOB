@@ -1,7 +1,8 @@
 .requisition-page {
-    padding: 30px;
-    background: #f8f9fb;
+    padding: 20px;
+    background: #fff;
     min-height: 100vh;
+    border-radius: 20px !important;
 }
 
 .requisition-page .page-title {
@@ -88,11 +89,13 @@
 }
 
 .requisition-page .bulk-actions {
-    background: #fff;
-    padding: 12px;
-    border-radius: 8px;
-    margin-left: 0px;
-    margin-right: 0px;
+	background: #fff;
+	padding: 12px;
+	border-radius: 8px;
+	margin-left: 0px;
+	margin-right: 0px;
+	border: 1px solid #ACBED4;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .requisition-page .selectall {
@@ -689,4 +692,10 @@
     color: #162B75;
     font-weight: 400;
 
+}
+
+.requisition-request {
+    background: none;
+    margin: 30px;
+    padding-bottom: 30px;
 }
