@@ -1,7 +1,6 @@
 // src/routes/AppRoutes.js
 import React, { Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 
 // Public pages
 import Login from "../modules/auth/pages/Login";

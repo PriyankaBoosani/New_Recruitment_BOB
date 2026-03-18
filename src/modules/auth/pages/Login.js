@@ -1,10 +1,10 @@
 
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import '../../../style/css/Login.css';
 import pana from "../../../assets/pana.png";
 import BobLogo from "../../../assets/bob-logo1.jpg";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setUser, setAuthUser, setPrivileges } from '../../../app/providers/userSlice';
 import loginApi from "../services/loginService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -29,8 +29,8 @@ const Login = () => {
   //   return CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
   // };
 
-  const encryptPassword = (password) =>
-    CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
+  // const encryptPassword = (password) =>
+  //   CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
 
   const handleLogin = async (e) => {
     e.preventDefault();

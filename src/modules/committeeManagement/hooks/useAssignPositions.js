@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import "../../../style/css/Committee.css";
 import masterApiService from "../../master/services/masterApiService";
 import committeeManagementService from "../services/committeeManagementService";
@@ -33,7 +33,6 @@ const [errorList, setErrorList] = useState([]);
 
   const [page, setPage] = useState(0);
   const [size] = useState(1000);
-  const [totalPages, setTotalPages] = useState(0);
 
   const [panelErrors, setPanelErrors] = useState({});
 

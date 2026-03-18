@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { validatePanelModal } from "../../interviews/validations/panelModalValidation";
-import { useTranslation } from "react-i18next";
 
 
 export const useAddPanelModal = ({
