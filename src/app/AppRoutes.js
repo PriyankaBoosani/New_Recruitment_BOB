@@ -211,14 +211,14 @@ const AppRoutes = () => {
                   }
                 />
 
-                {/* <Route
+                <Route
                   path="/interviewpanel"
                   element={
                     <PrivilegeRoute privilege="Committee Management">
                       <InterviewPanel />
                     </PrivilegeRoute>
                   }
-                /> */}
+                />
 
                 <Route
                   path="/schedule-interviews"

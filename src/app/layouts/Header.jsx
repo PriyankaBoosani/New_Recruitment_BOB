@@ -381,11 +381,11 @@ const Header = () => {
               )} */}
 
 
-              {/* {canCommittee && (
+              {canCommittee && (
                 <Nav.Link as={NavLink} to="/interviewpanel" onClick={closeMenu}>
                   {t("committee_management")}
                 </Nav.Link>
-              )} */}
+              )}
               {/* {isRecruiter && (
                 <Nav.Link
                   as={NavLink}
