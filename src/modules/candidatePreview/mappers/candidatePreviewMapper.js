@@ -224,6 +224,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
 
       return {
         institution: edu.institutionName || "-",
+        universityName: edu.universityName || "-",
         startDate: formatDateDDMMYYYY(edu.startDate) || "-",
         endDate: formatDateDDMMYYYY(edu.endDate) || "-",
         // percentage:

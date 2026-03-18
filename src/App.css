@@ -385,3 +385,24 @@ main {
   font-size: 0.8125em;
   font-weight: 400;
 }
+
+
+.bob-doc-table {
+  width: 100%;
+  table-layout: fixed; /* CRITICAL */
+}
+
+.bob-doc-table td {
+  word-break: break-word;
+  white-space: normal;
+}
+
+.bob-doc-table .action-cell {
+  width: 10%;
+  text-align: center;
+}
+
+.bob-doc-table td:first-child,
+.bob-doc-table td:nth-child(3) {
+  width: 40%;
+}

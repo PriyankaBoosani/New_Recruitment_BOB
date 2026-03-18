@@ -1442,11 +1442,12 @@ const ApplicationForm = ({
                     <th style={{ width: "4rem" }}>{t("s_no")}</th>
                     <th>{t("education_level")}</th>
                     <th>{t("school_college")}</th>
+                    <th>{t("university_name")}</th>
                     <th>{t("board")}</th>
                     <th>{t("specialization")}</th>
-                    <th>{t("from_date")}</th>
-                    <th>{t("to_date")}</th>
-                    <th>{t("percentage_cgpa")}</th>
+                    <th style={{ width: '10%' }}>{t("from_date")}</th>
+                    <th style={{ width: '10%' }}>{t("to_date")}</th>
+                    <th style={{ width: '9%' }}>{t("percentage_cgpa")}</th>
                   </tr>
                 </thead>
 
@@ -1456,6 +1457,7 @@ const ApplicationForm = ({
                       <td>{index + 1}</td>
                       <td>{edu.educationLevel_name || "-"}</td>
                       <td>{edu.institution || "-"}</td>
+                      <td>{edu.universityName || "-"}</td>
                       <td>{edu.mandatoryQualification_name || "-"}</td>
                       <td>{edu.specialization_name || "-"}</td>
                       <td>{edu.startDate || "-"}</td>
@@ -1547,13 +1549,13 @@ const ApplicationForm = ({
 
               <thead>
                 <tr>
-                  <th>{t("file_type")}</th>
-                  <th>{t("status")}</th>
-                  <th>{t("action")}</th>
+                  <th style={{ width: "44%" }}>{t("file_type")}</th>
+                  <th className="px-3" style={{ width: "5%" }}>{t("status")}</th>
+                  <th className="text-center" style={{ width: "1%" }}>{t("action")}</th>
 
-                  <th>{t("file_type")}</th>
-                  <th>{t("status")}</th>
-                  <th>{t("action")}</th>
+                  <th style={{ width: "44%" }}>{t("file_type")}</th>
+                  <th className="px-3" style={{ width: "5%" }}>{t("status")}</th>
+                  <th className="text-center" style={{ width: "1%" }}>{t("action")}</th>
                 </tr>
               </thead>
 
@@ -1594,7 +1596,7 @@ const ApplicationForm = ({
                                   cursor: disableDocAction ? "not-allowed" : "pointer",
                                   opacity: disableDocAction ? 0.4 : 1,
                                   pointerEvents: disableDocAction ? "none" : "auto",
-                                  marginLeft: "12px",
+                                  // marginLeft: "12px",
 
                                 }}
                                 onClick={() => {
@@ -1644,7 +1646,7 @@ const ApplicationForm = ({
                                   cursor: disableDocAction ? "not-allowed" : "pointer",
                                   opacity: disableDocAction ? 0.4 : 1,
                                   pointerEvents: disableDocAction ? "none" : "auto",
-                                  marginLeft: "12px",
+                                  // marginLeft: "12px",
 
                                 }}
                                 onClick={() => {
