@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import "../../style/css/Committee.css";
-import "./AssignPositionsPage.css";
 import CommitteeHistoryList from './components/CommitteeHistoryList';
 import { useAssignPositions } from "./hooks/useAssignPositions";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
@@ -48,7 +47,8 @@ const AssignPositionsPage = () => {
     setErrorList,
     isDirty,
     bulkImportPositionAssignments,
-    downloadPositionAssignmentTemplate
+    downloadPositionAssignmentTemplate,
+    loadPositionData
 
   } = useAssignPositions();
 
@@ -403,6 +403,8 @@ const hasAnySelectedPanels =
       t={t}
       onClose={() => setShowBulkImportModal(false)}
       onSuccess={() => {
+
+        loadPositionData(selectedPosition);
         setShowBulkImportModal(false);
       }}
     />

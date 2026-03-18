@@ -83,7 +83,7 @@ const PositionAssignmentImportModal = ({
               >
                 <ul className="mb-0">
                   {errorDetails.map((msg, idx) => (
-                    <li key={idx}>{msg}</li>
+                    <li key={idx} className="error-display">{msg}</li>
                   ))}
                 </ul>
               </div>
@@ -147,7 +147,7 @@ const PositionAssignmentImportModal = ({
           {t("interviewPanelCommittee:cancel")}
         </Button>
 
-        <Button variant="primary" onClick={handleUpload} disabled={loading}>
+        <Button variant="" className="import-btn" onClick={handleUpload} disabled={loading}>
           {loading ? t("interviewPanelCommittee:importing") : t("interviewPanelCommittee:import")}
         </Button>
       </div>

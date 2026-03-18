@@ -91,6 +91,7 @@
     "upload_position_assignments": "Upload Position Assignments",
     "bulk_import_position_assignments": "Bulk Position Assignments",
     "support_xlsx": "XLSX files are supported",
+    "upload_xlsx": "Upload XLSX",
     "reupload_xlsx": "Re-upload XLSX",
     "remove_file": "Remove",
     "invalid_file": "Please upload a valid Excel file",

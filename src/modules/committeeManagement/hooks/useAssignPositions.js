@@ -446,29 +446,19 @@ const showError = (message, errors = []) => {
     try {
       const res = await committeeManagementService.bulkImportPositionAssignments(file);
 
-      if (res && res.success === false) {
-        toast.error(res.message || "Validation failed");
-        
-        // Show individual error details if available
-        if (Array.isArray(res.data) && res.data.length > 0) {
-          res.data.forEach((err) => {
-            if (typeof err === 'string') {
-              toast.error(err);
-            }
-          });
-        }
-
+      if (!res.success) {
         return {
           success: false,
-          error: res.message,
+          error: res.message || "Validation failed",
           details: res.data || []
         };
       }
 
+
       // Success case - refresh data
-      if (selectedPosition) {
-        await loadPositionData(selectedPosition);
-      }
+      // if (selectedPosition) {
+      //  await loadPositionData(selectedPosition);
+      //}
       toast.success(res?.message || "Position assignments imported successfully");
       return { success: true };
 
@@ -485,7 +475,7 @@ const showError = (message, errors = []) => {
   const downloadPositionAssignmentTemplate = async () => {
     try {
       const res = await committeeManagementService.downloadPositionAssignmentTemplate();
-      const blob = res;
+      const blob = res.data;
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -537,8 +527,7 @@ const showError = (message, errors = []) => {
     setErrorList,
     isDirty,
     bulkImportPositionAssignments,
-    downloadPositionAssignmentTemplate
-
-
+    downloadPositionAssignmentTemplate,
+    loadPositionData
   };
 };

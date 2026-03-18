@@ -151,7 +151,7 @@ const PanelImportModal = ({
           {t("interviewPanelCommittee:cancel")}
         </Button>
 
-        <Button variant="primary" onClick={handleUpload} disabled={loading}>
+        <Button variant="" className="import-btn" onClick={handleUpload} disabled={loading}>
           {loading ? t("interviewPanelCommittee:importing") : t("interviewPanelCommittee:import")}
         </Button>
       </div>

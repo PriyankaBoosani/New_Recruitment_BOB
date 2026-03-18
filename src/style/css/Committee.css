@@ -514,3 +514,34 @@ border-color: hsl(0, 0%, 80%);
   font-size: 1.25rem;
   font-weight: 500;
 }
+.d-flex {
+  display: flex;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.me-2 {
+  margin-right: 0.5rem;
+}
+
+.bulk-import-btn {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
+}
+
+.bulk-import-btn:hover {
+  background-color: #5a6268;
+  border-color: #5a6268;
+}
+
+.bulk-import-btn:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  opacity: 0.6;
+}

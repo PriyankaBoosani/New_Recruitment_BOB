@@ -310,7 +310,7 @@ const [errorMessage, setErrorMessage] = useState("");
   }, [activeTab]);
 
   /* ================= BULK IMPORT ================= */
-const bulkAddPanels = useCallback(async (file) => {
+const bulkAddPanels = async (file) => {
   setLoading(true);
 
   try {
@@ -324,7 +324,7 @@ const bulkAddPanels = useCallback(async (file) => {
       };
     }
 
-    await fetchPanels();
+    //await fetchPanels();
     toast.success(res.message || "Panels imported successfully");
 
     return { success: true };
@@ -339,14 +339,14 @@ const bulkAddPanels = useCallback(async (file) => {
   } finally {
     setLoading(false);
   }
-}, [fetchPanels]);
+};
 
 //////////////
 
   const downloadPanelTemplate = async () => {
     try {
       const res = await committeeManagementService.downloadPanelTemplate();
-      const blob = res;
+      const blob = res.data;
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -386,6 +386,7 @@ const bulkAddPanels = useCallback(async (file) => {
     handleDelete,
     handleEdit,
     initData,
+    fetchPanels,
 
     page,
     setPage,

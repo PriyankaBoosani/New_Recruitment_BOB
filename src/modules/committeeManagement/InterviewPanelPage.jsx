@@ -104,7 +104,7 @@ const InterviewPanelPage = () => {
                       variant="outline-primary"
                       size="sm"
                       onClick={() => setShowBulkImportModal(true)}
-                      className="d-flex align-items-center gap-2"
+                      className="d-flex align-items-center gap-2 bulk-import-btn"
                     >
                       <FiUpload />
                       {t("interviewPanelCommittee:bulk_import")}
@@ -201,6 +201,7 @@ const InterviewPanelPage = () => {
             t={t}
             onClose={() => setShowBulkImportModal(false)}
             onSuccess={() => {
+              fetchPanels();
               setShowBulkImportModal(false);
             }}
           />
