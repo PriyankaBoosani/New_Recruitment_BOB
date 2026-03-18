@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { validatePanelModal } from "../../interviews/validations/panelModalValidation";
-import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
 
@@ -11,8 +10,6 @@ export const useAddPanelModal = ({
   onSave,
   onClose
 }) => {
-  const { t } = useTranslation("interviewSchedule");
-
 
   const buildRows = () =>
     initialRows && initialRows.length

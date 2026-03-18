@@ -1,7 +1,6 @@
 
 import React, { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
 import '../../../style/css/Login.css';
 import pana from "../../../assets/pana.png";
 import BobLogo from "../../../assets/bob-logo1.jpg";
@@ -25,7 +24,6 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [unverifiedUserId, setUnverifiedUserId] = useState(null);
   const navigate = useNavigate();
-  const token = useSelector((state) => state.user.auth?.access_token);
 
   // const encryptPassword = (password) => {
   //   return CryptoJS.AES.encrypt(password, SECRET_KEY).toString();

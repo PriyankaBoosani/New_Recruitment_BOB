@@ -17,8 +17,7 @@ export const mapAddPositionToCreateDto = ({
   certifications = [],
 }) => {
   /* ================= SAFE NORMALIZATION ================= */
-  const safeQualifications = Array.isArray(qualifications) ? qualifications : [];
-  const safeCertifications = Array.isArray(certifications) ? certifications : [];
+
   const buildEduRulesJson = (edu, mode) => {
     if (!edu) {
       return mode === "mandatory"

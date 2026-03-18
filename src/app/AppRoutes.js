@@ -32,9 +32,7 @@ import CandidateScreening from "../modules/candidatePreview/CandidateScreening";
 import InterviewerSchedule from "../modules/Interviewer/InterviewerSchedule"
 // import CandidateInterview from "../modules/Interview/CandidateInterview";
 import ScheduleInterviews from "../modules/interviews/ScheduleInterviews";
-import Approvals from "../modules/Approvals/pages/RequisitionRequests";
-import ExtensionsRequests from "../modules/Approvals/pages/ExtensionsRequests";
-import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";// Lazy loaded components
+
 import UnauthorizedPage from "./UnauthorizedPage"
 import PrivilegeRoute from "./PrivilegeRoute";
 // Lazy loaded components
@@ -51,7 +49,7 @@ const Loading = () => (
 
 const AppRoutes = () => {
   // Use the same selector you use for auth in your app
-  const token = useSelector((state) => state.user?.authUser?.access_token || state.user?.authUser?.accessToken || state.user?.auth?.access_token);
+ // const token = useSelector((state) => state.user?.authUser?.access_token || state.user?.authUser?.accessToken || state.user?.auth?.access_token);
 
   return (
     <Suspense fallback={<Loading />}>

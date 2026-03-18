@@ -90,10 +90,6 @@ const CandidateTable = ({
               filteredCandidates.length > 0 &&
               filteredCandidates.map((c) => {
 
-                const isRejected =
-                  c.status === ""
-
-
 
                 return (
 
@@ -187,10 +183,7 @@ const CandidateTable = ({
         ) : (
           filteredCandidates.map((c) => {
 
-            const isRejected =
-              c.status === ""
-
-
+           
 
             return (
 
