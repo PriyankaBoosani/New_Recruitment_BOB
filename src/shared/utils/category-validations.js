@@ -92,10 +92,11 @@ export const validateCategoryForm = (formData = {}, options = {}) => {
 /* =========================
    DEFAULT EXPORT
 ========================= */
-
-export default {
+const  categoryValidations = {
   validateCategoryForm,
   validateCategoryCode,
   validateCategoryName,
   validateCategoryDescription
 };
+
+export default categoryValidations;

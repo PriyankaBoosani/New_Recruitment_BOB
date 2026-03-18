@@ -66,9 +66,10 @@ export const validateCertificationForm = (formData = {}, options = {}) => {
 /* =========================
    DEFAULT EXPORT
 ========================= */
-
-export default {
+const certificationValidations = {
   validateCertificationForm,
   validateCertificationName,
   validateCertificationDescription
 };
+
+export default certificationValidations;
