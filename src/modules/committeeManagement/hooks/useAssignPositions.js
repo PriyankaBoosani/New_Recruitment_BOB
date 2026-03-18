@@ -456,9 +456,9 @@ const showError = (message, errors = []) => {
 
 
       // Success case - refresh data
-      // if (selectedPosition) {
-      //  await loadPositionData(selectedPosition);
-      //}
+      if (selectedPosition) {
+        await loadPositionData(selectedPosition);
+      }
       toast.success(res?.message || "Position assignments imported successfully");
       return { success: true };
 

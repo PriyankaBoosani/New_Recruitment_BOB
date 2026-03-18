@@ -48,7 +48,7 @@ const AssignPositionsPage = () => {
     isDirty,
     bulkImportPositionAssignments,
     downloadPositionAssignmentTemplate,
-    loadPositionData
+    loadPositionData  
 
   } = useAssignPositions();
 
@@ -399,15 +399,17 @@ const hasAnySelectedPanels =
     <Modal.Title className="header-title">{t("interviewPanelCommittee:bulk_import_position_assignments")}</Modal.Title>
   </Modal.Header>
   <Modal.Body>
-    <PositionAssignmentImportModal
-      t={t}
-      onClose={() => setShowBulkImportModal(false)}
-      onSuccess={() => {
-
-        loadPositionData(selectedPosition);
-        setShowBulkImportModal(false);
-      }}
-    />
+   <PositionAssignmentImportModal
+  t={t}
+  bulkImportPositionAssignments={bulkImportPositionAssignments}
+  downloadPositionAssignmentTemplate={downloadPositionAssignmentTemplate}
+  loading={loading}
+  onClose={() => setShowBulkImportModal(false)}
+  onSuccess={() => {
+    loadPositionData(selectedPosition);
+    setShowBulkImportModal(false);
+  }}
+/>
   </Modal.Body>
 </Modal>
 {loading && <Loader />}

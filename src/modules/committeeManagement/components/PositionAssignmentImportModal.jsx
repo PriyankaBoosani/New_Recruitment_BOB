@@ -5,10 +5,13 @@ import { useAssignPositions } from '../hooks/useAssignPositions';
 
 const PositionAssignmentImportModal = ({
   t,
-  onClose = () => { },
-  onSuccess = () => { }
-}) => {
-  const { bulkImportPositionAssignments, downloadPositionAssignmentTemplate, loading } = useAssignPositions();
+  onClose = () => {},
+  onSuccess = () => {},
+  bulkImportPositionAssignments,
+  downloadPositionAssignmentTemplate,
+  loading
+})  => {
+  //const { bulkImportPositionAssignments, downloadPositionAssignmentTemplate, loading } = useAssignPositions();
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState('');
   const [errorDetails, setErrorDetails] = useState([]);
