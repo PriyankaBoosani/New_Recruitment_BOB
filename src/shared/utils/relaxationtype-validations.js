@@ -53,11 +53,12 @@ export function validateRelaxationTypeForm(formData = {}, options = {}) {
 
   return { valid: Object.keys(errors).length === 0, errors };
 }
-
-export default {
+const relaxationTypeValidations = {
   validateRelaxationTypeForm,
   validateCode,
   validateInputType,
   validateOperator,
   validateDescription
-};
+};  
+
+export default relaxationTypeValidations;

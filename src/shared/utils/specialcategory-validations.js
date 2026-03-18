@@ -76,11 +76,10 @@ export const validateSpecialCategoryForm = (formData = {}, options = {}) => {
     errors
   };
 };
-
-
-export default {
+const specialCategoryValidations = {
   validateSpecialCategoryForm,
   validateSpecialCategoryCode,
   validateSpecialCategoryName,
   validateSpecialCategoryDescription
 };
+export default specialCategoryValidations;

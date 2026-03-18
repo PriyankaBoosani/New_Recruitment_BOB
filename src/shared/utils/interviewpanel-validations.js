@@ -86,9 +86,10 @@ export function validateInterviewPanelForm(formData = {}, options = {}) {
     }
   };
 }
-
-export default {
+const interviewPanelValidations = {
   validatePanelName,
   validatePanelMembers,
   validateInterviewPanelForm
 };
+
+export default interviewPanelValidations;

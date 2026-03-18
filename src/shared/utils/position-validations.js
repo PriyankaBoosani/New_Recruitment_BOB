@@ -149,8 +149,7 @@ export const validatePositionForm = (formData = {}, options = {}) => {
     errors
   };
 };
-
-export default {
+const positionValidations = {
   validatePositionTitle,
   // validateDepartmentId,
   validateJobGradeId,
@@ -162,3 +161,5 @@ export default {
   validateRolesResponsibilities,
   validatePositionForm
 };
+
+export default positionValidations;

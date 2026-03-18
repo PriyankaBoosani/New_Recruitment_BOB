@@ -161,7 +161,7 @@ export const validateUserForm = (formData = {}, options = {}) => {
   };
 };
 
-export default {
+const userValidations = {
   validateUserRole,
   validateFullName,
   validateUserEmail,
@@ -169,3 +169,4 @@ export default {
   validatePasswordConfirmation,
   validateUserForm
 };
+export default userValidations;

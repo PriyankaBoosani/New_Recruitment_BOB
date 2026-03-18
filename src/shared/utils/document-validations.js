@@ -48,9 +48,9 @@ export const validateDocumentForm = (formData = {}, options = {}) => {
     errors
   };
 };
-
-export default {
+const documentValidations = {
   validateDocumentForm,
   validateDocumentName,
   validateDocumentDescription
 };
+export default documentValidations;

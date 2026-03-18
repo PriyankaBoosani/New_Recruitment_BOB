@@ -166,8 +166,7 @@ export const validateJobGradeForm = (formData = {}, options = {}) => {
     errors
   };
 };
-
-export default {
+const jobgradeValidations = {
   validateScale,
   validateGradeCode,
   validateMinSalary,
@@ -175,4 +174,5 @@ export default {
   validateDescription,
   validateJobGradeForm
 };
+export default jobgradeValidations;
 
