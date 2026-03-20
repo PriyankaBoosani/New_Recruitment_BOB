@@ -866,7 +866,7 @@ select.form-control {
 }
 
 .wraps .req-code {
-  max-width: 75% !important;
+  max-width: 65% !important;
     float: left;
     
     overflow-wrap: break-word;
