@@ -226,7 +226,7 @@ const AppRoutes = () => {
                   }
                 />
 
-                <Route
+                {/* <Route
                   path="/requisition-requests"
                   element={
                     <PrivilegeRoute privilege="Requisition Approval">
@@ -251,7 +251,7 @@ const AppRoutes = () => {
                       <CommitteeRequests />
                     </PrivilegeRoute>
                   }
-                />
+                /> */}
 
 
 

@@ -344,7 +344,7 @@ const Header = () => {
                   {t("verification")}
                 </Nav.Link>
               )}
-              {canApprovals && (
+              {/* {canApprovals && (
                 <NavDropdown
                   id="approvals-dropdown"
                   show={showApprovalsMenu}
@@ -387,7 +387,7 @@ const Header = () => {
                     {t("committee_requests")}
                   </NavDropdown.Item>
                 </NavDropdown>
-              )}
+              )} */}
 
 
               {canCommittee && (
