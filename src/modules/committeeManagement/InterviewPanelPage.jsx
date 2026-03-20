@@ -10,6 +10,7 @@ import DeleteConfirmationModal from "./components/DeleteConfirmationModal";
 import ErrorModal from "./components/ErrorModal";
 import PanelImportModal from "./components/PanelImportModal";
 import { useTranslation } from "react-i18next";
+import PositionAssignmentImportModal from "./components/PositionAssignmentImportModal";
 
 const InterviewPanelPage = () => {
 
@@ -52,7 +53,12 @@ const InterviewPanelPage = () => {
     setShowErrorModal,
     errorMessage,
     bulkAddPanels,
-    downloadPanelTemplate
+    downloadPanelTemplate,
+    bulkImportPositionAssignments,
+    downloadPositionAssignmentTemplate,
+    loadPositionData,
+    selectedPosition,
+    
   } = useInterviewPanel();
 
   // useEffect(() => {
@@ -62,6 +68,7 @@ const InterviewPanelPage = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [deletePanelName, setDeletePanelName] = useState("");
   const [showBulkImportModal, setShowBulkImportModal] = useState(false);
+  const [showPositionImportModal, setShowPositionImportModal] = useState(false);
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   return (
     <div className="interview-panel-container">
@@ -73,7 +80,28 @@ const InterviewPanelPage = () => {
           </div>
           <div className="tabs-container">
             <div className="tabs">
-              <button
+
+              <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={() => setShowBulkImportModal(true)}
+                className="d-flex align-items-center gap-2 bulk-import-btn"
+              >
+                <FiUpload />
+                {t("interviewPanelCommittee:add_panels")}
+              </Button>
+              <Button variant="outline-primary"
+                size="sm"
+                onClick={() => {
+                  setShowPositionImportModal(true);
+                }}
+                 className="d-flex align-items-center gap-2 bulk-import-btn"
+              >
+                <FiUpload />
+                {t("interviewPanelCommittee:add_position_assignments")}
+              </Button>
+
+              {/* <button
                 className={`tab ${activeTab === "MANAGE" ? "active" : ""}`}
                 onClick={() => setActiveTab("MANAGE")}
               >
@@ -86,12 +114,12 @@ const InterviewPanelPage = () => {
               >
                 <FiFileText className="tab-icon" />
                 <span>{t("interviewPanelCommittee:assign_to_positions")}</span>
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
 
-        <div className="panel-content">
+        {/* <div className="panel-content">
           {activeTab === "MANAGE" && (
             <div className="panel-layout">
               <div className="panel-form-section">
@@ -158,7 +186,7 @@ const InterviewPanelPage = () => {
               <AssignPositionsPage />
             </div>
           )}
-        </div>
+        </div> */}
 
         <DeleteConfirmationModal
           show={showDeleteModal}
@@ -203,6 +231,29 @@ const InterviewPanelPage = () => {
             onSuccess={() => {
               fetchPanels();
               setShowBulkImportModal(false);
+            }}
+          />
+        </Modal.Body>
+      </Modal>
+      <Modal
+        show={showPositionImportModal}
+        onHide={() => setShowPositionImportModal(false)}
+        size="lg"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="header-title">{t("interviewPanelCommittee:bulk_import_position_assignments")}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PositionAssignmentImportModal
+            t={t}
+            bulkImportPositionAssignments={bulkImportPositionAssignments}
+            downloadPositionAssignmentTemplate={downloadPositionAssignmentTemplate}
+            loading={loading}
+            onClose={() => setShowPositionImportModal(false)}
+            onSuccess={() => {
+              loadPositionData(selectedPosition);
+              setShowPositionImportModal(false);
             }}
           />
         </Modal.Body>

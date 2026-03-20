@@ -87,5 +87,9 @@
     "add_button": "जोड़ें",
     "remove_button": "हटाएँ",
     "failed_load_requisitions": "विज्ञापन लोड करने में विफल",
-    "failed_load_positions": "पद लोड करने में विफल"
+    "failed_load_positions": "पद लोड करने में विफल",
+    "bulk_import": "थोक आयात",
+    "add_panels": "पैनल जोड़ें",
+    "add_position_assignments": "पद असाइनमेंट जोड़ें",
+    "bulk_import_panels": "पैनल थोक आयात"
 }

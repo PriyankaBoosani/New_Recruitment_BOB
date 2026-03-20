@@ -72,7 +72,6 @@ const LocationWiseVacancyTable = ({
 
           <tbody>
             {positionStateDistributions.map((state, idx) => (
-              console.log("city id", state.cityId),
 
               <tr key={idx}>
                 <td className="fw-400" style={{ padding: '12px 6px', textAlign: 'left' }}>

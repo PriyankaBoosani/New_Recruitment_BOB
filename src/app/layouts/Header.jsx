@@ -78,12 +78,9 @@ const Header = () => {
 
 
   //Privileges  console.log("ROLE FROM BACKEND:", user?.role);
-  console.log("ROLE NORMALIZED:", role);
-
   //Privileges
   const privileges = useSelector((state) => state.user.privileges);
 
-  console.log("PRIVILEGES:", privileges);
   // const privileges = useSelector((state) => state.user.privileges);
 
 

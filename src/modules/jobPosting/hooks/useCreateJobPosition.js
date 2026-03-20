@@ -10,7 +10,6 @@ export const useCreateJobPosition = () => {
   const createPosition = async (payload) => {
     try {
       setLoading(true);
-      console.log("Creating position with payload:", payload);
 
       const dto = mapAddPositionToCreateDto(payload);
 

@@ -197,7 +197,6 @@ const updateUser = async (id, payload) => {
     console.error("Update failed:", err);
   }
 };
-console.log("interviewCentres", interviewCentres)
   return {
   users,
   loading,

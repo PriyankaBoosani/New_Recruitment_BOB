@@ -102,6 +102,8 @@
     "cancel": "Cancel",
     "import": "Import",
     "bulk_import": "Bulk Import",
+    "add_panels": "Add Panels",
     "bulk_import_panels": "Bulk Import Panels",
-    "upload_panels": "Upload Panels"
+    "upload_panels": "Upload Panels",
+    "add_position_assignments": "Add Position Assignments"
 }
