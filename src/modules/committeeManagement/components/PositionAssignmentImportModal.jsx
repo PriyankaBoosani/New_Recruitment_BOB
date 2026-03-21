@@ -5,12 +5,12 @@ import { useAssignPositions } from '../hooks/useAssignPositions';
 
 const PositionAssignmentImportModal = ({
   t,
-  onClose = () => {},
-  onSuccess = () => {},
+  onClose = () => { },
+  onSuccess = () => { },
   bulkImportPositionAssignments,
   downloadPositionAssignmentTemplate,
   loading
-})  => {
+}) => {
   //const { bulkImportPositionAssignments, downloadPositionAssignmentTemplate, loading } = useAssignPositions();
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState('');
@@ -135,7 +135,11 @@ const PositionAssignmentImportModal = ({
           {t("interviewPanelCommittee:download_template")}:
           <button
             type="button"
-            onClick={downloadPositionAssignmentTemplate}
+            onClick={() => {
+              console.log("DOWNLOAD CLICKED");
+              downloadPositionAssignmentTemplate();
+            }}
+
             className="btn btn-link p-0 text-primary text-decoration-none btnfont"
             style={{ cursor: 'pointer' }}
             disabled={loading}

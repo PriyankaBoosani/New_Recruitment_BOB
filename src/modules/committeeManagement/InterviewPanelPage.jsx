@@ -4,6 +4,7 @@ import InterviewPanelTable from "./components/InterviewPanelTable";
 import AssignPositionsPage from "./AssignPositionsPage";
 import "../../style/css/InterviewPanelPage.css";
 import { useInterviewPanel } from "./hooks/useInterviewPanel";
+import { useAssignPositions } from "./hooks/useAssignPositions";
 import { FiUsers, FiFileText, FiUpload } from "react-icons/fi";
 import { Modal, Button } from "react-bootstrap";
 import DeleteConfirmationModal from "./components/DeleteConfirmationModal";
@@ -54,12 +55,16 @@ const InterviewPanelPage = () => {
     errorMessage,
     bulkAddPanels,
     downloadPanelTemplate,
+
+
+  } = useInterviewPanel();
+
+  const {
     bulkImportPositionAssignments,
     downloadPositionAssignmentTemplate,
     loadPositionData,
     selectedPosition,
-    
-  } = useInterviewPanel();
+  } = useAssignPositions()
 
   // useEffect(() => {
   //   initData();
@@ -95,7 +100,7 @@ const InterviewPanelPage = () => {
                 onClick={() => {
                   setShowPositionImportModal(true);
                 }}
-                 className="d-flex align-items-center gap-2 bulk-import-btn"
+                className="d-flex align-items-center gap-2 bulk-import-btn"
               >
                 <FiUpload />
                 {t("interviewPanelCommittee:add_position_assignments")}
@@ -187,6 +192,12 @@ const InterviewPanelPage = () => {
             </div>
           )}
         </div> */}
+
+        {activeTab === "ASSIGN" && (
+          <div className="assign-positions-container">
+            <AssignPositionsPage />
+          </div>
+        )}
 
         <DeleteConfirmationModal
           show={showDeleteModal}
