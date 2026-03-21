@@ -1,7 +1,7 @@
 // requisition-validation.js
 
 // ✔ allowed characters
-export const TITLE_ALLOWED_PATTERN = /^[A-Za-z0-9 _\-()/&]*$/;
+export const TITLE_ALLOWED_PATTERN = /^.*$/;
 
 // date-utils.js or inside requisition-validation.js
 
@@ -21,13 +21,6 @@ export const normalizeTitle = (value = "") =>
 
 // ✔ typing-time validator (USED IN onChange)
 export const validateTitleOnType = (value) => {
-  if (!TITLE_ALLOWED_PATTERN.test(value)) {
-    return {
-      valid: false,
-      message: "validation:title_invalid_chars"
-    };
-  }
-
   return {
     valid: true,
     value: normalizeTitle(value)
@@ -45,10 +38,7 @@ export const validateRequisitionForm = (formData = {}) => {
     errors.title = "validation:required";
 
     valid = false;
-  } else if (!TITLE_ALLOWED_PATTERN.test(title)) {
-    errors.title = "validation:title_invalid_chars";
-    valid = false;
-  }
+  } 
 
   if (!formData.description?.trim()) {
     errors.description = "validation:required";
