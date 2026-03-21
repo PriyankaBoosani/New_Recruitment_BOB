@@ -95,22 +95,11 @@ const RequisitionStrip = ({
       try {
         const [masterRes, zonalRes, centersRes] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
-          masterApiService.getZonalStates(),
-          masterApiService.getInterviewCentresByState(),
+          // masterApiService.getZonalStates(),
+
         ]);
 
-        setMasterData({
-          ...masterRes.data,
-
-          // use ZONAL states (correct IDs)
-          states: (zonalRes.data || []).map(s => ({
-            id: String(s.zonalStateID),
-            name: s.stateName,
-          })),
-
-          // use INTERVIEW CENTRES (correct IDs)
-          interviewCenters: centersRes.data || []
-        });
+        setMasterData(masterRes.data || {});
 
       } catch (err) {
         console.error("Failed to load master data", err);
@@ -413,7 +402,7 @@ const RequisitionStrip = ({
                 <LocationWiseVacancyTable
                   positionStateDistributions={job.positionStateDistributions}
                   states={masterData?.states || []}
-                  cities={masterData?.interviewCenters || []}
+                  cities={masterData?.cities || []}
                   reservationCategories={masterData?.reservationCategories || []}
                   disabilityCategories={masterData?.disabilityCategories || []}
                 />

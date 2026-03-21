@@ -68,7 +68,7 @@ export const useMasterData = () => {
           specializations: mapped.specializations,
           certifications: mapped.certifications,
           states: mapped.states,
-        //   languages: mapped.languages,
+          languages: mapped.languages,
           cities: mapped.cities,
 
 

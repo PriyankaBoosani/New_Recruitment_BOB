@@ -23,14 +23,12 @@ const LocationWiseVacancyTable = ({
   // }, {});
 
   const stateMap = states.reduce((acc, s) => {
-    const id = String(s.id || s.stateId || s.zonalStateID).toLowerCase();
-    const name = s.name || s.stateName;
-
-    acc[id] = name;
+    acc[String(s.stateId)] = s.stateName;
     return acc;
   }, {});
+
   const cityMap = cities.reduce((acc, c) => {
-    acc[String(c.interviewCentreId).toLowerCase()] = c.interviewCentre;
+    acc[String(c.cityId)] = c.cityName;
     return acc;
   }, {});
 
