@@ -19,7 +19,8 @@ export const useMasterData = () => {
     states: [],
     languages: [],
     stateLanguages: [],
-    approvingAuthorities: []
+    approvingAuthorities: [],
+    cities: []
 
   });
   const [loading, setLoading] = useState(false);
@@ -36,24 +37,23 @@ export const useMasterData = () => {
           masterRes,
           approvingRes,
           certRes,
-          zonalRes,
-          languagesRes,
-          stateLanguagesRes
+          // zonalRes,
+         // languagesRes,
+           stateLanguagesRes
         ] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
           masterApiService.getApprovingAuthorities(),
           masterApiService.getAllCertificates(),
-          masterApiService.getZonalStates(),
-          masterApiService.getAllLanguages(),
-          masterApiService.getStateLanguages(),
+          // masterApiService.getZonalStates(),
+          //masterApiService.getAllLanguages(),
+           masterApiService.getStateLanguages(),
         ]);
-
-
 
         const mapped = mapMasterResponse(
           masterRes.data,
           certRes.data,
-
+          //languagesRes.data,
+          stateLanguagesRes.data
         );
 
         setData({
@@ -67,24 +67,29 @@ export const useMasterData = () => {
           qualifications: mapped.qualifications,
           specializations: mapped.specializations,
           certifications: mapped.certifications,
+          states: mapped.states,
+        //   languages: mapped.languages,
+          cities: mapped.cities,
+
 
           approvingAuthorities: (approvingRes.data || []).map(a => ({
             id: a.approvingAuthorityId,
             name: a.authorityName,
           })),
-          // NEW STATES
-          states: (zonalRes.data || []).map(s => ({
-            id: String(s.zonalStateID),
-            name: s.stateName,
-          })),
+          // // NEW STATES
+          // states: (zonalRes.data || []).map(s => ({
+          //   id: String(s.zonalStateID),
+          //   name: s.stateName,
+          // })),
 
-          // NEW LANGUAGES
-          languages: (languagesRes.data || []).map(l => ({
-            id: String(l.languageId),
-            name: l.languageName,
-          })),
+          // // NEW LANGUAGES
+          // languages: (languagesRes.data || []).map(l => ({
+          //   id: String(l.languageId),
+          //   name: l.languageName,
+          //   stateId: l.stateId ? String(l.stateId) : null
+          // })),
 
-          // NEW STATE-LANGUAGE MAPPING
+          // // NEW STATE-LANGUAGE MAPPING
           stateLanguages: (stateLanguagesRes.data || []).map(sl => ({
             stateId: String(sl.stateId),
             languageId: String(sl.languageId),

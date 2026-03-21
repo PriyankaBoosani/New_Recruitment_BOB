@@ -66,7 +66,7 @@ const AddPosition = () => {
     const { createPosition, loading } = useCreateJobPosition();
     const { updatePosition } = useUpdateJobPosition();
     const masterData = useMasterData();
-    const { positions, employmentTypes, reservationCategories, disabilityCategories, educationTypes, qualifications, specializations, certifications, states, languages, stateLanguages } = masterData;
+    const { positions, employmentTypes, reservationCategories, disabilityCategories, educationTypes, qualifications, specializations, certifications, states, languages, stateLanguages, cities } = masterData;
 
     const [errors, setErrors] = useState({});
     const [showImportModal, setShowImportModal] = useState(false);
@@ -258,22 +258,13 @@ const AddPosition = () => {
                 existingPosition.positionStateDistributions.map(async (sd) => {
 
                     // 🔥 FETCH cities for this state
-                    let cityName = "";
 
-                    try {
-                        const res = await masterApiService.getInterviewCentresByState(
-                            ["Regional Office", "Zonal Office"],
-                            sd.stateId
-                        );
 
-                        const cityObj = res.data?.find(
-                            c => String(c.interviewCentreId) === String(sd.cityId)
-                        );
+                    const cityObj = masterData.cities.find(
+                        c => String(c.id) === String(sd.cityId)
+                    );
 
-                        cityName = cityObj?.interviewCentre || "";
-                    } catch (err) {
-                        console.error("City fetch failed", err);
-                    }
+                    const cityName = cityObj?.name || "";
 
                     // category mapping (same as your code)
                     const categories = {};
@@ -296,7 +287,7 @@ const AddPosition = () => {
                         positionStateDistributionId: sd.positionStateDistributionId,
                         state: sd.stateId,
                         city: sd.cityId,
-                        cityName, // ✅ NOW CORRECT
+
                         vacancies: sd.totalVacancies,
                         language: sd.localLanguage,
                         categories,
@@ -618,13 +609,18 @@ const AddPosition = () => {
     const nationalCategoryTotal = Object.values(nationalCategories).reduce((a, b) => a + Number(b || 0), 0);
     const stateCategoryTotal = Object.values(currentState.categories || {}).reduce((a, b) => a + Number(b || 0), 0);
     const filteredLanguages = currentState.state
-        ? languages.filter(lang =>
-            stateLanguages.some(
-                sl =>
-                    sl.stateId === currentState.state &&
-                    sl.languageId === lang.id
-            )
-        )
+        ? stateLanguages
+            .filter(sl => String(sl.stateId) === String(currentState.state))
+            .map(sl => {
+                const lang = languages.find(
+                    l => String(l.id) === String(sl.languageId)
+                );
+
+                return lang
+                    ? { id: lang.id, name: lang.name }
+                    : null;
+            })
+            .filter(Boolean)
         : [];
 
     return (
@@ -681,7 +677,7 @@ const AddPosition = () => {
                         />
                         <ReservationSection
                             isViewMode={isViewMode} formData={formData} errors={errors} setErrors={setErrors} reservationCategories={reservationCategories}
-                            disabilityCategories={disabilityCategories} states={states} languages={languages} nationalCategories={nationalCategories} setNationalCategories={setNationalCategories} nationalDisabilities={nationalDisabilities}
+                            disabilityCategories={disabilityCategories} states={states} languages={languages} cities={cities} nationalCategories={nationalCategories} setNationalCategories={setNationalCategories} nationalDisabilities={nationalDisabilities}
                             setNationalDisabilities={setNationalDisabilities} nationalCategoryTotal={nationalCategoryTotal}
                             currentState={currentState} setCurrentState={setCurrentState} stateCategoryTotal={stateCategoryTotal}
                             filteredLanguages={filteredLanguages} stateDistributions={stateDistributions} setStateDistributions={setStateDistributions} editingIndex={editingIndex}

@@ -15,6 +15,7 @@ const ReservationSection = ({
     disabilityCategories,
     states,
     languages,
+    cities,
     nationalCategories,
     setNationalCategories,
     nationalDisabilities,
@@ -38,26 +39,29 @@ const ReservationSection = ({
         if (typeof e === "object" && e.key) return t(e.key, e.params);
         return "";
     };
-    const [cities, setCities] = useState([]);
-    const [loadingCities, setLoadingCities] = useState(false);
-    const fetchCitiesByState = async (stateId) => {
-        if (!stateId) return;
-        try {
+    // const [cities, setCities] = useState([]);
+    // const [loadingCities, setLoadingCities] = useState(false);
+    // const fetchCitiesByState = async (stateId) => {
+    //     if (!stateId) return;
+    //     try {
 
 
-            const res = await masterApiService.getInterviewCentresByState(
-                ["Regional Office", "Zonal Office"],
-                stateId
-            );
+    //         const res = await masterApiService.getInterviewCentresByState(
+    //             ["Regional Office", "Zonal Office"],
+    //             stateId
+    //         );
 
 
 
-            setCities(Array.isArray(res.data) ? res.data : []);
-        } catch (err) {
+    //         setCities(Array.isArray(res.data) ? res.data : []);
+    //     } catch (err) {
 
-            console.error("ERROR RESPONSE", err?.response || err);
-        }
-    };
+    //         console.error("ERROR RESPONSE", err?.response || err);
+    //     }
+    // };
+    const filteredCities = cities.filter(
+        c => String(c.stateId) === String(currentState.state)
+    );
     return (
         <fieldset disabled={isViewMode}>
             {/* Reservation Section */}
@@ -158,7 +162,7 @@ const ReservationSection = ({
                                             stateLanguage: ""
                                         }));
 
-                                        fetchCitiesByState(stateId); // 🔥 THIS WAS MISSING
+
                                     }}
                                     options={[
                                         { value: "", label: t("addPosition:select_state") },
@@ -178,15 +182,14 @@ const ReservationSection = ({
                                     classNamePrefix="react-select"
                                     isDisabled={!currentState.state}
                                     value={
-                                        cities
+                                        filteredCities
                                             .map(c => ({
-                                                value: c.interviewCentreId,
-                                                label: c.interviewCentre
+                                                value: c.id,
+                                                label: c.name
                                             }))
                                             .find(option => String(option.value) === String(currentState.city)) || null
                                     }
                                     placeholder={t("addPosition:select_city")}
-
                                     onChange={(selected) => {
                                         setCurrentState(prev => ({
                                             ...prev,
@@ -199,15 +202,10 @@ const ReservationSection = ({
                                             city: ""
                                         }));
                                     }}
-
-                                    options={
-                                        loadingCities
-                                            ? [{ value: "", label: t("addPosition:loading") }]
-                                            : cities.map(c => ({
-                                                value: c.interviewCentreId,
-                                                label: c.interviewCentre
-                                            }))
-                                    }
+                                    options={filteredCities.map(c => ({
+                                        value: c.id,
+                                        label: c.name
+                                    }))}
                                 />
                             </Col>
                             <Col md={3}><Form.Label>{t("addPosition:vacancies")} <span className="text-danger">*</span></Form.Label><Form.Control
@@ -390,12 +388,14 @@ const ReservationSection = ({
                                         .map((row, idx) => (
 
                                             <tr key={idx}>
-                                                <td>{idx + 1}</td><td>{states.find(s => s.id === row.state)?.name}</td><td>{row.cityName || "-"}</td><td>{row.vacancies}</td><td>{languages.find(l => l.id === row.language)?.name}</td>
+                                                <td>{idx + 1}</td><td>{states.find(s => s.id === row.state)?.name}</td><td>
+                                                    {cities.find(c => String(c.id) === String(row.city))?.name || "-"}
+                                                </td><td>{row.vacancies}</td><td>{languages.find(l => l.id === row.language)?.name}</td>
                                                 {reservationCategories.map(c => <td key={c.code}>{row.categories?.[c.code] ?? 0}</td>)}
                                                 <td>{Object.values(row.categories || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
                                                 {disabilityCategories.map(d => <td key={d.disabilityCode}>{row.disabilities?.[d.disabilityCode] ?? 0}</td>)}
                                                 <td>{Object.values(row.disabilities || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
-                                                <td className="text-center"><Button size="sm" variant="link" onClick={() => { setEditingIndex(idx); setCurrentState({ ...row }); fetchCitiesByState(row.state); }}><img src={edit_icon} alt="edit_icon" className="icon-16" /></Button><Button size="sm" variant="link" className="text-danger" onClick={() => {
+                                                <td className="text-center"><Button size="sm" variant="link" onClick={() => { setEditingIndex(idx); setCurrentState({ ...row }); }}><img src={edit_icon} alt="edit_icon" className="icon-16" /></Button><Button size="sm" variant="link" className="text-danger" onClick={() => {
                                                     setStateDistributions(prev =>
                                                         prev.map((s, i) =>
                                                             i === idx ? { ...s, __deleted: true } : s
