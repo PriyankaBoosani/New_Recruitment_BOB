@@ -53,6 +53,7 @@
   "experience_details_required": "अनुभव विवरण दर्ज करें",
   "approved_date_future": "स्वीकृति तिथि भविष्य की नहीं हो सकती",
   "state_already_added": "यह राज्य पहले से जोड़ा गया है",
+  "state_city_already_added": "यह राज्य और शहर का संयोजन पहले से जोड़ा जा चुका है।",
   "category_total_mismatch": "श्रेणी कुल ({{categoryTotal}}) कुल रिक्तियों ({{vacancies}}) के बराबर होना चाहिए",
   "state_total_mismatch": "राज्य रिक्तियों का कुल ({{stateTotal}}) कुल रिक्तियों ({{vacancies}}) के बराबर होना चाहिए",
   "disability_exceeds_category": "दिव्यांग रिक्तियाँ ({{disabilityTotal}}) श्रेणी रिक्तियों ({{categoryTotal}}) से अधिक नहीं हो सकती",

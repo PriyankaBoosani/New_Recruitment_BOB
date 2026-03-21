@@ -53,6 +53,7 @@
   "experience_details_required": "Please enter experience details",
   "approved_date_future": "Approved date cannot be a future date",
   "state_already_added": "This state is already added",
+  "state_city_already_added": "This state and city combination is already added.",
   "category_total_mismatch": "Category total ({{categoryTotal}}) must equal total vacancies ({{vacancies}})",
   "state_total_mismatch": "Total state vacancies ({{stateTotal}}) must equal total vacancies ({{vacancies}})",
   "disability_exceeds_category": "Disability vacancies ({{disabilityTotal}}) cannot exceed category vacancies ({{categoryTotal}})",

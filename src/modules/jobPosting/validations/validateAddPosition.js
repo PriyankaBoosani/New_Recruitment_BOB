@@ -288,16 +288,16 @@ export const validateStateDistribution = ({
   }
 
 
-
   const duplicate = stateDistributions.some(
     (s, i) =>
-      s.state === currentState.state &&
+      String(s.state) === String(currentState.state) &&
+      String(s.city || "") === String(currentState.city || "") &&
       !s.__deleted &&
       i !== editingIndex
   );
 
   if (duplicate) {
-    errors.state = "validation:state_already_added";
+    errors.state = "validation:state_city_already_added";
   }
 
 
