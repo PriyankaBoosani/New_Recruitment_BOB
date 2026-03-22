@@ -71,10 +71,7 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 					name: item.candidateFullName,
 					categoryName: item.reservationCategory,
 					score: item.finalScore,
-					qnq:
-						item.interviewSchedulingStatus === "QUALIFIED"
-							? "Q"
-							: "NQ",
+					qnq: offer.qualified === true ? "Q" : "NQ",
 					status: offer.status,
 					selectList: offer.selectList,
 					waitList: offer.waitList,
@@ -242,7 +239,7 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 									<p className="fw-normal fs-14 mb-0 py-2 text-muted">{c.score || "-"}</p>
 								</td>
 								<td className='align-content-center' style={{ paddingLeft: '1.25rem' }}>
-									<p className="fw-normal fs-14 mb-0 py-2 text-muted">{c.qnq ? (c.qnq === "QUALIFIED" ? "Q" : "NQ") : "-"}</p>
+									<p className="fw-normal fs-14 mb-0 py-2 text-muted">{c.qnq || "-"}</p>
 								</td>
 								<td className="align-content-center" style={{ paddingLeft: '1.25rem', alignContent: 'center' }}>
 									<span
