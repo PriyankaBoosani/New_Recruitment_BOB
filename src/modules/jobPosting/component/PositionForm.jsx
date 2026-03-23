@@ -566,11 +566,9 @@ const PositionForm = ({
                                         className="react-select-fixed"
                                         classNamePrefix="react-select"
                                         isDisabled={isViewMode}
-                                        value={
-                                            yearOptions.find(
-                                                option => String(option.value) === String(formData[expType]?.years || "")
-                                            ) || null
-                                        }
+                                      value={yearOptions.find(
+                                            option => String(option.value) === String(formData[expType].years)
+                                        )}
                                         onChange={(selected) =>
                                             handleInputChange({
                                                 target: {
