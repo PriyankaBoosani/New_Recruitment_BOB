@@ -91,5 +91,7 @@
     "bulk_import": "थोक आयात",
     "add_panels": "पैनल जोड़ें",
     "add_position_assignments": "पद असाइनमेंट जोड़ें",
-    "bulk_import_panels": "पैनल थोक आयात"
+    "bulk_import_panels": "पैनल आयात करें",
+    "upload_position_assignments": "पैनल असाइनमेंट अपलोड करें",
+"bulk_import_position_assignments": "पदों के लिए पैनल असाइन करें"       
 }

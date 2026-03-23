@@ -88,8 +88,8 @@
     "remove_button": "Remove",
     "failed_load_requisitions": "Failed to load requisitions",
     "failed_load_positions": "Failed to load positions",
-    "upload_position_assignments": "Upload Position Assignments",
-    "bulk_import_position_assignments": "Bulk Position Assignments",
+    "upload_position_assignments": "Upload Panel Assignments",
+    "bulk_import_position_assignments": "Assign Panels to Positions",
     "support_xlsx": "XLSX files are supported",
     "upload_xlsx": "Upload XLSX",
     "reupload_xlsx": "Re-upload XLSX",
@@ -103,7 +103,7 @@
     "import": "Import",
     "bulk_import": "Bulk Import",
     "add_panels": "Add Panels",
-    "bulk_import_panels": "Bulk Import Panels",
+    "bulk_import_panels": "Import Panels",
     "upload_panels": "Upload Panels",
     "add_position_assignments": "Add Position Assignments"
 }
