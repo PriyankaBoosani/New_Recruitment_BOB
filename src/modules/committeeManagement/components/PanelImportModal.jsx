@@ -114,7 +114,7 @@ const PanelImportModal = ({
 
           {selectedFile && (
             <div className="mt-2">
-              <small className="text-muted d-block">{selectedFile.name}</small>
+              <small className="text-muted d-block file-name">{selectedFile.name}</small>
               <Button
                 variant="outline-danger"
                 size="sm"

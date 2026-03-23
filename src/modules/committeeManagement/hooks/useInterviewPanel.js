@@ -350,7 +350,7 @@ const bulkAddPanels = async (file) => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'InterviewPanels_template.xlsx';
+      link.download = 'ImportPanels_template.xlsx';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

@@ -545,3 +545,8 @@ border-color: hsl(0, 0%, 80%);
   border-color: #6c757d;
   opacity: 0.6;
 }
+.file-name {
+  word-break: break-all;     /* breaks long words */
+  overflow-wrap: anywhere;   /* modern support */
+  white-space: normal;       /* allow wrapping */
+}

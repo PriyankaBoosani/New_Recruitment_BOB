@@ -642,3 +642,8 @@ border-radius: 0;       /* optional */
   border-color: #f26522 !important;
   color:#fff !important;
 }
+.file-name {
+  word-break: break-all;     /* breaks long words */
+  overflow-wrap: anywhere;   /* modern support */
+  white-space: normal;       /* allow wrapping */
+}
