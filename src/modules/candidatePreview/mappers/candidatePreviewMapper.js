@@ -134,7 +134,8 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
           name: cleanedName || "Document",
           fileName: d.fileName,
           url: d.fileUrl,
-          status: d.documentScreeningStatus || "Pending"
+          status: d.documentScreeningStatus || "Pending",
+          isValidationPending: d.isValidationPending
         };
       });
 

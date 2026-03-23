@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Accordion, Card } from "react-bootstrap";
+import { Accordion, Card, OverlayTrigger, Tooltip } from "react-bootstrap";
 import "../../../style/css/PreviewModal.css";
 import logo_Bob from "../../../assets/bob-logo.png";
 import sign from "../../../assets/downloadIcon.png";
@@ -12,6 +12,8 @@ import { toast } from "react-toastify";
 import masterApiService from "../../master/services/masterApiService";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
 
 const ApplicationForm = ({
@@ -365,6 +367,8 @@ const ApplicationForm = ({
 
   const photoDoc = allDocs.find(doc => doc.name === "Photo");
   const signatureDoc = allDocs.find(doc => doc.name === "Signature");
+  const birthDoc = allDocs.find(doc => doc.name === "Birth Certificate");
+  const tenthDoc = allDocs.find(doc => doc.name === "10th Certificate");
 
   const photoUrl = photoDoc?.url || "";
   const signatureUrl = signatureDoc?.url || "";
@@ -1260,7 +1264,44 @@ const ApplicationForm = ({
 
                   <tr>
                     <td className="fw-med">{t("dob")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.dob}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.dob}
+                      {(!birthDoc?.isValidationPending || !tenthDoc?.isValidationPending) ? (
+                        <OverlayTrigger
+                          placement="top"
+                          overlay={
+                            <Tooltip id="dob-success-tooltip">
+                              Verified
+                            </Tooltip>
+                          }
+                        >
+                          <span>
+                            <FontAwesomeIcon
+                              icon={faCircleCheck}
+                              style={{ color: "#28a745" }}
+                              className="ms-1"
+                            />
+                          </span>
+                        </OverlayTrigger>
+                      ) : (
+                        <OverlayTrigger
+                          placement="top"
+                          overlay={
+                            <Tooltip id="dob-fail-tooltip">
+                              Manual verification pending
+                            </Tooltip>
+                          }
+                        >
+                          <span>
+                            <FontAwesomeIcon
+                              icon={faCircleXmark}
+                              style={{ color: "#dc3545" }}
+                              className="ms-1"
+                            />
+                          </span>
+                        </OverlayTrigger>
+                      )}
+                    </td>
                     <td className="fw-med">{t("age_cutoff")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.age || "-"}</td>
 
