@@ -22,7 +22,7 @@ const PageHeaderWithBack = ({ title, subtitle, positionId, requisitionId, candid
           marginRight: "25px",
           marginTop: "2px"
         }}
-        onClick={() => navigate(candidateScreening ? "/candidate-workflow" : -1, {state: {requisitionId, positionId, activeTab}})}
+        onClick={() => navigate(-1)}
       >
         <i className="bi bi-arrow-left"></i>
         <span>{t("back")}</span>
