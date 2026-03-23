@@ -5,7 +5,6 @@ import delete_icon from "../../../assets/delete_icon.png";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
 import { useState } from "react";
-import masterApiService from "../../master/services/masterApiService";
 const ReservationSection = ({
     isViewMode,
     formData,
@@ -39,6 +38,9 @@ const ReservationSection = ({
         if (typeof e === "object" && e.key) return t(e.key, e.params);
         return "";
     };
+    const sortedStates = [...states].sort((a, b) =>
+        a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
+    );
     // const [cities, setCities] = useState([]);
     // const [loadingCities, setLoadingCities] = useState(false);
     // const fetchCitiesByState = async (stateId) => {
@@ -59,8 +61,11 @@ const ReservationSection = ({
     //         console.error("ERROR RESPONSE", err?.response || err);
     //     }
     // };
-    const filteredCities = cities.filter(
-        c => String(c.stateId) === String(currentState.state)
+    const filteredCities = cities
+        .filter(c => String(c.stateId) === String(currentState.state));
+
+    const sortedCities = [...filteredCities].sort((a, b) =>
+        a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
     );
     return (
         <fieldset disabled={isViewMode}>
@@ -166,7 +171,7 @@ const ReservationSection = ({
                                     }}
                                     options={[
                                         { value: "", label: t("addPosition:select_state") },
-                                        ...states.map(s => ({
+                                        ...sortedStates.map(s => ({
                                             value: s.id,
                                             label: s.name
                                         }))
@@ -202,7 +207,7 @@ const ReservationSection = ({
                                             city: ""
                                         }));
                                     }}
-                                    options={filteredCities.map(c => ({
+                                    options={sortedCities.map(c => ({
                                         value: c.id,
                                         label: c.name
                                     }))}

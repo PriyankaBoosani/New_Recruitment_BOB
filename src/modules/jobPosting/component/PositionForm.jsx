@@ -555,12 +555,9 @@ const PositionForm = ({
                                     ? t("addPosition:mandatory_experience")
                                     : t("addPosition:preferred_experience")}
 
-                                {(expType === 'mandatoryExperience' ||
-                                    (expType === 'preferredExperience' &&
-                                        formData.preferredExperience.description?.trim())
-                                ) && (
-                                        <span className="text-danger">*</span>
-                                    )}
+                                {expType === 'mandatoryExperience' && (
+                                    <span className="text-danger">*</span>
+                                )}
                             </Form.Label>
 
                             <Row className="g-2 mb-2">
@@ -569,9 +566,11 @@ const PositionForm = ({
                                         className="react-select-fixed"
                                         classNamePrefix="react-select"
                                         isDisabled={isViewMode}
-                                        value={yearOptions.find(
-                                            option => String(option.value) === String(formData[expType].years)
-                                        )}
+                                        value={
+                                            yearOptions.find(
+                                                option => String(option.value) === String(formData[expType]?.years || "")
+                                            ) || null
+                                        }
                                         onChange={(selected) =>
                                             handleInputChange({
                                                 target: {

@@ -167,13 +167,13 @@ export const validateAddPosition = ({
 
   validateExperience(formData.mandatoryExperience, "mandatoryExperience");
 
-  if (
-    formData.preferredExperience.years ||
-    formData.preferredExperience.months ||
-    formData.preferredExperience.description?.trim()
-  ) {
-    validateExperience(formData.preferredExperience, "preferredExperience");
-  }
+  // if (
+  //   formData.preferredExperience.years ||
+  //   formData.preferredExperience.months ||
+  //   formData.preferredExperience.description?.trim()
+  // ) {
+  //   validateExperience(formData.preferredExperience, "preferredExperience");
+  // }
   // validateExperience(formData.preferredExperience, "preferredExperience");
 
   // ---------- RESPONSIBILITIES ----------
