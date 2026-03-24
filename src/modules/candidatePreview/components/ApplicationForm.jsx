@@ -1140,7 +1140,7 @@ const ApplicationForm = ({
     }
   }, [zonalDecision]);
 
-
+  const dobDoc = birthDoc || tenthDoc;
 
   return (
     <>
@@ -1266,7 +1266,7 @@ const ApplicationForm = ({
                     <td className="fw-med">{t("dob")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.dob}
-                      {(!birthDoc?.isValidationPending || !tenthDoc?.isValidationPending) ? (
+                      {!dobDoc && dobDoc.isValidationPending ? (
                         <OverlayTrigger
                           placement="top"
                           overlay={
