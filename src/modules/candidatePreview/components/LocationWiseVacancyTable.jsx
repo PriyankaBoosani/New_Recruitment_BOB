@@ -44,7 +44,7 @@ const LocationWiseVacancyTable = ({
           <thead>
             <tr>
               <th rowSpan="2" className="light_font fw-600 fs-13" style={{ textAlign: 'left', width: '15%' }}>{t("state_name")}</th>
-              <th rowSpan="2" className="light_font fw-600 fs-13" style={{ textAlign: 'left', width: '30%' }}>{t("city_name")}</th>
+              <th rowSpan="2" className="light_font fw-600 fs-13" style={{ textAlign: 'left', width: '15%' }}>{t("city_name")}</th>
               <th className="light_font fw-600 fs-13" colSpan={reservationCategories.length + 1}>{t("category")}</th>
               <th className="light_font fw-600 fs-13" colSpan={disabilityCategories.length}>{t("disability")}</th>
             </tr>

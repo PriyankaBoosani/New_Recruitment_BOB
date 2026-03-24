@@ -40,6 +40,7 @@ const InterviewDayTable = ({
 
     navigate("/candidate-preview", {
       state: {
+        from: "/candidate-interviewer",
         candidate: row.raw,
         candidateId: row.raw.candidateId,
         applicationId: row.raw.applicationId,

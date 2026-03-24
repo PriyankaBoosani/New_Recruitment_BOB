@@ -346,8 +346,8 @@ const ReservationSection = ({
                                     {/* ===== HEADER ROW 1 ===== */}
                                     <tr>
                                         <th>{t("addPosition:sno")}</th>
-                                        <th>{t("addPosition:state_name")}</th>
-                                        <th>{t("addPosition:city_name")}</th>
+                                        <th style={{width: '15%'}}>{t("addPosition:state_name")}</th>
+                                        <th style={{width: '15%'}}>{t("addPosition:city_name")}</th>
                                         <th>{t("addPosition:vacancies")}</th>
                                         <th>{t("addPosition:local_language_of_state")}</th>
 

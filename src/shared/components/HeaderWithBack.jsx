@@ -1,11 +1,43 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-
-const PageHeaderWithBack = ({ title, subtitle, positionId, requisitionId, candidateScreening, activeTab }) => {
+const PageHeaderWithBack = ({
+  title,
+  subtitle,
+  positionId,
+  requisitionId,
+  activeTab
+}) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation("common");
+
+  const handleBack = () => {
+    const state = location.state || {};
+    const from = state.from;
+
+    // fallback if from missing
+    const target = from || "/candidate-workflow";
+
+    // 🔥 keep this (your interviewer depends on it)
+    sessionStorage.setItem("fromPreviewBack", "true");
+
+    navigate(target, {
+      state: {
+        requisition: state.requisition,
+        position: state.position,
+        preloadedCandidates:
+          state.preloadedCandidates || state.candidates || [],
+        selectedDate: state.selectedDate,
+
+        // keep ids also (for workflow)
+        requisitionId,
+        positionId,
+        activeTab
+      }
+    });
+  };
 
   return (
     <div
@@ -22,7 +54,7 @@ const PageHeaderWithBack = ({ title, subtitle, positionId, requisitionId, candid
           marginRight: "25px",
           marginTop: "2px"
         }}
-       onClick={() => navigate(candidateScreening ? "/candidate-workflow" : -1, {state: {requisitionId, positionId, activeTab}})}
+        onClick={handleBack}
       >
         <i className="bi bi-arrow-left"></i>
         <span>{t("back")}</span>

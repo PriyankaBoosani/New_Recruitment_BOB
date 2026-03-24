@@ -220,6 +220,7 @@ export default function CandidatePool({
                         onClick={() =>
                           navigate("/candidate-preview", {
                             state: {
+                               from: "/candidate-workflow",
                               candidate: c,
                               positionId: selectedPositionId,
                               requisitionId: selectedRequisitionId,
@@ -340,6 +341,7 @@ export default function CandidatePool({
                   onClick={() =>
                     navigate("/candidate-preview", {
                       state: {
+                         from: "/candidate-workflow",
                         candidate: c, positionId: selectedPositionId, requisitionId: selectedRequisitionId,
                         requisition: requisition
                           ? {
