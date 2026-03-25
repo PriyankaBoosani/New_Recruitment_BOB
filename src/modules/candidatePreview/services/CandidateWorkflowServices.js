@@ -46,7 +46,7 @@ getInterviewCandidates: (payload) => {
     payload,
     {
       headers: {
-        "X-Client": "recruiter"
+        "X-Client": "AzureAD"
       }
     }
   );
@@ -56,7 +56,7 @@ getPanelScores: (scheduledInterviewId) => {
     `/recruiter/interview-pool/get-panel-scores/${scheduledInterviewId}`,
     {
       headers: {
-        "X-Client": "recruiter"
+        "X-Client": "AzureAD"
       }
     }
   );

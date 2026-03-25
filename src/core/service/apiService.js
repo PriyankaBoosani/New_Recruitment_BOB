@@ -22,12 +22,15 @@ async function getToken() {
     if (!account) {
       const accounts = msalInstance.getAllAccounts();
       account = accounts[0];
+
       if (account) {
         msalInstance.setActiveAccount(account);
       }
     }
 
-    if (!account) return null;
+    if (!account) {
+      throw new Error("No account available");
+    }
 
     const response = await msalInstance.acquireTokenSilent({
       ...loginRequest,
@@ -38,6 +41,10 @@ async function getToken() {
 
   } catch (error) {
     console.error("Token acquisition failed", error);
+
+    // 🔥 fallback to interactive login
+    msalInstance.loginRedirect(loginRequest);
+
     return null;
   }
 }
@@ -48,11 +55,14 @@ async function getToken() {
 const addAuthHeader = async (config) => {
   const token = await getToken();
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  if (!token) {
+    // 🚨 No token → force login
+    redirectToLogin();
+    return Promise.reject("No token available");
   }
 
-  config.headers["X-Client"] = "recruiter";
+  config.headers.Authorization = `Bearer ${token}`;
+  config.headers["X-Client"] = "AzureAD";
 
   return config;
 };

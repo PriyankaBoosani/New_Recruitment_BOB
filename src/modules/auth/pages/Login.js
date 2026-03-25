@@ -9,8 +9,12 @@ const Login = () => {
   const { instance, accounts } = useMsal();
 
   const handleLogin = () => {
-    instance.loginRedirect(loginRequest);
+    instance.loginRedirect({
+      ...loginRequest,
+      prompt: "select_account" // This forces the account selection prompt
+    });
   };
+
 
   // useEffect(() => {
   //   if (accounts.length > 0) {

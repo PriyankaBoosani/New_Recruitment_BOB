@@ -17,6 +17,7 @@ useEffect(() => {
       const response = await instance.handleRedirectPromise();
 
       const account = response?.account || accounts[0];
+      
 
       if (!account) {
   navigate("/login");

@@ -54,7 +54,7 @@ const jobPositionApiService = {
       {
         headers: {
           "Content-Type": "multipart/form-data",
-          "X-Client": "recruiter",
+          "X-Client": "AzureAD",
         },
       }
     );
@@ -82,7 +82,7 @@ const jobPositionApiService = {
       {
         headers: {
           "Content-Type": "multipart/form-data",
-          "X-Client": "recruiter"
+          "X-Client": "AzureAD"
         }
       }
     );
@@ -93,13 +93,13 @@ const jobPositionApiService = {
   getRequisitions: (name = "") =>
     api.get("/recruiter/job-requisitions/get-requisitions", {
       params: { name },
-      headers: { "X-Client": "recruiter" }
+      headers: { "X-Client": "AzureAD" }
     }),
 
   getPositionsByReqId: ({ requisitionId, searchText = "" }) =>
     api.get("/recruiter/job-positions/get-positions", {
       params: { requisitionId, searchText },
-      headers: { "X-Client": "recruiter" },
+      headers: { "X-Client": "AzureAD" },
     }),
 
   getCandidatesByPosition: (payload) =>
@@ -107,7 +107,7 @@ const jobPositionApiService = {
       "/recruiter/candidate-screening/get-candidate-details",
       payload,
       {
-        headers: { "X-Client": "recruiter" },
+        headers: { "X-Client": "AzureAD" },
       }
     ),
 
@@ -116,7 +116,7 @@ const jobPositionApiService = {
       `/recruiter/document-verification/get-screening-committee/${applicationId}`,
       {
         headers: {
-          "X-Client": "recruiter",
+          "X-Client": "AzureAD",
         },
       }
     ),
@@ -127,7 +127,7 @@ const jobPositionApiService = {
       `/recruiter/zonal-verification/documents/${applicationId}`,
       {
         headers: {
-          "X-Client": "recruiter",
+          "X-Client": "AzureAD",
         },
       }
     ),
@@ -138,7 +138,7 @@ const jobPositionApiService = {
       "/recruiter/document-verification/save-screening-committee/verify",
       payload,
       {
-        headers: { "X-Client": "recruiter" },
+        headers: { "X-Client": "AzureAD" },
       }
     ),
 
@@ -148,7 +148,7 @@ const jobPositionApiService = {
       payload,
       {
         headers: {
-          "X-Client": "recruiter",
+          "X-Client": "AzureAD",
         },
       }
     );
@@ -179,7 +179,7 @@ const jobPositionApiService = {
       payload,
       {
         headers: {
-          "X-Client": "recruiter"
+          "X-Client": "AzureAD"
         }
       }
     );
@@ -193,7 +193,7 @@ const jobPositionApiService = {
       {
         params: { applicationId, isAbsent },
         headers: {
-          "X-Client": "recruiter"
+          "X-Client": "AzureAD"
         }
       }
     );
@@ -205,7 +205,7 @@ const jobPositionApiService = {
       {
         params: { applicationId },
         headers: {
-          "X-Client": "recruiter",
+          "X-Client": "AzureAD",
         },
       }
     );
@@ -217,7 +217,7 @@ const jobPositionApiService = {
       {
         responseType: "blob",
         headers: {
-          "X-Client": "recruiter",
+          "X-Client": "AzureAD",
         },
       }
     ),
@@ -248,7 +248,7 @@ const jobPositionApiService = {
       {
         headers: {
           "Content-Type": "multipart/form-data",
-          "X-Client": "recruiter",
+          "X-Client": "AzureAD",
         },
       }
     );
@@ -261,7 +261,7 @@ const jobPositionApiService = {
       {
         responseType: "blob",
         headers: {
-          "X-Client": "recruiter",
+          "X-Client": "AzureAD",
         },
       }
     ),
@@ -269,19 +269,19 @@ const jobPositionApiService = {
   getL1Requisitions: ({ year, search, page, size, statuses }) =>
     api.get("/recruiter/job-requisitions/l1-requisitions", {
       params: { year, search, page, size, statuses },
-      headers: { "X-Client": "recruiter" }
+      headers: { "X-Client": "AzureAD" }
     }),
   getL2Requisitions: ({ year, search, page, size, statuses }) =>
     api.get("/recruiter/job-requisitions/l2-requisitions", {
       params: { year, search, page, size, statuses },
-      headers: { "X-Client": "recruiter" }
+      headers: { "X-Client": "AzureAD" }
     }),
   getRequisitionApprovalHistory: (requisitionId) =>
     api.get(
       `/recruiter/workflow-approval/get-requisition-approval-history/${requisitionId}`,
       {
         headers: {
-          "X-Client": "recruiter",
+          "X-Client": "AzureAD",
         },
       }
     ),
@@ -295,7 +295,7 @@ const jobPositionApiService = {
       },
       {
         headers: {
-          "X-Client": "recruiter"
+          "X-Client": "AzureAD"
         }
       }
     ),
@@ -306,7 +306,7 @@ const jobPositionApiService = {
       applicationIds,
       {
         headers: {
-          "X-Client": "recruiter",
+          "X-Client": "AzureAD",
         },
       }
     );
@@ -315,7 +315,7 @@ const jobPositionApiService = {
   getOffersByPosition(positionId) {
     return api.get(`/recruiter/candidate-offer/get-offers/${positionId}`, {
       headers: {
-        "X-Client": "recruiter"
+        "X-Client": "AzureAD"
       }
     });
   },
@@ -326,7 +326,7 @@ const jobPositionApiService = {
       offerIds,
       {
         headers: {
-          "X-Client": "recruiter",
+          "X-Client": "AzureAD",
         },
         responseType: "blob", // VERY IMPORTANT
       }
@@ -342,7 +342,7 @@ const jobPositionApiService = {
       formData,
       {
         headers: {
-          "X-Client": "recruiter",
+          "X-Client": "AzureAD",
         },
       }
     );
