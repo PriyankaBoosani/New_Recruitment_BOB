@@ -3,7 +3,7 @@ import { useMsal } from "@azure/msal-react";
 
 export default function PrivateRoute() {
 
-  const { accounts, inProgress } = useMsal();
+  const { accounts, inProgress, instance } = useMsal();
 
   // MSAL still restoring login state
   if (inProgress === "startup" || inProgress === "handleRedirect") {
@@ -11,7 +11,9 @@ export default function PrivateRoute() {
   }
 
   // No user logged in
-  if (!accounts || accounts.length === 0) {
+  const account = instance.getActiveAccount() || accounts[0];
+
+  if (!account) {
     return <Navigate to="/login" replace />;
   }
 

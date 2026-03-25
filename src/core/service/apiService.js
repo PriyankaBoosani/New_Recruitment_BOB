@@ -17,16 +17,25 @@ const MASTER_DROPDOWN_URL = process.env.REACT_APP_MASTER_DROPDOWN_URL;
 
 async function getToken() {
   try {
-    const accounts = msalInstance.getAllAccounts();
+    let account = msalInstance.getActiveAccount();
 
-    if (!accounts.length) return null;
+    if (!account) {
+      const accounts = msalInstance.getAllAccounts();
+      account = accounts[0];
+      if (account) {
+        msalInstance.setActiveAccount(account);
+      }
+    }
+
+    if (!account) return null;
 
     const response = await msalInstance.acquireTokenSilent({
       ...loginRequest,
-      account: accounts[0],
+      account,
     });
 
     return response.accessToken;
+
   } catch (error) {
     console.error("Token acquisition failed", error);
     return null;
