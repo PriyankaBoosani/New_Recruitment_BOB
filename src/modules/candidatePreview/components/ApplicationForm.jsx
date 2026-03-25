@@ -486,6 +486,7 @@ const ApplicationForm = ({
           fileName: item.fileName,
           url: item.fileUrl,
           status: status?.toUpperCase() || "PENDING",
+          isValidationPending: item.isValidationPending
         });
 
       });
@@ -1266,7 +1267,7 @@ const ApplicationForm = ({
                     <td className="fw-med">{t("dob")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.dob}
-                      {!dobDoc && dobDoc.isValidationPending ? (
+                      {!dobDoc?.isValidationPending ? (
                         <OverlayTrigger
                           placement="top"
                           overlay={

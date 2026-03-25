@@ -241,7 +241,7 @@ export default function CandidateScreening({ selectedJob }) {
   }, [masterData]);
 
   useEffect(() => {
-    if (!selectedPositionId) return;
+    if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") return;
 
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
@@ -253,7 +253,7 @@ export default function CandidateScreening({ selectedJob }) {
     }, 400);
 
     return () => clearTimeout(searchTimeoutRef.current);
-  }, [filters.searchText]);
+  }, [filters.searchText, activeTab]);
 
   useEffect(() => {
     fetchRequisitions("");
@@ -381,7 +381,7 @@ export default function CandidateScreening({ selectedJob }) {
   // }, [selectedPositionId, page, pageSize, filters, masterData]);
 
   useEffect(() => {
-    if (!selectedPositionId) return;
+    if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") return;
 
     fetchCandidates();
   }, [
@@ -392,17 +392,18 @@ export default function CandidateScreening({ selectedJob }) {
     filters.stateId,
     filters.categoryId,
     masterData,
+    activeTab
   ]);
 
   // 🔍 Fetch all candidates for filter dropdowns when position/status changes
   useEffect(() => {
-    if (!selectedPositionId) {
+    if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") {
       setAllCandidatesForFilters([]);
       return;
     }
 
     fetchAllCandidatesForFilters();
-  }, [selectedPositionId, filters.status, filters.searchText, masterData]);
+  }, [selectedPositionId, filters.status, filters.searchText, masterData, activeTab]);
 
   const handleRequisitionChange = async (e) => {
     const reqId = e.target.value;
