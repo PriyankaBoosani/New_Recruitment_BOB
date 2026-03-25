@@ -1141,8 +1141,11 @@ const ApplicationForm = ({
     }
   }, [zonalDecision]);
 
-  const dobDoc = birthDoc || tenthDoc;
 
+
+  const isBirthPending = birthDoc?.isValidationPending === true;
+  const isTenthPending = tenthDoc?.isValidationPending === true;
+  const isPending = isBirthPending || isTenthPending;
   return (
     <>
       <Accordion
@@ -1267,24 +1270,8 @@ const ApplicationForm = ({
                     <td className="fw-med">{t("dob")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.dob}
-                      {!dobDoc?.isValidationPending ? (
-                        <OverlayTrigger
-                          placement="top"
-                          overlay={
-                            <Tooltip id="dob-success-tooltip">
-                              Verified
-                            </Tooltip>
-                          }
-                        >
-                          <span>
-                            <FontAwesomeIcon
-                              icon={faCircleCheck}
-                              style={{ color: "#28a745" }}
-                              className="ms-1"
-                            />
-                          </span>
-                        </OverlayTrigger>
-                      ) : (
+                      {isPending ? (
+                        // ❌ PENDING
                         <OverlayTrigger
                           placement="top"
                           overlay={
@@ -1297,6 +1284,25 @@ const ApplicationForm = ({
                             <FontAwesomeIcon
                               icon={faCircleXmark}
                               style={{ color: "#dc3545" }}
+                              className="ms-1"
+                            />
+                          </span>
+                        </OverlayTrigger>
+
+                      ) : (
+                        // ✅ VERIFIED
+                        <OverlayTrigger
+                          placement="top"
+                          overlay={
+                            <Tooltip id="dob-success-tooltip">
+                              Verified
+                            </Tooltip>
+                          }
+                        >
+                          <span>
+                            <FontAwesomeIcon
+                              icon={faCircleCheck}
+                              style={{ color: "#28a745" }}
                               className="ms-1"
                             />
                           </span>
