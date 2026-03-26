@@ -52,7 +52,7 @@ export const mapUniqueRequisitionsToDropdown = (list = []) => {
     if (!map.has(req.id)) {
       map.set(req.id, {
         value: req.id,
-        label: req.requisitionTitle,
+       label: `${req.requisitionCode} - ${req.requisitionTitle}`,
         raw: {
           requisition_id: req.id,
           requisition_title: req.requisitionTitle,
