@@ -122,8 +122,6 @@ const ApplicationForm = ({
     return "PENDING";
   };
 
-
-
   const mapStatusToDecision = (status) => {
     const s = String(status || "").toUpperCase().trim();
 
@@ -132,12 +130,6 @@ const ApplicationForm = ({
     if (s === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
     return "";
   };
-
-
-
-
-
-
 
   useEffect(() => {
     if (!isZonalHr) return;
@@ -364,6 +356,8 @@ const ApplicationForm = ({
   const [signature, setSignature] = useState()
 
   const allDocs = screeningDocuments.length > 0 ? screeningDocuments : data.documents.allDocs;
+  console.log(screeningDocuments)
+  console.log(data.documents.allDocs)
 
   const photoDoc = allDocs.find(doc => doc.name === "Photo");
   const signatureDoc = allDocs.find(doc => doc.name === "Signature");
@@ -486,7 +480,8 @@ const ApplicationForm = ({
           fileName: item.fileName,
           url: item.fileUrl,
           status: status?.toUpperCase() || "PENDING",
-          isValidationPending: item.isValidationPending
+          isValidationPending: item.isValidationPending,
+          pendingChecks: item.pendingChecks || []
         });
 
       });
@@ -1141,7 +1136,17 @@ const ApplicationForm = ({
     }
   }, [zonalDecision]);
 
+  const getPendingMessage = (doc) => {
+    if (!doc?.pendingChecks?.length) {
+      return "Validation pending";
+    }
 
+    const formatted = doc.pendingChecks
+      .map(item => String(item).toUpperCase())
+      .join(", ");
+
+    return `Please verify the correctness of ${formatted}`;
+  };
 
   const isBirthPending = birthDoc?.isValidationPending === true;
   const isTenthPending = tenthDoc?.isValidationPending === true;
@@ -1633,7 +1638,7 @@ const ApplicationForm = ({
                               placement="top"
                               overlay={
                                 <Tooltip id={`tooltip-left-${left.candidateDocumentId}`}>
-                                  Manual verification pending
+                                  {getPendingMessage(left)}
                                 </Tooltip>
                               }
                             >
@@ -1703,7 +1708,7 @@ const ApplicationForm = ({
                               placement="top"
                               overlay={
                                 <Tooltip id={`tooltip-right-${right.candidateDocumentId}`}>
-                                  Manual verification pending
+                                  {getPendingMessage(right)}
                                 </Tooltip>
                               }
                             >
