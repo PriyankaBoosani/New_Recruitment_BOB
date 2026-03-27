@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import HeaderWithBack from "../../shared/components/HeaderWithBack";
-
-import masterApiService from "../master/services/masterApiService";
 
 import DropdownStrip from "../candidatePreview/components/DropdownStrip";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
@@ -20,58 +18,27 @@ const ScheduleInterviews = () => {
 
   /* ================= STATE ================= */
 
-  const [masterData, setMasterData] = useState(null);
 
-  const [requisitions, setRequisitions] = useState([]);
-  const [positions, setPositions] = useState([]);
 
-  const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
-  const [selectedPositionId, setSelectedPositionId] = useState("");
 
   const [panels, setPanels] = useState([]);
   const [startTime, setStartTime] = useState("");
 
-  const { schedule } = useInterviewSchedule();
+  const { 
+        schedule,
+    updateRow,
+    setSchedule,
+    requisitions,
+    selectedRequisitionId,
+    loadingRequisitions,
+    positions,
+    selectedPositionId,
+    loadingPositions,
+    handleRequisitionChange,
+    setSelectedPositionId
+  } = useInterviewSchedule();
 
-  /* ================= LOAD MASTER ================= */
-
-  useEffect(() => {
-    masterApiService.getMasterDisplayAll().then(res => {
-
-      setMasterData(res.data || {});
-
-      // ⚠️ CHANGE KEY HERE IF YOUR API USES DIFFERENT NAME
-      setRequisitions(res.data?.jobRequisitions || []);
-    });
-  }, []);
-
-  /* ================= LOAD POSITIONS ================= */
-
-  useEffect(() => {
-    if (!selectedRequisitionId) {
-      setPositions([]);
-      return;
-    }
-
-    masterApiService
-      .getPositionsByRequisitionId(selectedRequisitionId)
-      .then(res => {
-        setPositions(res.data || []);
-      })
-      .catch(() => setPositions([]));
-
-  }, [selectedRequisitionId]);
-
-  /* ================= DROPDOWN HANDLERS ================= */
-
-  const handleReqChange = (e) => {
-    setSelectedRequisitionId(e.target.value);
-    setSelectedPositionId("");
-  };
-
-  const handlePosChange = (id) => {
-    setSelectedPositionId(id);
-  };
+  
 
   const selectedRequisition =
     requisitions.find(r => r.id === selectedRequisitionId);
@@ -82,7 +49,7 @@ const ScheduleInterviews = () => {
   const isSelectionDone =
     selectedRequisition && selectedPosition;
 
-  /* ================= PANEL ACTIONS ================= */
+/* ================= PANEL ACTIONS ================= */
 
   const handleAddPanel = () => {
     setPanels(prev => [
@@ -96,7 +63,6 @@ const ScheduleInterviews = () => {
 
   const handleApplyAll = () => {
   };
-
   /* ================= UI ================= */
 
   return (
@@ -121,9 +87,9 @@ const ScheduleInterviews = () => {
               selectedPositionId={selectedPositionId}
               loadingRequisitions={!requisitions.length}
               loadingPositions={!positions.length}
-              onRequisitionChange={handleReqChange}
-              onPositionChange={handlePosChange}
+              onRequisitionChange={handleRequisitionChange}
               onRequisitionSearch={() => {}}
+              onPositionChange={setSelectedPositionId}
             />
 
           </div>
@@ -158,14 +124,14 @@ const ScheduleInterviews = () => {
 
       {/* ===== READY BAR ===== */}
       <div className="mt-3">
-        <ScheduleReadyBar
+        {/* <ScheduleReadyBar
           count={schedule.length}
           onCancel={() => navigate(-1)}
-        />
+        /> */}
       </div>
 
       {/* ===== INTERVIEW SCHEDULE TABLE ===== */}
-      <InterviewScheduleTable rows={schedule} />
+ <InterviewScheduleTable rows={schedule} /> 
 
     </div>
   );

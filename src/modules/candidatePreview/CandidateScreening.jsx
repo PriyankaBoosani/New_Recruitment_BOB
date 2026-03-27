@@ -14,7 +14,7 @@ import jobPositionApiService from "../jobPosting/services/jobPositionApiService"
 import DropdownStrip from "./components/DropdownStrip";
 import { toast } from "react-toastify";
 import PdfViewerModal from "./components/PdfViewerModal";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import InterviewFeedbackHistoryModal from "./components/InterviewFeedbackHistoryModal";
 import useInterviewPool from "./hooks/useInterviewPool";
 import candidateWorkflowServices from "./services/CandidateWorkflowServices";
@@ -77,6 +77,7 @@ export default function CandidateScreening({ selectedJob }) {
   const [interviewPage, setInterviewPage] = useState(0);
   const [interviewPageSize, setInterviewPageSize] = useState(10);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navActiveTab = location.state?.activeTab;
 
@@ -117,6 +118,27 @@ export default function CandidateScreening({ selectedJob }) {
     setZonalComment(comment || "-");
     setShowZonalCommentModal(true);
   };
+
+  const handleScheduleInterview = () => {
+    // Navigate to schedule interviews page with selected candidate, requisition, and position data
+    const queryParams = new URLSearchParams();
+    
+    if (selectedRequisitionId) {
+      queryParams.append('requisitionId', selectedRequisitionId);
+    }
+    
+    if (selectedPositionId) {
+      queryParams.append('positionId', selectedPositionId);
+    }
+    
+    if (selectedCandidateIds.length > 0) {
+      queryParams.append('candidateIds', selectedCandidateIds.join(','));
+    }
+    
+    const url = `/schedule-interviews${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+    navigate(url);
+  };
+
   const searchTimeoutRef = useRef(null);
   const {
     interviewCandidates,
@@ -1323,7 +1345,7 @@ export default function CandidateScreening({ selectedJob }) {
                 {activeTab === "CANDIDATE_POOL"
                   && hasPrivilege("Interview Pool")
                   && canScheduleInterview && (
-                    <button className="btn blue-bg text-white fs-14" onClick={() => setShowScheduleModal(true)}>
+                    <button className="btn blue-bg text-white fs-14" onClick={handleScheduleInterview}>
                       {t("candidateWorkflow:schedule_interview")}
                     </button>
                   )}
@@ -1338,7 +1360,6 @@ export default function CandidateScreening({ selectedJob }) {
                       {t("candidateWorkflow:send_to_offer_pool")}
                     </button>
                   )}
-
               </div>
             </div>
           )}

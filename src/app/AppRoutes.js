@@ -217,7 +217,7 @@ const AppRoutes = () => {
                   }
                 />
 
-                {/* <Route
+                <Route
                   path="/schedule-interviews"
                   element={
                     <PrivilegeRoute privilege="Interview">
