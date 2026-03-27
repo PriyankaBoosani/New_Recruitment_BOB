@@ -13,7 +13,7 @@ import masterApiService from "../../master/services/masterApiService";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faCircleExclamation, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
 
 const ApplicationForm = ({
@@ -1270,7 +1270,7 @@ const ApplicationForm = ({
                     <td className="fw-med">{t("dob")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.dob}
-                      {isPending ? (
+                      {/* {isPending ? (
                         // ❌ PENDING
                         <OverlayTrigger
                           placement="top"
@@ -1307,7 +1307,7 @@ const ApplicationForm = ({
                             />
                           </span>
                         </OverlayTrigger>
-                      )}
+                      )} */}
                     </td>
                     <td className="fw-med">{t("age_cutoff")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.age || "-"}</td>
@@ -1624,7 +1624,29 @@ const ApplicationForm = ({
                       <tr key={rowIndex}>
 
                         {/* LEFT SIDE */}
-                        <td>{left?.name}</td>
+                        {/* <td>{left?.name}</td> */}
+                        <td>
+                          {left?.name}
+
+                          {left?.isValidationPending && (
+                            <OverlayTrigger
+                              placement="top"
+                              overlay={
+                                <Tooltip id={`tooltip-left-${left.candidateDocumentId}`}>
+                                  Manual verification pending
+                                </Tooltip>
+                              }
+                            >
+                              <span>
+                                <FontAwesomeIcon
+                                  icon={faCircleExclamation}   // ⚠️ warning icon
+                                  style={{ color: "#ffc107" }}
+                                  className="ms-2"
+                                />
+                              </span>
+                            </OverlayTrigger>
+                          )}
+                        </td>
 
                         <td>
                           {left && (
@@ -1672,7 +1694,29 @@ const ApplicationForm = ({
 
 
                         {/* RIGHT SIDE */}
-                        <td>{right?.name || "-"}</td>
+                        {/* <td>{right?.name || "-"}</td> */}
+                        <td>
+                          {right?.name || "-"}
+
+                          {right?.isValidationPending && (
+                            <OverlayTrigger
+                              placement="top"
+                              overlay={
+                                <Tooltip id={`tooltip-right-${right.candidateDocumentId}`}>
+                                  Manual verification pending
+                                </Tooltip>
+                              }
+                            >
+                              <span>
+                                <FontAwesomeIcon
+                                  icon={faCircleExclamation}
+                                  style={{ color: "#ffc107" }}
+                                  className="ms-2"
+                                />
+                              </span>
+                            </OverlayTrigger>
+                          )}
+                        </td>
 
                         <td>
                           {right ? (
