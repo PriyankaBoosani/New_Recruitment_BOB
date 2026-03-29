@@ -32,7 +32,8 @@ const ApplicationForm = ({
   zonalVerificationStatus,
   zonalSubmitBeforeDate,
   zonalHrComments,
-  candidateStatus
+  candidateStatus,
+  isFromInterview
 }) => {
 
   const { t } = useTranslation(["preview", "common", "validation"]);
@@ -1782,7 +1783,7 @@ const ApplicationForm = ({
         </Accordion.Item>
 
         {/* ================= CRITERIA SECTION ================= */}
-        {canCandidatePool && !disableDocAction && (
+        {canCandidatePool && !disableDocAction && !isFromInterview && (
           <Card className="criteria-main-card">
 
             <div className="criteria-wrapper">

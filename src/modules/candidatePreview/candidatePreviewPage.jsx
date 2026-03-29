@@ -89,6 +89,8 @@ const CandidatePreviewPage = ({ onHide }) => {
   const [previewData, setPreviewData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const isFromInterview = state?.from === "/candidate-interviewer";
+
   /* =======================
      LOAD MASTERS + CANDIDATE
   ======================= */
@@ -286,6 +288,7 @@ const CandidatePreviewPage = ({ onHide }) => {
               zonalSubmitBeforeDate={candidate?.zonalSubmitBeforeDate}
               zonalHrComments={candidate?.zonalHrComments}
               candidateStatus={candidate?.status}
+                isFromInterview={isFromInterview}
             />
           )
         )}
