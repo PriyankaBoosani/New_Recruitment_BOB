@@ -12,7 +12,7 @@ import ErrorModal from "./components/ErrorModal";
 import PanelImportModal from "./components/PanelImportModal";
 import { useTranslation } from "react-i18next";
 import PositionAssignmentImportModal from "./components/PositionAssignmentImportModal";
-
+import bulbIcon from "../../assets/bulb-icon.png";
 const InterviewPanelPage = () => {
 
 
@@ -123,6 +123,66 @@ const InterviewPanelPage = () => {
             </div>
           </div>
         </div>
+
+
+      <div className="guidelines-box mt-3">
+        <div className="guidelines-header">
+          <img
+            src={bulbIcon}
+            alt="Info"
+            className="bulb-icon"
+          />
+          <h5 className="guidelines-title">Guidelines</h5>
+        </div>
+
+        {/* ADD PANELS */}
+        <div className="guideline-section">
+          <h6 className="sectiontitle">Add Panels</h6>
+
+          <ol className="main-list">
+            <li>Click on <b>Add Panels</b> to create new panels.</li>
+
+            <li>
+              In the <b>Panel Sheet:</b>
+              <ul>
+                <li>Enter the <b>Panel Number</b> and <b>Panel Name</b>.</li>
+                <li>
+                  Select the panel type under the <b>Committee Name</b> column
+                  (Screening, Interview, or Compensation).
+                </li>
+              </ul>
+            </li>
+
+            <li>
+              In the <b>Panel Member Sheet:</b>
+              <ul>
+                <li>Enter the <b>Panel Number</b> (as defined in the Panel Sheet).</li>
+                <li>Select and assign users to the panel.</li>
+                <li>Use additional rows to add multiple users to the same panel.</li>
+              </ul>
+            </li>
+
+            <li>Save the Excel file and upload it to the system.</li>
+          </ol>
+        </div>
+
+        <hr />
+
+        {/* ADD POSITION ASSIGNMENTS */}
+        <div className="guideline-section">
+          <h6 className="sectiontitle">Add Position Assignments</h6>
+
+          <ol className="main-list">
+            <li>
+              Click on <b>Add Position Assignments</b> to map panels to specific positions.
+            </li>
+            <li>Select the required <b>Requisition/Position</b>.</li>
+            <li>Choose the relevant <b>existing/created panel(s)</b>.</li>
+            <li>Enter the <b>Start Date</b> and <b>End Date</b>.</li>
+            <li>Save the Excel file and upload it to the system.</li>
+          </ol>
+        </div>
+      </div>
 
         {/* <div className="panel-content">
           {activeTab === "MANAGE" && (
