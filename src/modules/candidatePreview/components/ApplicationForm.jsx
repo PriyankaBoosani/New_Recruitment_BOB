@@ -1506,7 +1506,10 @@ const ApplicationForm = ({
                 </thead>
 
                 <tbody>
-                  {(data.education || []).map((edu, index) => (
+                  {/* {(data.education || []).map((edu, index) => ( */}
+                  {(data.education || [])
+                    .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+                    .map((edu, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
                       <td>{edu.educationLevel_name || "-"}</td>
@@ -1636,7 +1639,7 @@ const ApplicationForm = ({
 
                           {left?.isValidationPending && (
                             <OverlayTrigger
-                              placement="top"
+                              placement="bottom"
                               overlay={
                                 <Tooltip id={`tooltip-left-${left.candidateDocumentId}`}>
                                   {getPendingMessage(left)}
@@ -1706,7 +1709,7 @@ const ApplicationForm = ({
 
                           {right?.isValidationPending && (
                             <OverlayTrigger
-                              placement="top"
+                              placement="bottom"
                               overlay={
                                 <Tooltip id={`tooltip-right-${right.candidateDocumentId}`}>
                                   {getPendingMessage(right)}
