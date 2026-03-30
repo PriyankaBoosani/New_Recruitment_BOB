@@ -874,7 +874,7 @@ const ApplicationForm = ({
     });
   };
 
-  const disableDocAction = isInterviewView;
+  const disableDocAction = isInterviewView || isFromInterview;
 
   const allDocsVerified =
     documentRows.length > 0 &&
