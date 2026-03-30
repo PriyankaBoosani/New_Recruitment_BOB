@@ -3,7 +3,7 @@ import { Person, FileText } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-
+import { toast } from "react-toastify";
 
 const InterviewDayTable = ({
   rows = [],
@@ -196,14 +196,31 @@ disabled={row.absent || row.isZonalAbsent}
     return;
   }
  
+  // const num = parseInt(v, 10);
+ 
+  // if (isNaN(num)) {
+  //   updateScore(row.id, "");
+  //   return;
+  // }
+ 
+  // updateScore(row.id, Math.min(100, Math.max(0, num)));
+
+
+
   const num = parseInt(v, 10);
- 
-  if (isNaN(num)) {
-    updateScore(row.id, "");
-    return;
-  }
- 
-  updateScore(row.id, Math.min(100, Math.max(0, num)));
+
+if (isNaN(num)) {
+  updateScore(row.id, "");
+  return;
+}
+
+// 👉 ADD VALIDATION HERE
+if (num > 100) {
+  toast.error("Score cannot be greater than 100"); // simple message
+  return;
+}
+
+updateScore(row.id, num);
 }}
   onPaste={(e) => {
     const text = e.clipboardData.getData("text");

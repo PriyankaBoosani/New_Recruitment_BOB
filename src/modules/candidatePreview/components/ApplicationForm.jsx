@@ -13,7 +13,7 @@ import masterApiService from "../../master/services/masterApiService";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faCircleExclamation, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
 
 const ApplicationForm = ({
@@ -32,7 +32,8 @@ const ApplicationForm = ({
   zonalVerificationStatus,
   zonalSubmitBeforeDate,
   zonalHrComments,
-  candidateStatus
+  candidateStatus,
+  isFromInterview
 }) => {
 
   const { t } = useTranslation(["preview", "common", "validation"]);
@@ -122,8 +123,6 @@ const ApplicationForm = ({
     return "PENDING";
   };
 
-
-
   const mapStatusToDecision = (status) => {
     const s = String(status || "").toUpperCase().trim();
 
@@ -132,12 +131,6 @@ const ApplicationForm = ({
     if (s === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
     return "";
   };
-
-
-
-
-
-
 
   useEffect(() => {
     if (!isZonalHr) return;
@@ -364,6 +357,8 @@ const ApplicationForm = ({
   const [signature, setSignature] = useState()
 
   const allDocs = screeningDocuments.length > 0 ? screeningDocuments : data.documents.allDocs;
+  console.log(screeningDocuments)
+  console.log(data.documents.allDocs)
 
   const photoDoc = allDocs.find(doc => doc.name === "Photo");
   const signatureDoc = allDocs.find(doc => doc.name === "Signature");
@@ -486,7 +481,8 @@ const ApplicationForm = ({
           fileName: item.fileName,
           url: item.fileUrl,
           status: status?.toUpperCase() || "PENDING",
-          isValidationPending: item.isValidationPending
+          isValidationPending: item.isValidationPending,
+          pendingChecks: item.pendingChecks || []
         });
 
       });
@@ -878,7 +874,7 @@ const ApplicationForm = ({
     });
   };
 
-  const disableDocAction = isInterviewView;
+  const disableDocAction = isInterviewView || isFromInterview;
 
   const allDocsVerified =
     documentRows.length > 0 &&
@@ -1141,7 +1137,17 @@ const ApplicationForm = ({
     }
   }, [zonalDecision]);
 
+  const getPendingMessage = (doc) => {
+    if (!doc?.pendingChecks?.length) {
+      return "Validation pending";
+    }
 
+    const formatted = doc.pendingChecks
+      .map(item => String(item).toUpperCase())
+      .join(", ");
+
+    return `Please verify the correctness of ${formatted}`;
+  };
 
   const isBirthPending = birthDoc?.isValidationPending === true;
   const isTenthPending = tenthDoc?.isValidationPending === true;
@@ -1270,7 +1276,7 @@ const ApplicationForm = ({
                     <td className="fw-med">{t("dob")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.dob}
-                      {isPending ? (
+                      {/* {isPending ? (
                         // ❌ PENDING
                         <OverlayTrigger
                           placement="top"
@@ -1307,7 +1313,7 @@ const ApplicationForm = ({
                             />
                           </span>
                         </OverlayTrigger>
-                      )}
+                      )} */}
                     </td>
                     <td className="fw-med">{t("age_cutoff")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.age || "-"}</td>
@@ -1500,7 +1506,10 @@ const ApplicationForm = ({
                 </thead>
 
                 <tbody>
-                  {(data.education || []).map((edu, index) => (
+                  {/* {(data.education || []).map((edu, index) => ( */}
+                  {(data.education || [])
+                    .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+                    .map((edu, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
                       <td>{edu.educationLevel_name || "-"}</td>
@@ -1624,7 +1633,29 @@ const ApplicationForm = ({
                       <tr key={rowIndex}>
 
                         {/* LEFT SIDE */}
-                        <td>{left?.name}</td>
+                        {/* <td>{left?.name}</td> */}
+                        <td>
+                          {left?.name}
+
+                          {left?.isValidationPending && (
+                            <OverlayTrigger
+                              placement="bottom"
+                              overlay={
+                                <Tooltip id={`tooltip-left-${left.candidateDocumentId}`}>
+                                  {getPendingMessage(left)}
+                                </Tooltip>
+                              }
+                            >
+                              <span>
+                                <FontAwesomeIcon
+                                  icon={faCircleExclamation}   // ⚠️ warning icon
+                                  style={{ color: "#ffc107" }}
+                                  className="ms-2"
+                                />
+                              </span>
+                            </OverlayTrigger>
+                          )}
+                        </td>
 
                         <td>
                           {left && (
@@ -1672,7 +1703,29 @@ const ApplicationForm = ({
 
 
                         {/* RIGHT SIDE */}
-                        <td>{right?.name || "-"}</td>
+                        {/* <td>{right?.name || "-"}</td> */}
+                        <td>
+                          {right?.name || "-"}
+
+                          {right?.isValidationPending && (
+                            <OverlayTrigger
+                              placement="bottom"
+                              overlay={
+                                <Tooltip id={`tooltip-right-${right.candidateDocumentId}`}>
+                                  {getPendingMessage(right)}
+                                </Tooltip>
+                              }
+                            >
+                              <span>
+                                <FontAwesomeIcon
+                                  icon={faCircleExclamation}
+                                  style={{ color: "#ffc107" }}
+                                  className="ms-2"
+                                />
+                              </span>
+                            </OverlayTrigger>
+                          )}
+                        </td>
 
                         <td>
                           {right ? (
@@ -1733,7 +1786,7 @@ const ApplicationForm = ({
         </Accordion.Item>
 
         {/* ================= CRITERIA SECTION ================= */}
-        {canCandidatePool && !disableDocAction && (
+        {canCandidatePool && !disableDocAction && !isFromInterview && (
           <Card className="criteria-main-card">
 
             <div className="criteria-wrapper">

@@ -647,3 +647,67 @@ border-radius: 0;       /* optional */
   overflow-wrap: anywhere;   /* modern support */
   white-space: normal;       /* allow wrapping */
 }
+/*guidelines*/
+.guidelines-box {
+  background: #f5f6f8;
+  border-radius: 6px;
+  padding: 16px 20px;
+}
+
+.guidelines-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.bulb-icon {
+  width: 22px;
+  height: 22px;
+  margin-top: -4px;
+}
+
+.guidelines-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: #ff6a00;;
+}
+
+.guideline-section {
+  margin-top: 10px;
+}
+
+.guideline-section .sectiontitle {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #162B75 !important;
+}
+
+.main-list {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.main-list > li {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #444;
+}
+
+.main-list ul {
+  margin-top: 6px;
+  padding-left: 18px;
+}
+
+.main-list ul li {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+hr {
+  margin: 12px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
