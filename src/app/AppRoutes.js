@@ -51,7 +51,8 @@ const Loading = () => (
 );
 
 const AppRoutes = () => {
-  // Use the same selector you use for auth in your app
+  // Check if user is authenticated from Redux
+  const authUser = useSelector((state) => state.user?.authUser);
   const token = useSelector((state) => state.user?.authUser?.access_token || state.user?.authUser?.accessToken || state.user?.auth?.access_token);
 
   return (
@@ -63,8 +64,8 @@ const AppRoutes = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
 
-        {/* Root redirect: go to dashboard if authed, else login */}
-        <Route path="/" element={<Navigate to="/login" />} />
+        {/* Root redirect: if authed go to users, else login */}
+        <Route path="/" element={authUser ? <Navigate to="/users" /> : <Navigate to="/login" />} />
         {/* Protected routes */}
         <Route element={<Tokenexp />}>
           <Route element={<PrivateRoute />}>

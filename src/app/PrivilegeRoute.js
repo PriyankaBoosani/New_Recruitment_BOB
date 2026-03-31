@@ -4,9 +4,10 @@ import { useSelector } from "react-redux";
 
 const PrivilegeRoute = ({ children, privilege, privilegesRequired }) => {
    const privileges = useSelector((state) => state.user?.privileges);
+   const authUser = useSelector((state) => state.user?.authUser);
 
-  // Wait until privileges load
-  if (!privileges) {
+  // Wait until user is authenticated AND privileges are loaded
+  if (!authUser || !privileges || Object.keys(privileges).length === 0) {
     return <div>Loading...</div>;
   }
 
