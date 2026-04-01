@@ -162,11 +162,26 @@ export const validateUserForm = (formData = {}, options = {}) => {
   };
 };
 
+
+// utils/getDefaultRoute.js
+export const getDefaultRoute = (privileges = {}) => {
+  if (privileges.Admin) return "/users";
+  if (privileges.JobPostings) return "/job-posting";
+  if (privileges["Candidate Pool"] || privileges["Compensation Pool"]) return "/candidate-workflow";
+  if (privileges.Verification) return "/candidate-verification";
+  if (privileges.Interview) return "/candidate-interviewer";
+  if (privileges["Committee Management"]) return "/interviewpanel";
+  if (privileges["Requisition Approval"]) return "/requisition-requests";
+
+  return "/unauthorized";
+};
+
 export default {
   validateUserRole,
   validateFullName,
   validateUserEmail,
   validateUserPassword,
   validatePasswordConfirmation,
-  validateUserForm
+  validateUserForm,
+  getDefaultRoute
 };

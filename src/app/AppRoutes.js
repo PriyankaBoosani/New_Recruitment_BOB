@@ -38,6 +38,7 @@ import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";// 
 import UnauthorizedPage from "./UnauthorizedPage"
 import PrivilegeRoute from "./PrivilegeRoute";
 import AuthCallback from "../modules/auth/pages/AuthCallback";
+import { getDefaultRoute } from "../shared/utils/user-validations";
 // Lazy loaded components
 const Layout = React.lazy(() => import("../shared/components/Layout"));
 
@@ -54,6 +55,8 @@ const AppRoutes = () => {
   // Check if user is authenticated from Redux
   const authUser = useSelector((state) => state.user?.authUser);
   const token = useSelector((state) => state.user?.authUser?.access_token || state.user?.authUser?.accessToken || state.user?.auth?.access_token);
+  console.log("AppRoutes - authUser:", authUser);
+  const privileges = useSelector((state) => state.user?.privileges);
 
   return (
     <Suspense fallback={<Loading />}>
@@ -65,7 +68,15 @@ const AppRoutes = () => {
         <Route path="/auth/callback" element={<AuthCallback />} />
 
         {/* Root redirect: if authed go to users, else login */}
-        <Route path="/" element={authUser ? <Navigate to="/users" /> : <Navigate to="/login" />} />
+        {/* <Route path="/" element={authUser ? <Navigate to="/users" /> : <Navigate to="/login" />} /> */}
+        <Route
+          path="/"
+          element={
+            authUser
+              ? <Navigate to={getDefaultRoute(privileges)} replace />
+              : <Navigate to="/login" replace />
+          }
+        />
         {/* Protected routes */}
         <Route element={<Tokenexp />}>
           <Route element={<PrivateRoute />}>

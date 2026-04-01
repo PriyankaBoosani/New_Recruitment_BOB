@@ -7,6 +7,7 @@ import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setUser, setAuthUser, setPrivileges } from "../../../app/providers/userSlice";
+import { getDefaultRoute } from '../../../shared/utils/user-validations';
 
 const Login = () => {
   const { instance, accounts, inProgress } = useMsal();
@@ -96,7 +97,8 @@ const Login = () => {
       dispatch(setPrivileges(privileges));
 
       // 🚨 Navigate based on privileges
-      navigateByPrivileges(privileges);
+      // navigateByPrivileges(privileges);
+      navigate(getDefaultRoute(privileges), { replace: true });
     } catch (error) {
       console.error("Post-login error:", error);
       isProcessingRef.current = false;
