@@ -20,6 +20,14 @@ const createGroup = () => ({
   rows: [createRow()]
 });
 
+const createCertRow = () => ({
+  certificationId: ""
+});
+
+const createCertGroup = () => ({
+  certRows: [createCertRow()]
+});
+
 export default function EducationModal({
     show,
     mode,
@@ -36,22 +44,36 @@ export default function EducationModal({
     const [rows, setRows] = useState([createRow()]);
     const [certIds, setCertIds] = useState([""]);
     const [groups, setGroups] = useState([createGroup()]);
+    const [certGroups, setCertGroups] = useState([createCertGroup()]);
 
     
 
     useEffect(() => {
         if (!show) return;
 
-        setRows(
-            initialData?.educations?.length
-                ? initialData.educations
-                : [createRow()]
+        setGroups(
+            initialData?.groups?.length
+                ? initialData.groups.map(g => ({
+                    rows: g.educations?.length ? g.educations.map(e => ({
+                        educationTypeId: e.educationTypeId,
+                        educationQualificationsId: e.educationQualificationsId,
+                        specializationId: e.specializationId || "",
+                        duration: e.duration || "",
+                        gpa: e.gpa || "",
+                        percentage: e.percentage || ""
+                    })) : [createRow()]
+                }))
+                : [createGroup()]
         );
 
-        setCertIds(
-            initialData?.certificationIds?.length
-                ? initialData.certificationIds
-                : [""]
+        setCertGroups(
+            initialData?.certGroups?.length
+                ? initialData.certGroups.map(cg => ({
+                    certRows: cg.certifications?.length ? cg.certifications.map(c => ({
+                        certificationId: c.certificationId
+                    })) : [createCertRow()]
+                }))
+                : [createCertGroup()]
         );
     }, [show, initialData]);
 
@@ -164,6 +186,42 @@ const removeGroup = (gIdx) => {
 
   setGroups(groups.filter((_, i) => i !== gIdx));
 };
+
+// Certification group functions
+const addCertGroup = () => {
+  setCertGroups([...certGroups, createCertGroup()]);
+};
+
+const addCertRow = (certGroupIndex) => {
+  const copy = [...certGroups];
+  copy[certGroupIndex].certRows.push(createCertRow());
+  setCertGroups(copy);
+};
+
+const updateCertRow = (cgIdx, crIdx, field, value) => {
+  const copy = [...certGroups];
+  copy[cgIdx].certRows[crIdx][field] = value;
+  setCertGroups(copy);
+};
+
+const removeCertRow = (cgIdx, crIdx) => {
+  const copy = [...certGroups];
+
+  if (copy[cgIdx].certRows.length === 1) {
+    // reset instead of delete
+    copy[cgIdx].certRows[0] = createCertRow();
+  } else {
+    copy[cgIdx].certRows.splice(crIdx, 1);
+  }
+
+  setCertGroups(copy);
+};
+
+const removeCertGroup = (cgIdx) => {
+  if (certGroups.length === 1) return;
+
+  setCertGroups(certGroups.filter((_, i) => i !== cgIdx));
+};
     const getSpecializationsForDegree = (degreeId) => {
         if (!degreeId) return [];
         return specializations.filter(
@@ -171,10 +229,21 @@ const removeGroup = (gIdx) => {
         );
     };
 
-    const certText = certIds
-        .map(id => certifications.find(c => c.id === id)?.name)
-        .filter(Boolean)
-        .join(" OR ");
+    const certText = certGroups
+  .map(certGroup => {
+    const groupText = certGroup.certRows
+      .filter(cr => cr.certificationId)
+      .map(cr => {
+        const cert = certifications.find(c => c.id === cr.certificationId);
+        return cert ? cert.name : "";
+      })
+      .filter(Boolean)
+      .join(" AND ");
+
+    return groupText ? `(${groupText})` : null;
+  })
+  .filter(Boolean)
+  .join("\nOR\n");
 
 
     let finalText = "";
@@ -405,58 +474,82 @@ const removeGroup = (gIdx) => {
                 <Col md={6} className="mt-4">
                     <h6 className="f14 bluecol">{t("addPosition:certifications_optional")}</h6>
 
-                    {certIds.map((id, i) => (
-                        <Row key={i} className="mb-2 align-items-center">
-                            <Col md={10}>
-                                <Select
-                                    classNamePrefix="react-select"
-                                    menuPortalTarget={document.body}
-                                    menuPosition="fixed"
-                                    styles={{
-                                        menuPortal: base => ({ ...base, zIndex: 9999 })
-                                    }}
-                                    value={[
-                                        { value: "", label: t("common:select_certification") },
-                                        ...filteredCertifications.map(c => ({
-                                            value: c.id,
-                                            label: c.name
-                                        }))
-                                    ].find(option => String(option.value) === String(id))}
-                                    onChange={(selected) => {
-                                        const copy = [...certIds];
-                                        copy[i] = selected ? selected.value : "";
-                                        setCertIds(copy);
-                                    }}
-                                    options={[
-                                        { value: "", label: t("common:select_certification") },
-                                        ...filteredCertifications.map(c => ({
-                                            value: c.id,
-                                            label: c.name
-                                        }))
-                                    ]}
-                                />
-                            </Col>
+                    {certGroups.map((certGroup, cgIdx) => (
+                        <React.Fragment key={cgIdx}>
+                            <div className="group-box">
+                                <div className="group-header">
+                                    <strong>Certification Group {cgIdx + 1}</strong>
+                                    {certGroups.length > 1 && (
+                                        <Button
+                                            onClick={() => removeCertGroup(cgIdx)}
+                                            disabled={certGroups.length === 1}
+                                            variant="outline-danger"
+                                        >
+                                            Delete Group
+                                        </Button>
+                                    )}
+                                </div>
 
-                            <Col md={1} className="text-center">
-                                {certIds.length > 1 && (
-                                    <Button
-                                        variant="link"
-                                        className="p-0 text-danger"
-                                        onClick={() =>
-                                            setCertIds(prev => prev.filter((_, x) => x !== i))
-                                        }
-                                    >
-                                        <img src={delete_icon} alt="delete_icon" className="icon-16" />
-                                    </Button>
-                                )}
-                            </Col>
-                        </Row>
+                                {certGroup.certRows.map((certRow, crIdx) => (
+                                    <Row key={crIdx} className="mb-2 align-items-center">
+                                        <Col md={10}>
+                                            <Select
+                                                classNamePrefix="react-select"
+                                                menuPortalTarget={document.body}
+                                                menuPosition="fixed"
+                                                styles={{
+                                                    menuPortal: base => ({ ...base, zIndex: 9999 })
+                                                }}
+                                                value={[
+                                                    { value: "", label: t("common:select_certification") },
+                                                    ...filteredCertifications.map(c => ({
+                                                        value: c.id,
+                                                        label: c.name
+                                                    }))
+                                                ].find(option => String(option.value) === String(certRow.certificationId))}
+                                                onChange={(selected) => {
+                                                    updateCertRow(cgIdx, crIdx, "certificationId", selected ? selected.value : "");
+                                                }}
+                                                options={[
+                                                    { value: "", label: t("common:select_certification") },
+                                                    ...filteredCertifications.map(c => ({
+                                                        value: c.id,
+                                                        label: c.name
+                                                    }))
+                                                ]}
+                                            />
+                                        </Col>
+
+                                        <Col md={1} className="text-center">
+                                            {certGroup.certRows.length > 1 && (
+                                                <Button
+                                                    variant="link"
+                                                    className="p-0 text-danger"
+                                                    onClick={() => removeCertRow(cgIdx, crIdx)}
+                                                >
+                                                    <img src={delete_icon} alt="delete_icon" className="icon-16" />
+                                                </Button>
+                                            )}
+                                        </Col>
+                                    </Row>
+                                ))}
+                                <Button
+                                    variant="outline-primary"
+                                    size="sm"
+                                    onClick={() => addCertRow(cgIdx)}
+                                    className="mb-3"
+                                >
+                                    + Add Certification
+                                </Button>
+                            </div>
+                            {cgIdx < certGroups.length - 1 && (
+                                <div className="or-divider">( OR )</div>
+                            )}
+                        </React.Fragment>
                     ))}
                 </Col>
 
-                <Button variant="none" onClick={() => setCertIds([...certIds, ""])} className="edu-btn">
-                    {t("addPosition:add_certification")}
-                </Button>
+                <Button onClick={addCertGroup}>+ Add Certification Group</Button>
 
 
 
@@ -517,7 +610,13 @@ const removeGroup = (gIdx) => {
                             }))
                         })),
 
-                        certificationIds: certIds.filter(Boolean),
+                        certGroups: certGroups.map(certGroup => ({
+                            certifications: certGroup.certRows
+                            .filter(cr => cr.certificationId)
+                            .map(cr => ({
+                                certificationId: cr.certificationId
+                            }))
+                        })),
 
                         text: cleanText, // ✅ KEEP THIS
                         };

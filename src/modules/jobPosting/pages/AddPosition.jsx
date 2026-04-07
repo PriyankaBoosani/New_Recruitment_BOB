@@ -590,6 +590,7 @@ const AddPosition = () => {
             indentOthers,
             stateDistributions: stateDistributions.filter(s => !s.__deleted)
         };
+        //console.log(payload);return false;
 
         try {
             if (isEditMode) {
@@ -706,7 +707,7 @@ const AddPosition = () => {
 
             <ImportModal show={showImportModal} onHide={() => setShowImportModal(false)} requisitionId={requisitionId} onSuccess={() => fetchPositions(requisitionId)} // optional but correct
             />
-            <EducationModal key={`${eduMode}-${showEduModal}`} show={showEduModal} mode={eduMode} initialData={educationData[eduMode]} educationTypes={educationTypes} qualifications={qualifications} specializations={specializations} certifications={certifications} onHide={() => setShowEduModal(false)} onSave={({ educations, certificationIds, text }) => { setEducationData(prev => ({ ...prev, [eduMode]: { educations, certificationIds, text } })); setErrors(prev => { const upd = { ...prev }; delete upd[`${eduMode}Education`]; return upd; }); }} />
+            <EducationModal key={`${eduMode}-${showEduModal}`} show={showEduModal} mode={eduMode} initialData={educationData[eduMode]} educationTypes={educationTypes} qualifications={qualifications} specializations={specializations} certifications={certifications} onHide={() => setShowEduModal(false)} onSave={({ groups, certGroups, text }) => { setEducationData(prev => ({ ...prev,[eduMode]: { groups, certGroups, text } })); setErrors(prev => { const upd = { ...prev }; delete upd[`${eduMode}Education`]; return upd; }); }} />
             <ConfirmUsePositionModal show={showConfirmModal} onYes={handleUsePositionData} onNo={handleRejectPositionData}
             />
         </Container>
