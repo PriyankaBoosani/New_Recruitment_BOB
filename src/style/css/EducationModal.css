@@ -140,12 +140,12 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: #dee2e6;
+  /* background: #dee2e6; */
   z-index: 1;
 }
 
 .or-divider {
-  background: #f8f9fa;
+  /* background: #f8f9fa; */
   padding: 0 16px;
   position: relative;
   z-index: 2;

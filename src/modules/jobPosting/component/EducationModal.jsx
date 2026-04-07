@@ -1,5 +1,5 @@
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "../../../style/css/EducationModal.css";
 import { validateEducationModal } from "../validations/validateEducationModal";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
@@ -202,173 +202,193 @@ const removeGroup = (gIdx) => {
 
             <Modal.Body>
                 {groups.map((group, gIdx) => (
-  <div key={gIdx} className="group-box">
+                    <React.Fragment key={gIdx}>
+                        <div className="group-box">
+                            <div className="group-header">
+                                <strong>Group {gIdx + 1}</strong>
+                                {groups.length > 1 && (
+                                    <Button
+                                        onClick={() => removeGroup(gIdx)}
+                                        disabled={groups.length === 1}
+                                        variant="outline-danger"
+                                    >
+                                        Delete Group
+                                    </Button>
+                                )}
+                            </div>
 
-    <div className="group-header">
-      <strong>Group {gIdx + 1} (AND)</strong>
+                            {group.rows.map((row, rIdx) => {
+                                // ✅ ADD THIS (VERY IMPORTANT)
+                                const flatIndex =
+                                    groups.slice(0, gIdx).reduce((acc, g) => acc + g.rows.length, 0) + rIdx;
 
-      {groups.length > 1 && (
-        <Button
-  onClick={() => removeGroup(gIdx)}
-  disabled={groups.length === 1}
-  variant="outline-danger"
->
-  Delete Group
-</Button>
-      )}
-    </div>
+                                return (
+                                    <Row key={rIdx} className="mb-3 align-items-center">
+                                        {/* ✅ Education Type */}
+                                        <Col md={2}>
+                                            <Select
+                                                value={educationTypes
+                                                    .map(t => ({ value: t.id, label: t.label }))
+                                                    .find(opt => String(opt.value) === String(row.educationTypeId))}
+                                                onChange={(selected) =>
+                                                    updateRow(gIdx, rIdx, "educationTypeId", selected?.value || "")
+                                                }
+                                                options={educationTypes.map(t => ({
+                                                    value: t.id,
+                                                    label: t.label
+                                                }))}
+                                                placeholder="Type"
+                                            />
+                                            <ErrorMessage>
+                                                {errors.rows?.[flatIndex]?.educationTypeId &&
+                                                    t(errors.rows[flatIndex].educationTypeId)}
+                                            </ErrorMessage>
+                                        </Col>
 
-    {group.rows.map((row, rIdx) => {
+                                        {/* ✅ Qualification */}
+                                        <Col md={2}>
+                                            <Select
+                                                value={qualifications
+                                                    .map(q => ({ value: q.id, label: q.name }))
+                                                    .find(opt => String(opt.value) === String(row.educationQualificationsId))}
+                                                onChange={(selected) =>
+                                                    updateRow(gIdx, rIdx, "educationQualificationsId", selected?.value || "")
+                                                }
+                                                options={qualifications.map(q => ({
+                                                    value: q.id,
+                                                    label: q.name
+                                                }))}
+                                                placeholder="Degree"
+                                            />
+                                            <ErrorMessage>
+                                                {errors.rows?.[flatIndex]?.educationQualificationsId &&
+                                                    t(errors.rows[flatIndex].educationQualificationsId)}
+                                            </ErrorMessage>
+                                        </Col>
 
-  // ✅ ADD THIS (VERY IMPORTANT)
-  const flatIndex =
-    groups.slice(0, gIdx).reduce((acc, g) => acc + g.rows.length, 0) + rIdx;
+                                        {/* ✅ Specialization */}
+                                        <Col md={2}>
+                                            <Select
+                                                value={getSpecializationsForDegree(row.educationQualificationsId)
+                                                    .map(s => ({ value: s.id, label: s.label }))
+                                                    .find(opt => String(opt.value) === String(row.specializationId))}
+                                                onChange={(selected) =>
+                                                    updateRow(gIdx, rIdx, "specializationId", selected?.value || "")
+                                                }
+                                                options={getSpecializationsForDegree(row.educationQualificationsId).map(s => ({
+                                                    value: s.id,
+                                                    label: s.label
+                                                }))}
+                                                placeholder="Specialization"
+                                            />
+                                        </Col>
 
-  return (
-    <Row key={rIdx} className="mb-3 align-items-center">
+                                        {/* ✅ Duration */}
+                                        <Col md={2}>
+                                            <Form.Control
+                                                type="number"
+                                                placeholder="Duration"
+                                                value={row.duration}
+                                                min="0"
+                                                step="1"
 
-      {/* ✅ Education Type */}
-      <Col md={2}>
-        <Select
-          value={educationTypes
-            .map(t => ({ value: t.id, label: t.label }))
-            .find(opt => String(opt.value) === String(row.educationTypeId))}
-          onChange={(selected) =>
-            updateRow(gIdx, rIdx, "educationTypeId", selected?.value || "")
-          }
-          options={educationTypes.map(t => ({
-            value: t.id,
-            label: t.label
-          }))}
-          placeholder="Type"
-        />
-        <ErrorMessage>
-          {errors.rows?.[flatIndex]?.educationTypeId &&
-            t(errors.rows[flatIndex].educationTypeId)}
-        </ErrorMessage>
-      </Col>
+                                                onKeyDown={(e) => {
+                                                    if (["e", "E", "+", "-", "."].includes(e.key)) {
+                                                        e.preventDefault();
+                                                    }
+                                                }}
 
-      {/* ✅ Qualification */}
-      <Col md={2}>
-        <Select
-          value={qualifications
-            .map(q => ({ value: q.id, label: q.name }))
-            .find(opt => String(opt.value) === String(row.educationQualificationsId))}
-          onChange={(selected) =>
-            updateRow(gIdx, rIdx, "educationQualificationsId", selected?.value || "")
-          }
-          options={qualifications.map(q => ({
-            value: q.id,
-            label: q.name
-          }))}
-          placeholder="Degree"
-        />
-        <ErrorMessage>
-          {errors.rows?.[flatIndex]?.educationQualificationsId &&
-            t(errors.rows[flatIndex].educationQualificationsId)}
-        </ErrorMessage>
-      </Col>
+                                                onInput={(e) => {
+                                                    e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                                                }}
 
-      {/* ✅ Specialization */}
-      <Col md={2}>
-        <Select
-          value={getSpecializationsForDegree(row.educationQualificationsId)
-            .map(s => ({ value: s.id, label: s.label }))
-            .find(opt => String(opt.value) === String(row.specializationId))}
-          onChange={(selected) =>
-            updateRow(gIdx, rIdx, "specializationId", selected?.value || "")
-          }
-          options={getSpecializationsForDegree(row.educationQualificationsId).map(s => ({
-            value: s.id,
-            label: s.label
-          }))}
-          placeholder="Specialization"
-        />
-      </Col>
+                                                onChange={(e) =>
+                                                    updateRow(gIdx, rIdx, "duration", e.target.value)
+                                                }
+                                            />
+                                            <ErrorMessage>
+                                                {errors.rows?.[flatIndex]?.duration &&
+                                                    t(errors.rows[flatIndex].duration)}
+                                            </ErrorMessage>
+                                        </Col>
 
-      {/* ✅ Duration */}
-      <Col md={2}>
-        <Form.Control
-          type="number"
-          placeholder="Duration"
-          value={row.duration}
-          min="0"
-          step="1"
-          onChange={(e) =>
-            updateRow(gIdx, rIdx, "duration", e.target.value)
-          }
-        />
-        <ErrorMessage>
-          {errors.rows?.[flatIndex]?.duration &&
-            t(errors.rows[flatIndex].duration)}
-        </ErrorMessage>
-      </Col>
+                                        {/* ✅ GPA */}
+                                        <Col md={2}>
+                                            <Form.Control
+                                                type="text"
+                                                inputMode="decimal"
+                                                placeholder="GPA"
+                                                value={row.gpa}
 
-      {/* ✅ GPA */}
-      <Col md={2}>
-        <Form.Control
-          type="number"
-          placeholder="GPA"
-          value={row.gpa}
-          min="0"
-          max="10"
-          step="0.01"
-          onChange={(e) =>
-            updateRow(gIdx, rIdx, "gpa", e.target.value)
-          }
-        />
-        <ErrorMessage>
-          {errors.rows?.[flatIndex]?.gpa &&
-            t(errors.rows[flatIndex].gpa)}
-        </ErrorMessage>
-      </Col>
+                                                onChange={(e) => {
+                                                    let value = e.target.value;
 
-      {/* ✅ Percentage */}
-      <Col md={1}>
-        <Form.Control
-          type="number"
-          placeholder="%"
-          value={row.percentage}
-          min="0"
-          max="100"
-          step="0.01"
-          onChange={(e) =>
-            updateRow(gIdx, rIdx, "percentage", e.target.value)
-          }
-        />
-        <ErrorMessage>
-          {errors.rows?.[flatIndex]?.percentage &&
-            t(errors.rows[flatIndex].percentage)}
-        </ErrorMessage>
-      </Col>
+                                                    // allow only numbers and dot
+                                                    if (!/^[0-9]*\.?[0-9]*$/.test(value)) return;
 
-      {/* ✅ Delete */}
-      <Col md={1}>
-        {group.rows.length > 1 && (
-          <Button onClick={() => removeRow(gIdx, rIdx)}>
-            X
-          </Button>
-        )}
-      </Col>
+                                                    // limit to 2 decimal places
+                                                    const parts = value.split(".");
+                                                    if (parts[1]?.length > 2) return;
 
-    </Row>
-  );
-})}
-{/* 
-    {gIdx < groups.length - 1 && (
-      <div className="or-divider">OR</div>
-    )} */}
-    <Button
-  variant="outline-primary"
-  size="sm"
-  onClick={() => addRow(gIdx)}
-  className="mb-3"
->
-  + Add Education
-</Button>
+                                                    updateRow(gIdx, rIdx, "gpa", value);
+                                                }}
+                                            />
+                                            <ErrorMessage>
+                                                {errors.rows?.[flatIndex]?.gpa &&
+                                                    t(errors.rows[flatIndex].gpa)}
+                                            </ErrorMessage>
+                                        </Col>
 
-  </div>
-))}
+                                        {/* ✅ Percentage */}
+                                        <Col md={1}>
+                                            <Form.Control
+                                                type="text"
+                                                inputMode="decimal"
+                                                placeholder="%"
+                                                value={row.percentage}
+
+                                                onChange={(e) => {
+                                                    let value = e.target.value;
+
+                                                    if (!/^[0-9]*\.?[0-9]*$/.test(value)) return;
+
+                                                    const parts = value.split(".");
+                                                    if (parts[1]?.length > 2) return;
+
+                                                    updateRow(gIdx, rIdx, "percentage", value);
+                                                }}
+                                            />
+                                            <ErrorMessage>
+                                                {errors.rows?.[flatIndex]?.percentage &&
+                                                    t(errors.rows[flatIndex].percentage)}
+                                            </ErrorMessage>
+                                        </Col>
+
+                                        {/* ✅ Delete */}
+                                        <Col md={1}>
+                                            {group.rows.length > 1 && (
+                                                <Button onClick={() => removeRow(gIdx, rIdx)}>
+                                                    X
+                                                </Button>
+                                            )}
+                                        </Col>
+                                    </Row>
+                                );
+                            })}
+                            <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => addRow(gIdx)}
+                                className="mb-3"
+                            >
+                                + Add Education
+                            </Button>
+                        </div>
+                        {gIdx < groups.length - 1 && (
+                            <div className="or-divider">( OR )</div>
+                        )}
+                    </React.Fragment>
+                ))}
 
 <Button onClick={addGroup}>+ Add Group</Button>
                 {errors.rows?._error && (

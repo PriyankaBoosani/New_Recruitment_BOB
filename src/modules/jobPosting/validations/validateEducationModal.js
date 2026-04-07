@@ -8,7 +8,33 @@ export const validateEducationModal = ({ rows, mode }) => {
     const hasDegree = !!row.educationQualificationsId;
     const isPartiallyFilled = hasType || hasDegree;
 
-    // 🔹 Mandatory mode → always validate
+    // Always validate numeric fields if they have values, regardless of other fields
+    // Validate GPA - must be numeric only
+  // GPA
+if (row.gpa !== "") {
+  const gpa = parseFloat(row.gpa);
+  if (isNaN(gpa) || gpa < 0 || gpa > 10) {
+    rowErrors.gpa = "validation:gpa_range";
+  }
+}
+
+// Percentage
+if (row.percentage !== "") {
+  const per = parseFloat(row.percentage);
+  if (isNaN(per) || per < 0 || per > 100) {
+    rowErrors.percentage = "validation:percentage_range";
+  }
+}
+
+// Duration
+if (row.duration !== "") {
+  const dur = parseInt(row.duration);
+  if (isNaN(dur) || dur < 0) {
+    rowErrors.duration = "validation:duration_invalid";
+  }
+}
+
+    // Mandatory mode -> always validate education fields
     if (mode === "mandatory") {
       if (!hasType) {
         rowErrors.educationTypeId = "validation:required";
@@ -18,37 +44,13 @@ export const validateEducationModal = ({ rows, mode }) => {
       }
     }
 
-    // 🔹 Preferred mode → validate only if user started filling
+    // Preferred mode -> validate only if user started filling education fields
     if (mode === "preferred" && isPartiallyFilled) {
       if (!hasType) {
         rowErrors.educationTypeId = "validation:required";
       }
       if (!hasDegree) {
         rowErrors.educationQualificationsId = "validation:required";
-      }
-    }
-
-    // ✅ NEW: GPA validation
-    if (row.gpa !== "") {
-      const gpa = parseFloat(row.gpa);
-      if (isNaN(gpa) || gpa < 0 || gpa > 10) {
-        rowErrors.gpa = "validation:gpa_range";
-      }
-    }
-
-    // ✅ NEW: Percentage validation
-    if (row.percentage !== "") {
-      const per = parseFloat(row.percentage);
-      if (isNaN(per) || per < 0 || per > 100) {
-        rowErrors.percentage = "validation:percentage_range";
-      }
-    }
-
-    // ✅ NEW: Duration validation
-    if (row.duration !== "") {
-      const dur = parseInt(row.duration);
-      if (isNaN(dur) || dur < 0) {
-        rowErrors.duration = "validation:duration_invalid";
       }
     }
 

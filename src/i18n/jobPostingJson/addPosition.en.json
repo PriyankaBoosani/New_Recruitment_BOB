@@ -78,9 +78,6 @@
     "city": "City",
     "select_city": "Select City",
     "city_name": "City Name",
-    "enter_city_name": "Enter City Name",
-    "gpa_range": "GPA must be between 0 and 10",
-    "percentage_range": "Percentage must be between 0 and 100",
-    "duration_invalid": "Duration must be a valid number"
-    
+    "enter_city_name": "Enter City Name"
+ 
 }
