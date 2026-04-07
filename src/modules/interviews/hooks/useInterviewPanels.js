@@ -89,13 +89,14 @@ const openEdit = (panel, index) => {
   if (!positionId) return;
 
   try {
+    //https://dev.bobjava.sentrifugo.com/recruiter-portal/api/v1/recruiter/interview-scheduling/get-assigned-panels
     const response = await interviewService.getPanelsByPosition(positionId);
 
     const apiList = response?.data?.interviewPanelList || [];
 
     const formatted = apiList.map((item, index) => ({
       id: item.interviewPanel?.interviewPanelId,
-      name: item.interviewPanel?.panelName || `Panel ${index + 1}`,
+      name: item.interviewPanel?.panelName,
       slots: [],
 
       // 👇 store full data if needed later
