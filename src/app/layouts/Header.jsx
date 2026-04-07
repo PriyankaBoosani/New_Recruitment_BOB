@@ -392,7 +392,7 @@ const Header = () => {
                   {t("committee_management")}
                 </Nav.Link>
               )}
-              {canCommittee && (
+              {/* {canCommittee && (
                 <Nav.Link
                   as={NavLink}
                   to="/schedule-interviews"
@@ -400,7 +400,7 @@ const Header = () => {
                 >
                   {t("schedule_interviews")}
                 </Nav.Link>
-              )}
+              )} */}
 
 
 

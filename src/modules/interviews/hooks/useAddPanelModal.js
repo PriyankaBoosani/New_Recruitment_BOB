@@ -15,19 +15,20 @@ export const useAddPanelModal = ({
       ? initialRows.map(r => ({ ...r })) // clone edit rows
       : [{ date: "", perDay: "" }];
 
-  const [panelName, setPanelName] = useState("");
+ // const [panelName, setPanelName] = useState("");
+  const [panelId, setPanelId] = useState("");
   const [rows, setRows] = useState([{ date: "", perDay: "" }]);
   const [errors, setErrors] = useState({});
 
   /* ✅ Reset ONLY when modal opens */
-  useEffect(() => {
-    if (!show) return;
+useEffect(() => {
+  if (!show) return;
 
-    setPanelName(initialPanel || "");
-    setRows(buildRows());
-    setErrors({});
+  setPanelId(initialPanel || "");
+  setRows(buildRows());
+  setErrors({});
 
-  }, [show]);   // 🔥 ONLY show — do NOT add initialRows here
+}, [initialPanel,show]);   // 🔥 ONLY show// 🔥 ONLY show — do NOT add initialRows here
 
   /* ================= ADD ================= */
 
@@ -64,7 +65,7 @@ export const useAddPanelModal = ({
 
     if (v.rows?.length) return;
 
-    onSave({ panelName, slots: rows });
+    onSave({ panelId, slots: rows });
     onClose();
   };
 
@@ -75,8 +76,8 @@ export const useAddPanelModal = ({
   };
 
   return {
-    panelName,
-    setPanelName,
+    panelId,
+    setPanelId,
     rows,
     errors,
     addRow,

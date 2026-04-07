@@ -1,16 +1,17 @@
 import { useState,useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
+import interviewService from "../services/interviewService";
 export default function useInterviewSchedule() {
-  const location = useLocation();
+
   const navigate = useNavigate();
 
+const location = useLocation();
   // Parse URL parameters
-  const urlParams = new URLSearchParams(location.search);
-  const urlRequisitionId = urlParams.get('requisitionId');
-  const urlPositionId = urlParams.get('positionId');
-  const urlCandidateIds = urlParams.get('candidateIds');
 
+const passedCandidates = location.state?.candidates || [];
+const requisitionId = location.state?.requisitionId || "";
+const positionId = location.state?.positionId || "";
 
   //new
   const [requisitions, setRequisitions] = useState([]);
@@ -20,36 +21,7 @@ export default function useInterviewSchedule() {
   const [positions, setPositions] = useState([]);
   const [selectedPositionId, setSelectedPositionId] = useState("");
   const [loadingPositions, setLoadingPositions] = useState(false);
-
-  const [schedule, setSchedule] = useState([
-    {
-      id: 1,
-      name: "Rajesh Kumar",
-      regNo: "961344689",
-      date: "",
-      time: "",
-      zone: "",
-      panel: ""
-    },
-    {
-      id: 2,
-      name: "Priya Sharma",
-      regNo: "961967129",
-      date: "",
-      time: "",
-      zone: "",
-      panel: ""
-    },
-    {
-      id: 3,
-      name: "Amit Patel",
-      regNo: "961963464",
-      date: "",
-      time: "",
-      zone: "",
-      panel: ""
-    }
-  ]);
+const [schedule, setSchedule] = useState([]);
 
   const updateRow = (id, field, value) => {
     setSchedule(prev =>
@@ -104,16 +76,16 @@ export default function useInterviewSchedule() {
 
   // Handle URL parameters for auto-population
   useEffect(() => {
-    if (urlRequisitionId) {
-      setSelectedRequisitionId(urlRequisitionId);
+    if (requisitionId) {
+      setSelectedRequisitionId(requisitionId);
     }
-  }, [urlRequisitionId]);
+  }, [requisitionId]);
 
-  useEffect(() => {
-    if (urlPositionId) {
-      setSelectedPositionId(urlPositionId);
-    }
-  }, [urlPositionId, selectedRequisitionId]); // Wait for positions to be loaded
+useEffect(() => {
+  if (positionId && positions.length > 0) {
+    setSelectedPositionId(positionId);
+  }
+}, [positionId, positions]);
 
 
 
@@ -144,6 +116,85 @@ export default function useInterviewSchedule() {
     }
   };
 
+
+useEffect(() => {
+  if (passedCandidates.length > 0) {
+    const formatted = passedCandidates.map((c, index) => ({
+      id: c.id,
+      name: c.name,
+      regNo: c.regNo,
+      date: "",
+      time: "",
+      zone: "",
+      panel: ""
+    }));
+
+    setSchedule(formatted);
+  }
+}, [passedCandidates]);
+
+const formatTime = (time) => {
+  
+  if (!time) return "00:00:00";
+  return time.length === 5 ? `${time}:00` : time;
+};
+
+const applySchedule = async ({ selectedPanels, startTime, positionId }) => {
+  try {
+    console.log("startTime", startTime);
+   // console.log("FINAL TIME SENT 👉", formatTime(startTime));
+   console.log("selectedPanels", selectedPanels);
+    // ✅ Build payload
+    const payload = {
+      schedulingPanelModel: {
+        applicationIds: passedCandidates.map(c => c.id),
+        positionId
+      },
+      panelScheduleModelList: selectedPanels.flatMap(panel =>
+        (panel.slots || []).map(slot => ({
+          panelId: panel.id,
+          panelDate: slot.date,
+          interviewPerDay: Number(slot.perDay),
+          startTime: formatTime(startTime)   // 🔥 IMPORTANT FIX
+        }))
+      )
+    };
+
+    console.log("FINAL PAYLOAD 👉", payload);//return false;
+
+    // ✅ Call API
+    const res = await interviewService.allocatePanels(payload);
+
+    if (!res?.success) {
+      return { success: false, message: res.message };
+    }
+
+    // ✅ Convert response → table rows
+    const rows = res.data.map(item => {
+      const start = item.interviewSchedule?.interviewStartAt;
+
+      return {
+        id: item.application?.id,
+        name: item.fullName,
+        regNo: item.application?.applicationNo,
+        date: start?.split("T")[0],
+        time: start?.split("T")[1]?.slice(0, 5),
+        zone: item.interviewCentres?.zone,
+        panel: item.interviewPanels?.panelName
+      };
+    });
+
+    // ✅ Update table
+    setSchedule(rows);
+
+    return { success: true, rows };
+
+  } catch (err) {
+    console.error(err);
+    return { success: false, message: "Something went wrong" };
+  }
+};
+
   return {
     schedule,
     updateRow,
@@ -156,8 +207,9 @@ export default function useInterviewSchedule() {
     loadingPositions,
     handleRequisitionChange,
     setSelectedPositionId,
-    urlRequisitionId,
-    urlPositionId,
-    urlCandidateIds
+    requisitionId,
+    positionId,
+    passedCandidates,
+    applySchedule
   };
 }

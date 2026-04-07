@@ -2,22 +2,28 @@ import React from "react";
 import { Form } from "react-bootstrap";
 import "../../../style/css/InterviewPanelsConfig.css";
 import AddPanelModal from "../../interviews/components/AddPanelModal";
-import DeleteConfirmModal from "../../interviews/components/DeleteConfirmModal";
+import DeleteConfirmModal from "./DeleteConfirmModal";
 import { useInterviewPanels } from "../../interviews/hooks/useInterviewPanels";
 import { useTranslation } from "react-i18next";
 import ApplySuccessModal from "../../interviews/components/ApplySuccessModal";
-
-
+import { toast } from "react-toastify";
+import interviewService from "../services/interviewService";
 
 const InterviewPanelsConfig = ({
+  positionId,
   startTime,
   onStartTimeChange,
-  onImportPanel,
+   candidates,
+  onScheduleReady,
   onApplyAll
 }) => {
 
+  console.log("InterviewPanelsConfig - positionId:", positionId)
+  console.log("START TIME FROM INPUT 👉", startTime);
+
   const {
-    panels,
+     availablePanels,
+  selectedPanels,
     showAddModal,
     editPanel,
     openInfoIndex,
@@ -32,14 +38,30 @@ const InterviewPanelsConfig = ({
     savePanel,
     confirmDelete,
     openEdit
-  } = useInterviewPanels();
+  } = useInterviewPanels(positionId);
 
-  const activeCount = panels.length;
+  const activeCount = selectedPanels.length;
   const { t } = useTranslation(["interviewSchedule", "common"]);
   const [showApplySuccess, setShowApplySuccess] = React.useState(false);
   const [scheduledCount, setScheduledCount] = React.useState(0);
+  console.log("panels:", selectedPanels)
 
+const handleApplyAll = async () => {
+  console.log("startTime in handleApplyAll:", startTime);
+  const res = await onApplyAll({
+    selectedPanels,
+    startTime,
+    positionId
+  });
 
+  if (!res.success) {
+    toast.error(res.message);
+    return;
+  }
+
+  setScheduledCount(res.rows.length);
+  setShowApplySuccess(true);
+};
 
   return (
     <>
@@ -54,7 +76,10 @@ const InterviewPanelsConfig = ({
           </div>
 
           <div className="d-flex gap-2">
-            <button className="ipc-btn-blue" onClick={onImportPanel}>
+            <button className="ipc-btn-blue" onClick={() => {
+              // TODO: Implement import panel functionality
+              console.log("Import panel clicked");
+            }}>
               <i className="bi bi-upload me-2"></i>
               {t("import_panel")}
             </button>
@@ -90,7 +115,7 @@ const InterviewPanelsConfig = ({
         {/* PANEL CHIPS */}
         <div className="ipc-panel-box" ref={panelBoxRef}>
 
-          {panels.map((p, i) => (
+          {selectedPanels.map((p, i) => (
             <div key={i} className="ipc-panel-chip">
 
               <span className="ipc-panel-name">{p.name}</span>
@@ -165,12 +190,7 @@ const InterviewPanelsConfig = ({
           </div>
 
           <div className="col-md-3 ms-auto text-md-end mt-3 mt-md-0">
-            <button className="ipc-apply-btn" onClick={() => {
-              const count = onApplyAll?.();   // call your logic
-              setScheduledCount(count || 0);
-              setShowApplySuccess(true);
-            }}
-            >
+           <button className="ipc-apply-btn" onClick={handleApplyAll}>
               <i className="bi bi-check2-circle me-2"></i>
               {t("apply_to_all")}
             </button>
@@ -187,13 +207,14 @@ const InterviewPanelsConfig = ({
         mode={editPanel ? "edit" : "add"}
         initialPanel={editPanel?.name}
         initialRows={editPanel?.slots}
+        panels={availablePanels}
         onClose={() => setShowAddModal(false)}
         onSave={savePanel}
       />
 
       <DeleteConfirmModal
         show={deleteIndex !== null}
-        name={panels[deleteIndex]?.name}
+        name={selectedPanels[deleteIndex]?.name}
         onCancel={() => setDeleteIndex(null)}
         onConfirm={() => confirmDelete(deleteIndex)}
       />

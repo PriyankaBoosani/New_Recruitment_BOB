@@ -10,14 +10,15 @@ const AddPanelModal = ({
   onSave,
   mode = "add",
   initialPanel = "",
-  initialRows = []
+  initialRows = [],
+  panels = []   // ✅ NEW
 }) => {
 
   const { t } = useTranslation(["interviewSchedule", "common"]);
 
   const {
-    panelName,
-    setPanelName,
+    panelId,
+    setPanelId,
     rows,
     errors,
     addRow,
@@ -32,6 +33,7 @@ const AddPanelModal = ({
     onSave,
     onClose
   });
+  console.log("panels123", panels)
 
   return (
     <Modal show={show} onHide={handleCancel} centered dialogClassName="ap-modal">
@@ -63,8 +65,8 @@ const AddPanelModal = ({
             <Form.Select
               className="ap-input ap-no-arrow"
               disabled={mode === "edit"}
-              value={panelName || ""}
-              onChange={(e) => setPanelName(e.target.value)}
+              value={panelId || ""}
+              onChange={(e) => setPanelId(e.target.value)}
             >
 
               {/* ✅ placeholder */}
@@ -72,11 +74,11 @@ const AddPanelModal = ({
                 {t("select_panel_placeholder")}
               </option>
 
-              <option value="Panel 1">Panel 1</option>
-              <option value="Panel 2">Panel 2</option>
-              <option value="Panel 3">Panel 3</option>
-              <option value="Panel 4">Panel 4</option>
-              <option value="Panel 5">Panel 5</option>
+              {panels.map((panel) => (
+                <option key={panel.id} value={panel.id}>
+                  {panel.name}
+                </option>
+              ))}
 
             </Form.Select>
 

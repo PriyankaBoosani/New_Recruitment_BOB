@@ -7,7 +7,6 @@ import DropdownStrip from "../candidatePreview/components/DropdownStrip";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 
 import InterviewPanelsConfig from "../interviews/components/InterviewPanelsConfig";
-import ScheduleReadyBar from "../interviews/components/ScheduleReadyBar";
 import InterviewScheduleTable from "../interviews/components/InterviewScheduleTable";
 import useInterviewSchedule from "../interviews/hooks/useInterviewSchedule";
 
@@ -19,9 +18,6 @@ const ScheduleInterviews = () => {
   /* ================= STATE ================= */
 
 
-
-
-  const [panels, setPanels] = useState([]);
   const [startTime, setStartTime] = useState("");
 
   const { 
@@ -35,9 +31,11 @@ const ScheduleInterviews = () => {
     selectedPositionId,
     loadingPositions,
     handleRequisitionChange,
-    setSelectedPositionId
+    setSelectedPositionId,
+    passedCandidates,
+    applySchedule 
   } = useInterviewSchedule();
-
+console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId)
   
 
   const selectedRequisition =
@@ -49,20 +47,6 @@ const ScheduleInterviews = () => {
   const isSelectionDone =
     selectedRequisition && selectedPosition;
 
-/* ================= PANEL ACTIONS ================= */
-
-  const handleAddPanel = () => {
-    setPanels(prev => [
-      ...prev,
-      { name: `Panel ${prev.length + 1}` }
-    ]);
-  };
-
-  const handleImportPanel = () => {
-  };
-
-  const handleApplyAll = () => {
-  };
   /* ================= UI ================= */
 
   return (
@@ -90,6 +74,8 @@ const ScheduleInterviews = () => {
               onRequisitionChange={handleRequisitionChange}
               onRequisitionSearch={() => {}}
               onPositionChange={setSelectedPositionId}
+              disableRequisition={true}
+              disablePosition={true}
             />
 
           </div>
@@ -114,24 +100,16 @@ const ScheduleInterviews = () => {
 
       {/* ===== PANELS CONFIG ===== */}
       <InterviewPanelsConfig
-        panels={panels}
+         positionId={selectedPositionId}
         startTime={startTime}
         onStartTimeChange={setStartTime}
-        onAddPanel={handleAddPanel}
-        onImportPanel={handleImportPanel}
-        onApplyAll={handleApplyAll}
+          candidates={passedCandidates}              // ✅ ADD
+  onScheduleReady={(rows) => setSchedule(rows)}  // ✅ ADD
+   onApplyAll={applySchedule}
       />
 
-      {/* ===== READY BAR ===== */}
-      <div className="mt-3">
-        {/* <ScheduleReadyBar
-          count={schedule.length}
-          onCancel={() => navigate(-1)}
-        /> */}
-      </div>
-
       {/* ===== INTERVIEW SCHEDULE TABLE ===== */}
- <InterviewScheduleTable rows={schedule} /> 
+      <InterviewScheduleTable rows={schedule}/> 
 
     </div>
   );

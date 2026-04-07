@@ -119,25 +119,32 @@ export default function CandidateScreening({ selectedJob }) {
     setShowZonalCommentModal(true);
   };
 
-  const handleScheduleInterview = () => {
-    // Navigate to schedule interviews page with selected candidate, requisition, and position data
-    const queryParams = new URLSearchParams();
-    
-    if (selectedRequisitionId) {
-      queryParams.append('requisitionId', selectedRequisitionId);
-    }
-    
-    if (selectedPositionId) {
-      queryParams.append('positionId', selectedPositionId);
-    }
-    
-    if (selectedCandidateIds.length > 0) {
-      queryParams.append('candidateIds', selectedCandidateIds.join(','));
-    }
-    
-    const url = `/schedule-interviews${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
-    navigate(url);
-  };
+ const handleScheduleInterview = () => {
+  if (!selectedCandidateIds.length) return;
+
+  const selectedCandidatesData = candidates
+    .filter(c => selectedCandidateIds.includes(c.id))
+    .map(c => ({
+      id: c.id,
+      name: c.name,
+      regNo: c.applicationNo
+    }));
+
+  // const params = new URLSearchParams({
+  //   requisitionId: selectedRequisitionId || "",
+  //   positionId: selectedPositionId || "",
+  //   candidates: JSON.stringify(selectedCandidatesData)
+  // });
+
+
+navigate("/schedule-interviews", {
+  state: {
+    candidates: selectedCandidatesData,
+    requisitionId: selectedRequisitionId,
+    positionId: selectedPositionId
+  }
+});
+};
 
   const searchTimeoutRef = useRef(null);
   const {
