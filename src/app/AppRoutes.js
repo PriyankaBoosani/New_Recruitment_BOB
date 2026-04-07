@@ -1,6 +1,6 @@
 // src/routes/AppRoutes.js
 import React, { Suspense } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 // Public pages
@@ -57,6 +57,13 @@ const AppRoutes = () => {
   const token = useSelector((state) => state.user?.authUser?.access_token || state.user?.authUser?.accessToken || state.user?.auth?.access_token);
   console.log("AppRoutes - authUser:", authUser);
   const privileges = useSelector((state) => state.user?.privileges);
+  const location = useLocation();
+
+  // Component to catch unmatched routes
+  const NotFound = () => {
+    console.error("🔴 Route not matched:", location.pathname, location.search);
+    return <Navigate to="/login" />;
+  };
 
   return (
     <Suspense fallback={<Loading />}>
@@ -68,7 +75,7 @@ const AppRoutes = () => {
         <Route path="/auth/callback" element={<AuthCallback />} />
 
         {/* Root redirect: if authed go to users, else login */}
-        {/* <Route path="/" element={authUser ? <Navigate to="/users" /> : <Navigate to="/login" />} /> */}
+        {/* <Route path="/" element={authUser ? <Navigate to="/auth/callback" /> : <Navigate to="/login" />} /> */}
         <Route
           path="/"
           element={
@@ -277,8 +284,7 @@ const AppRoutes = () => {
         </Route>
 
         {/* Catch-all → login */}
-        <Route path="*" element={<Navigate to="/login" />} />
-
+        <Route path="*" element={<NotFound />} />
 
       </Routes>
     </Suspense>
