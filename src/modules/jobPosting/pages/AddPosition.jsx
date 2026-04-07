@@ -91,7 +91,8 @@ const AddPosition = () => {
         mandatoryEducation: "", preferredEducation: "",
         mandatoryExperience: { years: "", months: "", description: "" },
         preferredExperience: { years: "", months: "", description: "" },
-        responsibilities: "", medicalRequired: "yes", enableStateDistribution: false
+        responsibilities: "", medicalRequired: "yes", enableStateDistribution: false,
+        cutOffDate: ""
     });
 
 

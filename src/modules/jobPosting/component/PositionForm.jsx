@@ -702,6 +702,18 @@ const PositionForm = ({
                         />
                         <ErrorMessage>{renderError(errors.medicalRequired)}</ErrorMessage>
                     </Col>
+                    <Col md={3}>
+                        <Form.Label>{t("addPosition:cut_off_date")} <span className="text-danger">*</span></Form.Label>
+                        <Form.Control
+                            type="date"
+                            name="cutOffDate"
+                            value={formData.cutOffDate}
+                            
+                            onChange={handleInputChange}
+                            disabled={isViewMode}
+                        />
+                        <ErrorMessage>{renderError(errors.cutOffDate)}</ErrorMessage>
+                    </Col>
                 </Row>
             </div>
         </>

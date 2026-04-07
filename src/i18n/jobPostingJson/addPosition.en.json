@@ -13,6 +13,7 @@
     "supported_formats": "Supported formats: PDF, DOC, DOCX (Max 2 MB)",
     "approved_by": "Approved By",
     "approved_on": "Approved On",
+    "cut_off_date": "Cut Off Date",
     "position": "Position",
     "department": "Department",
     "total_vacancies": "Total Vacancies",
@@ -77,6 +78,9 @@
     "city": "City",
     "select_city": "Select City",
     "city_name": "City Name",
-     "enter_city_name": "Enter City Name"
+    "enter_city_name": "Enter City Name",
+    "gpa_range": "GPA must be between 0 and 10",
+    "percentage_range": "Percentage must be between 0 and 100",
+    "duration_invalid": "Duration must be a valid number"
     
 }

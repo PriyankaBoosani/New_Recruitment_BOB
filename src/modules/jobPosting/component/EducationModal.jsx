@@ -8,9 +8,16 @@ import { useTranslation } from "react-i18next";
 import Select from "react-select";
 
 const createRow = () => ({
-    educationTypeId: "",
-    educationQualificationsId: "",
-    specializationId: "",
+  educationTypeId: "",
+  educationQualificationsId: "",
+  specializationId: "",
+  duration: "",
+  gpa: "",
+  percentage: ""
+});
+
+const createGroup = () => ({
+  rows: [createRow()]
 });
 
 export default function EducationModal({
@@ -28,6 +35,9 @@ export default function EducationModal({
     const [errors, setErrors] = useState({});
     const [rows, setRows] = useState([createRow()]);
     const [certIds, setCertIds] = useState([""]);
+    const [groups, setGroups] = useState([createGroup()]);
+
+    
 
     useEffect(() => {
         if (!show) return;
@@ -48,56 +58,112 @@ export default function EducationModal({
     const getLabel = (list, id, key = "label") =>
         list.find(i => i.id === id)?.[key] || "";
 
-    const degreeText = rows
-        .filter(r =>
-            r.educationTypeId &&
-            r.educationQualificationsId
-        )
-        .map((r, i) => {
-            const type = getLabel(educationTypes, r.educationTypeId);
-            const degree = getLabel(qualifications, r.educationQualificationsId, "name");
-            const spec = getLabel(specializations, r.specializationId);
+    // const degreeText = rows
+    //     .filter(r =>
+    //         r.educationTypeId &&
+    //         r.educationQualificationsId
+    //     )
+    //     .map((r, i) => {
+    //         const type = getLabel(educationTypes, r.educationTypeId);
+    //         const degree = getLabel(qualifications, r.educationQualificationsId, "name");
+    //         const spec = getLabel(specializations, r.specializationId);
 
-            if (!type || !degree) return null;
+    //         if (!type || !degree) return null;
 
-            return `${i > 0 ? "OR " : ""}${type} ${degree}${spec ? ` in ${spec}` : ""}`;
-        })
+    //         return `${i > 0 ? "OR " : ""}${type} ${degree}${spec ? ` in ${spec}` : ""}`;
+    //     })
 
-        .join(" ");
+    //     .join(" ");
+
+const degreeText = groups
+  .map(group => {
+    const groupText = group.rows
+      .filter(r => r.educationTypeId && r.educationQualificationsId)
+      .map(r => {
+        const type = getLabel(educationTypes, r.educationTypeId);
+        const degree = getLabel(qualifications, r.educationQualificationsId, "name");
+        const spec = getLabel(specializations, r.specializationId);
+
+        let extra = [];
+        if (r.duration) extra.push(`Duration: ${r.duration}`);
+        if (r.gpa) extra.push(`GPA: ${r.gpa}`);
+        if (r.percentage) extra.push(`%: ${r.percentage}`);
+
+        const extraText = extra.length ? ` [${extra.join(", ")}]` : "";
+
+        return `${type} ${degree}${spec ? ` in ${spec}` : ""}${extraText}`;
+      })
+      .join(" AND ");
+
+    return groupText ? `(${groupText})` : null;
+  })
+  .filter(Boolean)
+  .join("\nOR\n");
+
+    // const addRow = () => {
+    //     setRows([...rows, createRow(false)]);
+    // };
+    const addGroup = () => {
+  setGroups([...groups, createGroup()]);
+};
+
+    const addRow = (groupIndex) => {
+  const copy = [...groups];
+  copy[groupIndex].rows.push(createRow());
+  setGroups(copy);
+};
 
 
-    const addRow = () => {
-        setRows([...rows, createRow(false)]);
-    };
+    // const updateRow = (i, field, value) => {
+    //     const copy = [...rows];
+    //     copy[i][field] = value;
 
-    const updateRow = (i, field, value) => {
-        const copy = [...rows];
-        copy[i][field] = value;
+    //     // if degree changes, wipe specialization
+    //     if (field === "educationQualificationsId") {
+    //         copy[i].specializationId = "";
+    //     }
 
-        // if degree changes, wipe specialization
-        if (field === "educationQualificationsId") {
-            copy[i].specializationId = "";
-        }
+    //     setRows(copy);
 
-        setRows(copy);
+    //     // clear errors (unchanged)
+    //     setErrors(prev => {
+    //         if (!prev.rows?.[i]?.[field]) return prev;
+    //         const updated = { ...prev };
+    //         updated.rows = [...updated.rows];
+    //         updated.rows[i] = { ...updated.rows[i], [field]: "" };
+    //         return updated;
+    //     });
+    // };
+const updateRow = (gIdx, rIdx, field, value) => {
+  const copy = [...groups];
+  copy[gIdx].rows[rIdx][field] = value;
+  setGroups(copy);
+};
+    // const removeRow = (index) => {
+    //     setRows(prev =>
+    //         prev.length > 1
+    //             ? prev.filter((_, i) => i !== index)
+    //             : [createRow()]
+    //     );
+    // };
 
-        // clear errors (unchanged)
-        setErrors(prev => {
-            if (!prev.rows?.[i]?.[field]) return prev;
-            const updated = { ...prev };
-            updated.rows = [...updated.rows];
-            updated.rows[i] = { ...updated.rows[i], [field]: "" };
-            return updated;
-        });
-    };
+   const removeRow = (gIdx, rIdx) => {
+  const copy = [...groups];
 
-    const removeRow = (index) => {
-        setRows(prev =>
-            prev.length > 1
-                ? prev.filter((_, i) => i !== index)
-                : [createRow()]
-        );
-    };
+  if (copy[gIdx].rows.length === 1) {
+    // reset instead of delete
+    copy[gIdx].rows[0] = createRow();
+  } else {
+    copy[gIdx].rows.splice(rIdx, 1);
+  }
+
+  setGroups(copy);
+};
+const removeGroup = (gIdx) => {
+  if (groups.length === 1) return;
+
+  setGroups(groups.filter((_, i) => i !== gIdx));
+};
     const getSpecializationsForDegree = (degreeId) => {
         if (!degreeId) return [];
         return specializations.filter(
@@ -125,7 +191,7 @@ export default function EducationModal({
         .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
 
     return (
-        <Modal show={show} onHide={onHide} size="lg" scrollable centered className="edu-modal">
+        <Modal show={show} onHide={onHide} size="xl" scrollable centered className="edu-modal">
             <Modal.Header closeButton className="edu-modal-header">
                 <Modal.Title className="f16 bluecol">
                     {mode === "mandatory"
@@ -135,136 +201,185 @@ export default function EducationModal({
             </Modal.Header>
 
             <Modal.Body>
-                {rows.map((row, idx) => (
-                    <Row key={idx} className="mb-3 align-items-center">
+                {groups.map((group, gIdx) => (
+  <div key={gIdx} className="group-box">
 
-                        <Col md={3}>
-                            <Select
-                                classNamePrefix="react-select"
-                                menuPortalTarget={document.body}
-                                menuPosition="fixed"
-                                styles={{
-                                    menuPortal: base => ({ ...base, zIndex: 9999 })
-                                }}
-                                value={[
-                                    { value: "", label: t("common:select_type") },
-                                    ...educationTypes.map(t => ({
-                                        value: t.id,
-                                        label: t.label
-                                    }))
-                                ].find(option => String(option.value) === String(row.educationTypeId))}
-                                onChange={(selected) =>
-                                    updateRow(idx, "educationTypeId", selected ? selected.value : "")
-                                }
-                                options={[
-                                    { value: "", label: t("common:select_type") },
-                                    ...educationTypes.map(t => ({
-                                        value: t.id,
-                                        label: t.label
-                                    }))
-                                ]}
-                            />
+    <div className="group-header">
+      <strong>Group {gIdx + 1} (AND)</strong>
 
-                            <div className="edu-error-space">
-                                <ErrorMessage>
-                                    {errors.rows?.[idx]?.educationTypeId && t(errors.rows[idx].educationTypeId)}
-                                </ErrorMessage>
-                            </div>
+      {groups.length > 1 && (
+        <Button
+  onClick={() => removeGroup(gIdx)}
+  disabled={groups.length === 1}
+  variant="outline-danger"
+>
+  Delete Group
+</Button>
+      )}
+    </div>
 
-                        </Col>
+    {group.rows.map((row, rIdx) => {
 
-                        <Col md={4}>
-                            <Select
-                                classNamePrefix="react-select"
-                                menuPortalTarget={document.body}
-                                menuPosition="fixed"
-                                styles={{
-                                    menuPortal: base => ({ ...base, zIndex: 9999 })
-                                }}
-                                value={[
-                                    { value: "", label: t("common:select_education") },
-                                    ...qualifications.map(q => ({
-                                        value: q.id,
-                                        label: q.name
-                                    }))
-                                ].find(option => String(option.value) === String(row.educationQualificationsId))}
-                                onChange={(selected) =>
-                                    updateRow(idx, "educationQualificationsId", selected ? selected.value : "")
-                                }
-                                options={[
-                                    { value: "", label: t("common:select_education") },
-                                    ...qualifications.map(q => ({
-                                        value: q.id,
-                                        label: q.name
-                                    }))
-                                ]}
-                            />
+  // ✅ ADD THIS (VERY IMPORTANT)
+  const flatIndex =
+    groups.slice(0, gIdx).reduce((acc, g) => acc + g.rows.length, 0) + rIdx;
 
-                            <div className="edu-error-space">
-                                <ErrorMessage>
-                                    {errors.rows?.[idx]?.educationQualificationsId && t(errors.rows[idx].educationQualificationsId)}
-                                </ErrorMessage>
+  return (
+    <Row key={rIdx} className="mb-3 align-items-center">
 
-                            </div>
-                        </Col>
+      {/* ✅ Education Type */}
+      <Col md={2}>
+        <Select
+          value={educationTypes
+            .map(t => ({ value: t.id, label: t.label }))
+            .find(opt => String(opt.value) === String(row.educationTypeId))}
+          onChange={(selected) =>
+            updateRow(gIdx, rIdx, "educationTypeId", selected?.value || "")
+          }
+          options={educationTypes.map(t => ({
+            value: t.id,
+            label: t.label
+          }))}
+          placeholder="Type"
+        />
+        <ErrorMessage>
+          {errors.rows?.[flatIndex]?.educationTypeId &&
+            t(errors.rows[flatIndex].educationTypeId)}
+        </ErrorMessage>
+      </Col>
 
-                        <Col md={4}>
-                            <Select
-                                classNamePrefix="react-select"
-                                menuPortalTarget={document.body}
-                                menuPosition="fixed"
-                                styles={{
-                                    menuPortal: base => ({ ...base, zIndex: 9999 })
-                                }}
-                                value={[
-                                    { value: "", label: t("common:select_specialization") },
-                                    ...getSpecializationsForDegree(row.educationQualificationsId).map(s => ({
-                                        value: s.id,
-                                        label: s.label
-                                    }))
-                                ].find(option => String(option.value) === String(row.specializationId))}
-                                onChange={(selected) =>
-                                    updateRow(idx, "specializationId", selected ? selected.value : "")
-                                }
-                                options={[
-                                    { value: "", label: t("common:select_specialization") },
-                                    ...getSpecializationsForDegree(row.educationQualificationsId).map(s => ({
-                                        value: s.id,
-                                        label: s.label
-                                    }))
-                                ]}
-                            />
+      {/* ✅ Qualification */}
+      <Col md={2}>
+        <Select
+          value={qualifications
+            .map(q => ({ value: q.id, label: q.name }))
+            .find(opt => String(opt.value) === String(row.educationQualificationsId))}
+          onChange={(selected) =>
+            updateRow(gIdx, rIdx, "educationQualificationsId", selected?.value || "")
+          }
+          options={qualifications.map(q => ({
+            value: q.id,
+            label: q.name
+          }))}
+          placeholder="Degree"
+        />
+        <ErrorMessage>
+          {errors.rows?.[flatIndex]?.educationQualificationsId &&
+            t(errors.rows[flatIndex].educationQualificationsId)}
+        </ErrorMessage>
+      </Col>
 
-                            <div className="edu-error-space">
-                                <ErrorMessage>
-                                    {errors.rows?.[idx]?.specializationId && t(errors.rows[idx].specializationId)}
-                                </ErrorMessage></div>
-                        </Col>
-                        <Col md={1} className="px-1">
+      {/* ✅ Specialization */}
+      <Col md={2}>
+        <Select
+          value={getSpecializationsForDegree(row.educationQualificationsId)
+            .map(s => ({ value: s.id, label: s.label }))
+            .find(opt => String(opt.value) === String(row.specializationId))}
+          onChange={(selected) =>
+            updateRow(gIdx, rIdx, "specializationId", selected?.value || "")
+          }
+          options={getSpecializationsForDegree(row.educationQualificationsId).map(s => ({
+            value: s.id,
+            label: s.label
+          }))}
+          placeholder="Specialization"
+        />
+      </Col>
 
-                            {rows.length > 1 && (
-                                <Button
-                                    variant="link"
-                                    className="p-0 text-danger"
-                                    onClick={() => removeRow(idx)}
-                                    title={t("common:remove")}
-                                >
-                                    <img src={delete_icon} alt="delete_icon" className="icon-16" />
-                                </Button>
-                            )}
-                            <div className="edu-error-space"></div>
-                        </Col>
-                    </Row>
-                ))}
+      {/* ✅ Duration */}
+      <Col md={2}>
+        <Form.Control
+          type="number"
+          placeholder="Duration"
+          value={row.duration}
+          min="0"
+          step="1"
+          onChange={(e) =>
+            updateRow(gIdx, rIdx, "duration", e.target.value)
+          }
+        />
+        <ErrorMessage>
+          {errors.rows?.[flatIndex]?.duration &&
+            t(errors.rows[flatIndex].duration)}
+        </ErrorMessage>
+      </Col>
+
+      {/* ✅ GPA */}
+      <Col md={2}>
+        <Form.Control
+          type="number"
+          placeholder="GPA"
+          value={row.gpa}
+          min="0"
+          max="10"
+          step="0.01"
+          onChange={(e) =>
+            updateRow(gIdx, rIdx, "gpa", e.target.value)
+          }
+        />
+        <ErrorMessage>
+          {errors.rows?.[flatIndex]?.gpa &&
+            t(errors.rows[flatIndex].gpa)}
+        </ErrorMessage>
+      </Col>
+
+      {/* ✅ Percentage */}
+      <Col md={1}>
+        <Form.Control
+          type="number"
+          placeholder="%"
+          value={row.percentage}
+          min="0"
+          max="100"
+          step="0.01"
+          onChange={(e) =>
+            updateRow(gIdx, rIdx, "percentage", e.target.value)
+          }
+        />
+        <ErrorMessage>
+          {errors.rows?.[flatIndex]?.percentage &&
+            t(errors.rows[flatIndex].percentage)}
+        </ErrorMessage>
+      </Col>
+
+      {/* ✅ Delete */}
+      <Col md={1}>
+        {group.rows.length > 1 && (
+          <Button onClick={() => removeRow(gIdx, rIdx)}>
+            X
+          </Button>
+        )}
+      </Col>
+
+    </Row>
+  );
+})}
+{/* 
+    {gIdx < groups.length - 1 && (
+      <div className="or-divider">OR</div>
+    )} */}
+    <Button
+  variant="outline-primary"
+  size="sm"
+  onClick={() => addRow(gIdx)}
+  className="mb-3"
+>
+  + Add Education
+</Button>
+
+  </div>
+))}
+
+<Button onClick={addGroup}>+ Add Group</Button>
                 {errors.rows?._error && (
                     <div className="mt-2">
                         <ErrorMessage>{t(errors.rows._error)}</ErrorMessage>
                     </div>
                 )}
 
-                <Button variant="none" onClick={addRow} className="edu-btn">
+                 {/* <Button variant="none" onClick={addRow} className="edu-btn">
                     {t("addPosition:add_degree")}
-                </Button>
+                </Button>  */}
 
 
                 <Col md={6} className="mt-4">
@@ -336,19 +451,20 @@ export default function EducationModal({
                 <Button
                     variant="primary"
                     onClick={() => {
+                        const allRows = groups.flatMap(g => g.rows);
                         const validationErrors = validateEducationModal({
-                            rows,
-                            mode,
-                        });
+  rows: allRows,
+  mode,
+});
 
                         if (Object.keys(validationErrors).length > 0) {
                             setErrors(validationErrors);
                             return;
                         }
 
-                        const filledRows = rows.filter(
-                            r => r.educationTypeId && r.educationQualificationsId
-                        );
+                        const filledRows = groups.flatMap(g => g.rows).filter(
+                                            r => r.educationTypeId && r.educationQualificationsId
+                                            );
 
                         // 🚨 Only enforce required rule in mandatory mode
                         if (mode === "mandatory" && filledRows.length === 0) {
@@ -360,21 +476,30 @@ export default function EducationModal({
 
                         setErrors({});
 
-                        const cleanText = [
-                            degreeText,
-                            certText ? `Certifications: ${certText}` : ""
+                       const cleanText = [
+                        degreeText ? `Education Requirements:\n${degreeText}` : "",
+                        `Certifications: ${certText || "None"}`
                         ]
-                            .filter(Boolean)
-                            .join("\n");
+                        .filter(Boolean)
+                        .join("\n");
 
-                        const payload = {
-                            educations: filledRows.map(r => ({
+                    const payload = {
+                            groups: groups.map(group => ({
+                            educations: group.rows
+                            .filter(r => r.educationTypeId && r.educationQualificationsId)
+                            .map(r => ({
                                 educationTypeId: r.educationTypeId,
                                 educationQualificationsId: r.educationQualificationsId,
-                                specializationId: r.specializationId || null
-                            })),
-                            certificationIds: certIds.filter(Boolean),
-                            text: cleanText,
+                                specializationId: r.specializationId || null,
+                                duration: r.duration,
+                                gpa: r.gpa,
+                                percentage: r.percentage
+                            }))
+                        })),
+
+                        certificationIds: certIds.filter(Boolean),
+
+                        text: cleanText, // ✅ KEEP THIS
                         };
 
                         onSave(payload);
