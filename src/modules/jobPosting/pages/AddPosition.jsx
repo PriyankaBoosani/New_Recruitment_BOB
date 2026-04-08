@@ -191,6 +191,11 @@ usePreferredEducationLevelExperience: false
 
         if (eduInitializedRef.current) return;
 
+        console.log("Debug - existingPosition:", existingPosition);
+        console.log("Debug - mandatoryEduRulesJson:", existingPosition.mandatoryEduRulesJson);
+        console.log("Debug - educationTypes:", educationTypes);
+        console.log("Debug - qualifications:", qualifications);
+
         const mandatory = mapEduRulesToModalData(
             existingPosition.mandatoryEduRulesJson,
             educationTypes,
@@ -207,6 +212,9 @@ usePreferredEducationLevelExperience: false
             certifications
         );
 
+        console.log("Debug - mapped mandatory:", mandatory);
+        console.log("Debug - mapped preferred:", preferred);
+
         setEducationData({
             mandatory: {
                 ...mandatory,
@@ -220,6 +228,16 @@ usePreferredEducationLevelExperience: false
             }
         });
 
+        console.log("Debug - educationData set:", {
+            mandatory: {
+                ...mandatory,
+                text: existingPosition.mandatoryEducation || ""
+            },
+            preferred: {
+                ...preferred,
+                text: existingPosition.preferredEducation || ""
+            }
+        });
 
         eduInitializedRef.current = true;
     }, [

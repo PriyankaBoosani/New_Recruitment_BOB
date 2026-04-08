@@ -49,33 +49,21 @@ export default function EducationModal({
     
 
     useEffect(() => {
+        console.log("EducationModal - show:", show);
+        console.log("EducationModal - initialData:", initialData);
+        console.log("EducationModal - mode:", mode);
+        
         if (!show) return;
 
-        setGroups(
-            initialData?.groups?.length
-                ? initialData.groups.map(g => ({
-                    rows: g.educations?.length ? g.educations.map(e => ({
-                        educationTypeId: e.educationTypeId,
-                        educationQualificationsId: e.educationQualificationsId,
-                        specializationId: e.specializationId || "",
-                        duration: e.duration || "",
-                        gpa: e.gpa || "",
-                        percentage: e.percentage || ""
-                    })) : [createRow()]
-                }))
-                : [createGroup()]
-        );
-
-        setCertGroups(
-            initialData?.certGroups?.length
-                ? initialData.certGroups.map(cg => ({
-                    certRows: cg.certifications?.length ? cg.certifications.map(c => ({
-                        certificationId: c.certificationId
-                    })) : [createCertRow()]
-                }))
-                : [createCertGroup()]
-        );
-    }, [show, initialData]);
+        // The groups from mapEduRulesToModalData already have the correct structure with rows
+        setGroups(initialData?.groups?.length ? initialData.groups : [createGroup()]);
+        
+        // The certGroups from mapEduRulesToModalData already have the correct structure with certRows
+        setCertGroups(initialData?.certGroups?.length ? initialData.certGroups : [createCertGroup()]);
+        
+        console.log("EducationModal - groups set:", initialData?.groups?.length ? initialData.groups : [createGroup()]);
+        console.log("EducationModal - first group structure:", initialData?.groups?.[0]);
+    }, [show, initialData, mode]);
 
     const getLabel = (list, id, key = "label") =>
         list.find(i => i.id === id)?.[key] || "";
