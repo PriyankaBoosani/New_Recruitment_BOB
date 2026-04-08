@@ -17,7 +17,7 @@ const createRow = () => ({
 });
 
 const createGroup = () => ({
-  rows: [createRow()]
+  educations: [createRow()]
 });
 
 const createCertRow = () => ({
@@ -25,7 +25,7 @@ const createCertRow = () => ({
 });
 
 const createCertGroup = () => ({
-  certRows: [createCertRow()]
+  certifications: [createCertRow()]
 });
 
 export default function EducationModal({
@@ -49,20 +49,13 @@ export default function EducationModal({
     
 
     useEffect(() => {
-        console.log("EducationModal - show:", show);
-        console.log("EducationModal - initialData:", initialData);
-        console.log("EducationModal - mode:", mode);
-        
         if (!show) return;
 
-        // The groups from mapEduRulesToModalData already have the correct structure with rows
+        // The groups from mapEduRulesToModalData have educations property
         setGroups(initialData?.groups?.length ? initialData.groups : [createGroup()]);
         
-        // The certGroups from mapEduRulesToModalData already have the correct structure with certRows
+        // The certGroups from mapEduRulesToModalData have certifications property
         setCertGroups(initialData?.certGroups?.length ? initialData.certGroups : [createCertGroup()]);
-        
-        console.log("EducationModal - groups set:", initialData?.groups?.length ? initialData.groups : [createGroup()]);
-        console.log("EducationModal - first group structure:", initialData?.groups?.[0]);
     }, [show, initialData, mode]);
 
     const getLabel = (list, id, key = "label") =>
@@ -87,7 +80,12 @@ export default function EducationModal({
 
 const degreeText = groups
   .map(group => {
-    const groupText = group.rows
+    // Check if group has educations property and it's an array
+    if (!group || !Array.isArray(group.educations)) {
+      return null;
+    }
+    
+    const groupText = group.educations
       .filter(r => r.educationTypeId && r.educationQualificationsId)
       .map(r => {
         const type = getLabel(educationTypes, r.educationTypeId);
@@ -119,7 +117,7 @@ const degreeText = groups
 
     const addRow = (groupIndex) => {
   const copy = [...groups];
-  copy[groupIndex].rows.push(createRow());
+  copy[groupIndex].educations.push(createRow());
   setGroups(copy);
 };
 
@@ -146,7 +144,7 @@ const degreeText = groups
     // };
 const updateRow = (gIdx, rIdx, field, value) => {
   const copy = [...groups];
-  copy[gIdx].rows[rIdx][field] = value;
+  copy[gIdx].educations[rIdx][field] = value;
   setGroups(copy);
 };
     // const removeRow = (index) => {
@@ -160,11 +158,11 @@ const updateRow = (gIdx, rIdx, field, value) => {
    const removeRow = (gIdx, rIdx) => {
   const copy = [...groups];
 
-  if (copy[gIdx].rows.length === 1) {
+  if (copy[gIdx].educations.length === 1) {
     // reset instead of delete
-    copy[gIdx].rows[0] = createRow();
+    copy[gIdx].educations[0] = createRow();
   } else {
-    copy[gIdx].rows.splice(rIdx, 1);
+    copy[gIdx].educations.splice(rIdx, 1);
   }
 
   setGroups(copy);
@@ -182,24 +180,37 @@ const addCertGroup = () => {
 
 const addCertRow = (certGroupIndex) => {
   const copy = [...certGroups];
-  copy[certGroupIndex].certRows.push(createCertRow());
+  // Initialize certifications if it doesn't exist
+  if (!copy[certGroupIndex].certifications) {
+    copy[certGroupIndex].certifications = [];
+  }
+  copy[certGroupIndex].certifications.push(createCertRow());
   setCertGroups(copy);
 };
 
 const updateCertRow = (cgIdx, crIdx, field, value) => {
   const copy = [...certGroups];
-  copy[cgIdx].certRows[crIdx][field] = value;
+  // Initialize certifications if it doesn't exist
+  if (!copy[cgIdx].certifications) {
+    copy[cgIdx].certifications = [];
+  }
+  copy[cgIdx].certifications[crIdx][field] = value;
   setCertGroups(copy);
 };
 
 const removeCertRow = (cgIdx, crIdx) => {
   const copy = [...certGroups];
 
-  if (copy[cgIdx].certRows.length === 1) {
+  // Initialize certifications if it doesn't exist
+  if (!copy[cgIdx].certifications) {
+    copy[cgIdx].certifications = [];
+  }
+
+  if (copy[cgIdx].certifications.length === 1) {
     // reset instead of delete
-    copy[cgIdx].certRows[0] = createCertRow();
+    copy[cgIdx].certifications[0] = createCertRow();
   } else {
-    copy[cgIdx].certRows.splice(crIdx, 1);
+    copy[cgIdx].certifications.splice(crIdx, 1);
   }
 
   setCertGroups(copy);
@@ -219,7 +230,12 @@ const removeCertGroup = (cgIdx) => {
 
     const certText = certGroups
   .map(certGroup => {
-    const groupText = certGroup.certRows
+    // Check if certGroup has certifications property and it's an array
+    if (!certGroup || !Array.isArray(certGroup.certifications)) {
+      return null;
+    }
+    
+    const groupText = certGroup.certifications
       .filter(cr => cr.certificationId)
       .map(cr => {
         const cert = certifications.find(c => c.id === cr.certificationId);
@@ -243,9 +259,17 @@ const removeCertGroup = (cgIdx) => {
         finalText += `Certifications: ${certText}`;
     }
 
-    const filteredCertifications = certifications
-        .filter(c => c.name?.toLowerCase() !== "other")
-        .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+    const filteredCertifications = (certGroup, crIdx) => {
+        return certifications
+            .filter(c => c.name?.toLowerCase() !== "other")
+            .filter(c => {
+                // Filter out certifications already selected in other rows within the same group
+                const alreadySelected = (certGroup.certifications || [])
+                    .some((certRow, index) => index !== crIdx && certRow.certificationId === c.id);
+                return !alreadySelected;
+            })
+            .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+    };
 
     return (
         <Modal show={show} onHide={onHide} size="xl" scrollable centered className="edu-modal">
@@ -274,10 +298,10 @@ const removeCertGroup = (cgIdx) => {
                                 )}
                             </div>
 
-                            {group.rows.map((row, rIdx) => {
+                            {(group && Array.isArray(group.educations) ? group.educations : []).map((row, rIdx) => {
                                 // ✅ ADD THIS (VERY IMPORTANT)
                                 const flatIndex =
-                                    groups.slice(0, gIdx).reduce((acc, g) => acc + g.rows.length, 0) + rIdx;
+                                    groups.slice(0, gIdx).reduce((acc, g) => acc + (g && Array.isArray(g.educations) ? g.educations.length : 0), 0) + rIdx;
 
                                 return (
                                     <Row key={rIdx} className="mb-3 align-items-center">
@@ -311,10 +335,17 @@ const removeCertGroup = (cgIdx) => {
                                                 onChange={(selected) =>
                                                     updateRow(gIdx, rIdx, "educationQualificationsId", selected?.value || "")
                                                 }
-                                                options={qualifications.map(q => ({
-                                                    value: q.id,
-                                                    label: q.name
-                                                }))}
+                                                options={qualifications
+                                                    .filter(q => {
+                                                        // Filter out qualifications already selected in other rows within the same group
+                                                        const alreadySelected = group.educations
+                                                            .some((row, index) => index !== rIdx && row.educationQualificationsId === q.id);
+                                                        return !alreadySelected;
+                                                    })
+                                                    .map(q => ({
+                                                        value: q.id,
+                                                        label: q.name
+                                                    }))}
                                                 placeholder="Degree"
                                             />
                                             <ErrorMessage>
@@ -423,7 +454,7 @@ const removeCertGroup = (cgIdx) => {
 
                                         {/* ✅ Delete */}
                                         <Col md={1}>
-                                            {group.rows.length > 1 && (
+                                            {group.educations.length > 1 && (
                                                 <Button onClick={() => removeRow(gIdx, rIdx)}>
                                                     X
                                                 </Button>
@@ -478,7 +509,7 @@ const removeCertGroup = (cgIdx) => {
                                     )}
                                 </div>
 
-                                {certGroup.certRows.map((certRow, crIdx) => (
+                                {(certGroup && Array.isArray(certGroup.certifications) ? certGroup.certifications : []).map((certRow, crIdx) => (
                                     <Row key={crIdx} className="mb-2 align-items-center">
                                         <Col md={10}>
                                             <Select
@@ -490,7 +521,7 @@ const removeCertGroup = (cgIdx) => {
                                                 }}
                                                 value={[
                                                     { value: "", label: t("common:select_certification") },
-                                                    ...filteredCertifications.map(c => ({
+                                                    ...filteredCertifications(certGroup, crIdx).map(c => ({
                                                         value: c.id,
                                                         label: c.name
                                                     }))
@@ -500,7 +531,7 @@ const removeCertGroup = (cgIdx) => {
                                                 }}
                                                 options={[
                                                     { value: "", label: t("common:select_certification") },
-                                                    ...filteredCertifications.map(c => ({
+                                                    ...filteredCertifications(certGroup, crIdx).map(c => ({
                                                         value: c.id,
                                                         label: c.name
                                                     }))
@@ -509,7 +540,7 @@ const removeCertGroup = (cgIdx) => {
                                         </Col>
 
                                         <Col md={1} className="text-center">
-                                            {certGroup.certRows.length > 1 && (
+                                            {certGroup.certifications.length > 1 && (
                                                 <Button
                                                     variant="link"
                                                     className="p-0 text-danger"
@@ -552,7 +583,7 @@ const removeCertGroup = (cgIdx) => {
                 <Button
                     variant="primary"
                     onClick={() => {
-                        const allRows = groups.flatMap(g => g.rows);
+                        const allRows = groups.flatMap(g => g.educations);
                         const validationErrors = validateEducationModal({
   rows: allRows,
   mode,
@@ -563,7 +594,7 @@ const removeCertGroup = (cgIdx) => {
                             return;
                         }
 
-                        const filledRows = groups.flatMap(g => g.rows).filter(
+                        const filledRows = groups.flatMap(g => g.educations).filter(
                                             r => r.educationTypeId && r.educationQualificationsId
                                             );
 
@@ -586,7 +617,7 @@ const removeCertGroup = (cgIdx) => {
 
                     const payload = {
                             groups: groups.map(group => ({
-                            educations: group.rows
+                            educations: group.educations
                             .filter(r => r.educationTypeId && r.educationQualificationsId)
                             .map(r => ({
                                 educationTypeId: r.educationTypeId,
@@ -599,7 +630,7 @@ const removeCertGroup = (cgIdx) => {
                         })),
 
                         certGroups: certGroups.map(certGroup => ({
-                            certifications: certGroup.certRows
+                            certifications: (certGroup.certifications || [])
                             .filter(cr => cr.certificationId)
                             .map(cr => ({
                                 certificationId: cr.certificationId
