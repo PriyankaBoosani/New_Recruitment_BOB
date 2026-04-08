@@ -800,10 +800,17 @@ console.log("educationDocuments",educationDocuments)
                                                             }}
 
                                                             options={withSelectOption(
-                                                                educationDocuments.map(e => ({
-                                                                value: e.id,
-                                                                label: e.name
-                                                                }))
+                                                                educationDocuments
+                                                                    .filter(e => {
+                                                                        // Filter out qualifications already selected in other education levels
+                                                                        const alreadySelected = (formData[expType]?.educationLevelExperiences || [])
+                                                                            .some((exp, index) => index !== eduExpIndex && exp.educationLevel === e.id);
+                                                                        return !alreadySelected;
+                                                                    })
+                                                                    .map(e => ({
+                                                                        value: e.id,
+                                                                        label: e.name
+                                                                    }))
                                                             )}
                                                             />
                                                     </Col>
