@@ -30,7 +30,7 @@ const PositionForm = ({
     setIndentOthers,
     approvedOn,
     setApprovedOn,
-    masterData: { positions, departments, employmentTypes, jobGrades, approvingAuthorities, educationTypes,qualifications},
+    masterData: { positions, departments, employmentTypes, jobGrades, approvingAuthorities, educationTypes, qualifications, documentTypes },
     onPositionSelect,
     onEducationClick,
     educationData,
@@ -174,8 +174,11 @@ const PositionForm = ({
             label: `${g.code} ${g.scale ? `- ${g.scale}` : ""}`
         }))
     );
+    console.log("documentTypes",documentTypes)
+    const educationDocuments = documentTypes?.filter(doc => doc.docType === "educationdocs") || [];
+console.log("educationDocuments",educationDocuments)
     const qualificationOptions = withSelectOption(
-        qualifications.map(e => ({
+        educationDocuments.map(e => ({
             value: e.id,
             label: e.name
         }))
@@ -557,7 +560,7 @@ const PositionForm = ({
 
                     {/* Experience Row logic maintained for both mandatory/preferred */}
                     {['mandatoryExperience', 'preferredExperience'].map((expType) => (
-                        <Col md={12} key={expType}>
+                        <Col md={6} key={expType}>
                             <div className="d-flex justify-content-between align-items-center mb-2">
                                 <Form.Label className="mb-0">
                                     {expType === 'mandatoryExperience'
@@ -639,7 +642,7 @@ const PositionForm = ({
                                         });
                                     }}
                                     />
-                                    <OverlayTrigger
+                                    {/* <OverlayTrigger
                                         placement="top"
                                         overlay={
                                             <Popover>
@@ -652,7 +655,7 @@ const PositionForm = ({
                                         }
                                     >
                                         <img src={I_icon} alt="info" style={{ width: "14px", height: "14px", cursor: "pointer" }} />
-                                    </OverlayTrigger>
+                                    </OverlayTrigger> */}
                                 </div>
                             </div>
 
@@ -770,9 +773,9 @@ const PositionForm = ({
                                                             placeholder="Select Qualification"
 
                                                             value={withSelectOption(
-                                                                qualifications.map(q => ({
-                                                                value: q.id,
-                                                                label: q.name
+                                                                educationDocuments.map(e => ({
+                                                                value: e.id,
+                                                                label: e.name
                                                                 }))
                                                             ).find(
                                                                 option => String(option.value) === String(eduExp.educationLevel || "")
@@ -797,9 +800,9 @@ const PositionForm = ({
                                                             }}
 
                                                             options={withSelectOption(
-                                                                qualifications.map(q => ({
-                                                                value: q.id,
-                                                                label: q.name
+                                                                educationDocuments.map(e => ({
+                                                                value: e.id,
+                                                                label: e.name
                                                                 }))
                                                             )}
                                                             />

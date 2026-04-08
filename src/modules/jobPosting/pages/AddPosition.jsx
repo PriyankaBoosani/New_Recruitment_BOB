@@ -66,7 +66,7 @@ const AddPosition = () => {
     const { createPosition, loading } = useCreateJobPosition();
     const { updatePosition } = useUpdateJobPosition();
     const masterData = useMasterData();
-    const { positions, employmentTypes, reservationCategories, disabilityCategories, educationTypes, qualifications, specializations, certifications, states, languages, stateLanguages, cities } = masterData;
+    const { positions, employmentTypes, reservationCategories, disabilityCategories, educationTypes, qualifications, specializations, certifications, states, languages, stateLanguages, cities, documentTypes } = masterData;
 
     const [errors, setErrors] = useState({});
     const [showImportModal, setShowImportModal] = useState(false);
