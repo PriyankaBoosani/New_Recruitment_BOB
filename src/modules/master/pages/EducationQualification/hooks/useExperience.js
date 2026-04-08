@@ -205,7 +205,7 @@ export const useExperience = () => {
             specializationId: s.id || null,     // ✅ dynamic
           }))
       };
-      
+
       const res = await masterApiService.saveEducation(payload);
 
       const saved = res.data;
@@ -234,19 +234,11 @@ export const useExperience = () => {
         educationQualificationsId: saved?.qualification?.educationQualificationsId || "-",
       };
 
-      if (isEditMode) {
-        // ✅ UPDATE existing row
-        setExperienceList((prev) => {
-          const updated = [...prev];
-          updated[editIndex] = mapped;
-          return updated;
-        });
+      await loadData();  // ✅ REFETCH TABLE DATA
 
+      if (isEditMode) {
         toast.success(t("education:updated_success"));
       } else {
-        // ✅ ADD new row
-        setExperienceList((prev) => [mapped, ...prev]);
-
         toast.success(t("education:saved_success"));
       }
 
