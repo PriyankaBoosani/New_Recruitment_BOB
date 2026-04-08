@@ -557,53 +557,104 @@ const PositionForm = ({
 
                     {/* Experience Row logic maintained for both mandatory/preferred */}
                     {['mandatoryExperience', 'preferredExperience'].map((expType) => (
-                        <Col md={6} key={expType}>
-                            {/* Toggle for each experience type */}
-                            <div className="d-flex align-items-center gap-2 mb-2">
-                                <Form.Check
-                                    type="switch"
-                                    id={`${expType}-experience-type-toggle`} 
-                                    label={expType === 'mandatoryExperience' 
-                                        ? t("addPosition:use_mandatory_education_level_experience")
-                                        : t("addPosition:use_preferred_education_level_experience")}
-                                    disabled={isViewMode}
-                                    checked={expType === 'mandatoryExperience' 
-                                        ? (formData.useMandatoryEducationLevelExperience || false)
-                                        : (formData.usePreferredEducationLevelExperience || false)}
-                                    onChange={(e) => handleInputChange({
-                                        target: {
-                                            name: expType === 'mandatoryExperience' 
-                                                ? 'useMandatoryEducationLevelExperience'
-                                                : 'usePreferredEducationLevelExperience',
-                                            value: e.target.checked
-                                        }
-                                    })}
-                                />
-                                <OverlayTrigger
-                                    placement="top"
-                                    overlay={
-                                        <Popover>
-                                            <Popover.Body>
-                                                {expType === 'mandatoryExperience' 
-                                                    ? t("addPosition:mandatory_education_toggle_help")
-                                                    : t("addPosition:preferred_education_toggle_help")}
-                                            </Popover.Body>
-                                        </Popover>
-                                    }
-                                >
-                                    <img src={I_icon} alt="info" style={{ width: "14px", height: "14px", cursor: "pointer" }} />
-                                </OverlayTrigger>
-                            </div>
-                            
-                            <Form.Label>
-                                {expType === 'mandatoryExperience'
-                                    ? t("addPosition:mandatory_experience")
-                                    : t("addPosition:preferred_experience")}
+                        <Col md={12} key={expType}>
+                            <div className="d-flex justify-content-between align-items-center mb-2">
+                                <Form.Label className="mb-0">
+                                    {expType === 'mandatoryExperience'
+                                        ? t("addPosition:mandatory_experience")
+                                        : t("addPosition:preferred_experience")}
 
-                                {expType === 'mandatoryExperience' && (
-                                    <span className="text-danger">*</span>
-                                )}
-                            </Form.Label>
+                                    {expType === 'mandatoryExperience' && (
+                                        <span className="text-danger">*</span>
+                                    )}
+                                </Form.Label>
+                                
+                                <div className="d-flex align-items-center gap-2">
+                                    <Form.Check
+                                        type="switch"
+                                        id={`${expType}-experience-type-toggle`} 
+                                        label={expType === 'mandatoryExperience' 
+                                            ? t("addPosition:use_mandatory_education_level_experience")
+                                            : t("addPosition:use_preferred_education_level_experience")}
+                                        disabled={isViewMode}
+                                        checked={expType === 'mandatoryExperience' 
+                                            ? (formData.useMandatoryEducationLevelExperience || false)
+                                            : (formData.usePreferredEducationLevelExperience || false)}
+                                        onChange={(e) => {
+                                        const isEducationMode = e.target.checked;
+                                        const fieldName = expType === 'mandatoryExperience' 
+                                            ? 'useMandatoryEducationLevelExperience'
+                                            : 'usePreferredEducationLevelExperience';
+                                        
+                                        // Clear data when switching modes
+                                        if (isEducationMode) {
+                                            // Switching to education mode - clear standard experience data
+                                            handleInputChange({
+                                                target: {
+                                                    name: `${expType}.years`,
+                                                    value: ""
+                                                }
+                                            });
+                                            handleInputChange({
+                                                target: {
+                                                    name: `${expType}.months`,
+                                                    value: ""
+                                                }
+                                            });
+                                            handleInputChange({
+                                                target: {
+                                                    name: `${expType}.description`,
+                                                    value: ""
+                                                }
+                                            });
+                                            
+                                            // Initialize with one empty education level experience
+                                            handleInputChange({
+                                                target: {
+                                                    name: `${expType}.educationLevelExperiences`,
+                                                    value: [{
+                                                        educationLevel: "",
+                                                        years: "",
+                                                        months: "",
+                                                        description: ""
+                                                    }]
+                                                }
+                                            });
+                                        } else {
+                                            // Switching to standard mode - clear education level experiences
+                                            handleInputChange({
+                                                target: {
+                                                    name: `${expType}.educationLevelExperiences`,
+                                                    value: []
+                                                }
+                                            });
+                                        }
+                                        
+                                        // Update the toggle state
+                                        handleInputChange({
+                                            target: {
+                                                name: fieldName,
+                                                value: isEducationMode
+                                            }
+                                        });
+                                    }}
+                                    />
+                                    <OverlayTrigger
+                                        placement="top"
+                                        overlay={
+                                            <Popover>
+                                                <Popover.Body>
+                                                    {expType === 'mandatoryExperience' 
+                                                        ? t("addPosition:mandatory_education_toggle_help")
+                                                        : t("addPosition:preferred_education_toggle_help")}
+                                                </Popover.Body>
+                                            </Popover>
+                                        }
+                                    >
+                                        <img src={I_icon} alt="info" style={{ width: "14px", height: "14px", cursor: "pointer" }} />
+                                    </OverlayTrigger>
+                                </div>
+                            </div>
 
                             {(expType === 'mandatoryExperience' ? !formData.useMandatoryEducationLevelExperience : !formData.usePreferredEducationLevelExperience) ? (
                                 // Existing experience fields (when toggle is OFF)
