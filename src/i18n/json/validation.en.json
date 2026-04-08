@@ -51,6 +51,7 @@
   "max_greater_than_min_age": "Max age must be greater than Min age",
   "experience_duration_required": "Please select experience duration",
   "experience_details_required": "Please enter experience details",
+  "qualification_and_duration_required": "Please select qualification and experience duration",
   "approved_date_future": "Approved date cannot be a future date",
   "state_already_added": "This state is already added",
   "state_city_already_added": "This state and city combination is already added.",

@@ -183,46 +183,57 @@ export const validateAddPosition = ({
       const hasDuration = exp.years || exp.months;
       const hasQualification = exp.educationLevel;
 
-      return hasQualification && hasDuration;
+      // Qualification is mandatory
+      if (!hasQualification) {
+        return false;
+      }
+
+      // Duration is also mandatory
+      return hasDuration;
     });
 
     if (!isValid) {
-      errors.mandatoryExperience = "validation:experience_duration_required";
+      errors.mandatoryExperience = "validation:qualification_and_duration_required";
     }
-
-    // description check (optional but recommended)
-   const hasDescription = eduExps.every(exp => {
-      // ignore empty rows
-      const isEmptyRow =
-        !exp.educationLevel &&
-        !exp.years &&
-        !exp.months &&
-        !exp.description;
-
-      if (isEmptyRow) return true;
-
-      return exp.description?.trim();
-    });
-
-    if (!hasDescription) {
+    
+    // Description validation when toggle is ON (textarea is always visible)
+    if (!formData.mandatoryExperience.description?.trim()) {
       errors.mandatoryExperience = "validation:experience_details_required";
     }
   }
 }
-if (formData.usePreferredEducationLevelExperience) {
+
+// Preferred Experience validation
+if (!formData.usePreferredEducationLevelExperience) {
+  // OLD logic (toggle OFF)
+  validateExperience(formData.preferredExperience, "preferredExperience");
+} else {
+  // NEW logic (toggle ON)
   const eduExps = formData.preferredExperience?.educationLevelExperiences || [];
 
-  const hasAnyData = eduExps.some(exp =>
-    exp.educationLevel || exp.years || exp.months || exp.description
-  );
+  if (!eduExps.length) {
+    errors.preferredExperience = "validation:experience_duration_required";
+  } else {
+    const isValid = eduExps.every(exp => {
+      const hasDuration = exp.years || exp.months;
+      const hasQualification = exp.educationLevel;
 
-  if (hasAnyData) {
-    const isValid = eduExps.every(exp =>
-      exp.educationLevel && (exp.years || exp.months)
-    );
+      // Qualification is mandatory
+      if (!hasQualification) {
+        return false;
+      }
+
+      // Duration is also mandatory
+      return hasDuration;
+    });
 
     if (!isValid) {
-      errors.preferredExperience = "validation:experience_duration_required";
+      errors.preferredExperience = "validation:qualification_and_duration_required";
+    }
+    
+    // Description validation when toggle is ON (textarea is always visible)
+    if (!formData.preferredExperience.description?.trim()) {
+      errors.preferredExperience = "validation:experience_details_required";
     }
   }
 }
