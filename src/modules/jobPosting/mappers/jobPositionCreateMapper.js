@@ -21,42 +21,64 @@ export const mapAddPositionToCreateDto = ({
   const buildEduRulesJson = (edu, mode) => {
     if (!edu) {
       return mode === "mandatory"
-        ? { mandatoryEducations: [], mandatoryCertificationIds: [] }
-        : { preferredEducations: [], preferredCertificationIds: [] };
+        ? { 
+            mandatoryEducations: { operator: "OR", groups: [] },
+            mandatoryCertifications: { operator: "OR", groups: [] }
+          }
+        : { 
+            preferredEducations: { operator: "OR", groups: [] },
+            preferredCertifications: { operator: "OR", groups: [] }
+          };
     }
 
-    // Handle new structure with groups and certGroups from EducationModal
-    const educations = [];
-    const certificationIds = [];
-
-    // Extract educations from groups
+    // Process education groups with OR/AND operators
+    const educationGroups = [];
     if (edu.groups && Array.isArray(edu.groups)) {
       edu.groups.forEach(group => {
+        const conditions = [];
+        
         if (group.educations && Array.isArray(group.educations)) {
           group.educations.forEach(edu => {
             if (edu.educationTypeId && edu.educationQualificationsId) {
-              educations.push({
-                educationTypeId: edu.educationTypeId,
-                educationQualificationsId: edu.educationQualificationsId,
-                specializationId: edu.specializationId,
-                duration: edu.duration,
-                gpa: edu.gpa,
-                percentage: edu.percentage
+              conditions.push({
+                educationType: edu.educationTypeId,
+                qualification: edu.educationQualificationsId,
+                specialization: edu.specializationId || "",
+                duration: edu.duration || "",
+                gpa: edu.gpa || "",
+                percentage: edu.percentage || ""
               });
             }
+          });
+        }
+
+        if (conditions.length > 0) {
+          educationGroups.push({
+            operator: "AND",
+            conditions: conditions
           });
         }
       });
     }
 
-    // Extract certifications from certGroups
+    // Process certification groups with OR/AND operators
+    const certificationGroups = [];
     if (edu.certGroups && Array.isArray(edu.certGroups)) {
       edu.certGroups.forEach(certGroup => {
+        const conditions = [];
+        
         if (certGroup.certifications && Array.isArray(certGroup.certifications)) {
           certGroup.certifications.forEach(cert => {
             if (cert.certificationId) {
-              certificationIds.push(cert.certificationId);
+              conditions.push(cert.certificationId);
             }
+          });
+        }
+
+        if (conditions.length > 0) {
+          certificationGroups.push({
+            operator: "AND",
+            conditions: conditions
           });
         }
       });
@@ -64,13 +86,25 @@ export const mapAddPositionToCreateDto = ({
 
     return mode === "mandatory"
       ? {
-        mandatoryEducations: educations,
-        mandatoryCertificationIds: certificationIds,
-      }
+          mandatoryEducations: {
+            operator: "OR",
+            groups: educationGroups
+          },
+          mandatoryCertificationIds: {
+            operator: "OR",
+            groups: certificationGroups
+          }
+        }
       : {
-        preferredEducations: educations,
-        preferredCertificationIds: certificationIds,
-      };
+          preferredEducations: {
+            operator: "OR",
+            groups: educationGroups
+          },
+          preferredCertifications: {
+            operator: "OR",
+            groups: certificationGroups
+          }
+        };
   };
 
 

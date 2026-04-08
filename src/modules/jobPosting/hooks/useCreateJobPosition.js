@@ -12,7 +12,7 @@ export const useCreateJobPosition = () => {
       setLoading(true);
 
       const dto = mapAddPositionToCreateDto(payload);
-    console.log("dto",dto);
+   // console.log("dto",dto);return false;
 
       const res = await jobPositionApiService.createPosition({
         dto,
