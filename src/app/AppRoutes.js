@@ -18,6 +18,7 @@ import JobPostingsList from "../modules/jobPosting/pages/JobPostingsList";
 import CreateRequisition from "../modules/jobPosting/pages/CreateRequisition";
 import GenericOrAnnexuresPage from "../modules/master/pages/GenericOrAnnexures/GenericOrAnnexuresPage";
 import CertificationPage from "../modules/master/pages/CertificationPage/CertificationPage";
+import EducationModal from "../modules/master/pages/EducationQualification/EducationQualificationPage";
 // import NonAdminRoute from "./NonAdminRoute";
 // import AdminRoute from "./AdminRoute";
 import AddPosition from "../modules/jobPosting/pages/AddPosition";
@@ -143,7 +144,16 @@ const AppRoutes = () => {
                       <GenericOrAnnexuresPage />
                     </PrivilegeRoute>
                   }
-                />          
+                />   
+
+                 <Route
+                  path="/education-qualification"
+                  element={
+                    <PrivilegeRoute privilege="Admin">
+                      <EducationModal />
+                    </PrivilegeRoute>
+                  }
+                />       
                 {/* ---------- NON-ADMIN ONLY ROUTES ---------- */}
                 <Route
                   path="/job-posting"

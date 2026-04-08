@@ -9,6 +9,7 @@
   "certification": "Certification",
   "special_category": "Special Category",
   "document": "Document",
+   "education_qualification": "Educational Qualification",
   "generic_or_annexures": "Generic or Annexures",
   "job_postings": "Job Postings",
   "logout": "Logout",
@@ -61,5 +62,6 @@
   "extension_requests": "Extension Requests",
   "committee_requests": "Committee Requests",
   "back": "Back",
-  "view_details": "View Details"
+  "view_details": "View Details",
+  "add": "Add"
 }

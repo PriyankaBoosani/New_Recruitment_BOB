@@ -143,7 +143,8 @@ const Header = () => {
     location.pathname.startsWith("/category") ||
     location.pathname.startsWith("/certification") ||
     location.pathname.startsWith("/document") ||
-    location.pathname.startsWith("/generic-or-annexures");
+    location.pathname.startsWith("/generic-or-annexures") ||
+    location.pathname.startsWith("/education-qualification");
 
   return (
     <header className="fixed-top">
@@ -465,6 +466,11 @@ const Header = () => {
 
                   <NavDropdown.Item as={Link} to="/generic-or-annexures" onClick={closeMenu}>
                     {t("generic_or_annexures")}
+                  </NavDropdown.Item>
+
+
+                     <NavDropdown.Item as={Link} to="/education-qualification" onClick={closeMenu}>
+                    {t("education_qualification")}
                   </NavDropdown.Item>
                 </NavDropdown>
               )}
