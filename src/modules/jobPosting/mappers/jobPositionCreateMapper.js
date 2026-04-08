@@ -25,17 +25,42 @@ export const mapAddPositionToCreateDto = ({
         : { preferredEducations: [], preferredCertificationIds: [] };
     }
 
-    const educations = Array.isArray(edu.educations)
-      ? edu.educations.map(e => ({
-        educationTypeId: e.educationTypeId,
-        educationQualificationsId: e.educationQualificationsId,
-        specializationId: e.specializationId,
-      }))
-      : [];
+    // Handle new structure with groups and certGroups from EducationModal
+    const educations = [];
+    const certificationIds = [];
 
-    const certificationIds = Array.isArray(edu.certificationIds)
-      ? edu.certificationIds
-      : [];
+    // Extract educations from groups
+    if (edu.groups && Array.isArray(edu.groups)) {
+      edu.groups.forEach(group => {
+        if (group.educations && Array.isArray(group.educations)) {
+          group.educations.forEach(edu => {
+            if (edu.educationTypeId && edu.educationQualificationsId) {
+              educations.push({
+                educationTypeId: edu.educationTypeId,
+                educationQualificationsId: edu.educationQualificationsId,
+                specializationId: edu.specializationId,
+                duration: edu.duration,
+                gpa: edu.gpa,
+                percentage: edu.percentage
+              });
+            }
+          });
+        }
+      });
+    }
+
+    // Extract certifications from certGroups
+    if (edu.certGroups && Array.isArray(edu.certGroups)) {
+      edu.certGroups.forEach(certGroup => {
+        if (certGroup.certifications && Array.isArray(certGroup.certifications)) {
+          certGroup.certifications.forEach(cert => {
+            if (cert.certificationId) {
+              certificationIds.push(cert.certificationId);
+            }
+          });
+        }
+      });
+    }
 
     return mode === "mandatory"
       ? {
