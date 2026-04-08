@@ -166,8 +166,66 @@ export const validateAddPosition = ({
   };
 
 
-  validateExperience(formData.mandatoryExperience, "mandatoryExperience");
+  //validateExperience(formData.mandatoryExperience, "mandatoryExperience");
 
+  if (!formData.useMandatoryEducationLevelExperience) {
+  // OLD logic (toggle OFF)
+  validateExperience(formData.mandatoryExperience, "mandatoryExperience");
+} else {
+  // NEW logic (toggle ON)
+
+  const eduExps = formData.mandatoryExperience?.educationLevelExperiences || [];
+
+  if (!eduExps.length) {
+    errors.mandatoryExperience = "validation:experience_duration_required";
+  } else {
+    const isValid = eduExps.every(exp => {
+      const hasDuration = exp.years || exp.months;
+      const hasQualification = exp.educationLevel;
+
+      return hasQualification && hasDuration;
+    });
+
+    if (!isValid) {
+      errors.mandatoryExperience = "validation:experience_duration_required";
+    }
+
+    // description check (optional but recommended)
+   const hasDescription = eduExps.every(exp => {
+      // ignore empty rows
+      const isEmptyRow =
+        !exp.educationLevel &&
+        !exp.years &&
+        !exp.months &&
+        !exp.description;
+
+      if (isEmptyRow) return true;
+
+      return exp.description?.trim();
+    });
+
+    if (!hasDescription) {
+      errors.mandatoryExperience = "validation:experience_details_required";
+    }
+  }
+}
+if (formData.usePreferredEducationLevelExperience) {
+  const eduExps = formData.preferredExperience?.educationLevelExperiences || [];
+
+  const hasAnyData = eduExps.some(exp =>
+    exp.educationLevel || exp.years || exp.months || exp.description
+  );
+
+  if (hasAnyData) {
+    const isValid = eduExps.every(exp =>
+      exp.educationLevel && (exp.years || exp.months)
+    );
+
+    if (!isValid) {
+      errors.preferredExperience = "validation:experience_duration_required";
+    }
+  }
+}
   // if (
   //   formData.preferredExperience.years ||
   //   formData.preferredExperience.months ||

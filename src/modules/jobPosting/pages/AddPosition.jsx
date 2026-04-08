@@ -92,7 +92,8 @@ const AddPosition = () => {
         mandatoryExperience: { years: "", months: "", description: "" },
         preferredExperience: { years: "", months: "", description: "" },
         responsibilities: "", medicalRequired: "yes", enableStateDistribution: false,
-        cutOffDate: ""
+        cutOffDate: "",useMandatoryEducationLevelExperience: false,
+usePreferredEducationLevelExperience: false
     });
 
 
@@ -134,15 +135,19 @@ const AddPosition = () => {
                 years: Math.floor(existingPosition.mandatoryExperienceMonths / 12),
                 months: existingPosition.mandatoryExperienceMonths % 12,
                 description: existingPosition.mandatoryExperience,
+                educationLevelExperiences: existingPosition.mandatoryEducationLevelExperiences || []
             },
             preferredExperience: {
                 years: Math.floor(existingPosition.preferredExperienceMonths / 12),
                 months: existingPosition.preferredExperienceMonths % 12,
                 description: existingPosition.preferredExperience,
+                educationLevelExperiences: existingPosition.preferredEducationLevelExperiences || []
             },
             contractualPeriod: isContract
                 ? String(existingPosition.contractYears ?? "")
                 : "",
+            useMandatoryEducationLevelExperience: existingPosition.useMandatoryEducationLevelExperience || false,
+            usePreferredEducationLevelExperience: existingPosition.usePreferredEducationLevelExperience || false,
         });
         setApprovedBy(existingPosition.approvedBy || "");
         setIndentOthers(existingPosition.indentOthers || "");
@@ -372,27 +377,21 @@ const AddPosition = () => {
             }));
         }
         if (name === "vacancies") {
-            setErrors(prev => ({
-                ...prev,
-                vacancies: "",
-                nationalDistribution: ""
-            }));
-        } else {
-            setErrors(prev => ({
-                ...prev,
-                [name]: ""
-            }));
+            setErrors(prev => ({ ...prev, vacancies: "", nationalDistribution: "" }));
         }
-
     };
+
     const resetPositionDerivedFields = {
         minAge: "",
         maxAge: "",
         grade: "",
         responsibilities: "",
         mandatoryExperience: { years: "", months: "", description: "" },
-        preferredExperience: { years: "", months: "", description: "" }
+        preferredExperience: { years: "", months: "", description: "" },
+        useMandatoryEducationLevelExperience: false,
+        usePreferredEducationLevelExperience: false
     };
+
     const handleRejectPositionData = () => {
         setFormData(prev => ({
             ...prev,
@@ -419,19 +418,13 @@ const AddPosition = () => {
         setShowConfirmModal(false);
     };
 
-
     const onPositionSelect = (id) => {
-        // 🔥 If user selects "Select"
+        // If user selects "Select"
         if (!id) {
             setFormData(prev => ({
                 ...prev,
                 position: "",
-                minAge: "",
-                maxAge: "",
-                grade: "",
-                responsibilities: "",
-                mandatoryExperience: { years: "", months: "", description: "" },
-                preferredExperience: { years: "", months: "", description: "" }
+                ...resetPositionDerivedFields
             }));
 
             setErrors(prev => ({
@@ -461,7 +454,6 @@ const AddPosition = () => {
         setPendingPosition(selected);
         setShowConfirmModal(true);
     };
-
 
     const handleUsePositionData = () => {
         if (!pendingPosition) return;

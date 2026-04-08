@@ -126,13 +126,39 @@ export const mapAddPositionToCreateDto = ({
     ),
 
 
+    isMandatoryExpMonthsEduWise: !!formData.useMandatoryEducationLevelExperience,
+    isPreferredExpMonthsEduWise: !!formData.usePreferredEducationLevelExperience,
+
+    // Map education level experiences when toggles are ON
+    mandatoryEducationLevelExperiences: formData.useMandatoryEducationLevelExperience 
+      ? (formData.mandatoryExperience?.educationLevelExperiences || []).reduce((acc, exp) => {
+          if (exp.educationLevel && (exp.years || exp.months)) {
+            acc[exp.educationLevel] = (Number(exp.years || 0) * 12) + Number(exp.months || 0);
+          }
+          return acc;
+        }, {})
+      : {},
+
+    preferredEducationLevelExperiences: formData.usePreferredEducationLevelExperience 
+      ? (formData.preferredExperience?.educationLevelExperiences || []).reduce((acc, exp) => {
+          if (exp.educationLevel && (exp.years || exp.months)) {
+            acc[exp.educationLevel] = (Number(exp.years || 0) * 12) + Number(exp.months || 0);
+          }
+          return acc;
+        }, {})
+      : {},
+
     mandatoryExperienceMonths:
-      Number(formData.mandatoryExperience.years || 0) * 12 +
-      Number(formData.mandatoryExperience.months || 0),
+      !formData.useMandatoryEducationLevelExperience
+        ? Number(formData.mandatoryExperience.years || 0) * 12 +
+          Number(formData.mandatoryExperience.months || 0)
+        : 0,
 
     preferredExperienceMonths:
-      Number(formData.preferredExperience.years || 0) * 12 +
-      Number(formData.preferredExperience.months || 0),
+      !formData.usePreferredEducationLevelExperience
+        ? Number(formData.preferredExperience.years || 0) * 12 +
+          Number(formData.preferredExperience.months || 0)
+        : 0,
 
     mandatoryExperience: formData.mandatoryExperience.description || "",
     preferredExperience: formData.preferredExperience.description || "",

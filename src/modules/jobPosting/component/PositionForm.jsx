@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import { Row, Col, Form, Button, Tooltip } from "react-bootstrap";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import upload_icon from '../../../assets/upload_Icon.png';
@@ -30,16 +30,18 @@ const PositionForm = ({
     setIndentOthers,
     approvedOn,
     setApprovedOn,
-    masterData: { positions, departments, employmentTypes, jobGrades, approvingAuthorities },
+    masterData: { positions, departments, employmentTypes, jobGrades, approvingAuthorities, educationTypes,qualifications},
     onPositionSelect,
     onEducationClick,
     educationData,
     YEAR_OPTIONS,
     MONTH_OPTIONS,
     ALLOWED_EXTENSIONS,
-    MAX_FILE_SIZE_MB
+    MAX_FILE_SIZE_MB,
+    
 }) => {
     const { t } = useTranslation(["addPosition", "common", "validation"]);
+    
     const renderError = (e) => {
         if (!e) return "";
         if (typeof e === "string") return t(e);
@@ -170,6 +172,12 @@ const PositionForm = ({
         jobGrades.map(g => ({
             value: g.id,
             label: `${g.code} ${g.scale ? `- ${g.scale}` : ""}`
+        }))
+    );
+    const qualificationOptions = withSelectOption(
+        qualifications.map(e => ({
+            value: e.id,
+            label: e.name
         }))
     );
     return (
@@ -550,6 +558,43 @@ const PositionForm = ({
                     {/* Experience Row logic maintained for both mandatory/preferred */}
                     {['mandatoryExperience', 'preferredExperience'].map((expType) => (
                         <Col md={6} key={expType}>
+                            {/* Toggle for each experience type */}
+                            <div className="d-flex align-items-center gap-2 mb-2">
+                                <Form.Check
+                                    type="switch"
+                                    id={`${expType}-experience-type-toggle`} 
+                                    label={expType === 'mandatoryExperience' 
+                                        ? t("addPosition:use_mandatory_education_level_experience")
+                                        : t("addPosition:use_preferred_education_level_experience")}
+                                    disabled={isViewMode}
+                                    checked={expType === 'mandatoryExperience' 
+                                        ? (formData.useMandatoryEducationLevelExperience || false)
+                                        : (formData.usePreferredEducationLevelExperience || false)}
+                                    onChange={(e) => handleInputChange({
+                                        target: {
+                                            name: expType === 'mandatoryExperience' 
+                                                ? 'useMandatoryEducationLevelExperience'
+                                                : 'usePreferredEducationLevelExperience',
+                                            value: e.target.checked
+                                        }
+                                    })}
+                                />
+                                <OverlayTrigger
+                                    placement="top"
+                                    overlay={
+                                        <Popover>
+                                            <Popover.Body>
+                                                {expType === 'mandatoryExperience' 
+                                                    ? t("addPosition:mandatory_education_toggle_help")
+                                                    : t("addPosition:preferred_education_toggle_help")}
+                                            </Popover.Body>
+                                        </Popover>
+                                    }
+                                >
+                                    <img src={I_icon} alt="info" style={{ width: "14px", height: "14px", cursor: "pointer" }} />
+                                </OverlayTrigger>
+                            </div>
+                            
                             <Form.Label>
                                 {expType === 'mandatoryExperience'
                                     ? t("addPosition:mandatory_experience")
@@ -560,86 +605,304 @@ const PositionForm = ({
                                 )}
                             </Form.Label>
 
-                            <Row className="g-2 mb-2">
-                                <Col md={6}>
-                                    <Select
-                                        className="react-select-fixed"
-                                        classNamePrefix="react-select"
-                                        isDisabled={isViewMode}
-                                      value={yearOptions.find(
-                                            option => String(option.value) === String(formData[expType].years)
-                                        )}
-                                        onChange={(selected) =>
-                                            handleInputChange({
-                                                target: {
-                                                    name: `${expType}.years`,
-                                                    value: selected ? selected.value : ""
+                            {(expType === 'mandatoryExperience' ? !formData.useMandatoryEducationLevelExperience : !formData.usePreferredEducationLevelExperience) ? (
+                                // Existing experience fields (when toggle is OFF)
+                                <>
+                                    <Row className="g-2 mb-2">
+                                        <Col md={6}>
+                                            <Select
+                                                className="react-select-fixed"
+                                                classNamePrefix="react-select"
+                                                isDisabled={isViewMode}
+                                              value={yearOptions.find(
+                                                    option => String(option.value) === String(formData[expType].years)
+                                                )}
+                                                onChange={(selected) =>
+                                                    handleInputChange({
+                                                        target: {
+                                                            name: `${expType}.years`,
+                                                            value: selected ? selected.value : ""
+                                                        }
+                                                    })
                                                 }
-                                            })
-                                        }
-                                        options={yearOptions}
-                                    />
-                                </Col>
-                                <Col md={6}>
-                                    <Select
-                                        className="react-select-fixed"
-                                        classNamePrefix="react-select"
-                                        isDisabled={isViewMode}
-                                        value={monthOptions.find(
-                                            option => String(option.value) === String(formData[expType].months)
-                                        )}
-                                        onChange={(selected) =>
-                                            handleInputChange({
-                                                target: {
-                                                    name: `${expType}.months`,
-                                                    value: selected ? selected.value : ""
+                                                options={yearOptions}
+                                            />
+                                        </Col>
+                                        <Col md={6}>
+                                            <Select
+                                                className="react-select-fixed"
+                                                classNamePrefix="react-select"
+                                                isDisabled={isViewMode}
+                                                value={monthOptions.find(
+                                                    option => String(option.value) === String(formData[expType].months)
+                                                )}
+                                                onChange={(selected) =>
+                                                    handleInputChange({
+                                                        target: {
+                                                            name: `${expType}.months`,
+                                                            value: selected ? selected.value : ""
+                                                        }
+                                                    })
                                                 }
-                                            })
+                                                options={monthOptions}
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Form.Control
+                                        as="textarea"
+                                        maxLength={2000}
+                                        placeholder={
+                                            expType === "mandatoryExperience"
+                                                ? t("addPosition:enter_mandatory_experience")
+                                                : t("addPosition:enter_preferred_experience")
                                         }
-                                        options={monthOptions}
+                                        rows={3}
+                                        value={formData[expType].description} disabled={isViewMode}
+                                        onChange={(e) => {
+                                            const { valid, value } = validateTitleOnType(e.target.value);
+
+                                            if (!valid) {
+                                                setErrors(prev => ({ ...prev, [expType]: "validation:title_invalid_chars_extended" }));
+                                                return;
+                                            }
+
+                                            setFormData(prev => ({ ...prev, [expType]: { ...prev[expType], description: value } }));
+                                            setErrors(prev => ({ ...prev, [expType]: "" }));
+                                        }}
+                                        onBlur={() => {
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                [expType]: {
+                                                    ...prev[expType],
+                                                    description: normalizeTitle(prev[expType].description)
+                                                }
+                                            }));
+                                        }}
                                     />
-                                </Col>
-                            </Row>
-                            <Form.Control
-                                as="textarea"
-                                maxLength={2000}
-                                placeholder={
-                                    expType === "mandatoryExperience"
-                                        ? t("addPosition:enter_mandatory_experience")
-                                        : t("addPosition:enter_preferred_experience")
-                                }
+                                </>
+                            ) : (
+                                // Education level experience fields (when toggle is ON)
+                                <>
+                                    <div className="education-level-experience-section">
+                                        {formData[expType]?.educationLevelExperiences?.map((eduExp, eduExpIndex) => (
+                                            <div key={eduExpIndex} className="education-level-experience-item mb-3 p-3 border rounded">
+                                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                                    <h6 className="mb-0">Education Level {eduExpIndex + 1}</h6>
+                                                    {formData[expType]?.educationLevelExperiences?.length > 1 && !isViewMode && (
+                                                        <Button
+                                                            variant="outline-danger"
+                                                            size="sm"
+                                                            onClick={() => {
+                                                                const updatedExperiences = [...(formData[expType]?.educationLevelExperiences || [])];
+                                                                updatedExperiences.splice(eduExpIndex, 1);
+                                                                handleInputChange({
+                                                                    target: {
+                                                                        name: `${expType}.educationLevelExperiences`,
+                                                                        value: updatedExperiences
+                                                                    }
+                                                                });
+                                                            }}
+                                                        >
+                                                            Remove
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                                
+                                                <Row className="g-2 mb-2">
+                                                    <Col md={12}>
+                                                        <Form.Label className="small">Qualification</Form.Label>
 
+                                                            <Select
+                                                            className="react-select-fixed"
+                                                            classNamePrefix="react-select"
+                                                            isDisabled={isViewMode}
+                                                            placeholder="Select Qualification"
 
-                                rows={3}
-                                value={formData[expType].description} disabled={isViewMode}
+                                                            value={withSelectOption(
+                                                                qualifications.map(q => ({
+                                                                value: q.id,
+                                                                label: q.name
+                                                                }))
+                                                            ).find(
+                                                                option => String(option.value) === String(eduExp.educationLevel || "")
+                                                            )}
 
-                                onChange={(e) => {
+                                                            onChange={(selected) => {
+                                                                const updatedExperiences = [
+                                                                ...(formData[expType]?.educationLevelExperiences || [])
+                                                                ];
 
-                                    const { valid, value } = validateTitleOnType(e.target.value);
+                                                                updatedExperiences[eduExpIndex] = {
+                                                                ...updatedExperiences[eduExpIndex],
+                                                                educationLevel: selected ? selected.value : ""
+                                                                };
 
-                                    if (!valid) {
-                                        setErrors(prev => ({ ...prev, [expType]: "validation:title_invalid_chars_extended" }));
-                                        return;
-                                    }
+                                                                handleInputChange({
+                                                                target: {
+                                                                    name: `${expType}.educationLevelExperiences`,
+                                                                    value: updatedExperiences
+                                                                }
+                                                                });
+                                                            }}
 
-                                    setFormData(prev => ({ ...prev, [expType]: { ...prev[expType], description: value } }));
+                                                            options={withSelectOption(
+                                                                qualifications.map(q => ({
+                                                                value: q.id,
+                                                                label: q.name
+                                                                }))
+                                                            )}
+                                                            />
+                                                    </Col>
+                                                </Row>
+                                                
+                                                <Row className="g-2 mb-2">
+                                                    <Col md={6}>
+                                                        <Form.Label className="small">Years</Form.Label>
+                                                        <Select
+                                                            className="react-select-fixed"
+                                                            classNamePrefix="react-select"
+                                                            isDisabled={isViewMode}
+                                                            placeholder="Years"
+                                                            value={yearOptions.find(
+                                                                option => String(option.value) === String(eduExp.years || "")
+                                                            )}
+                                                            onChange={(selected) => {
+                                                                const updatedExperiences = [...(formData[expType]?.educationLevelExperiences || [])];
+                                                                updatedExperiences[eduExpIndex] = {
+                                                                    ...updatedExperiences[eduExpIndex],
+                                                                    years: selected ? selected.value : ""
+                                                                };
+                                                                handleInputChange({
+                                                                    target: {
+                                                                        name: `${expType}.educationLevelExperiences`,
+                                                                        value: updatedExperiences
+                                                                    }
+                                                                });
+                                                            }}
+                                                            options={yearOptions}
+                                                        />
+                                                    </Col>
+                                                    <Col md={6}>
+                                                        <Form.Label className="small">Months</Form.Label>
+                                                        <Select
+                                                            className="react-select-fixed"
+                                                            classNamePrefix="react-select"
+                                                            isDisabled={isViewMode}
+                                                            placeholder="Months"
+                                                            value={monthOptions.find(
+                                                                option => String(option.value) === String(eduExp.months || "")
+                                                            )}
+                                                            onChange={(selected) => {
+                                                                const updatedExperiences = [...(formData[expType]?.educationLevelExperiences || [])];
+                                                                updatedExperiences[eduExpIndex] = {
+                                                                    ...updatedExperiences[eduExpIndex],
+                                                                    months: selected ? selected.value : ""
+                                                                };
+                                                                handleInputChange({
+                                                                    target: {
+                                                                        name: `${expType}.educationLevelExperiences`,
+                                                                        value: updatedExperiences
+                                                                    }
+                                                                });
+                                                            }}
+                                                            options={monthOptions}
+                                                        />
+                                                    </Col>
+                                                </Row>
+                                                
+                                                <Form.Control
+                                                    as="textarea"
+                                                    maxLength={2000}
+                                                    placeholder={`Enter ${expType === 'mandatoryExperience' ? 'mandatory' : 'preferred'} experience details for this education level`}
+                                                    rows={2}
+                                                    value={eduExp.description || ""} 
+                                                    disabled={isViewMode}
+                                                    onChange={(e) => {
+                                                        const { valid, value } = validateTitleOnType(e.target.value);
 
-                                    setErrors(prev => ({ ...prev, [expType]: "" }));
-                                }}
+                                                        if (!valid) {
+                                                            setErrors(prev => ({ ...prev, [`${expType}EducationLevel${eduExpIndex}`]: "validation:title_invalid_chars_extended" }));
+                                                            return;
+                                                        }
 
-                                onBlur={() => {
-                                    setFormData(prev => ({
-                                        ...prev,
-                                        [expType]: {
-                                            ...prev[expType],
-                                            description: normalizeTitle(prev[expType].description)
-                                        }
-                                    }));
-                                }}
-                            />
-
+                                                        const updatedExperiences = [...(formData[expType]?.educationLevelExperiences || [])];
+                                                        updatedExperiences[eduExpIndex] = {
+                                                            ...updatedExperiences[eduExpIndex],
+                                                            description: value
+                                                        };
+                                                        handleInputChange({
+                                                            target: {
+                                                                name: `${expType}.educationLevelExperiences`,
+                                                                value: updatedExperiences
+                                                            }
+                                                        });
+                                                        setErrors(prev => ({ ...prev, [`${expType}EducationLevel${eduExpIndex}`]: "" }));
+                                                    }}
+                                                    onBlur={() => {
+                                                        const updatedExperiences = [...(formData[expType]?.educationLevelExperiences || [])];
+                                                        updatedExperiences[eduExpIndex] = {
+                                                            ...updatedExperiences[eduExpIndex],
+                                                            description: normalizeTitle(eduExp.description || "")
+                                                        };
+                                                        handleInputChange({
+                                                            target: {
+                                                                name: `${expType}.educationLevelExperiences`,
+                                                                value: updatedExperiences
+                                                            }
+                                                        });
+                                                    }}
+                                                />
+                                                <ErrorMessage>{renderError(errors[`${expType}EducationLevel${eduExpIndex}`])}</ErrorMessage>
+                                            </div>
+                                        ))}
+                                        
+                                        {!isViewMode && (
+                                            <Button
+                                                variant="outline-primary"
+                                                size="sm"
+                                                onClick={() => {
+                                                    const currentExperiences = formData[expType]?.educationLevelExperiences || [];
+                                                    
+                                                    // Initialize array if it doesn't exist
+                                                    if (!formData[expType]?.educationLevelExperiences) {
+                                                        const initialExperience = {
+                                                            educationLevel: "",
+                                                            years: "",
+                                                            months: "",
+                                                            description: ""
+                                                        };
+                                                        handleInputChange({
+                                                            target: {
+                                                                name: `${expType}.educationLevelExperiences`,
+                                                                value: [initialExperience]
+                                                            }
+                                                        });
+                                                        return;
+                                                    }
+                                                    
+                                                    const newExperience = {
+                                                        educationLevel: "",
+                                                        years: "",
+                                                        months: "",
+                                                        description: ""
+                                                    };
+                                                    handleInputChange({
+                                                        target: {
+                                                            name: `${expType}.educationLevelExperiences`,
+                                                            value: [...currentExperiences, newExperience]
+                                                        }
+                                                    });
+                                                }}
+                                            >
+                                                + Add Education Level Experience
+                                            </Button>
+                                        )}
+                                    </div>
+                                </>
+                            )}
 
                             <ErrorMessage>{renderError(errors[expType])}</ErrorMessage>
+                            <ErrorMessage>{renderError(errors[`${expType}EducationLevel`])}</ErrorMessage>
 
                         </Col>
                     ))}
