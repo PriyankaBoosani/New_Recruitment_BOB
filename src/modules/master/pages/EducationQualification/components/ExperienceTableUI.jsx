@@ -52,7 +52,7 @@ const EducationTable = ({
                   <td>{item.course}</td>
 
                   <td>
-                    {item.specialization?.join(", ")}
+                    {item.specialization.map((s) => s.name).join(", ")}
                   </td>
 
                   <td>

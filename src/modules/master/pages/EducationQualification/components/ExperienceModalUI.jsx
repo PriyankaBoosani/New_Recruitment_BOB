@@ -24,7 +24,7 @@ const ExperienceModal = ({
     const duplicates = new Set();
 
     list.forEach((val, index) => {
-      const key = val.trim().toLowerCase();
+      const key = val?.name?.trim().toLowerCase();
       if (!key) return;
 
       if (map[key] !== undefined) {
@@ -34,7 +34,6 @@ const ExperienceModal = ({
         map[key] = index;
       }
     });
-
     return duplicates;
   };
 
@@ -54,7 +53,6 @@ const ExperienceModal = ({
       <Modal.Body>
 
         {formData.map((form, formIndex) => {
-
           const duplicateIndexes = getDuplicateIndexes(form.specializationOthers);
 
           return (
@@ -69,9 +67,28 @@ const ExperienceModal = ({
                   </label>
 
                   {isViewing ? (
-                    <div className="form-control-view">
-                      {form.educationLevel || "-"}
-                    </div>
+                    <select
+                      className={`form-select ${errors[formIndex]?.educationLevel ? "is-invalid" : ""}`}
+                      value={form.educationLevel}
+                      onChange={(e) =>
+                        onChange(formIndex, "educationLevel", e.target.value)
+                      }
+                      disabled={isViewing}
+                    >
+                      <option value="">Select</option>
+
+                      {educationOptions?.map((item) => (
+                        <option
+                          key={item.documentTypeId}
+                          value={item.documentTypeId}
+                        >
+                          {item.documentName}
+                        </option>
+                      ))}
+                    </select>
+                    // <div className="form-control-view">
+                    //   {form.educationLevel || "-"}
+                    // </div>
                   ) : (
                     <select
                       className={`form-select ${errors[formIndex]?.educationLevel ? "is-invalid" : ""}`}
@@ -85,9 +102,9 @@ const ExperienceModal = ({
                       {educationOptions?.map((item) => (
                         <option
                           key={item.documentTypeId}
-                          value={item.documentTypeId} 
+                          value={item.documentTypeId}
                         >
-                          {item.documentName}          
+                          {item.documentName}
                         </option>
                       ))}
                     </select>
@@ -137,7 +154,11 @@ const ExperienceModal = ({
 
                   {isViewing ? (
                     <div className="form-control-view">
-                      {form.specializationOthers?.join(", ") || "-"}
+                      {form.specializationOthers?.length
+                        ? form.specializationOthers
+                          .map((s) => (typeof s === "string" ? s : s.name))
+                          .join(", ")
+                        : "-"}
                     </div>
                   ) : (
                     <>
@@ -148,7 +169,7 @@ const ExperienceModal = ({
                             <input
                               type="text"
                               className={`form-control ${duplicateIndexes.has(i) ? "is-invalid" : ""}`}
-                              value={val}
+                              value={val?.name || ""}
                               placeholder={t("education:search_placeholder", { index: i + 1 })}
                               onChange={(e) =>
                                 onChange(
