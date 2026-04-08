@@ -34,14 +34,21 @@ export const validateSpecialization = (list = []) => {
   const seen = new Set();
 
   for (let val of list) {
-    const normalized = normalize(val);
+    // ✅ support both string + object
+    const value =
+      typeof val === "string" ? val : val?.name;
+
+    const normalized = normalize(value);
 
     // skip empty values
     if (!normalized) continue;
 
     // ❌ invalid characters
-    if (!validText(val)) {
-      return i18n.t("education:invalid_characters", "Invalid characters");
+    if (!validText(value)) {
+      return i18n.t(
+        "education:invalid_characters",
+        "Invalid characters"
+      );
     }
 
     // ❌ duplicate specialization
@@ -57,6 +64,33 @@ export const validateSpecialization = (list = []) => {
 
   return null;
 };
+// export const validateSpecialization = (list = []) => {
+//   const seen = new Set();
+
+//   for (let val of list) {
+//     const normalized = normalize(val);
+
+//     // skip empty values
+//     if (!normalized) continue;
+
+//     // ❌ invalid characters
+//     if (!validText(val)) {
+//       return i18n.t("education:invalid_characters", "Invalid characters");
+//     }
+
+//     // ❌ duplicate specialization
+//     if (seen.has(normalized)) {
+//       return i18n.t(
+//         "education:duplicate_specialization",
+//         "Duplicate specialization"
+//       );
+//     }
+
+//     seen.add(normalized);
+//   }
+
+//   return null;
+// };
 
 /* =========================
    FORM VALIDATION

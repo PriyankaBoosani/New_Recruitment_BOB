@@ -14,7 +14,10 @@ export const mapEducationListFromApi = (list = [], educationOptions = []) => {
       educationLevel: documentName || "-", // 🔥 final output
       course: item?.qualification?.qualificationName || "-",
       specialization: Array.isArray(item?.specializations)
-        ? item.specializations.map(s => s.specializationName)
+        ? item.specializations.map(s => ({
+          name: s.specializationName,
+          id: s.specializationId
+        }))
         : [],
       educationQualificationsId: item?.qualification?.educationQualificationsId || "-",
     };
