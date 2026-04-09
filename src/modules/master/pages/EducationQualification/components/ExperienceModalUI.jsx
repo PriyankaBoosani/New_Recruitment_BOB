@@ -214,7 +214,7 @@ const ExperienceModal = ({
                                     className="remove-btn"
                                     style={{
                                       visibility: (isEditing
-                                        ? i === form.specializationOthers.length - 1
+                                        ? !val?.name   // ✅ CHANGED HERE
                                         : true
                                       ) ? "visible" : "hidden"
                                     }}
