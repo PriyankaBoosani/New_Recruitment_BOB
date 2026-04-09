@@ -159,8 +159,8 @@ usePreferredEducationLevelExperience: false
             contractualPeriod: isContract
                 ? String(existingPosition.contractYears ?? "")
                 : "",
-            useMandatoryEducationLevelExperience: existingPosition.useMandatoryEducationLevelExperience || true,
-            usePreferredEducationLevelExperience: existingPosition.usePreferredEducationLevelExperience || false,
+            useMandatoryEducationLevelExperience: existingPosition.isMandatoryExpMonthsEduWise || false,
+            usePreferredEducationLevelExperience: existingPosition.isPreferredExpMonthsEduWise || false,
         });
         setApprovedBy(existingPosition.approvedBy || "");
         setIndentOthers(existingPosition.indentOthers || "");
