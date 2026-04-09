@@ -48,7 +48,7 @@ export function mapEduRulesToModalData(eduRulesJson, educationTypes, qualificati
   if (eduRulesJson.mandatoryEducations && eduRulesJson.mandatoryEducations.groups) {
     const result = {
       groups: createGroupsFromEducations(eduRulesJson.mandatoryEducations.groups),
-      certGroups: createCertGroupsFromIds(eduRulesJson.mandatoryCertificationIds?.groups || [])
+      certGroups: createCertGroupsFromIds(eduRulesJson.mandatoryCertifications?.groups || [])
     };
     console.log('MAPPING RESULT - Mandatory:', JSON.stringify(result, null, 2));
     return result;

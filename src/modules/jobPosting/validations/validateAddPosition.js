@@ -58,7 +58,7 @@ export const validateAddPosition = ({
   if (!formData.employmentType) errors.employmentType = "validation:required";
   if (!formData.grade) errors.grade = "validation:required";
   if (!formData.medicalRequired) errors.medicalRequired = "validation:required";
-  if (!formData.cutOffDate) errors.cutOffDate = "validation:required";
+  if (!formData.cutoffDate) errors.cutoffDate = "validation:required";
 
   // ---------- DUPLICATE POSITION + DEPARTMENT ----------
   if (

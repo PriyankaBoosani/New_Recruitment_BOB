@@ -90,7 +90,7 @@ export const mapAddPositionToCreateDto = ({
             operator: "OR",
             groups: educationGroups
           },
-          mandatoryCertificationIds: {
+          mandatoryCertifications: {
             operator: "OR",
             groups: certificationGroups
           }
@@ -139,7 +139,7 @@ export const mapAddPositionToCreateDto = ({
     employmentType: formData.employmentType,
     gradeId: formData.grade,
     indentName: formData.indentName,
-    cutOffDate: formData.cutOffDate,
+    cutoffDate: formData.cutoffDate,
 
     contractYears: Number(formData.contractualPeriod || 0),
 
@@ -166,7 +166,7 @@ export const mapAddPositionToCreateDto = ({
 
     // When toggles are OFF: set null and empty objects
     // When toggles are ON: build education UUID to months mapping
-    mandatoryEducationLevelExperiences: formData.useMandatoryEducationLevelExperience 
+    mandatoryExpMonthsEduWise: formData.useMandatoryEducationLevelExperience 
       ? (formData.mandatoryExperience?.educationLevelExperiences || []).reduce((acc, exp) => {
           if (exp.educationLevel) {
             const months = (Number(exp.years || 0) * 12) + Number(exp.months || 0);
@@ -178,7 +178,7 @@ export const mapAddPositionToCreateDto = ({
         }, {})
       : {},
 
-    preferredEducationLevelExperiences: formData.usePreferredEducationLevelExperience 
+    preferredExpMonthsEduWise: formData.usePreferredEducationLevelExperience 
       ? (formData.preferredExperience?.educationLevelExperiences || []).reduce((acc, exp) => {
           if (exp.educationLevel) {
             const months = (Number(exp.years || 0) * 12) + Number(exp.months || 0);

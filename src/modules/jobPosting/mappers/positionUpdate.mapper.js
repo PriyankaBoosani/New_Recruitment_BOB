@@ -161,14 +161,14 @@ export const mapAddPositionToUpdateDto = ({
     preferredExperience: formData.preferredExperience.description,
 
     // Education Level Experiences
-    mandatoryEducationLevelExperiences: formData.mandatoryExperience.educationLevelExperiences?.reduce((acc, exp) => {
+    mandatoryExpMonthsEduWise: formData.mandatoryExperience.educationLevelExperiences?.reduce((acc, exp) => {
       if (exp.educationLevel && (exp.years > 0 || exp.months > 0)) {
         acc[exp.educationLevel] = (exp.years * 12) + exp.months;
       }
       return acc;
     }, {}),
 
-    preferredEducationLevelExperiences: formData.preferredExperience.educationLevelExperiences?.reduce((acc, exp) => {
+    preferredExpMonthsEduWise: formData.preferredExperience.educationLevelExperiences?.reduce((acc, exp) => {
       if (exp.educationLevel && (exp.years > 0 || exp.months > 0)) {
         acc[exp.educationLevel] = (exp.years * 12) + exp.months;
       }
@@ -180,7 +180,7 @@ export const mapAddPositionToUpdateDto = ({
     usePreferredEducationLevelExperience: formData.usePreferredEducationLevelExperience,
 
     // Cut Off Date
-    cutOffDate: formData.cutOffDate || null,
+    cutoffDate: formData.cutoffDate || null,
 
     approvedBy,
     approvedOn,

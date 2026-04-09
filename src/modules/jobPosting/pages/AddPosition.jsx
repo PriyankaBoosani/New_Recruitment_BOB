@@ -92,7 +92,7 @@ const AddPosition = () => {
         mandatoryExperience: { years: "", months: "", description: "" },
         preferredExperience: { years: "", months: "", description: "" },
         responsibilities: "", medicalRequired: "yes", enableStateDistribution: false,
-        cutOffDate: "",useMandatoryEducationLevelExperience: false,
+        cutoffDate: "",useMandatoryEducationLevelExperience: false,
 usePreferredEducationLevelExperience: false
     });
 
@@ -135,12 +135,12 @@ usePreferredEducationLevelExperience: false
             responsibilities: existingPosition.rolesResponsibilities,
             medicalRequired: existingPosition.isMedicalRequired ? "yes" : "no",
             enableStateDistribution: existingPosition.isLocationWise,
-            cutOffDate: existingPosition.cutOffDate || "",
+            cutoffDate: existingPosition.cutoffDate || "",
             mandatoryExperience: {
                 years: Math.floor(existingPosition.mandatoryExperienceMonths / 12),
                 months: existingPosition.mandatoryExperienceMonths % 12,
                 description: existingPosition.mandatoryExperience,
-                educationLevelExperiences: Object.entries(existingPosition.mandatoryEducationLevelExperiences || {}).map(([educationLevel, months]) => ({
+                educationLevelExperiences: Object.entries(existingPosition.mandatoryExpMonthsEduWise || {}).map(([educationLevel, months]) => ({
                     educationLevel,
                     years: Math.floor(months / 12),
                     months: months % 12
@@ -150,7 +150,7 @@ usePreferredEducationLevelExperience: false
                 years: Math.floor(existingPosition.preferredExperienceMonths / 12),
                 months: existingPosition.preferredExperienceMonths % 12,
                 description: existingPosition.preferredExperience,
-                educationLevelExperiences: Object.entries(existingPosition.preferredEducationLevelExperiences || {}).map(([educationLevel, months]) => ({
+                educationLevelExperiences: Object.entries(existingPosition.preferredExpMonthsEduWise || {}).map(([educationLevel, months]) => ({
                     educationLevel,
                     years: Math.floor(months / 12),
                     months: months % 12
