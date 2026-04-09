@@ -212,7 +212,7 @@ if (!formData.usePreferredEducationLevelExperience) {
   const eduExps = formData.preferredExperience?.educationLevelExperiences || [];
 
   if (!eduExps.length) {
-    errors.preferredExperience = "validation:experience_duration_required";
+    errors.preferredExperience = "validation:experience_duration_required"; 
   } else {
     // const isValid = eduExps.every(exp => {
     //   const hasDuration = exp.years || exp.months;
