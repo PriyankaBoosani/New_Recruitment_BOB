@@ -290,7 +290,7 @@ const removeCertGroup = (cgIdx) => {
                     <React.Fragment key={gIdx}>
                         <div className="group-box">
                             <div className="group-header">
-                                <strong>Group {gIdx + 1}</strong>
+                                <strong>Education Group {gIdx + 1}</strong>
                                 {groups.length > 1 && (
                                     <Button
                                         onClick={() => removeGroup(gIdx)}
@@ -313,6 +313,12 @@ const removeCertGroup = (cgIdx) => {
                                         {/* ✅ Education Type */}
                                         <Col md={2}>
                                             <Select
+                                                classNamePrefix="react-select"
+                                                menuPortalTarget={document.body}
+                                                menuPosition="fixed"
+                                                styles={{
+                                                    menuPortal: base => ({ ...base, zIndex: 9999 })
+                                                }}
                                                 value={educationTypes
                                                     .map(t => ({ value: t.id, label: t.label }))
                                                     .find(opt => String(opt.value) === String(row.educationTypeId))}
@@ -334,6 +340,12 @@ const removeCertGroup = (cgIdx) => {
                                         {/* ✅ Qualification */}
                                         <Col md={3}>
                                             <Select
+                                                classNamePrefix="react-select"
+                                                menuPortalTarget={document.body}
+                                                menuPosition="fixed"
+                                                styles={{
+                                                    menuPortal: base => ({ ...base, zIndex: 9999 })
+                                                }}
                                                 value={qualifications
                                                     .map(q => ({ value: q.id, label: q.name }))
                                                     .find(opt => String(opt.value) === String(row.educationQualificationsId))}
@@ -362,6 +374,12 @@ const removeCertGroup = (cgIdx) => {
                                         {/* ✅ Specialization */}
                                         <Col md={2}>
                                             <Select
+                                                classNamePrefix="react-select"
+                                                menuPortalTarget={document.body}
+                                                menuPosition="fixed"
+                                                styles={{
+                                                    menuPortal: base => ({ ...base, zIndex: 9999 })
+                                                }}
                                                 value={getSpecializationsForDegree(row.educationQualificationsId)
                                                     .map(s => ({ value: s.id, label: s.label }))
                                                     .find(opt => String(opt.value) === String(row.specializationId))}
