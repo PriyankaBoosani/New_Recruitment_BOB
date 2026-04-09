@@ -332,7 +332,7 @@ const removeCertGroup = (cgIdx) => {
                                         </Col>
 
                                         {/* ✅ Qualification */}
-                                        <Col md={2}>
+                                        <Col md={3}>
                                             <Select
                                                 value={qualifications
                                                     .map(q => ({ value: q.id, label: q.name }))
@@ -406,7 +406,7 @@ const removeCertGroup = (cgIdx) => {
                                         </Col>
 
                                         {/* ✅ GPA */}
-                                        <Col md={2}>
+                                        <Col md={1}>
                                             <Form.Control
                                                 type="text"
                                                 inputMode="decimal"
@@ -469,10 +469,10 @@ const removeCertGroup = (cgIdx) => {
                                 );
                             })}
                             <Button
-                                variant="outline-primary"
+                                variant="none"
                                 size="sm"
                                 onClick={() => addRow(gIdx)}
-                                className="mb-3"
+                                className="mb-3 edu-btn"
                             >
                                 + Add Education
                             </Button>
@@ -559,10 +559,10 @@ const removeCertGroup = (cgIdx) => {
                                     </Row>
                                 ))}
                                 <Button
-                                    variant="outline-primary"
+                                    variant="none"
                                     size="sm"
                                     onClick={() => addCertRow(cgIdx)}
-                                    className="mb-3"
+                                    className="mb-3 edu-btn"
                                 >
                                     + Add Certification
                                 </Button>
