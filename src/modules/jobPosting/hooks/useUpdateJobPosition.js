@@ -10,7 +10,8 @@ export const useUpdateJobPosition = () => {
       setLoading(true);
 
       const dto = mapAddPositionToUpdateDto(payload);
-      //console.log("dto", dto);return false;
+
+     //  console.log("dto", dto);return false;
 
       const res = await jobPositionApiService.updatePosition({
         dto,

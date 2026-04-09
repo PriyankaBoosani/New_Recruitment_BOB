@@ -148,15 +148,39 @@ export const mapAddPositionToUpdateDto = ({
     preferredEducation: educationData.preferred.text,
 
     mandatoryExperienceMonths:
-      Number(formData.mandatoryExperience.years) * 12 +
-      Number(formData.mandatoryExperience.months),
+      formData.useMandatoryEducationLevelExperience 
+        ? null 
+        : Number(formData.mandatoryExperience.years) * 12 + Number(formData.mandatoryExperience.months),
 
     preferredExperienceMonths:
-      Number(formData.preferredExperience.years) * 12 +
-      Number(formData.preferredExperience.months),
+      formData.usePreferredEducationLevelExperience 
+        ? null 
+        : Number(formData.preferredExperience.years) * 12 + Number(formData.preferredExperience.months),
 
     mandatoryExperience: formData.mandatoryExperience.description,
     preferredExperience: formData.preferredExperience.description,
+
+    // Education Level Experiences
+    mandatoryEducationLevelExperiences: formData.mandatoryExperience.educationLevelExperiences?.reduce((acc, exp) => {
+      if (exp.educationLevel && (exp.years > 0 || exp.months > 0)) {
+        acc[exp.educationLevel] = (exp.years * 12) + exp.months;
+      }
+      return acc;
+    }, {}),
+
+    preferredEducationLevelExperiences: formData.preferredExperience.educationLevelExperiences?.reduce((acc, exp) => {
+      if (exp.educationLevel && (exp.years > 0 || exp.months > 0)) {
+        acc[exp.educationLevel] = (exp.years * 12) + exp.months;
+      }
+      return acc;
+    }, {}),
+
+    // Toggle States
+    useMandatoryEducationLevelExperience: formData.useMandatoryEducationLevelExperience,
+    usePreferredEducationLevelExperience: formData.usePreferredEducationLevelExperience,
+
+    // Cut Off Date
+    cutOffDate: formData.cutOffDate || null,
 
     approvedBy,
     approvedOn,
