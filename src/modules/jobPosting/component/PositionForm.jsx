@@ -737,6 +737,7 @@ console.log("educationDocuments",educationDocuments)
                         <Button
                           size="sm"
                           variant="none"
+                        
                           onClick={() => {
                             const updated = [...formData[expType].educationLevelExperiences];
                             updated.splice(index, 1);
