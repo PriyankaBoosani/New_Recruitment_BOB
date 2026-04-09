@@ -11,7 +11,7 @@ import { OverlayTrigger, Popover } from "react-bootstrap";
 import I_icon from '../../../assets/I_icon.png';
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
-
+import delete_icon from "../../../assets/delete_icon.png"
 
 const PositionForm = ({
     isViewMode = false,
@@ -722,7 +722,7 @@ console.log("educationDocuments",educationDocuments)
                       {(formData[expType].educationLevelExperiences.length > 1) && !isViewMode && (
                         <Button
                           size="sm"
-                          variant="outline-danger"
+                          variant="none"
                           onClick={() => {
                             const updated = [...formData[expType].educationLevelExperiences];
                             updated.splice(index, 1);
@@ -735,7 +735,8 @@ console.log("educationDocuments",educationDocuments)
                             });
                           }}
                         >
-                          Remove
+                          {/* Remove */}
+                          <img src={delete_icon} alt="delete_icon" className="icon-16" />
                         </Button>
                       )}
                     </div>
@@ -813,7 +814,8 @@ console.log("educationDocuments",educationDocuments)
             {!isViewMode && (
               <Button
                 size="sm"
-                variant="outline-primary"
+                variant="none"
+                className="edu-btn"
                 onClick={() => {
                   const current = formData[expType]?.educationLevelExperiences || [];
 
