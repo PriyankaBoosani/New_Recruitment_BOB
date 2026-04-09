@@ -71,5 +71,8 @@
   "percentage_range": "Percentage must be between 0 and 100",
   "duration_invalid": "Duration must be a valid number",
   "gpa_invalid": "GPA must be a valid number",
-  "percentage_invalid": "Percentage must be a valid number"
+  "percentage_invalid": "Percentage must be a valid number",
+  
+  "qualification_required": "Please select qualification"
+
 }

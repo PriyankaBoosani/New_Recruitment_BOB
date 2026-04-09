@@ -398,7 +398,7 @@ const removeCertGroup = (cgIdx) => {
                                         <Col md={2}>
                                             <Form.Control
                                                 type="number"
-                                                placeholder="Duration"
+                                                placeholder="Duration (Years)"
                                                 value={row.duration}
                                                 min="0"
                                                 step="1"

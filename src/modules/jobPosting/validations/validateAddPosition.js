@@ -206,7 +206,7 @@ export const validateAddPosition = ({
 // Preferred Experience validation
 if (!formData.usePreferredEducationLevelExperience) {
   // OLD logic (toggle OFF)
-  validateExperience(formData.preferredExperience, "preferredExperience");
+ // validateExperience(formData.preferredExperience, "preferredExperience");
 } else {
   // NEW logic (toggle ON)
   const eduExps = formData.preferredExperience?.educationLevelExperiences || [];
@@ -214,22 +214,51 @@ if (!formData.usePreferredEducationLevelExperience) {
   if (!eduExps.length) {
     errors.preferredExperience = "validation:experience_duration_required";
   } else {
-    const isValid = eduExps.every(exp => {
-      const hasDuration = exp.years || exp.months;
-      const hasQualification = exp.educationLevel;
+    // const isValid = eduExps.every(exp => {
+    //   const hasDuration = exp.years || exp.months;
+    //   const hasQualification = exp.educationLevel;
 
-      // Qualification is mandatory
-      if (!hasQualification) {
-        return false;
-      }
+    //   // Qualification is mandatory
+    //   if (!hasQualification) {
+    //     return false;
+    //   }
 
-      // Duration is also mandatory
-      return hasDuration;
-    });
+    //   // Duration is also mandatory
+    //   return hasDuration;
+    // });
 
-    if (!isValid) {
-      errors.preferredExperience = "validation:qualification_and_duration_required";
-    }
+    // if (!isValid) {
+    //   errors.preferredExperience = "validation:qualification_and_duration_required";
+    // }
+
+    let hasQualificationError = false;
+let hasDurationError = false;
+
+eduExps.forEach(exp => {
+  const isEmptyRow =
+    !exp.educationLevel &&
+    !exp.years &&
+    !exp.months;
+
+  if (isEmptyRow) return;
+
+  if (!exp.educationLevel) {
+    hasQualificationError = true;
+  }
+
+  if (!(exp.years || exp.months)) {
+    hasDurationError = true;
+  }
+});
+
+// 🎯 Decide message
+if (hasQualificationError && hasDurationError) {
+  errors.mandatoryExperience = "validation:qualification_and_duration_required";
+} else if (hasQualificationError) {
+  errors.mandatoryExperience = "validation:qualification_required";
+} else if (hasDurationError) {
+  errors.mandatoryExperience = "validation:experience_duration_required";
+}
     
     // Description validation when toggle is ON (textarea is always visible)
     if (!formData.preferredExperience.description?.trim()) {
