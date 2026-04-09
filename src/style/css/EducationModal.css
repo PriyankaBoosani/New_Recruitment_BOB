@@ -99,16 +99,16 @@
 }
 
 .group-header strong {
-  color: #007bff;
-  font-size: 14px;
+  /* color: #007bff; */
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .group-header .btn {
-  background: #dc3545;
-  border-color: #dc3545;
+  /* background: #dc3545;
+  border-color: #dc3545; */
   color: white;
   font-size: 12px;
   padding: 4px 8px;
@@ -117,20 +117,21 @@
 }
 
 .group-header .btn:hover {
-  background: #c82333;
-  border-color: #c82333;
+  /* background: #c82333;
+  border-color: #c82333; */
   transform: translateY(-1px);
 }
 
+
 .or-divider {
-  text-align: center;
-  margin: 20px 0;
-  position: relative;
-  font-weight: 600;
-  color: #6c757d;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+	text-align: center;
+	margin: 4px 0;
+	position: relative;
+	font-weight: 500;
+	color: #6c757d;
+	font-size: 0.875rem;
+	text-transform: uppercase;
+	letter-spacing: 1px;
 }
 
 .or-divider:before {
@@ -225,6 +226,12 @@
 .group-box {
   animation: slideIn 0.3s ease-out;
 }
+.btn-header{
+border: 1px solid rgb(22, 43, 117) !important;
+  background: rgb(22, 43, 117) !important;
+  color: #fff !important;
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

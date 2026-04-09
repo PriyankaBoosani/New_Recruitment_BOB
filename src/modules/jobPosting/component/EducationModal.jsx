@@ -295,9 +295,10 @@ const removeCertGroup = (cgIdx) => {
                                     <Button
                                         onClick={() => removeGroup(gIdx)}
                                         disabled={groups.length === 1}
-                                        variant="outline-danger"
+                                        variant="none"
                                     >
-                                        Delete Group
+                                        {/* Delete Group */}
+                                        <img src={delete_icon} alt="delete_icon" className="icon-16" />
                                     </Button>
                                 )}
                             </div>
@@ -482,7 +483,7 @@ const removeCertGroup = (cgIdx) => {
                     </React.Fragment>
                 ))}
 
-<Button onClick={addGroup}>+ Add Group</Button>
+<Button className="btn-header" variant="none" onClick={addGroup}>+ Add Group</Button>
                 {errors.rows?._error && (
                     <div className="mt-2">
                         <ErrorMessage>{t(errors.rows._error)}</ErrorMessage>
@@ -506,9 +507,10 @@ const removeCertGroup = (cgIdx) => {
                                         <Button
                                             onClick={() => removeCertGroup(cgIdx)}
                                             disabled={certGroups.length === 1}
-                                            variant="outline-danger"
+                                            variant="none"
                                         >
-                                            Delete Group
+                                            {/* Delete Group */}
+                                            <img src={delete_icon} alt="delete_icon" className="icon-16" />
                                         </Button>
                                     )}
                                 </div>
@@ -572,7 +574,7 @@ const removeCertGroup = (cgIdx) => {
                     ))}
                 </Col>
 
-                <Button onClick={addCertGroup}>+ Add Certification Group</Button>
+                <Button className="btn-header" variant="none" onClick={addCertGroup}>+ Add Certification Group</Button>
 
 
 
