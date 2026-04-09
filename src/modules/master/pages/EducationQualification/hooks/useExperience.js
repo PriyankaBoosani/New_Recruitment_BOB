@@ -286,8 +286,26 @@ export const useExperience = () => {
     setShowModal(true);
   };
 
+  // ✅ STEP 3: ADD THIS FILTER
+const filteredList = experienceList.filter((item) => {
+  const search = searchTerm.toLowerCase();
+
+  const educationMatch =
+    item.educationLevel?.toLowerCase().includes(search);
+
+  const courseMatch =
+    item.course?.toLowerCase().includes(search);
+
+  const specializationMatch =
+    item.specialization?.some((s) =>
+      s.name?.toLowerCase().includes(search)
+    );
+
+  return educationMatch || courseMatch || specializationMatch;
+});
+
   return {
-    experienceList,
+   experienceList: filteredList,
     educationOptions, // ✅ dropdown
     loading,
     showModal,

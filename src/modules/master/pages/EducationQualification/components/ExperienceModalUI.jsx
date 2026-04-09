@@ -14,7 +14,7 @@ const ExperienceModal = ({
   onRemoveSpec,
   isViewing,
   isEditing,
-  educationOptions   // ✅ ADDED
+  educationOptions
 }) => {
 
   const { t } = useTranslation(["education", "common"]);
@@ -58,6 +58,7 @@ const ExperienceModal = ({
           return (
             <div key={formIndex} className="border rounded p-3 mb-3">
 
+              {/* ✅ FIRST ROW */}
               <div className="row g-3">
 
                 {/* EDUCATION LEVEL */}
@@ -66,49 +67,24 @@ const ExperienceModal = ({
                     {t("education:education_level")} *
                   </label>
 
-                  {isViewing ? (
-                    <select
-                      className={`form-select ${errors[formIndex]?.educationLevel ? "is-invalid" : ""}`}
-                      value={form.educationLevel}
-                      onChange={(e) =>
-                        onChange(formIndex, "educationLevel", e.target.value)
-                      }
-                      disabled={isViewing}
-                    >
-                      <option value="">Select</option>
-
-                      {educationOptions?.map((item) => (
-                        <option
-                          key={item.documentTypeId}
-                          value={item.documentTypeId}
-                        >
-                          {item.documentName}
-                        </option>
-                      ))}
-                    </select>
-                    // <div className="form-control-view">
-                    //   {form.educationLevel || "-"}
-                    // </div>
-                  ) : (
-                    <select
-                      className={`form-select ${errors[formIndex]?.educationLevel ? "is-invalid" : ""}`}
-                      value={form.educationLevel}
-                      onChange={(e) =>
-                        onChange(formIndex, "educationLevel", e.target.value)
-                      }
-                    >
-                      <option value="">Select</option>
-
-                      {educationOptions?.map((item) => (
-                        <option
-                          key={item.documentTypeId}
-                          value={item.documentTypeId}
-                        >
-                          {item.documentName}
-                        </option>
-                      ))}
-                    </select>
-                  )}
+                  <select
+                    className={`form-select ${errors[formIndex]?.educationLevel ? "is-invalid" : ""}`}
+                    value={form.educationLevel}
+                    onChange={(e) =>
+                      onChange(formIndex, "educationLevel", e.target.value)
+                    }
+                    disabled={isViewing}
+                  >
+                    <option value="">Select</option>
+                    {educationOptions?.map((item) => (
+                      <option
+                        key={item.documentTypeId}
+                        value={item.documentTypeId}
+                      >
+                        {item.documentName}
+                      </option>
+                    ))}
+                  </select>
 
                   {!isViewing && (
                     <small className="text-danger">
@@ -146,8 +122,12 @@ const ExperienceModal = ({
                   )}
                 </div>
 
-                {/* SPECIALIZATION */}
-                <div className="col-md-4">
+              </div>
+
+              {/* ✅ SPECIALIZATION BELOW WITH SCROLL */}
+              <div className="row mt-3">
+                <div className="col-md-12">
+
                   <label className="form-label">
                     {t("education:specialization")}
                   </label>
@@ -162,54 +142,66 @@ const ExperienceModal = ({
                     </div>
                   ) : (
                     <>
-                      {form.specializationOthers.map((val, i) => (
-                        <div key={i} className="mb-2">
+                      {/* ✅ SCROLL CONTAINER */}
+                      <div
+                        style={{
+                          maxHeight: "220px",
+                          overflowY: "auto",
+                          overflowX: "hidden",
+                          paddingRight: "5px"
+                        }}
+                      >
+                        <div className="row">
+                          {form.specializationOthers.map((val, i) => (
+                            <div key={i} className="col-md-6 mb-2">
 
-                          <div className="d-flex gap-2">
-                            <input
-                              type="text"
-                              className={`form-control ${duplicateIndexes.has(i) ? "is-invalid" : ""}`}
-                              value={val?.name || ""}
-                              placeholder={t("education:search_placeholder", { index: i + 1 })}
-                              onChange={(e) =>
-                                onChange(
-                                  formIndex,
-                                  "specialization",
-                                  e.target.value,
-                                  i
-                                )
-                              }
-                            />
+                              <div className="d-flex gap-2">
+                                <input
+                                  type="text"
+                                  className={`form-control ${duplicateIndexes.has(i) ? "is-invalid" : ""}`}
+                                  value={val?.name || ""}
+                                  placeholder={t("education:search_placeholder", { index: i + 1 })}
+                                  onChange={(e) =>
+                                    onChange(formIndex, "specialization", e.target.value, i)
+                                  }
+                                />
 
-                            <button
-                              type="button"
-                              className="remove-btn"
-                              onClick={() => onRemoveSpec(formIndex, i)}
-                            >
-                              −
-                            </button>
-                          </div>
+                                {!isEditing && (
+                                  <button
+                                    type="button"
+                                    className="remove-btn"
+                                    onClick={() => onRemoveSpec(formIndex, i)}
+                                  >
+                                    −
+                                  </button>
+                                )}
+                              </div>
 
-                          {duplicateIndexes.has(i) && (
-                            <small className="text-danger">
-                              {t("education:duplicate_specialization")}
-                            </small>
-                          )}
+                              {duplicateIndexes.has(i) && (
+                                <small className="text-danger">
+                                  {t("education:duplicate_specialization")}
+                                </small>
+                              )}
+
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      </div>
 
+                      {/* ADD BUTTON */}
                       <button
                         type="button"
-                        className="add-spec-btn"
+                        className="add-spec-btn mt-2"
                         onClick={() => onAddSpec(formIndex)}
                       >
                         {t("education:add_specialization")}
                       </button>
                     </>
                   )}
-                </div>
 
+                </div>
               </div>
+
             </div>
           );
         })}

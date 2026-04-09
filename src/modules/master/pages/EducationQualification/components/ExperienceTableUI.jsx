@@ -2,8 +2,8 @@ import React from "react";
 import { Table, Button } from "react-bootstrap";
 import editIcon from "../../../../../assets/edit_icon.png";
 import deleteIcon from "../../../../../assets/delete_icon.png";
-import { useTranslation } from "react-i18next";
 import viewIcon from "../../../../../assets/view_icon.png";
+import { useTranslation } from "react-i18next";
 
 const EducationTable = ({
   data,
@@ -47,7 +47,7 @@ const EducationTable = ({
 
                   <td>{indexOfFirst + idx + 1}</td>
 
-                 <td>{item.educationLevel}</td>
+                  <td>{item.educationLevel}</td>
 
                   <td>{item.course}</td>
 
@@ -67,21 +67,23 @@ const EducationTable = ({
                         <img src={viewIcon} alt="View" className="icon-16" />
                       </Button>
 
+                      {/* EDIT */}
                       <Button
                         variant="link"
                         className="action-btn edit-btn"
                         onClick={() => onEdit(item, idx)}
                       >
-                        <img src={editIcon} alt={t("common:edit", "Edit")} className="icon-16" />
+                        <img src={editIcon} alt="Edit" className="icon-16" />
                       </Button>
 
-                      <Button
+                      {/* DELETE */}
+                      {/* <Button
                         variant="link"
                         className="action-btn delete-btn"
                         onClick={() => onDelete(idx)}
                       >
-                        <img src={deleteIcon} alt={t("common:delete")} className="icon-16" />
-                      </Button>
+                        <img src={deleteIcon} alt="Delete" className="icon-16" />
+                      </Button> */}
 
                     </div>
                   </td>
@@ -104,6 +106,7 @@ const EducationTable = ({
       {data.length > 0 && (
         <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
 
+          {/* PAGE SIZE */}
           <div className="d-flex align-items-center gap-2">
             <span className="fw-semibold">
               {t("education:page_size")}
@@ -124,7 +127,10 @@ const EducationTable = ({
             </select>
           </div>
 
+          {/* PAGINATION UI */}
           <ul className="pagination mb-0">
+
+            {/* PREVIOUS */}
             <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
               <button
                 className="page-link"
@@ -134,20 +140,57 @@ const EducationTable = ({
               </button>
             </li>
 
-            {[...Array(totalPages)].map((_, i) => (
-              <li
-                key={i}
-                className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(i + 1)}
-                >
-                  {i + 1}
-                </button>
-              </li>
-            ))}
+            {/* ✅ 3 PAGE + DOTS (NO LAST PAGE NUMBER) */}
+            {(() => {
+              let pages = [];
 
+              if (totalPages <= 3) {
+                pages = [...Array(totalPages)].map((_, i) => i + 1);
+              } else {
+                if (currentPage <= 2) {
+                  pages = [1, 2, 3];
+                } else if (currentPage >= totalPages - 1) {
+                  pages = [totalPages - 2, totalPages - 1, totalPages];
+                } else {
+                  pages = [currentPage - 1, currentPage, currentPage + 1];
+                }
+              }
+
+              return (
+                <>
+                  {/* LEFT DOTS ONLY */}
+                  {pages[0] > 1 && (
+                    <li className="page-item disabled">
+                      <span className="page-link">...</span>
+                    </li>
+                  )}
+
+                  {/* PAGE NUMBERS */}
+                  {pages.map((page) => (
+                    <li
+                      key={page}
+                      className={`page-item ${currentPage === page ? "active" : ""}`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => setCurrentPage(page)}
+                      >
+                        {page}
+                      </button>
+                    </li>
+                  ))}
+
+                  {/* RIGHT DOTS ONLY */}
+                  {pages[pages.length - 1] < totalPages && (
+                    <li className="page-item disabled">
+                      <span className="page-link">...</span>
+                    </li>
+                  )}
+                </>
+              );
+            })()}
+
+            {/* NEXT */}
             <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
               <button
                 className="page-link"
@@ -156,6 +199,7 @@ const EducationTable = ({
                 &raquo;
               </button>
             </li>
+
           </ul>
 
         </div>
