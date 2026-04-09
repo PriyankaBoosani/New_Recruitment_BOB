@@ -131,22 +131,31 @@ usePreferredEducationLevelExperience: false
             responsibilities: existingPosition.rolesResponsibilities,
             medicalRequired: existingPosition.isMedicalRequired ? "yes" : "no",
             enableStateDistribution: existingPosition.isLocationWise,
+            cutOffDate: existingPosition.cutOffDate || "",
             mandatoryExperience: {
                 years: Math.floor(existingPosition.mandatoryExperienceMonths / 12),
                 months: existingPosition.mandatoryExperienceMonths % 12,
                 description: existingPosition.mandatoryExperience,
-                educationLevelExperiences: existingPosition.mandatoryEducationLevelExperiences || []
+                educationLevelExperiences: Object.entries(existingPosition.mandatoryEducationLevelExperiences || {}).map(([educationLevel, months]) => ({
+                    educationLevel,
+                    years: Math.floor(months / 12),
+                    months: months % 12
+                }))
             },
             preferredExperience: {
                 years: Math.floor(existingPosition.preferredExperienceMonths / 12),
                 months: existingPosition.preferredExperienceMonths % 12,
                 description: existingPosition.preferredExperience,
-                educationLevelExperiences: existingPosition.preferredEducationLevelExperiences || []
+                educationLevelExperiences: Object.entries(existingPosition.preferredEducationLevelExperiences || {}).map(([educationLevel, months]) => ({
+                    educationLevel,
+                    years: Math.floor(months / 12),
+                    months: months % 12
+                }))
             },
             contractualPeriod: isContract
                 ? String(existingPosition.contractYears ?? "")
                 : "",
-            useMandatoryEducationLevelExperience: existingPosition.useMandatoryEducationLevelExperience || false,
+            useMandatoryEducationLevelExperience: existingPosition.useMandatoryEducationLevelExperience || true,
             usePreferredEducationLevelExperience: existingPosition.usePreferredEducationLevelExperience || false,
         });
         setApprovedBy(existingPosition.approvedBy || "");

@@ -42,6 +42,14 @@ const PositionForm = ({
 }) => {
     const { t } = useTranslation(["addPosition", "common", "validation"]);
     
+    // Sync form data when parent formData changes (for edit mode)
+    useEffect(() => {
+        console.log("formData",formData)
+        if (formData) {
+            setFormData(formData);
+        }
+    }, [formData]);
+    
     const renderError = (e) => {
         if (!e) return "";
         if (typeof e === "string") return t(e);
@@ -599,39 +607,41 @@ console.log("educationDocuments",educationDocuments)
               }
             });
 
-            // reset fields when switching
-            if (isOn) {
-              handleInputChange({
-                target: {
-                  name: `${expType}.years`,
-                  value: ""
-                }
-              });
-              handleInputChange({
-                target: {
-                  name: `${expType}.months`,
-                  value: ""
-                }
-              });
-              handleInputChange({
-                target: {
-                  name: `${expType}.educationLevelExperiences`,
-                  value: [
-                    {
-                      educationLevel: "",
-                      years: "",
-                      months: ""
-                    }
-                  ]
-                }
-              });
-            } else {
-              handleInputChange({
-                target: {
-                  name: `${expType}.educationLevelExperiences`,
-                  value: []
-                }
-              });
+            // reset fields when switching (only in add mode, not edit mode)
+            if (!isViewMode && !formData[expType]?.educationLevelExperiences?.length && !formData[expType]?.years && !formData[expType]?.months) {
+              if (isOn) {
+                handleInputChange({
+                  target: {
+                    name: `${expType}.years`,
+                    value: ""
+                  }
+                });
+                handleInputChange({
+                  target: {
+                    name: `${expType}.months`,
+                    value: ""
+                  }
+                });
+                handleInputChange({
+                  target: {
+                    name: `${expType}.educationLevelExperiences`,
+                    value: [
+                      {
+                        educationLevel: "",
+                        years: "",
+                        months: ""
+                      }
+                    ]
+                  }
+                });
+              } else {
+                handleInputChange({
+                  target: {
+                    name: `${expType}.educationLevelExperiences`,
+                    value: []
+                  }
+                });
+              }
             }
           }}
         />
@@ -682,7 +692,10 @@ console.log("educationDocuments",educationDocuments)
         <>
           <div className="education-level-experience-section">
 
-            {(formData[expType]?.educationLevelExperiences || []).map(
+            {(formData[expType]?.educationLevelExperiences?.length > 0 
+              ? formData[expType].educationLevelExperiences 
+              : [{ educationLevel: "", years: "", months: "" }]
+            ).map(
               (eduExp, index) => {
                 const selected = (formData[expType]?.educationLevelExperiences || [])
                   .map(e => e.educationLevel)
