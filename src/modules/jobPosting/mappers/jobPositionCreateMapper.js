@@ -191,15 +191,11 @@ export const mapAddPositionToCreateDto = ({
       : {},
 
     mandatoryExperienceMonths: formData.useMandatoryEducationLevelExperience
-      ? (formData.mandatoryExperience?.educationLevelExperiences || []).reduce((total, exp) => {
-          return total + (Number(exp.years || 0) * 12) + Number(exp.months || 0);
-        }, 0)
+      ? null
       : Number(formData.mandatoryExperience?.years || 0) * 12 + Number(formData.mandatoryExperience?.months || 0),
 
     preferredExperienceMonths: formData.usePreferredEducationLevelExperience
-      ? (formData.preferredExperience?.educationLevelExperiences || []).reduce((total, exp) => {
-          return total + (Number(exp.years || 0) * 12) + Number(exp.months || 0);
-        }, 0)
+      ? null
       : Number(formData.preferredExperience?.years || 0) * 12 + Number(formData.preferredExperience?.months || 0),
 
     mandatoryExperience: formData.mandatoryExperience.description || "",
