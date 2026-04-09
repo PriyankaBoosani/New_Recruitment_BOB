@@ -103,6 +103,10 @@ usePreferredEducationLevelExperience: false
     });
     const eduInitializedRef = useRef(false);
 
+    // Reset eduInitializedRef when mode changes to allow re-initialization
+    useEffect(() => {
+        eduInitializedRef.current = false;
+    }, [mode]);
 
     // --- EFFECTS ---
     useEffect(() => {
@@ -187,6 +191,14 @@ usePreferredEducationLevelExperience: false
     }, [formData.employmentType, employmentTypes]);
 
     useEffect(() => {
+        console.log('Education mapping useEffect triggered');
+        console.log('existingPosition:', !!existingPosition);
+        console.log('educationTypes.length:', educationTypes.length);
+        console.log('qualifications.length:', qualifications.length);
+        console.log('specializations.length:', specializations.length);
+        console.log('certifications.length:', certifications.length);
+        console.log('eduInitializedRef.current:', eduInitializedRef.current);
+        
         if (!existingPosition) return;
 
         if (
@@ -195,10 +207,14 @@ usePreferredEducationLevelExperience: false
             !specializations.length ||
             !certifications.length
         ) {
+            console.log('Education mapping useEffect - missing master data, returning');
             return;
         }
 
-        if (eduInitializedRef.current) return;
+        if (eduInitializedRef.current) {
+            console.log('Education mapping useEffect - already initialized, returning');
+            return;
+        }
 
         const mandatory = mapEduRulesToModalData(
             existingPosition.mandatoryEduRulesJson,
@@ -707,6 +723,7 @@ usePreferredEducationLevelExperience: false
 
             <ImportModal show={showImportModal} onHide={() => setShowImportModal(false)} requisitionId={requisitionId} onSuccess={() => fetchPositions(requisitionId)} // optional but correct
             />
+            {console.log('AddPosition - Passing to modal:', eduMode, educationData[eduMode])}
             <EducationModal key={`${eduMode}-${showEduModal}`} show={showEduModal} mode={eduMode} initialData={educationData[eduMode]} educationTypes={educationTypes} qualifications={qualifications} specializations={specializations} certifications={certifications} onHide={() => setShowEduModal(false)} onSave={({ groups, certGroups, text }) => { setEducationData(prev => ({ ...prev,[eduMode]: { groups, certGroups, text } })); setErrors(prev => { const upd = { ...prev }; delete upd[`${eduMode}Education`]; return upd; }); }} />
             <ConfirmUsePositionModal show={showConfirmModal} onYes={handleUsePositionData} onNo={handleRejectPositionData}
             />

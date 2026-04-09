@@ -51,6 +51,10 @@ export default function EducationModal({
     useEffect(() => {
         if (!show) return;
 
+        // Debug: Log the incoming data
+        console.log('EducationModal - initialData:', initialData);
+        console.log('EducationModal - mode:', mode);
+
         // The groups from mapEduRulesToModalData have educations property
         setGroups(initialData?.groups?.length ? initialData.groups : [createGroup()]);
         
