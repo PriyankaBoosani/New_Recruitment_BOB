@@ -588,9 +588,11 @@ console.log("educationDocuments",educationDocuments)
           type="switch"
           disabled={isViewMode}
           label={
-            isMandatory
-              ? t("addPosition:use_mandatory_education_level_experience")
-              : t("addPosition:use_preferred_education_level_experience")
+              <span style={{ fontSize: "12px", marginLeft: "6px" }}>
+                {isMandatory
+                    ? t("addPosition:use_mandatory_education_level_experience")
+                    : t("addPosition:use_preferred_education_level_experience")}
+            </span>
           }
           checked={isEducationMode || false}
           onChange={(e) => {
@@ -653,6 +655,12 @@ console.log("educationDocuments",educationDocuments)
           <Row className="g-2 mb-2">
             <Col md={6}>
               <Select
+                classNamePrefix="react-select"
+                menuPortalTarget={document.body}
+                menuPosition="fixed"
+                styles={{
+                  menuPortal: base => ({ ...base, zIndex: 9999 })
+                }}
                 value={yearOptions.find(
                   o => String(o.value) === String(formData[expType].years)
                 )}
@@ -671,6 +679,12 @@ console.log("educationDocuments",educationDocuments)
 
             <Col md={6}>
               <Select
+                classNamePrefix="react-select"
+                menuPortalTarget={document.body}
+                menuPosition="fixed"
+                styles={{
+                  menuPortal: base => ({ ...base, zIndex: 9999 })
+                }}
                 value={monthOptions.find(
                   o => String(o.value) === String(formData[expType].months)
                 )}
@@ -717,7 +731,7 @@ console.log("educationDocuments",educationDocuments)
                   <div key={index} className="mb-3 p-3 border rounded">
 
                     <div className="d-flex justify-content-between">
-                      <strong>Education Level {index + 1}</strong>
+                      <strong className="f14 bluecol">Education Level {index + 1}</strong>
 
                       {(formData[expType].educationLevelExperiences.length > 1) && !isViewMode && (
                         <Button
@@ -744,6 +758,12 @@ console.log("educationDocuments",educationDocuments)
                     <Form.Label className="small mt-2">Qualification</Form.Label>
 
                     <Select
+                      classNamePrefix="react-select"
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{
+                        menuPortal: base => ({ ...base, zIndex: 9999 })
+                      }}
                       value={options.find(
                         o => String(o.value) === String(eduExp.educationLevel)
                       )}
@@ -765,6 +785,12 @@ console.log("educationDocuments",educationDocuments)
                     <Row className="g-2 mt-2">
                       <Col md={6}>
                         <Select
+                          classNamePrefix="react-select"
+                          menuPortalTarget={document.body}
+                          menuPosition="fixed"
+                          styles={{
+                            menuPortal: base => ({ ...base, zIndex: 9999 })
+                          }}
                           value={yearOptions.find(
                             o => String(o.value) === String(eduExp.years)
                           )}
@@ -786,6 +812,12 @@ console.log("educationDocuments",educationDocuments)
 
                       <Col md={6}>
                         <Select
+                          classNamePrefix="react-select"
+                          menuPortalTarget={document.body}
+                          menuPosition="fixed"
+                          styles={{
+                            menuPortal: base => ({ ...base, zIndex: 9999 })
+                          }}
                           value={monthOptions.find(
                             o => String(o.value) === String(eduExp.months)
                           )}
