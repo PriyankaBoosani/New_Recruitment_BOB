@@ -1286,8 +1286,18 @@ export default function CandidateScreening({ selectedJob }) {
               {/* RIGHT SECTION */}
               <div className="col-md-4 col-12">
                 <div className="d-flex justify-content-end gap-2 align-items-center pb-3">
-                  <button className="btn orange-color orange-border fs-13 px-3 py-1">
-                    <img className="me-2" src={locationIcon} width={16} />
+              <button
+                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${
+                      isSendOfferEnabled ? "" : "disabled_button"
+                    }`}
+                    disabled={!isSendOfferEnabled}
+   >
+                    <img
+                      className="me-2"
+                      src={locationIcon}
+                      width={16}
+                      style={{ filter: "brightness(0) invert(1)" }}
+                    />
                     {t("candidateWorkflow:assign_locations")}
                   </button>
                   <button className="btn blue-border blue-color fs-13 px-3 py-1" onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}>

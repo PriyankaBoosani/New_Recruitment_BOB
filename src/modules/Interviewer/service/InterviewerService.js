@@ -14,6 +14,41 @@ const InterviewerService = {
         date: dateStr
       }
     }),
+
+
+downloadInterviewTemplate: (positionId, date) =>
+  api.get(`${BASE}/download-interview-scores-template`, {
+    params: {
+      positionId,
+      date
+    },
+    headers: {
+      "X-Client": "recruiter"   // 🔥 ADD THIS
+    },
+    responseType: "blob"
+  }),
+
+
+
+
+
+
+
+  uploadInterviewFile: (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return api.post(
+    `${BASE}/upload-interview-scores`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "X-Client": "recruiter"
+      }
+    }
+  );
+},
  
   /*  NEW */
   // setCandidateScore: (payload) =>

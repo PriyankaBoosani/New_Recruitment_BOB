@@ -25,7 +25,9 @@ import { mapInterviewerCandidates } from "./mapper/InterviewerScheduleMapper";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FiCalendar } from "react-icons/fi";
-
+import { Button, Modal } from "react-bootstrap";
+import InterviewerImportModal from "./components/InterviewerImportModal";
+import { FiUpload } from "react-icons/fi";
 
 
 
@@ -78,6 +80,8 @@ export default function InterviewerSchedule() {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [loadingPdf, setLoadingPdf] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  
 
   /* ================= LOAD MASTERS ================= */
 
@@ -229,7 +233,7 @@ export default function InterviewerSchedule() {
     setSelectedRequisition(restored);
     setSelectedPosition(restored);
 
-    // ✅ IMPORTANT — clear restore flag after use
+    //  IMPORTANT — clear restore flag after use
     sessionStorage.removeItem("fromPreviewBack");
 
   }, [cameFromPreviewBack]);
@@ -391,7 +395,7 @@ const toggleAbsent = (id) =>
   // setOriginalRows(rows.map(r => ({ ...r })));
 
   //   } catch (err) {
-  //     console.error("🔥 SAVE SCORE ERROR:", err);
+  //     console.error(" SAVE SCORE ERROR:", err);
   //     toast.error("Save failed");
   //   }
   // };
@@ -432,7 +436,7 @@ const toggleAbsent = (id) =>
   //     setOriginalRows(rows.map(r => ({ ...r })));
 
   //   } catch (err) {
-  //     console.error("🔥 SAVE SCORE ERROR:", err);
+  //     console.error(" SAVE SCORE ERROR:", err);
   //     toast.error("Save failed");
   //   }
   // };
@@ -462,7 +466,7 @@ const handleSave = async () => {
         candidateId: raw.candidateId,
         panelId: raw.panelId,
 
-        // ✅ SCORE NOT MANDATORY
+        //  SCORE NOT MANDATORY
         panelScore:
           r.absent
             ? null
@@ -486,7 +490,7 @@ const handleSave = async () => {
     setOriginalRows(rows.map(r => ({ ...r })));
 
   } catch (err) {
-    console.error("🔥 SAVE SCORE ERROR:", err);
+    console.error(" SAVE SCORE ERROR:", err);
     toast.error(t("save_failed"));
   }
 };
@@ -570,14 +574,30 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
           >›</span>
         </div>
 
-        <div className="search-box">
-          <img src={searchIcon} width={15} alt="" />
-          <input
-            placeholder={t("search_placeholder")}
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-          />
-        </div>
+     <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+  
+  <div className="search-box">
+    <img src={searchIcon} width={15} alt="" />
+    <input
+      placeholder={t("search_placeholder")}
+      value={searchText}
+      onChange={e => setSearchText(e.target.value)}
+    />
+  </div>
+
+ {/* {isSelectionDone && (
+  <Button
+    onClick={() => setShowImportModal(true)}
+    className="add-panels-btn d-flex align-items-center gap-2"
+  >
+    <FiUpload />
+    {t("import_data")}
+  </Button>
+)} */}
+
+</div>
+
+        
 
       </div>
 
@@ -597,6 +617,8 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
             setSelectedPosition(p);
           }}
           closeCalendar={() => setIsCalendarOpen(false)}
+          showImportBtn={isSelectionDone}
+  onImportClick={() => setShowImportModal(true)}
         />
 
 
@@ -634,7 +656,9 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
             isCardBg={false}
             isSaveEnabled={anyChanged}
             onSave={handleSave}
-            isSaveBtn={true}
+            isSaveBtn={true}  
+  //            showImportBtn={isSelectionDone}
+  // onImportClick={() => setShowImportModal(true)}
           />
         </div>
       )}
@@ -679,6 +703,64 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
         loading={loadingPdf}
         title={t("candidate_resume")}
       />
+
+
+
+
+        <Modal
+    show={showImportModal}
+    onHide={() => setShowImportModal(false)}
+    size="lg"
+    centered
+  >
+    {/* <Modal.Header closeButton>
+      <Modal.Title>{t("import_data")}</Modal.Title>
+    </Modal.Header> */}
+
+
+
+      <Modal.Header closeButton>
+          <Modal.Title className="header-title">{t("import_data")}</Modal.Title>
+        </Modal.Header>
+
+    <Modal.Body>
+   <InterviewerImportModal
+  onClose={() => setShowImportModal(false)}
+  onSuccess={async () => {
+    setShowImportModal(false);
+
+    try {
+      const res = await InterviewerService.getPanelPositions();
+
+      const mapped = mapPanelPositions(res.data || []);
+      setPanelPositions(mapped);
+
+      // 🔥 OPTIONAL (recommended)
+      // reload candidates also
+      if (selectedPosition?.position?.positionId) {
+        const dateStr = formatApiDate(selectedDate);
+
+        const candRes =
+          await InterviewerService.getCandidatesByPositionAndDate(
+            selectedPosition.position.positionId,
+            dateStr
+          );
+
+        const mappedRows = mapInterviewerCandidates(candRes.data || []);
+        setRows(mappedRows);
+        setOriginalRows(mappedRows.map(r => ({ ...r })));
+      }
+
+    } catch (err) {
+      console.error("Refresh failed", err);
+      toast.error("Failed to refresh data");
+    }
+  }}
+  positionId={selectedPosition?.position?.positionId}
+  selectedDate={selectedDate}
+/>
+    </Modal.Body>
+  </Modal>
 
     </div>
   );

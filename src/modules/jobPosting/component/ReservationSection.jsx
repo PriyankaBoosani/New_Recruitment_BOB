@@ -94,19 +94,38 @@ const ReservationSection = ({
                                     {reservationCategories.map(cat => (
                                         <Col md={2} key={cat.id}>
                                             <Form.Label className="small fw-semibold">{cat.code}</Form.Label>
-                                            <Form.Control
-                                                type="number"
-                                                value={nationalCategories[cat.code] ?? 0}
-                                                onChange={e => {
-                                                    setNationalCategories(prev => ({
-                                                        ...prev,
-                                                        [cat.code]: Number(e.target.value || 0)
-                                                    }));
+                        <Form.Control
+  type="text"
+  inputMode="numeric"
+  pattern="[0-9]*"
+  value={nationalCategories[cat.code] ?? "0"}
+  onChange={e => {
+    let value = e.target.value;
 
-                                                    //  CLEAR NATIONAL DISTRIBUTION ERROR
-                                                    setErrors(prev => ({ ...prev, nationalDistribution: "" }));
-                                                }}
-                                            />
+    // allow only digits
+    value = value.replace(/\D/g, "");
+
+    // remove leading zeros (keep single 0)
+    if (value.length > 1) {
+      value = value.replace(/^0+/, "");
+    }
+
+    setNationalCategories(prev => ({
+      ...prev,
+      [cat.code]: value === "" ? "0" : value
+    }));
+
+    setErrors(prev => ({ ...prev, nationalDistribution: "" }));
+  }}
+  onKeyDown={e => {
+    if (
+      !/[0-9]/.test(e.key) &&
+      !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+    ) {
+      e.preventDefault();
+    }
+  }}
+/>
                                         </Col>
                                     ))}
                                     <Col md={2}><Form.Label className="small fw-semibold">{t("common:total")}</Form.Label><Form.Control disabled value={nationalCategoryTotal} /></Col>
@@ -118,19 +137,41 @@ const ReservationSection = ({
                                 <Row className="g-3">
                                     {disabilityCategories.map(d => (
                                         <Col md={3} key={d.id}><Form.Label className="small fw-semibold">{d.disabilityCode}</Form.Label>
-                                            <Form.Control type="number" value={nationalDisabilities[d.disabilityCode] ?? 0} onChange={e => {
-                                                setNationalDisabilities(prev => ({
-                                                    ...prev,
-                                                    [d.disabilityCode]: Number(e.target.value || 0)
-                                                }));
+                                         <Form.Control
+  type="text"                 // 🔥 change from number → text
+  inputMode="numeric"
+  pattern="[0-9]*"
+  value={nationalDisabilities[d.disabilityCode] ?? "0"}
+  onChange={e => {
+    let value = e.target.value;
 
-                                                //  CLEAR CROSS-FIELD ERROR
-                                                setErrors(prev => ({
-                                                    ...prev,
-                                                    nationalDistribution: ""
-                                                }));
-                                            }}
-                                            />
+    // ❌ allow only digits
+    value = value.replace(/\D/g, "");
+
+    // ✅ remove leading zeros (but allow single 0)
+    if (value.length > 1) {
+      value = value.replace(/^0+/, "");
+    }
+
+    setNationalDisabilities(prev => ({
+      ...prev,
+      [d.disabilityCode]: value === "" ? "0" : value
+    }));
+
+    setErrors(prev => ({
+      ...prev,
+      nationalDistribution: ""
+    }));
+  }}
+  onKeyDown={e => {
+    if (
+      !/[0-9]/.test(e.key) &&
+      !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+    ) {
+      e.preventDefault();
+    }
+  }}
+/>
                                         </Col>
                                     ))}
                                 </Row>
@@ -143,6 +184,19 @@ const ReservationSection = ({
                             <Col md={3}><Form.Label>{t("addPosition:state")} <span className="text-danger">*</span></Form.Label>
                                 <Select
                                     classNamePrefix="react-select"
+                                     isDisabled={isViewMode} 
+                                      styles={{
+        control: (base, state) => ({
+            ...base,
+            backgroundColor: isViewMode ? "#e9ecef" : base.backgroundColor,
+          //  cursor: isViewMode ? "not-allowed" : "pointer",
+            opacity: isViewMode ? 0.8 : 1
+        }),
+        singleValue: (base) => ({
+            ...base,
+            color: isViewMode ? "#6c757d" : base.color
+        })
+    }}
                                     value={[
                                         { value: "", label: t("addPosition:select_state") },
                                         ...states.map(s => ({
@@ -156,7 +210,7 @@ const ReservationSection = ({
                                         setCurrentState(prev => ({
                                             ...prev,
                                             state: stateId,
-                                            city: "",        // 🔥 MUST RESET
+                                            city: "",        //  MUST RESET
                                             language: ""
                                         }));
 
@@ -186,6 +240,19 @@ const ReservationSection = ({
                                 <Select
                                     classNamePrefix="react-select"
                                     isDisabled={!currentState.state}
+                                  
+                                      styles={{
+        control: (base, state) => ({
+            ...base,
+            backgroundColor: isViewMode ? "#e9ecef" : base.backgroundColor,
+          //  cursor: isViewMode ? "not-allowed" : "pointer",
+            opacity: isViewMode ? 0.8 : 1
+        }),
+        singleValue: (base) => ({
+            ...base,
+            color: isViewMode ? "#6c757d" : base.color
+        })
+    }}
                                     value={
                                         filteredCities
                                             .map(c => ({
@@ -244,6 +311,19 @@ const ReservationSection = ({
                                 <Select
                                     classNamePrefix="react-select"
                                     isDisabled={!currentState.state}
+                                 
+                                      styles={{
+        control: (base, state) => ({
+            ...base,
+            backgroundColor: isViewMode ? "#e9ecef" : base.backgroundColor,
+          //  cursor: isViewMode ? "not-allowed" : "pointer",
+            opacity: isViewMode ? 0.8 : 1
+        }),
+        singleValue: (base) => ({
+            ...base,
+            color: isViewMode ? "#6c757d" : base.color
+        })
+    }}
                                     value={[
                                         { value: "", label: t("addPosition:select_language") },
                                         ...filteredLanguages.map(lang => ({
@@ -275,25 +355,47 @@ const ReservationSection = ({
                                     <Row className="g-3">
                                         {reservationCategories.map(cat => (
                                             <Col md={2} key={cat.id}><Form.Label className="small fw-semibold">{cat.code}</Form.Label>
-                                                <Form.Control
-                                                    type="number"
-                                                    value={currentState.categories?.[cat.code] ?? 0}
-                                                    onChange={e => {
-                                                        setCurrentState(prev => ({
-                                                            ...prev,
-                                                            categories: {
-                                                                ...prev.categories,
-                                                                [cat.code]: Number(e.target.value || 0)
-                                                            }
-                                                        }));
+                                     <Form.Control
+  type="text"
+  inputMode="numeric"
+  pattern="[0-9]*"
+  value={currentState.categories?.[cat.code] ?? 0}
+  onChange={e => {
+    let value = e.target.value;
 
-                                                        // 🔥 CLEAR CROSS-FIELD ERROR
-                                                        setErrors(prev => ({
-                                                            ...prev,
-                                                            stateDistribution: ""
-                                                        }));
-                                                    }}
-                                                />
+    //  keep only digits
+    value = value.replace(/\D/g, "");
+
+    setCurrentState(prev => ({
+      ...prev,
+      categories: {
+        ...prev.categories,
+        [cat.code]: Number(value || 0)
+      }
+    }));
+
+    setErrors(prev => ({
+      ...prev,
+      stateDistribution: ""
+    }));
+  }}
+  onKeyDown={e => {
+    //  block anything except digits + control keys
+    if (
+      !/[0-9]/.test(e.key) &&
+      !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+    ) {
+      e.preventDefault();
+    }
+  }}
+  onPaste={e => {
+    //  block paste if it contains non-digits
+    const paste = e.clipboardData.getData("text");
+    if (!/^\d+$/.test(paste)) {
+      e.preventDefault();
+    }
+  }}
+/>
                                             </Col>
                                         ))}
                                         <Col md={2}><Form.Label className="small fw-semibold">{t("common:total")}</Form.Label><Form.Control disabled value={stateCategoryTotal} /></Col>
@@ -305,25 +407,44 @@ const ReservationSection = ({
                                     <Row className="g-3">
                                         {disabilityCategories.map(d => (
                                             <Col md={3} key={d.id}><Form.Label className="small fw-semibold">{d.disabilityCode}</Form.Label>
-                                                <Form.Control
-                                                    type="number"
-                                                    value={currentState.disabilities?.[d.disabilityCode] ?? 0}
-                                                    onChange={e => {
-                                                        setCurrentState(prev => ({
-                                                            ...prev,
-                                                            disabilities: {
-                                                                ...prev.disabilities,
-                                                                [d.disabilityCode]: Number(e.target.value || 0)
-                                                            }
-                                                        }));
+<Form.Control
+  type="text"
+  inputMode="numeric"
+  pattern="[0-9]*"
+  value={currentState.disabilities?.[d.disabilityCode] ?? "0"}
+  onChange={e => {
+    let value = e.target.value;
 
-                                                        // 🔥 CLEAR CROSS-FIELD ERROR
-                                                        setErrors(prev => ({
-                                                            ...prev,
-                                                            stateDistribution: ""
-                                                        }));
-                                                    }}
-                                                />
+    // allow only digits
+    value = value.replace(/\D/g, "");
+
+    // remove leading zeros (keep single 0)
+    if (value.length > 1) {
+      value = value.replace(/^0+/, "");
+    }
+
+    setCurrentState(prev => ({
+      ...prev,
+      disabilities: {
+        ...prev.disabilities,
+        [d.disabilityCode]: value === "" ? "0" : value
+      }
+    }));
+
+    setErrors(prev => ({
+      ...prev,
+      stateDistribution: ""
+    }));
+  }}
+  onKeyDown={e => {
+    if (
+      !/[0-9]/.test(e.key) &&
+      !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+    ) {
+      e.preventDefault();
+    }
+  }}
+/>
 
                                             </Col>
                                         ))}

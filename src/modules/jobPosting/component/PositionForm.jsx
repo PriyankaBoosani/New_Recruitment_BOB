@@ -964,7 +964,7 @@ console.log("educationDocuments",educationDocuments)
 
                     </Col>
                     <Col md={3}>
-                        <Form.Label>{t("addPosition:medical_required")} <span className="text-danger">*</span></Form.Label>
+                        <Form.Label>{t("addPosition:medical_required")} <span className="text-danger"></span></Form.Label>
                         <Select
                             classNamePrefix="react-select"
                             isDisabled={true}

@@ -76,19 +76,20 @@ const CandidateTable = ({
             </tr>
           </thead>
 
-          <tbody>
-            {!isSelectionDone && (
-              <tr className="no-candidates-row">
-                <td colSpan="7" className="text-center py-4 text-muted fs-15">
-                  {t("verification:no_candidates_found")}
-                </td>
-              </tr>
-            )}
+         <tbody>
+  {/*  No selection OR No data after filter */}
+  {(!isSelectionDone || filteredCandidates.length === 0) && (
+    <tr className="no-candidates-row">
+      <td colSpan="7" className="text-center py-4 text-muted fs-15">
+        {t("verification:no_candidates_found")}
+      </td>
+    </tr>
+  )}
 
-
-            {isSelectionDone &&
-              filteredCandidates.length > 0 &&
-              filteredCandidates.map((c) => {
+  {/*  Data available */}
+  {isSelectionDone &&
+    filteredCandidates.length > 0 &&
+    filteredCandidates.map((c) => {
 
 
                 return (
