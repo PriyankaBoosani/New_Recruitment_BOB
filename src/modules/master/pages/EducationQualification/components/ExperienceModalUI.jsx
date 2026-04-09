@@ -133,12 +133,49 @@ const ExperienceModal = ({
                   </label>
 
                   {isViewing ? (
-                    <div className="form-control-view">
-                      {form.specializationOthers?.length
-                        ? form.specializationOthers
-                          .map((s) => (typeof s === "string" ? s : s.name))
-                          .join(", ")
-                        : "-"}
+                    <div
+                      style={{
+                        maxHeight: "220px",
+                        overflowY: "auto",
+                        overflowX: "hidden",
+                        paddingRight: "5px"
+                      }}
+                    >
+                      <div className="row">
+                        {form.specializationOthers?.length ? (
+                          form.specializationOthers.map((s, i) => (
+                            <div key={i} className="col-md-6 mb-2">
+
+                              <div className="row g-2 align-items-center">
+
+                                {/* INPUT (READ ONLY) */}
+                                <div className="col">
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    value={typeof s === "string" ? s : s.name}
+                                    readOnly
+                                  />
+                                </div>
+
+                                {/* EMPTY SPACE FOR ALIGNMENT */}
+                                <div className="col-auto">
+                                  <button
+                                    className="remove-btn"
+                                    style={{ visibility: "hidden" }}
+                                  >
+                                    −
+                                  </button>
+                                </div>
+
+                              </div>
+
+                            </div>
+                          ))
+                        ) : (
+                          <div className="col-md-12">-</div>
+                        )}
+                      </div>
                     </div>
                   ) : (
                     <>
@@ -155,26 +192,38 @@ const ExperienceModal = ({
                           {form.specializationOthers.map((val, i) => (
                             <div key={i} className="col-md-6 mb-2">
 
-                              <div className="d-flex gap-2">
-                                <input
-                                  type="text"
-                                  className={`form-control ${duplicateIndexes.has(i) ? "is-invalid" : ""}`}
-                                  value={val?.name || ""}
-                                  placeholder={t("education:search_placeholder", { index: i + 1 })}
-                                  onChange={(e) =>
-                                    onChange(formIndex, "specialization", e.target.value, i)
-                                  }
-                                />
+                              <div className="row g-2 align-items-center">
 
-                                {!isEditing && (
+                                {/* INPUT */}
+                                <div className="col">
+                                  <input
+                                    type="text"
+                                    className={`form-control ${duplicateIndexes.has(i) ? "is-invalid" : ""}`}
+                                    value={val?.name || ""}
+                                    placeholder={t("education:search_placeholder", { index: i + 1 })}
+                                    onChange={(e) =>
+                                      onChange(formIndex, "specialization", e.target.value, i)
+                                    }
+                                  />
+                                </div>
+
+                                {/* DELETE BUTTON */}
+                                <div className="col-auto">
                                   <button
                                     type="button"
                                     className="remove-btn"
+                                    style={{
+                                      visibility: (isEditing
+                                        ? i === form.specializationOthers.length - 1
+                                        : true
+                                      ) ? "visible" : "hidden"
+                                    }}
                                     onClick={() => onRemoveSpec(formIndex, i)}
                                   >
                                     −
                                   </button>
-                                )}
+                                </div>
+
                               </div>
 
                               {duplicateIndexes.has(i) && (
