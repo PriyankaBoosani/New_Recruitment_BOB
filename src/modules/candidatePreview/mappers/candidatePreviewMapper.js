@@ -243,7 +243,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
             ? (() => {
               const value = Number(edu.percentage).toFixed(2);
               return Number(edu.percentage) < 10
-                ? `${value} CGPA`
+                ? `${value}%`
                 : `${value}%`;
             })()
             : "-",
