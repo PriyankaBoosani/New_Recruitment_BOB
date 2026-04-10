@@ -183,7 +183,10 @@ export const useExperience = () => {
 
   const saveExperience = async () => {
     try {
-      const { valid, errors: newErrors } = validateEducationForm(formData[0]);
+      const { valid, errors: newErrors } = validateEducationForm(formData[0], {
+        existing: experienceList,   // 🔥 REQUIRED
+        currentId: formData[0].educationQualificationsId
+      });
       setErrors([newErrors]);
       console.log("Payload to save", valid); // ✅ check payload
 
@@ -287,25 +290,25 @@ export const useExperience = () => {
   };
 
   // ✅ STEP 3: ADD THIS FILTER
-const filteredList = experienceList.filter((item) => {
-  const search = searchTerm.toLowerCase();
+  const filteredList = experienceList.filter((item) => {
+    const search = searchTerm.toLowerCase();
 
-  const educationMatch =
-    item.educationLevel?.toLowerCase().includes(search);
+    const educationMatch =
+      item.educationLevel?.toLowerCase().includes(search);
 
-  const courseMatch =
-    item.course?.toLowerCase().includes(search);
+    const courseMatch =
+      item.course?.toLowerCase().includes(search);
 
-  const specializationMatch =
-    item.specialization?.some((s) =>
-      s.name?.toLowerCase().includes(search)
-    );
+    const specializationMatch =
+      item.specialization?.some((s) =>
+        s.name?.toLowerCase().includes(search)
+      );
 
-  return educationMatch || courseMatch || specializationMatch;
-});
+    return educationMatch || courseMatch || specializationMatch;
+  });
 
   return {
-   experienceList: filteredList,
+    experienceList: filteredList,
     educationOptions, // ✅ dropdown
     loading,
     showModal,

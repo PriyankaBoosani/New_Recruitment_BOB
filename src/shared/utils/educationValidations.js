@@ -104,10 +104,35 @@ export const validateEducationForm = (formData = {}, options = {}) => {
   const eduError = validateEducationLevel(formData.educationLevel);
   if (eduError) errors.educationLevel = eduError;
 
-  // ✅ Course (NO DUPLICATE CHECK NOW)
+  // ✅ Course (WITH DUPLICATE CHECK)
   const courseError = validateCourse(formData.course);
-  if (courseError) errors.course = courseError;
+  console.log("Course validation error:", courseError); // ✅ check course error
 
+  if (courseError) {
+    console.log("Course validation failed, skipping duplicate check."); // ✅ debug log
+    errors.course = courseError;
+  } else {
+    console.log("Checking for duplicate course among existing entries..."); // ✅ debug log
+    const { existing = [], currentId = null } = options;
+
+    const isDuplicate = existing.some((item) => {
+      const sameCourse =
+        item.course?.trim().toLowerCase() ===
+        formData.course?.trim().toLowerCase();
+
+      const isSameId =
+        item.educationQualificationsId === currentId;
+
+      return sameCourse && !isSameId;
+    });
+
+    if (isDuplicate) {
+     errors.course = i18n.t(
+  "education:duplicate_course",
+  "Course already exists"
+);
+    }
+  }
   // ✅ Specialization (WITH DUPLICATE CHECK)
   const specError = validateSpecialization(
     formData.specializationOthers || []
