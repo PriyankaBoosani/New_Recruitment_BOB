@@ -354,7 +354,7 @@ const ReservationSection = ({
                                 <Form.Check
                                     type="checkbox"
                                     label="Is proficient in local language required?"
-                                    checked={currentState.isProficientInLocalLanguage || false}
+                                    checked={currentState.isProficientInLocalLanguage === true}
                                     onChange={(e) => {
                                         setCurrentState(prev => ({
                                             ...prev,

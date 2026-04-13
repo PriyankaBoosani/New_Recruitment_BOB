@@ -320,7 +320,7 @@ usePreferredEducationLevelExperience: false
 
                         vacancies: sd.totalVacancies,
                         language: sd.localLanguage,
-                        isProficientInLocalLanguage: sd.isProficientInLocalLanguage || false,
+                        isProficientInLocalLanguage: sd.isProficientInLocalLanguage === true,
                         categories,
                         disabilities,
                         categoryDistributions: sd.positionCategoryDistributions.map(cd => ({

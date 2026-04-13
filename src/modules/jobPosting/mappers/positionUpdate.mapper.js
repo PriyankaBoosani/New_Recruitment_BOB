@@ -326,5 +326,6 @@ export const mapAddPositionToUpdateDto = ({
     }));
 
   }
+
   return dto;
 };
