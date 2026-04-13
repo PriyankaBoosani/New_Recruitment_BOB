@@ -26,9 +26,13 @@ import RankListModal from "./components/RankListModal";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import ZonalRejectedCommentModal from "./components/ZonalRejectedCommentModal";
-import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck } from "react-icons/fa";
+import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck, FaBars, FaListOl } from "react-icons/fa";
+import { faListOl } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
+import { useDispatch } from "react-redux";
+import { setRankEnabled, clearRankState } from "../../app/providers/rankSlice";
 
 export default function CandidateScreening({ selectedJob }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
@@ -175,6 +179,15 @@ export default function CandidateScreening({ selectedJob }) {
     acceptBeforeDate: "",
     joiningDate: "",
   });
+  const dispatch = useDispatch();
+
+
+  const isRankEnabled = useSelector(
+    (state) => state.rank.isRankEnabled
+  );
+  const isScoreEnabled = useSelector(
+    (state) => state.rank.isScoreEnabled
+  );
 
   const todayString = () => {
     const today = new Date();
@@ -183,6 +196,7 @@ export default function CandidateScreening({ selectedJob }) {
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
+
 
   const navInitRef = useRef({
     requisitionId: null,
@@ -283,6 +297,8 @@ export default function CandidateScreening({ selectedJob }) {
     fetchPositions();
   }, [selectedRequisitionId]);
 
+
+
   const formatCandidateData = (apiData) => {
     const formatStatus = (status = "") => status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
 
@@ -290,7 +306,21 @@ export default function CandidateScreening({ selectedJob }) {
       id: c.candidateApplications.id, // REQUIRED for selection
       name: c.fullName,
       rank: c.rank,
-      score: c.score,
+
+      educationScore:
+        c?.candidateRankingResults?.educationScore ?? "-",
+
+      experienceScore:
+        c?.candidateRankingResults?.experienceScore ?? "-",
+
+      finalScore:
+        c?.candidateRankingResults?.finalScore ?? "-",
+
+      educationSimilarity:
+        c?.candidateRankingResults?.educationSimilarity ?? "-",
+
+      experienceSimilarity:
+        c?.candidateRankingResults?.experienceSimilarity ?? "-",
       // experience: `${Math.floor((c.totalMonths || 0) / 12)} years`,
       experienceMonths: c.totalMonths || 0,
       status: formatStatus(c.candidateApplications.applicationStatus),
@@ -339,6 +369,8 @@ export default function CandidateScreening({ selectedJob }) {
         status: normalizedStatus,
         stateId: filters.stateId,
         categoryId: filters.categoryId,
+        rank: isRankEnabled,
+        score: isScoreEnabled,
       });
 
       const apiData = res?.data;
@@ -392,8 +424,16 @@ export default function CandidateScreening({ selectedJob }) {
     filters.stateId,
     filters.categoryId,
     masterData,
-    activeTab
+    activeTab,
+    
   ]);
+  useEffect(() => {
+  if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") return;
+
+  if (isRankEnabled) {
+    fetchCandidates();
+  }
+}, [isRankEnabled]);
 
   // 🔍 Fetch all candidates for filter dropdowns when position/status changes
   useEffect(() => {
@@ -403,11 +443,11 @@ export default function CandidateScreening({ selectedJob }) {
     }
 
     fetchAllCandidatesForFilters();
-  }, [selectedPositionId, filters.status, filters.searchText, masterData, activeTab]);
+  }, [selectedPositionId, filters.status, filters.searchText, masterData, activeTab, isRankEnabled]);
 
   const handleRequisitionChange = async (e) => {
     const reqId = e.target.value;
-
+    dispatch(clearRankState());
     isNavModeRef.current = false;
 
     setSelectedRequisitionId(reqId);
@@ -437,6 +477,10 @@ export default function CandidateScreening({ selectedJob }) {
     } finally {
       setLoadingPositions(false);
     }
+  };
+  const handlePositionChange = (id) => {
+    dispatch(clearRankState()); // ✅ RESET HERE
+    setSelectedPositionId(id);
   };
 
   const handleViewFile = async (candidate) => {
@@ -874,6 +918,10 @@ export default function CandidateScreening({ selectedJob }) {
     }
   }, [activeTab]);
 
+
+
+
+
   return (
     <div className="container-fluid px-5 py-4">
       {/* Header */}
@@ -897,7 +945,7 @@ export default function CandidateScreening({ selectedJob }) {
               loadingRequisitions={loadingRequisitions}
               loadingPositions={loadingPositions}
               onRequisitionChange={handleRequisitionChange}
-              onPositionChange={setSelectedPositionId}
+              onPositionChange={handlePositionChange}
               onRequisitionSearch={handleRequisitionSearch}
             />
             <div className="col-md-6 col-12 text-md-end">
@@ -1084,6 +1132,20 @@ export default function CandidateScreening({ selectedJob }) {
                     <img src={rankIcon} className="me-2" width={15}/>
                     Rank
                   </button> */}
+                  {activeTab === "CANDIDATE_POOL" && (
+                    <button
+                      className="rank-btn fs-14"
+                      onClick={() => {
+                      
+                        dispatch(setRankEnabled(true)); // 🔥 ONLY TRUE
+                        
+                       
+                        setPage(0);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faListOl} className="rank-icon" /> Rank
+                    </button>
+                  )}
                   <OverlayTrigger
                     placement="bottom"
                     overlay={<Tooltip >{t("candidateWorkflow:download_pdf")}</Tooltip>}
@@ -1264,9 +1326,8 @@ export default function CandidateScreening({ selectedJob }) {
                     {/* Send Offers Button */}
                     <div>
                       <button
-                        className={`btn fs-13 px-3 py-1 orange-bg text-white ${
-                          isSendOfferEnabled ? "" : "disabled_button"
-                        }`}
+                        className={`btn fs-13 px-3 py-1 orange-bg text-white ${isSendOfferEnabled ? "" : "disabled_button"
+                          }`}
                         onClick={handleSendOffer}
                         disabled={!isSendOfferEnabled}
                       >
@@ -1370,6 +1431,7 @@ export default function CandidateScreening({ selectedJob }) {
             selectedRequisitionId={selectedRequisitionId}
             requisition={normalizedRequisition}
             position={selectedPosition}
+            isRankEnabled={isRankEnabled}
           />
         )}
 

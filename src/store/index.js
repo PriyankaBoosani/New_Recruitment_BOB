@@ -4,10 +4,12 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import languageReducer from '../i18n/store/languageSlice';
 import userReducer from '../app/providers/userSlice';
+import rankReducer from '../app/providers/rankSlice'
 // 1) Combine all reducers
 const rootReducer = combineReducers({
   user: userReducer,
   language: languageReducer,
+   rank: rankReducer,
 });
  
 // 2) Persist config
