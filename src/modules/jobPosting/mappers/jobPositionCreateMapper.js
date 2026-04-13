@@ -278,6 +278,7 @@ const mapStateDistribution = ({
     cityId: currentState.city,
     totalVacancies: Number(currentState.vacancies),
     localLanguage: currentState.language,
+    isProficientInLocalLanguage: !!currentState.isProficientInLocalLanguage,
     positionCategoryDistributions: distributions,
   };
 };

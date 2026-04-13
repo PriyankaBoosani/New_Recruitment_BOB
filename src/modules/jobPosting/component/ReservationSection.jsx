@@ -347,7 +347,23 @@ const ReservationSection = ({
                                     ]}
                                 />
 
-                                <ErrorMessage>{renderError(errors.stateLanguage)}</ErrorMessage></Col>
+                                <ErrorMessage>{renderError(errors.stateLanguage)}</ErrorMessage>
+                            </Col>
+
+                            <Col md={3} className="d-flex align-items-end">
+                                <Form.Check
+                                    type="checkbox"
+                                    label="Is proficient in local language required?"
+                                    checked={currentState.isProficientInLocalLanguage || false}
+                                    onChange={(e) => {
+                                        setCurrentState(prev => ({
+                                            ...prev,
+                                            isProficientInLocalLanguage: e.target.checked
+                                        }));
+                                    }}
+                                    className="custom_checkbox"
+                                />
+                            </Col>
                         </Row>
                         <Row className="g-4 mt-3">
                             <Col md={7}>
@@ -536,7 +552,8 @@ const ReservationSection = ({
                                                             vacancies: "",
                                                             language: "",
                                                             categories: {},
-                                                            disabilities: {}
+                                                            disabilities: {},
+                                                            isProficientInLocalLanguage: false
                                                         });
                                                     }
                                                 }}

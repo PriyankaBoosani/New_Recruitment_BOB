@@ -317,6 +317,7 @@ export const mapAddPositionToUpdateDto = ({
       cityId: sd.city,
       totalVacancies: Number(sd.vacancies),
       localLanguage: sd.language,
+      isProficientInLocalLanguage: !!sd.isProficientInLocalLanguage,
       positionCategoryDistributions: buildCategoryDistributionsForUpdate(
         sd,
         reservationCategories,

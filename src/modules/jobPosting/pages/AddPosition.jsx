@@ -84,7 +84,7 @@ const AddPosition = () => {
     const [editingIndex, setEditingIndex] = useState(null);
     const [nationalCategories, setNationalCategories] = useState({});
     const [nationalDisabilities, setNationalDisabilities] = useState({});
-    const [currentState, setCurrentState] = useState({ state: "", vacancies: "", language: "", categories: {}, disabilities: {} });
+    const [currentState, setCurrentState] = useState({ state: "", vacancies: "", language: "", categories: {}, disabilities: {}, isProficientInLocalLanguage: false });
     const [formData, setFormData] = useState({
         department: "", position: "", vacancies: "", minAge: "", maxAge: "",
         employmentType: "", contractualPeriod: "", grade: "", enableLocation: false,
@@ -320,6 +320,7 @@ usePreferredEducationLevelExperience: false
 
                         vacancies: sd.totalVacancies,
                         language: sd.localLanguage,
+                        isProficientInLocalLanguage: sd.isProficientInLocalLanguage || false,
                         categories,
                         disabilities,
                         categoryDistributions: sd.positionCategoryDistributions.map(cd => ({
