@@ -1225,12 +1225,12 @@ export default function CandidateScreening({ selectedJob }) {
           {activeTab === "OFFER_POOL" && (
             <div className="row g-2 mt-1 px-2 py-2 align-items-center">
 
-             {/* LEFT SECTION */}
+              {/* LEFT SECTION */}
               <div className="col-md-8 col-12">
                 <div className="d-flex flex-wrap gap-4 justify-content-between align-items-end">
                   <div className="d-flex gap-3 flex-wrap align-items-end pb-3">
                     {/* Offer Template */}
-                    <div>
+                    {/* <div>
                       <p className="mb-1 fw-normal fs-13 blue-color">
                         {t("candidateWorkflow:offer_template")}
                       </p>
@@ -1255,8 +1255,39 @@ export default function CandidateScreening({ selectedJob }) {
                       <small className="d-block mt-1 fs-12 invisible">
                         placeholder
                       </small>
+                    </div> */}
+
+                    <div>
+                      <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:offer_template")}</p>
+                      {/* <select
+                        className="form-select fs-13 py-1"
+                        style={{ width: "180px" }}
+                        value={offerTemplateId}
+                        onChange={(e) => setOfferTemplateId(e.target.value)}
+                      >
+                        <option value="">{t("candidateWorkflow:select_template")}</option>
+                        <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Template 1</option>
+                      </select> */}
+
+                      <select
+                        className="form-select fs-13 py-1"
+                        style={{ width: "180px" }}
+                        value={offerTemplateId}
+                        onChange={(e) => {
+                          setOfferTemplateId(e.target.value);
+                          setSelectedTemplate(e.target.value); // 👈 important
+                        }}
+                      >
+                        <option value="">{t("candidateWorkflow:select_template")}</option>
+                        <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Template 1</option>
+                      </select>
+
+                      {/* Reserve space for alignment consistency */}
+                      <small className="d-block mt-1 fs-12 invisible">
+                        placeholder
+                      </small>
                     </div>
-                  
+
                     {/* Accept Before Date */}
                     <div>
                       <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:accept_before")}</p>
@@ -1361,8 +1392,8 @@ export default function CandidateScreening({ selectedJob }) {
                       </small>
                     </div>
 
-                  
-                    {/* Send Offers Button */}
+
+
                     <div>
                       <button
                         className={`btn fs-13 px-3 py-1 orange-bg text-white ${isSendOfferEnabled ? "" : "disabled_button"
