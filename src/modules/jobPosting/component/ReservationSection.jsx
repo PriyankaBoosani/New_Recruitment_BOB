@@ -71,7 +71,7 @@ const ReservationSection = ({
     );
     return (
         <fieldset disabled={isViewMode}>
-            <Col md={3} className="d-flex align-items-end">
+            <Col md={3} className="d-flex align-items-end mt-2">
                 <Form.Check
                     type="checkbox"
                     label="Is local language required?"
