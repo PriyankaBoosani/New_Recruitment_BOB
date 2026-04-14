@@ -39,6 +39,7 @@ import view_jobpost from "../../../assets/view_jobpost.jpg"
 import history_icon from "../../../assets/history_icon.png"
 import { useJobRequisitions } from "../hooks/useJobAllRequisition";
 import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisition";
+import masterApiService from "../../master/services/masterApiService";
 import { toast } from "react-toastify";
 import { validateRequisitionSubmission } from "../validations/validateRequisitionSubmission";
 import CreatePlus_Icon from "../../../assets/CreatePlus_Icon.png";
@@ -61,6 +62,8 @@ const JobPostingsList = () => {
     const [showDeletePosModal, setShowDeletePosModal] = useState(false);
     const [selectedPosition, setSelectedPosition] = useState(null);
     const [year, setYear] = useState("");
+    const [month, setMonth] = useState("");
+    const [departmentId, setDepartmentId] = useState(null);
     const [showHistoryModal, setShowHistoryModal] = useState(false);
 
     const {
@@ -131,18 +134,48 @@ const JobPostingsList = () => {
     // 🔹 API Hook
     const { requisitions, loading, pageInfo, yearOptions, deleteRequisition, submitForApproval, refetch } = useJobRequisitions({
         year,
+        month,
         status,
         search,
         page,
-        size: pageSize
+        size: pageSize,
+        departmentId
     });
 
     useEffect(() => {
         setPage(0);
     }, [pageSize]);
 
+    useEffect(() => {
+        setPage(0);
+    }, [month]);
+
+    useEffect(() => {
+        setPage(0);
+    }, [departmentId]);
 
     const [selectedReqIds, setSelectedReqIds] = useState(new Set());
+    const [departmentOptions, setDepartmentOptions] = useState([]);
+
+    // 🔹 Fetch departments for filter dropdown
+    useEffect(() => {
+        const fetchDepartments = async () => {
+            try {
+                const res = await masterApiService.getAllDepartments();
+                const depts = Array.isArray(res.data) ? res.data : res.data?.data || [];
+                // Map to format { id, name }
+                const mapped = depts.map(d => ({
+                    id: d.departmentId,
+                    name: d.departmentName
+                }));
+                setDepartmentOptions(mapped);
+            } catch (err) {
+                console.error("Failed to fetch departments", err);
+                setDepartmentOptions([]);
+            }
+        };
+        fetchDepartments();
+    }, []);
     const selectableRequisitions = requisitions.filter(
         r => r.status !== "APPROVED" &&
             r.status !== "L1_PENDING" &&
@@ -314,7 +347,28 @@ const JobPostingsList = () => {
 
                 </Col>
 
-                <Col xs={12} md={8}>
+                <Col xs={12} md={2}>
+                    <Form.Select
+                        value={month}
+                        onChange={(e) => setMonth(e.target.value)}
+                    >
+                        <option value="">All Months</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </Form.Select>
+                </Col>
+
+                <Col xs={12} md={4}>
                     <div className="search-boxpost">
                         <Search />
                         <Form.Control
@@ -324,6 +378,25 @@ const JobPostingsList = () => {
                             onChange={(e) => setSearchInput(e.target.value)}
                         />
                     </div>
+                </Col>
+
+                <Col xs={12} md={2}>
+                    <Form.Select
+                    className="department-select"
+                        value={departmentId || ""}
+                        onChange={(e) => {
+                            const value = e.target.value || null;
+                            setDepartmentId(value);
+                            setPage(0);
+                        }}
+                    >
+                        <option value="">{t("jobPostingsList:all_departments") || "All Departments"}</option>
+                        {departmentOptions.map((dept) => (
+                            <option key={dept.id} value={dept.id}>
+                                {dept.name}
+                            </option>
+                        ))}
+                    </Form.Select>
                 </Col>
 
                 <Col xs={12} md="2">

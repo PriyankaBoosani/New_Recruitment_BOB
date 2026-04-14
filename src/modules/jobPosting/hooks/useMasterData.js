@@ -39,7 +39,8 @@ export const useMasterData = () => {
           certRes,
           // zonalRes,
          // languagesRes,
-           stateLanguagesRes
+           stateLanguagesRes,
+           documentTypesRes
         ] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
           masterApiService.getApprovingAuthorities(),
@@ -47,13 +48,15 @@ export const useMasterData = () => {
           // masterApiService.getZonalStates(),
           //masterApiService.getAllLanguages(),
            masterApiService.getStateLanguages(),
+           masterApiService.getAllDocumentTypes()
         ]);
 
         const mapped = mapMasterResponse(
           masterRes.data,
           certRes.data,
           //languagesRes.data,
-          stateLanguagesRes.data
+          stateLanguagesRes.data,
+          documentTypesRes.data
         );
 
         setData({
@@ -94,6 +97,11 @@ export const useMasterData = () => {
             stateId: String(sl.stateId),
             languageId: String(sl.languageId),
             isPrimary: sl.isPrimary,
+          })),
+          documentTypes: (documentTypesRes.data || []).map(dt => ({
+            id: String(dt.documentTypeId),
+            name: dt.documentName,
+            docType: dt.docType,
           })),
         });
 

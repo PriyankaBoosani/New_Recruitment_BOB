@@ -23,5 +23,21 @@
   "score_mandatory": "सभी उपस्थित उम्मीदवारों के लिए अंक अनिवार्य हैं",
   "saved_candidates": "{{count}} उम्मीदवार सफलतापूर्वक सहेजे गए",
   "save_failed": "सहेजने में विफल",
-  "candidate_resume": "उम्मीदवार का रिज़्यूमे"
+  "candidate_resume": "उम्मीदवार का रिज़्यूमे",
+  "upload_interview_data": "साक्षात्कार डेटा अपलोड करें",
+  "support_xlsx": "XLSX फ़ाइल प्रारूप समर्थित है",
+ "upload_xlsx": "XLSX अपलोड करें",
+  "reupload_xlsx": "XLSX पुनः अपलोड करें",
+  "remove": "हटाएं",
+  "download_template": "टेम्पलेट डाउनलोड करें",
+  "invalid_file": "अमान्य फ़ाइल। कृपया XLSX फ़ाइल अपलोड करें",
+  "no_file_selected": "कोई फ़ाइल चयनित नहीं है",
+  "import": "आयात करें",
+  "importing": "आयात किया जा रहा है...",
+  "import_error": "आयात विफल",
+  "upload_failed": "अपलोड विफल",
+  "import_data": "इम्पोर्ट",
+  "cancel": "रद्द करें",
+  "template_download_failed": "टेम्पलेट डाउनलोड करने में विफल"
+
 }

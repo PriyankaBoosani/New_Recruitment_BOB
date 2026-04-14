@@ -12,6 +12,7 @@ import { mapJobPositionToRequisitionStrip } from "../mappers/candidatePreviewMap
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
+import { FiUpload } from "react-icons/fi";
 
 const RequisitionStrip = ({
   requisition,
@@ -20,7 +21,9 @@ const RequisitionStrip = ({
   onSave,
   isCardBg,
   isSaveEnabled,
-  isSaveBtn
+  isSaveBtn,
+    showImportBtn,
+  onImportClick
 }) => {
 
   const [showPosition, setShowPosition] = useState(false);
@@ -224,7 +227,7 @@ const RequisitionStrip = ({
         </div>
 
         {/* ===== BUTTONS ===== */}
-        <div className="d-flex flex-row gap-2 mt-2 mt-md-0 ms-md-auto">
+        {/* <div className="d-flex flex-row gap-2 mt-2 mt-md-0 ms-md-auto">
 
           <button
             className="btn btn-sm blue-border blue-color px-3"
@@ -244,7 +247,47 @@ const RequisitionStrip = ({
             </button>
           )}
 
-        </div>
+        </div> */}
+
+
+
+
+        <div className="d-flex flex-row gap-2 mt-2 mt-md-0 ms-md-auto">
+
+
+           {showImportBtn && (
+    <button
+      onClick={onImportClick}
+      className="add-panels-btn d-flex align-items-center gap-2"
+    >
+      <FiUpload />
+      {t("import_data")}
+    </button>
+  )}
+
+  <button
+    className="btn btn-sm blue-border blue-color px-3"
+    onClick={handleViewPosition}
+    disabled={loading || !position}
+    style={{ backgroundColor: "rgba(66, 87, 159, 0.12)" }}
+  >
+    {t("candidateWorkflow:view_position")}
+  </button>
+
+  {/* ✅ IMPORT BUTTON */}
+ 
+
+  {isSaveBtn && (
+    <button
+      className={`save-btn ${isSaveEnabled ? "unsaved" : "saved"}`}
+      disabled={!isSaveEnabled}
+      onClick={onSave}
+    >
+      {t("common:save")}
+    </button>
+  )}
+
+</div>
 
       </div>
 

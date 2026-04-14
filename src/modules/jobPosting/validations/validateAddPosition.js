@@ -58,6 +58,7 @@ export const validateAddPosition = ({
   if (!formData.employmentType) errors.employmentType = "validation:required";
   if (!formData.grade) errors.grade = "validation:required";
   if (!formData.medicalRequired) errors.medicalRequired = "validation:required";
+  if (!formData.cutoffDate) errors.cutoffDate = "validation:required";
 
   // ---------- DUPLICATE POSITION + DEPARTMENT ----------
   if (
@@ -165,8 +166,106 @@ export const validateAddPosition = ({
   };
 
 
-  validateExperience(formData.mandatoryExperience, "mandatoryExperience");
+  //validateExperience(formData.mandatoryExperience, "mandatoryExperience");
 
+  if (!formData.useMandatoryEducationLevelExperience) {
+  // OLD logic (toggle OFF)
+  validateExperience(formData.mandatoryExperience, "mandatoryExperience");
+} else {
+  // NEW logic (toggle ON)
+
+  const eduExps = formData.mandatoryExperience?.educationLevelExperiences || [];
+
+  if (!eduExps.length) {
+    errors.mandatoryExperience = "validation:experience_duration_required";
+  } else {
+    const isValid = eduExps.every(exp => {
+      const hasDuration = exp.years || exp.months;
+      const hasQualification = exp.educationLevel;
+
+      // Qualification is mandatory
+      if (!hasQualification) {
+        return false;
+      }
+
+      // Duration is also mandatory
+      return hasDuration;
+    });
+
+    if (!isValid) {
+      errors.mandatoryExperience = "validation:qualification_and_duration_required";
+    }
+    
+    // Description validation when toggle is ON (textarea is always visible)
+    if (!formData.mandatoryExperience.description?.trim()) {
+      errors.mandatoryExperience = "validation:experience_details_required";
+    }
+  }
+}
+
+// Preferred Experience validation
+if (!formData.usePreferredEducationLevelExperience) {
+  // OLD logic (toggle OFF)
+ // validateExperience(formData.preferredExperience, "preferredExperience");
+} else {
+  // NEW logic (toggle ON)
+  const eduExps = formData.preferredExperience?.educationLevelExperiences || [];
+
+  if (!eduExps.length) {
+    errors.preferredExperience = "validation:experience_duration_required"; 
+  } else {
+    // const isValid = eduExps.every(exp => {
+    //   const hasDuration = exp.years || exp.months;
+    //   const hasQualification = exp.educationLevel;
+
+    //   // Qualification is mandatory
+    //   if (!hasQualification) {
+    //     return false;
+    //   }
+
+    //   // Duration is also mandatory
+    //   return hasDuration;
+    // });
+
+    // if (!isValid) {
+    //   errors.preferredExperience = "validation:qualification_and_duration_required";
+    // }
+
+    let hasQualificationError = false;
+let hasDurationError = false;
+
+eduExps.forEach(exp => {
+  const isEmptyRow =
+    !exp.educationLevel &&
+    !exp.years &&
+    !exp.months;
+
+  if (isEmptyRow) return;
+
+  if (!exp.educationLevel) {
+    hasQualificationError = true;
+  }
+
+  if (!(exp.years || exp.months)) {
+    hasDurationError = true;
+  }
+});
+
+// 🎯 Decide message
+if (hasQualificationError && hasDurationError) {
+  errors.mandatoryExperience = "validation:qualification_and_duration_required";
+} else if (hasQualificationError) {
+  errors.mandatoryExperience = "validation:qualification_required";
+} else if (hasDurationError) {
+  errors.mandatoryExperience = "validation:experience_duration_required";
+}
+    
+    // Description validation when toggle is ON (textarea is always visible)
+    if (!formData.preferredExperience.description?.trim()) {
+      errors.preferredExperience = "validation:experience_details_required";
+    }
+  }
+}
   // if (
   //   formData.preferredExperience.years ||
   //   formData.preferredExperience.months ||

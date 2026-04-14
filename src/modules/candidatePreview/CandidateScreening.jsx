@@ -26,9 +26,13 @@ import RankListModal from "./components/RankListModal";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import ZonalRejectedCommentModal from "./components/ZonalRejectedCommentModal";
-import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck } from "react-icons/fa";
+import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck, FaBars, FaListOl } from "react-icons/fa";
+import { faListOl } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
+import { useDispatch } from "react-redux";
+import { setRankEnabled, clearRankState } from "../../app/providers/rankSlice";
 
 export default function CandidateScreening({ selectedJob }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
@@ -204,6 +208,15 @@ navigate("/schedule-interviews", {
     acceptBeforeDate: "",
     joiningDate: "",
   });
+  const dispatch = useDispatch();
+
+
+  const isRankEnabled = useSelector(
+    (state) => state.rank.isRankEnabled
+  );
+  const isScoreEnabled = useSelector(
+    (state) => state.rank.isScoreEnabled
+  );
 
   const todayString = () => {
     const today = new Date();
@@ -212,6 +225,7 @@ navigate("/schedule-interviews", {
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
+
 
   const navInitRef = useRef({
     requisitionId: null,
@@ -312,6 +326,8 @@ navigate("/schedule-interviews", {
     fetchPositions();
   }, [selectedRequisitionId]);
 
+
+
   const formatCandidateData = (apiData) => {
     const formatStatus = (status = "") => status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
 
@@ -319,7 +335,21 @@ navigate("/schedule-interviews", {
       id: c.candidateApplications.id, // REQUIRED for selection
       name: c.fullName,
       rank: c.rank,
-      score: c.score,
+
+      educationScore:
+        c?.candidateRankingResults?.educationScore ?? "-",
+
+      experienceScore:
+        c?.candidateRankingResults?.experienceScore ?? "-",
+
+      finalScore:
+        c?.candidateRankingResults?.finalScore ?? "-",
+
+      educationSimilarity:
+        c?.candidateRankingResults?.educationSimilarity ?? "-",
+
+      experienceSimilarity:
+        c?.candidateRankingResults?.experienceSimilarity ?? "-",
       // experience: `${Math.floor((c.totalMonths || 0) / 12)} years`,
       experienceMonths: c.totalMonths || 0,
       status: formatStatus(c.candidateApplications.applicationStatus),
@@ -368,6 +398,8 @@ navigate("/schedule-interviews", {
         status: normalizedStatus,
         stateId: filters.stateId,
         categoryId: filters.categoryId,
+        rank: isRankEnabled,
+        score: isScoreEnabled,
       });
 
       const apiData = res?.data;
@@ -421,8 +453,16 @@ navigate("/schedule-interviews", {
     filters.stateId,
     filters.categoryId,
     masterData,
-    activeTab
+    activeTab,
+    
   ]);
+  useEffect(() => {
+  if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") return;
+
+  if (isRankEnabled) {
+    fetchCandidates();
+  }
+}, [isRankEnabled]);
 
   // 🔍 Fetch all candidates for filter dropdowns when position/status changes
   useEffect(() => {
@@ -432,11 +472,11 @@ navigate("/schedule-interviews", {
     }
 
     fetchAllCandidatesForFilters();
-  }, [selectedPositionId, filters.status, filters.searchText, masterData, activeTab]);
+  }, [selectedPositionId, filters.status, filters.searchText, masterData, activeTab, isRankEnabled]);
 
   const handleRequisitionChange = async (e) => {
     const reqId = e.target.value;
-
+    dispatch(clearRankState());
     isNavModeRef.current = false;
 
     setSelectedRequisitionId(reqId);
@@ -466,6 +506,10 @@ navigate("/schedule-interviews", {
     } finally {
       setLoadingPositions(false);
     }
+  };
+  const handlePositionChange = (id) => {
+    dispatch(clearRankState()); // ✅ RESET HERE
+    setSelectedPositionId(id);
   };
 
   const handleViewFile = async (candidate) => {
@@ -903,6 +947,10 @@ navigate("/schedule-interviews", {
     }
   }, [activeTab]);
 
+
+
+
+
   return (
     <div className="container-fluid px-5 py-4">
       {/* Header */}
@@ -926,7 +974,7 @@ navigate("/schedule-interviews", {
               loadingRequisitions={loadingRequisitions}
               loadingPositions={loadingPositions}
               onRequisitionChange={handleRequisitionChange}
-              onPositionChange={setSelectedPositionId}
+              onPositionChange={handlePositionChange}
               onRequisitionSearch={handleRequisitionSearch}
             />
             <div className="col-md-6 col-12 text-md-end">
@@ -1113,6 +1161,20 @@ navigate("/schedule-interviews", {
                     <img src={rankIcon} className="me-2" width={15}/>
                     Rank
                   </button> */}
+                  {activeTab === "CANDIDATE_POOL" && (
+                    <button
+                      className="rank-btn fs-14"
+                      onClick={() => {
+                      
+                        dispatch(setRankEnabled(true)); // 🔥 ONLY TRUE
+                        
+                       
+                        setPage(0);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faListOl} className="rank-icon" /> Rank
+                    </button>
+                  )}
                   <OverlayTrigger
                     placement="bottom"
                     overlay={<Tooltip >{t("candidateWorkflow:download_pdf")}</Tooltip>}
@@ -1293,9 +1355,8 @@ navigate("/schedule-interviews", {
                     {/* Send Offers Button */}
                     <div>
                       <button
-                        className={`btn fs-13 px-3 py-1 orange-bg text-white ${
-                          isSendOfferEnabled ? "" : "disabled_button"
-                        }`}
+                        className={`btn fs-13 px-3 py-1 orange-bg text-white ${isSendOfferEnabled ? "" : "disabled_button"
+                          }`}
                         onClick={handleSendOffer}
                         disabled={!isSendOfferEnabled}
                       >
@@ -1315,8 +1376,18 @@ navigate("/schedule-interviews", {
               {/* RIGHT SECTION */}
               <div className="col-md-4 col-12">
                 <div className="d-flex justify-content-end gap-2 align-items-center pb-3">
-                  <button className="btn orange-color orange-border fs-13 px-3 py-1">
-                    <img className="me-2" src={locationIcon} width={16} />
+              <button
+                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${
+                      isSendOfferEnabled ? "" : "disabled_button"
+                    }`}
+                    disabled={!isSendOfferEnabled}
+   >
+                    <img
+                      className="me-2"
+                      src={locationIcon}
+                      width={16}
+                      style={{ filter: "brightness(0) invert(1)" }}
+                    />
                     {t("candidateWorkflow:assign_locations")}
                   </button>
                   <button className="btn blue-border blue-color fs-13 px-3 py-1" onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}>
@@ -1388,6 +1459,7 @@ navigate("/schedule-interviews", {
             selectedRequisitionId={selectedRequisitionId}
             requisition={normalizedRequisition}
             position={selectedPosition}
+            isRankEnabled={isRankEnabled}
           />
         )}
 

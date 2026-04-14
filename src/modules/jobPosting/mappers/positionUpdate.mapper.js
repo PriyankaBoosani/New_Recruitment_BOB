@@ -110,6 +110,95 @@ const buildCategoryDistributionsForUpdate = (
   return result;
 };
 
+const buildEduRulesJson = (edu, mode) => {
+  if (!edu) {
+    return mode === "mandatory"
+      ? { 
+          mandatoryEducations: { operator: "OR", groups: [] },
+          mandatoryCertifications: { operator: "OR", groups: [] }
+        }
+      : { 
+          preferredEducations: { operator: "OR", groups: [] },
+          preferredCertifications: { operator: "OR", groups: [] }
+        };
+  }
+
+  // Process education groups with OR/AND operators
+  const educationGroups = [];
+  if (edu.groups && Array.isArray(edu.groups)) {
+    edu.groups.forEach(group => {
+      const conditions = [];
+      
+      if (group.educations && Array.isArray(group.educations)) {
+        group.educations.forEach(edu => {
+          if (edu.educationTypeId && edu.educationQualificationsId) {
+            conditions.push({
+              educationType: edu.educationTypeId,
+              qualification: edu.educationQualificationsId,
+              specialization: edu.specializationId || "",
+              duration: edu.duration || "",
+              gpa: edu.gpa || "",
+              percentage: edu.percentage || ""
+            });
+          }
+        });
+      }
+
+      if (conditions.length > 0) {
+        educationGroups.push({
+          operator: "AND",
+          conditions: conditions
+        });
+      }
+    });
+  }
+
+  // Process certification groups with OR/AND operators
+  const certificationGroups = [];
+  if (edu.certGroups && Array.isArray(edu.certGroups)) {
+    edu.certGroups.forEach(certGroup => {
+      const conditions = [];
+      
+      if (certGroup.certifications && Array.isArray(certGroup.certifications)) {
+        certGroup.certifications.forEach(cert => {
+          if (cert.certificationId) {
+            conditions.push(cert.certificationId);
+          }
+        });
+      }
+
+      if (conditions.length > 0) {
+        certificationGroups.push({
+          operator: "AND",
+          conditions: conditions
+        });
+      }
+    });
+  }
+
+  return mode === "mandatory"
+    ? {
+        mandatoryEducations: {
+          operator: "OR",
+          groups: educationGroups
+        },
+        mandatoryCertifications: {
+          operator: "OR",
+          groups: certificationGroups
+        }
+      }
+    : {
+        preferredEducations: {
+          operator: "OR",
+          groups: educationGroups
+        },
+        preferredCertifications: {
+          operator: "OR",
+          groups: certificationGroups
+        }
+      };
+};
+
 export const mapAddPositionToUpdateDto = ({
   positionId,
   requisitionId,
@@ -125,6 +214,7 @@ export const mapAddPositionToUpdateDto = ({
   approvedBy,
   approvedOn,
   indentOthers,
+  isProficientInLocalLanguage,
   existingPosition
 }) => {
   const dto = {
@@ -148,29 +238,56 @@ export const mapAddPositionToUpdateDto = ({
     preferredEducation: educationData.preferred.text,
 
     mandatoryExperienceMonths:
-      Number(formData.mandatoryExperience.years) * 12 +
-      Number(formData.mandatoryExperience.months),
+      formData.useMandatoryEducationLevelExperience 
+        ? null 
+        : Number(formData.mandatoryExperience.years) * 12 + Number(formData.mandatoryExperience.months),
 
     preferredExperienceMonths:
-      Number(formData.preferredExperience.years) * 12 +
-      Number(formData.preferredExperience.months),
+      formData.usePreferredEducationLevelExperience 
+        ? null 
+        : Number(formData.preferredExperience.years) * 12 + Number(formData.preferredExperience.months),
 
     mandatoryExperience: formData.mandatoryExperience.description,
     preferredExperience: formData.preferredExperience.description,
+
+    // Education Level Experiences
+    mandatoryExpMonthsEduWise: formData.mandatoryExperience.educationLevelExperiences?.reduce((acc, exp) => {
+      if (exp.educationLevel && (exp.years > 0 || exp.months > 0)) {
+        acc[exp.educationLevel] = (exp.years * 12) + exp.months;
+      }
+      return acc;
+    }, {}),
+
+    preferredExpMonthsEduWise: formData.preferredExperience.educationLevelExperiences?.reduce((acc, exp) => {
+      if (exp.educationLevel && (exp.years > 0 || exp.months > 0)) {
+        acc[exp.educationLevel] = (exp.years * 12) + exp.months;
+      }
+      return acc;
+    }, {}),
+
+    // Toggle States
+    isMandatoryExpMonthsEduWise: formData.useMandatoryEducationLevelExperience,
+    isPreferredExpMonthsEduWise: formData.usePreferredEducationLevelExperience,
+
+    // Cut Off Date
+    cutoffDate: formData.cutoffDate || null,
+
+    // Root level field
+    isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
 
     approvedBy,
     approvedOn,
     indentOthers: indentOthers?.trim() || null,
 
-    mandatoryEduRulesJson: {
-      mandatoryEducations: educationData.mandatory.educations,
-      mandatoryCertificationIds: educationData.mandatory.certificationIds
-    },
+    mandatoryEduRulesJson: buildEduRulesJson(
+      educationData.mandatory,
+      "mandatory"
+    ),
 
-    preferredEduRulesJson: {
-      preferredEducations: educationData.preferred.educations,
-      preferredCertificationIds: educationData.preferred.certificationIds
-    },
+    preferredEduRulesJson: buildEduRulesJson(
+      educationData.preferred,
+      "preferred"
+    ),
 
     // IMPORTANT
     positionCategoryNationalDistributions: [],
@@ -204,13 +321,14 @@ export const mapAddPositionToUpdateDto = ({
       cityId: sd.city,
       totalVacancies: Number(sd.vacancies),
       localLanguage: sd.language,
+      isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
       positionCategoryDistributions: buildCategoryDistributionsForUpdate(
         sd,
         reservationCategories,
         disabilityCategories
       )
     }));
-
   }
+
   return dto;
 };

@@ -405,4 +405,23 @@ main {
 .bob-doc-table td:first-child,
 .bob-doc-table td:nth-child(3) {
   width: 40%;
+
+
+}
+
+.custom_checkbox .form-check-input {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+.custom_checkbox .form-check-label {
+  font-size: 0.875rem !important;
+}
+
+.department-select {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 30px !important; /* space for arrow */
 }

@@ -271,7 +271,7 @@ const RequisitionRequests = () => {
             <Search />
             <Form.Control
               type="text"
-              placeholder="Search by requisition by id, title, department..."
+              placeholder="Search by requisition by id, title"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />

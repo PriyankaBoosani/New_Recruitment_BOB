@@ -12,6 +12,7 @@ import i18n from '../../i18n/i18n';
 import { persistor } from '../../store';
 import { NavLink } from "react-router-dom";
 import "../../style/css/header-pill.css";
+import { setRankEnabled } from '../providers/rankSlice';
 
 const Header = () => {
   const { t } = useTranslation();
@@ -59,6 +60,7 @@ const Header = () => {
   /* ===================== LOGOUT ===================== */
   const handleLogout = () => {
     dispatch(clearUser());
+    dispatch(setRankEnabled(false));
     dispatch(setLanguage("en"));
     i18n.changeLanguage("en");
     persistor.purge();
@@ -90,7 +92,8 @@ const Header = () => {
   const canVerification = privileges?.Verification;
   const canAdmin = privileges?.Admin;
   const canInterview = privileges?.["Interview"];
-  const canApprovals = privileges?.["Requisition Approval"];
+  const canApprovals =
+    privileges?.["L1 Approval"] || privileges?.["L2 Approval"];
   const canViewPosition = privileges?.["View Position"];
   // {
   // 	"preveileges": {
@@ -143,7 +146,8 @@ const Header = () => {
     location.pathname.startsWith("/category") ||
     location.pathname.startsWith("/certification") ||
     location.pathname.startsWith("/document") ||
-    location.pathname.startsWith("/generic-or-annexures");
+    location.pathname.startsWith("/generic-or-annexures") ||
+    location.pathname.startsWith("/education-qualification");
 
   return (
     <header className="fixed-top">
@@ -348,10 +352,10 @@ const Header = () => {
                   onMouseEnter={() => setShowApprovalsMenu(true)}
                   onMouseLeave={() => setShowApprovalsMenu(false)}
                   className={`approvals-dropdown ${location.pathname.startsWith("/requisition-requests") ||
-                      location.pathname.startsWith("/extension-requests") ||
-                      location.pathname.startsWith("/committee-requests")
-                      ? "active-admin"
-                      : ""
+                    location.pathname.startsWith("/extension-requests") ||
+                    location.pathname.startsWith("/committee-requests")
+                    ? "active-admin"
+                    : ""
                     }`}
                   title={
                     <>
@@ -465,6 +469,11 @@ const Header = () => {
 
                   <NavDropdown.Item as={Link} to="/generic-or-annexures" onClick={closeMenu}>
                     {t("generic_or_annexures")}
+                  </NavDropdown.Item>
+
+
+                     <NavDropdown.Item as={Link} to="/education-qualification" onClick={closeMenu}>
+                    {t("education_qualification")}
                   </NavDropdown.Item>
                 </NavDropdown>
               )}

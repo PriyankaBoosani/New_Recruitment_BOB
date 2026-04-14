@@ -20,10 +20,10 @@ const NationalVacancyTable = ({ nationalCategoryDistribution, reservationCategor
         <table className="category-table">
           <thead>
             <tr>
-              <th colSpan="6" className="group-header text-center">
+              <th colSpan="6" className="text-center">
                 {t("candidateWorkflow:category")}
               </th>
-              <th colSpan="4" className="group-header text-center">
+              <th colSpan="4" className="text-center">
                 {t("candidateWorkflow:disability")}
               </th>
             </tr>

@@ -300,7 +300,13 @@ const masterApiService = {
   );
 },
 
+getAllEducation: (ids) =>
+  apis.post("/admin-education-master/all", ids),
 
+saveEducation: (payload) =>
+  apis.post("/admin-education-master/save", payload),
 };
+
+
 
 export default masterApiService;
