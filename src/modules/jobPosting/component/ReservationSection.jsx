@@ -31,7 +31,11 @@ const ReservationSection = ({
     handleInputChange,
     handleAddOrUpdateState,
     isProficientInLocalLanguage,
-    setIsProficientInLocalLanguage
+    setIsProficientInLocalLanguage,
+    isAffectedBy1984Riots,
+    setIsAffectedBy1984Riots,
+    isWidowOrDivorced,
+    setIsWidowOrDivorced
 }) => {
     const { t } = useTranslation(["addPosition", "common", "validation"]);
     const renderError = (e) => {
@@ -71,6 +75,7 @@ const ReservationSection = ({
     );
     return (
         <fieldset disabled={isViewMode}>
+
             <Col md={3} className="d-flex align-items-end mt-2">
                 <Form.Check
                     type="checkbox"
@@ -82,6 +87,30 @@ const ReservationSection = ({
                     className="custom_checkbox"
                 />
             </Col>
+           {/* ✅ Age Relaxation Section */}
+                <Col xs={12} className="mt-3">
+                <Form.Label>
+                    Age relaxation also applicable for:
+                </Form.Label>
+
+                <div className="ms-2">
+                    <Form.Check
+                    type="checkbox"
+                    label="Persons affected by the 1984 riots"
+                    checked={!!isAffectedBy1984Riots}
+                    onChange={(e) => setIsAffectedBy1984Riots(e.target.checked)}
+                    className="custom_checkbox mb-2"
+                    />
+
+                    <Form.Check
+                    type="checkbox"
+                    label="Widowed, divorced, or judicially separated women (not remarried)"
+                    checked={!!isWidowOrDivorced}
+                    onChange={(e) => setIsWidowOrDivorced(e.target.checked)}
+                    className="custom_checkbox"
+                    />
+                </div>
+                </Col>
             {/* Reservation Section */}
             <Col xs={12} className="mt-4">
                 <div className="d-flex justify-content-between align-items-center mb-2 catfonts">

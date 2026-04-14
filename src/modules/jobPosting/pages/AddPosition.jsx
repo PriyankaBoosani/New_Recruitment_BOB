@@ -94,8 +94,10 @@ const AddPosition = () => {
         preferredExperience: { years: "", months: "", description: "" },
         responsibilities: "", medicalRequired: "yes", enableStateDistribution: false,
         cutoffDate: "",useMandatoryEducationLevelExperience: false,
-usePreferredEducationLevelExperience: false
+        usePreferredEducationLevelExperience: false
     });
+    const [isAffectedBy1984Riots, setIsAffectedBy1984Riots] = useState(false);
+    const [isWidowOrDivorced, setIsWidowOrDivorced] = useState(false);
 
     // Initialize isProficientInLocalLanguage from existingPosition ROOT LEVEL
     useEffect(() => {
@@ -723,6 +725,10 @@ usePreferredEducationLevelExperience: false
                             filteredLanguages={filteredLanguages} stateDistributions={stateDistributions} setStateDistributions={setStateDistributions} editingIndex={editingIndex}
                             setEditingIndex={setEditingIndex} handleInputChange={handleInputChange} handleAddOrUpdateState={handleAddOrUpdateState}
                             isProficientInLocalLanguage={isProficientInLocalLanguage} setIsProficientInLocalLanguage={setIsProficientInLocalLanguage}
+                            isAffectedBy1984Riots={isAffectedBy1984Riots}
+                            setIsAffectedBy1984Riots={setIsAffectedBy1984Riots}
+                            isWidowOrDivorced={isWidowOrDivorced}
+                            setIsWidowOrDivorced={setIsWidowOrDivorced}
                         />
 
 
