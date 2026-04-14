@@ -214,6 +214,7 @@ export const mapAddPositionToUpdateDto = ({
   approvedBy,
   approvedOn,
   indentOthers,
+  isProficientInLocalLanguage,
   existingPosition
 }) => {
   const dto = {
@@ -271,6 +272,9 @@ export const mapAddPositionToUpdateDto = ({
     // Cut Off Date
     cutoffDate: formData.cutoffDate || null,
 
+    // Root level field
+    isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
+
     approvedBy,
     approvedOn,
     indentOthers: indentOthers?.trim() || null,
@@ -317,14 +321,13 @@ export const mapAddPositionToUpdateDto = ({
       cityId: sd.city,
       totalVacancies: Number(sd.vacancies),
       localLanguage: sd.language,
-      isProficientInLocalLanguage: !!sd.isProficientInLocalLanguage,
+      isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
       positionCategoryDistributions: buildCategoryDistributionsForUpdate(
         sd,
         reservationCategories,
         disabilityCategories
       )
     }));
-
   }
 
   return dto;

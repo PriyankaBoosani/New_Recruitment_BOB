@@ -12,6 +12,7 @@ export const mapAddPositionToCreateDto = ({
   disabilityCategories = [],
   nationalCategories = {},
   nationalDisabilities = {},
+  isProficientInLocalLanguage,
 
   qualifications = [],
   certifications = [],
@@ -205,6 +206,9 @@ export const mapAddPositionToCreateDto = ({
 
     isMedicalRequired: formData.medicalRequired === "yes",
 
+    // Root level field
+    isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
+
     approvedBy,
     approvedOn,
     indentOthers: indentOthers?.trim() || null,
@@ -223,6 +227,7 @@ export const mapAddPositionToCreateDto = ({
           currentState: state,
           reservationCategories,
           disabilityCategories,
+          isProficientInLocalLanguage,
         })
       )
       : [],
@@ -246,6 +251,7 @@ const mapStateDistribution = ({
   currentState,
   reservationCategories,
   disabilityCategories,
+  isProficientInLocalLanguage,
 }) => {
   const distributions = [];
 
@@ -278,7 +284,7 @@ const mapStateDistribution = ({
     cityId: currentState.city,
     totalVacancies: Number(currentState.vacancies),
     localLanguage: currentState.language,
-    isProficientInLocalLanguage: !!currentState.isProficientInLocalLanguage,
+    isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
     positionCategoryDistributions: distributions,
   };
 };

@@ -84,7 +84,8 @@ const AddPosition = () => {
     const [editingIndex, setEditingIndex] = useState(null);
     const [nationalCategories, setNationalCategories] = useState({});
     const [nationalDisabilities, setNationalDisabilities] = useState({});
-    const [currentState, setCurrentState] = useState({ state: "", vacancies: "", language: "", categories: {}, disabilities: {}, isProficientInLocalLanguage: false });
+    const [isProficientInLocalLanguage, setIsProficientInLocalLanguage] = useState(false);
+    const [currentState, setCurrentState] = useState({ state: "", vacancies: "", language: "", categories: {}, disabilities: {} });
     const [formData, setFormData] = useState({
         department: "", position: "", vacancies: "", minAge: "", maxAge: "",
         employmentType: "", contractualPeriod: "", grade: "", enableLocation: false,
@@ -95,6 +96,16 @@ const AddPosition = () => {
         cutoffDate: "",useMandatoryEducationLevelExperience: false,
 usePreferredEducationLevelExperience: false
     });
+
+    // Initialize isProficientInLocalLanguage from existingPosition ROOT LEVEL
+    useEffect(() => {
+        if (existingPosition?.isProficientInLocalLanguage !== undefined) {
+            const value = existingPosition.isProficientInLocalLanguage;
+            setIsProficientInLocalLanguage(value === true || value === 'true' || value === 1 || value === '1');
+        } else {
+            setIsProficientInLocalLanguage(false);
+        }
+    }, [existingPosition]);
 
 
     const [educationData, setEducationData] = useState({
@@ -320,7 +331,8 @@ usePreferredEducationLevelExperience: false
 
                         vacancies: sd.totalVacancies,
                         language: sd.localLanguage,
-                        isProficientInLocalLanguage: sd.isProficientInLocalLanguage === true,
+                        // 🔵 DO NOT store isProficientInLocalLanguage per-state - it's a root-level field
+                        // isProficientInLocalLanguage will be managed at AddPosition root level only
                         categories,
                         disabilities,
                         categoryDistributions: sd.positionCategoryDistributions.map(cd => ({
@@ -334,6 +346,14 @@ usePreferredEducationLevelExperience: false
             );
 
             setStateDistributions(mappedStates);
+            
+            // Set root-level isProficientInLocalLanguage from ROOT LEVEL of existingPosition
+            if (existingPosition?.isProficientInLocalLanguage !== undefined) {
+                const value = existingPosition.isProficientInLocalLanguage;
+                setIsProficientInLocalLanguage(value === true || value === 'true' || value === 1 || value === '1');
+            } else {
+                setIsProficientInLocalLanguage(false);
+            }
         };
 
         mapStates();
@@ -605,6 +625,7 @@ usePreferredEducationLevelExperience: false
             qualifications,
             certifications,
             indentOthers,
+            isProficientInLocalLanguage,
             stateDistributions: stateDistributions.filter(s => !s.__deleted)
         };
         //console.log(payload);return false;
@@ -701,6 +722,7 @@ usePreferredEducationLevelExperience: false
                             currentState={currentState} setCurrentState={setCurrentState} stateCategoryTotal={stateCategoryTotal}
                             filteredLanguages={filteredLanguages} stateDistributions={stateDistributions} setStateDistributions={setStateDistributions} editingIndex={editingIndex}
                             setEditingIndex={setEditingIndex} handleInputChange={handleInputChange} handleAddOrUpdateState={handleAddOrUpdateState}
+                            isProficientInLocalLanguage={isProficientInLocalLanguage} setIsProficientInLocalLanguage={setIsProficientInLocalLanguage}
                         />
 
 

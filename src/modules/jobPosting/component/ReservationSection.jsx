@@ -29,7 +29,9 @@ const ReservationSection = ({
     editingIndex,
     setEditingIndex,
     handleInputChange,
-    handleAddOrUpdateState
+    handleAddOrUpdateState,
+    isProficientInLocalLanguage,
+    setIsProficientInLocalLanguage
 }) => {
     const { t } = useTranslation(["addPosition", "common", "validation"]);
     const renderError = (e) => {
@@ -69,6 +71,17 @@ const ReservationSection = ({
     );
     return (
         <fieldset disabled={isViewMode}>
+            <Col md={3} className="d-flex align-items-end">
+                <Form.Check
+                    type="checkbox"
+                    label="Is local language required?"
+                    checked={!!isProficientInLocalLanguage}
+                    onChange={(e) => {
+                        setIsProficientInLocalLanguage(e.target.checked);
+                    }}
+                    className="custom_checkbox"
+                />
+            </Col>
             {/* Reservation Section */}
             <Col xs={12} className="mt-4">
                 <div className="d-flex justify-content-between align-items-center mb-2 catfonts">
@@ -350,20 +363,6 @@ const ReservationSection = ({
                                 <ErrorMessage>{renderError(errors.stateLanguage)}</ErrorMessage>
                             </Col>
 
-                            <Col md={3} className="d-flex align-items-end">
-                                <Form.Check
-                                    type="checkbox"
-                                    label="Is proficient in local language required?"
-                                    checked={currentState.isProficientInLocalLanguage === true}
-                                    onChange={(e) => {
-                                        setCurrentState(prev => ({
-                                            ...prev,
-                                            isProficientInLocalLanguage: e.target.checked
-                                        }));
-                                    }}
-                                    className="custom_checkbox"
-                                />
-                            </Col>
                         </Row>
                         <Row className="g-4 mt-3">
                             <Col md={7}>
