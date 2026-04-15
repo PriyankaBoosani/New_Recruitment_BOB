@@ -82,19 +82,26 @@ export default function EducationModal({
 
     //     .join(" ");
 
+     const getSpecializationsForDegree = (degreeId) => {
+        if (!degreeId) return [];
+        return specializations.filter(
+            s => s.educationQualificationsId === degreeId
+        );
+    };
+
 const degreeText = groups
   .map(group => {
-    // Check if group has educations property and it's an array
-    if (!group || !Array.isArray(group.educations)) {
-      return null;
-    }
-    
+    if (!group || !Array.isArray(group.educations)) return null;
+
     const groupText = group.educations
       .filter(r => r.educationTypeId && r.educationQualificationsId)
       .map(r => {
         const type = getLabel(educationTypes, r.educationTypeId);
         const degree = getLabel(qualifications, r.educationQualificationsId, "name");
-        const spec = getLabel(specializations, r.specializationId);
+
+        // ✅ VALIDATE SPECIALIZATION
+        const validSpecs = getSpecializationsForDegree(r.educationQualificationsId);
+        const spec = validSpecs.find(s => s.id === r.specializationId)?.label || "";
 
         let extra = [];
         if (r.duration) extra.push(`Duration: ${r.duration}`);
@@ -148,7 +155,13 @@ const degreeText = groups
     // };
 const updateRow = (gIdx, rIdx, field, value) => {
   const copy = [...groups];
+
   copy[gIdx].educations[rIdx][field] = value;
+
+  if (field === "educationQualificationsId") {
+    copy[gIdx].educations[rIdx].specializationId = "";
+  }
+
   setGroups(copy);
 };
     // const removeRow = (index) => {
@@ -225,12 +238,7 @@ const removeCertGroup = (cgIdx) => {
 
   setCertGroups(certGroups.filter((_, i) => i !== cgIdx));
 };
-    const getSpecializationsForDegree = (degreeId) => {
-        if (!degreeId) return [];
-        return specializations.filter(
-            s => s.educationQualificationsId === degreeId
-        );
-    };
+   
 
     const certText = certGroups
   .map(certGroup => {
@@ -373,26 +381,29 @@ const removeCertGroup = (cgIdx) => {
 
                                         {/* ✅ Specialization */}
                                         <Col md={2}>
-                                            <Select
-                                                classNamePrefix="react-select"
-                                                menuPortalTarget={document.body}
-                                                menuPosition="fixed"
-                                                styles={{
-                                                    menuPortal: base => ({ ...base, zIndex: 9999 })
-                                                }}
-                                                value={getSpecializationsForDegree(row.educationQualificationsId)
-                                                    .map(s => ({ value: s.id, label: s.label }))
-                                                    .find(opt => String(opt.value) === String(row.specializationId))}
-                                                onChange={(selected) =>
-                                                    updateRow(gIdx, rIdx, "specializationId", selected?.value || "")
-                                                }
-                                                options={getSpecializationsForDegree(row.educationQualificationsId).map(s => ({
-                                                    value: s.id,
-                                                    label: s.label
-                                                }))}
-                                                placeholder="Specialization"
-                                            />
-                                        </Col>
+                                      <Select
+  key={row.educationQualificationsId} // 🔥 FORCE RESET
+  classNamePrefix="react-select"
+  menuPortalTarget={document.body}
+  menuPosition="fixed"
+  styles={{
+    menuPortal: base => ({ ...base, zIndex: 9999 })
+  }}
+  value={
+    getSpecializationsForDegree(row.educationQualificationsId)
+      .map(s => ({ value: s.id, label: s.label }))
+      .find(opt => String(opt.value) === String(row.specializationId)) || null
+  }
+  onChange={(selected) =>
+    updateRow(gIdx, rIdx, "specializationId", selected?.value || "")
+  }
+  options={getSpecializationsForDegree(row.educationQualificationsId).map(s => ({
+    value: s.id,
+    label: s.label
+  }))}
+  placeholder="Specialization"
+/>
+</Col>
 
                                         {/* ✅ Duration */}
                                         <Col md={2}>
@@ -639,30 +650,40 @@ const removeCertGroup = (cgIdx) => {
                         .filter(Boolean)
                         .join("\n");
 
-                    const payload = {
-                            groups: groups.map(group => ({
-                            educations: group.educations
-                            .filter(r => r.educationTypeId && r.educationQualificationsId)
-                            .map(r => ({
-                                educationTypeId: r.educationTypeId,
-                                educationQualificationsId: r.educationQualificationsId,
-                                specializationId: r.specializationId || null,
-                                duration: r.duration,
-                                gpa: r.gpa,
-                                percentage: r.percentage
-                            }))
-                        })),
+                  const payload = {
+  groups: groups.map(group => ({
+    educations: group.educations
+      .filter(r => r.educationTypeId && r.educationQualificationsId)
+      .map(r => {
 
-                        certGroups: certGroups.map(certGroup => ({
-                            certifications: (certGroup.certifications || [])
-                            .filter(cr => cr.certificationId)
-                            .map(cr => ({
-                                certificationId: cr.certificationId
-                            }))
-                        })),
+        // ✅ VALIDATION LOGIC (move here)
+        const validSpecs = getSpecializationsForDegree(r.educationQualificationsId);
+        const isValidSpec = validSpecs.some(s => s.id === r.specializationId);
 
-                        text: cleanText, // ✅ KEEP THIS
-                        };
+        return {
+          educationTypeId: r.educationTypeId,
+          educationQualificationsId: r.educationQualificationsId,
+
+          // ✅ FIXED
+          specializationId: isValidSpec ? r.specializationId : null,
+
+          duration: r.duration,
+          gpa: r.gpa,
+          percentage: r.percentage
+        };
+      })
+  })),
+
+  certGroups: certGroups.map(certGroup => ({
+    certifications: (certGroup.certifications || [])
+      .filter(cr => cr.certificationId)
+      .map(cr => ({
+        certificationId: cr.certificationId
+      }))
+  })),
+
+  text: cleanText
+};
 
                         onSave(payload);
                         onHide();
