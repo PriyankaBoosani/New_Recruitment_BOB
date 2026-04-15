@@ -96,8 +96,10 @@ const AddPosition = () => {
         cutoffDate: "",useMandatoryEducationLevelExperience: false,
         usePreferredEducationLevelExperience: false
     });
-    const [isAffectedBy1984Riots, setIsAffectedBy1984Riots] = useState(false);
-    const [isWidowOrDivorced, setIsWidowOrDivorced] = useState(false);
+    const [isAgeRelRiotVictimFamily, setIsAgeRelRiotVictimFamily] = useState(false);
+    const [isAgeRelWdsWomen, setIsAgeRelWdsWomen] = useState(false);
+
+    console.log("existingPosition", existingPosition);
 
     // Initialize isProficientInLocalLanguage from existingPosition ROOT LEVEL
     useEffect(() => {
@@ -107,7 +109,23 @@ const AddPosition = () => {
         } else {
             setIsProficientInLocalLanguage(false);
         }
+
+
+  setIsAgeRelRiotVictimFamily(
+    existingPosition?.isAgeRelRiotVictimFamily === true ||
+    existingPosition?.isAgeRelRiotVictimFamily === "true" ||
+    existingPosition?.isAgeRelRiotVictimFamily === 1
+  );
+
+  setIsAgeRelWdsWomen(
+    existingPosition?.isAgeRelWdsWomen === true ||
+    existingPosition?.isAgeRelWdsWomen === "true" ||
+    existingPosition?.isAgeRelWdsWomen === 1
+  );
+        
     }, [existingPosition]);
+
+    
 
 
     const [educationData, setEducationData] = useState({
@@ -204,13 +222,7 @@ const AddPosition = () => {
     }, [formData.employmentType, employmentTypes]);
 
     useEffect(() => {
-        console.log('Education mapping useEffect triggered');
-        console.log('existingPosition:', !!existingPosition);
-        console.log('educationTypes.length:', educationTypes.length);
-        console.log('qualifications.length:', qualifications.length);
-        console.log('specializations.length:', specializations.length);
-        console.log('certifications.length:', certifications.length);
-        console.log('eduInitializedRef.current:', eduInitializedRef.current);
+      
         
         if (!existingPosition) return;
 
@@ -628,7 +640,9 @@ const AddPosition = () => {
             certifications,
             indentOthers,
             isProficientInLocalLanguage,
-            stateDistributions: stateDistributions.filter(s => !s.__deleted)
+            stateDistributions: stateDistributions.filter(s => !s.__deleted),
+            isAgeRelRiotVictimFamily,
+            isAgeRelWdsWomen
         };
         //console.log(payload);return false;
 
@@ -725,10 +739,11 @@ const AddPosition = () => {
                             filteredLanguages={filteredLanguages} stateDistributions={stateDistributions} setStateDistributions={setStateDistributions} editingIndex={editingIndex}
                             setEditingIndex={setEditingIndex} handleInputChange={handleInputChange} handleAddOrUpdateState={handleAddOrUpdateState}
                             isProficientInLocalLanguage={isProficientInLocalLanguage} setIsProficientInLocalLanguage={setIsProficientInLocalLanguage}
-                            isAffectedBy1984Riots={isAffectedBy1984Riots}
-                            setIsAffectedBy1984Riots={setIsAffectedBy1984Riots}
-                            isWidowOrDivorced={isWidowOrDivorced}
-                            setIsWidowOrDivorced={setIsWidowOrDivorced}
+                              // ✅ UPDATED VARIABLES
+                            isAgeRelRiotVictimFamily={isAgeRelRiotVictimFamily}
+                            setIsAgeRelRiotVictimFamily={setIsAgeRelRiotVictimFamily}
+                            isAgeRelWdsWomen={isAgeRelWdsWomen}
+                            setIsAgeRelWdsWomen={setIsAgeRelWdsWomen}
                         />
 
 
