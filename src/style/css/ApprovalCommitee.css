@@ -59,12 +59,20 @@ border-radius: 20px !important;
 }
 
 .committee-page .assign-positions-page .form-select:disabled {
-  background-color: #e9ecef;
+  background-color: #AFBDEB4F;
   color: #6c757d;
   cursor: not-allowed;
   opacity: 1;
 }
-
+.form-check-input:disabled {
+	
+   background-color: #AFBDEB4F;
+}
+.icon-history{
+  width: 16px;
+  height: 16px;
+  
+}
 .committee-page .assign-positions-page .form-select:not(:focus) {
   border: 2px solid #e5e7eb;
 }
@@ -460,10 +468,10 @@ border-radius: 20px !important;
 }
 
 .committee-page .filter-label {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: #31315b;
-  margin-bottom: 6px;
+	margin-bottom: 6px;
+	font-size: 0.875rem;
+	font-weight: 400;
+	color: #404040;
 }
 
 

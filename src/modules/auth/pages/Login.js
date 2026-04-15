@@ -116,8 +116,8 @@ const Login = () => {
       } else if (privileges["Committee Management"]) {
         navigate("/interviewpanel", { replace: true });
 
-      } else if (privileges["Requisition Approval"]) {
-        navigate("/requisition-requests", { replace: true });
+      } else if (privileges["L1 Approval"] || privileges["L2 Approval"]) {
+        navigate("/requisition-requests");
       }
       else {
         toast.error("No access assigned to this user");

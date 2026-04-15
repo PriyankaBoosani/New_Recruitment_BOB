@@ -78,11 +78,13 @@
 }
 
 .bulk-actions {
-  background: #fff;
-  padding: 12px;
-  border-radius: 8px;
-  margin-left: 0px;
-  margin-right: 0px;
+	background: #fff;
+	padding: 12px;
+	border-radius: 8px;
+	margin-left: 0px;
+	margin-right: 0px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	border: 1px solid #ACBED4;
 }
 
 .selectall {

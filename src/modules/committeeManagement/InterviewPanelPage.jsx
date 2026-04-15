@@ -4,7 +4,7 @@ import InterviewPanelTable from "./components/InterviewPanelTable";
 import AssignPositionsPage from "./AssignPositionsPage";
 import "../../style/css/InterviewPanelPage.css";
 import { useInterviewPanel } from "./hooks/useInterviewPanel";
-import { useAssignPositions } from "./hooks/useAssignPositions";
+// import { useAssignPositions } from "./hooks/useAssignPositions";
 import { FiUsers, FiFileText, FiUpload } from "react-icons/fi";
 import { Modal, Button } from "react-bootstrap";
 import DeleteConfirmationModal from "./components/DeleteConfirmationModal";
@@ -13,6 +13,7 @@ import PanelImportModal from "./components/PanelImportModal";
 import { useTranslation } from "react-i18next";
 import PositionAssignmentImportModal from "./components/PositionAssignmentImportModal";
 import bulbIcon from "../../assets/bulb-icon.png";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 const InterviewPanelPage = () => {
 
 
@@ -59,12 +60,12 @@ const InterviewPanelPage = () => {
 
   } = useInterviewPanel();
 
-  const {
-    bulkImportPositionAssignments,
-    downloadPositionAssignmentTemplate,
-    loadPositionData,
-    selectedPosition,
-  } = useAssignPositions()
+  // const {
+  //   bulkImportPositionAssignments,
+  //   downloadPositionAssignmentTemplate,
+  //   loadPositionData,
+  //   selectedPosition,
+  // } = useAssignPositions()
 
   // useEffect(() => {
   //   initData();
@@ -74,6 +75,8 @@ const InterviewPanelPage = () => {
   const [deletePanelName, setDeletePanelName] = useState("");
   const [showBulkImportModal, setShowBulkImportModal] = useState(false);
   const [showPositionImportModal, setShowPositionImportModal] = useState(false);
+  const [showGuidelines, setShowGuidelines] = useState(false);
+
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   return (
     <div className="interview-panel-container">
@@ -86,7 +89,7 @@ const InterviewPanelPage = () => {
           <div className="tabs-container">
             <div className="tabs">
 
-              <Button
+              {/* <Button
                 variant="outline-primary"
                 size="sm"
                 onClick={() => setShowBulkImportModal(true)}
@@ -104,9 +107,9 @@ const InterviewPanelPage = () => {
               >
                 <FiUpload />
                 {t("interviewPanelCommittee:add_position_assignments")}
-              </Button>
+              </Button> */}
 
-              {/* <button
+              <button
                 className={`tab ${activeTab === "MANAGE" ? "active" : ""}`}
                 onClick={() => setActiveTab("MANAGE")}
               >
@@ -119,72 +122,99 @@ const InterviewPanelPage = () => {
               >
                 <FiFileText className="tab-icon" />
                 <span>{t("interviewPanelCommittee:assign_to_positions")}</span>
-              </button> */}
+              </button>
             </div>
           </div>
         </div>
 
 
-      <div className="guidelines-box mt-3">
-        <div className="guidelines-header">
+        <div className="guidelines-box mt-3">
+          {/* <div className="guidelines-header">
           <img
             src={bulbIcon}
             alt="Info"
             className="bulb-icon"
           />
           <h5 className="guidelines-title">Guidelines</h5>
+        </div> */}
+          <div
+            className="guidelines-header"
+            style={{ cursor: "pointer" }}
+            onClick={() => setShowGuidelines(prev => !prev)}
+          >
+            <OverlayTrigger
+              placement="bottom"
+             
+              overlay={
+                <Tooltip>
+                  Click to expand the guidelines for adding panels and position assignments via Excel templates.
+                </Tooltip>
+              }
+            >
+              <div className="d-flex align-items-center gap-2">
+                <img src={bulbIcon} alt="Info" className="bulb-icon" />
+                <h5 className="guidelines-title mb-0">
+                  Guidelines for Bulk upload {showGuidelines ? "▲" : "▼"}
+                </h5>
+              </div>
+            </OverlayTrigger>
+          </div>
+
+          {/* ADD PANELS */}
+          {showGuidelines && (
+            <>
+              <div className="guideline-section">
+                <h6 className="sectiontitle">Add Panels</h6>
+
+                <ol className="main-list">
+                  <li>Click on <b>Manage Panels</b> there we have <b>Bulk Import</b> to create new panels.</li>
+
+                  <li>
+                    In the <b>Panel Sheet:</b>
+                    <ul>
+                      <li>Enter the <b>Panel Number</b> and <b>Panel Name</b>.</li>
+                      <li>
+                        Select the panel type under the <b>Committee Name</b> column
+                        (Screening, Interview, or Compensation).
+                      </li>
+                    </ul>
+                  </li>
+
+                  <li>
+                    In the <b>Panel Member Sheet:</b>
+                    <ul>
+                      <li>Enter the <b>Panel Number</b> (as defined in the Panel Sheet).</li>
+                      <li>Select and assign users to the panel.</li>
+                      <li>Use additional rows to add multiple users to the same panel.</li>
+                    </ul>
+                  </li>
+
+                  <li>Save the Excel file and upload it to the system.</li>
+                </ol>
+              </div>
+
+
+              <hr />
+
+              {/* ADD POSITION ASSIGNMENTS */}
+              <div className="guideline-section">
+                <h6 className="sectiontitle">Add Position Assignments</h6>
+
+                <ol className="main-list">
+                  <li>
+                    Click on <b>Assign to Positions</b> there you will have the <b>Bulk Import</b> to map panels to specific positions.
+                  </li>
+                  <li>Select the required <b>Requisition/Position</b>.</li>
+                  <li>Choose the relevant <b>existing/created panel(s)</b>.</li>
+                  <li>Enter the <b>Start Date</b> and <b>End Date</b>.</li>
+                  <li>Save the Excel file and upload it to the system.</li>
+                </ol>
+              </div>
+            </>
+          )}
         </div>
 
-        {/* ADD PANELS */}
-        <div className="guideline-section">
-          <h6 className="sectiontitle">Add Panels</h6>
-
-          <ol className="main-list">
-            <li>Click on <b>Add Panels</b> to create new panels.</li>
-
-            <li>
-              In the <b>Panel Sheet:</b>
-              <ul>
-                <li>Enter the <b>Panel Number</b> and <b>Panel Name</b>.</li>
-                <li>
-                  Select the panel type under the <b>Committee Name</b> column
-                  (Screening, Interview, or Compensation).
-                </li>
-              </ul>
-            </li>
-
-            <li>
-              In the <b>Panel Member Sheet:</b>
-              <ul>
-                <li>Enter the <b>Panel Number</b> (as defined in the Panel Sheet).</li>
-                <li>Select and assign users to the panel.</li>
-                <li>Use additional rows to add multiple users to the same panel.</li>
-              </ul>
-            </li>
-
-            <li>Save the Excel file and upload it to the system.</li>
-          </ol>
-        </div>
-
-        <hr />
-
-        {/* ADD POSITION ASSIGNMENTS */}
-        <div className="guideline-section">
-          <h6 className="sectiontitle">Add Position Assignments</h6>
-
-          <ol className="main-list">
-            <li>
-              Click on <b>Add Position Assignments</b> to map panels to specific positions.
-            </li>
-            <li>Select the required <b>Requisition/Position</b>.</li>
-            <li>Choose the relevant <b>existing/created panel(s)</b>.</li>
-            <li>Enter the <b>Start Date</b> and <b>End Date</b>.</li>
-            <li>Save the Excel file and upload it to the system.</li>
-          </ol>
-        </div>
-      </div>
-
-        {/* <div className="panel-content">
+        <div className="panel-content">
           {activeTab === "MANAGE" && (
             <div className="panel-layout">
               <div className="panel-form-section">
@@ -192,7 +222,10 @@ const InterviewPanelPage = () => {
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <span className="card-title">{formData.id
                       ? t("interviewPanelCommittee:update_panel_title")
-                      : t("interviewPanelCommittee:create_panel_title")}</span>
+                      : t("interviewPanelCommittee:create_panel_title")}
+                      <p className="card-subtitle">{t("interviewPanelCommittee:subtitle")}</p>
+                    </span>
+
                     <Button
                       variant="outline-primary"
                       size="sm"
@@ -248,16 +281,16 @@ const InterviewPanelPage = () => {
 
           {activeTab === "ASSIGN" && (
             <div className="assign-positions-container">
-              <AssignPositionsPage />
+             <AssignPositionsPage refreshPanels={fetchPanels} />
             </div>
           )}
-        </div> */}
+        </div>
 
-        {activeTab === "ASSIGN" && (
+        {/* {activeTab === "ASSIGN" && (
           <div className="assign-positions-container">
             <AssignPositionsPage />
           </div>
-        )}
+        )} */}
 
         <DeleteConfirmationModal
           show={showDeleteModal}
@@ -306,29 +339,7 @@ const InterviewPanelPage = () => {
           />
         </Modal.Body>
       </Modal>
-      <Modal
-        show={showPositionImportModal}
-        onHide={() => setShowPositionImportModal(false)}
-        size="lg"
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title className="header-title">{t("interviewPanelCommittee:bulk_import_position_assignments")}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <PositionAssignmentImportModal
-            t={t}
-            bulkImportPositionAssignments={bulkImportPositionAssignments}
-            downloadPositionAssignmentTemplate={downloadPositionAssignmentTemplate}
-            loading={loading}
-            onClose={() => setShowPositionImportModal(false)}
-            onSuccess={() => {
-              loadPositionData(selectedPosition);
-              setShowPositionImportModal(false);
-            }}
-          />
-        </Modal.Body>
-      </Modal>
+
     </div>
   );
 };

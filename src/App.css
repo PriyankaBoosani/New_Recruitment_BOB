@@ -127,12 +127,12 @@ body {
 
 /* Dropdown menu styling */
 .navbar .dropdown-menu {
-  margin-top: 0;
-  border: 1px solid rgba(0, 0, 0, .15);
-  border-radius: 0 0 4px 4px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
-  font-size: 13px;
-  font-weight: 300;
+	margin-top: 0;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 0 0 4px 4px;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	font-size: 14px;
+	font-weight: 400;
 }
 
 /* Dropdown items */
@@ -304,15 +304,17 @@ main {
   left: 0;
   position: absolute;
   width: 100%;
+    color: #42579f !important;
 }
 .dropdown-toggle::after {
-  border-top: 0.25em solid;
+  border-top: 0;
 }
+
 /* Admin dropdown active state */
-.nav-link.active,
-.active-admin > .nav-link {
-  position: relative;
-  color: #42579f;
+.nav-link.active, .active-admin > .nav-link {
+	position: relative;
+	color: #42579f;
+	font-weight: 500;
 }
 
 .nav-link.active::before,
@@ -336,13 +338,14 @@ main {
 /* kill underline everywhere */
 
 
-.dropdown-toggle{
+/* .dropdown-toggle{
   color: #162B75 !important;
   font-weight: 500;
-}
+} */
 .dropdown-item.active, .dropdown-item:active {
 	background-color: #42579f;
 }
+
 
 .fw-500 {
   font-weight: 500;
@@ -380,9 +383,9 @@ main {
 /* Active item (orange background) */
 .approvals-dropdown .dropdown-item.active,
 .approvals-dropdown .dropdown-item:active {
-  background-color: #F2652226 !important;
-  color: #333333 !important;
-  font-size: 1em;
+  background-color: #42579F !important;
+  color: #fff !important;
+  font-size: 14px;
   font-weight: 400;
 }
 

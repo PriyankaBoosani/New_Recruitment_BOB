@@ -550,3 +550,36 @@ border-color: hsl(0, 0%, 80%);
   overflow-wrap: anywhere;   /* modern support */
   white-space: normal;       /* allow wrapping */
 }
+.bg-yellowwarning {
+	color: #856404;
+	border: 1px solid #ffc107;
+	background: #fff3cd !important;
+	font-weight: 500;
+	font-size: 0.625em;
+  text-transform: capitalize;
+}
+.bg-success {
+  color: #0EB319;
+  border: 1px solid #0EB319 !important;
+  background: #F5FFF6 !important;
+  font-weight: 500;
+  font-size: 0.625em;
+  text-transform: capitalize;
+}
+.bg-info{
+  text-transform: capitalize;
+}
+.bg-danger{
+  text-transform: capitalize;
+}
+.edit-btn:disabled{
+  cursor: not-allowed;
+}
+.edit-btn{
+  border: none;
+  background: none;
+}
+.edit-icon{
+  width: 22px;
+  height: 22px;
+}
