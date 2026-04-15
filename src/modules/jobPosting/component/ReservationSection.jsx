@@ -75,18 +75,6 @@ const ReservationSection = ({
     );
     return (
         <fieldset disabled={isViewMode}>
-
-            <Col md={3} className="d-flex align-items-end mt-2">
-                <Form.Check
-                    type="checkbox"
-                    label="Is local language required?"
-                    checked={!!isProficientInLocalLanguage}
-                    onChange={(e) => {
-                        setIsProficientInLocalLanguage(e.target.checked);
-                    }}
-                    className="custom_checkbox"
-                />
-            </Col>
            {/* ✅ Age Relaxation Section */}
                 <Col xs={12} className="mt-3">
                 <Form.Label>
@@ -391,6 +379,18 @@ const ReservationSection = ({
 
                                 <ErrorMessage>{renderError(errors.stateLanguage)}</ErrorMessage>
                             </Col>
+
+                            <Col md={3} className="d-flex align-items-end mt-2">
+                <Form.Check
+                    type="checkbox"
+                    label="Is local language required?"
+                    checked={!!isProficientInLocalLanguage}
+                    onChange={(e) => {
+                        setIsProficientInLocalLanguage(e.target.checked);
+                    }}
+                    className="custom_checkbox"
+                />
+            </Col>
 
                         </Row>
                         <Row className="g-4 mt-3">
