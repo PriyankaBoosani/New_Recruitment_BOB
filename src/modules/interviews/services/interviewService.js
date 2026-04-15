@@ -3,7 +3,7 @@ import { nodeApi, api, apis } from "../../../core/service/apiService";
 const interviewService = {
   getPanelsByPosition(positionId) {
     return api.get(
-      `recruiter/position-panel/get-by-position-id/${positionId}`
+      `recruiter/interview-scheduling/get-assigned-panels/${positionId}`
     );
   },
   allocatePanels(payload) {
