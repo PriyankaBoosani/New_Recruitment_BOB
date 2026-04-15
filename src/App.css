@@ -425,3 +425,10 @@ main {
   text-overflow: ellipsis;
   padding-right: 30px !important; /* space for arrow */
 }
+
+.custom-disabled-bg1 {
+  background-color: #f36f21  !important;
+  color: #ffffff; /* optional for contrast */
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}

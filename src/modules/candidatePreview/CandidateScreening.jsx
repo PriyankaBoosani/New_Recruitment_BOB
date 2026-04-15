@@ -34,6 +34,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch } from "react-redux";
 import { setRankEnabled, clearRankState } from "../../app/providers/rankSlice";
 
+import { Modal, Button } from "react-bootstrap";
+
+
 export default function CandidateScreening({ selectedJob }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
 
@@ -99,6 +102,8 @@ export default function CandidateScreening({ selectedJob }) {
   const [positions, setPositions] = useState([]);
   const [selectedPositionId, setSelectedPositionId] = useState("");
   const [loadingPositions, setLoadingPositions] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState("");
 
   const [candidates, setCandidates] = useState([]);
   const [loadingCandidates, setLoadingCandidates] = useState(false);
@@ -454,15 +459,15 @@ navigate("/schedule-interviews", {
     filters.categoryId,
     masterData,
     activeTab,
-    
+
   ]);
   useEffect(() => {
-  if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") return;
+    if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") return;
 
-  if (isRankEnabled) {
-    fetchCandidates();
-  }
-}, [isRankEnabled]);
+    if (isRankEnabled) {
+      fetchCandidates();
+    }
+  }, [isRankEnabled]);
 
   // 🔍 Fetch all candidates for filter dropdowns when position/status changes
   useEffect(() => {
@@ -1165,10 +1170,10 @@ navigate("/schedule-interviews", {
                     <button
                       className="rank-btn fs-14"
                       onClick={() => {
-                      
+
                         dispatch(setRankEnabled(true)); // 🔥 ONLY TRUE
-                        
-                       
+
+
                         setPage(0);
                       }}
                     >
@@ -1254,13 +1259,53 @@ navigate("/schedule-interviews", {
                 <div className="d-flex flex-wrap gap-4 justify-content-between align-items-end">
                   <div className="d-flex gap-3 flex-wrap align-items-end pb-3">
                     {/* Offer Template */}
+                    {/* <div>
+                      <p className="mb-1 fw-normal fs-13 blue-color">
+                        {t("candidateWorkflow:offer_template")}
+                      </p>
+
+                      <div style={{ position: "relative", width: "180px" }}>
+
+                        <select
+                          className="form-select fs-13 py-1 pe-4"
+                          value={selectedTemplate}
+                          onChange={(e) => setSelectedTemplate(e.target.value)}
+                        >
+                          <option value="">
+                            {t("candidateWorkflow:select_template")}
+                          </option>
+                          <option value="template1">Template 1</option>
+                          <option value="template2">Template 2</option>
+                          <option value="template3">Template 3</option>
+                        </select>
+
+                      </div>
+
+                      <small className="d-block mt-1 fs-12 invisible">
+                        placeholder
+                      </small>
+                    </div> */}
+
                     <div>
                       <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:offer_template")}</p>
-                      <select
+                      {/* <select
                         className="form-select fs-13 py-1"
                         style={{ width: "180px" }}
                         value={offerTemplateId}
                         onChange={(e) => setOfferTemplateId(e.target.value)}
+                      >
+                        <option value="">{t("candidateWorkflow:select_template")}</option>
+                        <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Template 1</option>
+                      </select> */}
+
+                      <select
+                        className="form-select fs-13 py-1"
+                        style={{ width: "180px" }}
+                        value={offerTemplateId}
+                        onChange={(e) => {
+                          setOfferTemplateId(e.target.value);
+                          setSelectedTemplate(e.target.value); // 👈 important
+                        }}
                       >
                         <option value="">{t("candidateWorkflow:select_template")}</option>
                         <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Template 1</option>
@@ -1343,6 +1388,7 @@ navigate("/schedule-interviews", {
                             setFormErrors(prev => ({ ...prev, joiningDate: "" }));
                           }
                         }}
+
                       />
                       <small
                         className={`d-block mt-1 fs-12 ${formErrors.joiningDate ? "text-danger" : "invisible"
@@ -1352,7 +1398,31 @@ navigate("/schedule-interviews", {
                       </small>
                     </div>
 
-                    {/* Send Offers Button */}
+                    <div>
+                      <p className="mb-1 fw-normal fs-13 blue-color">
+                        {t("candidateWorkflow:preview")}
+                      </p>
+
+                      <div
+                        className={`form-control fs-13 d-flex align-items-center justify-content-center 
+      ${selectedTemplate
+                            ? "cursor-pointer orange-bg text-white"
+                            : "disabled_button custom-disabled-bg1"
+                          }
+    `}
+                        style={{ width: "80px", height: "32px" }}
+                        onClick={() => selectedTemplate && setShowPreview(true)}
+                      >
+                        <i className="bi bi-eye" style={{ fontSize: "16px" }}></i>
+                      </div>
+
+                      <small className="d-block mt-1 fs-12 invisible">
+                        {"\u00A0"}
+                      </small>
+                    </div>
+
+
+
                     <div>
                       <button
                         className={`btn fs-13 px-3 py-1 orange-bg text-white ${isSendOfferEnabled ? "" : "disabled_button"
@@ -1376,12 +1446,11 @@ navigate("/schedule-interviews", {
               {/* RIGHT SECTION */}
               <div className="col-md-4 col-12">
                 <div className="d-flex justify-content-end gap-2 align-items-center pb-3">
-              <button
-                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${
-                      isSendOfferEnabled ? "" : "disabled_button"
-                    }`}
+                  <button
+                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${isSendOfferEnabled ? "" : "disabled_button"
+                      }`}
                     disabled={!isSendOfferEnabled}
-   >
+                  >
                     <img
                       className="me-2"
                       src={locationIcon}
@@ -1571,6 +1640,27 @@ navigate("/schedule-interviews", {
         setSelectedIds={setOfferSelectedIds}
         onUploadSuccess={() => setOfferRefreshKey(prev => prev + 1)}
       />
+      <Modal
+        show={showPreview}
+        onHide={() => setShowPreview(false)}
+        size="lg"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Template Preview</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body style={{ height: "800px", width: "100%" }}>
+          {(
+            <iframe
+              src="https://pdfobject.com/pdf/sample.pdf"
+              title="PDF Preview"
+              width="100%"
+              height="100%"
+            />
+          )}
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
