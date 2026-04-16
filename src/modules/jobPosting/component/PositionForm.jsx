@@ -576,7 +576,7 @@ const PositionForm = ({
             return (
               <Col md={6} key={expType}>
                 {/* Header + Toggle */}
-                <div className="d-flex justify-content-between align-items-center mb-2">
+                <div className="d-flex justify-content-between align-items-center mb-1">
                   <Form.Label className="mb-0">
                     {isMandatory
                       ? t("addPosition:mandatory_experience")
@@ -707,7 +707,7 @@ const PositionForm = ({
                     <div className="education-level-experience-section">
 
                       {/* ✅ SINGLE CONTAINER (FIXED) */}
-                      <div className="mb-3 p-3">
+                      <div className="p-1">
 
                         {/* ✅ ADD BUTTON (UNCHANGED) */}
                       {!isViewMode && (
@@ -881,7 +881,7 @@ const PositionForm = ({
                 <Form.Control
                   as="textarea"
                   rows={3}
-                  className="mt-2"
+                   className="mt-1"
                   value={formData[expType].description}
                   disabled={isViewMode}
                   placeholder={
