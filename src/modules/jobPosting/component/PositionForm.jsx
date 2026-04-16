@@ -707,7 +707,31 @@ const PositionForm = ({
                     <div className="education-level-experience-section">
 
                       {/* ✅ SINGLE CONTAINER (FIXED) */}
-                      <div className="mb-3 p-3 border rounded">
+                      <div className="mb-3 p-3">
+
+                        {/* ✅ ADD BUTTON (UNCHANGED) */}
+                      {!isViewMode && (
+                        <Button
+                          size="sm"
+                          variant="none"
+                          className="edu-btn"
+                          onClick={() => {
+                            const current = formData[expType]?.educationLevelExperiences || [];
+
+                            handleInputChange({
+                              target: {
+                                name: `${expType}.educationLevelExperiences`,
+                                value: [
+                                  ...current,
+                                  { educationLevel: "", years: "", months: "" }
+                                ]
+                              }
+                            });
+                          }}
+                        >
+                          + Add Education Level Experience
+                        </Button>
+                      )}
 
                         {(formData[expType]?.educationLevelExperiences?.length > 0
                           ? formData[expType].educationLevelExperiences
@@ -732,7 +756,7 @@ const PositionForm = ({
                           );
 
                           return (
-                            <Row className="g-2 mt-2 align-items-center" key={index}>
+                            <Row className="g-2 mt-1 align-items-center" key={index}>
 
                               {/* Qualification */}
                               <Col md={4}>
@@ -847,29 +871,7 @@ const PositionForm = ({
 
                       </div>
 
-                      {/* ✅ ADD BUTTON (UNCHANGED) */}
-                      {!isViewMode && (
-                        <Button
-                          size="sm"
-                          variant="none"
-                          className="edu-btn"
-                          onClick={() => {
-                            const current = formData[expType]?.educationLevelExperiences || [];
-
-                            handleInputChange({
-                              target: {
-                                name: `${expType}.educationLevelExperiences`,
-                                value: [
-                                  ...current,
-                                  { educationLevel: "", years: "", months: "" }
-                                ]
-                              }
-                            });
-                          }}
-                        >
-                          + Add Education Level Experience
-                        </Button>
-                      )}
+                      
 
                     </div>
                   </>
