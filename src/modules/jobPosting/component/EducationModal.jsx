@@ -110,9 +110,9 @@ export default function EducationModal({
                     const spec = validSpecs.find(s => s.id === r.specializationId)?.label || "";
 
                     let extra = [];
-                    if (r.duration) extra.push(`Duration: ${r.duration}`);
+                    if (r.duration) extra.push(`Duration: ${r.duration} Year(s)`);
 
-                    if (r.percentage) extra.push(`Percentage: ${r.percentage}`);
+                    if (r.percentage) extra.push(`Percentage: ${r.percentage}%`);
 
                     const extraText = extra.length ? ` [${extra.join(", ")}]` : "";
 
