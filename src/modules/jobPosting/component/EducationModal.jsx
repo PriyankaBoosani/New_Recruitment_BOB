@@ -111,7 +111,7 @@ export default function EducationModal({
 
                     let extra = [];
                     if (r.duration) extra.push(`Duration: ${r.duration}`);
-                  
+
                     if (r.percentage) extra.push(`Percentage: ${r.percentage}`);
 
                     const extraText = extra.length ? ` [${extra.join(", ")}]` : "";
@@ -181,13 +181,25 @@ export default function EducationModal({
     const removeRow = (gIdx, rIdx) => {
         const copy = [...groups];
 
-        if (copy[gIdx].educations.length === 1) {
-            return; // do nothing, don't destroy data
-        } else {
-            copy[gIdx].educations.splice(rIdx, 1);
-        }
+        if (copy[gIdx].educations.length === 1) return;
 
+        copy[gIdx].educations.splice(rIdx, 1);
         setGroups(copy);
+
+        // ✅ CLEAR ERRORS PROPERLY
+        setErrors(prev => {
+            if (!prev.rows) return prev;
+
+            const updatedRows = [...prev.rows];
+
+            // remove the same index error
+            updatedRows.splice(rIdx, 1);
+
+            return {
+                ...prev,
+                rows: updatedRows
+            };
+        });
     };
     const removeGroup = (gIdx) => {
         if (groups.length === 1) return;
@@ -335,7 +347,7 @@ export default function EducationModal({
                                             <Select
 
                                                 classNamePrefix="react-select"
-                                                
+
                                                 value={[
                                                     { value: "", label: "Select Type" }, // ✅ ADD THIS
                                                     ...educationTypes.map(t => ({
@@ -364,13 +376,16 @@ export default function EducationModal({
                                                         t(errors.rows[flatIndex].educationTypeId)}
                                                 </ErrorMessage>
                                             </div>
-                                            
+
                                         </Col>
 
                                         {/* ✅ Qualification */}
                                         <Col md={3}>
                                             <Select
                                                 classNamePrefix="react-select"
+                                                styles={{
+                                                    menuPortal: (base) => ({ ...base, zIndex: 9999 })
+                                                }}
                                                 value={[
                                                     { value: "", label: "Select Degree" },
                                                     ...qualifications.map(q => ({
@@ -402,7 +417,7 @@ export default function EducationModal({
                                         </Col>
 
                                         {/* ✅ Specialization */}
-                                        <Col md={2}>
+                                        <Col md={3}>
                                             <Select
                                                 classNamePrefix="react-select"
                                                 key={row.educationQualificationsId}
@@ -488,22 +503,22 @@ export default function EducationModal({
                                                     updateRow(gIdx, rIdx, "percentage", value);
                                                 }}
                                             />
-                                            <div className="error-space">   
-                                            <ErrorMessage>
-                                                {errors.rows?.[flatIndex]?.percentage &&
-                                                    t(errors.rows[flatIndex].percentage)}
-                                            </ErrorMessage>
+                                            <div className="error-space">
+                                                <ErrorMessage>
+                                                    {errors.rows?.[flatIndex]?.percentage &&
+                                                        t(errors.rows[flatIndex].percentage)}
+                                                </ErrorMessage>
                                             </div>
                                         </Col>
 
                                         {/* ✅ Delete */}
                                         <Col md={1}>
                                             {group.educations.length > 1 && (
-                                              
-                                                   
+
+
                                                 <Button variant="none" className="delbtn" onClick={() => removeRow(gIdx, rIdx)}>
                                                     <img src={delete_icon} alt="delete_icon" className="icon-16" />
-                                                </Button> 
+                                                </Button>
                                             )}
                                         </Col>
                                     </Row>
@@ -657,7 +672,7 @@ export default function EducationModal({
 
                         const cleanText = [
                             degreeText ? `Education Requirements:\n${degreeText}` : "",
-                            `Certifications: ${certText || "None"}`
+                            certText ? `Certifications: ${certText}` : ""
                         ]
                             .filter(Boolean)
                             .join("\n");
@@ -677,7 +692,7 @@ export default function EducationModal({
                                                     educationQualificationsId: r.educationQualificationsId,
                                                     specializationId: isValidSpec ? r.specializationId : null,
                                                     duration: r.duration,
-                                                    
+
                                                     percentage: r.percentage
                                                 };
                                             })
