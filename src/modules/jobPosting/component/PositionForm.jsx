@@ -609,41 +609,47 @@ const PositionForm = ({
                         }
                       });
 
-                      // reset fields when switching (only in add mode, not edit mode)
-                      if (!isViewMode && !formData[expType]?.educationLevelExperiences?.length && !formData[expType]?.years && !formData[expType]?.months) {
-                        if (isOn) {
-                          handleInputChange({
-                            target: {
-                              name: `${expType}.years`,
-                              value: ""
-                            }
-                          });
-                          handleInputChange({
-                            target: {
-                              name: `${expType}.months`,
-                              value: ""
-                            }
-                          });
-                          handleInputChange({
-                            target: {
-                              name: `${expType}.educationLevelExperiences`,
-                              value: [
-                                {
-                                  educationLevel: "",
-                                  years: "",
-                                  months: ""
-                                }
-                              ]
-                            }
-                          });
-                        } else {
-                          handleInputChange({
-                            target: {
-                              name: `${expType}.educationLevelExperiences`,
-                              value: []
-                            }
-                          });
-                        }
+                      if (!isOn) {
+                        const existing = formData[expType]?.educationLevelExperiences || [];
+
+                        // ✅ KEEP ONLY SAVED (EDIT DATA)
+                        const filtered = existing.filter(e => e.isSaved);
+
+                        handleInputChange({
+                          target: {
+                            name: `${expType}.educationLevelExperiences`,
+                            value: filtered
+                          }
+                        });
+
+                        handleInputChange({
+                          target: { name: `${expType}.years`, value: "" }
+                        });
+
+                        handleInputChange({
+                          target: { name: `${expType}.months`, value: "" }
+                        });
+                      }
+
+                      if (isOn) {
+                        const existing = formData[expType]?.educationLevelExperiences;
+
+                        handleInputChange({
+                          target: {
+                            name: `${expType}.educationLevelExperiences`,
+                            value:
+                              existing && existing.length > 0
+                                ? existing
+                                : [
+                                  {
+                                    educationLevel: "",
+                                    years: "",
+                                    months: "",
+                                    isSaved: false
+                                  }
+                                ]
+                          }
+                        });
                       }
                     }}
                   />
@@ -710,32 +716,32 @@ const PositionForm = ({
                       <div className="p-1">
 
                         {/* ✅ ADD BUTTON (UNCHANGED) */}
-                      {!isViewMode && (
-                        <Button
-                          size="sm"
-                          variant="none"
-                          className="edu-btn"
-                          onClick={() => {
-                            const current = formData[expType]?.educationLevelExperiences || [];
+                        {!isViewMode && (
+                          <Button
+                            size="sm"
+                            variant="none"
+                            className="edu-btn"
+                            onClick={() => {
+                              const current = formData[expType]?.educationLevelExperiences || [];
 
-                            handleInputChange({
-                              target: {
-                                name: `${expType}.educationLevelExperiences`,
-                                value: [
-                                  ...current,
-                                  { educationLevel: "", years: "", months: "" }
-                                ]
-                              }
-                            });
-                          }}
-                        >
-                          + Add Education Level Experience
-                        </Button>
-                      )}
+                              handleInputChange({
+                                target: {
+                                  name: `${expType}.educationLevelExperiences`,
+                                  value: [
+                                    ...current,
+                                    { educationLevel: "", years: "", months: "", isSaved: false }
+                                  ]
+                                }
+                              });
+                            }}
+                          >
+                            + Add Education Level Experience
+                          </Button>
+                        )}
 
                         {(formData[expType]?.educationLevelExperiences?.length > 0
                           ? formData[expType].educationLevelExperiences
-                          : [{ educationLevel: "", years: "", months: "" }]
+                          : [{ educationLevel: "", years: "", months: "", isSaved: false }]
                         ).map((eduExp, index) => {
 
                           const selected = (formData[expType]?.educationLevelExperiences || [])
@@ -843,7 +849,7 @@ const PositionForm = ({
                               </Col>
 
                               {/* Remove Button */}
-                              <Col md={2} className="text-end">
+                              <Col md={1} className="text-end">
                                 {(formData[expType].educationLevelExperiences.length > 1) && !isViewMode && (
                                   <Button
                                     size="sm"
@@ -871,7 +877,7 @@ const PositionForm = ({
 
                       </div>
 
-                      
+
 
                     </div>
                   </>
@@ -881,7 +887,7 @@ const PositionForm = ({
                 <Form.Control
                   as="textarea"
                   rows={3}
-                   className="mt-1"
+                  className="mt-1"
                   value={formData[expType].description}
                   disabled={isViewMode}
                   placeholder={

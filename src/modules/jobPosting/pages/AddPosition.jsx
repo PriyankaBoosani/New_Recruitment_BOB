@@ -174,7 +174,8 @@ const AddPosition = () => {
                 educationLevelExperiences: Object.entries(existingPosition.mandatoryExpMonthsEduWise || {}).map(([educationLevel, months]) => ({
                     educationLevel,
                     years: Math.floor(months / 12),
-                    months: months % 12
+                    months: months % 12,
+                     isSaved: true 
                 }))
             },
             preferredExperience: {
@@ -184,7 +185,8 @@ const AddPosition = () => {
                 educationLevelExperiences: Object.entries(existingPosition.preferredExpMonthsEduWise || {}).map(([educationLevel, months]) => ({
                     educationLevel,
                     years: Math.floor(months / 12),
-                    months: months % 12
+                    months: months % 12,
+                    isSaved: true
                 }))
             },
             contractualPeriod: isContract
