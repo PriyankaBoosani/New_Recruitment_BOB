@@ -89,27 +89,45 @@ const openEdit = (panel, index) => {
   if (!positionId) return;
 
   try {
-    //https://dev.bobjava.sentrifugo.com/recruiter-portal/api/v1/recruiter/interview-scheduling/get-assigned-panels
     const response = await interviewService.getPanelsByPosition(positionId);
 
     console.log("response1111", response);
 
-    const apiList = response?.data?.interviewPanelList || [];
+    // ✅ FIXED PATH
+    const apiList = response?.data || [];
 
-    const formatted = apiList.map((item, index) => ({
+    const formatted = apiList.map((item) => ({
       id: item.interviewPanel?.interviewPanelId,
       name: item.interviewPanel?.panelName,
+
+      // ✅ Optional: map members (useful for UI later)
+      members: (item.interviewPanel?.panelMembers || []).map(m => ({
+        name: m.panelMember?.name,
+        role: m.panelMember?.role,
+        email: m.panelMember?.email
+      })),
+
+      // ✅ Keep slots empty for now
       slots: [],
 
-      // 👇 store full data if needed later
+      // ✅ Extra useful fields
+      startDate: item.startDate,
+      endDate: item.endDate,
+      status: item.positionPanelStatus,
+      canEdit: item.canEdit,
+
       raw: item
     }));
 
-setAvailablePanels(formatted);
+    // ✅ SET AVAILABLE PANELS
+    setAvailablePanels(formatted);
+
+    // ❗ OPTIONAL: If you want already assigned panels pre-selected
+    // setSelectedPanels(formatted);
 
   } catch (error) {
     console.error("Error loading panels:", error);
-    setPanels([]);
+    setAvailablePanels([]); // ✅ fix wrong state
   }
 };
   useEffect(() => {
