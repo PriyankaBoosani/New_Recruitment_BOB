@@ -16,6 +16,8 @@ export const mapAddPositionToCreateDto = ({
 
   qualifications = [],
   certifications = [],
+   isAgeRelRiotVictimFamily,
+  isAgeRelWdsWomen
 }) => {
   /* ================= SAFE NORMALIZATION ================= */
 
@@ -46,7 +48,6 @@ export const mapAddPositionToCreateDto = ({
                 qualification: edu.educationQualificationsId,
                 specialization: edu.specializationId || "",
                 duration: edu.duration || "",
-                gpa: edu.gpa || "",
                 percentage: edu.percentage || ""
               });
             }
@@ -209,6 +210,10 @@ export const mapAddPositionToCreateDto = ({
     // Root level field
     isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
 
+    // ✅ NEW
+    isAgeRelRiotVictimFamily: !!isAgeRelRiotVictimFamily,
+    isAgeRelWdsWomen: !!isAgeRelWdsWomen,
+
     approvedBy,
     approvedOn,
     indentOthers: indentOthers?.trim() || null,
@@ -242,6 +247,7 @@ export const mapAddPositionToCreateDto = ({
         disabilityCategories,
       })
       : [],
+      
   };
 };
 

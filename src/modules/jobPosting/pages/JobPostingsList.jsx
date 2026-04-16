@@ -1032,8 +1032,8 @@ const JobPostingsList = () => {
                 // confirmText="Approve"
                 // confirmVariant="primary"
 
-                title={t("jobPostingsList:submit_confirm_title")}
-                message={t("jobPostingsList:submit_confirm_message")}
+                title={t("jobPostingsList:submit_confirm_title_approve")}
+                message={t("jobPostingsList:submit_confirm_message_approve")}
                 confirmText={t("jobPostingsList:approve")}
                 itemLabel={t("jobPostingsList:requisition_count", { count: selectedReqIds.size })}
 

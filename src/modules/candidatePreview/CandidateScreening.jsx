@@ -86,6 +86,7 @@ export default function CandidateScreening({ selectedJob }) {
   const location = useLocation();
   const navigate = useNavigate();
 
+
   const navActiveTab = location.state?.activeTab;
 
   const [activeTab, setActiveTab] = useState(
@@ -104,6 +105,7 @@ export default function CandidateScreening({ selectedJob }) {
   const [loadingPositions, setLoadingPositions] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [loadingPreview, setLoadingPreview] = useState(false);
 
   const [candidates, setCandidates] = useState([]);
   const [loadingCandidates, setLoadingCandidates] = useState(false);
@@ -123,6 +125,7 @@ export default function CandidateScreening({ selectedJob }) {
   const [loadingPdf, setLoadingPdf] = useState(false);
   const [showZonalCommentModal, setShowZonalCommentModal] = useState(false);
   const [zonalComment, setZonalComment] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
   const handleOpenZonalComments = (comment) => {
     setZonalComment(comment || "-");
     setShowZonalCommentModal(true);
@@ -214,7 +217,7 @@ navigate("/schedule-interviews", {
     joiningDate: "",
   });
   const dispatch = useDispatch();
-
+  const [templates, setTemplates] = useState([]);
 
   const isRankEnabled = useSelector(
     (state) => state.rank.isRankEnabled
@@ -237,6 +240,14 @@ navigate("/schedule-interviews", {
     positionId: null,
     initialized: false,
   });
+
+  const handleClose = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setShowPreview(false);
+    setPreviewUrl("");
+  };
 
   // 🔍 Requisition search (debounced)
   const requisitionSearchTimeout = useRef(null);
@@ -331,7 +342,13 @@ navigate("/schedule-interviews", {
     fetchPositions();
   }, [selectedRequisitionId]);
 
-
+  useEffect(() => {
+    masterApiService.getAllTemplates().then((res) => {
+      if (res?.success) {
+        setTemplates(res.data);
+      }
+    });
+  }, []);
 
   const formatCandidateData = (apiData) => {
     const formatStatus = (status = "") => status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
@@ -689,6 +706,12 @@ navigate("/schedule-interviews", {
   const navRequisitionId = location.state?.requisitionId || null;
   const navPositionId = location.state?.positionId || null;
 
+  const selectedTemplateData = templates.find(
+    (t) => t.templateId === offerTemplateId
+  );
+
+  const templateName = selectedTemplateData?.templateName || "";
+
 
   useEffect(() => {
     if (
@@ -954,6 +977,21 @@ navigate("/schedule-interviews", {
 
 
 
+  const handlePreview = async () => {
+    try {
+      const res = await masterApiService.previewTemplate(offerTemplateId);
+
+      // Convert blob to URL
+      const file = new Blob([res.data], { type: "application/pdf" });
+      const fileURL = URL.createObjectURL(file);
+
+      // Option 2 (better): show in modal
+      setPreviewUrl(fileURL);
+      setShowPreview(true);
+    } catch (err) {
+      console.error("Preview failed", err);
+    }
+  };
 
 
   return (
@@ -1202,7 +1240,7 @@ navigate("/schedule-interviews", {
           )}
 
           {activeTab === "OFFER_POOL" && (
-            <div className="row g-2 mt-1 px-2 py-1 align-items-center border-bottom">
+            <div className="row g-2 mt-1 px-3 py-1 align-items-center border-bottom">
               <div className="col-md-2 col-6 d-flex align-items-center gap-2">
                 <p className="text-muted fs-14 mb-1">{t("candidateWorkflow:filter_by_stage")}:</p>
                 <button
@@ -1237,7 +1275,7 @@ navigate("/schedule-interviews", {
                           };
                         })
                       }
-                      className={`badge px-3 py-2 border-0 rounded fw-normal fs-12 ${isSelected
+                      className={`badge px-3 py-2 border-2 rounded fw-normal fs-12 ${isSelected
                         ? "orange-color orange-border"
                         : "bg-light text-muted border"
                         }`}
@@ -1252,51 +1290,87 @@ navigate("/schedule-interviews", {
           )}
 
           {activeTab === "OFFER_POOL" && (
-            <div className="row g-2 mt-1 px-2 py-2 align-items-center">
+            <div className="row g-2 mt-1 px-3 py-2 align-items-center">
 
               {/* LEFT SECTION */}
               <div className="col-md-8 col-12">
                 <div className="d-flex flex-wrap gap-4 justify-content-between align-items-end">
-                  <div className="d-flex gap-3 flex-wrap align-items-end pb-3">
+                  <div className="d-flex gap-3 flex-wrap align-items-end">
                     {/* Offer Template */}
-                    {/* <div>
-                      <p className="mb-1 fw-normal fs-13 blue-color">
-                        {t("candidateWorkflow:offer_template")}
-                      </p>
-
-                      <div style={{ position: "relative", width: "180px" }}>
-
-                        <select
-                          className="form-select fs-13 py-1 pe-4"
-                          value={selectedTemplate}
-                          onChange={(e) => setSelectedTemplate(e.target.value)}
-                        >
-                          <option value="">
-                            {t("candidateWorkflow:select_template")}
-                          </option>
-                          <option value="template1">Template 1</option>
-                          <option value="template2">Template 2</option>
-                          <option value="template3">Template 3</option>
-                        </select>
-
-                      </div>
-
-                      <small className="d-block mt-1 fs-12 invisible">
-                        placeholder
-                      </small>
-                    </div> */}
 
                     <div>
-                      <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:offer_template")}</p>
-                      {/* <select
-                        className="form-select fs-13 py-1"
-                        style={{ width: "180px" }}
+                      {/* Label */}
+                      <div className="d-flex align-items-center justify-content-between" style={{ width: "180px" }}>
+                        <p className="mb-1 fw-normal fs-13 blue-color">
+                          {t("candidateWorkflow:offer_template")}
+                        </p>
+                      </div>
+
+                      {/* Dynamic Dropdown */}
+                      <select
+                        title={templateName} // 👈 hover shows full text
+                        className="form-select fs-13 py-1 text-truncate"
+                        style={{
+                          width: "180px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          paddingRight: "30px"
+
+                        }}
                         value={offerTemplateId}
-                        onChange={(e) => setOfferTemplateId(e.target.value)}
+                        onChange={(e) => {
+                          setOfferTemplateId(e.target.value);
+                          setSelectedTemplate(e.target.value);
+                        }}
                       >
-                        <option value="">{t("candidateWorkflow:select_template")}</option>
-                        <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Template 1</option>
-                      </select> */}
+
+                        <option value="">
+                          {t("candidateWorkflow:select_template")}
+                        </option>
+
+                        {templates.map((t) => (
+                          <option key={t.templateId} value={t.templateId}>
+                            {t.templateName}
+                          </option>
+                        ))}
+                      </select>
+
+                      {/* Preview with Hover */}
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="preview-tooltip">
+                            {templateName || "No template selected"}
+                          </Tooltip>
+                        }
+                      >
+                        {selectedTemplate ? (
+                          <span
+                            onClick={handlePreview}
+                            className="cursor-pointer text-orange orange-color"
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "600",
+                              fontFamily: "Segoe UI, sans-serif",
+                              letterSpacing: "0.5px",
+                              textDecoration: "underline",
+                            }}
+                          >
+                            Template Preview
+                          </span>
+                        ) : (
+                          <small className="d-block invisible">placeholder</small>
+                        )}
+                      </OverlayTrigger>
+                    </div>
+                    {/* <div>
+                      <div className="d-flex align-items-center justify-content-between" style={{ width: "180px" }}>
+                        <p className="mb-1 fw-normal fs-13 blue-color">
+                          {t("candidateWorkflow:offer_template")}
+                        </p>
+
+                      </div>
 
                       <select
                         className="form-select fs-13 py-1"
@@ -1304,18 +1378,48 @@ navigate("/schedule-interviews", {
                         value={offerTemplateId}
                         onChange={(e) => {
                           setOfferTemplateId(e.target.value);
-                          setSelectedTemplate(e.target.value); // 👈 important
+                          setSelectedTemplate(e.target.value);
                         }}
                       >
-                        <option value="">{t("candidateWorkflow:select_template")}</option>
-                        <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Template 1</option>
+                        <option value="">
+                          {t("candidateWorkflow:select_template")}
+                        </option>
+                        <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">
+                          Template 1
+                        </option>
                       </select>
 
-                      {/* Reserve space for alignment consistency */}
-                      <small className="d-block mt-1 fs-12 invisible">
-                        placeholder
-                      </small>
-                    </div>
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="preview-tooltip">
+                            {offerTemplateId === "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                              ? "Template 1"
+                              : ""}
+                          </Tooltip>
+                        }
+                      >
+                        {selectedTemplate && offerTemplateId === "3fa85f64-5717-4562-b3fc-2c963f66afa6" ? (
+                          <span
+                            onClick={() => setShowPreview(true)}
+                            className="cursor-pointer text-orange orange-color"
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "600",
+                              fontFamily: "Segoe UI, sans-serif",
+                              letterSpacing: "0.5px",
+                              textDecoration: "underline",
+                            }}
+                          >
+                            Preview
+                          </span>
+                        ) : (
+                          <small className="d-block invisible">placeholder</small>
+                        )}
+                      </OverlayTrigger>
+
+
+                    </div> */}
 
                     {/* Accept Before Date */}
                     <div>
@@ -1398,7 +1502,7 @@ navigate("/schedule-interviews", {
                       </small>
                     </div>
 
-                    <div>
+                    {/* <div>
                       <p className="mb-1 fw-normal fs-13 blue-color">
                         {t("candidateWorkflow:preview")}
                       </p>
@@ -1419,13 +1523,13 @@ navigate("/schedule-interviews", {
                       <small className="d-block mt-1 fs-12 invisible">
                         {"\u00A0"}
                       </small>
-                    </div>
+                    </div> */}
 
 
 
                     <div>
                       <button
-                        className={`btn fs-13 px-3 py-1 orange-bg text-white ${isSendOfferEnabled ? "" : "disabled_button"
+                        className={`form-select fs-13 px-3 py-1 orange-bg text-white ${isSendOfferEnabled ? "" : "disabled_button"
                           }`}
                         onClick={handleSendOffer}
                         disabled={!isSendOfferEnabled}
@@ -1445,25 +1549,34 @@ navigate("/schedule-interviews", {
 
               {/* RIGHT SECTION */}
               <div className="col-md-4 col-12">
-                <div className="d-flex justify-content-end gap-2 align-items-center pb-3">
+                <div className="d-flex justify-content-end gap-2 align-items-center">
                   <button
-                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${isSendOfferEnabled ? "" : "disabled_button"
+                    className={`btn fs-13 px-3 py-1 orange-border orange-color text-orange ${isSendOfferEnabled ? "" : "disabled_button"
                       }`}
+                    style={{
+                      minHeight: "39px",
+                      cursor: isSendOfferEnabled ? "pointer" : "not-allowed"
+                    }}
                     disabled={!isSendOfferEnabled}
                   >
                     <img
-                      className="me-2"
+                      className="me-2 orange-color"
                       src={locationIcon}
                       width={16}
-                      style={{ filter: "brightness(0) invert(1)" }}
+                      style={{ color: "#f36f21 !important" }}
                     />
                     {t("candidateWorkflow:assign_locations")}
                   </button>
-                  <button className="btn blue-border blue-color fs-13 px-3 py-1" onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}>
+
+
+
+                  <button className={`btn blue-border blue-color fs-13 px-3 py-1 ${offerSelectedIds.length !== 0 ? "" : "disabled_button"}`} onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}
+                    style={{ minHeight: "39px" }}>
                     <img src={excelIcon} className="me-1" width={18} /> {t("candidateWorkflow:rank_list")}
                   </button>
                 </div>
               </div>
+
             </div>
           )}
 
@@ -1640,27 +1753,86 @@ navigate("/schedule-interviews", {
         setSelectedIds={setOfferSelectedIds}
         onUploadSuccess={() => setOfferRefreshKey(prev => prev + 1)}
       />
-      <Modal
-        show={showPreview}
-        onHide={() => setShowPreview(false)}
-        size="lg"
-        centered
-      >
+      {/* <Modal show={showPreview}
+        onHide={() => setShowPreview(false)} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Template Preview</Modal.Title>
+          <Modal.Title>{templateName || "Preview"}</Modal.Title>
         </Modal.Header>
-
-        <Modal.Body style={{ height: "800px", width: "100%" }}>
-          {(
+        <Modal.Body style={{ height: "80vh" }}>
+          {previewUrl && (
             <iframe
-              src="https://pdfobject.com/pdf/sample.pdf"
-              title="PDF Preview"
+              src={previewUrl}
               width="100%"
               height="100%"
+              title="PDF Preview"
             />
           )}
         </Modal.Body>
+      </Modal> */}
+
+
+      <Modal
+        show={showPreview}
+        onHide={handleClose}
+        size="xl"
+        centered
+      >
+        {/* HEADER */}
+        <Modal.Header closeButton className="border-0 pb-2">
+          <div className="w-100 d-flex justify-content-between align-items-center">
+            <div>
+              <h6 className="mb-0 fw-semibold">
+                {templateName || "Preview"}
+              </h6>
+              <small className="text-muted">Template Preview</small>
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div className="d-flex gap-2">
+              {previewUrl && (
+                <a
+                  href={previewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-sm btn-outline-primary"
+                >
+                  Open
+                </a>
+              )}
+            </div>
+          </div>
+        </Modal.Header>
+
+        {/* BODY */}
+        <Modal.Body
+          style={{
+            height: "85vh",
+            background: "#f8f9fa",
+            padding: "10px",
+            borderRadius: "10px",
+          }}
+        >
+          {previewUrl ? (
+            <iframe
+              src={previewUrl}
+              width="100%"
+              height="100%"
+              title="PDF Preview"
+              style={{
+                border: "none",
+                borderRadius: "8px",
+                background: "#fff",
+              }}
+            />
+          ) : (
+            <div className="d-flex justify-content-center align-items-center h-100 text-muted">
+              No preview available
+            </div>
+          )}
+        </Modal.Body>
       </Modal>
+
+
     </div>
   );
 }

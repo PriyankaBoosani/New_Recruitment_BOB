@@ -12,7 +12,7 @@ export function mapEduRulesToModalData(eduRulesJson, educationTypes, qualificati
         educationQualificationsId: "",
         specializationId: "",
         duration: "",
-        gpa: "",
+       
         percentage: ""
       }] }];
     }
@@ -24,7 +24,7 @@ export function mapEduRulesToModalData(eduRulesJson, educationTypes, qualificati
         educationQualificationsId: condition.qualification || "",
         specializationId: condition.specialization || "",
         duration: condition.duration || "",
-        gpa: condition.gpa || "",
+       
         percentage: condition.percentage || ""
       }))
     }));

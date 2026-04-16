@@ -13,7 +13,6 @@ export const useJobPositionById = (positionId) => {
   try {
 
     const res = await jobPositionApiService.getPositionById(positionId);
-    console.log("res",res);
   
     // ✅ CORRECT
     setData(res.data);

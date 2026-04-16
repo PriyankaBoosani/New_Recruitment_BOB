@@ -110,7 +110,7 @@ const [errorMessage, setErrorMessage] = useState("");
 
       const [commRes, memRes] = await Promise.all([
         masterApiService.getMasterDropdownData(),
-        committeeManagementService.getAllusers()
+        committeeManagementService.getPanelMembers()
       ]);
 
       setCommunityOptions(

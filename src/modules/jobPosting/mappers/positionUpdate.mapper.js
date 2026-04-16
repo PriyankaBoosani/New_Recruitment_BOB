@@ -137,7 +137,6 @@ const buildEduRulesJson = (edu, mode) => {
               qualification: edu.educationQualificationsId,
               specialization: edu.specializationId || "",
               duration: edu.duration || "",
-              gpa: edu.gpa || "",
               percentage: edu.percentage || ""
             });
           }
@@ -215,7 +214,10 @@ export const mapAddPositionToUpdateDto = ({
   approvedOn,
   indentOthers,
   isProficientInLocalLanguage,
-  existingPosition
+  existingPosition,
+    // ✅ ADD THESE
+  isAgeRelRiotVictimFamily,
+  isAgeRelWdsWomen
 }) => {
   const dto = {
     positionId,
@@ -274,6 +276,8 @@ export const mapAddPositionToUpdateDto = ({
 
     // Root level field
     isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
+    isAgeRelRiotVictimFamily: !!isAgeRelRiotVictimFamily,
+isAgeRelWdsWomen: !!isAgeRelWdsWomen,
 
     approvedBy,
     approvedOn,

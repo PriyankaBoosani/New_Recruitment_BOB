@@ -305,7 +305,20 @@ getAllEducation: (ids) =>
 
 saveEducation: (payload) =>
   apis.post("/admin-education-master/save", payload),
+
+getAllTemplates: () => 
+  apis.get("/templates/all"),
+
+// masterApiService
+previewTemplate: (templateId) =>
+  apis.get(`/templates/preview`, {
+    params: { templateId },
+    responseType: "blob", // 👈 IMPORTANT (for bytes/PDF)
+  }),
+
 };
+
+
 
 
 

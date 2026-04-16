@@ -26,7 +26,9 @@
     "delete_position_title": "पद हटाएँ",
     "delete_position_message": "क्या आप इस पद को हटाना चाहते हैं?",
     "submit_confirm_title": "सीधा अनुमोदन पुष्टि",
+    "submit_confirm_title_approve": "अनुमोदन पुष्टि",
     "submit_confirm_message": "यह क्रिया चयनित अनुरोधों को सीधे स्वीकृत कर देगी। क्या आप जारी रखना चाहते हैं?",
+    "submit_confirm_message_approve": "यह कार्रवाई चयनित रिक्विज़िशन(नों) को स्वीकृत कर देगी। क्या आप वाकई जारी रखना चाहते हैं?",
     "approve": "स्वीकृत करें",
     "requisition_count": "{{count}} अनुरोध",
     "no_selected": "वर्तमान वर्ष के लिए कोई अनुरोध चयनित नहीं है",
@@ -55,5 +57,13 @@
     "status_l1_rejected": "एल1 द्वारा अस्वीकृत",
     "status_l1_approved": "एल1 स्तर पर स्वीकृत",
     "status_l2_rejected": "एल2 स्तर पर अस्वीकृत",
-    "years_fetch_failed": "वर्षों को प्राप्त करने में विफल।"
+    "years_fetch_failed": "वर्षों को प्राप्त करने में विफल।",
+
+    "requisitionRequests": "अनुरोध अनुरोध",
+    "review_and_approve_or_reject_requisition_requests": "अनुरोध अनुरोधों की समीक्षा करें और स्वीकृत या अस्वीकृत करें",
+    "reject": "अस्वीकृत करें",
+    "approved_successfully": "सफलतापूर्वक स्वीकृत",
+    "failed_to_approve": "स्वीकृत करने में विफल",
+    "rejected_successfully": "सफलतापूर्वक अस्वीकृत",
+    "approved_failed": "स्वीकृत करने में विफल"
 }

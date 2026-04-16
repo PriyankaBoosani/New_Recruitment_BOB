@@ -10,13 +10,6 @@ export const validateEducationModal = ({ rows, mode }) => {
 
     // Always validate numeric fields if they have values, regardless of other fields
     // Validate GPA - must be numeric only
-  // GPA
-if (row.gpa !== "") {
-  const gpa = parseFloat(row.gpa);
-  if (isNaN(gpa) || gpa < 0 || gpa > 10) {
-    rowErrors.gpa = "validation:gpa_range";
-  }
-}
 
 // Percentage
 if (row.percentage !== "") {
