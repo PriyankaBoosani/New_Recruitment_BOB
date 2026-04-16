@@ -137,7 +137,6 @@ const buildEduRulesJson = (edu, mode) => {
               qualification: edu.educationQualificationsId,
               specialization: edu.specializationId || "",
               duration: edu.duration || "",
-              gpa: edu.gpa || "",
               percentage: edu.percentage || ""
             });
           }

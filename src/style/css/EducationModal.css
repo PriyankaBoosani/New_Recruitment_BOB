@@ -84,7 +84,7 @@
   background: #f8f9fa;
   border: 1px solid #e9ecef;
   border-radius: 8px;
-  padding: 16px;
+  padding: 10px 15px;
   margin-bottom: 16px;
   position: relative;
 }
@@ -97,7 +97,10 @@
   padding-bottom: 8px;
   border-bottom: 2px solid #007bff;
 }
-
+.edugrp-header{
+   margin-bottom: 0px !important;
+    border-bottom: none !important;
+}
 .group-header strong {
   /* color: #007bff; */
   font-size: 0.75rem;
@@ -161,6 +164,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border: 1px solid #e9ecef;
   transition: all 0.2s ease;
+  margin: 0px;
 }
 
 .group-box .row:hover {
@@ -265,4 +269,20 @@ border: 1px solid rgb(22, 43, 117) !important;
     margin: 16px 0;
     font-size: 12px;
   }
+}
+.react-select-wrapper {
+  min-height: 60px; /* adjust based on your UI */
+}
+
+.error-space {
+  min-height: 18px;
+}
+.error-message {
+	margin-top: 4px !important;
+}
+.delbtn{
+  margin-top: -15px !important;
+}
+.edu-modal .react-select__control {
+ min-height: 41px;
 }
