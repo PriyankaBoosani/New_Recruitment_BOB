@@ -668,7 +668,7 @@ console.log("educationDocuments",educationDocuments)
                   handleInputChange({
                     target: {
                       name: `${expType}.years`,
-                      value: s?.value || ""
+                      value: s?.value ?? ""
                     }
                   })
                 }
@@ -692,7 +692,7 @@ console.log("educationDocuments",educationDocuments)
                   handleInputChange({
                     target: {
                       name: `${expType}.months`,
-                      value: s?.value || ""
+                      value: s?.value ?? ""
                     }
                   })
                 }
