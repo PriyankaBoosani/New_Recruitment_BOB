@@ -435,3 +435,6 @@ main {
   opacity: 0.5 !important;
   cursor: not-allowed !important;
 }
+.text-orange {
+  color: #f97316; /* or your theme orange */
+}
