@@ -808,7 +808,7 @@ const PositionForm = ({
                                   isDisabled={isViewMode}
                                   onChange={(s) => {
                                     const updated = [...formData[expType].educationLevelExperiences];
-                                    updated[index].years = s?.value || "";
+                                   updated[index].years = s?.value ?? "";
 
                                     handleInputChange({
                                       target: {
