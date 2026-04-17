@@ -299,6 +299,9 @@ export default function EducationModal({
             })
             .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
     };
+    const filteredQualifications = qualifications
+        .filter(q => q.name?.toLowerCase() !== "others")
+        .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
 
     const handleClose = () => {
         setErrors({});
@@ -380,7 +383,7 @@ export default function EducationModal({
                                         </Col>
 
                                         {/* ✅ Qualification */}
-                                        <Col md={3}>
+                                        <Col md={2}>
                                             <Select
                                                 classNamePrefix="react-select"
                                                 styles={{
@@ -388,7 +391,7 @@ export default function EducationModal({
                                                 }}
                                                 value={[
                                                     { value: "", label: "Select Degree" },
-                                                    ...qualifications.map(q => ({
+                                                    ...filteredQualifications.map(q => ({
                                                         value: q.id,
                                                         label: q.name
                                                     }))
@@ -400,7 +403,7 @@ export default function EducationModal({
 
                                                 options={[
                                                     { value: "", label: "Select Degree" },
-                                                    ...qualifications.map(q => ({
+                                                    ...filteredQualifications.map(q => ({
                                                         value: q.id,
                                                         label: q.name
                                                     }))
@@ -485,7 +488,7 @@ export default function EducationModal({
                                         </Col>
 
                                         {/* ✅ Percentage */}
-                                        <Col md={1}>
+                                        <Col md={2}>
                                             <Form.Control
                                                 type="text"
                                                 inputMode="decimal"
