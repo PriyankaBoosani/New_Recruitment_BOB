@@ -1171,11 +1171,8 @@ export default function CandidateScreening({ selectedJob }) {
 
               {selectedPositionId && selectedRequisitionId && (
                 <div className="col-md-4 col-12 text-md-end mt-2 mt-md-0">
-                  {/* <button className="btn orange-bg text-white fs-14 me-3 py-1 px-3">
-                    <img src={rankIcon} className="me-2" width={15}/>
-                    Rank
-                  </button> */}
-                  {activeTab === "CANDIDATE_POOL" && (
+                
+                  {/* {activeTab === "CANDIDATE_POOL" && (
                     <button
                       className="rank-btn fs-14"
                       onClick={() => {
@@ -1188,7 +1185,7 @@ export default function CandidateScreening({ selectedJob }) {
                     >
                       <FontAwesomeIcon icon={faListOl} className="rank-icon" /> Rank
                     </button>
-                  )}
+                  )} */}
                   <OverlayTrigger
                     placement="bottom"
                     overlay={<Tooltip >{t("candidateWorkflow:download_pdf")}</Tooltip>}
