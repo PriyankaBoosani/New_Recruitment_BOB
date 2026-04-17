@@ -90,9 +90,16 @@ export default function EducationModal({
 
     const getSpecializationsForDegree = (degreeId) => {
         if (!degreeId) return [];
-        return specializations.filter(
-            s => s.educationQualificationsId === degreeId
-        );
+
+        return specializations
+            .filter(
+                s =>
+                    s.educationQualificationsId === degreeId &&
+                    s.label?.toLowerCase() !== "others" // 🚨 REMOVE OTHERS
+            )
+            .sort((a, b) =>
+                a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
+            );
     };
 
     const degreeText = groups
@@ -114,13 +121,13 @@ export default function EducationModal({
 
                     if (r.percentage) extra.push(`Percentage: ${r.percentage}%`);
 
-                   const extraText = extra.length ? ` - ${extra.join(", ")}` : "";
+                    const extraText = extra.length ? ` - ${extra.join(", ")}` : "";
 
                     return `${type} ${degree}${spec ? ` in ${spec}` : ""}${extraText}`;
                 })
                 .join(" AND ");
 
-           return groupText ? groupText : null;
+            return groupText ? groupText : null;
         })
         .filter(Boolean)
         .join("\nOR\n");
@@ -302,6 +309,8 @@ export default function EducationModal({
     const filteredQualifications = qualifications
         .filter(q => q.name?.toLowerCase() !== "others")
         .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+
+
 
     const handleClose = () => {
         setErrors({});
