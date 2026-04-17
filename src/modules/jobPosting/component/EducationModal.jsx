@@ -114,13 +114,13 @@ export default function EducationModal({
 
                     if (r.percentage) extra.push(`Percentage: ${r.percentage}%`);
 
-                    const extraText = extra.length ? ` [${extra.join(", ")}]` : "";
+                   const extraText = extra.length ? ` - ${extra.join(", ")}` : "";
 
                     return `${type} ${degree}${spec ? ` in ${spec}` : ""}${extraText}`;
                 })
                 .join(" AND ");
 
-            return groupText ? `(${groupText})` : null;
+           return groupText ? groupText : null;
         })
         .filter(Boolean)
         .join("\nOR\n");
@@ -273,7 +273,7 @@ export default function EducationModal({
                 .filter(Boolean)
                 .join(" AND ");
 
-            return groupText ? `(${groupText})` : null;
+            return groupText ? groupText : null;
         })
         .filter(Boolean)
         .join("\nOR\n");
@@ -282,7 +282,7 @@ export default function EducationModal({
     let finalText = "";
 
     if (degreeText) {
-        finalText += `Education Requirements:\n${degreeText}\n`;
+        finalText += `Education Requirements: \n${degreeText}\n`;
         finalText += `Certifications: ${certText || "None"}`;
     } else if (certText) {
         finalText += `Certifications: ${certText}`;
@@ -674,7 +674,7 @@ export default function EducationModal({
                         setErrors({});
 
                         const cleanText = [
-                            degreeText ? `Education Requirements:\n${degreeText}` : "",
+                            degreeText ? `Education Requirements: ${degreeText}` : "",
                             certText ? `Certifications: ${certText}` : ""
                         ]
                             .filter(Boolean)
