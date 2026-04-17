@@ -453,7 +453,7 @@ const getEduWiseExperience = () => {
   </span>{" "}
   <span className="stat-value">
     {job?.isMandatoryExpMonthsEduWise
-      ? getEduWiseExperience().join(", ")
+      ? getEduWiseExperience().join("/ ")
       : formatExperience(
           job?.mandatory_experience_years,
           job?.mandatory_experience_months
