@@ -26,7 +26,7 @@ import RankListModal from "./components/RankListModal";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import ZonalRejectedCommentModal from "./components/ZonalRejectedCommentModal";
-import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck, FaBars, FaListOl } from "react-icons/fa";
+import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck, FaBars, FaListOl, FaExternalLinkAlt } from "react-icons/fa";
 import { faListOl } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import DropdownStrip from "./components/DropdownStrip"
@@ -1757,15 +1757,16 @@ export default function CandidateScreening({ selectedJob }) {
             </div>
 
             {/* ACTION BUTTONS */}
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-4 align-items-center"   style={{
+          paddingRight: "15px"
+          }}>
               {previewUrl && (
                 <a
                   href={previewUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-sm btn-outline-primary"
-                >
-                  Open
+                > <FaExternalLinkAlt />
                 </a>
               )}
             </div>
