@@ -101,19 +101,35 @@ const ReservationSection = ({
             </Col>
             {/* Reservation Section */}
             <Col xs={12} className="mt-4">
-                <div className="d-flex justify-content-between align-items-center mb-2 catfonts">
-                    <div><h6 className="mb-0 catfont">{t("addPosition:category_wise_reservation")} <span className="text-danger">*</span></h6><small className="text-muted">{t("addPosition:enable_state_distribution_help")}</small></div>
-                    <Form.Check
-                        type="switch"
-                        name="enableStateDistribution"
-                        checked={formData.enableStateDistribution}
-                        onChange={e => {
-                            handleInputChange(e);
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                    <div className="d-flex justify-content-between align-items-center mb-2 catfonts" style={{ width: '49%' }}>
+                        <div><h6 className="mb-0 catfont">{t("addPosition:category_wise_reservation")} <span className="text-danger">*</span></h6><small className="text-muted">{t("addPosition:enable_state_distribution_help")}</small></div>
+                        <Form.Check
+                            type="switch"
+                            name="enableStateDistribution"
+                            checked={formData.enableStateDistribution}
+                            onChange={e => {
+                                handleInputChange(e);
 
-                            //  CLEAR NATIONAL DISTRIBUTION ERROR
-                            setErrors(prev => ({ ...prev, nationalDistribution: "" }));
-                        }}
-                    />
+                                //  CLEAR NATIONAL DISTRIBUTION ERROR
+                                setErrors(prev => ({ ...prev, nationalDistribution: "" }));
+                            }}
+                            className="mb-2"
+                        />
+                    </div>
+                    {formData.enableStateDistribution && (
+                        <div>
+                            <Form.Check
+                                type="checkbox"
+                                label="Is local language required?"
+                                checked={!!isProficientInLocalLanguage}
+                                onChange={(e) => {
+                                    setIsProficientInLocalLanguage(e.target.checked);
+                                }}
+                                className="custom_checkbox mb-3"
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {!formData.enableStateDistribution ? (
@@ -379,18 +395,6 @@ const ReservationSection = ({
 
                                 <ErrorMessage>{renderError(errors.stateLanguage)}</ErrorMessage>
                             </Col>
-
-                            <Col md={3} className="d-flex align-items-end mt-2">
-                <Form.Check
-                    type="checkbox"
-                    label="Is local language required?"
-                    checked={!!isProficientInLocalLanguage}
-                    onChange={(e) => {
-                        setIsProficientInLocalLanguage(e.target.checked);
-                    }}
-                    className="custom_checkbox"
-                />
-            </Col>
 
                         </Row>
                         <Row className="g-4 mt-3">
