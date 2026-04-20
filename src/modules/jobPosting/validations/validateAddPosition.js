@@ -180,7 +180,7 @@ export const validateAddPosition = ({
     errors.mandatoryExperience = "validation:experience_duration_required";
   } else {
     const isValid = eduExps.every(exp => {
-      const hasDuration = exp.years || exp.months;
+      const hasDuration = exp.years !== undefined && exp.years !== null && exp.years !== '';
       const hasQualification = exp.educationLevel;
 
       // Qualification is mandatory
@@ -188,7 +188,7 @@ export const validateAddPosition = ({
         return false;
       }
 
-      // Duration is also mandatory
+      // Duration is also mandatory (years can be 0, which is valid)
       return hasDuration;
     });
 
@@ -237,8 +237,7 @@ let hasDurationError = false;
 eduExps.forEach(exp => {
   const isEmptyRow =
     !exp.educationLevel &&
-    !exp.years &&
-    !exp.months;
+    (exp.years === undefined || exp.years === null || exp.years === '')
 
   if (isEmptyRow) return;
 
@@ -246,7 +245,7 @@ eduExps.forEach(exp => {
     hasQualificationError = true;
   }
 
-  if (!(exp.years || exp.months)) {
+  if (exp.years === undefined || exp.years === null || exp.years === '') {
     hasDurationError = true;
   }
 });
