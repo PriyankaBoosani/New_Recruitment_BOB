@@ -553,15 +553,15 @@ border-color: hsl(0, 0%, 80%);
 .bg-yellowwarning {
 	color: #856404;
 	border: 1px solid #ffc107;
-	background: #fff3cd !important;
+	background: #fff3cd;
 	font-weight: 500;
 	font-size: 0.625em;
   text-transform: capitalize;
 }
 .bg-success {
   color: #0EB319;
-  border: 1px solid #0EB319 !important;
-  background: #F5FFF6 !important;
+  border: 1px solid #0EB319;
+  background: #F5FFF6;
   font-weight: 500;
   font-size: 0.625em;
   text-transform: capitalize;

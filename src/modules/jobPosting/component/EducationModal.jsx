@@ -90,9 +90,16 @@ export default function EducationModal({
 
     const getSpecializationsForDegree = (degreeId) => {
         if (!degreeId) return [];
-        return specializations.filter(
-            s => s.educationQualificationsId === degreeId
-        );
+
+        return specializations
+            .filter(
+                s =>
+                    s.educationQualificationsId === degreeId &&
+                    s.label?.toLowerCase() !== "others" // 🚨 REMOVE OTHERS
+            )
+            .sort((a, b) =>
+                a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
+            );
     };
 
     const degreeText = groups
@@ -114,13 +121,13 @@ export default function EducationModal({
 
                     if (r.percentage) extra.push(`Percentage: ${r.percentage}%`);
 
-                    const extraText = extra.length ? ` [${extra.join(", ")}]` : "";
+                    const extraText = extra.length ? ` - ${extra.join(", ")}` : "";
 
                     return `${type} ${degree}${spec ? ` in ${spec}` : ""}${extraText}`;
                 })
                 .join(" AND ");
 
-            return groupText ? `(${groupText})` : null;
+            return groupText ? groupText : null;
         })
         .filter(Boolean)
         .join("\nOR\n");
@@ -273,7 +280,7 @@ export default function EducationModal({
                 .filter(Boolean)
                 .join(" AND ");
 
-            return groupText ? `(${groupText})` : null;
+            return groupText ? groupText : null;
         })
         .filter(Boolean)
         .join("\nOR\n");
@@ -282,7 +289,7 @@ export default function EducationModal({
     let finalText = "";
 
     if (degreeText) {
-        finalText += `Education Requirements:\n${degreeText}\n`;
+        finalText += `Education Requirements: \n${degreeText}\n`;
         finalText += `Certifications: ${certText || "None"}`;
     } else if (certText) {
         finalText += `Certifications: ${certText}`;
@@ -299,6 +306,11 @@ export default function EducationModal({
             })
             .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
     };
+    const filteredQualifications = qualifications
+        .filter(q => q.name?.toLowerCase() !== "others")
+        .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+
+
 
     const handleClose = () => {
         setErrors({});
@@ -380,7 +392,7 @@ export default function EducationModal({
                                         </Col>
 
                                         {/* ✅ Qualification */}
-                                        <Col md={3}>
+                                        <Col md={2}>
                                             <Select
                                                 classNamePrefix="react-select"
                                                 styles={{
@@ -388,7 +400,7 @@ export default function EducationModal({
                                                 }}
                                                 value={[
                                                     { value: "", label: "Select Degree" },
-                                                    ...qualifications.map(q => ({
+                                                    ...filteredQualifications.map(q => ({
                                                         value: q.id,
                                                         label: q.name
                                                     }))
@@ -400,7 +412,7 @@ export default function EducationModal({
 
                                                 options={[
                                                     { value: "", label: "Select Degree" },
-                                                    ...qualifications.map(q => ({
+                                                    ...filteredQualifications.map(q => ({
                                                         value: q.id,
                                                         label: q.name
                                                     }))
@@ -485,7 +497,7 @@ export default function EducationModal({
                                         </Col>
 
                                         {/* ✅ Percentage */}
-                                        <Col md={1}>
+                                        <Col md={2}>
                                             <Form.Control
                                                 type="text"
                                                 inputMode="decimal"
@@ -671,7 +683,7 @@ export default function EducationModal({
                         setErrors({});
 
                         const cleanText = [
-                            degreeText ? `Education Requirements:\n${degreeText}` : "",
+                            degreeText ? `Education Requirements: ${degreeText}` : "",
                             certText ? `Certifications: ${certText}` : ""
                         ]
                             .filter(Boolean)

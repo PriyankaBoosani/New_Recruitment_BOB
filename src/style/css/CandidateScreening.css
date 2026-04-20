@@ -436,3 +436,6 @@ candidate-screening-tabs-header ul {
 }
 
 
+.interview-pool .bg-success{
+background-color: none !important;
+}

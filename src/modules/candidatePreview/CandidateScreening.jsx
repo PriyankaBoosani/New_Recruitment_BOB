@@ -26,7 +26,7 @@ import RankListModal from "./components/RankListModal";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import ZonalRejectedCommentModal from "./components/ZonalRejectedCommentModal";
-import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck, FaBars, FaListOl } from "react-icons/fa";
+import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck, FaBars, FaListOl, FaExternalLinkAlt } from "react-icons/fa";
 import { faListOl } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import DropdownStrip from "./components/DropdownStrip"
@@ -1200,11 +1200,8 @@ navigate("/schedule-interviews", {
 
               {selectedPositionId && selectedRequisitionId && (
                 <div className="col-md-4 col-12 text-md-end mt-2 mt-md-0">
-                  {/* <button className="btn orange-bg text-white fs-14 me-3 py-1 px-3">
-                    <img src={rankIcon} className="me-2" width={15}/>
-                    Rank
-                  </button> */}
-                  {activeTab === "CANDIDATE_POOL" && (
+                
+                  {/* {activeTab === "CANDIDATE_POOL" && (
                     <button
                       className="rank-btn fs-14"
                       onClick={() => {
@@ -1217,7 +1214,7 @@ navigate("/schedule-interviews", {
                     >
                       <FontAwesomeIcon icon={faListOl} className="rank-icon" /> Rank
                     </button>
-                  )}
+                  )} */}
                   <OverlayTrigger
                     placement="bottom"
                     overlay={<Tooltip >{t("candidateWorkflow:download_pdf")}</Tooltip>}
@@ -1788,15 +1785,16 @@ navigate("/schedule-interviews", {
             </div>
 
             {/* ACTION BUTTONS */}
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-4 align-items-center"   style={{
+          paddingRight: "15px"
+          }}>
               {previewUrl && (
                 <a
                   href={previewUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-sm btn-outline-primary"
-                >
-                  Open
+                > <FaExternalLinkAlt />
                 </a>
               )}
             </div>
