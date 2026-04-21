@@ -47,7 +47,6 @@ const InterviewPanelsConfig = ({
   console.log("panels:", selectedPanels)
 
 const handleApplyAll = async () => {
-  console.log("startTime in handleApplyAll:", startTime);
   const res = await onApplyAll({
     selectedPanels,
     startTime,
@@ -59,8 +58,7 @@ const handleApplyAll = async () => {
     return;
   }
 
-  setScheduledCount(res.rows.length);
-  setShowApplySuccess(true);
+  onScheduleReady(res.rows);   // ✅ send to parent
 };
 
   return (
@@ -205,11 +203,17 @@ const handleApplyAll = async () => {
       <AddPanelModal
         show={showAddModal}
         mode={editPanel ? "edit" : "add"}
-        initialPanel={editPanel?.name}
+        initialPanel={editPanel?.id}
         initialRows={editPanel?.slots}
-        panels={availablePanels}
+        //panels={availablePanels}
+        panels={
+  editPanel
+    ? [...availablePanels, editPanel]   // ✅ add current panel back
+    : availablePanels
+}
         onClose={() => setShowAddModal(false)}
         onSave={savePanel}
+        selectedPanels={selectedPanels}
       />
 
       <DeleteConfirmModal

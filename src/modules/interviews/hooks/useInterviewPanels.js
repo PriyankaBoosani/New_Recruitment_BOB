@@ -26,8 +26,17 @@ const [selectedPanels, setSelectedPanels] = useState([]);   // USER SELECTION
     return () => document.removeEventListener("mousedown", handleOutside);
   }, []);
 const savePanel = (data) => {
-  console.log("data1111", data);
   try {
+    const isDuplicate = selectedPanels.some(
+      p => p.id === data.panelId
+    );
+
+    // ❌ BLOCK duplicate (only in ADD mode)
+    if (!editPanel && isDuplicate) {
+      toast.error("Panel already selected");
+      return;
+    }
+
     const newPanel = {
       id: data.panelId || Date.now(),
       name: data.panelName,
@@ -35,7 +44,6 @@ const savePanel = (data) => {
     };
 
     if (editPanel) {
-      // ✅ UPDATE EXISTING
       setSelectedPanels(prev =>
         prev.map((p, i) =>
           i === editPanel.index ? newPanel : p
@@ -44,12 +52,10 @@ const savePanel = (data) => {
 
       toast.success("Panel updated successfully");
     } else {
-      // ✅ ADD NEW
       setSelectedPanels(prev => [...prev, newPanel]);
 
-      // ✅ REMOVE FROM AVAILABLE
       setAvailablePanels(prev =>
-        prev.filter(p => p.name !== data.panelName)
+        prev.filter(p => p.id !== data.panelId) // 🔥 better than name
       );
 
       toast.success("Panel added successfully");

@@ -7,7 +7,8 @@ export const useAddPanelModal = ({
   initialPanel,
   initialRows,
   onSave,
-  onClose
+  onClose,
+  panels
 }) => {
 
   const buildRows = () =>
@@ -28,7 +29,13 @@ useEffect(() => {
   setRows(buildRows());
   setErrors({});
 
-}, [initialPanel,show]);   // 🔥 ONLY show// 🔥 ONLY show — do NOT add initialRows here
+}, [initialPanel,show]);   // 🔥 ONLY show// 🔥 ONLY show — do NOT add initialRows 
+
+
+
+const selectedPanel = panels.find(p => p.id === panelId);
+const minDate = selectedPanel?.startDate || "";
+const maxDate = selectedPanel?.endDate || "";
 
   /* ================= ADD ================= */
 
@@ -60,14 +67,22 @@ useEffect(() => {
   /* ================= SAVE ================= */
 
   const handleSave = () => {
-    const v = validatePanelModal({ rows });
-    setErrors(v);
+  const v = validatePanelModal({ rows });
+  setErrors(v);
 
-    if (v.rows?.length) return;
+  if (v.rows?.length) return;
 
-    onSave({ panelId, slots: rows });
-    onClose();
-  };
+  // ✅ FIND SELECTED PANEL
+  const selectedPanel = panels.find(p => p.id === panelId);
+
+  onSave({
+    panelId,
+    panelName: selectedPanel?.name,   // ✅ FIX HERE
+    slots: rows
+  });
+
+  onClose();
+};
 
   /* ================= CANCEL ================= */
 
@@ -84,6 +99,8 @@ useEffect(() => {
     removeRow,
     updateRow,
     handleSave,
-    handleCancel
+    handleCancel,
+    minDate,   // ✅ ADD
+    maxDate    // ✅ ADD
   };
 };

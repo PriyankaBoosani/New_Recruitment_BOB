@@ -9,6 +9,8 @@ import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import InterviewPanelsConfig from "../interviews/components/InterviewPanelsConfig";
 import InterviewScheduleTable from "../interviews/components/InterviewScheduleTable";
 import useInterviewSchedule from "../interviews/hooks/useInterviewSchedule";
+import ScheduleReadyBar from "../interviews/components/ScheduleReadyBar";
+import { toast } from "react-toastify";
 
 import "../../style/css/CandidateScreening.css";
 
@@ -19,7 +21,8 @@ const ScheduleInterviews = () => {
 
 
   const [startTime, setStartTime] = useState("");
-
+const [scheduledCount, setScheduledCount] = useState(0);
+  const [showReadyBar, setShowReadyBar] = useState(false);
   const { 
         schedule,
     updateRow,
@@ -33,7 +36,9 @@ const ScheduleInterviews = () => {
     handleRequisitionChange,
     setSelectedPositionId,
     passedCandidates,
-    applySchedule 
+    applySchedule,
+    scheduleApiData,
+    scheduleInterview   
   } = useInterviewSchedule();
 console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId)
   
@@ -104,9 +109,33 @@ console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId)
         startTime={startTime}
         onStartTimeChange={setStartTime}
           candidates={passedCandidates}              // ✅ ADD
-  onScheduleReady={(rows) => setSchedule(rows)}  // ✅ ADD
+ onScheduleReady={(rows) => {
+    setSchedule(rows);
+    setScheduledCount(rows.length);
+    setShowReadyBar(true);   // ✅ trigger here
+  }} // ✅ ADD
    onApplyAll={applySchedule}
       />
+
+      {showReadyBar && (
+        <div className="mt-3">
+          <ScheduleReadyBar
+            count={scheduledCount}
+            onCancel={() => setShowReadyBar(false)}
+            onSchedule={async () => {
+              const res = await scheduleInterview();
+
+              if (!res.success) {
+                toast.error(res.message);
+                return;
+              }
+
+              toast.success("Interviews scheduled successfully");
+              setShowReadyBar(false);
+            }}
+          />
+        </div>
+      )}
 
       {/* ===== INTERVIEW SCHEDULE TABLE ===== */}
       <InterviewScheduleTable rows={schedule}/> 

@@ -11,6 +11,12 @@ const interviewService = {
       `recruiter/interview-scheduling/allocate-interview`,
       payload
     );
+  },
+  scheduleInterview(payload) {
+    return api.post(
+      `recruiter/interview-scheduling/schedule-interview`,
+      payload
+    );
   }
 };
 

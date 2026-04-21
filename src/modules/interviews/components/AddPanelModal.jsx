@@ -11,7 +11,8 @@ const AddPanelModal = ({
   mode = "add",
   initialPanel = "",
   initialRows = [],
-  panels = []   // ✅ NEW
+  panels = [],  // ✅ NEW
+  selectedPanels = [] 
 }) => {
 
   const { t } = useTranslation(["interviewSchedule", "common"]);
@@ -25,13 +26,16 @@ const AddPanelModal = ({
     removeRow,
     updateRow,
     handleSave,
-    handleCancel
+    handleCancel,
+    minDate,
+    maxDate
   } = useAddPanelModal({
     show,
     initialPanel,
     initialRows,
     onSave,
-    onClose
+    onClose,
+    panels
   });
   console.log("panels123", panels)
 
@@ -68,18 +72,25 @@ const AddPanelModal = ({
               value={panelId || ""}
               onChange={(e) => setPanelId(e.target.value)}
             >
-
-              {/* ✅ placeholder */}
               <option value="">
                 {t("select_panel_placeholder")}
               </option>
 
-              {panels.map((panel) => (
-                <option key={panel.id} value={panel.id}>
-                  {panel.name}
-                </option>
-              ))}
+              {panels.map((panel) => {
+                const isSelected = selectedPanels?.some(p => p.id === panel.id);
 
+                return (
+                  <option
+                    key={panel.id}
+                    value={panel.id}
+                    disabled={
+                        isSelected && panel.id !== panelId   // ✅ allow current edit
+                      }  // ✅ PREVENT DUPLICATE
+                  >
+                    {panel.name}
+                  </option>
+                );
+              })}
             </Form.Select>
 
             <i className="bi bi-chevron-down ap-select-icon" />
@@ -103,8 +114,10 @@ const AddPanelModal = ({
                     errors?.rows?.[i]?.date ? "ap-error" : ""
                   }`}
                   value={row.date}
-                  onChange={(e) => updateRow(i, "date", e.target.value)}
-                />
+                  min={minDate}   // ✅ IMPORTANT
+                    max={maxDate}   // ✅ IMPORTANT
+                    onChange={(e) => updateRow(i, "date", e.target.value)}
+                  />
                 <i className="bi bi-calendar3 ap-calendar" />
               </div>
 

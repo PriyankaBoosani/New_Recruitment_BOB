@@ -22,6 +22,7 @@ const positionId = location.state?.positionId || "";
   const [selectedPositionId, setSelectedPositionId] = useState("");
   const [loadingPositions, setLoadingPositions] = useState(false);
 const [schedule, setSchedule] = useState([]);
+const [scheduleApiData, setScheduleApiData] = useState([]);
 
   const updateRow = (id, field, value) => {
     setSchedule(prev =>
@@ -165,9 +166,14 @@ const applySchedule = async ({ selectedPanels, startTime, positionId }) => {
     // ✅ Call API
     const res = await interviewService.allocatePanels(payload);
 
+    
+
+  //  const res=
+
     if (!res?.success) {
-      return { success: false, message: res.message };
+      return { success: false, message: res.data };
     }
+    setScheduleApiData(res.data);   // 🔥 IMPORTANT
 
     // ✅ Convert response → table rows
     const rows = res.data.map(item => {
@@ -195,6 +201,23 @@ const applySchedule = async ({ selectedPanels, startTime, positionId }) => {
   }
 };
 
+const scheduleInterview = async () => {
+  try {
+//console.log("scheduleApiData", scheduleApiData);return false;
+    const res = await interviewService.scheduleInterview(scheduleApiData);
+
+    if (!res?.success) {
+      return { success: false, message: res.message };
+    }
+
+    return { success: true };
+
+  } catch (err) {
+    console.error(err);
+    return { success: false, message: "Failed to schedule interviews" };
+  }
+};
+
   return {
     schedule,
     updateRow,
@@ -210,6 +233,8 @@ const applySchedule = async ({ selectedPanels, startTime, positionId }) => {
     requisitionId,
     positionId,
     passedCandidates,
-    applySchedule
+    applySchedule,
+    scheduleApiData,
+    scheduleInterview   
   };
 }
