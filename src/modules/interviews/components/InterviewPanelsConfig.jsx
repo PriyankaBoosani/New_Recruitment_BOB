@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import ApplySuccessModal from "../../interviews/components/ApplySuccessModal";
 import { toast } from "react-toastify";
 import interviewService from "../services/interviewService";
+import Loader from "../../../shared/components/Loader";
 
 const InterviewPanelsConfig = ({
   positionId,
@@ -44,26 +45,58 @@ const InterviewPanelsConfig = ({
   const { t } = useTranslation(["interviewSchedule", "common"]);
   const [showApplySuccess, setShowApplySuccess] = React.useState(false);
   const [scheduledCount, setScheduledCount] = React.useState(0);
+  const [isApplying, setIsApplying] = React.useState(false);
+
   console.log("panels:", selectedPanels)
 
 const handleApplyAll = async () => {
-  const res = await onApplyAll({
-    selectedPanels,
-    startTime,
-    positionId
-  });
 
-  if (!res.success) {
-    toast.error(res.message);
+  // ✅ Validate Position
+  if (!positionId) {
+    toast.error("Position is missing");
+    return;
+  }
+// ✅ Validate Panels
+  if (!selectedPanels || selectedPanels.length === 0) {
+    toast.error("Please add at least one interview panel");
     return;
   }
 
-  onScheduleReady(res.rows);   // ✅ send to parent
+  // ✅ Validate Start Time
+  if (!startTime) {
+    toast.error("Start time is required");
+    return;
+  }
+
+    try {
+    setIsApplying(true);   // 🔥 START LOADER
+
+    const res = await onApplyAll({
+      selectedPanels,
+      startTime,
+      positionId
+    });
+
+    if (!res.success) {
+      toast.error(res.message);
+      return;
+    }
+
+    onScheduleReady(res.rows);
+
+  } catch (err) {
+    toast.error("Something went wrong");
+  } finally {
+    setIsApplying(false);  // 🔥 STOP LOADER
+  }
 };
 
   return (
     <>
       <div className="ipc-card mt-4">
+        {isApplying && (
+          <Loader />
+        )}
 
         {/* HEADER */}
         <div className="d-flex justify-content-between align-items-center mb-3">

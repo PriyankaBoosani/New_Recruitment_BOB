@@ -132,6 +132,15 @@ console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId)
 
               toast.success("Interviews scheduled successfully");
               setShowReadyBar(false);
+
+                // Redirect HERE
+              navigate("/candidate-workflow", {
+                state: {
+                  //activeTab: "INTERVIEW_POOL",   
+                  requisitionId: selectedRequisitionId,
+                  positionId: selectedPositionId
+                }
+              });
             }}
           />
         </div>

@@ -50,7 +50,7 @@ const savePanel = (data) => {
         )
       );
 
-      toast.success("Panel updated successfully");
+      //toast.success("Panel updated successfully");
     } else {
       setSelectedPanels(prev => [...prev, newPanel]);
 
@@ -58,7 +58,7 @@ const savePanel = (data) => {
         prev.filter(p => p.id !== data.panelId) // 🔥 better than name
       );
 
-      toast.success("Panel added successfully");
+      //toast.success("Panel added successfully");
     }
 
     setEditPanel(null);
@@ -83,7 +83,7 @@ const confirmDelete = (index) => {
   setDeleteIndex(null);
   setOpenInfoIndex(null);
 
-  toast.success("Panel deleted successfully");
+  //toast.success("Panel deleted successfully");
 };
 
 const openEdit = (panel, index) => {

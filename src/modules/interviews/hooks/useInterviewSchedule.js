@@ -2,6 +2,7 @@ import { useState,useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
 import interviewService from "../services/interviewService";
+import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 export default function useInterviewSchedule() {
 
   const navigate = useNavigate();
@@ -138,6 +139,25 @@ const formatTime = (time) => {
   
   if (!time) return "00:00:00";
   return time.length === 5 ? `${time}:00` : time;
+}
+const formatTimeRange = (startStr, endStr) => {
+  if (!startStr) return "";
+
+  const format = (time) => {
+    const d = new Date(time);
+    let hours = d.getHours();
+    const minutes = String(d.getMinutes()).padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+
+    hours = hours % 12 || 12;
+
+    return `${String(hours).padStart(2, "0")}:${minutes} ${ampm}`;
+  };
+
+  const start = format(startStr);
+  const end = endStr ? format(endStr) : "";
+
+  return end ? `${start} - ${end}` : start;
 };
 
 const applySchedule = async ({ selectedPanels, startTime, positionId }) => {
@@ -178,13 +198,14 @@ const applySchedule = async ({ selectedPanels, startTime, positionId }) => {
     // ✅ Convert response → table rows
     const rows = res.data.map(item => {
       const start = item.interviewSchedule?.interviewStartAt;
+       const end = item.interviewSchedule?.interviewEndAt;
 
       return {
         id: item.application?.id,
         name: item.fullName,
         regNo: item.application?.applicationNo,
-        date: start?.split("T")[0],
-        time: start?.split("T")[1]?.slice(0, 5),
+        date: formatDateDDMMYYYY(start?.split("T")[0]) || "-",
+        time: formatTimeRange(start, end),
         zone: item.interviewCentres?.zone,
         panel: item.interviewPanels?.panelName
       };
