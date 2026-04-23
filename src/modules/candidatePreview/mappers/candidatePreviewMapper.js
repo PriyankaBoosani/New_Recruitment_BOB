@@ -238,15 +238,9 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
         //     : "-",
         // percentage: edu.percentage ?? "-",
 
-        percentage:
-          edu.percentage != null
-            ? (() => {
-              const value = Number(edu.percentage).toFixed(2);
-              return Number(edu.percentage) < 10
-                ? `${value}%`
-                : `${value}%`;
-            })()
-            : "-",
+        percentage:edu.percentage != null && !isNaN(Number(edu.percentage))
+          ? `${Number(edu.percentage).toFixed(2)}%`
+          : "-",
         educationLevel_name: educationLevel?.documentName || "-",
         mandatoryQualification_name: qualification?.qualificationName || "-",
         specialization_name: specialization?.specializationName || "-"

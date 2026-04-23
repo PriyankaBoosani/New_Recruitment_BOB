@@ -95,7 +95,7 @@ const DepartmentFormModal = ({
 
               <Col xs={12}>
                 <Form.Group className="form-group">
-                  <Form.Label className={isViewing ? '' : ''}>
+                  <Form.Label >
                     {t("description")} {!isViewing && <span className="text-danger">*</span>}
                   </Form.Label>
                   {isViewing ? (

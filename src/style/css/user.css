@@ -888,7 +888,7 @@ body.modal-open {
     box-shadow: 0 0 0 0.15rem rgba(242, 101, 34, 0.35) !important;
 }
 
-scrollbar styling .import-scroll-wrapper::-webkit-scrollbar,
+.import-scroll-wrapper::-webkit-scrollbar,
 .error-scroll::-webkit-scrollbar {
     width: 6px;
 }

@@ -213,7 +213,6 @@
 
 /* DANGER → Red */
 .requisition-page .bg-danger {
-    color: #721c24;
     border: 1px solid #dc3545;
     background: #f8d7da !important;
     background-color: #fdf5f5;

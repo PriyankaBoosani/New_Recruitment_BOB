@@ -911,7 +911,6 @@ select.form-control {
 
 .section-list {
   margin: 0;
-  padding-left: 18px;
   font-size: 13px;
   color: #212529;
   margin-top: 0 !important;
@@ -921,7 +920,6 @@ select.form-control {
 }
 
 .section-list li {
-  margin-top: 2px;
   margin-bottom: 10;
   margin-top: 0 !important;
   padding-top: 0 !important;
