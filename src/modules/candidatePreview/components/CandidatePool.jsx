@@ -16,6 +16,7 @@ export default function CandidatePool({
   loading,
   page,
   pageSize,
+  filters,
   totalElements,
   onPageChange,
   onPageSizeChange,
@@ -367,6 +368,11 @@ export default function CandidatePool({
                                 : null,
                               activeTab: "CANDIDATE_POOL",
                               isRankEnabled,
+
+                              //ADD THESE
+                              page,
+                              pageSize,
+                              filters,
                             },
                           })
                         }
@@ -471,6 +477,11 @@ export default function CandidatePool({
                       state: {
                         from: "/candidate-workflow",
                         isRankEnabled,
+                        // 🔥 ADD 
+                        activeTab: "CANDIDATE_POOL",
+                        page,
+                        pageSize,
+                        filters,
                         candidate: c, positionId: selectedPositionId, requisitionId: selectedRequisitionId,
                         requisition: requisition
                           ? {

@@ -220,6 +220,8 @@ export default function CandidateScreening({ selectedJob }) {
     setPreviewUrl("");
   };
 
+  const isBackNavigation = location.state?.page !== undefined;
+
   // 🔍 Requisition search (debounced)
   const requisitionSearchTimeout = useRef(null);
   const isNavModeRef = useRef(false);
@@ -611,6 +613,7 @@ export default function CandidateScreening({ selectedJob }) {
     .map(c => c.id);
 
   useEffect(() => {
+    if (isBackNavigation) return; // 🔥 ADD THIS LINE  
     if (activeTab === "INTERVIEW_POOL") {
       setInterviewPage(0);
     }
@@ -652,6 +655,7 @@ export default function CandidateScreening({ selectedJob }) {
   // }, [filters]);
 
   useEffect(() => {
+    if (isBackNavigation) return; // 🔥 ADD THIS
     if (!navPositionId) {
       setFilters({
         status: [],
@@ -663,6 +667,7 @@ export default function CandidateScreening({ selectedJob }) {
   }, [selectedPositionId]);
 
   useEffect(() => {
+    if (isBackNavigation) return; // 🔥 STOP RESET
     setFilters({
       status: [],
       stateId: "",
@@ -672,7 +677,32 @@ export default function CandidateScreening({ selectedJob }) {
     setPage(0);
   }, [activeTab]);
 
+useEffect(() => {
+  if (!location.state) return;
 
+  // ✅ Candidate Pool
+  if (location.state.page !== undefined) {
+    setPage(location.state.page);
+  }
+
+  if (location.state.pageSize !== undefined) {
+    setPageSize(location.state.pageSize);
+  }
+
+  // 🔥 INTERVIEW POOL FIX (ADD THIS)
+  if (location.state.interviewPage !== undefined) {
+    setInterviewPage(location.state.interviewPage);
+  }
+
+  if (location.state.interviewPageSize !== undefined) {
+    setInterviewPageSize(location.state.interviewPageSize);
+  }
+
+  if (location.state.filters) {
+    setFilters(location.state.filters);
+  }
+
+}, []);
 
   const navRequisitionId = location.state?.requisitionId || null;
   const navPositionId = location.state?.positionId || null;
@@ -1611,6 +1641,7 @@ export default function CandidateScreening({ selectedJob }) {
             requisition={normalizedRequisition}
             position={selectedPosition}
             isRankEnabled={isRankEnabled}
+            filters={filters}   // ✅ ADD THIS
           />
         )}
 
@@ -1622,6 +1653,7 @@ export default function CandidateScreening({ selectedJob }) {
             setSelectedIds={setSelectedInterviewCandidateIds}
             page={interviewPage}
             pageSize={interviewPageSize}
+            filters={filters}   // ✅ ADD THIS
             totalElements={interviewTotalElements}
             onPageChange={setInterviewPage}
             onPageSizeChange={setInterviewPageSize}

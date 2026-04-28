@@ -194,7 +194,10 @@ const CandidatePreviewPage = ({ onHide }) => {
                 requisition: state.requisition,
                 position: state.position,
                 preloadedCandidates: state.candidates,
-                selectedDate: state.selectedDate
+                selectedDate: state,
+                page: state.page,
+                pageSize: state.pageSize,
+                filters: state.filters
               }
             })
           }
@@ -202,6 +205,7 @@ const CandidatePreviewPage = ({ onHide }) => {
           requisitionId={requisitionId}
           candidateScreening={true}
           activeTab={activeTab}
+          
         />
       ) : isZonalHr ? (
         <HeaderWithBacks
@@ -215,7 +219,10 @@ const CandidatePreviewPage = ({ onHide }) => {
                 requisition,
                 position,
                 preloadedCandidates: state.candidates || [],
-                selectedDate
+                selectedDate,
+                page: state.page,
+                pageSize: state.pageSize,
+                filters: state.filters
               }
             });
           }}
@@ -233,7 +240,10 @@ const CandidatePreviewPage = ({ onHide }) => {
                 position,
                 preloadedCandidates:
                   state.preloadedCandidates || state.candidates || [],
-                selectedDate
+                selectedDate,
+                page: state.page,
+                pageSize: state.pageSize,
+                filters: state.filters
               }
             });
           }}
