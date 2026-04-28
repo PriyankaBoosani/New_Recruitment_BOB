@@ -44,7 +44,13 @@ const PositionFormModal = ({
   fetchPositions,
   t
 }) => {
+let title = t("add_position");
 
+if (isViewing) {
+  title = t("view");
+} else if (isEditing) {
+  title = t("edit_position");
+}
   return (
     <Modal
       show={show}
@@ -58,11 +64,7 @@ const PositionFormModal = ({
       <Modal.Header closeButton className="modal-header-custom">
         <div>
           <Modal.Title>
-            {isViewing
-              ? t("view")
-              : isEditing
-                ? t("edit_position")
-                : t("add_position")}
+            {title}
           </Modal.Title>
 
           {!isEditing && !isViewing && (

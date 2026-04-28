@@ -153,40 +153,41 @@ const AssignPositionsPage = ({ refreshPanels }) => {
       p => p.jobPositions?.positionId === selectedPosition
     )?.masterPositions?.positionName || "";
 
+const getUpdatedCommittees = (prev, type, committee) => {
+  const isSelected = prev[type].some(c => c.id === committee.id);
 
-  const toggleCommittee = (type, committee) => {
-    setSelectedCommittees(prev => {
-      const isSelected = prev[type].some(c => c.id === committee.id);
+  if (isSelected) {
+    setAvailablePanels(ap => [...ap, committee]);
+    setIsManuallyDirty(true);
 
-      if (isSelected) {
-        // REMOVE → move back to available
-        setAvailablePanels(ap => [...ap, committee]);
-        setIsManuallyDirty(true);
-        return {
-          ...prev,
-          [type]: prev[type].filter(c => c.id !== committee.id),
-        };
-      } else {
-        // ADD → remove from available
-        setAvailablePanels(ap =>
-          ap.filter(c => c.id !== committee.id)
-        );
+    return {
+      ...prev,
+      [type]: prev[type].filter(c => c.id !== committee.id),
+    };
+  }
 
-        return {
-          ...prev,
-          [type]: [
-            ...prev[type],
-            {
-              ...committee,
-              startDate: committee.startDate || "",
-              endDate: committee.endDate || "",
-              canEdit: true
-            }
-          ],
-        };
+  setAvailablePanels(ap =>
+    ap.filter(c => c.id !== committee.id)
+  );
+
+  return {
+    ...prev,
+    [type]: [
+      ...prev[type],
+      {
+        ...committee,
+        startDate: committee.startDate || "",
+        endDate: committee.endDate || "",
+        canEdit: true
       }
-    });
+    ],
   };
+};
+  const toggleCommittee = (type, committee) => {
+  setSelectedCommittees(prev =>
+    getUpdatedCommittees(prev, type, committee)
+  );
+};
 
   const renderAvailableCommittee = (committee, type) => (
     <div className="committee-row" key={committee.id}>
@@ -356,6 +357,35 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     selectedCommittees.SCREENING.length > 0 ||
     selectedCommittees.INTERVIEW.length > 0 ||
     selectedCommittees.COMPENSATION.length > 0;
+
+
+    const mapMembers = (membersOptions, selectedIds) => {
+  return membersOptions
+    .filter(m => selectedIds.includes(m.value))
+    .map(m => ({
+      name: m.label,
+      userId: m.value,
+      email: m.email,
+      role: m.role
+    }));
+};
+const updatePanelsWithMembers = (prev, editFormData, membersOptions) => {
+  const updated = { ...prev };
+
+  Object.keys(updated).forEach(type => {
+    updated[type] = updated[type].map(panel => {
+      if (panel.id === editFormData.id) {
+        return {
+          ...panel,
+          members: mapMembers(membersOptions, editFormData.members)
+        };
+      }
+      return panel;
+    });
+  });
+
+  return updated;
+};
 
 
   return (
@@ -592,30 +622,9 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                 );
 
 
-                setSelectedCommittees(prev => {
-                  const updated = { ...prev };
-
-                  Object.keys(updated).forEach(type => {
-                    updated[type] = updated[type].map(panel => {
-                      if (panel.id === editFormData.id) {
-                        return {
-                          ...panel,
-                          members: membersOptions
-                            .filter(m => editFormData.members.includes(m.value))
-                            .map(m => ({
-                              name: m.label,
-                              userId: m.value,
-                              email: m.email,
-                              role: m.role
-                            }))
-                        };
-                      }
-                      return panel;
-                    });
-                  });
-
-                  return updated;
-                });
+                setSelectedCommittees(prev =>
+                    updatePanelsWithMembers(prev, editFormData, membersOptions)
+                  );
                 await refreshPanels(); // 🔥 THIS is what updates table
 
 

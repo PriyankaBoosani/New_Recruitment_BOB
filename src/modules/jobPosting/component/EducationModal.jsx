@@ -319,6 +319,87 @@ export default function EducationModal({
         onHide();
     };
 
+
+    const validateModalData = () => {
+  const allRows = groups.flatMap(g => g.educations);
+
+  const validationErrors = validateEducationModal({
+    rows: allRows,
+    mode,
+  });
+
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    return false;
+  }
+
+  const filledRows = allRows.filter(
+    r => r.educationTypeId && r.educationQualificationsId
+  );
+
+  if (mode === "mandatory" && filledRows.length === 0) {
+    setErrors({
+      rows: { _error: "validation:degree_required" }
+    });
+    return false;
+  }
+
+  return true;
+};
+const buildEducations = (group) => {
+  const hasValid = group.educations.some(
+    r => r.educationTypeId && r.educationQualificationsId
+  );
+
+  if (!hasValid) return [createRow()];
+
+  return group.educations
+    .filter(r => r.educationTypeId && r.educationQualificationsId)
+    .map(r => {
+      const validSpecs = getSpecializationsForDegree(r.educationQualificationsId);
+
+      return {
+        educationTypeId: r.educationTypeId,
+        educationQualificationsId: r.educationQualificationsId,
+        specializationId: validSpecs.some(s => s.id === r.specializationId)
+          ? r.specializationId
+          : null,
+        duration: r.duration,
+        percentage: r.percentage
+      };
+    });
+};
+const buildCertifications = (group) => {
+  const hasValid = (group.certifications || []).some(c => c.certificationId);
+
+  if (!hasValid) return [createCertRow()];
+
+  return group.certifications
+    .filter(c => c.certificationId)
+    .map(c => ({
+      certificationId: c.certificationId
+    }));
+};
+const buildFinalText = () => {
+  return [
+    degreeText ? `Education Requirements: ${degreeText}` : "",
+    certText ? `Certifications: ${certText}` : ""
+  ]
+    .filter(Boolean)
+    .join("\n");
+};
+const buildEducationPayload = () => {
+  return {
+    groups: groups.map(group => ({
+      educations: buildEducations(group)
+    })),
+    certGroups: certGroups.map(group => ({
+      certifications: buildCertifications(group)
+    })),
+    text: buildFinalText()
+  };
+};
+
     return (
         <Modal show={show} onHide={handleClose} size="xl" scrollable centered className="edu-modal">
             <Modal.Header closeButton className="edu-modal-header">
@@ -657,73 +738,11 @@ export default function EducationModal({
                 <Button
                     variant="primary"
                     onClick={() => {
-                        const allRows = groups.flatMap(g => g.educations);
-                        const validationErrors = validateEducationModal({
-                            rows: allRows,
-                            mode,
-                        });
-
-                        if (Object.keys(validationErrors).length > 0) {
-                            setErrors(validationErrors);
-                            return;
-                        }
-
-                        const filledRows = groups.flatMap(g => g.educations).filter(
-                            r => r.educationTypeId && r.educationQualificationsId
-                        );
-
-                        // 🚨 Only enforce required rule in mandatory mode
-                        if (mode === "mandatory" && filledRows.length === 0) {
-                            setErrors({
-                                rows: { _error: "validation:degree_required" }
-                            });
-                            return;
-                        }
+                        if (!validateModalData()) return;
 
                         setErrors({});
 
-                        const cleanText = [
-                            degreeText ? `Education Requirements: ${degreeText}` : "",
-                            certText ? `Certifications: ${certText}` : ""
-                        ]
-                            .filter(Boolean)
-                            .join("\n");
-
-                        const payload = {
-                            groups: groups.map(group => ({
-                                educations:
-                                    group.educations.some(r => r.educationTypeId || r.educationQualificationsId)
-                                        ? group.educations
-                                            .filter(r => r.educationTypeId && r.educationQualificationsId)
-                                            .map(r => {
-                                                const validSpecs = getSpecializationsForDegree(r.educationQualificationsId);
-                                                const isValidSpec = validSpecs.some(s => s.id === r.specializationId);
-
-                                                return {
-                                                    educationTypeId: r.educationTypeId,
-                                                    educationQualificationsId: r.educationQualificationsId,
-                                                    specializationId: isValidSpec ? r.specializationId : null,
-                                                    duration: r.duration,
-
-                                                    percentage: r.percentage
-                                                };
-                                            })
-                                        : [createRow()] // 👈 THIS LINE FIXES YOUR ISSUE
-                            })),
-
-                            certGroups: certGroups.map(certGroup => ({
-                                certifications:
-                                    (certGroup.certifications || []).some(cr => cr.certificationId)
-                                        ? certGroup.certifications
-                                            .filter(cr => cr.certificationId)
-                                            .map(cr => ({
-                                                certificationId: cr.certificationId
-                                            }))
-                                        : [createCertRow()]
-                            })),
-
-                            text: cleanText
-                        };
+                        const payload = buildEducationPayload();
 
                         onSave(payload);
                         onHide();

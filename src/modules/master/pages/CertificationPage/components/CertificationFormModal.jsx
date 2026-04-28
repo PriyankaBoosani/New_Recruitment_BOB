@@ -71,7 +71,13 @@ const CertificationFormModal = ({
 
     onHide();
   };
+let title = t("add_certification");
 
+if (isViewing) {
+  title = t("view_certification");
+} else if (isEditing) {
+  title = t("edit_certification");
+}
   return (
     <Modal
       show={show}
@@ -84,11 +90,7 @@ const CertificationFormModal = ({
       <Modal.Header closeButton className="modal-header-custom">
         <div>
           <Modal.Title>
-            {isViewing
-              ? t("view_certification")
-              : isEditing
-                ? t("edit_certification")
-                : t("add_certification")}
+            {title}
           </Modal.Title>
 
           {!isEditing && !isViewing && (

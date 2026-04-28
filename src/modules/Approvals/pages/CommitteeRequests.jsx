@@ -141,43 +141,48 @@ const CommitteeRequests = () => {
 
         await fetchPanels(pos.positionId);
     };
-
+const executeApprovalAction = async ({
+  actionType,
+  ids,
+  commentText,
+  positionId,
+  approvePanels,
+  rejectPanels
+}) => {
+  if (actionType === "approve") {
+    return await approvePanels(ids, commentText, positionId);
+  }
+  return await rejectPanels(ids, commentText, positionId);
+};
 
     const handleApprovalAction = async (modalComment) => {
 
-        const ids = Array.from(selectedReqIds);
+  const ids = Array.from(selectedReqIds);
 
-        if (ids.length === 0) return;
+  if (ids.length === 0) return;
 
-        const commentText = modalComment?.trim();
+  const commentText = modalComment?.trim();
 
-        if (!commentText) {
-            toast.error("Comment is required");
-            return;
-        }
+  if (!commentText) {
+    toast.error("Comment is required");
+    return;
+  }
 
-        let success = false;
+  // ✅ moved logic
+  const success = await executeApprovalAction({
+    actionType,
+    ids,
+    commentText,
+    positionId: selectedPosition?.positionId,
+    approvePanels,
+    rejectPanels
+  });
 
-        if (actionType === "approve") {
-            success = await approvePanels(
-                ids,
-                commentText,
-                selectedPosition?.positionId
-            );
-        } else {
-            success = await rejectPanels(
-                ids,
-                commentText,
-                selectedPosition?.positionId
-            );
-        }
-
-        if (success) {
-            setSelectedReqIds(new Set());
-
-            setShowCommentModal(false);
-        }
-    };
+  if (success) {
+    setSelectedReqIds(new Set());
+    setShowCommentModal(false);
+  }
+};
     const getStatusBadge = (status = "") => {
         switch (status) {
             case "L1_PENDING":

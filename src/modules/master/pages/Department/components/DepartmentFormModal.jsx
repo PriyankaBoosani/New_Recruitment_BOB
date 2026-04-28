@@ -20,12 +20,19 @@ const DepartmentFormModal = ({
   t,
   ...importProps
 }) => {
+  let title = t("addDepartment");
+
+if (isViewing) {
+  title = t("viewDepartment");
+} else if (isEditing) {
+  title = t("editDepartment");
+}
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
       <Modal.Header closeButton className="modal-header-custom">
         <div>
           <Modal.Title>
-            {isViewing ? t("viewDepartment") : isEditing ? t("editDepartment") : t("addDepartment")}
+           {title}
           </Modal.Title>
           {!isEditing && !isViewing && (
             <p className="mb-0 small text-muted para">

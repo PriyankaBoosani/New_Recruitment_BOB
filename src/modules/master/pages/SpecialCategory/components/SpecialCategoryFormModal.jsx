@@ -20,17 +20,19 @@ const SpecialCategoryFormModal = ({
   t,
   ...importProps
 }) => {
+  let title = t("added");
 
+if (isViewing) {
+  title = t("view");
+} else if (isEditing) {
+  title = t("edit");
+}
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
       <Modal.Header closeButton className="modal-header-custom">
         <div>
           <Modal.Title>
-            {isViewing
-              ? t("view")
-              : isEditing
-                ? t("edit")
-                : t("added")}
+            {title}
           </Modal.Title>
 
 

@@ -73,6 +73,25 @@ const ReservationSection = ({
     const sortedCities = [...filteredCities].sort((a, b) =>
         a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
     );
+    const handleDeleteState = (idx) => {
+  setStateDistributions(prev =>
+    prev.map((s, i) =>
+      i === idx ? { ...s, __deleted: true } : s
+    )
+  );
+
+  if (editingIndex === idx) {
+    setEditingIndex(null);
+    setCurrentState({
+      state: "",
+      vacancies: "",
+      language: "",
+      categories: {},
+      disabilities: {},
+      isProficientInLocalLanguage: false
+    });
+  }
+};
     return (
         <fieldset disabled={isViewMode}>
            {/* ✅ Age Relaxation Section */}
@@ -569,26 +588,7 @@ const ReservationSection = ({
                                                 <td>{Object.values(row.categories || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
                                                 {disabilityCategories.map(d => <td key={d.disabilityCode}>{row.disabilities?.[d.disabilityCode] ?? 0}</td>)}
                                                 <td>{Object.values(row.disabilities || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
-                                                <td className="text-center"><Button size="sm" variant="link" onClick={() => { setEditingIndex(idx); setCurrentState({ ...row }); }}><img src={edit_icon} alt="edit_icon" className="icon-16" /></Button><Button size="sm" variant="link" className="text-danger" onClick={() => {
-                                                    setStateDistributions(prev =>
-                                                        prev.map((s, i) =>
-                                                            i === idx ? { ...s, __deleted: true } : s
-                                                        )
-                                                    );
-
-                                                    // if deleting the row being edited
-                                                    if (editingIndex === idx) {
-                                                        setEditingIndex(null);
-                                                        setCurrentState({
-                                                            state: "",
-                                                            vacancies: "",
-                                                            language: "",
-                                                            categories: {},
-                                                            disabilities: {},
-                                                            isProficientInLocalLanguage: false
-                                                        });
-                                                    }
-                                                }}
+                                                <td className="text-center"><Button size="sm" variant="link" onClick={() => handleDeleteState(idx)}
                                                 ><img src={delete_icon} alt="delete_icon" className="icon-16" /></Button></td>
                                             </tr>
                                         ))}

@@ -260,6 +260,41 @@ const RequisitionRequests = () => {
     };
   };
 
+  const renderPagination = () => {
+  const {
+    pages,
+    showStartEllipsis,
+    showEndEllipsis,
+  } = getVisiblePages(page, pageInfo.totalPages);
+
+  return (
+    <>
+      {showStartEllipsis && (
+        <li className="page-item disabled">
+          <span className="page-link">…</span>
+        </li>
+      )}
+
+      {pages.map(p => (
+        <li key={p} className={`page-item ${page === p ? "active" : ""}`}>
+          <button
+            className="page-link"
+            onClick={() => setPage(p)}
+            disabled={loading}
+          >
+            {p + 1}
+          </button>
+        </li>
+      ))}
+
+      {showEndEllipsis && (
+        <li className="page-item disabled">
+          <span className="page-link">…</span>
+        </li>
+      )}
+    </>
+  );
+};
   return (
     <div className="requisition-request">
       <Container fluid className="requisition-page">
@@ -682,47 +717,7 @@ const RequisitionRequests = () => {
                   </li>
 
                   {/* Pages */}
-                  {(() => {
-                    const {
-                      pages,
-                      showStartEllipsis,
-                      showEndEllipsis,
-                    } = getVisiblePages(page, pageInfo.totalPages);
-
-                    return (
-                      <>
-                        {/* Leading ellipsis */}
-                        {showStartEllipsis && (
-                          <li className="page-item disabled">
-                            <span className="page-link">…</span>
-                          </li>
-                        )}
-
-                        {/* Page numbers */}
-                        {pages.map(p => (
-                          <li
-                            key={p}
-                            className={`page-item ${page === p ? "active" : ""}`}
-                          >
-                            <button
-                              className="page-link"
-                              onClick={() => setPage(p)}
-                              disabled={loading}
-                            >
-                              {p + 1}
-                            </button>
-                          </li>
-                        ))}
-
-                        {/* Trailing ellipsis */}
-                        {showEndEllipsis && (
-                          <li className="page-item disabled">
-                            <span className="page-link">…</span>
-                          </li>
-                        )}
-                      </>
-                    );
-                  })()}
+                 {renderPagination()}
 
                   {/* Next */}
                   <li

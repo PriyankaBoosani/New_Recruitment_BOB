@@ -18,7 +18,13 @@ const GenericOrAnnexuresFormModal = ({
   const { t } = useTranslation(["genericOrAnnexures"]);
   const isTypeSelected = !!formData?.type;
   const MAX_PDF_SIZE = 5 * 1024 * 1024; // 5 MB
+let title = t("addgenAnn", "Add Generic / Annexures");
 
+if (isViewing) {
+  title = t("view", "View Generic / Annexures");
+} else if (isEditing) {
+  title = t("edit", "Edit Generic / Annexures");
+}
 
   return (
     <Modal
@@ -32,11 +38,7 @@ const GenericOrAnnexuresFormModal = ({
       <Modal.Header closeButton className="modal-header-custom">
         <div>
           <Modal.Title>
-            {isViewing
-              ? t("view", "View Generic / Annexures")
-              : isEditing
-                ? t("edit", "Edit Generic / Annexures")
-                : t("addgenAnn", "Add Generic / Annexures")}
+            {title}
           </Modal.Title>
 
           {!isViewing && (

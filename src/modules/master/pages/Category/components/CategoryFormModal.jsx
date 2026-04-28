@@ -68,7 +68,13 @@ const CategoryFormModal = ({
     onHide();
   };
 
+let title = t("add_category");
 
+if (isViewing) {
+  title = t("view_category");
+} else if (isEditing) {
+  title = t("edit_category");
+}
   return (
     <Modal
       show={show}
@@ -81,11 +87,7 @@ const CategoryFormModal = ({
       <Modal.Header closeButton className="modal-header-custom">
         <div>
           <Modal.Title>
-            {isViewing
-              ? t("view_category")
-              : isEditing
-                ? t("edit_category")
-                : t("add_category")}
+                {title}
           </Modal.Title>
           {!isEditing && !isViewing && (
             <p className="mb-0 small text-muted">

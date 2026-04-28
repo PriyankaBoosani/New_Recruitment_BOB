@@ -53,6 +53,13 @@ const LocationFormModal = ({
     }
 
   };
+  let title = t("addd");
+
+if (isViewing) {
+  title = t("view");
+} else if (isEditing) {
+  title = t("edit");
+}
   return (
     <Modal
       show={show}
@@ -66,7 +73,7 @@ const LocationFormModal = ({
       <Modal.Header closeButton className="modal-header-custom">
         <div>
           <Modal.Title>
-            {isViewing ? t("view") : isEditing ? t("edit") : t("addd")}
+            {title}
           </Modal.Title>
 
           {!isEditing && !isViewing && (
