@@ -115,7 +115,7 @@ const cameFromPreviewBack =
 const [showPdfViewer, setShowPdfViewer] = useState(false);
 const [loadingPdf, setLoadingPdf] = useState(false);
 const [page, setPage] = useState(0);
-const [pageSize, setPageSize] = useState(1);
+const [pageSize, setPageSize] = useState(10);
 
 
 
