@@ -197,7 +197,9 @@ const CandidatePreviewPage = ({ onHide }) => {
                 selectedDate: state,
                 page: state.page,
                 pageSize: state.pageSize,
-                filters: state.filters
+                filters: state.filters,
+                searchText: state.searchText,
+                activeStage: state.activeStage
               }
             })
           }
@@ -220,9 +222,21 @@ const CandidatePreviewPage = ({ onHide }) => {
                 position,
                 preloadedCandidates: state.candidates || [],
                 selectedDate,
-                page: state.page,
-                pageSize: state.pageSize,
-                filters: state.filters
+                  // 🔥 ADD THESE
+                  activeTab: state.activeTab,
+                  requisitionId: state.requisitionId,
+                  positionId: state.positionId,
+
+                  page: state.page,
+                  pageSize: state.pageSize,
+
+                  // 🔥 INTERVIEW FIX
+                  interviewPage: state.interviewPage,
+                  interviewPageSize: state.interviewPageSize,
+
+                  filters: state.filters,
+                  searchText: state.searchText,
+                  activeStage: state.activeStage
               }
             });
           }}

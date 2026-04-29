@@ -220,7 +220,7 @@ export default function CandidateScreening({ selectedJob }) {
     setPreviewUrl("");
   };
 
-  const isBackNavigation = location.state?.page !== undefined;
+  const isBackNavigation = location.state?.page !== undefined || location.state?.interviewPage !== undefined;
 
   // 🔍 Requisition search (debounced)
   const requisitionSearchTimeout = useRef(null);
@@ -408,6 +408,36 @@ export default function CandidateScreening({ selectedJob }) {
       setLoadingCandidates(false);
     }
   };
+
+  const handleJoiningDateChange = (value) => {
+  setJoiningDate(value);
+
+  if (!value) {
+    setFormErrors(prev => ({ ...prev, joiningDate: "" }));
+    return;
+  }
+
+  if (!acceptBeforeDate) {
+    setFormErrors(prev => ({
+      ...prev,
+      joiningDate: t("candidateWorkflow:select_accept_before_first"),
+    }));
+    return;
+  }
+
+  if (value <= acceptBeforeDate) {
+    setFormErrors(prev => ({
+      ...prev,
+      joiningDate: t("candidateWorkflow:must_be_greater_than_accept_before"),
+    }));
+  } else {
+    setFormErrors(prev => ({ ...prev, joiningDate: "" }));
+  }
+};
+const handleTemplateChange = (value) => {
+  setOfferTemplateId(value);
+  setSelectedTemplate(value);
+};
 
   const formatDateTime = (value) => {
     if (!value) return "-";
@@ -993,7 +1023,41 @@ useEffect(() => {
       console.error("Preview failed", err);
     }
   };
+const handleAcceptBeforeDateChange = (value) => {
+  setAcceptBeforeDate(value);
 
+  if (!value) {
+    setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
+    return;
+  }
+
+  if (value <= todayString()) {
+    setFormErrors(prev => ({
+      ...prev,
+      acceptBeforeDate: t("candidateWorkflow:must_be_greater_than_today"),
+    }));
+  } else {
+    setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
+  }
+};
+const handleStatusChange = (value) => {
+  setFilters(prev => ({
+    ...prev,
+    status: value ? [value] : [],
+  }));
+};
+const handleOfferStatusToggle = (status) => {
+  setFilters(prev => {
+    const alreadySelected = prev.status.includes(status);
+
+    return {
+      ...prev,
+      status: alreadySelected
+        ? prev.status.filter(s => s !== status)
+        : [...prev.status, status],
+    };
+  });
+};
 
   return (
     <div className="container-fluid px-5 py-4">
@@ -1126,12 +1190,7 @@ useEffect(() => {
                 <select
                   className="form-select fs-14 py-1 mt-0"
                   value={filters?.status[0] || ""}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      status: e.target.value ? [e.target.value] : [],
-                    }))
-                  }
+                  onChange={(e) => handleStatusChange(e.target.value)}
                 >
                   <option value="">{t("candidateWorkflow:all_statuses")}</option>
                   {/* {availableStatuses?.map((status) => (
@@ -1261,18 +1320,7 @@ useEffect(() => {
                   return (
                     <span
                       key={status}
-                      onClick={() =>
-                        setFilters((prev) => {
-                          const alreadySelected = prev.status.includes(status);
-
-                          return {
-                            ...prev,
-                            status: alreadySelected
-                              ? prev.status.filter((s) => s !== status)
-                              : [...prev.status, status],
-                          };
-                        })
-                      }
+                     onClick={() => handleOfferStatusToggle(status)}
                       className={`badge px-3 py-2 border-2 rounded fw-normal fs-12 ${isSelected
                         ? "orange-color orange-border"
                         : "bg-light text-muted border"
@@ -1317,10 +1365,7 @@ useEffect(() => {
 
                         }}
                         value={offerTemplateId}
-                        onChange={(e) => {
-                          setOfferTemplateId(e.target.value);
-                          setSelectedTemplate(e.target.value);
-                        }}
+                        onChange={(e) => handleTemplateChange(e.target.value)}
                       >
 
                         <option value="">
@@ -1428,24 +1473,7 @@ useEffect(() => {
                         style={{ width: "160px" }}
                         value={acceptBeforeDate}
                         min={todayString()}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setAcceptBeforeDate(value);
-
-                          if (!value) {
-                            setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
-                            return;
-                          }
-
-                          if (value <= todayString()) {
-                            setFormErrors(prev => ({
-                              ...prev,
-                              acceptBeforeDate: t("candidateWorkflow:must_be_greater_than_today"),
-                            }));
-                          } else {
-                            setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
-                          }
-                        }}
+                        onChange={(e) => handleAcceptBeforeDateChange(e.target.value)}
                       />
                       <small
                         className={`d-block mt-1 fs-12 ${formErrors.acceptBeforeDate ? "text-danger" : "invisible"
@@ -1464,32 +1492,7 @@ useEffect(() => {
                         style={{ width: "160px" }}
                         value={joiningDate}
                         min={acceptBeforeDate || todayString()}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setJoiningDate(value);
-
-                          if (!value) {
-                            setFormErrors(prev => ({ ...prev, joiningDate: "" }));
-                            return;
-                          }
-
-                          if (!acceptBeforeDate) {
-                            setFormErrors(prev => ({
-                              ...prev,
-                              joiningDate: t("candidateWorkflow:select_accept_before_first"),
-                            }));
-                            return;
-                          }
-
-                          if (value <= acceptBeforeDate) {
-                            setFormErrors(prev => ({
-                              ...prev,
-                              joiningDate: t("candidateWorkflow:must_be_greater_than_accept_before"),
-                            }));
-                          } else {
-                            setFormErrors(prev => ({ ...prev, joiningDate: "" }));
-                          }
-                        }}
+                        onChange={(e) => handleJoiningDateChange(e.target.value)}
 
                       />
                       <small

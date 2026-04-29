@@ -21,7 +21,10 @@ const CandidateTable = ({
   pageSize,
   totalPages,
   setPage,
-  setPageSize
+  setPageSize,
+  filter,
+  searchText,
+  activeStage
 }) => {
   const { t } = useTranslation(["verification", "common"]);
 
@@ -47,6 +50,13 @@ const CandidateTable = ({
         candidates: allCandidatesRaw,
         requisition,
         position,
+        page,
+        pageSize,
+        filter,
+        searchText,
+        activeStage,
+        fromCandidateList: true
+
       },
     });
   };
@@ -299,7 +309,7 @@ const CandidateTable = ({
               setPage(0);
             }}
           >
-            <option value={10}>10</option>
+            <option value={1}>1</option>
             <option value={20}>20</option>
             <option value={50}>50</option>
           </select>

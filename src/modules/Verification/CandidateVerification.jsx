@@ -66,6 +66,43 @@ export default function CandidateVerification() {
  
  
 const location = useLocation();
+const isBackNavigationRef = useRef(
+  sessionStorage.getItem("fromPreviewBack") === "true"
+);
+
+// Check for back navigation on mount
+useEffect(() => {
+  if (isBackNavigationRef.current) {
+    setTimeout(() => {
+      sessionStorage.removeItem("fromPreviewBack");
+      isBackNavigationRef.current = false;
+    }, 100); // 🔥 delay is IMPORTANT
+  }
+
+  navInitRef.current = false;
+}, []);
+
+useEffect(() => {
+  if (!location.state) return;
+
+  if (location.state.page !== undefined) {
+    setPage(location.state.page);
+  }
+
+  if (location.state.pageSize !== undefined) {
+    setPageSize(location.state.pageSize);
+  }
+
+  // Restore search text and filters
+  if (location.state.searchText !== undefined) {
+    setSearchText(location.state.searchText);
+  }
+
+  if (location.state.activeStage !== undefined) {
+    setActiveStage(location.state.activeStage);
+  }
+
+}, [location.state]); // 🔥 FIX
  
 const cameFromZonal =
   sessionStorage.getItem("fromZonalSubmit") === "true";
@@ -78,7 +115,7 @@ const cameFromPreviewBack =
 const [showPdfViewer, setShowPdfViewer] = useState(false);
 const [loadingPdf, setLoadingPdf] = useState(false);
 const [page, setPage] = useState(0);
-const [pageSize, setPageSize] = useState(10);
+const [pageSize, setPageSize] = useState(1);
 
 
 
@@ -144,16 +181,38 @@ const navPosition = location.state?.position || null;
   //     setMasterData(res.data);
   //   });
   // }, []);
- 
- 
- 
-useEffect(() => {
+
+  useEffect(() => {
+  if (navInitRef.current) {
+    navInitRef.current = false;
+    return;
+  }
 }, []);
  
- useEffect(() => {
+const isBackNavigation = isBackNavigationRef.current;
+
+// Reset page only when user manually changes filters (not during back navigation)
+useEffect(() => {
+  // Skip during initial load/back navigation
+  if (navInitRef.current || isBackNavigationRef.current) return;
+
+  // Reset page when filters change
   setPage(0);
 }, [activeStage, searchText, selectedRequisition, selectedPosition]);
 
+// Reset page when date changes (but not during back navigation)
+useEffect(() => {
+  // Skip during initial load/back navigation  
+  if (navInitRef.current || isBackNavigationRef.current) return;
+
+  setPage(0);
+}, [selectedDate]);
+// useEffect(() => {
+//   // When selection becomes empty → reset page
+//   if (!selectedRequisition || !selectedPosition) {
+//     setPage(0);
+//   }
+// }, [selectedRequisition, selectedPosition]);
  
 const formatApiDate = (d) => {
   if (!d) return null;
@@ -362,6 +421,16 @@ const totalElements = filteredCandidates.length;
 
 const totalPages = Math.ceil(totalElements / pageSize);
 
+useEffect(() => {
+  // Fix invalid page after data change, but not during back navigation
+  if (!isBackNavigationRef.current && page >= totalPages) {
+    setPage(0);
+  }
+}, [totalPages, page]);
+
+
+
+
 const startIndex = page * pageSize;
 const endIndex = startIndex + pageSize;
 
@@ -479,6 +548,8 @@ useEffect(() => {
  
   loadMasters();
 }, []);
+
+
 
 const DatePill = React.forwardRef(({ value, onClick }, ref) => (
   <div className="date-pill" onClick={onClick} ref={ref}>
@@ -643,6 +714,9 @@ isSaveEnabled={anyAbsentChanged}
         selectedDate={selectedDate}
         allCandidatesRaw={allCandidatesRaw}
         onViewFile={handleViewFile}
+        filter={filteredCandidates}
+        searchText={searchText}
+        activeStage={activeStage}
       />
  
  
