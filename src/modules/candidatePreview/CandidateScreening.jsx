@@ -285,7 +285,7 @@ export default function CandidateScreening({ selectedJob }) {
     }, 400);
 
     return () => clearTimeout(searchTimeoutRef.current);
-  }, [filters.searchText, activeTab]);
+  }, [filters.searchText]); // Remove activeTab from dependencies to prevent page reset on tab change
 
   useEffect(() => {
     fetchRequisitions("");
@@ -704,7 +704,7 @@ const handleTemplateChange = (value) => {
       categoryId: "",
       searchText: "",
     });
-    setPage(0);
+    // Don't reset page when changing tabs - preserve user's page position
   }, [activeTab]);
 
 useEffect(() => {
