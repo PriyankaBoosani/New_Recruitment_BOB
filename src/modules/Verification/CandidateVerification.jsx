@@ -71,39 +71,28 @@ const isBackNavigationRef = useRef(
 );
 
 // Check for back navigation on mount
-useEffect(() => {
-  if (isBackNavigationRef.current) {
-    setTimeout(() => {
-      sessionStorage.removeItem("fromPreviewBack");
-      isBackNavigationRef.current = false;
-    }, 100); // 🔥 delay is IMPORTANT
-  }
-
-  navInitRef.current = false;
-}, []);
-
+// useEffect(() => {
+//   isBackNavigationRef.current = sessionStorage.getItem("fromPreviewBack") === "true";
+  
+//   // Clean up sessionStorage after checking
+//   if (isBackNavigationRef.current) {
+//     sessionStorage.removeItem("fromPreviewBack");
+//   }
+// }, []);
 useEffect(() => {
   if (!location.state) return;
 
-  if (location.state.page !== undefined) {
-    setPage(location.state.page);
-  }
+  setPage(location.state.page ?? 0);
+  setPageSize(location.state.pageSize ?? 10);
 
-  if (location.state.pageSize !== undefined) {
-    setPageSize(location.state.pageSize);
-  }
+  // remove flag AFTER restore
+  setTimeout(() => {
+    sessionStorage.removeItem("fromPreviewBack");
+    isBackNavigationRef.current = false;
+  }, 50);
 
-  // Restore search text and filters
-  if (location.state.searchText !== undefined) {
-    setSearchText(location.state.searchText);
-  }
+}, [location.state]);
 
-  if (location.state.activeStage !== undefined) {
-    setActiveStage(location.state.activeStage);
-  }
-
-}, [location.state]); // 🔥 FIX
- 
 const cameFromZonal =
   sessionStorage.getItem("fromZonalSubmit") === "true";
  
@@ -191,22 +180,7 @@ const navPosition = location.state?.position || null;
  
 const isBackNavigation = isBackNavigationRef.current;
 
-// Reset page only when user manually changes filters (not during back navigation)
-useEffect(() => {
-  // Skip during initial load/back navigation
-  if (navInitRef.current || isBackNavigationRef.current) return;
 
-  // Reset page when filters change
-  setPage(0);
-}, [activeStage, searchText, selectedRequisition, selectedPosition]);
-
-// Reset page when date changes (but not during back navigation)
-useEffect(() => {
-  // Skip during initial load/back navigation  
-  if (navInitRef.current || isBackNavigationRef.current) return;
-
-  setPage(0);
-}, [selectedDate]);
 // useEffect(() => {
 //   // When selection becomes empty → reset page
 //   if (!selectedRequisition || !selectedPosition) {
@@ -584,6 +558,10 @@ const DatePill = React.forwardRef(({ value, onClick }, ref) => (
   onChange={(date) => {
     setSelectedDate(date);
     setIsCalendarOpen(false);
+
+    if (!isBackNavigationRef.current) {
+      setPage(0);
+    }
   }}
   onClickOutside={() => setIsCalendarOpen(false)}
   open={isCalendarOpen}
@@ -670,8 +648,17 @@ const DatePill = React.forwardRef(({ value, onClick }, ref) => (
   onRequisitionChange={(req) => {
     setSelectedRequisition(req);
     setSelectedPosition(null);   //  reset position when req changes
+      if (!isBackNavigationRef.current) {
+    setPage(0);
+  }
   }}
-  onPositionChange={setSelectedPosition}
+  onPositionChange={(pos) => {
+  setSelectedPosition(pos);
+
+  if (!isBackNavigationRef.current) {
+    setPage(0);
+  }
+}}
    closeCalendar={() => setIsCalendarOpen(false)}
 />
  
