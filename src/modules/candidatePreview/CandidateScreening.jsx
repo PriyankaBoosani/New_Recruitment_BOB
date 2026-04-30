@@ -205,6 +205,15 @@ export default function CandidateScreening({ selectedJob }) {
     return `${year}-${month}-${day}`;
   };
 
+  const hasLocationData = useMemo(() => {
+    const selected = positions.find(
+      (p) => p.jobPositions?.positionId === selectedPositionId
+    );
+
+    return (
+      selected?.jobPositions?.positionStateDistributions?.length > 0
+    );
+  }, [positions, selectedPositionId]);
 
   const navInitRef = useRef({
     requisitionId: null,
@@ -1645,6 +1654,7 @@ const handleOfferStatusToggle = (status) => {
             position={selectedPosition}
             isRankEnabled={isRankEnabled}
             filters={filters}   // ✅ ADD THIS
+            hasLocationData={hasLocationData}
           />
         )}
 

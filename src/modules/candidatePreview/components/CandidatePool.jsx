@@ -24,7 +24,8 @@ export default function CandidatePool({
   requisition,
   position,
   selectedRequisitionId,
-  isRankEnabled
+  isRankEnabled,
+  hasLocationData,
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const STATUS_CLASS_MAP = {
@@ -191,6 +192,8 @@ export default function CandidatePool({
     );
   };
 
+  const columnCount = hasLocationData ? 7 : 6;
+
   /* ---------- Render ---------- */
 
   return (
@@ -228,9 +231,11 @@ export default function CandidatePool({
                 {t("candidateWorkflow:status")}
               </th>
 
-              <th className="fs-14 fw-normal py-3">
-                {t("common:location")}
-              </th>
+              {hasLocationData && (
+                <th className="fs-14 fw-normal py-3">
+                  {t("common:location")}
+                </th>
+              )}
 
               <th className="fs-14 fw-normal py-3">
                 {t("common:category")}
@@ -329,10 +334,12 @@ export default function CandidatePool({
                       )} */}
                     </span>
                   </td>
-
-                  <td className="align-content-center">
-                    <p className="fw-normal fs-14 mb-0">{c.location}</p>
-                  </td>
+                  
+                  {hasLocationData && (
+                    <td className="align-content-center">
+                      <p className="fw-normal fs-14 mb-0">{c.location}</p>
+                    </td>
+                  )}
 
                   <td className="align-content-center">
                     <p className="fw-normal fs-14 mb-0">{c.categoryName}</p>
