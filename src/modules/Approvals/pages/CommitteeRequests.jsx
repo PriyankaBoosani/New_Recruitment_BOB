@@ -155,20 +155,27 @@ const executeApprovalAction = async ({
   return await rejectPanels(ids, commentText, positionId);
 };
 
-    const handleApprovalAction = async (modalComment) => {
-
-  const ids = Array.from(selectedReqIds);
-
-  if (ids.length === 0) return;
-
-  const commentText = modalComment?.trim();
+const validateApprovalInput = (ids, commentText) => {
+  if (ids.length === 0) return false;
 
   if (!commentText) {
     toast.error("Comment is required");
-    return;
+    return false;
   }
 
-  // ✅ moved logic
+  return true;
+};
+const resetApprovalState = () => {
+  setSelectedReqIds(new Set());
+  setShowCommentModal(false);
+};
+
+const handleApprovalAction = async (modalComment) => {
+  const ids = Array.from(selectedReqIds);
+  const commentText = modalComment?.trim();
+
+  if (!validateApprovalInput(ids, commentText)) return;
+
   const success = await executeApprovalAction({
     actionType,
     ids,
@@ -178,10 +185,9 @@ const executeApprovalAction = async ({
     rejectPanels
   });
 
-  if (success) {
-    setSelectedReqIds(new Set());
-    setShowCommentModal(false);
-  }
+  if (!success) return;
+
+  resetApprovalState();
 };
     const getStatusBadge = (status = "") => {
         switch (status) {

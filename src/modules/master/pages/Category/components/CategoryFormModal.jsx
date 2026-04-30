@@ -68,13 +68,21 @@ const CategoryFormModal = ({
     onHide();
   };
 
-let title = t("add_category");
+const title = isViewing
+  ? t("view_category")
+  : isEditing
+  ? t("edit_category")
+  : t("add_category");
 
-if (isViewing) {
-  title = t("view_category");
-} else if (isEditing) {
-  title = t("edit_category");
-}
+const isCreateMode = !isEditing && !isViewing;
+const handleFormSubmit = (e) => {
+  if (isViewing) {
+    e.preventDefault();
+    onHide();
+  } else {
+    handleSubmit(e);
+  }
+};
   return (
     <Modal
       show={show}
@@ -89,7 +97,7 @@ if (isViewing) {
           <Modal.Title>
                 {title}
           </Modal.Title>
-          {!isEditing && !isViewing && (
+          {isCreateMode  && (
             <p className="mb-0 small text-muted">
               {t("choose_add_method")}
             </p>
@@ -100,7 +108,7 @@ if (isViewing) {
       {/* ---------------- BODY ---------------- */}
       <Modal.Body className="p-4">
         {/* -------- Tabs (Add Only) -------- */}
-        {!isEditing && !isViewing && (
+        {isCreateMode  && (
           <div className="tab-buttons mb-4">
             <Button
               variant={activeTab === "manual" ? "light" : "outline-light"}
@@ -124,17 +132,7 @@ if (isViewing) {
 
         {/* -------- MANUAL ENTRY -------- */}
         {activeTab === "manual" ? (
-          <Form
-            onSubmit={
-              isViewing
-                ? (e) => {
-                  e.preventDefault();
-                  onHide();
-                }
-                : handleSubmit
-            }
-            noValidate
-          >
+          <Form onSubmit={handleFormSubmit}>
 
             <Row className="g-3">
               <Col md={6}>

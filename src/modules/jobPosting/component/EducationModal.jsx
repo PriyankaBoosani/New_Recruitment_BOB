@@ -588,7 +588,8 @@ const buildEducationPayload = () => {
                                                 onChange={(e) => {
                                                     let value = e.target.value;
 
-                                                    if (!/^[0-9]*\.?[0-9]*$/.test(value)) return;
+                                                    //if (!/^[0-9]*\.?[0-9]*$/.test(value)) return;
+                                                    if (!/^\d{0,3}(\.\d{0,2})?$/.test(value)) return;
 
                                                     const parts = value.split(".");
                                                     if (parts[1]?.length > 2) return;

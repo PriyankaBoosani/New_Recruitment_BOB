@@ -20,13 +20,21 @@ const SpecialCategoryFormModal = ({
   t,
   ...importProps
 }) => {
-  let title = t("added");
+ const title = isViewing
+  ? t("view")
+  : isEditing
+  ? t("edit")
+  : t("added");
 
-if (isViewing) {
-  title = t("view");
-} else if (isEditing) {
-  title = t("edit");
-}
+const isCreateMode = !isEditing && !isViewing;
+const handleFormSubmit = (e) => {
+  if (isViewing) {
+    e.preventDefault();
+    onHide();
+  } else {
+    handleSave(e);
+  }
+};
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
       <Modal.Header closeButton className="modal-header-custom">
@@ -45,7 +53,7 @@ if (isViewing) {
       </Modal.Header>
 
       <Modal.Body className="p-4">
-        {!isEditing && !isViewing && (
+        {isCreateMode && (
           <div className="tab-buttons mb-4">
             <Button
               className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
@@ -66,16 +74,7 @@ if (isViewing) {
         )}
 
         {activeTab === 'manual' ? (
-          <Form
-            onSubmit={
-              isViewing
-                ? (e) => {
-                  e.preventDefault();
-                  onHide();
-                }
-                : handleSave
-            }
-          >
+          <Form onSubmit={handleFormSubmit}>
 
             <Row className="g-3">
               <Col md={6}>

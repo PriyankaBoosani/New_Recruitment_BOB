@@ -44,13 +44,22 @@ const PositionFormModal = ({
   fetchPositions,
   t
 }) => {
-let title = t("add_position");
+const title = isViewing
+  ? t("view")
+  : isEditing
+  ? t("edit_position")
+  : t("add_position");
 
-if (isViewing) {
-  title = t("view");
-} else if (isEditing) {
-  title = t("edit_position");
-}
+const isCreateMode = !isViewing && !isEditing;
+
+const handleSubmit = (e) => {
+  if (isViewing) {
+    e.preventDefault();
+    onHide();
+  } else {
+    handleSave(e);
+  }
+};
   return (
     <Modal
       show={show}
@@ -67,7 +76,7 @@ if (isViewing) {
             {title}
           </Modal.Title>
 
-          {!isEditing && !isViewing && (
+          {isCreateMode && (
             <p className="mb-0 small text-muted para">
               {t("choose_add_method")}
             </p>
@@ -98,17 +107,7 @@ if (isViewing) {
         )}
 
         {activeTab === "manual" ? (
-          <Form
-            onSubmit={
-              isViewing
-                ? (e) => {
-                  e.preventDefault();
-                  onHide();
-                }
-                : handleSave
-            }
-            noValidate
-          >
+          <Form onSubmit={handleSubmit}>
             <Row className="g-3">
               <Col xs={6}>
                 <Form.Group className="form-group">

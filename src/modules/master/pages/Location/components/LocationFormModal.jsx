@@ -53,13 +53,21 @@ const LocationFormModal = ({
     }
 
   };
-  let title = t("addd");
+ const title = isViewing
+  ? t("view")
+  : isEditing
+  ? t("edit")
+  : t("addd");
 
-if (isViewing) {
-  title = t("view");
-} else if (isEditing) {
-  title = t("edit");
-}
+const isCreateMode = !isEditing && !isViewing;
+const handleFormSubmit = (e) => {
+  if (isViewing) {
+    e.preventDefault();
+    onHide();
+  } else {
+    handleSave(e);
+  }
+};
   return (
     <Modal
       show={show}
@@ -76,7 +84,7 @@ if (isViewing) {
             {title}
           </Modal.Title>
 
-          {!isEditing && !isViewing && (
+          {isCreateMode && (
             <p className="mb-0 small text-muted para">
               {t("choose_add_method")}
             </p>
@@ -87,7 +95,7 @@ if (isViewing) {
       {/* ===== BODY ===== */}
       <Modal.Body className="p-4">
         {/* Tabs hidden in View */}
-        {!isEditing && !isViewing && (
+        {isCreateMode && (
           <div className="tab-buttons mb-4">
             <Button
               variant={activeTab === "manual" ? "light" : "outline-light"}
@@ -111,16 +119,7 @@ if (isViewing) {
 
         {/* ===== MANUAL TAB ===== */}
         {activeTab === "manual" ? (
-          <Form
-            onSubmit={
-              isViewing
-                ? (e) => {
-                  e.preventDefault();
-                  onHide();
-                }
-                : handleSave
-            }
-          >
+         <Form onSubmit={handleFormSubmit}>
             <Row className="g-3">
               {/* CITY */}
               <Col xs={12} md={6}>

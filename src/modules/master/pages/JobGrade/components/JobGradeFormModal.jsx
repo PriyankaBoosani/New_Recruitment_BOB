@@ -35,13 +35,21 @@ const JobGradeFormModal = ({
   t,
   ...importProps
 }) => {
-  let title = t("added");
+  const title = isViewing
+  ? t("view")
+  : isEditing
+  ? t("edit")
+  : t("added");
 
-if (isViewing) {
-  title = t("view");
-} else if (isEditing) {
-  title = t("edit");
-}
+const isCreateMode = !isViewing && !isEditing;
+const handleSubmit = (e) => {
+  if (isViewing) {
+    e.preventDefault();
+    onHide();
+  } else {
+    handleSave(e);
+  }
+};
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
       <Modal.Header closeButton className="modal-header-custom">
@@ -50,7 +58,7 @@ if (isViewing) {
             {title}
           </Modal.Title>
 
-          {!isEditing && !isViewing && (
+          {isCreateMode && (
             <p className="mb-0 small text-muted para">
               {t("choose_add_method")}
             </p>
@@ -81,16 +89,7 @@ if (isViewing) {
         )}
 
         {activeTab === 'manual' ? (
-          <Form
-            onSubmit={
-              isViewing
-                ? (e) => {
-                  e.preventDefault();
-                  onHide();
-                }
-                : handleSave
-            }
-          >
+          <Form onSubmit={handleSubmit}>
 
             <Row className="g-3">
               <Col md={6}>

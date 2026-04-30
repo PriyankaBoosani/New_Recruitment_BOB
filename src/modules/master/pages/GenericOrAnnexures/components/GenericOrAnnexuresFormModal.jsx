@@ -18,14 +18,19 @@ const GenericOrAnnexuresFormModal = ({
   const { t } = useTranslation(["genericOrAnnexures"]);
   const isTypeSelected = !!formData?.type;
   const MAX_PDF_SIZE = 5 * 1024 * 1024; // 5 MB
-let title = t("addgenAnn", "Add Generic / Annexures");
-
-if (isViewing) {
-  title = t("view", "View Generic / Annexures");
-} else if (isEditing) {
-  title = t("edit", "Edit Generic / Annexures");
-}
-
+const title = isViewing
+  ? t("view", "View Generic / Annexures")
+  : isEditing
+  ? t("edit", "Edit Generic / Annexures")
+  : t("addgenAnn", "Add Generic / Annexures");
+const handleFormSubmit = (e) => {
+  if (isViewing) {
+    e.preventDefault();
+    onHide();
+  } else {
+    handleSave(e);
+  }
+};
   return (
     <Modal
       show={show}
@@ -51,16 +56,7 @@ if (isViewing) {
 
       {/* ===== BODY ===== */}
       <Modal.Body className="p-4">
-        <Form
-          onSubmit={
-            isViewing
-              ? (e) => {
-                e.preventDefault();
-                onHide();
-              }
-              : handleSave
-          }
-        >
+        <Form onSubmit={handleFormSubmit}>
           <Row className="g-3">
             {/* ===== TYPE FIELD (REQUIRED) ===== */}
             <Col xs={12}>

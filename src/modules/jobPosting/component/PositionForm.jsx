@@ -361,7 +361,8 @@ const PositionForm = ({
                       if (value.length === 1 && value === " ") return;
 
                       // collapse multiple spaces inside
-                      value = value.replace(/[ \t]+/g, " ");
+                     // value = value.replace(/[ \t]+/g, " ");
+                      value = value.replace(/\s{2,}/g, " ");
 
                       setIndentOthers(value);
                     }}

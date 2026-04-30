@@ -4,37 +4,50 @@ import ErrorMessage from '../../../../../shared/components/ErrorMessage';
 import DepartmentImportView from '../components/DepartmentImportModal';
 import { handleValidatedInput, INPUT_PATTERNS }
   from '../../../../../shared/utils/inputHandlers';
-const DepartmentFormModal = ({
-  show,
-  onHide,
-  isEditing,
-  isViewing,
-  activeTab,
-  setActiveTab,
-  formData,
-  setFormData,
-  handleInputChange,
-  errors,
-  setErrors,
-  handleSave,
-  t,
-  ...importProps
-}) => {
-  let title = t("addDepartment");
+const DepartmentFormModal = (props) => {
+  const {
+    show,
+    onHide,
+    isEditing,
+    isViewing,
+    activeTab,
+    setActiveTab,
+    formData,
+    setFormData,
+    handleInputChange,
+    errors,
+    setErrors,
+    handleSave,
+    t,
+    ...importProps
+  } = props;
 
-if (isViewing) {
-  title = t("viewDepartment");
-} else if (isEditing) {
-  title = t("editDepartment");
-}
+
+  const getModalTitle = (isViewing, isEditing, t) => {
+  if (isViewing) return t("viewDepartment");
+  if (isEditing) return t("editDepartment");
+  return t("addDepartment");
+};
+const getSubmitHandler = (isViewing, onHide, handleSave) => {
+  if (isViewing) {
+    return (e) => {
+      e.preventDefault();
+      onHide();
+    };
+  }
+  return handleSave;
+};
+  const title = getModalTitle(isViewing, isEditing, t);
+  const isCreateMode = !isEditing && !isViewing;
+  const onSubmitHandler = getSubmitHandler(isViewing, onHide, handleSave);
+
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
       <Modal.Header closeButton className="modal-header-custom">
         <div>
-          <Modal.Title>
-           {title}
-          </Modal.Title>
-          {!isEditing && !isViewing && (
+          <Modal.Title>{title}</Modal.Title>
+
+          {isCreateMode && (
             <p className="mb-0 small text-muted para">
               {t("choose_add_method")}
             </p>
@@ -43,7 +56,8 @@ if (isViewing) {
       </Modal.Header>
 
       <Modal.Body className="p-4">
-        {!isEditing && !isViewing && (
+
+        {isCreateMode && (
           <div className="tab-buttons mb-4">
             <Button
               className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
@@ -64,7 +78,7 @@ if (isViewing) {
         )}
 
         {activeTab === 'manual' ? (
-          <Form onSubmit={isViewing ? (e) => { e.preventDefault(); onHide(); } : handleSave}>
+          <Form onSubmit={onSubmitHandler}>
             <Row className="g-3">
               <Col xs={12}>
                 <Form.Group className="form-group">

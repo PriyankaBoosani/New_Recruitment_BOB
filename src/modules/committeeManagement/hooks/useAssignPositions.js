@@ -484,6 +484,37 @@ const pushToPayload = (payload, type, panelPayload) => {
   }
 };
 
+const buildPayloadFromCommittees = (
+  selectedCommittees,
+  originalCommittees,
+  payload
+) => {
+  const flattened = flattenCommittees(selectedCommittees);
+
+  flattened.forEach(({ committeeType, panel, seqIndex }) => {
+    if (!panel) return;
+
+    const originalPanel = originalCommittees?.[committeeType]
+      ?.find(p => p.id === panel.id);
+
+    const panelPayload = buildPanelPayload(panel, originalPanel, seqIndex);
+
+    pushToPayload(payload, committeeType, panelPayload);
+  });
+};
+
+const flattenCommittees = (selectedCommittees) => {
+  const result = [];
+
+  Object.entries(selectedCommittees).forEach(([committeeType, panels]) => {
+    panels.forEach((panel, seqIndex) => {
+      result.push({ committeeType, panel, seqIndex });
+    });
+  });
+
+  return result;
+};
+
   const handleAssignCommittees = async () => {
     if (loading) return;
     if (!selectedPosition) {
@@ -502,24 +533,28 @@ const pushToPayload = (payload, type, panelPayload) => {
         compensationPanelList: []
       };
 
-    Object.entries(selectedCommittees).flatMap(([committeeType, panels]) =>
-          panels.map((panel, seqIndex) => ({
-            committeeType,
-            panel,
-            seqIndex
-          }))
-        )
-      .forEach(({ committeeType, panel, seqIndex }) => {
-        if (!panel) return;
+    // Object.entries(selectedCommittees).flatMap(([committeeType, panels]) =>
+    //       panels.map((panel, seqIndex) => ({
+    //         committeeType,
+    //         panel,
+    //         seqIndex
+    //       }))
+    //     )
+    //   .forEach(({ committeeType, panel, seqIndex }) => {
+    //     if (!panel) return;
 
-        const originalPanel = originalCommittees?.[committeeType]
-          ?.find(p => p.id === panel.id);
+    //     const originalPanel = originalCommittees?.[committeeType]
+    //       ?.find(p => p.id === panel.id);
 
-        const panelPayload = buildPanelPayload(panel, originalPanel, seqIndex);
+    //     const panelPayload = buildPanelPayload(panel, originalPanel, seqIndex);
 
-        pushToPayload(payload, committeeType, panelPayload);
-      });
-
+    //     pushToPayload(payload, committeeType, panelPayload);
+    //   });
+buildPayloadFromCommittees(
+      selectedCommittees,
+      originalCommittees,
+      payload
+    );
       const res = await committeeManagementService.assignPanelToPosition(
         selectedPosition,
         payload
