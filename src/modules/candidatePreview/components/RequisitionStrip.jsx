@@ -60,7 +60,34 @@ const RequisitionStrip = ({
       return <li key={idx}>{cleaned}</li>;
     });
   };
+const renderVacancySection = () => {
+  if (job?.positionStateDistributions?.length > 0) {
+    return (
+      <LocationWiseVacancyTable
+        positionStateDistributions={job.positionStateDistributions}
+        states={masterData?.states || []}
+        cities={masterData?.cities || []}
+        reservationCategories={masterData?.reservationCategories || []}
+        disabilityCategories={masterData?.disabilityCategories || []}
+      />
+    );
+  }
 
+  if (
+    job?.positionStateDistributions?.length === 0 &&
+    job?.nationalCategoryDistribution
+  ) {
+    return (
+      <NationalVacancyTable
+        nationalCategoryDistribution={job.nationalCategoryDistribution}
+        reservationCategories={masterData?.reservationCategories || []}
+        disabilityCategories={masterData?.disabilityCategories || []}
+      />
+    );
+  }
+
+  return null;
+};
 
 
 
@@ -507,24 +534,7 @@ const getEduWiseExperience = () => {
 
               </div>
 
-              {job?.positionStateDistributions?.length > 0 && (
-                <LocationWiseVacancyTable
-                  positionStateDistributions={job.positionStateDistributions}
-                  states={masterData?.states || []}
-                  cities={masterData?.cities || []}
-                  reservationCategories={masterData?.reservationCategories || []}
-                  disabilityCategories={masterData?.disabilityCategories || []}
-                />
-              )}
-
-              {job?.positionStateDistributions?.length === 0 &&
-                job?.nationalCategoryDistribution && (
-                  <NationalVacancyTable
-                    nationalCategoryDistribution={job.nationalCategoryDistribution}
-                    reservationCategories={masterData?.reservationCategories || []}
-                    disabilityCategories={masterData?.disabilityCategories || []}
-                  />
-                )}
+             {renderVacancySection()}
             </>
           )}
 

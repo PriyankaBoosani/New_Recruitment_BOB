@@ -600,6 +600,46 @@ const runZonalValidations = ({
   //     return updated;
   //   });
   // };
+  const validateCriteria = (form, errors, t) => {
+  if (!form.isWorkCriteriaMet) {
+    errors.isWorkCriteriaMet = t("please_select_option");
+  }
+
+  if (!form.isAgeCriteriaMet) {
+    errors.isAgeCriteriaMet = t("please_select_option");
+  }
+
+  if (!form.isEducationCriteriaMet) {
+    errors.isEducationCriteriaMet = t("please_select_option");
+  }
+};
+const validateRemarks = (form, errors, t) => {
+  const checkRemark = (field, remarkField) => {
+    if (form[field] === "NO" || form[field] === "DISCREPANCY") {
+      if (!form[remarkField]?.trim()) {
+        errors[remarkField] = t("required");
+      }
+    }
+  };
+
+  checkRemark("isWorkCriteriaMet", "workCriteriaRemark");
+  checkRemark("isAgeCriteriaMet", "ageCriteriaRemark");
+  checkRemark("isEducationCriteriaMet", "educationCriteriaRemark");
+};
+const validateSubmitDate = (form, errors, t) => {
+  if (!form.submitBeforeDate) {
+    errors.submitBeforeDate = t("please_select_date");
+    return;
+  }
+
+  const selectedDate = new Date(form.submitBeforeDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (selectedDate <= today) {
+    errors.submitBeforeDate = t("date_after_today");
+  }
+};
 
   const handleRadioChange = (field, value) => {
     setScreeningForm(prev => {
@@ -755,104 +795,45 @@ const runZonalValidations = ({
   };
 
 
-  const validateForm = () => {
-    const newErrors = {};
+ const validateForm = () => {
+  const newErrors = {};
 
-    // Criteria validations
-    if (!screeningForm.isWorkCriteriaMet) {
-      newErrors.isWorkCriteriaMet = t("please_select_option");
+  // ✅ Split validations
+  validateCriteria(screeningForm, newErrors, t);
+  validateRemarks(screeningForm, newErrors, t);
+
+  if (!disableShortlistedSection && !screeningForm.isShortlisted) {
+    newErrors.isShortlisted = t("please_select_option");
+  }
+
+  // ❗ Business rule (UNCHANGED)
+  if (hasAnyRejectedDocument()) {
+    const allYes =
+      screeningForm.isWorkCriteriaMet === "YES" &&
+      screeningForm.isAgeCriteriaMet === "YES" &&
+      screeningForm.isEducationCriteriaMet === "YES";
+
+    if (allYes) {
+      toast.error("All criteria cannot be YES when any document is REJECTED");
+      return false;
     }
+  }
 
-    if (!screeningForm.isAgeCriteriaMet) {
-      newErrors.isAgeCriteriaMet = t("please_select_option");
+  // ❗ Final remark validation
+  if (screeningForm.isShortlisted === "NO") {
+    if (!screeningForm.finalScreeningRemark?.trim()) {
+      newErrors.finalScreeningRemark = t("validation:required");
     }
+  }
 
-    if (!screeningForm.isEducationCriteriaMet) {
-      newErrors.isEducationCriteriaMet = t("please_select_option");
-    }
+  // ❗ Date validation
+  if (disableShortlistedSection) {
+    validateSubmitDate(screeningForm, newErrors, t);
+  }
 
-    // Work criteria remark mandatory if NO or DISCREPANCY
-    if (
-      screeningForm.isWorkCriteriaMet === "NO" ||
-      screeningForm.isWorkCriteriaMet === "DISCREPANCY"
-    ) {
-      if (!screeningForm.workCriteriaRemark?.trim()) {
-        newErrors.workCriteriaRemark = t("required");
-      }
-    }
-
-    // Age criteria remark mandatory if NO or DISCREPANCY
-    if (
-      screeningForm.isAgeCriteriaMet === "NO" ||
-      screeningForm.isAgeCriteriaMet === "DISCREPANCY"
-    ) {
-      if (!screeningForm.ageCriteriaRemark?.trim()) {
-        newErrors.ageCriteriaRemark = t("required");
-      }
-    }
-
-    // Education criteria remark mandatory if NO or DISCREPANCY
-    if (
-      screeningForm.isEducationCriteriaMet === "NO" ||
-      screeningForm.isEducationCriteriaMet === "DISCREPANCY"
-    ) {
-      if (!screeningForm.educationCriteriaRemark?.trim()) {
-        newErrors.educationCriteriaRemark = t("required");
-      }
-    }
-
-    if (!disableShortlistedSection && !screeningForm.isShortlisted) {
-      newErrors.isShortlisted = t("please_select_option");
-    }
-
-    if (hasAnyRejectedDocument()) {
-      const allYes =
-        screeningForm.isWorkCriteriaMet === "YES" &&
-        screeningForm.isAgeCriteriaMet === "YES" &&
-        screeningForm.isEducationCriteriaMet === "YES";
-
-      if (allYes) {
-        toast.error(
-          "All criteria cannot be YES when any document is REJECTED"
-        );
-        return false;
-      }
-    }
-
-    // const derivedStatus = deriveShortlistStatus();
-
-    // if (derivedStatus === "NO") {
-    //   if (!screeningForm.finalScreeningRemark?.trim()) {
-    //     newErrors.finalScreeningRemark = t("validation:required");
-    //   }
-    // }
-
-    if (screeningForm.isShortlisted === "NO") {
-      if (!screeningForm.finalScreeningRemark?.trim()) {
-        newErrors.finalScreeningRemark = t("validation:required");
-      }
-    }
-
-    // Submit before date validation
-    if (disableShortlistedSection) {
-      if (!screeningForm.submitBeforeDate) {
-        newErrors.submitBeforeDate = t("please_select_date");
-      } else {
-        const selectedDate = new Date(screeningForm.submitBeforeDate);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        if (selectedDate <= today) {
-          newErrors.submitBeforeDate = t("date_after_today");
-        }
-      }
-    }
-
-    setErrors(newErrors);
-
-    // valid if no errors
-    return Object.keys(newErrors).length === 0;
-  };
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
   const areAllDocumentsValidated = () => {
     return documentRows.every(doc => {
