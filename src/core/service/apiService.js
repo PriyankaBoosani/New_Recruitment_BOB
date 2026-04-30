@@ -146,7 +146,7 @@ const attachInterceptors = (instance) => {
           } catch (err) {
             isRefreshing = false;
             redirectToLogin();
-            return Promise.reject(err);
+            throw err;
           }
         }
 
@@ -162,7 +162,7 @@ const attachInterceptors = (instance) => {
         return Promise.resolve(error.response.data);
       }
 
-      return Promise.reject(error);
+      throw error;
     }
   );
 };
@@ -179,7 +179,7 @@ attachInterceptors(nodeApi);
 masterDropdownApi.interceptors.request.use(addAuthHeader);
 masterDropdownApi.interceptors.response.use(
   (res) => res.data,
-  (err) => Promise.reject(err)
+  (err) => { throw err; }
 );
 
 /* ---------------------------
