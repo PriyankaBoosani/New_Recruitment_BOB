@@ -10,7 +10,7 @@ const HeaderWithBackss = ({ title, subtitle }) => {
 
   const state = location.state || {};
 
-  // ✅ Hooks must be here
+  //  Hooks must be here
   const privileges = useSelector((state) => state.user.privileges);
 
  const handleBack = () => {
@@ -22,7 +22,9 @@ const HeaderWithBackss = ({ title, subtitle }) => {
     position: state.position,
     preloadedCandidates:
       state.preloadedCandidates || state.candidates || [],
-    selectedDate: state.selectedDate
+    selectedDate: state.selectedDate,
+    page: state.page,
+    pageSize: state.pageSize
   };
 
   if (privileges?.Interview) {

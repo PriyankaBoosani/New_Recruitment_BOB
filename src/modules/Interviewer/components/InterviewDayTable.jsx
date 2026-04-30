@@ -50,6 +50,8 @@ const InterviewDayTable = ({
         candidates: allCandidatesRaw,
         requisition,
         position,
+        page,        
+        pageSize
       },
     });
   };
