@@ -36,6 +36,11 @@ const RequisitionStrip = ({
     const orderedPattern =
   /^\s*(?:\(?\d{1,5}[\).\]]|\(?[ivxlcdm]{1,7}[\).\]])\s*/i;
 
+  const isOrderedLine = (line) => {
+  if (typeof line !== "string" || line.length > 200) return false;
+  return orderedPattern.test(line);
+};
+
   const renderBullets = (text) => {
     if (!text) return <li>-</li>;
 
@@ -48,7 +53,7 @@ const RequisitionStrip = ({
       const cleaned = line.replace(/\.+$/, "");
 
       // ✅ If already numbered → DO NOT ADD BULLET
-      if (orderedPattern.test(cleaned)) {
+      if (isOrderedLine(cleaned)) {
         return (
           <div key={idx} className="no-bullet-line">
             {cleaned}
