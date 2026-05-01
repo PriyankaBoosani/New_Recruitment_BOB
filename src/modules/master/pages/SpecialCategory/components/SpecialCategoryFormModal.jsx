@@ -42,13 +42,11 @@ const handleFormSubmit = (e) => {
           <Modal.Title>
             {title}
           </Modal.Title>
-
-
-          <p className="small text-muted para">
-            {isViewing || isEditing
-              ? null
-              : t("choose_add_method")}
-          </p>
+           {isCreateMode && (
+              <p className="small text-muted para">
+                {t("choose_add_method")}
+              </p>
+            )}
         </div>
       </Modal.Header>
 

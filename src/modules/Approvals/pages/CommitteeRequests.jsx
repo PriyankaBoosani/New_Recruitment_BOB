@@ -170,6 +170,12 @@ const resetApprovalState = () => {
   setShowCommentModal(false);
 };
 
+const handleApprovalSuccess = (success) => {
+  if (!success) return false;
+  resetApprovalState();
+  return true;
+};
+
 const handleApprovalAction = async (modalComment) => {
   const ids = Array.from(selectedReqIds);
   const commentText = modalComment?.trim();
@@ -185,9 +191,7 @@ const handleApprovalAction = async (modalComment) => {
     rejectPanels
   });
 
-  if (!success) return;
-
-  resetApprovalState();
+  handleApprovalSuccess(success);
 };
     const getStatusBadge = (status = "") => {
         switch (status) {

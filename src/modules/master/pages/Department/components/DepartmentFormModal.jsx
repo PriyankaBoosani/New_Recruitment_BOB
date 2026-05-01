@@ -41,45 +41,13 @@ const getSubmitHandler = (isViewing, onHide, handleSave) => {
   const isCreateMode = !isEditing && !isViewing;
   const onSubmitHandler = getSubmitHandler(isViewing, onHide, handleSave);
 
-  return (
-    <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
-      <Modal.Header closeButton className="modal-header-custom">
-        <div>
-          <Modal.Title>{title}</Modal.Title>
 
-          {isCreateMode && (
-            <p className="mb-0 small text-muted para">
-              {t("choose_add_method")}
-            </p>
-          )}
-        </div>
-      </Modal.Header>
 
-      <Modal.Body className="p-4">
-
-        {isCreateMode && (
-          <div className="tab-buttons mb-4">
-            <Button
-              className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
-              variant={activeTab === 'manual' ? 'light' : 'outline-light'}
-              onClick={() => setActiveTab('manual')}
-            >
-              {t("manual_entry")}
-            </Button>
-
-            <Button
-              className={`tab-button ${activeTab === 'import' ? 'active' : ''}`}
-              variant={activeTab === 'import' ? 'light' : 'outline-light'}
-              onClick={() => setActiveTab('import')}
-            >
-              {t("import_file")}
-            </Button>
-          </div>
-        )}
-
-        {activeTab === 'manual' ? (
-          <Form onSubmit={onSubmitHandler}>
-            <Row className="g-3">
+  const renderContent = () => {
+  if (activeTab === 'manual') {
+    return (
+      <Form onSubmit={onSubmitHandler}>
+        <Row className="g-3">
               <Col xs={12}>
                 <Form.Group className="form-group">
                   <Form.Label>
@@ -141,28 +109,68 @@ const getSubmitHandler = (isViewing, onHide, handleSave) => {
               </Col>
             </Row>
 
-            <Modal.Footer className="px-0 pt-3 pb-0 modal-footer-custom">
-              <Button variant="outline-secondary" onClick={onHide}>
-                {isViewing ? t("close") : t("cancel")}
-              </Button>
-              {!isViewing && (
-                <Button variant="primary" type="submit">
-                  {isEditing ? t("updateDepartment") : t("save")}
-                </Button>
-              )}
-            </Modal.Footer>
-          </Form>
-        ) : (
-          <>
-            {/* Import view handles upload internally */}
-            <DepartmentImportView
-              t={t}
-              onClose={onHide}
-              onSuccess={importProps.onSuccess}
-            />
 
-          </>
+        <Modal.Footer className="px-0 pt-3 pb-0 modal-footer-custom">
+          <Button variant="outline-secondary" onClick={onHide}>
+            {isViewing ? t("close") : t("cancel")}
+          </Button>
+
+          {!isViewing && (
+            <Button variant="primary" type="submit">
+              {isEditing ? t("updateDepartment") : t("save")}
+            </Button>
+          )}
+        </Modal.Footer>
+      </Form>
+    );
+  }
+
+  return (
+    <DepartmentImportView
+      t={t}
+      onClose={onHide}
+      onSuccess={importProps.onSuccess}
+    />
+  );
+};
+
+  return (
+    <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
+      <Modal.Header closeButton className="modal-header-custom">
+        <div>
+          <Modal.Title>{title}</Modal.Title>
+
+          {isCreateMode && (
+            <p className="mb-0 small text-muted para">
+              {t("choose_add_method")}
+            </p>
+          )}
+        </div>
+      </Modal.Header>
+
+      <Modal.Body className="p-4">
+
+        {isCreateMode && (
+          <div className="tab-buttons mb-4">
+            <Button
+              className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
+              variant={activeTab === 'manual' ? 'light' : 'outline-light'}
+              onClick={() => setActiveTab('manual')}
+            >
+              {t("manual_entry")}
+            </Button>
+
+            <Button
+              className={`tab-button ${activeTab === 'import' ? 'active' : ''}`}
+              variant={activeTab === 'import' ? 'light' : 'outline-light'}
+              onClick={() => setActiveTab('import')}
+            >
+              {t("import_file")}
+            </Button>
+          </div>
         )}
+
+        {renderContent()}
       </Modal.Body>
     </Modal>
   );

@@ -214,42 +214,39 @@ const validateSinglePanel = (panel, today) => {
         }
       };
 
-
-      const mapAssigned = (list) =>
-        list.map(p => {
-          const rawStatus = p.positionPanelStatus ?? "";
-          const isLocked = p.positionPanelStatus === "L1_APPROVED";
-          return {
-            id: p.interviewPanel.interviewPanelId,
-            positionPanelId: p.positionPanelId,
-            name: p.interviewPanel.panelName,
-            committeeName: p.interviewPanel.committee.committeeName.toUpperCase(),
-            committeeId: p.interviewPanel.committee.interviewCommitteeId,
-            members: p.interviewPanel.panelMembers.map(m => ({
-              ...m.panelMember,
-              interviewPanelMemberId: m.interviewPanelMemberId
-            })),
-            startDate: p.startDate || "",
-            endDate: p.endDate || "",
+      const mapPanelMembers = (panelMembers) => {
+        return panelMembers.map(m => ({
+          ...m.panelMember,
+          interviewPanelMemberId: m.interviewPanelMemberId
+        }));
+      };
 
 
-            canEdit: !isLocked && p.canEdit !== false,
-            //      canEdit:
-            // committeeType === "INTERVIEW"
-            //   ? p.canEdit !== false
-            //   : false,
+     const transformAssignedPanel = (p, getStatusBadge) => {
+    const rawStatus = p.positionPanelStatus ?? "";
+    const isLocked = p.positionPanelStatus === "L1_APPROVED";
 
-            // ✅ SAME PATTERN AS REQUISITION
-            rawStatus,
-            statusType: getStatusBadge(rawStatus),
+    return {
+      id: p.interviewPanel.interviewPanelId,
+      positionPanelId: p.positionPanelId,
+      name: p.interviewPanel.panelName,
+      committeeName: p.interviewPanel.committee.committeeName.toUpperCase(),
+      committeeId: p.interviewPanel.committee.interviewCommitteeId,
+      members: mapPanelMembers(p.interviewPanel.panelMembers),
+      startDate: p.startDate || "",
+      endDate: p.endDate || "",
+      canEdit: !isLocked && p.canEdit !== false,
+      rawStatus,
+      statusType: getStatusBadge(rawStatus),
+      positionPanelStatus: rawStatus
+        .toLowerCase()
+        .replace("_", " ")
+        .replace(/^l1/, "L1")
+    };
+  };
 
-            // display text
-            positionPanelStatus: rawStatus
-              .toLowerCase()
-              .replace("_", " ")
-              .replace(/^l1/, "L1")
-          };
-        });
+  const mapAssigned = (list, getStatusBadge) =>
+    list.map(p => transformAssignedPanel(p, getStatusBadge));
 
 
       const assigned = {
@@ -444,6 +441,20 @@ const isDirty = () => {
       ? "L1_PENDING"
       : panel.rawStatus;
 
+
+      const mapPayloadMembers = (members, panelId) => {
+  return members.map(m => ({
+    panelId,
+    panelMember: {
+      name: m.name,
+      role: m.role,
+      email: m.email,
+      userId: m.userId
+    },
+    interviewPanelMemberId: m.interviewPanelMemberId
+  }));
+};
+
   return {
     positionId: null,
     actionEnum,
@@ -456,16 +467,7 @@ const isDirty = () => {
         committeeDesc: panel.committeeDesc || "",
         interviewCommitteeId: panel.committeeId
       },
-      panelMembers: panel.members.map(m => ({
-        panelId: panel.id,
-        panelMember: {
-          name: m.name,
-          role: m.role,
-          email: m.email,
-          userId: m.userId
-        },
-        interviewPanelMemberId: m.interviewPanelMemberId
-      })),
+      panelMembers: mapPayloadMembers(panel.members, panel.id),
       interviewPanelId: panel.id
     },
     startDate: panel.startDate,

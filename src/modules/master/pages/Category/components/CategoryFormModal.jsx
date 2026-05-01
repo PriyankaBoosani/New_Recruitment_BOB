@@ -83,6 +83,132 @@ const handleFormSubmit = (e) => {
     handleSubmit(e);
   }
 };
+
+const renderContent = () => {
+  if (activeTab === "manual") {
+    return (
+      <Form onSubmit={handleFormSubmit}>
+      <Row className="g-3">
+            <Col md={6}>
+              <Form.Label>
+                {t("code")} <span className="text-danger">*</span>
+              </Form.Label>
+              {isViewing ? (
+                <div className="form-control-view">
+                  {formData.code || "-"}
+                </div>
+              ) : (
+                <Form.Control
+                  name="code"
+                  maxLength={200}
+                  value={formData.code}
+                  placeholder={t("enter_code")}
+                  className="form-control-custom"
+                  onChange={(e) =>
+                    handleValidatedInput({
+                      e,
+                      fieldName: "code",
+                      setFormData,
+                      setErrors,
+                      pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
+                      errorMessage: t("validation:no_special_charses")
+                    })
+                  }
+                />
+
+              )}
+              {!isViewing && <ErrorMessage>{errors.code}</ErrorMessage>}
+
+            </Col>
+
+            <Col md={6}>
+              <Form.Label>
+                {t("name")} <span className="text-danger">*</span>
+              </Form.Label>
+              {isViewing ? (
+                <div className="form-control-view">
+                  {formData.name || "-"}
+                </div>
+              ) : (
+                <Form.Control
+                  name="name"
+                  maxLength={200}
+                  value={formData.name}
+                  placeholder={t("enter_name")}
+                  className="form-control-custom"
+                  onChange={(e) =>
+                    handleValidatedInput({
+                      e,
+                      fieldName: "name",
+                      setFormData,
+                      setErrors,
+                      pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at,
+                      errorMessage: t("validation:no_special_charsess")
+                    })
+                  }
+                />
+
+              )}
+              {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
+
+            </Col>
+
+            <Col md={12}>
+              <Form.Label>
+                {t("description")}{" "}
+                <span className="text-danger">*</span>
+              </Form.Label>
+              {isViewing ? (
+                <div
+                  className="form-control-view"
+                  style={{ whiteSpace: "pre-line" }}
+                >
+                  {formData.description || "-"}
+                </div>
+              ) : (
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  maxLength={2000}
+                  name="description"
+                  value={formData.description}
+                  placeholder={t("enter_description")}
+                  className="form-control-custom"
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      description: e.target.value,
+                    })
+                  }
+                />
+              )}
+              {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
+            </Col>
+          </Row>
+
+        <Modal.Footer className="px-0 pt-4 modal-footer-custom">
+          <Button variant="outline-secondary" onClick={onHide}>
+            {isViewing ? t("close") : t("cancel")}
+          </Button>
+
+          {!isViewing && (
+            <Button variant="primary" type="submit">
+              {isEditing ? t("update") : t("save")}
+            </Button>
+          )}
+        </Modal.Footer>
+      </Form>
+    );
+  }
+
+  return (
+    <CategoryImportModal
+      onImport={onImport}
+      onClose={onHide}
+      onSuccess={importProps.onSuccess}
+    />
+  );
+};
   return (
     <Modal
       show={show}
@@ -131,124 +257,7 @@ const handleFormSubmit = (e) => {
         )}
 
         {/* -------- MANUAL ENTRY -------- */}
-        {activeTab === "manual" ? (
-          <Form onSubmit={handleFormSubmit}>
-
-            <Row className="g-3">
-              <Col md={6}>
-                <Form.Label>
-                  {t("code")} <span className="text-danger">*</span>
-                </Form.Label>
-                {isViewing ? (
-                  <div className="form-control-view">
-                    {formData.code || "-"}
-                  </div>
-                ) : (
-                  <Form.Control
-                    name="code"
-                    maxLength={200}
-                    value={formData.code}
-                    placeholder={t("enter_code")}
-                    className="form-control-custom"
-                    onChange={(e) =>
-                      handleValidatedInput({
-                        e,
-                        fieldName: "code",
-                        setFormData,
-                        setErrors,
-                        pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
-                        errorMessage: t("validation:no_special_charses")
-                      })
-                    }
-                  />
-
-                )}
-                {!isViewing && <ErrorMessage>{errors.code}</ErrorMessage>}
-
-              </Col>
-
-              <Col md={6}>
-                <Form.Label>
-                  {t("name")} <span className="text-danger">*</span>
-                </Form.Label>
-                {isViewing ? (
-                  <div className="form-control-view">
-                    {formData.name || "-"}
-                  </div>
-                ) : (
-                  <Form.Control
-                    name="name"
-                    maxLength={200}
-                    value={formData.name}
-                    placeholder={t("enter_name")}
-                    className="form-control-custom"
-                    onChange={(e) =>
-                      handleValidatedInput({
-                        e,
-                        fieldName: "name",
-                        setFormData,
-                        setErrors,
-                        pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at,
-                        errorMessage: t("validation:no_special_charsess")
-                      })
-                    }
-                  />
-
-                )}
-                {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
-
-              </Col>
-
-              <Col md={12}>
-                <Form.Label>
-                  {t("description")}{" "}
-                  <span className="text-danger">*</span>
-                </Form.Label>
-                {isViewing ? (
-                  <div
-                    className="form-control-view"
-                    style={{ whiteSpace: "pre-line" }}
-                  >
-                    {formData.description || "-"}
-                  </div>
-                ) : (
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    maxLength={2000}
-                    name="description"
-                    value={formData.description}
-                    placeholder={t("enter_description")}
-                    className="form-control-custom"
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        description: e.target.value,
-                      })
-                    }
-                  />
-                )}
-                {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
-              </Col>
-            </Row>
-
-            <Modal.Footer className="px-0 pt-4 modal-footer-custom">
-              <Button variant="outline-secondary" onClick={onHide}>
-                {isViewing ? t("close") : t("cancel")}
-              </Button>
-
-              {!isViewing && (
-                <Button variant="primary" type="submit">
-                  {isEditing ? t("update") : t("save")}
-                </Button>
-              )}
-            </Modal.Footer>
-
-          </Form>
-        ) : (
-          /* -------- IMPORT TAB -------- */
-          <CategoryImportModal onImport={onImport} onClose={onHide} onSuccess={importProps.onSuccess} />
-        )}
+        {renderContent()}
       </Modal.Body>
     </Modal>
   );

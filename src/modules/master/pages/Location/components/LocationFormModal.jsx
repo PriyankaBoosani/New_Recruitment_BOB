@@ -68,59 +68,12 @@ const handleFormSubmit = (e) => {
     handleSave(e);
   }
 };
-  return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      size="lg"
-      centered
-      className="user-modal"
-      scrollable
-    >
-      {/* ===== HEADER ===== */}
-      <Modal.Header closeButton className="modal-header-custom">
-        <div>
-          <Modal.Title>
-            {title}
-          </Modal.Title>
 
-          {isCreateMode && (
-            <p className="mb-0 small text-muted para">
-              {t("choose_add_method")}
-            </p>
-          )}
-        </div>
-      </Modal.Header>
-
-      {/* ===== BODY ===== */}
-      <Modal.Body className="p-4">
-        {/* Tabs hidden in View */}
-        {isCreateMode && (
-          <div className="tab-buttons mb-4">
-            <Button
-              variant={activeTab === "manual" ? "light" : "outline-light"}
-              className={`tab-button ${activeTab === "manual" ? "active" : ""
-                }`}
-              onClick={() => setActiveTab("manual")}
-            >
-              {t("manual_entry")}
-            </Button>
-
-            <Button
-              variant={activeTab === "import" ? "light" : "outline-light"}
-              className={`tab-button ${activeTab === "import" ? "active" : ""
-                }`}
-              onClick={() => setActiveTab("import")}
-            >
-              {t("import_file")}
-            </Button>
-          </div>
-        )}
-
-        {/* ===== MANUAL TAB ===== */}
-        {activeTab === "manual" ? (
-         <Form onSubmit={handleFormSubmit}>
-            <Row className="g-3">
+const renderContent = () => {
+  if (activeTab === "manual") {
+    return (
+      <Form onSubmit={handleFormSubmit}>
+        <Row className="g-3">
               {/* CITY */}
               <Col xs={12} md={6}>
                 <Form.Group className="form-group">
@@ -188,32 +141,94 @@ const handleFormSubmit = (e) => {
               </Col>
             </Row>
 
-            {/* ===== FOOTER ===== */}
-            <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
-              {isViewing ? (
-                <Button variant="outline-secondary" onClick={onHide}>
-                  {t("close")}
-                </Button>
-              ) : (
-                <>
-                  <Button variant="outline-secondary" onClick={onHide}>
-                    {t("cancel")}
-                  </Button>
-                  <Button variant="primary" type="submit">
-                    {isEditing ? t("update") : t("save")}
-                  </Button>
-                </>
-              )}
-            </Modal.Footer>
-          </Form>
-        ) : (
-          /* ===== IMPORT TAB ===== */
-          <LocationImportModal
-            t={t}
-            onClose={onHide}
-            onSuccess={importProps.onSuccess}
-          />
+        {renderFooter()}
+      </Form>
+    );
+  }
+
+  return (
+    <LocationImportModal
+      t={t}
+      onClose={onHide}
+      onSuccess={importProps.onSuccess}
+    />
+  );
+};
+
+const renderFooter = () => {
+  if (isViewing) {
+    return (
+      <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
+        <Button variant="outline-secondary" onClick={onHide}>
+          {t("close")}
+        </Button>
+      </Modal.Footer>
+    );
+  }
+
+  return (
+    <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
+      <Button variant="outline-secondary" onClick={onHide}>
+        {t("cancel")}
+      </Button>
+
+      <Button variant="primary" type="submit">
+        {isEditing ? t("update") : t("save")}
+      </Button>
+    </Modal.Footer>
+  );
+};
+  return (
+    <Modal
+      show={show}
+      onHide={onHide}
+      size="lg"
+      centered
+      className="user-modal"
+      scrollable
+    >
+      {/* ===== HEADER ===== */}
+      <Modal.Header closeButton className="modal-header-custom">
+        <div>
+          <Modal.Title>
+            {title}
+          </Modal.Title>
+
+          {isCreateMode && (
+            <p className="mb-0 small text-muted para">
+              {t("choose_add_method")}
+            </p>
+          )}
+        </div>
+      </Modal.Header>
+
+      {/* ===== BODY ===== */}
+      <Modal.Body className="p-4">
+        {/* Tabs hidden in View */}
+        {isCreateMode && (
+          <div className="tab-buttons mb-4">
+            <Button
+              variant={activeTab === "manual" ? "light" : "outline-light"}
+              className={`tab-button ${activeTab === "manual" ? "active" : ""
+                }`}
+              onClick={() => setActiveTab("manual")}
+            >
+              {t("manual_entry")}
+            </Button>
+
+            <Button
+              variant={activeTab === "import" ? "light" : "outline-light"}
+              className={`tab-button ${activeTab === "import" ? "active" : ""
+                }`}
+              onClick={() => setActiveTab("import")}
+            >
+              {t("import_file")}
+            </Button>
+          </div>
         )}
+
+        {/* ===== MANUAL TAB ===== */}
+        {renderContent()}
       </Modal.Body>
     </Modal>
   );

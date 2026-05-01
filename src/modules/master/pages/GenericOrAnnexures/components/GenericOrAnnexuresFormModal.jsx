@@ -31,6 +31,12 @@ const handleFormSubmit = (e) => {
     handleSave(e);
   }
 };
+
+const handleFileClick = () => {
+  if (isTypeSelected) {
+    document.getElementById("pdfUpload").click();
+  }
+};
   return (
     <Modal
       show={show}
@@ -169,12 +175,7 @@ const handleFormSubmit = (e) => {
                           ? "pointer"
                           : "not-allowed"
                       }}
-                      onClick={() =>
-                        isTypeSelected &&
-                        document
-                          .getElementById("pdfUpload")
-                          .click()
-                      }
+                      onClick={handleFileClick}
                     >
                       <span className="text-muted">
                         {formData?.file?.name ||
