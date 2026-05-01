@@ -155,7 +155,7 @@ const Login = () => {
         </div>
 
         <form className="login_form" onSubmit={handleLogin}>
-          <label>Email Id:</label>
+          <label htmlFor="email">Email Id:</label>
           <input
             type="email"
             value={email}
@@ -164,7 +164,7 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
 
-          <label>Password:</label>
+          <label htmlFor="password">Password:</label>
           <div className="" style={{ position: 'relative' }}>
             <input
               type={showPassword ? "text" : "password"}

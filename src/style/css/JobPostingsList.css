@@ -106,13 +106,6 @@
   /* ensure normal checkbox size */
 }
 
-.requisition-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  border: 1px solid #ACBED4;
-}
 
 .subbtn {
   background-color: #42579F !important;

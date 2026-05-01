@@ -7,8 +7,14 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
   height: 100vh;
+  min-height: 100vh;
+
   overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .app-container {
@@ -237,13 +243,6 @@ body {
   color: #7B91B0;
   box-shadow: 0 -4px 12px #00000014;
   width: 100%;
-}
-
-/* Ensure the footer stays at the bottom */
-body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 /* Make sure main content pushes the footer down */

@@ -296,8 +296,7 @@ body.modal-open .modal-fullscreen-sm-down .modal-header {
 }
 
 body.modal-open .modal-fullscreen-sm-down .modal-footer {
-    /* position: sticky; */
-    /* bottom: 0; */
+  
     z-index: 6;
     background: #fff;
 }
@@ -315,11 +314,6 @@ body.modal-open {
     padding-right: 0 !important;
 }
 
-/* Ensure modal dialog inline style left/right don't shift layout */
-.modal-dialog[style] {
-    left: auto !important;
-    right: auto !important;
-}
 
 /* ---------- Form controls ---------- */
 .form-label {

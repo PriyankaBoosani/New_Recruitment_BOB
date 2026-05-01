@@ -18,18 +18,6 @@
   height: 18px;
 }
 
-.register-link {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 14px;
-}
-
-.register-link a {
-  color: #ff6a00;
-  text-decoration: none;
-  font-weight: bold;
-}
-
 
 /* Base layout */
 .login-container {

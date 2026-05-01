@@ -385,7 +385,6 @@
   border-collapse: separate;
   border-spacing: 0;
   background-color: #ffffff;
-  /* border-radius: 8px; */
   overflow: hidden;
 }
 
@@ -550,13 +549,10 @@
 
 /* TOP TOOLBAR */
 .verification-toolbar {
-  /* margin-left: -35px;
-  margin-right: -35px; */
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 0px;
-  /* background: #91380c; */
   border-radius: 0px;
 }
 
@@ -568,7 +564,6 @@
   border: 1px solid #e0e0e0;
   padding: 6px 10px;
   width: 350px; 
-  /* border-radius: 6px; */
 }
 
 .search-box input {
@@ -581,25 +576,15 @@
 
 /* REQUISITION SELECTOR */
 .requisition-selector-row {
-  /* margin-left: -35px;
-  margin-right: -35px; */
   background: #fff;
   padding: 10px 12px;
-  /* border-radius: 8px; */
   margin-bottom: 6px;
 }
 
-/* REMOVE PAGE BOTTOM GAP */
-/* .candidate-verification-page {
-  padding-bottom: 0;
-} */
 
 .stage-filter-row {
-  /* margin-left:-35px;
-  margin-right: -35px; */
   padding: 12px 16px;
   background: #fff;
-  /* border-radius: 10px; */
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
 }
@@ -624,14 +609,6 @@ color: rgb(228, 116, 51);
 }
 
 
-
-/* .candidate-verification-page {
-  margin-top: 2px; 
-} */
-
-
-
-
 .candidate-verification-page {
  
   max-width: 1800px;
@@ -644,8 +621,6 @@ color: rgb(228, 116, 51);
 
 .verification-table-wrapper {
   padding-top: 10px;
-  /* margin-left: -35px;
-  margin-right: -35px; */
   background: #ffffff;
   margin-top: 0;
 
@@ -663,7 +638,6 @@ color: rgb(228, 116, 51);
   font-size: 16px;
   color: #1f2937;
   padding: 12px 14px; 
-  /* border-bottom: 1px solid #e5e7eb; */
 }
 
 .verification-table thead th {
@@ -688,8 +662,6 @@ color: rgb(228, 116, 51);
 
 /* REQUISITION STRIP – SUBTLE SIDE LINES */
 .requisition-strip {
-  /* margin-left: -18px;
-  margin-right: -18px; */
   background: #f3f3f3;
   position: relative;   /* ADD THIS */
 }
@@ -775,9 +747,6 @@ color: rgb(228, 116, 51);
   pointer-events: none;
 }
 
-/* .table-footer {
-  border-top: 1px solid #e5e7eb;
-} */
 
 .verification-table-wrapper .table-footer {
   border-top: 1px solid #e5e7eb;
