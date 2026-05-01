@@ -27,6 +27,8 @@ const createCertGroup = () => ({
     certifications: [createCertRow()]
 });
 
+const percentagePattern = /^\d{0,3}(?:\.\d{0,2})?$/;
+
 export default function EducationModal({
     show,
     mode,
@@ -400,6 +402,11 @@ const buildEducationPayload = () => {
   };
 };
 
+const isValidPercentage = (value) => {
+  if (typeof value !== "string" || value.length > 6) return false; // DoS protection
+  return percentagePattern.test(value);
+};
+
     return (
         <Modal show={show} onHide={handleClose} size="xl" scrollable centered className="edu-modal">
             <Modal.Header closeButton className="edu-modal-header">
@@ -589,7 +596,7 @@ const buildEducationPayload = () => {
                                                     let value = e.target.value;
 
                                                     //if (!/^[0-9]*\.?[0-9]*$/.test(value)) return;
-                                                    if (!/^\d{0,3}(\.\d{0,2})?$/.test(value)) return;
+                                                    if (!isValidPercentage(value)) return;
 
                                                     const parts = value.split(".");
                                                     if (parts[1]?.length > 2) return;

@@ -362,7 +362,7 @@ const PositionForm = ({
 
                       // collapse multiple spaces inside
                      // value = value.replace(/[ \t]+/g, " ");
-                      value = value.replace(/\s{2,}/g, " ");
+                      value = value.replace(/ +/g, " ");
 
                       setIndentOthers(value);
                     }}
@@ -451,17 +451,15 @@ const PositionForm = ({
           </Col>
 
           <Col md={4}><Form.Label>{t("addPosition:min_age")} <span className="text-danger">*</span></Form.Label><Form.Control name="minAge" type="text" placeholder={t("addPosition:min_age")} inputMode="numeric" value={formData.minAge} disabled={isViewMode} onChange={(e) => {
-            let value = e.target.value;
+              let value = e.target.value;
 
-            // allow only digits
-            value = value.replace(/\D/g, "");
+            if (value.length === 1 && value === " ") return;
 
-            // limit to 2 digits
-            if (value.length > 2) return;
+            if (value.length > 200) return; // DoS protection
 
-            handleInputChange({
-              target: { name: "minAge", value }
-            });
+            value = value.replace(/ +/g, " ");
+
+            setIndentOthers(value);
           }} />
             <ErrorMessage>{renderError(errors.minAge)}</ErrorMessage></Col>
           <Col md={4}><Form.Label>{t("addPosition:max_age")}<span className="text-danger">*</span></Form.Label><Form.Control name="maxAge" type="text" placeholder={t("addPosition:max_age")} inputMode="numeric" disabled={isViewMode} value={formData.maxAge} onChange={(e) => {
