@@ -280,15 +280,6 @@ candidate-screening-tabs-header ul {
 }
 
 
-/* ===== ITEM ALIGNMENT ===== */
-.item {
-	display: flex;
-	align-items: center;
-	font-size: 13px;
-	margin-bottom: 6px;
-	color: #404040;
-}
-
 /* ===== OUTLINED DOTS (MATCH DESIGN) ===== */
 .dot {
   width: 12px;
@@ -380,6 +371,7 @@ candidate-screening-tabs-header ul {
   align-items: center;
   font-size: 13px;
   margin-bottom: 6px;
+  color: #404040;
 }
 
 /* LABEL (takes space) */

@@ -107,8 +107,8 @@
 .add-button:hover {
     transform: translateY(-1px);
 }
-
 .buttonnonebg {
+    /* base reset */
     background: none;
     border: none;
     color: #0d6efd;
@@ -116,6 +116,10 @@
     font: inherit;
     cursor: pointer;
     outline: inherit;
+
+    /* overridden style (latest behavior) */
+    background-color: #fff !important;
+    border: 1px solid #ced4da !important;
 }
 
 /* View Mode Styles */
@@ -831,10 +835,6 @@ body.modal-open {
     position: fixed !important;
 }
 
-.buttonnonebg {
-    background-color: #fff !important;
-    border: 1px solid #ced4da !important;
-}
 
 .buttonnonebg:hover {
     background-color: #fff !important;

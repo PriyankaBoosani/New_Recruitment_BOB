@@ -123,11 +123,7 @@ body {
   border-radius: 4px;
 }
 
-/* Active link styling */
-.navbar-nav .nav-link.active {
-  font-weight: 500;
-  color: #0d6efd;
-}
+
 
 /* Dropdown menu styling */
 .navbar .dropdown-menu {
@@ -270,8 +266,9 @@ main {
 
 
 .navbar-nav .nav-link.active {
-  color: #162B75;
-  position: relative;
+   font-weight: 500;     /* from first */
+  color: #162B75;       /* latest applied */
+  position: relative;   /* from second */
 }
 
 .navbar-nav .nav-link.active::after  {

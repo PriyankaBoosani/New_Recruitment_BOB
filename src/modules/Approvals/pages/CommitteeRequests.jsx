@@ -193,6 +193,28 @@ const handleApprovalAction = async (modalComment) => {
 
   handleApprovalSuccess(success);
 };
+const isPanelMatching = (
+  panelItem,
+  allowedStatuses,
+  searchInput,
+  status
+) => {
+  const panelName =
+    panelItem.interviewPanel?.panelName?.toLowerCase() || "";
+
+  const panelStatus = panelItem.positionPanelStatus;
+
+  const roleStatuses = allowedStatuses.map(s => s.value);
+
+  const roleMatch = roleStatuses.includes(panelStatus);
+
+  const searchMatch = panelName.includes(searchInput.toLowerCase());
+
+  const statusMatch =
+    status === "ALL" || panelStatus === status;
+
+  return roleMatch && searchMatch && statusMatch;
+};
     const getStatusBadge = (status = "") => {
         switch (status) {
             case "L1_PENDING":
@@ -234,23 +256,9 @@ const handleApprovalAction = async (modalComment) => {
         ...panelData.compensationPanelList
     ];
 
-    const filteredPanels = allPanels.filter(panelItem => {
-
-        const panelName = panelItem.interviewPanel?.panelName?.toLowerCase() || "";
-        const panelStatus = panelItem.positionPanelStatus;
-
-        // role based allowed statuses
-        const roleStatuses = allowedStatuses.map(s => s.value);
-
-        const roleMatch = roleStatuses.includes(panelStatus);
-
-        const searchMatch = panelName.includes(searchInput.toLowerCase());
-
-        const statusMatch =
-            status === "ALL" || panelStatus === status;
-
-        return roleMatch && searchMatch && statusMatch;
-    });
+    const filteredPanels = allPanels.filter(panelItem =>
+  isPanelMatching(panelItem, allowedStatuses, searchInput, status)
+);
     const totalPages = Math.ceil(filteredPanels.length / pageSize);
 
     const paginatedPanels = filteredPanels.slice(

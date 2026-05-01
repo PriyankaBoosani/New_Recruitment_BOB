@@ -369,8 +369,10 @@ const PositionForm = ({
                       setIndentOthers(value);
                     }}
                     onBlur={() => {
-                      // remove trailing space only
-                      setIndentOthers(prev => prev.replace(/\s+$/, ""));
+                      setIndentOthers(prev => {
+                        if (typeof prev !== "string") return prev;
+                        return prev.trimEnd();
+                      });
                     }}
                   />
                   {!indentOthers.trim() && (

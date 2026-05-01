@@ -45,15 +45,6 @@
 
 /* History icon */
 
-/* Meta info */
-/* .user-meta {
-  font-size: 12px;
-  color: #6c757d;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  gap: 4px;
-} */
 .extensions-page .user-meta {
   font-size: 0.75rem;
   color: #6c757d;
@@ -229,11 +220,6 @@
   white-space: nowrap;
 }
 
-/* .status-badge {
-  font-size: 12px;
-  font-weight: 500;
-  padding: 3px 10px;
-} */
 /* Approved */
 .extensions-page .status-approved {
   background-color: #e6f4ea !important;
@@ -256,7 +242,6 @@
   color: #D73C40 !important;
   font-weight: 400;
   font-size: 0.875em;
-  /* border: 1px solid #f5c2c7; */
 }
 
 /* ===== SELECTION SECTION ===== */
@@ -293,7 +278,6 @@
   border-radius: 8px;
   font-size: 0.875rem;
   background: #ffffff;
-  /* transition: all 0.2s ease; */
 }
 
 .extensions-page .assign-positions-page .form-select:disabled {
@@ -422,7 +406,6 @@
   border-radius: 8px;
   margin-left: 0px;
   margin-right: 0px;
-  /* border: 1px solid #ddd; */
   border: 1px solid #ACBED4;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }

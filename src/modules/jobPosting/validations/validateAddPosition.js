@@ -107,82 +107,90 @@ const validateEducation = (educationData, errors) => {
   }
 };
 
+const hasValidDuration = (exp) =>
+  exp.years !== undefined && exp.years !== null && exp.years !== '';
+
+const isEmptyExperienceRow = (exp) =>
+  !exp.educationLevel &&
+  (exp.years === undefined || exp.years === null || exp.years === '');
+
+const validateMandatorySimpleExperience = (exp, errors) => {
+  const years = exp.years === "" ? null : Number(exp.years);
+  const months = exp.months === "" ? null : Number(exp.months);
+
+  if (years === null && months === null) {
+    errors.mandatoryExperience = "validation:experience_duration_required";
+    return;
+  }
+
+  if (!exp.description?.trim()) {
+    errors.mandatoryExperience = "validation:experience_details_required";
+  }
+};
+
+const validateMandatoryEducationExperience = (formData, errors) => {
+  const eduExps = formData.mandatoryExperience?.educationLevelExperiences || [];
+
+  if (!eduExps.length) {
+    errors.mandatoryExperience = "validation:experience_duration_required";
+    return;
+  }
+
+  const isValid = eduExps.every(exp => {
+    if (!exp.educationLevel) return false;
+    return hasValidDuration(exp);
+  });
+
+  if (!isValid) {
+    errors.mandatoryExperience = "validation:qualification_and_duration_required";
+  }
+
+  if (!formData.mandatoryExperience.description?.trim()) {
+    errors.mandatoryExperience = "validation:experience_details_required";
+  }
+};
+
+const validatePreferredExperience = (formData, errors) => {
+  const eduExps = formData.preferredExperience?.educationLevelExperiences || [];
+
+  if (!eduExps.length) {
+    errors.preferredExperience = "validation:experience_duration_required";
+    return;
+  }
+
+  let hasQualificationError = false;
+  let hasDurationError = false;
+
+  eduExps.forEach(exp => {
+    if (isEmptyExperienceRow(exp)) return;
+
+    if (!exp.educationLevel) hasQualificationError = true;
+    if (!hasValidDuration(exp)) hasDurationError = true;
+  });
+
+  if (hasQualificationError && hasDurationError) {
+    errors.preferredExperience = "validation:qualification_and_duration_required";
+  } else if (hasQualificationError) {
+    errors.preferredExperience = "validation:qualification_required";
+  } else if (hasDurationError) {
+    errors.preferredExperience = "validation:experience_duration_required";
+  }
+
+  if (!formData.preferredExperience.description?.trim()) {
+    errors.preferredExperience = "validation:experience_details_required";
+  }
+};
+
 // 👉 SAME EXPERIENCE LOGIC (NO CHANGE)
 const validateExperienceSection = (formData, errors) => {
-  const validateExperience = (exp, key) => {
-    const years = exp.years === "" ? null : Number(exp.years);
-    const months = exp.months === "" ? null : Number(exp.months);
-
-    if (years === null && months === null) {
-      errors[key] = "validation:experience_duration_required";
-      return;
-    }
-
-    if (!exp.description?.trim()) {
-      errors[key] = "validation:experience_details_required";
-    }
-  };
-
   if (!formData.useMandatoryEducationLevelExperience) {
-    validateExperience(formData.mandatoryExperience, "mandatoryExperience");
+    validateMandatorySimpleExperience(formData.mandatoryExperience, errors);
   } else {
-    const eduExps = formData.mandatoryExperience?.educationLevelExperiences || [];
-
-    if (!eduExps.length) {
-      errors.mandatoryExperience = "validation:experience_duration_required";
-    } else {
-      const isValid = eduExps.every(exp => {
-        const hasDuration = exp.years !== undefined && exp.years !== null && exp.years !== '';
-        const hasQualification = exp.educationLevel;
-
-        if (!hasQualification) return false;
-        return hasDuration;
-      });
-
-      if (!isValid) {
-        errors.mandatoryExperience = "validation:qualification_and_duration_required";
-      }
-
-      if (!formData.mandatoryExperience.description?.trim()) {
-        errors.mandatoryExperience = "validation:experience_details_required";
-      }
-    }
+    validateMandatoryEducationExperience(formData, errors);
   }
 
   if (formData.usePreferredEducationLevelExperience) {
-    const eduExps = formData.preferredExperience?.educationLevelExperiences || [];
-
-    if (!eduExps.length) {
-      errors.preferredExperience = "validation:experience_duration_required";
-    } else {
-      let hasQualificationError = false;
-      let hasDurationError = false;
-
-      eduExps.forEach(exp => {
-        const isEmptyRow =
-          !exp.educationLevel &&
-          (exp.years === undefined || exp.years === null || exp.years === '');
-
-        if (isEmptyRow) return;
-
-        if (!exp.educationLevel) hasQualificationError = true;
-        if (exp.years === undefined || exp.years === null || exp.years === '') {
-          hasDurationError = true;
-        }
-      });
-
-      if (hasQualificationError && hasDurationError) {
-        errors.preferredExperience = "validation:qualification_and_duration_required";
-      } else if (hasQualificationError) {
-        errors.preferredExperience = "validation:qualification_required";
-      } else if (hasDurationError) {
-        errors.preferredExperience = "validation:experience_duration_required";
-      }
-
-      if (!formData.preferredExperience.description?.trim()) {
-        errors.preferredExperience = "validation:experience_details_required";
-      }
-    }
+    validatePreferredExperience(formData, errors);
   }
 };
 

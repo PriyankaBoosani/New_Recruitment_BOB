@@ -48,11 +48,14 @@
   padding: 0 6px;
   user-select: none;
 }
-
 .stage-chip {
-  font-size: 13px;
-  padding: 4px 10px;
-  border-radius: 16px;
+  border: none;
+  background: #f1f3f5;
+
+  border-radius: 20px;
+  padding: 6px 14px;
+
+  font-size: 14px;
 }
 
 .stage-chip .stage-count {
@@ -444,12 +447,6 @@
 }
 
 
-.nav-arrow {
-  font-size: 30px;
-  color: #162B75;
-  cursor: pointer;
-  user-select: none;
-}
 
 .nav-arrow:hover {
   color: #162B75;
@@ -468,16 +465,6 @@
   cursor: pointer;
 }
 
-/* Search */
-.search-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #ffffff;
-  padding: 6px 12px;
-  border-radius: 8px;
-  width: 250px; 
-}
 
 /* Stage pills */
 .stage-chip {
@@ -560,10 +547,15 @@
 .search-box {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 6px; /* latest */
+  
+  background: #ffffff;
   border: 1px solid #e0e0e0;
-  padding: 6px 10px;
-  width: 350px; 
+
+  padding: 6px 10px; /* latest */
+  border-radius: 8px;
+
+  width: 350px; /* latest */
 }
 
 .search-box input {
@@ -581,14 +573,18 @@
   margin-bottom: 6px;
 }
 
-
 .stage-filter-row {
   padding: 12px 16px;
   background: #fff;
+
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
-}
 
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 12px;
+
+  margin-bottom: 0;
+}
 .stage-chip {
 
   border: none;
@@ -648,15 +644,6 @@ color: rgb(228, 116, 51);
 /* remove divider from empty row */
 .no-candidates-row td {
   border-bottom: none !important;
-}
-
-
-
-/* UNDERLINE AFTER FILTER BY STAGE */
-.stage-filter-row {
-  border-bottom: 1px solid #e5e7eb; /* light grey line */
-  padding-bottom: 12px;
-  margin-bottom: 0; /* keep it tight */
 }
 
 

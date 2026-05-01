@@ -36,11 +36,21 @@ const RequisitionStrip = ({
     const orderedPattern =
   /^\s*(?:\(?\d{1,5}[\).\]]|\(?[ivxlcdm]{1,7}[\).\]])\s*/i;
 
-  const isOrderedLine = (line) => {
+ const isOrderedLine = (line) => {
   if (typeof line !== "string" || line.length > 200) return false;
-  return orderedPattern.test(line);
-};
 
+  const trimmed = line.trim();
+
+  // Numeric check
+  if (/^\(?\d{1,5}[\).\]]/.test(trimmed)) return true;
+
+  // Roman check (safe + extended)
+  const roman = trimmed.replace(/[\).\]]/g, "").toLowerCase();
+
+  const romanPattern = /^(i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv)$/;
+
+  return romanPattern.test(roman);
+};
   const renderBullets = (text) => {
     if (!text) return <li>-</li>;
 
