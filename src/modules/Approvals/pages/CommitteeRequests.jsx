@@ -353,7 +353,93 @@ const handleApprovalAction = async (modalComment) => {
     // };
 
 
+const renderPanelRow = (panelItem) => {
+  const panel =
+    panelItem.interviewPanel ||
+    panelItem.screeningPanel ||
+    panelItem.compensationPanel;
 
+  const members = panel.panelMembers.map(
+    m => m.panelMember.name
+  );
+
+  return (
+    <div
+      key={panelItem.positionPanelId}
+      className="bulk-actions align-items-center mt-3 mb-1"
+    >
+      <Row className="align-items-center gx-2 d-flex">
+
+        <Col xs="auto" className="checkbox-col pe-1 ms-2">
+          <Form.Check
+            type="checkbox"
+            className="select-checkbox"
+            checked={selectedReqIds.has(panelItem.positionPanelId)}
+            disabled={panelItem.positionPanelStatus !== selectableStatus}
+            onChange={(e) => {
+              setSelectedReqIds(prev => {
+                const next = new Set(prev);
+
+                if (e.target.checked) {
+                  next.add(panelItem.positionPanelId);
+                } else {
+                  next.delete(panelItem.positionPanelId);
+                }
+
+                return next;
+              });
+            }}
+          />
+        </Col>
+
+        <Col md={3} className="data-col">
+          <div className="field-label">
+            {t("approvalHistory:panel_name")}
+            <img
+              src={history_icon}
+              alt="History"
+              className="icon-history"
+              onClick={() => handleOpenHistory(panelItem.positionPanelId)}
+            />
+          </div>
+          <div className="field-value">{panel.panelName}</div>
+        </Col>
+
+        <Col md={2} className="data-col">
+          <div className="field-label">{t("approvalHistory:panel_type")}</div>
+          <div className="field-value">
+            {panel.committee?.committeeName}
+          </div>
+        </Col>
+
+        <Col md={3} className="data-col">
+          <div className="field-label">{t("approvalHistory:panel_members")}</div>
+          <div className="field-value">{members.join(", ")}</div>
+        </Col>
+
+        <Col md={1} className="data-col">
+          <div className="field-label">{t("approvalHistory:start_date")}</div>
+          <div className="field-value">{panelItem.startDate}</div>
+        </Col>
+
+        <Col md={1} className="data-col">
+          <div className="field-label">{t("approvalHistory:end_date")}</div>
+          <div className="field-value">{panelItem.endDate}</div>
+        </Col>
+
+        <Col className="d-flex align-items-center">
+          <Badge
+            bg={getStatusBadge(panelItem.positionPanelStatus)}
+            className="status-badge ms-auto"
+          >
+            {formatStatusLabel(panelItem.positionPanelStatus)}
+          </Badge>
+        </Col>
+
+      </Row>
+    </div>
+  );
+};
     return (
         <div className="committee-requests-page">
             <Container fluid className="committee-page">
@@ -513,105 +599,7 @@ const handleApprovalAction = async (modalComment) => {
                                 {t("approvalHistory:no_panels_found")}
                             </div>
                         ) : (
-                            paginatedPanels.map((panelItem) => {
-                                const panel =
-                                    panelItem.interviewPanel ||
-                                    panelItem.screeningPanel ||
-                                    panelItem.compensationPanel;
-                                const members = panel.panelMembers.map(
-                                    m => m.panelMember.name
-                                );
-
-                                return (
-                                    <div
-                                        key={panelItem.positionPanelId}
-                                        className="bulk-actions align-items-center mt-3 mb-1"
-                                    >
-                                        <Row className="align-items-center gx-2 d-flex">
-
-                                            {/* Checkbox */}
-                                            <Col xs="auto" className="checkbox-col pe-1 ms-2">
-                                                <Form.Check
-                                                    type="checkbox"
-                                                    className="select-checkbox"
-                                                    checked={selectedReqIds.has(panelItem.positionPanelId)}
-                                                    disabled={panelItem.positionPanelStatus !== selectableStatus}
-                                                    onChange={(e) => {
-                                                        setSelectedReqIds(prev => {
-                                                            const next = new Set(prev);
-
-                                                            if (e.target.checked) {
-                                                                next.add(panelItem.positionPanelId);
-                                                            } else {
-                                                                next.delete(panelItem.positionPanelId);
-                                                            }
-
-                                                            return next;
-                                                        });
-                                                    }}
-                                                />
-                                            </Col>
-
-                                            {/* Panel Name */}
-                                            <Col md={3} className="data-col">
-                                                <div className="field-label">{t("approvalHistory:panel_name")} <img
-                                                    src={history_icon}
-                                                    alt="History"
-                                                    className="icon-history"
-                                                    onClick={() => handleOpenHistory(panelItem.positionPanelId)}
-                                                /></div>
-                                                <div className="field-value">
-                                                    {panel.panelName}
-                                                </div>
-                                            </Col>
-
-                                            {/* Panel Type */}
-                                            <Col md={2} className="data-col">
-                                                <div className="field-label">{t("approvalHistory:panel_type")}</div>
-                                                <div className="field-value">
-                                                    {panel.committee?.committeeName}
-                                                </div>
-                                            </Col>
-
-                                            {/* Panel Members */}
-                                            <Col md={3} className="data-col">
-                                                <div className="field-label">{t("approvalHistory:panel_members")}</div>
-                                                <div className="field-value">
-                                                    {members.join(", ")}
-                                                </div>
-                                            </Col>
-
-                                            {/* Start Date */}
-                                            <Col md={1} className="data-col">
-                                                <div className="field-label">{t("approvalHistory:start_date")}</div>
-                                                <div className="field-value">
-                                                    {panelItem.startDate}
-                                                </div>
-                                            </Col>
-
-                                            {/* End Date */}
-                                            <Col md={1} className="data-col">
-                                                <div className="field-label">{t("approvalHistory:end_date")}</div>
-                                                <div className="field-value">
-                                                    {panelItem.endDate}
-                                                </div>
-                                            </Col>
-
-                                            {/* Status */}
-                                            <Col className="d-flex align-items-center">
-                                                <Badge
-                                                    bg={getStatusBadge(panelItem.positionPanelStatus)}
-                                                    className="status-badge ms-auto"
-                                                >
-                                                    {formatStatusLabel(panelItem.positionPanelStatus)}
-                                                </Badge>
-                                            </Col>
-
-                                        </Row>
-                                    </div>
-                                );
-                            })
-
+                            paginatedPanels.map(renderPanelRow)
                         )}
                         {totalPages > 1 && (
                             <Row className="mt-4 mb-4">
