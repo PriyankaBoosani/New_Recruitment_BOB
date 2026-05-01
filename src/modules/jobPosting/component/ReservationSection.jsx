@@ -12,6 +12,7 @@ const ReservationSection = ({
     setErrors,
     reservationCategories,
     disabilityCategories,
+    stateLanguages,
     states,
     languages,
     cities,
@@ -72,11 +73,23 @@ const ReservationSection = ({
 
     const sortedCities = [...filteredCities].sort((a, b) =>
         a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
+
     );
+
+    const getLanguagesByState = (stateId) => {
+        return stateLanguages
+            .filter(sl => String(sl.stateId) === String(stateId))
+            .map(sl => {
+                const lang = languages.find(l => String(l.id) === String(sl.languageId));
+                return lang?.name;
+            })
+            .filter(Boolean)
+            .join(", ");
+    };
     return (
         <fieldset disabled={isViewMode}>
-           {/* ✅ Age Relaxation Section */}
-                 <Col xs={12} className="mt-3">
+            {/* ✅ Age Relaxation Section */}
+            <Col xs={12} className="mt-3">
                 <Form.Label>
                     Age relaxation also applicable for:
                 </Form.Label>
@@ -353,45 +366,26 @@ const ReservationSection = ({
 
                                 <ErrorMessage>{renderError(errors.stateVacancies)}</ErrorMessage>
                             </Col>
-                            <Col md={3}><Form.Label>{t("addPosition:local_language")} <span className="text-danger">*</span></Form.Label>
-                                <Select
-                                    classNamePrefix="react-select"
-                                    isDisabled={!currentState.state}
+                            <Col md={3}><Form.Label>Approved Languages</Form.Label>
 
-                                    styles={{
-                                        control: (base, state) => ({
-                                            ...base,
-                                            backgroundColor: isViewMode ? "#e9ecef" : base.backgroundColor,
-                                            //  cursor: isViewMode ? "not-allowed" : "pointer",
-                                            opacity: isViewMode ? 0.8 : 1
-                                        }),
-                                        singleValue: (base) => ({
-                                            ...base,
-                                            color: isViewMode ? "#6c757d" : base.color
-                                        })
+                                <div
+                                    style={{
+                                        minHeight: "38px",
+                                        border: "1px solid #ced4da",
+                                        borderRadius: "4px",
+                                        padding: "6px 12px",
+                                       backgroundColor: "#e9ecef",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        fontSize: "14px",
+                                        color: currentState.state ? "#212529" : "#6c757d"
                                     }}
-                                    value={[
-                                        { value: "", label: t("addPosition:select_language") },
-                                        ...filteredLanguages.map(lang => ({
-                                            value: lang.id,
-                                            label: lang.name
-                                        }))
-                                    ].find(option => String(option.value) === String(currentState.language))}
-                                    onChange={(selected) => {
-                                        setCurrentState(prev => ({
-                                            ...prev,
-                                            language: selected ? selected.value : ""
-                                        }));
-                                        setErrors(prev => ({ ...prev, stateLanguage: "" }));
-                                    }}
-                                    options={[
-                                        { value: "", label: t("addPosition:select_language") },
-                                        ...filteredLanguages.map(lang => ({
-                                            value: lang.id,
-                                            label: lang.name
-                                        }))
-                                    ]}
-                                />
+                                    disabled={!currentState.state}
+                                >
+                                    {currentState.state
+                                        ? getLanguagesByState(currentState.state)
+                                        : "State Language"}
+                                </div>
 
                                 <ErrorMessage>{renderError(errors.stateLanguage)}</ErrorMessage>
                             </Col>
@@ -564,7 +558,7 @@ const ReservationSection = ({
                                             <tr key={idx}>
                                                 <td>{idx + 1}</td><td>{states.find(s => s.id === row.state)?.name}</td><td>
                                                     {cities.find(c => String(c.id) === String(row.city))?.name || "-"}
-                                                </td><td>{row.vacancies}</td><td>{languages.find(l => l.id === row.language)?.name}</td>
+                                                </td><td>{row.vacancies}</td><td>{getLanguagesByState(row.state)}</td>
                                                 {reservationCategories.map(c => <td key={c.code}>{row.categories?.[c.code] ?? 0}</td>)}
                                                 <td>{Object.values(row.categories || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
                                                 {disabilityCategories.map(d => <td key={d.disabilityCode}>{row.disabilities?.[d.disabilityCode] ?? 0}</td>)}

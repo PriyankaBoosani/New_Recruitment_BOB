@@ -352,7 +352,9 @@ export default function CandidatePool({
                     >
                       <Person
                         className="me-3 cursor-pointer"
-                        onClick={() =>
+                        onClick={() =>{
+
+                          
                           navigate("/candidate-preview", {
                             state: {
                               from: "/candidate-workflow",
@@ -371,6 +373,7 @@ export default function CandidatePool({
                                 ? {
                                   positionId: position.positionId,
                                   positionName: position.positionName,
+                                  isLocationWise: position.isLocationWise,
                                 }
                                 : null,
                               activeTab: "CANDIDATE_POOL",
@@ -381,7 +384,7 @@ export default function CandidatePool({
                               pageSize,
                               filters,
                             },
-                          })
+                          })}
                         }
                       />
                     </OverlayTrigger>

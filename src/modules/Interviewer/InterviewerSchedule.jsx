@@ -633,7 +633,7 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   onInputClick={() => setIsCalendarOpen(true)}
   dateFormat="dd MMMM yyyy"
   customInput={<DatePill />}
-  maxDate={new Date()}
+  // maxDate={new Date()}
 
   /*  Month + Year Dropdown */
   showMonthDropdown

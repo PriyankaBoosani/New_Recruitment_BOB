@@ -735,7 +735,7 @@ const AddPosition = () => {
                         />
                         <ReservationSection
                             isViewMode={isViewMode} formData={formData} errors={errors} setErrors={setErrors} reservationCategories={reservationCategories}
-                            disabilityCategories={disabilityCategories} states={states} languages={languages} cities={cities} nationalCategories={nationalCategories} setNationalCategories={setNationalCategories} nationalDisabilities={nationalDisabilities}
+                            disabilityCategories={disabilityCategories} states={states} languages={languages} stateLanguages={stateLanguages} cities={cities} nationalCategories={nationalCategories} setNationalCategories={setNationalCategories} nationalDisabilities={nationalDisabilities}
                             setNationalDisabilities={setNationalDisabilities} nationalCategoryTotal={nationalCategoryTotal}
                             currentState={currentState} setCurrentState={setCurrentState} stateCategoryTotal={stateCategoryTotal}
                             filteredLanguages={filteredLanguages} stateDistributions={stateDistributions} setStateDistributions={setStateDistributions} editingIndex={editingIndex}

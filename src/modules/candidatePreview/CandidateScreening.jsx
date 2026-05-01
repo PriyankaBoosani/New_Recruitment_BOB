@@ -610,6 +610,7 @@ const handleTemplateChange = (value) => {
         positions.find(
           (p) => p.jobPositions?.positionId === selectedPositionId
         )?.masterPositions?.positionName,
+        isLocationWise: positions.find((p) => p.jobPositions?.positionId === selectedPositionId).jobPositions.isLocationWise
     }
     : null;
 

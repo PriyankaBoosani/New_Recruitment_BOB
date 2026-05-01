@@ -69,8 +69,8 @@ const CandidatePreviewPage = ({ onHide }) => {
   const requisition = state?.requisition;
   const requisitionTitle = requisition?.requisition_title;
   const positionName = state?.position?.positionName;
+  const isLocationWise = state?.position?.isLocationWise;
   const position = state?.position;
-
   const candidateId = candidate?.candidateId;
   const positionId = state?.positionId;
   const requisitionId = state?.requisitionId;
@@ -149,8 +149,10 @@ const CandidatePreviewPage = ({ onHide }) => {
             cities: fullMasters.cities,
             pincodes: fullMasters.pincodes,
             interviewCenters: InterviewCenters.data || [],
-            zonalStats: ZonalStats.data || []
+            zonalStats: ZonalStats.data || [],
+            languages: fullMasters.languageMasters || []
           };
+          
 
           const mapped = mapCandidateToPreview(
             candidateRes.data,
@@ -197,9 +199,7 @@ const CandidatePreviewPage = ({ onHide }) => {
                 selectedDate: state,
                 page: state.page,
                 pageSize: state.pageSize,
-                filters: state.filters,
-                searchText: state.searchText,
-                activeStage: state.activeStage
+                filters: state.filters
               }
             })
           }
@@ -222,21 +222,9 @@ const CandidatePreviewPage = ({ onHide }) => {
                 position,
                 preloadedCandidates: state.candidates || [],
                 selectedDate,
-                  // 🔥 ADD THESE
-                  activeTab: state.activeTab,
-                  requisitionId: state.requisitionId,
-                  positionId: state.positionId,
-
-                  page: state.page,
-                  pageSize: state.pageSize,
-
-                  // 🔥 INTERVIEW FIX
-                  interviewPage: state.interviewPage,
-                  interviewPageSize: state.interviewPageSize,
-
-                  filters: state.filters,
-                  searchText: state.searchText,
-                  activeStage: state.activeStage
+                page: state.page,
+                pageSize: state.pageSize,
+                filters: state.filters
               }
             });
           }}
@@ -311,6 +299,7 @@ const CandidatePreviewPage = ({ onHide }) => {
               zonalVerificationStatus={candidate?.zonalVerificationStatus}
               zonalSubmitBeforeDate={candidate?.zonalSubmitBeforeDate}
               zonalHrComments={candidate?.zonalHrComments}
+              isLocationWise={isLocationWise}
               candidateStatus={candidate?.status}
                 isFromInterview={isFromInterview}
             />

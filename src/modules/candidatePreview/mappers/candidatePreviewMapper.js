@@ -51,8 +51,10 @@ const getInterviewCentreName = (masters, id) =>
 /* ===============================
    SINGLE SOURCE OF TRUTH
 ================================ */
-export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
+export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
   const profile = apiData?.basicDetails?.candidateProfile || {};
+  const languagesKnown = apiData?.basicDetails?.languagesKnown || [];
+  console.log("languagesKnown", languagesKnown);
   const address = apiData?.addressDetails || {};
   // const locationprefApiData = apiData?.locationPreference
   const locationprefApiData = apiData?.locationPreference || {};
@@ -83,6 +85,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
   const locationPreference1 = getCityName(masters, locationprefApiData.locationPreference1);
   const locationPreference2 = getCityName(masters, locationprefApiData.locationPreference2);
   const locationPreference3 = getCityName(masters, locationprefApiData.locationPreference3);
+
 
   const examCenterName =
     getInterviewCentreName(masters, locationprefApiData.interviewCenter);
@@ -121,6 +124,8 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
   const nationality = getNationality(masters, profile.nationality);
   const maritalStatus = getMaritalStatus(masters, profile.maritalStatusId);
   const reservation = getReservation(masters, profile.reservationCategoryId);
+  const getLanguageName = (masters, id) =>
+    findById(masters.languages, "languageId", id)?.languageName || "-";
 
 
   /* ========= DOCUMENT GROUP ========= */
@@ -158,7 +163,20 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
 
   //   status: d.documentScreeningStatus || "Pending"
   // }));
+  const mapLanguageNames = (languages, masters) => {
+    if (!languages?.length) return "-";
 
+    return languages
+      .map(lang => {
+        const found = masters?.languages?.find(
+          l => String(l.languageId) === String(lang.languageId)
+        );
+
+        return found?.languageName;
+      })
+      .filter(Boolean)
+      .join(", ");
+  };
 
   return {
     /* ================= PERSONAL ================= */
@@ -171,7 +189,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
       spouseName: profile.spouseName || "-",
       dob: formatDateDDMMYYYY(profile.dateOfBirth) || "-",
       age: apiData?.age || "-",
-
+      languages: mapLanguageNames(languagesKnown, masters),
       gender_name: gender?.gender || "-",
       religion_name: religion?.religion || "-",
       nationality_name: nationality?.countryName || "-",
@@ -212,7 +230,8 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
       locationPreference2: locationPreference2,
       locationPreference3: locationPreference3,
       examCenter: examCenterName,
-
+      localLanguage: getLanguageName(masters, locationprefApiData.localLanguageId),
+      isLocalLanguageStudied: locationprefApiData.isLocalLanguageStudied ? "Yes" : "No",
 
     },
 
