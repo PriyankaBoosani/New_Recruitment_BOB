@@ -456,13 +456,33 @@ const ApplicationForm = ({
 
         const isZonal = isZonalHr;
 
-        const status = isZonalHr
-          ? item.zonalHrDocStatus || "PENDING"
-          : isInterviewer
-            ? (item.zonalHrDocStatus && item.zonalHrDocStatus !== "PENDING"
-              ? item.zonalHrDocStatus
-              : item.docScreeningStatus || "PENDING")
-            : item.docScreeningStatus || "PENDING";
+        // const status = isZonalHr
+        //   ? item.zonalHrDocStatus || "PENDING"
+        //   : isInterviewer
+        //     ? (item.zonalHrDocStatus && item.zonalHrDocStatus !== "PENDING"
+        //       ? item.zonalHrDocStatus
+        //       : item.docScreeningStatus || "PENDING")
+        //     : item.docScreeningStatus || "PENDING";
+
+
+
+  //       const status = isZonalHr
+  // ? item.zonalHrDocStatus || "PENDING"
+  // : isInterviewer
+  //   ? (item.zonalHrDocStatus || "PENDING")   //  ONLY ZONAL STATUS
+  //   : item.docScreeningStatus || "PENDING";
+
+
+
+
+  const status = isZonalHr
+  ? item.zonalHrDocStatus || "PENDING"
+  : (isInterviewer || isInterviewView)
+    ? (item.zonalHrDocStatus || "PENDING")   //  ONLY ZONAL
+    : item.docScreeningStatus || "PENDING";
+
+
+
 
         const comments = isZonal
           ? item.zonalHrDocComments
