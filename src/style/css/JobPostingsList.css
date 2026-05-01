@@ -1,7 +1,6 @@
 .job-postings-page {
   padding: 30px;
   background: #f8f9fb;
-  /* min-height: 100vh; */
 }
 
 .page-title {
@@ -619,10 +618,6 @@
 
 /* css wittern by Veeresh */
 .department-header{
-  /* border-bottom: 1px solid #ddd; */
-    /* padding-bottom: 10px; */
     padding: 5px 20px;
     background: #6679BC;
-    /* border-radius: 10px 10px 0 0; */
-   
 }

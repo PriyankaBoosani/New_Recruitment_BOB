@@ -100,10 +100,8 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  /* background-color: #f8f9fa; */
   padding: 15px;
   border-radius: 8px;
-  /* border: 1px solid #dee2e6; */
 }
 
 .form-footer {
@@ -592,13 +590,11 @@
   font-size: 12px;
   margin-top: 6px;
 }
-/* .css-hlgwow{
-  min-height: 42px;
-} */
+
 .modal-dialog-scrollable .modal-body {
 	overflow-y: inherit;
 }
 .modal-dialog-scrollable .modal-content {
-	/* max-height: 100%; */
+	
 	overflow: inherit;
 }

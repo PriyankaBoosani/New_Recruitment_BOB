@@ -23,7 +23,6 @@ body {
   overflow-y: auto;
   margin-top: 91px;
   background-color: #f8f9fa;
-  /* margin-bottom: 35px; */
 }
 
 /* For pages where header is hidden (login, forgot-password, etc) */
@@ -107,7 +106,6 @@ body {
 
 /* Add spacing between navigation items */
 .navbar-nav .nav-link {
-  /* padding: 1rem 1.25rem; */
   margin: 0 2px;
   position: relative;
   transition: all 0.3s ease;
@@ -230,16 +228,6 @@ body {
   font-size: 12px;
 }
 
-/* .app-footer {
-  background-color: #fff;
-  border-top: 1px solid #e9ecef;
-  margin-top: auto;
-  font-size: 0.875rem;
-  color: #6c757d;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-} */
 .app-footer {
   position: fixed;
   bottom: 0;
@@ -338,10 +326,6 @@ main {
 /* kill underline everywhere */
 
 
-/* .dropdown-toggle{
-  color: #162B75 !important;
-  font-weight: 500;
-} */
 .dropdown-item.active, .dropdown-item:active {
 	background-color: #42579f;
 }

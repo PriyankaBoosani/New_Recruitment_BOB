@@ -60,7 +60,6 @@
     background-size: 16px;
     width: 100%;
     cursor: pointer;
-    /* padding-right: 28px; */
     font-weight: 400;
     font-size: 0.875em;
     color: #162B75;
@@ -158,13 +157,6 @@
     margin-left: 26px;
 }
 
-.requisition-page .bg-warning {
-    color: #42579F;
-    border: 1px solid #42579F;
-    background: #AFBDEB2E !important;
-    font-weight: 500;
-    font-size: 0.625em;
-}
 
 .requisition-page .bg-success {
     color: #0EB319;
@@ -195,6 +187,8 @@
     color: #856404;
     border: 1px solid #ffc107;
     background: #fff3cd !important;
+      font-weight: 500;
+    font-size: 0.625em;
 }
 
 /* INFO → Blue */
@@ -241,17 +235,6 @@
     height: 22px;
 }
 
-/* .job-postings-page .req-code {
-	font-weight: 500;
-	margin: 12px 0;
-	color: #162B75 !important;
-	font-size: 1em;
-	width: 100%;
-	white-space: wrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	word-wrap: anywhere;
-} */
 
 .requisition-page .req-code {
     font-weight: 500;
@@ -404,15 +387,9 @@
     color: #404040;
 }
 
-/* .requisition-page .icon-btn {
-    width: 34px;
-    height: 34px;
-    padding: 0;
-} */
 
 /* DETAILS BELOW */
 .requisition-page .position-details {
-    /* margin-top: 10px; */
     font-size: 0.875em;
     color: #404040;
     font-weight: normal;

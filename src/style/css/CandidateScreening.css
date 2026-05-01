@@ -6,13 +6,6 @@
   color: #162B75 !important;
 }
 
-.blue-bg {
-  background-color: #162B75 !important;
-}
-
-.blue-border {
-  border: 1px solid #162B75 !important;
-}
 
 .orange-color {
   color: #f36f21 !important;
@@ -72,14 +65,12 @@
 }
 
 .orange-bottom-border {
-  /* border-bottom: 2px solid #f36f21 !important; */
   border: 1px solid rgb(22, 43, 117) !important;
   background: rgb(22, 43, 117) !important;
   color: #fff !important;
 }
 
 .tabs {
-  /* padding-bottom: 0 !important;  */
   padding-top: 1rem !important;
 }
 
@@ -105,7 +96,6 @@ candidate-screening-tabs-header ul {
 }
 
 .candidate-screening-tabs-header ul li .nav-link:focus {
-  /* border-bottom: 2px solid #f36f21 !important; */
   border-top: none !important;
   border-left: none !important;
   border-right: none !important;
@@ -113,7 +103,6 @@ candidate-screening-tabs-header ul {
 }
 
 .candidate-screening-tabs-header ul li .nav-link:hover {
-  /* border: none !important; */
   outline: none !important;
 }
 
@@ -125,7 +114,6 @@ candidate-screening-tabs-header ul {
 }
 
 .candidate-screening-tabs-header ul li .nav-link:active {
-  /* border-bottom: 2px solid #f36f21 !important; */
   border-top: none !important;
   border-left: none !important;
   border-right: none !important;
@@ -291,20 +279,11 @@ candidate-screening-tabs-header ul {
   color: #333;
 }
 
-/* ===== ITEMS ===== */
-.item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  margin-bottom: 4px;
-}
 
 /* ===== ITEM ALIGNMENT ===== */
 .item {
 	display: flex;
 	align-items: center;
-	/* gap: 8px; */
 	font-size: 13px;
 	margin-bottom: 6px;
 	color: #404040;
@@ -337,21 +316,13 @@ candidate-screening-tabs-header ul {
 /* ===== TAG TEXT ===== */
 
 
-.tag.green {
-  color: #28a745;
-}
 
-.tag.orange {
-  color: #f4b400;
-}
 .greenfin{
    color: #28a745;
    font-weight: 600;
 }
 
-.tag.red {
-  color: #d32f2f;
-}
+
 
 /* ===== TAG (Low/High) ===== */
 
@@ -381,16 +352,6 @@ candidate-screening-tabs-header ul {
   cursor: pointer;
 }
 
-/* ===== ARROW (SMART, NOT HARDCODED) ===== */
-/* .rank-popover::before {
-  content: "";
-  position: absolute;
-  top: -8px;
-  left: 20px;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-bottom: 8px solid #243a5e;
-} */
 
 .bs-popover-auto[data-popper-placement^="right"] > .popover-arrow::after, .bs-popover-end > .popover-arrow::after {
 	border-right-color: #243a5e;

@@ -1,8 +1,6 @@
 /* ===== MODERN ASSIGN POSITIONS PAGE ===== */
 .assign-positions-page {
-  /* background: #f8fafc; */
   min-height: 100vh;
-  /* padding: 24px; */
 }
 
 /* ===== PAGE HEADER ===== */
@@ -44,7 +42,6 @@
 .assign-positions-page .selection-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  /* gap: 24px; */
   max-width: 750px;
 }
 
@@ -66,7 +63,6 @@
   border-radius: 8px;
   font-size: 0.875rem;
   background: #ffffff;
-  /* transition: all 0.2s ease; */
 }
 .assign-positions-page .form-select:disabled {
   background-color: #e9ecef;
@@ -158,7 +154,6 @@
   flex: 1;
   padding: 10px 24px;
   border: 2px solid transparent;
-  /* background: #ffffff; */
   border-radius: 8px;
   font-weight: 500;
   font-size: 0.875rem;
@@ -365,7 +360,6 @@
 }
 
 .committee-row.selected {
-  /* border-color: #F26522; */
   background: #fff7f3;
 }
 
@@ -399,7 +393,6 @@
   font-weight: 500;
   font-size: 0.75rem;
   cursor: pointer;
-  /* transition: all 0.2s ease; */
 }
 
 .action-pill.add {
@@ -480,10 +473,6 @@
 	font-size: .75rem;
 	font-weight: 400;
 }
-/* .requisition-strip-section
-{
-  border-top: 2px solid #e5e7eb;
-} */
 
 
 .custom-select__control{

@@ -419,8 +419,6 @@ body.modal-open {
     text-align: center;
     border-radius: 8px;
     white-space: nowrap;
-    /* background: #f2f3f5; */
-    /* border: 1px solid transparent; */
     color: #1E1E2D;
     font-size: 0.875em;
     font-weight: 500;
@@ -686,7 +684,6 @@ body.modal-open {
 /* <= 768px: modal layout adjustments, stack form columns */
 @media (max-width: 768px) {
     .user-modal .modal-dialog {
-        /* max-width: 71%; */
         margin: 0.5rem;
         width: auto;
     }
@@ -887,6 +884,7 @@ body.modal-open {
     border-color: #f26522 !important;
     box-shadow: 0 0 0 0.15rem rgba(242, 101, 34, 0.35) !important;
 }
+
 
 .import-scroll-wrapper::-webkit-scrollbar,
 .error-scroll::-webkit-scrollbar {
