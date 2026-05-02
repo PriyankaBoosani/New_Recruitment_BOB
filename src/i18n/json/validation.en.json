@@ -64,6 +64,7 @@
   "no_requisitions_selected": "No requisitions selected for the current year.",
   "no_positions_for_requisition": "Submission blocked. No positions found for requisition(s): {{labels}}",
   "file_invalid_type": "Only PDF, DOC, and DOCX files are allowed",
+  "file_empty": "Uploaded file is empty",
   "file_too_large": "File size must not exceed {{size}} MB",
   "degree_required": "At least one degree is required",
   "vacancies_must_be_greater_than_zero": "Vacancies must be greater than zero.",
@@ -72,7 +73,5 @@
   "duration_invalid": "Duration must be a valid number",
   "gpa_invalid": "GPA must be a valid number",
   "percentage_invalid": "Percentage must be a valid number",
-  
   "qualification_required": "Please select qualification"
-
 }
