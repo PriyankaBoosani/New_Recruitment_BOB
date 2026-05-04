@@ -116,8 +116,8 @@ const Login = () => {
       } else if (privileges["Committee Management"]) {
         navigate("/interviewpanel", { replace: true });
 
-      } else if (privileges["Requisition Approval"]) {
-        navigate("/requisition-requests", { replace: true });
+      } else if (privileges["L1 Approval"] || privileges["L2 Approval"]) {
+        navigate("/requisition-requests");
       }
       else {
         toast.error("No access assigned to this user");
@@ -155,7 +155,7 @@ const Login = () => {
         </div>
 
         <form className="login_form" onSubmit={handleLogin}>
-          <label>Email Id:</label>
+          <label htmlFor="email">Email Id:</label>
           <input
             type="email"
             value={email}
@@ -164,7 +164,7 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
 
-          <label>Password:</label>
+          <label htmlFor="password">Password:</label>
           <div className="" style={{ position: 'relative' }}>
             <input
               type={showPassword ? "text" : "password"}

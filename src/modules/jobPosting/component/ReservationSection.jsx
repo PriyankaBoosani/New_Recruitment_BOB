@@ -12,6 +12,7 @@ const ReservationSection = ({
     setErrors,
     reservationCategories,
     disabilityCategories,
+    stateLanguages,
     states,
     languages,
     cities,
@@ -29,7 +30,13 @@ const ReservationSection = ({
     editingIndex,
     setEditingIndex,
     handleInputChange,
-    handleAddOrUpdateState
+    handleAddOrUpdateState,
+    isProficientInLocalLanguage,
+    setIsProficientInLocalLanguage,
+    isAgeRelRiotVictimFamily,
+    setIsAgeRelRiotVictimFamily,
+    isAgeRelWdsWomen,
+    setIsAgeRelWdsWomen
 }) => {
     const { t } = useTranslation(["addPosition", "common", "validation"]);
     const renderError = (e) => {
@@ -66,24 +73,76 @@ const ReservationSection = ({
 
     const sortedCities = [...filteredCities].sort((a, b) =>
         a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
+
     );
+
+    const getLanguagesByState = (stateId) => {
+        return stateLanguages
+            .filter(sl => String(sl.stateId) === String(stateId))
+            .map(sl => {
+                const lang = languages.find(l => String(l.id) === String(sl.languageId));
+                return lang?.name;
+            })
+            .filter(Boolean)
+            .join(", ");
+    };
     return (
         <fieldset disabled={isViewMode}>
+            {/* ✅ Age Relaxation Section */}
+            <Col xs={12} className="mt-3">
+                <Form.Label>
+                    Age relaxation also applicable for:
+                </Form.Label>
+
+                <div className="ms-2">
+                    <Form.Check
+                        type="checkbox"
+                        label="Persons affected by the 1984 riots"
+                        checked={!!isAgeRelRiotVictimFamily}
+                        onChange={(e) => setIsAgeRelRiotVictimFamily(e.target.checked)}
+                        className="custom_checkbox mb-2"
+                    />
+
+                    <Form.Check
+                        type="checkbox"
+                        label="Widowed, divorced, or judicially separated women (not remarried)"
+                        checked={!!isAgeRelWdsWomen}
+                        onChange={(e) => setIsAgeRelWdsWomen(e.target.checked)}
+                        className="custom_checkbox"
+                    />
+                </div>
+            </Col>
             {/* Reservation Section */}
             <Col xs={12} className="mt-4">
-                <div className="d-flex justify-content-between align-items-center mb-2 catfonts">
-                    <div><h6 className="mb-0 catfont">{t("addPosition:category_wise_reservation")} <span className="text-danger">*</span></h6><small className="text-muted">{t("addPosition:enable_state_distribution_help")}</small></div>
-                    <Form.Check
-                        type="switch"
-                        name="enableStateDistribution"
-                        checked={formData.enableStateDistribution}
-                        onChange={e => {
-                            handleInputChange(e);
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                    <div className="d-flex gap-5 align-items-center catfonts" style={{ width: '49%' }}>
+                        <div><h6 className="mb-0 catfont">{t("addPosition:category_wise_reservation")} <span className="text-danger">*</span></h6><small className="text-muted">{t("addPosition:enable_state_distribution_help")}</small></div>
+                        <Form.Check
+                            type="switch"
+                            name="enableStateDistribution"
+                            checked={formData.enableStateDistribution}
+                            onChange={e => {
+                                handleInputChange(e);
 
-                            //  CLEAR NATIONAL DISTRIBUTION ERROR
-                            setErrors(prev => ({ ...prev, nationalDistribution: "" }));
-                        }}
-                    />
+                                //  CLEAR NATIONAL DISTRIBUTION ERROR
+                                setErrors(prev => ({ ...prev, nationalDistribution: "" }));
+                            }}
+                            className="mb-2"
+                        />
+                    </div>
+                    {formData.enableStateDistribution && (
+                        <div>
+                            <Form.Check
+                                type="checkbox"
+                                label="Is local language required?"
+                                checked={!!isProficientInLocalLanguage}
+                                onChange={(e) => {
+                                    setIsProficientInLocalLanguage(e.target.checked);
+                                }}
+                                className="custom_checkbox mb-3"
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {!formData.enableStateDistribution ? (
@@ -94,38 +153,38 @@ const ReservationSection = ({
                                     {reservationCategories.map(cat => (
                                         <Col md={2} key={cat.id}>
                                             <Form.Label className="small fw-semibold">{cat.code}</Form.Label>
-                        <Form.Control
-  type="text"
-  inputMode="numeric"
-  pattern="[0-9]*"
-  value={nationalCategories[cat.code] ?? "0"}
-  onChange={e => {
-    let value = e.target.value;
+                                            <Form.Control
+                                                type="text"
+                                                inputMode="numeric"
+                                                pattern="[0-9]*"
+                                                value={nationalCategories[cat.code] ?? "0"}
+                                                onChange={e => {
+                                                    let value = e.target.value;
 
-    // allow only digits
-    value = value.replace(/\D/g, "");
+                                                    // allow only digits
+                                                    value = value.replace(/\D/g, "");
 
-    // remove leading zeros (keep single 0)
-    if (value.length > 1) {
-      value = value.replace(/^0+/, "");
-    }
+                                                    // remove leading zeros (keep single 0)
+                                                    if (value.length > 1) {
+                                                        value = value.replace(/^0+/, "");
+                                                    }
 
-    setNationalCategories(prev => ({
-      ...prev,
-      [cat.code]: value === "" ? "0" : value
-    }));
+                                                    setNationalCategories(prev => ({
+                                                        ...prev,
+                                                        [cat.code]: value === "" ? "0" : value
+                                                    }));
 
-    setErrors(prev => ({ ...prev, nationalDistribution: "" }));
-  }}
-  onKeyDown={e => {
-    if (
-      !/[0-9]/.test(e.key) &&
-      !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
-    ) {
-      e.preventDefault();
-    }
-  }}
-/>
+                                                    setErrors(prev => ({ ...prev, nationalDistribution: "" }));
+                                                }}
+                                                onKeyDown={e => {
+                                                    if (
+                                                        !/[0-9]/.test(e.key) &&
+                                                        !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+                                                    ) {
+                                                        e.preventDefault();
+                                                    }
+                                                }}
+                                            />
                                         </Col>
                                     ))}
                                     <Col md={2}><Form.Label className="small fw-semibold">{t("common:total")}</Form.Label><Form.Control disabled value={nationalCategoryTotal} /></Col>
@@ -137,41 +196,41 @@ const ReservationSection = ({
                                 <Row className="g-3">
                                     {disabilityCategories.map(d => (
                                         <Col md={3} key={d.id}><Form.Label className="small fw-semibold">{d.disabilityCode}</Form.Label>
-                                         <Form.Control
-  type="text"                 // 🔥 change from number → text
-  inputMode="numeric"
-  pattern="[0-9]*"
-  value={nationalDisabilities[d.disabilityCode] ?? "0"}
-  onChange={e => {
-    let value = e.target.value;
+                                            <Form.Control
+                                                type="text"                 // 🔥 change from number → text
+                                                inputMode="numeric"
+                                                pattern="[0-9]*"
+                                                value={nationalDisabilities[d.disabilityCode] ?? "0"}
+                                                onChange={e => {
+                                                    let value = e.target.value;
 
-    // ❌ allow only digits
-    value = value.replace(/\D/g, "");
+                                                    // ❌ allow only digits
+                                                    value = value.replace(/\D/g, "");
 
-    // ✅ remove leading zeros (but allow single 0)
-    if (value.length > 1) {
-      value = value.replace(/^0+/, "");
-    }
+                                                    // ✅ remove leading zeros (but allow single 0)
+                                                    if (value.length > 1) {
+                                                        value = value.replace(/^0+/, "");
+                                                    }
 
-    setNationalDisabilities(prev => ({
-      ...prev,
-      [d.disabilityCode]: value === "" ? "0" : value
-    }));
+                                                    setNationalDisabilities(prev => ({
+                                                        ...prev,
+                                                        [d.disabilityCode]: value === "" ? "0" : value
+                                                    }));
 
-    setErrors(prev => ({
-      ...prev,
-      nationalDistribution: ""
-    }));
-  }}
-  onKeyDown={e => {
-    if (
-      !/[0-9]/.test(e.key) &&
-      !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
-    ) {
-      e.preventDefault();
-    }
-  }}
-/>
+                                                    setErrors(prev => ({
+                                                        ...prev,
+                                                        nationalDistribution: ""
+                                                    }));
+                                                }}
+                                                onKeyDown={e => {
+                                                    if (
+                                                        !/[0-9]/.test(e.key) &&
+                                                        !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+                                                    ) {
+                                                        e.preventDefault();
+                                                    }
+                                                }}
+                                            />
                                         </Col>
                                     ))}
                                 </Row>
@@ -184,19 +243,19 @@ const ReservationSection = ({
                             <Col md={3}><Form.Label>{t("addPosition:state")} <span className="text-danger">*</span></Form.Label>
                                 <Select
                                     classNamePrefix="react-select"
-                                     isDisabled={isViewMode} 
-                                      styles={{
-        control: (base, state) => ({
-            ...base,
-            backgroundColor: isViewMode ? "#e9ecef" : base.backgroundColor,
-          //  cursor: isViewMode ? "not-allowed" : "pointer",
-            opacity: isViewMode ? 0.8 : 1
-        }),
-        singleValue: (base) => ({
-            ...base,
-            color: isViewMode ? "#6c757d" : base.color
-        })
-    }}
+                                    isDisabled={isViewMode}
+                                    styles={{
+                                        control: (base, state) => ({
+                                            ...base,
+                                            backgroundColor: isViewMode ? "#e9ecef" : base.backgroundColor,
+                                            //  cursor: isViewMode ? "not-allowed" : "pointer",
+                                            opacity: isViewMode ? 0.8 : 1
+                                        }),
+                                        singleValue: (base) => ({
+                                            ...base,
+                                            color: isViewMode ? "#6c757d" : base.color
+                                        })
+                                    }}
                                     value={[
                                         { value: "", label: t("addPosition:select_state") },
                                         ...states.map(s => ({
@@ -240,19 +299,19 @@ const ReservationSection = ({
                                 <Select
                                     classNamePrefix="react-select"
                                     isDisabled={!currentState.state}
-                                  
-                                      styles={{
-        control: (base, state) => ({
-            ...base,
-            backgroundColor: isViewMode ? "#e9ecef" : base.backgroundColor,
-          //  cursor: isViewMode ? "not-allowed" : "pointer",
-            opacity: isViewMode ? 0.8 : 1
-        }),
-        singleValue: (base) => ({
-            ...base,
-            color: isViewMode ? "#6c757d" : base.color
-        })
-    }}
+
+                                    styles={{
+                                        control: (base, state) => ({
+                                            ...base,
+                                            backgroundColor: isViewMode ? "#e9ecef" : base.backgroundColor,
+                                            //  cursor: isViewMode ? "not-allowed" : "pointer",
+                                            opacity: isViewMode ? 0.8 : 1
+                                        }),
+                                        singleValue: (base) => ({
+                                            ...base,
+                                            color: isViewMode ? "#6c757d" : base.color
+                                        })
+                                    }}
                                     value={
                                         filteredCities
                                             .map(c => ({
@@ -307,63 +366,30 @@ const ReservationSection = ({
 
                                 <ErrorMessage>{renderError(errors.stateVacancies)}</ErrorMessage>
                             </Col>
-                            <Col md={3}><Form.Label>{t("addPosition:local_language")} <span className="text-danger">*</span></Form.Label>
-                                <Select
-                                    classNamePrefix="react-select"
-                                    isDisabled={!currentState.state}
-                                 
-                                      styles={{
-        control: (base, state) => ({
-            ...base,
-            backgroundColor: isViewMode ? "#e9ecef" : base.backgroundColor,
-          //  cursor: isViewMode ? "not-allowed" : "pointer",
-            opacity: isViewMode ? 0.8 : 1
-        }),
-        singleValue: (base) => ({
-            ...base,
-            color: isViewMode ? "#6c757d" : base.color
-        })
-    }}
-                                    value={[
-                                        { value: "", label: t("addPosition:select_language") },
-                                        ...filteredLanguages.map(lang => ({
-                                            value: lang.id,
-                                            label: lang.name
-                                        }))
-                                    ].find(option => String(option.value) === String(currentState.language))}
-                                    onChange={(selected) => {
-                                        setCurrentState(prev => ({
-                                            ...prev,
-                                            language: selected ? selected.value : ""
-                                        }));
-                                        setErrors(prev => ({ ...prev, stateLanguage: "" }));
+                            <Col md={3}><Form.Label>Approved Languages</Form.Label>
+
+                                <div
+                                    style={{
+                                        minHeight: "38px",
+                                        border: "1px solid #ced4da",
+                                        borderRadius: "4px",
+                                        padding: "6px 12px",
+                                       backgroundColor: "#e9ecef",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        fontSize: "14px",
+                                        color: currentState.state ? "#212529" : "#6c757d"
                                     }}
-                                    options={[
-                                        { value: "", label: t("addPosition:select_language") },
-                                        ...filteredLanguages.map(lang => ({
-                                            value: lang.id,
-                                            label: lang.name
-                                        }))
-                                    ]}
-                                />
+                                    disabled={!currentState.state}
+                                >
+                                    {currentState.state
+                                        ? getLanguagesByState(currentState.state)
+                                        : "State Language"}
+                                </div>
 
                                 <ErrorMessage>{renderError(errors.stateLanguage)}</ErrorMessage>
                             </Col>
 
-                            <Col md={3} className="d-flex align-items-end">
-                                <Form.Check
-                                    type="checkbox"
-                                    label="Is proficient in local language required?"
-                                    checked={currentState.isProficientInLocalLanguage === true}
-                                    onChange={(e) => {
-                                        setCurrentState(prev => ({
-                                            ...prev,
-                                            isProficientInLocalLanguage: e.target.checked
-                                        }));
-                                    }}
-                                    className="custom_checkbox"
-                                />
-                            </Col>
                         </Row>
                         <Row className="g-4 mt-3">
                             <Col md={7}>
@@ -371,47 +397,47 @@ const ReservationSection = ({
                                     <Row className="g-3">
                                         {reservationCategories.map(cat => (
                                             <Col md={2} key={cat.id}><Form.Label className="small fw-semibold">{cat.code}</Form.Label>
-                                     <Form.Control
-  type="text"
-  inputMode="numeric"
-  pattern="[0-9]*"
-  value={currentState.categories?.[cat.code] ?? 0}
-  onChange={e => {
-    let value = e.target.value;
+                                                <Form.Control
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    pattern="[0-9]*"
+                                                    value={currentState.categories?.[cat.code] ?? 0}
+                                                    onChange={e => {
+                                                        let value = e.target.value;
 
-    //  keep only digits
-    value = value.replace(/\D/g, "");
+                                                        //  keep only digits
+                                                        value = value.replace(/\D/g, "");
 
-    setCurrentState(prev => ({
-      ...prev,
-      categories: {
-        ...prev.categories,
-        [cat.code]: Number(value || 0)
-      }
-    }));
+                                                        setCurrentState(prev => ({
+                                                            ...prev,
+                                                            categories: {
+                                                                ...prev.categories,
+                                                                [cat.code]: Number(value || 0)
+                                                            }
+                                                        }));
 
-    setErrors(prev => ({
-      ...prev,
-      stateDistribution: ""
-    }));
-  }}
-  onKeyDown={e => {
-    //  block anything except digits + control keys
-    if (
-      !/[0-9]/.test(e.key) &&
-      !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
-    ) {
-      e.preventDefault();
-    }
-  }}
-  onPaste={e => {
-    //  block paste if it contains non-digits
-    const paste = e.clipboardData.getData("text");
-    if (!/^\d+$/.test(paste)) {
-      e.preventDefault();
-    }
-  }}
-/>
+                                                        setErrors(prev => ({
+                                                            ...prev,
+                                                            stateDistribution: ""
+                                                        }));
+                                                    }}
+                                                    onKeyDown={e => {
+                                                        //  block anything except digits + control keys
+                                                        if (
+                                                            !/[0-9]/.test(e.key) &&
+                                                            !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+                                                        ) {
+                                                            e.preventDefault();
+                                                        }
+                                                    }}
+                                                    onPaste={e => {
+                                                        //  block paste if it contains non-digits
+                                                        const paste = e.clipboardData.getData("text");
+                                                        if (!/^\d+$/.test(paste)) {
+                                                            e.preventDefault();
+                                                        }
+                                                    }}
+                                                />
                                             </Col>
                                         ))}
                                         <Col md={2}><Form.Label className="small fw-semibold">{t("common:total")}</Form.Label><Form.Control disabled value={stateCategoryTotal} /></Col>
@@ -423,44 +449,44 @@ const ReservationSection = ({
                                     <Row className="g-3">
                                         {disabilityCategories.map(d => (
                                             <Col md={3} key={d.id}><Form.Label className="small fw-semibold">{d.disabilityCode}</Form.Label>
-<Form.Control
-  type="text"
-  inputMode="numeric"
-  pattern="[0-9]*"
-  value={currentState.disabilities?.[d.disabilityCode] ?? "0"}
-  onChange={e => {
-    let value = e.target.value;
+                                                <Form.Control
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    pattern="[0-9]*"
+                                                    value={currentState.disabilities?.[d.disabilityCode] ?? "0"}
+                                                    onChange={e => {
+                                                        let value = e.target.value;
 
-    // allow only digits
-    value = value.replace(/\D/g, "");
+                                                        // allow only digits
+                                                        value = value.replace(/\D/g, "");
 
-    // remove leading zeros (keep single 0)
-    if (value.length > 1) {
-      value = value.replace(/^0+/, "");
-    }
+                                                        // remove leading zeros (keep single 0)
+                                                        if (value.length > 1) {
+                                                            value = value.replace(/^0+/, "");
+                                                        }
 
-    setCurrentState(prev => ({
-      ...prev,
-      disabilities: {
-        ...prev.disabilities,
-        [d.disabilityCode]: value === "" ? "0" : value
-      }
-    }));
+                                                        setCurrentState(prev => ({
+                                                            ...prev,
+                                                            disabilities: {
+                                                                ...prev.disabilities,
+                                                                [d.disabilityCode]: value === "" ? "0" : value
+                                                            }
+                                                        }));
 
-    setErrors(prev => ({
-      ...prev,
-      stateDistribution: ""
-    }));
-  }}
-  onKeyDown={e => {
-    if (
-      !/[0-9]/.test(e.key) &&
-      !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
-    ) {
-      e.preventDefault();
-    }
-  }}
-/>
+                                                        setErrors(prev => ({
+                                                            ...prev,
+                                                            stateDistribution: ""
+                                                        }));
+                                                    }}
+                                                    onKeyDown={e => {
+                                                        if (
+                                                            !/[0-9]/.test(e.key) &&
+                                                            !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+                                                        ) {
+                                                            e.preventDefault();
+                                                        }
+                                                    }}
+                                                />
 
                                             </Col>
                                         ))}
@@ -483,8 +509,8 @@ const ReservationSection = ({
                                     {/* ===== HEADER ROW 1 ===== */}
                                     <tr>
                                         <th>{t("addPosition:sno")}</th>
-                                        <th style={{width: '15%'}}>{t("addPosition:state_name")}</th>
-                                        <th style={{width: '15%'}}>{t("addPosition:city_name")}</th>
+                                        <th style={{ width: '15%' }}>{t("addPosition:state_name")}</th>
+                                        <th style={{ width: '15%' }}>{t("addPosition:city_name")}</th>
                                         <th>{t("addPosition:vacancies")}</th>
                                         <th>{t("addPosition:local_language_of_state")}</th>
 
@@ -532,7 +558,7 @@ const ReservationSection = ({
                                             <tr key={idx}>
                                                 <td>{idx + 1}</td><td>{states.find(s => s.id === row.state)?.name}</td><td>
                                                     {cities.find(c => String(c.id) === String(row.city))?.name || "-"}
-                                                </td><td>{row.vacancies}</td><td>{languages.find(l => l.id === row.language)?.name}</td>
+                                                </td><td>{row.vacancies}</td><td>{getLanguagesByState(row.state)}</td>
                                                 {reservationCategories.map(c => <td key={c.code}>{row.categories?.[c.code] ?? 0}</td>)}
                                                 <td>{Object.values(row.categories || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
                                                 {disabilityCategories.map(d => <td key={d.disabilityCode}>{row.disabilities?.[d.disabilityCode] ?? 0}</td>)}

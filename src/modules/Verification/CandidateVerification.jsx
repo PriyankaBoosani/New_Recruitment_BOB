@@ -66,7 +66,33 @@ export default function CandidateVerification() {
  
  
 const location = useLocation();
- 
+const isBackNavigationRef = useRef(
+  sessionStorage.getItem("fromPreviewBack") === "true"
+);
+
+// Check for back navigation on mount
+// useEffect(() => {
+//   isBackNavigationRef.current = sessionStorage.getItem("fromPreviewBack") === "true";
+  
+//   // Clean up sessionStorage after checking
+//   if (isBackNavigationRef.current) {
+//     sessionStorage.removeItem("fromPreviewBack");
+//   }
+// }, []);
+useEffect(() => {
+  if (!location.state) return;
+
+  setPage(location.state.page ?? 0);
+  setPageSize(location.state.pageSize ?? 10);
+
+  // remove flag AFTER restore
+  setTimeout(() => {
+    sessionStorage.removeItem("fromPreviewBack");
+    isBackNavigationRef.current = false;
+  }, 50);
+
+}, [location.state]);
+
 const cameFromZonal =
   sessionStorage.getItem("fromZonalSubmit") === "true";
  
@@ -144,16 +170,23 @@ const navPosition = location.state?.position || null;
   //     setMasterData(res.data);
   //   });
   // }, []);
- 
- 
- 
-useEffect(() => {
+
+  useEffect(() => {
+  if (navInitRef.current) {
+    navInitRef.current = false;
+    return;
+  }
 }, []);
  
- useEffect(() => {
-  setPage(0);
-}, [activeStage, searchText, selectedRequisition, selectedPosition]);
+const isBackNavigation = isBackNavigationRef.current;
 
+
+// useEffect(() => {
+//   // When selection becomes empty → reset page
+//   if (!selectedRequisition || !selectedPosition) {
+//     setPage(0);
+//   }
+// }, [selectedRequisition, selectedPosition]);
  
 const formatApiDate = (d) => {
   if (!d) return null;
@@ -362,6 +395,16 @@ const totalElements = filteredCandidates.length;
 
 const totalPages = Math.ceil(totalElements / pageSize);
 
+useEffect(() => {
+  // Fix invalid page after data change, but not during back navigation
+  if (!isBackNavigationRef.current && page >= totalPages) {
+    setPage(0);
+  }
+}, [totalPages, page]);
+
+
+
+
 const startIndex = page * pageSize;
 const endIndex = startIndex + pageSize;
 
@@ -480,6 +523,8 @@ useEffect(() => {
   loadMasters();
 }, []);
 
+
+
 const DatePill = React.forwardRef(({ value, onClick }, ref) => (
   <div className="date-pill" onClick={onClick} ref={ref}>
     {value}
@@ -513,6 +558,10 @@ const DatePill = React.forwardRef(({ value, onClick }, ref) => (
   onChange={(date) => {
     setSelectedDate(date);
     setIsCalendarOpen(false);
+
+    if (!isBackNavigationRef.current) {
+      setPage(0);
+    }
   }}
   onClickOutside={() => setIsCalendarOpen(false)}
   open={isCalendarOpen}
@@ -599,8 +648,17 @@ const DatePill = React.forwardRef(({ value, onClick }, ref) => (
   onRequisitionChange={(req) => {
     setSelectedRequisition(req);
     setSelectedPosition(null);   //  reset position when req changes
+      if (!isBackNavigationRef.current) {
+    setPage(0);
+  }
   }}
-  onPositionChange={setSelectedPosition}
+  onPositionChange={(pos) => {
+  setSelectedPosition(pos);
+
+  if (!isBackNavigationRef.current) {
+    setPage(0);
+  }
+}}
    closeCalendar={() => setIsCalendarOpen(false)}
 />
  
@@ -643,6 +701,9 @@ isSaveEnabled={anyAbsentChanged}
         selectedDate={selectedDate}
         allCandidatesRaw={allCandidatesRaw}
         onViewFile={handleViewFile}
+        filter={filteredCandidates}
+        searchText={searchText}
+        activeStage={activeStage}
       />
  
  

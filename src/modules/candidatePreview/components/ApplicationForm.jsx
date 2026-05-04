@@ -1173,6 +1173,13 @@ const ApplicationForm = ({
           <Accordion.Body>
             <div className="personal-details-wrapper">
               <table className="table table-bordered bob-table w-100 mb-0">
+                  <thead className="visually-hidden">
+                  <tr>
+                    <th>Field</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+
                 <tbody>
                   <tr>
                     <td className="fw-med" style={{ width: "20%" }}>{t("full_name")}</td>

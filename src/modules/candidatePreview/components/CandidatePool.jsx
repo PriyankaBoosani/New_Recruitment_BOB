@@ -16,6 +16,7 @@ export default function CandidatePool({
   loading,
   page,
   pageSize,
+  filters,
   totalElements,
   onPageChange,
   onPageSizeChange,
@@ -23,7 +24,8 @@ export default function CandidatePool({
   requisition,
   position,
   selectedRequisitionId,
-  isRankEnabled
+  isRankEnabled,
+  hasLocationData,
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const STATUS_CLASS_MAP = {
@@ -190,6 +192,8 @@ export default function CandidatePool({
     );
   };
 
+  const columnCount = hasLocationData ? 7 : 6;
+
   /* ---------- Render ---------- */
 
   return (
@@ -211,13 +215,13 @@ export default function CandidatePool({
                 {t("candidateWorkflow:candidate")} {sortIcon("name")}
               </th>
 
-              <th className="fs-14 fw-normal py-3" role="button">
+              {/* <th className="fs-14 fw-normal py-3" role="button">
                 Rank
               </th>
 
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("score")} role="button">
                 Score {sortIcon("score")}
-              </th>
+              </th> */}
 
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("experienceMonths")} role="button">
                 {t("candidateWorkflow:experience")} {sortIcon("experienceMonths")}
@@ -227,9 +231,11 @@ export default function CandidatePool({
                 {t("candidateWorkflow:status")}
               </th>
 
-              <th className="fs-14 fw-normal py-3">
-                {t("common:location")}
-              </th>
+              {hasLocationData && (
+                <th className="fs-14 fw-normal py-3">
+                  {t("common:location")}
+                </th>
+              )}
 
               <th className="fs-14 fw-normal py-3">
                 {t("common:category")}
@@ -273,7 +279,7 @@ export default function CandidatePool({
 
 
 
-                  <td className="align-content-center">
+                  {/* <td className="align-content-center">
                     <p className="fw-normal fs-14 mb-0">{c?.rank || "-"}</p>
                   </td>
 
@@ -307,7 +313,7 @@ export default function CandidatePool({
                         </OverlayTrigger>
                       )}
                     </div>
-                  </td>
+                  </td> */}
 
                   <td className="align-content-center">
                     {/* <p className="fw-normal fs-14 mb-0">{(c.experienceMonths / 12).toFixed(1)} {t("candidateWorkflow:years")}</p> */}
@@ -328,10 +334,12 @@ export default function CandidatePool({
                       )} */}
                     </span>
                   </td>
-
-                  <td className="align-content-center">
-                    <p className="fw-normal fs-14 mb-0">{c.location}</p>
-                  </td>
+                  
+                  {hasLocationData && (
+                    <td className="align-content-center">
+                      <p className="fw-normal fs-14 mb-0">{c.location}</p>
+                    </td>
+                  )}
 
                   <td className="align-content-center">
                     <p className="fw-normal fs-14 mb-0">{c.categoryName}</p>
@@ -344,7 +352,9 @@ export default function CandidatePool({
                     >
                       <Person
                         className="me-3 cursor-pointer"
-                        onClick={() =>
+                        onClick={() =>{
+
+                          
                           navigate("/candidate-preview", {
                             state: {
                               from: "/candidate-workflow",
@@ -363,12 +373,18 @@ export default function CandidatePool({
                                 ? {
                                   positionId: position.positionId,
                                   positionName: position.positionName,
+                                  isLocationWise: position.isLocationWise,
                                 }
                                 : null,
                               activeTab: "CANDIDATE_POOL",
                               isRankEnabled,
+
+                              //ADD THESE
+                              page,
+                              pageSize,
+                              filters,
                             },
-                          })
+                          })}
                         }
                       />
                     </OverlayTrigger>
@@ -471,6 +487,11 @@ export default function CandidatePool({
                       state: {
                         from: "/candidate-workflow",
                         isRankEnabled,
+                        // 🔥 ADD 
+                        activeTab: "CANDIDATE_POOL",
+                        page,
+                        pageSize,
+                        filters,
                         candidate: c, positionId: selectedPositionId, requisitionId: selectedRequisitionId,
                         requisition: requisition
                           ? {

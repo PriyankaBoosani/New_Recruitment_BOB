@@ -46,7 +46,7 @@ const ForgotPassword = () => {
             ← Login
           </button>
 
-          <label>Enter your registered email:</label>
+          <label htmlFor="forgot-email">Enter your registered email:</label>
           <input
             type="email"
             value={email}

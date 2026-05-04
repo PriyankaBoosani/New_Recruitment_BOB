@@ -74,19 +74,17 @@
   overflow-y: auto;
   max-height: 600px;
 }
-/* .react-select__menu 
-{
-   overflow: inherit;
-} */
+
 
 /* Education Modal Group Styling */
 .group-box {
   background: #f8f9fa;
   border: 1px solid #e9ecef;
   border-radius: 8px;
-  padding: 16px;
+  padding: 10px 15px;
   margin-bottom: 16px;
   position: relative;
+  animation: slideIn 0.3s ease-out;
 }
 
 .group-header {
@@ -97,9 +95,11 @@
   padding-bottom: 8px;
   border-bottom: 2px solid #007bff;
 }
-
+.edugrp-header{
+   margin-bottom: 0px !important;
+    border-bottom: none !important;
+}
 .group-header strong {
-  /* color: #007bff; */
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -107,8 +107,6 @@
 }
 
 .group-header .btn {
-  /* background: #dc3545;
-  border-color: #dc3545; */
   color: white;
   font-size: 12px;
   padding: 4px 8px;
@@ -117,21 +115,8 @@
 }
 
 .group-header .btn:hover {
-  /* background: #c82333;
-  border-color: #c82333; */
+  
   transform: translateY(-1px);
-}
-
-
-.or-divider {
-	text-align: center;
-	margin: 4px 0;
-	position: relative;
-	font-weight: 500;
-	color: #6c757d;
-	font-size: 0.875rem;
-	text-transform: uppercase;
-	letter-spacing: 1px;
 }
 
 .or-divider:before {
@@ -141,12 +126,10 @@
   left: 0;
   right: 0;
   height: 1px;
-  /* background: #dee2e6; */
   z-index: 1;
 }
 
 .or-divider {
-  /* background: #f8f9fa; */
   padding: 0 16px;
   position: relative;
   z-index: 2;
@@ -157,16 +140,16 @@
   background: white;
   border-radius: 6px;
   padding: 12px;
-  margin-bottom: 8px !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border: 1px solid #e9ecef;
   transition: all 0.2s ease;
+  margin: 0px;
 }
 
-.group-box .row:hover {
+/* .group-box .row:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transform: translateY(-1px);
-}
+} */
 
 /* Delete button styling */
 .group-box .btn-danger {
@@ -223,9 +206,6 @@
   }
 }
 
-.group-box {
-  animation: slideIn 0.3s ease-out;
-}
 .btn-header{
 border: 1px solid rgb(22, 43, 117) !important;
   background: rgb(22, 43, 117) !important;
@@ -265,4 +245,20 @@ border: 1px solid rgb(22, 43, 117) !important;
     margin: 16px 0;
     font-size: 12px;
   }
+}
+.react-select-wrapper {
+  min-height: 60px; /* adjust based on your UI */
+}
+
+.error-space {
+  min-height: 18px;
+}
+.error-message {
+	margin-top: 4px !important;
+}
+.delbtn{
+  margin-top: -15px !important;
+}
+.edu-modal .react-select__control {
+ min-height: 41px;
 }

@@ -22,6 +22,7 @@ const PageHeaderWithBack = ({
 
     // 🔥 keep this (your interviewer depends on it)
     sessionStorage.setItem("fromPreviewBack", "true");
+    console.log("HeaderWithBack - navigating to:", target, "with state:", state);
 
     navigate(target, {
       state: {
@@ -31,10 +32,17 @@ const PageHeaderWithBack = ({
           state.preloadedCandidates || state.candidates || [],
         selectedDate: state.selectedDate,
 
-        // keep ids also (for workflow)
-        requisitionId,
-        positionId,
-        activeTab
+        // 🔥 safer mapping
+        requisitionId: state.requisitionId || requisitionId,
+        positionId: state.positionId || positionId,
+        activeTab: state.activeTab || activeTab,
+        // 🔥 ADD THESE
+        page: state.page,
+        pageSize: state.pageSize,
+        // 🔥 ADD THESE
+        interviewPage: state.interviewPage,
+        interviewPageSize: state.interviewPageSize,
+        filters: state.filters
       }
     });
   };

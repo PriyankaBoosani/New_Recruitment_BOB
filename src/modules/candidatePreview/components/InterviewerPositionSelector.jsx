@@ -195,7 +195,7 @@ export default function InterviewerPositionSelector({
 
 
       {/* ===== IMPORT BUTTON ===== */}
-<div className="col-md-4 d-flex justify-content-end align-items-end">
+{/* <div className="col-md-4 d-flex justify-content-end align-items-end">
   {showImportBtn && (
     <Button
       onClick={onImportClick}
@@ -206,7 +206,7 @@ export default function InterviewerPositionSelector({
       {t("interviewDay:import_data")}
     </Button>
   )}
-</div>
+</div> */}
 
     </div>
   );

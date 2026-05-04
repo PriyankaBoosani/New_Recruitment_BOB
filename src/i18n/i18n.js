@@ -75,6 +75,8 @@ import verificationHi from "../i18n/verificationJson/verification.hi.json";
 import educationEn from "../i18n/json/education.en.json";
 import educationHi from "../i18n/json/education.hi.json";
 
+import ApprovalEn from "../i18n/ApprovalJson/approvalhistory.en.json";
+import ApprovalHi from "../i18n/ApprovalJson/approvalhistory.hi.json";
 
 
 
@@ -109,6 +111,7 @@ i18n
          candidateWorkflow: candidateWorkflowEn,
          verification: verificationEn,
          education: educationEn,
+          approvalHistory: ApprovalEn,
       },
       hi: {
         common: commonHi,
@@ -136,6 +139,7 @@ i18n
          candidateWorkflow: candidateWorkflowHi,
          verification: verificationHi,
           education: educationHi,
+          approvalHistory: ApprovalHi,
       }
     },
     lng: "en",       

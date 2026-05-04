@@ -28,8 +28,13 @@ import { validateSelectedRequisitions } from "../validations/requisitionValidati
 //  Mapper
 
 const CommitteeRequests = () => {
-    const { t } = useTranslation(["jobPostingsList", "common"]);
-    const userRole = useSelector((state) => state.user.user?.role);
+    const { t } = useTranslation(["jobPostingsList", "common", "approvalHistory"]);
+    const privileges = useSelector((state) => state.user.privileges);
+
+    const isL1 = privileges?.["L1 Approval"];
+    const isL2 = privileges?.["L2 Approval"];
+
+    const approvalLevel = isL2 ? "L2" : isL1 ? "L1" : null;
     const navigate = useNavigate();
     const {
         requisitionOptions,
@@ -68,26 +73,33 @@ const CommitteeRequests = () => {
     const [selectedRequisition, setSelectedRequisition] = useState(null);
     const [selectedPosition, setSelectedPosition] = useState(null);
 
-    const statusOptionsByRole = {
+    const statusOptionsByApproval = {
         L1: [
-            { value: "L1_PENDING", label: "L1 Pending" },
-            { value: "L1_APPROVED", label: "L1 Approved" },
-            { value: "L1_REJECTED", label: "L1 Rejected" },
-            { value: "L2_REJECTED", label: "L2 Rejected" },
-            { value: "APPROVED", label: "Approved" }
+            { value: "L1_PENDING", label: t("jobPostingsList:status_l1_pending") },
+            { value: "L1_APPROVED", label: t("jobPostingsList:status_l1_approved") },
+            { value: "L1_REJECTED", label: t("jobPostingsList:status_l1_rejected") },
+            { value: "L2_REJECTED", label: t("jobPostingsList:status_l2_rejected") },
+            { value: "APPROVED", label: t("jobPostingsList:status_approved") }
         ],
         L2: [
-            { value: "L1_APPROVED", label: "L1 Approved" },
-            { value: "L2_REJECTED", label: "L2 Rejected" },
-            { value: "APPROVED", label: "Approved" }
+            { value: "L1_APPROVED", label: t("jobPostingsList:status_l1_approved") },
+            { value: "L2_REJECTED", label: t("jobPostingsList:status_l2_rejected") },
+            { value: "APPROVED", label: t("jobPostingsList:status_approved") }
         ]
     };
+    const selectableStatus =
+        approvalLevel === "L1"
+            ? "L1_PENDING"
+            : approvalLevel === "L2"
+                ? "L1_APPROVED"
+                : null;
 
-    const allowedStatuses = statusOptionsByRole[userRole] || [];
+    const allowedStatuses = statusOptionsByApproval[approvalLevel] || [];
+
 
     const selectedRequisitionOption = selectedRequisition
         ? {
-            label: selectedRequisition.requisitionTitle,
+            label: `${selectedRequisition.requisitionCode}- ${selectedRequisition.requisitionTitle}`,
             value: selectedRequisition.id,
             raw: selectedRequisition
         }
@@ -271,6 +283,47 @@ const CommitteeRequests = () => {
             .replace(/_/g, " ")
             .replace(/\b\w/g, (c) => c.toUpperCase());
     };
+    const selectStyles = {
+        control: (base) => ({
+            ...base,
+            height: "38px",
+            minHeight: "38px",   // 🔥 override default 38px
+            fontSize: "14px"
+        }),
+
+        valueContainer: (base) => ({
+            ...base,
+            height: "38px",
+            padding: "0 8px"     // 🔥 remove vertical padding
+        }),
+
+        indicatorsContainer: (base) => ({
+            ...base,
+            height: "34px"
+        }),
+
+        input: (base) => ({
+            ...base,
+            margin: 0,
+            padding: 0
+        }),
+
+        singleValue: (base) => ({
+            ...base,
+            fontSize: "14px"
+        }),
+
+        placeholder: (base) => ({
+            ...base,
+            fontSize: "14px"
+        }),
+
+        menuPortal: (base) => ({
+            ...base,
+            zIndex: 9999
+        })
+    };
+
     // const getStatusBadgeVariant = (status) => {
     //     switch (status.toLowerCase()) {
     //         case "approved":
@@ -292,9 +345,9 @@ const CommitteeRequests = () => {
                 {/* ================= HEADER ================= */}
                 <Row className="mb-3 align-items-center">
                     <Col>
-                        <h5 className="page-title">Committee Requests</h5>
+                        <h5 className="page-title">{t("approvalHistory:committee_requests")}</h5>
                         <p className="page-subtitle">
-                            Review and approve or reject committee requests
+                            {t("approvalHistory:review_and_approve_or_reject_committee_requests")}
                         </p>
                     </Col>
                     <Col xs={12} md={4}>
@@ -302,7 +355,7 @@ const CommitteeRequests = () => {
                             <Search />
                             <Form.Control
                                 type="text"
-                                placeholder="Search by Panel name..."
+                                placeholder={t("approvalHistory:search_by_panel_name")}
                                 value={searchInput}
                                 onChange={(e) => setSearchInput(e.target.value)}
                             />
@@ -314,10 +367,12 @@ const CommitteeRequests = () => {
 
                     {/* Requisition */}
                     <Col xs={12} md={4}>
-                        <div className="filter-label">Requisition</div>
+                        <div className="filter-label">{t("approvalHistory:requisition")}</div>
                         <Select
-                            classNamePrefix="filter-select"
-                            placeholder="Select Requisition"
+                            styles={selectStyles}
+                            classNamePrefix="react-select"
+                            menuPortalTarget={document.body}
+                            placeholder={t("approvalHistory:select_requisition")}
                             options={requisitionOptions}
                             isLoading={loadingRequisitions}
                             value={selectedRequisitionOption}
@@ -330,10 +385,12 @@ const CommitteeRequests = () => {
 
                     {/* Position */}
                     <Col xs={12} md={4}>
-                        <div className="filter-label">Position</div>
+                        <div className="filter-label">{t("approvalHistory:position")}</div>
                         <Select
-                            classNamePrefix="filter-select"
-                            placeholder="Select Position"
+                            styles={selectStyles}
+                            classNamePrefix="react-select"
+                            menuPortalTarget={document.body}
+                            placeholder={t("approvalHistory:select_position")}
                             options={positionOptions}
                             isLoading={loadingPositions}
                             value={selectedPositionOption}
@@ -357,7 +414,7 @@ const CommitteeRequests = () => {
                                 setPage(0);
                             }}
                         >
-                            <option value="ALL">All</option>
+                            <option value="ALL">{t("jobPostingsList:status_all")}</option>
 
                             {allowedStatuses.map((status) => (
                                 <option key={status.value} value={status.value}>
@@ -377,7 +434,7 @@ const CommitteeRequests = () => {
                             type="checkbox"
                             id="select-all-requests"
                             className="select-checkbox"
-                            label="Select All"
+                            label={t("approvalHistory:select_all")}
                             checked={allSelected}
                             onChange={(e) => {
                                 if (e.target.checked) {
@@ -406,7 +463,7 @@ const CommitteeRequests = () => {
                                 setShowCommentModal(true);
                             }}
                         >
-                            Reject
+                            {t("approvalHistory:reject")}
                         </Button>
 
                         <Button
@@ -425,7 +482,7 @@ const CommitteeRequests = () => {
                                 setShowCommentModal(true);
                             }}
                         >
-                            Approve
+                            {t("approvalHistory:approve")}
                         </Button>
                     </Col>
                 </Row>
@@ -433,12 +490,12 @@ const CommitteeRequests = () => {
                 {/* ================= COMMITTEE REQUEST CARDS ================= */}
                 {/* ================= PANELS ================= */}
                 {loadingPanels ? (
-                    <div className="text-center my-4">Loading panels...</div>
+                    <div className="text-center my-4">{t("approvalHistory:loading_panels")}</div>
                 ) : (
                     <>
                         {filteredPanels.length === 0 ? (
                             <div className="text-center text-muted my-4">
-                                No panels found
+                                {t("approvalHistory:no_panels_found")}
                             </div>
                         ) : (
                             paginatedPanels.map((panelItem) => {
@@ -463,14 +520,17 @@ const CommitteeRequests = () => {
                                                     type="checkbox"
                                                     className="select-checkbox"
                                                     checked={selectedReqIds.has(panelItem.positionPanelId)}
+                                                    disabled={panelItem.positionPanelStatus !== selectableStatus}
                                                     onChange={(e) => {
                                                         setSelectedReqIds(prev => {
                                                             const next = new Set(prev);
+
                                                             if (e.target.checked) {
                                                                 next.add(panelItem.positionPanelId);
                                                             } else {
                                                                 next.delete(panelItem.positionPanelId);
                                                             }
+
                                                             return next;
                                                         });
                                                     }}
@@ -479,7 +539,7 @@ const CommitteeRequests = () => {
 
                                             {/* Panel Name */}
                                             <Col md={3} className="data-col">
-                                                <div className="field-label">Panel Name <img
+                                                <div className="field-label">{t("approvalHistory:panel_name")} <img
                                                     src={history_icon}
                                                     alt="History"
                                                     className="icon-history"
@@ -492,7 +552,7 @@ const CommitteeRequests = () => {
 
                                             {/* Panel Type */}
                                             <Col md={2} className="data-col">
-                                                <div className="field-label">Panel Type</div>
+                                                <div className="field-label">{t("approvalHistory:panel_type")}</div>
                                                 <div className="field-value">
                                                     {panel.committee?.committeeName}
                                                 </div>
@@ -500,7 +560,7 @@ const CommitteeRequests = () => {
 
                                             {/* Panel Members */}
                                             <Col md={3} className="data-col">
-                                                <div className="field-label">Panel Members</div>
+                                                <div className="field-label">{t("approvalHistory:panel_members")}</div>
                                                 <div className="field-value">
                                                     {members.join(", ")}
                                                 </div>
@@ -508,7 +568,7 @@ const CommitteeRequests = () => {
 
                                             {/* Start Date */}
                                             <Col md={1} className="data-col">
-                                                <div className="field-label">Start Date</div>
+                                                <div className="field-label">{t("approvalHistory:start_date")}</div>
                                                 <div className="field-value">
                                                     {panelItem.startDate}
                                                 </div>
@@ -516,7 +576,7 @@ const CommitteeRequests = () => {
 
                                             {/* End Date */}
                                             <Col md={1} className="data-col">
-                                                <div className="field-label">End Date</div>
+                                                <div className="field-label">{t("approvalHistory:end_date")}</div>
                                                 <div className="field-value">
                                                     {panelItem.endDate}
                                                 </div>

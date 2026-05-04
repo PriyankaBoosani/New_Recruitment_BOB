@@ -18,8 +18,25 @@ const GenericOrAnnexuresFormModal = ({
   const { t } = useTranslation(["genericOrAnnexures"]);
   const isTypeSelected = !!formData?.type;
   const MAX_PDF_SIZE = 5 * 1024 * 1024; // 5 MB
+const title = isViewing
+  ? t("view", "View Generic / Annexures")
+  : isEditing
+  ? t("edit", "Edit Generic / Annexures")
+  : t("addgenAnn", "Add Generic / Annexures");
+const handleFormSubmit = (e) => {
+  if (isViewing) {
+    e.preventDefault();
+    onHide();
+  } else {
+    handleSave(e);
+  }
+};
 
-
+const handleFileClick = () => {
+  if (isTypeSelected) {
+    document.getElementById("pdfUpload").click();
+  }
+};
   return (
     <Modal
       show={show}
@@ -49,16 +66,7 @@ const GenericOrAnnexuresFormModal = ({
 
       {/* ===== BODY ===== */}
       <Modal.Body className="p-4">
-        <Form
-          onSubmit={
-            isViewing
-              ? (e) => {
-                e.preventDefault();
-                onHide();
-              }
-              : handleSave
-          }
-        >
+        <Form onSubmit={handleFormSubmit}>
           <Row className="g-3">
             {/* ===== TYPE FIELD (REQUIRED) ===== */}
             <Col xs={12}>
@@ -171,12 +179,7 @@ const GenericOrAnnexuresFormModal = ({
                           ? "pointer"
                           : "not-allowed"
                       }}
-                      onClick={() =>
-                        isTypeSelected &&
-                        document
-                          .getElementById("pdfUpload")
-                          .click()
-                      }
+                      onClick={handleFileClick}
                     >
                       <span className="text-muted">
                         {formData?.file?.name ||

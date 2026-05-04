@@ -30,7 +30,7 @@
     "oc": "OC",
     "id": "ID",
     "category_wise_reservation_state": "श्रेणीवार आरक्षण (राज्यवार)",
-    "state_name": "राज्य का नाम",
+    "state_name": "राज्य",
     "unknown": "अज्ञात",
     "years_short": "वर्ष",
     "not_specified": "निर्दिष्ट नहीं",
@@ -182,5 +182,5 @@
     "view_zonal_comments": "क्षेत्रीय टिप्पणियाँ देखें",
     "zonal_rejection_comment": "क्षेत्रीय अस्वीकृति टिप्पणी",
     "view_feedback_history": "प्रतिक्रिया इतिहास देखें",
-    "city_name": "शहर का नाम"
+    "city_name": "शहर"
 }

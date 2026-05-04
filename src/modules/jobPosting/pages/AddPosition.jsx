@@ -84,7 +84,8 @@ const AddPosition = () => {
     const [editingIndex, setEditingIndex] = useState(null);
     const [nationalCategories, setNationalCategories] = useState({});
     const [nationalDisabilities, setNationalDisabilities] = useState({});
-    const [currentState, setCurrentState] = useState({ state: "", vacancies: "", language: "", categories: {}, disabilities: {}, isProficientInLocalLanguage: false });
+    const [isProficientInLocalLanguage, setIsProficientInLocalLanguage] = useState(false);
+    const [currentState, setCurrentState] = useState({ state: "", vacancies: "", language: "", categories: {}, disabilities: {} });
     const [formData, setFormData] = useState({
         department: "", position: "", vacancies: "", minAge: "", maxAge: "",
         employmentType: "", contractualPeriod: "", grade: "", enableLocation: false,
@@ -93,8 +94,38 @@ const AddPosition = () => {
         preferredExperience: { years: "", months: "", description: "" },
         responsibilities: "", medicalRequired: "yes", enableStateDistribution: false,
         cutoffDate: "",useMandatoryEducationLevelExperience: false,
-usePreferredEducationLevelExperience: false
+        usePreferredEducationLevelExperience: false
     });
+    const [isAgeRelRiotVictimFamily, setIsAgeRelRiotVictimFamily] = useState(false);
+    const [isAgeRelWdsWomen, setIsAgeRelWdsWomen] = useState(false);
+
+    console.log("existingPosition", existingPosition);
+
+    // Initialize isProficientInLocalLanguage from existingPosition ROOT LEVEL
+    useEffect(() => {
+        if (existingPosition?.isProficientInLocalLanguage !== undefined) {
+            const value = existingPosition.isProficientInLocalLanguage;
+            setIsProficientInLocalLanguage(value === true || value === 'true' || value === 1 || value === '1');
+        } else {
+            setIsProficientInLocalLanguage(false);
+        }
+
+
+  setIsAgeRelRiotVictimFamily(
+    existingPosition?.isAgeRelRiotVictimFamily === true ||
+    existingPosition?.isAgeRelRiotVictimFamily === "true" ||
+    existingPosition?.isAgeRelRiotVictimFamily === 1
+  );
+
+  setIsAgeRelWdsWomen(
+    existingPosition?.isAgeRelWdsWomen === true ||
+    existingPosition?.isAgeRelWdsWomen === "true" ||
+    existingPosition?.isAgeRelWdsWomen === 1
+  );
+        
+    }, [existingPosition]);
+
+    
 
 
     const [educationData, setEducationData] = useState({
@@ -126,10 +157,10 @@ usePreferredEducationLevelExperience: false
             minAge: existingPosition.eligibilityAgeMin,
             maxAge: existingPosition.eligibilityAgeMax,
             employmentType: existingPosition.employmentType,
-            contractualPeriod:
-                existingPosition.employmentType?.toLowerCase().includes("contract")
-                    ? existingPosition.contractYears || ""
-                    : "",
+            // contractualPeriod:
+            //     existingPosition.employmentType?.toLowerCase().includes("contract")
+            //         ? existingPosition.contractYears || ""
+            //         : "",
             grade: existingPosition.gradeId,
             enableLocation: existingPosition.isLocationPreferenceEnabled,
             responsibilities: existingPosition.rolesResponsibilities,
@@ -143,7 +174,8 @@ usePreferredEducationLevelExperience: false
                 educationLevelExperiences: Object.entries(existingPosition.mandatoryExpMonthsEduWise || {}).map(([educationLevel, months]) => ({
                     educationLevel,
                     years: Math.floor(months / 12),
-                    months: months % 12
+                    months: months % 12,
+                     isSaved: true 
                 }))
             },
             preferredExperience: {
@@ -153,7 +185,8 @@ usePreferredEducationLevelExperience: false
                 educationLevelExperiences: Object.entries(existingPosition.preferredExpMonthsEduWise || {}).map(([educationLevel, months]) => ({
                     educationLevel,
                     years: Math.floor(months / 12),
-                    months: months % 12
+                    months: months % 12,
+                    isSaved: true
                 }))
             },
             contractualPeriod: isContract
@@ -191,13 +224,7 @@ usePreferredEducationLevelExperience: false
     }, [formData.employmentType, employmentTypes]);
 
     useEffect(() => {
-        console.log('Education mapping useEffect triggered');
-        console.log('existingPosition:', !!existingPosition);
-        console.log('educationTypes.length:', educationTypes.length);
-        console.log('qualifications.length:', qualifications.length);
-        console.log('specializations.length:', specializations.length);
-        console.log('certifications.length:', certifications.length);
-        console.log('eduInitializedRef.current:', eduInitializedRef.current);
+      
         
         if (!existingPosition) return;
 
@@ -320,7 +347,8 @@ usePreferredEducationLevelExperience: false
 
                         vacancies: sd.totalVacancies,
                         language: sd.localLanguage,
-                        isProficientInLocalLanguage: sd.isProficientInLocalLanguage === true,
+                        // 🔵 DO NOT store isProficientInLocalLanguage per-state - it's a root-level field
+                        // isProficientInLocalLanguage will be managed at AddPosition root level only
                         categories,
                         disabilities,
                         categoryDistributions: sd.positionCategoryDistributions.map(cd => ({
@@ -334,6 +362,14 @@ usePreferredEducationLevelExperience: false
             );
 
             setStateDistributions(mappedStates);
+            
+            // Set root-level isProficientInLocalLanguage from ROOT LEVEL of existingPosition
+            if (existingPosition?.isProficientInLocalLanguage !== undefined) {
+                const value = existingPosition.isProficientInLocalLanguage;
+                setIsProficientInLocalLanguage(value === true || value === 'true' || value === 1 || value === '1');
+            } else {
+                setIsProficientInLocalLanguage(false);
+            }
         };
 
         mapStates();
@@ -605,7 +641,10 @@ usePreferredEducationLevelExperience: false
             qualifications,
             certifications,
             indentOthers,
-            stateDistributions: stateDistributions.filter(s => !s.__deleted)
+            isProficientInLocalLanguage,
+            stateDistributions: stateDistributions.filter(s => !s.__deleted),
+            isAgeRelRiotVictimFamily,
+            isAgeRelWdsWomen
         };
         //console.log(payload);return false;
 
@@ -701,6 +740,12 @@ usePreferredEducationLevelExperience: false
                             currentState={currentState} setCurrentState={setCurrentState} stateCategoryTotal={stateCategoryTotal}
                             filteredLanguages={filteredLanguages} stateDistributions={stateDistributions} setStateDistributions={setStateDistributions} editingIndex={editingIndex}
                             setEditingIndex={setEditingIndex} handleInputChange={handleInputChange} handleAddOrUpdateState={handleAddOrUpdateState}
+                            isProficientInLocalLanguage={isProficientInLocalLanguage} setIsProficientInLocalLanguage={setIsProficientInLocalLanguage}
+                              // ✅ UPDATED VARIABLES
+                            isAgeRelRiotVictimFamily={isAgeRelRiotVictimFamily}
+                            setIsAgeRelRiotVictimFamily={setIsAgeRelRiotVictimFamily}
+                            isAgeRelWdsWomen={isAgeRelWdsWomen}
+                            setIsAgeRelWdsWomen={setIsAgeRelWdsWomen}
                         />
 
 

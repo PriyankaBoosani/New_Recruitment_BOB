@@ -61,7 +61,7 @@
     "add_state": "राज्य जोड़ें",
     "update_state": "राज्य अपडेट करें",
     "sno": "क्रमांक",
-    "state_name": "राज्य का नाम",
+    "state_name": "राज्य",
     "local_language_of_state": "राज्य की स्थानीय भाषा",
     "out_of_which": "जिसमें से",
     "actions": "कार्यवाही",
@@ -76,6 +76,6 @@
     "view_indent": "इंडेंट देखें",
     "city": "शहर",
     "select_city": "शहर चुनें",
-    "city_name": "शहर का नाम",
+    "city_name": "शहर",
     "enter_city_name": "शहर का नाम दर्ज करें"
 }

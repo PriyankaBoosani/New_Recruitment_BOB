@@ -14,7 +14,7 @@ import jobPositionApiService from "../jobPosting/services/jobPositionApiService"
 import DropdownStrip from "./components/DropdownStrip";
 import { toast } from "react-toastify";
 import PdfViewerModal from "./components/PdfViewerModal";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import InterviewFeedbackHistoryModal from "./components/InterviewFeedbackHistoryModal";
 import useInterviewPool from "./hooks/useInterviewPool";
 import candidateWorkflowServices from "./services/CandidateWorkflowServices";
@@ -26,13 +26,16 @@ import RankListModal from "./components/RankListModal";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import ZonalRejectedCommentModal from "./components/ZonalRejectedCommentModal";
-import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck, FaBars, FaListOl } from "react-icons/fa";
+import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck, FaBars, FaListOl, FaExternalLinkAlt } from "react-icons/fa";
 import { faListOl } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
 import { useDispatch } from "react-redux";
 import { setRankEnabled, clearRankState } from "../../app/providers/rankSlice";
+
+import { Modal, Button } from "react-bootstrap";
+
 import CompensationPool from "./components/CompensationPool";
 import useCompensationPool from "./hooks/useCompensationPool";
 import { mapCompensationCandidates } from "./mappers/compositionMapper";
@@ -142,6 +145,8 @@ console.log("IS COMMITTEE:", role === "committee_member");
   const [interviewPage, setInterviewPage] = useState(0);
   const [interviewPageSize, setInterviewPageSize] = useState(10);
   const location = useLocation();
+  const navigate = useNavigate();
+
 
   const navActiveTab = location.state?.activeTab;
 
@@ -178,6 +183,9 @@ const [activeTab, setActiveTab] = useState(() => {
   // const [positions, setPositions] = useState([]);
   // const [selectedPositionId, setSelectedPositionId] = useState("");
   const [loadingPositions, setLoadingPositions] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [loadingPreview, setLoadingPreview] = useState(false);
 
   const [candidates, setCandidates] = useState([]);
   const [loadingCandidates, setLoadingCandidates] = useState(false);
@@ -197,10 +205,39 @@ const [activeTab, setActiveTab] = useState(() => {
   const [loadingPdf, setLoadingPdf] = useState(false);
   const [showZonalCommentModal, setShowZonalCommentModal] = useState(false);
   const [zonalComment, setZonalComment] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
   const handleOpenZonalComments = (comment) => {
     setZonalComment(comment || "-");
     setShowZonalCommentModal(true);
   };
+
+ const handleScheduleInterview = () => {
+  if (!selectedCandidateIds.length) return;
+
+  const selectedCandidatesData = candidates
+    .filter(c => selectedCandidateIds.includes(c.id))
+    .map(c => ({
+      id: c.id,
+      name: c.name,
+      regNo: c.applicationNo
+    }));
+
+  // const params = new URLSearchParams({
+  //   requisitionId: selectedRequisitionId || "",
+  //   positionId: selectedPositionId || "",
+  //   candidates: JSON.stringify(selectedCandidatesData)
+  // });
+
+
+navigate("/schedule-interviews", {
+  state: {
+    candidates: selectedCandidatesData,
+    requisitionId: selectedRequisitionId,
+    positionId: selectedPositionId
+  }
+});
+};
+
   const searchTimeoutRef = useRef(null);
   const {
     interviewCandidates,
@@ -276,7 +313,7 @@ enabled:
     joiningDate: "",
   });
   const dispatch = useDispatch();
-
+  const [templates, setTemplates] = useState([]);
 
   const isRankEnabled = useSelector(
     (state) => state.rank.isRankEnabled
@@ -293,15 +330,31 @@ enabled:
     return `${year}-${month}-${day}`;
   };
 
+  const hasLocationData = useMemo(() => {
+    const selected = positions.find(
+      (p) => p.jobPositions?.positionId === selectedPositionId
+    );
 
-
-  
+    return (
+      selected?.jobPositions?.positionStateDistributions?.length > 0
+    );
+  }, [positions, selectedPositionId]);
 
   const navInitRef = useRef({
     requisitionId: null,
     positionId: null,
     initialized: false,
   });
+
+  const handleClose = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setShowPreview(false);
+    setPreviewUrl("");
+  };
+
+  const isBackNavigation = location.state?.page !== undefined || location.state?.interviewPage !== undefined;
 
   // 🔍 Requisition search (debounced)
   const requisitionSearchTimeout = useRef(null);
@@ -431,7 +484,7 @@ const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
     }, 400);
 
     return () => clearTimeout(searchTimeoutRef.current);
-  }, [filters.searchText, activeTab]);
+  }, [filters.searchText]); // Remove activeTab from dependencies to prevent page reset on tab change
 
   useEffect(() => {
     fetchRequisitions("");
@@ -461,7 +514,13 @@ const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
     fetchPositions();
   }, [selectedRequisitionId]);
 
-
+  useEffect(() => {
+    masterApiService.getAllTemplates().then((res) => {
+      if (res?.success) {
+        setTemplates(res.data);
+      }
+    });
+  }, []);
 
   const formatCandidateData = (apiData) => {
     const formatStatus = (status = "") => status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
@@ -549,6 +608,36 @@ const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
     }
   };
 
+  const handleJoiningDateChange = (value) => {
+  setJoiningDate(value);
+
+  if (!value) {
+    setFormErrors(prev => ({ ...prev, joiningDate: "" }));
+    return;
+  }
+
+  if (!acceptBeforeDate) {
+    setFormErrors(prev => ({
+      ...prev,
+      joiningDate: t("candidateWorkflow:select_accept_before_first"),
+    }));
+    return;
+  }
+
+  if (value <= acceptBeforeDate) {
+    setFormErrors(prev => ({
+      ...prev,
+      joiningDate: t("candidateWorkflow:must_be_greater_than_accept_before"),
+    }));
+  } else {
+    setFormErrors(prev => ({ ...prev, joiningDate: "" }));
+  }
+};
+const handleTemplateChange = (value) => {
+  setOfferTemplateId(value);
+  setSelectedTemplate(value);
+};
+
 
   const [submitBeforeDate, setSubmitBeforeDate] = useState(""); 
   console.log("Compensation Data:", compensationCandidates);
@@ -604,15 +693,15 @@ const canSendToOfferFromCompensation =
     filters.categoryId,
     masterData,
     activeTab,
-    
+
   ]);
   useEffect(() => {
-  if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") return;
+    if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") return;
 
-  if (isRankEnabled) {
-    fetchCandidates();
-  }
-}, [isRankEnabled]);
+    if (isRankEnabled) {
+      fetchCandidates();
+    }
+  }, [isRankEnabled]);
 
   // 🔍 Fetch all candidates for filter dropdowns when position/status changes
   useEffect(() => {
@@ -731,6 +820,7 @@ if (role === "committee_member") {
         positions.find(
           (p) => p.jobPositions?.positionId === selectedPositionId
         )?.masterPositions?.positionName,
+        isLocationWise: positions.find((p) => p.jobPositions?.positionId === selectedPositionId).jobPositions.isLocationWise
     }
     : null;
 
@@ -783,6 +873,7 @@ if (role === "committee_member") {
     .map(c => c.id);
 
   useEffect(() => {
+    if (isBackNavigation) return; // 🔥 ADD THIS LINE  
     if (activeTab === "INTERVIEW_POOL") {
       setInterviewPage(0);
     }
@@ -824,6 +915,7 @@ if (role === "committee_member") {
   // }, [filters]);
 
   useEffect(() => {
+    if (isBackNavigation) return; // 🔥 ADD THIS
     if (!navPositionId) {
       setFilters({
         status: [],
@@ -835,23 +927,51 @@ if (role === "committee_member") {
   }, [selectedPositionId]);
 
   useEffect(() => {
+    if (isBackNavigation) return; // 🔥 STOP RESET
     setFilters({
       status: [],
       stateId: "",
       categoryId: "",
       searchText: "",
     });
-    setPage(0);
+    // Don't reset page when changing tabs - preserve user's page position
   }, [activeTab]);
 
+useEffect(() => {
+  if (!location.state) return;
 
+  // ✅ Candidate Pool
+  if (location.state.page !== undefined) {
+    setPage(location.state.page);
+  }
 
+  if (location.state.pageSize !== undefined) {
+    setPageSize(location.state.pageSize);
+  }
 
+  // 🔥 INTERVIEW POOL FIX (ADD THIS)
+  if (location.state.interviewPage !== undefined) {
+    setInterviewPage(location.state.interviewPage);
+  }
 
+  if (location.state.interviewPageSize !== undefined) {
+    setInterviewPageSize(location.state.interviewPageSize);
+  }
 
+  if (location.state.filters) {
+    setFilters(location.state.filters);
+  }
+
+}, []);
 
   const navRequisitionId = location.state?.requisitionId || null;
   const navPositionId = location.state?.positionId || null;
+
+  const selectedTemplateData = templates.find(
+    (t) => t.templateId === offerTemplateId
+  );
+
+  const templateName = selectedTemplateData?.templateName || "";
 
 
   useEffect(() => {
@@ -1224,7 +1344,56 @@ const handleSendToOfferPool = async () => {
 
 
 
+  const handlePreview = async () => {
+    try {
+      const res = await masterApiService.previewTemplate(offerTemplateId);
 
+      // Convert blob to URL
+      const file = new Blob([res.data], { type: "application/pdf" });
+      const fileURL = URL.createObjectURL(file);
+
+      // Option 2 (better): show in modal
+      setPreviewUrl(fileURL);
+      setShowPreview(true);
+    } catch (err) {
+      console.error("Preview failed", err);
+    }
+  };
+const handleAcceptBeforeDateChange = (value) => {
+  setAcceptBeforeDate(value);
+
+  if (!value) {
+    setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
+    return;
+  }
+
+  if (value <= todayString()) {
+    setFormErrors(prev => ({
+      ...prev,
+      acceptBeforeDate: t("candidateWorkflow:must_be_greater_than_today"),
+    }));
+  } else {
+    setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
+  }
+};
+const handleStatusChange = (value) => {
+  setFilters(prev => ({
+    ...prev,
+    status: value ? [value] : [],
+  }));
+};
+const handleOfferStatusToggle = (status) => {
+  setFilters(prev => {
+    const alreadySelected = prev.status.includes(status);
+
+    return {
+      ...prev,
+      status: alreadySelected
+        ? prev.status.filter(s => s !== status)
+        : [...prev.status, status],
+    };
+  });
+};
 
   return (
     <div className="container-fluid px-5 py-4">
@@ -1360,12 +1529,7 @@ const handleSendToOfferPool = async () => {
                 <select
                   className="form-select fs-14 py-1 mt-0"
                   value={filters?.status[0] || ""}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      status: e.target.value ? [e.target.value] : [],
-                    }))
-                  }
+                  onChange={(e) => handleStatusChange(e.target.value)}
                 >
                   <option value="">{t("candidateWorkflow:all_statuses")}</option>
                   {/* {availableStatuses?.map((status) => (
@@ -1435,24 +1599,21 @@ const handleSendToOfferPool = async () => {
 
               {selectedPositionId && selectedRequisitionId && (
                 <div className="col-md-4 col-12 text-md-end mt-2 mt-md-0">
-                  {/* <button className="btn orange-bg text-white fs-14 me-3 py-1 px-3">
-                    <img src={rankIcon} className="me-2" width={15}/>
-                    Rank
-                  </button> */}
-                  {activeTab === "CANDIDATE_POOL" && (
+                
+                  {/* {activeTab === "CANDIDATE_POOL" && (
                     <button
                       className="rank-btn fs-14"
                       onClick={() => {
-                      
+
                         dispatch(setRankEnabled(true)); // 🔥 ONLY TRUE
-                        
-                       
+
+
                         setPage(0);
                       }}
                     >
                       <FontAwesomeIcon icon={faListOl} className="rank-icon" /> Rank
                     </button>
-                  )}
+                  )} */}
                   <OverlayTrigger
                     placement="bottom"
                     overlay={<Tooltip >{t("candidateWorkflow:download_pdf")}</Tooltip>}
@@ -1475,7 +1636,7 @@ const handleSendToOfferPool = async () => {
           )}
 
           {activeTab === "OFFER_POOL" && (
-            <div className="row g-2 mt-1 px-2 py-1 align-items-center border-bottom">
+            <div className="row g-2 mt-1 px-3 py-1 align-items-center border-bottom">
               <div className="col-md-2 col-6 d-flex align-items-center gap-2">
                 <p className="text-muted fs-14 mb-1">{t("candidateWorkflow:filter_by_stage")}:</p>
                 <button
@@ -1498,19 +1659,8 @@ const handleSendToOfferPool = async () => {
                   return (
                     <span
                       key={status}
-                      onClick={() =>
-                        setFilters((prev) => {
-                          const alreadySelected = prev.status.includes(status);
-
-                          return {
-                            ...prev,
-                            status: alreadySelected
-                              ? prev.status.filter((s) => s !== status)
-                              : [...prev.status, status],
-                          };
-                        })
-                      }
-                      className={`badge px-3 py-2 border-0 rounded fw-normal fs-12 ${isSelected
+                     onClick={() => handleOfferStatusToggle(status)}
+                      className={`badge px-3 py-2 border-2 rounded fw-normal fs-12 ${isSelected
                         ? "orange-color orange-border"
                         : "bg-light text-muted border"
                         }`}
@@ -1525,30 +1675,133 @@ const handleSendToOfferPool = async () => {
           )}
 
           {activeTab === "OFFER_POOL" && (
-            <div className="row g-2 mt-1 px-2 py-2 align-items-center">
+            <div className="row g-2 mt-1 px-3 py-2 align-items-center">
 
               {/* LEFT SECTION */}
               <div className="col-md-8 col-12">
                 <div className="d-flex flex-wrap gap-4 justify-content-between align-items-end">
-                  <div className="d-flex gap-3 flex-wrap align-items-end pb-3">
+                  <div className="d-flex gap-3 flex-wrap align-items-end">
                     {/* Offer Template */}
+
                     <div>
-                      <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:offer_template")}</p>
+                      {/* Label */}
+                      <div className="d-flex align-items-center justify-content-between" style={{ width: "180px" }}>
+                        <p className="mb-1 fw-normal fs-13 blue-color">
+                          {t("candidateWorkflow:offer_template")}
+                        </p>
+                      </div>
+
+                      {/* Dynamic Dropdown */}
+                      <select
+                        title={templateName} // 👈 hover shows full text
+                        className="form-select fs-13 py-1 text-truncate"
+                        style={{
+                          width: "180px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          paddingRight: "30px"
+
+                        }}
+                        value={offerTemplateId}
+                        onChange={(e) => handleTemplateChange(e.target.value)}
+                      >
+
+                        <option value="">
+                          {t("candidateWorkflow:select_template")}
+                        </option>
+
+                        {templates.map((t) => (
+                          <option key={t.templateId} value={t.templateId}>
+                            {t.templateName}
+                          </option>
+                        ))}
+                      </select>
+
+                      {/* Preview with Hover */}
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="preview-tooltip">
+                            {templateName || "No template selected"}
+                          </Tooltip>
+                        }
+                      >
+                        {selectedTemplate ? (
+                          <span
+                            onClick={handlePreview}
+                            className="cursor-pointer text-orange orange-color"
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "600",
+                              fontFamily: "Segoe UI, sans-serif",
+                              letterSpacing: "0.5px",
+                              textDecoration: "underline",
+                            }}
+                          >
+                            Template Preview
+                          </span>
+                        ) : (
+                          <small className="d-block invisible">placeholder</small>
+                        )}
+                      </OverlayTrigger>
+                    </div>
+                    {/* <div>
+                      <div className="d-flex align-items-center justify-content-between" style={{ width: "180px" }}>
+                        <p className="mb-1 fw-normal fs-13 blue-color">
+                          {t("candidateWorkflow:offer_template")}
+                        </p>
+
+                      </div>
+
                       <select
                         className="form-select fs-13 py-1"
                         style={{ width: "180px" }}
                         value={offerTemplateId}
-                        onChange={(e) => setOfferTemplateId(e.target.value)}
+                        onChange={(e) => {
+                          setOfferTemplateId(e.target.value);
+                          setSelectedTemplate(e.target.value);
+                        }}
                       >
-                        <option value="">{t("candidateWorkflow:select_template")}</option>
-                        <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Template 1</option>
+                        <option value="">
+                          {t("candidateWorkflow:select_template")}
+                        </option>
+                        <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">
+                          Template 1
+                        </option>
                       </select>
 
-                      {/* Reserve space for alignment consistency */}
-                      <small className="d-block mt-1 fs-12 invisible">
-                        placeholder
-                      </small>
-                    </div>
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="preview-tooltip">
+                            {offerTemplateId === "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                              ? "Template 1"
+                              : ""}
+                          </Tooltip>
+                        }
+                      >
+                        {selectedTemplate && offerTemplateId === "3fa85f64-5717-4562-b3fc-2c963f66afa6" ? (
+                          <span
+                            onClick={() => setShowPreview(true)}
+                            className="cursor-pointer text-orange orange-color"
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "600",
+                              fontFamily: "Segoe UI, sans-serif",
+                              letterSpacing: "0.5px",
+                              textDecoration: "underline",
+                            }}
+                          >
+                            Preview
+                          </span>
+                        ) : (
+                          <small className="d-block invisible">placeholder</small>
+                        )}
+                      </OverlayTrigger>
+
+
+                    </div> */}
 
                     {/* Accept Before Date */}
                     <div>
@@ -1559,24 +1812,7 @@ const handleSendToOfferPool = async () => {
                         style={{ width: "160px" }}
                         value={acceptBeforeDate}
                         min={todayString()}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setAcceptBeforeDate(value);
-
-                          if (!value) {
-                            setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
-                            return;
-                          }
-
-                          if (value <= todayString()) {
-                            setFormErrors(prev => ({
-                              ...prev,
-                              acceptBeforeDate: t("candidateWorkflow:must_be_greater_than_today"),
-                            }));
-                          } else {
-                            setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
-                          }
-                        }}
+                        onChange={(e) => handleAcceptBeforeDateChange(e.target.value)}
                       />
                       <small
                         className={`d-block mt-1 fs-12 ${formErrors.acceptBeforeDate ? "text-danger" : "invisible"
@@ -1595,32 +1831,8 @@ const handleSendToOfferPool = async () => {
                         style={{ width: "160px" }}
                         value={joiningDate}
                         min={acceptBeforeDate || todayString()}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setJoiningDate(value);
+                        onChange={(e) => handleJoiningDateChange(e.target.value)}
 
-                          if (!value) {
-                            setFormErrors(prev => ({ ...prev, joiningDate: "" }));
-                            return;
-                          }
-
-                          if (!acceptBeforeDate) {
-                            setFormErrors(prev => ({
-                              ...prev,
-                              joiningDate: t("candidateWorkflow:select_accept_before_first"),
-                            }));
-                            return;
-                          }
-
-                          if (value <= acceptBeforeDate) {
-                            setFormErrors(prev => ({
-                              ...prev,
-                              joiningDate: t("candidateWorkflow:must_be_greater_than_accept_before"),
-                            }));
-                          } else {
-                            setFormErrors(prev => ({ ...prev, joiningDate: "" }));
-                          }
-                        }}
                       />
                       <small
                         className={`d-block mt-1 fs-12 ${formErrors.joiningDate ? "text-danger" : "invisible"
@@ -1630,10 +1842,34 @@ const handleSendToOfferPool = async () => {
                       </small>
                     </div>
 
-                    {/* Send Offers Button */}
+                    {/* <div>
+                      <p className="mb-1 fw-normal fs-13 blue-color">
+                        {t("candidateWorkflow:preview")}
+                      </p>
+
+                      <div
+                        className={`form-control fs-13 d-flex align-items-center justify-content-center 
+      ${selectedTemplate
+                            ? "cursor-pointer orange-bg text-white"
+                            : "disabled_button custom-disabled-bg1"
+                          }
+    `}
+                        style={{ width: "80px", height: "32px" }}
+                        onClick={() => selectedTemplate && setShowPreview(true)}
+                      >
+                        <i className="bi bi-eye" style={{ fontSize: "16px" }}></i>
+                      </div>
+
+                      <small className="d-block mt-1 fs-12 invisible">
+                        {"\u00A0"}
+                      </small>
+                    </div> */}
+
+
+
                     <div>
                       <button
-                        className={`btn fs-13 px-3 py-1 orange-bg text-white ${isSendOfferEnabled ? "" : "disabled_button"
+                        className={`form-select fs-13 px-3 py-1 orange-bg text-white ${isSendOfferEnabled ? "" : "disabled_button"
                           }`}
                         onClick={handleSendOffer}
                         disabled={!isSendOfferEnabled}
@@ -1653,26 +1889,34 @@ const handleSendToOfferPool = async () => {
 
               {/* RIGHT SECTION */}
               <div className="col-md-4 col-12">
-                <div className="d-flex justify-content-end gap-2 align-items-center pb-3">
-              <button
-                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${
-                      isSendOfferEnabled ? "" : "disabled_button"
-                    }`}
+                <div className="d-flex justify-content-end gap-2 align-items-center">
+                  <button
+                    className={`btn fs-13 px-3 py-1 orange-border orange-color text-orange ${isSendOfferEnabled ? "" : "disabled_button"
+                      }`}
+                    style={{
+                      minHeight: "39px",
+                      cursor: isSendOfferEnabled ? "pointer" : "not-allowed"
+                    }}
                     disabled={!isSendOfferEnabled}
-   >
+                  >
                     <img
-                      className="me-2"
+                      className="me-2 orange-color"
                       src={locationIcon}
                       width={16}
-                      style={{ filter: "brightness(0) invert(1)" }}
+                      style={{ color: "#f36f21 !important" }}
                     />
                     {t("candidateWorkflow:assign_locations")}
                   </button>
-                  <button className="btn blue-border blue-color fs-13 px-3 py-1" onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}>
+
+
+
+                  <button className={`btn blue-border blue-color fs-13 px-3 py-1 ${offerSelectedIds.length !== 0 ? "" : "disabled_button"}`} onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}
+                    style={{ minHeight: "39px" }}>
                     <img src={excelIcon} className="me-1" width={18} /> {t("candidateWorkflow:rank_list")}
                   </button>
                 </div>
               </div>
+
             </div>
           )}
 
@@ -1701,7 +1945,7 @@ const handleSendToOfferPool = async () => {
                 {activeTab === "CANDIDATE_POOL"
                   && hasPrivilege("Interview Pool")
                   && canScheduleInterview && (
-                    <button className="btn blue-bg text-white fs-14" onClick={() => setShowScheduleModal(true)}>
+                    <button className="btn blue-bg text-white fs-14" onClick={handleScheduleInterview}>
                       {t("candidateWorkflow:schedule_interview")}
                     </button>
                   )}
@@ -1795,6 +2039,8 @@ const handleSendToOfferPool = async () => {
             requisition={normalizedRequisition}
             position={selectedPosition}
             isRankEnabled={isRankEnabled}
+            filters={filters}   // ✅ ADD THIS
+            hasLocationData={hasLocationData}
           />
         )}
 
@@ -1806,6 +2052,7 @@ const handleSendToOfferPool = async () => {
             setSelectedIds={setSelectedInterviewCandidateIds}
             page={interviewPage}
             pageSize={interviewPageSize}
+            filters={filters}   // ✅ ADD THIS
             totalElements={interviewTotalElements}
             onPageChange={setInterviewPage}
             onPageSizeChange={setInterviewPageSize}
@@ -1931,6 +2178,87 @@ const handleSendToOfferPool = async () => {
         setSelectedIds={setOfferSelectedIds}
         onUploadSuccess={() => setOfferRefreshKey(prev => prev + 1)}
       />
+      {/* <Modal show={showPreview}
+        onHide={() => setShowPreview(false)} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>{templateName || "Preview"}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ height: "80vh" }}>
+          {previewUrl && (
+            <iframe
+              src={previewUrl}
+              width="100%"
+              height="100%"
+              title="PDF Preview"
+            />
+          )}
+        </Modal.Body>
+      </Modal> */}
+
+
+      <Modal
+        show={showPreview}
+        onHide={handleClose}
+        size="xl"
+        centered
+      >
+        {/* HEADER */}
+        <Modal.Header closeButton className="border-0 pb-2">
+          <div className="w-100 d-flex justify-content-between align-items-center">
+            <div>
+              <h6 className="mb-0 fw-semibold">
+                {templateName || "Preview"}
+              </h6>
+              <small className="text-muted">Template Preview</small>
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div className="d-flex gap-4 align-items-center"   style={{
+          paddingRight: "15px"
+          }}>
+              {previewUrl && (
+                <a
+                  href={previewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-sm btn-outline-primary"
+                > <FaExternalLinkAlt />
+                </a>
+              )}
+            </div>
+          </div>
+        </Modal.Header>
+
+        {/* BODY */}
+        <Modal.Body
+          style={{
+            height: "85vh",
+            background: "#f8f9fa",
+            padding: "10px",
+            borderRadius: "10px",
+          }}
+        >
+          {previewUrl ? (
+            <iframe
+              src={previewUrl}
+              width="100%"
+              height="100%"
+              title="PDF Preview"
+              style={{
+                border: "none",
+                borderRadius: "8px",
+                background: "#fff",
+              }}
+            />
+          ) : (
+            <div className="d-flex justify-content-center align-items-center h-100 text-muted">
+              No preview available
+            </div>
+          )}
+        </Modal.Body>
+      </Modal>
+
+
     </div>
   );
 }

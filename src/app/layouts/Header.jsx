@@ -345,7 +345,16 @@ const Header = () => {
                   {t("verification")}
                 </Nav.Link>
               )}
-              {/* {canApprovals && (
+             
+
+
+              {canCommittee && (
+                <Nav.Link as={NavLink} to="/interviewpanel" onClick={closeMenu}>
+                  {t("committee_management")}
+                </Nav.Link>
+              )}
+
+               {/* {canApprovals && (
                 <NavDropdown
                   id="approvals-dropdown"
                   show={showApprovalsMenu}
@@ -389,13 +398,6 @@ const Header = () => {
                   </NavDropdown.Item>
                 </NavDropdown>
               )} */}
-
-
-              {canCommittee && (
-                <Nav.Link as={NavLink} to="/interviewpanel" onClick={closeMenu}>
-                  {t("committee_management")}
-                </Nav.Link>
-              )}
               {/* {isRecruiter && (
                 <Nav.Link
                   as={NavLink}

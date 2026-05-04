@@ -92,6 +92,21 @@ export default function InterviewerSchedule() {
   }, []);
 
 
+
+useEffect(() => {
+  if (navState.page !== undefined) {
+    setPage(navState.page);
+  }
+
+  if (navState.pageSize) {
+    setPageSize(navState.pageSize);
+  }
+}, [navState]);
+
+
+
+
+
   const navReqId =
     navState.requisition?.requisition?.id ||
     navState.requisition?.id ||
@@ -104,11 +119,17 @@ export default function InterviewerSchedule() {
 
 
 
-  useEffect(() => {
-    if (navState.selectedDate) {
-      setSelectedDate(new Date(navState.selectedDate));
-    }
-  }, []);
+ useEffect(() => {
+  if (
+    sessionStorage.getItem("fromPreviewBack") === "true" &&
+    navState.selectedDate
+  ) {
+    setSelectedDate(new Date(navState.selectedDate));
+  } else {
+    //  Always reset to today on refresh / normal load
+    setSelectedDate(new Date());
+  }
+}, []);
 
   /* ================= LOAD CANDIDATES ================= */
 
@@ -126,22 +147,18 @@ export default function InterviewerSchedule() {
 
 
 
-  useEffect(() => {
-    if (!cameFromPreviewBack) return;
-    if (!navState.preloadedCandidates?.length) return;
+ useEffect(() => {
+  if (!cameFromPreviewBack) return;
+  if (!navState.preloadedCandidates?.length) return;
+  if (!selectedPosition) return; //  IMPORTANT
 
+  setAllCandidatesRaw(navState.preloadedCandidates);
 
-    setAllCandidatesRaw(navState.preloadedCandidates);
-    const mapped = mapInterviewerCandidates(navState.preloadedCandidates);
-    setRows(mapped);
-    setOriginalRows(mapped.map(r => ({ ...r })));
+  const mapped = mapInterviewerCandidates(navState.preloadedCandidates);
+  setRows(mapped);
+  setOriginalRows(mapped.map(r => ({ ...r })));
 
-
-
-
-    setUsedRestoreData(true);
-
-  }, []);
+}, [selectedPosition]);
 
 
 
@@ -155,88 +172,147 @@ export default function InterviewerSchedule() {
 
 
 
+  // useEffect(() => {
+
+  //   const posId = selectedPosition?.position?.positionId;
+
+  //   if (!posId) {
+  //     setRows([]);
+  //     setAllCandidatesRaw([]);
+  //     setPage(0);
+  //     return;
+  //   }
+
+  //   const load = async () => {
+  //     try {
+  //       const dateStr = formatApiDate(selectedDate || new Date());
+
+  //       const res =
+  //         await InterviewerService.getCandidatesByPositionAndDate(
+  //           posId,
+  //           dateStr
+  //         );
+
+  //       const apiList = res.data || [];
+
+  //       //  SHOW BACKEND MESSAGE WHEN EMPTY
+  //       if (apiList.length === 0 && res.message) {
+  //         toast.info(res.message);
+  //       }
+
+  //       setAllCandidatesRaw(apiList);
+
+  //       const mapped = mapInterviewerCandidates(apiList);
+  //       setRows(mapped);
+  //       setOriginalRows(mapped.map(r => ({ ...r })));
+
+  //     } catch (err) {
+  //       console.error("Load interviewer candidates failed", err);
+  //       toast.error(t("failed_load_candidates"));
+  //       setRows([]);
+  //       setAllCandidatesRaw([]);
+  //     }
+  //   };
+
+  //   load();
+
+  // }, [selectedPosition, selectedDate, usedRestoreData]);
+
   useEffect(() => {
 
-    const posId = selectedPosition?.position?.positionId;
+  //  ADD THIS BLOCK
+ if (
+  cameFromPreviewBack &&
+  navState.preloadedCandidates?.length &&
+  selectedPosition
+) {
+  return;
+}
 
-    if (!posId) {
+  const posId = selectedPosition?.position?.positionId;
+
+  if (!posId) {
+    setRows([]);
+    setAllCandidatesRaw([]);
+    setPage(0);
+    return;
+  }
+
+  const load = async () => {
+    try {
+      const dateStr = formatApiDate(selectedDate || new Date());
+
+      const res =
+        await InterviewerService.getCandidatesByPositionAndDate(
+          posId,
+          dateStr
+        );
+
+      const apiList = res.data || [];
+
+      setAllCandidatesRaw(apiList);
+
+      const mapped = mapInterviewerCandidates(apiList);
+      setRows(mapped);
+      setOriginalRows(mapped.map(r => ({ ...r })));
+
+    } catch (err) {
+      console.error("Load interviewer candidates failed", err);
       setRows([]);
       setAllCandidatesRaw([]);
-      setPage(0);
-      return;
     }
+  };
 
-    const load = async () => {
-      try {
-        const dateStr = formatApiDate(selectedDate || new Date());
+  load();
 
-        const res =
-          await InterviewerService.getCandidatesByPositionAndDate(
-            posId,
-            dateStr
-          );
-
-        const apiList = res.data || [];
-
-        //  SHOW BACKEND MESSAGE WHEN EMPTY
-        if (apiList.length === 0 && res.message) {
-          toast.info(res.message);
-        }
-
-        setAllCandidatesRaw(apiList);
-
-        const mapped = mapInterviewerCandidates(apiList);
-        setRows(mapped);
-        setOriginalRows(mapped.map(r => ({ ...r })));
-
-      } catch (err) {
-        console.error("Load interviewer candidates failed", err);
-        toast.error(t("failed_load_candidates"));
-        setRows([]);
-        setAllCandidatesRaw([]);
-      }
-    };
-
-    load();
-
-  }, [selectedPosition, selectedDate, usedRestoreData]);
+}, [selectedPosition, selectedDate]);
 
 
 
 
+
+useEffect(() => {
+  if (!cameFromPreviewBack) return;
+  if (!navState.requisition || !navState.position) return;
+
+  const normalizedReq = {
+    ...navState.requisition,
+    startDate:
+      navState.requisition.startDate ??
+      navState.requisition.registration_start_date,
+    endDate:
+      navState.requisition.endDate ??
+      navState.requisition.registration_end_date
+  };
+
+  const restored = {
+    requisition: normalizedReq,
+    position: navState.position,
+    masterPosition: {
+      positionName: navState.position.positionName
+    }
+  };
+
+  //  SET POSITION FIRST
+  setSelectedRequisition(restored);
+  setSelectedPosition(restored);
+
+}, [cameFromPreviewBack]);
 
 
 
   useEffect(() => {
-    if (!cameFromPreviewBack) return;
-    if (!navState.requisition || !navState.position) return;
+  if (
+    cameFromPreviewBack &&
+    navState.page !== undefined &&
+    rows.length > 0
+  ) {
+    setPage(navState.page);
 
-
-    const normalizedReq = {
-      ...navState.requisition,
-      startDate:
-        navState.requisition.startDate ??
-        navState.requisition.registration_start_date,
-      endDate:
-        navState.requisition.endDate ??
-        navState.requisition.registration_end_date
-    };
-
-    const restored = {
-      requisition: normalizedReq,
-      position: navState.position,
-      masterPosition: {
-        positionName: navState.position.positionName
-      }
-    };
-
-    setSelectedRequisition(restored);
-    setSelectedPosition(restored);
-
-    //  IMPORTANT — clear restore flag after use
+    //  NOW clear flag safely
     sessionStorage.removeItem("fromPreviewBack");
-
-  }, [cameFromPreviewBack]);
+  }
+}, [rows]);
 
 
 
@@ -283,9 +359,11 @@ export default function InterviewerSchedule() {
     return filteredRows.slice(start, start + pageSize);
   }, [filteredRows, page, pageSize]);
 
-  useEffect(() => {
+useEffect(() => {
+  if (!cameFromPreviewBack) {
     setPage(0);
-  }, [filteredRows.length]);
+  }
+}, [filteredRows.length]);
 
   /* ================= ROW UPDATES ================= */
 
@@ -547,9 +625,9 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 <DatePicker
   selected={selectedDate}
   onChange={(date) => {
-    setSelectedDate(date);
-    setIsCalendarOpen(false);
-  }}
+  setSelectedDate(date);
+  setIsCalendarOpen(false);
+}}
   open={isCalendarOpen}
   onClickOutside={() => setIsCalendarOpen(false)}
   onInputClick={() => setIsCalendarOpen(true)}

@@ -6,6 +6,11 @@ const committeeManagementService = {
       `/getdetails/users/all`
     ),
 
+    getPanelMembers: () =>
+    apis.get(
+      `/interview-panels/get/panel-members`
+    ),
+
 
   // GET ALL REQUISITIONS
   getRequisitions: (name = "") =>

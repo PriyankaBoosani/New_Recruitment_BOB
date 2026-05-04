@@ -51,8 +51,10 @@ const getInterviewCentreName = (masters, id) =>
 /* ===============================
    SINGLE SOURCE OF TRUTH
 ================================ */
-export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
+export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
   const profile = apiData?.basicDetails?.candidateProfile || {};
+  const languagesKnown = apiData?.basicDetails?.languagesKnown || [];
+  console.log("languagesKnown", languagesKnown);
   const address = apiData?.addressDetails || {};
   // const locationprefApiData = apiData?.locationPreference
   const locationprefApiData = apiData?.locationPreference || {};
@@ -68,13 +70,22 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
   const presentState = getStateName(masters, address.stateId);
   const presentPin = getPincode(masters, address.pincodeId);
 
-  const statePreference1 = getZonalState(masters, locationprefApiData.statePreference1);
-  const statePreference2 = getZonalState(masters, locationprefApiData.statePreference2);
-  const statePreference3 = getZonalState(masters, locationprefApiData.statePreference3);
+  // const statePreference1 = getZonalState(masters, locationprefApiData.statePreference1);
+  // const statePreference2 = getZonalState(masters, locationprefApiData.statePreference2);
+  // const statePreference3 = getZonalState(masters, locationprefApiData.statePreference3);
 
-  const locationPreference1 = getInterviewCentreName(masters, locationprefApiData.locationPreference1);
-  const locationPreference2 = getInterviewCentreName(masters, locationprefApiData.locationPreference2);
-  const locationPreference3 = getInterviewCentreName(masters, locationprefApiData.locationPreference3);
+  // const locationPreference1 = getInterviewCentreName(masters, locationprefApiData.locationPreference1);
+  // const locationPreference2 = getInterviewCentreName(masters, locationprefApiData.locationPreference2);
+  // const locationPreference3 = getInterviewCentreName(masters, locationprefApiData.locationPreference3);
+
+  const statePreference1 = getStateName(masters, locationprefApiData.statePreference1);
+  const statePreference2 = getStateName(masters, locationprefApiData.statePreference2);
+  const statePreference3 = getStateName(masters, locationprefApiData.statePreference3);
+
+  const locationPreference1 = getCityName(masters, locationprefApiData.locationPreference1);
+  const locationPreference2 = getCityName(masters, locationprefApiData.locationPreference2);
+  const locationPreference3 = getCityName(masters, locationprefApiData.locationPreference3);
+
 
   const examCenterName =
     getInterviewCentreName(masters, locationprefApiData.interviewCenter);
@@ -113,6 +124,8 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
   const nationality = getNationality(masters, profile.nationality);
   const maritalStatus = getMaritalStatus(masters, profile.maritalStatusId);
   const reservation = getReservation(masters, profile.reservationCategoryId);
+  const getLanguageName = (masters, id) =>
+    findById(masters.languages, "languageId", id)?.languageName || "-";
 
 
   /* ========= DOCUMENT GROUP ========= */
@@ -150,7 +163,20 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
 
   //   status: d.documentScreeningStatus || "Pending"
   // }));
+  const mapLanguageNames = (languages, masters) => {
+    if (!languages?.length) return "-";
 
+    return languages
+      .map(lang => {
+        const found = masters?.languages?.find(
+          l => String(l.languageId) === String(lang.languageId)
+        );
+
+        return found?.languageName;
+      })
+      .filter(Boolean)
+      .join(", ");
+  };
 
   return {
     /* ================= PERSONAL ================= */
@@ -163,7 +189,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
       spouseName: profile.spouseName || "-",
       dob: formatDateDDMMYYYY(profile.dateOfBirth) || "-",
       age: apiData?.age || "-",
-
+      languages: mapLanguageNames(languagesKnown, masters),
       gender_name: gender?.gender || "-",
       religion_name: religion?.religion || "-",
       nationality_name: nationality?.countryName || "-",
@@ -204,7 +230,8 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
       locationPreference2: locationPreference2,
       locationPreference3: locationPreference3,
       examCenter: examCenterName,
-
+      localLanguage: getLanguageName(masters, locationprefApiData.localLanguageId),
+      isLocalLanguageStudied: locationprefApiData.isLocalLanguageStudied ? "Yes" : "No",
 
     },
 
@@ -238,15 +265,9 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
         //     : "-",
         // percentage: edu.percentage ?? "-",
 
-        percentage:
-          edu.percentage != null
-            ? (() => {
-              const value = Number(edu.percentage).toFixed(2);
-              return Number(edu.percentage) < 10
-                ? `${value}%`
-                : `${value}%`;
-            })()
-            : "-",
+        percentage: edu.percentage != null && !isNaN(Number(edu.percentage))
+          ? `${Number(edu.percentage).toFixed(2)}%`
+          : "-",
         educationLevel_name: educationLevel?.documentName || "-",
         mandatoryQualification_name: qualification?.qualificationName || "-",
         specialization_name: specialization?.specializationName || "-"
@@ -321,7 +342,7 @@ export const mapJobPositionToRequisitionStrip = (
   //   }, {}) || {};
 
   /* ========= NATIONAL CATEGORY + DISABILITY (PIVOTED) ========= */
- 
+
 
 
   const formatExperience = (months) => {

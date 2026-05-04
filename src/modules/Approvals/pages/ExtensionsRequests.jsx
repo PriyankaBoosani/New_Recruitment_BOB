@@ -249,8 +249,8 @@ const ExtensionsRequests = () => {
             options={requisitions}
             value={selectedRequisitionOption}
             onChange={(opt) => {
-              onRequisitionChange?.(opt?.raw || null);
-              onPositionChange?.(null);
+              onRequisitionChange(opt?.raw || null);
+              onPositionChange(null);
               setPage(0);
             }}
           />
@@ -266,7 +266,7 @@ const ExtensionsRequests = () => {
             value={selectedPositionOption}
             isDisabled={!selectedRequisitionOption}
             onChange={(opt) => {
-              onPositionChange?.(opt?.raw || null);
+              onPositionChange(opt?.raw || null);
               setPage(0);
             }}
           />

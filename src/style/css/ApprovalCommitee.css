@@ -3,7 +3,7 @@
   padding: 20px;
   background: #fff;
   min-height: 100vh;
-border-radius: 20px !important;
+border-radius: 20px !important;  
 }
 
 .committee-page .page-title {
@@ -55,16 +55,24 @@ border-radius: 20px !important;
   border-radius: 8px;
   font-size: 0.875rem;
   background: #ffffff;
-  /* transition: all 0.2s ease; */
 }
+ 
 
 .committee-page .assign-positions-page .form-select:disabled {
-  background-color: #e9ecef;
+  background-color: #AFBDEB4F;
   color: #6c757d;
   cursor: not-allowed;
   opacity: 1;
 }
-
+.form-check-input:disabled {
+	
+   background-color: #AFBDEB4F;
+}
+.icon-history{
+  width: 16px;
+  height: 16px;
+  
+}
 .committee-page .assign-positions-page .form-select:not(:focus) {
   border: 2px solid #e5e7eb;
 }
@@ -121,7 +129,7 @@ border-radius: 20px !important;
   font-weight: 500;
   font-size: 0.875rem;
   cursor: pointer;
-  /* transition: all 0.2s ease; */
+  
   box-shadow: 0 4px 12px rgba(242, 101, 34, 0.3);
 }
 
@@ -138,7 +146,7 @@ border-radius: 20px !important;
 
 .committee-page .committee-tabs {
   display: flex;
-  /* background: #9ca3af; */
+
   border-radius: 12px;
   padding: 8px;
   margin-bottom: 32px;
@@ -150,7 +158,6 @@ border-radius: 20px !important;
   flex: 1;
   padding: 14px 24px;
   border: 2px solid transparent;
-  /* background: #ffffff; */
   border-radius: 8px;
   font-weight: 500;
   font-size: 0.875rem;
@@ -355,7 +362,7 @@ border-radius: 20px !important;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* transition: all 0.2s ease; */
+
 }
 
 .committee-page .committee-row:hover {
@@ -364,7 +371,6 @@ border-radius: 20px !important;
 }
 
 .committee-page .committee-row.selected {
-  /* border-color: #F26522; */
   background: #fff7f3;
 }
 
@@ -398,7 +404,6 @@ border-radius: 20px !important;
   font-weight: 500;
   font-size: 0.75rem;
   cursor: pointer;
-  /* transition: all 0.2s ease; */
 }
 
 .committee-page .action-pill.add {
@@ -460,10 +465,10 @@ border-radius: 20px !important;
 }
 
 .committee-page .filter-label {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: #31315b;
-  margin-bottom: 6px;
+	margin-bottom: 6px;
+	font-size: 0.875rem;
+	font-weight: 400;
+	color: #404040;
 }
 
 
@@ -532,7 +537,6 @@ border-radius: 20px !important;
 }
 
 
-/* Status dropdown */
 .committee-page .status-select {
   appearance: none;
   background-image: url('../../assets/Vector.png');
@@ -556,14 +560,12 @@ border-radius: 20px !important;
 	border-radius: 8px;
 	margin-left: 0px;
 	margin-right: 0px;
-	/* border: 1px solid #ddd; */
+	
 	border: 1px solid #ACBED4;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* .bulk-actions:hover {
-  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.08);
-} */
+
 
 .committee-page .selectall {
   font-size: 0.875em;
@@ -623,12 +625,7 @@ border-radius: 20px !important;
   gap: 2px;
 }
 
-/* .field-label {
-  font-size: 12px; 
-  font-weight: 500;
-  color: #6b7280;
-  letter-spacing: 0.4px;
-} */
+
 
 
 .committee-page .field-label {
@@ -639,11 +636,7 @@ border-radius: 20px !important;
   margin-bottom: 2px;
 }
 
-/* .field-value {
-  font-size: 13px;
-  font-weight: 500;
-  color: #1f2937;
-} */
+
 
 .committee-page .field-value {
   font-size: 0.875rem;
@@ -680,15 +673,7 @@ border-radius: 20px !important;
 }
 
 /* ================= STATUS BADGE ================= */
-/* .status-badge {
-  min-width: 90px;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 6px;
-  display: inline-block;
-} */
+
 .committee-page .status-badge {
   display: inline-flex !important;
   align-items: center;
@@ -700,11 +685,7 @@ border-radius: 20px !important;
   white-space: nowrap;
 }
 
-/* .status-badge {
-  font-size: 12px;
-  font-weight: 500;
-  padding: 3px 10px;
-} */
+
 /* Approved */
 .committee-page .status-approved {
   background-color: #e6f4ea !important;
@@ -718,8 +699,8 @@ border-radius: 20px !important;
   color: #F28A22 !important;
   font-weight: 400;
   font-size: 0.75em;
-  /* border: 1px solid #ffd8a8; */
 }
+ 
 
 /* Rejected */
 .committee-page .status-rejected {
@@ -727,7 +708,6 @@ border-radius: 20px !important;
   color: #D73C40 !important;
   font-weight: 400;
   font-size: 0.875em;
-  /* border: 1px solid #f5c2c7; */
 }
 
 /* Blue border */

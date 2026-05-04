@@ -137,7 +137,6 @@ const buildEduRulesJson = (edu, mode) => {
               qualification: edu.educationQualificationsId,
               specialization: edu.specializationId || "",
               duration: edu.duration || "",
-              gpa: edu.gpa || "",
               percentage: edu.percentage || ""
             });
           }
@@ -214,7 +213,11 @@ export const mapAddPositionToUpdateDto = ({
   approvedBy,
   approvedOn,
   indentOthers,
-  existingPosition
+  isProficientInLocalLanguage,
+  existingPosition,
+    // ✅ ADD THESE
+  isAgeRelRiotVictimFamily,
+  isAgeRelWdsWomen
 }) => {
   const dto = {
     positionId,
@@ -271,6 +274,11 @@ export const mapAddPositionToUpdateDto = ({
     // Cut Off Date
     cutoffDate: formData.cutoffDate || null,
 
+    // Root level field
+    isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
+    isAgeRelRiotVictimFamily: !!isAgeRelRiotVictimFamily,
+isAgeRelWdsWomen: !!isAgeRelWdsWomen,
+
     approvedBy,
     approvedOn,
     indentOthers: indentOthers?.trim() || null,
@@ -317,14 +325,13 @@ export const mapAddPositionToUpdateDto = ({
       cityId: sd.city,
       totalVacancies: Number(sd.vacancies),
       localLanguage: sd.language,
-      isProficientInLocalLanguage: !!sd.isProficientInLocalLanguage,
+      isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
       positionCategoryDistributions: buildCategoryDistributionsForUpdate(
         sd,
         reservationCategories,
         disabilityCategories
       )
     }));
-
   }
 
   return dto;

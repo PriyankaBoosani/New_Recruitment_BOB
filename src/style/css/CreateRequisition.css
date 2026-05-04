@@ -78,9 +78,6 @@
 	display: flex;
 	justify-content: flex-end;
 	gap: 12px;
-	/* position: sticky; */
-	/* bottom: 0; */
-	/* border-top: 1px solid #e6e6e6; */
 	border-radius: 10px;
 }
 

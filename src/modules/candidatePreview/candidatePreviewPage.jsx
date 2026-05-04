@@ -69,8 +69,8 @@ const isFromCompensationPool = state?.fromCompensationPool;
   const requisition = state?.requisition;
   const requisitionTitle = requisition?.requisition_title;
   const positionName = state?.position?.positionName;
+  const isLocationWise = state?.position?.isLocationWise;
   const position = state?.position;
-
   const candidateId = candidate?.candidateId;
   const positionId = state?.positionId;
   const requisitionId = state?.requisitionId;
@@ -149,8 +149,10 @@ const isFromCompensationPool = state?.fromCompensationPool;
             cities: fullMasters.cities,
             pincodes: fullMasters.pincodes,
             interviewCenters: InterviewCenters.data || [],
-            zonalStats: ZonalStats.data || []
+            zonalStats: ZonalStats.data || [],
+            languages: fullMasters.languageMasters || []
           };
+          
 
           const mapped = mapCandidateToPreview(
             candidateRes.data,
@@ -194,7 +196,10 @@ const isFromCompensationPool = state?.fromCompensationPool;
                 requisition: state.requisition,
                 position: state.position,
                 preloadedCandidates: state.candidates,
-                selectedDate: state.selectedDate
+                selectedDate: state,
+                page: state.page,
+                pageSize: state.pageSize,
+                filters: state.filters
               }
             })
           }
@@ -202,6 +207,7 @@ const isFromCompensationPool = state?.fromCompensationPool;
           requisitionId={requisitionId}
           candidateScreening={true}
           activeTab={activeTab}
+          
         />
       ) : isZonalHr ? (
         <HeaderWithBacks
@@ -215,7 +221,10 @@ const isFromCompensationPool = state?.fromCompensationPool;
                 requisition,
                 position,
                 preloadedCandidates: state.candidates || [],
-                selectedDate
+                selectedDate,
+                page: state.page,
+                pageSize: state.pageSize,
+                filters: state.filters
               }
             });
           }}
@@ -233,7 +242,10 @@ const isFromCompensationPool = state?.fromCompensationPool;
                 position,
                 preloadedCandidates:
                   state.preloadedCandidates || state.candidates || [],
-                selectedDate
+                selectedDate,
+                page: state.page,
+                pageSize: state.pageSize,
+                filters: state.filters
               }
             });
           }}
@@ -287,6 +299,7 @@ const isFromCompensationPool = state?.fromCompensationPool;
               zonalVerificationStatus={candidate?.zonalVerificationStatus}
               zonalSubmitBeforeDate={candidate?.zonalSubmitBeforeDate}
               zonalHrComments={candidate?.zonalHrComments}
+              isLocationWise={isLocationWise}
               candidateStatus={candidate?.status}
                 isFromInterview={isFromInterview}
                 isFromCompensationPool={isFromCompensationPool}

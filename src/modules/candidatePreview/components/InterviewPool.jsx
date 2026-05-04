@@ -18,6 +18,7 @@ export default function InterviewPool({
   onPageSizeChange,
   page,
   pageSize,
+  filters,
   totalElements,
   onOpenFeedback,
   onOpenZonalComments
@@ -93,7 +94,7 @@ export default function InterviewPool({
   };
 
   return (
-    <div className="card-body p-0">
+    <div className="card-body p-0 interview-pool">
       <table className="table table-hover mb-0">
         <thead className="bg-light">
           <tr>
@@ -210,6 +211,12 @@ export default function InterviewPool({
                             requisitionId: selectedRequisitionId,
                             fromInterviewPool: true,
                             activeTab: "INTERVIEW_POOL",
+                            // 🔥 IMPORTANT FIX
+                            interviewPage: page,
+                            interviewPageSize: pageSize,
+                            page,
+                            pageSize,
+                            filters,
                             requisition: requisition
                               ? {
                                 requisition_code: requisition.requisition_code,

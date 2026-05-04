@@ -15,7 +15,10 @@ const InterviewPanelFormModal = ({
   onSave,
   errors,
   setErrors,
-  clearError
+  clearError,
+   disableName = false,
+  disableType = false
+  
 }) => {
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
 
@@ -47,10 +50,7 @@ const InterviewPanelFormModal = ({
   return (
     <>
 
-      <span className="card-title">{formData.id
-        ? t("interviewPanelCommittee:update_panel_title")
-        : t("interviewPanelCommittee:create_panel_title")}</span>
-      <p className="card-subtitle">{t("interviewPanelCommittee:subtitle")}</p>
+      
 
       {/* Panel Name */}
       <div className="form-group">
@@ -60,6 +60,7 @@ const InterviewPanelFormModal = ({
           placeholder={t("interviewPanelCommittee:enter_panel_name")}
           maxLength={200}
           value={formData.name}
+           disabled={disableName}
           onChange={e => {
             setFormData({ ...formData, name: e.target.value });
             clearError("name");
@@ -78,9 +79,10 @@ const InterviewPanelFormModal = ({
         <select
           className="form-control"
           value={formData.community}
+           disabled={disableType}
           onChange={e => {
             setFormData({ ...formData, community: e.target.value });
-            clearError("community");
+           clearError?.("community");
           }}
         >
           <option value="">{t("interviewPanelCommittee:select_panel_type")}</option>
@@ -128,7 +130,7 @@ const InterviewPanelFormModal = ({
                 ? selectedOptions.map(o => o.value)
                 : []
             });
-            clearError("members");
+          clearError?.("members");
           }}
 
           classNamePrefix="react-select"

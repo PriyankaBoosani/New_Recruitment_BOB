@@ -21,7 +21,6 @@
 	font-weight: 500;
 	color: #162b75;
 	margin-bottom: 6px;
-	/* line-height: 1.2; */
 }
 
 .approval-history-subtitle {
@@ -39,18 +38,12 @@
 }
 
 .approval-history-modal .table-responsive {
-	/* background-color: #fff; */
 	border-radius: 0px;
 	border: none;
-	overflow: hidden;
+	overflow: visible;
 	margin: 0 !important;
 }
 
-/* Make table body scrollable while keeping header visible */
-/* allow container to host sticky header; actual scrolling will be on tbody */
-.approval-history-modal .table-responsive {
-  overflow: visible; /* allow sticky header to escape clipping */
-}
 
 .approval-history-table {
   width: 100%;
@@ -85,9 +78,7 @@
 
 /* Prevent very long text from breaking layout */
 .approval-history-table th, .approval-history-table td {
-	/* white-space: nowrap; */
 	overflow: hidden;
-	/* text-overflow: ellipsis; */
 }
 @media (max-width: 992px) {
   .approval-history-modal .modal-lg {

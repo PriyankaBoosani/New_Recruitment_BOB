@@ -409,23 +409,6 @@
   position: relative;
 }
 
-.ap-calendar {
-  position: absolute;
-  right: 14px;
-  top: 12px;
-  color: #2f3e6f;
-}
-
-/* ROW GRID */
-
-/* .ap-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 56px;
-  gap: 18px;
-  margin-bottom: 18px;
-} */
-
-/* SIDE BUTTONS */
 
 .ap-plus {
   width: 46px;
@@ -502,6 +485,7 @@
   pointer-events: none;
 }
 
+
 /* BUTTON ALIGNMENT */
 
 .ap-btn-col {
@@ -522,8 +506,8 @@
   font-size: 12px;
   color: #ef4444;
   margin-top: 4px;
+  min-height: 18px;   /* ⭐ prevents jumpng i*/
 }
-
 .ap-error {
   border-color: #ef4444 !important;
   background: #fff5f5;
@@ -662,12 +646,6 @@
   transform: translateY(1px);
 }
 
-.field-error {
-  font-size: 12px;
-  color: #ef4444;
-  margin-top: 4px;
-  min-height: 18px;   /* ⭐ prevents jumping */
-}
 
 /* ===== APPLY SUCCESS MODAL ===== */
 

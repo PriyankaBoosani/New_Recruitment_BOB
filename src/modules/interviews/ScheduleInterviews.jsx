@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import HeaderWithBack from "../../shared/components/HeaderWithBack";
-
-import masterApiService from "../master/services/masterApiService";
 
 import DropdownStrip from "../candidatePreview/components/DropdownStrip";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 
 import InterviewPanelsConfig from "../interviews/components/InterviewPanelsConfig";
-import ScheduleReadyBar from "../interviews/components/ScheduleReadyBar";
 import InterviewScheduleTable from "../interviews/components/InterviewScheduleTable";
 import useInterviewSchedule from "../interviews/hooks/useInterviewSchedule";
+import ScheduleReadyBar from "../interviews/components/ScheduleReadyBar";
+import { toast } from "react-toastify";
 
 import "../../style/css/CandidateScreening.css";
 
@@ -20,58 +19,29 @@ const ScheduleInterviews = () => {
 
   /* ================= STATE ================= */
 
-  const [masterData, setMasterData] = useState(null);
 
-  const [requisitions, setRequisitions] = useState([]);
-  const [positions, setPositions] = useState([]);
-
-  const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
-  const [selectedPositionId, setSelectedPositionId] = useState("");
-
-  const [panels, setPanels] = useState([]);
   const [startTime, setStartTime] = useState("");
-
-  const { schedule } = useInterviewSchedule();
-
-  /* ================= LOAD MASTER ================= */
-
-  useEffect(() => {
-    masterApiService.getMasterDisplayAll().then(res => {
-
-      setMasterData(res.data || {});
-
-      // ⚠️ CHANGE KEY HERE IF YOUR API USES DIFFERENT NAME
-      setRequisitions(res.data?.jobRequisitions || []);
-    });
-  }, []);
-
-  /* ================= LOAD POSITIONS ================= */
-
-  useEffect(() => {
-    if (!selectedRequisitionId) {
-      setPositions([]);
-      return;
-    }
-
-    masterApiService
-      .getPositionsByRequisitionId(selectedRequisitionId)
-      .then(res => {
-        setPositions(res.data || []);
-      })
-      .catch(() => setPositions([]));
-
-  }, [selectedRequisitionId]);
-
-  /* ================= DROPDOWN HANDLERS ================= */
-
-  const handleReqChange = (e) => {
-    setSelectedRequisitionId(e.target.value);
-    setSelectedPositionId("");
-  };
-
-  const handlePosChange = (id) => {
-    setSelectedPositionId(id);
-  };
+const [scheduledCount, setScheduledCount] = useState(0);
+  const [showReadyBar, setShowReadyBar] = useState(false);
+  const { 
+        schedule,
+    updateRow,
+    setSchedule,
+    requisitions,
+    selectedRequisitionId,
+    loadingRequisitions,
+    positions,
+    selectedPositionId,
+    loadingPositions,
+    handleRequisitionChange,
+    setSelectedPositionId,
+    passedCandidates,
+    applySchedule,
+    scheduleApiData,
+    scheduleInterview   
+  } = useInterviewSchedule();
+console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId)
+  
 
   const selectedRequisition =
     requisitions.find(r => r.id === selectedRequisitionId);
@@ -81,21 +51,6 @@ const ScheduleInterviews = () => {
 
   const isSelectionDone =
     selectedRequisition && selectedPosition;
-
-  /* ================= PANEL ACTIONS ================= */
-
-  const handleAddPanel = () => {
-    setPanels(prev => [
-      ...prev,
-      { name: `Panel ${prev.length + 1}` }
-    ]);
-  };
-
-  const handleImportPanel = () => {
-  };
-
-  const handleApplyAll = () => {
-  };
 
   /* ================= UI ================= */
 
@@ -121,9 +76,11 @@ const ScheduleInterviews = () => {
               selectedPositionId={selectedPositionId}
               loadingRequisitions={!requisitions.length}
               loadingPositions={!positions.length}
-              onRequisitionChange={handleReqChange}
-              onPositionChange={handlePosChange}
+              onRequisitionChange={handleRequisitionChange}
               onRequisitionSearch={() => {}}
+              onPositionChange={setSelectedPositionId}
+              disableRequisition={true}
+              disablePosition={true}
             />
 
           </div>
@@ -148,24 +105,49 @@ const ScheduleInterviews = () => {
 
       {/* ===== PANELS CONFIG ===== */}
       <InterviewPanelsConfig
-        panels={panels}
+         positionId={selectedPositionId}
         startTime={startTime}
         onStartTimeChange={setStartTime}
-        onAddPanel={handleAddPanel}
-        onImportPanel={handleImportPanel}
-        onApplyAll={handleApplyAll}
+          candidates={passedCandidates}              // ✅ ADD
+ onScheduleReady={(rows) => {
+    setSchedule(rows);
+    setScheduledCount(rows.length);
+    setShowReadyBar(true);   // ✅ trigger here
+  }} // ✅ ADD
+   onApplyAll={applySchedule}
       />
 
-      {/* ===== READY BAR ===== */}
-      <div className="mt-3">
-        <ScheduleReadyBar
-          count={schedule.length}
-          onCancel={() => navigate(-1)}
-        />
-      </div>
+      {showReadyBar && (
+        <div className="mt-3">
+          <ScheduleReadyBar
+            count={scheduledCount}
+            onCancel={() => setShowReadyBar(false)}
+            onSchedule={async () => {
+              const res = await scheduleInterview();
+
+              if (!res.success) {
+                toast.error(res.message);
+                return;
+              }
+
+              toast.success("Interviews scheduled successfully");
+              setShowReadyBar(false);
+
+                // Redirect HERE
+              navigate("/candidate-workflow", {
+                state: {
+                  //activeTab: "INTERVIEW_POOL",   
+                  requisitionId: selectedRequisitionId,
+                  positionId: selectedPositionId
+                }
+              });
+            }}
+          />
+        </div>
+      )}
 
       {/* ===== INTERVIEW SCHEDULE TABLE ===== */}
-      <InterviewScheduleTable rows={schedule} />
+      <InterviewScheduleTable rows={schedule}/> 
 
     </div>
   );

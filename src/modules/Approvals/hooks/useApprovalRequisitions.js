@@ -2,9 +2,10 @@ import jobPositionApiService from "../../jobPosting/services/jobPositionApiServi
 import { useEffect, useState } from "react";
 import { mapApprovalRequisition } from "../mapper/mapApprovalRequisition";
 
+import { useSelector } from "react-redux";
+
 export const useApprovalRequisitions = ({
     year,
-    role,
     search,
     page,
     size,
@@ -14,30 +15,29 @@ export const useApprovalRequisitions = ({
     const [loading, setLoading] = useState(false);
     const [pageInfo, setPageInfo] = useState(null);
 
+    const privileges = useSelector((state) => state.user.privileges);
+
+    const isL1 = privileges?.["L1 Approval"];
+    const isL2 = privileges?.["L2 Approval"];
+
+    const approvalLevel = isL2 ? "L2" : isL1 ? "L1" : null;
+
     const fetchRequisitions = async () => {
         try {
             setLoading(true);
 
             let response;
 
-            if (role === "L1") {
+            if (approvalLevel === "L1") {
                 response = await jobPositionApiService.getL1Requisitions({
-                    year,
-                    search,
-                    page,
-                    size,
-                    statuses
+                    year, search, page, size, statuses
                 });
-            } else if (role === "L2") {
+            } else if (approvalLevel === "L2") {
                 response = await jobPositionApiService.getL2Requisitions({
-                    year,
-                    search,
-                    page,
-                    size,
-                    statuses
+                    year, search, page, size, statuses
                 });
             } else {
-                return; // no valid role
+                return;
             }
 
             const data = response?.data;
@@ -54,33 +54,32 @@ export const useApprovalRequisitions = ({
     };
 
     useEffect(() => {
-        if (!role) return;
+        if (!approvalLevel) return;
         fetchRequisitions();
-    }, [year, role, search, page, size, statuses]);
+    }, [year, approvalLevel, search, page, size, statuses]);
 
     const approve = async (ids, comment) => {
         const response = await jobPositionApiService.approveRequisitions({
             ids,
-            postingStatus: role === "L1" ? "L1_APPROVED" : "APPROVED",
+            postingStatus:
+                approvalLevel === "L1" ? "L1_APPROVED" : "APPROVED",
             comments: comment
         });
 
         await fetchRequisitions();
-
-        return response;   // 🔥 THIS IS CRITICAL
-
+        return response;
     };
 
     const reject = async (ids, comment) => {
         const response = await jobPositionApiService.approveRequisitions({
             ids,
-            postingStatus: role === "L1" ? "L1_REJECTED" : "L2_REJECTED",
+            postingStatus:
+                approvalLevel === "L1" ? "L1_REJECTED" : "L2_REJECTED",
             comments: comment
         });
 
         await fetchRequisitions();
-
-        return response;   // 🔥 THIS IS CRITICAL
+        return response;
     };
 
     return {

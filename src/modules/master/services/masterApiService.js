@@ -265,12 +265,8 @@ const masterApiService = {
     );
   },
 
-  getUser: () => apis.get('/user/all'),
-
   getAllMasters: () => apis.get("/display/all"),
   getUser: () => apis.get('/user/all'),
-  getAllCertificates: () =>
-    apis.get("/certificates-master/all"),
   getZonalStates: () => apis.get("/zonal-states/all"),
 
 
@@ -305,7 +301,20 @@ getAllEducation: (ids) =>
 
 saveEducation: (payload) =>
   apis.post("/admin-education-master/save", payload),
+
+getAllTemplates: () => 
+  apis.get("/templates/all"),
+
+// masterApiService
+previewTemplate: (templateId) =>
+  apis.get(`/templates/preview`, {
+    params: { templateId },
+    responseType: "blob", // 👈 IMPORTANT (for bytes/PDF)
+  }),
+
 };
+
+
 
 
 

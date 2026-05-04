@@ -7,8 +7,14 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
   height: 100vh;
+  min-height: 100vh;
+
   overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .app-container {
@@ -23,7 +29,6 @@ body {
   overflow-y: auto;
   margin-top: 91px;
   background-color: #f8f9fa;
-  /* margin-bottom: 35px; */
 }
 
 /* For pages where header is hidden (login, forgot-password, etc) */
@@ -92,7 +97,7 @@ body {
   .main-content {
     margin-top: 91px;
     /* Height of the header on mobile */
-    margin-top: 91px; /* Height of the header on mobile */
+  
     margin-bottom: 35px;
   }
 
@@ -107,7 +112,6 @@ body {
 
 /* Add spacing between navigation items */
 .navbar-nav .nav-link {
-  /* padding: 1rem 1.25rem; */
   margin: 0 2px;
   position: relative;
   transition: all 0.3s ease;
@@ -119,20 +123,16 @@ body {
   border-radius: 4px;
 }
 
-/* Active link styling */
-.navbar-nav .nav-link.active {
-  font-weight: 500;
-  color: #0d6efd;
-}
+
 
 /* Dropdown menu styling */
 .navbar .dropdown-menu {
-  margin-top: 0;
-  border: 1px solid rgba(0, 0, 0, .15);
-  border-radius: 0 0 4px 4px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
-  font-size: 13px;
-  font-weight: 300;
+	margin-top: 0;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 0 0 4px 4px;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	font-size: 14px;
+	font-weight: 400;
 }
 
 /* Dropdown items */
@@ -231,16 +231,6 @@ body {
   font-size: 12px;
 }
 
-/* .app-footer {
-  background-color: #fff;
-  border-top: 1px solid #e9ecef;
-  margin-top: auto;
-  font-size: 0.875rem;
-  color: #6c757d;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-} */
 .app-footer {
   position: fixed;
   bottom: 0;
@@ -250,13 +240,6 @@ body {
   color: #7B91B0;
   box-shadow: 0 -4px 12px #00000014;
   width: 100%;
-}
-
-/* Ensure the footer stays at the bottom */
-body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 /* Make sure main content pushes the footer down */
@@ -284,8 +267,9 @@ main {
 
 
 .navbar-nav .nav-link.active {
-  color: #162B75;
-  position: relative;
+   font-weight: 500;     /* from first */
+  color: #162B75;       /* latest applied */
+  position: relative;   /* from second */
 }
 
 .navbar-nav .nav-link.active::after  {
@@ -305,15 +289,17 @@ main {
   left: 0;
   position: absolute;
   width: 100%;
+    color: #42579f !important;
 }
 .dropdown-toggle::after {
-  border-top: 0.25em solid;
+  border-top: 0;
 }
+
 /* Admin dropdown active state */
-.nav-link.active,
-.active-admin > .nav-link {
-  position: relative;
-  color: #42579f;
+.nav-link.active, .active-admin > .nav-link {
+	position: relative;
+	color: #42579f;
+	font-weight: 500;
 }
 
 .nav-link.active::before,
@@ -337,13 +323,10 @@ main {
 /* kill underline everywhere */
 
 
-.dropdown-toggle{
-  color: #162B75 !important;
-  font-weight: 500;
-}
 .dropdown-item.active, .dropdown-item:active {
 	background-color: #42579f;
 }
+
 
 .fw-500 {
   font-weight: 500;
@@ -381,9 +364,9 @@ main {
 /* Active item (orange background) */
 .approvals-dropdown .dropdown-item.active,
 .approvals-dropdown .dropdown-item:active {
-  background-color: #F2652226 !important;
-  color: #333333 !important;
-  font-size: 1em;
+  background-color: #42579F !important;
+  color: #fff !important;
+  font-size: 14px;
   font-weight: 400;
 }
 
@@ -425,4 +408,14 @@ main {
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 30px !important; /* space for arrow */
+}
+
+.custom-disabled-bg1 {
+  background-color: #f36f21  !important;
+  color: #ffffff; /* optional for contrast */
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+.text-orange {
+  color: #f97316; /* or your theme orange */
 }
