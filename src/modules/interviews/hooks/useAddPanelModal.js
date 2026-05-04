@@ -7,7 +7,8 @@ export const useAddPanelModal = ({
   initialPanel,
   initialRows,
   onSave,
-  onClose
+  onClose,
+  panels
 }) => {
 
   const buildRows = () =>
@@ -15,19 +16,26 @@ export const useAddPanelModal = ({
       ? initialRows.map(r => ({ ...r })) // clone edit rows
       : [{ date: "", perDay: "" }];
 
-  const [panelName, setPanelName] = useState("");
+ // const [panelName, setPanelName] = useState("");
+  const [panelId, setPanelId] = useState("");
   const [rows, setRows] = useState([{ date: "", perDay: "" }]);
   const [errors, setErrors] = useState({});
 
   /* ✅ Reset ONLY when modal opens */
-  useEffect(() => {
-    if (!show) return;
+useEffect(() => {
+  if (!show) return;
 
-    setPanelName(initialPanel || "");
-    setRows(buildRows());
-    setErrors({});
+  setPanelId(initialPanel || "");
+  setRows(buildRows());
+  setErrors({});
 
-  }, [show]);   // 🔥 ONLY show — do NOT add initialRows here
+}, [initialPanel,show]);   // 🔥 ONLY show// 🔥 ONLY show — do NOT add initialRows 
+
+
+
+const selectedPanel = panels.find(p => p.id === panelId);
+const minDate = selectedPanel?.startDate || "";
+const maxDate = selectedPanel?.endDate || "";
 
   /* ================= ADD ================= */
 
@@ -59,14 +67,22 @@ export const useAddPanelModal = ({
   /* ================= SAVE ================= */
 
   const handleSave = () => {
-    const v = validatePanelModal({ rows });
-    setErrors(v);
+  const v = validatePanelModal({ rows });
+  setErrors(v);
 
-    if (v.rows?.length) return;
+  if (v.rows?.length) return;
 
-    onSave({ panelName, slots: rows });
-    onClose();
-  };
+  // ✅ FIND SELECTED PANEL
+  const selectedPanel = panels.find(p => p.id === panelId);
+
+  onSave({
+    panelId,
+    panelName: selectedPanel?.name,   // ✅ FIX HERE
+    slots: rows
+  });
+
+  onClose();
+};
 
   /* ================= CANCEL ================= */
 
@@ -75,14 +91,16 @@ export const useAddPanelModal = ({
   };
 
   return {
-    panelName,
-    setPanelName,
+    panelId,
+    setPanelId,
     rows,
     errors,
     addRow,
     removeRow,
     updateRow,
     handleSave,
-    handleCancel
+    handleCancel,
+    minDate,   // ✅ ADD
+    maxDate    // ✅ ADD
   };
 };

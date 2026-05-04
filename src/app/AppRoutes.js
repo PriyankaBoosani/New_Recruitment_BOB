@@ -230,14 +230,14 @@ const AppRoutes = () => {
                 }
               />
 
-              {/* <Route
+              <Route
                   path="/schedule-interviews"
                   element={
-                    <PrivilegeRoute privilege="Interview">
+                    <PrivilegeRoute privilege="Interview Pool">
                       <ScheduleInterviews />
                     </PrivilegeRoute>
                   }
-                /> */}
+                />
 
               <Route
                 path="/requisition-requests"

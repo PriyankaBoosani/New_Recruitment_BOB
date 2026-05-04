@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import interviewService from "../services/interviewService";
 
-export const useInterviewPanels = () => {
+export const useInterviewPanels = (positionId,rows) => {
 
   const { t } = useTranslation("interviewSchedule");
   const [panels, setPanels] = useState([]);
@@ -11,6 +12,8 @@ export const useInterviewPanels = () => {
   const [openInfoIndex, setOpenInfoIndex] = useState(null);
   const [deleteIndex, setDeleteIndex] = useState(null);
   const panelBoxRef = useRef(null);
+  const [availablePanels, setAvailablePanels] = useState([]); // API
+const [selectedPanels, setSelectedPanels] = useState([]);   // USER SELECTION
 
   useEffect(() => {
     const handleOutside = (e) => {
@@ -22,56 +25,124 @@ export const useInterviewPanels = () => {
     document.addEventListener("mousedown", handleOutside);
     return () => document.removeEventListener("mousedown", handleOutside);
   }, []);
+const savePanel = (data) => {
+  try {
+    const isDuplicate = selectedPanels.some(
+      p => p.id === data.panelId
+    );
 
-  const savePanel = (data) => {
-    try {
-      if (editPanel) {
-        setPanels(prev =>
-          prev.map((p, i) =>
-            i === editPanel.index
-              ? { name: data.panelName, slots: data.slots }
-              : p
-          )
-        );
-        toast.success(t("toast_update_success"));
-      } else {
-        setPanels(prev => [
-          ...prev,
-          {
-            name: data.panelName || `Panel ${prev.length + 1}`,
-            slots: data.slots
-          }
-        ]);
-        toast.success(t("toast_add_success"));
-      }
-      setEditPanel(null);
-      setShowAddModal(false);
-      setOpenInfoIndex(null);
-    } catch {
-      toast.error(
-        editPanel
-          ? t("toast_update_fail")
-          : t("toast_add_fail")
-      );
+    // ❌ BLOCK duplicate (only in ADD mode)
+    if (!editPanel && isDuplicate) {
+      toast.error("Panel already selected");
+      return;
     }
-  };
 
-  const confirmDelete = (index) => {
-    setPanels(prev => prev.filter((_, i) => i !== index));
-    setDeleteIndex(null);
-    setOpenInfoIndex(null);
+    const newPanel = {
+      id: data.panelId || Date.now(),
+      name: data.panelName,
+      slots: data.slots
+    };
 
-    toast.success(t("toast_delete_success"));
-  };
+    if (editPanel) {
+      setSelectedPanels(prev =>
+        prev.map((p, i) =>
+          i === editPanel.index ? newPanel : p
+        )
+      );
 
-  const openEdit = (panel, index) => {
-    setOpenInfoIndex(null);
-    setEditPanel({ ...panel, index });
-    setShowAddModal(true);
-  };
+      //toast.success("Panel updated successfully");
+    } else {
+      setSelectedPanels(prev => [...prev, newPanel]);
+
+      setAvailablePanels(prev =>
+        prev.filter(p => p.id !== data.panelId) // 🔥 better than name
+      );
+
+      //toast.success("Panel added successfully");
+    }
+
+    setEditPanel(null);
+    setShowAddModal(false);
+
+  } catch {
+    toast.error("Failed to save panel");
+  }
+};
+const confirmDelete = (index) => {
+  const deletedPanel = selectedPanels[index];
+
+  // ✅ REMOVE FROM SELECTED
+  setSelectedPanels(prev => prev.filter((_, i) => i !== index));
+
+  // ✅ ADD BACK TO AVAILABLE
+  setAvailablePanels(prev => [
+    ...prev,
+    { id: deletedPanel.id, name: deletedPanel.name }
+  ]);
+
+  setDeleteIndex(null);
+  setOpenInfoIndex(null);
+
+  //toast.success("Panel deleted successfully");
+};
+
+const openEdit = (panel, index) => {
+  setEditPanel({ ...panel, index });
+  setShowAddModal(true);
+};
+//new for load the panles which are assigned in committe management
+  const loadPanels = async (positionId) => {
+  if (!positionId) return;
+
+  try {
+    const response = await interviewService.getPanelsByPosition(positionId);
+
+    console.log("response1111", response);
+
+    // ✅ FIXED PATH
+    const apiList = response?.data || [];
+
+    const formatted = apiList.map((item) => ({
+      id: item.interviewPanel?.interviewPanelId,
+      name: item.interviewPanel?.panelName,
+
+      // ✅ Optional: map members (useful for UI later)
+      members: (item.interviewPanel?.panelMembers || []).map(m => ({
+        name: m.panelMember?.name,
+        role: m.panelMember?.role,
+        email: m.panelMember?.email
+      })),
+
+      // ✅ Keep slots empty for now
+      slots: [],
+
+      // ✅ Extra useful fields
+      startDate: item.startDate,
+      endDate: item.endDate,
+      status: item.positionPanelStatus,
+      canEdit: item.canEdit,
+
+      raw: item
+    }));
+
+    // ✅ SET AVAILABLE PANELS
+    setAvailablePanels(formatted);
+
+    // ❗ OPTIONAL: If you want already assigned panels pre-selected
+    // setSelectedPanels(formatted);
+
+  } catch (error) {
+    console.error("Error loading panels:", error);
+    setAvailablePanels([]); // ✅ fix wrong state
+  }
+};
+  useEffect(() => {
+    loadPanels(positionId);
+  }, [positionId]);
 
   return {
-    panels,
+  availablePanels,
+  selectedPanels,
     showAddModal,
     editPanel,
     openInfoIndex,

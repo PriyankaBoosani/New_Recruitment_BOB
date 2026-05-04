@@ -11,7 +11,10 @@ export default function DropdownStrip({
   loadingPositions,
   onRequisitionChange,
   onPositionChange,
-	onRequisitionSearch
+	onRequisitionSearch,
+   // ✅ DISABLE HERE
+  disableRequisition=false,
+  disablePosition=false
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
 	const requisitionOptions = useMemo(
@@ -42,6 +45,7 @@ export default function DropdownStrip({
 					options={requisitionOptions}
 					isLoading={loadingRequisitions}
 					placeholder={t("candidateWorkflow:select_requisition")}
+          isDisabled={disableRequisition}  
 					value={requisitionOptions.find(
 						(opt) => opt.value === selectedRequisitionId
 					)}
@@ -65,7 +69,7 @@ export default function DropdownStrip({
           classNamePrefix="react-select"
           options={positionOptions}
           isLoading={loadingPositions}
-          isDisabled={!selectedRequisitionId}
+          isDisabled={!selectedRequisitionId || disablePosition}
           
           placeholder={
             loadingPositions ? t("candidateWorkflow:loading_positions") : t("candidateWorkflow:select_position")
