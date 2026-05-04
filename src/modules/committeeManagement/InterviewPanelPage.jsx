@@ -22,6 +22,7 @@ const InterviewPanelPage = () => {
     loading,
     communityOptions,
     membersOptions,
+    //centerOptions,
     formData,
     setFormData,
     errors,
@@ -60,12 +61,12 @@ const InterviewPanelPage = () => {
 
   } = useInterviewPanel();
 
-  const {
-    bulkImportPositionAssignments,
-    downloadPositionAssignmentTemplate,
-    loadPositionData,
-    selectedPosition,
-  } = useAssignPositions()
+  // const {
+  //   bulkImportPositionAssignments,
+  //   downloadPositionAssignmentTemplate,
+  //   loadPositionData,
+  //   selectedPosition,
+  // } = useAssignPositions()
 
   useEffect(() => {
     initData();
@@ -89,7 +90,7 @@ const InterviewPanelPage = () => {
           <div className="tabs-container">
             <div className="tabs">
 
-              <Button
+              {/* <Button
                 variant="outline-primary"
                 size="sm"
                 onClick={() => setShowBulkImportModal(true)}
@@ -107,9 +108,9 @@ const InterviewPanelPage = () => {
               >
                 <FiUpload />
                 {t("interviewPanelCommittee:add_position_assignments")}
-              </Button>
+              </Button> */}
 
-              {/* <button
+              <button
                 className={`tab ${activeTab === "MANAGE" ? "active" : ""}`}
                 onClick={() => setActiveTab("MANAGE")}
               >
@@ -122,7 +123,7 @@ const InterviewPanelPage = () => {
               >
                 <FiFileText className="tab-icon" />
                 <span>{t("interviewPanelCommittee:assign_to_positions")}</span>
-              </button> */}
+              </button>
             </div>
           </div>
         </div>
@@ -191,7 +192,7 @@ const InterviewPanelPage = () => {
 
         </div>
 
-        {/* <div className="panel-content">
+        <div className="panel-content">
           {activeTab === "MANAGE" && (
             <div className="panel-layout">
               <div className="panel-form-section">
@@ -217,6 +218,7 @@ const InterviewPanelPage = () => {
                   <InterviewPanelFormModal
                     communityOptions={communityOptions}
                     membersOptions={membersOptions}
+                      // centerOptions={centerOptions}
                     formData={formData}
                     setFormData={setFormData}
                     onSave={handleSave}
@@ -261,7 +263,7 @@ const InterviewPanelPage = () => {
              <AssignPositionsPage refreshPanels={fetchPanels} />
             </div>
           )}
-        </div> */}
+        </div>
 
         {/* {activeTab === "ASSIGN" && (
           <div className="assign-positions-container">
@@ -317,7 +319,7 @@ const InterviewPanelPage = () => {
         </Modal.Body>
       </Modal>
 
-      <Modal
+      {/* <Modal
         show={showPositionImportModal}
         onHide={() => setShowPositionImportModal(false)}
         size="lg"
@@ -339,7 +341,7 @@ const InterviewPanelPage = () => {
             }}
           />
         </Modal.Body>
-      </Modal>
+      </Modal> */}
 
     </div>
   );

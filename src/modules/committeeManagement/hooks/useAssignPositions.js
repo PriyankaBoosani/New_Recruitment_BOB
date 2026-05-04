@@ -221,39 +221,42 @@ export const useAssignPositions = (userId) => {
         }
       };
 
-      const mapPanelMembers = (panelMembers) => {
-        return panelMembers.map(m => ({
-          ...m.panelMember,
-          interviewPanelMemberId: m.interviewPanelMemberId
-        }));
-      };
+
+      const mapAssigned = (list) =>
+        list.map(p => {
+          const rawStatus = p.positionPanelStatus ?? "";
+          const isLocked = p.positionPanelStatus === "L1_APPROVED";
+          return {
+            id: p.interviewPanel.interviewPanelId,
+            positionPanelId: p.positionPanelId,
+            name: p.interviewPanel.panelName,
+            committeeName: p.interviewPanel.committee.committeeName.toUpperCase(),
+            committeeId: p.interviewPanel.committee.interviewCommitteeId,
+            members: p.interviewPanel.panelMembers.map(m => ({
+              ...m.panelMember,
+              interviewPanelMemberId: m.interviewPanelMemberId
+            })),
+            startDate: p.startDate || "",
+            endDate: p.endDate || "",
 
 
-     const transformAssignedPanel = (p, getStatusBadge) => {
-    const rawStatus = p.positionPanelStatus ?? "";
-    const isLocked = p.positionPanelStatus === "L1_APPROVED";
+            canEdit: !isLocked && p.canEdit !== false,
+            //      canEdit:
+            // committeeType === "INTERVIEW"
+            //   ? p.canEdit !== false
+            //   : false,
 
-    return {
-      id: p.interviewPanel.interviewPanelId,
-      positionPanelId: p.positionPanelId,
-      name: p.interviewPanel.panelName,
-      committeeName: p.interviewPanel.committee.committeeName.toUpperCase(),
-      committeeId: p.interviewPanel.committee.interviewCommitteeId,
-      members: mapPanelMembers(p.interviewPanel.panelMembers),
-      startDate: p.startDate || "",
-      endDate: p.endDate || "",
-      canEdit: !isLocked && p.canEdit !== false,
-      rawStatus,
-      statusType: getStatusBadge(rawStatus),
-      positionPanelStatus: rawStatus
-        .toLowerCase()
-        .replace("_", " ")
-        .replace(/^l1/, "L1")
-    };
-  };
+            // ✅ SAME PATTERN AS REQUISITION
+            rawStatus,
+            statusType: getStatusBadge(rawStatus),
 
-  const mapAssigned = (list, getStatusBadge) =>
-    list.map(p => transformAssignedPanel(p, getStatusBadge));
+            // display text
+            positionPanelStatus: rawStatus
+              .toLowerCase()
+              .replace("_", " ")
+              .replace(/^l1/, "L1")
+          };
+        });
 
 
       const assigned = {
@@ -427,101 +430,6 @@ export const useAssignPositions = (userId) => {
     setShowErrorModal(true);
   };
 
-  const buildPanelPayload = (panel, originalPanel, seqIndex) => {
-  const isChanged =
-    !originalPanel ||
-    panel.startDate !== originalPanel.startDate ||
-    panel.endDate !== originalPanel.endDate ||
-    JSON.stringify(panel.members.map(m => m.userId).sort()) !==
-    JSON.stringify(originalPanel.members.map(m => m.userId).sort());
-
-  const actionEnum = !panel.positionPanelId
-    ? "ADD"
-    : isChanged
-      ? "MODIFY"
-      : null;
-
-  const positionPanelStatus =
-    !panel.positionPanelId || isChanged
-      ? "L1_PENDING"
-      : panel.rawStatus;
-
-
-      const mapPayloadMembers = (members, panelId) => {
-  return members.map(m => ({
-    panelId,
-    panelMember: {
-      name: m.name,
-      role: m.role,
-      email: m.email,
-      userId: m.userId
-    },
-    interviewPanelMemberId: m.interviewPanelMemberId
-  }));
-};
-
-  return {
-    positionId: null,
-    actionEnum,
-    positionPanelStatus,
-    interviewPanel: {
-      panelName: panel.name,
-      description: panel.description || "",
-      committee: {
-        committeeName: panel.committeeName,
-        committeeDesc: panel.committeeDesc || "",
-        interviewCommitteeId: panel.committeeId
-      },
-      panelMembers: mapPayloadMembers(panel.members, panel.id),
-      interviewPanelId: panel.id
-    },
-    startDate: panel.startDate,
-    endDate: panel.endDate,
-    sequenceNo: seqIndex,
-    positionPanelId: panel.positionPanelId
-  };
-};
-const pushToPayload = (payload, type, panelPayload) => {
-  if (type === "INTERVIEW") {
-    payload.interviewPanelList.push(panelPayload);
-  } else if (type === "SCREENING") {
-    payload.screeningPanelList.push(panelPayload);
-  } else if (type === "COMPENSATION") {
-    payload.compensationPanelList.push(panelPayload);
-  }
-};
-
-const buildPayloadFromCommittees = (
-  selectedCommittees,
-  originalCommittees,
-  payload
-) => {
-  const flattened = flattenCommittees(selectedCommittees);
-
-  flattened.forEach(({ committeeType, panel, seqIndex }) => {
-    if (!panel) return;
-
-    const originalPanel = originalCommittees?.[committeeType]
-      ?.find(p => p.id === panel.id);
-
-    const panelPayload = buildPanelPayload(panel, originalPanel, seqIndex);
-
-    pushToPayload(payload, committeeType, panelPayload);
-  });
-};
-
-const flattenCommittees = (selectedCommittees) => {
-  const result = [];
-
-  Object.entries(selectedCommittees).forEach(([committeeType, panels]) => {
-    panels.forEach((panel, seqIndex) => {
-      result.push({ committeeType, panel, seqIndex });
-    });
-  });
-
-  return result;
-};
-
   const handleAssignCommittees = async () => {
     if (loading) return;
     if (!selectedPosition) {
@@ -540,28 +448,82 @@ const flattenCommittees = (selectedCommittees) => {
         compensationPanelList: []
       };
 
-    // Object.entries(selectedCommittees).flatMap(([committeeType, panels]) =>
-    //       panels.map((panel, seqIndex) => ({
-    //         committeeType,
-    //         panel,
-    //         seqIndex
-    //       }))
-    //     )
-    //   .forEach(({ committeeType, panel, seqIndex }) => {
-    //     if (!panel) return;
+      Object.entries(selectedCommittees).forEach(
+        ([committeeType, panels]) => {
+          panels.forEach((panel, seqIndex) => {
 
-    //     const originalPanel = originalCommittees?.[committeeType]
-    //       ?.find(p => p.id === panel.id);
+            const originalPanel = originalCommittees?.[committeeType]
+              ?.find(p => p.id === panel.id);
 
-    //     const panelPayload = buildPanelPayload(panel, originalPanel, seqIndex);
+            const isChanged =
+              !originalPanel ||
+              panel.startDate !== originalPanel.startDate ||
+              panel.endDate !== originalPanel.endDate ||
+              JSON.stringify(panel.members.map(m => m.userId).sort()) !==
+              JSON.stringify(originalPanel.members.map(m => m.userId).sort());
 
-    //     pushToPayload(payload, committeeType, panelPayload);
-    //   });
-buildPayloadFromCommittees(
-      selectedCommittees,
-      originalCommittees,
-      payload
-    );
+
+            let finalPanel = panel;
+
+            if (!finalPanel) return;
+
+            // ✅ detect change properly
+            const actionEnum = !panel.positionPanelId
+              ? "ADD"
+              : isChanged
+                ? "MODIFY"
+                : null;
+
+            // ✅ reset status if changed
+            let positionPanelStatus = panel.rawStatus;
+
+            if (!panel.positionPanelId || isChanged) {
+              positionPanelStatus = "L1_PENDING";
+            }
+
+            const panelPayload = {
+              positionId: null,
+              actionEnum, // ✅ ADD THISif (!finalPanel) return;
+              positionPanelStatus,
+              interviewPanel: {
+                panelName: finalPanel.name,
+                description: finalPanel.description || "",
+                committee: {
+                  committeeName: finalPanel.committeeName,
+                  committeeDesc: finalPanel.committeeDesc || "",
+                  interviewCommitteeId: finalPanel.committeeId
+                },
+                panelMembers: finalPanel.members.map(m => ({
+                  panelId: finalPanel.id,
+                  panelMember: {
+                    name: m.name,
+                    role: m.role,
+                    email: m.email,
+                    userId: m.userId
+                  },
+                  interviewPanelMemberId: m.interviewPanelMemberId
+                })),
+                interviewPanelId: finalPanel.id
+              },
+              startDate: finalPanel.startDate,
+              endDate: finalPanel.endDate,
+              sequenceNo: seqIndex,
+              positionPanelId: finalPanel.positionPanelId,
+
+            };
+            console.log("🔥 API PAYLOAD", panelPayload);
+            if (committeeType === "INTERVIEW") {
+              payload.interviewPanelList.push(panelPayload);
+            } else if (committeeType === "SCREENING") {
+              payload.screeningPanelList.push(panelPayload);
+            } else if (committeeType === "COMPENSATION") {
+              payload.compensationPanelList.push(panelPayload);
+            }
+          });
+        }
+      );
+
+
       const res = await committeeManagementService.assignPanelToPosition(
         selectedPosition,
         payload

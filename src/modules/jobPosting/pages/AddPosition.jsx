@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import ReservationSection from "../component/ReservationSection";
 import { useTranslation } from "react-i18next";
 import masterApiService from "../../master/services/masterApiService";
+import SelectIndentModal from "../component/SelectIndentModal";
 const AddPosition = () => {
     const { t } = useTranslation(["addPosition", "common", "validation"]);
     const renderError = (e) => {
@@ -93,13 +94,15 @@ const AddPosition = () => {
         mandatoryExperience: { years: "", months: "", description: "" },
         preferredExperience: { years: "", months: "", description: "" },
         responsibilities: "", medicalRequired: "yes", enableStateDistribution: false,
-        cutoffDate: "",useMandatoryEducationLevelExperience: false,
+        cutoffDate: "", useMandatoryEducationLevelExperience: false,
         usePreferredEducationLevelExperience: false
     });
     const [isAgeRelRiotVictimFamily, setIsAgeRelRiotVictimFamily] = useState(false);
     const [isAgeRelWdsWomen, setIsAgeRelWdsWomen] = useState(false);
 
-    console.log("existingPosition", existingPosition);
+    const [indentCandidates, setIndentCandidates] = useState([]);
+    const [showIndentModal, setShowIndentModal] = useState(false);
+    const [selectedIndent, setSelectedIndent] = useState(null);
 
     // Initialize isProficientInLocalLanguage from existingPosition ROOT LEVEL
     useEffect(() => {
@@ -111,21 +114,34 @@ const AddPosition = () => {
         }
 
 
-  setIsAgeRelRiotVictimFamily(
-    existingPosition?.isAgeRelRiotVictimFamily === true ||
-    existingPosition?.isAgeRelRiotVictimFamily === "true" ||
-    existingPosition?.isAgeRelRiotVictimFamily === 1
-  );
+        setIsAgeRelRiotVictimFamily(
+            existingPosition?.isAgeRelRiotVictimFamily === true ||
+            existingPosition?.isAgeRelRiotVictimFamily === "true" ||
+            existingPosition?.isAgeRelRiotVictimFamily === 1
+        );
 
-  setIsAgeRelWdsWomen(
-    existingPosition?.isAgeRelWdsWomen === true ||
-    existingPosition?.isAgeRelWdsWomen === "true" ||
-    existingPosition?.isAgeRelWdsWomen === 1
-  );
-        
+        setIsAgeRelWdsWomen(
+            existingPosition?.isAgeRelWdsWomen === true ||
+            existingPosition?.isAgeRelWdsWomen === "true" ||
+            existingPosition?.isAgeRelWdsWomen === 1
+        );
+
     }, [existingPosition]);
+    useEffect(() => {
+        if (existingPosition && positionsByReq[requisitionId]) {
+            const match = positionsByReq[requisitionId].find(
+                p => p.indentName === existingPosition.indentName
+            );
 
-    
+            if (match) {
+                setSelectedIndent(match);
+            } else if (existingPosition.indentName) {
+                // fallback → custom indent
+                setSelectedIndent("CUSTOM");
+            }
+        }
+    }, [existingPosition, positionsByReq]);
+
 
 
     const [educationData, setEducationData] = useState({
@@ -175,7 +191,7 @@ const AddPosition = () => {
                     educationLevel,
                     years: Math.floor(months / 12),
                     months: months % 12,
-                     isSaved: true 
+                    isSaved: true
                 }))
             },
             preferredExperience: {
@@ -224,8 +240,8 @@ const AddPosition = () => {
     }, [formData.employmentType, employmentTypes]);
 
     useEffect(() => {
-      
-        
+
+
         if (!existingPosition) return;
 
         if (
@@ -234,12 +250,10 @@ const AddPosition = () => {
             !specializations.length ||
             !certifications.length
         ) {
-            console.log('Education mapping useEffect - missing master data, returning');
             return;
         }
 
         if (eduInitializedRef.current) {
-            console.log('Education mapping useEffect - already initialized, returning');
             return;
         }
 
@@ -362,7 +376,7 @@ const AddPosition = () => {
             );
 
             setStateDistributions(mappedStates);
-            
+
             // Set root-level isProficientInLocalLanguage from ROOT LEVEL of existingPosition
             if (existingPosition?.isProficientInLocalLanguage !== undefined) {
                 const value = existingPosition.isProficientInLocalLanguage;
@@ -413,6 +427,7 @@ const AddPosition = () => {
         }
 
 
+
         let finalValue = value;
 
         if (numericFields.includes(name)) {
@@ -426,11 +441,19 @@ const AddPosition = () => {
 
         //  SPECIAL CASE: department change clears position error
         if (name === "department") {
-            setErrors(prev => ({
-                ...prev,
-                department: "",
-                position: ""
-            }));
+            const matches = positionsByReq[requisitionId]
+                ?.filter(p => String(p.deptId) === String(value));
+
+            setIndentCandidates(matches);
+
+            // 🔥 reset selection if mismatch
+            if (!matches.some(p => p.positionId === selectedIndent?.positionId)) {
+                setSelectedIndent(null);
+            }
+
+            if (matches.length > 0) {
+                setShowIndentModal(true);
+            }
         } else {
             setErrors(prev => ({
                 ...prev,
@@ -440,6 +463,49 @@ const AddPosition = () => {
         if (name === "vacancies") {
             setErrors(prev => ({ ...prev, vacancies: "", nationalDistribution: "" }));
         }
+    };
+    const handleUseIndent = (pos) => {
+        if (pos === "CUSTOM") {
+            setSelectedIndent(null);
+
+            setFormData(prev => ({
+                ...prev,
+                indentName: ""
+            }));
+
+            setExistingIndentPath(null);
+            setExistingIndentName(null);
+
+            setIndentFile(null);   // 🔥 IMPORTANT
+
+            setApprovedBy("");
+            setApprovedOn("");
+
+            setShowIndentModal(false);
+            return;
+        }
+
+        // 🔥 EXISTING CASE
+        if (!pos) return;
+
+        setSelectedIndent(pos);
+
+        setFormData(prev => ({
+            ...prev,
+            indentName: pos.indentName,
+            minAge: pos.minAge,
+            maxAge: pos.maxAge,
+            grade: pos.gradeId,
+            responsibilities: pos.rolesResponsibilities
+        }));
+
+        setApprovedBy(pos.approvedBy);
+        setApprovedOn(pos.approvedOn);
+
+        setExistingIndentPath(pos.indentPath);
+        setExistingIndentName(pos.indentName);
+
+        setShowIndentModal(false);
     };
 
     const resetPositionDerivedFields = {
@@ -646,7 +712,6 @@ const AddPosition = () => {
             isAgeRelRiotVictimFamily,
             isAgeRelWdsWomen
         };
-        //console.log(payload);return false;
 
         try {
             if (isEditMode) {
@@ -741,7 +806,7 @@ const AddPosition = () => {
                             filteredLanguages={filteredLanguages} stateDistributions={stateDistributions} setStateDistributions={setStateDistributions} editingIndex={editingIndex}
                             setEditingIndex={setEditingIndex} handleInputChange={handleInputChange} handleAddOrUpdateState={handleAddOrUpdateState}
                             isProficientInLocalLanguage={isProficientInLocalLanguage} setIsProficientInLocalLanguage={setIsProficientInLocalLanguage}
-                              // ✅ UPDATED VARIABLES
+                            // ✅ UPDATED VARIABLES
                             isAgeRelRiotVictimFamily={isAgeRelRiotVictimFamily}
                             setIsAgeRelRiotVictimFamily={setIsAgeRelRiotVictimFamily}
                             isAgeRelWdsWomen={isAgeRelWdsWomen}
@@ -769,9 +834,16 @@ const AddPosition = () => {
 
             <ImportModal show={showImportModal} onHide={() => setShowImportModal(false)} requisitionId={requisitionId} onSuccess={() => fetchPositions(requisitionId)} // optional but correct
             />
-            {console.log('AddPosition - Passing to modal:', eduMode, educationData[eduMode])}
-            <EducationModal key={`${eduMode}-${showEduModal}`} show={showEduModal} mode={eduMode} initialData={educationData[eduMode]} educationTypes={educationTypes} qualifications={qualifications} specializations={specializations} certifications={certifications} onHide={() => setShowEduModal(false)} onSave={({ groups, certGroups, text }) => { setEducationData(prev => ({ ...prev,[eduMode]: { groups, certGroups, text } })); setErrors(prev => { const upd = { ...prev }; delete upd[`${eduMode}Education`]; return upd; }); }} />
+            <EducationModal key={`${eduMode}-${showEduModal}`} show={showEduModal} mode={eduMode} initialData={educationData[eduMode]} educationTypes={educationTypes} qualifications={qualifications} specializations={specializations} certifications={certifications} onHide={() => setShowEduModal(false)} onSave={({ groups, certGroups, text }) => { setEducationData(prev => ({ ...prev, [eduMode]: { groups, certGroups, text } })); setErrors(prev => { const upd = { ...prev }; delete upd[`${eduMode}Education`]; return upd; }); }} />
             <ConfirmUsePositionModal show={showConfirmModal} onYes={handleUsePositionData} onNo={handleRejectPositionData}
+            />
+
+            <SelectIndentModal
+                show={showIndentModal}
+                onClose={() => setShowIndentModal(false)}
+                data={indentCandidates}
+                onSelect={handleUseIndent}
+                selectedIndent={selectedIndent}
             />
         </Container>
     );

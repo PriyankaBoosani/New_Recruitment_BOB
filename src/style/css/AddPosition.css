@@ -591,3 +591,10 @@
 	
 	overflow: inherit;
 }
+.selectindent .form-check-input:focus {
+	box-shadow: none;
+
+}
+.selectindent .bluecol{
+    color: #162B75 !important;
+}

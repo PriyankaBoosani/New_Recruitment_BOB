@@ -40,6 +40,7 @@ const PositionFormModal = ({
 
   /*  DEFAULTS ADDED */
   departments = [],
+
   jobGrades = [],
   fetchPositions,
   t
@@ -82,6 +83,46 @@ const renderContent = () => {
     return (
       <Form onSubmit={handleSubmit}>
         <Row className="g-3">
+              <Col xs={6}>
+                <Form.Group className="form-group">
+                  <Form.Label>
+                    {t("department")} <span className="text-danger">*</span>
+                  </Form.Label>
+
+                  {isViewing ? (
+                    <div className="form-control-view">
+                      {departments.find(d => d.id === formData.departmentId)?.name || "-"}
+
+                    </div>
+                  ) : (
+                    <Form.Select
+                      name="departmentId"
+                      value={formData.departmentId}
+                      onChange={handleInputChange}
+                      className="form-control-custom"
+                      // disabled={isEditing}
+                    >
+                      <option value="">{t("select_department")}</option>
+
+                      {departments.length > 0 &&
+                        departments.map(d => (
+
+                          <option
+                            key={d.id}
+                            value={d.id}
+                          >
+                            {d.name}
+                          </option>
+                        ))
+
+                      }
+
+                    </Form.Select>
+                  )}
+
+                  {!isViewing && <ErrorMessage>{errors.departmentId}</ErrorMessage>}
+                </Form.Group>
+              </Col>
               <Col xs={6}>
                 <Form.Group className="form-group">
                   <Form.Label>

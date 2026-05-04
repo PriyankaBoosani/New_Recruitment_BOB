@@ -25,6 +25,7 @@ const PositionTable = ({
     : data.filter(
       (p) =>
         p.title?.toLowerCase().includes(term) ||
+        p.department?.toLowerCase().includes(term) ||
         p.jobGrade?.toLowerCase().includes(term) ||
         p.rolesResponsibilities?.toLowerCase().includes(term) ||
         p.description?.toLowerCase().includes(term)
@@ -68,6 +69,7 @@ const PositionTable = ({
           <thead>
             <tr>
               <th>{t("s_no")}</th>
+              <th>{t("department")}</th>
               <th>{t("position_title")}</th>
               <th>{t("job_grade")}</th>
               <th>{t("roles_responsibilities")}</th>
@@ -80,6 +82,7 @@ const PositionTable = ({
               current.map((p, idx) => (
                 <tr key={p.id}>
                   <td>{indexOfFirst + idx + 1}</td>
+                  <td>{p.department}</td>
                   <td>{p.title}</td>
                   <td>{p.jobGrade}</td>
                   <td>{p.rolesResponsibilities}</td>
@@ -126,7 +129,7 @@ const PositionTable = ({
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="text-center">
+                <td colSpan="7" className="text-center">
                   No positions found
                 </td>
               </tr>

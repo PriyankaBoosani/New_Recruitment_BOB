@@ -8,6 +8,14 @@ export const usePositions = () => {
   const [positions, setPositions] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const buildDeptMap = (departments = []) => {
+    const map = {};
+    departments.forEach(d => {
+      map[d.departmentId] = d.departmentName;  // ✅ FIXED
+    });
+    return map;
+  };
+
   const buildJobGradeMap = (jobGrades = []) => {
     const map = {};
     jobGrades.forEach(jg => {
@@ -32,10 +40,17 @@ export const usePositions = () => {
 
       const jobGradeMap = buildJobGradeMap(jobGradeApiData);
 
+      const deptRes = await masterApiService.getAllDepartments();
+      const deptApiData = Array.isArray(deptRes.data)
+        ? deptRes.data
+        : deptRes.data?.data || [];
+
+      const deptMap = buildDeptMap(deptApiData);
+
       //  Enrich positions
       const enrichedPositions = mappedPositions.map(p => ({
         ...p,
-        //  department: deptMap[p.departmentId] || "—",
+        department: deptMap[p.departmentId] || "—",
         jobGrade: jobGradeMap[p.jobGradeId] || "—"
       }));
 
@@ -100,7 +115,7 @@ export const usePositions = () => {
 
       //  business failure
       if (res.success === false) {
-       toast.error(res.message);
+        toast.error(res.message);
 
         return {
           success: false,

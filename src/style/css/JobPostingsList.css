@@ -1,6 +1,7 @@
 .job-postings-page {
   padding: 30px;
   background: #f8f9fb;
+  /* min-height: 100vh; */
 }
 
 .page-title {
@@ -52,8 +53,6 @@
   padding-right: 30px;
   width: 100%;
   cursor: pointer;
-  text-overflow: ellipsis;
-  white-space: normal;
 }
 
 /* Remove default dropdown arrow in IE */
@@ -108,6 +107,13 @@
   /* ensure normal checkbox size */
 }
 
+.requisition-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #ACBED4;
+}
 
 .subbtn {
   background-color: #42579F !important;
@@ -186,6 +192,17 @@
   border-radius: 5px;
 }
 
+/* .job-postings-page .req-code {
+	font-weight: 500;
+	margin: 12px 0;
+	color: #162B75 !important;
+	font-size: 1em;
+	width: 100%;
+	white-space: wrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-wrap: anywhere;
+} */
 
 .job-postings-page .req-code {
     font-weight: 500;
@@ -261,7 +278,7 @@
 
 .icon-19 {
   width: 19px;
-  
+  /* height: 19px; */
 }
 
 /* Responsive */
@@ -287,14 +304,16 @@
 }
 
 .accordion-body {
+  /* background: #f9fbff; */
+  /* border-radius: 8px; */
   padding: 20px 15px 0;
  border-top: 1px solid #ddd;
 }
 
 .department-card {
   background: #fff;
-  
-
+  /* border-radius: 10px; */
+  /* padding: 15px 20px; */
   border: 1px solid #ddd;
   color:#fff;
   
@@ -305,7 +324,7 @@
   border-radius: 12px;
   padding: 16px 20px;
   background: #F0F7FF;
-
+  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
   margin: 15px 20px;
 }
 
@@ -347,7 +366,7 @@
 
 /* DETAILS BELOW */
 .position-details {
-  
+  /* margin-top: 10px; */
   font-size: 0.85em;
   color: #404040;
   font-weight: normal;
@@ -588,6 +607,10 @@
     padding: 0.5rem;
   }
 }
+.status-select {
+  text-overflow: ellipsis;
+  white-space: normal;
+}
 .filters-row {
   flex-wrap: wrap;
 }
@@ -607,6 +630,10 @@
 
 /* css wittern by Veeresh */
 .department-header{
+  /* border-bottom: 1px solid #ddd; */
+    /* padding-bottom: 10px; */
     padding: 5px 20px;
     background: #6679BC;
+    /* border-radius: 10px 10px 0 0; */
+   
 }

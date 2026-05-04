@@ -44,7 +44,6 @@ const PositionForm = ({
 
   // Sync form data when parent formData changes (for edit mode)
   useEffect(() => {
-    console.log("formData", formData)
     if (formData) {
       setFormData(formData);
     }
@@ -154,9 +153,12 @@ const PositionForm = ({
       label: a.name
     }))
   );
+  const filteredPositions = positions.filter(
+    p => String(p.deptId) === String(formData.department)
+  );
 
   const positionOptions = withSelectOption(
-    positions.map(p => ({
+    filteredPositions.map(p => ({
       value: p.id,
       label: p.name
     }))
@@ -182,9 +184,7 @@ const PositionForm = ({
       label: `${g.code} ${g.scale ? `- ${g.scale}` : ""}`
     }))
   );
-  console.log("documentTypes", documentTypes)
   const educationDocuments = documentTypes?.filter(doc => doc.docType === "educationdocs") || [];
-  console.log("educationDocuments", educationDocuments)
   const qualificationOptions = withSelectOption(
     educationDocuments.map(e => ({
       value: e.id,
@@ -336,6 +336,10 @@ const PositionForm = ({
                     return;
                   }
                   setIndentFile(file);
+                  setFormData(prev => ({
+                    ...prev,
+                    indentName: file.name
+                  }));
                   setErrors(prev => { const { indentFile, ...rest } = prev; return rest; });
                 }}
               />
@@ -420,22 +424,7 @@ const PositionForm = ({
         </Row>
 
         <Row className="g-4">
-          <Col md={4}>
-            <Form.Label>{t("addPosition:position")} <span className="text-danger">*</span></Form.Label>
-            <Select
-              className="react-select-fixed"
-              classNamePrefix="react-select"
-              isDisabled={isViewMode}
-              value={positionOptions.find(
-                option => String(option.value) === String(formData.position)
-              )}
-              onChange={(selected) =>
-                onPositionSelect(selected ? selected.value : "")
-              }
-              options={positionOptions}
-            />
-            <ErrorMessage>{renderError(errors.position)}</ErrorMessage>
-          </Col>
+
 
           <Col md={4}>
             <Form.Label>{t("addPosition:department")} <span className="text-danger">*</span></Form.Label>
@@ -457,6 +446,23 @@ const PositionForm = ({
               options={departmentOptions}
             />
             <ErrorMessage>{renderError(errors.department)}</ErrorMessage>
+          </Col>
+
+          <Col md={4}>
+            <Form.Label>{t("addPosition:position")} <span className="text-danger">*</span></Form.Label>
+            <Select
+              className="react-select-fixed"
+              classNamePrefix="react-select"
+              isDisabled={isViewMode}
+              value={positionOptions.find(
+                option => String(option.value) === String(formData.position)
+              )}
+              onChange={(selected) =>
+                onPositionSelect(selected ? selected.value : "")
+              }
+              options={positionOptions}
+            />
+            <ErrorMessage>{renderError(errors.position)}</ErrorMessage>
           </Col>
 
           <Col md={4}>

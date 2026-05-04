@@ -10,15 +10,16 @@ const InterviewPanelFormModal = ({
 
   communityOptions = [],
   membersOptions = [],
+  centerOptions = [],
   formData,
   setFormData,
   onSave,
   errors,
   setErrors,
   clearError,
-   disableName = false,
+  disableName = false,
   disableType = false
-  
+
 }) => {
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
 
@@ -50,7 +51,7 @@ const InterviewPanelFormModal = ({
   return (
     <>
 
-      
+
 
       {/* Panel Name */}
       <div className="form-group">
@@ -60,7 +61,7 @@ const InterviewPanelFormModal = ({
           placeholder={t("interviewPanelCommittee:enter_panel_name")}
           maxLength={200}
           value={formData.name}
-           disabled={disableName}
+          disabled={disableName}
           onChange={e => {
             setFormData({ ...formData, name: e.target.value });
             clearError("name");
@@ -79,10 +80,10 @@ const InterviewPanelFormModal = ({
         <select
           className="form-control"
           value={formData.community}
-           disabled={disableType}
+          disabled={disableType}
           onChange={e => {
             setFormData({ ...formData, community: e.target.value });
-           clearError?.("community");
+            clearError?.("community");
           }}
         >
           <option value="">{t("interviewPanelCommittee:select_panel_type")}</option>
@@ -130,7 +131,7 @@ const InterviewPanelFormModal = ({
                 ? selectedOptions.map(o => o.value)
                 : []
             });
-          clearError?.("members");
+            clearError?.("members");
           }}
 
           classNamePrefix="react-select"
@@ -139,6 +140,45 @@ const InterviewPanelFormModal = ({
           <div className="field-error">{t(errors.members)}</div>
         )}
       </div>
+      {/* Interview Center (Zone) */}
+      {/* <div className="form-group">
+        <label>
+          Interview Center / Zone <span className="text-danger">*</span>
+        </label>
+
+        <Select
+          options={centerOptions}
+          placeholder={t("interviewPanelCommittee:select_interview_center")}
+          isMulti={false}   // explicitly single select (optional but clear)
+          value={
+            formData.interviewCenterId
+              ? centerOptions.find(opt => opt.value === formData.interviewCenterId)
+              : null
+          }
+          onChange={(selected) => {
+            setFormData({
+              ...formData,
+              interviewCenterId: selected ? selected.value : ""
+            });
+            clearError?.("interviewCenterId");
+          }}
+          styles={{
+            menuList: (provided) => ({
+              ...provided,
+              maxHeight: "270px",   // 👈 control height
+              overflowY: "auto",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
+            })
+          }}
+          classNamePrefix="react-select"
+        />
+
+        {errors?.interviewCenterId && (
+          <div className="field-error">{errors.interviewCenterId}</div>
+        )}
+      </div> */}
 
       <div className="panel-form-actions">
         <button

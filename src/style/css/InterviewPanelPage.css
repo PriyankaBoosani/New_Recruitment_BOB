@@ -504,25 +504,7 @@ border-radius: 0;       /* optional */
   width: 70px;
 }
 
-.panel-table th:nth-child(2),
-.panel-table td:nth-child(2) {
-  width: 250px;  /* Panel Name */
-}
 
-.panel-table th:nth-child(3),
-.panel-table td:nth-child(3) {
-  width: 180px;  /* Panel Type */
-}
-
-.panel-table th:nth-child(4),
-.panel-table td:nth-child(4) {
-  width: 300px;  /* Panel Members */
-}
-
-.panel-table th:nth-child(5),
-.panel-table td:nth-child(5) {
-  width: 120px;  /* Actions */
-}
 .header-title {
   color: #162B75;
   font-size: 1.25rem;
