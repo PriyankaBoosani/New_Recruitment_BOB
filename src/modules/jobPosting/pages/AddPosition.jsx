@@ -19,6 +19,7 @@ import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisit
 import { toast } from "react-toastify";
 import ReservationSection from "../component/ReservationSection";
 import { useTranslation } from "react-i18next";
+import masterApiService from "../../master/services/masterApiService";
 const AddPosition = () => {
     const { t } = useTranslation(["addPosition", "common", "validation"]);
     const renderError = (e) => {
@@ -326,88 +327,53 @@ const AddPosition = () => {
                     const categories = {};
                     const disabilities = {};
 
-  reservationCategories.forEach(c => (categories[c.code] = 0));
-  disabilityCategories.forEach(d => (disabilities[d.disabilityCode] = 0));
+                    reservationCategories.forEach(c => (categories[c.code] = 0));
+                    disabilityCategories.forEach(d => (disabilities[d.disabilityCode] = 0));
 
-  distributions.forEach(d => {
-    if (d.isDisability) {
-      const dis = disabilityCategories.find(x => x.id === d.disabilityCategoryId);
-      if (dis) disabilities[dis.disabilityCode] = d.vacancyCount;
-    } else {
-      const cat = reservationCategories.find(x => x.id === d.reservationCategoryId);
-      if (cat) categories[cat.code] = d.vacancyCount;
-    }
-  });
+                    sd.positionCategoryDistributions.forEach(d => {
+                        if (d.isDisability) {
+                            const dis = disabilityCategories.find(x => x.id === d.disabilityCategoryId);
+                            if (dis) disabilities[dis.disabilityCode] = d.vacancyCount;
+                        } else {
+                            const cat = reservationCategories.find(x => x.id === d.reservationCategoryId);
+                            if (cat) categories[cat.code] = d.vacancyCount;
+                        }
+                    });
 
-  return { categories, disabilities };
-};
+                    return {
+                        positionStateDistributionId: sd.positionStateDistributionId,
+                        state: sd.stateId,
+                        city: sd.cityId,
 
-const mapSingleState =  (
-  sd,
-  masterData,
-  reservationCategories,
-  disabilityCategories
-) => {
-  const { categories, disabilities } = mapCategoryAndDisability(
-    sd.positionCategoryDistributions,
-    reservationCategories,
-    disabilityCategories
-  );
+                        vacancies: sd.totalVacancies,
+                        language: sd.localLanguage,
+                        // 🔵 DO NOT store isProficientInLocalLanguage per-state - it's a root-level field
+                        // isProficientInLocalLanguage will be managed at AddPosition root level only
+                        categories,
+                        disabilities,
+                        categoryDistributions: sd.positionCategoryDistributions.map(cd => ({
+                            positionCategoryDistributionId: cd.positionCategoryDistributionId,
+                            reservationCategoryId: cd.reservationCategoryId,
+                            disabilityCategoryId: cd.disabilityCategoryId,
+                            isDisability: cd.isDisability
+                        }))
+                    };
+                })
+            );
 
-  return {
-    positionStateDistributionId: sd.positionStateDistributionId,
-    state: sd.stateId,
-    city: sd.cityId,
-    vacancies: sd.totalVacancies,
-    language: sd.localLanguage,
-    categories,
-    disabilities,
-    categoryDistributions: sd.positionCategoryDistributions.map(cd => ({
-      positionCategoryDistributionId: cd.positionCategoryDistributionId,
-      reservationCategoryId: cd.reservationCategoryId,
-      disabilityCategoryId: cd.disabilityCategoryId,
-      isDisability: cd.isDisability
-    }))
-  };
-};
+            setStateDistributions(mappedStates);
+            
+            // Set root-level isProficientInLocalLanguage from ROOT LEVEL of existingPosition
+            if (existingPosition?.isProficientInLocalLanguage !== undefined) {
+                const value = existingPosition.isProficientInLocalLanguage;
+                setIsProficientInLocalLanguage(value === true || value === 'true' || value === 1 || value === '1');
+            } else {
+                setIsProficientInLocalLanguage(false);
+            }
+        };
 
-    // Handle State Distribution mapping
-   useEffect(() => {
-  const mapStates = async () => {
-    const isEduDataReady =
-      existingPosition &&
-      educationTypes.length &&
-      qualifications.length &&
-      specializations.length &&
-      certifications.length;
-
-    if (!isEduDataReady) return;
-
-    const mappedStates = await Promise.all(
-      existingPosition.positionStateDistributions.map(sd =>
-        mapSingleState(
-          sd,
-          masterData,
-          reservationCategories,
-          disabilityCategories
-        )
-      )
-    );
-
-    setStateDistributions(mappedStates);
-
-    if (existingPosition?.isProficientInLocalLanguage !== undefined) {
-      const value = existingPosition.isProficientInLocalLanguage;
-      setIsProficientInLocalLanguage(
-        value === true || value === "true" || value === 1 || value === "1"
-      );
-    } else {
-      setIsProficientInLocalLanguage(false);
-    }
-  };
-
-  mapStates();
-}, [existingPosition, reservationCategories, disabilityCategories]);
+        mapStates();
+    }, [existingPosition, reservationCategories, disabilityCategories]);
 
     // --- HANDLERS ---
     const numericFields = [
@@ -715,8 +681,6 @@ const mapSingleState =  (
             .filter(Boolean)
         : [];
 
-
-
     return (
         <Container fluid className="add-position-page">
             <div className="req_top-bar">
@@ -771,7 +735,7 @@ const mapSingleState =  (
                         />
                         <ReservationSection
                             isViewMode={isViewMode} formData={formData} errors={errors} setErrors={setErrors} reservationCategories={reservationCategories}
-                            disabilityCategories={disabilityCategories} states={states} languages={languages} stateLanguages={stateLanguages} cities={cities} nationalCategories={nationalCategories} setNationalCategories={setNationalCategories} nationalDisabilities={nationalDisabilities}
+                            disabilityCategories={disabilityCategories} states={states} languages={languages} cities={cities} nationalCategories={nationalCategories} setNationalCategories={setNationalCategories} nationalDisabilities={nationalDisabilities}
                             setNationalDisabilities={setNationalDisabilities} nationalCategoryTotal={nationalCategoryTotal}
                             currentState={currentState} setCurrentState={setCurrentState} stateCategoryTotal={stateCategoryTotal}
                             filteredLanguages={filteredLanguages} stateDistributions={stateDistributions} setStateDistributions={setStateDistributions} editingIndex={editingIndex}

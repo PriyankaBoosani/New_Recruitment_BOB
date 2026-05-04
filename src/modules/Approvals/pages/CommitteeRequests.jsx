@@ -143,66 +143,41 @@ const CommitteeRequests = () => {
     };
 
 
-const validateApprovalInput = (ids, commentText) => {
-  if (ids.length === 0) return false;
+    const handleApprovalAction = async (modalComment) => {
 
-  if (!commentText) {
-    toast.error("Comment is required");
-    return false;
-  }
+        const ids = Array.from(selectedReqIds);
 
-  return true;
-};
-const resetApprovalState = () => {
-  setSelectedReqIds(new Set());
-  setShowCommentModal(false);
-};
+        if (ids.length === 0) return;
 
-const handleApprovalSuccess = (success) => {
-  if (!success) return false;
-  resetApprovalState();
-  return true;
-};
+        const commentText = modalComment?.trim();
 
-const handleApprovalAction = async (modalComment) => {
-  const ids = Array.from(selectedReqIds);
-  const commentText = modalComment?.trim();
+        if (!commentText) {
+            toast.error("Comment is required");
+            return;
+        }
 
-  if (!validateApprovalInput(ids, commentText)) return;
+        let success = false;
 
-  const success = await executeApprovalAction({
-    actionType,
-    ids,
-    commentText,
-    positionId: selectedPosition?.positionId,
-    approvePanels,
-    rejectPanels
-  });
+        if (actionType === "approve") {
+            success = await approvePanels(
+                ids,
+                commentText,
+                selectedPosition?.positionId
+            );
+        } else {
+            success = await rejectPanels(
+                ids,
+                commentText,
+                selectedPosition?.positionId
+            );
+        }
 
-  handleApprovalSuccess(success);
-};
-const isPanelMatching = (
-  panelItem,
-  allowedStatuses,
-  searchInput,
-  status
-) => {
-  const panelName =
-    panelItem.interviewPanel?.panelName?.toLowerCase() || "";
+        if (success) {
+            setSelectedReqIds(new Set());
 
-  const panelStatus = panelItem.positionPanelStatus;
-
-  const roleStatuses = allowedStatuses.map(s => s.value);
-
-  const roleMatch = roleStatuses.includes(panelStatus);
-
-  const searchMatch = panelName.includes(searchInput.toLowerCase());
-
-  const statusMatch =
-    status === "ALL" || panelStatus === status;
-
-  return roleMatch && searchMatch && statusMatch;
-};
+            setShowCommentModal(false);
+        }
+    };
     const getStatusBadge = (status = "") => {
         switch (status) {
             case "L1_PENDING":
@@ -244,9 +219,23 @@ const isPanelMatching = (
         ...panelData.compensationPanelList
     ];
 
-    const filteredPanels = allPanels.filter(panelItem =>
-  isPanelMatching(panelItem, allowedStatuses, searchInput, status)
-);
+    const filteredPanels = allPanels.filter(panelItem => {
+
+        const panelName = panelItem.interviewPanel?.panelName?.toLowerCase() || "";
+        const panelStatus = panelItem.positionPanelStatus;
+
+        // role based allowed statuses
+        const roleStatuses = allowedStatuses.map(s => s.value);
+
+        const roleMatch = roleStatuses.includes(panelStatus);
+
+        const searchMatch = panelName.includes(searchInput.toLowerCase());
+
+        const statusMatch =
+            status === "ALL" || panelStatus === status;
+
+        return roleMatch && searchMatch && statusMatch;
+    });
     const totalPages = Math.ceil(filteredPanels.length / pageSize);
 
     const paginatedPanels = filteredPanels.slice(
@@ -349,93 +338,7 @@ const isPanelMatching = (
     // };
 
 
-const renderPanelRow = (panelItem) => {
-  const panel =
-    panelItem.interviewPanel ||
-    panelItem.screeningPanel ||
-    panelItem.compensationPanel;
 
-  const members = panel.panelMembers.map(
-    m => m.panelMember.name
-  );
-
-  return (
-    <div
-      key={panelItem.positionPanelId}
-      className="bulk-actions align-items-center mt-3 mb-1"
-    >
-      <Row className="align-items-center gx-2 d-flex">
-
-        <Col xs="auto" className="checkbox-col pe-1 ms-2">
-          <Form.Check
-            type="checkbox"
-            className="select-checkbox"
-            checked={selectedReqIds.has(panelItem.positionPanelId)}
-            disabled={panelItem.positionPanelStatus !== selectableStatus}
-            onChange={(e) => {
-              setSelectedReqIds(prev => {
-                const next = new Set(prev);
-
-                if (e.target.checked) {
-                  next.add(panelItem.positionPanelId);
-                } else {
-                  next.delete(panelItem.positionPanelId);
-                }
-
-                return next;
-              });
-            }}
-          />
-        </Col>
-
-        <Col md={3} className="data-col">
-          <div className="field-label">
-            {t("approvalHistory:panel_name")}
-            <img
-              src={history_icon}
-              alt="History"
-              className="icon-history"
-              onClick={() => handleOpenHistory(panelItem.positionPanelId)}
-            />
-          </div>
-          <div className="field-value">{panel.panelName}</div>
-        </Col>
-
-        <Col md={2} className="data-col">
-          <div className="field-label">{t("approvalHistory:panel_type")}</div>
-          <div className="field-value">
-            {panel.committee?.committeeName}
-          </div>
-        </Col>
-
-        <Col md={3} className="data-col">
-          <div className="field-label">{t("approvalHistory:panel_members")}</div>
-          <div className="field-value">{members.join(", ")}</div>
-        </Col>
-
-        <Col md={1} className="data-col">
-          <div className="field-label">{t("approvalHistory:start_date")}</div>
-          <div className="field-value">{panelItem.startDate}</div>
-        </Col>
-
-        <Col md={1} className="data-col">
-          <div className="field-label">{t("approvalHistory:end_date")}</div>
-          <div className="field-value">{panelItem.endDate}</div>
-        </Col>
-
-        <Col className="d-flex align-items-center">
-          <Badge
-            bg={getStatusBadge(panelItem.positionPanelStatus)}
-            className="status-badge ms-auto"
-          >
-            {formatStatusLabel(panelItem.positionPanelStatus)}
-          </Badge>
-        </Col>
-
-      </Row>
-    </div>
-  );
-};
     return (
         <div className="committee-requests-page">
             <Container fluid className="committee-page">
@@ -595,7 +498,105 @@ const renderPanelRow = (panelItem) => {
                                 {t("approvalHistory:no_panels_found")}
                             </div>
                         ) : (
-                            paginatedPanels.map(renderPanelRow)
+                            paginatedPanels.map((panelItem) => {
+                                const panel =
+                                    panelItem.interviewPanel ||
+                                    panelItem.screeningPanel ||
+                                    panelItem.compensationPanel;
+                                const members = panel.panelMembers.map(
+                                    m => m.panelMember.name
+                                );
+
+                                return (
+                                    <div
+                                        key={panelItem.positionPanelId}
+                                        className="bulk-actions align-items-center mt-3 mb-1"
+                                    >
+                                        <Row className="align-items-center gx-2 d-flex">
+
+                                            {/* Checkbox */}
+                                            <Col xs="auto" className="checkbox-col pe-1 ms-2">
+                                                <Form.Check
+                                                    type="checkbox"
+                                                    className="select-checkbox"
+                                                    checked={selectedReqIds.has(panelItem.positionPanelId)}
+                                                    disabled={panelItem.positionPanelStatus !== selectableStatus}
+                                                    onChange={(e) => {
+                                                        setSelectedReqIds(prev => {
+                                                            const next = new Set(prev);
+
+                                                            if (e.target.checked) {
+                                                                next.add(panelItem.positionPanelId);
+                                                            } else {
+                                                                next.delete(panelItem.positionPanelId);
+                                                            }
+
+                                                            return next;
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+
+                                            {/* Panel Name */}
+                                            <Col md={3} className="data-col">
+                                                <div className="field-label">{t("approvalHistory:panel_name")} <img
+                                                    src={history_icon}
+                                                    alt="History"
+                                                    className="icon-history"
+                                                    onClick={() => handleOpenHistory(panelItem.positionPanelId)}
+                                                /></div>
+                                                <div className="field-value">
+                                                    {panel.panelName}
+                                                </div>
+                                            </Col>
+
+                                            {/* Panel Type */}
+                                            <Col md={2} className="data-col">
+                                                <div className="field-label">{t("approvalHistory:panel_type")}</div>
+                                                <div className="field-value">
+                                                    {panel.committee?.committeeName}
+                                                </div>
+                                            </Col>
+
+                                            {/* Panel Members */}
+                                            <Col md={3} className="data-col">
+                                                <div className="field-label">{t("approvalHistory:panel_members")}</div>
+                                                <div className="field-value">
+                                                    {members.join(", ")}
+                                                </div>
+                                            </Col>
+
+                                            {/* Start Date */}
+                                            <Col md={1} className="data-col">
+                                                <div className="field-label">{t("approvalHistory:start_date")}</div>
+                                                <div className="field-value">
+                                                    {panelItem.startDate}
+                                                </div>
+                                            </Col>
+
+                                            {/* End Date */}
+                                            <Col md={1} className="data-col">
+                                                <div className="field-label">{t("approvalHistory:end_date")}</div>
+                                                <div className="field-value">
+                                                    {panelItem.endDate}
+                                                </div>
+                                            </Col>
+
+                                            {/* Status */}
+                                            <Col className="d-flex align-items-center">
+                                                <Badge
+                                                    bg={getStatusBadge(panelItem.positionPanelStatus)}
+                                                    className="status-badge ms-auto"
+                                                >
+                                                    {formatStatusLabel(panelItem.positionPanelStatus)}
+                                                </Badge>
+                                            </Col>
+
+                                        </Row>
+                                    </div>
+                                );
+                            })
+
                         )}
                         {totalPages > 1 && (
                             <Row className="mt-4 mb-4">
