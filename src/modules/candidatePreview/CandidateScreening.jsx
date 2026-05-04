@@ -1600,7 +1600,7 @@ const handleOfferStatusToggle = (status) => {
               {selectedPositionId && selectedRequisitionId && (
                 <div className="col-md-4 col-12 text-md-end mt-2 mt-md-0">
                 
-                  {/* {activeTab === "CANDIDATE_POOL" && (
+                  {activeTab === "CANDIDATE_POOL" && (
                     <button
                       className="rank-btn fs-14"
                       onClick={() => {
@@ -1613,7 +1613,7 @@ const handleOfferStatusToggle = (status) => {
                     >
                       <FontAwesomeIcon icon={faListOl} className="rank-icon" /> Rank
                     </button>
-                  )} */}
+                  )}
                   <OverlayTrigger
                     placement="bottom"
                     overlay={<Tooltip >{t("candidateWorkflow:download_pdf")}</Tooltip>}

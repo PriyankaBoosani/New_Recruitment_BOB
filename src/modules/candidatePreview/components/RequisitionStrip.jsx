@@ -32,25 +32,9 @@ const RequisitionStrip = ({
 
   const [masterData, setMasterData] = useState(null);   //  INTERNAL
 
- // const orderedPattern =/^\s*(\(?\d+[\).\]]|\(?[ivxlcdm]+[\).\]])\s*/i;
-    //const orderedPattern =/^\s*(?:\(?\d{1,5}[\).\]]|\(?[ivxlcdm]{1,7}[\).\]])\s*/i;
-  
+  const orderedPattern =
+    /^\s*(\(?\d+[\).\]]|\(?[ivxlcdm]+[\).\]])\s*/i;
 
- const isOrderedLine = (line) => {
-  if (typeof line !== "string" || line.length > 200) return false;
-
-  const trimmed = line.trim();
-
-  // Numeric check
-  if (/^\(?\d{1,5}[\).\]]/.test(trimmed)) return true;
-
-  // Roman check (safe + extended)
-  const roman = trimmed.replace(/[\).\]]/g, "").toLowerCase();
-
-  const romanPattern = /^(i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv)$/;
-
-  return romanPattern.test(roman);
-};
   const renderBullets = (text) => {
     if (!text) return <li>-</li>;
 
@@ -63,7 +47,7 @@ const RequisitionStrip = ({
       const cleaned = line.replace(/\.+$/, "");
 
       // ✅ If already numbered → DO NOT ADD BULLET
-      if (isOrderedLine(cleaned)) {
+      if (orderedPattern.test(cleaned)) {
         return (
           <div key={idx} className="no-bullet-line">
             {cleaned}
@@ -75,34 +59,7 @@ const RequisitionStrip = ({
       return <li key={idx}>{cleaned}</li>;
     });
   };
-const renderVacancySection = () => {
-  if (job?.positionStateDistributions?.length > 0) {
-    return (
-      <LocationWiseVacancyTable
-        positionStateDistributions={job.positionStateDistributions}
-        states={masterData?.states || []}
-        cities={masterData?.cities || []}
-        reservationCategories={masterData?.reservationCategories || []}
-        disabilityCategories={masterData?.disabilityCategories || []}
-      />
-    );
-  }
 
-  if (
-    job?.positionStateDistributions?.length === 0 &&
-    job?.nationalCategoryDistribution
-  ) {
-    return (
-      <NationalVacancyTable
-        nationalCategoryDistribution={job.nationalCategoryDistribution}
-        reservationCategories={masterData?.reservationCategories || []}
-        disabilityCategories={masterData?.disabilityCategories || []}
-      />
-    );
-  }
-
-  return null;
-};
 
 
 
@@ -160,9 +117,6 @@ const renderVacancySection = () => {
   console.log("MASTER DATA FULL", masterData);
   
 
-  console.log("MASTER DATA FULL", masterData);
-  
-
 
   /* ================= FETCH JOB ================= */
 
@@ -210,48 +164,6 @@ const renderVacancySection = () => {
       return `${months} ${t("candidateWorkflow:months")}`;
 
     return `${years} ${t("candidateWorkflow:years")} ${months} ${t("candidateWorkflow:months")}`;
-  };
-
-
-
-
-
-
-
-
-
-
-const getEducationNameById = (id) => {
-  const docs = masterData?.educationLevels || []; // ✅ FIXED
-
-  const match = docs.find(
-    (doc) =>
-      doc.documentTypeId === id &&
-      doc.docType === "educationdocs"
-  );
-
-  return match?.documentName || "-";
-};
-
-
-
-const getEduWiseExperience = () => {
-  if (!job?.mandatoryExpMonthsEduWise) return [];
-
-  return Object.entries(job.mandatoryExpMonthsEduWise)
-    .map(([id, months]) => {
-      const name = getEducationNameById(id);
-
-      const years = Math.floor(months / 12);
-      const remMonths = months % 12;
-
-      let exp = "";
-      if (years > 0) exp += `${years} yr `;
-      if (remMonths > 0) exp += `${remMonths} mo`;
-
-      return `${name}: ${exp || "0 mo"}`;
-    });
-};
   };
 
 
@@ -534,19 +446,20 @@ const getEduWiseExperience = () => {
                     </span>
                   </div>
 
-                <div className="col-12 col-md-4">
-                  <span className="stat-label">
-                    {t("candidateWorkflow:experience")}:
-                  </span>{" "}
-                  <span className="stat-value">
-                    {job?.isMandatoryExpMonthsEduWise
-                      ? getEduWiseExperience().join(" / ")
-                      : formatExperience(
-                          job?.mandatory_experience_years,
-                          job?.mandatory_experience_months
-                        )}
-                  </span>
-                </div>
+
+                 <div className="col-12 col-md-4">
+  <span className="stat-label">
+    {t("candidateWorkflow:experience")}:
+  </span>{" "}
+  <span className="stat-value">
+    {job?.isMandatoryExpMonthsEduWise
+      ? getEduWiseExperience().join("/ ")
+      : formatExperience(
+          job?.mandatory_experience_years,
+          job?.mandatory_experience_months
+        )}
+  </span>
+</div>
 
                 </div>
               </div>
@@ -593,7 +506,24 @@ const getEduWiseExperience = () => {
 
               </div>
 
-             {renderVacancySection()}
+              {job?.positionStateDistributions?.length > 0 && (
+                <LocationWiseVacancyTable
+                  positionStateDistributions={job.positionStateDistributions}
+                  states={masterData?.states || []}
+                  cities={masterData?.cities || []}
+                  reservationCategories={masterData?.reservationCategories || []}
+                  disabilityCategories={masterData?.disabilityCategories || []}
+                />
+              )}
+
+              {job?.positionStateDistributions?.length === 0 &&
+                job?.nationalCategoryDistribution && (
+                  <NationalVacancyTable
+                    nationalCategoryDistribution={job.nationalCategoryDistribution}
+                    reservationCategories={masterData?.reservationCategories || []}
+                    disabilityCategories={masterData?.disabilityCategories || []}
+                  />
+                )}
             </>
           )}
 

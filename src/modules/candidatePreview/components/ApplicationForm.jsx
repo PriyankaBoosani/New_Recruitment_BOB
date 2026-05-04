@@ -28,13 +28,13 @@ const ApplicationForm = ({
   interviewScheduleId,
   requisitionTitle,
   positionName,
+  isLocationWise,
   selectedDate,
   zonalVerificationStatus,
   zonalSubmitBeforeDate,
   zonalHrComments,
   candidateStatus,
-  isFromInterview,
-  isFromCompensationPool
+  isFromInterview
 }) => {
 
   const { t } = useTranslation(["preview", "common", "validation"]);
@@ -457,18 +457,13 @@ const ApplicationForm = ({
 
         const isZonal = isZonalHr;
 
-       const status = isZonalHr
-  ? item.zonalHrDocStatus || "PENDING"
-
-  : isFromCompensationPool   //  ADD THIS
-    ? item.zonalHrDocStatus || "PENDING"
-
-    : isInterviewer
-      ? (item.zonalHrDocStatus && item.zonalHrDocStatus !== "PENDING"
-          ? item.zonalHrDocStatus
-          : item.docScreeningStatus || "PENDING")
-
-      : item.docScreeningStatus || "PENDING";
+        const status = isZonalHr
+          ? item.zonalHrDocStatus || "PENDING"
+          : isInterviewer
+            ? (item.zonalHrDocStatus && item.zonalHrDocStatus !== "PENDING"
+              ? item.zonalHrDocStatus
+              : item.docScreeningStatus || "PENDING")
+            : item.docScreeningStatus || "PENDING";
 
         const comments = isZonal
           ? item.zonalHrDocComments
@@ -1173,7 +1168,7 @@ const ApplicationForm = ({
           <Accordion.Body>
             <div className="personal-details-wrapper">
               <table className="table table-bordered bob-table w-100 mb-0">
-                  <thead className="visually-hidden">
+                <thead className="visually-hidden">
                   <tr>
                     <th>Field</th>
                     <th>Value</th>
@@ -1400,30 +1395,19 @@ const ApplicationForm = ({
                       {data.personalDetails.expectedCtc}
                     </td>
 
-                    {/* <td className="fw-med">Social Media Profile links</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td> */}
-                    {/* <td className="fw-med">Expected CTC</td>
-                      <td className="fw-reg" colSpan={2}>{preferences.ctc ? `₹${Number(preferences.ctc).toLocaleString()}` : "-"}</td> */}
                   </tr>
 
-                  {/* <tr>
-                      <td className="fw-med">Location Preference 1</td>
-                      <td className="fw-reg" colSpan={2}>{state1?.state_name || "-"}</td>
-                      <td className="fw-med">Location Preference 2</td>
-                      <td className="fw-reg" colSpan={2}>{state2?.state_name || "-"}</td>
-                    </tr> */}
 
-                  {/*<tr>
-                       <td className="fw-med">Location Preference 3</td>
-                      <td className="fw-reg" colSpan={2}>{state3?.state_name || "-"}</td> 
-                      <td className="fw-med">Social Media Profile links</td>
-                      <td className="fw-reg" colSpan={2}>{previewData.personalDetails.socialMediaProfileLink}</td>
-                    </tr>*/}
 
                   <tr>
-
+                    <td className="fw-med">{t("language_proficiency")}</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.languages || "-"}</td>
                     <td className="fw-med">{t("social_media_links")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td>
+                    
+                  </tr>
+
+                  <tr>
                     <td className="fw-med">{t("location_pref1")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
@@ -1432,10 +1416,6 @@ const ApplicationForm = ({
                       )}
 
                     </td>
-
-                  </tr>
-
-                  <tr>
                     <td className="fw-med">{t("location_pref2")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
@@ -1444,15 +1424,31 @@ const ApplicationForm = ({
                       )}
 
                     </td>
-                    <td className="fw-med">{t("location_pref3")}</td>
+                   
+
+                  </tr>
+
+                  <tr>
+                     <td className="fw-med">{t("location_pref3")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
                         data.personalDetails.locationPreference3,
                         data.personalDetails.statePreference3
                       )}
                     </td>
-
+                    <td className="fw-med">{t("language_preference")}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.localLanguage || "-"}
+                    </td>
+                    
+                  </tr> 
+                  <tr>
+                    <td className="fw-med">{t("is_local_language_studied")}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {isLocationWise ? data.personalDetails.isLocalLanguageStudied : "-"}
+                    </td>
                   </tr>
+
 
 
                   <tr>
@@ -1475,23 +1471,6 @@ const ApplicationForm = ({
                     <td className="fw-med">{t("disciplinary_action")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.disciplinaryAction || "No"}</td>
                   </tr>
-
-                  {/* {data.personalDetails.disciplinaryAction === "Yes" && (
-                      <tr>
-                        <td className="fw-med">Details of disciplinary proceedings, if Any</td>
-                        <td className="fw-reg" colSpan={5}>{data.personalDetails.disciplinaryDetails || "N/A"}</td>
-                      </tr>
-
-                      
-                    )} */}
-
-                  {/* <tr>
-                    <td className="fw-med">{t("disciplinary_details")}</td>
-                    <td className="fw-reg" colSpan={5}>
-                      {data.personalDetails.disciplinaryDetails}
-                    </td>
-                  </tr> */}
-
                 </tbody>
               </table>
             </div>
@@ -1523,18 +1502,18 @@ const ApplicationForm = ({
                   {(data.education || [])
                     .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
                     .map((edu, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{edu.educationLevel_name || "-"}</td>
-                      <td>{edu.institution || "-"}</td>
-                      <td>{edu.universityName || "-"}</td>
-                      <td>{edu.mandatoryQualification_name || "-"}</td>
-                      <td>{edu.specialization_name || "-"}</td>
-                      <td>{edu.startDate || "-"}</td>
-                      <td>{edu.endDate || "-"}</td>
-                      <td>{edu.percentage || "-"}</td>
-                    </tr>
-                  ))}
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{edu.educationLevel_name || "-"}</td>
+                        <td>{edu.institution || "-"}</td>
+                        <td>{edu.universityName || "-"}</td>
+                        <td>{edu.mandatoryQualification_name || "-"}</td>
+                        <td>{edu.specialization_name || "-"}</td>
+                        <td>{edu.startDate || "-"}</td>
+                        <td>{edu.endDate || "-"}</td>
+                        <td>{edu.percentage || "-"}</td>
+                      </tr>
+                    ))}
 
 
                   {(!data.education || data.education.length === 0) && (
@@ -1799,10 +1778,8 @@ const ApplicationForm = ({
         </Accordion.Item>
 
         {/* ================= CRITERIA SECTION ================= */}
-{canCandidatePool &&
-  !disableDocAction &&
-  !isFromInterview &&
-  !isFromCompensationPool && (          <Card className="criteria-main-card">
+        {canCandidatePool && !disableDocAction && !isFromInterview && (
+          <Card className="criteria-main-card">
 
             <div className="criteria-wrapper">
 
@@ -2018,14 +1995,12 @@ const ApplicationForm = ({
                 </div>
               )}
 
-          {!isFromCompensationPool && (
-  <button
-    className="btn-submit-orange"
-    onClick={handleFinalSubmit}
-  >
-    {t("submit")}
-  </button>
-)}
+              <button
+                className="btn-submit-orange"
+                onClick={handleFinalSubmit}
+              >
+                {t("submit")}
+              </button>
             </div>
           </Card>
         )}
@@ -2197,7 +2172,6 @@ const ApplicationForm = ({
         onVerify={handleVerify}
         onReject={handleReject}
         isZonalAbsent={isZonalAbsent}
-          isFromCompensationPool={isFromCompensationPool}
 
       />
     </>

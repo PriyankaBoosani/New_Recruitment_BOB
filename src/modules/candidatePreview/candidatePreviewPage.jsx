@@ -33,7 +33,7 @@ const CandidatePreviewPage = ({ onHide }) => {
   //   const isRecruiter = role === "recruiter";
 
 
-const isFromCompensationPool = state?.fromCompensationPool;
+  const isFromCompensationPool = state?.fromCompensationPool;
 
   const privileges = useSelector((state) => state.user.privileges);
 
@@ -152,7 +152,7 @@ const isFromCompensationPool = state?.fromCompensationPool;
             zonalStats: ZonalStats.data || [],
             languages: fullMasters.languageMasters || []
           };
-          
+
 
           const mapped = mapCandidateToPreview(
             candidateRes.data,
@@ -207,7 +207,7 @@ const isFromCompensationPool = state?.fromCompensationPool;
           requisitionId={requisitionId}
           candidateScreening={true}
           activeTab={activeTab}
-          
+
         />
       ) : isZonalHr ? (
         <HeaderWithBacks
@@ -301,8 +301,9 @@ const isFromCompensationPool = state?.fromCompensationPool;
               zonalHrComments={candidate?.zonalHrComments}
               isLocationWise={isLocationWise}
               candidateStatus={candidate?.status}
-                isFromInterview={isFromInterview}
-                isFromCompensationPool={isFromCompensationPool}
+              isFromInterview={isFromInterview}
+              isFromCompensationPool={isFromCompensationPool}
+
             />
           )
         )}

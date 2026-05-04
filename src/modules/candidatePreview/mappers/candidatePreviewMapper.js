@@ -405,8 +405,8 @@ export const mapJobPositionToRequisitionStrip = (
     dept_name: departmentObj?.departmentName || "-",
 
 
-  isMandatoryExpMonthsEduWise: apiData.isMandatoryExpMonthsEduWise,
-  mandatoryExpMonthsEduWise: apiData.mandatoryExpMonthsEduWise || {},
+    isMandatoryExpMonthsEduWise: apiData.isMandatoryExpMonthsEduWise,
+    mandatoryExpMonthsEduWise: apiData.mandatoryExpMonthsEduWise || {},
 
 
 
