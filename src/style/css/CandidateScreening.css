@@ -18,19 +18,13 @@
 
 .react-select__value-container {
   padding: 2px 8px;
+   pointer-events: auto !important;
 }
 
 .react-select__placeholder {
   font-size: 14px;
   color: #9aa0a6;
 }
-
-.react-select__value-container {
-  pointer-events: auto !important;
-}
-
-
-
 .react-select__single-value {
   overflow: hidden;
   text-overflow: ellipsis;

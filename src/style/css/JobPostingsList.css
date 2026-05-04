@@ -52,6 +52,8 @@
   padding-right: 30px;
   width: 100%;
   cursor: pointer;
+  text-overflow: ellipsis;
+  white-space: normal;
 }
 
 /* Remove default dropdown arrow in IE */
@@ -585,10 +587,6 @@
     min-height: 42px;
     padding: 0.5rem;
   }
-}
-.status-select {
-  text-overflow: ellipsis;
-  white-space: normal;
 }
 .filters-row {
   flex-wrap: wrap;

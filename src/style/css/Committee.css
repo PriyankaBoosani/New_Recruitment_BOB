@@ -467,6 +467,7 @@
 
 .custom-select__control{
   max-width: 350px;
+  font-size: .875rem;
 }
 .custom-select__menu {
 border-color: hsl(0, 0%, 80%);
@@ -476,9 +477,6 @@ border-color: hsl(0, 0%, 80%);
   white-space: normal;
   word-break: break-word;
   max-width: 350px;
-}
-.custom-select__control{
-  font-size: .875rem;
 }
 
 .action-pill:disabled {
