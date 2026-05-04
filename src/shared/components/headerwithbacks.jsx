@@ -21,13 +21,29 @@ const PageHeaderWithBacks = ({ title, subtitle }) => {
     const targetRoute = isZonalHr
       ? "/candidate-verification"
       : "/candidate-workflow";
-
+ console.log("HeaderWithBack - navigating to:", targetRoute, "with state:", state);
     navigate(targetRoute, {
       state: {
         requisition: state.requisition,
         position: state.position,
-        preloadedCandidates: state.candidates || [],
-        selectedDate: state.selectedDate
+        preloadedCandidates:   state.preloadedCandidates || state.candidates || [],
+        selectedDate: state.selectedDate,
+
+         // 🔥 ADD THESE
+    activeTab: state.activeTab,
+    requisitionId: state.requisitionId,
+    positionId: state.positionId,
+
+    page: state.page,
+    pageSize: state.pageSize,
+
+    // 🔥 INTERVIEW FIX (VERY IMPORTANT)
+    interviewPage: state.interviewPage,
+    interviewPageSize: state.interviewPageSize,
+
+    filters: state.filters,
+    searchText: state.searchText,
+    activeStage: state.activeStage
       }
     });
   };

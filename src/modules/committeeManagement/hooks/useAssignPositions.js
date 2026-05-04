@@ -49,68 +49,75 @@ export const useAssignPositions = (userId) => {
       .replace("_", " ")          // l1 pending
       .replace(/\b\w/g, c => c.toUpperCase()); // L1 Pending
   };
-const validateSinglePanel = (panel, today) => {
-  const errors = {};
-  let isValid = true;
 
-  if (!panel.startDate) {
-    errors.startDate = "start_date_required";
-    isValid = false;
-  }
+  const validatePanels = () => {
+    const errors = {};
+    let isValid = true;
 
-  if (!panel.endDate) {
-    errors.endDate = "end_date_required";
-    isValid = false;
-  }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  if (panel.startDate && panel.endDate &&
-      new Date(panel.endDate) < new Date(panel.startDate)) {
-    errors.endDate = "end_before_start";
-    isValid = false;
-  }
+    Object.entries(selectedCommittees).forEach(([type, panels]) => {
+      panels.forEach(panel => {
+        const key = `${type}_${panel.id}`;
+        errors[key] = {};
 
-  if (!panel.positionPanelId && panel.endDate &&
-      new Date(panel.endDate) <= today) {
-    errors.endDate = "end_future_required";
-    isValid = false;
-  }
+        const isNewPanel = !panel.positionPanelId;
 
-  if (!panel.members?.length) {
-    errors.members = "member_required";
-    isValid = false;
-  }
 
-  return { errors, isValid };
-};
- const validatePanels = () => {
-  const errors = {};
-  let isValid = true;
+        if (!panel.startDate) {
+          errors[key].startDate = "start_date_required";
+          isValid = false;
+        }
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+        if (!panel.endDate) {
+          errors[key].endDate = "end_date_required";
+          isValid = false;
+        }
 
-  Object.entries(selectedCommittees)
-    .flatMap(([type, panels]) =>
-      panels.map(panel => ({ type, panel }))
-    )
-    .forEach(({ type, panel }) => {
-      const key = `${type}_${panel.id}`;
-      const result = validateSinglePanel(panel, today);
+        if (
+          panel.startDate &&
+          panel.endDate &&
+          new Date(panel.endDate) < new Date(panel.startDate)
+        ) {
+          errors[key].endDate = "end_before_start";
+          isValid = false;
+        }
 
-      if (!result.isValid) {
-        errors[key] = result.errors;
-        isValid = false;
-      }
+        if (isNewPanel) {
+
+          if (panel.endDate && new Date(panel.endDate) <= today) {
+            errors[key].endDate = "end_future_required";
+            isValid = false;
+          }
+        }
+
+        // if (panel.startDate && new Date(panel.startDate) < today) {
+        //   errors[key].startDate = "Start date cannot be in the past";
+        //   isValid = false;
+        // }
+
+        if (!panel.members || panel.members.length === 0) {
+          errors[key].members = "member_required";
+          isValid = false;
+        }
+
+        if (Object.keys(errors[key]).length === 0) {
+          delete errors[key];
+        }
+      });
     });
 
-  setPanelErrors(errors);
+    setPanelErrors(errors);
 
-  if (!isValid) {
-    toast.error(t("fix_committee_errors"));
-  }
+    if (!isValid) {
 
-  return isValid;
-};
+      toast.error(t("fix_committee_errors"));
+    }
+
+    return isValid;
+  };
+
 
 
   useEffect(() => {
@@ -304,24 +311,22 @@ const validateSinglePanel = (panel, today) => {
       // JSON.stringify(originalPanel.members.map(m => m.userId).sort())
     );
   };
-const hasPanelChanged = (panels, originalPanels) => {
-  if (panels.length !== originalPanels.length) return true;
 
-  return panels.some(panel => {
-    const original = originalPanels.find(p => p.id === panel.id);
-    return isPanelChanged(panel, original);
-  });
-};
-const isDirty = () => {
-  return Object.entries(selectedCommittees)
-    .flatMap(([type, panels]) =>
-      panels.map(panel => ({ type, panel }))
-    )
-    .some(({ type, panel }) => {
-      const original = originalCommittees?.[type]?.find(p => p.id === panel.id);
-      return isPanelChanged(panel, original);
+  const isDirty = () => {
+    return Object.entries(selectedCommittees).some(([type, panels]) => {
+      const originalPanels = originalCommittees?.[type] || [];
+
+      // length changed → add/remove happened
+      if (panels.length !== originalPanels.length) return true;
+
+      return panels.some(panel => {
+        const originalPanel = originalPanels.find(p => p.id === panel.id);
+        return isPanelChanged(panel, originalPanel);
+      });
     });
-};
+  };
+
+
   // const fetchPanels = useCallback(async () => {
   //   try {
   //     setLoading(true);

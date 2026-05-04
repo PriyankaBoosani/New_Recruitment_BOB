@@ -49,7 +49,11 @@ const handleFileClick = () => {
       <Modal.Header closeButton className="modal-header-custom">
         <div>
           <Modal.Title>
-            {title}
+            {isViewing
+              ? t("view", "View Generic / Annexures")
+              : isEditing
+                ? t("edit", "Edit Generic / Annexures")
+                : t("addgenAnn", "Add Generic / Annexures")}
           </Modal.Title>
 
           {!isViewing && (

@@ -234,6 +234,15 @@ navigate("/schedule-interviews", {
     return `${year}-${month}-${day}`;
   };
 
+  const hasLocationData = useMemo(() => {
+    const selected = positions.find(
+      (p) => p.jobPositions?.positionId === selectedPositionId
+    );
+
+    return (
+      selected?.jobPositions?.positionStateDistributions?.length > 0
+    );
+  }, [positions, selectedPositionId]);
 
   const navInitRef = useRef({
     requisitionId: null,
@@ -248,6 +257,8 @@ navigate("/schedule-interviews", {
     setShowPreview(false);
     setPreviewUrl("");
   };
+
+  const isBackNavigation = location.state?.page !== undefined || location.state?.interviewPage !== undefined;
 
   // 🔍 Requisition search (debounced)
   const requisitionSearchTimeout = useRef(null);
@@ -312,7 +323,7 @@ navigate("/schedule-interviews", {
     }, 400);
 
     return () => clearTimeout(searchTimeoutRef.current);
-  }, [filters.searchText, activeTab]);
+  }, [filters.searchText]); // Remove activeTab from dependencies to prevent page reset on tab change
 
   useEffect(() => {
     fetchRequisitions("");
@@ -628,6 +639,7 @@ const handleTemplateChange = (value) => {
         positions.find(
           (p) => p.jobPositions?.positionId === selectedPositionId
         )?.masterPositions?.positionName,
+        isLocationWise: positions.find((p) => p.jobPositions?.positionId === selectedPositionId).jobPositions.isLocationWise
     }
     : null;
 
@@ -670,6 +682,7 @@ const handleTemplateChange = (value) => {
     .map(c => c.id);
 
   useEffect(() => {
+    if (isBackNavigation) return; // 🔥 ADD THIS LINE  
     if (activeTab === "INTERVIEW_POOL") {
       setInterviewPage(0);
     }
@@ -711,6 +724,7 @@ const handleTemplateChange = (value) => {
   // }, [filters]);
 
   useEffect(() => {
+    if (isBackNavigation) return; // 🔥 ADD THIS
     if (!navPositionId) {
       setFilters({
         status: [],
@@ -722,16 +736,42 @@ const handleTemplateChange = (value) => {
   }, [selectedPositionId]);
 
   useEffect(() => {
+    if (isBackNavigation) return; // 🔥 STOP RESET
     setFilters({
       status: [],
       stateId: "",
       categoryId: "",
       searchText: "",
     });
-    setPage(0);
+    // Don't reset page when changing tabs - preserve user's page position
   }, [activeTab]);
 
+useEffect(() => {
+  if (!location.state) return;
 
+  // ✅ Candidate Pool
+  if (location.state.page !== undefined) {
+    setPage(location.state.page);
+  }
+
+  if (location.state.pageSize !== undefined) {
+    setPageSize(location.state.pageSize);
+  }
+
+  // 🔥 INTERVIEW POOL FIX (ADD THIS)
+  if (location.state.interviewPage !== undefined) {
+    setInterviewPage(location.state.interviewPage);
+  }
+
+  if (location.state.interviewPageSize !== undefined) {
+    setInterviewPageSize(location.state.interviewPageSize);
+  }
+
+  if (location.state.filters) {
+    setFilters(location.state.filters);
+  }
+
+}, []);
 
   const navRequisitionId = location.state?.requisitionId || null;
   const navPositionId = location.state?.positionId || null;
@@ -1642,6 +1682,8 @@ const handleOfferStatusToggle = (status) => {
             requisition={normalizedRequisition}
             position={selectedPosition}
             isRankEnabled={isRankEnabled}
+            filters={filters}   // ✅ ADD THIS
+            hasLocationData={hasLocationData}
           />
         )}
 
@@ -1653,6 +1695,7 @@ const handleOfferStatusToggle = (status) => {
             setSelectedIds={setSelectedInterviewCandidateIds}
             page={interviewPage}
             pageSize={interviewPageSize}
+            filters={filters}   // ✅ ADD THIS
             totalElements={interviewTotalElements}
             onPageChange={setInterviewPage}
             onPageSizeChange={setInterviewPageSize}

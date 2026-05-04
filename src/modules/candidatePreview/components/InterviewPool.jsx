@@ -18,6 +18,7 @@ export default function InterviewPool({
   onPageSizeChange,
   page,
   pageSize,
+  filters,
   totalElements,
   onOpenFeedback,
   onOpenZonalComments
@@ -210,6 +211,12 @@ export default function InterviewPool({
                             requisitionId: selectedRequisitionId,
                             fromInterviewPool: true,
                             activeTab: "INTERVIEW_POOL",
+                            // 🔥 IMPORTANT FIX
+                            interviewPage: page,
+                            interviewPageSize: pageSize,
+                            page,
+                            pageSize,
+                            filters,
                             requisition: requisition
                               ? {
                                 requisition_code: requisition.requisition_code,

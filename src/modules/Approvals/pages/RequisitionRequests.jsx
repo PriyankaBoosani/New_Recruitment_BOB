@@ -718,7 +718,47 @@ const renderDepartment = ({
                   </li>
 
                   {/* Pages */}
-                 {renderPagination()}
+                  {(() => {
+                    const {
+                      pages,
+                      showStartEllipsis,
+                      showEndEllipsis,
+                    } = getVisiblePages(page, pageInfo.totalPages);
+
+                    return (
+                      <>
+                        {/* Leading ellipsis */}
+                        {showStartEllipsis && (
+                          <li className="page-item disabled">
+                            <span className="page-link">…</span>
+                          </li>
+                        )}
+
+                        {/* Page numbers */}
+                        {pages.map(p => (
+                          <li
+                            key={p}
+                            className={`page-item ${page === p ? "active" : ""}`}
+                          >
+                            <button
+                              className="page-link"
+                              onClick={() => setPage(p)}
+                              disabled={loading}
+                            >
+                              {p + 1}
+                            </button>
+                          </li>
+                        ))}
+
+                        {/* Trailing ellipsis */}
+                        {showEndEllipsis && (
+                          <li className="page-item disabled">
+                            <span className="page-link">…</span>
+                          </li>
+                        )}
+                      </>
+                    );
+                  })()}
 
                   {/* Next */}
                   <li

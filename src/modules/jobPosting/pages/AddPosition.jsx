@@ -25,10 +25,9 @@ const AddPosition = () => {
         if (!e) return "";
         if (typeof e === "string") {
             return t(e);
-        } else if (typeof e === "object" && e.key) {
+        } if (typeof e === "object" && e.key) {
             return t(e.key, e.params);
-        } 
-        return "";
+        } return "";
     };
 
 
@@ -301,13 +300,31 @@ const AddPosition = () => {
         setNationalDisabilities(natDis);
     }, [existingPosition, reservationCategories, disabilityCategories]);
 
-    const mapCategoryAndDisability = (
-  distributions,
-  reservationCategories,
-  disabilityCategories
-) => {
-  const categories = {};
-  const disabilities = {};
+    // Handle State Distribution mapping
+    useEffect(() => {
+        const mapStates = async () => {
+            if (
+                !existingPosition ||
+                !existingPosition.isLocationWise ||
+                !reservationCategories.length ||
+                !disabilityCategories.length
+            ) return;
+
+            const mappedStates = await Promise.all(
+                existingPosition.positionStateDistributions.map(async (sd) => {
+
+                    // 🔥 FETCH cities for this state
+
+
+                    const cityObj = masterData.cities.find(
+                        c => String(c.id) === String(sd.cityId)
+                    );
+
+                    const cityName = cityObj?.name || "";
+
+                    // category mapping (same as your code)
+                    const categories = {};
+                    const disabilities = {};
 
   reservationCategories.forEach(c => (categories[c.code] = 0));
   disabilityCategories.forEach(d => (disabilities[d.disabilityCode] = 0));
@@ -400,24 +417,21 @@ const mapSingleState =  (
         "contractualPeriod"
     ];
 
-   const handleInputChange = (e) => {
-            const { name, value, type, checked } = e.target;
+    const handleInputChange = (e) => {
+        const { name, value, type, checked } = e.target;
 
-            const isNested = name.includes(".");
-            const isCheckbox = type === "checkbox";
+        // handle nested fields
+        if (name.includes(".")) {
+            const [parent, child] = name.split(".");
 
-            // 🔹 Handle nested fields
-            if (isNested) {
-                const [parent, child] = name.split(".");
-
-                setFormData(prev => {
+            setFormData(prev => {
                 const updated = {
                     ...prev[parent],
                     [child]: value
                 };
 
-                // Clear both dropdowns if value is empty
-                if (!value) {
+                // 🔥 If one dropdown cleared, clear both
+                if (value === "") {
                     updated.years = "";
                     updated.months = "";
                 }
@@ -426,51 +440,41 @@ const mapSingleState =  (
                     ...prev,
                     [parent]: updated
                 };
-                });
-
-                setErrors(prev => ({
-                ...prev,
-                [parent]: ""
-                }));
-
-                return;
-            }
-
-            // 🔹 Normalize value
-            let finalValue = value;
-
-            if (numericFields.includes(name)) {
-                finalValue = value.replace(/\D/g, "");
-            }
-
-            const updatedValue = isCheckbox ? checked : finalValue;
-
-            // 🔹 Update form
-            setFormData(prev => ({
-                ...prev,
-                [name]: updatedValue
-            }));
-
-            // 🔹 Handle errors (single place)
-            setErrors(prev => {
-                const newErrors = { ...prev };
-
-                // Clear field error
-                newErrors[name] = "";
-
-                // Special case: department clears position
-                if (name === "department") {
-                newErrors.position = "";
-                }
-
-                // Special case: vacancies clears nationalDistribution
-                if (name === "vacancies") {
-                newErrors.nationalDistribution = "";
-                }
-
-                return newErrors;
             });
-            };
+
+            setErrors(prev => ({ ...prev, [parent]: "" }));
+            return;
+        }
+
+
+        let finalValue = value;
+
+        if (numericFields.includes(name)) {
+            finalValue = value.replace(/\D/g, "");
+        }
+
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : finalValue
+        }));
+
+        //  SPECIAL CASE: department change clears position error
+        if (name === "department") {
+            setErrors(prev => ({
+                ...prev,
+                department: "",
+                position: ""
+            }));
+        } else {
+            setErrors(prev => ({
+                ...prev,
+                [name]: ""
+            }));
+        }
+        if (name === "vacancies") {
+            setErrors(prev => ({ ...prev, vacancies: "", nationalDistribution: "" }));
+        }
+    };
 
     const resetPositionDerivedFields = {
         minAge: "",
@@ -571,158 +575,127 @@ const mapSingleState =  (
         setPendingPosition(null);
         setShowConfirmModal(false);
     };
-const reviveDeletedState = (index) => {
-  const revived = [...stateDistributions];
 
-  revived[index] = {
-    ...revived[index],   // keep existing IDs
-    ...currentState,     // apply new values
-    __deleted: false
-  };
-
-  setStateDistributions(revived);
-
-  // reset form
-  setCurrentState({
-    state: "",
-    vacancies: "",
-    language: "",
-    categories: {},
-    disabilities: {}
-  });
-
-  setEditingIndex(null);
-};
-const updateOrAddState = () => {
-  const updated = [...stateDistributions];
-
-  if (editingIndex !== null) {
-    // ✏️ UPDATE
-    updated[editingIndex] = {
-      ...updated[editingIndex],
-      ...currentState
-    };
-  } else {
-    // ➕ ADD
-    updated.push({ ...currentState });
-  }
-
-  setStateDistributions(updated);
-
-  // ✅ Clear national distribution error
-  setErrors(prev => {
-    const { nationalDistribution, ...rest } = prev;
-    return rest;
-  });
-
-  // reset form
-  setCurrentState({
-    state: "",
-    vacancies: "",
-    language: "",
-    categories: {},
-    disabilities: {}
-  });
-
-  setEditingIndex(null);
-};
     const handleAddOrUpdateState = () => {
+
         const newErrors = validateStateDistribution({
             currentState,
             stateDistributions,
             editingIndex
         });
 
-        if (Object.keys(newErrors).length) {
+        if (Object.keys(newErrors).length > 0) {
             setErrors(prev => ({ ...prev, ...newErrors }));
             return;
         }
-
         const deletedIndex = stateDistributions.findIndex(
             s => s.state === currentState.state && s.__deleted
         );
 
         if (deletedIndex !== -1) {
-            reviveDeletedState(deletedIndex);
+            const revived = [...stateDistributions];
+            revived[deletedIndex] = {
+                ...revived[deletedIndex], // keeps positionStateDistributionId
+                ...currentState,
+                __deleted: false
+            };
+
+            setStateDistributions(revived);
+            setCurrentState({
+                state: "",
+                vacancies: "",
+                language: "",
+                categories: {},
+                disabilities: {}
+            });
+            setEditingIndex(null);
             return;
         }
+        const updated = [...stateDistributions];
+        if (editingIndex !== null) updated[editingIndex] = { ...updated[editingIndex], ...currentState };
+        else updated.push({ ...currentState });
 
-        updateOrAddState();
+        setStateDistributions(updated);
+
+        //  CLEAR NATIONAL DISTRIBUTION ERROR
+        setErrors(prev => {
+            const { nationalDistribution, ...rest } = prev;
+            return rest;
+        });
+
+        setCurrentState({
+            state: "",
+            vacancies: "",
+            language: "",
+            categories: {},
+            disabilities: {}
+        });
+        setEditingIndex(null);
+
     };
-    const validateForm = () => {
-    const validationErrors = validateAddPosition({
-        isEditMode,
-        formData,
-        educationData,
-        indentFile,
-        approvedBy,
-        approvedOn,
-        existingIndentPath,
-        existingIndentName,
-        nationalCategories,
-        nationalDisabilities,
-        stateDistributions,
-        existingPositions: positionsByReq[requisitionId] || [],
-        positionId
-    });
 
-    if (Object.keys(validationErrors).length > 0) {
-        setErrors(validationErrors);
-        return false;
-    }
-
-    if (!errors.vacancies && Number(formData.vacancies) <= 0) {
-        setErrors(prev => ({
-            ...prev,
-            vacancies: "validation:vacancies_must_be_greater_than_zero"
-        }));
-        return false;
-    }
-
-    return true;
-};
-    const buildPayload = () => ({
-    formData,
-    educationData,
-    requisitionId,
-    indentFile,
-    approvedBy,
-    approvedOn,
-    reservationCategories,
-    disabilityCategories,
-    nationalCategories,
-    nationalDisabilities,
-    qualifications,
-    certifications,
-    indentOthers,
-    isProficientInLocalLanguage,
-    stateDistributions: stateDistributions.filter(s => !s.__deleted),
-    isAgeRelRiotVictimFamily,
-    isAgeRelWdsWomen
-});
-const savePosition = async (payload) => {
-    if (isEditMode) {
-        await updatePosition({ ...payload, positionId, existingPosition });
-        toast.success(t("position_updated_success"));
-    } else {
-        await createPosition(payload);
-        toast.success(t("position_added_success"));
-    }
-};
     const handleSubmit = async (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    if (!validateForm()) return;
+        const validationErrors = validateAddPosition({
+            isEditMode,
+            formData,
+            educationData,
+            indentFile,
+            approvedBy,
+            approvedOn,
+            existingIndentPath,
+            existingIndentName,
+            nationalCategories,
+            nationalDisabilities,
+            stateDistributions,
+            existingPositions: positionsByReq[requisitionId] || [],
+            positionId
+        });
 
-    const payload = buildPayload();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+        if (!errors.vacancies && Number(formData.vacancies) <= 0) {
+            errors.vacancies = "validation:vacancies_must_be_greater_than_zero";
+        }
 
-    try {
-        await savePosition(payload);
-        navigate(-1);
-    } catch (err) {
-        toast.error(err.message || t("operation_failed"));
-    }
-};
+        const payload = {
+            formData,
+            educationData,
+            requisitionId,
+            indentFile,
+            approvedBy,
+            approvedOn,
+            reservationCategories,
+            disabilityCategories,
+            nationalCategories,
+            nationalDisabilities,
+            qualifications,
+            certifications,
+            indentOthers,
+            isProficientInLocalLanguage,
+            stateDistributions: stateDistributions.filter(s => !s.__deleted),
+            isAgeRelRiotVictimFamily,
+            isAgeRelWdsWomen
+        };
+        //console.log(payload);return false;
+
+        try {
+            if (isEditMode) {
+                await updatePosition({ ...payload, positionId, existingPosition });
+                toast.success(t("position_updated_success"));
+            } else {
+                await createPosition(payload);
+                toast.success(t("position_added_success"));
+            }
+
+            navigate(-1);
+        } catch (err) {
+            toast.error(err.message || t("operation_failed"));
+        }
+    };
 
 
     const nationalCategoryTotal = Object.values(nationalCategories).reduce((a, b) => a + Number(b || 0), 0);
@@ -798,7 +771,7 @@ const savePosition = async (payload) => {
                         />
                         <ReservationSection
                             isViewMode={isViewMode} formData={formData} errors={errors} setErrors={setErrors} reservationCategories={reservationCategories}
-                            disabilityCategories={disabilityCategories} states={states} languages={languages} cities={cities} nationalCategories={nationalCategories} setNationalCategories={setNationalCategories} nationalDisabilities={nationalDisabilities}
+                            disabilityCategories={disabilityCategories} states={states} languages={languages} stateLanguages={stateLanguages} cities={cities} nationalCategories={nationalCategories} setNationalCategories={setNationalCategories} nationalDisabilities={nationalDisabilities}
                             setNationalDisabilities={setNationalDisabilities} nationalCategoryTotal={nationalCategoryTotal}
                             currentState={currentState} setCurrentState={setCurrentState} stateCategoryTotal={stateCategoryTotal}
                             filteredLanguages={filteredLanguages} stateDistributions={stateDistributions} setStateDistributions={setStateDistributions} editingIndex={editingIndex}

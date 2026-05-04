@@ -746,11 +746,73 @@ const isValidPercentage = (value) => {
                 <Button
                     variant="primary"
                     onClick={() => {
-                        if (!validateModalData()) return;
+                        const allRows = groups.flatMap(g => g.educations);
+                        const validationErrors = validateEducationModal({
+                            rows: allRows,
+                            mode,
+                        });
+
+                        if (Object.keys(validationErrors).length > 0) {
+                            setErrors(validationErrors);
+                            return;
+                        }
+
+                        const filledRows = groups.flatMap(g => g.educations).filter(
+                            r => r.educationTypeId && r.educationQualificationsId
+                        );
+
+                        // 🚨 Only enforce required rule in mandatory mode
+                        if (mode === "mandatory" && filledRows.length === 0) {
+                            setErrors({
+                                rows: { _error: "validation:degree_required" }
+                            });
+                            return;
+                        }
 
                         setErrors({});
 
-                        const payload = buildEducationPayload();
+                        const cleanText = [
+                            degreeText ? `Education Requirements: ${degreeText}` : "",
+                            certText ? `Certifications: ${certText}` : ""
+                        ]
+                            .filter(Boolean)
+                            .join("\n");
+
+                        const payload = {
+                            groups: groups.map(group => ({
+                                educations:
+                                    group.educations.some(r => r.educationTypeId || r.educationQualificationsId)
+                                        ? group.educations
+                                            .filter(r => r.educationTypeId && r.educationQualificationsId)
+                                            .map(r => {
+                                                const validSpecs = getSpecializationsForDegree(r.educationQualificationsId);
+                                                const isValidSpec = validSpecs.some(s => s.id === r.specializationId);
+
+                                                return {
+                                                    educationTypeId: r.educationTypeId,
+                                                    educationQualificationsId: r.educationQualificationsId,
+                                                    specializationId: isValidSpec ? r.specializationId : null,
+                                                    duration: r.duration,
+
+                                                    percentage: r.percentage
+                                                };
+                                            })
+                                        : [createRow()] // 👈 THIS LINE FIXES YOUR ISSUE
+                            })),
+
+                            certGroups: certGroups.map(certGroup => ({
+                                certifications:
+                                    (certGroup.certifications || []).some(cr => cr.certificationId)
+                                        ? certGroup.certifications
+                                            .filter(cr => cr.certificationId)
+                                            .map(cr => ({
+                                                certificationId: cr.certificationId
+                                            }))
+                                        : [createCertRow()]
+                            })),
+
+                            text: cleanText
+                        };
 
                         onSave(payload);
                         onHide();

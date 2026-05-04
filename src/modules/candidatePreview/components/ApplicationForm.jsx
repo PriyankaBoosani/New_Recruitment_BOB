@@ -28,6 +28,7 @@ const ApplicationForm = ({
   interviewScheduleId,
   requisitionTitle,
   positionName,
+  isLocationWise,
   selectedDate,
   zonalVerificationStatus,
   zonalSubmitBeforeDate,
@@ -157,87 +158,186 @@ const ApplicationForm = ({
     isZonalHr
   ]);
 
-const validateProvisional = () => {
-  let hasError = false;
-  const newErrors = {};
 
-  if (!screeningRemarks?.trim()) {
-    newErrors.zonalComments = "This field is required";
-    hasError = true;
-  }
+  const handleZonalSubmit = async () => {
 
-  if (!screeningForm.zonalSubmitDate) {
-    newErrors.zonalSubmitDate = "This field is required";
-    hasError = true;
-  } else {
-    const selected = new Date(screeningForm.zonalSubmitDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // -----------------------------------------
+    // Helper Conditions
+    // -----------------------------------------
+    const allVerified = areAllDocumentsVerified();   // returns true/false
+    const anyRejected = hasAnyRejectedDocument();    // returns true/false
+    const hasPendingDocument = documentRows.some(doc => {
+      const status = docStatusMap[doc.candidateDocumentId]?.status;
+      return !status || status === "PENDING";
+    });
 
-    if (selected <= today) {
-      newErrors.zonalSubmitDate = "Must be future date";
-      hasError = true;
+
+    // -----------------------------------------
+    // 1️⃣ Decision not selected
+    // -----------------------------------------
+
+    if (isZonalAbsent) {
+      toast.info("Zonal Absent candidates cannot be processed.");
+      return;
     }
-  }
 
-  setErrors(prev => ({ ...prev, ...newErrors }));
-
-  return hasError;
-};
-const runZonalValidations = ({
-  isZonalAbsent,
-  hasPendingDocument,
-  zonalDecision,
-  screeningRemarks,
-  allVerified,
-  anyRejected,
-  setErrors
-}) => {
-
-  if (isZonalAbsent) {
-    toast.info("Zonal Absent candidates cannot be processed.");
-    return true;
-  }
-
-  if (hasPendingDocument) {
-    toast.warning("All documents must be verified before submission.");
-    return true;
-  }
-
-  if (!zonalDecision) {
-    toast.error("Please select decision");
-    return true;
-  }
-
-  // 🔴 Comments mandatory when decision = NO
-  if (zonalDecision === "NO") {
-    if (!screeningRemarks?.trim()) {
-      setErrors(prev => ({
-        ...prev,
-        zonalComments: "This field is required"
-      }));
-      return true;
+    if (hasPendingDocument) {
+      toast.warning(
+        "All documents must be verified before submission."
+      );
+      return;
     }
-  }
 
-  if (zonalDecision === "NO" && allVerified) {
-    toast.warning("All documents are verified. Please select other decision instead.");
-    return true;
-  }
+    if (!zonalDecision) {
+      toast.error("Please select decision");
+      return;
+    }
+    // 🔴 Comments mandatory when decision = NO
+    if (zonalDecision === "NO") {
+      if (!screeningRemarks?.trim()) {
+        setErrors(prev => ({
+          ...prev,
+          zonalComments: "This field is required"
+        }));
+        return;
+      }
+    }
 
-  if (zonalDecision === "YES" && anyRejected) {
-    toast.error("Cannot approve. One or more documents are rejected.");
-    return true;
-  }
+    // -----------------------------------------
+    // 2️⃣ All documents VERIFIED but decision = NO
+    // -----------------------------------------
+    if (zonalDecision === "NO" && allVerified) {
+      toast.warning(
+        "All documents are verified. Please select other decision instead."
+      );
+      return;
+    }
 
-  if (zonalDecision === "PROVISIONALLY_APPROVED" && allVerified) {
-    toast.warning("All documents are verified. Please select other decision instead.");
-    return true;
-  }
+    // -----------------------------------------
+    // 3️⃣ Decision = YES but any document REJECTED
+    // -----------------------------------------
+    if (zonalDecision === "YES" && anyRejected) {
+      toast.error(
+        "Cannot approve. One or more documents are rejected."
+      );
+      return;
+    }
 
-  return false; // ✅ no error
-};
-  
+    // -----------------------------------------
+    // 4️⃣ Decision = PROVISIONAL but all VERIFIED
+    // -----------------------------------------
+    if (zonalDecision === "PROVISIONALLY_APPROVED" && allVerified) {
+      toast.warning(
+        "All documents are verified. Please select other decision instead."
+      );
+      return;
+    }
+
+    // -----------------------------------------
+    // 5️⃣ PROVISIONAL requires future date
+    // -----------------------------------------
+    if (zonalDecision === "PROVISIONALLY_APPROVED") {
+
+      let hasError = false;
+
+      // 🔴 Comments mandatory
+      if (!screeningRemarks?.trim()) {
+        setErrors(prev => ({
+          ...prev,
+          zonalComments: "This field is required"
+        }));
+        hasError = true;
+      }
+
+      // 🔴 Date mandatory
+      if (!screeningForm.zonalSubmitDate) {
+        setErrors(prev => ({
+          ...prev,
+          zonalSubmitDate: "This field is required"
+        }));
+        hasError = true;
+      } else {
+        const selected = new Date(screeningForm.zonalSubmitDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (selected <= today) {
+          setErrors(prev => ({
+            ...prev,
+            zonalSubmitDate: "Must be future date"
+          }));
+          hasError = true;
+        }
+      }
+
+      if (hasError) return;
+    }
+
+
+
+    // -----------------------------------------
+    // 6️⃣ Show Loading Toast
+    // -----------------------------------------
+    const toastId = toast.loading("Submitting zonal verification...");
+
+    try {
+
+      const payload = {
+        candidateId,
+        applicationId,
+        interviewScheduleId,
+        zonalVerificationStatus: mapDecisionToStatus(zonalDecision),
+        zonalSubmitBeforeDate: screeningForm.zonalSubmitDate || null,
+        zonalHrComments: screeningRemarks || ""
+      };
+
+      await jobPositionApiService.submitOverallZonalVerification(payload);
+
+      // -----------------------------------------
+      // 7️⃣ Success Toast
+      // -----------------------------------------
+      toast.update(toastId, {
+        render: "Zonal verification submitted successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+
+      sessionStorage.setItem("fromZonalSubmit", "true");
+
+      navigate("/candidate-verification", {
+        state: {
+          requisition: location.state?.requisition,
+          position: location.state?.position,
+          preloadedCandidates: location.state?.candidates || [],
+          selectedDate
+        }
+      });
+
+    } catch (err) {
+
+      // -----------------------------------------
+      // 8️⃣ Error Toast
+      // -----------------------------------------
+      toast.update(toastId, {
+        render: "Zonal submit failed. Please try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      console.error(err);
+    }
+  };
+
+
+
+
+
+
+
+
+
   const data = previewData || {
     personalDetails: {},
     experienceSummary: {},
@@ -1179,7 +1279,7 @@ const handleZonalSubmit = async () => {
           <Accordion.Body>
             <div className="personal-details-wrapper">
               <table className="table table-bordered bob-table w-100 mb-0">
-                  <thead className="visually-hidden">
+                <thead className="visually-hidden">
                   <tr>
                     <th>Field</th>
                     <th>Value</th>
@@ -1406,30 +1506,19 @@ const handleZonalSubmit = async () => {
                       {data.personalDetails.expectedCtc}
                     </td>
 
-                    {/* <td className="fw-med">Social Media Profile links</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td> */}
-                    {/* <td className="fw-med">Expected CTC</td>
-                      <td className="fw-reg" colSpan={2}>{preferences.ctc ? `₹${Number(preferences.ctc).toLocaleString()}` : "-"}</td> */}
                   </tr>
 
-                  {/* <tr>
-                      <td className="fw-med">Location Preference 1</td>
-                      <td className="fw-reg" colSpan={2}>{state1?.state_name || "-"}</td>
-                      <td className="fw-med">Location Preference 2</td>
-                      <td className="fw-reg" colSpan={2}>{state2?.state_name || "-"}</td>
-                    </tr> */}
 
-                  {/*<tr>
-                       <td className="fw-med">Location Preference 3</td>
-                      <td className="fw-reg" colSpan={2}>{state3?.state_name || "-"}</td> 
-                      <td className="fw-med">Social Media Profile links</td>
-                      <td className="fw-reg" colSpan={2}>{previewData.personalDetails.socialMediaProfileLink}</td>
-                    </tr>*/}
 
                   <tr>
-
+                    <td className="fw-med">{t("language_proficiency")}</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.languages || "-"}</td>
                     <td className="fw-med">{t("social_media_links")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td>
+                    
+                  </tr>
+
+                  <tr>
                     <td className="fw-med">{t("location_pref1")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
@@ -1438,10 +1527,6 @@ const handleZonalSubmit = async () => {
                       )}
 
                     </td>
-
-                  </tr>
-
-                  <tr>
                     <td className="fw-med">{t("location_pref2")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
@@ -1450,15 +1535,31 @@ const handleZonalSubmit = async () => {
                       )}
 
                     </td>
-                    <td className="fw-med">{t("location_pref3")}</td>
+                   
+
+                  </tr>
+
+                  <tr>
+                     <td className="fw-med">{t("location_pref3")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
                         data.personalDetails.locationPreference3,
                         data.personalDetails.statePreference3
                       )}
                     </td>
-
+                    <td className="fw-med">{t("language_preference")}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.localLanguage || "-"}
+                    </td>
+                    
+                  </tr> 
+                  <tr>
+                    <td className="fw-med">{t("is_local_language_studied")}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {isLocationWise ? data.personalDetails.isLocalLanguageStudied : "-"}
+                    </td>
                   </tr>
+
 
 
                   <tr>
@@ -1481,23 +1582,6 @@ const handleZonalSubmit = async () => {
                     <td className="fw-med">{t("disciplinary_action")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.disciplinaryAction || "No"}</td>
                   </tr>
-
-                  {/* {data.personalDetails.disciplinaryAction === "Yes" && (
-                      <tr>
-                        <td className="fw-med">Details of disciplinary proceedings, if Any</td>
-                        <td className="fw-reg" colSpan={5}>{data.personalDetails.disciplinaryDetails || "N/A"}</td>
-                      </tr>
-
-                      
-                    )} */}
-
-                  {/* <tr>
-                    <td className="fw-med">{t("disciplinary_details")}</td>
-                    <td className="fw-reg" colSpan={5}>
-                      {data.personalDetails.disciplinaryDetails}
-                    </td>
-                  </tr> */}
-
                 </tbody>
               </table>
             </div>
@@ -1529,18 +1613,18 @@ const handleZonalSubmit = async () => {
                   {(data.education || [])
                     .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
                     .map((edu, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{edu.educationLevel_name || "-"}</td>
-                      <td>{edu.institution || "-"}</td>
-                      <td>{edu.universityName || "-"}</td>
-                      <td>{edu.mandatoryQualification_name || "-"}</td>
-                      <td>{edu.specialization_name || "-"}</td>
-                      <td>{edu.startDate || "-"}</td>
-                      <td>{edu.endDate || "-"}</td>
-                      <td>{edu.percentage || "-"}</td>
-                    </tr>
-                  ))}
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{edu.educationLevel_name || "-"}</td>
+                        <td>{edu.institution || "-"}</td>
+                        <td>{edu.universityName || "-"}</td>
+                        <td>{edu.mandatoryQualification_name || "-"}</td>
+                        <td>{edu.specialization_name || "-"}</td>
+                        <td>{edu.startDate || "-"}</td>
+                        <td>{edu.endDate || "-"}</td>
+                        <td>{edu.percentage || "-"}</td>
+                      </tr>
+                    ))}
 
 
                   {(!data.education || data.education.length === 0) && (

@@ -63,6 +63,7 @@
   "no_requisitions_selected": "वर्तमान वर्ष के लिए कोई requisition चयनित नहीं है।",
   "no_positions_for_requisition": "सबमिशन रोका गया। इन requisition के लिए कोई position नहीं मिला: {{labels}}",
   "file_invalid_type": "केवल PDF, DOC और DOCX फ़ाइलें अनुमत हैं",
+  "file_empty": "अपलोड की गई फ़ाइल खाली है",
   "file_too_large": "फ़ाइल आकार {{size}} MB से अधिक नहीं होना चाहिए",
   "degree_required": "कम से कम एक डिग्री आवश्यक है",
   "vacancies_must_be_greater_than_zero": "रिक्तियों की संख्या शून्य से अधिक होनी चाहिए।"

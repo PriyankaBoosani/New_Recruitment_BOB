@@ -68,7 +68,11 @@ const renderField = (name, value, placeholder, pattern, errorMessage) => {
       <Modal.Header closeButton className="modal-header-custom">
         <div>
           <Modal.Title>
-            {title}
+            {isViewing
+              ? t("view")
+              : isEditing
+                ? t("edit")
+                : t("added")}
           </Modal.Title>
            {isCreateMode && (
               <p className="small text-muted para">

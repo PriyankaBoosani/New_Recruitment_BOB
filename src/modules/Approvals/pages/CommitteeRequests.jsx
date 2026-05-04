@@ -141,19 +141,7 @@ const CommitteeRequests = () => {
 
         await fetchPanels(pos.positionId);
     };
-const executeApprovalAction = async ({
-  actionType,
-  ids,
-  commentText,
-  positionId,
-  approvePanels,
-  rejectPanels
-}) => {
-  if (actionType === "approve") {
-    return await approvePanels(ids, commentText, positionId);
-  }
-  return await rejectPanels(ids, commentText, positionId);
-};
+
 
 const validateApprovalInput = (ids, commentText) => {
   if (ids.length === 0) return false;

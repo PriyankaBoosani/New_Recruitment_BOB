@@ -312,9 +312,19 @@ const PositionForm = ({
                 onChange={(e) => {
                   const file = e.target.files[0];
                   if (!file) return;
+                  if (file.size === 0) {
+                    setErrors(prev => ({
+                      ...prev,
+                      indentFile: "validation:file_empty"
+                    }));
+
+                    e.target.value = "";
+                    return;
+                  }
                   const extension = "." + file.name.split(".").pop().toLowerCase();
                   if (!ALLOWED_EXTENSIONS.includes(extension)) {
                     setErrors(prev => ({ ...prev, indentFile: "validation:file_invalid_type" }));
+                    e.target.value = "";
                     return;
                   }
                   if (file.size / (1024 * 1024) > MAX_FILE_SIZE_MB) {
@@ -322,6 +332,7 @@ const PositionForm = ({
                       ...prev,
                       indentFile: { key: "validation:file_too_large", params: { size: 2 } }
                     }));
+                    e.target.value = "";
                     return;
                   }
                   setIndentFile(file);
@@ -813,7 +824,7 @@ handleInputChange({
                                   isDisabled={isViewMode}
                                   onChange={(s) => {
                                     const updated = [...formData[expType].educationLevelExperiences];
-                                   updated[index].years = s?.value ?? "";
+                                    updated[index].years = s?.value ?? "";
 
                                     handleInputChange({
                                       target: {
