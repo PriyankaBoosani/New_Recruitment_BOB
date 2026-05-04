@@ -8,6 +8,7 @@ import {
   setPrivileges
 } from "../../../app/providers/userSlice";
 import { getDefaultRoute } from "../../../shared/utils/user-validations";
+import loginApi from "../services/loginService";
 
 export default function AuthCallback() {
   const { instance, accounts, inProgress } = useMsal();
@@ -73,13 +74,13 @@ export default function AuthCallback() {
         let tokenResponse;
         try {
           tokenResponse = await instance.acquireTokenSilent({
-            scopes: ["api://5ef1ea14-0b56-4c9e-ac14-896dd0a92c1c/access_as_user"],
+            scopes: [process.env.REACT_APP_MSAL_SCOPE],
             account
           });
         } catch (tokenError) {
           // console.log("⚠️ Silent token acquisition failed, attempting popup...");
           tokenResponse = await instance.acquireTokenPopup({
-            scopes: ["api://5ef1ea14-0b56-4c9e-ac14-896dd0a92c1c/access_as_user"],
+            scopes: [process.env.REACT_APP_MSAL_SCOPE],
             account
           });
         }
@@ -92,40 +93,19 @@ export default function AuthCallback() {
           token: accessToken,
           email: account.username
         }));
-        // console.log("✅ Auth stored in Redux");
 
-        // Call backend API
-        // console.log("📡 Calling backend API...");
-        // console.log("📌 Token audience:", accessToken.split('.')[1] ? JSON.parse(atob(accessToken.split('.')[1])).aud : "unknown");
-        
-        const apiResponse = await fetch(
-          "https://192.168.20.111:8085/auth-portal/api/v1/getdetails/user",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "X-Client": "AzureAD",
-              "Content-Type": "application/json"
-            }
-          }
-        );
+        const data = await loginApi.getAzureUserDetails(accessToken);
 
-        // console.log("📡 Backend response status:", apiResponse.status);
-        // console.log("📡 Backend response headers:", Object.fromEntries(apiResponse.headers));
-
-        if (!apiResponse.ok) {
-          let errorText = "No error details";
-          try {
-            errorText = await apiResponse.text();
-            console.error("❌ Backend API error text:", errorText);
-          } catch (e) {
-            console.error("❌ Could not parse error response");
-          }
-          throw new Error(`Backend API failed with status ${apiResponse.status}: ${errorText}`);
-        }
-
-        const data = await apiResponse.json();
-        // console.log("✅ Backend data received");
+        // if (!apiResponse.ok) {
+        //   let errorText = "No error details";
+        //   try {
+        //     errorText = await apiResponse.text();
+        //     console.error("❌ Backend API error text:", errorText);
+        //   } catch (e) {
+        //     console.error("❌ Could not parse error response");
+        //   }
+        //   throw new Error(`Backend API failed with status ${apiResponse.status}: ${errorText}`);
+        // }
 
         // Store user info
         dispatch(setUser({

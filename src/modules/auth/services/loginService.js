@@ -11,6 +11,14 @@ const loginApi = {
     forgotPassword: (email) =>
         nodeApi.post(`/recruiter-auth/recruiter-forgot-password?email=${email}`),
 
+    getAzureUserDetails: (token) =>
+    nodeApi.get("/getdetails/user", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-Client": process.env.REACT_APP_AUTH_CLIENT,
+      },
+    }),
+
 };
 
 export default loginApi;
