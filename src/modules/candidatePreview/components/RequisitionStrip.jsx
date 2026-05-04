@@ -33,8 +33,8 @@ const RequisitionStrip = ({
   const [masterData, setMasterData] = useState(null);   //  INTERNAL
 
  // const orderedPattern =/^\s*(\(?\d+[\).\]]|\(?[ivxlcdm]+[\).\]])\s*/i;
-    const orderedPattern =
-  /^\s*(?:\(?\d{1,5}[\).\]]|\(?[ivxlcdm]{1,7}[\).\]])\s*/i;
+    //const orderedPattern =/^\s*(?:\(?\d{1,5}[\).\]]|\(?[ivxlcdm]{1,7}[\).\]])\s*/i;
+  
 
  const isOrderedLine = (line) => {
   if (typeof line !== "string" || line.length > 200) return false;

@@ -16,35 +16,15 @@
   box-shadow: 0 0 0 1px rgba(220, 53, 69, .15);
 }
 
-.input-error {
-  border: 1px solid #dc3545 !important;
-}
-
-
-
 .comment-block {
   display: flex;
   flex-direction: column;
   width: 100%;
+  flex: 1;
 }
 
 .comment-input.input-error {
   border: 1px solid #dc3545 !important;
-}
-
-.comment-block {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-
-
-/* left side comment + error */
-.comment-block {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
 }
 
 /* === comment box = same height as buttons === */
@@ -86,12 +66,6 @@
   font-weight: 600;
   border: none;
 }
-
-
-.comment-input.input-error {
-  border: 1px solid #dc3545 !important;
-}
-
 
 
 .submit-date-group {
@@ -733,7 +707,6 @@ select.form-control {
   gap: 18px;
   
   max-width: auto;
-  /* white-space: nowrap;        */
 }
 
 .modal-req-title {
@@ -1054,12 +1027,6 @@ select.form-control {
   display: flex;
   align-items: flex-end;
   gap: 16px;
-}
-
-/* keep button small */
-.btn-submit-orange {
-  height: 40px;
-  min-width: 110px;
 }
 
 .radio-label.disabled {

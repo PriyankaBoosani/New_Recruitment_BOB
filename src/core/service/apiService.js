@@ -159,7 +159,8 @@ const attachInterceptors = (instance) => {
 
       // Pass 4xx to caller (business validation)
       if (error.response && error.response.status < 500) {
-        return Promise.resolve(error.response.data);
+       // return Promise.resolve(error.response.data);
+       return error.response.data;
       }
 
       throw error;

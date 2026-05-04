@@ -54,7 +54,6 @@ border-radius: 0;       /* optional */
   align-items: center;
   gap: 8px;
   position: relative;
-  /* transition: all 0.2s ease; */
 }
 
 .interview-panel-container .tab .tab-icon {
@@ -312,7 +311,7 @@ border-radius: 0;       /* optional */
   justify-content: center;
   align-items: center;
   margin-top: 20px;
-  gap: 10px;
+  gap: 6px;
 }
 
 .interview-panel-container .pagination button {
@@ -466,7 +465,6 @@ border-radius: 0;       /* optional */
 	color: #374151;
 	background: #fff;
 	cursor: pointer;
-	/* transition: border-color 0.2s ease; */
 
 }
 
@@ -479,11 +477,6 @@ border-radius: 0;       /* optional */
   margin-top: 16px;
 }
 
-/* Pagination stays centered */
-.interview-panel-container .pagination {
-  display: flex;
-  gap: 6px;
-}
 
 /* Page size sticks to right */
 .interview-panel-container .table-size-selector {
@@ -495,10 +488,6 @@ border-radius: 0;       /* optional */
   font-size: 14px;
 }
 
-.interview-panel-container .table-size-selector select {
-  padding: 4px 6px;
-  border-radius: 4px;
-}
 .interview-panel-container .infoicon-16{
   width:16px;
   height:16px;

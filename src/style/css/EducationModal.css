@@ -84,6 +84,7 @@
   padding: 10px 15px;
   margin-bottom: 16px;
   position: relative;
+  animation: slideIn 0.3s ease-out;
 }
 
 .group-header {
@@ -201,9 +202,6 @@
   }
 }
 
-.group-box {
-  animation: slideIn 0.3s ease-out;
-}
 .btn-header{
 border: 1px solid rgb(22, 43, 117) !important;
   background: rgb(22, 43, 117) !important;
