@@ -33,6 +33,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import CandidatePreviewPage from "./candidatePreviewPage";
 import { useDispatch } from "react-redux";
 import { setRankEnabled, clearRankState } from "../../app/providers/rankSlice";
+import CompensationPool from "./components/CompensationPool";
+import useCompensationPool from "./hooks/useCompensationPool";
+import { mapCompensationCandidates } from "./mappers/compositionMapper";
+import useCommitteeRequests from "../Approvals/hooks/useCommitteeRequests";
 
 export default function CandidateScreening({ selectedJob }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
@@ -47,6 +51,10 @@ export default function CandidateScreening({ selectedJob }) {
     // REJECTED: "Rejected",
   };
 
+
+
+    const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
+
   const CANDIDATE_POOL_STATUSES = [
     "APPLIED",
     "SHORTLISTED",
@@ -54,6 +62,59 @@ export default function CandidateScreening({ selectedJob }) {
     "DISCREPANCY",
     "PENDING"
   ];
+
+  const [compRefreshKey, setCompRefreshKey] = useState(0);
+  const { panelData, fetchPanels } = useCommitteeRequests();
+
+  const COMPENSATION_POOL_STATUSES = [
+  "NEW",
+  "SUBMITTED",
+  "PENDING",
+  "APPROVED",
+  "REJECTED",
+  "RENEGOTIATE",
+];
+
+const COMPENSATION_STATUS_LABEL_MAP = {
+  NEW: "New",
+  SUBMITTED: "Submitted",
+  PENDING: "Pending",
+  APPROVED: "Approved",
+  REJECTED: "Rejected",
+  RENEGOTIATE: "Renegotiate",
+};
+
+
+
+
+
+
+
+
+
+const user = useSelector((state) => state.user.user);
+
+
+const role = user?.role?.toLowerCase();
+
+const isRecruiter = role === "recruiter";
+
+
+
+
+useEffect(() => {
+  if (role === "committee_member") {
+    setActiveTab("COMPENSATION_POOL");
+  }
+}, [role, selectedRequisitionId]); // 🔥 ADD THIS
+
+
+const isCommitteeMember = role === "committee_member";
+
+
+console.log("ROLE:", role);
+console.log("IS COMMITTEE:", role === "committee_member");
+
   const INTERVIEW_STATUS_LABEL_MAP = {
     SCHEDULED: "Scheduled",
     QUALIFIED: "Qualified",
@@ -84,19 +145,38 @@ export default function CandidateScreening({ selectedJob }) {
 
   const navActiveTab = location.state?.activeTab;
 
-  const [activeTab, setActiveTab] = useState(
-    navActiveTab || "CANDIDATE_POOL"
-  ); const [selectedCandidate, setSelectedCandidate] = useState(null);
+  
+const [positions, setPositions] = useState([]);
+const [selectedPositionId, setSelectedPositionId] = useState("");
+
+
+
+
+
+
+
+
+
+
+
+  
+
+const [activeTab, setActiveTab] = useState(() => {
+  if (role === "committee_member") return "COMPENSATION_POOL";
+  return navActiveTab || "CANDIDATE_POOL";
+});
+  
+  
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
   const [selectedInterviewCandidateIds, setSelectedInterviewCandidateIds] = useState([]);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   const [requisitions, setRequisitions] = useState([]);
-  const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
   const [loadingRequisitions, setLoadingRequisitions] = useState(false);
 
-  const [positions, setPositions] = useState([]);
-  const [selectedPositionId, setSelectedPositionId] = useState("");
+  // const [positions, setPositions] = useState([]);
+  // const [selectedPositionId, setSelectedPositionId] = useState("");
   const [loadingPositions, setLoadingPositions] = useState(false);
 
   const [candidates, setCandidates] = useState([]);
@@ -134,11 +214,30 @@ export default function CandidateScreening({ selectedJob }) {
     pageSize: interviewPageSize,
     enabled: !!selectedPositionId
   });
+
+
+  const {
+  data: compensationCandidates,
+  totalElements: compensationTotal,
+  loading: loadingCompensation,
+  refetch: refetchCompensation
+} = useCompensationPool({
+  positionId: selectedPositionId,
+  filters,
+  page: interviewPage,
+  pageSize: interviewPageSize,
+enabled:
+  activeTab === "COMPENSATION_POOL" &&
+  !!selectedPositionId &&     // 🔥 MUST
+  (isCommitteeMember || !!selectedPositionId),   refreshKey: compRefreshKey
+});
+
   const TAB_PRIVILEGE_MAP = {
     CANDIDATE_POOL: "Candidate Pool",
     INTERVIEW_POOL: "Interview Pool",
+    COMPENSATION_POOL: "Compensation Pool",
     OFFER_POOL: "Offer Pool",
-    ONBOARDING_POOL: "Compensation Pool", // assuming onboarding is compensation
+    // ONBOARDING_POOL: "Compensation Pool", // assuming onboarding is compensation
   };
   // const tabs = [
   //   { key: "CANDIDATE_POOL", label: "Candidate Pool", count: totalElements },
@@ -150,6 +249,7 @@ export default function CandidateScreening({ selectedJob }) {
   const tabs = [
     { key: "CANDIDATE_POOL", label: t("candidateWorkflow:candidate_pool"), count: totalElements },
     { key: "INTERVIEW_POOL", label: t("candidateWorkflow:interview_pool"), count: interviewTotalElements },
+    { key: "COMPENSATION_POOL", label: "Compensation Pool", count: compensationTotal },
     { key: "OFFER_POOL", label: t("candidateWorkflow:offer_pool"), count: 0 },
     { key: "ONBOARDING_POOL", label: t("candidateWorkflow:onboarding_pool"), count: 0 },
   ];
@@ -160,11 +260,7 @@ export default function CandidateScreening({ selectedJob }) {
   const hasPrivilege = (key) => {
     return privileges?.[key] === true;
   };
-  const accessibleTabs = useMemo(() => {
-    return tabs.filter(tab =>
-      hasPrivilege(TAB_PRIVILEGE_MAP[tab.key])
-    );
-  }, [tabs, privileges]);
+
 
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState([]);
@@ -197,6 +293,9 @@ export default function CandidateScreening({ selectedJob }) {
     return `${year}-${month}-${day}`;
   };
 
+
+
+  
 
   const navInitRef = useRef({
     requisitionId: null,
@@ -238,6 +337,71 @@ export default function CandidateScreening({ selectedJob }) {
     loadMasters();
   }, []);
 
+
+
+  useEffect(() => {
+  if (!selectedPositionId) {
+    setSelectedCompensationIds([]);
+  }
+}, [selectedPositionId]);
+
+
+
+useEffect(() => {
+  if (selectedPositionId) {
+    fetchPanels(selectedPositionId);
+  }
+}, [selectedPositionId]);
+
+  const employmentTypeMap = React.useMemo(() => {
+  const map = {};
+  (masterData?.employementTypes || []).forEach((e) => {
+    map[e.employementTypeId] = e.typeName; // "Contract" or "Regular"
+  });
+  return map;
+}, [masterData]);
+
+
+const isContractPosition = useMemo(() => {
+  if (!positions.length || !selectedPositionId || !employmentTypeMap) return false;
+
+  const selectedPositionObj = positions.find(
+    (p) => p.jobPositions?.positionId === selectedPositionId
+  );
+
+  const employmentType =
+    employmentTypeMap[selectedPositionObj?.jobPositions?.employmentType];
+
+  return employmentType === "Contract";
+}, [positions, selectedPositionId, employmentTypeMap]);
+
+const accessibleTabs = useMemo(() => {
+
+  console.log("🔄 Recomputing Tabs, role:", role);
+
+  return tabs.filter((tab) => {
+
+    if (tab.key === "COMPENSATION_POOL") {
+
+      if (role === "committee_member") {
+        return true; // ✅ force show
+      }
+
+      if (!isContractPosition) {
+        return false;
+      }
+    }
+
+    return hasPrivilege(TAB_PRIVILEGE_MAP[tab.key]);
+
+  });
+
+}, [tabs, privileges, isContractPosition, role]); // 🔥 IMPORTANT
+
+
+
+
+const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
   const categoryMap = React.useMemo(() => {
     const map = {};
     (masterData?.reservationCategories || []).forEach(cat => {
@@ -385,6 +549,21 @@ export default function CandidateScreening({ selectedJob }) {
     }
   };
 
+
+  const [submitBeforeDate, setSubmitBeforeDate] = useState(""); 
+  console.log("Compensation Data:", compensationCandidates);
+const mappedCompensationCandidates = mapCompensationCandidates(compensationCandidates);
+
+const selectedCompensationCandidates = mappedCompensationCandidates.filter(c =>
+  selectedCompensationIds.includes(c.id)
+);
+
+const canSendToOfferFromCompensation =
+  selectedCompensationCandidates.length > 0 &&
+  selectedCompensationCandidates.every(
+    (c) => c.status === "APPROVED"
+  );
+
   const formatDateTime = (value) => {
     if (!value) return "-";
     const d = new Date(value);
@@ -452,9 +631,14 @@ export default function CandidateScreening({ selectedJob }) {
 
     setSelectedRequisitionId(reqId);
     setSelectedPositionId("");
+    //  CORRECT LOGIC
+if (role === "committee_member") {
+  setActiveTab("COMPENSATION_POOL");
+}
     setCandidates([]);
     setSelectedCandidateIds([]);
     setSelectedInterviewCandidateIds([]);
+    setSelectedCompensationIds([]); 
     setPage(0);
     setTotalElements(0);
 
@@ -558,6 +742,11 @@ export default function CandidateScreening({ selectedJob }) {
       return Object.keys(INTERVIEW_STATUS_LABEL_MAP);
     }
 
+     if (activeTab === "COMPENSATION_POOL") {
+    return COMPENSATION_POOL_STATUSES; // ✅ ADD THIS
+  }
+
+
     if (activeTab === "OFFER_POOL") {
       return OFFER_POOL_STATUSES;
     }
@@ -566,12 +755,17 @@ export default function CandidateScreening({ selectedJob }) {
   }, [activeTab]);
 
 
-  const getStatusLabel = (status) => {
-    if (activeTab === "INTERVIEW_POOL") {
-      return INTERVIEW_STATUS_LABEL_MAP[status] || status;
-    }
-    return STATUS_LABEL_MAP[status] || status;
-  };
+ const getStatusLabel = (status) => {
+  if (activeTab === "INTERVIEW_POOL") {
+    return INTERVIEW_STATUS_LABEL_MAP[status] || status;
+  }
+
+  if (activeTab === "COMPENSATION_POOL") {
+    return COMPENSATION_STATUS_LABEL_MAP[status] || status; //  ADD THIS
+  }
+
+  return STATUS_LABEL_MAP[status] || status;
+};
 
   const selectedInterviewCandidates = useMemo(() => {
     return interviewCandidates.filter((c) =>
@@ -649,6 +843,10 @@ export default function CandidateScreening({ selectedJob }) {
     });
     setPage(0);
   }, [activeTab]);
+
+
+
+
 
 
 
@@ -780,6 +978,84 @@ export default function CandidateScreening({ selectedJob }) {
     }
   };
 
+
+const handleSendToCompensation = async () => {
+
+
+
+    if (!submitBeforeDate) {
+  toast.error("Please select Submit Before date");
+  return;
+}
+
+
+  if (selectedInterviewCandidates.length === 0) {
+    toast.error("Select at least one candidate");
+    return;
+  }
+
+
+
+
+  const allQualified = selectedInterviewCandidates.every(
+    (c) => c.status === "QUALIFIED"
+  );
+
+  if (!allQualified) {
+    toast.error("Only QUALIFIED candidates allowed");
+    return;
+  }
+
+  try {
+    const payload = {
+      interviewSchedules: selectedInterviewCandidates.map((c) => ({
+        applicationId: c.applicationId,
+        candidateId: c.candidateId,
+
+        panelId: c.panelId ?? null,
+        interviewStartAt: c.interviewStartAt ?? null,
+        interviewEndAt: c.interviewEndAt ?? null,
+        interviewDurationMinutes: c.duration ?? 0,
+        meetingLink: c.meetingLink ?? "",
+
+        zonalOfficeId: c.zonalOfficeId ?? null,
+        finalScore: c.score ?? 0,
+
+        interviewStatus: c.status,
+        zonalVerificationStatus: c.zonalVerificationStatus ?? "",
+
+        zonalSubmitBeforeDate: c.zonalSubmitBeforeDate ?? null,
+        zonalHrComments: c.zonalHrComments ?? "",
+
+        interviewScheduleId: c.id,
+      })),
+    submitBeforeDate: submitBeforeDate,
+    };
+
+    console.log("🔥 Compensation Payload:", payload); // debug
+
+    await candidateWorkflowServices.sendToCompensationPool(payload);
+
+    toast.success("Sent to Compensation Pool");
+
+    setSelectedInterviewCandidateIds([]);
+    setInterviewPage(0);
+    await refetchInterviewPool();
+
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to send to Compensation Pool");
+  }
+};
+
+
+
+
+
+
+
+
+
   const mapInterviewFeedback = (candidateId) => {
     // STATIC for now — API later
     return [
@@ -804,30 +1080,58 @@ export default function CandidateScreening({ selectedJob }) {
     ];
   };
 
-  const handleSendToOfferPool = async () => {
-    if (qualifiedInterviewIds.length === 0) {
-      toast.error(t("candidateWorkflow:select_qualified_candidate"));
-      return;
+const handleSendToOfferPool = async () => {
+  try {
+    let payloadIds = [];
+
+    // ✅ INTERVIEW POOL (NO CHANGE)
+    if (activeTab === "INTERVIEW_POOL") {
+      if (qualifiedInterviewIds.length === 0) {
+        toast.error(t("candidateWorkflow:select_qualified_candidate"));
+        return;
+      }
+
+      payloadIds = qualifiedInterviewIds;
     }
 
-    try {
-      await jobPositionApiService.sendToOfferPool(qualifiedInterviewIds);
+    // ✅ COMPENSATION POOL (NEW LOGIC)
+    if (activeTab === "COMPENSATION_POOL") {
+      const approvedCandidates = selectedCompensationCandidates.filter(
+        (c) => c.status === "APPROVED"
+      );
 
-      toast.success(t("candidateWorkflow:candidates_moved_to_offer_pool"));
+      if (approvedCandidates.length === 0) {
+        toast.error("Select APPROVED candidates");
+        return;
+      }
 
-      // Clear selection
-      setSelectedInterviewCandidateIds([]);
-
-      // Optional: refresh interview pool
-      setInterviewPage(0);
-      await refetchInterviewPool();
-    } catch (err) {
-      console.error(err);
-      toast.error(
-        err?.response?.data?.message || t("candidateWorkflow:failed_to_send_offer_pool")
+      payloadIds = approvedCandidates.map(
+        (c) => c.interviewScheduleId
       );
     }
-  };
+
+    // 🔥 FINAL API CALL
+    await jobPositionApiService.sendToOfferPool(payloadIds);
+
+    toast.success(t("candidateWorkflow:candidates_moved_to_offer_pool"));
+
+    // ✅ Clear selections
+    setSelectedInterviewCandidateIds([]);
+    setSelectedCompensationIds([]);
+
+    // ✅ Refresh
+    setInterviewPage(0);
+    await refetchInterviewPool();
+    await refetchCompensation();
+
+  } catch (err) {
+    console.error(err);
+    toast.error(
+      err?.response?.data?.message ||
+      t("candidateWorkflow:failed_to_send_offer_pool")
+    );
+  }
+};
 
   const handleSendOffer = async () => {
     if (offerSelectedIds.length === 0) {
@@ -985,7 +1289,10 @@ export default function CandidateScreening({ selectedJob }) {
                 <button
                   className={`nav-link fs-14 ${activeTab === tab.key ? "orange-color orange-bottom-border" : "text-muted"
                     }`}
-                  onClick={() => setActiveTab(tab.key)}
+                 onClick={() => {
+  if (role === "committee_member") return; // 🔥 BLOCK SWITCH
+  setActiveTab(tab.key);
+}}
                   type="button"
                 >
                   {tab.key === "CANDIDATE_POOL" && (
@@ -1122,9 +1429,9 @@ export default function CandidateScreening({ selectedJob }) {
               )}
 
               {/* 👇 spacer ONLY for Interview Pool */}
-              {activeTab === "INTERVIEW_POOL" && (
-                <div className="col-md-4 d-none d-md-block" />
-              )}
+            {(activeTab === "INTERVIEW_POOL" || activeTab === "COMPENSATION_POOL") && (
+  <div className="col-md-4 d-none d-md-block" />
+)}
 
               {selectedPositionId && selectedRequisitionId && (
                 <div className="col-md-4 col-12 text-md-end mt-2 mt-md-0">
@@ -1399,7 +1706,7 @@ export default function CandidateScreening({ selectedJob }) {
                     </button>
                   )}
 
-                {activeTab === "INTERVIEW_POOL"
+                {/* {activeTab === "INTERVIEW_POOL"
                   && hasPrivilege("Offer Pool")
                   && canSendToOfferPool && (
                     <button
@@ -1408,7 +1715,63 @@ export default function CandidateScreening({ selectedJob }) {
                     >
                       {t("candidateWorkflow:send_to_offer_pool")}
                     </button>
-                  )}
+                  )} */}
+
+
+
+
+{activeTab === "INTERVIEW_POOL" && canSendToOfferPool && (
+  isContractPosition ? (
+   <div className="d-flex align-items-center justify-content-end gap-4">
+      
+      {/*  Submit Before Date */}
+      <div className="d-flex align-items-center gap-2">
+       <span className="fs-14">
+  Submit Before <span className="text-danger">*</span>
+</span>
+        <input
+          type="date"
+          className="form-control fs-14"
+          style={{ width: "150px" }}
+          value={submitBeforeDate}
+          min={todayString()}
+          onChange={(e) => setSubmitBeforeDate(e.target.value)}
+        />
+      </div>
+
+      {/* Button */}
+      <button
+        className="btn orange-bg text-white fs-14"
+        onClick={handleSendToCompensation}
+        // disabled={!submitBeforeDate} // 🔥 important
+      >
+        {t("candidateWorkflow:Compensation_Request")}
+      </button>
+    </div>
+  ) : (
+    hasPrivilege("Offer Pool") && (
+      <button
+        className="btn blue-bg text-white fs-14"
+        onClick={handleSendToOfferPool}
+      >
+        {t("candidateWorkflow:send_to_offer_pool")}
+      </button>
+    )
+  )
+)}
+
+
+
+{activeTab === "COMPENSATION_POOL" &&
+  hasPrivilege("Offer Pool") &&
+  canSendToOfferFromCompensation && (
+    <button
+      className="btn blue-bg text-white fs-14"
+      onClick={handleSendToOfferPool}
+    >
+      {t("candidateWorkflow:send_to_offer_pool")}
+    </button>
+)}
 
               </div>
             </div>
@@ -1492,6 +1855,31 @@ export default function CandidateScreening({ selectedJob }) {
           />
         )}
 
+
+        {activeTab === "COMPENSATION_POOL" &&  selectedPositionId && (
+<CompensationPool
+  candidates={mapCompensationCandidates(compensationCandidates)}
+  loading={loadingCompensation}
+  page={interviewPage}
+  pageSize={interviewPageSize}
+  totalElements={compensationTotal}
+  onPageChange={setInterviewPage}
+  onPageSizeChange={setInterviewPageSize}
+  selectedIds={selectedCompensationIds}
+  setSelectedIds={setSelectedCompensationIds}
+
+  // 🔥 ADD THESE
+  onViewFile={handleViewFile}
+  selectedRequisitionId={selectedRequisitionId}
+  selectedPositionId={selectedPositionId}
+  requisition={normalizedRequisition}
+  position={selectedPosition}
+  refetch={refetchCompensation}
+   triggerRefresh={() => setCompRefreshKey(prev => prev + 1)}
+   panelData={panelData}
+/>
+)}
+
         {activeTab === "OFFER_POOL" && (
           <OfferPool
             selectedPositionId={selectedPositionId}
@@ -1546,3 +1934,6 @@ export default function CandidateScreening({ selectedJob }) {
     </div>
   );
 }
+
+
+

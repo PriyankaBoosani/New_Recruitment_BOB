@@ -519,7 +519,7 @@ const DatePill = React.forwardRef(({ value, onClick }, ref) => (
   onInputClick={() => setIsCalendarOpen(true)}
   dateFormat="dd MMMM yyyy"
   customInput={<DatePill />}
-  maxDate={new Date()}
+  // maxDate={new Date()}
 
 
   showMonthDropdown

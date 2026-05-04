@@ -13,6 +13,7 @@ const DocumentViewerModal = ({
   onVerify,
   onReject,
   isZonalAbsent,
+  isFromCompensationPool  
 
 }) => {
   const { t } = useTranslation(["preview", "common", "validation"]);
@@ -44,6 +45,7 @@ const DocumentViewerModal = ({
 
 
   const disableActions =
+   isFromCompensationPool || 
     !canCandidatePool && (
       isInterviewer || (isZonalHr && isZonalAbsent)
     );;

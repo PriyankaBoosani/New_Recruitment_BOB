@@ -185,7 +185,7 @@ const AppRoutes = () => {
              <Route
   path="/candidate-preview"
   element={
-    <PrivilegeRoute privilegesRequired={["Candidate Pool", "Verification", "Interview"]}>
+    <PrivilegeRoute privilegesRequired={["Candidate Pool", "Verification", "Interview", "Compensation Pool"]}>
       <CandidatePreviewPage />
     </PrivilegeRoute>
   }
@@ -194,7 +194,8 @@ const AppRoutes = () => {
                 <Route
                   path="/candidate-workflow"
                   element={
-                    <PrivilegeRoute privilege="Candidate Pool">
+                     <PrivilegeRoute privilegesRequired={["Candidate Pool", "Compensation Pool"]}>
+                   
                       <CandidateScreening />
                     </PrivilegeRoute>
                   }

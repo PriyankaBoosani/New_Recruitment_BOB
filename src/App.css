@@ -186,6 +186,7 @@ body {
 .badge {
   font-size: 0.6rem;
   padding: 0.25em 0.4em;
+  border: 1px solid #ddd !important;
 }
 
 /* Top bar styles */

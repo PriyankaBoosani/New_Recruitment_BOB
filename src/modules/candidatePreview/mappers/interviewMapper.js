@@ -54,7 +54,17 @@ export const mapInterviewCandidates = (
       status: schedule.interviewStatus || "SCHEDULED",
 
       score: schedule.finalScore ?? "",
-      zonalHrComments: schedule.zonalHrComments || ""
+      zonalHrComments: schedule.zonalHrComments || "",
+
+      panelId: schedule.panelId,
+      interviewStartAt: schedule.interviewStartAt,
+      interviewEndAt: schedule.interviewEndAt,
+      duration: schedule.interviewDurationMinutes,
+      meetingLink: schedule.meetingLink,
+      zonalOfficeId: schedule.zonalOfficeId,
+      zonalVerificationStatus: schedule.zonalVerificationStatus,
+      zonalSubmitBeforeDate: schedule.zonalSubmitBeforeDate,
+
 
 
     };

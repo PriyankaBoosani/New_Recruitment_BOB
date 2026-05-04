@@ -99,6 +99,7 @@ const RequisitionStrip = ({
         const [masterRes, zonalRes, centersRes] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
           // masterApiService.getZonalStates(),
+          
 
         ]);
 
@@ -112,6 +113,9 @@ const RequisitionStrip = ({
 
     loadMasters();
   }, []);
+
+  console.log("MASTER DATA FULL", masterData);
+  
 
 
   /* ================= FETCH JOB ================= */
@@ -161,6 +165,47 @@ const RequisitionStrip = ({
 
     return `${years} ${t("candidateWorkflow:years")} ${months} ${t("candidateWorkflow:months")}`;
   };
+
+
+
+
+
+
+
+
+
+
+const getEducationNameById = (id) => {
+  const docs = masterData?.educationLevels || []; // ✅ FIXED
+
+  const match = docs.find(
+    (doc) =>
+      doc.documentTypeId === id &&
+      doc.docType === "educationdocs"
+  );
+
+  return match?.documentName || "-";
+};
+
+
+
+const getEduWiseExperience = () => {
+  if (!job?.mandatoryExpMonthsEduWise) return [];
+
+  return Object.entries(job.mandatoryExpMonthsEduWise)
+    .map(([id, months]) => {
+      const name = getEducationNameById(id);
+
+      const years = Math.floor(months / 12);
+      const remMonths = months % 12;
+
+      let exp = "";
+      if (years > 0) exp += `${years} yr `;
+      if (remMonths > 0) exp += `${remMonths} mo`;
+
+      return `${name}: ${exp || "0 mo"}`;
+    });
+};
 
   return (
     <>
@@ -363,14 +408,17 @@ const RequisitionStrip = ({
 
 
                   {/* Experience */}
-                  <div className="col-12 col-md-4">
+                  {/* <div className="col-12 col-md-4">
                     <span className="stat-label">{t("candidateWorkflow:experience")}:</span>{" "}
-                    <span className="stat-value">
-                      {formatExperience(
-                        job?.mandatory_experience_years, job?.mandatory_experience_months
-                      )}
-                    </span>
-                  </div>
+                   <span className="stat-value">
+  {job?.isMandatoryExpMonthsEduWise
+    ? getEduWiseExperience()
+    : formatExperience(
+        job?.mandatory_experience_years,
+        job?.mandatory_experience_months
+      )}
+</span>
+                  </div> */}
 
                   {/* Eligibility */}
                   <div className="col-12 col-md-4">
@@ -380,13 +428,7 @@ const RequisitionStrip = ({
                     </span>
                   </div>
 
-                  {/* Department */}
-                  <div className="col-12 col-md-4">
-                    <span className="stat-label">{t("candidateWorkflow:department")}:</span>{" "}
-                    <span className="stat-value">
-                      {job?.dept_name || "-"}
-                    </span>
-                  </div>
+             
 
                   {/* Vacancies */}
                   <div className="col-12 col-md-4">
@@ -395,6 +437,28 @@ const RequisitionStrip = ({
                       {job?.no_of_vacancies ?? 0}
                     </span>
                   </div>
+
+                       {/* Department */}
+                  <div className="col-12 col-md-4">
+                    <span className="stat-label">{t("candidateWorkflow:department")}:</span>{" "}
+                    <span className="stat-value">
+                      {job?.dept_name || "-"}
+                    </span>
+                  </div>
+
+                <div className="col-12 col-md-4">
+                  <span className="stat-label">
+                    {t("candidateWorkflow:experience")}:
+                  </span>{" "}
+                  <span className="stat-value">
+                    {job?.isMandatoryExpMonthsEduWise
+                      ? getEduWiseExperience().join(" / ")
+                      : formatExperience(
+                          job?.mandatory_experience_years,
+                          job?.mandatory_experience_months
+                        )}
+                  </span>
+                </div>
 
                 </div>
               </div>

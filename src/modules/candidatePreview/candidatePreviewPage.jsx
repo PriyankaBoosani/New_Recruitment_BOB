@@ -33,7 +33,7 @@ const CandidatePreviewPage = ({ onHide }) => {
   //   const isRecruiter = role === "recruiter";
 
 
-
+const isFromCompensationPool = state?.fromCompensationPool;
 
   const privileges = useSelector((state) => state.user.privileges);
 
@@ -184,7 +184,7 @@ const CandidatePreviewPage = ({ onHide }) => {
       />
 
       {/* Header */}
-      {(isRecruiter || privileges?.["Candidate Pool"]) ? (
+      {(isRecruiter || privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"]) ? (
         <HeaderWithBack
           title={t("candidateWorkflow:candidate_screening")}
           subtitle={t("candidateWorkflow:manage_schedule_interviews")}
@@ -289,6 +289,7 @@ const CandidatePreviewPage = ({ onHide }) => {
               zonalHrComments={candidate?.zonalHrComments}
               candidateStatus={candidate?.status}
                 isFromInterview={isFromInterview}
+                isFromCompensationPool={isFromCompensationPool}
             />
           )
         )}

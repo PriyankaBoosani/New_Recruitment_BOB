@@ -555,7 +555,7 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   onInputClick={() => setIsCalendarOpen(true)}
   dateFormat="dd MMMM yyyy"
   customInput={<DatePill />}
-  maxDate={new Date()}
+  // maxDate={new Date()}
 
   /*  Month + Year Dropdown */
   showMonthDropdown
@@ -617,8 +617,9 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
             setSelectedPosition(p);
           }}
           closeCalendar={() => setIsCalendarOpen(false)}
-          showImportBtn={isSelectionDone}
-  onImportClick={() => setShowImportModal(true)}
+          //showImportBtn={isSelectionDone}
+          showImportBtn={isSelectionDone && allCandidatesRaw.length > 0}
+          onImportClick={() => setShowImportModal(true)}
         />
 
 

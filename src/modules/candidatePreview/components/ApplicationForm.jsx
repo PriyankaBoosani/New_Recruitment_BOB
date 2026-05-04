@@ -33,7 +33,8 @@ const ApplicationForm = ({
   zonalSubmitBeforeDate,
   zonalHrComments,
   candidateStatus,
-  isFromInterview
+  isFromInterview,
+  isFromCompensationPool
 }) => {
 
   const { t } = useTranslation(["preview", "common", "validation"]);
@@ -456,13 +457,18 @@ const ApplicationForm = ({
 
         const isZonal = isZonalHr;
 
-        const status = isZonalHr
-          ? item.zonalHrDocStatus || "PENDING"
-          : isInterviewer
-            ? (item.zonalHrDocStatus && item.zonalHrDocStatus !== "PENDING"
-              ? item.zonalHrDocStatus
-              : item.docScreeningStatus || "PENDING")
-            : item.docScreeningStatus || "PENDING";
+       const status = isZonalHr
+  ? item.zonalHrDocStatus || "PENDING"
+
+  : isFromCompensationPool   //  ADD THIS
+    ? item.zonalHrDocStatus || "PENDING"
+
+    : isInterviewer
+      ? (item.zonalHrDocStatus && item.zonalHrDocStatus !== "PENDING"
+          ? item.zonalHrDocStatus
+          : item.docScreeningStatus || "PENDING")
+
+      : item.docScreeningStatus || "PENDING";
 
         const comments = isZonal
           ? item.zonalHrDocComments
@@ -1786,8 +1792,10 @@ const ApplicationForm = ({
         </Accordion.Item>
 
         {/* ================= CRITERIA SECTION ================= */}
-        {canCandidatePool && !disableDocAction && !isFromInterview && (
-          <Card className="criteria-main-card">
+{canCandidatePool &&
+  !disableDocAction &&
+  !isFromInterview &&
+  !isFromCompensationPool && (          <Card className="criteria-main-card">
 
             <div className="criteria-wrapper">
 
@@ -2003,12 +2011,14 @@ const ApplicationForm = ({
                 </div>
               )}
 
-              <button
-                className="btn-submit-orange"
-                onClick={handleFinalSubmit}
-              >
-                {t("submit")}
-              </button>
+          {!isFromCompensationPool && (
+  <button
+    className="btn-submit-orange"
+    onClick={handleFinalSubmit}
+  >
+    {t("submit")}
+  </button>
+)}
             </div>
           </Card>
         )}
@@ -2180,6 +2190,7 @@ const ApplicationForm = ({
         onVerify={handleVerify}
         onReject={handleReject}
         isZonalAbsent={isZonalAbsent}
+          isFromCompensationPool={isFromCompensationPool}
 
       />
     </>
