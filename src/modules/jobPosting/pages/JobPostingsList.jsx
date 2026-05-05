@@ -411,10 +411,10 @@ const JobPostingsList = () => {
                     >
                         <option value="">{t("jobPostingsList:status_all")}</option>
                         <option value="NEW">{t("jobPostingsList:status_new")}</option>
-                        {/* <option value="L1_APPROVED">{t("jobPostingsList:status_l1_approved")}</option>
+                        <option value="L1_APPROVED">{t("jobPostingsList:status_l1_approved")}</option>
                         <option value="L1_PENDING">{t("jobPostingsList:status_l1_pending")}</option>
                         <option value="L1_REJECTED">{t("jobPostingsList:status_l1_rejected")}</option>
-                        <option value="L2_REJECTED">{t("jobPostingsList:status_l2_rejected")}</option> */}
+                        <option value="L2_REJECTED">{t("jobPostingsList:status_l2_rejected")}</option>
                         <option value="APPROVED">{t("jobPostingsList:status_approved")}</option>
 
 
@@ -525,8 +525,8 @@ const JobPostingsList = () => {
                                                 req.status === "APPROVED" ||
                                                 req.status === "L1_PENDING" ||
                                                 req.status === "L1_APPROVED" ||
-                                                // req.status === "L1_REJECTED" ||
-                                                // req.status === "L2_REJECTED" ||
+                                                req.status === "L1_REJECTED" ||
+                                                req.status === "L2_REJECTED" ||
                                                 req.hasDraftPositions
                                             }
                                             onClick={(e) => e.stopPropagation()}
@@ -534,9 +534,9 @@ const JobPostingsList = () => {
                                                 if (
                                                     req.status === "APPROVED" ||
                                                     req.status === "L1_PENDING" ||
-                                                    req.status === "L1_APPROVED"
-                                                    // req.status === "L1_REJECTED" ||
-                                                    // req.status === "L2_REJECTED"
+                                                    req.status === "L1_APPROVED" ||
+                                                    req.status === "L1_REJECTED" ||
+                                                    req.status === "L2_REJECTED"
                                                 ) return;
 
                                                 setSelectedReqIds(prev => {
@@ -557,7 +557,7 @@ const JobPostingsList = () => {
                                                     {req.code}
                                                 </h6>
 
-                                                {/* {req.status !== "NEW" && (
+                                                {req.status !== "NEW" && (
                                                     <img
                                                         src={history_icon}
                                                         alt="history"
@@ -567,7 +567,7 @@ const JobPostingsList = () => {
                                                             handleOpenHistory(req);
                                                         }}
                                                     />
-                                                )} */}
+                                                )}
                                             </div>
 
                                             <div className="req-dates">

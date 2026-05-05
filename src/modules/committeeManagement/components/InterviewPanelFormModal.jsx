@@ -10,7 +10,7 @@ const InterviewPanelFormModal = ({
 
   communityOptions = [],
   membersOptions = [],
-  centerOptions = [],
+ // centerOptions = [],
   formData,
   setFormData,
   onSave,

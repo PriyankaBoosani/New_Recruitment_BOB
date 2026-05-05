@@ -23,7 +23,7 @@ export const mapPanelToFormData = (panel) => {
     id: panel.interviewPanelId,
     name: panel.panelName || "",
     community: panel.committee?.interviewCommitteeId || "",
-    interviewCenterId: panel.interviewCenter?.interviewCentreId || "",
+   // interviewCenterId: panel.interviewCenter?.interviewCentreId || "",
     members:
       panel.panelMembers?.map(m => m.panelMember?.userId) || []
   };
@@ -34,7 +34,7 @@ export const preparePanelPayload = (
   formData,
   communityOptions,
   membersOptions,
-  centerOptions
+ // centerOptions
 ) => {
   const selectedCommittee = communityOptions.find(
     c => c.id === formData.community
@@ -44,9 +44,9 @@ export const preparePanelPayload = (
     formData.members.includes(m.value)
   );
 
-  const selectedCenter = centerOptions.find(
-    c => c.value === formData.interviewCenterId
-  );
+  // const selectedCenter = centerOptions.find(
+  //   c => c.value === formData.interviewCenterId
+  // );
 
   return {
     panelName: formData.name,
@@ -58,14 +58,14 @@ export const preparePanelPayload = (
       interviewCommitteeId: selectedCommittee?.id
     },
 
-    interviewCenter: {
-      interviewCentre: selectedCenter?.label || "",
-      organizationType: "Zonal Office",
-      zone: selectedCenter?.label || "",
-      zonalStateId: "",
-      alpha: "",
-      interviewCentreId: selectedCenter?.value
-    },
+    // interviewCenter: {
+    //   interviewCentre: selectedCenter?.label || "",
+    //   organizationType: "Zonal Office",
+    //   zone: selectedCenter?.label || "",
+    //   zonalStateId: "",
+    //   alpha: "",
+    //   interviewCentreId: selectedCenter?.value
+    // },
 
     panelMembers: selectedMembers.map(m => ({
       panelMember: {

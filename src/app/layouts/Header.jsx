@@ -354,7 +354,7 @@ const Header = () => {
                 </Nav.Link>
               )}
 
-               {/* {canApprovals && (
+               {canApprovals && (
                 <NavDropdown
                   id="approvals-dropdown"
                   show={showApprovalsMenu}
@@ -381,13 +381,13 @@ const Header = () => {
                     {t("requisition_requests")}
                   </NavDropdown.Item>
 
-                  <NavDropdown.Item
+                  {/* <NavDropdown.Item
                     as={NavLink}
                     to="/extension-requests"
                     onClick={closeMenu}
                   >
                     {t("extension_requests")}
-                  </NavDropdown.Item>
+                  </NavDropdown.Item> */}
 
                   <NavDropdown.Item
                     as={NavLink}
@@ -397,7 +397,7 @@ const Header = () => {
                     {t("committee_requests")}
                   </NavDropdown.Item>
                 </NavDropdown>
-              )} */}
+              )}
               {/* {isRecruiter && (
                 <Nav.Link
                   as={NavLink}

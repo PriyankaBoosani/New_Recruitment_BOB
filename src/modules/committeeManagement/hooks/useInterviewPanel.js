@@ -32,7 +32,7 @@ export const useInterviewPanel = () => {
   const [size, setSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [activeTab, setActiveTab] = useState("MANAGE");
-  const [centerOptions, setCenterOptions] = useState([]);
+  // const [centerOptions, setCenterOptions] = useState([]);
 
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -122,16 +122,16 @@ export const useInterviewPanel = () => {
           name: c.committeeName
         }))
       );
-      setCenterOptions(
-        (centerRes?.data || [])
-          .sort((a, b) =>
-            a.interviewCentre.localeCompare(b.interviewCentre)
-          )
-          .map(c => ({
-            value: c.interviewCentreId,
-            label: c.interviewCentre
-          }))
-      );
+      // setCenterOptions(
+      //   (centerRes?.data || [])
+      //     .sort((a, b) =>
+      //       a.interviewCentre.localeCompare(b.interviewCentre)
+      //     )
+      //     .map(c => ({
+      //       value: c.interviewCentreId,
+      //       label: c.interviewCentre
+      //     }))
+      // );
 
       setMembersOptions(mapInterviewMembersApi(memRes));
 
@@ -196,7 +196,7 @@ export const useInterviewPanel = () => {
       cleanedFormData,
       communityOptions,
       membersOptions,
-      centerOptions
+   //   centerOptions
     );
 
     try {
@@ -394,7 +394,7 @@ export const useInterviewPanel = () => {
 
     communityOptions,
     membersOptions,
-    centerOptions,
+   // centerOptions,
 
     formData,
     setFormData,
