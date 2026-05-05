@@ -168,17 +168,46 @@ export default function EducationModal({
     //         return updated;
     //     });
     // };
+    // const updateRow = (gIdx, rIdx, field, value) => {
+    //     const copy = [...groups];
+
+    //     copy[gIdx].educations[rIdx][field] = value;
+
+    //     if (field === "educationQualificationsId") {
+    //         copy[gIdx].educations[rIdx].specializationId = "";
+    //     }
+
+    //     setGroups(copy);
+    // };
+
+
     const updateRow = (gIdx, rIdx, field, value) => {
-        const copy = [...groups];
+    const copy = [...groups];
+    copy[gIdx].educations[rIdx][field] = value;
 
-        copy[gIdx].educations[rIdx][field] = value;
+    if (field === "educationQualificationsId") {
+        copy[gIdx].educations[rIdx].specializationId = "";
+    }
 
-        if (field === "educationQualificationsId") {
-            copy[gIdx].educations[rIdx].specializationId = "";
-        }
+    setGroups(copy);
 
-        setGroups(copy);
-    };
+    // ✅ CLEAR ERROR HERE
+    const flatIndex =
+        groups.slice(0, gIdx).reduce((acc, g) => acc + g.educations.length, 0) + rIdx;
+
+    setErrors(prev => {
+        if (!prev.rows?.[flatIndex]?.[field]) return prev;
+
+        const updated = { ...prev };
+        updated.rows = [...(updated.rows || [])];
+        updated.rows[flatIndex] = {
+            ...updated.rows[flatIndex],
+            [field]: ""
+        };
+
+        return updated;
+    });
+};
     // const removeRow = (index) => {
     //     setRows(prev =>
     //         prev.length > 1
