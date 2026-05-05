@@ -2,8 +2,7 @@
 import axios from "axios";
 import { store } from "../../store";
 import { clearUser } from "../../app/providers/userSlice";
-import { PublicClientApplication } from "@azure/msal-browser";
-import { msalConfig, loginRequest } from "../../modules/auth/services/msalConfig";
+import { loginRequest } from "../../modules/auth/services/msalConfig";
 import { msalInstance } from "../..";
 
 const REFRESH_PATH = "/recruiter-auth/recruiter-refresh-token";
