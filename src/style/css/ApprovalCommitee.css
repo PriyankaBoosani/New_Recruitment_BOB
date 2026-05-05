@@ -675,14 +675,15 @@ border-radius: 20px !important;
 /* ================= STATUS BADGE ================= */
 
 .committee-page .status-badge {
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  padding: 3px 10px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  border-radius: 6px;
-  white-space: nowrap;
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: center;
+	padding: 3px 10px;
+	font-size: 0.75rem;
+	font-weight: 500;
+	border-radius: 6px;
+	white-space: nowrap;
+	color: #fff;
 }
 
 

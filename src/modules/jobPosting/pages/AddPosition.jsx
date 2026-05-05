@@ -19,9 +19,8 @@ import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisit
 import { toast } from "react-toastify";
 import ReservationSection from "../component/ReservationSection";
 import { useTranslation } from "react-i18next";
-import SelectIndentModal from "../component/SelectIndentModal";
-
 import masterApiService from "../../master/services/masterApiService";
+import SelectIndentModal from "../component/SelectIndentModal";
 const AddPosition = () => {
     const { t } = useTranslation(["addPosition", "common", "validation"]);
     const renderError = (e) => {
@@ -100,12 +99,10 @@ const AddPosition = () => {
     });
     const [isAgeRelRiotVictimFamily, setIsAgeRelRiotVictimFamily] = useState(false);
     const [isAgeRelWdsWomen, setIsAgeRelWdsWomen] = useState(false);
-    const [indentCandidates, setIndentCandidates] = useState([]);
 
+    const [indentCandidates, setIndentCandidates] = useState([]);
     const [showIndentModal, setShowIndentModal] = useState(false);
     const [selectedIndent, setSelectedIndent] = useState(null);
-
-    console.log("existingPosition", existingPosition);
 
     // Initialize isProficientInLocalLanguage from existingPosition ROOT LEVEL
     useEffect(() => {
@@ -130,7 +127,20 @@ const AddPosition = () => {
         );
 
     }, [existingPosition]);
+    useEffect(() => {
+        if (existingPosition && positionsByReq[requisitionId]) {
+            const match = positionsByReq[requisitionId].find(
+                p => p.indentName === existingPosition.indentName
+            );
 
+            if (match) {
+                setSelectedIndent(match);
+            } else if (existingPosition.indentName) {
+                // fallback → custom indent
+                setSelectedIndent("CUSTOM");
+            }
+        }
+    }, [existingPosition, positionsByReq]);
 
 
 
@@ -240,12 +250,10 @@ const AddPosition = () => {
             !specializations.length ||
             !certifications.length
         ) {
-            console.log('Education mapping useEffect - missing master data, returning');
             return;
         }
 
         if (eduInitializedRef.current) {
-            console.log('Education mapping useEffect - already initialized, returning');
             return;
         }
 
@@ -419,6 +427,7 @@ const AddPosition = () => {
         }
 
 
+
         let finalValue = value;
 
         if (numericFields.includes(name)) {
@@ -432,11 +441,19 @@ const AddPosition = () => {
 
         //  SPECIAL CASE: department change clears position error
         if (name === "department") {
-            setErrors(prev => ({
-                ...prev,
-                department: "",
-                position: ""
-            }));
+            const matches = positionsByReq[requisitionId]
+                ?.filter(p => String(p.deptId) === String(value));
+
+            setIndentCandidates(matches);
+
+            // 🔥 reset selection if mismatch
+            if (!matches.some(p => p.positionId === selectedIndent?.positionId)) {
+                setSelectedIndent(null);
+            }
+
+            if (matches.length > 0) {
+                setShowIndentModal(true);
+            }
         } else {
             setErrors(prev => ({
                 ...prev,
@@ -695,7 +712,6 @@ const AddPosition = () => {
             isAgeRelRiotVictimFamily,
             isAgeRelWdsWomen
         };
-        //console.log(payload);return false;
 
         try {
             if (isEditMode) {
@@ -818,10 +834,10 @@ const AddPosition = () => {
 
             <ImportModal show={showImportModal} onHide={() => setShowImportModal(false)} requisitionId={requisitionId} onSuccess={() => fetchPositions(requisitionId)} // optional but correct
             />
-            {console.log('AddPosition - Passing to modal:', eduMode, educationData[eduMode])}
             <EducationModal key={`${eduMode}-${showEduModal}`} show={showEduModal} mode={eduMode} initialData={educationData[eduMode]} educationTypes={educationTypes} qualifications={qualifications} specializations={specializations} certifications={certifications} onHide={() => setShowEduModal(false)} onSave={({ groups, certGroups, text }) => { setEducationData(prev => ({ ...prev, [eduMode]: { groups, certGroups, text } })); setErrors(prev => { const upd = { ...prev }; delete upd[`${eduMode}Education`]; return upd; }); }} />
             <ConfirmUsePositionModal show={showConfirmModal} onYes={handleUsePositionData} onNo={handleRejectPositionData}
             />
+
             <SelectIndentModal
                 show={showIndentModal}
                 onClose={() => setShowIndentModal(false)}

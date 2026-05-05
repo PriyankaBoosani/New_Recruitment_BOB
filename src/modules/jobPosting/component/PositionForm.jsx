@@ -321,6 +321,7 @@ const PositionForm = ({
                     e.target.value = "";
                     return;
                   }
+
                   const extension = "." + file.name.split(".").pop().toLowerCase();
                   if (!ALLOWED_EXTENSIONS.includes(extension)) {
                     setErrors(prev => ({ ...prev, indentFile: "validation:file_invalid_type" }));
@@ -376,18 +377,13 @@ const PositionForm = ({
                       if (value.length === 1 && value === " ") return;
 
                       // collapse multiple spaces inside
-                     // value = value.replace(/[ \t]+/g, " ");
-                      if (typeof value === "string" && value.length <= 200) {
-                        value = value.split(" ").filter(Boolean).join(" ");
-                      }
+                      value = value.replace(/[ \t]+/g, " ");
 
                       setIndentOthers(value);
                     }}
                     onBlur={() => {
-                      setIndentOthers(prev => {
-                        if (typeof prev !== "string") return prev;
-                        return prev.trimEnd();
-                      });
+                      // remove trailing space only
+                      setIndentOthers(prev => prev.replace(/\s+$/, ""));
                     }}
                   />
                   {!indentOthers.trim() && (
@@ -472,17 +468,17 @@ const PositionForm = ({
           </Col>
 
           <Col md={4}><Form.Label>{t("addPosition:min_age")} <span className="text-danger">*</span></Form.Label><Form.Control name="minAge" type="text" placeholder={t("addPosition:min_age")} inputMode="numeric" value={formData.minAge} disabled={isViewMode} onChange={(e) => {
-              let value = e.target.value;
+            let value = e.target.value;
 
-// allow only digits
-value = value.replace(/\D/g, "");
+            // allow only digits
+            value = value.replace(/\D/g, "");
 
-// limit to 2 digits
-if (value.length > 2) return;
+            // limit to 2 digits
+            if (value.length > 2) return;
 
-handleInputChange({
-  target: { name: "minAge", value }
-});
+            handleInputChange({
+              target: { name: "minAge", value }
+            });
           }} />
             <ErrorMessage>{renderError(errors.minAge)}</ErrorMessage></Col>
           <Col md={4}><Form.Label>{t("addPosition:max_age")}<span className="text-danger">*</span></Form.Label><Form.Control name="maxAge" type="text" placeholder={t("addPosition:max_age")} inputMode="numeric" disabled={isViewMode} value={formData.maxAge} onChange={(e) => {

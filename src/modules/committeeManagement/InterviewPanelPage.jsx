@@ -129,7 +129,7 @@ const InterviewPanelPage = () => {
         </div>
 
 
-        <div className="guidelines-box mt-3">
+        {/* <div className="guidelines-box mt-3">
           <div className="guidelines-header">
             <img
               src={bulbIcon}
@@ -140,8 +140,7 @@ const InterviewPanelPage = () => {
           </div>
 
 
-          {/* ADD PANELS */}
-
+         
           <div className="guideline-section">
             <h6 className="sectiontitle">Add Panels</h6>
 
@@ -175,7 +174,7 @@ const InterviewPanelPage = () => {
 
           <hr />
 
-          {/* ADD POSITION ASSIGNMENTS */}
+        
           <div className="guideline-section">
             <h6 className="sectiontitle">Add Position Assignments</h6>
 
@@ -190,7 +189,7 @@ const InterviewPanelPage = () => {
             </ol>
           </div>
 
-        </div>
+        </div> */}
 
         <div className="panel-content">
           {activeTab === "MANAGE" && (
