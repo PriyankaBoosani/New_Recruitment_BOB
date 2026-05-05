@@ -13,6 +13,7 @@ import { persistor } from '../../store';
 import { NavLink } from "react-router-dom";
 import "../../style/css/header-pill.css";
 import { setRankEnabled } from '../providers/rankSlice';
+import { useMsal } from '@azure/msal-react';
 
 const Header = () => {
   const { t } = useTranslation();
@@ -20,6 +21,8 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [langOpen, setLangOpen] = useState(false);
+
+  const { instance } = useMsal();
 
   /* ===================== USER FROM REDUX ===================== */
   const userSlice = useSelector((state) => state.user);
@@ -58,14 +61,17 @@ const Header = () => {
   };
 
   /* ===================== LOGOUT ===================== */
-  const handleLogout = () => {
+  const handleLogout = async () => {
     dispatch(clearUser());
     dispatch(setRankEnabled(false));
     dispatch(setLanguage("en"));
     i18n.changeLanguage("en");
-    persistor.purge();
+    await persistor.purge();
 
-    navigate('/login');
+    // navigate('/login');
+    await instance.logoutRedirect({
+      postLogoutRedirectUri: "/login",
+    });
   };
   const role = user?.role?.trim().toLowerCase();
 
