@@ -3,8 +3,7 @@ import {
   requiredField,
   minLength,
   maxLength,
-  emailFormat,
-  phoneFormat
+  emailFormat
 } from "./common-validations";
 
 /**
@@ -176,7 +175,8 @@ export const getDefaultRoute = (privileges = {}) => {
   return "/unauthorized";
 };
 
-export default {
+
+const userValidations = {
   validateUserRole,
   validateFullName,
   validateUserEmail,
@@ -185,3 +185,4 @@ export default {
   validateUserForm,
   getDefaultRoute
 };
+export default userValidations;

@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react'
 import jobPositionApiService from '../../jobPosting/services/jobPositionApiService';
 import { toast } from 'react-toastify';
 import { useTranslation } from "react-i18next";
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const OFFER_STATUS_CLASS_MAP = {
   OFFER_AWAITED: "bg-warning",
@@ -70,10 +71,7 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 					name: item.candidateFullName,
 					categoryName: item.reservationCategory,
 					score: item.finalScore,
-					qnq:
-						item.interviewSchedulingStatus === "QUALIFIED"
-							? "Q"
-							: "NQ",
+					qnq: offer.qualified === true ? "Q" : "NQ",
 					status: offer.status,
 					selectList: offer.selectList,
 					waitList: offer.waitList,
@@ -185,7 +183,7 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 								onChange={toggleSelectAll}
 							/> */}
 						</th>
-						<th className="fs-14 fw-normal py-3 border-top sticky-col-1" scope="col" style={{ paddingLeft: '1rem', width: "200px", minWidth: "200px" }}>{t("common:name")}</th>
+						<th className="fs-14 fw-normal py-3 border-top sticky-col-1" scope="col" style={{ paddingLeft: '1rem', width: "200px", minWidth: "200px" }}>{t("candidateWorkflow:candidate")}</th>
 						<th className="fs-14 fw-normal py-3 border-top" style={{ paddingLeft: '1rem', width: "160px", minWidth: "160px" }} scope="col">{t("candidateWorkflow:registration_number")}</th>
 						<th className="fs-14 fw-normal py-3 border-top" style={{ paddingLeft: '2rem' }} scope="col">{t("candidateWorkflow:caste")}</th>
 						<th className="fs-14 fw-normal py-3 border-top" scope="col" style={{ paddingLeft: '1.25rem' }}>{t("candidateWorkflow:combined_score")}</th>
@@ -204,13 +202,13 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 					{loading ? (
 						<tr>
 							<td colSpan="14" className="text-center py-4">
-								Loading candidates...
+								{t("loading_candidates")}
 							</td>
 						</tr>
 					) : paginatedOffers.length === 0 ? (
 						<tr>
 							<td colSpan="14" className="text-center py-4">
-								No candidates found
+								{t("no_candidates_found")}
 							</td>
 						</tr>
 					) : (
@@ -241,7 +239,7 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 									<p className="fw-normal fs-14 mb-0 py-2 text-muted">{c.score || "-"}</p>
 								</td>
 								<td className='align-content-center' style={{ paddingLeft: '1.25rem' }}>
-									<p className="fw-normal fs-14 mb-0 py-2 text-muted">{c.qnq ? (c.qnq === "QUALIFIED" ? "Q" : "NQ") : "-"}</p>
+									<p className="fw-normal fs-14 mb-0 py-2 text-muted">{c.qnq || "-"}</p>
 								</td>
 								<td className="align-content-center" style={{ paddingLeft: '1.25rem', alignContent: 'center' }}>
 									<span
@@ -271,16 +269,25 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 									<p className="fw-normal fs-14 mb-0 py-2 text-muted">{c.joiningDate}</p>
 								</td>
 								<td className='align-content-center sticky-col-action' style={{ paddingLeft: '1.5rem' }}>
-									<button
-										className="btn btn-sm btn-outline-secondary border-0"
-										onClick={() => {
-											setSelectedOffer(c);
-											setShowModal(true);
+									<OverlayTrigger
+										placement="bottom"
+										overlay={
+											<Tooltip id={`tooltip-${c.id}`}>
+												{t("common:view_details")}
+											</Tooltip>
+										}
+									>
+										<button
+											className="btn btn-sm btn-outline-secondary border-0"
+											onClick={() => {
+												setSelectedOffer(c);
+												setShowModal(true);
 										}}
 										style={{ backgroundColor: '#eff6ff' }}
 									>
 										<i className="bi bi-eye" style={{ color: 'black' }}></i>
 									</button>
+									</OverlayTrigger>
 								</td>
 							</tr>
 						))
@@ -297,7 +304,7 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 						value={pageSize}
 						onChange={(e) => setPageSize(Number(e.target.value))}
 					>
-						<option value={10}>10</option>
+						<option value={1}>1</option>
 						<option value={20}>20</option>
 						<option value={50}>50</option>
 					</select>

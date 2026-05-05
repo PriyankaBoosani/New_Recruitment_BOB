@@ -1,5 +1,5 @@
 // src/validators/jobgrade-validations.js
-import { requiredField, minLength, maxLength } from './common-validations';
+import { requiredField } from './common-validations';
 import i18n from 'i18next';
 
 const normalize = (s = '') => String(s).trim().toLowerCase();
@@ -41,10 +41,10 @@ export const validateGradeCode = (gradeCode) => {
 
 //   return null;
 // };
-const exceedsMaxDigits = (value, maxDigits) => {
-  const digitsOnly = String(value).replace(/\D/g, '');
-  return digitsOnly.length > maxDigits;
-};
+// const exceedsMaxDigits = (value, maxDigits) => {
+//   const digitsOnly = String(value).replace(/\D/g, '');
+//   return digitsOnly.length > maxDigits;
+// };
 export const validateMinSalary = (minSalary) => {
   let error = requiredField(minSalary, 'Minimum salary');
   if (error) return error;
@@ -166,8 +166,7 @@ export const validateJobGradeForm = (formData = {}, options = {}) => {
     errors
   };
 };
-
-export default {
+const jobgradeValidations = {
   validateScale,
   validateGradeCode,
   validateMinSalary,
@@ -175,4 +174,5 @@ export default {
   validateDescription,
   validateJobGradeForm
 };
+export default jobgradeValidations;
 

@@ -3,12 +3,13 @@ export const mapInterviewPanelsApiToUI = (list = []) => {
     id: panel.interviewPanelId,
     panelName: panel.panelName,
     panelType: panel.committee?.committeeName || "-",
+    centerName: panel.interviewCenter?.interviewCentre || "-",
 
     members:
       panel.panelMembers?.length > 0
         ? panel.panelMembers
-            .map(m => m.panelMember?.name)
-            .join(", ")
+          .map(m => m.panelMember?.name)
+          .join(", ")
         : "-",
 
     memberIds:
@@ -22,8 +23,9 @@ export const mapPanelToFormData = (panel) => {
     id: panel.interviewPanelId,
     name: panel.panelName || "",
     community: panel.committee?.interviewCommitteeId || "",
+    interviewCenterId: panel.interviewCenter?.interviewCentreId || "",
     members:
-       panel.panelMembers?.map(m => m.panelMember?.userId) || []
+      panel.panelMembers?.map(m => m.panelMember?.userId) || []
   };
 };
 
@@ -31,7 +33,8 @@ export const mapPanelToFormData = (panel) => {
 export const preparePanelPayload = (
   formData,
   communityOptions,
-  membersOptions
+  membersOptions,
+  centerOptions
 ) => {
   const selectedCommittee = communityOptions.find(
     c => c.id === formData.community
@@ -39,6 +42,10 @@ export const preparePanelPayload = (
 
   const selectedMembers = membersOptions.filter(m =>
     formData.members.includes(m.value)
+  );
+
+  const selectedCenter = centerOptions.find(
+    c => c.value === formData.interviewCenterId
   );
 
   return {
@@ -49,6 +56,15 @@ export const preparePanelPayload = (
       committeeName: selectedCommittee?.name || "",
       committeeDesc: "",
       interviewCommitteeId: selectedCommittee?.id
+    },
+
+    interviewCenter: {
+      interviewCentre: selectedCenter?.label || "",
+      organizationType: "Zonal Office",
+      zone: selectedCenter?.label || "",
+      zonalStateId: "",
+      alpha: "",
+      interviewCentreId: selectedCenter?.value
     },
 
     panelMembers: selectedMembers.map(m => ({

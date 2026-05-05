@@ -105,6 +105,7 @@ const InterviewPanelTable = ({
               {/* {sortConfig.key === "members" &&
                 (sortConfig.direction === "asc" ? " ▲" : " ▼")} */}
             </th>
+            {/* <th>Interview Center</th> */}
             <th>{t("common:actions")}</th>
           </tr>
         </thead>
@@ -112,7 +113,7 @@ const InterviewPanelTable = ({
         <tbody>
           {panels.length === 0 ? (
             <tr>
-              <td colSpan="5" style={{ textAlign: "center" }}>
+              <td colSpan="6" style={{ textAlign: "center" }}>
                 {t("interviewPanelCommittee:no_panels_found")}
               </td>
             </tr>
@@ -125,6 +126,7 @@ const InterviewPanelTable = ({
                 <td className="panel-name-cell" title={panel.panelName}>{panel.panelName}</td>
                 <td>{panel.panelType}</td>
                 <td>{panel.members}</td>
+                {/* <td>{panel.centerName}</td> */}
 
                 <td className="actions">
                   <div className="icon-group">

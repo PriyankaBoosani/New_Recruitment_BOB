@@ -4,6 +4,7 @@ export const mapStateDistribution = ({
   currentState,
   reservationCategories,
   disabilityCategories,
+  isProficientInLocalLanguage,
 }) => {
   const distributions = [];
 
@@ -33,8 +34,10 @@ export const mapStateDistribution = ({
 
   return {
     stateId: currentState.state,
+    cityId: currentState.city,
     totalVacancies: Number(currentState.vacancies),
     localLanguage: currentState.language,
+    isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
     positionCategoryDistributions: distributions,
   };
 };

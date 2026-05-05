@@ -28,5 +28,6 @@
   "failed_load_candidates": "उम्मीदवार लोड करने में विफल",
   "no_changes_to_save": "सहेजने के लिए कोई परिवर्तन नहीं",
   "absent_status_updated": "अनुपस्थिति स्थिति अपडेट हो गई",
-  "save_failed": "सहेजना विफल हुआ"
+  "save_failed": "सहेजना विफल हुआ",
+  "loading_candidates": "उम्मीदवार लोड हो रहे हैं..."
 }

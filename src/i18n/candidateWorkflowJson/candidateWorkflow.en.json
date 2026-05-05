@@ -6,6 +6,7 @@
     "employment_type": "Employment Type",
     "contract_period": "Contract Period",
     "years": "Years",
+    "months": "Months",
     "experience": "Experience",
     "eligibility_age": "Eligibility Age",
     "department": "Department",
@@ -29,7 +30,7 @@
     "oc": "OC",
     "id": "ID",
     "category_wise_reservation_state": "Category Wise Reservation (State-wise)",
-    "state_name": "State Name",
+    "state_name": "State",
     "unknown": "Unknown",
     "years_short": "yrs",
     "not_specified": "Not specified",
@@ -59,7 +60,7 @@
     "panel_details": "Panel Details",
     "interview_status": "Interview Status",
     "no_candidates_interview_pool": "No candidates in Interview Pool yet.",
-    "registration_number": "Registration Number",
+    "registration_number": "Application number",
     "caste": "Caste",
     "combined_score": "Combined Score",
     "qnq": "Q/NQ",
@@ -110,6 +111,7 @@
     "interviews_scheduled_successfully": "Interviews scheduled successfully",
     "bulk_scheduling_failed": "Bulk scheduling failed",
     "send_to_offer_pool": "Send to Offer Pool",
+    "Compensation_Request": "Compensation Request",
     "upload_offer_details_for_candidates": "Upload offer details for qualified candidates",
     "no_qualified_candidates_selected": "No qualified candidates selected",
     "candidates_sent_to_offer_pool": "Candidates sent to Offer Pool",
@@ -122,7 +124,7 @@
     "view_candidate_application_status": "View candidate details application status",
     "loading_candidate_details": "Loading candidate details...",
     "filter_by": "Filter by",
-    "filter_by_stage": "Filter by stage",
+    "filter_by_stage": "Filter by",
     "search_candidates": "Search candidates...",
     "schedule_interview": "Schedule Interview",
     "select_position_first": "Please select a position first",
@@ -172,6 +174,10 @@
     "failed_to_send_offer": "Failed to send offer",
     "must_be_greater_than_today": "Must be greater than today",
     "select_accept_before_first": "Select Accept Before date first",
-    "must_be_greater_than_accept_before": "Must be greater than Accept Before date"
-    
+    "must_be_greater_than_accept_before": "Must be greater than Accept Before date",
+    "view_zonal_comments": "View Zonal Comments",
+    "zonal_rejection_comment": "Zonal Rejection Comment",
+    "view_feedback_history": "View Feedback History",
+    "city_name": "City"
+
 }

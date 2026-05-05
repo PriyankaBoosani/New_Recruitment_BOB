@@ -1,7 +1,7 @@
 .modalimport .modal-header {
-	border-bottom: none;
+	border-bottom: 1px solid #ddd;
 	margin-bottom: 0px;
-	padding-bottom: 0px;
+	padding-bottom: 10px;
 }
 .f14{
     font-size: 0.875em;

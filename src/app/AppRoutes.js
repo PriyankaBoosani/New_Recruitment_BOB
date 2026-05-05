@@ -19,6 +19,7 @@ import JobPostingsList from "../modules/jobPosting/pages/JobPostingsList";
 import CreateRequisition from "../modules/jobPosting/pages/CreateRequisition";
 import GenericOrAnnexuresPage from "../modules/master/pages/GenericOrAnnexures/GenericOrAnnexuresPage";
 import CertificationPage from "../modules/master/pages/CertificationPage/CertificationPage";
+import EducationModal from "../modules/master/pages/EducationQualification/EducationQualificationPage";
 // import NonAdminRoute from "./NonAdminRoute";
 // import AdminRoute from "./AdminRoute";
 import AddPosition from "../modules/jobPosting/pages/AddPosition";
@@ -34,7 +35,8 @@ import InterviewerSchedule from "../modules/Interviewer/InterviewerSchedule"
 import ScheduleInterviews from "../modules/interviews/ScheduleInterviews";
 import Approvals from "../modules/Approvals/pages/RequisitionRequests";
 import ExtensionsRequests from "../modules/Approvals/pages/ExtensionsRequests";
-import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";// Lazy loaded components
+import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";
+
 import UnauthorizedPage from "./UnauthorizedPage"
 import PrivilegeRoute from "./PrivilegeRoute";
 import AuthCallback from "../modules/auth/pages/AuthCallback";
@@ -89,76 +91,76 @@ const AppRoutes = () => {
           <Route element={<PrivateRoute />}>
             <Route element={<Layout />}>
               <Route
-                  path="/users"
-                  element={
-                    <PrivilegeRoute privilege="Admin">
-                      <UserPage />
-                    </PrivilegeRoute>
-                  }
-                />
+                path="/users"
+                element={
+                  <PrivilegeRoute privilege="Admin">
+                    <UserPage />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
-                  path="/department"
-                  element={
-                    <PrivilegeRoute privilege="Admin">
-                      <DepartmentPage />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/department"
+                element={
+                  <PrivilegeRoute privilege="Admin">
+                    <DepartmentPage />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
-                  path="/location"
-                  element={
-                    <PrivilegeRoute privilege="Admin">
-                      <LocationPage />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/location"
+                element={
+                  <PrivilegeRoute privilege="Admin">
+                    <LocationPage />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
-                  path="/jobgrade"
-                  element={
-                    <PrivilegeRoute privilege="Admin">
-                      <JobGradePage />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/jobgrade"
+                element={
+                  <PrivilegeRoute privilege="Admin">
+                    <JobGradePage />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
-                  path="/position"
-                  element={
-                    <PrivilegeRoute privilege="Admin">
-                      <PositionPage />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/position"
+                element={
+                  <PrivilegeRoute privilege="Admin">
+                    <PositionPage />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
-                  path="/category"
-                  element={
-                    <PrivilegeRoute privilege="Admin">
-                      <CategoryPage />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/category"
+                element={
+                  <PrivilegeRoute privilege="Admin">
+                    <CategoryPage />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
-                  path="/certification"
-                  element={
-                    <PrivilegeRoute privilege="Admin">
-                      <CertificationPage />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/certification"
+                element={
+                  <PrivilegeRoute privilege="Admin">
+                    <CertificationPage />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
-                  path="/document"
-                  element={
-                    <PrivilegeRoute privilege="Admin">
-                      <DocumentPage />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/document"
+                element={
+                  <PrivilegeRoute privilege="Admin">
+                    <DocumentPage />
+                  </PrivilegeRoute>
+                }
+              />
 
                 <Route
                   path="/generic-or-annexures"
@@ -167,7 +169,16 @@ const AppRoutes = () => {
                       <GenericOrAnnexuresPage />
                     </PrivilegeRoute>
                   }
-                />          
+                />   
+
+                 <Route
+                  path="/education-qualification"
+                  element={
+                    <PrivilegeRoute privilege="Admin">
+                      <EducationModal />
+                    </PrivilegeRoute>
+                  }
+                />       
                 {/* ---------- NON-ADMIN ONLY ROUTES ---------- */}
                 <Route
                   path="/job-posting"
@@ -178,104 +189,105 @@ const AppRoutes = () => {
                   }
                 />
 
-                <Route
-                  path="/job-posting/create-requisition"
-                  element={
-                    <PrivilegeRoute privilegesRequired={["JobPostings", "View Position"]}>
-                      <CreateRequisition />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/job-posting/create-requisition"
+                element={
+                  <PrivilegeRoute privilegesRequired={["JobPostings", "View Position"]}>
+                    <CreateRequisition />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
-                  path="/job-posting/:requisitionId/add-position"
-                  element={
-                      <PrivilegeRoute privilegesRequired={["JobPostings", "View Position"]}>
-                        <AddPosition />
-                      </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/job-posting/:requisitionId/add-position"
+                element={
+                  <PrivilegeRoute privilegesRequired={["JobPostings", "View Position"]}>
+                    <AddPosition />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
-                  path="/candidate-preview"
-                  element={
-                    <PrivilegeRoute privilegesRequired={["Candidate Pool", "Verification", "Interview"]}>
-                      <CandidatePreviewPage />
-                    </PrivilegeRoute>
-                  }
-                />
+             <Route
+  path="/candidate-preview"
+  element={
+    <PrivilegeRoute privilegesRequired={["Candidate Pool", "Verification", "Interview", "Compensation Pool"]}>
+      <CandidatePreviewPage />
+    </PrivilegeRoute>
+  }
+/>
 
                 <Route
                   path="/candidate-workflow"
                   element={
-                    <PrivilegeRoute privilege="Candidate Pool">
+                     <PrivilegeRoute privilegesRequired={["Candidate Pool", "Compensation Pool"]}>
+                   
                       <CandidateScreening />
                     </PrivilegeRoute>
                   }
                 />
 
-                <Route
-                  path="/candidate-verification"
-                  element={
-                    <PrivilegeRoute privilege="Verification">
-                      <CandidateVerification />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/candidate-verification"
+                element={
+                  <PrivilegeRoute privilege="Verification">
+                    <CandidateVerification />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
-                  path="/candidate-interviewer"
-                  element={
-                    <PrivilegeRoute privilege="Interview">
-                      <InterviewerSchedule />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/candidate-interviewer"
+                element={
+                  <PrivilegeRoute privilege="Interview">
+                    <InterviewerSchedule />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
-                  path="/interviewpanel"
-                  element={
-                    <PrivilegeRoute privilege="Committee Management">
-                      <InterviewPanel />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/interviewpanel"
+                element={
+                  <PrivilegeRoute privilege="Committee Management">
+                    <InterviewPanel />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
+              <Route
                   path="/schedule-interviews"
                   element={
-                    <PrivilegeRoute privilege="Interview">
+                    <PrivilegeRoute privilege="Interview Pool">
                       <ScheduleInterviews />
                     </PrivilegeRoute>
                   }
                 />
 
-                <Route
-                  path="/requisition-requests"
-                  element={
-                    <PrivilegeRoute privilege="Requisition Approval">
-                      <Approvals />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/requisition-requests"
+                element={
+                  <PrivilegeRoute privilegesRequired={["L1 Approval", "L2 Approval"]}>
+                    <Approvals />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
-                  path="/extension-requests"
-                  element={
-                    <PrivilegeRoute privilege="Extension Approval">
-                      <ExtensionsRequests />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/extension-requests"
+                element={
+                  <PrivilegeRoute privilegesRequired={["L1 Approval", "L2 Approval"]}>
+                    <ExtensionsRequests />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
-                  path="/committee-requests"
-                  element={
-                    <PrivilegeRoute privilege="Committee Approval">
-                      <CommitteeRequests />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/committee-requests"
+                element={
+                   <PrivilegeRoute privilegesRequired={["L1 Approval", "L2 Approval"]}>
+                    <CommitteeRequests />
+                  </PrivilegeRoute>
+                }
+              />
 
 
 

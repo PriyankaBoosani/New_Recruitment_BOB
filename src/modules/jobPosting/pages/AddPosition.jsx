@@ -19,6 +19,9 @@ import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisit
 import { toast } from "react-toastify";
 import ReservationSection from "../component/ReservationSection";
 import { useTranslation } from "react-i18next";
+import SelectIndentModal from "../component/SelectIndentModal";
+
+import masterApiService from "../../master/services/masterApiService";
 const AddPosition = () => {
     const { t } = useTranslation(["addPosition", "common", "validation"]);
     const renderError = (e) => {
@@ -65,7 +68,7 @@ const AddPosition = () => {
     const { createPosition, loading } = useCreateJobPosition();
     const { updatePosition } = useUpdateJobPosition();
     const masterData = useMasterData();
-    const { positions, employmentTypes, reservationCategories, disabilityCategories, educationTypes, qualifications, specializations, certifications, states, languages, stateLanguages } = masterData;
+    const { positions, employmentTypes, reservationCategories, disabilityCategories, educationTypes, qualifications, specializations, certifications, states, languages, stateLanguages, cities, documentTypes } = masterData;
 
     const [errors, setErrors] = useState({});
     const [showImportModal, setShowImportModal] = useState(false);
@@ -83,6 +86,7 @@ const AddPosition = () => {
     const [editingIndex, setEditingIndex] = useState(null);
     const [nationalCategories, setNationalCategories] = useState({});
     const [nationalDisabilities, setNationalDisabilities] = useState({});
+    const [isProficientInLocalLanguage, setIsProficientInLocalLanguage] = useState(false);
     const [currentState, setCurrentState] = useState({ state: "", vacancies: "", language: "", categories: {}, disabilities: {} });
     const [formData, setFormData] = useState({
         department: "", position: "", vacancies: "", minAge: "", maxAge: "",
@@ -90,8 +94,45 @@ const AddPosition = () => {
         mandatoryEducation: "", preferredEducation: "",
         mandatoryExperience: { years: "", months: "", description: "" },
         preferredExperience: { years: "", months: "", description: "" },
-        responsibilities: "", medicalRequired: "", enableStateDistribution: false
+        responsibilities: "", medicalRequired: "yes", enableStateDistribution: false,
+        cutoffDate: "", useMandatoryEducationLevelExperience: false,
+        usePreferredEducationLevelExperience: false
     });
+    const [isAgeRelRiotVictimFamily, setIsAgeRelRiotVictimFamily] = useState(false);
+    const [isAgeRelWdsWomen, setIsAgeRelWdsWomen] = useState(false);
+    const [indentCandidates, setIndentCandidates] = useState([]);
+
+    const [showIndentModal, setShowIndentModal] = useState(false);
+    const [selectedIndent, setSelectedIndent] = useState(null);
+
+    console.log("existingPosition", existingPosition);
+
+    // Initialize isProficientInLocalLanguage from existingPosition ROOT LEVEL
+    useEffect(() => {
+        if (existingPosition?.isProficientInLocalLanguage !== undefined) {
+            const value = existingPosition.isProficientInLocalLanguage;
+            setIsProficientInLocalLanguage(value === true || value === 'true' || value === 1 || value === '1');
+        } else {
+            setIsProficientInLocalLanguage(false);
+        }
+
+
+        setIsAgeRelRiotVictimFamily(
+            existingPosition?.isAgeRelRiotVictimFamily === true ||
+            existingPosition?.isAgeRelRiotVictimFamily === "true" ||
+            existingPosition?.isAgeRelRiotVictimFamily === 1
+        );
+
+        setIsAgeRelWdsWomen(
+            existingPosition?.isAgeRelWdsWomen === true ||
+            existingPosition?.isAgeRelWdsWomen === "true" ||
+            existingPosition?.isAgeRelWdsWomen === 1
+        );
+
+    }, [existingPosition]);
+
+
+
 
     const [educationData, setEducationData] = useState({
         mandatory: { educations: [], certificationIds: [], text: "" },
@@ -99,6 +140,10 @@ const AddPosition = () => {
     });
     const eduInitializedRef = useRef(false);
 
+    // Reset eduInitializedRef when mode changes to allow re-initialization
+    useEffect(() => {
+        eduInitializedRef.current = false;
+    }, [mode]);
 
     // --- EFFECTS ---
     useEffect(() => {
@@ -118,28 +163,43 @@ const AddPosition = () => {
             minAge: existingPosition.eligibilityAgeMin,
             maxAge: existingPosition.eligibilityAgeMax,
             employmentType: existingPosition.employmentType,
-            contractualPeriod:
-                existingPosition.employmentType?.toLowerCase().includes("contract")
-                    ? existingPosition.contractYears || ""
-                    : "",
+            // contractualPeriod:
+            //     existingPosition.employmentType?.toLowerCase().includes("contract")
+            //         ? existingPosition.contractYears || ""
+            //         : "",
             grade: existingPosition.gradeId,
             enableLocation: existingPosition.isLocationPreferenceEnabled,
             responsibilities: existingPosition.rolesResponsibilities,
             medicalRequired: existingPosition.isMedicalRequired ? "yes" : "no",
             enableStateDistribution: existingPosition.isLocationWise,
+            cutoffDate: existingPosition.cutoffDate || "",
             mandatoryExperience: {
                 years: Math.floor(existingPosition.mandatoryExperienceMonths / 12),
                 months: existingPosition.mandatoryExperienceMonths % 12,
                 description: existingPosition.mandatoryExperience,
+                educationLevelExperiences: Object.entries(existingPosition.mandatoryExpMonthsEduWise || {}).map(([educationLevel, months]) => ({
+                    educationLevel,
+                    years: Math.floor(months / 12),
+                    months: months % 12,
+                    isSaved: true
+                }))
             },
             preferredExperience: {
                 years: Math.floor(existingPosition.preferredExperienceMonths / 12),
                 months: existingPosition.preferredExperienceMonths % 12,
                 description: existingPosition.preferredExperience,
+                educationLevelExperiences: Object.entries(existingPosition.preferredExpMonthsEduWise || {}).map(([educationLevel, months]) => ({
+                    educationLevel,
+                    years: Math.floor(months / 12),
+                    months: months % 12,
+                    isSaved: true
+                }))
             },
             contractualPeriod: isContract
                 ? String(existingPosition.contractYears ?? "")
                 : "",
+            useMandatoryEducationLevelExperience: existingPosition.isMandatoryExpMonthsEduWise || false,
+            usePreferredEducationLevelExperience: existingPosition.isPreferredExpMonthsEduWise || false,
         });
         setApprovedBy(existingPosition.approvedBy || "");
         setIndentOthers(existingPosition.indentOthers || "");
@@ -170,6 +230,8 @@ const AddPosition = () => {
     }, [formData.employmentType, employmentTypes]);
 
     useEffect(() => {
+
+
         if (!existingPosition) return;
 
         if (
@@ -178,10 +240,14 @@ const AddPosition = () => {
             !specializations.length ||
             !certifications.length
         ) {
+            console.log('Education mapping useEffect - missing master data, returning');
             return;
         }
 
-        if (eduInitializedRef.current) return;
+        if (eduInitializedRef.current) {
+            console.log('Education mapping useEffect - already initialized, returning');
+            return;
+        }
 
         const mandatory = mapEduRulesToModalData(
             existingPosition.mandatoryEduRulesJson,
@@ -211,7 +277,6 @@ const AddPosition = () => {
                 text: existingPosition.preferredEducation || ""
             }
         });
-
 
         eduInitializedRef.current = true;
     }, [
@@ -244,33 +309,76 @@ const AddPosition = () => {
 
     // Handle State Distribution mapping
     useEffect(() => {
-        if (!existingPosition || !existingPosition.isLocationWise || !reservationCategories.length || !disabilityCategories.length) return;
-        const mappedStates = existingPosition.positionStateDistributions.map(sd => {
-            const categories = {}; const disabilities = {};
-            reservationCategories.forEach(c => (categories[c.code] = 0));
-            disabilityCategories.forEach(d => (disabilities[d.disabilityCode] = 0));
-            sd.positionCategoryDistributions.forEach(d => {
-                if (d.isDisability) {
-                    const dis = disabilityCategories.find(x => x.id === d.disabilityCategoryId);
-                    if (dis) disabilities[dis.disabilityCode] = d.vacancyCount;
-                } else {
-                    const cat = reservationCategories.find(x => x.id === d.reservationCategoryId);
-                    if (cat) categories[cat.code] = d.vacancyCount;
-                }
-            });
-            return {
-                positionStateDistributionId: sd.positionStateDistributionId,
-                state: sd.stateId, vacancies: sd.totalVacancies, language: sd.localLanguage,
-                categories, disabilities,
-                categoryDistributions: sd.positionCategoryDistributions.map(cd => ({
-                    positionCategoryDistributionId: cd.positionCategoryDistributionId,
-                    reservationCategoryId: cd.reservationCategoryId,
-                    disabilityCategoryId: cd.disabilityCategoryId,
-                    isDisability: cd.isDisability
-                }))
-            };
-        });
-        setStateDistributions(mappedStates);
+        const mapStates = async () => {
+            if (
+                !existingPosition ||
+                !existingPosition.isLocationWise ||
+                !reservationCategories.length ||
+                !disabilityCategories.length
+            ) return;
+
+            const mappedStates = await Promise.all(
+                existingPosition.positionStateDistributions.map(async (sd) => {
+
+                    // 🔥 FETCH cities for this state
+
+
+                    const cityObj = masterData.cities.find(
+                        c => String(c.id) === String(sd.cityId)
+                    );
+
+                    const cityName = cityObj?.name || "";
+
+                    // category mapping (same as your code)
+                    const categories = {};
+                    const disabilities = {};
+
+                    reservationCategories.forEach(c => (categories[c.code] = 0));
+                    disabilityCategories.forEach(d => (disabilities[d.disabilityCode] = 0));
+
+                    sd.positionCategoryDistributions.forEach(d => {
+                        if (d.isDisability) {
+                            const dis = disabilityCategories.find(x => x.id === d.disabilityCategoryId);
+                            if (dis) disabilities[dis.disabilityCode] = d.vacancyCount;
+                        } else {
+                            const cat = reservationCategories.find(x => x.id === d.reservationCategoryId);
+                            if (cat) categories[cat.code] = d.vacancyCount;
+                        }
+                    });
+
+                    return {
+                        positionStateDistributionId: sd.positionStateDistributionId,
+                        state: sd.stateId,
+                        city: sd.cityId,
+
+                        vacancies: sd.totalVacancies,
+                        language: sd.localLanguage,
+                        // 🔵 DO NOT store isProficientInLocalLanguage per-state - it's a root-level field
+                        // isProficientInLocalLanguage will be managed at AddPosition root level only
+                        categories,
+                        disabilities,
+                        categoryDistributions: sd.positionCategoryDistributions.map(cd => ({
+                            positionCategoryDistributionId: cd.positionCategoryDistributionId,
+                            reservationCategoryId: cd.reservationCategoryId,
+                            disabilityCategoryId: cd.disabilityCategoryId,
+                            isDisability: cd.isDisability
+                        }))
+                    };
+                })
+            );
+
+            setStateDistributions(mappedStates);
+
+            // Set root-level isProficientInLocalLanguage from ROOT LEVEL of existingPosition
+            if (existingPosition?.isProficientInLocalLanguage !== undefined) {
+                const value = existingPosition.isProficientInLocalLanguage;
+                setIsProficientInLocalLanguage(value === true || value === 'true' || value === 1 || value === '1');
+            } else {
+                setIsProficientInLocalLanguage(false);
+            }
+        };
+
+        mapStates();
     }, [existingPosition, reservationCategories, disabilityCategories]);
 
     // --- HANDLERS ---
@@ -336,27 +444,64 @@ const AddPosition = () => {
             }));
         }
         if (name === "vacancies") {
-            setErrors(prev => ({
+            setErrors(prev => ({ ...prev, vacancies: "", nationalDistribution: "" }));
+        }
+    };
+    const handleUseIndent = (pos) => {
+        if (pos === "CUSTOM") {
+            setSelectedIndent(null);
+
+            setFormData(prev => ({
                 ...prev,
-                vacancies: "",
-                nationalDistribution: ""
+                indentName: ""
             }));
-        } else {
-            setErrors(prev => ({
-                ...prev,
-                [name]: ""
-            }));
+
+            setExistingIndentPath(null);
+            setExistingIndentName(null);
+
+            setIndentFile(null);   // 🔥 IMPORTANT
+
+            setApprovedBy("");
+            setApprovedOn("");
+
+            setShowIndentModal(false);
+            return;
         }
 
+        // 🔥 EXISTING CASE
+        if (!pos) return;
+
+        setSelectedIndent(pos);
+
+        setFormData(prev => ({
+            ...prev,
+            indentName: pos.indentName,
+            minAge: pos.minAge,
+            maxAge: pos.maxAge,
+            grade: pos.gradeId,
+            responsibilities: pos.rolesResponsibilities
+        }));
+
+        setApprovedBy(pos.approvedBy);
+        setApprovedOn(pos.approvedOn);
+
+        setExistingIndentPath(pos.indentPath);
+        setExistingIndentName(pos.indentName);
+
+        setShowIndentModal(false);
     };
+
     const resetPositionDerivedFields = {
         minAge: "",
         maxAge: "",
         grade: "",
         responsibilities: "",
         mandatoryExperience: { years: "", months: "", description: "" },
-        preferredExperience: { years: "", months: "", description: "" }
+        preferredExperience: { years: "", months: "", description: "" },
+        useMandatoryEducationLevelExperience: false,
+        usePreferredEducationLevelExperience: false
     };
+
     const handleRejectPositionData = () => {
         setFormData(prev => ({
             ...prev,
@@ -383,19 +528,13 @@ const AddPosition = () => {
         setShowConfirmModal(false);
     };
 
-
     const onPositionSelect = (id) => {
-        // 🔥 If user selects "Select"
+        // If user selects "Select"
         if (!id) {
             setFormData(prev => ({
                 ...prev,
                 position: "",
-                minAge: "",
-                maxAge: "",
-                grade: "",
-                responsibilities: "",
-                mandatoryExperience: { years: "", months: "", description: "" },
-                preferredExperience: { years: "", months: "", description: "" }
+                ...resetPositionDerivedFields
             }));
 
             setErrors(prev => ({
@@ -425,7 +564,6 @@ const AddPosition = () => {
         setPendingPosition(selected);
         setShowConfirmModal(true);
     };
-
 
     const handleUsePositionData = () => {
         if (!pendingPosition) return;
@@ -552,8 +690,12 @@ const AddPosition = () => {
             qualifications,
             certifications,
             indentOthers,
-            stateDistributions: stateDistributions.filter(s => !s.__deleted)
+            isProficientInLocalLanguage,
+            stateDistributions: stateDistributions.filter(s => !s.__deleted),
+            isAgeRelRiotVictimFamily,
+            isAgeRelWdsWomen
         };
+        //console.log(payload);return false;
 
         try {
             if (isEditMode) {
@@ -574,13 +716,18 @@ const AddPosition = () => {
     const nationalCategoryTotal = Object.values(nationalCategories).reduce((a, b) => a + Number(b || 0), 0);
     const stateCategoryTotal = Object.values(currentState.categories || {}).reduce((a, b) => a + Number(b || 0), 0);
     const filteredLanguages = currentState.state
-        ? languages.filter(lang =>
-            stateLanguages.some(
-                sl =>
-                    sl.stateId === currentState.state &&
-                    sl.languageId === lang.id
-            )
-        )
+        ? stateLanguages
+            .filter(sl => String(sl.stateId) === String(currentState.state))
+            .map(sl => {
+                const lang = languages.find(
+                    l => String(l.id) === String(sl.languageId)
+                );
+
+                return lang
+                    ? { id: lang.id, name: lang.name }
+                    : null;
+            })
+            .filter(Boolean)
         : [];
 
     return (
@@ -637,11 +784,17 @@ const AddPosition = () => {
                         />
                         <ReservationSection
                             isViewMode={isViewMode} formData={formData} errors={errors} setErrors={setErrors} reservationCategories={reservationCategories}
-                            disabilityCategories={disabilityCategories} states={states} languages={languages} nationalCategories={nationalCategories} setNationalCategories={setNationalCategories} nationalDisabilities={nationalDisabilities}
+                            disabilityCategories={disabilityCategories} states={states} languages={languages} stateLanguages={stateLanguages} cities={cities} nationalCategories={nationalCategories} setNationalCategories={setNationalCategories} nationalDisabilities={nationalDisabilities}
                             setNationalDisabilities={setNationalDisabilities} nationalCategoryTotal={nationalCategoryTotal}
                             currentState={currentState} setCurrentState={setCurrentState} stateCategoryTotal={stateCategoryTotal}
                             filteredLanguages={filteredLanguages} stateDistributions={stateDistributions} setStateDistributions={setStateDistributions} editingIndex={editingIndex}
                             setEditingIndex={setEditingIndex} handleInputChange={handleInputChange} handleAddOrUpdateState={handleAddOrUpdateState}
+                            isProficientInLocalLanguage={isProficientInLocalLanguage} setIsProficientInLocalLanguage={setIsProficientInLocalLanguage}
+                            // ✅ UPDATED VARIABLES
+                            isAgeRelRiotVictimFamily={isAgeRelRiotVictimFamily}
+                            setIsAgeRelRiotVictimFamily={setIsAgeRelRiotVictimFamily}
+                            isAgeRelWdsWomen={isAgeRelWdsWomen}
+                            setIsAgeRelWdsWomen={setIsAgeRelWdsWomen}
                         />
 
 
@@ -665,8 +818,16 @@ const AddPosition = () => {
 
             <ImportModal show={showImportModal} onHide={() => setShowImportModal(false)} requisitionId={requisitionId} onSuccess={() => fetchPositions(requisitionId)} // optional but correct
             />
-            <EducationModal key={`${eduMode}-${showEduModal}`} show={showEduModal} mode={eduMode} initialData={educationData[eduMode]} educationTypes={educationTypes} qualifications={qualifications} specializations={specializations} certifications={certifications} onHide={() => setShowEduModal(false)} onSave={({ educations, certificationIds, text }) => { setEducationData(prev => ({ ...prev, [eduMode]: { educations, certificationIds, text } })); setErrors(prev => { const upd = { ...prev }; delete upd[`${eduMode}Education`]; return upd; }); }} />
+            {console.log('AddPosition - Passing to modal:', eduMode, educationData[eduMode])}
+            <EducationModal key={`${eduMode}-${showEduModal}`} show={showEduModal} mode={eduMode} initialData={educationData[eduMode]} educationTypes={educationTypes} qualifications={qualifications} specializations={specializations} certifications={certifications} onHide={() => setShowEduModal(false)} onSave={({ groups, certGroups, text }) => { setEducationData(prev => ({ ...prev, [eduMode]: { groups, certGroups, text } })); setErrors(prev => { const upd = { ...prev }; delete upd[`${eduMode}Education`]; return upd; }); }} />
             <ConfirmUsePositionModal show={showConfirmModal} onYes={handleUsePositionData} onNo={handleRejectPositionData}
+            />
+            <SelectIndentModal
+                show={showIndentModal}
+                onClose={() => setShowIndentModal(false)}
+                data={indentCandidates}
+                onSelect={handleUseIndent}
+                selectedIndent={selectedIndent}
             />
         </Container>
     );

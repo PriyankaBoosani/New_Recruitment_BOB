@@ -124,6 +124,7 @@ const { t } = useTranslation(["candidateWorkflow","common"]);
 			onHide={() => {
 				setShowScheduleModal(false);
 				setFile(null);
+				closeModal();
 			}}
 			centered
 			backdrop="static"

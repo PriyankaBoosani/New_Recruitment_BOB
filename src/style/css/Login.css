@@ -88,69 +88,13 @@
   cursor: pointer;
 }
 
-.login-button {
-  background-color: #ff6a00;
-  color: white;
-  width: 100%;
-  padding: 8px;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 20px;
-}
 
-.divider {
-  text-align: center;
-  color: #999;
-  margin-bottom: 20px;
-  font-size: 14px;
-}
-
-.google-button {
-  background-color: white;
-  color: #333;
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 25px;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  cursor: pointer;
-}
 
 .google-button img {
   width: 18px;
   height: 18px;
 }
 
-.register-link {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 14px;
-}
-
-.register-link a {
-  color: #ff6a00;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.back-button {
-  width: 80px;
-  font-size: 12px;
-  border: none;
-  background: none;
-  color: #414141;
-  /* margin-left: 9rem; */
-  margin-bottom: 1.5rem;
-  text-align: left;
-  padding-left: 0px;
-}
 
 /* Base layout */
 .login-container {

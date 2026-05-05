@@ -63,9 +63,10 @@ export const validateLocationForm = (formData = {}, options = {}) => {
 
   return { valid: Object.keys(errors).length === 0, errors };
 };
-
-export default {
+const locationValidations = {
   validateLocationForm,
   validateLocationName,
   validateCity
 };
+
+export default locationValidations;

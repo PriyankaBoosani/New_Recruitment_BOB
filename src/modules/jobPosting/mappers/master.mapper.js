@@ -79,8 +79,13 @@ export const mapMasterResponse = (masterData, certData) => {
       id: String(s.stateId),
       name: s.stateName,
       localLanguage: s.localLanguage,
+      cities: s.cities || [],
     })),
-
+    cities: (masterData.cities || []).map(c => ({
+      id: String(c.cityId),
+      name: c.cityName,
+      stateId: String(c.stateId)
+    })),
 
     languages: (masterData.languageMasters || []).map(l => ({
       id: String(l.languageId),

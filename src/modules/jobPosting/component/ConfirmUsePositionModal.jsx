@@ -12,7 +12,7 @@ const ConfirmUsePositionModal = ({ show, fields = [], onYes, onNo }) => {
         <p className="text-center"> {t("importModal:confirm_use_position")}</p>
 
         <div className="d-flex justify-content-center gap-3">
-          <Button variant="success" onClick={onYes}>
+          <Button variant="primary" onClick={onYes}>
            {t("importModal:yes")}
           </Button>
           <Button variant="outline-secondary" onClick={onNo}>

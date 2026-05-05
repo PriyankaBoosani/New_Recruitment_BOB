@@ -9,10 +9,12 @@ import { useTranslation } from "react-i18next";
 
 export const useJobRequisitions = ({
   year,
+  month,
   status,
   search,
   page = 0,
-  size = 0
+  size = 0,
+  departmentId
 }) => {
   const { t } = useTranslation("jobPostingsList");
   const [requisitions, setRequisitions] = useState([]);
@@ -30,7 +32,9 @@ export const useJobRequisitions = ({
         status,
         search,
         page,
-        size
+        size,
+        departmentId,
+        ...(month && { month: Number(month) })
       });
 
       const content = res?.data?.content || [];
@@ -53,7 +57,7 @@ export const useJobRequisitions = ({
       toast.error(t("requisition_delete_failed"));
     }
   };
-  const submitForApproval = async (jobRequisitionIds) => {
+  const submitForApproval = async (jobRequisitionIds, postingStatus) => {
     if (!jobRequisitionIds?.length) return;
 
     try {
@@ -61,7 +65,7 @@ export const useJobRequisitions = ({
 
       const res = await requisitionApiService.submitForApprovalFlow({
         jobRequisitionIds,
-        postingStatus: "L1_PENDING"
+        postingStatus
       });
 
       if (res?.success === false) {
@@ -116,7 +120,7 @@ export const useJobRequisitions = ({
 
   useEffect(() => {
     fetchRequisitions();
-  }, [year, status, search, page, size]);
+  }, [year, month, status, search, page, size, departmentId]);
 
   return {
     requisitions,

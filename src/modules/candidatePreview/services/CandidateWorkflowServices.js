@@ -1,4 +1,4 @@
-import { nodeApi, api, candidateApi} from "../../../core/service/apiService";
+import { nodeApi, api} from "../../../core/service/apiService";
  
 const candidateWorkflowServices = {
   /* Users (Node API) */
@@ -51,6 +51,45 @@ getInterviewCandidates: (payload) => {
     }
   );
 },
+
+getCompensationCandidates(payload) {
+  return api.post(
+    "/recruiter/candidate-compensation/get-compensation-candidates",
+    payload,
+    {
+      headers: {
+        "X-Client": "recruiter",
+      },
+    }
+  );
+},
+
+
+sendToCompensationPool: (payload) => {
+  return api.post(
+    "/recruiter/candidate-compensation/send-to-compensation-pool",
+    payload,
+    {
+      headers: {
+        "X-Client": "recruiter",
+      },
+    }
+  );
+},
+
+
+
+addCompensationDetails: (payload) => {
+  return api.post(
+    "/recruiter/candidate-compensation/add-compensation-details",
+    payload,
+    {
+      headers: { "X-Client": "recruiter" },
+    }
+  );
+},
+
+
 getPanelScores: (scheduledInterviewId) => {
   return api.get(
     `/recruiter/interview-pool/get-panel-scores/${scheduledInterviewId}`,

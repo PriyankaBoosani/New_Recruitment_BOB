@@ -12,19 +12,14 @@ import i18n from '../../i18n/i18n';
 import { persistor } from '../../store';
 import { NavLink } from "react-router-dom";
 import "../../style/css/header-pill.css";
-
-
-
-
+import { setRankEnabled } from '../providers/rankSlice';
 
 const Header = () => {
-
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [langOpen, setLangOpen] = useState(false);
-
 
   /* ===================== USER FROM REDUX ===================== */
   const userSlice = useSelector((state) => state.user);
@@ -32,6 +27,8 @@ const Header = () => {
 
   /* ===================== USER DROPDOWN STATE ===================== */
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showAdminMenu, setShowAdminMenu] = useState(false);
+  const [showApprovalsMenu, setShowApprovalsMenu] = useState(false);
   const dropdownRef = useRef(null);
 
   const closeMenu = () => setExpanded(false);
@@ -63,6 +60,7 @@ const Header = () => {
   /* ===================== LOGOUT ===================== */
   const handleLogout = () => {
     dispatch(clearUser());
+    dispatch(setRankEnabled(false));
     dispatch(setLanguage("en"));
     i18n.changeLanguage("en");
     persistor.purge();
@@ -79,15 +77,12 @@ const Header = () => {
   const isL1 = role === "l1";
   const isL2 = role === "l2";
 
-  
+
 
   //Privileges  console.log("ROLE FROM BACKEND:", user?.role);
-  console.log("ROLE NORMALIZED:", role);
-
   //Privileges
   const privileges = useSelector((state) => state.user.privileges);
 
-  console.log("PRIVILEGES:", privileges);
   // const privileges = useSelector((state) => state.user.privileges);
 
 
@@ -97,8 +92,9 @@ const Header = () => {
   const canVerification = privileges?.Verification;
   const canAdmin = privileges?.Admin;
   const canInterview = privileges?.["Interview"];
-  const canApprovals = privileges?.["Requisition Approval"] || privileges?.["Extension Approval"] || privileges?.["Committee Approval"];
-  const canViewPosition= privileges?.["View Position"];
+  const canApprovals =
+    privileges?.["L1 Approval"] || privileges?.["L2 Approval"];
+  const canViewPosition = privileges?.["View Position"];
   // {
   // 	"preveileges": {
   // 		"Committee Management": true,
@@ -150,7 +146,8 @@ const Header = () => {
     location.pathname.startsWith("/category") ||
     location.pathname.startsWith("/certification") ||
     location.pathname.startsWith("/document") ||
-    location.pathname.startsWith("/generic-or-annexures");
+    location.pathname.startsWith("/generic-or-annexures") ||
+    location.pathname.startsWith("/education-qualification");
 
   return (
     <header className="fixed-top">
@@ -333,7 +330,7 @@ const Header = () => {
                   to="/candidate-interviewer"
                   onClick={closeMenu}
                 >
-                  Interview
+                  {t("interview")}
                 </Nav.Link>
               )}
 
@@ -345,45 +342,10 @@ const Header = () => {
                   to="/candidate-verification"
                   onClick={closeMenu}
                 >
-                  Verification
+                  {t("verification")}
                 </Nav.Link>
               )}
-              {canApprovals && (
-                <NavDropdown
-                  title="Approvals"
-                  id="approvals-dropdown"
-                  className={`approvals-dropdown ${location.pathname.startsWith("/requisition-requests") ||
-                    location.pathname.startsWith("/extension-requests") ||
-                    location.pathname.startsWith("/committee-requests")
-                    ? "active-admin"
-                    : ""
-                    }`}
-                >
-                  <NavDropdown.Item
-                    as={NavLink}
-                    to="/requisition-requests"
-                    onClick={closeMenu}
-                  >
-                    Requisition Requests
-                  </NavDropdown.Item>
-
-                  <NavDropdown.Item
-                    as={NavLink}
-                    to="/extension-requests"
-                    onClick={closeMenu}
-                  >
-                    Extension Requests
-                  </NavDropdown.Item>
-
-                  <NavDropdown.Item
-                    as={NavLink}
-                    to="/committee-requests"
-                    onClick={closeMenu}
-                  >
-                    Committee Requests
-                  </NavDropdown.Item>
-                </NavDropdown>
-              )}
+             
 
 
               {canCommittee && (
@@ -391,6 +353,51 @@ const Header = () => {
                   {t("committee_management")}
                 </Nav.Link>
               )}
+
+               {/* {canApprovals && (
+                <NavDropdown
+                  id="approvals-dropdown"
+                  show={showApprovalsMenu}
+                  onMouseEnter={() => setShowApprovalsMenu(true)}
+                  onMouseLeave={() => setShowApprovalsMenu(false)}
+                  className={`approvals-dropdown ${location.pathname.startsWith("/requisition-requests") ||
+                    location.pathname.startsWith("/extension-requests") ||
+                    location.pathname.startsWith("/committee-requests")
+                    ? "active-admin"
+                    : ""
+                    }`}
+                  title={
+                    <>
+                      {t("approvals")}{" "}
+                      <FontAwesomeIcon icon={faChevronDown} className="ms-1" />
+                    </>
+                  }
+                >
+                  <NavDropdown.Item
+                    as={NavLink}
+                    to="/requisition-requests"
+                    onClick={closeMenu}
+                  >
+                    {t("requisition_requests")}
+                  </NavDropdown.Item>
+
+                  <NavDropdown.Item
+                    as={NavLink}
+                    to="/extension-requests"
+                    onClick={closeMenu}
+                  >
+                    {t("extension_requests")}
+                  </NavDropdown.Item>
+
+                  <NavDropdown.Item
+                    as={NavLink}
+                    to="/committee-requests"
+                    onClick={closeMenu}
+                  >
+                    {t("committee_requests")}
+                  </NavDropdown.Item>
+                </NavDropdown>
+              )} */}
               {/* {isRecruiter && (
                 <Nav.Link
                   as={NavLink}
@@ -412,7 +419,20 @@ const Header = () => {
 
               {/* Admin Menu */}
               {canAdmin && (
-                <NavDropdown title={t("admin")} id="admin-dropdown" className={isAdminRoute ? "active-admin" : ""}>
+                // <NavDropdown title={t("admin")} id="admin-dropdown" className={isAdminRoute ? "active-admin" : ""}>
+                <NavDropdown
+                  id="admin-dropdown"
+                  show={showAdminMenu}
+                  onMouseEnter={() => setShowAdminMenu(true)}
+                  onMouseLeave={() => setShowAdminMenu(false)}
+                  className={isAdminRoute ? "active-admin" : ""}
+                  title={
+                    <>
+                      {t("admin")}{" "}
+                      <FontAwesomeIcon icon={faChevronDown} className="ms-1" />
+                    </>
+                  }
+                >
                   <NavDropdown.Item as={Link} to="/users" onClick={closeMenu}>
                     {t("users")}
                   </NavDropdown.Item>
@@ -451,6 +471,11 @@ const Header = () => {
 
                   <NavDropdown.Item as={Link} to="/generic-or-annexures" onClick={closeMenu}>
                     {t("generic_or_annexures")}
+                  </NavDropdown.Item>
+
+
+                     <NavDropdown.Item as={Link} to="/education-qualification" onClick={closeMenu}>
+                    {t("education_qualification")}
                   </NavDropdown.Item>
                 </NavDropdown>
               )}

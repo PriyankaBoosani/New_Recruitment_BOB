@@ -1,10 +1,12 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const PageHeaderWithBacks = ({ title, subtitle }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation("common");
 
   const state = location.state || {};
 
@@ -19,13 +21,29 @@ const PageHeaderWithBacks = ({ title, subtitle }) => {
     const targetRoute = isZonalHr
       ? "/candidate-verification"
       : "/candidate-workflow";
-
+ console.log("HeaderWithBack - navigating to:", targetRoute, "with state:", state);
     navigate(targetRoute, {
       state: {
         requisition: state.requisition,
         position: state.position,
-        preloadedCandidates: state.candidates || [],
-        selectedDate: state.selectedDate
+        preloadedCandidates:   state.preloadedCandidates || state.candidates || [],
+        selectedDate: state.selectedDate,
+
+         // 🔥 ADD THESE
+    activeTab: state.activeTab,
+    requisitionId: state.requisitionId,
+    positionId: state.positionId,
+
+    page: state.page,
+    pageSize: state.pageSize,
+
+    // 🔥 INTERVIEW FIX (VERY IMPORTANT)
+    interviewPage: state.interviewPage,
+    interviewPageSize: state.interviewPageSize,
+
+    filters: state.filters,
+    searchText: state.searchText,
+    activeStage: state.activeStage
       }
     });
   };
@@ -48,7 +66,7 @@ const PageHeaderWithBacks = ({ title, subtitle }) => {
         onClick={handleBack}
       >
         <i className="bi bi-arrow-left"></i>
-        <span>Back</span>
+        <span>{t("back")}</span>
       </div>
 
       {/* TITLE */}

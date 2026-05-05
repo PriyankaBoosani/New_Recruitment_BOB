@@ -1,4 +1,4 @@
-import { requiredField, minLength, maxLength } from "./common-validations";
+import { requiredField} from "./common-validations";
 import i18n from "i18next";
 
 const normalize = (v = "") => String(v).trim().toLowerCase();
@@ -76,11 +76,10 @@ export const validateSpecialCategoryForm = (formData = {}, options = {}) => {
     errors
   };
 };
-
-
-export default {
+const specialCategoryValidations = {
   validateSpecialCategoryForm,
   validateSpecialCategoryCode,
   validateSpecialCategoryName,
   validateSpecialCategoryDescription
 };
+export default specialCategoryValidations;

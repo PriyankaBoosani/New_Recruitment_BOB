@@ -40,74 +40,89 @@ const PositionFormModal = ({
 
   /*  DEFAULTS ADDED */
   departments = [],
+
   jobGrades = [],
   fetchPositions,
   t
 }) => {
+const title = isViewing
+  ? t("view")
+  : isEditing
+  ? t("edit_position")
+  : t("add_position");
 
+const isCreateMode = !isViewing && !isEditing;
+
+const handleSubmit = (e) => {
+  if (isViewing) {
+    e.preventDefault();
+    onHide();
+  } else {
+    handleSave(e);
+  }
+};
+
+const renderFooter = () => {
   return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      size="lg"
-      centered
-      className="user-modal pos"
-      fullscreen="sm-down"
-      scrollable
-    >
-      <Modal.Header closeButton className="modal-header-custom">
-        <div>
-          <Modal.Title>
-            {isViewing
-              ? t("view")
-              : isEditing
-                ? t("edit_position")
-                : t("add_position")}
-          </Modal.Title>
+    <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
+      <Button variant="outline-secondary" onClick={onHide}>
+        {isViewing ? t("close") : t("cancel")}
+      </Button>
 
-          {!isEditing && !isViewing && (
-            <p className="mb-0 small text-muted para">
-              {t("choose_add_method")}
-            </p>
-          )}
+      {!isViewing && (
+        <Button variant="primary" type="submit">
+          {isEditing ? t("update") : t("save")}
+        </Button>
+      )}
+    </Modal.Footer>
+  );
+};
 
-        </div>
-      </Modal.Header>
+const renderContent = () => {
+  if (activeTab === "manual") {
+    return (
+      <Form onSubmit={handleSubmit}>
+        <Row className="g-3">
+              <Col xs={6}>
+                <Form.Group className="form-group">
+                  <Form.Label>
+                    {t("department")} <span className="text-danger">*</span>
+                  </Form.Label>
 
-      <Modal.Body className="p-4">
-        {!isViewing && !isEditing && (
-          <div className="tab-buttons mb-4">
-            <Button
-              variant={activeTab === "manual" ? "light" : "outline-light"}
-              className={`tab-button ${activeTab === "manual" ? "active" : ""}`}
-              onClick={() => setActiveTab("manual")}
-            >
-              {t("manual_entry")}
-            </Button>
+                  {isViewing ? (
+                    <div className="form-control-view">
+                      {departments.find(d => d.id === formData.departmentId)?.name || "-"}
 
-            <Button
-              variant={activeTab === "import" ? "light" : "outline-light"}
-              className={`tab-button ${activeTab === "import" ? "active" : ""}`}
-              onClick={() => setActiveTab("import")}
-            >
-              {t("import_file")}
-            </Button>
-          </div>
-        )}
+                    </div>
+                  ) : (
+                    <Form.Select
+                      name="departmentId"
+                      value={formData.departmentId}
+                      onChange={handleInputChange}
+                      className="form-control-custom"
+                      // disabled={isEditing}
+                    >
+                      <option value="">{t("select_department")}</option>
 
-        {activeTab === "manual" ? (
-          <Form
-            onSubmit={
-              isViewing
-                ? (e) => {
-                  e.preventDefault();
-                  onHide();
-                }
-                : handleSave
-            }
-            noValidate
-          >
-            <Row className="g-3">
+                      {departments.length > 0 &&
+                        departments.map(d => (
+
+                          <option
+                            key={d.id}
+                            value={d.id}
+                          >
+                            {d.name}
+                          </option>
+                        ))
+
+                      }
+
+                    </Form.Select>
+                  )}
+
+                  {!isViewing && <ErrorMessage>{errors.departmentId}</ErrorMessage>}
+                </Form.Group>
+              </Col>
               <Col xs={6}>
                 <Form.Group className="form-group">
                   <Form.Label>
@@ -369,33 +384,70 @@ const PositionFormModal = ({
               </Col>
 
             </Row>
-            <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
-              <Button variant="outline-secondary" onClick={onHide}>
-                {isViewing ? t("close") : t("cancel")}
-              </Button>
 
-              {!isViewing && (
-                <Button variant="primary" type="submit">
-                  {isEditing ? t("update") : t("save")}
-                </Button>
-              )}
-            </Modal.Footer>
+        {renderFooter()}
+      </Form>
+    );
+  }
 
+  return (
+    <PositionImportModal
+      t={t}
+      onClose={onHide}
+      onSuccess={async () => {
+        await fetchPositions();
+        setActiveTab("manual");
+      }}
+    />
+  );
+};
+  return (
+    <Modal
+      show={show}
+      onHide={onHide}
+      size="lg"
+      centered
+      className="user-modal pos"
+      fullscreen="sm-down"
+      scrollable
+    >
+      <Modal.Header closeButton className="modal-header-custom">
+        <div>
+          <Modal.Title>
+            {title}
+          </Modal.Title>
 
-          </Form>
+          {isCreateMode && (
+            <p className="mb-0 small text-muted para">
+              {t("choose_add_method")}
+            </p>
+          )}
 
-        ) : (
-          <>
-            <PositionImportModal
-              t={t}
-              onClose={onHide}
-              onSuccess={async () => {
-                await fetchPositions();   //  THIS is the key
-                setActiveTab("manual");
-              }}
-            />
-          </>
+        </div>
+      </Modal.Header>
+
+      <Modal.Body className="p-4">
+        {isCreateMode && (
+          <div className="tab-buttons mb-4">
+            <Button
+              variant={activeTab === "manual" ? "light" : "outline-light"}
+              className={`tab-button ${activeTab === "manual" ? "active" : ""}`}
+              onClick={() => setActiveTab("manual")}
+            >
+              {t("manual_entry")}
+            </Button>
+
+            <Button
+              variant={activeTab === "import" ? "light" : "outline-light"}
+              className={`tab-button ${activeTab === "import" ? "active" : ""}`}
+              onClick={() => setActiveTab("import")}
+            >
+              {t("import_file")}
+            </Button>
+          </div>
         )}
+
+        {renderContent()}
       </Modal.Body>
     </Modal>
   );

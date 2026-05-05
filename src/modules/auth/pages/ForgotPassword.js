@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import '../../../style/css/Login.css';
 import pana from "../../../assets/pana.png";
 import boblogo from "../../../assets/bob-logo1.jpg";
@@ -16,7 +15,7 @@ const ForgotPassword = () => {
     e.preventDefault();
     try {
    
-     const res = await loginApi.forgotPassword(email);
+     await loginApi.forgotPassword(email);
       alert("Password reset link sent. Check your email.");
       navigate("/login");
     } catch (error) {
@@ -47,7 +46,7 @@ const ForgotPassword = () => {
             ← Login
           </button>
 
-          <label>Enter your registered email:</label>
+          <label htmlFor="forgot-email">Enter your registered email:</label>
           <input
             type="email"
             value={email}

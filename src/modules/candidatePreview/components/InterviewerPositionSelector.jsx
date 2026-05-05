@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
 import Select, { components } from "react-select";
 import { useTranslation } from "react-i18next";
+import { Button } from "react-bootstrap";
+import { FiUpload } from "react-icons/fi";
 
 /* ================= CONTROL TOOLTIP ================= */
 
@@ -36,7 +38,9 @@ export default function InterviewerPositionSelector({
   selectedPosition,
   onRequisitionChange,
   onPositionChange,
-   closeCalendar
+   closeCalendar,
+     showImportBtn,
+  onImportClick
 }) {
 
   const selectStyles = {
@@ -125,8 +129,7 @@ export default function InterviewerPositionSelector({
   /* ================= UI ================= */
 
   return (
-    <div className="row g-3">
-
+<div className="row g-3 align-items-end">
       {/* ===== Requisition ===== */}
 
       <div className="col-md-4">
@@ -188,6 +191,22 @@ export default function InterviewerPositionSelector({
           onMenuOpen={() => closeCalendar?.()} 
         />
       </div>
+
+
+
+      {/* ===== IMPORT BUTTON ===== */}
+{/* <div className="col-md-4 d-flex justify-content-end align-items-end">
+  {showImportBtn && (
+    <Button
+      onClick={onImportClick}
+      className="add-panels-btn d-flex align-items-center gap-2"
+      
+    >
+      <FiUpload />
+      {t("interviewDay:import_data")}
+    </Button>
+  )}
+</div> */}
 
     </div>
   );

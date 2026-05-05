@@ -2,8 +2,9 @@
     "page_title": "All Requisitions",
     "create_new_requisition": "Create New Requisition",
     "year_label": "Year",
-    "search_placeholder": "Search requisitions by id, title, department...",
+    "search_placeholder": "Search requisitions by id, title",
     "status_all": "All Status",
+    "all_departments": "All Departments",
     "status_new": "New",
     "status_approved": "Approved",
     "select_all": "Select All",
@@ -26,7 +27,9 @@
     "delete_position_title": "Delete Position",
     "delete_position_message": "Are you sure you want to delete this position?",
     "submit_confirm_title": "Direct Approval Confirmation",
+    "submit_confirm_title_approve": "Approval Confirmation",
     "submit_confirm_message": "This action will directly approve the selected requisition(s). Are you sure you want to continue?",
+    "submit_confirm_message_approve": "This action will approve the selected requisition(s). Are you sure you want to continue?",
     "approve": "Approve",
     "requisition_count": "{{count}} requisition(s)",
     "no_selected": "No requisitions selected for the current year.",
@@ -55,5 +58,15 @@
     "status_l1_pending": "L1 Pending",
     "status_l1_rejected": "L1 Rejected",
     "status_l2_rejected": "L2 Rejected",
-    "years_fetch_failed": "Failed to fetch years."
+    "years_fetch_failed": "Failed to fetch years.",
+
+    
+    "requisitionRequests": "Requisition Requests",
+    "review_and_approve_or_reject_requisition_requests": "Review and approve or reject requisition requests",
+    "reject": "Reject",
+    "approved_successfully": "Approved successfully",
+    "failed_to_approve": "Failed to approve",
+    "rejected_successfully": "Rejected successfully",
+    "approved_failed": "Approved failed"
+  
 }

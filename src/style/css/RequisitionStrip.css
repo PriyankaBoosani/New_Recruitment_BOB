@@ -11,15 +11,11 @@
 }
 
 .requisition-strip-no-card {
-  /* background: #ffffff; */
-  /* border: 1px solid #e3e6ef; */
   border-radius: 8px;
   padding: 14px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* margin-top: 12px; */
-  /* margin-bottom: 14px; */
 }
 
 /* LEFT SIDE */

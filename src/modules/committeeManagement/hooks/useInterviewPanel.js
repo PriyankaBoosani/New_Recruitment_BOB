@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 import masterApiService from "../../master/services/masterApiService";
 import committeeManagementService from "../services/committeeManagementService";
@@ -11,7 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 export const useInterviewPanel = () => {
-    const { t } = useTranslation(["interviewPanelCommittee", "common"]);
+  const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   const [panels, setPanels] = useState([]);
   const [communityOptions, setCommunityOptions] = useState([]);
   const [membersOptions, setMembersOptions] = useState([]);
@@ -20,7 +20,8 @@ export const useInterviewPanel = () => {
   const [formData, setFormData] = useState({
     name: "",
     community: "",
-    members: []
+    members: [],
+   // interviewCenterId: ""
   });
 
   const [errors, setErrors] = useState({});
@@ -31,9 +32,10 @@ export const useInterviewPanel = () => {
   const [size, setSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [activeTab, setActiveTab] = useState("MANAGE");
+  const [centerOptions, setCenterOptions] = useState([]);
 
   const [showErrorModal, setShowErrorModal] = useState(false);
-const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   /* ================= search ================= */
   const [search, setSearch] = useState({
@@ -108,9 +110,10 @@ const [errorMessage, setErrorMessage] = useState("");
     try {
       setLoading(true);
 
-      const [commRes, memRes] = await Promise.all([
+      const [commRes, memRes, centerRes] = await Promise.all([
         masterApiService.getMasterDropdownData(),
-        committeeManagementService.getAllusers()
+        committeeManagementService.getPanelMembers(),
+        masterApiService.getAllInterviewCenters()
       ]);
 
       setCommunityOptions(
@@ -118,6 +121,16 @@ const [errorMessage, setErrorMessage] = useState("");
           id: c.interviewCommitteeId,
           name: c.committeeName
         }))
+      );
+      setCenterOptions(
+        (centerRes?.data || [])
+          .sort((a, b) =>
+            a.interviewCentre.localeCompare(b.interviewCentre)
+          )
+          .map(c => ({
+            value: c.interviewCentreId,
+            label: c.interviewCentre
+          }))
       );
 
       setMembersOptions(mapInterviewMembersApi(memRes));
@@ -130,13 +143,15 @@ const [errorMessage, setErrorMessage] = useState("");
     }
   }, [t]);
 
+
+
   /* ================= VALIDATION ================= */
 
   const validatePanelForm = () => {
     const newErrors = {};
 
     if (!formData.name?.trim()) {
-     newErrors.name = "panel_name_required";
+      newErrors.name = "panel_name_required";
     }
     else if (formData.name.trim().length > 200) {
       newErrors.name = "panel_name_max";
@@ -149,6 +164,10 @@ const [errorMessage, setErrorMessage] = useState("");
     if (!formData.members || formData.members.length === 0) {
       newErrors.members = "member_required";
     }
+
+    // if (!formData.interviewCenterId) {
+    //   newErrors.interviewCenterId = "interview_center_required";
+    // }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -176,7 +195,8 @@ const [errorMessage, setErrorMessage] = useState("");
     const payload = preparePanelPayload(
       cleanedFormData,
       communityOptions,
-      membersOptions
+      membersOptions,
+      centerOptions
     );
 
     try {
@@ -189,9 +209,9 @@ const [errorMessage, setErrorMessage] = useState("");
 
 
         if (!res?.success) {
-          
-         // toast.error(res?.message || "Panel name already exists for selected committee");
-         setErrorMessage(
+
+          // toast.error(res?.message || "Panel name already exists for selected committee");
+          setErrorMessage(
             res?.message || t("panel_exists_for_committee")
           );
           setShowErrorModal(true);
@@ -205,8 +225,8 @@ const [errorMessage, setErrorMessage] = useState("");
         const res = await masterApiService.addInterviewPanel(payload);
 
         if (!res?.success) {
-         // toast.error(res?.message || "Failed to create panel");
-         setErrorMessage(
+          // toast.error(res?.message || "Failed to create panel");
+          setErrorMessage(
             res?.message || t("failed_create_panel")
           );
           setShowErrorModal(true);
@@ -309,6 +329,58 @@ const [errorMessage, setErrorMessage] = useState("");
 
   }, [activeTab]);
 
+  /* ================= BULK IMPORT ================= */
+  const bulkAddPanels = async (file) => {
+    setLoading(true);
+
+    try {
+      const res = await committeeManagementService.bulkAddPanels(file) || {};
+
+      if (!res.success) {
+        return {
+          success: false,
+          error: res.message || "Validation failed",
+          details: res.data || []
+        };
+      }
+
+      //await fetchPanels();
+      toast.success(res.message || "Panels imported successfully");
+
+      return { success: true };
+
+    } catch (err) {
+      toast.error("Unexpected server error");
+
+      return {
+        success: false,
+        error: "Unexpected server error"
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //////////////
+
+  const downloadPanelTemplate = async () => {
+    try {
+      const res = await committeeManagementService.downloadPanelTemplate();
+      const blob = res.data;
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'ImportPanels_template.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Download failed:', err);
+      toast.error(t("interviewPanelCommittee:download_error") || 'Failed to download template');
+    }
+  };
+
   // useEffect(() => {
   //   fetchPanels();
   // }, [fetchPanels]);
@@ -322,6 +394,7 @@ const [errorMessage, setErrorMessage] = useState("");
 
     communityOptions,
     membersOptions,
+    centerOptions,
 
     formData,
     setFormData,
@@ -334,6 +407,7 @@ const [errorMessage, setErrorMessage] = useState("");
     handleDelete,
     handleEdit,
     initData,
+    fetchPanels,
 
     page,
     setPage,
@@ -355,7 +429,10 @@ const [errorMessage, setErrorMessage] = useState("");
     setActiveTab,
     showErrorModal,
     setShowErrorModal,
-    errorMessage
+    errorMessage,
+    bulkAddPanels,
+    downloadPanelTemplate,
+
 
   };
 };

@@ -1,7 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Person, FileText } from "react-bootstrap-icons";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { OverlayTrigger, Popover, Tooltip } from "react-bootstrap";
+import I_icon from '../../../assets/I_icon.png';
+
+
 import { useTranslation } from "react-i18next";
 
 export default function CandidatePool({
@@ -13,13 +16,16 @@ export default function CandidatePool({
   loading,
   page,
   pageSize,
+  filters,
   totalElements,
   onPageChange,
   onPageSizeChange,
   selectedPositionId,
   requisition,
   position,
-  selectedRequisitionId
+  selectedRequisitionId,
+  isRankEnabled,
+  hasLocationData,
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const STATUS_CLASS_MAP = {
@@ -93,6 +99,100 @@ export default function CandidatePool({
     if (sortConfig.key !== key) return "↕";
     return sortConfig.direction === "asc" ? "▲" : "▼";
   };
+  const getLevelFrom100 = (val) => {
+    if (val >= 75) return { label: "Strong", color: "green" };
+    if (val >= 50) return { label: "Moderate", color: "orange" };
+    return { label: "Weak", color: "red" };
+  };
+
+
+  const renderPopover = (c) => {
+    const scoreMeta = getLevelFrom100(c.finalScore);
+    return (
+      <Popover className="rank-popover">
+        <div className="rank-header">
+          Candidate Analysis - {c.name}
+        </div>
+
+        <div className="rank-body">
+
+          {/* 🔥 FINAL SCORE FIRST */}
+          <div className="final-score">
+            <p className="m-0 p-0 greenfin">Final Score</p>
+            <div className="score">{c.finalScore}%</div>
+            <div className={`score-label ${scoreMeta.color}`}>
+              {scoreMeta.label}
+            </div>
+          </div>
+
+          <hr />
+
+          {/* ✅ SCORE BREAKDOWN */}
+          <div className="section">
+            <div className="section-header">
+              <span>Score Details</span>
+              <span className="weight-header">Weightage</span>
+            </div>
+
+            <div className="item">
+              <span className="dot green"></span>
+
+              <span className="label">
+                Education: <strong>{c.educationScore}%</strong>
+              </span>
+
+              <span className="weight">25%</span>
+            </div>
+
+            <div className="item">
+              <span className="dot green"></span>
+
+              <span className="label">
+                Experience: <strong>{c.experienceScore}%</strong>
+              </span>
+
+              <span className="weight">25%</span>
+            </div>
+
+
+          </div>
+
+          <hr />
+
+          {/* ⚠️ RISK SECTION */}
+          <div className="section">
+            <div className="section-header">
+              <span>Areas for Review</span>
+              <span className="weight-header">Weightage</span>
+            </div>
+
+
+            <div className="item">
+              <span className="dot yellow"></span>
+
+              <span className="label">Education Similarity: <strong>{c.educationSimilarity}%</strong>
+              </span>
+
+              <span className="weight">25%</span>
+            </div>
+
+            <div className="item">
+              <span className="dot yellow"></span>
+
+              <span className="label">Experience Similarity: <strong>{c.experienceSimilarity}%</strong>
+              </span>
+
+              <span className="weight">25%</span>
+            </div>
+
+          </div>
+
+        </div>
+      </Popover >
+    );
+  };
+
+  const columnCount = hasLocationData ? 7 : 6;
 
   /* ---------- Render ---------- */
 
@@ -115,13 +215,13 @@ export default function CandidatePool({
                 {t("candidateWorkflow:candidate")} {sortIcon("name")}
               </th>
 
-              {/* <th className="fs-14 fw-normal py-3" onClick={() => requestSort("rank")} role="button">
-                Rank {sortIcon("rank")}
+              <th className="fs-14 fw-normal py-3" role="button">
+                Rank
               </th>
 
-							<th className="fs-14 fw-normal py-3" onClick={() => requestSort("score")} role="button">
+              <th className="fs-14 fw-normal py-3" onClick={() => requestSort("score")} role="button">
                 Score {sortIcon("score")}
-              </th> */}
+              </th>
 
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("experienceMonths")} role="button">
                 {t("candidateWorkflow:experience")} {sortIcon("experienceMonths")}
@@ -131,9 +231,11 @@ export default function CandidatePool({
                 {t("candidateWorkflow:status")}
               </th>
 
-              <th className="fs-14 fw-normal py-3">
-                {t("common:location")}
-              </th>
+              {hasLocationData && (
+                <th className="fs-14 fw-normal py-3">
+                  {t("common:location")}
+                </th>
+              )}
 
               <th className="fs-14 fw-normal py-3">
                 {t("common:category")}
@@ -146,13 +248,13 @@ export default function CandidatePool({
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="9" className="text-center py-4">
+                <td colSpan="11" className="text-center py-4">
                   {t("candidateWorkflow:loading_candidates")}
                 </td>
               </tr>
             ) : sortedCandidates.length === 0 ? (
               <tr>
-                <td colSpan="9" className="text-center py-4">
+                <td colSpan="11" className="text-center py-4">
                   {t("candidateWorkflow:no_candidates_found")}
                 </td>
               </tr>
@@ -174,13 +276,44 @@ export default function CandidatePool({
                     </p>
                   </td>
 
-                  {/* <td className="align-content-center">
-									<p className="fw-normal fs-14 mb-0">{c?.rank || "-"}</p>
-								</td>
 
-								<td className="align-content-center">
-									<p className="fw-normal fs-14 mb-0">{c?.score || "-"}</p>
-								</td> */}
+
+
+                  <td className="align-content-center">
+                    <p className="fw-normal fs-14 mb-0">{c?.rank || "-"}</p>
+                  </td>
+
+                  <td className="align-content-center">
+                    <div className="rank-cell">
+                      <span className="rank-value fw-normal fs-14 mb-0">{c?.finalScore || "-"}</span>
+
+
+                      {isRankEnabled && (
+                        <OverlayTrigger
+                          trigger="click"
+                          placement="auto"
+                          rootClose
+                          overlay={renderPopover(c)}
+                          popperConfig={{
+                            modifiers: [
+                              {
+                                name: "offset",
+                                options: {
+                                  offset: [0, 12],
+                                },
+                              },
+                            ],
+                          }}
+                        >
+                          <img
+                            src={I_icon}
+                            alt="info_icon"
+                            className="info-icon"
+                          />
+                        </OverlayTrigger>
+                      )}
+                    </div>
+                  </td>
 
                   <td className="align-content-center">
                     {/* <p className="fw-normal fs-14 mb-0">{(c.experienceMonths / 12).toFixed(1)} {t("candidateWorkflow:years")}</p> */}
@@ -201,10 +334,12 @@ export default function CandidatePool({
                       )} */}
                     </span>
                   </td>
-
-                  <td className="align-content-center">
-                    <p className="fw-normal fs-14 mb-0">{c.location}</p>
-                  </td>
+                  
+                  {hasLocationData && (
+                    <td className="align-content-center">
+                      <p className="fw-normal fs-14 mb-0">{c.location}</p>
+                    </td>
+                  )}
 
                   <td className="align-content-center">
                     <p className="fw-normal fs-14 mb-0">{c.categoryName}</p>
@@ -217,9 +352,12 @@ export default function CandidatePool({
                     >
                       <Person
                         className="me-3 cursor-pointer"
-                        onClick={() =>
+                        onClick={() =>{
+
+                          
                           navigate("/candidate-preview", {
                             state: {
+                              from: "/candidate-workflow",
                               candidate: c,
                               positionId: selectedPositionId,
                               requisitionId: selectedRequisitionId,
@@ -235,11 +373,18 @@ export default function CandidatePool({
                                 ? {
                                   positionId: position.positionId,
                                   positionName: position.positionName,
+                                  isLocationWise: position.isLocationWise,
                                 }
                                 : null,
                               activeTab: "CANDIDATE_POOL",
+                              isRankEnabled,
+
+                              //ADD THESE
+                              page,
+                              pageSize,
+                              filters,
                             },
-                          })
+                          })}
                         }
                       />
                     </OverlayTrigger>
@@ -340,6 +485,13 @@ export default function CandidatePool({
                   onClick={() =>
                     navigate("/candidate-preview", {
                       state: {
+                        from: "/candidate-workflow",
+                        isRankEnabled,
+                        // 🔥 ADD 
+                        activeTab: "CANDIDATE_POOL",
+                        page,
+                        pageSize,
+                        filters,
                         candidate: c, positionId: selectedPositionId, requisitionId: selectedRequisitionId,
                         requisition: requisition
                           ? {

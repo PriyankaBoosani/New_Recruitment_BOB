@@ -1,7 +1,7 @@
 .job-postings-page {
   padding: 30px;
   background: #f8f9fb;
-  min-height: 100vh;
+  /* min-height: 100vh; */
 }
 
 .page-title {
@@ -78,11 +78,13 @@
 }
 
 .bulk-actions {
-  background: #fff;
-  padding: 12px;
-  border-radius: 8px;
-  margin-left: 0px;
-  margin-right: 0px;
+	background: #fff;
+	padding: 12px;
+	border-radius: 8px;
+	margin-left: 0px;
+	margin-right: 0px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	border: 1px solid #ACBED4;
 }
 
 .selectall {
@@ -110,6 +112,7 @@
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #ACBED4;
 }
 
 .subbtn {
@@ -186,6 +189,7 @@
 .icon-22 {
   width: 22px;
   height: 22px;
+  border-radius: 5px;
 }
 
 /* .job-postings-page .req-code {
@@ -220,10 +224,13 @@
   text-overflow: ellipsis;
   word-wrap: anywhere;
 }
-
+.accordion-arrow-position{
+  color:#fff !important;
+  margin-right: -10px;
+}
 .job-postings-page .depname {
-  color: #162B75;
-  font-size: 1em;
+  color: #fff;
+  font-size: 0.85em;
   font-weight: 600;
 }
 
@@ -249,7 +256,9 @@
 
 .actions .icon-btn {
   margin-left: 8px;
-  background: #EFF6FF;
+  background: #fff;
+  border: 1px solid #6679BC;
+  border-radius: 20% !important;
 }
 
 .icon-23 {
@@ -269,7 +278,7 @@
 
 .icon-19 {
   width: 19px;
-  height: 19px;
+  /* height: 19px; */
 }
 
 /* Responsive */
@@ -295,23 +304,28 @@
 }
 
 .accordion-body {
-  background: #f9fbff;
-  border-radius: 8px;
-  padding: 16px;
+  /* background: #f9fbff; */
+  /* border-radius: 8px; */
+  padding: 20px 15px 0;
+ border-top: 1px solid #ddd;
 }
 
 .department-card {
   background: #fff;
-  border-radius: 10px;
-  padding: 12px;
-  border: 1px solid #e6ecf5;
+  /* border-radius: 10px; */
+  /* padding: 15px 20px; */
+  border: 1px solid #ddd;
+  color:#fff;
+  
 }
 
 .position-card-inner {
-  border: 1px solid #eef2f7;
+  border: 1px solid #ACBED4;
   border-radius: 12px;
   padding: 16px 20px;
-  background: #fff;
+  background: #F0F7FF;
+  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
+  margin: 15px 20px;
 }
 
 /* 🔑 SINGLE LINE HEADER */
@@ -326,7 +340,7 @@
   font-size: 1em;
   flex: 1;
   color: #162B75;
-  font-weight: 600;
+  font-weight: 500;
 
 }
 
@@ -334,12 +348,12 @@
 .position-meta-inline {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
   margin-right: 100px;
 }
 
 .position-meta-inline span {
-  font-weight: 400;
+  font-weight: normal;
   font-size: 0.875em;
   color: #404040;
 }
@@ -353,17 +367,23 @@
 /* DETAILS BELOW */
 .position-details {
   /* margin-top: 10px; */
-  font-size: 0.875em;
+  font-size: 0.85em;
   color: #404040;
-  font-weight: 400;
+  font-weight: normal;
 }
-
+.position-details span{
+  font-weight: 500;
+  color: #404040;
+}
 .position-details strong {
   font-weight: 600;
 }
 
 .position-card-inner .icon-btn {
-  background: #EFF6FF;
+  background: #fff;
+  margin-right: -8px;
+  border: 1px solid #6679BC;
+  border-radius:20% !important;
 }
 
 @media (max-width: 768px) {
@@ -378,7 +398,9 @@
     margin-right: 0px;
   }
 }
-
+.position-meta-inline span b{
+  font-weight: 500;;
+}
 .requisition-card {
   margin-bottom: 1rem;
   border-radius: 8px;
@@ -604,4 +626,14 @@
 .icon-16his{
   width: 20px;
   height: 20px;
+}
+
+/* css wittern by Veeresh */
+.department-header{
+  /* border-bottom: 1px solid #ddd; */
+    /* padding-bottom: 10px; */
+    padding: 5px 20px;
+    background: #6679BC;
+    /* border-radius: 10px 10px 0 0; */
+   
 }

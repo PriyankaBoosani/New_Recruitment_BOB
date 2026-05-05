@@ -18,8 +18,10 @@ export default function InterviewPool({
   onPageSizeChange,
   page,
   pageSize,
+  filters,
   totalElements,
-  onOpenFeedback
+  onOpenFeedback,
+  onOpenZonalComments
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const navigate = useNavigate();
@@ -92,7 +94,7 @@ export default function InterviewPool({
   };
 
   return (
-    <div className="card-body p-0">
+    <div className="card-body p-0 interview-pool">
       <table className="table table-hover mb-0">
         <thead className="bg-light">
           <tr>
@@ -118,7 +120,7 @@ export default function InterviewPool({
           {candidates.length === 0 ? (
             <tr>
               <td colSpan="9" className="text-center py-4 text-muted fs-14">
-               {t("candidateWorkflow:no_candidates_interview_pool")}
+                {t("candidateWorkflow:no_candidates_interview_pool")}
               </td>
             </tr>
           ) : (
@@ -144,12 +146,30 @@ export default function InterviewPool({
                 <td className="fs-14 align-content-center">{c.panel}</td>
 
                 <td className="align-content-center">
-                  <span
-                    className={`round_badge px-3 py-1 fs-12 rounded text-white ${STATUS_CLASS_MAP[c.status] || "bg-secondary"
-                      }`}
-                  >
-                    {formatStatus(c.status)}
-                  </span>
+                  <div className="d-flex align-items-center gap-2">
+
+                    <span
+                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${STATUS_CLASS_MAP[c.status] || "bg-secondary"
+                        }`}
+                    >
+                      {formatStatus(c.status)}
+                    </span>
+
+                    {["ZONAL_REJECTED", "PROVISIONALLY_APPROVED"].includes(c.status) && (
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={<Tooltip>{t("candidateWorkflow:view_zonal_comments")}</Tooltip>}
+                      >
+                        <img
+                          src={I_icon}
+                          alt="zonal-comment"
+                          className="infoicon-16 cursor-pointer"
+                          onClick={() => onOpenZonalComments(c.zonalHrComments)}
+                        />
+                      </OverlayTrigger>
+                    )}
+
+                  </div>
                 </td>
 
                 <td className="fs-14 align-content-center">
@@ -162,7 +182,12 @@ export default function InterviewPool({
                       className="cursor-pointer text-danger fw-bold"
                       onClick={() => onOpenFeedback(c.id)}
                     >
-                      < img src={I_icon} alt="feedback" className="infoicon-16" />
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={<Tooltip>{t("candidateWorkflow:view_feedback_history")}</Tooltip>}
+                      >
+                        <img src={I_icon} alt="feedback" className="infoicon-16" />
+                      </OverlayTrigger>
                     </span>
                   </div>
                 </td>
@@ -177,7 +202,7 @@ export default function InterviewPool({
                     <Person
                       className="me-3 cursor-pointer"
                       onClick={() =>
-                       
+
                         navigate("/candidate-preview", {
                           state: {
                             candidate: c,
@@ -186,6 +211,12 @@ export default function InterviewPool({
                             requisitionId: selectedRequisitionId,
                             fromInterviewPool: true,
                             activeTab: "INTERVIEW_POOL",
+                            // 🔥 IMPORTANT FIX
+                            interviewPage: page,
+                            interviewPageSize: pageSize,
+                            page,
+                            pageSize,
+                            filters,
                             requisition: requisition
                               ? {
                                 requisition_code: requisition.requisition_code,

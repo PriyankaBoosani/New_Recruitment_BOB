@@ -32,14 +32,16 @@ const requisitionApiService = {
     ),
 
 
-  getJobRequisitions: ({ year, status, search, page, size }) =>
+  getJobRequisitions: ({ year, month, status, search, page, size, departmentId }) =>
     api.get("/recruiter/job-requisitions", {
       params: {
         year,
+        month,
         status,
         search,
         page,
-        size
+        size,
+        ...(departmentId && { departmentId })
       }
     }),
   submitForApproval: (payload) =>

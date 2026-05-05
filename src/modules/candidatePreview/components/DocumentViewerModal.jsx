@@ -13,7 +13,8 @@ const DocumentViewerModal = ({
   onVerify,
   onReject,
   isZonalAbsent,
-  
+  isFromCompensationPool  
+
 }) => {
   const { t } = useTranslation(["preview", "common", "validation"]);
 
@@ -36,17 +37,18 @@ const DocumentViewerModal = ({
 
 
 
-const privileges = useSelector((state) => state.user.privileges);
+  const privileges = useSelector((state) => state.user.privileges);
 
-const isZonalHr = privileges?.Verification;
-const isInterviewer = privileges?.Interview;
-const canCandidatePool = privileges?.["Candidate Pool"];
+  const isZonalHr = privileges?.Verification;
+  const isInterviewer = privileges?.Interview;
+  const canCandidatePool = privileges?.["Candidate Pool"];
 
 
-const disableActions =
-  !canCandidatePool && (
-    isInterviewer || (isZonalHr && isZonalAbsent)
-  );;
+  const disableActions =
+   isFromCompensationPool || 
+    !canCandidatePool && (
+      isInterviewer || (isZonalHr && isZonalAbsent)
+    );;
 
 
 
@@ -85,23 +87,23 @@ const disableActions =
 
   /* ================= RESET PER DOCUMENT ================= */
 
-useEffect(() => {
-  if (show && document) {
+  useEffect(() => {
+    if (show && document) {
 
-    // ✅ If already VERIFIED → do not preload comment
-    if (document.status === "VERIFIED") {
-      setComment("");
+      // ✅ If already VERIFIED → do not preload comment
+      if (document.status === "VERIFIED") {
+        setComment("");
+      } else {
+        setComment(document.docScreeningComments || "");
+      }
+
+      setError("");
     } else {
-      setComment(document.docScreeningComments || "");
+      setComment("");
+      setError("");
+      setSasUrl(null);
     }
-
-    setError("");
-  } else {
-    setComment("");
-    setError("");
-    setSasUrl(null);
-  }
-}, [show, document]);
+  }, [show, document]);
 
 
   /* ================= FILE TYPE ================= */
@@ -118,9 +120,9 @@ useEffect(() => {
   /* ================= ACTION HANDLERS ================= */
 
   const handleRejectClick = () => {
-      if (disableActions) return;
+    if (disableActions) return;
 
-    if (isZonalHr && !comment.trim()) {
+    if (!comment.trim()) {
       setError("required");
       return;
     }
@@ -130,7 +132,7 @@ useEffect(() => {
   };
 
   const handleVerifyClick = () => {
-     if (disableActions) return;
+    if (disableActions) return;
     setError("");
     onVerify(comment.trim());
   };
@@ -211,7 +213,7 @@ useEffect(() => {
                 placeholder={t("enter_comments")}
                 rows={1}
                 value={comment}
-              disabled={disableActions}
+                disabled={disableActions}
                 className={`doc-comment-input one-line ${error ? "input-error" : ""}`}
                 onChange={(e) => {
                   setComment(e.target.value);
@@ -219,38 +221,38 @@ useEffect(() => {
                 }}
               />
 
-              {error && isZonalHr && (
+              {error && (
                 <div className="field-error-text">
-                 {t("validation:required")}
+                  {t("validation:required")}
                 </div>
               )}
             </div>
 
             {/* buttons */}
-            <div className="doc-viewer-actions d-flex gap-2">
-            <button
-  className="btn-reject"
-  onClick={handleRejectClick}
-  disabled={disableActions}
-  style={{
-  opacity: disableActions ? 0.5 : 1,
-  cursor: disableActions ? "not-allowed" : "pointer"
-}}
->
-  {t("REJECTED")}
-</button>
+            <div className="doc-viewer-actions d-flex gap-2 ">
+              <button
+                className="btn-reject"
+                onClick={handleRejectClick}
+                disabled={disableActions}
+                style={{
+                  opacity: disableActions ? 0.5 : 1,
+                  cursor: disableActions ? "not-allowed" : "pointer"
+                }}
+              >
+                {t("REJECTED")}
+              </button>
 
-<button
-  className="btn-verify"
-  onClick={handleVerifyClick}
-  disabled={disableActions}
- style={{
-  opacity: disableActions ? 0.5 : 1,
-  cursor: disableActions ? "not-allowed" : "pointer"
-}}
->
-  {t("VERIFIED")}
-</button>
+              <button
+                className="btn-verify"
+                onClick={handleVerifyClick}
+                disabled={disableActions}
+                style={{
+                  opacity: disableActions ? 0.5 : 1,
+                  cursor: disableActions ? "not-allowed" : "pointer"
+                }}
+              >
+                {t("VERIFIED")}
+              </button>
 
             </div>
 

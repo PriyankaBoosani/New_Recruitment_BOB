@@ -9,6 +9,7 @@
   "certification": "प्रमाणपत्र",
   "special_category": "विशेष श्रेणी",
   "document": "दस्तावेज़",
+   "education_qualification": "शैक्षिक योग्यता",
   "generic_or_annexures": "सामान्य या परिशिष्ट",
   "job_postings": "नौकरी पोस्टिंग",
   "logout": "लॉगआउट",
@@ -55,5 +56,12 @@
   "view_profile": "प्रोफ़ाइल देखें",
   "view_resume": "रिज़्यूमे देखें",
   "action": "कार्य",
-  "clear_all": "सभी साफ़ करें"
+  "clear_all": "सभी साफ़ करें",
+  "approvals": "अनुमोदन",
+  "requisition_requests": "अनुरोध अनुरोध",
+  "extension_requests": "विस्तार अनुरोध",
+  "committee_requests": "समिति अनुरोध",
+  "back": "वापस",
+  "view_details": "विवरण देखें",
+  "add": "जोड़ें"
 }

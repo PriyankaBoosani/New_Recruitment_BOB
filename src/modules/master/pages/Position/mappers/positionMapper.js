@@ -6,12 +6,13 @@ export const mapPositionFromApi = (api) => ({
 
   title: api.positionName,
   description: api.positionDescription,
+  departmentId: api.deptId,
   jobGradeId: api.gradeId,
   mandatoryExperience: api.mandatoryExperience || "",
   preferredExperience: api.preferredExperience || "",
   rolesResponsibilities: api.rolesResponsibilities || "",
-  eligibilityAgeMin: api.eligibilityAgeMin ||  "",
-  eligibilityAgeMax: api.eligibilityAgeMax ||  "",
+  eligibilityAgeMin: api.eligibilityAgeMin || "",
+  eligibilityAgeMax: api.eligibilityAgeMax || "",
   code: api.positionCode,
   isActive: api.isActive
 });
@@ -31,6 +32,7 @@ export const mapPositionToApi = (ui, isEditing = false) => ({
   positionCode: ui.code || undefined,
   positionName: ui.title,
   positionDescription: ui.description || "",
+  deptId: ui.departmentId,
   gradeId: ui.jobGradeId,
   mandatoryExperience: cleanData(ui.mandatoryExperience),
   preferredExperience: cleanData(ui.preferredExperience),

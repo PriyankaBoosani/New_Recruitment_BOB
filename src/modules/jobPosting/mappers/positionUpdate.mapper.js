@@ -1,39 +1,39 @@
-const buildEducationRulesForDto = (
-  edu,
-  qualifications,
-  certifications
-) => {
-  if (!edu?.educations?.length) return [];
+// const buildEducationRulesForDto = (
+//   edu,
+//   qualifications,
+//   certifications
+// ) => {
+//   if (!edu?.educations?.length) return [];
 
-  const degrees = edu.educations
-    .map(e =>
-      qualifications.find(q => q.id === e.educationQualificationsId)?.name
-    )
-    .filter(Boolean);
+//   const degrees = edu.educations
+//     .map(e =>
+//       qualifications.find(q => q.id === e.educationQualificationsId)?.name
+//     )
+//     .filter(Boolean);
 
-  const educations = edu.educations.map(e => ({
-    educationTypeId: e.educationTypeId,
-    educationQualificationId: e.educationQualificationsId,
-    specializationId: e.specializationId
-  }));
+//   const educations = edu.educations.map(e => ({
+//     educationTypeId: e.educationTypeId,
+//     educationQualificationId: e.educationQualificationsId,
+//     specializationId: e.specializationId
+//   }));
 
-  const certNames = (edu.certificationIds || [])
-    .map(id => certifications.find(c => c.id === id)?.name)
-    .filter(Boolean);
+//   const certNames = (edu.certificationIds || [])
+//     .map(id => certifications.find(c => c.id === id)?.name)
+//     .filter(Boolean);
 
-  if (!degrees.length) {
-    throw new Error("Education rules must contain at least one degree");
-  }
+//   if (!degrees.length) {
+//     throw new Error("Education rules must contain at least one degree");
+//   }
 
-  return [
-    {
-      operator: "OR",
-      degrees,
-      educations,
-      ...(certNames.length ? { certifications: certNames } : {})
-    }
-  ];
-};
+//   return [
+//     {
+//       operator: "OR",
+//       degrees,
+//       educations,
+//       ...(certNames.length ? { certifications: certNames } : {})
+//     }
+//   ];
+// };
 
 
 const buildCategoryDistributionsForUpdate = (
@@ -110,6 +110,94 @@ const buildCategoryDistributionsForUpdate = (
   return result;
 };
 
+const buildEduRulesJson = (edu, mode) => {
+  if (!edu) {
+    return mode === "mandatory"
+      ? { 
+          mandatoryEducations: { operator: "OR", groups: [] },
+          mandatoryCertifications: { operator: "OR", groups: [] }
+        }
+      : { 
+          preferredEducations: { operator: "OR", groups: [] },
+          preferredCertifications: { operator: "OR", groups: [] }
+        };
+  }
+
+  // Process education groups with OR/AND operators
+  const educationGroups = [];
+  if (edu.groups && Array.isArray(edu.groups)) {
+    edu.groups.forEach(group => {
+      const conditions = [];
+      
+      if (group.educations && Array.isArray(group.educations)) {
+        group.educations.forEach(edu => {
+          if (edu.educationTypeId && edu.educationQualificationsId) {
+            conditions.push({
+              educationType: edu.educationTypeId,
+              qualification: edu.educationQualificationsId,
+              specialization: edu.specializationId || "",
+              duration: edu.duration || "",
+              percentage: edu.percentage || ""
+            });
+          }
+        });
+      }
+
+      if (conditions.length > 0) {
+        educationGroups.push({
+          operator: "AND",
+          conditions: conditions
+        });
+      }
+    });
+  }
+
+  // Process certification groups with OR/AND operators
+  const certificationGroups = [];
+  if (edu.certGroups && Array.isArray(edu.certGroups)) {
+    edu.certGroups.forEach(certGroup => {
+      const conditions = [];
+      
+      if (certGroup.certifications && Array.isArray(certGroup.certifications)) {
+        certGroup.certifications.forEach(cert => {
+          if (cert.certificationId) {
+            conditions.push(cert.certificationId);
+          }
+        });
+      }
+
+      if (conditions.length > 0) {
+        certificationGroups.push({
+          operator: "AND",
+          conditions: conditions
+        });
+      }
+    });
+  }
+
+  return mode === "mandatory"
+    ? {
+        mandatoryEducations: {
+          operator: "OR",
+          groups: educationGroups
+        },
+        mandatoryCertifications: {
+          operator: "OR",
+          groups: certificationGroups
+        }
+      }
+    : {
+        preferredEducations: {
+          operator: "OR",
+          groups: educationGroups
+        },
+        preferredCertifications: {
+          operator: "OR",
+          groups: certificationGroups
+        }
+      };
+};
+
 export const mapAddPositionToUpdateDto = ({
   positionId,
   requisitionId,
@@ -125,7 +213,11 @@ export const mapAddPositionToUpdateDto = ({
   approvedBy,
   approvedOn,
   indentOthers,
-  existingPosition
+  isProficientInLocalLanguage,
+  existingPosition,
+    // ✅ ADD THESE
+  isAgeRelRiotVictimFamily,
+  isAgeRelWdsWomen
 }) => {
   const dto = {
     positionId,
@@ -148,29 +240,58 @@ export const mapAddPositionToUpdateDto = ({
     preferredEducation: educationData.preferred.text,
 
     mandatoryExperienceMonths:
-      Number(formData.mandatoryExperience.years) * 12 +
-      Number(formData.mandatoryExperience.months),
+      formData.useMandatoryEducationLevelExperience 
+        ? null 
+        : Number(formData.mandatoryExperience.years) * 12 + Number(formData.mandatoryExperience.months),
 
     preferredExperienceMonths:
-      Number(formData.preferredExperience.years) * 12 +
-      Number(formData.preferredExperience.months),
+      formData.usePreferredEducationLevelExperience 
+        ? null 
+        : Number(formData.preferredExperience.years) * 12 + Number(formData.preferredExperience.months),
 
     mandatoryExperience: formData.mandatoryExperience.description,
     preferredExperience: formData.preferredExperience.description,
+
+    // Education Level Experiences
+    mandatoryExpMonthsEduWise: formData.mandatoryExperience.educationLevelExperiences?.reduce((acc, exp) => {
+      if (exp.educationLevel && (exp.years > 0 || exp.months > 0)) {
+        acc[exp.educationLevel] = (exp.years * 12) + exp.months;
+      }
+      return acc;
+    }, {}),
+
+    preferredExpMonthsEduWise: formData.preferredExperience.educationLevelExperiences?.reduce((acc, exp) => {
+      if (exp.educationLevel && (exp.years > 0 || exp.months > 0)) {
+        acc[exp.educationLevel] = (exp.years * 12) + exp.months;
+      }
+      return acc;
+    }, {}),
+
+    // Toggle States
+    isMandatoryExpMonthsEduWise: formData.useMandatoryEducationLevelExperience,
+    isPreferredExpMonthsEduWise: formData.usePreferredEducationLevelExperience,
+
+    // Cut Off Date
+    cutoffDate: formData.cutoffDate || null,
+
+    // Root level field
+    isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
+    isAgeRelRiotVictimFamily: !!isAgeRelRiotVictimFamily,
+isAgeRelWdsWomen: !!isAgeRelWdsWomen,
 
     approvedBy,
     approvedOn,
     indentOthers: indentOthers?.trim() || null,
 
-    mandatoryEduRulesJson: {
-      mandatoryEducations: educationData.mandatory.educations,
-      mandatoryCertificationIds: educationData.mandatory.certificationIds
-    },
+    mandatoryEduRulesJson: buildEduRulesJson(
+      educationData.mandatory,
+      "mandatory"
+    ),
 
-    preferredEduRulesJson: {
-      preferredEducations: educationData.preferred.educations,
-      preferredCertificationIds: educationData.preferred.certificationIds
-    },
+    preferredEduRulesJson: buildEduRulesJson(
+      educationData.preferred,
+      "preferred"
+    ),
 
     // IMPORTANT
     positionCategoryNationalDistributions: [],
@@ -201,15 +322,17 @@ export const mapAddPositionToUpdateDto = ({
     dto.positionStateDistributions = stateDistributions.map(sd => ({
       positionStateDistributionId: sd.positionStateDistributionId, // 🔑 MISSING TODAY
       stateId: sd.state,
+      cityId: sd.city,
       totalVacancies: Number(sd.vacancies),
       localLanguage: sd.language,
+      isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
       positionCategoryDistributions: buildCategoryDistributionsForUpdate(
         sd,
         reservationCategories,
         disabilityCategories
       )
     }));
-
   }
+
   return dto;
 };

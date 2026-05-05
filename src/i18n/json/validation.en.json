@@ -51,8 +51,10 @@
   "max_greater_than_min_age": "Max age must be greater than Min age",
   "experience_duration_required": "Please select experience duration",
   "experience_details_required": "Please enter experience details",
+  "qualification_and_duration_required": "Please select qualification and experience duration",
   "approved_date_future": "Approved date cannot be a future date",
   "state_already_added": "This state is already added",
+  "state_city_already_added": "This state and city combination is already added.",
   "category_total_mismatch": "Category total ({{categoryTotal}}) must equal total vacancies ({{vacancies}})",
   "state_total_mismatch": "Total state vacancies ({{stateTotal}}) must equal total vacancies ({{vacancies}})",
   "disability_exceeds_category": "Disability vacancies ({{disabilityTotal}}) cannot exceed category vacancies ({{categoryTotal}})",
@@ -62,7 +64,14 @@
   "no_requisitions_selected": "No requisitions selected for the current year.",
   "no_positions_for_requisition": "Submission blocked. No positions found for requisition(s): {{labels}}",
   "file_invalid_type": "Only PDF, DOC, and DOCX files are allowed",
+  "file_empty": "Uploaded file is empty",
   "file_too_large": "File size must not exceed {{size}} MB",
   "degree_required": "At least one degree is required",
-  "vacancies_must_be_greater_than_zero": "Vacancies must be greater than zero."
+  "vacancies_must_be_greater_than_zero": "Vacancies must be greater than zero.",
+  "gpa_range": "GPA must be between 0 and 10",
+  "percentage_range": "Value must be 0-100.",
+  "duration_invalid": "Duration must be a valid number",
+  "gpa_invalid": "GPA must be a valid number",
+  "percentage_invalid": "Percentage must be a valid number",
+  "qualification_required": "Please select qualification"
 }

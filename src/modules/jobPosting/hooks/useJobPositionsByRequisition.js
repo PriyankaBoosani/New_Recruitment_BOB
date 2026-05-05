@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 
 
 export const useJobPositionsByRequisition = () => {
-   const { t } = useTranslation("jobPostingsList");
+  const { t } = useTranslation("jobPostingsList");
   const [positionsByReq, setPositionsByReq] = useState({});
   const [loadingReqId, setLoadingReqId] = useState(null);
 
@@ -36,13 +36,17 @@ export const useJobPositionsByRequisition = () => {
 
       const enriched = list.map(api => ({
         positionId: api.positionId || api.id,
-         masterPositionId: api.masterPositionId,
+        masterPositionId: api.masterPositionId,
         positionName: positionMap[api.masterPositionId] || "—",
         deptId: api.deptId,
         departmentName: departmentMap[api.deptId] || "—",
         vacancies: api.totalVacancies ?? 0,
         minAge: api.eligibilityAgeMin,
         maxAge: api.eligibilityAgeMax,
+        indentPath: api.indentPath,
+        indentName: api.indentName,
+        approvedBy: api.approvedBy,
+        approvedOn: api.approvedOn,
         mandatoryEducation: api.mandatoryEducation ?? "",
         preferredEducation: api.preferredEducation ?? "",
       }));
@@ -52,7 +56,7 @@ export const useJobPositionsByRequisition = () => {
         [requisitionId]: enriched
       }));
     } catch {
-     toast.error(t("positions_load_failed"));
+      toast.error(t("positions_load_failed"));
     } finally {
       setLoadingReqId(null);
     }

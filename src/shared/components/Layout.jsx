@@ -1,14 +1,19 @@
 import React, { Suspense } from 'react';
 import { Container, Row, Col, Spinner, InputGroup, Form } from 'react-bootstrap';
 import { Outlet } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
 
-const Loading = () => (
-  <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-    <Spinner animation="border" role="status">
-      <span className="visually-hidden">Loading...</span>
-    </Spinner>
-  </div>
-);
+
+const Loading = () => {
+  const { t } = useTranslation("common");
+  return (
+    <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">{t("loading")}</span>
+      </Spinner>
+    </div>
+  );
+};
 
 const Layout = ({ children }) => (
   <Suspense fallback={<Loading />}>

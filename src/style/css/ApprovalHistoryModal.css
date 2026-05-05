@@ -17,11 +17,10 @@
 }
 
 .approval-history-title {
-	font-size: 1.25em;
-	font-weight: 400;
+	font-size: 1.05em;
+	font-weight: 500;
 	color: #162b75;
 	margin-bottom: 6px;
-	/* line-height: 1.2; */
 }
 
 .approval-history-subtitle {
@@ -39,21 +38,48 @@
 }
 
 .approval-history-modal .table-responsive {
-	/* background-color: #fff; */
 	border-radius: 0px;
 	border: none;
-	overflow: hidden;
+	overflow: visible;
 	margin: 0 !important;
 }
 
 
-/* Modal size */
-.approval-history-modal .modal-lg {
-  max-width: 920px;
+.approval-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* keep column widths stable when tbody is scrollable */
 }
 
+/* Thead stays as table header group so semantics remain; make header above tbody */
+.approval-history-table thead {
+  display: table-header-group;
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: #ffffff;
+}
 
+/* Make tbody a block with its own scroll so the scrollbar is inside the body area */
+.approval-history-table tbody {
+  display: block;
+  max-height: 360px; /* adjust as needed */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+}
 
+/* Keep rows full width inside both thead and tbody */
+.approval-history-table thead tr,
+.approval-history-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* Prevent very long text from breaking layout */
+.approval-history-table th, .approval-history-table td {
+	overflow: hidden;
+}
 @media (max-width: 992px) {
   .approval-history-modal .modal-lg {
     max-width: 95%;
@@ -104,4 +130,10 @@
   }
   
   
+}
+
+@media (max-width: 576px) {
+  .approval-history-table tbody {
+    max-height: 260px;
+  }
 }

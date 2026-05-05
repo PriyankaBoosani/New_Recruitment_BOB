@@ -1,11 +1,13 @@
 import React from "react";
 import { Modal, Table, Spinner } from "react-bootstrap";
 import "../../../style/css/ApprovalHistoryModal.css";
+import { useTranslation } from "react-i18next";
 
 const formatDateTime = (iso) => {
   if (!iso) return "-";
 
   const d = new Date(iso);
+
 
   const day = String(d.getDate()).padStart(2, "0");
   const month = String(d.getMonth() + 1).padStart(2, "0");
@@ -35,6 +37,7 @@ const ApprovalHistoryModal = ({
   const historyArray = Array.isArray(historyData)
     ? historyData
     : [];
+  const { t } = useTranslation("approvalHistory");
 
   return (
     <Modal
@@ -47,10 +50,10 @@ const ApprovalHistoryModal = ({
       <Modal.Header closeButton>
         <div>
           <Modal.Title className="approval-history-title">
-            Approval History
+            {t("approvalHistory:approval_history")}
           </Modal.Title>
           <p className="approval-history-subtitle">
-            Track approvals and decisions
+            {t("approvalHistory:track_approvals_and_decisions")}
           </p>
         </div>
       </Modal.Header>
@@ -68,10 +71,10 @@ const ApprovalHistoryModal = ({
 
                   {/* <th className="text-white fs-14 fw-normal blue-bg">Requester</th>
                   <th className="text-white fs-14 fw-normal blue-bg">Request Date</th> */}
-                  <th className="text-white fs-14 fw-normal blue-bg">Approver</th>
-                  <th className="text-white fs-14 fw-normal blue-bg">Approval Date</th>
-                  <th className="text-white fs-14 fw-normal blue-bg">Status</th>
-                  <th className="text-white fs-14 fw-normal blue-bg">Comments</th>
+                  <th className="text-white fs-14 fw-normal blue-bg">{t("approvalHistory:approver")}</th>
+                  <th className="text-white fs-14 fw-normal blue-bg">{t("approvalHistory:approval_date")}</th>
+                  <th className="text-white fs-14 fw-normal blue-bg">{t("approvalHistory:status")}</th>
+                  <th className="text-white fs-14 fw-normal blue-bg">{t("approvalHistory:comments")}</th>
                 </tr>
 
               </thead>
@@ -106,7 +109,7 @@ const ApprovalHistoryModal = ({
                 ) : (
                   <tr>
                     <td colSpan="6" className="text-center py-4 text-muted fs-14">
-                      No history available
+                     {t("approvalHistory:no_history_available")}
                     </td>
                   </tr>
                 )}

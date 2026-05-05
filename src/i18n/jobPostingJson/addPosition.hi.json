@@ -49,8 +49,8 @@
     "view_salary_range": "वेतन सीमा देखें",
     "category_wise_reservation": "श्रेणीवार आरक्षण",
     "enable_state_distribution_help": "राज्यों में रिक्तियों का वितरण सक्षम करें",
-    "general_category": "सामान्य श्रेणी",
-    "disability_category": "दिव्यांग श्रेणी",
+    "category": "श्रेणी",
+    "disability": "दिव्यांगता",
     "total": "कुल",
     "state": "राज्य",
     "select_state": "राज्य चुनें",
@@ -61,7 +61,7 @@
     "add_state": "राज्य जोड़ें",
     "update_state": "राज्य अपडेट करें",
     "sno": "क्रमांक",
-    "state_name": "राज्य का नाम",
+    "state_name": "राज्य",
     "local_language_of_state": "राज्य की स्थानीय भाषा",
     "out_of_which": "जिसमें से",
     "actions": "कार्यवाही",
@@ -73,5 +73,9 @@
     "result_preview": "परिणाम (उम्मीदवार को कैसे दिखाई देगा)",
     "replace_indent": "इंडेंट बदलें",
     "delete_position": "पद हटाएं",
-    "view_indent": "इंडेंट देखें"
+    "view_indent": "इंडेंट देखें",
+    "city": "शहर",
+    "select_city": "शहर चुनें",
+    "city_name": "शहर",
+    "enter_city_name": "शहर का नाम दर्ज करें"
 }

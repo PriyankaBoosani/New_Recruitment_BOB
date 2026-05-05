@@ -14,7 +14,7 @@ import jobPositionApiService from "../jobPosting/services/jobPositionApiService"
 import DropdownStrip from "./components/DropdownStrip";
 import { toast } from "react-toastify";
 import PdfViewerModal from "./components/PdfViewerModal";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import InterviewFeedbackHistoryModal from "./components/InterviewFeedbackHistoryModal";
 import useInterviewPool from "./hooks/useInterviewPool";
 import candidateWorkflowServices from "./services/CandidateWorkflowServices";
@@ -25,13 +25,26 @@ import locationIcon from "../../assets/location-icon.png";
 import RankListModal from "./components/RankListModal";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import ZonalRejectedCommentModal from "./components/ZonalRejectedCommentModal";
+import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck, FaBars, FaListOl, FaExternalLinkAlt } from "react-icons/fa";
+import { faListOl } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
+import { useDispatch } from "react-redux";
+import { setRankEnabled, clearRankState } from "../../app/providers/rankSlice";
+
+import { Modal, Button } from "react-bootstrap";
+
+import CompensationPool from "./components/CompensationPool";
+import useCompensationPool from "./hooks/useCompensationPool";
+import { mapCompensationCandidates } from "./mappers/compositionMapper";
+import useCommitteeRequests from "../Approvals/hooks/useCommitteeRequests";
 
 export default function CandidateScreening({ selectedJob }) {
-   const { t } = useTranslation(["candidateWorkflow","common"]);
-   
-   const STATUS_LABEL_MAP = {
+  const { t } = useTranslation(["candidateWorkflow", "common"]);
+
+  const STATUS_LABEL_MAP = {
     SHORTLISTED: "Shortlisted",
     APPLIED: "Applied",
     REJECTED: "Rejected",
@@ -41,6 +54,10 @@ export default function CandidateScreening({ selectedJob }) {
     // REJECTED: "Rejected",
   };
 
+
+
+    const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
+
   const CANDIDATE_POOL_STATUSES = [
     "APPLIED",
     "SHORTLISTED",
@@ -48,7 +65,60 @@ export default function CandidateScreening({ selectedJob }) {
     "DISCREPANCY",
     "PENDING"
   ];
- const INTERVIEW_STATUS_LABEL_MAP = {
+
+  const [compRefreshKey, setCompRefreshKey] = useState(0);
+  const { panelData, fetchPanels } = useCommitteeRequests();
+
+  const COMPENSATION_POOL_STATUSES = [
+  "NEW",
+  "SUBMITTED",
+  "PENDING",
+  "APPROVED",
+  "REJECTED",
+  "RENEGOTIATE",
+];
+
+const COMPENSATION_STATUS_LABEL_MAP = {
+  NEW: "New",
+  SUBMITTED: "Submitted",
+  PENDING: "Pending",
+  APPROVED: "Approved",
+  REJECTED: "Rejected",
+  RENEGOTIATE: "Renegotiate",
+};
+
+
+
+
+
+
+
+
+
+const user = useSelector((state) => state.user.user);
+
+
+const role = user?.role?.toLowerCase();
+
+const isRecruiter = role === "recruiter";
+
+
+
+
+useEffect(() => {
+  if (role === "committee_member") {
+    setActiveTab("COMPENSATION_POOL");
+  }
+}, [role, selectedRequisitionId]); // 🔥 ADD THIS
+
+
+const isCommitteeMember = role === "committee_member";
+
+
+console.log("ROLE:", role);
+console.log("IS COMMITTEE:", role === "committee_member");
+
+  const INTERVIEW_STATUS_LABEL_MAP = {
     SCHEDULED: "Scheduled",
     QUALIFIED: "Qualified",
     DISQUALIFIED: "Disqualified",
@@ -75,23 +145,47 @@ export default function CandidateScreening({ selectedJob }) {
   const [interviewPage, setInterviewPage] = useState(0);
   const [interviewPageSize, setInterviewPageSize] = useState(10);
   const location = useLocation();
+  const navigate = useNavigate();
+
 
   const navActiveTab = location.state?.activeTab;
 
-  const [activeTab, setActiveTab] = useState(
-    navActiveTab || "CANDIDATE_POOL"
-  ); const [selectedCandidate, setSelectedCandidate] = useState(null);
+  
+const [positions, setPositions] = useState([]);
+const [selectedPositionId, setSelectedPositionId] = useState("");
+
+
+
+
+
+
+
+
+
+
+
+  
+
+const [activeTab, setActiveTab] = useState(() => {
+  if (role === "committee_member") return "COMPENSATION_POOL";
+  return navActiveTab || "CANDIDATE_POOL";
+});
+  
+  
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
   const [selectedInterviewCandidateIds, setSelectedInterviewCandidateIds] = useState([]);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   const [requisitions, setRequisitions] = useState([]);
-  const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
   const [loadingRequisitions, setLoadingRequisitions] = useState(false);
 
-  const [positions, setPositions] = useState([]);
-  const [selectedPositionId, setSelectedPositionId] = useState("");
+  // const [positions, setPositions] = useState([]);
+  // const [selectedPositionId, setSelectedPositionId] = useState("");
   const [loadingPositions, setLoadingPositions] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [loadingPreview, setLoadingPreview] = useState(false);
 
   const [candidates, setCandidates] = useState([]);
   const [loadingCandidates, setLoadingCandidates] = useState(false);
@@ -109,6 +203,41 @@ export default function CandidateScreening({ selectedJob }) {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [loadingPdf, setLoadingPdf] = useState(false);
+  const [showZonalCommentModal, setShowZonalCommentModal] = useState(false);
+  const [zonalComment, setZonalComment] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
+  const handleOpenZonalComments = (comment) => {
+    setZonalComment(comment || "-");
+    setShowZonalCommentModal(true);
+  };
+
+ const handleScheduleInterview = () => {
+  if (!selectedCandidateIds.length) return;
+
+  const selectedCandidatesData = candidates
+    .filter(c => selectedCandidateIds.includes(c.id))
+    .map(c => ({
+      id: c.id,
+      name: c.name,
+      regNo: c.applicationNo
+    }));
+
+  // const params = new URLSearchParams({
+  //   requisitionId: selectedRequisitionId || "",
+  //   positionId: selectedPositionId || "",
+  //   candidates: JSON.stringify(selectedCandidatesData)
+  // });
+
+
+navigate("/schedule-interviews", {
+  state: {
+    candidates: selectedCandidatesData,
+    requisitionId: selectedRequisitionId,
+    positionId: selectedPositionId
+  }
+});
+};
+
   const searchTimeoutRef = useRef(null);
   const {
     interviewCandidates,
@@ -122,12 +251,31 @@ export default function CandidateScreening({ selectedJob }) {
     pageSize: interviewPageSize,
     enabled: !!selectedPositionId
   });
-const TAB_PRIVILEGE_MAP = {
-  CANDIDATE_POOL: "Candidate Pool",
-  INTERVIEW_POOL: "Interview Pool",
-  OFFER_POOL: "Offer Pool",
-  ONBOARDING_POOL: "Compensation Pool", // assuming onboarding is compensation
-};
+
+
+  const {
+  data: compensationCandidates,
+  totalElements: compensationTotal,
+  loading: loadingCompensation,
+  refetch: refetchCompensation
+} = useCompensationPool({
+  positionId: selectedPositionId,
+  filters,
+  page: interviewPage,
+  pageSize: interviewPageSize,
+enabled:
+  activeTab === "COMPENSATION_POOL" &&
+  !!selectedPositionId &&     // 🔥 MUST
+  (isCommitteeMember || !!selectedPositionId),   refreshKey: compRefreshKey
+});
+
+  const TAB_PRIVILEGE_MAP = {
+    CANDIDATE_POOL: "Candidate Pool",
+    INTERVIEW_POOL: "Interview Pool",
+    COMPENSATION_POOL: "Compensation Pool",
+    OFFER_POOL: "Offer Pool",
+    // ONBOARDING_POOL: "Compensation Pool", // assuming onboarding is compensation
+  };
   // const tabs = [
   //   { key: "CANDIDATE_POOL", label: "Candidate Pool", count: totalElements },
   //   { key: "INTERVIEW_POOL", label: "Interview Pool", count: interviewTotalElements },
@@ -136,23 +284,20 @@ const TAB_PRIVILEGE_MAP = {
   // ];
 
   const tabs = [
-  { key: "CANDIDATE_POOL", label: t("candidateWorkflow:candidate_pool"), count: totalElements },
-  { key: "INTERVIEW_POOL", label: t("candidateWorkflow:interview_pool"), count: interviewTotalElements },
-  { key: "OFFER_POOL", label: t("candidateWorkflow:offer_pool"), count: 0 },
-  { key: "ONBOARDING_POOL", label: t("candidateWorkflow:onboarding_pool"), count: 0 },
-];
-const privileges = useSelector(
-  (state) => state.user.privileges || {}
-);
-
-const hasPrivilege = (key) => {
- return privileges?.[key] === true;
-};
-  const accessibleTabs = useMemo(() => {
-  return tabs.filter(tab =>
-    hasPrivilege(TAB_PRIVILEGE_MAP[tab.key])
+    { key: "CANDIDATE_POOL", label: t("candidateWorkflow:candidate_pool"), count: totalElements },
+    { key: "INTERVIEW_POOL", label: t("candidateWorkflow:interview_pool"), count: interviewTotalElements },
+    { key: "COMPENSATION_POOL", label: "Compensation Pool", count: compensationTotal },
+    { key: "OFFER_POOL", label: t("candidateWorkflow:offer_pool"), count: 0 },
+    { key: "ONBOARDING_POOL", label: t("candidateWorkflow:onboarding_pool"), count: 0 },
+  ];
+  const privileges = useSelector(
+    (state) => state.user.privileges || {}
   );
-}, [tabs, privileges]);
+
+  const hasPrivilege = (key) => {
+    return privileges?.[key] === true;
+  };
+
 
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState([]);
@@ -167,6 +312,15 @@ const hasPrivilege = (key) => {
     acceptBeforeDate: "",
     joiningDate: "",
   });
+  const dispatch = useDispatch();
+  const [templates, setTemplates] = useState([]);
+
+  const isRankEnabled = useSelector(
+    (state) => state.rank.isRankEnabled
+  );
+  const isScoreEnabled = useSelector(
+    (state) => state.rank.isScoreEnabled
+  );
 
   const todayString = () => {
     const today = new Date();
@@ -176,11 +330,31 @@ const hasPrivilege = (key) => {
     return `${year}-${month}-${day}`;
   };
 
+  const hasLocationData = useMemo(() => {
+    const selected = positions.find(
+      (p) => p.jobPositions?.positionId === selectedPositionId
+    );
+
+    return (
+      selected?.jobPositions?.positionStateDistributions?.length > 0
+    );
+  }, [positions, selectedPositionId]);
+
   const navInitRef = useRef({
     requisitionId: null,
     positionId: null,
     initialized: false,
   });
+
+  const handleClose = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setShowPreview(false);
+    setPreviewUrl("");
+  };
+
+  const isBackNavigation = location.state?.page !== undefined || location.state?.interviewPage !== undefined;
 
   // 🔍 Requisition search (debounced)
   const requisitionSearchTimeout = useRef(null);
@@ -216,6 +390,71 @@ const hasPrivilege = (key) => {
     loadMasters();
   }, []);
 
+
+
+  useEffect(() => {
+  if (!selectedPositionId) {
+    setSelectedCompensationIds([]);
+  }
+}, [selectedPositionId]);
+
+
+
+useEffect(() => {
+  if (selectedPositionId) {
+    fetchPanels(selectedPositionId);
+  }
+}, [selectedPositionId]);
+
+  const employmentTypeMap = React.useMemo(() => {
+  const map = {};
+  (masterData?.employementTypes || []).forEach((e) => {
+    map[e.employementTypeId] = e.typeName; // "Contract" or "Regular"
+  });
+  return map;
+}, [masterData]);
+
+
+const isContractPosition = useMemo(() => {
+  if (!positions.length || !selectedPositionId || !employmentTypeMap) return false;
+
+  const selectedPositionObj = positions.find(
+    (p) => p.jobPositions?.positionId === selectedPositionId
+  );
+
+  const employmentType =
+    employmentTypeMap[selectedPositionObj?.jobPositions?.employmentType];
+
+  return employmentType === "Contract";
+}, [positions, selectedPositionId, employmentTypeMap]);
+
+const accessibleTabs = useMemo(() => {
+
+  console.log("🔄 Recomputing Tabs, role:", role);
+
+  return tabs.filter((tab) => {
+
+    if (tab.key === "COMPENSATION_POOL") {
+
+      if (role === "committee_member") {
+        return true; // ✅ force show
+      }
+
+      if (!isContractPosition) {
+        return false;
+      }
+    }
+
+    return hasPrivilege(TAB_PRIVILEGE_MAP[tab.key]);
+
+  });
+
+}, [tabs, privileges, isContractPosition, role]); // 🔥 IMPORTANT
+
+
+
+
+const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
   const categoryMap = React.useMemo(() => {
     const map = {};
     (masterData?.reservationCategories || []).forEach(cat => {
@@ -233,7 +472,7 @@ const hasPrivilege = (key) => {
   }, [masterData]);
 
   useEffect(() => {
-    if (!selectedPositionId) return;
+    if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") return;
 
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
@@ -245,7 +484,7 @@ const hasPrivilege = (key) => {
     }, 400);
 
     return () => clearTimeout(searchTimeoutRef.current);
-  }, [filters.searchText]);
+  }, [filters.searchText]); // Remove activeTab from dependencies to prevent page reset on tab change
 
   useEffect(() => {
     fetchRequisitions("");
@@ -275,6 +514,14 @@ const hasPrivilege = (key) => {
     fetchPositions();
   }, [selectedRequisitionId]);
 
+  useEffect(() => {
+    masterApiService.getAllTemplates().then((res) => {
+      if (res?.success) {
+        setTemplates(res.data);
+      }
+    });
+  }, []);
+
   const formatCandidateData = (apiData) => {
     const formatStatus = (status = "") => status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
 
@@ -282,7 +529,21 @@ const hasPrivilege = (key) => {
       id: c.candidateApplications.id, // REQUIRED for selection
       name: c.fullName,
       rank: c.rank,
-      score: c.score,
+
+      educationScore:
+        c?.candidateRankingResults?.educationScore ?? "-",
+
+      experienceScore:
+        c?.candidateRankingResults?.experienceScore ?? "-",
+
+      finalScore:
+        c?.candidateRankingResults?.finalScore ?? "-",
+
+      educationSimilarity:
+        c?.candidateRankingResults?.educationSimilarity ?? "-",
+
+      experienceSimilarity:
+        c?.candidateRankingResults?.experienceSimilarity ?? "-",
       // experience: `${Math.floor((c.totalMonths || 0) / 12)} years`,
       experienceMonths: c.totalMonths || 0,
       status: formatStatus(c.candidateApplications.applicationStatus),
@@ -331,6 +592,8 @@ const hasPrivilege = (key) => {
         status: normalizedStatus,
         stateId: filters.stateId,
         categoryId: filters.categoryId,
+        rank: isRankEnabled,
+        score: isScoreEnabled,
       });
 
       const apiData = res?.data;
@@ -344,6 +607,51 @@ const hasPrivilege = (key) => {
       setLoadingCandidates(false);
     }
   };
+
+  const handleJoiningDateChange = (value) => {
+  setJoiningDate(value);
+
+  if (!value) {
+    setFormErrors(prev => ({ ...prev, joiningDate: "" }));
+    return;
+  }
+
+  if (!acceptBeforeDate) {
+    setFormErrors(prev => ({
+      ...prev,
+      joiningDate: t("candidateWorkflow:select_accept_before_first"),
+    }));
+    return;
+  }
+
+  if (value <= acceptBeforeDate) {
+    setFormErrors(prev => ({
+      ...prev,
+      joiningDate: t("candidateWorkflow:must_be_greater_than_accept_before"),
+    }));
+  } else {
+    setFormErrors(prev => ({ ...prev, joiningDate: "" }));
+  }
+};
+const handleTemplateChange = (value) => {
+  setOfferTemplateId(value);
+  setSelectedTemplate(value);
+};
+
+
+  const [submitBeforeDate, setSubmitBeforeDate] = useState(""); 
+  console.log("Compensation Data:", compensationCandidates);
+const mappedCompensationCandidates = mapCompensationCandidates(compensationCandidates);
+
+const selectedCompensationCandidates = mappedCompensationCandidates.filter(c =>
+  selectedCompensationIds.includes(c.id)
+);
+
+const canSendToOfferFromCompensation =
+  selectedCompensationCandidates.length > 0 &&
+  selectedCompensationCandidates.every(
+    (c) => c.status === "APPROVED"
+  );
 
   const formatDateTime = (value) => {
     if (!value) return "-";
@@ -373,7 +681,7 @@ const hasPrivilege = (key) => {
   // }, [selectedPositionId, page, pageSize, filters, masterData]);
 
   useEffect(() => {
-    if (!selectedPositionId) return;
+    if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") return;
 
     fetchCandidates();
   }, [
@@ -384,51 +692,69 @@ const hasPrivilege = (key) => {
     filters.stateId,
     filters.categoryId,
     masterData,
+    activeTab,
+
   ]);
+  useEffect(() => {
+    if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") return;
+
+    if (isRankEnabled) {
+      fetchCandidates();
+    }
+  }, [isRankEnabled]);
 
   // 🔍 Fetch all candidates for filter dropdowns when position/status changes
   useEffect(() => {
-    if (!selectedPositionId) {
+    if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") {
       setAllCandidatesForFilters([]);
       return;
     }
 
     fetchAllCandidatesForFilters();
-  }, [selectedPositionId, filters.status, filters.searchText, masterData]);
+  }, [selectedPositionId, filters.status, filters.searchText, masterData, activeTab, isRankEnabled]);
 
-const handleRequisitionChange = async (e) => {
-  const reqId = e.target.value;
+  const handleRequisitionChange = async (e) => {
+    const reqId = e.target.value;
+    dispatch(clearRankState());
+    isNavModeRef.current = false;
 
-  isNavModeRef.current = false;
+    setSelectedRequisitionId(reqId);
+    setSelectedPositionId("");
+    //  CORRECT LOGIC
+if (role === "committee_member") {
+  setActiveTab("COMPENSATION_POOL");
+}
+    setCandidates([]);
+    setSelectedCandidateIds([]);
+    setSelectedInterviewCandidateIds([]);
+    setSelectedCompensationIds([]); 
+    setPage(0);
+    setTotalElements(0);
 
-  setSelectedRequisitionId(reqId);
-  setSelectedPositionId("");
-  setCandidates([]);
-  setSelectedCandidateIds([]);
-  setSelectedInterviewCandidateIds([]);
-  setPage(0);
-  setTotalElements(0);
+    if (!reqId) {
+      setPositions([]);
+      return;
+    }
 
-  if (!reqId) {
-    setPositions([]);
-    return;
-  }
+    try {
+      setLoadingPositions(true);
 
-  try {
-    setLoadingPositions(true);
+      const res = await jobPositionApiService.getPositionsByReqId({
+        requisitionId: reqId,
+      });
 
-    const res = await jobPositionApiService.getPositionsByReqId({
-      requisitionId: reqId,
-    });
-
-    setPositions(res?.data || []);
-  } catch (err) {
-    console.error("Failed to load positions", err);
-    setPositions([]);
-  } finally {
-    setLoadingPositions(false);
-  }
-};
+      setPositions(res?.data || []);
+    } catch (err) {
+      console.error("Failed to load positions", err);
+      setPositions([]);
+    } finally {
+      setLoadingPositions(false);
+    }
+  };
+  const handlePositionChange = (id) => {
+    dispatch(clearRankState()); // ✅ RESET HERE
+    setSelectedPositionId(id);
+  };
 
   const handleViewFile = async (candidate) => {
     if (!candidate.fileUrl) {
@@ -494,6 +820,7 @@ const handleRequisitionChange = async (e) => {
         positions.find(
           (p) => p.jobPositions?.positionId === selectedPositionId
         )?.masterPositions?.positionName,
+        isLocationWise: positions.find((p) => p.jobPositions?.positionId === selectedPositionId).jobPositions.isLocationWise
     }
     : null;
 
@@ -505,6 +832,11 @@ const handleRequisitionChange = async (e) => {
       return Object.keys(INTERVIEW_STATUS_LABEL_MAP);
     }
 
+     if (activeTab === "COMPENSATION_POOL") {
+    return COMPENSATION_POOL_STATUSES; // ✅ ADD THIS
+  }
+
+
     if (activeTab === "OFFER_POOL") {
       return OFFER_POOL_STATUSES;
     }
@@ -513,12 +845,17 @@ const handleRequisitionChange = async (e) => {
   }, [activeTab]);
 
 
-  const getStatusLabel = (status) => {
-    if (activeTab === "INTERVIEW_POOL") {
-      return INTERVIEW_STATUS_LABEL_MAP[status] || status;
-    }
-    return STATUS_LABEL_MAP[status] || status;
-  };
+ const getStatusLabel = (status) => {
+  if (activeTab === "INTERVIEW_POOL") {
+    return INTERVIEW_STATUS_LABEL_MAP[status] || status;
+  }
+
+  if (activeTab === "COMPENSATION_POOL") {
+    return COMPENSATION_STATUS_LABEL_MAP[status] || status; //  ADD THIS
+  }
+
+  return STATUS_LABEL_MAP[status] || status;
+};
 
   const selectedInterviewCandidates = useMemo(() => {
     return interviewCandidates.filter((c) =>
@@ -536,6 +873,7 @@ const handleRequisitionChange = async (e) => {
     .map(c => c.id);
 
   useEffect(() => {
+    if (isBackNavigation) return; // 🔥 ADD THIS LINE  
     if (activeTab === "INTERVIEW_POOL") {
       setInterviewPage(0);
     }
@@ -577,6 +915,7 @@ const handleRequisitionChange = async (e) => {
   // }, [filters]);
 
   useEffect(() => {
+    if (isBackNavigation) return; // 🔥 ADD THIS
     if (!navPositionId) {
       setFilters({
         status: [],
@@ -588,19 +927,51 @@ const handleRequisitionChange = async (e) => {
   }, [selectedPositionId]);
 
   useEffect(() => {
+    if (isBackNavigation) return; // 🔥 STOP RESET
     setFilters({
       status: [],
       stateId: "",
       categoryId: "",
       searchText: "",
     });
-    setPage(0);
+    // Don't reset page when changing tabs - preserve user's page position
   }, [activeTab]);
 
+useEffect(() => {
+  if (!location.state) return;
 
+  // ✅ Candidate Pool
+  if (location.state.page !== undefined) {
+    setPage(location.state.page);
+  }
+
+  if (location.state.pageSize !== undefined) {
+    setPageSize(location.state.pageSize);
+  }
+
+  // 🔥 INTERVIEW POOL FIX (ADD THIS)
+  if (location.state.interviewPage !== undefined) {
+    setInterviewPage(location.state.interviewPage);
+  }
+
+  if (location.state.interviewPageSize !== undefined) {
+    setInterviewPageSize(location.state.interviewPageSize);
+  }
+
+  if (location.state.filters) {
+    setFilters(location.state.filters);
+  }
+
+}, []);
 
   const navRequisitionId = location.state?.requisitionId || null;
   const navPositionId = location.state?.positionId || null;
+
+  const selectedTemplateData = templates.find(
+    (t) => t.templateId === offerTemplateId
+  );
+
+  const templateName = selectedTemplateData?.templateName || "";
 
 
   useEffect(() => {
@@ -688,7 +1059,7 @@ const handleRequisitionChange = async (e) => {
 
   const handleDownload = async (type) => {
     if (!selectedPositionId) {
-     toast.error(t("candidateWorkflow:select_position_first"));
+      toast.error(t("candidateWorkflow:select_position_first"));
       return;
     }
 
@@ -723,9 +1094,87 @@ const handleRequisitionChange = async (e) => {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error(err);
-     toast.error(t("candidateWorkflow:download_failed"));
+      toast.error(t("candidateWorkflow:download_failed"));
     }
   };
+
+
+const handleSendToCompensation = async () => {
+
+
+
+    if (!submitBeforeDate) {
+  toast.error("Please select Submit Before date");
+  return;
+}
+
+
+  if (selectedInterviewCandidates.length === 0) {
+    toast.error("Select at least one candidate");
+    return;
+  }
+
+
+
+
+  const allQualified = selectedInterviewCandidates.every(
+    (c) => c.status === "QUALIFIED"
+  );
+
+  if (!allQualified) {
+    toast.error("Only QUALIFIED candidates allowed");
+    return;
+  }
+
+  try {
+    const payload = {
+      interviewSchedules: selectedInterviewCandidates.map((c) => ({
+        applicationId: c.applicationId,
+        candidateId: c.candidateId,
+
+        panelId: c.panelId ?? null,
+        interviewStartAt: c.interviewStartAt ?? null,
+        interviewEndAt: c.interviewEndAt ?? null,
+        interviewDurationMinutes: c.duration ?? 0,
+        meetingLink: c.meetingLink ?? "",
+
+        zonalOfficeId: c.zonalOfficeId ?? null,
+        finalScore: c.score ?? 0,
+
+        interviewStatus: c.status,
+        zonalVerificationStatus: c.zonalVerificationStatus ?? "",
+
+        zonalSubmitBeforeDate: c.zonalSubmitBeforeDate ?? null,
+        zonalHrComments: c.zonalHrComments ?? "",
+
+        interviewScheduleId: c.id,
+      })),
+    submitBeforeDate: submitBeforeDate,
+    };
+
+    console.log("🔥 Compensation Payload:", payload); // debug
+
+    await candidateWorkflowServices.sendToCompensationPool(payload);
+
+    toast.success("Sent to Compensation Pool");
+
+    setSelectedInterviewCandidateIds([]);
+    setInterviewPage(0);
+    await refetchInterviewPool();
+
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to send to Compensation Pool");
+  }
+};
+
+
+
+
+
+
+
+
 
   const mapInterviewFeedback = (candidateId) => {
     // STATIC for now — API later
@@ -751,30 +1200,58 @@ const handleRequisitionChange = async (e) => {
     ];
   };
 
-  const handleSendToOfferPool = async () => {
-    if (qualifiedInterviewIds.length === 0) {
-      toast.error(t("candidateWorkflow:select_qualified_candidate"));
-      return;
+const handleSendToOfferPool = async () => {
+  try {
+    let payloadIds = [];
+
+    // ✅ INTERVIEW POOL (NO CHANGE)
+    if (activeTab === "INTERVIEW_POOL") {
+      if (qualifiedInterviewIds.length === 0) {
+        toast.error(t("candidateWorkflow:select_qualified_candidate"));
+        return;
+      }
+
+      payloadIds = qualifiedInterviewIds;
     }
 
-    try {
-      await jobPositionApiService.sendToOfferPool(qualifiedInterviewIds);
+    // ✅ COMPENSATION POOL (NEW LOGIC)
+    if (activeTab === "COMPENSATION_POOL") {
+      const approvedCandidates = selectedCompensationCandidates.filter(
+        (c) => c.status === "APPROVED"
+      );
 
-      toast.success(t("candidateWorkflow:candidates_moved_to_offer_pool"));
+      if (approvedCandidates.length === 0) {
+        toast.error("Select APPROVED candidates");
+        return;
+      }
 
-      // Clear selection
-      setSelectedInterviewCandidateIds([]);
-
-      // Optional: refresh interview pool
-      setInterviewPage(0);
-      await refetchInterviewPool();
-    } catch (err) {
-      console.error(err);
-      toast.error(
-        err?.response?.data?.message ||  t("candidateWorkflow:failed_to_send_offer_pool")
+      payloadIds = approvedCandidates.map(
+        (c) => c.interviewScheduleId
       );
     }
-  };
+
+    // 🔥 FINAL API CALL
+    await jobPositionApiService.sendToOfferPool(payloadIds);
+
+    toast.success(t("candidateWorkflow:candidates_moved_to_offer_pool"));
+
+    // ✅ Clear selections
+    setSelectedInterviewCandidateIds([]);
+    setSelectedCompensationIds([]);
+
+    // ✅ Refresh
+    setInterviewPage(0);
+    await refetchInterviewPool();
+    await refetchCompensation();
+
+  } catch (err) {
+    console.error(err);
+    toast.error(
+      err?.response?.data?.message ||
+      t("candidateWorkflow:failed_to_send_offer_pool")
+    );
+  }
+};
 
   const handleSendOffer = async () => {
     if (offerSelectedIds.length === 0) {
@@ -821,7 +1298,7 @@ const handleRequisitionChange = async (e) => {
       console.error(err);
       toast.error(
         err?.response?.data?.message || t("candidateWorkflow:failed_send_offer")
-);
+      );
     }
   };
 
@@ -865,6 +1342,59 @@ const handleRequisitionChange = async (e) => {
     }
   }, [activeTab]);
 
+
+
+  const handlePreview = async () => {
+    try {
+      const res = await masterApiService.previewTemplate(offerTemplateId);
+
+      // Convert blob to URL
+      const file = new Blob([res.data], { type: "application/pdf" });
+      const fileURL = URL.createObjectURL(file);
+
+      // Option 2 (better): show in modal
+      setPreviewUrl(fileURL);
+      setShowPreview(true);
+    } catch (err) {
+      console.error("Preview failed", err);
+    }
+  };
+const handleAcceptBeforeDateChange = (value) => {
+  setAcceptBeforeDate(value);
+
+  if (!value) {
+    setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
+    return;
+  }
+
+  if (value <= todayString()) {
+    setFormErrors(prev => ({
+      ...prev,
+      acceptBeforeDate: t("candidateWorkflow:must_be_greater_than_today"),
+    }));
+  } else {
+    setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
+  }
+};
+const handleStatusChange = (value) => {
+  setFilters(prev => ({
+    ...prev,
+    status: value ? [value] : [],
+  }));
+};
+const handleOfferStatusToggle = (status) => {
+  setFilters(prev => {
+    const alreadySelected = prev.status.includes(status);
+
+    return {
+      ...prev,
+      status: alreadySelected
+        ? prev.status.filter(s => s !== status)
+        : [...prev.status, status],
+    };
+  });
+};
+
   return (
     <div className="container-fluid px-5 py-4">
       {/* Header */}
@@ -888,7 +1418,7 @@ const handleRequisitionChange = async (e) => {
               loadingRequisitions={loadingRequisitions}
               loadingPositions={loadingPositions}
               onRequisitionChange={handleRequisitionChange}
-              onPositionChange={setSelectedPositionId}
+              onPositionChange={handlePositionChange}
               onRequisitionSearch={handleRequisitionSearch}
             />
             <div className="col-md-6 col-12 text-md-end">
@@ -919,19 +1449,55 @@ const handleRequisitionChange = async (e) => {
       </div>
 
       {/* Desktop Table */}
-      <div className="card rounded border-0 d-none d-md-block mt-4" style={{ marginBottom: '2rem !important' }}>
+      <div className="card rounded border-0 d-none d-md-block mt-4 mb-5">
         <div className="card-header bg-white border-bottom-0 p-0 px-1 candidate-screening-tabs-header">
           {/* Tabs */}
-          <ul className="nav nav-tabs border-0 pt-2 pb-3 px-2 border-bottom">
+          <ul className="nav nav-tabs border-0 pt-2 pb-3 px-2 border-bottom tabs">
             {accessibleTabs.map((tab) => (
               <li className="nav-item" key={tab.key}>
                 <button
                   className={`nav-link fs-14 ${activeTab === tab.key ? "orange-color orange-bottom-border" : "text-muted"
                     }`}
-                  onClick={() => setActiveTab(tab.key)}
+                 onClick={() => {
+  if (role === "committee_member") return; // 🔥 BLOCK SWITCH
+  setActiveTab(tab.key);
+}}
                   type="button"
                 >
-                  {tab.label}
+                  {tab.key === "CANDIDATE_POOL" && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4H6Zm7.25-2.095c.478-.86.75-1.85.75-2.905a5.973 5.973 0 0 0-.75-2.906 4 4 0 1 1 0 5.811ZM15.466 20c.34-.588.535-1.271.535-2v-1a5.978 5.978 0 0 0-1.528-4H18a4 4 0 0 1 4 4v1a2 2 0 0 1-2 2h-4.535Z"
+                      />
+                    </svg>
+                  )}
+                  {tab.key === "INTERVIEW_POOL" && (
+                    <svg class="w-[21px] h-[21px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z" />
+                    </svg>
+
+                  )}
+                  {tab.key === "OFFER_POOL" && (
+                    <svg class="w-[21px] h-[21px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5" />
+                    </svg>
+
+                  )}
+                  {tab.key === "ONBOARDING_POOL" && (
+                    <svg class="w-[21px] h-[21px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M6 2c-1.10457 0-2 .89543-2 2v4c0 .55228.44772 1 1 1s1-.44772 1-1V4h12v7h-2c-.5523 0-1 .4477-1 1v2h-1c-.5523 0-1 .4477-1 1s.4477 1 1 1h5c.5523 0 1-.4477 1-1V3.85714C20 2.98529 19.3667 2 18.268 2H6Z" />
+                      <path d="M6 11.5C6 9.567 7.567 8 9.5 8S13 9.567 13 11.5 11.433 15 9.5 15 6 13.433 6 11.5ZM4 20c0-2.2091 1.79086-4 4-4h3c2.2091 0 4 1.7909 4 4 0 1.1046-.8954 2-2 2H6c-1.10457 0-2-.8954-2-2Z" />
+                    </svg>
+
+                  )} {tab.label}
                   {/* <span className="ms-2 badge rounded-pill bg-light text-muted p-2" style={{ fontSize: '0.675rem', fontWeight: '500' }}>
                     {tab.count}
                   </span> */}
@@ -956,19 +1522,14 @@ const handleRequisitionChange = async (e) => {
                     })
                   }
                 >
-                 {t("common:clear_all")}
+                  {t("common:clear_all")}
                 </button>
               </div>
               <div className="col-md-2 col-6 mt-0">
                 <select
                   className="form-select fs-14 py-1 mt-0"
                   value={filters?.status[0] || ""}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      status: e.target.value ? [e.target.value] : [],
-                    }))
-                  }
+                  onChange={(e) => handleStatusChange(e.target.value)}
                 >
                   <option value="">{t("candidateWorkflow:all_statuses")}</option>
                   {/* {availableStatuses?.map((status) => (
@@ -1032,16 +1593,27 @@ const handleRequisitionChange = async (e) => {
               )}
 
               {/* 👇 spacer ONLY for Interview Pool */}
-              {activeTab === "INTERVIEW_POOL" && (
-                <div className="col-md-4 d-none d-md-block" />
-              )}
+            {(activeTab === "INTERVIEW_POOL" || activeTab === "COMPENSATION_POOL") && (
+  <div className="col-md-4 d-none d-md-block" />
+)}
 
               {selectedPositionId && selectedRequisitionId && (
                 <div className="col-md-4 col-12 text-md-end mt-2 mt-md-0">
-                  {/* <button className="btn orange-bg text-white fs-14 me-3 py-1 px-3">
-                    <img src={rankIcon} className="me-2" width={15}/>
-                    Rank
-                  </button> */}
+                
+                  {activeTab === "CANDIDATE_POOL" && (
+                    <button
+                      className="rank-btn fs-14"
+                      onClick={() => {
+
+                        dispatch(setRankEnabled(true)); // 🔥 ONLY TRUE
+
+
+                        setPage(0);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faListOl} className="rank-icon" /> Rank
+                    </button>
+                  )}
                   <OverlayTrigger
                     placement="bottom"
                     overlay={<Tooltip >{t("candidateWorkflow:download_pdf")}</Tooltip>}
@@ -1064,7 +1636,7 @@ const handleRequisitionChange = async (e) => {
           )}
 
           {activeTab === "OFFER_POOL" && (
-            <div className="row g-2 mt-1 px-2 py-1 align-items-center border-bottom">
+            <div className="row g-2 mt-1 px-3 py-1 align-items-center border-bottom">
               <div className="col-md-2 col-6 d-flex align-items-center gap-2">
                 <p className="text-muted fs-14 mb-1">{t("candidateWorkflow:filter_by_stage")}:</p>
                 <button
@@ -1087,20 +1659,9 @@ const handleRequisitionChange = async (e) => {
                   return (
                     <span
                       key={status}
-                      onClick={() =>
-                        setFilters((prev) => {
-                          const alreadySelected = prev.status.includes(status);
-
-                          return {
-                            ...prev,
-                            status: alreadySelected
-                              ? prev.status.filter((s) => s !== status)
-                              : [...prev.status, status],
-                          };
-                        })
-                      }
-                      className={`badge px-3 py-2 border-0 rounded fw-normal fs-12 ${isSelected
-                        ? "bg-primary text-white"
+                     onClick={() => handleOfferStatusToggle(status)}
+                      className={`badge px-3 py-2 border-2 rounded fw-normal fs-12 ${isSelected
+                        ? "orange-color orange-border"
                         : "bg-light text-muted border"
                         }`}
                       style={{ cursor: "pointer" }}
@@ -1114,30 +1675,133 @@ const handleRequisitionChange = async (e) => {
           )}
 
           {activeTab === "OFFER_POOL" && (
-            <div className="row g-2 mt-1 px-2 py-2 align-items-end">
+            <div className="row g-2 mt-1 px-3 py-2 align-items-center">
 
               {/* LEFT SECTION */}
               <div className="col-md-8 col-12">
                 <div className="d-flex flex-wrap gap-4 justify-content-between align-items-end">
-                  <div className="d-flex gap-3 flex-wrap align-items-end pb-3">
+                  <div className="d-flex gap-3 flex-wrap align-items-end">
                     {/* Offer Template */}
-                  <div>
-                        <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:offer_template")}</p>
-                        <select
-                          className="form-select fs-13 py-1"
-                          style={{ width: "180px" }}
-                          value={offerTemplateId}
-                          onChange={(e) => setOfferTemplateId(e.target.value)}
-                        >
-                          <option value="">{t("candidateWorkflow:select_template")}</option>
-                          <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Template 1</option>
-                        </select>
 
-                        {/* Reserve space for alignment consistency */}
-                        <small className="d-block mt-1 fs-12 invisible">
-                          placeholder
-                        </small>
+                    <div>
+                      {/* Label */}
+                      <div className="d-flex align-items-center justify-content-between" style={{ width: "180px" }}>
+                        <p className="mb-1 fw-normal fs-13 blue-color">
+                          {t("candidateWorkflow:offer_template")}
+                        </p>
                       </div>
+
+                      {/* Dynamic Dropdown */}
+                      <select
+                        title={templateName} // 👈 hover shows full text
+                        className="form-select fs-13 py-1 text-truncate"
+                        style={{
+                          width: "180px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          paddingRight: "30px"
+
+                        }}
+                        value={offerTemplateId}
+                        onChange={(e) => handleTemplateChange(e.target.value)}
+                      >
+
+                        <option value="">
+                          {t("candidateWorkflow:select_template")}
+                        </option>
+
+                        {templates.map((t) => (
+                          <option key={t.templateId} value={t.templateId}>
+                            {t.templateName}
+                          </option>
+                        ))}
+                      </select>
+
+                      {/* Preview with Hover */}
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="preview-tooltip">
+                            {templateName || "No template selected"}
+                          </Tooltip>
+                        }
+                      >
+                        {selectedTemplate ? (
+                          <span
+                            onClick={handlePreview}
+                            className="cursor-pointer text-orange orange-color"
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "600",
+                              fontFamily: "Segoe UI, sans-serif",
+                              letterSpacing: "0.5px",
+                              textDecoration: "underline",
+                            }}
+                          >
+                            Template Preview
+                          </span>
+                        ) : (
+                          <small className="d-block invisible">placeholder</small>
+                        )}
+                      </OverlayTrigger>
+                    </div>
+                    {/* <div>
+                      <div className="d-flex align-items-center justify-content-between" style={{ width: "180px" }}>
+                        <p className="mb-1 fw-normal fs-13 blue-color">
+                          {t("candidateWorkflow:offer_template")}
+                        </p>
+
+                      </div>
+
+                      <select
+                        className="form-select fs-13 py-1"
+                        style={{ width: "180px" }}
+                        value={offerTemplateId}
+                        onChange={(e) => {
+                          setOfferTemplateId(e.target.value);
+                          setSelectedTemplate(e.target.value);
+                        }}
+                      >
+                        <option value="">
+                          {t("candidateWorkflow:select_template")}
+                        </option>
+                        <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">
+                          Template 1
+                        </option>
+                      </select>
+
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id="preview-tooltip">
+                            {offerTemplateId === "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                              ? "Template 1"
+                              : ""}
+                          </Tooltip>
+                        }
+                      >
+                        {selectedTemplate && offerTemplateId === "3fa85f64-5717-4562-b3fc-2c963f66afa6" ? (
+                          <span
+                            onClick={() => setShowPreview(true)}
+                            className="cursor-pointer text-orange orange-color"
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "600",
+                              fontFamily: "Segoe UI, sans-serif",
+                              letterSpacing: "0.5px",
+                              textDecoration: "underline",
+                            }}
+                          >
+                            Preview
+                          </span>
+                        ) : (
+                          <small className="d-block invisible">placeholder</small>
+                        )}
+                      </OverlayTrigger>
+
+
+                    </div> */}
 
                     {/* Accept Before Date */}
                     <div>
@@ -1148,32 +1812,14 @@ const handleRequisitionChange = async (e) => {
                         style={{ width: "160px" }}
                         value={acceptBeforeDate}
                         min={todayString()}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setAcceptBeforeDate(value);
-
-                          if (!value) {
-                            setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
-                            return;
-                          }
-
-                          if (value <= todayString()) {
-                            setFormErrors(prev => ({
-                              ...prev,
-                              acceptBeforeDate: t("candidateWorkflow:must_be_greater_than_today"),
-                            }));
-                          } else {
-                            setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
-                          }
-                        }}
+                        onChange={(e) => handleAcceptBeforeDateChange(e.target.value)}
                       />
-                        <small
-        className={`d-block mt-1 fs-12 ${
-          formErrors.acceptBeforeDate ? "text-danger" : "invisible"
-        }`}
-      >
-        {formErrors.acceptBeforeDate || "placeholder"}
-      </small>
+                      <small
+                        className={`d-block mt-1 fs-12 ${formErrors.acceptBeforeDate ? "text-danger" : "invisible"
+                          }`}
+                      >
+                        {formErrors.acceptBeforeDate || "placeholder"}
+                      </small>
                     </div>
 
                     {/* Joining Date */}
@@ -1185,74 +1831,92 @@ const handleRequisitionChange = async (e) => {
                         style={{ width: "160px" }}
                         value={joiningDate}
                         min={acceptBeforeDate || todayString()}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setJoiningDate(value);
+                        onChange={(e) => handleJoiningDateChange(e.target.value)}
 
-                          if (!value) {
-                            setFormErrors(prev => ({ ...prev, joiningDate: "" }));
-                            return;
-                          }
-
-                          if (!acceptBeforeDate) {
-                            setFormErrors(prev => ({
-                              ...prev,
-                              joiningDate: t("candidateWorkflow:select_accept_before_first"),
-                            }));
-                            return;
-                          }
-
-                          if (value <= acceptBeforeDate) {
-                            setFormErrors(prev => ({
-                              ...prev,
-                              joiningDate: t("candidateWorkflow:must_be_greater_than_accept_before"),
-                            }));
-                          } else {
-                            setFormErrors(prev => ({ ...prev, joiningDate: "" }));
-                          }
-                        }}
                       />
-                                            <small
-                          className={`d-block mt-1 fs-12 ${
-                            formErrors.joiningDate ? "text-danger" : "invisible"
+                      <small
+                        className={`d-block mt-1 fs-12 ${formErrors.joiningDate ? "text-danger" : "invisible"
                           }`}
-                        >
-                          {formErrors.joiningDate || "placeholder"}
-                        </small>
+                      >
+                        {formErrors.joiningDate || "placeholder"}
+                      </small>
                     </div>
 
-                    {/* Send Offers Button */}
-                  <div>
-  <button
-    className="btn orange-bg text-white fs-13 px-3 py-1"
-    onClick={handleSendOffer}
-    disabled={!isSendOfferEnabled}
-  >
-    <img className="me-2" src={offerIcon} width={14} />
-    {t("candidateWorkflow:send_offers")}
-  </button>
+                    {/* <div>
+                      <p className="mb-1 fw-normal fs-13 blue-color">
+                        {t("candidateWorkflow:preview")}
+                      </p>
 
-  {/* Reserve equal space like other fields */}
-  <small className="d-block mt-1 fs-12 invisible">
-    {"\u00A0"}
-  </small>
-</div>
+                      <div
+                        className={`form-control fs-13 d-flex align-items-center justify-content-center 
+      ${selectedTemplate
+                            ? "cursor-pointer orange-bg text-white"
+                            : "disabled_button custom-disabled-bg1"
+                          }
+    `}
+                        style={{ width: "80px", height: "32px" }}
+                        onClick={() => selectedTemplate && setShowPreview(true)}
+                      >
+                        <i className="bi bi-eye" style={{ fontSize: "16px" }}></i>
+                      </div>
+
+                      <small className="d-block mt-1 fs-12 invisible">
+                        {"\u00A0"}
+                      </small>
+                    </div> */}
+
+
+
+                    <div>
+                      <button
+                        className={`form-select fs-13 px-3 py-1 orange-bg text-white ${isSendOfferEnabled ? "" : "disabled_button"
+                          }`}
+                        onClick={handleSendOffer}
+                        disabled={!isSendOfferEnabled}
+                      >
+                        <img className="me-2" src={offerIcon} width={14} />
+                        {t("candidateWorkflow:send_offers")}
+                      </button>
+
+                      {/* Reserve equal space like other fields */}
+                      <small className="d-block mt-1 fs-12 invisible">
+                        {"\u00A0"}
+                      </small>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* RIGHT SECTION */}
               <div className="col-md-4 col-12">
-                <div className="d-flex justify-content-end gap-2 align-items-center pb-3">
-                  <button className="btn orange-color orange-border fs-13 px-3 py-1">
-                    <img className="me-2" src={locationIcon} width={16} />
+                <div className="d-flex justify-content-end gap-2 align-items-center">
+                  <button
+                    className={`btn fs-13 px-3 py-1 orange-border orange-color text-orange ${isSendOfferEnabled ? "" : "disabled_button"
+                      }`}
+                    style={{
+                      minHeight: "39px",
+                      cursor: isSendOfferEnabled ? "pointer" : "not-allowed"
+                    }}
+                    disabled={!isSendOfferEnabled}
+                  >
+                    <img
+                      className="me-2 orange-color"
+                      src={locationIcon}
+                      width={16}
+                      style={{ color: "#f36f21 !important" }}
+                    />
                     {t("candidateWorkflow:assign_locations")}
                   </button>
-                  <button className="btn blue-border blue-color fs-13 px-3 py-1" onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}>
+
+
+
+                  <button className={`btn blue-border blue-color fs-13 px-3 py-1 ${offerSelectedIds.length !== 0 ? "" : "disabled_button"}`} onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}
+                    style={{ minHeight: "39px" }}>
                     <img src={excelIcon} className="me-1" width={18} /> {t("candidateWorkflow:rank_list")}
                   </button>
                 </div>
               </div>
+
             </div>
           )}
 
@@ -1278,24 +1942,80 @@ const handleRequisitionChange = async (e) => {
                 </div>
               </div>
               <div className="col-md-7 col-12 text-md-end px-2 mb-2">
-                {activeTab === "CANDIDATE_POOL" 
+                {activeTab === "CANDIDATE_POOL"
                   && hasPrivilege("Interview Pool")
                   && canScheduleInterview && (
-                  <button className="btn blue-bg text-white fs-14" onClick={() => setShowScheduleModal(true)}>
-                    {t("candidateWorkflow:schedule_interview")}
-                  </button>
-                )}
+                    <button className="btn blue-bg text-white fs-14" onClick={handleScheduleInterview}>
+                      {t("candidateWorkflow:schedule_interview")}
+                    </button>
+                  )}
 
-                {activeTab === "INTERVIEW_POOL" 
+                {/* {activeTab === "INTERVIEW_POOL"
                   && hasPrivilege("Offer Pool")
                   && canSendToOfferPool && (
-                  <button
-                    className="btn blue-bg text-white fs-14"
-                    onClick={handleSendToOfferPool}
-                  >
-                    {t("candidateWorkflow:send_to_offer_pool")}
-                  </button>
-                )}
+                    <button
+                      className="btn blue-bg text-white fs-14"
+                      onClick={handleSendToOfferPool}
+                    >
+                      {t("candidateWorkflow:send_to_offer_pool")}
+                    </button>
+                  )} */}
+
+
+
+
+{activeTab === "INTERVIEW_POOL" && canSendToOfferPool && (
+  isContractPosition ? (
+   <div className="d-flex align-items-center justify-content-end gap-4">
+      
+      {/*  Submit Before Date */}
+      <div className="d-flex align-items-center gap-2">
+       <span className="fs-14">
+  Submit Before <span className="text-danger">*</span>
+</span>
+        <input
+          type="date"
+          className="form-control fs-14"
+          style={{ width: "150px" }}
+          value={submitBeforeDate}
+          min={todayString()}
+          onChange={(e) => setSubmitBeforeDate(e.target.value)}
+        />
+      </div>
+
+      {/* Button */}
+      <button
+        className="btn orange-bg text-white fs-14"
+        onClick={handleSendToCompensation}
+        // disabled={!submitBeforeDate} // 🔥 important
+      >
+        {t("candidateWorkflow:Compensation_Request")}
+      </button>
+    </div>
+  ) : (
+    hasPrivilege("Offer Pool") && (
+      <button
+        className="btn blue-bg text-white fs-14"
+        onClick={handleSendToOfferPool}
+      >
+        {t("candidateWorkflow:send_to_offer_pool")}
+      </button>
+    )
+  )
+)}
+
+
+
+{activeTab === "COMPENSATION_POOL" &&
+  hasPrivilege("Offer Pool") &&
+  canSendToOfferFromCompensation && (
+    <button
+      className="btn blue-bg text-white fs-14"
+      onClick={handleSendToOfferPool}
+    >
+      {t("candidateWorkflow:send_to_offer_pool")}
+    </button>
+)}
 
               </div>
             </div>
@@ -1318,6 +2038,9 @@ const handleRequisitionChange = async (e) => {
             selectedRequisitionId={selectedRequisitionId}
             requisition={normalizedRequisition}
             position={selectedPosition}
+            isRankEnabled={isRankEnabled}
+            filters={filters}   // ✅ ADD THIS
+            hasLocationData={hasLocationData}
           />
         )}
 
@@ -1329,6 +2052,7 @@ const handleRequisitionChange = async (e) => {
             setSelectedIds={setSelectedInterviewCandidateIds}
             page={interviewPage}
             pageSize={interviewPageSize}
+            filters={filters}   // ✅ ADD THIS
             totalElements={interviewTotalElements}
             onPageChange={setInterviewPage}
             onPageSizeChange={setInterviewPageSize}
@@ -1370,10 +2094,38 @@ const handleRequisitionChange = async (e) => {
                 setShowFeedbackModal(false);
               }
             }}
+            onOpenZonalComments={handleOpenZonalComments}
+
+
 
 
           />
         )}
+
+
+        {activeTab === "COMPENSATION_POOL" &&  selectedPositionId && (
+<CompensationPool
+  candidates={mapCompensationCandidates(compensationCandidates)}
+  loading={loadingCompensation}
+  page={interviewPage}
+  pageSize={interviewPageSize}
+  totalElements={compensationTotal}
+  onPageChange={setInterviewPage}
+  onPageSizeChange={setInterviewPageSize}
+  selectedIds={selectedCompensationIds}
+  setSelectedIds={setSelectedCompensationIds}
+
+  // 🔥 ADD THESE
+  onViewFile={handleViewFile}
+  selectedRequisitionId={selectedRequisitionId}
+  selectedPositionId={selectedPositionId}
+  requisition={normalizedRequisition}
+  position={selectedPosition}
+  refetch={refetchCompensation}
+   triggerRefresh={() => setCompRefreshKey(prev => prev + 1)}
+   panelData={panelData}
+/>
+)}
 
         {activeTab === "OFFER_POOL" && (
           <OfferPool
@@ -1413,6 +2165,11 @@ const handleRequisitionChange = async (e) => {
         onHide={() => setShowFeedbackModal(false)}
         feedbackList={selectedFeedback}
       />
+      <ZonalRejectedCommentModal
+        show={showZonalCommentModal}
+        onHide={() => setShowZonalCommentModal(false)}
+        comment={zonalComment}
+      />
 
       <RankListModal
         showRankListModal={showRankListModal}
@@ -1421,6 +2178,90 @@ const handleRequisitionChange = async (e) => {
         setSelectedIds={setOfferSelectedIds}
         onUploadSuccess={() => setOfferRefreshKey(prev => prev + 1)}
       />
+      {/* <Modal show={showPreview}
+        onHide={() => setShowPreview(false)} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>{templateName || "Preview"}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ height: "80vh" }}>
+          {previewUrl && (
+            <iframe
+              src={previewUrl}
+              width="100%"
+              height="100%"
+              title="PDF Preview"
+            />
+          )}
+        </Modal.Body>
+      </Modal> */}
+
+
+      <Modal
+        show={showPreview}
+        onHide={handleClose}
+        size="xl"
+        centered
+      >
+        {/* HEADER */}
+        <Modal.Header closeButton className="border-0 pb-2">
+          <div className="w-100 d-flex justify-content-between align-items-center">
+            <div>
+              <h6 className="mb-0 fw-semibold">
+                {templateName || "Preview"}
+              </h6>
+              <small className="text-muted">Template Preview</small>
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div className="d-flex gap-4 align-items-center"   style={{
+          paddingRight: "15px"
+          }}>
+              {previewUrl && (
+                <a
+                  href={previewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-sm btn-outline-primary"
+                > <FaExternalLinkAlt />
+                </a>
+              )}
+            </div>
+          </div>
+        </Modal.Header>
+
+        {/* BODY */}
+        <Modal.Body
+          style={{
+            height: "85vh",
+            background: "#f8f9fa",
+            padding: "10px",
+            borderRadius: "10px",
+          }}
+        >
+          {previewUrl ? (
+            <iframe
+              src={previewUrl}
+              width="100%"
+              height="100%"
+              title="PDF Preview"
+              style={{
+                border: "none",
+                borderRadius: "8px",
+                background: "#fff",
+              }}
+            />
+          ) : (
+            <div className="d-flex justify-content-center align-items-center h-100 text-muted">
+              No preview available
+            </div>
+          )}
+        </Modal.Body>
+      </Modal>
+
+
     </div>
   );
 }
+
+
+

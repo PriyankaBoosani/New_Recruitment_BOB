@@ -1,14 +1,16 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const HeaderWithBackss = ({ title, subtitle }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation("common");
 
   const state = location.state || {};
 
-  // ✅ Hooks must be here
+  //  Hooks must be here
   const privileges = useSelector((state) => state.user.privileges);
 
  const handleBack = () => {
@@ -20,7 +22,9 @@ const HeaderWithBackss = ({ title, subtitle }) => {
     position: state.position,
     preloadedCandidates:
       state.preloadedCandidates || state.candidates || [],
-    selectedDate: state.selectedDate
+    selectedDate: state.selectedDate,
+    page: state.page,
+    pageSize: state.pageSize
   };
 
   if (privileges?.Interview) {
@@ -55,7 +59,7 @@ const HeaderWithBackss = ({ title, subtitle }) => {
         onClick={handleBack}
       >
         <i className="bi bi-arrow-left"></i>
-        <span>Back</span>
+        <span>{t("back")}</span>
       </div>
 
       <div>

@@ -21,7 +21,10 @@ const CandidateTable = ({
   pageSize,
   totalPages,
   setPage,
-  setPageSize
+  setPageSize,
+  filter,
+  searchText,
+  activeStage
 }) => {
   const { t } = useTranslation(["verification", "common"]);
 
@@ -47,6 +50,13 @@ const CandidateTable = ({
         candidates: allCandidatesRaw,
         requisition,
         position,
+        page,
+        pageSize,
+        filter,
+        searchText,
+        activeStage,
+        fromCandidateList: true
+
       },
     });
   };
@@ -76,23 +86,20 @@ const CandidateTable = ({
             </tr>
           </thead>
 
-          <tbody>
-            {!isSelectionDone && (
-              <tr className="no-candidates-row">
-                <td colSpan="7" className="text-center py-4 text-muted fs-15">
-                  {t("verification:no_candidates_found")}
-                </td>
-              </tr>
-            )}
+         <tbody>
+  {/*  No selection OR No data after filter */}
+  {(!isSelectionDone || filteredCandidates.length === 0) && (
+    <tr className="no-candidates-row">
+      <td colSpan="7" className="text-center py-4 text-muted fs-15">
+        {t("verification:no_candidates_found")}
+      </td>
+    </tr>
+  )}
 
-
-            {isSelectionDone &&
-              filteredCandidates.length > 0 &&
-              filteredCandidates.map((c) => {
-
-                const isRejected =
-                  c.status === ""
-
+  {/*  Data available */}
+  {isSelectionDone &&
+    filteredCandidates.length > 0 &&
+    filteredCandidates.map((c) => {
 
 
                 return (
@@ -187,10 +194,7 @@ const CandidateTable = ({
         ) : (
           filteredCandidates.map((c) => {
 
-            const isRejected =
-              c.status === ""
-
-
+           
 
             return (
 

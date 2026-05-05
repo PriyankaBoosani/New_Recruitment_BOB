@@ -1,7 +1,6 @@
 /* Main Container */
 .interview-panel-container {
   padding: 24px;
-  /* background: #f5f7fa; */
   min-height: 100vh;
 }
 
@@ -17,11 +16,6 @@ border-radius: 0;       /* optional */
   box-shadow: none !important;
 }
 
-/* Header Styles */
-/* .interview-panel-container .panel-header {
-  padding: 20px 30px;
-  border-bottom: 1px solid #eaeef5;
-} */
 
 .interview-panel-container .panel-header h2 {
   color: #162B75;;
@@ -60,7 +54,6 @@ border-radius: 0;       /* optional */
   align-items: center;
   gap: 8px;
   position: relative;
-  /* transition: all 0.2s ease; */
 }
 
 .interview-panel-container .tab .tab-icon {
@@ -98,7 +91,6 @@ border-radius: 0;       /* optional */
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 24px;
-  /* margin-top: 24px; */
 }
 
 /* Form Section */
@@ -123,11 +115,6 @@ border-radius: 0;       /* optional */
   color: #333;
 }
 
-.interview-panel-container .card-subtitle {
-  font-size: 13px;
-  color: #666;
-  margin: 0 0 20px 0;
-}
 
 .interview-panel-container .card-title {
   font-size: 1rem;
@@ -158,17 +145,11 @@ border-radius: 0;       /* optional */
 .interview-panel-container .form-control {
   width: 100%;
   padding: 10px 12px;
-  /* border: 1px solid #ddd; */
   border-radius: 4px;
   font-size: 0.875rem;
-  /* transition: border-color 0.2s; */
+    appearance: auto !important;
 }
 
-/* .interview-panel-container .form-control:focus {
-  border-color: #86b7fe;
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-} */
 
 /* Table Card */
 .interview-panel-container .panel-table-card {
@@ -199,31 +180,11 @@ border-radius: 0;       /* optional */
   font-weight: 500;
   color: #42579F;
 }
-/* Action icons */
-/* .interview-panel-container .actions {
-  display: flex;
-  gap: 10px;
-  
-  margin-top: 12px;
-} */
-/* 
-.interview-panel-container .icon-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid #e0e0e0;
-  background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}*/
+
 /* group icons horizontally */
 .icon-group {
   display: flex;
   gap: 10px;
-  /* justify-content: flex-end; */
 }
 
 .interview-panel-container .table-icon-btn{
@@ -242,15 +203,6 @@ border-radius: 0;       /* optional */
 
 }
 
-/* .interview-panel-container .icon-btn.edit:hover {
-  border-color: #ff6a00;
-  background: rgba(255, 106, 0, 0.08);
-}
-
-.interview-panel-container .icon-btn.delete:hover {
-  border-color: #dc3545;
-  background: rgba(220, 53, 69, 0.08);
-}  */
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {
@@ -316,7 +268,6 @@ border-radius: 0;       /* optional */
   margin: 0 5px;
   padding: 5px;
   border-radius: 4px;
-  /* transition: all 0.2s; */
 }
 
 .interview-panel-container .action-btn:hover {
@@ -331,7 +282,6 @@ border-radius: 0;       /* optional */
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  /* transition: all 0.2s; */
   border: 1px solid transparent;
 }
 
@@ -361,7 +311,7 @@ border-radius: 0;       /* optional */
   justify-content: center;
   align-items: center;
   margin-top: 20px;
-  gap: 10px;
+  gap: 6px;
 }
 
 .interview-panel-container .pagination button {
@@ -376,7 +326,6 @@ border-radius: 0;       /* optional */
   cursor: pointer;
   font-size: 13px;
   color: #666;
-  /* transition: all 0.2s; */
 }
 
 .interview-panel-container .pagination button:hover {
@@ -432,7 +381,6 @@ border-radius: 0;       /* optional */
   font-size: 13px;
   color: #374151;
   cursor: pointer;
-  /* transition: all 0.2s ease; */
 }
 
 .interview-panel-container .filter-button:hover {
@@ -460,7 +408,6 @@ border-radius: 0;       /* optional */
   color: #374151;
   background: #fff;
   cursor: pointer;
-  /* transition: border-color 0.2s ease; */
 }
 
 .interview-panel-container .table-filter-select:focus {
@@ -478,10 +425,6 @@ border-radius: 0;       /* optional */
     position: static;
     margin-bottom: 24px;
   }
-}
-
-.interview-panel-container .form-control {
-  appearance: auto !important;
 }
 
 
@@ -502,7 +445,6 @@ border-radius: 0;       /* optional */
   margin-left: 6px;
   color: #F26522;
   cursor: pointer;
-  /* transition: color 0.2s ease; */
 }
 
 .interview-panel-container .info-icon:hover {
@@ -513,16 +455,6 @@ border-radius: 0;       /* optional */
   user-select: none;
 }
 
-/* .interview-panel-container .sortable:hover {
-  color: #007bff;
-} */
-
-.interview-panel-container .table-size-selector {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-}
 
 .interview-panel-container .table-size-selector select {
 
@@ -533,7 +465,6 @@ border-radius: 0;       /* optional */
 	color: #374151;
 	background: #fff;
 	cursor: pointer;
-	/* transition: border-color 0.2s ease; */
 
 }
 
@@ -546,11 +477,6 @@ border-radius: 0;       /* optional */
   margin-top: 16px;
 }
 
-/* Pagination stays centered */
-.interview-panel-container .pagination {
-  display: flex;
-  gap: 6px;
-}
 
 /* Page size sticks to right */
 .interview-panel-container .table-size-selector {
@@ -562,10 +488,6 @@ border-radius: 0;       /* optional */
   font-size: 14px;
 }
 
-.interview-panel-container .table-size-selector select {
-  padding: 4px 6px;
-  border-radius: 4px;
-}
 .interview-panel-container .infoicon-16{
   width:16px;
   height:16px;
@@ -582,22 +504,114 @@ border-radius: 0;       /* optional */
   width: 70px;
 }
 
-.panel-table th:nth-child(2),
-.panel-table td:nth-child(2) {
-  width: 250px;  /* Panel Name */
+
+.header-title {
+  color: #162B75;
+  font-size: 1.25rem;
+  font-weight: 500;
 }
 
-.panel-table th:nth-child(3),
-.panel-table td:nth-child(3) {
-  width: 180px;  /* Panel Type */
+/* Bulk Import Button Styling */
+.bulk-import-btn {
+  background-color: #ff6a00 !important;
+  border-color: #ff6a00 !important;
+  color: white !important;
+  transition: all 0.2s ease-in-out;
 }
 
-.panel-table th:nth-child(4),
-.panel-table td:nth-child(4) {
-  width: 300px;  /* Panel Members */
+.bulk-import-btn:hover {
+  background-color: #ff6a00 !important;
+  border-color: #ff6a00 !important;
+  color: white !important;
+  transform: translateY(-1px);
 }
 
-.panel-table th:nth-child(5),
-.panel-table td:nth-child(5) {
-  width: 120px;  /* Actions */
+.bulk-import-btn:active {
+  background-color: #ff6a00 !important;
+  border-color: #ff6a00 !important;
+  transform: translateY(0);
+}
+
+.import-btn:focus,
+.import-btn:active,
+.import-btn:hover,
+.import-btn:focus-visible {
+  background-color: #f26522 !important;
+  border-color: #f26522 !important;
+  box-shadow: none !important;
+  color:#fff !important;
+}
+.import-btn{
+  background-color: #f26522 !important;
+  border-color: #f26522 !important;
+  color:#fff !important;
+}
+.file-name {
+  word-break: break-all;     /* breaks long words */
+  overflow-wrap: anywhere;   /* modern support */
+  white-space: normal;       /* allow wrapping */
+}
+/*guidelines*/
+.guidelines-box {
+  background: #f5f6f8;
+  border-radius: 6px;
+  padding: 16px 20px;
+}
+
+.guidelines-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.bulb-icon {
+  width: 22px;
+  height: 22px;
+  margin-top: -4px;
+}
+
+.guidelines-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: #ff6a00;;
+}
+
+.guideline-section {
+  margin-top: 10px;
+}
+
+.guideline-section .sectiontitle {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #162B75 !important;
+}
+
+.main-list {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.main-list > li {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #444;
+}
+
+.main-list ul {
+  margin-top: 6px;
+  padding-left: 18px;
+}
+
+.main-list ul li {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+hr {
+  margin: 12px 0;
+  border: none;
+  border-top: 1px solid #ddd;
 }

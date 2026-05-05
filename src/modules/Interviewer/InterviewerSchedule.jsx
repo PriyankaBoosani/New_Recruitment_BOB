@@ -24,6 +24,10 @@ import { mapPanelPositions } from "./mapper/InterviewerScheduleMapper";
 import { mapInterviewerCandidates } from "./mapper/InterviewerScheduleMapper";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { FiCalendar } from "react-icons/fi";
+import { Button, Modal } from "react-bootstrap";
+import InterviewerImportModal from "./components/InterviewerImportModal";
+import { FiUpload } from "react-icons/fi";
 
 
 
@@ -76,6 +80,8 @@ export default function InterviewerSchedule() {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [loadingPdf, setLoadingPdf] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  
 
   /* ================= LOAD MASTERS ================= */
 
@@ -84,6 +90,21 @@ export default function InterviewerSchedule() {
       .then(res => setMasterData(res.data || {}))
       .catch(() => setMasterData({}));
   }, []);
+
+
+
+useEffect(() => {
+  if (navState.page !== undefined) {
+    setPage(navState.page);
+  }
+
+  if (navState.pageSize) {
+    setPageSize(navState.pageSize);
+  }
+}, [navState]);
+
+
+
 
 
   const navReqId =
@@ -98,11 +119,17 @@ export default function InterviewerSchedule() {
 
 
 
-  useEffect(() => {
-    if (navState.selectedDate) {
-      setSelectedDate(new Date(navState.selectedDate));
-    }
-  }, []);
+ useEffect(() => {
+  if (
+    sessionStorage.getItem("fromPreviewBack") === "true" &&
+    navState.selectedDate
+  ) {
+    setSelectedDate(new Date(navState.selectedDate));
+  } else {
+    //  Always reset to today on refresh / normal load
+    setSelectedDate(new Date());
+  }
+}, []);
 
   /* ================= LOAD CANDIDATES ================= */
 
@@ -120,22 +147,18 @@ export default function InterviewerSchedule() {
 
 
 
-  useEffect(() => {
-    if (!cameFromPreviewBack) return;
-    if (!navState.preloadedCandidates?.length) return;
+ useEffect(() => {
+  if (!cameFromPreviewBack) return;
+  if (!navState.preloadedCandidates?.length) return;
+  if (!selectedPosition) return; //  IMPORTANT
 
+  setAllCandidatesRaw(navState.preloadedCandidates);
 
-    setAllCandidatesRaw(navState.preloadedCandidates);
-    const mapped = mapInterviewerCandidates(navState.preloadedCandidates);
-    setRows(mapped);
-    setOriginalRows(mapped.map(r => ({ ...r })));
+  const mapped = mapInterviewerCandidates(navState.preloadedCandidates);
+  setRows(mapped);
+  setOriginalRows(mapped.map(r => ({ ...r })));
 
-
-
-
-    setUsedRestoreData(true);
-
-  }, []);
+}, [selectedPosition]);
 
 
 
@@ -149,88 +172,147 @@ export default function InterviewerSchedule() {
 
 
 
+  // useEffect(() => {
+
+  //   const posId = selectedPosition?.position?.positionId;
+
+  //   if (!posId) {
+  //     setRows([]);
+  //     setAllCandidatesRaw([]);
+  //     setPage(0);
+  //     return;
+  //   }
+
+  //   const load = async () => {
+  //     try {
+  //       const dateStr = formatApiDate(selectedDate || new Date());
+
+  //       const res =
+  //         await InterviewerService.getCandidatesByPositionAndDate(
+  //           posId,
+  //           dateStr
+  //         );
+
+  //       const apiList = res.data || [];
+
+  //       //  SHOW BACKEND MESSAGE WHEN EMPTY
+  //       if (apiList.length === 0 && res.message) {
+  //         toast.info(res.message);
+  //       }
+
+  //       setAllCandidatesRaw(apiList);
+
+  //       const mapped = mapInterviewerCandidates(apiList);
+  //       setRows(mapped);
+  //       setOriginalRows(mapped.map(r => ({ ...r })));
+
+  //     } catch (err) {
+  //       console.error("Load interviewer candidates failed", err);
+  //       toast.error(t("failed_load_candidates"));
+  //       setRows([]);
+  //       setAllCandidatesRaw([]);
+  //     }
+  //   };
+
+  //   load();
+
+  // }, [selectedPosition, selectedDate, usedRestoreData]);
+
   useEffect(() => {
 
-    const posId = selectedPosition?.position?.positionId;
+  //  ADD THIS BLOCK
+ if (
+  cameFromPreviewBack &&
+  navState.preloadedCandidates?.length &&
+  selectedPosition
+) {
+  return;
+}
 
-    if (!posId) {
+  const posId = selectedPosition?.position?.positionId;
+
+  if (!posId) {
+    setRows([]);
+    setAllCandidatesRaw([]);
+    setPage(0);
+    return;
+  }
+
+  const load = async () => {
+    try {
+      const dateStr = formatApiDate(selectedDate || new Date());
+
+      const res =
+        await InterviewerService.getCandidatesByPositionAndDate(
+          posId,
+          dateStr
+        );
+
+      const apiList = res.data || [];
+
+      setAllCandidatesRaw(apiList);
+
+      const mapped = mapInterviewerCandidates(apiList);
+      setRows(mapped);
+      setOriginalRows(mapped.map(r => ({ ...r })));
+
+    } catch (err) {
+      console.error("Load interviewer candidates failed", err);
       setRows([]);
       setAllCandidatesRaw([]);
-      setPage(0);
-      return;
     }
+  };
 
-    const load = async () => {
-      try {
-        const dateStr = formatApiDate(selectedDate || new Date());
+  load();
 
-        const res =
-          await InterviewerService.getCandidatesByPositionAndDate(
-            posId,
-            dateStr
-          );
-
-        const apiList = res.data || [];
-
-        //  SHOW BACKEND MESSAGE WHEN EMPTY
-        if (apiList.length === 0 && res.message) {
-          toast.info(res.message);
-        }
-
-        setAllCandidatesRaw(apiList);
-
-        const mapped = mapInterviewerCandidates(apiList);
-        setRows(mapped);
-        setOriginalRows(mapped.map(r => ({ ...r })));
-
-      } catch (err) {
-        console.error("Load interviewer candidates failed", err);
-        toast.error(t("failed_load_candidates"));
-        setRows([]);
-        setAllCandidatesRaw([]);
-      }
-    };
-
-    load();
-
-  }, [selectedPosition, selectedDate, usedRestoreData]);
+}, [selectedPosition, selectedDate]);
 
 
 
 
+
+useEffect(() => {
+  if (!cameFromPreviewBack) return;
+  if (!navState.requisition || !navState.position) return;
+
+  const normalizedReq = {
+    ...navState.requisition,
+    startDate:
+      navState.requisition.startDate ??
+      navState.requisition.registration_start_date,
+    endDate:
+      navState.requisition.endDate ??
+      navState.requisition.registration_end_date
+  };
+
+  const restored = {
+    requisition: normalizedReq,
+    position: navState.position,
+    masterPosition: {
+      positionName: navState.position.positionName
+    }
+  };
+
+  //  SET POSITION FIRST
+  setSelectedRequisition(restored);
+  setSelectedPosition(restored);
+
+}, [cameFromPreviewBack]);
 
 
 
   useEffect(() => {
-    if (!cameFromPreviewBack) return;
-    if (!navState.requisition || !navState.position) return;
+  if (
+    cameFromPreviewBack &&
+    navState.page !== undefined &&
+    rows.length > 0
+  ) {
+    setPage(navState.page);
 
-
-    const normalizedReq = {
-      ...navState.requisition,
-      startDate:
-        navState.requisition.startDate ??
-        navState.requisition.registration_start_date,
-      endDate:
-        navState.requisition.endDate ??
-        navState.requisition.registration_end_date
-    };
-
-    const restored = {
-      requisition: normalizedReq,
-      position: navState.position,
-      masterPosition: {
-        positionName: navState.position.positionName
-      }
-    };
-
-    setSelectedRequisition(restored);
-    setSelectedPosition(restored);
-
-    // ✅ IMPORTANT — clear restore flag after use
+    //  NOW clear flag safely
     sessionStorage.removeItem("fromPreviewBack");
-
-  }, [cameFromPreviewBack]);
+  }
+}, [rows]);
 
 
 
@@ -277,9 +359,11 @@ export default function InterviewerSchedule() {
     return filteredRows.slice(start, start + pageSize);
   }, [filteredRows, page, pageSize]);
 
-  useEffect(() => {
+useEffect(() => {
+  if (!cameFromPreviewBack) {
     setPage(0);
-  }, [filteredRows.length]);
+  }
+}, [filteredRows.length]);
 
   /* ================= ROW UPDATES ================= */
 
@@ -389,7 +473,7 @@ const toggleAbsent = (id) =>
   // setOriginalRows(rows.map(r => ({ ...r })));
 
   //   } catch (err) {
-  //     console.error("🔥 SAVE SCORE ERROR:", err);
+  //     console.error(" SAVE SCORE ERROR:", err);
   //     toast.error("Save failed");
   //   }
   // };
@@ -430,7 +514,7 @@ const toggleAbsent = (id) =>
   //     setOriginalRows(rows.map(r => ({ ...r })));
 
   //   } catch (err) {
-  //     console.error("🔥 SAVE SCORE ERROR:", err);
+  //     console.error(" SAVE SCORE ERROR:", err);
   //     toast.error("Save failed");
   //   }
   // };
@@ -460,7 +544,7 @@ const handleSave = async () => {
         candidateId: raw.candidateId,
         panelId: raw.panelId,
 
-        // ✅ SCORE NOT MANDATORY
+        //  SCORE NOT MANDATORY
         panelScore:
           r.absent
             ? null
@@ -484,7 +568,7 @@ const handleSave = async () => {
     setOriginalRows(rows.map(r => ({ ...r })));
 
   } catch (err) {
-    console.error("🔥 SAVE SCORE ERROR:", err);
+    console.error(" SAVE SCORE ERROR:", err);
     toast.error(t("save_failed"));
   }
 };
@@ -498,6 +582,17 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const isSelectionDone =
     selectedRequisition && selectedPosition;
+
+
+
+    const DatePill = React.forwardRef(({ value, onClick }, ref) => (
+      <div className="date-pill" onClick={onClick} ref={ref}>
+        {value}
+        <span className="calendar-icon">
+          <FiCalendar />
+        </span>
+      </div>
+    ));
 
 
 
@@ -530,15 +625,15 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 <DatePicker
   selected={selectedDate}
   onChange={(date) => {
-    setSelectedDate(date);
-    setIsCalendarOpen(false);
-  }}
+  setSelectedDate(date);
+  setIsCalendarOpen(false);
+}}
   open={isCalendarOpen}
   onClickOutside={() => setIsCalendarOpen(false)}
   onInputClick={() => setIsCalendarOpen(true)}
   dateFormat="dd MMMM yyyy"
   customInput={<DatePill />}
-  maxDate={new Date()}
+   maxDate={new Date()}
 
   /*  Month + Year Dropdown */
   showMonthDropdown
@@ -557,14 +652,30 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
           >›</span>
         </div>
 
-        <div className="search-box">
-          <img src={searchIcon} width={14} alt="" />
-          <input
-            placeholder={t("search_placeholder")}
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-          />
-        </div>
+     <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+  
+  <div className="search-box">
+    <img src={searchIcon} width={15} alt="" />
+    <input
+      placeholder={t("search_placeholder")}
+      value={searchText}
+      onChange={e => setSearchText(e.target.value)}
+    />
+  </div>
+
+ {/* {isSelectionDone && (
+  <Button
+    onClick={() => setShowImportModal(true)}
+    className="add-panels-btn d-flex align-items-center gap-2"
+  >
+    <FiUpload />
+    {t("import_data")}
+  </Button>
+)} */}
+
+</div>
+
+        
 
       </div>
 
@@ -584,6 +695,9 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
             setSelectedPosition(p);
           }}
           closeCalendar={() => setIsCalendarOpen(false)}
+          //showImportBtn={isSelectionDone}
+          showImportBtn={isSelectionDone && allCandidatesRaw.length > 0}
+          onImportClick={() => setShowImportModal(true)}
         />
 
 
@@ -621,7 +735,9 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
             isCardBg={false}
             isSaveEnabled={anyChanged}
             onSave={handleSave}
-            isSaveBtn={true}
+            isSaveBtn={true}  
+  //            showImportBtn={isSelectionDone}
+  // onImportClick={() => setShowImportModal(true)}
           />
         </div>
       )}
@@ -666,6 +782,64 @@ const [isCalendarOpen, setIsCalendarOpen] = useState(false);
         loading={loadingPdf}
         title={t("candidate_resume")}
       />
+
+
+
+
+        <Modal
+    show={showImportModal}
+    onHide={() => setShowImportModal(false)}
+    size="lg"
+    centered
+  >
+    {/* <Modal.Header closeButton>
+      <Modal.Title>{t("import_data")}</Modal.Title>
+    </Modal.Header> */}
+
+
+
+      <Modal.Header closeButton>
+          <Modal.Title className="header-title">{t("import_data")}</Modal.Title>
+        </Modal.Header>
+
+    <Modal.Body>
+   <InterviewerImportModal
+  onClose={() => setShowImportModal(false)}
+  onSuccess={async () => {
+    setShowImportModal(false);
+
+    try {
+      const res = await InterviewerService.getPanelPositions();
+
+      const mapped = mapPanelPositions(res.data || []);
+      setPanelPositions(mapped);
+
+      // 🔥 OPTIONAL (recommended)
+      // reload candidates also
+      if (selectedPosition?.position?.positionId) {
+        const dateStr = formatApiDate(selectedDate);
+
+        const candRes =
+          await InterviewerService.getCandidatesByPositionAndDate(
+            selectedPosition.position.positionId,
+            dateStr
+          );
+
+        const mappedRows = mapInterviewerCandidates(candRes.data || []);
+        setRows(mappedRows);
+        setOriginalRows(mappedRows.map(r => ({ ...r })));
+      }
+
+    } catch (err) {
+      console.error("Refresh failed", err);
+      toast.error("Failed to refresh data");
+    }
+  }}
+  positionId={selectedPosition?.position?.positionId}
+  selectedDate={selectedDate}
+/>
+    </Modal.Body>
+  </Modal>
 
     </div>
   );

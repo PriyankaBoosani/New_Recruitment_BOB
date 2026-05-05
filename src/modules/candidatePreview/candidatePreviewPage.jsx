@@ -28,21 +28,22 @@ const CandidatePreviewPage = ({ onHide }) => {
 
   const user = useSelector((state) => state.user.user);
 
-const role = user?.role ? user.role.toLowerCase() : "";  // const isZonalHr = role === "zonal_hr";
+  const role = user?.role ? user.role.toLowerCase() : "";  // const isZonalHr = role === "zonal_hr";
   // const isInterviewer = role === "interviewer";
   //   const isRecruiter = role === "recruiter";
 
 
-
+  const isFromCompensationPool = state?.fromCompensationPool;
 
   const privileges = useSelector((state) => state.user.privileges);
 
-const isInterviewer = privileges?.Interview;
-const isZonalHr = privileges?.Verification;
-// const isRecruiter = privileges?.JobPostings; // or whatever recruiter privilege is
+  const isInterviewer = privileges?.Interview;
+  const isZonalHr = privileges?.Verification;
+  // const isRecruiter = privileges?.JobPostings; // or whatever recruiter privilege is
 
 
- const isRecruiter = role === "recruiter";
+  const isRecruiter = role === "recruiter";
+  const iscommitteeMember = role === "committee_member";
 
   const selectedDate = state?.selectedDate;
 
@@ -52,14 +53,14 @@ const isZonalHr = privileges?.Verification;
 
 
   // const privileges = useSelector((state) => state.user.privileges);
-    const canJobPost = privileges?.JobPostings;
-    const canCandidateWorkflow = privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"];
-    const canCommittee = privileges?.["Committee Management"];
-    const canVerification = privileges?.Verification;
-    const canAdmin = privileges?.Admin;
-    const canInterview = privileges?.["Interview"];
-    const canApprovals = privileges?.["Requisition Approval"] || privileges?.["Extension Approval"] || privileges?.["Committee Approval"];
-    const canViewPosition= privileges?.["View Position"];
+  const canJobPost = privileges?.JobPostings;
+  const canCandidateWorkflow = privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"];
+  const canCommittee = privileges?.["Committee Management"];
+  const canVerification = privileges?.Verification;
+  const canAdmin = privileges?.Admin;
+  const canInterview = privileges?.["Interview"];
+  const canApprovals = privileges?.["Requisition Approval"] || privileges?.["Extension Approval"] || privileges?.["Committee Approval"];
+  const canViewPosition = privileges?.["View Position"];
 
   //  Now safe to use state
   const interviewScheduleId = state?.interviewScheduleId;
@@ -68,8 +69,8 @@ const isZonalHr = privileges?.Verification;
   const requisition = state?.requisition;
   const requisitionTitle = requisition?.requisition_title;
   const positionName = state?.position?.positionName;
+  const isLocationWise = state?.position?.isLocationWise;
   const position = state?.position;
-
   const candidateId = candidate?.candidateId;
   const positionId = state?.positionId;
   const requisitionId = state?.requisitionId;
@@ -88,6 +89,8 @@ const isZonalHr = privileges?.Verification;
   const [previewData, setPreviewData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const isFromInterview = state?.from === "/candidate-interviewer";
+
   /* =======================
      LOAD MASTERS + CANDIDATE
   ======================= */
@@ -104,8 +107,8 @@ const isZonalHr = privileges?.Verification;
         const fullMasters = masterRes?.data || {};
 
         const InterviewCenters = await masterApiService.getAllInterviewCenters()
-        const  ZonalStats =await masterApiService.getZonalStates()
-    
+        const ZonalStats = await masterApiService.getZonalStates()
+
 
         // const normalizedMasters = {
         //   genders: raw.genderMasters || [],
@@ -146,8 +149,10 @@ const isZonalHr = privileges?.Verification;
             cities: fullMasters.cities,
             pincodes: fullMasters.pincodes,
             interviewCenters: InterviewCenters.data || [],
-            zonalStats: ZonalStats.data || []
+            zonalStats: ZonalStats.data || [],
+            languages: fullMasters.languageMasters || []
           };
+
 
           const mapped = mapCandidateToPreview(
             candidateRes.data,
@@ -181,61 +186,71 @@ const isZonalHr = privileges?.Verification;
       />
 
       {/* Header */}
- {isRecruiter ? (
-  <HeaderWithBack
-    title="Candidate Screening"
-    subtitle="Manage and schedule interviews for candidates"
-    onBack={() =>
-      navigate("/candidate-verification", {
-        state: {
-          requisition: state.requisition,
-          position: state.position,
-          preloadedCandidates: state.candidates,
-          selectedDate: state.selectedDate
-        }
-      })
-    }
-    positionId={positionId}
-    requisitionId={requisitionId}
-    candidateScreening={true}
-    activeTab={activeTab}
-  />
-) : isZonalHr ? (
-  <HeaderWithBacks
-    title="Candidate Profile"
-    subtitle="View candidate details application status"
-    onBack={() => {
-      sessionStorage.setItem("fromPreviewBack", "true");
+      {(isRecruiter || privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"]) ? (
+        <HeaderWithBack
+          title={t("candidateWorkflow:candidate_screening")}
+          subtitle={t("candidateWorkflow:manage_schedule_interviews")}
+          onBack={() =>
+            navigate("/candidate-verification", {
+              state: {
+                requisition: state.requisition,
+                position: state.position,
+                preloadedCandidates: state.candidates,
+                selectedDate: state,
+                page: state.page,
+                pageSize: state.pageSize,
+                filters: state.filters
+              }
+            })
+          }
+          positionId={positionId}
+          requisitionId={requisitionId}
+          candidateScreening={true}
+          activeTab={activeTab}
 
-      navigate("/candidate-verification", {
-        state: {
-          requisition,
-          position,
-          preloadedCandidates: state.candidates || [],
-          selectedDate
-        }
-      });
-    }}
-  />
-) : isInterviewer ? (
-  <HeaderWithBackss
-    title="Candidate Profile"
-    subtitle="View candidate details application status"
-    onBack={() => {
-      sessionStorage.setItem("fromPreviewBack", "true");
+        />
+      ) : isZonalHr ? (
+        <HeaderWithBacks
+          title={t("candidateWorkflow:candidate_profile")}
+          subtitle={t("candidateWorkflow:view_candidate_application_status")}
+          onBack={() => {
+            sessionStorage.setItem("fromPreviewBack", "true");
 
-      navigate("/candidate-interviewer", {
-        state: {
-          requisition,
-          position,
-          preloadedCandidates:
-            state.preloadedCandidates || state.candidates || [],
-          selectedDate
-        }
-      });
-    }}
-  />
-) : null}
+            navigate("/candidate-verification", {
+              state: {
+                requisition,
+                position,
+                preloadedCandidates: state.candidates || [],
+                selectedDate,
+                page: state.page,
+                pageSize: state.pageSize,
+                filters: state.filters
+              }
+            });
+          }}
+        />
+      ) : isInterviewer ? (
+        <HeaderWithBackss
+          title={t("candidateWorkflow:candidate_profile")}
+          subtitle={t("candidateWorkflow:view_candidate_application_status")}
+          onBack={() => {
+            sessionStorage.setItem("fromPreviewBack", "true");
+
+            navigate("/candidate-interviewer", {
+              state: {
+                requisition,
+                position,
+                preloadedCandidates:
+                  state.preloadedCandidates || state.candidates || [],
+                selectedDate,
+                page: state.page,
+                pageSize: state.pageSize,
+                filters: state.filters
+              }
+            });
+          }}
+        />
+      ) : null}
 
 
       {/* Requisition Strip */}
@@ -284,7 +299,11 @@ const isZonalHr = privileges?.Verification;
               zonalVerificationStatus={candidate?.zonalVerificationStatus}
               zonalSubmitBeforeDate={candidate?.zonalSubmitBeforeDate}
               zonalHrComments={candidate?.zonalHrComments}
+              isLocationWise={isLocationWise}
               candidateStatus={candidate?.status}
+              isFromInterview={isFromInterview}
+              isFromCompensationPool={isFromCompensationPool}
+
             />
           )
         )}

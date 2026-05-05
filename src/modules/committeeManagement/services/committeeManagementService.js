@@ -1,9 +1,14 @@
-import { nodeApi, api } from "../../../core/service/apiService";
+import { nodeApi, api, apis } from "../../../core/service/apiService";
 
 const committeeManagementService = {
   getAllusers: () =>
     nodeApi.get(
       `/getdetails/users/all`
+    ),
+
+    getPanelMembers: () =>
+    apis.get(
+      `/interview-panels/get/panel-members`
     ),
 
 
@@ -32,8 +37,49 @@ const committeeManagementService = {
     return api.get(
       `recruiter/position-panel/get-by-position-id/${positionId}`
     );
-  }
+  },
 
+  // Bulk import methods for panels
+  bulkAddPanels: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return apis.post('/interview-panels/upload-excel', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  downloadPanelTemplate: () => apis.get('/interview-panels/download-panel-template', { responseType: 'blob' }),
+
+  // Bulk import methods for position assignments
+  bulkImportPositionAssignments: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/recruiter/position-panel/upload-excel', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  downloadPositionAssignmentTemplate: () => api.get('/recruiter/position-panel/download-assignment-template', { responseType: 'blob' }),
+
+  approvePanels: (ids, comments) =>
+    api.post("/recruiter/position-panel/approve-committee", {
+      positionPanelIds: ids,
+      comments: comments
+    }),
+
+  rejectPanels: (ids, comments) =>
+    api.post("/recruiter/position-panel/reject-committee", {
+      positionPanelIds: ids,
+      comments: comments
+    }),
+  getRequisitionApprovalHistory: (panelId) =>
+    api.get(
+      `/recruiter/workflow-approval/get-panels-approval-history/${panelId}`
+    ),
 
 };
 

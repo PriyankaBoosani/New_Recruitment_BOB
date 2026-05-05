@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Accordion, Card } from "react-bootstrap";
+import { Accordion, Card, OverlayTrigger, Tooltip } from "react-bootstrap";
 import "../../../style/css/PreviewModal.css";
 import logo_Bob from "../../../assets/bob-logo.png";
 import sign from "../../../assets/downloadIcon.png";
@@ -12,6 +12,8 @@ import { toast } from "react-toastify";
 import masterApiService from "../../master/services/masterApiService";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleCheck, faCircleExclamation, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
 
 const ApplicationForm = ({
@@ -26,11 +28,13 @@ const ApplicationForm = ({
   interviewScheduleId,
   requisitionTitle,
   positionName,
+  isLocationWise,
   selectedDate,
   zonalVerificationStatus,
   zonalSubmitBeforeDate,
   zonalHrComments,
-  candidateStatus
+  candidateStatus,
+  isFromInterview
 }) => {
 
   const { t } = useTranslation(["preview", "common", "validation"]);
@@ -120,8 +124,6 @@ const ApplicationForm = ({
     return "PENDING";
   };
 
-
-
   const mapStatusToDecision = (status) => {
     const s = String(status || "").toUpperCase().trim();
 
@@ -130,12 +132,6 @@ const ApplicationForm = ({
     if (s === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
     return "";
   };
-
-
-
-
-
-
 
   useEffect(() => {
     if (!isZonalHr) return;
@@ -195,6 +191,16 @@ const ApplicationForm = ({
     if (!zonalDecision) {
       toast.error("Please select decision");
       return;
+    }
+    // 🔴 Comments mandatory when decision = NO
+    if (zonalDecision === "NO") {
+      if (!screeningRemarks?.trim()) {
+        setErrors(prev => ({
+          ...prev,
+          zonalComments: "This field is required"
+        }));
+        return;
+      }
     }
 
     // -----------------------------------------
@@ -352,9 +358,13 @@ const ApplicationForm = ({
   const [signature, setSignature] = useState()
 
   const allDocs = screeningDocuments.length > 0 ? screeningDocuments : data.documents.allDocs;
+  console.log(screeningDocuments)
+  console.log(data.documents.allDocs)
 
   const photoDoc = allDocs.find(doc => doc.name === "Photo");
   const signatureDoc = allDocs.find(doc => doc.name === "Signature");
+  const birthDoc = allDocs.find(doc => doc.name === "Birth Certificate");
+  const tenthDoc = allDocs.find(doc => doc.name === "10th Certificate");
 
   const photoUrl = photoDoc?.url || "";
   const signatureUrl = signatureDoc?.url || "";
@@ -436,45 +446,47 @@ const ApplicationForm = ({
       const map = {};
       const documents = [];
 
-    (res.data || []).forEach((item) => {
+      (res.data || []).forEach((item) => {
 
-//   const isZonal = isZonalHr;
-//  const status =
-//   item.zonalHrDocStatus &&
-//   item.zonalHrDocStatus !== "PENDING"
-//     ? item.zonalHrDocStatus
-//     : item.docScreeningStatus;
+        //   const isZonal = isZonalHr;
+        //  const status =
+        //   item.zonalHrDocStatus &&
+        //   item.zonalHrDocStatus !== "PENDING"
+        //     ? item.zonalHrDocStatus
+        //     : item.docScreeningStatus;
 
- const isZonal = isZonalHr;
+        const isZonal = isZonalHr;
 
-const status = isZonalHr
-  ? item.zonalHrDocStatus || "PENDING"
-  : isInterviewer
-    ? (item.zonalHrDocStatus && item.zonalHrDocStatus !== "PENDING"
-        ? item.zonalHrDocStatus
-        : item.docScreeningStatus || "PENDING")
-    : item.docScreeningStatus || "PENDING";
+        const status = isZonalHr
+          ? item.zonalHrDocStatus || "PENDING"
+          : isInterviewer
+            ? (item.zonalHrDocStatus && item.zonalHrDocStatus !== "PENDING"
+              ? item.zonalHrDocStatus
+              : item.docScreeningStatus || "PENDING")
+            : item.docScreeningStatus || "PENDING";
 
-  const comments = isZonal
-    ? item.zonalHrDocComments
-    : item.docScreeningComments;
+        const comments = isZonal
+          ? item.zonalHrDocComments
+          : item.docScreeningComments;
 
-  map[item.candidateDocumentId] = {
-    status: status?.toUpperCase() || "PENDING",
-    comments: comments,
-    verificationId: item.verificationId,
-  };
+        map[item.candidateDocumentId] = {
+          status: status?.toUpperCase() || "PENDING",
+          comments: comments,
+          verificationId: item.verificationId,
+        };
 
-  documents.push({
-    id: item.candidateDocumentId,
-    candidateDocumentId: item.candidateDocumentId,
-    name: item.displayName || item.fileName || "Document",
-    fileName: item.fileName,
-    url: item.fileUrl,
-    status: status?.toUpperCase() || "PENDING",
-  });
+        documents.push({
+          id: item.candidateDocumentId,
+          candidateDocumentId: item.candidateDocumentId,
+          name: item.displayName || item.fileName || "Document",
+          fileName: item.fileName,
+          url: item.fileUrl,
+          status: status?.toUpperCase() || "PENDING",
+          isValidationPending: item.isValidationPending,
+          pendingChecks: item.pendingChecks || []
+        });
 
-});
+      });
 
       setDocStatusMap(map);
       setScreeningDocuments(documents);
@@ -863,7 +875,7 @@ const status = isZonalHr
     });
   };
 
-  const disableDocAction = isInterviewView;
+  const disableDocAction = isInterviewView || isFromInterview;
 
   const allDocsVerified =
     documentRows.length > 0 &&
@@ -920,7 +932,8 @@ const status = isZonalHr
   // const disableNoOption =
   //   disableShortlistedSection || derivedShortlist === "YES";
 
-  const disableYesOption = disableShortlistedSection;
+  // const disableYesOption = disableShortlistedSection;
+  const disableYesOption = disableShortlistedSection || !areAllCriteriaYes();
   const disableNoOption = disableShortlistedSection;
 
   const handleFinalSubmit = async () => {
@@ -1071,6 +1084,17 @@ const status = isZonalHr
     screeningForm.isEducationCriteriaMet
   ]);
 
+  useEffect(() => {
+    if (!areAllCriteriaYes() && screeningForm.isShortlisted === "YES") {
+      setScreeningForm(prev => ({
+        ...prev,
+        isShortlisted: ""
+      }));
+    }
+  }, [screeningForm.isWorkCriteriaMet,
+  screeningForm.isAgeCriteriaMet,
+  screeningForm.isEducationCriteriaMet]);
+
   const allDocsAreVerified = areAllDocumentsVerified();
 
   const isOptionDisabled = (option) => {
@@ -1114,8 +1138,21 @@ const status = isZonalHr
     }
   }, [zonalDecision]);
 
+  const getPendingMessage = (doc) => {
+    if (!doc?.pendingChecks?.length) {
+      return "Validation pending";
+    }
 
+    const formatted = doc.pendingChecks
+      .map(item => String(item).toUpperCase())
+      .join(", ");
 
+    return `Please verify the correctness of ${formatted}`;
+  };
+
+  const isBirthPending = birthDoc?.isValidationPending === true;
+  const isTenthPending = tenthDoc?.isValidationPending === true;
+  const isPending = isBirthPending || isTenthPending;
   return (
     <>
       <Accordion
@@ -1131,6 +1168,13 @@ const status = isZonalHr
           <Accordion.Body>
             <div className="personal-details-wrapper">
               <table className="table table-bordered bob-table w-100 mb-0">
+                <thead className="visually-hidden">
+                  <tr>
+                    <th>Field</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+
                 <tbody>
                   <tr>
                     <td className="fw-med" style={{ width: "20%" }}>{t("full_name")}</td>
@@ -1238,7 +1282,47 @@ const status = isZonalHr
 
                   <tr>
                     <td className="fw-med">{t("dob")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.dob}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.dob}
+                      {/* {isPending ? (
+                        // ❌ PENDING
+                        <OverlayTrigger
+                          placement="top"
+                          overlay={
+                            <Tooltip id="dob-fail-tooltip">
+                              Manual verification pending
+                            </Tooltip>
+                          }
+                        >
+                          <span>
+                            <FontAwesomeIcon
+                              icon={faCircleXmark}
+                              style={{ color: "#dc3545" }}
+                              className="ms-1"
+                            />
+                          </span>
+                        </OverlayTrigger>
+
+                      ) : (
+                        // ✅ VERIFIED
+                        <OverlayTrigger
+                          placement="top"
+                          overlay={
+                            <Tooltip id="dob-success-tooltip">
+                              Verified
+                            </Tooltip>
+                          }
+                        >
+                          <span>
+                            <FontAwesomeIcon
+                              icon={faCircleCheck}
+                              style={{ color: "#28a745" }}
+                              className="ms-1"
+                            />
+                          </span>
+                        </OverlayTrigger>
+                      )} */}
+                    </td>
                     <td className="fw-med">{t("age_cutoff")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.age || "-"}</td>
 
@@ -1287,7 +1371,7 @@ const status = isZonalHr
                         ? `Yes (${data.personalDetails.twinName})`
                         : "No"}
                     </td> */}
-                     <td className="fw-med">{t("twin_sibling")}</td>
+                    <td className="fw-med">{t("twin_sibling")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.isTwin === "Yes"
                         ? `Yes (${data.personalDetails.twinName})`
@@ -1311,30 +1395,19 @@ const status = isZonalHr
                       {data.personalDetails.expectedCtc}
                     </td>
 
-                    {/* <td className="fw-med">Social Media Profile links</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td> */}
-                    {/* <td className="fw-med">Expected CTC</td>
-                      <td className="fw-reg" colSpan={2}>{preferences.ctc ? `₹${Number(preferences.ctc).toLocaleString()}` : "-"}</td> */}
                   </tr>
 
-                  {/* <tr>
-                      <td className="fw-med">Location Preference 1</td>
-                      <td className="fw-reg" colSpan={2}>{state1?.state_name || "-"}</td>
-                      <td className="fw-med">Location Preference 2</td>
-                      <td className="fw-reg" colSpan={2}>{state2?.state_name || "-"}</td>
-                    </tr> */}
 
-                  {/*<tr>
-                       <td className="fw-med">Location Preference 3</td>
-                      <td className="fw-reg" colSpan={2}>{state3?.state_name || "-"}</td> 
-                      <td className="fw-med">Social Media Profile links</td>
-                      <td className="fw-reg" colSpan={2}>{previewData.personalDetails.socialMediaProfileLink}</td>
-                    </tr>*/}
 
                   <tr>
-
+                    <td className="fw-med">{t("language_proficiency")}</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.languages || "-"}</td>
                     <td className="fw-med">{t("social_media_links")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td>
+                    
+                  </tr>
+
+                  <tr>
                     <td className="fw-med">{t("location_pref1")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
@@ -1343,10 +1416,6 @@ const status = isZonalHr
                       )}
 
                     </td>
-
-                  </tr>
-
-                  <tr>
                     <td className="fw-med">{t("location_pref2")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
@@ -1355,15 +1424,31 @@ const status = isZonalHr
                       )}
 
                     </td>
-                    <td className="fw-med">{t("location_pref3")}</td>
+                   
+
+                  </tr>
+
+                  <tr>
+                     <td className="fw-med">{t("location_pref3")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
                         data.personalDetails.locationPreference3,
                         data.personalDetails.statePreference3
                       )}
                     </td>
-
+                    <td className="fw-med">{t("language_preference")}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.localLanguage || "-"}
+                    </td>
+                    
+                  </tr> 
+                  <tr>
+                    <td className="fw-med">{t("is_local_language_studied")}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {isLocationWise ? data.personalDetails.isLocalLanguageStudied : "-"}
+                    </td>
                   </tr>
+
 
 
                   <tr>
@@ -1374,35 +1459,18 @@ const status = isZonalHr
                   </tr>
 
                   <tr>
-                    <td className="fw-med">{t("family_1984")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.familyMember1984 || "No"}</td>
+                    <td className="fw-med">{t("riot_family_member")}</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.riotVictimFamily || "No"}</td>
                     <td className="fw-med">{t("religious_minority")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.religiousMinority || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.minority || "No"}</td>
                   </tr>
 
                   <tr>
-                    <td className="fw-med">{t("serving_govt")}</td>
+                    <td className="fw-med">{t("govt_service")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.servingInGovt || "No"}</td>
                     <td className="fw-med">{t("disciplinary_action")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.disciplinaryAction || "No"}</td>
                   </tr>
-
-                  {/* {data.personalDetails.disciplinaryAction === "Yes" && (
-                      <tr>
-                        <td className="fw-med">Details of disciplinary proceedings, if Any</td>
-                        <td className="fw-reg" colSpan={5}>{data.personalDetails.disciplinaryDetails || "N/A"}</td>
-                      </tr>
-
-                      
-                    )} */}
-
-                  <tr>
-                    <td className="fw-med">{t("disciplinary_details")}</td>
-                    <td className="fw-reg" colSpan={5}>
-                      {data.personalDetails.disciplinaryDetails}
-                    </td>
-                  </tr>
-
                 </tbody>
               </table>
             </div>
@@ -1420,27 +1488,32 @@ const status = isZonalHr
                     <th style={{ width: "4rem" }}>{t("s_no")}</th>
                     <th>{t("education_level")}</th>
                     <th>{t("school_college")}</th>
+                    <th>{t("university_name")}</th>
                     <th>{t("board")}</th>
                     <th>{t("specialization")}</th>
-                    <th>{t("from_date")}</th>
-                    <th>{t("to_date")}</th>
-                    <th>{t("percentage_cgpa")}</th>
+                    <th style={{ width: '10%' }}>{t("from_date")}</th>
+                    <th style={{ width: '10%' }}>{t("to_date")}</th>
+                    <th style={{ width: '9%' }}>{t("percentage_cgpa")}</th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {(data.education || []).map((edu, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{edu.educationLevel_name || "-"}</td>
-                      <td>{edu.institution || "-"}</td>
-                      <td>{edu.mandatoryQualification_name || "-"}</td>
-                      <td>{edu.specialization_name || "-"}</td>
-                      <td>{edu.startDate || "-"}</td>
-                      <td>{edu.endDate || "-"}</td>
-                      <td>{edu.percentage || "-"}</td>
-                    </tr>
-                  ))}
+                  {/* {(data.education || []).map((edu, index) => ( */}
+                  {(data.education || [])
+                    .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+                    .map((edu, index) => (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{edu.educationLevel_name || "-"}</td>
+                        <td>{edu.institution || "-"}</td>
+                        <td>{edu.universityName || "-"}</td>
+                        <td>{edu.mandatoryQualification_name || "-"}</td>
+                        <td>{edu.specialization_name || "-"}</td>
+                        <td>{edu.startDate || "-"}</td>
+                        <td>{edu.endDate || "-"}</td>
+                        <td>{edu.percentage || "-"}</td>
+                      </tr>
+                    ))}
 
 
                   {(!data.education || data.education.length === 0) && (
@@ -1508,152 +1581,205 @@ const status = isZonalHr
 
         <Accordion.Item eventKey="3">
           <Accordion.Header>{t("documents_details")}</Accordion.Header>
+
           <Accordion.Body>
 
             <table className="bob-doc-table">
+
+              {/* COLUMN WIDTH CONTROL */}
+              <colgroup>
+                <col style={{ width: "16.66%" }} />
+                <col style={{ width: "16.66%" }} />
+                <col style={{ width: "16.66%" }} />
+                <col style={{ width: "16.66%" }} />
+                <col style={{ width: "16.66%" }} />
+                <col style={{ width: "16.66%" }} />
+              </colgroup>
+
               <thead>
                 <tr>
-                  <th>{t("file_type")}</th>
-                  <th>{t("status")}</th>
-                  <th>{t("action")}</th>
+                  <th style={{ width: "44%" }}>{t("file_type")}</th>
+                  <th className="px-3" style={{ width: "5%" }}>{t("status")}</th>
+                  <th className="text-center" style={{ width: "1%" }}>{t("action")}</th>
 
-                  <th>{t("file_type")}</th>
-                  <th>{t("status")}</th>
-                  <th>{t("action")}</th>
-
+                  <th style={{ width: "44%" }}>{t("file_type")}</th>
+                  <th className="px-3" style={{ width: "5%" }}>{t("status")}</th>
+                  <th className="text-center" style={{ width: "1%" }}>{t("action")}</th>
                 </tr>
               </thead>
 
               <tbody>
-                {Array.from({ length: Math.ceil(documentRows.length / 2) })
-                  .map(
-                    (_, rowIndex) => {
-                      const left = documentRows[rowIndex * 2];
-                      const right = documentRows[rowIndex * 2 + 1];
-                      const leftStatus =
-                        docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
+                {Array.from({ length: Math.ceil(documentRows.length / 2) }).map(
+                  (_, rowIndex) => {
 
-                      const rightStatus =
-                        docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
+                    const left = documentRows[rowIndex * 2];
+                    const right = documentRows[rowIndex * 2 + 1];
 
-                      return (
-                        <tr key={rowIndex}>
-                          {/* LEFT COLUMN */}
-                          <td>{left?.name}</td>
-                          <td>
-                            {left && (
-                              <span className={getStatusClass(leftStatus)}>
-                                {t(leftStatus)}
-                              </span>
-                            )}
-                          </td>
-                          <td className="action-cell" style={{      width: 100, borderRight: '1px solid #dee2e6', }}>
-                            {left && (
-                              <>
-                                <img
-                                  src={viewIcon}
-                                  alt={t("view")}
-                                  style={{
-                                    cursor: disableDocAction ? "not-allowed" : "pointer",
-                                    opacity: disableDocAction ? 0.4 : 1,
-                                    pointerEvents: disableDocAction ? "none" : "auto",
-                                    marginLeft: '12px',
-                                  }}
-                                  onClick={() => {
-                                    if (disableDocAction) return;
-                                    setSelectedDoc({
-                                      candidateDocumentId: left.candidateDocumentId,
-                                      status: leftStatus,   //  add this
+                    const leftStatus =
+                      docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
 
-                                      candidateId: previewData.candidateId,
-                                      applicationId: previewData.applicationId,
-                                      verificationId: docStatusMap[left.candidateDocumentId]?.verificationId,
-                                      docScreeningComments:
-                                        docStatusMap[left.candidateDocumentId]?.comments || "",
-                                      name: left.name,
-                                      fileUrl: left.url,
-                                    });
-                                    setShowViewer(true);
-                                  }}
+                    const rightStatus =
+                      docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
+
+                    return (
+                      <tr key={rowIndex}>
+
+                        {/* LEFT SIDE */}
+                        {/* <td>{left?.name}</td> */}
+                        <td>
+                          {left?.name}
+
+                          {left?.isValidationPending && (
+                            <OverlayTrigger
+                              placement="bottom"
+                              overlay={
+                                <Tooltip id={`tooltip-left-${left.candidateDocumentId}`}>
+                                  {getPendingMessage(left)}
+                                </Tooltip>
+                              }
+                            >
+                              <span>
+                                <FontAwesomeIcon
+                                  icon={faCircleExclamation}   // ⚠️ warning icon
+                                  style={{ color: "#ffc107" }}
+                                  className="ms-2"
                                 />
-                                {/* <img
-                                  src={downloadIcon}
-                                  alt={t("download")}
-                                  style={{
-                                    cursor: isInterviewView ? "not-allowed" : "pointer",
-                                    opacity: isInterviewView ? 0.4 : 1,
-                                    pointerEvents: isInterviewView ? "none" : "auto"
-                                  }}
-                                /> */}
-                              </>
-                            )}
-                          </td>
-
-                          {/* RIGHT COLUMN */}
-                          <td>{right?.name || "-"}</td>
-                          <td>
-                            {right ? (
-                              <span className={getStatusClass(rightStatus)}>
-                                {t(rightStatus)}
                               </span>
-                            ) : (
-                              "-"
-                            )}
-                          </td>
-                          <td className="action-cell">
-                            {right ? (
-                              <>
-                                <img
-                                  src={viewIcon}
-                                  alt={t("view")}
-                                  style={{
-                                    cursor: disableDocAction ? "not-allowed" : "pointer",
-                                    opacity: disableDocAction ? 0.4 : 1,
-                                    pointerEvents: disableDocAction ? "none" : "auto",
-                                    marginLeft: '12px'
-                                  }}
-                                  onClick={() => {
-                                    if (disableDocAction) return;
-                                    setSelectedDoc({
-                                      candidateDocumentId: right.candidateDocumentId,
-                                      candidateId: previewData.candidateId,
-                                      applicationId: previewData.applicationId,
-                                      verificationId: docStatusMap[right.candidateDocumentId]?.verificationId,
-                                      docScreeningComments:
-                                        docStatusMap[right.candidateDocumentId]?.comments || "",
-                                      name: right.name,
-                                      fileUrl: right.url,
-                                    });
-                                    setShowViewer(true);
-                                  }}
+                            </OverlayTrigger>
+                          )}
+                        </td>
+
+                        <td>
+                          {left && (
+                            <span className={getStatusClass(leftStatus)}>
+                              {t(leftStatus)}
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="action-cell divider1">
+                          {left && (
+                            <>
+                              <img
+                                src={viewIcon}
+                                alt={t("view")}
+                                style={{
+                                  cursor: disableDocAction ? "not-allowed" : "pointer",
+                                  opacity: disableDocAction ? 0.4 : 1,
+                                  pointerEvents: disableDocAction ? "none" : "auto",
+                                  // marginLeft: "12px",
+
+                                }}
+                                onClick={() => {
+                                  if (disableDocAction) return;
+
+                                  setSelectedDoc({
+                                    candidateDocumentId: left.candidateDocumentId,
+                                    status: leftStatus,
+                                    candidateId: previewData.candidateId,
+                                    applicationId: previewData.applicationId,
+                                    verificationId:
+                                      docStatusMap[left.candidateDocumentId]?.verificationId,
+                                    docScreeningComments:
+                                      docStatusMap[left.candidateDocumentId]?.comments || "",
+                                    name: left.name,
+                                    fileUrl: left.url,
+                                  });
+
+                                  setShowViewer(true);
+                                }}
+                              />
+                            </>
+                          )}
+                        </td>
+
+
+                        {/* RIGHT SIDE */}
+                        {/* <td>{right?.name || "-"}</td> */}
+                        <td>
+                          {right?.name || "-"}
+
+                          {right?.isValidationPending && (
+                            <OverlayTrigger
+                              placement="bottom"
+                              overlay={
+                                <Tooltip id={`tooltip-right-${right.candidateDocumentId}`}>
+                                  {getPendingMessage(right)}
+                                </Tooltip>
+                              }
+                            >
+                              <span>
+                                <FontAwesomeIcon
+                                  icon={faCircleExclamation}
+                                  style={{ color: "#ffc107" }}
+                                  className="ms-2"
                                 />
-                                {/* <img
-                                  src={downloadIcon}
-                                  alt={t("download")}
-                                  style={{
-                                    cursor: isInterviewView ? "not-allowed" : "pointer",
-                                    opacity: isInterviewView ? 0.4 : 1,
-                                    pointerEvents: isInterviewView ? "none" : "auto"
-                                  }}
-                                /> */}
-                              </>
-                            ) : (
-                              "-"
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    }
-                  )}
+                              </span>
+                            </OverlayTrigger>
+                          )}
+                        </td>
+
+                        <td>
+                          {right ? (
+                            <span className={getStatusClass(rightStatus)}>
+                              {t(rightStatus)}
+                            </span>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+
+                        <td className="action-cell">
+                          {right ? (
+                            <>
+                              <img
+                                src={viewIcon}
+                                alt={t("view")}
+                                style={{
+                                  cursor: disableDocAction ? "not-allowed" : "pointer",
+                                  opacity: disableDocAction ? 0.4 : 1,
+                                  pointerEvents: disableDocAction ? "none" : "auto",
+                                  // marginLeft: "12px",
+
+                                }}
+                                onClick={() => {
+                                  if (disableDocAction) return;
+
+                                  setSelectedDoc({
+                                    candidateDocumentId: right.candidateDocumentId,
+                                    candidateId: previewData.candidateId,
+                                    applicationId: previewData.applicationId,
+                                    verificationId:
+                                      docStatusMap[right.candidateDocumentId]?.verificationId,
+                                    docScreeningComments:
+                                      docStatusMap[right.candidateDocumentId]?.comments || "",
+                                    name: right.name,
+                                    fileUrl: right.url,
+                                  });
+
+                                  setShowViewer(true);
+                                }}
+                              />
+                            </>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+
+                      </tr>
+                    );
+                  }
+                )}
               </tbody>
+
             </table>
 
           </Accordion.Body>
         </Accordion.Item>
 
         {/* ================= CRITERIA SECTION ================= */}
-       {canCandidatePool && !disableDocAction && (
-  <Card className="criteria-main-card">
+        {canCandidatePool && !disableDocAction && !isFromInterview && (
+          <Card className="criteria-main-card">
 
             <div className="criteria-wrapper">
 
@@ -1921,11 +2047,16 @@ const status = isZonalHr
                       checked={zonalDecision === opt}
                       disabled={isDisabled}
                       onChange={(e) => {
-                        setZonalDecision(e.target.value);
+                        const value = e.target.value;
+                        setZonalDecision(value);
                         setErrors(prev => ({
                           ...prev,
-                          zonalSubmitDate: undefined
+                          zonalSubmitDate: undefined,
+                          zonalComments: undefined
                         }));
+                        if (value === "YES") {
+                          setScreeningRemarks("");
+                        }
                       }}
                     />
                     <span className="custom-radio"></span>
@@ -2034,15 +2165,15 @@ const status = isZonalHr
 
 
       </Accordion>
-    <DocumentViewerModal
-  show={showViewer}
-  onHide={() => setShowViewer(false)}
-  document={selectedDoc}
-  onVerify={handleVerify}
-  onReject={handleReject}
-  isZonalAbsent={isZonalAbsent}
- 
-/>
+      <DocumentViewerModal
+        show={showViewer}
+        onHide={() => setShowViewer(false)}
+        document={selectedDoc}
+        onVerify={handleVerify}
+        onReject={handleReject}
+        isZonalAbsent={isZonalAbsent}
+
+      />
     </>
   );
 };

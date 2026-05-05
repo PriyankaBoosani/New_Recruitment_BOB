@@ -11,7 +11,7 @@
   "next": "Next",
 
   "search_candidates": "Search candidates...",
-  "filter_by_stage": "Filter by stage:",
+  "filter_by_stage": "Filter by",
   "clear_all": "Clear all",
   "all_statuses": "All Statuses",
   "candidate_resume": "Candidate Resume",
@@ -28,6 +28,7 @@
   "failed_load_candidates": "Failed to load candidates",
   "no_changes_to_save": "No changes to save",
   "absent_status_updated": "Absent status updated",
-  "save_failed": "Save failed"
+  "save_failed": "Save failed",
+  "loading_candidates": "Loading candidates..."
   
 }

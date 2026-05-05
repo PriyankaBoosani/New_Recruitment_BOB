@@ -1,6 +1,6 @@
 // src/shared/utils/position-validations.js
 
-import { requiredField, minLength, maxLength } from './common-validations';
+import { requiredField } from './common-validations';
 import i18n from 'i18next';
 
 const normalizeTitle = (s = '') => String(s).trim().toLowerCase();
@@ -30,12 +30,12 @@ export const validatePositionTitle = (title, options = {}) => {
 };
 
 /* ---------------- DEPARTMENT ---------------- */
-// export const validateDepartmentId = (departmentId) => {
-//   if (isEmpty(departmentId)) {
-//     return i18n.t('validation:required', { field: 'Department' });
-//   }
-//   return null;
-// };
+export const validateDepartmentId = (departmentId) => {
+  if (isEmpty(departmentId)) {
+    return i18n.t('validation:required', { field: 'Department' });
+  }
+  return null;
+};
 
 /* ---------------- JOB GRADE ---------------- */
 export const validateJobGradeId = (jobGradeId) => {
@@ -122,8 +122,8 @@ export const validatePositionForm = (formData = {}, options = {}) => {
   const titleError = validatePositionTitle(formData.title, { existing, currentId });
   if (titleError) errors.title = titleError;
 
-  // const deptError = validateDepartmentId(formData.departmentId);
-  // if (deptError) errors.departmentId = deptError;
+  const deptError = validateDepartmentId(formData.departmentId);
+  if (deptError) errors.departmentId = deptError;
 
   const gradeError = validateJobGradeId(formData.jobGradeId);
   if (gradeError) errors.jobGradeId = gradeError;
@@ -149,16 +149,17 @@ export const validatePositionForm = (formData = {}, options = {}) => {
     errors
   };
 };
-
-export default {
+const positionValidations = {
   validatePositionTitle,
-  // validateDepartmentId,
+  validateDepartmentId,
   validateJobGradeId,
   validateMinAge,
   validateMaxAge,
-  
+
   validateMandatoryExperience,
   validatePreferredExperience,
   validateRolesResponsibilities,
   validatePositionForm
 };
+
+export default positionValidations;

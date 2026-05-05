@@ -9,10 +9,10 @@ import {
 } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
-import { CommitteeRequestsData } from "../hooks/committee.static";
-
+import { useSelector } from "react-redux";
 import "../../../style/css/ApprovalCommitee.css";
 import history_icon from "../../../assets/history_icon.png";
+import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 
 import ApprovalCommentModal from "../components/ApprovalCommentModal";
 import ApprovalHistoryModal from "../components/ApprovalHistoryModal";
@@ -20,19 +20,40 @@ import { useTranslation } from "react-i18next";
 import Select from "react-select";
 
 import { toast } from "react-toastify";
+import useCommitteeRequests from "../hooks/useCommitteeRequests";
 
 //  Utilities
 import { validateSelectedRequisitions } from "../validations/requisitionValidation";
 
 //  Mapper
-import { mapCommitteeRequests } from "../mapper/committeeRequestMapper";
-
 
 const CommitteeRequests = () => {
-    const { t } = useTranslation(["jobPostingsList", "common"]);
+    const { t } = useTranslation(["jobPostingsList", "common", "approvalHistory"]);
+    const privileges = useSelector((state) => state.user.privileges);
 
+    const isL1 = privileges?.["L1 Approval"];
+    const isL2 = privileges?.["L2 Approval"];
+
+    const approvalLevel = isL2 ? "L2" : isL1 ? "L1" : null;
     const navigate = useNavigate();
-    const [pageSize, setPageSize] = useState(10);
+    const {
+        requisitionOptions,
+        positionOptions,
+        panelData,
+        loadingRequisitions,
+        loadingPositions,
+        loadingPanels,
+        fetchRequisitions,
+        fetchPositions,
+        fetchPanels,
+        clearPanels,
+        setPositionOptions,
+        approvePanels,
+        rejectPanels,
+        fetchApprovalHistory
+    } = useCommitteeRequests();
+    const [pageSize, setPageSize] = useState(5);
+
 
     const [showCommentModal, setShowCommentModal] = useState(false);
     const [actionType, setActionType] = useState(null);
@@ -40,26 +61,45 @@ const CommitteeRequests = () => {
     const [historyData, setHistoryData] = useState([]);
     const [selectedHistoryReq, setSelectedHistoryReq] = useState(null);
 
+
     // Filters
     const [status, setStatus] = useState("ALL");
     const [searchInput, setSearchInput] = useState("");
     const [page, setPage] = useState(0);
 
     const [selectedReqIds, setSelectedReqIds] = useState(new Set());
-    const [committeeRequests, setCommitteeRequests] = useState(() => 
-        mapCommitteeRequests(CommitteeRequestsData)
-    );
+
     // Requisition & Position state
     const [selectedRequisition, setSelectedRequisition] = useState(null);
     const [selectedPosition, setSelectedPosition] = useState(null);
 
-    // Options (reuse same shape as existing selector)
-    const requisitions = [];
-    const positions = [];
+    const statusOptionsByApproval = {
+        L1: [
+            { value: "L1_PENDING", label: t("jobPostingsList:status_l1_pending") },
+            { value: "L1_APPROVED", label: t("jobPostingsList:status_l1_approved") },
+            { value: "L1_REJECTED", label: t("jobPostingsList:status_l1_rejected") },
+            { value: "L2_REJECTED", label: t("jobPostingsList:status_l2_rejected") },
+            { value: "APPROVED", label: t("jobPostingsList:status_approved") }
+        ],
+        L2: [
+            { value: "L1_APPROVED", label: t("jobPostingsList:status_l1_approved") },
+            { value: "L2_REJECTED", label: t("jobPostingsList:status_l2_rejected") },
+            { value: "APPROVED", label: t("jobPostingsList:status_approved") }
+        ]
+    };
+    const selectableStatus =
+        approvalLevel === "L1"
+            ? "L1_PENDING"
+            : approvalLevel === "L2"
+                ? "L1_APPROVED"
+                : null;
+
+    const allowedStatuses = statusOptionsByApproval[approvalLevel] || [];
+
 
     const selectedRequisitionOption = selectedRequisition
         ? {
-            label: selectedRequisition.requisitionCode,
+            label: `${selectedRequisition.requisitionCode}- ${selectedRequisition.requisitionTitle}`,
             value: selectedRequisition.id,
             raw: selectedRequisition
         }
@@ -72,131 +112,142 @@ const CommitteeRequests = () => {
             raw: selectedPosition
         }
         : null;
-    const onRequisitionChange = (req) => {
+    const onRequisitionChange = async (req) => {
+
         setSelectedRequisition(req);
         setSelectedPosition(null);
-        setPage(0);
-    };
 
-    const onPositionChange = (pos) => {
+        setPositionOptions([]);
+
+        clearPanels();
+
+        setSelectedReqIds(new Set());
+        setSearchInput("");
+        setPage(0);
+
+        if (!req?.id) return;
+
+        await fetchPositions(req.id);
+    };
+    const onPositionChange = async (pos) => {
+
         setSelectedPosition(pos);
         setPage(0);
-    };
 
-
-    // Filter and paginate data
-    const getFilteredData = () => {
-        let filtered = [...committeeRequests];
-
-        // Filter by status
-        if (status && status !== "ALL") {
-            filtered = filtered.filter(
-                req => req.status.toUpperCase() === status.toUpperCase()
-            );
+        if (!pos?.positionId) {
+            clearPanels();
+            return;
         }
 
-        // Filter by search
-        if (searchInput.trim() !== "") {
-            const searchLower = searchInput.toLowerCase();
-            filtered = filtered.filter(
-                req =>
-                    req.positionName.toLowerCase().includes(searchLower) ||
-                    req.requisitionId.toLowerCase().includes(searchLower) ||
-                    req.panelType.toLowerCase().includes(searchLower) ||
-                    req.panelMembers.some(member =>
-                        member.toLowerCase().includes(searchLower)
-                    )
-            );
-        }
-
-        return filtered;
+        await fetchPanels(pos.positionId);
     };
 
-    const getPaginatedData = () => {
-        const filtered = getFilteredData();
-        const start = page * pageSize;
-        const end = start + pageSize;
-        return filtered.slice(start, end);
-    };
 
-    const getTotalPages = () => {
-        const filtered = getFilteredData();
-        return Math.ceil(filtered.length / pageSize);
-    };
+    const handleApprovalAction = async (modalComment) => {
 
-    const handleApprovalAction = (comment, type) => {
         const ids = Array.from(selectedReqIds);
 
         if (ids.length === 0) return;
 
-        if (type === "approve") {
-            setCommitteeRequests(prev =>
-                prev.map(req =>
-                    ids.includes(req.id) ? { ...req, status: "Approved" } : req
-                )
-            );
-            toast.success("Committee requests approved successfully");
+        const commentText = modalComment?.trim();
+
+        if (!commentText) {
+            toast.error("Comment is required");
+            return;
         }
 
-        if (type === "reject") {
-            setCommitteeRequests(prev =>
-                prev.map(req =>
-                    ids.includes(req.id) ? { ...req, status: "Rejected" } : req
-                )
+        let success = false;
+
+        if (actionType === "approve") {
+            success = await approvePanels(
+                ids,
+                commentText,
+                selectedPosition?.positionId
             );
-            toast.success("Committee requests rejected successfully");
+        } else {
+            success = await rejectPanels(
+                ids,
+                commentText,
+                selectedPosition?.positionId
+            );
         }
 
-        setSelectedReqIds(new Set());
-        setShowCommentModal(false);
+        if (success) {
+            setSelectedReqIds(new Set());
+
+            setShowCommentModal(false);
+        }
     };
+    const getStatusBadge = (status = "") => {
+        switch (status) {
+            case "L1_PENDING":
+                return "warning";
 
-    const handleOpenHistory = (req) => {
-        setSelectedHistoryReq(req);
+            case "L1_APPROVED":
+                return "info";
 
-        setHistoryData([
-            {
-                requester: "HR Department",
-                requestDate: req.startDate,
-                approver: "Manager",
-                approvalDate: "18-11-2025",
-                status: req.status,
-                comments: req.status === "Approved" ? "Committee approved successfully" : "Pending review"
-            }
-        ]);
+            case "APPROVED":
+                return "success";
 
+            case "L1_REJECTED":
+            case "L2_REJECTED":
+                return "danger";
+
+            default:
+                return "secondary";
+        }
+    };
+    const handleOpenHistory = async (panelId) => {
+
+        const history = await fetchApprovalHistory(panelId);
+
+        setHistoryData(history);
         setShowHistoryModal(true);
     };
+    useEffect(() => {
+        fetchRequisitions();
+    }, []);
 
     // Reset page when filters change
     useEffect(() => {
         setPage(0);
     }, [status, searchInput, pageSize]);
 
-    const paginatedData = getPaginatedData();
-    const totalPages = getTotalPages();
+    const allPanels = [
+        ...panelData.interviewPanelList,
+        ...panelData.screeningPanelList,
+        ...panelData.compensationPanelList
+    ];
 
-    const selectableRequests = paginatedData.filter(
-        r => r.status !== "Approved"
+    const filteredPanels = allPanels.filter(panelItem => {
+
+        const panelName = panelItem.interviewPanel?.panelName?.toLowerCase() || "";
+        const panelStatus = panelItem.positionPanelStatus;
+
+        // role based allowed statuses
+        const roleStatuses = allowedStatuses.map(s => s.value);
+
+        const roleMatch = roleStatuses.includes(panelStatus);
+
+        const searchMatch = panelName.includes(searchInput.toLowerCase());
+
+        const statusMatch =
+            status === "ALL" || panelStatus === status;
+
+        return roleMatch && searchMatch && statusMatch;
+    });
+    const totalPages = Math.ceil(filteredPanels.length / pageSize);
+
+    const paginatedPanels = filteredPanels.slice(
+        page * pageSize,
+        page * pageSize + pageSize
     );
 
     const allSelected =
-        selectableRequests.length > 0 &&
-        selectableRequests.every(r => selectedReqIds.has(r.id));
-
-    // const getStatusBadgeVariant = (status) => {
-    //     switch (status.toLowerCase()) {
-    //         case "approved":
-    //             return "success";
-    //         case "pending":
-    //             return "warning";
-    //         case "rejected":
-    //             return "danger";
-    //         default:
-    //             return "secondary";
-    //     }
-    // };
-
+        filteredPanels.length > 0 &&
+        filteredPanels.every(p =>
+            selectedReqIds.has(p.positionPanelId)
+        );
     const getVisiblePages = (currentPage, totalPages) => {
         const windowSize = 3;
 
@@ -224,291 +275,363 @@ const CommitteeRequests = () => {
             showEndEllipsis: end < totalPages,
         };
     };
+    const formatStatusLabel = (status) => {
+        if (!status) return "-";
+
+        return status
+            .toLowerCase()
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase());
+    };
+    const selectStyles = {
+        control: (base) => ({
+            ...base,
+            height: "38px",
+            minHeight: "38px",   // 🔥 override default 38px
+            fontSize: "14px"
+        }),
+
+        valueContainer: (base) => ({
+            ...base,
+            height: "38px",
+            padding: "0 8px"     // 🔥 remove vertical padding
+        }),
+
+        indicatorsContainer: (base) => ({
+            ...base,
+            height: "34px"
+        }),
+
+        input: (base) => ({
+            ...base,
+            margin: 0,
+            padding: 0
+        }),
+
+        singleValue: (base) => ({
+            ...base,
+            fontSize: "14px"
+        }),
+
+        placeholder: (base) => ({
+            ...base,
+            fontSize: "14px"
+        }),
+
+        menuPortal: (base) => ({
+            ...base,
+            zIndex: 9999
+        })
+    };
+
+    // const getStatusBadgeVariant = (status) => {
+    //     switch (status.toLowerCase()) {
+    //         case "approved":
+    //             return "success";
+    //         case "pending":
+    //             return "warning";
+    //         case "rejected":
+    //             return "danger";
+    //         default:
+    //             return "secondary";
+    //     }
+    // };
+
+
 
     return (
-        <Container fluid className="committee-page">
-            {/* ================= HEADER ================= */}
-            <Row className="mb-3 align-items-center">
-                <Col>
-                    <h5 className="page-title">Committee Requests</h5>
-                    <p className="page-subtitle">
-                        Review and approve or reject committee requests
-                    </p>
-                </Col>
-                <Col xs={12} md={4}>
-                    <div className="search-boxpost">
-                        <Search />
-                        <Form.Control
-                            type="text"
-                            placeholder="Search"
-                            value={searchInput}
-                            onChange={(e) => setSearchInput(e.target.value)}
-                        />
-                    </div>
-                </Col>
-            </Row>
-
-            <Row className="mb-3 align-items-end filters-row">
-
-                {/* Requisition */}
-                <Col xs={12} md={5}>
-                    <div className="filter-label">Requisition</div>
-                    <Select
-                        classNamePrefix="filter-select"
-                        isClearable
-                        options={requisitions}
-                        value={selectedRequisitionOption}
-                        onChange={(opt) => {
-                            onRequisitionChange?.(opt?.raw || null);
-                            onPositionChange?.(null);
-                            setPage(0);
-                        }}
-                    />
-                </Col>
-
-                {/* Position */}
-                <Col xs={12} md={5}>
-                    <div className="filter-label">Position</div>
-                    <Select
-                        classNamePrefix="filter-select"
-                        isClearable
-                        options={positions}
-                        value={selectedPositionOption}
-                        isDisabled={!selectedRequisitionOption}
-                        onChange={(opt) => {
-                            onPositionChange?.(opt?.raw || null);
-                            setPage(0);
-                        }}
-                    />
-                </Col>
-
-                {/* Status (right aligned like screenshot) */}
-                <Col xs={12} md={1} className="ms-auto">
-                    {/* <div className="filter-label">Status</div> */}
-                    <Form.Select
-                        className="status-select"
-                        value={status}
-                        onChange={(e) => {
-                            const value = e.target.value || null;
-                            setStatus(value);
-                            setPage(0);
-                        }}
-                    >
-                        <option value="ALL">{t("jobPostingsList:status_all")}</option>
-                        <option value="NEW">{t("jobPostingsList:status_new")}</option>
-                        <option value="APPROVED">{t("jobPostingsList:status_approved")}</option>
-                    </Form.Select>
-                </Col>
-
-            </Row>
-
-
-            {/* ================= BULK ACTIONS ================= */}
-            <Row className="bulk-actions align-items-center mt-3 mb-3">
-                <Col xs={12} md={6} className="selectcheck">
-                    <Form.Check
-                        type="checkbox"
-                        id="select-all-requests"
-                        className="select-checkbox"
-                        label="Select All"
-                        checked={allSelected}
-                        onChange={(e) => {
-                            if (e.target.checked) {
-                                setSelectedReqIds(
-                                    new Set(selectableRequests.map(r => r.id))
-                                );
-                            } else {
-                                setSelectedReqIds(new Set());
-                            }
-                        }}
-                    />
-                </Col>
-                <Col xs={12} md={6} className="d-flex justify-content-end gap-2">
-                    <Button
-                        variant="outline-danger"
-                        className="px-4 reject-btn"
-                        disabled={selectedReqIds.size === 0}
-                        onClick={() => {
-                            const errors = validateSelectedRequisitions(selectedReqIds);
-
-                            if (errors.length > 0) {
-                                errors.forEach(err => toast.error(err));
-                                return;
-                            }
-                            setActionType("reject");
-                            setShowCommentModal(true);
-                        }}
-                    >
-                        Reject
-                    </Button>
-
-                    <Button
-                        variant="outline-success"
-                        className="px-4 approve-btn"
-                        disabled={selectedReqIds.size === 0}
-                        onClick={() => {
-                            const errors = validateSelectedRequisitions(selectedReqIds);
-
-                            if (errors.length > 0) {
-                                errors.forEach(err => toast.error(err));
-                                return;
-                            }
-
-                            setActionType("approve");
-                            setShowCommentModal(true);
-                        }}
-                    >
-                        Approve
-                    </Button>
-                </Col>
-            </Row>
-
-            {/* ================= COMMITTEE REQUEST CARDS ================= */}
-            {paginatedData.length === 0 ? (
-                <div className="text-center text-muted my-4">
-                    No committee requests found
-                </div>
-            ) : (
-                paginatedData.map((req) => (
-                    <div key={req.id} className="bulk-actions align-items-center mt-3 mb-1">
-                        <Row className="align-items-center gx-3">
-                            {/* Checkbox */}
-                            <Col xs="auto" className="checkbox-col me-3">
-                                <Form.Check 
-                                    type="checkbox"
-                                    className="select-checkbox"
-                                    checked={selectedReqIds.has(req.id)}
-                                    disabled={req.status === "Approved"}
-                                    onChange={(e) => {
-                                        if (req.status === "Approved") return;
-
-                                        setSelectedReqIds(prev => {
-                                            const next = new Set(prev);
-                                            if (e.target.checked) {
-                                                next.add(req.id);
-                                            } else {
-                                                next.delete(req.id);
-                                            }
-                                            return next;
-                                        });
-                                    }}
-                                />
-                            </Col>
-
-                            {/* Requisition */}
-                            <Col xs="auto" md={2} className="data-col">
-                                <div className="field-label">Requisition  <img
-                                    src={history_icon} alt="history_icon"
-                                    className="icon-14"
-                                    onClick={() => handleOpenHistory(req)}
-                                /></div>
-                                <div className="d-flex align-items-center gap-1">
-
-                                    <span className="field-value requisition-text">
-                                        {req.requisitionId}
-                                    </span>
-
-                                </div>
-
-                            </Col>
-
-                            {/* Position */}
-                            <Col xs={12} md={2} className="data-col">
-                                <div className="field-label">Position</div>
-                                <div className="field-value">{req.positionName}</div>
-                            </Col>
-
-                            {/* Panel Type */}
-                            <Col xs={12} md={1} className="data-col">
-                                <div className="field-label">Panel Type</div>
-                                <div className="field-value">{req.panelType}</div>
-                            </Col>
-
-                            {/* Panel Members */}
-                            <Col xs={12} md={2} className="data-col">
-                                <div className="field-label">Panel Members</div>
-                                <div className="field-value">
-                                    {req.panelMembers.join(", ")}
-                                </div>
-                            </Col>
-
-                            {/* Start Date */}
-                            <Col xs={12} md={1} className="data-col">
-                                <div className="field-label">Start Date</div>
-                                <div className="field-value">{req.startDate}</div>
-                            </Col>
-
-                            {/* End Date */}
-                            <Col xs={12} md={1} className="data-col">
-                                <div className="field-label">End Date</div>
-                                <div className="field-value">{req.endDate}</div>
-                            </Col>
-
-                            {/* Status */}
-<Col xs={12} md={2} className="d-flex justify-content-end align-items-center"><Badge
-                                    bg={req.statusType}
-                                    className={`status-badge status-${req.status.toLowerCase()}`}
-                                >
-                                    {req.status}
-                                </Badge>
-
-
-                            </Col>
-                        </Row>
-                    </div>
-                ))
-            )}
-
-            {/* ================= PAGINATION ================= */}
-            {totalPages > 1 && (
-                <Row className="mt-4 mb-4">
-                    <Col className="d-flex justify-content-end align-items-center gap-3">
-                        {/* Page size */}
-                        <div className="d-flex align-items-center gap-2">
-                            <span className="fw-semibold pagesize">Page Size:</span>
-                            <Form.Select
-                                size="sm"
-                                style={{ width: "90px" }}
-                                value={pageSize}
-                                onChange={(e) => setPageSize(Number(e.target.value))}
-                            >
-                                {[5, 10, 15, 20, 25, 30].map(n => (
-                                    <option key={n} value={n}>{n}</option>
-                                ))}
-                            </Form.Select>
+        <div className="committee-requests-page">
+            <Container fluid className="committee-page">
+                {/* ================= HEADER ================= */}
+                <Row className="mb-3 align-items-center">
+                    <Col>
+                        <h5 className="page-title">{t("approvalHistory:committee_requests")}</h5>
+                        <p className="page-subtitle">
+                            {t("approvalHistory:review_and_approve_or_reject_committee_requests")}
+                        </p>
+                    </Col>
+                    <Col xs={12} md={4}>
+                        <div className="search-boxpost">
+                            <Search />
+                            <Form.Control
+                                type="text"
+                                placeholder={t("approvalHistory:search_by_panel_name")}
+                                value={searchInput}
+                                onChange={(e) => setSearchInput(e.target.value)}
+                            />
                         </div>
+                    </Col>
+                </Row>
 
-                        {/* Pagination */}
-                        <nav aria-label="Page navigation">
-                            <ul className="pagination mb-0 justify-content-center">
-                                {/* Prev */}
-                                <li className={`page-item ${page === 0 ? "disabled" : ""}`}>
-                                    <button
-                                        className="page-link"
-                                        onClick={() => setPage(p => Math.max(p - 1, 0))}
-                                        disabled={page === 0}
+                <Row className="mb-3 align-items-end filters-row">
+
+                    {/* Requisition */}
+                    <Col xs={12} md={4}>
+                        <div className="filter-label">{t("approvalHistory:requisition")}</div>
+                        <Select
+                            styles={selectStyles}
+                            classNamePrefix="react-select"
+                            menuPortalTarget={document.body}
+                            placeholder={t("approvalHistory:select_requisition")}
+                            options={requisitionOptions}
+                            isLoading={loadingRequisitions}
+                            value={selectedRequisitionOption}
+                            onChange={(opt) => {
+                                onRequisitionChange(opt?.raw || null);
+                                setPage(0);
+                            }}
+                        />
+                    </Col>
+
+                    {/* Position */}
+                    <Col xs={12} md={4}>
+                        <div className="filter-label">{t("approvalHistory:position")}</div>
+                        <Select
+                            styles={selectStyles}
+                            classNamePrefix="react-select"
+                            menuPortalTarget={document.body}
+                            placeholder={t("approvalHistory:select_position")}
+                            options={positionOptions}
+                            isLoading={loadingPositions}
+                            value={selectedPositionOption}
+                            isDisabled={!selectedRequisitionOption}
+                            onChange={(opt) => {
+                                onPositionChange(opt?.raw || null);
+                                setPage(0);
+                            }}
+                        />
+                    </Col>
+
+                    {/* Status (right aligned like screenshot) */}
+                    <Col xs={12} md={2} className="ms-auto">
+                        {/* <div className="filter-label">Status</div> */}
+                        <Form.Select
+                            className="status-select"
+                            value={status}
+                            onChange={(e) => {
+                                const value = e.target.value || null;
+                                setStatus(value);
+                                setPage(0);
+                            }}
+                        >
+                            <option value="ALL">{t("jobPostingsList:status_all")}</option>
+
+                            {allowedStatuses.map((status) => (
+                                <option key={status.value} value={status.value}>
+                                    {status.label}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Col>
+
+                </Row>
+
+
+                {/* ================= BULK ACTIONS ================= */}
+                <Row className="bulk-actions align-items-center mt-3 mb-3">
+                    <Col xs={12} md={6} className="selectcheck">
+                        <Form.Check
+                            type="checkbox"
+                            id="select-all-requests"
+                            className="select-checkbox"
+                            label={t("approvalHistory:select_all")}
+                            checked={allSelected}
+                            onChange={(e) => {
+                                if (e.target.checked) {
+                                    setSelectedReqIds(
+                                        new Set(filteredPanels.map(p => p.positionPanelId))
+                                    );
+                                } else {
+                                    setSelectedReqIds(new Set());
+                                }
+                            }}
+                        />
+                    </Col>
+                    <Col xs={12} md={6} className="d-flex justify-content-end gap-2">
+                        <Button
+                            variant="outline-danger"
+                            className="px-4 reject-btn"
+                            disabled={selectedReqIds.size === 0}
+                            onClick={() => {
+                                const errors = validateSelectedRequisitions(selectedReqIds);
+
+                                if (errors.length > 0) {
+                                    errors.forEach(err => toast.error(err));
+                                    return;
+                                }
+                                setActionType("reject");
+                                setShowCommentModal(true);
+                            }}
+                        >
+                            {t("approvalHistory:reject")}
+                        </Button>
+
+                        <Button
+                            variant="outline-success"
+                            className="px-4 approve-btn"
+                            disabled={selectedReqIds.size === 0}
+                            onClick={() => {
+                                const errors = validateSelectedRequisitions(selectedReqIds);
+
+                                if (errors.length > 0) {
+                                    errors.forEach(err => toast.error(err));
+                                    return;
+                                }
+
+                                setActionType("approve");
+                                setShowCommentModal(true);
+                            }}
+                        >
+                            {t("approvalHistory:approve")}
+                        </Button>
+                    </Col>
+                </Row>
+
+                {/* ================= COMMITTEE REQUEST CARDS ================= */}
+                {/* ================= PANELS ================= */}
+                {loadingPanels ? (
+                    <div className="text-center my-4">{t("approvalHistory:loading_panels")}</div>
+                ) : (
+                    <>
+                        {filteredPanels.length === 0 ? (
+                            <div className="text-center text-muted my-4">
+                                {t("approvalHistory:no_panels_found")}
+                            </div>
+                        ) : (
+                            paginatedPanels.map((panelItem) => {
+                                const panel =
+                                    panelItem.interviewPanel ||
+                                    panelItem.screeningPanel ||
+                                    panelItem.compensationPanel;
+                                const members = panel.panelMembers.map(
+                                    m => m.panelMember.name
+                                );
+
+                                return (
+                                    <div
+                                        key={panelItem.positionPanelId}
+                                        className="bulk-actions align-items-center mt-3 mb-1"
                                     >
-                                        &laquo;
-                                    </button>
-                                </li>
+                                        <Row className="align-items-center gx-2 d-flex">
 
-                                {/* Pages */}
-                                {(() => {
-                                    const {
-                                        pages,
-                                        showStartEllipsis,
-                                        showEndEllipsis,
-                                    } = getVisiblePages(page, totalPages);
+                                            {/* Checkbox */}
+                                            <Col xs="auto" className="checkbox-col pe-1 ms-2">
+                                                <Form.Check
+                                                    type="checkbox"
+                                                    className="select-checkbox"
+                                                    checked={selectedReqIds.has(panelItem.positionPanelId)}
+                                                    disabled={panelItem.positionPanelStatus !== selectableStatus}
+                                                    onChange={(e) => {
+                                                        setSelectedReqIds(prev => {
+                                                            const next = new Set(prev);
 
-                                    return (
-                                        <>
-                                            {showStartEllipsis && (
-                                                <li className="page-item disabled">
-                                                    <span className="page-link">…</span>
-                                                </li>
-                                            )}
+                                                            if (e.target.checked) {
+                                                                next.add(panelItem.positionPanelId);
+                                                            } else {
+                                                                next.delete(panelItem.positionPanelId);
+                                                            }
 
-                                            {pages.map(p => (
+                                                            return next;
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+
+                                            {/* Panel Name */}
+                                            <Col md={3} className="data-col">
+                                                <div className="field-label">{t("approvalHistory:panel_name")} <img
+                                                    src={history_icon}
+                                                    alt="History"
+                                                    className="icon-history"
+                                                    onClick={() => handleOpenHistory(panelItem.positionPanelId)}
+                                                /></div>
+                                                <div className="field-value">
+                                                    {panel.panelName}
+                                                </div>
+                                            </Col>
+
+                                            {/* Panel Type */}
+                                            <Col md={2} className="data-col">
+                                                <div className="field-label">{t("approvalHistory:panel_type")}</div>
+                                                <div className="field-value">
+                                                    {panel.committee?.committeeName}
+                                                </div>
+                                            </Col>
+
+                                            {/* Panel Members */}
+                                            <Col md={3} className="data-col">
+                                                <div className="field-label">{t("approvalHistory:panel_members")}</div>
+                                                <div className="field-value">
+                                                    {members.join(", ")}
+                                                </div>
+                                            </Col>
+
+                                            {/* Start Date */}
+                                            <Col md={1} className="data-col">
+                                                <div className="field-label">{t("approvalHistory:start_date")}</div>
+                                                <div className="field-value">
+                                                    {panelItem.startDate}
+                                                </div>
+                                            </Col>
+
+                                            {/* End Date */}
+                                            <Col md={1} className="data-col">
+                                                <div className="field-label">{t("approvalHistory:end_date")}</div>
+                                                <div className="field-value">
+                                                    {panelItem.endDate}
+                                                </div>
+                                            </Col>
+
+                                            {/* Status */}
+                                            <Col className="d-flex align-items-center">
+                                                <Badge
+                                                    bg={getStatusBadge(panelItem.positionPanelStatus)}
+                                                    className="status-badge ms-auto"
+                                                >
+                                                    {formatStatusLabel(panelItem.positionPanelStatus)}
+                                                </Badge>
+                                            </Col>
+
+                                        </Row>
+                                    </div>
+                                );
+                            })
+
+                        )}
+                        {totalPages > 1 && (
+                            <Row className="mt-4 mb-4">
+                                <Col className="d-flex justify-content-end align-items-center gap-3">
+
+                                    {/* Page size */}
+                                    <div className="d-flex align-items-center gap-2">
+                                        <span className="fw-semibold pagesize">Page Size:</span>
+                                        <Form.Select
+                                            size="sm"
+                                            style={{ width: "90px" }}
+                                            value={pageSize}
+                                            onChange={(e) => setPageSize(Number(e.target.value))}
+                                        >
+                                            {[5, 10, 15, 20].map(n => (
+                                                <option key={n} value={n}>{n}</option>
+                                            ))}
+                                        </Form.Select>
+                                    </div>
+
+                                    {/* Pagination */}
+                                    <nav>
+                                        <ul className="pagination mb-0">
+
+                                            {/* Prev */}
+                                            <li className={`page-item ${page === 0 ? "disabled" : ""}`}>
+                                                <button
+                                                    className="page-link"
+                                                    onClick={() => setPage(p => Math.max(p - 1, 0))}
+                                                >
+                                                    &laquo;
+                                                </button>
+                                            </li>
+
+                                            {getVisiblePages(page, totalPages).pages.map(p => (
                                                 <li
                                                     key={p}
                                                     className={`page-item ${page === p ? "active" : ""}`}
@@ -522,44 +645,41 @@ const CommitteeRequests = () => {
                                                 </li>
                                             ))}
 
-                                            {showEndEllipsis && (
-                                                <li className="page-item disabled">
-                                                    <span className="page-link">…</span>
-                                                </li>
-                                            )}
-                                        </>
-                                    );
-                                })()}
+                                            {/* Next */}
+                                            <li className={`page-item ${page >= totalPages - 1 ? "disabled" : ""}`}>
+                                                <button
+                                                    className="page-link"
+                                                    onClick={() => setPage(p => p + 1)}
+                                                >
+                                                    &raquo;
+                                                </button>
+                                            </li>
 
-                                {/* Next */}
-                                <li className={`page-item ${page >= totalPages - 1 ? "disabled" : ""}`}>
-                                    <button
-                                        className="page-link"
-                                        onClick={() => setPage(p => p + 1)}
-                                        disabled={page >= totalPages - 1}
-                                    >
-                                        &raquo;
-                                    </button>
-                                </li>
-                            </ul>
-                        </nav>
-                    </Col>
-                </Row>
-            )}
+                                        </ul>
+                                    </nav>
 
-            {/* Modals */}
-            <ApprovalCommentModal
-                show={showCommentModal}
-                actionType={actionType}
-                onClose={() => setShowCommentModal(false)}
-                onConfirm={handleApprovalAction}
-            />
-            <ApprovalHistoryModal
-                show={showHistoryModal}
-                onClose={() => setShowHistoryModal(false)}
-                historyData={historyData}
-            />
-        </Container>
+                                </Col>
+                            </Row>
+                        )}
+                    </>
+                )}
+
+
+
+                {/* Modals */}
+                <ApprovalCommentModal
+                    show={showCommentModal}
+                    actionType={actionType}
+                    onClose={() => setShowCommentModal(false)}
+                    onConfirm={handleApprovalAction}
+                />
+                <ApprovalHistoryModal
+                    show={showHistoryModal}
+                    onClose={() => setShowHistoryModal(false)}
+                    historyData={historyData}
+                />
+            </Container>
+        </div>
     );
 };
 

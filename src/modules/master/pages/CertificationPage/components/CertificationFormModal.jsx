@@ -71,74 +71,27 @@ const CertificationFormModal = ({
 
     onHide();
   };
+const title = isViewing
+  ? t("view_certification")
+  : isEditing
+  ? t("edit_certification")
+  : t("add_certification");
+const handleFormSubmit = (e) => {
+  if (isViewing) {
+    e.preventDefault();
+    onHide();
+  } else {
+    handleSubmit(e);
+  }
+};
+const isCreateMode = !isEditing && !isViewing;
 
-  return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      size="lg"
-      centered
-      className="user-modal"
-    >
-      {/* ---------------- HEADER ---------------- */}
-      <Modal.Header closeButton className="modal-header-custom">
-        <div>
-          <Modal.Title>
-            {isViewing
-              ? t("view_certification")
-              : isEditing
-                ? t("edit_certification")
-                : t("add_certification")}
-          </Modal.Title>
 
-          {!isEditing && !isViewing && (
-            <p className="mb-0 small text-muted">
-              {t("choose_add_method")}
-            </p>
-          )}
-        </div>
-      </Modal.Header>
-
-      {/* ---------------- BODY ---------------- */}
-      <Modal.Body className="p-4">
-
-        {/* -------- Tabs (Add Only) -------- */}
-        {!isEditing && !isViewing && (
-          <div className="tab-buttons mb-4">
-            <Button
-              variant={activeTab === "manual" ? "light" : "outline-light"}
-              className={`tab-button ${activeTab === "manual" ? "active" : ""
-                }`}
-              onClick={() => setActiveTab("manual")}
-            >
-              {t("manual_entry")}
-            </Button>
-
-            <Button
-              variant={activeTab === "import" ? "light" : "outline-light"}
-              className={`tab-button ${activeTab === "import" ? "active" : ""
-                }`}
-              onClick={() => setActiveTab("import")}
-            >
-              {t("import_file")}
-            </Button>
-          </div>
-        )}
-
-        {/* -------- MANUAL ENTRY -------- */}
-        {activeTab === "manual" ? (
-          <Form
-            onSubmit={
-              isViewing
-                ? (e) => {
-                  e.preventDefault();
-                  onHide();
-                }
-                : handleSubmit
-            }
-            noValidate
-          >
-            <Row className="g-3">
+const renderContent = () => {
+  if (activeTab === "manual") {
+    return (
+      <Form onSubmit={handleFormSubmit}>
+        <Row className="g-3">
               <Col md={12}>
                 <Form.Label>
                   {t("name")} <span className="text-danger">*</span>
@@ -216,27 +169,80 @@ const CertificationFormModal = ({
 
             </Row>
 
-            {/* -------- FOOTER -------- */}
-            <Modal.Footer className="px-0 pt-4 modal-footer-custom">
-              <Button variant="outline-secondary" onClick={onHide}>
-                {isViewing ? t("close") : t("cancel")}
-              </Button>
+        <Modal.Footer className="px-0 pt-4 modal-footer-custom">
+          <Button variant="outline-secondary" onClick={onHide}>
+            {isViewing ? t("close") : t("cancel")}
+          </Button>
 
-              {!isViewing && (
-                <Button variant="primary" type="submit">
-                  {isEditing ? t("update") : t("save")}
-                </Button>
-              )}
-            </Modal.Footer>
-          </Form>
-        ) : (
-          /* -------- IMPORT TAB -------- */
-          <CertificationImportModal
-            onImport={onImport}
-            onClose={onHide}
-            onSuccess={onSuccess}
-          />
+          {!isViewing && (
+            <Button variant="primary" type="submit">
+              {isEditing ? t("update") : t("save")}
+            </Button>
+          )}
+        </Modal.Footer>
+      </Form>
+    );
+  }
+
+  return (
+    <CertificationImportModal
+      onImport={onImport}
+      onClose={onHide}
+      onSuccess={onSuccess}
+    />
+  );
+};
+  return (
+    <Modal
+      show={show}
+      onHide={onHide}
+      size="lg"
+      centered
+      className="user-modal"
+    >
+      {/* ---------------- HEADER ---------------- */}
+      <Modal.Header closeButton className="modal-header-custom">
+        <div>
+          <Modal.Title>
+            {title}
+          </Modal.Title>
+
+          {isCreateMode && (
+            <p className="mb-0 small text-muted">
+              {t("choose_add_method")}
+            </p>
+          )}
+        </div>
+      </Modal.Header>
+
+      {/* ---------------- BODY ---------------- */}
+      <Modal.Body className="p-4">
+
+        {/* -------- Tabs (Add Only) -------- */}
+        {isCreateMode && (
+          <div className="tab-buttons mb-4">
+            <Button
+              variant={activeTab === "manual" ? "light" : "outline-light"}
+              className={`tab-button ${activeTab === "manual" ? "active" : ""
+                }`}
+              onClick={() => setActiveTab("manual")}
+            >
+              {t("manual_entry")}
+            </Button>
+
+            <Button
+              variant={activeTab === "import" ? "light" : "outline-light"}
+              className={`tab-button ${activeTab === "import" ? "active" : ""
+                }`}
+              onClick={() => setActiveTab("import")}
+            >
+              {t("import_file")}
+            </Button>
+          </div>
         )}
+
+        {/* -------- MANUAL ENTRY -------- */}
+        {renderContent()}
       </Modal.Body>
     </Modal>
   );

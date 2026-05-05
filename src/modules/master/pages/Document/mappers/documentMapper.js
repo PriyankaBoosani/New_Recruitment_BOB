@@ -15,8 +15,8 @@ export const mapDocumentsFromApi = (apiData = []) => {
 };
 
 export const mapDocumentToApi = (formData) => ({
-  documentName: cleanData(formData. name ),
-  documentDesc: cleanData(formData. description ),
+  documentName: cleanData(formData.name),
+  documentDesc: cleanData(formData.description),
   isRequired: formData.isRequired,
   isEditable: true,
   isActive: true

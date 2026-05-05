@@ -12,6 +12,7 @@ import { mapJobPositionToRequisitionStrip } from "../mappers/candidatePreviewMap
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
+import { FiUpload } from "react-icons/fi";
 
 const RequisitionStrip = ({
   requisition,
@@ -20,7 +21,9 @@ const RequisitionStrip = ({
   onSave,
   isCardBg,
   isSaveEnabled,
-  isSaveBtn
+  isSaveBtn,
+    showImportBtn,
+  onImportClick
 }) => {
 
   const [showPosition, setShowPosition] = useState(false);
@@ -93,20 +96,14 @@ const RequisitionStrip = ({
   useEffect(() => {
     const loadMasters = async () => {
       try {
-        const [masterRes, zonalRes] = await Promise.all([
+        const [masterRes, zonalRes, centersRes] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
-          masterApiService.getZonalStates()
+          // masterApiService.getZonalStates(),
+          
+
         ]);
 
-        setMasterData({
-          ...masterRes.data,
-
-          // use ZONAL states (correct IDs)
-          states: (zonalRes.data || []).map(s => ({
-            id: String(s.zonalStateID),
-            name: s.stateName,
-          }))
-        });
+        setMasterData(masterRes.data || {});
 
       } catch (err) {
         console.error("Failed to load master data", err);
@@ -116,6 +113,9 @@ const RequisitionStrip = ({
 
     loadMasters();
   }, []);
+
+  console.log("MASTER DATA FULL", masterData);
+  
 
 
   /* ================= FETCH JOB ================= */
@@ -154,6 +154,58 @@ const RequisitionStrip = ({
   };
 
   const { t } = useTranslation(["candidateWorkflow", "common"]);
+  const formatExperience = (years = 0, months = 0) => {
+    if (years === 0 && months === 0) return `0 ${t("candidateWorkflow:years")}`;
+
+    if (years > 0 && months === 0)
+      return `${years} ${t("candidateWorkflow:years")}`;
+
+    if (years === 0 && months > 0)
+      return `${months} ${t("candidateWorkflow:months")}`;
+
+    return `${years} ${t("candidateWorkflow:years")} ${months} ${t("candidateWorkflow:months")}`;
+  };
+
+
+
+
+
+
+
+
+
+
+const getEducationNameById = (id) => {
+  const docs = masterData?.educationLevels || []; // ✅ FIXED
+
+  const match = docs.find(
+    (doc) =>
+      doc.documentTypeId === id &&
+      doc.docType === "educationdocs"
+  );
+
+  return match?.documentName || "-";
+};
+
+
+
+const getEduWiseExperience = () => {
+  if (!job?.mandatoryExpMonthsEduWise) return [];
+
+  return Object.entries(job.mandatoryExpMonthsEduWise)
+    .map(([id, months]) => {
+      const name = getEducationNameById(id);
+
+      const years = Math.floor(months / 12);
+      const remMonths = months % 12;
+
+      let exp = "";
+      if (years > 0) exp += `${years} yr `;
+      if (remMonths > 0) exp += `${remMonths} mo`;
+
+      return `${name}: ${exp || "0 mo"}`;
+    });
+};
 
   return (
     <>
@@ -203,7 +255,7 @@ const RequisitionStrip = ({
 
             <span className="date-text">
               <i className="bi bi-clock me-1"></i>
-             {t("candidateWorkflow:end")}: {formatDMY(
+              {t("candidateWorkflow:end")}: {formatDMY(
                 requisition?.endDate || requisition?.registration_end_date
               )}
             </span>
@@ -220,7 +272,7 @@ const RequisitionStrip = ({
         </div>
 
         {/* ===== BUTTONS ===== */}
-        <div className="d-flex flex-row gap-2 mt-2 mt-md-0 ms-md-auto">
+        {/* <div className="d-flex flex-row gap-2 mt-2 mt-md-0 ms-md-auto">
 
           <button
             className="btn btn-sm blue-border blue-color px-3"
@@ -228,7 +280,7 @@ const RequisitionStrip = ({
             disabled={loading || !position}
             style={{ backgroundColor: "rgba(66, 87, 159, 0.12)" }}
           >
-           {t("candidateWorkflow:view_position")}
+            {t("candidateWorkflow:view_position")}
           </button>
           {isSaveBtn && (
             <button
@@ -240,7 +292,47 @@ const RequisitionStrip = ({
             </button>
           )}
 
-        </div>
+        </div> */}
+
+
+
+
+        <div className="d-flex flex-row gap-2 mt-2 mt-md-0 ms-md-auto">
+
+
+           {showImportBtn && (
+    <button
+      onClick={onImportClick}
+      className="add-panels-btn d-flex align-items-center gap-2"
+    >
+      <FiUpload />
+      {t("import_data")}
+    </button>
+  )}
+
+  <button
+    className="btn btn-sm blue-border blue-color px-3"
+    onClick={handleViewPosition}
+    disabled={loading || !position}
+    style={{ backgroundColor: "rgba(66, 87, 159, 0.12)" }}
+  >
+    {t("candidateWorkflow:view_position")}
+  </button>
+
+  {/* ✅ IMPORT BUTTON */}
+ 
+
+  {isSaveBtn && (
+    <button
+      className={`save-btn ${isSaveEnabled ? "unsaved" : "saved"}`}
+      disabled={!isSaveEnabled}
+      onClick={onSave}
+    >
+      {t("common:save")}
+    </button>
+  )}
+
+</div>
 
       </div>
 
@@ -250,7 +342,7 @@ const RequisitionStrip = ({
         onHide={() => setShowPosition(false)}
         centered
         size="lg"
-        // scrollable
+      // scrollable
       >
 
         <Modal.Header closeButton className="knowmore-header">
@@ -263,7 +355,7 @@ const RequisitionStrip = ({
 
               <span className="modal-date">
                 <i className="bi bi-calendar3 me-1"></i>
-               {t("candidateWorkflow:start")}: {formatDMY(requisition?.registration_start_date)}
+                {t("candidateWorkflow:start")}: {formatDMY(requisition?.registration_start_date)}
               </span>
 
               <span className="modal-divider">|</span>
@@ -289,7 +381,7 @@ const RequisitionStrip = ({
 
           {loading ? (
             <div className="text-center py-5">
-             {t("candidateWorkflow:loading_job_details")}
+              {t("candidateWorkflow:loading_job_details")}
             </div>
           ) : (
             <>
@@ -316,12 +408,17 @@ const RequisitionStrip = ({
 
 
                   {/* Experience */}
-                  <div className="col-12 col-md-4">
+                  {/* <div className="col-12 col-md-4">
                     <span className="stat-label">{t("candidateWorkflow:experience")}:</span>{" "}
-                    <span className="stat-value">
-                   {job?.mandatory_experience_years || "-"} {t("candidateWorkflow:years")}
-                    </span>
-                  </div>
+                   <span className="stat-value">
+  {job?.isMandatoryExpMonthsEduWise
+    ? getEduWiseExperience()
+    : formatExperience(
+        job?.mandatory_experience_years,
+        job?.mandatory_experience_months
+      )}
+</span>
+                  </div> */}
 
                   {/* Eligibility */}
                   <div className="col-12 col-md-4">
@@ -331,13 +428,7 @@ const RequisitionStrip = ({
                     </span>
                   </div>
 
-                  {/* Department */}
-                  <div className="col-12 col-md-4">
-                    <span className="stat-label">{t("candidateWorkflow:department")}:</span>{" "}
-                    <span className="stat-value">
-                      {job?.dept_name || "-"}
-                    </span>
-                  </div>
+             
 
                   {/* Vacancies */}
                   <div className="col-12 col-md-4">
@@ -347,6 +438,29 @@ const RequisitionStrip = ({
                     </span>
                   </div>
 
+                       {/* Department */}
+                  <div className="col-12 col-md-4">
+                    <span className="stat-label">{t("candidateWorkflow:department")}:</span>{" "}
+                    <span className="stat-value">
+                      {job?.dept_name || "-"}
+                    </span>
+                  </div>
+
+
+                 <div className="col-12 col-md-4">
+  <span className="stat-label">
+    {t("candidateWorkflow:experience")}:
+  </span>{" "}
+  <span className="stat-value">
+    {job?.isMandatoryExpMonthsEduWise
+      ? getEduWiseExperience().join("/ ")
+      : formatExperience(
+          job?.mandatory_experience_years,
+          job?.mandatory_experience_months
+        )}
+  </span>
+</div>
+
                 </div>
               </div>
 
@@ -354,12 +468,12 @@ const RequisitionStrip = ({
               <div className="info-card">
                 <div className="section-title">{t("candidateWorkflow:mandatory_education")}:</div>
                 <ul className="section-list">
-                  <li>{job?.mandatory_qualification || "-"}</li>
+                  <li style={{ whiteSpace: "pre-line" }}>{job?.mandatory_qualification || "-"}</li>
                 </ul>
 
                 <div className="section-title mt-2">{t("candidateWorkflow:preferred_education")}:</div>
                 <ul className="section-list">
-                  <li>{job?.preferred_qualification || "NA"}</li>
+                  <li style={{ whiteSpace: "pre-line" }}>{job?.preferred_qualification || "NA"}</li>
                 </ul>
               </div>
 
@@ -375,7 +489,7 @@ const RequisitionStrip = ({
 
                 <div className="section-title mt-2">{t("candidateWorkflow:preferred_experience")}:</div>
                 <ul className="section-lists">
-                  {renderBullets(job?.preferred_experience)}
+                  {renderBullets(job?.preferred_experience || "NA")}
                 </ul>
 
 
@@ -396,8 +510,9 @@ const RequisitionStrip = ({
                 <LocationWiseVacancyTable
                   positionStateDistributions={job.positionStateDistributions}
                   states={masterData?.states || []}
-                  reservationCategories={masterData?.reservation_categories || []}
-                  disabilities={masterData?.disabilities || []}
+                  cities={masterData?.cities || []}
+                  reservationCategories={masterData?.reservationCategories || []}
+                  disabilityCategories={masterData?.disabilityCategories || []}
                 />
               )}
 
@@ -405,6 +520,8 @@ const RequisitionStrip = ({
                 job?.nationalCategoryDistribution && (
                   <NationalVacancyTable
                     nationalCategoryDistribution={job.nationalCategoryDistribution}
+                    reservationCategories={masterData?.reservationCategories || []}
+                    disabilityCategories={masterData?.disabilityCategories || []}
                   />
                 )}
             </>

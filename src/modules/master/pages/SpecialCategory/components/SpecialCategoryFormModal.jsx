@@ -20,6 +20,48 @@ const SpecialCategoryFormModal = ({
   t,
   ...importProps
 }) => {
+ const getTitle = () => {
+  if (isViewing) return t("view");
+  if (isEditing) return t("edit");
+  return t("added");
+};
+
+const title = getTitle();
+
+const isCreateMode = !isEditing && !isViewing;
+const handleFormSubmit = (e) => {
+  if (isViewing) {
+    e.preventDefault();
+    onHide();
+  } else {
+    handleSave(e);
+  }
+};
+const renderField = (name, value, placeholder, pattern, errorMessage) => {
+  if (isViewing) {
+    return <div className="form-control-view">{value || "-"}</div>;
+  }
+
+  return (
+    <Form.Control
+      name={name}
+      value={value}
+      placeholder={placeholder}
+      className="form-control-custom"
+      onChange={(e) =>
+        handleValidatedInput({
+          e,
+          fieldName: name,
+          setFormData,
+          setErrors,
+          pattern,
+          errorMessage
+        })
+      }
+    />
+  );
+};
+
 
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
@@ -32,18 +74,16 @@ const SpecialCategoryFormModal = ({
                 ? t("edit")
                 : t("added")}
           </Modal.Title>
-
-
-          <p className="small text-muted para">
-            {isViewing || isEditing
-              ? null
-              : t("choose_add_method")}
-          </p>
+           {isCreateMode && (
+              <p className="small text-muted para">
+                {t("choose_add_method")}
+              </p>
+            )}
         </div>
       </Modal.Header>
 
       <Modal.Body className="p-4">
-        {!isEditing && !isViewing && (
+        {isCreateMode && (
           <div className="tab-buttons mb-4">
             <Button
               className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
@@ -64,16 +104,7 @@ const SpecialCategoryFormModal = ({
         )}
 
         {activeTab === 'manual' ? (
-          <Form
-            onSubmit={
-              isViewing
-                ? (e) => {
-                  e.preventDefault();
-                  onHide();
-                }
-                : handleSave
-            }
-          >
+          <Form onSubmit={handleFormSubmit}>
 
             <Row className="g-3">
               <Col md={6}>
@@ -82,29 +113,13 @@ const SpecialCategoryFormModal = ({
                     {t("code")} <span className="text-danger">*</span>
                   </Form.Label>
 
-                  {isViewing ? (
-                    <div className="form-control-view">
-                      {formData.code || "-"}
-                    </div>
-                  ) : (
-                    <Form.Control
-                      name="code"
-                      value={formData.code}
-                      placeholder={t("enter_code")}
-                      className="form-control-custom"
-                      onChange={(e) =>
-                        handleValidatedInput({
-                          e,
-                          fieldName: "code",
-                          setFormData,
-                          setErrors,
-                          pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
-                          errorMessage: t("validation:no_special_charses")
-                        })
-                      }
-                    />
-
-                  )}
+                 {renderField(
+  "code",
+  formData.code,
+  t("enter_code"),
+  INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
+  t("validation:no_special_charses")
+)}
 
                   {!isViewing && <ErrorMessage>{errors.code}</ErrorMessage>}
                 </Form.Group>
@@ -117,28 +132,12 @@ const SpecialCategoryFormModal = ({
                     {t("name")} <span className="text-danger">*</span>
                   </Form.Label>
 
-                  {isViewing ? (
-                    <div className="form-control-view">
-                      {formData.name || "-"}
-                    </div>
-                  ) : (
-                    <Form.Control
-                      name="name"
-                      value={formData.name}
-                      placeholder={t("enter_name")}
-                      className="form-control-custom"
-                      onChange={(e) =>
-                        handleValidatedInput({
-                          e,
-                          fieldName: "name",
-                          setFormData,
-                          setErrors,
-                          pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at,
-                          errorMessage: t("validation:no_special_charsess")
-                        })
-                      }
-                    />
-
+                  {renderField(
+                    "name",
+                    formData.name,
+                    t("enter_name"),
+                    INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at,
+                    t("validation:no_special_charsess")
                   )}
 
                   {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
@@ -152,39 +151,7 @@ const SpecialCategoryFormModal = ({
                     {t("description")} <span className="text-danger">*</span>
                   </Form.Label>
 
-                  {isViewing ? (
-                    <div
-                      className="form-control-view"
-                      style={{ whiteSpace: "pre-line" }}
-                    >
-                      {formData.description || "-"}
-                    </div>
-                  ) : (
-                    <Form.Control
-                      as="textarea"
-                      rows={3}
-                      name="description"
-                      value={formData.description}
-                      placeholder={t("enter_description")}
-                      className="form-control-custom"
-                      onChange={(e) => {
-                        const { name, value } = e.target;
-
-                        setFormData(prev => ({
-                          ...prev,
-                          [name]: value
-                        }));
-
-                        // optional: clear only this field error
-                        setErrors(prev => {
-                          const copy = { ...prev };
-                          delete copy[name];
-                          return copy;
-                        });
-                      }}
-                    />
-
-                  )}
+                  {renderDescription()}
 
                   {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
                 </Form.Group>

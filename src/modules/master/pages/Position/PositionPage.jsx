@@ -42,6 +42,7 @@ const PositionPage = () => {
 
   /* ---------------- FORM STATE ---------------- */
   const [formData, setFormData] = useState({
+     departmentId: "",  
     title: "",
     jobGradeId: "",
     mandatoryExperience: "",
@@ -61,6 +62,7 @@ const PositionPage = () => {
     setEditingId(p.id);
 
     setFormData({
+      departmentId: p.departmentId || "",
       title: p.title || "",
       jobGradeId: p.jobGradeId || "",
       mandatoryEducation: p.mandatoryEducation || "",
@@ -84,6 +86,7 @@ const PositionPage = () => {
     setShowAddModal(true);
     setEditingId(null);
     setFormData({
+        departmentId: "",
       title: "",
       jobGradeId: "",
       mandatoryExperience: "",
@@ -106,6 +109,7 @@ const PositionPage = () => {
     setIsEditing(true);
     setEditingId(p.id);
     setFormData({
+      departmentId: p.departmentId || "",
       title: p.title || "",
       jobGradeId: p.jobGradeId || "",
 
@@ -241,7 +245,9 @@ const PositionPage = () => {
         jobGrades={jobGrades}
         t={t}
         fetchPositions={fetchPositions}
+        
       />
+      
 
       <DeleteConfirmModal
         show={showDeleteModal}

@@ -4,12 +4,16 @@ import InterviewPanelTable from "./components/InterviewPanelTable";
 import AssignPositionsPage from "./AssignPositionsPage";
 import "../../style/css/InterviewPanelPage.css";
 import { useInterviewPanel } from "./hooks/useInterviewPanel";
-import { FiUsers, FiFileText } from "react-icons/fi";
+import { useAssignPositions } from "./hooks/useAssignPositions";
+import { FiUsers, FiFileText, FiUpload } from "react-icons/fi";
 import { Modal, Button } from "react-bootstrap";
 import DeleteConfirmationModal from "./components/DeleteConfirmationModal";
 import ErrorModal from "./components/ErrorModal";
+import PanelImportModal from "./components/PanelImportModal";
 import { useTranslation } from "react-i18next";
-
+import PositionAssignmentImportModal from "./components/PositionAssignmentImportModal";
+import bulbIcon from "../../assets/bulb-icon.png";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 const InterviewPanelPage = () => {
 
 
@@ -18,6 +22,7 @@ const InterviewPanelPage = () => {
     loading,
     communityOptions,
     membersOptions,
+    //centerOptions,
     formData,
     setFormData,
     errors,
@@ -49,15 +54,30 @@ const InterviewPanelPage = () => {
     setActiveTab,
     showErrorModal,
     setShowErrorModal,
-    errorMessage
+    errorMessage,
+    bulkAddPanels,
+    downloadPanelTemplate,
+
+
   } = useInterviewPanel();
 
-  // useEffect(() => {
-  //   initData();
-  // }, []);
+  // const {
+  //   bulkImportPositionAssignments,
+  //   downloadPositionAssignmentTemplate,
+  //   loadPositionData,
+  //   selectedPosition,
+  // } = useAssignPositions()
+
+  useEffect(() => {
+    initData();
+  }, []);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [deletePanelName, setDeletePanelName] = useState("");
+  const [showBulkImportModal, setShowBulkImportModal] = useState(false);
+  const [showPositionImportModal, setShowPositionImportModal] = useState(false);
+  // const [showGuidelines, setShowGuidelines] = useState(false);
+
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   return (
     <div className="interview-panel-container">
@@ -69,6 +89,27 @@ const InterviewPanelPage = () => {
           </div>
           <div className="tabs-container">
             <div className="tabs">
+
+              {/* <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={() => setShowBulkImportModal(true)}
+                className="d-flex align-items-center gap-2 bulk-import-btn"
+              >
+                <FiUpload />
+                {t("interviewPanelCommittee:add_panels")}
+              </Button>
+              <Button variant="outline-primary"
+                size="sm"
+                onClick={() => {
+                  setShowPositionImportModal(true);
+                }}
+                className="d-flex align-items-center gap-2 bulk-import-btn"
+              >
+                <FiUpload />
+                {t("interviewPanelCommittee:add_position_assignments")}
+              </Button> */}
+
               <button
                 className={`tab ${activeTab === "MANAGE" ? "active" : ""}`}
                 onClick={() => setActiveTab("MANAGE")}
@@ -87,15 +128,97 @@ const InterviewPanelPage = () => {
           </div>
         </div>
 
+
+        <div className="guidelines-box mt-3">
+          <div className="guidelines-header">
+            <img
+              src={bulbIcon}
+              alt="Info"
+              className="bulb-icon"
+            />
+            <h5 className="guidelines-title">Guidelines</h5>
+          </div>
+
+
+          {/* ADD PANELS */}
+
+          <div className="guideline-section">
+            <h6 className="sectiontitle">Add Panels</h6>
+
+            <ol className="main-list">
+              <li>Click on <b>Add Panels</b> to create new panels.</li>
+
+              <li>
+                In the <b>Panel Sheet:</b>
+                <ul>
+                  <li>Enter the <b>Panel Number</b> and <b>Panel Name</b>.</li>
+                  <li>
+                    Select the panel type under the <b>Committee Name</b> column
+                    (Screening, Interview, or Compensation).
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                In the <b>Panel Member Sheet:</b>
+                <ul>
+                  <li>Enter the <b>Panel Number</b> (as defined in the Panel Sheet).</li>
+                  <li>Select and assign users to the panel.</li>
+                  <li>Use additional rows to add multiple users to the same panel.</li>
+                </ul>
+              </li>
+
+              <li>Save the Excel file and upload it to the system.</li>
+            </ol>
+          </div>
+
+
+          <hr />
+
+          {/* ADD POSITION ASSIGNMENTS */}
+          <div className="guideline-section">
+            <h6 className="sectiontitle">Add Position Assignments</h6>
+
+            <ol className="main-list">
+              <li>
+                Click on <b>Add Position Assignments</b> to map panels to specific positions.
+              </li>
+              <li>Select the required <b>Requisition/Position</b>.</li>
+              <li>Choose the relevant <b>existing/created panel(s)</b>.</li>
+              <li>Enter the <b>Start Date</b> and <b>End Date</b>.</li>
+              <li>Save the Excel file and upload it to the system.</li>
+            </ol>
+          </div>
+
+        </div>
+
         <div className="panel-content">
           {activeTab === "MANAGE" && (
             <div className="panel-layout">
               <div className="panel-form-section">
                 <div className="panel-form-card">
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <span className="card-title">{formData.id
+                      ? t("interviewPanelCommittee:update_panel_title")
+                      : t("interviewPanelCommittee:create_panel_title")}
+                      <p className="card-subtitle">{t("interviewPanelCommittee:subtitle")}</p>
+                    </span>
+
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => setShowBulkImportModal(true)}
+                      className="d-flex align-items-center gap-2 bulk-import-btn"
+                    >
+                      <FiUpload />
+                      {t("interviewPanelCommittee:bulk_import")}
+                    </Button>
+                  </div>
 
                   <InterviewPanelFormModal
                     communityOptions={communityOptions}
                     membersOptions={membersOptions}
+                      // centerOptions={centerOptions}
                     formData={formData}
                     setFormData={setFormData}
                     onSave={handleSave}
@@ -137,10 +260,16 @@ const InterviewPanelPage = () => {
 
           {activeTab === "ASSIGN" && (
             <div className="assign-positions-container">
-              <AssignPositionsPage />
+             <AssignPositionsPage refreshPanels={fetchPanels} />
             </div>
           )}
         </div>
+
+        {/* {activeTab === "ASSIGN" && (
+          <div className="assign-positions-container">
+            <AssignPositionsPage />
+          </div>
+        )} */}
 
         <DeleteConfirmationModal
           show={showDeleteModal}
@@ -168,6 +297,52 @@ const InterviewPanelPage = () => {
         errors={[]}   // no list needed here
         onClose={() => setShowErrorModal(false)}
       />
+
+      <Modal
+        show={showBulkImportModal}
+        onHide={() => setShowBulkImportModal(false)}
+        size="lg"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="header-title">{t("interviewPanelCommittee:bulk_import_panels")}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PanelImportModal
+            t={t}
+            onClose={() => setShowBulkImportModal(false)}
+            onSuccess={() => {
+              fetchPanels();
+              setShowBulkImportModal(false);
+            }}
+          />
+        </Modal.Body>
+      </Modal>
+
+      {/* <Modal
+        show={showPositionImportModal}
+        onHide={() => setShowPositionImportModal(false)}
+        size="lg"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="header-title">{t("interviewPanelCommittee:bulk_import_position_assignments")}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PositionAssignmentImportModal
+            t={t}
+            bulkImportPositionAssignments={bulkImportPositionAssignments}
+            downloadPositionAssignmentTemplate={downloadPositionAssignmentTemplate}
+            loading={loading}
+            onClose={() => setShowPositionImportModal(false)}
+            onSuccess={() => {
+              loadPositionData(selectedPosition);
+              setShowPositionImportModal(false);
+            }}
+          />
+        </Modal.Body>
+      </Modal> */}
+
     </div>
   );
 };

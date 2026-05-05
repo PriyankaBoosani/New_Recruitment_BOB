@@ -15,7 +15,7 @@ const masterApiService = {
       responseType: "blob",
     }),
 
-     bulkAddUsers: (file) => {
+  bulkAddUsers: (file) => {
     const formData = new FormData();
 
     formData.append("file", file);
@@ -26,7 +26,7 @@ const masterApiService = {
       },
     });
   },
-   deleteUser: (id) => apis.delete(`/user/delete/${id}`),
+  deleteUser: (id) => apis.delete(`/user/delete/${id}`),
 
   // city
   getallCities: () => apis.get('/city/all'),
@@ -265,14 +265,10 @@ const masterApiService = {
     );
   },
 
-  getUser: () => apis.get('/user/all'),
-
   getAllMasters: () => apis.get("/display/all"),
   getUser: () => apis.get('/user/all'),
-  getAllCertificates: () =>
-    apis.get("/certificates-master/all"),
   getZonalStates: () => apis.get("/zonal-states/all"),
-  
+
 
   getAllLanguages: () =>
     apis.get("/master-dd-data/get/languages"),
@@ -281,13 +277,45 @@ const masterApiService = {
     apis.get("/master-dd-data/get/state-languages"),
 
 
-    //Interview Pool related master data interview-center
-    getAllInterviewCenters: () => apis.get("/master-dd-data/get/interview-centres"),
+  //Interview Pool related master data interview-center
+  getAllInterviewCenters: () => apis.get("/master-dd-data/get/interview-centres"),
 
-  getApprovingAuthorities: () =>apis.get("/approving-authority/all"),
+  getApprovingAuthorities: () => apis.get("/approving-authority/all"),
+  getInterviewCentresByState: (organizationTypes, zonalStateId) => {
+  return apis.post(
+    "/interview-centres/search",
+    {
+      organizationTypes,
+      zonalStateId,
+    },
+    {
+      headers: {
+        "X-Client": "recruiter",
+      },
+    }
+  );
+},
 
-    
+getAllEducation: (ids) =>
+  apis.post("/admin-education-master/all", ids),
+
+saveEducation: (payload) =>
+  apis.post("/admin-education-master/save", payload),
+
+getAllTemplates: () => 
+  apis.get("/templates/all"),
+
+// masterApiService
+previewTemplate: (templateId) =>
+  apis.get(`/templates/preview`, {
+    params: { templateId },
+    responseType: "blob", // 👈 IMPORTANT (for bytes/PDF)
+  }),
 
 };
+
+
+
+
 
 export default masterApiService;

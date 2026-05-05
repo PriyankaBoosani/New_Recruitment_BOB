@@ -11,7 +11,17 @@ import i18n from 'i18next';
 //   return null;
 // };
  
+const emailRegex = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;
 
+const isValidEmail = (email) => {
+  if (typeof email !== "string") return false;
+
+  const trimmed = email.trim();
+
+  if (trimmed.length === 0 || trimmed.length > 254) return false;
+
+  return emailRegex.test(trimmed);
+};
 export const requiredField = (value) => {
   if (value === null || value === undefined) {
     return i18n.t("validation:required");
@@ -38,11 +48,26 @@ export const maxLength = (value, max) => {
   return null;
 };
  
+// export const emailFormat = (email) => {
+//   //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//   const emailRegex = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;
+//   if (email && !emailRegex.test(email)) {
+//     return i18n.t('validation:invalidEmail');
+//   }
+//   return null;
+// };
+
+
 export const emailFormat = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (email && !emailRegex.test(email)) {
-    return i18n.t('validation:invalidEmail');
+  if (typeof email !== "string" || email.length > 254) {
+    return i18n.t("validation:invalidEmail");
   }
+
+
+if (email && !isValidEmail(email)) {
+    return i18n.t("validation:invalidEmail");
+  }
+
   return null;
 };
  

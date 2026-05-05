@@ -2,10 +2,11 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import "../../../style/css/ApprovalCommentModal.css";
-
+import { useTranslation } from "react-i18next";
 const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
   const [comment, setComment] = useState("");
   const [error, setError] = useState("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!show) {
@@ -14,30 +15,17 @@ const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
     }
   }, [show]);
   const handleConfirm = () => {
-  const trimmedComment = comment.trimStart();
+    const trimmedComment = comment.trim(); // trims BOTH start + end
 
-  // Empty check
-  if (!trimmedComment.trim()) {
-    setError("Comment is required");
-    return;
-  }
+    if (!trimmedComment) {
+      setError(t(`approvalHistory:comment_is_required`));
+      return;
+    }
 
-  // Leading space check
-  if (comment.startsWith(" ")) {
-    setError("Comment should not start with space");
-    return;
-  }
+    setError("");
+    onConfirm(trimmedComment);
+  };
 
-  // Max length check
-  if (comment.length > 200) {
-    setError("Comment should not exceed 200 characters");
-    return;
-  }
-
-  // Success
-  setError("");
-  onConfirm(trimmedComment);
-};
 
 
   return (
@@ -50,21 +38,30 @@ const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
     >
       <Modal.Header closeButton className="modal-header-custom">
         <Modal.Title className="modal-title-custom">
-          Approval / Rejection Comments
+          {t(`approvalHistory:approval_rejection_comments`)}
         </Modal.Title>
       </Modal.Header>
 
       <Modal.Body className="modal-body-custom">
         <Form.Group>
-          <Form.Label className="comment-label">Comments</Form.Label>
+          <Form.Label className="comment-label">{t(`approvalHistory:Comments`)}</Form.Label>
           <Form.Control
             as="textarea"
             rows={4}
-            placeholder="Enter Comment"
+            placeholder={t(`approvalHistory:enter_comments`)}
             value={comment}
             onChange={(e) => {
-              setComment(e.target.value);
-              if (e.target.value.trim()) setError("");
+              let value = e.target.value;
+
+              // 1. Remove leading spaces
+              value = value.replace(/^\s+/, "");
+
+              // 2. Replace multiple spaces inside with single space
+              value = value.replace(/\s{2,}/g, " ");
+
+              setComment(value);
+
+              if (value.trim()) setError("");
             }}
             isInvalid={!!error}
             className="comment-textarea"
@@ -77,7 +74,7 @@ const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
 
       <Modal.Footer className="modal-footer-custom">
         <Button variant="" className="btn-cancel" onClick={onClose}>
-          Cancel
+          {t(`approvalHistory:cancel`)}
         </Button>
 
         <Button variant=""
@@ -86,7 +83,7 @@ const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
           }
           onClick={handleConfirm}
         >
-          {actionType === "approve" ? "Approve" : "Reject"}
+          {actionType === "approve" ? t(`approvalHistory:approve`) : t(`approvalHistory:reject`)}
         </Button>
       </Modal.Footer>
     </Modal>

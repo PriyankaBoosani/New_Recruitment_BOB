@@ -51,8 +51,10 @@ const getInterviewCentreName = (masters, id) =>
 /* ===============================
    SINGLE SOURCE OF TRUTH
 ================================ */
-export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
+export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
   const profile = apiData?.basicDetails?.candidateProfile || {};
+  const languagesKnown = apiData?.basicDetails?.languagesKnown || [];
+  console.log("languagesKnown", languagesKnown);
   const address = apiData?.addressDetails || {};
   // const locationprefApiData = apiData?.locationPreference
   const locationprefApiData = apiData?.locationPreference || {};
@@ -68,13 +70,22 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
   const presentState = getStateName(masters, address.stateId);
   const presentPin = getPincode(masters, address.pincodeId);
 
-  const statePreference1 = getZonalState(masters, locationprefApiData.statePreference1);
-  const statePreference2 = getZonalState(masters, locationprefApiData.statePreference2);
-  const statePreference3 = getZonalState(masters, locationprefApiData.statePreference3);
+  // const statePreference1 = getZonalState(masters, locationprefApiData.statePreference1);
+  // const statePreference2 = getZonalState(masters, locationprefApiData.statePreference2);
+  // const statePreference3 = getZonalState(masters, locationprefApiData.statePreference3);
 
-  const locationPreference1 = getInterviewCentreName(masters, locationprefApiData.locationPreference1);
-  const locationPreference2 = getInterviewCentreName(masters, locationprefApiData.locationPreference2);
-  const locationPreference3 = getInterviewCentreName(masters, locationprefApiData.locationPreference3);
+  // const locationPreference1 = getInterviewCentreName(masters, locationprefApiData.locationPreference1);
+  // const locationPreference2 = getInterviewCentreName(masters, locationprefApiData.locationPreference2);
+  // const locationPreference3 = getInterviewCentreName(masters, locationprefApiData.locationPreference3);
+
+  const statePreference1 = getStateName(masters, locationprefApiData.statePreference1);
+  const statePreference2 = getStateName(masters, locationprefApiData.statePreference2);
+  const statePreference3 = getStateName(masters, locationprefApiData.statePreference3);
+
+  const locationPreference1 = getCityName(masters, locationprefApiData.locationPreference1);
+  const locationPreference2 = getCityName(masters, locationprefApiData.locationPreference2);
+  const locationPreference3 = getCityName(masters, locationprefApiData.locationPreference3);
+
 
   const examCenterName =
     getInterviewCentreName(masters, locationprefApiData.interviewCenter);
@@ -113,6 +124,8 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
   const nationality = getNationality(masters, profile.nationality);
   const maritalStatus = getMaritalStatus(masters, profile.maritalStatusId);
   const reservation = getReservation(masters, profile.reservationCategoryId);
+  const getLanguageName = (masters, id) =>
+    findById(masters.languages, "languageId", id)?.languageName || "-";
 
 
   /* ========= DOCUMENT GROUP ========= */
@@ -134,7 +147,10 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
           name: cleanedName || "Document",
           fileName: d.fileName,
           url: d.fileUrl,
-          status: d.documentScreeningStatus || "Pending"
+          status: d.documentScreeningStatus || "Pending",
+          isValidationPending: d.isValidationPending,
+          pendingChecks: d.pendingChecks,
+          documentNumber: d.documentNumber
         };
       });
 
@@ -147,7 +163,20 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
 
   //   status: d.documentScreeningStatus || "Pending"
   // }));
+  const mapLanguageNames = (languages, masters) => {
+    if (!languages?.length) return "-";
 
+    return languages
+      .map(lang => {
+        const found = masters?.languages?.find(
+          l => String(l.languageId) === String(lang.languageId)
+        );
+
+        return found?.languageName;
+      })
+      .filter(Boolean)
+      .join(", ");
+  };
 
   return {
     /* ================= PERSONAL ================= */
@@ -160,7 +189,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
       spouseName: profile.spouseName || "-",
       dob: formatDateDDMMYYYY(profile.dateOfBirth) || "-",
       age: apiData?.age || "-",
-
+      languages: mapLanguageNames(languagesKnown, masters),
       gender_name: gender?.gender || "-",
       religion_name: religion?.religion || "-",
       nationality_name: nationality?.countryName || "-",
@@ -181,7 +210,10 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
       centralGovtEmployment: yesNo(profile.centralGovtEmployed),
       servingLowerPost: yesNo(profile.employedInLowerPost),
       servingInGovt: yesNo(profile.isPublicSectorUndertaking),
+      familyMember1984: yesNo(profile.familyMember1984),
+      riotVictimFamily: yesNo(profile.riotVictimFamily),
       disciplinaryAction: yesNo(profile.anyDisciplinaryAction),
+      minority: yesNo(profile.minority),
       disciplinaryDetails: profile.disciplinaryDetails || "-",
 
       socialMediaProfileLink: profile.socialMediaProfileLink || "-",
@@ -198,7 +230,8 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
       locationPreference2: locationPreference2,
       locationPreference3: locationPreference3,
       examCenter: examCenterName,
-
+      localLanguage: getLanguageName(masters, locationprefApiData.localLanguageId),
+      isLocalLanguageStudied: locationprefApiData.isLocalLanguageStudied ? "Yes" : "No",
 
     },
 
@@ -221,6 +254,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
 
       return {
         institution: edu.institutionName || "-",
+        universityName: edu.universityName || "-",
         startDate: formatDateDDMMYYYY(edu.startDate) || "-",
         endDate: formatDateDDMMYYYY(edu.endDate) || "-",
         // percentage:
@@ -231,15 +265,9 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}) => {
         //     : "-",
         // percentage: edu.percentage ?? "-",
 
-        percentage:
-          edu.percentage != null
-            ? (() => {
-              const value = Number(edu.percentage).toFixed(2);
-              return Number(edu.percentage) < 10
-                ? `${value} CGPA`
-                : `${value}%`;
-            })()
-            : "-",
+        percentage: edu.percentage != null && !isNaN(Number(edu.percentage))
+          ? `${Number(edu.percentage).toFixed(2)}%`
+          : "-",
         educationLevel_name: educationLevel?.documentName || "-",
         mandatoryQualification_name: qualification?.qualificationName || "-",
         specialization_name: specialization?.specializationName || "-"
@@ -301,73 +329,73 @@ export const mapJobPositionToRequisitionStrip = (
     );
 
   /* ========= MASTER LOOKUPS ========= */
-  const reservationMap =
-    masters?.reservationCategories?.reduce((acc, r) => {
-      acc[r.reservationCategoriesId] = r.categoryCode; // GEN / EWS / SC / ST / OBC
-      return acc;
-    }, {}) || {};
+  // const reservationMap =
+  //   masters?.reservationCategories?.reduce((acc, r) => {
+  //     acc[r.reservationCategoriesId] = r.categoryCode; // GEN / EWS / SC / ST / OBC
+  //     return acc;
+  //   }, {}) || {};
 
-  const disabilityCodeMap =
-    masters?.disabilityCategories?.reduce((acc, d) => {
-      acc[d.disabilityCategoryId] = d.disabilityCode; // HI / VI / OC / ID
-      return acc;
-    }, {}) || {};
+  // const disabilityCodeMap =
+  //   masters?.disabilityCategories?.reduce((acc, d) => {
+  //     acc[d.disabilityCategoryId] = d.disabilityCode; // HI / VI / OC / ID
+  //     return acc;
+  //   }, {}) || {};
 
   /* ========= NATIONAL CATEGORY + DISABILITY (PIVOTED) ========= */
-  const nationalCategoryCounts = {
-    GEN: 0,
-    EWS: 0,
-    SC: 0,
-    ST: 0,
-    OBC: 0
-  };
 
-  const nationalDisabilityCounts = {
-    HI: 0,
-    VI: 0,
-    OC: 0,
-    ID: 0
-  };
 
 
   const formatExperience = (months) => {
-  if (months == null) return null;
+    if (months == null) return null;
 
-  const totalMonths = Number(months);
+    const totalMonths = Number(months);
 
-  if (isNaN(totalMonths)) return null;
+    if (isNaN(totalMonths)) return null;
 
-  const years = Math.floor(totalMonths / 12);
-  const remainingMonths = totalMonths % 12;
+    const years = Math.floor(totalMonths / 12);
+    const remainingMonths = totalMonths % 12;
 
-  if (years > 0 && remainingMonths > 0) {
-    return `${years} year${years > 1 ? "s" : ""} ${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
-  }
+    if (years > 0 && remainingMonths > 0) {
+      return `${years} year${years > 1 ? "s" : ""} ${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
+    }
 
-  if (years > 0) {
-    return `${years} year${years > 1 ? "s" : ""}`;
-  }
+    if (years > 0) {
+      return `${years} year${years > 1 ? "s" : ""}`;
+    }
 
-  return `${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
-};
+    return `${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
+  };
 
+  const nationalCategoryCounts = {};
+  const nationalDisabilityCounts = {};
+
+  // initialize
+  masters?.reservationCategories?.forEach(cat => {
+    nationalCategoryCounts[cat.reservationCategoriesId] = 0;
+  });
+
+  masters?.disabilityCategories?.forEach(dis => {
+    nationalDisabilityCounts[dis.disabilityCategoryId] = 0;
+  });
+
+  // populate
   apiData.positionCategoryNationalDistributions?.forEach((c) => {
-    // Reservation categories
     if (!c.isDisability && c.reservationCategoryId) {
-      const code = reservationMap[c.reservationCategoryId];
-      if (code) {
-        nationalCategoryCounts[code] += c.vacancyCount;
+      if (nationalCategoryCounts.hasOwnProperty(c.reservationCategoryId)) {
+        nationalCategoryCounts[c.reservationCategoryId] += c.vacancyCount;
       }
     }
 
-    // Disability categories
     if (c.isDisability && c.disabilityCategoryId) {
-      const dCode = disabilityCodeMap[c.disabilityCategoryId];
-      if (dCode) {
-        nationalDisabilityCounts[dCode] += c.vacancyCount;
+      if (nationalDisabilityCounts.hasOwnProperty(c.disabilityCategoryId)) {
+        nationalDisabilityCounts[c.disabilityCategoryId] += c.vacancyCount;
       }
     }
   });
+  const totalMonths = apiData.mandatoryExperienceMonths ?? 0;
+
+  const mandatoryYears = Math.floor(totalMonths / 12);
+  const mandatoryMonths = totalMonths % 12;
 
   return {
     requisition_code: apiData.requisitionId || "-",
@@ -377,15 +405,15 @@ export const mapJobPositionToRequisitionStrip = (
     dept_name: departmentObj?.departmentName || "-",
 
 
-
+    isMandatoryExpMonthsEduWise: apiData.isMandatoryExpMonthsEduWise,
+    mandatoryExpMonthsEduWise: apiData.mandatoryExpMonthsEduWise || {},
 
 
 
     /*  ADD THESE */
     contract_years: apiData.contractYears ?? 0,
-mandatory_experience_years:
-  formatExperience(apiData.mandatoryExperienceMonths),
-
+    mandatory_experience_years: mandatoryYears,
+    mandatory_experience_months: mandatoryMonths,
     registration_start_date: formatToIST(apiData.createdDate),
     registration_end_date: formatToIST(apiData.modifiedDate),
 
@@ -393,7 +421,7 @@ mandatory_experience_years:
     eligibility_age_max: apiData.eligibilityAgeMax ?? "-",
 
     mandatory_experience: apiData.mandatoryExperience || "-",
-    preferred_experience: apiData.preferredExperience || "-",
+    preferred_experience: apiData.preferredExperience || "NA",
 
     no_of_vacancies: apiData.totalVacancies ?? 0,
 
@@ -414,41 +442,37 @@ mandatory_experience_years:
     /* ========= STATE + CATEGORY + DISABILITY (PIVOTED) ========= */
     positionStateDistributions:
       apiData.positionStateDistributions?.map((state) => {
-        const categoryCounts = {
-          GEN: 0,
-          EWS: 0,
-          SC: 0,
-          ST: 0,
-          OBC: 0
-        };
+        const categoryCounts = {};
+        const disabilityCounts = {};
 
-        const disabilityCounts = {
-          HI: 0,
-          VI: 0,
-          OC: 0,
-          ID: 0
-        };
+        // initialize using IDs
+        masters?.reservationCategories?.forEach(cat => {
+          categoryCounts[cat.reservationCategoriesId] = 0;
+        });
+
+        masters?.disabilityCategories?.forEach(dis => {
+          disabilityCounts[dis.disabilityCategoryId] = 0;
+        });
 
         state.positionCategoryDistributions?.forEach((c) => {
           // Reservation categories
           if (!c.isDisability && c.reservationCategoryId) {
-            const code = reservationMap[c.reservationCategoryId];
-            if (code) {
-              categoryCounts[code] += c.vacancyCount;
+            if (categoryCounts.hasOwnProperty(c.reservationCategoryId)) {
+              categoryCounts[c.reservationCategoryId] += c.vacancyCount;
             }
           }
 
           // Disability categories
           if (c.isDisability && c.disabilityCategoryId) {
-            const dCode = disabilityCodeMap[c.disabilityCategoryId];
-            if (dCode) {
-              disabilityCounts[dCode] += c.vacancyCount;
+            if (disabilityCounts.hasOwnProperty(c.disabilityCategoryId)) {
+              disabilityCounts[c.disabilityCategoryId] += c.vacancyCount;
             }
           }
         });
 
         return {
           stateId: state.stateId,
+          cityId: state.cityId,
           totalVacancies: state.totalVacancies,
           localLanguage: state.localLanguage,
 

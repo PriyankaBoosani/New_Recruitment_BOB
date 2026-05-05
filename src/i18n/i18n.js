@@ -72,6 +72,11 @@ import candidateWorkflowHi from "../i18n/candidateWorkflowJson/candidateWorkflow
 import verificationEn from "../i18n/verificationJson/verification.en.json";
 import verificationHi from "../i18n/verificationJson/verification.hi.json";
 
+import educationEn from "../i18n/json/education.en.json";
+import educationHi from "../i18n/json/education.hi.json";
+
+import ApprovalEn from "../i18n/ApprovalJson/approvalhistory.en.json";
+import ApprovalHi from "../i18n/ApprovalJson/approvalhistory.hi.json";
 
 
 
@@ -105,6 +110,8 @@ i18n
          interviewDay: interviewDayEn,
          candidateWorkflow: candidateWorkflowEn,
          verification: verificationEn,
+         education: educationEn,
+          approvalHistory: ApprovalEn,
       },
       hi: {
         common: commonHi,
@@ -131,6 +138,8 @@ i18n
          interviewDay: interviewDayHi,
          candidateWorkflow: candidateWorkflowHi,
          verification: verificationHi,
+          education: educationHi,
+          approvalHistory: ApprovalHi,
       }
     },
     lng: "en",       

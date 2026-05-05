@@ -16,51 +16,15 @@
   box-shadow: 0 0 0 1px rgba(220, 53, 69, .15);
 }
 
-.input-error {
-  border: 1px solid #dc3545 !important;
-}
-
-
-
 .comment-block {
   display: flex;
   flex-direction: column;
   width: 100%;
+  flex: 1;
 }
 
 .comment-input.input-error {
   border: 1px solid #dc3545 !important;
-}
-
-.doc-viewer-footer {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.comment-block {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-
-
-/* ================= DOCUMENT VIEWER FOOTER LAYOUT ================= */
-
-.doc-viewer-footer {
-  padding: 10px;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  border-top: 1px solid #ddd;
-}
-
-/* left side comment + error */
-.comment-block {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
 }
 
 /* === comment box = same height as buttons === */
@@ -91,12 +55,6 @@
   margin-top: 4px;
 }
 
-/* buttons row */
-.doc-viewer-actions {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
 
 /* button height fixed */
 .btn-reject,
@@ -108,12 +66,6 @@
   font-weight: 600;
   border: none;
 }
-
-
-.comment-input.input-error {
-  border: 1px solid #dc3545 !important;
-}
-
 
 
 .submit-date-group {
@@ -204,7 +156,6 @@
   background: #002d62 !important;
   color: #fff !important;
   font-weight: 500 !important;
-  /* text-align: center; */
   font-size: 0.8rem !important;
   letter-spacing: 0.2px !important;
   text-transform: capitalize !important;
@@ -242,7 +193,6 @@
   border: 1px solid #ccc;
   border-radius: 6px;
   width: 110px;
-  /* height: 110px; */
   overflow: hidden;
   background: #fff;
   margin: 6px auto 10px;
@@ -255,27 +205,6 @@
 .btn-bob-orange:hover {
   background: #e66100 !important;
 }
-
-/* .btn-outline-primary {
-  color: #004e9a;
-  border: 1px solid #004e9a;
-  border-radius: 4px;
-  font-weight: 500;
-  padding: 8px 20px;
-  background: #fff;
-  transition: all 0.2s ease-in-out;
-}
-
-.btn-outline-primary:hover {
-  background: #004e9a;
-  color: #fff;
-}
-
-.btn-outline-secondary {
-  border-radius: 4px;
-  padding: 8px 20px;
-  font-weight: 500;
-} */
 
 
 /* Accordion styling */
@@ -290,7 +219,6 @@
   background: #f8f9fa !important;
   padding: 10px 14px;
   color: #162B75;
-  /* font-size: 1.125rem; */
   font-size: 0.9rem;
   font-weight: 500;
   border: none;
@@ -298,10 +226,8 @@
 }
 
 .bob-accordion .accordion-header button:not(.collapsed) {
-  /* background: #004e9a !important; */
   color: #162B75;
   font-size: 0.9rem;
-  /* font-size: 1.125rem; */
   font-weight: 500;
 }
 
@@ -359,8 +285,20 @@ select.form-control {
 
 /* ================= DOCUMENT TABLE ================= */
 
+
+
+.bob-doc-table th,
+.bob-doc-table td {
+  padding: 10px;
+}
+
+.divider1 {
+  border-right: 1px solid #dee2e6;
+}
+
 .bob-doc-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   background: #fff;
 }
@@ -382,27 +320,15 @@ select.form-control {
 }
 
 .bob-doc-table td {
-  padding: 10px;
+  padding-left: 10px;
   font-size: 14px;
   vertical-align: middle;
-}
-
-/* ================= VERIFIED PILL ================= */
-
-.verified-pill {
-  background: #e8f6ea;
-  color: #2e7d32;
-  border: 1px solid #9ad0a3;
-  border-radius: 14px;
-  padding: 3px 12px;
-  font-size: 12px;
-  font-weight: 600;
 }
 
 /* ================= ACTION ICONS ================= */
 
 .action-cell {
-  display: flex;
+ 
   gap: 10px;
 }
 
@@ -445,12 +371,6 @@ select.form-control {
   margin-top: 20px;
 }
 
-.submit-label {
-  font-weight: 600;
-  color: #3f51b5;
-  margin-bottom: 6px;
-  display: block;
-}
 
 
 /* ===== MAIN CARD ===== */
@@ -520,16 +440,10 @@ select.form-control {
   border-color: #2f3a8f;
 }
 
-/* ===== DISABLED ===== */
-.radio-label.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
 
 /* ===== REMARK ===== */
 .criteria-remark {
   width: 100%;
-  /* height: 34px; */
   padding: 6px 8px;
   border: 1px solid #e6e9f0;
   border-radius: 5px;
@@ -558,19 +472,6 @@ select.form-control {
   border-radius: 4px;
   font-size: 12px;
 }
-
-/* ===== SUBMIT BUTTON ===== */
-.btn-submit-orange {
-  background: #f36f21;
-  color: #fff;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-
 
 /* ================= EXPERIENCE ACCORDION ================= */
 .exp-accordion {
@@ -747,6 +648,7 @@ select.form-control {
 .doc-viewer-actions {
   display: flex;
   gap: 10px;
+    align-items: center;
 }
 
 .btn-reject {
@@ -805,7 +707,6 @@ select.form-control {
   gap: 18px;
   
   max-width: auto;
-  /* white-space: nowrap;        */
 }
 
 .modal-req-title {
@@ -835,25 +736,11 @@ select.form-control {
 }
 
 
-
-
-
-
-
-
-.req-code {
-  color: #F57C00 !important;
-  /* BOB Orange */
-  font-weight: 600;
-  font-size: 15px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-}
-
 .wraps .req-code {
-  max-width: 300px !important;
+  max-width: 65% !important;
+    float: left;
+    
+    overflow-wrap: break-word;
 
 }
 
@@ -895,7 +782,6 @@ select.form-control {
 
 .section-list {
   margin: 0;
-  padding-left: 18px;
   font-size: 13px;
   color: #212529;
   margin-top: 0 !important;
@@ -905,7 +791,6 @@ select.form-control {
 }
 
 .section-list li {
-  margin-top: 2px;
   margin-bottom: 10;
   margin-top: 0 !important;
   padding-top: 0 !important;
@@ -1109,15 +994,18 @@ select.form-control {
   border-color: #ff7a2f;
   background: #ffffff;
 }
-
 .btn-submit-orange {
-    height: 40px;
+  height: 40px;
   min-width: 110px;
+
   background: #f47c2c;
+  color: #fff;
+
   border: none;
   padding: 10px 22px;
   border-radius: 10px;
-  color: white;
+
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -1141,17 +1029,6 @@ select.form-control {
   gap: 16px;
 }
 
-.remarks-box {
-  flex: 1;
-  resize: none;
-}
-
-/* keep button small */
-.btn-submit-orange {
-  height: 40px;
-  min-width: 110px;
-}
-
 .radio-label.disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -1159,51 +1036,6 @@ select.form-control {
 }
 
 
-/* .photo-signature-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-} */
-
-/* PHOTO BOX */
-/* .photo-box {
-  width: 130px;
-  height: 160px;
-  border: 1px solid #d6d6d6;
-  border-radius: 14px;
-  overflow: hidden;   
-  background: #f5f5f5;
-} */
-
-/* .photo-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-} */
-
-/* .signature-box {
-  width: 130px;
-  height: 65px;
-  border: 1px solid #d6d6d6;
-  border-radius: 14px;
-  overflow: hidden;
-  background: #f5f5f5;
-} */
-
-/* .signature-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;  
-  display: block;
-} */
-/* .no-bullet-line {
-	line-height: 1.4;
-	margin-bottom: 0 !important;
-	margin-top: 0 !important;
-	padding-bottom: 8px;
-} */
 
 
 .photo-signature-wrapper {
