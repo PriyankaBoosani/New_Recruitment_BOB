@@ -1027,35 +1027,54 @@ useEffect(() => {
       ? filters.status.map((s) => s.toUpperCase())
       : availableStatuses;
   };
+
+
   const buildDownloadPayload = (documentType) => {
-    const normalizedStatuses = getNormalizedStatuses();
+  const normalizedStatuses = getNormalizedStatuses();
 
-    const basePayload = {
-      documentType,
-      positionId: selectedPositionId,
-      screenName:
-        activeTab === "INTERVIEW_POOL"
-          ? "InterviewPool"
-          : "CandidatePool",
-      categoryId: filters.categoryId || null,
-    };
-
-    if (activeTab === "CANDIDATE_POOL") {
-      return {
-        ...basePayload,
-        candidateApplicationStatuses: normalizedStatuses,
-      };
-    }
-
-    if (activeTab === "INTERVIEW_POOL") {
-      return {
-        ...basePayload,
-        interviewSchedulingStatuses: normalizedStatuses,
-      };
-    }
-
-    return basePayload;
+  const basePayload = {
+    documentType,
+    positionId: selectedPositionId,
+    screenName:
+      activeTab === "INTERVIEW_POOL"
+        ? "InterviewPool"
+        : activeTab === "COMPENSATION_POOL"
+        ? "CompensationPool"
+        : "CandidatePool",
+    categoryId: filters.categoryId || null,
   };
+
+  //  Candidate Pool
+  if (activeTab === "CANDIDATE_POOL") {
+    return {
+      ...basePayload,
+      candidateApplicationStatuses: normalizedStatuses,
+    };
+  }
+
+  //  Interview Pool
+  if (activeTab === "INTERVIEW_POOL") {
+    return {
+      ...basePayload,
+      interviewSchedulingStatuses: normalizedStatuses,
+    };
+  }
+
+  //   Compensation Pool (NEW)
+  if (activeTab === "COMPENSATION_POOL") {
+    return {
+      ...basePayload,
+      candidateApplicationStatuses: CANDIDATE_POOL_STATUSES, // fixed list
+      compensationStatuses: normalizedStatuses, // selected filter
+    };
+  }
+
+  return basePayload;
+};
+
+
+
+
 
   const handleDownload = async (type) => {
     if (!selectedPositionId) {
