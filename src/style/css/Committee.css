@@ -535,9 +535,9 @@ border-color: hsl(0, 0%, 80%);
 	font-size: 0.625em;
   text-transform: capitalize;
 }
-.bg-success {
-  color: #0EB319;
-  border: 1px solid #0EB319;
+.committee-row .bg-success {
+  color: #fff;
+  border: 1px solid #0EB319 !important;
   background: #F5FFF6;
   font-weight: 500;
   font-size: 0.625em;
