@@ -96,11 +96,8 @@ const RequisitionStrip = ({
   useEffect(() => {
     const loadMasters = async () => {
       try {
-        const [masterRes, zonalRes, centersRes] = await Promise.all([
+        const [masterRes] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
-          // masterApiService.getZonalStates(),
-          
-
         ]);
 
         setMasterData(masterRes.data || {});

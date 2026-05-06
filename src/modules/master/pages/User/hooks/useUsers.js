@@ -14,7 +14,7 @@ export const useUsers = () => {
     setLoading(true);
     try {
       const res = await masterApiService.getRegister();
-      const list = mapUsersFromApi(res || []);
+      const list = mapUsersFromApi(res.data || []);
 
       // Newest first (highest id on top)
       //list.sort((a, b) => Number(b.id) - Number(a.id));

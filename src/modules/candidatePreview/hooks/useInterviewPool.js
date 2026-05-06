@@ -22,32 +22,34 @@ export default function useInterviewPool({
   // 🔹 Fetch interview centres only once
   useEffect(() => {
     const fetchMasters = async () => {
-      try {
-        const [centreRes, panelRes] = await Promise.all([
-          masterApiService.getAllInterviewCenters(),
-          masterApiService.getInterviewPanels(),
-        ]);
+      let centreRes, panelRes;
 
-        // Centres
+      // Fetch centres
+      try {
+        centreRes = await masterApiService.getAllInterviewCenters();
         const centres = centreRes?.data || [];
         const centreLookup = {};
         centres.forEach((c) => {
           centreLookup[c.interviewCentreId] = c.interviewCentre;
         });
+        setCentreMap(centreLookup);
+      } catch (err) {
+        console.error("Failed to fetch interview centres:", err);
+        setCentreMap({});
+      }
 
-        // Panels
+      // Fetch panels
+      try {
+        panelRes = await masterApiService.getInterviewPanels();
         const panels = panelRes?.data || [];
         const panelLookup = {};
         panels.forEach((p) => {
           panelLookup[p.interviewPanelId] = p.panelName;
         });
-
-        setCentreMap(centreLookup);
         setPanelMap(panelLookup);
-
-
       } catch (err) {
-        console.error(t("candidateWorkflow:failed_fetch_master_data"), err);
+        console.error("Failed to fetch interview panels:", err);
+        setPanelMap({});
       }
     };
 

@@ -110,30 +110,49 @@ export const useInterviewPanel = () => {
     try {
       setLoading(true);
 
-      const [commRes, memRes, centerRes] = await Promise.all([
-        masterApiService.getMasterDropdownData(),
-        committeeManagementService.getPanelMembers(),
-        masterApiService.getAllInterviewCenters()
-      ]);
+      // Individual API calls for better error handling
+      let commRes, memRes, centerRes;
 
-      setCommunityOptions(
-        (commRes?.data || []).map(c => ({
-          id: c.interviewCommitteeId,
-          name: c.committeeName
-        }))
-      );
-      // setCenterOptions(
-      //   (centerRes?.data || [])
-      //     .sort((a, b) =>
-      //       a.interviewCentre.localeCompare(b.interviewCentre)
-      //     )
-      //     .map(c => ({
-      //       value: c.interviewCentreId,
-      //       label: c.interviewCentre
-      //     }))
-      // );
+      try {
+        commRes = await masterApiService.getMasterDropdownData();
+        setCommunityOptions(
+          (commRes?.data || []).map(c => ({
+            id: c.interviewCommitteeId,
+            name: c.committeeName
+          }))
+        );
+      } catch (error) {
+        console.error("Failed to load community options:", error);
+        toast.error(t("failed_load_communities"));
+        setCommunityOptions([]);
+      }
 
-      setMembersOptions(mapInterviewMembersApi(memRes));
+      try {
+        memRes = await committeeManagementService.getPanelMembers();
+        setMembersOptions(mapInterviewMembersApi(memRes));
+      } catch (error) {
+        console.error("Failed to load panel members:", error);
+        toast.error(t("failed_load_members"));
+        setMembersOptions([]);
+      }
+
+      try {
+        centerRes = await masterApiService.getAllInterviewCenters();
+        // setCenterOptions(
+        //   (centerRes?.data || [])
+        //     .sort((a, b) =>
+        //       a.interviewCentre.localeCompare(b.interviewCentre)
+        //     )
+        //     .map(c => ({
+        //       value: c.interviewCentreId,
+        //       label: c.interviewCentre
+        //     }))
+        // );
+      } catch (error) {
+        console.error("Failed to load interview centers:", error);
+        toast.error(t("failed_load_centers"));
+        // setCenterOptions([]);
+      }
 
     } catch (error) {
       console.error("Init Data Error:", error);
