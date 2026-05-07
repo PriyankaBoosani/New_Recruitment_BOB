@@ -108,7 +108,13 @@ const JobPostingsList = () => {
             selectedPosition.requisitionId,
             selectedPosition.positionId
         );
-        fetchPositions(selectedPosition.requisitionId);
+        // fetchPositions(selectedPosition.requisitionId);
+        fetchPositions(
+            selectedReq.isDraft
+                ? selectedReq.parentRequisitionId
+                : selectedPosition.requisitionId,
+            selectedReq.isDraft
+        );
         refetch();
         setShowDeletePosModal(false);
         setSelectedPosition(null);
@@ -145,7 +151,7 @@ const JobPostingsList = () => {
     const toggleAccordion = (req) => {
         setOpenReqId((prev) => {
             const next = prev === req.id ? null : req.id;
-            console.log(req);
+
             if (next) {
                 fetchPositions(
                     req.isDraft ? req.parentRequisitionId : req.id,

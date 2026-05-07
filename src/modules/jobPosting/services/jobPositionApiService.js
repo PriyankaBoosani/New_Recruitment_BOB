@@ -6,6 +6,11 @@ const jobPositionApiService = {
       `/recruiter/job-positions/get-job-position-by-requisition/${requisitionId}`
     ),
 
+  getDraftPositionsByRequisition: (requisitionId) =>
+  api.get(
+    `/recruiter/job-positions/get-draft-job-position-by-requisition/${requisitionId}`
+  ),
+
   getPositionById: (positionId) =>
     api.get(
       `/recruiter/job-positions/get-job-position-by-id/${positionId}`
