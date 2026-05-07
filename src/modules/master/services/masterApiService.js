@@ -304,13 +304,16 @@ saveEducation: (payload) =>
 
 getAllTemplates: () => 
   apis.get("/templates/all"),
-
+getStates: () => apis.get("/state/all"),
 // masterApiService
 previewTemplate: (templateId) =>
   apis.get(`/templates/preview`, {
     params: { templateId },
     responseType: "blob", // 👈 IMPORTANT (for bytes/PDF)
   }),
+
+  getRequestTypes: () =>
+  apis.get("/master-dd-data/get/request-types"),
 
 };
 

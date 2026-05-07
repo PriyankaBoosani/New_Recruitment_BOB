@@ -1,0 +1,23 @@
+{
+    "reg_no": "Reg No",
+    "requisition": "Requisition",
+    "request_type": "Request Type",
+    "send_message": "Send Message",
+    "accept": "Accept",
+    "reject": "Reject",
+    "request_history": "Request History",
+    "comment": "Comment",
+    "message_history": "Message History",
+    "manage_communications": "View and manage all candidate communications",
+    "search": "Search",
+    "extend_submission_date": "Extend the Submission Date",
+    "select_date": "Select Date",
+    "all_status": "All Status",
+    "all": "All",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "no_data": "No data found",
+    "submit": "Submit"
+    
+}

@@ -20,6 +20,7 @@ import CreateRequisition from "../modules/jobPosting/pages/CreateRequisition";
 import GenericOrAnnexuresPage from "../modules/master/pages/GenericOrAnnexures/GenericOrAnnexuresPage";
 import CertificationPage from "../modules/master/pages/CertificationPage/CertificationPage";
 import EducationModal from "../modules/master/pages/EducationQualification/EducationQualificationPage";
+import StatesLanguagesPage from "../modules/master/pages/StatesLanguages/StatesLanguagesPage";
 // import NonAdminRoute from "./NonAdminRoute";
 // import AdminRoute from "./AdminRoute";
 import AddPosition from "../modules/jobPosting/pages/AddPosition";
@@ -36,6 +37,7 @@ import ScheduleInterviews from "../modules/interviews/ScheduleInterviews";
 import Approvals from "../modules/Approvals/pages/RequisitionRequests";
 import ExtensionsRequests from "../modules/Approvals/pages/ExtensionsRequests";
 import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";
+import Messages from "../modules/Messages/messagesScreen";
 
 import UnauthorizedPage from "./UnauthorizedPage"
 import PrivilegeRoute from "./PrivilegeRoute";
@@ -57,7 +59,6 @@ const AppRoutes = () => {
   // Check if user is authenticated from Redux
   const authUser = useSelector((state) => state.user?.authUser);
   const token = useSelector((state) => state.user?.authUser?.access_token || state.user?.authUser?.accessToken || state.user?.auth?.access_token);
-  console.log("AppRoutes - authUser:", authUser);
   const privileges = useSelector((state) => state.user?.privileges);
   const location = useLocation();
 
@@ -179,6 +180,14 @@ const AppRoutes = () => {
                     </PrivilegeRoute>
                   }
                 />       
+                 <Route
+                path="/state-languages"
+                element={
+                  <PrivilegeRoute privilege="Admin">
+                    <StatesLanguagesPage />
+                  </PrivilegeRoute>
+                }
+              />
                 {/* ---------- NON-ADMIN ONLY ROUTES ---------- */}
                 <Route
                   path="/job-posting"
@@ -252,6 +261,16 @@ const AppRoutes = () => {
                   </PrivilegeRoute>
                 }
               />
+              
+                 <Route
+                path="/messages"
+                element={
+                  // <PrivilegeRoute privilege="JobPostings">
+                    <Messages />
+                  // </PrivilegeRoute>
+                }
+              />
+
 
               <Route
                   path="/schedule-interviews"

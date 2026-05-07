@@ -1,0 +1,22 @@
+{
+    "reg_no": "पंजीकरण संख्या",
+    "requisition": "अनुरोध",
+    "request_type": "अनुरोध प्रकार",
+    "send_message": "संदेश भेजें",
+    "accept": "स्वीकार करें",
+    "reject": "अस्वीकार करें",
+    "request_history": "अनुरोध इतिहास",
+    "comment": "टिप्पणी",
+    "message_history": "संदेश इतिहास",
+    "manage_communications": "सभी उम्मीदवार संचार देखें और प्रबंधित करें",
+    "search": "खोजें",
+    "extend_submission_date": "सबमिशन तिथि बढ़ाएँ",
+    "select_date": "तिथि चुनें",
+    "all_status": "सभी स्थिति",
+    "all": "सभी",
+    "pending": "लंबित",
+    "approved": "स्वीकृत",
+    "rejected": "अस्वीकृत",
+    "no_data": "कोई डेटा नहीं मिला",
+    "submit": "सबमिट करें"
+}

@@ -9,7 +9,7 @@
   "certification": "प्रमाणपत्र",
   "special_category": "विशेष श्रेणी",
   "document": "दस्तावेज़",
-   "education_qualification": "शैक्षिक योग्यता",
+  "education_qualification": "शैक्षिक योग्यता",
   "generic_or_annexures": "सामान्य या परिशिष्ट",
   "job_postings": "नौकरी पोस्टिंग",
   "logout": "लॉगआउट",
@@ -63,5 +63,7 @@
   "committee_requests": "समिति अनुरोध",
   "back": "वापस",
   "view_details": "विवरण देखें",
-  "add": "जोड़ें"
+  "add": "जोड़ें",
+  "messages": "संदेश",
+  "stateLanguages": "राज्य/भाषाएँ"
 }

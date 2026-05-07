@@ -77,6 +77,8 @@ import educationHi from "../i18n/json/education.hi.json";
 
 import ApprovalEn from "../i18n/ApprovalJson/approvalhistory.en.json";
 import ApprovalHi from "../i18n/ApprovalJson/approvalhistory.hi.json";
+import messagesEn from "../i18n/Messages/messages.en.json";
+import messagesHi from "../i18n/Messages/messages.hi.json";
 
 
 
@@ -112,6 +114,7 @@ i18n
          verification: verificationEn,
          education: educationEn,
           approvalHistory: ApprovalEn,
+           messages: messagesEn,
       },
       hi: {
         common: commonHi,
@@ -140,6 +143,7 @@ i18n
          verification: verificationHi,
           education: educationHi,
           approvalHistory: ApprovalHi,
+           messages: messagesHi,
       }
     },
     lng: "en",       

@@ -101,10 +101,44 @@ getPanelScores: (scheduledInterviewId) => {
   );
 },
 
+// getMessageHistory: (positionIds) =>
+//   api.post(
+//     "/recruiter/messages/get-history",
+//     positionIds, // ✅ send array directly
+//     {
+//       headers: {
+//         "X-Client": "AzureAD",
+//       },
+//     }
+//   ),
 
+  getMessageHistory: (positionIds, page, size) =>
+  api.post(
+    "/recruiter/messages/get-history",
+    positionIds,
+    {
+      params: { page, size },   // ✅ ADD THIS
+      // headers: {
+      //   "X-Client": "AzureAD",
+      // },
+    }
+  ),
+
+getMessagesByThreadId: (conversationThreadId) =>
+  api.get(
+    `/recruiter/messages/get-message/${conversationThreadId}`,
+    // {
+    //   headers: {
+    //     "X-Client": "AzureAD",   // ✅ ADD THIS
+    //   },
+    // }
+  ),
 
  
- 
+  
+
 };  
+
+
  
 export default candidateWorkflowServices;

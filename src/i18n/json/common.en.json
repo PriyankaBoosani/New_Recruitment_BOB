@@ -9,7 +9,8 @@
   "certification": "Certification",
   "special_category": "Special Category",
   "document": "Document",
-   "education_qualification": "Educational Qualification",
+  "education_qualification": "Educational Qualification",
+  "stateLanguages": "State/Languages",
   "generic_or_annexures": "Generic or Annexures",
   "job_postings": "Job Postings",
   "logout": "Logout",
@@ -57,11 +58,12 @@
   "view_resume": "View Resume",
   "action": "Action",
   "clear_all": "Clear all",
-   "approvals": "Approvals",
+  "approvals": "Approvals",
   "requisition_requests": "Requisition Requests",
   "extension_requests": "Extension Requests",
   "committee_requests": "Committee Requests",
   "back": "Back",
   "view_details": "View Details",
-  "add": "Add"
+  "add": "Add",
+  "messages": "Messages"
 }
