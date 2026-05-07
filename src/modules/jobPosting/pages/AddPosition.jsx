@@ -50,21 +50,42 @@ const AddPosition = () => {
     const isEditMode = !!positionId && mode !== "view";
     const isControlledEdit = isEditMode && isInEditMode;
     const isImportDisabled = isViewMode || isEditMode;
+    const isDraft = location.state?.isDraft === true;
+    const parentRequisitionId = location.state?.parentRequisitionId;
     const {
         positionsByReq,
         fetchPositions
     } = useJobPositionsByRequisition();
 
+    // useEffect(() => {
+    //     if (requisitionId) {
+    //         fetchPositions(requisitionId);
+    //     }
+    // }, [requisitionId]);
+
     useEffect(() => {
         if (requisitionId) {
-            fetchPositions(requisitionId);
+            fetchPositions(
+            isDraft ? parentRequisitionId : requisitionId,
+            isDraft
+            );
         }
-    }, [requisitionId]);
+    }, [requisitionId, isDraft, parentRequisitionId]);
 
     const shouldFetchPosition = !!positionId && (isEditMode || isViewMode);
 
-    const { data: existingPosition } = useJobPositionById(shouldFetchPosition ? positionId : null);
+    // const { data: existingPosition } = useJobPositionById(shouldFetchPosition ? positionId : null);
     const { requisition, loading: requisitionLoading } = useRequisitionDetails(requisitionId);
+
+    const { data: existingPosition } = useJobPositionById(
+        shouldFetchPosition ? positionId : null,
+        { isDraft, parentRequisitionId }
+    );
+
+    // const { requisition, loading: requisitionLoading } = useRequisitionDetails(
+    //     requisitionId,
+    //     { isDraft, parentRequisitionId }
+    // );
     const { createPosition, loading } = useCreateJobPosition();
     const { updatePosition } = useUpdateJobPosition();
     const masterData = useMasterData();

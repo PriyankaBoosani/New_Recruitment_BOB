@@ -864,7 +864,7 @@ const JobPostingsList = () => {
                                                                             e.stopPropagation();
                                                                             navigate(
                                                                                 `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
-                                                                                { state: { mode: "edit", isInEditMode: req.isInEditMode } }
+                                                                                { state: { mode: "edit", isInEditMode: req.isInEditMode, isDraft: req.isDraft === true, parentRequisitionId: req.parentRequisitionId } }
                                                                             );
 
                                                                         }}
@@ -913,7 +913,7 @@ const JobPostingsList = () => {
                                                                         e.stopPropagation();
                                                                         navigate(
                                                                             `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
-                                                                            { state: { mode: "view" } }
+                                                                            { state: { mode: "view", isDraft: req.isDraft === true, parentRequisitionId: req.parentRequisitionId } }
                                                                         );
 
                                                                     }}
