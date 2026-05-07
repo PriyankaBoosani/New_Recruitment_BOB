@@ -7,9 +7,8 @@ import MessageActions from "../../Messages/components/messageActions.jsx";
 import { useMessages } from '../../Messages/hooks/useMessages.js';
 import { useTranslation } from "react-i18next";
 
-const MessageCard = ({ item, isOpen, onToggle }) => {
-   const { t } = useTranslation(["messages", "common"]);
-
+const MessageCard = ({ item, isOpen, onToggle, onSubmitApproval }) => {
+  const { t } = useTranslation(["messages", "common"]);
   const { getStatusClass, getHistoryColor } = useMessages();
 
   return (
@@ -30,7 +29,10 @@ const MessageCard = ({ item, isOpen, onToggle }) => {
             getHistoryColor={getHistoryColor}
           />
 
-          <MessageActions />
+          <MessageActions
+            item={item}
+            onSubmitApproval={onSubmitApproval}
+          />
 
         </div>
       )}

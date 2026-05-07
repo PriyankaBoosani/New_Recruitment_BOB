@@ -462,6 +462,16 @@
 }
 
 
+.pagination .page-link {
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+.pagination .active .page-link {
+  background-color: #ff6b2c;
+  border-color: #ff6b2c;
+}
+
 
 
 

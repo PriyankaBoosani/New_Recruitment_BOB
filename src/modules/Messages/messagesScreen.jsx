@@ -104,12 +104,12 @@ const Messages = () => {
   //   }
   // };
 
-  const fetchMessages = async (positionIds, pageNo = page, pageSize = size) => {
+  const fetchMessages = async (payload, pageNo = page, pageSize = size) => {
     try {
       setLoadingMessages(true);
 
       const res = await candidateWorkflowServices.getMessageHistory(
-        positionIds,
+        payload,
         pageNo,
         pageSize
       );
@@ -117,14 +117,11 @@ const Messages = () => {
       // setApiMessages(res?.data?.content || []);
       // setTotalPages(res?.data?.totalPages || 0);
       // setTotalElements(res?.data?.totalElements || 0);   // ✅ ADD THIS
-      const responseData = res?.data;
+      const responseData = res?.data;   // ✅ CHANGE THIS
 
       setApiMessages(responseData?.content || []);
-
-      // ✅ FIX: read from page object
-      setTotalPages(responseData?.page?.totalPages || 0);
-      setTotalElements(responseData?.page?.totalElements || 0);
-
+      setTotalPages(responseData?.totalPages || 0);
+      setTotalElements(responseData?.totalElements || 0);
     } catch (err) {
       console.error("Messages API error", err);
     } finally {
@@ -211,18 +208,49 @@ const Messages = () => {
 
   React.useEffect(() => {
     if (selectedPositionId) {
-      fetchMessages([selectedPositionId], page, size);
+      // fetchMessages([selectedPositionId], page, size);
+      fetchMessages({
+        positionsIds: selectedPositionId ? [selectedPositionId] : [],
+        requestTypeIds: [], // optional (can pass selected later)
+        statusList: selectedStatus ? [selectedStatus.toUpperCase()] : []
+      }, page, size);
     }
   }, [page, size]);
   React.useEffect(() => {
     if (selectedPositionId) {
-      fetchMessages([selectedPositionId], 0, size);  // ✅ force first load
+      fetchMessages({
+        positionsIds: [selectedPositionId],
+        requestTypeIds: [],
+        statusList: selectedStatus ? [selectedStatus.toUpperCase()] : []
+      }, 0, size);
     }
   }, [selectedPositionId]);
 
   React.useEffect(() => {
     setPage(0);
   }, [selectedPositionId, selectedStatus, searchText]);
+
+  const handleSubmitApproval = async (threadId, status) => {
+  try {
+    const payload = {
+      conversationThreadId: [threadId], // ✅ must be array with single id
+      status,                           // "L1_PENDING" or "REJECTED"
+      comments: "test"                  // or from input box
+    };
+
+    await candidateWorkflowServices.submitForApproval(payload);
+
+    // 🔄 Refresh list after action
+    fetchMessages({
+      positionsIds: selectedPositionId ? [selectedPositionId] : [],
+      requestTypeIds: [],
+      statusList: selectedStatus ? [selectedStatus.toUpperCase()] : []
+    }, page, size);
+
+  } catch (err) {
+    console.error("Submit approval error", err);
+  }
+};
 
   return (
     <div className="container-fluid py-3 px-3"
@@ -287,7 +315,11 @@ const Messages = () => {
                     setSelectedPositionId(value);
                     setPage(0);   // ✅ reset page
                     const ids = value ? [value] : [];
-                    fetchMessages(ids, 0, size);
+                    fetchMessages({
+                      positionsIds: value ? [value] : [],
+                      requestTypeIds: [],
+                      statusList: selectedStatus ? [selectedStatus.toUpperCase()] : []
+                    }, 0, size);
                   }}
                   onRequisitionSearch={(val) => fetchRequisitions(val)}
                 />
@@ -407,6 +439,7 @@ const Messages = () => {
                   item={item}
                   isOpen={openRow === item.id}
                   onToggle={handleToggle}
+                   onSubmitApproval={handleSubmitApproval} 
                 />
               ))
             ) : (
@@ -418,54 +451,88 @@ const Messages = () => {
               </div>
             )}
           </div>
-          <div className="d-flex justify-content-between align-items-center px-3 py-3 border-top">
+        <div className="d-flex justify-content-end align-items-center gap-3 col px-3 py-3 border-top">
 
-            {/* LEFT: Showing */}
-            <div className="fs-14 text-muted">
-              Showing{" "}
-              {totalElements === 0 ? 0 : page * size + 1}–
-              {Math.min((page + 1) * size, totalElements)} of{" "}
-              {totalElements}
-            </div>
+  {/* Page Size */}
+  <div className="d-flex align-items-center gap-2">
+    <span className="fw-semibold pagesize">Page size:</span>
+    <select
+      className="form-select form-select-sm"
+      style={{ width: "90px" }}
+      value={size}
+      onChange={(e) => {
+        setSize(Number(e.target.value));
+        setPage(0);
+      }}
+    >
+      {[5, 10, 15, 20, 25, 30].map(s => (
+        <option key={s} value={s}>{s}</option>
+      ))}
+    </select>
+  </div>
 
-            {/* RIGHT: Controls */}
-            <div className="d-flex align-items-center gap-2">
+  {/* Pagination */}
+  <nav aria-label="Page navigation">
+    <ul className="pagination mb-0 justify-content-center">
 
-              {/* Page Size */}
-              <select
-                className="form-select fs-14"
-                style={{ width: "90px" }}
-                value={size}
-                onChange={(e) => {
-                  setSize(Number(e.target.value));
-                  setPage(0);
-                }}
-              >
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-              </select>
+      {/* « Prev */}
+      <li className={`page-item ${page === 0 ? "disabled" : ""}`}>
+        <button
+          className="page-link"
+          disabled={page === 0}
+          onClick={() => setPage(page - 1)}
+        >
+          «
+        </button>
+      </li>
 
-              {/* Prev */}
+      {/* Page Numbers */}
+      {[...Array(totalPages)].map((_, i) => {
+
+        // show first, last, and near current
+        if (
+          i === 0 ||
+          i === totalPages - 1 ||
+          Math.abs(i - page) <= 1
+        ) {
+          return (
+            <li key={i} className={`page-item ${page === i ? "active" : ""}`}>
               <button
-                className="btn btn-sm btn-outline-secondary"
-                disabled={page === 0}
-                onClick={() => setPage(page - 1)}
+                className="page-link"
+                onClick={() => setPage(i)}
               >
-                Prev
+                {i + 1}
               </button>
+            </li>
+          );
+        }
 
-              {/* Next */}
-              <button
-                className="btn btn-sm btn-outline-secondary"
-                disabled={page === totalPages - 1}
-                onClick={() => setPage(page + 1)}
-              >
-                Next
-              </button>
+        // show dots
+        if (i === page - 2 || i === page + 2) {
+          return (
+            <li key={i} className="page-item disabled">
+              <span className="page-link">…</span>
+            </li>
+          );
+        }
 
-            </div>
-          </div>
+        return null;
+      })}
+
+      {/* » Next */}
+      <li className={`page-item ${page === totalPages - 1 ? "disabled" : ""}`}>
+        <button
+          className="page-link"
+          disabled={page === totalPages - 1}
+          onClick={() => setPage(page + 1)}
+        >
+          »
+        </button>
+      </li>
+
+    </ul>
+  </nav>
+</div>
 
         </div>
       </div>
