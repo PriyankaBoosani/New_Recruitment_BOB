@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Container, Row, Col, Form, Button, Card, Spinner } from "react-bootstrap";
 import "../../../style/css/CreateRequisition.css";
-
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import { validateRequisitionForm, validateTitleOnType, normalizeTitle } from "../validations/requisition-validation";
 import { mapRequisitionToApi } from "../mappers/createRequisitionMapper";
@@ -10,12 +9,19 @@ import { useCreateRequisition } from "../hooks/useCreateRequisition";
 import { REQUISITION_CONFIG } from "../config/requisitionConfig";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-
+import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisition";
+import masterApiService from "../../master/services/masterApiService";
+import requisitionApiService from "../services/requisitionApiService";
 
 const CreateRequisition = () => {
   const { t } = useTranslation(["CreateRequisition", "common"]);
   const renderError = (err) => (err ? t(err) : "");
 
+  const {
+    positionsByReq,
+    fetchPositions,
+    loadingReqId
+  } = useJobPositionsByRequisition();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,6 +33,7 @@ const CreateRequisition = () => {
   const mode = location.state?.mode; // "view" | "edit" | undefined
 
   const isViewMode = !!editId && mode === "view";
+  const isCloneMode = mode === "clone";
 
   const handleCancel = () => {
     if (from === "approval") {
@@ -48,30 +55,92 @@ const CreateRequisition = () => {
 
   const [errors, setErrors] = useState({});
   /* ===================== SAVE ===================== */
+
+  useEffect(() => {
+    if (!editId) return;
+
+    // ✅ ALWAYS call normal API in CreateRequisition
+    fetchPositions(editId, false);
+
+  }, [editId]);
+
+  // const positions = positionsByReq[editId] || [];
+  const key = `${editId}_false`;
+  const positions = positionsByReq[key] || [];
+
+  const [selectedPositions, setSelectedPositions] = useState(new Set());
+  const [masterPositionsMap, setMasterPositionsMap] = useState({});
+
+  useEffect(() => {
+    const fetchMasterPositions = async () => {
+      const res = await masterApiService.getMasterDisplayAll();
+
+      const list = res?.data?.masterPositions || [];
+
+      // 🔥 Convert to map for O(1) lookup
+      const map = {};
+      list.forEach(p => {
+        map[p.masterPositionsId] = p.positionName;
+      });
+
+      setMasterPositionsMap(map);
+    };
+
+    fetchMasterPositions();
+  }, []);
+
   const handleSave = async (e) => {
     e?.preventDefault?.();
 
-    const { valid, errors: valErrors } = validateRequisitionForm(
-      formData,
-      Boolean(editId)
-    );
+    // const { valid, errors: valErrors } = validateRequisitionForm(
+    //   formData,
+    //   Boolean(editId),
+    //   { isCloneMode }
+    // );
+
+    const { valid, errors: valErrors } = validateRequisitionForm(formData, { isCloneMode });
 
     if (!valid) {
       setErrors(valErrors);
       return;
     }
 
+    // if (isCloneMode && selectedPositions.size === 0) {
+    //   toast.error("Select at least one position to clone");
+    //   return;
+    // }
+
     if (isViewMode) return;
 
     try {
-      const payload = mapRequisitionToApi(formData);
-      await saveRequisition(payload);
-      toast.success(
-        editId
-          ? t("update_success")
-          : t("create_success")
-      );
+      if (isCloneMode) {
+        const positionIds = Array.from(selectedPositions);
 
+        await requisitionApiService.editDraftRequisition(
+          editId,
+          positionIds
+        );
+
+        const draftPayload = {
+          requisitionDescription: formData.description,
+          endDate: formData.endDate
+        };
+
+        await requisitionApiService.saveDraftDetails(
+          editId,
+          draftPayload
+        );
+
+        toast.success("Draft created successfully");
+      } else {
+        const payload = mapRequisitionToApi(formData);
+        await saveRequisition(payload);
+        toast.success(
+          editId
+            ? t("update_success")
+            : t("create_success")
+        );
+      }
       navigate(REQUISITION_CONFIG.SUCCESS_REDIRECT);
     } catch (err) {
       console.error("Save failed", err);
@@ -106,6 +175,7 @@ const CreateRequisition = () => {
       </Container>
     );
   }
+  console.log("Positions for cloning", positions);
 
   /* ===================== UI ===================== */
   return (
@@ -135,6 +205,7 @@ const CreateRequisition = () => {
                   name="title"
                   value={formData.title}
                   maxLength={200}
+                  disabled= {isCloneMode}
                   placeholder={t("enter_requisition_title")}
                   onChange={(e) => {
                     const result = validateTitleOnType(e.target.value);
@@ -205,10 +276,44 @@ const CreateRequisition = () => {
                       }
 
                     />
-
                     <ErrorMessage>{renderError(errors.description)}</ErrorMessage>
-
                   </Form.Group>
+
+                  {isCloneMode && (
+                    <div className="mt-4">
+                      <Form.Label>Select Positions to Edit</Form.Label>
+
+                      {loadingReqId === editId && <Spinner size="sm" />}
+
+                      {!loadingReqId && positions.length === 0 && (
+                        <div className="text-muted">No positions available</div>
+                      )}
+
+                      {!loadingReqId && positions.map((pos) => (
+                        <Form.Check
+                          key={pos.positionId}
+                          type="checkbox"
+                          className="mb-2"
+                          style={{ fontSize: '0.875rem' }}
+                          label={`${masterPositionsMap[pos.masterPositionId] || "Unknown"} - (${pos.vacancies} vacancies)`}
+                          checked={selectedPositions.has(pos.positionId)}
+                          onChange={(e) => {
+                            setSelectedPositions(prev => {
+                              const next = new Set(prev);
+
+                              if (e.target.checked) {
+                                next.add(pos.positionId);
+                              } else {
+                                next.delete(pos.positionId);
+                              }
+
+                              return next;
+                            });
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </Col>
 
                 <Col md={6}>
@@ -223,6 +328,7 @@ const CreateRequisition = () => {
                           type="date"
                           name="startDate"
                           value={formData.startDate}
+                          disabled= {isCloneMode}
                           min={getTomorrowISO()} // ✅ tomorrow onwards
                           onChange={(e) => {
                             const startDate = e.target.value;

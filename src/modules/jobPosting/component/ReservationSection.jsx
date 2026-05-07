@@ -7,6 +7,8 @@ import Select from "react-select";
 import { useState } from "react";
 const ReservationSection = ({
     isViewMode,
+    isControlledEdit = false,
+    isFieldDisabled = () => false,
     formData,
     errors,
     setErrors,
@@ -36,7 +38,11 @@ const ReservationSection = ({
     isAgeRelRiotVictimFamily,
     setIsAgeRelRiotVictimFamily,
     isAgeRelWdsWomen,
-    setIsAgeRelWdsWomen
+    setIsAgeRelWdsWomen,
+    originalCategories,
+    originalDisabilities,
+    setOriginalCategories,
+    setOriginalDisabilities,
 }) => {
     const { t } = useTranslation(["addPosition", "common", "validation"]);
     const renderError = (e) => {
@@ -121,6 +127,7 @@ const ReservationSection = ({
                             type="switch"
                             name="enableStateDistribution"
                             checked={formData.enableStateDistribution}
+                            disabled={isViewMode || isFieldDisabled("enableStateDistribution")}
                             onChange={e => {
                                 handleInputChange(e);
 
@@ -137,8 +144,13 @@ const ReservationSection = ({
                                 label="Is local language required?"
                                 checked={!!isProficientInLocalLanguage}
                                 onChange={(e) => {
+                                    if (isControlledEdit && !isProficientInLocalLanguage) return;
                                     setIsProficientInLocalLanguage(e.target.checked);
                                 }}
+                                disabled={
+                                    isViewMode ||
+                                    (isControlledEdit && !isProficientInLocalLanguage)
+                                }
                                 className="custom_checkbox mb-3"
                             />
                         </div>
@@ -339,27 +351,36 @@ const ReservationSection = ({
                                     }))}
                                 />
                             </Col>
-                            <Col md={3}><Form.Label>{t("addPosition:vacancies")} <span className="text-danger">*</span></Form.Label><Form.Control
-                                type="text"
-                                inputMode="numeric"
-                                maxLength={10}
-                                placeholder={t("addPosition:enter_vacancies_small")}
+                            <Col md={3}><Form.Label>{t("addPosition:vacancies")} <span className="text-danger">*</span></Form.Label>
+                            <Form.Control
                                 value={currentState.vacancies}
                                 onChange={e => {
                                     let value = e.target.value;
 
-                                    // HARD FILTER: digits only
+                                    // digits only
                                     value = value.replace(/\D/g, "");
 
+                                    const isExistingRow = !!currentState.positionStateDistributionId;
+
+                                    // 🚨 CONTROLLED EDIT RULE
+                                    if (
+                                    isControlledEdit &&
+                                    isExistingRow &&
+                                    // originalVacancy > 0 &&
+                                    value === "0"
+                                    ) {
+                                    return; // ❌ block setting to 0
+                                    }
+
                                     setCurrentState(prev => ({
-                                        ...prev,
-                                        vacancies: value
+                                    ...prev,
+                                    vacancies: value
                                     }));
 
                                     setErrors(prev => ({
-                                        ...prev,
-                                        stateVacancies: "",
-                                        stateDistribution: ""
+                                    ...prev,
+                                    stateVacancies: "",
+                                    stateDistribution: ""
                                     }));
                                 }}
                             />
@@ -405,36 +426,47 @@ const ReservationSection = ({
                                                     onChange={e => {
                                                         let value = e.target.value;
 
-                                                        //  keep only digits
+                                                        // digits only
                                                         value = value.replace(/\D/g, "");
 
+                                                        const isExistingRow = !!currentState.positionStateDistributionId;
+                                                        const originalValue = Number(originalCategories?.[cat.code] || 0);
+
+                                                        // 🚨 FIELD-LEVEL RULE
+                                                        if (
+                                                        isControlledEdit &&
+                                                        isExistingRow &&
+                                                        originalValue > 0 &&
+                                                        value === "0"
+                                                        ) {
+                                                        return;
+                                                        }
+
                                                         setCurrentState(prev => ({
-                                                            ...prev,
-                                                            categories: {
-                                                                ...prev.categories,
-                                                                [cat.code]: Number(value || 0)
-                                                            }
+                                                        ...prev,
+                                                        categories: {
+                                                            ...prev.categories,
+                                                            [cat.code]: Number(value || 0)
+                                                        }
                                                         }));
 
                                                         setErrors(prev => ({
-                                                            ...prev,
-                                                            stateDistribution: ""
+                                                        ...prev,
+                                                        stateDistribution: ""
                                                         }));
                                                     }}
                                                     onKeyDown={e => {
-                                                        //  block anything except digits + control keys
                                                         if (
-                                                            !/[0-9]/.test(e.key) &&
-                                                            !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+                                                        !/[0-9]/.test(e.key) &&
+                                                        !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
                                                         ) {
-                                                            e.preventDefault();
+                                                        e.preventDefault();
                                                         }
                                                     }}
                                                     onPaste={e => {
-                                                        //  block paste if it contains non-digits
                                                         const paste = e.clipboardData.getData("text");
                                                         if (!/^\d+$/.test(paste)) {
-                                                            e.preventDefault();
+                                                        e.preventDefault();
                                                         }
                                                     }}
                                                 />
@@ -457,25 +489,36 @@ const ReservationSection = ({
                                                     onChange={e => {
                                                         let value = e.target.value;
 
-                                                        // allow only digits
                                                         value = value.replace(/\D/g, "");
 
-                                                        // remove leading zeros (keep single 0)
                                                         if (value.length > 1) {
-                                                            value = value.replace(/^0+/, "");
+                                                        value = value.replace(/^0+/, "");
+                                                        }
+
+                                                        const isExistingRow = !!currentState.positionStateDistributionId;
+                                                        const originalValue = Number(originalDisabilities?.[d.disabilityCode] || 0);
+
+                                                        // 🚨 FIELD-LEVEL RULE
+                                                        if (
+                                                        isControlledEdit &&
+                                                        isExistingRow &&
+                                                        originalValue > 0 &&
+                                                        value === "0"
+                                                        ) {
+                                                        return;
                                                         }
 
                                                         setCurrentState(prev => ({
-                                                            ...prev,
-                                                            disabilities: {
-                                                                ...prev.disabilities,
-                                                                [d.disabilityCode]: value === "" ? "0" : value
-                                                            }
+                                                        ...prev,
+                                                        disabilities: {
+                                                            ...prev.disabilities,
+                                                            [d.disabilityCode]: value === "" ? "0" : value
+                                                        }
                                                         }));
 
                                                         setErrors(prev => ({
-                                                            ...prev,
-                                                            stateDistribution: ""
+                                                        ...prev,
+                                                        stateDistribution: ""
                                                         }));
                                                     }}
                                                     onKeyDown={e => {
@@ -553,39 +596,72 @@ const ReservationSection = ({
                                 <tbody>
                                     {stateDistributions
                                         .filter(row => !row.__deleted)
-                                        .map((row, idx) => (
-
-                                            <tr key={idx}>
-                                                <td>{idx + 1}</td><td>{states.find(s => s.id === row.state)?.name}</td><td>
-                                                    {cities.find(c => String(c.id) === String(row.city))?.name || "-"}
+                                        .map((row, idx) => {
+                                            const isExistingRow = !!row.positionStateDistributionId;
+                                            const canDelete = !isControlledEdit || !isExistingRow;
+                                            return (
+                                                <tr key={idx}>
+                                                    <td>{idx + 1}</td><td>{states.find(s => s.id === row.state)?.name}</td><td>
+                                                        {cities.find(c => String(c.id) === String(row.city))?.name || "-"}
                                                 </td><td>{row.vacancies}</td><td>{getLanguagesByState(row.state)}</td>
                                                 {reservationCategories.map(c => <td key={c.code}>{row.categories?.[c.code] ?? 0}</td>)}
                                                 <td>{Object.values(row.categories || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
                                                 {disabilityCategories.map(d => <td key={d.disabilityCode}>{row.disabilities?.[d.disabilityCode] ?? 0}</td>)}
                                                 <td>{Object.values(row.disabilities || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
-                                                <td className="text-center"><Button size="sm" variant="link" onClick={() => { setEditingIndex(idx); setCurrentState({ ...row }); }}><img src={edit_icon} alt="edit_icon" className="icon-16" /></Button><Button size="sm" variant="link" className="text-danger" onClick={() => {
-                                                    setStateDistributions(prev =>
-                                                        prev.map((s, i) =>
-                                                            i === idx ? { ...s, __deleted: true } : s
-                                                        )
-                                                    );
+                                                <td className="text-center">
+                                                    <Button
+                                                        size="sm"
+                                                        variant="link"
+                                                        onClick={() => {
+                                                            setEditingIndex(idx);
+                                                            setCurrentState({ ...row });
 
-                                                    // if deleting the row being edited
-                                                    if (editingIndex === idx) {
-                                                        setEditingIndex(null);
-                                                        setCurrentState({
-                                                            state: "",
-                                                            vacancies: "",
-                                                            language: "",
-                                                            categories: {},
-                                                            disabilities: {},
-                                                            isProficientInLocalLanguage: false
-                                                        });
-                                                    }
-                                                }}
-                                                ><img src={delete_icon} alt="delete_icon" className="icon-16" /></Button></td>
+                                                            if (row.positionStateDistributionId) {
+                                                                // setOriginalVacancy(Number(row.vacancies || 0));
+                                                                setOriginalCategories({ ...row.categories });
+                                                                setOriginalDisabilities({ ...row.disabilities });
+                                                            } else {
+                                                                // setOriginalVacancy(null);
+                                                                setOriginalCategories({});
+                                                                setOriginalDisabilities({});
+                                                            }
+                                                        }}
+                                                    >
+                                                        <img src={edit_icon} alt="edit_icon" className="icon-16" />
+                                                    </Button>
+                                                    {canDelete && (
+                                                        <Button
+                                                            size="sm"
+                                                            variant="link"
+                                                            className="text-danger"
+                                                            onClick={() => {
+                                                            setStateDistributions(prev =>
+                                                                prev.map((s, i) =>
+                                                                i === idx ? { ...s, __deleted: true } : s
+                                                                )
+                                                            );
+
+                                                            if (editingIndex === idx) {
+                                                                setEditingIndex(null);
+                                                                setCurrentState({
+                                                                state: "",
+                                                                vacancies: "",
+                                                                language: "",
+                                                                categories: {},
+                                                                disabilities: {},
+                                                                isProficientInLocalLanguage: false
+                                                                });
+                                                                setOriginalCategories({});
+                                                                setOriginalDisabilities({});
+                                                            }
+                                                            }}
+                                                        >
+                                                            <img src={delete_icon} alt="delete_icon" className="icon-16" />
+                                                        </Button>
+                                                        )}
+                                                    </td>
                                             </tr>
-                                        ))}
+                                        )})}
                                 </tbody>
                             </table>
                         </div>

@@ -32,22 +32,23 @@ const AddPosition = () => {
         } return "";
     };
 
-
     const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx"];
     const MAX_FILE_SIZE_MB = 2;
     const YEAR_OPTIONS = Array.from({ length: 31 }, (_, i) => i);
     const MONTH_OPTIONS = Array.from({ length: 11 }, (_, i) => i + 1);
-
+    
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const location = useLocation();
-
+    
     const { requisitionId } = useParams();
     const positionId = searchParams.get("positionId");
     const mode = location.state?.mode; // "view" | "edit" | undefined
-
+    
+    const isInEditMode = location.state?.isInEditMode === false;
     const isViewMode = !!positionId && mode === "view";
     const isEditMode = !!positionId && mode !== "view";
+    const isControlledEdit = isEditMode && isInEditMode;
     const isImportDisabled = isViewMode || isEditMode;
     const {
         positionsByReq,
@@ -103,6 +104,25 @@ const AddPosition = () => {
     const [indentCandidates, setIndentCandidates] = useState([]);
     const [showIndentModal, setShowIndentModal] = useState(false);
     const [selectedIndent, setSelectedIndent] = useState(null);
+    const [originalCategories, setOriginalCategories] = useState({});
+    const [originalDisabilities, setOriginalDisabilities] = useState({});
+
+    const isFieldDisabled = (field) => {
+        if (isViewMode) return true;
+
+        if (isControlledEdit) {
+            const restrictedFields = [
+                "department",
+                "position",
+                "enableStateDistribution",
+                // add more based on business rules
+            ];
+
+            return restrictedFields.includes(field);
+        }
+
+        return false;
+    };
 
     // Initialize isProficientInLocalLanguage from existingPosition ROOT LEVEL
     useEffect(() => {
@@ -610,6 +630,38 @@ const AddPosition = () => {
 
     const handleAddOrUpdateState = () => {
 
+        const isExistingRow = !!currentState.positionStateDistributionId;
+
+        if (isControlledEdit && isExistingRow) {
+        // 🚨 check categories
+        for (const key in currentState.categories || {}) {
+            const originalValue = Number(originalCategories?.[key] || 0);
+            const newValue = Number(currentState.categories[key] || 0);
+
+            if (originalValue > 0 && newValue === 0) {
+            setErrors(prev => ({
+                ...prev,
+                stateDistribution: "Cannot reduce existing category to zero"
+            }));
+            return;
+            }
+        }
+
+        // 🚨 check disabilities
+        for (const key in currentState.disabilities || {}) {
+            const originalValue = Number(originalDisabilities?.[key] || 0);
+            const newValue = Number(currentState.disabilities[key] || 0);
+
+            if (originalValue > 0 && newValue === 0) {
+            setErrors(prev => ({
+                ...prev,
+                stateDistribution: "Cannot reduce existing disability to zero"
+            }));
+            return;
+            }
+        }
+        }
+
         const newErrors = validateStateDistribution({
             currentState,
             stateDistributions,
@@ -797,6 +849,8 @@ const AddPosition = () => {
                                     });
                                 }
                             }} YEAR_OPTIONS={YEAR_OPTIONS} MONTH_OPTIONS={MONTH_OPTIONS} ALLOWED_EXTENSIONS={ALLOWED_EXTENSIONS} MAX_FILE_SIZE_MB={MAX_FILE_SIZE_MB}
+                            isControlledEdit={isControlledEdit}
+                            isFieldDisabled={isFieldDisabled}
                         />
                         <ReservationSection
                             isViewMode={isViewMode} formData={formData} errors={errors} setErrors={setErrors} reservationCategories={reservationCategories}
@@ -811,6 +865,12 @@ const AddPosition = () => {
                             setIsAgeRelRiotVictimFamily={setIsAgeRelRiotVictimFamily}
                             isAgeRelWdsWomen={isAgeRelWdsWomen}
                             setIsAgeRelWdsWomen={setIsAgeRelWdsWomen}
+                            isControlledEdit={isControlledEdit}
+                            isFieldDisabled={isFieldDisabled}
+                            originalCategories={originalCategories}
+                            originalDisabilities={originalDisabilities}
+                            setOriginalCategories={setOriginalCategories}
+                            setOriginalDisabilities={setOriginalDisabilities}
                         />
 
 

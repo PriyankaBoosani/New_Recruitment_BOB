@@ -44,6 +44,7 @@ import { toast } from "react-toastify";
 import { validateRequisitionSubmission } from "../validations/validateRequisitionSubmission";
 import CreatePlus_Icon from "../../../assets/CreatePlus_Icon.png";
 import { useTranslation } from "react-i18next";
+import requisitionApiService from "../services/requisitionApiService";
 
 const JobPostingsList = () => {
     const { t } = useTranslation(["jobPostingsList", "common"]);
@@ -80,10 +81,26 @@ const JobPostingsList = () => {
     const handleConfirmDelete = async () => {
         if (!selectedReq) return;
 
-        await deleteRequisition(selectedReq.id);
-        setShowDeleteModal(false);
-        setSelectedReq(null);
+        try {
+            if (selectedReq.isDraft) {
+            await requisitionApiService.cancelDraftRequisition(
+                selectedReq.parentRequisitionId
+            );
+            } else {
+            await deleteRequisition(selectedReq.id);
+            }
+
+            setShowDeleteModal(false);
+            setSelectedReq(null);
+
+            // 🔥 refresh list (important)
+            refetch();
+
+        } catch (err) {
+            console.error(err);
+        }
     };
+
     const handleConfirmDeletePosition = async () => {
         if (!selectedPosition) return;
 
@@ -113,12 +130,27 @@ const JobPostingsList = () => {
     // 🔹 Accordion
     const [openReqId, setOpenReqId] = useState(null);
     const [openDept, setOpenDept] = useState({});
-    const toggleAccordion = (reqId) => {
-        setOpenReqId((prev) => {
-            const next = prev === reqId ? null : reqId;
+    // const toggleAccordion = (reqId) => {
+    //     setOpenReqId((prev) => {
+    //         const next = prev === reqId ? null : reqId;
 
+    //         if (next) {
+    //             fetchPositions(reqId, req.isDraft);
+    //         }
+
+    //         return next;
+    //     });
+    // };
+
+    const toggleAccordion = (req) => {
+        setOpenReqId((prev) => {
+            const next = prev === req.id ? null : req.id;
+            console.log(req);
             if (next) {
-                fetchPositions(reqId);
+                fetchPositions(
+                    req.isDraft ? req.parentRequisitionId : req.id,
+                    req.isDraft
+                );
             }
 
             return next;
@@ -482,7 +514,9 @@ const JobPostingsList = () => {
 
             {requisitions.map((req) => {
 
-                const positions = positionsByReq[req.id] || [];
+                // const positions = positionsByReq[req.id] || [];
+                const key = `${req.isDraft ? req.parentRequisitionId : req.id}_${req.isDraft}`;
+                const positions = positionsByReq[key] || [];
 
                 const positionsGroupedByDept = positions.reduce((acc, pos) => {
                     if (!acc[pos.deptId]) {
@@ -494,12 +528,14 @@ const JobPostingsList = () => {
                     acc[pos.deptId].positions.push(pos);
                     return acc;
                 }, {});
-
+                console.log(req);
                 return (
-                    <div key={req.id} className="requisition-card mb-3">
+                    <div key={req.id} className={`requisition-card mb-3 ${req.isDraft ? "draft-card" : ""}`}>
                         <Row
                             className="align-items-center req-clickable"
-                            onClick={() => toggleAccordion(req.id)} >
+                            // onClick={() => toggleAccordion(req.id)}
+                            onClick={() => toggleAccordion(req)}
+                        >
                             {/* -------- LEFT -------- */}
                             <Col xs={12} md={6}>
                                 <div className="req-header">
@@ -512,7 +548,24 @@ const JobPostingsList = () => {
                                     <Badge bg={req.statusType} className="ms-2">
                                         {formatStatusLabel(req.status)}
                                     </Badge>
-
+																		
+                                    {req.status === "APPROVED" && !req.isInEditMode && (
+                                        <Button
+                                            size="sm"
+                                            className="py-0"
+                                            variant="btn-outline"
+                                            onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    // console.log("Approved action clicked", req.id);
+                                                    navigate(`/job-posting/create-requisition?id=${req.id}`, {
+                                                        state: { mode: "clone" }
+                                                    });
+                                            }}
+                                            style={{ fontSize: '0.75rem', color: '#f26522' }}
+                                        >
+                                            Edit
+                                        </Button>
+                                    )}
                                 </div>
 
                                 <div className="d-flex justify-content-between align-items-start">
@@ -623,7 +676,7 @@ const JobPostingsList = () => {
                                             </Button>
                                         </OverlayTrigger>
                                     )}
-                                    {req.editable && (
+                                    {req.editable && !req.isDraft && (
                                         <OverlayTrigger
                                             placement="bottom"
                                             overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:edit_requisition")}</Tooltip>}
@@ -694,7 +747,8 @@ const JobPostingsList = () => {
                                     className="accordion-arrow"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        toggleAccordion(req.id);
+                                        // toggleAccordion(req.id);
+                                        toggleAccordion(req);
                                     }}
                                 >
                                     {openReqId === req.id ? <ChevronUp /> : <ChevronDown />}
@@ -704,7 +758,7 @@ const JobPostingsList = () => {
                         {/* -------- ACCORDION BODY (STATIC FOR NOW) -------- */}
                         {openReqId === req.id && (
                             <div className="accordion-body mt-3">
-
+                                
                                 {loadingReqId === req.id && (
                                     <Spinner animation="border" size="sm" />
                                 )}
@@ -804,7 +858,7 @@ const JobPostingsList = () => {
                                                                             e.stopPropagation();
                                                                             navigate(
                                                                                 `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
-                                                                                { state: { mode: "edit" } }
+                                                                                { state: { mode: "edit", isInEditMode: req.isInEditMode } }
                                                                             );
 
                                                                         }}

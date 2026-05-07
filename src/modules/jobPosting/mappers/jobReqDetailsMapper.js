@@ -1,4 +1,4 @@
-const isEditableStatus = ["NEW", "L1_REJECTED", "L2_REJECTED"];
+const isEditableStatus = ["NEW", "L1_REJECTED", "L2_REJECTED", "DRAFT"];
 
 export const mapJobRequisitionFromApi = (item = {}) => {
   const rawStatus = item.requisitionStatus ?? "";
@@ -6,6 +6,8 @@ export const mapJobRequisitionFromApi = (item = {}) => {
   // ✅ DEFINE HERE (not outside)
   const isRejected =
     rawStatus === "L1_REJECTED" || rawStatus === "L2_REJECTED";
+
+  const isInEditMode = item.is_in_edit_mode === true;
 
   return {
     id: item.id ?? "",
@@ -22,11 +24,14 @@ export const mapJobRequisitionFromApi = (item = {}) => {
     startDate: item.startDate ?? "-",
     endDate: item.endDate ?? "-",
     hasDraftPositions: item.hasDraftPositions === true,
+    parentRequisitionId: item.parentRequisitionId ?? null,
 
+    isDraft: item.isDraft === true,
     editable: isEditableStatus.includes(rawStatus),
 
     // ✅ now works
-    isRejected
+    isRejected,
+    isInEditMode
   };
 };
 const getStatusBadge = (status = "") => {

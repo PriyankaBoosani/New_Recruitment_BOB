@@ -27,7 +27,7 @@ export const useJobRequisitions = ({
     try {
       setLoading(true);
 
-      const res = await requisitionApiService.getJobRequisitions({
+      const res = await requisitionApiService.getJobRequisitionsWithDrafts({
         year,
         status,
         search,
@@ -37,9 +37,57 @@ export const useJobRequisitions = ({
         ...(month && { month: Number(month) })
       });
 
+      // const content = res?.data?.content || [];
+      // setRequisitions(content.map(mapJobRequisitionFromApi));
+
       const content = res?.data?.content || [];
 
-      setRequisitions(content.map(mapJobRequisitionFromApi));
+      const flattened = content.flatMap(item => {
+        const result = [];
+
+        // ✅ Main requisition
+        result.push({
+          ...item,
+          isDraft: false
+        });
+
+        // ✅ Draft requisition (if exists)
+        if (item.draft) {
+          const draftPositions = item.draft.positions || [];
+
+          const draftPositionCount = draftPositions.length;
+
+          const draftVacancyCount = draftPositions.reduce(
+            (sum, p) => sum + Number(p.totalVacancies || 0),
+            0
+          );
+
+          result.push({
+            ...item.draft,
+
+            id: item.draft.draftId,
+            requisitionCode: item.requisitionCode, // fallback
+            requisitionTitle: item.draft.requisitionTitle,
+            requisitionStatus: item.draft.requisitionStatus || "DRAFT",
+            parentRequisitionId: item.id,
+
+            // 🔥 CORRECT VALUES
+            departmentCount: draftPositions.length
+              ? new Set(draftPositions.map(p => p.deptId)).size
+              : 0,
+            positionCount: draftPositionCount,
+            vacancyCount: draftVacancyCount,
+
+            isDraft: true,
+            parentRequisitionId: item.id
+          });
+        }
+
+        return result;
+      });
+
+      setRequisitions(flattened.map(mapJobRequisitionFromApi));
+
       setPageInfo(res.data.page);
     } catch (err) {
       toast.error(t("requisitions_fetch_failed"));

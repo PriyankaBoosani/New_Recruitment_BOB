@@ -15,6 +15,8 @@ import delete_icon from "../../../assets/delete_icon.png"
 
 const PositionForm = ({
   isViewMode = false,
+  isControlledEdit = false,
+  isFieldDisabled = () => false,
   formData,
   errors,
   handleInputChange,
@@ -427,7 +429,8 @@ const PositionForm = ({
             <Select
               className="react-select-fixed"
               classNamePrefix="react-select"
-              isDisabled={isViewMode}
+              // isDisabled={isViewMode}
+              isDisabled={isViewMode || isFieldDisabled("department")}
               value={departmentOptions.find(
                 option => String(option.value) === String(formData.department)
               )}
@@ -449,7 +452,8 @@ const PositionForm = ({
             <Select
               className="react-select-fixed"
               classNamePrefix="react-select"
-              isDisabled={isViewMode}
+              // isDisabled={isViewMode}
+              isDisabled={isViewMode || isFieldDisabled("position")}
               value={positionOptions.find(
                 option => String(option.value) === String(formData.position)
               )}

@@ -28,7 +28,8 @@ export const validateTitleOnType = (value) => {
 };
 
 // ✔ submit-time validator (USED ON SAVE)
-export const validateRequisitionForm = (formData = {}) => {
+export const validateRequisitionForm = (formData = {}, options = {}) => {
+  const { isCloneMode = false } = options;
   const errors = {};
   let valid = true;
 
@@ -54,7 +55,7 @@ export const validateRequisitionForm = (formData = {}) => {
     const startDate = new Date(formData.startDate);
     startDate.setHours(0, 0, 0, 0);
 
-    if (startDate < tomorrow) {
+    if (!isCloneMode && startDate < tomorrow) {
       errors.startDate = "validation:requisition_date_future";
       valid = false;
     }
