@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import DropdownStrip from "../candidatePreview/components/DropdownStrip";
 import MessageCard from "../Messages/components/messageCard";
 import { useMessages } from "../Messages/hooks/useMessages";
@@ -7,6 +7,7 @@ import "../../style/css/MessageCard.css";
 import { useTranslation } from "react-i18next";
 import candidateWorkflowServices from "../candidatePreview/services/CandidateWorkflowServices";
 import masterApiService from "../master/services/masterApiService";
+import { toast } from "react-toastify";
 
 const Messages = () => {
   const { t } = useTranslation(["messages", "common"]);
@@ -21,7 +22,7 @@ const Messages = () => {
     toggleRow,
   } = useMessages();
 
-  // ✅ EXISTING
+
   const [selectedStatus, setSelectedStatus] = React.useState("");
   const [isFilterOpen, setIsFilterOpen] = React.useState(false);
   const [requisitions, setRequisitions] = React.useState([]);
@@ -39,6 +40,8 @@ const Messages = () => {
   const [page, setPage] = React.useState(0);
   const [size, setSize] = React.useState(10);
   const [totalPages, setTotalPages] = React.useState(0);
+  const filterRef = useRef(null);
+  
 
 
   const selectedRequisitionName = requisitions.find(r => r.id === selectedRequisitionId)?.requisitionTitle || "";
@@ -59,9 +62,8 @@ const Messages = () => {
     threadMessagesMap
   );
 
-  // ✅ ✅ NEW: DYNAMIC COUNTS (ONLY ADD THIS)
   const statusCounts = messagesData.reduce((acc, item) => {
-    acc[item.status] = (acc[item.status] || 0) + 1;
+    acc[item.rawStatus] = (acc[item.rawStatus] || 0) + 1;
     return acc;
   }, {});
 
@@ -81,8 +83,8 @@ const Messages = () => {
         item.requisitionId === selectedRequisitionId) &&
       (!selectedPositionId ||
         item.positionId === selectedPositionId) &&
-      (!selectedStatus || item.status === selectedStatus) &&
-      (!searchText || matchesSearch)   // ✅ SEARCH CONDITION
+      (!selectedStatus || item.rawStatus === selectedStatus) &&
+      (!searchText || matchesSearch)   
     );
   });
 
@@ -114,10 +116,8 @@ const Messages = () => {
         pageSize
       );
 
-      // setApiMessages(res?.data?.content || []);
-      // setTotalPages(res?.data?.totalPages || 0);
-      // setTotalElements(res?.data?.totalElements || 0);   // ✅ ADD THIS
-      const responseData = res?.data;   // ✅ CHANGE THIS
+     
+      const responseData = res?.data;   
 
       setApiMessages(responseData?.content || []);
       setTotalPages(responseData?.totalPages || 0);
@@ -160,7 +160,7 @@ const Messages = () => {
 
 
 
-      // 👇 adjust based on API response structure
+    
       setRequisitions(res?.data || []);
 
     } catch (err) {
@@ -182,6 +182,16 @@ const Messages = () => {
     }
   };
 
+  React.useEffect(() => {
+    if (selectedPositionId) {  
+      fetchMessages({
+        positionsIds: [selectedPositionId],
+        requestTypeIds: [],
+        statusList: selectedStatus ? [selectedStatus] : []
+      }, 0, size);
+    }
+  }, [selectedPositionId, selectedStatus]);   
+
   const fetchThreadMessages = async (threadId) => {
     try {
       const res = await candidateWorkflowServices.getMessagesByThreadId(threadId);
@@ -194,63 +204,94 @@ const Messages = () => {
     }
   };
   const handleToggle = async (id) => {
-    if (!threadMessagesMap[id]) {
-      const msgs = await fetchThreadMessages(id);
-
-      setThreadMessagesMap((prev) => ({
-        ...prev,
-        [id]: msgs,
-      }));
-    }
+    const msgs = await fetchThreadMessages(id);   
+    setThreadMessagesMap((prev) => ({
+      ...prev,
+      [id]: msgs,
+    }));
 
     toggleRow(id);
   };
-
   React.useEffect(() => {
     if (selectedPositionId) {
       // fetchMessages([selectedPositionId], page, size);
       fetchMessages({
         positionsIds: selectedPositionId ? [selectedPositionId] : [],
         requestTypeIds: [], // optional (can pass selected later)
-        statusList: selectedStatus ? [selectedStatus.toUpperCase()] : []
+        statusList: selectedStatus ? [selectedStatus] : []
       }, page, size);
     }
   }, [page, size]);
-  React.useEffect(() => {
-    if (selectedPositionId) {
-      fetchMessages({
-        positionsIds: [selectedPositionId],
-        requestTypeIds: [],
-        statusList: selectedStatus ? [selectedStatus.toUpperCase()] : []
-      }, 0, size);
-    }
-  }, [selectedPositionId]);
+
 
   React.useEffect(() => {
     setPage(0);
   }, [selectedPositionId, selectedStatus, searchText]);
+  
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (filterRef.current && !filterRef.current.contains(event.target)) {
+      setIsFilterOpen(false);
+    }
+  };
 
-  const handleSubmitApproval = async (threadId, status) => {
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+
+
+const handleSubmitApproval = async (threadId, status, comment) => {
   try {
     const payload = {
-      conversationThreadId: [threadId], // ✅ must be array with single id
-      status,                           // "L1_PENDING" or "REJECTED"
-      comments: "test"                  // or from input box
+      conversationThreadId: [threadId],
+      status,
+      comments: comment || ""
     };
 
     await candidateWorkflowServices.submitForApproval(payload);
 
-    // 🔄 Refresh list after action
-    fetchMessages({
-      positionsIds: selectedPositionId ? [selectedPositionId] : [],
-      requestTypeIds: [],
-      statusList: selectedStatus ? [selectedStatus.toUpperCase()] : []
-    }, page, size);
+    if (status === "L1_PENDING") {
+      toast.success("Approved successfully");
+    } else if (status === "REJECTED") {
+      toast.success("Rejected successfully");
+    }
+
+    // ✅ Refresh messages
+    const latestMessages = await fetchThreadMessages(threadId);
+
+    setThreadMessagesMap(prev => ({
+      ...prev,
+      [threadId]: latestMessages?.data || latestMessages || []
+    }));
+
+    // ✅ Update status
+    setApiMessages(prev =>
+      prev.map(item =>
+        item.conversationThreadId === threadId
+          ? { ...item, status }
+          : item
+      )
+    );
 
   } catch (err) {
     console.error("Submit approval error", err);
+
+    toast.error(
+      err?.response?.data?.message || "Something went wrong"
+    );
   }
 };
+
+
+
+
+
+
+
 
   return (
     <div className="container-fluid py-3 px-3"
@@ -301,24 +342,24 @@ const Messages = () => {
 
                     setSelectedRequisitionId(id);
 
-                    // ✅ CLEAR POSITION
+                  
                     setSelectedPositionId("");
 
-                    // ✅ CLEAR MESSAGES
+                   
                     setApiMessages([]);
 
-                    // ✅ FETCH NEW POSITIONS
+                  
                     fetchPositions(id);
                   }}
 
                   onPositionChange={(value) => {
                     setSelectedPositionId(value);
-                    setPage(0);   // ✅ reset page
+                    setPage(0);  
                     const ids = value ? [value] : [];
                     fetchMessages({
                       positionsIds: value ? [value] : [],
                       requestTypeIds: [],
-                      statusList: selectedStatus ? [selectedStatus.toUpperCase()] : []
+                      statusList: selectedStatus ? [selectedStatus] : []
                     }, 0, size);
                   }}
                   onRequisitionSearch={(val) => fetchRequisitions(val)}
@@ -351,6 +392,7 @@ const Messages = () => {
                 </div> */}
 
                 <div
+                  ref={filterRef}
                   className="filter-wrapper"
                   style={{
                     marginLeft: "auto",
@@ -359,20 +401,29 @@ const Messages = () => {
                     alignItems: "flex-end"
                   }}
                 >
-
                   <div
                     className="filter-header"
                     style={{ height: "38px", display: "flex", alignItems: "center" }}
                     onClick={() => setIsFilterOpen(!isFilterOpen)}
                   >
                     <i className="bi bi-funnel"></i>
-                    {selectedStatus ? t(`messages:${selectedStatus.toLowerCase()}`) : t("messages:all_status")}
+
+                    {selectedStatus === "PENDING" && "Pending"}
+                    {selectedStatus === "L1_PENDING" && "L1 Pending"}
+                    {selectedStatus === "L1_APPROVED" && "L1 Approved"}
+                    {selectedStatus === "L1_REJECTED" && "L1 Rejected"}    
+                    {selectedStatus === "L2_APPROVED" && "L2 Approved"}    
+                    {selectedStatus === "L2_REJECTED" && "L2 Rejected"}
+                    {selectedStatus === "REJECTED" && "Rejected"}
+                    {!selectedStatus && t("messages:all_status")}
+
                     <i className={`bi ms-2 ${isFilterOpen ? "bi-chevron-up" : "bi-chevron-down"}`}></i>
                   </div>
 
                   {isFilterOpen && (
                     <div className="filter-dropdown">
 
+                      {/* ALL */}
                       <div
                         className={`filter-item ${!selectedStatus ? "active" : ""}`}
                         onClick={() => {
@@ -380,42 +431,88 @@ const Messages = () => {
                           setIsFilterOpen(false);
                         }}
                       >
-                        {t("messages:all")}<span>{messagesData.length}</span>
+                        {t("messages:all")} <span>{messagesData.length}</span>
                       </div>
 
+                      {/* PENDING */}
                       <div
-                        className={`filter-item pending ${selectedStatus === "Pending" ? "active" : ""}`}
+                        className={`filter-item pending ${selectedStatus === "PENDING" ? "active" : ""}`}
                         onClick={() => {
-                          setSelectedStatus("Pending");
+                          setSelectedStatus("PENDING");
                           setIsFilterOpen(false);
                         }}
                       >
-                        {t("messages:pending")} <span>{statusCounts["Pending"] || 0}</span>
+                        Pending <span>{statusCounts["PENDING"] || 0}</span>
                       </div>
 
+                      {/* L1 PENDING */}
                       <div
-                        className={`filter-item approved ${selectedStatus === "Approved" ? "active" : ""}`}
+                        className={`filter-item ${selectedStatus === "L1_PENDING" ? "active" : ""}`}
                         onClick={() => {
-                          setSelectedStatus("Approved");
+                          setSelectedStatus("L1_PENDING");
                           setIsFilterOpen(false);
                         }}
                       >
-                        {t("messages:approved")} <span>{statusCounts["Approved"] || 0}</span>
+                        L1 Pending <span>{statusCounts["L1_PENDING"] || 0}</span>
                       </div>
 
+                      {/* L1 APPROVED */}
                       <div
-                        className={`filter-item rejected ${selectedStatus === "Rejected" ? "active" : ""}`}
+                        className={`filter-item approved ${selectedStatus === "L1_APPROVED" ? "active" : ""}`}
                         onClick={() => {
-                          setSelectedStatus("Rejected");
+                          setSelectedStatus("L1_APPROVED");
                           setIsFilterOpen(false);
                         }}
                       >
-                        {t("messages:rejected")} <span>{statusCounts["Rejected"] || 0}</span>
+                        L1 Approved <span>{statusCounts["L1_APPROVED"] || 0}</span>
+                      </div>
+
+                      {/* L1 REJECTED */}
+                      <div
+                        className={`filter-item rejected ${selectedStatus === "L1_REJECTED" ? "active" : ""}`}
+                        onClick={() => {
+                          setSelectedStatus("L1_REJECTED");
+                          setIsFilterOpen(false);
+                        }}
+                      >
+                        L1 Rejected <span>{statusCounts["L1_REJECTED"] || 0}</span>
+                      </div>
+
+                      {/* L2 APPROVED */}
+                      <div
+                        className={`filter-item approved ${selectedStatus === "L2_APPROVED" ? "active" : ""}`}
+                        onClick={() => {
+                          setSelectedStatus("L2_APPROVED");
+                          setIsFilterOpen(false);
+                        }}
+                      >
+                        L2 Approved <span>{statusCounts["L2_APPROVED"] || 0}</span>
+                      </div>
+
+                      {/* L2 REJECTED */}
+                      <div
+                        className={`filter-item rejected ${selectedStatus === "L2_REJECTED" ? "active" : ""}`}
+                        onClick={() => {
+                          setSelectedStatus("L2_REJECTED");
+                          setIsFilterOpen(false);
+                        }}
+                      >
+                        L2 Rejected <span>{statusCounts["L2_REJECTED"] || 0}</span>
+                      </div>
+
+                      {/* FINAL REJECTED */}
+                      <div
+                        className={`filter-item rejected ${selectedStatus === "REJECTED" ? "active" : ""}`}
+                        onClick={() => {
+                          setSelectedStatus("REJECTED");
+                          setIsFilterOpen(false);
+                        }}
+                      >
+                        Rejected <span>{statusCounts["REJECTED"] || 0}</span>
                       </div>
 
                     </div>
                   )}
-
                 </div>
 
               </div>
@@ -439,7 +536,7 @@ const Messages = () => {
                   item={item}
                   isOpen={openRow === item.id}
                   onToggle={handleToggle}
-                   onSubmitApproval={handleSubmitApproval} 
+                  onSubmitApproval={handleSubmitApproval}
                 />
               ))
             ) : (
@@ -451,88 +548,100 @@ const Messages = () => {
               </div>
             )}
           </div>
-        <div className="d-flex justify-content-end align-items-center gap-3 col px-3 py-3 border-top">
+          <div className="d-flex justify-content-end align-items-center gap-3 col px-3 py-3 border-top">
 
-  {/* Page Size */}
-  <div className="d-flex align-items-center gap-2">
-    <span className="fw-semibold pagesize">Page size:</span>
-    <select
-      className="form-select form-select-sm"
-      style={{ width: "90px" }}
-      value={size}
-      onChange={(e) => {
-        setSize(Number(e.target.value));
-        setPage(0);
-      }}
-    >
-      {[5, 10, 15, 20, 25, 30].map(s => (
-        <option key={s} value={s}>{s}</option>
-      ))}
-    </select>
-  </div>
-
-  {/* Pagination */}
-  <nav aria-label="Page navigation">
-    <ul className="pagination mb-0 justify-content-center">
-
-      {/* « Prev */}
-      <li className={`page-item ${page === 0 ? "disabled" : ""}`}>
-        <button
-          className="page-link"
-          disabled={page === 0}
-          onClick={() => setPage(page - 1)}
-        >
-          «
-        </button>
-      </li>
-
-      {/* Page Numbers */}
-      {[...Array(totalPages)].map((_, i) => {
-
-        // show first, last, and near current
-        if (
-          i === 0 ||
-          i === totalPages - 1 ||
-          Math.abs(i - page) <= 1
-        ) {
-          return (
-            <li key={i} className={`page-item ${page === i ? "active" : ""}`}>
-              <button
-                className="page-link"
-                onClick={() => setPage(i)}
+            {/* Page Size */}
+            <div className="d-flex align-items-center gap-2">
+              <span className="fw-semibold pagesize">Page size:</span>
+              <select
+                className="form-select form-select-sm"
+                style={{ width: "90px" }}
+                value={size}
+                onChange={(e) => {
+                  setSize(Number(e.target.value));
+                  setPage(0);
+                }}
               >
-                {i + 1}
-              </button>
-            </li>
-          );
-        }
+                {[5, 10, 15, 20, 25, 30].map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
 
-        // show dots
-        if (i === page - 2 || i === page + 2) {
-          return (
-            <li key={i} className="page-item disabled">
-              <span className="page-link">…</span>
-            </li>
-          );
-        }
+            {/* Pagination */}
+            <nav aria-label="Page navigation">
+              <ul className="pagination mb-0 justify-content-center">
 
-        return null;
-      })}
+                {/* PREV */}
+                <li className={`page-item ${page === 0 ? "disabled" : ""}`}>
+                  <button
+                    className="page-link"
+                    disabled={page === 0}
+                    onClick={() => setPage(page - 1)}
+                  >
+                    «
+                  </button>
+                </li>
 
-      {/* » Next */}
-      <li className={`page-item ${page === totalPages - 1 ? "disabled" : ""}`}>
-        <button
-          className="page-link"
-          disabled={page === totalPages - 1}
-          onClick={() => setPage(page + 1)}
-        >
-          »
-        </button>
-      </li>
+                {/* FIRST PAGE */}
+                <li className={`page-item ${page === 0 ? "active" : ""}`}>
+                  <button className="page-link" onClick={() => setPage(0)}>1</button>
+                </li>
 
-    </ul>
-  </nav>
-</div>
+                {/* LEFT DOTS */}
+                {page > 2 && (
+                  <li className="page-item disabled">
+                    <span className="page-link">…</span>
+                  </li>
+                )}
+
+                {/* MIDDLE PAGES */}
+                {[page - 1, page, page + 1].map((i) => {
+                  if (i > 0 && i < totalPages - 1) {
+                    return (
+                      <li key={i} className={`page-item ${page === i ? "active" : ""}`}>
+                        <button className="page-link" onClick={() => setPage(i)}>
+                          {i + 1}
+                        </button>
+                      </li>
+                    );
+                  }
+                  return null;
+                })}
+
+                {/* RIGHT DOTS */}
+                {page < totalPages - 3 && (
+                  <li className="page-item disabled">
+                    <span className="page-link">…</span>
+                  </li>
+                )}
+
+                {/* LAST PAGE */}
+                {totalPages > 1 && (
+                  <li className={`page-item ${page === totalPages - 1 ? "active" : ""}`}>
+                    <button
+                      className="page-link"
+                      onClick={() => setPage(totalPages - 1)}
+                    >
+                      {totalPages}
+                    </button>
+                  </li>
+                )}
+
+                {/* NEXT */}
+                <li className={`page-item ${page <= 0 ? "disabled" : ""}`}>
+                  <button
+                    className="page-link"
+                    disabled={page <= 0}
+                    onClick={() => setPage((p) => Math.max(p - 1, 0))}
+                  >
+                    «
+                  </button>
+                </li>
+
+              </ul>
+            </nav>
+          </div>
 
         </div>
       </div>

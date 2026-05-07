@@ -1,4 +1,3 @@
-
 export const mapMessagesData = (
   apiMessages = [],
   selectedRequisitionId,
@@ -9,7 +8,7 @@ export const mapMessagesData = (
   threadMessagesMap = {}
 ) => {
 
-  // ✅ Create lookup map
+  // Create lookup map
   const requestTypeMap = {};
   requestTypes.forEach(rt => {
     requestTypeMap[rt.requestTypeId] = rt.requestName;
@@ -17,7 +16,6 @@ export const mapMessagesData = (
 
   return (apiMessages || []).map((item, index) => {
     return {
-      // id: item?.conversationThreadId || index,
       id: item?.conversationThreadId,
 
       name: item?.candidateName || "",
@@ -37,18 +35,48 @@ export const mapMessagesData = (
         ? new Date(item.createdDate).toLocaleTimeString()
         : "-",
 
-      status:
-        item?.status === "PENDING"
-          ? "Pending"
-          : item?.status || "-",
+     status: (() => {
+  switch (item?.status) {
+    case "PENDING":
+      return "Pending";
 
-      // ✅ FIX HERE
+    case "L1_PENDING":
+      return "L1 Pending";
+
+    case "L1_APPROVED":
+      return "L1 Approved";
+
+    case "L1_REJECTED":
+      return "L1 Rejected";  
+
+    case "L2_APPROVED":
+      return "L2 Approved";   
+
+    case "L2_REJECTED":
+      return "L2 Rejected";
+
+    case "REJECTED":
+      return "Rejected";
+
+    default:
+      return item?.status || "-";
+  }
+})(),
+
+rawStatus: item?.status,
+
+      rawStatus: item?.status,
+
+      rawStatus: item?.status,   
+
+  
       type:
         item?.requestTypeName ||
         requestTypeMap[item?.requestTypeId] ||
         item?.requestTypeId ||
         "-",
 
+    
       history: (threadMessagesMap[item?.conversationThreadId] || []).map(msg => ({
         type:
           msg.senderType === "CANDIDATE"
@@ -56,7 +84,9 @@ export const mapMessagesData = (
             : "request",
 
         title: msg.senderType || "-",
-        comment: msg.comments || "-",
+
+  
+        comment: msg.message || msg.comments || "-",
 
         time: msg.createdDate
           ? new Date(msg.createdDate).toLocaleString()

@@ -209,6 +209,7 @@
   display: flex;
   gap: 8px;
   margin-top: 12px;
+  margin-bottom: 21px;
 }
 
 #msg-card-1 .msg-input {

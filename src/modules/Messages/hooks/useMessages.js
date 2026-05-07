@@ -10,7 +10,6 @@ export const useMessages = () => {
     setOpenRow((prev) => (prev === id ? null : id));
   };
 
-  // ✅ MOVE THIS HERE (reusable everywhere)
   const getStatusClass = (status) => {
     switch (status) {
       case "Approved":
@@ -22,7 +21,7 @@ export const useMessages = () => {
     }
   };
 
-  // ✅ MOVE THIS HERE
+
   const getHistoryColor = (type) => {
     return type === "request" ? "#ff9800" : "#2196f3";
   };
@@ -37,7 +36,7 @@ export const useMessages = () => {
     setDate,
     toggleRow,
 
-    // ✅ expose reusable helpers
+
     getStatusClass,
     getHistoryColor
   };
