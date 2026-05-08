@@ -175,7 +175,7 @@ export default function InterviewPool({
                 <td className="fs-14 align-content-center">
                   <div className="d-flex align-items-center gap-2">
                     <span className="scorebg">
-                      {c.score || "-"}
+                      {c.score !== null && c.score !== undefined && c.score !== ""? c.score: "-"}
                     </span>
 
                     <span

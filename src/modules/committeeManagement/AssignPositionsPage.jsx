@@ -376,6 +376,12 @@ const AssignPositionsPage = ({ refreshPanels }) => {
               isSearchable
               placeholder={t("select_requisition_placeholder")}
               options={requisitionOptions}
+              filterOption={(option, inputValue) =>
+                option.label
+                  .toLowerCase()
+                  .includes(inputValue.toLowerCase())
+              }
+
               value={
                 requisitionOptions.find(
                   option => option.value === selectedRequisition

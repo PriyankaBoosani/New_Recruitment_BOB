@@ -49,11 +49,19 @@ export default function DropdownStrip({
 					value={requisitionOptions.find(
 						(opt) => opt.value === selectedRequisitionId
 					)}
-					onInputChange={(inputValue, actionMeta) => {
-						if (actionMeta.action === "input-change") {
-							onRequisitionSearch(inputValue);
-						}
-					}}
+					// onInputChange={(inputValue, actionMeta) => {
+					// 	if (actionMeta.action === "input-change") {
+					// 		onRequisitionSearch(inputValue);
+					// 	}
+					// }}
+
+           // ✅ FIX
+          filterOption={(option, inputValue) =>
+            option.label
+              ?.toLowerCase()
+              .includes(inputValue.toLowerCase())
+          }
+          
 					onChange={(option) =>
 						onRequisitionChange({
 							target: { value: option ? option.value : "" },
