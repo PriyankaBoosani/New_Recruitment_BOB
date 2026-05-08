@@ -36,6 +36,7 @@ const Messages = () => {
   // const messagesData = mapMessagesData(rawData);
   const [apiMessages, setApiMessages] = React.useState([]);
   const [loadingMessages, setLoadingMessages] = React.useState(false);
+  const [allMessages, setAllMessages] = React.useState([]);  // ✅ ADD THIS
   const [searchText, setSearchText] = React.useState("");
   const [page, setPage] = React.useState(0);
   const [size, setSize] = React.useState(10);
@@ -62,8 +63,13 @@ const Messages = () => {
     threadMessagesMap
   );
 
-  const statusCounts = messagesData.reduce((acc, item) => {
-    acc[item.rawStatus] = (acc[item.rawStatus] || 0) + 1;
+  // const statusCounts = messagesData.reduce((acc, item) => {
+  //   acc[item.rawStatus] = (acc[item.rawStatus] || 0) + 1;
+  //   return acc;
+  // }, {});
+
+  const statusCounts = (allMessages || []).reduce((acc, item) => {
+    acc[item.status] = (acc[item.status] || 0) + 1;
     return acc;
   }, {});
 
@@ -87,7 +93,15 @@ const Messages = () => {
       (!searchText || matchesSearch)
     );
   });
-
+  // const ALL_STATUSES = [
+  //   "PENDING",
+  //   "L1_PENDING",
+  //   "L1_APPROVED",
+  //   "L1_REJECTED",
+  //   "L2_APPROVED",
+  //   "L2_REJECTED",
+  //   "REJECTED"
+  // ];
 
 
   const fetchMessages = async (payload, pageNo = page, pageSize = size) => {
@@ -102,13 +116,13 @@ const Messages = () => {
 
 
       const responseData = res?.data;
-    
+
 
       setApiMessages(responseData?.content || []);
       setTotalPages(responseData?.page.totalPages || 0);
       setTotalElements(responseData?.page.totalElements || 0);
 
-   
+
     } catch (err) {
       console.error("Messages API error", err);
     } finally {
@@ -171,6 +185,9 @@ const Messages = () => {
 
   React.useEffect(() => {
     if (selectedPositionId) {
+
+      toggleRow(null);
+
       fetchMessages({
         positionsIds: [selectedPositionId],
         requestTypeIds: [],
@@ -206,6 +223,7 @@ const Messages = () => {
         positionsIds: selectedPositionId ? [selectedPositionId] : [],
         requestTypeIds: [], // optional (can pass selected later)
         statusList: selectedStatus ? [selectedStatus] : []
+        // statusList: []
       }, page, size);
     }
   }, [page, size]);
@@ -273,7 +291,44 @@ const Messages = () => {
     }
   };
 
+  const fetchAllMessagesForCounts = async () => {
+    try {
+      const res = await candidateWorkflowServices.getMessageHistory(
+        {
+          positionsIds: selectedPositionId ? [selectedPositionId] : [],
+          requestTypeIds: [],
+          statusList: []   // ✅ ALWAYS ALL
+        },
+        0,
+        1000
+      );
 
+      setAllMessages(res?.data?.content || []);
+    } catch (err) {
+      console.error("Count API error", err);
+    }
+  };
+  React.useEffect(() => {
+    if (selectedPositionId) {
+      fetchAllMessagesForCounts();
+    }
+  }, [selectedPositionId]);
+
+  const getVisiblePages = () => {
+    if (totalPages <= 3) {
+      return Array.from({ length: totalPages }, (_, i) => i);
+    }
+
+    if (page <= 1) {
+      return [0, 1, 2];
+    }
+
+    if (page >= totalPages - 2) {
+      return [totalPages - 3, totalPages - 2, totalPages - 1];
+    }
+
+    return [page - 1, page, page + 1];
+  };
 
 
 
@@ -348,7 +403,7 @@ const Messages = () => {
                       positionsIds: value ? [value] : [],
                       requestTypeIds: [],
                       statusList: selectedStatus ? [selectedStatus] : []
-                    }, 0, size);
+                    }, 0, size); //ALL_STATUSES
                   }}
                   onRequisitionSearch={(val) => fetchRequisitions(val)}
                 />
@@ -419,7 +474,9 @@ const Messages = () => {
                           setIsFilterOpen(false);
                         }}
                       >
-                        {t("messages:all")} <span>{messagesData.length}</span>
+                        {t("messages:all")}
+                        {/* <span>{totalElements}</span> */}
+                        {/* <span>{messagesData.length}</span> */}
                       </div>
 
                       {/* PENDING */}
@@ -430,7 +487,7 @@ const Messages = () => {
                           setIsFilterOpen(false);
                         }}
                       >
-                        Pending <span>{statusCounts["PENDING"] || 0}</span>
+                        Pending
                       </div>
 
                       {/* L1 PENDING */}
@@ -441,7 +498,8 @@ const Messages = () => {
                           setIsFilterOpen(false);
                         }}
                       >
-                        L1 Pending <span>{statusCounts["L1_PENDING"] || 0}</span>
+                        L1 Pending
+                        {/* <span>{statusCounts["L1_PENDING"] || 0}</span> */}
                       </div>
 
                       {/* L1 APPROVED */}
@@ -452,7 +510,8 @@ const Messages = () => {
                           setIsFilterOpen(false);
                         }}
                       >
-                        L1 Approved <span>{statusCounts["L1_APPROVED"] || 0}</span>
+                        L1 Approved
+                        {/* <span>{statusCounts["L1_APPROVED"] || 0}</span> */}
                       </div>
 
                       {/* L1 REJECTED */}
@@ -463,7 +522,8 @@ const Messages = () => {
                           setIsFilterOpen(false);
                         }}
                       >
-                        L1 Rejected <span>{statusCounts["L1_REJECTED"] || 0}</span>
+                        L1 Rejected
+                        {/* <span>{statusCounts["L1_REJECTED"] || 0}</span> */}
                       </div>
 
                       {/* L2 APPROVED */}
@@ -474,7 +534,8 @@ const Messages = () => {
                           setIsFilterOpen(false);
                         }}
                       >
-                        L2 Approved <span>{statusCounts["L2_APPROVED"] || 0}</span>
+                        L2 Approved
+                        {/* <span>{statusCounts["L2_APPROVED"] || 0}</span> */}
                       </div>
 
                       {/* L2 REJECTED */}
@@ -485,7 +546,8 @@ const Messages = () => {
                           setIsFilterOpen(false);
                         }}
                       >
-                        L2 Rejected <span>{statusCounts["L2_REJECTED"] || 0}</span>
+                        L2 Rejected
+                        {/* <span>{statusCounts["L2_REJECTED"] || 0}</span> */}
                       </div>
 
                       {/* FINAL REJECTED */}
@@ -496,7 +558,8 @@ const Messages = () => {
                           setIsFilterOpen(false);
                         }}
                       >
-                        Rejected <span>{statusCounts["REJECTED"] || 0}</span>
+                        Rejected
+                        {/* <span>{statusCounts["REJECTED"] || 0}</span> */}
                       </div>
 
                     </div>
@@ -528,11 +591,30 @@ const Messages = () => {
                 />
               ))
             ) : (
-              <div
-                className="text-center text-muted mt-5"
-                style={{ minHeight: "200px", display: "flex", alignItems: "center", justifyContent: "center" }}
-              >
-                {t("messages:no_data")}
+              <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "250px" }}>
+
+                <div
+                  className="card text-center p-4"
+                  style={{
+                    width: "350px",
+                    borderRadius: "12px",
+                    border: "1px solid #E0E0E0",
+                    boxShadow: "0 2px 6px rgba(0,0,0,0.05)"
+                  }}
+                >
+                  <div className="mb-2">
+                    <i className="bi bi-inbox" style={{ fontSize: "28px", color: "#A0A0A0" }}></i>
+                  </div>
+
+                  <div className="fw-semibold text-muted">
+                    {t("messages:no_data")}
+                  </div>
+
+                  <small className="text-muted">
+                    No messages available for selected filters
+                  </small>
+                </div>
+
               </div>
             )}
           </div>
@@ -574,57 +656,35 @@ const Messages = () => {
                   </button>
                 </li>
 
-                {/* FIRST PAGE */}
-                <li className={`page-item ${page === 0 ? "active" : ""}`}>
-                  <button className="page-link" onClick={() => setPage(0)}>1</button>
-                </li>
-
                 {/* LEFT DOTS */}
-                {page > 2 && (
+                {page > 1 && (
                   <li className="page-item disabled">
-                    <span className="page-link">…</span>
+                    <span className="page-link">...</span>
                   </li>
                 )}
 
-                {/* MIDDLE PAGES */}
-                {[page - 1, page, page + 1].map((i) => {
-                  if (i > 0 && i < totalPages - 1) {
-                    return (
-                      <li key={i} className={`page-item ${page === i ? "active" : ""}`}>
-                        <button className="page-link" onClick={() => setPage(i)}>
-                          {i + 1}
-                        </button>
-                      </li>
-                    );
-                  }
-                  return null;
-                })}
-
-                {/* RIGHT DOTS */}
-                {page < totalPages - 3 && (
-                  <li className="page-item disabled">
-                    <span className="page-link">…</span>
-                  </li>
-                )}
-
-                {/* LAST PAGE */}
-                {totalPages > 1 && (
-                  <li className={`page-item ${page === totalPages - 1 ? "active" : ""}`}>
-                    <button
-                      className="page-link"
-                      onClick={() => setPage(totalPages - 1)}
-                    >
-                      {totalPages}
+                {/* PAGE NUMBERS (ONLY 3) */}
+                {getVisiblePages().map((i) => (
+                  <li key={i} className={`page-item ${page === i ? "active" : ""}`}>
+                    <button className="page-link" onClick={() => setPage(i)}>
+                      {i + 1}
                     </button>
                   </li>
+                ))}
+
+                {/* RIGHT DOTS */}
+                {page < totalPages - 2 && (
+                  <li className="page-item disabled">
+                    <span className="page-link">...</span>
+                  </li>
                 )}
 
-                {/* ✅ FIXED NEXT */}
-                <li className={`page-item ${page === totalPages + 1 ? "disabled" : ""}`}>
+                {/* NEXT */}
+                <li className={`page-item ${page >= totalPages - 1 ? "disabled" : ""}`}>
                   <button
                     className="page-link"
-                    disabled={page === totalPages + 1}
-                    onClick={() => setPage((p) => Math.min(p + 1, totalPages + 1))}
+                    disabled={page >= totalPages - 1}
+                    onClick={() => setPage((p) => Math.min(p + 1, totalPages - 1))}
                   >
                     »
                   </button>

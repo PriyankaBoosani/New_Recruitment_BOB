@@ -8,7 +8,7 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
   return (
     <div
       className="msg-row"
-      onClick={() => onToggle(item.id)}
+    
     >
 
       {/* LEFT */}
