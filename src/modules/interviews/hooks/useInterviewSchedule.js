@@ -160,28 +160,56 @@ const formatTimeRange = (startStr, endStr) => {
   return end ? `${start} - ${end}` : start;
 };
 
-const applySchedule = async ({ selectedPanels, startTime, positionId }) => {
+const applySchedule = async ({ selectedPanels,positionId }) => {
   try {
-    console.log("startTime", startTime);
    // console.log("FINAL TIME SENT 👉", formatTime(startTime));
    console.log("selectedPanels", selectedPanels);
     // ✅ Build payload
+    // const payload = {
+    //   schedulingPanelModel: {
+    //     applicationIds: passedCandidates.map(c => c.id),
+    //     positionId
+    //   },
+    //   panelScheduleModelList: selectedPanels.flatMap(panel =>
+    //     (panel.slots || []).map(slot => ({
+    //       panelId: panel.id,
+    //       panelDate: slot.date,
+    //       interviewPerDay: Number(slot.perDay),
+    //       startTime: formatTime(startTime)   // 🔥 IMPORTANT FIX
+    //     }))
+    //   )
+    // };
     const payload = {
       schedulingPanelModel: {
+
         applicationIds: passedCandidates.map(c => c.id),
-        positionId
+
+        // ✅ future-ready
+        positionIds: [positionId]
+
       },
+
       panelScheduleModelList: selectedPanels.flatMap(panel =>
+
         (panel.slots || []).map(slot => ({
+
           panelId: panel.id,
+
           panelDate: slot.date,
+
           interviewPerDay: Number(slot.perDay),
-          startTime: formatTime(startTime)   // 🔥 IMPORTANT FIX
+
+          startTime: formatTime(slot.startTime),
+
+          endTime: formatTime(slot.endTime),
+
+          durationInMinutes: Number(slot.duration)
+
         }))
+
       )
     };
-
-    console.log("FINAL PAYLOAD 👉", payload);//return false;
+    console.log("FINAL PAYLOAD 👉", payload);return false;
 
     // ✅ Call API
     const res = await interviewService.allocatePanels(payload);
