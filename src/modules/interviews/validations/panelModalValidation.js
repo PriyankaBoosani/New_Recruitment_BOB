@@ -1,8 +1,13 @@
-export const validatePanelModal = ({ rows }) => {
-  const errors = { rows: [] };
+export const validatePanelModal = ({ rows, panelId }) => {
+  const errors = { rows: [], panelId: "" };
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+
+  // Panel validation
+  if (!panelId) {
+    errors.panelId = "validation:panel_required";
+  }
 
   rows.forEach((row, i) => {
     const rowErrors = {};
@@ -12,6 +17,23 @@ export const validatePanelModal = ({ rows }) => {
     } else if (new Date(row.date) < today) {
       rowErrors.date = "validation:past_dates_not_allowed";
     }
+
+    if (!row.duration) {
+      rowErrors.duration = "validation:duration_required";
+    }
+
+    if (!row.startTime) {
+      rowErrors.startTime = "validation:start_time_required";
+    }
+
+    if (!row.endTime) {
+      rowErrors.endTime = "validation:end_time_required";
+    }
+
+    // End time should be greater than start time
+    // if (row.startTime && row.endTime && row.endTime <= row.startTime) {
+    //   rowErrors.endTime = "validation:end_time_greater_than_start";
+    // }
 
     if (!row.perDay) {
       rowErrors.perDay = "validation:required";
@@ -26,5 +48,5 @@ export const validatePanelModal = ({ rows }) => {
     }
   });
 
-  return errors.rows.length ? errors : {};
+  return (errors.rows?.length || errors.panelId) ? errors : {};
 };

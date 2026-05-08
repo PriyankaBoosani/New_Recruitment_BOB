@@ -466,6 +466,44 @@
   align-items: start;   /* ⭐ KEY FIX */
 }
 
+/* NEW LAYOUT CLASSES */
+.ap-panel-row {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.ap-row-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: start;
+}
+
+.ap-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.ap-actions {
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+@media (max-width: 768px) {
+  .ap-row-group {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .ap-field {
+    width: 100%;
+  }
+}
+
 
 /* DATE PICKER */
 
@@ -677,5 +715,52 @@
   border: none;
   border-radius: 8px;
   padding: 8px 26px;
+  font-weight: 500;
+}
+.ipc-alert-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.ipc-alert-modal {
+  width: 480px;
+  max-width: 90%;
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.ipc-alert-icon {
+  font-size: 42px;
+  color: #f97316;
+  margin-bottom: 14px;
+}
+
+.ipc-alert-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1e293b;
+}
+
+.ipc-alert-message {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #475569;
+  white-space: pre-line;
+}
+
+.ipc-alert-btn {
+  background: #f97316;
+  border: none;
+  color: white;
+  padding: 10px 22px;
+  border-radius: 10px;
   font-weight: 500;
 }

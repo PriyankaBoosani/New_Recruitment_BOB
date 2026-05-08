@@ -12,15 +12,15 @@ import Loader from "../../../shared/components/Loader";
 
 const InterviewPanelsConfig = ({
   positionId,
-  startTime,
-  onStartTimeChange,
+  //startTime,
+ // onStartTimeChange,
    candidates,
   onScheduleReady,
   onApplyAll
 }) => {
 
   console.log("InterviewPanelsConfig - positionId:", positionId)
-  console.log("START TIME FROM INPUT 👉", startTime);
+  //console.log("START TIME FROM INPUT 👉", startTime);
 
   const {
      availablePanels,
@@ -46,34 +46,79 @@ const InterviewPanelsConfig = ({
   const [showApplySuccess, setShowApplySuccess] = React.useState(false);
   const [scheduledCount, setScheduledCount] = React.useState(0);
   const [isApplying, setIsApplying] = React.useState(false);
+  const [showCapacityModal, setShowCapacityModal] = React.useState(false);
+
+const [capacityMessage, setCapacityMessage] = React.useState("");
 
   console.log("panels:", selectedPanels)
 
 const handleApplyAll = async () => {
 
   // ✅ Validate Position
-  if (!positionId) {
-    toast.error("Position is missing");
-    return;
-  }
-// ✅ Validate Panels
-  if (!selectedPanels || selectedPanels.length === 0) {
-    toast.error("Please add at least one interview panel");
-    return;
-  }
+        if (!positionId) {
+          toast.error("Position is missing");
+          return;
+        }
+      // ✅ Validate Panels
+        if (!selectedPanels || selectedPanels.length === 0) {
+          toast.error("Please add at least one interview panel");
+          return;
+        }
 
-  // ✅ Validate Start Time
-  if (!startTime) {
-    toast.error("Start time is required");
-    return;
-  }
 
+        
+
+        // ✅ Validate Start Time
+        // if (!startTime) {
+        //   toast.error("Start time is required");
+        //   return;
+        // }
+      // ✅ Calculate total interview capacity
+      const totalCapacity = selectedPanels.reduce(
+        (sum, panel) => {
+
+          const panelCapacity = (panel.slots || []).reduce(
+            (slotSum, slot) => {
+
+              return slotSum + Number(slot.perDay || 0);
+
+            },
+            0
+          );
+
+          return sum + panelCapacity;
+
+        },
+        0
+      );
+
+      // ✅ Total candidates
+      const totalCandidates = candidates?.length || 0;
+
+      const remainingCandidates =
+        totalCandidates - totalCapacity;
+
+      // ✅ Validate capacity
+      if (totalCapacity < totalCandidates) {
+
+              setCapacityMessage(
+        `Unable to schedule all candidates.
+
+      Only ${totalCapacity} interview slots are available. ${remainingCandidates} more candidates still need to be scheduled.
+
+      Please add additional interview slots or create another panel to continue.`
+      );
+
+            setShowCapacityModal(true);
+
+            return;
+      }
     try {
     setIsApplying(true);   // 🔥 START LOADER
 
     const res = await onApplyAll({
       selectedPanels,
-      startTime,
+     // startTime,
       positionId
     });
 
@@ -207,7 +252,7 @@ const handleApplyAll = async () => {
         {/* START TIME */}
         <div className="row mt-3 align-items-end">
 
-          <div className="col-md-3">
+          {/* <div className="col-md-3">
             <Form.Label className="ipc-label">
               {t("start_time")} <span className="text-danger">*</span>
             </Form.Label>
@@ -218,7 +263,7 @@ const handleApplyAll = async () => {
               onChange={(e) => onStartTimeChange(e.target.value)}
               className="ipc-time-input"
             />
-          </div>
+          </div> */}
 
           <div className="col-md-3 ms-auto text-md-end mt-3 mt-md-0">
            <button className="ipc-apply-btn" onClick={handleApplyAll}>
@@ -261,7 +306,36 @@ const handleApplyAll = async () => {
         count={scheduledCount}
         onOk={() => setShowApplySuccess(false)}
       />
+      {showCapacityModal && (
+        <div className="ipc-alert-overlay">
 
+          <div className="ipc-alert-modal">
+
+            <div className="ipc-alert-icon">
+              <i className="bi bi-exclamation-triangle-fill"></i>
+            </div>
+
+            <h4 className="ipc-alert-title">
+              Interview Capacity Insufficient
+            </h4>
+
+            <p className="ipc-alert-message">
+              {capacityMessage}
+            </p>
+
+            <div className="text-end mt-4">
+              <button
+                className="ipc-alert-btn"
+                onClick={() => setShowCapacityModal(false)}
+              >
+                OK
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      )}
 
 
     </>

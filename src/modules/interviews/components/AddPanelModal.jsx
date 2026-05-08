@@ -28,7 +28,8 @@ const AddPanelModal = ({
     handleSave,
     handleCancel,
     minDate,
-    maxDate
+    maxDate,
+    clearPanelError
   } = useAddPanelModal({
     show,
     initialPanel,
@@ -40,7 +41,7 @@ const AddPanelModal = ({
   console.log("panels123", panels)
 
   return (
-    <Modal show={show} onHide={handleCancel} centered dialogClassName="ap-modal">
+    <Modal show={show} onHide={handleCancel} size="xl" centered dialogClassName="ap-modal">
       <Modal.Body className="ap-body">
 
         {/* HEADER */}
@@ -67,10 +68,16 @@ const AddPanelModal = ({
 
           <div className="ap-select-wrap">
             <Form.Select
-              className="ap-input ap-no-arrow"
+              className={`ap-input ap-no-arrow ${
+                      errors?.panelId ? "ap-error" : ""
+                    }`}
               disabled={mode === "edit"}
               value={panelId || ""}
-              onChange={(e) => setPanelId(e.target.value)}
+              onChange={(e) => {
+                setPanelId(e.target.value);
+                clearPanelError();
+              }}
+              
             >
               <option value="">
                 {t("select_panel_placeholder")}
@@ -95,79 +102,166 @@ const AddPanelModal = ({
 
             <i className="bi bi-chevron-down ap-select-icon" />
           </div>
+          <div className="field-error">
+            {errors?.panelId ? t(errors.panelId) : ""}
+          </div>
         </Form.Group>
 
         {/* ROWS */}
         {rows.map((row, i) => (
-          <div key={i} className="ap-row">
+          <div key={i} className="ap-panel-row">
+            
+            {/* FIRST ROW: Date, Start Time, End Time */}
+            <div className="ap-row-group">
+              {/* DATE */}
+              <div className="ap-field">
+                <Form.Label className="ap-label">
+                  {t("panel_date")} <span>*</span>
+                </Form.Label>
 
-            {/* DATE */}
-            <div>
-              <Form.Label className="ap-label">
-                {t("panel_date")} <span>*</span>
-              </Form.Label>
-
-              <div className="ap-icon-input">
-                <input
-                  type="date"
-                  className={`ap-input ap-no-date ${
-                    errors?.rows?.[i]?.date ? "ap-error" : ""
-                  }`}
-                  value={row.date}
-                  min={minDate}   // ✅ IMPORTANT
-                    max={maxDate}   // ✅ IMPORTANT
+                <div className="ap-icon-input">
+                  <input
+                    type="date"
+                    className={`ap-input ap-no-date ${
+                      errors?.rows?.[i]?.date ? "ap-error" : ""
+                    }`}
+                    value={row.date}
+                    min={minDate}
+                    max={maxDate}
                     onChange={(e) => updateRow(i, "date", e.target.value)}
                   />
-                <i className="bi bi-calendar3 ap-calendar" />
+                  <i className="bi bi-calendar3 ap-calendar" />
+                </div>
+
+                <div className="field-error">
+                  {errors?.rows?.[i]?.date ? t(errors.rows[i].date) : ""}
+                </div>
               </div>
 
-              <div className="field-error">
-                {errors?.rows?.[i]?.date ? t(errors.rows[i].date) : ""}
+              {/* START TIME */}
+              <div className="ap-field">
+                <Form.Label className="ap-label">
+                  Start Time <span>*</span>
+                </Form.Label>
+
+                <input
+                  type="time"
+                  className={`ap-input ${
+                    errors?.rows?.[i]?.startTime ? "ap-error" : ""
+                  }`}
+                  value={row.startTime}
+                  onChange={(e) =>
+                    updateRow(i, "startTime", e.target.value)
+                  }
+                />
+
+                <div className="field-error">
+                  {errors?.rows?.[i]?.startTime
+                    ? t(errors.rows[i].startTime)
+                    : ""}
+                </div>
+              </div>
+
+              {/* END TIME */}
+              <div className="ap-field">
+                <Form.Label className="ap-label">
+                  End Time <span>*</span>
+                </Form.Label>
+
+                <input
+                  type="time"
+                  className={`ap-input ${
+                    errors?.rows?.[i]?.endTime ? "ap-error" : ""
+                  }`}
+                  value={row.endTime}
+                  onChange={(e) =>
+                    updateRow(i, "endTime", e.target.value)
+                  }
+                />
+
+                <div className="field-error">
+                  {errors?.rows?.[i]?.endTime
+                    ? t(errors.rows[i].endTime)
+                    : ""}
+                </div>
               </div>
             </div>
 
-            {/* PER DAY */}
-            <div>
-              <Form.Label className="ap-label">
-                {t("interviews_per_day")} <span>*</span>
-              </Form.Label>
+            {/* SECOND ROW: Duration, Interviews per Day, Actions */}
+            <div className="ap-row-group">
+              {/* DURATION */}
+              <div className="ap-field">
+                <Form.Label className="ap-label">
+                  Duration <span>*</span>
+                </Form.Label>
 
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                maxLength={3}
-                placeholder={t("enter_interviews_per_day")}
-                className={`ap-inputs ${
-                  errors?.rows?.[i]?.perDay ? "ap-error" : ""
-                }`}
-                value={row.perDay}
-                onChange={(e) => {
-                  const onlyNums = e.target.value.replace(/\D/g, "");
-                  updateRow(i, "perDay", onlyNums);
-                }}
-              />
-
-              <div className="field-error">
-                {errors?.rows?.[i]?.perDay ? t(errors.rows[i].perDay) : ""}
-              </div>
-            </div>
-
-            {/* ADD / DELETE */}
-            <div className="ap-btn-col">
-              {i === 0 ? (
-                <button type="button" className="ap-plus" onClick={addRow}>
-                  <i className="bi bi-plus-lg" />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="ap-trash"
-                  onClick={() => removeRow(i)}
+                <Form.Select
+                  className={`ap-input ${
+                    errors?.rows?.[i]?.duration ? "ap-error" : ""
+                  }`}
+                  value={row.duration}
+                  onChange={(e) => updateRow(i, "duration", e.target.value)}
                 >
-                  <i className="bi bi-trash" />
-                </button>
-              )}
+                  <option value="10">10 mins</option>
+                  <option value="15">15 mins</option>
+                  <option value="20">20 mins</option>
+                  <option value="25">25 mins</option>
+                </Form.Select>
+
+                <div className="field-error">
+                  {errors?.rows?.[i]?.duration
+                    ? t(errors.rows[i].duration)
+                    : ""}
+                </div>
+              </div>
+
+              {/* INTERVIEWS PER DAY */}
+              <div className="ap-field">
+                <Form.Label className="ap-label">
+                  {t("interviews_per_day")} <span>*</span>
+                </Form.Label>
+
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={3}
+                  placeholder={t("enter_interviews_per_day")}
+                  className={`ap-inputs ${
+                    errors?.rows?.[i]?.perDay ? "ap-error" : ""
+                  }`}
+                  value={row.perDay}
+                  readOnly
+                  onChange={(e) => {
+                    const onlyNums = e.target.value.replace(/\D/g, "");
+                    updateRow(i, "perDay", onlyNums);
+                  }}
+                />
+
+                <div className="field-error">
+                  {errors?.rows?.[i]?.perDay ? t(errors.rows[i].perDay) : ""}
+                </div>
+              </div>
+
+              {/* ACTIONS */}
+              <div className="ap-field ap-actions">
+                <Form.Label className="ap-label">
+                  &nbsp;
+                </Form.Label>
+                {i === 0 ? (
+                  <button type="button" className="ap-plus" onClick={addRow}>
+                    <i className="bi bi-plus-lg" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="ap-trash"
+                    onClick={() => removeRow(i)}
+                  >
+                    <i className="bi bi-trash" />
+                  </button>
+                )}
+              </div>
             </div>
 
           </div>

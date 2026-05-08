@@ -20,7 +20,7 @@ const ScheduleInterviews = () => {
   /* ================= STATE ================= */
 
 
-  const [startTime, setStartTime] = useState("");
+  //const [startTime, setStartTime] = useState("");
 const [scheduledCount, setScheduledCount] = useState(0);
   const [showReadyBar, setShowReadyBar] = useState(false);
   const { 
@@ -106,8 +106,8 @@ console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId)
       {/* ===== PANELS CONFIG ===== */}
       <InterviewPanelsConfig
          positionId={selectedPositionId}
-        startTime={startTime}
-        onStartTimeChange={setStartTime}
+       // startTime={startTime}
+       // onStartTimeChange={setStartTime}
           candidates={passedCandidates}              // ✅ ADD
  onScheduleReady={(rows) => {
     setSchedule(rows);
