@@ -209,7 +209,7 @@ const applySchedule = async ({ selectedPanels,positionId }) => {
 
       )
     };
-    console.log("FINAL PAYLOAD 👉", payload);return false;
+    console.log("FINAL PAYLOAD 👉", payload);//return false;
 
     // ✅ Call API
     const res = await interviewService.allocatePanels(payload);
