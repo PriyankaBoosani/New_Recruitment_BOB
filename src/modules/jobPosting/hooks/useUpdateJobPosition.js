@@ -9,24 +9,67 @@ export const useUpdateJobPosition = () => {
     try {
       setLoading(true);
 
+      // 🔥 SAFETY: ensure formData always exists
+      const safePayload = {
+        ...payload,
+        formData: payload.formData || {}
+      };
+
+      if (!payload.educationData || !payload.educationData.mandatory) {
+        console.error("INVALID PAYLOAD", payload);
+        throw new Error("Missing educationData.mandatory");
+      }
+
       const dto = mapAddPositionToUpdateDto(payload);
 
-      //console.log("dto", dto);return false;
+      let res;
 
-      const res = await jobPositionApiService.updatePosition({
-        dto,
-        indentFile: payload.indentFile
-      });
+      // ================================
+      // 🔥 DRAFT FLOW
+      // ================================
+      if (payload.isDraft) {
+        if (!payload.parentRequisitionId) {
+          throw new Error("Missing parentRequisitionId for draft update");
+        }
 
-      //  MATCH ACTUAL RESPONSE SHAPE
+        if (!payload.existingPosition?.parentPositionId) {
+          throw new Error("Missing parentPositionId for draft update");
+        }
+
+        // res = await jobPositionApiService.updateDraftPosition({
+        //   requisitionId: payload.parentRequisitionId,
+        //   parentPositionId: payload.existingPosition.parentPositionId,
+        //   dto
+        // });
+
+        res = await jobPositionApiService.updateDraftPosition({
+          requisitionId: payload.parentRequisitionId,
+          parentPositionId: payload.existingPosition.parentPositionId,
+          dto,
+          indentFile: payload.indentFile   // 🔥 REQUIRED
+        });
+      }
+
+      // ================================
+      // ✅ NORMAL FLOW
+      // ================================
+      else {
+        res = await jobPositionApiService.updatePosition({
+          dto,
+          indentFile: payload.indentFile
+        });
+      }
+
+      // 🔥 RESPONSE CHECK
       if (!res?.success) {
         throw new Error(res?.message || "Update position failed");
       }
 
-      return res.data; // success path only
+      return res.data;
+
     } catch (err) {
       console.error("Update position failed", err);
-      throw err; //  DO NOT RETURN FALSE
+      throw err;
     } finally {
       setLoading(false);
     }

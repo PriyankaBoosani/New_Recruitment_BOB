@@ -555,7 +555,7 @@ const JobPostingsList = () => {
                                         {formatStatusLabel(req.status)}
                                     </Badge>
 																		
-                                    {req.status === "APPROVED" && !req.isInEditMode && (
+                                    {req.status === "APPROVED" && !req.isInEditMode && !req.isDraft && (
                                         <Button
                                             size="sm"
                                             className="py-0"
@@ -665,7 +665,7 @@ const JobPostingsList = () => {
 
 
                                 <>
-                                    {!req.isRejected && req.editable && (
+                                    {!req.isRejected && req.editable && !req.isDraft && (
                                         <OverlayTrigger
                                             placement="bottom"
                                             overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:add_position")}</Tooltip>}
@@ -875,7 +875,7 @@ const JobPostingsList = () => {
                                                             )}
 
                                                             {/* DELETE POSITION */}
-                                                            {!req.isRejected && req.editable && (
+                                                            {!req.isRejected && req.editable && !req.isDraft && (
                                                                 <OverlayTrigger
                                                                     placement="bottom"
                                                                     overlay={<Tooltip id={`tooltip-delete-${req.id}`}>{t("jobPostingsList:delete_position")}</Tooltip>}

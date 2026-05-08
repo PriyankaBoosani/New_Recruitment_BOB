@@ -75,7 +75,8 @@ const AddPosition = () => {
     const shouldFetchPosition = !!positionId && (isEditMode || isViewMode);
 
     // const { data: existingPosition } = useJobPositionById(shouldFetchPosition ? positionId : null);
-    const { requisition, loading: requisitionLoading } = useRequisitionDetails(requisitionId);
+    const effectiveRequisitionId = isDraft ? parentRequisitionId : requisitionId;
+    const { requisition, loading: requisitionLoading } = useRequisitionDetails(effectiveRequisitionId);
 
     const { data: existingPosition } = useJobPositionById(
         shouldFetchPosition ? positionId : null,

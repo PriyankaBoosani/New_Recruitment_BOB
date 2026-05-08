@@ -65,6 +65,36 @@ const jobPositionApiService = {
     );
   },
 
+  // updateDraftPosition: ({ requisitionId, parentPositionId, dto }) =>
+  //   api.put(
+  //     `/recruiter/job-requisitions/${requisitionId}/edit-drafts/current/positions/${parentPositionId}`,
+  //     dto
+  //   ),
+
+  updateDraftPosition: ({ requisitionId, parentPositionId, dto, indentFile }) => {
+    const formData = new FormData();
+
+    formData.append(
+      "jobPositionsDTO",
+      new Blob([JSON.stringify(dto)], { type: "application/json" })
+    );
+
+    if (indentFile) {
+      formData.append("indentFile", indentFile);
+    }
+
+    return api.put(
+      `/recruiter/job-requisitions/${requisitionId}/edit-drafts/current/positions/${parentPositionId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "X-Client": "AzureAD",
+        },
+      }
+    );
+  },
+
 
   deletePositionById: (positionId) =>
     api.delete(
