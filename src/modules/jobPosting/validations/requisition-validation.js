@@ -28,8 +28,13 @@ export const validateTitleOnType = (value) => {
 };
 
 // ✔ submit-time validator (USED ON SAVE)
-export const validateRequisitionForm = (formData = {}, options = {}) => {
-  const { isCloneMode = false } = options;
+export const validateRequisitionForm = (
+  formData = {},
+  options = {},
+  selectedPositions = new Set()
+) => {
+  const { isCloneMode = false, isReinitializeMode = false } = options;
+
   const errors = {};
   let valid = true;
 
@@ -37,17 +42,16 @@ export const validateRequisitionForm = (formData = {}, options = {}) => {
 
   if (!title) {
     errors.title = "validation:required";
-
     valid = false;
-  } 
+  }
 
   if (!formData.description?.trim()) {
     errors.description = "validation:required";
-
     valid = false;
   }
 
   const tomorrow = getTomorrowStart();
+
   if (!formData.startDate) {
     errors.startDate = "validation:required";
     valid = false;
@@ -55,12 +59,11 @@ export const validateRequisitionForm = (formData = {}, options = {}) => {
     const startDate = new Date(formData.startDate);
     startDate.setHours(0, 0, 0, 0);
 
-    if (!isCloneMode && startDate < tomorrow) {
+    if (!isCloneMode && !isReinitializeMode && startDate < tomorrow) {
       errors.startDate = "validation:requisition_date_future";
       valid = false;
     }
   }
-
 
   if (!formData.endDate) {
     errors.endDate = "validation:required";
@@ -73,6 +76,12 @@ export const validateRequisitionForm = (formData = {}, options = {}) => {
     new Date(formData.endDate) < new Date(formData.startDate)
   ) {
     errors.endDate = "validation:end_before_start";
+    valid = false;
+  }
+
+  // 🔥 NEW: reinitialize validation
+  if (isReinitializeMode && selectedPositions.size === 0) {
+    errors.positions = "validation:select_position_required";
     valid = false;
   }
 

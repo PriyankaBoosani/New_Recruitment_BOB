@@ -340,7 +340,61 @@ const JobPostingsList = () => {
         };
     };
 
+    const handleAutoApprove = async (req) => {
+        try {
+            await requisitionApiService.autoApproveDraftRequisition(
+                req.parentRequisitionId,
+                ""
+            );
 
+            toast.success("Approved successfully");
+            refetch();
+
+        } catch (err) {
+            console.error(err);
+            toast.error("Approval failed");
+        }
+    };
+
+    const handlePublish = async (req) => {
+        try {
+            await requisitionApiService.publishDraftRequisition(
+                req.parentRequisitionId
+            );
+
+            toast.success("Published successfully");
+
+            refetch(); // mandatory, otherwise UI lies again
+        } catch (err) {
+            console.error(err);
+            toast.error("Publish failed");
+        }
+    };
+
+    const selectedRequisitions = requisitions.filter(r =>
+        selectedReqIds.has(r.id)
+    );
+
+    const isSubmitEnabled =
+        selectedRequisitions.length > 0 &&
+        selectedRequisitions.every(r => r.status === "NEW");
+
+    const isReinitializeEnabled = (() => {
+        if (selectedRequisitions.length !== 1) return false;
+
+        const req = selectedRequisitions[0];
+
+        if (req.status !== "APPROVED") return false;
+        if (!req.endDate) return false;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const endDate = new Date(req.endDate);
+        endDate.setHours(0, 0, 0, 0);
+
+        return endDate < today;
+    })();
 
     return (
         <Container fluid className="job-postings-page">
@@ -483,8 +537,24 @@ const JobPostingsList = () => {
                 <Col xs={12} md={6} className="text-md-end mt-2 mt-md-0">
                     <Button
                         variant="primary"
+                        className="subbtn me-2"
+                        disabled={!isReinitializeEnabled || loading}
+                        onClick={() => {
+                            const req = selectedRequisitions[0];
+
+                            navigate(`/job-posting/create-requisition?id=${req.id}`, {
+                                state: { mode: "reinitialize" }
+                            });
+                        }}
+                    >
+                        Reinitialize
+                    </Button>
+
+                    <Button
+                        variant="primary"
                         className="me-2 subbtn"
-                        disabled={selectedReqIds.size === 0 || loading}
+                        // disabled={selectedReqIds.size === 0 || loading}
+                        disabled={!isSubmitEnabled || loading}
                         onClick={() => setShowSubmitModal(true)}
 
                     >
@@ -496,7 +566,8 @@ const JobPostingsList = () => {
                         variant="outline-secondary"
                         className="canbtn"
                         onClick={handleCancelSelection}
-                        disabled={selectedReqIds.size === 0 || loading}
+                        // disabled={selectedReqIds.size === 0 || loading}
+                        disabled={!isSubmitEnabled || loading}
                     >
                         {t("common:cancel")}
                     </Button>
@@ -523,6 +594,24 @@ const JobPostingsList = () => {
                 // const positions = positionsByReq[req.id] || [];
                 const key = `${req.isDraft ? req.parentRequisitionId : req.id}_${req.isDraft}`;
                 const positions = positionsByReq[key] || [];
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const endDate = req.endDate ? new Date(req.endDate) : null;
+                if (endDate) endDate.setHours(0, 0, 0, 0);
+
+                const isApprovedAndExpired =
+                    req.status === "APPROVED" &&
+                    endDate &&
+                    endDate < today;
+
+                const isCheckboxEnabled =
+                    !req.isDraft &&
+                    (
+                        req.status === "NEW" ||
+                        isApprovedAndExpired
+                    );
 
                 const positionsGroupedByDept = positions.reduce((acc, pos) => {
                     if (!acc[pos.deptId]) {
@@ -572,6 +661,36 @@ const JobPostingsList = () => {
                                             Edit
                                         </Button>
                                     )}
+
+                                    {req.isDraft && req.status === "DRAFT" && (
+                                        <Button
+                                            size="sm"
+                                            variant="success"
+                                            className="ms-2 py-0"
+                                            style={{ fontSize: "0.7rem" }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleAutoApprove(req);
+                                            }}
+                                        >
+                                            Submit
+                                        </Button>
+                                    )}
+
+                                    {req.isDraft && req.status === "APPROVED" && (
+                                        <Button
+                                            size="sm"
+                                            variant="primary"
+                                            className="ms-2 py-0"
+                                            style={{ fontSize: "0.7rem" }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handlePublish(req);
+                                            }}
+                                        >
+                                            Publish
+                                        </Button>
+                                    )}
                                 </div>
 
                                 <div className="d-flex justify-content-between align-items-start">
@@ -580,23 +699,18 @@ const JobPostingsList = () => {
                                             type="checkbox"
                                             className="me-2 mt-2"
                                             checked={selectedReqIds.has(req.id)}
-                                            disabled={
-                                                req.status === "APPROVED" ||
-                                                req.status === "L1_PENDING" ||
-                                                req.status === "L1_APPROVED" ||
-                                                req.status === "L1_REJECTED" ||
-                                                req.status === "L2_REJECTED" ||
-                                                req.hasDraftPositions
-                                            }
+                                            // disabled={
+                                            //     req.status === "APPROVED" ||
+                                            //     req.status === "L1_PENDING" ||
+                                            //     req.status === "L1_APPROVED" ||
+                                            //     req.status === "L1_REJECTED" ||
+                                            //     req.status === "L2_REJECTED" ||
+                                            //     req.hasDraftPositions
+                                            // }
+                                            disabled={!isCheckboxEnabled}
                                             onClick={(e) => e.stopPropagation()}
                                             onChange={(e) => {
-                                                if (
-                                                    req.status === "APPROVED" ||
-                                                    req.status === "L1_PENDING" ||
-                                                    req.status === "L1_APPROVED" ||
-                                                    req.status === "L1_REJECTED" ||
-                                                    req.status === "L2_REJECTED"
-                                                ) return;
+                                                if (!isCheckboxEnabled) return;
 
                                                 setSelectedReqIds(prev => {
                                                     const next = new Set(prev);

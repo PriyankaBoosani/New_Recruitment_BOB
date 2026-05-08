@@ -34,6 +34,7 @@ const CreateRequisition = () => {
 
   const isViewMode = !!editId && mode === "view";
   const isCloneMode = mode === "clone";
+  const isReinitializeMode = mode === "reinitialize";
 
   const handleCancel = () => {
     if (from === "approval") {
@@ -50,8 +51,9 @@ const CreateRequisition = () => {
     saveRequisition,
     loading,
     fetching,
-    error: apiError
-  } = useCreateRequisition(editId);
+    error: apiError,
+    requisitionData
+  } = useCreateRequisition(editId, mode);
 
   const [errors, setErrors] = useState({});
   /* ===================== SAVE ===================== */
@@ -92,27 +94,21 @@ const CreateRequisition = () => {
   const handleSave = async (e) => {
     e?.preventDefault?.();
 
-    // const { valid, errors: valErrors } = validateRequisitionForm(
-    //   formData,
-    //   Boolean(editId),
-    //   { isCloneMode }
-    // );
-
-    const { valid, errors: valErrors } = validateRequisitionForm(formData, { isCloneMode });
+    const { valid, errors: valErrors } = validateRequisitionForm(
+      formData,
+      { isCloneMode, isReinitializeMode },
+      selectedPositions
+    );
 
     if (!valid) {
       setErrors(valErrors);
       return;
     }
 
-    // if (isCloneMode && selectedPositions.size === 0) {
-    //   toast.error("Select at least one position to clone");
-    //   return;
-    // }
-
     if (isViewMode) return;
 
     try {
+      // 🔵 CLONE MODE (existing)
       if (isCloneMode) {
         const positionIds = Array.from(selectedPositions);
 
@@ -132,20 +128,41 @@ const CreateRequisition = () => {
         );
 
         toast.success("Draft created successfully");
-      } else {
+      }
+
+      // 🟢 REINITIALIZE MODE (NEW API)
+      else if (isReinitializeMode) {
+        const payload = {
+          parentRequisitionId: editId,
+          positionIds: Array.from(selectedPositions),
+          requisitionTitle: formData.title,
+          requisitionDescription: formData.description,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+        };
+
+        await requisitionApiService.reinitializeRequisition(payload);
+
+        toast.success("Reinitialized successfully");
+      }
+
+      // ⚪ NORMAL CREATE / EDIT
+      else {
         const payload = mapRequisitionToApi(formData);
         await saveRequisition(payload);
+
         toast.success(
-          editId
-            ? t("update_success")
-            : t("create_success")
+          editId ? t("update_success") : t("create_success")
         );
       }
+
       navigate(REQUISITION_CONFIG.SUCCESS_REDIRECT);
+
     } catch (err) {
       console.error("Save failed", err);
     }
   };
+
   function getTomorrowISO() {
     const d = new Date();
     d.setDate(d.getDate() + 1);
@@ -184,12 +201,27 @@ const CreateRequisition = () => {
         <Card.Body>
           <div className="section-title">
             <span className="indicator" />
-            <h6>
+            {/* <h6>
               {isViewMode
                 ? t("view_requisition")
                 : editId
                   ? t("edit_requisition")
                   : t("create_requisition")}
+            </h6> */}
+            <h6>
+              {isViewMode && t("view_requisition")}
+
+              {!isViewMode && isReinitializeMode && (
+                <>
+                  {t("reinitialize_requisition")}{" "}
+                  {requisitionData?.requisitionCode && ` (${requisitionData?.requisitionCode}`}{" "}
+                  {requisitionData?.requisitionTitle && `- ${requisitionData?.requisitionTitle})`}
+                </>
+              )}
+
+              {!isViewMode && !isReinitializeMode && editId && t("edit_requisition")}
+
+              {!editId && t("create_requisition")}
             </h6>
           </div>
 
@@ -279,7 +311,7 @@ const CreateRequisition = () => {
                     <ErrorMessage>{renderError(errors.description)}</ErrorMessage>
                   </Form.Group>
 
-                  {isCloneMode && (
+                  {(isCloneMode || isReinitializeMode) && (
                     <div className="mt-4">
                       <Form.Label>Select Positions to Edit</Form.Label>
 

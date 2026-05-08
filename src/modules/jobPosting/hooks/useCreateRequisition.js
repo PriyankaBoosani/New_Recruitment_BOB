@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import requisitionApiService from "../services/requisitionApiService";
 import { REQUISITION_CONFIG } from "../config/requisitionConfig";
 
-export const useCreateRequisition = (editId) => {
+export const useCreateRequisition = (editId, mode) => {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState(null);
@@ -29,16 +29,27 @@ export const useCreateRequisition = (editId) => {
         const res = await requisitionApiService.getRequisitionById(editId);
         const data = res?.data || {};
 
-        // 🔥 STORE FULL OBJECT
         setRequisitionData(data);
 
-        // existing logic
+        // ❗ CRITICAL: skip prefill for reinitialize
+        if (mode === "reinitialize") {
+          setFormData({
+            title: "",
+            description: "",
+            startDate: "",
+            endDate: "",
+          });
+          return;
+        }
+
+        // normal behavior
         setFormData({
           title: data.requisitionTitle || "",
           description: data.requisitionDescription || "",
           startDate: data.startDate ? data.startDate.split("T")[0] : "",
           endDate: data.endDate ? data.endDate.split("T")[0] : "",
         });
+
       } catch (err) {
         setError("Failed to load requisition data.");
       } finally {
@@ -47,7 +58,7 @@ export const useCreateRequisition = (editId) => {
     };
 
     loadData();
-  }, [editId]);
+  }, [editId, mode]);
 
 
   // Handle Input Changes
@@ -94,6 +105,6 @@ export const useCreateRequisition = (editId) => {
     loading,
     fetching,
     error,
-    requisitionData
+    requisitionData,
   };
 };

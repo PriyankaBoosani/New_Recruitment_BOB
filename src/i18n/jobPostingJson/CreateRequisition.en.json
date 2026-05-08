@@ -1,6 +1,7 @@
 {
     "create_requisition": "Create New Requisition",
     "edit_requisition": "Edit Requisition",
+    "reinitialize_requisition": "Reinitialize Requisition",
     "view_requisition": "View Requisition",
     "requisition_title": "Requisition Title",
     "enter_requisition_title": "Enter Requisition Title",

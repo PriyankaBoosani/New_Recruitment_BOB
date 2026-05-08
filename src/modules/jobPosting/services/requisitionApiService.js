@@ -89,6 +89,39 @@ const requisitionApiService = {
     payload
   ),
 
+  autoApproveDraftRequisition: (parentRequisitionId, comments = "") =>
+    api.post(
+      `/recruiter/job-requisitions/${parentRequisitionId}/edit-drafts/current/submit-for-approval`,
+      { comments },
+      {
+        headers: {
+          "X-Client": "AzureAD"
+        }
+      }
+    ),
+
+  publishDraftRequisition: (parentRequisitionId) =>
+    api.post(
+      `/recruiter/job-requisitions/${parentRequisitionId}/edit-drafts/current/publish`,
+      null,
+      {
+        headers: {
+          "X-Client": "AzureAD"
+        }
+      }
+    ),
+
+  reinitializeRequisition: (payload) =>
+    api.post(
+      "/recruiter/job-requisitions/reinitialize",
+      payload,
+      {
+        headers: {
+          "X-Client": "AzureAD"
+        }
+      }
+    ),
+
 };
 
 export default requisitionApiService;
