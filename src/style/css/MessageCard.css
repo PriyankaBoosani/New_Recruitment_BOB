@@ -24,7 +24,7 @@
 #msg-card-1 .msg-left {
   display: flex;
   gap: 12px;
-  flex: 1;
+
   min-width: 300px;
   flex-wrap: wrap;
   white-space: nowrap;
