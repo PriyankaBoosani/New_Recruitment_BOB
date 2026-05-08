@@ -25,7 +25,25 @@
   display: flex;
   gap: 12px;
   flex: 1;
-  min-width: 250px;
+  min-width: 300px;
+  flex-wrap: wrap;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+
+
+
+
+}
+
+
+@media (max-width: 768px) {
+  #msg-card-1 .msg-left {
+    flex-direction: column;
+    /* stack vertically */
+    align-items: flex-start;
+  }
 }
 
 /* AVATAR */
@@ -142,8 +160,8 @@
 }
 
 #msg-card-1 .msg-history-title {
-  font-size: 13px;
-  font-weight: 450;
+  font-size: 14px;
+  font-weight: 420;
   color: #525c6b;
   margin-bottom: 8px;
 }
@@ -161,8 +179,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: 400;
+  font-size: 15px;
 }
 
 #msg-card-1 .msg-icon.orange {
@@ -177,8 +195,8 @@
 
 /* HISTORY TEXT */
 #msg-card-1 .msg-history-head {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 #msg-card-1 .msg-history-text {
@@ -282,12 +300,12 @@
 
 #msg-card-1 .msg-btn-reject {
   background-color: #f5f7fa;
-  color: #6c757d;
+
   font-size: 0.875rem !important;
   border: 1px solid #dcdfe3;
   padding: 6px 12px;
   border-radius: 6px;
-  color: #8c8485;
+  color: #9d9697;
 }
 
 

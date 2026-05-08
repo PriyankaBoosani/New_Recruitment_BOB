@@ -41,7 +41,7 @@ const Messages = () => {
   const [size, setSize] = React.useState(10);
   const [totalPages, setTotalPages] = React.useState(0);
   const filterRef = useRef(null);
-  
+
 
 
   const selectedRequisitionName = requisitions.find(r => r.id === selectedRequisitionId)?.requisitionTitle || "";
@@ -84,27 +84,11 @@ const Messages = () => {
       (!selectedPositionId ||
         item.positionId === selectedPositionId) &&
       (!selectedStatus || item.rawStatus === selectedStatus) &&
-      (!searchText || matchesSearch)   
+      (!searchText || matchesSearch)
     );
   });
 
 
-  // const fetchMessages = async (positionIds) => {
-  //   try {
-  //     setLoadingMessages(true);
-
-  //     const res = await candidateWorkflowServices.getMessageHistory(positionIds);
-
-  //     // setApiMessages(res?.data || []);
-  //     setApiMessages(res?.data?.content || []);
-  //     setTotalPages(res?.data?.totalPages || 0);
-
-  //   } catch (err) {
-  //     console.error("Messages API error", err);
-  //   } finally {
-  //     setLoadingMessages(false);
-  //   }
-  // };
 
   const fetchMessages = async (payload, pageNo = page, pageSize = size) => {
     try {
@@ -116,12 +100,15 @@ const Messages = () => {
         pageSize
       );
 
-     
-      const responseData = res?.data;   
+
+      const responseData = res?.data;
+    
 
       setApiMessages(responseData?.content || []);
-      setTotalPages(responseData?.totalPages || 0);
-      setTotalElements(responseData?.totalElements || 0);
+      setTotalPages(responseData?.page.totalPages || 0);
+      setTotalElements(responseData?.page.totalElements || 0);
+
+   
     } catch (err) {
       console.error("Messages API error", err);
     } finally {
@@ -160,7 +147,7 @@ const Messages = () => {
 
 
 
-    
+
       setRequisitions(res?.data || []);
 
     } catch (err) {
@@ -183,14 +170,14 @@ const Messages = () => {
   };
 
   React.useEffect(() => {
-    if (selectedPositionId) {  
+    if (selectedPositionId) {
       fetchMessages({
         positionsIds: [selectedPositionId],
         requestTypeIds: [],
         statusList: selectedStatus ? [selectedStatus] : []
       }, 0, size);
     }
-  }, [selectedPositionId, selectedStatus]);   
+  }, [selectedPositionId, selectedStatus]);
 
   const fetchThreadMessages = async (threadId) => {
     try {
@@ -204,7 +191,7 @@ const Messages = () => {
     }
   };
   const handleToggle = async (id) => {
-    const msgs = await fetchThreadMessages(id);   
+    const msgs = await fetchThreadMessages(id);
     setThreadMessagesMap((prev) => ({
       ...prev,
       [id]: msgs,
@@ -214,7 +201,7 @@ const Messages = () => {
   };
   React.useEffect(() => {
     if (selectedPositionId) {
-      // fetchMessages([selectedPositionId], page, size);
+
       fetchMessages({
         positionsIds: selectedPositionId ? [selectedPositionId] : [],
         requestTypeIds: [], // optional (can pass selected later)
@@ -227,64 +214,65 @@ const Messages = () => {
   React.useEffect(() => {
     setPage(0);
   }, [selectedPositionId, selectedStatus, searchText]);
-  
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (filterRef.current && !filterRef.current.contains(event.target)) {
-      setIsFilterOpen(false);
-    }
-  };
 
-  document.addEventListener("mousedown", handleClickOutside);
-
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
-
-
-
-const handleSubmitApproval = async (threadId, status, comment) => {
-  try {
-    const payload = {
-      conversationThreadId: [threadId],
-      status,
-      comments: comment || ""
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (filterRef.current && !filterRef.current.contains(event.target)) {
+        setIsFilterOpen(false);
+      }
     };
 
-    await candidateWorkflowServices.submitForApproval(payload);
+    document.addEventListener("mousedown", handleClickOutside);
 
-    if (status === "L1_PENDING") {
-      toast.success("Approved successfully");
-    } else if (status === "REJECTED") {
-      toast.success("Rejected successfully");
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+
+
+  const handleSubmitApproval = async (threadId, status, comment) => {
+    try {
+      const payload = {
+        conversationThreadId: [threadId],
+        status,
+        comments: comment || ""
+      };
+
+      await candidateWorkflowServices.submitForApproval(payload);
+
+      if (status === "L1_PENDING") {
+        toast.success("Approved successfully");
+      } else if (status === "REJECTED") {
+        toast.success("Rejected successfully");
+      }
+
+
+      const latestMessages = await fetchThreadMessages(threadId);
+
+      setThreadMessagesMap(prev => ({
+        ...prev,
+        [threadId]: latestMessages?.data || latestMessages || []
+      }));
+
+
+      setApiMessages(prev =>
+        prev.map(item =>
+          item.conversationThreadId === threadId
+            ? { ...item, status }
+            : item
+        )
+      );
+
+    } catch (err) {
+      console.error("Submit approval error", err);
+
+      toast.error(
+        err?.response?.data?.message || "Something went wrong"
+      );
     }
+  };
 
-    // ✅ Refresh messages
-    const latestMessages = await fetchThreadMessages(threadId);
-
-    setThreadMessagesMap(prev => ({
-      ...prev,
-      [threadId]: latestMessages?.data || latestMessages || []
-    }));
-
-    // ✅ Update status
-    setApiMessages(prev =>
-      prev.map(item =>
-        item.conversationThreadId === threadId
-          ? { ...item, status }
-          : item
-      )
-    );
-
-  } catch (err) {
-    console.error("Submit approval error", err);
-
-    toast.error(
-      err?.response?.data?.message || "Something went wrong"
-    );
-  }
-};
 
 
 
@@ -342,19 +330,19 @@ const handleSubmitApproval = async (threadId, status, comment) => {
 
                     setSelectedRequisitionId(id);
 
-                  
+
                     setSelectedPositionId("");
 
-                   
+
                     setApiMessages([]);
 
-                  
+
                     fetchPositions(id);
                   }}
 
                   onPositionChange={(value) => {
                     setSelectedPositionId(value);
-                    setPage(0);  
+                    setPage(0);
                     const ids = value ? [value] : [];
                     fetchMessages({
                       positionsIds: value ? [value] : [],
@@ -411,8 +399,8 @@ const handleSubmitApproval = async (threadId, status, comment) => {
                     {selectedStatus === "PENDING" && "Pending"}
                     {selectedStatus === "L1_PENDING" && "L1 Pending"}
                     {selectedStatus === "L1_APPROVED" && "L1 Approved"}
-                    {selectedStatus === "L1_REJECTED" && "L1 Rejected"}    
-                    {selectedStatus === "L2_APPROVED" && "L2 Approved"}    
+                    {selectedStatus === "L1_REJECTED" && "L1 Rejected"}
+                    {selectedStatus === "L2_APPROVED" && "L2 Approved"}
                     {selectedStatus === "L2_REJECTED" && "L2 Rejected"}
                     {selectedStatus === "REJECTED" && "Rejected"}
                     {!selectedStatus && t("messages:all_status")}
@@ -550,9 +538,12 @@ const handleSubmitApproval = async (threadId, status, comment) => {
           </div>
           <div className="d-flex justify-content-end align-items-center gap-3 col px-3 py-3 border-top">
 
-            {/* Page Size */}
+            {/* Page size */}
             <div className="d-flex align-items-center gap-2">
-              <span className="fw-semibold pagesize">Page size:</span>
+              <span className="fw-semibold pagesize" style={{ color: "#162B75" }}>
+                Page size:
+              </span>
+
               <select
                 className="form-select form-select-sm"
                 style={{ width: "90px" }}
@@ -577,7 +568,7 @@ const handleSubmitApproval = async (threadId, status, comment) => {
                   <button
                     className="page-link"
                     disabled={page === 0}
-                    onClick={() => setPage(page - 1)}
+                    onClick={() => setPage((p) => Math.max(p - 1, 0))}
                   >
                     «
                   </button>
@@ -628,14 +619,14 @@ const handleSubmitApproval = async (threadId, status, comment) => {
                   </li>
                 )}
 
-                {/* NEXT */}
-                <li className={`page-item ${page <= 0 ? "disabled" : ""}`}>
+                {/* ✅ FIXED NEXT */}
+                <li className={`page-item ${page === totalPages + 1 ? "disabled" : ""}`}>
                   <button
                     className="page-link"
-                    disabled={page <= 0}
-                    onClick={() => setPage((p) => Math.max(p - 1, 0))}
+                    disabled={page === totalPages + 1}
+                    onClick={() => setPage((p) => Math.min(p + 1, totalPages + 1))}
                   >
-                    «
+                    »
                   </button>
                 </li>
 

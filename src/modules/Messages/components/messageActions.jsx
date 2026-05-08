@@ -16,7 +16,7 @@ const MessageActions = ({ item, onSubmitApproval }) => {
 
       {/* ✅ Wrap input + error */}
       <div style={{ flex: 1 }}>
-        
+
         {/* Input */}
         <input
           type="text"
@@ -30,7 +30,7 @@ const MessageActions = ({ item, onSubmitApproval }) => {
           disabled={isRejected}
         />
 
-        {/* ✅ Error BELOW input */}
+
         {error && (
           <small className="text-danger d-block mt-1">
             {error}
@@ -41,7 +41,7 @@ const MessageActions = ({ item, onSubmitApproval }) => {
       {/* ACCEPT */}
       <button
         className="btn msg-btn-accept"
-        disabled={!isPending}
+        disabled={isRejected}
         onClick={async () => {
           if (!comment.trim()) {
             setError("This field is required");

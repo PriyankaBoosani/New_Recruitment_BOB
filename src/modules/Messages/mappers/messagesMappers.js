@@ -8,13 +8,17 @@ export const mapMessagesData = (
   threadMessagesMap = {}
 ) => {
 
-  // Create lookup map
   const requestTypeMap = {};
   requestTypes.forEach(rt => {
     requestTypeMap[rt.requestTypeId] = rt.requestName;
   });
 
-  return (apiMessages || []).map((item, index) => {
+  return (apiMessages || []).map((item) => {
+
+    const createdDate = item?.createdDate
+      ? new Date(item.createdDate)
+      : null;
+
     return {
       id: item?.conversationThreadId,
 
@@ -27,73 +31,61 @@ export const mapMessagesData = (
       positionId: item?.positionId || selectedPositionId,
       positionName: selectedPositionName || "-",
 
-      date: item?.createdDate
-        ? item.createdDate.split("T")[0]
+      date: createdDate
+        ? createdDate.toISOString().split("T")[0]
         : "-",
 
-      time: item?.createdDate
-        ? new Date(item.createdDate).toLocaleTimeString()
+      time: createdDate
+        ? createdDate.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+          })
         : "-",
 
-     status: (() => {
-  switch (item?.status) {
-    case "PENDING":
-      return "Pending";
+      status: (() => {
+        switch (item?.status) {
+          case "PENDING": return "Pending";
+          case "L1_PENDING": return "L1 Pending";
+          case "L1_APPROVED": return "L1 Approved";
+          case "L1_REJECTED": return "L1 Rejected";
+          case "L2_APPROVED": return "L2 Approved";
+          case "L2_REJECTED": return "L2 Rejected";
+          case "REJECTED": return "Rejected";
+          default: return item?.status || "-";
+        }
+      })(),
 
-    case "L1_PENDING":
-      return "L1 Pending";
+      rawStatus: item?.status, // ✅ only once
 
-    case "L1_APPROVED":
-      return "L1 Approved";
-
-    case "L1_REJECTED":
-      return "L1 Rejected";  
-
-    case "L2_APPROVED":
-      return "L2 Approved";   
-
-    case "L2_REJECTED":
-      return "L2 Rejected";
-
-    case "REJECTED":
-      return "Rejected";
-
-    default:
-      return item?.status || "-";
-  }
-})(),
-
-rawStatus: item?.status,
-
-      rawStatus: item?.status,
-
-      rawStatus: item?.status,   
-
-  
       type:
         item?.requestTypeName ||
         requestTypeMap[item?.requestTypeId] ||
         item?.requestTypeId ||
         "-",
 
-    
-      history: (threadMessagesMap[item?.conversationThreadId] || []).map(msg => ({
-        type:
-          msg.senderType === "CANDIDATE"
-            ? "candidate"
-            : "request",
+      history: (threadMessagesMap[item?.conversationThreadId] || []).map(msg => {
 
-        title: msg.senderType || "-",
+        const msgDate = msg?.createdDate
+          ? new Date(msg.createdDate)
+          : null;
 
-  
-        comment: msg.message || msg.comments || "-",
+        return {
+          type: msg.senderType === "CANDIDATE" ? "candidate" : "request",
+          title: msg.senderType || "-",
+          comment: msg.message || msg.comments || "-",
 
-        time: msg.createdDate
-          ? new Date(msg.createdDate).toLocaleString()
-          : "-",
+          time: msgDate
+            ? msgDate.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true
+              })
+            : "-",
 
-        file: false,
-      })),
+          file: false,
+        };
+      }),
     };
   });
 };
