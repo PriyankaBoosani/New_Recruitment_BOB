@@ -112,15 +112,23 @@ getPanelScores: (scheduledInterviewId) => {
 //     }
 //   ),
 
-  getMessageHistory: (positionIds, page, size) =>
+  // getMessageHistory: (positionIds, page, size) =>
+  // api.post(
+  //   "/recruiter/messages/get-history",
+  //   positionIds,
+    
+  //   {
+  //     params: { page, size },   // ✅ ADD THIS
+     
+  //   }
+  // ),
+
+  getMessageHistory: (payload, page, size) =>
   api.post(
     "/recruiter/messages/get-history",
-    positionIds,
+    payload,   // ✅ send full object
     {
-      params: { page, size },   // ✅ ADD THIS
-      // headers: {
-      //   "X-Client": "AzureAD",
-      // },
+      params: { page, size },
     }
   ),
 
@@ -132,6 +140,13 @@ getMessagesByThreadId: (conversationThreadId) =>
     //     "X-Client": "AzureAD",   // ✅ ADD THIS
     //   },
     // }
+  ),
+
+  submitForApproval: (payload) =>
+  api.post(
+    "/recruiter/messages/submit-for-approval",
+    payload,
+   
   ),
 
  

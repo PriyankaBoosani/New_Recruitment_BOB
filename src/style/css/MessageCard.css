@@ -209,6 +209,7 @@
   display: flex;
   gap: 8px;
   margin-top: 12px;
+  margin-bottom: 21px;
 }
 
 #msg-card-1 .msg-input {
@@ -461,6 +462,16 @@
   padding: 3px 6px;
 }
 
+
+.pagination .page-link {
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+.pagination .active .page-link {
+  background-color: #ff6b2c;
+  border-color: #ff6b2c;
+}
 
 
 

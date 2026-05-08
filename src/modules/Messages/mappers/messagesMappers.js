@@ -1,66 +1,3 @@
-// export const mapMessagesData = (
-//   apiMessages = [],
-//   selectedRequisitionId,
-//   selectedPositionId,
-//   selectedRequisitionName,
-//   selectedPositionName
-// ) => {
-//   return (apiMessages || []).map((item, index) => {
-//     const thread = item.message?.conversationThreads;
-//     const msgs = item.message?.conversationMessages || [];
-//     const candidate = item.candidateProfileEntity;
-
-//     return {
-//       id: thread?.conversationThreadId || index,
-
-//       name: `${candidate?.firstName || ""} ${candidate?.lastName || ""}`.trim(),
-//       regNo: candidate?.registrationNo,
-
-//       // ✅ keep filters working
-//       requisitionId: selectedRequisitionId,
-//       requisitionName: selectedRequisitionName || "-",
-
-//       positionId: selectedPositionId,
-//       positionName: selectedPositionName || "-",
-
-//       date: thread?.createdDate
-//         ? thread.createdDate.split("T")[0]
-//         : "-",
-
-//       time: thread?.createdDate
-//         ? new Date(thread.createdDate).toLocaleTimeString()
-//         : "-",
-
-
-//       status:
-//         thread?.status?.toUpperCase() === "PENDING"
-//           ? "Pending"
-//           : thread?.status || "-",
-
-
-//       type: thread?.initiatedBy || "-",
-
-//       history: msgs.map((msg) => ({
-
-//         type:
-//           msg.senderType?.toLowerCase() === "candidate"
-//             ? "candidate"
-//             : "request",
-
-//         title: msg.senderType || "-",
-//         comment: msg.message || "-",
-
-//         time: msg.createdDate
-//           ? new Date(msg.createdDate).toLocaleString()
-//           : "-",
-
-//         file: !!msg.attachmentPath,
-//       })),
-//     };
-//   });
-// };
-
-
 export const mapMessagesData = (
   apiMessages = [],
   selectedRequisitionId,
@@ -71,7 +8,7 @@ export const mapMessagesData = (
   threadMessagesMap = {}
 ) => {
 
-  // ✅ Create lookup map
+  // Create lookup map
   const requestTypeMap = {};
   requestTypes.forEach(rt => {
     requestTypeMap[rt.requestTypeId] = rt.requestName;
@@ -79,7 +16,6 @@ export const mapMessagesData = (
 
   return (apiMessages || []).map((item, index) => {
     return {
-      // id: item?.conversationThreadId || index,
       id: item?.conversationThreadId,
 
       name: item?.candidateName || "",
@@ -99,18 +35,48 @@ export const mapMessagesData = (
         ? new Date(item.createdDate).toLocaleTimeString()
         : "-",
 
-      status:
-        item?.status === "PENDING"
-          ? "Pending"
-          : item?.status || "-",
+     status: (() => {
+  switch (item?.status) {
+    case "PENDING":
+      return "Pending";
 
-      // ✅ FIX HERE
+    case "L1_PENDING":
+      return "L1 Pending";
+
+    case "L1_APPROVED":
+      return "L1 Approved";
+
+    case "L1_REJECTED":
+      return "L1 Rejected";  
+
+    case "L2_APPROVED":
+      return "L2 Approved";   
+
+    case "L2_REJECTED":
+      return "L2 Rejected";
+
+    case "REJECTED":
+      return "Rejected";
+
+    default:
+      return item?.status || "-";
+  }
+})(),
+
+rawStatus: item?.status,
+
+      rawStatus: item?.status,
+
+      rawStatus: item?.status,   
+
+  
       type:
         item?.requestTypeName ||
         requestTypeMap[item?.requestTypeId] ||
         item?.requestTypeId ||
         "-",
 
+    
       history: (threadMessagesMap[item?.conversationThreadId] || []).map(msg => ({
         type:
           msg.senderType === "CANDIDATE"
@@ -118,7 +84,9 @@ export const mapMessagesData = (
             : "request",
 
         title: msg.senderType || "-",
-        comment: msg.comments || "-",
+
+  
+        comment: msg.message || msg.comments || "-",
 
         time: msg.createdDate
           ? new Date(msg.createdDate).toLocaleString()
