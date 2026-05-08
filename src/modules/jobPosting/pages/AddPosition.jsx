@@ -788,7 +788,14 @@ const AddPosition = () => {
 
         try {
             if (isEditMode) {
-                await updatePosition({ ...payload, positionId, existingPosition });
+                // await updatePosition({ ...payload, positionId, existingPosition });
+                await updatePosition({
+                    ...payload,   // 🔥 THIS IS THE REAL DATA
+                    isDraft,
+                    parentRequisitionId,
+                    existingPosition
+                });
+
                 toast.success(t("position_updated_success"));
             } else {
                 await createPosition(payload);
