@@ -487,8 +487,6 @@ const CommitteeRequests = () => {
                     </Col>
                 </Row>
 
-                {/* ================= COMMITTEE REQUEST CARDS ================= */}
-                {/* ================= PANELS ================= */}
                 {loadingPanels ? (
                     <div className="text-center my-4">{t("approvalHistory:loading_panels")}</div>
                 ) : (

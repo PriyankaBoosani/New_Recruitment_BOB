@@ -390,13 +390,13 @@ const Header = () => {
                     {t("requisition_requests")}
                   </NavDropdown.Item>
 
-                  {/* <NavDropdown.Item
+                  <NavDropdown.Item
                     as={NavLink}
                     to="/extension-requests"
                     onClick={closeMenu}
                   >
                     {t("extension_requests")}
-                  </NavDropdown.Item> */}
+                  </NavDropdown.Item>
 
                   <NavDropdown.Item
                     as={NavLink}

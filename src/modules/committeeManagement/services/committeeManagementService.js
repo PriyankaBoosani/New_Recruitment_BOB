@@ -6,7 +6,7 @@ const committeeManagementService = {
       `/getdetails/users/all`
     ),
 
-    getPanelMembers: () =>
+  getPanelMembers: () =>
     apis.get(
       `/interview-panels/get/panel-members`
     ),
@@ -79,6 +79,24 @@ const committeeManagementService = {
   getRequisitionApprovalHistory: (panelId) =>
     api.get(
       `/recruiter/workflow-approval/get-panels-approval-history/${panelId}`
+    ),
+  getExtensionApprovals: (body, params = {}) =>
+    api.post("recruiter/messages/get-approvals", body, {
+      params,
+
+    }),
+  getRequestTypes: () =>
+    apis.get("/master-dd-data/get/request-types"),
+
+  getMessagesByThreadId: (conversationThreadId) =>
+    api.get(`/recruiter/messages/get-message/${conversationThreadId}`),
+
+  submitForL1L2Approval: (body) =>
+  api.post("/recruiter/messages/submit-for-l1-l2-approval", body),
+
+   getApprovalHistoryByThreadId : (conversationThreadId) =>
+    api.get(
+      `/recruiter/workflow-approval/get-conversation-threads-approval-history/${conversationThreadId}`
     ),
 
 };
