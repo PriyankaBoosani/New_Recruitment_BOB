@@ -36,7 +36,7 @@ const [allInterviewCentres, setAllInterviewCentres] = useState([]);
     );
   };
 
-  
+  console.log("passedcandidates",passedCandidates)
 
 
   

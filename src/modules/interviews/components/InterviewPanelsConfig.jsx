@@ -130,7 +130,7 @@ const handleApplyAll = async () => {
     onScheduleReady(res.rows);
 
   } catch (err) {
-    toast.error("Something went wrong");
+    toast.error("Something went wrongg");
   } finally {
     setIsApplying(false);  // 🔥 STOP LOADER
   }

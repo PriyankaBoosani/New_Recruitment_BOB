@@ -34,6 +34,8 @@ const [scheduledCount, setScheduledCount] = useState(0);
 
   const [showCentreConfirmModal, setShowCentreConfirmModal] =
   useState(false);
+  const [pendingApplyData, setPendingApplyData] =
+  useState(null);
 
 const [centreMappings, setCentreMappings] = useState({});
   const { 
@@ -226,9 +228,15 @@ const selectedPosition = positions.filter(p =>
           onScheduleReady={(rows) => {
               setSchedule(rows);
               setScheduledCount(rows.length);
-              setShowReadyBar(true);   // ✅ trigger here
+           //   setShowReadyBar(true);   // ✅ trigger here
             }} // ✅ ADD
-            onApplyAll={applySchedule}
+            onApplyAll={(data) => {
+
+            setPendingApplyData(data);
+
+            setShowCentreConfirmModal(true);
+
+          }}
       />
 
       {showReadyBar && (
@@ -257,11 +265,29 @@ const selectedPosition = positions.filter(p =>
             //   });
             // }}
 
-            onSchedule={() => {
+            onSchedule={async () => {
 
-              setShowCentreConfirmModal(true);
+                const res = await scheduleInterview();
 
-            }}
+                if (!res.success) {
+                  toast.error(res.message);
+                  return;
+                }
+
+                toast.success(
+                  "Interviews scheduled successfully"
+                );
+
+                setShowReadyBar(false);
+
+                navigate("/candidate-workflow", {
+                  state: {
+                    requisitionId: selectedRequisitionId,
+                    positionId: selectedPositionId
+                  }
+                });
+
+              }}
           />
         </div>
       )}
@@ -332,19 +358,19 @@ const selectedPosition = positions.filter(p =>
 
     setShowCentreConfirmModal(false);
 
-    const mappings = {};
+    // const mappings = {};
 
-    scheduleApiData.forEach(item => {
+    // scheduleApiData.forEach(item => {
 
-      const centre =
-        item.interviewCentres;
+    //   const centre =
+    //     item.interviewCentres;
 
-      mappings[centre.interviewCentreId] =
-        centre.interviewCentreId;
+    //   mappings[centre.interviewCentreId] =
+    //     centre.interviewCentreId;
 
-    });
+    // });
 
-    setCentreMappings(mappings);
+    // setCentreMappings(mappings);
 
     setShowCentreModal(true);
 
@@ -352,32 +378,19 @@ const selectedPosition = positions.filter(p =>
 
   onProceed={async () => {
 
-    // const res =
-    //   await scheduleInterview();
+  setShowCentreConfirmModal(false);
 
-    // if (!res.success) {
-    //   toast.error(res.message);
-    //   return;
-    // }
+  const res = await applySchedule(pendingApplyData);
 
-    // toast.success(
-    //   "Interviews scheduled successfully"
-    // );
+  if (!res.success) {
+    toast.error(res.message);
+    return;
+  }
 
-    // setShowCentreConfirmModal(false);
+  // ✅ NOW show ready bar
+  setShowReadyBar(true);
 
-    // setShowReadyBar(false);
-
-    // navigate("/candidate-workflow", {
-    //   state: {
-    //     requisitionId:
-    //       selectedRequisitionId,
-    //     positionId:
-    //       selectedPositionId
-    //   }
-    // });
-
-  }}
+}}
 />
 {/* {showCentreConfirmModal && (
 

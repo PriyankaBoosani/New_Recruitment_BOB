@@ -219,6 +219,9 @@ const [activeTab, setActiveTab] = useState(() => {
   const [showZonalCommentModal, setShowZonalCommentModal] = useState(false);
   const [zonalComment, setZonalComment] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
+
+ 
+  
   const handleOpenZonalComments = (comment) => {
     setZonalComment(comment || "-");
     setShowZonalCommentModal(true);
@@ -633,6 +636,8 @@ useEffect(() => {
       positionId: c.candidateApplications.positionId,
 
       fileUrl: c.resumeUrl,
+      interviewCenterId: c.interviewCenterId,  // Add interview centre ID
+      interviewCenterName: c.interviewCenterName,  // Add interview centre name
     }));
   };
 
