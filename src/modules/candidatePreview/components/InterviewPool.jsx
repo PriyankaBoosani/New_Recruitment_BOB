@@ -211,6 +211,7 @@ export default function InterviewPool({
                             requisitionId: selectedRequisitionId,
                             fromInterviewPool: true,
                             activeTab: "INTERVIEW_POOL",
+                              candidatePositionId: c.positionId, // ADD THIS
                             // 🔥 IMPORTANT FIX
                             interviewPage: page,
                             interviewPageSize: pageSize,
@@ -225,12 +226,13 @@ export default function InterviewPool({
                                 registration_end_date: requisition.registration_end_date,
                               }
                               : null,
-                            position: position
-                              ? {
-                                positionId: position.positionId,
-                                positionName: position.positionName,
-                              }
-                              : null,
+                          positionIds: selectedPositionId,
+
+position: position?.map?.(p => ({
+  positionId: p.positionId,
+  positionName: p.positionName,
+  isLocationWise: p.isLocationWise,
+})) || [],
                           },
 
                         })

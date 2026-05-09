@@ -33,9 +33,12 @@ const CandidatePreviewPage = ({ onHide }) => {
   //   const isRecruiter = role === "recruiter";
 
 
-  const isFromCompensationPool = state?.fromCompensationPool;
+const isFromCompensationPool = state?.fromCompensationPool;
 
   const privileges = useSelector((state) => state.user.privileges);
+  const candidatePositionId = state?.candidatePositionId;
+  console.log("Candidate Position ID in Preview:@@@@@@@@@@@@@@@@@@@@@", candidatePositionId);
+  
 
   const isInterviewer = privileges?.Interview;
   const isZonalHr = privileges?.Verification;
@@ -70,10 +73,47 @@ const CandidatePreviewPage = ({ onHide }) => {
   const requisitionTitle = requisition?.requisition_title;
   const positionName = state?.position?.positionName;
   const isLocationWise = state?.position?.isLocationWise;
-  const position = state?.position;
+//  const position = Array.isArray(state?.position)
+//   ? state.position
+//   : state?.position
+//     ? [state.position]
+//     : [];
+
+// const position = Array.isArray(state?.position)
+//   ? state.position[0]
+//   : state?.position || null;
+
+
+
+
+
+
+
+// const position = Array.isArray(state?.position)
+//   ? state.position.find(
+//       (p) => p.positionId === candidatePositionId
+//     )
+//   : state?.position || null;
+
+
+const position = Array.isArray(state?.position)
+  ? state.position.find(
+      (p) => p.positionId === candidatePositionId
+    ) || state.position[0]
+  : state?.position || null;  
+
+
+
+
+
+
   const candidateId = candidate?.candidateId;
   const positionId = state?.positionId;
   const requisitionId = state?.requisitionId;
+  const positionIds = state?.positionIds || [];
+  const positionss = state.position;
+  
+  
 
   const applicationId =
     isZonalHr
@@ -123,12 +163,17 @@ const CandidatePreviewPage = ({ onHide }) => {
 
         setMasters(fullMasters);
         /* ---------- Load Candidate ---------- */
-        if (candidateId && positionId) {
+      if (candidateId && (positionId || positionIds.length > 0)) {
           const candidateRes =
-            await candidateWorkflowServices.getCandidateAllDetails(
-              candidateId,
-              positionId
-            );
+//           await candidateWorkflowServices.getCandidateAllDetails(
+//   candidateId,
+//   positionIds.length > 0 ? positionIds : [positionId]
+// );
+
+await candidateWorkflowServices.getCandidateAllDetails(
+  candidateId,
+  candidatePositionId || positionId
+);
 
           // const mapped = mapCandidateToPreview(
           //   candidateRes.data,
@@ -152,7 +197,7 @@ const CandidatePreviewPage = ({ onHide }) => {
             zonalStats: ZonalStats.data || [],
             languages: fullMasters.languageMasters || []
           };
-
+          
 
           const mapped = mapCandidateToPreview(
             candidateRes.data,
@@ -187,28 +232,68 @@ const CandidatePreviewPage = ({ onHide }) => {
 
       {/* Header */}
       {(isRecruiter || privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"]) ? (
-        <HeaderWithBack
-          title={t("candidateWorkflow:candidate_screening")}
-          subtitle={t("candidateWorkflow:manage_schedule_interviews")}
-          onBack={() =>
-            navigate("/candidate-verification", {
-              state: {
-                requisition: state.requisition,
-                position: state.position,
-                preloadedCandidates: state.candidates,
-                selectedDate: state,
-                page: state.page,
-                pageSize: state.pageSize,
-                filters: state.filters
-              }
-            })
-          }
-          positionId={positionId}
-          requisitionId={requisitionId}
-          candidateScreening={true}
-          activeTab={activeTab}
+        // <HeaderWithBack
+        //   title={t("candidateWorkflow:candidate_screening")}
+        //   subtitle={t("candidateWorkflow:manage_schedule_interviews")}
+        //   onBack={() =>
+        //     navigate("/candidate-verification", {
+        //       state: {
+        //         requisition: state.requisition,
+        //         position: state.position,
+        //         preloadedCandidates: state.candidates,
+        //         selectedDate: state,
+        //         page: state.page,
+        //         pageSize: state.pageSize,
+        //         filters: state.filters
+        //       }
+        //     })
+        //   }
+        //   positionId={positionId}
+        //   requisitionId={requisitionId}
+        //   candidateScreening={true}
+        //   activeTab={activeTab}
+          
+        // />
 
-        />
+
+
+
+        <HeaderWithBack
+  title={t("candidateWorkflow:candidate_screening")}
+  subtitle={t("candidateWorkflow:manage_schedule_interviews")}
+  onBack={() => {
+
+    console.log("🔙 CandidatePreview Back Navigation");
+
+    console.log("requisition:", state.requisition);
+
+    console.log("position:", state.position);
+
+    console.log("candidates:", state.candidates);
+
+    console.log("page:", state.page);
+
+    console.log("pageSize:", state.pageSize);
+
+    console.log("filters:", state.filters);
+
+    navigate("/candidate-verification", {
+      state: {
+        requisition: state.requisition,
+        position: state.position,
+        preloadedCandidates: state.candidates,
+        selectedDate: state,
+        page: state.page,
+        pageSize: state.pageSize,
+        filters: state.filters
+      }
+    });
+  }}
+  positionId={positionId}
+  requisitionId={requisitionId}
+  candidateScreening={true}
+  activeTab={activeTab}
+/>
       ) : isZonalHr ? (
         <HeaderWithBacks
           title={t("candidateWorkflow:candidate_profile")}
@@ -290,6 +375,7 @@ const CandidatePreviewPage = ({ onHide }) => {
               normalizedMasters={masters}
               candidateId={candidateId}
               positionId={positionId}
+               positionIds={positionss}
               applicationId={applicationId}
               requisitionId={requisitionId}
               interviewScheduleId={interviewScheduleId}
@@ -301,9 +387,8 @@ const CandidatePreviewPage = ({ onHide }) => {
               zonalHrComments={candidate?.zonalHrComments}
               isLocationWise={isLocationWise}
               candidateStatus={candidate?.status}
-              isFromInterview={isFromInterview}
-              isFromCompensationPool={isFromCompensationPool}
-
+                isFromInterview={isFromInterview}
+                isFromCompensationPool={isFromCompensationPool}
             />
           )
         )}

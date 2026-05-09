@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { Person, FileText } from "react-bootstrap-icons";
 import { OverlayTrigger, Popover, Tooltip } from "react-bootstrap";
 import I_icon from '../../../assets/I_icon.png';
+import { toast } from "react-toastify";
 
 
 import { useTranslation } from "react-i18next";
@@ -26,6 +27,7 @@ export default function CandidatePool({
   selectedRequisitionId,
   isRankEnabled,
   hasLocationData,
+  allCandidatesForFilters
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const STATUS_CLASS_MAP = {
@@ -40,16 +42,67 @@ export default function CandidatePool({
 
   /* ---------- Selection logic ---------- */
 
-  const allSelected =
-    candidates.length > 0 && selectedIds.length === candidates.length;
+const allSelected =
+  allCandidatesForFilters?.length > 0 &&
+  allCandidatesForFilters.every((c) =>
+    selectedIds.includes(c.id)
+  );
 
-  const toggleSelectAll = () => {
-    if (allSelected) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(candidates.map((c) => c.id));
-    }
-  };
+  // const toggleSelectAll = () => {
+  //   if (allSelected) {
+  //     setSelectedIds([]);
+  //   } else {
+  //     setSelectedIds(candidates.map((c) => c.id));
+  //   }
+  // };
+
+
+
+  useEffect(() => {
+  if (!filters?.status?.length) {
+    setSelectedIds([]);
+  }
+}, [filters?.status]);
+
+
+//   const toggleSelectAll = () => {
+
+//   //  VALIDATION
+//   if (!filters?.status?.length) {
+//     toast.error("Please select the filter first");
+//     return;
+//   }
+
+//   if (allSelected) {
+//     setSelectedIds([]);
+//   } else {
+//     setSelectedIds(candidates.map((c) => c.id));
+//   }
+// };
+
+
+
+const toggleSelectAll = () => {
+
+  if (!filters?.status?.length) {
+    toast.error("Please select the filter first");
+    return;
+  }
+
+  const allIds = allCandidatesForFilters.map((c) => c.id);
+
+  if (allSelected) {
+    setSelectedIds([]);
+  } else {
+    setSelectedIds(allIds);
+  }
+};
+
+
+
+
+
+
 
   const toggleRow = (id) => {
     setSelectedIds((prev) =>
@@ -354,12 +407,18 @@ export default function CandidatePool({
                         className="me-3 cursor-pointer"
                         onClick={() =>{
 
+
+                          console.log("FULL CANDIDATE::::@@@@#@#@@", c);
+
                           
                           navigate("/candidate-preview", {
                             state: {
                               from: "/candidate-workflow",
                               candidate: c,
-                              positionId: selectedPositionId,
+                            
+                              positionId: selectedPositionId, // for preview API
+                              positionIds: selectedPositionId,   // for auto populate after back
+                               candidatePositionId: c.positionId,
                               requisitionId: selectedRequisitionId,
                               requisition: requisition
                                 ? {
@@ -369,13 +428,11 @@ export default function CandidatePool({
                                   registration_end_date: requisition.registration_end_date,
                                 }
                                 : null,
-                              position: position
-                                ? {
-                                  positionId: position.positionId,
-                                  positionName: position.positionName,
-                                  isLocationWise: position.isLocationWise,
-                                }
-                                : null,
+                             position: position?.map?.(p => ({
+                            positionId: p.positionId,
+                            positionName: p.positionName,
+                            isLocationWise: p.isLocationWise,
+                            })) || [],
                               activeTab: "CANDIDATE_POOL",
                               isRankEnabled,
 
@@ -487,7 +544,7 @@ export default function CandidatePool({
                       state: {
                         from: "/candidate-workflow",
                         isRankEnabled,
-                        // 🔥 ADD 
+                        //  ADD 
                         activeTab: "CANDIDATE_POOL",
                         page,
                         pageSize,

@@ -748,30 +748,36 @@ if (!formData.fixedPay) {
   console.log(" applicationId:", c.applicationId);   // MUST be application.id
   console.log(" compensationId:", c.id);             // just for comparison
 
-  navigate("/candidate-preview", {
-    state: {
-      candidate: c,
-      applicationId: c.applicationId,
-      positionId: selectedPositionId,
-      requisitionId: selectedRequisitionId,
-      fromCompensationPool: true,
-      activeTab: "COMPENSATION_POOL",
-      requisition: requisition
-        ? {
-            requisition_code: requisition.requisition_code,
-            requisition_title: requisition.requisition_title,
-            registration_start_date: requisition.registration_start_date,
-            registration_end_date: requisition.registration_end_date,
-          }
-        : null,
-      position: position
-        ? {
-            positionId: position.positionId,
-            positionName: position.positionName,
-          }
-        : null,
-    },
-  });
+navigate("/candidate-preview", {
+  state: {
+    candidate: c,
+    applicationId: c.applicationId,
+
+    positionId: selectedPositionId,
+    positionIds: selectedPositionId,
+
+    requisitionId: selectedRequisitionId,
+
+    fromCompensationPool: true,
+    activeTab: "COMPENSATION_POOL",
+    candidatePositionId: c.positionId,
+
+    requisition: requisition
+      ? {
+          requisition_code: requisition.requisition_code,
+          requisition_title: requisition.requisition_title,
+          registration_start_date: requisition.registration_start_date,
+          registration_end_date: requisition.registration_end_date,
+        }
+      : null,
+
+    position: position?.map?.((p) => ({
+      positionId: p.positionId,
+      positionName: p.positionName,
+      isLocationWise: p.isLocationWise,
+    })) || [],
+  },
+});
 }}
 />
   </OverlayTrigger>
@@ -900,7 +906,7 @@ handleCompensationClick(c)
 onHide={() => setShowRecruiterModal(false)}
   centered
    backdrop="static"
-  dialogClassName="custom-modal"
+ dialogClassName="custom-modal compensation-modal"
    size="lg" 
   //size="xl" 
 >
@@ -1009,7 +1015,7 @@ onHide={() => setShowRecruiterModal(false)}
   onHide={() => setShowManagerModal(false)}
   centered
   backdrop="static"
-  dialogClassName="custom-modal"
+dialogClassName="custom-modal compensation-modal"
    size="lg" 
 >
   <Modal.Header closeButton className="border-0 pb-0">

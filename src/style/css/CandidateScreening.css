@@ -386,3 +386,90 @@ candidate-screening-tabs-header ul {
 .interview-pool .bg-success{
 background-color: none !important;
 }
+
+
+
+.position-tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.position-tooltip-wrapper::after {
+  content: attr(data-tooltip);
+
+  position: absolute;
+
+  top: 135%;
+  left: 0;
+
+  background: #42579f;
+  color: #fff;
+
+  padding: 8px 12px;
+
+  border-radius: 4px;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  white-space: normal;
+
+  min-width: 240px;
+  max-width: 350px;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition: 0.2s ease;
+
+  z-index: 99999;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.position-tooltip-wrapper::before {
+  content: "";
+
+  position: absolute;
+
+  top: 118%;
+  left: 20px;
+
+  border-width: 7px;
+  border-style: solid;
+
+  border-color: transparent transparent #42579f transparent;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition: 0.2s ease;
+
+  z-index: 99999;
+}
+
+.position-tooltip-wrapper:hover::after,
+.position-tooltip-wrapper:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+
+
+.react-select__control {
+  overflow: visible !important;
+}
+
+.react-select__value-container {
+  overflow: visible !important;
+}
+
+.react-select__indicators {
+  overflow: visible !important;
+}
+
+.position-tooltip-wrapper {
+  overflow: visible !important;
+}

@@ -13,39 +13,145 @@ const PageHeaderWithBack = ({
   const location = useLocation();
   const { t } = useTranslation("common");
 
+  // const handleBack = () => {
+  //   const state = location.state || {};
+  //   const from = state.from;
+
+  //   // fallback if from missing
+  //   const target = from || "/candidate-workflow";
+
+  //   // 🔥 keep this (your interviewer depends on it)
+  //   sessionStorage.setItem("fromPreviewBack", "true");
+
+  //   navigate(target, {
+  //     state: {
+  //       requisition: state.requisition,
+  //       position: state.position,
+  //      positionIds:
+  // Array.isArray(state.positionIds) &&
+  // state.positionIds.length > 0
+  //   ? state.positionIds
+  //   : Array.isArray(state.position)
+  //     ? state.position.map(p => p.positionId)
+  //     : state.position?.positionId
+  //       ? [state.position.positionId]
+  //       : [],
+  //       preloadedCandidates:
+  //         state.preloadedCandidates || state.candidates || [],
+  //       selectedDate: state.selectedDate,
+
+  //       // keep ids also (for workflow)
+  //       requisitionId,
+  //       positionId,
+  //       activeTab,
+  //         page: state.page,
+  //       pageSize: state.pageSize,
+  //       // 🔥 ADD THESE
+  //       interviewPage: state.interviewPage,
+  //       interviewPageSize: state.interviewPageSize,
+  //       filters: state.filters
+  //     }
+  //   });
+  // };
+
+
+
+
+
+
+
+
   const handleBack = () => {
-    const state = location.state || {};
-    const from = state.from;
+  const state = location.state || {};
+  const from = state.from;
 
-    // fallback if from missing
-    const target = from || "/candidate-workflow";
+  // fallback if from missing
+  const target = from || "/candidate-workflow";
 
-    // 🔥 keep this (your interviewer depends on it)
-    sessionStorage.setItem("fromPreviewBack", "true");
-    console.log("HeaderWithBack - navigating to:", target, "with state:", state);
+  console.log("🔙 HeaderWithBack handleBack");
 
-    navigate(target, {
-      state: {
-        requisition: state.requisition,
-        position: state.position,
-        preloadedCandidates:
-          state.preloadedCandidates || state.candidates || [],
-        selectedDate: state.selectedDate,
+  console.log("target:", target);
 
-        // 🔥 safer mapping
-        requisitionId: state.requisitionId || requisitionId,
-        positionId: state.positionId || positionId,
-        activeTab: state.activeTab || activeTab,
-        // 🔥 ADD THESE
-        page: state.page,
-        pageSize: state.pageSize,
-        // 🔥 ADD THESE
-        interviewPage: state.interviewPage,
-        interviewPageSize: state.interviewPageSize,
-        filters: state.filters
-      }
-    });
-  };
+  console.log("requisition:", state.requisition);
+
+  console.log("position:", state.position);
+
+  console.log("positionIds:", state.positionIds);
+
+  console.log(
+    "derivedPositionIds:",
+    Array.isArray(state.positionIds) &&
+      state.positionIds.length > 0
+      ? state.positionIds
+      : Array.isArray(state.position)
+        ? state.position.map(p => p.positionId)
+        : state.position?.positionId
+          ? [state.position.positionId]
+          : []
+  );
+
+  console.log(
+    "preloadedCandidates:",
+    state.preloadedCandidates || state.candidates || []
+  );
+
+  console.log("selectedDate:", state.selectedDate);
+
+  console.log("requisitionId:", requisitionId);
+
+  console.log("positionId:", positionId);
+
+  console.log("activeTab:", activeTab);
+
+  console.log("page:", state.page);
+
+  console.log("pageSize:", state.pageSize);
+
+  console.log("interviewPage:", state.interviewPage);
+
+  console.log("interviewPageSize:", state.interviewPageSize);
+
+  console.log("filters:", state.filters);
+
+  // 🔥 keep this (your interviewer depends on it)
+  sessionStorage.setItem("fromPreviewBack", "true");
+
+  navigate(target, {
+    state: {
+      requisition: state.requisition,
+      position: state.position,
+
+      positionIds:
+        Array.isArray(state.positionIds) &&
+        state.positionIds.length > 0
+          ? state.positionIds
+          : Array.isArray(state.position)
+            ? state.position.map(p => p.positionId)
+            : state.position?.positionId
+              ? [state.position.positionId]
+              : [],
+
+      preloadedCandidates:
+        state.preloadedCandidates || state.candidates || [],
+
+      selectedDate: state.selectedDate,
+
+      // keep ids also (for workflow)
+      requisitionId,
+      positionId,
+      activeTab,
+
+      page: state.page,
+      pageSize: state.pageSize,
+
+      // 🔥 ADD THESE
+      interviewPage: state.interviewPage,
+      interviewPageSize: state.interviewPageSize,
+
+      filters: state.filters
+    }
+  });
+};
 
   return (
     <div

@@ -10,7 +10,12 @@ import InterviewPanelsConfig from "../interviews/components/InterviewPanelsConfi
 import InterviewScheduleTable from "../interviews/components/InterviewScheduleTable";
 import useInterviewSchedule from "../interviews/hooks/useInterviewSchedule";
 import ScheduleReadyBar from "../interviews/components/ScheduleReadyBar";
+import RequisitionStripformultiplepositions
+from "../candidatePreview/components/RequisitionStripformultiplepositions";
+import DropdownStripMultipleposition
+from "../candidatePreview/components/DropdownStripMultipleposition";
 import { toast } from "react-toastify";
+import { useLocation } from "react-router-dom";
 
 import "../../style/css/CandidateScreening.css";
 import InterviewCentreAllocationModal from "../interviews/components/InterviewCentreAllocationModal";
@@ -55,8 +60,27 @@ console.log("All interviews centres:", allInterviewCentres)
   const selectedRequisition =
     requisitions.find(r => r.id === selectedRequisitionId);
 
-  const selectedPosition =
-    positions.find(p => p.jobPositions?.positionId === selectedPositionId);
+    const normalizedRequisition = selectedRequisition
+  ? {
+      requisition_id: selectedRequisition.id,
+      requisition_code: selectedRequisition.requisitionCode,
+      requisition_title: selectedRequisition.requisitionTitle,
+      registration_start_date: selectedRequisition.startDate,
+      registration_end_date: selectedRequisition.endDate,
+    }
+  : null;
+
+  // const selectedPosition =
+  //   positions.find(p => p.jobPositions?.positionId === selectedPositionId);
+
+const location = useLocation();
+const state = location.state || {}; 
+
+const selectedPosition = positions.filter(p =>
+  selectedPositionId?.includes(
+    p.jobPositions?.positionId
+  )
+);
 
   const isSelectionDone =
     selectedRequisition && selectedPosition;
@@ -77,18 +101,59 @@ console.log("All interviews centres:", allInterviewCentres)
     <div className="container-fluid px-4 py-3 mb-5 pb-5">
 
       {/* ===== HEADER ===== */}
-      <HeaderWithBack
+      {/* <HeaderWithBack
         title="Schedule Interviews"
         subtitle="Scheduling for 03 candidates"
         onBack={() => navigate(-1)}
-      />
+      /> */}
 
+<HeaderWithBack
+  title="Schedule Interviews"
+  subtitle={`Scheduling for ${state?.candidates?.length || 0} candidates`}
+
+  // 🔥 ADD THESE
+  requisitionId={state.requisitionId}
+
+  positionId={
+    Array.isArray(state.positionId)
+      ? state.positionId[0]
+      : state.positionId
+  }
+
+  activeTab="CANDIDATE_POOL"
+
+  onBack={() => {
+
+    console.log("🔙 ScheduleInterviews Back Navigation");
+
+    navigate("/candidate-workflow", {
+      state: {
+        requisitionId: state.requisitionId,
+
+        // 🔥 IMPORTANT
+        positionIds:
+          Array.isArray(state.positionId)
+            ? state.positionId
+            : [state.positionId],
+
+        requisition: state.requisition,
+        position: state.position,
+
+        page: state.page,
+        pageSize: state.pageSize,
+        filters: state.filters,
+
+        activeTab: "CANDIDATE_POOL"
+      }
+    });
+  }}
+/>
       {/* ===== DROPDOWN STRIP ===== */}
       <div className="card border-0 mt-3">
         <div className="card-body">
           <div className="row g-3">
 
-            <DropdownStrip
+            {/* <DropdownStrip
               requisitions={requisitions}
               positions={positions}
               selectedRequisitionId={selectedRequisitionId}
@@ -100,8 +165,26 @@ console.log("All interviews centres:", allInterviewCentres)
               onPositionChange={setSelectedPositionId}
               disableRequisition={true}
               disablePosition={true}
-            />
+            /> */}
 
+
+
+
+
+
+<DropdownStripMultipleposition
+  requisitions={requisitions}
+  positions={positions}
+  selectedRequisitionId={selectedRequisitionId}
+  selectedPositionId={selectedPositionId}
+  loadingRequisitions={loadingRequisitions}
+  loadingPositions={loadingPositions}
+  onRequisitionChange={handleRequisitionChange}
+  onPositionChange={setSelectedPositionId}
+  onRequisitionSearch={() => {}}
+  disableRequisition={true}
+  disablePosition={true}
+/>
           </div>
         </div>
       </div>
@@ -109,7 +192,19 @@ console.log("All interviews centres:", allInterviewCentres)
       {/* ===== REQUISITION STRIP ===== */}
       {isSelectionDone && (
         <div className="mt-3">
-          <RequisitionStrip
+          <RequisitionStripformultiplepositions
+    requisition={normalizedRequisition}
+  position={selectedPosition.map(p => ({
+    positionId: p.jobPositions?.positionId,
+    positionName:
+      p.masterPositions?.positionName
+  }))}
+  isCardBg={false}
+  isSaveEnabled={false}
+  isSaveBtn={false}
+  saveButton={false}
+/>
+          {/* <RequisitionStrip
             requisition={selectedRequisition}
             position={{
               positionId: selectedPositionId,
@@ -118,7 +213,7 @@ console.log("All interviews centres:", allInterviewCentres)
             }}
             isCardBg={false}
             isSaveEnabled={false}
-          />
+          /> */}
         </div>
       )}
 

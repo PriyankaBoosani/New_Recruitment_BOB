@@ -5,7 +5,7 @@ import { Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
 import NationalVacancyTable from "./NationalVacancyTable";
 import LocationWiseVacancyTable from "./LocationWiseVacancyTable";
-
+import "../../../style/css/RequisitionStrip.css";
 import candidateWorkflowServices from "../services/CandidateWorkflowServices";
 import masterApiService from "../../master/services/masterApiService";   // ADDED
 import { mapJobPositionToRequisitionStrip } from "../mappers/candidatePreviewMapper";
@@ -14,7 +14,7 @@ import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { FiUpload } from "react-icons/fi";
 
-const RequisitionStrip = ({
+const RequisitionStripformultiplepositions = ({
   requisition,
   position,
   isSaved,
@@ -23,7 +23,8 @@ const RequisitionStrip = ({
   isSaveEnabled,
   isSaveBtn,
     showImportBtn,
-  onImportClick
+  onImportClick,
+  onRemovePosition   
 }) => {
 
   const [showPosition, setShowPosition] = useState(false);
@@ -31,6 +32,14 @@ const RequisitionStrip = ({
   const [loading, setLoading] = useState(false);
 
   const [masterData, setMasterData] = useState(null);   //  INTERNAL
+
+  const [selectedPositionIdForModal, setSelectedPositionIdForModal] = useState(null);
+
+
+  const handlePositionClick = (id) => {
+  setSelectedPositionIdForModal(id);
+  setShowPosition(true);
+};
 
   const orderedPattern =
     /^\s*(\(?\d+[\).\]]|\(?[ivxlcdm]+[\).\]])\s*/i;
@@ -96,8 +105,11 @@ const RequisitionStrip = ({
   useEffect(() => {
     const loadMasters = async () => {
       try {
-        const [masterRes] = await Promise.all([
+        const [masterRes, zonalRes, centersRes] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
+          // masterApiService.getZonalStates(),
+          
+
         ]);
 
         setMasterData(masterRes.data || {});
@@ -117,34 +129,34 @@ const RequisitionStrip = ({
 
   /* ================= FETCH JOB ================= */
 
-  useEffect(() => {
-    if (!position?.positionId || !masterData) return;
+useEffect(() => {
+  if (!selectedPositionIdForModal || !masterData) return;
 
-    const fetchJob = async () => {
-      try {
-        setLoading(true);
+  const fetchJob = async () => {
+    try {
+      setLoading(true);
 
-        const res =
-          await candidateWorkflowServices.getJobPositionById(
-            position.positionId
-          );
+      const res =
+        await candidateWorkflowServices.getJobPositionById(
+          selectedPositionIdForModal
+        );
 
-        const mapped =
-          mapJobPositionToRequisitionStrip(res.data, masterData);
+      const mapped =
+        mapJobPositionToRequisitionStrip(res.data, masterData);
 
-        setJob(mapped);
+      setJob(mapped);
 
-      } catch (err) {
-        console.error("Failed to fetch job details", err);
-        toast.error(t("candidateWorkflow:failed_load_position_details"));
-      } finally {
-        setLoading(false);
-      }
-    };
+    } catch (err) {
+      console.error("Failed to fetch job details", err);
+      toast.error(t("candidateWorkflow:failed_load_position_details"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchJob();
+  fetchJob();
 
-  }, [position?.positionId, masterData]);
+}, [selectedPositionIdForModal, masterData]);
 
   const handleViewPosition = () => {
     setShowPosition(true);
@@ -197,12 +209,19 @@ const getEduWiseExperience = () => {
       const remMonths = months % 12;
 
       let exp = "";
-      if (years > 0) exp += `${years} years `;
-      if (remMonths > 0) exp += `${remMonths} months`;
+      if (years > 0) exp += `${years} yr `;
+      if (remMonths > 0) exp += `${remMonths} mo`;
 
-      return `${name}: ${exp || "0 months"}`;
+      return `${name}: ${exp || "0 mo"}`;
     });
 };
+
+
+const selectedModalPosition = Array.isArray(position)
+  ? position.find(
+      (p) => p.positionId === selectedPositionIdForModal
+    )
+  : position;
 
   return (
     <>
@@ -259,12 +278,51 @@ const getEduWiseExperience = () => {
 
           </div>
 
-          <div
-            className="job-title mt-1"
-            style={{ color: "#162B75", fontWeight: 500 }}
-          >
-            {position?.positionName || position?.masterPositions?.positionName || "—"}
-          </div>
+   <div className="req-position-wrapper mt-2">
+  {Array.isArray(position) ? (
+    position.map((p) => (
+    <span className="req-position-chip-wrapper">
+  <div
+    key={p.positionId}
+    onClick={() => handlePositionClick(p.positionId)}
+    className="req-position-chip"
+  >
+        <span className="req-position-text">
+          {p.positionName}
+        </span>
+
+     <span
+  className="req-position-close"
+  onClick={(e) => {
+    e.stopPropagation();
+    onRemovePosition?.(p.positionId);
+  }}
+>
+  ×
+</span>
+      </div>
+    </span>
+    ))
+  ) : (
+    <div className="req-position-chip">
+      <span className="req-position-text">
+        {position?.positionName ||
+          position?.masterPositions?.positionName ||
+          "—"}
+      </span>
+
+    <span
+  className="req-position-close"
+  onClick={(e) => {
+    e.stopPropagation();
+    onRemovePosition?.(position?.positionId);
+  }}
+>
+  ×
+</span>
+    </div>
+  )}
+</div>
 
         </div>
 
@@ -294,42 +352,6 @@ const getEduWiseExperience = () => {
 
 
 
-        <div className="d-flex flex-row gap-2 mt-2 mt-md-0 ms-md-auto">
-
-
-           {showImportBtn && (
-    <button
-      onClick={onImportClick}
-      className="add-panels-btn d-flex align-items-center gap-2"
-    >
-      <FiUpload />
-      {t("import_data")}
-    </button>
-  )}
-
-  <button
-    className="btn btn-sm blue-border blue-color px-3"
-    onClick={handleViewPosition}
-    disabled={loading || !position}
-    style={{ backgroundColor: "rgba(66, 87, 159, 0.12)" }}
-  >
-    {t("candidateWorkflow:view_position")}
-  </button>
-
-  {/* ✅ IMPORT BUTTON */}
- 
-
-  {isSaveBtn && (
-    <button
-      className={`save-btn ${isSaveEnabled ? "unsaved" : "saved"}`}
-      disabled={!isSaveEnabled}
-      onClick={onSave}
-    >
-      {t("common:save")}
-    </button>
-  )}
-
-</div>
 
       </div>
 
@@ -364,12 +386,21 @@ const getEduWiseExperience = () => {
             </div>
 
 
-            <div
-              className="job-title mt-1"
-              style={{ color: "#162B75", fontWeight: 500 }}
-            >
-              {position?.positionName || position?.masterPositions?.positionName || "—"}
-            </div>
+    <div
+  className="job-title mt-1 d-flex flex-wrap align-items-center gap-2"
+  style={{ color: "#162B75", fontWeight: 500 }}
+>
+  <span
+    style={{
+      color: "#162B75",
+      textDecoration: "underline",
+    }}
+  >
+    {selectedModalPosition?.positionName ||
+      selectedModalPosition?.masterPositions?.positionName ||
+      "—"}
+  </span>
+</div>
 
           </div>
         </Modal.Header>
@@ -540,10 +571,4 @@ const getEduWiseExperience = () => {
   );
 };
 
-export default RequisitionStrip;
-
-
-
-
-
-
+export default RequisitionStripformultiplepositions;

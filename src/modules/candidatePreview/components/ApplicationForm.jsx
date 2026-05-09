@@ -23,6 +23,7 @@ const ApplicationForm = ({
   setFormErrors,
   candidateId,
   positionId,
+    positionIds,
   applicationId,
   requisitionId,
   interviewScheduleId,
@@ -972,7 +973,21 @@ const ApplicationForm = ({
     try {
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
       toast.success("Screening submitted successfully");
-      navigate("/candidate-workflow", { state: { requisitionId, positionId } })
+      console.log("SENDING POSITION IDS:", {
+  positionIds,
+  positionId
+});
+navigate("/candidate-workflow", {
+  state: {
+    requisitionId,
+
+    positionIds: Array.isArray(positionIds)
+      ? positionIds.map(item => item.positionId)
+      : positionId
+        ? [positionId]
+        : [],
+  },
+});
     } catch (err) {
       console.error("Screening submit failed", err);
       toast.error("Submission failed");
