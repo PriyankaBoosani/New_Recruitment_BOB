@@ -12,6 +12,16 @@ setCentreRows,
 
   if (!show) return null;
 
+  const selectedAllocatedCentres =
+  centreRows
+    .map(r => r.allocatedCentreId)
+    .filter(Boolean);
+
+    const candidateCentreIds =
+  uniqueAllocatedCentres.map(
+    c => c.interviewCentreId
+  );
+
   return (
 
     <div className="ipc-alert-overlay">
@@ -65,7 +75,23 @@ setCentreRows,
           Select Centre
         </option>
 
-        {uniqueAllocatedCentres.map(c => (
+        {uniqueAllocatedCentres
+          .filter(c => {
+
+            // allow current row selected value
+            if (
+              c.interviewCentreId ===
+              row.allocatedCentreId
+            ) {
+              return true;
+            }
+
+            // remove already selected centres
+            return !selectedAllocatedCentres.includes(
+              c.interviewCentreId
+            );
+
+          }).map(c => (
 
           <option
             key={c.interviewCentreId}
@@ -104,7 +130,12 @@ setCentreRows,
             Select Replacement
           </option>
 
-          {allInterviewCentres.map(c => (
+          {allInterviewCentres.filter(c =>// remove candidate centres
+              !candidateCentreIds.includes(
+                c.interviewCentreId
+              )
+
+            ).map(c => (
 
             <option
               key={c.interviewCentreId}
