@@ -142,14 +142,21 @@ console.log("IS COMMITTEE:", role === "committee_member");
     ZONAL_ABSENT: "Zonal Absent",
     INTERVIEW_ABSENT: "Interview Absent",
   };
-
+const SCHEDULE_POOL_STATUS_LABEL_MAP = {
+  L1_PENDING: "L1 Pending",
+  L2_PENDING: "L2 Pending",
+  APPROVED: "Approved",
+  REJECTED: "Rejected"
+};
   const OFFER_POOL_STATUSES = [
     "OFFER_AWAITED",
     "OFFER_SENT",
     "OFFER_REJECTED",
     "OFFER_ACCEPTED",
   ];
-
+const SCHEDULE_POOL_STATUSES = [
+  "L1_PENDING"
+];
   const OFFER_STATUS_LABEL_MAP = {
     OFFER_AWAITED: "Offer Awaited",
     OFFER_SENT: "Offer Sent",
@@ -201,6 +208,11 @@ const [activeTab, setActiveTab] = useState(() => {
   const [loadingPreview, setLoadingPreview] = useState(false);
 
   const [candidates, setCandidates] = useState([]);
+
+  const [schedulePoolCandidates, setSchedulePoolCandidates] = useState([]);
+const [loadingSchedulePool, setLoadingSchedulePool] = useState(false);
+const [schedulePoolTotal, setSchedulePoolTotal] = useState(0);
+
   const [loadingCandidates, setLoadingCandidates] = useState(false);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
@@ -325,6 +337,7 @@ enabled:
   const TAB_PRIVILEGE_MAP = {
     CANDIDATE_POOL: "Candidate Pool",
     INTERVIEW_POOL: "Interview Pool",
+    SCHEDULE_POOL: "Schedule Pool",
     COMPENSATION_POOL: "Compensation Pool",
     OFFER_POOL: "Offer Pool",
     // ONBOARDING_POOL: "Compensation Pool", // assuming onboarding is compensation
@@ -339,6 +352,11 @@ enabled:
   const tabs = [
     { key: "CANDIDATE_POOL", label: t("candidateWorkflow:candidate_pool"), count: totalElements },
     { key: "INTERVIEW_POOL", label: t("candidateWorkflow:interview_pool"), count: interviewTotalElements },
+    {
+  key: "SCHEDULE_POOL",
+  label: t("candidateWorkflow:schedule_pool"),
+  count: 0
+},
     { key: "COMPENSATION_POOL", label: "Compensation Pool", count: compensationTotal },
     { key: "OFFER_POOL", label: t("candidateWorkflow:offer_pool"), count: 0 },
     { key: "ONBOARDING_POOL", label: t("candidateWorkflow:onboarding_pool"), count: 0 },
@@ -500,6 +518,8 @@ const isContractPosition = useMemo(() => {
 const accessibleTabs = useMemo(() => {
 
   console.log("🔄 Recomputing Tabs, role:", role);
+  console.log("📋 All tabs:", tabs);
+  console.log("🔐 Privileges:", privileges);
 
   return tabs.filter((tab) => {
 
@@ -514,9 +534,16 @@ const accessibleTabs = useMemo(() => {
       }
     }
 
+    // Enable Schedule Pool if Interview Pool privilege is true
+    if (tab.key === "SCHEDULE_POOL" && hasPrivilege("Interview Pool")) {
+      return true;
+    }
+
     return hasPrivilege(TAB_PRIVILEGE_MAP[tab.key]);
 
   });
+
+  console.log("✅ Final accessibleTabs:", accessibleTabs);
 
 }, [tabs, privileges, isContractPosition, role]); // 🔥 IMPORTANT
 
@@ -558,6 +585,25 @@ const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
   useEffect(() => {
     fetchRequisitions("");
   }, []);
+
+  useEffect(() => {
+
+  if (
+    activeTab !== "SCHEDULE_POOL" ||
+    !selectedPositionId.length
+  ) {
+    return;
+  }
+
+  fetchSchedulePoolCandidates();
+
+}, [
+  activeTab,
+  selectedPositionId,
+  filters,
+  page,
+  pageSize
+]);
 
 useEffect(() => {
 
@@ -756,7 +802,63 @@ useEffect(() => {
       setLoadingCandidates(false);
     }
   };
+const fetchSchedulePoolCandidates = async () => {
 
+  if (!selectedPositionId.length) return;
+
+  try {
+
+    setLoadingSchedulePool(true);
+
+    const payload = {
+
+      searchText: filters.searchText || "",
+
+      positionIds: selectedPositionId,
+
+      statusList:
+        filters.status.length
+          ? filters.status
+          : ["L1_PENDING"],
+
+      page,
+
+      size: pageSize
+    };
+
+    console.log(
+      "Schedule Pool Payload",
+      payload
+    );
+
+    const res =
+      await candidateWorkflowServices
+        .getSchedulePoolCandidates(payload);
+
+    const apiData = res?.data;
+
+    setSchedulePoolCandidates(
+      apiData?.content || []
+    );
+
+    setSchedulePoolTotal(
+      apiData?.page?.totalElements || 0
+    );
+
+  } catch (err) {
+
+    console.error(
+      "Failed to fetch schedule pool",
+      err
+    );
+
+  } finally {
+
+    setLoadingSchedulePool(false);
+
+  }
+
+};
   const handleJoiningDateChange = (value) => {
   setJoiningDate(value);
 
@@ -1003,6 +1105,9 @@ const selectedPosition = positions
     if (activeTab === "INTERVIEW_POOL") {
       return Object.keys(INTERVIEW_STATUS_LABEL_MAP);
     }
+    if (activeTab === "SCHEDULE_POOL") {
+  return SCHEDULE_POOL_STATUSES;
+}
 
      if (activeTab === "COMPENSATION_POOL") {
     return COMPENSATION_POOL_STATUSES; // ✅ ADD THIS
@@ -1021,7 +1126,9 @@ const selectedPosition = positions
   if (activeTab === "INTERVIEW_POOL") {
     return INTERVIEW_STATUS_LABEL_MAP[status] || status;
   }
-
+if (activeTab === "SCHEDULE_POOL") {
+  return SCHEDULE_POOL_STATUS_LABEL_MAP[status] || status;
+}
   if (activeTab === "COMPENSATION_POOL") {
     return COMPENSATION_STATUS_LABEL_MAP[status] || status; //  ADD THIS
   }
@@ -2425,6 +2532,13 @@ const handleOfferStatusToggle = (status) => {
    panelData={panelData}
 />
 )}
+
+        {activeTab === "SCHEDULE_POOL" && (
+          <div className="text-center py-5">
+            <h4 className="text-muted">Schedule Pool</h4>
+            <p className="text-muted">Schedule Pool functionality coming soon...</p>
+          </div>
+        )}
 
         {activeTab === "OFFER_POOL" && (
           <OfferPool

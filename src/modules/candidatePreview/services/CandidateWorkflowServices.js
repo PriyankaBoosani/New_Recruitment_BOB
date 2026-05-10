@@ -149,7 +149,19 @@ getMessagesByThreadId: (conversationThreadId) =>
    
   ),
 
- 
+ getSchedulePoolCandidates: (payload) => {
+
+  return api.post(
+    "/recruiter/schedule-pool/get-schedule-pool-candidates",
+    payload,
+    {
+      headers: {
+        "X-Client": "AzureAD"
+      }
+    }
+  );
+
+},
   
 
 };  
