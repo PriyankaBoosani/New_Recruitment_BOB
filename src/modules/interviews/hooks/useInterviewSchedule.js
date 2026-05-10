@@ -177,6 +177,7 @@ const formatTimeRange = (startStr, endStr) => {
   return end ? `${start} - ${end}` : start;
 };
 
+
 const applySchedule = async ({ selectedPanels,positionId, candidates = passedCandidates, zonalChangeMap = {} }) => {
   try {
    // console.log("FINAL TIME SENT 👉", formatTime(startTime));
@@ -196,6 +197,21 @@ const applySchedule = async ({ selectedPanels,positionId, candidates = passedCan
     //     }))
     //   )
     // };
+
+
+    
+const updatedZonalChangeMap = {};
+
+// add all centres
+candidates.forEach((candidate) => {
+
+  const centreId = candidate.interviewCenterId;
+
+  updatedZonalChangeMap[centreId] =
+    zonalChangeMap[centreId] || centreId;
+
+});
+
    const payload = {
 
   schedulingPanelModel: {
@@ -203,7 +219,7 @@ const applySchedule = async ({ selectedPanels,positionId, candidates = passedCan
     applicationIds:
       candidates.map(c => c.id),
 
-    positionIds: [positionId]
+    positionIds: positionId
 
   },
 
@@ -232,7 +248,7 @@ const applySchedule = async ({ selectedPanels,positionId, candidates = passedCan
 
     ),
 
-  zonalChangeMap
+  zonalChangeMap: updatedZonalChangeMap
 };
     console.log("FINAL PAYLOAD 👉", payload);
 
