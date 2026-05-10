@@ -4,8 +4,8 @@ const InterviewCentreAllocationModal = ({
   show,
   onClose,
   uniqueAllocatedCentres,
-  centreMappings,
-  setCentreMappings,
+  centreRows,
+setCentreRows,
   allInterviewCentres,
   onContinue
 }) => {
@@ -39,64 +39,115 @@ const InterviewCentreAllocationModal = ({
 
             <tbody>
 
-              {uniqueAllocatedCentres.map((centre) => (
+             {centreRows.map((row, index) => (
 
-                <tr key={centre.interviewCentreId}>
+  <tr key={index}>
 
-                  {/* LEFT */}
-                  <td style={{ minWidth: "260px" }}>
+    {/* LEFT */}
+    <td style={{ minWidth: "260px" }}>
 
-                    <select
-                      className="form-select"
-                      value={centre.interviewCentreId}
-                      disabled
-                    >
-                      <option>
-                        {centre.interviewCentre}
-                      </option>
-                    </select>
+      <select
+        className="form-select"
+        value={row.allocatedCentreId}
+        onChange={(e) => {
 
-                  </td>
+          const updated = [...centreRows];
 
-                  {/* RIGHT */}
-                  <td style={{ minWidth: "260px" }}>
+          updated[index].allocatedCentreId =
+            e.target.value;
 
-                    <select
-                      className="form-select"
-                      value={
-                        centreMappings[
-                          centre.interviewCentreId
-                        ] || ""
-                      }
-                      onChange={(e) => {
+          setCentreRows(updated);
 
-                        setCentreMappings(prev => ({
-                          ...prev,
-                          [centre.interviewCentreId]:
-                            e.target.value
-                        }));
+        }}
+      >
 
-                      }}
-                    >
+        <option value="">
+          Select Centre
+        </option>
 
-                      {allInterviewCentres.map(c => (
+        {uniqueAllocatedCentres.map(c => (
 
-                        <option
-                          key={c.interviewCentreId}
-                          value={c.interviewCentreId}
-                        >
-                          {c.interviewCentre}
-                        </option>
+          <option
+            key={c.interviewCentreId}
+            value={c.interviewCentreId}
+          >
+            {c.interviewCentre}
+          </option>
 
-                      ))}
+        ))}
 
-                    </select>
+      </select>
 
-                  </td>
+    </td>
 
-                </tr>
+    {/* RIGHT */}
+    <td style={{ minWidth: "260px" }}>
 
-              ))}
+      <div className="d-flex gap-2">
+
+        <select
+          className="form-select"
+          value={row.replacedCentreId}
+          onChange={(e) => {
+
+            const updated = [...centreRows];
+
+            updated[index].replacedCentreId =
+              e.target.value;
+
+            setCentreRows(updated);
+
+          }}
+        >
+
+          <option value="">
+            Select Replacement
+          </option>
+
+          {allInterviewCentres.map(c => (
+
+            <option
+              key={c.interviewCentreId}
+              value={c.interviewCentreId}
+            >
+              {c.interviewCentre}
+            </option>
+
+          ))}
+
+        </select>
+
+        {/* ADD BUTTON */}
+        {index === centreRows.length - 1 && (
+
+          <button
+            type="button"
+            className="btn btn-outline-primary"
+            onClick={() => {
+
+              setCentreRows([
+                ...centreRows,
+
+                {
+                  allocatedCentreId: "",
+                  replacedCentreId: ""
+                }
+              ]);
+
+            }}
+          >
+            +
+          </button>
+
+        )}
+
+      </div>
+
+    </td>
+
+  </tr>
+
+))}
 
             </tbody>
 

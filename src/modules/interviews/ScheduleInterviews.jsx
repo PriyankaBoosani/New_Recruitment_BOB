@@ -37,7 +37,12 @@ const [scheduledCount, setScheduledCount] = useState(0);
   const [pendingApplyData, setPendingApplyData] =
   useState(null);
 
-const [centreMappings, setCentreMappings] = useState({});
+const [centreRows, setCentreRows] = useState([
+  {
+    allocatedCentreId: "",
+    replacedCentreId: ""
+  }
+]);
   const { 
         schedule,
     updateRow,
@@ -302,46 +307,62 @@ const uniqueAllocatedCentres = [
         show={showCentreModal}
         onClose={() => setShowCentreModal(false)}
         uniqueAllocatedCentres={uniqueAllocatedCentres}
-        centreMappings={centreMappings}
-        setCentreMappings={setCentreMappings}
+        centreRows={centreRows}
+        setCentreRows={setCentreRows}
         allInterviewCentres={allInterviewCentres}
         onContinue={async () => {
 
-  setShowCentreModal(false);
+            setShowCentreModal(false);
 
-  // 🔥 Build zonalChangeMap
-  const zonalChangeMap = {};
+            // 🔥 Build zonalChangeMap
+            const zonalChangeMap = {};
 
-Object.entries(centreMappings).forEach(
-  ([oldCentreId, newCentreId]) => {
+            // 🔥 first add all centres with empty
+            uniqueAllocatedCentres.forEach((centre) => {
 
-    zonalChangeMap[oldCentreId] =
-      oldCentreId === newCentreId
-        ? ""
-        : newCentreId;
+              zonalChangeMap[
+                centre.interviewCentreId
+              ] = "";
 
-  }
-);
+            });
 
-  // 🔥 Call scheduling API
-  const res = await applySchedule({
-    ...pendingApplyData,
+            // 🔥 overwrite changed centres
+            centreRows.forEach((row) => {
 
-    zonalChangeMap
-  });
+              if (
+                row.allocatedCentreId &&
+                row.replacedCentreId
+              ) {
 
-  if (!res.success) {
-    toast.error(res.message);
-    return;
-  }
+                zonalChangeMap[
+                  row.allocatedCentreId
+                ] = row.replacedCentreId;
 
-  setSchedule(res.rows);
+              }
 
-  setScheduledCount(res.rows.length);
+            });
 
-  setShowReadyBar(true);
+            console.log("zonalChangeMap", zonalChangeMap);
 
-}}
+            // 🔥 Call scheduling API
+            const res = await applySchedule({
+              ...pendingApplyData,
+
+              zonalChangeMap
+            });
+
+            if (!res.success) {
+              toast.error(res.message);
+              return;
+            }
+
+            setSchedule(res.rows);
+
+            setScheduledCount(res.rows.length);
+
+            setShowReadyBar(true);
+
+          }}
       />}
 
 <InterviewCentreConfirmModal
@@ -352,18 +373,12 @@ Object.entries(centreMappings).forEach(
   setShowCentreConfirmModal(false);
 
   // 🔥 initialize mappings
-  const mappings = {};
-
-  uniqueAllocatedCentres.forEach(centre => {
-
-    mappings[centre.interviewCentreId] =
-      centre.interviewCentreId;
-
-  });
-
-  console.log("DEFAULT MAPPINGS", mappings);
-
-  setCentreMappings(mappings);
+ setCentreRows([
+  {
+    allocatedCentreId: "",
+    replacedCentreId: ""
+  }
+]);
 
   setShowCentreModal(true);
 
