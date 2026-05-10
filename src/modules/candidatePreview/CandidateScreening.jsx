@@ -246,7 +246,9 @@ const selectedCandidatesData = allCandidatesForFilters
     id: c.id,
     name: c.name,
     regNo: c.applicationNo,
-    positionId: c.positionId
+    positionId: c.positionId,
+    interviewCenterId: c.interviewCenterId,
+    interviewCenterName: c.interviewCenterName
   }));
 
   // const params = new URLSearchParams({
@@ -636,8 +638,8 @@ useEffect(() => {
       positionId: c.candidateApplications.positionId,
 
       fileUrl: c.resumeUrl,
-      interviewCenterId: c.interviewCenterId,  // Add interview centre ID
-      interviewCenterName: c.interviewCenterName,  // Add interview centre name
+      interviewCenterId: c.interviewCenter?.interviewCentreId,  // Add interview centre ID
+      interviewCenterName: c.interviewCenter?.interviewCentre,  // Add interview centre name
     }));
   };
 
@@ -708,6 +710,8 @@ useEffect(() => {
       });
 
     const finalApiData = finalRes?.data;
+
+    console.log("finalApiData",finalApiData)
 
     const mappedCandidates =
       formatCandidateData(finalApiData);

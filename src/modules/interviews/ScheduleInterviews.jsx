@@ -87,12 +87,14 @@ const selectedPosition = positions.filter(p =>
   const isSelectionDone =
     selectedRequisition && selectedPosition;
 
-
-    const uniqueAllocatedCentres = [
+const uniqueAllocatedCentres = [
   ...new Map(
-    scheduleApiData.map(item => [
-      item.interviewCentres.interviewCentreId,
-      item.interviewCentres
+    passedCandidates.map(candidate => [
+      candidate.interviewCenterId,
+      {
+        interviewCentreId: candidate.interviewCenterId,
+        interviewCentre: candidate.interviewCenterName
+      }
     ])
   ).values()
 ];
@@ -305,89 +307,98 @@ const selectedPosition = positions.filter(p =>
         allInterviewCentres={allInterviewCentres}
         onContinue={async () => {
 
-          // apply mapping
-          const updatedSchedule =
-            scheduleApiData.map(item => {
+  setShowCentreModal(false);
 
-              const oldCentreId =
-                item.interviewCentres.interviewCentreId;
+  // 🔥 Build zonalChangeMap
+  const zonalChangeMap = {};
 
-              const newCentreId =
-                centreMappings[oldCentreId];
+Object.entries(centreMappings).forEach(
+  ([oldCentreId, newCentreId]) => {
 
-              return {
-                ...item,
+    zonalChangeMap[oldCentreId] =
+      oldCentreId === newCentreId
+        ? ""
+        : newCentreId;
 
-                interviewCentres: {
-                  ...item.interviewCentres,
+  }
+);
 
-                  interviewCentreId: newCentreId
-                }
-              };
+  // 🔥 Call scheduling API
+  const res = await applySchedule({
+    ...pendingApplyData,
 
-            });
-
-          const res =
-            await scheduleInterview(updatedSchedule);
-
-          if (!res.success) {
-            toast.error(res.message);
-            return;
-          }
-
-          toast.success(
-            "Interviews scheduled successfully"
-          );
-
-          setShowCentreModal(false);
-
-          navigate("/candidate-workflow", {
-            state: {
-              requisitionId: selectedRequisitionId,
-              positionId: selectedPositionId
-            }
-          });
-
-        }}
-      />}
-
-<InterviewCentreConfirmModal
-  show={showCentreConfirmModal}
-
-  onReview={() => {
-
-    setShowCentreConfirmModal(false);
-
-    // const mappings = {};
-
-    // scheduleApiData.forEach(item => {
-
-    //   const centre =
-    //     item.interviewCentres;
-
-    //   mappings[centre.interviewCentreId] =
-    //     centre.interviewCentreId;
-
-    // });
-
-    // setCentreMappings(mappings);
-
-    setShowCentreModal(true);
-
-  }}
-
-  onProceed={async () => {
-
-  setShowCentreConfirmModal(false);
-
-  const res = await applySchedule(pendingApplyData);
+    zonalChangeMap
+  });
 
   if (!res.success) {
     toast.error(res.message);
     return;
   }
 
-  // ✅ NOW show ready bar
+  setSchedule(res.rows);
+
+  setScheduledCount(res.rows.length);
+
+  setShowReadyBar(true);
+
+}}
+      />}
+
+<InterviewCentreConfirmModal
+  show={showCentreConfirmModal}
+
+ onReview={() => {
+
+  setShowCentreConfirmModal(false);
+
+  // 🔥 initialize mappings
+  const mappings = {};
+
+  uniqueAllocatedCentres.forEach(centre => {
+
+    mappings[centre.interviewCentreId] =
+      centre.interviewCentreId;
+
+  });
+
+  console.log("DEFAULT MAPPINGS", mappings);
+
+  setCentreMappings(mappings);
+
+  setShowCentreModal(true);
+
+}}
+
+  onProceed={async () => {
+
+  setShowCentreConfirmModal(false);
+
+  // 🔥 Build empty zonal map
+  const zonalChangeMap = {};
+
+  uniqueAllocatedCentres.forEach((centre) => {
+
+    zonalChangeMap[
+      centre.interviewCentreId
+    ] = "";
+
+  });
+
+  console.log(
+    "PROCEED zonalChangeMap",
+    zonalChangeMap
+  );
+
+  const res = await applySchedule({
+    ...pendingApplyData,
+    zonalChangeMap
+  });
+
+  if (!res.success) {
+    toast.error(res.message);
+    return;
+  }
+
   setShowReadyBar(true);
 
 }}

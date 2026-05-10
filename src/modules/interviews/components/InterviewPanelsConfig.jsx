@@ -55,87 +55,66 @@ const [capacityMessage, setCapacityMessage] = React.useState("");
 const handleApplyAll = async () => {
 
   // ✅ Validate Position
-        if (!positionId) {
-          toast.error("Position is missing");
-          return;
-        }
-      // ✅ Validate Panels
-        if (!selectedPanels || selectedPanels.length === 0) {
-          toast.error("Please add at least one interview panel");
-          return;
-        }
+  if (!positionId) {
+    toast.error("Position is missing");
+    return;
+  }
 
+  // ✅ Validate Panels
+  if (!selectedPanels || selectedPanels.length === 0) {
+    toast.error("Please add at least one interview panel");
+    return;
+  }
 
-        
+  // ✅ Calculate total interview capacity
+  const totalCapacity = selectedPanels.reduce(
+    (sum, panel) => {
 
-        // ✅ Validate Start Time
-        // if (!startTime) {
-        //   toast.error("Start time is required");
-        //   return;
-        // }
-      // ✅ Calculate total interview capacity
-      const totalCapacity = selectedPanels.reduce(
-        (sum, panel) => {
+      const panelCapacity = (panel.slots || []).reduce(
+        (slotSum, slot) => {
 
-          const panelCapacity = (panel.slots || []).reduce(
-            (slotSum, slot) => {
-
-              return slotSum + Number(slot.perDay || 0);
-
-            },
-            0
-          );
-
-          return sum + panelCapacity;
+          return slotSum + Number(slot.perDay || 0);
 
         },
         0
       );
 
-      // ✅ Total candidates
-      const totalCandidates = candidates?.length || 0;
+      return sum + panelCapacity;
 
-      const remainingCandidates =
-        totalCandidates - totalCapacity;
+    },
+    0
+  );
 
-      // ✅ Validate capacity
-      if (totalCapacity < totalCandidates) {
+  // ✅ Total candidates
+  const totalCandidates = candidates?.length || 0;
 
-              setCapacityMessage(
-        `Unable to schedule all candidates.
+  const remainingCandidates =
+    totalCandidates - totalCapacity;
 
-      Only ${totalCapacity} interview slots are available. ${remainingCandidates} more candidates still need to be scheduled.
+  // ✅ Validate capacity
+  if (totalCapacity < totalCandidates) {
 
-      Please add additional interview slots or create another panel to continue.`
-      );
+    setCapacityMessage(
+      `Unable to schedule all candidates.
 
-            setShowCapacityModal(true);
+Only ${totalCapacity} interview slots are available. ${remainingCandidates} more candidates still need to be scheduled.
 
-            return;
-      }
-    try {
-    setIsApplying(true);   // 🔥 START LOADER
+Please add additional interview slots or create another panel to continue.`
+    );
 
-    const res = await onApplyAll({
-      selectedPanels,
-     // startTime,
-      positionId
-    });
+    setShowCapacityModal(true);
 
-    if (!res.success) {
-      toast.error(res.message);
-      return;
-    }
-
-    onScheduleReady(res.rows);
-
-  } catch (err) {
-    toast.error("Something went wrongg");
-  } finally {
-    setIsApplying(false);  // 🔥 STOP LOADER
+    return;
   }
-};
 
+  // ✅ ONLY OPEN CONFIRMATION MODAL
+  onApplyAll({
+    selectedPanels,
+    positionId,
+    candidates
+  });
+
+};
   return (
     <>
       <div className="ipc-card mt-4">
