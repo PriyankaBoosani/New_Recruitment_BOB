@@ -3,7 +3,8 @@ import React from "react";
 const InterviewCentreConfirmModal = ({
   show,
   onProceed,
-  onReview
+  onReview,
+  onClose
 }) => {
 
   if (!show) return null;
@@ -12,7 +13,11 @@ const InterviewCentreConfirmModal = ({
 
     <div className="ipc-alert-overlay">
 
-      <div className="ipc-alert-modal">
+      <div className="ipc-alert-modal" style={{ position: 'relative' }}>
+        <button
+  className="btn-close position-absolute top-0 end-0 m-3"
+  onClick={onClose}
+></button>
 
         <div className="ipc-alert-icon">
           <i className="bi bi-building-check"></i>

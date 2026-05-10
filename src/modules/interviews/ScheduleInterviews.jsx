@@ -367,8 +367,8 @@ const uniqueAllocatedCentres = [
 
 <InterviewCentreConfirmModal
   show={showCentreConfirmModal}
-
- onReview={() => {
+  onClose={() => setShowCentreConfirmModal(false)}
+  onReview={() => {
 
   setShowCentreConfirmModal(false);
 
