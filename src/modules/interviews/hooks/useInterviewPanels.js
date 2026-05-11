@@ -3,7 +3,10 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import interviewService from "../services/interviewService";
 
-export const useInterviewPanels = (positionId,rows) => {
+export const useInterviewPanels = (
+  positionId,
+  initialSelectedPanels = []
+) => {
 
   const { t } = useTranslation("interviewSchedule");
   const [panels, setPanels] = useState([]);
@@ -13,7 +16,21 @@ export const useInterviewPanels = (positionId,rows) => {
   const [deleteIndex, setDeleteIndex] = useState(null);
   const panelBoxRef = useRef(null);
   const [availablePanels, setAvailablePanels] = useState([]); // API
-const [selectedPanels, setSelectedPanels] = useState([]);   // USER SELECTION
+const [selectedPanels, setSelectedPanels] =
+  useState(initialSelectedPanels);  // USER SELECTION
+
+
+  useEffect(() => {
+
+  if (
+    initialSelectedPanels?.length
+  ) {
+    setSelectedPanels(
+      initialSelectedPanels
+    );
+  }
+
+}, [initialSelectedPanels]);
 
   useEffect(() => {
     const handleOutside = (e) => {

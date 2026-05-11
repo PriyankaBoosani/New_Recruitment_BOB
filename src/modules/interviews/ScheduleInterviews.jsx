@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState,useEffect } from "react";
+import { useNavigate,useLocation } from "react-router-dom";
 
 import HeaderWithBack from "../../shared/components/HeaderWithBack";
 
@@ -15,7 +15,6 @@ from "../candidatePreview/components/RequisitionStripformultiplepositions";
 import DropdownStripMultipleposition
 from "../candidatePreview/components/DropdownStripMultipleposition";
 import { toast } from "react-toastify";
-import { useLocation } from "react-router-dom";
 
 import "../../style/css/CandidateScreening.css";
 import InterviewCentreAllocationModal from "../interviews/components/InterviewCentreAllocationModal";
@@ -83,27 +82,136 @@ console.log("All interviews centres:", allInterviewCentres)
 const location = useLocation();
 const state = location.state || {}; 
 
+
+//from schedule pool
+
+const schedulePoolData =
+  location.state?.schedulePoolData;
+
+const isEditMode =
+  location.state?.isEditMode;
+
+  const selectedPanelsFromEdit =
+  location.state?.selectedPanels || [];
+
+
+
+  useEffect(() => {
+
+  if (
+    !isEditMode ||
+    !schedulePoolData?.length
+  ) {
+    return;
+  }
+
+  const mappedRows =
+    schedulePoolData.map(item => ({
+
+      id: item.id,
+
+      name: item.name,
+
+      regNo: item.regNo,
+
+      date: item.date,
+
+      time: item.time,
+
+      zone: item.zone,
+
+      panel: item.panel
+
+    }));
+
+  setSchedule(mappedRows);
+
+  setScheduledCount(mappedRows.length);
+
+  //setShowReadyBar(true);
+
+}, [isEditMode, schedulePoolData]);
+
+  //end
+
 const selectedPosition = positions.filter(p =>
   selectedPositionId?.includes(
     p.jobPositions?.positionId
   )
 );
-
-  const isSelectionDone =
-    selectedRequisition && selectedPosition;
+const isSelectionDone =
+  selectedRequisition &&
+  selectedPosition.length > 0;
+const sourceCandidates = isEditMode
+  ? schedulePoolData
+  : passedCandidates;
 
 const uniqueAllocatedCentres = [
   ...new Map(
-    passedCandidates.map(candidate => [
-      candidate.interviewCenterId,
+    sourceCandidates.map(candidate => [
+
+      isEditMode
+        ? candidate.interviewCenterId
+        : candidate.interviewCenterId,
+
       {
-        interviewCentreId: candidate.interviewCenterId,
-        interviewCentre: candidate.interviewCenterName
+        interviewCentreId:
+          isEditMode
+            ? candidate.interviewCenterId
+            : candidate.interviewCenterId,
+
+        interviewCentre:
+          isEditMode
+            ? candidate.zone
+            : candidate.interviewCenterName
       }
+
     ])
   ).values()
 ];
 
+
+const rebuiltSelectedPanels = Object.values(
+
+  (schedulePoolData || []).reduce((acc, item, index) => {
+
+    if (!acc[item.panel]) {
+
+      acc[item.panel] = {
+        id: item.panelId || index + 1,
+        name: item.panel,
+        slots: []
+      };
+
+    }
+
+    acc[item.panel].slots.push({
+
+      date: item.rawDate || item.date,
+
+      startTime:
+        item.startTime ||
+        item.time?.split(" - ")[0] ||
+        "",
+
+      endTime:
+        item.endTime ||
+        item.time?.split(" - ")[1] ||
+        "",
+
+      duration:
+        item.duration || "15",
+
+      perDay:
+        item.perDay || "1"
+
+    });
+
+    return acc;
+
+  }, {})
+
+);
   /* ================= UI ================= */
 
   return (
@@ -239,11 +347,39 @@ const uniqueAllocatedCentres = [
             }} // ✅ ADD
             onApplyAll={(data) => {
 
-            setPendingApplyData(data);
+              // ✅ EDIT MODE
+              if (isEditMode) {
 
-            setShowCentreConfirmModal(true);
+                const editPayload = {
 
-          }}
+                  applicationIds:
+                    schedulePoolData.map(
+                      x => x.applicationId
+                    ),
+
+                  positionIds:
+                    Array.isArray(selectedPositionId)
+                      ? selectedPositionId
+                      : [selectedPositionId],
+
+                  panelScheduleModelList:
+                    data.panelScheduleModelList
+                };
+
+                setPendingApplyData(editPayload);
+
+              } else {
+
+                setPendingApplyData(data);
+
+              }
+
+              setShowCentreConfirmModal(true);
+
+            }}
+          initialSelectedPanels={
+              selectedPanelsFromEdit
+            }
       />
 
       {showReadyBar && (
@@ -384,11 +520,10 @@ const uniqueAllocatedCentres = [
 
 }}
 
-  onProceed={async () => {
-
+ onProceed={async () => {
+console.log("pendingApplyData", pendingApplyData);
   setShowCentreConfirmModal(false);
 
-  // 🔥 Build empty zonal map
   const zonalChangeMap = {};
 
   uniqueAllocatedCentres.forEach((centre) => {
@@ -398,12 +533,7 @@ const uniqueAllocatedCentres = [
     ] = "";
 
   });
-
-  console.log(
-    "PROCEED zonalChangeMap",
-    zonalChangeMap
-  );
-
+console.log("zonalChangeMap", zonalChangeMap);
   const res = await applySchedule({
     ...pendingApplyData,
     zonalChangeMap
@@ -413,6 +543,11 @@ const uniqueAllocatedCentres = [
     toast.error(res.message);
     return;
   }
+
+  // ✅ IMPORTANT
+  setSchedule(res.rows);
+
+  setScheduledCount(res.rows.length);
 
   setShowReadyBar(true);
 

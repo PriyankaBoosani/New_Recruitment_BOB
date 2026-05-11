@@ -40,6 +40,8 @@ import CompensationPool from "./components/CompensationPool";
 import useCompensationPool from "./hooks/useCompensationPool";
 import { mapCompensationCandidates } from "./mappers/compositionMapper";
 import useCommitteeRequests from "../Approvals/hooks/useCommitteeRequests";
+import InterviewScheduleTable from ".././interviews/components/InterviewScheduleTable";
+import SchedulePoolTable from "../interviews/components/SchedulePoolTable";
 
 export default function CandidateScreening({ selectedJob }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
@@ -831,15 +833,92 @@ const fetchSchedulePoolCandidates = async () => {
       payload
     );
 
-    const res =
-      await candidateWorkflowServices
-        .getSchedulePoolCandidates(payload);
+    
 
-    const apiData = res?.data;
+    const res = await candidateWorkflowServices.getSchedulePoolCandidates(payload);
 
-    setSchedulePoolCandidates(
-      apiData?.content || []
-    );
+    //const apiData = res?.data;
+   const apiData = {
+  content: [
+    {
+      fullName: "Allvar Mahesh",
+
+      candidateApplications: {
+        id: "ede93cac-74ff-494a-9787-e45e253660f0",
+        applicationNo: "APP-2026-000593"
+      },
+
+      interviewCenter: {
+        interviewCentre:
+          "AHMEDABAD,ZO AHMEDABAD"
+      },
+
+      panelName: "Panel 1",
+
+      panelDate: "2026-05-13",
+
+      startTime: "11:00:00",
+
+      endTime: "11:15:00"
+    },
+
+    {
+      fullName: "John Doe",
+
+      candidateApplications: {
+        id: "ebe791c4-1d41-4db9-9981-f00c50ea9a7b",
+        applicationNo: "APP-2026-000596"
+      },
+
+      interviewCenter: {
+        interviewCentre:
+          "HYDERABAD,ZO HYDERABAD"
+      },
+
+      panelName: "Panel 2",
+
+      panelDate: "2026-05-13",
+
+      startTime: "11:30:00",
+
+      endTime: "11:45:00"
+    }
+  ]
+};
+
+  const mappedRows =
+  (apiData?.content || []).map((c) => ({
+
+    id:
+      c?.candidateApplications?.id,
+
+    name:
+      c?.fullName || "-",
+
+    regNo:
+      c?.candidateApplications
+        ?.applicationNo || "-",
+
+    date:
+      c?.panelDate || "-",
+
+    time:
+      c?.startTime && c?.endTime
+        ? `${c.startTime} - ${c.endTime}`
+        : "-",
+
+    zone:
+      c?.interviewCenter
+        ?.interviewCentre || "-",
+
+    panel:
+      c?.panelName || "-"
+
+  }));
+
+  console.log("mappedRows",mappedRows)
+
+setSchedulePoolCandidates(mappedRows);
 
     setSchedulePoolTotal(
       apiData?.page?.totalElements || 0
@@ -1719,6 +1798,78 @@ const handleOfferStatusToggle = (status) => {
     };
   });
 };
+const groupedPanels = Object.values(
+
+  schedulePoolCandidates.reduce((acc, item, index) => {
+
+    if (!acc[item.panel]) {
+
+      acc[item.panel] = {
+
+        id:
+          item.panelId || index + 1,
+
+        name:
+          item.panel,
+
+        slots: []
+
+      };
+
+    }
+
+    acc[item.panel].slots.push({
+
+      date:
+        item.date,
+
+      startTime:
+        item.startTime ||
+        item.time?.split(" - ")[0] ||
+        "",
+
+      endTime:
+        item.endTime ||
+        item.time?.split(" - ")[1] ||
+        "",
+
+      duration:
+        item.duration || "15",
+
+      perDay:
+        item.perDay || "1"
+
+    });
+
+    return acc;
+
+  }, {})
+
+);
+const handleEditSchedule = () => {
+
+  navigate("/schedule-interviews", {
+    state: {
+
+      isEditMode: true,
+
+      requisitionId: selectedRequisitionId,
+
+      positionId: selectedPositionId,
+
+      // 🔥 FULL SCHEDULE DATA
+      schedulePoolData: schedulePoolCandidates,
+
+      requisition: normalizedRequisition,
+
+      position: selectedPosition,
+
+      activeTab: "SCHEDULE_POOL",
+      selectedPanels: groupedPanels
+    }
+  });
+
+};
 
   return (
     <div className="container-fluid px-5 py-4">
@@ -2510,33 +2661,45 @@ const handleOfferStatusToggle = (status) => {
 
 
         {activeTab === "COMPENSATION_POOL" &&  selectedPositionId && (
-<CompensationPool
-  candidates={mapCompensationCandidates(compensationCandidates)}
-  loading={loadingCompensation}
-  page={interviewPage}
-  pageSize={interviewPageSize}
-  totalElements={compensationTotal}
-  onPageChange={setInterviewPage}
-  onPageSizeChange={setInterviewPageSize}
-  selectedIds={selectedCompensationIds}
-  setSelectedIds={setSelectedCompensationIds}
+          <CompensationPool
+            candidates={mapCompensationCandidates(compensationCandidates)}
+            loading={loadingCompensation}
+            page={interviewPage}
+            pageSize={interviewPageSize}
+            totalElements={compensationTotal}
+            onPageChange={setInterviewPage}
+            onPageSizeChange={setInterviewPageSize}
+            selectedIds={selectedCompensationIds}
+            setSelectedIds={setSelectedCompensationIds}
 
-  // 🔥 ADD THESE
-  onViewFile={handleViewFile}
-  selectedRequisitionId={selectedRequisitionId}
-  selectedPositionId={selectedPositionId[0]}
-  requisition={normalizedRequisition}
-  position={selectedPosition}
-  refetch={refetchCompensation}
-   triggerRefresh={() => setCompRefreshKey(prev => prev + 1)}
-   panelData={panelData}
-/>
-)}
+            // 🔥 ADD THESE
+            onViewFile={handleViewFile}
+            selectedRequisitionId={selectedRequisitionId}
+            selectedPositionId={selectedPositionId[0]}
+            requisition={normalizedRequisition}
+            position={selectedPosition}
+            refetch={refetchCompensation}
+            triggerRefresh={() => setCompRefreshKey(prev => prev + 1)}
+            panelData={panelData}
+          />
+        )}
 
         {activeTab === "SCHEDULE_POOL" && (
-          <div className="text-center py-5">
-            <h4 className="text-muted">Schedule Pool</h4>
-            <p className="text-muted">Schedule Pool functionality coming soon...</p>
+          <div>
+
+          <div className="d-flex justify-content-end mb-3">
+
+            <button
+              className="btn btn-primary"
+              onClick={handleEditSchedule}
+            >
+              <i className="bi bi-pencil-square me-2"></i>
+              Edit Schedule
+            </button>
+
+          </div>
+     
+          <SchedulePoolTable rows={schedulePoolCandidates}/>
           </div>
         )}
 

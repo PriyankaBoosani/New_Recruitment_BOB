@@ -16,7 +16,8 @@ const InterviewPanelsConfig = ({
  // onStartTimeChange,
    candidates,
   onScheduleReady,
-  onApplyAll
+  onApplyAll,
+    initialSelectedPanels = []
 }) => {
 
   console.log("InterviewPanelsConfig - positionId:", positionId)
@@ -39,7 +40,10 @@ const InterviewPanelsConfig = ({
     savePanel,
     confirmDelete,
     openEdit
-  } = useInterviewPanels(positionId);
+  } = useInterviewPanels(
+  positionId,
+  initialSelectedPanels
+);
 
   const activeCount = selectedPanels.length;
   const { t } = useTranslation(["interviewSchedule", "common"]);
