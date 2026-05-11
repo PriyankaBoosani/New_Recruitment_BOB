@@ -60,8 +60,14 @@ const [allInterviewCentres, setAllInterviewCentres] = useState([]);
         const centreRes = await masterApiService.getAllInterviewCenters();
         console.log("centreRes", centreRes?.data)
 
-        if (centreRes?.data) {
-          setAllInterviewCentres(centreRes.data);
+         if (centreRes?.data) {
+
+          const zonalOfficeCentres =
+            centreRes.data.filter(
+              c => c.organizationType === "Zonal Office"
+            );
+
+          setAllInterviewCentres(zonalOfficeCentres);
         }
       };
       

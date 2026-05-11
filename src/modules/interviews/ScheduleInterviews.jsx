@@ -94,6 +94,8 @@ const isEditMode =
   const selectedPanelsFromEdit =
   location.state?.selectedPanels || [];
 
+  console.log('isEditMode',isEditMode)
+
 
 
   useEffect(() => {
@@ -509,12 +511,17 @@ const rebuiltSelectedPanels = Object.values(
   setShowCentreConfirmModal(false);
 
   // 🔥 initialize mappings
- setCentreRows([
-  {
-    allocatedCentreId: "",
+ setCentreRows(
+
+  uniqueAllocatedCentres.map(c => ({
+
+    allocatedCentreId: c.interviewCentreId,
+
     replacedCentreId: ""
-  }
-]);
+
+  }))
+
+);
 
   setShowCentreModal(true);
 
