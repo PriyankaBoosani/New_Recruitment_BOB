@@ -9,9 +9,25 @@ const MessageActions = ({ item, onSubmitApproval }) => {
   const [showRejectModal, setShowRejectModal] = useState(false);
 
   const status = (item.status || "").toUpperCase();
+
   const isRejected = status === "REJECTED";
 
-  // ✅ Confirm Reject API call
+  const disableAccept =
+    status === "REJECTED" ||
+    status === "L1 PENDING" ||
+    status === "L2 PENDING" ||
+    status === "L2 REJECTED" ||
+    status === "L1 APPROVED" ||
+    status === "L2 APPROVED";
+
+  const disableReject =
+    status === "REJECTED" ||
+    status === "L2 PENDING" ||
+    status === "L2 REJECTED" ||
+    status === "L1 APPROVED" ||
+    status === "L2 APPROVED";
+
+  
   const handleRejectConfirm = async () => {
     await onSubmitApproval(item.id, "REJECTED", comment);
     setShowRejectModal(false);
@@ -47,7 +63,7 @@ const MessageActions = ({ item, onSubmitApproval }) => {
         {/* ACCEPT */}
         <button
           className="btn msg-btn-accept"
-          disabled={isRejected}
+          disabled={disableAccept}
           onClick={async () => {
             if (!comment.trim()) {
               setError("This field is required");
@@ -62,57 +78,74 @@ const MessageActions = ({ item, onSubmitApproval }) => {
           {t("messages:accept")}
         </button>
 
-        {/* ✅ REJECT (VALIDATION FIRST → THEN POPUP) */}
+        {/* REJECT */}
         <button
           className="btn btn-outline-secondary msg-btn-reject"
-          disabled={isRejected}
+          disabled={disableReject}
           onClick={() => {
             if (!comment.trim()) {
-              setError("This field is required"); // ❌ validation first
+              setError("This field is required");
               return;
             }
 
-            setShowRejectModal(true); // ✅ open popup only if valid
+            setShowRejectModal(true);
           }}
         >
           {t("messages:reject")}
         </button>
       </div>
 
-      {/* ✅ REJECT CONFIRMATION MODAL */}
-      <Modal
-        show={showRejectModal}
-        onHide={() => setShowRejectModal(false)}
-        centered
+      {/* REJECT CONFIRMATION MODAL */}
+<Modal
+  show={showRejectModal}
+  onHide={() => setShowRejectModal(false)}
+  centered
+  dialogClassName="del-modal"
+>
+  <Modal.Body className="del-body">
+
+    {/* HEADER */}
+    <div className="del-header">
+      <div className="del-title">
+        Confirm Reject
+      </div>
+
+      <button
+        className="del-close"
+        onClick={() => setShowRejectModal(false)}
       >
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Reject</Modal.Title>
-        </Modal.Header>
+        <i className="bi bi-x-lg"></i>
+      </button>
+    </div>
 
-        <Modal.Body>
-          <p>Are you sure you want to reject?</p>
+    {/* MESSAGE */}
+    <div className="del-message">
+      Are you sure you want to reject?
+      <div className="text-muted small mt-2">
+        Reason: {comment}
+      </div>
+    </div>
 
-          <div className="text-muted small">
-            Reason: {comment}
-          </div>
-        </Modal.Body>
+    {/* FOOTER */}
+    <div className="del-footer">
 
-        <Modal.Footer>
-          <button
-            className="btn btn-secondary"
-            onClick={() => setShowRejectModal(false)}
-          >
-            Cancel
-          </button>
+      <button
+        className="del-cancel"
+        onClick={() => setShowRejectModal(false)}
+      >
+        {t("common:cancel")}
+      </button>
 
-          <button
-            className="btn btn-danger"
-            onClick={handleRejectConfirm}
-          >
-            Confirm Reject
-          </button>
-        </Modal.Footer>
-      </Modal>
+      <button
+        className="del-delete"
+        onClick={handleRejectConfirm}
+      >
+        {t("messages:reject")}
+      </button>
+
+    </div>
+  </Modal.Body>
+</Modal>
     </>
   );
 };

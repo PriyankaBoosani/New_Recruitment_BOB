@@ -126,7 +126,7 @@ getPanelScores: (scheduledInterviewId) => {
   getMessageHistory: (payload, page, size) =>
   api.post(
     "/recruiter/messages/get-history",
-    payload,   // ✅ send full object
+    payload,  
     {
       params: { page, size },
     }
@@ -135,11 +135,7 @@ getPanelScores: (scheduledInterviewId) => {
 getMessagesByThreadId: (conversationThreadId) =>
   api.get(
     `/recruiter/messages/get-message/${conversationThreadId}`,
-    // {
-    //   headers: {
-    //     "X-Client": "AzureAD",   // ✅ ADD THIS
-    //   },
-    // }
+  
   ),
 
   submitForApproval: (payload) =>

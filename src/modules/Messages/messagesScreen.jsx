@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import DropdownStrip from "../candidatePreview/components/DropdownStrip";
+import DropdownStripMultipleposition from "../candidatePreview/components/DropdownStripMultipleposition";
 import MessageCard from "../Messages/components/messageCard";
 import { useMessages } from "../Messages/hooks/useMessages";
 import { mapMessagesData } from "../Messages/mappers/messagesMappers";
@@ -47,18 +47,19 @@ const Messages = () => {
 
   const selectedRequisitionName = requisitions.find(r => r.id === selectedRequisitionId)?.requisitionTitle || "";
 
-  const selectedPositionName =
-    positions.find(
-      p => p.jobPositions?.positionId === selectedPositionId
-    )?.masterPositions?.positionName || "";
+  // const selectedPositionName =
+  //   positions.find(
+  //     p => p.jobPositions?.positionId === selectedPositionId
+  //   )?.masterPositions?.positionName || "";
 
+  const selectedPositionName = "";
 
   const messagesData = mapMessagesData(
     apiMessages,
     selectedRequisitionId,
     selectedPositionId,
     selectedRequisitionName,
-    selectedPositionName,
+    positions,
     requestTypes,
     threadMessagesMap
   );
@@ -84,11 +85,11 @@ const Messages = () => {
       item.type?.toLowerCase().includes(search);
 
     return (
-      selectedPositionId &&
+      selectedPositionId?.length > 0 &&
       (!selectedRequisitionId ||
         item.requisitionId === selectedRequisitionId) &&
       (!selectedPositionId ||
-        item.positionId === selectedPositionId) &&
+        selectedPositionId.includes(item.positionId)) &&
       (!selectedStatus || item.rawStatus === selectedStatus) &&
       (!searchText || matchesSearch)
     );
@@ -184,12 +185,12 @@ const Messages = () => {
   };
 
   React.useEffect(() => {
-    if (selectedPositionId) {
+    if (selectedPositionId?.length > 0) {
 
       toggleRow(null);
 
       fetchMessages({
-        positionsIds: [selectedPositionId],
+        positionsIds: selectedPositionId || [],
         requestTypeIds: [],
         statusList: selectedStatus ? [selectedStatus] : []
       }, 0, size);
@@ -220,7 +221,7 @@ const Messages = () => {
     if (selectedPositionId) {
 
       fetchMessages({
-        positionsIds: selectedPositionId ? [selectedPositionId] : [],
+        positionsIds: selectedPositionId || [],
         requestTypeIds: [], // optional (can pass selected later)
         statusList: selectedStatus ? [selectedStatus] : []
         // statusList: []
@@ -295,7 +296,7 @@ const Messages = () => {
     try {
       const res = await candidateWorkflowServices.getMessageHistory(
         {
-          positionsIds: selectedPositionId ? [selectedPositionId] : [],
+          positionsIds: selectedPositionId || [],
           requestTypeIds: [],
           statusList: []   // ✅ ALWAYS ALL
         },
@@ -309,8 +310,10 @@ const Messages = () => {
     }
   };
   React.useEffect(() => {
-    if (selectedPositionId) {
+    if (selectedPositionId?.length > 0) {
       fetchAllMessagesForCounts();
+    } else {
+      setAllMessages([]);
     }
   }, [selectedPositionId]);
 
@@ -372,8 +375,7 @@ const Messages = () => {
               {/* LEFT */}
               <div className="d-flex flex-wrap gap-3 flex-grow-1 align-items-end">
 
-                {/* DROPDOWNS */}
-                <DropdownStrip
+                <DropdownStripMultipleposition
                   requisitions={requisitions}
                   positions={positions}
                   selectedRequisitionId={selectedRequisitionId}
@@ -385,29 +387,28 @@ const Messages = () => {
 
                     setSelectedRequisitionId(id);
 
-
-                    setSelectedPositionId("");
-
+                    setSelectedPositionId([]);
 
                     setApiMessages([]);
 
-
                     fetchPositions(id);
                   }}
-
-                  onPositionChange={(value) => {
-                    setSelectedPositionId(value);
+                  onPositionChange={(values) => {
+                    setSelectedPositionId(values);
                     setPage(0);
-                    const ids = value ? [value] : [];
-                    fetchMessages({
-                      positionsIds: value ? [value] : [],
-                      requestTypeIds: [],
-                      statusList: selectedStatus ? [selectedStatus] : []
-                    }, 0, size); //ALL_STATUSES
+
+                    fetchMessages(
+                      {
+                        positionsIds: values || [],
+                        requestTypeIds: [],
+                        statusList: selectedStatus ? [selectedStatus] : []
+                      },
+                      0,
+                      size
+                    );
                   }}
                   onRequisitionSearch={(val) => fetchRequisitions(val)}
                 />
-
                 {/* <div style={{ minWidth: "180px", maxWidth: "220px", flex: 1 }}>
                   <label className="fs-14 blue-color">
                     {t("messages:extend_submission_date")}
@@ -455,6 +456,7 @@ const Messages = () => {
                     {selectedStatus === "L1_PENDING" && "L1 Pending"}
                     {selectedStatus === "L1_APPROVED" && "L1 Approved"}
                     {selectedStatus === "L1_REJECTED" && "L1 Rejected"}
+                    {selectedStatus === "L2_PENDING" && "L2 Pending"}
                     {selectedStatus === "L2_APPROVED" && "L2 Approved"}
                     {selectedStatus === "L2_REJECTED" && "L2 Rejected"}
                     {selectedStatus === "REJECTED" && "Rejected"}
@@ -492,7 +494,7 @@ const Messages = () => {
 
                       {/* L1 PENDING */}
                       <div
-                        className={`filter-item ${selectedStatus === "L1_PENDING" ? "active" : ""}`}
+                        className={`filter-item pending ${selectedStatus === "L1_PENDING" ? "active" : ""}`}
                         onClick={() => {
                           setSelectedStatus("L1_PENDING");
                           setIsFilterOpen(false);
@@ -524,6 +526,16 @@ const Messages = () => {
                       >
                         L1 Rejected
                         {/* <span>{statusCounts["L1_REJECTED"] || 0}</span> */}
+                      </div>
+
+                        <div
+                        className={`filter-item pending ${selectedStatus === "L2_PENDING" ? "active" : ""}`}
+                        onClick={() => {
+                          setSelectedStatus("L2_PENDING");
+                          setIsFilterOpen(false);
+                        }}
+                      >
+                        L2 Pending
                       </div>
 
                       {/* L2 APPROVED */}
