@@ -23,19 +23,20 @@ const ApplicationForm = ({
   setFormErrors,
   candidateId,
   positionId,
-    positionIds,
+  positionIds,
   applicationId,
   requisitionId,
   interviewScheduleId,
   requisitionTitle,
   positionName,
+  isLocationWise,
   selectedDate,
   zonalVerificationStatus,
   zonalSubmitBeforeDate,
   zonalHrComments,
   candidateStatus,
   isFromInterview,
-   isFromCompensationPool
+  isFromCompensationPool
 }) => {
 
   const { t } = useTranslation(["preview", "common", "validation"]);
@@ -467,15 +468,15 @@ const ApplicationForm = ({
         //     : item.docScreeningStatus || "PENDING";
 
 
-          const status = isZonalHr
-  ? item.zonalHrDocStatus || "PENDING"
-  
-  : isFromCompensationPool   //  ADD THIS
-    ? item.zonalHrDocStatus || "PENDING"
-    
-  : (isInterviewer || isInterviewView)
-    ? (item.zonalHrDocStatus || "PENDING")   //  ONLY ZONAL
-    : item.docScreeningStatus || "PENDING";
+        const status = isZonalHr
+          ? item.zonalHrDocStatus || "PENDING"
+
+          : isFromCompensationPool   //  ADD THIS
+            ? item.zonalHrDocStatus || "PENDING"
+
+            : (isInterviewer || isInterviewView)
+              ? (item.zonalHrDocStatus || "PENDING")   //  ONLY ZONAL
+              : item.docScreeningStatus || "PENDING";
 
 
         const comments = isZonal
@@ -974,20 +975,20 @@ const ApplicationForm = ({
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
       toast.success("Screening submitted successfully");
       console.log("SENDING POSITION IDS:", {
-  positionIds,
-  positionId
-});
-navigate("/candidate-workflow", {
-  state: {
-    requisitionId,
+        positionIds,
+        positionId
+      });
+      navigate("/candidate-workflow", {
+        state: {
+          requisitionId,
 
-    positionIds: Array.isArray(positionIds)
-      ? positionIds.map(item => item.positionId)
-      : positionId
-        ? [positionId]
-        : [],
-  },
-});
+          positionIds: Array.isArray(positionIds)
+            ? positionIds.map(item => item.positionId)
+            : positionId
+              ? [positionId]
+              : [],
+        },
+      });
     } catch (err) {
       console.error("Screening submit failed", err);
       toast.error("Submission failed");
@@ -1434,11 +1435,18 @@ navigate("/candidate-workflow", {
                       <td className="fw-med">Social Media Profile links</td>
                       <td className="fw-reg" colSpan={2}>{previewData.personalDetails.socialMediaProfileLink}</td>
                     </tr>*/}
-
                   <tr>
+                    <td className="fw-med">{t("language_proficiency")}</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.languages || "-"}</td>
 
                     <td className="fw-med">{t("social_media_links")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td>
+
+                  </tr>
+
+                  <tr>
+
+
                     <td className="fw-med">{t("location_pref1")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
@@ -1447,10 +1455,6 @@ navigate("/candidate-workflow", {
                       )}
 
                     </td>
-
-                  </tr>
-
-                  <tr>
                     <td className="fw-med">{t("location_pref2")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
@@ -1459,6 +1463,11 @@ navigate("/candidate-workflow", {
                       )}
 
                     </td>
+
+                  </tr>
+
+                  <tr>
+
                     <td className="fw-med">{t("location_pref3")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
@@ -1466,7 +1475,17 @@ navigate("/candidate-workflow", {
                         data.personalDetails.statePreference3
                       )}
                     </td>
+                    <td className="fw-med">{t("language_preference")}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.localLanguage || "-"}
+                    </td>
 
+                  </tr>
+                  <tr>
+                    <td className="fw-med">{t("is_local_language_studied")}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {isLocationWise ? data.personalDetails.isLocalLanguageStudied : "-"}
+                    </td>
                   </tr>
 
 
@@ -1538,18 +1557,18 @@ navigate("/candidate-workflow", {
                   {(data.education || [])
                     .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
                     .map((edu, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{edu.educationLevel_name || "-"}</td>
-                      <td>{edu.institution || "-"}</td>
-                      <td>{edu.universityName || "-"}</td>
-                      <td>{edu.mandatoryQualification_name || "-"}</td>
-                      <td>{edu.specialization_name || "-"}</td>
-                      <td>{edu.startDate || "-"}</td>
-                      <td>{edu.endDate || "-"}</td>
-                      <td>{edu.percentage || "-"}</td>
-                    </tr>
-                  ))}
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{edu.educationLevel_name || "-"}</td>
+                        <td>{edu.institution || "-"}</td>
+                        <td>{edu.universityName || "-"}</td>
+                        <td>{edu.mandatoryQualification_name || "-"}</td>
+                        <td>{edu.specialization_name || "-"}</td>
+                        <td>{edu.startDate || "-"}</td>
+                        <td>{edu.endDate || "-"}</td>
+                        <td>{edu.percentage || "-"}</td>
+                      </tr>
+                    ))}
 
 
                   {(!data.education || data.education.length === 0) && (
@@ -1814,237 +1833,237 @@ navigate("/candidate-workflow", {
         </Accordion.Item>
 
         {/* ================= CRITERIA SECTION ================= */}
-      {canCandidatePool &&
-  !disableDocAction &&
-  !isFromInterview &&
-  !isFromCompensationPool && (   
-          <Card className="criteria-main-card">
+        {canCandidatePool &&
+          !disableDocAction &&
+          !isFromInterview &&
+          !isFromCompensationPool && (
+            <Card className="criteria-main-card">
 
-            <div className="criteria-wrapper">
+              <div className="criteria-wrapper">
 
-              {/* WORK CRITERIA */}
-              <div className="criteria-card">
-                <label className="criteria-title">{t("work_criteria")}</label>
+                {/* WORK CRITERIA */}
+                <div className="criteria-card">
+                  <label className="criteria-title">{t("work_criteria")}</label>
 
-                <div className="criteria-radio mb-0">
-                  {CRITERIA_OPTIONS.map(option => (
-                    <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
-                      <input
-                        type="radio"
-                        name="workCriteria"
-                        checked={screeningForm.isWorkCriteriaMet === option}
-                        onChange={() =>
-                          handleRadioChange("isWorkCriteriaMet", option)
-                        }
-                        disabled={isOptionDisabled(option)}
-                      />
-                      <span className="custom-radio"></span>
-                      {t(option)}
-                    </label>
-                  ))}
-                </div>
-                {errors.isWorkCriteriaMet && (
-                  <small className="text-danger fs-12">
-                    {errors.isWorkCriteriaMet}
-                  </small>
-                )}
-
-                <textarea
-                  // type="text"
-                  className="criteria-remark mt-2"
-                  placeholder={t("work_remark")}
-                  value={screeningForm.workCriteriaRemark}
-                  onChange={(e) =>
-                    handleInputChange("workCriteriaRemark", e.target.value)
-                  }
-                  maxLength={2000}
-                  rows={4}
-                // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
-                />
-                {errors.workCriteriaRemark && (
-                  <small className="text-danger fs-12">
-                    {errors.workCriteriaRemark}
-                  </small>
-                )}
-              </div>
-
-              {/* AGE CRITERIA */}
-              <div className="criteria-card">
-                <label className="criteria-title">{t("age_criteria")}</label>
-
-                <div className="criteria-radio mb-0">
-                  {CRITERIA_OPTIONS.map(option => (
-                    <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
-                      <input
-                        type="radio"
-                        name="ageCriteria"
-                        checked={screeningForm.isAgeCriteriaMet === option}
-                        onChange={() =>
-                          handleRadioChange("isAgeCriteriaMet", option)
-                        }
-                        disabled={isOptionDisabled(option)}
-                      />
-                      <span className="custom-radio"></span>
-                      {t(option)}
-                    </label>
-                  ))}
-                </div>
-                {errors.isAgeCriteriaMet && (
-                  <small className="text-danger fs-12">
-                    {errors.isAgeCriteriaMet}
-                  </small>
-                )}
-
-                <textarea
-                  // type="text"
-                  className="criteria-remark mt-2"
-                  placeholder={t("age_remark")}
-                  value={screeningForm.ageCriteriaRemark}
-                  onChange={(e) =>
-                    handleInputChange("ageCriteriaRemark", e.target.value)
-                  }
-                  maxLength={2000}
-                  rows={4}
-                // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
-                />
-                {errors.ageCriteriaRemark && (
-                  <small className="text-danger fs-12">
-                    {errors.ageCriteriaRemark}
-                  </small>
-                )}
-              </div>
-
-              {/* EDUCATION CRITERIA */}
-              <div className="criteria-card">
-                <label className="criteria-title"> {t("education_criteria")}</label>
-
-                <div className="criteria-radio mb-0">
-                  {CRITERIA_OPTIONS.map(option => (
-                    <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
-                      <input
-                        type="radio"
-                        name="educationCriteria"
-                        checked={screeningForm.isEducationCriteriaMet === option}
-                        onChange={() =>
-                          handleRadioChange("isEducationCriteriaMet", option)
-                        }
-                        disabled={isOptionDisabled(option)}
-                      />
-                      <span className="custom-radio"></span>
-                      {t(option)}
-                    </label>
-                  ))}
-                </div>
-                {errors.isEducationCriteriaMet && (
-                  <small className="text-danger fs-12">
-                    {errors.isEducationCriteriaMet}
-                  </small>
-                )}
-
-                <textarea
-                  // type="text"
-                  className="criteria-remark mt-2"
-                  placeholder={t("education_remark")}
-                  value={screeningForm.educationCriteriaRemark}
-                  onChange={(e) =>
-                    handleInputChange("educationCriteriaRemark", e.target.value)
-                  }
-                  maxLength={2000}
-                  rows={4}
-                // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
-                />
-                {errors.educationCriteriaRemark && (
-                  <small className="text-danger fs-12">
-                    {errors.educationCriteriaRemark}
-                  </small>
-                )}
-              </div>
-
-              {/* FINAL REMARK */}
-              <div
-                className={`criteria-card ${disableShortlistedSection ? "criteria-disabled" : ""
-                  }`}
-              >
-                <label className="criteria-title">{t("shortlisted")}</label>
-
-                <div className="criteria-radio mb-0">
-                  {["YES", "NO"].map(option => {
-                    const isDisabled =
-                      (option === "YES" && disableYesOption) ||
-                      (option === "NO" && disableNoOption);
-
-                    return (
-                      <label key={option} className={`radio-label ${isDisabled ? "disabled" : ""}`}>
+                  <div className="criteria-radio mb-0">
+                    {CRITERIA_OPTIONS.map(option => (
+                      <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
                         <input
                           type="radio"
-                          name="shortlisted"
-                          value={option}
-                          checked={screeningForm.isShortlisted === option}
-                          disabled={isDisabled}
-                          onChange={() => handleInputChange("isShortlisted", option)}
+                          name="workCriteria"
+                          checked={screeningForm.isWorkCriteriaMet === option}
+                          onChange={() =>
+                            handleRadioChange("isWorkCriteriaMet", option)
+                          }
+                          disabled={isOptionDisabled(option)}
                         />
                         <span className="custom-radio"></span>
-                        {option}
+                        {t(option)}
                       </label>
-                    );
-                  })}
-                </div>
-                {!disableShortlistedSection && errors.isShortlisted && (
-                  <small className="text-danger fs-12">
-                    {errors.isShortlisted}
-                  </small>
-                )}
+                    ))}
+                  </div>
+                  {errors.isWorkCriteriaMet && (
+                    <small className="text-danger fs-12">
+                      {errors.isWorkCriteriaMet}
+                    </small>
+                  )}
 
-                <textarea
-                  // type="text"
-                  className="criteria-remark mt-2"
-                  placeholder={t("final_remark")}
-                  value={screeningForm.finalScreeningRemark}
-                  onChange={(e) =>
-                    handleInputChange("finalScreeningRemark", e.target.value)
-                  }
-                  maxLength={2000}
-                  rows={4}
-                />
-                {errors.finalScreeningRemark && (
-                  <small className="text-danger fs-12">
-                    {errors.finalScreeningRemark}
-                  </small>
-                )}
-              </div>
-            </div>
-
-            {/* ================= SUBMIT ROW ================= */}
-            <div className={`criteria-submit-row ${disableShortlistedSection ? 'justify-content-between' : 'justify-content-end'}`}>
-              {!isZonalHr && disableShortlistedSection && (
-                <div className="d-grid">
-                  <label className="submit-label">{t("submit_before")}</label>
-                  <input
-                    type="date"
-                    className="criteria-date"
-                    min={minDate}
-                    value={screeningForm.submitBeforeDate}
-                    onChange={handleDateChange}
+                  <textarea
+                    // type="text"
+                    className="criteria-remark mt-2"
+                    placeholder={t("work_remark")}
+                    value={screeningForm.workCriteriaRemark}
+                    onChange={(e) =>
+                      handleInputChange("workCriteriaRemark", e.target.value)
+                    }
+                    maxLength={2000}
+                    rows={4}
+                  // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
                   />
-                  {errors.submitBeforeDate && (
-                    <small className="text-danger mt-1 fs-12">
-                      {errors.submitBeforeDate}
+                  {errors.workCriteriaRemark && (
+                    <small className="text-danger fs-12">
+                      {errors.workCriteriaRemark}
                     </small>
                   )}
                 </div>
-              )}
 
-             {!isFromCompensationPool && (
-  <button
-    className="btn-submit-orange"
-    onClick={handleFinalSubmit}
-  >
-    {t("submit")}
-  </button>
-)}
-            </div>
-          </Card>
-        )}
+                {/* AGE CRITERIA */}
+                <div className="criteria-card">
+                  <label className="criteria-title">{t("age_criteria")}</label>
+
+                  <div className="criteria-radio mb-0">
+                    {CRITERIA_OPTIONS.map(option => (
+                      <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
+                        <input
+                          type="radio"
+                          name="ageCriteria"
+                          checked={screeningForm.isAgeCriteriaMet === option}
+                          onChange={() =>
+                            handleRadioChange("isAgeCriteriaMet", option)
+                          }
+                          disabled={isOptionDisabled(option)}
+                        />
+                        <span className="custom-radio"></span>
+                        {t(option)}
+                      </label>
+                    ))}
+                  </div>
+                  {errors.isAgeCriteriaMet && (
+                    <small className="text-danger fs-12">
+                      {errors.isAgeCriteriaMet}
+                    </small>
+                  )}
+
+                  <textarea
+                    // type="text"
+                    className="criteria-remark mt-2"
+                    placeholder={t("age_remark")}
+                    value={screeningForm.ageCriteriaRemark}
+                    onChange={(e) =>
+                      handleInputChange("ageCriteriaRemark", e.target.value)
+                    }
+                    maxLength={2000}
+                    rows={4}
+                  // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
+                  />
+                  {errors.ageCriteriaRemark && (
+                    <small className="text-danger fs-12">
+                      {errors.ageCriteriaRemark}
+                    </small>
+                  )}
+                </div>
+
+                {/* EDUCATION CRITERIA */}
+                <div className="criteria-card">
+                  <label className="criteria-title"> {t("education_criteria")}</label>
+
+                  <div className="criteria-radio mb-0">
+                    {CRITERIA_OPTIONS.map(option => (
+                      <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
+                        <input
+                          type="radio"
+                          name="educationCriteria"
+                          checked={screeningForm.isEducationCriteriaMet === option}
+                          onChange={() =>
+                            handleRadioChange("isEducationCriteriaMet", option)
+                          }
+                          disabled={isOptionDisabled(option)}
+                        />
+                        <span className="custom-radio"></span>
+                        {t(option)}
+                      </label>
+                    ))}
+                  </div>
+                  {errors.isEducationCriteriaMet && (
+                    <small className="text-danger fs-12">
+                      {errors.isEducationCriteriaMet}
+                    </small>
+                  )}
+
+                  <textarea
+                    // type="text"
+                    className="criteria-remark mt-2"
+                    placeholder={t("education_remark")}
+                    value={screeningForm.educationCriteriaRemark}
+                    onChange={(e) =>
+                      handleInputChange("educationCriteriaRemark", e.target.value)
+                    }
+                    maxLength={2000}
+                    rows={4}
+                  // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
+                  />
+                  {errors.educationCriteriaRemark && (
+                    <small className="text-danger fs-12">
+                      {errors.educationCriteriaRemark}
+                    </small>
+                  )}
+                </div>
+
+                {/* FINAL REMARK */}
+                <div
+                  className={`criteria-card ${disableShortlistedSection ? "criteria-disabled" : ""
+                    }`}
+                >
+                  <label className="criteria-title">{t("shortlisted")}</label>
+
+                  <div className="criteria-radio mb-0">
+                    {["YES", "NO"].map(option => {
+                      const isDisabled =
+                        (option === "YES" && disableYesOption) ||
+                        (option === "NO" && disableNoOption);
+
+                      return (
+                        <label key={option} className={`radio-label ${isDisabled ? "disabled" : ""}`}>
+                          <input
+                            type="radio"
+                            name="shortlisted"
+                            value={option}
+                            checked={screeningForm.isShortlisted === option}
+                            disabled={isDisabled}
+                            onChange={() => handleInputChange("isShortlisted", option)}
+                          />
+                          <span className="custom-radio"></span>
+                          {option}
+                        </label>
+                      );
+                    })}
+                  </div>
+                  {!disableShortlistedSection && errors.isShortlisted && (
+                    <small className="text-danger fs-12">
+                      {errors.isShortlisted}
+                    </small>
+                  )}
+
+                  <textarea
+                    // type="text"
+                    className="criteria-remark mt-2"
+                    placeholder={t("final_remark")}
+                    value={screeningForm.finalScreeningRemark}
+                    onChange={(e) =>
+                      handleInputChange("finalScreeningRemark", e.target.value)
+                    }
+                    maxLength={2000}
+                    rows={4}
+                  />
+                  {errors.finalScreeningRemark && (
+                    <small className="text-danger fs-12">
+                      {errors.finalScreeningRemark}
+                    </small>
+                  )}
+                </div>
+              </div>
+
+              {/* ================= SUBMIT ROW ================= */}
+              <div className={`criteria-submit-row ${disableShortlistedSection ? 'justify-content-between' : 'justify-content-end'}`}>
+                {!isZonalHr && disableShortlistedSection && (
+                  <div className="d-grid">
+                    <label className="submit-label">{t("submit_before")}</label>
+                    <input
+                      type="date"
+                      className="criteria-date"
+                      min={minDate}
+                      value={screeningForm.submitBeforeDate}
+                      onChange={handleDateChange}
+                    />
+                    {errors.submitBeforeDate && (
+                      <small className="text-danger mt-1 fs-12">
+                        {errors.submitBeforeDate}
+                      </small>
+                    )}
+                  </div>
+                )}
+
+                {!isFromCompensationPool && (
+                  <button
+                    className="btn-submit-orange"
+                    onClick={handleFinalSubmit}
+                  >
+                    {t("submit")}
+                  </button>
+                )}
+              </div>
+            </Card>
+          )}
 
         {isZonalHr && !isInterviewView && (
           <Card
@@ -2213,7 +2232,7 @@ navigate("/candidate-workflow", {
         onVerify={handleVerify}
         onReject={handleReject}
         isZonalAbsent={isZonalAbsent}
-            isFromCompensationPool={isFromCompensationPool}
+        isFromCompensationPool={isFromCompensationPool}
 
       />
     </>

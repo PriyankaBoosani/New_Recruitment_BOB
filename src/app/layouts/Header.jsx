@@ -371,7 +371,8 @@ const Header = () => {
                   onMouseLeave={() => setShowApprovalsMenu(false)}
                   className={`approvals-dropdown ${location.pathname.startsWith("/requisition-requests") ||
                     location.pathname.startsWith("/extension-requests") ||
-                    location.pathname.startsWith("/committee-requests")
+                    location.pathname.startsWith("/committee-requests") ||
+                    location.pathname.startsWith("/interview-requests")
                     ? "active-admin"
                     : ""
                     }`}
@@ -404,6 +405,14 @@ const Header = () => {
                     onClick={closeMenu}
                   >
                     {t("committee_requests")}
+                  </NavDropdown.Item>
+
+                  <NavDropdown.Item
+                    as={NavLink}
+                    to="/interview-requests"
+                    onClick={closeMenu}
+                  >
+                    {t("interview_requests")}
                   </NavDropdown.Item>
                 </NavDropdown>
               )}

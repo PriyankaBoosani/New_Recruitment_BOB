@@ -172,7 +172,15 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
           l => String(l.languageId) === String(lang.languageId)
         );
 
-        return found?.languageName;
+        if (!found) return null;
+
+        const proficiency = [];
+
+        if (lang.canRead) proficiency.push("Read");
+        if (lang.canWrite) proficiency.push("Write");
+        if (lang.canSpeak) proficiency.push("Speak");
+
+        return `${found.languageName} (${proficiency.join(", ")})`;
       })
       .filter(Boolean)
       .join(", ");

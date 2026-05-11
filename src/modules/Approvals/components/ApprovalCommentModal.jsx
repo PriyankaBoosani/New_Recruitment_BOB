@@ -38,7 +38,10 @@ const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
     >
       <Modal.Header closeButton className="modal-header-custom">
         <Modal.Title className="modal-title-custom">
-          {t(`approvalHistory:approval_rejection_comments`)}
+          {actionType === "approve"
+            ? t(`approvalHistory:approval_comments`)
+            : t(`approvalHistory:rejection_comments`)
+          }
         </Modal.Title>
       </Modal.Header>
 

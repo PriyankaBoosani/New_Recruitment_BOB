@@ -27,5 +27,7 @@
     "panel_type": "पैनल प्रकार",
     "panel_members": "पैनल सदस्य",
     "start_date": "प्रारंभ तिथि",
-    "end_date": "समाप्ति तिथि"
+    "end_date": "समाप्ति तिथि",
+    "approval_comments": "स्वीकृति टिप्पणियाँ",
+    "rejection_comments": "अस्वीकृति टिप्पणियाँ"
 }

@@ -37,6 +37,7 @@ import ScheduleInterviews from "../modules/interviews/ScheduleInterviews";
 import Approvals from "../modules/Approvals/pages/RequisitionRequests";
 import ExtensionsRequests from "../modules/Approvals/pages/ExtensionsRequests";
 import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";
+import InterviewRequests from "../modules/Approvals/pages/InterviewRequests";
 import Messages from "../modules/Messages/messagesScreen";
 
 import UnauthorizedPage from "./UnauthorizedPage"
@@ -304,6 +305,14 @@ const AppRoutes = () => {
                 element={
                    <PrivilegeRoute privilegesRequired={["L1 Approval", "L2 Approval"]}>
                     <CommitteeRequests />
+                  </PrivilegeRoute>
+                }
+              />
+               <Route
+                path="/interview-requests"
+                element={
+                  <PrivilegeRoute privilegesRequired={["L1 Approval", "L2 Approval"]}>
+                    <InterviewRequests />
                   </PrivilegeRoute>
                 }
               />
