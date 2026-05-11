@@ -172,7 +172,15 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
           l => String(l.languageId) === String(lang.languageId)
         );
 
-        return found?.languageName;
+        if (!found) return null;
+
+        const proficiency = [];
+
+        if (lang.canRead) proficiency.push("Read");
+        if (lang.canWrite) proficiency.push("Write");
+        if (lang.canSpeak) proficiency.push("Speak");
+
+        return `${found.languageName} (${proficiency.join(", ")})`;
       })
       .filter(Boolean)
       .join(", ");
@@ -255,19 +263,18 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
       return {
         institution: edu.institutionName || "-",
         universityName: edu.universityName || "-",
+
+        rawStartDate: edu.startDate || null,
+        rawEndDate: edu.endDate || null,
+
         startDate: formatDateDDMMYYYY(edu.startDate) || "-",
         endDate: formatDateDDMMYYYY(edu.endDate) || "-",
-        // percentage:
-        //   edu.percentage != null
-        //     ? Number(edu.percentage) < 10
-        //       ? `${edu.percentage} CGPA`
-        //       : `${edu.percentage}%`
-        //     : "-",
-        // percentage: edu.percentage ?? "-",
 
-        percentage: edu.percentage != null && !isNaN(Number(edu.percentage))
-          ? `${Number(edu.percentage).toFixed(2)}%`
-          : "-",
+        percentage:
+          edu.percentage != null && !isNaN(Number(edu.percentage))
+            ? `${Number(edu.percentage).toFixed(2)}%`
+            : "-",
+
         educationLevel_name: educationLevel?.documentName || "-",
         mandatoryQualification_name: qualification?.qualificationName || "-",
         specialization_name: specialization?.specializationName || "-"

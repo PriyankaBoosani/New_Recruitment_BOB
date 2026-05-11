@@ -298,13 +298,11 @@ const ReservationSection = ({
 
                                 <Select
                                     classNamePrefix="react-select"
-                                    isDisabled={!currentState.state}
-
+                                    isDisabled={!currentState.state || isViewMode}
                                     styles={{
-                                        control: (base, state) => ({
+                                        control: (base) => ({
                                             ...base,
                                             backgroundColor: isViewMode ? "#e9ecef" : base.backgroundColor,
-                                            //  cursor: isViewMode ? "not-allowed" : "pointer",
                                             opacity: isViewMode ? 0.8 : 1
                                         }),
                                         singleValue: (base) => ({
@@ -312,14 +310,13 @@ const ReservationSection = ({
                                             color: isViewMode ? "#6c757d" : base.color
                                         })
                                     }}
-                                    value={
-                                        filteredCities
-                                            .map(c => ({
-                                                value: c.id,
-                                                label: c.name
-                                            }))
-                                            .find(option => String(option.value) === String(currentState.city)) || null
-                                    }
+                                    value={[
+                                        { value: "", label: t("addPosition:select_city") },
+                                        ...sortedCities.map(c => ({
+                                            value: c.id,
+                                            label: c.name
+                                        }))
+                                    ].find(option => String(option.value) === String(currentState.city)) || null}
                                     placeholder={t("addPosition:select_city")}
                                     onChange={(selected) => {
                                         setCurrentState(prev => ({
@@ -333,10 +330,13 @@ const ReservationSection = ({
                                             city: ""
                                         }));
                                     }}
-                                    options={sortedCities.map(c => ({
-                                        value: c.id,
-                                        label: c.name
-                                    }))}
+                                    options={[
+                                        { value: "", label: t("addPosition:select_city") },
+                                        ...sortedCities.map(c => ({
+                                            value: c.id,
+                                            label: c.name
+                                        }))
+                                    ]}
                                 />
                             </Col>
                             <Col md={3}><Form.Label>{t("addPosition:vacancies")} <span className="text-danger">*</span></Form.Label><Form.Control
@@ -374,7 +374,7 @@ const ReservationSection = ({
                                         border: "1px solid #ced4da",
                                         borderRadius: "4px",
                                         padding: "6px 12px",
-                                       backgroundColor: "#e9ecef",
+                                        backgroundColor: "#e9ecef",
                                         display: "flex",
                                         alignItems: "center",
                                         fontSize: "14px",

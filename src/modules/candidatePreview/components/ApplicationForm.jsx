@@ -1404,7 +1404,7 @@ const ApplicationForm = ({
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.languages || "-"}</td>
                     <td className="fw-med">{t("social_media_links")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td>
-                    
+
                   </tr>
 
                   <tr>
@@ -1424,12 +1424,12 @@ const ApplicationForm = ({
                       )}
 
                     </td>
-                   
+
 
                   </tr>
 
                   <tr>
-                     <td className="fw-med">{t("location_pref3")}</td>
+                    <td className="fw-med">{t("location_pref3")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
                         data.personalDetails.locationPreference3,
@@ -1440,8 +1440,8 @@ const ApplicationForm = ({
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.localLanguage || "-"}
                     </td>
-                    
-                  </tr> 
+
+                  </tr>
                   <tr>
                     <td className="fw-med">{t("is_local_language_studied")}</td>
                     <td className="fw-reg" colSpan={2}>
@@ -1500,7 +1500,20 @@ const ApplicationForm = ({
                 <tbody>
                   {/* {(data.education || []).map((edu, index) => ( */}
                   {(data.education || [])
-                    .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+                    .sort((a, b) => {
+                      const getDate = (item) =>
+                        item.rawStartDate || item.rawEndDate || null;
+
+                      const dateA = getDate(a)
+                        ? new Date(getDate(a)).getTime()
+                        : 0;
+
+                      const dateB = getDate(b)
+                        ? new Date(getDate(b)).getTime()
+                        : 0;
+
+                      return dateB - dateA;
+                    })
                     .map((edu, index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>
