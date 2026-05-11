@@ -111,6 +111,8 @@ const openEdit = (panel, index) => {
   const loadPanels = async (positionId) => {
   if (!positionId) return;
 
+  console.log("positionids",positionId)
+
   try {
     const response = await interviewService.getPanelsByPosition(positionId);
 

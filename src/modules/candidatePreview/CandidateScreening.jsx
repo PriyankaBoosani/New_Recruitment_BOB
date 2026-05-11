@@ -837,84 +837,85 @@ const fetchSchedulePoolCandidates = async () => {
 
     const res = await candidateWorkflowServices.getSchedulePoolCandidates(payload);
 
-    //const apiData = res?.data;
-   const apiData = {
-  content: [
-    {
-      fullName: "Allvar Mahesh",
+    const apiData = res?.data;
 
-      candidateApplications: {
-        id: "ede93cac-74ff-494a-9787-e45e253660f0",
-        applicationNo: "APP-2026-000593"
-      },
 
-      interviewCenter: {
-        interviewCentre:
-          "AHMEDABAD,ZO AHMEDABAD"
-      },
+ const mappedRows = (apiData?.content || []).map((c) => {
 
-      panelName: "Panel 1",
+  const start =
+    c?.interviewScheduleStaging
+      ?.interviewStartAt;
 
-      panelDate: "2026-05-13",
+  const end =
+    c?.interviewScheduleStaging
+      ?.interviewEndAt;
 
-      startTime: "11:00:00",
+  return {
 
-      endTime: "11:15:00"
-    },
+    // IMPORTANT FOR EDIT FLOW
+    applicationId:
+      c?.application?.id,
 
-    {
-      fullName: "John Doe",
+    interviewCenterId:
+      c?.interviewCentres
+        ?.interviewCentreId || "",
 
-      candidateApplications: {
-        id: "ebe791c4-1d41-4db9-9981-f00c50ea9a7b",
-        applicationNo: "APP-2026-000596"
-      },
+    panelId:
+      c?.interviewPanels
+        ?.interviewPanelId,
 
-      interviewCenter: {
-        interviewCentre:
-          "HYDERABAD,ZO HYDERABAD"
-      },
+    duration:
+      c?.interviewScheduleStaging
+        ?.interviewDurationMinutes || 15,
 
-      panelName: "Panel 2",
+    perDay: "1",
 
-      panelDate: "2026-05-13",
-
-      startTime: "11:30:00",
-
-      endTime: "11:45:00"
-    }
-  ]
-};
-
-  const mappedRows =
-  (apiData?.content || []).map((c) => ({
-
+    // TABLE DATA
     id:
-      c?.candidateApplications?.id,
+      c?.application?.id,
 
     name:
       c?.fullName || "-",
 
     regNo:
-      c?.candidateApplications
+      c?.application
         ?.applicationNo || "-",
 
     date:
-      c?.panelDate || "-",
+      start?.split("T")[0] || "-",
+
+    rawDate:
+      start?.split("T")[0] || "",
+
+    startTime:
+      start
+        ?.split("T")[1]
+        ?.slice(0, 5) || "",
+
+    endTime:
+      end
+        ?.split("T")[1]
+        ?.slice(0, 5) || "",
 
     time:
-      c?.startTime && c?.endTime
-        ? `${c.startTime} - ${c.endTime}`
+      start && end
+        ? `${start
+            .split("T")[1]
+            .slice(0, 5)} - ${end
+            .split("T")[1]
+            .slice(0, 5)}`
         : "-",
 
     zone:
-      c?.interviewCenter
-        ?.interviewCentre || "-",
+      c?.interviewCentres?.zone || "-",
 
     panel:
-      c?.panelName || "-"
+      c?.interviewPanels
+        ?.panelName || "-"
 
-  }));
+  };
+
+});
 
   console.log("mappedRows",mappedRows)
 

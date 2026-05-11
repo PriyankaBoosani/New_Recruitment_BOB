@@ -180,6 +180,7 @@ const formatTimeRange = (startStr, endStr) => {
 
 const applySchedule = async ({ selectedPanels,positionId, candidates = passedCandidates, zonalChangeMap = {} }) => {
   try {
+    console.log("selectedPanels",selectedPanels)
    // console.log("FINAL TIME SENT 👉", formatTime(startTime));
    console.log("zonalChangeMap", zonalChangeMap);
     // ✅ Build payload
