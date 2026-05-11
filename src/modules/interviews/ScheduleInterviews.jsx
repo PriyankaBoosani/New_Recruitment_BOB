@@ -352,25 +352,37 @@ const rebuiltSelectedPanels = Object.values(
               // ✅ EDIT MODE
               if (isEditMode) {
 
-                const editPayload = {
+  const editPayload = {
 
-                  applicationIds:
-                    schedulePoolData.map(
-                      x => x.applicationId
-                    ),
+    selectedPanels:
+      rebuiltSelectedPanels,
 
-                  positionIds:
-                    Array.isArray(selectedPositionId)
-                      ? selectedPositionId
-                      : [selectedPositionId],
+    positionId:
+      Array.isArray(selectedPositionId)
+        ? selectedPositionId
+        : [selectedPositionId],
 
-                  panelScheduleModelList:
-                    data.panelScheduleModelList
-                };
+    candidates:
+      schedulePoolData.map(item => ({
 
-                setPendingApplyData(editPayload);
+        id:
+          item.applicationId,
 
-              } else {
+        interviewCenterId:
+          item.interviewCenterId
+
+      }))
+
+  };
+
+  console.log(
+    "EDIT PAYLOAD",
+    editPayload
+  );
+
+  setPendingApplyData(editPayload);
+
+} else {
 
                 setPendingApplyData(data);
 

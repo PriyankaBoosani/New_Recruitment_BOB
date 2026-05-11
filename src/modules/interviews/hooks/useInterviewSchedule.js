@@ -262,7 +262,7 @@ candidates.forEach((candidate) => {
 
   zonalChangeMap: updatedZonalChangeMap
 };
-    console.log("FINAL PAYLOAD 👉", payload);
+    console.log("FINAL PAYLOAD 👉", payload);//return false;
 
     // ✅ Call API
    const res = await interviewService.allocatePanels(payload);
