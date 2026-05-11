@@ -911,7 +911,8 @@ const fetchSchedulePoolCandidates = async () => {
 
     panel:
       c?.interviewPanels
-        ?.panelName || "-"
+        ?.panelName || "-",
+    interviewStatus:c?.interviewScheduleStaging.interviewSchedulingApprovalStatus || "-"
 
   };
 
@@ -2687,7 +2688,7 @@ const handleEditSchedule = () => {
 
         {activeTab === "SCHEDULE_POOL" && (
           <div>
-
+{/* 
           <div className="d-flex justify-content-end mb-3">
 
             <button
@@ -2698,9 +2699,56 @@ const handleEditSchedule = () => {
               Edit Schedule
             </button>
 
-          </div>
+          </div> */}
      
-          <SchedulePoolTable rows={schedulePoolCandidates}/>
+           <SchedulePoolTable
+              rows={schedulePoolCandidates}
+
+              onEdit={handleEditSchedule}
+
+              page={page}
+
+              pageSize={pageSize}
+
+              totalElements={schedulePoolTotal}
+
+              onPageChange={setPage}
+
+              onPageSizeChange={setPageSize}
+
+              onViewProfile={(candidate) => {
+
+                navigate("/candidate-preview", {
+
+                  state: {
+
+                    candidate,
+
+                    applicationId:
+                      candidate.applicationId,
+
+                    positionId:
+                      selectedPositionId,
+
+                    requisitionId:
+                      selectedRequisitionId,
+
+                    fromSchedulePool: true,
+
+                    activeTab: "SCHEDULE_POOL"
+
+                  }
+
+                });
+
+              }}
+
+              onViewResume={handleViewFile}
+
+              onOpenZonalComments={
+                handleOpenZonalComments
+              }
+            />
           </div>
         )}
 
