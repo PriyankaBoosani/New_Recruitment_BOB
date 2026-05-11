@@ -30,6 +30,7 @@ export const mapMessagesData = (
 
       positionId: item?.positionId || selectedPositionId,
       positionName: selectedPositionName || "-",
+      
 
       date: createdDate
         ? createdDate.toISOString().split("T")[0]
@@ -74,6 +75,7 @@ export const mapMessagesData = (
           type: msg.senderType === "CANDIDATE" ? "candidate" : "request",
           title: msg.senderType || "-",
           comment: msg.message || msg.comments || "-",
+          attachmentPath: msg.attachmentPath || null,
 
           time: msgDate
             ? msgDate.toLocaleTimeString([], {

@@ -265,6 +265,18 @@ const masterApiService = {
     );
   },
 
+  getMessagesAzureBlobSasUrl(dir, client = "AzureAD") {
+    return apis.get(
+      `/azureblob/file/sas-url?dir=${dir}`,
+      {
+        headers: {
+          "X-Client": client,
+        },
+      }
+    );
+  },
+
+
   getAllMasters: () => apis.get("/display/all"),
   getUser: () => apis.get('/user/all'),
   getZonalStates: () => apis.get("/zonal-states/all"),
