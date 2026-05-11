@@ -12,8 +12,11 @@ export const useMessages = () => {
 
   const getStatusClass = (status) => {
     switch (status) {
-      case "Approved":
+      case "L1 Approved":
+      case "L2 Approved":
         return "msg-status-approved";
+      case "L1 Rejected":
+      case "L2 Rejected":
       case "Rejected":
         return "msg-status-rejected";
       default:

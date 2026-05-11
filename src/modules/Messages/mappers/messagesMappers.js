@@ -3,7 +3,8 @@ export const mapMessagesData = (
   selectedRequisitionId,
   selectedPositionId,
   selectedRequisitionName,
-  selectedPositionName,
+  // selectedPositionName,
+  positions = [],
   requestTypes = [],
   threadMessagesMap = {}
 ) => {
@@ -28,9 +29,15 @@ export const mapMessagesData = (
       requisitionId: selectedRequisitionId,
       requisitionName: selectedRequisitionName || "-",
 
-      positionId: item?.positionId || selectedPositionId,
-      positionName: selectedPositionName || "-",
-      
+      // positionId: item?.positionId || selectedPositionId,
+      // positionName: selectedPositionName || "-",
+      positionId: item?.positionId || "",
+
+      positionName:
+        positions.find(
+          (p) => p.jobPositions?.positionId === item?.positionId
+        )?.masterPositions?.positionName || "-",
+
 
       date: createdDate
         ? createdDate.toISOString().split("T")[0]
@@ -38,10 +45,10 @@ export const mapMessagesData = (
 
       time: createdDate
         ? createdDate.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true
-          })
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true
+        })
         : "-",
 
       status: (() => {
@@ -50,6 +57,7 @@ export const mapMessagesData = (
           case "L1_PENDING": return "L1 Pending";
           case "L1_APPROVED": return "L1 Approved";
           case "L1_REJECTED": return "L1 Rejected";
+          case "L2_PENDING": return "L2 Pending";
           case "L2_APPROVED": return "L2 Approved";
           case "L2_REJECTED": return "L2 Rejected";
           case "REJECTED": return "Rejected";
@@ -79,10 +87,10 @@ export const mapMessagesData = (
 
           time: msgDate
             ? msgDate.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true
-              })
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true
+            })
             : "-",
 
           file: false,
