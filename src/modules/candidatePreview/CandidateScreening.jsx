@@ -419,34 +419,34 @@ export default function CandidateScreening({ selectedJob }) {
   };
 
   const handleJoiningDateChange = (value) => {
-  setJoiningDate(value);
+    setJoiningDate(value);
 
-  if (!value) {
-    setFormErrors(prev => ({ ...prev, joiningDate: "" }));
-    return;
-  }
+    if (!value) {
+      setFormErrors(prev => ({ ...prev, joiningDate: "" }));
+      return;
+    }
 
-  if (!acceptBeforeDate) {
-    setFormErrors(prev => ({
-      ...prev,
-      joiningDate: t("candidateWorkflow:select_accept_before_first"),
-    }));
-    return;
-  }
+    if (!acceptBeforeDate) {
+      setFormErrors(prev => ({
+        ...prev,
+        joiningDate: t("candidateWorkflow:select_accept_before_first"),
+      }));
+      return;
+    }
 
-  if (value <= acceptBeforeDate) {
-    setFormErrors(prev => ({
-      ...prev,
-      joiningDate: t("candidateWorkflow:must_be_greater_than_accept_before"),
-    }));
-  } else {
-    setFormErrors(prev => ({ ...prev, joiningDate: "" }));
-  }
-};
-const handleTemplateChange = (value) => {
-  setOfferTemplateId(value);
-  setSelectedTemplate(value);
-};
+    if (value <= acceptBeforeDate) {
+      setFormErrors(prev => ({
+        ...prev,
+        joiningDate: t("candidateWorkflow:must_be_greater_than_accept_before"),
+      }));
+    } else {
+      setFormErrors(prev => ({ ...prev, joiningDate: "" }));
+    }
+  };
+  const handleTemplateChange = (value) => {
+    setOfferTemplateId(value);
+    setSelectedTemplate(value);
+  };
 
   const formatDateTime = (value) => {
     if (!value) return "-";
@@ -610,7 +610,7 @@ const handleTemplateChange = (value) => {
         positions.find(
           (p) => p.jobPositions?.positionId === selectedPositionId
         )?.masterPositions?.positionName,
-        isLocationWise: positions.find((p) => p.jobPositions?.positionId === selectedPositionId).jobPositions.isLocationWise
+      isLocationWise: positions.find((p) => p.jobPositions?.positionId === selectedPositionId).jobPositions.isLocationWise
     }
     : null;
 
@@ -717,32 +717,32 @@ const handleTemplateChange = (value) => {
     // Don't reset page when changing tabs - preserve user's page position
   }, [activeTab]);
 
-useEffect(() => {
-  if (!location.state) return;
+  useEffect(() => {
+    if (!location.state) return;
 
-  // ✅ Candidate Pool
-  if (location.state.page !== undefined) {
-    setPage(location.state.page);
-  }
+    // ✅ Candidate Pool
+    if (location.state.page !== undefined) {
+      setPage(location.state.page);
+    }
 
-  if (location.state.pageSize !== undefined) {
-    setPageSize(location.state.pageSize);
-  }
+    if (location.state.pageSize !== undefined) {
+      setPageSize(location.state.pageSize);
+    }
 
-  // 🔥 INTERVIEW POOL FIX (ADD THIS)
-  if (location.state.interviewPage !== undefined) {
-    setInterviewPage(location.state.interviewPage);
-  }
+    // 🔥 INTERVIEW POOL FIX (ADD THIS)
+    if (location.state.interviewPage !== undefined) {
+      setInterviewPage(location.state.interviewPage);
+    }
 
-  if (location.state.interviewPageSize !== undefined) {
-    setInterviewPageSize(location.state.interviewPageSize);
-  }
+    if (location.state.interviewPageSize !== undefined) {
+      setInterviewPageSize(location.state.interviewPageSize);
+    }
 
-  if (location.state.filters) {
-    setFilters(location.state.filters);
-  }
+    if (location.state.filters) {
+      setFilters(location.state.filters);
+    }
 
-}, []);
+  }, []);
 
   const navRequisitionId = location.state?.requisitionId || null;
   const navPositionId = location.state?.positionId || null;
@@ -1033,41 +1033,42 @@ useEffect(() => {
       console.error("Preview failed", err);
     }
   };
-const handleAcceptBeforeDateChange = (value) => {
-  setAcceptBeforeDate(value);
+  const handleAcceptBeforeDateChange = (value) => {
+    setAcceptBeforeDate(value);
 
-  if (!value) {
-    setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
-    return;
-  }
+    if (!value) {
+      setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
+      return;
+    }
 
-  if (value <= todayString()) {
-    setFormErrors(prev => ({
+    if (value <= todayString()) {
+      setFormErrors(prev => ({
+        ...prev,
+        acceptBeforeDate: t("candidateWorkflow:must_be_greater_than_today"),
+      }));
+    } else {
+      setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
+    }
+  };
+  const handleStatusChange = (value) => {
+    setFilters(prev => ({
       ...prev,
-      acceptBeforeDate: t("candidateWorkflow:must_be_greater_than_today"),
+      status: value ? [value] : [],
     }));
-  } else {
-    setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
-  }
-};
-const handleStatusChange = (value) => {
-  setFilters(prev => ({
-    ...prev,
-    status: value ? [value] : [],
-  }));
-};
-const handleOfferStatusToggle = (status) => {
-  setFilters(prev => {
-    const alreadySelected = prev.status.includes(status);
+  };
+  const handleOfferStatusToggle = (status) => {
+    setFilters(prev => {
+      const alreadySelected = prev.status.includes(status);
 
-    return {
-      ...prev,
-      status: alreadySelected
-        ? prev.status.filter(s => s !== status)
-        : [...prev.status, status],
-    };
-  });
-};
+      return {
+        ...prev,
+        status: alreadySelected
+          ? prev.status.filter(s => s !== status)
+          : [...prev.status, status],
+      };
+    });
+  };
+  const showLocationFilter = activeTab === "CANDIDATE_POOL" && hasLocationData;
 
   return (
     <div className="container-fluid px-5 py-4">
@@ -1218,7 +1219,7 @@ const handleOfferStatusToggle = (status) => {
                 </select>
               </div>
 
-              {activeTab === "CANDIDATE_POOL" && (
+              {activeTab === "CANDIDATE_POOL" && hasLocationData && (
                 <div className="col-md-2 col-6 mt-0">
                   <select
                     className="form-select fs-14 py-1 mt-0"
@@ -1231,6 +1232,7 @@ const handleOfferStatusToggle = (status) => {
                     }
                   >
                     <option value="">{t("candidateWorkflow:all_locations")}</option>
+
                     {availableLocations?.map((loc) => (
                       <option key={loc.id} value={loc.id}>
                         {loc.name}
@@ -1269,8 +1271,15 @@ const handleOfferStatusToggle = (status) => {
               )}
 
               {selectedPositionId && selectedRequisitionId && (
-                <div className="col-md-4 col-12 text-md-end mt-2 mt-md-0">
-                
+                <div
+                  className={`col-12 text-md-end mt-2 mt-md-0 ${activeTab === "CANDIDATE_POOL" && hasLocationData
+                      ? "col-md-4"
+                      : activeTab === "CANDIDATE_POOL"
+                        ? "col-md-6"
+                        : "col-md-4"
+                    }`}
+                >
+
                   {/* {activeTab === "CANDIDATE_POOL" && (
                     <button
                       className="rank-btn fs-14"
@@ -1330,7 +1339,7 @@ const handleOfferStatusToggle = (status) => {
                   return (
                     <span
                       key={status}
-                     onClick={() => handleOfferStatusToggle(status)}
+                      onClick={() => handleOfferStatusToggle(status)}
                       className={`badge px-3 py-2 border-2 rounded fw-normal fs-12 ${isSelected
                         ? "orange-color orange-border"
                         : "bg-light text-muted border"
@@ -1803,9 +1812,9 @@ const handleOfferStatusToggle = (status) => {
             </div>
 
             {/* ACTION BUTTONS */}
-            <div className="d-flex gap-4 align-items-center"   style={{
-          paddingRight: "15px"
-          }}>
+            <div className="d-flex gap-4 align-items-center" style={{
+              paddingRight: "15px"
+            }}>
               {previewUrl && (
                 <a
                   href={previewUrl}
