@@ -907,7 +907,7 @@ const fetchSchedulePoolCandidates = async () => {
         : "-",
 
     zone:
-      c?.interviewCentres?.zone || "-",
+      c?.interviewCentres?.interviewCentre || "-",
 
     panel:
       c?.interviewPanels

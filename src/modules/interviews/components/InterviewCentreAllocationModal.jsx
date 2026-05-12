@@ -9,6 +9,7 @@ setCentreRows,
   allInterviewCentres,
   onContinue
 }) => {
+  console.log("allInterviewCentres",allInterviewCentres)
   console.log("uniqueAllocatedCentres",uniqueAllocatedCentres)
 
   if (!show) return null;

@@ -131,6 +131,7 @@
     "candidate_resume": "Candidate Resume",
     "candidate_pool": "Candidate Pool",
     "interview_pool": "Interview Pool",
+    "schedule_pool":"Schedule Pool",
     "offer_pool": "Offer Pool",
     "onboarding_pool": "Onboarding Pool",
     "import_candidates": "Import Candidates",

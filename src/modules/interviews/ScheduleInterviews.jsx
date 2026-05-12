@@ -88,6 +88,8 @@ const state = location.state || {};
 const schedulePoolData =
   location.state?.schedulePoolData;
 
+  console.log("schedulePoolData",schedulePoolData)
+
 const isEditMode =
   location.state?.isEditMode;
 
@@ -147,7 +149,7 @@ const isSelectionDone =
 const sourceCandidates = isEditMode
   ? schedulePoolData
   : passedCandidates;
-
+console.log("sourceCandidates",sourceCandidates);
 const uniqueAllocatedCentres = [
   ...new Map(
     sourceCandidates.map(candidate => [
@@ -523,17 +525,12 @@ const rebuiltSelectedPanels = Object.values(
   setShowCentreConfirmModal(false);
 
   // 🔥 initialize mappings
- setCentreRows(
-
-  uniqueAllocatedCentres.map(c => ({
-
-    allocatedCentreId: c.interviewCentreId,
-
+setCentreRows([
+  {
+    allocatedCentreId: "",
     replacedCentreId: ""
-
-  }))
-
-);
+  }
+]);
 
   setShowCentreModal(true);
 
