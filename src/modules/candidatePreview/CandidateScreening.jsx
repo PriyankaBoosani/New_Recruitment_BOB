@@ -1272,7 +1272,165 @@ export default function CandidateScreening({ selectedJob }) {
   const canSendToOfferPool =
     selectedInterviewCandidates.length > 0 &&
     selectedInterviewCandidates.every((c) => c.status === "QUALIFIED");
-const handleReschedule={};
+const handleReschedule = () => {
+
+  console.log(
+    "selectedInterviewCandidates",
+    selectedInterviewCandidates
+  );
+
+  const mappedRows = selectedInterviewCandidates.map((c) => ({
+
+    // REQUIRED FOR SAVE PAYLOAD
+    applicationId:
+      c.applicationId || c.id,
+
+    interviewCenterId:
+      c.zonalOfficeId || "",
+
+    panelId:
+      c.panelId || "",
+
+    duration:
+      c.duration || 15,
+
+    perDay: "1",
+
+    // TABLE DATA
+    id: c.id,
+
+    name:
+      c.name || "-",
+
+    regNo:
+      c.regNo || "-",
+
+    // IMPORTANT → YYYY-MM-DD FORMAT
+    date:
+      c.interviewStartAt
+        ?.split("T")[0] || "",
+
+    rawDate:
+      c.interviewStartAt
+        ?.split("T")[0] || "",
+
+    // IMPORTANT → 24 HOUR FORMAT
+    startTime:
+      c.interviewStartAt
+        ?.split("T")[1]
+        ?.slice(0, 5) || "",
+
+    endTime:
+      c.interviewEndAt
+        ?.split("T")[1]
+        ?.slice(0, 5) || "",
+
+    // IMPORTANT → SAME FORMAT AS SCHEDULE POOL
+    time:
+      c.interviewStartAt && c.interviewEndAt
+        ? `${c.interviewStartAt
+            .split("T")[1]
+            .slice(0, 5)} - ${c.interviewEndAt
+            .split("T")[1]
+            .slice(0, 5)}`
+        : "-",
+
+    zone:
+      c.zone || "-",
+
+    // IMPORTANT
+    panel:
+      c.panel || "-"
+
+  }));
+
+  console.log("mappedRows", mappedRows);
+
+  // BUILD PANEL STRUCTURE
+  const groupedPanels = Object.values(
+
+    mappedRows.reduce((acc, item, index) => {
+
+      if (!acc[item.panel]) {
+
+        acc[item.panel] = {
+
+          id:
+            item.panelId || index + 1,
+
+          name:
+            item.panel,
+
+          slots: []
+
+        };
+
+      }
+
+      acc[item.panel].slots.push({
+
+        date:
+          item.rawDate || "",
+
+        startTime:
+          item.startTime || "",
+
+        endTime:
+          item.endTime || "",
+
+        duration:
+          item.duration || 15,
+
+        perDay:
+          item.perDay || "1"
+
+      });
+
+      return acc;
+
+    }, {})
+
+  );
+
+  console.log(
+    "groupedPanels",
+    groupedPanels
+  );
+
+  navigate("/schedule-interviews", {
+
+    state: {
+
+      isEditMode: true,
+
+      requisitionId:
+        selectedRequisitionId,
+
+      positionId:
+        selectedPositionId,
+
+      // TABLE DATA
+      schedulePoolData:
+        mappedRows,
+
+      // PANEL DATA
+      selectedPanels:
+        groupedPanels,
+
+      requisition:
+        normalizedRequisition,
+
+      position:
+        selectedPosition,
+
+      activeTab:
+        "INTERVIEW_POOL"
+
+    }
+
+  });
+
+};
 const canReschedule =
   selectedInterviewCandidates.length > 0 &&
   selectedInterviewCandidates.every(

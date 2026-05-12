@@ -30,7 +30,7 @@ export default function useInterviewPool({
         const centres = centreRes?.data || [];
         const centreLookup = {};
         centres.forEach((c) => {
-          centreLookup[c.interviewCentreId] = c.displayName;
+          centreLookup[c.interviewCentreId] = c.interviewCentre;
         });
         setCentreMap(centreLookup);
       } catch (err) {
