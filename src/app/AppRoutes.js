@@ -34,10 +34,10 @@ import CandidateScreening from "../modules/candidatePreview/CandidateScreening";
 import InterviewerSchedule from "../modules/Interviewer/InterviewerSchedule"
 // import CandidateInterview from "../modules/Interview/CandidateInterview";
 import ScheduleInterviews from "../modules/interviews/ScheduleInterviews";
-import Approvals from "../modules/Approvals/pages/RequisitionRequests";
-import ExtensionsRequests from "../modules/Approvals/pages/ExtensionsRequests";
-import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";
-import InterviewRequests from "../modules/Approvals/pages/InterviewRequests";
+// import Approvals from "../modules/Approvals/pages/RequisitionRequests";
+// import ExtensionsRequests from "../modules/Approvals/pages/ExtensionsRequests";
+// import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";
+// import InterviewRequests from "../modules/Approvals/pages/InterviewRequests";
 import Messages from "../modules/Messages/messagesScreen";
 
 import UnauthorizedPage from "./UnauthorizedPage"
@@ -164,24 +164,24 @@ const AppRoutes = () => {
                 }
               />
 
-                <Route
-                  path="/generic-or-annexures"
-                  element={
-                    <PrivilegeRoute privilege="Admin">
-                      <GenericOrAnnexuresPage />
-                    </PrivilegeRoute>
-                  }
-                />   
+              <Route
+                path="/generic-or-annexures"
+                element={
+                  <PrivilegeRoute privilege="Admin">
+                    <GenericOrAnnexuresPage />
+                  </PrivilegeRoute>
+                }
+              />
 
-                 <Route
-                  path="/education-qualification"
-                  element={
-                    <PrivilegeRoute privilege="Admin">
-                      <EducationModal />
-                    </PrivilegeRoute>
-                  }
-                />       
-                 <Route
+              <Route
+                path="/education-qualification"
+                element={
+                  <PrivilegeRoute privilege="Admin">
+                    <EducationModal />
+                  </PrivilegeRoute>
+                }
+              />
+              <Route
                 path="/state-languages"
                 element={
                   <PrivilegeRoute privilege="Admin">
@@ -189,15 +189,15 @@ const AppRoutes = () => {
                   </PrivilegeRoute>
                 }
               />
-                {/* ---------- NON-ADMIN ONLY ROUTES ---------- */}
-                <Route
-                  path="/job-posting"
-                  element={
-                    <PrivilegeRoute privilege="JobPostings">
-                      <JobPostingsList />
-                    </PrivilegeRoute>
-                  }
-                />
+              {/* ---------- NON-ADMIN ONLY ROUTES ---------- */}
+              <Route
+                path="/job-posting"
+                element={
+                  <PrivilegeRoute privilege="JobPostings">
+                    <JobPostingsList />
+                  </PrivilegeRoute>
+                }
+              />
 
               <Route
                 path="/job-posting/create-requisition"
@@ -217,24 +217,24 @@ const AppRoutes = () => {
                 }
               />
 
-             <Route
-  path="/candidate-preview"
-  element={
-    <PrivilegeRoute privilegesRequired={["Candidate Pool", "Verification", "Interview", "Compensation Pool"]}>
-      <CandidatePreviewPage />
-    </PrivilegeRoute>
-  }
-/>
+              <Route
+                path="/candidate-preview"
+                element={
+                  <PrivilegeRoute privilegesRequired={["Candidate Pool", "Verification", "Interview", "Compensation Pool"]}>
+                    <CandidatePreviewPage />
+                  </PrivilegeRoute>
+                }
+              />
 
-                <Route
-                  path="/candidate-workflow"
-                  element={
-                     <PrivilegeRoute privilegesRequired={["Candidate Pool", "Compensation Pool"]}>
-                   
-                      <CandidateScreening />
-                    </PrivilegeRoute>
-                  }
-                />
+              <Route
+                path="/candidate-workflow"
+                element={
+                  <PrivilegeRoute privilegesRequired={["Candidate Pool", "Compensation Pool"]}>
+
+                    <CandidateScreening />
+                  </PrivilegeRoute>
+                }
+              />
 
               <Route
                 path="/candidate-verification"
@@ -262,27 +262,27 @@ const AppRoutes = () => {
                   </PrivilegeRoute>
                 }
               />
-              
-                 <Route
+
+              {/* <Route
                 path="/messages"
                 element={
                   // <PrivilegeRoute privilege="JobPostings">
-                    <Messages />
+                  <Messages />
                   // </PrivilegeRoute>
+                }
+              /> */}
+
+
+              <Route
+                path="/schedule-interviews"
+                element={
+                  <PrivilegeRoute privilege="Interview Pool">
+                    <ScheduleInterviews />
+                  </PrivilegeRoute>
                 }
               />
 
-
-              <Route
-                  path="/schedule-interviews"
-                  element={
-                    <PrivilegeRoute privilege="Interview Pool">
-                      <ScheduleInterviews />
-                    </PrivilegeRoute>
-                  }
-                />
-
-              <Route
+              {/* <Route
                 path="/requisition-requests"
                 element={
                   <PrivilegeRoute privilegesRequired={["L1 Approval", "L2 Approval"]}>
@@ -315,7 +315,7 @@ const AppRoutes = () => {
                     <InterviewRequests />
                   </PrivilegeRoute>
                 }
-              />
+              /> */}
 
 
 

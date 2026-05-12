@@ -360,10 +360,10 @@ const Header = () => {
                 </Nav.Link>
               )}
 
-              <Nav.Link as={NavLink} to="/messages" onClick={closeMenu}>
+              {/* <Nav.Link as={NavLink} to="/messages" onClick={closeMenu}>
                 {t("messages")}
-              </Nav.Link>
-               {canApprovals && (
+              </Nav.Link> */}
+               {/* {canApprovals && (
                 <NavDropdown
                   id="approvals-dropdown"
                   show={showApprovalsMenu}
@@ -415,7 +415,7 @@ const Header = () => {
                     {t("interview_requests")}
                   </NavDropdown.Item>
                 </NavDropdown>
-              )}
+              )} */}
               {/* {isRecruiter && (
                 <Nav.Link
                   as={NavLink}

@@ -284,12 +284,10 @@ const InterviewRequests = () => {
                   <Badge bg="light" text="primary" className="req-id">
                     {selectedRequisition.requisitionCode}
                   </Badge>
-                  <Badge bg="info" className="ms-2">
-                    {selectedRequisition.status}
-                  </Badge>
+                 
                 </div>
 
-                <div className="d-flex justify-content-between align-items-start">
+                <div className="d-flex justify-content-between align-items-start req-header">
                   <div className="d-flex align-items-start">
                     <div>
                       <div className="d-flex align-items-center gap-2 mb-2">

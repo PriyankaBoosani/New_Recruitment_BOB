@@ -29,7 +29,7 @@ const SelectIndentModal = ({
 
   return (
     <Modal show={show} onHide={onClose} centered className="selectindent">
-      <Modal.Header closeButton>
+      <Modal.Header closeButton className="border-0">
         <Modal.Title className="bluecol f16">Select Indent</Modal.Title>
       </Modal.Header>
 
@@ -94,7 +94,7 @@ const SelectIndentModal = ({
         )}
       </Modal.Body>
 
-      <Modal.Footer>
+      <Modal.Footer className="border-0">
         <Button variant="outline-secondary" onClick={onClose}>
           Cancel
         </Button>
