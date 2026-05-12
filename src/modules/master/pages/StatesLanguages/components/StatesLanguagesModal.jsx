@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Modal, Button } from "react-bootstrap";
+import { ChevronDown } from "react-bootstrap-icons";;
 
 const StatesLanguagesModal = ({
     show,
@@ -70,8 +71,10 @@ const StatesLanguagesModal = ({
                     <div className="row g-3">
 
                         {/* STATE */}
-                        <div className="col-md-4">
-                            <label className="form-label">State *</label>
+                        <div className="col-md-5">
+                            <label className="form-label">
+                                State <span className="text-danger">*</span>
+                            </label>
 
                             {isViewing ? (
                                 <div className="form-control-view"> {states.find(s => s.stateId === formData.state)?.stateName || "-"}</div>
@@ -81,9 +84,17 @@ const StatesLanguagesModal = ({
                                         className={`form-select ${errors?.state ? "is-invalid" : ""}`}
                                         value={formData.state}
                                         onChange={(e) => onChange("state", e.target.value)}
+                                        style={{
+                                            paddingRight: "40px",
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                            whiteSpace: "nowrap",
+                                            width: "100%"
+                                        }}
                                     >
                                         <option value="">Select</option>
-                                        {states.map((s, i) => (
+
+                                        {states.map((s) => (
                                             <option key={s.stateId} value={s.stateId}>
                                                 {s.stateName}
                                             </option>
@@ -96,9 +107,10 @@ const StatesLanguagesModal = ({
                         </div>
 
                         {/* LANGUAGES */}
-                        <div className="col-md-4">
-                            <label className="form-label">Languages *</label>
-
+                        <div className="col-md-7">
+                            <label className="form-label">
+                                Languages <span className="text-danger">*</span>
+                            </label>
                             {isViewing ? (
                                 <div className="form-control-view">
                                     {formData.languages
@@ -109,22 +121,44 @@ const StatesLanguagesModal = ({
                             ) : (
                                 <>
                                     <div className="position-relative" ref={dropdownRef}>
-
-                                        {/* INPUT */}
                                         <div
-                                            className={`form-control ${errors?.languages ? "is-invalid" : ""}`}
+                                            className={`form-control d-flex align-items-center justify-content-between ${errors?.languages ? "is-invalid" : ""}`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setOpenDropdown(prev => !prev);
                                             }}
-                                            style={{ cursor: "pointer" }}
+                                            style={{
+                                                cursor: "pointer",
+                                                minHeight: "38px"
+                                            }}
                                         >
-                                            {formData.languages?.length
-                                                ? formData.languages
-                                                    .map(id => languages.find(l => l.languageId === id)?.languageName)
-                                                    .filter(Boolean)
-                                                    .join(", ")
-                                                : "Select Languages"}
+                                            <span
+                                                style={{
+                                                    whiteSpace: "nowrap",
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    maxWidth: "90%"
+                                                }}
+                                                title={
+                                                    formData.languages?.length
+                                                        ? formData.languages
+                                                            .map(id => languages.find(l => l.languageId === id)?.languageName)
+                                                            .filter(Boolean)
+                                                            .join(", ")
+                                                        : ""
+                                                }
+                                            >
+                                                {formData.languages?.length
+                                                    ? formData.languages
+                                                        .map(id => languages.find(l => l.languageId === id)?.languageName)
+                                                        .filter(Boolean)
+                                                        .join(", ")
+                                                    : "Select Languages"}
+                                            </span>
+
+                                            <span style={{ marginLeft: "10px", flexShrink: 0 }}>
+                                                <ChevronDown size={14} />
+                                            </span>
                                         </div>
 
                                         {/* DROPDOWN */}
@@ -134,7 +168,10 @@ const StatesLanguagesModal = ({
                                                 style={{
                                                     zIndex: 1000,
                                                     maxHeight: "200px",
-                                                    overflowY: "auto"
+                                                    overflowY: "auto",
+                                                    top: "100%",
+                                                    left: 0,
+                                                    marginTop: "4px"
                                                 }}
                                             >
                                                 {languages.map((lang, i) => (

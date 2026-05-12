@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { Search, Plus } from "react-bootstrap-icons";
 
@@ -8,6 +8,8 @@ import StatesLanguagesTable from "../../../master/pages/StatesLanguages/componen
 import { useStateLanguages } from "../../../master/pages/StatesLanguages/hooks/useStateLanguages";
 
 const StatesLanguagesPage = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const {
     stateLangList,
@@ -17,6 +19,8 @@ const StatesLanguagesPage = () => {
     errors,
     isEditMode,
     isViewing,
+    states,
+    languages,
 
     // ✅ FIX: ADD THESE
     getStateName,
@@ -33,37 +37,26 @@ const StatesLanguagesPage = () => {
   } = useStateLanguages();
 
   return (
-    <div className="px-4 py-3 border rounded bg-white">
+    <div className="px-4 py-3 border rounded user-container">
 
-      {/* HEADER */}
       <div className="user-header d-flex justify-content-between align-items-center mb-3">
         <h2>States & Languages</h2>
 
-        <div className="d-flex align-items-center gap-3">
+        <div className="user-actions">
 
-          {/* SEARCH */}
-          <div className="position-relative">
-            <Search
-              size={16}
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "10px",
-                transform: "translateY(-50%)"
-              }}
-            />
+          <div className="search-box">
+            <Search className="search-icon" />
 
             <Form.Control
-              placeholder="Search"
+              placeholder="Search by State"
+              className="search-input"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ paddingLeft: "30px", width: "220px" }}
             />
           </div>
 
-          {/* ADD */}
           <Button className="add-button" onClick={handleAddClick}>
-            <Plus size={18} /> Add
+            <Plus size={20} /> Add
           </Button>
 
         </div>
@@ -71,6 +64,10 @@ const StatesLanguagesPage = () => {
 
       <StatesLanguagesTable
         data={stateLangList}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
         onEdit={handleEditClick}
         onView={handleViewClick}
       />
@@ -95,15 +92,11 @@ const StatesLanguagesPage = () => {
         isViewing={isViewing}
         isEditing={isEditMode}
         errors={errors}
-
-        states={stateLangList}      // ✅ ADD THIS
-        languages={stateLangList.flatMap(s =>
-          s.languageIds.map((id, i) => ({
-            languageId: id,
-            languageName: s.languageNames[i]
-          }))
-        )}                          // ✅ TEMP FIX
+        states={states}
+        languages={languages}
       />
+
+
 
     </div>
   );

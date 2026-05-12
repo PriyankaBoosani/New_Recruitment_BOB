@@ -18,6 +18,7 @@ export const validateState = (value) => {
 
 // ✅ Languages (FIXED FOR IDS)
 export const validateLanguages = (list = []) => {
+  console.log("test---", list);
 
   // ✅ REQUIRED CHECK
   if (!list || list.length === 0) {
@@ -64,15 +65,17 @@ export const validateStateLanguageForm = (
 
   // ✅ Duplicate State (FIXED)
   if (!stateError) {
-    const isDuplicate = existing.some((item, index) => {
-      const sameState =
-        normalize(item.state) === normalize(formData.state);
+   const isDuplicate = existing.some((item) => {
 
-      const isSameIndex = index === currentId;
+  const sameState =
+    String(item.stateId) === String(formData.state);
 
-      return sameState && !isSameIndex;
-    });
+  // Ignore current editing record
+  const isCurrentRecord =
+    String(item.stateId) === String(currentId);
 
+  return sameState && !isCurrentRecord;
+});
     if (isDuplicate) {
       errors.state = i18n.t(
         "statelang:duplicate_state",

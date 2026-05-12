@@ -14,7 +14,7 @@
   align-items: flex-start;
   gap: 20px;
   padding: 12px;
-  border-bottom: 1px solid #eee;
+  
   position: relative;
   /* ✅ needed for arrow */
 

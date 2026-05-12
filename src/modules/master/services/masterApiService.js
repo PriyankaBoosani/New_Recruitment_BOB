@@ -288,6 +288,13 @@ const masterApiService = {
   getStateLanguages: () =>
     apis.get("/master-dd-data/get/state-languages"),
 
+  // CREATE / UPDATE
+saveStateLanguages: (payload) =>
+  apis.post(
+    "/state-language/create-or-update/state-languages",
+    payload
+  ),
+
 
   //Interview Pool related master data interview-center
   getAllInterviewCenters: () => apis.get("/master-dd-data/get/interview-centres"),

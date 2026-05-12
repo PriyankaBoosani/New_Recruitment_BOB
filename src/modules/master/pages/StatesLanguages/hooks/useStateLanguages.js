@@ -13,6 +13,8 @@ export const useStateLanguages = () => {
     const { t } = useTranslation(["statelang", "common"]);
 
     const [stateLangList, setStateLangList] = useState([]);
+    const [states, setStates] = useState([]);
+    const [languages, setLanguages] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -50,15 +52,9 @@ export const useStateLanguages = () => {
             const states = statesRes?.data || [];
             const languages = langRes?.data || [];
             const mappings = mapRes?.data || [];
+            setStates(states);
+            setLanguages(languages);
 
-            console.log("States DATA:", states);
-            console.log("Languages DATA:", languages);
-            console.log("Mappings DATA:", mappings);
-
-            // 🔥 CHECK LENGTHS (VERY IMPORTANT)
-            console.log("States count:", states.length);
-            console.log("Languages count:", languages.length);
-            console.log("Mappings count:", mappings.length);
 
             // 🔥 MAPPER OUTPUT
             const initialData = buildStateLanguageData(
@@ -125,42 +121,61 @@ export const useStateLanguages = () => {
         setErrors({});
         setFormData({ state: "", languages: [] });
     };
+/* =========================
+   SAVE
+========================= */
+const saveStateLanguage = async () => {
 
-    /* =========================
-       SAVE
-    ========================= */
-    const saveStateLanguage = () => {
+    const { valid, errors: newErrors } =
+        validateStateLanguageForm(formData, {
+            existing: stateLangList,
+            currentId: isEditMode ? formData.state : null
+        });
 
-        const { valid, errors: newErrors } =
-            validateStateLanguageForm(formData, {
-                existing: stateLangList,
-                currentId: editIndex
-            });
+    setErrors(newErrors);
 
-        setErrors(newErrors);
-        if (!valid) return;
+    if (!valid) return;
+
+    try {
 
         const payload = {
             stateId: formData.state,
-            languageIds: formData.languages,
-            stateName: "",        // optional
-            languageNames: []     // optional
+            languageIds: formData.languages
         };
 
-        if (isEditMode) {
-            const updated = [...stateLangList];
-            updated[editIndex] = payload;
-            setStateLangList(updated);
+        console.log("SAVE PAYLOAD:", payload);
 
-            toast.success(t("statelang:updated_success", "Updated successfully"));
-        } else {
-            setStateLangList([...stateLangList, payload]);
+        const response =
+            await masterApiService.saveStateLanguages(payload);
 
-            toast.success(t("statelang:saved_success", "Saved successfully"));
+        if (!response?.success) {
+            throw new Error(
+                response?.message ||
+                "Failed to save state languages"
+            );
         }
 
+        toast.success(
+            isEditMode
+                ? t("statelang:updated_success", "Updated successfully")
+                : t("statelang:saved_success", "Saved successfully")
+        );
+
+        await loadMasterData();
+
         handleCloseModal();
-    };
+
+    } catch (error) {
+
+        console.error("SAVE ERROR:", error);
+
+        toast.error(
+            error?.response?.data?.message ||
+            error?.message ||
+            "Failed to save state languages"
+        );
+    }
+};
 
     /* =========================
        EDIT / VIEW
@@ -206,6 +221,8 @@ export const useStateLanguages = () => {
 
     return {
         stateLangList: filteredList,
+        states,
+        languages,
         showModal,
         searchTerm,
         formData,
