@@ -1049,7 +1049,7 @@ const ApplicationForm = ({
   };
 
   useEffect(() => {
-    if (!disableShortlistedSection) return;
+    if (!disableShortlistedSection || hasAnyDiscrepancy) return;
     if (screeningForm.isScreeningCompleted) return; // 🔒 preserve backend value
 
     setScreeningForm(prev => ({
