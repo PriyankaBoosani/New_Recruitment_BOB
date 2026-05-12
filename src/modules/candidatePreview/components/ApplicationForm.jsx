@@ -795,6 +795,12 @@ const ApplicationForm = ({
     }
   };
 
+  const hasAnyDiscrepancy =
+    screeningForm.isWorkCriteriaMet === "DISCREPANCY" ||
+    screeningForm.isAgeCriteriaMet === "DISCREPANCY" ||
+    screeningForm.isEducationCriteriaMet === "DISCREPANCY";
+
+
 
   const validateForm = () => {
     const newErrors = {};
@@ -1067,8 +1073,7 @@ const ApplicationForm = ({
 
   useEffect(() => {
     if (!disableShortlistedSection || hasAnyDiscrepancy) return;
-    if (screeningForm.isScreeningCompleted) return; // 🔒 preserve backend value
-
+    if (screeningForm.isScreeningCompleted) return; 
     setScreeningForm(prev => ({
       ...prev,
       submitBeforeDate: "",
@@ -1181,10 +1186,6 @@ const ApplicationForm = ({
   const isBirthPending = birthDoc?.isValidationPending === true;
   const isTenthPending = tenthDoc?.isValidationPending === true;
   const isPending = isBirthPending || isTenthPending;
-  const hasAnyDiscrepancy =
-    screeningForm.isWorkCriteriaMet === "DISCREPANCY" ||
-    screeningForm.isAgeCriteriaMet === "DISCREPANCY" ||
-    screeningForm.isEducationCriteriaMet === "DISCREPANCY";
 
   return (
     <>
