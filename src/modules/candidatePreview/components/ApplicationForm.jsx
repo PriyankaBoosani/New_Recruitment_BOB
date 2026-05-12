@@ -179,19 +179,22 @@ const ApplicationForm = ({
     // -----------------------------------------
 
     if (isZonalAbsent) {
-      toast.info("Zonal Absent candidates cannot be processed.");
+      // toast.info("Zonal Absent candidates cannot be processed.");
+      toast.info(t("zonal_absent_cannot_process"));
       return;
     }
 
     if (hasPendingDocument) {
-      toast.warning(
-        "All documents must be verified before submission."
-      );
+      // toast.warning(
+      //   "All documents must be verified before submission."
+      // );
+      toast.warning(t("all_documents_must_verified"));
       return;
     }
 
     if (!zonalDecision) {
-      toast.error("Please select decision");
+      // toast.error("Please select decision");
+      toast.error(t("please_select_decision"));
       return;
     }
     // 🔴 Comments mandatory when decision = NO
@@ -199,7 +202,8 @@ const ApplicationForm = ({
       if (!screeningRemarks?.trim()) {
         setErrors(prev => ({
           ...prev,
-          zonalComments: "This field is required"
+          zonalComments: t("validation:required")
+          // zonalComments: "This field is required"
         }));
         return;
       }
@@ -209,8 +213,11 @@ const ApplicationForm = ({
     // 2️⃣ All documents VERIFIED but decision = NO
     // -----------------------------------------
     if (zonalDecision === "NO" && allVerified) {
+      // toast.warning(
+      //   "All documents are verified. Please select other decision instead."
+      // );
       toast.warning(
-        "All documents are verified. Please select other decision instead."
+        t("all_documents_verified_select_other")
       );
       return;
     }
@@ -219,8 +226,11 @@ const ApplicationForm = ({
     // 3️⃣ Decision = YES but any document REJECTED
     // -----------------------------------------
     if (zonalDecision === "YES" && anyRejected) {
+      // toast.error(
+      //   "Cannot approve. One or more documents are rejected."
+      // );
       toast.error(
-        "Cannot approve. One or more documents are rejected."
+        t("cannot_approve_documents_rejected")
       );
       return;
     }
@@ -266,7 +276,8 @@ const ApplicationForm = ({
         if (selected <= today) {
           setErrors(prev => ({
             ...prev,
-            zonalSubmitDate: "Must be future date"
+            // zonalSubmitDate: "Must be future date"
+            zonalSubmitDate: t("must_be_future_date")
           }));
           hasError = true;
         }
@@ -280,7 +291,8 @@ const ApplicationForm = ({
     // -----------------------------------------
     // 6️⃣ Show Loading Toast
     // -----------------------------------------
-    const toastId = toast.loading("Submitting zonal verification...");
+    // const toastId = toast.loading("Submitting zonal verification...");
+    const toastId = toast.loading(t("submitting_zonal_verification"));
 
     try {
 
@@ -299,7 +311,9 @@ const ApplicationForm = ({
       // 7️⃣ Success Toast
       // -----------------------------------------
       toast.update(toastId, {
-        render: "Zonal verification submitted successfully",
+        // render: "Zonal verification submitted successfully",
+        render: t("zonal_verification_success"),
+
         type: "success",
         isLoading: false,
         autoClose: 2000,
@@ -322,7 +336,8 @@ const ApplicationForm = ({
       // 8️⃣ Error Toast
       // -----------------------------------------
       toast.update(toastId, {
-        render: "Zonal submit failed. Please try again.",
+        // render: "Zonal submit failed. Please try again.",
+        render: t("zonal_submit_failed"),
         type: "error",
         isLoading: false,
         autoClose: 3000,
@@ -387,7 +402,7 @@ const ApplicationForm = ({
 
         setPhoto(trimmedUrl);
       } catch (err) {
-        console.error("Failed to load candidate photo", err);
+        console.error(t("failed_load_candidate_photo"), err);
       }
     };
 
@@ -408,7 +423,7 @@ const ApplicationForm = ({
 
         setSignature(trimmedUrl);
       } catch (err) {
-        console.error("Failed to load candidate photo", err);
+        console.error(t("failed_load_candidate_photo"), err);
       }
     };
 
@@ -506,7 +521,7 @@ const ApplicationForm = ({
       setScreeningDocuments(documents);
 
     } catch (e) {
-      console.error("Failed to fetch document status", e);
+     console.error(t("failed_fetch_document_status"), e);
     } finally {
       setDocStatusLoading(false);
     }
@@ -571,7 +586,7 @@ const ApplicationForm = ({
           screeningId: data.screeningId ?? null,
         }));
       } catch (err) {
-        console.error("Failed to fetch discrepancy details", err);
+        console.error(t("failed_fetch_discrepancy_details"), err);
       }
     };
 
@@ -737,7 +752,7 @@ const ApplicationForm = ({
       await refreshDocStatuses();
 
     } catch (err) {
-      console.error("Verify failed", err);
+     console.error(t("reject_failed"), err);
     }
   };
 
@@ -952,16 +967,17 @@ const ApplicationForm = ({
 
   const handleFinalSubmit = async () => {
 
-    // 🔴 1️⃣ Hard stop: documents cannot be pending
+
     if (!areAllDocumentsValidated()) {
-      toast.error("Please validate all documents");
+      // toast.error("Please validate all documents");
+      toast.error(t("please_validate_all_documents"));
       return;
     }
 
     const isValid = validateForm();
     if (!isValid) return;
 
-    // 🔴 2️⃣ Auto derive shortlist status
+
     const derivedShortlist = deriveShortlistStatus();
 
     const payload = {
@@ -973,7 +989,8 @@ const ApplicationForm = ({
 
     try {
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
-      toast.success("Screening submitted successfully");
+      // toast.success("Screening submitted successfully");
+      toast.success(t("screening_submitted_success"));
       console.log("SENDING POSITION IDS:", {
         positionIds,
         positionId
@@ -990,8 +1007,8 @@ const ApplicationForm = ({
         },
       });
     } catch (err) {
-      console.error("Screening submit failed", err);
-      toast.error("Submission failed");
+     console.error(t("screening_submit_failed"), err);
+     toast.error(t("submission_failed"));
     }
   };
 
@@ -1022,7 +1039,7 @@ const ApplicationForm = ({
     // Clear error while typing
     setErrors(prev => ({ ...prev, submitBeforeDate: undefined }));
 
-    // ⛔ Do NOT validate until full date exists
+
     if (value.length < 10) return;
 
     // Enforce exact YYYY-MM-DD
@@ -1062,34 +1079,16 @@ const ApplicationForm = ({
       submitBeforeDate: undefined,
     }));
 
-  }, [disableShortlistedSection, screeningForm.isScreeningCompleted]);
+  }, [disableShortlistedSection, screeningForm.isScreeningCompleted, hasAnyDiscrepancy]);
 
   useEffect(() => {
     const derived = deriveShortlistStatus();
 
-    // if (derived === "YES") {
-    //   setScreeningForm(prev => ({
-    //     ...prev,
-    //     isShortlisted: "YES",
-    //     finalScreeningRemark: "",   // 🔥 CLEAR HERE
-    //   }));
 
-    //   setErrors(prev => ({
-    //     ...prev,
-    //     finalScreeningRemark: undefined,
-    //   }));
-    // }
-
-    // if (derived === "NO") {
-    //   setScreeningForm(prev => ({
-    //     ...prev,
-    //     isShortlisted: "NO",
-    //   }));
-    // }
 
     if (derived === "DEFAULT") {
       setScreeningForm(prev => {
-        if (prev.isScreeningCompleted) return prev; // 🔒 preserve backend data
+        if (prev.isScreeningCompleted) return prev;
 
         return {
           ...prev,
@@ -1168,14 +1167,15 @@ const ApplicationForm = ({
 
   const getPendingMessage = (doc) => {
     if (!doc?.pendingChecks?.length) {
-      return "Validation pending";
+    return t("validation_pending");
     }
 
     const formatted = doc.pendingChecks
       .map(item => String(item).toUpperCase())
       .join(", ");
 
-    return `Please verify the correctness of ${formatted}`;
+    // return `Please verify the correctness of ${formatted}`;
+    return `${t("please_verify_correctness")} ${formatted}`;
   };
 
   const isBirthPending = birthDoc?.isValidationPending === true;
@@ -1247,7 +1247,7 @@ const ApplicationForm = ({
                               className="photo-img"
                             />
                           ) : (
-                            <div className="no-image">No Photo</div>
+                           <div className="no-image">{t("no_photo")}</div>
                           )}
                         </div>
 
@@ -1260,7 +1260,7 @@ const ApplicationForm = ({
                               className="signature-img"
                             />
                           ) : (
-                            <div className="no-image">No Signature</div>
+                            <div className="no-image">{t("no_signature")}</div>
                           )}
                         </div>
 
