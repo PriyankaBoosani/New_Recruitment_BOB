@@ -42,6 +42,7 @@ import { mapCompensationCandidates } from "./mappers/compositionMapper";
 import useCommitteeRequests from "../Approvals/hooks/useCommitteeRequests";
 import InterviewScheduleTable from ".././interviews/components/InterviewScheduleTable";
 import SchedulePoolTable from "../interviews/components/SchedulePoolTable";
+import ScheduleApprovalModal from "../candidatePreview/components/ScheduleApprovalModal";
 
 export default function CandidateScreening({ selectedJob }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
@@ -177,16 +178,10 @@ const SCHEDULE_POOL_STATUSES = [
 const [positions, setPositions] = useState([]);
 const [selectedPositionId, setSelectedPositionId] = useState([]);
 
+const [showApprovalModal, setShowApprovalModal] = useState(false);
 
+const [submittingApproval, setSubmittingApproval] =useState(false);
 
-
-
-
-
-
-
-
-  
 
 const [activeTab, setActiveTab] = useState(() => {
   if (role === "committee_member") return "COMPENSATION_POOL";
@@ -244,7 +239,48 @@ const [schedulePoolTotal, setSchedulePoolTotal] = useState(0);
 //  const handleScheduleInterview = () => {
 //   if (!selectedCandidateIds.length) return;
 
+const handleSubmitForApproval = async () => {
 
+  try {
+
+    setSubmittingApproval(true);
+
+    const payload = {
+      positionIds: selectedPositionId
+    };
+
+    console.log(
+      "Submit Approval Payload",
+      payload
+    );
+
+    await candidateWorkflowServices.submitForApproval(
+      selectedPositionId
+    );
+
+    toast.success(
+      "Submitted for approval successfully"
+    );
+
+    setShowApprovalModal(false);
+
+    fetchSchedulePoolCandidates();
+
+  } catch (err) {
+
+    console.error(err);
+
+    toast.error(
+      "Failed to submit for approval"
+    );
+
+  } finally {
+
+    setSubmittingApproval(false);
+
+  }
+
+};
 const handleScheduleInterview = () => {
 
  
@@ -2734,7 +2770,9 @@ const handleEditSchedule = () => {
 
               onEdit={handleEditSchedule}
 
-              
+              onSubmitApproval={() =>
+                setShowApprovalModal(true)
+              }
 
               page={page}
 
@@ -2857,7 +2895,14 @@ const handleEditSchedule = () => {
         </Modal.Body>
       </Modal> */}
 
-
+      <ScheduleApprovalModal
+        show={showApprovalModal}
+        onClose={() =>
+          setShowApprovalModal(false)
+        }
+        onApprove={handleSubmitForApproval}
+        loading={submittingApproval}
+      />
       <Modal
         show={showPreview}
         onHide={handleClose}

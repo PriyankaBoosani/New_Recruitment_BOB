@@ -49,6 +49,60 @@
   border: 1px solid rgb(22, 43, 117) !important;
 }
 
+/* Schedule Approval Modal Styles */
+.schedule-approval-modal .modal-dialog {
+  max-width: 450px;
+}
+
+.schedule-approval-modal .modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.schedule-approval-modal .modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #162B75;
+}
+
+.schedule-approval-modal .modal-body {
+  padding: 20px;
+  font-size: 14px;
+  color: #6c757d;
+  text-align: center;
+}
+
+.schedule-approval-modal .modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+}
+
+.schedule-approval-modal .btn-primary {
+  background-color: #f36f21;
+  border-color: #f36f21;
+  padding: 8px 20px;
+  font-size: 14px;
+}
+
+.schedule-approval-modal .btn-primary:hover {
+  background-color: #f36f21;
+  border-color: #f36f21;
+}
+
+.schedule-approval-modal .btn-light {
+  background-color: #ffffff;
+  border-color: #ced4da;
+  color: #6c757d;
+  padding: 8px 20px;
+  font-size: 14px;
+}
+
+.schedule-approval-modal .btn-light:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+
 .orange-bg {
   background-color: #f36f21 !important;
   opacity: 1 !important;

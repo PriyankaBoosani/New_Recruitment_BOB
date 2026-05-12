@@ -158,6 +158,12 @@ getMessagesByThreadId: (conversationThreadId) =>
   );
 
 },
+submitForApproval(payload) {
+  return api.post(
+    "/recruiter/schedule-pool/submit-for-approval",
+    payload
+  );
+}
   
 
 };  
