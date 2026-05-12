@@ -11,29 +11,6 @@ import {
 
 import { useTranslation } from "react-i18next";
 
-// import I_icon from "../../../assets/I_icon.png";
-
-// const STATUS_CLASS_MAP = {
-//   SCHEDULED: "blue-bg",
-//   QUALIFIED: "bg-success",
-//   DISQUALIFIED: "bg-danger",
-//   PROVISIONALLY_APPROVED: "bg-secondary",
-//   ZONAL_ABSENT: "bg-info",
-//   INTERVIEW_ABSENT: "bg-info",
-//   PENDING: "bg-warning",
-//   ZONAL_REJECTED: "bg-danger"
-// };
-
-// const formatStatus = (status = "") =>
-//   status
-//     .toLowerCase()
-//     .split("_")
-//     .map(
-//       word =>
-//         word.charAt(0).toUpperCase() +
-//         word.slice(1)
-//     )
-//     .join(" ");
 
 const SchedulePoolTable = ({
   rows,
@@ -69,7 +46,7 @@ const SchedulePoolTable = ({
         <div className="d-flex gap-2">
 
           <button
-            className="btn fs-14"
+            className="btn fs-14 btn-primary"
             onClick={onSubmitApproval}
             disabled={rows.length === 0}
           >
@@ -77,7 +54,7 @@ const SchedulePoolTable = ({
           </button>
 
           <button
-            className="btn  fs-14"
+            className="btn btn-primary fs-14"
             onClick={onEdit}
             disabled={rows.length === 0}
           >

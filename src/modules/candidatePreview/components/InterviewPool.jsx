@@ -21,7 +21,9 @@ export default function InterviewPool({
   filters,
   totalElements,
   onOpenFeedback,
-  onOpenZonalComments
+  onOpenZonalComments,
+  canReschedule,
+onReschedule
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const navigate = useNavigate();
@@ -95,6 +97,20 @@ export default function InterviewPool({
 
   return (
     <div className="card-body p-0 interview-pool">
+      {canReschedule && (
+
+  <div className="d-flex justify-content-end px-3 pt-3">
+
+    <button
+      className="btn btn-primary fs-14"
+      onClick={onReschedule}
+    >
+      Reschedule
+    </button>
+
+  </div>
+
+)}
       <table className="table table-hover mb-0">
         <thead className="bg-light">
           <tr>

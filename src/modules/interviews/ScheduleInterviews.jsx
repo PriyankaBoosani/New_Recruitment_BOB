@@ -185,6 +185,7 @@ const rebuiltSelectedPanels = Object.values(
         id: item.panelId || index + 1,
         name: item.panel,
         slots: []
+
       };
 
     }
@@ -343,7 +344,11 @@ const rebuiltSelectedPanels = Object.values(
          positionId={selectedPositionId}
        // startTime={startTime}
        // onStartTimeChange={setStartTime}
-          candidates={passedCandidates}              // ✅ ADD
+          candidates={
+  isEditMode
+    ? schedulePoolData
+    : passedCandidates
+}          // ✅ ADD
           onScheduleReady={(rows) => {
               setSchedule(rows);
               setScheduledCount(rows.length);
@@ -394,8 +399,10 @@ const rebuiltSelectedPanels = Object.values(
 
             }}
           initialSelectedPanels={
-              selectedPanelsFromEdit
-            }
+  isEditMode
+    ? rebuiltSelectedPanels
+    : selectedPanelsFromEdit
+}
       />
 
       {showReadyBar && (

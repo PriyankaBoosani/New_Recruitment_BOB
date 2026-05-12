@@ -43,7 +43,7 @@ useEffect(() => {
   setRows(buildRows());
   setErrors({});
 
-}, [initialPanel,show]);   // 🔥 ONLY show// 🔥 ONLY show — do NOT add initialRows 
+}, [initialPanel,initialRows,show]);   // 🔥 ONLY show// 🔥 ONLY show — do NOT add initialRows 
 
 // useEffect(() => {
 

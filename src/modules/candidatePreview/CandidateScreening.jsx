@@ -1272,7 +1272,12 @@ export default function CandidateScreening({ selectedJob }) {
   const canSendToOfferPool =
     selectedInterviewCandidates.length > 0 &&
     selectedInterviewCandidates.every((c) => c.status === "QUALIFIED");
-
+const handleReschedule={};
+const canReschedule =
+  selectedInterviewCandidates.length > 0 &&
+  selectedInterviewCandidates.every(
+    (c) => c.status === "SCHEDULED"
+  );
   const qualifiedInterviewIds = selectedInterviewCandidates
     .filter(c => c.status === "QUALIFIED")
     .map(c => c.id);
@@ -1887,11 +1892,11 @@ export default function CandidateScreening({ selectedJob }) {
           item.time?.split(" - ")[1] ||
           "",
 
-        duration:
-          item.duration || "15",
+      duration:
+        item.duration || "",
 
-        perDay:
-          item.perDay || "1"
+      perDay:
+        item.perDay || ""
 
       });
 
@@ -2696,6 +2701,8 @@ export default function CandidateScreening({ selectedJob }) {
             position={selectedPosition}
             onViewFile={handleViewFile}
             getStatusLabel={getStatusLabel}
+            canReschedule={canReschedule}
+            onReschedule={handleReschedule}
             onOpenFeedback={async (scheduledInterviewId) => {
               try {
                 setShowFeedbackModal(true);
