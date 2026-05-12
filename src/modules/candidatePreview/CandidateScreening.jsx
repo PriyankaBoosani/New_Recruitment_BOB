@@ -212,7 +212,7 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [loadingCandidates, setLoadingCandidates] = useState(false);
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(2);
   const [totalElements, setTotalElements] = useState(0);
   const [masterData, setMasterData] = useState(null);
   const [allCandidatesForFilters, setAllCandidatesForFilters] = useState([]);

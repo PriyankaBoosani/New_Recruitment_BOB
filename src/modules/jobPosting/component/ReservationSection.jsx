@@ -91,13 +91,13 @@ const ReservationSection = ({
             {/* ✅ Age Relaxation Section */}
             <Col xs={12} className="mt-3">
                 <Form.Label>
-                    Age relaxation also applicable for:
+                   {t("addPosition:age_relaxation_for")}:
                 </Form.Label>
 
                 <div className="ms-2">
                     <Form.Check
                         type="checkbox"
-                        label="Persons affected by the 1984 riots"
+                        label={t("addPosition:persons_affected_by_1984_riots")}
                         checked={!!isAgeRelRiotVictimFamily}
                         onChange={(e) => setIsAgeRelRiotVictimFamily(e.target.checked)}
                         className="custom_checkbox mb-2"
@@ -105,7 +105,7 @@ const ReservationSection = ({
 
                     <Form.Check
                         type="checkbox"
-                        label="Widowed, divorced, or judicially separated women (not remarried)"
+                        label={t("addPosition:widowed_divorced_separated_women")}
                         checked={!!isAgeRelWdsWomen}
                         onChange={(e) => setIsAgeRelWdsWomen(e.target.checked)}
                         className="custom_checkbox"

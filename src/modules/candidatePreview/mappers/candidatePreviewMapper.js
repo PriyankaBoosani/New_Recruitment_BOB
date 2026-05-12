@@ -88,7 +88,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
 
 
   const examCenterName =
-    getInterviewCentreName(masters, locationprefApiData.interviewCenter);
+    getInterviewCentreName(masters, locationprefApiData.displayName);
 
 
   const permanentCity = getCityName(masters, address.permanentCityId);

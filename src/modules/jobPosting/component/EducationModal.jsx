@@ -451,7 +451,7 @@ const isValidPercentage = (value) => {
                     <React.Fragment key={gIdx}>
                         <div className="group-box">
                             <div className="group-header edugrp-header">
-                                <strong>Education Group {gIdx + 1}</strong>
+                                <strong>{t("addPosition:education_group")} {gIdx + 1}</strong>
                                 {groups.length > 1 && (
                                     <Button
                                         onClick={() => removeGroup(gIdx)}
@@ -478,7 +478,7 @@ const isValidPercentage = (value) => {
                                                 classNamePrefix="react-select"
 
                                                 value={[
-                                                    { value: "", label: "Select Type" }, // ✅ ADD THIS
+                                                    { value: "", label: t("addPosition:select_type") }, // ✅ ADD THIS
                                                     ...educationTypes.map(t => ({
                                                         value: t.id,
                                                         label: t.label
@@ -490,7 +490,7 @@ const isValidPercentage = (value) => {
                                                 }
 
                                                 options={[
-                                                    { value: "", label: "Select Type" }, // ✅ ADD THIS
+                                                    { value: "", label: t("addPosition:select_type") }, // ✅ ADD THIS
                                                     ...educationTypes.map(t => ({
                                                         value: t.id,
                                                         label: t.label
@@ -516,7 +516,7 @@ const isValidPercentage = (value) => {
                                                     menuPortal: (base) => ({ ...base, zIndex: 9999 })
                                                 }}
                                                 value={[
-                                                    { value: "", label: "Select Degree" },
+                                                    { value: "", label: t("addPosition:select_degree") },
                                                     ...filteredQualifications.map(q => ({
                                                         value: q.id,
                                                         label: q.name
@@ -528,7 +528,7 @@ const isValidPercentage = (value) => {
                                                 }
 
                                                 options={[
-                                                    { value: "", label: "Select Degree" },
+                                                    { value: "", label: t("addPosition:select_degree") },
                                                     ...filteredQualifications.map(q => ({
                                                         value: q.id,
                                                         label: q.name
@@ -552,7 +552,7 @@ const isValidPercentage = (value) => {
                                                 key={row.educationQualificationsId}
 
                                                 value={[
-                                                    { value: "", label: "Select Specialization" },
+                                                    { value: "", label: t("addPosition:select_specialization") },
                                                     ...getSpecializationsForDegree(row.educationQualificationsId).map(s => ({
                                                         value: s.id,
                                                         label: s.label
@@ -564,14 +564,14 @@ const isValidPercentage = (value) => {
                                                 }
 
                                                 options={[
-                                                    { value: "", label: "Select Specialization" },
+                                                    { value: "", label: t("addPosition:select_specialization") },
                                                     ...getSpecializationsForDegree(row.educationQualificationsId).map(s => ({
                                                         value: s.id,
                                                         label: s.label
                                                     }))
                                                 ]}
 
-                                                placeholder="Select Specialization"
+                                                placeholder={t("addPosition:select_specialization")}
                                             />
                                             <div className="error-space">
                                                 <ErrorMessage>
@@ -586,7 +586,7 @@ const isValidPercentage = (value) => {
                                         <Col md={2}>
                                             <Form.Control
                                                 type="number"
-                                                placeholder="Duration (Years)"
+                                                placeholder={t("addPosition:duration_placeholder")}
                                                 value={row.duration}
                                                 min="0"
                                                 step="1"
@@ -660,16 +660,16 @@ const isValidPercentage = (value) => {
                                 onClick={() => addRow(gIdx)}
                                 className="edu-btn"
                             >
-                                + Add Education
+                                 {t("addPosition:add_degree")}
                             </Button>
                         </div>
                         {gIdx < groups.length - 1 && (
-                            <div className="or-divider">( OR )</div>
+                            <div className="or-divider">( {t("addPosition:or")} )</div>
                         )}
                     </React.Fragment>
                 ))}
 
-                <Button className="btn-header" variant="none" onClick={addGroup}>+ Add Group</Button>
+                <Button className="btn-header" variant="none" onClick={addGroup}> {t("addPosition:add_group")}</Button>
                 {errors.rows?._error && (
                     <div className="mt-2">
                         <ErrorMessage>{t(errors.rows._error)}</ErrorMessage>
@@ -688,7 +688,7 @@ const isValidPercentage = (value) => {
                         <React.Fragment key={cgIdx}>
                             <div className="group-box">
                                 <div className="group-header edugrp-header">
-                                    <strong>Certification Group {cgIdx + 1}</strong>
+                                    <strong>{t("addPosition:certification_group")} {cgIdx + 1}</strong>
                                     {certGroups.length > 1 && (
                                         <Button
                                             onClick={() => removeCertGroup(cgIdx)}
@@ -750,17 +750,17 @@ const isValidPercentage = (value) => {
                                     onClick={() => addCertRow(cgIdx)}
                                     className="mb-3 edu-btn"
                                 >
-                                    + Add Certification
+                                    {t("addPosition:add_certification")}
                                 </Button>
                             </div>
                             {cgIdx < certGroups.length - 1 && (
-                                <div className="or-divider">( OR )</div>
+                                <div className="or-divider">( {t("addPosition:or")} )</div>
                             )}
                         </React.Fragment>
                     ))}
                 </Col>
 
-                <Button className="btn-header" variant="none" onClick={addCertGroup}>+ Add Certification Group</Button>
+                <Button className="btn-header" variant="none" onClick={addCertGroup}>{t("addPosition:add_certification_group")}</Button>
 
 
 
