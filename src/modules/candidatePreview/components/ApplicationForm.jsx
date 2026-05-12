@@ -860,7 +860,7 @@ const ApplicationForm = ({
     }
 
     // Submit before date validation
-    if (disableShortlistedSection) {
+    if (hasAnyDiscrepancy) {
       if (!screeningForm.submitBeforeDate) {
         newErrors.submitBeforeDate = t("please_select_date");
       } else {
@@ -1181,6 +1181,11 @@ const ApplicationForm = ({
   const isBirthPending = birthDoc?.isValidationPending === true;
   const isTenthPending = tenthDoc?.isValidationPending === true;
   const isPending = isBirthPending || isTenthPending;
+  const hasAnyDiscrepancy =
+    screeningForm.isWorkCriteriaMet === "DISCREPANCY" ||
+    screeningForm.isAgeCriteriaMet === "DISCREPANCY" ||
+    screeningForm.isEducationCriteriaMet === "DISCREPANCY";
+
   return (
     <>
       <Accordion
@@ -2034,8 +2039,8 @@ const ApplicationForm = ({
               </div>
 
               {/* ================= SUBMIT ROW ================= */}
-              <div className={`criteria-submit-row ${disableShortlistedSection ? 'justify-content-between' : 'justify-content-end'}`}>
-                {!isZonalHr && disableShortlistedSection && (
+              <div className={`criteria-submit-row ${hasAnyDiscrepancy ? 'justify-content-between' : 'justify-content-end'}`}>
+                {!isZonalHr && hasAnyDiscrepancy && (
                   <div className="d-grid">
                     <label className="submit-label">{t("submit_before")}</label>
                     <input
