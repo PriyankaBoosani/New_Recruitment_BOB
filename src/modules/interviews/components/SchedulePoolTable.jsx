@@ -65,12 +65,23 @@ const SchedulePoolTable = ({
           Schedule Pool
         </h6>
 
-        <button
-          className="btn btn-primary fs-14"
-          onClick={onEdit}
-        >
-          Edit Schedule
-        </button>
+        <div className="d-flex gap-2">
+
+          <button
+            className="btn btn-primary fs-14"
+            // onClick={submitApproval}
+          >
+            Submit for Approval
+          </button>
+
+          <button
+            className="btn btn-primary fs-14"
+            onClick={onEdit}
+          >
+            Edit Schedule
+          </button>
+
+        </div>
 
       </div>
 

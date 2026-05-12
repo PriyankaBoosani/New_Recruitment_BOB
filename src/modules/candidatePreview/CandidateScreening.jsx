@@ -908,6 +908,11 @@ const fetchSchedulePoolCandidates = async () => {
 
     zone:
       c?.interviewCentres?.interviewCentre || "-",
+      candidateId:
+  c?.application?.candidateId,
+
+fileUrl:
+  c?.resumeUrl,
 
     panel:
       c?.interviewPanels
@@ -1455,6 +1460,13 @@ useEffect(() => {
       compensationStatuses: normalizedStatuses, // selected filter
     };
   }
+  if (activeTab === "SCHEDULE_POOL") {
+  return {
+    ...basePayload,
+    screenName: "SchedulePool",
+    interviewSchedulingStatuses: normalizedStatuses,
+  };
+}
 
   return basePayload;
 };
@@ -2151,7 +2163,7 @@ const handleEditSchedule = () => {
               )}
 
               {/* 👇 spacer ONLY for Interview Pool */}
-            {(activeTab === "INTERVIEW_POOL" || activeTab === "COMPENSATION_POOL") && (
+            {(activeTab === "INTERVIEW_POOL" || activeTab === "COMPENSATION_POOL" ||  activeTab === "SCHEDULE_POOL") && (
   <div className="col-md-4 d-none d-md-block" />
 )}
 
@@ -2706,6 +2718,8 @@ const handleEditSchedule = () => {
 
               onEdit={handleEditSchedule}
 
+              
+
               page={page}
 
               pageSize={pageSize}
@@ -2716,34 +2730,41 @@ const handleEditSchedule = () => {
 
               onPageSizeChange={setPageSize}
 
-              onViewProfile={(candidate) => {
+             onViewProfile={(candidate) => {
 
-                navigate("/candidate-preview", {
+            navigate("/candidate-preview", {
 
-                  state: {
+              state: {
 
-                    candidate,
+                candidate: candidate,
 
-                    applicationId:
-                      candidate.applicationId,
+                applicationId: candidate.applicationId,
 
-                    positionId:
-                      selectedPositionId,
+                positionId: selectedPositionId,
 
-                    requisitionId:
-                      selectedRequisitionId,
+                requisitionId: selectedRequisitionId,
 
-                    fromSchedulePool: true,
+                fromInterviewPool: true,
 
-                    activeTab: "SCHEDULE_POOL"
+                activeTab: "SCHEDULE_POOL",
 
-                  }
+                page,
+                pageSize,
+                filters,
 
-                });
+                requisition: normalizedRequisition,
 
+                position: selectedPosition
+
+              }
+
+            });
+
+          }}
+
+              onViewResume={(candidate) => {
+                handleViewFile(candidate);
               }}
-
-              onViewResume={handleViewFile}
 
               onOpenZonalComments={
                 handleOpenZonalComments
