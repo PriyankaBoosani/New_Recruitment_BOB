@@ -1360,9 +1360,12 @@ const selectedInterviewCandidates = useMemo(() => {
 console.log("selectedInterviewCandidates", selectedInterviewCandidates);
 
 
-  const canSendToOfferPool =
-    selectedInterviewCandidates.length > 0 &&
-    selectedInterviewCandidates.every((c) => c.status === "QUALIFIED");
+ const canSendToOfferPool =
+  selectedInterviewCandidates.length > 0 &&
+  selectedInterviewCandidates.every(
+    (c) =>
+      c?.interviewSchedules?.interviewStatus === "QUALIFIED"
+  );
 const handleReschedule = () => {
 
   console.log(
