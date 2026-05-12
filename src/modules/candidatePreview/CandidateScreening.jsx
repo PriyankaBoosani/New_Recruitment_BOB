@@ -779,7 +779,12 @@ useEffect(() => {
     return;
   }
 
-  fetchAllInterviewCandidatesForFilters();
+  // wait until status reset completes
+  const timer = setTimeout(() => {
+    fetchAllInterviewCandidatesForFilters();
+  }, 0);
+
+  return () => clearTimeout(timer);
 
 }, [
   selectedPositionId,
@@ -792,10 +797,10 @@ useEffect(() => {
 const fetchAllInterviewCandidatesForFilters = async () => {
   try {
 
-    const normalizedStatus =
-      filters.status.length === 0
-        ? availableStatuses
-        : filters.status.map((s) => s.toUpperCase());
+      const normalizedStatus =
+        filters.status.length === 0
+          ? availableStatuses
+          : filters.status.map((s) => s.toUpperCase());
 
     // FIRST API
     const firstRes =
@@ -1592,16 +1597,14 @@ const qualifiedInterviewIds = selectedInterviewCandidates
     }
   }, [selectedPositionId]);
 
-  useEffect(() => {
-    if (isBackNavigation) return; //  STOP RESET
-    setFilters({
-      status: [],
-      stateId: "",
-      categoryId: "",
-      searchText: "",
-    });
-    // Don't reset page when changing tabs - preserve user's page position
-  }, [activeTab]);
+useEffect(() => {
+  if (isBackNavigation) return;
+
+  setFilters((prev) => ({
+    ...prev,
+    status: [],
+  }));
+}, [activeTab]);
 
   useEffect(() => {
     if (!location.state) return;
@@ -2348,10 +2351,43 @@ const allQualified = selectedInterviewCandidates.every(
                 <button
                   className={`nav-link fs-14 ${activeTab === tab.key ? "orange-color orange-bottom-border" : "text-muted"
                     }`}
-                 onClick={() => {
-  if (role === "committee_member") return; //  BLOCK SWITCH
-  setActiveTab(tab.key);
-}}
+                onClick={() => {
+
+              if (role === "committee_member") return;
+
+              const multiTabs = [
+                "CANDIDATE_POOL",
+                "INTERVIEW_POOL",
+                "SCHEDULE_POOL"
+              ];
+
+              const goingToSingleSelect =
+                !multiTabs.includes(tab.key);
+
+              // RESET when moving multi -> single
+              if (goingToSingleSelect) {
+
+                setSelectedRequisitionId("");
+                setSelectedPositionId([]);
+                setPositions([]);
+
+                setCandidates([]);
+                setTotalElements(0);
+
+                setSelectedCandidateIds([]);
+                setSelectedInterviewCandidateIds([]);
+                setSelectedCompensationIds([]);
+
+                setAllCandidatesForFilters([]);
+              }
+
+              setFilters((prev) => ({
+                ...prev,
+                status: [],
+              }));
+
+              setActiveTab(tab.key);
+            }}
                   type="button"
                 >
                   {tab.key === "CANDIDATE_POOL" && (
