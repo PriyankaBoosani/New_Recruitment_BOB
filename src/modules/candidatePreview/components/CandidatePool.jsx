@@ -81,6 +81,13 @@ const allSelected =
 // };
 
 
+  const formatStatus = (status = "") =>
+  status
+    .toLowerCase()
+    .split("_")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
 
 const toggleSelectAll = () => {
 
@@ -95,6 +102,10 @@ const toggleSelectAll = () => {
     setSelectedIds([]);
   } else {
     setSelectedIds(allIds);
+  
+      toast.success(
+      `${allIds.length} ${formatStatus(filters?.status?.[0])} candidate${allIds.length > 1 ? "s" : ""} selected`
+    );
   }
 };
 
@@ -253,6 +264,28 @@ const toggleSelectAll = () => {
     <>
       {/* Desktop Table */}
       <div className="card-body p-0 d-none d-md-block">
+        {/* {selectedIds.length > 0 && (
+  <div
+    className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom"
+    style={{
+      background: "#F0FFF4",
+      borderLeft: "4px solid #22C55E"
+    }}
+  >
+    <span className="fs-13 fw-semibold text-success">
+      {selectedIds.length}{" "}
+      {formatStatus(filters?.status?.[0])} candidate
+      {selectedIds.length > 1 ? "s" : ""} selected
+    </span>
+
+    <button
+      className="btn btn-sm btn-link text-secondary p-0 text-decoration-none"
+      onClick={() => setSelectedIds([])}
+    >
+      Clear Selection
+    </button>
+  </div>
+)}   */}
         <table className="table table-hover mb-0">
           <thead className="bg-light">
             <tr>

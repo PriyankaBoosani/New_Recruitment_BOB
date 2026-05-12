@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import I_icon from '../../../assets/I_icon.png';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 
 export default function InterviewPool({
   selectedIds,
@@ -23,7 +24,8 @@ export default function InterviewPool({
   onOpenFeedback,
   onOpenZonalComments,
   canReschedule,
-onReschedule
+onReschedule,
+   allCandidatesForFilters,
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const navigate = useNavigate();
@@ -44,18 +46,64 @@ onReschedule
 
 
 
-  const allSelected =
-    candidates.length > 0 && selectedIds.length === candidates.length;
+  
 
-  const toggleSelectAll = () => {
-    setSelectedIds(allSelected ? [] : candidates.map((c) => c.id));
-  };
 
-  const toggleRow = (id) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+
+  // const allSelected =
+  //   candidates.length > 0 && selectedIds.length === candidates.length;
+
+
+ const allSelected =
+  allCandidatesForFilters?.length > 0 &&
+  allCandidatesForFilters.every((c) =>
+    selectedIds.includes(String(c.id))
+  );
+  console.log("selectedIds", selectedIds);
+console.log(
+  "page ids",
+  candidates.map(c => String(c.id))
+);
+
+  // const toggleSelectAll = () => {
+  //   setSelectedIds(allSelected ? [] : candidates.map((c) => c.id));
+  // };
+
+
+
+const toggleSelectAll = () => {
+
+  if (!filters?.status?.length) {
+    toast.error("Please select the filter first");
+    return;
+  }
+
+const allIds = allCandidatesForFilters.map((c) => String(c.id));
+  if (allSelected) {
+
+    setSelectedIds([]);
+
+    toast.info("Selection cleared");
+
+  } else {
+
+    setSelectedIds(allIds);
+
+    toast.success(
+      `${allIds.length} ${filters?.status?.[0]} candidates selected`
     );
-  };
+  }
+};
+
+const toggleRow = (id) => {
+  const normalizedId = String(id);
+
+  setSelectedIds((prev) =>
+    prev.includes(normalizedId)
+      ? prev.filter((x) => x !== normalizedId)
+      : [...prev, normalizedId]
+  );
+};
   const requestSort = (key) => {
     setSortConfig((prev) => {
       if (prev.key === key) {
@@ -67,6 +115,9 @@ onReschedule
       return { key, direction: "asc" };
     });
   };
+
+
+  
 
   const sortedCandidates = useMemo(() => {
     if (!sortConfig.key) return candidates;
@@ -146,8 +197,8 @@ onReschedule
                 <td className="align-content-center" style={{ paddingLeft: '1rem' }}>
                   <input
                     type="checkbox"
-                    checked={selectedIds.includes(c.id)}
-                    onChange={() => toggleRow(c.id)}
+                  checked={selectedIds.includes(String(c.id))}
+                    onChange={() => toggleRow(String(c.id))}
                   />
                 </td>
 

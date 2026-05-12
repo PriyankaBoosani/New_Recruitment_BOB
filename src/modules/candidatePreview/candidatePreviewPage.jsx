@@ -263,19 +263,6 @@ await candidateWorkflowServices.getCandidateAllDetails(
   subtitle={t("candidateWorkflow:manage_schedule_interviews")}
   onBack={() => {
 
-    console.log("🔙 CandidatePreview Back Navigation");
-
-    console.log("requisition:", state.requisition);
-
-    console.log("position:", state.position);
-
-    console.log("candidates:", state.candidates);
-
-    console.log("page:", state.page);
-
-    console.log("pageSize:", state.pageSize);
-
-    console.log("filters:", state.filters);
 
     navigate("/candidate-verification", {
       state: {

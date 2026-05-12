@@ -57,7 +57,7 @@ export default function useInterviewPool({
   }, []);
 
   const fetchInterviewCandidates = useCallback(async () => {
-    if (!enabled || !positionId) {
+    if (!enabled || !positionId.length) {
       setData([]);
       setTotalElements(0);
       return;
@@ -70,7 +70,7 @@ export default function useInterviewPool({
       
       const res = await candidateWorkflowServices.getInterviewCandidates({
         searchText: filters.searchText || "",
-        positionId,
+        positionIds: positionId,
         statusList: filters.status.length ? filters.status : INTERVIEW_STATUSES,
         page,
         size: pageSize,

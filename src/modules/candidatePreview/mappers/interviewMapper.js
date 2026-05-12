@@ -10,11 +10,11 @@ export const mapInterviewCandidates = (
 
       candidateId: schedule.candidateId,
       applicationId: schedule.applicationId,
+      positionId: item?.application?.positionId,
       id: schedule.interviewScheduleId,
       name: item.fullName || "-",
-      regNo: item.applicationNo || "-",
-      fileUrl: item.resumeUrl,
-
+      regNo: item?.application?.applicationNo || "-",
+      fileUrl: item?.resumeUrl || "-",
 
       date: schedule.interviewStartAt
         ? (() => {
