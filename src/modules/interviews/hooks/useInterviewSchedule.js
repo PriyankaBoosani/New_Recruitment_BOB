@@ -4,7 +4,8 @@ import jobPositionApiService from "../../jobPosting/services/jobPositionApiServi
 import interviewService from "../services/interviewService";
 import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 import masterApiService from "../../master/services/masterApiService";
-export default function useInterviewSchedule() {
+
+export default function useInterviewSchedule(isEditMode) {
 
   const navigate = useNavigate();
 
@@ -302,7 +303,29 @@ candidates.forEach((candidate) => {
 const scheduleInterview = async () => {
   try {
 //console.log("scheduleApiData", scheduleApiData);return false;
-    const res = await interviewService.scheduleInterview(scheduleApiData);
+
+
+const updatedScheduleData = scheduleApiData.map(item => ({
+  ...item,
+
+  interviewScheduleStaging: {
+    ...item.interviewScheduleStaging,
+
+    // ✅ backend requirement
+    rescheduled: isEditMode ? true : false
+  }
+}));
+
+console.log(
+  "FINAL SCHEDULE PAYLOAD",
+  updatedScheduleData
+);return false;
+
+const res =
+  await interviewService.scheduleInterview(
+    updatedScheduleData
+  );
+  //  const res = await interviewService.scheduleInterview(scheduleApiData);
 
     if (!res?.success) {
       return { success: false, message: res.message };
