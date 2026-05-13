@@ -111,24 +111,75 @@ const schedulePoolData =
     return;
   }
 
+  // const mappedRows =
+  //   schedulePoolData.map(item => ({
+
+  //     id: item.id,
+
+  //     name: item.name,
+
+  //     regNo: item.regNo,
+
+  //     date: item.date,
+
+  //     time: item.time,
+
+  //     zone: item.zone,
+
+  //     panel: item.panel
+
+  //   }));
+
   const mappedRows =
-    schedulePoolData.map(item => ({
+  schedulePoolData.map(item => ({
 
-      id: item.id,
+    id: item.id,
 
-      name: item.name,
+    // ✅ IMPORTANT FOR RESCHEDULE
+    applicationId:
+      item.applicationId,
 
-      regNo: item.regNo,
+    interviewCenterId:
+      item.interviewCenterId,
 
-      date: item.date,
+    panelId:
+      item.panelId,
 
-      time: item.time,
+    duration:
+      item.duration,
 
-      zone: item.zone,
+    perDay:
+      item.perDay,
 
-      panel: item.panel
+    startTime:
+      item.startTime,
 
-    }));
+    endTime:
+      item.endTime,
+
+    rawDate:
+      item.rawDate,
+
+    // TABLE DATA
+    name:
+      item.name,
+
+    regNo:
+      item.regNo,
+
+    date:
+      item.date,
+
+    time:
+      item.time,
+
+    zone:
+      item.zone,
+
+    panel:
+      item.panel
+
+  }));
 
   setSchedule(mappedRows);
 
@@ -527,17 +578,21 @@ const uniqueAllocatedCentres = [
 <InterviewCentreConfirmModal
   show={showCentreConfirmModal}
   onClose={() => setShowCentreConfirmModal(false)}
-  onReview={() => {
+ onReview={() => {
 
   setShowCentreConfirmModal(false);
 
-  // 🔥 initialize mappings
-setCentreRows([
-  {
-    allocatedCentreId: "",
-    replacedCentreId: ""
-  }
-]);
+  // ✅ prefill allocated centres
+  setCentreRows(
+    uniqueAllocatedCentres.map(centre => ({
+
+      allocatedCentreId:
+        centre.interviewCentreId,
+
+      replacedCentreId:
+        centre.interviewCentreId
+    }))
+  );
 
   setShowCentreModal(true);
 
