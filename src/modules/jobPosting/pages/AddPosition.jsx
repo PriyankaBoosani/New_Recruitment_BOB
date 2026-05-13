@@ -468,12 +468,12 @@ const AddPosition = () => {
             }));
 
             // clear indent when department changes
-            setSelectedIndent(null);
-            setExistingIndentPath(null);
-            setExistingIndentName(null);
-            setIndentFile(null);
-            setApprovedBy("");
-            setApprovedOn("");
+            // setSelectedIndent(null);
+            // setExistingIndentPath(null);
+            // setExistingIndentName(null);
+            // setIndentFile(null);
+            // setApprovedBy("");
+            // setApprovedOn("");
             setPendingPosition(null);
             setShowConfirmModal(false);
             setShowIndentModal(false);
