@@ -66,5 +66,18 @@
   "back": "Back",
   "view_details": "View Details",
   "add": "Add",
-  "messages": "Messages"
+  "messages": "Messages",
+  "all_months": "All Months",
+  "january": "January",
+  "february": "February",
+  "march": "March",
+  "april": "April",
+  "may": "May",
+  "june": "June",
+  "july": "July",
+  "august": "August",
+  "september": "September",
+  "october": "October",
+  "november": "November",
+  "december": "December"
 }

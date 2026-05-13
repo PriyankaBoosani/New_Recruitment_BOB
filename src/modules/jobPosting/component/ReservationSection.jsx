@@ -91,7 +91,7 @@ const ReservationSection = ({
             {/* ✅ Age Relaxation Section */}
             <Col xs={12} className="mt-3">
                 <Form.Label>
-                   {t("addPosition:age_relaxation_for")}:
+                    {t("addPosition:age_relaxation_for")}:
                 </Form.Label>
 
                 <div className="ms-2">
@@ -134,7 +134,7 @@ const ReservationSection = ({
                         <div>
                             <Form.Check
                                 type="checkbox"
-                                label="Is local language required?"
+                                label={t("addPosition:is_local_language_required")}
                                 checked={!!isProficientInLocalLanguage}
                                 onChange={(e) => {
                                     setIsProficientInLocalLanguage(e.target.checked);
@@ -296,7 +296,7 @@ const ReservationSection = ({
                                     {t("addPosition:city")}
                                 </Form.Label>
 
-                                 <Select
+                                <Select
                                     classNamePrefix="react-select"
                                     isDisabled={!currentState.state || isViewMode}
                                     styles={{
@@ -366,7 +366,7 @@ const ReservationSection = ({
 
                                 <ErrorMessage>{renderError(errors.stateVacancies)}</ErrorMessage>
                             </Col>
-                            <Col md={3}><Form.Label>Approved Languages</Form.Label>
+                            <Col md={3}><Form.Label>{t("addPosition:approved_languages")}</Form.Label>
 
                                 <div
                                     style={{
@@ -374,7 +374,7 @@ const ReservationSection = ({
                                         border: "1px solid #ced4da",
                                         borderRadius: "4px",
                                         padding: "6px 12px",
-                                       backgroundColor: "#e9ecef",
+                                        backgroundColor: "#e9ecef",
                                         display: "flex",
                                         alignItems: "center",
                                         fontSize: "14px",
@@ -384,7 +384,7 @@ const ReservationSection = ({
                                 >
                                     {currentState.state
                                         ? getLanguagesByState(currentState.state)
-                                        : "State Language"}
+                                        : t("addPosition:state_language")}
                                 </div>
 
                                 <ErrorMessage>{renderError(errors.stateLanguage)}</ErrorMessage>

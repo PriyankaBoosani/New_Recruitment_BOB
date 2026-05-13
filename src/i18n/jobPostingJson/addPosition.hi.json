@@ -68,7 +68,6 @@
     "add_mandatory_education": "अनिवार्य शिक्षा जोड़ें",
     "add_preferred_education": "वांछित शिक्षा जोड़ें",
     "add_degree": "+ डिग्री जोड़ें",
-    "add_certification": "+ प्रमाणन जोड़ें",
     "certifications_optional": "प्रमाणपत्र (वैकल्पिक)",
     "result_preview": "परिणाम (उम्मीदवार को कैसे दिखाई देगा)",
     "replace_indent": "इंडेंट बदलें",
@@ -79,7 +78,9 @@
     "city_name": "शहर",
     "enter_city_name": "शहर का नाम दर्ज करें",
     "select_indent": "इंडेंट चुनें",
-    "upload_indent": "इंडेंट अपलोड करें",
+    "approved_languages": "स्वीकृत भाषाएँ",
+    "state_language": "राज्य भाषा",
+    "is_local_language_required": "क्या स्थानीय भाषा आवश्यक है?",
     "cancel": "रद्द करें",
     "existing_indents": "मौजूदा इंडेंट",
     "no_existing_indents": "कोई मौजूदा इंडेंट उपलब्ध नहीं",
@@ -107,5 +108,4 @@
     "age_relaxation_for": "के लिए आयु में छूट भी लागू है",
     "persons_affected_by_1984_riots": "1984 के दंगों से प्रभावित व्यक्ति",
     "widowed_divorced_separated_women": "विधवा, तलाकशुदा, या न्यायिक रूप से अलग महिलाएं (जो पुनर्विवाह नहीं करती हैं)"
-    
 }

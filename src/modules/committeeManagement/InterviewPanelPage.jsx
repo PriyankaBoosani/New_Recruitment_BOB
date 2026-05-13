@@ -31,7 +31,7 @@ const InterviewPanelPage = () => {
     // setEditAssignedMembers,
 
     initData,
-    fetchPanels, // ✅ RETURNED
+    fetchPanels,
     handleSave,
     handleDelete,
     handleEdit,
@@ -136,56 +136,60 @@ const InterviewPanelPage = () => {
               alt="Info"
               className="bulb-icon"
             />
-            <h5 className="guidelines-title">Guidelines</h5>
+            <h5 className="guidelines-title">{t("interviewPanelCommittee:guidelines")}</h5>
           </div>
 
 
-         
+
           <div className="guideline-section">
-            <h6 className="sectiontitle">Add Panels</h6>
+            <h6 className="sectiontitle">  {t("interviewPanelCommittee:add_panels_guideline_title")}</h6>
 
             <ol className="main-list">
-              <li>Click on <b>Add Panels</b> to create new panels.</li>
-
               <li>
-                In the <b>Panel Sheet:</b>
+                {t("interviewPanelCommittee:add_panels_step_1")}{" "}
+                <b>{t("interviewPanelCommittee:add_panels_guideline_title")}</b>{" "}
+                {t("interviewPanelCommittee:create_new_panels")}
+              </li>    <li>
+                {t("interviewPanelCommittee:add_panels_step_2")}{" "}
+                <b>{t("interviewPanelCommittee:panel_sheet")}</b>
                 <ul>
-                  <li>Enter the <b>Panel Number</b> and <b>Panel Name</b>.</li>
+                  <li> {t("interviewPanelCommittee:add_panels_step_2_1")} <b>{t("interviewPanelCommittee:panel_number")}</b> {t("interviewPanelCommittee:and")} <b>{t("interviewPanelCommittee:panel_name")}</b>.</li>
                   <li>
-                    Select the panel type under the <b>Committee Name</b> column
-                    (Screening, Interview, or Compensation).
+                    {t("interviewPanelCommittee:add_panels_step_2_2")} <b>{t("interviewPanelCommittee:committee_name")}</b> {t("interviewPanelCommittee:column_text")}
+                    {" "} {t("interviewPanelCommittee:screening_interview_compensation")}
                   </li>
                 </ul>
               </li>
 
               <li>
-                In the <b>Panel Member Sheet:</b>
+                {t("interviewPanelCommittee:add_panels_step_3")}{" "}
+                <b>{t("interviewPanelCommittee:panel_member_sheet")}</b>:
                 <ul>
-                  <li>Enter the <b>Panel Number</b> (as defined in the Panel Sheet).</li>
-                  <li>Select and assign users to the panel.</li>
-                  <li>Use additional rows to add multiple users to the same panel.</li>
+                  <li>{t("interviewPanelCommittee:add_panels_step_3_1")} <b>{t("interviewPanelCommittee:panel_number")}</b>{" "}{t("interviewPanelCommittee:as_defined_panel_sheet")}</li>
+                  <li>{t("interviewPanelCommittee:add_panels_step_3_2")}</li>
+                  <li>{t("interviewPanelCommittee:add_panels_step_3_3")}</li>
                 </ul>
               </li>
 
-              <li>Save the Excel file and upload it to the system.</li>
+              <li>{t("interviewPanelCommittee:add_panels_step_4")}</li>
             </ol>
           </div>
 
 
           <hr />
 
-        
+
           <div className="guideline-section">
-            <h6 className="sectiontitle">Add Position Assignments</h6>
+            <h6 className="sectiontitle">{t("interviewPanelCommittee:add_position_assignments_guideline_title")}</h6>
 
             <ol className="main-list">
               <li>
-                Click on <b>Add Position Assignments</b> to map panels to specific positions.
+                {t("interviewPanelCommittee:add_panels_step_1")}{" "}<b>{t("interviewPanelCommittee:add_position_assignments_guideline_title")}</b> {t("interviewPanelCommittee:map_panels_positions")}
               </li>
-              <li>Select the required <b>Requisition/Position</b>.</li>
-              <li>Choose the relevant <b>existing/created panel(s)</b>.</li>
-              <li>Enter the <b>Start Date</b> and <b>End Date</b>.</li>
-              <li>Save the Excel file and upload it to the system.</li>
+              <li> {t("interviewPanelCommittee:position_assignment_step_2")}{" "}<b>{t("interviewPanelCommittee:requisition_position")}</b>.</li>
+              <li> {t("interviewPanelCommittee:position_assignment_step_3")}{" "} <b>{t("interviewPanelCommittee:existing_created_panels")}</b>.</li>
+              <li>{t("interviewPanelCommittee:position_assignment_step_4")}{" "} <b>{t("interviewPanelCommittee:start_date")}{" "}</b>{t("interviewPanelCommittee:and")}{" "}<b>{t("interviewPanelCommittee:end_date")}</b>.</li>
+              <li>{t("interviewPanelCommittee:position_assignment_step_5")}</li>
             </ol>
           </div>
 

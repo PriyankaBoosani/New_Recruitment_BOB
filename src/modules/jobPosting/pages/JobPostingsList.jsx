@@ -352,19 +352,19 @@ const JobPostingsList = () => {
                         value={month}
                         onChange={(e) => setMonth(e.target.value)}
                     >
-                        <option value="">All Months</option>
-                        <option value="1">January</option>
-                        <option value="2">February</option>
-                        <option value="3">March</option>
-                        <option value="4">April</option>
-                        <option value="5">May</option>
-                        <option value="6">June</option>
-                        <option value="7">July</option>
-                        <option value="8">August</option>
-                        <option value="9">September</option>
-                        <option value="10">October</option>
-                        <option value="11">November</option>
-                        <option value="12">December</option>
+                        <option value="">{t("common:all_months")}</option>
+                        <option value="1">{t("common:january")}</option>
+                        <option value="2">{t("common:february")}</option>
+                        <option value="3">{t("common:march")}</option>
+                        <option value="4">{t("common:april")}</option>
+                        <option value="5">{t("common:may")}</option>
+                        <option value="6">{t("common:june")}</option>
+                        <option value="7">{t("common:july")}</option>
+                        <option value="8">{t("common:august")}</option>
+                        <option value="9">{t("common:september")}</option>
+                        <option value="10">{t("common:october")}</option>
+                        <option value="11">{t("common:november")}</option>
+                        <option value="12">{t("common:december")}</option>
                     </Form.Select>
                 </Col>
 
@@ -532,7 +532,7 @@ const JobPostingsList = () => {
                                             onClick={(e) => e.stopPropagation()}
                                             onChange={(e) => {
                                                 if (
-                                                    req.status === "APPROVED" 
+                                                    req.status === "APPROVED"
                                                     // req.status === "L1_PENDING" ||
                                                     // req.status === "L1_APPROVED" ||
                                                     // req.status === "L1_REJECTED" ||
