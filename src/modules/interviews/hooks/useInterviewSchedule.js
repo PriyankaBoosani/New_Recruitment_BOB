@@ -319,7 +319,7 @@ const updatedScheduleData = scheduleApiData.map(item => ({
 console.log(
   "FINAL SCHEDULE PAYLOAD",
   updatedScheduleData
-);return false;
+);//return false;
 
 const res =
   await interviewService.scheduleInterview(
