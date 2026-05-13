@@ -305,6 +305,8 @@ setShowErrorModal(true);
 
     fetchSchedulePoolCandidates();
 
+    setActiveTab("INTERVIEW_POOL");
+
   } catch (err) {
 
     console.error(
