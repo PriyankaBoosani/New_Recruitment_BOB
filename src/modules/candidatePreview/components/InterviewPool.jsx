@@ -75,7 +75,7 @@ console.log(
 const toggleSelectAll = () => {
 
   if (!filters?.status?.length) {
-    toast.error("Please select the filter first");
+    toast.error("Please select the status filter first");
     return;
   }
 
