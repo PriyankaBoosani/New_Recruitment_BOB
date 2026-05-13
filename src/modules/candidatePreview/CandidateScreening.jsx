@@ -1533,7 +1533,8 @@ const handleReschedule = () => {
 const canReschedule =
   selectedInterviewCandidates.length > 0 &&
   selectedInterviewCandidates.every(
-    (c) => c.status === "SCHEDULED"
+    (c) =>
+      c?.interviewSchedules?.interviewStatus === "SCHEDULED"
   );
 const qualifiedInterviewIds = selectedInterviewCandidates
   .filter(

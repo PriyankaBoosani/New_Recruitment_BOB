@@ -175,48 +175,48 @@ const uniqueAllocatedCentres = [
 ];
 
 
-const rebuiltSelectedPanels = Object.values(
+// const rebuiltSelectedPanels = Object.values(
 
-  (schedulePoolData || []).reduce((acc, item, index) => {
+//   (schedulePoolData || []).reduce((acc, item, index) => {
 
-    if (!acc[item.panel]) {
+//     if (!acc[item.panel]) {
 
-      acc[item.panel] = {
-        id: item.panelId || index + 1,
-        name: item.panel,
-        slots: []
+//       acc[item.panel] = {
+//         id: item.panelId || index + 1,
+//         name: item.panel,
+//         slots: []
 
-      };
+//       };
 
-    }
+//     }
 
-    acc[item.panel].slots.push({
+//     acc[item.panel].slots.push({
 
-      date: item.rawDate || item.date,
+//       date: item.rawDate || item.date,
 
-      startTime:
-        item.startTime ||
-        item.time?.split(" - ")[0] ||
-        "",
+//       startTime:
+//         item.startTime ||
+//         item.time?.split(" - ")[0] ||
+//         "",
 
-      endTime:
-        item.endTime ||
-        item.time?.split(" - ")[1] ||
-        "",
+//       endTime:
+//         item.endTime ||
+//         item.time?.split(" - ")[1] ||
+//         "",
 
-      duration:
-        item.duration || "15",
+//       duration:
+//         item.duration || "15",
 
-      perDay:
-        item.perDay || "1"
+//       perDay:
+//         item.perDay || "1"
 
-    });
+//     });
 
-    return acc;
+//     return acc;
 
-  }, {})
+//   }, {})
 
-);
+// );
   /* ================= UI ================= */
 
   return (
@@ -357,51 +357,49 @@ const rebuiltSelectedPanels = Object.values(
             onApplyAll={(data) => {
 
               // ✅ EDIT MODE
-              if (isEditMode) {
+             if (isEditMode) {
 
-  const editPayload = {
+              const editPayload = {
 
-    selectedPanels:
-      rebuiltSelectedPanels,
+                selectedPanels:
+                  data.selectedPanels,
 
-    positionId:
-      Array.isArray(selectedPositionId)
-        ? selectedPositionId
-        : [selectedPositionId],
+                positionId:
+                  Array.isArray(selectedPositionId)
+                    ? selectedPositionId
+                    : [selectedPositionId],
 
-    candidates:
-      schedulePoolData.map(item => ({
+                candidates:
+                  schedule.map(item => ({
 
-        id:
-          item.applicationId,
+                    id:
+                      item.applicationId || item.id,
 
-        interviewCenterId:
-          item.interviewCenterId
+                    interviewCenterId:
+                      item.interviewCenterId
 
-      }))
+                  }))
 
-  };
+              };
 
-  console.log(
-    "EDIT PAYLOAD",
-    editPayload
-  );
+              console.log(
+                "EDIT PAYLOAD",
+                editPayload
+              );
 
-  setPendingApplyData(editPayload);
+              setPendingApplyData(editPayload);
 
-} else {
+            } else {
 
-                setPendingApplyData(data);
+              setPendingApplyData(data);
 
-              }
+            }
 
               setShowCentreConfirmModal(true);
 
             }}
           initialSelectedPanels={
-  isEditMode
-    ? rebuiltSelectedPanels
-    : selectedPanelsFromEdit
+  selectedPanelsFromEdit
 }
       />
 

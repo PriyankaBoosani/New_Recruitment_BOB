@@ -8,7 +8,8 @@ export const useAddPanelModal = ({
   initialRows,
   onSave,
   onClose,
-  panels
+  panels,
+  onPanelsUpdated
 }) => {
 
   const buildRows = () =>
@@ -43,7 +44,7 @@ useEffect(() => {
   setRows(buildRows());
   setErrors({});
 
-}, [initialPanel,initialRows,show]);   // 🔥 ONLY show// 🔥 ONLY show — do NOT add initialRows 
+}, [initialPanel,show]);   // 🔥 ONLY show// 🔥 ONLY show — do NOT add initialRows 
 
 // useEffect(() => {
 
