@@ -40,7 +40,7 @@ const getInterviewCentreName = (masters, id) =>
     masters?.interviewCenters || [],
     "interviewCentreId",
     id
-  )?.interviewCentre || "-";
+  )?.displayName || "-";
 
 
 
@@ -88,7 +88,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
 
 
   const examCenterName =
-    getInterviewCentreName(masters, locationprefApiData.displayName);
+    getInterviewCentreName(masters, locationprefApiData.interviewCenter);
 
 
   const permanentCity = getCityName(masters, address.permanentCityId);
