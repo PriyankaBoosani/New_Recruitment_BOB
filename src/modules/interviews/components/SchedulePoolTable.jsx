@@ -43,10 +43,10 @@ const SchedulePoolTable = ({
           Schedule Pool
         </h6>
 
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 schddis">
 
           <button
-            className="btn fs-14 btn-primary"
+            className="btn fs-14"
             onClick={onSubmitApproval}
             disabled={rows.length === 0}
           >
@@ -54,7 +54,7 @@ const SchedulePoolTable = ({
           </button>
 
           <button
-            className="btn btn-primary fs-14"
+            className="btn fs-14"
             onClick={onEdit}
             disabled={rows.length === 0}
           >

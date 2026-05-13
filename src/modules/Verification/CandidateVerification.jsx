@@ -18,153 +18,153 @@ import PdfViewerModal from "../candidatePreview/components/PdfViewerModal"
 import { useTranslation } from "react-i18next";
 import { FiCalendar } from "react-icons/fi";
 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
 /* ================= STATUS MAP ================= */
- 
+
 const STAGE_STATUS_MAP = {
   PENDING: "Pending",
   VERIFIED: "Verified",
   REJECTED: "Rejected",
   PROVISIONALLY_APPROVED: "Provisionally Approved",
-  ZONAL_ABSENT: "Zonal Absent",   
+  ZONAL_ABSENT: "Zonal Absent",
   ZONAL_REJECTED: "Zonal Rejected",
 };
 
- 
+
 /* ================= DATE PILL ================= */
- 
+
 const DatePill = React.forwardRef(({ value, onClick }, ref) => (
   <div className="date-pill" onClick={onClick} ref={ref}>
     {value}
     <span className="calendar-icon">📅</span>
   </div>
 ));
- 
+
 export default function CandidateVerification() {
-  const { t } = useTranslation(["verification","common"]);
- 
+  const { t } = useTranslation(["verification", "common"]);
+
   // const [selectedDate, setSelectedDate] = useState(new Date());
   const [activeStage, setActiveStage] = useState(null);
   const [masterData, setMasterData] = useState(null);
   const [searchText, setSearchText] = useState("");
- 
+
   const [allCandidates, setAllCandidates] = useState([]);
   const [selectedRequisition, setSelectedRequisition] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [allCandidatesRaw, setAllCandidatesRaw] = useState([]);
   const [originalAbsentMap, setOriginalAbsentMap] = useState({});
- 
- 
+
+
   const [usedNavData, setUsedNavData] = useState(false);
- 
+
   const navInitRef = useRef(true);
- 
- 
-const location = useLocation();
-const isBackNavigationRef = useRef(
-  sessionStorage.getItem("fromPreviewBack") === "true"
-);
 
-// Check for back navigation on mount
-// useEffect(() => {
-//   isBackNavigationRef.current = sessionStorage.getItem("fromPreviewBack") === "true";
-  
-//   // Clean up sessionStorage after checking
-//   if (isBackNavigationRef.current) {
-//     sessionStorage.removeItem("fromPreviewBack");
-//   }
-// }, []);
-useEffect(() => {
-  if (!location.state) return;
 
-  setPage(location.state.page ?? 0);
-  setPageSize(location.state.pageSize ?? 10);
+  const location = useLocation();
+  const isBackNavigationRef = useRef(
+    sessionStorage.getItem("fromPreviewBack") === "true"
+  );
 
-  // remove flag AFTER restore
-  setTimeout(() => {
-    sessionStorage.removeItem("fromPreviewBack");
-    isBackNavigationRef.current = false;
-  }, 50);
+  // Check for back navigation on mount
+  // useEffect(() => {
+  //   isBackNavigationRef.current = sessionStorage.getItem("fromPreviewBack") === "true";
 
-}, [location.state]);
+  //   // Clean up sessionStorage after checking
+  //   if (isBackNavigationRef.current) {
+  //     sessionStorage.removeItem("fromPreviewBack");
+  //   }
+  // }, []);
+  useEffect(() => {
+    if (!location.state) return;
 
-const cameFromZonal =
-  sessionStorage.getItem("fromZonalSubmit") === "true";
- 
-const cameFromPreviewBack =
-  sessionStorage.getItem("fromPreviewBack") === "true";
- 
- 
+    setPage(location.state.page ?? 0);
+    setPageSize(location.state.pageSize ?? 10);
+
+    // remove flag AFTER restore
+    setTimeout(() => {
+      sessionStorage.removeItem("fromPreviewBack");
+      isBackNavigationRef.current = false;
+    }, 50);
+
+  }, [location.state]);
+
+  const cameFromZonal =
+    sessionStorage.getItem("fromZonalSubmit") === "true";
+
+  const cameFromPreviewBack =
+    sessionStorage.getItem("fromPreviewBack") === "true";
+
+
   const [pdfUrl, setPdfUrl] = useState(null);
-const [showPdfViewer, setShowPdfViewer] = useState(false);
-const [loadingPdf, setLoadingPdf] = useState(false);
-const [page, setPage] = useState(0);
-const [pageSize, setPageSize] = useState(10);
+  const [showPdfViewer, setShowPdfViewer] = useState(false);
+  const [loadingPdf, setLoadingPdf] = useState(false);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
 
 
 
- 
- 
-const handleViewFile = async (candidateRaw) => {
-  if (!candidateRaw?.resumeUrl) {
-   toast.error(t("verification:no_document_available"));
-    return;
-  }
- 
-  try {
-    setLoadingPdf(true);
- 
-    const res = await masterApiService.getAzureBlobSasUrl(
-      candidateRaw.resumeUrl,
-      "candidate"
-    );
- 
-    const sasUrl = res?.trim();
- 
-    if (!sasUrl) throw new Error("Invalid SAS URL");
- 
-    setPdfUrl(sasUrl);
-    setShowPdfViewer(true);
- 
-  } catch (err) {
-    console.error(err);
-    toast.error(t("verification:failed_open_document"));
-  } finally {
-    setLoadingPdf(false);
-  }
-};
- 
-  
-const navSelectedDate =
-  (cameFromZonal || cameFromPreviewBack) &&
-  location.state?.selectedDate
-    ? new Date(location.state.selectedDate)
-    : null;
- 
- 
- 
-const [selectedDate, setSelectedDate] =
-  useState(navSelectedDate || new Date());
- 
- 
-useEffect(() => {
-}, [selectedDate]);
- 
- 
- 
- 
-// const navCandidates = location.state?.preloadedCandidates || [];
-const navRequisition = location.state?.requisition || null;
-const navPosition = location.state?.position || null;
-  
- 
+
+
+  const handleViewFile = async (candidateRaw) => {
+    if (!candidateRaw?.resumeUrl) {
+      toast.error(t("verification:no_document_available"));
+      return;
+    }
+
+    try {
+      setLoadingPdf(true);
+
+      const res = await masterApiService.getAzureBlobSasUrl(
+        candidateRaw.resumeUrl,
+        "candidate"
+      );
+
+      const sasUrl = res?.trim();
+
+      if (!sasUrl) throw new Error("Invalid SAS URL");
+
+      setPdfUrl(sasUrl);
+      setShowPdfViewer(true);
+
+    } catch (err) {
+      console.error(err);
+      toast.error(t("verification:failed_open_document"));
+    } finally {
+      setLoadingPdf(false);
+    }
+  };
+
+
+  const navSelectedDate =
+    (cameFromZonal || cameFromPreviewBack) &&
+      location.state?.selectedDate
+      ? new Date(location.state.selectedDate)
+      : null;
+
+
+
+  const [selectedDate, setSelectedDate] =
+    useState(navSelectedDate || new Date());
+
+
+  useEffect(() => {
+  }, [selectedDate]);
+
+
+
+
+  // const navCandidates = location.state?.preloadedCandidates || [];
+  const navRequisition = location.state?.requisition || null;
+  const navPosition = location.state?.position || null;
+
+
   /* ================= LOAD MASTER ================= */
- 
+
   // useEffect(() => {
   //   masterApiService.getAllMasters().then(res => {
   //     setMasterData(res.data);
@@ -172,210 +172,210 @@ const navPosition = location.state?.position || null;
   // }, []);
 
   useEffect(() => {
-  if (navInitRef.current) {
-    navInitRef.current = false;
-    return;
-  }
-}, []);
- 
-const isBackNavigation = isBackNavigationRef.current;
-
-
-// useEffect(() => {
-//   // When selection becomes empty → reset page
-//   if (!selectedRequisition || !selectedPosition) {
-//     setPage(0);
-//   }
-// }, [selectedRequisition, selectedPosition]);
- 
-const formatApiDate = (d) => {
-  if (!d) return null;
- 
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
- 
-  return `${year}-${month}-${day}`;
-};
- 
-const loadCandidates = async (dateParam = selectedDate) => {
-  try {
-    const res =
-      await CandidateVerificationService.getCandidatesByDate(
-        formatApiDate(dateParam)
-      );
- 
-    const apiList = res.data || [];
- 
-    //  SHOW BACKEND MESSAGE WHEN EMPTY
-    if (apiList.length === 0 && res.message) {
-      toast.info(res.message);
+    if (navInitRef.current) {
+      navInitRef.current = false;
+      return;
     }
- 
-    setAllCandidatesRaw(apiList);
- 
-    const rows = mapCandidatesToTableRows(apiList);
-    setAllCandidates(rows);
- 
-    const map = {};
-    rows.forEach(r => {
-      map[r.id] = r.absent;
-    });
-    setOriginalAbsentMap(map);
- 
-    /* ✅ RESTORE HERE — AFTER DATA ARRIVES */
- 
+  }, []);
+
+  const isBackNavigation = isBackNavigationRef.current;
+
+
+  // useEffect(() => {
+  //   // When selection becomes empty → reset page
+  //   if (!selectedRequisition || !selectedPosition) {
+  //     setPage(0);
+  //   }
+  // }, [selectedRequisition, selectedPosition]);
+
+  const formatApiDate = (d) => {
+    if (!d) return null;
+
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const loadCandidates = async (dateParam = selectedDate) => {
+    try {
+      const res =
+        await CandidateVerificationService.getCandidatesByDate(
+          formatApiDate(dateParam)
+        );
+
+      const apiList = res.data || [];
+
+      //  SHOW BACKEND MESSAGE WHEN EMPTY
+      if (apiList.length === 0 && res.message) {
+        toast.info(res.message);
+      }
+
+      setAllCandidatesRaw(apiList);
+
+      const rows = mapCandidatesToTableRows(apiList);
+      setAllCandidates(rows);
+
+      const map = {};
+      rows.forEach(r => {
+        map[r.id] = r.absent;
+      });
+      setOriginalAbsentMap(map);
+
+      /* ✅ RESTORE HERE — AFTER DATA ARRIVES */
+
+      if (
+        apiList.length > 0 &&
+        (cameFromZonal || cameFromPreviewBack) &&
+        !usedNavData &&
+        location.state?.preloadedCandidates?.length
+      ) {
+
+        if (location.state?.requisition)
+          setSelectedRequisition(location.state.requisition);
+
+        if (location.state?.position)
+          setSelectedPosition(location.state.position);
+
+        setUsedNavData(true);
+
+        sessionStorage.removeItem("fromZonalSubmit");
+        sessionStorage.removeItem("fromPreviewBack");
+      }
+
+    } catch (err) {
+      setAllCandidatesRaw([]);
+      setAllCandidates([]);
+      toast.error(t("verification:failed_load_candidates"));
+    }
+  };
+
+
+
+
+  useEffect(() => {
+  }, [allCandidatesRaw]);
+
+  const hasNavCandidates = !!location.state?.preloadedCandidates?.length;
+  const navCandidates = location.state?.preloadedCandidates || [];
+
+
+  useEffect(() => {
+    // restore selection from nav
     if (
-      apiList.length > 0 &&
       (cameFromZonal || cameFromPreviewBack) &&
       !usedNavData &&
-      location.state?.preloadedCandidates?.length
+      navCandidates.length &&
+      navInitRef.current
     ) {
- 
-      if (location.state?.requisition)
-        setSelectedRequisition(location.state.requisition);
- 
-      if (location.state?.position)
-        setSelectedPosition(location.state.position);
- 
+
+      setAllCandidatesRaw(navCandidates);
+      const rows = mapCandidatesToTableRows(navCandidates);
+      setAllCandidates(rows);
+
+      const map = {};
+      rows.forEach(r => {
+        map[r.id] = r.absent;
+      });
+      setOriginalAbsentMap(map);
+
+      if (navRequisition) setSelectedRequisition(navRequisition);
+      if (navPosition) setSelectedPosition(navPosition);
+
       setUsedNavData(true);
- 
+
       sessionStorage.removeItem("fromZonalSubmit");
       sessionStorage.removeItem("fromPreviewBack");
     }
- 
-  } catch (err) {
-    setAllCandidatesRaw([]);
-    setAllCandidates([]);
-    toast.error(t("verification:failed_load_candidates"));
-  }
-};
- 
- 
- 
- 
-useEffect(() => {
-}, [allCandidatesRaw]);
- 
-const hasNavCandidates = !!location.state?.preloadedCandidates?.length;
-const navCandidates = location.state?.preloadedCandidates || [];
- 
- 
-useEffect(() => {
-  // restore selection from nav
-  if (
-    (cameFromZonal || cameFromPreviewBack) &&
-    !usedNavData &&
-    navCandidates.length &&
-    navInitRef.current
-  ) {
- 
-    setAllCandidatesRaw(navCandidates);
-const rows = mapCandidatesToTableRows(navCandidates);
-setAllCandidates(rows);
- 
-const map = {};
-rows.forEach(r => {
-  map[r.id] = r.absent;
-});
-setOriginalAbsentMap(map);
- 
-    if (navRequisition) setSelectedRequisition(navRequisition);
-    if (navPosition) setSelectedPosition(navPosition);
- 
-    setUsedNavData(true);
- 
-    sessionStorage.removeItem("fromZonalSubmit");
-    sessionStorage.removeItem("fromPreviewBack");
-  }
- 
-  //  ALWAYS call API
-  loadCandidates(selectedDate);
- 
-}, [selectedDate]);
- 
-useEffect(() => {
-}, [selectedRequisition]);
- 
-useEffect(() => {
-}, [selectedPosition]);
- 
- 
-useEffect(() => {
- 
-  // First render after navigation → keep auto-populated selection
-  if (navInitRef.current) {
-    navInitRef.current = false;
-    return;
-  }
- 
-  // User changed date manually → reset selection
-  setSelectedRequisition(null);
-  setSelectedPosition(null);
-  setActiveStage(null);
- 
-}, [selectedDate]);
- 
- 
- 
- 
- 
- 
- 
- 
+
+    //  ALWAYS call API
+    loadCandidates(selectedDate);
+
+  }, [selectedDate]);
+
+  useEffect(() => {
+  }, [selectedRequisition]);
+
+  useEffect(() => {
+  }, [selectedPosition]);
+
+
+  useEffect(() => {
+
+    // First render after navigation → keep auto-populated selection
+    if (navInitRef.current) {
+      navInitRef.current = false;
+      return;
+    }
+
+    // User changed date manually → reset selection
+    setSelectedRequisition(null);
+    setSelectedPosition(null);
+    setActiveStage(null);
+
+  }, [selectedDate]);
+
+
+
+
+
+
+
+
   /* ================= LOAD DUMMY → TABLE MAP ================= */
- 
+
   // useEffect(() => {
   //   setAllCandidates(mapCandidatesToTableRows(DUMMY_DATA));
   // }, []);
- 
+
   /* ================= FILTER ================= */
- 
- 
- 
- 
-const baseFiltered = allCandidates.filter(c => {
- 
-  if (!selectedRequisition || !selectedPosition) return false;
- 
-  const selectedReqId =
-    selectedRequisition?.raw?.requisition_id ||
-    selectedRequisition?.requisition_id ||
-    selectedRequisition?.value ||
-    null;
- 
-  const selectedPosId =
-    selectedPosition?.raw?.positionId ||
-    selectedPosition?.positionId ||
-    selectedPosition?.value ||
-    null;
- 
-  const reqMatch =
-    c.raw.requisitionId === selectedReqId;
- 
-  const posMatch =
-    c.raw.positionId === selectedPosId;
- 
-  const searchMatch =
-    c.name?.toLowerCase().includes(searchText.toLowerCase()) ||
-    c.regNo?.includes(searchText);
- 
-  return reqMatch && posMatch && searchMatch;
-});
- 
- 
- 
- 
- 
- 
- 
- 
- 
-const filteredCandidates = baseFiltered.filter(c =>
-  activeStage
-    ? c.status === STAGE_STATUS_MAP[activeStage]
-    : true
-);
+
+
+
+
+  const baseFiltered = allCandidates.filter(c => {
+
+    if (!selectedRequisition || !selectedPosition) return false;
+
+    const selectedReqId =
+      selectedRequisition?.raw?.requisition_id ||
+      selectedRequisition?.requisition_id ||
+      selectedRequisition?.value ||
+      null;
+
+    const selectedPosId =
+      selectedPosition?.raw?.positionId ||
+      selectedPosition?.positionId ||
+      selectedPosition?.value ||
+      null;
+
+    const reqMatch =
+      c.raw.requisitionId === selectedReqId;
+
+    const posMatch =
+      c.raw.positionId === selectedPosId;
+
+    const searchMatch =
+      c.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+      c.regNo?.includes(searchText);
+
+    return reqMatch && posMatch && searchMatch;
+  });
+
+
+
+
+
+
+
+
+
+  const filteredCandidates = baseFiltered.filter(c =>
+    activeStage
+      ? c.status === STAGE_STATUS_MAP[activeStage]
+      : true
+  );
 
 
 
@@ -389,44 +389,50 @@ const filteredCandidates = baseFiltered.filter(c =>
 
 
 
-const [isCalendarOpen, setIsCalendarOpen] = useState(false);
- 
-const totalElements = filteredCandidates.length;
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
-const totalPages = Math.ceil(totalElements / pageSize);
+  const totalElements = filteredCandidates.length;
 
-useEffect(() => {
-  // Fix invalid page after data change, but not during back navigation
-  if (!isBackNavigationRef.current && page >= totalPages) {
-    setPage(0);
-  }
-}, [totalPages, page]);
-
-
-
-
-const startIndex = page * pageSize;
-const endIndex = startIndex + pageSize;
-
-const paginatedCandidates = filteredCandidates.slice(
-  startIndex,
-  endIndex
-);
+  const totalPages = Math.ceil(totalElements / pageSize);
 
  
- 
+
+  const shouldPreservePage =
+    cameFromZonal ||
+    cameFromPreviewBack ||
+    location.state?.page !== undefined;
+
+  useEffect(() => {
+    if (shouldPreservePage) return;
+
+    if (page >= totalPages) {
+      setPage(0);
+    }
+  }, [totalPages, page, shouldPreservePage]);
+
+
+  const startIndex = page * pageSize;
+  const endIndex = startIndex + pageSize;
+
+  const paginatedCandidates = filteredCandidates.slice(
+    startIndex,
+    endIndex
+  );
+
+
+
   /* ================= STAGE COUNTS ================= */
- 
-const stageCounts = Object.keys(STAGE_STATUS_MAP).reduce((acc, key) => {
-  acc[key] = baseFiltered.filter(
-    c => c.status === STAGE_STATUS_MAP[key]
-  ).length;
-  return acc;
-}, {});
- 
- 
+
+  const stageCounts = Object.keys(STAGE_STATUS_MAP).reduce((acc, key) => {
+    acc[key] = baseFiltered.filter(
+      c => c.status === STAGE_STATUS_MAP[key]
+    ).length;
+    return acc;
+  }, {});
+
+
   /* ================= ABSENT TOGGLE ================= */
- 
+
   const toggleAbsent = (id) => {
     setAllCandidates(prev =>
       prev.map(c =>
@@ -434,152 +440,152 @@ const stageCounts = Object.keys(STAGE_STATUS_MAP).reduce((acc, key) => {
       )
     );
   };
- 
-const anyAbsentChanged = baseFiltered.some(
-  c => originalAbsentMap[c.id] !== c.absent
-);
- 
- 
- 
- 
- 
+
+  const anyAbsentChanged = baseFiltered.some(
+    c => originalAbsentMap[c.id] !== c.absent
+  );
+
+
+
+
+
   const isSelectionDone =
     selectedRequisition && selectedPosition;
- 
- 
-// const handleSaveAbsent = async () => {
-//   try {
-//     if (!filteredCandidates.length) return;
- 
-//     for (const c of filteredCandidates) {
-//       if (originalAbsentMap[c.id] !== c.absent) {
-//         await CandidateVerificationService.updateAbsentStatus(
-//           c.raw.applicationId,
-//           c.absent
-//         );
-//       }
-//     }
- 
-//     await loadCandidates(selectedDate);   //  refresh data
- 
-//     toast.success("Absent status updated");
- 
-//   } catch (err) {
-//     console.error("Absent update failed", err);
-//     toast.error("Save failed");
-//   }
-// };
- 
- 
- 
-const handleSaveAbsent = async () => {
-  try {
- 
-    const updates = filteredCandidates
-      .filter(c => originalAbsentMap[c.id] !== c.absent)
-      .map(c => ({
-        applicationId: c.raw.applicationId,
-        isAbsent: c.absent
-      }));
- 
-    if (updates.length === 0) {
-      toast.info(t("verification:no_changes_to_save"));
-      return;
-    }
- 
-    const payload = {
-      absentStatusUpdates: updates
-    };
- 
- 
-    await CandidateVerificationService.updateAbsentStatusBatch(payload);
- 
-    await loadCandidates(selectedDate); // refresh table
- 
-    toast.success(t("verification:absent_status_updated"));
- 
-  } catch (err) {
-    console.error("Absent batch update failed", err);
-    toast.error(t("verification:save_failed"));
-  }
-};
- 
- 
- 
- 
- 
- 
-useEffect(() => {
-  const loadMasters = async () => {
+
+
+  // const handleSaveAbsent = async () => {
+  //   try {
+  //     if (!filteredCandidates.length) return;
+
+  //     for (const c of filteredCandidates) {
+  //       if (originalAbsentMap[c.id] !== c.absent) {
+  //         await CandidateVerificationService.updateAbsentStatus(
+  //           c.raw.applicationId,
+  //           c.absent
+  //         );
+  //       }
+  //     }
+
+  //     await loadCandidates(selectedDate);   //  refresh data
+
+  //     toast.success("Absent status updated");
+
+  //   } catch (err) {
+  //     console.error("Absent update failed", err);
+  //     toast.error("Save failed");
+  //   }
+  // };
+
+
+
+  const handleSaveAbsent = async () => {
     try {
-      const res = await masterApiService.getMasterDisplayAll();
-      setMasterData(res.data || {});
-    } catch (e) {
-      console.error("Master load failed", e);
-      setMasterData({});
+
+      const updates = filteredCandidates
+        .filter(c => originalAbsentMap[c.id] !== c.absent)
+        .map(c => ({
+          applicationId: c.raw.applicationId,
+          isAbsent: c.absent
+        }));
+
+      if (updates.length === 0) {
+        toast.info(t("verification:no_changes_to_save"));
+        return;
+      }
+
+      const payload = {
+        absentStatusUpdates: updates
+      };
+
+
+      await CandidateVerificationService.updateAbsentStatusBatch(payload);
+
+      await loadCandidates(selectedDate); // refresh table
+
+      toast.success(t("verification:absent_status_updated"));
+
+    } catch (err) {
+      console.error("Absent batch update failed", err);
+      toast.error(t("verification:save_failed"));
     }
   };
- 
-  loadMasters();
-}, []);
 
 
 
-const DatePill = React.forwardRef(({ value, onClick }, ref) => (
-  <div className="date-pill" onClick={onClick} ref={ref}>
-    {value}
-    <span className="calendar-icon">
-      <FiCalendar />
-    </span>
-  </div>
-));
- 
- 
- 
+
+
+
+  useEffect(() => {
+    const loadMasters = async () => {
+      try {
+        const res = await masterApiService.getMasterDisplayAll();
+        setMasterData(res.data || {});
+      } catch (e) {
+        console.error("Master load failed", e);
+        setMasterData({});
+      }
+    };
+
+    loadMasters();
+  }, []);
+
+
+
+  const DatePill = React.forwardRef(({ value, onClick }, ref) => (
+    <div className="date-pill" onClick={onClick} ref={ref}>
+      {value}
+      <span className="calendar-icon">
+        <FiCalendar />
+      </span>
+    </div>
+  ));
+
+
+
   /* ================= UI ================= */
- 
+
   return (
     <div className="container-fluid px-4 py-3 candidate-verification-page">
- 
+
       {/* ================= DATE + SEARCH ================= */}
- 
+
       <div className="verification-toolbar">
         <div className="date-nav">
- 
+
           <span
             className="nav-arrow"
             onClick={() =>
               setSelectedDate(d => subDays(d, 1))
             }
           >‹</span>
- 
-<DatePicker
-  selected={selectedDate}
-  onChange={(date) => {
-    setSelectedDate(date);
-    setIsCalendarOpen(false);
 
-    if (!isBackNavigationRef.current) {
-      setPage(0);
-    }
-  }}
-  onClickOutside={() => setIsCalendarOpen(false)}
-  open={isCalendarOpen}
-  onInputClick={() => setIsCalendarOpen(true)}
-  dateFormat="dd MMMM yyyy"
-  customInput={<DatePill />}
-  // maxDate={new Date()}
+          <DatePicker
+            selected={selectedDate}
+            onChange={(date) => {
+              setSelectedDate(date);
+              setIsCalendarOpen(false);
+
+              if (!isBackNavigationRef.current) {
+                setPage(0);
+              }
+            }}
+            onClickOutside={() => setIsCalendarOpen(false)}
+            open={isCalendarOpen}
+            onInputClick={() => setIsCalendarOpen(true)}
+            dateFormat="dd MMMM yyyy"
+            customInput={<DatePill />}
+            // maxDate={new Date()}
 
 
-  showMonthDropdown
-  showYearDropdown
-  dropdownMode="select"
-  yearDropdownItemNumber={15}
-  scrollableYearDropdown
-/>
+            showMonthDropdown
+            showYearDropdown
+            dropdownMode="select"
+            yearDropdownItemNumber={15}
+            scrollableYearDropdown
+          />
 
- 
- 
+
+
           <span
             className="nav-arrow"
             onClick={() => {
@@ -587,10 +593,10 @@ const DatePill = React.forwardRef(({ value, onClick }, ref) => (
               if (next <= new Date()) setSelectedDate(next);
             }}
           >›</span>
- 
+
         </div>
- 
-        <div className="search-box">  
+
+        <div className="search-box">
           <img src={searchIcon} width={14} alt="search" />
           <input
             placeholder={t("verification:search_candidates")}
@@ -599,93 +605,93 @@ const DatePill = React.forwardRef(({ value, onClick }, ref) => (
           />
         </div>
       </div>
- 
+
       {/* ================= STAGE FILTER ================= */}
- 
-<div className="stage-filter-row d-flex align-items-center gap-3">
 
-  <span className="fs-14 text-muted">
-    {t("verification:filter_by_stage")}:
-  </span>
+      <div className="stage-filter-row d-flex align-items-center gap-3">
 
-  <button
-    className="btn p-0 text-danger fs-14"
-    type="button"
-    onClick={() => setActiveStage(null)}
-  >
-    {t("common:clear_all")}
-  </button>
+        <span className="fs-14 text-muted">
+          {t("verification:filter_by_stage")}:
+        </span>
 
-  <div style={{ width: 200 }}>
-    <select
-      className="form-select form-select-sm"
-      value={activeStage || ""}
-      onChange={(e) =>
-        setActiveStage(e.target.value || null)
-      }
-    >
-      <option value="">{t("verification:all_statuses")}</option>
+        <button
+          className="btn p-0 text-danger fs-14"
+          type="button"
+          onClick={() => setActiveStage(null)}
+        >
+          {t("common:clear_all")}
+        </button>
 
-      {Object.keys(STAGE_STATUS_MAP).map(key => (
-        <option key={key} value={key}>
-          {STAGE_STATUS_MAP[key]}
-        </option>
-      ))}
-    </select>
-  </div>
+        <div style={{ width: 200 }}>
+          <select
+            className="form-select form-select-sm"
+            value={activeStage || ""}
+            onChange={(e) =>
+              setActiveStage(e.target.value || null)
+            }
+          >
+            <option value="">{t("verification:all_statuses")}</option>
 
-</div>
+            {Object.keys(STAGE_STATUS_MAP).map(key => (
+              <option key={key} value={key}>
+                {STAGE_STATUS_MAP[key]}
+              </option>
+            ))}
+          </select>
+        </div>
 
-
- 
-      {/* ================= SELECTORS ================= */}
- 
-    <div className="requisition-selector-row">
-<RequisitionPositionSelector
-  apiList={allCandidatesRaw}
-  selectedRequisitionRaw={selectedRequisition}
-  selectedPositionRaw={selectedPosition}
-  onRequisitionChange={(req) => {
-    setSelectedRequisition(req);
-    setSelectedPosition(null);   //  reset position when req changes
-      if (!isBackNavigationRef.current) {
-    setPage(0);
-  }
-  }}
-  onPositionChange={(pos) => {
-  setSelectedPosition(pos);
-
-  if (!isBackNavigationRef.current) {
-    setPage(0);
-  }
-}}
-   closeCalendar={() => setIsCalendarOpen(false)}
-/>
- 
- 
- 
- 
- 
       </div>
- 
+
+
+
+      {/* ================= SELECTORS ================= */}
+
+      <div className="requisition-selector-row">
+        <RequisitionPositionSelector
+          apiList={allCandidatesRaw}
+          selectedRequisitionRaw={selectedRequisition}
+          selectedPositionRaw={selectedPosition}
+          onRequisitionChange={(req) => {
+            setSelectedRequisition(req);
+            setSelectedPosition(null);   //  reset position when req changes
+            if (!isBackNavigationRef.current) {
+              setPage(0);
+            }
+          }}
+          onPositionChange={(pos) => {
+            setSelectedPosition(pos);
+
+            if (!isBackNavigationRef.current) {
+              setPage(0);
+            }
+          }}
+          closeCalendar={() => setIsCalendarOpen(false)}
+        />
+
+
+
+
+
+      </div>
+
       {/* ================= STRIP ================= */}
- 
+
       {isSelectionDone && (
         <div className="requisition-strip">
-       <RequisitionStrip
-  requisition={selectedRequisition}
-  position={selectedPosition}
-  isCardBg={false}
-isSaveEnabled={anyAbsentChanged}
-  onSave={handleSaveAbsent}
-  isSaveBtn={true}
-/>
- 
+          <RequisitionStrip
+            requisition={selectedRequisition}
+            position={selectedPosition}
+            isCardBg={false}
+            isSaveEnabled={anyAbsentChanged}
+            onSave={handleSaveAbsent}
+            isSaveBtn={true}
+          />
+
         </div>
       )}
- 
+
       {/* ================= TABLE ================= */}
- 
+
       <CandidateTable
         requisition={selectedRequisition}
         position={selectedPosition}
@@ -705,21 +711,21 @@ isSaveEnabled={anyAbsentChanged}
         searchText={searchText}
         activeStage={activeStage}
       />
- 
- 
+
+
       <PdfViewerModal
-  show={showPdfViewer}
-  onHide={() => {
-    setShowPdfViewer(false);
-    setPdfUrl(null);
-  }}
-  fileUrl={pdfUrl}
-  loading={loadingPdf}
-  title={t("verification:candidate_resume")}
-/>
- 
- 
+        show={showPdfViewer}
+        onHide={() => {
+          setShowPdfViewer(false);
+          setPdfUrl(null);
+        }}
+        fileUrl={pdfUrl}
+        loading={loadingPdf}
+        title={t("verification:candidate_resume")}
+      />
+
+
     </div>
-    
+
   );
 }

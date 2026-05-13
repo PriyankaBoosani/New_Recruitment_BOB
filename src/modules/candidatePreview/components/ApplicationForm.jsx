@@ -36,7 +36,9 @@ const ApplicationForm = ({
   zonalHrComments,
   candidateStatus,
   isFromInterview,
-  isFromCompensationPool
+  isFromCompensationPool,
+  page,
+  pageSize
 }) => {
 
   const { t } = useTranslation(["preview", "common", "validation"]);
@@ -326,10 +328,12 @@ const ApplicationForm = ({
           requisition: location.state?.requisition,
           position: location.state?.position,
           preloadedCandidates: location.state?.candidates || [],
-          selectedDate
+          selectedDate,
+          page: page,
+          pageSize: pageSize
         }
       });
-
+     
     } catch (err) {
 
       // -----------------------------------------
@@ -521,7 +525,7 @@ const ApplicationForm = ({
       setScreeningDocuments(documents);
 
     } catch (e) {
-     console.error(t("failed_fetch_document_status"), e);
+      console.error(t("failed_fetch_document_status"), e);
     } finally {
       setDocStatusLoading(false);
     }
@@ -752,7 +756,7 @@ const ApplicationForm = ({
       await refreshDocStatuses();
 
     } catch (err) {
-     console.error(t("reject_failed"), err);
+      console.error(t("reject_failed"), err);
     }
   };
 
@@ -1010,11 +1014,13 @@ const ApplicationForm = ({
             : positionId
               ? [positionId]
               : [],
+          page: page,
+          pageSize: pageSize,
         },
       });
     } catch (err) {
-     console.error(t("screening_submit_failed"), err);
-     toast.error(t("submission_failed"));
+      console.error(t("screening_submit_failed"), err);
+      toast.error(t("submission_failed"));
     }
   };
 
@@ -1073,7 +1079,7 @@ const ApplicationForm = ({
 
   useEffect(() => {
     if (!disableShortlistedSection || hasAnyDiscrepancy) return;
-    if (screeningForm.isScreeningCompleted) return; 
+    if (screeningForm.isScreeningCompleted) return;
     setScreeningForm(prev => ({
       ...prev,
       submitBeforeDate: "",
@@ -1172,7 +1178,7 @@ const ApplicationForm = ({
 
   const getPendingMessage = (doc) => {
     if (!doc?.pendingChecks?.length) {
-    return t("validation_pending");
+      return t("validation_pending");
     }
 
     const formatted = doc.pendingChecks
@@ -1248,7 +1254,7 @@ const ApplicationForm = ({
                               className="photo-img"
                             />
                           ) : (
-                           <div className="no-image">{t("no_photo")}</div>
+                            <div className="no-image">{t("no_photo")}</div>
                           )}
                         </div>
 

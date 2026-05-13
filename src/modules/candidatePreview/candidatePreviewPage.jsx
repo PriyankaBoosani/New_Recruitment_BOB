@@ -376,6 +376,8 @@ await candidateWorkflowServices.getCandidateAllDetails(
               candidateStatus={candidate?.status}
                 isFromInterview={isFromInterview}
                 isFromCompensationPool={isFromCompensationPool}
+                page={state.page}
+                pageSize={state.pageSize}
             />
           )
         )}
