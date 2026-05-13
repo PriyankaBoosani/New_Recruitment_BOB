@@ -301,13 +301,13 @@ const toggleSelectAll = () => {
                 {t("candidateWorkflow:candidate")} {sortIcon("name")}
               </th>
 
-              <th className="fs-14 fw-normal py-3" role="button">
+              {/* <th className="fs-14 fw-normal py-3" role="button">
                 Rank
               </th>
 
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("score")} role="button">
                 Score {sortIcon("score")}
-              </th>
+              </th> */}
 
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("experienceMonths")} role="button">
                 {t("candidateWorkflow:experience")} {sortIcon("experienceMonths")}
@@ -334,7 +334,7 @@ const toggleSelectAll = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="11" className="text-center py-4">
+                <td colSpan="9" className="text-center py-4">
                   {t("candidateWorkflow:loading_candidates")}
                 </td>
               </tr>
@@ -365,7 +365,7 @@ const toggleSelectAll = () => {
 
 
 
-                  <td className="align-content-center">
+                  {/* <td className="align-content-center">
                     <p className="fw-normal fs-14 mb-0">{c?.rank || "-"}</p>
                   </td>
 
@@ -399,7 +399,7 @@ const toggleSelectAll = () => {
                         </OverlayTrigger>
                       )}
                     </div>
-                  </td>
+                  </td> */}
 
                   <td className="align-content-center">
                     {/* <p className="fw-normal fs-14 mb-0">{(c.experienceMonths / 12).toFixed(1)} {t("candidateWorkflow:years")}</p> */}
