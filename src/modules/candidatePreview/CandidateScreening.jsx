@@ -1380,68 +1380,70 @@ const handleReschedule = () => {
 
   const mappedRows = selectedInterviewCandidates.map((c) => ({
 
-    // REQUIRED FOR SAVE PAYLOAD
-    applicationId:
-      c.applicationId || c.id,
+  // REQUIRED FOR SAVE
+  applicationId:
+    c?.application?.id || "",
 
-    interviewCenterId:
-      c.zonalOfficeId || "",
+  interviewCenterId:
+    c?.center?.interviewCentreId || "",
 
-    panelId:
-      c.panelId || "",
+  panelId:
+    c?.panel?.interviewPanelId || "",
 
-    duration:
-      c.duration || 15,
+  duration:
+    c?.interviewSchedules?.interviewDurationMinutes || 15,
 
-    perDay: "1",
+  perDay: "1",
 
-    // TABLE DATA
-    id: c.id,
+  // TABLE DATA
+  id:
+    c?.interviewSchedules?.interviewScheduleId || "",
 
-    name:
-      c.name || "-",
+  name:
+    c?.fullName || "-",
 
-    regNo:
-      c.regNo || "-",
+  regNo:
+    c?.application?.applicationNo || "-",
 
-    // IMPORTANT → YYYY-MM-DD FORMAT
-    date:
-      c.interviewStartAt
-        ?.split("T")[0] || "",
+  // DATE
+  date:
+    c?.interviewSchedules?.interviewStartAt
+      ?.split("T")[0] || "",
 
-    rawDate:
-      c.interviewStartAt
-        ?.split("T")[0] || "",
+  rawDate:
+    c?.interviewSchedules?.interviewStartAt
+      ?.split("T")[0] || "",
 
-    // IMPORTANT → 24 HOUR FORMAT
-    startTime:
-      c.interviewStartAt
-        ?.split("T")[1]
-        ?.slice(0, 5) || "",
+  // TIME
+  startTime:
+    c?.interviewSchedules?.interviewStartAt
+      ?.split("T")[1]
+      ?.slice(0, 5) || "",
 
-    endTime:
-      c.interviewEndAt
-        ?.split("T")[1]
-        ?.slice(0, 5) || "",
+  endTime:
+    c?.interviewSchedules?.interviewEndAt
+      ?.split("T")[1]
+      ?.slice(0, 5) || "",
 
-    // IMPORTANT → SAME FORMAT AS SCHEDULE POOL
-    time:
-      c.interviewStartAt && c.interviewEndAt
-        ? `${c.interviewStartAt
-            .split("T")[1]
-            .slice(0, 5)} - ${c.interviewEndAt
-            .split("T")[1]
-            .slice(0, 5)}`
-        : "-",
+  time:
+    c?.interviewSchedules?.interviewStartAt &&
+    c?.interviewSchedules?.interviewEndAt
+      ? `${c.interviewSchedules.interviewStartAt
+          .split("T")[1]
+          .slice(0, 5)} - ${c.interviewSchedules.interviewEndAt
+          .split("T")[1]
+          .slice(0, 5)}`
+      : "-",
 
-    zone:
-      c.zone || "-",
+  // CENTER
+  zone:
+    c?.center?.interviewCentre || "-",
 
-    // IMPORTANT
-    panel:
-      c.panel || "-"
+  // PANEL
+  panel:
+    c?.panel?.panelName || "-"
 
-  }));
+}));
 
   console.log("mappedRows", mappedRows);
 
