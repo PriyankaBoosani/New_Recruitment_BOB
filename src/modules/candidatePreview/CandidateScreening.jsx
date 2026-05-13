@@ -1039,7 +1039,7 @@ setAllInterviewCandidatesForFilters(mappedCandidates);
               : "-",
 
           zone:
-            c?.interviewCentres?.interviewCentre || "-",
+            c?.interviewCentres?.displayName || "-",
           candidateId:
             c?.application?.candidateId,
 
@@ -2364,25 +2364,28 @@ const allQualified = selectedInterviewCandidates.every(
                 "SCHEDULE_POOL"
               ];
 
-              const goingToSingleSelect =
-                !multiTabs.includes(tab.key);
+       const goingToSingleSelect =
+  !multiTabs.includes(tab.key);
 
-              // RESET when moving multi -> single
-              if (goingToSingleSelect) {
+// Clear ONLY when multiple positions exist
+if (
+  goingToSingleSelect &&
+  selectedPositionId.length > 1
+) {
 
-                setSelectedRequisitionId("");
-                setSelectedPositionId([]);
-                setPositions([]);
+  setSelectedRequisitionId("");
+  setSelectedPositionId([]);
+  setPositions([]);
 
-                setCandidates([]);
-                setTotalElements(0);
+  setCandidates([]);
+  setTotalElements(0);
 
-                setSelectedCandidateIds([]);
-                setSelectedInterviewCandidateIds([]);
-                setSelectedCompensationIds([]);
+  setSelectedCandidateIds([]);
+  setSelectedInterviewCandidateIds([]);
+  setSelectedCompensationIds([]);
 
-                setAllCandidatesForFilters([]);
-              }
+  setAllCandidatesForFilters([]);
+}
 
               setFilters((prev) => ({
                 ...prev,
