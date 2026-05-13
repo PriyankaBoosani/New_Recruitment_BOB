@@ -38,6 +38,7 @@ onReschedule,
     INTERVIEW_ABSENT: "bg-info",
     PENDING: "bg-warning",
     ZONAL_REJECTED: "bg-danger",
+   RESCHEDULED: "bg-warning"
     // OFFER_AWAITED: "bg-dark"
 
   };

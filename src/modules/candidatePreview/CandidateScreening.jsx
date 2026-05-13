@@ -144,6 +144,7 @@ useEffect(() => {
     ZONAL_REJECTED: "Zonal Rejected",
     ZONAL_ABSENT: "Zonal Absent",
     INTERVIEW_ABSENT: "Interview Absent",
+    RESCHEDULED: "Rescheduled",
   };
   const SCHEDULE_POOL_STATUS_LABEL_MAP = {
     L1_PENDING: "L1 Pending",
