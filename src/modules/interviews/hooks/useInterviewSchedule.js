@@ -269,8 +269,20 @@ candidates.forEach((candidate) => {
    const res = await interviewService.allocatePanels(payload);
    console.log("data12345",res.data);
     if (!res?.success) {
-      return { success: false, message: res.data };
-    }
+
+  return {
+
+    success: false,
+
+    message:
+      res?.message ||
+      "Scheduling failed",
+
+    data:
+      res?.data || []
+
+  };
+}
     setScheduleApiData(res.data);   // 🔥 IMPORTANT
 
     // ✅ Convert response → table rows
@@ -295,9 +307,38 @@ candidates.forEach((candidate) => {
     return { success: true, rows };
 
   } catch (err) {
-    console.error(err);
-    return { success: false, message: "Something went wrong" };
+
+  console.error("ALLOCATE ERROR", err);
+
+  // ✅ backend 400 response
+  if (err?.response?.data) {
+
+    return {
+
+      success: false,
+
+      message:
+        err.response.data.message ||
+        "Scheduling failed",
+
+      data:
+        err.response.data.data || []
+
+    };
+
   }
+
+  return {
+
+    success: false,
+
+    message:
+      "Something went wrong",
+
+    data: []
+
+  };
+}
 };
 
 const scheduleInterview = async () => {
@@ -327,16 +368,61 @@ const res =
   );
   //  const res = await interviewService.scheduleInterview(scheduleApiData);
 
-    if (!res?.success) {
-      return { success: false, message: res.message };
-    }
+   if (!res?.success) {
+
+  return {
+
+    success: false,
+
+    message:
+      res.message ||
+
+      "Failed to schedule interviews",
+
+    data:
+      res.data || []
+
+  };
+}
 
     return { success: true };
 
   } catch (err) {
-    console.error(err);
-    return { success: false, message: "Failed to schedule interviews" };
+
+  console.error(
+    "SCHEDULE ERROR",
+    err
+  );
+
+  // ✅ backend 400 response
+  if (err?.response?.data) {
+
+    return {
+
+      success: false,
+
+      message:
+        err.response.data.message ||
+        "Failed to schedule interviews",
+
+      data:
+        err.response.data.data || []
+
+    };
+
   }
+
+  return {
+
+    success: false,
+
+    message:
+      "Failed to schedule interviews",
+
+    data: []
+
+  };
+}
 };
 
   return {

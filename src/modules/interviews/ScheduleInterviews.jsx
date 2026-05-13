@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import "../../style/css/CandidateScreening.css";
 import InterviewCentreAllocationModal from "../interviews/components/InterviewCentreAllocationModal";
 import InterviewCentreConfirmModal from "../interviews/components/InterviewCentreConfirmModal";
+import ScheduleErrorModal from "../interviews/components/ScheduleErrorModal";
 const ScheduleInterviews = () => {
   const navigate = useNavigate();
 
@@ -30,6 +31,12 @@ const [scheduledCount, setScheduledCount] = useState(0);
   const [showReadyBar, setShowReadyBar] = useState(false);
   //availability of centres
   const [showCentreModal, setShowCentreModal] = useState(false);
+
+  const [showErrorModal, setShowErrorModal] =useState(false);
+
+const [errorCandidates, setErrorCandidates] =useState([]);
+
+const [errorMessage, setErrorMessage] =useState("");
 
   const [showCentreConfirmModal, setShowCentreConfirmModal] =
   useState(false);
@@ -465,9 +472,17 @@ const uniqueAllocatedCentres = [
                 const res = await scheduleInterview();
 
                 if (!res.success) {
-                  toast.error(res.message);
-                  return;
-                }
+
+                setErrorMessage(res.message);
+
+                setErrorCandidates(
+                  res.data || []
+                );
+
+                setShowErrorModal(true);
+
+                return;
+              }
 
                 toast.success(
                   "Interviews scheduled successfully"
@@ -571,7 +586,14 @@ const uniqueAllocatedCentres = [
             });
 
             if (!res.success) {
-              toast.error(res.message);
+              setErrorMessage(res.message);
+
+              setErrorCandidates(
+                res.data || []
+              );
+
+              setShowErrorModal(true);
+
               return;
             }
 
@@ -627,8 +649,15 @@ console.log("zonalChangeMap", zonalChangeMap);
   });
 
   if (!res.success) {
-    toast.error(res.message);
-    return;
+    setErrorMessage(res.message);
+
+  setErrorCandidates(
+    res.data || []
+  );
+
+  setShowErrorModal(true);
+
+  return;
   }
 
   // ✅ IMPORTANT
@@ -640,6 +669,16 @@ console.log("zonalChangeMap", zonalChangeMap);
 
 }}
 />
+
+<ScheduleErrorModal
+  show={showErrorModal}
+  onClose={() =>
+    setShowErrorModal(false)
+  }
+  errorMessage={errorMessage}
+  errorCandidates={errorCandidates}
+/>
+
 {/* {showCentreConfirmModal && (
 
   <div className="ipc-alert-overlay">

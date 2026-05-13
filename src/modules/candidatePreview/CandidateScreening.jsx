@@ -43,7 +43,7 @@ import useCommitteeRequests from "../Approvals/hooks/useCommitteeRequests";
 import InterviewScheduleTable from ".././interviews/components/InterviewScheduleTable";
 import SchedulePoolTable from "../interviews/components/SchedulePoolTable";
 import ScheduleApprovalModal from "../candidatePreview/components/ScheduleApprovalModal";
-
+import ScheduleErrorModal from "../interviews/components/ScheduleErrorModal";
 export default function CandidateScreening({ selectedJob }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
 
@@ -71,6 +71,15 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [compRefreshKey, setCompRefreshKey] = useState(0);
   const { panelData, fetchPanels } = useCommitteeRequests();
+
+  const [showErrorModal, setShowErrorModal] =
+  useState(false);
+
+const [errorCandidates, setErrorCandidates] =
+  useState([]);
+
+const [errorMessage, setErrorMessage] =
+  useState("");
 
   const COMPENSATION_POOL_STATUSES = [
     "NEW",
@@ -240,48 +249,107 @@ useEffect(() => {
   //  const handleScheduleInterview = () => {
   //   if (!selectedCandidateIds.length) return;
 
-  const handleSubmitForApproval = async () => {
+ const handleSubmitForApproval = async () => {
 
-    try {
+  try {
 
-      setSubmittingApproval(true);
+    setSubmittingApproval(true);
 
-      const payload = {
-        positionIds: selectedPositionId
-      };
+    const payload = {
+      positionIds: selectedPositionId
+    };
 
-      console.log(
-        "Submit Approval Payload",
-        payload
+    console.log(
+      "Submit Approval Payload",
+      payload
+    );
+
+    const res =
+      await candidateWorkflowServices
+        .submitForApproval(
+          selectedPositionId
+        );
+
+    console.log(
+      "SUBMIT APPROVAL RESPONSE",
+      res
+    );
+
+    // ✅ HANDLE BACKEND VALIDATION
+    if (!res?.success) {
+
+      setErrorMessage(
+        res?.message ||
+        "Validation failed"
       );
 
-      await candidateWorkflowServices.submitForApproval(
-        selectedPositionId
+      // ✅ store backend data
+      setErrorCandidates(
+        Array.isArray(res?.data)
+          ? res.data
+          : []
       );
 
-      toast.success(
-        "Submitted for approval successfully"
+     setShowApprovalModal(false);
+
+setShowErrorModal(true);
+
+      return;
+    }
+
+    toast.success(
+      "Submitted for approval successfully"
+    );
+
+    setShowApprovalModal(false);
+
+    fetchSchedulePoolCandidates();
+
+  } catch (err) {
+
+    console.error(
+      "SUBMIT APPROVAL ERROR",
+      err
+    );
+
+    // ✅ HANDLE 400
+    if (err?.response?.data) {
+
+      setErrorMessage(
+
+        err.response.data.message ||
+
+        "Validation failed"
+
       );
 
-      setShowApprovalModal(false);
+      setErrorCandidates(
 
-      fetchSchedulePoolCandidates();
+        Array.isArray(
+          err.response.data.data
+        )
+          ? err.response.data.data
+          : []
 
-    } catch (err) {
-
-      console.error(err);
-
-      toast.error(
-        "Failed to submit for approval"
       );
 
-    } finally {
+      setShowErrorModal(true);
 
-      setSubmittingApproval(false);
+      return;
 
     }
 
-  };
+    toast.error(
+      "Failed to submit for approval"
+    );
+
+  } finally {
+
+    setSubmittingApproval(false);
+
+  }
+
+};
   const handleScheduleInterview = () => {
 
 
@@ -390,12 +458,13 @@ enabled:
 
   const tabs = [
     { key: "CANDIDATE_POOL", label: t("candidateWorkflow:candidate_pool"), count: totalElements },
-    { key: "INTERVIEW_POOL", label: t("candidateWorkflow:interview_pool"), count: interviewTotalElements },
     {
       key: "SCHEDULE_POOL",
       label: t("candidateWorkflow:schedule_pool"),
       count: 0
     },
+    { key: "INTERVIEW_POOL", label: t("candidateWorkflow:interview_pool"), count: interviewTotalElements },
+    
     { key: "COMPENSATION_POOL", label: "Compensation Pool", count: compensationTotal },
     { key: "OFFER_POOL", label: t("candidateWorkflow:offer_pool"), count: 0 },
     { key: "ONBOARDING_POOL", label: t("candidateWorkflow:onboarding_pool"), count: 0 },
@@ -3246,6 +3315,14 @@ if (
           )}
         </Modal.Body>
       </Modal> */}
+      <ScheduleErrorModal
+  show={showErrorModal}
+  onClose={() =>
+    setShowErrorModal(false)
+  }
+  errorMessage={errorMessage}
+  errorCandidates={errorCandidates}
+/>
 
       <ScheduleApprovalModal
         show={showApprovalModal}

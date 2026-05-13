@@ -163,7 +163,7 @@ const SchedulePoolTable = ({
                 {/* Interview Status */}
                 <td className="align-content-center">
 
-               {row.interviewStatus}
+               {row.interviewStatus === "L1_PENDING" ? "L1 Pending" : row.interviewStatus}
                 </td>
 
                 {/* Actions */}
