@@ -42,6 +42,12 @@ const [centreRows, setCentreRows] = useState([
     replacedCentreId: ""
   }
 ]);
+
+
+const location = useLocation();
+const state = location.state || {}; 
+const isEditMode =
+  location.state?.isEditMode;
   const { 
         schedule,
     updateRow,
@@ -59,7 +65,7 @@ const [centreRows, setCentreRows] = useState([
     scheduleApiData,
     scheduleInterview,
     allInterviewCentres 
-  } = useInterviewSchedule();
+  } = useInterviewSchedule(isEditMode);
 console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId)
   
 console.log("All interviews centres:", allInterviewCentres)
@@ -79,8 +85,6 @@ console.log("All interviews centres:", allInterviewCentres)
   // const selectedPosition =
   //   positions.find(p => p.jobPositions?.positionId === selectedPositionId);
 
-const location = useLocation();
-const state = location.state || {}; 
 
 
 //from schedule pool
@@ -90,8 +94,6 @@ const schedulePoolData =
 
   console.log("schedulePoolData",schedulePoolData)
 
-const isEditMode =
-  location.state?.isEditMode;
 
   const selectedPanelsFromEdit =
   location.state?.selectedPanels || [];
