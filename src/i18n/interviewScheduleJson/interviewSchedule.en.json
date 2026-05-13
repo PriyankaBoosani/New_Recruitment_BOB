@@ -34,7 +34,7 @@
   "panel_details": "Panel Details",
   "reg_no": "Reg No",
   "ready_to_schedule": "{{count}} candidates ready to schedule",
-  "schedule_interviews": "Schedule Interviews",
+  "schedule_interviews": "Submit",
   "apply_success_text": "{{count}} candidates interview scheduled",
   "ok": "OK"
 }
