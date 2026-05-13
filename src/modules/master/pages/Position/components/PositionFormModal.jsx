@@ -303,12 +303,12 @@ const renderContent = () => {
               <Col xs={12} md={6}>
                 <Form.Group className="form-group">
                   <Form.Label>
-                    {t("preferred_experience")} <span className="text-danger">*</span>
+                    {t("preferred_experience")} 
                   </Form.Label>
 
                   {isViewing ? (
                     <div className="form-control-view manscroll" style={{ whiteSpace: "pre-line" }}>
-                      {formData.preferredExperience || "-"}
+                      {formData.preferredExperience || "NA"}
                     </div>
                   ) : (
                     <Form.Control

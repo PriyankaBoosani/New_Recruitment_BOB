@@ -101,11 +101,11 @@ export const validateMandatoryExperience = (value) => {
 };
 
 /* ---------------- PREFERRED EXPERIENCE ---------------- */
-export const validatePreferredExperience = (value) => {
-  let error = requiredField(value);
-  if (error) return error;
-  return null;
-};
+// export const validatePreferredExperience = (value) => {
+//   let error = requiredField(value);
+//   if (error) return error;
+//   return null;
+// };
 
 /* ---------------- ROLES & RESPONSIBILITIES ---------------- */
 export const validateRolesResponsibilities = (value) => {
@@ -138,8 +138,8 @@ export const validatePositionForm = (formData = {}, options = {}) => {
   const mandExpError = validateMandatoryExperience(formData.mandatoryExperience);
   if (mandExpError) errors.mandatoryExperience = mandExpError;
 
-  const prefExpError = validatePreferredExperience(formData.preferredExperience);
-  if (prefExpError) errors.preferredExperience = prefExpError;
+  // const prefExpError = validatePreferredExperience(formData.preferredExperience);
+  // if (prefExpError) errors.preferredExperience = prefExpError;
 
   const rolesError = validateRolesResponsibilities(formData.rolesResponsibilities);
   if (rolesError) errors.rolesResponsibilities = rolesError;
@@ -157,7 +157,7 @@ const positionValidations = {
   validateMaxAge,
 
   validateMandatoryExperience,
-  validatePreferredExperience,
+//  validatePreferredExperience,
   validateRolesResponsibilities,
   validatePositionForm
 };

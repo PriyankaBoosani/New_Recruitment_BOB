@@ -142,7 +142,7 @@ const AddPosition = () => {
         }
     }, [existingPosition, positionsByReq]);
 
-    
+
 
 
 
@@ -448,20 +448,46 @@ const AddPosition = () => {
             ) || [];
 
             const uniqueMatches = Array.from(
-                new Map(
-                    matches.map(p => [p.indentPath || p.indentName, p])
-                ).values()
+                new Map(matches.map(p => [p.indentPath || p.indentName, p])).values()
             );
 
             setIndentCandidates(uniqueMatches);
 
-            if (!uniqueMatches.some(p => p.positionId === selectedIndent?.positionId)) {
-                setSelectedIndent(null);
-            }
+            // clear position when department changes
+            setFormData(prev => ({
+                ...prev,
+                position: "",
+                minAge: "",
+                maxAge: "",
+                grade: "",
+                responsibilities: "",
+                mandatoryExperience: { years: "", months: "", description: "" },
+                preferredExperience: { years: "", months: "", description: "" },
+                useMandatoryEducationLevelExperience: false,
+                usePreferredEducationLevelExperience: false
+            }));
+
+            // clear indent when department changes
+            setSelectedIndent(null);
+            setExistingIndentPath(null);
+            setExistingIndentName(null);
+            setIndentFile(null);
+            setApprovedBy("");
+            setApprovedOn("");
+            setPendingPosition(null);
+            setShowConfirmModal(false);
+            setShowIndentModal(false);
+
+            setErrors(prev => ({
+                ...prev,
+                department: "",
+                position: ""
+            }));
 
             if (uniqueMatches.length > 0) {
                 setShowIndentModal(true);
             }
+            return;
         } else {
             setErrors(prev => ({
                 ...prev,
