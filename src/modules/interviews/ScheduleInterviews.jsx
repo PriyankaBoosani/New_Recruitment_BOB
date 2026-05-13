@@ -295,7 +295,7 @@ const uniqueAllocatedCentres = [
       : state.positionId
   }
 
-  activeTab="CANDIDATE_POOL"
+  activeTab="SCHEDULE_POOL"
 
   onBack={() => {
 
@@ -318,7 +318,7 @@ const uniqueAllocatedCentres = [
         pageSize: state.pageSize,
         filters: state.filters,
 
-        activeTab: "CANDIDATE_POOL"
+        activeTab: "SCHEDULE_POOL"
       }
     });
   }}
@@ -461,29 +461,7 @@ const uniqueAllocatedCentres = [
           <ScheduleReadyBar
             count={scheduledCount}
             onCancel={() => setShowReadyBar(false)}
-            // onSchedule={async () => {
-            //   const res = await scheduleInterview();
-
-            //   if (!res.success) {
-            //     toast.error(res.message);
-            //     return;
-            //   }
-
-            //   toast.success("Interviews scheduled successfully");
-            //   setShowReadyBar(false);
-
-            //     // Redirect HERE
-            //   navigate("/candidate-workflow", {
-            //     state: {
-            //       //activeTab: "INTERVIEW_POOL",   
-            //       requisitionId: selectedRequisitionId,
-            //       positionId: selectedPositionId
-            //     }
-            //   });
-            // }}
-
             onSchedule={async () => {
-
                 const res = await scheduleInterview();
 
                 if (!res.success) {
@@ -497,10 +475,41 @@ const uniqueAllocatedCentres = [
 
                 setShowReadyBar(false);
 
+                // Navigate back to candidate-workflow with full state so
+                // positions and requisition are pre-populated (SCHEDULE_POOL)
                 navigate("/candidate-workflow", {
                   state: {
+                    // original objects if available, otherwise fallbacks
+                    requisition: state.requisition || normalizedRequisition,
+
+                    // position objects (friendly shape) and ids
+                    position: selectedPosition.map(p => ({
+                      positionId: p.jobPositions?.positionId,
+                      positionName: p.masterPositions?.positionName
+                    })),
+
+                    positionIds: Array.isArray(selectedPositionId)
+                      ? selectedPositionId
+                      : selectedPositionId
+                        ? [selectedPositionId]
+                        : [],
+
+                    // keep ids too (for workflow)
                     requisitionId: selectedRequisitionId,
-                    positionId: selectedPositionId
+                    positionId: selectedPositionId,
+
+                    preloadedCandidates:
+                      state.preloadedCandidates || state.candidates || [],
+
+                    activeTab: "SCHEDULE_POOL",
+
+                    page: state.page,
+                    pageSize: state.pageSize,
+
+                    interviewPage: state.interviewPage,
+                    interviewPageSize: state.interviewPageSize,
+
+                    filters: state.filters
                   }
                 });
 
