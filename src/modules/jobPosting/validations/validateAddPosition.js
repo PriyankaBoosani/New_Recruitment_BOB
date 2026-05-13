@@ -28,7 +28,8 @@ export const validateTitleOnType = (value) => {
 
 
 const validateFile = ({ indentFile, isEditMode, existingIndentPath, errors }) => {
-  if (!indentFile && !(isEditMode && existingIndentPath)) {
+ 
+  if (!indentFile && !existingIndentPath) {
     errors.indentFile = "validation:required";
   }
 };
