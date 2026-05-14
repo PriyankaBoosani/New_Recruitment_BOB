@@ -26,6 +26,11 @@ const positionId = location.state?.positionId || "";
   const [loadingPositions, setLoadingPositions] = useState(false);
 const [schedule, setSchedule] = useState([]);
 const [scheduleApiData, setScheduleApiData] = useState([]);
+const [
+  panelExcelModelList,
+  setPanelExcelModelList
+] = useState([]);
+
 
 const [allInterviewCentres, setAllInterviewCentres] = useState([]);
 
@@ -187,25 +192,7 @@ const formatTimeRange = (startStr, endStr) => {
 
 const applySchedule = async ({ selectedPanels,positionId, candidates = passedCandidates, zonalChangeMap = {} }) => {
   try {
-    console.log("selectedPanels",selectedPanels)
-   // console.log("FINAL TIME SENT 👉", formatTime(startTime));
-   console.log("zonalChangeMap", zonalChangeMap);
-    // ✅ Build payload
-    // const payload = {
-    //   schedulingPanelModel: {
-    //     applicationIds: passedCandidates.map(c => c.id),
-    //     positionId
-    //   },
-    //   panelScheduleModelList: selectedPanels.flatMap(panel =>
-    //     (panel.slots || []).map(slot => ({
-    //       panelId: panel.id,
-    //       panelDate: slot.date,
-    //       interviewPerDay: Number(slot.perDay),
-    //       startTime: formatTime(startTime)   // 🔥 IMPORTANT FIX
-    //     }))
-    //   )
-    // };
-
+   
 
     
 const updatedZonalChangeMap = {};
@@ -263,6 +250,34 @@ candidates.forEach((candidate) => {
 
   zonalChangeMap: updatedZonalChangeMap
 };
+
+
+const excelPanels =
+  selectedPanels.flatMap(panel =>
+    (panel.slots || []).map(slot => ({
+
+      panelId: panel.id,
+
+      panelDate: slot.date,
+
+      interviewPerDay:
+        Number(slot.perDay),
+
+      startTime:
+        formatTime(slot.startTime),
+
+      endTime:
+        formatTime(slot.endTime),
+
+      durationInMinutes:
+        Number(slot.duration)
+
+    }))
+  );
+
+setPanelExcelModelList(excelPanels);
+
+
     console.log("FINAL PAYLOAD 👉", payload);//return false;
 
     // ✅ Call API
@@ -357,14 +372,21 @@ const updatedScheduleData = scheduleApiData.map(item => ({
   }
 }));
 
+
+const finalPayload = {
+
+  allocatedRequestModelList:
+    updatedScheduleData,
+
+  panelExcelModelList
+};
 console.log(
   "FINAL SCHEDULE PAYLOAD",
-  updatedScheduleData
+  finalPayload
 );//return false;
-
 const res =
   await interviewService.scheduleInterview(
-    updatedScheduleData
+    finalPayload
   );
   //  const res = await interviewService.scheduleInterview(scheduleApiData);
 

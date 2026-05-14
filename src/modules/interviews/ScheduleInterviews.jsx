@@ -237,48 +237,106 @@ console.log("All interviews centres:", allInterviewCentres)
   ];
 
 
-  // const rebuiltSelectedPanels = Object.values(
+  const rebuiltSelectedPanels = Object.values(
 
-  //   (schedulePoolData || []).reduce((acc, item, index) => {
+  (schedulePoolData || []).reduce((acc, item) => {
 
-  //     if (!acc[item.panel]) {
+    const panelId =
+      item.panelId;
 
-  //       acc[item.panel] = {
-  //         id: item.panelId || index + 1,
-  //         name: item.panel,
-  //         slots: []
+    const panelName =
+      item.panel;
 
-  //       };
+    const configurations =
+      item.panelScheduleConfigurations || [];
 
-  //     }
+    // create panel group
+    if (!acc[panelId]) {
 
-  //     acc[item.panel].slots.push({
+      acc[panelId] = {
 
-  //       date: item.rawDate || item.date,
+        id: panelId,
 
-  //       startTime:
-  //         item.startTime ||
-  //         item.time?.split(" - ")[0] ||
-  //         "",
+        name: panelName,
 
-  //       endTime:
-  //         item.endTime ||
-  //         item.time?.split(" - ")[1] ||
-  //         "",
+        slots: []
 
-  //       duration:
-  //         item.duration || "15",
+      };
 
-  //       perDay:
-  //         item.perDay || "1"
+    }
 
-  //     });
+    configurations.forEach(config => {
 
-  //     return acc;
+  const slotDate =
+    config?.startDatetime
+      ?.split("T")[0];
 
-  //   }, {})
+  if (!slotDate) return;
 
-  // );
+  const existingSlot =
+    acc[panelId].slots.find(
+      slot => slot.date === slotDate
+    );
+
+  const startTime =
+    config?.startDatetime
+      ?.split("T")[1]
+      ?.slice(0, 5) || "";
+
+  const endTime =
+    config?.endDatetime
+      ?.split("T")[1]
+      ?.slice(0, 5) || "";
+
+  if (existingSlot) {
+
+    if (
+      startTime &&
+      startTime < existingSlot.startTime
+    ) {
+      existingSlot.startTime =
+        startTime;
+    }
+
+    if (
+      endTime &&
+      endTime > existingSlot.endTime
+    ) {
+      existingSlot.endTime =
+        endTime;
+    }
+
+  } else {
+
+    acc[panelId].slots.push({
+
+      date: slotDate,
+
+      startTime,
+
+      endTime,
+
+      duration:
+        String(
+          config?.durationMinutes || 15
+        ),
+
+      perDay:
+        String(
+          config?.interviewsPerDay || 1
+        )
+
+    });
+
+  }
+
+});
+
+    return acc;
+
+  }, {})
+
+);
   /* ================= UI ================= */
   const sourceTab = state?.sourceTab || state?.activeTab || "CANDIDATE_POOL";
   return (
@@ -443,7 +501,7 @@ console.log("All interviews centres:", allInterviewCentres)
 
         }}
         initialSelectedPanels={
-          selectedPanelsFromEdit
+          rebuiltSelectedPanels
         }
       />
 

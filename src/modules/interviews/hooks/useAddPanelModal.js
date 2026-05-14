@@ -38,13 +38,44 @@ export const useAddPanelModal = ({
 
   /* ✅ Reset ONLY when modal opens */
 useEffect(() => {
+
   if (!show) return;
 
   setPanelId(initialPanel || "");
-  setRows(buildRows());
-  setErrors({});
 
-}, [initialPanel,show]);   // 🔥 ONLY show// 🔥 ONLY show — do NOT add initialRows 
+  const builtRows = buildRows();
+
+  setRows(builtRows);
+
+  // ✅ duplicate validation for edit mode
+  const duplicateDates = {};
+
+  builtRows.forEach((row, index) => {
+
+    const isDuplicate =
+      builtRows.some(
+        (r, i) =>
+          i !== index &&
+          r.date &&
+          r.date === row.date
+      );
+
+    if (isDuplicate) {
+
+      if (!duplicateDates.rows) {
+        duplicateDates.rows = [];
+      }
+
+      duplicateDates.rows[index] = {
+        date: "Date already selected"
+      };
+    }
+
+  });
+
+  setErrors(duplicateDates);
+
+}, [initialPanel, show]);   // 🔥 ONLY show// 🔥 ONLY show — do NOT add initialRows 
 
 // useEffect(() => {
 
@@ -141,6 +172,58 @@ const updateRow = (i, field, value) => {
       [field]: value
     };
 
+    if (field === "date") {
+
+  const duplicateDate = copy.some(
+    (r, idx) =>
+      idx !== i &&
+      r.date &&
+      r.date === value
+  );
+
+  if (duplicateDate) {
+
+    setErrors(prevErrors => {
+
+      const updated = { ...prevErrors };
+
+      if (!updated.rows) {
+        updated.rows = [];
+      }
+
+      if (!updated.rows[i]) {
+        updated.rows[i] = {};
+      }
+
+      updated.rows[i].date =
+        "Date already selected";
+
+      return updated;
+    });
+
+  } else {
+
+    setErrors(prevErrors => {
+
+      const updated = { ...prevErrors };
+
+      if (updated.rows?.[i]?.date) {
+
+        delete updated.rows[i].date;
+
+        if (
+          Object.keys(updated.rows[i]).length === 0
+        ) {
+          delete updated.rows[i];
+        }
+      }
+
+      return updated;
+    });
+
+  }
+}
+
     const row = copy[i];
 
     // ================= LIVE TIME VALIDATION =================
@@ -186,7 +269,80 @@ const updateRow = (i, field, value) => {
           diffMins / Number(row.duration)
         );
 
-        row.perDay = interviews.toString();
+       // row.perDay = interviews.toString();
+
+       if (
+  row.startTime &&
+  row.endTime &&
+  row.duration &&
+  field !== "perDay"
+) {
+
+  const start =
+    new Date(`2000-01-01T${row.startTime}`);
+
+  const end =
+    new Date(`2000-01-01T${row.endTime}`);
+
+  const diffMins =
+    (end - start) / (1000 * 60);
+
+  // invalid range
+  if (diffMins <= 0) {
+
+    row.perDay = "";
+
+    setErrors(prevErrors => {
+
+      const updated = { ...prevErrors };
+
+      if (!updated.rows) {
+        updated.rows = [];
+      }
+
+      if (!updated.rows[i]) {
+        updated.rows[i] = {};
+      }
+
+      updated.rows[i].endTime =
+        "validation:end_time_greater_than_start";
+
+      return updated;
+    });
+
+  } else {
+
+    // ✅ auto calculate ONLY
+    // when recruiter is not typing perDay
+    const interviews =
+      Math.floor(
+        diffMins / Number(row.duration)
+      );
+
+    row.perDay =
+      interviews.toString();
+
+    // clear validation
+    setErrors(prevErrors => {
+
+      const updated = { ...prevErrors };
+
+      if (updated.rows?.[i]?.endTime) {
+
+        delete updated.rows[i].endTime;
+
+        if (
+          Object.keys(updated.rows[i]).length === 0
+        ) {
+          delete updated.rows[i];
+        }
+      }
+
+      return updated;
+    });
+
+  }
+}
 
         // clear end time validation
         setErrors(prevErrors => {

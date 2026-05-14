@@ -104,7 +104,24 @@ const confirmDelete = (index) => {
 };
 
 const openEdit = (panel, index) => {
-  setEditPanel({ ...panel, index });
+  const availablePanel =
+  availablePanels.find(
+    p => p.id === panel.id
+  );
+
+setEditPanel({
+
+  ...panel,
+
+  startDate:
+    availablePanel?.startDate,
+
+  endDate:
+    availablePanel?.endDate,
+
+  index
+
+});
   setShowAddModal(true);
 };
 //new for load the panles which are assigned in committe management

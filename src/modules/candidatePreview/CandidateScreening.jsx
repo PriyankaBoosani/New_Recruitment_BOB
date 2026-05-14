@@ -1056,7 +1056,8 @@ export default function CandidateScreening({ selectedJob }) {
             ?.interviewEndAt;
 
         return {
-
+panelScheduleConfigurations:
+  c?.panelScheduleConfigurations || [],
           // IMPORTANT FOR EDIT FLOW
           applicationId:
             c?.application?.id,
@@ -2215,52 +2216,73 @@ export default function CandidateScreening({ selectedJob }) {
   };
   const groupedPanels = Object.values(
 
-    schedulePoolCandidates.reduce((acc, item, index) => {
+  schedulePoolCandidates.reduce((acc, item) => {
 
-      if (!acc[item.panel]) {
+    const config =
+      item.panelScheduleConfiguration;
 
-        acc[item.panel] = {
+    if (!config) return acc;
 
-          id:
-            item.panelId || index + 1,
+    if (!acc[item.panelId]) {
 
-          name:
-            item.panel,
+      acc[item.panelId] = {
 
-          slots: []
+        id:
+          item.panelId,
 
-        };
+        name:
+          item.panel,
 
-      }
+        slots: []
 
-      acc[item.panel].slots.push({
+      };
 
-        date:
-          item.date,
+    }
 
-        startTime:
-          item.startTime ||
-          item.time?.split(" - ")[0] ||
-          "",
+    const slot = {
 
-        endTime:
-          item.endTime ||
-          item.time?.split(" - ")[1] ||
-          "",
+      date:
+        config?.startDatetime
+          ?.split("T")[0] || "",
 
-        duration:
-          item.duration || "",
+      startTime:
+        config?.startDatetime
+          ?.split("T")[1]
+          ?.slice(0, 5) || "",
 
-        perDay:
-          item.perDay || ""
+      endTime:
+        config?.endDatetime
+          ?.split("T")[1]
+          ?.slice(0, 5) || "",
 
-      });
+      duration:
+        config?.durationMinutes || 15,
 
-      return acc;
+      perDay:
+        String(
+          config?.interviewsPerDay || 1
+        )
 
-    }, {})
+    };
 
-  );
+    // prevent duplicate slots
+    const exists =
+      acc[item.panelId].slots.some(
+        s =>
+          s.date === slot.date &&
+          s.startTime === slot.startTime &&
+          s.endTime === slot.endTime
+      );
+
+    if (!exists) {
+      acc[item.panelId].slots.push(slot);
+    }
+
+    return acc;
+
+  }, {})
+
+);
   const handleEditSchedule = () => {
 
     navigate("/schedule-interviews", {
@@ -2644,22 +2666,41 @@ export default function CandidateScreening({ selectedJob }) {
                       <FontAwesomeIcon icon={faListOl} className="rank-icon" /> Rank
                     </button>
                   )} */}
-                  <OverlayTrigger
-                    placement="bottom"
-                    overlay={<Tooltip >{t("candidateWorkflow:download_pdf")}</Tooltip>}
-                  >
-                    <button className="btn fs-14 me-3 blue-color blue-border" onClick={() => handleDownload("pdf")}>
-                      <img src={pdfIcon} className="" width={20} />
-                    </button>
-                  </OverlayTrigger>
-                  <OverlayTrigger
-                    placement="bottom"
-                    overlay={<Tooltip >{t("candidateWorkflow:download_excel")}</Tooltip>}
-                  >
-                    <button className="btn fs-14 blue-color blue-border" onClick={() => handleDownload("xlsx")}>
-                      <img src={excelIcon} className="" width={20} />
-                    </button>
-                  </OverlayTrigger>
+                  {activeTab !== "SCHEDULE_POOL" && (
+                      <>
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={
+                            <Tooltip>
+                              {t("candidateWorkflow:download_pdf")}
+                            </Tooltip>
+                          }
+                        >
+                          <button
+                            className="btn fs-14 me-3 blue-color blue-border"
+                            onClick={() => handleDownload("pdf")}
+                          >
+                            <img src={pdfIcon} width={20} />
+                          </button>
+                        </OverlayTrigger>
+
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={
+                            <Tooltip>
+                              {t("candidateWorkflow:download_excel")}
+                            </Tooltip>
+                          }
+                        >
+                          <button
+                            className="btn fs-14 blue-color blue-border"
+                            onClick={() => handleDownload("xlsx")}
+                          >
+                            <img src={excelIcon} width={20} />
+                          </button>
+                        </OverlayTrigger>
+                      </>
+                    )}
                 </div>
               )}
             </div>
