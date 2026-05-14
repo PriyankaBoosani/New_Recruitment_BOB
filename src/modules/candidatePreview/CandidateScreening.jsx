@@ -222,6 +222,15 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [loadingCandidates, setLoadingCandidates] = useState(false);
   const [page, setPage] = useState(0);
+  const [
+  schedulePoolPage,
+  setSchedulePoolPage
+] = useState(0);
+
+const [
+  schedulePoolPageSize,
+  setSchedulePoolPageSize
+] = useState(10);
   const [pageSize, setPageSize] = useState(10);
   const [totalElements, setTotalElements] = useState(0);
   const [masterData, setMasterData] = useState(null);
@@ -511,7 +520,27 @@ export default function CandidateScreening({ selectedJob }) {
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
+const paginatedSchedulePool =
+  useMemo(() => {
 
+    const start =
+      schedulePoolPage *
+      schedulePoolPageSize;
+
+    const end =
+      start +
+      schedulePoolPageSize;
+
+    return schedulePoolCandidates.slice(
+      start,
+      end
+    );
+
+  }, [
+    schedulePoolCandidates,
+    schedulePoolPage,
+    schedulePoolPageSize
+  ]);
   const hasLocationData = useMemo(() => {
     const selected = positions.find(
       (p) => p.jobPositions?.positionId === selectedPositionId[0]
@@ -716,22 +745,20 @@ export default function CandidateScreening({ selectedJob }) {
 
   useEffect(() => {
 
-    if (
-      activeTab !== "SCHEDULE_POOL" ||
-      !selectedPositionId.length
-    ) {
-      return;
-    }
+  if (
+    activeTab !== "SCHEDULE_POOL" ||
+    !selectedPositionId.length
+  ) {
+    return;
+  }
 
-    fetchSchedulePoolCandidates();
+  fetchSchedulePoolCandidates();
 
-  }, [
-    activeTab,
-    selectedPositionId,
-    filters,
-    page,
-    pageSize
-  ]);
+}, [
+  activeTab,
+  selectedPositionId,
+  filters
+]);
 
   useEffect(() => {
 
@@ -1028,9 +1055,10 @@ export default function CandidateScreening({ selectedJob }) {
             ? filters.status
             : ["L1_PENDING"],
 
-        page,
+        page: 0,
 
-        size: pageSize
+        size: 0
+
       };
 
       console.log(
@@ -1043,9 +1071,10 @@ export default function CandidateScreening({ selectedJob }) {
       const res = await candidateWorkflowServices.getSchedulePoolCandidates(payload);
 
       const apiData = res?.data;
+      const content =Array.isArray(apiData)? apiData: apiData?.content || [];
 
 
-      const mappedRows = (apiData?.content || []).map((c) => {
+      const mappedRows = content.map((c) => {
 
         const start =
           c?.interviewScheduleStaging
@@ -1134,8 +1163,8 @@ panelScheduleConfigurations:
       setSchedulePoolCandidates(mappedRows);
 
       setSchedulePoolTotal(
-        apiData?.page?.totalElements || 0
-      );
+          mappedRows.length
+        );
 
     } catch (err) {
 
@@ -3233,7 +3262,7 @@ panelScheduleConfigurations:
           </div> */}
 
             <SchedulePoolTable
-              rows={schedulePoolCandidates}
+              rows={paginatedSchedulePool}
 
               onEdit={handleEditSchedule}
 
@@ -3241,15 +3270,16 @@ panelScheduleConfigurations:
                 setShowApprovalModal(true)
               }
 
-              page={page}
+              page={schedulePoolPage}
 
-              pageSize={pageSize}
+              pageSize={schedulePoolPageSize}
 
-              totalElements={schedulePoolTotal}
+              totalElements={schedulePoolCandidates.length}
 
-              onPageChange={setPage}
 
-              onPageSizeChange={setPageSize}
+              onPageChange={setSchedulePoolPage}
+
+              onPageSizeChange={setSchedulePoolPageSize}
 
               onViewProfile={(candidate) => {
 

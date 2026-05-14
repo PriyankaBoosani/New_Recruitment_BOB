@@ -148,7 +148,7 @@ getMessagesByThreadId: (conversationThreadId) =>
  getSchedulePoolCandidates: (payload) => {
 
   return api.post(
-    "/recruiter/schedule-pool/get-schedule-pool-candidates",
+    "/recruiter/schedule-pool/get-schedule-pool-candidate-list",
     payload,
     {
       headers: {
