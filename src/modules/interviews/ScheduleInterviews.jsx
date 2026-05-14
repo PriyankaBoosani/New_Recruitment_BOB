@@ -500,9 +500,11 @@ console.log("All interviews centres:", allInterviewCentres)
           setShowCentreConfirmModal(true);
 
         }}
-        initialSelectedPanels={
-          rebuiltSelectedPanels
-        }
+       initialSelectedPanels={
+              isReschedule
+                ? []
+                : rebuiltSelectedPanels
+            }
       />
 
       {showReadyBar && (
