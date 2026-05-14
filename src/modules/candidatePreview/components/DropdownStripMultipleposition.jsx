@@ -42,7 +42,24 @@ export default function DropdownStripMultipleposition({
 
 
 
-
+const Option = (props) => {
+  return (
+    <components.Option {...props}>
+      <input
+        type="checkbox"
+        checked={props.isSelected}
+        onChange={() => null}
+        style={{
+          marginRight: 8,
+          accentColor: "#FFFFFF", // white
+          cursor: "pointer",
+        }}
+      />
+      
+      <label>{props.label}</label>
+    </components.Option>
+  );
+};
 
 
 
@@ -106,9 +123,12 @@ const MultiValue = ({ index, getValue, ...props }) => {
 
       <div className="col-md-3 col-12">
         <label className="fs-14 blue-color">{t("common:position")}</label>
-    <Select
+ <Select
   isMulti
-    components={{
+  closeMenuOnSelect={false}
+  hideSelectedOptions={false}
+  components={{
+    Option,
     MultiValue,
   }}
   className="mt-1 fs-14"
