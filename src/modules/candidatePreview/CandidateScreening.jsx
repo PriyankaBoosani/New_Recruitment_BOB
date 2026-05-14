@@ -1610,7 +1610,7 @@ export default function CandidateScreening({ selectedJob }) {
     selectedInterviewCandidates.length > 0 &&
     selectedInterviewCandidates.every(
       (c) =>
-        c?.interviewSchedules?.interviewStatus === "SCHEDULED"
+        c?.interviewSchedules?.interviewStatus === "SCHEDULED" || c?.interviewSchedules?.interviewStatus === "RESCHEDULED"
     );
   const qualifiedInterviewIds = selectedInterviewCandidates
     .filter(
