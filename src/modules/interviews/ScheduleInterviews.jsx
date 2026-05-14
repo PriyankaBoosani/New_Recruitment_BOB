@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from "react";
-import { useNavigate,useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import HeaderWithBack from "../../shared/components/HeaderWithBack";
 
@@ -11,9 +11,9 @@ import InterviewScheduleTable from "../interviews/components/InterviewScheduleTa
 import useInterviewSchedule from "../interviews/hooks/useInterviewSchedule";
 import ScheduleReadyBar from "../interviews/components/ScheduleReadyBar";
 import RequisitionStripformultiplepositions
-from "../candidatePreview/components/RequisitionStripformultiplepositions";
+  from "../candidatePreview/components/RequisitionStripformultiplepositions";
 import DropdownStripMultipleposition
-from "../candidatePreview/components/DropdownStripMultipleposition";
+  from "../candidatePreview/components/DropdownStripMultipleposition";
 import { toast } from "react-toastify";
 
 import "../../style/css/CandidateScreening.css";
@@ -27,36 +27,36 @@ const ScheduleInterviews = () => {
 
 
   //const [startTime, setStartTime] = useState("");
-const [scheduledCount, setScheduledCount] = useState(0);
+  const [scheduledCount, setScheduledCount] = useState(0);
   const [showReadyBar, setShowReadyBar] = useState(false);
   //availability of centres
   const [showCentreModal, setShowCentreModal] = useState(false);
 
-  const [showErrorModal, setShowErrorModal] =useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
-const [errorCandidates, setErrorCandidates] =useState([]);
+  const [errorCandidates, setErrorCandidates] = useState([]);
 
-const [errorMessage, setErrorMessage] =useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [showCentreConfirmModal, setShowCentreConfirmModal] =
-  useState(false);
+    useState(false);
   const [pendingApplyData, setPendingApplyData] =
-  useState(null);
+    useState(null);
 
-const [centreRows, setCentreRows] = useState([
-  {
-    allocatedCentreId: "",
-    replacedCentreId: ""
-  }
-]);
+  const [centreRows, setCentreRows] = useState([
+    {
+      allocatedCentreId: "",
+      replacedCentreId: ""
+    }
+  ]);
 
 
-const location = useLocation();
-const state = location.state || {}; 
-const isEditMode =
-  location.state?.isEditMode;
-  const { 
-        schedule,
+  const location = useLocation();
+  const state = location.state || {};
+  const isEditMode =
+    location.state?.isEditMode;
+  const {
+    schedule,
     updateRow,
     setSchedule,
     requisitions,
@@ -71,212 +71,212 @@ const isEditMode =
     applySchedule,
     scheduleApiData,
     scheduleInterview,
-    allInterviewCentres 
+    allInterviewCentres
   } = useInterviewSchedule(isEditMode);
-console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId)
-  
-console.log("All interviews centres:", allInterviewCentres)
+  console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId)
+
+  console.log("All interviews centres:", allInterviewCentres)
   const selectedRequisition =
     requisitions.find(r => r.id === selectedRequisitionId);
 
-    const normalizedRequisition = selectedRequisition
-  ? {
+  const normalizedRequisition = selectedRequisition
+    ? {
       requisition_id: selectedRequisition.id,
       requisition_code: selectedRequisition.requisitionCode,
       requisition_title: selectedRequisition.requisitionTitle,
       registration_start_date: selectedRequisition.startDate,
       registration_end_date: selectedRequisition.endDate,
     }
-  : null;
+    : null;
 
   // const selectedPosition =
   //   positions.find(p => p.jobPositions?.positionId === selectedPositionId);
 
 
 
-//from schedule pool
+  //from schedule pool
 
-const schedulePoolData =
-  location.state?.schedulePoolData;
+  const schedulePoolData =
+    location.state?.schedulePoolData;
 
-  console.log("schedulePoolData",schedulePoolData)
+  console.log("schedulePoolData", schedulePoolData)
 
 
   const selectedPanelsFromEdit =
-  location.state?.selectedPanels || [];
+    location.state?.selectedPanels || [];
 
-  console.log('isEditMode',isEditMode)
+  console.log('isEditMode', isEditMode)
 
 
 
   useEffect(() => {
 
-  if (
-    !isEditMode ||
-    !schedulePoolData?.length
-  ) {
-    return;
-  }
+    if (
+      !isEditMode ||
+      !schedulePoolData?.length
+    ) {
+      return;
+    }
 
-  // const mappedRows =
-  //   schedulePoolData.map(item => ({
+    // const mappedRows =
+    //   schedulePoolData.map(item => ({
 
-  //     id: item.id,
+    //     id: item.id,
 
-  //     name: item.name,
+    //     name: item.name,
 
-  //     regNo: item.regNo,
+    //     regNo: item.regNo,
 
-  //     date: item.date,
+    //     date: item.date,
 
-  //     time: item.time,
+    //     time: item.time,
 
-  //     zone: item.zone,
+    //     zone: item.zone,
 
-  //     panel: item.panel
+    //     panel: item.panel
 
-  //   }));
+    //   }));
 
-  const mappedRows =
-  schedulePoolData.map(item => ({
+    const mappedRows =
+      schedulePoolData.map(item => ({
 
-    id: item.id,
+        id: item.id,
 
-    // ✅ IMPORTANT FOR RESCHEDULE
-    applicationId:
-      item.applicationId,
+        // ✅ IMPORTANT FOR RESCHEDULE
+        applicationId:
+          item.applicationId,
 
-    interviewCenterId:
-      item.interviewCenterId,
+        interviewCenterId:
+          item.interviewCenterId,
 
-    panelId:
-      item.panelId,
+        panelId:
+          item.panelId,
 
-    duration:
-      item.duration,
+        duration:
+          item.duration,
 
-    perDay:
-      item.perDay,
+        perDay:
+          item.perDay,
 
-    startTime:
-      item.startTime,
+        startTime:
+          item.startTime,
 
-    endTime:
-      item.endTime,
+        endTime:
+          item.endTime,
 
-    rawDate:
-      item.rawDate,
+        rawDate:
+          item.rawDate,
 
-    // TABLE DATA
-    name:
-      item.name,
+        // TABLE DATA
+        name:
+          item.name,
 
-    regNo:
-      item.regNo,
+        regNo:
+          item.regNo,
 
-    date:
-      item.date,
+        date:
+          item.date,
 
-    time:
-      item.time,
+        time:
+          item.time,
 
-    zone:
-      item.zone,
+        zone:
+          item.zone,
 
-    panel:
-      item.panel
+        panel:
+          item.panel
 
-  }));
+      }));
 
-  setSchedule(mappedRows);
+    setSchedule(mappedRows);
 
-  setScheduledCount(mappedRows.length);
+    setScheduledCount(mappedRows.length);
 
-  //setShowReadyBar(true);
+    //setShowReadyBar(true);
 
-}, [isEditMode, schedulePoolData]);
+  }, [isEditMode, schedulePoolData]);
 
   //end
 
-const selectedPosition = positions.filter(p =>
-  selectedPositionId?.includes(
-    p.jobPositions?.positionId
-  )
-);
-const isSelectionDone =
-  selectedRequisition &&
-  selectedPosition.length > 0;
-const sourceCandidates = isEditMode
-  ? schedulePoolData
-  : passedCandidates;
-console.log("sourceCandidates",sourceCandidates);
-const uniqueAllocatedCentres = [
-  ...new Map(
-    sourceCandidates.map(candidate => [
+  const selectedPosition = positions.filter(p =>
+    selectedPositionId?.includes(
+      p.jobPositions?.positionId
+    )
+  );
+  const isSelectionDone =
+    selectedRequisition &&
+    selectedPosition.length > 0;
+  const sourceCandidates = isEditMode
+    ? schedulePoolData
+    : passedCandidates;
+  console.log("sourceCandidates", sourceCandidates);
+  const uniqueAllocatedCentres = [
+    ...new Map(
+      sourceCandidates.map(candidate => [
 
-      isEditMode
-        ? candidate.interviewCenterId
-        : candidate.interviewCenterId,
+        isEditMode
+          ? candidate.interviewCenterId
+          : candidate.interviewCenterId,
 
-      {
-        interviewCentreId:
-          isEditMode
-            ? candidate.interviewCenterId
-            : candidate.interviewCenterId,
+        {
+          interviewCentreId:
+            isEditMode
+              ? candidate.interviewCenterId
+              : candidate.interviewCenterId,
 
-        interviewCentre:
-          isEditMode
-            ? candidate.zone
-            : candidate.interviewCenterName
-      }
+          interviewCentre:
+            isEditMode
+              ? candidate.zone
+              : candidate.interviewCenterName
+        }
 
-    ])
-  ).values()
-];
+      ])
+    ).values()
+  ];
 
 
-// const rebuiltSelectedPanels = Object.values(
+  // const rebuiltSelectedPanels = Object.values(
 
-//   (schedulePoolData || []).reduce((acc, item, index) => {
+  //   (schedulePoolData || []).reduce((acc, item, index) => {
 
-//     if (!acc[item.panel]) {
+  //     if (!acc[item.panel]) {
 
-//       acc[item.panel] = {
-//         id: item.panelId || index + 1,
-//         name: item.panel,
-//         slots: []
+  //       acc[item.panel] = {
+  //         id: item.panelId || index + 1,
+  //         name: item.panel,
+  //         slots: []
 
-//       };
+  //       };
 
-//     }
+  //     }
 
-//     acc[item.panel].slots.push({
+  //     acc[item.panel].slots.push({
 
-//       date: item.rawDate || item.date,
+  //       date: item.rawDate || item.date,
 
-//       startTime:
-//         item.startTime ||
-//         item.time?.split(" - ")[0] ||
-//         "",
+  //       startTime:
+  //         item.startTime ||
+  //         item.time?.split(" - ")[0] ||
+  //         "",
 
-//       endTime:
-//         item.endTime ||
-//         item.time?.split(" - ")[1] ||
-//         "",
+  //       endTime:
+  //         item.endTime ||
+  //         item.time?.split(" - ")[1] ||
+  //         "",
 
-//       duration:
-//         item.duration || "15",
+  //       duration:
+  //         item.duration || "15",
 
-//       perDay:
-//         item.perDay || "1"
+  //       perDay:
+  //         item.perDay || "1"
 
-//     });
+  //     });
 
-//     return acc;
+  //     return acc;
 
-//   }, {})
+  //   }, {})
 
-// );
+  // );
   /* ================= UI ================= */
 
   return (
@@ -289,47 +289,29 @@ const uniqueAllocatedCentres = [
         onBack={() => navigate(-1)}
       /> */}
 
-<HeaderWithBack
-  title="Schedule Interviews"
-  subtitle={`Scheduling for ${state?.candidates?.length || 0} candidates`}
-
-  // 🔥 ADD THESE
-  requisitionId={state.requisitionId}
-
-  positionId={
-    Array.isArray(state.positionId)
-      ? state.positionId[0]
-      : state.positionId
-  }
-
-  activeTab="SCHEDULE_POOL"
-
-  onBack={() => {
-
-    console.log("🔙 ScheduleInterviews Back Navigation");
-
-    navigate("/candidate-workflow", {
-      state: {
-        requisitionId: state.requisitionId,
-
-        // 🔥 IMPORTANT
-        positionIds:
-          Array.isArray(state.positionId)
-            ? state.positionId
-            : [state.positionId],
-
-        requisition: state.requisition,
-        position: state.position,
-
-        page: state.page,
-        pageSize: state.pageSize,
-        filters: state.filters,
-
-        activeTab: "SCHEDULE_POOL"
-      }
-    });
-  }}
-/>
+      <HeaderWithBack
+        title="Schedule Interviews"
+        subtitle={`Scheduling for ${state?.candidates?.length || 0} candidates`}
+        requisitionId={state.requisitionId}
+        positionId={Array.isArray(state.positionId) ? state.positionId[0] : state.positionId}
+        activeTab="CANDIDATE_POOL"
+        onBack={() => {
+          navigate("/candidate-workflow", {
+            state: {
+              requisitionId: state.requisitionId,
+              positionIds: Array.isArray(state.positionId)
+                ? state.positionId
+                : [state.positionId],
+              requisition: state.requisition,
+              position: state.position,
+              page: state.page,
+              pageSize: state.pageSize,
+              filters: state.filters,
+              activeTab: "CANDIDATE_POOL"
+            }
+          });
+        }}
+      />
       {/* ===== DROPDOWN STRIP ===== */}
       <div className="card border-0 mt-3">
         <div className="card-body">
@@ -354,19 +336,19 @@ const uniqueAllocatedCentres = [
 
 
 
-<DropdownStripMultipleposition
-  requisitions={requisitions}
-  positions={positions}
-  selectedRequisitionId={selectedRequisitionId}
-  selectedPositionId={selectedPositionId}
-  loadingRequisitions={loadingRequisitions}
-  loadingPositions={loadingPositions}
-  onRequisitionChange={handleRequisitionChange}
-  onPositionChange={setSelectedPositionId}
-  onRequisitionSearch={() => {}}
-  disableRequisition={true}
-  disablePosition={true}
-/>
+            <DropdownStripMultipleposition
+              requisitions={requisitions}
+              positions={positions}
+              selectedRequisitionId={selectedRequisitionId}
+              selectedPositionId={selectedPositionId}
+              loadingRequisitions={loadingRequisitions}
+              loadingPositions={loadingPositions}
+              onRequisitionChange={handleRequisitionChange}
+              onPositionChange={setSelectedPositionId}
+              onRequisitionSearch={() => { }}
+              disableRequisition={true}
+              disablePosition={true}
+            />
           </div>
         </div>
       </div>
@@ -375,17 +357,17 @@ const uniqueAllocatedCentres = [
       {isSelectionDone && (
         <div className="mt-3">
           <RequisitionStripformultiplepositions
-    requisition={normalizedRequisition}
-  position={selectedPosition.map(p => ({
-    positionId: p.jobPositions?.positionId,
-    positionName:
-      p.masterPositions?.positionName
-  }))}
-  isCardBg={false}
-  isSaveEnabled={false}
-  isSaveBtn={false}
-  saveButton={false}
-/>
+            requisition={normalizedRequisition}
+            position={selectedPosition.map(p => ({
+              positionId: p.jobPositions?.positionId,
+              positionName:
+                p.masterPositions?.positionName
+            }))}
+            isCardBg={false}
+            isSaveEnabled={false}
+            isSaveBtn={false}
+            saveButton={false}
+          />
           {/* <RequisitionStrip
             requisition={selectedRequisition}
             position={{
@@ -401,66 +383,66 @@ const uniqueAllocatedCentres = [
 
       {/* ===== PANELS CONFIG ===== */}
       <InterviewPanelsConfig
-         positionId={selectedPositionId}
-       // startTime={startTime}
-       // onStartTimeChange={setStartTime}
-          candidates={
-  isEditMode
-    ? schedulePoolData
-    : passedCandidates
-}          // ✅ ADD
-          onScheduleReady={(rows) => {
-              setSchedule(rows);
-              setScheduledCount(rows.length);
-           //   setShowReadyBar(true);   // ✅ trigger here
-            }} // ✅ ADD
-            onApplyAll={(data) => {
+        positionId={selectedPositionId}
+        // startTime={startTime}
+        // onStartTimeChange={setStartTime}
+        candidates={
+          isEditMode
+            ? schedulePoolData
+            : passedCandidates
+        }          // ✅ ADD
+        onScheduleReady={(rows) => {
+          setSchedule(rows);
+          setScheduledCount(rows.length);
+          //   setShowReadyBar(true);   // ✅ trigger here
+        }} // ✅ ADD
+        onApplyAll={(data) => {
 
-              // ✅ EDIT MODE
-             if (isEditMode) {
+          // ✅ EDIT MODE
+          if (isEditMode) {
 
-              const editPayload = {
+            const editPayload = {
 
-                selectedPanels:
-                  data.selectedPanels,
+              selectedPanels:
+                data.selectedPanels,
 
-                positionId:
-                  Array.isArray(selectedPositionId)
-                    ? selectedPositionId
-                    : [selectedPositionId],
+              positionId:
+                Array.isArray(selectedPositionId)
+                  ? selectedPositionId
+                  : [selectedPositionId],
 
-                candidates:
-                  schedule.map(item => ({
+              candidates:
+                schedule.map(item => ({
 
-                    id:
-                      item.applicationId || item.id,
+                  id:
+                    item.applicationId || item.id,
 
-                    interviewCenterId:
-                      item.interviewCenterId
+                  interviewCenterId:
+                    item.interviewCenterId
 
-                  }))
+                }))
 
-              };
+            };
 
-              console.log(
-                "EDIT PAYLOAD",
-                editPayload
-              );
+            console.log(
+              "EDIT PAYLOAD",
+              editPayload
+            );
 
-              setPendingApplyData(editPayload);
+            setPendingApplyData(editPayload);
 
-            } else {
+          } else {
 
-              setPendingApplyData(data);
+            setPendingApplyData(data);
 
-            }
+          }
 
-              setShowCentreConfirmModal(true);
+          setShowCentreConfirmModal(true);
 
-            }}
-          initialSelectedPanels={
-  selectedPanelsFromEdit
-}
+        }}
+        initialSelectedPanels={
+          selectedPanelsFromEdit
+        }
       />
 
       {showReadyBar && (
@@ -469,9 +451,9 @@ const uniqueAllocatedCentres = [
             count={scheduledCount}
             onCancel={() => setShowReadyBar(false)}
             onSchedule={async () => {
-                const res = await scheduleInterview();
+              const res = await scheduleInterview();
 
-                if (!res.success) {
+              if (!res.success) {
 
                 setErrorMessage(res.message);
 
@@ -484,57 +466,57 @@ const uniqueAllocatedCentres = [
                 return;
               }
 
-                toast.success(
-                  "Interviews scheduled successfully"
-                );
+              toast.success(
+                "Interviews scheduled successfully"
+              );
 
-                setShowReadyBar(false);
+              setShowReadyBar(false);
 
-                // Navigate back to candidate-workflow with full state so
-                // positions and requisition are pre-populated (SCHEDULE_POOL)
-                navigate("/candidate-workflow", {
-                  state: {
-                    // original objects if available, otherwise fallbacks
-                    requisition: state.requisition || normalizedRequisition,
+              // Navigate back to candidate-workflow with full state so
+              // positions and requisition are pre-populated (SCHEDULE_POOL)
+              navigate("/candidate-workflow", {
+                state: {
+                  // original objects if available, otherwise fallbacks
+                  requisition: state.requisition || normalizedRequisition,
 
-                    // position objects (friendly shape) and ids
-                    position: selectedPosition.map(p => ({
-                      positionId: p.jobPositions?.positionId,
-                      positionName: p.masterPositions?.positionName
-                    })),
+                  // position objects (friendly shape) and ids
+                  position: selectedPosition.map(p => ({
+                    positionId: p.jobPositions?.positionId,
+                    positionName: p.masterPositions?.positionName
+                  })),
 
-                    positionIds: Array.isArray(selectedPositionId)
-                      ? selectedPositionId
-                      : selectedPositionId
-                        ? [selectedPositionId]
-                        : [],
+                  positionIds: Array.isArray(selectedPositionId)
+                    ? selectedPositionId
+                    : selectedPositionId
+                      ? [selectedPositionId]
+                      : [],
 
-                    // keep ids too (for workflow)
-                    requisitionId: selectedRequisitionId,
-                    positionId: selectedPositionId,
+                  // keep ids too (for workflow)
+                  requisitionId: selectedRequisitionId,
+                  positionId: selectedPositionId,
 
-                    preloadedCandidates:
-                      state.preloadedCandidates || state.candidates || [],
+                  preloadedCandidates:
+                    state.preloadedCandidates || state.candidates || [],
 
-                    activeTab: "SCHEDULE_POOL",
+                  activeTab: "SCHEDULE_POOL",
 
-                    page: state.page,
-                    pageSize: state.pageSize,
+                  page: state.page,
+                  pageSize: state.pageSize,
 
-                    interviewPage: state.interviewPage,
-                    interviewPageSize: state.interviewPageSize,
+                  interviewPage: state.interviewPage,
+                  interviewPageSize: state.interviewPageSize,
 
-                    filters: state.filters
-                  }
-                });
+                  filters: state.filters
+                }
+              });
 
-              }}
+            }}
           />
         </div>
       )}
 
       {/* ===== INTERVIEW SCHEDULE TABLE ===== */}
-      <InterviewScheduleTable rows={schedule}/> 
+      <InterviewScheduleTable rows={schedule} />
 
 
       {showCentreModal && <InterviewCentreAllocationModal
@@ -546,140 +528,140 @@ const uniqueAllocatedCentres = [
         allInterviewCentres={allInterviewCentres}
         onContinue={async () => {
 
-            setShowCentreModal(false);
+          setShowCentreModal(false);
 
-            // 🔥 Build zonalChangeMap
-            const zonalChangeMap = {};
+          // 🔥 Build zonalChangeMap
+          const zonalChangeMap = {};
 
-            // 🔥 first add all centres with empty
-            uniqueAllocatedCentres.forEach((centre) => {
+          // 🔥 first add all centres with empty
+          uniqueAllocatedCentres.forEach((centre) => {
+
+            zonalChangeMap[
+              centre.interviewCentreId
+            ] = "";
+
+          });
+
+          // 🔥 overwrite changed centres
+          centreRows.forEach((row) => {
+
+            if (
+              row.allocatedCentreId &&
+              row.replacedCentreId
+            ) {
 
               zonalChangeMap[
-                centre.interviewCentreId
-              ] = "";
+                row.allocatedCentreId
+              ] = row.replacedCentreId;
 
-            });
-
-            // 🔥 overwrite changed centres
-            centreRows.forEach((row) => {
-
-              if (
-                row.allocatedCentreId &&
-                row.replacedCentreId
-              ) {
-
-                zonalChangeMap[
-                  row.allocatedCentreId
-                ] = row.replacedCentreId;
-
-              }
-
-            });
-
-            console.log("zonalChangeMap", zonalChangeMap);
-
-            // 🔥 Call scheduling API
-            const res = await applySchedule({
-              ...pendingApplyData,
-
-              zonalChangeMap
-            });
-
-            if (!res.success) {
-              setErrorMessage(res.message);
-
-              setErrorCandidates(
-                res.data || []
-              );
-
-              setShowErrorModal(true);
-
-              return;
             }
 
-            setSchedule(res.rows);
+          });
 
-            setScheduledCount(res.rows.length);
+          console.log("zonalChangeMap", zonalChangeMap);
 
-            setShowReadyBar(true);
+          // 🔥 Call scheduling API
+          const res = await applySchedule({
+            ...pendingApplyData,
 
-          }}
+            zonalChangeMap
+          });
+
+          if (!res.success) {
+            setErrorMessage(res.message);
+
+            setErrorCandidates(
+              res.data || []
+            );
+
+            setShowErrorModal(true);
+
+            return;
+          }
+
+          setSchedule(res.rows);
+
+          setScheduledCount(res.rows.length);
+
+          setShowReadyBar(true);
+
+        }}
       />}
 
-<InterviewCentreConfirmModal
-  show={showCentreConfirmModal}
-  onClose={() => setShowCentreConfirmModal(false)}
- onReview={() => {
+      <InterviewCentreConfirmModal
+        show={showCentreConfirmModal}
+        onClose={() => setShowCentreConfirmModal(false)}
+        onReview={() => {
 
-  setShowCentreConfirmModal(false);
+          setShowCentreConfirmModal(false);
 
-  // ✅ prefill allocated centres
-  setCentreRows(
-    uniqueAllocatedCentres.map(centre => ({
+          // ✅ prefill allocated centres
+          setCentreRows(
+            uniqueAllocatedCentres.map(centre => ({
 
-      allocatedCentreId:
-        centre.interviewCentreId,
+              allocatedCentreId:
+                centre.interviewCentreId,
 
-      replacedCentreId:
-        centre.interviewCentreId
-    }))
-  );
+              replacedCentreId:
+                centre.interviewCentreId
+            }))
+          );
 
-  setShowCentreModal(true);
+          setShowCentreModal(true);
 
-}}
+        }}
 
- onProceed={async () => {
-console.log("pendingApplyData", pendingApplyData);
-  setShowCentreConfirmModal(false);
+        onProceed={async () => {
+          console.log("pendingApplyData", pendingApplyData);
+          setShowCentreConfirmModal(false);
 
-  const zonalChangeMap = {};
+          const zonalChangeMap = {};
 
-  uniqueAllocatedCentres.forEach((centre) => {
+          uniqueAllocatedCentres.forEach((centre) => {
 
-    zonalChangeMap[
-      centre.interviewCentreId
-    ] = "";
+            zonalChangeMap[
+              centre.interviewCentreId
+            ] = "";
 
-  });
-console.log("zonalChangeMap", zonalChangeMap);
-  const res = await applySchedule({
-    ...pendingApplyData,
-    zonalChangeMap
-  });
+          });
+          console.log("zonalChangeMap", zonalChangeMap);
+          const res = await applySchedule({
+            ...pendingApplyData,
+            zonalChangeMap
+          });
 
-  if (!res.success) {
-    setErrorMessage(res.message);
+          if (!res.success) {
+            setErrorMessage(res.message);
 
-  setErrorCandidates(
-    res.data || []
-  );
+            setErrorCandidates(
+              res.data || []
+            );
 
-  setShowErrorModal(true);
+            setShowErrorModal(true);
 
-  return;
-  }
+            return;
+          }
 
-  // ✅ IMPORTANT
-  setSchedule(res.rows);
+          // ✅ IMPORTANT
+          setSchedule(res.rows);
 
-  setScheduledCount(res.rows.length);
+          setScheduledCount(res.rows.length);
 
-  setShowReadyBar(true);
+          setShowReadyBar(true);
 
-}}
-/>
+        }}
+      />
 
-<ScheduleErrorModal
-  show={showErrorModal}
-  onClose={() =>
-    setShowErrorModal(false)
-  }
-  errorMessage={errorMessage}
-  errorCandidates={errorCandidates}
-/>
+      <ScheduleErrorModal
+        show={showErrorModal}
+        onClose={() =>
+          setShowErrorModal(false)
+        }
+        errorMessage={errorMessage}
+        errorCandidates={errorCandidates}
+      />
 
-{/* {showCentreConfirmModal && (
+      {/* {showCentreConfirmModal && (
 
   <div className="ipc-alert-overlay">
 

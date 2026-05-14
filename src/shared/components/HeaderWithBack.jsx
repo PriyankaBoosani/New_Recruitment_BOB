@@ -68,50 +68,6 @@ const PageHeaderWithBack = ({
   // fallback if from missing
   const target = from || "/candidate-workflow";
 
-  console.log("🔙 HeaderWithBack handleBack");
-
-  console.log("target:", target);
-
-  console.log("requisition:", state.requisition);
-
-  console.log("position:", state.position);
-
-  console.log("positionIds:", state.positionIds);
-
-  console.log(
-    "derivedPositionIds:",
-    Array.isArray(state.positionIds) &&
-      state.positionIds.length > 0
-      ? state.positionIds
-      : Array.isArray(state.position)
-        ? state.position.map(p => p.positionId)
-        : state.position?.positionId
-          ? [state.position.positionId]
-          : []
-  );
-
-  console.log(
-    "preloadedCandidates:",
-    state.preloadedCandidates || state.candidates || []
-  );
-
-  console.log("selectedDate:", state.selectedDate);
-
-  console.log("requisitionId:", requisitionId);
-
-  console.log("positionId:", positionId);
-
-  console.log("activeTab:", activeTab);
-
-  console.log("page:", state.page);
-
-  console.log("pageSize:", state.pageSize);
-
-  console.log("interviewPage:", state.interviewPage);
-
-  console.log("interviewPageSize:", state.interviewPageSize);
-
-  console.log("filters:", state.filters);
 
   // 🔥 keep this (your interviewer depends on it)
   sessionStorage.setItem("fromPreviewBack", "true");
