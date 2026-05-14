@@ -141,8 +141,6 @@ export default function CandidateScreening({ selectedJob }) {
   const isCommitteeMember = role === "committee_member";
 
 
-  console.log("ROLE:", role);
-  console.log("IS COMMITTEE:", role === "committee_member");
 
   const INTERVIEW_STATUS_LABEL_MAP = {
     SCHEDULED: "Scheduled",
@@ -268,10 +266,7 @@ const [
         positionIds: selectedPositionId
       };
 
-      console.log(
-        "Submit Approval Payload",
-        payload
-      );
+     
 
       const res =
         await candidateWorkflowServices
@@ -279,10 +274,7 @@ const [
             selectedPositionId
           );
 
-      console.log(
-        "SUBMIT APPROVAL RESPONSE",
-        res
-      );
+     
 
       // ✅ HANDLE BACKEND VALIDATION
       if (!res?.success) {
@@ -669,9 +661,6 @@ const paginatedSchedulePool =
 
   const accessibleTabs = useMemo(() => {
 
-    console.log("🔄 Recomputing Tabs, role:", role);
-    console.log("📋 All tabs:", tabs);
-    console.log("🔐 Privileges:", privileges);
 
     return tabs.filter((tab) => {
 
@@ -699,8 +688,6 @@ const paginatedSchedulePool =
 
     });
 
-    console.log(" Final accessibleTabs:", accessibleTabs);
-    console.log("✅ Final accessibleTabs:", accessibleTabs);
 
   }, [tabs, privileges, isContractPosition, role]); //  IMPORTANT
 
@@ -928,7 +915,6 @@ const paginatedSchedulePool =
         });
 
       const finalApiData = finalRes?.data;
-      console.log("INTERVIEW API", finalApiData?.content);
 
       const mappedCandidates =
         (finalApiData?.content || []).map((c) => ({
@@ -991,7 +977,6 @@ const paginatedSchedulePool =
 
       const finalApiData = finalRes?.data;
 
-      console.log("finalApiData", finalApiData)
 
       const mappedCandidates =
         formatCandidateData(finalApiData);
@@ -1061,11 +1046,7 @@ const paginatedSchedulePool =
 
       };
 
-      console.log(
-        "Schedule Pool Payload",
-        payload
-      );
-
+     
 
 
       const res = await candidateWorkflowServices.getSchedulePoolCandidates(payload);
@@ -1158,7 +1139,6 @@ panelScheduleConfigurations:
 
       });
 
-      console.log("mappedRows", mappedRows)
 
       setSchedulePoolCandidates(mappedRows);
 
@@ -1212,7 +1192,6 @@ panelScheduleConfigurations:
 
 
   const [submitBeforeDate, setSubmitBeforeDate] = useState("");
-  console.log("Compensation Data:", compensationCandidates);
   const mappedCompensationCandidates = mapCompensationCandidates(compensationCandidates);
 
   const selectedCompensationCandidates = mappedCompensationCandidates.filter(c =>
@@ -1465,7 +1444,6 @@ panelScheduleConfigurations:
     allInterviewCandidatesForFilters,
     selectedInterviewCandidateIds
   ]);
-  console.log("selectedInterviewCandidates", selectedInterviewCandidates);
 
 
   const canSendToOfferPool =
@@ -1476,10 +1454,7 @@ panelScheduleConfigurations:
     );
   const handleReschedule = () => {
 
-    console.log(
-      "selectedInterviewCandidates",
-      selectedInterviewCandidates
-    );
+   
 
     const mappedRows = selectedInterviewCandidates.map((c) => ({
 
@@ -1548,7 +1523,6 @@ panelScheduleConfigurations:
 
     }));
 
-    console.log("mappedRows", mappedRows);
 
     // BUILD PANEL STRUCTURE
     const groupedPanels = Object.values(
@@ -1596,10 +1570,7 @@ panelScheduleConfigurations:
 
     );
 
-    console.log(
-      "groupedPanels",
-      groupedPanels
-    );
+   
 
     navigate("/schedule-interviews", {
 
@@ -1806,8 +1777,7 @@ panelScheduleConfigurations:
       )
       .map((p) => p.jobPositions?.positionId);
 
-    console.log("NAV POSITION IDS:", normalizedIncoming);
-    console.log("VALID IDS:", validIds);
+
 
     if (validIds.length > 0) {
       setSelectedPositionId(validIds);
@@ -2001,7 +1971,6 @@ panelScheduleConfigurations:
         submitBeforeDate: submitBeforeDate,
       };
 
-      console.log(" Compensation Payload:", payload); // debug
 
       await candidateWorkflowServices.sendToCompensationPool(payload);
 
@@ -2226,6 +2195,7 @@ panelScheduleConfigurations:
     }
   };
   const handleStatusChange = (value) => {
+     setPage(0);
     setFilters(prev => ({
       ...prev,
       status: value ? [value] : [],
@@ -2626,12 +2596,13 @@ panelScheduleConfigurations:
                   <select
                     className="form-select fs-14 py-1 mt-0"
                     value={filters?.stateId}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      setPage(0);
                       setFilters((prev) => ({
                         ...prev,
                         stateId: e.target.value,
                       }))
-                    }
+                    }}
                   >
                     <option value="">{t("candidateWorkflow:all_locations")}</option>
                     {availableLocations?.map((loc) => (
@@ -2649,11 +2620,14 @@ panelScheduleConfigurations:
                   <select
                     className="form-select fs-14 py-1 mt-0"
                     value={filters.categoryId}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      setPage(0);
+                    
                       setFilters((prev) => ({
                         ...prev,
                         categoryId: e.target.value,
                       }))
+                    }
                     }
                   >
                     <option value="">{t("candidateWorkflow:all_categories")}</option>
