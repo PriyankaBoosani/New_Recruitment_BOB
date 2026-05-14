@@ -66,7 +66,7 @@ export default function useInterviewPool({
 
     try {
       // Only fetch interview statuses: SCHEDULED, QUALIFIED, DISQUALIFIED, PROVISIONALLY_APPROVED, PENDING
-      const INTERVIEW_STATUSES = ["SCHEDULED", "QUALIFIED", "DISQUALIFIED", "PROVISIONALLY_APPROVED", "PENDING", "ZONAL_ABSENT", "INTERVIEW_ABSENT", "ZONAL_REJECTED"];
+      const INTERVIEW_STATUSES = ["SCHEDULED", "QUALIFIED", "DISQUALIFIED", "PROVISIONALLY_APPROVED", "PENDING", "ZONAL_ABSENT", "INTERVIEW_ABSENT", "ZONAL_REJECTED", "RESCHEDULED"];
       
       const res = await candidateWorkflowServices.getInterviewCandidates({
         searchText: filters.searchText || "",

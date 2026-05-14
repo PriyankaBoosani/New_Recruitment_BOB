@@ -528,5 +528,8 @@ background-color: none !important;
   overflow: visible !important;
 }
 .schddis :disabled {
-  background-color: var(--bs-secondary-bg);
+	color: rgba(33, 37, 41, 0.75);
+	background: #eee;
+	border: 1px solid #eee;
+	border-color: var(--bs-nav-tabs-link-hover-border-color);
 }

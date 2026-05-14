@@ -46,7 +46,7 @@ const SchedulePoolTable = ({
         <div className="d-flex gap-2 schddis">
 
           <button
-            className="btn fs-14"
+            className="btn btn-primary fs-14"
             onClick={onSubmitApproval}
             disabled={rows.length === 0}
           >
@@ -54,7 +54,7 @@ const SchedulePoolTable = ({
           </button>
 
           <button
-            className="btn fs-14"
+            className="btn btn-primary fs-14"
             onClick={onEdit}
             disabled={rows.length === 0}
           >
