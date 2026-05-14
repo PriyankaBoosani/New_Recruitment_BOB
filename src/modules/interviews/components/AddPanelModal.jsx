@@ -105,6 +105,13 @@ const AddPanelModal = ({
           <div className="field-error">
             {errors?.panelId ? t(errors.panelId) : ""}
           </div>
+
+          {/* DATE RANGE TEXT BELOW DROPDOWN */}
+          {minDate && maxDate && (
+            <div className="ap-date-range-text">
+              Allowed dates: {minDate} to {maxDate}
+            </div>
+          )}
         </Form.Group>
 
         {/* ROWS */}
@@ -136,6 +143,7 @@ const AddPanelModal = ({
                 <div className="field-error">
                   {errors?.rows?.[i]?.date ? t(errors.rows[i].date) : ""}
                 </div>
+                
               </div>
 
               {/* START TIME */}
@@ -231,7 +239,6 @@ const AddPanelModal = ({
                     errors?.rows?.[i]?.perDay ? "ap-error" : ""
                   }`}
                   value={row.perDay}
-                  readOnly
                   onChange={(e) => {
                     const onlyNums = e.target.value.replace(/\D/g, "");
                     updateRow(i, "perDay", onlyNums);

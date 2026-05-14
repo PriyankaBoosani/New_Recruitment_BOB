@@ -1575,7 +1575,8 @@ export default function CandidateScreening({ selectedJob }) {
 
       state: {
 
-        isEditMode: true,
+      isEditMode: true,
+      isReschedule: true,
 
         requisitionId:
           selectedRequisitionId,
@@ -2266,6 +2267,7 @@ export default function CandidateScreening({ selectedJob }) {
       state: {
 
         isEditMode: true,
+        isReschedule: false,
 
         requisitionId: selectedRequisitionId,
 

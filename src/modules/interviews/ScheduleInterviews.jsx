@@ -51,12 +51,14 @@ const ScheduleInterviews = () => {
   ]);
 
 
-  const location = useLocation();
-  const state = location.state || {};
-  const isEditMode =
-    location.state?.isEditMode;
-  const {
-    schedule,
+const location = useLocation();
+const state = location.state || {}; 
+const isEditMode =
+  location.state?.isEditMode;
+const isReschedule =
+  location.state?.isReschedule;
+  const { 
+        schedule,
     updateRow,
     setSchedule,
     requisitions,
@@ -71,11 +73,11 @@ const ScheduleInterviews = () => {
     applySchedule,
     scheduleApiData,
     scheduleInterview,
-    allInterviewCentres
-  } = useInterviewSchedule(isEditMode);
-  console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId)
-
-  console.log("All interviews centres:", allInterviewCentres)
+    allInterviewCentres 
+  } = useInterviewSchedule(isEditMode,isReschedule);
+console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId)
+  
+console.log("All interviews centres:", allInterviewCentres)
   const selectedRequisition =
     requisitions.find(r => r.id === selectedRequisitionId);
 

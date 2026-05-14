@@ -5,7 +5,7 @@ import interviewService from "../services/interviewService";
 import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 import masterApiService from "../../master/services/masterApiService";
 
-export default function useInterviewSchedule(isEditMode) {
+export default function useInterviewSchedule(isEditMode,isReschedule) {
 
   const navigate = useNavigate();
 
@@ -353,7 +353,7 @@ const updatedScheduleData = scheduleApiData.map(item => ({
     ...item.interviewScheduleStaging,
 
     // ✅ backend requirement
-    rescheduled: isEditMode ? true : false
+    rescheduled: isReschedule
   }
 }));
 

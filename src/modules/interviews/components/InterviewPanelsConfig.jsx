@@ -135,13 +135,13 @@ Please add additional interview slots or create another panel to continue.`
           </div>
 
           <div className="d-flex gap-2">
-            <button className="ipc-btn-blue" onClick={() => {
+            {/* <button className="ipc-btn-blue" onClick={() => {
               // TODO: Implement import panel functionality
               console.log("Import panel clicked");
             }}>
               <i className="bi bi-upload me-2"></i>
               {t("import_panel")}
-            </button>
+            </button> */}
 
             <button
               className="ipc-btn-blue"
@@ -198,7 +198,7 @@ Please add additional interview slots or create another panel to continue.`
                   />
 
                   <i
-                    className="bi bi-trash ipc-chip-delete"
+                    className="bi bi-x-circle ipc-chip-delete"
                     onClick={(e) => {
                       e.stopPropagation();
                       setOpenInfoIndex(null);
