@@ -141,7 +141,7 @@ const MultiValue = ({ index, getValue, ...props }) => {
         <label className="fs-14 blue-color">{t("common:position")}</label>
  <Select
   isMulti
-  closeMenuOnSelect={false}
+   closeMenuOnSelect={true}
   hideSelectedOptions={false}
   components={{
     Option,
