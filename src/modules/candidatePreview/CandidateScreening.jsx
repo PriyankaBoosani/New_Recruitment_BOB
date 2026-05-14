@@ -3262,6 +3262,9 @@ export default function CandidateScreening({ selectedJob }) {
             setSelectedIds={setOfferSelectedIds}
             refreshKey={offerRefreshKey}
             onOffersLoaded={(data) => setOfferData(data)}
+            offerTemplateId={offerTemplateId} 
+            acceptBeforeDate={acceptBeforeDate}
+            joiningDate={joiningDate}
           />
         )}
 

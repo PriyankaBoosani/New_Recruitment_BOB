@@ -315,6 +315,16 @@ saveStateLanguages: (payload) =>
   );
 },
 
+// Candidate Preview API
+candidatePreview: (templateId, applicationId) =>
+  apis.get(`/templates/candidate-preview`, {
+    params: {
+      templateId,
+      applicationId,
+    },
+    responseType: "blob",
+  }),
+
 getAllEducation: (ids) =>
   apis.post("/admin-education-master/all", ids),
 
@@ -335,6 +345,7 @@ previewTemplate: (templateId) =>
   apis.get("/master-dd-data/get/request-types"),
 
 };
+
 
 
 

@@ -67,7 +67,7 @@
   "add": "जोड़ें",
   "messages": "संदेश",
   "stateLanguages": "राज्य & भाषाएँ जानकारी",
-   "all_months": "सभी महीने",
+  "all_months": "सभी महीने",
   "january": "जनवरी",
   "february": "फ़रवरी",
   "march": "मार्च",
@@ -79,5 +79,6 @@
   "september": "सितंबर",
   "october": "अक्टूबर",
   "november": "नवंबर",
-  "december": "दिसंबर"
+  "december": "दिसंबर",
+  "view_file": "ऑफर पूर्वावलोकन"
 }

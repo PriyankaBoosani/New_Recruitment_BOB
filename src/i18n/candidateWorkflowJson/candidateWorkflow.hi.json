@@ -115,7 +115,7 @@
     "interviews_scheduled_successfully": "साक्षात्कार सफलतापूर्वक निर्धारित किए गए",
     "bulk_scheduling_failed": "बल्क शेड्यूलिंग विफल",
     "send_to_offer_pool": "ऑफर पूल में भेजें",
-    "Compensation_Request" : "मुआवजा अनुरोध",
+    "Compensation_Request": "मुआवजा अनुरोध",
     "upload_offer_details_for_candidates": "योग्य उम्मीदवारों के लिए ऑफर विवरण अपलोड करें",
     "no_qualified_candidates_selected": "कोई योग्य उम्मीदवार चयनित नहीं है",
     "candidates_sent_to_offer_pool": "उम्मीदवारों को ऑफर पूल में भेज दिया गया",
@@ -135,7 +135,7 @@
     "candidate_resume": "उम्मीदवार रिज़्यूमे",
     "candidate_pool": "उम्मीदवार पूल",
     "interview_pool": "साक्षात्कार पूल",
-    "schedule_pool":"स्केड्यूल पूल",
+    "schedule_pool": "स्केड्यूल पूल",
     "offer_pool": "ऑफर पूल",
     "onboarding_pool": "ऑनबोर्डिंग पूल",
     "import_candidates": "उम्मीदवार आयात करें",
@@ -183,5 +183,9 @@
     "view_zonal_comments": "क्षेत्रीय टिप्पणियाँ देखें",
     "zonal_rejection_comment": "क्षेत्रीय अस्वीकृति टिप्पणी",
     "view_feedback_history": "प्रतिक्रिया इतिहास देखें",
-    "city_name": "शहर"
+    "city_name": "शहर",
+    "OfferTemplate": "कृपया ऑफर टेम्पलेट चुनें",
+    "BeforeDate": "कृपया स्वीकार करने की अंतिम तिथि चुनें",
+    "JoiningDate": "कृपया जॉइनिंग तिथि चुनें",
+     "wentwrong": "कुछ गलत हो गया"
 }
