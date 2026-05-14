@@ -115,6 +115,14 @@
   border: 1px solid #ACBED4;
 }
 
+.draft-card {
+  background: #d8eaff6e !important;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #ACBED4;
+}
+
 .subbtn {
   background-color: #42579F !important;
   font-size: 0.875em;

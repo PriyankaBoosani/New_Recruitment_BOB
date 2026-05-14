@@ -44,6 +44,7 @@ import { toast } from "react-toastify";
 import { validateRequisitionSubmission } from "../validations/validateRequisitionSubmission";
 import CreatePlus_Icon from "../../../assets/CreatePlus_Icon.png";
 import { useTranslation } from "react-i18next";
+import requisitionApiService from "../services/requisitionApiService";
 
 const JobPostingsList = () => {
     const { t } = useTranslation(["jobPostingsList", "common"]);
@@ -80,10 +81,26 @@ const JobPostingsList = () => {
     const handleConfirmDelete = async () => {
         if (!selectedReq) return;
 
-        await deleteRequisition(selectedReq.id);
-        setShowDeleteModal(false);
-        setSelectedReq(null);
+        try {
+            if (selectedReq.isDraft) {
+            await requisitionApiService.cancelDraftRequisition(
+                selectedReq.parentRequisitionId
+            );
+            } else {
+            await deleteRequisition(selectedReq.id);
+            }
+
+            setShowDeleteModal(false);
+            setSelectedReq(null);
+
+            // 🔥 refresh list (important)
+            refetch();
+
+        } catch (err) {
+            console.error(err);
+        }
     };
+
     const handleConfirmDeletePosition = async () => {
         if (!selectedPosition) return;
 
@@ -91,7 +108,13 @@ const JobPostingsList = () => {
             selectedPosition.requisitionId,
             selectedPosition.positionId
         );
-        fetchPositions(selectedPosition.requisitionId);
+        // fetchPositions(selectedPosition.requisitionId);
+        fetchPositions(
+            selectedReq.isDraft
+                ? selectedReq.parentRequisitionId
+                : selectedPosition.requisitionId,
+            selectedReq.isDraft
+        );
         refetch();
         setShowDeletePosModal(false);
         setSelectedPosition(null);
@@ -113,12 +136,27 @@ const JobPostingsList = () => {
     // 🔹 Accordion
     const [openReqId, setOpenReqId] = useState(null);
     const [openDept, setOpenDept] = useState({});
-    const toggleAccordion = (reqId) => {
+    // const toggleAccordion = (reqId) => {
+    //     setOpenReqId((prev) => {
+    //         const next = prev === reqId ? null : reqId;
+
+    //         if (next) {
+    //             fetchPositions(reqId, req.isDraft);
+    //         }
+
+    //         return next;
+    //     });
+    // };
+
+    const toggleAccordion = (req) => {
         setOpenReqId((prev) => {
-            const next = prev === reqId ? null : reqId;
+            const next = prev === req.id ? null : req.id;
 
             if (next) {
-                fetchPositions(reqId);
+                fetchPositions(
+                    req.isDraft ? req.parentRequisitionId : req.id,
+                    req.isDraft
+                );
             }
 
             return next;
@@ -302,7 +340,61 @@ const JobPostingsList = () => {
         };
     };
 
+    const handleAutoApprove = async (req) => {
+        try {
+            await requisitionApiService.autoApproveDraftRequisition(
+                req.parentRequisitionId,
+                ""
+            );
 
+            toast.success("Approved successfully");
+            refetch();
+
+        } catch (err) {
+            console.error(err);
+            toast.error("Approval failed");
+        }
+    };
+
+    const handlePublish = async (req) => {
+        try {
+            await requisitionApiService.publishDraftRequisition(
+                req.parentRequisitionId
+            );
+
+            toast.success("Published successfully");
+
+            refetch(); // mandatory, otherwise UI lies again
+        } catch (err) {
+            console.error(err);
+            toast.error("Publish failed");
+        }
+    };
+
+    const selectedRequisitions = requisitions.filter(r =>
+        selectedReqIds.has(r.id)
+    );
+
+    const isSubmitEnabled =
+        selectedRequisitions.length > 0 &&
+        selectedRequisitions.every(r => r.status === "NEW");
+
+    const isReinitializeEnabled = (() => {
+        if (selectedRequisitions.length !== 1) return false;
+
+        const req = selectedRequisitions[0];
+
+        if (req.status !== "APPROVED") return false;
+        if (!req.endDate) return false;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const endDate = new Date(req.endDate);
+        endDate.setHours(0, 0, 0, 0);
+
+        return endDate < today;
+    })();
 
     return (
         <Container fluid className="job-postings-page">
@@ -445,8 +537,24 @@ const JobPostingsList = () => {
                 <Col xs={12} md={6} className="text-md-end mt-2 mt-md-0">
                     <Button
                         variant="primary"
+                        className="subbtn me-2"
+                        disabled={!isReinitializeEnabled || loading}
+                        onClick={() => {
+                            const req = selectedRequisitions[0];
+
+                            navigate(`/job-posting/create-requisition?id=${req.id}`, {
+                                state: { mode: "reinitialize" }
+                            });
+                        }}
+                    >
+                        Reinitialize
+                    </Button>
+
+                    <Button
+                        variant="primary"
                         className="me-2 subbtn"
-                        disabled={selectedReqIds.size === 0 || loading}
+                        // disabled={selectedReqIds.size === 0 || loading}
+                        disabled={!isSubmitEnabled || loading}
                         onClick={() => setShowSubmitModal(true)}
 
                     >
@@ -458,7 +566,8 @@ const JobPostingsList = () => {
                         variant="outline-secondary"
                         className="canbtn"
                         onClick={handleCancelSelection}
-                        disabled={selectedReqIds.size === 0 || loading}
+                        // disabled={selectedReqIds.size === 0 || loading}
+                        disabled={!isSubmitEnabled || loading}
                     >
                         {t("common:cancel")}
                     </Button>
@@ -482,7 +591,27 @@ const JobPostingsList = () => {
 
             {requisitions.map((req) => {
 
-                const positions = positionsByReq[req.id] || [];
+                // const positions = positionsByReq[req.id] || [];
+                const key = `${req.isDraft ? req.parentRequisitionId : req.id}_${req.isDraft}`;
+                const positions = positionsByReq[key] || [];
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const endDate = req.endDate ? new Date(req.endDate) : null;
+                if (endDate) endDate.setHours(0, 0, 0, 0);
+
+                const isApprovedAndExpired =
+                    req.status === "APPROVED" &&
+                    endDate &&
+                    endDate < today;
+
+                const isCheckboxEnabled =
+                    !req.isDraft &&
+                    (
+                        req.status === "NEW" ||
+                        isApprovedAndExpired
+                    );
 
                 const positionsGroupedByDept = positions.reduce((acc, pos) => {
                     if (!acc[pos.deptId]) {
@@ -494,12 +623,14 @@ const JobPostingsList = () => {
                     acc[pos.deptId].positions.push(pos);
                     return acc;
                 }, {});
-
+                console.log(req);
                 return (
-                    <div key={req.id} className="requisition-card mb-3">
+                    <div key={req.id} className={`requisition-card mb-3 ${req.isDraft ? "draft-card" : ""}`}>
                         <Row
                             className="align-items-center req-clickable"
-                            onClick={() => toggleAccordion(req.id)} >
+                            // onClick={() => toggleAccordion(req.id)}
+                            onClick={() => toggleAccordion(req)}
+                        >
                             {/* -------- LEFT -------- */}
                             <Col xs={12} md={6}>
                                 <div className="req-header">
@@ -512,7 +643,54 @@ const JobPostingsList = () => {
                                     <Badge bg={req.statusType} className="ms-2">
                                         {formatStatusLabel(req.status)}
                                     </Badge>
+																		
+                                    {req.status === "APPROVED" && !req.isInEditMode && !req.isDraft && (
+                                        <Button
+                                            size="sm"
+                                            className="py-0"
+                                            variant="btn-outline"
+                                            onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    // console.log("Approved action clicked", req.id);
+                                                    navigate(`/job-posting/create-requisition?id=${req.id}`, {
+                                                        state: { mode: "clone" }
+                                                    });
+                                            }}
+                                            style={{ fontSize: '0.75rem', color: '#f26522' }}
+                                        >
+                                            Edit
+                                        </Button>
+                                    )}
 
+                                    {req.isDraft && req.status === "DRAFT" && (
+                                        <Button
+                                            size="sm"
+                                            variant="success"
+                                            className="ms-2 py-0"
+                                            style={{ fontSize: "0.7rem" }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleAutoApprove(req);
+                                            }}
+                                        >
+                                            Submit
+                                        </Button>
+                                    )}
+
+                                    {req.isDraft && req.status === "APPROVED" && (
+                                        <Button
+                                            size="sm"
+                                            variant="primary"
+                                            className="ms-2 py-0"
+                                            style={{ fontSize: "0.7rem" }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handlePublish(req);
+                                            }}
+                                        >
+                                            Publish
+                                        </Button>
+                                    )}
                                 </div>
 
                                 <div className="d-flex justify-content-between align-items-start">
@@ -521,23 +699,18 @@ const JobPostingsList = () => {
                                             type="checkbox"
                                             className="me-2 mt-2"
                                             checked={selectedReqIds.has(req.id)}
-                                            disabled={
-                                                req.status === "APPROVED" ||
-                                                // req.status === "L1_PENDING" ||
-                                                // req.status === "L1_APPROVED" ||
-                                                // req.status === "L1_REJECTED" ||
-                                                // req.status === "L2_REJECTED" ||
-                                                req.hasDraftPositions
-                                            }
+                                            // disabled={
+                                            //     req.status === "APPROVED" ||
+                                            //     req.status === "L1_PENDING" ||
+                                            //     req.status === "L1_APPROVED" ||
+                                            //     req.status === "L1_REJECTED" ||
+                                            //     req.status === "L2_REJECTED" ||
+                                            //     req.hasDraftPositions
+                                            // }
+                                            disabled={!isCheckboxEnabled}
                                             onClick={(e) => e.stopPropagation()}
                                             onChange={(e) => {
-                                                if (
-                                                    req.status === "APPROVED"
-                                                    // req.status === "L1_PENDING" ||
-                                                    // req.status === "L1_APPROVED" ||
-                                                    // req.status === "L1_REJECTED" ||
-                                                    // req.status === "L2_REJECTED"
-                                                ) return;
+                                                if (!isCheckboxEnabled) return;
 
                                                 setSelectedReqIds(prev => {
                                                     const next = new Set(prev);
@@ -606,7 +779,7 @@ const JobPostingsList = () => {
 
 
                                 <>
-                                    {!req.isRejected && req.editable && (
+                                    {!req.isRejected && req.editable && !req.isDraft && (
                                         <OverlayTrigger
                                             placement="bottom"
                                             overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:add_position")}</Tooltip>}
@@ -623,7 +796,7 @@ const JobPostingsList = () => {
                                             </Button>
                                         </OverlayTrigger>
                                     )}
-                                    {req.editable && (
+                                    {req.editable && !req.isDraft && (
                                         <OverlayTrigger
                                             placement="bottom"
                                             overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:edit_requisition")}</Tooltip>}
@@ -694,7 +867,8 @@ const JobPostingsList = () => {
                                     className="accordion-arrow"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        toggleAccordion(req.id);
+                                        // toggleAccordion(req.id);
+                                        toggleAccordion(req);
                                     }}
                                 >
                                     {openReqId === req.id ? <ChevronUp /> : <ChevronDown />}
@@ -704,7 +878,7 @@ const JobPostingsList = () => {
                         {/* -------- ACCORDION BODY (STATIC FOR NOW) -------- */}
                         {openReqId === req.id && (
                             <div className="accordion-body mt-3">
-
+                                
                                 {loadingReqId === req.id && (
                                     <Spinner animation="border" size="sm" />
                                 )}
@@ -804,7 +978,7 @@ const JobPostingsList = () => {
                                                                             e.stopPropagation();
                                                                             navigate(
                                                                                 `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
-                                                                                { state: { mode: "edit" } }
+                                                                                { state: { mode: "edit", isInEditMode: req.isInEditMode, isDraft: req.isDraft === true, parentRequisitionId: req.parentRequisitionId } }
                                                                             );
 
                                                                         }}
@@ -815,7 +989,7 @@ const JobPostingsList = () => {
                                                             )}
 
                                                             {/* DELETE POSITION */}
-                                                            {!req.isRejected && req.editable && (
+                                                            {!req.isRejected && req.editable && !req.isDraft && (
                                                                 <OverlayTrigger
                                                                     placement="bottom"
                                                                     overlay={<Tooltip id={`tooltip-delete-${req.id}`}>{t("jobPostingsList:delete_position")}</Tooltip>}
@@ -853,7 +1027,7 @@ const JobPostingsList = () => {
                                                                         e.stopPropagation();
                                                                         navigate(
                                                                             `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
-                                                                            { state: { mode: "view" } }
+                                                                            { state: { mode: "view", isDraft: req.isDraft === true, parentRequisitionId: req.parentRequisitionId } }
                                                                         );
 
                                                                     }}

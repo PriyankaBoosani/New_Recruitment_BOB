@@ -6,6 +6,11 @@ const jobPositionApiService = {
       `/recruiter/job-positions/get-job-position-by-requisition/${requisitionId}`
     ),
 
+  getDraftPositionsByRequisition: (requisitionId) =>
+  api.get(
+    `/recruiter/job-positions/get-draft-job-position-by-requisition/${requisitionId}`
+  ),
+
   getPositionById: (positionId) =>
     api.get(
       `/recruiter/job-positions/get-job-position-by-id/${positionId}`
@@ -50,6 +55,36 @@ const jobPositionApiService = {
 
     return api.post(
       "/recruiter/job-positions/update-job-position",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "X-Client": "AzureAD",
+        },
+      }
+    );
+  },
+
+  // updateDraftPosition: ({ requisitionId, parentPositionId, dto }) =>
+  //   api.put(
+  //     `/recruiter/job-requisitions/${requisitionId}/edit-drafts/current/positions/${parentPositionId}`,
+  //     dto
+  //   ),
+
+  updateDraftPosition: ({ requisitionId, parentPositionId, dto, indentFile }) => {
+    const formData = new FormData();
+
+    formData.append(
+      "jobPositionsDTO",
+      new Blob([JSON.stringify(dto)], { type: "application/json" })
+    );
+
+    if (indentFile) {
+      formData.append("indentFile", indentFile);
+    }
+
+    return api.put(
+      `/recruiter/job-requisitions/${requisitionId}/edit-drafts/current/positions/${parentPositionId}`,
       formData,
       {
         headers: {

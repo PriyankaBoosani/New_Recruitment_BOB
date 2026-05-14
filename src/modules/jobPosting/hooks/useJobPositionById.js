@@ -1,36 +1,49 @@
 import { useEffect, useState, useCallback } from "react";
 import jobPositionApiService from "../services/jobPositionApiService";
 
-export const useJobPositionById = (positionId) => {
+export const useJobPositionById = (positionId, options = {}) => {
+  const { isDraft, parentRequisitionId } = options;
+
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
-//const res = await jobPositionApiService.getPositionById(positionId);
+
   const fetchPosition = useCallback(async () => {
-  if (!positionId) return;
+    if (!positionId) return;
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
+    try {
+      let res;
 
-    const res = await jobPositionApiService.getPositionById(positionId);
-  
-    // ✅ CORRECT
-    setData(res.data);
+      if (isDraft) {
+        // 🔥 USE EXISTING LIST API → FILTER
+        const draftRes =
+          await jobPositionApiService.getDraftPositionsByRequisition(
+            parentRequisitionId
+          );
 
-  } catch (e) {
-    console.error("Failed to fetch position", e);
-  } finally {
-    setLoading(false);
-  }
-}, [positionId]);
+        const list = draftRes?.data || [];
+
+        const match = list.find(
+          p => String(p.positionId || p.id) === String(positionId)
+        );
+
+        res = { data: match };
+      } else {
+        res = await jobPositionApiService.getPositionById(positionId);
+      }
+
+      setData(res?.data || null);
+    } catch (e) {
+      console.error("Failed to fetch position", e);
+    } finally {
+      setLoading(false);
+    }
+  }, [positionId, isDraft, parentRequisitionId]);
 
   useEffect(() => {
     fetchPosition();
   }, [fetchPosition]);
 
-  return {
-    data,
-    loading,
-    refetch: fetchPosition, // 🔑 THIS IS WHAT YOU WERE MISSING
-  };
+  return { data, loading, refetch: fetchPosition };
 };

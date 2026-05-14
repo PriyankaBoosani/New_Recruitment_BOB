@@ -50,6 +50,7 @@
     "status_submitted": "Submitted",
     "add_position": "Add Position",
     "edit_requisition": "Edit Requisition",
+    "reinitialize_requisition": "Reinitialize Requisition",
     "delete_requisition": "Delete Requisition",
     "delete_position": "Delete Position",
     "view_position": "View Position",

@@ -199,6 +199,15 @@ const AppRoutes = () => {
                 }
               />
 
+                <Route
+                  path="/job-posting/edit-requisition"
+                  element={
+                    <PrivilegeRoute privilege="JobPostings">
+                      <JobPostingsList />
+                    </PrivilegeRoute>
+                  }
+                />
+
               <Route
                 path="/job-posting/create-requisition"
                 element={

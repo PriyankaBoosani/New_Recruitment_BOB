@@ -18,14 +18,21 @@ export const useJobPositionsByRequisition = () => {
     positionMap[p.id] = p.name;
   });
 
-  const fetchPositions = async (requisitionId) => {
-    if (positionsByReq[requisitionId]) return;
+  const fetchPositions = async (requisitionId, isDraft = false) => {
+    // if (positionsByReq[requisitionId]) return;
+    const key = `${requisitionId}_${isDraft}`;
+
+    if (positionsByReq[key]) return;
 
     try {
       setLoadingReqId(requisitionId);
 
-      const res =
-        await jobPositionApiService.getPositionsByRequisition(requisitionId);
+      // const res =
+      //   await jobPositionApiService.getPositionsByRequisition(requisitionId);
+
+      const res = isDraft
+        ? await jobPositionApiService.getDraftPositionsByRequisition(requisitionId)
+        : await jobPositionApiService.getPositionsByRequisition(requisitionId);
 
       const list = res?.data || [];
 
@@ -53,7 +60,7 @@ export const useJobPositionsByRequisition = () => {
 
       setPositionsByReq(prev => ({
         ...prev,
-        [requisitionId]: enriched
+        [key]: enriched
       }));
     } catch {
       toast.error(t("positions_load_failed"));
