@@ -278,7 +278,7 @@ const ScheduleInterviews = () => {
 
   // );
   /* ================= UI ================= */
-
+  const sourceTab = state?.sourceTab || state?.activeTab || "CANDIDATE_POOL";
   return (
     <div className="container-fluid px-4 py-3 mb-5 pb-5">
 
@@ -294,7 +294,7 @@ const ScheduleInterviews = () => {
         subtitle={`Scheduling for ${state?.candidates?.length || 0} candidates`}
         requisitionId={state.requisitionId}
         positionId={Array.isArray(state.positionId) ? state.positionId[0] : state.positionId}
-        activeTab="CANDIDATE_POOL"
+        activeTab={sourceTab}
         onBack={() => {
           navigate("/candidate-workflow", {
             state: {
@@ -307,7 +307,7 @@ const ScheduleInterviews = () => {
               page: state.page,
               pageSize: state.pageSize,
               filters: state.filters,
-              activeTab: "CANDIDATE_POOL"
+              activeTab: sourceTab,
             }
           });
         }}
