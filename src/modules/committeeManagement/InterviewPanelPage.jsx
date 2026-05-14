@@ -163,7 +163,7 @@ const InterviewPanelPage = () => {
 
               <li>
                 {t("interviewPanelCommittee:add_panels_step_3")}{" "}
-                <b>{t("interviewPanelCommittee:panel_member_sheet")}</b>:
+                <b>{t("interviewPanelCommittee:panel_member_sheet")}</b>
                 <ul>
                   <li>{t("interviewPanelCommittee:add_panels_step_3_1")} <b>{t("interviewPanelCommittee:panel_number")}</b>{" "}{t("interviewPanelCommittee:as_defined_panel_sheet")}</li>
                   <li>{t("interviewPanelCommittee:add_panels_step_3_2")}</li>
