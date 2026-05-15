@@ -45,7 +45,7 @@ const ScheduleErrorModal = ({
           </div>
 
           {/* DETAILED ERRORS */}
-          {errorCandidates?.length > 0 && (
+          {/* {errorCandidates?.length > 0 && (
 
             <ul className="mb-0 ps-3">
 
@@ -92,7 +92,17 @@ const ScheduleErrorModal = ({
 
             </ul>
 
-          )}
+          )} */}
+
+
+{errorCandidates && (
+  <ScheduleErrorModal />
+)}
+          {/* {errorCandidates?.length > 0 && (
+
+         
+
+          )} */}
 
         </div>
 

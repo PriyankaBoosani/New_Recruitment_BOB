@@ -603,7 +603,7 @@ console.log("All interviews centres:", allInterviewCentres)
             setErrorMessage(res.message);
 
             setErrorCandidates(
-              res.data || []
+              res.data || ''
             );
 
             setShowErrorModal(true);
