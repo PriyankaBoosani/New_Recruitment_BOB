@@ -2270,6 +2270,11 @@ panelScheduleConfigurations:
 
         name:
           item.panel,
+           startDate:
+    item.rawDate,
+
+  endDate:
+    item.rawDate,
 
         slots: []
 

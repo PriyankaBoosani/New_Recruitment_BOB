@@ -36,6 +36,8 @@ export const useAddPanelModal = ({
 ]);
   const [errors, setErrors] = useState({});
 
+
+
   /* ✅ Reset ONLY when modal opens */
 useEffect(() => {
 
@@ -217,6 +219,47 @@ const updateRow = (i, field, value) => {
           delete updated.rows[i];
         }
       }
+
+      return updated;
+    });
+
+  }
+}
+
+if (
+  field === "date" &&
+  minDate &&
+  maxDate
+) {
+
+  const selected =
+    new Date(value);
+
+  const min =
+    new Date(minDate);
+
+  const max =
+    new Date(maxDate);
+
+  if (
+    selected < min ||
+    selected > max
+  ) {
+
+    setErrors(prevErrors => {
+
+      const updated = { ...prevErrors };
+
+      if (!updated.rows) {
+        updated.rows = [];
+      }
+
+      if (!updated.rows[i]) {
+        updated.rows[i] = {};
+      }
+
+      updated.rows[i].date =
+        "Date must be within panel range";
 
       return updated;
     });
@@ -427,10 +470,72 @@ const clearPanelError = () => {
 });
   setErrors(v);
 
-  if (v.rows?.length) return;
+   if (
+    v.panelId ||
+    (v.rows && Object.keys(v.rows).length > 0)
+  ) {
+    return;
+  }
 
   // ✅ FIND SELECTED PANEL
   const selectedPanel = panels.find(p => p.id === panelId);
+
+  const invalidDateExists =
+  rows.some((row) => {
+
+    if (!row.date) return false;
+
+    const selected =
+      new Date(row.date);
+
+    const min =
+      new Date(minDate);
+
+    const max =
+      new Date(maxDate);
+
+    return (
+      selected < min ||
+      selected > max
+    );
+
+  });
+if (invalidDateExists) {
+
+  const updatedRows = rows.map((row) => {
+
+    if (!row.date) return {};
+
+    const selected =
+      new Date(row.date);
+
+    const min =
+      new Date(minDate);
+
+    const max =
+      new Date(maxDate);
+
+    if (
+      selected < min ||
+      selected > max
+    ) {
+
+      return {
+        date:
+          "Date must be within panel range"
+      };
+    }
+
+    return {};
+  });
+
+  setErrors(prev => ({
+    ...prev,
+    rows: updatedRows
+  }));
+
+  return;
+}
 
   onSave({
     panelId,
@@ -440,6 +545,13 @@ const clearPanelError = () => {
 
   onClose();
 };
+
+console.log("initialPanel", initialPanel);
+console.log("panelId", panelId);
+console.log("selectedPanel", selectedPanel);
+console.log("minDate", minDate);
+console.log("maxDate", maxDate);
+
 
   /* ================= CANCEL ================= */
 

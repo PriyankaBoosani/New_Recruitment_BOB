@@ -73,7 +73,7 @@ const AddPanelModal = ({
                     }`}
               disabled={mode === "edit"}
               value={panelId || ""}
-              onChange={(e) => {
+           onChange={(e) => {
                 setPanelId(e.target.value);
                 clearPanelError();
               }}
