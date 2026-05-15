@@ -243,6 +243,7 @@ const AddPanelModal = ({
                     const onlyNums = e.target.value.replace(/\D/g, "");
                     updateRow(i, "perDay", onlyNums);
                   }}
+                  readOnly
                 />
 
                 <div className="field-error">

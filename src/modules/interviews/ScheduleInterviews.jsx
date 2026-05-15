@@ -513,67 +513,33 @@ console.log("All interviews centres:", allInterviewCentres)
             count={scheduledCount}
             onCancel={() => setShowReadyBar(false)}
             onSchedule={async () => {
-              const res = await scheduleInterview();
 
-              if (!res.success) {
+            const res = await scheduleInterview();
 
-                setErrorMessage(res.message);
-
-                setErrorCandidates(
-                  res.data || []
-                );
-
-                setShowErrorModal(true);
-
-                return;
-              }
-
-              toast.success(
-                "Interviews scheduled successfully"
+            if (!res?.success) {
+              toast.error(
+                res?.message || "Failed to schedule interviews"
               );
+              return;
+            }
 
-              setShowReadyBar(false);
+            toast.success("Interview scheduled successfully");
 
-              // Navigate back to candidate-workflow with full state so
-              // positions and requisition are pre-populated (SCHEDULE_POOL)
-              navigate("/candidate-workflow", {
-                state: {
-                   refreshSchedulePool: true,
-                  // original objects if available, otherwise fallbacks
-                  requisition: state.requisition || normalizedRequisition,
+            navigate("/candidate-workflow", {
+              state: {
 
-                  // position objects (friendly shape) and ids
-                  position: selectedPosition.map(p => ({
-                    positionId: p.jobPositions?.positionId,
-                    positionName: p.masterPositions?.positionName
-                  })),
+                requisitionId: selectedRequisitionId,
 
-                  positionIds: Array.isArray(selectedPositionId)
-                    ? selectedPositionId
-                    : selectedPositionId
-                      ? [selectedPositionId]
-                      : [],
+                positionIds: Array.isArray(selectedPositionId)
+                  ? selectedPositionId
+                  : [selectedPositionId],
 
-                  // keep ids too (for workflow)
-                  requisitionId: selectedRequisitionId,
-                  positionId: selectedPositionId,
+                activeTab: "SCHEDULE_POOL",
 
-                  preloadedCandidates:
-                    state.preloadedCandidates || state.candidates || [],
-
-                  activeTab: "SCHEDULE_POOL",
-
-                  page: state.page,
-                  pageSize: state.pageSize,
-
-                  interviewPage: state.interviewPage,
-                  interviewPageSize: state.interviewPageSize,
-
-                  filters: state.filters
-                }
-              });
-
-            }}
+                refreshSchedulePool: true
+              }
+            });
+          }}
           />
         </div>
       )}
