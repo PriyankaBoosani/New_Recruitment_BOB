@@ -311,7 +311,7 @@ setPanelExcelModelList(excelPanels);
         regNo: item.application?.applicationNo,
         date: formatDateDDMMYYYY(start?.split("T")[0]) || "-",
         time: formatTimeRange(start, end),
-        zone: item.interviewCentres?.zone,
+        zone: item.interviewCentres?.displayName,
         panel: item.interviewPanels?.panelName
       };
     });

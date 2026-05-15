@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import "../../../style/css/InterviewPanelsConfig.css";
+import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 
 const InterviewScheduleTable = ({ rows }) => {
 
@@ -36,7 +37,7 @@ const InterviewScheduleTable = ({ rows }) => {
                 </div>
               </td>
 
-              <td>{row.date}</td>
+              <td>{formatDateDDMMYYYY(row.date)}</td>
               <td>{row.time}</td>
               <td>{row.zone}</td>
               <td>{row.panel}</td>

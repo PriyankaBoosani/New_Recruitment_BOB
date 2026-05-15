@@ -3,7 +3,7 @@ import { Modal, Form } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { useAddPanelModal } from "../../interviews/hooks/useAddPanelModal";
 import "../../../style/css/InterviewPanelsConfig.css";
-
+import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 const AddPanelModal = ({
   show,
   onClose,
@@ -106,7 +106,7 @@ const AddPanelModal = ({
           {/* DATE RANGE TEXT BELOW DROPDOWN */}
           {minDate && maxDate && (
             <div className="ap-date-range-text">
-              Allowed dates: {minDate} to {maxDate}
+              Allowed dates: {formatDateDDMMYYYY(minDate)} to {formatDateDDMMYYYY(maxDate)}
             </div>
           )}
         </Form.Group>

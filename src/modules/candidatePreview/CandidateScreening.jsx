@@ -1554,7 +1554,7 @@ panelScheduleConfigurations:
 
       // CENTER
       zone:
-        c?.center?.interviewCentre || "-",
+        c?.center?.displayName || "-",
 
       // PANEL
       panel:

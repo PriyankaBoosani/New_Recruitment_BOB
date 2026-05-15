@@ -208,6 +208,7 @@ console.log("All interviews centres:", allInterviewCentres)
   const isSelectionDone =
     selectedRequisition &&
     selectedPosition.length > 0;
+  console.log("passedCandidates", passedCandidates);
   const sourceCandidates = isEditMode
     ? schedulePoolData
     : passedCandidates;
