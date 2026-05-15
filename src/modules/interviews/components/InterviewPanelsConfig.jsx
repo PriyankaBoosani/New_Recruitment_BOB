@@ -267,11 +267,23 @@ Please add additional interview slots or create another panel to continue.`
         initialPanel={editPanel?.id}
         initialRows={editPanel?.slots}
         //panels={availablePanels}
-        panels={
-  editPanel
-    ? [...availablePanels, editPanel]   // ✅ add current panel back
-    : availablePanels
-}
+      panels={availablePanels.filter(panel => {
+
+  // show current editing panel
+  if (
+    editPanel &&
+    panel.id === editPanel.id
+  ) {
+    return true;
+  }
+
+  // hide already selected panels
+  return !selectedPanels.some(
+    selected =>
+      selected.id === panel.id
+  );
+
+})}
         onClose={() => setShowAddModal(false)}
         onSave={savePanel}
         selectedPanels={selectedPanels}

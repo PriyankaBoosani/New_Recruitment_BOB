@@ -22,15 +22,20 @@ const [selectedPanels, setSelectedPanels] =
 
   useEffect(() => {
 
+  // ONLY INITIAL LOAD
   if (
-    initialSelectedPanels?.length
+    initialSelectedPanels?.length &&
+    selectedPanels.length === 0
   ) {
+
     setSelectedPanels(
       initialSelectedPanels
     );
+
   }
 
-}, [initialSelectedPanels]);
+}, []);
+
 
   useEffect(() => {
     const handleOutside = (e) => {
@@ -61,22 +66,23 @@ const savePanel = (data) => {
     };
 
     if (editPanel) {
-      setSelectedPanels(prev =>
-        prev.map((p, i) =>
-          i === editPanel.index ? newPanel : p
-        )
-      );
 
-      //toast.success("Panel updated successfully");
-    } else {
-      setSelectedPanels(prev => [...prev, newPanel]);
+        setSelectedPanels(prev =>
+          prev.map((p, i) =>
+            i === editPanel.index
+              ? newPanel
+              : p
+          )
+        );
 
-      setAvailablePanels(prev =>
-        prev.filter(p => p.id !== data.panelId) // 🔥 better than name
-      );
+      } else {
 
-      //toast.success("Panel added successfully");
-    }
+        setSelectedPanels(prev => [
+          ...prev,
+          newPanel
+        ]);
+
+      }
 
     setEditPanel(null);
     setShowAddModal(false);
@@ -86,21 +92,13 @@ const savePanel = (data) => {
   }
 };
 const confirmDelete = (index) => {
-  const deletedPanel = selectedPanels[index];
-
-  // ✅ REMOVE FROM SELECTED
-  setSelectedPanels(prev => prev.filter((_, i) => i !== index));
-
-  // ✅ ADD BACK TO AVAILABLE
-  setAvailablePanels(prev => [
-    ...prev,
-    { id: deletedPanel.id, name: deletedPanel.name }
-  ]);
+  setSelectedPanels(prev =>
+    prev.filter((_, i) => i !== index)
+  );
 
   setDeleteIndex(null);
-  setOpenInfoIndex(null);
 
-  //toast.success("Panel deleted successfully");
+  setOpenInfoIndex(null);
 };
 
 const openEdit = (panel, index) => {

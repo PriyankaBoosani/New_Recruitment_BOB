@@ -90,9 +90,6 @@ const AddPanelModal = ({
                   <option
                     key={panel.id}
                     value={panel.id}
-                    disabled={
-                        isSelected && panel.id !== panelId   // ✅ allow current edit
-                      }  // ✅ PREVENT DUPLICATE
                   >
                     {panel.name}
                   </option>
