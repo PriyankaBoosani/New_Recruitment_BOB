@@ -37,7 +37,7 @@ const InterviewScheduleTable = ({ rows }) => {
                 </div>
               </td>
 
-              <td>{formatDateDDMMYYYY(row.date)}</td>
+              <td>{(row.date)}</td>
               <td>{row.time}</td>
               <td>{row.zone}</td>
               <td>{row.panel}</td>
