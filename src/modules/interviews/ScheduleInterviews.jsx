@@ -51,14 +51,14 @@ const ScheduleInterviews = () => {
   ]);
 
 
-const location = useLocation();
-const state = location.state || {}; 
-const isEditMode =
-  location.state?.isEditMode;
-const isReschedule =
-  location.state?.isReschedule;
-  const { 
-        schedule,
+  const location = useLocation();
+  const state = location.state || {};
+  const isEditMode =
+    location.state?.isEditMode;
+  const isReschedule =
+    location.state?.isReschedule;
+  const {
+    schedule,
     updateRow,
     setSchedule,
     requisitions,
@@ -73,11 +73,11 @@ const isReschedule =
     applySchedule,
     scheduleApiData,
     scheduleInterview,
-    allInterviewCentres 
-  } = useInterviewSchedule(isEditMode,isReschedule);
-console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId)
-  
-console.log("All interviews centres:", allInterviewCentres)
+    allInterviewCentres
+  } = useInterviewSchedule(isEditMode, isReschedule);
+  console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId)
+
+  console.log("All interviews centres:", allInterviewCentres)
   const selectedRequisition =
     requisitions.find(r => r.id === selectedRequisitionId);
 
@@ -186,7 +186,8 @@ console.log("All interviews centres:", allInterviewCentres)
           item.zone,
 
         panel:
-          item.panel
+            item.panel,
+            positionId: item.positionId
 
       }));
 
@@ -240,104 +241,104 @@ console.log("All interviews centres:", allInterviewCentres)
 
   const rebuiltSelectedPanels = Object.values(
 
-  (schedulePoolData || []).reduce((acc, item) => {
+    (schedulePoolData || []).reduce((acc, item) => {
 
-    const panelId =
-      item.panelId;
+      const panelId =
+        item.panelId;
 
-    const panelName =
-      item.panel;
+      const panelName =
+        item.panel;
 
-    const configurations =
-      item.panelScheduleConfigurations || [];
+      const configurations =
+        item.panelScheduleConfigurations || [];
 
-    // create panel group
-    if (!acc[panelId]) {
+      // create panel group
+      if (!acc[panelId]) {
 
-      acc[panelId] = {
+        acc[panelId] = {
 
-        id: panelId,
+          id: panelId,
 
-        name: panelName,
+          name: panelName,
 
-        slots: []
+          slots: []
 
-      };
+        };
 
-    }
+      }
 
-    configurations.forEach(config => {
+      configurations.forEach(config => {
 
-  const slotDate =
-    config?.startDatetime
-      ?.split("T")[0];
+        const slotDate =
+          config?.startDatetime
+            ?.split("T")[0];
 
-  if (!slotDate) return;
+        if (!slotDate) return;
 
-  const existingSlot =
-    acc[panelId].slots.find(
-      slot => slot.date === slotDate
-    );
+        const existingSlot =
+          acc[panelId].slots.find(
+            slot => slot.date === slotDate
+          );
 
-  const startTime =
-    config?.startDatetime
-      ?.split("T")[1]
-      ?.slice(0, 5) || "";
+        const startTime =
+          config?.startDatetime
+            ?.split("T")[1]
+            ?.slice(0, 5) || "";
 
-  const endTime =
-    config?.endDatetime
-      ?.split("T")[1]
-      ?.slice(0, 5) || "";
+        const endTime =
+          config?.endDatetime
+            ?.split("T")[1]
+            ?.slice(0, 5) || "";
 
-  if (existingSlot) {
+        if (existingSlot) {
 
-    if (
-      startTime &&
-      startTime < existingSlot.startTime
-    ) {
-      existingSlot.startTime =
-        startTime;
-    }
+          if (
+            startTime &&
+            startTime < existingSlot.startTime
+          ) {
+            existingSlot.startTime =
+              startTime;
+          }
 
-    if (
-      endTime &&
-      endTime > existingSlot.endTime
-    ) {
-      existingSlot.endTime =
-        endTime;
-    }
+          if (
+            endTime &&
+            endTime > existingSlot.endTime
+          ) {
+            existingSlot.endTime =
+              endTime;
+          }
 
-  } else {
+        } else {
 
-    acc[panelId].slots.push({
+          acc[panelId].slots.push({
 
-      date: slotDate,
+            date: slotDate,
 
-      startTime,
+            startTime,
 
-      endTime,
+            endTime,
 
-      duration:
-        String(
-          config?.durationMinutes || 15
-        ),
+            duration:
+              String(
+                config?.durationMinutes || 15
+              ),
 
-      perDay:
-        String(
-          config?.interviewsPerDay || 1
-        )
+            perDay:
+              String(
+                config?.interviewsPerDay || 1
+              )
 
-    });
+          });
 
-  }
+        }
 
-});
+      });
 
-    return acc;
+      return acc;
 
-  }, {})
+    }, {})
 
-);
+  );
   /* ================= UI ================= */
   const sourceTab = state?.sourceTab || state?.activeTab || "CANDIDATE_POOL";
   return (
@@ -409,7 +410,7 @@ console.log("All interviews centres:", allInterviewCentres)
               onRequisitionSearch={() => { }}
               disableRequisition={true}
               disablePosition={true}
-              isReadonly = {true}
+              isReadonly={true}
             />
           </div>
         </div>
@@ -429,7 +430,7 @@ console.log("All interviews centres:", allInterviewCentres)
             isSaveEnabled={false}
             isSaveBtn={false}
             saveButton={false}
-            isReadonly = {true}
+            isReadonly={true}
           />
           {/* <RequisitionStrip
             requisition={selectedRequisition}
@@ -503,11 +504,11 @@ console.log("All interviews centres:", allInterviewCentres)
           setShowCentreConfirmModal(true);
 
         }}
-       initialSelectedPanels={
-              isReschedule
-                ? []
-                : rebuiltSelectedPanels
-            }
+        initialSelectedPanels={
+          isReschedule
+            ? []
+            : rebuiltSelectedPanels
+        }
       />
 
       {showReadyBar && (
@@ -517,38 +518,40 @@ console.log("All interviews centres:", allInterviewCentres)
             onCancel={() => setShowReadyBar(false)}
             onSchedule={async () => {
 
-            const res = await scheduleInterview();
+              const res = await scheduleInterview();
 
-            if (!res?.success) {
-              toast.error(
-                res?.message || "Failed to schedule interviews"
-              );
-              return;
-            }
-
-            toast.success("Interview scheduled successfully");
-
-            navigate("/candidate-workflow", {
-              state: {
-
-                requisitionId: selectedRequisitionId,
-
-                positionIds: Array.isArray(selectedPositionId)
-                  ? selectedPositionId
-                  : [selectedPositionId],
-
-                activeTab: "SCHEDULE_POOL",
-
-                refreshSchedulePool: true
+              if (!res?.success) {
+                toast.error(
+                  res?.message || "Failed to schedule interviews"
+                );
+                return;
               }
-            });
-          }}
+
+              toast.success("Interview scheduled successfully");
+
+              navigate("/candidate-workflow", {
+                state: {
+
+                  requisitionId: selectedRequisitionId,
+
+                  positionIds: Array.isArray(selectedPositionId)
+                    ? selectedPositionId
+                    : [selectedPositionId],
+
+                  activeTab: "SCHEDULE_POOL",
+
+                  refreshSchedulePool: true
+                }
+              });
+            }}
           />
         </div>
       )}
 
       {/* ===== INTERVIEW SCHEDULE TABLE ===== */}
-      <InterviewScheduleTable rows={schedule} />
+      <InterviewScheduleTable rows={schedule}
+        positionId={selectedPositionId}
+        position={selectedPosition} />
 
 
       {showCentreModal && <InterviewCentreAllocationModal
@@ -557,6 +560,7 @@ console.log("All interviews centres:", allInterviewCentres)
         uniqueAllocatedCentres={uniqueAllocatedCentres}
         centreRows={centreRows}
         setCentreRows={setCentreRows}
+
         allInterviewCentres={allInterviewCentres}
         onContinue={async () => {
 

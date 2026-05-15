@@ -146,7 +146,6 @@ const SchedulePoolTable = ({
 
                 </td>
 
-                {console.log("Position for row", { positionId: row.positionId })}
                 <td className="fs-14 align-content-center">
                   {position?.find((p) => p.positionId === row.positionId)?.positionName || "-"}
                   {/* {row.positionId} */}

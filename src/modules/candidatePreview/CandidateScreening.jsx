@@ -1132,6 +1132,8 @@ export default function CandidateScreening({ selectedJob }) {
           // IMPORTANT FOR EDIT FLOW
           applicationId:
             c?.application?.id,
+            positionId:
+            c?.application?.positionId,
 
           interviewCenterId:
             c?.interviewCentres
@@ -1567,6 +1569,7 @@ export default function CandidateScreening({ selectedJob }) {
 
       interviewCenterId:
         c?.center?.interviewCentreId || "",
+      positionId: c?.application?.positionId || "",
 
       panelId:
         c?.panel?.interviewPanelId || "",

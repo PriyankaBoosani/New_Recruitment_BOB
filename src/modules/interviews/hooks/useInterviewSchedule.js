@@ -157,7 +157,8 @@ useEffect(() => {
       date: "",
       time: "",
       zone: "",
-      panel: ""
+      panel: "",
+      positionId: c.positionId
     }));
 
     setSchedule(formatted);
@@ -214,7 +215,7 @@ candidates.forEach((candidate) => {
     applicationIds:
       candidates.map(c => c.id),
 
-    positionIds: positionId
+    positionIds: positionId,
 
   },
 
@@ -312,7 +313,8 @@ setPanelExcelModelList(excelPanels);
         date: formatDateDDMMYYYY(start?.split("T")[0]) || "-",
         time: formatTimeRange(start, end),
         zone: item.interviewCentres?.displayName,
-        panel: item.interviewPanels?.panelName
+        panel: item.interviewPanels?.panelName,
+        positionId: item.application?.positionId
       };
     });
 

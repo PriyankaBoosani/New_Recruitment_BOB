@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import "../../../style/css/InterviewPanelsConfig.css";
 import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 
-const InterviewScheduleTable = ({ rows }) => {
-
+const InterviewScheduleTable = ({ rows, position }) => {
+console.log("InterviewScheduleTable render", { rows, position });
   const { t } = useTranslation("interviewSchedule");
 
   return (
@@ -19,6 +19,7 @@ const InterviewScheduleTable = ({ rows }) => {
         <thead>
           <tr>
             <th>{t("candidate")}</th>
+            <th>Position</th>
             <th>{t("date")}</th>
             <th>{t("time")}</th>
             <th>{t("zone")}</th>
@@ -36,7 +37,11 @@ const InterviewScheduleTable = ({ rows }) => {
                   {t("reg_no")}: {row.regNo}
                 </div>
               </td>
-
+             <td className="fs-14 align-content-center">
+  {position?.find(
+    (p) => p.jobPositions?.positionId === row.positionId
+  )?.masterPositions?.positionName || "-"}
+</td>
               <td>{(row.date)}</td>
               <td>{row.time}</td>
               <td>{row.zone}</td>
