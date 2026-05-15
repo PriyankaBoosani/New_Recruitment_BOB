@@ -571,12 +571,9 @@ export default function CandidateScreening({ selectedJob }) {
       schedulePoolPageSize
     ]);
   const hasLocationData = useMemo(() => {
-    const selected = positions.find(
-      (p) => p.jobPositions?.positionId === selectedPositionId[0]
-    );
-
-    return (
-      selected?.jobPositions?.positionStateDistributions?.length > 0
+    return positions.some((p) =>
+      selectedPositionId.includes(p.jobPositions?.positionId) &&
+      (p.jobPositions?.positionStateDistributions?.length || 0) > 0
     );
   }, [positions, selectedPositionId]);
 
