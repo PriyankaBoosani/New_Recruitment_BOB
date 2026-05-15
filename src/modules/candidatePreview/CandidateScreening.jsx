@@ -1172,7 +1172,9 @@ panelScheduleConfigurations:
           panel:
             c?.interviewPanels
               ?.panelName || "-",
-          interviewStatus: c?.interviewScheduleStaging.interviewSchedulingApprovalStatus || "-"
+          interviewStatus: c?.interviewScheduleStaging.interviewSchedulingApprovalStatus || "-",
+          positionId:
+            c?.application?.positionId,
 
         };
 
@@ -1971,6 +1973,7 @@ panelScheduleConfigurations:
         interviewSchedules: selectedInterviewCandidates.map((c) => ({
           applicationId: c?.application?.id,
           candidateId: c?.application?.candidateId,
+          
 
           panelId:
             c?.interviewSchedules?.panelId ?? null,
@@ -3289,6 +3292,8 @@ panelScheduleConfigurations:
               }
 
               page={schedulePoolPage}
+              position={selectedPosition}
+              
 
               pageSize={schedulePoolPageSize}
 

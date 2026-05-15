@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect} from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Person, FileText } from "react-bootstrap-icons";
 import { OverlayTrigger, Popover, Tooltip } from "react-bootstrap";
@@ -42,11 +42,11 @@ export default function CandidatePool({
 
   /* ---------- Selection logic ---------- */
 
-const allSelected =
-  allCandidatesForFilters?.length > 0 &&
-  allCandidatesForFilters.every((c) =>
-    selectedIds.includes(c.id)
-  );
+  const allSelected =
+    allCandidatesForFilters?.length > 0 &&
+    allCandidatesForFilters.every((c) =>
+      selectedIds.includes(c.id)
+    );
 
   // const toggleSelectAll = () => {
   //   if (allSelected) {
@@ -59,55 +59,55 @@ const allSelected =
 
 
   useEffect(() => {
-  if (!filters?.status?.length) {
-    setSelectedIds([]);
-  }
-}, [filters?.status]);
+    if (!filters?.status?.length) {
+      setSelectedIds([]);
+    }
+  }, [filters?.status]);
 
 
-//   const toggleSelectAll = () => {
+  //   const toggleSelectAll = () => {
 
-//   //  VALIDATION
-//   if (!filters?.status?.length) {
-//     toast.error("Please select the filter first");
-//     return;
-//   }
+  //   //  VALIDATION
+  //   if (!filters?.status?.length) {
+  //     toast.error("Please select the filter first");
+  //     return;
+  //   }
 
-//   if (allSelected) {
-//     setSelectedIds([]);
-//   } else {
-//     setSelectedIds(candidates.map((c) => c.id));
-//   }
-// };
+  //   if (allSelected) {
+  //     setSelectedIds([]);
+  //   } else {
+  //     setSelectedIds(candidates.map((c) => c.id));
+  //   }
+  // };
 
 
   const formatStatus = (status = "") =>
-  status
-    .toLowerCase()
-    .split("_")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+    status
+      .toLowerCase()
+      .split("_")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
 
 
-const toggleSelectAll = () => {
+  const toggleSelectAll = () => {
 
-  if (!filters?.status?.length) {
-    toast.error("Please select the status filter first");
-    return;
-  }
+    if (!filters?.status?.length) {
+      toast.error("Please select the status filter first");
+      return;
+    }
 
-  const allIds = allCandidatesForFilters.map((c) => c.id);
+    const allIds = allCandidatesForFilters.map((c) => c.id);
 
-  if (allSelected) {
-    setSelectedIds([]);
-  } else {
-    setSelectedIds(allIds);
-  
+    if (allSelected) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(allIds);
+
       toast.success(
-      `${allIds.length} ${formatStatus(filters?.status?.[0])} candidate${allIds.length > 1 ? "s" : ""} selected`
-    );
-  }
-};
+        `${allIds.length} ${formatStatus(filters?.status?.[0])} candidate${allIds.length > 1 ? "s" : ""} selected`
+      );
+    }
+  };
 
 
 
@@ -300,6 +300,9 @@ const toggleSelectAll = () => {
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("name")} role="button">
                 {t("candidateWorkflow:candidate")} {sortIcon("name")}
               </th>
+              <th className="fs-14 fw-normal py-3" onClick={() => requestSort("name")} role="button">
+                {t("candidateWorkflow:position")} {sortIcon("name")}
+              </th>
 
               {/* <th className="fs-14 fw-normal py-3" role="button">
                 Rank
@@ -334,7 +337,7 @@ const toggleSelectAll = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="9" className="text-center py-4">
+                <td colSpan="10" className="text-center py-4">
                   {t("candidateWorkflow:loading_candidates")}
                 </td>
               </tr>
@@ -362,7 +365,9 @@ const toggleSelectAll = () => {
                     </p>
                   </td>
 
-
+                   <td className="align-content-center">
+                    <p className="fw-normal fs-14 mb-0">{position?.find(p => p.positionId === c.positionId)?.positionName || "-"}</p>
+                  </td>
 
 
                   {/* <td className="align-content-center">
@@ -420,7 +425,7 @@ const toggleSelectAll = () => {
                       )} */}
                     </span>
                   </td>
-                  
+
                   {hasLocationData && (
                     <td className="align-content-center">
                       <p className="fw-normal fs-14 mb-0">{c.location}</p>
@@ -438,20 +443,20 @@ const toggleSelectAll = () => {
                     >
                       <Person
                         className="me-3 cursor-pointer"
-                        onClick={() =>{
+                        onClick={() => {
 
 
                           console.log("FULL CANDIDATE::::@@@@#@#@@", c);
 
-                          
+
                           navigate("/candidate-preview", {
                             state: {
                               from: "/candidate-workflow",
                               candidate: c,
-                            
+
                               positionId: selectedPositionId, // for preview API
                               positionIds: selectedPositionId,   // for auto populate after back
-                               candidatePositionId: c.positionId,
+                              candidatePositionId: c.positionId,
                               requisitionId: selectedRequisitionId,
                               requisition: requisition
                                 ? {
@@ -461,11 +466,11 @@ const toggleSelectAll = () => {
                                   registration_end_date: requisition.registration_end_date,
                                 }
                                 : null,
-                             position: position?.map?.(p => ({
-                            positionId: p.positionId,
-                            positionName: p.positionName,
-                            isLocationWise: p.isLocationWise,
-                            })) || [],
+                              position: position?.map?.(p => ({
+                                positionId: p.positionId,
+                                positionName: p.positionName,
+                                isLocationWise: p.isLocationWise,
+                              })) || [],
                               activeTab: "CANDIDATE_POOL",
                               isRankEnabled,
 
@@ -474,7 +479,8 @@ const toggleSelectAll = () => {
                               pageSize,
                               filters,
                             },
-                          })}
+                          })
+                        }
                         }
                       />
                     </OverlayTrigger>

@@ -24,9 +24,10 @@ export default function InterviewPool({
   onOpenFeedback,
   onOpenZonalComments,
   canReschedule,
-onReschedule,
-   allCandidatesForFilters,
+  onReschedule,
+  allCandidatesForFilters,
 }) {
+  console.log("InterviewPool render", position);
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const navigate = useNavigate();
   const STATUS_CLASS_MAP = {
@@ -38,7 +39,7 @@ onReschedule,
     INTERVIEW_ABSENT: "bg-info",
     PENDING: "bg-warning",
     ZONAL_REJECTED: "bg-danger",
-   RESCHEDULED: "bg-warning"
+    RESCHEDULED: "bg-warning"
     // OFFER_AWAITED: "bg-dark"
 
   };
@@ -47,7 +48,7 @@ onReschedule,
 
 
 
-  
+
 
 
 
@@ -55,16 +56,16 @@ onReschedule,
   //   candidates.length > 0 && selectedIds.length === candidates.length;
 
 
- const allSelected =
-  allCandidatesForFilters?.length > 0 &&
-  allCandidatesForFilters.every((c) =>
-    selectedIds.includes(String(c.id))
-  );
+  const allSelected =
+    allCandidatesForFilters?.length > 0 &&
+    allCandidatesForFilters.every((c) =>
+      selectedIds.includes(String(c.id))
+    );
   console.log("selectedIds", selectedIds);
-console.log(
-  "page ids",
-  candidates.map(c => String(c.id))
-);
+  console.log(
+    "page ids",
+    candidates.map(c => String(c.id))
+  );
 
   // const toggleSelectAll = () => {
   //   setSelectedIds(allSelected ? [] : candidates.map((c) => c.id));
@@ -72,39 +73,39 @@ console.log(
 
 
 
-const toggleSelectAll = () => {
+  const toggleSelectAll = () => {
 
-  if (!filters?.status?.length) {
-    toast.error("Please select the status filter first");
-    return;
-  }
+    if (!filters?.status?.length) {
+      toast.error("Please select the status filter first");
+      return;
+    }
 
-const allIds = allCandidatesForFilters.map((c) => String(c.id));
-  if (allSelected) {
+    const allIds = allCandidatesForFilters.map((c) => String(c.id));
+    if (allSelected) {
 
-    setSelectedIds([]);
+      setSelectedIds([]);
 
-    toast.info("Selection cleared");
+      toast.info("Selection cleared");
 
-  } else {
+    } else {
 
-    setSelectedIds(allIds);
+      setSelectedIds(allIds);
 
-    toast.success(
-      `${allIds.length} ${filters?.status?.[0]} candidates selected`
+      toast.success(
+        `${allIds.length} ${filters?.status?.[0]} candidates selected`
+      );
+    }
+  };
+
+  const toggleRow = (id) => {
+    const normalizedId = String(id);
+
+    setSelectedIds((prev) =>
+      prev.includes(normalizedId)
+        ? prev.filter((x) => x !== normalizedId)
+        : [...prev, normalizedId]
     );
-  }
-};
-
-const toggleRow = (id) => {
-  const normalizedId = String(id);
-
-  setSelectedIds((prev) =>
-    prev.includes(normalizedId)
-      ? prev.filter((x) => x !== normalizedId)
-      : [...prev, normalizedId]
-  );
-};
+  };
   const requestSort = (key) => {
     setSortConfig((prev) => {
       if (prev.key === key) {
@@ -118,7 +119,7 @@ const toggleRow = (id) => {
   };
 
 
-  
+
 
   const sortedCandidates = useMemo(() => {
     if (!sortConfig.key) return candidates;
@@ -151,18 +152,18 @@ const toggleRow = (id) => {
     <div className="card-body p-0 interview-pool">
       {canReschedule && (
 
-  <div className="d-flex justify-content-end px-3 pt-3">
+        <div className="d-flex justify-content-end px-3 pt-3">
 
-    <button
-      className="btn btn-primary fs-14"
-      onClick={onReschedule}
-    >
-      Reschedule
-    </button>
+          <button
+            className="btn btn-primary fs-14"
+            onClick={onReschedule}
+          >
+            Reschedule
+          </button>
 
-  </div>
+        </div>
 
-)}
+      )}
       <table className="table table-hover mb-0">
         <thead className="bg-light">
           <tr>
@@ -174,6 +175,7 @@ const toggleRow = (id) => {
               />
             </th>
             <th className="fs-14 fw-normal py-3" >{t("candidateWorkflow:candidate")}</th>
+            <th className="fs-14 fw-normal py-3" >{t("candidateWorkflow:position")}</th>
             <th className="fs-14 fw-normal py-3">{t("common:date")}</th>
             <th className="fs-14 fw-normal py-3">{t("common:time")}</th>
             <th className="fs-14 fw-normal py-3">{t("candidateWorkflow:zone")}</th>
@@ -198,7 +200,7 @@ const toggleRow = (id) => {
                 <td className="align-content-center" style={{ paddingLeft: '1rem' }}>
                   <input
                     type="checkbox"
-                  checked={selectedIds.includes(String(c.id))}
+                    checked={selectedIds.includes(String(c.id))}
                     onChange={() => toggleRow(String(c.id))}
                   />
                 </td>
@@ -207,7 +209,11 @@ const toggleRow = (id) => {
                   <p className="fw-normal fs-14 mb-0">{c.name}</p>
                   <p className="text-muted fs-12 mb-0">{t("candidateWorkflow:application_number")}: {c.regNo}</p>
                 </td>
-
+                <td className="fs-14 align-content-center">
+                  {
+                    position?.find(p => p.positionId === c.positionId)?.positionName || "-"
+                  }
+                </td>
                 <td className="fs-14 align-content-center">{c.date}</td>
                 <td className="fs-14 align-content-center">{c.time}</td>
                 <td className="fs-14 align-content-center">{c.zone}</td>
@@ -243,7 +249,7 @@ const toggleRow = (id) => {
                 <td className="fs-14 align-content-center">
                   <div className="d-flex align-items-center gap-2">
                     <span className="scorebg">
-                      {c.score !== null && c.score !== undefined && c.score !== ""? c.score: "-"}
+                      {c.score !== null && c.score !== undefined && c.score !== "" ? c.score : "-"}
                     </span>
 
                     <span
@@ -279,7 +285,7 @@ const toggleRow = (id) => {
                             requisitionId: selectedRequisitionId,
                             fromInterviewPool: true,
                             activeTab: "INTERVIEW_POOL",
-                              candidatePositionId: c.positionId, // ADD THIS
+                            candidatePositionId: c.positionId, // ADD THIS
                             // 🔥 IMPORTANT FIX
                             interviewPage: page,
                             interviewPageSize: pageSize,
@@ -294,13 +300,13 @@ const toggleRow = (id) => {
                                 registration_end_date: requisition.registration_end_date,
                               }
                               : null,
-                          positionIds: selectedPositionId,
+                            positionIds: selectedPositionId,
 
-position: position?.map?.(p => ({
-  positionId: p.positionId,
-  positionName: p.positionName,
-  isLocationWise: p.isLocationWise,
-})) || [],
+                            position: position?.map?.(p => ({
+                              positionId: p.positionId,
+                              positionName: p.positionName,
+                              isLocationWise: p.isLocationWise,
+                            })) || [],
                           },
 
                         })

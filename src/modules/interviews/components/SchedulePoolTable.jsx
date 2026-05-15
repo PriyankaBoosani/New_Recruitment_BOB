@@ -23,9 +23,11 @@ const SchedulePoolTable = ({
   onPageSizeChange,
   onViewProfile,
   onViewResume,
-  onOpenZonalComments
+  onOpenZonalComments,
+  position = [],
 }) => {
 
+  console.log("SchedulePoolTable render", { rows, position });
   const { t } = useTranslation([
     "candidateWorkflow",
     "common",
@@ -75,6 +77,9 @@ const SchedulePoolTable = ({
             <th className="fs-14 fw-normal py-3">
               {t("candidateWorkflow:candidate")}
             </th>
+            <th className="fs-14 fw-normal py-3">
+              {t("candidateWorkflow:position")}
+            </th>
 
             <th className="fs-14 fw-normal py-3">
               {t("common:date")}
@@ -111,7 +116,7 @@ const SchedulePoolTable = ({
             <tr>
 
               <td
-                colSpan="7"
+                colSpan="8"
                 className="text-center py-4 text-muted fs-14"
               >
                 No candidates in Schedule Pool yet.
@@ -122,6 +127,7 @@ const SchedulePoolTable = ({
           ) : (
 
             rows.map((row) => (
+              console.log("Rendering row", { row }),
 
               <tr key={row.id}>
 
@@ -138,6 +144,12 @@ const SchedulePoolTable = ({
                     {row.regNo}
                   </p>
 
+                </td>
+
+                {console.log("Position for row", { positionId: row.positionId })}
+                <td className="fs-14 align-content-center">
+                  {position?.find((p) => p.positionId === row.positionId)?.positionName || "-"}
+                  {/* {row.positionId} */}
                 </td>
 
                 {/* Date */}
@@ -163,7 +175,7 @@ const SchedulePoolTable = ({
                 {/* Interview Status */}
                 <td className="align-content-center">
 
-               {row.interviewStatus === "L1_PENDING" ? "L1 Pending" : row.interviewStatus}
+                  {row.interviewStatus === "L1_PENDING" ? "L1 Pending" : row.interviewStatus}
                 </td>
 
                 {/* Actions */}
