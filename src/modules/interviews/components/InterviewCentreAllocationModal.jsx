@@ -9,6 +9,7 @@ setCentreRows,
   allInterviewCentres,
   onContinue
 }) => {
+  console.log("centreRows",centreRows)
   console.log("allInterviewCentres",allInterviewCentres)
   console.log("uniqueAllocatedCentres",uniqueAllocatedCentres)
 
@@ -80,20 +81,24 @@ setCentreRows,
         {uniqueAllocatedCentres
           .filter(c => {
 
-            // allow current row selected value
-            if (
-              c.interviewCentreId ===
-              row.allocatedCentreId
-            ) {
-              return true;
-            }
+          // allow current row selected value
+          if (
+            c.interviewCentreId ===
+            row.allocatedCentreId
+          ) {
+            return true;
+          }
 
-            // remove already selected centres
-            return !selectedAllocatedCentres.includes(
+          // prevent duplicate rows
+          return !centreRows.some(
+            (r, idx) =>
+
+              idx !== index &&
+              r.allocatedCentreId ===
               c.interviewCentreId
-            );
+          );
 
-          }).map(c => (
+        }).map(c => (
 
           <option
             key={c.interviewCentreId}
@@ -132,18 +137,20 @@ setCentreRows,
             Select Replacement
           </option>
 
-          {allInterviewCentres.filter(c =>// remove candidate centres
-              !candidateCentreIds.includes(
-                c.interviewCentreId
-              )
+         {allInterviewCentres
+          .filter(c =>
 
-            ).map(c => (
+            // left & right should not match
+            c.interviewCentreId !==
+            row.allocatedCentreId
+          )
+          .map(c => (
 
             <option
               key={c.interviewCentreId}
               value={c.interviewCentreId}
             >
-              {c.interviewCentre}
+              {c.displayName}
             </option>
 
           ))}

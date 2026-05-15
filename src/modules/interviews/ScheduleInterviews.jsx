@@ -624,17 +624,13 @@ console.log("All interviews centres:", allInterviewCentres)
 
           setShowCentreConfirmModal(false);
 
-          // ✅ prefill allocated centres
-          setCentreRows(
-            uniqueAllocatedCentres.map(centre => ({
-
-              allocatedCentreId:
-                centre.interviewCentreId,
-
-              replacedCentreId:
-                centre.interviewCentreId
-            }))
-          );
+          // ✅ ONLY ONE EMPTY ROW
+          setCentreRows([
+            {
+              allocatedCentreId: "",
+              replacedCentreId: ""
+            }
+          ]);
 
           setShowCentreModal(true);
 
