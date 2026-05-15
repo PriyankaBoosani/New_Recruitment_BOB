@@ -2,6 +2,7 @@ import React from "react";
 import { Modal, Button } from "react-bootstrap";
 import "../../../../../style/Experience.css";
 import { useTranslation } from "react-i18next";
+import deleteIcon from "../../../../../assets/delete_icon.png";
 
 const ExperienceModal = ({
   show,
@@ -64,7 +65,7 @@ const ExperienceModal = ({
                 {/* EDUCATION LEVEL */}
                 <div className="col-md-4">
                   <label className="form-label">
-                    {t("education:education_level")} *
+                    {t("education:education_level")} <span className="text-danger">*</span>
                   </label>
 
                   <select
@@ -96,7 +97,7 @@ const ExperienceModal = ({
                 {/* COURSE */}
                 <div className="col-md-4">
                   <label className="form-label">
-                    {t("education:course")} *
+                    {t("education:course")} <span className="text-danger">*</span>
                   </label>
 
                   {isViewing ? (
@@ -125,9 +126,11 @@ const ExperienceModal = ({
               </div>
 
               {/* ✅ SPECIALIZATION BELOW WITH SCROLL */}
+
               <div className="row mt-3">
                 <div className="col-md-12">
 
+                  {/* TITLE ALWAYS TOP */}
                   <label className="form-label">
                     {t("education:specialization")}
                   </label>
@@ -142,44 +145,222 @@ const ExperienceModal = ({
                       }}
                     >
                       <div className="row">
-                        {form.specializationOthers?.length ? (
-                          form.specializationOthers.map((s, i) => (
-                            <div key={i} className="col-md-6 mb-2">
-
+                        {form.specializationOthers
+                          ?.filter(
+                            (s) =>
+                              (typeof s === "string" &&
+                                s.trim().length > 0) ||
+                              (typeof s === "object" &&
+                                typeof s?.name === "string" &&
+                                s.name.trim().length > 0)
+                          )
+                          .map((s, i) => (
+                            <div
+                              key={i}
+                              className="col-md-6 mb-2"
+                            >
                               <div className="row g-2 align-items-center">
 
-                                {/* INPUT (READ ONLY) */}
                                 <div className="col">
                                   <input
                                     type="text"
                                     className="form-control"
-                                    value={typeof s === "string" ? s : s.name}
+                                    value={
+                                      typeof s === "string"
+                                        ? s
+                                        : s.name
+                                    }
                                     readOnly
                                   />
                                 </div>
 
-                                {/* EMPTY SPACE FOR ALIGNMENT */}
-                                <div className="col-auto">
-                                  <button
-                                    className="remove-btn"
-                                    style={{ visibility: "hidden" }}
-                                  >
-                                    −
-                                  </button>
-                                </div>
-
                               </div>
-
                             </div>
-                          ))
-                        ) : (
-                          <div className="col-md-12">-</div>
-                        )}
+                          ))}
                       </div>
                     </div>
                   ) : (
                     <>
-                      {/* ✅ SCROLL CONTAINER */}
+                      {/* INPUTS */}
+                      {form.specializationOthers?.length > 0 && (
+                        <div
+                          style={{
+                            maxHeight: "220px",
+                            overflowY: "auto",
+                            overflowX: "hidden",
+                            paddingRight: "5px"
+                          }}
+                        >
+                          <div className="row">
+                            {form.specializationOthers.map((val, i) => (
+                              <div key={i} className="col-md-6 mb-2">
+
+                                <div className="row g-2 align-items-center">
+
+                                  <div className="col">
+                                    <input
+                                      type="text"
+                                      className={`form-control ${duplicateIndexes.has(i)
+                                          ? "is-invalid"
+                                          : ""
+                                        }`}
+                                      value={val?.name || ""}
+                                      placeholder={t(
+                                        "education:specialization_placeholder",
+                                        { index: i + 1 }
+                                      )}
+                                      onChange={(e) =>
+                                        onChange(
+                                          formIndex,
+                                          "specialization",
+                                          e.target.value,
+                                          i
+                                        )
+                                      }
+                                    />
+                                  </div>
+
+                                  <div className="col-auto">
+                                    <Button
+                                      type="button"
+                                      variant="link"
+                                      className="action-btn delete-btn"
+                                      onClick={() =>
+                                        onRemoveSpec(formIndex, i)
+                                      }
+                                    >
+                                      <img
+                                        src={deleteIcon}
+                                        alt="Delete"
+                                        className="icon-16"
+                                      />
+                                    </Button>
+                                  </div>
+
+                                </div>
+
+                                {duplicateIndexes.has(i) && (
+                                  <small className="text-danger">
+                                    {t(
+                                      "education:duplicate_specialization"
+                                    )}
+                                  </small>
+                                )}
+
+                              </div>
+                            ))}
+                          </div>
+
+                          <small className="text-danger">
+                            {errors[formIndex]?.specialization}
+                          </small>
+                        </div>
+                      )}
+
+                      {/* BUTTON ALWAYS BOTTOM */}
+                      <div className="mt-2">
+                        <button
+                          type="button"
+                          className="add-spec-btn"
+                          onClick={() => onAddSpec(formIndex)}
+                        >
+                          {t("education:add_specialization")}
+                        </button>
+                      </div>
+                    </>
+                  )}
+
+                </div>
+              </div>
+
+              {/* <div className="row mt-3">
+                <div className="col-md-12">
+
+                  {!isViewing && (
+                    <label className="form-label">
+                      {t("education:specialization")}
+                    </label>
+                  )}
+
+                  {isViewing ? (
+                    <div
+                      style={{
+                        maxHeight: "220px",
+                        overflowY: "auto",
+                        overflowX: "hidden",
+                        paddingRight: "5px"
+                      }}
+                    >
+                      <div className="row">
+                        {
+                          form.specializationOthers?.filter(
+                            (s) =>
+                              (typeof s === "string" && s.trim().length > 0) ||
+                              (typeof s === "object" &&
+                                typeof s?.name === "string" &&
+                                s.name.trim().length > 0)
+                          ).length > 0 && (
+                            <>
+                              <label className="form-label">
+                                {t("education:specialization")}
+                              </label>
+
+                              <div className="row">
+
+                                {form.specializationOthers
+                                  ?.filter(
+                                    (s) =>
+                                      (typeof s === "string" &&
+                                        s.trim().length > 0) ||
+                                      (typeof s === "object" &&
+                                        typeof s?.name === "string" &&
+                                        s.name.trim().length > 0)
+                                  )
+                                  .map((s, i) => (
+                                    <div
+                                      key={i}
+                                      className="col-md-6 mb-2"
+                                    >
+
+                                      <div className="row g-2 align-items-center">
+
+                                        <div className="col">
+                                          <input
+                                            type="text"
+                                            className="form-control"
+                                            value={
+                                              typeof s === "string"
+                                                ? s
+                                                : s.name
+                                            }
+                                            readOnly
+                                          />
+                                        </div>
+
+                                        <div className="col-auto">
+                                          <button
+                                            className="remove-btn"
+                                            style={{
+                                              visibility: "hidden"
+                                            }}
+                                          >
+                                            −
+                                          </button>
+                                        </div>
+
+                                      </div>
+
+                                    </div>
+                                  ))}
+
+                              </div>
+                            </>
+                          )
+                        }
+                      </div>
+                    </div>
+                  ) : (
+                    <>
                       <div
                         style={{
                           maxHeight: "220px",
@@ -194,36 +375,39 @@ const ExperienceModal = ({
 
                               <div className="row g-2 align-items-center">
 
-                                {/* INPUT */}
                                 <div className="col">
                                   <input
                                     type="text"
                                     className={`form-control ${duplicateIndexes.has(i) ? "is-invalid" : ""}`}
                                     value={val?.name || ""}
-                                    placeholder={t("education:search_placeholder", { index: i + 1 })}
+                                    placeholder={t("education:specialization_placeholder", { index: i + 1 })}
                                     onChange={(e) =>
                                       onChange(formIndex, "specialization", e.target.value, i)
                                     }
                                   />
                                 </div>
 
-                                {/* DELETE BUTTON */}
-                                <div className="col-auto">
-                                  <button
-                                    type="button"
-                                    className="remove-btn"
-                                    style={{
-                                      visibility: (isEditing
-                                        ? !val?.name   // ✅ CHANGED HERE
-                                        : true
-                                      ) ? "visible" : "hidden"
-                                    }}
-                                    onClick={() => onRemoveSpec(formIndex, i)}
-                                  >
-                                    −
-                                  </button>
-                                </div>
-
+                                <Button
+                                  type="button"
+                                  variant="link"
+                                  className="action-btn delete-btn"
+                                  style={{
+                                    visibility:
+                                      (
+                                        !isEditing ||
+                                        (isEditing && !val?.id && !val?.name)
+                                      )
+                                        ? "visible"
+                                        : "hidden"
+                                  }}
+                                  onClick={() => onRemoveSpec(formIndex, i)}
+                                >
+                                  <img
+                                    src={deleteIcon}
+                                    alt="Delete"
+                                    className="icon-16"
+                                  />
+                                </Button>
                               </div>
 
                               {duplicateIndexes.has(i) && (
@@ -235,9 +419,12 @@ const ExperienceModal = ({
                             </div>
                           ))}
                         </div>
+                         <small className="text-danger">
+                          {errors[formIndex]?.specialization}
+                        </small>
                       </div>
 
-                      {/* ADD BUTTON */}
+
                       <button
                         type="button"
                         className="add-spec-btn mt-2"
@@ -248,8 +435,10 @@ const ExperienceModal = ({
                     </>
                   )}
 
+          
+
                 </div>
-              </div>
+              </div> */}
 
             </div>
           );
