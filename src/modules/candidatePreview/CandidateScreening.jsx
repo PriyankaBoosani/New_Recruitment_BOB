@@ -1345,6 +1345,26 @@ export default function CandidateScreening({ selectedJob }) {
   //   setSelectedPositionId(id);
   // };
 
+  // const handlePositionChange = (ids) => {
+  //   dispatch(clearRankState());
+
+  //   setSelectedPositionId(ids);
+
+  //   // CLEAR EVERYTHING WHEN NO POSITION SELECTED
+  //   if (!ids || ids.length === 0) {
+  //     setCandidates([]);
+  //     setTotalElements(0);
+
+  //     setSelectedCandidateIds([]);
+  //     setSelectedInterviewCandidateIds([]);
+  //     setSelectedCompensationIds([]);
+
+  //     setAllCandidatesForFilters([]);
+
+  //     setPage(0);
+  //   }
+  // };
+
   const handlePositionChange = (ids) => {
     dispatch(clearRankState());
 
@@ -1352,6 +1372,7 @@ export default function CandidateScreening({ selectedJob }) {
 
     // CLEAR EVERYTHING WHEN NO POSITION SELECTED
     if (!ids || ids.length === 0) {
+
       setCandidates([]);
       setTotalElements(0);
 
@@ -1361,9 +1382,27 @@ export default function CandidateScreening({ selectedJob }) {
 
       setAllCandidatesForFilters([]);
 
+      // ADD THESE
+      setSchedulePoolCandidates([]);
+      setSchedulePoolTotal(0);
+
       setPage(0);
+      setSchedulePoolPage(0);
     }
   };
+
+  useEffect(() => {
+
+  if (
+    activeTab === "SCHEDULE_POOL" &&
+    selectedPositionId.length === 0
+  ) {
+
+    setSchedulePoolCandidates([]);
+    setSchedulePoolTotal(0);
+  }
+
+}, [selectedPositionId, activeTab]);
 
   const handleViewFile = async (candidate) => {
     if (!candidate.fileUrl) {
