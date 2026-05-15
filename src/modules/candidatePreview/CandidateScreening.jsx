@@ -221,14 +221,14 @@ export default function CandidateScreening({ selectedJob }) {
   const [loadingCandidates, setLoadingCandidates] = useState(false);
   const [page, setPage] = useState(0);
   const [
-  schedulePoolPage,
-  setSchedulePoolPage
-] = useState(0);
+    schedulePoolPage,
+    setSchedulePoolPage
+  ] = useState(0);
 
-const [
-  schedulePoolPageSize,
-  setSchedulePoolPageSize
-] = useState(10);
+  const [
+    schedulePoolPageSize,
+    setSchedulePoolPageSize
+  ] = useState(10);
   const [pageSize, setPageSize] = useState(10);
   const [totalElements, setTotalElements] = useState(0);
   const [masterData, setMasterData] = useState(null);
@@ -257,41 +257,41 @@ const [
   //   if (!selectedCandidateIds.length) return;
 
 
- useEffect(() => {
+  useEffect(() => {
 
-  if (location.state?.activeTab) {
-    setActiveTab(location.state.activeTab);
-  }
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
 
-}, [location.state?.activeTab]);
+  }, [location.state?.activeTab]);
 
-// useEffect(() => {
+  // useEffect(() => {
 
-//   if (
-//     !location.state?.refreshSchedulePool
-//   ) {
-//     return;
-//   }
+  //   if (
+  //     !location.state?.refreshSchedulePool
+  //   ) {
+  //     return;
+  //   }
 
-//   if (
-//     activeTab !== "SCHEDULE_POOL"
-//   ) {
-//     return;
-//   }
+  //   if (
+  //     activeTab !== "SCHEDULE_POOL"
+  //   ) {
+  //     return;
+  //   }
 
-//   if (
-//     !selectedPositionId?.length
-//   ) {
-//     return;
-//   }
+  //   if (
+  //     !selectedPositionId?.length
+  //   ) {
+  //     return;
+  //   }
 
-//   fetchSchedulePoolCandidates();
+  //   fetchSchedulePoolCandidates();
 
-// }, [
-//   location.state?.refreshSchedulePool,
-//   activeTab,
-//   selectedPositionId?.join(",")
-// ]);
+  // }, [
+  //   location.state?.refreshSchedulePool,
+  //   activeTab,
+  //   selectedPositionId?.join(",")
+  // ]);
 
   const handleSubmitForApproval = async () => {
 
@@ -303,7 +303,7 @@ const [
         positionIds: selectedPositionId
       };
 
-     
+
 
       const res =
         await candidateWorkflowServices
@@ -311,7 +311,7 @@ const [
             selectedPositionId
           );
 
-     
+
 
       // ✅ HANDLE BACKEND VALIDATION
       if (!res?.success) {
@@ -549,27 +549,27 @@ const [
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
-const paginatedSchedulePool =
-  useMemo(() => {
+  const paginatedSchedulePool =
+    useMemo(() => {
 
-    const start =
-      schedulePoolPage *
-      schedulePoolPageSize;
+      const start =
+        schedulePoolPage *
+        schedulePoolPageSize;
 
-    const end =
-      start +
-      schedulePoolPageSize;
+      const end =
+        start +
+        schedulePoolPageSize;
 
-    return schedulePoolCandidates.slice(
-      start,
-      end
-    );
+      return schedulePoolCandidates.slice(
+        start,
+        end
+      );
 
-  }, [
-    schedulePoolCandidates,
-    schedulePoolPage,
-    schedulePoolPageSize
-  ]);
+    }, [
+      schedulePoolCandidates,
+      schedulePoolPage,
+      schedulePoolPageSize
+    ]);
   const hasLocationData = useMemo(() => {
     const selected = positions.find(
       (p) => p.jobPositions?.positionId === selectedPositionId[0]
@@ -767,24 +767,24 @@ const paginatedSchedulePool =
     fetchRequisitions("");
   }, []);
 
- useEffect(() => {
+  useEffect(() => {
 
-  if (activeTab !== "SCHEDULE_POOL") {
-    return;
-  }
+    if (activeTab !== "SCHEDULE_POOL") {
+      return;
+    }
 
-  if (!selectedPositionId?.length) {
-    return;
-  }
+    if (!selectedPositionId?.length) {
+      return;
+    }
 
-  fetchSchedulePoolCandidates();
+    fetchSchedulePoolCandidates();
 
-}, [
-  activeTab,
-  selectedPositionId?.join(","),
-  filters.searchText,
-  filters.status
-]);
+  }, [
+    activeTab,
+    selectedPositionId?.join(","),
+    filters.searchText,
+    filters.status
+  ]);
 
   useEffect(() => {
 
@@ -1085,13 +1085,13 @@ const paginatedSchedulePool =
 
       };
 
-     
+
 
 
       const res = await candidateWorkflowServices.getSchedulePoolCandidates(payload);
 
       const apiData = res?.data;
-      const content =Array.isArray(apiData)? apiData: apiData?.content || [];
+      const content = Array.isArray(apiData) ? apiData : apiData?.content || [];
 
 
       const mappedRows = content.map((c) => {
@@ -1105,8 +1105,8 @@ const paginatedSchedulePool =
             ?.interviewEndAt;
 
         return {
-panelScheduleConfigurations:
-  c?.panelScheduleConfigurations || [],
+          panelScheduleConfigurations:
+            c?.panelScheduleConfigurations || [],
           // IMPORTANT FOR EDIT FLOW
           applicationId:
             c?.application?.id,
@@ -1184,8 +1184,8 @@ panelScheduleConfigurations:
       setSchedulePoolCandidates(mappedRows);
 
       setSchedulePoolTotal(
-          mappedRows.length
-        );
+        mappedRows.length
+      );
 
     } catch (err) {
 
@@ -1495,7 +1495,7 @@ panelScheduleConfigurations:
     );
   const handleReschedule = () => {
 
-   
+
 
     const mappedRows = selectedInterviewCandidates.map((c) => ({
 
@@ -1611,14 +1611,14 @@ panelScheduleConfigurations:
 
     );
 
-   
+
 
     navigate("/schedule-interviews", {
 
       state: {
 
-      isEditMode: true,
-      isReschedule: true,
+        isEditMode: true,
+        isReschedule: true,
 
         requisitionId:
           selectedRequisitionId,
@@ -1640,7 +1640,7 @@ panelScheduleConfigurations:
         position:
           selectedPosition,
 
-        activeTab:"INTERVIEW_POOL",
+        activeTab: "INTERVIEW_POOL",
         sourceTab: "INTERVIEW_POOL"
 
       }
@@ -1973,7 +1973,7 @@ panelScheduleConfigurations:
         interviewSchedules: selectedInterviewCandidates.map((c) => ({
           applicationId: c?.application?.id,
           candidateId: c?.application?.candidateId,
-          
+
 
           panelId:
             c?.interviewSchedules?.panelId ?? null,
@@ -2237,7 +2237,7 @@ panelScheduleConfigurations:
     }
   };
   const handleStatusChange = (value) => {
-     setPage(0);
+    setPage(0);
     setFilters(prev => ({
       ...prev,
       status: value ? [value] : [],
@@ -2257,78 +2257,78 @@ panelScheduleConfigurations:
   };
   const groupedPanels = Object.values(
 
-  schedulePoolCandidates.reduce((acc, item) => {
+    schedulePoolCandidates.reduce((acc, item) => {
 
-    const config =
-       item.panelScheduleConfigurations?.[0];
+      const config =
+        item.panelScheduleConfigurations?.[0];
 
-    if (!config) return acc;
+      if (!config) return acc;
 
-    if (!acc[item.panelId]) {
+      if (!acc[item.panelId]) {
 
-      acc[item.panelId] = {
+        acc[item.panelId] = {
 
-        id:
-          item.panelId,
+          id:
+            item.panelId,
 
-        name:
-          item.panel,
-           startDate:
-    item.rawDate,
+          name:
+            item.panel,
+          startDate:
+            item.rawDate,
 
-  endDate:
-    item.rawDate,
+          endDate:
+            item.rawDate,
 
-        slots: []
+          slots: []
+
+        };
+
+      }
+
+      const slot = {
+
+        date:
+          config?.startDatetime
+            ?.split("T")[0] || "",
+
+        startTime:
+          config?.startDatetime
+            ?.split("T")[1]
+            ?.slice(0, 5) || "",
+
+        endTime:
+          config?.endDatetime
+            ?.split("T")[1]
+            ?.slice(0, 5) || "",
+
+        duration:
+          config?.durationMinutes || 15,
+
+        perDay:
+          String(
+            config?.interviewsPerDay || 1
+          )
 
       };
 
-    }
+      // prevent duplicate slots
+      const exists =
+        acc[item.panelId].slots.some(
+          s =>
+            s.date === slot.date &&
+            s.startTime === slot.startTime &&
+            s.endTime === slot.endTime
+        );
 
-    const slot = {
+      if (!exists) {
+        acc[item.panelId].slots.push(slot);
+      }
 
-      date:
-        config?.startDatetime
-          ?.split("T")[0] || "",
+      return acc;
 
-      startTime:
-        config?.startDatetime
-          ?.split("T")[1]
-          ?.slice(0, 5) || "",
+    }, {})
 
-      endTime:
-        config?.endDatetime
-          ?.split("T")[1]
-          ?.slice(0, 5) || "",
-
-      duration:
-        config?.durationMinutes || 15,
-
-      perDay:
-        String(
-          config?.interviewsPerDay || 1
-        )
-
-    };
-
-    // prevent duplicate slots
-    const exists =
-      acc[item.panelId].slots.some(
-        s =>
-          s.date === slot.date &&
-          s.startTime === slot.startTime &&
-          s.endTime === slot.endTime
-      );
-
-    if (!exists) {
-      acc[item.panelId].slots.push(slot);
-    }
-
-    return acc;
-
-  }, {})
-
-);
+  );
   const handleEditSchedule = () => {
 
     navigate("/schedule-interviews", {
@@ -2528,12 +2528,16 @@ panelScheduleConfigurations:
                       setSelectedCompensationIds([]);
 
                       setAllCandidatesForFilters([]);
+                      setPage(0);                // Candidate Pool page reset
+                      setInterviewPage(0);       // Interview Pool page reset
+                      setSchedulePoolPage(0);    // Schedule Pool page reset
                     }
 
-                    // setFilters((prev) => ({
-                    //   ...prev,
-                    //   status: [],
-                    // }));
+                    setFilters(prev => ({
+                      ...prev,
+                      status: [],          // clear old tab status
+                      searchText: "",      // optional if you also want search reset
+                    }));
 
                     setActiveTab(tab.key);
                   }}
@@ -2669,7 +2673,7 @@ panelScheduleConfigurations:
                     value={filters.categoryId}
                     onChange={(e) => {
                       setPage(0);
-                    
+
                       setFilters((prev) => ({
                         ...prev,
                         categoryId: e.target.value,
@@ -2717,40 +2721,40 @@ panelScheduleConfigurations:
                     </button>
                   )} */}
                   {activeTab !== "SCHEDULE_POOL" && (
-                      <>
-                        <OverlayTrigger
-                          placement="bottom"
-                          overlay={
-                            <Tooltip>
-                              {t("candidateWorkflow:download_pdf")}
-                            </Tooltip>
-                          }
+                    <>
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip>
+                            {t("candidateWorkflow:download_pdf")}
+                          </Tooltip>
+                        }
+                      >
+                        <button
+                          className="btn fs-14 me-3 blue-color blue-border"
+                          onClick={() => handleDownload("pdf")}
                         >
-                          <button
-                            className="btn fs-14 me-3 blue-color blue-border"
-                            onClick={() => handleDownload("pdf")}
-                          >
-                            <img src={pdfIcon} width={20} />
-                          </button>
-                        </OverlayTrigger>
+                          <img src={pdfIcon} width={20} />
+                        </button>
+                      </OverlayTrigger>
 
-                        <OverlayTrigger
-                          placement="bottom"
-                          overlay={
-                            <Tooltip>
-                              {t("candidateWorkflow:download_excel")}
-                            </Tooltip>
-                          }
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip>
+                            {t("candidateWorkflow:download_excel")}
+                          </Tooltip>
+                        }
+                      >
+                        <button
+                          className="btn fs-14 blue-color blue-border"
+                          onClick={() => handleDownload("xlsx")}
                         >
-                          <button
-                            className="btn fs-14 blue-color blue-border"
-                            onClick={() => handleDownload("xlsx")}
-                          >
-                            <img src={excelIcon} width={20} />
-                          </button>
-                        </OverlayTrigger>
-                      </>
-                    )}
+                          <img src={excelIcon} width={20} />
+                        </button>
+                      </OverlayTrigger>
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -3293,7 +3297,7 @@ panelScheduleConfigurations:
 
               page={schedulePoolPage}
               position={selectedPosition}
-              
+
 
               pageSize={schedulePoolPageSize}
 
@@ -3356,7 +3360,7 @@ panelScheduleConfigurations:
             setSelectedIds={setOfferSelectedIds}
             refreshKey={offerRefreshKey}
             onOffersLoaded={(data) => setOfferData(data)}
-            offerTemplateId={offerTemplateId} 
+            offerTemplateId={offerTemplateId}
             acceptBeforeDate={acceptBeforeDate}
             joiningDate={joiningDate}
           />
