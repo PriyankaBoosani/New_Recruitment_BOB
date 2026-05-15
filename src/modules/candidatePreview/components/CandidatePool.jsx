@@ -300,9 +300,9 @@ export default function CandidatePool({
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("name")} role="button">
                 {t("candidateWorkflow:candidate")} {sortIcon("name")}
               </th>
-              <th className="fs-14 fw-normal py-3" onClick={() => requestSort("name")} role="button">
+              {/* <th className="fs-14 fw-normal py-3" onClick={() => requestSort("name")} role="button">
                 {t("candidateWorkflow:position")} {sortIcon("name")}
-              </th>
+              </th> */}
 
               {/* <th className="fs-14 fw-normal py-3" role="button">
                 Rank
@@ -363,11 +363,11 @@ export default function CandidatePool({
                     <p className="text-muted fs-12 mb-0">
                       {t("candidateWorkflow:application_number")}: {c.applicationNo}
                     </p>
+                    <p className="text-muted fs-12 mb-0">Position: {position?.find(p => p.positionId === c.positionId)?.positionName || "-"}</p>
+
                   </td>
 
-                   <td className="align-content-center">
-                    <p className="fw-normal fs-14 mb-0">{position?.find(p => p.positionId === c.positionId)?.positionName || "-"}</p>
-                  </td>
+                 
 
 
                   {/* <td className="align-content-center">

@@ -77,9 +77,7 @@ const SchedulePoolTable = ({
             <th className="fs-14 fw-normal py-3">
               {t("candidateWorkflow:candidate")}
             </th>
-            <th className="fs-14 fw-normal py-3">
-              {t("candidateWorkflow:position")}
-            </th>
+          
 
             <th className="fs-14 fw-normal py-3">
               {t("common:date")}
@@ -139,17 +137,22 @@ const SchedulePoolTable = ({
                   </p>
 
                   <p className="text-muted fs-12 mb-0">
-                    {t("interviewSchedule:reg_no")}:
+                   Application Number:
                     {" "}
                     {row.regNo}
+                  </p>
+                  <p className="text-muted fs-12 mb-0">
+                    Position:
+                    {" "}
+                    {position?.find((p) => p.positionId === row.positionId)?.positionName || "-"}
                   </p>
 
                 </td>
 
-                <td className="fs-14 align-content-center">
+                {/* <td className="fs-14 align-content-center">
                   {position?.find((p) => p.positionId === row.positionId)?.positionName || "-"}
-                  {/* {row.positionId} */}
-                </td>
+                
+                </td> */}
 
                 {/* Date */}
                 <td className="fs-14 align-content-center">

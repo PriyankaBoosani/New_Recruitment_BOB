@@ -175,7 +175,7 @@ export default function InterviewPool({
               />
             </th>
             <th className="fs-14 fw-normal py-3" >{t("candidateWorkflow:candidate")}</th>
-            <th className="fs-14 fw-normal py-3" >{t("candidateWorkflow:position")}</th>
+            {/* <th className="fs-14 fw-normal py-3" >{t("candidateWorkflow:position")}</th> */}
             <th className="fs-14 fw-normal py-3">{t("common:date")}</th>
             <th className="fs-14 fw-normal py-3">{t("common:time")}</th>
             <th className="fs-14 fw-normal py-3">{t("candidateWorkflow:zone")}</th>
@@ -189,7 +189,7 @@ export default function InterviewPool({
         <tbody>
           {candidates.length === 0 ? (
             <tr>
-              <td colSpan="9" className="text-center py-4 text-muted fs-14">
+              <td colSpan="8" className="text-center py-4 text-muted fs-14">
                 {t("candidateWorkflow:no_candidates_interview_pool")}
               </td>
             </tr>
@@ -208,12 +208,13 @@ export default function InterviewPool({
                 <td className="align-content-center">
                   <p className="fw-normal fs-14 mb-0">{c.name}</p>
                   <p className="text-muted fs-12 mb-0">{t("candidateWorkflow:application_number")}: {c.regNo}</p>
+                  <p className="text-muted fs-12 mb-0">Position: {position?.find(p => p.positionId === c.positionId)?.positionName || "-"}</p>
                 </td>
-                <td className="fs-14 align-content-center">
+                {/* <td className="fs-14 align-content-center">
                   {
                     position?.find(p => p.positionId === c.positionId)?.positionName || "-"
                   }
-                </td>
+                </td> */}
                 <td className="fs-14 align-content-center">{c.date}</td>
                 <td className="fs-14 align-content-center">{c.time}</td>
                 <td className="fs-14 align-content-center">{c.zone}</td>

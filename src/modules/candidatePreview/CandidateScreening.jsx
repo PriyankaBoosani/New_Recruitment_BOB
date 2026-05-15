@@ -1952,7 +1952,7 @@ export default function CandidateScreening({ selectedJob }) {
       return {
         ...basePayload,
         screenName: "SchedulePool",
-        interviewSchedulingStatuses: normalizedStatuses,
+        interviewSchedulingApprovalStatuses: ["L1_PENDING"],
       };
     }
 
@@ -2786,7 +2786,7 @@ export default function CandidateScreening({ selectedJob }) {
                       <FontAwesomeIcon icon={faListOl} className="rank-icon" /> Rank
                     </button>
                   )} */}
-                  {activeTab !== "SCHEDULE_POOL" && (
+                 
                     <>
                       <OverlayTrigger
                         placement="bottom"
@@ -2820,7 +2820,7 @@ export default function CandidateScreening({ selectedJob }) {
                         </button>
                       </OverlayTrigger>
                     </>
-                  )}
+                 
                 </div>
               )}
             </div>
