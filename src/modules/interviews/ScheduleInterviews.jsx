@@ -238,107 +238,160 @@ const ScheduleInterviews = () => {
     ).values()
   ];
 
+const panelNameMap = {};
 
-  const rebuiltSelectedPanels = Object.values(
+(schedulePoolData || []).forEach(item => {
 
-    (schedulePoolData || []).reduce((acc, item) => {
+  if (
+    item?.panelId &&
+    item?.panel
+  ) {
+
+    panelNameMap[item.panelId] =
+      item.panel;
+
+  }
+
+});
+
+ const rebuiltSelectedPanels = Object.values(
+
+  (schedulePoolData || []).reduce((acc, item) => {
+
+    // ✅ current item panel mapping
+    // const currentPanelId =
+    //   item?.interviewPanels?.interviewPanelId;
+
+    // const currentPanelName =
+    //   item?.interviewPanels?.panelName;
+
+    const currentPanelId =
+  item?.panelId;
+
+const currentPanelName =
+  item?.panel;
+
+    const configurations =
+      item.panelScheduleConfigurations || [];
+
+    configurations.forEach(config => {
+
+      // const panelId =
+      //   config?.panelId;
+
+      // if (!panelId) return;
+
+      // // ✅ use current item panel name
+      // const panelName =
+      //   panelId === currentPanelId
+      //     ? currentPanelName
+      //     : acc[panelId]?.name || "";
+
+      // // ✅ create group
+      // if (!acc[panelId]) {
+
+      //   acc[panelId] = {
+
+      //     id: panelId,
+
+      //     name: panelName,
+
+      //     slots: []
+
+      //   };
+
+      // }
+
 
       const panelId =
-        item.panelId;
+  config?.panelId;
 
-      const panelName =
-        item.panel;
+if (!panelId) return;
+const panelName =
+  panelNameMap[panelId] || "";
 
-      const configurations =
-        item.panelScheduleConfigurations || [];
+if (!acc[panelId]) {
 
-      // create panel group
-      if (!acc[panelId]) {
+  acc[panelId] = {
 
-        acc[panelId] = {
+    id: panelId,
 
-          id: panelId,
+    name: panelName,
 
-          name: panelName,
+    slots: []
 
-          slots: []
+  };
 
-        };
+}
+
+      const slotDate =
+        config?.startDatetime
+          ?.split("T")[0];
+
+      if (!slotDate) return;
+
+      const startTime =
+        config?.startDatetime
+          ?.split("T")[1]
+          ?.slice(0, 5) || "";
+
+      const endTime =
+        config?.endDatetime
+          ?.split("T")[1]
+          ?.slice(0, 5) || "";
+
+      const duration =
+        String(
+          config?.durationMinutes || 15
+        );
+
+      const perDay =
+        String(
+          config?.interviewsPerDay || 1
+        );
+
+      // ✅ avoid duplicates
+      const alreadyExists =
+        acc[panelId].slots.some(
+          slot =>
+
+            slot.date === slotDate &&
+
+            slot.startTime === startTime &&
+
+            slot.endTime === endTime &&
+
+            slot.duration === duration &&
+
+            slot.perDay === perDay
+        );
+
+      if (!alreadyExists) {
+
+        acc[panelId].slots.push({
+
+          date: slotDate,
+
+          startTime,
+
+          endTime,
+
+          duration,
+
+          perDay
+
+        });
 
       }
 
-      configurations.forEach(config => {
+    });
 
-        const slotDate =
-          config?.startDatetime
-            ?.split("T")[0];
+    return acc;
 
-        if (!slotDate) return;
+  }, {})
 
-        const existingSlot =
-          acc[panelId].slots.find(
-            slot => slot.date === slotDate
-          );
+);
 
-        const startTime =
-          config?.startDatetime
-            ?.split("T")[1]
-            ?.slice(0, 5) || "";
-
-        const endTime =
-          config?.endDatetime
-            ?.split("T")[1]
-            ?.slice(0, 5) || "";
-
-        if (existingSlot) {
-
-          if (
-            startTime &&
-            startTime < existingSlot.startTime
-          ) {
-            existingSlot.startTime =
-              startTime;
-          }
-
-          if (
-            endTime &&
-            endTime > existingSlot.endTime
-          ) {
-            existingSlot.endTime =
-              endTime;
-          }
-
-        } else {
-
-          acc[panelId].slots.push({
-
-            date: slotDate,
-
-            startTime,
-
-            endTime,
-
-            duration:
-              String(
-                config?.durationMinutes || 15
-              ),
-
-            perDay:
-              String(
-                config?.interviewsPerDay || 1
-              )
-
-          });
-
-        }
-
-      });
-
-      return acc;
-
-    }, {})
-
-  );
   /* ================= UI ================= */
   const sourceTab = state?.sourceTab || state?.activeTab || "CANDIDATE_POOL";
   return (
@@ -607,7 +660,7 @@ const ScheduleInterviews = () => {
             setErrorMessage(res.message);
 
             setErrorCandidates(
-              res.data || ''
+              res.data || []
             );
 
             setShowErrorModal(true);

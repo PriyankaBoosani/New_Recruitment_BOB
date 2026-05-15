@@ -95,8 +95,26 @@ const ScheduleErrorModal = ({
           )} */}
 
 
-{errorCandidates && (
-  <ScheduleErrorModal />
+{errorCandidates?.length > 0 && (
+
+  <div className="schedule-error-box">
+
+    {errorCandidates.map((item, index) => (
+
+      <div
+        key={index}
+        className="schedule-error-row"
+      >
+        <i className="bi bi-exclamation-circle me-2" />
+
+        <span>{item}</span>
+
+      </div>
+
+    ))}
+
+  </div>
+
 )}
           {/* {errorCandidates?.length > 0 && (
 
