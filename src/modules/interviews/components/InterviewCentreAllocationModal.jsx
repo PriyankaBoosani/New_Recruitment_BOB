@@ -116,7 +116,7 @@ setCentreRows,
     {/* RIGHT */}
     <td style={{ minWidth: "260px" }}>
 
-      <div className="d-flex gap-2">
+      <div className="d-flex gap-2 align-items-center">
 
         <select
           className="form-select"
@@ -180,6 +180,28 @@ setCentreRows,
           </button>
 
         )}
+
+        {/* REMOVE BUTTON */}
+{centreRows.length > 1 && (
+
+  <button
+    type="button"
+    className="btn btn-outline-danger"
+    onClick={() => {
+
+      const updated =
+        centreRows.filter(
+          (_, i) => i !== index
+        );
+
+      setCentreRows(updated);
+
+    }}
+  >
+    -
+  </button>
+
+)}
 
       </div>
 
