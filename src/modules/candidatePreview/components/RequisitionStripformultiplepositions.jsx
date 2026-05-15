@@ -24,7 +24,8 @@ const RequisitionStripformultiplepositions = ({
   isSaveBtn,
     showImportBtn,
   onImportClick,
-  onRemovePosition   
+  onRemovePosition,
+  isReadonly = false   
 }) => {
 
   const [showPosition, setShowPosition] = useState(false);
@@ -291,15 +292,17 @@ const selectedModalPosition = Array.isArray(position)
           {p.positionName}
         </span>
 
-     <span
-  className="req-position-close"
-  onClick={(e) => {
-    e.stopPropagation();
-    onRemovePosition?.(p.positionId);
-  }}
->
-  ×
-</span>
+     {!isReadonly && onRemovePosition && (
+  <span
+    className="req-position-close"
+    onClick={(e) => {
+      e.stopPropagation();
+      onRemovePosition(p.positionId);
+    }}
+  >
+    ×
+  </span>
+)}
       </div>
     </span>
     ))
@@ -311,15 +314,17 @@ const selectedModalPosition = Array.isArray(position)
           "—"}
       </span>
 
-    <span
-  className="req-position-close"
-  onClick={(e) => {
-    e.stopPropagation();
-    onRemovePosition?.(position?.positionId);
-  }}
->
-  ×
-</span>
+   {!isReadonly && onRemovePosition && (
+  <span
+    className="req-position-close"
+    onClick={(e) => {
+      e.stopPropagation();
+      onRemovePosition(position?.positionId);
+    }}
+  >
+    ×
+  </span>
+)}
     </div>
   )}
 </div>

@@ -16,7 +16,8 @@ export default function DropdownStripMultipleposition({
 	onRequisitionSearch,
    //  DISABLE HERE
   disableRequisition=false,
-  disablePosition=false
+  disablePosition=false,
+  isReadonly = false
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
 	const requisitionOptions = useMemo(
@@ -143,10 +144,13 @@ const MultiValue = ({ index, getValue, ...props }) => {
   isMulti
    closeMenuOnSelect={true}
   hideSelectedOptions={false}
-  components={{
-    Option,
-    MultiValue,
-  }}
+ components={{
+  Option,
+  MultiValue,
+  ...(isReadonly && {
+    MultiValueRemove: () => null,
+  }),
+}}
   className="mt-1 fs-14"
   classNamePrefix="react-select"
   options={positionOptions}

@@ -409,6 +409,7 @@ console.log("All interviews centres:", allInterviewCentres)
               onRequisitionSearch={() => { }}
               disableRequisition={true}
               disablePosition={true}
+              isReadonly = {true}
             />
           </div>
         </div>
@@ -428,6 +429,7 @@ console.log("All interviews centres:", allInterviewCentres)
             isSaveEnabled={false}
             isSaveBtn={false}
             saveButton={false}
+            isReadonly = {true}
           />
           {/* <RequisitionStrip
             requisition={selectedRequisition}

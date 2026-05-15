@@ -132,5 +132,11 @@
 }
 
 
+.req-position-readonly {
+  pointer-events: none;
+}
 
+.req-position-readonly .req-position-close {
+  display: none !important;
+}
 
