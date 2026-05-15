@@ -85,6 +85,30 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 		}
 	};
 
+	const handleCandidateOfferPreview = async (
+		offerFileUrl
+	) => {
+		try {
+			const encodedPath = encodeURIComponent(offerFileUrl);
+
+			const res = await masterApiService.getMessagesAzureBlobSasUrl(encodedPath);
+
+			const fileUrl = res;
+
+			if (fileUrl) {
+				setPreviewUrl(fileUrl);     // ✅ set URL
+				setShowPreview(true);   // ✅ open modal
+			}
+		} catch (err) {
+
+			console.error(err);
+
+			toast.error(
+				t("candidateWorkflow:wentwrong")
+			);
+		}
+	};
+
 	const toggleRow = (id) => {
 		setSelectedIds((prev) =>
 			prev.includes(id)
@@ -113,6 +137,7 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 					id: offer.candidateOfferId,
 					applicationNo: item.regNo,
 					applicationId: offer.applicationId,
+					offerFileUrl: offer.offerFileUrl,
 					name: item.candidateFullName,
 					categoryName: item.reservationCategory,
 					score: item.finalScore,
@@ -349,9 +374,22 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 												className="btn btn-sm btn-outline-secondary border-0 me-2"
 												onClick={() => {
 
-													if (!offerTemplateId) {
-														toast.error(t("candidateWorkflow:OfferTemplate"));
-														return;
+													if (c.status === "OFFER_SENT" || c.status === "OFFER_ACCEPTED") {
+														handleCandidateOfferPreview(
+															c.offerFileUrl // applicationId
+														);
+
+													} else {
+														if (!offerTemplateId) {
+															toast.error(t("candidateWorkflow:OfferTemplate"));
+															return;
+														}
+
+														handleCandidatePreview(
+															offerTemplateId,
+															c.applicationId // applicationId
+														);
+
 													}
 
 													// if (!acceptBeforeDate) {
@@ -364,10 +402,6 @@ const OfferPool = ({ selectedPositionId, selectedRequisitionId, filters, selecte
 													// 	return;
 													// }
 
-													handleCandidatePreview(
-														offerTemplateId,
-														c.applicationId // applicationId
-													);
 
 												}}
 												style={{ backgroundColor: '#eff6ff' }}
