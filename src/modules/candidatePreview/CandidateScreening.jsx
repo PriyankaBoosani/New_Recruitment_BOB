@@ -100,23 +100,48 @@ export default function CandidateScreening({ selectedJob }) {
   };
 
 
+  // const handleRemovePosition = (removeId) => {
+  //   const updatedIds = selectedPositionId.filter(
+  //     (id) => id !== removeId
+  //   );
+
+  //   setSelectedPositionId(updatedIds);
+
+  //   // CLEAR DATA WHEN NO POSITIONS LEFT
+  //   if (updatedIds.length === 0) {
+  //     setCandidates([]);
+  //     setTotalElements(0);
+  //     setSelectedCandidateIds([]);
+  //     setAllCandidatesForFilters([]);
+  //   }
+  // };
+
   const handleRemovePosition = (removeId) => {
+
     const updatedIds = selectedPositionId.filter(
       (id) => id !== removeId
     );
+
+    // MOVE TO FIRST PAGE
+    setPage(0);
+    setInterviewPage(0);
+    setSchedulePoolPage(0);
 
     setSelectedPositionId(updatedIds);
 
     // CLEAR DATA WHEN NO POSITIONS LEFT
     if (updatedIds.length === 0) {
+
       setCandidates([]);
       setTotalElements(0);
+
       setSelectedCandidateIds([]);
       setAllCandidatesForFilters([]);
+
+      setSchedulePoolCandidates([]);
+      setSchedulePoolTotal(0);
     }
   };
-
-
 
 
 
@@ -1391,18 +1416,19 @@ export default function CandidateScreening({ selectedJob }) {
     }
   };
 
+
   useEffect(() => {
 
-  if (
-    activeTab === "SCHEDULE_POOL" &&
-    selectedPositionId.length === 0
-  ) {
+    if (
+      activeTab === "SCHEDULE_POOL" &&
+      selectedPositionId.length === 0
+    ) {
 
-    setSchedulePoolCandidates([]);
-    setSchedulePoolTotal(0);
-  }
+      setSchedulePoolCandidates([]);
+      setSchedulePoolTotal(0);
+    }
 
-}, [selectedPositionId, activeTab]);
+  }, [selectedPositionId, activeTab]);
 
   const handleViewFile = async (candidate) => {
     if (!candidate.fileUrl) {
@@ -1885,7 +1911,7 @@ export default function CandidateScreening({ selectedJob }) {
 
     const basePayload = {
       documentType,
-      positionId: selectedPositionId[0],
+       positionIds: selectedPositionId,
       screenName:
         activeTab === "INTERVIEW_POOL"
           ? "InterviewPool"
@@ -2494,11 +2520,12 @@ export default function CandidateScreening({ selectedJob }) {
                   isSaveEnabled={false}
                   isSaveBtn={false}
                   saveButton={false}
-                  onRemovePosition={(positionId) => {
-                    setSelectedPositionId((prev) =>
-                      prev.filter((id) => id !== positionId)
-                    );
-                  }}
+                  onRemovePosition={handleRemovePosition}
+                  // onRemovePosition={(positionId) => {
+                  //   setSelectedPositionId((prev) =>
+                  //     prev.filter((id) => id !== positionId)
+                  //   );
+                  // }}
                 />
               )}
             </div>
