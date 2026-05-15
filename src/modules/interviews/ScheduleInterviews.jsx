@@ -538,6 +538,7 @@ console.log("All interviews centres:", allInterviewCentres)
               // positions and requisition are pre-populated (SCHEDULE_POOL)
               navigate("/candidate-workflow", {
                 state: {
+                   refreshSchedulePool: true,
                   // original objects if available, otherwise fallbacks
                   requisition: state.requisition || normalizedRequisition,
 

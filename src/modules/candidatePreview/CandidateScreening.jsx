@@ -256,6 +256,43 @@ const [
   //  const handleScheduleInterview = () => {
   //   if (!selectedCandidateIds.length) return;
 
+
+ useEffect(() => {
+
+  if (location.state?.activeTab) {
+    setActiveTab(location.state.activeTab);
+  }
+
+}, [location.state?.activeTab]);
+
+// useEffect(() => {
+
+//   if (
+//     !location.state?.refreshSchedulePool
+//   ) {
+//     return;
+//   }
+
+//   if (
+//     activeTab !== "SCHEDULE_POOL"
+//   ) {
+//     return;
+//   }
+
+//   if (
+//     !selectedPositionId?.length
+//   ) {
+//     return;
+//   }
+
+//   fetchSchedulePoolCandidates();
+
+// }, [
+//   location.state?.refreshSchedulePool,
+//   activeTab,
+//   selectedPositionId?.join(",")
+// ]);
+
   const handleSubmitForApproval = async () => {
 
     try {
@@ -730,12 +767,13 @@ const paginatedSchedulePool =
     fetchRequisitions("");
   }, []);
 
-  useEffect(() => {
+ useEffect(() => {
 
-  if (
-    activeTab !== "SCHEDULE_POOL" ||
-    !selectedPositionId.length
-  ) {
+  if (activeTab !== "SCHEDULE_POOL") {
+    return;
+  }
+
+  if (!selectedPositionId?.length) {
     return;
   }
 
@@ -743,8 +781,9 @@ const paginatedSchedulePool =
 
 }, [
   activeTab,
-  selectedPositionId,
-  filters
+  selectedPositionId?.join(","),
+  filters.searchText,
+  filters.status
 ]);
 
   useEffect(() => {
@@ -1678,10 +1717,10 @@ panelScheduleConfigurations:
   useEffect(() => {
     if (isBackNavigation) return;
 
-    setFilters((prev) => ({
-      ...prev,
-      status: [],
-    }));
+    // setFilters((prev) => ({
+    //   ...prev,
+    //   status: [],
+    // }));
   }, [activeTab]);
 
   useEffect(() => {
@@ -2218,7 +2257,7 @@ panelScheduleConfigurations:
   schedulePoolCandidates.reduce((acc, item) => {
 
     const config =
-      item.panelScheduleConfiguration;
+       item.panelScheduleConfigurations?.[0];
 
     if (!config) return acc;
 
@@ -2483,10 +2522,10 @@ panelScheduleConfigurations:
                       setAllCandidatesForFilters([]);
                     }
 
-                    setFilters((prev) => ({
-                      ...prev,
-                      status: [],
-                    }));
+                    // setFilters((prev) => ({
+                    //   ...prev,
+                    //   status: [],
+                    // }));
 
                     setActiveTab(tab.key);
                   }}
