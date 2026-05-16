@@ -20,7 +20,7 @@ const InterviewScheduleTable = ({ rows, position }) => {
           <tr>
             <th>{t("candidate")}</th>
             {/* <th>Position</th> */}
-            <th>{t("date")}</th>
+            <th>Date</th>
             <th>{t("time")}</th>
             <th>{t("zone")}</th>
             <th>{t("panel_details")}</th>
