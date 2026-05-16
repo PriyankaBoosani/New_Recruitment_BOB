@@ -136,7 +136,16 @@ setEditPanel({
     // ✅ FIXED PATH
     const apiList = response?.data || [];
 
-    const formatted = apiList.map((item) => ({
+    const uniquePanels = [
+  ...new Map(
+    apiList.map(item => [
+      item.interviewPanel?.interviewPanelId,
+      item
+    ])
+  ).values()
+];
+
+    const formatted = uniquePanels.map((item) => ({
       id: item.interviewPanel?.interviewPanelId,
       name: item.interviewPanel?.panelName,
 
