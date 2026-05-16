@@ -57,6 +57,7 @@ export const mapInterviewerCandidates = (list = []) => {
       time: timeRange,
 
       zone:
+       item.interviewCentre?.displayName ||
         item.interviewCentre?.zone ||
         item.interviewCentre?.interviewCentre ||
         "-",
