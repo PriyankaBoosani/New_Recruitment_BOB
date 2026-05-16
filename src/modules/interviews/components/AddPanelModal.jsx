@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Modal, Form } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { useAddPanelModal } from "../../interviews/hooks/useAddPanelModal";
@@ -29,7 +29,15 @@ const AddPanelModal = ({
     handleCancel,
     minDate,
     maxDate,
-    clearPanelError
+    clearPanelError,
+    showPanelInfo,
+setShowPanelInfo,
+
+panelInfoLoading,
+
+panelAvailability,
+
+loadPanelAvailability
   } = useAddPanelModal({
     show,
     initialPanel,
@@ -96,7 +104,109 @@ const AddPanelModal = ({
                 );
               })}
             </Form.Select>
+{panelId && (
 
+  <button
+    type="button"
+    className="ap-info-btn"
+    onClick={(e) => {
+
+      e.stopPropagation();
+
+      loadPanelAvailability();
+
+    }}
+  >
+    <i className="bi bi-info-circle" />
+  </button>
+
+)}
+
+{showPanelInfo && (
+
+  <div className="ap-panel-popover">
+
+    <div className="ap-panel-popover-header">
+
+      <h6 className="ap-panel-popover-title">
+        scheduled interviews 
+      </h6>
+
+      <button
+        type="button"
+        className="ap-panel-popover-close"
+        onClick={() => setShowPanelInfo(false)}
+      >
+        <i className="bi bi-x" />
+      </button>
+
+    </div>
+
+    <div className="ap-panel-popover-body">
+
+      {panelInfoLoading ? (
+
+        <div className="ap-loading-spinner">
+          <i className="bi bi-arrow-clockwise" />
+        </div>
+
+      ) : panelAvailability.length > 0 ? (
+
+        panelAvailability.map(
+          (day, index) => (
+
+            <div
+              key={index}
+              className="ap-day-block"
+            >
+
+              <div className="ap-day-title">
+
+                {formatDateDDMMYYYY(day.panelDate)}
+
+              </div>
+
+              {day.panelAvailableModels.map(
+                (slot, idx) => (
+
+                  <div
+                    key={idx}
+                    className="ap-slot-card"
+                  >
+
+                    <div className="ap-slot-position">
+                      {slot.positionName}
+                    </div>
+
+                    <div className="ap-slot-time">
+                      {slot.startTime.slice(0,5)}
+                      {" - "}
+                      {slot.endTime.slice(0,5)}
+                    </div>
+
+                  </div>
+
+                )
+              )}
+
+            </div>
+
+          )
+        )
+
+      ) : (
+
+        <div className="text-center text-muted py-3">
+          No availability data found
+        </div>
+
+      )}
+
+    </div>
+
+  </div>
+
+)}
             <i className="bi bi-chevron-down ap-select-icon" />
           </div>
           <div className="field-error">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { validatePanelModal } from "../../interviews/validations/panelModalValidation";
-
+import interviewService from "../services/interviewService";
 
 export const useAddPanelModal = ({
   show,
@@ -36,12 +36,25 @@ export const useAddPanelModal = ({
 ]);
   const [errors, setErrors] = useState({});
 
+  const [showPanelInfo, setShowPanelInfo] =
+  useState(false);
+
+const [panelInfoLoading, setPanelInfoLoading] =
+  useState(false);
+
+const [panelAvailability, setPanelAvailability] =
+  useState([]);
+
 
 
   /* ✅ Reset ONLY when modal opens */
 useEffect(() => {
 
   if (!show) return;
+
+    setShowPanelInfo(false);
+
+  setPanelAvailability([]);
 
   setPanelId(initialPanel || "");
 
@@ -559,6 +572,161 @@ console.log("maxDate", maxDate);
     onClose();
   };
 
+ const loadPanelAvailability =
+  async () => {
+
+    if (
+      !panelId ||
+      !minDate ||
+      !maxDate
+    ) return;
+
+    try {
+
+      setShowPanelInfo(true);
+
+      setPanelInfoLoading(true);
+
+      // ✅ STATIC RESPONSE
+      // const res = [
+      //   {
+      //     panelDate: "2026-05-16",
+
+      //     panelAvailableModels: [
+      //       {
+      //         positionName:
+      //           "Software Engineer",
+
+      //         startTime: "09:00:00",
+
+      //         endTime: "09:15:00"
+      //       },
+
+      //       {
+      //         positionName:
+      //           "Backend Developer",
+
+      //         startTime: "09:15:00",
+
+      //         endTime: "09:30:00"
+      //       },
+
+      //       {
+      //         positionName:
+      //           "Java Developer",
+
+      //         startTime: "09:30:00",
+
+      //         endTime: "09:45:00"
+      //       }
+      //     ]
+      //   },
+
+      //   {
+      //     panelDate: "2026-05-17",
+
+      //     panelAvailableModels: [
+      //       {
+      //         positionName:
+      //           "HR Executive",
+
+      //         startTime: "10:00:00",
+
+      //         endTime: "10:30:00"
+      //       },
+
+      //       {
+      //         positionName:
+      //           "Technical Lead",
+
+      //         startTime: "11:00:00",
+
+      //         endTime: "11:30:00"
+      //       }
+      //     ]
+      //   },
+
+
+      //   {
+      //     panelDate: "2026-05-18",
+
+      //     panelAvailableModels: [
+      //       {
+      //         positionName:
+      //           "HR Executive",
+
+      //         startTime: "10:00:00",
+
+      //         endTime: "10:30:00"
+      //       },
+
+      //       {
+      //         positionName:
+      //           "Technical Lead",
+
+      //         startTime: "11:00:00",
+
+      //         endTime: "11:30:00"
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     panelDate: "2026-05-19",
+
+      //     panelAvailableModels: [
+      //       {
+      //         positionName:
+      //           "HR Executive",
+
+      //         startTime: "10:00:00",
+
+      //         endTime: "10:30:00"
+      //       },
+
+      //       {
+      //         positionName:
+      //           "Technical Lead",
+
+      //         startTime: "11:00:00",
+
+      //         endTime: "11:30:00"
+      //       }
+      //     ]
+      //   }
+      // ];
+const res=   await interviewService
+    .getScheduledSlots({
+
+      panelId,
+
+      panelStartDate: minDate,
+
+      panelEndDate: maxDate
+
+    });
+    console.log("resslots",res?.data)
+      // ✅ IMPORTANT FIX
+      setPanelAvailability(
+  res?.data || []
+);
+
+    } catch (error) {
+
+      console.error(
+        "Panel availability error",
+        error
+      );
+
+      setPanelAvailability([]);
+
+    } finally {
+
+      setPanelInfoLoading(false);
+
+    }
+
+  };
+
   return {
     panelId,
     setPanelId,
@@ -571,6 +739,15 @@ console.log("maxDate", maxDate);
     handleCancel,
     minDate,   // ✅ ADD
     maxDate,    // ✅ ADD
-    clearPanelError
+    clearPanelError,
+
+    showPanelInfo,
+setShowPanelInfo,
+
+panelInfoLoading,
+
+panelAvailability,
+
+loadPanelAvailability
   };
 };
