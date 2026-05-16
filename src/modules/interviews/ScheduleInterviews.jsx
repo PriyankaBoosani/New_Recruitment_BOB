@@ -254,75 +254,37 @@ const panelNameMap = {};
 
 });
 
- const rebuiltSelectedPanels = Object.values(
+const rebuiltSelectedPanels = Object.values(
 
   (schedulePoolData || []).reduce((acc, item) => {
-
-    // ✅ current item panel mapping
-    // const currentPanelId =
-    //   item?.interviewPanels?.interviewPanelId;
-
-    // const currentPanelName =
-    //   item?.interviewPanels?.panelName;
-
-    const currentPanelId =
-  item?.panelId;
-
-const currentPanelName =
-  item?.panel;
 
     const configurations =
       item.panelScheduleConfigurations || [];
 
     configurations.forEach(config => {
 
-      // const panelId =
-      //   config?.panelId;
-
-      // if (!panelId) return;
-
-      // // ✅ use current item panel name
-      // const panelName =
-      //   panelId === currentPanelId
-      //     ? currentPanelName
-      //     : acc[panelId]?.name || "";
-
-      // // ✅ create group
-      // if (!acc[panelId]) {
-
-      //   acc[panelId] = {
-
-      //     id: panelId,
-
-      //     name: panelName,
-
-      //     slots: []
-
-      //   };
-
-      // }
-
-
       const panelId =
-  config?.panelId;
+        config?.panelId;
 
-if (!panelId) return;
-const panelName =
-  panelNameMap[panelId] || "";
+      if (!panelId) return;
 
-if (!acc[panelId]) {
+      const panelName =
+        panelNameMap[panelId] || "";
 
-  acc[panelId] = {
+      // ✅ create panel group
+      if (!acc[panelId]) {
 
-    id: panelId,
+        acc[panelId] = {
 
-    name: panelName,
+          id: panelId,
 
-    slots: []
+          name: panelName,
 
-  };
+          slots: []
 
-}
+        };
+
+      }
 
       const slotDate =
         config?.startDatetime
@@ -345,28 +307,86 @@ if (!acc[panelId]) {
           config?.durationMinutes || 15
         );
 
-      const perDay =
-        String(
-          config?.interviewsPerDay || 1
+      // ✅ SAME PANEL + SAME DATE
+      const existingSlot =
+        acc[panelId].slots.find(
+          slot => slot.date === slotDate
         );
 
-      // ✅ avoid duplicates
-      const alreadyExists =
-        acc[panelId].slots.some(
-          slot =>
+      // ================= MERGE =================
 
-            slot.date === slotDate &&
+      if (existingSlot) {
 
-            slot.startTime === startTime &&
+        // earliest start
+        if (
+          startTime &&
+          startTime < existingSlot.startTime
+        ) {
 
-            slot.endTime === endTime &&
+          existingSlot.startTime =
+            startTime;
 
-            slot.duration === duration &&
+        }
 
-            slot.perDay === perDay
-        );
+        // latest end
+        if (
+          endTime &&
+          endTime > existingSlot.endTime
+        ) {
 
-      if (!alreadyExists) {
+          existingSlot.endTime =
+            endTime;
+
+        }
+
+        // ✅ recalculate perDay
+        const start =
+          new Date(
+            `2000-01-01T${existingSlot.startTime}`
+          );
+
+        const end =
+          new Date(
+            `2000-01-01T${existingSlot.endTime}`
+          );
+
+        const diffMins =
+          (end - start) / (1000 * 60);
+
+        existingSlot.perDay =
+          String(
+            Math.floor(
+              diffMins /
+              Number(existingSlot.duration || 15)
+            )
+          );
+
+      }
+
+      // ================= NEW SLOT =================
+
+      else {
+
+        const start =
+          new Date(
+            `2000-01-01T${startTime}`
+          );
+
+        const end =
+          new Date(
+            `2000-01-01T${endTime}`
+          );
+
+        const diffMins =
+          (end - start) / (1000 * 60);
+
+        const perDay =
+          String(
+            Math.floor(
+              diffMins /
+              Number(duration || 15)
+            )
+          );
 
         acc[panelId].slots.push({
 
@@ -391,7 +411,6 @@ if (!acc[panelId]) {
   }, {})
 
 );
-
   /* ================= UI ================= */
   const sourceTab = state?.sourceTab || state?.activeTab || "CANDIDATE_POOL";
   return (
