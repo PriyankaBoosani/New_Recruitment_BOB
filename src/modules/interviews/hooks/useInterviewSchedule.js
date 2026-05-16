@@ -418,24 +418,35 @@ const res =
     err
   );
 
-  // ✅ backend 400 response
-  if (err?.response?.data) {
+  const backendError =
+    err?.response?.data;
+
+  // ✅ HANDLE BACKEND VALIDATION
+  if (backendError) {
 
     return {
 
       success: false,
 
       message:
-        err.response.data.message ||
+
+        backendError?.message ||
+
         "Failed to schedule interviews",
 
       data:
-        err.response.data.data || []
+
+        Array.isArray(
+          backendError?.data
+        )
+          ? backendError.data
+          : []
 
     };
 
   }
 
+  // ✅ FALLBACK ERROR
   return {
 
     success: false,
@@ -446,6 +457,7 @@ const res =
     data: []
 
   };
+
 }
 };
 

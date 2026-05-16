@@ -574,11 +574,27 @@ if (!acc[panelId]) {
               const res = await scheduleInterview();
 
               if (!res?.success) {
-                toast.error(
-                  res?.message || "Failed to schedule interviews"
-                );
-                return;
-              }
+
+  setErrorMessage(
+
+    res?.message ||
+
+    "Failed to schedule interviews"
+
+  );
+
+  setErrorCandidates(
+
+    Array.isArray(res?.data)
+      ? res.data
+      : []
+
+  );
+
+  setShowErrorModal(true);
+
+  return;
+}
 
               toast.success("Interview scheduled successfully");
 

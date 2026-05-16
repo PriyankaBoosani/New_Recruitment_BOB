@@ -44,58 +44,40 @@ const ScheduleErrorModal = ({
 
           </div>
 
-          {/* DETAILED ERRORS */}
-          {/* {errorCandidates?.length > 0 && (
-
-            <ul className="mb-0 ps-3">
-
-              {errorCandidates.map(
-                (item, index) => (
-
-                <li
-                  key={index}
-                  className="mb-3"
-                >
-
-                  <div>
-                    <strong>
-                      Application:
-                    </strong>{" "}
-                    {item.applicationNo}
-                  </div>
-
-                  <div>
-                    <strong>
-                      Conflicting Application:
-                    </strong>{" "}
-                    {item.conflictingApplicationNo}
-                  </div>
-
-                  <div>
-                    <strong>
-                      Time:
-                    </strong>{" "}
-                    {item.startTime} -{" "}
-                    {item.endTime}
-                  </div>
-
-                  <div>
-                    <strong>
-                      Reason:
-                    </strong>{" "}
-                    {item.message}
-                  </div>
-
-                </li>
-
-              ))}
-
-            </ul>
-
-          )} */}
-
-
 {errorCandidates?.length > 0 && (
+
+  <div className="schedule-error-box">
+
+    {errorCandidates.map((item, index) => (
+
+      <div
+        key={index}
+        className="schedule-error-row"
+      >
+
+        <i className="bi bi-exclamation-circle me-2" />
+
+        <span>
+          
+          {typeof item === "string"
+
+            ? item
+
+            : item?.message || "Error"
+
+          }
+
+        </span>
+
+      </div>
+
+    ))}
+
+  </div>
+
+)}
+
+{/* {errorCandidates?.length > 0 && (
 
   <div className="schedule-error-box">
 
@@ -115,7 +97,7 @@ const ScheduleErrorModal = ({
 
   </div>
 
-)}
+)} */}
           {/* {errorCandidates?.length > 0 && (
 
          

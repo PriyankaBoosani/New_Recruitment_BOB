@@ -345,7 +345,7 @@ export default function CandidateScreening({ selectedJob }) {
           res?.message ||
           "Validation failed"
         );
-
+console.log("message",res.data[0].message)
         // ✅ store backend data
         setErrorCandidates(
           Array.isArray(res?.data)
