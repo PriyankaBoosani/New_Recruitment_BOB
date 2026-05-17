@@ -20,7 +20,7 @@ const InterviewScheduleTable = ({ rows, position }) => {
           <tr>
             <th>{t("candidate")}</th>
             {/* <th>Position</th> */}
-            <th>Date</th>
+            <th>{t("date")}</th>
             <th>{t("time")}</th>
             <th>{t("zone")}</th>
             <th>{t("panel_details")}</th>
@@ -50,7 +50,7 @@ const InterviewScheduleTable = ({ rows, position }) => {
                   (p) => p.jobPositions?.positionId === row.positionId
                 )?.masterPositions?.positionName || "-"}
               </td> */}
-              <td>{(row.date)}</td>
+              <td>{formatDateDDMMYYYY(row.date)}</td>
               <td>{row.time}</td>
               <td>{row.zone}</td>
               <td>{row.panel}</td>

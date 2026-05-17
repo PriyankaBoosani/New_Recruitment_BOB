@@ -310,7 +310,7 @@ setPanelExcelModelList(excelPanels);
         id: item.application?.id,
         name: item.fullName,
         regNo: item.application?.applicationNo,
-        date: formatDateDDMMYYYY(start?.split("T")[0]) || "-",
+        date: (start?.split("T")[0]) || "-",
         time: formatTimeRange(start, end),
         zone: item.interviewCentres?.displayName,
         panel: item.interviewPanels?.panelName,

@@ -10,7 +10,7 @@ import {
 } from "react-bootstrap";
 
 import { useTranslation } from "react-i18next";
-
+import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 
 const SchedulePoolTable = ({
   rows,
@@ -156,7 +156,7 @@ const SchedulePoolTable = ({
 
                 {/* Date */}
                 <td className="fs-14 align-content-center">
-                  {row.date}
+                  {formatDateDDMMYYYY(row.date)}
                 </td>
 
                 {/* Time */}

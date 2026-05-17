@@ -319,8 +319,9 @@ loadPanelAvailability
                 >
                   <option value="10">10 mins</option>
                   <option value="15">15 mins</option>
-                  <option value="20">20 mins</option>
-                  <option value="25">25 mins</option>
+                  <option value="30">30 mins</option>
+                  <option value="45">45 mins</option>
+                  <option value="60">60 mins</option>
                 </Form.Select>
 
                 <div className="field-error">

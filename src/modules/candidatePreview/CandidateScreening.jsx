@@ -368,7 +368,22 @@ console.log("message",res.data[0].message)
 
       fetchSchedulePoolCandidates();
 
+            // CLEAR SCHEDULE POOL FILTER
+      setFilters(prev => ({
+        ...prev,
+        status: []
+      }));
+
+      // MOVE TO INTERVIEW POOL
       setActiveTab("INTERVIEW_POOL");
+
+      // RESET PAGE
+      setInterviewPage(0);
+
+      // REFRESH
+      setTimeout(async () => {
+        await refetchInterviewPool();
+      }, 0);
 
     } catch (err) {
 

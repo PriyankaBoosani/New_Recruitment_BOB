@@ -366,7 +366,7 @@
 .ap-inputs[readonly] {
   background: #e9ecef; 
     color: #374151;
-  border: 1px solid #f59e0b;
+  /* border: 1px solid #f59e0b; */
  
 }
 .ap-inputs {
