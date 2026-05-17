@@ -1,3 +1,81 @@
+/*pagination*/
+.schedule-pagination {
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 18px 20px;
+}
+
+.schedule-page-size {
+
+  width: 90px;
+
+  height: 50px;
+
+  border: 1px solid #d0d5dd;
+
+  border-radius: 12px;
+
+  padding: 0 14px;
+
+  font-size: 16px;
+
+  font-weight: 500;
+
+  background: white;
+
+  outline: none;
+
+  cursor: pointer;
+}
+
+.schedule-page-btn {
+
+  min-width: 70px;
+
+  height: 44px;
+
+  border-radius: 10px;
+
+  border: 1px solid #98a2b3;
+
+  background: white;
+
+  font-size: 16px;
+
+  font-weight: 500;
+
+  color: #344054;
+
+  transition: all 0.2s ease;
+
+  cursor: pointer;
+}
+
+.schedule-page-btn:hover:not(:disabled) {
+
+  border-color: #4263eb;
+
+  color: #4263eb;
+}
+
+.schedule-page-btn.active {
+
+  border-color: #344054;
+}
+
+.schedule-page-btn:disabled {
+
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
 /* ===== CARD ===== */
 .ipc-card {
   background: white;

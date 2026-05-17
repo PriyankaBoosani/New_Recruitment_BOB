@@ -425,7 +425,13 @@ const rebuiltSelectedPanels = Object.values(
 
       <HeaderWithBack
         title="Schedule Interviews"
-        subtitle={`Scheduling for ${state?.candidates?.length || 0} candidates`}
+        //subtitle={`Scheduling for ${state?.candidates?.length || 0} candidates`}
+
+        subtitle={`Scheduling for ${
+  isEditMode
+    ? schedulePoolData?.length || 0
+    : passedCandidates?.length || 0
+} candidates`}
         requisitionId={state.requisitionId}
         positionId={Array.isArray(state.positionId) ? state.positionId[0] : state.positionId}
         activeTab={sourceTab}
