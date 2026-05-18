@@ -394,8 +394,8 @@ const ApplicationForm = ({
   const [signature, setSignature] = useState()
 
   const allDocs = screeningDocuments.length > 0 ? screeningDocuments : data.documents.allDocs;
-  console.log(screeningDocuments)
-  console.log(data.documents.allDocs)
+  // console.log(screeningDocuments)
+  // console.log(data.documents.allDocs)
 
   const photoDoc = allDocs.find(doc => doc.name === "Photo");
   const signatureDoc = allDocs.find(doc => doc.name === "Signature");
@@ -507,24 +507,9 @@ const ApplicationForm = ({
     });
   };
 
-  useEffect(() => {
-    // DO NOT auto-populate criteria based on document verification.
-    // Users must manually set criteria (YES/NO/DISCREPANCY).
-    // Documents being VERIFIED only affects:
-    // - Whether we ALLOW shortlist YES (all categories must have at least one VERIFIED doc)
-    // - But does NOT force criteria to YES
-    // If user marked DISCREPANCY, it should stay DISCREPANCY until manually changed.
-  }, [docStatusMap]);
-
   // const allDocsVerified =
   //   documentRows.length > 0 &&
   //   areAllDocumentsValidated();
-
-
-
-
-
-
 
   const refreshDocStatuses = async () => {
     try {
@@ -750,53 +735,40 @@ const ApplicationForm = ({
     });
   };
 
-  // const handleInputChange = (field, value) => {
-  //   setScreeningForm(prev => ({
-  //     ...prev,
-  //     [field]: value,
-  //   }));
+const handleInputChange = (field, value) => {
+  setScreeningForm(prev => {
+    const updated = {
+      ...prev,
+      [field]: value,
+    };
 
-  //   setErrors(prev => {
-  //     const updated = { ...prev };
+    if (field === "isShortlisted") {
+      updated.finalScreeningRemark = "";
+    }
 
-  //     delete updated[field];
+    return updated;
+  });
 
-  //     // special rule: shortlisted YES → remark no longer required
-  //     if (field === "isShortlisted" && value === "YES") {
-  //       delete updated.finalScreeningRemark;
-  //     }
+  // shortlist selected -> clear eligible
+  if (
+    field === "isShortlisted" &&
+    (value === "YES" || value === "NO")
+  ) {
+    setIsEligible(false);
+  }
 
-  //     return updated;
-  //   });
-  // };
+  setErrors(prev => {
+    const updated = { ...prev };
 
-  const handleInputChange = (field, value) => {
-    setScreeningForm(prev => {
-      const updated = {
-        ...prev,
-        [field]: value,
-      };
+    delete updated[field];
 
-      // 🔥 Clear remark when shortlist changes
-      if (field === "isShortlisted") {
-        updated.finalScreeningRemark = "";
-      }
+    if (field === "isShortlisted") {
+      delete updated.finalScreeningRemark;
+    }
 
-      return updated;
-    });
-
-    setErrors(prev => {
-      const updated = { ...prev };
-
-      delete updated[field];
-
-      if (field === "isShortlisted") {
-        delete updated.finalScreeningRemark;
-      }
-
-      return updated;
-    });
-  };
+    return updated;
+  });
+};
 
   const handleVerify = async (comment) => {
     if (!selectedDoc) return;
@@ -934,9 +906,22 @@ const ApplicationForm = ({
       }
     }
 
-    if (!disableShortlistedSection && !screeningForm.isShortlisted) {
+    if (hasMissingUploads) {
+      toast.error("All mandatory documents must be uploaded");
+      return false;
+    }
+
+    if (
+      !disableShortlistedSection &&
+      !screeningForm.isShortlisted &&
+      !isEligible
+    ) {
       newErrors.isShortlisted = t("please_select_option");
     }
+
+    // if (!disableShortlistedSection && !screeningForm.isShortlisted) {
+    //   newErrors.isShortlisted = t("please_select_option");
+    // }
 
     // if (hasAnyRejectedDocument()) {
     //   const allYes =
@@ -996,7 +981,7 @@ const ApplicationForm = ({
     }
 
     setErrors(newErrors);
-
+    console.log("VALIDATION ERRORS", newErrors);
     // valid if no errors
     return Object.keys(newErrors).length === 0;
   };
@@ -1045,11 +1030,9 @@ const ApplicationForm = ({
 
   const disableEligibleCheckbox =
     !areAllCriteriaYes() ||
-    hasShortlistSelection ||
+    // hasShortlistSelection ||
     hasAdditionalDocuments ||
     hasMissingUploads;
-
-  const disableShortlistBecauseEligible = isEligible;
 
   const hasAnyRejectedDocument = () => {
     return documentRows.some(doc => {
@@ -1080,7 +1063,7 @@ const ApplicationForm = ({
   const disableShortlistedSection =
   !areAllCriteriaSelected ||
   hasAnyDiscrepancy ||
-  disableShortlistBecauseEligible ||
+  // disableShortlistBecauseEligible ||
   hasMissingUploads;
 
   // Disable YES option if:
@@ -1258,93 +1241,229 @@ const ApplicationForm = ({
     screeningForm.isEducationCriteriaMet
   ]);
 
-  useEffect(() => {
-    if (!areAllCriteriaYes() && screeningForm.isShortlisted === "YES") {
-      setScreeningForm(prev => ({
-        ...prev,
-        isShortlisted: ""
-      }));
-    }
-  }, [screeningForm.isWorkCriteriaMet,
-  screeningForm.isAgeCriteriaMet,
-  screeningForm.isEducationCriteriaMet]);
-
-  // Clear shortlist completely when any criteria is marked as DISCREPANCY
-  useEffect(() => {
-    if (hasAnyDiscrepancy && screeningForm.isShortlisted) {
-      setScreeningForm(prev => ({
-        ...prev,
-        isShortlisted: "",
-        finalScreeningRemark: ""
-      }));
-
-      setErrors(prev => ({
-        ...prev,
-        isShortlisted: undefined,
-        finalScreeningRemark: undefined
-      }));
-    }
-  }, [hasAnyDiscrepancy]);
+  // useEffect(() => {
+  //   if (!areAllCriteriaYes() && screeningForm.isShortlisted === "YES") {
+  //     setScreeningForm(prev => ({
+  //       ...prev,
+  //       isShortlisted: ""
+  //     }));
+  //   }
+  // }, [screeningForm.isWorkCriteriaMet,
+  // screeningForm.isAgeCriteriaMet,
+  // screeningForm.isEducationCriteriaMet]);
 
   useEffect(() => {
-  if (!hasAdditionalDocuments) return;
+  if (!disableShortlistedSection) return;
 
-  // Clear shortlist + eligible immediately
-  setIsEligible(false);
+  if (
+    screeningForm.isShortlisted ||
+    screeningForm.finalScreeningRemark
+  ) {
+    setScreeningForm(prev => ({
+      ...prev,
+      isShortlisted: "",
+      finalScreeningRemark: "",
+    }));
 
-  setScreeningForm(prev => ({
-    ...prev,
-    isShortlisted: "",
-    finalScreeningRemark: "",
-  }));
+    setErrors(prev => ({
+      ...prev,
+      isShortlisted: undefined,
+      finalScreeningRemark: undefined,
+    }));
+  }
 
-  setErrors(prev => ({
-    ...prev,
-    isShortlisted: undefined,
-    finalScreeningRemark: undefined,
-  }));
-}, [hasAdditionalDocuments]);
+}, [disableShortlistedSection]);
 
 useEffect(() => {
   if (!hasMissingUploads) return;
 
-  setIsEligible(false);
+  // clear eligible
+  if (isEligible) {
+    setIsEligible(false);
+  }
 
-  setScreeningForm(prev => ({
-    ...prev,
-    isShortlisted: "",
-    finalScreeningRemark: "",
-  }));
+  // clear shortlist
+  if (
+    screeningForm.isShortlisted ||
+    screeningForm.finalScreeningRemark
+  ) {
+    setScreeningForm(prev => ({
+      ...prev,
+      isShortlisted: "",
+      finalScreeningRemark: "",
+    }));
 
-  setErrors(prev => ({
-    ...prev,
-    isShortlisted: undefined,
-    finalScreeningRemark: undefined,
-  }));
+    setErrors(prev => ({
+      ...prev,
+      isShortlisted: undefined,
+      finalScreeningRemark: undefined,
+    }));
+  }
+
 }, [hasMissingUploads]);
 
   const allDocsAreVerified = areAllDocumentsVerified();
 
-  const isOptionDisabled = (option) => {
-    if (option === "DISCREPANCY" && allDocsAreVerified) return true;
+  const isOptionDisabled = (option, category) => {
+    const categorySatisfied = isCategorySatisfied(category);
+
+    // Disable YES if no VERIFIED doc exists
+    if (option === "YES" && !categorySatisfied) {
+      return true;
+    }
+
+    // Disable DISCREPANCY if all docs verified
+    if (option === "DISCREPANCY" && allDocsAreVerified) {
+      return true;
+    }
+
     return false;
   };
 
-  useEffect(() => {
-    if (!allDocsAreVerified) return;
+  // const isOptionDisabled = (option) => {
+  //   if (option === "DISCREPANCY" && allDocsAreVerified) return true;
+  //   return false;
+  // };
 
-    setScreeningForm(prev => ({
-      ...prev,
-      isWorkCriteriaMet:
-        prev.isWorkCriteriaMet === "DISCREPANCY" ? "" : prev.isWorkCriteriaMet,
-      isAgeCriteriaMet:
-        prev.isAgeCriteriaMet === "DISCREPANCY" ? "" : prev.isAgeCriteriaMet,
-      isEducationCriteriaMet:
-        prev.isEducationCriteriaMet === "DISCREPANCY" ? "" : prev.isEducationCriteriaMet,
-    }));
-  }, [allDocsAreVerified]);
+  // useEffect(() => {
+  //   if (!allDocsAreVerified) return;
 
+  //   setScreeningForm(prev => ({
+  //     ...prev,
+  //     isWorkCriteriaMet:
+  //       prev.isWorkCriteriaMet === "DISCREPANCY" ? "" : prev.isWorkCriteriaMet,
+  //     isAgeCriteriaMet:
+  //       prev.isAgeCriteriaMet === "DISCREPANCY" ? "" : prev.isAgeCriteriaMet,
+  //     isEducationCriteriaMet:
+  //       prev.isEducationCriteriaMet === "DISCREPANCY" ? "" : prev.isEducationCriteriaMet,
+  //   }));
+  // }, [allDocsAreVerified]);
 
+//   useEffect(() => {
+//   const ageVerified = isCategorySatisfied("AGE");
+//   const workVerified = isCategorySatisfied("WORK");
+//   const educationVerified = isCategorySatisfied("EDUCATION");
+
+//   setScreeningForm(prev => {
+//     const updated = { ...prev };
+
+//     // AGE
+//     if (ageVerified) {
+//       updated.isAgeCriteriaMet =
+//         prev.isAgeCriteriaMet === "NO" ||
+//         prev.isAgeCriteriaMet === "DISCREPANCY"
+//           ? prev.isAgeCriteriaMet
+//           : "YES";
+//     } else {
+//       updated.isAgeCriteriaMet =
+//         prev.isAgeCriteriaMet === "YES"
+//           ? ""
+//           : prev.isAgeCriteriaMet;
+//     }
+
+//     // WORK
+//     if (workVerified) {
+//       updated.isWorkCriteriaMet =
+//         prev.isWorkCriteriaMet === "NO" ||
+//         prev.isWorkCriteriaMet === "DISCREPANCY"
+//           ? prev.isWorkCriteriaMet
+//           : "YES";
+//     } else {
+//       updated.isWorkCriteriaMet =
+//         prev.isWorkCriteriaMet === "YES"
+//           ? ""
+//           : prev.isWorkCriteriaMet;
+//     }
+
+//     // EDUCATION
+//     if (educationVerified) {
+//       updated.isEducationCriteriaMet =
+//         prev.isEducationCriteriaMet === "NO" ||
+//         prev.isEducationCriteriaMet === "DISCREPANCY"
+//           ? prev.isEducationCriteriaMet
+//           : "YES";
+//     } else {
+//       updated.isEducationCriteriaMet =
+//         prev.isEducationCriteriaMet === "YES"
+//           ? ""
+//           : prev.isEducationCriteriaMet;
+//     }
+
+//     return updated;
+//   });
+// }, [docStatusMap, groupedDocs]);
+
+useEffect(() => {
+  const ageVerified = isCategorySatisfied("AGE");
+  const workVerified = isCategorySatisfied("WORK");
+  const educationVerified = isCategorySatisfied("EDUCATION");
+
+  setScreeningForm(prev => {
+    let changed = false;
+
+    const updated = { ...prev };
+
+    // AGE
+    const nextAge = ageVerified
+      ? (
+          prev.isAgeCriteriaMet === "NO" ||
+          prev.isAgeCriteriaMet === "DISCREPANCY"
+            ? prev.isAgeCriteriaMet
+            : "YES"
+        )
+      : (
+          prev.isAgeCriteriaMet === "YES"
+            ? ""
+            : prev.isAgeCriteriaMet
+        );
+
+    if (nextAge !== prev.isAgeCriteriaMet) {
+      updated.isAgeCriteriaMet = nextAge;
+      changed = true;
+    }
+
+    // WORK
+    const nextWork = workVerified
+      ? (
+          prev.isWorkCriteriaMet === "NO" ||
+          prev.isWorkCriteriaMet === "DISCREPANCY"
+            ? prev.isWorkCriteriaMet
+            : "YES"
+        )
+      : (
+          prev.isWorkCriteriaMet === "YES"
+            ? ""
+            : prev.isWorkCriteriaMet
+        );
+
+    if (nextWork !== prev.isWorkCriteriaMet) {
+      updated.isWorkCriteriaMet = nextWork;
+      changed = true;
+    }
+
+    // EDUCATION
+    const nextEducation = educationVerified
+      ? (
+          prev.isEducationCriteriaMet === "NO" ||
+          prev.isEducationCriteriaMet === "DISCREPANCY"
+            ? prev.isEducationCriteriaMet
+            : "YES"
+        )
+      : (
+          prev.isEducationCriteriaMet === "YES"
+            ? ""
+            : prev.isEducationCriteriaMet
+        );
+
+    if (nextEducation !== prev.isEducationCriteriaMet) {
+      updated.isEducationCriteriaMet = nextEducation;
+      changed = true;
+    }
+
+    return changed ? updated : prev;
+  });
+
+}, [docStatusMap]);
 
 
   useEffect(() => {
@@ -1386,6 +1505,7 @@ useEffect(() => {
   const handleEligibleChange = (checked) => {
     setIsEligible(checked);
 
+    // If eligible checked -> clear shortlist
     if (checked) {
       setScreeningForm(prev => ({
         ...prev,
@@ -1400,12 +1520,6 @@ useEffect(() => {
       }));
     }
   };
-
-  useEffect(() => {
-    if (hasShortlistSelection && isEligible) {
-      setIsEligible(false);
-    }
-  }, [screeningForm.isShortlisted]);
 
   const handleAddDocumentRow = () => {
     setOtherDocuments(prev => [
@@ -2154,7 +2268,7 @@ useEffect(() => {
 
         <div className="card mt-3 border-0">
           <div className="d-flex gap-3 align-items-center border-bottom p-3">
-            <label style={{ fontSize: '0.875rem', fontWeight: 500, color: '#162B75' }}>Additioal Required Documents</label>
+            <label style={{ fontSize: '0.875rem', fontWeight: 500, color: '#162B75' }}>Additional Required Documents</label>
             <button className="btn-submit-orange py-1 px-2" style={{ height: 'auto', fontSize: '0.75rem' }} onClick={handleAddDocumentRow}>+ Add Document</button>
           </div>
 
@@ -2245,7 +2359,7 @@ useEffect(() => {
 
                   <div className="criteria-radio mb-0">
                     {CRITERIA_OPTIONS.map(option => (
-                      <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
+                      <label key={option} className={`radio-label ${isOptionDisabled(option, "WORK") ? "disabled" : ""}`}>
                         <input
                           type="radio"
                           name="workCriteria"
@@ -2253,7 +2367,7 @@ useEffect(() => {
                           onChange={() =>
                             handleRadioChange("isWorkCriteriaMet", option)
                           }
-                          disabled={isOptionDisabled(option)}
+                          disabled={isOptionDisabled(option, "WORK")}
                         />
                         <span className="custom-radio"></span>
                         {t(option)}
@@ -2291,7 +2405,7 @@ useEffect(() => {
 
                   <div className="criteria-radio mb-0">
                     {CRITERIA_OPTIONS.map(option => (
-                      <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
+                      <label key={option} className={`radio-label ${isOptionDisabled(option, "AGE") ? "disabled" : ""}`}>
                         <input
                           type="radio"
                           name="ageCriteria"
@@ -2299,7 +2413,7 @@ useEffect(() => {
                           onChange={() =>
                             handleRadioChange("isAgeCriteriaMet", option)
                           }
-                          disabled={isOptionDisabled(option)}
+                          disabled={isOptionDisabled(option, "AGE")}
                         />
                         <span className="custom-radio"></span>
                         {t(option)}
@@ -2337,7 +2451,7 @@ useEffect(() => {
 
                   <div className="criteria-radio mb-0">
                     {CRITERIA_OPTIONS.map(option => (
-                      <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
+                      <label key={option} className={`radio-label ${isOptionDisabled(option, "EDUCATION") ? "disabled" : ""}`}>
                         <input
                           type="radio"
                           name="educationCriteria"
@@ -2345,7 +2459,7 @@ useEffect(() => {
                           onChange={() =>
                             handleRadioChange("isEducationCriteriaMet", option)
                           }
-                          disabled={isOptionDisabled(option)}
+                          disabled={isOptionDisabled(option, "EDUCATION")}
                         />
                         <span className="custom-radio"></span>
                         {t(option)}
