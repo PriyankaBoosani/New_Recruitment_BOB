@@ -117,7 +117,7 @@ const AddPosition = () => {
         mandatoryExperience: { years: "", months: "", description: "" },
         preferredExperience: { years: "", months: "", description: "" },
         responsibilities: "", medicalRequired: "yes", enableStateDistribution: false,
-        cutoffDate: "", useMandatoryEducationLevelExperience: false,
+        useMandatoryEducationLevelExperience: false,
         usePreferredEducationLevelExperience: false
     });
     const [isAgeRelRiotVictimFamily, setIsAgeRelRiotVictimFamily] = useState(false);
@@ -186,6 +186,8 @@ const AddPosition = () => {
 
 
 
+
+
     const [educationData, setEducationData] = useState({
         mandatory: { educations: [], certificationIds: [], text: "" },
         preferred: { educations: [], certificationIds: [], text: "" }
@@ -224,7 +226,7 @@ const AddPosition = () => {
             responsibilities: existingPosition.rolesResponsibilities,
             medicalRequired: existingPosition.isMedicalRequired ? "yes" : "no",
             enableStateDistribution: existingPosition.isLocationWise,
-            cutoffDate: existingPosition.cutoffDate || "",
+           // cutoffDate: existingPosition.cutoffDate || "",
             mandatoryExperience: {
                 years: Math.floor(existingPosition.mandatoryExperienceMonths / 12),
                 months: existingPosition.mandatoryExperienceMonths % 12,
@@ -483,19 +485,51 @@ const AddPosition = () => {
 
         //  SPECIAL CASE: department change clears position error
         if (name === "department") {
-            const matches = positionsByReq[requisitionId]
-                ?.filter(p => String(p.deptId) === String(value));
+            const matches = positionsByReq[requisitionId]?.filter(
+                p => String(p.deptId) === String(value)
+            ) || [];
 
-            setIndentCandidates(matches);
+            const uniqueMatches = Array.from(
+                new Map(matches.map(p => [p.indentPath || p.indentName, p])).values()
+            );
 
-            // 🔥 reset selection if mismatch
-            if (!matches.some(p => p.positionId === selectedIndent?.positionId)) {
-                setSelectedIndent(null);
-            }
+            setIndentCandidates(uniqueMatches);
 
-            if (matches.length > 0) {
+            // clear position when department changes
+            setFormData(prev => ({
+                ...prev,
+                position: "",
+                minAge: "",
+                maxAge: "",
+                grade: "",
+                responsibilities: "",
+                mandatoryExperience: { years: "", months: "", description: "" },
+                preferredExperience: { years: "", months: "", description: "" },
+                useMandatoryEducationLevelExperience: false,
+                usePreferredEducationLevelExperience: false
+            }));
+
+            // clear indent when department changes
+            // setSelectedIndent(null);
+            // setExistingIndentPath(null);
+            // setExistingIndentName(null);
+            // setIndentFile(null);
+            // setApprovedBy("");
+            // setApprovedOn("");
+            setPendingPosition(null);
+            setShowConfirmModal(false);
+            setShowIndentModal(false);
+
+            setErrors(prev => ({
+                ...prev,
+                department: "",
+                position: ""
+            }));
+
+            if (uniqueMatches.length > 0) {
                 setShowIndentModal(true);
             }
+            return;
         } else {
             setErrors(prev => ({
                 ...prev,
@@ -509,47 +543,40 @@ const AddPosition = () => {
     const handleUseIndent = (pos) => {
         if (pos === "CUSTOM") {
             setSelectedIndent(null);
-
             setFormData(prev => ({
                 ...prev,
                 indentName: ""
             }));
-
             setExistingIndentPath(null);
             setExistingIndentName(null);
-
-            setIndentFile(null);   // 🔥 IMPORTANT
-
+            setIndentFile(null);
             setApprovedBy("");
             setApprovedOn("");
-
             setShowIndentModal(false);
             return;
         }
 
-        // 🔥 EXISTING CASE
         if (!pos) return;
 
         setSelectedIndent(pos);
 
         setFormData(prev => ({
             ...prev,
-            indentName: pos.indentName,
-            minAge: pos.minAge,
-            maxAge: pos.maxAge,
-            grade: pos.gradeId,
-            responsibilities: pos.rolesResponsibilities
+            indentName: pos.indentName ?? prev.indentName,
+            minAge: pos.minAge ?? prev.minAge,
+            maxAge: pos.maxAge ?? prev.maxAge,
+            grade: pos.gradeId ?? prev.grade,
+            responsibilities: pos.rolesResponsibilities ?? prev.responsibilities
         }));
 
-        setApprovedBy(pos.approvedBy);
-        setApprovedOn(pos.approvedOn);
+        setApprovedBy(pos.approvedBy ?? approvedBy);
+        setApprovedOn(pos.approvedOn ?? approvedOn);
 
-        setExistingIndentPath(pos.indentPath);
-        setExistingIndentName(pos.indentName);
+        setExistingIndentPath(pos.indentPath ?? existingIndentPath);
+        setExistingIndentName(pos.indentName ?? existingIndentName);
 
         setShowIndentModal(false);
     };
-
     const resetPositionDerivedFields = {
         minAge: "",
         maxAge: "",
@@ -772,6 +799,8 @@ const AddPosition = () => {
             educationData,
             requisitionId,
             indentFile,
+            indentPath: existingIndentPath,
+            indentName: existingIndentName,
             approvedBy,
             approvedOn,
             reservationCategories,

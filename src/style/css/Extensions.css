@@ -19,7 +19,7 @@
   background-color: #e9edf5;
   color: #163990;
   font-weight: 600;
-  font-size: 0.875em;
+  font-size: 1em;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,11 +38,27 @@
 }
 
 .extensions-page .user-name {
-  font-size: 0.9375rem;
+  font-size: 0.875em;
   font-weight: 500;
-  color: #171718;
+  color: #404040;
+  letter-spacing: 0.2px;
+  margin-bottom: 2px;
 }
 
+.extension_request .field-label {
+   font-size: 0.875em;
+  font-weight: 400;
+  color: #404040;
+  letter-spacing: 0.2px;
+  margin-bottom: 2px;
+}
+
+.extension_request .field-value {
+  font-size: 0.75em;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  margin-bottom: 2px;
+}
 /* History icon */
 
 .extensions-page .user-meta {
@@ -176,15 +192,10 @@
 
 /* Checkbox base */
 .extensions-page .form-check-input {
-  width: 16px;
-  height: 16px;
-  border: 2px solid #2f4ea2 !important;
-  border-radius: 4px;
-  background-color: #ffffff !important;
-  cursor: pointer;
-  box-shadow: none !important;
-  appearance: none;
-  -webkit-appearance: none;
+	border: 2px solid #2f4ea2 !important;
+	border-radius: 4px;
+	background-color: #ffffff !important;
+	cursor: pointer;
 }
 
 /* Checked */
@@ -412,4 +423,31 @@
   background: none;
   margin: 30px;
   padding-bottom: 30px;
+}
+.extension_request .form-check-input:disabled {
+	background-color: #AFBDEB4F !important;
+	cursor: not-allowed;
+}
+
+.extension_request .badge {
+  font-size: 0.75em;
+}
+.extension_request .bi.bi-clock.icon-14 {
+	margin-top: -3px;
+}
+.extension_request .msg-history-title {
+	font-size: 0.875em;
+	font-weight: 500;
+	color: #525c6b;
+	margin-bottom: 8px;
+}
+.extension_request .msg-history-head {
+	font-size: 0.875rem;
+	font-weight: 500;
+}
+.extension_request .msg-history-text {
+	font-size: 0.825em;
+}
+.extension_request .msg-history-time {
+	font-size: 0.85rem;
 }

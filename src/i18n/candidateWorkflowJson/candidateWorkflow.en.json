@@ -131,6 +131,7 @@
     "candidate_resume": "Candidate Resume",
     "candidate_pool": "Candidate Pool",
     "interview_pool": "Interview Pool",
+    "schedule_pool": "Schedule Pool",
     "offer_pool": "Offer Pool",
     "onboarding_pool": "Onboarding Pool",
     "import_candidates": "Import Candidates",
@@ -178,6 +179,9 @@
     "view_zonal_comments": "View Zonal Comments",
     "zonal_rejection_comment": "Zonal Rejection Comment",
     "view_feedback_history": "View Feedback History",
-    "city_name": "City"
-
+    "city_name": "City",
+    "OfferTemplate": "Please select Offer Template",
+    "BeforeDate": "Please select Accept Before Date",
+    "JoiningDate": "Please select Joining Date",
+    "wentwrong": "Something went wrong"
 }

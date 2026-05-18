@@ -1,24 +1,37 @@
-
 export const mapMessagesData = (
   apiMessages = [],
   selectedRequisitionId,
   selectedPositionId,
   selectedRequisitionName,
-  selectedPositionName,
+  // selectedPositionName,
+  positions = [],
   requestTypes = [],
-  threadMessagesMap = {}
+  threadMessagesMap = {},
+  interviewCentres = []
 ) => {
 
-  // ✅ Create lookup map
   const requestTypeMap = {};
   requestTypes.forEach(rt => {
     requestTypeMap[rt.requestTypeId] = rt.requestName;
   });
 
-  return (apiMessages || []).map((item, index) => {
+  const zonalMap = {};
+
+  interviewCentres.forEach((z) => {
+    zonalMap[z.interviewCentreId] =
+      z.displayName;
+  });
+
+  return (apiMessages || []).map((item) => {
+
+    const createdDate = item?.createdDate
+      ? new Date(item.createdDate)
+      : null;
+
     return {
-      // id: item?.conversationThreadId || index,
       id: item?.conversationThreadId,
+      applicationId: item?.applicationId || "",
+
 
       name: item?.candidateName || "",
       regNo: item?.applicationNo || "",
@@ -26,44 +39,89 @@ export const mapMessagesData = (
       requisitionId: selectedRequisitionId,
       requisitionName: selectedRequisitionName || "-",
 
-      positionId: item?.positionId || selectedPositionId,
-      positionName: selectedPositionName || "-",
+      // positionId: item?.positionId || selectedPositionId,
+      // positionName: selectedPositionName || "-",
+      positionId: item?.positionId || "",
 
-      date: item?.createdDate
-        ? item.createdDate.split("T")[0]
+      positionName:
+        positions.find(
+          (p) => p.jobPositions?.positionId === item?.positionId
+        )?.masterPositions?.positionName || "-",
+
+
+      date: createdDate
+        ? `${String(createdDate.getDate()).padStart(2, "0")}-${String(
+          createdDate.getMonth() + 1
+        ).padStart(2, "0")}-${String(
+          createdDate.getFullYear()
+        ).slice(-2)}`
         : "-",
-
-      time: item?.createdDate
-        ? new Date(item.createdDate).toLocaleTimeString()
+      time: createdDate
+        ? createdDate.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true
+        })
         : "-",
+      dateExtension: item?.dateExtension
+        ? `${String(
+          new Date(item.dateExtension).getDate()
+        ).padStart(2, "0")}-${String(
+          new Date(item.dateExtension).getMonth() + 1
+        ).padStart(2, "0")}-${String(
+          new Date(item.dateExtension).getFullYear()
+        ).slice(-2)}`
+        : "-",
+      status: (() => {
+        switch (item?.status) {
+          case "PENDING": return "Pending";
+          case "L1_PENDING": return "L1 Pending";
+          case "L1_APPROVED": return "L1 Approved";
+          case "L1_REJECTED": return "L1 Rejected";
+          case "L2_PENDING": return "L2 Pending";
+          case "L2_APPROVED": return "L2 Approved";
+          case "L2_REJECTED": return "L2 Rejected";
+          case "REJECTED": return "Rejected";
+          default: return item?.status || "-";
+        }
+      })(),
 
-      status:
-        item?.status === "PENDING"
-          ? "Pending"
-          : item?.status || "-",
-
-      // ✅ FIX HERE
+      rawStatus: item?.status, // ✅ only once
+      requestTypeId: item?.requestTypeId || "",
       type:
         item?.requestTypeName ||
         requestTypeMap[item?.requestTypeId] ||
         item?.requestTypeId ||
         "-",
 
-      history: (threadMessagesMap[item?.conversationThreadId] || []).map(msg => ({
-        type:
-          msg.senderType === "CANDIDATE"
-            ? "candidate"
-            : "request",
+      zonalId:
+        zonalMap[item?.zonalId] ||
+        item?.zonalId ||
+        "-",
 
-        title: msg.senderType || "-",
-        comment: msg.comments || "-",
+      history: (threadMessagesMap[item?.conversationThreadId] || []).map(msg => {
 
-        time: msg.createdDate
-          ? new Date(msg.createdDate).toLocaleString()
-          : "-",
+        const msgDate = msg?.createdDate
+          ? new Date(msg.createdDate)
+          : null;
 
-        file: false,
-      })),
+        return {
+          type: msg.senderType === "CANDIDATE" ? "candidate" : "request",
+          title: msg.senderType || "-",
+          comment: msg.message || msg.comments || "-",
+          attachmentPath: msg.attachmentPath || null,
+
+          time: msgDate
+            ? msgDate.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true
+            })
+            : "-",
+
+          file: false,
+        };
+      }),
     };
   });
 };

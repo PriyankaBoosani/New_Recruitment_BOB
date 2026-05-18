@@ -17,6 +17,7 @@ export const useCreateRequisition = (editId, mode) => {
     description: "",
     startDate: "",
     endDate: "",
+    cutoffDate: ""
   });
 
   // Fetch data if in Edit Mode
@@ -48,6 +49,7 @@ export const useCreateRequisition = (editId, mode) => {
           description: data.requisitionDescription || "",
           startDate: data.startDate ? data.startDate.split("T")[0] : "",
           endDate: data.endDate ? data.endDate.split("T")[0] : "",
+          cutoffDate: data.cutoffDate ? data.cutoffDate.split("T")[0] : ""
         });
 
       } catch (err) {

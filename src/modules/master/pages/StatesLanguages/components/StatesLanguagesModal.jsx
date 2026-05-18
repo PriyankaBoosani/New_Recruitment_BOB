@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Modal, Button } from "react-bootstrap";
-
+import { ChevronDown } from "react-bootstrap-icons";;
 const StatesLanguagesModal = ({
     show,
     handleCloseModal,
@@ -13,35 +14,21 @@ const StatesLanguagesModal = ({
     states = [],
     languages = []
 }) => {
-
-
+    const { t } = useTranslation(["common", "stateLanguages"]);
     const [openDropdown, setOpenDropdown] = useState(false);
     const dropdownRef = useRef(null);
-
-    /* =========================
-       RESET DROPDOWN ON OPEN/CLOSE
-    ========================= */
     useEffect(() => {
         setOpenDropdown(false);
     }, [show]);
-
-    /* =========================
-       CLOSE ON OUTSIDE CLICK
-    ========================= */
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
                 setOpenDropdown(false);
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
-
-    /* =========================
-       MULTI SELECT (NO AUTO CLOSE)
-    ========================= */
     const toggleLanguage = (lang) => {
         let updated = [...(formData.languages || [])];
 
@@ -50,29 +37,28 @@ const StatesLanguagesModal = ({
         } else {
             updated.push(lang);
         }
-
         onChange("setLanguages", updated);
-
-        // ❌ DO NOT CLOSE HERE → allows multi-select
     };
-
     return (
         <Modal show={show} onHide={handleCloseModal} size="lg" centered>
-
             <Modal.Header closeButton className="modal-header-custom">
                 <Modal.Title className="cerhead">
-                    {isViewing ? "View" : isEditing ? "Edit" : "Add"} State & Languages
+                    {isViewing
+                        ? t("stateLanguages:view")
+                        : isEditing
+                            ? t("stateLanguages:edit")
+                            : t("common:add")
+                    } {t("common:stateLanguages")}
                 </Modal.Title>
             </Modal.Header>
-
             <Modal.Body>
                 <div className="border rounded p-3 mb-3">
                     <div className="row g-3">
-
                         {/* STATE */}
-                        <div className="col-md-4">
-                            <label className="form-label">State *</label>
-
+                        <div className="col-md-5">
+                            <label className="form-label">
+                                {t("stateLanguages:state")} <span className="text-danger">*</span>
+                            </label>
                             {isViewing ? (
                                 <div className="form-control-view"> {states.find(s => s.stateId === formData.state)?.stateName || "-"}</div>
                             ) : (
@@ -81,24 +67,30 @@ const StatesLanguagesModal = ({
                                         className={`form-select ${errors?.state ? "is-invalid" : ""}`}
                                         value={formData.state}
                                         onChange={(e) => onChange("state", e.target.value)}
+                                        style={{
+                                            paddingRight: "40px",
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                            whiteSpace: "nowrap",
+                                            width: "100%"
+                                        }}
                                     >
-                                        <option value="">Select</option>
-                                        {states.map((s, i) => (
+                                        <option value="">{t("common:select")}</option>
+                                        {states.map((s) => (
                                             <option key={s.stateId} value={s.stateId}>
                                                 {s.stateName}
                                             </option>
                                         ))}
                                     </select>
-
                                     <small className="text-danger">{errors?.state}</small>
                                 </>
                             )}
                         </div>
-
                         {/* LANGUAGES */}
-                        <div className="col-md-4">
-                            <label className="form-label">Languages *</label>
-
+                        <div className="col-md-7">
+                            <label className="form-label">
+                                {t("stateLanguages:languages")} <span className="text-danger">*</span>
+                            </label>
                             {isViewing ? (
                                 <div className="form-control-view">
                                     {formData.languages
@@ -109,24 +101,45 @@ const StatesLanguagesModal = ({
                             ) : (
                                 <>
                                     <div className="position-relative" ref={dropdownRef}>
-
-                                        {/* INPUT */}
                                         <div
-                                            className={`form-control ${errors?.languages ? "is-invalid" : ""}`}
+                                            className={`form-control d-flex align-items-center justify-content-between ${errors?.languages ? "is-invalid" : ""}`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setOpenDropdown(prev => !prev);
                                             }}
-                                            style={{ cursor: "pointer" }}
+                                            style={{
+                                                cursor: "pointer",
+                                                minHeight: "38px"
+                                            }}
                                         >
-                                            {formData.languages?.length
-                                                ? formData.languages
-                                                    .map(id => languages.find(l => l.languageId === id)?.languageName)
-                                                    .filter(Boolean)
-                                                    .join(", ")
-                                                : "Select Languages"}
-                                        </div>
+                                            <span
+                                                style={{
+                                                    whiteSpace: "nowrap",
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    maxWidth: "90%"
+                                                }}
+                                                title={
+                                                    formData.languages?.length
+                                                        ? formData.languages
+                                                            .map(id => languages.find(l => l.languageId === id)?.languageName)
+                                                            .filter(Boolean)
+                                                            .join(", ")
+                                                        : ""
+                                                }
+                                            >
+                                                {formData.languages?.length
+                                                    ? formData.languages
+                                                        .map(id => languages.find(l => l.languageId === id)?.languageName)
+                                                        .filter(Boolean)
+                                                        .join(", ")
+                                                    : t("stateLanguages:select_languages")}
+                                            </span>
 
+                                            <span style={{ marginLeft: "10px", flexShrink: 0 }}>
+                                                <ChevronDown size={14} />
+                                            </span>
+                                        </div>
                                         {/* DROPDOWN */}
                                         {openDropdown && (
                                             <div
@@ -134,7 +147,10 @@ const StatesLanguagesModal = ({
                                                 style={{
                                                     zIndex: 1000,
                                                     maxHeight: "200px",
-                                                    overflowY: "auto"
+                                                    overflowY: "auto",
+                                                    top: "100%",
+                                                    left: 0,
+                                                    marginTop: "4px"
                                                 }}
                                             >
                                                 {languages.map((lang, i) => (
@@ -155,7 +171,6 @@ const StatesLanguagesModal = ({
                                                 ))}
                                             </div>
                                         )}
-
                                     </div>
 
                                     <small className="text-danger">
@@ -164,11 +179,9 @@ const StatesLanguagesModal = ({
                                 </>
                             )}
                         </div>
-
                     </div>
                 </div>
             </Modal.Body>
-
             <Modal.Footer className="modal-footer-custom">
                 <Button
                     variant="outline-secondary"
@@ -177,9 +190,8 @@ const StatesLanguagesModal = ({
                         handleCloseModal();
                     }}
                 >
-                    {isViewing ? "Close" : "Cancel"}
+                    {isViewing ? t("common:close") : t("common:cancel")}
                 </Button>
-
                 {!isViewing && (
                     <Button
                         variant="primary"
@@ -188,13 +200,11 @@ const StatesLanguagesModal = ({
                             saveData();
                         }}
                     >
-                        {isEditing ? "Update" : "Save"}
+                        {isEditing ? t("common:update") : t("common:save")}
                     </Button>
                 )}
             </Modal.Footer>
-
         </Modal>
     );
 };
-
 export default StatesLanguagesModal;

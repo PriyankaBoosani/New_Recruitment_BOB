@@ -142,12 +142,12 @@ const PositionForm = ({
   };
   const yearOptions = withSelectOption(
     YEAR_OPTIONS.map(y => ({ value: y, label: y })),
-    "Select Years"
+    ` ${t("addPosition:select_year")} `
   );
 
   const monthOptions = withSelectOption(
     MONTH_OPTIONS.map(m => ({ value: m, label: m })),
-    "Select Months"
+    ` ${t("addPosition:select_month")} `
   );
   const approvedByOptions = withSelectOption(
     approvingAuthorities.map(a => ({
@@ -757,7 +757,7 @@ const PositionForm = ({
                               });
                             }}
                           >
-                            + Add Education Level Experience
+                             {t("addPosition:add_education_level_experience")}
                           </Button>
                         )}
 
@@ -780,7 +780,7 @@ const PositionForm = ({
                                 value: doc.id,
                                 label: doc.name
                               })),
-                            "Select Qualification"
+                            t("addPosition:select_qualification")
                           );
 
                           return (
@@ -1015,7 +1015,7 @@ const PositionForm = ({
             />
             <ErrorMessage>{renderError(errors.medicalRequired)}</ErrorMessage>
           </Col>
-          <Col md={3}>
+          {/* <Col md={3}>
             <Form.Label>{t("addPosition:cut_off_date")} <span className="text-danger">*</span></Form.Label>
             <Form.Control
               type="date"
@@ -1026,7 +1026,7 @@ const PositionForm = ({
               disabled={isViewMode}
             />
             <ErrorMessage>{renderError(errors.cutoffDate)}</ErrorMessage>
-          </Col>
+          </Col> */}
         </Row>
       </div>
     </>

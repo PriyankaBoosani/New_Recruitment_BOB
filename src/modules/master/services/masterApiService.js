@@ -265,6 +265,18 @@ const masterApiService = {
     );
   },
 
+  getMessagesAzureBlobSasUrl(dir, client = "AzureAD") {
+    return apis.get(
+      `/azureblob/file/sas-url?dir=${dir}`,
+      {
+        headers: {
+          "X-Client": client,
+        },
+      }
+    );
+  },
+
+
   getAllMasters: () => apis.get("/display/all"),
   getUser: () => apis.get('/user/all'),
   getZonalStates: () => apis.get("/zonal-states/all"),
@@ -275,6 +287,13 @@ const masterApiService = {
 
   getStateLanguages: () =>
     apis.get("/master-dd-data/get/state-languages"),
+
+  // CREATE / UPDATE
+saveStateLanguages: (payload) =>
+  apis.post(
+    "/state-language/create-or-update/state-languages",
+    payload
+  ),
 
 
   //Interview Pool related master data interview-center
@@ -296,6 +315,16 @@ const masterApiService = {
   );
 },
 
+// Candidate Preview API
+candidatePreview: (templateId, applicationId) =>
+  apis.get(`/templates/candidate-preview`, {
+    params: {
+      templateId,
+      applicationId,
+    },
+    responseType: "blob",
+  }),
+
 getAllEducation: (ids) =>
   apis.post("/admin-education-master/all", ids),
 
@@ -316,6 +345,7 @@ previewTemplate: (templateId) =>
   apis.get("/master-dd-data/get/request-types"),
 
 };
+
 
 
 

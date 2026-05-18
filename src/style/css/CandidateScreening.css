@@ -49,6 +49,60 @@
   border: 1px solid rgb(22, 43, 117) !important;
 }
 
+/* Schedule Approval Modal Styles */
+.schedule-approval-modal .modal-dialog {
+  max-width: 450px;
+}
+
+.schedule-approval-modal .modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.schedule-approval-modal .modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #162B75;
+}
+
+.schedule-approval-modal .modal-body {
+  padding: 20px;
+  font-size: 14px;
+  color: #6c757d;
+  text-align: center;
+}
+
+.schedule-approval-modal .modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+}
+
+.schedule-approval-modal .btn-primary {
+  background-color: #f36f21;
+  border-color: #f36f21;
+  padding: 8px 20px;
+  font-size: 14px;
+}
+
+.schedule-approval-modal .btn-primary:hover {
+  background-color: #f36f21;
+  border-color: #f36f21;
+}
+
+.schedule-approval-modal .btn-light {
+  background-color: #ffffff;
+  border-color: #ced4da;
+  color: #6c757d;
+  padding: 8px 20px;
+  font-size: 14px;
+}
+
+.schedule-approval-modal .btn-light:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+
 .orange-bg {
   background-color: #f36f21 !important;
   opacity: 1 !important;
@@ -385,4 +439,107 @@ candidate-screening-tabs-header ul {
 
 .interview-pool .bg-success{
 background-color: none !important;
+}
+
+
+
+.position-tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.position-tooltip-wrapper::after {
+  content: attr(data-tooltip);
+
+  position: absolute;
+
+  top: 135%;
+  left: 0;
+
+  background: #42579f;
+  color: #fff;
+
+  padding: 8px 12px;
+
+  border-radius: 4px;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  white-space: normal;
+
+  min-width: 240px;
+  max-width: 350px;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition: 0.2s ease;
+
+  z-index: 99999;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.position-tooltip-wrapper::before {
+  content: "";
+
+  position: absolute;
+
+  top: 118%;
+  left: 20px;
+
+  border-width: 7px;
+  border-style: solid;
+
+  border-color: transparent transparent #42579f transparent;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition: 0.2s ease;
+
+  z-index: 99999;
+}
+
+.position-tooltip-wrapper:hover::after,
+.position-tooltip-wrapper:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+
+
+.react-select__control {
+  overflow: visible !important;
+}
+
+/* .react-select__value-container {
+  overflow: visible !important;
+} */
+
+.react-select__indicators {
+  overflow: visible !important;
+}
+
+.position-tooltip-wrapper {
+  overflow: visible !important;
+}
+.schddis :disabled {
+	color: rgba(33, 37, 41, 0.75);
+	background: #eee;
+	border: 1px solid #eee;
+	border-color: var(--bs-nav-tabs-link-hover-border-color);
+}
+.selected-count-chip{
+  background: #EEF3FF;
+  color: #162B75;
+  /* border: 1px solid #C9D7FF; */
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 400;
+  white-space: nowrap;
 }

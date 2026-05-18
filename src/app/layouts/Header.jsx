@@ -360,9 +360,10 @@ const Header = () => {
                 </Nav.Link>
               )}
 
-              <Nav.Link as={NavLink} to="/messages" onClick={closeMenu}>
+               <Nav.Link as={NavLink} to="/messages" onClick={closeMenu}>
                 {t("messages")}
-              </Nav.Link>
+              </Nav.Link> 
+              
                {canApprovals && (
                 <NavDropdown
                   id="approvals-dropdown"
@@ -371,7 +372,9 @@ const Header = () => {
                   onMouseLeave={() => setShowApprovalsMenu(false)}
                   className={`approvals-dropdown ${location.pathname.startsWith("/requisition-requests") ||
                     location.pathname.startsWith("/extension-requests") ||
-                    location.pathname.startsWith("/committee-requests")
+                    location.pathname.startsWith("/committee-requests") ||
+                    location.pathname.startsWith("/interview-requests") ||
+                    location.pathname.startsWith("/exam-requests")
                     ? "active-admin"
                     : ""
                     }`}
@@ -390,13 +393,13 @@ const Header = () => {
                     {t("requisition_requests")}
                   </NavDropdown.Item>
 
-                  {/* <NavDropdown.Item
+                  <NavDropdown.Item
                     as={NavLink}
                     to="/extension-requests"
                     onClick={closeMenu}
                   >
                     {t("extension_requests")}
-                  </NavDropdown.Item> */}
+                  </NavDropdown.Item>
 
                   <NavDropdown.Item
                     as={NavLink}
@@ -404,6 +407,22 @@ const Header = () => {
                     onClick={closeMenu}
                   >
                     {t("committee_requests")}
+                  </NavDropdown.Item>
+
+                  <NavDropdown.Item
+                    as={NavLink}
+                    to="/exam-requests"
+                    onClick={closeMenu}
+                    >
+                       {t("exam_requests")}
+                    </NavDropdown.Item>
+
+                  <NavDropdown.Item
+                    as={NavLink}
+                    to="/interview-requests"
+                    onClick={closeMenu}
+                  >
+                    {t("interview_requests")}
                   </NavDropdown.Item>
                 </NavDropdown>
               )}

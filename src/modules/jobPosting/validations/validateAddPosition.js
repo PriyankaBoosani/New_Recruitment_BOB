@@ -28,7 +28,8 @@ export const validateTitleOnType = (value) => {
 
 
 const validateFile = ({ indentFile, isEditMode, existingIndentPath, errors }) => {
-  if (!indentFile && !(isEditMode && existingIndentPath)) {
+ 
+  if (!indentFile && !existingIndentPath) {
     errors.indentFile = "validation:required";
   }
 };
@@ -39,7 +40,7 @@ const validateBasicFields = (formData, errors) => {
   if (!formData.employmentType) errors.employmentType = "validation:required";
   if (!formData.grade) errors.grade = "validation:required";
   if (!formData.medicalRequired) errors.medicalRequired = "validation:required";
-  if (!formData.cutoffDate) errors.cutoffDate = "validation:required";
+ // if (!formData.cutoffDate) errors.cutoffDate = "validation:required";
 };
 
 const validateDuplicate = ({ formData, existingPositions, isEditMode, positionId, errors }) => {

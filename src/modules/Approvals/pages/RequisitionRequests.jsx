@@ -78,18 +78,18 @@ const RequisitionRequests = () => {
 
       // 🔥 THIS IS THE IMPORTANT CHECK
       if (!result || result.success !== true) {
-        toast.error(t("jobPostingsList.failed_to_approve"));
+        toast.error(t("jobPostingsList:failed_to_approve"));
         return;
       }
 
-      toast.success(t("jobPostingsList.approved_successfully"));
+      toast.success(t("jobPostingsList:approved_successfully"));
 
       setShowCommentModal(false);
       setSelectedReqIds(new Set());
 
     } catch (error) {
       console.error("Approval error:", error);
-      toast.error(t("jobPostingsList.approved_failed"));
+      toast.error(t("jobPostingsList:approved_failed"));
     }
   };
   const {

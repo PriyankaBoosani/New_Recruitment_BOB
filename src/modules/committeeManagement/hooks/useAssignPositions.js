@@ -305,13 +305,20 @@ export const useAssignPositions = (userId) => {
   //   );
   // };
   const isPanelChanged = (panel, originalPanel) => {
-    if (!originalPanel) return true; // new panel
+    if (!originalPanel) return true;
+
+    const currentMembers = (panel.members || [])
+      .map(m => m.userId)
+      .sort();
+
+    const originalMembers = (originalPanel.members || [])
+      .map(m => m.userId)
+      .sort();
 
     return (
       panel.startDate !== originalPanel.startDate ||
-      panel.endDate !== originalPanel.endDate 
-      // JSON.stringify(panel.members.map(m => m.userId).sort()) !==
-      // JSON.stringify(originalPanel.members.map(m => m.userId).sort())
+      panel.endDate !== originalPanel.endDate ||
+      JSON.stringify(currentMembers) !== JSON.stringify(originalMembers)
     );
   };
 

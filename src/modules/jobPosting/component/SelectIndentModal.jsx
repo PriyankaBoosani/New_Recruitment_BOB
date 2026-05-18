@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 const formatDate = (date) => {
   if (!date) return "-";
@@ -19,6 +20,7 @@ const SelectIndentModal = ({
   selectedIndent
 }) => {
   const [selected, setSelected] = useState(null);
+  const { t } = useTranslation("addPosition");
 
   // 🔥 Preselect when modal opens
   useEffect(() => {
@@ -29,8 +31,8 @@ const SelectIndentModal = ({
 
   return (
     <Modal show={show} onHide={onClose} centered className="selectindent">
-      <Modal.Header closeButton>
-        <Modal.Title className="bluecol f16">Select Indent</Modal.Title>
+      <Modal.Header closeButton className="border-0">
+        <Modal.Title className="bluecol f16">{t("select_indent")}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
@@ -47,7 +49,7 @@ const SelectIndentModal = ({
             name="indent"
             checked={selected === "CUSTOM"}
             onChange={() => setSelected("CUSTOM")}
-            label={<span className="text-muted small">Upload New Indent</span>}
+            label={<span className="text-muted small">{t("upload_indent")}</span>}
           />
         </div>
 
@@ -55,7 +57,7 @@ const SelectIndentModal = ({
         {data?.length > 0 && (
           <>
             <div className="mt-3 mb-2 fw-semibold text-muted small bluecol">
-              Existing Indents
+              {t("existing_indents")}
             </div>
 
             {data.map((item, index) => (
@@ -89,14 +91,14 @@ const SelectIndentModal = ({
 
         {data?.length === 0 && (
           <div className="text-muted mt-2">
-            No existing indents available
+            {t("no_existing_indents")}
           </div>
         )}
       </Modal.Body>
 
-      <Modal.Footer>
+      <Modal.Footer className="border-0">
         <Button variant="outline-secondary" onClick={onClose}>
-          Cancel
+          {t("cancel")}
         </Button>
 
         <Button
@@ -104,7 +106,7 @@ const SelectIndentModal = ({
           onClick={() => onSelect(selected)}
           disabled={!selected}
         >
-          Select
+          {t("select")}
         </Button>
       </Modal.Footer>
     </Modal>

@@ -6,6 +6,7 @@ export const mapAddPositionToCreateDto = ({
   approvedOn,
   indentName,
   indentOthers,
+  indentPath,
   currentState,
   stateDistributions = [],
   reservationCategories = [],
@@ -16,7 +17,7 @@ export const mapAddPositionToCreateDto = ({
 
   qualifications = [],
   certifications = [],
-   isAgeRelRiotVictimFamily,
+  isAgeRelRiotVictimFamily,
   isAgeRelWdsWomen
 }) => {
   /* ================= SAFE NORMALIZATION ================= */
@@ -24,14 +25,14 @@ export const mapAddPositionToCreateDto = ({
   const buildEduRulesJson = (edu, mode) => {
     if (!edu) {
       return mode === "mandatory"
-        ? { 
-            mandatoryEducations: { operator: "OR", groups: [] },
-            mandatoryCertifications: { operator: "OR", groups: [] }
-          }
-        : { 
-            preferredEducations: { operator: "OR", groups: [] },
-            preferredCertifications: { operator: "OR", groups: [] }
-          };
+        ? {
+          mandatoryEducations: { operator: "OR", groups: [] },
+          mandatoryCertifications: { operator: "OR", groups: [] }
+        }
+        : {
+          preferredEducations: { operator: "OR", groups: [] },
+          preferredCertifications: { operator: "OR", groups: [] }
+        };
     }
 
     // Process education groups with OR/AND operators
@@ -39,7 +40,7 @@ export const mapAddPositionToCreateDto = ({
     if (edu.groups && Array.isArray(edu.groups)) {
       edu.groups.forEach(group => {
         const conditions = [];
-        
+
         if (group.educations && Array.isArray(group.educations)) {
           group.educations.forEach(edu => {
             if (edu.educationTypeId && edu.educationQualificationsId) {
@@ -68,7 +69,7 @@ export const mapAddPositionToCreateDto = ({
     if (edu.certGroups && Array.isArray(edu.certGroups)) {
       edu.certGroups.forEach(certGroup => {
         const conditions = [];
-        
+
         if (certGroup.certifications && Array.isArray(certGroup.certifications)) {
           certGroup.certifications.forEach(cert => {
             if (cert.certificationId) {
@@ -88,25 +89,25 @@ export const mapAddPositionToCreateDto = ({
 
     return mode === "mandatory"
       ? {
-          mandatoryEducations: {
-            operator: "OR",
-            groups: educationGroups
-          },
-          mandatoryCertifications: {
-            operator: "OR",
-            groups: certificationGroups
-          }
+        mandatoryEducations: {
+          operator: "OR",
+          groups: educationGroups
+        },
+        mandatoryCertifications: {
+          operator: "OR",
+          groups: certificationGroups
         }
+      }
       : {
-          preferredEducations: {
-            operator: "OR",
-            groups: educationGroups
-          },
-          preferredCertifications: {
-            operator: "OR",
-            groups: certificationGroups
-          }
-        };
+        preferredEducations: {
+          operator: "OR",
+          groups: educationGroups
+        },
+        preferredCertifications: {
+          operator: "OR",
+          groups: certificationGroups
+        }
+      };
   };
 
 
@@ -141,7 +142,8 @@ export const mapAddPositionToCreateDto = ({
     employmentType: formData.employmentType,
     gradeId: formData.grade,
     indentName: formData.indentName,
-    cutoffDate: formData.cutoffDate,
+   // cutoffDate: formData.cutoffDate,
+    indentPath: indentPath,
 
     contractYears: Number(formData.contractualPeriod || 0),
 
@@ -168,28 +170,28 @@ export const mapAddPositionToCreateDto = ({
 
     // When toggles are OFF: set null and empty objects
     // When toggles are ON: build education UUID to months mapping
-    mandatoryExpMonthsEduWise: formData.useMandatoryEducationLevelExperience 
+    mandatoryExpMonthsEduWise: formData.useMandatoryEducationLevelExperience
       ? (formData.mandatoryExperience?.educationLevelExperiences || []).reduce((acc, exp) => {
-          if (exp.educationLevel) {
-            const months = (Number(exp.years || 0) * 12) + Number(exp.months || 0);
-            if (months > 0) {
-              acc[exp.educationLevel] = months;
-            }
+        if (exp.educationLevel) {
+          const months = (Number(exp.years || 0) * 12) + Number(exp.months || 0);
+          if (months > 0) {
+            acc[exp.educationLevel] = months;
           }
-          return acc;
-        }, {})
+        }
+        return acc;
+      }, {})
       : {},
 
-    preferredExpMonthsEduWise: formData.usePreferredEducationLevelExperience 
+    preferredExpMonthsEduWise: formData.usePreferredEducationLevelExperience
       ? (formData.preferredExperience?.educationLevelExperiences || []).reduce((acc, exp) => {
-          if (exp.educationLevel) {
-            const months = (Number(exp.years || 0) * 12) + Number(exp.months || 0);
-            if (months > 0) {
-              acc[exp.educationLevel] = months;
-            }
+        if (exp.educationLevel) {
+          const months = (Number(exp.years || 0) * 12) + Number(exp.months || 0);
+          if (months > 0) {
+            acc[exp.educationLevel] = months;
           }
-          return acc;
-        }, {})
+        }
+        return acc;
+      }, {})
       : {},
 
     mandatoryExperienceMonths: formData.useMandatoryEducationLevelExperience
@@ -247,7 +249,7 @@ export const mapAddPositionToCreateDto = ({
         disabilityCategories,
       })
       : [],
-      
+
   };
 };
 

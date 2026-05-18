@@ -9,13 +9,13 @@ import {
 import { useTranslation } from "react-i18next";
 
 import masterApiService from "../../../services/masterApiService";
-import { mapEducationListFromApi } from "../mappers/educationMapper"; // ✅ ADD
+import { mapEducationListFromApi } from "../mappers/educationMapper";
 
 export const useExperience = () => {
   const { t } = useTranslation(["education", "common"]);
 
-  const [experienceList, setExperienceList] = useState([]); // table
-  const [educationOptions, setEducationOptions] = useState([]); // dropdown
+  const [experienceList, setExperienceList] = useState([]);
+  const [educationOptions, setEducationOptions] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
@@ -26,7 +26,8 @@ export const useExperience = () => {
       educationLevel: "",
       course: "",
       educationQualificationsId: "",
-      specializationOthers: [{ name: "", id: "" }]
+      specializationOthers: []
+      // specializationOthers: [{ name: "", id: "" }]
     },
   ]);
 
@@ -38,7 +39,7 @@ export const useExperience = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
 
-  // 🔥 GET API → DROPDOWN
+
   const fetchEducationOptions = async () => {
     try {
       setLoading(true);
@@ -53,7 +54,7 @@ export const useExperience = () => {
 
       const ids = filtered.map(item => item.documentTypeId);
 
-      return { ids, filtered }; // ✅ return both
+      return { ids, filtered };
     } catch (err) {
       toast.error("Failed to fetch education dropdown");
       return { ids: [], filtered: [] };
@@ -62,7 +63,7 @@ export const useExperience = () => {
     }
   };
 
-  // 🔥 POST API → TABLE (WITH IDS)
+
   const fetchEducationByIds = async (ids, educationOptionsList) => {
     try {
       setLoading(true);
@@ -90,11 +91,11 @@ export const useExperience = () => {
     const { ids, filtered } = await fetchEducationOptions();
 
     if (ids?.length) {
-      await fetchEducationByIds(ids, filtered); // ✅ pass directly
+      await fetchEducationByIds(ids, filtered);
     }
   };
 
-  // 🔥 HANDLE CHANGE
+
   const handleFieldChange = (formIndex, field, value, specIndex = null) => {
     const regex = /^[A-Za-z\s.&,()\-_/]*$/;
 
@@ -113,8 +114,7 @@ export const useExperience = () => {
     setFormData(updated);
 
     if (field === "educationLevel") {
-      console.log("Selected ID:", value); // ✅ check ID
-
+      console.log("Selected ID:", value);
     }
 
     let fieldError = null;
@@ -149,7 +149,7 @@ export const useExperience = () => {
     const updated = [...formData];
     updated[formIndex].specializationOthers.push({
       name: "",
-      id: null // ✅ dynamic id
+      id: null
     });
     setFormData(updated);
   };
@@ -166,7 +166,8 @@ export const useExperience = () => {
       {
         educationLevel: "",
         course: "",
-        specializationOthers: [{ name: "", id: "" }]
+        specializationOthers: []
+        // specializationOthers: [{ name: "", id: "" }]
       },
     ]);
     setErrors([]);
@@ -183,29 +184,32 @@ export const useExperience = () => {
 
   const saveExperience = async () => {
     try {
+
+
       const { valid, errors: newErrors } = validateEducationForm(formData[0], {
-        existing: experienceList,   // 🔥 REQUIRED
-        currentId: formData[0].educationQualificationsId
+        existing: experienceList,
+        currentId: formData[0].educationQualificationsId,
+        editMode: isEditMode
       });
       setErrors([newErrors]);
-      console.log("Payload to save", valid); // ✅ check payload
 
+      // return
       if (!valid) return;
-      console.log("Payload to save111", formData[0].specializationOthers); // ✅ check payload
-
       const payload = {
         qualification: {
           levelId: formData[0].educationLevel,
-          qualificationName: formData[0].course,   // ✅ use course as name
-          qualificationCode: formData[0].course,   // ✅ simple fix
+          qualificationName: formData[0].course,
+          // qualificationCode: formData[0].course,
+          qualificationCode: "",
           displayOrder: 0,
-          educationQualificationsId: formData[0].educationQualificationsId || null, // ✅ include ID for edit
+          educationQualificationsId: formData[0].educationQualificationsId || null,
         },
         specializations: formData[0].specializationOthers
-          .filter((s) => s?.name?.trim()).map((s) => ({
+          .filter((s) => s?.name.trim()).map((s) => ({
             specializationName: s.name.trim(),
-            specializationCode: s.name.trim(),   // ✅ dynamic
-            specializationId: s.id || null,     // ✅ dynamic
+            // specializationCode: s.name,
+            specializationCode: "",
+            specializationId: s.id || null,
           }))
       };
 
@@ -213,42 +217,51 @@ export const useExperience = () => {
 
       const saved = res.data;
 
-      const levelId = String(saved?.qualification?.levelId || "").toLowerCase();
-
-      // 🔥 Create lookup map (same as before)
-      const docMap = new Map(
-        educationOptions.map(opt => [
-          String(opt.documentTypeId).toLowerCase(),
-          opt.documentName
-        ])
-      );
-
-      // 🔥 Get documentName using levelId
-      const documentName = docMap.get(levelId);
-
-      const mapped = {
-        educationLevel: documentName || "-", // ✅ FIXED
-        course: saved?.qualification?.qualificationName || "-",
-        specialization:
-          saved?.specializations?.map((s) => ({
-            name: s.specializationName,
-            id: s.specializationId
-          })) || [],
-        educationQualificationsId: saved?.qualification?.educationQualificationsId || "-",
-      };
-
-      await loadData();  // ✅ REFETCH TABLE DATA
-
       if (isEditMode) {
-        toast.success(t("education:updated_success"));
+        if (res.success) {
+          toast.success(t("education:updated_success"));
+        } else {
+          toast.error(res.message + ": " + res.data);
+        }
       } else {
-        toast.success(t("education:saved_success"));
+        if (res.success) {
+          toast.success(t("education:saved_success"));
+        } else {
+          toast.error(res.message + ": " + res.data);
+        }
       }
+      if (res.success) {
+        const levelId = String(saved?.qualification?.levelId || "").toLowerCase();
 
-      setShowModal(false);
-      setIsEditMode(false);
-      setEditIndex(null);
 
+        const docMap = new Map(
+          educationOptions.map(opt => [
+            String(opt.documentTypeId).toLowerCase(),
+            opt.documentName
+          ])
+        );
+
+
+        const documentName = docMap.get(levelId);
+
+        const mapped = {
+          educationLevel: documentName || "-",
+          course: saved?.qualification?.qualificationName || "-",
+          specialization:
+            saved?.specializations?.map((s) => ({
+              name: s.specializationName,
+              id: s.specializationId
+            })) || [],
+          educationQualificationsId: saved?.qualification?.educationQualificationsId || "-",
+        };
+
+        await loadData();
+
+        setShowModal(false);
+        setIsEditMode(false);
+        setEditIndex(null);
+
+      }
     } catch (err) {
       console.error(err);
       toast.error("Save failed");
@@ -279,7 +292,7 @@ export const useExperience = () => {
               name: s.name,
               id: s.id
             }))
-            : [{ name: "", id: "" }],
+            : [],
       },
     ]);
 

@@ -13,7 +13,8 @@ import masterApiService from "../../master/services/masterApiService";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck, faCircleExclamation, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faCircleExclamation, faCircleXmark, faTrash, faUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+import CommentsModal from "./CommentsModal";
 
 
 const ApplicationForm = ({
@@ -23,18 +24,22 @@ const ApplicationForm = ({
   setFormErrors,
   candidateId,
   positionId,
+  positionIds,
   applicationId,
   requisitionId,
   interviewScheduleId,
   requisitionTitle,
   positionName,
+  isLocationWise,
   selectedDate,
   zonalVerificationStatus,
   zonalSubmitBeforeDate,
   zonalHrComments,
   candidateStatus,
   isFromInterview,
-   isFromCompensationPool
+  isFromCompensationPool,
+  page,
+  pageSize
 }) => {
 
   const { t } = useTranslation(["preview", "common", "validation"]);
@@ -42,6 +47,10 @@ const ApplicationForm = ({
   const navigate = useNavigate();
   const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
   const [criteria, setCriteria] = useState({});
+  const [showCommentsModal, setShowCommentsModal] = useState(false);
+  const [isEligible, setIsEligible] = useState(false);
+  const [otherDocuments, setOtherDocuments] = useState([]);
+  const [otherDocumentErrors, setOtherDocumentErrors] = useState({});
   const location = useLocation();
   const isInterviewView = location.state?.fromInterviewPool;
   const candidate = location.state?.candidate;
@@ -53,17 +62,27 @@ const ApplicationForm = ({
 
 
 
-  const deriveShortlistStatus = () => {
-    const values = [
-      screeningForm.isWorkCriteriaMet,
-      screeningForm.isAgeCriteriaMet,
-      screeningForm.isEducationCriteriaMet,
-    ];
+  // const deriveShortlistStatus = () => {
+  //   const values = [
+  //     screeningForm.isWorkCriteriaMet,
+  //     screeningForm.isAgeCriteriaMet,
+  //     screeningForm.isEducationCriteriaMet,
+  //   ];
 
-    if (values.includes("NO")) return "NO";                  // Highest priority
-    if (values.includes("DISCREPANCY")) return "DEFAULT";    // Second priority
-    if (values.every(v => v === "YES")) return "YES";        // All YES
-    return "";
+  //   if (values.includes("NO")) return "NO";                  // Highest priority
+  //   if (values.includes("DISCREPANCY")) return "DEFAULT";    // Second priority
+  //   if (values.every(v => v === "YES")) return "YES";        // All YES
+  //   return "";
+  // };
+
+  const deriveShortlistStatus = () => {
+    const ageOk = isCategorySatisfied("AGE");
+    const workOk = isCategorySatisfied("WORK");
+    const eduOk = isCategorySatisfied("EDUCATION");
+
+    if (!ageOk || !workOk || !eduOk) return "NO";
+
+    return "YES";
   };
 
   useEffect(() => {
@@ -177,19 +196,22 @@ const ApplicationForm = ({
     // -----------------------------------------
 
     if (isZonalAbsent) {
-      toast.info("Zonal Absent candidates cannot be processed.");
+      // toast.info("Zonal Absent candidates cannot be processed.");
+      toast.info(t("zonal_absent_cannot_process"));
       return;
     }
 
     if (hasPendingDocument) {
-      toast.warning(
-        "All documents must be verified before submission."
-      );
+      // toast.warning(
+      //   "All documents must be verified before submission."
+      // );
+      toast.warning(t("all_documents_must_verified"));
       return;
     }
 
     if (!zonalDecision) {
-      toast.error("Please select decision");
+      // toast.error("Please select decision");
+      toast.error(t("please_select_decision"));
       return;
     }
     // 🔴 Comments mandatory when decision = NO
@@ -197,7 +219,8 @@ const ApplicationForm = ({
       if (!screeningRemarks?.trim()) {
         setErrors(prev => ({
           ...prev,
-          zonalComments: "This field is required"
+          zonalComments: t("validation:required")
+          // zonalComments: "This field is required"
         }));
         return;
       }
@@ -207,8 +230,11 @@ const ApplicationForm = ({
     // 2️⃣ All documents VERIFIED but decision = NO
     // -----------------------------------------
     if (zonalDecision === "NO" && allVerified) {
+      // toast.warning(
+      //   "All documents are verified. Please select other decision instead."
+      // );
       toast.warning(
-        "All documents are verified. Please select other decision instead."
+        t("all_documents_verified_select_other")
       );
       return;
     }
@@ -217,8 +243,11 @@ const ApplicationForm = ({
     // 3️⃣ Decision = YES but any document REJECTED
     // -----------------------------------------
     if (zonalDecision === "YES" && anyRejected) {
+      // toast.error(
+      //   "Cannot approve. One or more documents are rejected."
+      // );
       toast.error(
-        "Cannot approve. One or more documents are rejected."
+        t("cannot_approve_documents_rejected")
       );
       return;
     }
@@ -264,7 +293,8 @@ const ApplicationForm = ({
         if (selected <= today) {
           setErrors(prev => ({
             ...prev,
-            zonalSubmitDate: "Must be future date"
+            // zonalSubmitDate: "Must be future date"
+            zonalSubmitDate: t("must_be_future_date")
           }));
           hasError = true;
         }
@@ -278,7 +308,8 @@ const ApplicationForm = ({
     // -----------------------------------------
     // 6️⃣ Show Loading Toast
     // -----------------------------------------
-    const toastId = toast.loading("Submitting zonal verification...");
+    // const toastId = toast.loading("Submitting zonal verification...");
+    const toastId = toast.loading(t("submitting_zonal_verification"));
 
     try {
 
@@ -297,7 +328,9 @@ const ApplicationForm = ({
       // 7️⃣ Success Toast
       // -----------------------------------------
       toast.update(toastId, {
-        render: "Zonal verification submitted successfully",
+        // render: "Zonal verification submitted successfully",
+        render: t("zonal_verification_success"),
+
         type: "success",
         isLoading: false,
         autoClose: 2000,
@@ -310,17 +343,20 @@ const ApplicationForm = ({
           requisition: location.state?.requisition,
           position: location.state?.position,
           preloadedCandidates: location.state?.candidates || [],
-          selectedDate
+          selectedDate,
+          page: page,
+          pageSize: pageSize
         }
       });
-
+     
     } catch (err) {
 
       // -----------------------------------------
       // 8️⃣ Error Toast
       // -----------------------------------------
       toast.update(toastId, {
-        render: "Zonal submit failed. Please try again.",
+        // render: "Zonal submit failed. Please try again.",
+        render: t("zonal_submit_failed"),
         type: "error",
         isLoading: false,
         autoClose: 3000,
@@ -385,7 +421,7 @@ const ApplicationForm = ({
 
         setPhoto(trimmedUrl);
       } catch (err) {
-        console.error("Failed to load candidate photo", err);
+        console.error(t("failed_load_candidate_photo"), err);
       }
     };
 
@@ -406,7 +442,7 @@ const ApplicationForm = ({
 
         setSignature(trimmedUrl);
       } catch (err) {
-        console.error("Failed to load candidate photo", err);
+        console.error(t("failed_load_candidate_photo"), err);
       }
     };
 
@@ -420,6 +456,65 @@ const ApplicationForm = ({
   const [errors, setErrors] = useState({});
   const [docStatus, setDocStatus] = useState({});
   const [zonalDecision, setZonalDecision] = useState("");
+
+    const getDocCategory = (name = "") => {
+    const n = name.toLowerCase().trim();
+
+    // AGE
+    if (
+      n.includes("birth certificate") ||
+      n.includes("10th") ||
+      n.includes("10th certificate")
+    ) {
+      return "AGE";
+    }
+
+    // WORK
+    if (/^work[_\s]?experience/i.test(name)) {
+      return "WORK";
+    }
+
+    // EDUCATION
+    if (
+      n.includes("board") ||
+      n.includes("intermediate") ||
+      n.includes("graduation") ||
+      n.includes("post-graduation") ||
+      n.includes("doctorate") ||
+      n.includes("professional")
+    ) {
+      return "EDUCATION";
+    }
+
+    return "OTHER";
+  };
+
+  const groupedDocs = documentRows.reduce((acc, doc) => {
+    const category = getDocCategory(doc.name);
+
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(doc);
+
+    return acc;
+  }, {});
+
+  const isCategorySatisfied = (category) => {
+    const docs = groupedDocs[category] || [];
+
+    return docs.some(doc => {
+      const status = docStatusMap[doc.candidateDocumentId]?.status;
+      return status === "VERIFIED";
+    });
+  };
+
+  useEffect(() => {
+    // DO NOT auto-populate criteria based on document verification.
+    // Users must manually set criteria (YES/NO/DISCREPANCY).
+    // Documents being VERIFIED only affects:
+    // - Whether we ALLOW shortlist YES (all categories must have at least one VERIFIED doc)
+    // - But does NOT force criteria to YES
+    // If user marked DISCREPANCY, it should stay DISCREPANCY until manually changed.
+  }, [docStatusMap]);
 
   // const allDocsVerified =
   //   documentRows.length > 0 &&
@@ -466,15 +561,15 @@ const ApplicationForm = ({
         //     : item.docScreeningStatus || "PENDING";
 
 
-          const status = isZonalHr
-  ? item.zonalHrDocStatus || "PENDING"
-  
-  : isFromCompensationPool   //  ADD THIS
-    ? item.zonalHrDocStatus || "PENDING"
-    
-  : (isInterviewer || isInterviewView)
-    ? (item.zonalHrDocStatus || "PENDING")   //  ONLY ZONAL
-    : item.docScreeningStatus || "PENDING";
+        const status = isZonalHr
+          ? item.zonalHrDocStatus || "PENDING"
+
+          : isFromCompensationPool   //  ADD THIS
+            ? item.zonalHrDocStatus || "PENDING"
+
+            : (isInterviewer || isInterviewView)
+              ? (item.zonalHrDocStatus || "PENDING")   //  ONLY ZONAL
+              : item.docScreeningStatus || "PENDING";
 
 
         const comments = isZonal
@@ -504,7 +599,7 @@ const ApplicationForm = ({
       setScreeningDocuments(documents);
 
     } catch (e) {
-      console.error("Failed to fetch document status", e);
+      console.error(t("failed_fetch_document_status"), e);
     } finally {
       setDocStatusLoading(false);
     }
@@ -568,8 +663,9 @@ const ApplicationForm = ({
           submitBeforeDate: data.submitBeforeDate ?? "",
           screeningId: data.screeningId ?? null,
         }));
+        setIsEligible(Boolean(data.isEligible));
       } catch (err) {
-        console.error("Failed to fetch discrepancy details", err);
+        console.error(t("failed_fetch_discrepancy_details"), err);
       }
     };
 
@@ -596,6 +692,8 @@ const ApplicationForm = ({
         return "verified-pill";
       case "REJECTED":
         return "rejected-pill";
+      case "YET TO UPLOAD":
+        return "yet-upload-pill";
       default:
         return "pending-pill";
     }
@@ -735,7 +833,7 @@ const ApplicationForm = ({
       await refreshDocStatuses();
 
     } catch (err) {
-      console.error("Verify failed", err);
+      console.error(t("reject_failed"), err);
     }
   };
 
@@ -777,6 +875,17 @@ const ApplicationForm = ({
       console.error("Reject failed", err);
     }
   };
+
+  const hasAdditionalDocuments = otherDocuments.some(
+    doc => doc.documentName?.trim()
+  );
+
+  const hasAnyDiscrepancy =
+    screeningForm.isWorkCriteriaMet === "DISCREPANCY" ||
+    screeningForm.isAgeCriteriaMet === "DISCREPANCY" ||
+    screeningForm.isEducationCriteriaMet === "DISCREPANCY" ||
+    hasAdditionalDocuments;
+
 
 
   const validateForm = () => {
@@ -829,19 +938,19 @@ const ApplicationForm = ({
       newErrors.isShortlisted = t("please_select_option");
     }
 
-    if (hasAnyRejectedDocument()) {
-      const allYes =
-        screeningForm.isWorkCriteriaMet === "YES" &&
-        screeningForm.isAgeCriteriaMet === "YES" &&
-        screeningForm.isEducationCriteriaMet === "YES";
+    // if (hasAnyRejectedDocument()) {
+    //   const allYes =
+    //     screeningForm.isWorkCriteriaMet === "YES" &&
+    //     screeningForm.isAgeCriteriaMet === "YES" &&
+    //     screeningForm.isEducationCriteriaMet === "YES";
 
-      if (allYes) {
-        toast.error(
-          "All criteria cannot be YES when any document is REJECTED"
-        );
-        return false;
-      }
-    }
+    //   if (allYes) {
+    //     toast.error(
+    //       "All criteria cannot be YES when any document is REJECTED"
+    //     );
+    //     return false;
+    //   }
+    // }
 
     // const derivedStatus = deriveShortlistStatus();
 
@@ -858,7 +967,7 @@ const ApplicationForm = ({
     }
 
     // Submit before date validation
-    if (disableShortlistedSection) {
+    if (hasAnyDiscrepancy) {
       if (!screeningForm.submitBeforeDate) {
         newErrors.submitBeforeDate = t("please_select_date");
       } else {
@@ -870,6 +979,20 @@ const ApplicationForm = ({
           newErrors.submitBeforeDate = t("date_after_today");
         }
       }
+    }
+
+    const docErrors = {};
+
+    otherDocuments.forEach((doc) => {
+      if (!doc.documentName?.trim()) {
+        docErrors[doc.id] = "Document name is required";
+      }
+    });
+
+    setOtherDocumentErrors(docErrors);
+
+    if (Object.keys(docErrors).length > 0) {
+      return false;
     }
 
     setErrors(newErrors);
@@ -912,6 +1035,22 @@ const ApplicationForm = ({
     );
   };
 
+  const hasShortlistSelection =
+    screeningForm.isShortlisted === "YES" ||
+    screeningForm.isShortlisted === "NO";
+
+  const hasMissingUploads = documentRows.some(
+    doc => !doc?.url
+  );
+
+  const disableEligibleCheckbox =
+    !areAllCriteriaYes() ||
+    hasShortlistSelection ||
+    hasAdditionalDocuments ||
+    hasMissingUploads;
+
+  const disableShortlistBecauseEligible = isEligible;
+
   const hasAnyRejectedDocument = () => {
     return documentRows.some(doc => {
       const status = docStatusMap[doc.candidateDocumentId]?.status;
@@ -928,54 +1067,96 @@ const ApplicationForm = ({
   };
 
   const baseDerived = deriveShortlistStatus();
-  const derivedShortlist = baseDerived;
 
   const areAllCriteriaSelected =
     screeningForm.isWorkCriteriaMet &&
     screeningForm.isAgeCriteriaMet &&
     screeningForm.isEducationCriteriaMet;
 
+  // Disable shortlist section if:
+  // 1. Criteria are not all selected, OR
+  // 2. ANY criteria is marked as DISCREPANCY
+  // const disableShortlistedSection = !areAllCriteriaSelected || hasAnyDiscrepancy;
   const disableShortlistedSection =
-    !areAllCriteriaSelected || baseDerived === "DEFAULT";
+  !areAllCriteriaSelected ||
+  hasAnyDiscrepancy ||
+  disableShortlistBecauseEligible ||
+  hasMissingUploads;
 
-  // const disableYesOption =
-  //   disableShortlistedSection || derivedShortlist === "NO";
-
-  // const disableNoOption =
-  //   disableShortlistedSection || derivedShortlist === "YES";
-
-  // const disableYesOption = disableShortlistedSection;
+  // Disable YES option if:
+  // 1. Shortlist section is disabled, OR
+  // 2. NOT all criteria are marked as YES
   const disableYesOption = disableShortlistedSection || !areAllCriteriaYes();
+  
+  // NO option is disabled if shortlist section is disabled
   const disableNoOption = disableShortlistedSection;
 
   const handleFinalSubmit = async () => {
-
-    // 🔴 1️⃣ Hard stop: documents cannot be pending
-    if (!areAllDocumentsValidated()) {
-      toast.error("Please validate all documents");
-      return;
-    }
-
+    // ✅ Validation 1: Criteria must be selected
     const isValid = validateForm();
     if (!isValid) return;
 
-    // 🔴 2️⃣ Auto derive shortlist status
-    const derivedShortlist = deriveShortlistStatus();
+    // ✅ Validation 2: Check document satisfaction for shortlist logic
+    const isAgeValid = isCategorySatisfied("AGE");
+    const isWorkValid = isCategorySatisfied("WORK");
+    const isEducationValid = isCategorySatisfied("EDUCATION");
+
+    // If all categories have verified docs, allow user's shortlist decision
+    // If not, force shortlist to NO (but don't stop submission)
+    // let finalShortlist = screeningForm.isShortlisted;
+    // if (!isAgeValid || !isWorkValid || !isEducationValid) {
+    //   finalShortlist = "NO";
+    // }
+
+    let finalShortlist = screeningForm.isShortlisted;
+
+    // If any criteria is DISCREPANCY,
+    // shortlist must stay empty
+    if (hasAnyDiscrepancy) {
+      finalShortlist = "";
+    }
+
+    // Otherwise, if required verified docs are missing,
+    // force shortlist to NO
+    else if (!isAgeValid || !isWorkValid || !isEducationValid) {
+      finalShortlist = "NO";
+    }
 
     const payload = {
       ...screeningForm,
-      // isShortlisted: derivedShortlist || "NO",
+      isShortlisted: finalShortlist,
       isScreeningCompleted: true,
+      isEligible,
+      additionalDocumentNames: otherDocuments
+        .map(doc => doc.documentName?.trim())
+        .filter(Boolean),
     };
 
 
     try {
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
-      toast.success("Screening submitted successfully");
-      navigate("/candidate-workflow", { state: { requisitionId, positionId } })
+      // toast.success("Screening submitted successfully");
+      toast.success(t("screening_submitted_success"));
+      console.log("SENDING POSITION IDS:", {
+        positionIds,
+        positionId
+      });
+      navigate("/candidate-workflow", {
+        state: {
+          requisitionId,
+
+          positionIds: Array.isArray(positionIds)
+            ? positionIds.map(item => item.positionId)
+            : positionId
+              ? [positionId]
+              : [],
+          page: page,
+          pageSize: pageSize,
+        },
+      });
     } catch (err) {
-      console.error("Screening submit failed", err);
-      toast.error("Submission failed");
+      console.error(t("screening_submit_failed"), err);
+      toast.error(t("submission_failed"));
     }
   };
 
@@ -1006,7 +1187,7 @@ const ApplicationForm = ({
     // Clear error while typing
     setErrors(prev => ({ ...prev, submitBeforeDate: undefined }));
 
-    // ⛔ Do NOT validate until full date exists
+
     if (value.length < 10) return;
 
     // Enforce exact YYYY-MM-DD
@@ -1033,9 +1214,8 @@ const ApplicationForm = ({
   };
 
   useEffect(() => {
-    if (!disableShortlistedSection) return;
-    if (screeningForm.isScreeningCompleted) return; // 🔒 preserve backend value
-
+    if (!disableShortlistedSection || hasAnyDiscrepancy) return;
+    if (screeningForm.isScreeningCompleted) return;
     setScreeningForm(prev => ({
       ...prev,
       submitBeforeDate: "",
@@ -1046,34 +1226,16 @@ const ApplicationForm = ({
       submitBeforeDate: undefined,
     }));
 
-  }, [disableShortlistedSection, screeningForm.isScreeningCompleted]);
+  }, [disableShortlistedSection, screeningForm.isScreeningCompleted, hasAnyDiscrepancy]);
 
   useEffect(() => {
     const derived = deriveShortlistStatus();
 
-    // if (derived === "YES") {
-    //   setScreeningForm(prev => ({
-    //     ...prev,
-    //     isShortlisted: "YES",
-    //     finalScreeningRemark: "",   // 🔥 CLEAR HERE
-    //   }));
 
-    //   setErrors(prev => ({
-    //     ...prev,
-    //     finalScreeningRemark: undefined,
-    //   }));
-    // }
-
-    // if (derived === "NO") {
-    //   setScreeningForm(prev => ({
-    //     ...prev,
-    //     isShortlisted: "NO",
-    //   }));
-    // }
 
     if (derived === "DEFAULT") {
       setScreeningForm(prev => {
-        if (prev.isScreeningCompleted) return prev; // 🔒 preserve backend data
+        if (prev.isScreeningCompleted) return prev;
 
         return {
           ...prev,
@@ -1106,6 +1268,60 @@ const ApplicationForm = ({
   }, [screeningForm.isWorkCriteriaMet,
   screeningForm.isAgeCriteriaMet,
   screeningForm.isEducationCriteriaMet]);
+
+  // Clear shortlist completely when any criteria is marked as DISCREPANCY
+  useEffect(() => {
+    if (hasAnyDiscrepancy && screeningForm.isShortlisted) {
+      setScreeningForm(prev => ({
+        ...prev,
+        isShortlisted: "",
+        finalScreeningRemark: ""
+      }));
+
+      setErrors(prev => ({
+        ...prev,
+        isShortlisted: undefined,
+        finalScreeningRemark: undefined
+      }));
+    }
+  }, [hasAnyDiscrepancy]);
+
+  useEffect(() => {
+  if (!hasAdditionalDocuments) return;
+
+  // Clear shortlist + eligible immediately
+  setIsEligible(false);
+
+  setScreeningForm(prev => ({
+    ...prev,
+    isShortlisted: "",
+    finalScreeningRemark: "",
+  }));
+
+  setErrors(prev => ({
+    ...prev,
+    isShortlisted: undefined,
+    finalScreeningRemark: undefined,
+  }));
+}, [hasAdditionalDocuments]);
+
+useEffect(() => {
+  if (!hasMissingUploads) return;
+
+  setIsEligible(false);
+
+  setScreeningForm(prev => ({
+    ...prev,
+    isShortlisted: "",
+    finalScreeningRemark: "",
+  }));
+
+  setErrors(prev => ({
+    ...prev,
+    isShortlisted: undefined,
+    finalScreeningRemark: undefined,
+  }));
+}, [hasMissingUploads]);
 
   const allDocsAreVerified = areAllDocumentsVerified();
 
@@ -1152,19 +1368,137 @@ const ApplicationForm = ({
 
   const getPendingMessage = (doc) => {
     if (!doc?.pendingChecks?.length) {
-      return "Validation pending";
+      return t("validation_pending");
     }
 
     const formatted = doc.pendingChecks
       .map(item => String(item).toUpperCase())
       .join(", ");
 
-    return `Please verify the correctness of ${formatted}`;
+    // return `Please verify the correctness of ${formatted}`;
+    return `${t("please_verify_correctness")} ${formatted}`;
   };
 
   const isBirthPending = birthDoc?.isValidationPending === true;
   const isTenthPending = tenthDoc?.isValidationPending === true;
   const isPending = isBirthPending || isTenthPending;
+
+  const handleEligibleChange = (checked) => {
+    setIsEligible(checked);
+
+    if (checked) {
+      setScreeningForm(prev => ({
+        ...prev,
+        isShortlisted: "",
+        finalScreeningRemark: "",
+      }));
+
+      setErrors(prev => ({
+        ...prev,
+        isShortlisted: undefined,
+        finalScreeningRemark: undefined,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    if (hasShortlistSelection && isEligible) {
+      setIsEligible(false);
+    }
+  }, [screeningForm.isShortlisted]);
+
+  const handleAddDocumentRow = () => {
+    setOtherDocuments(prev => [
+      ...prev,
+      {
+        id: Date.now(),
+        documentName: "",
+        criteriaType: "",
+      },
+    ]);
+  };
+
+  const handleRemoveDocumentRow = (id) => {
+    setOtherDocuments(prev => {
+      const updated = prev.filter(row => row.id !== id);
+
+      // Recalculate discrepancy after delete
+      const hasAge = updated.some(r => r.criteriaType === "Age");
+      const hasWork = updated.some(r => r.criteriaType === "Work");
+      const hasEducation = updated.some(r => r.criteriaType === "Education");
+
+      setScreeningForm(current => ({
+        ...current,
+
+        isAgeCriteriaMet:
+          current.isAgeCriteriaMet === "DISCREPANCY" && !hasAge
+            ? ""
+            : current.isAgeCriteriaMet,
+
+        isWorkCriteriaMet:
+          current.isWorkCriteriaMet === "DISCREPANCY" && !hasWork
+            ? ""
+            : current.isWorkCriteriaMet,
+
+        isEducationCriteriaMet:
+          current.isEducationCriteriaMet === "DISCREPANCY" && !hasEducation
+            ? ""
+            : current.isEducationCriteriaMet,
+      }));
+
+      return updated;
+    });
+  };
+
+  const handleOtherDocumentChange = (id, field, value) => {
+    setOtherDocuments(prev => {
+      const updated = prev.map(row =>
+        row.id === id
+          ? {
+              ...row,
+              [field]: value,
+            }
+          : row
+      );
+
+      // Get latest selected values
+      const selectedRow = updated.find(r => r.id === id);
+
+      setScreeningForm(current => {
+        const next = { ...current };
+
+        // Reset first
+        const hasAge = updated.some(r => r.criteriaType === "Age");
+        const hasWork = updated.some(r => r.criteriaType === "Work");
+        const hasEducation = updated.some(r => r.criteriaType === "Education");
+
+        if (hasAge) {
+          next.isAgeCriteriaMet = "DISCREPANCY";
+        }
+
+        if (hasWork) {
+          next.isWorkCriteriaMet = "DISCREPANCY";
+        }
+
+        if (hasEducation) {
+          next.isEducationCriteriaMet = "DISCREPANCY";
+        }
+
+        if (field === "documentName" && value.trim()) {
+          setOtherDocumentErrors(prev => {
+            const updated = { ...prev };
+            delete updated[id];
+            return updated;
+          });
+        }
+
+        return next;
+      });
+
+      return updated;
+    });
+  };
+
   return (
     <>
       <Accordion
@@ -1226,7 +1560,7 @@ const ApplicationForm = ({
                               className="photo-img"
                             />
                           ) : (
-                            <div className="no-image">No Photo</div>
+                            <div className="no-image">{t("no_photo")}</div>
                           )}
                         </div>
 
@@ -1239,7 +1573,7 @@ const ApplicationForm = ({
                               className="signature-img"
                             />
                           ) : (
-                            <div className="no-image">No Signature</div>
+                            <div className="no-image">{t("no_signature")}</div>
                           )}
                         </div>
 
@@ -1419,11 +1753,18 @@ const ApplicationForm = ({
                       <td className="fw-med">Social Media Profile links</td>
                       <td className="fw-reg" colSpan={2}>{previewData.personalDetails.socialMediaProfileLink}</td>
                     </tr>*/}
-
                   <tr>
+                    <td className="fw-med">{t("language_proficiency")}</td>
+                    <td className="fw-reg" colSpan={2}>{data.personalDetails.languages || "-"}</td>
 
                     <td className="fw-med">{t("social_media_links")}</td>
                     <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td>
+
+                  </tr>
+
+                  <tr>
+
+
                     <td className="fw-med">{t("location_pref1")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
@@ -1432,10 +1773,6 @@ const ApplicationForm = ({
                       )}
 
                     </td>
-
-                  </tr>
-
-                  <tr>
                     <td className="fw-med">{t("location_pref2")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
@@ -1444,6 +1781,11 @@ const ApplicationForm = ({
                       )}
 
                     </td>
+
+                  </tr>
+
+                  <tr>
+
                     <td className="fw-med">{t("location_pref3")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
@@ -1451,7 +1793,17 @@ const ApplicationForm = ({
                         data.personalDetails.statePreference3
                       )}
                     </td>
+                    <td className="fw-med">{t("language_preference")}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.localLanguage || "-"}
+                    </td>
 
+                  </tr>
+                  <tr>
+                    <td className="fw-med">{t("is_local_language_studied")}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {isLocationWise ? data.personalDetails.isLocalLanguageStudied : "-"}
+                    </td>
                   </tr>
 
 
@@ -1523,18 +1875,18 @@ const ApplicationForm = ({
                   {(data.education || [])
                     .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
                     .map((edu, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{edu.educationLevel_name || "-"}</td>
-                      <td>{edu.institution || "-"}</td>
-                      <td>{edu.universityName || "-"}</td>
-                      <td>{edu.mandatoryQualification_name || "-"}</td>
-                      <td>{edu.specialization_name || "-"}</td>
-                      <td>{edu.startDate || "-"}</td>
-                      <td>{edu.endDate || "-"}</td>
-                      <td>{edu.percentage || "-"}</td>
-                    </tr>
-                  ))}
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{edu.educationLevel_name || "-"}</td>
+                        <td>{edu.institution || "-"}</td>
+                        <td>{edu.universityName || "-"}</td>
+                        <td>{edu.mandatoryQualification_name || "-"}</td>
+                        <td>{edu.specialization_name || "-"}</td>
+                        <td>{edu.startDate || "-"}</td>
+                        <td>{edu.endDate || "-"}</td>
+                        <td>{edu.percentage || "-"}</td>
+                      </tr>
+                    ))}
 
 
                   {(!data.education || data.education.length === 0) && (
@@ -1636,11 +1988,13 @@ const ApplicationForm = ({
                     const left = documentRows[rowIndex * 2];
                     const right = documentRows[rowIndex * 2 + 1];
 
-                    const leftStatus =
-                      docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
+                    const leftStatus = !left?.url
+                      ? "YET TO UPLOAD"
+                      : docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
 
-                    const rightStatus =
-                      docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
+                    const rightStatus = !right?.url
+                      ? "YET TO UPLOAD"
+                      : docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
 
                     return (
                       <tr key={rowIndex}>
@@ -1798,238 +2152,359 @@ const ApplicationForm = ({
           </Accordion.Body>
         </Accordion.Item>
 
-        {/* ================= CRITERIA SECTION ================= */}
-      {canCandidatePool &&
-  !disableDocAction &&
-  !isFromInterview &&
-  !isFromCompensationPool && (   
-          <Card className="criteria-main-card">
+        <div className="card mt-3 border-0">
+          <div className="d-flex gap-3 align-items-center border-bottom p-3">
+            <label style={{ fontSize: '0.875rem', fontWeight: 500, color: '#162B75' }}>Additioal Required Documents</label>
+            <button className="btn-submit-orange py-1 px-2" style={{ height: 'auto', fontSize: '0.75rem' }} onClick={handleAddDocumentRow}>+ Add Document</button>
+          </div>
 
-            <div className="criteria-wrapper">
+          {otherDocuments.map((row) => (
+            <div
+              key={row.id}
+              className="d-flex align-items-end gap-3 p-3"
+            >
+              <div style={{ flex: 1 }}>
+                <label className="mb-1" style={{ color: '#162B75', fontSize: '0.75rem', fontWeight: 500 }}>
+                  Document Name
+                </label>
 
-              {/* WORK CRITERIA */}
-              <div className="criteria-card">
-                <label className="criteria-title">{t("work_criteria")}</label>
-
-                <div className="criteria-radio mb-0">
-                  {CRITERIA_OPTIONS.map(option => (
-                    <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
-                      <input
-                        type="radio"
-                        name="workCriteria"
-                        checked={screeningForm.isWorkCriteriaMet === option}
-                        onChange={() =>
-                          handleRadioChange("isWorkCriteriaMet", option)
-                        }
-                        disabled={isOptionDisabled(option)}
-                      />
-                      <span className="custom-radio"></span>
-                      {t(option)}
-                    </label>
-                  ))}
-                </div>
-                {errors.isWorkCriteriaMet && (
-                  <small className="text-danger fs-12">
-                    {errors.isWorkCriteriaMet}
-                  </small>
-                )}
-
-                <textarea
-                  // type="text"
-                  className="criteria-remark mt-2"
-                  placeholder={t("work_remark")}
-                  value={screeningForm.workCriteriaRemark}
+                <input
+                  type="text"
+                  className="form-control"
+                  value={row.documentName}
                   onChange={(e) =>
-                    handleInputChange("workCriteriaRemark", e.target.value)
+                    handleOtherDocumentChange(
+                      row.id,
+                      "documentName",
+                      e.target.value
+                    )
                   }
-                  maxLength={2000}
-                  rows={4}
-                // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
+                  style={{ minHeight: 'auto', padding: '0.4rem 0.8rem' }}
+                  placeholder="Enter document name"
                 />
-                {errors.workCriteriaRemark && (
+                {otherDocumentErrors[row.id] && (
                   <small className="text-danger fs-12">
-                    {errors.workCriteriaRemark}
+                    {otherDocumentErrors[row.id]}
                   </small>
                 )}
               </div>
 
-              {/* AGE CRITERIA */}
-              <div className="criteria-card">
-                <label className="criteria-title">{t("age_criteria")}</label>
+              {/* <div style={{ width: "220px" }}>
+                <label className="mb-1" style={{ color: '#162B75', fontSize: '0.75rem', fontWeight: 500 }}>
+                  Criteria
+                </label>
 
-                <div className="criteria-radio mb-0">
-                  {CRITERIA_OPTIONS.map(option => (
-                    <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
-                      <input
-                        type="radio"
-                        name="ageCriteria"
-                        checked={screeningForm.isAgeCriteriaMet === option}
-                        onChange={() =>
-                          handleRadioChange("isAgeCriteriaMet", option)
-                        }
-                        disabled={isOptionDisabled(option)}
-                      />
-                      <span className="custom-radio"></span>
-                      {t(option)}
-                    </label>
-                  ))}
-                </div>
-                {errors.isAgeCriteriaMet && (
-                  <small className="text-danger fs-12">
-                    {errors.isAgeCriteriaMet}
-                  </small>
-                )}
-
-                <textarea
-                  // type="text"
-                  className="criteria-remark mt-2"
-                  placeholder={t("age_remark")}
-                  value={screeningForm.ageCriteriaRemark}
+                <select
+                  className="form-select"
+                  value={row.criteriaType}
                   onChange={(e) =>
-                    handleInputChange("ageCriteriaRemark", e.target.value)
+                    handleOtherDocumentChange(
+                      row.id,
+                      "criteriaType",
+                      e.target.value
+                    )
                   }
-                  maxLength={2000}
-                  rows={4}
-                // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
-                />
-                {errors.ageCriteriaRemark && (
-                  <small className="text-danger fs-12">
-                    {errors.ageCriteriaRemark}
-                  </small>
-                )}
-              </div>
+                  style={{ minHeight: 'auto', padding: '0.4rem 0.8rem' }}
+                >
+                  <option value="">Select</option>
+                  <option value="Age">Age</option>
+                  <option value="Work">Work</option>
+                  <option value="Education">Education</option>
+                </select>
+              </div> */}
 
-              {/* EDUCATION CRITERIA */}
-              <div className="criteria-card">
-                <label className="criteria-title"> {t("education_criteria")}</label>
-
-                <div className="criteria-radio mb-0">
-                  {CRITERIA_OPTIONS.map(option => (
-                    <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
-                      <input
-                        type="radio"
-                        name="educationCriteria"
-                        checked={screeningForm.isEducationCriteriaMet === option}
-                        onChange={() =>
-                          handleRadioChange("isEducationCriteriaMet", option)
-                        }
-                        disabled={isOptionDisabled(option)}
-                      />
-                      <span className="custom-radio"></span>
-                      {t(option)}
-                    </label>
-                  ))}
-                </div>
-                {errors.isEducationCriteriaMet && (
-                  <small className="text-danger fs-12">
-                    {errors.isEducationCriteriaMet}
-                  </small>
-                )}
-
-                <textarea
-                  // type="text"
-                  className="criteria-remark mt-2"
-                  placeholder={t("education_remark")}
-                  value={screeningForm.educationCriteriaRemark}
-                  onChange={(e) =>
-                    handleInputChange("educationCriteriaRemark", e.target.value)
-                  }
-                  maxLength={2000}
-                  rows={4}
-                // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
-                />
-                {errors.educationCriteriaRemark && (
-                  <small className="text-danger fs-12">
-                    {errors.educationCriteriaRemark}
-                  </small>
-                )}
-              </div>
-
-              {/* FINAL REMARK */}
-              <div
-                className={`criteria-card ${disableShortlistedSection ? "criteria-disabled" : ""
-                  }`}
+              <button
+                type="button"
+                className="btn btn-link p-0 mb-1"
+                onClick={() => handleRemoveDocumentRow(row.id)}
               >
-                <label className="criteria-title">{t("shortlisted")}</label>
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  style={{
+                    color: "#ccc",
+                    fontSize: "16px",
+                  }}
+                />
+              </button>
+            </div>
+          ))}
+        </div>
 
-                <div className="criteria-radio mb-0">
-                  {["YES", "NO"].map(option => {
-                    const isDisabled =
-                      (option === "YES" && disableYesOption) ||
-                      (option === "NO" && disableNoOption);
+        {/* ================= CRITERIA SECTION ================= */}
+        {canCandidatePool &&
+          !disableDocAction &&
+          !isFromInterview &&
+          !isFromCompensationPool && (
+            <Card className="criteria-main-card">
 
-                    return (
-                      <label key={option} className={`radio-label ${isDisabled ? "disabled" : ""}`}>
+              <div className="criteria-wrapper">
+
+                {/* WORK CRITERIA */}
+                <div className="criteria-card">
+                  <label className="criteria-title">{t("work_criteria")}</label>
+
+                  <div className="criteria-radio mb-0">
+                    {CRITERIA_OPTIONS.map(option => (
+                      <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
                         <input
                           type="radio"
-                          name="shortlisted"
-                          value={option}
-                          checked={screeningForm.isShortlisted === option}
-                          disabled={isDisabled}
-                          onChange={() => handleInputChange("isShortlisted", option)}
+                          name="workCriteria"
+                          checked={screeningForm.isWorkCriteriaMet === option}
+                          onChange={() =>
+                            handleRadioChange("isWorkCriteriaMet", option)
+                          }
+                          disabled={isOptionDisabled(option)}
                         />
                         <span className="custom-radio"></span>
-                        {option}
+                        {t(option)}
                       </label>
-                    );
-                  })}
-                </div>
-                {!disableShortlistedSection && errors.isShortlisted && (
-                  <small className="text-danger fs-12">
-                    {errors.isShortlisted}
-                  </small>
-                )}
+                    ))}
+                  </div>
+                  {errors.isWorkCriteriaMet && (
+                    <small className="text-danger fs-12">
+                      {errors.isWorkCriteriaMet}
+                    </small>
+                  )}
 
-                <textarea
-                  // type="text"
-                  className="criteria-remark mt-2"
-                  placeholder={t("final_remark")}
-                  value={screeningForm.finalScreeningRemark}
-                  onChange={(e) =>
-                    handleInputChange("finalScreeningRemark", e.target.value)
-                  }
-                  maxLength={2000}
-                  rows={4}
-                />
-                {errors.finalScreeningRemark && (
-                  <small className="text-danger fs-12">
-                    {errors.finalScreeningRemark}
-                  </small>
-                )}
-              </div>
-            </div>
-
-            {/* ================= SUBMIT ROW ================= */}
-            <div className={`criteria-submit-row ${disableShortlistedSection ? 'justify-content-between' : 'justify-content-end'}`}>
-              {!isZonalHr && disableShortlistedSection && (
-                <div className="d-grid">
-                  <label className="submit-label">{t("submit_before")}</label>
-                  <input
-                    type="date"
-                    className="criteria-date"
-                    min={minDate}
-                    value={screeningForm.submitBeforeDate}
-                    onChange={handleDateChange}
+                  <textarea
+                    // type="text"
+                    className="criteria-remark mt-2"
+                    placeholder={t("work_remark")}
+                    value={screeningForm.workCriteriaRemark}
+                    onChange={(e) =>
+                      handleInputChange("workCriteriaRemark", e.target.value)
+                    }
+                    maxLength={2000}
+                    rows={4}
+                  // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
                   />
-                  {errors.submitBeforeDate && (
-                    <small className="text-danger mt-1 fs-12">
-                      {errors.submitBeforeDate}
+                  {errors.workCriteriaRemark && (
+                    <small className="text-danger fs-12">
+                      {errors.workCriteriaRemark}
                     </small>
                   )}
                 </div>
-              )}
 
-             {!isFromCompensationPool && (
-  <button
-    className="btn-submit-orange"
-    onClick={handleFinalSubmit}
-  >
-    {t("submit")}
-  </button>
-)}
-            </div>
-          </Card>
-        )}
+                {/* AGE CRITERIA */}
+                <div className="criteria-card">
+                  <label className="criteria-title">{t("age_criteria")}</label>
+
+                  <div className="criteria-radio mb-0">
+                    {CRITERIA_OPTIONS.map(option => (
+                      <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
+                        <input
+                          type="radio"
+                          name="ageCriteria"
+                          checked={screeningForm.isAgeCriteriaMet === option}
+                          onChange={() =>
+                            handleRadioChange("isAgeCriteriaMet", option)
+                          }
+                          disabled={isOptionDisabled(option)}
+                        />
+                        <span className="custom-radio"></span>
+                        {t(option)}
+                      </label>
+                    ))}
+                  </div>
+                  {errors.isAgeCriteriaMet && (
+                    <small className="text-danger fs-12">
+                      {errors.isAgeCriteriaMet}
+                    </small>
+                  )}
+
+                  <textarea
+                    // type="text"
+                    className="criteria-remark mt-2"
+                    placeholder={t("age_remark")}
+                    value={screeningForm.ageCriteriaRemark}
+                    onChange={(e) =>
+                      handleInputChange("ageCriteriaRemark", e.target.value)
+                    }
+                    maxLength={2000}
+                    rows={4}
+                  // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
+                  />
+                  {errors.ageCriteriaRemark && (
+                    <small className="text-danger fs-12">
+                      {errors.ageCriteriaRemark}
+                    </small>
+                  )}
+                </div>
+
+                {/* EDUCATION CRITERIA */}
+                <div className="criteria-card">
+                  <label className="criteria-title"> {t("education_criteria")}</label>
+
+                  <div className="criteria-radio mb-0">
+                    {CRITERIA_OPTIONS.map(option => (
+                      <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
+                        <input
+                          type="radio"
+                          name="educationCriteria"
+                          checked={screeningForm.isEducationCriteriaMet === option}
+                          onChange={() =>
+                            handleRadioChange("isEducationCriteriaMet", option)
+                          }
+                          disabled={isOptionDisabled(option)}
+                        />
+                        <span className="custom-radio"></span>
+                        {t(option)}
+                      </label>
+                    ))}
+                  </div>
+                  {errors.isEducationCriteriaMet && (
+                    <small className="text-danger fs-12">
+                      {errors.isEducationCriteriaMet}
+                    </small>
+                  )}
+
+                  <textarea
+                    // type="text"
+                    className="criteria-remark mt-2"
+                    placeholder={t("education_remark")}
+                    value={screeningForm.educationCriteriaRemark}
+                    onChange={(e) =>
+                      handleInputChange("educationCriteriaRemark", e.target.value)
+                    }
+                    maxLength={2000}
+                    rows={4}
+                  // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
+                  />
+                  {errors.educationCriteriaRemark && (
+                    <small className="text-danger fs-12">
+                      {errors.educationCriteriaRemark}
+                    </small>
+                  )}
+                </div>
+
+                {/* FINAL REMARK */}
+                <div
+                  className={`criteria-card ${disableShortlistedSection ? "criteria-disabled" : ""
+                    }`}
+                >
+                  <label className="criteria-title">{t("shortlisted")}</label>
+
+                  <div className="criteria-radio mb-0">
+                    {["YES", "NO"].map(option => {
+                      const isDisabled =
+                        (option === "YES" && disableYesOption) ||
+                        (option === "NO" && disableNoOption);
+
+                      return (
+                        <label key={option} className={`radio-label ${isDisabled ? "disabled" : ""}`}>
+                          <input
+                            type="radio"
+                            name="shortlisted"
+                            value={option}
+                            checked={screeningForm.isShortlisted === option}
+                            disabled={isDisabled}
+                            onChange={() => handleInputChange("isShortlisted", option)}
+                          />
+                          <span className="custom-radio"></span>
+                          {option}
+                        </label>
+                      );
+                    })}
+                  </div>
+                  {!disableShortlistedSection && errors.isShortlisted && (
+                    <small className="text-danger fs-12">
+                      {errors.isShortlisted}
+                    </small>
+                  )}
+
+                  <textarea
+                    // type="text"
+                    className="criteria-remark mt-2"
+                    placeholder={t("final_remark")}
+                    value={screeningForm.finalScreeningRemark}
+                    onChange={(e) =>
+                      handleInputChange("finalScreeningRemark", e.target.value)
+                    }
+                    maxLength={2000}
+                    rows={4}
+                  />
+                  {errors.finalScreeningRemark && (
+                    <small className="text-danger fs-12">
+                      {errors.finalScreeningRemark}
+                    </small>
+                  )}
+                </div>
+              </div>
+
+              {/* ================= SUBMIT ROW ================= */}
+              <div className={`criteria-submit-row ${hasAnyDiscrepancy ? 'justify-content-between' : 'justify-content-end'}`}>
+                {!isZonalHr && hasAnyDiscrepancy && (
+                  <div className="d-grid">
+                    <label className="submit-label">{t("submit_before")}</label>
+                    <input
+                      type="date"
+                      className="criteria-date"
+                      min={minDate}
+                      value={screeningForm.submitBeforeDate}
+                      onChange={handleDateChange}
+                    />
+                    {errors.submitBeforeDate && (
+                      <small className="text-danger mt-1 fs-12">
+                        {errors.submitBeforeDate}
+                      </small>
+                    )}
+                  </div>
+                )}
+
+                {!isFromCompensationPool && (
+                  <div className="d-flex align-items-center gap-2 mb-2 me-4">
+                    <input
+                      type="checkbox"
+                      checked={isEligible}
+                      disabled={disableEligibleCheckbox}
+                      onChange={(e) => handleEligibleChange(e.target.checked)}
+                    />
+
+                    <label
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        color: "#162B75",
+                        marginBottom: 0,
+                        cursor: disableEligibleCheckbox ? "not-allowed" : "pointer",
+                        opacity: disableEligibleCheckbox ? 0.6 : 1,
+                      }}
+                    >
+                      Eligible?
+                    </label>
+                  </div>
+                )}
+
+                {!isFromCompensationPool && (
+                <div>
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      color: "#f47c2c",
+                      cursor: "pointer",
+                      // textDecoration: "underline",
+                    }}
+                    className="me-4"
+                    onClick={() => setShowCommentsModal(true)}
+                  >
+                    View all comments
+                    <FontAwesomeIcon
+                      icon={faUpRightFromSquare}
+                      style={{ fontSize: "12px" }}
+                      className="ms-1"
+                    />
+                  </span>
+                  <button
+                    className="btn-submit-orange"
+                    onClick={handleFinalSubmit}
+                  >
+                    {t("submit")}
+                  </button>
+                </div>
+              )}
+              </div>
+            </Card>
+          )}
 
         {isZonalHr && !isInterviewView && (
           <Card
@@ -2198,8 +2673,14 @@ const ApplicationForm = ({
         onVerify={handleVerify}
         onReject={handleReject}
         isZonalAbsent={isZonalAbsent}
-            isFromCompensationPool={isFromCompensationPool}
+        isFromCompensationPool={isFromCompensationPool}
 
+      />
+
+      <CommentsModal
+        show={showCommentsModal}
+        onClose={() => setShowCommentsModal(false)}
+        applicationId={applicationId}
       />
     </>
   );

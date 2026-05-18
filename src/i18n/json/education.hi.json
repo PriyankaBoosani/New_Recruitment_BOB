@@ -24,5 +24,6 @@
     "deleted_success": "सफलतापूर्वक हटाया गया",
     "invalid_characters": "अमान्य अक्षर",
     "duplicate_specialization": "डुप्लिकेट विशेषज्ञता",
-    "duplicate_course": "यह कोर्स पहले से मौजूद है"
+    "duplicate_course": "यह कोर्स पहले से मौजूद है",
+    "specialization_required": "विशेषज्ञता आवश्यक है"
 }

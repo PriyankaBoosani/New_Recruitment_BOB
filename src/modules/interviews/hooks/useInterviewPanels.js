@@ -3,7 +3,10 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import interviewService from "../services/interviewService";
 
-export const useInterviewPanels = (positionId,rows) => {
+export const useInterviewPanels = (
+  positionId,
+  initialSelectedPanels = []
+) => {
 
   const { t } = useTranslation("interviewSchedule");
   const [panels, setPanels] = useState([]);
@@ -13,7 +16,26 @@ export const useInterviewPanels = (positionId,rows) => {
   const [deleteIndex, setDeleteIndex] = useState(null);
   const panelBoxRef = useRef(null);
   const [availablePanels, setAvailablePanels] = useState([]); // API
-const [selectedPanels, setSelectedPanels] = useState([]);   // USER SELECTION
+const [selectedPanels, setSelectedPanels] =
+  useState(initialSelectedPanels);  // USER SELECTION
+
+
+  useEffect(() => {
+
+  // ONLY INITIAL LOAD
+  if (
+    initialSelectedPanels?.length &&
+    selectedPanels.length === 0
+  ) {
+
+    setSelectedPanels(
+      initialSelectedPanels
+    );
+
+  }
+
+}, []);
+
 
   useEffect(() => {
     const handleOutside = (e) => {
@@ -44,22 +66,23 @@ const savePanel = (data) => {
     };
 
     if (editPanel) {
-      setSelectedPanels(prev =>
-        prev.map((p, i) =>
-          i === editPanel.index ? newPanel : p
-        )
-      );
 
-      //toast.success("Panel updated successfully");
-    } else {
-      setSelectedPanels(prev => [...prev, newPanel]);
+        setSelectedPanels(prev =>
+          prev.map((p, i) =>
+            i === editPanel.index
+              ? newPanel
+              : p
+          )
+        );
 
-      setAvailablePanels(prev =>
-        prev.filter(p => p.id !== data.panelId) // 🔥 better than name
-      );
+      } else {
 
-      //toast.success("Panel added successfully");
-    }
+        setSelectedPanels(prev => [
+          ...prev,
+          newPanel
+        ]);
+
+      }
 
     setEditPanel(null);
     setShowAddModal(false);
@@ -69,30 +92,41 @@ const savePanel = (data) => {
   }
 };
 const confirmDelete = (index) => {
-  const deletedPanel = selectedPanels[index];
-
-  // ✅ REMOVE FROM SELECTED
-  setSelectedPanels(prev => prev.filter((_, i) => i !== index));
-
-  // ✅ ADD BACK TO AVAILABLE
-  setAvailablePanels(prev => [
-    ...prev,
-    { id: deletedPanel.id, name: deletedPanel.name }
-  ]);
+  setSelectedPanels(prev =>
+    prev.filter((_, i) => i !== index)
+  );
 
   setDeleteIndex(null);
-  setOpenInfoIndex(null);
 
-  //toast.success("Panel deleted successfully");
+  setOpenInfoIndex(null);
 };
 
 const openEdit = (panel, index) => {
-  setEditPanel({ ...panel, index });
+  const availablePanel =
+  availablePanels.find(
+    p => p.id === panel.id
+  );
+
+setEditPanel({
+
+  ...panel,
+
+  startDate:
+    availablePanel?.startDate,
+
+  endDate:
+    availablePanel?.endDate,
+
+  index
+
+});
   setShowAddModal(true);
 };
 //new for load the panles which are assigned in committe management
   const loadPanels = async (positionId) => {
   if (!positionId) return;
+
+  console.log("positionids",positionId)
 
   try {
     const response = await interviewService.getPanelsByPosition(positionId);
@@ -102,7 +136,16 @@ const openEdit = (panel, index) => {
     // ✅ FIXED PATH
     const apiList = response?.data || [];
 
-    const formatted = apiList.map((item) => ({
+    const uniquePanels = [
+  ...new Map(
+    apiList.map(item => [
+      item.interviewPanel?.interviewPanelId,
+      item
+    ])
+  ).values()
+];
+
+    const formatted = uniquePanels.map((item) => ({
       id: item.interviewPanel?.interviewPanelId,
       name: item.interviewPanel?.panelName,
 

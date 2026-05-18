@@ -126,7 +126,7 @@ getPanelScores: (scheduledInterviewId) => {
   getMessageHistory: (payload, page, size) =>
   api.post(
     "/recruiter/messages/get-history",
-    payload,   // ✅ send full object
+    payload,  
     {
       params: { page, size },
     }
@@ -135,21 +135,35 @@ getPanelScores: (scheduledInterviewId) => {
 getMessagesByThreadId: (conversationThreadId) =>
   api.get(
     `/recruiter/messages/get-message/${conversationThreadId}`,
-    // {
-    //   headers: {
-    //     "X-Client": "AzureAD",   // ✅ ADD THIS
-    //   },
-    // }
+  
   ),
 
-  submitForApproval: (payload) =>
+  submitForMessageApproval: (payload) =>
   api.post(
     "/recruiter/messages/submit-for-approval",
     payload,
    
   ),
 
- 
+ getSchedulePoolCandidates: (payload) => {
+
+  return api.post(
+    "/recruiter/schedule-pool/get-schedule-pool-candidate-list",
+    payload,
+    {
+      headers: {
+        "X-Client": "AzureAD"
+      }
+    }
+  );
+
+},
+submitForApproval(payload) {
+  return api.post(
+    "/recruiter/schedule-pool/submit-for-approval",
+    payload
+  );
+}
   
 
 };  

@@ -197,10 +197,10 @@ const getEduWiseExperience = () => {
       const remMonths = months % 12;
 
       let exp = "";
-      if (years > 0) exp += `${years} yr `;
-      if (remMonths > 0) exp += `${remMonths} mo`;
+      if (years > 0) exp += `${years} years `;
+      if (remMonths > 0) exp += `${remMonths} months`;
 
-      return `${name}: ${exp || "0 mo"}`;
+      return `${name}: ${exp || "0 months"}`;
     });
 };
 
@@ -541,3 +541,9 @@ const getEduWiseExperience = () => {
 };
 
 export default RequisitionStrip;
+
+
+
+
+
+

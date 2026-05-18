@@ -386,6 +386,30 @@ const jobPositionApiService = {
   sendOffer(payload) {
     return api.post("/recruiter/candidate-offer/send-offer", payload);
   },
+
+  getScreeningComments(applicationId) {
+    return api.get(
+      `/recruiter/screening-comments/${applicationId}`,
+      {
+        headers: {
+          "X-Client": "AzureAD",
+        },
+      }
+    );
+  },
+
+  postScreeningComment(applicationId, payload) {
+    return api.post(
+      `/recruiter/screening-comments/${applicationId}`,
+      payload,
+      {
+        headers: {
+          "X-Client": "AzureAD",
+        },
+      }
+    );
+  },
+
 };
 
 export default jobPositionApiService;

@@ -10,6 +10,9 @@ const normalize = (v = "") => String(v).trim().toLowerCase();
 const validText = (value) =>
   /^[A-Za-z\s.&,()\-_/]+$/.test(value);
 
+const validTextForm = (value) =>
+  /^[A-Za-z\s.,&()+/_\-–—]+$/.test(value);
+
 /* =========================
    FIELD VALIDATIONS
 ========================= */
@@ -22,7 +25,7 @@ export const validateCourse = (value) => {
   let error = requiredField(value);
   if (error) return error;
 
-  if (!validText(value)) {
+  if (!validTextForm(value)) {
     return i18n.t("education:invalid_characters", "Invalid characters");
   }
 
@@ -30,7 +33,7 @@ export const validateCourse = (value) => {
 };
 
 // ✅ UPDATED SPECIALIZATION VALIDATION
-export const validateSpecialization = (list = []) => {
+export const validateSpecializationTest = (list = []) => {
   const seen = new Set();
 
   for (let val of list) {
@@ -43,7 +46,7 @@ export const validateSpecialization = (list = []) => {
     // skip empty values
     if (!normalized) continue;
 
-    // ❌ invalid characters
+
     if (!validText(value)) {
       return i18n.t(
         "education:invalid_characters",
@@ -51,7 +54,7 @@ export const validateSpecialization = (list = []) => {
       );
     }
 
-    // ❌ duplicate specialization
+
     if (seen.has(normalized)) {
       return i18n.t(
         "education:duplicate_specialization",
@@ -64,41 +67,51 @@ export const validateSpecialization = (list = []) => {
 
   return null;
 };
-// export const validateSpecialization = (list = []) => {
-//   const seen = new Set();
 
-//   for (let val of list) {
-//     const normalized = normalize(val);
+export const validateSpecialization = (list = []) => {
+  const seen = new Set();
+  for (let val of list) {
+    const value =
+      typeof val === "string" ? val : val?.name;
 
-//     // skip empty values
-//     if (!normalized) continue;
+    // ✅ empty validation
+    if (!value || !value.trim()) {
+      return i18n.t(
+        "education:specialization_required",
+        "Specialization is required"
+      );
+    }
 
-//     // ❌ invalid characters
-//     if (!validText(val)) {
-//       return i18n.t("education:invalid_characters", "Invalid characters");
-//     }
+    const normalized = normalize(value);
 
-//     // ❌ duplicate specialization
-//     if (seen.has(normalized)) {
-//       return i18n.t(
-//         "education:duplicate_specialization",
-//         "Duplicate specialization"
-//       );
-//     }
+    // ✅ invalid character validation
+    if (!validText(value)) {
+      return i18n.t(
+        "education:invalid_characters",
+        "Invalid characters"
+      );
+    }
 
-//     seen.add(normalized);
-//   }
+    // ✅ duplicate validation
+    if (seen.has(normalized)) {
+      return i18n.t(
+        "education:duplicate_specialization",
+        "Duplicate specialization"
+      );
+    }
 
-//   return null;
-// };
+    seen.add(normalized);
+  }
 
-/* =========================
-   FORM VALIDATION
-========================= */
+  return null;
+};
+
 
 export const validateEducationForm = (formData = {}, options = {}) => {
   const errors = {};
-  const { existing = [], currentId = null } = options;
+  const { existing = [], currentId = null, editMode = false} = options;
+
+  console.log("editMode", editMode);
 
   // ✅ Education Level
   const eduError = validateEducationLevel(formData.educationLevel);
@@ -106,13 +119,10 @@ export const validateEducationForm = (formData = {}, options = {}) => {
 
   // ✅ Course (WITH DUPLICATE CHECK)
   const courseError = validateCourse(formData.course);
-  console.log("Course validation error:", courseError); // ✅ check course error
 
   if (courseError) {
-    console.log("Course validation failed, skipping duplicate check."); // ✅ debug log
     errors.course = courseError;
   } else {
-    console.log("Checking for duplicate course among existing entries..."); // ✅ debug log
     const { existing = [], currentId = null } = options;
 
     const isDuplicate = existing.some((item) => {
@@ -127,14 +137,25 @@ export const validateEducationForm = (formData = {}, options = {}) => {
     });
 
     if (isDuplicate) {
-     errors.course = i18n.t(
-  "education:duplicate_course",
-  "Course already exists"
-);
+      errors.course = i18n.t(
+        "education:duplicate_course",
+        "Course already exists"
+      );
     }
   }
   // ✅ Specialization (WITH DUPLICATE CHECK)
-  const specError = validateSpecialization(
+  if(editMode){
+    const specError = validateSpecialization(
+        formData.specializationOthers || []
+      );
+      if (specError) errors.specialization = specError;
+
+      return {
+        valid: Object.keys(errors).length === 0,
+        errors,
+      };
+  } else{
+    const specError = validateSpecializationTest(
     formData.specializationOthers || []
   );
   if (specError) errors.specialization = specError;
@@ -143,6 +164,8 @@ export const validateEducationForm = (formData = {}, options = {}) => {
     valid: Object.keys(errors).length === 0,
     errors,
   };
+  }
+  
 };
 
 /* =========================

@@ -216,10 +216,10 @@ const JobPostingsList = () => {
     }, []);
     const selectableRequisitions = requisitions.filter(
         r => r.status !== "APPROVED" &&
-            r.status !== "L1_PENDING" &&
-            r.status !== "L1_APPROVED" &&
-            r.status !== "L1_REJECTED" &&
-            r.status !== "L2_REJECTED" &&
+            // r.status !== "L1_PENDING" &&
+            // r.status !== "L1_APPROVED" &&
+            // r.status !== "L1_REJECTED" &&
+            // r.status !== "L2_REJECTED" &&
 
             !r.hasDraftPositions
     );
@@ -444,19 +444,19 @@ const JobPostingsList = () => {
                         value={month}
                         onChange={(e) => setMonth(e.target.value)}
                     >
-                        <option value="">All Months</option>
-                        <option value="1">January</option>
-                        <option value="2">February</option>
-                        <option value="3">March</option>
-                        <option value="4">April</option>
-                        <option value="5">May</option>
-                        <option value="6">June</option>
-                        <option value="7">July</option>
-                        <option value="8">August</option>
-                        <option value="9">September</option>
-                        <option value="10">October</option>
-                        <option value="11">November</option>
-                        <option value="12">December</option>
+                        <option value="">{t("common:all_months")}</option>
+                        <option value="1">{t("common:january")}</option>
+                        <option value="2">{t("common:february")}</option>
+                        <option value="3">{t("common:march")}</option>
+                        <option value="4">{t("common:april")}</option>
+                        <option value="5">{t("common:may")}</option>
+                        <option value="6">{t("common:june")}</option>
+                        <option value="7">{t("common:july")}</option>
+                        <option value="8">{t("common:august")}</option>
+                        <option value="9">{t("common:september")}</option>
+                        <option value="10">{t("common:october")}</option>
+                        <option value="11">{t("common:november")}</option>
+                        <option value="12">{t("common:december")}</option>
                     </Form.Select>
                 </Col>
 
@@ -503,10 +503,10 @@ const JobPostingsList = () => {
                     >
                         <option value="">{t("jobPostingsList:status_all")}</option>
                         <option value="NEW">{t("jobPostingsList:status_new")}</option>
-                        <option value="L1_APPROVED">{t("jobPostingsList:status_l1_approved")}</option>
+                        {/* <option value="L1_APPROVED">{t("jobPostingsList:status_l1_approved")}</option>
                         <option value="L1_PENDING">{t("jobPostingsList:status_l1_pending")}</option>
                         <option value="L1_REJECTED">{t("jobPostingsList:status_l1_rejected")}</option>
-                        <option value="L2_REJECTED">{t("jobPostingsList:status_l2_rejected")}</option>
+                        <option value="L2_REJECTED">{t("jobPostingsList:status_l2_rejected")}</option> */}
                         <option value="APPROVED">{t("jobPostingsList:status_approved")}</option>
 
 
@@ -730,7 +730,7 @@ const JobPostingsList = () => {
                                                     {req.code}
                                                 </h6>
 
-                                                {req.status !== "NEW" && (
+                                                {/* {req.status !== "NEW" && (
                                                     <img
                                                         src={history_icon}
                                                         alt="history"
@@ -740,7 +740,7 @@ const JobPostingsList = () => {
                                                             handleOpenHistory(req);
                                                         }}
                                                     />
-                                                )}
+                                                )} */}
                                             </div>
 
                                             <div className="req-dates">
@@ -1206,8 +1206,8 @@ const JobPostingsList = () => {
                 // confirmText="Approve"
                 // confirmVariant="primary"
 
-                title={t("jobPostingsList:submit_confirm_title_approve")}
-                message={t("jobPostingsList:submit_confirm_message_approve")}
+                title={t("jobPostingsList:submit_confirm_title")}
+                message={t("jobPostingsList:submit_confirm_message")}
                 confirmText={t("jobPostingsList:approve")}
                 itemLabel={t("jobPostingsList:requisition_count", { count: selectedReqIds.size })}
 

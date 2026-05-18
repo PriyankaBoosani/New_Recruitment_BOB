@@ -2,24 +2,50 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import "../../../style/css/MessageCard.css";
 import attachment from "../../../assets/attachment.png";
+import masterApiService from "../../master/services/masterApiService.js";
+import { Modal } from "react-bootstrap";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 const MessageHistory = ({ item }) => {
   const { t } = useTranslation(["messages", "common"]);
 
-  // 🎨 Random but stable color generator
-  const getRandomColor = (seed) => {
-    const colors = [
-      "#F44336", "#E91E63", "#9C27B0", "#673AB7",
-      "#3F51B5", "#2196F3", "#03A9F4", "#00BCD4",
-      "#009688", "#4CAF50", "#8BC34A", "#CDDC39",
-      "#FFC107", "#FF9800", "#FF5722"
-    ];
+  const [previewUrl, setPreviewUrl] = React.useState(null);
+  const [showPreview, setShowPreview] = React.useState(false);
 
-    const index = seed
-      ? seed.charCodeAt(0) % colors.length
-      : Math.floor(Math.random() * colors.length);
+  const handleClose = () => {
+    setShowPreview(false);
+    setPreviewUrl(null);
+  };
 
-    return colors[index];
+  const handleViewFile = async (path) => {
+    try {
+      const encodedPath = encodeURIComponent(path);
+
+      const res = await masterApiService.getMessagesAzureBlobSasUrl(encodedPath);
+
+      const fileUrl = res;
+
+      if (fileUrl) {
+        setPreviewUrl(fileUrl);     // ✅ set URL
+        setShowPreview(true);   // ✅ open modal
+      }
+    } catch (err) {
+      console.error("File open error", err);
+    }
+  };
+
+  // 🎯 Detect role from title
+  const getColorByTitle = (title) => {
+    const text = title?.toLowerCase() || "";
+
+    if (text.includes("candidate")) {
+      return "#42579f";
+    }
+    if (text.includes("recruiter") || text.includes("approved") || text.includes("rejected")) {
+      return "#f26522";
+    }
+
+    return "#42579f";
   };
 
   return (
@@ -30,7 +56,9 @@ const MessageHistory = ({ item }) => {
       </div>
 
       {item.history?.map((hist, index) => {
-        const color = getRandomColor(hist.title || hist.comment);
+        console.log("History item:", hist);
+
+        const color = getColorByTitle(hist.title);
 
         return (
           <React.Fragment key={index}>
@@ -40,8 +68,8 @@ const MessageHistory = ({ item }) => {
               <div
                 className="msg-icon"
                 style={{
-                  backgroundColor: color + "20",
-                  color: color
+                  backgroundColor: color,
+                  color: "#fff"
                 }}
               >
                 {hist.title?.charAt(0)?.toUpperCase() || "?"}
@@ -66,9 +94,15 @@ const MessageHistory = ({ item }) => {
               </div>
 
               {/* Attachment */}
-              {hist.file && (
-                <img src={attachment} width={50} height={50} alt="attachment" />
-              )}
+              {hist.attachmentPath && (
+                <img
+                  src={attachment}
+                  width={50}
+                  height={50}
+                  alt="attachment"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => handleViewFile(hist.attachmentPath)}
+                />)}
             </div>
 
             {index !== item.history.length - 1 && (
@@ -77,6 +111,66 @@ const MessageHistory = ({ item }) => {
           </React.Fragment>
         );
       })}
+      <Modal
+        show={showPreview}
+        onHide={handleClose}
+        size="xl"
+        centered
+      >
+        {/* HEADER */}
+        <Modal.Header closeButton className="border-0 pb-2">
+          <div className="w-100 d-flex justify-content-between align-items-center">
+            <div>
+              <h6 className="mb-0 fw-semibold">
+               File
+              </h6>
+              {/* <small className="text-muted">Template Preview</small> */}
+            </div>
+
+            {/* ACTION BUTTON */}
+            <div className="d-flex gap-4 align-items-center" style={{ paddingRight: "15px" }}>
+              {previewUrl && (
+                <a
+                  href={previewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-sm btn-outline-primary"
+                >
+                  <FaExternalLinkAlt />
+                </a>
+              )}
+            </div>
+          </div>
+        </Modal.Header>
+
+        {/* BODY */}
+        <Modal.Body
+          style={{
+            height: "85vh",
+            background: "#f8f9fa",
+            padding: "10px",
+            borderRadius: "10px",
+          }}
+        >
+          {previewUrl ? (
+            <iframe
+              src={previewUrl}
+              width="100%"
+              height="100%"
+              title="PDF Preview"
+              style={{
+                border: "none",
+                borderRadius: "8px",
+                background: "#fff",
+              }}
+            />
+          ) : (
+            <div className="d-flex justify-content-center align-items-center h-100 text-muted">
+              No preview available
+            </div>
+          )}
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

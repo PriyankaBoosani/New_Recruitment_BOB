@@ -2,8 +2,8 @@
   background: #ffffff;
   border: 1px solid #e3e6ef;
   border-radius: 8px;
-  padding: 14px 18px;
-  display: flex;
+  /* padding: 14px 18px;
+  display: flex; */
   justify-content: space-between;
   align-items: center;
   margin-top: 12px;
@@ -70,3 +70,73 @@
   background: #162B75;
   color: #ffffff;
 }
+
+
+
+.req-position-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.req-position-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  background: #e2e2e2;
+  border: 1px solid #cfcfcf;
+
+  padding: 2px 8px;
+
+  border-radius: 2px;
+
+  width: fit-content;
+
+  font-size: 12px;
+  font-weight: 400;
+
+  min-height: 24px;
+}
+
+.req-position-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-left: 4px;
+
+  width: 16px;
+  height: 16px;
+
+  border-radius: 2px;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  color: #333;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.req-position-close:hover {
+  background: #ffbdad;
+  color: #de350b;
+}
+
+.req-position-text {
+  white-space: nowrap;
+}
+
+
+.req-position-readonly {
+  pointer-events: none;
+}
+
+.req-position-readonly .req-position-close {
+  display: none !important;
+}
+

@@ -79,6 +79,8 @@ import ApprovalEn from "../i18n/ApprovalJson/approvalhistory.en.json";
 import ApprovalHi from "../i18n/ApprovalJson/approvalhistory.hi.json";
 import messagesEn from "../i18n/Messages/messages.en.json";
 import messagesHi from "../i18n/Messages/messages.hi.json";
+import stateLanguagesEn from "../i18n/json/stateLanguages.en.json";
+import stateLanguagesHi from "../i18n/json/stateLanguages.hi.json";
 
 
 
@@ -109,12 +111,13 @@ i18n
         preview: previewEn,
         interviewSchedule: interviewScheduleEn,
         interviewPanelCommittee: committeeInterviewPanelEn,
-         interviewDay: interviewDayEn,
-         candidateWorkflow: candidateWorkflowEn,
-         verification: verificationEn,
-         education: educationEn,
-          approvalHistory: ApprovalEn,
-           messages: messagesEn,
+        interviewDay: interviewDayEn,
+        candidateWorkflow: candidateWorkflowEn,
+        verification: verificationEn,
+        education: educationEn,
+        approvalHistory: ApprovalEn,
+        messages: messagesEn,
+        stateLanguages: stateLanguagesEn,
       },
       hi: {
         common: commonHi,
@@ -136,17 +139,18 @@ i18n
         importModal: importModalHi,
         jobPostingsList: jobPostingsListHi,
         preview: previewHi,
-         interviewSchedule: interviewScheduleHi,
-         interviewPanelCommittee: committeeInterviewPanelHi,
-         interviewDay: interviewDayHi,
-         candidateWorkflow: candidateWorkflowHi,
-         verification: verificationHi,
-          education: educationHi,
-          approvalHistory: ApprovalHi,
-           messages: messagesHi,
+        interviewSchedule: interviewScheduleHi,
+        interviewPanelCommittee: committeeInterviewPanelHi,
+        interviewDay: interviewDayHi,
+        candidateWorkflow: candidateWorkflowHi,
+        verification: verificationHi,
+        education: educationHi,
+        approvalHistory: ApprovalHi,
+        messages: messagesHi,
+        stateLanguages: stateLanguagesHi,
       }
     },
-    lng: "en",       
+    lng: "en",
     fallbackLng: "en",
     defaultNS: "common",
     interpolation: {

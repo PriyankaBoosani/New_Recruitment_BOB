@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Person, FileText } from "react-bootstrap-icons";
 import { OverlayTrigger, Popover, Tooltip } from "react-bootstrap";
 import I_icon from '../../../assets/I_icon.png';
+import { toast } from "react-toastify";
 
 
 import { useTranslation } from "react-i18next";
@@ -26,6 +27,7 @@ export default function CandidatePool({
   selectedRequisitionId,
   isRankEnabled,
   hasLocationData,
+  allCandidatesForFilters
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const STATUS_CLASS_MAP = {
@@ -41,15 +43,77 @@ export default function CandidatePool({
   /* ---------- Selection logic ---------- */
 
   const allSelected =
-    candidates.length > 0 && selectedIds.length === candidates.length;
+    allCandidatesForFilters?.length > 0 &&
+    allCandidatesForFilters.every((c) =>
+      selectedIds.includes(c.id)
+    );
+
+  // const toggleSelectAll = () => {
+  //   if (allSelected) {
+  //     setSelectedIds([]);
+  //   } else {
+  //     setSelectedIds(candidates.map((c) => c.id));
+  //   }
+  // };
+
+
+
+  useEffect(() => {
+    if (!filters?.status?.length) {
+      setSelectedIds([]);
+    }
+  }, [filters?.status]);
+
+
+  //   const toggleSelectAll = () => {
+
+  //   //  VALIDATION
+  //   if (!filters?.status?.length) {
+  //     toast.error("Please select the filter first");
+  //     return;
+  //   }
+
+  //   if (allSelected) {
+  //     setSelectedIds([]);
+  //   } else {
+  //     setSelectedIds(candidates.map((c) => c.id));
+  //   }
+  // };
+
+
+  const formatStatus = (status = "") =>
+    status
+      .toLowerCase()
+      .split("_")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+
 
   const toggleSelectAll = () => {
+
+    if (!filters?.status?.length) {
+      toast.error("Please select the status filter first");
+      return;
+    }
+
+    const allIds = allCandidatesForFilters.map((c) => c.id);
+
     if (allSelected) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(candidates.map((c) => c.id));
+      setSelectedIds(allIds);
+
+      toast.success(
+        `${allIds.length} ${formatStatus(filters?.status?.[0])} candidate${allIds.length > 1 ? "s" : ""} selected`
+      );
     }
   };
+
+
+
+
+
+
 
   const toggleRow = (id) => {
     setSelectedIds((prev) =>
@@ -200,6 +264,28 @@ export default function CandidatePool({
     <>
       {/* Desktop Table */}
       <div className="card-body p-0 d-none d-md-block">
+        {/* {selectedIds.length > 0 && (
+  <div
+    className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom"
+    style={{
+      background: "#F0FFF4",
+      borderLeft: "4px solid #22C55E"
+    }}
+  >
+    <span className="fs-13 fw-semibold text-success">
+      {selectedIds.length}{" "}
+      {formatStatus(filters?.status?.[0])} candidate
+      {selectedIds.length > 1 ? "s" : ""} selected
+    </span>
+
+    <button
+      className="btn btn-sm btn-link text-secondary p-0 text-decoration-none"
+      onClick={() => setSelectedIds([])}
+    >
+      Clear Selection
+    </button>
+  </div>
+)}   */}
         <table className="table table-hover mb-0">
           <thead className="bg-light">
             <tr>
@@ -214,14 +300,17 @@ export default function CandidatePool({
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("name")} role="button">
                 {t("candidateWorkflow:candidate")} {sortIcon("name")}
               </th>
+              {/* <th className="fs-14 fw-normal py-3" onClick={() => requestSort("name")} role="button">
+                {t("candidateWorkflow:position")} {sortIcon("name")}
+              </th> */}
 
-              <th className="fs-14 fw-normal py-3" role="button">
+              {/* <th className="fs-14 fw-normal py-3" role="button">
                 Rank
               </th>
 
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("score")} role="button">
                 Score {sortIcon("score")}
-              </th>
+              </th> */}
 
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("experienceMonths")} role="button">
                 {t("candidateWorkflow:experience")} {sortIcon("experienceMonths")}
@@ -248,7 +337,7 @@ export default function CandidatePool({
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="11" className="text-center py-4">
+                <td colSpan="10" className="text-center py-4">
                   {t("candidateWorkflow:loading_candidates")}
                 </td>
               </tr>
@@ -274,12 +363,14 @@ export default function CandidatePool({
                     <p className="text-muted fs-12 mb-0">
                       {t("candidateWorkflow:application_number")}: {c.applicationNo}
                     </p>
+                    <p className="text-muted fs-12 mb-0">Position: {position?.find(p => p.positionId === c.positionId)?.positionName || "-"}</p>
+
                   </td>
 
+                 
 
 
-
-                  <td className="align-content-center">
+                  {/* <td className="align-content-center">
                     <p className="fw-normal fs-14 mb-0">{c?.rank || "-"}</p>
                   </td>
 
@@ -313,7 +404,7 @@ export default function CandidatePool({
                         </OverlayTrigger>
                       )}
                     </div>
-                  </td>
+                  </td> */}
 
                   <td className="align-content-center">
                     {/* <p className="fw-normal fs-14 mb-0">{(c.experienceMonths / 12).toFixed(1)} {t("candidateWorkflow:years")}</p> */}
@@ -334,7 +425,7 @@ export default function CandidatePool({
                       )} */}
                     </span>
                   </td>
-                  
+
                   {hasLocationData && (
                     <td className="align-content-center">
                       <p className="fw-normal fs-14 mb-0">{c.location}</p>
@@ -352,14 +443,20 @@ export default function CandidatePool({
                     >
                       <Person
                         className="me-3 cursor-pointer"
-                        onClick={() =>{
+                        onClick={() => {
 
-                          
+
+                          console.log("FULL CANDIDATE::::@@@@#@#@@", c);
+
+
                           navigate("/candidate-preview", {
                             state: {
                               from: "/candidate-workflow",
                               candidate: c,
-                              positionId: selectedPositionId,
+
+                              positionId: selectedPositionId, // for preview API
+                              positionIds: selectedPositionId,   // for auto populate after back
+                              candidatePositionId: c.positionId,
                               requisitionId: selectedRequisitionId,
                               requisition: requisition
                                 ? {
@@ -369,13 +466,11 @@ export default function CandidatePool({
                                   registration_end_date: requisition.registration_end_date,
                                 }
                                 : null,
-                              position: position
-                                ? {
-                                  positionId: position.positionId,
-                                  positionName: position.positionName,
-                                  isLocationWise: position.isLocationWise,
-                                }
-                                : null,
+                              position: position?.map?.(p => ({
+                                positionId: p.positionId,
+                                positionName: p.positionName,
+                                isLocationWise: p.isLocationWise,
+                              })) || [],
                               activeTab: "CANDIDATE_POOL",
                               isRankEnabled,
 
@@ -384,7 +479,8 @@ export default function CandidatePool({
                               pageSize,
                               filters,
                             },
-                          })}
+                          })
+                        }
                         }
                       />
                     </OverlayTrigger>
@@ -487,7 +583,7 @@ export default function CandidatePool({
                       state: {
                         from: "/candidate-workflow",
                         isRankEnabled,
-                        // 🔥 ADD 
+                        //  ADD 
                         activeTab: "CANDIDATE_POOL",
                         page,
                         pageSize,

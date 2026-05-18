@@ -560,3 +560,27 @@ border-color: hsl(0, 0%, 80%);
   width: 22px;
   height: 22px;
 }
+.modaleditcustom .modal-title {
+  color: #162B75;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.modaleditcustom .modal-header {
+border-bottom: none;
+padding-bottom: 0px;
+}
+.modaleditcustom .modal-body label {
+	font-size: 0.875rem;
+	font-weight: 400;
+	margin-bottom: 4px;
+}
+.panel-form-actions .btn{
+  font-size: 0.875rem;
+}
+.panel-form-actions .btn-outline-secondary {
+  margin-right: 10px;
+}
+.panel-form-actions{
+  display: flex;
+  justify-content: flex-end;
+}

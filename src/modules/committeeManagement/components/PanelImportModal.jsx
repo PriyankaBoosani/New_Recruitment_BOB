@@ -40,8 +40,13 @@ const PanelImportModal = ({
       onClose();
     } else {
       setError(result.error);
-     
-      setErrorDetails(result.details || []);
+    //  setErrorDetails(result.details || []);
+      setErrorDetails(
+      result.details
+        ? [result.details]
+        : []
+    );
+    
     }
   };
 

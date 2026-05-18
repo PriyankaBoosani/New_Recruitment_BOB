@@ -397,7 +397,7 @@ const CreateRequisition = () => {
                     </Col>
 
                     <Col md={12}>
-                      <Form.Group>
+                      <Form.Group className="mb-3">
                         <Form.Label>
                           {t("end_date")} <span className="text-danger">*</span>
                         </Form.Label>
@@ -418,6 +418,27 @@ const CreateRequisition = () => {
 
                         </Form.Text>
                         <ErrorMessage>{renderError(errors.endDate)}</ErrorMessage>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={12}>
+                      <Form.Group>
+                        <Form.Label>
+                          {t("cut_off_date")} <span className="text-danger">*</span>
+                        </Form.Label>
+
+                        <Form.Control
+                          type="date"
+                          name="cutoffDate"
+                          value={formData.cutoffDate}
+                          onChange={(e) => {
+                            handleInputChange(e);
+                            setErrors((prev) => ({ ...prev, cutoffDate: "" }));
+                          }}
+                        
+                        />
+                       
+                        <ErrorMessage>{renderError(errors.cutoffDate)}</ErrorMessage>
                       </Form.Group>
                     </Col>
                   </Row>

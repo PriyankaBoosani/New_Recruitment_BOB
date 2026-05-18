@@ -27,5 +27,7 @@
     "panel_type": "Panel Type",
     "panel_members": "Panel Members",
     "start_date": "Start Date",
-    "end_date": "End Date"
+    "end_date": "End Date",
+    "approval_comments": "Approval Comments",
+    "rejection_comments": "Rejection Comments"
 }

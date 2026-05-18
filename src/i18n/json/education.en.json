@@ -24,5 +24,6 @@
     "deleted_success": "Deleted successfully",
     "invalid_characters": "Invalid characters",
     "duplicate_specialization": "Duplicate specialization",
-    "duplicate_course": "Course already exists"
+    "duplicate_course": "Course already exists",
+    "specialization_required": "Specialization is required"
 }

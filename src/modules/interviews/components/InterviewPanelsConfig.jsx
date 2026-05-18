@@ -9,18 +9,19 @@ import ApplySuccessModal from "../../interviews/components/ApplySuccessModal";
 import { toast } from "react-toastify";
 import interviewService from "../services/interviewService";
 import Loader from "../../../shared/components/Loader";
-
+import InterviewScheduleSummaryModal from "./InterviewScheduleSummaryModal";
 const InterviewPanelsConfig = ({
   positionId,
-  startTime,
-  onStartTimeChange,
+  //startTime,
+ // onStartTimeChange,
    candidates,
   onScheduleReady,
-  onApplyAll
+  onApplyAll,
+    initialSelectedPanels = []
 }) => {
 
   console.log("InterviewPanelsConfig - positionId:", positionId)
-  console.log("START TIME FROM INPUT 👉", startTime);
+  //console.log("START TIME FROM INPUT 👉", startTime);
 
   const {
      availablePanels,
@@ -39,13 +40,21 @@ const InterviewPanelsConfig = ({
     savePanel,
     confirmDelete,
     openEdit
-  } = useInterviewPanels(positionId);
+  } = useInterviewPanels(
+  positionId,
+  initialSelectedPanels
+);
 
   const activeCount = selectedPanels.length;
   const { t } = useTranslation(["interviewSchedule", "common"]);
   const [showApplySuccess, setShowApplySuccess] = React.useState(false);
   const [scheduledCount, setScheduledCount] = React.useState(0);
   const [isApplying, setIsApplying] = React.useState(false);
+  const [showCapacityModal, setShowCapacityModal] = React.useState(false);
+
+const [capacityMessage, setCapacityMessage] = React.useState("");
+
+  const [showSummaryModal, setShowSummaryModal] = React.useState(false);
 
   console.log("panels:", selectedPanels)
 
@@ -56,41 +65,62 @@ const handleApplyAll = async () => {
     toast.error("Position is missing");
     return;
   }
-// ✅ Validate Panels
+
+  // ✅ Validate Panels
   if (!selectedPanels || selectedPanels.length === 0) {
     toast.error("Please add at least one interview panel");
     return;
   }
 
-  // ✅ Validate Start Time
-  if (!startTime) {
-    toast.error("Start time is required");
+  // ✅ Calculate total interview capacity
+  const totalCapacity = selectedPanels.reduce(
+    (sum, panel) => {
+
+      const panelCapacity = (panel.slots || []).reduce(
+        (slotSum, slot) => {
+
+          return slotSum + Number(slot.perDay || 0);
+
+        },
+        0
+      );
+
+      return sum + panelCapacity;
+
+    },
+    0
+  );
+
+  // ✅ Total candidates
+  const totalCandidates = candidates?.length || 0;
+
+  const remainingCandidates =
+    totalCandidates - totalCapacity;
+
+  // ✅ Validate capacity
+  if (totalCapacity < totalCandidates) {
+
+    setCapacityMessage(
+      `Unable to schedule all candidates.
+
+Only ${totalCapacity} interview slots are available. ${remainingCandidates} more candidates still need to be scheduled.
+
+Please add additional interview slots or create another panel to continue.`
+    );
+
+    setShowCapacityModal(true);
+
     return;
   }
 
-    try {
-    setIsApplying(true);   // 🔥 START LOADER
+  // ✅ ONLY OPEN CONFIRMATION MODAL
+  onApplyAll({
+    selectedPanels,
+    positionId,
+    candidates
+  });
 
-    const res = await onApplyAll({
-      selectedPanels,
-      startTime,
-      positionId
-    });
-
-    if (!res.success) {
-      toast.error(res.message);
-      return;
-    }
-
-    onScheduleReady(res.rows);
-
-  } catch (err) {
-    toast.error("Something went wrong");
-  } finally {
-    setIsApplying(false);  // 🔥 STOP LOADER
-  }
 };
-
   return (
     <>
       <div className="ipc-card mt-4">
@@ -107,12 +137,17 @@ const handleApplyAll = async () => {
           </div>
 
           <div className="d-flex gap-2">
-            <button className="ipc-btn-blue" onClick={() => {
-              // TODO: Implement import panel functionality
-              console.log("Import panel clicked");
-            }}>
-              <i className="bi bi-upload me-2"></i>
-              {t("import_panel")}
+            
+            {/* VIEW SUMMARY BUTTON */}
+            <button
+              className="ipc-btn-outline"
+              onClick={() => {
+                // open summary modal
+                setShowSummaryModal(true);
+              }}
+            >
+              <i className="bi bi-eye me-2"></i>
+              View Summary
             </button>
 
             <button
@@ -170,7 +205,7 @@ const handleApplyAll = async () => {
                   />
 
                   <i
-                    className="bi bi-trash ipc-chip-delete"
+                    className="bi bi-x-circle ipc-chip-delete"
                     onClick={(e) => {
                       e.stopPropagation();
                       setOpenInfoIndex(null);
@@ -207,7 +242,7 @@ const handleApplyAll = async () => {
         {/* START TIME */}
         <div className="row mt-3 align-items-end">
 
-          <div className="col-md-3">
+          {/* <div className="col-md-3">
             <Form.Label className="ipc-label">
               {t("start_time")} <span className="text-danger">*</span>
             </Form.Label>
@@ -218,7 +253,7 @@ const handleApplyAll = async () => {
               onChange={(e) => onStartTimeChange(e.target.value)}
               className="ipc-time-input"
             />
-          </div>
+          </div> */}
 
           <div className="col-md-3 ms-auto text-md-end mt-3 mt-md-0">
            <button className="ipc-apply-btn" onClick={handleApplyAll}>
@@ -239,11 +274,23 @@ const handleApplyAll = async () => {
         initialPanel={editPanel?.id}
         initialRows={editPanel?.slots}
         //panels={availablePanels}
-        panels={
-  editPanel
-    ? [...availablePanels, editPanel]   // ✅ add current panel back
-    : availablePanels
-}
+      panels={availablePanels.filter(panel => {
+
+  // show current editing panel
+  if (
+    editPanel &&
+    panel.id === editPanel.id
+  ) {
+    return true;
+  }
+
+  // hide already selected panels
+  return !selectedPanels.some(
+    selected =>
+      selected.id === panel.id
+  );
+
+})}
         onClose={() => setShowAddModal(false)}
         onSave={savePanel}
         selectedPanels={selectedPanels}
@@ -262,6 +309,43 @@ const handleApplyAll = async () => {
         onOk={() => setShowApplySuccess(false)}
       />
 
+     <InterviewScheduleSummaryModal
+        show={showSummaryModal}
+        onClose={() => setShowSummaryModal(false)}
+        candidates={candidates}
+        selectedPanels={selectedPanels}
+        availablePanels={availablePanels}
+      />
+      {showCapacityModal && (
+        <div className="ipc-alert-overlay">
+
+          <div className="ipc-alert-modal">
+
+            <div className="ipc-alert-icon">
+              <i className="bi bi-exclamation-triangle-fill"></i>
+            </div>
+
+            <h4 className="ipc-alert-title">
+              Interview Capacity Insufficient
+            </h4>
+
+            <p className="ipc-alert-message">
+              {capacityMessage}
+            </p>
+
+            <div className="text-end mt-4">
+              <button
+                className="ipc-alert-btn"
+                onClick={() => setShowCapacityModal(false)}
+              >
+                OK
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      )}
 
 
     </>

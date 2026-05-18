@@ -29,7 +29,7 @@
     "submit_confirm_title": "Direct Approval Confirmation",
     "submit_confirm_title_approve": "Approval Confirmation",
     "submit_confirm_message": "This action will directly approve the selected requisition(s). Are you sure you want to continue?",
-    "submit_confirm_message_approve": "This action will approve the selected requisition(s). Are you sure you want to continue?",
+    "submit_confirm_message_approve": "This action will submit the selected requisition(s) for L1 approval. Are you sure you want to continue?",
     "approve": "Approve",
     "requisition_count": "{{count}} requisition(s)",
     "no_selected": "No requisitions selected for the current year.",

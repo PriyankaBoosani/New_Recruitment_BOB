@@ -34,7 +34,7 @@
   "panel_details": "पैनल विवरण",
   "reg_no": "पंजीकरण संख्या",
   "ready_to_schedule": "{{count}} उम्मीदवार अनुसूची के लिए तैयार",
-  "schedule_interviews": "साक्षात्कार अनुसूचित करें",
+  "schedule_interviews": "सबमिट करें",
   "apply_success_text": "{{count}} उम्मीदवारों का साक्षात्कार निर्धारित किया गया",
   "ok": "ठीक है"
 }

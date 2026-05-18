@@ -606,6 +606,11 @@
 	box-shadow: none;
 
 }
+.selectindent .form-check-input {
+	padding: 0px !important;
+	margin-top: 6px;
+}
 .selectindent .bluecol{
     color: #162B75 !important;
 }
+

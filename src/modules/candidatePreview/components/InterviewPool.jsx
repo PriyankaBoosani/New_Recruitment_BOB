@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import I_icon from '../../../assets/I_icon.png';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 
 export default function InterviewPool({
   selectedIds,
@@ -21,8 +22,12 @@ export default function InterviewPool({
   filters,
   totalElements,
   onOpenFeedback,
-  onOpenZonalComments
+  onOpenZonalComments,
+  canReschedule,
+  onReschedule,
+  allCandidatesForFilters,
 }) {
+  console.log("InterviewPool render", position);
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const navigate = useNavigate();
   const STATUS_CLASS_MAP = {
@@ -34,6 +39,7 @@ export default function InterviewPool({
     INTERVIEW_ABSENT: "bg-info",
     PENDING: "bg-warning",
     ZONAL_REJECTED: "bg-danger",
+    RESCHEDULED: "bg-warning"
     // OFFER_AWAITED: "bg-dark"
 
   };
@@ -42,16 +48,62 @@ export default function InterviewPool({
 
 
 
+
+
+
+
+  // const allSelected =
+  //   candidates.length > 0 && selectedIds.length === candidates.length;
+
+
   const allSelected =
-    candidates.length > 0 && selectedIds.length === candidates.length;
+    allCandidatesForFilters?.length > 0 &&
+    allCandidatesForFilters.every((c) =>
+      selectedIds.includes(String(c.id))
+    );
+  console.log("selectedIds", selectedIds);
+  console.log(
+    "page ids",
+    candidates.map(c => String(c.id))
+  );
+
+  // const toggleSelectAll = () => {
+  //   setSelectedIds(allSelected ? [] : candidates.map((c) => c.id));
+  // };
+
+
 
   const toggleSelectAll = () => {
-    setSelectedIds(allSelected ? [] : candidates.map((c) => c.id));
+
+    if (!filters?.status?.length) {
+      toast.error("Please select the status filter first");
+      return;
+    }
+
+    const allIds = allCandidatesForFilters.map((c) => String(c.id));
+    if (allSelected) {
+
+      setSelectedIds([]);
+
+      toast.info("Selection cleared");
+
+    } else {
+
+      setSelectedIds(allIds);
+
+      toast.success(
+        `${allIds.length} ${filters?.status?.[0]} candidates selected`
+      );
+    }
   };
 
   const toggleRow = (id) => {
+    const normalizedId = String(id);
+
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.includes(normalizedId)
+        ? prev.filter((x) => x !== normalizedId)
+        : [...prev, normalizedId]
     );
   };
   const requestSort = (key) => {
@@ -65,6 +117,9 @@ export default function InterviewPool({
       return { key, direction: "asc" };
     });
   };
+
+
+
 
   const sortedCandidates = useMemo(() => {
     if (!sortConfig.key) return candidates;
@@ -95,6 +150,20 @@ export default function InterviewPool({
 
   return (
     <div className="card-body p-0 interview-pool">
+      {canReschedule && (
+
+        <div className="d-flex justify-content-end px-3 pt-3">
+
+          <button
+            className="btn btn-primary fs-14"
+            onClick={onReschedule}
+          >
+            Reschedule
+          </button>
+
+        </div>
+
+      )}
       <table className="table table-hover mb-0">
         <thead className="bg-light">
           <tr>
@@ -106,6 +175,7 @@ export default function InterviewPool({
               />
             </th>
             <th className="fs-14 fw-normal py-3" >{t("candidateWorkflow:candidate")}</th>
+            {/* <th className="fs-14 fw-normal py-3" >{t("candidateWorkflow:position")}</th> */}
             <th className="fs-14 fw-normal py-3">{t("common:date")}</th>
             <th className="fs-14 fw-normal py-3">{t("common:time")}</th>
             <th className="fs-14 fw-normal py-3">{t("candidateWorkflow:zone")}</th>
@@ -119,7 +189,7 @@ export default function InterviewPool({
         <tbody>
           {candidates.length === 0 ? (
             <tr>
-              <td colSpan="9" className="text-center py-4 text-muted fs-14">
+              <td colSpan="8" className="text-center py-4 text-muted fs-14">
                 {t("candidateWorkflow:no_candidates_interview_pool")}
               </td>
             </tr>
@@ -130,16 +200,21 @@ export default function InterviewPool({
                 <td className="align-content-center" style={{ paddingLeft: '1rem' }}>
                   <input
                     type="checkbox"
-                    checked={selectedIds.includes(c.id)}
-                    onChange={() => toggleRow(c.id)}
+                    checked={selectedIds.includes(String(c.id))}
+                    onChange={() => toggleRow(String(c.id))}
                   />
                 </td>
 
                 <td className="align-content-center">
                   <p className="fw-normal fs-14 mb-0">{c.name}</p>
                   <p className="text-muted fs-12 mb-0">{t("candidateWorkflow:application_number")}: {c.regNo}</p>
+                  <p className="text-muted fs-12 mb-0">Position: {position?.find(p => p.positionId === c.positionId)?.positionName || "-"}</p>
                 </td>
-
+                {/* <td className="fs-14 align-content-center">
+                  {
+                    position?.find(p => p.positionId === c.positionId)?.positionName || "-"
+                  }
+                </td> */}
                 <td className="fs-14 align-content-center">{c.date}</td>
                 <td className="fs-14 align-content-center">{c.time}</td>
                 <td className="fs-14 align-content-center">{c.zone}</td>
@@ -175,7 +250,7 @@ export default function InterviewPool({
                 <td className="fs-14 align-content-center">
                   <div className="d-flex align-items-center gap-2">
                     <span className="scorebg">
-                      {c.score || "-"}
+                      {c.score !== null && c.score !== undefined && c.score !== "" ? c.score : "-"}
                     </span>
 
                     <span
@@ -211,6 +286,7 @@ export default function InterviewPool({
                             requisitionId: selectedRequisitionId,
                             fromInterviewPool: true,
                             activeTab: "INTERVIEW_POOL",
+                            candidatePositionId: c.positionId, // ADD THIS
                             // 🔥 IMPORTANT FIX
                             interviewPage: page,
                             interviewPageSize: pageSize,
@@ -225,12 +301,13 @@ export default function InterviewPool({
                                 registration_end_date: requisition.registration_end_date,
                               }
                               : null,
-                            position: position
-                              ? {
-                                positionId: position.positionId,
-                                positionName: position.positionName,
-                              }
-                              : null,
+                            positionIds: selectedPositionId,
+
+                            position: position?.map?.(p => ({
+                              positionId: p.positionId,
+                              positionName: p.positionName,
+                              isLocationWise: p.isLocationWise,
+                            })) || [],
                           },
 
                         })

@@ -20,6 +20,7 @@ import InterviewPanelFormModal from "./components/InterviewPanelFormModal";
 import committeeManagementService from "../committeeManagement/services/committeeManagementService";
 import { mapInterviewMembersApi } from "../committeeManagement/mappers/interviewMembersMapper";
 import pos_edit_icon from "../../assets/pos_edit_icon.png";
+import { toast } from "react-toastify";
 
 const AssignPositionsPage = ({ refreshPanels }) => {
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
@@ -376,6 +377,12 @@ const AssignPositionsPage = ({ refreshPanels }) => {
               isSearchable
               placeholder={t("select_requisition_placeholder")}
               options={requisitionOptions}
+              filterOption={(option, inputValue) =>
+                option.label
+                  .toLowerCase()
+                  .includes(inputValue.toLowerCase())
+              }
+
               value={
                 requisitionOptions.find(
                   option => option.value === selectedRequisition
@@ -565,6 +572,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
         onHide={() => setShowEditModal(false)}
         size="lg"
         centered
+        className="modaleditcustom"
       >
         <Modal.Header closeButton>
           <Modal.Title>Edit Panel</Modal.Title>
@@ -580,47 +588,71 @@ const AssignPositionsPage = ({ refreshPanels }) => {
               disableName={true}
               disableType={true}     // ✅ ADD THIS
               onSave={async () => {
-                const payload = preparePanelPayload(
-                  editFormData,
-                  communityOptions,
-                  membersOptions
-                );
+                try {
+                  const payload = preparePanelPayload(
+                    editFormData,
+                    communityOptions,
+                    membersOptions
+                  );
 
-                await masterApiService.updateInterviewPanel(
-                  editFormData.id,
-                  payload
-                );
+                  const res = await masterApiService.updateInterviewPanel(
+                    editFormData.id,
+                    payload
+                  );
 
+                  // ✅ HANDLE VALIDATION RESPONSE
+                  if (!res?.success) {
+                    toast.error(
+                      res?.data || res?.message || "Validation failed"
+                    );
+                    
+                    return;
+                  }
 
-                setSelectedCommittees(prev => {
-                  const updated = { ...prev };
+                  setSelectedCommittees(prev => {
+                    const updated = { ...prev };
 
-                  Object.keys(updated).forEach(type => {
-                    updated[type] = updated[type].map(panel => {
-                      if (panel.id === editFormData.id) {
-                        return {
-                          ...panel,
-                          members: membersOptions
-                            .filter(m => editFormData.members.includes(m.value))
-                            .map(m => ({
-                              name: m.label,
-                              userId: m.value,
-                              email: m.email,
-                              role: m.role
-                            }))
-                        };
-                      }
-                      return panel;
+                    Object.keys(updated).forEach(type => {
+                      updated[type] = updated[type].map(panel => {
+                        if (panel.id === editFormData.id) {
+                          return {
+                            ...panel,
+                            isDirty: true,
+                            members: membersOptions
+                              .filter(m => editFormData.members.includes(m.value))
+                              .map(m => ({
+                                name: m.label,
+                                userId: m.value,
+                                email: m.email,
+                                role: m.role
+                              }))
+                          };
+                        }
+
+                        return panel;
+                      });
                     });
+
+                    return updated;
                   });
 
-                  return updated;
-                });
-                await refreshPanels(); // 🔥 THIS is what updates table
+                  setIsManuallyDirty(true);
 
+                  await refreshPanels();
 
+                  toast.success("Panel updated successfully");
 
-                setShowEditModal(false);
+                  setShowEditModal(false);
+
+                } catch (err) {
+                  console.error("UPDATE PANEL ERROR", err);
+
+                  toast.error(
+                    err?.response?.data?.data ||
+                    err?.response?.data?.message ||
+                    "Failed to update panel"
+                  );
+                }
               }}
             />
           )}

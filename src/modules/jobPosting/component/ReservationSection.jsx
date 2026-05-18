@@ -97,13 +97,13 @@ const ReservationSection = ({
             {/* ✅ Age Relaxation Section */}
             <Col xs={12} className="mt-3">
                 <Form.Label>
-                    Age relaxation also applicable for:
+                    {t("addPosition:age_relaxation_for")}:
                 </Form.Label>
 
                 <div className="ms-2">
                     <Form.Check
                         type="checkbox"
-                        label="Persons affected by the 1984 riots"
+                        label={t("addPosition:persons_affected_by_1984_riots")}
                         checked={!!isAgeRelRiotVictimFamily}
                         onChange={(e) => setIsAgeRelRiotVictimFamily(e.target.checked)}
                         className="custom_checkbox mb-2"
@@ -111,7 +111,7 @@ const ReservationSection = ({
 
                     <Form.Check
                         type="checkbox"
-                        label="Widowed, divorced, or judicially separated women (not remarried)"
+                        label={t("addPosition:widowed_divorced_separated_women")}
                         checked={!!isAgeRelWdsWomen}
                         onChange={(e) => setIsAgeRelWdsWomen(e.target.checked)}
                         className="custom_checkbox"
@@ -141,7 +141,7 @@ const ReservationSection = ({
                         <div>
                             <Form.Check
                                 type="checkbox"
-                                label="Is local language required?"
+                                label={t("addPosition:is_local_language_required")}
                                 checked={!!isProficientInLocalLanguage}
                                 onChange={(e) => {
                                     if (isControlledEdit && !isProficientInLocalLanguage) return;
@@ -310,13 +310,11 @@ const ReservationSection = ({
 
                                 <Select
                                     classNamePrefix="react-select"
-                                    isDisabled={!currentState.state}
-
+                                    isDisabled={!currentState.state || isViewMode}
                                     styles={{
-                                        control: (base, state) => ({
+                                        control: (base) => ({
                                             ...base,
                                             backgroundColor: isViewMode ? "#e9ecef" : base.backgroundColor,
-                                            //  cursor: isViewMode ? "not-allowed" : "pointer",
                                             opacity: isViewMode ? 0.8 : 1
                                         }),
                                         singleValue: (base) => ({
@@ -324,14 +322,13 @@ const ReservationSection = ({
                                             color: isViewMode ? "#6c757d" : base.color
                                         })
                                     }}
-                                    value={
-                                        filteredCities
-                                            .map(c => ({
-                                                value: c.id,
-                                                label: c.name
-                                            }))
-                                            .find(option => String(option.value) === String(currentState.city)) || null
-                                    }
+                                    value={[
+                                        { value: "", label: t("addPosition:select_city") },
+                                        ...sortedCities.map(c => ({
+                                            value: c.id,
+                                            label: c.name
+                                        }))
+                                    ].find(option => String(option.value) === String(currentState.city)) || null}
                                     placeholder={t("addPosition:select_city")}
                                     onChange={(selected) => {
                                         setCurrentState(prev => ({
@@ -345,10 +342,13 @@ const ReservationSection = ({
                                             city: ""
                                         }));
                                     }}
-                                    options={sortedCities.map(c => ({
-                                        value: c.id,
-                                        label: c.name
-                                    }))}
+                                    options={[
+                                        { value: "", label: t("addPosition:select_city") },
+                                        ...sortedCities.map(c => ({
+                                            value: c.id,
+                                            label: c.name
+                                        }))
+                                    ]}
                                 />
                             </Col>
                             <Col md={3}><Form.Label>{t("addPosition:vacancies")} <span className="text-danger">*</span></Form.Label>
@@ -387,7 +387,7 @@ const ReservationSection = ({
 
                                 <ErrorMessage>{renderError(errors.stateVacancies)}</ErrorMessage>
                             </Col>
-                            <Col md={3}><Form.Label>Approved Languages</Form.Label>
+                            <Col md={3}><Form.Label>{t("addPosition:approved_languages")}</Form.Label>
 
                                 <div
                                     style={{
@@ -395,7 +395,7 @@ const ReservationSection = ({
                                         border: "1px solid #ced4da",
                                         borderRadius: "4px",
                                         padding: "6px 12px",
-                                       backgroundColor: "#e9ecef",
+                                        backgroundColor: "#e9ecef",
                                         display: "flex",
                                         alignItems: "center",
                                         fontSize: "14px",
@@ -405,7 +405,7 @@ const ReservationSection = ({
                                 >
                                     {currentState.state
                                         ? getLanguagesByState(currentState.state)
-                                        : "State Language"}
+                                        : t("addPosition:state_language")}
                                 </div>
 
                                 <ErrorMessage>{renderError(errors.stateLanguage)}</ErrorMessage>

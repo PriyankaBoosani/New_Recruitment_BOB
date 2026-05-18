@@ -30,7 +30,7 @@ export default function useInterviewPool({
         const centres = centreRes?.data || [];
         const centreLookup = {};
         centres.forEach((c) => {
-          centreLookup[c.interviewCentreId] = c.interviewCentre;
+          centreLookup[c.interviewCentreId] = c.displayName;
         });
         setCentreMap(centreLookup);
       } catch (err) {
@@ -57,7 +57,7 @@ export default function useInterviewPool({
   }, []);
 
   const fetchInterviewCandidates = useCallback(async () => {
-    if (!enabled || !positionId) {
+    if (!enabled || !positionId.length) {
       setData([]);
       setTotalElements(0);
       return;
@@ -66,11 +66,11 @@ export default function useInterviewPool({
 
     try {
       // Only fetch interview statuses: SCHEDULED, QUALIFIED, DISQUALIFIED, PROVISIONALLY_APPROVED, PENDING
-      const INTERVIEW_STATUSES = ["SCHEDULED", "QUALIFIED", "DISQUALIFIED", "PROVISIONALLY_APPROVED", "PENDING", "ZONAL_ABSENT", "INTERVIEW_ABSENT", "ZONAL_REJECTED"];
+      const INTERVIEW_STATUSES = ["SCHEDULED", "QUALIFIED", "DISQUALIFIED", "PROVISIONALLY_APPROVED", "PENDING", "ZONAL_ABSENT", "INTERVIEW_ABSENT", "ZONAL_REJECTED", "RESCHEDULED"];
       
       const res = await candidateWorkflowServices.getInterviewCandidates({
         searchText: filters.searchText || "",
-        positionId,
+        positionIds: positionId,
         statusList: filters.status.length ? filters.status : INTERVIEW_STATUSES,
         page,
         size: pageSize,
