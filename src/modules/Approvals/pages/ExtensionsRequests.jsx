@@ -119,6 +119,8 @@ const ExtensionsRequests = () => {
   const [selectedRequestType, setSelectedRequestType] = useState(null);
   const privileges = useSelector((state) => state.user.privileges);
 
+
+
   const [openThreadId, setOpenThreadId] = useState(null);
   const {
     requisitionOptions,
@@ -249,6 +251,8 @@ const ExtensionsRequests = () => {
       { value: "APPROVED", label: "Approved" }
     ]
   };
+  const requestTypeCol = isL2 ? 3 : 2;
+  const statusCol = isL2 ? 2 : 1;
 
   const statusOptions = useMemo(() => {
     if (isL1) return statusOptionsByApproval.L1;
@@ -730,7 +734,7 @@ const ExtensionsRequests = () => {
 
                     </Col>
 
-                    <Col xs={12} md={2} className="data-col">
+                    <Col xs={12} md={requestTypeCol} className="data-col">
 
                       <div className="d-flex align-items-start gap-2">
 
@@ -756,33 +760,34 @@ const ExtensionsRequests = () => {
                       </div>
 
                     </Col>
+                    {!isL2 && (
+                      <Col xs={12} md={2} className="data-col">
 
-                    <Col xs={12} md={2} className="data-col">
+                        <div className="d-flex align-items-start gap-2">
 
-                      <div className="d-flex align-items-start gap-2">
+                          <FontAwesomeIcon
+                            icon={faLocationDot}
+                            className="text-muted mt-1"
+                            style={{ fontSize: "18px" }}
+                          />
 
-                        <FontAwesomeIcon
-                          icon={faLocationDot}
-                          className="text-muted mt-1"
-                          style={{ fontSize: "18px" }}
-                        />
+                          <div>
+                            <div className="field-label">
+                              Zone Change
+                            </div>
 
-                        <div>
-                          <div className="field-label">
-                            Zone Change
+                            <div className="field-value">
+                              {zonalDisplayMap[req.zonalId] || "-"}
+                            </div>
                           </div>
 
-                          <div className="field-value">
-                            {zonalDisplayMap[req.zonalId] || "-"}
-                          </div>
+
                         </div>
 
+                      </Col>
+                    )}
 
-                      </div>
-
-                    </Col>
-
-                    <Col xs={12} md={1} className="data-col d-flex align-items-center justify-content-between">
+                    <Col xs={12} md={statusCol} className="data-col d-flex align-items-center justify-content-between">
                       <div>
                         <Badge bg={getStatusBadge(req.status)}>
                           {formatStatus(req.status)}
