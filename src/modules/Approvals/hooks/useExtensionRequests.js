@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import committeeManagementService from "../../committeeManagement/services/committeeManagementService";
 import masterApiService from "../../master/services/masterApiService";
@@ -19,7 +19,7 @@ const useExtensionRequests = () => {
 
     const [historyData, setHistoryData] = useState([]);
     const [loadingHistory, setLoadingHistory] = useState(false);
-
+    const [interviewCenters, setInterviewCenters] = useState([]);
 
     const [approvalPage, setApprovalPage] = useState({
         totalPages: 0,
@@ -114,6 +114,27 @@ const useExtensionRequests = () => {
         }
     }, []);
 
+    const fetchInterviewCenters = useCallback(async () => {
+        try {
+            const res = await masterApiService.getAllInterviewCenters();
+            const data = res?.data || [];
+            setInterviewCenters(data);
+            return data;
+        } catch (error) {
+            toast.error("Failed to load interview centres");
+            return [];
+        }
+    }, []);
+
+    const zonalDisplayMap = useMemo(() => {
+        return (interviewCenters || []).reduce((acc, item) => {
+            if (item?.interviewCentreId) {
+                acc[item.interviewCentreId] = item.displayName;
+            }
+            return acc;
+        }, {});
+    }, [interviewCenters]);
+
     const fetchExtensionRequests = useCallback(async ({
         requisitionId,
         positionId,
@@ -202,7 +223,7 @@ const useExtensionRequests = () => {
         }
     }, []);
 
-    
+
 
     return {
         requisitionOptions,
@@ -226,7 +247,10 @@ const useExtensionRequests = () => {
         setApprovalPage,
         historyData,
         loadingHistory,
-        fetchApprovalHistory
+        fetchApprovalHistory,
+        fetchInterviewCenters,
+        interviewCenters,
+        zonalDisplayMap
     };
 };
 

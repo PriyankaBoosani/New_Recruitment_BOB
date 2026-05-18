@@ -59,6 +59,10 @@ export const validateRequisitionForm = (formData = {}) => {
       valid = false;
     }
   }
+if (!formData.cutoffDate) {
+    errors.cutoffDate = "validation:required";
+    valid = false;
+  }
 
 
   if (!formData.endDate) {

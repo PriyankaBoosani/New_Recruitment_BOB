@@ -363,7 +363,7 @@ const Header = () => {
               {/* <Nav.Link as={NavLink} to="/messages" onClick={closeMenu}>
                 {t("messages")}
               </Nav.Link> */}
-               {/* {canApprovals && (
+               {canApprovals && (
                 <NavDropdown
                   id="approvals-dropdown"
                   show={showApprovalsMenu}
@@ -372,7 +372,8 @@ const Header = () => {
                   className={`approvals-dropdown ${location.pathname.startsWith("/requisition-requests") ||
                     location.pathname.startsWith("/extension-requests") ||
                     location.pathname.startsWith("/committee-requests") ||
-                    location.pathname.startsWith("/interview-requests")
+                    location.pathname.startsWith("/interview-requests") ||
+                    location.pathname.startsWith("/exam-requests")
                     ? "active-admin"
                     : ""
                     }`}
@@ -409,13 +410,21 @@ const Header = () => {
 
                   <NavDropdown.Item
                     as={NavLink}
+                    to="/exam-requests"
+                    onClick={closeMenu}
+                    >
+                       {t("exam_requests")}
+                    </NavDropdown.Item>
+
+                  <NavDropdown.Item
+                    as={NavLink}
                     to="/interview-requests"
                     onClick={closeMenu}
                   >
                     {t("interview_requests")}
                   </NavDropdown.Item>
                 </NavDropdown>
-              )} */}
+              )}
               {/* {isRecruiter && (
                 <Nav.Link
                   as={NavLink}

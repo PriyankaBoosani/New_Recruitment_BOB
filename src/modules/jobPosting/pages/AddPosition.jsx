@@ -94,7 +94,7 @@ const AddPosition = () => {
         mandatoryExperience: { years: "", months: "", description: "" },
         preferredExperience: { years: "", months: "", description: "" },
         responsibilities: "", medicalRequired: "yes", enableStateDistribution: false,
-        cutoffDate: "", useMandatoryEducationLevelExperience: false,
+        useMandatoryEducationLevelExperience: false,
         usePreferredEducationLevelExperience: false
     });
     const [isAgeRelRiotVictimFamily, setIsAgeRelRiotVictimFamily] = useState(false);
@@ -184,7 +184,7 @@ const AddPosition = () => {
             responsibilities: existingPosition.rolesResponsibilities,
             medicalRequired: existingPosition.isMedicalRequired ? "yes" : "no",
             enableStateDistribution: existingPosition.isLocationWise,
-            cutoffDate: existingPosition.cutoffDate || "",
+           // cutoffDate: existingPosition.cutoffDate || "",
             mandatoryExperience: {
                 years: Math.floor(existingPosition.mandatoryExperienceMonths / 12),
                 months: existingPosition.mandatoryExperienceMonths % 12,

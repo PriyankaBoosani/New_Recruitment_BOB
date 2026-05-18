@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Container,
   Row,
@@ -19,53 +19,60 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import ApprovalCommentModal from "../components/ApprovalCommentModal";
 import "../../../style/css/InterviewRequest.css";
-const mockRequisitions = [
-  {
-    id: 1,
-    requisitionCode: "REQ-2026-00140",
-    requisitionTitle: "Requisition Approval Mail Test",
-    status: "NEW",
-    departmentCount: 1,
-    positionsCount: 2,
-    vacanciesCount: 20,
-    startDate: "2026-05-10",
-    endDate: "2026-05-30",
-    positions: [
-      {
-        positionId: 101,
-        positionName: "Position 1",
-        departmentCount: 1,
-        totalCandidateCount: 12,
-        zoneCount: 2,
-        panelCount: 3,
-        zones: [
-          { zoneId: 1, zoneName: "Zone A", center: "Hyderabad", candidates: 6 },
-          { zoneId: 2, zoneName: "Zone B", center: "Warangal", candidates: 6 },
-        ],
-        panels: [
-          { panelId: 1, panelName: "Panel 1", members: 4, status: "Active" },
-          { panelId: 2, panelName: "Panel 2", members: 3, status: "Active" },
-          { panelId: 3, panelName: "Panel 3", members: 2, status: "Pending" },
-        ],
-      },
-      {
-        positionId: 102,
-        positionName: "Position 2",
-        departmentCount: 1,
-        totalCandidateCount: 8,
-        zoneCount: 1,
-        panelCount: 2,
-        zones: [
-          { zoneId: 3, zoneName: "Zone C", center: "Nizamabad", candidates: 8 },
-        ],
-        panels: [
-          { panelId: 4, panelName: "Panel 4", members: 3, status: "Active" },
-          { panelId: 5, panelName: "Panel 5", members: 2, status: "Active" },
-        ],
-      },
-    ],
-  },
-];
+import mingcute_department_line from "../../../assets/mingcute_department-line.png";
+import start_icon from "../../../assets/start_icon.png"
+import end_icon from "../../../assets/end_icon.png"
+import position_Icon from "../../../assets/position_Icon.png"
+import useInterviewSchedule from "../hooks/useInterviewSchedule";
+import { toast } from "react-toastify";
+
+// const mockRequisitions = [
+//   {
+//     id: 1,
+//     requisitionCode: "REQ-2026-00140",
+//     requisitionTitle: "Requisition Approval Mail Test",
+//     status: "NEW",
+//     departmentName: "2",
+//     positionsCount: 2,
+//     vacanciesCount: 20,
+//     startDate: "2026-05-10",
+//     endDate: "2026-05-30",
+//     positions: [
+//       {
+//         positionId: 101,
+//         positionName: "Position 1",
+//         departmentName: "SBI",
+//         totalCandidateCount: 132,
+//         zoneCount: 2,
+//         panelCount: 3,
+//         zones: [
+//           { zoneId: 1, zoneName: "Hyderabad", candidates: 6 },
+//           { zoneId: 2, zoneName: "Warangal", candidates: 6 },
+//         ],
+//         panels: [
+//           { panelId: 1, panelName: "Panel 1", members: 4, date: "2026-05-10" },
+//           { panelId: 2, panelName: "Panel 2", members: 3, date: "2026-05-10" },
+//           { panelId: 3, panelName: "Panel 3", members: 2, date: "2026-05-10" },
+//         ],
+//       },
+//       {
+//         positionId: 102,
+//         positionName: "Position 2",
+//         departmentName: "SBI",
+//         totalCandidateCount: 8,
+//         zoneCount: 1,
+//         panelCount: 2,
+//         zones: [
+//           { zoneId: 3, zoneName: "Nizamabad", candidates: 8 },
+//         ],
+//         panels: [
+//           { panelId: 4, panelName: "Panel 4", members: 3, date: "2026-05-10" },
+//           { panelId: 5, panelName: "Panel 5", members: 2, date: "2026-05-10" },
+//         ],
+//       },
+//     ],
+//   },
+// ];
 
 const selectStyles = {
   control: (base) => ({
@@ -102,6 +109,7 @@ const selectStyles = {
   }),
 };
 
+
 const formatDateDDMMYYYY = (value) => {
   if (!value) return "-";
   const d = new Date(value);
@@ -128,28 +136,31 @@ const InterviewRequests = () => {
   const [actionType, setActionType] = useState(null);
   const [selectedPositionForAction, setSelectedPositionForAction] = useState(null);
 
-  const requisitionOptions = useMemo(
-    () =>
-      mockRequisitions.map((req) => ({
-        label: `${req.requisitionCode} - ${req.requisitionTitle}`,
-        value: req.id,
-        raw: req,
-      })),
-    []
-  );
+  // const requisitionOptions = useMemo(
+  //   () =>
+  //     mockRequisitions.map((req) => ({
+  //       label: `${req.requisitionCode} - ${req.requisitionTitle}`,
+  //       value: req.id,
+  //       raw: req,
+  //     })),
+  //   []
+  // );
 
   const selectedRequisitionOption = selectedRequisition
     ? {
-        label: `${selectedRequisition.requisitionCode} - ${selectedRequisition.requisitionTitle}`,
-        value: selectedRequisition.id,
-        raw: selectedRequisition,
-      }
+      label: `${selectedRequisition.requisitionCode} - ${selectedRequisition.requisitionTitle}`,
+      value: selectedRequisition.id,
+      raw: selectedRequisition,
+    }
     : null;
 
   const handleRequisitionChange = (opt) => {
-    setSelectedRequisition(opt?.raw || null);
+    const requisition = opt?.raw || null;
+    setSelectedRequisition(requisition);
     setOpenReq(true);
     setOpenPositionId(null);
+
+    fetchPositionDetailsByRequisition(opt?.value);
   };
 
   const openDetails = (type, position) => {
@@ -157,16 +168,37 @@ const InterviewRequests = () => {
       show: true,
       type,
       positionName: position.positionName,
-      data: type === "zone" ? position.zones || [] : position.panels || [],
+      data: type === "zone" ? position.zonalData || [] : position.panelData || [],
     });
   };
 
-  const handleActionClick = (type, position) => {
+  const handleActionClick = async (type, position) => {
+    if (type === "approve") {
+      const positionId = position.positionId || position.jobPositionId;
+
+      if (!positionId) {
+        toast.error("Position ID not found");
+        return;
+      }
+
+      try {
+        await submitL1Approval([positionId]);
+
+        if (selectedRequisition?.id) {
+          fetchPositionDetailsByRequisition(selectedRequisition.id);
+        }
+      } catch (error) {
+        console.error("L1 approval failed:", error);
+      }
+
+      return;
+    }
+
+    // reject stays as comment modal
     setActionType(type);
     setSelectedPositionForAction(position);
     setShowCommentModal(true);
   };
-
   const handleApprovalAction = (comment) => {
     if (!selectedPositionForAction) return;
 
@@ -183,6 +215,19 @@ const InterviewRequests = () => {
     setActionType(null);
     setSelectedPositionForAction(null);
   };
+  const {
+    requisitionOptions,
+    loadingRequisitions,
+    fetchRequisitions,
+    positionDetails,
+    loadingPositionDetails,
+    fetchPositionDetailsByRequisition,
+    submitL1Approval,
+    loadingL1Approval
+  } = useInterviewSchedule();
+  useEffect(() => {
+    fetchRequisitions();
+  }, [fetchRequisitions]);
 
   const renderDetailTable = () => {
     if (detailModal.type === "zone") {
@@ -191,22 +236,20 @@ const InterviewRequests = () => {
           <thead>
             <tr>
               <th>Zone Name</th>
-              <th>Center</th>
               <th>Candidates</th>
             </tr>
           </thead>
           <tbody>
             {detailModal.data.length > 0 ? (
               detailModal.data.map((z) => (
-                <tr key={z.zoneId}>
-                  <td>{z.zoneName}</td>
-                  <td>{z.center}</td>
-                  <td>{z.candidates}</td>
+                <tr key={z.zonalId || z.zoneId}>
+                  <td>{z.zoneName || "-"}</td>
+                  <td>{z.candidateCount ?? z.candidates ?? 0}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="3" className="text-center text-muted">
+                <td colSpan="2" className="text-center text-muted">
                   No zone details found
                 </td>
               </tr>
@@ -222,21 +265,27 @@ const InterviewRequests = () => {
           <tr>
             <th>Panel Name</th>
             <th>Members</th>
-            <th>Status</th>
+            <th>Start Date</th>
+            <th>End Date</th>
           </tr>
         </thead>
         <tbody>
           {detailModal.data.length > 0 ? (
             detailModal.data.map((p) => (
               <tr key={p.panelId}>
-                <td>{p.panelName}</td>
-                <td>{p.members}</td>
-                <td>{p.status}</td>
+                <td>{p.panelName || "-"}</td>
+                <td>
+                  {p.members?.length > 0
+                    ? p.members.map((member) => member.name).join(", ")
+                    : "-"}
+                </td>
+                <td>{formatDateDDMMYYYY(p.startDate)}</td>
+                <td>{formatDateDDMMYYYY(p.endDate)}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="3" className="text-center text-muted">
+              <td colSpan="4" className="text-center text-muted">
                 No panel details found
               </td>
             </tr>
@@ -269,6 +318,8 @@ const InterviewRequests = () => {
               options={requisitionOptions}
               value={selectedRequisitionOption}
               onChange={handleRequisitionChange}
+              isLoading={loadingRequisitions}
+
             />
           </Col>
         </Row>
@@ -279,15 +330,15 @@ const InterviewRequests = () => {
               className="align-items-center req-clickable"
               onClick={() => setOpenReq((prev) => !prev)}
             >
-              <Col xs={12} md={6}>
+              <Col xs={12} md={7}>
                 <div className="req-header">
                   <Badge bg="light" text="primary" className="req-id">
                     {selectedRequisition.requisitionCode}
                   </Badge>
-                 
+
                 </div>
 
-                <div className="d-flex justify-content-between align-items-start req-header">
+                <div className="d-flex justify-content-between align-items-start mt-2 req-header">
                   <div className="d-flex align-items-start">
                     <div>
                       <div className="d-flex align-items-center gap-2 mb-2">
@@ -298,9 +349,11 @@ const InterviewRequests = () => {
 
                       <div className="req-dates">
                         <div className="d-flex align-items-center gap-1">
+                          <img src={start_icon} alt="start_icon" className="icon-12" />
                           <span>Start: {formatDateDDMMYYYY(selectedRequisition.startDate)}</span>
                         </div>
                         <div className="d-flex align-items-center gap-1">
+                          <img src={end_icon} alt="end_icon" className="icon-12" />
                           <span>End: {formatDateDDMMYYYY(selectedRequisition.endDate)}</span>
                         </div>
                       </div>
@@ -312,23 +365,20 @@ const InterviewRequests = () => {
               <Col xs={12} md={4}>
                 <div className="req-meta">
                   <div>
-                    <FontAwesomeIcon icon={faLayerGroup} className="text-muted me-2" />
-                    Department - {selectedRequisition.departmentCount}
+                    <img src={mingcute_department_line} alt="department" className="icon-16" />{" "}
+                    Department - {selectedRequisition.totalDepartmentCount || 0}
                   </div>
                   <div>
-                    <FontAwesomeIcon icon={faLayerGroup} className="text-muted me-2" />
-                    Positions - {selectedRequisition.positionsCount}
+                    <img src={position_Icon} alt="position" className="icon-16" />{" "}
+                    Positions - {selectedRequisition.positionsCount || 0}
                   </div>
-                  <div>
-                    <FontAwesomeIcon icon={faLayerGroup} className="text-muted me-2" />
-                    Vacancies - {selectedRequisition.vacanciesCount}
-                  </div>
+
                 </div>
               </Col>
 
               <Col
                 xs={12}
-                md={2}
+                md={1}
                 className="text-md-end mt-3 mt-md-0 actions d-flex justify-content-end align-items-center"
               >
                 <button
@@ -347,7 +397,7 @@ const InterviewRequests = () => {
             {openReq && (
               <div className="accordion-body mt-3">
                 <div className="p-3 border rounded bg-white">
-                  {selectedRequisition.positions.map((pos, index) => {
+                  {/* {selectedRequisition.positions.map((pos, index) => {
                     const isOpen = openPositionId === pos.positionId;
 
                     return (
@@ -386,19 +436,19 @@ const InterviewRequests = () => {
                           <div className="position-card-inner mt-2">
                             <div className="row g-3 mb-3">
                               <div className="col-md-3">
-                                <div className="field-label">Department Count</div>
-                                <div className="field-value">{pos.departmentCount}</div>
+                                <div className="field-label">Department</div>
+                                <div className="field-value">{pos.departmentName}</div>
                               </div>
 
                               <div className="col-md-3">
-                                <div className="field-label">Total Candidate Count</div>
+                                <div className="field-label">Scheduled Candidates</div>
                                 <div className="field-value">{pos.totalCandidateCount}</div>
                               </div>
 
                               <div className="col-md-2">
                                 <div className="field-label">Zone Count  <span>{pos.zoneCount}</span></div>
 
-                               
+
                                 <Button
                                   variant="outline-primary"
                                   size="sm"
@@ -408,8 +458,8 @@ const InterviewRequests = () => {
                                     openDetails("zone", pos);
                                   }}
                                 >
-                                 
-                                View
+
+                                  View
                                 </Button>
                               </div>
 
@@ -424,37 +474,159 @@ const InterviewRequests = () => {
                                     openDetails("panel", pos);
                                   }}
                                 >
-                               View
-                                  
+                                  View
+
                                 </Button>
                               </div>
-                               <div className="col-md-2">
-                              <Button className="me-2"
-                                variant="success"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleActionClick("approve", pos);
-                                }}
-                              >
-                                Accept
-                              </Button>
-                              <Button
-                                variant="danger"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleActionClick("reject", pos);
-                                }}
-                              >
-                                Reject
-                              </Button>
+                              <div className="col-md-2">
+                                <Button className="me-2"
+                                  variant="success"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleActionClick("approve", pos);
+                                  }}
+                                >
+                                  Accept
+                                </Button>
+                                <Button
+                                  variant="danger"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleActionClick("reject", pos);
+                                  }}
+                                >
+                                  Reject
+                                </Button>
+                              </div>
                             </div>
-                            </div>
-                           
+
                           </div>
                         )}
                       </div>
                     );
-                  })}
+                  })} */}
+
+                  {loadingPositionDetails ? (
+                    <div className="text-muted p-3">Loading position details...</div>
+                  ) : positionDetails.length > 0 ? (
+                    positionDetails.map((pos, index) => {
+                      const isOpen = openPositionId === pos.positionId || openPositionId === pos.jobPositionId;
+
+                      return (
+                        <div key={pos.positionId || pos.jobPositionId} className="department-card mb-3">
+                          <div
+                            className="department-header d-flex align-items-center gap-2 cursor-pointer"
+                            onClick={() =>
+                              setOpenPositionId((prev) =>
+                                prev === (pos.positionId || pos.jobPositionId)
+                                  ? null
+                                  : (pos.positionId || pos.jobPositionId)
+                              )
+                            }
+                          >
+                            <span className="depname">
+                              {pos.positionName}
+                            </span>
+
+
+
+
+
+                            <button
+                              type="button"
+                              className="btn btn-none accordion-arrow-position ms-auto"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenPositionId((prev) =>
+                                  prev === (pos.positionId || pos.jobPositionId)
+                                    ? null
+                                    : (pos.positionId || pos.jobPositionId)
+                                );
+                              }}
+                            >
+                              {isOpen ? <ChevronUp /> : <ChevronDown />}
+                            </button>
+                          </div>
+
+                          {isOpen && (
+                            <div className="position-card-inner mt-2">
+                              <div className="row g-3 mb-3">
+                                <div className="col-md-3">
+                                  <div className="field-label">Department: <span className="field-value">{pos.departmentName}</span></div>
+
+                                </div>
+
+                                <div className="col-md-3">
+                                  <div className="field-label">Scheduled Candidates: <span className="field-value">{pos.totalCandidateCount || 0}</span></div>
+
+                                </div>
+
+                                <div className="col-md-2">
+                                  <div className="field-label">
+                                    Zone Count: <span className="field-value">{pos.totalZonalCount || 0}</span>
+                                  </div>
+                                  <Button
+                                    variant="primary"
+                                    size="sm"
+                                    className="d-flex align-items-center gap-2 mt-1"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      openDetails("zone", pos);
+                                    }}
+                                  >
+                                    View
+                                  </Button>
+                                </div>
+
+                                <div className="col-md-2">
+                                  <div className="field-label">
+                                    Panel Count: <span className="field-value">{pos.totalPanelCount || 0}</span>
+                                  </div>
+                                  <Button
+                                    variant="primary"
+                                    size="sm"
+                                    className="d-flex align-items-center gap-2 mt-1"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      openDetails("panel", pos);
+                                    }}
+                                  >
+                                    View
+                                  </Button>
+                                </div>
+
+                                <div className="col-md-2">
+                                  <Button
+                                    className="me-2"
+                                    variant="success"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleActionClick("approve", pos);
+                                    }}
+                                  >
+                                    Accept
+                                  </Button>
+                                  <Button
+                                    variant="danger"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleActionClick("reject", pos);
+                                    }}
+                                  >
+                                    Reject
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-center text-muted my-4">
+                      No position details found
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -471,7 +643,7 @@ const InterviewRequests = () => {
         >
           <Modal.Header closeButton>
             <Modal.Title>
-              {detailModal.type === "zone" ? "Zone Details" : "Panel Details"} - {detailModal.positionName}
+              {detailModal.type === "zone" ? "Zone Details" : "Panel Details"}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>{renderDetailTable()}</Modal.Body>

@@ -435,3 +435,19 @@
 .extension_request .bi.bi-clock.icon-14 {
 	margin-top: -3px;
 }
+.extension_request .msg-history-title {
+	font-size: 0.875em;
+	font-weight: 500;
+	color: #525c6b;
+	margin-bottom: 8px;
+}
+.extension_request .msg-history-head {
+	font-size: 0.875rem;
+	font-weight: 500;
+}
+.extension_request .msg-history-text {
+	font-size: 0.825em;
+}
+.extension_request .msg-history-time {
+	font-size: 0.85rem;
+}

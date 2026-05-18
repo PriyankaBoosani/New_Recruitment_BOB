@@ -272,7 +272,7 @@ export const mapAddPositionToUpdateDto = ({
     isPreferredExpMonthsEduWise: formData.usePreferredEducationLevelExperience,
 
     // Cut Off Date
-    cutoffDate: formData.cutoffDate || null,
+    //cutoffDate: formData.cutoffDate || null,
 
     // Root level field
     isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,

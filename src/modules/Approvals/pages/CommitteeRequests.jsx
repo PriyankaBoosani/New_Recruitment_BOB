@@ -243,11 +243,14 @@ const CommitteeRequests = () => {
         page * pageSize + pageSize
     );
 
+    const selectablePanels = filteredPanels.filter(
+        p => p.positionPanelStatus === selectableStatus
+    );
+
     const allSelected =
-        filteredPanels.length > 0 &&
-        filteredPanels.every(p =>
-            selectedReqIds.has(p.positionPanelId)
-        );
+        selectablePanels.length > 0 &&
+        selectablePanels.every(p => selectedReqIds.has(p.positionPanelId));
+
     const getVisiblePages = (currentPage, totalPages) => {
         const windowSize = 3;
 
@@ -439,7 +442,7 @@ const CommitteeRequests = () => {
                             onChange={(e) => {
                                 if (e.target.checked) {
                                     setSelectedReqIds(
-                                        new Set(filteredPanels.map(p => p.positionPanelId))
+                                        new Set(selectablePanels.map(p => p.positionPanelId))
                                     );
                                 } else {
                                     setSelectedReqIds(new Set());

@@ -92,13 +92,19 @@ const committeeManagementService = {
     api.get(`/recruiter/messages/get-message/${conversationThreadId}`),
 
   submitForL1L2Approval: (body) =>
-  api.post("/recruiter/messages/submit-for-l1-l2-approval", body),
+    api.post("/recruiter/messages/submit-for-l1-l2-approval", body),
 
-   getApprovalHistoryByThreadId : (conversationThreadId) =>
+  getApprovalHistoryByThreadId: (conversationThreadId) =>
     api.get(
       `/recruiter/workflow-approval/get-conversation-threads-approval-history/${conversationThreadId}`
     ),
+  getPositionDetailsInterviewApproval: (requisitionId) =>
+    api.get(
+      `/recruiter/schedule-pool/get-position-details-interview-approval/${requisitionId}`
+    ),
 
+  submitL1Approval: (body) =>
+    api.post("/recruiter/schedule-pool/submit-l1-approval", body),
 };
 
 export default committeeManagementService;

@@ -13,5 +13,6 @@
     "end_date_help": "ⓘ Standard duration: 21 days.",
     "loading": "Loading Requisition...",
     "create_success": "Requisition created successfully",
-    "update_success": "Requisition updated successfully"
+    "update_success": "Requisition updated successfully",
+    "cut_off_date": "Cutoff Date"
 }

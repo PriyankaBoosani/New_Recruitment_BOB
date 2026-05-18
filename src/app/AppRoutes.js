@@ -34,16 +34,17 @@ import CandidateScreening from "../modules/candidatePreview/CandidateScreening";
 import InterviewerSchedule from "../modules/Interviewer/InterviewerSchedule"
 // import CandidateInterview from "../modules/Interview/CandidateInterview";
 import ScheduleInterviews from "../modules/interviews/ScheduleInterviews";
-// import Approvals from "../modules/Approvals/pages/RequisitionRequests";
-// import ExtensionsRequests from "../modules/Approvals/pages/ExtensionsRequests";
-// import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";
-// import InterviewRequests from "../modules/Approvals/pages/InterviewRequests";
+import Approvals from "../modules/Approvals/pages/RequisitionRequests";
+import ExtensionsRequests from "../modules/Approvals/pages/ExtensionsRequests";
+import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";
+import InterviewRequests from "../modules/Approvals/pages/InterviewRequests";
 import Messages from "../modules/Messages/messagesScreen";
 
 import UnauthorizedPage from "./UnauthorizedPage"
 import PrivilegeRoute from "./PrivilegeRoute";
 import AuthCallback from "../modules/auth/pages/AuthCallback";
 import { getDefaultRoute } from "../shared/utils/user-validations";
+import ExamRequest from "../modules/Approvals/pages/ExamRequest";
 // Lazy loaded components
 const Layout = React.lazy(() => import("../shared/components/Layout"));
 
@@ -282,7 +283,7 @@ const AppRoutes = () => {
                 }
               />
 
-              {/* <Route
+              <Route
                 path="/requisition-requests"
                 element={
                   <PrivilegeRoute privilegesRequired={["L1 Approval", "L2 Approval"]}>
@@ -315,7 +316,15 @@ const AppRoutes = () => {
                     <InterviewRequests />
                   </PrivilegeRoute>
                 }
-              /> */}
+              />
+              <Route
+                path="/exam-requests"
+                element={
+                  <PrivilegeRoute privilegesRequired={["L1 Approval", "L2 Approval"]}>
+                    <ExamRequest />
+                  </PrivilegeRoute>
+                }
+              />
 
 
 

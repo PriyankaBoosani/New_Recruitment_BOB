@@ -1011,7 +1011,7 @@ const PositionForm = ({
             />
             <ErrorMessage>{renderError(errors.medicalRequired)}</ErrorMessage>
           </Col>
-          <Col md={3}>
+          {/* <Col md={3}>
             <Form.Label>{t("addPosition:cut_off_date")} <span className="text-danger">*</span></Form.Label>
             <Form.Control
               type="date"
@@ -1022,7 +1022,7 @@ const PositionForm = ({
               disabled={isViewMode}
             />
             <ErrorMessage>{renderError(errors.cutoffDate)}</ErrorMessage>
-          </Col>
+          </Col> */}
         </Row>
       </div>
     </>

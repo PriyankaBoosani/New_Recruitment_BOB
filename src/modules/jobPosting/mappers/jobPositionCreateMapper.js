@@ -142,7 +142,7 @@ export const mapAddPositionToCreateDto = ({
     employmentType: formData.employmentType,
     gradeId: formData.grade,
     indentName: formData.indentName,
-    cutoffDate: formData.cutoffDate,
+   // cutoffDate: formData.cutoffDate,
     indentPath: indentPath,
 
     contractYears: Number(formData.contractualPeriod || 0),

@@ -19,7 +19,7 @@ import Select from "react-select";
 
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarDays, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarDays, faLayerGroup, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 
 //  Utilities
 import { validateSelectedRequisitions } from "../validations/requisitionValidation";
@@ -29,6 +29,7 @@ import useExtensionRequests from "../hooks/useExtensionRequests";
 import MessageHistory from "../../Messages/components/messageHistory";
 import committeeManagementService from "../../committeeManagement/services/committeeManagementService";
 import { useSelector } from "react-redux";
+import { FaLocationArrow } from "react-icons/fa";
 
 //  Other module (go up to modules, then down)
 // import RequisitionPositionSelector from "../../candidatePreview/components/RequisitionPositionSelector";
@@ -139,12 +140,18 @@ const ExtensionsRequests = () => {
     fetchThreadMessages,
     historyData,
     loadingHistory,
-    fetchApprovalHistory
+    fetchApprovalHistory,
+    interviewCenters,
+    fetchInterviewCenters,
+    zonalDisplayMap
   } = useExtensionRequests();
 
   useEffect(() => {
     fetchRequisitions();
-  }, [fetchRequisitions]);
+    fetchInterviewCenters();
+  }, [fetchRequisitions, fetchInterviewCenters]);
+
+
 
   const handleToggleThread = async (threadId) => {
     if (!threadId) return;
@@ -588,12 +595,15 @@ const ExtensionsRequests = () => {
                 (msg) => ({
                   title: msg.senderType,
                   comment: msg.comments || msg.message || msg.content || "-",
-                  time: msg.createdDate
-                    ? new Date(msg.createdDate).toLocaleString()
-                    : "",
-                  file: msg.file || msg.attachmentUrl || null,
+                  // time: msg.createdDate
+                  //   ? new Date(msg.createdDate).toLocaleString()
+                  //   : "",
+                  time: `${formatDate(msg.createdDate)} ${formatTime(msg.createdDate)}`,
+                  attachmentPath: msg.attachmentPath || null,
                 })
+
               );
+              console.log(historyItems, "time")
 
               return (
                 <div
@@ -652,7 +662,7 @@ const ExtensionsRequests = () => {
 
                           <div className="user-meta">
                             <div className="reg-no">
-                              Application No: {req.applicationNo || "-"}
+                              Application Number: {req.applicationNo || "-"}
                             </div>
 
                             <div className="date-row d-flex align-items-center gap-3">
@@ -711,7 +721,7 @@ const ExtensionsRequests = () => {
 
                     </Col>
 
-                    <Col xs={12} md={3} className="data-col">
+                    <Col xs={12} md={2} className="data-col">
 
                       <div className="d-flex align-items-start gap-2">
 
@@ -733,11 +743,37 @@ const ExtensionsRequests = () => {
                           </div>
                         </div>
 
+
                       </div>
 
                     </Col>
 
-                    <Col xs={12} md={2} className="data-col d-flex align-items-center justify-content-between">
+                    <Col xs={12} md={2} className="data-col">
+
+                      <div className="d-flex align-items-start gap-2">
+
+                        <FontAwesomeIcon
+                          icon={faLocationDot }
+                          className="text-muted mt-1"
+                          style={{ fontSize: "18px" }}
+                        />
+
+                        <div>
+                          <div className="field-label">
+                            Zone Change
+                          </div>
+
+                          <div className="field-value">
+                            {zonalDisplayMap[req.zonalId] || "-"}
+                          </div>
+                        </div>
+
+
+                      </div>
+
+                    </Col>
+
+                    <Col xs={12} md={1} className="data-col d-flex align-items-center justify-content-between">
                       <div>
                         <Badge bg={getStatusBadge(req.status)}>
                           {formatStatus(req.status)}
@@ -746,7 +782,7 @@ const ExtensionsRequests = () => {
 
                       <button
                         type="button"
-                        className="btn btn-link p-0 ms-2"
+                        className="btn btn-link p-0 ms-4"
                         onClick={() => handleToggleThread(req.conversationThreadId)}
                         style={{ textDecoration: "none" }}
                       >
