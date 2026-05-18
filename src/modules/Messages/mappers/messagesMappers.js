@@ -30,6 +30,8 @@ export const mapMessagesData = (
 
     return {
       id: item?.conversationThreadId,
+      applicationId: item?.applicationId || "",
+
 
       name: item?.candidateName || "",
       regNo: item?.applicationNo || "",
@@ -48,9 +50,12 @@ export const mapMessagesData = (
 
 
       date: createdDate
-        ? createdDate.toISOString().split("T")[0]
+        ? `${String(createdDate.getDate()).padStart(2, "0")}-${String(
+          createdDate.getMonth() + 1
+        ).padStart(2, "0")}-${String(
+          createdDate.getFullYear()
+        ).slice(-2)}`
         : "-",
-
       time: createdDate
         ? createdDate.toLocaleTimeString([], {
           hour: "2-digit",
@@ -59,11 +64,14 @@ export const mapMessagesData = (
         })
         : "-",
       dateExtension: item?.dateExtension
-        ? new Date(item.dateExtension)
-          .toISOString()
-          .split("T")[0]
+        ? `${String(
+          new Date(item.dateExtension).getDate()
+        ).padStart(2, "0")}-${String(
+          new Date(item.dateExtension).getMonth() + 1
+        ).padStart(2, "0")}-${String(
+          new Date(item.dateExtension).getFullYear()
+        ).slice(-2)}`
         : "-",
-
       status: (() => {
         switch (item?.status) {
           case "PENDING": return "Pending";

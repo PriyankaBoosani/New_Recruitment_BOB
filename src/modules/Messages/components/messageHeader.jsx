@@ -47,19 +47,67 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
           </div>
 
           <div>
-            <div className="msg-name">
-              {item.name}
+
+            {/* NAME + HISTORY ICON */}
+            <div
+              className="msg-name"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px"
+              }}
+            >
+              <span>{item.name}</span>
+
+              <button
+                type="button"
+                className="btn btn-link p-0 border-0"
+                title="Approval History"
+                onClick={(e) => {
+                  e.stopPropagation();
+
+                  item.onHistoryClick?.();
+                }}
+              >
+                <i
+                  className="bi bi-clock-history"
+                  style={{
+                    fontSize: "16px",
+                    color: "#6B7280",
+                    cursor: "pointer"
+                  }}
+                ></i>
+              </button>
             </div>
 
+            {/* REG NO */}
             <div className="msg-sub">
               {t("messages:reg_no")}: {item.regNo}
             </div>
 
+            {/* DATE + TIME */}
             <div className="msg-sub">
-              <i className="bi bi-calendar3"></i>{" "}
+
+              <i
+                className="bi bi-calendar3"
+                style={{
+                  color: "#6B7280",
+                  fontSize: "14px"
+                }}
+              ></i>{" "}
+
               {item.date || "-"} {" | "}
-              <i className="bi bi-clock ms-1"></i>{" "}
+
+              <i
+                className="bi bi-clock ms-1"
+                style={{
+                  color: "#6B7280",
+                  fontSize: "14px"
+                }}
+              ></i>{" "}
+
               {item.time || "-"}
+
             </div>
           </div>
         </div>
@@ -70,9 +118,10 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
           style={{
             display: "grid",
             gridTemplateColumns:
-              "repeat(auto-fit, minmax(140px, 1fr))",
-            alignItems: "center",
-            gap: "16px",
+              "repeat(auto-fit, minmax(180px, 1fr))",
+            alignItems: "start",
+            columnGap: "10px",
+            rowGap: "20px",
             flex: 1,
             minWidth: "300px"
           }}
@@ -80,46 +129,94 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
 
           {/* DATE EXTENSION */}
           <div>
-            <div className="msg-label">
-              Date Extension
+
+            <div
+              className="msg-label"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                minHeight: "22px"
+              }}
+            >
+              <i className="bi bi-calendar-event"></i>
+
+              <span>Date Extension</span>
             </div>
 
             <div className="msg-value">
               {item.dateExtension || "-"}
             </div>
+
           </div>
 
           {/* POSITION */}
           <div>
-            <div className="msg-label">
-              {t("common:position")}
+
+            <div
+              className="msg-label"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                minHeight: "22px"
+              }}
+            >
+              <i className="bi bi-briefcase"></i>
+
+              <span>{t("common:position")}</span>
             </div>
 
             <div className="msg-value">
               {item.positionName || "-"}
             </div>
+
           </div>
 
           {/* REQUEST TYPE */}
           <div>
-            <div className="msg-label">
-              {t("messages:request_type")}
+
+            <div
+              className="msg-label"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                minHeight: "22px"
+              }}
+            >
+              <i className="bi bi-grid"></i>
+
+              <span>{t("messages:request_type")}</span>
             </div>
 
             <div className="msg-value">
               {item.type || "-"}
             </div>
+
           </div>
 
           {/* ZONAL ID */}
           <div>
-            <div className="msg-label">
-              Zonal ID
+
+            <div
+              className="msg-label"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                minHeight: "22px"
+              }}
+            >
+              <i className="bi bi-geo-alt"></i>
+
+              <span>Zonal</span>
             </div>
 
             <div className="msg-value">
               {item.zonalId || "-"}
             </div>
+
           </div>
 
           {/* STATUS */}
@@ -127,7 +224,8 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
             className="msg-status-wrap"
             style={{
               display: "flex",
-              alignItems: "center"
+              alignItems: "center",
+              marginTop: "22px"
             }}
           >
             <span
