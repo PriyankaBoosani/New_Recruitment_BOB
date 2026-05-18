@@ -98,18 +98,61 @@ export const mapMessagesData = (
         zonalMap[item?.zonalId] ||
         item?.zonalId ||
         "-",
-
       history: (threadMessagesMap[item?.conversationThreadId] || []).map(msg => {
 
-        const msgDate = msg?.createdDate
-          ? new Date(msg.createdDate)
-          : null;
+        const msgDate =
+          msg?.actionDate
+            ? new Date(msg.actionDate)
+            : msg?.createdDate
+              ? new Date(msg.createdDate)
+              : null;
 
         return {
-          type: msg.senderType === "CANDIDATE" ? "candidate" : "request",
-          title: msg.senderType || "-",
-          comment: msg.message || msg.comments || "-",
+
+          // ✅ CHANGE THIS
+          type:
+            msg?.status
+              ? "approval"
+              : msg.senderType === "CANDIDATE"
+                ? "candidate"
+                : "request",
+
+          // ✅ CHANGE TITLE
+          // ✅ SHOW APPROVER NAME INSTEAD OF STATUS
+          title:
+            msg?.approverName ||
+            msg?.senderType ||
+            "-",
+          comment:
+            msg?.comments ||
+            msg?.comment ||
+            msg?.approvalComments ||
+            msg?.remarks ||
+            msg?.remark ||
+            msg?.message ||
+            "-",
+
           attachmentPath: msg.attachmentPath || null,
+
+          approverName:
+            msg.approverName ||
+            msg.approver ||
+            msg.createdByName ||
+            "-",
+
+
+          approvalStatus:
+            msg.status || "-",
+
+          approvalDate: msgDate
+            ? `${String(msgDate.getDate()).padStart(2, "0")}-${String(
+              msgDate.getMonth() + 1
+            ).padStart(2, "0")}-${msgDate.getFullYear()} ${msgDate.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true
+            })}`
+            : "-",
 
           time: msgDate
             ? msgDate.toLocaleTimeString([], {

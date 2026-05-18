@@ -6,6 +6,7 @@ import { mapMessagesData } from "../Messages/mappers/messagesMappers";
 import "../../style/css/MessageCard.css";
 import { useTranslation } from "react-i18next";
 import candidateWorkflowServices from "../candidatePreview/services/CandidateWorkflowServices";
+import committeeManagementService from "../committeeManagement/services/committeeManagementService";
 import masterApiService from "../master/services/masterApiService";
 import { toast } from "react-toastify";
 import RequisitionStripformultiplepositions from "../candidatePreview/components/RequisitionStripformultiplepositions";
@@ -233,31 +234,107 @@ const Messages = () => {
     }
   };
   const handleToggle = async (id) => {
+
+    // REQUEST HISTORY
     const msgs = await fetchThreadMessages(id);
+
+    // APPROVAL HISTORY + USERS
+    const [approvalRes, usersRes] = await Promise.all([
+      committeeManagementService.getApprovalHistoryByThreadId(id),
+      masterApiService.getUser(),
+    ]);
+
+    const approvalData =
+      approvalRes?.data?.data ||
+      approvalRes?.data ||
+      [];
+
+    const users =
+      usersRes?.data?.data ||
+      usersRes?.data ||
+      [];
+
+    // USER MAP
+    const userMap = {};
+
+    users.forEach((u) => {
+      userMap[u.userId] = u.name;
+    });
+
+    // MAP APPROVAL ENTRIES
+    const approvalMapped = approvalData.map((a) => ({
+
+      senderType: "APPROVER",
+
+      approverName:
+        userMap[a.approverId] ||
+        a.approverRole ||
+        "Approver",
+
+      message:
+        a.comments ||
+        a.comment ||
+        a.remarks ||
+        a.remark ||
+        "-",
+
+      createdDate:
+        a.actionDate ||
+        a.createdDate,
+
+      status: a.status,
+    }));
+
+const filteredMsgs = (msgs || []).filter((m) => {
+
+  // KEEP NON-RECRUITER
+  if (m.senderType !== "RECRUITER") {
+    return true;
+  }
+
+  // NORMALIZE MESSAGE
+  const recruiterMessage = (
+    m.message ||
+    m.comments ||
+    ""
+  ).trim().toLowerCase();
+
+  // CHECK DUPLICATE
+  const isDuplicate = approvalMapped.some((a) => {
+
+    const approvalMessage = (
+      a.message ||
+      a.comments ||
+      ""
+    ).trim().toLowerCase();
+
+    return recruiterMessage === approvalMessage;
+  });
+
+  // REMOVE DUPLICATE
+  return !isDuplicate;
+});
+// MERGE BOTH
+const mergedHistory = [
+  ...filteredMsgs,
+  ...approvalMapped,
+];
+
+    // SORT
+    mergedHistory.sort(
+      (a, b) =>
+        new Date(a.createdDate) -
+        new Date(b.createdDate)
+    );
+
     setThreadMessagesMap((prev) => ({
       ...prev,
-      [id]: msgs,
+      [id]: mergedHistory,
     }));
 
     toggleRow(id);
   };
-  // React.useEffect(() => {
-  //   if (selectedPositionId) {
-  //     fetchMessages(
-  //       {
-  //         positionsIds: selectedPositionId || [],
-  //         requestTypeIds: selectedRequestType
-  //           ? [selectedRequestType]
-  //           : [],
-  //         statusList: selectedStatus
-  //           ? [selectedStatus]
-  //           : []
-  //       },
-  //       page,
-  //       size
-  //     );
-  //   }
-  // }, [page, size]);
+
 
   React.useEffect(() => {
     setPage(0);
@@ -283,31 +360,47 @@ const Messages = () => {
 
 
 
-  const handleSubmitApproval = async (threadId, status, comment) => {
+  const handleSubmitApproval = async (
+    threadId,
+    status,
+    comment
+  ) => {
+
     try {
+
       const payload = {
         conversationThreadId: [threadId],
         status,
         comments: comment || ""
       };
 
-      await candidateWorkflowServices.submitForMessageApproval(payload);
+      const res =
+        await candidateWorkflowServices.submitForMessageApproval(
+          payload
+        );
 
-      if (status === "L1_PENDING") {
-        toast.success("Approved successfully");
-      } else if (status === "REJECTED") {
-        toast.success("Rejected successfully");
+      // SUCCESS TOAST ONLY AFTER SUCCESS API
+      if (res?.success || res?.data?.success) {
+
+        if (status === "L1_PENDING") {
+          toast.success("Approved successfully");
+        }
+
+        if (status === "REJECTED") {
+          toast.success("Rejected successfully");
+        }
       }
-
-
-      const latestMessages = await fetchThreadMessages(threadId);
+      const latestMessages =
+        await fetchThreadMessages(threadId);
 
       setThreadMessagesMap(prev => ({
         ...prev,
-        [threadId]: latestMessages?.data || latestMessages || []
+        [threadId]: Array.isArray(latestMessages)
+          ? latestMessages
+          : []
       }));
 
-
+      // UPDATE STATUS
       setApiMessages(prev =>
         prev.map(item =>
           item.conversationThreadId === threadId
@@ -317,10 +410,17 @@ const Messages = () => {
       );
 
     } catch (err) {
-      console.error("Submit approval error", err);
 
+      console.error(
+        "Submit approval error",
+        err
+      );
+
+      // BACKEND ERROR MESSAGE
       toast.error(
-        err?.response?.data?.message || "Something went wrong"
+        err?.response?.data?.message ||
+        err?.message ||
+        "Something went wrong"
       );
     }
   };
@@ -333,7 +433,7 @@ const Messages = () => {
           requestTypeIds: selectedRequestType
             ? [selectedRequestType]
             : [],
-          statusList: []   // ✅ ALWAYS ALL
+          statusList: []
         },
         0,
         1000
