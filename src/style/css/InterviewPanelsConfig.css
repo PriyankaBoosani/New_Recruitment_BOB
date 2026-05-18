@@ -1111,6 +1111,20 @@
   animation: spin 1s linear infinite;
 }
 
+.ipc-btn-outline {
+  background: #fff;
+  border: 1px solid #4f5fbf;
+  color: #4f5fbf;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.ipc-btn-outline:hover {
+  background: #f5f7ff;
+}
+
 @keyframes spin {
 
   from {

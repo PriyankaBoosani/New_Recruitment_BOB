@@ -536,10 +536,10 @@ background-color: none !important;
 .selected-count-chip{
   background: #EEF3FF;
   color: #162B75;
-  border: 1px solid #C9D7FF;
+  /* border: 1px solid #C9D7FF; */
   border-radius: 20px;
   padding: 6px 12px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 400;
   white-space: nowrap;
 }

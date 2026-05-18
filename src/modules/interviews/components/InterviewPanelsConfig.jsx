@@ -9,7 +9,7 @@ import ApplySuccessModal from "../../interviews/components/ApplySuccessModal";
 import { toast } from "react-toastify";
 import interviewService from "../services/interviewService";
 import Loader from "../../../shared/components/Loader";
-
+import InterviewScheduleSummaryModal from "./InterviewScheduleSummaryModal";
 const InterviewPanelsConfig = ({
   positionId,
   //startTime,
@@ -53,6 +53,8 @@ const InterviewPanelsConfig = ({
   const [showCapacityModal, setShowCapacityModal] = React.useState(false);
 
 const [capacityMessage, setCapacityMessage] = React.useState("");
+
+  const [showSummaryModal, setShowSummaryModal] = React.useState(false);
 
   console.log("panels:", selectedPanels)
 
@@ -135,13 +137,18 @@ Please add additional interview slots or create another panel to continue.`
           </div>
 
           <div className="d-flex gap-2">
-            {/* <button className="ipc-btn-blue" onClick={() => {
-              // TODO: Implement import panel functionality
-              console.log("Import panel clicked");
-            }}>
-              <i className="bi bi-upload me-2"></i>
-              {t("import_panel")}
-            </button> */}
+            
+            {/* VIEW SUMMARY BUTTON */}
+            <button
+              className="ipc-btn-outline"
+              onClick={() => {
+                // open summary modal
+                setShowSummaryModal(true);
+              }}
+            >
+              <i className="bi bi-eye me-2"></i>
+              View Summary
+            </button>
 
             <button
               className="ipc-btn-blue"
@@ -300,6 +307,14 @@ Please add additional interview slots or create another panel to continue.`
         show={showApplySuccess}
         count={scheduledCount}
         onOk={() => setShowApplySuccess(false)}
+      />
+
+     <InterviewScheduleSummaryModal
+        show={showSummaryModal}
+        onClose={() => setShowSummaryModal(false)}
+        candidates={candidates}
+        selectedPanels={selectedPanels}
+        availablePanels={availablePanels}
       />
       {showCapacityModal && (
         <div className="ipc-alert-overlay">

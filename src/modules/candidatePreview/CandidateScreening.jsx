@@ -3158,19 +3158,36 @@ console.log("message",res.data[0].message)
 
                   {activeTab === "CANDIDATE_POOL" && (
                     <div className="selected-count-chip">
-                      {selectedCandidateIds.length} Candidates Selected
+                      
+                    {selectedCandidateIds.length}{" "}
+
+                    {selectedCandidateIds.length === 1
+                      ? "Candidate"
+                      : "Candidates"} Selected
                     </div>
                   )}
 
                   {activeTab === "INTERVIEW_POOL" && (
                     <div className="selected-count-chip">
-                      {selectedInterviewCandidateIds.length} Candidates Selected
+
+
+
+                      {selectedInterviewCandidateIds.length}{" "}
+
+                      {selectedInterviewCandidateIds.length === 1
+                        ? "Candidate"
+                        : "Candidates"} Selected
                     </div>
                   )}
 
                   {activeTab === "COMPENSATION_POOL" && (
                     <div className="selected-count-chip">
-                      {selectedCompensationIds.length} Candidates Selected
+
+                      {selectedCompensationIds.length}{" "}
+
+                      {selectedCompensationIds.length === 1
+                        ? "Candidate"
+                        : "Candidates"} Selected
                     </div>
                   )}
 
