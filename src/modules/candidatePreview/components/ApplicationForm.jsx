@@ -13,7 +13,8 @@ import masterApiService from "../../master/services/masterApiService";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck, faCircleExclamation, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faCircleExclamation, faCircleXmark, faTrash, faUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+import CommentsModal from "./CommentsModal";
 
 
 const ApplicationForm = ({
@@ -46,6 +47,10 @@ const ApplicationForm = ({
   const navigate = useNavigate();
   const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
   const [criteria, setCriteria] = useState({});
+  const [showCommentsModal, setShowCommentsModal] = useState(false);
+  const [isEligible, setIsEligible] = useState(false);
+  const [otherDocuments, setOtherDocuments] = useState([]);
+  const [otherDocumentErrors, setOtherDocumentErrors] = useState({});
   const location = useLocation();
   const isInterviewView = location.state?.fromInterviewPool;
   const candidate = location.state?.candidate;
@@ -57,17 +62,27 @@ const ApplicationForm = ({
 
 
 
-  const deriveShortlistStatus = () => {
-    const values = [
-      screeningForm.isWorkCriteriaMet,
-      screeningForm.isAgeCriteriaMet,
-      screeningForm.isEducationCriteriaMet,
-    ];
+  // const deriveShortlistStatus = () => {
+  //   const values = [
+  //     screeningForm.isWorkCriteriaMet,
+  //     screeningForm.isAgeCriteriaMet,
+  //     screeningForm.isEducationCriteriaMet,
+  //   ];
 
-    if (values.includes("NO")) return "NO";                  // Highest priority
-    if (values.includes("DISCREPANCY")) return "DEFAULT";    // Second priority
-    if (values.every(v => v === "YES")) return "YES";        // All YES
-    return "";
+  //   if (values.includes("NO")) return "NO";                  // Highest priority
+  //   if (values.includes("DISCREPANCY")) return "DEFAULT";    // Second priority
+  //   if (values.every(v => v === "YES")) return "YES";        // All YES
+  //   return "";
+  // };
+
+  const deriveShortlistStatus = () => {
+    const ageOk = isCategorySatisfied("AGE");
+    const workOk = isCategorySatisfied("WORK");
+    const eduOk = isCategorySatisfied("EDUCATION");
+
+    if (!ageOk || !workOk || !eduOk) return "NO";
+
+    return "YES";
   };
 
   useEffect(() => {
@@ -442,6 +457,65 @@ const ApplicationForm = ({
   const [docStatus, setDocStatus] = useState({});
   const [zonalDecision, setZonalDecision] = useState("");
 
+    const getDocCategory = (name = "") => {
+    const n = name.toLowerCase().trim();
+
+    // AGE
+    if (
+      n.includes("birth certificate") ||
+      n.includes("10th") ||
+      n.includes("10th certificate")
+    ) {
+      return "AGE";
+    }
+
+    // WORK
+    if (/^work[_\s]?experience/i.test(name)) {
+      return "WORK";
+    }
+
+    // EDUCATION
+    if (
+      n.includes("board") ||
+      n.includes("intermediate") ||
+      n.includes("graduation") ||
+      n.includes("post-graduation") ||
+      n.includes("doctorate") ||
+      n.includes("professional")
+    ) {
+      return "EDUCATION";
+    }
+
+    return "OTHER";
+  };
+
+  const groupedDocs = documentRows.reduce((acc, doc) => {
+    const category = getDocCategory(doc.name);
+
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(doc);
+
+    return acc;
+  }, {});
+
+  const isCategorySatisfied = (category) => {
+    const docs = groupedDocs[category] || [];
+
+    return docs.some(doc => {
+      const status = docStatusMap[doc.candidateDocumentId]?.status;
+      return status === "VERIFIED";
+    });
+  };
+
+  useEffect(() => {
+    // DO NOT auto-populate criteria based on document verification.
+    // Users must manually set criteria (YES/NO/DISCREPANCY).
+    // Documents being VERIFIED only affects:
+    // - Whether we ALLOW shortlist YES (all categories must have at least one VERIFIED doc)
+    // - But does NOT force criteria to YES
+    // If user marked DISCREPANCY, it should stay DISCREPANCY until manually changed.
+  }, [docStatusMap]);
+
   // const allDocsVerified =
   //   documentRows.length > 0 &&
   //   areAllDocumentsValidated();
@@ -589,6 +663,7 @@ const ApplicationForm = ({
           submitBeforeDate: data.submitBeforeDate ?? "",
           screeningId: data.screeningId ?? null,
         }));
+        setIsEligible(Boolean(data.isEligible));
       } catch (err) {
         console.error(t("failed_fetch_discrepancy_details"), err);
       }
@@ -617,6 +692,8 @@ const ApplicationForm = ({
         return "verified-pill";
       case "REJECTED":
         return "rejected-pill";
+      case "YET TO UPLOAD":
+        return "yet-upload-pill";
       default:
         return "pending-pill";
     }
@@ -799,10 +876,15 @@ const ApplicationForm = ({
     }
   };
 
+  const hasAdditionalDocuments = otherDocuments.some(
+    doc => doc.documentName?.trim()
+  );
+
   const hasAnyDiscrepancy =
     screeningForm.isWorkCriteriaMet === "DISCREPANCY" ||
     screeningForm.isAgeCriteriaMet === "DISCREPANCY" ||
-    screeningForm.isEducationCriteriaMet === "DISCREPANCY";
+    screeningForm.isEducationCriteriaMet === "DISCREPANCY" ||
+    hasAdditionalDocuments;
 
 
 
@@ -856,19 +938,19 @@ const ApplicationForm = ({
       newErrors.isShortlisted = t("please_select_option");
     }
 
-    if (hasAnyRejectedDocument()) {
-      const allYes =
-        screeningForm.isWorkCriteriaMet === "YES" &&
-        screeningForm.isAgeCriteriaMet === "YES" &&
-        screeningForm.isEducationCriteriaMet === "YES";
+    // if (hasAnyRejectedDocument()) {
+    //   const allYes =
+    //     screeningForm.isWorkCriteriaMet === "YES" &&
+    //     screeningForm.isAgeCriteriaMet === "YES" &&
+    //     screeningForm.isEducationCriteriaMet === "YES";
 
-      if (allYes) {
-        toast.error(
-          "All criteria cannot be YES when any document is REJECTED"
-        );
-        return false;
-      }
-    }
+    //   if (allYes) {
+    //     toast.error(
+    //       "All criteria cannot be YES when any document is REJECTED"
+    //     );
+    //     return false;
+    //   }
+    // }
 
     // const derivedStatus = deriveShortlistStatus();
 
@@ -897,6 +979,20 @@ const ApplicationForm = ({
           newErrors.submitBeforeDate = t("date_after_today");
         }
       }
+    }
+
+    const docErrors = {};
+
+    otherDocuments.forEach((doc) => {
+      if (!doc.documentName?.trim()) {
+        docErrors[doc.id] = "Document name is required";
+      }
+    });
+
+    setOtherDocumentErrors(docErrors);
+
+    if (Object.keys(docErrors).length > 0) {
+      return false;
     }
 
     setErrors(newErrors);
@@ -939,6 +1035,22 @@ const ApplicationForm = ({
     );
   };
 
+  const hasShortlistSelection =
+    screeningForm.isShortlisted === "YES" ||
+    screeningForm.isShortlisted === "NO";
+
+  const hasMissingUploads = documentRows.some(
+    doc => !doc?.url
+  );
+
+  const disableEligibleCheckbox =
+    !areAllCriteriaYes() ||
+    hasShortlistSelection ||
+    hasAdditionalDocuments ||
+    hasMissingUploads;
+
+  const disableShortlistBecauseEligible = isEligible;
+
   const hasAnyRejectedDocument = () => {
     return documentRows.some(doc => {
       const status = docStatusMap[doc.candidateDocumentId]?.status;
@@ -955,45 +1067,69 @@ const ApplicationForm = ({
   };
 
   const baseDerived = deriveShortlistStatus();
-  const derivedShortlist = baseDerived;
 
   const areAllCriteriaSelected =
     screeningForm.isWorkCriteriaMet &&
     screeningForm.isAgeCriteriaMet &&
     screeningForm.isEducationCriteriaMet;
 
+  // Disable shortlist section if:
+  // 1. Criteria are not all selected, OR
+  // 2. ANY criteria is marked as DISCREPANCY
+  // const disableShortlistedSection = !areAllCriteriaSelected || hasAnyDiscrepancy;
   const disableShortlistedSection =
-    !areAllCriteriaSelected || baseDerived === "DEFAULT";
+  !areAllCriteriaSelected ||
+  hasAnyDiscrepancy ||
+  disableShortlistBecauseEligible ||
+  hasMissingUploads;
 
-  // const disableYesOption =
-  //   disableShortlistedSection || derivedShortlist === "NO";
-
-  // const disableNoOption =
-  //   disableShortlistedSection || derivedShortlist === "YES";
-
-  // const disableYesOption = disableShortlistedSection;
+  // Disable YES option if:
+  // 1. Shortlist section is disabled, OR
+  // 2. NOT all criteria are marked as YES
   const disableYesOption = disableShortlistedSection || !areAllCriteriaYes();
+  
+  // NO option is disabled if shortlist section is disabled
   const disableNoOption = disableShortlistedSection;
 
   const handleFinalSubmit = async () => {
-
-
-    if (!areAllDocumentsValidated()) {
-      // toast.error("Please validate all documents");
-      toast.error(t("please_validate_all_documents"));
-      return;
-    }
-
+    // ✅ Validation 1: Criteria must be selected
     const isValid = validateForm();
     if (!isValid) return;
 
+    // ✅ Validation 2: Check document satisfaction for shortlist logic
+    const isAgeValid = isCategorySatisfied("AGE");
+    const isWorkValid = isCategorySatisfied("WORK");
+    const isEducationValid = isCategorySatisfied("EDUCATION");
 
-    const derivedShortlist = deriveShortlistStatus();
+    // If all categories have verified docs, allow user's shortlist decision
+    // If not, force shortlist to NO (but don't stop submission)
+    // let finalShortlist = screeningForm.isShortlisted;
+    // if (!isAgeValid || !isWorkValid || !isEducationValid) {
+    //   finalShortlist = "NO";
+    // }
+
+    let finalShortlist = screeningForm.isShortlisted;
+
+    // If any criteria is DISCREPANCY,
+    // shortlist must stay empty
+    if (hasAnyDiscrepancy) {
+      finalShortlist = "";
+    }
+
+    // Otherwise, if required verified docs are missing,
+    // force shortlist to NO
+    else if (!isAgeValid || !isWorkValid || !isEducationValid) {
+      finalShortlist = "NO";
+    }
 
     const payload = {
       ...screeningForm,
-      // isShortlisted: derivedShortlist || "NO",
+      isShortlisted: finalShortlist,
       isScreeningCompleted: true,
+      isEligible,
+      additionalDocumentNames: otherDocuments
+        .map(doc => doc.documentName?.trim())
+        .filter(Boolean),
     };
 
 
@@ -1133,6 +1269,60 @@ const ApplicationForm = ({
   screeningForm.isAgeCriteriaMet,
   screeningForm.isEducationCriteriaMet]);
 
+  // Clear shortlist completely when any criteria is marked as DISCREPANCY
+  useEffect(() => {
+    if (hasAnyDiscrepancy && screeningForm.isShortlisted) {
+      setScreeningForm(prev => ({
+        ...prev,
+        isShortlisted: "",
+        finalScreeningRemark: ""
+      }));
+
+      setErrors(prev => ({
+        ...prev,
+        isShortlisted: undefined,
+        finalScreeningRemark: undefined
+      }));
+    }
+  }, [hasAnyDiscrepancy]);
+
+  useEffect(() => {
+  if (!hasAdditionalDocuments) return;
+
+  // Clear shortlist + eligible immediately
+  setIsEligible(false);
+
+  setScreeningForm(prev => ({
+    ...prev,
+    isShortlisted: "",
+    finalScreeningRemark: "",
+  }));
+
+  setErrors(prev => ({
+    ...prev,
+    isShortlisted: undefined,
+    finalScreeningRemark: undefined,
+  }));
+}, [hasAdditionalDocuments]);
+
+useEffect(() => {
+  if (!hasMissingUploads) return;
+
+  setIsEligible(false);
+
+  setScreeningForm(prev => ({
+    ...prev,
+    isShortlisted: "",
+    finalScreeningRemark: "",
+  }));
+
+  setErrors(prev => ({
+    ...prev,
+    isShortlisted: undefined,
+    finalScreeningRemark: undefined,
+  }));
+}, [hasMissingUploads]);
+
   const allDocsAreVerified = areAllDocumentsVerified();
 
   const isOptionDisabled = (option) => {
@@ -1192,6 +1382,122 @@ const ApplicationForm = ({
   const isBirthPending = birthDoc?.isValidationPending === true;
   const isTenthPending = tenthDoc?.isValidationPending === true;
   const isPending = isBirthPending || isTenthPending;
+
+  const handleEligibleChange = (checked) => {
+    setIsEligible(checked);
+
+    if (checked) {
+      setScreeningForm(prev => ({
+        ...prev,
+        isShortlisted: "",
+        finalScreeningRemark: "",
+      }));
+
+      setErrors(prev => ({
+        ...prev,
+        isShortlisted: undefined,
+        finalScreeningRemark: undefined,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    if (hasShortlistSelection && isEligible) {
+      setIsEligible(false);
+    }
+  }, [screeningForm.isShortlisted]);
+
+  const handleAddDocumentRow = () => {
+    setOtherDocuments(prev => [
+      ...prev,
+      {
+        id: Date.now(),
+        documentName: "",
+        criteriaType: "",
+      },
+    ]);
+  };
+
+  const handleRemoveDocumentRow = (id) => {
+    setOtherDocuments(prev => {
+      const updated = prev.filter(row => row.id !== id);
+
+      // Recalculate discrepancy after delete
+      const hasAge = updated.some(r => r.criteriaType === "Age");
+      const hasWork = updated.some(r => r.criteriaType === "Work");
+      const hasEducation = updated.some(r => r.criteriaType === "Education");
+
+      setScreeningForm(current => ({
+        ...current,
+
+        isAgeCriteriaMet:
+          current.isAgeCriteriaMet === "DISCREPANCY" && !hasAge
+            ? ""
+            : current.isAgeCriteriaMet,
+
+        isWorkCriteriaMet:
+          current.isWorkCriteriaMet === "DISCREPANCY" && !hasWork
+            ? ""
+            : current.isWorkCriteriaMet,
+
+        isEducationCriteriaMet:
+          current.isEducationCriteriaMet === "DISCREPANCY" && !hasEducation
+            ? ""
+            : current.isEducationCriteriaMet,
+      }));
+
+      return updated;
+    });
+  };
+
+  const handleOtherDocumentChange = (id, field, value) => {
+    setOtherDocuments(prev => {
+      const updated = prev.map(row =>
+        row.id === id
+          ? {
+              ...row,
+              [field]: value,
+            }
+          : row
+      );
+
+      // Get latest selected values
+      const selectedRow = updated.find(r => r.id === id);
+
+      setScreeningForm(current => {
+        const next = { ...current };
+
+        // Reset first
+        const hasAge = updated.some(r => r.criteriaType === "Age");
+        const hasWork = updated.some(r => r.criteriaType === "Work");
+        const hasEducation = updated.some(r => r.criteriaType === "Education");
+
+        if (hasAge) {
+          next.isAgeCriteriaMet = "DISCREPANCY";
+        }
+
+        if (hasWork) {
+          next.isWorkCriteriaMet = "DISCREPANCY";
+        }
+
+        if (hasEducation) {
+          next.isEducationCriteriaMet = "DISCREPANCY";
+        }
+
+        if (field === "documentName" && value.trim()) {
+          setOtherDocumentErrors(prev => {
+            const updated = { ...prev };
+            delete updated[id];
+            return updated;
+          });
+        }
+
+        return next;
+      });
+
+      return updated;
+    });
+  };
 
   return (
     <>
@@ -1682,11 +1988,13 @@ const ApplicationForm = ({
                     const left = documentRows[rowIndex * 2];
                     const right = documentRows[rowIndex * 2 + 1];
 
-                    const leftStatus =
-                      docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
+                    const leftStatus = !left?.url
+                      ? "YET TO UPLOAD"
+                      : docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
 
-                    const rightStatus =
-                      docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
+                    const rightStatus = !right?.url
+                      ? "YET TO UPLOAD"
+                      : docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
 
                     return (
                       <tr key={rowIndex}>
@@ -1843,6 +2151,84 @@ const ApplicationForm = ({
 
           </Accordion.Body>
         </Accordion.Item>
+
+        <div className="card mt-3 border-0">
+          <div className="d-flex gap-3 align-items-center border-bottom p-3">
+            <label style={{ fontSize: '0.875rem', fontWeight: 500, color: '#162B75' }}>Additioal Required Documents</label>
+            <button className="btn-submit-orange py-1 px-2" style={{ height: 'auto', fontSize: '0.75rem' }} onClick={handleAddDocumentRow}>+ Add Document</button>
+          </div>
+
+          {otherDocuments.map((row) => (
+            <div
+              key={row.id}
+              className="d-flex align-items-end gap-3 p-3"
+            >
+              <div style={{ flex: 1 }}>
+                <label className="mb-1" style={{ color: '#162B75', fontSize: '0.75rem', fontWeight: 500 }}>
+                  Document Name
+                </label>
+
+                <input
+                  type="text"
+                  className="form-control"
+                  value={row.documentName}
+                  onChange={(e) =>
+                    handleOtherDocumentChange(
+                      row.id,
+                      "documentName",
+                      e.target.value
+                    )
+                  }
+                  style={{ minHeight: 'auto', padding: '0.4rem 0.8rem' }}
+                  placeholder="Enter document name"
+                />
+                {otherDocumentErrors[row.id] && (
+                  <small className="text-danger fs-12">
+                    {otherDocumentErrors[row.id]}
+                  </small>
+                )}
+              </div>
+
+              {/* <div style={{ width: "220px" }}>
+                <label className="mb-1" style={{ color: '#162B75', fontSize: '0.75rem', fontWeight: 500 }}>
+                  Criteria
+                </label>
+
+                <select
+                  className="form-select"
+                  value={row.criteriaType}
+                  onChange={(e) =>
+                    handleOtherDocumentChange(
+                      row.id,
+                      "criteriaType",
+                      e.target.value
+                    )
+                  }
+                  style={{ minHeight: 'auto', padding: '0.4rem 0.8rem' }}
+                >
+                  <option value="">Select</option>
+                  <option value="Age">Age</option>
+                  <option value="Work">Work</option>
+                  <option value="Education">Education</option>
+                </select>
+              </div> */}
+
+              <button
+                type="button"
+                className="btn btn-link p-0 mb-1"
+                onClick={() => handleRemoveDocumentRow(row.id)}
+              >
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  style={{
+                    color: "#ccc",
+                    fontSize: "16px",
+                  }}
+                />
+              </button>
+            </div>
+          ))}
+        </div>
 
         {/* ================= CRITERIA SECTION ================= */}
         {canCandidatePool &&
@@ -2066,13 +2452,56 @@ const ApplicationForm = ({
                 )}
 
                 {!isFromCompensationPool && (
+                  <div className="d-flex align-items-center gap-2 mb-2 me-4">
+                    <input
+                      type="checkbox"
+                      checked={isEligible}
+                      disabled={disableEligibleCheckbox}
+                      onChange={(e) => handleEligibleChange(e.target.checked)}
+                    />
+
+                    <label
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        color: "#162B75",
+                        marginBottom: 0,
+                        cursor: disableEligibleCheckbox ? "not-allowed" : "pointer",
+                        opacity: disableEligibleCheckbox ? 0.6 : 1,
+                      }}
+                    >
+                      Eligible?
+                    </label>
+                  </div>
+                )}
+
+                {!isFromCompensationPool && (
+                <div>
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      color: "#f47c2c",
+                      cursor: "pointer",
+                      // textDecoration: "underline",
+                    }}
+                    className="me-4"
+                    onClick={() => setShowCommentsModal(true)}
+                  >
+                    View all comments
+                    <FontAwesomeIcon
+                      icon={faUpRightFromSquare}
+                      style={{ fontSize: "12px" }}
+                      className="ms-1"
+                    />
+                  </span>
                   <button
                     className="btn-submit-orange"
                     onClick={handleFinalSubmit}
                   >
                     {t("submit")}
                   </button>
-                )}
+                </div>
+              )}
               </div>
             </Card>
           )}
@@ -2246,6 +2675,12 @@ const ApplicationForm = ({
         isZonalAbsent={isZonalAbsent}
         isFromCompensationPool={isFromCompensationPool}
 
+      />
+
+      <CommentsModal
+        show={showCommentsModal}
+        onClose={() => setShowCommentsModal(false)}
+        applicationId={applicationId}
       />
     </>
   );

@@ -54,6 +54,7 @@ export default function CandidateScreening({ selectedJob }) {
     DISCREPANCY: "Discrepancy",
     PENDING: "Pending",
     INTERVIEW_SCHEDULED: "Interview Scheduled",
+    ELIGIBLE: "Eligible",
     // REJECTED: "Rejected",
   };
 
@@ -66,7 +67,8 @@ export default function CandidateScreening({ selectedJob }) {
     "SHORTLISTED",
     "REJECTED",
     "DISCREPANCY",
-    "PENDING"
+    "PENDING",
+    "ELIGIBLE",
   ];
 
   const [compRefreshKey, setCompRefreshKey] = useState(0);

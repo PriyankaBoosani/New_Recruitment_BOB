@@ -1,80 +1,230 @@
-import React, { useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Modal, Button, Spinner } from "react-bootstrap";
+import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
+import { toast } from "react-toastify";
 
-const CommentsModal = ({ show, onClose }) => {
+const CommentsModal = ({ show, onClose, applicationId }) => {
   const [newComment, setNewComment] = useState("");
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // 🔹 Static mock data (for now)
-  const comments = [
-    {
-      id: 1,
-      user: "Zonal HR",
-      text: "Documents look fine overall.",
-      time: "2026-05-01 10:30 AM",
-    },
-    {
-      id: 2,
-      user: "Screening Team",
-      text: "Work experience needs re-check.",
-      time: "2026-05-02 02:15 PM",
-    },
-  ];
+  useEffect(() => {
+    if (!show || !applicationId) return;
 
-  const handleAddComment = () => {
-    if (!newComment.trim()) return;
+    fetchComments();
+  }, [show, applicationId]);
 
-    console.log("New Comment:", newComment);
+  const fetchComments = async () => {
+    try {
+      setLoading(true);
 
-    // Later → API call
-    setNewComment("");
+      const res =
+        await jobPositionApiService.getScreeningComments(
+          applicationId
+        );
+
+      setComments(res?.data?.comments || []);
+    } catch (err) {
+      console.error("Failed to fetch comments", err);
+      setComments([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+	const handleAddComment = async () => {
+    const trimmedComment = newComment.trim();
+
+    // REQUIRED VALIDATION
+    if (!trimmedComment) {
+        toast.error("Comment is required");
+        return;
+    }
+
+    // MAX LENGTH VALIDATION
+    if (trimmedComment.length > 2000) {
+        toast.error(
+        "Comment cannot exceed 2000 characters"
+        );
+        return;
+    }
+
+    try {
+        await jobPositionApiService.postScreeningComment(
+        applicationId,
+        {
+					commentText: trimmedComment,
+        }
+        );
+        setNewComment("");
+        await fetchComments();
+    } catch (err) {
+        console.error("Failed to post comment", err);
+        toast.error("Failed to post comment");
+    }
+	};
+
+  const formatRole = (role) => {
+    if (!role) return "-";
+
+    return role
+      .replaceAll("_", " ")
+      .toLowerCase()
+      .replace(/\b\w/g, c => c.toUpperCase());
   };
 
   return (
     <Modal show={show} onHide={onClose} centered size="lg">
       <Modal.Header closeButton>
-        <Modal.Title style={{ fontSize: '1rem', color: '#2f3a8f' }}>Comments</Modal.Title>
+        <Modal.Title
+          style={{
+            fontSize: "1rem",
+            color: "#2f3a8f",
+          }}
+        >
+          Comments
+        </Modal.Title>
       </Modal.Header>
 
-      <Modal.Body style={{ maxHeight: "400px", overflowY: "auto" }}>
-        {/* COMMENTS LIST */}
-        <div className="mb-3">
-          {comments.map((c) => (
-            <div
-              key={c.id}
-              style={{
-                border: "1px solid #eee",
-                borderRadius: "6px",
-                padding: "10px",
-                marginBottom: "10px",
-                background: "#f9f9f9",
-              }}
-            >
-              <div style={{ fontWeight: "500", color: '#2f3a8f', fontSize: '1rem' }}>{c.user}</div>
-              <div style={{ fontSize: "0.875rem" }} className="mt-1">
-                {c.text}
-              </div>
-              <div style={{ fontSize: "0.75rem", color: "#888" }} className="mt-1">
-                {c.time}
-              </div>
-            </div>
-          ))}
-        </div>
+      <Modal.Body
+        style={{
+          maxHeight: "400px",
+          overflowY: "auto",
+        }}
+      >
+        {loading ? (
+          <div className="text-center py-4">
+            <Spinner animation="border" size="sm" />
+          </div>
+        ) : comments.length === 0 ? (
+          <div
+            className="text-center py-3"
+            style={{
+              color: "#777",
+              fontSize: "0.875rem",
+            }}
+          >
+            No comments found
+          </div>
+        ) : (
+          <div className="d-flex flex-column gap-3 mb-3">
+            {comments.map((c) => {
+                const isCandidate =
+                c.userRole?.toUpperCase() === "CANDIDATE";
 
-        {/* INPUT */}
+                return (
+                <div
+                    key={c.id}
+                    className={`d-flex ${
+                    isCandidate
+                        ? "justify-content-start"
+                        : "justify-content-end"
+                    }`}
+                >
+                    <div
+                    style={{
+                        maxWidth: "75%",
+                        padding: "10px 14px",
+                        borderRadius: "16px",
+                        background: isCandidate
+                        ? "#f1f1f1"
+                        : "#dbeafe",
+                        border: "1px solid #e5e7eb",
+                    }}
+                    >
+                    {/* ROLE */}
+                    <div
+                        style={{
+                        fontWeight: 600,
+                        fontSize: "0.875rem",
+                        color: "#2f3a8f",
+                        marginBottom: "4px",
+                        }}
+                    >
+                        {formatRole(c.userRole)}
+                    </div>
+
+                    {/* MESSAGE */}
+                    <div
+                        style={{
+                        fontSize: "0.92rem",
+                        color: "#222",
+                        whiteSpace: "pre-wrap",
+                        wordBreak: "break-word",
+                        }}
+                    >
+                        {c.commentText}
+                    </div>
+
+                    {/* TIME */}
+                    <div
+                        style={{
+                        fontSize: "0.72rem",
+                        color: "#777",
+                        marginTop: "6px",
+                        textAlign: "right",
+                        }}
+                    >
+                      {new Date(c.createdDate).toLocaleString("en-GB", {
+												day: "2-digit",
+												month: "2-digit",
+												year: "numeric",
+												hour: "2-digit",
+												minute: "2-digit",
+												second: "2-digit",
+												hour12: true,
+											}).replace(/\//g, "/")}
+                    </div>
+                    </div>
+                </div>
+                );
+            })}
+            </div>
+        )}
+
         <textarea
           className="form-control"
           rows={3}
           placeholder="Enter your comment..."
           value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
+          onChange={(e) =>
+            setNewComment(e.target.value)
+          }
         />
+				<div
+					style={{
+						textAlign: "right",
+						fontSize: "0.75rem",
+						color: "#777",
+						marginTop: "4px",
+					}}
+				>
+					{newComment.length}/2000
+				</div>
       </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="btn" onClick={onClose} style={{ fontSize: '0.875rem', border: '1px solid #333', color: '#333' }}>
+        <Button
+          variant="btn"
+          onClick={onClose}
+          style={{
+            fontSize: "0.875rem",
+            border: "1px solid #333",
+            color: "#333",
+          }}
+        >
           Close
         </Button>
-        <Button variant="btn primary" onClick={handleAddComment} style={{ fontSize: '0.875rem', backgroundColor: '#f47c2c', color: '#fff' }}>
+
+        <Button
+          variant="btn primary"
+          onClick={handleAddComment}
+          style={{
+            fontSize: "0.875rem",
+            backgroundColor: "#f47c2c",
+            color: "#fff",
+          }}
+        >
           Send
         </Button>
       </Modal.Footer>
