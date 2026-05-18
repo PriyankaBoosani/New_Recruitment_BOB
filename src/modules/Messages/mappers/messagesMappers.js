@@ -6,12 +6,20 @@ export const mapMessagesData = (
   // selectedPositionName,
   positions = [],
   requestTypes = [],
-  threadMessagesMap = {}
+  threadMessagesMap = {},
+  interviewCentres = []
 ) => {
 
   const requestTypeMap = {};
   requestTypes.forEach(rt => {
     requestTypeMap[rt.requestTypeId] = rt.requestName;
+  });
+
+  const zonalMap = {};
+
+  interviewCentres.forEach((z) => {
+    zonalMap[z.interviewCentreId] =
+      z.displayName;
   });
 
   return (apiMessages || []).map((item) => {
@@ -50,6 +58,11 @@ export const mapMessagesData = (
           hour12: true
         })
         : "-",
+      dateExtension: item?.dateExtension
+        ? new Date(item.dateExtension)
+          .toISOString()
+          .split("T")[0]
+        : "-",
 
       status: (() => {
         switch (item?.status) {
@@ -66,11 +79,16 @@ export const mapMessagesData = (
       })(),
 
       rawStatus: item?.status, // ✅ only once
-
+      requestTypeId: item?.requestTypeId || "",
       type:
         item?.requestTypeName ||
         requestTypeMap[item?.requestTypeId] ||
         item?.requestTypeId ||
+        "-",
+
+      zonalId:
+        zonalMap[item?.zonalId] ||
+        item?.zonalId ||
         "-",
 
       history: (threadMessagesMap[item?.conversationThreadId] || []).map(msg => {

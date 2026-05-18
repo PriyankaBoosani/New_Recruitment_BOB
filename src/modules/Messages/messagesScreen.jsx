@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import candidateWorkflowServices from "../candidatePreview/services/CandidateWorkflowServices";
 import masterApiService from "../master/services/masterApiService";
 import { toast } from "react-toastify";
-
+import RequisitionStripformultiplepositions from "../candidatePreview/components/RequisitionStripformultiplepositions";
 const Messages = () => {
   const { t } = useTranslation(["messages", "common"]);
   const {
@@ -24,6 +24,9 @@ const Messages = () => {
 
 
   const [selectedStatus, setSelectedStatus] = React.useState("");
+  const [selectedRequestType, setSelectedRequestType] = React.useState("");
+
+
   const [isFilterOpen, setIsFilterOpen] = React.useState(false);
   const [requisitions, setRequisitions] = React.useState([]);
   const [loadingRequisitions, setLoadingRequisitions] = React.useState(false);
@@ -42,6 +45,8 @@ const Messages = () => {
   const [size, setSize] = React.useState(10);
   const [totalPages, setTotalPages] = React.useState(0);
   const filterRef = useRef(null);
+  const [interviewCentres, setInterviewCentres] =
+    React.useState([]);
 
 
 
@@ -61,7 +66,8 @@ const Messages = () => {
     selectedRequisitionName,
     positions,
     requestTypes,
-    threadMessagesMap
+    threadMessagesMap,
+    interviewCentres
   );
 
   // const statusCounts = messagesData.reduce((acc, item) => {
@@ -90,7 +96,10 @@ const Messages = () => {
         item.requisitionId === selectedRequisitionId) &&
       (!selectedPositionId ||
         selectedPositionId.includes(item.positionId)) &&
-      (!selectedStatus || item.rawStatus === selectedStatus) &&
+      (!selectedStatus ||
+        item.rawStatus === selectedStatus) &&
+      (!selectedRequestType ||
+        item.requestTypeId === selectedRequestType) &&
       (!searchText || matchesSearch)
     );
   });
@@ -152,6 +161,7 @@ const Messages = () => {
   React.useEffect(() => {
     fetchRequisitions();
     fetchRequestTypes();
+    fetchInterviewCentres();
   }, []);
 
   const fetchRequisitions = async (search = "") => {
@@ -189,13 +199,27 @@ const Messages = () => {
 
       toggleRow(null);
 
-      fetchMessages({
-        positionsIds: selectedPositionId || [],
-        requestTypeIds: [],
-        statusList: selectedStatus ? [selectedStatus] : []
-      }, 0, size);
+      fetchMessages(
+        {
+          positionsIds: selectedPositionId || [],
+          requestTypeIds: selectedRequestType
+            ? [selectedRequestType]
+            : [],
+          statusList: selectedStatus
+            ? [selectedStatus]
+            : []
+        },
+        page,
+        size
+      );
     }
-  }, [selectedPositionId, selectedStatus]);
+  }, [
+    selectedPositionId,
+    selectedStatus,
+    selectedRequestType,
+    page,
+    size
+  ]);
 
   const fetchThreadMessages = async (threadId) => {
     try {
@@ -217,23 +241,32 @@ const Messages = () => {
 
     toggleRow(id);
   };
-  React.useEffect(() => {
-    if (selectedPositionId) {
-
-      fetchMessages({
-        positionsIds: selectedPositionId || [],
-        requestTypeIds: [], // optional (can pass selected later)
-        statusList: selectedStatus ? [selectedStatus] : []
-        // statusList: []
-      }, page, size);
-    }
-  }, [page, size]);
-
+  // React.useEffect(() => {
+  //   if (selectedPositionId) {
+  //     fetchMessages(
+  //       {
+  //         positionsIds: selectedPositionId || [],
+  //         requestTypeIds: selectedRequestType
+  //           ? [selectedRequestType]
+  //           : [],
+  //         statusList: selectedStatus
+  //           ? [selectedStatus]
+  //           : []
+  //       },
+  //       page,
+  //       size
+  //     );
+  //   }
+  // }, [page, size]);
 
   React.useEffect(() => {
     setPage(0);
-  }, [selectedPositionId, selectedStatus, searchText]);
-
+  }, [
+    selectedPositionId,
+    selectedStatus,
+    selectedRequestType,
+    searchText
+  ]);
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (filterRef.current && !filterRef.current.contains(event.target)) {
@@ -258,7 +291,7 @@ const Messages = () => {
         comments: comment || ""
       };
 
-      await candidateWorkflowServices.submitForApproval(payload);
+      await candidateWorkflowServices.submitForMessageApproval(payload);
 
       if (status === "L1_PENDING") {
         toast.success("Approved successfully");
@@ -297,7 +330,9 @@ const Messages = () => {
       const res = await candidateWorkflowServices.getMessageHistory(
         {
           positionsIds: selectedPositionId || [],
-          requestTypeIds: [],
+          requestTypeIds: selectedRequestType
+            ? [selectedRequestType]
+            : [],
           statusList: []   // ✅ ALWAYS ALL
         },
         0,
@@ -337,6 +372,23 @@ const Messages = () => {
 
 
 
+
+  const fetchInterviewCentres = async () => {
+    try {
+      const res =
+        await masterApiService.getInterviewCentresByState(
+          [],
+          null
+        );
+
+      setInterviewCentres(res?.data || []);
+    } catch (err) {
+      console.error(
+        "Interview centre error",
+        err
+      );
+    }
+  };
 
 
   return (
@@ -400,7 +452,9 @@ const Messages = () => {
                     fetchMessages(
                       {
                         positionsIds: values || [],
-                        requestTypeIds: [],
+                        requestTypeIds: selectedRequestType
+                          ? [selectedRequestType]
+                          : [],
                         statusList: selectedStatus ? [selectedStatus] : []
                       },
                       0,
@@ -409,6 +463,7 @@ const Messages = () => {
                   }}
                   onRequisitionSearch={(val) => fetchRequisitions(val)}
                 />
+
                 {/* <div style={{ minWidth: "180px", maxWidth: "220px", flex: 1 }}>
                   <label className="fs-14 blue-color">
                     {t("messages:extend_submission_date")}
@@ -436,146 +491,47 @@ const Messages = () => {
                 </div> */}
 
                 <div
-                  ref={filterRef}
-                  className="filter-wrapper"
-                  style={{
-                    marginLeft: "auto",
-                    minWidth: "160px",
-                    display: "flex",
-                    alignItems: "flex-end"
-                  }}
+                  className="col-md-2 col-12"
+                  style={{ marginLeft: "auto" }}
                 >
-                  <div
-                    className="filter-header"
-                    style={{ height: "38px", display: "flex", alignItems: "center" }}
-                    onClick={() => setIsFilterOpen(!isFilterOpen)}
+                  <select
+                    className="status-select form-select"
+                    value={selectedStatus || ""}
+                    onChange={(e) =>
+                      setSelectedStatus(e.target.value)
+                    }
                   >
-                    <i className="bi bi-funnel"></i>
+                    <option value="">All Status</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="L1_PENDING">L1 Pending</option>
+                    <option value="L1_APPROVED">L1 Approved</option>
+                    <option value="L1_REJECTED">L1 Rejected</option>
+                    <option value="APPROVED">Approved</option>
+                    <option value="L2_REJECTED">L2 Rejected</option>
+                    <option value="REJECTED">Rejected</option>
+                  </select>
+                </div>
+                <div className="col-md-2 col-12">
+                  <select
+                    className="status-select form-select"
+                    value={selectedRequestType || ""}
+                    onChange={(e) =>
+                      setSelectedRequestType(e.target.value)
+                    }
+                  >
+                    <option value="">All Request Types</option>
 
-                    {selectedStatus === "PENDING" && "Pending"}
-                    {selectedStatus === "L1_PENDING" && "L1 Pending"}
-                    {selectedStatus === "L1_APPROVED" && "L1 Approved"}
-                    {selectedStatus === "L1_REJECTED" && "L1 Rejected"}
-                    {selectedStatus === "L2_PENDING" && "L2 Pending"}
-                    {selectedStatus === "L2_APPROVED" && "L2 Approved"}
-                    {selectedStatus === "L2_REJECTED" && "L2 Rejected"}
-                    {selectedStatus === "REJECTED" && "Rejected"}
-                    {!selectedStatus && t("messages:all_status")}
-
-                    <i className={`bi ms-2 ${isFilterOpen ? "bi-chevron-up" : "bi-chevron-down"}`}></i>
-                  </div>
-
-                  {isFilterOpen && (
-                    <div className="filter-dropdown">
-
-                      {/* ALL */}
-                      <div
-                        className={`filter-item ${!selectedStatus ? "active" : ""}`}
-                        onClick={() => {
-                          setSelectedStatus("");
-                          setIsFilterOpen(false);
-                        }}
+                    {requestTypes.map((type) => (
+                      <option
+                        key={type.requestTypeId}
+                        value={type.requestTypeId}
                       >
-                        {t("messages:all")}
-                        {/* <span>{totalElements}</span> */}
-                        {/* <span>{messagesData.length}</span> */}
-                      </div>
-
-                      {/* PENDING */}
-                      <div
-                        className={`filter-item pending ${selectedStatus === "PENDING" ? "active" : ""}`}
-                        onClick={() => {
-                          setSelectedStatus("PENDING");
-                          setIsFilterOpen(false);
-                        }}
-                      >
-                        Pending
-                      </div>
-
-                      {/* L1 PENDING */}
-                      <div
-                        className={`filter-item pending ${selectedStatus === "L1_PENDING" ? "active" : ""}`}
-                        onClick={() => {
-                          setSelectedStatus("L1_PENDING");
-                          setIsFilterOpen(false);
-                        }}
-                      >
-                        L1 Pending
-                        {/* <span>{statusCounts["L1_PENDING"] || 0}</span> */}
-                      </div>
-
-                      {/* L1 APPROVED */}
-                      <div
-                        className={`filter-item approved ${selectedStatus === "L1_APPROVED" ? "active" : ""}`}
-                        onClick={() => {
-                          setSelectedStatus("L1_APPROVED");
-                          setIsFilterOpen(false);
-                        }}
-                      >
-                        L1 Approved
-                        {/* <span>{statusCounts["L1_APPROVED"] || 0}</span> */}
-                      </div>
-
-                      {/* L1 REJECTED */}
-                      <div
-                        className={`filter-item rejected ${selectedStatus === "L1_REJECTED" ? "active" : ""}`}
-                        onClick={() => {
-                          setSelectedStatus("L1_REJECTED");
-                          setIsFilterOpen(false);
-                        }}
-                      >
-                        L1 Rejected
-                        {/* <span>{statusCounts["L1_REJECTED"] || 0}</span> */}
-                      </div>
-
-                        <div
-                        className={`filter-item pending ${selectedStatus === "L2_PENDING" ? "active" : ""}`}
-                        onClick={() => {
-                          setSelectedStatus("L2_PENDING");
-                          setIsFilterOpen(false);
-                        }}
-                      >
-                        L2 Pending
-                      </div>
-
-                      {/* L2 APPROVED */}
-                      <div
-                        className={`filter-item approved ${selectedStatus === "L2_APPROVED" ? "active" : ""}`}
-                        onClick={() => {
-                          setSelectedStatus("L2_APPROVED");
-                          setIsFilterOpen(false);
-                        }}
-                      >
-                        L2 Approved
-                        {/* <span>{statusCounts["L2_APPROVED"] || 0}</span> */}
-                      </div>
-
-                      {/* L2 REJECTED */}
-                      <div
-                        className={`filter-item rejected ${selectedStatus === "L2_REJECTED" ? "active" : ""}`}
-                        onClick={() => {
-                          setSelectedStatus("L2_REJECTED");
-                          setIsFilterOpen(false);
-                        }}
-                      >
-                        L2 Rejected
-                        {/* <span>{statusCounts["L2_REJECTED"] || 0}</span> */}
-                      </div>
-
-                      {/* FINAL REJECTED */}
-                      <div
-                        className={`filter-item rejected ${selectedStatus === "REJECTED" ? "active" : ""}`}
-                        onClick={() => {
-                          setSelectedStatus("REJECTED");
-                          setIsFilterOpen(false);
-                        }}
-                      >
-                        Rejected
-                        {/* <span>{statusCounts["REJECTED"] || 0}</span> */}
-                      </div>
-
-                    </div>
-                  )}
+                        {type.requestTypeName ||
+                          type.requestName ||
+                          type.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
               </div>
@@ -585,6 +541,51 @@ const Messages = () => {
 
             </div>
           </div>
+
+          {selectedRequisitionId && selectedPositionId?.length > 0 && (
+            <div className="mt-3">
+              <RequisitionStripformultiplepositions
+                requisition={
+                  requisitions.find(
+                    (r) => r.id === selectedRequisitionId
+                  )
+                }
+                position={positions
+                  .filter((p) =>
+                    selectedPositionId.includes(
+                      p.jobPositions?.positionId
+                    )
+                  )
+                  .map((p) => ({
+                    positionId: p.jobPositions?.positionId,
+                    positionName:
+                      p.masterPositions?.positionName,
+                  }))}
+                onRemovePosition={(removedId) => {
+                  const updatedPositions =
+                    selectedPositionId.filter(
+                      (id) => id !== removedId
+                    );
+
+                  setSelectedPositionId(updatedPositions);
+
+                  fetchMessages(
+                    {
+                      positionsIds: updatedPositions,
+                      requestTypeIds: selectedRequestType
+                        ? [selectedRequestType]
+                        : [],
+                      statusList: selectedStatus
+                        ? [selectedStatus]
+                        : [],
+                    },
+                    0,
+                    size
+                  );
+                }}
+              />
+            </div>
+          )}
 
 
           {/* LIST */}
@@ -603,30 +604,27 @@ const Messages = () => {
                 />
               ))
             ) : (
-              <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "250px" }}>
-
-                <div
-                  className="card text-center p-4"
-                  style={{
-                    width: "350px",
-                    borderRadius: "12px",
-                    border: "1px solid #E0E0E0",
-                    boxShadow: "0 2px 6px rgba(0,0,0,0.05)"
-                  }}
-                >
-                  <div className="mb-2">
-                    <i className="bi bi-inbox" style={{ fontSize: "28px", color: "#A0A0A0" }}></i>
-                  </div>
-
-                  <div className="fw-semibold text-muted">
-                    {t("messages:no_data")}
-                  </div>
-
-                  <small className="text-muted">
-                    No messages available for selected filters
-                  </small>
+              <div
+                className="d-flex flex-column justify-content-center align-items-center"
+                style={{ minHeight: "250px" }}
+              >
+                <div className="mb-2">
+                  <i
+                    className="bi bi-inbox"
+                    style={{
+                      fontSize: "28px",
+                      color: "#A0A0A0"
+                    }}
+                  ></i>
                 </div>
 
+                <div className="fw-semibold text-muted">
+                  {t("messages:no_data")}
+                </div>
+
+                <small className="text-muted">
+                  No messages available for selected filters
+                </small>
               </div>
             )}
           </div>

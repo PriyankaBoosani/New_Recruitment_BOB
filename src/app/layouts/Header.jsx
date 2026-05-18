@@ -360,9 +360,10 @@ const Header = () => {
                 </Nav.Link>
               )}
 
-              {/* <Nav.Link as={NavLink} to="/messages" onClick={closeMenu}>
+               <Nav.Link as={NavLink} to="/messages" onClick={closeMenu}>
                 {t("messages")}
-              </Nav.Link> */}
+              </Nav.Link> 
+              
                {canApprovals && (
                 <NavDropdown
                   id="approvals-dropdown"

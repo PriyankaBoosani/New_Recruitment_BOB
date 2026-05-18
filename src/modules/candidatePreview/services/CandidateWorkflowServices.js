@@ -138,7 +138,7 @@ getMessagesByThreadId: (conversationThreadId) =>
   
   ),
 
-  submitForApproval: (payload) =>
+  submitForMessageApproval: (payload) =>
   api.post(
     "/recruiter/messages/submit-for-approval",
     payload,

@@ -264,14 +264,14 @@ const AppRoutes = () => {
                 }
               />
 
-              {/* <Route
+              <Route
                 path="/messages"
                 element={
                   // <PrivilegeRoute privilege="JobPostings">
                   <Messages />
                   // </PrivilegeRoute>
                 }
-              /> */}
+              />
 
 
               <Route
