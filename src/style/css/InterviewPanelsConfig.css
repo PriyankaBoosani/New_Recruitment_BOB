@@ -1125,6 +1125,132 @@
   background: #f5f7ff;
 }
 
+/* ===== INTERVIEW SCHEDULE SUMMARY MODAL ===== */
+
+.iss-modal-dialog {
+  max-width: 600px;
+}
+
+.iss-modal-body {
+  padding: 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.iss-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: linear-gradient(135deg, #4f5fbf, #6b73ff);
+  border-radius: 8px;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.iss-total-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.iss-total-value {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.iss-section {
+  margin-bottom: 20px;
+}
+
+.iss-section:last-child {
+  margin-bottom: 0;
+}
+
+.iss-section-header {
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 12px;
+}
+
+.iss-list {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.iss-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.iss-list-item:last-child {
+  margin-bottom: 0;
+}
+
+.iss-item-name {
+  font-size: 13px;
+  color: #212529;
+}
+
+.iss-item-count {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.iss-panel-card {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.iss-panel-card:last-child {
+  margin-bottom: 0;
+}
+
+.iss-panel-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 8px;
+}
+
+.iss-panel-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #6c757d;
+  margin-bottom: 8px;
+}
+
+.iss-separator {
+  color: #adb5bd;
+}
+
+.iss-panel-members {
+  font-size: 12px;
+  color: #6c757d;
+  line-height: 1.4;
+}
+
+.iss-empty {
+  text-align: center;
+  padding: 20px;
+  color: #adb5bd;
+  font-size: 13px;
+}
+
 @keyframes spin {
 
   from {
@@ -1138,4 +1264,5 @@
     transform: rotate(360deg);
 
   }
+
 }
