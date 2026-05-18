@@ -302,7 +302,7 @@ const InterviewRequests = () => {
           <Col>
             <h5 className="page-title">Interview Schedule Request</h5>
             <p className="page-subtitle">
-              Select requisition, expand positions, and review zone/panel details
+              Review and approve or reject interview schedule request.
             </p>
           </Col>
         </Row>

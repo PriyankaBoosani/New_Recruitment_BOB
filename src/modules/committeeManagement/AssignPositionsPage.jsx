@@ -605,6 +605,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                     toast.error(
                       res?.data || res?.message || "Validation failed"
                     );
+                    
                     return;
                   }
 
