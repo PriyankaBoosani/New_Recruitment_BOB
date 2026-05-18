@@ -435,3 +435,22 @@
 	font-weight: 500;
 	color: #162B75 !important;
 }
+.interview_requests .fs-14{
+  font-size: 0.875rem;
+}
+.interviewmodal .bluefont{
+font-size: 1.05em;
+  font-weight: 500;
+  color: #162b75;
+  margin-bottom: 6px;
+}
+.interviewmodal th{
+  background-color: #42579F;
+  font-size: 0.875rem;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+.interviewmodal td{
+  font-size: 0.875rem;
+  color: #404040;
+}

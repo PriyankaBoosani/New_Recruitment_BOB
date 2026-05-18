@@ -304,13 +304,13 @@ export default function CandidatePool({
                 {t("candidateWorkflow:position")} {sortIcon("name")}
               </th> */}
 
-              {/* <th className="fs-14 fw-normal py-3" role="button">
+              <th className="fs-14 fw-normal py-3" role="button">
                 Rank
               </th>
 
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("score")} role="button">
                 Score {sortIcon("score")}
-              </th> */}
+              </th>
 
               <th className="fs-14 fw-normal py-3" onClick={() => requestSort("experienceMonths")} role="button">
                 {t("candidateWorkflow:experience")} {sortIcon("experienceMonths")}
@@ -370,7 +370,7 @@ export default function CandidatePool({
                  
 
 
-                  {/* <td className="align-content-center">
+                  <td className="align-content-center">
                     <p className="fw-normal fs-14 mb-0">{c?.rank || "-"}</p>
                   </td>
 
@@ -404,7 +404,7 @@ export default function CandidatePool({
                         </OverlayTrigger>
                       )}
                     </div>
-                  </td> */}
+                  </td>
 
                   <td className="align-content-center">
                     {/* <p className="fw-normal fs-14 mb-0">{(c.experienceMonths / 12).toFixed(1)} {t("candidateWorkflow:years")}</p> */}
