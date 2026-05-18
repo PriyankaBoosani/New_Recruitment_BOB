@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Person,
   FileText
@@ -6,11 +6,14 @@ import {
 
 import {
   OverlayTrigger,
-  Tooltip
+  Tooltip,
+  Modal,
+  Button
 } from "react-bootstrap";
 
 import { useTranslation } from "react-i18next";
 import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
+import I_icon from "../../../assets/I_icon.png"
 
 const SchedulePoolTable = ({
   rows,
@@ -26,6 +29,19 @@ const SchedulePoolTable = ({
   onOpenZonalComments,
   position = [],
 }) => {
+  const [showCommentModal, setShowCommentModal] = useState(false);
+  const [selectedRemarks, setSelectedRemarks] = useState("");
+
+  const getApprovalStatus = (row) =>
+    row?.interviewScheduleStaging?.interviewSchedulingApprovalStatus ||
+    row?.interviewSchedulingApprovalStatus ||
+    row?.interviewStatus ||
+    "";
+
+  const getRemarks = (row) =>
+    row?.interviewScheduleStaging?.remarks ||
+    row?.remarks ||
+    "";
 
   console.log("SchedulePoolTable render", { rows, position });
   const { t } = useTranslation([
@@ -34,7 +50,9 @@ const SchedulePoolTable = ({
     "interviewSchedule"
   ]);
 
+
   return (
+
 
     <div className="card-body p-0 interview-pool">
 
@@ -77,7 +95,7 @@ const SchedulePoolTable = ({
             <th className="fs-14 fw-normal py-3">
               {t("candidateWorkflow:candidate")}
             </th>
-          
+
 
             <th className="fs-14 fw-normal py-3">
               {t("common:date")}
@@ -97,6 +115,7 @@ const SchedulePoolTable = ({
 
             <th className="fs-14 fw-normal py-3">
               {t("candidateWorkflow:interview_status")}
+
             </th>
 
             <th className="text-center fs-14 fw-normal py-3">
@@ -137,7 +156,7 @@ const SchedulePoolTable = ({
                   </p>
 
                   <p className="text-muted fs-12 mb-0">
-                   Application Number:
+                    Application Number:
                     {" "}
                     {row.regNo}
                   </p>
@@ -176,8 +195,34 @@ const SchedulePoolTable = ({
 
                 {/* Interview Status */}
                 <td className="align-content-center">
+                  {getApprovalStatus(row) === "L1_PENDING"
+                    ? "L1 Pending"
+                    : getApprovalStatus(row)}
 
-                  {row.interviewStatus === "L1_PENDING" ? "L1 Pending" : row.interviewStatus}
+                  {getApprovalStatus(row) === "REJECTED" && (
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={
+                        <Tooltip id={`tooltip-remarks-${row.id}`}>
+                          View rejection remarks
+                        </Tooltip>
+                      }
+                    >
+                      <span>
+                        <img
+                          className="ms-2"
+                          src={I_icon}
+                          alt="View remarks"
+                          style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedRemarks(getRemarks(row));
+                            setShowCommentModal(true);
+                          }}
+                        />
+                      </span>
+                    </OverlayTrigger>
+                  )}
                 </td>
 
                 {/* Actions */}
@@ -311,10 +356,30 @@ const SchedulePoolTable = ({
         </div>
 
       </div>
+      <Modal
+        show={showCommentModal}
+        onHide={() => setShowCommentModal(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Rejection Remarks</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="mb-0">
+            {selectedRemarks || "No remarks available"}
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowCommentModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
     </div>
 
   );
+
 
 };
 

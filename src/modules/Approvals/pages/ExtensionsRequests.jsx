@@ -256,14 +256,26 @@ const ExtensionsRequests = () => {
     return [{ value: "ALL", label: "All" }];
   }, [isL1, isL2]);
 
-  const requestTypeDropdownOptions = [
-    {
-      label: "All",
-      value: "ALL",
-      raw: null,
-    },
-    ...requestTypeOptions,
-  ];
+  const requestTypeDropdownOptions = useMemo(() => {
+    const options = [
+      {
+        label: "All",
+        value: "ALL",
+        raw: null,
+      },
+      ...requestTypeOptions,
+    ];
+
+    if (isL2) {
+      return options.filter(
+        (opt) =>
+          opt.value === "ALL" ||
+          !opt.label?.toLowerCase().includes("zone office change request")
+      );
+    }
+
+    return options;
+  }, [isL2, requestTypeOptions]);
 
   const getStatusBadge = (status = "") => {
     switch (status) {
@@ -328,13 +340,10 @@ const ExtensionsRequests = () => {
         comments: comment,
       };
 
-      const res =
-        await committeeManagementService.submitForL1L2Approval(payload);
+      const res = await committeeManagementService.submitForL1L2Approval(payload);
 
-      const body = res?.data ?? res;
-
-      if (body?.success === false) {
-        toast.error(body?.message || "Failed to submit");
+      if (res?.success !== true) {
+        toast.error(res?.data || res?.message || "Failed to submit");
         return;
       }
 
@@ -508,7 +517,7 @@ const ExtensionsRequests = () => {
             >
               <option value="ALL">All</option>
 
-              {requestTypeOptions.map((option) => (
+              {requestTypeDropdownOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -603,7 +612,7 @@ const ExtensionsRequests = () => {
                 })
 
               );
-              console.log(historyItems, "time")
+
 
               return (
                 <div
@@ -655,7 +664,7 @@ const ExtensionsRequests = () => {
                             <img
                               src={history_icon}
                               alt="history_icon"
-                              className="icon-14 cursor-pointer"
+                              className="icon-14 mb-2 cursor-pointer"
                               onClick={() => handleOpenHistory(req)}
                             />
                           </div>
@@ -753,7 +762,7 @@ const ExtensionsRequests = () => {
                       <div className="d-flex align-items-start gap-2">
 
                         <FontAwesomeIcon
-                          icon={faLocationDot }
+                          icon={faLocationDot}
                           className="text-muted mt-1"
                           style={{ fontSize: "18px" }}
                         />

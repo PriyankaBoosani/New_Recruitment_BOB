@@ -8,23 +8,20 @@ import {
   Modal,
   Button,
   Table,
+  OverlayTrigger,
 } from "react-bootstrap";
 import Select from "react-select";
 import { ChevronDown, ChevronUp } from "react-bootstrap-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faMapLocationDot,
-  faUsers,
-  faLayerGroup,
-} from "@fortawesome/free-solid-svg-icons";
 import ApprovalCommentModal from "../components/ApprovalCommentModal";
 import "../../../style/css/InterviewRequest.css";
 import mingcute_department_line from "../../../assets/mingcute_department-line.png";
 import start_icon from "../../../assets/start_icon.png"
 import end_icon from "../../../assets/end_icon.png"
+import I_icon from "../../../assets/I_icon.png"
 import position_Icon from "../../../assets/position_Icon.png"
 import useInterviewSchedule from "../hooks/useInterviewSchedule";
 import { toast } from "react-toastify";
+import { Tooltip } from "react-bootstrap";
 
 // const mockRequisitions = [
 //   {
@@ -172,48 +169,43 @@ const InterviewRequests = () => {
     });
   };
 
-  const handleActionClick = async (type, position) => {
-    if (type === "approve") {
-      const positionId = position.positionId || position.jobPositionId;
+  const handleActionClick = (type, position) => {
+    const positionId = position.positionId || position.jobPositionId;
 
-      if (!positionId) {
-        toast.error("Position ID not found");
-        return;
-      }
-
-      try {
-        await submitL1Approval([positionId]);
-
-        if (selectedRequisition?.id) {
-          fetchPositionDetailsByRequisition(selectedRequisition.id);
-        }
-      } catch (error) {
-        console.error("L1 approval failed:", error);
-      }
-
+    if (!positionId) {
+      toast.error("Position ID not found");
       return;
     }
 
-    // reject stays as comment modal
-    setActionType(type);
+    setActionType(type); // approve / reject
     setSelectedPositionForAction(position);
     setShowCommentModal(true);
   };
-  const handleApprovalAction = (comment) => {
+  const handleApprovalAction = async (comment) => {
     if (!selectedPositionForAction) return;
 
-    const payload = {
-      requisitionId: selectedRequisition?.id,
-      positionId: selectedPositionForAction.positionId,
-      action: actionType,
-      comment,
-    };
+    const positionId =
+      selectedPositionForAction.positionId || selectedPositionForAction.jobPositionId;
 
-    console.log("Approval payload:", payload);
+    const status = actionType === "approve" ? "APPROVED" : "REJECTED";
 
-    setShowCommentModal(false);
-    setActionType(null);
-    setSelectedPositionForAction(null);
+    try {
+      await submitL1Approval({
+        positionIds: [positionId],
+        status,
+        remarks: comment || "",
+      });
+
+      if (selectedRequisition?.id) {
+        fetchPositionDetailsByRequisition(selectedRequisition.id);
+      }
+    } catch (error) {
+      console.error("Approval submission failed:", error);
+    } finally {
+      setShowCommentModal(false);
+      setActionType(null);
+      setSelectedPositionForAction(null);
+    }
   };
   const {
     requisitionOptions,
@@ -232,7 +224,7 @@ const InterviewRequests = () => {
   const renderDetailTable = () => {
     if (detailModal.type === "zone") {
       return (
-        <Table bordered hover responsive className="mb-0 align-middle">
+        <Table bordered hover className="mb-0 align-middle">
           <thead>
             <tr>
               <th>Zone Name</th>
@@ -260,7 +252,7 @@ const InterviewRequests = () => {
     }
 
     return (
-      <Table bordered hover responsive className="mb-0 align-middle">
+      <Table bordered hover className="mb-0 align-middle">
         <thead>
           <tr>
             <th>Panel Name</th>
@@ -324,332 +316,159 @@ const InterviewRequests = () => {
           </Col>
         </Row>
 
-        {selectedRequisition ? (
-          <div className="requisition-card mb-3">
-            <Row
-              className="align-items-center req-clickable"
-              onClick={() => setOpenReq((prev) => !prev)}
-            >
-              <Col xs={12} md={7}>
-                <div className="req-header">
-                  <Badge bg="light" text="primary" className="req-id">
-                    {selectedRequisition.requisitionCode}
-                  </Badge>
+        {selectedRequisition && (
+          <div className="mb-3">
+            <div className="p-3 border rounded bg-white">
+              {loadingPositionDetails ? (
+                <div className="text-muted p-3">Loading position details...</div>
+              ) : positionDetails.length > 0 ? (
+                positionDetails.map((pos) => {
+                  const isOpen = openPositionId === (pos.positionId || pos.jobPositionId);
 
-                </div>
+                  return (
+                    <div key={pos.positionId || pos.jobPositionId} className="department-card mb-3">
+                      <div
+                        className="department-header d-flex align-items-center gap-2 cursor-pointer"
+                        onClick={() =>
+                          setOpenPositionId((prev) =>
+                            prev === (pos.positionId || pos.jobPositionId)
+                              ? null
+                              : (pos.positionId || pos.jobPositionId)
+                          )
+                        }
+                      >
+                        <span className="depname">{pos.positionName}</span>
 
-                <div className="d-flex justify-content-between align-items-start mt-2 req-header">
-                  <div className="d-flex align-items-start">
-                    <div>
-                      <div className="d-flex align-items-center gap-2 mb-2">
-                        <h6 className="req-code mb-0">
-                          {selectedRequisition.requisitionTitle}
-                        </h6>
-                      </div>
-
-                      <div className="req-dates">
-                        <div className="d-flex align-items-center gap-1">
-                          <img src={start_icon} alt="start_icon" className="icon-12" />
-                          <span>Start: {formatDateDDMMYYYY(selectedRequisition.startDate)}</span>
-                        </div>
-                        <div className="d-flex align-items-center gap-1">
-                          <img src={end_icon} alt="end_icon" className="icon-12" />
-                          <span>End: {formatDateDDMMYYYY(selectedRequisition.endDate)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Col>
-
-              <Col xs={12} md={4}>
-                <div className="req-meta">
-                  <div>
-                    <img src={mingcute_department_line} alt="department" className="icon-16" />{" "}
-                    Department - {selectedRequisition.totalDepartmentCount || 0}
-                  </div>
-                  <div>
-                    <img src={position_Icon} alt="position" className="icon-16" />{" "}
-                    Positions - {selectedRequisition.positionsCount || 0}
-                  </div>
-
-                </div>
-              </Col>
-
-              <Col
-                xs={12}
-                md={1}
-                className="text-md-end mt-3 mt-md-0 actions d-flex justify-content-end align-items-center"
-              >
-                <button
-                  type="button"
-                  className="btn btn-none accordion-arrow"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setOpenReq((prev) => !prev);
-                  }}
-                >
-                  {openReq ? <ChevronUp /> : <ChevronDown />}
-                </button>
-              </Col>
-            </Row>
-
-            {openReq && (
-              <div className="accordion-body mt-3">
-                <div className="p-3 border rounded bg-white">
-                  {/* {selectedRequisition.positions.map((pos, index) => {
-                    const isOpen = openPositionId === pos.positionId;
-
-                    return (
-                      <div key={pos.positionId} className="department-card mb-3">
-                        <div
-                          className="department-header d-flex align-items-center gap-2 cursor-pointer"
-                          onClick={() =>
+                        <button
+                          type="button"
+                          className="btn btn-none accordion-arrow-position ms-auto"
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setOpenPositionId((prev) =>
-                              prev === pos.positionId ? null : pos.positionId
-                            )
-                          }
+                              prev === (pos.positionId || pos.jobPositionId)
+                                ? null
+                                : (pos.positionId || pos.jobPositionId)
+                            );
+                          }}
                         >
-                          <span className="depname">
-                            Position {index + 1} - {pos.positionName}
-                          </span>
-
-                          <Badge bg="light" text="primary" className="deppos">
-                            {pos.totalCandidateCount} Candidates
-                          </Badge>
-
-                          <button
-                            type="button"
-                            className="btn btn-none accordion-arrow-position ms-auto"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setOpenPositionId((prev) =>
-                                prev === pos.positionId ? null : pos.positionId
-                              );
-                            }}
-                          >
-                            {isOpen ? <ChevronUp /> : <ChevronDown />}
-                          </button>
-                        </div>
-
-                        {isOpen && (
-                          <div className="position-card-inner mt-2">
-                            <div className="row g-3 mb-3">
-                              <div className="col-md-3">
-                                <div className="field-label">Department</div>
-                                <div className="field-value">{pos.departmentName}</div>
-                              </div>
-
-                              <div className="col-md-3">
-                                <div className="field-label">Scheduled Candidates</div>
-                                <div className="field-value">{pos.totalCandidateCount}</div>
-                              </div>
-
-                              <div className="col-md-2">
-                                <div className="field-label">Zone Count  <span>{pos.zoneCount}</span></div>
-
-
-                                <Button
-                                  variant="outline-primary"
-                                  size="sm"
-                                  className="d-flex align-items-center gap-2 mt-1"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    openDetails("zone", pos);
-                                  }}
-                                >
-
-                                  View
-                                </Button>
-                              </div>
-
-                              <div className="col-md-2">
-                                <div className="field-label">Panel Count: <span>{pos.panelCount}</span></div>
-                                <Button
-                                  variant="outline-primary"
-                                  size="sm"
-                                  className="d-flex align-items-center gap-2 mt-1"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    openDetails("panel", pos);
-                                  }}
-                                >
-                                  View
-
-                                </Button>
-                              </div>
-                              <div className="col-md-2">
-                                <Button className="me-2"
-                                  variant="success"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleActionClick("approve", pos);
-                                  }}
-                                >
-                                  Accept
-                                </Button>
-                                <Button
-                                  variant="danger"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleActionClick("reject", pos);
-                                  }}
-                                >
-                                  Reject
-                                </Button>
-                              </div>
-                            </div>
-
-                          </div>
-                        )}
+                          {isOpen ? <ChevronUp /> : <ChevronDown />}
+                        </button>
                       </div>
-                    );
-                  })} */}
 
-                  {loadingPositionDetails ? (
-                    <div className="text-muted p-3">Loading position details...</div>
-                  ) : positionDetails.length > 0 ? (
-                    positionDetails.map((pos, index) => {
-                      const isOpen = openPositionId === pos.positionId || openPositionId === pos.jobPositionId;
-
-                      return (
-                        <div key={pos.positionId || pos.jobPositionId} className="department-card mb-3">
-                          <div
-                            className="department-header d-flex align-items-center gap-2 cursor-pointer"
-                            onClick={() =>
-                              setOpenPositionId((prev) =>
-                                prev === (pos.positionId || pos.jobPositionId)
-                                  ? null
-                                  : (pos.positionId || pos.jobPositionId)
-                              )
-                            }
-                          >
-                            <span className="depname">
-                              {pos.positionName}
-                            </span>
-
-
-
-
-
-                            <button
-                              type="button"
-                              className="btn btn-none accordion-arrow-position ms-auto"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setOpenPositionId((prev) =>
-                                  prev === (pos.positionId || pos.jobPositionId)
-                                    ? null
-                                    : (pos.positionId || pos.jobPositionId)
-                                );
-                              }}
-                            >
-                              {isOpen ? <ChevronUp /> : <ChevronDown />}
-                            </button>
-                          </div>
-
-                          {isOpen && (
-                            <div className="position-card-inner mt-2">
-                              <div className="row g-3 mb-3">
-                                <div className="col-md-3">
-                                  <div className="field-label">Department: <span className="field-value">{pos.departmentName}</span></div>
-
-                                </div>
-
-                                <div className="col-md-3">
-                                  <div className="field-label">Scheduled Candidates: <span className="field-value">{pos.totalCandidateCount || 0}</span></div>
-
-                                </div>
-
-                                <div className="col-md-2">
-                                  <div className="field-label">
-                                    Zone Count: <span className="field-value">{pos.totalZonalCount || 0}</span>
-                                  </div>
-                                  <Button
-                                    variant="primary"
-                                    size="sm"
-                                    className="d-flex align-items-center gap-2 mt-1"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      openDetails("zone", pos);
-                                    }}
-                                  >
-                                    View
-                                  </Button>
-                                </div>
-
-                                <div className="col-md-2">
-                                  <div className="field-label">
-                                    Panel Count: <span className="field-value">{pos.totalPanelCount || 0}</span>
-                                  </div>
-                                  <Button
-                                    variant="primary"
-                                    size="sm"
-                                    className="d-flex align-items-center gap-2 mt-1"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      openDetails("panel", pos);
-                                    }}
-                                  >
-                                    View
-                                  </Button>
-                                </div>
-
-                                <div className="col-md-2">
-                                  <Button
-                                    className="me-2"
-                                    variant="success"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleActionClick("approve", pos);
-                                    }}
-                                  >
-                                    Accept
-                                  </Button>
-                                  <Button
-                                    variant="danger"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleActionClick("reject", pos);
-                                    }}
-                                  >
-                                    Reject
-                                  </Button>
-                                </div>
+                      {isOpen && (
+                        <div className="position-card-inner mt-2">
+                          <div className="row g-3">
+                            <div className="col-md-3">
+                              <div className="field-label">
+                                Department: <span className="field-value">{pos.departmentName}</span>
                               </div>
                             </div>
-                          )}
+
+                            <div className="col-md-3">
+                              <div className="field-label">
+                                Scheduled Candidates: <span className="field-value">{pos.totalCandidateCount || 0}</span>
+                              </div>
+                            </div>
+
+                            <div className="col-md-2">
+                              <div className="field-label">
+                                Zone Count:{" "}
+                                <span className="field-value">{pos.totalZonalCount || 0}</span>
+                                <OverlayTrigger
+                                  placement="bottom"
+                                  overlay={<Tooltip id={`tooltip-zone-${pos.id}`}>View Zone Details</Tooltip>}
+                                >
+                                  <span>
+                                    <img
+                                      src={I_icon}
+                                      alt="View Details"
+                                      className="ms-2"
+                                      style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        openDetails("zone", pos);
+                                      }}
+                                    />
+                                  </span>
+                                </OverlayTrigger>
+                              </div>
+                            </div>
+
+                            <div className="col-md-2">
+                              <div className="field-label">
+                                Panel Count:{" "}
+                                <span className="field-value">{pos.totalPanelCount || 0}</span>
+                                <OverlayTrigger
+                                  placement="bottom"
+                                  overlay={<Tooltip id={`tooltip-panel-${pos.id}`}>View Panel Details</Tooltip>}
+                                >
+                                  <span>
+                                    <img
+                                      src={I_icon}
+                                      alt="View Details"
+                                      className="ms-2"
+                                      style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        openDetails("panel", pos);
+                                      }}
+                                    />
+                                  </span>
+                                </OverlayTrigger>
+                              </div>
+                            </div>
+
+                            <div className="col-md-2">
+                              <Button
+                                className="me-2 fs-14"
+                                variant="success"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleActionClick("approve", pos);
+                                }}
+                              >
+                                Accept
+                              </Button>
+                              <Button
+                                className="fs-14"
+                                variant="danger"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleActionClick("reject", pos);
+                                }}
+                              >
+                                Reject
+                              </Button>
+                            </div>
+                          </div>
                         </div>
-                      );
-                    })
-                  ) : (
-                    <div className="text-center text-muted my-4">
-                      No position details found
+                      )}
                     </div>
-                  )}
-                </div>
-              </div>
-            )}
+                  );
+                })
+              ) : (
+                <div className="text-center text-muted my-4">No position details found</div>
+              )}
+            </div>
           </div>
-        ) : (
-          <div className="text-center text-muted my-4">No requisition selected</div>
         )}
 
         <Modal
           show={detailModal.show}
+          className="interviewmodal"
           onHide={() => setDetailModal({ show: false, type: null, positionName: "", data: [] })}
           centered
           size="lg"
         >
-          <Modal.Header closeButton>
-            <Modal.Title>
+          <Modal.Header closeButton className="border-0">
+            <Modal.Title className="bluefont">
               {detailModal.type === "zone" ? "Zone Details" : "Panel Details"}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>{renderDetailTable()}</Modal.Body>
-          <Modal.Footer>
+          <Modal.Footer className="border-0">
             <Button
-              variant="secondary"
+              variant="outline-secondary"
               onClick={() => setDetailModal({ show: false, type: null, positionName: "", data: [] })}
             >
               Close

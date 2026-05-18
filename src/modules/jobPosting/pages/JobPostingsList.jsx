@@ -176,12 +176,14 @@ const JobPostingsList = () => {
         };
         fetchDepartments();
     }, []);
+
+
     const selectableRequisitions = requisitions.filter(
         r => r.status !== "APPROVED" &&
-            // r.status !== "L1_PENDING" &&
-            // r.status !== "L1_APPROVED" &&
-            // r.status !== "L1_REJECTED" &&
-            // r.status !== "L2_REJECTED" &&
+            r.status !== "L1_PENDING" &&
+            r.status !== "L1_APPROVED" &&
+            //  r.status !== "L1_REJECTED" &&
+            //    r.status !== "L2_REJECTED" &&
 
             !r.hasDraftPositions
     );
@@ -411,10 +413,10 @@ const JobPostingsList = () => {
                     >
                         <option value="">{t("jobPostingsList:status_all")}</option>
                         <option value="NEW">{t("jobPostingsList:status_new")}</option>
-                        {/* <option value="L1_APPROVED">{t("jobPostingsList:status_l1_approved")}</option>
+                        <option value="L1_APPROVED">{t("jobPostingsList:status_l1_approved")}</option>
                         <option value="L1_PENDING">{t("jobPostingsList:status_l1_pending")}</option>
                         <option value="L1_REJECTED">{t("jobPostingsList:status_l1_rejected")}</option>
-                        <option value="L2_REJECTED">{t("jobPostingsList:status_l2_rejected")}</option> */}
+                        <option value="L2_REJECTED">{t("jobPostingsList:status_l2_rejected")}</option>
                         <option value="APPROVED">{t("jobPostingsList:status_approved")}</option>
 
 
@@ -484,6 +486,10 @@ const JobPostingsList = () => {
 
                 const positions = positionsByReq[req.id] || [];
 
+                const isRejected =
+                    req.status === "L1_REJECTED" ||
+                    req.status === "L2_REJECTED";
+
                 const positionsGroupedByDept = positions.reduce((acc, pos) => {
                     if (!acc[pos.deptId]) {
                         acc[pos.deptId] = {
@@ -496,6 +502,7 @@ const JobPostingsList = () => {
                 }, {});
 
                 return (
+
                     <div key={req.id} className="requisition-card mb-3">
                         <Row
                             className="align-items-center req-clickable"
@@ -523,7 +530,7 @@ const JobPostingsList = () => {
                                             checked={selectedReqIds.has(req.id)}
                                             disabled={
                                                 req.status === "APPROVED" ||
-                                                // req.status === "L1_PENDING" ||
+                                                req.status === "L1_PENDING" ||
                                                 // req.status === "L1_APPROVED" ||
                                                 // req.status === "L1_REJECTED" ||
                                                 // req.status === "L2_REJECTED" ||
@@ -531,12 +538,17 @@ const JobPostingsList = () => {
                                             }
                                             onClick={(e) => e.stopPropagation()}
                                             onChange={(e) => {
+                                                // if (
+                                                //     req.status === "APPROVED" ||
+                                                //     req.status === "L1_PENDING" ||
+                                                //     req.status === "L1_APPROVED" ||
+                                                //     req.status === "L1_REJECTED" ||
+                                                //     req.status === "L2_REJECTED"
+                                                // ) return;
+
                                                 if (
-                                                    req.status === "APPROVED"
-                                                    // req.status === "L1_PENDING" ||
-                                                    // req.status === "L1_APPROVED" ||
-                                                    // req.status === "L1_REJECTED" ||
-                                                    // req.status === "L2_REJECTED"
+                                                    req.status === "APPROVED" ||
+                                                    req.status === "L1_PENDING"
                                                 ) return;
 
                                                 setSelectedReqIds(prev => {
@@ -557,7 +569,7 @@ const JobPostingsList = () => {
                                                     {req.code}
                                                 </h6>
 
-                                                {/* {req.status !== "NEW" && (
+                                                {req.status !== "NEW" && (
                                                     <img
                                                         src={history_icon}
                                                         alt="history"
@@ -567,7 +579,7 @@ const JobPostingsList = () => {
                                                             handleOpenHistory(req);
                                                         }}
                                                     />
-                                                )} */}
+                                                )}
                                             </div>
 
                                             <div className="req-dates">
@@ -623,7 +635,7 @@ const JobPostingsList = () => {
                                             </Button>
                                         </OverlayTrigger>
                                     )}
-                                    {req.editable && (
+                                    {req.editable && !isRejected && (
                                         <OverlayTrigger
                                             placement="bottom"
                                             overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:edit_requisition")}</Tooltip>}
@@ -792,7 +804,7 @@ const JobPostingsList = () => {
 
                                                         <>
                                                             {/* EDIT POSITION */}
-                                                            {req.editable && (
+                                                            {(req.editable || isRejected) && (
                                                                 <OverlayTrigger
                                                                     placement="bottom"
                                                                     overlay={<Tooltip id={`tooltip-edit-${req.id}`}>{t("jobPostingsList:edit_position")}</Tooltip>}
@@ -1032,8 +1044,8 @@ const JobPostingsList = () => {
                 // confirmText="Approve"
                 // confirmVariant="primary"
 
-                title={t("jobPostingsList:submit_confirm_title")}
-                message={t("jobPostingsList:submit_confirm_message")}
+                title={t("jobPostingsList:submit_confirm_title_approve")}
+                message={t("jobPostingsList:submit_confirm_message_approve")}
                 confirmText={t("jobPostingsList:approve")}
                 itemLabel={t("jobPostingsList:requisition_count", { count: selectedReqIds.size })}
 
