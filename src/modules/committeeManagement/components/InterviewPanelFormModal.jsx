@@ -181,7 +181,7 @@ const InterviewPanelFormModal = ({
       </div> */}
 
       <div className="panel-form-actions">
-        <button
+        {/* <button
           type="button"
           className="btn btn-outline-secondary"
           onClick={() => {
@@ -190,7 +190,7 @@ const InterviewPanelFormModal = ({
           }}
         >
           {t("common:cancel")}
-        </button>
+        </button> */}
 
         <button
           type="button"

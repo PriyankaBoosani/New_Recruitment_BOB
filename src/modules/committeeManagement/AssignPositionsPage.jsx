@@ -25,6 +25,8 @@ import { toast } from "react-toastify";
 const AssignPositionsPage = ({ refreshPanels }) => {
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   const [showBulkImportModal, setShowBulkImportModal] = useState(false);
+  const [showScheduleWarning, setShowScheduleWarning] = useState(false);
+const [pendingPayload, setPendingPayload] = useState(null);
 
   const {
     requisitions,
@@ -69,6 +71,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
   const [editFormData, setEditFormData] = useState(null);
   const [communityOptions, setCommunityOptions] = useState([]);
   const [membersOptions, setMembersOptions] = useState([]);
+  const [updatingPanel, setUpdatingPanel] = useState(false);
   useEffect(() => {
     const loadMetaData = async () => {
       try {
@@ -213,11 +216,19 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     const errors = panelErrors?.[errorKey] || {};
     const today = new Date().toISOString().split("T")[0];
 
-    const isApproved = committee.rawStatus === "APPROVED";
-    const isL1Approved = committee.rawStatus === "L1_APPROVED";
+    // const isApproved = committee.rawStatus === "APPROVED";
+    // const isL1Approved = committee.rawStatus === "L1_APPROVED";
 
-    const isCompleted =
-      committee.endDate && committee.endDate < today;
+    // const isCompleted =
+    //   committee.endDate && committee.endDate < today;
+
+    console.log("committee.rawStatus =", committee.rawStatus);
+  const shouldDisableFields =
+    committee.rawStatus === "L1_APPROVED";
+
+  const shouldDisableRemove =
+    committee.rawStatus === "L1_APPROVED" ||
+    committee.rawStatus === "APPROVED";
 
 
     return (
@@ -242,7 +253,8 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                 <button
                   className="edit-btn"
                   onClick={() => handleEditPanel(committee)}
-                  disabled={committee.rawStatus === "L1_APPROVED" || committee.rawStatus === "APPROVED"}
+                  disabled={shouldDisableFields}
+                  // disabled={committee.rawStatus === "L1_APPROVED" || committee.rawStatus === "APPROVED"}
                 >
                   <img src={pos_edit_icon} alt="Edit" className="edit-icon" />
                 </button>
@@ -263,17 +275,29 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                 type="date"
                 min={today}
                 value={committee.startDate}
-                // disabled={committee.canEdit === false}
-                disabled={
-                  isL1Approved ||
-                  (isApproved && (
-                    !committee.canEdit ||   // scenario 2
-                    isCompleted             // scenario 3 override
-                  ))
+                disabled={shouldDisableFields}
+                // disabled={
+                //   isL1Approved ||
+                //   (isApproved && (
+                //     !committee.canEdit ||   // scenario 2
+                //     isCompleted             // scenario 3 override
+                //   ))
+                // }
+               onChange={(e) => {
+                const value = e.target.value;
+
+                if (value < today) {
+                  toast.error("Past dates are not allowed");
+                  return;
                 }
-                onChange={(e) =>
-                  updateCommitteeDate(type, committee.id, "startDate", e.target.value)
-                }
+
+                updateCommitteeDate(
+                  type,
+                  committee.id,
+                  "startDate",
+                  value
+                );
+              }}
               />
               {errors.startDate && (
                 <div className="field-error">{t(errors.startDate)}</div>
@@ -286,14 +310,29 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                 type="date"
                 min={committee.startDate || today}
                 value={committee.endDate}
-                //  disabled={committee.canEdit === false}
-                disabled={
-                  isL1Approved ||
-                  (isApproved && !committee.canEdit)   // only scenario 2
+               disabled={shouldDisableFields}
+                // disabled={
+                //   isL1Approved ||
+                //   (isApproved && !committee.canEdit)   // only scenario 2
+                // }
+               onChange={(e) => {
+                const value = e.target.value;
+
+                const minEndDate =
+                  committee.startDate || today;
+
+                if (value < minEndDate) {
+                  toast.error("End date cannot be before start date");
+                  return;
                 }
-                onChange={(e) =>
-                  updateCommitteeDate(type, committee.id, "endDate", e.target.value)
-                }
+
+                updateCommitteeDate(
+                  type,
+                  committee.id,
+                  "endDate",
+                  value
+                );
+              }}
               />
               {errors.endDate && (
                 <div className="field-error">{t(errors.endDate)}</div>
@@ -305,8 +344,8 @@ const AssignPositionsPage = ({ refreshPanels }) => {
         <button
           className="action-pill remove"
           onClick={() => toggleCommittee(type, committee)}
-          //onClick={() => committee.canEdit && toggleCommittee(type, committee)}
-          disabled={committee.rawStatus === "L1_APPROVED" || committee.rawStatus === "APPROVED"}
+          disabled={shouldDisableRemove}
+          // disabled={committee.rawStatus === "L1_APPROVED" || committee.rawStatus === "APPROVED"}
         >
           ← {t("remove_button")}
         </button>
@@ -358,7 +397,61 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     selectedCommittees.INTERVIEW.length > 0 ||
     selectedCommittees.COMPENSATION.length > 0;
 
+const updatePanel = async (payload) => {
+  try {
+    setUpdatingPanel(true);
 
+    const res = await masterApiService.updateInterviewPanel(
+      editFormData.id,
+      payload
+    );
+
+    if (!res?.success) {
+      toast.error(
+        res?.data || res?.message || "Validation failed"
+      );
+      return;
+    }
+
+    setSelectedCommittees(prev => {
+      const updated = { ...prev };
+
+      Object.keys(updated).forEach(type => {
+        updated[type] = updated[type].map(panel => {
+          if (panel.id === editFormData.id) {
+            return {
+              ...panel,
+              isDirty: true,
+              members: membersOptions
+                .filter(m => editFormData.members.includes(m.value))
+                .map(m => ({
+                  name: m.label,
+                  userId: m.value,
+                  email: m.email,
+                  role: m.role
+                }))
+            };
+          }
+
+          return panel;
+        });
+      });
+
+      return updated;
+    });
+
+    setIsManuallyDirty(true);
+
+    await refreshPanels();
+
+    toast.success("Panel updated successfully");
+
+    setShowEditModal(false);
+
+  } finally {
+    setUpdatingPanel(false);
+  }
+};
   return (
     <div className="assign-positions-page">
       {/* ===== PAGE HEADER ===== */}
@@ -559,7 +652,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
           />
         </Modal.Body>
       </Modal>
-      {loading && <Loader />}
+      {(loading || updatingPanel) && <Loader />}
 
       <ApprovalHistoryModal
         show={showHistoryModal}
@@ -595,55 +688,22 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                     membersOptions
                   );
 
-                  const res = await masterApiService.updateInterviewPanel(
-                    editFormData.id,
-                    payload
+                  const isresScheduled = await masterApiService.checkScheduledInterviews(
+                    editFormData.id
                   );
-
-                  // ✅ HANDLE VALIDATION RESPONSE
-                  if (!res?.success) {
-                    toast.error(
-                      res?.data || res?.message || "Validation failed"
+                  console.log("isresScheduled", isresScheduled);
+                  if (isresScheduled?.data) {
+                    const confirmed = window.confirm(
+                      "Interviews are already scheduled for this panel. Do you want to continue updating?"
                     );
-                    
-                    return;
+
+                    if (!confirmed) {
+                      return;
+                    }
                   }
 
-                  setSelectedCommittees(prev => {
-                    const updated = { ...prev };
-
-                    Object.keys(updated).forEach(type => {
-                      updated[type] = updated[type].map(panel => {
-                        if (panel.id === editFormData.id) {
-                          return {
-                            ...panel,
-                            isDirty: true,
-                            members: membersOptions
-                              .filter(m => editFormData.members.includes(m.value))
-                              .map(m => ({
-                                name: m.label,
-                                userId: m.value,
-                                email: m.email,
-                                role: m.role
-                              }))
-                          };
-                        }
-
-                        return panel;
-                      });
-                    });
-
-                    return updated;
-                  });
-
-                  setIsManuallyDirty(true);
-
-                  await refreshPanels();
-
-                  toast.success("Panel updated successfully");
-
-                  setShowEditModal(false);
-
+                  
+                  await updatePanel(payload);
                 } catch (err) {
                   console.error("UPDATE PANEL ERROR", err);
 
