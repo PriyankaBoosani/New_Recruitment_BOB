@@ -33,12 +33,22 @@ const paginatedRows =
 
         <thead>
           <tr>
-            <th>{t("candidate")}</th>
-            {/* <th>Position</th> */}
-            <th>{t("date")}</th>
-            <th>{t("time")}</th>
-            <th>{t("zone")}</th>
-            <th>{t("panel_details")}</th>
+           <th style={{ width: "32%" }}>
+              {t("candidate")}
+            </th>
+                        {/* <th>Position</th> */}
+                      <th style={{ width: "16%" }}>
+              {t("date")}
+            </th>
+                      <th style={{ width: "16%" }}>
+              {t("time")}
+            </th>
+                      <th style={{ width: "16%" }}>
+              {t("zone")}
+            </th>
+                      <th style={{ width: "20%" }}>
+              {t("panel_details")}
+            </th>
           </tr>
         </thead>
 
