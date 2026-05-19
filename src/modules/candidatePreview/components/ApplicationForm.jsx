@@ -1613,6 +1613,25 @@ useEffect(() => {
     });
   };
 
+  useEffect(() => {
+  if (
+    disableYesOption &&
+    screeningForm.isShortlisted === "YES"
+  ) {
+    setScreeningForm(prev => ({
+      ...prev,
+      isShortlisted: "",
+      finalScreeningRemark: "",
+    }));
+
+    setErrors(prev => ({
+      ...prev,
+      isShortlisted: undefined,
+      finalScreeningRemark: undefined,
+    }));
+  }
+}, [disableYesOption]);
+
   return (
     <>
       <Accordion
