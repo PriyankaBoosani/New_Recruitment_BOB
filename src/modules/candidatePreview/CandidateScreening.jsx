@@ -28,14 +28,22 @@ import { useTranslation } from "react-i18next";
 import ZonalRejectedCommentModal from "./components/ZonalRejectedCommentModal";
 import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck, FaBars, FaListOl, FaExternalLinkAlt } from "react-icons/fa";
 import { faListOl } from "@fortawesome/free-solid-svg-icons";
+import CandidateImportModal
+from "./components/CandidateImportModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
 import { useDispatch } from "react-redux";
 import { setRankEnabled, clearRankState } from "../../app/providers/rankSlice";
 
-import { Modal, Button } from "react-bootstrap";
-import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
+import {
+  Modal,
+  Button
+} from "react-bootstrap";
+
+import {
+  FiUpload
+} from "react-icons/fi";import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import CompensationPool from "./components/CompensationPool";
 import useCompensationPool from "./hooks/useCompensationPool";
 import { mapCompensationCandidates } from "./mappers/compositionMapper";
@@ -151,6 +159,12 @@ const [
   examinationScoreData,
   setExaminationScoreData
 ] = useState([]);
+
+
+const [
+  showImportCandidatesModal,
+  setShowImportCandidatesModal
+] = useState(false);
 
   const user = useSelector((state) => state.user.user);
 
@@ -308,11 +322,19 @@ useEffect(() => {
 
   /* SMALL DELAY FOR UI */
 
-  setTimeout(() => {
+setTimeout(() => {
 
-    handleOpenExaminationScore();
+  handleOpenExaminationScore();
 
-  }, 300);
+  navigate(
+    location.pathname,
+    {
+      replace: true,
+      state: {}
+    }
+  );
+
+}, 300);  
 
 }, [
   location.state?.openExaminationScore,
@@ -381,15 +403,15 @@ useEffect(() => {
 
 
 
-      // ✅ HANDLE BACKEND VALIDATION
+      //  HANDLE BACKEND VALIDATION
       if (!res?.success) {
 
-        setErrorMessage(
+        setErrorMessage(  
           res?.message ||
           "Validation failed"
         );
         console.log("message", res.data[0].message)
-        // ✅ store backend data
+        //  store backend data
         setErrorCandidates(
           Array.isArray(res?.data)
             ? res.data
@@ -2616,24 +2638,49 @@ const [selectedRelaxation, setSelectedRelaxation] = useState("SET_II");
               />
             )}
 
+<div className="col-md-6 col-12">
 
-            <div className="col-md-6 col-12 text-md-end">
-              <button className="btn blue-color blue-border me-2 fs-14">
-                <img src={uploadIcon} width={15} className="me-2" />
-                {t("candidateWorkflow:import_candidates")}
-              </button>
-              {/* <button className="btn text-white orange-bg fs-14">
-                + {t("candidateWorkflow:add_candidate")}
-              </button> */}
-          <button
-  className="btn blue-color blue-border me-2 fs-14"
-  onClick={
-    handleOpenExaminationScore
-  }
->
-  Examination Score
-</button>
-            </div>
+  <div className="d-flex justify-content-md-end align-items-end gap-2 h-100">
+
+    {/* IMPORT BUTTON */}
+
+    <Button
+      variant="outline-primary"
+      size="sm"
+      onClick={() =>
+        setShowImportCandidatesModal(true)
+      }
+      className="d-flex align-items-center gap-2 bulk-import-btn"
+      style={{
+        height: "38px"
+      }}
+    >
+
+      <FiUpload />
+
+      {t(
+        "candidateWorkflow:import_candidates"
+      )}
+
+    </Button>
+
+    {/* EXAMINATION SCORE */}
+
+    <button
+      className="btn blue-color blue-border fs-14"
+      onClick={
+        handleOpenExaminationScore
+      }
+      style={{
+        height: "38px"
+      }}
+    >
+      Examination Score
+    </button>
+
+  </div>
+
+</div>
           </div>
 
           {/* <div className="mt-2 pt-1 pb-3">
@@ -4208,182 +4255,55 @@ const [selectedRelaxation, setSelectedRelaxation] = useState("SET_II");
 
 </Modal>
 
-{/* <Modal  
-  show={showExaminationModal}
-  onHide={() => setShowExaminationModal(false)}
-  centered
-  size="xl"
->
-  <Modal.Header closeButton>
-    <div>
-      <h5 className="fw-bold mb-1">
-        Rank Positions Summary
-      </h5>
 
-      <small className="text-muted">
-        View and manage position rankings
-      </small>
-    </div>
+<Modal
+  show={
+    showImportCandidatesModal
+  }
+  onHide={() =>
+    setShowImportCandidatesModal(false)
+  }
+  size="lg"
+  centered
+>
+
+  <Modal.Header closeButton>
+
+   <Modal.Title
+  style={{
+    fontSize: "18px",
+    fontWeight: "600"
+  }}
+>
+
+  Import Candidates
+
+</Modal.Title>
+
   </Modal.Header>
 
   <Modal.Body>
 
-    <div className="border rounded p-3">
+    <CandidateImportModal
+      t={t}
+      onClose={() =>
+        setShowImportCandidatesModal(
+          false
+        )
+      }
+      onSuccess={() => {
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h6 className="fw-bold mb-0">
-          Senior Manager - Finacle Developer
-        </h6>
+        console.log(
+          "IMPORT SUCCESS"
+        );
 
-        <div className="fw-semibold fs-14">
-          Start: 14-02-2026 &nbsp;&nbsp;
-          End: 08-03-2026
-        </div>
-      </div>
-
-      <div className="d-flex gap-5 mb-4">
-
-        <div className="form-check">
-          <input
-            className="form-check-input"
-            type="radio"
-            checked={selectedRelaxation === "SET_II"}
-            onChange={() => setSelectedRelaxation("SET_II")}
-          />
-
-          <label className="form-check-label fw-semibold">
-            QUALIFIED WITH SET II (5%)
-          </label>
-        </div>
-
-        <div className="form-check">
-          <input
-            className="form-check-input"
-            type="radio"
-            checked={selectedRelaxation === "SET_III"}
-            onChange={() => setSelectedRelaxation("SET_III")}
-          />
-
-          <label className="form-check-label fw-semibold">
-            QUALIFIED WITH SET III (10%)
-          </label>
-        </div>
-
-      </div>
-
-      <div className="table-responsive">
-
-        <table className="table table-bordered align-middle text-center">
-
-          <thead className="table-light">
-
-            <tr>
-              <th>CATEGORY</th>
-              <th>SC</th>
-              <th>ST</th>
-              <th>OBC</th>
-              <th>EWS</th>
-              <th>UR</th>
-              <th>OC</th>
-              <th>HI</th>
-              <th>VI</th>
-              <th>ID</th>
-              <th>TOTAL</th>
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            <tr>
-              <td className="fw-semibold text-start">APPEARED</td>
-              <td>120</td>
-              <td>85</td>
-              <td>200</td>
-              <td>95</td>
-              <td>450</td>
-              <td>50</td>
-              <td>15</td>
-              <td>10</td>
-              <td>5</td>
-              <td><b>1030</b></td>
-            </tr>
-
-            <tr>
-              <td className="fw-semibold text-start">VACANCY</td>
-              <td>2</td>
-              <td>1</td>
-              <td>3</td>
-              <td>2</td>
-              <td>8</td>
-              <td>1</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td><b>17</b></td>
-            </tr>
-
-            <tr className="table-warning">
-              <td className="fw-semibold text-start">
-                QUALIFIED WITH NO RELAXATION
-              </td>
-              <td>45</td>
-              <td>30</td>
-              <td>85</td>
-              <td>40</td>
-              <td>180</td>
-              <td>20</td>
-              <td>8</td>
-              <td>5</td>
-              <td>2</td>
-              <td><b>415</b></td>
-            </tr>
-
-            <tr>
-              <td className="fw-semibold text-start">
-                QUALIFIED WITH SET II (5%)
-              </td>
-              <td>25</td>
-              <td>18</td>
-              <td>45</td>
-              <td>22</td>
-              <td>95</td>
-              <td>12</td>
-              <td>4</td>
-              <td>3</td>
-              <td>1</td>
-              <td><b>225</b></td>
-            </tr>
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </div>
+      }}
+    />
 
   </Modal.Body>
 
-  <Modal.Footer>
+</Modal>
 
-    <Button
-      variant="secondary"
-      onClick={() => setShowExaminationModal(false)}
-    >
-      Cancel
-    </Button>
-
-    <Button
-      variant="warning"
-      onClick={() => setShowExaminationModal(false)}
-    >
-      Save
-    </Button>
-
-  </Modal.Footer>
-
-</Modal> */}
     </div>
     
   );
