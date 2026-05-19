@@ -123,15 +123,11 @@ loadPanelAvailability
 )}
 
 {showPanelInfo && (
-
   <div className="ap-panel-popover">
-
     <div className="ap-panel-popover-header">
-
       <h6 className="ap-panel-popover-title">
-        Scheduled interviews 
+        <i className="bi bi-calendar-check me-2 text-primary" /> Scheduled Interviews
       </h6>
-
       <button
         type="button"
         className="ap-panel-popover-close"
@@ -139,76 +135,56 @@ loadPanelAvailability
       >
         <i className="bi bi-x" />
       </button>
-
     </div>
 
     <div className="ap-panel-popover-body">
-
       {panelInfoLoading ? (
-
-        <div className="ap-loading-spinner">
-          <i className="bi bi-arrow-clockwise" />
+        <div className="ap-loading-spinner py-4">
+          <div className="spinner-border text-primary spinner-border-sm" role="status"></div>
+          <span className="ms-2 text-muted">Loading availability...</span>
         </div>
-
       ) : panelAvailability.length > 0 ? (
-
-        panelAvailability.map(
-          (day, index) => (
-
-            <div
-              key={index}
-              className="ap-day-block"
-            >
-
-              <div className="ap-day-title">
-
-                 <span>
-                  {formatDateDDMMYYYY(day.panelDate)} - count : ({day.panelAvailableModels?.length || 0})
-                </span>
-
-              
-              </div>
-
-              {day.panelAvailableModels.map(
-                (slot, idx) => (
-
-                  <div
-                    key={idx}
-                    className="ap-slot-card"
-                  >
-
-                    <div className="ap-slot-position">
-                      {slot.positionName}
-                    </div>
-
-                    <div className="ap-slot-time">
-                      {slot.startTime.slice(0,5)}
-                      {" - "}
-                      {slot.endTime.slice(0,5)}
-                    </div>
-
-                  </div>
-
-                )
-              )}
-
+        panelAvailability.map((day, index) => (
+          <div key={index} className="ap-day-section">
+            {/* Elegant Header for Date */}
+            <div className="ap-day-badge-header">
+              <span className="ap-date-text">
+                <i className="bi bi-calendar-event me-1" />
+                {formatDateDDMMYYYY(day.panelDate)}
+              </span>
+              <span className="ap-count-badge">
+                {day.panelAvailableModels?.length || 0} Allocated
+              </span>
             </div>
 
-          )
-        )
-
+            {/* List of Time Slots */}
+            <div className="ap-slots-list">
+              {day.panelAvailableModels.map((slot, idx) => (
+                <div key={idx} className="ap-slot-row-item">
+                  <div className="ap-slot-left">
+                    <span className="ap-time-pill">
+                      <i className="bi bi-clock me-1" />
+                      {slot.startTime.slice(0, 5)} - {slot.endTime.slice(0, 5)}
+                    </span>
+                  </div>
+                  <div className="ap-slot-right">
+                    <div className="ap-slot-position-title" title={slot.positionName}>
+                      {slot.positionName}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
       ) : (
-
-        <div className="text-center text-muted py-3">
-          No Scheduled interviews found
+        <div className="text-center text-muted py-4">
+          <i className="bi bi-calendar-x d-block fs-4 mb-2 text-neutral" />
+          No scheduled interviews found
         </div>
-
       )}
-
     </div>
-
   </div>
-
 )}
             <i className="bi bi-chevron-down ap-select-icon" />
           </div>
