@@ -132,7 +132,7 @@ export const mapCandidatesToTableRows = (list = []) => {
         sched.interviewStartAt,
         sched.interviewEndAt
       ),
-     zone: zone.displayName || "-",
+      zone: zone.displayName || "-",
 
       /* ===== STATE TRACKING ===== */
 

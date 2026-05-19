@@ -11,7 +11,7 @@ import masterApiService from "../master/services/masterApiService";
 import RequisitionPositionSelector from "../candidatePreview/components/RequisitionPositionSelector";
 import CandidateTable from "./components/CandidateTable";
 import CandidateVerificationService from "./services/CandidateVerification";
-import { DUMMY_DATA } from "./components/mockData";
+// import { DUMMY_DATA } from "./components/mockData";
 import { mapCandidatesToTableRows } from "./mappers/CandidateVerificationMapper";
 import { useLocation } from "react-router-dom";
 import PdfViewerModal from "../candidatePreview/components/PdfViewerModal"

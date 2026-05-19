@@ -46,7 +46,8 @@ export const useInterviewPanel = () => {
   const [showFilters, setShowFilters] = useState(true);
 const [savingPanel, setSavingPanel] = useState(false);
 
-
+const [showUpdateConfirmModal, setShowUpdateConfirmModal] = useState(false);
+const [pendingPayload, setPendingPayload] = useState(null);
   useEffect(() => {
     const panelNameValue = search.panelName?.trim();
     const committeeNameValue = search.committeeName?.trim();
@@ -200,6 +201,57 @@ const [savingPanel, setSavingPanel] = useState(false);
 
   /* ================= SAVE ================= */
 
+  const continuePanelUpdate = async () => {
+
+  if (!pendingPayload) return;
+
+  try {
+
+    setSavingPanel(true);
+
+    const res =
+      await masterApiService.updateInterviewPanel(
+        formData.id,
+        pendingPayload
+      );
+
+    if (!res?.success) {
+
+      setErrorMessage(
+        res?.data || "Failed to update the panel"
+      );
+
+      setShowErrorModal(true);
+      return;
+    }
+
+    toast.success(t("panel_updated"));
+
+    fetchPanels();
+
+    setFormData({
+      name: "",
+      community: "",
+      members: []
+    });
+
+    setErrors({});
+
+    setShowUpdateConfirmModal(false);
+    setPendingPayload(null);
+
+  } catch (error) {
+
+    toast.error(
+      error?.response?.data?.message ||
+      "Failed to update panel"
+    );
+
+  } finally {
+    setSavingPanel(false);
+  }
+};
+
   const handleSave = async () => {
     if (!validatePanelForm()) {
       //toast.error("Please fix the validation errors");
@@ -228,14 +280,9 @@ const [savingPanel, setSavingPanel] = useState(false);
           );
 
         if (isresScheduled?.data) {
-          const confirmed = window.confirm(
-            "Interviews are already scheduled for this panel. Do you want to continue updating?"
-          );
-
-          if (!confirmed) {
-            return;
-          }
-          setSavingPanel(true);
+         setPendingPayload(payload);
+setShowUpdateConfirmModal(true);
+return;
         }
 
         // ✅ UPDATE
@@ -475,7 +522,10 @@ const [savingPanel, setSavingPanel] = useState(false);
     errorMessage,
     bulkAddPanels,
     downloadPanelTemplate,
-    savingPanel
+    savingPanel,
+    showUpdateConfirmModal,
+setShowUpdateConfirmModal,
+continuePanelUpdate
 
 
   };

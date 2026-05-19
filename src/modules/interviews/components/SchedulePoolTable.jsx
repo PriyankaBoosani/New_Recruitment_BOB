@@ -92,28 +92,28 @@ const SchedulePoolTable = ({
 
           <tr>
 
-            <th className="fs-14 fw-normal py-3">
+            <th className="fs-14 fw-normal py-3 ps-4">
               {t("candidateWorkflow:candidate")}
             </th>
 
 
-            <th className="fs-14 fw-normal py-3">
+            <th className="fs-14 fw-normal py-3 ps-4">
               {t("common:date")}
             </th>
 
-            <th className="fs-14 fw-normal py-3">
+            <th className="fs-14 fw-normal py-3 ps-4">
               {t("common:time")}
             </th>
 
-            <th className="fs-14 fw-normal py-3">
+            <th className="fs-14 fw-normal py-3 ps-4">
               {t("candidateWorkflow:zone")}
             </th>
 
-            <th className="fs-14 fw-normal py-3">
+            <th className="fs-14 fw-normal py-3 ps-4">
               {t("candidateWorkflow:panel_details")}
             </th>
 
-            <th className="fs-14 fw-normal py-3">
+            <th className="fs-14 fw-normal py-3 ps-4">
               {t("candidateWorkflow:interview_status")}
 
             </th>
@@ -149,7 +149,7 @@ const SchedulePoolTable = ({
               <tr key={row.id}>
 
                 {/* Candidate */}
-                <td className="align-content-center">
+                <td className="align-content-center ps-4">
 
                   <p className="fw-normal fs-14 mb-0">
                     {row.name}
@@ -194,7 +194,7 @@ const SchedulePoolTable = ({
                 </td>
 
                 {/* Interview Status */}
-                <td className="align-content-center">
+                <td className="align-content-center ps-4">
                   {getApprovalStatus(row) === "L1_PENDING"
                     ? "L1 Pending"
                     : getApprovalStatus(row)}

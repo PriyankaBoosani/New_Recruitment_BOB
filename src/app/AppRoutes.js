@@ -21,6 +21,7 @@ import GenericOrAnnexuresPage from "../modules/master/pages/GenericOrAnnexures/G
 import CertificationPage from "../modules/master/pages/CertificationPage/CertificationPage";
 import EducationModal from "../modules/master/pages/EducationQualification/EducationQualificationPage";
 import StatesLanguagesPage from "../modules/master/pages/StatesLanguages/StatesLanguagesPage";
+import ExaminationCutoffConfiguration from "../modules/ExaminationCutoffConfiguration/ExaminationCutoffConfiguration";
 // import NonAdminRoute from "./NonAdminRoute";
 // import AdminRoute from "./AdminRoute";
 import AddPosition from "../modules/jobPosting/pages/AddPosition";
@@ -263,6 +264,26 @@ const AppRoutes = () => {
                   </PrivilegeRoute>
                 }
               />
+
+
+
+
+ <Route
+                path="/ExaminationCutoffConfiguration"
+                element={
+                  <PrivilegeRoute privilegesRequired={["Candidate Pool", "Verification", "Interview", "Compensation Pool", "ExaminationCutoffConfiguration"]}>
+                    <ExaminationCutoffConfiguration />
+                  </PrivilegeRoute>
+                }
+              />
+              {/* <Route
+                path="/ExaminationCutoffConfiguration"
+                element={
+                  <PrivilegeRoute privilege="ExaminationCutoffConfiguration">
+                    <ExaminationCutoffConfiguration />
+                  </PrivilegeRoute>
+                }
+              /> */}
 
               <Route
                 path="/interviewpanel"

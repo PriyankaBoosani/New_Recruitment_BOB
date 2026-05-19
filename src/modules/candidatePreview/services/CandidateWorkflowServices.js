@@ -158,16 +158,81 @@ getMessagesByThreadId: (conversationThreadId) =>
   );
 
 },
+
+
+/* =========================
+   BULK IMPORT CANDIDATES
+========================= */
+
+bulkImportCandidates: (file) => {
+
+  const formData =
+    new FormData();
+
+  formData.append(
+    "file",
+    file
+  );
+
+  return api.post(
+
+    "/recruiter/candidate/import-candidates",
+
+    formData,
+
+    {
+      headers: {
+        "Content-Type":
+          "multipart/form-data",
+        "X-Client":
+          "AzureAD"
+      }
+    }
+
+  );
+
+},
+
+/* =========================
+   DOWNLOAD TEMPLATE
+========================= */
+
+downloadCandidateTemplate: () => {
+
+  return api.get(
+
+    "/recruiter/candidate/download-template",
+
+    {
+      responseType: "blob",
+      headers: {
+        "X-Client":
+          "AzureAD"
+      }
+    }
+
+  );
+
+},
+
 submitForApproval(payload) {
   return api.post(
     "/recruiter/schedule-pool/submit-for-approval",
     payload
   );
 }
+
   
 
 };  
 
 
+
+
+
  
 export default candidateWorkflowServices;
+
+
+
+

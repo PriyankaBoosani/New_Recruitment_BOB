@@ -26,7 +26,9 @@ const AssignPositionsPage = ({ refreshPanels }) => {
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   const [showBulkImportModal, setShowBulkImportModal] = useState(false);
   const [showScheduleWarning, setShowScheduleWarning] = useState(false);
-const [pendingPayload, setPendingPayload] = useState(null);
+  const [showUpdateWarning, setShowUpdateWarning] = useState(false);
+  const [pendingPayload, setPendingPayload] = useState(null);
+
 
   const {
     requisitions,
@@ -662,7 +664,12 @@ const updatePanel = async (payload) => {
       />
       <Modal
         show={showEditModal}
-        onHide={() => setShowEditModal(false)}
+        onHide={() => {
+              setShowEditModal(false);
+
+              setShowUpdateWarning(false);
+              setPendingPayload(null);
+            }}
         size="lg"
         centered
         className="modaleditcustom"
@@ -672,12 +679,68 @@ const updatePanel = async (payload) => {
         </Modal.Header>
 
         <Modal.Body>
+
+          {showUpdateWarning && (
+  <div className="panel-update-warning">
+    
+    <div className="panel-update-warning-icon">
+      <i className="bi bi-exclamation-triangle-fill" />
+    </div>
+
+    <div className="panel-update-warning-content">
+      
+      <div className="panel-update-warning-title">
+        Scheduled Interviews Found
+      </div>
+
+      <div className="panel-update-warning-text">
+        Scheduled interviews already exist for this panel.
+
+        Continuing the update will notify newly added
+        panel members about the scheduled interviews.
+      </div>
+
+    </div>
+
+    <div className="panel-update-warning-actions">
+
+      <button
+        className="btn btn-light"
+        onClick={() => {
+          setShowUpdateWarning(false);
+          setPendingPayload(null);
+        }}
+      >
+        Cancel
+      </button>
+
+      <button
+        className="btn btn-warning text-white"
+        onClick={async () => {
+
+          setShowUpdateWarning(false);
+
+          if (pendingPayload) {
+            await updatePanel(pendingPayload);
+            setPendingPayload(null);
+          }
+
+        }}
+      >
+        Continue Update
+      </button>
+
+    </div>
+
+  </div>
+)}
           {editFormData && (
             <InterviewPanelFormModal
               formData={editFormData}
               setFormData={setEditFormData}
               communityOptions={communityOptions}   // ✅ ADD THIS
               membersOptions={membersOptions}
+              showUpdateWarning={showUpdateWarning}
               disableName={true}
               disableType={true}     // ✅ ADD THIS
               onSave={async () => {
@@ -693,14 +756,10 @@ const updatePanel = async (payload) => {
                   );
                   console.log("isresScheduled", isresScheduled);
                   if (isresScheduled?.data) {
-                    const confirmed = window.confirm(
-                      "Interviews are already scheduled for this panel. Do you want to continue updating?"
-                    );
-
-                    if (!confirmed) {
-                      return;
-                    }
-                  }
+  setPendingPayload(payload);
+  setShowUpdateWarning(true);
+  return;
+}
 
                   
                   await updatePanel(payload);
@@ -718,6 +777,8 @@ const updatePanel = async (payload) => {
           )}
         </Modal.Body>
       </Modal>
+
+
     </div>
   );
 };

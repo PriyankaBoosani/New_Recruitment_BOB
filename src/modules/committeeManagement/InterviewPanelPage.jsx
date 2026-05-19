@@ -58,7 +58,10 @@ const InterviewPanelPage = () => {
     errorMessage,
     bulkAddPanels,
     downloadPanelTemplate,
- savingPanel
+ savingPanel,
+ showUpdateConfirmModal,
+setShowUpdateConfirmModal,
+continuePanelUpdate
 
   } = useInterviewPanel();
 
@@ -302,7 +305,53 @@ const InterviewPanelPage = () => {
         errors={[]}   // no list needed here
         onClose={() => setShowErrorModal(false)}
       />
+<Modal
+  show={showUpdateConfirmModal}
+  onHide={() => setShowUpdateConfirmModal(false)}
+  centered
+  backdrop="static"
+>
 
+  <Modal.Body className="update-confirm-modal-body">
+
+    <div className="update-confirm-icon">
+      <i className="bi bi-exclamation-triangle-fill" />
+    </div>
+
+    <h5 className="update-confirm-title">
+      Scheduled Interviews Found
+    </h5>
+
+    <p className="update-confirm-text">
+      Some interviews are already scheduled for this panel.
+
+      Continuing the update will notify newly added
+      panel members about the scheduled interviews.
+    </p>
+
+    <div className="update-confirm-actions">
+
+      <button
+        className="btn btn-light"
+        onClick={() =>
+          setShowUpdateConfirmModal(false)
+        }
+      >
+        Cancel
+      </button>
+
+      <button
+        className="btn btn-warning text-white"
+        onClick={continuePanelUpdate}
+      >
+        Continue Update
+      </button>
+
+    </div>
+
+  </Modal.Body>
+
+</Modal>
       <Modal
         show={showBulkImportModal}
         onHide={() => setShowBulkImportModal(false)}
