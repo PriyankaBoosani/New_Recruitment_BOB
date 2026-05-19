@@ -4286,6 +4286,9 @@ const [selectedRelaxation, setSelectedRelaxation] = useState("SET_II");
 
     <CandidateImportModal
       t={t}
+      positionIds={
+    selectedPositionId
+  }
       onClose={() =>
         setShowImportCandidatesModal(
           false

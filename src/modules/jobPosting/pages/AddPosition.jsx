@@ -454,11 +454,11 @@ const AddPosition = () => {
                     [child]: value
                 };
 
-                // 🔥 If one dropdown cleared, clear both
-                if (value === "") {
-                    updated.years = "";
-                    updated.months = "";
-                }
+                // // 🔥 If one dropdown cleared, clear both
+                // if (value === "") {
+                //     updated.years = "";
+                //     updated.months = "";
+                // }
 
                 return {
                     ...prev,

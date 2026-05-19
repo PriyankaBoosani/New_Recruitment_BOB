@@ -115,14 +115,20 @@ const Messages = () => {
   // ];
 
 
-  const fetchMessages = async (payload, pageNo = page, pageSize = size) => {
+  const fetchMessages = async (payload, pageNo = page, pageSize = size, searchValue = "") => {
     try {
       setLoadingMessages(true);
+      const finalPayload = {
+        ...payload,
+        ...(searchValue?.trim()
+          ? { searchText: searchValue.trim() }
+          : {})
+      };
 
       const res = await candidateWorkflowServices.getMessageHistory(
-        payload,
+        finalPayload,
         pageNo,
-        pageSize
+        pageSize,
       );
 
 
@@ -208,7 +214,8 @@ const Messages = () => {
             : [],
           statusList: selectedStatus
             ? [selectedStatus]
-            : []
+            : [],
+          searchText: searchText || ""
         },
         page,
         size
@@ -285,40 +292,40 @@ const Messages = () => {
       status: a.status,
     }));
 
-const filteredMsgs = (msgs || []).filter((m) => {
+    const filteredMsgs = (msgs || []).filter((m) => {
 
-  // KEEP NON-RECRUITER
-  if (m.senderType !== "RECRUITER") {
-    return true;
-  }
+      // KEEP NON-RECRUITER
+      if (m.senderType !== "RECRUITER") {
+        return true;
+      }
 
-  // NORMALIZE MESSAGE
-  const recruiterMessage = (
-    m.message ||
-    m.comments ||
-    ""
-  ).trim().toLowerCase();
+      // NORMALIZE MESSAGE
+      const recruiterMessage = (
+        m.message ||
+        m.comments ||
+        ""
+      ).trim().toLowerCase();
 
-  // CHECK DUPLICATE
-  const isDuplicate = approvalMapped.some((a) => {
+      // CHECK DUPLICATE
+      const isDuplicate = approvalMapped.some((a) => {
 
-    const approvalMessage = (
-      a.message ||
-      a.comments ||
-      ""
-    ).trim().toLowerCase();
+        const approvalMessage = (
+          a.message ||
+          a.comments ||
+          ""
+        ).trim().toLowerCase();
 
-    return recruiterMessage === approvalMessage;
-  });
+        return recruiterMessage === approvalMessage;
+      });
 
-  // REMOVE DUPLICATE
-  return !isDuplicate;
-});
-// MERGE BOTH
-const mergedHistory = [
-  ...filteredMsgs,
-  ...approvalMapped,
-];
+      // REMOVE DUPLICATE
+      return !isDuplicate;
+    });
+    // MERGE BOTH
+    const mergedHistory = [
+      ...filteredMsgs,
+      ...approvalMapped,
+    ];
 
     // SORT
     mergedHistory.sort(
@@ -514,8 +521,38 @@ const mergedHistory = [
                   placeholder={t("messages:search")}
                   className="msg-search-input"
                   value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    setSearchText(value);
+                    setPage(0);
+
+                    if (selectedPositionId?.length > 0) {
+                      fetchMessages(
+                        {
+                          positionsIds: selectedPositionId || [],
+                          requestTypeIds: selectedRequestType
+                            ? [selectedRequestType]
+                            : [],
+                          statusList: selectedStatus
+                            ? [selectedStatus]
+                            : [],
+                          searchText: value || ""
+                        },
+                        0,
+                        size,
+                        value
+                      );
+                    }
+                  }}
                 />
+                {/* <input
+                  type="text"
+                  placeholder={t("messages:search")}
+                  className="msg-search-input"
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                /> */}
               </div>
             </div>
           </div>
@@ -542,24 +579,30 @@ const mergedHistory = [
                     setSelectedPositionId([]);
 
                     setApiMessages([]);
+                    setSearchText(""); // clear search
+
+                    setPage(0);
 
                     fetchPositions(id);
                   }}
                   onPositionChange={(values) => {
                     setSelectedPositionId(values);
+
+                    setSearchText(""); // clear search
+
                     setPage(0);
 
-                    fetchMessages(
-                      {
-                        positionsIds: values || [],
-                        requestTypeIds: selectedRequestType
-                          ? [selectedRequestType]
-                          : [],
-                        statusList: selectedStatus ? [selectedStatus] : []
-                      },
-                      0,
-                      size
-                    );
+                    // fetchMessages(
+                    //   {
+                    //     positionsIds: values || [],
+                    //     requestTypeIds: selectedRequestType
+                    //       ? [selectedRequestType]
+                    //       : [],
+                    //     statusList: selectedStatus ? [selectedStatus] : []
+                    //   },
+                    //   0,
+                    //   size
+                    // );
                   }}
                   onRequisitionSearch={(val) => fetchRequisitions(val)}
                 />
@@ -678,6 +721,7 @@ const mergedHistory = [
                       statusList: selectedStatus
                         ? [selectedStatus]
                         : [],
+                      searchText: searchText || ""
                     },
                     0,
                     size

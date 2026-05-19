@@ -176,7 +176,7 @@ bulkImportCandidates: (file) => {
 
   return api.post(
 
-    "/recruiter/candidate/import-candidates",
+    "/recruiter/examination-marks/upload-marks-excel",
 
     formData,
 
@@ -197,14 +197,19 @@ bulkImportCandidates: (file) => {
    DOWNLOAD TEMPLATE
 ========================= */
 
-downloadCandidateTemplate: () => {
+downloadCandidateTemplate: (
+  positionIds = []
+) => {
 
-  return api.get(
+  return api.post(
 
-    "/recruiter/candidate/download-template",
+    "/recruiter/examination-marks/download-template",
+
+    positionIds,
 
     {
       responseType: "blob",
+
       headers: {
         "X-Client":
           "AzureAD"

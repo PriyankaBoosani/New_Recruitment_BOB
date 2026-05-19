@@ -100,14 +100,14 @@ export const useCandidateImport =
        DOWNLOAD TEMPLATE
     ========================== */
 
-    const downloadCandidateTemplate =
-      async () => {
+const downloadCandidateTemplate =
+  async (positionIds = []) => {
 
         try {
 
           const res =
             await candidateWorkflowServices
-              .downloadCandidateTemplate();
+              .downloadCandidateTemplate( positionIds);
 
           const blob =
             res.data;
