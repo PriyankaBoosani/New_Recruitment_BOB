@@ -1251,6 +1251,48 @@
   font-size: 13px;
 }
 
+
+.ap-modern-select {
+  height: 48px !important;
+  border-radius: 14px !important;
+  border: 1px solid #dbe3ef !important;
+  background: #fff !important;
+  font-size: 14px !important;
+  font-weight: 500;
+  color: #1e293b !important;
+  padding: 0 42px 0 14px !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s ease;
+  appearance: none;
+}
+
+.ap-modern-select:hover {
+  border-color: #b6c2d2 !important;
+}
+
+.ap-modern-select:focus {
+  border-color: #f97316 !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
+}
+
+.ap-select-wrap {
+  position: relative;
+}
+
+.ap-select-icon {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.ap-modern-select option {
+  padding: 10px;
+}
+
 @keyframes spin {
 
   from {

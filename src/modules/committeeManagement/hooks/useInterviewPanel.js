@@ -44,7 +44,7 @@ export const useInterviewPanel = () => {
     panelMemberName: ""
   });
   const [showFilters, setShowFilters] = useState(true);
-
+const [savingPanel, setSavingPanel] = useState(false);
 
 
   useEffect(() => {
@@ -220,8 +220,26 @@ export const useInterviewPanel = () => {
 
     try {
       if (formData.id) {
+
+
+        const isresScheduled =
+          await masterApiService.checkScheduledInterviews(
+            formData.id
+          );
+
+        if (isresScheduled?.data) {
+          const confirmed = window.confirm(
+            "Interviews are already scheduled for this panel. Do you want to continue updating?"
+          );
+
+          if (!confirmed) {
+            return;
+          }
+          setSavingPanel(true);
+        }
+
         // ✅ UPDATE
-        const res = await masterApiService.updateInterviewPanel(
+        try{ const res = await masterApiService.updateInterviewPanel(
           formData.id,
           payload
         );
@@ -231,7 +249,7 @@ export const useInterviewPanel = () => {
 
           // toast.error(res?.message || "Panel name already exists for selected committee");
           setErrorMessage(
-            res?.message || t("panel_exists_for_committee")
+            res?.data || "Failed to update the panel"
           );
           setShowErrorModal(true);
           return; // ⛔ VERY IMPORTANT
@@ -239,6 +257,12 @@ export const useInterviewPanel = () => {
 
 
         toast.success(t("panel_updated"));
+      } catch (error) {
+        console.error("Error updating panel:", error);
+        toast.error("Failed to update panel");
+      } finally {
+        setSavingPanel(false);
+      }
       } else {
         // ✅ CREATE
         const res = await masterApiService.addInterviewPanel(payload);
@@ -246,7 +270,7 @@ export const useInterviewPanel = () => {
         if (!res?.success) {
           // toast.error(res?.message || "Failed to create panel");
           setErrorMessage(
-            res?.message || t("failed_create_panel")
+            res?.data || "Failed to save the panel"
           );
           setShowErrorModal(true);
           return; // ⛔ VERY IMPORTANT
@@ -451,6 +475,7 @@ export const useInterviewPanel = () => {
     errorMessage,
     bulkAddPanels,
     downloadPanelTemplate,
+    savingPanel
 
 
   };

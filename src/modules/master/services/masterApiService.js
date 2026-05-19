@@ -208,6 +208,7 @@ const masterApiService = {
   /* Interview Panels */
   getInterviewPanels: () => apis.get("/interview-panels/get-all"),
   addInterviewPanel: (data) => apis.post("/interview-panels/add", data),
+  checkScheduledInterviews: (id) => apis.get(`/interview-panels/check-schedule/${id}`),
   updateInterviewPanel: (id, data) => apis.put(`/interview-panels/update/${id}`, data),
   deleteInterviewPanel: (id) => apis.delete(`/interview-panels/delete/${id}`),
   getActiveInterviewMembers: () => apis.get("/interview-panels/active-members"),

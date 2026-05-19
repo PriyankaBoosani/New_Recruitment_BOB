@@ -135,30 +135,32 @@ const useInterviewSchedule = () => {
         },
         [getDepartmentNameFromMaster, getPositionNameFromMaster]
     );
-    const submitL1Approval = useCallback(async (positionIds) => {
-        if (!positionIds || positionIds.length === 0) return;
+    // hook
+    const submitL1Approval = useCallback(
+        async ({ positionIds, status, remarks = "" }) => {
+            if (!positionIds || positionIds.length === 0) return;
 
-        try {
-            setLoadingL1Approval(true);
+            try {
+                setLoadingL1Approval(true);
 
-            const payload = {
-                positionIds,
-                status: "L1_PENDING",
-            };
+                const payload = {
+                    positionIds,
+                    status,     // "APPROVED" or "REJECTED"
+                    remarks,
+                };
 
-            const res = await committeeManagementService.submitL1Approval(payload);
-
-            toast.success(res?.data?.message || "L1 approval submitted successfully");
-            return res;
-        } catch (error) {
-            toast.error(
-                error?.response?.data?.message || "Failed to submit L1 approval"
-            );
-            throw error;
-        } finally {
-            setLoadingL1Approval(false);
-        }
-    }, []);
+                const res = await committeeManagementService.submitL1Approval(payload);
+                toast.success(res?.data?.message || "Submitted successfully");
+                return res;
+            } catch (error) {
+                toast.error(error?.response?.data?.message || "Failed to submit approval");
+                throw error;
+            } finally {
+                setLoadingL1Approval(false);
+            }
+        },
+        []
+    );
 
     useEffect(() => {
         fetchMasters();

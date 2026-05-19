@@ -347,7 +347,7 @@ export default function CandidateScreening({ selectedJob }) {
           res?.message ||
           "Validation failed"
         );
-console.log("message",res.data[0].message)
+        console.log("message", res.data[0].message)
         // ✅ store backend data
         setErrorCandidates(
           Array.isArray(res?.data)
@@ -370,7 +370,7 @@ console.log("message",res.data[0].message)
 
       fetchSchedulePoolCandidates();
 
-            // CLEAR SCHEDULE POOL FILTER
+      // CLEAR SCHEDULE POOL FILTER
       setFilters(prev => ({
         ...prev,
         status: []
@@ -740,20 +740,20 @@ console.log("message",res.data[0].message)
 
     return tabs.filter((tab) => {
 
-      // if (tab.key === "COMPENSATION_POOL") {
-
-      //   if (role === "committee_member") {
-      //     return true; // ✅ force show
-      //   }
-
-      //   if (!isContractPosition) {
-      //     return false;
-      //   }
-      // }
-
       if (tab.key === "COMPENSATION_POOL") {
-        return false;
+
+        if (role === "committee_member") {
+          return true; // ✅ force show
+        }
+
+        if (!isContractPosition) {
+          return false;
+        }
       }
+
+      // if (tab.key === "COMPENSATION_POOL") {
+      //   return false;
+      // }
 
       // Enable Schedule Pool if Interview Pool privilege is true
       if (tab.key === "SCHEDULE_POOL" && hasPrivilege("Interview Pool")) {
@@ -1116,7 +1116,7 @@ console.log("message",res.data[0].message)
         statusList:
           filters.status.length
             ? filters.status
-            : ["L1_PENDING"],
+            : ["L1_PENDING", "REJECTED"],
 
         page: 0,
 
@@ -1149,7 +1149,7 @@ console.log("message",res.data[0].message)
           // IMPORTANT FOR EDIT FLOW
           applicationId:
             c?.application?.id,
-            positionId:
+          positionId:
             c?.application?.positionId,
 
           interviewCenterId:
@@ -1214,6 +1214,7 @@ console.log("message",res.data[0].message)
             c?.interviewPanels
               ?.panelName || "-",
           interviewStatus: c?.interviewScheduleStaging.interviewSchedulingApprovalStatus || "-",
+          remarks: c?.interviewScheduleStaging.remarks || " -",
           positionId:
             c?.application?.positionId,
 
@@ -1931,7 +1932,7 @@ console.log("message",res.data[0].message)
 
     const basePayload = {
       documentType,
-       positionIds: selectedPositionId,
+      positionIds: selectedPositionId,
       screenName:
         activeTab === "INTERVIEW_POOL"
           ? "InterviewPool"
@@ -2541,11 +2542,11 @@ console.log("message",res.data[0].message)
                   isSaveBtn={false}
                   saveButton={false}
                   onRemovePosition={handleRemovePosition}
-                  // onRemovePosition={(positionId) => {
-                  //   setSelectedPositionId((prev) =>
-                  //     prev.filter((id) => id !== positionId)
-                  //   );
-                  // }}
+                // onRemovePosition={(positionId) => {
+                //   setSelectedPositionId((prev) =>
+                //     prev.filter((id) => id !== positionId)
+                //   );
+                // }}
                 />
               )}
             </div>
@@ -2789,7 +2790,7 @@ console.log("message",res.data[0].message)
                     }`}
                 >
 
-                  {/* {activeTab === "CANDIDATE_POOL" && (
+                  {activeTab === "CANDIDATE_POOL" && (
                     <button
                       className="rank-btn fs-14"
                       onClick={() => {
@@ -2802,42 +2803,42 @@ console.log("message",res.data[0].message)
                     >
                       <FontAwesomeIcon icon={faListOl} className="rank-icon" /> Rank
                     </button>
-                  )} */}
-                 
-                    <>
-                      <OverlayTrigger
-                        placement="bottom"
-                        overlay={
-                          <Tooltip>
-                            {t("candidateWorkflow:download_pdf")}
-                          </Tooltip>
-                        }
-                      >
-                        <button
-                          className="btn fs-14 me-3 blue-color blue-border"
-                          onClick={() => handleDownload("pdf")}
-                        >
-                          <img src={pdfIcon} width={20} />
-                        </button>
-                      </OverlayTrigger>
+                  )}
 
-                      <OverlayTrigger
-                        placement="bottom"
-                        overlay={
-                          <Tooltip>
-                            {t("candidateWorkflow:download_excel")}
-                          </Tooltip>
-                        }
+                  <>
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={
+                        <Tooltip>
+                          {t("candidateWorkflow:download_pdf")}
+                        </Tooltip>
+                      }
+                    >
+                      <button
+                        className="btn fs-14 me-3 blue-color blue-border"
+                        onClick={() => handleDownload("pdf")}
                       >
-                        <button
-                          className="btn fs-14 blue-color blue-border"
-                          onClick={() => handleDownload("xlsx")}
-                        >
-                          <img src={excelIcon} width={20} />
-                        </button>
-                      </OverlayTrigger>
-                    </>
-                 
+                        <img src={pdfIcon} width={20} />
+                      </button>
+                    </OverlayTrigger>
+
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={
+                        <Tooltip>
+                          {t("candidateWorkflow:download_excel")}
+                        </Tooltip>
+                      }
+                    >
+                      <button
+                        className="btn fs-14 blue-color blue-border"
+                        onClick={() => handleDownload("xlsx")}
+                      >
+                        <img src={excelIcon} width={20} />
+                      </button>
+                    </OverlayTrigger>
+                  </>
+
                 </div>
               )}
             </div>
@@ -3149,12 +3150,12 @@ console.log("message",res.data[0].message)
                   />
                 </div>
               </div>
-           <div className="col-md-7 col-12 px-2 mb-2">
+              <div className="col-md-7 col-12 px-2 mb-2">
 
-              <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
 
-                {/* LEFT SIDE COUNT */}
-                <div>
+                  {/* LEFT SIDE COUNT */}
+                  <div>
 
                   {activeTab === "CANDIDATE_POOL" && (
                     <div className="selected-count-chip">
@@ -3191,23 +3192,61 @@ console.log("message",res.data[0].message)
                     </div>
                   )}
 
-                </div>
+                  </div>
 
-                {/* RIGHT SIDE BUTTONS */}
-                <div className="d-flex gap-2">
+                  {/* RIGHT SIDE BUTTONS */}
+                  <div className="d-flex gap-2">
 
-                  {activeTab === "CANDIDATE_POOL"
-                    && hasPrivilege("Interview Pool")
-                    && canScheduleMultiPositionInterview && (
-                      <button
-                        className="btn blue-bg text-white fs-14"
-                        onClick={handleScheduleInterview}
-                      >
-                        {t("candidateWorkflow:schedule_interview")}
-                      </button>
-                  )}
+                    {activeTab === "CANDIDATE_POOL"
+                      && hasPrivilege("Interview Pool")
+                      && canScheduleMultiPositionInterview && (
+                        <button
+                          className="btn blue-bg text-white fs-14"
+                          onClick={handleScheduleInterview}
+                        >
+                          {t("candidateWorkflow:schedule_interview")}
+                        </button>
+                      )}
+                    {activeTab === "INTERVIEW_POOL" && canSendToOfferPool && (
+                      isContractPosition ? (
+                        <div className="d-flex align-items-center justify-content-end gap-4">
+                          {/*  Submit Before Date */}
+                          <div className="d-flex align-items-center gap-2">
+                            <span className="fs-14">
+                              Submit Before <span className="text-danger">*</span>
+                            </span>
+                            <input
+                              type="date"
+                              className="form-control fs-14"
+                              style={{ width: "150px" }}
+                              value={submitBeforeDate}
+                              min={todayString()}
+                              onChange={(e) => setSubmitBeforeDate(e.target.value)}
+                            />
+                          </div>
 
-                  {activeTab === "INTERVIEW_POOL"
+                          {/* Button */}
+                          <button
+                            className="btn orange-bg text-white fs-14"
+                            onClick={handleSendToCompensation}
+                          // disabled={!submitBeforeDate} // 🔥 important
+                          >
+                            {t("candidateWorkflow:Compensation_Request")}
+                          </button>
+                        </div>
+                      ) : (
+                        hasPrivilege("Offer Pool") && (
+                          <button
+                            className="btn blue-bg text-white fs-14"
+                            onClick={handleSendToOfferPool}
+                          >
+                            {t("candidateWorkflow:send_to_offer_pool")}
+                          </button>
+                        )
+                      )
+                    )}
+
+                    {/* {activeTab === "INTERVIEW_POOL"
                     && hasPrivilege("Offer Pool")
                     && canSendToOfferPool && (
                       <button
@@ -3216,24 +3255,24 @@ console.log("message",res.data[0].message)
                       >
                         {t("candidateWorkflow:send_to_offer_pool")}
                       </button>
-                  )}
+                  )} */}
 
-                  {activeTab === "COMPENSATION_POOL"
-                    && hasPrivilege("Offer Pool")
-                    && canSendToOfferFromCompensation && (
-                      <button
-                        className="btn blue-bg text-white fs-14"
-                        onClick={handleSendToOfferPool}
-                      >
-                        {t("candidateWorkflow:send_to_offer_pool")}
-                      </button>
-                  )}
+                    {activeTab === "COMPENSATION_POOL"
+                      && hasPrivilege("Offer Pool")
+                      && canSendToOfferFromCompensation && (
+                        <button
+                          className="btn blue-bg text-white fs-14"
+                          onClick={handleSendToOfferPool}
+                        >
+                          {t("candidateWorkflow:send_to_offer_pool")}
+                        </button>
+                      )}
+
+                  </div>
 
                 </div>
 
               </div>
-
-            </div>
             </div>
           )}
         </div>
@@ -3579,7 +3618,7 @@ console.log("message",res.data[0].message)
       </Modal>
 
 
-    </div>
+    </div >
   );
 }
 

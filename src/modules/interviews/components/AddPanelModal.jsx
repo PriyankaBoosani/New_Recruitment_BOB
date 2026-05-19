@@ -76,7 +76,7 @@ loadPanelAvailability
 
           <div className="ap-select-wrap">
             <Form.Select
-              className={`ap-input ap-no-arrow ${
+              className={`ap-input ap-modern-select ${
                       errors?.panelId ? "ap-error" : ""
                     }`}
               disabled={mode === "edit"}
@@ -305,13 +305,13 @@ loadPanelAvailability
             {/* SECOND ROW: Duration, Interviews per Day, Actions */}
             <div className="ap-row-group">
               {/* DURATION */}
-              <div className="ap-field">
+              <div className="ap-select-wrap">
                 <Form.Label className="ap-label">
                   Duration <span>*</span>
                 </Form.Label>
 
-                <Form.Select
-                  className={`ap-input ${
+                 <Form.Select
+                  className={`ap-input ap-modern-select ap-no-arrow ${
                     errors?.rows?.[i]?.duration ? "ap-error" : ""
                   }`}
                   value={row.duration}
@@ -323,6 +323,8 @@ loadPanelAvailability
                   <option value="45">45 mins</option>
                   <option value="60">60 mins</option>
                 </Form.Select>
+
+                <i className="bi bi-chevron-down ap-select-icon" />
 
                 <div className="field-error">
                   {errors?.rows?.[i]?.duration

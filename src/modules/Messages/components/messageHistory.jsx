@@ -89,7 +89,7 @@ const MessageHistory = ({ item }) => {
                 </div>
 
                 <div className="msg-history-time">
-                  {hist.time}
+                   {hist.approvalDate || hist.time}
                 </div>
               </div>
 

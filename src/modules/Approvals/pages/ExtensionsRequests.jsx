@@ -119,6 +119,8 @@ const ExtensionsRequests = () => {
   const [selectedRequestType, setSelectedRequestType] = useState(null);
   const privileges = useSelector((state) => state.user.privileges);
 
+
+
   const [openThreadId, setOpenThreadId] = useState(null);
   const {
     requisitionOptions,
@@ -249,6 +251,8 @@ const ExtensionsRequests = () => {
       { value: "APPROVED", label: "Approved" }
     ]
   };
+  const requestTypeCol = isL2 ? 3 : 2;
+  const statusCol = isL2 ? 2 : 1;
 
   const statusOptions = useMemo(() => {
     if (isL1) return statusOptionsByApproval.L1;
@@ -256,14 +260,26 @@ const ExtensionsRequests = () => {
     return [{ value: "ALL", label: "All" }];
   }, [isL1, isL2]);
 
-  const requestTypeDropdownOptions = [
-    {
-      label: "All",
-      value: "ALL",
-      raw: null,
-    },
-    ...requestTypeOptions,
-  ];
+  const requestTypeDropdownOptions = useMemo(() => {
+    const options = [
+      {
+        label: "All",
+        value: "ALL",
+        raw: null,
+      },
+      ...requestTypeOptions,
+    ];
+
+    if (isL2) {
+      return options.filter(
+        (opt) =>
+          opt.value === "ALL" ||
+          !opt.label?.toLowerCase().includes("zone office change request")
+      );
+    }
+
+    return options;
+  }, [isL2, requestTypeOptions]);
 
   const getStatusBadge = (status = "") => {
     switch (status) {
@@ -328,13 +344,10 @@ const ExtensionsRequests = () => {
         comments: comment,
       };
 
-      const res =
-        await committeeManagementService.submitForL1L2Approval(payload);
+      const res = await committeeManagementService.submitForL1L2Approval(payload);
 
-      const body = res?.data ?? res;
-
-      if (body?.success === false) {
-        toast.error(body?.message || "Failed to submit");
+      if (res?.success !== true) {
+        toast.error(res?.data || res?.message || "Failed to submit");
         return;
       }
 
@@ -508,7 +521,7 @@ const ExtensionsRequests = () => {
             >
               <option value="ALL">All</option>
 
-              {requestTypeOptions.map((option) => (
+              {requestTypeDropdownOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -603,7 +616,7 @@ const ExtensionsRequests = () => {
                 })
 
               );
-              console.log(historyItems, "time")
+
 
               return (
                 <div
@@ -655,7 +668,7 @@ const ExtensionsRequests = () => {
                             <img
                               src={history_icon}
                               alt="history_icon"
-                              className="icon-14 cursor-pointer"
+                              className="icon-14 mb-2 cursor-pointer"
                               onClick={() => handleOpenHistory(req)}
                             />
                           </div>
@@ -721,7 +734,7 @@ const ExtensionsRequests = () => {
 
                     </Col>
 
-                    <Col xs={12} md={2} className="data-col">
+                    <Col xs={12} md={requestTypeCol} className="data-col">
 
                       <div className="d-flex align-items-start gap-2">
 
@@ -747,33 +760,34 @@ const ExtensionsRequests = () => {
                       </div>
 
                     </Col>
+                    {!isL2 && (
+                      <Col xs={12} md={2} className="data-col">
 
-                    <Col xs={12} md={2} className="data-col">
+                        <div className="d-flex align-items-start gap-2">
 
-                      <div className="d-flex align-items-start gap-2">
+                          <FontAwesomeIcon
+                            icon={faLocationDot}
+                            className="text-muted mt-1"
+                            style={{ fontSize: "18px" }}
+                          />
 
-                        <FontAwesomeIcon
-                          icon={faLocationDot }
-                          className="text-muted mt-1"
-                          style={{ fontSize: "18px" }}
-                        />
+                          <div>
+                            <div className="field-label">
+                              Zone Change
+                            </div>
 
-                        <div>
-                          <div className="field-label">
-                            Zone Change
+                            <div className="field-value">
+                              {zonalDisplayMap[req.zonalId] || "-"}
+                            </div>
                           </div>
 
-                          <div className="field-value">
-                            {zonalDisplayMap[req.zonalId] || "-"}
-                          </div>
+
                         </div>
 
+                      </Col>
+                    )}
 
-                      </div>
-
-                    </Col>
-
-                    <Col xs={12} md={1} className="data-col d-flex align-items-center justify-content-between">
+                    <Col xs={12} md={statusCol} className="data-col d-flex align-items-center justify-content-between">
                       <div>
                         <Badge bg={getStatusBadge(req.status)}>
                           {formatStatus(req.status)}

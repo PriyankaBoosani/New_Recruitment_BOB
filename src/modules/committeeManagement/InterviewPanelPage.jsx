@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import PositionAssignmentImportModal from "./components/PositionAssignmentImportModal";
 import bulbIcon from "../../assets/bulb-icon.png";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import Loader from "../../shared/components/Loader";
 const InterviewPanelPage = () => {
 
 
@@ -57,7 +58,7 @@ const InterviewPanelPage = () => {
     errorMessage,
     bulkAddPanels,
     downloadPanelTemplate,
-
+ savingPanel
 
   } = useInterviewPanel();
 
@@ -294,6 +295,7 @@ const InterviewPanelPage = () => {
 
 
       </div>
+      {(loading || savingPanel) && <Loader />}
       <ErrorModal
         show={showErrorModal}
         message={errorMessage}
