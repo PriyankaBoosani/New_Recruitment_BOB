@@ -16,7 +16,8 @@ import {
 const CandidateImportModal = ({
   t,
   onClose = () => {},
-  onSuccess = () => {}
+  onSuccess = () => {},
+    positionIds = []
 }) => {
 
   /* =========================
@@ -303,9 +304,11 @@ const CandidateImportModal = ({
 
           <button
             type="button"
-            onClick={
-              downloadCandidateTemplate
-            }
+            onClick={() =>
+  downloadCandidateTemplate(
+    positionIds
+  )
+}
             className="btn btn-link p-0 text-primary text-decoration-none"
             style={{
               cursor: "pointer"
