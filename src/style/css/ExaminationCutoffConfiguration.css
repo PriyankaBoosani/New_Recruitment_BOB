@@ -1,0 +1,637 @@
+.exam-config-page {
+  background: #f5f6fa;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+/* ================= COMMON ALIGNMENT ================= */
+
+.exam-layout-wrapper {
+  width: 100%;
+}
+
+.exam-top-card,
+.exam-table-card {
+  width: 100%;
+  margin: 0;
+  border-radius: 18px;
+ /* / overflow: hidden; */
+}
+
+/* SAME LEFT RIGHT ALIGNMENT */
+
+.exam-top-card .card-body,
+.exam-table-card .card-body {
+  padding: 0 !important;
+}
+
+/* FILTER SECTION */
+
+.exam-filter-section {
+  padding: 20px 24px;
+  border-bottom: 1px solid #ececec;
+}
+
+/* STRIP SECTION */
+
+.exam-strip-section {
+  padding: 14px 24px 18px;
+}
+
+/* TABLE SECTION */
+
+.exam-table-inner {
+  padding: 24px;
+}
+
+/* ================= PAGE TITLE ================= */
+
+.exam-page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #243c8f;
+  margin-bottom: 4px;
+  margin-left: 20px;
+}
+
+.exam-page-subtitle {
+  font-size: 14px;
+  color: #5f6368;
+  margin-left: 20px;
+}
+
+/* ================= TOP CARD ================= */
+
+.top-selection-card,
+.table-main-card {
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+
+/* ================= BUTTON ================= */
+
+.add-config-btn {
+  background: #f97316 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  height: 38px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ================= TABLE ================= */
+
+.table-main-heading {
+  font-size: 16px;
+  font-weight: 600;
+  color: #243c8f;
+}
+
+/* ================= FILTER BUTTON ================= */
+
+.filter-btn {
+  border-radius: 10px !important;
+  font-size: 14px !important;
+  height: 38px;
+  padding: 0 16px !important;
+  background: #fff !important;
+}
+
+/* ================= TABLE ================= */
+
+.cutoff-table {
+  margin-bottom: 0 !important;
+}
+
+.cutoff-table thead th {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2b2b2b;
+  padding: 14px !important;
+  background: #fff;
+  border-bottom: 1px solid #ececec;
+}
+
+.cutoff-table tbody td {
+  font-size: 14px;
+  color: #3b3b3b;
+  padding: 14px !important;
+  vertical-align: middle;
+}
+
+/* ================= STATUS ================= */
+
+.status-badge {
+  border-radius: 30px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.approved {
+  background: #e7f7e8;
+  color: #1f9d39;
+}
+
+.status-badge.pending {
+  background: #fff3e5;
+  color: #d97706;
+}
+
+/* ================= ACTION BUTTONS ================= */
+
+.action-btn-group {
+  display: flex;
+  gap: 8px;
+}
+
+.table-action-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #cfd4dc;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ================= PAGINATION ================= */
+
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+}
+
+.pagination-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #e2e2e2;
+  background: #fff;
+  font-size: 13px;
+}
+
+.pagination-btn.active {
+  background: #f97316;
+  color: #fff;
+  border-color: #f97316;
+}
+
+/* ================= STRIP ================= */
+
+.req-strip-card {
+  border-top: 1px solid #ececec;
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.top-selection-card {
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.top-selection-card .card-body {
+  padding: 0 !important;
+}
+
+.orange-bg {
+  background: #f97316 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  height: 38px;
+  font-weight: 500;
+}
+
+.orange-bg:hover {
+  background: #ea580c !important;
+}
+
+.cutoff-custom-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.cutoff-custom-table thead th {
+  background: #f8f9fc;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  vertical-align: middle;
+  border: 1px solid #ececec;
+  padding: 14px;
+}
+
+.cutoff-custom-table tbody td {
+  font-size: 14px;
+  color: #4b5563;
+  border: 1px solid #f1f1f1;
+  padding: 14px;
+  vertical-align: middle;
+}
+
+.cutoff-custom-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.status-pill {
+  padding: 5px 14px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-pill.pending {
+  background: #fff4e8;
+  color: #f59e0b;
+}
+
+.status-pill.approved {
+  background: #e8f9ee;
+  color: #22c55e;
+}
+
+.icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #dbe2f0;
+  background: white;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.icon-btn:hover {
+  background: #f3f4f6;
+}
+
+.pagination-box {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.pagination-box.active {
+  background: #ff6b00;
+  color: white;
+  border-color: #ff6b00;
+}
+
+.weightage-column {
+  min-width: 220px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+
+.cutoff-custom-table th,
+.cutoff-custom-table td {
+  white-space: nowrap;
+}
+
+.cutoff-custom-table tbody td:nth-child(7) {
+  min-width: 220px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.cutoff-custom-table thead th:nth-child(7) {
+  min-width: 220px;
+}
+
+.cutoff-custom-table {
+  table-layout: auto;
+  width: 100%;
+}
+
+
+.cutoff-custom-table th:nth-child(8),
+.cutoff-custom-table td:nth-child(8) {
+  width: 160px;
+  min-width: 160px;
+  text-align: center;
+}
+
+.cutoff-custom-table th:nth-child(9),
+.cutoff-custom-table td:nth-child(9) {
+  width: 140px;
+  min-width: 140px;
+  text-align: center;
+}
+
+.cutoff-custom-table tbody td:nth-child(9) {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.cutoff-custom-table tbody td:nth-child(9) .d-flex {
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+
+.cutoff-custom-table td:last-child {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+
+
+.cutoff-custom-table tbody td:nth-child(9) {
+  vertical-align: middle !important;
+}
+
+
+.cutoff-custom-table tbody td {
+  text-align: center;
+  vertical-align: middle !important;
+}
+
+.section-inline-row {
+  margin-bottom: 18px;
+}
+
+.section-inline-row .form-control {
+  height: 42px;
+}
+
+/* ================= SECTION TABLE ================= */
+
+.section-table-wrapper {
+  width: 100%;
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.section-cutoff-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.section-cutoff-table th {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  padding: 14px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  text-align: left;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.section-cutoff-table td {
+  border: 1px solid #e5e7eb;
+  padding: 12px;
+  vertical-align: middle;
+}
+
+.section-cutoff-table .form-control {
+  width: 100%;
+  height: 42px;
+  border-radius: 8px;
+}
+
+/* SECTION COLUMN */
+
+.section-cutoff-table th:first-child,
+.section-cutoff-table td:first-child {
+  width: 24%;
+  min-width: 220px;
+}
+
+/* TOTAL SECTION MARKS */
+
+.section-cutoff-table th:nth-child(2),
+.section-cutoff-table td:nth-child(2) {
+  width: 14%;
+  min-width: 150px;
+}
+
+/* PASS MARKS COLUMNS */
+
+/* PASS MARKS COLUMNS */
+
+.section-cutoff-table th:nth-child(3),
+.section-cutoff-table td:nth-child(3),
+.section-cutoff-table th:nth-child(4),
+.section-cutoff-table td:nth-child(4),
+.section-cutoff-table th:nth-child(5),
+.section-cutoff-table td:nth-child(5),
+.section-cutoff-table th:nth-child(6),
+.section-cutoff-table td:nth-child(6) {
+  width: 13%;
+  min-width: 120px;
+}
+
+
+/* ================= WEIGHTAGE TABLE ================= */
+
+/* .weightage-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.weightage-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.weightage-table th {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  padding: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  text-align: left;
+}
+
+.weightage-table td {
+  border: 1px solid #e5e7eb;
+  padding: 12px;
+  vertical-align: middle;
+} */
+
+.weightage-table .form-control {
+  width: 100%;
+  height: 42px;
+  border-radius: 8px;
+}
+
+.weightage-table th:first-child,
+.weightage-table td:first-child {
+  width: 10%;
+  text-align: center;
+}
+
+.weightage-table th:nth-child(2),
+.weightage-table td:nth-child(2) {
+  width: 45%;
+}
+
+.weightage-table th:nth-child(3),
+.weightage-table td:nth-child(3) {
+  width: 45%;
+}
+
+
+
+
+/* ================= CATEGORY CUTOFF TABLE ================= */
+
+.category-cutoff-table-wrapper {
+  width: 100%;
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.category-cutoff-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.category-cutoff-table th {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  padding: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  text-align: left;
+}
+
+.category-cutoff-table td {
+  border: 1px solid #e5e7eb;
+  padding: 12px;
+}
+
+.category-cutoff-table .form-control {
+  width: 100%;
+  height: 42px;
+  border-radius: 8px;
+}
+
+/* ================= WEIGHTAGE CONFIG ================= */
+
+.weightage-box {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 18px;
+  background: #fff;
+}
+
+.weightage-chip-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.weightage-chip {
+  min-width: 180px;
+  height: 52px;
+  border: 1px solid #dbe2f0;
+  border-radius: 14px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  background: #fff;
+  transition: 0.2s;
+}
+
+.weightage-chip:hover {
+  border-color: #243c8f;
+}
+
+.weightage-chip.active {
+  border-color: #243c8f;
+  background: #f8fbff;
+}
+
+.weightage-chip span {
+  font-size: 15px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.weightage-chip .form-check-input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.weightage-input-wrapper {
+  margin-top: 28px;
+  max-width: 360px;
+}
+
+
+
+/* ================= TOP INPUT ROW ================= */
+
+.top-input-row {
+  margin-bottom: 18px;
+}
+
+.top-input-row .form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #3f3f46;
+  margin-bottom: 8px;
+}
+
+.top-input-row .form-control {
+  height: 38px;
+  border-radius: 10px;
+  font-size: 14px;
+  padding: 8px 14px;
+}
+
+.generate-btn {
+  height: 38px !important;
+  min-width: 92px;
+  border-radius: 10px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  margin-bottom: 1px;
+}
+
+/* HEADER COMPACT */
+
+.cutoff-config-modal .modal-header {
+  padding: 14px 22px 12px;
+}
+
+.modal-main-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.modal-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 0;
+}
+
+.cutoff-config-modal .modal-body {
+  padding: 18px 22px 22px;
+}
