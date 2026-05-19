@@ -114,55 +114,37 @@ export default function ExaminationCutoffTable({
 
         <table className="table align-middle cutoff-custom-table">
 
-          <thead>
+       <thead>
 
-            <tr>
+  <tr>
 
-              <th rowSpan={2}>
-                Position
-              </th>
+    <th>
+      Position
+    </th>
 
-              <th rowSpan={2}>
-                Total Marks
-              </th>
+    <th>
+      Total Marks
+    </th>
 
-            <th
-  colSpan={4}
-  className="text-center"
->
-  Category Wise Cut-off (%)
-</th>
+    <th>
+      No. of Sections
+    </th>
 
-              <th
-                rowSpan={2}
-                className="weightage-column"
-              >
-                Written Exam Weightage
-              </th>
+    <th className="weightage-column">
+      Weightage
+    </th>
 
-              <th rowSpan={2}>
-                Status
-              </th>
+    <th>
+      Status
+    </th>
 
-              <th rowSpan={2}>
-                Actions
-              </th>
+    <th>
+      Actions
+    </th>
 
-            </tr>
+  </tr>
 
-            <tr>
-
-            <th>SC/ST</th>
-
-<th>OBC</th>
-
-<th>EWS</th>
-
-<th>UR</th>
-
-            </tr>
-
-          </thead>
+</thead>  
 
           <tbody>
 
@@ -171,126 +153,75 @@ export default function ExaminationCutoffTable({
               tableRows.map(
                 (item, index) => (
 
-                  <tr key={index}>
+<tr key={index}>
 
-                    <td>
-                   {item.positionName ||
-  item.positionId}
-                    </td>
+  <td>
+    {item.positionName ||
+      item.positionId}
+  </td>
 
-                    <td>
-                   {item.totalMarks}
-                    </td>
+  <td>
+    {item.totalMarks}
+  </td>
 
-                    <td>
-                   {
-  item.sections?.[0]
-    ?.categoryPassMarks?.find(
-      cat =>
-        cat.categoryId ===
-        "69bf3f47-2cf9-4e0d-90a9-2e77a1752b6b"
-    )?.passMark || 0
-}
-%
-                    </td>
+  <td>
+    {item.sections?.length || 0}
+  </td>
 
-                    <td>
-                    {
-  item.sections?.[0]
-    ?.categoryPassMarks?.find(
-      cat =>
-        cat.categoryId ===
-        "b5b949b3-3b1a-4f27-96a2-3e1e2390b72b"
-    )?.passMark || 0
-}
-%
-                    </td>
+  <td>
+    <span className="fw-semibold">
+      {item.writtenExamWeightage}%
+    </span>
+  </td>
 
-                    <td>
-{
-  item.sections?.[0]
-    ?.categoryPassMarks?.find(
-      cat =>
-        cat.categoryId ===
-        "a56f2294-d032-4598-b994-44480da4fc2e"
-    )?.passMark || 0
-}
-%
-</td>
+  <td>
 
-                    <td>
-                    {
-  item.sections?.[0]
-    ?.categoryPassMarks?.find(
-      cat =>
-        cat.categoryId ===
-        "0a02efbd-11fe-498b-b8db-9bb76cae18a1"
-    )?.passMark || 0
-}
-%
-                    </td>
+    <span
+      className={`status-pill ${
+        item.status?.includes(
+          "APPROVED"
+        )
+          ? "approved"
+          : "pending"
+      }`}
+    >
+      {item.status?.replaceAll(
+        "_",
+        " "
+      )}
+    </span>
 
-                    <td>
-                      <span className="fw-semibold">
-                        {
-                          item.writtenExamWeightage
-                        }
-                        %
-                      </span>
-                    </td>
+  </td>
 
-                    <td>
+  <td>
 
-                      <span
-                        className={`status-pill ${
-                          item.status?.includes(
-                            "Approved"
-                          )
-                            ? "approved"
-                            : "pending"
-                        }`}
-                      >
-                       {item.status?.replaceAll(
-  "_",
-  " "
-)}
-                      </span>
+    <div className="d-flex justify-content-center align-items-center gap-2 w-100">
 
-                    </td>
+      <button
+        className="icon-btn"
+        onClick={() =>
+          onView &&
+          onView(item)
+        }
+      >
+        <FaEye size={13} />
+      </button>
 
-                    <td>
+      <button
+        className="icon-btn"
+        onClick={() =>
+          onEdit &&
+          onEdit(item)
+        }
+      >
+        <FaPen size={13} />
+      </button>
 
-                    <div className="d-flex justify-content-center align-items-center gap-2 w-100">
+    </div>
 
-                        {/* VIEW */}
+  </td>
 
-                        <button
-                          className="icon-btn"
-                          onClick={() =>
-                            onView &&
-                            onView(item)
-                          }
-                        >
-                          <FaEye size={13} />
-                        </button>
-
-                        {/* EDIT */}
-
-                        <button
-                          className="icon-btn"
-                          onClick={() =>
-                            onEdit &&
-                            onEdit(item)
-                          }
-                        >
-                          <FaPen size={13} />
-                        </button>
-
-                      </div>
-
-                    </td>
-
-                  </tr>
+</tr>
                 )
               )
 
@@ -299,7 +230,7 @@ export default function ExaminationCutoffTable({
               <tr>
 
                 <td
-                  colSpan={8}
+                 colSpan={6}
                   className="text-center py-4"
                 >
                   No configurations found

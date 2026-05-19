@@ -630,14 +630,14 @@ const handleWeightageCheckbox =
 
       /* ALLOW ONLY 2 SECTIONS */
 
-      if (existing.length >= 2) {
+      // if (existing.length >= 2) {
 
-        alert(
-          "Only 2 sections can be selected"
-        );
+      //   alert(
+      //     "Only 2 sections can be selected"
+      //   );
 
-        return;
-      }
+      //   return;
+      // }
 
       updated = [
         ...existing,
@@ -1206,18 +1206,26 @@ if (response?.success === true) {
                 </span>
               </Form.Label>
 
-            <Form.Control
-              type="number"
-              disabled={viewOnly}
-              placeholder="Sum of all sections combined."
-              value={formData.totalMarks}
-              onChange={e =>
-                  handleChange(
-                    "totalMarks",
-                    e.target.value
-                  )
-                }
-              />
+          <Form.Control
+  type="number"
+  min={0}
+  disabled={viewOnly}
+  placeholder="Sum of all sections combined."
+  value={formData.totalMarks}
+  onChange={e => {
+
+    const value =
+      Number(e.target.value);
+
+    if (value < 0) return;
+
+    handleChange(
+      "totalMarks",
+      e.target.value
+    );
+
+  }}
+/>
             </Form.Group>
           </Col>
 
@@ -1230,20 +1238,28 @@ if (response?.success === true) {
                 </span>
               </Form.Label>
 
-             <Form.Control
-               type="number"
+            <Form.Control
+  type="number"
+  min={0}
   disabled={viewOnly}
-                placeholder="e.g. 4"
-                value={
-                  formData.numberOfSections
-                }
-                onChange={e =>
-                  handleChange(
-                    "numberOfSections",
-                    e.target.value
-                  )
-                }
-              />
+  placeholder="e.g. 4"
+  value={
+    formData.numberOfSections
+  }
+  onChange={e => {
+
+    const value =
+      Number(e.target.value);
+
+    if (value < 0) return;
+
+    handleChange(
+      "numberOfSections",
+      e.target.value
+    );
+
+  }}
+/>
             </Form.Group>
           </Col>
 
@@ -1314,16 +1330,24 @@ if (response?.success === true) {
  <Form.Control
   disabled={viewOnly}
   type="number"
- placeholder="Enter %"
+  min={0}
+  placeholder="Enter Marks"
   value={
     section.sectionTotalMarks || ""
   }
-  onChange={e =>
+  onChange={e => {
+
+    const value =
+      Number(e.target.value);
+
+    if (value < 0) return;
+
     handleSectionTotalMarksChange(
       index,
       e.target.value
-    )
-  }
+    );
+
+  }}
 />
 
 </td>
@@ -1333,20 +1357,22 @@ if (response?.success === true) {
 
               <td>
               <Form.Control
-    type="number"
-  disabled={viewOnly}
+              min={0}
+              max={100}
+                type="number"
+                  disabled={viewOnly}
                   placeholder="Enter %"
                   value={
                     section.passMarks
                       ?.scst || ""
                   }
-                onChange={e =>
-  handlePassMarksChange(
-    index,
-    "scst",
-    e.target.value
-  )
-}
+                   onChange={e =>
+                handlePassMarksChange(
+                  index,
+                  "scst",
+                 e.target.value
+                    )
+                }
                 />
               </td>
 
@@ -1354,6 +1380,8 @@ if (response?.success === true) {
 
               <td>
              <Form.Control
+             min={0}
+max={100}
     type="number"
   disabled={viewOnly}
                   placeholder="Enter %"
@@ -1372,6 +1400,8 @@ if (response?.success === true) {
               </td>
               <td>
   <Form.Control
+  min={0}
+max={100}
     type="number"
     disabled={viewOnly}
     placeholder="Enter %"
@@ -1393,6 +1423,8 @@ if (response?.success === true) {
 
               <td>
              <Form.Control
+             min={0}
+max={100}
     type="number"
   disabled={viewOnly}
                  placeholder="Enter %"
@@ -1427,7 +1459,8 @@ if (response?.success === true) {
 
         <div className="weightage-box mt-4">
           <h5 className="section-title">
-            Weightage Configuration
+            Section consideration for comnined score:
+           {/* // Weightage Configuration */}
           </h5>
 
 <div className="weightage-chip-wrapper">
@@ -1481,19 +1514,38 @@ if (response?.success === true) {
                 </span>
               </Form.Label>
 
-            <Form.Control
+           <Form.Control
+           min={0}
+max={100}
+  type="number"
   disabled={viewOnly}
-                placeholder="e.g. 40"
-                value={
-                  formData.writtenExamWeightage
-                }
-                onChange={e =>
-                  handleChange(
-                    "writtenExamWeightage",
-                    e.target.value
-                  )
-                }
-              />
+  placeholder="Enter %"
+  min={0}
+  max={100}
+  value={
+    formData.writtenExamWeightage
+  }
+  onChange={e => {
+
+    const value =
+      Number(e.target.value);
+
+    if (value > 100) {
+
+      alert(
+        "Written Exam Weightage cannot exceed 100%"
+      );
+
+      return;
+    }
+
+    handleChange(
+      "writtenExamWeightage",
+      e.target.value
+    );
+
+  }}
+/>
             </Form.Group>
           </div>
         </div>

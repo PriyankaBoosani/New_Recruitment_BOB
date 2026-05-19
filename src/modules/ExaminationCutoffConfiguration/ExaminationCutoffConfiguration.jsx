@@ -9,7 +9,8 @@ import "../../style/css/CandidateVerification.css";
 import "../../style/css/CandidateScreening.css";
 
 import {
-  useLocation
+  useLocation,
+  useNavigate
 } from "react-router-dom";
 
 import { Button } from "react-bootstrap";
@@ -332,6 +333,7 @@ const selectedPosition =
 
 
      const location = useLocation();
+     const navigate = useNavigate();
 const fromCandidateScreening =
   location.state
     ?.fromCandidateScreening;
@@ -433,8 +435,15 @@ setTimeout(() => {
           setShowModal(true);
         }
 
-      }, 500);
 
+
+
+   window.history.replaceState(
+  {},
+  document.title
+);
+
+}, 500);
     };
 
   initialize();
