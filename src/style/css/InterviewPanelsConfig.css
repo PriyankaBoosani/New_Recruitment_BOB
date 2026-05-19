@@ -1119,6 +1119,7 @@
   padding: 8px 16px;
   font-weight: 500;
   transition: 0.2s ease;
+  font-size:0.875rem;
 }
 
 .ipc-btn-outline:hover {
@@ -1348,6 +1349,58 @@
 }
 .panel-update-warning .btn.btn-light {
   font-size:0.75rem !important;
+}
+
+.update-confirm-modal-body {
+  padding: 32px 28px;
+  text-align: center;
+}
+
+.update-confirm-icon {
+  width: 72px;
+  height: 72px;
+
+  margin: 0 auto 18px;
+
+  border-radius: 50%;
+
+  background: #fff7ed;
+  color: #f97316;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 34px;
+}
+
+.update-confirm-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1e293b;
+
+  margin-bottom: 12px;
+}
+
+.update-confirm-text {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #64748b;
+
+  margin-bottom: 26px;
+}
+
+.update-confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.update-confirm-actions .btn {
+  min-width: 140px;
+  border-radius: 10px;
+  font-weight: 400;
+  font-size: 0.875rem;
 }
 @keyframes spin {
 

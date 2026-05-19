@@ -129,7 +129,7 @@ loadPanelAvailability
     <div className="ap-panel-popover-header">
 
       <h6 className="ap-panel-popover-title">
-        scheduled interviews 
+        Scheduled interviews 
       </h6>
 
       <button
@@ -162,8 +162,11 @@ loadPanelAvailability
 
               <div className="ap-day-title">
 
-                {formatDateDDMMYYYY(day.panelDate)}
+                 <span>
+                  {formatDateDDMMYYYY(day.panelDate)} - count : ({day.panelAvailableModels?.length || 0})
+                </span>
 
+              
               </div>
 
               {day.panelAvailableModels.map(
@@ -197,7 +200,7 @@ loadPanelAvailability
       ) : (
 
         <div className="text-center text-muted py-3">
-          No availability data found
+          No Scheduled interviews found
         </div>
 
       )}
