@@ -73,6 +73,7 @@ export const useExperience = () => {
       const list = res.data || [];
 
       const mapped = mapEducationListFromApi(list, educationOptionsList);
+      console.log("Mapped education list:", mapped);
 
       setExperienceList(mapped);
     } catch (err) {
@@ -285,12 +286,14 @@ export const useExperience = () => {
       {
         educationLevel: selectedOption?.documentTypeId || "", // ✅ FIXED
         course: item.course,
+        courseCode: item.qualificationCode || "",
         educationQualificationsId: item.educationQualificationsId || null,
         specializationOthers:
           item.specialization?.length > 0
             ? item.specialization.map((s) => ({
               name: s.name,
-              id: s.id
+              id: s.id,
+              code : s.code
             }))
             : [],
       },

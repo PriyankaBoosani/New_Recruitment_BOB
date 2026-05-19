@@ -73,10 +73,10 @@ const EducationTable = ({
 
                   <td>{item.educationLevel}</td>
 
-                  <td>{item.course}</td>
+                  <td>{item.course}({item.qualificationCode})</td>
 
                   <td>
-                    {item.specialization.map((s) => s.name).join(", ")}
+                    {item.specialization.map((s) => `${s.name} (${s.code})`).join(", ")}
                   </td>
 
                   <td>

@@ -2,6 +2,8 @@
     "title": "Add Education",
     "education_level": "Education Level",
     "course": "Course",
+    "course_code": "Course Code",
+    "course_code_placeholder": "Enter Course Code",
     "specialization": "Specialization",
     "add_specialization": "+ Add Specialization",
     "course_placeholder": "Enter course",

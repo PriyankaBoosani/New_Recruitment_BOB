@@ -123,6 +123,33 @@ const ExperienceModal = ({
                   )}
                 </div>
 
+                <div className="col-md-4">
+                  <label className="form-label">
+                    {t("education:course_code")} <span className="text-danger">*</span>
+                  </label>
+
+                  {isViewing ? (
+                    <div className="form-control-view">
+                      {form.courseCode || "-"}
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      className={`form-control ${errors[formIndex]?.courseCode ? "is-invalid" : ""}`}
+                      value={form.courseCode}
+                      placeholder={t("education:course_code_placeholder")}
+                      onChange={(e) =>
+                        onChange(formIndex, "course_code", e.target.value)
+                      }
+                    />
+                  )}
+
+                  {!isViewing && (
+                    <small className="text-danger">
+                      {errors[formIndex]?.course}
+                    </small>
+                  )}
+                </div>
               </div>
 
               {/* ✅ SPECIALIZATION BELOW WITH SCROLL */}
@@ -201,8 +228,8 @@ const ExperienceModal = ({
                                     <input
                                       type="text"
                                       className={`form-control ${duplicateIndexes.has(i)
-                                          ? "is-invalid"
-                                          : ""
+                                        ? "is-invalid"
+                                        : ""
                                         }`}
                                       value={val?.name || ""}
                                       placeholder={t(
