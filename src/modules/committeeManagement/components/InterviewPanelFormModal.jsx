@@ -18,7 +18,8 @@ const InterviewPanelFormModal = ({
   setErrors,
   clearError,
   disableName = false,
-  disableType = false
+  disableType = false,
+  showUpdateWarning = false
 
 }) => {
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
@@ -192,13 +193,17 @@ const InterviewPanelFormModal = ({
           {t("common:cancel")}
         </button> */}
 
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={onSave}
-        >
-          {formData.id ? t("interviewPanelCommittee:update_panel_button") : t("interviewPanelCommittee:save_panel")}
-        </button>
+       {!showUpdateWarning && (
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={onSave}
+          >
+            {formData.id
+              ? t("interviewPanelCommittee:update_panel_button")
+              : t("interviewPanelCommittee:save_panel")}
+          </button>
+        )}
       </div>
     </>
   );
