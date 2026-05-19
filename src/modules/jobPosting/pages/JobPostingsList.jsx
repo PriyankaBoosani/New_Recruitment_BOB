@@ -538,7 +538,7 @@ const JobPostingsList = () => {
                     />
                 </Col>
                 <Col xs={12} md={6} className="text-md-end mt-2 mt-md-0">
-                    <Button
+                    {/* <Button
                         variant="primary"
                         className="subbtn me-2"
                         disabled={!isReinitializeEnabled || loading}
@@ -551,7 +551,7 @@ const JobPostingsList = () => {
                         }}
                     >
                         Reinitialize
-                    </Button>
+                    </Button> */}
 
                     <Button
                         variant="primary"
