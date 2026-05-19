@@ -64,7 +64,18 @@ const RequisitionRequests = () => {
 
 
   const handleApprovalAction = async (comment) => {
-    const ids = Array.from(selectedReqIds);
+    // const ids = Array.from(selectedReqIds);
+    const ids = [
+    ...new Set(
+        requisitions
+            .filter(req => selectedReqIds.has(req.id))
+            .map(req =>
+                req.isDraft
+                    ? req.parentRequisitionId
+                    : req.id
+            )
+    )
+];
     if (ids.length === 0) return;
 
     try {
@@ -164,12 +175,15 @@ const RequisitionRequests = () => {
 
   // 🔹 Accordion
   const [openReqId, setOpenReqId] = useState(null);
-  const toggleAccordion = (reqId) => {
+  const toggleAccordion = (req) => {
     setOpenReqId((prev) => {
-      const next = prev === reqId ? null : reqId;
+      const next = prev === req.id ? null : req.id;
 
       if (next) {
-        fetchPositions(reqId);
+        fetchPositions(
+          req.isDraft ? req.parentRequisitionId : req.id,
+          req.isDraft
+        );
       }
 
       return next;
@@ -530,15 +544,25 @@ const renderDepartment = ({
 
         {requisitions.map((req) => {
 
-          const positions = positionsByReq[req.id] || [];
+          // const positions = positionsByReq[req.id] || [];
+          // const positionsKey = `${req.id}_false`;
+          const positionsKey = `${
+            req.isDraft ? req.parentRequisitionId : req.id
+          }_${req.isDraft}`;
+          const positions = positionsByReq[positionsKey] || [];
+          // console.log(positionsByReq)
 
          const positionsGroupedByDept = groupPositionsByDept(positions);
+        //  console.log("Positions grouped by department:", requisitions);
 
           return (
-            <div key={req.id} className="requisition-card mb-3">
+            <div
+              key={req.id}
+              className={`requisition-card mb-3 ${req.isDraft ? "draft-card" : ""}`}
+            >
               <Row
                 className="align-items-center req-clickable"
-                onClick={() => toggleAccordion(req.id)}
+                onClick={() => toggleAccordion(req)}
               >
                 {/* -------- LEFT -------- */}
                 <Col xs={12} md={6}>
@@ -641,7 +665,7 @@ const renderDepartment = ({
                     className="accordion-arrow"
                     onClick={(e) => {
                       e.stopPropagation();
-                      toggleAccordion(req.id);
+                      toggleAccordion(req);
                     }}
                   >
                     {openReqId === req.id ? <ChevronUp /> : <ChevronDown />}

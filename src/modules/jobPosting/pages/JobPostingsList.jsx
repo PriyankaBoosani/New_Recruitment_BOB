@@ -294,7 +294,8 @@ const JobPostingsList = () => {
 
         const ids = selectedVisibleRequisitions
             .filter(r => r.status !== "Approved")
-            .map(r => r.id);
+            // .map(r => r.id);
+            .map(r => r.isDraft ? r.parentRequisitionId : r.id);
 
         if (ids.length === 0) return;
 
@@ -379,7 +380,7 @@ const JobPostingsList = () => {
 
     const isSubmitEnabled =
         selectedRequisitions.length > 0 &&
-        selectedRequisitions.every(r => r.status === "NEW");
+        selectedRequisitions.every(r => r.status === "NEW" || r.status === "DRAFT");
 
     const isReinitializeEnabled = (() => {
         if (selectedRequisitions.length !== 1) return false;
@@ -596,7 +597,7 @@ const JobPostingsList = () => {
                 // const positions = positionsByReq[req.id] || [];
                 const key = `${req.isDraft ? req.parentRequisitionId : req.id}_${req.isDraft}`;
                 const positions = positionsByReq[key] || [];
-
+                console.log(req)
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
 
@@ -609,9 +610,9 @@ const JobPostingsList = () => {
                     endDate < today;
 
                 const isCheckboxEnabled =
-                    !req.isDraft &&
+                    // !req.isDraft &&
                     (
-                        req.status === "NEW" ||
+                        req.status === "NEW" || req.status === "DRAFT" ||
                         isApprovedAndExpired
                     );
 
@@ -668,7 +669,7 @@ const JobPostingsList = () => {
                                         </Button>
                                     )}
 
-                                    {req.isDraft && req.status === "DRAFT" && (
+                                    {/* {req.isDraft && req.status === "DRAFT" && (
                                         <Button
                                             size="sm"
                                             variant="success"
@@ -681,7 +682,7 @@ const JobPostingsList = () => {
                                         >
                                             Submit
                                         </Button>
-                                    )}
+                                    )} */}
 
                                     {req.isDraft && req.status === "APPROVED" && (
                                         <Button

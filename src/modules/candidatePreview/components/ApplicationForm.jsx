@@ -2266,83 +2266,85 @@ useEffect(() => {
           </Accordion.Body>
         </Accordion.Item>
 
-        <div className="card mt-3 border-0">
-          <div className="d-flex gap-3 align-items-center border-bottom p-3">
-            <label style={{ fontSize: '0.875rem', fontWeight: 500, color: '#162B75' }}>Additional Required Documents</label>
-            <button className="btn-submit-orange py-1 px-2" style={{ height: 'auto', fontSize: '0.75rem' }} onClick={handleAddDocumentRow}>+ Add Document</button>
-          </div>
-
-          {otherDocuments.map((row) => (
-            <div
-              key={row.id}
-              className="d-flex align-items-end gap-3 p-3"
-            >
-              <div style={{ flex: 1 }}>
-                <label className="mb-1" style={{ color: '#162B75', fontSize: '0.75rem', fontWeight: 500 }}>
-                  Document Name
-                </label>
-
-                <input
-                  type="text"
-                  className="form-control"
-                  value={row.documentName}
-                  onChange={(e) =>
-                    handleOtherDocumentChange(
-                      row.id,
-                      "documentName",
-                      e.target.value
-                    )
-                  }
-                  style={{ minHeight: 'auto', padding: '0.4rem 0.8rem' }}
-                  placeholder="Enter document name"
-                />
-                {otherDocumentErrors[row.id] && (
-                  <small className="text-danger fs-12">
-                    {otherDocumentErrors[row.id]}
-                  </small>
-                )}
-              </div>
-
-              {/* <div style={{ width: "220px" }}>
-                <label className="mb-1" style={{ color: '#162B75', fontSize: '0.75rem', fontWeight: 500 }}>
-                  Criteria
-                </label>
-
-                <select
-                  className="form-select"
-                  value={row.criteriaType}
-                  onChange={(e) =>
-                    handleOtherDocumentChange(
-                      row.id,
-                      "criteriaType",
-                      e.target.value
-                    )
-                  }
-                  style={{ minHeight: 'auto', padding: '0.4rem 0.8rem' }}
-                >
-                  <option value="">Select</option>
-                  <option value="Age">Age</option>
-                  <option value="Work">Work</option>
-                  <option value="Education">Education</option>
-                </select>
-              </div> */}
-
-              <button
-                type="button"
-                className="btn btn-link p-0 mb-1"
-                onClick={() => handleRemoveDocumentRow(row.id)}
-              >
-                <FontAwesomeIcon
-                  icon={faTrash}
-                  style={{
-                    color: "#ccc",
-                    fontSize: "16px",
-                  }}
-                />
-              </button>
+        {!isZonalHr && (
+          <div className="card mt-3 border-0">
+            <div className="d-flex gap-3 align-items-center border-bottom p-3">
+              <label style={{ fontSize: '0.875rem', fontWeight: 500, color: '#162B75' }}>Additional Required Documents</label>
+              <button className="btn-submit-orange py-1 px-2" style={{ height: 'auto', fontSize: '0.75rem' }} onClick={handleAddDocumentRow}>+ Add Document</button>
             </div>
-          ))}
-        </div>
+
+            {otherDocuments.map((row) => (
+              <div
+                key={row.id}
+                className="d-flex align-items-end gap-3 p-3"
+              >
+                <div style={{ flex: 1 }}>
+                  <label className="mb-1" style={{ color: '#162B75', fontSize: '0.75rem', fontWeight: 500 }}>
+                    Document Name
+                  </label>
+
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={row.documentName}
+                    onChange={(e) =>
+                      handleOtherDocumentChange(
+                        row.id,
+                        "documentName",
+                        e.target.value
+                      )
+                    }
+                    style={{ minHeight: 'auto', padding: '0.4rem 0.8rem' }}
+                    placeholder="Enter document name"
+                  />
+                  {otherDocumentErrors[row.id] && (
+                    <small className="text-danger fs-12">
+                      {otherDocumentErrors[row.id]}
+                    </small>
+                  )}
+                </div>
+
+                {/* <div style={{ width: "220px" }}>
+                  <label className="mb-1" style={{ color: '#162B75', fontSize: '0.75rem', fontWeight: 500 }}>
+                    Criteria
+                  </label>
+
+                  <select
+                    className="form-select"
+                    value={row.criteriaType}
+                    onChange={(e) =>
+                      handleOtherDocumentChange(
+                        row.id,
+                        "criteriaType",
+                        e.target.value
+                      )
+                    }
+                    style={{ minHeight: 'auto', padding: '0.4rem 0.8rem' }}
+                  >
+                    <option value="">Select</option>
+                    <option value="Age">Age</option>
+                    <option value="Work">Work</option>
+                    <option value="Education">Education</option>
+                  </select>
+                </div> */}
+
+                <button
+                  type="button"
+                  className="btn btn-link p-0 mb-1"
+                  onClick={() => handleRemoveDocumentRow(row.id)}
+                >
+                  <FontAwesomeIcon
+                    icon={faTrash}
+                    style={{
+                      color: "#ccc",
+                      fontSize: "16px",
+                    }}
+                  />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* ================= CRITERIA SECTION ================= */}
         {canCandidatePool &&

@@ -41,9 +41,60 @@ export const useApprovalRequisitions = ({
             }
 
             const data = response?.data;
-            const mapped = (data?.content || []).map(mapApprovalRequisition);
+            const content = data?.content || [];
+
+            const flattened = content.flatMap(item => {
+                const result = [];
+
+                // NORMAL REQUISITION
+                result.push({
+                    ...item,
+                    isDraft: false
+                });
+
+                // DRAFT REQUISITION
+                if (item.draft) {
+                    const draftPositions = item.draft.positions || [];
+
+                    result.push({
+                        ...item.draft,
+
+                        id: item.draft.draftId,
+
+                        requisitionCode: item.requisitionCode,
+                        requisitionTitle: item.draft.requisitionTitle,
+
+                        requisitionStatus:
+                            item.draft.requisitionStatus || "DRAFT",
+
+                        departmentCount: draftPositions.length
+                            ? new Set(draftPositions.map(p => p.deptId)).size
+                            : 0,
+
+                        positionCount: draftPositions.length,
+
+                        vacancyCount: draftPositions.reduce(
+                            (sum, p) => sum + Number(p.totalVacancies || 0),
+                            0
+                        ),
+
+                        isDraft: true,
+
+                        parentRequisitionId: item.id
+                    });
+                }
+
+                return result;
+            });
+
+            const mapped = flattened.map(mapApprovalRequisition);
 
             setRequisitions(mapped);
+
+            // const data = response?.data;
+            // const mapped = (data?.content || []).map(mapApprovalRequisition);
+
+            // setRequisitions(mapped);
             setPageInfo(data?.page || null);
 
         } catch (error) {

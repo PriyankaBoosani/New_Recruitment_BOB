@@ -119,7 +119,8 @@ const CreateRequisition = () => {
 
         const draftPayload = {
           requisitionDescription: formData.description,
-          endDate: formData.endDate
+          endDate: formData.endDate,
+          cutoffDate: formData.cutoffDate,
         };
 
         await requisitionApiService.saveDraftDetails(
@@ -139,6 +140,7 @@ const CreateRequisition = () => {
           requisitionDescription: formData.description,
           startDate: formData.startDate,
           endDate: formData.endDate,
+          cutoffDate: formData.cutoffDate,
         };
 
         await requisitionApiService.reinitializeRequisition(payload);
