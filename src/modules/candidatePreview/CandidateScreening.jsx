@@ -147,6 +147,10 @@ export default function CandidateScreening({ selectedJob }) {
 
 
 
+const [
+  examinationScoreData,
+  setExaminationScoreData
+] = useState([]);
 
   const user = useSelector((state) => state.user.user);
 
@@ -282,6 +286,43 @@ export default function CandidateScreening({ selectedJob }) {
 
   //  const handleScheduleInterview = () => {
   //   if (!selectedCandidateIds.length) return;
+
+useEffect(() => {
+
+  if (
+    !location.state
+      ?.openExaminationScore
+  ) {
+    return;
+  }
+
+  /* WAIT UNTIL REQUISITION
+     & POSITION RESTORE */
+
+  if (
+    !selectedRequisitionId ||
+    !selectedPositionId.length
+  ) {
+    return;
+  }
+
+  /* SMALL DELAY FOR UI */
+
+  setTimeout(() => {
+
+    handleOpenExaminationScore();
+
+  }, 300);
+
+}, [
+  location.state?.openExaminationScore,
+  selectedRequisitionId,
+  selectedPositionId
+]);
+
+
+
+
 
 
   useEffect(() => {
@@ -2285,7 +2326,84 @@ export default function CandidateScreening({ selectedJob }) {
     }
   }, [activeTab]);
 
+const handleOpenExaminationScore =
+  () => {
 
+    // VALIDATION
+    if (
+      !selectedRequisitionId ||
+      !selectedPositionId?.length
+    ) {
+
+      toast.error(
+        "Please select requisition and position"
+      );
+
+      return;
+    }
+
+    // BUILD GRID DATA
+    const mappedData =
+      positions
+        .filter((p) =>
+          selectedPositionId.includes(
+            p?.jobPositions?.positionId
+          )
+        )
+        .map((p, index) => ({
+
+          id:
+            p?.jobPositions?.positionId,
+
+          positionName:
+            p?.masterPositions
+              ?.positionName || "-",
+
+          startDate:
+            normalizedRequisition
+              ?.registration_start_date,
+
+          endDate:
+            normalizedRequisition
+              ?.registration_end_date,
+
+          expanded:
+            index === 0
+        }));
+
+    setExaminationScoreData(
+      mappedData
+    );
+
+    setShowExaminationModal(true);
+
+  };
+
+
+const handleEditExaminationScore =
+  () => {
+
+    setShowExaminationModal(false);
+
+    navigate(
+      "/ExaminationCutoffConfiguration",
+      {
+        state: {
+
+          requisitionId:
+            selectedRequisitionId,
+
+          positionIds:
+            selectedPositionId,
+
+          openEditModal: true,
+
+          fromCandidateScreening: true
+        }
+      }
+    );
+
+  };
 
   const handlePreview = async () => {
     try {
@@ -2319,6 +2437,10 @@ export default function CandidateScreening({ selectedJob }) {
       setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
     }
   };
+
+
+  const [showExaminationModal, setShowExaminationModal] = useState(false);
+const [selectedRelaxation, setSelectedRelaxation] = useState("SET_II");
   const handleStatusChange = (value) => {
     setPage(0);
     setFilters(prev => ({
@@ -2500,9 +2622,17 @@ export default function CandidateScreening({ selectedJob }) {
                 <img src={uploadIcon} width={15} className="me-2" />
                 {t("candidateWorkflow:import_candidates")}
               </button>
-              <button className="btn text-white orange-bg fs-14">
+              {/* <button className="btn text-white orange-bg fs-14">
                 + {t("candidateWorkflow:add_candidate")}
-              </button>
+              </button> */}
+          <button
+  className="btn blue-color blue-border me-2 fs-14"
+  onClick={
+    handleOpenExaminationScore
+  }
+>
+  Examination Score
+</button>
             </div>
           </div>
 
@@ -3615,10 +3745,647 @@ export default function CandidateScreening({ selectedJob }) {
             </div>
           )}
         </Modal.Body>
+        
+        
+        
       </Modal>
 
 
+<Modal
+  show={showExaminationModal}
+  onHide={() => setShowExaminationModal(false)}
+  centered
+  size="xl"
+  backdrop="static"
+>
+
+  <Modal.Header
+    closeButton
+    className="border-0 pb-2"
+    style={{
+      padding: "20px 24px 10px"
+    }}
+  >
+
+    <div>
+
+      <h2
+        className="fw-bold mb-1"
+        style={{
+          fontSize: "18px",
+          color: "#1F2937"
+        }}
+      >
+        Rank Positions Summary
+      </h2>
+
+      <p
+        className="mb-0"
+        style={{
+          fontSize: "13px",
+          color: "#6B7280"
+        }}
+      >
+        View and manage position rankings
+      </p>
+
     </div >
+
+  </Modal.Header>
+
+  <Modal.Body
+    style={{
+      padding: "8px 24px 20px",
+      maxHeight: "72vh",
+      overflowY: "auto"
+    }}
+  >
+
+    {examinationScoreData.map((item, index) => (
+
+      <div
+        key={index}
+        className="mb-3"
+        style={{
+          border: "1px solid #D8DEE8",
+          borderRadius: "10px",
+          overflow: "hidden",
+          background: "#FFFFFF"
+        }}
+      >
+
+        {/* HEADER */}
+
+        <div
+          onClick={() => {
+
+            setExaminationScoreData(prev =>
+              prev.map((p, i) => ({
+                ...p,
+                expanded:
+                  i === index
+                    ? !p.expanded
+                    : p.expanded
+              }))
+            );
+
+          }}
+          className="d-flex justify-content-between align-items-center"
+          style={{
+            background: "#F3F4F6",
+            padding: "16px 18px",
+            cursor: "pointer"
+          }}
+        >
+
+          {/* LEFT */}
+
+          <div>
+
+            <h5
+              className="fw-semibold mb-0"
+              style={{
+                fontSize: "15px",
+                color: "#374151"
+              }}
+            >
+              {item.positionName}
+            </h5>
+
+          </div>
+
+          {/* RIGHT */}
+
+          <div className="d-flex align-items-center gap-3">
+
+            <div
+              className="d-flex align-items-center gap-3"
+              style={{
+                fontSize: "12px",
+                color: "#6B7280",
+                fontWeight: "600"
+              }}
+            >
+
+              <span>
+                Start: {item.startDate}
+              </span>
+
+              <span>
+                End: {item.endDate}
+              </span>
+
+            </div>
+
+            {/* EDIT BUTTON */}
+
+            <button
+              className="btn btn-sm"
+              style={{
+                border: "1px solid #F97316",
+                color: "#F97316",
+                background: "#FFF7ED",
+                fontSize: "12px",
+                fontWeight: "600",
+                padding: "4px 12px",
+                borderRadius: "6px"
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+
+                handleEditExaminationScore(item, index);
+              }}
+            >
+              <i className="bi bi-pencil-square me-1" />
+              Edit
+            </button>
+
+            <i
+              className={`bi bi-chevron-${
+                item.expanded ? "up" : "down"
+              }`}
+              style={{
+                fontSize: "14px",
+                color: "#6B7280",
+                fontWeight: "700"
+              }}
+            />
+
+          </div>
+
+        </div>
+
+        {/* BODY */}
+
+        {item.expanded && (
+
+          <div
+            style={{
+              padding: "14px 18px 18px",
+              background: "#FFFFFF"
+            }}
+          >
+
+            <div
+              style={{
+                border: "1px solid #E5E7EB",
+                borderRadius: "8px",
+                overflow: "hidden"
+              }}
+            >
+
+              <table
+                className="table mb-0"
+                style={{
+                  borderCollapse: "collapse"
+                }}
+              >
+
+                <thead>
+
+                  <tr
+                    style={{
+                      background: "#F9FAFB"
+                    }}
+                  >
+
+                    <th
+                      style={{
+                        minWidth: "260px",
+                        padding: "10px 14px",
+                        border: "1px solid #E5E7EB",
+                        fontSize: "12px",
+                        color: "#374151",
+                        fontWeight: "700"
+                      }}
+                    >
+                      CATEGORY
+                    </th>
+
+                    {[
+                      "SC",
+                      "ST",
+                      "OBC",
+                      "EWS",
+                      "UR",
+                      "OC",
+                      "HI",
+                      "VI",
+                      "ID",
+                      "TOTAL"
+                    ].map((head) => (
+
+                      <th
+                        key={head}
+                        style={{
+                          padding: "10px",
+                          border: "1px solid #E5E7EB",
+                          textAlign: "center",
+                          fontSize: "12px",
+                          color: "#374151",
+                          fontWeight: "700"
+                        }}
+                      >
+                        {head}
+                      </th>
+
+                    ))}
+
+                  </tr>
+
+                </thead>
+
+                <tbody>
+
+                  {/* APPEARED */}
+
+                  <tr>
+
+                    <td
+                      style={{
+                        padding: "10px 14px",
+                        border: "1px solid #E5E7EB",
+                        fontWeight: "600",
+                        fontSize: "13px",
+                        color: "#374151"
+                      }}
+                    >
+                      APPEARED
+                    </td>
+
+                    {[120,85,200,95,450,50,15,10,5,1030]
+                      .map((val, i) => (
+
+                      <td
+                        key={i}
+                        style={{
+                          textAlign: "center",
+                          border: "1px solid #E5E7EB",
+                          padding: "10px",
+                          fontSize: "13px",
+                          color: "#374151"
+                        }}
+                      >
+                        {val}
+                      </td>
+
+                    ))}
+
+                  </tr>
+
+                  {/* VACANCY */}
+
+                  <tr>
+
+                    <td
+                      style={{
+                        padding: "10px 14px",
+                        border: "1px solid #E5E7EB",
+                        fontWeight: "600",
+                        fontSize: "13px",
+                        color: "#374151"
+                      }}
+                    >
+                      VACANCY
+                    </td>
+
+                    {[2,1,3,2,8,1,0,0,0,17]
+                      .map((val, i) => (
+
+                      <td
+                        key={i}
+                        style={{
+                          textAlign: "center",
+                          border: "1px solid #E5E7EB",
+                          padding: "10px",
+                          fontSize: "13px",
+                          color: "#374151"
+                        }}
+                      >
+                        {val}
+                      </td>
+
+                    ))}
+
+                  </tr>
+
+                  {/* HIGHLIGHTED ROW */}
+
+                  <tr
+                    style={{
+                      background: "#F7EDC3"
+                    }}
+                  >
+
+                    <td
+                      style={{
+                        padding: "10px 14px",
+                        border: "1px solid #E5E7EB",
+                        fontWeight: "700",
+                        fontSize: "13px",
+                        color: "#374151"
+                      }}
+                    >
+                      QUALIFIED WITH NO RELAXATION
+                    </td>
+
+                    {[45,30,85,40,180,20,8,5,2,415]
+                      .map((val, i) => (
+
+                      <td
+                        key={i}
+                        style={{
+                          textAlign: "center",
+                          border: "1px solid #E5E7EB",
+                          padding: "10px",
+                          fontSize: "13px",
+                          color: "#374151",
+                          fontWeight: "700"
+                        }}
+                      >
+                        {val}
+                      </td>
+
+                    ))}
+
+                  </tr>
+
+                  {/* QUALIFIED SET II */}
+
+                  <tr>
+
+                    <td
+                      style={{
+                        padding: "10px 14px",
+                        border: "1px solid #E5E7EB",
+                        fontWeight: "600",
+                        fontSize: "13px",
+                        color: "#374151"
+                      }}
+                    >
+                      QUALIFIED WITH SET II (5%)
+                    </td>
+
+                    {[25,18,45,22,95,12,4,3,1,225]
+                      .map((val, i) => (
+
+                      <td
+                        key={i}
+                        style={{
+                          textAlign: "center",
+                          border: "1px solid #E5E7EB",
+                          padding: "10px",
+                          fontSize: "13px",
+                          color: "#374151"
+                        }}
+                      >
+                        {val}
+                      </td>
+
+                    ))}
+
+                  </tr>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+
+        )}
+
+      </div>
+
+    ))}
+
+  </Modal.Body>
+
+  <Modal.Footer
+    className="border-0"
+    style={{
+      padding: "0 24px 20px"
+    }}
+  >
+
+    <button
+      className="btn"
+      style={{
+        minWidth: "110px",
+        height: "40px",
+        border: "1px solid #D1D5DB",
+        background: "#FFFFFF",
+        color: "#6B7280",
+        fontWeight: "600",
+        fontSize: "13px"
+      }}
+      onClick={() =>
+        setShowExaminationModal(false)
+      }
+    >
+      CANCEL
+    </button>
+
+    <button
+      className="btn text-white"
+      style={{
+        minWidth: "110px",
+        height: "40px",
+        background: "#F97316",
+        border: "none",
+        fontWeight: "600",
+        fontSize: "13px"
+      }}
+      onClick={() =>
+        handleEditExaminationScore()
+      }
+    >
+      SAVE
+    </button>
+
+  </Modal.Footer>
+
+</Modal>
+
+{/* <Modal  
+  show={showExaminationModal}
+  onHide={() => setShowExaminationModal(false)}
+  centered
+  size="xl"
+>
+  <Modal.Header closeButton>
+    <div>
+      <h5 className="fw-bold mb-1">
+        Rank Positions Summary
+      </h5>
+
+      <small className="text-muted">
+        View and manage position rankings
+      </small>
+    </div>
+  </Modal.Header>
+
+  <Modal.Body>
+
+    <div className="border rounded p-3">
+
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h6 className="fw-bold mb-0">
+          Senior Manager - Finacle Developer
+        </h6>
+
+        <div className="fw-semibold fs-14">
+          Start: 14-02-2026 &nbsp;&nbsp;
+          End: 08-03-2026
+        </div>
+      </div>
+
+      <div className="d-flex gap-5 mb-4">
+
+        <div className="form-check">
+          <input
+            className="form-check-input"
+            type="radio"
+            checked={selectedRelaxation === "SET_II"}
+            onChange={() => setSelectedRelaxation("SET_II")}
+          />
+
+          <label className="form-check-label fw-semibold">
+            QUALIFIED WITH SET II (5%)
+          </label>
+        </div>
+
+        <div className="form-check">
+          <input
+            className="form-check-input"
+            type="radio"
+            checked={selectedRelaxation === "SET_III"}
+            onChange={() => setSelectedRelaxation("SET_III")}
+          />
+
+          <label className="form-check-label fw-semibold">
+            QUALIFIED WITH SET III (10%)
+          </label>
+        </div>
+
+      </div>
+
+      <div className="table-responsive">
+
+        <table className="table table-bordered align-middle text-center">
+
+          <thead className="table-light">
+
+            <tr>
+              <th>CATEGORY</th>
+              <th>SC</th>
+              <th>ST</th>
+              <th>OBC</th>
+              <th>EWS</th>
+              <th>UR</th>
+              <th>OC</th>
+              <th>HI</th>
+              <th>VI</th>
+              <th>ID</th>
+              <th>TOTAL</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            <tr>
+              <td className="fw-semibold text-start">APPEARED</td>
+              <td>120</td>
+              <td>85</td>
+              <td>200</td>
+              <td>95</td>
+              <td>450</td>
+              <td>50</td>
+              <td>15</td>
+              <td>10</td>
+              <td>5</td>
+              <td><b>1030</b></td>
+            </tr>
+
+            <tr>
+              <td className="fw-semibold text-start">VACANCY</td>
+              <td>2</td>
+              <td>1</td>
+              <td>3</td>
+              <td>2</td>
+              <td>8</td>
+              <td>1</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td><b>17</b></td>
+            </tr>
+
+            <tr className="table-warning">
+              <td className="fw-semibold text-start">
+                QUALIFIED WITH NO RELAXATION
+              </td>
+              <td>45</td>
+              <td>30</td>
+              <td>85</td>
+              <td>40</td>
+              <td>180</td>
+              <td>20</td>
+              <td>8</td>
+              <td>5</td>
+              <td>2</td>
+              <td><b>415</b></td>
+            </tr>
+
+            <tr>
+              <td className="fw-semibold text-start">
+                QUALIFIED WITH SET II (5%)
+              </td>
+              <td>25</td>
+              <td>18</td>
+              <td>45</td>
+              <td>22</td>
+              <td>95</td>
+              <td>12</td>
+              <td>4</td>
+              <td>3</td>
+              <td>1</td>
+              <td><b>225</b></td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </Modal.Body>
+
+  <Modal.Footer>
+
+    <Button
+      variant="secondary"
+      onClick={() => setShowExaminationModal(false)}
+    >
+      Cancel
+    </Button>
+
+    <Button
+      variant="warning"
+      onClick={() => setShowExaminationModal(false)}
+    >
+      Save
+    </Button>
+
+  </Modal.Footer>
+
+</Modal> */}
+    </div>
+    
   );
 }
 

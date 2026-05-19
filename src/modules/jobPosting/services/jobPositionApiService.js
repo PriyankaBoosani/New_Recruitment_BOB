@@ -285,6 +285,38 @@ const jobPositionApiService = {
         },
       }
     ),
+
+
+    /* ================= EXAMINATION CUTOFF ================= */
+
+    /* ================= GET EXAM CONFIG ================= */
+
+getExamConfigurationsByPositions: (
+  positionIds
+) =>
+  api.get(
+    "/recruiter/examination-config/get-by-positions",
+    {
+      params: {
+        positionIds
+      },
+
+      headers: {
+        "X-Client": "AzureAD"
+      }
+    }
+  ),
+
+saveConfiguration: (payload) =>
+  api.post(
+    "/recruiter/examination-config/save-exam-config",
+    payload,
+    {
+      headers: {
+        "X-Client": "AzureAD"
+      }
+    }
+  ),
   approveRequisitions: ({ ids, postingStatus, comments }) =>
     api.post(
       "/recruiter/job-requisitions/approve-job-requisitions",
