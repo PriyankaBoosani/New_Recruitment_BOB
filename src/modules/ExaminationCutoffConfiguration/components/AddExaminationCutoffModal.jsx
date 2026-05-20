@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 
 import ExaminationCutoffService from "../service/ExaminationCutoffService";
 import committeeManagementService from "../../committeeManagement/services/committeeManagementService";
-import  "../../../style/css/ExaminationCutoffConfiguration.css";
+import "../../../style/css/ExaminationCutoffConfiguration.css";
 import { useSelector } from "react-redux";
 
 export default function AddExaminationCutoffModal({
@@ -1368,25 +1368,26 @@ export default function AddExaminationCutoffModal({
               />
             </Form.Group>
           </Col>
-
-          <Col
-            md={4}
-            className="d-flex align-items-end"
-          >
-            <Button
-              className="generate-btn"
-              onClick={handleGenerateSections}
-              disabled={
-                viewOnly ||
-                !formData.totalMarks ||
-                !formData.numberOfSections
-              }
+          {!showApprovalActions && (
+            <Col
+              md={4}
+              className="d-flex align-items-end"
             >
-              + Add
-            </Button>
-          </Col>
+              <Button
+                className="generate-btn"
+                onClick={handleGenerateSections}
+                disabled={
+                  viewOnly ||
+                  !formData.totalMarks ||
+                  !formData.numberOfSections
+                }
+              >
+                + Add
+              </Button>
+            </Col>
+             )}
         </Row>
-
+           
         {/* ================= DYNAMIC SECTIONS ================= */}
 
         <div className="sections-wrapper">
