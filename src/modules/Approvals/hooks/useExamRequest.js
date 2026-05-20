@@ -1,17 +1,24 @@
 import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import committeeManagementService from "../../committeeManagement/services/committeeManagementService";
+import masterApiService from "../../master/services/masterApiService";
 
 const useExamRequest = () => {
     const [requisitionOptions, setRequisitionOptions] = useState([]);
-    const [positionOptions, setPositionOptions] = useState([]);
+    const [examConfigList, setExamConfigList] = useState([]);
+    const [workflowHistory, setWorkflowHistory] = useState([]);
 
     const [loadingRequisitions, setLoadingRequisitions] = useState(false);
-    const [loadingPositions, setLoadingPositions] = useState(false);
+    const [loadingExamConfigs, setLoadingExamConfigs] = useState(false);
+    const [loadingWorkflowHistory, setLoadingWorkflowHistory] = useState(false);
+
+    const [users, setUsers] = useState([]);
+    const [loadingUsers, setLoadingUsers] = useState(false);
 
     const fetchRequisitions = useCallback(async () => {
         try {
             setLoadingRequisitions(true);
+
             const res = await committeeManagementService.getRequisitions();
             const data = res?.data || [];
 
@@ -30,40 +37,86 @@ const useExamRequest = () => {
         }
     }, []);
 
-    const fetchPositions = useCallback(async (reqId) => {
+    const fetchExamConfigList = useCallback(async (requisitionId) => {
         try {
-            setLoadingPositions(true);
-            const res = await committeeManagementService.getPositionsByRequisition(reqId);
+            setLoadingExamConfigs(true);
+
+            const res = await committeeManagementService.getExamConfigList(requisitionId);
             const data = res?.data || [];
 
-            const mapped = data.map((item) => ({
-                label: item.masterPositions?.positionName || "-",
-                value: item.jobPositions?.positionId,
-                raw: {
-                    ...item.jobPositions,
-                    ...item.masterPositions,
-                },
-            }));
-
-            setPositionOptions(mapped);
-            return mapped;
-        } catch {
-            toast.error("Failed to load positions");
-            setPositionOptions([]);
+            setExamConfigList(data);
+            return data;
+        } catch (error) {
+            toast.error("Failed to load exam configurations");
+            setExamConfigList([]);
             return [];
         } finally {
-            setLoadingPositions(false);
+            setLoadingExamConfigs(false);
+        }
+    }, []);
+
+    const fetchWorkflowHistory = useCallback(async (examConfigId) => {
+        try {
+            setLoadingWorkflowHistory(true);
+
+            const res = await committeeManagementService.getWorkflowHistory(examConfigId);
+            const data = res?.data || [];
+
+            setWorkflowHistory(data);
+            return data;
+        } catch (error) {
+            toast.error("Failed to load workflow history");
+            setWorkflowHistory([]);
+            return [];
+        } finally {
+            setLoadingWorkflowHistory(false);
+        }
+    }, []);
+
+    const fetchUsers = useCallback(async () => {
+        try {
+
+            setLoadingUsers(true);
+
+            const res =
+                await masterApiService.getUser();
+
+            const data =
+                Object.values(res?.data || {});
+
+            setUsers(data);
+
+            return data;
+
+        } catch (error) {
+
+            toast.error("Failed to load users");
+
+            setUsers([]);
+
+            return [];
+
+        } finally {
+
+            setLoadingUsers(false);
         }
     }, []);
 
     return {
         requisitionOptions,
-        positionOptions,
+        examConfigList,
+        workflowHistory,
         loadingRequisitions,
-        loadingPositions,
+        loadingExamConfigs,
+        loadingWorkflowHistory,
         fetchRequisitions,
-        fetchPositions,
-        setPositionOptions,
+        fetchExamConfigList,
+        fetchWorkflowHistory,
+        setExamConfigList,
+        setWorkflowHistory,
+        users,
+        loadingUsers,
+        fetchUsers,
     };
 };
 

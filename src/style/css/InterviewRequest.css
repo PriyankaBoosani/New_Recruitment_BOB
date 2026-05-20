@@ -454,3 +454,46 @@ font-size: 1.05em;
   font-size: 0.875rem;
   color: #404040;
 }
+.interview_requests th{
+   background-color: #42579F;
+  font-size: 0.875rem;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+.interview_requests td{
+   font-size: 0.875rem;
+  color: #404040;
+}
+
+.interview-page .history-card {
+  border: 1px solid #dbe4f3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.interview-page .history-summary-row {
+  padding: 12px 16px;
+  background: #f7fbff;
+  border-bottom: 1px solid #e8eef8;
+}
+
+.interview-page .history-details-wrap {
+  padding: 16px;
+  background: #fff;
+}
+
+.interview-page .historyposition-card-inner.mt-3 {
+	border: 1px solid #ACBED4;
+	border-radius: 12px;
+	padding: 16px 20px;
+	background: #F0F7FF;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	/* margin: 15px 20px; */
+	margin-top: 15px;
+}
+.interview-page .hisname{
+  color: #162B75;
+  font-weight: 500;
+}

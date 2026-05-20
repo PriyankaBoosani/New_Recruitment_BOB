@@ -1685,7 +1685,7 @@ export default function AddExaminationCutoffModal({
         </div>
       )}
 
-      <Modal.Footer>
+      <Modal.Footer className="border-0">
         {showApprovalActions ? (
           <>
             <Button

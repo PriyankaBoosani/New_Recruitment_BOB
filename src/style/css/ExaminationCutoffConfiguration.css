@@ -617,7 +617,8 @@
 /* HEADER COMPACT */
 
 .cutoff-config-modal .modal-header {
-  padding: 14px 22px 12px;
+	padding: 14px 22px 12px;
+	border: 0;
 }
 
 .modal-main-title {

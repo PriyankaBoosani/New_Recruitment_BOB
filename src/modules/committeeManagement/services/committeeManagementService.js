@@ -105,6 +105,32 @@ const committeeManagementService = {
 
   submitL1Approval: (body) =>
     api.post("/recruiter/schedule-pool/submit-l1-approval", body),
+
+  getExamConfigList: (requisitionId) =>
+    api.get(
+      "/recruiter/examination-config/get-all-list",
+      {
+        params: {
+          requisitionIds: [requisitionId],
+        },
+      }
+    ),
+  approveOrRejectExamConfig: (payload) =>
+    api.post(
+      "/recruiter/examination-config/approve-or-reject",
+      payload,
+      
+    ),
+    getWorkflowHistory: (examConfigId) =>
+  api.get(
+    `/recruiter/examination-config/workflow-history/${examConfigId}`
+  ),
+getApprovalHistory: (requisitionId) =>
+  api.post(
+    `/recruiter/schedule-pool/get-approval-history/${requisitionId}`,
+   
+  ),
 };
+
 
 export default committeeManagementService;

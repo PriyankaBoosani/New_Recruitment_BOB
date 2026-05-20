@@ -98,26 +98,55 @@ const useInterviewSchedule = () => {
             try {
                 setLoadingPositionDetails(true);
 
-                const res =
-                    await committeeManagementService.getPositionDetailsInterviewApproval(
-                        requisitionId
-                    );
+                const res = await committeeManagementService.getPositionDetailsInterviewApproval(
+                    requisitionId
+                );
 
                 const data = res?.data?.data || res?.data || [];
 
                 const mapped = Array.isArray(data)
                     ? data.map((item, index) => {
-                        const job = item?.jobPositionsDTO || {};
+                        const job = item?.jobPosition || {};
+                        const approval = item?.interviewApprovalDetails || null;
+                        const history = Array.isArray(item?.interviewApprovalHistory)
+                            ? [...item.interviewApprovalHistory]
+                                .sort(
+                                    (a, b) =>
+                                        new Date(b?.approvalOn || 0).getTime() -
+                                        new Date(a?.approvalOn || 0).getTime()
+                                )
+                                .map((h, hIndex) => ({
+                                    id: h?.id || hIndex,
+                                    date: h?.approvalOn || "-",
+                                    status: h?.status || "-",
+                                    totalCandidateCount: h?.totalCandidateCount || 0,
+                                    totalZonalCount: h?.totalZonalCount || 0,
+                                    totalPanelCount: h?.totalPanelCount || 0,
+                                    zones: h?.zonalData || [],
+                                    panels: h?.panelData || [],
+                                    isHistory: true,
+                                }))
+                            : [];
+
+                        const latestHistory = history.length > 0 ? history[0] : null;
 
                         return {
-                            positionId: job?.positionId || job?.masterPositionId || index,
+                            positionId: job?.positionId || index,
                             positionName: getPositionNameFromMaster(job),
                             departmentName: getDepartmentNameFromMaster(job),
-                            totalCandidateCount: item?.totalCandidateCount || 0,
-                            totalZonalCount: item?.totalZonalCount || 0,
-                            totalPanelCount: item?.totalPanelCount || 0,
-                            zonalData: item?.zonalData || [],
-                            panelData: item?.panelData || [],
+
+                            status: approval?.status || latestHistory?.status || "-",
+                            approvalOn: approval?.approvalOn || "-",
+
+                            canTakeAction: approval?.isHistory === false, // only this controls buttons
+
+                            totalCandidateCount: approval?.totalCandidateCount ?? 0,
+                            totalZonalCount: approval?.totalZonalCount ?? 0,
+                            totalPanelCount: approval?.totalPanelCount ?? 0,
+                            zones: approval?.zonalData ?? [],
+                            panels: approval?.panelData ?? [],
+
+                            history,
                             raw: item,
                         };
                     })
@@ -125,9 +154,7 @@ const useInterviewSchedule = () => {
 
                 setPositionDetails(mapped);
             } catch (error) {
-                toast.error(
-                    error?.response?.data?.message || "Failed to load position details"
-                );
+                toast.error(error?.response?.data?.message || "Failed to load position details");
                 setPositionDetails([]);
             } finally {
                 setLoadingPositionDetails(false);
@@ -135,7 +162,7 @@ const useInterviewSchedule = () => {
         },
         [getDepartmentNameFromMaster, getPositionNameFromMaster]
     );
-    // hook
+
     const submitL1Approval = useCallback(
         async ({ positionIds, status, remarks = "" }) => {
             if (!positionIds || positionIds.length === 0) return;
@@ -145,15 +172,27 @@ const useInterviewSchedule = () => {
 
                 const payload = {
                     positionIds,
-                    status,     // "APPROVED" or "REJECTED"
+                    status,
                     remarks,
                 };
 
                 const res = await committeeManagementService.submitL1Approval(payload);
-                toast.success(res?.data?.message || "Submitted successfully");
+                console.log(res, "ersd");
+
+                if (res?.success === false) {
+                    toast.error(res?.message || "Failed to submit approval");
+                } else {
+                    toast.success("Submitted successfully");
+                }
+
                 return res;
             } catch (error) {
-                toast.error(error?.response?.data?.message || "Failed to submit approval");
+                console.log(error, "reer");
+                toast.error(
+                    error?.response?.data?.message ||
+                    error?.message ||
+                    "Failed to submit approval"
+                );
                 throw error;
             } finally {
                 setLoadingL1Approval(false);
@@ -170,12 +209,15 @@ const useInterviewSchedule = () => {
         requisitionOptions,
         loadingRequisitions,
         fetchRequisitions,
+
         positionDetails,
         loadingPositionDetails,
         fetchPositionDetailsByRequisition,
+
         loadingMasters,
+
         submitL1Approval,
-        loadingL1Approval
+        loadingL1Approval,
     };
 };
 

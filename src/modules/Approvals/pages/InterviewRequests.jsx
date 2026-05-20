@@ -1,75 +1,23 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Row,
   Col,
-  Form,
   Badge,
   Modal,
   Button,
   Table,
   OverlayTrigger,
+  Tooltip,
 } from "react-bootstrap";
 import Select from "react-select";
 import { ChevronDown, ChevronUp } from "react-bootstrap-icons";
 import ApprovalCommentModal from "../components/ApprovalCommentModal";
 import "../../../style/css/InterviewRequest.css";
-import mingcute_department_line from "../../../assets/mingcute_department-line.png";
-import start_icon from "../../../assets/start_icon.png"
-import end_icon from "../../../assets/end_icon.png"
-import I_icon from "../../../assets/I_icon.png"
-import position_Icon from "../../../assets/position_Icon.png"
+import start_icon from "../../../assets/start_icon.png";
+import I_icon from "../../../assets/I_icon.png";
 import useInterviewSchedule from "../hooks/useInterviewSchedule";
 import { toast } from "react-toastify";
-import { Tooltip } from "react-bootstrap";
-
-// const mockRequisitions = [
-//   {
-//     id: 1,
-//     requisitionCode: "REQ-2026-00140",
-//     requisitionTitle: "Requisition Approval Mail Test",
-//     status: "NEW",
-//     departmentName: "2",
-//     positionsCount: 2,
-//     vacanciesCount: 20,
-//     startDate: "2026-05-10",
-//     endDate: "2026-05-30",
-//     positions: [
-//       {
-//         positionId: 101,
-//         positionName: "Position 1",
-//         departmentName: "SBI",
-//         totalCandidateCount: 132,
-//         zoneCount: 2,
-//         panelCount: 3,
-//         zones: [
-//           { zoneId: 1, zoneName: "Hyderabad", candidates: 6 },
-//           { zoneId: 2, zoneName: "Warangal", candidates: 6 },
-//         ],
-//         panels: [
-//           { panelId: 1, panelName: "Panel 1", members: 4, date: "2026-05-10" },
-//           { panelId: 2, panelName: "Panel 2", members: 3, date: "2026-05-10" },
-//           { panelId: 3, panelName: "Panel 3", members: 2, date: "2026-05-10" },
-//         ],
-//       },
-//       {
-//         positionId: 102,
-//         positionName: "Position 2",
-//         departmentName: "SBI",
-//         totalCandidateCount: 8,
-//         zoneCount: 1,
-//         panelCount: 2,
-//         zones: [
-//           { zoneId: 3, zoneName: "Nizamabad", candidates: 8 },
-//         ],
-//         panels: [
-//           { panelId: 4, panelName: "Panel 4", members: 3, date: "2026-05-10" },
-//           { panelId: 5, panelName: "Panel 5", members: 2, date: "2026-05-10" },
-//         ],
-//       },
-//     ],
-//   },
-// ];
 
 const selectStyles = {
   control: (base) => ({
@@ -106,7 +54,6 @@ const selectStyles = {
   }),
 };
 
-
 const formatDateDDMMYYYY = (value) => {
   if (!value) return "-";
   const d = new Date(value);
@@ -117,9 +64,29 @@ const formatDateDDMMYYYY = (value) => {
   return `${day}-${month}-${year}`;
 };
 
+const formatDateTime = (value) => {
+  if (!value) return "-";
+
+  const d = new Date(value);
+
+  if (Number.isNaN(d.getTime())) return "-";
+
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+
+  let hours = d.getHours();
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+
+  const ampm = hours >= 12 ? "PM" : "AM";
+
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+
+  return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`;
+};
 const InterviewRequests = () => {
   const [selectedRequisition, setSelectedRequisition] = useState(null);
-  const [openReq, setOpenReq] = useState(true);
   const [openPositionId, setOpenPositionId] = useState(null);
 
   const [detailModal, setDetailModal] = useState({
@@ -133,15 +100,21 @@ const InterviewRequests = () => {
   const [actionType, setActionType] = useState(null);
   const [selectedPositionForAction, setSelectedPositionForAction] = useState(null);
 
-  // const requisitionOptions = useMemo(
-  //   () =>
-  //     mockRequisitions.map((req) => ({
-  //       label: `${req.requisitionCode} - ${req.requisitionTitle}`,
-  //       value: req.id,
-  //       raw: req,
-  //     })),
-  //   []
-  // );
+  const [openHistoryId, setOpenHistoryId] = useState(null);
+
+  const {
+    requisitionOptions,
+    loadingRequisitions,
+    fetchRequisitions,
+    positionDetails,
+    loadingPositionDetails,
+    fetchPositionDetailsByRequisition,
+    submitL1Approval,
+  } = useInterviewSchedule();
+
+  useEffect(() => {
+    fetchRequisitions();
+  }, [fetchRequisitions]);
 
   const selectedRequisitionOption = selectedRequisition
     ? {
@@ -150,13 +123,32 @@ const InterviewRequests = () => {
       raw: selectedRequisition,
     }
     : null;
+  const formatStatus = (status = "") => {
+    return status
+      .replaceAll("_", " ")
+      .toLowerCase()
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+  };
+  const getStatusBadge = (status = "") => {
+    switch (status) {
+      case "L1_PENDING":
+        return "warning";
+
+      case "APPROVED":
+        return "success";
+      case "REJECTED":
+
+        return "danger";
+      default:
+        return "secondary";
+    }
+  };
 
   const handleRequisitionChange = (opt) => {
     const requisition = opt?.raw || null;
     setSelectedRequisition(requisition);
-    setOpenReq(true);
     setOpenPositionId(null);
-
+    setOpenHistoryId(null);
     fetchPositionDetailsByRequisition(opt?.value);
   };
 
@@ -165,7 +157,7 @@ const InterviewRequests = () => {
       show: true,
       type,
       positionName: position.positionName,
-      data: type === "zone" ? position.zonalData || [] : position.panelData || [],
+      data: type === "zone" ? position.zones || [] : position.panels || [],
     });
   };
 
@@ -177,10 +169,11 @@ const InterviewRequests = () => {
       return;
     }
 
-    setActionType(type); // approve / reject
+    setActionType(type);
     setSelectedPositionForAction(position);
     setShowCommentModal(true);
   };
+
   const handleApprovalAction = async (comment) => {
     if (!selectedPositionForAction) return;
 
@@ -197,7 +190,7 @@ const InterviewRequests = () => {
       });
 
       if (selectedRequisition?.id) {
-        fetchPositionDetailsByRequisition(selectedRequisition.id);
+        await fetchPositionDetailsByRequisition(selectedRequisition.id);
       }
     } catch (error) {
       console.error("Approval submission failed:", error);
@@ -207,19 +200,6 @@ const InterviewRequests = () => {
       setSelectedPositionForAction(null);
     }
   };
-  const {
-    requisitionOptions,
-    loadingRequisitions,
-    fetchRequisitions,
-    positionDetails,
-    loadingPositionDetails,
-    fetchPositionDetailsByRequisition,
-    submitL1Approval,
-    loadingL1Approval
-  } = useInterviewSchedule();
-  useEffect(() => {
-    fetchRequisitions();
-  }, [fetchRequisitions]);
 
   const renderDetailTable = () => {
     if (detailModal.type === "zone") {
@@ -267,7 +247,7 @@ const InterviewRequests = () => {
               <tr key={p.panelId}>
                 <td>{p.panelName || "-"}</td>
                 <td>
-                  {p.members?.length > 0
+                  {Array.isArray(p.members) && p.members.length > 0
                     ? p.members.map((member) => member.name).join(", ")
                     : "-"}
                 </td>
@@ -311,7 +291,6 @@ const InterviewRequests = () => {
               value={selectedRequisitionOption}
               onChange={handleRequisitionChange}
               isLoading={loadingRequisitions}
-
             />
           </Col>
         </Row>
@@ -323,50 +302,55 @@ const InterviewRequests = () => {
                 <div className="text-muted p-3">Loading position details...</div>
               ) : positionDetails.length > 0 ? (
                 positionDetails.map((pos) => {
-                  const isOpen = openPositionId === (pos.positionId || pos.jobPositionId);
+                  const positionKey = pos.positionId || pos.jobPositionId;
+                  const isPositionOpen = openPositionId === positionKey;
 
                   return (
-                    <div key={pos.positionId || pos.jobPositionId} className="department-card mb-3">
+                    <div key={positionKey} className="department-card mb-3">
                       <div
                         className="department-header d-flex align-items-center gap-2 cursor-pointer"
                         onClick={() =>
-                          setOpenPositionId((prev) =>
-                            prev === (pos.positionId || pos.jobPositionId)
-                              ? null
-                              : (pos.positionId || pos.jobPositionId)
-                          )
+                          setOpenPositionId((prev) => (prev === positionKey ? null : positionKey))
                         }
                       >
-                        <span className="depname">{pos.positionName}</span>
+                        {/* <span className="depname">{pos.positionName}</span> */}
+
+                        <div className="d-flex align-items-center gap-2">
+                          <span className="depname">{pos.positionName}</span>
+
+                          <Badge bg={getStatusBadge(pos.status)}>
+                            {formatStatus(pos.status)}
+                          </Badge>
+                        </div>
 
                         <button
                           type="button"
                           className="btn btn-none accordion-arrow-position ms-auto"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setOpenPositionId((prev) =>
-                              prev === (pos.positionId || pos.jobPositionId)
-                                ? null
-                                : (pos.positionId || pos.jobPositionId)
-                            );
+                            setOpenPositionId((prev) => (prev === positionKey ? null : positionKey));
                           }}
                         >
-                          {isOpen ? <ChevronUp /> : <ChevronDown />}
+                          {isPositionOpen ? <ChevronUp /> : <ChevronDown />}
                         </button>
                       </div>
 
-                      {isOpen && (
+                      {isPositionOpen && (
                         <div className="position-card-inner mt-2">
                           <div className="row g-3">
                             <div className="col-md-3">
                               <div className="field-label">
-                                Department: <span className="field-value">{pos.departmentName}</span>
+                                Department:{" "}
+                                <span className="field-value">{pos.departmentName}</span>
                               </div>
                             </div>
 
                             <div className="col-md-3">
                               <div className="field-label">
-                                Scheduled Candidates: <span className="field-value">{pos.totalCandidateCount || 0}</span>
+                                Scheduled Candidates:{" "}
+                                <span className="field-value">
+                                  {pos.totalCandidateCount || 0}
+                                </span>
                               </div>
                             </div>
 
@@ -376,14 +360,18 @@ const InterviewRequests = () => {
                                 <span className="field-value">{pos.totalZonalCount || 0}</span>
                                 <OverlayTrigger
                                   placement="bottom"
-                                  overlay={<Tooltip id={`tooltip-zone-${pos.id}`}>View Zone Details</Tooltip>}
+                                  overlay={
+                                    <Tooltip id={`tooltip-zone-${positionKey}`}>
+                                      View Zone Details
+                                    </Tooltip>
+                                  }
                                 >
                                   <span>
                                     <img
                                       src={I_icon}
                                       alt="View Details"
                                       className="ms-2"
-                                      style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                                      style={{ width: 16, height: 16, cursor: "pointer" }}
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         openDetails("zone", pos);
@@ -400,14 +388,18 @@ const InterviewRequests = () => {
                                 <span className="field-value">{pos.totalPanelCount || 0}</span>
                                 <OverlayTrigger
                                   placement="bottom"
-                                  overlay={<Tooltip id={`tooltip-panel-${pos.id}`}>View Panel Details</Tooltip>}
+                                  overlay={
+                                    <Tooltip id={`tooltip-panel-${positionKey}`}>
+                                      View Panel Details
+                                    </Tooltip>
+                                  }
                                 >
                                   <span>
                                     <img
                                       src={I_icon}
                                       alt="View Details"
                                       className="ms-2"
-                                      style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                                      style={{ width: 16, height: 16, cursor: "pointer" }}
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         openDetails("panel", pos);
@@ -422,6 +414,7 @@ const InterviewRequests = () => {
                               <Button
                                 className="me-2 fs-14"
                                 variant="success"
+                                disabled={!pos.canTakeAction}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleActionClick("approve", pos);
@@ -429,9 +422,11 @@ const InterviewRequests = () => {
                               >
                                 Accept
                               </Button>
+
                               <Button
                                 className="fs-14"
                                 variant="danger"
+                                disabled={!pos.canTakeAction}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleActionClick("reject", pos);
@@ -439,6 +434,182 @@ const InterviewRequests = () => {
                               >
                                 Reject
                               </Button>
+                            </div>
+
+                            <div className="historyposition-card-inner mt-3">
+                              <div className="d-flex align-items-center gap-2 mb-3">
+                                <img
+                                  src={start_icon}
+                                  alt="History"
+                                  style={{ width: 18, height: 18 }}
+                                />
+                                <span className="hisname">History</span>
+                              </div>
+
+                              {pos.history?.length > 0 ? (
+                                pos.history.map((item) => {
+                                  const isHistoryOpen = openHistoryId === item.id;
+
+                                  return (
+                                    <div key={item.id} className="department-card mb-3 history-card">
+                                      <div
+                                        className="history-summary-row"
+                                        onClick={() =>
+                                          setOpenHistoryId((prev) =>
+                                            prev === item.id ? null : item.id
+                                          )
+                                        }
+                                        style={{ cursor: "pointer" }}
+                                      >
+                                        <div className="row g-3 align-items-center">
+                                          <div className="col-md-3">
+                                            <button
+                                              type="button"
+                                              className="btn p-0 border-0 bg-transparent d-flex align-items-center gap-2 w-100 text-start"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setOpenHistoryId((prev) =>
+                                                  prev === item.id ? null : item.id
+                                                );
+                                              }}
+                                            >
+                                              {isHistoryOpen ? (
+                                                <ChevronUp size={18} />
+                                              ) : (
+                                                <ChevronDown size={18} />
+                                              )}
+                                              <div className="field-label">
+                                                Date:{" "}
+                                                <span className="field-value mb-0">
+                                                  {formatDateTime(item.date)}
+                                                </span>
+                                              </div>
+                                            </button>
+                                          </div>
+
+                                          <div className="col-md-3">
+                                            <div className="field-label">
+                                              Scheduled Candidates:{" "}
+                                              <span className="field-value">
+                                                {item.totalCandidateCount || 0}
+                                              </span>
+                                            </div>
+                                          </div>
+
+                                          <div className="col-md-2">
+                                            <div className="field-label">
+                                              Zone Count:{" "}
+                                              <span className="field-value">
+                                                {item.totalZonalCount || 0}
+                                              </span>
+                                            </div>
+                                          </div>
+
+                                          <div className="col-md-2">
+                                            <div className="field-label">
+                                              Panel Count:{" "}
+                                              <span className="field-value ms-1">
+                                                {item.totalPanelCount || 0}
+                                              </span>
+                                            </div>
+                                          </div>
+
+                                          <div className="col-md-2">
+                                            <Badge bg={getStatusBadge(item.status)}>
+                                            {formatStatus(item.status)}
+                                            </Badge>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      {isHistoryOpen && (
+                                        <div className="history-details-wrap mt-2">
+                                          <div className="row g-3">
+                                            <div className="col-md-6">
+                                              <div className="field-label mb-2">
+                                                Zone Details ({item.zones?.length || 0})
+                                              </div>
+
+                                              <Table bordered hover className="mb-0 align-middle">
+                                                <thead>
+                                                  <tr>
+                                                    <th>Zone Name</th>
+                                                    <th>Candidates</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  {item.zones?.length > 0 ? (
+                                                    item.zones.map((z, idx) => (
+                                                      <tr key={idx}>
+                                                        <td>{z.zoneName || "-"}</td>
+                                                        <td>{z.candidateCount ?? 0}</td>
+                                                      </tr>
+                                                    ))
+                                                  ) : (
+                                                    <tr>
+                                                      <td
+                                                        colSpan="2"
+                                                        className="text-center text-muted"
+                                                      >
+                                                        No zone details found
+                                                      </td>
+                                                    </tr>
+                                                  )}
+                                                </tbody>
+                                              </Table>
+                                            </div>
+
+                                            <div className="col-md-6">
+                                              <div className="field-label mb-2">
+                                                Panel Details ({item.panels?.length || 0})
+                                              </div>
+
+                                              <Table bordered hover className="mb-0 align-middle">
+                                                <thead>
+                                                  <tr>
+                                                    <th>Panel Name</th>
+                                                    <th>Members</th>
+                                                    <th>Start Date</th>
+                                                    <th>End Date</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  {item.panels?.length > 0 ? (
+                                                    item.panels.map((p, idx) => (
+                                                      <tr key={idx}>
+                                                        <td>{p.panelName || "-"}</td>
+                                                        <td>
+                                                          {Array.isArray(p.members) &&
+                                                            p.members.length > 0
+                                                            ? p.members.map((m) => m.name).join(", ")
+                                                            : "-"}
+                                                        </td>
+                                                        <td>{formatDateDDMMYYYY(p.startDate)}</td>
+                                                        <td>{formatDateDDMMYYYY(p.endDate)}</td>
+                                                      </tr>
+                                                    ))
+                                                  ) : (
+                                                    <tr>
+                                                      <td
+                                                        colSpan="4"
+                                                        className="text-center text-muted"
+                                                      >
+                                                        No panel details found
+                                                      </td>
+                                                    </tr>
+                                                  )}
+                                                </tbody>
+                                              </Table>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })
+                              ) : (
+                                <div className="text-muted">No history found</div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -469,7 +640,9 @@ const InterviewRequests = () => {
           <Modal.Footer className="border-0">
             <Button
               variant="outline-secondary"
-              onClick={() => setDetailModal({ show: false, type: null, positionName: "", data: [] })}
+              onClick={() =>
+                setDetailModal({ show: false, type: null, positionName: "", data: [] })
+              }
             >
               Close
             </Button>

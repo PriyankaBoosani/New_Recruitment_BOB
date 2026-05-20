@@ -1,173 +1,283 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Container, Row, Col, Form, Button, Badge } from "react-bootstrap";
-import Select from "react-select";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// ExamRequest.jsx
+
+import React, {
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
+
 import {
-    faCalendarDays,
-    faLayerGroup,
-    faLocationDot,
-} from "@fortawesome/free-solid-svg-icons";
+    Container,
+    Row,
+    Col,
+    Button,
+} from "react-bootstrap";
+
+import Select from "react-select";
+
 import useExamRequest from "../hooks/useExamRequest";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import "../../../style/css/ExamRequest.css"
+
+import "../../../style/css/ExamRequest.css";
+
+import AddExaminationCutoffModal from "../../ExaminationCutoffConfiguration/components/AddExaminationCutoffModal";
+import view_icon from "../../../assets/view_icon.png"
+import history_icon from "../../../assets/history_icon.png"
+import ApprovalHistoryModal from "../../Approvals/components/ApprovalHistoryModal";
 
 const ExamRequest = () => {
-    const { t } = useTranslation(["jobPostingsList", "common"]);
-    const privileges = useSelector((state) => state.user.privileges);
-
     const {
         requisitionOptions,
-        positionOptions,
+        examConfigList,
+        workflowHistory,
+        users,
+
         loadingRequisitions,
-        loadingPositions,
+        loadingExamConfigs,
+        loadingWorkflowHistory,
+
         fetchRequisitions,
-        fetchPositions,
-        setPositionOptions,
+        fetchExamConfigList,
+        fetchWorkflowHistory,
+        fetchUsers,
+
+        setExamConfigList,
+        setWorkflowHistory,
     } = useExamRequest();
 
-    const [selectedRequisition, setSelectedRequisition] = useState(null);
-    const [selectedPosition, setSelectedPosition] = useState(null);
+    /* ================= STATES ================= */
+
+    const [showCutoffModal, setShowCutoffModal] =
+        useState(false);
+    const [decisionComments, setDecisionComments] = useState("");
+    const [commentError, setCommentError] = useState("");
+    const [showHistoryModal, setShowHistoryModal] = useState(false);
+
+    const [cutoffEditData, setCutoffEditData] =
+        useState(null);
+
+    const [viewPosition, setViewPosition] =
+        useState(null);
+
+    const getStatusBadge = (status = "") => {
+        switch (status) {
+            case "L1_PENDING":
+                return "warning";
+
+            case "L1_APPROVED":
+                return "info";
+
+            case "APPROVED":
+                return "success";
+
+            case "L1_REJECTED":
+            case "L2_REJECTED":
+                return "danger";
+
+            default:
+                return "secondary";
+        }
+    };
+    const formatStatus = (status = "") => {
+        return status
+            .replaceAll("_", " ")
+            .toLowerCase()
+            .replace(/\b\w/g, (c) => c.toUpperCase());
+    };
+
+
+    const [selectedRequisition, setSelectedRequisition] =
+        useState(null);
+
+    /* ================= LOAD REQUISITIONS ================= */
+
+    useEffect(() => {
+
+        fetchRequisitions();
+
+        fetchUsers();
+
+    }, [fetchRequisitions, fetchUsers]);
+    const refreshExamConfigs = async () => {
+        if (!selectedRequisition?.id) return;
+
+        await fetchExamConfigList(selectedRequisition.id);
+    };
+
+    /* ================= REQUISITION CHANGE ================= */
+
+    const handleHistoryClick = async (pos) => {
+        const examConfigId = pos?.raw?.examConfigId;
+        if (!examConfigId) return;
+
+        await fetchWorkflowHistory(examConfigId);
+        setShowHistoryModal(true);
+    };
 
     const onRequisitionChange = async (req) => {
+
         setSelectedRequisition(req);
-        setRequisitionPositions([]);
 
-        if (!req?.id) return;
+        setCutoffEditData(null);
 
-        const positions = await fetchPositions(req.id);
-        setRequisitionPositions(positions || []);
+        setViewPosition(null);
+
+        if (!req?.id) {
+
+            setExamConfigList([]);
+
+            return;
+        }
+
+        await fetchExamConfigList(req.id);
     };
-    const [requisitionPositions, setRequisitionPositions] = useState([]);
+
+    /* ================= POSITIONS FROM CONFIG LIST ================= */
+
+    const requisitionPositions = useMemo(() => {
+        return examConfigList.map((item) => ({
+            label:
+                item.positionName ||
+                item.masterPositions?.positionName ||
+                item.positionId ||
+                "-",
+            value: item.positionId,
+            raw: item,
+        }));
+    }, [examConfigList]);
+
+    const userMap = useMemo(() => {
+
+        return users.reduce((acc, user) => {
+
+            acc[user.userId] = user.name;
+
+            return acc;
+
+        }, {});
+
+    }, [users]);
+
+    /* ================= VIEW CLICK ================= */
+
+    const handleViewClick = (pos) => {
+
+        setViewPosition(pos);
+
+        setCutoffEditData(pos.raw || null);
+
+        setShowCutoffModal(true);
+    };
+
+
+
+    /* ================= SELECT VALUE ================= */
+
+    const selectedRequisitionOption =
+        selectedRequisition
+            ? {
+                label:
+                    `${selectedRequisition.requisitionCode} - ${selectedRequisition.requisitionTitle}`,
+
+                value:
+                    selectedRequisition.id,
+
+                raw:
+                    selectedRequisition,
+            }
+            : null;
+
+    /* ================= SELECT STYLES ================= */
+
     const selectStyles = {
+
         control: (base) => ({
             ...base,
+
             height: "38px",
+
             minHeight: "38px",
+
             fontSize: "14px",
         }),
+
         valueContainer: (base) => ({
             ...base,
+
             height: "38px",
+
             padding: "0 8px",
         }),
+
         indicatorsContainer: (base) => ({
             ...base,
+
             height: "34px",
         }),
+
         input: (base) => ({
             ...base,
+
             margin: 0,
+
             padding: 0,
         }),
+
         singleValue: (base) => ({
             ...base,
+
             fontSize: "14px",
         }),
+
         placeholder: (base) => ({
             ...base,
+
             fontSize: "14px",
         }),
+
         menuPortal: (base) => ({
             ...base,
+
             zIndex: 9999,
         }),
     };
 
-    useEffect(() => {
-        fetchRequisitions();
-    }, [fetchRequisitions]);
 
-    const selectedRequisitionOption = selectedRequisition
-        ? {
-            label: `${selectedRequisition.requisitionCode} - ${selectedRequisition.requisitionTitle}`,
-            value: selectedRequisition.id,
-            raw: selectedRequisition,
-        }
-        : null;
-
-    const selectedPositionOption = selectedPosition
-        ? {
-            label: selectedPosition.positionName,
-            value: selectedPosition.positionId,
-            raw: selectedPosition,
-        }
-        : null;
-
-    const staticPositionRows = [
-        {
-            requisition: "BOB/HRM/REC/ADVT/2025/06",
-            position: "Deputy Manager",
-            totalMarks: 100,
-            scst: "40%",
-            obc: "50%",
-            ur: "60%",
-            writtenWeightage: "60%",
-            status: "L1 Pending",
-        },
-        {
-            requisition: "BOB/HRM/REC/ADVT/2025/08",
-            position: "Director",
-            totalMarks: 200,
-            scst: "40%",
-            obc: "50%",
-            ur: "60%",
-            writtenWeightage: "60%",
-            status: "L2 Pending",
-        },
-        {
-            requisition: "BOB/HRM/REC/ADVT/2025/10",
-            position: "Auditor",
-            totalMarks: 100,
-            scst: "40%",
-            obc: "50%",
-            ur: "60%",
-            writtenWeightage: "60%",
-            status: "L1 Pending",
-        },
-        {
-            requisition: "BOB/HRM/REC/ADVT/2025/07",
-            position: "Sales Manager",
-            totalMarks: 150,
-            scst: "40%",
-            obc: "50%",
-            ur: "60%",
-            writtenWeightage: "60%",
-            status: "Approved",
-        },
-        {
-            requisition: "BOB/HRM/REC/ADVT/2025/05",
-            position: "Finance Officer",
-            totalMarks: 100,
-            scst: "40%",
-            obc: "50%",
-            ur: "60%",
-            writtenWeightage: "60%",
-            status: "Approved",
-        },
-    ];
-
-    const getStatusBadge = (status) => {
-        if (status === "Approved") return "success";
-        if (status.includes("Pending")) return "warning";
-        return "secondary";
-    };
+    /* ================= UI ================= */
 
     return (
+
         <div className="exam-request">
+
             <Container fluid className="exam-page">
+
+                {/* ================= HEADER ================= */}
+
                 <Row className="mb-3 align-items-center">
+
                     <Col>
-                        <h5 className="page-title">Written Exam — Section & Cutoff Configuration</h5>
+
+                        <h5 className="page-title">
+                            Written Exam — Section & Cutoff Configuration Requests
+                        </h5>
+
                         <p className="page-subtitle">
-                           Review and approve or reject Exam requests
+                            Review and approve or reject Written Exam requests
                         </p>
+
                     </Col>
+
                 </Row>
 
+                {/* ================= FILTER ================= */}
+
                 <Row className="mb-3 align-items-end filters-row border rounded p-3 bulk-actions">
+
                     <Col xs={12} md={4}>
-                        <div className="field-label mb-2">Requisition</div>
+
+                        <div className="field-label mb-2">
+                            Requisition
+                        </div>
+
                         <Select
                             placeholder="Select Requisition"
                             styles={selectStyles}
@@ -177,97 +287,169 @@ const ExamRequest = () => {
                             isLoading={loadingRequisitions}
                             value={selectedRequisitionOption}
                             onChange={(opt) => {
-                                onRequisitionChange(opt?.raw || null);
+                                onRequisitionChange(
+                                    opt?.raw || null
+                                );
                             }}
                         />
+
                     </Col>
-
-
 
                 </Row>
 
+                {/* ================= POSITION LIST ================= */}
+
                 {selectedRequisition && (
+
+
                     <Row className="mt-4">
+
                         <Col>
+
                             <div className="border rounded bg-white p-3">
+
                                 <div className="section-header mb-3">
                                     Position Wise Cutoff Configuration
                                 </div>
 
-                                {loadingPositions ? (
-                                    <div className="text-muted">Loading positions...</div>
-                                ) : requisitionPositions.length === 0 ? (
-                                    <div className="text-muted">No positions available for this requisition.</div>
-                                ) : (
-                                    <div className="d-flex flex-column gap-3">
-                                        {requisitionPositions.map((pos) => (
-                                            <div key={pos.value} className="position-item">
-                                                <div className="position-item-header">
-                                                    {pos.label}
-                                                </div>
-                                            </div>
-                                        ))}
+                                {loadingExamConfigs ? (
+
+                                    <div className="text-muted">
+                                        Loading configurations...
                                     </div>
+
+                                ) : requisitionPositions.length === 0 ? (
+
+                                    <div className="text-muted">
+                                        No positions available for this requisition.
+                                    </div>
+
+                                ) : (
+
+                                    <div className="d-flex flex-column gap-3">
+
+                                        {requisitionPositions.map((pos) => {
+
+                                            const badgeVariant = getStatusBadge(pos.raw?.status);
+
+                                            return (
+                                                <div
+                                                    key={pos.value}
+                                                    className="position-item-header d-flex justify-content-between align-items-center border rounded p-2"
+                                                >
+
+                                                    <div className="d-flex align-items-center gap-2">
+                                                        <span>{pos.label}</span>
+
+                                                        <button
+                                                            type="button"
+                                                            className="history-btn"
+                                                            onClick={() => handleHistoryClick(pos)}
+                                                        >
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                width="16"
+                                                                height="16"
+                                                                viewBox="0 0 24 24"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                strokeWidth="2"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                            >
+                                                                <path d="M3 12a9 9 0 1 0 3-6.7" />
+                                                                <path d="M3 3v6h6" />
+                                                                <path d="M12 7v5l4 2" />
+                                                            </svg>
+
+                                                           
+                                                        </button>
+
+                                                        <span className={`status-badge status-${badgeVariant}`} >
+                                                            {formatStatus(pos.raw?.status || "")}
+                                                        </span>
+                                                    </div>
+
+                                                    <Button
+                                                        size="sm"
+                                                        variant="none"
+                                                        onClick={() =>
+                                                            handleViewClick(pos)
+                                                        }
+                                                    >
+                                                        <img src={view_icon} alt="view_icon" className="icon-14" />
+                                                    </Button>
+
+                                                </div>
+                                            );
+                                        })}
+
+                                    </div>
+
                                 )}
+
                             </div>
+
                         </Col>
+
                     </Row>
+
                 )}
 
-                {/* <Row className="mt-4">
-                    <Col>
-                        <div className="border rounded bg-white p-3">
-                            <div className="d-flex justify-content-between align-items-center mb-3">
-                                <h5 className="mb-0" style={{ color: "#3551a3" }}>
-                                    Position Wise Cutoff Configuration
-                                </h5>
-                                <Button variant="outline-secondary">Filters</Button>
-                            </div>
+                {/* ================= MODAL ================= */}
 
-                            <div className="table-responsive">
-                                <table className="table table-bordered align-middle mb-0">
-                                    <thead>
-                                        <tr>
+                <AddExaminationCutoffModal
+                    show={showCutoffModal}
+                    onHide={() => {
 
+                        setShowCutoffModal(false);
 
-                                            <th rowSpan="2">Total Marks</th>
-                                            <th colSpan="3" className="text-center">
-                                                Category Wise Cut-off (%)
-                                            </th>
-                                            <th rowSpan="2">Written Exam Weightage</th>
-                                            <th rowSpan="2">Status</th>
+                        setCutoffEditData(null);
 
-                                        </tr>
-                                        <tr>
-                                            <th>SC/ST</th>
-                                            <th>OBC</th>
-                                            <th>UR</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {staticPositionRows.map((row) => (
-                                            <tr key={`${row.requisition}-${row.position}`}>
+                        setViewPosition(null);
 
-                                                <td>{row.totalMarks}</td>
-                                                <td>{row.scst}</td>
-                                                <td>{row.obc}</td>
-                                                <td>{row.ur}</td>
-                                                <td>{row.writtenWeightage}</td>
-                                                <td>
-                                                    <Badge bg={getStatusBadge(row.status)}>{row.status}</Badge>
-                                                </td>
+                        setDecisionComments("");
 
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                        setCommentError("");
+                    }}
 
+                    editData={cutoffEditData}
 
-                        </div>
-                    </Col>
-                </Row> */}
+                    viewOnly={true}
+
+                    showApprovalActions={true}
+
+                    refreshExamConfigs={refreshExamConfigs}
+
+                    selectedRequisition={selectedRequisition}
+
+                    selectedPosition={
+                        viewPosition
+                            ? [viewPosition]
+                            : []
+                    }
+                />
+
+                <ApprovalHistoryModal
+                    show={showHistoryModal}
+                    onClose={() => {
+                        setShowHistoryModal(false);
+                        setWorkflowHistory([]);
+                    }}
+                    historyData={
+                        workflowHistory.map((item) => ({
+                            ...item,
+                            approverName:
+                                userMap[item.approverId] ||
+                                item.approverRole ||
+                                "-",
+                        }))
+                    }
+                    loading={loadingWorkflowHistory}
+                />
+
             </Container>
+
         </div>
     );
 };
