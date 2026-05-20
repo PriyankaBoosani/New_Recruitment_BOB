@@ -16,6 +16,28 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faCircleExclamation, faCircleXmark, faTrash, faUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import CommentsModal from "./CommentsModal";
 
+// Utility functions for masking sensitive information
+const maskEmail = (email) => {
+  if (!email) return "-";
+  const [localPart, domain] = email.split("@");
+  if (!localPart || !domain) return "-";
+  const maskedLocal = localPart.charAt(0) + "***" + (localPart.length > 1 ? localPart.charAt(localPart.length - 1) : "");
+  return `${maskedLocal}@${domain}`;
+};
+
+const maskPhoneNumber = (phone) => {
+  if (!phone) return "-";
+  const cleanPhone = phone.replace(/\D/g, "");
+  if (cleanPhone.length < 4) return "***";
+  return "*".repeat(cleanPhone.length - 4) + cleanPhone.slice(-4);
+};
+
+const maskAddress = (address) => {
+  if (!address) return "-";
+  if (address.length <= 10) return "*".repeat(address.length);
+  return "*".repeat(Math.min(50, address.length - 4)) + address.slice(-4);
+};
+
 
 const ApplicationForm = ({
   previewData,
@@ -1716,19 +1738,27 @@ useEffect(() => {
 
                   <tr>
                     <td className="fw-med">{t("address")}</td>
-                    <td className="fw-reg" colSpan={4}>{data.personalDetails.address}</td>
+                    <td className="fw-reg" colSpan={4}>
+                      {role !== "recruiter" ? maskAddress(data.personalDetails.address) : data.personalDetails.address}
+                    </td>
                   </tr>
 
                   <tr>
                     <td className="fw-med">{t("permanent_address")}</td>
-                    <td className="fw-reg" colSpan={4}>{data.personalDetails.permanentAddress}</td>
+                    <td className="fw-reg" colSpan={4}>
+                      {role !== "recruiter" ? maskAddress(data.personalDetails.permanentAddress) : data.personalDetails.permanentAddress}
+                    </td>
                   </tr>
 
                   <tr >
                     <td className="fw-med" >{t("mobile")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.mobile}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {role !== "recruiter" ? maskPhoneNumber(data.personalDetails.mobile) : data.personalDetails.mobile}
+                    </td>
                     <td className="fw-med">{t("email")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.email}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {role !== "recruiter" ? maskEmail(data.personalDetails.email) : data.personalDetails.email}
+                    </td>
                   </tr>
 
                   <tr >
