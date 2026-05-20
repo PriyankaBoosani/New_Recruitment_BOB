@@ -45,6 +45,7 @@ import { validateRequisitionSubmission } from "../validations/validateRequisitio
 import CreatePlus_Icon from "../../../assets/CreatePlus_Icon.png";
 import { useTranslation } from "react-i18next";
 import requisitionApiService from "../services/requisitionApiService";
+import Loader from "../../../shared/components/Loader";
 
 const JobPostingsList = () => {
     const { t } = useTranslation(["jobPostingsList", "common"]);
@@ -66,6 +67,7 @@ const JobPostingsList = () => {
     const [month, setMonth] = useState("");
     const [departmentId, setDepartmentId] = useState(null);
     const [showHistoryModal, setShowHistoryModal] = useState(false);
+    const [isPublishing, setIsPublishing] = useState(false);
 
     const {
         history,
@@ -361,6 +363,7 @@ const JobPostingsList = () => {
 
     const handlePublish = async (req) => {
         try {
+            setIsPublishing(true);
             await requisitionApiService.publishDraftRequisition(
                 req.parentRequisitionId
             );
@@ -371,6 +374,8 @@ const JobPostingsList = () => {
         } catch (err) {
             console.error(err);
             toast.error("Publish failed");
+        } finally {
+            setIsPublishing(false);
         }
     };
 
@@ -401,6 +406,7 @@ const JobPostingsList = () => {
 
     return (
         <Container fluid className="job-postings-page">
+            {isPublishing && <Loader />}
             {/* ================= HEADER ================= */}
             <Row className="mb-3 align-items-center">
                 <Col>
