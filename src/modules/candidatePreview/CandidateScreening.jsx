@@ -440,10 +440,11 @@ setTimeout(() => {
       }));
 
       // MOVE TO INTERVIEW POOL
-      setActiveTab("INTERVIEW_POOL");
+     // setActiveTab("INTERVIEW_POOL");
 
       // RESET PAGE
-      setInterviewPage(0);
+      //setInterviewPage(0);
+      setSchedulePoolPage(0);
 
       // REFRESH
       setTimeout(async () => {
@@ -1179,7 +1180,7 @@ setTimeout(() => {
         statusList:
           filters.status.length
             ? filters.status
-            : ["L1_PENDING", "REJECTED"],
+            : ["L1_PENDING", "REJECTED", "PENDING"],
 
         page: 0,
 
