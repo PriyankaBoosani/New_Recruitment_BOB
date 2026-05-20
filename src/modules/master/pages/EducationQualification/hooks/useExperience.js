@@ -4,6 +4,7 @@ import {
   validateEducationForm,
   validateEducationLevel,
   validateCourse,
+  validateCourseCode,
   validateSpecialization
 } from "../../../../../shared/utils/educationValidations";
 import { useTranslation } from "react-i18next";
@@ -105,10 +106,12 @@ export const useExperience = () => {
     }
 
     const updated = [...formData];
-
     if (field === "specialization") {
       updated[formIndex].specializationOthers[specIndex].name = value;
-    } else {
+    } else if (field === "specializationCode") {
+      updated[formIndex].specializationOthers[specIndex].code = value;
+    }
+    else {
       updated[formIndex][field] = value;
     }
 
@@ -127,6 +130,15 @@ export const useExperience = () => {
     if (field === "course") {
       fieldError = validateCourse(value);
     }
+
+   if (field === "courseCode") {
+  fieldError = value?.trim()
+    ? null
+    : t(
+        "education:course_code_required",
+        "Course code is required"
+      );
+}
 
     if (field === "specialization") {
       fieldError = validateSpecialization(
@@ -150,6 +162,7 @@ export const useExperience = () => {
     const updated = [...formData];
     updated[formIndex].specializationOthers.push({
       name: "",
+      code: "",
       id: null
     });
     setFormData(updated);
@@ -167,6 +180,7 @@ export const useExperience = () => {
       {
         educationLevel: "",
         course: "",
+        courseCode: "",
         specializationOthers: []
         // specializationOthers: [{ name: "", id: "" }]
       },
@@ -201,7 +215,7 @@ export const useExperience = () => {
           levelId: formData[0].educationLevel,
           qualificationName: formData[0].course,
           // qualificationCode: formData[0].course,
-          qualificationCode: "",
+          qualificationCode: formData[0].courseCode || "",
           displayOrder: 0,
           educationQualificationsId: formData[0].educationQualificationsId || null,
         },
@@ -209,7 +223,7 @@ export const useExperience = () => {
           .filter((s) => s?.name.trim()).map((s) => ({
             specializationName: s.name.trim(),
             // specializationCode: s.name,
-            specializationCode: "",
+            specializationCode: s.code || "",
             specializationId: s.id || null,
           }))
       };
@@ -293,7 +307,7 @@ export const useExperience = () => {
             ? item.specialization.map((s) => ({
               name: s.name,
               id: s.id,
-              code : s.code
+              code: s.code
             }))
             : [],
       },

@@ -21,21 +21,45 @@ const ExperienceModal = ({
   const { t } = useTranslation(["education", "common"]);
 
   const getDuplicateIndexes = (list = []) => {
-    const map = {};
-    const duplicates = new Set();
+
+    const nameMap = {};
+    const codeMap = {};
+
+    const duplicateNames = new Set();
+    const duplicateCodes = new Set();
 
     list.forEach((val, index) => {
-      const key = val?.name?.trim().toLowerCase();
-      if (!key) return;
 
-      if (map[key] !== undefined) {
-        duplicates.add(index);
-        duplicates.add(map[key]);
-      } else {
-        map[key] = index;
+      /* NAME */
+      const nameKey = val?.name?.trim().toLowerCase();
+
+      if (nameKey) {
+        if (nameMap[nameKey] !== undefined) {
+          duplicateNames.add(index);
+          duplicateNames.add(nameMap[nameKey]);
+        } else {
+          nameMap[nameKey] = index;
+        }
       }
+
+      /* CODE */
+      const codeKey = val?.code?.trim().toLowerCase();
+
+      if (codeKey) {
+        if (codeMap[codeKey] !== undefined) {
+          duplicateCodes.add(index);
+          duplicateCodes.add(codeMap[codeKey]);
+        } else {
+          codeMap[codeKey] = index;
+        }
+      }
+
     });
-    return duplicates;
+
+    return {
+      duplicateNames,
+      duplicateCodes
+    };
   };
 
   return (
@@ -54,7 +78,10 @@ const ExperienceModal = ({
       <Modal.Body>
 
         {formData.map((form, formIndex) => {
-          const duplicateIndexes = getDuplicateIndexes(form.specializationOthers);
+          const {
+            duplicateNames,
+            duplicateCodes
+          } = getDuplicateIndexes(form.specializationOthers);
 
           return (
             <div key={formIndex} className="border rounded p-3 mb-3">
@@ -135,18 +162,19 @@ const ExperienceModal = ({
                   ) : (
                     <input
                       type="text"
-                      className={`form-control ${errors[formIndex]?.courseCode ? "is-invalid" : ""}`}
+                      className={`form-control ${errors[formIndex]?.courseCode ? "is-invalid" : ""
+                        }`}
                       value={form.courseCode}
                       placeholder={t("education:course_code_placeholder")}
                       onChange={(e) =>
-                        onChange(formIndex, "course_code", e.target.value)
+                        onChange(formIndex, "courseCode", e.target.value)
                       }
                     />
                   )}
 
                   {!isViewing && (
                     <small className="text-danger">
-                      {errors[formIndex]?.course}
+                      {errors[formIndex]?.courseCode}
                     </small>
                   )}
                 </div>
@@ -158,10 +186,40 @@ const ExperienceModal = ({
                 <div className="col-md-12">
 
                   {/* TITLE ALWAYS TOP */}
-                  <label className="form-label">
-                    {t("education:specialization")}
-                  </label>
+                  {form.specializationOthers?.length > 0 && (
+                    <>
 
+                      <label className="form-label">
+                        {t("education:specialization")}
+                      </label>
+
+
+                      <div className="row g-2 align-items-start mb-2">
+
+                        <div className="col-md-5">
+                          <label
+                            className="form-label"
+                            style={{ fontSize: "13px", fontWeight: "400" }}
+                          >
+                            {t("education:specialization_name")}
+                          </label>
+                        </div>
+
+                        <div className="col-md-5">
+                          <label
+                            className="form-label"
+                            style={{ fontSize: "13px", fontWeight: "400" }}
+                          >
+                            {t("education:specialization_code")}
+                          </label>
+                        </div>
+
+                        <div className="col-md-2"></div>
+
+                      </div>
+
+                    </>
+                  )}
                   {isViewing ? (
                     <div
                       style={{
@@ -184,14 +242,15 @@ const ExperienceModal = ({
                           .map((s, i) => (
                             <div
                               key={i}
-                              className="col-md-6 mb-2"
+                              className="col-md-12 mb-2"
                             >
-                              <div className="row g-2 align-items-center">
+                              <div className="row g-2 align-items-start">
 
-                                <div className="col">
+                                {/* SPECIALIZATION NAME */}
+                                <div className="col-md-5">
                                   <input
                                     type="text"
-                                    className="form-control"
+                                    className="form-control-view"
                                     value={
                                       typeof s === "string"
                                         ? s
@@ -200,6 +259,23 @@ const ExperienceModal = ({
                                     readOnly
                                   />
                                 </div>
+
+                                {/* SPECIALIZATION CODE */}
+                                <div className="col-md-5">
+                                  <input
+                                    type="text"
+                                    className="form-control-view"
+                                    value={
+                                      typeof s === "object"
+                                        ? s.code || "-"
+                                        : "-"
+                                    }
+                                    readOnly
+                                  />
+                                </div>
+
+                                {/* EMPTY SPACE LIKE DELETE BUTTON */}
+                                <div className="col-md-2"></div>
 
                               </div>
                             </div>
@@ -218,7 +294,7 @@ const ExperienceModal = ({
                             paddingRight: "5px"
                           }}
                         >
-                          <div className="row">
+                          {/* <div className="row">
                             {form.specializationOthers.map((val, i) => (
                               <div key={i} className="col-md-6 mb-2">
 
@@ -276,11 +352,132 @@ const ExperienceModal = ({
 
                               </div>
                             ))}
+                          </div> */}
+                          <div className="row">
+                            {form.specializationOthers.map((val, i) => (
+                              <div key={i} className="col-md-12 mb-2">
+
+                                <div className="row g-2 align-items-start">
+
+                                  {/* SPECIALIZATION NAME */}
+                                  <div className="col-md-5">
+                                    <input
+                                      type="text"
+                                      className={`form-control ${duplicateNames.has(i) ? "is-invalid" : ""
+                                        }`}
+                                      value={val?.name || ""}
+                                      placeholder="Specialization Name"
+                                      onChange={(e) =>
+                                        onChange(
+                                          formIndex,
+                                          "specialization",
+                                          e.target.value,
+                                          i
+                                        )
+                                      }
+                                    />
+                                  </div>
+
+                                  {/* SPECIALIZATION CODE */}
+                                  <div className="col-md-5">
+                                    <input
+                                      type="text"
+                                      className={`form-control ${duplicateCodes.has(i) ? "is-invalid" : ""
+                                        }`}
+                                      value={val?.code || ""}
+                                      placeholder="Specialization Code"
+                                      onChange={(e) =>
+                                        onChange(
+                                          formIndex,
+                                          "specializationCode",
+                                          e.target.value,
+                                          i
+                                        )
+                                      }
+                                    />
+                                  </div>
+
+                                  {/* DELETE BUTTON */}
+                                  <div className="col-md-2 d-flex align-items-center">
+
+                                    {(!isEditing || (isEditing && !val?.id)) && (
+                                      <Button
+                                        type="button"
+                                        variant="link"
+                                        className="action-btn delete-btn"
+                                        onClick={() => onRemoveSpec(formIndex, i)}
+                                      >
+                                        <img
+                                          src={deleteIcon}
+                                          alt="Delete"
+                                          className="icon-16"
+                                        />
+                                      </Button>
+                                    )}
+
+                                  </div>
+
+                                </div>
+                                <div className="row mt-1">
+
+                                  {/* NAME ERROR */}
+                                  <div className="col-md-5">
+
+                                    {/* Duplicate Name */}
+                                    {duplicateNames.has(i) && (
+                                      <small className="text-danger">
+                                        {t("education:duplicate_specialization")}
+                                      </small>
+                                    )}
+
+                                    {/* Name Required */}
+                                    {val?.code?.trim() && !val?.name?.trim() && (
+                                      <small className="text-danger">
+                                        {t(
+                                          "education:specialization_required",
+                                          "Specialization name is required"
+                                        )}
+                                      </small>
+                                    )}
+
+                                  </div>
+
+                                  {/* CODE ERROR */}
+                                  <div className="col-md-5">
+
+                                    {/* Duplicate Code */}
+                                    {duplicateCodes.has(i) && (
+                                      <small className="text-danger">
+                                        {t(
+                                          "education:duplicate_specialization_code",
+                                          "Duplicate specialization code"
+                                        )}
+                                      </small>
+                                    )}
+
+                                    {/* Code Required */}
+                                    {val?.name?.trim() && !val?.code?.trim() && (
+                                      <small className="text-danger">
+                                        {t(
+                                          "education:specialization_code_required",
+                                          "Specialization code is required"
+                                        )}
+                                      </small>
+                                    )}
+
+                                  </div>
+
+                                  <div className="col-md-2"></div>
+
+                                </div>
+
+                              </div>
+                            ))}
                           </div>
 
-                          <small className="text-danger">
+                          {/* <small className="text-danger">
                             {errors[formIndex]?.specialization}
-                          </small>
+                          </small> */}
                         </div>
                       )}
 

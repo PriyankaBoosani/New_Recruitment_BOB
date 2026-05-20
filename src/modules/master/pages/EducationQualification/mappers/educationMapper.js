@@ -26,12 +26,3 @@ export const mapEducationListFromApi = (list = [], educationOptions = []) => {
   });
 };
 
-// export const mapEducationListFromApi = (list = []) => {
-//   return list.map(item => ({
-//     educationLevel: item?.qualification?.documentName || "-",
-//     course: item?.qualification?.qualificationName || "-",
-//     specialization: item?.specializations?.map(
-//       s => s.specializationName
-//     ) || [],
-//   }));
-// };

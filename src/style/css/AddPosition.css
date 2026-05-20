@@ -145,7 +145,17 @@
 	border-width: 1px;
 	border-color: hsl(0, 0%, 80%);
 	border-style: solid;
-	min-height: 39px;
+	min-height: 43px;
+}
+
+.form-control, .form-selects {
+	border-radius: 6px;
+	padding: 6px 12px;
+	font-size: 0.875em;
+	border-width: 1px;
+	border-color: hsl(0, 0%, 80%);
+	border-style: solid;
+	min-height: 43px;
 }
 
 
