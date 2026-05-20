@@ -176,7 +176,7 @@ bulkImportCandidates: (file) => {
 
   return api.post(
 
-    "/recruiter/examination-marks/upload-marks-excel",
+    "/recruiter/examination-marks/upload-marks",
 
     formData,
 

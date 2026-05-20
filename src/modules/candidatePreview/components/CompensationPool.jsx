@@ -44,7 +44,9 @@ const [selectedCandidate, setSelectedCandidate] = useState(null);
 
 const canEditManagerCompensation =
   selectedCandidate?.status !== "NEW" &&
-  selectedCandidate?.status !== "APPROVED"; //  ADD THIS
+  selectedCandidate?.status !== "APPROVED" &&
+  selectedCandidate?.status !== "RENEGOTIATE";
+   //  ADD THIS
 
 const formatNumberWithCommas = (value) => {
   const numeric = value.replace(/[^0-9]/g, ""); // allow only digits
@@ -257,10 +259,10 @@ const handleManagerAction = async (actionType) => {
   return;
 }
 
-    if (fixed + variable !== expected) {
-      toast.error("Fixed Pay + Variable Pay should be equal to Expected CTC");
-      return;
-    }
+    // if (fixed + variable !== expected) {
+    //   toast.error("Fixed Pay + Variable Pay should be equal to Expected CTC");
+    //   return;
+    // }
    const payload = {
   compensation: {
     candidateId: selectedCandidate.candidateId,
@@ -541,10 +543,10 @@ if (!formData.fixedPay) {
     const variable = parseAmount(formData.variablePay) || 0;
     const expected = Number(selectedCandidate?.expectedCtc || 0);
 
-    if (fixed + variable !== expected) {
-      toast.error("Fixed Pay + Variable Pay should be equal to Expected CTC");
-      return;
-    }
+    // if (fixed + variable !== expected) {
+    //   toast.error("Fixed Pay + Variable Pay should be equal to Expected CTC");
+    //   return;
+    // }
     const payload = {
       compensation: {
         candidateId: selectedCandidate.candidateId,
