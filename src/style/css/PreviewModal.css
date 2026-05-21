@@ -932,11 +932,11 @@ select.form-control {
 
 /* ENABLED (Save) */
 .save-btn.unsaved {
-  background-color: transparent;
-  color: #f36c21;
-  /* BOB Orange */
-  border: 1.5px solid #f36c21;
-  cursor: pointer;
+	background-color: transparent;
+	color: #fff;
+	border: 1.5px solid #f36c21;
+	cursor: pointer;
+	background: #f36c21;
 }
 
 .save-btn.unsaved:hover {
