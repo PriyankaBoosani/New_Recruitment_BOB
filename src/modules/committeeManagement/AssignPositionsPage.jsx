@@ -277,7 +277,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                 type="date"
                 min={today}
                 value={committee.startDate}
-                disabled={shouldDisableFields}
+                disabled={shouldDisableRemove}
                 // disabled={
                 //   isL1Approved ||
                 //   (isApproved && (
@@ -744,6 +744,16 @@ const updatePanel = async (payload) => {
               disableName={true}
               disableType={true}     // ✅ ADD THIS
               onSave={async () => {
+
+                 // ✅ MEMBERS MANDATORY
+                if (
+                  !editFormData?.members ||
+                  editFormData.members.length === 0
+                ) {
+                  toast.error("Please select at least one panel member");
+                  return;
+                }
+
                 try {
                   const payload = preparePanelPayload(
                     editFormData,
@@ -756,10 +766,10 @@ const updatePanel = async (payload) => {
                   );
                   console.log("isresScheduled", isresScheduled);
                   if (isresScheduled?.data) {
-  setPendingPayload(payload);
-  setShowUpdateWarning(true);
-  return;
-}
+                      setPendingPayload(payload);
+                      setShowUpdateWarning(true);
+                      return;
+                    }
 
                   
                   await updatePanel(payload);

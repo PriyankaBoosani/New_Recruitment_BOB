@@ -356,7 +356,7 @@ return;
         //   "Panel is assigned to a position and cannot be deleted"
         // );
         setErrorMessage(
-          res?.message || t("panel_assigned_cannot_delete")
+          res?.data || t("panel_assigned_cannot_delete")
         );
         setShowErrorModal(true);
         return;

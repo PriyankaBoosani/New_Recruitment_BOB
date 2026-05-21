@@ -860,7 +860,7 @@ setTimeout(() => {
 
     searchTimeoutRef.current = setTimeout(() => {
       setPage(0);
-      fetchCandidates();
+      //fetchCandidates();
     }, 400);
 
     return () => clearTimeout(searchTimeoutRef.current);
@@ -1389,7 +1389,7 @@ setTimeout(() => {
     filters.status,
     filters.stateId,
     filters.categoryId,
-    masterData,
+    //masterData,
     activeTab,
 
   ]);
@@ -1402,14 +1402,14 @@ setTimeout(() => {
   }, [isRankEnabled]);
 
   // 🔍 Fetch all candidates for filter dropdowns when position/status changes
-  useEffect(() => {
-    if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") {
-      setAllCandidatesForFilters([]);
-      return;
-    }
+  // useEffect(() => {
+  //   if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") {
+  //     setAllCandidatesForFilters([]);
+  //     return;
+  //   }
 
-    fetchAllCandidatesForFilters();
-  }, [selectedPositionId, filters.status, filters.searchText, masterData, activeTab, isRankEnabled]);
+  //   fetchAllCandidatesForFilters();
+  // }, [selectedPositionId, filters.status, filters.searchText, masterData, activeTab, isRankEnabled]);
 
   const handleRequisitionChange = async (e) => {
     const reqId = e.target.value;

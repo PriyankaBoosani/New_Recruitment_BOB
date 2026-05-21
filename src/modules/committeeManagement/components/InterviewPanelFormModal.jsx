@@ -182,28 +182,37 @@ const InterviewPanelFormModal = ({
       </div> */}
 
       <div className="panel-form-actions">
-        {/* <button
-          type="button"
-          className="btn btn-outline-secondary"
-          onClick={() => {
-            setFormData({ name: "", community: "", members: [] });
-            setErrors({});
-          }}
-        >
-          {t("common:cancel")}
-        </button> */}
 
-       {!showUpdateWarning && (
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={onSave}
-          >
-            {formData.id
-              ? t("interviewPanelCommittee:update_panel_button")
-              : t("interviewPanelCommittee:save_panel")}
-          </button>
+        {!showUpdateWarning && (
+          <>
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={() => {
+                setFormData({
+                  name: "",
+                  community: "",
+                  members: []
+                });
+
+                setErrors({});
+              }}
+            >
+              {t("common:cancel")}
+            </button>
+
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={onSave}
+            >
+              {formData.id
+                ? t("interviewPanelCommittee:update_panel_button")
+                : t("interviewPanelCommittee:save_panel")}
+            </button>
+          </>
         )}
+
       </div>
     </>
   );
