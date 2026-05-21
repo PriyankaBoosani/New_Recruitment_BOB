@@ -47,7 +47,7 @@ const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
 
       <Modal.Body className="modal-body-custom">
         <Form.Group>
-          <Form.Label className="comment-label">{t(`approvalHistory:Comments`)}</Form.Label>
+          <Form.Label className="comment-label">{t(`approvalHistory:Comments`)}<span className="text-danger">*</span></Form.Label>
           <Form.Control
             as="textarea"
             rows={4}
