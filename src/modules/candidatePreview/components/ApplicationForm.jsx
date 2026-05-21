@@ -669,6 +669,7 @@ const ApplicationForm = ({
           finalScreeningRemark: data.finalScreeningRemark ?? "",
           submitBeforeDate: data.submitBeforeDate ?? "",
           screeningId: data.screeningId ?? null,
+          isScreeningCompleted: data.isScreeningCompleted ?? false,
         }));
         setIsEligible(Boolean(data.isEligible));
       } catch (err) {
@@ -880,7 +881,15 @@ const handleInputChange = (field, value) => {
     screeningForm.isEducationCriteriaMet === "DISCREPANCY" ||
     hasAdditionalDocuments;
 
+    console.log("hasAnyDiscrepancy", hasAnyDiscrepancy)
 
+console.log("hasAdditionalDocuments",hasAdditionalDocuments)
+
+const hasYetToUpload = documentRows.some(
+  doc => !doc?.url
+);
+const shouldShowSubmitBefore =
+  hasAnyDiscrepancy || hasYetToUpload;
 
   const validateForm = () => {
     const newErrors = {};
@@ -974,7 +983,7 @@ const handleInputChange = (field, value) => {
     }
 
     // Submit before date validation
-    if (hasAnyDiscrepancy) {
+    if (shouldShowSubmitBefore) {
       if (!screeningForm.submitBeforeDate) {
         newErrors.submitBeforeDate = t("please_select_date");
       } else {
@@ -2196,7 +2205,7 @@ useEffect(() => {
                         </td>
 
                         <td className="action-cell divider1">
-                          {left && (
+                          {left && leftStatus !== "YET TO UPLOAD" && (
                             <>
                               <img
                                 src={viewIcon}
@@ -2268,7 +2277,7 @@ useEffect(() => {
                         </td>
 
                         <td className="action-cell">
-                          {right ? (
+                          {right && rightStatus !== "YET TO UPLOAD" ? (
                             <>
                               <img
                                 src={viewIcon}
@@ -2315,7 +2324,9 @@ useEffect(() => {
           </Accordion.Body>
         </Accordion.Item>
 
-        {!isZonalHr && (
+        {canCandidatePool && !disableDocAction &&
+          !isFromInterview &&
+          !isFromCompensationPool && (
           <div className="card mt-3 border-0">
             <div className="d-flex gap-3 align-items-center border-bottom p-3">
               <label style={{ fontSize: '0.875rem', fontWeight: 500, color: '#162B75' }}>Additional Required Documents</label>
@@ -2597,8 +2608,14 @@ useEffect(() => {
               </div>
 
               {/* ================= SUBMIT ROW ================= */}
-              <div className={`criteria-submit-row ${hasAnyDiscrepancy ? 'justify-content-between' : 'justify-content-end'}`}>
-                {!isZonalHr && hasAnyDiscrepancy && (
+              <div
+  className={`criteria-submit-row ${
+    shouldShowSubmitBefore
+      ? "justify-content-between"
+      : "justify-content-end"
+  }`}
+>
+                {!isZonalHr && shouldShowSubmitBefore && (
                   <div className="d-grid">
                     <label className="submit-label">{t("submit_before")}</label>
                     <input
