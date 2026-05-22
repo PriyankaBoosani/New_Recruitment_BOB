@@ -19,6 +19,14 @@
 }
 
 
+.is-invalid {
+  border: 1px solid red !important;
+}
+
+.is-invalid:focus {
+  border: 1px solid red !important;
+  box-shadow: 0 0 0 0.15rem rgba(255, 0, 0, 0.15) !important;
+}
 
 
 

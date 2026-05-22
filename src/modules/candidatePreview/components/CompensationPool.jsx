@@ -44,9 +44,7 @@ const [selectedCandidate, setSelectedCandidate] = useState(null);
 
 const canEditManagerCompensation =
   selectedCandidate?.status !== "NEW" &&
-  selectedCandidate?.status !== "APPROVED" &&
-  selectedCandidate?.status !== "RENEGOTIATE";
-   //  ADD THIS
+  selectedCandidate?.status !== "APPROVED"; //  ADD THIS
 
 const formatNumberWithCommas = (value) => {
   const numeric = value.replace(/[^0-9]/g, ""); // allow only digits
@@ -151,6 +149,11 @@ const getNegotiationClass = (status) => {
 const [showRecruiterModal, setShowRecruiterModal] = useState(false);
 const [showManagerModal, setShowManagerModal] = useState(false);
 
+
+
+const [saveClicked, setSaveClicked] = useState(false);
+const [managerSaveClicked, setManagerSaveClicked] = useState(false);
+
   const allSelected =
     candidates.length > 0 && selectedIds.length === candidates.length;
 
@@ -240,7 +243,7 @@ const parseAmount = (val) =>
 const handleManagerAction = async (actionType) => {
   try {
 
-
+setManagerSaveClicked(true);
       const fixed =
       parseAmount(managerForm.fixedPay) ||
       selectedCandidate.fixedPay ||
@@ -454,7 +457,75 @@ if (responseData?.success === true) {
 
 
 
+// const handleCompensationClick = (c) => {
+//   setSelectedCandidate(c);
+
+//   const userEmail = user?.email?.toLowerCase();
+//   const userRole = user?.role?.toLowerCase();
+
+//   const isRecruiter = userRole === "recruiter";
+//   const isCommitteeMember = userRole === "committee_member";
+
+//   // ✅ Panel check
+//   const matchedPanel = panelData?.compensationPanelList?.find(panel =>
+//     panel?.interviewPanel?.panelMembers?.some(member => {
+//       const apiEmail = member?.panelMember?.email?.toLowerCase();
+//       const apiRole = member?.panelMember?.role?.toLowerCase();
+//       return apiEmail === userEmail && apiRole === userRole;
+//     })
+//   );
+
+//   const isUserInPanel = !!matchedPanel;
+
+//   //  DATE CHECK
+//   let isWithinDateRange = false;
+
+//   if (matchedPanel?.startDate && matchedPanel?.endDate) {
+//     const today = new Date();
+//     const start = new Date(matchedPanel.startDate);
+//     const end = new Date(matchedPanel.endDate);
+
+//     // normalize time
+//     start.setHours(0,0,0,0);
+//     end.setHours(23,59,59,999);
+
+//     isWithinDateRange = today >= start && today <= end;
+//   }
+
+//   // ===== FINAL DECISION =====
+
+//   // Committee Member + match → Manager Modal
+//   if (isCommitteeMember && isUserInPanel && canCompensationPool) {
+//     setShowManagerModal(true);
+//   }
+
+//   //  Recruiter + match + DATE VALID → Manager Modal
+//   else if (isRecruiter && isUserInPanel && isWithinDateRange) {
+//     setShowManagerModal(true);
+//   }
+
+//   //  Recruiter + match BUT DATE INVALID → Recruiter Modal
+//   else if (isRecruiter && isUserInPanel && !isWithinDateRange) {
+//     setShowRecruiterModal(true);
+//   }
+
+//   //  Recruiter + NOT match → Recruiter Modal
+//   else if (isRecruiter && !isUserInPanel) {
+//     setShowRecruiterModal(true);
+//   }
+
+//   else {
+//     console.warn("No matching condition for modal");
+//   }
+// };
+
+
 const handleCompensationClick = (c) => {
+
+  console.log("====================================");
+  console.log("COMPENSATION CLICKED");
+  console.log("====================================");
+
   setSelectedCandidate(c);
 
   const userEmail = user?.email?.toLowerCase();
@@ -463,57 +534,189 @@ const handleCompensationClick = (c) => {
   const isRecruiter = userRole === "recruiter";
   const isCommitteeMember = userRole === "committee_member";
 
-  // ✅ Panel check
+  console.log("LOGIN USER EMAIL:", userEmail);
+  console.log("LOGIN USER ROLE:", userRole);
+
+  console.log("isRecruiter:", isRecruiter);
+  console.log("isCommitteeMember:", isCommitteeMember);
+
+  console.log("canCompensationPool:", canCompensationPool);
+
+  // PANEL CHECK
   const matchedPanel = panelData?.compensationPanelList?.find(panel =>
     panel?.interviewPanel?.panelMembers?.some(member => {
-      const apiEmail = member?.panelMember?.email?.toLowerCase();
-      const apiRole = member?.panelMember?.role?.toLowerCase();
-      return apiEmail === userEmail && apiRole === userRole;
+
+      const apiEmail =
+        member?.panelMember?.email?.toLowerCase();
+
+      const apiRole =
+        member?.panelMember?.role?.toLowerCase();
+
+      console.log("----------- PANEL MEMBER -----------");
+      console.log("API EMAIL:", apiEmail);
+      console.log("API ROLE:", apiRole);
+
+      console.log(
+        "EMAIL MATCH:",
+        apiEmail === userEmail
+      );
+
+      console.log(
+        "ROLE MATCH:",
+        apiRole === userRole
+      );
+
+      return (
+        apiEmail === userEmail &&
+        apiRole === userRole
+      );
     })
   );
 
   const isUserInPanel = !!matchedPanel;
 
-  // ✅ DATE CHECK
+  console.log("MATCHED PANEL:", matchedPanel);
+  console.log("isUserInPanel:", isUserInPanel);
+
+  // DATE CHECK
   let isWithinDateRange = false;
 
   if (matchedPanel?.startDate && matchedPanel?.endDate) {
+
     const today = new Date();
     const start = new Date(matchedPanel.startDate);
     const end = new Date(matchedPanel.endDate);
 
-    // normalize time
     start.setHours(0,0,0,0);
     end.setHours(23,59,59,999);
 
-    isWithinDateRange = today >= start && today <= end;
+    isWithinDateRange =
+      today >= start && today <= end;
+
+    console.log("TODAY:", today);
+    console.log("START DATE:", start);
+    console.log("END DATE:", end);
+
+  } else {
+
+    console.log(
+      "DATE CHECK FAILED -> startDate or endDate missing"
+    );
   }
+
+  console.log(
+    "isWithinDateRange:",
+    isWithinDateRange
+  );
+
+  console.log("====================================");
+  console.log("CHECKING CONDITIONS");
+  console.log("====================================");
+
+  // CONDITION 1
+  console.log(
+    "Condition 1 -> Committee Member + Panel + Privilege:",
+    isCommitteeMember &&
+    isUserInPanel &&
+    canCompensationPool
+  );
+
+  // CONDITION 2
+  console.log(
+    "Condition 2 -> Recruiter + Panel + Valid Date:",
+    isRecruiter &&
+    isUserInPanel &&
+    isWithinDateRange
+  );
+
+  // CONDITION 3
+  console.log(
+    "Condition 3 -> Recruiter + Panel + Invalid Date:",
+    isRecruiter &&
+    isUserInPanel &&
+    !isWithinDateRange
+  );
+
+  // CONDITION 4
+  console.log(
+    "Condition 4 -> Recruiter + NOT In Panel:",
+    isRecruiter &&
+    !isUserInPanel
+  );
 
   // ===== FINAL DECISION =====
 
-  // ✅ Committee Member + match → Manager Modal
-  if (isCommitteeMember && isUserInPanel && canCompensationPool) {
+  if (
+    isCommitteeMember &&
+    isUserInPanel &&
+    canCompensationPool
+  ) {
+
+    console.log(
+      "OPENING MANAGER MODAL -> Committee Member"
+    );
+
     setShowManagerModal(true);
   }
 
-  // ✅ Recruiter + match + DATE VALID → Manager Modal
-  else if (isRecruiter && isUserInPanel && isWithinDateRange) {
+  else if (
+    isRecruiter &&
+    isUserInPanel &&
+    isWithinDateRange
+  ) {
+
+    console.log(
+      "OPENING MANAGER MODAL -> Recruiter + Valid Date"
+    );
+
     setShowManagerModal(true);
   }
 
-  // ✅ Recruiter + match BUT DATE INVALID → Recruiter Modal
-  else if (isRecruiter && isUserInPanel && !isWithinDateRange) {
+  else if (
+    isRecruiter &&
+    isUserInPanel &&
+    !isWithinDateRange
+  ) {
+
+    console.log(
+      "OPENING RECRUITER MODAL -> Invalid Date"
+    );
+
     setShowRecruiterModal(true);
   }
 
-  // ✅ Recruiter + NOT match → Recruiter Modal
-  else if (isRecruiter && !isUserInPanel) {
+  else if (
+    isRecruiter &&
+    !isUserInPanel
+  ) {
+
+    console.log(
+      "OPENING RECRUITER MODAL -> User Not In Panel"
+    );
+
     setShowRecruiterModal(true);
   }
 
   else {
-    console.warn("No matching condition for modal");
+
+    console.log("NO MODAL OPENED");
+
+    console.log({
+      userEmail,
+      userRole,
+      isRecruiter,
+      isCommitteeMember,
+      isUserInPanel,
+      isWithinDateRange,
+      canCompensationPool
+    });
+
+    console.warn(
+      "No matching condition for modal"
+    );
   }
+
+  console.log("====================================");
 };
 
 
@@ -528,11 +731,11 @@ const handleSaveCompensation = async () => {
 
 
 
+  setSaveClicked(true);
 
 
 
-
-    // ✅ REQUIRED FIELD VALIDATION
+    //  REQUIRED FIELD VALIDATION
 if (!formData.fixedPay) {
   toast.error("Fixed Pay is required");
   return;
@@ -636,6 +839,10 @@ if (!formData.fixedPay) {
     toast.error(errorMsg);
   }
 };
+
+
+
+
 
   const sortIcon = (key) => {
     if (sortConfig.key !== key) return "↕";
@@ -925,17 +1132,19 @@ onHide={() => setShowRecruiterModal(false)}
   <label className="form-label fw-medium">
     Fixed Pay <span className="text-danger">*</span>
   </label>
-  <input
-    className={`form-control ${!formData.fixedPay ? "is-invalid" : ""}`}
-    placeholder="Enter Value"
-    value={formData.fixedPay}
-    onChange={(e) =>
-      setFormData({
-        ...formData,
-        fixedPay: formatNumberWithCommas(e.target.value),
-      })
-    }
-  />
+<input
+ className={`form-control ${
+  saveClicked && !formData.fixedPay ? "is-invalid" : ""
+}`}
+  placeholder="Enter Value"
+  value={formData.fixedPay}
+  onChange={(e) =>
+    setFormData({
+      ...formData,
+      fixedPay: formatNumberWithCommas(e.target.value),
+    })
+  }
+/>
   {/* {!formData.fixedPay && (
     <div className="invalid-feedback">Fixed Pay is required</div>
   )} */}
@@ -1033,7 +1242,11 @@ dialogClassName="custom-modal compensation-modal"
     Fixed Pay <span className="text-danger">*</span>
   </label>
 <input
-  className={`form-control ${!managerForm.fixedPay ? "is-invalid" : ""}`}
+ className={`form-control ${
+  managerSaveClicked && !managerForm.fixedPay
+    ? "is-invalid"
+    : ""
+}`}
   value={managerForm.fixedPay}
   readOnly={!canEditManagerFields}
   onChange={(e) =>

@@ -3805,6 +3805,10 @@ export default function CandidateScreening({ selectedJob }) {
       </Modal>
 
 
+
+      
+
+
       <Modal
         show={showExaminationModal}
         onHide={() => setShowExaminationModal(false)}
@@ -4102,8 +4106,8 @@ export default function CandidateScreening({ selectedJob }) {
                             VACANCY
                           </td>
 
-                    {[2,1,3,2,8,1,0,0,0,17]
-                            .map((val, i) => (
+                    {[25,18,45,22,95,12,4,3,1,225]
+                      .map((val, i) => (
 
                               <td
                                 key={i}
@@ -4165,7 +4169,7 @@ export default function CandidateScreening({ selectedJob }) {
 
                         {/* QUALIFIED SET II */}
 
-                        <tr>
+                  {/* <tr>
 
                           <td
                             style={{
@@ -4197,7 +4201,7 @@ export default function CandidateScreening({ selectedJob }) {
 
                             ))}
 
-                        </tr>
+                  </tr> */}
 
                       </tbody>
 
