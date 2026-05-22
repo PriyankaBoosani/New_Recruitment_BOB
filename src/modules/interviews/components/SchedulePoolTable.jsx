@@ -195,9 +195,10 @@ const SchedulePoolTable = ({
 
                 {/* Interview Status */}
                 <td className="align-content-center ps-4">
-                  {getApprovalStatus(row) === "L1_PENDING"
-                    ? "L1 Pending"
-                    : getApprovalStatus(row)}
+                  {getApprovalStatus(row)
+                    ?.toLowerCase()
+                    ?.replaceAll("_", " ")
+                    ?.replace(/\b\w/g, (char) => char.toUpperCase())}
 
                   {getApprovalStatus(row) === "REJECTED" && (
                     <OverlayTrigger
@@ -213,7 +214,11 @@ const SchedulePoolTable = ({
                           className="ms-2"
                           src={I_icon}
                           alt="View remarks"
-                          style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                          style={{
+                            width: "16px",
+                            height: "16px",
+                            cursor: "pointer",
+                          }}
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedRemarks(getRemarks(row));

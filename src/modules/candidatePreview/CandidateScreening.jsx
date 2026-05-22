@@ -29,7 +29,7 @@ import ZonalRejectedCommentModal from "./components/ZonalRejectedCommentModal";
 import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck, FaBars, FaListOl, FaExternalLinkAlt } from "react-icons/fa";
 import { faListOl } from "@fortawesome/free-solid-svg-icons";
 import CandidateImportModal
-from "./components/CandidateImportModal";
+  from "./components/CandidateImportModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DropdownStrip from "./components/DropdownStrip"
 // import CandidatePreviewPage from "./candidatePreviewPage";
@@ -43,7 +43,8 @@ import {
 
 import {
   FiUpload
-} from "react-icons/fi";import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
+} from "react-icons/fi";
+import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import CompensationPool from "./components/CompensationPool";
 import useCompensationPool from "./hooks/useCompensationPool";
 import { mapCompensationCandidates } from "./mappers/compositionMapper";
@@ -155,16 +156,16 @@ export default function CandidateScreening({ selectedJob }) {
 
 
 
-const [
-  examinationScoreData,
-  setExaminationScoreData
-] = useState([]);
+  const [
+    examinationScoreData,
+    setExaminationScoreData
+  ] = useState([]);
 
 
-const [
-  showImportCandidatesModal,
-  setShowImportCandidatesModal
-] = useState(false);
+  const [
+    showImportCandidatesModal,
+    setShowImportCandidatesModal
+  ] = useState(false);
 
   const user = useSelector((state) => state.user.user);
 
@@ -202,7 +203,8 @@ const [
     L1_PENDING: "L1 Pending",
     L2_PENDING: "L2 Pending",
     APPROVED: "Approved",
-    REJECTED: "Rejected"
+    REJECTED: "Rejected",
+    PENDING: "Pending"
   };
   const OFFER_POOL_STATUSES = [
     "OFFER_AWAITED",
@@ -211,7 +213,9 @@ const [
     "OFFER_ACCEPTED",
   ];
   const SCHEDULE_POOL_STATUSES = [
-    "L1_PENDING"
+    "L1_PENDING",
+    "PENDING",
+    "REJECTED"
   ];
   const OFFER_STATUS_LABEL_MAP = {
     OFFER_AWAITED: "Offer Awaited",
@@ -301,46 +305,46 @@ const [
   //  const handleScheduleInterview = () => {
   //   if (!selectedCandidateIds.length) return;
 
-useEffect(() => {
+  useEffect(() => {
 
-  if (
-    !location.state
-      ?.openExaminationScore
-  ) {
-    return;
-  }
-
-  /* WAIT UNTIL REQUISITION
-     & POSITION RESTORE */
-
-  if (
-    !selectedRequisitionId ||
-    !selectedPositionId.length
-  ) {
-    return;
-  }
-
-  /* SMALL DELAY FOR UI */
-
-setTimeout(() => {
-
-  handleOpenExaminationScore();
-
-  navigate(
-    location.pathname,
-    {
-      replace: true,
-      state: {}
+    if (
+      !location.state
+        ?.openExaminationScore
+    ) {
+      return;
     }
-  );
 
-}, 300);  
+    /* WAIT UNTIL REQUISITION
+       & POSITION RESTORE */
 
-}, [
-  location.state?.openExaminationScore,
-  selectedRequisitionId,
-  selectedPositionId
-]);
+    if (
+      !selectedRequisitionId ||
+      !selectedPositionId.length
+    ) {
+      return;
+    }
+
+    /* SMALL DELAY FOR UI */
+
+    setTimeout(() => {
+
+      handleOpenExaminationScore();
+
+      navigate(
+        location.pathname,
+        {
+          replace: true,
+          state: {}
+        }
+      );
+
+    }, 300);
+
+  }, [
+    location.state?.openExaminationScore,
+    selectedRequisitionId,
+    selectedPositionId
+  ]);
 
 
 
@@ -406,7 +410,7 @@ setTimeout(() => {
       //  HANDLE BACKEND VALIDATION
       if (!res?.success) {
 
-        setErrorMessage(  
+        setErrorMessage(
           res?.message ||
           "Validation failed"
         );
@@ -440,7 +444,7 @@ setTimeout(() => {
       }));
 
       // MOVE TO INTERVIEW POOL
-     // setActiveTab("INTERVIEW_POOL");
+      // setActiveTab("INTERVIEW_POOL");
 
       // RESET PAGE
       //setInterviewPage(0);
@@ -2034,7 +2038,9 @@ setTimeout(() => {
       return {
         ...basePayload,
         screenName: "SchedulePool",
-        interviewSchedulingApprovalStatuses: ["L1_PENDING"],
+        //  interviewSchedulingApprovalStatuses: ["L1_PENDING", "PENDING", "REJECTED"],
+        interviewSchedulingApprovalStatuses: normalizedStatuses,
+
       };
     }
 
@@ -2349,84 +2355,84 @@ setTimeout(() => {
     }
   }, [activeTab]);
 
-const handleOpenExaminationScore =
-  () => {
+  const handleOpenExaminationScore =
+    () => {
 
-    // VALIDATION
-    if (
-      !selectedRequisitionId ||
-      !selectedPositionId?.length
-    ) {
+      // VALIDATION
+      if (
+        !selectedRequisitionId ||
+        !selectedPositionId?.length
+      ) {
 
-      toast.error(
-        "Please select requisition and position"
+        toast.error(
+          "Please select requisition and position"
+        );
+
+        return;
+      }
+
+      // BUILD GRID DATA
+      const mappedData =
+        positions
+          .filter((p) =>
+            selectedPositionId.includes(
+              p?.jobPositions?.positionId
+            )
+          )
+          .map((p, index) => ({
+
+            id:
+              p?.jobPositions?.positionId,
+
+            positionName:
+              p?.masterPositions
+                ?.positionName || "-",
+
+            startDate:
+              normalizedRequisition
+                ?.registration_start_date,
+
+            endDate:
+              normalizedRequisition
+                ?.registration_end_date,
+
+            expanded:
+              index === 0
+          }));
+
+      setExaminationScoreData(
+        mappedData
       );
 
-      return;
-    }
+      setShowExaminationModal(true);
 
-    // BUILD GRID DATA
-    const mappedData =
-      positions
-        .filter((p) =>
-          selectedPositionId.includes(
-            p?.jobPositions?.positionId
-          )
-        )
-        .map((p, index) => ({
-
-          id:
-            p?.jobPositions?.positionId,
-
-          positionName:
-            p?.masterPositions
-              ?.positionName || "-",
-
-          startDate:
-            normalizedRequisition
-              ?.registration_start_date,
-
-          endDate:
-            normalizedRequisition
-              ?.registration_end_date,
-
-          expanded:
-            index === 0
-        }));
-
-    setExaminationScoreData(
-      mappedData
-    );
-
-    setShowExaminationModal(true);
-
-  };
+    };
 
 
-const handleEditExaminationScore =
-  () => {
+  const handleEditExaminationScore =
+    () => {
 
-    setShowExaminationModal(false);
+      setShowExaminationModal(false);
 
-    navigate(
-      "/ExaminationCutoffConfiguration",
-      {
-        state: {
+      navigate(
+        "/ExaminationCutoffConfiguration",
+        {
+          state: {
 
-          requisitionId:
-            selectedRequisitionId,
+            requisitionId:
+              selectedRequisitionId,
 
-          positionIds:
-            selectedPositionId,
+            positionIds:
+              selectedPositionId,
 
-          openEditModal: true,
+            openEditModal: true,
 
-          fromCandidateScreening: true
+            fromCandidateScreening: true
+          }
         }
-      }
-    );
+      );
 
-  };
+    };
 
   const handlePreview = async () => {
     try {
@@ -2463,7 +2469,7 @@ const handleEditExaminationScore =
 
 
   const [showExaminationModal, setShowExaminationModal] = useState(false);
-const [selectedRelaxation, setSelectedRelaxation] = useState("SET_II");
+  const [selectedRelaxation, setSelectedRelaxation] = useState("SET_II");
   const handleStatusChange = (value) => {
     setPage(0);
     setFilters(prev => ({
@@ -2639,49 +2645,49 @@ const [selectedRelaxation, setSelectedRelaxation] = useState("SET_II");
               />
             )}
 
-<div className="col-md-6 col-12">
+            <div className="col-md-6 col-12">
 
-  <div className="d-flex justify-content-md-end align-items-end gap-2 h-100">
+              <div className="d-flex justify-content-md-end align-items-end gap-2 h-100">
 
-    {/* IMPORT BUTTON */}
+                {/* IMPORT BUTTON */}
 
-    <Button
-      variant="outline-primary"
-      size="sm"
-      onClick={() =>
-        setShowImportCandidatesModal(true)
-      }
-      className="d-flex align-items-center gap-2 bulk-import-btn"
-      style={{
-        height: "38px"
-      }}
-    >
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                  onClick={() =>
+                    setShowImportCandidatesModal(true)
+                  }
+                  className="d-flex align-items-center gap-2 bulk-import-btn"
+                  style={{
+                    height: "38px"
+                  }}
+                >
 
-      <FiUpload />
+                  <FiUpload />
 
-      {t(
-        "candidateWorkflow:import_candidates"
-      )}
+                  {t(
+                    "candidateWorkflow:import_candidates"
+                  )}
 
-    </Button>
+                </Button>
 
-    {/* EXAMINATION SCORE */}
+                {/* EXAMINATION SCORE */}
 
-    <button
-      className="btn blue-color blue-border fs-14"
-      onClick={
-        handleOpenExaminationScore
-      }
-      style={{
-        height: "38px"
-      }}
-    >
-      Examination Score
-    </button>
+                <button
+                  className="btn blue-color blue-border fs-14"
+                  onClick={
+                    handleOpenExaminationScore
+                  }
+                  style={{
+                    height: "38px"
+                  }}
+                >
+                  Examination Score
+                </button>
 
-  </div>
+              </div>
 
-</div>
+            </div>
           </div>
 
           {/* <div className="mt-2 pt-1 pb-3">
@@ -3335,40 +3341,40 @@ const [selectedRelaxation, setSelectedRelaxation] = useState("SET_II");
                   {/* LEFT SIDE COUNT */}
                   <div>
 
-                  {activeTab === "CANDIDATE_POOL" && (
-                    <div className="selected-count-chip">
-                      
-                    {selectedCandidateIds.length}{" "}
+                    {activeTab === "CANDIDATE_POOL" && (
+                      <div className="selected-count-chip">
 
-                    {selectedCandidateIds.length === 1
-                      ? "Candidate"
-                      : "Candidates"} Selected
-                    </div>
-                  )}
+                        {selectedCandidateIds.length}{" "}
 
-                  {activeTab === "INTERVIEW_POOL" && (
-                    <div className="selected-count-chip">
+                        {selectedCandidateIds.length === 1
+                          ? "Candidate"
+                          : "Candidates"} Selected
+                      </div>
+                    )}
+
+                    {activeTab === "INTERVIEW_POOL" && (
+                      <div className="selected-count-chip">
 
 
 
-                      {selectedInterviewCandidateIds.length}{" "}
+                        {selectedInterviewCandidateIds.length}{" "}
 
-                      {selectedInterviewCandidateIds.length === 1
-                        ? "Candidate"
-                        : "Candidates"} Selected
-                    </div>
-                  )}
+                        {selectedInterviewCandidateIds.length === 1
+                          ? "Candidate"
+                          : "Candidates"} Selected
+                      </div>
+                    )}
 
-                  {activeTab === "COMPENSATION_POOL" && (
-                    <div className="selected-count-chip">
+                    {activeTab === "COMPENSATION_POOL" && (
+                      <div className="selected-count-chip">
 
-                      {selectedCompensationIds.length}{" "}
+                        {selectedCompensationIds.length}{" "}
 
-                      {selectedCompensationIds.length === 1
-                        ? "Candidate"
-                        : "Candidates"} Selected
-                    </div>
-                  )}
+                        {selectedCompensationIds.length === 1
+                          ? "Candidate"
+                          : "Candidates"} Selected
+                      </div>
+                    )}
 
                   </div>
 
@@ -3793,523 +3799,522 @@ const [selectedRelaxation, setSelectedRelaxation] = useState("SET_II");
             </div>
           )}
         </Modal.Body>
-        
-        
-        
+
+
+
       </Modal>
 
 
-<Modal
-  show={showExaminationModal}
-  onHide={() => setShowExaminationModal(false)}
-  centered
-  size="xl"
-  backdrop="static"
->
-
-  <Modal.Header
-    closeButton
-    className="border-0 pb-2"
-    style={{
-      padding: "20px 24px 10px"
-    }}
-  >
-
-    <div>
-
-      <h2
-        className="fw-bold mb-1"
-        style={{
-          fontSize: "18px",
-          color: "#1F2937"
-        }}
-      >
-        Rank Positions Summary
-      </h2>
-
-      <p
-        className="mb-0"
-        style={{
-          fontSize: "13px",
-          color: "#6B7280"
-        }}
-      >
-        View and manage position rankings
-      </p>
-
-    </div >
-
-  </Modal.Header>
-
-  <Modal.Body
-    style={{
-      padding: "8px 24px 20px",
-      maxHeight: "72vh",
-      overflowY: "auto"
-    }}
-  >
-
-    {examinationScoreData.map((item, index) => (
-
-      <div
-        key={index}
-        className="mb-3"
-        style={{
-          border: "1px solid #D8DEE8",
-          borderRadius: "10px",
-          overflow: "hidden",
-          background: "#FFFFFF"
-        }}
+      <Modal
+        show={showExaminationModal}
+        onHide={() => setShowExaminationModal(false)}
+        centered
+        size="xl"
+        backdrop="static"
       >
 
-        {/* HEADER */}
-
-        <div
-          onClick={() => {
-
-            setExaminationScoreData(prev =>
-              prev.map((p, i) => ({
-                ...p,
-                expanded:
-                  i === index
-                    ? !p.expanded
-                    : p.expanded
-              }))
-            );
-
-          }}
-          className="d-flex justify-content-between align-items-center"
+        <Modal.Header
+          closeButton
+          className="border-0 pb-2"
           style={{
-            background: "#F3F4F6",
-            padding: "16px 18px",
-            cursor: "pointer"
+            padding: "20px 24px 10px"
           }}
         >
 
-          {/* LEFT */}
-
           <div>
 
-            <h5
-              className="fw-semibold mb-0"
+            <h2
+              className="fw-bold mb-1"
               style={{
-                fontSize: "15px",
-                color: "#374151"
+                fontSize: "18px",
+                color: "#1F2937"
               }}
             >
-              {item.positionName}
-            </h5>
+              Rank Positions Summary
+            </h2>
 
-          </div>
+            <p
+              className="mb-0"
+              style={{
+                fontSize: "13px",
+                color: "#6B7280"
+              }}
+            >
+              View and manage position rankings
+            </p>
 
-          {/* RIGHT */}
+          </div >
 
-          <div className="d-flex align-items-center gap-3">
+        </Modal.Header>
+
+        <Modal.Body
+          style={{
+            padding: "8px 24px 20px",
+            maxHeight: "72vh",
+            overflowY: "auto"
+          }}
+        >
+
+          {examinationScoreData.map((item, index) => (
 
             <div
-              className="d-flex align-items-center gap-3"
+              key={index}
+              className="mb-3"
               style={{
-                fontSize: "12px",
-                color: "#6B7280",
-                fontWeight: "600"
+                border: "1px solid #D8DEE8",
+                borderRadius: "10px",
+                overflow: "hidden",
+                background: "#FFFFFF"
               }}
             >
 
-              <span>
-                Start: {item.startDate}
-              </span>
+              {/* HEADER */}
 
-              <span>
-                End: {item.endDate}
-              </span>
+              <div
+                onClick={() => {
 
-            </div>
+                  setExaminationScoreData(prev =>
+                    prev.map((p, i) => ({
+                      ...p,
+                      expanded:
+                        i === index
+                          ? !p.expanded
+                          : p.expanded
+                    }))
+                  );
 
-            {/* EDIT BUTTON */}
-
-            <button
-              className="btn btn-sm"
-              style={{
-                border: "1px solid #F97316",
-                color: "#F97316",
-                background: "#FFF7ED",
-                fontSize: "12px",
-                fontWeight: "600",
-                padding: "4px 12px",
-                borderRadius: "6px"
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-
-                handleEditExaminationScore(item, index);
-              }}
-            >
-              <i className="bi bi-pencil-square me-1" />
-              Edit
-            </button>
-
-            <i
-              className={`bi bi-chevron-${
-                item.expanded ? "up" : "down"
-              }`}
-              style={{
-                fontSize: "14px",
-                color: "#6B7280",
-                fontWeight: "700"
-              }}
-            />
-
-          </div>
-
-        </div>
-
-        {/* BODY */}
-
-        {item.expanded && (
-
-          <div
-            style={{
-              padding: "14px 18px 18px",
-              background: "#FFFFFF"
-            }}
-          >
-
-            <div
-              style={{
-                border: "1px solid #E5E7EB",
-                borderRadius: "8px",
-                overflow: "hidden"
-              }}
-            >
-
-              <table
-                className="table mb-0"
+                }}
+                className="d-flex justify-content-between align-items-center"
                 style={{
-                  borderCollapse: "collapse"
+                  background: "#F3F4F6",
+                  padding: "16px 18px",
+                  cursor: "pointer"
                 }}
               >
 
-                <thead>
+                {/* LEFT */}
 
-                  <tr
+                <div>
+
+                  <h5
+                    className="fw-semibold mb-0"
                     style={{
-                      background: "#F9FAFB"
+                      fontSize: "15px",
+                      color: "#374151"
+                    }}
+                  >
+                    {item.positionName}
+                  </h5>
+
+                </div>
+
+                {/* RIGHT */}
+
+                <div className="d-flex align-items-center gap-3">
+
+                  <div
+                    className="d-flex align-items-center gap-3"
+                    style={{
+                      fontSize: "12px",
+                      color: "#6B7280",
+                      fontWeight: "600"
                     }}
                   >
 
-                    <th
+                    <span>
+                      Start: {item.startDate}
+                    </span>
+
+                    <span>
+                      End: {item.endDate}
+                    </span>
+
+                  </div>
+
+                  {/* EDIT BUTTON */}
+
+                  <button
+                    className="btn btn-sm"
+                    style={{
+                      border: "1px solid #F97316",
+                      color: "#F97316",
+                      background: "#FFF7ED",
+                      fontSize: "12px",
+                      fontWeight: "600",
+                      padding: "4px 12px",
+                      borderRadius: "6px"
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+
+                      handleEditExaminationScore(item, index);
+                    }}
+                  >
+                    <i className="bi bi-pencil-square me-1" />
+                    Edit
+                  </button>
+
+                  <i
+                    className={`bi bi-chevron-${item.expanded ? "up" : "down"
+                      }`}
+                    style={{
+                      fontSize: "14px",
+                      color: "#6B7280",
+                      fontWeight: "700"
+                    }}
+                  />
+
+                </div>
+
+              </div>
+
+              {/* BODY */}
+
+              {item.expanded && (
+
+                <div
+                  style={{
+                    padding: "14px 18px 18px",
+                    background: "#FFFFFF"
+                  }}
+                >
+
+                  <div
+                    style={{
+                      border: "1px solid #E5E7EB",
+                      borderRadius: "8px",
+                      overflow: "hidden"
+                    }}
+                  >
+
+                    <table
+                      className="table mb-0"
                       style={{
-                        minWidth: "260px",
-                        padding: "10px 14px",
-                        border: "1px solid #E5E7EB",
-                        fontSize: "12px",
-                        color: "#374151",
-                        fontWeight: "700"
+                        borderCollapse: "collapse"
                       }}
                     >
-                      CATEGORY
-                    </th>
 
-                    {[
-                      "SC",
-                      "ST",
-                      "OBC",
-                      "EWS",
-                      "UR",
-                      "OC",
-                      "HI",
-                      "VI",
-                      "ID",
-                      "TOTAL"
-                    ].map((head) => (
+                      <thead>
 
-                      <th
-                        key={head}
-                        style={{
-                          padding: "10px",
-                          border: "1px solid #E5E7EB",
-                          textAlign: "center",
-                          fontSize: "12px",
-                          color: "#374151",
-                          fontWeight: "700"
-                        }}
-                      >
-                        {head}
-                      </th>
+                        <tr
+                          style={{
+                            background: "#F9FAFB"
+                          }}
+                        >
 
-                    ))}
+                          <th
+                            style={{
+                              minWidth: "260px",
+                              padding: "10px 14px",
+                              border: "1px solid #E5E7EB",
+                              fontSize: "12px",
+                              color: "#374151",
+                              fontWeight: "700"
+                            }}
+                          >
+                            CATEGORY
+                          </th>
 
-                  </tr>
+                          {[
+                            "SC",
+                            "ST",
+                            "OBC",
+                            "EWS",
+                            "UR",
+                            "OC",
+                            "HI",
+                            "VI",
+                            "ID",
+                            "TOTAL"
+                          ].map((head) => (
 
-                </thead>
+                            <th
+                              key={head}
+                              style={{
+                                padding: "10px",
+                                border: "1px solid #E5E7EB",
+                                textAlign: "center",
+                                fontSize: "12px",
+                                color: "#374151",
+                                fontWeight: "700"
+                              }}
+                            >
+                              {head}
+                            </th>
 
-                <tbody>
+                          ))}
 
-                  {/* APPEARED */}
+                        </tr>
 
-                  <tr>
+                      </thead>
 
-                    <td
-                      style={{
-                        padding: "10px 14px",
-                        border: "1px solid #E5E7EB",
-                        fontWeight: "600",
-                        fontSize: "13px",
-                        color: "#374151"
-                      }}
-                    >
-                      APPEARED
-                    </td>
+                      <tbody>
+
+                        {/* APPEARED */}
+
+                        <tr>
+
+                          <td
+                            style={{
+                              padding: "10px 14px",
+                              border: "1px solid #E5E7EB",
+                              fontWeight: "600",
+                              fontSize: "13px",
+                              color: "#374151"
+                            }}
+                          >
+                            APPEARED
+                          </td>
 
                     {[120,85,200,95,450,50,15,10,5,1030]
-                      .map((val, i) => (
+                            .map((val, i) => (
 
-                      <td
-                        key={i}
-                        style={{
-                          textAlign: "center",
-                          border: "1px solid #E5E7EB",
-                          padding: "10px",
-                          fontSize: "13px",
-                          color: "#374151"
-                        }}
-                      >
-                        {val}
-                      </td>
+                              <td
+                                key={i}
+                                style={{
+                                  textAlign: "center",
+                                  border: "1px solid #E5E7EB",
+                                  padding: "10px",
+                                  fontSize: "13px",
+                                  color: "#374151"
+                                }}
+                              >
+                                {val}
+                              </td>
 
-                    ))}
+                            ))}
 
-                  </tr>
+                        </tr>
 
-                  {/* VACANCY */}
+                        {/* VACANCY */}
 
-                  <tr>
+                        <tr>
 
-                    <td
-                      style={{
-                        padding: "10px 14px",
-                        border: "1px solid #E5E7EB",
-                        fontWeight: "600",
-                        fontSize: "13px",
-                        color: "#374151"
-                      }}
-                    >
-                      VACANCY
-                    </td>
+                          <td
+                            style={{
+                              padding: "10px 14px",
+                              border: "1px solid #E5E7EB",
+                              fontWeight: "600",
+                              fontSize: "13px",
+                              color: "#374151"
+                            }}
+                          >
+                            VACANCY
+                          </td>
 
                     {[2,1,3,2,8,1,0,0,0,17]
-                      .map((val, i) => (
+                            .map((val, i) => (
 
-                      <td
-                        key={i}
-                        style={{
-                          textAlign: "center",
-                          border: "1px solid #E5E7EB",
-                          padding: "10px",
-                          fontSize: "13px",
-                          color: "#374151"
-                        }}
-                      >
-                        {val}
-                      </td>
+                              <td
+                                key={i}
+                                style={{
+                                  textAlign: "center",
+                                  border: "1px solid #E5E7EB",
+                                  padding: "10px",
+                                  fontSize: "13px",
+                                  color: "#374151"
+                                }}
+                              >
+                                {val}
+                              </td>
 
-                    ))}
+                            ))}
 
-                  </tr>
+                        </tr>
 
-                  {/* HIGHLIGHTED ROW */}
+                        {/* HIGHLIGHTED ROW */}
 
-                  <tr
-                    style={{
-                      background: "#F7EDC3"
-                    }}
-                  >
+                        <tr
+                          style={{
+                            background: "#F7EDC3"
+                          }}
+                        >
 
-                    <td
-                      style={{
-                        padding: "10px 14px",
-                        border: "1px solid #E5E7EB",
-                        fontWeight: "700",
-                        fontSize: "13px",
-                        color: "#374151"
-                      }}
-                    >
-                      QUALIFIED WITH NO RELAXATION
-                    </td>
+                          <td
+                            style={{
+                              padding: "10px 14px",
+                              border: "1px solid #E5E7EB",
+                              fontWeight: "700",
+                              fontSize: "13px",
+                              color: "#374151"
+                            }}
+                          >
+                            QUALIFIED WITH NO RELAXATION
+                          </td>
 
                     {[45,30,85,40,180,20,8,5,2,415]
-                      .map((val, i) => (
+                            .map((val, i) => (
 
-                      <td
-                        key={i}
-                        style={{
-                          textAlign: "center",
-                          border: "1px solid #E5E7EB",
-                          padding: "10px",
-                          fontSize: "13px",
-                          color: "#374151",
-                          fontWeight: "700"
-                        }}
-                      >
-                        {val}
-                      </td>
+                              <td
+                                key={i}
+                                style={{
+                                  textAlign: "center",
+                                  border: "1px solid #E5E7EB",
+                                  padding: "10px",
+                                  fontSize: "13px",
+                                  color: "#374151",
+                                  fontWeight: "700"
+                                }}
+                              >
+                                {val}
+                              </td>
 
-                    ))}
+                            ))}
 
-                  </tr>
+                        </tr>
 
-                  {/* QUALIFIED SET II */}
+                        {/* QUALIFIED SET II */}
 
-                  <tr>
+                        <tr>
 
-                    <td
-                      style={{
-                        padding: "10px 14px",
-                        border: "1px solid #E5E7EB",
-                        fontWeight: "600",
-                        fontSize: "13px",
-                        color: "#374151"
-                      }}
-                    >
-                      QUALIFIED WITH SET II (5%)
-                    </td>
+                          <td
+                            style={{
+                              padding: "10px 14px",
+                              border: "1px solid #E5E7EB",
+                              fontWeight: "600",
+                              fontSize: "13px",
+                              color: "#374151"
+                            }}
+                          >
+                            QUALIFIED WITH SET II (5%)
+                          </td>
 
                     {[25,18,45,22,95,12,4,3,1,225]
-                      .map((val, i) => (
+                            .map((val, i) => (
 
-                      <td
-                        key={i}
-                        style={{
-                          textAlign: "center",
-                          border: "1px solid #E5E7EB",
-                          padding: "10px",
-                          fontSize: "13px",
-                          color: "#374151"
-                        }}
-                      >
-                        {val}
-                      </td>
+                              <td
+                                key={i}
+                                style={{
+                                  textAlign: "center",
+                                  border: "1px solid #E5E7EB",
+                                  padding: "10px",
+                                  fontSize: "13px",
+                                  color: "#374151"
+                                }}
+                              >
+                                {val}
+                              </td>
 
-                    ))}
+                            ))}
 
-                  </tr>
+                        </tr>
 
-                </tbody>
+                      </tbody>
 
-              </table>
+                    </table>
+
+                  </div>
+
+                </div>
+
+              )}
 
             </div>
 
-          </div>
+          ))}
 
-        )}
+        </Modal.Body>
 
-      </div>
+        <Modal.Footer
+          className="border-0"
+          style={{
+            padding: "0 24px 20px"
+          }}
+        >
 
-    ))}
+          <button
+            className="btn"
+            style={{
+              minWidth: "110px",
+              height: "40px",
+              border: "1px solid #D1D5DB",
+              background: "#FFFFFF",
+              color: "#6B7280",
+              fontWeight: "600",
+              fontSize: "13px"
+            }}
+            onClick={() =>
+              setShowExaminationModal(false)
+            }
+          >
+            CANCEL
+          </button>
 
-  </Modal.Body>
+          <button
+            className="btn text-white"
+            style={{
+              minWidth: "110px",
+              height: "40px",
+              background: "#F97316",
+              border: "none",
+              fontWeight: "600",
+              fontSize: "13px"
+            }}
+            onClick={() =>
+              handleEditExaminationScore()
+            }
+          >
+            SAVE
+          </button>
 
-  <Modal.Footer
-    className="border-0"
-    style={{
-      padding: "0 24px 20px"
-    }}
-  >
+        </Modal.Footer>
 
-    <button
-      className="btn"
-      style={{
-        minWidth: "110px",
-        height: "40px",
-        border: "1px solid #D1D5DB",
-        background: "#FFFFFF",
-        color: "#6B7280",
-        fontWeight: "600",
-        fontSize: "13px"
-      }}
-      onClick={() =>
-        setShowExaminationModal(false)
-      }
-    >
-      CANCEL
-    </button>
-
-    <button
-      className="btn text-white"
-      style={{
-        minWidth: "110px",
-        height: "40px",
-        background: "#F97316",
-        border: "none",
-        fontWeight: "600",
-        fontSize: "13px"
-      }}
-      onClick={() =>
-        handleEditExaminationScore()
-      }
-    >
-      SAVE
-    </button>
-
-  </Modal.Footer>
-
-</Modal>
+      </Modal>
 
 
-<Modal
-  show={
-    showImportCandidatesModal
-  }
-  onHide={() =>
-    setShowImportCandidatesModal(false)
-  }
-  size="lg"
-  centered
->
+      <Modal
+        show={
+          showImportCandidatesModal
+        }
+        onHide={() =>
+          setShowImportCandidatesModal(false)
+        }
+        size="lg"
+        centered
+      >
 
-  <Modal.Header closeButton>
+        <Modal.Header closeButton>
 
-   <Modal.Title
-  style={{
-    fontSize: "18px",
-    fontWeight: "600"
-  }}
->
+          <Modal.Title
+            style={{
+              fontSize: "18px",
+              fontWeight: "600"
+            }}
+          >
 
-  Import Candidates
+            Import Candidates
 
-</Modal.Title>
+          </Modal.Title>
 
-  </Modal.Header>
+        </Modal.Header>
 
-  <Modal.Body>
+        <Modal.Body>
 
-    <CandidateImportModal
-      t={t}
-      positionIds={
-    selectedPositionId
-  }
-      onClose={() =>
-        setShowImportCandidatesModal(
-          false
-        )
-      }
-      onSuccess={() => {
+          <CandidateImportModal
+            t={t}
+            positionIds={
+              selectedPositionId
+            }
+            onClose={() =>
+              setShowImportCandidatesModal(
+                false
+              )
+            }
+            onSuccess={() => {
 
-        console.log(
-          "IMPORT SUCCESS"
-        );
+              console.log(
+                "IMPORT SUCCESS"
+              );
 
-      }}
-    />
+            }}
+          />
 
-  </Modal.Body>
+        </Modal.Body>
 
-</Modal>
+      </Modal>
 
     </div>
-    
+
   );
 }
 
