@@ -869,7 +869,7 @@ if (!formData.fixedPay) {
             </th>
 
             <th className="fs-14 fw-normal py-3" onClick={() => requestSort("hike")}>
-              Hike % {sortIcon("hike")}
+              Expected Hike % {sortIcon("hike")}
             </th>
 
             <th className="fs-14 fw-normal py-3" onClick={() => requestSort("agreedCtc")}>

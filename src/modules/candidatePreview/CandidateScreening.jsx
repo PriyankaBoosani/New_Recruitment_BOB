@@ -67,7 +67,12 @@ export default function CandidateScreening({ selectedJob }) {
     // REJECTED: "Rejected",
   };
 
+  const user = useSelector((state) => state.user.user);
 
+
+  const role = user?.role?.toLowerCase();
+
+  const isRecruiter = role === "recruiter";
 
   const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
 
@@ -92,14 +97,27 @@ export default function CandidateScreening({ selectedJob }) {
   const [errorMessage, setErrorMessage] =
     useState("");
 
-  const COMPENSATION_POOL_STATUSES = [
-    "NEW",
-    "SUBMITTED",
-    "PENDING",
-    "APPROVED",
-    "REJECTED",
-    "RENEGOTIATE",
-  ];
+// const user = useSelector((state) => state.user.user);
+
+// const role = user?.role?.toLowerCase();
+
+// const isRecruiter = role === "recruiter";
+const COMPENSATION_POOL_STATUSES =
+  role === "committee_member"
+    ? [
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "RENEGOTIATE",
+      ]
+    : [
+        "NEW",
+        "SUBMITTED",
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "RENEGOTIATE",
+      ];
 
   const COMPENSATION_STATUS_LABEL_MAP = {
     NEW: "New",
@@ -167,12 +185,12 @@ export default function CandidateScreening({ selectedJob }) {
     setShowImportCandidatesModal
   ] = useState(false);
 
-  const user = useSelector((state) => state.user.user);
+  // const user = useSelector((state) => state.user.user);
 
 
-  const role = user?.role?.toLowerCase();
+  // const role = user?.role?.toLowerCase();
 
-  const isRecruiter = role === "recruiter";
+  // const isRecruiter = role === "recruiter";
 
 
 
@@ -2102,6 +2120,13 @@ export default function CandidateScreening({ selectedJob }) {
       return;
     }
 
+    const today = todayString();
+
+if (submitBeforeDate < today) {
+  toast.error("Past dates are not allowed");
+  return;
+}
+
 
     if (selectedInterviewCandidates.length === 0) {
       toast.error("Select at least one candidate");
@@ -3804,7 +3829,56 @@ export default function CandidateScreening({ selectedJob }) {
 
       </Modal>
 
+ <Modal
+        show={
+          showImportCandidatesModal
+        }
+        onHide={() =>
+          setShowImportCandidatesModal(false)
+        }
+        size="lg"
+        centered
+      >
 
+        <Modal.Header closeButton>
+
+          <Modal.Title
+            style={{
+              fontSize: "18px",
+              fontWeight: "600"
+            }}
+          >
+
+            Import Candidates
+
+          </Modal.Title>
+
+        </Modal.Header>
+
+        <Modal.Body>
+
+          <CandidateImportModal
+            t={t}
+            positionIds={
+              selectedPositionId
+            }
+            onClose={() =>
+              setShowImportCandidatesModal(
+                false
+              )
+            }
+            onSuccess={() => {
+
+              console.log(
+                "IMPORT SUCCESS"
+              );
+
+            }}
+          />
+
+        </Modal.Body>
+
+      </Modal>
 
       
 
@@ -4266,56 +4340,7 @@ export default function CandidateScreening({ selectedJob }) {
       </Modal>
 
 
-      <Modal
-        show={
-          showImportCandidatesModal
-        }
-        onHide={() =>
-          setShowImportCandidatesModal(false)
-        }
-        size="lg"
-        centered
-      >
-
-        <Modal.Header closeButton>
-
-          <Modal.Title
-            style={{
-              fontSize: "18px",
-              fontWeight: "600"
-            }}
-          >
-
-            Import Candidates
-
-          </Modal.Title>
-
-        </Modal.Header>
-
-        <Modal.Body>
-
-          <CandidateImportModal
-            t={t}
-            positionIds={
-              selectedPositionId
-            }
-            onClose={() =>
-              setShowImportCandidatesModal(
-                false
-              )
-            }
-            onSuccess={() => {
-
-              console.log(
-                "IMPORT SUCCESS"
-              );
-
-            }}
-          />
-
-        </Modal.Body>
-
-      </Modal>
+     
 
     </div>
 
