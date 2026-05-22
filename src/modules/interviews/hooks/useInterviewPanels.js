@@ -189,6 +189,9 @@ apiList.forEach((item) => {
 
     positionPanelId:
       item.positionPanelId,
+      positionName:
+    item.positionName ||
+    "Position"
        
   });
 

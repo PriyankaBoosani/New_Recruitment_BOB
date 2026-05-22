@@ -229,15 +229,26 @@ panelRanges
 
               {panelRanges.map((range, index) => (
 
-                <div key={index}>
+  <div
+    key={index}
+    className="ap-range-item"
+  >
 
-                  {formatDateDDMMYYYY(range.startDate)}
-                  {" "}to{" "}
-                  {formatDateDDMMYYYY(range.endDate)}
+    <div className="ap-range-position">
+      {range.positionName}
+    </div>
 
-                </div>
+    <div className="ap-range-dates">
 
-              ))}
+      {formatDateDDMMYYYY(range.startDate)}
+      {" "}to{" "}
+      {formatDateDDMMYYYY(range.endDate)}
+
+    </div>
+
+  </div>
+
+))}
 
             </div>
           )}
