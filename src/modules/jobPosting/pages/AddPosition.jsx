@@ -48,9 +48,13 @@ const AddPosition = () => {
     const isInEditMode = location.state?.isInEditMode === false;
     const isViewMode = !!positionId && mode === "view";
     const isEditMode = !!positionId && mode !== "view";
-    const isControlledEdit = isEditMode && isInEditMode;
-    const isImportDisabled = isViewMode || isEditMode;
     const isDraft = location.state?.isDraft === true;
+    // const isControlledEdit = isEditMode && isInEditMode;
+    const isControlledEdit =
+    isDraft &&
+    isEditMode &&
+    isInEditMode;
+    const isImportDisabled = isViewMode || isEditMode;
     const parentRequisitionId = location.state?.parentRequisitionId;
     const {
         positionsByReq,
@@ -137,6 +141,9 @@ const AddPosition = () => {
                 "department",
                 "position",
                 "enableStateDistribution",
+                "grade",
+                "employmentType",
+                "contractualPeriod",
                 // add more based on business rules
             ];
 
@@ -821,6 +828,7 @@ const AddPosition = () => {
                 // await updatePosition({ ...payload, positionId, existingPosition });
                 await updatePosition({
                     ...payload,   // 🔥 THIS IS THE REAL DATA
+                    ...(isDraft ? {} : { positionId }),
                     isDraft,
                     parentRequisitionId,
                     existingPosition

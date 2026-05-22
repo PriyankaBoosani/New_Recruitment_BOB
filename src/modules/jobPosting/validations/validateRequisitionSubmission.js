@@ -14,7 +14,8 @@ export const validateRequisitionSubmission = ({
   }
 
   const noPositionReqs = selected.filter(
-    r => Number(r.positions) === 0
+    r => !r.isDraft &&
+    Number(r.positions) === 0
   );
 
   if (noPositionReqs.length > 0) {

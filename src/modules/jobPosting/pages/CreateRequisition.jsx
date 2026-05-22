@@ -35,6 +35,7 @@ const CreateRequisition = () => {
   const isViewMode = !!editId && mode === "view";
   const isCloneMode = mode === "clone";
   const isReinitializeMode = mode === "reinitialize";
+  const isDraftView = location.state?.isDraftView;
 
   const handleCancel = () => {
     if (from === "approval") {
@@ -53,20 +54,20 @@ const CreateRequisition = () => {
     fetching,
     error: apiError,
     requisitionData
-  } = useCreateRequisition(editId, mode);
+  } = useCreateRequisition(editId, mode, isDraftView);
 
   const [errors, setErrors] = useState({});
   /* ===================== SAVE ===================== */
 
-  useEffect(() => {
-    if (!editId) return;
+useEffect(() => {
+  if (!editId) return;
 
-    // ✅ ALWAYS call normal API in CreateRequisition
-    fetchPositions(editId, false);
+  fetchPositions(editId, isDraftView);
 
-  }, [editId]);
+}, [editId, isDraftView]);
 
   // const positions = positionsByReq[editId] || [];
+  // const key = `${editId}_false`;
   const key = `${editId}_false`;
   const positions = positionsByReq[key] || [];
 

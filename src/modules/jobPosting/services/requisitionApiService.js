@@ -83,6 +83,16 @@ const requisitionApiService = {
       positionIds.length ? { positionIds } : {}
     ),
 
+  getCurrentDraftRequisition: (parentRequisitionId) =>
+  api.get(
+    `/recruiter/job-requisitions/${parentRequisitionId}/edit-drafts/current`,
+    {
+      headers: {
+        "X-Client": "AzureAD"
+      }
+    }
+  ),
+
   saveDraftDetails: (requisitionId, payload) =>
   api.put(
     `/recruiter/job-requisitions/${requisitionId}/edit-drafts/current`,

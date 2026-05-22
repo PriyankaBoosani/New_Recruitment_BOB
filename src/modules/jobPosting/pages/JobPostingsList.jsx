@@ -851,7 +851,7 @@ const JobPostingsList = () => {
                                 </>
 
 
-                                {!req.editable && (
+                                {/* {!req.editable || req.isDraft && ( */}
                                     <OverlayTrigger
                                         placement="bottom"
                                         overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:view_requisition")}</Tooltip>}
@@ -861,16 +861,39 @@ const JobPostingsList = () => {
                                             className="icon-btn"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                navigate(
-                                                    `/job-posting/create-requisition?id=${req.id}`,
-                                                    { state: { mode: "view" } }
-                                                );
+                                                // navigate(
+                                                //     `/job-posting/create-requisition?id=${req.id}`,
+                                                //     { state: { mode: "view" } }
+                                                // );
+                                                if (!req.isDraft) {
+                    navigate(
+                        `/job-posting/create-requisition?id=${req.id}`,
+                        {
+                            state: {
+                                mode: "view"
+                            }
+                        }
+                    );
+
+                    return;
+                }
+
+                // DRAFT VIEW
+                navigate(
+                    `/job-posting/create-requisition?id=${req.parentRequisitionId}`,
+                    {
+                        state: {
+                            mode: "view",
+                            isDraftView: true
+                        }
+                    }
+                );
                                             }}
                                         >
                                             <img src={view_jobpost} alt="view" className="icon-19" />
                                         </Button>
                                     </OverlayTrigger>
-                                )}
+                                {/* )} */}
 
 
 

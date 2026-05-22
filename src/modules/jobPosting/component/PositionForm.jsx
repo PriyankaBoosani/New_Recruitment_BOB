@@ -501,7 +501,7 @@ const PositionForm = ({
             <Form.Label>{t("addPosition:employment_type")} <span className="text-danger">*</span></Form.Label>
             <Select
               classNamePrefix="react-select"
-              isDisabled={isViewMode}
+              isDisabled={isViewMode || isFieldDisabled("employmentType")}
               value={employmentTypeOptions.find(
                 option => String(option.value) === String(formData.employmentType)
               )}
@@ -522,7 +522,7 @@ const PositionForm = ({
             isContractEmployment
               ? t("addPosition:enter_contractual_period")
               : ""
-          } type="text" inputMode="numeric" value={isContractEmployment ? formData.contractualPeriod : ""} onChange={handleInputChange} disabled={!isContractEmployment || isViewMode} /></Col>
+          } type="text" inputMode="numeric" value={isContractEmployment ? formData.contractualPeriod : ""} onChange={handleInputChange} disabled={!isContractEmployment || isViewMode || isFieldDisabled("contractualPeriod")} /></Col>
           <Col md={4}>
             <Form.Label className="d-flex align-items-center gap-2">
               {t("addPosition:grade_scale")} <span className="text-danger">*</span>
@@ -547,7 +547,7 @@ const PositionForm = ({
             <Select
               className="react-select-fixed"
               classNamePrefix="react-select"
-              isDisabled={isViewMode}
+              isDisabled={isViewMode || isFieldDisabled("grade")}
               value={gradeOptions.find(
                 option => String(option.value) === String(formData.grade)
               )}

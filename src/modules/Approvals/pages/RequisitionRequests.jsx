@@ -390,7 +390,14 @@ const renderDepartment = ({
                   e.stopPropagation();
                   navigate(
                     `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
-                    { state: { mode: "view", from: "approval" } }
+                    {
+                      state: {
+                        mode: "view",
+                        from: "approval",
+                        isDraft: req.isDraft === true,
+                        parentRequisitionId: req.parentRequisitionId
+                      }
+                    }
                   );
                 }}
               >
@@ -651,10 +658,31 @@ const renderDepartment = ({
                     className="icon-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(
-                        `/job-posting/create-requisition?id=${req.id}`,
-                        { state: { mode: "view", from: "approval" } }
-                      );
+                       if (!req.isDraft) {
+      navigate(
+        `/job-posting/create-requisition?id=${req.id}`,
+        {
+          state: {
+            mode: "view",
+            from: "approval"
+          }
+        }
+      );
+
+      return;
+    }
+
+    // DRAFT REQUISITION
+    navigate(
+      `/job-posting/create-requisition?id=${req.parentRequisitionId}`,
+      {
+        state: {
+          mode: "view",
+          from: "approval",
+          isDraftView: true
+        }
+      }
+    );
                     }}
                   >
                     <img src={view_jobpost} alt="view" className="icon-19" />

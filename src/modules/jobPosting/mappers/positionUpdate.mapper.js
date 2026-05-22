@@ -220,7 +220,8 @@ export const mapAddPositionToUpdateDto = ({
   isAgeRelWdsWomen
 }) => {
   const dto = {
-    positionId,
+    // positionId,
+    ...(positionId ? { positionId } : {}),
     requisitionId,
     deptId: formData.department,
     masterPositionId: formData.position,
