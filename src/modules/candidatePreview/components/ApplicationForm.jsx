@@ -78,12 +78,27 @@ const ApplicationForm = ({
   const candidate = location.state?.candidate;
 
   const zonalInitRef = useRef(true);
-  const isZonalAbsent =
-    String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
+  const isZonalAbsent = String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
+  const [isLptRequired, setIsLptRequired] = useState("");
+  const [lptType, setLptType] = useState("");
 
 
+  const isFirstLoad = useRef(true);
 
+  useEffect(() => {
 
+    if (!isZonalHr) return;
+
+    // Skip initial page load
+    if (isFirstLoad.current) {
+      isFirstLoad.current = false;
+      return;
+    }
+
+    // Clear radio selection whenever LPT changes
+    setZonalDecision("");
+
+  }, [lptType]);
   // const deriveShortlistStatus = () => {
   //   const values = [
   //     screeningForm.isWorkCriteriaMet,
@@ -108,6 +123,26 @@ const ApplicationForm = ({
   };
 
   useEffect(() => {
+
+    if (!candidate) return;
+
+    // LPT Required
+    const required =
+      candidate?.lptRequired === true
+        ? "YES"
+        : candidate?.lptRequired === false
+          ? "NO"
+          : "";
+
+    setIsLptRequired(required);
+
+    // IMPORTANT
+    if (required === "YES") {
+      setLptType(candidate?.lptStatus || "");
+    } else {
+      setLptType("");
+    }
+
   }, [candidate]);
 
   const [screeningForm, setScreeningForm] = useState({
@@ -128,6 +163,7 @@ const ApplicationForm = ({
     submitBeforeDate: "",
     isScreeningCompleted: false,
     screeningId: null,
+    lptExtensionDate: "",
   });
   const [screeningDocuments, setScreeningDocuments] = useState([]);
 
@@ -166,39 +202,64 @@ const ApplicationForm = ({
   };
 
   const mapStatusToDecision = (status) => {
-    const s = String(status || "").toUpperCase().trim();
 
-    if (s === "VERIFIED") return "YES";
-    if (s === "REJECTED" || s === "ZONAL_REJECTED") return "NO";
-    if (s === "PROVISIONALLY_APPROVED") return "PROVISIONALLY_APPROVED";
+    const s = String(status || "")
+      .toUpperCase()
+      .trim();
+
+    // VERIFIED -> YES
+    if (s === "VERIFIED") {
+      return "YES";
+    }
+
+    // REJECTED / ZONAL_REJECTED -> NO
+    if (
+      s === "REJECTED" ||
+      s === "ZONAL_REJECTED"
+    ) {
+      return "NO";
+    }
+
+    // PROVISIONAL
+    if (s === "PROVISIONALLY_APPROVED") {
+      return "PROVISIONALLY_APPROVED";
+    }
+
+    // PENDING -> EMPTY
+    if (s === "PENDING") {
+      return "";
+    }
     return "";
   };
 
   useEffect(() => {
+
     if (!isZonalHr) return;
 
-    if (zonalVerificationStatus) {
-      setZonalDecision(mapStatusToDecision(zonalVerificationStatus));
+    const mappedDecision = mapStatusToDecision(zonalVerificationStatus);
+
+    const isLptFailed = isLptRequired === "YES" && lptType === "FAIL";
+
+    // FAIL -> clear YES only
+    if (
+      mappedDecision === "YES" &&
+      isLptFailed 
+    ) {
+      setZonalDecision("");
+      return;
+    } else if (mappedDecision === "NO" && !isLptFailed) {
+      setZonalDecision("");
+      return;
     }
 
-    if (zonalSubmitBeforeDate) {
-      setScreeningForm(prev => ({
-        ...prev,
-        zonalSubmitDate: zonalSubmitBeforeDate.split("T")[0] // safe for input[type=date]
-      }));
-    }
-
-    if (zonalHrComments) {
-      setScreeningRemarks(zonalHrComments);
-    }
+    setZonalDecision(mappedDecision);
 
   }, [
     zonalVerificationStatus,
-    zonalSubmitBeforeDate,
-    zonalHrComments,
-    isZonalHr
+    isZonalHr,
+    isLptRequired,
+    lptType
   ]);
-
 
   const handleZonalSubmit = async () => {
 
@@ -251,15 +312,16 @@ const ApplicationForm = ({
     // -----------------------------------------
     // 2️⃣ All documents VERIFIED but decision = NO
     // -----------------------------------------
-    if (zonalDecision === "NO" && allVerified) {
-      // toast.warning(
-      //   "All documents are verified. Please select other decision instead."
-      // );
-      toast.warning(
-        t("all_documents_verified_select_other")
-      );
-      return;
-    }
+
+    // if (zonalDecision === "NO" && allVerified) {
+    //   // toast.warning(
+    //   //   "All documents are verified. Please select other decision instead."
+    //   // );
+    //   toast.warning(
+    //     t("all_documents_verified_select_other")
+    //   );
+    //   return;
+    // }
 
     // -----------------------------------------
     // 3️⃣ Decision = YES but any document REJECTED
@@ -274,9 +336,22 @@ const ApplicationForm = ({
       return;
     }
 
+    const isLptFailed =
+      isLptRequired === "YES" &&
+      lptType === "FAIL";
+
+    if (zonalDecision === "YES" && isLptFailed) {
+      toast.error("Candidate failed LPT. Approval not allowed.");
+      return;
+    }
+
     // -----------------------------------------
     // 4️⃣ Decision = PROVISIONAL but all VERIFIED
     // -----------------------------------------
+    console.log("Zonal Decision:", zonalDecision);
+    console.log("Zonal allVerified:", allVerified);
+    console.log(zonalDecision === "PROVISIONALLY_APPROVED" && allVerified);
+
     if (zonalDecision === "PROVISIONALLY_APPROVED" && allVerified) {
       toast.warning(
         "All documents are verified. Please select other decision instead."
@@ -341,7 +416,14 @@ const ApplicationForm = ({
         interviewScheduleId,
         zonalVerificationStatus: mapDecisionToStatus(zonalDecision),
         zonalSubmitBeforeDate: screeningForm.zonalSubmitDate || null,
-        zonalHrComments: screeningRemarks || ""
+        zonalHrComments: screeningRemarks || "",
+        lptRequired:
+          isLptRequired === "YES",
+
+        lptStatus:
+          isLptRequired === "YES"
+            ? lptType
+            : null
       };
 
       await jobPositionApiService.submitOverallZonalVerification(payload);
@@ -370,7 +452,7 @@ const ApplicationForm = ({
           pageSize: pageSize
         }
       });
-     
+
     } catch (err) {
 
       // -----------------------------------------
@@ -479,7 +561,7 @@ const ApplicationForm = ({
   const [docStatus, setDocStatus] = useState({});
   const [zonalDecision, setZonalDecision] = useState("");
 
-    const getDocCategory = (name = "") => {
+  const getDocCategory = (name = "") => {
     const n = name.toLowerCase().trim();
 
     // AGE
@@ -694,6 +776,28 @@ const ApplicationForm = ({
     }));
   }, [applicationId, candidateId]);
 
+
+  //   useEffect(() => {
+
+  //   const isLptFailed =
+  //     isLptRequired === "YES" &&
+  //     lptType === "FAIL";
+
+  //   // ALL DOCS VERIFIED + FAIL
+  //   if (
+  //     areAllDocumentsVerified() &&
+  //     isLptFailed
+  //   ) {
+  //     setZonalDecision("NO");
+
+  //     // toast.warning(
+  //     //   "LPT was failed. Candidate cannot be approved."
+  //     // );
+  //   }
+
+  // }, [isLptRequired, lptType, docStatusMap]);
+
+
   const getStatusClass = (status) => {
     switch (status) {
       case "VERIFIED":
@@ -758,40 +862,40 @@ const ApplicationForm = ({
     });
   };
 
-const handleInputChange = (field, value) => {
-  setScreeningForm(prev => {
-    const updated = {
-      ...prev,
-      [field]: value,
-    };
+  const handleInputChange = (field, value) => {
+    setScreeningForm(prev => {
+      const updated = {
+        ...prev,
+        [field]: value,
+      };
 
-    if (field === "isShortlisted") {
-      updated.finalScreeningRemark = "";
+      if (field === "isShortlisted") {
+        updated.finalScreeningRemark = "";
+      }
+
+      return updated;
+    });
+
+    // shortlist selected -> clear eligible
+    if (
+      field === "isShortlisted" &&
+      (value === "YES" || value === "NO")
+    ) {
+      setIsEligible(false);
     }
 
-    return updated;
-  });
+    setErrors(prev => {
+      const updated = { ...prev };
 
-  // shortlist selected -> clear eligible
-  if (
-    field === "isShortlisted" &&
-    (value === "YES" || value === "NO")
-  ) {
-    setIsEligible(false);
-  }
+      delete updated[field];
 
-  setErrors(prev => {
-    const updated = { ...prev };
+      if (field === "isShortlisted") {
+        delete updated.finalScreeningRemark;
+      }
 
-    delete updated[field];
-
-    if (field === "isShortlisted") {
-      delete updated.finalScreeningRemark;
-    }
-
-    return updated;
-  });
-};
+      return updated;
+    });
+  };
 
   const handleVerify = async (comment) => {
     if (!selectedDoc) return;
@@ -1092,16 +1196,16 @@ const shouldShowSubmitBefore =
   // 2. ANY criteria is marked as DISCREPANCY
   // const disableShortlistedSection = !areAllCriteriaSelected || hasAnyDiscrepancy;
   const disableShortlistedSection =
-  !areAllCriteriaSelected ||
-  hasAnyDiscrepancy ||
-  // disableShortlistBecauseEligible ||
-  hasMissingUploads;
+    !areAllCriteriaSelected ||
+    hasAnyDiscrepancy ||
+    // disableShortlistBecauseEligible ||
+    hasMissingUploads;
 
   // Disable YES option if:
   // 1. Shortlist section is disabled, OR
   // 2. NOT all criteria are marked as YES
   const disableYesOption = disableShortlistedSection || !areAllCriteriaYes();
-  
+
   // NO option is disabled if shortlist section is disabled
   const disableNoOption = disableShortlistedSection;
 
@@ -1284,54 +1388,54 @@ const shouldShowSubmitBefore =
   // screeningForm.isEducationCriteriaMet]);
 
   useEffect(() => {
-  if (!disableShortlistedSection) return;
+    if (!disableShortlistedSection) return;
 
-  if (
-    screeningForm.isShortlisted ||
-    screeningForm.finalScreeningRemark
-  ) {
-    setScreeningForm(prev => ({
-      ...prev,
-      isShortlisted: "",
-      finalScreeningRemark: "",
-    }));
+    if (
+      screeningForm.isShortlisted ||
+      screeningForm.finalScreeningRemark
+    ) {
+      setScreeningForm(prev => ({
+        ...prev,
+        isShortlisted: "",
+        finalScreeningRemark: "",
+      }));
 
-    setErrors(prev => ({
-      ...prev,
-      isShortlisted: undefined,
-      finalScreeningRemark: undefined,
-    }));
-  }
+      setErrors(prev => ({
+        ...prev,
+        isShortlisted: undefined,
+        finalScreeningRemark: undefined,
+      }));
+    }
 
-}, [disableShortlistedSection]);
+  }, [disableShortlistedSection]);
 
-useEffect(() => {
-  if (!hasMissingUploads) return;
+  useEffect(() => {
+    if (!hasMissingUploads) return;
 
-  // clear eligible
-  if (isEligible) {
-    setIsEligible(false);
-  }
+    // clear eligible
+    if (isEligible) {
+      setIsEligible(false);
+    }
 
-  // clear shortlist
-  if (
-    screeningForm.isShortlisted ||
-    screeningForm.finalScreeningRemark
-  ) {
-    setScreeningForm(prev => ({
-      ...prev,
-      isShortlisted: "",
-      finalScreeningRemark: "",
-    }));
+    // clear shortlist
+    if (
+      screeningForm.isShortlisted ||
+      screeningForm.finalScreeningRemark
+    ) {
+      setScreeningForm(prev => ({
+        ...prev,
+        isShortlisted: "",
+        finalScreeningRemark: "",
+      }));
 
-    setErrors(prev => ({
-      ...prev,
-      isShortlisted: undefined,
-      finalScreeningRemark: undefined,
-    }));
-  }
+      setErrors(prev => ({
+        ...prev,
+        isShortlisted: undefined,
+        finalScreeningRemark: undefined,
+      }));
+    }
 
-}, [hasMissingUploads]);
+  }, [hasMissingUploads]);
 
   const allDocsAreVerified = areAllDocumentsVerified();
 
@@ -1370,131 +1474,131 @@ useEffect(() => {
   //   }));
   // }, [allDocsAreVerified]);
 
-//   useEffect(() => {
-//   const ageVerified = isCategorySatisfied("AGE");
-//   const workVerified = isCategorySatisfied("WORK");
-//   const educationVerified = isCategorySatisfied("EDUCATION");
+  //   useEffect(() => {
+  //   const ageVerified = isCategorySatisfied("AGE");
+  //   const workVerified = isCategorySatisfied("WORK");
+  //   const educationVerified = isCategorySatisfied("EDUCATION");
 
-//   setScreeningForm(prev => {
-//     const updated = { ...prev };
+  //   setScreeningForm(prev => {
+  //     const updated = { ...prev };
 
-//     // AGE
-//     if (ageVerified) {
-//       updated.isAgeCriteriaMet =
-//         prev.isAgeCriteriaMet === "NO" ||
-//         prev.isAgeCriteriaMet === "DISCREPANCY"
-//           ? prev.isAgeCriteriaMet
-//           : "YES";
-//     } else {
-//       updated.isAgeCriteriaMet =
-//         prev.isAgeCriteriaMet === "YES"
-//           ? ""
-//           : prev.isAgeCriteriaMet;
-//     }
+  //     // AGE
+  //     if (ageVerified) {
+  //       updated.isAgeCriteriaMet =
+  //         prev.isAgeCriteriaMet === "NO" ||
+  //         prev.isAgeCriteriaMet === "DISCREPANCY"
+  //           ? prev.isAgeCriteriaMet
+  //           : "YES";
+  //     } else {
+  //       updated.isAgeCriteriaMet =
+  //         prev.isAgeCriteriaMet === "YES"
+  //           ? ""
+  //           : prev.isAgeCriteriaMet;
+  //     }
 
-//     // WORK
-//     if (workVerified) {
-//       updated.isWorkCriteriaMet =
-//         prev.isWorkCriteriaMet === "NO" ||
-//         prev.isWorkCriteriaMet === "DISCREPANCY"
-//           ? prev.isWorkCriteriaMet
-//           : "YES";
-//     } else {
-//       updated.isWorkCriteriaMet =
-//         prev.isWorkCriteriaMet === "YES"
-//           ? ""
-//           : prev.isWorkCriteriaMet;
-//     }
+  //     // WORK
+  //     if (workVerified) {
+  //       updated.isWorkCriteriaMet =
+  //         prev.isWorkCriteriaMet === "NO" ||
+  //         prev.isWorkCriteriaMet === "DISCREPANCY"
+  //           ? prev.isWorkCriteriaMet
+  //           : "YES";
+  //     } else {
+  //       updated.isWorkCriteriaMet =
+  //         prev.isWorkCriteriaMet === "YES"
+  //           ? ""
+  //           : prev.isWorkCriteriaMet;
+  //     }
 
-//     // EDUCATION
-//     if (educationVerified) {
-//       updated.isEducationCriteriaMet =
-//         prev.isEducationCriteriaMet === "NO" ||
-//         prev.isEducationCriteriaMet === "DISCREPANCY"
-//           ? prev.isEducationCriteriaMet
-//           : "YES";
-//     } else {
-//       updated.isEducationCriteriaMet =
-//         prev.isEducationCriteriaMet === "YES"
-//           ? ""
-//           : prev.isEducationCriteriaMet;
-//     }
+  //     // EDUCATION
+  //     if (educationVerified) {
+  //       updated.isEducationCriteriaMet =
+  //         prev.isEducationCriteriaMet === "NO" ||
+  //         prev.isEducationCriteriaMet === "DISCREPANCY"
+  //           ? prev.isEducationCriteriaMet
+  //           : "YES";
+  //     } else {
+  //       updated.isEducationCriteriaMet =
+  //         prev.isEducationCriteriaMet === "YES"
+  //           ? ""
+  //           : prev.isEducationCriteriaMet;
+  //     }
 
-//     return updated;
-//   });
-// }, [docStatusMap, groupedDocs]);
+  //     return updated;
+  //   });
+  // }, [docStatusMap, groupedDocs]);
 
-useEffect(() => {
-  const ageVerified = isCategorySatisfied("AGE");
-  const workVerified = isCategorySatisfied("WORK");
-  const educationVerified = isCategorySatisfied("EDUCATION");
+  useEffect(() => {
+    const ageVerified = isCategorySatisfied("AGE");
+    const workVerified = isCategorySatisfied("WORK");
+    const educationVerified = isCategorySatisfied("EDUCATION");
 
-  setScreeningForm(prev => {
-    let changed = false;
+    setScreeningForm(prev => {
+      let changed = false;
 
-    const updated = { ...prev };
+      const updated = { ...prev };
 
-    // AGE
-    const nextAge = ageVerified
-      ? (
+      // AGE
+      const nextAge = ageVerified
+        ? (
           prev.isAgeCriteriaMet === "NO" ||
-          prev.isAgeCriteriaMet === "DISCREPANCY"
+            prev.isAgeCriteriaMet === "DISCREPANCY"
             ? prev.isAgeCriteriaMet
             : "YES"
         )
-      : (
+        : (
           prev.isAgeCriteriaMet === "YES"
             ? ""
             : prev.isAgeCriteriaMet
         );
 
-    if (nextAge !== prev.isAgeCriteriaMet) {
-      updated.isAgeCriteriaMet = nextAge;
-      changed = true;
-    }
+      if (nextAge !== prev.isAgeCriteriaMet) {
+        updated.isAgeCriteriaMet = nextAge;
+        changed = true;
+      }
 
-    // WORK
-    const nextWork = workVerified
-      ? (
+      // WORK
+      const nextWork = workVerified
+        ? (
           prev.isWorkCriteriaMet === "NO" ||
-          prev.isWorkCriteriaMet === "DISCREPANCY"
+            prev.isWorkCriteriaMet === "DISCREPANCY"
             ? prev.isWorkCriteriaMet
             : "YES"
         )
-      : (
+        : (
           prev.isWorkCriteriaMet === "YES"
             ? ""
             : prev.isWorkCriteriaMet
         );
 
-    if (nextWork !== prev.isWorkCriteriaMet) {
-      updated.isWorkCriteriaMet = nextWork;
-      changed = true;
-    }
+      if (nextWork !== prev.isWorkCriteriaMet) {
+        updated.isWorkCriteriaMet = nextWork;
+        changed = true;
+      }
 
-    // EDUCATION
-    const nextEducation = educationVerified
-      ? (
+      // EDUCATION
+      const nextEducation = educationVerified
+        ? (
           prev.isEducationCriteriaMet === "NO" ||
-          prev.isEducationCriteriaMet === "DISCREPANCY"
+            prev.isEducationCriteriaMet === "DISCREPANCY"
             ? prev.isEducationCriteriaMet
             : "YES"
         )
-      : (
+        : (
           prev.isEducationCriteriaMet === "YES"
             ? ""
             : prev.isEducationCriteriaMet
         );
 
-    if (nextEducation !== prev.isEducationCriteriaMet) {
-      updated.isEducationCriteriaMet = nextEducation;
-      changed = true;
-    }
+      if (nextEducation !== prev.isEducationCriteriaMet) {
+        updated.isEducationCriteriaMet = nextEducation;
+        changed = true;
+      }
 
-    return changed ? updated : prev;
-  });
+      return changed ? updated : prev;
+    });
 
-}, [docStatusMap]);
+  }, [docStatusMap]);
 
 
   useEffect(() => {
@@ -1515,6 +1619,29 @@ useEffect(() => {
       }));
     }
   }, [zonalDecision]);
+
+  // useEffect(() => {
+  //   const isLptFailed =
+  //     isLptRequired === "YES" &&
+  //     lptType === "FAIL";
+
+  //   if (isLptFailed) {
+  //     setZonalDecision("");
+  //   }
+  // }, [isLptRequired, lptType]);
+
+
+  // useEffect(() => {
+  //   const isLptSelectionPending =
+  //     !isLptRequired ||
+  //     (isLptRequired === "YES" && !lptType);
+
+  //   if (isLptSelectionPending) {
+  //     setZonalDecision("");
+  //   }
+  // }, [isLptRequired, lptType]);
+
+
 
   const getPendingMessage = (doc) => {
     if (!doc?.pendingChecks?.length) {
@@ -1600,9 +1727,9 @@ useEffect(() => {
       const updated = prev.map(row =>
         row.id === id
           ? {
-              ...row,
-              [field]: value,
-            }
+            ...row,
+            [field]: value,
+          }
           : row
       );
 
@@ -1645,23 +1772,23 @@ useEffect(() => {
   };
 
   useEffect(() => {
-  if (
-    disableYesOption &&
-    screeningForm.isShortlisted === "YES"
-  ) {
-    setScreeningForm(prev => ({
-      ...prev,
-      isShortlisted: "",
-      finalScreeningRemark: "",
-    }));
+    if (
+      disableYesOption &&
+      screeningForm.isShortlisted === "YES"
+    ) {
+      setScreeningForm(prev => ({
+        ...prev,
+        isShortlisted: "",
+        finalScreeningRemark: "",
+      }));
 
-    setErrors(prev => ({
-      ...prev,
-      isShortlisted: undefined,
-      finalScreeningRemark: undefined,
-    }));
-  }
-}, [disableYesOption]);
+      setErrors(prev => ({
+        ...prev,
+        isShortlisted: undefined,
+        finalScreeningRemark: undefined,
+      }));
+    }
+  }, [disableYesOption]);
 
   return (
     <>
@@ -2658,35 +2785,204 @@ useEffect(() => {
                 )}
 
                 {!isFromCompensationPool && (
-                <div>
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      color: "#f47c2c",
-                      cursor: "pointer",
-                      // textDecoration: "underline",
-                    }}
-                    className="me-4"
-                    onClick={() => setShowCommentsModal(true)}
-                  >
-                    View all comments
-                    <FontAwesomeIcon
-                      icon={faUpRightFromSquare}
-                      style={{ fontSize: "12px" }}
-                      className="ms-1"
-                    />
-                  </span>
-                  <button
-                    className="btn-submit-orange"
-                    onClick={handleFinalSubmit}
-                  >
-                    {t("submit")}
-                  </button>
-                </div>
-              )}
+                  <div>
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        color: "#f47c2c",
+                        cursor: "pointer",
+                        // textDecoration: "underline",
+                      }}
+                      className="me-4"
+                      onClick={() => setShowCommentsModal(true)}
+                    >
+                      View all comments
+                      <FontAwesomeIcon
+                        icon={faUpRightFromSquare}
+                        style={{ fontSize: "12px" }}
+                        className="ms-1"
+                      />
+                    </span>
+                    <button
+                      className="btn-submit-orange"
+                      onClick={handleFinalSubmit}
+                    >
+                      {t("submit")}
+                    </button>
+                  </div>
+                )}
               </div>
             </Card>
           )}
+        {isZonalHr && (
+
+          <Card className="criteria-main-card p-3 mb-3">
+
+            <label className="criteria-title mb-3">
+              LPT (Language Proficiency Test)
+            </label>
+
+            <div className="d-flex align-items-start gap-3 flex-wrap">
+
+              {/* LPT REQUIRED */}
+              <div style={{ width: "220px" }}>
+
+                <label
+                  className="submit-label mb-1"
+                  style={{
+                    whiteSpace: "nowrap",
+                    fontSize: "13px"
+                  }}
+                >
+                  LPT Required
+                </label>
+
+                <select
+                  className="form-select"
+                  value={isLptRequired}
+                  disabled={isZonalAbsent}
+                  onChange={(e) => {
+
+                    const value = e.target.value;
+
+                    // clear ONLY during manual change
+                    if (value === "" || value === "NO") {
+                      setLptType("");
+                      setZonalDecision("");
+                    }
+
+                    setIsLptRequired(value);
+
+                  }}
+                >
+
+                  <option value="">Select</option>
+                  <option value="YES">YES</option>
+                  <option value="NO">NO</option>
+
+                </select>
+
+                {/* <select
+                  className="form-select"
+                  value={isLptRequired}
+                  disabled={isZonalAbsent}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    setIsLptRequired(value);
+
+                    // reset all when dropdown cleared
+                    if (!value) {
+                      setLptType("");
+                      setZonalDecision("");
+                    }
+
+                    // reset LPT type when NO
+                    if (value === "NO") {
+                      setLptType("");
+                      setZonalDecision("");
+                    }
+                  }}
+                >
+
+                  <option value="">Select</option>
+                  <option value="YES">YES</option>
+                  <option value="NO">NO</option>
+
+                </select> */}
+
+              </div>
+
+              {/* 10TH / 12TH */}
+              {/* {isLptRequired === "YES" && (
+
+                <div style={{ width: "260px" }}>
+
+                  <label
+                    className="submit-label mb-1"
+                    style={{
+                      whiteSpace: "nowrap",
+                      fontSize: "13px"
+                    }}
+                  >
+                    Is 10th / 12th completed in Local Language?
+                  </label>
+
+                  <select
+                    className="form-select"
+                    value={lptType}
+                    disabled={isZonalAbsent}
+                    onChange={(e) => {
+                      setLptType(e.target.value);
+                    }}
+                  >
+
+                    <option value="">Select</option>
+
+                    <option value="PASS">
+                      Pass
+                    </option>
+
+                    <option value="FAIL">
+                      Fail
+                    </option>
+
+                    <option value="EXTENSION_GRANTED">
+                      Extension Granted
+                    </option>
+
+                  </select>
+
+                </div>
+              )}
+            </div> */}
+              {isLptRequired === "YES" && (
+
+                <div style={{ width: "260px" }}>
+
+                  <label
+                    className="submit-label mb-1"
+                    style={{
+                      whiteSpace: "nowrap",
+                      fontSize: "13px"
+                    }}
+                  >
+                    LPT Status
+                  </label>
+
+                  <select
+                    className="form-select"
+                    value={lptType}
+                    disabled={isZonalAbsent}
+                    onChange={(e) => {
+                      setLptType(e.target.value);
+                      setZonalDecision("");
+                    }}
+                  >
+
+                    <option value="">Select</option>
+
+                    <option value="PASS">
+                      Pass
+                    </option>
+
+                    <option value="FAIL">
+                      Fail
+                    </option>
+
+                    <option value="EXTENSION_GRANTED">
+                      Extension Granted
+                    </option>
+
+                  </select>
+
+                </div>
+              )}
+            </div>
+
+          </Card>
+
+        )}
 
         {isZonalHr && !isInterviewView && (
           <Card
@@ -2702,7 +2998,7 @@ useEffect(() => {
 
             {/* RADIO OPTIONS — same pattern as Shortlisted */}
             <div className="criteria-radio mb-3">
-              {["YES", "NO", "PROVISIONALLY_APPROVED"].map((opt) => {
+              {/* {["YES", "NO", "PROVISIONALLY_APPROVED"].map((opt) => {
 
                 const disableYes =
                   opt === "YES" && !areAllDocumentsVerified();
@@ -2714,7 +3010,37 @@ useEffect(() => {
                   isZonalAbsent ||
                   !allDocsVerified ||
                   disableProvisionallyApproved ||
-                  disableYes;
+                  disableYes; */}
+              {["YES", "NO", "PROVISIONALLY_APPROVED"].map((opt) => {
+
+                const isLptSelectionPending =
+                  !isLptRequired ||
+                  (isLptRequired === "YES" && !lptType);
+                const isLptFailed =
+                  isLptRequired === "YES" &&
+                  lptType === "FAIL";
+
+                const disableYes =
+                  opt === "YES" &&
+                  (
+                    !areAllDocumentsVerified() ||
+                    isLptFailed
+                  );
+                const disableNo =
+                  opt === "NO" &&
+                  !isLptFailed;
+
+                const disableProvisionallyApproved =
+                  opt === "PROVISIONALLY_APPROVED" &&
+                  areAllDocumentsVerified();
+
+                const isDisabled =
+                  isZonalAbsent ||
+                  !allDocsVerified ||
+                  disableProvisionallyApproved ||
+                  disableYes ||
+                  disableNo ||
+                  isLptSelectionPending;
 
 
 
@@ -2845,6 +3171,7 @@ useEffect(() => {
 
           </Card>
         )}
+
 
 
       </Accordion>

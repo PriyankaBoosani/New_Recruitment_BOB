@@ -158,6 +158,9 @@ export const mapCandidatesToTableRows = (list = []) => {
   positionId: app.positionId,
 
    zonalHrComments: sched.zonalHrComments, 
+     // ✅ ADD THESE
+  lptRequired: sched.lptRequired,
+  lptStatus: sched.lptStatus,
 
   requisitionId: req.id,
   requisitionTitle: req.requisitionTitle,
