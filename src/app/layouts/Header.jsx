@@ -32,6 +32,8 @@ const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showAdminMenu, setShowAdminMenu] = useState(false);
   const [showApprovalsMenu, setShowApprovalsMenu] = useState(false);
+
+
   const dropdownRef = useRef(null);
 
   const closeMenu = () => setExpanded(false);
@@ -88,6 +90,7 @@ const Header = () => {
   //Privileges  console.log("ROLE FROM BACKEND:", user?.role);
   //Privileges
   const privileges = useSelector((state) => state.user.privileges);
+  
 
   // const privileges = useSelector((state) => state.user.privileges);
 
@@ -100,6 +103,7 @@ const Header = () => {
   const canInterview = privileges?.["Interview"];
   const canApprovals =
     privileges?.["L1 Approval"] || privileges?.["L2 Approval"];
+  const canL2 = privileges?.["L2 Approval"];
   const canViewPosition = privileges?.["View Position"];
   // {
   // 	"preveileges": {
@@ -330,11 +334,11 @@ const Header = () => {
               )}
 
 
-                 <Nav.Link as={NavLink} to="/ExaminationCutoffConfiguration" onClick={closeMenu}>
+              <Nav.Link as={NavLink} to="/ExaminationCutoffConfiguration" onClick={closeMenu}>
                 {t("ExaminationCutoffConfiguration")}
               </Nav.Link>
 
-                 {/* {canCandidateWorkflow && (
+              {/* {canCandidateWorkflow && (
                 <Nav.Link as={NavLink} to="/ExaminationCutoffConfiguration" onClick={closeMenu}>
                   {t("ExaminationCutoffConfiguration")}
                 </Nav.Link>
@@ -362,7 +366,7 @@ const Header = () => {
                   {t("verification")}
                 </Nav.Link>
               )}
-             
+
 
 
               {canCommittee && (
@@ -371,11 +375,11 @@ const Header = () => {
                 </Nav.Link>
               )}
 
-               <Nav.Link as={NavLink} to="/messages" onClick={closeMenu}>
+              <Nav.Link as={NavLink} to="/messages" onClick={closeMenu}>
                 {t("messages")}
-              </Nav.Link> 
-              
-               {canApprovals && (
+              </Nav.Link>
+
+              {canApprovals && (
                 <NavDropdown
                   id="approvals-dropdown"
                   show={showApprovalsMenu}
@@ -424,17 +428,19 @@ const Header = () => {
                     as={NavLink}
                     to="/exam-requests"
                     onClick={closeMenu}
-                    >
-                       {t("exam_requests")}
-                    </NavDropdown.Item>
-
-                  <NavDropdown.Item
-                    as={NavLink}
-                    to="/interview-requests"
-                    onClick={closeMenu}
                   >
-                    {t("interview_requests")}
+                    {t("exam_requests")}
                   </NavDropdown.Item>
+
+                  {!canL2 && (
+                    <NavDropdown.Item
+                      as={NavLink}
+                      to="/interview-requests"
+                      onClick={closeMenu}
+                    >
+                      {t("interview_requests")}
+                    </NavDropdown.Item>
+                  )}
                 </NavDropdown>
               )}
               {/* {isRecruiter && (
@@ -513,11 +519,11 @@ const Header = () => {
                   </NavDropdown.Item>
 
 
-                     <NavDropdown.Item as={Link} to="/education-qualification" onClick={closeMenu}>
+                  <NavDropdown.Item as={Link} to="/education-qualification" onClick={closeMenu}>
                     {t("education_qualification")}
                   </NavDropdown.Item>
-                  
-                     <NavDropdown.Item as={Link} to="/state-languages" onClick={closeMenu}>
+
+                  <NavDropdown.Item as={Link} to="/state-languages" onClick={closeMenu}>
                     {t("stateLanguages")}
                   </NavDropdown.Item>
                 </NavDropdown>
