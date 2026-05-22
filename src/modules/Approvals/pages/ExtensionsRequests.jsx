@@ -519,7 +519,6 @@ const ExtensionsRequests = () => {
                 setPage(0);
               }}
             >
-              <option value="ALL">All</option>
 
               {requestTypeDropdownOptions.map((option) => (
                 <option key={option.value} value={option.value}>
