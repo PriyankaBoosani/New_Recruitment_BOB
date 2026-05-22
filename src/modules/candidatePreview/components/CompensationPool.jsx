@@ -44,7 +44,8 @@ const [selectedCandidate, setSelectedCandidate] = useState(null);
 
 const canEditManagerCompensation =
   selectedCandidate?.status !== "NEW" &&
-  selectedCandidate?.status !== "APPROVED"; //  ADD THIS
+  selectedCandidate?.status !== "APPROVED" &&
+  selectedCandidate?.status !== "RENEGOTIATE";//  ADD THIS
 
 const formatNumberWithCommas = (value) => {
   const numeric = value.replace(/[^0-9]/g, ""); // allow only digits
@@ -294,12 +295,7 @@ joiningBonus:
       (parseAmount(managerForm.fixedPay) || 0) +
       (parseAmount(managerForm.variablePay) || 0),
 
-    hike:
-      selectedCandidate.currentCtc
-        ? ((parseAmount(managerForm.fixedPay) - selectedCandidate.currentCtc) /
-            selectedCandidate.currentCtc) *
-          100
-        : 0,
+   hike: selectedCandidate?.hike || 0,
 
     recruiterComments: selectedCandidate.recruiterComments || "", //  IMPORTANT
 panelComments: managerForm.panelComments || "",
@@ -772,12 +768,7 @@ if (!formData.fixedPay) {
           (parseAmount(formData.fixedPay) || 0) +
           (parseAmount(formData.variablePay) || 0),
 
-        hike:
-          selectedCandidate.currentCtc
-            ? ((parseAmount(formData.fixedPay) - selectedCandidate.currentCtc) /
-                selectedCandidate.currentCtc) *
-              100
-            : 0,
+     hike: selectedCandidate?.hike || 0,
 
         recruiterComments: formData.recruiterComments || "",
         panelComments: formData.panelComments || "",
