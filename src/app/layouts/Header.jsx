@@ -334,9 +334,9 @@ const Header = () => {
               )}
 
 
-              <Nav.Link as={NavLink} to="/ExaminationCutoffConfiguration" onClick={closeMenu}>
+              {/* <Nav.Link as={NavLink} to="/ExaminationCutoffConfiguration" onClick={closeMenu}>
                 {t("ExaminationCutoffConfiguration")}
-              </Nav.Link>
+              </Nav.Link> */}
 
               {/* {canCandidateWorkflow && (
                 <Nav.Link as={NavLink} to="/ExaminationCutoffConfiguration" onClick={closeMenu}>
