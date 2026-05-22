@@ -210,7 +210,7 @@ continuePanelUpdate
                       : t("interviewPanelCommittee:create_panel_title")}
                       <p className="card-subtitle">{t("interviewPanelCommittee:subtitle")}</p>
                     </span>
-
+                    {!formData.id && (    
                     <Button
                       variant="outline-primary"
                       size="sm"
@@ -220,6 +220,7 @@ continuePanelUpdate
                       <FiUpload />
                       {t("interviewPanelCommittee:bulk_import")}
                     </Button>
+                    )}
                   </div>
 
                   <InterviewPanelFormModal
