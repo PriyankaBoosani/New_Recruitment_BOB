@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import candidateWorkflowServices from "../services/CandidateWorkflowServices";
+import { useSelector } from "react-redux";
 
 export default function useCompensationPool({
   positionId,
@@ -14,14 +15,41 @@ export default function useCompensationPool({
   const [loading, setLoading] = useState(false);
 
 
-const ALL_STATUSES = [
-  "NEW",
-  "SUBMITTED",
-  "PENDING",
-  "APPROVED",
-  "REJECTED",
-  "RENEGOTIATE",
-];
+const user = useSelector(
+  (state) => state.user.user
+);
+
+const role =
+  user?.role?.toLowerCase();
+
+console.log("====================================");
+console.log("COMPENSATION POOL ROLE CHECK");
+console.log("====================================");
+
+console.log("LOGIN USER:", user);
+
+console.log("ROLE:", role);
+
+const ALL_STATUSES =
+  role === "committee_member"
+    ? [
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "RENEGOTIATE",
+      ]
+    : [
+        "NEW",
+        "SUBMITTED",
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "RENEGOTIATE",
+      ];
+
+console.log("FINAL STATUS LIST:", ALL_STATUSES);
+
+console.log("====================================");
 
 const fetchData = async () => {
   if (!enabled) return;
