@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useAddPanelModal } from "../../interviews/hooks/useAddPanelModal";
 import "../../../style/css/InterviewPanelsConfig.css";
 import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 const AddPanelModal = ({
   show,
   onClose,
@@ -27,8 +29,6 @@ const AddPanelModal = ({
     updateRow,
     handleSave,
     handleCancel,
-    minDate,
-    maxDate,
     clearPanelError,
     showPanelInfo,
 setShowPanelInfo,
@@ -37,7 +37,8 @@ panelInfoLoading,
 
 panelAvailability,
 
-loadPanelAvailability
+loadPanelAvailability,
+panelRanges
   } = useAddPanelModal({
     show,
     initialPanel,
@@ -47,6 +48,33 @@ loadPanelAvailability
     panels
   });
   console.log("panels123", panels)
+
+  const isDateAllowed = (date, ranges) => {
+
+  if (!date) return false;
+
+  return ranges.some(range => {
+
+    const selected =
+      new Date(date);
+
+    const start =
+      new Date(range.startDate);
+
+    const end =
+      new Date(range.endDate);
+
+    // remove time issue
+    selected.setHours(0,0,0,0);
+    start.setHours(0,0,0,0);
+    end.setHours(0,0,0,0);
+
+    return (
+      selected >= start &&
+      selected <= end
+    );
+  });
+};
 
   return (
     <Modal show={show} onHide={handleCancel} size="xl" centered dialogClassName="ap-modal">
@@ -193,9 +221,24 @@ loadPanelAvailability
           </div>
 
           {/* DATE RANGE TEXT BELOW DROPDOWN */}
-          {minDate && maxDate && (
+          {panelRanges.length > 0 && (
+
             <div className="ap-date-range-text">
-              Allowed dates: {formatDateDDMMYYYY(minDate)} to {formatDateDDMMYYYY(maxDate)}
+
+              Allowed ranges:
+
+              {panelRanges.map((range, index) => (
+
+                <div key={index}>
+
+                  {formatDateDDMMYYYY(range.startDate)}
+                  {" "}to{" "}
+                  {formatDateDDMMYYYY(range.endDate)}
+
+                </div>
+
+              ))}
+
             </div>
           )}
         </Form.Group>
@@ -213,18 +256,43 @@ loadPanelAvailability
                 </Form.Label>
 
                 <div className="ap-icon-input">
-                  <input
-                    type="date"
-                    className={`ap-input ap-no-date ${
-                      errors?.rows?.[i]?.date ? "ap-error" : ""
-                    }`}
-                    value={row.date}
-                    min={minDate}
-                    max={maxDate}
-                    onChange={(e) => updateRow(i, "date", e.target.value)}
-                  />
-                  <i className="bi bi-calendar3 ap-calendar" />
-                </div>
+
+  <DatePicker
+    selected={
+      row.date
+        ? new Date(row.date)
+        : null
+    }
+
+    onChange={(date) => {
+
+      if (!date) return;
+
+      const formatted =
+        date.toISOString().split("T")[0];
+
+      updateRow(i, "date", formatted);
+
+    }}
+
+    filterDate={(date) =>
+      isDateAllowed(date, panelRanges)
+    }
+
+    dateFormat="dd/MM/yyyy"
+
+    placeholderText="Select Date"
+
+    className={`ap-input ap-no-date ${
+      errors?.rows?.[i]?.date
+        ? "ap-error"
+        : ""
+    }`}
+  />
+
+  <i className="bi bi-calendar3 ap-calendar" />
+
+</div>
 
                 <div className="field-error">
                   {errors?.rows?.[i]?.date ? t(errors.rows[i].date) : ""}

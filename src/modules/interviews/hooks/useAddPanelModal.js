@@ -151,9 +151,32 @@ const formatDate = (date) => {
     .split("T")[0];
 };
 
-const minDate = formatDate(selectedPanel?.startDate);
-const maxDate = formatDate(selectedPanel?.endDate);
+// const minDate = formatDate(selectedPanel?.startDate);
+// const maxDate = formatDate(selectedPanel?.endDate);
+const panelRanges =
+  selectedPanel?.ranges || [];
 
+  const isDateWithinRanges = (date) => {
+
+  if (!date) return false;
+
+  return panelRanges.some(range => {
+
+    const selected =
+      new Date(date);
+
+    const min =
+      new Date(range.startDate);
+
+    const max =
+      new Date(range.endDate);
+
+    return (
+      selected >= min &&
+      selected <= max
+    );
+  });
+};
   /* ================= ADD ================= */
 
   const addRow = () => {
@@ -239,25 +262,12 @@ const updateRow = (i, field, value) => {
   }
 }
 
-if (
-  field === "date" &&
-  minDate &&
-  maxDate
-) {
+if (field === "date") {
 
-  const selected =
-    new Date(value);
+  const validDate =
+    isDateWithinRanges(value);
 
-  const min =
-    new Date(minDate);
-
-  const max =
-    new Date(maxDate);
-
-  if (
-    selected < min ||
-    selected > max
-  ) {
+  if (!validDate) {
 
     setErrors(prevErrors => {
 
@@ -433,7 +443,12 @@ if (
     if (updated.rows?.[i]) {
 
       // clear current field error
-      delete updated.rows[i][field];
+     if (
+  field !== "date" ||
+  isDateWithinRanges(value)
+) {
+  delete updated.rows[i][field];
+}
 
       // clear dependent validations
       if (
@@ -494,53 +509,27 @@ const clearPanelError = () => {
   const selectedPanel = panels.find(p => p.id === panelId);
 
   const invalidDateExists =
-  rows.some((row) => {
-
-    if (!row.date) return false;
-
-    const selected =
-      new Date(row.date);
-
-    const min =
-      new Date(minDate);
-
-    const max =
-      new Date(maxDate);
-
-    return (
-      selected < min ||
-      selected > max
-    );
-
-  });
+  rows.some(row =>
+    row.date &&
+    !isDateWithinRanges(row.date)
+  );
 if (invalidDateExists) {
 
   const updatedRows = rows.map((row) => {
 
-    if (!row.date) return {};
+  if (
+    row.date &&
+    !isDateWithinRanges(row.date)
+  ) {
 
-    const selected =
-      new Date(row.date);
+    return {
+      date:
+        "Date must be within panel range"
+    };
+  }
 
-    const min =
-      new Date(minDate);
-
-    const max =
-      new Date(maxDate);
-
-    if (
-      selected < min ||
-      selected > max
-    ) {
-
-      return {
-        date:
-          "Date must be within panel range"
-      };
-    }
-
-    return {};
-  });
+  return {};
+});
 
   setErrors(prev => ({
     ...prev,
@@ -562,8 +551,7 @@ if (invalidDateExists) {
 console.log("initialPanel", initialPanel);
 console.log("panelId", panelId);
 console.log("selectedPanel", selectedPanel);
-console.log("minDate", minDate);
-console.log("maxDate", maxDate);
+
 
 
   /* ================= CANCEL ================= */
@@ -571,7 +559,20 @@ console.log("maxDate", maxDate);
   const handleCancel = () => {
     onClose();
   };
+const sortedRanges =
+  [...panelRanges].sort(
+    (a, b) =>
+      new Date(a.startDate) -
+      new Date(b.startDate)
+  );
 
+const minDate =
+  sortedRanges[0]?.startDate || "";
+
+const maxDate =
+  sortedRanges[
+    sortedRanges.length - 1
+  ]?.endDate || "";
  const loadPanelAvailability =
   async () => {
 
@@ -737,8 +738,8 @@ const res=   await interviewService
     updateRow,
     handleSave,
     handleCancel,
-    minDate,   // ✅ ADD
-    maxDate,    // ✅ ADD
+    // minDate,   // ✅ ADD
+    // maxDate,    // ✅ ADD
     clearPanelError,
 
     showPanelInfo,
@@ -748,6 +749,7 @@ panelInfoLoading,
 
 panelAvailability,
 
-loadPanelAvailability
+loadPanelAvailability,
+panelRanges
   };
 };

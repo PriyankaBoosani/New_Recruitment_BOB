@@ -111,11 +111,9 @@ setEditPanel({
 
   ...panel,
 
-  startDate:
-    availablePanel?.startDate,
+   ranges:
+    availablePanel?.ranges || [],
 
-  endDate:
-    availablePanel?.endDate,
 
   index
 
@@ -136,40 +134,70 @@ setEditPanel({
     // ✅ FIXED PATH
     const apiList = response?.data || [];
 
-    const uniquePanels = [
-  ...new Map(
-    apiList.map(item => [
-      item.interviewPanel?.interviewPanelId,
-      item
-    ])
-  ).values()
-];
+//     const uniquePanels = [
+//   ...new Map(
+//     apiList.map(item => [
+//       item.interviewPanel?.interviewPanelId,
+//       item
+//     ])
+//   ).values()
+// ];
 
-    const formatted = uniquePanels.map((item) => ({
-      id: item.interviewPanel?.interviewPanelId,
-      name: item.interviewPanel?.panelName,
+   const groupedPanels = {};
 
-      // ✅ Optional: map members (useful for UI later)
-      members: (item.interviewPanel?.panelMembers || []).map(m => ({
-        name: m.panelMember?.name,
-        role: m.panelMember?.role,
-        email: m.panelMember?.email
-      })),
+apiList.forEach((item) => {
 
-      // ✅ Keep slots empty for now
+  const panelId =
+    item.interviewPanel?.interviewPanelId;
+
+  // create panel once
+  if (!groupedPanels[panelId]) {
+
+    groupedPanels[panelId] = {
+
+      id: panelId,
+
+      name:
+        item.interviewPanel?.panelName,
+
+      members:
+        (item.interviewPanel?.panelMembers || []).map(m => ({
+          name: m.panelMember?.name,
+          role: m.panelMember?.role,
+          email: m.panelMember?.email
+        })),
+
       slots: [],
 
-      // ✅ Extra useful fields
-      startDate: item.startDate,
-      endDate: item.endDate,
-      status: item.positionPanelStatus,
-      canEdit: item.canEdit,
+      // ✅ IMPORTANT
+      ranges: [],
 
-      raw: item
-    }));
+      status:
+        item.positionPanelStatus,
 
-    // ✅ SET AVAILABLE PANELS
-    setAvailablePanels(formatted);
+      canEdit:
+        item.canEdit
+    };
+  }
+
+  // ✅ ADD ALL RANGES
+  groupedPanels[panelId].ranges.push({
+
+    startDate: item.startDate,
+
+    endDate: item.endDate,
+
+    positionPanelId:
+      item.positionPanelId,
+       
+  });
+
+});
+
+const formatted =
+  Object.values(groupedPanels);
+
+setAvailablePanels(formatted);
 
     // ❗ OPTIONAL: If you want already assigned panels pre-selected
     // setSelectedPanels(formatted);

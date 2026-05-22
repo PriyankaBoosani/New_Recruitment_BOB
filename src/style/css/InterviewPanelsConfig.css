@@ -598,15 +598,27 @@
 .ap-date-wrap .react-datepicker-wrapper {
   width: 100%;
 }
+.ap-icon-input {
+  position: relative;
+  width: 100%;
+}
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker__input-container {
+  width: 100%;
+}
 
 .ap-calendar {
   position: absolute;
   right: 14px;
-  top: 12px;
-  color: #2f3e6f;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  font-size: 16px;
   pointer-events: none;
 }
-
 
 /* BUTTON ALIGNMENT */
 
