@@ -819,17 +819,36 @@ const JobPostingsList = () => {
                                                 className="icon-btn"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
+                                                   if (!req.isDraft) {
                                                     navigate(
                                                         `/job-posting/create-requisition?id=${req.id}`,
-                                                        { state: { mode: "edit" } }
+                                                        {
+                                                            state: {
+                                                                mode: "edit"
+                                                            }
+                                                        }
                                                     );
+
+                                                    return;
+                                                }
+
+                                                // DRAFT EDIT
+                                                navigate(
+                                                    `/job-posting/create-requisition?id=${req.parentRequisitionId}`,
+                                                    {
+                                                        state: {
+                                                            mode: "edit",
+                                                            isDraft: true
+                                                        }
+                                                    }
+                                                );
                                                 }}
                                             >
                                                 <img src={pos_edit_icon} alt="edit" className="icon-20" />
                                             </Button>
                                         </OverlayTrigger>
                                     )}
-                                    {!req.isRejected && req.editable && (
+                                    {(req.editable || (req.isDraft && isRejected)) && (
                                         <OverlayTrigger
                                             placement="bottom"
                                             overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:delete_requisition")}</Tooltip>}
