@@ -413,7 +413,7 @@ const Header = () => {
                     to="/extension-requests"
                     onClick={closeMenu}
                   >
-                    {t("extension_requests")}
+                   {canL2 ? t("extension_requests"): t("extension_requests_zone")}
                   </NavDropdown.Item>
 
                   <NavDropdown.Item

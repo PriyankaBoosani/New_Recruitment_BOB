@@ -446,7 +446,7 @@ const ExtensionsRequests = () => {
         {/* ================= HEADER ================= */}
         <Row className="mb-3 align-items-center">
           <Col>
-            <h5 className="page-title">Extensions Requests</h5>
+            <h5 className="page-title">{ isL1 ? "Extension/Zone Change Requests" : "Extension Requests"}</h5>
             <p className="page-subtitle">
               Review and approve or reject extensions requests
             </p>
