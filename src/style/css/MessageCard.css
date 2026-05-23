@@ -299,13 +299,13 @@
 }
 
 #msg-card-1 .msg-btn-reject {
-  background-color: #f5f7fa;
+  /* background-color: #f5f7fa; */
 
   font-size: 0.875rem !important;
   border: 1px solid #dcdfe3;
   padding: 6px 12px;
   border-radius: 6px;
-  color: #9d9697;
+  color: #fff;
 }
 
 

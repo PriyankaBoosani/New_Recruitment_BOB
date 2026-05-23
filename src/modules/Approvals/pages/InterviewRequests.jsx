@@ -420,7 +420,7 @@ const InterviewRequests = () => {
                                   handleActionClick("approve", pos);
                                 }}
                               >
-                                Accept
+                                Approve
                               </Button>
 
                               <Button

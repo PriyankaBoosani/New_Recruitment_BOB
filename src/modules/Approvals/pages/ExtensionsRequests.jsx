@@ -448,7 +448,7 @@ const ExtensionsRequests = () => {
           <Col>
             <h5 className="page-title">{ isL1 ? "Extension/Zone Change Requests" : "Extension Requests"}</h5>
             <p className="page-subtitle">
-              Review and approve or reject extensions requests
+             { isL1 ? " Review and approve or reject extension/zone change requests" : " Review and approve or reject extension requests"}
             </p>
           </Col>
 
@@ -596,7 +596,7 @@ const ExtensionsRequests = () => {
         {/* ================= EXTENSION REQUEST CARDS ================= */}
         {paginatedData.length === 0 ? (
           <div className="text-center text-muted my-4">
-            No Extensions requests found
+            {isL1 ? "No Extension/Zone Change requests found" : "No Extension requests found"}
           </div>
         ) : (
           <>

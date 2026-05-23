@@ -141,7 +141,7 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
             >
               <i className="bi bi-calendar-event"></i>
 
-              <span>Date Extension</span>
+              <span>Extension Date</span>
             </div>
 
             <div className="msg-value">

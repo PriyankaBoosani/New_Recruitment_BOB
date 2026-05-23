@@ -76,6 +76,7 @@
 
   cursor: not-allowed;
 }
+
 /* ===== CARD ===== */
 .ipc-card {
   background: white;
@@ -131,7 +132,8 @@
 
 .ipc-chip-popover {
   position: absolute;
-  top: calc(100% + 8px);   /* ⭐ always below chip */
+  top: calc(100% + 8px);
+  /* ⭐ always below chip */
   left: 0;
 
   background: #2f3e6f;
@@ -142,7 +144,7 @@
   min-width: 200px;
 
   z-index: 9999;
-  box-shadow: 0 8px 18px rgba(0,0,0,.18);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .18);
 }
 
 
@@ -150,7 +152,8 @@
   content: "";
   position: absolute;
   top: -6px;
-  left: 20px;   /* adjust if needed */
+  left: 20px;
+  /* adjust if needed */
   width: 12px;
   height: 12px;
   background: #2f3e6f;
@@ -189,7 +192,7 @@
   border-radius: 10px;
   min-height: 70px;
   padding: 10px;
-   display: flex;
+  display: flex;
   flex-wrap: wrap;
 }
 
@@ -331,7 +334,7 @@
 
 
 .schedule-card {
-  background:white;
+  background: white;
   border-radius: 12px;
   padding: 18px 20px;
   margin-top: 20px;
@@ -353,8 +356,8 @@
 .schedule-table thead th {
   text-align: left;
   font-weight: 410;
-  color: 
-#494955;
+  color:
+    #494955;
   padding: 12px 8px;
   border-bottom: 1px solid #e5e7eb;
 }
@@ -367,14 +370,14 @@
 
 .cand-name {
   font-weight: 420;
-  color: 
-#2d2d2d;
+  color:
+    #2d2d2d;
 }
 
 .cand-reg {
   font-size: 12px;
-  color: 
-#7e7e7e;
+  color:
+    #7e7e7e;
   margin-top: 4px;
 }
 
@@ -387,7 +390,7 @@
 .ap-body {
   padding: 20px;
   background: #ffffff;
-   border-radius: 16px;
+  border-radius: 16px;
 }
 
 /* HEADER */
@@ -441,17 +444,20 @@
   width: 100%;
   font-size: 14px;
 }
+
 .ap-inputs[readonly] {
-  background: #e9ecef; 
-    color: #374151;
+  background: #e9ecef;
+  color: #374151;
   /* border: 1px solid #f59e0b; */
- 
+
 }
+
 .ap-inputs {
   height: 40px;
   border-radius: 12px;
   border: 1px solid #d7dce6;
-  background: #ffffff;   /* ✅ make fields white */
+  background: #ffffff;
+  /* ✅ make fields white */
   padding: 0 14px;
   width: 100%;
   font-size: 14px;
@@ -529,7 +535,7 @@
   padding: 0 24px;
   border-radius: 12px;
   color: #6b7280;
-  
+
 }
 
 .ap-save {
@@ -539,7 +545,7 @@
   padding: 0 28px;
   border-radius: 12px;
   color: white;
-  
+
 }
 
 .ap-row {
@@ -547,7 +553,8 @@
   grid-template-columns: 1fr 1fr 56px;
   gap: 18px;
   margin-bottom: 18px;
-  align-items: start;   /* ⭐ KEY FIX */
+  align-items: start;
+  /* ⭐ KEY FIX */
 }
 
 /* NEW LAYOUT CLASSES */
@@ -582,7 +589,7 @@
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  
+
   .ap-field {
     width: 100%;
   }
@@ -598,10 +605,12 @@
 .ap-date-wrap .react-datepicker-wrapper {
   width: 100%;
 }
+
 .ap-icon-input {
   position: relative;
   width: 100%;
 }
+
 .react-datepicker-wrapper {
   width: 100%;
 }
@@ -624,9 +633,9 @@
 
 .ap-btn-col {
   display: flex;
-  align-items: center;    
+  align-items: center;
   justify-content: center;
-  padding-top: 28px;      
+  padding-top: 28px;
 }
 
 .ap-plus,
@@ -640,8 +649,10 @@
   font-size: 12px;
   color: #ef4444;
   margin-top: 4px;
-  min-height: 18px;   /* ⭐ prevents jumpng i*/
+  min-height: 18px;
+  /* ⭐ prevents jumpng i*/
 }
+
 .ap-error {
   border-color: #ef4444 !important;
   background: #fff5f5;
@@ -701,15 +712,14 @@
 
 .del-title {
   font-size: 15px;
-  font-weight: 350;
-  color:
-#596cab;
+  font-weight: 500;
+  color: #162b75;
 }
 
 .del-close {
   border: none;
   background: none;
-  color:#7a7a7a;
+  color: #7a7a7a;
   font-size: 14px;
 }
 
@@ -718,9 +728,9 @@
 .del-message {
   font-size: 14px;
   font-weight: 400;
-  color: 
+  color:
 
-#162b75;
+    #162b75;
   margin-bottom: 22px;
 }
 
@@ -734,12 +744,12 @@
 
 .del-cancel {
   background:
-#f8f8f8;
+    #f8f8f8;
   border: 1px solid #e3e6ec;
   border-radius: 10px;
   height: 36px;
   padding: 0 18px;
-  color:#818181;
+  color: #818181;
   font-size: 13px;
 }
 
@@ -753,6 +763,7 @@
   font-size: 13px;
   font-weight: 400;
 }
+
 /* ===== APPLY TO ALL BUTTON ===== */
 
 .ipc-apply-btn {
@@ -794,7 +805,8 @@
 
 .apply-icon {
   font-size: 42px;
-  color: #22c55e;   /* green */
+  color: #22c55e;
+  /* green */
   margin-bottom: 8px;
 }
 
@@ -813,10 +825,11 @@
   padding: 8px 26px;
   font-weight: 500;
 }
+
 .ipc-alert-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -829,7 +842,7 @@
   background: #fff;
   border-radius: 16px;
   padding: 28px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 .ipc-alert-icon {
@@ -860,12 +873,14 @@
   border-radius: 10px;
   font-weight: 500;
 }
+
 .ap-date-range-text {
   font-size: 12px;
   color: #0d6efd;
   margin-top: 4px;
   font-weight: 500;
 }
+
 .schedule-error-box {
 
   background: #fff5f5;
@@ -1131,7 +1146,7 @@
   padding: 8px 16px;
   font-weight: 500;
   transition: 0.2s ease;
-  font-size:0.875rem;
+  font-size: 0.875rem;
 }
 
 .ipc-btn-outline:hover {
@@ -1305,6 +1320,7 @@
 .ap-modern-select option {
   padding: 10px;
 }
+
 /* .schedule-table {
   table-layout: fixed;
 } */
@@ -1312,11 +1328,11 @@
 .schedule-table td {
   word-break: break-word;
 } */
- .alert-modal .btn{
+.alert-modal .btn {
   background-color: #f26522 !important;
- }
+}
 
- .panel-update-warning {
+.panel-update-warning {
   margin-top: 16px;
   padding: 16px;
   border-radius: 14px;
@@ -1356,11 +1372,13 @@
   gap: 10px;
   align-items: center;
 }
+
 .panel-update-warning .btn.btn-warning {
-  font-size:0.875rem !important;
+  font-size: 0.875rem !important;
 }
+
 .panel-update-warning .btn.btn-light {
-  font-size:0.75rem !important;
+  font-size: 0.75rem !important;
 }
 
 .update-confirm-modal-body {
@@ -1457,6 +1475,7 @@
   cursor: pointer;
   transition: color 0.15s ease;
 }
+
 .ap-panel-popover-close:hover {
   color: #475569;
 }
@@ -1471,6 +1490,7 @@
 .ap-day-section {
   margin-bottom: 18px;
 }
+
 .ap-day-section:last-child {
   margin-bottom: 0;
 }
@@ -1516,6 +1536,7 @@
   border-radius: 6px;
   transition: all 0.2s ease;
 }
+
 .ap-slot-row-item:hover {
   background-color: #f8fafc;
   border-color: #cbd5e1;
@@ -1523,7 +1544,8 @@
 
 /* Dedicated Left Column for Time tags */
 .ap-slot-left {
-  flex: 0 0 115px; /* Keeps widths completely locked */
+  flex: 0 0 115px;
+  /* Keeps widths completely locked */
 }
 
 .ap-time-pill {
@@ -1542,7 +1564,8 @@
 .ap-slot-right {
   flex-grow: 1;
   padding-left: 12px;
-  min-width: 0; /* Prevents text overflow breaks */
+  min-width: 0;
+  /* Prevents text overflow breaks */
 }
 
 .ap-slot-position-title {
@@ -1581,6 +1604,7 @@
   color: #2563eb;
   font-weight: 500;
 }
+
 @keyframes spin {
 
   from {

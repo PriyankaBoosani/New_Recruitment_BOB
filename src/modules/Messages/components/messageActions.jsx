@@ -108,7 +108,7 @@ const MessageActions = ({ item, onSubmitApproval }) => {
           {/* REJECT BUTTON */}
           {showReject && (
             <button
-              className="btn btn-outline-secondary msg-btn-reject"
+              className="btn btn-danger msg-btn-reject"
               disabled={disableReject}
               onClick={() => {
                 if (!comment.trim()) {
