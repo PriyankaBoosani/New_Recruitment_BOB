@@ -878,7 +878,7 @@ if (!formData.fixedPay) {
 
             <th className="fs-14 fw-normal py-3">Comments</th>
 
-            <th className="fs-14 fw-normal py-3">Negotiation</th>
+            <th className="fs-14 fw-normal py-3">Status</th>
 
             <th className="text-center fs-14 fw-normal py-3">Actions</th>
           </tr>
@@ -1129,6 +1129,7 @@ onHide={() => setShowRecruiterModal(false)}
 }`}
   placeholder="Enter Value"
   value={formData.fixedPay}
+    disabled={!canEditCompensation }
   onChange={(e) =>
     setFormData({
       ...formData,
@@ -1148,6 +1149,7 @@ onHide={() => setShowRecruiterModal(false)}
     className="form-control"
     placeholder="Enter Value"
     value={formData.variablePay}
+     disabled={!canEditCompensation }
     onChange={(e) =>
       setFormData({
         ...formData,
@@ -1165,6 +1167,7 @@ onHide={() => setShowRecruiterModal(false)}
     className="form-control"
     placeholder="Enter Value"
     value={formData.joiningBonus}
+     disabled={!canEditCompensation }
     onChange={(e) =>
       setFormData({
         ...formData,
@@ -1181,6 +1184,7 @@ onHide={() => setShowRecruiterModal(false)}
   rows={3}
   placeholder="Enter Comment"
   value={formData.recruiterComments}   //  correct
+   disabled={!canEditCompensation }
   onChange={(e) =>
     setFormData({ ...formData, recruiterComments: e.target.value })
   }
@@ -1239,7 +1243,7 @@ dialogClassName="custom-modal compensation-modal"
     : ""
 }`}
   value={managerForm.fixedPay}
-  readOnly={!canEditManagerFields}
+  disabled={!canEditManagerFields}
   onChange={(e) =>
     setManagerForm({
       ...managerForm,
@@ -1259,7 +1263,7 @@ dialogClassName="custom-modal compensation-modal"
  <input
   className="form-control"
   value={managerForm.variablePay}
-  readOnly={!canEditManagerFields}
+  disabled={!canEditManagerFields}
   onChange={(e) =>
     setManagerForm({
       ...managerForm,
@@ -1276,7 +1280,7 @@ dialogClassName="custom-modal compensation-modal"
  <input
   className="form-control"
   value={managerForm.joiningBonus}
-  readOnly={!canEditManagerFields}
+  disabled={!canEditManagerFields}
   onChange={(e) =>
     setManagerForm({
       ...managerForm,
@@ -1292,6 +1296,7 @@ dialogClassName="custom-modal compensation-modal"
   className="form-control"
   rows={3}
   value={managerForm.panelComments}   //  correct
+  disabled={!canEditManagerFields}
   onChange={(e) =>
     setManagerForm({ ...managerForm, panelComments: e.target.value })
   }

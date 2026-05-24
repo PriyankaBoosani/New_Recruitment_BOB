@@ -2122,7 +2122,7 @@ const COMPENSATION_POOL_STATUSES =
 
     const today = todayString();
 
-if (submitBeforeDate < today) {
+if (submitBeforeDate <= today) {
   toast.error("Past dates are not allowed");
   return;
 }
@@ -2474,23 +2474,47 @@ if (submitBeforeDate < today) {
       console.error("Preview failed", err);
     }
   };
-  const handleAcceptBeforeDateChange = (value) => {
+
+  const handleSubmitBeforeDateChange = (value) => {
+
+  const today = todayString();
+
+  // EMPTY
+  if (!value) {
+    setSubmitBeforeDate("");
+    return;
+  }
+
+  // BLOCK TODAY + PAST
+  if (value <= today) {
+
+    toast.error("Today and past dates are not allowed");
+
+    setSubmitBeforeDate("");
+
+    return;
+  }
+
+  // VALID
+  setSubmitBeforeDate(value);
+};
+ const handleAcceptBeforeDateChange = (value) => {
     setAcceptBeforeDate(value);
 
-    if (!value) {
+  if (!value) {
       setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
-      return;
-    }
+    return;
+  }
 
     if (value <= todayString()) {
-      setFormErrors(prev => ({
-        ...prev,
+    setFormErrors(prev => ({
+      ...prev,
         acceptBeforeDate: t("candidateWorkflow:must_be_greater_than_today"),
-      }));
+    }));
     } else {
       setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
     }
-  };
+};
 
 
   const [showExaminationModal, setShowExaminationModal] = useState(false);
@@ -3223,7 +3247,7 @@ if (submitBeforeDate < today) {
 
                     {/* Accept Before Date */}
                     <div>
-                      <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:accept_before")}</p>
+                      <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:accept_before")}11</p>
                       <input
                         type="date"
                         className="form-control fs-13 py-1"
@@ -3427,10 +3451,15 @@ if (submitBeforeDate < today) {
                             <input
                               type="date"
                               className="form-control fs-14"
-                              style={{ width: "150px" }}
+                              style={{ width: "155px" }}
                               value={submitBeforeDate}
-                              min={todayString()}
-                              onChange={(e) => setSubmitBeforeDate(e.target.value)}
+                              min={new Date(Date.now() + 86400000)
+                                .toISOString()
+                                .split("T")[0]}
+                                onChange={(e) =>
+                                handleSubmitBeforeDateChange(e.target.value)
+                              }
+                              
                             />
                           </div>
 
