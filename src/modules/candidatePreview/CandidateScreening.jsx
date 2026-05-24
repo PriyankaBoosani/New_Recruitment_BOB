@@ -97,20 +97,20 @@ export default function CandidateScreening({ selectedJob }) {
   const [errorMessage, setErrorMessage] =
     useState("");
 
-// const user = useSelector((state) => state.user.user);
+  // const user = useSelector((state) => state.user.user);
 
-// const role = user?.role?.toLowerCase();
+  // const role = user?.role?.toLowerCase();
 
-// const isRecruiter = role === "recruiter";
-const COMPENSATION_POOL_STATUSES =
-  role === "committee_member"
-    ? [
+  // const isRecruiter = role === "recruiter";
+  const COMPENSATION_POOL_STATUSES =
+    role === "committee_member"
+      ? [
         "PENDING",
         "APPROVED",
         "REJECTED",
         "RENEGOTIATE",
       ]
-    : [
+      : [
         "NEW",
         "SUBMITTED",
         "PENDING",
@@ -2026,6 +2026,8 @@ const COMPENSATION_POOL_STATUSES =
             ? "CompensationPool"
             : "CandidatePool",
       categoryId: filters.categoryId || null,
+      rank: isRankEnabled,
+      score: isScoreEnabled,
     };
 
     //  Candidate Pool
@@ -2122,10 +2124,10 @@ const COMPENSATION_POOL_STATUSES =
 
     const today = todayString();
 
-if (submitBeforeDate <= today) {
-  toast.error("Past dates are not allowed");
-  return;
-}
+    if (submitBeforeDate <= today) {
+      toast.error("Past dates are not allowed");
+      return;
+    }
 
 
     if (selectedInterviewCandidates.length === 0) {
@@ -2477,44 +2479,44 @@ if (submitBeforeDate <= today) {
 
   const handleSubmitBeforeDateChange = (value) => {
 
-  const today = todayString();
+    const today = todayString();
 
-  // EMPTY
-  if (!value) {
-    setSubmitBeforeDate("");
-    return;
-  }
+    // EMPTY
+    if (!value) {
+      setSubmitBeforeDate("");
+      return;
+    }
 
-  // BLOCK TODAY + PAST
-  if (value <= today) {
+    // BLOCK TODAY + PAST
+    if (value <= today) {
 
-    toast.error("Today and past dates are not allowed");
+      toast.error("Today and past dates are not allowed");
 
-    setSubmitBeforeDate("");
+      setSubmitBeforeDate("");
 
-    return;
-  }
+      return;
+    }
 
-  // VALID
-  setSubmitBeforeDate(value);
-};
- const handleAcceptBeforeDateChange = (value) => {
+    // VALID
+    setSubmitBeforeDate(value);
+  };
+  const handleAcceptBeforeDateChange = (value) => {
     setAcceptBeforeDate(value);
 
-  if (!value) {
+    if (!value) {
       setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
-    return;
-  }
+      return;
+    }
 
     if (value <= todayString()) {
-    setFormErrors(prev => ({
-      ...prev,
+      setFormErrors(prev => ({
+        ...prev,
         acceptBeforeDate: t("candidateWorkflow:must_be_greater_than_today"),
-    }));
+      }));
     } else {
       setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
     }
-};
+  };
 
 
   const [showExaminationModal, setShowExaminationModal] = useState(false);
@@ -3456,10 +3458,10 @@ if (submitBeforeDate <= today) {
                               min={new Date(Date.now() + 86400000)
                                 .toISOString()
                                 .split("T")[0]}
-                                onChange={(e) =>
+                              onChange={(e) =>
                                 handleSubmitBeforeDateChange(e.target.value)
                               }
-                              
+
                             />
                           </div>
 
@@ -3858,7 +3860,7 @@ if (submitBeforeDate <= today) {
 
       </Modal>
 
- <Modal
+      <Modal
         show={
           showImportCandidatesModal
         }
@@ -3909,7 +3911,7 @@ if (submitBeforeDate <= today) {
 
       </Modal>
 
-      
+
 
 
       <Modal
@@ -4173,7 +4175,7 @@ if (submitBeforeDate <= today) {
                             APPEARED
                           </td>
 
-                    {[120,85,200,95,450,50,15,10,5,1030]
+                          {[120, 85, 200, 95, 450, 50, 15, 10, 5, 1030]
                             .map((val, i) => (
 
                               <td
@@ -4209,8 +4211,8 @@ if (submitBeforeDate <= today) {
                             VACANCY
                           </td>
 
-                    {[25,18,45,22,95,12,4,3,1,225]
-                      .map((val, i) => (
+                          {[25, 18, 45, 22, 95, 12, 4, 3, 1, 225]
+                            .map((val, i) => (
 
                               <td
                                 key={i}
@@ -4249,7 +4251,7 @@ if (submitBeforeDate <= today) {
                             QUALIFIED WITH NO RELAXATION
                           </td>
 
-                    {[45,30,85,40,180,20,8,5,2,415]
+                          {[45, 30, 85, 40, 180, 20, 8, 5, 2, 415]
                             .map((val, i) => (
 
                               <td
@@ -4272,7 +4274,7 @@ if (submitBeforeDate <= today) {
 
                         {/* QUALIFIED SET II */}
 
-                  {/* <tr>
+                        {/* <tr>
 
                           <td
                             style={{
@@ -4369,7 +4371,7 @@ if (submitBeforeDate <= today) {
       </Modal>
 
 
-     
+
 
     </div>
 
