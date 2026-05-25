@@ -61,7 +61,8 @@ const ApplicationForm = ({
   isFromInterview,
   isFromCompensationPool,
   page,
-  pageSize
+  pageSize,
+  isCandidateWorkflow,
 }) => {
 
   const { t } = useTranslation(["preview", "common", "validation"]);
@@ -650,15 +651,20 @@ const ApplicationForm = ({
         //     : item.docScreeningStatus || "PENDING";
 
 
-        const status = isZonalHr
-          ? item.zonalHrDocStatus || "PENDING"
+        // const status = isZonalHr
+        //   ? item.zonalHrDocStatus || "PENDING"
 
-          : isFromCompensationPool   //  ADD THIS
-            ? item.zonalHrDocStatus || "PENDING"
+        //   : isFromCompensationPool   //  ADD THIS
+        //     ? item.zonalHrDocStatus || "PENDING"
 
-            : (isInterviewer || isInterviewView)
-              ? (item.zonalHrDocStatus || "PENDING")   //  ONLY ZONAL
-              : item.docScreeningStatus || "PENDING";
+        //     : (isInterviewer || isInterviewView)
+        //       ? (item.zonalHrDocStatus || "PENDING")   //  ONLY ZONAL
+        //       : item.docScreeningStatus || "PENDING";
+
+
+              const status = isCandidateWorkflow
+  ? item.docScreeningStatus || "PENDING"
+  : item.zonalHrDocStatus || "PENDING";
 
 
         const comments = isZonal

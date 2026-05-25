@@ -26,6 +26,15 @@ const CandidatePreviewPage = ({ onHide }) => {
   const state = location.state || {};
   const activeTab = state?.activeTab;
 
+
+  
+const isCandidateWorkflow =
+  activeTab === "CANDIDATE_POOL";
+
+const isZonalScreen =
+  activeTab === "INTERVIEW_POOL" ||
+  activeTab === "COMPENSATION_POOL";
+
   const user = useSelector((state) => state.user.user);
 
   const role = user?.role ? user.role.toLowerCase() : "";  // const isZonalHr = role === "zonal_hr";
@@ -378,6 +387,7 @@ await candidateWorkflowServices.getCandidateAllDetails(
                 isFromCompensationPool={isFromCompensationPool}
                 page={state.page}
                 pageSize={state.pageSize}
+                isCandidateWorkflow={isCandidateWorkflow}
             />
           )
         )}
