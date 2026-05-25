@@ -78,25 +78,37 @@ export default function ExaminationCutoffTable({
       }}
     >
 
-      <option value="">
-        All Status
-      </option>
+          <option value="">
+            All Status
+          </option>
 
-      <option value="L1_PENDING">
-        L1 Pending
-      </option>
+          <option value="L1_PENDING">
+            L1 Pending
+          </option>
 
-      <option value="L2_PENDING">
-        L2 Pending
-      </option>
+          <option value="L1_APPROVED">
+            L1 Approved
+          </option>
 
-      <option value="APPROVED">
-        Approved
-      </option>
+          <option value="L1_REJECTED">
+            L1 Rejected
+          </option>
 
-      <option value="REJECTED">
-        Rejected
-      </option>
+          <option value="APPROVED">
+            Approved
+          </option>
+
+          <option value="L2_REJECTED">
+            L2 Rejected
+          </option>
+
+          <option value="REJECTED">
+            Rejected
+          </option>
+
+          <option value="FINALIZED">
+            Finalized
+          </option>
 
     </select>
 
@@ -178,10 +190,18 @@ export default function ExaminationCutoffTable({
 
     <span
       className={`status-pill ${
-        item.status?.includes(
-          "APPROVED"
-        )
+        item.status === "APPROVED" ||
+        item.status === "L1_APPROVED"
           ? "approved"
+
+          : item.status === "REJECTED" ||
+            item.status === "L1_REJECTED" ||
+            item.status === "L2_REJECTED"
+          ? "rejected"
+
+          : item.status === "FINALIZED"
+          ? "finalized"
+
           : "pending"
       }`}
     >

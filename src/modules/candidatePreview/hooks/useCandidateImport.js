@@ -103,58 +103,144 @@ export const useCandidateImport =
 const downloadCandidateTemplate =
   async (positionIds = []) => {
 
+    try {
+
+      const res =
+  await candidateWorkflowServices
+    .downloadCandidateTemplate(
+      positionIds
+    );
+
+    console.log(
+  "DOWNLOAD TEMPLATE STATUS",
+  res.status
+);
+
+      // ✅ HANDLE 422 RESPONSE
+      if (res.status === 422) {
+
+        const text =
+          await res.data.text();
+
+        const errorData =
+          JSON.parse(text);
+
+        return {
+
+          success: false,
+
+          error:
+            errorData?.message ||
+            "Validation failed",
+
+          details:
+            errorData?.data || []
+
+        };
+
+      }
+
+      // ✅ SUCCESS FILE DOWNLOAD
+      const blob = new Blob(
+        [res.data],
+        {
+          type:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        }
+      );
+
+      const url =
+        window.URL.createObjectURL(
+          blob
+        );
+
+      const link =
+        document.createElement("a");
+
+      link.href = url;
+
+      link.download =
+        "candidate-template.xlsx";
+
+      document.body.appendChild(
+        link
+      );
+
+      link.click();
+
+      link.remove();
+
+      window.URL.revokeObjectURL(
+        url
+      );
+
+      return {
+        success: true
+      };
+
+    } catch (err) {
+
+      console.error(
+        "DOWNLOAD TEMPLATE ERROR",
+        err
+      );
+
+      // ✅ HANDLE BLOB ERROR RESPONSE
+      if (
+        err?.response?.data instanceof Blob
+      ) {
+
         try {
 
-          const res =
-            await candidateWorkflowServices
-              .downloadCandidateTemplate( positionIds);
+          const text =
+            await err.response.data.text();
 
-          const blob =
-            res.data;
+          const errorData =
+            JSON.parse(text);
 
-          const url =
-            window.URL.createObjectURL(
-              blob
-            );
+          return {
 
-          const link =
-            document.createElement(
-              "a"
-            );
+            success: false,
 
-          link.href = url;
+            error:
+              errorData?.message ||
+              "Download failed",
 
-          link.download =
-            "Candidate_Template.xlsx";
+            details:
+              errorData?.data || []
 
-          document.body.appendChild(
-            link
-          );
+          };
 
-          link.click();
-
-          document.body.removeChild(
-            link
-          );
-
-          window.URL.revokeObjectURL(
-            url
-          );
-
-        } catch (err) {
+        } catch (parseErr) {
 
           console.error(
-            "Download failed:",
-            err
-          );
-
-          toast.error(
-            "Failed to download template"
+            "BLOB PARSE ERROR",
+            parseErr
           );
 
         }
 
+      }
+
+      return {
+
+        success: false,
+
+        error:
+          err?.response?.data
+            ?.message ||
+          err?.message ||
+          "Download failed",
+
+        details:
+          err?.response?.data
+            ?.data || []
+
       };
+
+    }
+
+  };
 
     return {
 

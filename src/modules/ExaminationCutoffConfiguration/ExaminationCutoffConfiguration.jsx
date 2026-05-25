@@ -22,6 +22,12 @@ import DropdownStripMultipleposition from
 import RequisitionStripformultiplepositions from
   "../candidatePreview/components/RequisitionStripformultiplepositions";
 
+  import DropdownStrip from
+  "../candidatePreview/components/DropdownStrip";
+
+import RequisitionStrip from
+  "../candidatePreview/components/RequisitionStrip";
+
 import ExaminationCutoffTable from
   "./components/ExaminationCutoffTable";
 
@@ -69,6 +75,12 @@ export default function ExaminationCutoffConfiguration() {
     loadingRequisitions,
     setLoadingRequisitions
   ] = useState(false);
+
+
+  const [
+  hasExistingConfiguration,
+  setHasExistingConfiguration
+] = useState(false);
 
   const [
     loadingPositions,
@@ -182,12 +194,14 @@ const loadConfigurations =
 
     try {
 
-      if (!positionIds.length) {
+if (!positionIds.length) {
 
-        setConfigurations([]);
+  setConfigurations([]);
 
-        return;
-      }
+  setHasExistingConfiguration(false);
+
+  return;
+}
 
       const res =
         await jobPositionApiService.getExamConfigurationsByPositions(
@@ -222,8 +236,12 @@ const mappedData =
     };
   });
 
-setConfigurations(
-  mappedData
+setConfigurations(mappedData);
+
+/* CHECK CONFIG EXISTS */
+
+setHasExistingConfiguration(
+  mappedData.length > 0
 );
 
 return mappedData;
@@ -592,7 +610,7 @@ const handleSuccess = async () => {
 
     {/* FILTERS */}
     <div className="row g-2 align-items-end exam-filter-section">
-      <DropdownStripMultipleposition
+      {/* <DropdownStripMultipleposition
         requisitions={requisitions}
         positions={positions}
         selectedRequisitionId={selectedRequisitionId}
@@ -602,16 +620,36 @@ const handleSuccess = async () => {
         onRequisitionChange={handleRequisitionChange}
         onPositionChange={handlePositionChange}
         onRequisitionSearch={handleRequisitionSearch}
-      />
+      /> */}
+
+
+      <DropdownStrip
+  requisitions={requisitions}
+  positions={positions}
+  selectedRequisitionId={selectedRequisitionId}
+  selectedPositionId={selectedPositionId?.[0] || ""}
+  loadingRequisitions={loadingRequisitions}
+  loadingPositions={loadingPositions}
+  onRequisitionChange={handleRequisitionChange}
+  onPositionChange={(id) =>
+    handlePositionChange(id ? [id] : [])
+  }
+  onRequisitionSearch={handleRequisitionSearch}
+/>
 
       {/* BUTTONS */}
       <div className="col-md-6 col-12 text-md-end">
 
         <button
-          className="btn text-white orange-bg fs-14"
+ className={`btn fs-14 ${
+  hasExistingConfiguration
+    ? "btn-secondary"
+    : "text-white orange-bg"
+}`}
+  disabled={hasExistingConfiguration}
     onClick={() => {
 
-  /* REQUISITION VALIDATION */
+  /* REQUISITION VALIDATION */  
 
   if (!selectedRequisitionId) {
 
@@ -656,19 +694,28 @@ const handleSuccess = async () => {
       {normalizedRequisition &&
         selectedPosition?.length > 0 && (
 
-        <RequisitionStripformultiplepositions
-          requisition={normalizedRequisition}
-          position={selectedPosition}
-          isCardBg={false}
-          isSaveEnabled={false}
-          isSaveBtn={false}
-          saveButton={false}
-          onRemovePosition={(positionId) => {
-            setSelectedPositionId((prev) =>
-              prev.filter((id) => id !== positionId)
-            );
-          }}
-        />
+        // <RequisitionStripformultiplepositions
+        //   requisition={normalizedRequisition}
+        //   position={selectedPosition}
+        //   isCardBg={false}
+        //   isSaveEnabled={false}
+        //   isSaveBtn={false}
+        //   saveButton={false}
+        //   onRemovePosition={(positionId) => {
+        //     setSelectedPositionId((prev) =>
+        //       prev.filter((id) => id !== positionId)
+        //     );
+        //   }}
+        // />
+
+        <RequisitionStrip
+  requisition={normalizedRequisition}
+  position={selectedPosition?.[0]}
+  isCardBg={false}
+  isSaveEnabled={false} 
+  isSaveBtn={false}
+  saveButton={false}
+/>
 
       )}
 

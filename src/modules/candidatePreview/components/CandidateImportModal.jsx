@@ -133,21 +133,23 @@ const CandidateImportModal = ({
           IMPORT AREA
       ========================== */}
 
-      <div
-        className="p-4 rounded"
-        style={{
-          background: "#FCEEE9"
-        }}
-      >
+     <div
+  className="p-4 rounded"
+  style={{
+    background: "#FCEEE9",
+    borderRadius: "18px",
+    minHeight: "280px"
+  }}
+>
 
         {/* ICON + TITLE */}
 
         <div className="text-center mb-3">
 
-          <div
-            style={{
-              width: 72,
-              height: 72,
+         <div
+  style={{
+    width: 58,
+    height: 58,
               borderRadius: 12,
               display: "inline-flex",
               alignItems: "center",
@@ -157,21 +159,31 @@ const CandidateImportModal = ({
             }}
           >
 
-            <UploadIcon size={32} />
+          <UploadIcon
+  size={24}
+  color="#374151"
+/>
 
           </div>
 
-          <h5
-            className="mb-2"
-            style={{
-              fontWeight: "600"
-            }}
-          >
-            Upload Candidates
+        <h5
+  className="mb-1"
+  style={{
+    fontWeight: "600",
+    fontSize: "15px",
+    color: "#1F2937"
+  }}
+>
+            Upload Candidates score
           </h5>
 
-          <p className="text-muted small">
-            Support for XLSX formats
+         <p
+  className="text-muted mb-3"
+  style={{
+    fontSize: "12px"
+  }}
+>
+         Upload candidate scores using XLSX format
           </p>
 
         </div>
@@ -239,16 +251,19 @@ const CandidateImportModal = ({
 
           <label htmlFor="upload-candidates-xlsx">
 
-            <Button
-              variant="primary"
-              as="span"
-              disabled={loading}
-              style={{
-                background:
-                  "#F97316",
-                border: "none"
-              }}
-            >
+        <Button
+  variant="primary"
+  as="span"
+  disabled={loading}
+  style={{
+    background: "#F97316",
+    border: "none",
+    fontSize: "13px",
+    fontWeight: "600",
+    padding: "8px 18px",
+    borderRadius: "10px"
+  }}
+>
 
               {selectedFile
                 ? "Reupload XLSX"
@@ -298,21 +313,44 @@ const CandidateImportModal = ({
             DOWNLOAD TEMPLATE
         ========================== */}
 
-        <div className="text-center small">
+      <div
+  className="text-center"
+  style={{
+    fontSize: "15px",
+    marginTop: "18px"
+  }}
+>
 
           Download template:
 
           <button
             type="button"
-            onClick={() =>
-  downloadCandidateTemplate(
-    positionIds
-  )
-}
+  onClick={async () => {
+
+  const result =
+    await downloadCandidateTemplate(
+      positionIds
+    );
+
+  if (!result?.success) {
+
+    setError(
+      result.error
+    );
+
+    setErrorDetails(
+      result.details || []
+    );
+
+  }
+
+}}
             className="btn btn-link p-0 text-primary text-decoration-none"
             style={{
-              cursor: "pointer"
-            }}
+  cursor: "pointer",
+  fontSize: "15px",
+  fontWeight: "600"
+}}
             disabled={loading}
           >
             {" "}XLSX
@@ -328,16 +366,27 @@ const CandidateImportModal = ({
 
       <div className="d-flex justify-content-end gap-2 mt-3">
 
-        <Button
-          variant="outline-secondary"
-          onClick={onClose}
-          disabled={loading}
-        >
+<Button
+  variant="outline-secondary"
+  style={{
+    fontSize: "13px",
+    padding: "7px 16px",
+    borderRadius: "10px",
+    fontWeight: "600"
+  }}>
           Cancel
         </Button>
 
         <Button
-          onClick={handleUpload}
+  onClick={handleUpload}
+  style={{
+    background: "#F97316",
+    border: "none",
+    fontSize: "13px",
+    padding: "7px 18px",
+    borderRadius: "10px",
+    fontWeight: "600"
+  }}    
           disabled={loading}
           style={{
             background: "#F97316",

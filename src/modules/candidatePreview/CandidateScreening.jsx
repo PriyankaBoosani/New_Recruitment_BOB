@@ -25,6 +25,7 @@ import locationIcon from "../../assets/location-icon.png";
 import RankListModal from "./components/RankListModal";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import ExaminationScoreModal from "./components/ExaminationScoreModal";
 import ZonalRejectedCommentModal from "./components/ZonalRejectedCommentModal";
 import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck, FaBars, FaListOl, FaExternalLinkAlt } from "react-icons/fa";
 import { faListOl } from "@fortawesome/free-solid-svg-icons";
@@ -315,6 +316,127 @@ export default function CandidateScreening({ selectedJob }) {
 
 
 
+  const [
+  examConfigMap,
+  setExamConfigMap
+] = useState({});
+
+
+
+
+
+const fetchExamConfigByPositions = async (
+  positionIds = []
+) => {
+
+  try {
+
+    console.log(
+      "FETCH EXAM CONFIG POSITION IDS",
+      positionIds
+    );
+
+    if (!positionIds?.length) {
+
+      console.log(
+        "NO POSITION IDS FOUND"
+      );
+
+      setExamConfigMap({});
+      return;
+    }
+
+    const query =
+      positionIds.join(",");
+
+    console.log(
+      "EXAM CONFIG QUERY",
+      query
+    );
+
+    const res =
+      await jobPositionApiService.getExamConfigurationsByPositions(
+        query
+      );
+
+    console.log(
+      "EXAM CONFIG API RESPONSE",
+      res
+    );
+
+    console.log(
+      "EXAM CONFIG API DATA",
+      res?.data
+    );
+
+    const data = res?.data || [];
+
+    const map = {};
+
+    // ENABLE ONLY WHEN CONFIG EXISTS
+    data.forEach((item) => {
+
+      console.log(
+        "CONFIG ITEM",
+        item
+      );
+
+      map[item.positionId] = true;
+
+    });
+
+    console.log(
+      "FINAL EXAM CONFIG MAP",
+      map
+    );
+
+    setExamConfigMap(map);
+
+  } catch (err) {
+
+    console.error(
+      "FAILED TO FETCH EXAM CONFIG",
+      err
+    );
+
+    console.error(
+      "FAILED RESPONSE",
+      err?.response
+    );
+
+    console.error(
+      "FAILED RESPONSE DATA",
+      err?.response?.data
+    );
+
+    setExamConfigMap({});
+
+  }
+
+};  
+
+
+
+
+useEffect(() => {
+
+  if (selectedPositionId?.length) {
+
+    fetchExamConfigByPositions(
+      selectedPositionId
+    );
+
+  } else {
+
+    setExamConfigMap({});
+
+  }
+
+}, [selectedPositionId]);
+
+
+
+
   const handleOpenZonalComments = (comment) => {
     setZonalComment(comment || "-");
     setShowZonalCommentModal(true);
@@ -323,50 +445,138 @@ export default function CandidateScreening({ selectedJob }) {
   //  const handleScheduleInterview = () => {
   //   if (!selectedCandidateIds.length) return;
 
-  useEffect(() => {
 
-    if (
-      !location.state
-        ?.openExaminationScore
-    ) {
-      return;
-    }
+  const [
+  reservationCategories,
+  setReservationCategories
+] = useState([]);
 
-    /* WAIT UNTIL REQUISITION
-       & POSITION RESTORE */
+const reservationCategoryMap =
+  useMemo(() => {
 
-    if (
-      !selectedRequisitionId ||
-      !selectedPositionId.length
-    ) {
-      return;
-    }
+    const map = {};
 
-    /* SMALL DELAY FOR UI */
+    reservationCategories?.forEach(
+      (item) => {
 
-    setTimeout(() => {
+        map[
+          item.reservationCategoriesId
+        ] = item.categoryCode;
 
-      handleOpenExaminationScore();
+      }
+    );
 
-      navigate(
-        location.pathname,
-        {
-          replace: true,
-          state: {}
-        }
+    return map;
+
+  }, [reservationCategories]);
+
+  
+
+useEffect(() => {
+
+  if (
+    !location.state
+      ?.openExaminationScore
+  ) {
+    return;
+  }
+
+  /* WAIT FOR CATEGORY + STATE DATA */
+
+  if (
+    !selectedRequisitionId ||
+    !selectedPositionId.length ||
+    !reservationCategories.length ||
+    !masterData?.states?.length
+  ) {
+    return;
+  }
+
+  setTimeout(() => {
+
+    handleOpenExaminationScore();
+
+    navigate(
+      location.pathname,
+      {
+        replace: true,
+        state: {}
+      }
+    );
+
+  }, 300);
+
+}, [
+  location.state?.openExaminationScore,
+  selectedRequisitionId,
+  selectedPositionId,
+  reservationCategories,
+  masterData
+]);
+
+
+
+
+
+
+
+const fetchReservationCategories =
+  async () => {
+
+    try {
+
+      const res =
+        await masterApiService.getAllCategories();
+
+      console.log(
+        "CATEGORY API FULL RESPONSE",
+        res
       );
 
-    }, 300);
+      console.log(
+        "CATEGORY API DATA",
+        res?.data
+      );
 
-  }, [
-    location.state?.openExaminationScore,
-    selectedRequisitionId,
-    selectedPositionId
-  ]);
+      console.log(
+        "CATEGORY API ARRAY",
+        res?.data
+      );
+
+      console.log(
+        "CATEGORY COUNT",
+        res?.data?.length
+      );
+
+      setReservationCategories(
+        res?.data || []
+      );
+
+    } catch (err) {
+
+      console.error(
+        "CATEGORY API ERROR",
+        err
+      );
+
+    }
+
+  };
 
 
+  useEffect(() => {
 
+  console.log(
+    "reservationCategories STATE",
+    reservationCategories
+  );
 
+  console.log(
+    "reservationCategories LENGTH",
+    reservationCategories?.length
+  );
+
+}, [reservationCategories]);
 
 
   useEffect(() => {
@@ -647,6 +857,8 @@ export default function CandidateScreening({ selectedJob }) {
   };
 
 
+
+
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState([]);
   const [showRankListModal, setShowRankListModal] = useState(false);
@@ -747,13 +959,23 @@ export default function CandidateScreening({ selectedJob }) {
     }, 400);
   }, []);
 
-  useEffect(() => {
-    const loadMasters = async () => {
-      const res = await masterApiService.getMasterDisplayAll();
-      setMasterData(res.data);
-    };
-    loadMasters();
-  }, []);
+useEffect(() => {
+
+  const loadMasters = async () => {
+
+    const res =
+      await masterApiService
+        .getMasterDisplayAll();
+
+    setMasterData(res.data);
+
+    fetchReservationCategories();
+
+  };
+
+  loadMasters();
+
+}, []);
 
 
 
@@ -859,7 +1081,7 @@ export default function CandidateScreening({ selectedJob }) {
   const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
   const categoryMap = React.useMemo(() => {
     const map = {};
-    (masterData?.reservationCategories || []).forEach(cat => {
+    (reservationCategories || []).forEach(cat => {
       map[cat.reservationCategoriesId] = cat.categoryName;
     });
     return map;
@@ -2399,33 +2621,132 @@ export default function CandidateScreening({ selectedJob }) {
       }
 
       // BUILD GRID DATA
-      const mappedData =
-        positions
-          .filter((p) =>
-            selectedPositionId.includes(
-              p?.jobPositions?.positionId
-            )
-          )
-          .map((p, index) => ({
+const mappedData =
+  positions
+    .filter((p) =>
+      selectedPositionId.includes(
+        p?.jobPositions?.positionId
+      )
+    )
+    .map((p, index) => ({
 
-            id:
-              p?.jobPositions?.positionId,
+      id:
+        p?.jobPositions?.positionId,
 
-            positionName:
-              p?.masterPositions
-                ?.positionName || "-",
+      positionName:
+        p?.masterPositions
+          ?.positionName || "-",
 
-            startDate:
-              normalizedRequisition
-                ?.registration_start_date,
+      isLocationWise:
+        p?.jobPositions
+          ?.isLocationWise || false,
 
-            endDate:
-              normalizedRequisition
-                ?.registration_end_date,
+    states:
+  (
+    p?.jobPositions
+      ?.positionStateDistributions || []
+  ).map((stateObj) => {
 
-            expanded:
-              index === 0
-          }));
+    const stateId =
+      typeof stateObj === "string"
+        ? stateObj
+        : stateObj?.stateId;
+
+    const foundState =
+      masterData?.states?.find(
+        (s) => s.stateId === stateId
+      );
+
+    return {
+
+      stateId,
+
+    stateName:
+  foundState?.stateName ||
+  stateObj?.stateName ||
+  "Unknown State",
+       
+        expanded : false,
+        
+      tableData:
+        (
+          stateObj?.tableData || []
+        ).map((row) => {
+
+          const transformedRow = {
+            label: row.label
+          };
+
+          Object.keys(row || {}).forEach(
+            (key) => {
+
+              if (key === "label") return;
+
+              const categoryCode =
+                reservationCategoryMap[key];
+
+              if (categoryCode) {
+
+                transformedRow[
+                  categoryCode
+                ] = row[key];
+
+              }
+
+            }
+          );
+
+          return transformedRow;
+
+        })
+
+    };
+
+  }),
+
+      startDate:
+        normalizedRequisition
+          ?.registration_start_date,
+
+      endDate:
+        normalizedRequisition
+          ?.registration_end_date,
+
+     tableData:
+  (
+    p?.tableData || []
+  ).map((row) => {
+
+    const transformedRow = {
+      label: row.label
+    };
+
+    Object.keys(row || {}).forEach(
+      (key) => {
+
+        if (key === "label") return;
+
+        const categoryCode =
+          reservationCategoryMap[key];
+
+        if (categoryCode) {
+
+          transformedRow[
+            categoryCode
+          ] = row[key];
+
+        }
+
+      }
+    );
+
+    return transformedRow;
+
+  }),
+
+expanded:
+  index === 0
+    }));
 
       setExaminationScoreData(
         mappedData
@@ -2520,7 +2841,8 @@ export default function CandidateScreening({ selectedJob }) {
 
 
   const [showExaminationModal, setShowExaminationModal] = useState(false);
-  const [selectedRelaxation, setSelectedRelaxation] = useState("SET_II");
+  const [expandedStates,setExpandedStates] = useState({});
+  // const [selectedRelaxation, setSelectedRelaxation] = useState("SET_II");
   const handleStatusChange = (value) => {
     setPage(0);
     setFilters(prev => ({
@@ -2716,9 +3038,11 @@ export default function CandidateScreening({ selectedJob }) {
 
                   <FiUpload />
 
-                  {t(
+                   Update Canidates Score 
+
+                  {/* {t(
                     "candidateWorkflow:import_candidates"
-                  )}
+                  )} */}
 
                 </Button>
 
@@ -2733,7 +3057,7 @@ export default function CandidateScreening({ selectedJob }) {
                     height: "38px"
                   }}
                 >
-                  Examination Score
+                  Positions Summary
                 </button>
 
               </div>
@@ -3880,7 +4204,7 @@ export default function CandidateScreening({ selectedJob }) {
             }}
           >
 
-            Import Candidates
+          Upload Candidate Score
 
           </Modal.Title>
 
@@ -3912,463 +4236,27 @@ export default function CandidateScreening({ selectedJob }) {
       </Modal>
 
 
-
-
-      <Modal
-        show={showExaminationModal}
-        onHide={() => setShowExaminationModal(false)}
-        centered
-        size="xl"
-        backdrop="static"
-      >
-
-        <Modal.Header
-          closeButton
-          className="border-0 pb-2"
-          style={{
-            padding: "20px 24px 10px"
-          }}
-        >
-
-          <div>
-
-            <h2
-              className="fw-bold mb-1"
-              style={{
-                fontSize: "18px",
-                color: "#1F2937"
-              }}
-            >
-              Rank Positions Summary
-            </h2>
-
-            <p
-              className="mb-0"
-              style={{
-                fontSize: "13px",
-                color: "#6B7280"
-              }}
-            >
-              View and manage position rankings
-            </p>
-
-          </div >
-
-        </Modal.Header>
-
-        <Modal.Body
-          style={{
-            padding: "8px 24px 20px",
-            maxHeight: "72vh",
-            overflowY: "auto"
-          }}
-        >
-
-          {examinationScoreData.map((item, index) => (
-
-            <div
-              key={index}
-              className="mb-3"
-              style={{
-                border: "1px solid #D8DEE8",
-                borderRadius: "10px",
-                overflow: "hidden",
-                background: "#FFFFFF"
-              }}
-            >
-
-              {/* HEADER */}
-
-              <div
-                onClick={() => {
-
-                  setExaminationScoreData(prev =>
-                    prev.map((p, i) => ({
-                      ...p,
-                      expanded:
-                        i === index
-                          ? !p.expanded
-                          : p.expanded
-                    }))
-                  );
-
-                }}
-                className="d-flex justify-content-between align-items-center"
-                style={{
-                  background: "#F3F4F6",
-                  padding: "16px 18px",
-                  cursor: "pointer"
-                }}
-              >
-
-                {/* LEFT */}
-
-                <div>
-
-                  <h5
-                    className="fw-semibold mb-0"
-                    style={{
-                      fontSize: "15px",
-                      color: "#374151"
-                    }}
-                  >
-                    {item.positionName}
-                  </h5>
-
-                </div>
-
-                {/* RIGHT */}
-
-                <div className="d-flex align-items-center gap-3">
-
-                  <div
-                    className="d-flex align-items-center gap-3"
-                    style={{
-                      fontSize: "12px",
-                      color: "#6B7280",
-                      fontWeight: "600"
-                    }}
-                  >
-
-                    <span>
-                      Start: {item.startDate}
-                    </span>
-
-                    <span>
-                      End: {item.endDate}
-                    </span>
-
-                  </div>
-
-                  {/* EDIT BUTTON */}
-
-                  <button
-                    className="btn btn-sm"
-                    style={{
-                      border: "1px solid #F97316",
-                      color: "#F97316",
-                      background: "#FFF7ED",
-                      fontSize: "12px",
-                      fontWeight: "600",
-                      padding: "4px 12px",
-                      borderRadius: "6px"
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-
-                      handleEditExaminationScore(item, index);
-                    }}
-                  >
-                    <i className="bi bi-pencil-square me-1" />
-                    Edit
-                  </button>
-
-                  <i
-                    className={`bi bi-chevron-${item.expanded ? "up" : "down"
-                      }`}
-                    style={{
-                      fontSize: "14px",
-                      color: "#6B7280",
-                      fontWeight: "700"
-                    }}
-                  />
-
-                </div>
-
-              </div>
-
-              {/* BODY */}
-
-              {item.expanded && (
-
-                <div
-                  style={{
-                    padding: "14px 18px 18px",
-                    background: "#FFFFFF"
-                  }}
-                >
-
-                  <div
-                    style={{
-                      border: "1px solid #E5E7EB",
-                      borderRadius: "8px",
-                      overflow: "hidden"
-                    }}
-                  >
-
-                    <table
-                      className="table mb-0"
-                      style={{
-                        borderCollapse: "collapse"
-                      }}
-                    >
-
-                      <thead>
-
-                        <tr
-                          style={{
-                            background: "#F9FAFB"
-                          }}
-                        >
-
-                          <th
-                            style={{
-                              minWidth: "260px",
-                              padding: "10px 14px",
-                              border: "1px solid #E5E7EB",
-                              fontSize: "12px",
-                              color: "#374151",
-                              fontWeight: "700"
-                            }}
-                          >
-                            CATEGORY
-                          </th>
-
-                          {[
-                            "SC",
-                            "ST",
-                            "OBC",
-                            "EWS",
-                            "UR",
-                            "OC",
-                            "HI",
-                            "VI",
-                            "ID",
-                            "TOTAL"
-                          ].map((head) => (
-
-                            <th
-                              key={head}
-                              style={{
-                                padding: "10px",
-                                border: "1px solid #E5E7EB",
-                                textAlign: "center",
-                                fontSize: "12px",
-                                color: "#374151",
-                                fontWeight: "700"
-                              }}
-                            >
-                              {head}
-                            </th>
-
-                          ))}
-
-                        </tr>
-
-                      </thead>
-
-                      <tbody>
-
-                        {/* APPEARED */}
-
-                        <tr>
-
-                          <td
-                            style={{
-                              padding: "10px 14px",
-                              border: "1px solid #E5E7EB",
-                              fontWeight: "600",
-                              fontSize: "13px",
-                              color: "#374151"
-                            }}
-                          >
-                            APPEARED
-                          </td>
-
-                          {[120, 85, 200, 95, 450, 50, 15, 10, 5, 1030]
-                            .map((val, i) => (
-
-                              <td
-                                key={i}
-                                style={{
-                                  textAlign: "center",
-                                  border: "1px solid #E5E7EB",
-                                  padding: "10px",
-                                  fontSize: "13px",
-                                  color: "#374151"
-                                }}
-                              >
-                                {val}
-                              </td>
-
-                            ))}
-
-                        </tr>
-
-                        {/* VACANCY */}
-
-                        <tr>
-
-                          <td
-                            style={{
-                              padding: "10px 14px",
-                              border: "1px solid #E5E7EB",
-                              fontWeight: "600",
-                              fontSize: "13px",
-                              color: "#374151"
-                            }}
-                          >
-                            VACANCY
-                          </td>
-
-                          {[25, 18, 45, 22, 95, 12, 4, 3, 1, 225]
-                            .map((val, i) => (
-
-                              <td
-                                key={i}
-                                style={{
-                                  textAlign: "center",
-                                  border: "1px solid #E5E7EB",
-                                  padding: "10px",
-                                  fontSize: "13px",
-                                  color: "#374151"
-                                }}
-                              >
-                                {val}
-                              </td>
-
-                            ))}
-
-                        </tr>
-
-                        {/* HIGHLIGHTED ROW */}
-
-                        <tr
-                          style={{
-                            background: "#F7EDC3"
-                          }}
-                        >
-
-                          <td
-                            style={{
-                              padding: "10px 14px",
-                              border: "1px solid #E5E7EB",
-                              fontWeight: "700",
-                              fontSize: "13px",
-                              color: "#374151"
-                            }}
-                          >
-                            QUALIFIED WITH NO RELAXATION
-                          </td>
-
-                          {[45, 30, 85, 40, 180, 20, 8, 5, 2, 415]
-                            .map((val, i) => (
-
-                              <td
-                                key={i}
-                                style={{
-                                  textAlign: "center",
-                                  border: "1px solid #E5E7EB",
-                                  padding: "10px",
-                                  fontSize: "13px",
-                                  color: "#374151",
-                                  fontWeight: "700"
-                                }}
-                              >
-                                {val}
-                              </td>
-
-                            ))}
-
-                        </tr>
-
-                        {/* QUALIFIED SET II */}
-
-                        {/* <tr>
-
-                          <td
-                            style={{
-                              padding: "10px 14px",
-                              border: "1px solid #E5E7EB",
-                              fontWeight: "600",
-                              fontSize: "13px",
-                              color: "#374151"
-                            }}
-                          >
-                            QUALIFIED WITH SET II (5%)
-                          </td>
-
-                    {[25,18,45,22,95,12,4,3,1,225]
-                            .map((val, i) => (
-
-                              <td
-                                key={i}
-                                style={{
-                                  textAlign: "center",
-                                  border: "1px solid #E5E7EB",
-                                  padding: "10px",
-                                  fontSize: "13px",
-                                  color: "#374151"
-                                }}
-                              >
-                                {val}
-                              </td>
-
-                            ))}
-
-                  </tr> */}
-
-                      </tbody>
-
-                    </table>
-
-                  </div>
-
-                </div>
-
-              )}
-
-            </div>
-
-          ))}
-
-        </Modal.Body>
-
-        <Modal.Footer
-          className="border-0"
-          style={{
-            padding: "0 24px 20px"
-          }}
-        >
-
-          <button
-            className="btn"
-            style={{
-              minWidth: "110px",
-              height: "40px",
-              border: "1px solid #D1D5DB",
-              background: "#FFFFFF",
-              color: "#6B7280",
-              fontWeight: "600",
-              fontSize: "13px"
-            }}
-            onClick={() =>
-              setShowExaminationModal(false)
-            }
-          >
-            CANCEL
-          </button>
-
-          <button
-            className="btn text-white"
-            style={{
-              minWidth: "110px",
-              height: "40px",
-              background: "#F97316",
-              border: "none",
-              fontWeight: "600",
-              fontSize: "13px"
-            }}
-            onClick={() =>
-              handleEditExaminationScore()
-            }
-          >
-            SAVE
-          </button>
-
-        </Modal.Footer>
-
-      </Modal>
+      
+
+<ExaminationScoreModal
+  show={showExaminationModal}
+  onHide={() =>
+    setShowExaminationModal(false)
+  }
+  examinationScoreData={
+    examinationScoreData
+  }
+  setExaminationScoreData={
+    setExaminationScoreData
+  }
+  handleEditExaminationScore={
+    handleEditExaminationScore
+  }
+  reservationCategories={
+    reservationCategories
+  }
+  examConfigMap={examConfigMap}
+/>
 
 
 

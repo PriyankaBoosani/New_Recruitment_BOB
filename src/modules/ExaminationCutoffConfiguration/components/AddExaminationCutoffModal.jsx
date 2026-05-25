@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 
 
 import ExaminationCutoffService from "../service/ExaminationCutoffService";
+import candidateWorkflowServices from "../../candidatePreview/services/CandidateWorkflowServices";
 import committeeManagementService from "../../committeeManagement/services/committeeManagementService";
 import "../../../style/css/ExaminationCutoffConfiguration.css";
 import { useSelector } from "react-redux";
@@ -33,23 +34,44 @@ export default function AddExaminationCutoffModal({
 
   const [loading, setLoading] = useState(false);
 
+
   const privileges = useSelector(state => state.user.privileges);
 
   const isL1 = privileges?.["L1 Approval"];
   const isL2 = privileges?.["L2 Approval"];
 
+const [allCategories, setAllCategories] =
+  useState([]);
 
+  const [masterData, setMasterData] =
+  useState({});
+
+
+  const [expandedSection, setExpandedSection] =
+  useState(0);
+
+    const getStateName = (stateId) => {
+
+      const states =
+        masterData?.states || [];
+
+      const matched =
+        states.find(
+          item =>
+            String(item.stateId).toLowerCase() ===
+            String(stateId).toLowerCase()
+        );
+
+      return matched?.stateName || "-";
+
+      };
   const [formData, setFormData] = useState({
     totalMarks: "",
     numberOfSections: "",
 
     sections: [],
 
-    categoryWiseCutoff: {
-      scst: "",
-      obc: "",
-      ur: ""
-    },
+  
 
     writtenExamWeightage: "",
 
@@ -67,6 +89,20 @@ export default function AddExaminationCutoffModal({
     setCommentError("");
     return true;
   };
+
+
+
+  const [positionDetails, setPositionDetails] =
+  useState(null);
+
+const [reservationCategories, setReservationCategories] =
+  useState([]);
+
+const [stateWiseDistributions, setStateWiseDistributions] =
+  useState([]);
+
+const [isStateWisePosition, setIsStateWisePosition] =
+  useState(false);
 
   const handleApprove = async () => {
 
@@ -151,35 +187,7 @@ export default function AddExaminationCutoffModal({
           editData.sections?.map(
             section => {
 
-              const scst =
-                section.categoryPassMarks?.find(
-                  item =>
-                    item.categoryId ===
-                    "69bf3f47-2cf9-4e0d-90a9-2e77a1752b6b"
-                );
-
-              const obc =
-                section.categoryPassMarks?.find(
-                  item =>
-                    item.categoryId ===
-                    "b5b949b3-3b1a-4f27-96a2-3e1e2390b72b"
-                );
-
-              const ur =
-                section.categoryPassMarks?.find(
-                  item =>
-                    item.categoryId ===
-                    "0a02efbd-11fe-498b-b8db-9bb76cae18a1"
-                );
-
-
-              const ews =
-                section.categoryPassMarks?.find(
-                  item =>
-                    item.categoryId ===
-                    "a56f2294-d032-4598-b994-44480da4fc2e"
-                );
-
+             
               //   return {
 
               //     ...section,
@@ -216,29 +224,46 @@ export default function AddExaminationCutoffModal({
 
                 ...section,
 
-                passMarks: {
+            nationalCutoffs:
+  section.categoryPassMarks?.reduce(
+    
+    (acc, item) => {
 
-                  scst:
-                    scst?.passMark || "",
+      acc[item.categoryId] =
+        item.passMark;
 
-                  obc:
-                    obc?.passMark || "",
+      return acc;
 
-                  ews:
-                    ews?.passMark || "",
+    },
+    {}
+  ) || {},
 
-                  ur:
-                    ur?.passMark || ""
-                }
+  stateCutoffs:
+  section.categoryPassMarks?.reduce(
+    (acc, item) => {
+
+      if (item.stateId) {
+
+        if (!acc[item.stateId]) {
+          acc[item.stateId] = {};
+        }
+
+        acc[item.stateId][
+          item.categoryId
+        ] = item.passMark;
+      }
+
+      return acc;
+
+    },
+    {}
+  ) || {},
+  
               };
             }
           ) || [],
 
-        categoryWiseCutoff: {
-          scst: editData.scstCutoff || "",
-          obc: editData.obcCutoff || "",
-          ur: editData.urCutoff || ""
-        },
+     
 
         writtenExamWeightage:
           editData.writtenExamWeightage || "",
@@ -261,70 +286,125 @@ export default function AddExaminationCutoffModal({
   }, [editData, show]);
 
 
-  const fetchReservationCategories =
-    async () => {
+const fetchReservationCategories =
+  async () => {
 
-      try {
+    try {
 
-        const response =
-          await masterApiService.getMasterDisplayAll()
+      const response =
+        await masterApiService.getAllCategories();
 
-        const categories =
-          response?.data
-            ?.reservationCategories || [];
+      const categories =
+        response?.data || [];
 
-        const scCategory =
-          categories.find(
-            item =>
-              item.categoryCode === "SC"
-          );
+        const masterResponse =
+  await masterApiService.getMasterDisplayAll();
 
-        const obcCategory =
-          categories.find(
-            item =>
-              item.categoryCode === "OBC"
-          );
+setMasterData(
+  masterResponse?.data || {}
+);
 
-        const ewsCategory =
-          categories.find(
-            item =>
-              item.categoryCode === "EWS"
-          );
+      setAllCategories(categories);
+
+      setReservationCategories(categories);
+
+    } catch (error) {
+
+      console.error(
+        "Failed to fetch reservation categories",
+        error
+      );
+
+    }
+  };
 
 
-        const genCategory =
-          categories.find(
-            item =>
-              item.categoryCode === "GEN"
-          );
 
-        setCategoryIds({
-          scst:
-            scCategory
-              ?.reservationCategoriesId || "",
+    useEffect(() => {
 
-          obc:
-            obcCategory
-              ?.reservationCategoriesId || "",
+  const fetchPositionDetails = async () => {
 
-          ews:
-            ewsCategory
-              ?.reservationCategoriesId || "",
+    try {
 
-          ur:
-            genCategory
-              ?.reservationCategoriesId || ""
-        });
+      if (!selectedPosition?.length) return;
 
-      } catch (error) {
+      const positionId =
+        selectedPosition?.[0]?.positionId;
 
-        console.error(
-          "Failed to fetch reservation categories",
-          error
+      const res =
+        await candidateWorkflowServices.getJobPositionById(
+          positionId
         );
 
-      }
-    };
+      const data = res?.data;
+
+      setPositionDetails(data);
+
+      /* ================= CHECK STATE WISE ================= */
+
+    const distributions =
+  data?.positionStateDistributions || [];
+
+const nationalDistribution =
+  data?.positionCategoryNationalDistributions ||
+  data?.nationalCategoryDistribution ||
+  [];
+
+
+  const verticalCategories =
+  allCategories.filter(
+    item =>
+      item.reservationType === "VERTICAL"
+  );
+
+const horizontalCategories =
+  allCategories.filter(
+    item =>
+      item.reservationType === "HORIZONTAL"
+  );
+
+
+  setReservationCategories([
+  ...verticalCategories,
+  ...horizontalCategories
+]);
+       
+
+      setStateWiseDistributions(distributions);
+
+      setIsStateWisePosition(
+        distributions.length > 0
+      );
+
+      /* ================= RESERVATION CATEGORY IDS ================= */
+
+/* ================= RESERVATION CATEGORY IDS ================= */
+
+
+
+/* ================= STATE WISE ================= */
+
+
+
+      /* ================= DISABILITY CATEGORIES ================= */
+
+/* ================= DISABILITY CATEGORIES ================= */
+
+
+    } catch (err) {
+
+      console.error(
+        "Failed to fetch position details",
+        err
+      );
+
+    }
+
+  };
+
+  fetchPositionDetails();
+
+}, [selectedPosition, allCategories]);
 
 
   useEffect(() => {
@@ -342,11 +422,6 @@ export default function AddExaminationCutoffModal({
 
       sections: [],
 
-      categoryWiseCutoff: {
-        scst: "",
-        obc: "",
-        ur: ""
-      },
 
       writtenExamWeightage: "",
 
@@ -365,19 +440,7 @@ export default function AddExaminationCutoffModal({
 
   /* ================= CATEGORY CHANGE ================= */
 
-  const handleCategoryChange = (
-    field,
-    value
-  ) => {
-    setFormData(prev => ({
-      ...prev,
 
-      categoryWiseCutoff: {
-        ...prev.categoryWiseCutoff,
-        [field]: value
-      }
-    }));
-  };
 
 
 
@@ -423,101 +486,8 @@ export default function AddExaminationCutoffModal({
 
 
 
-  const handlePassMarksChange = (
-    index,
-    category,
-    value
-  ) => {
 
-    const enteredPercentage =
-      Number(value || 0);
 
-    const sectionTotalMarks =
-      Number(
-        formData.sections[index]
-          ?.sectionTotalMarks || 0
-      );
-
-    const updatedSections = [
-      ...formData.sections
-    ];
-
-    /* SHOULD NOT EXCEED 100 */
-
-    if (enteredPercentage > 100) {
-
-      alert(
-        `${category.toUpperCase()} Cutoff Percentage cannot exceed 100%`
-      );
-
-      updatedSections[index].passMarks[
-        category
-      ] = "";
-
-      setFormData(prev => ({
-        ...prev,
-        sections: updatedSections
-      }));
-
-      return;
-    }
-
-    /* SHOULD NOT EXCEED
-       TOTAL SECTION MARKS */
-
-    /* TOTAL CATEGORY MARKS
-       SHOULD NOT EXCEED
-       TOTAL SECTION MARKS */
-
-    // const currentPassMarks = {
-    //   ...updatedSections[index].passMarks,
-
-    //   [category]: Number(value || 0)
-    // };
-
-    // const totalCategoryMarks =
-    //   Number(currentPassMarks.scst || 0) +
-    //   Number(currentPassMarks.obc || 0) +
-    //   Number(currentPassMarks.ur || 0);
-
-    // if (
-    //   totalCategoryMarks >
-    //   sectionTotalMarks
-    // ) {
-
-    //   alert(
-    //     `Total cutoff marks cannot exceed Total Section Marks (${sectionTotalMarks})`
-    //   );
-
-    //   updatedSections[index].passMarks[
-    //     category
-    //   ] = "";
-
-    //   setFormData(prev => ({
-    //     ...prev,
-    //     sections: updatedSections
-    //   }));
-
-    //   return;
-    // }
-
-    updatedSections[index].passMarks[
-      category
-    ] = value;
-
-    setFormData(prev => ({
-      ...prev,
-      sections: updatedSections
-    }));
-  };
-
-  const [categoryIds, setCategoryIds] =
-    useState({
-      scst: "",
-      obc: "",
-      ews: "",
-      ur: ""
-    });
 
   const handleSectionTotalMarksChange = (
     index,
@@ -539,10 +509,9 @@ export default function AddExaminationCutoffModal({
       Number(formData.totalMarks)
     ) {
 
-      alert(
-        `Section marks cannot exceed Total Marks (${formData.totalMarks})`
-      );
-
+      toast.warning(
+  `Section marks cannot exceed Total Marks (${formData.totalMarks})`
+);
       updatedSections[index] = {
         ...updatedSections[index],
         sectionTotalMarks: ""
@@ -578,9 +547,9 @@ export default function AddExaminationCutoffModal({
       Number(formData.totalMarks)
     ) {
 
-      alert(
-        `Sum of all section marks cannot exceed Total Marks (${formData.totalMarks})`
-      );
+      toast.warning(
+  `Sum of all section marks cannot exceed Total Marks (${formData.totalMarks})`
+);
 
       updatedSections[index] = {
         ...updatedSections[index],
@@ -628,18 +597,15 @@ export default function AddExaminationCutoffModal({
               count -
               existingSections.length
           },
-          () => ({
-            sectionName: "",
-
-            sectionTotalMarks: "",
-
-            passMarks: {
-              scst: "",
-              obc: "",
-              ews: "",
-              ur: ""
-            }
-          })
+        () => ({
+          sectionName: "",
+          sectionTotalMarks: "",
+          nationalCutoffs: {},
+          stateCutoffs: {},
+          categoryPassMarks: [],
+          examSectionId: "",
+          examConfigId: ""
+        })
         );
 
       setFormData(prev => ({
@@ -777,9 +743,9 @@ export default function AddExaminationCutoffModal({
         Number(formData.numberOfSections)
       ) {
 
-        alert(
-          `You selected ${formData.numberOfSections} sections but only ${formData.sections.length} sections are added. Please click + Add again.`
-        );
+       toast.error(
+  `You selected ${formData.numberOfSections} sections but only ${formData.sections.length} sections are added. Please click + Add again.`
+);
 
         return;
       }
@@ -794,7 +760,7 @@ export default function AddExaminationCutoffModal({
         !formData.totalMarks ||
         Number(formData.totalMarks) <= 0
       ) {
-        alert("Total Marks is required");
+       toast.error("Total Marks is required");
 
         return;
       }
@@ -808,9 +774,7 @@ export default function AddExaminationCutoffModal({
         ) <= 0
       ) {
 
-        alert(
-          "Number of Sections is required"
-        );
+       toast.error("Number of Sections is required");
 
         return;
       }
@@ -844,9 +808,9 @@ export default function AddExaminationCutoffModal({
 
         if (!section.sectionName) {
 
-          alert(
-            `Section ${i + 1} name is required`
-          );
+         toast.error(
+  `Section ${i + 1} name is required`
+);
 
           return;
         }
@@ -860,75 +824,15 @@ export default function AddExaminationCutoffModal({
           ) <= 0
         ) {
 
-          alert(
-            `Total Section Marks is required for Section ${i + 1}`
-          );
+          toast.error(
+  `Total Section Marks is required for Section ${i + 1}`
+);
 
           return;
         }
 
         /* SC/ST */
 
-        if (
-          section.passMarks?.scst === "" ||
-          Number(
-            section.passMarks?.scst
-          ) <= 0
-        ) {
-
-          alert(
-            `SC/ST Cutoff % is required for Section ${i + 1}`
-          );
-
-          return;
-        }
-
-        /* OBC */
-
-        if (
-          section.passMarks?.obc === "" ||
-          Number(
-            section.passMarks?.obc
-          ) <= 0
-        ) {
-
-          alert(
-            `OBC Cutoff % is required for Section ${i + 1}`
-          );
-
-          return;
-        }
-
-        if (
-          section.passMarks?.ews === "" ||
-          Number(
-            section.passMarks?.ews
-          ) <= 0
-        ) {
-
-          alert(
-            `EWS Cutoff % is required for Section ${i + 1}`
-          );
-
-          return;
-        }
-
-
-        /* UR */
-
-        if (
-          section.passMarks?.ur === "" ||
-          Number(
-            section.passMarks?.ur
-          ) <= 0
-        ) {
-
-          alert(
-            `UR Cutoff % is required for Section ${i + 1}`
-          );
-
-          return;
-        }
       }
 
       /* TOTAL SECTION MARKS
@@ -949,9 +853,9 @@ export default function AddExaminationCutoffModal({
         Number(formData.totalMarks)
       ) {
 
-        alert(
-          `Sum of all Total Section Marks (${totalSectionMarks}) must equal Total Marks (${formData.totalMarks})`
-        );
+        toast.error(
+  `Sum of all Total Section Marks (${totalSectionMarks}) must equal Total Marks (${formData.totalMarks})`
+);
 
         return;
       }
@@ -965,9 +869,9 @@ export default function AddExaminationCutoffModal({
         ) <= 0
       ) {
 
-        alert(
-          "Written Exam Weightage is required"
-        );
+     toast.error(
+  "Written Exam Weightage is required"
+);
 
         return;
       }
@@ -979,122 +883,105 @@ export default function AddExaminationCutoffModal({
           .length === 0
       ) {
 
-        alert(
-          "Please select at least one Weightage Configuration section"
-        );
+       toast.error(
+  "Please select at least one Weightage Configuration section"
+);
 
         return;
       }
 
 
 
-      const sectionsPayload =
-        formData.sections.map(
-          (section, index) => ({
+const sectionsPayload =
+  formData.sections.map(
+    (section, index) => ({
 
-            /* PRESERVE IDS FOR EDIT */
+      examConfigId:
+        section.examConfigId || "",
 
-            examConfigId:
-              section.examConfigId || "",
+      sectionNumber:
+        index + 1,
 
-            examSectionId:
-              section.examSectionId || "",
+      sectionName:
+        section.sectionName,
 
-            sectionNumber:
-              index + 1,
+      isRankingEnabled:
+        formData.selectedWeightageSections.includes(
+          index
+        ),
 
-            sectionName:
-              section.sectionName,
+      sectionTotalMarks: Number(
+        section.sectionTotalMarks || 0
+      ),
 
-            isRankingEnabled:
-              formData.selectedWeightageSections.includes(
-                index
+      isStatewise:
+        isStateWisePosition,
+
+      categoryPassMarks:
+
+        isStateWisePosition
+
+          ? stateWiseDistributions.flatMap(
+              stateItem =>
+
+                reservationCategories.map(cat => ({
+
+                  examSectionId:
+                    section.examSectionId || "",
+
+                  categoryId:
+                    cat.reservationCategoriesId,
+
+                  passMark: Number(
+                    section?.stateCutoffs?.[
+                      stateItem.stateId
+                    ]?.[
+                      cat.reservationCategoriesId
+                    ] || 0
+                  ),
+
+                  stateId:
+                    stateItem.stateId,
+
+                  examSectionCategoryId:
+                    section.categoryPassMarks?.find(
+                      item =>
+                        item.categoryId ===
+                          cat.reservationCategoriesId &&
+                        item.stateId ===
+                          stateItem.stateId
+                    )?.examSectionCategoryId || ""
+                }))
+            )
+
+          : reservationCategories.map(cat => ({
+
+              examSectionId:
+                section.examSectionId || "",
+
+              categoryId:
+                cat.reservationCategoriesId,
+
+              passMark: Number(
+                section?.nationalCutoffs?.[
+                  cat.reservationCategoriesId
+                ] || 0
               ),
 
-            sectionTotalMarks: Number(
-              section.sectionTotalMarks || 0
-            ),
+              stateId: null,
 
-            categoryPassMarks: [
+              examSectionCategoryId:
+                section.categoryPassMarks?.find(
+                  item =>
+                    item.categoryId ===
+                    cat.reservationCategoriesId
+                )?.examSectionCategoryId || ""
+            })),
 
-              {
-                examSectionId:
-                  section.examSectionId || "",
-
-                examSectionCategoryId:
-                  section.categoryPassMarks?.find(
-                    item =>
-                      item.categoryId ===
-                      categoryIds.scst
-                  )?.examSectionCategoryId || "",
-
-                categoryId:
-                  categoryIds.scst,
-
-                passMark: Number(
-                  section.passMarks?.scst || 0
-                )
-              },
-
-              {
-                examSectionId:
-                  section.examSectionId || "",
-
-                examSectionCategoryId:
-                  section.categoryPassMarks?.find(
-                    item =>
-                      item.categoryId ===
-                      categoryIds.obc
-                  )?.examSectionCategoryId || "",
-
-                categoryId:
-                  categoryIds.obc,
-
-                passMark: Number(
-                  section.passMarks?.obc || 0
-                )
-              },
-
-              {
-                examSectionId:
-                  section.examSectionId || "",
-
-                examSectionCategoryId:
-                  section.categoryPassMarks?.find(
-                    item =>
-                      item.categoryId ===
-                      categoryIds.ews
-                  )?.examSectionCategoryId || "",
-
-                categoryId:
-                  categoryIds.ews,
-
-                passMark: Number(
-                  section.passMarks?.ews || 0
-                )
-              },
-
-              {
-                examSectionId:
-                  section.examSectionId || "",
-
-                examSectionCategoryId:
-                  section.categoryPassMarks?.find(
-                    item =>
-                      item.categoryId ===
-                      categoryIds.ur
-                  )?.examSectionCategoryId || "",
-
-                categoryId:
-                  categoryIds.ur,
-
-                passMark: Number(
-                  section.passMarks?.ur || 0
-                )
-              }
-            ]
-          })
-        );
+      examSectionId:
+        section.examSectionId || ""
+    })
+  );
 
       /* ================= PAYLOAD ================= */
 
@@ -1123,13 +1010,8 @@ export default function AddExaminationCutoffModal({
               formData.numberOfSections
             ),
 
-          marksPerSection:
-            Number(
-              formData.totalMarks
-            ) /
-            Number(
-              formData.numberOfSections
-            ),
+         marksPerSection:
+  Number(formData.marksPerSection || 0),
 
           writtenExamWeightage:
             Number(
@@ -1242,7 +1124,7 @@ export default function AddExaminationCutoffModal({
         err?.message ||
         "Something went wrong";
 
-      alert(errorMessage);
+   toast.error(errorMessage);
 
     } finally {
 
@@ -1266,6 +1148,46 @@ export default function AddExaminationCutoffModal({
     return false;
 
   })();
+
+
+
+  /* ================= NUMBER VALIDATION ================= */
+
+const validateCutoffValue = (value) => {
+
+  // allow empty
+  if (value === "") return "";
+
+  // remove special characters
+  let cleanedValue = value.replace(/[^0-9]/g, "");
+
+  // convert to number
+  const numericValue = Number(cleanedValue);
+
+  // prevent negative and max > 100
+  if (numericValue < 0) return "";
+
+  if (numericValue > 100) {
+    return "100";
+  }
+
+  return cleanedValue;
+};
+
+
+
+const preventInvalidNumberInput = (e) => {
+
+  if (
+    e.key === "-" ||
+    e.key === "+" ||
+    e.key === "e" ||
+    e.key === "E" ||
+    e.key === "."
+  ) {
+    e.preventDefault();
+  }
+};
 
   /* ================= UI ================= */
 
@@ -1316,6 +1238,7 @@ export default function AddExaminationCutoffModal({
                 type="number"
                 min={0}
                 disabled={viewOnly}
+                onKeyDown={preventInvalidNumberInput}
                 placeholder="Sum of all sections combined."
                 value={formData.totalMarks}
                 onChange={e => {
@@ -1348,6 +1271,7 @@ export default function AddExaminationCutoffModal({
                 type="number"
                 min={0}
                 disabled={viewOnly}
+                onKeyDown={preventInvalidNumberInput}
                 placeholder="e.g. 4"
                 value={
                   formData.numberOfSections
@@ -1390,170 +1314,417 @@ export default function AddExaminationCutoffModal({
            
         {/* ================= DYNAMIC SECTIONS ================= */}
 
-        <div className="sections-wrapper">
-          <div className="section-table-wrapper">
-            <table className="section-cutoff-table">
-              <thead>
-                <tr>
-                  <th>Section</th>
-                  <th>Total Section Marks</th>
-                  <th>SC/ST Cutoff %</th>
-                  <th>OBC Cutoff %</th>
-                  <th>EWS Cutoff %</th>
-                  <th>UR Cutoff %</th>
-                </tr>
-              </thead>
+  <div className="cutoff-accordion-wrapper">
 
-              <tbody>
-                {formData.sections.map(
-                  (section, index) => (
-                    <tr key={index}>
-                      {/* SECTION */}
+  {formData.sections.map((section, index) => {
 
-                      <td>
-                        <Form.Control
-                          disabled={viewOnly}
-                          placeholder={`Section ${index + 1
-                            }`}
-                          value={
-                            section.sectionName
-                          }
-                          onChange={e =>
-                            handleSectionChange(
-                              index,
-                              "sectionName",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </td>
+    const isExpanded =
+      expandedSection === index;
 
+    return (
 
+      <div
+        key={index}
+        className="cutoff-section-card"
+      >
 
-                      {/* TOTAL SECTION MARKS */}
+        {/* HEADER */}
 
-                      <td>
-                        <Form.Control
-                          disabled={viewOnly}
-                          type="number"
-                          min={0}
-                          placeholder="Enter Marks"
-                          value={
-                            section.sectionTotalMarks || ""
-                          }
-                          onChange={e => {
+        <div
+          className="cutoff-section-header"
+          onClick={() =>
+            setExpandedSection(
+              isExpanded
+                ? null
+                : index
+            )
+          }
+        >
 
-                            const value =
-                              Number(e.target.value);
+          <div className="d-flex align-items-center gap-3">
 
-                            if (value < 0) return;
+         
 
-                            handleSectionTotalMarksChange(
-                              index,
-                              e.target.value
-                            );
+<div className="section-header-content">
 
-                          }}
-                        />
+  {/* SECTION NAME */}
 
-                      </td>
+  <Form.Control
+    className="section-name-header-input"
+    placeholder={`Section ${index + 1}`}
+    value={section.sectionName || ""}
+      disabled={viewOnly}
+    onChange={(e) =>
+      handleSectionChange(
+        index,
+        "sectionName",
+        e.target.value
+      )
+    }
+    onClick={(e) => e.stopPropagation()}
+  />
 
+  {/* TOTAL MARKS */}
 
-                      {/* SC/ST */}
+  <div className="section-marks-wrapper">
 
-                      <td>
-                        <Form.Control
-                          min={0}
-                          max={100}
-                          type="number"
-                          disabled={viewOnly}
-                          placeholder="Enter %"
-                          value={
-                            section.passMarks
-                              ?.scst || ""
-                          }
-                          onChange={e =>
-                            handlePassMarksChange(
-                              index,
-                              "scst",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </td>
+    <span className="marks-label">
+      Total Section Marks
+    </span>
 
-                      {/* OBC */}
+    <Form.Control
+      type="number"
+      className="section-marks-header-input"
+      placeholder="0"
+       disabled={viewOnly}
+       onKeyDown={preventInvalidNumberInput}
+      value={section.sectionTotalMarks || ""}
+      onChange={(e) =>
+        handleSectionTotalMarksChange(
+          index,
+          e.target.value
+        )
+      }
+      onClick={(e) => e.stopPropagation()}
+    />
 
-                      <td>
-                        <Form.Control
-                          min={0}
-                          max={100}
-                          type="number"
-                          disabled={viewOnly}
-                          placeholder="Enter %"
-                          value={
-                            section.passMarks
-                              ?.obc || ""
-                          }
-                          onChange={e =>
-                            handlePassMarksChange(
-                              index,
-                              "obc",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </td>
-                      <td>
-                        <Form.Control
-                          min={0}
-                          max={100}
-                          type="number"
-                          disabled={viewOnly}
-                          placeholder="Enter %"
-                          value={
-                            section.passMarks?.ews || ""
-                          }
-                          onChange={e =>
-                            handlePassMarksChange(
-                              index,
-                              "ews",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </td>
+  </div>
 
+  {/* TITLE AT LAST */}
 
-                      {/* UR */}
+<div className="cutoff-title-wrapper">
 
-                      <td>
-                        <Form.Control
-                          min={0}
-                          max={100}
-                          type="number"
-                          disabled={viewOnly}
-                          placeholder="Enter %"
+ <span className="cutoff-header-title">
 
-                          value={
-                            section.passMarks?.ur ||
-                            ""
-                          }
-                          onChange={e =>
-                            handlePassMarksChange(
-                              index,
-                              "ur",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </td>
-                    </tr>
-                  )
-                )}
-              </tbody>
-            </table>
+  {isStateWisePosition
+    ? "State Wise Cutoff Configuration"
+    : "National Wise Cutoff Configuration"}
+
+</span>
+
+  <i
+    className={`bi bi-chevron-${
+      isExpanded ? "up" : "down"
+    } section-arrow-icon`}
+  />
+
+</div>
+</div>
+          
+            {/* <span
+              className={`ranking-badge ${
+                formData.selectedWeightageSections.includes(index)
+                  ? "enabled"
+                  : "disabled"
+              }`}
+            >
+              Ranking:
+              {formData.selectedWeightageSections.includes(index)
+                ? "Enabled"
+                : "Disabled"}
+            </span> */}
+
           </div>
+
+         
+
+        </div>
+
+        {/* BODY */}
+
+        {isExpanded && (
+
+          <div className="cutoff-section-body">
+
+          <div className="section-table-only-layout">
+            {/* LEFT PANEL */}
+
+
+
+            {/* RIGHT PANEL */}
+
+            <div className="section-right-panel">
+
+            
+
+                            <div className="cutoff-table-wrapper">
+
+                              {isStateWisePosition ? (
+
+                                /* ================= STATE WISE ================= */
+
+                                <table className="cutoff-state-table-modern">
+
+                                  <thead>
+
+                                    <tr>
+
+                                      <th className="sticky-state-col">
+                                        State
+                                      </th>
+
+                                      {reservationCategories.map(cat => (
+
+                                        <th
+                                          key={cat.reservationCategoriesId}
+                                        >
+                                          {cat.categoryCode} Cutoff %
+                                        </th>
+
+                                      ))}
+
+                         </tr>
+
+                                  </thead>
+
+                                  <tbody>
+
+                                    {stateWiseDistributions.map(
+                                      (stateItem, stateIndex) => (
+
+                                        <tr key={stateIndex}>
+
+                                          <td className="sticky-state-col state-cell-modern">
+
+                                            {getStateName(
+                                              stateItem.stateId
+                                            )}
+
+                                          </td>
+
+                                          {/* RESERVATION */}
+
+                                          {reservationCategories.map(cat => (
+
+                                            <td
+                                              key={cat.reservationCategoriesId}
+                                            >
+
+  <Form.Control
+  type="number"
+  min={0}
+  max={100}
+   disabled={viewOnly}
+   onKeyDown={preventInvalidNumberInput}
+  className="modern-cutoff-input"
+  placeholder="0"
+  value={
+    formData.sections[index]
+      ?.stateCutoffs?.[
+        stateItem.stateId
+      ]?.[
+        cat.reservationCategoriesId
+      ] ?? ""
+  }
+  onKeyDown={(e) => {
+    if (
+      e.key === "-" ||
+      e.key === "+" ||
+      e.key === "e" ||
+      e.key === "E" ||
+      e.key === "."
+    ) {
+      e.preventDefault();
+    }
+  }}
+  onChange={(e) => {
+
+    const value =
+      validateCutoffValue(
+        e.target.value
+      );
+
+    const updatedSections =
+      [...formData.sections];
+
+    if (
+      !updatedSections[index]
+        .stateCutoffs
+    ) {
+
+      updatedSections[index]
+        .stateCutoffs = {};
+    }
+
+    if (
+      !updatedSections[index]
+        .stateCutoffs[
+          stateItem.stateId
+        ]
+    ) {
+
+      updatedSections[index]
+        .stateCutoffs[
+          stateItem.stateId
+        ] = {};
+    }
+
+    updatedSections[index]
+      .stateCutoffs[
+        stateItem.stateId
+      ][
+        cat.reservationCategoriesId
+      ] = value;
+
+    setFormData(prev => ({
+      ...prev,
+      sections: updatedSections
+    }));
+  }}
+/>
+
+                                            </td>
+
+                                          ))}
+
+                                          {/* DISABILITY */}
+
+                                        {/* DISABILITY */}
+
+
+                                        </tr>
+
+                                      )
+                                    )}
+
+                                  </tbody>
+
+                                </table>
+
+                              ) : (
+
+                                /* ================= NATIONAL ================= */
+
+/* ================= NATIONAL ================= */
+
+<table className="cutoff-state-table-modern national-cutoff-table">
+
+  <thead>
+
+
+
+    <tr>
+
+      {reservationCategories.map(cat => (
+
+        <th
+          key={cat.reservationCategoriesId}
+          className="text-center"
+        >
+         {cat.categoryCode} Cutoff %
+        </th>
+
+      ))}
+
+    
+
+ 
+
+    </tr>
+
+  </thead>
+
+  <tbody>
+
+    <tr>
+
+      {/* CATEGORY */}
+
+      {reservationCategories.map(cat => (
+
+        <td
+          key={cat.reservationCategoriesId}
+        >
+
+        <Form.Control
+  type="number"
+  min={0}
+  max={100}
+  disabled={viewOnly}
+  className="modern-cutoff-input"
+  onKeyDown={preventInvalidNumberInput}
+          placeholder="0"
+
+                value={
+            formData.sections[index]
+              ?.nationalCutoffs?.[
+                cat.reservationCategoriesId
+              ] ?? ""
+          }
+         onChange={(e) => {
+
+  const value =
+    validateCutoffValue(e.target.value);
+
+  const updatedSections =
+    [...formData.sections];
+
+  if (
+    !updatedSections[index]
+      .nationalCutoffs
+  ) {
+
+    updatedSections[index]
+      .nationalCutoffs = {};
+
+  }
+
+  updatedSections[index]
+    .nationalCutoffs[
+      cat.reservationCategoriesId
+    ] = value;
+
+
+    console.log(
+  "NATIONAL CUTOFFS",
+  updatedSections[index].nationalCutoffs
+);
+
+  setFormData(prev => ({
+    ...prev,
+    sections: updatedSections
+  }));
+
+}}
+
+          />
+
+        </td>
+
+      ))}
+
+      {/* TOTAL */}
+
+   
+      {/* DISABILITY */}
+
+
+
+
+
+    </tr>
+
+  </tbody>
+
+</table>
+
+                              )}
+
+                            </div>
+
+                              </div>
+
+                            </div>
+
+                  </div>
+
+                )}
+
+              </div>
+
+            );
+          })}
+
         </div>
 
 
@@ -1563,9 +1734,16 @@ export default function AddExaminationCutoffModal({
 
         {/* ================= WEIGHTAGE CONFIG ================= */}
 
+
+        {formData.totalMarks &&
+ formData.numberOfSections &&
+ formData.sections.length > 0 && (
+
+
+
         <div className="weightage-box mt-4">
           <h5 className="section-title">
-            Section consideration for comnined score:
+            Section consideration for combined score:
             {/* // Weightage Configuration */}
           </h5>
 
@@ -1623,6 +1801,7 @@ export default function AddExaminationCutoffModal({
                 max={100}
                 type="number"
                 disabled={viewOnly}
+                onKeyDown={preventInvalidNumberInput}
                 placeholder="Enter %"
                 min={0}
                 max={100}
@@ -1636,9 +1815,9 @@ export default function AddExaminationCutoffModal({
 
                   if (value > 100) {
 
-                    alert(
-                      "Written Exam Weightage cannot exceed 100%"
-                    );
+                   toast.warning(
+  "Written Exam Weightage cannot exceed 100%"
+);
 
                     return;
                   }
@@ -1653,6 +1832,7 @@ export default function AddExaminationCutoffModal({
             </Form.Group>
           </div>
         </div>
+ )}
       </Modal.Body>
 
       {/* ================= FOOTER ================= */}

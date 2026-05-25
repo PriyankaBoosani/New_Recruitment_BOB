@@ -16,7 +16,7 @@ getRegister: () => nodeApi.get('/getdetails/users/all'),
   api.get(
     `/recruiter/job-positions/get-job-position-by-id/${positionId}`
   ),
- 
+
 
 
     /* ================= REQUISITIONS ================= */
@@ -208,12 +208,26 @@ downloadCandidateTemplate: (
     positionIds,
 
     {
+
       responseType: "blob",
+
+      validateStatus:
+        function (status) {
+
+          return (
+            (status >= 200 &&
+             status < 300) ||
+
+            status === 422
+          );
+
+        },
 
       headers: {
         "X-Client":
           "AzureAD"
       }
+
     }
 
   );
