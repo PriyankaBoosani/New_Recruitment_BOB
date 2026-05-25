@@ -700,3 +700,17 @@
   }
 
 }
+
+@media (max-width: 768px) {
+  .msg-row {
+    flex-direction: column;
+  }
+
+  .msg-right {
+    grid-template-columns: 1fr !important;
+  }
+
+  .msg-status-wrap {
+    margin-top: 0 !important;
+  }
+}
