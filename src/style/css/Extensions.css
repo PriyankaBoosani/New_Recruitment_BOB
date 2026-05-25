@@ -46,7 +46,7 @@
 }
 
 .extension_request .field-label {
-   font-size: 0.875em;
+  font-size: 0.875em;
   font-weight: 400;
   color: #404040;
   letter-spacing: 0.2px;
@@ -59,6 +59,7 @@
   letter-spacing: 0.2px;
   margin-bottom: 2px;
 }
+
 /* History icon */
 
 .extensions-page .user-meta {
@@ -192,10 +193,10 @@
 
 /* Checkbox base */
 .extensions-page .form-check-input {
-	border: 2px solid #2f4ea2 !important;
-	border-radius: 4px;
-	background-color: #ffffff !important;
-	cursor: pointer;
+  border: 2px solid #2f4ea2 !important;
+  border-radius: 4px;
+  background-color: #ffffff !important;
+  cursor: pointer;
 }
 
 /* Checked */
@@ -394,6 +395,10 @@
   font-size: 0.8125rem;
   border-radius: 10px;
   cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
 }
 
 .extensions-page .status-select::-ms-expand {
@@ -424,34 +429,41 @@
   margin: 30px;
   padding-bottom: 30px;
 }
+
 .extension_request .form-check-input:disabled {
-	background-color: #AFBDEB4F !important;
-	cursor: not-allowed;
+  background-color: #AFBDEB4F !important;
+  cursor: not-allowed;
 }
 
 .extension_request .badge {
   font-size: 0.75em;
 }
+
 .extension_request .bi.bi-clock.icon-14 {
-	margin-top: -3px;
+  margin-top: -3px;
 }
+
 .extension_request .msg-history-title {
-	font-size: 0.875em;
-	font-weight: 500;
-	color: #525c6b;
-	margin-bottom: 8px;
+  font-size: 0.875em;
+  font-weight: 500;
+  color: #525c6b;
+  margin-bottom: 8px;
 }
+
 .extension_request .msg-history-head {
-	font-size: 0.875rem;
-	font-weight: 500;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
+
 .extension_request .msg-history-text {
-	font-size: 0.825em;
+  font-size: 0.825em;
 }
+
 .extension_request .msg-history-time {
-	font-size: 0.85rem;
+  font-size: 0.85rem;
 }
+
 .extension_request .icon-14 {
-	width: 18px;
-	height: 18px;
+  width: 18px;
+  height: 18px;
 }
