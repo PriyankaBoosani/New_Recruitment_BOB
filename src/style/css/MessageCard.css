@@ -646,7 +646,7 @@
   }
 }
 
-#msg-card-1 .form-control {
+/* #msg-card-1 .form-control {
   display: block;
   width: 95%;
   padding: .375rem .75rem;
@@ -660,7 +660,7 @@
   border: var(--bs-border-width) solid var(--bs-border-color);
   border-radius: var(--bs-border-radius);
   transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-}
+} */
 
 #msg-card-1 .submit-btn {
   background-color: #ff6b2c;

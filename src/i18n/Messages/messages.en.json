@@ -18,6 +18,6 @@
     "approved": "Approved",
     "rejected": "Rejected",
     "no_data": "No data found",
-    "submit": "Submit"
-    
+    "submit": "Submit",
+    "search_candidates": "Search candidates..."
 }

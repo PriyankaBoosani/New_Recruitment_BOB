@@ -10,6 +10,15 @@ import committeeManagementService from "../committeeManagement/services/committe
 import masterApiService from "../master/services/masterApiService";
 import { toast } from "react-toastify";
 import RequisitionStripformultiplepositions from "../candidatePreview/components/RequisitionStripformultiplepositions";
+
+
+import {
+  Form
+} from "react-bootstrap";
+import {
+  Search
+} from "react-bootstrap-icons";
+
 const Messages = () => {
   const { t } = useTranslation(["messages", "common"]);
   const {
@@ -432,32 +441,32 @@ const Messages = () => {
     }
   };
 
-  const fetchAllMessagesForCounts = async () => {
-    try {
-      const res = await candidateWorkflowServices.getMessageHistory(
-        {
-          positionsIds: selectedPositionId || [],
-          requestTypeIds: selectedRequestType
-            ? [selectedRequestType]
-            : [],
-          statusList: []
-        },
-        0,
-        1000
-      );
+  // const fetchAllMessagesForCounts = async () => {
+  //   try {
+  //     const res = await candidateWorkflowServices.getMessageHistory(
+  //       {
+  //         positionsIds: selectedPositionId || [],
+  //         requestTypeIds: selectedRequestType
+  //           ? [selectedRequestType]
+  //           : [],
+  //         statusList: []
+  //       },
+  //       0,
+  //       1000
+  //     );
 
-      setAllMessages(res?.data?.content || []);
-    } catch (err) {
-      console.error("Count API error", err);
-    }
-  };
-  React.useEffect(() => {
-    if (selectedPositionId?.length > 0) {
-      fetchAllMessagesForCounts();
-    } else {
-      setAllMessages([]);
-    }
-  }, [selectedPositionId]);
+  //     setAllMessages(res?.data?.content || []);
+  //   } catch (err) {
+  //     console.error("Count API error", err);
+  //   }
+  // };
+  // React.useEffect(() => {
+  //   if (selectedPositionId?.length > 0) {
+  //     fetchAllMessagesForCounts();
+  //   } else {
+  //     setAllMessages([]);
+  //   }
+  // }, [selectedPositionId]);
 
   const getVisiblePages = () => {
     if (totalPages <= 3) {
@@ -514,11 +523,11 @@ const Messages = () => {
                 </small>
               </div>
 
-              <div className="msg-search-box">
+              {/* <div className="msg-search-box">
                 <i className="bi bi-search msg-search-icon"></i>
                 <input
                   type="text"
-                  placeholder={t("messages:search")}
+                  placeholder={t("messages:search_candidates")}
                   className="msg-search-input"
                   value={searchText}
                   onChange={(e) => {
@@ -546,13 +555,40 @@ const Messages = () => {
                     }
                   }}
                 />
-                {/* <input
+             
+              </div> */}
+
+              <div className="search-boxpost">
+                <Search />
+                <Form.Control
                   type="text"
-                  placeholder={t("messages:search")}
-                  className="msg-search-input"
+                  placeholder={t("messages:search_candidates")}
                   value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                /> */}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    setSearchText(value);
+                    setPage(0);
+
+                    if (selectedPositionId?.length > 0) {
+                      fetchMessages(
+                        {
+                          positionsIds: selectedPositionId || [],
+                          requestTypeIds: selectedRequestType
+                            ? [selectedRequestType]
+                            : [],
+                          statusList: selectedStatus
+                            ? [selectedStatus]
+                            : [],
+                          searchText: value || ""
+                        },
+                        0,
+                        size,
+                        value
+                      );
+                    }
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -766,9 +802,9 @@ const Messages = () => {
                   {t("messages:no_data")}
                 </div>
 
-                <small className="text-muted">
+                {/* <small className="text-muted">
                   No messages available for selected filters
-                </small>
+                </small> */}
               </div>
             )}
           </div>
