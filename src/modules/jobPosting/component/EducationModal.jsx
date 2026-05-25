@@ -354,11 +354,14 @@ export default function EducationModal({
     const validateModalData = () => {
   const allRows = groups.flatMap(g => g.educations);
 
-  const validationErrors = validateEducationModal({
-    rows: allRows,
-    mode,
-  });
-
+//   const validationErrors = validateEducationModal({
+//     rows: allRows,
+//     mode,
+//   });
+const validationErrors = validateEducationModal({
+  groups,
+  mode,
+});
   if (Object.keys(validationErrors).length > 0) {
     setErrors(validationErrors);
     return false;
@@ -654,6 +657,13 @@ const isValidPercentage = (value) => {
                                     </Row>
                                 );
                             })}
+                            {errors.groupErrors?.[gIdx] && (
+                                <div className="mt-2">
+                                    <ErrorMessage>
+                                        {t(errors.groupErrors[gIdx])}
+                                    </ErrorMessage>
+                                </div>
+                            )}
                             <Button
                                 variant="none"
                                 size="sm"
@@ -776,8 +786,13 @@ const isValidPercentage = (value) => {
                     variant="primary"
                     onClick={() => {
                         const allRows = groups.flatMap(g => g.educations);
+                        // const validationErrors = validateEducationModal({
+                        //     rows: allRows,
+                        //     mode,
+                        // });
+
                         const validationErrors = validateEducationModal({
-                            rows: allRows,
+                            groups,
                             mode,
                         });
 

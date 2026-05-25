@@ -1,59 +1,121 @@
-export const validateEducationModal = ({ rows, mode }) => {
+export const validateEducationModal = ({ groups, mode }) => {
   const errors = { rows: [] };
 
-  rows.forEach((row, i) => {
-    const rowErrors = {};
+  // ✅ Track duplicate OR groups
+  const groupKeys = new Set();
 
-    const hasType = !!row.educationTypeId;
-    const hasDegree = !!row.educationQualificationsId;
-    const isPartiallyFilled = hasType || hasDegree;
+  groups.forEach((group, gIdx) => {
 
-    // Always validate numeric fields if they have values, regardless of other fields
-    // Validate GPA - must be numeric only
+    // ✅ Track duplicates only inside SAME GROUP
+    const seenEducations = new Set();
 
-// Percentage
-if (row.percentage !== "") {
-  const per = parseFloat(row.percentage);
-  if (isNaN(per) || per < 0 || per > 100) {
-    rowErrors.percentage = "validation:percentage_range";
-  }
-}
+    group.educations.forEach((row, rIdx) => {
+      const rowErrors = {};
 
-// Duration
-if (row.duration !== "") {
-  const dur = parseInt(row.duration);
-  if (isNaN(dur) || dur < 0) {
-    rowErrors.duration = "validation:duration_invalid";
-  }
-}
+      const hasType = !!row.educationTypeId;
+      const hasDegree = !!row.educationQualificationsId;
+      const isPartiallyFilled = hasType || hasDegree;
 
-    // Mandatory mode -> always validate education fields
-    if (mode === "mandatory") {
-      if (!hasType) {
-        rowErrors.educationTypeId = "validation:required";
+      // ✅ Create education key
+      const educationKey = [
+        row.educationTypeId,
+        row.educationQualificationsId,
+        row.specializationId || ""
+      ].join("_");
+
+      // ✅ Duplicate inside SAME GROUP
+      if (hasType && hasDegree) {
+        if (seenEducations.has(educationKey)) {
+          rowErrors.educationQualificationsId =
+            "validation:duplicate_education";
+        } else {
+          seenEducations.add(educationKey);
+        }
       }
-      if (!hasDegree) {
-        rowErrors.educationQualificationsId = "validation:required";
-      }
-    }
 
-    // Preferred mode -> validate only if user started filling education fields
-    if (mode === "preferred" && isPartiallyFilled) {
-      if (!hasType) {
-        rowErrors.educationTypeId = "validation:required";
-      }
-      if (!hasDegree) {
-        rowErrors.educationQualificationsId = "validation:required";
-      }
-    }
+      // ✅ Percentage Validation
+      if (row.percentage !== "") {
+        const per = parseFloat(row.percentage);
 
-    if (Object.keys(rowErrors).length > 0) {
-      errors.rows[i] = rowErrors;
+        if (isNaN(per) || per < 0 || per > 100) {
+          rowErrors.percentage = "validation:percentage_range";
+        }
+      }
+
+      // ✅ Duration Validation
+      if (row.duration !== "") {
+        const dur = parseInt(row.duration);
+
+        if (isNaN(dur) || dur < 0) {
+          rowErrors.duration = "validation:duration_invalid";
+        }
+      }
+
+      // ✅ Mandatory Mode Validation
+      if (mode === "mandatory") {
+        if (!hasType) {
+          rowErrors.educationTypeId = "validation:required";
+        }
+
+        if (!hasDegree) {
+          rowErrors.educationQualificationsId =
+            "validation:required";
+        }
+      }
+
+      // ✅ Preferred Mode Validation
+      if (mode === "preferred" && isPartiallyFilled) {
+        if (!hasType) {
+          rowErrors.educationTypeId = "validation:required";
+        }
+
+        if (!hasDegree) {
+          rowErrors.educationQualificationsId =
+            "validation:required";
+        }
+      }
+
+      // ✅ Convert group index -> flat index
+      const flatIndex =
+        groups
+          .slice(0, gIdx)
+          .reduce((acc, g) => acc + g.educations.length, 0) + rIdx;
+
+      if (Object.keys(rowErrors).length > 0) {
+        errors.rows[flatIndex] = rowErrors;
+      }
+    });
+
+    // ✅ Duplicate ENTIRE GROUP Check
+    const groupKey = [...seenEducations]
+      .sort()
+      .join("|");
+
+    if (groupKey && groupKeys.has(groupKey)) {
+
+      // ✅ Group-level error
+      errors.groupErrors = errors.groupErrors || {};
+
+      errors.groupErrors[gIdx] =
+        "validation:duplicate_group";
+
+    } else if (groupKey) {
+      groupKeys.add(groupKey);
     }
   });
 
-if (errors.rows.every(row => !row || Object.keys(row).length === 0)) {
-  return {};
-}
+  // ✅ FINAL ERROR CHECK
+  const hasRowErrors = errors.rows.some(
+    row => row && Object.keys(row).length > 0
+  );
+
+  const hasGroupErrors =
+    errors.groupErrors &&
+    Object.keys(errors.groupErrors).length > 0;
+
+  if (!hasRowErrors && !hasGroupErrors) {
+    return {};
+  }
+
   return errors;
 };
