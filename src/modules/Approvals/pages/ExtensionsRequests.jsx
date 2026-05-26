@@ -11,6 +11,7 @@ import { Search } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import "../../../style/css/Extensions.css";
 import start_icon from "../../../assets/start_icon.png";
+import end_icon from "../../../assets/end_icon.png"
 import history_icon from "../../../assets/history_icon.png";
 import ApprovalCommentModal from "../components/ApprovalCommentModal";
 import ApprovalHistoryModal from "../components/ApprovalHistoryModal";
@@ -694,7 +695,12 @@ const ExtensionsRequests = () => {
 
                               {/* Time */}
                               <div className="d-flex align-items-center gap-1">
-                                <i className="bi bi-clock icon-14"></i>
+                                {/* <i className="bi bi-clock icon-14"></i> */}
+                                 <img
+                                  src={end_icon}
+                                  alt="end_icon"
+                                  className="icon-14"
+                                />
 
                                 <span>
                                   {formatTime(req.createdDate)}
