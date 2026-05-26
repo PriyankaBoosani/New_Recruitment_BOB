@@ -509,7 +509,7 @@ const Messages = () => {
 
   return (
     <div className="container-fluid py-3 px-3"
-      style={{ background: "#F5F7FA", minHeight: "100vh" }}>
+      style={{ background: "#F5F7FA", minHeight: "100vh",    marginBottom: "35px",}}>
       <div className="card" style={{ borderRadius: "16px", overflow: "hidden", border: "1px solid #E0E0E0", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
         <div className="card-body p-0 d-flex flex-column" style={{ height: "100%" }}>
 
@@ -769,9 +769,14 @@ const Messages = () => {
 
 
           {/* LIST */}
+          {/* LIST */}
           <div
             className="px-3 py-3 flex-grow-1"
-            style={{ overflowY: "auto", minHeight: "300px" }}
+            style={{
+              overflowY: "auto",
+              minHeight: "300px",
+              paddingBottom: "90px"
+            }}
           >
             {filteredMessages.length > 0 ? (
               filteredMessages.map((item) => (
@@ -808,7 +813,17 @@ const Messages = () => {
               </div>
             )}
           </div>
-          <div className="d-flex justify-content-end align-items-center gap-3 col px-3 py-3 border-top">
+          <div
+            className="d-flex justify-content-end align-items-center gap-3 col px-3 py-3 border-top flex-wrap"
+            style={{
+              position: "sticky",
+              bottom: 0,
+              background: "#fff",
+              zIndex: 10,
+              marginBottom: "10px",
+              paddingBottom: "16px"
+            }}
+          >
 
             {/* Page size */}
             <div className="d-flex align-items-center gap-2">

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import history_icon from "../../../assets/history_icon.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarDays, faLayerGroup, faLocationDot, faBriefcase } from "@fortawesome/free-solid-svg-icons";
+import endIcon  from "../../../../src/assets/end_icon.png";
 
 const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
   const { t } = useTranslation(["messages", "common"]);
@@ -99,7 +100,14 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
             <div className="msg-sub">
               {t("messages:reg_no")}: {item.regNo}
             </div>
-
+            <div
+              className="msg-sub"
+              style={{
+                marginTop: "1px"
+              }}
+            >
+              Position : {item.positionName || "-"}
+            </div>
             {/* DATE + TIME */}
             <div
               className="msg-sub"
@@ -111,7 +119,7 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
               }}
             >
               <i
-                className="bi bi-calendar3"
+                className="bi bi-calendar-event"
                 style={{
                   color: "#6B7280",
                   fontSize: "14px"
@@ -122,16 +130,12 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
 
               <span>|</span>
 
-              <i
-                className="bi bi-clock"
-                style={{
-                  color: "#6B7280",
-                  fontSize: "14px"
-                }}
-              ></i>
+             <img src={endIcon } alt="endIcon" className="icon-14" />
 
               <span>{item.time || "-"}</span>
             </div>
+
+
           </div>
         </div>
 
@@ -149,37 +153,117 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
           }}
         >
           {/* DATE EXTENSION */}
-          <div style={{ minWidth: 0 }}>
-            <div
-              className="msg-label"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "6px"
-              }}
-            >
-              <FontAwesomeIcon
-                icon={faCalendarDays}
-                className="mt-1"
-                style={{ fontSize: "16px" }}
-              />
+          <div className="msg-label"
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "10px",
+              minWidth: 0
+            }}
+          >
+            {/* Left Side Icon */}
+            <FontAwesomeIcon
+              icon={faCalendarDays}
+              className="mt-1"
+              style={{ fontSize: "16px" }}
+            />
 
-              {/* <i className="bi bi-calendar-event"></i> */}
+            {/* Right Side Title + Subtitle */}
+            <div style={{ minWidth: 0 }}>
               <span>Extension Date </span>
+              <div
+                className="msg-value"
+                style={{
+                  wordBreak: "break-word",
+                  fontSize: "13px",
+                  // color: "#6c757d"
+                }}
+              >
+                {item.dateExtension || "-"}
+              </div>
             </div>
+          </div>
 
-            <div
-              className="msg-value"
+          {/* REQUEST TYPE */}
+          <div className="msg-label"
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "10px",
+              minWidth: 0
+            }}
+          >
+            {/* Left Icon */}
+            <FontAwesomeIcon
+              icon={faLayerGroup}
               style={{
-                wordBreak: "break-word"
+                fontSize: "16px",
+                marginTop: "3px",
+                flexShrink: 0
               }}
-            >
-              {item.dateExtension || "-"}
+            />
+
+            {/* Right Content */}
+            <div style={{ minWidth: 0 }}>
+              <div
+                className="msg-label"
+              >
+                {t("messages:request_type")}
+              </div>
+
+              <div
+                className="msg-value"
+                style={{
+                  wordBreak: "break-word",
+                  fontSize: "13px",
+                }}
+              >
+                {item.type || "-"}
+              </div>
+            </div>
+          </div>
+
+          {/* ZONE */}
+          <div className="msg-label"
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "10px",
+              minWidth: 0
+            }}
+          >
+            {/* Left Icon */}
+            <FontAwesomeIcon
+              icon={faLocationDot}
+              style={{
+                fontSize: "16px",
+                marginTop: "3px",
+                flexShrink: 0
+              }}
+            />
+
+            {/* Right Content */}
+            <div style={{ minWidth: 0 }}>
+              <div
+                className="msg-label"
+              >
+                Zone
+              </div>
+
+              <div
+                className="msg-value"
+                style={{
+                  wordBreak: "break-word",
+                  fontSize: "13px",
+                }}
+              >
+                {item.zonalId || "-"}
+              </div>
             </div>
           </div>
 
           {/* POSITION */}
-          <div style={{ minWidth: 0 }}>
+          {/* <div style={{ minWidth: 0 }}>
             <div
               className="msg-label"
               style={{
@@ -188,7 +272,7 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
                 gap: "6px"
               }}
             >
-              {/* <i className="bi bi-briefcase"></i> */}
+             
               <FontAwesomeIcon
                 icon={faBriefcase}
                 className="mt-1"
@@ -205,10 +289,10 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
             >
               {item.positionName || "-"}
             </div>
-          </div>
+          </div> */}
 
           {/* REQUEST TYPE */}
-          <div style={{ minWidth: 0 }}>
+          {/* <div style={{ minWidth: 0 }}>
             <div
               className="msg-label"
               style={{
@@ -222,7 +306,6 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
                 className="mt-1"
                 style={{ fontSize: "16px" }}
               />
-              {/* <i className="bi bi-grid"></i> */}
               <span>{t("messages:request_type")}</span>
             </div>
 
@@ -236,7 +319,6 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
             </div>
           </div>
 
-          {/* ZONAL */}
           <div style={{ minWidth: 0 }}>
             <div
               className="msg-label"
@@ -246,7 +328,6 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
                 gap: "6px"
               }}
             >
-              {/* <i className="bi bi-geo-alt"></i> */}
               <FontAwesomeIcon
                 icon={faLocationDot}
                 className="mt-1"
@@ -263,7 +344,7 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
             >
               {item.zonalId || "-"}
             </div>
-          </div>
+          </div> */}
 
           {/* STATUS */}
           <div
