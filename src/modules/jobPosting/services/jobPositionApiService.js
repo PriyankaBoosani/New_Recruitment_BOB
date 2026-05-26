@@ -39,6 +39,28 @@ const jobPositionApiService = {
   },
 
 
+
+
+
+  finalizeExamConfiguration: (payload) => {
+
+  return api.post(
+
+    "/recruiter/examination-config/submit-for-approval",
+
+    payload,
+
+    {
+      headers: {
+        "X-Client": "AzureAD"
+      }
+    }
+
+  );
+
+},
+
+
   updatePosition: ({ dto, indentFile }) => {
     const formData = new FormData();
 

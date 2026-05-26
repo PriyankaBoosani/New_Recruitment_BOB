@@ -2,6 +2,10 @@ import React from "react";
 import {
   Modal
 } from "react-bootstrap";
+import jobPositionApiService from
+"../../jobPosting/services/jobPositionApiService";
+
+import { toast } from "react-toastify";
 
 const getTableHeaders = (
   reservationCategories = []
@@ -313,6 +317,16 @@ const ExaminationScoreModal = ({
     item.positionId || item.id
   ];
 
+
+  const hasQualifiedWithoutRelaxation =
+  item?.tableData?.some(
+    (row) =>
+
+      Number(
+        row?.qualifiedWithoutRelaxation || 0
+      ) > 0
+  );    
+
       console.log(
   "CARD ITEM POSITION ID",
   item.positionId
@@ -420,18 +434,68 @@ console.log(
 
                 {/* FINALIZE BUTTON */}
 
-              {hasConfig && (
+          {hasConfig && hasQualifiedWithoutRelaxation && (
 
   <button
     className="btn rank-finalize-btn"
-    onClick={(e) => {
+    onClick={async (e) => {
 
       e.stopPropagation();
 
-      console.log(
-        "FINALIZE POSITION",
-        item
-      );
+      try {
+
+       const payload = {
+  positionId:
+    item.positionId || item.id
+};
+
+        const res =
+          await jobPositionApiService.finalizeExamConfiguration(
+            payload
+          );
+
+        if (res?.success) {
+
+          toast.success(
+            res?.message ||
+            "Position finalized successfully"
+          );
+
+          // OPTIONAL UI UPDATE
+          setExaminationScoreData(prev =>
+            prev.map(p =>
+           (p.positionId || p.id) ===
+(item.positionId || item.id)
+                ? {
+                    ...p,
+                    isFinalized: true
+                  }
+                : p
+            )
+          );
+
+        } else {
+
+          toast.error(
+            res?.message ||
+            "Failed to finalize"
+          );
+
+        }
+
+      } catch (err) {
+
+        console.error(
+          "FINALIZE ERROR",
+          err
+        );
+
+        toast.error(
+          err?.response?.data?.message ||
+          "Failed to finalize"
+        );
+
+      }
 
     }}
   >
@@ -439,8 +503,6 @@ console.log(
   </button>
 
 )}
-
-           
 
                 {/* CHEVRON */}
 
