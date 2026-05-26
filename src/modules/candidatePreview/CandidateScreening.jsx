@@ -129,6 +129,9 @@ export default function CandidateScreening({ selectedJob }) {
     RENEGOTIATE: "Renegotiate",
   };
 
+  const [pendingExamOpen, setPendingExamOpen] =
+  useState(false);
+
 
   // const handleRemovePosition = (removeId) => {
   //   const updatedIds = selectedPositionId.filter(
@@ -415,7 +418,10 @@ const fetchExamConfigByPositions = async (
 
 };  
 
-
+const hasExamConfiguration =
+  selectedPositionId?.some(
+    (id) => examConfigMap[id]
+  );
 
 
 useEffect(() => {
@@ -475,13 +481,21 @@ const reservationCategoryMap =
 useEffect(() => {
 
   if (
-    !location.state
-      ?.openExaminationScore
+    location.state?.openExaminationScore
   ) {
-    return;
+
+    setPendingExamOpen(true);
+
   }
 
-  /* WAIT FOR CATEGORY + STATE DATA */
+}, [location.state?.reopenKey]);
+
+
+useEffect(() => {
+
+  if (!pendingExamOpen) {
+    return;
+  }
 
   if (
     !selectedRequisitionId ||
@@ -492,22 +506,20 @@ useEffect(() => {
     return;
   }
 
-  setTimeout(() => {
+  handleOpenExaminationScore();
 
-    handleOpenExaminationScore();
+  setPendingExamOpen(false);
 
-    navigate(
-      location.pathname,
-      {
-        replace: true,
-        state: {}
-      }
-    );
-
-  }, 300);
+  navigate(
+    location.pathname,
+    {
+      replace: true,
+      state: {}
+    }
+  );
 
 }, [
-  location.state?.openExaminationScore,
+  pendingExamOpen,
   selectedRequisitionId,
   selectedPositionId,
   reservationCategories,
@@ -2607,6 +2619,8 @@ useEffect(() => {
   const handleOpenExaminationScore =
     () => {
 
+      setExaminationScoreData([]);
+
       // VALIDATION
       if (
         !selectedRequisitionId ||
@@ -2760,25 +2774,29 @@ expanded:
   const handleEditExaminationScore =
     () => {
 
-      setShowExaminationModal(false);
+     setShowExaminationModal(false);
 
-      navigate(
-        "/ExaminationCutoffConfiguration",
-        {
-          state: {
+setExaminationScoreData([]);
 
-            requisitionId:
-              selectedRequisitionId,
+navigate(
+  "/ExaminationCutoffConfiguration",
+  {
+    state: {
 
-            positionIds:
-              selectedPositionId,
+      requisitionId:
+        selectedRequisitionId,
 
-            openEditModal: true,
+      positionIds:
+        selectedPositionId,
 
-            fromCandidateScreening: true
-          }
-        }
-      );
+      openEditModal: true,
+
+      fromCandidateScreening: true,
+
+      reopenKey: Date.now()
+    }
+  }
+);
 
     };
 
@@ -3023,31 +3041,33 @@ expanded:
               <div className="d-flex justify-content-md-end align-items-end gap-2 h-100">
 
                 {/* IMPORT BUTTON */}
+                     {hasExamConfiguration && (
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            onClick={() =>
+                              setShowImportCandidatesModal(true)
+                            }
+                            className="d-flex align-items-center gap-2 bulk-import-btn"
+                            style={{
+                              height: "38px"
+                            }}
+                          >
 
-                <Button
-                  variant="outline-primary"
-                  size="sm"
-                  onClick={() =>
-                    setShowImportCandidatesModal(true)
-                  }
-                  className="d-flex align-items-center gap-2 bulk-import-btn"
-                  style={{
-                    height: "38px"
-                  }}
-                >
+                            <FiUpload />
 
-                  <FiUpload />
+                            Update Canidates Score 
 
-                   Update Canidates Score 
+                            {/* {t(
+                              "candidateWorkflow:import_candidates"
+                            )} */}
 
-                  {/* {t(
-                    "candidateWorkflow:import_candidates"
-                  )} */}
-
-                </Button>
+                          </Button>
+                      )}
 
                 {/* EXAMINATION SCORE */}
 
+            {hasExamConfiguration && (
                 <button
                   className="btn blue-color blue-border fs-14"
                   onClick={
@@ -3059,6 +3079,7 @@ expanded:
                 >
                   Positions Summary
                 </button>
+              )}
 
               </div>
 

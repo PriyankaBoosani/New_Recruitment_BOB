@@ -1079,7 +1079,8 @@ const sectionsPayload =
                     item => item.positionId
                   ),
 
-                openExaminationScore: true
+                openExaminationScore: true,
+                  reopenKey: Date.now()
               }
             }
           );
@@ -1276,19 +1277,29 @@ const preventInvalidNumberInput = (e) => {
                 value={
                   formData.numberOfSections
                 }
-                onChange={e => {
+              onChange={e => {
 
-                  const value =
-                    Number(e.target.value);
+                const value =
+                  Number(e.target.value);
 
-                  if (value < 0) return;
+                if (value < 0) return;
 
-                  handleChange(
-                    "numberOfSections",
-                    e.target.value
+                // LIMIT TO 5
+                if (value > 5) {
+
+                  toast.warning(
+                    "Maximum 5 sections allowed"
                   );
 
-                }}
+                  return;
+                }
+
+                handleChange(
+                  "numberOfSections",
+                  e.target.value
+                );
+
+              }}
               />
             </Form.Group>
           </Col>
