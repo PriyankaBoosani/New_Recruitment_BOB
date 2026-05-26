@@ -311,15 +311,24 @@ const jobPositionApiService = {
       params: { year, search, page, size, statuses },
       headers: { "X-Client": "AzureAD" }
     }),
+  // getRequisitionApprovalHistory: (requisitionId) =>
+  //   api.get(
+  //     `/recruiter/workflow-approval/get-requisition-approval-history/${requisitionId}`,
+  //     {
+  //       headers: {
+  //         "X-Client": "AzureAD",
+  //       },
+  //     }
+  //   ),
   getRequisitionApprovalHistory: (requisitionId) =>
-    api.get(
-      `/recruiter/workflow-approval/get-requisition-approval-history/${requisitionId}`,
-      {
-        headers: {
-          "X-Client": "AzureAD",
-        },
-      }
-    ),
+  api.get(
+    `/recruiter/workflow-approval/get-requisition-approval-history-including-drafts/${requisitionId}`,
+    {
+      headers: {
+        "X-Client": "AzureAD",
+      },
+    }
+  ),
 
 
     /* ================= EXAMINATION CUTOFF ================= */

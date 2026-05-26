@@ -132,6 +132,12 @@ const requisitionApiService = {
       }
     ),
 
+    getDraftRequisitionApprovalHistory(draftId) {
+    return api.get(
+        `/recruiter/workflow-approval/get-draft-requisition-approval-history/${draftId}`
+    );
+},
+
 };
 
 export default requisitionApiService;

@@ -2400,17 +2400,15 @@ const shouldShowSubmitBefore =
                         </td>
 
                         <td>
-                          {right ? (
+                          {right && (
                             <span className={getStatusClass(rightStatus)}>
                               {t(rightStatus)}
                             </span>
-                          ) : (
-                            "-"
                           )}
                         </td>
 
                         <td className="action-cell">
-                          {right && rightStatus !== "YET TO UPLOAD" ? (
+                          {right && rightStatus !== "YET TO UPLOAD"&& (
                             <>
                               <img
                                 src={viewIcon}
@@ -2441,8 +2439,6 @@ const shouldShowSubmitBefore =
                                 }}
                               />
                             </>
-                          ) : (
-                            "-"
                           )}
                         </td>
 
@@ -2767,36 +2763,34 @@ const shouldShowSubmitBefore =
                 )}
 
                 {!isFromCompensationPool && (
-                  <div className="d-flex align-items-center gap-2 mb-2 me-4">
-                    <input
-                      type="checkbox"
-                      checked={isEligible}
-                      disabled={disableEligibleCheckbox}
-                      onChange={(e) => handleEligibleChange(e.target.checked)}
-                    />
+                  <div className="d-flex">
+                    <div className="d-flex align-items-center gap-2 me-4">
+                      <input
+                        type="checkbox"
+                        checked={isEligible}
+                        disabled={disableEligibleCheckbox}
+                        onChange={(e) => handleEligibleChange(e.target.checked)}
+                      />
 
-                    <label
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: 500,
-                        color: "#162B75",
-                        marginBottom: 0,
-                        cursor: disableEligibleCheckbox ? "not-allowed" : "pointer",
-                        opacity: disableEligibleCheckbox ? 0.6 : 1,
-                      }}
-                    >
-                      Eligible?
-                    </label>
-                  </div>
-                )}
-
-                {!isFromCompensationPool && (
-                  <div>
+                      <label
+                        style={{
+                          fontSize: "13px",
+                          fontWeight: 500,
+                          color: "#162B75",
+                          marginBottom: 0,
+                          cursor: disableEligibleCheckbox ? "not-allowed" : "pointer",
+                          opacity: disableEligibleCheckbox ? 0.6 : 1,
+                        }}
+                      >
+                        Eligible?
+                      </label>
+                    </div>
                     <span
                       style={{
                         fontSize: "13px",
                         color: "#f47c2c",
                         cursor: "pointer",
+                        alignContent: "center",
                         // textDecoration: "underline",
                       }}
                       className="me-4"

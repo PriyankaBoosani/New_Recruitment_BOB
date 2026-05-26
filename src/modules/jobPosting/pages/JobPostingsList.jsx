@@ -71,14 +71,47 @@ const JobPostingsList = () => {
 
     const {
         history,
+        setHistory,
         loading: historyLoading,
         fetchHistory,
     } = useRequisitionApprovalHistory();
 
-    const handleOpenHistory = (req) => {
-        setShowHistoryModal(true);
-        fetchHistory(req.id);
-    };
+    const handleOpenHistory = async (req) => {
+    setShowHistoryModal(true);
+
+    try {
+
+        // NORMAL REQUISITION
+        if (!req.isDraft) {
+            await fetchHistory(req.id);
+            return;
+        }
+
+        // DRAFT REQUISITION
+        const res =
+            await requisitionApiService.getDraftRequisitionApprovalHistory(
+                req.id
+            );
+            console.log("Approval history response", res);
+
+        const historyData =
+        (res?.data || []).map(item => ({
+            ...item,
+
+            // fallback because draft API lacks approverName
+            approverName:
+                item.approverName ||
+                item.approverRole ||
+                "-"
+        }));
+
+        setHistory(historyData);
+
+    } catch (err) {
+        console.error("Failed to fetch approval history", err);
+        toast.error("Failed to load approval history");
+    }
+};
 
     const handleConfirmDelete = async () => {
         if (!selectedReq) return;
@@ -809,7 +842,7 @@ const JobPostingsList = () => {
                                             </Button>
                                         </OverlayTrigger>
                                     )}
-                                    {req.editable && !req.isDraft && (
+                                    {(req.editable || req.isDraft) && (
                                         <OverlayTrigger
                                             placement="bottom"
                                             overlay={<Tooltip id={`tooltip-add-${req.id}`}>{t("jobPostingsList:edit_requisition")}</Tooltip>}
@@ -819,29 +852,32 @@ const JobPostingsList = () => {
                                                 className="icon-btn"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                   if (!req.isDraft) {
+                                                   // NORMAL REQUISITION EDIT
+                                                    if (!req.isDraft) {
+                                                        navigate(
+                                                            `/job-posting/create-requisition?id=${req.id}`,
+                                                            {
+                                                                state: {
+                                                                    mode: "edit"
+                                                                }
+                                                            }
+                                                        );
+
+                                                        return;
+                                                    }
+
+                                                    // DRAFT REQUISITION EDIT
+                                                    // use clone mode so positions can be selected/unselected
                                                     navigate(
-                                                        `/job-posting/create-requisition?id=${req.id}`,
+                                                        `/job-posting/create-requisition?id=${req.parentRequisitionId}`,
                                                         {
                                                             state: {
-                                                                mode: "edit"
+                                                                mode: "clone",
+                                                                isDraftEdit: true,
+                                                                draftId: req.id
                                                             }
                                                         }
                                                     );
-
-                                                    return;
-                                                }
-
-                                                // DRAFT EDIT
-                                                navigate(
-                                                    `/job-posting/create-requisition?id=${req.parentRequisitionId}`,
-                                                    {
-                                                        state: {
-                                                            mode: "edit",
-                                                            isDraft: true
-                                                        }
-                                                    }
-                                                );
                                                 }}
                                             >
                                                 <img src={pos_edit_icon} alt="edit" className="icon-20" />
@@ -885,28 +921,28 @@ const JobPostingsList = () => {
                                                 //     { state: { mode: "view" } }
                                                 // );
                                                 if (!req.isDraft) {
-                    navigate(
-                        `/job-posting/create-requisition?id=${req.id}`,
-                        {
-                            state: {
-                                mode: "view"
-                            }
-                        }
-                    );
+                                                    navigate(
+                                                        `/job-posting/create-requisition?id=${req.id}`,
+                                                        {
+                                                            state: {
+                                                                mode: "view"
+                                                            }
+                                                        }
+                                                    );
 
-                    return;
-                }
+                                                    return;
+                                                }
 
-                // DRAFT VIEW
-                navigate(
-                    `/job-posting/create-requisition?id=${req.parentRequisitionId}`,
-                    {
-                        state: {
-                            mode: "view",
-                            isDraftView: true
-                        }
-                    }
-                );
+                                                // DRAFT VIEW
+                                                navigate(
+                                                    `/job-posting/create-requisition?id=${req.parentRequisitionId}`,
+                                                    {
+                                                        state: {
+                                                            mode: "view",
+                                                            isDraftView: true
+                                                        }
+                                                    }
+                                                );
                                             }}
                                         >
                                             <img src={view_jobpost} alt="view" className="icon-19" />
@@ -1273,6 +1309,7 @@ const JobPostingsList = () => {
                 show={showHistoryModal}
                 onClose={() => setShowHistoryModal(false)}
                 historyData={history}
+                // setHistory={setHistory}
                 loading={historyLoading}
             />
 

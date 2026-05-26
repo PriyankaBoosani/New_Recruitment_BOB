@@ -45,6 +45,7 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useApprovalRequisitions } from "../hooks/useApprovalRequisitions";
+import requisitionApiService from "../../jobPosting/services/requisitionApiService";
 
 
 // import ApprovalCommentModal from "../components/ApprovalCommentModal";
@@ -105,16 +106,45 @@ const RequisitionRequests = () => {
   };
   const {
     history,
+    setHistory,
     loading: historyLoading,
     fetchHistory,
   } = useRequisitionApprovalHistory();
 
-  const handleOpenHistory = async (req) => {
-    setSelectedHistoryReq(req);
-    setShowHistoryModal(true);
+const handleOpenHistory = async (req) => {
+  setSelectedHistoryReq(req);
+  setShowHistoryModal(true);
 
-    await fetchHistory(req.id);
-  };
+  try {
+
+    // NORMAL REQUISITION
+    if (!req.isDraft) {
+      await fetchHistory(req.id);
+      return;
+    }
+
+    // DRAFT REQUISITION
+    const res =
+      await requisitionApiService.getDraftRequisitionApprovalHistory(
+        req.id
+      );
+
+    const historyData =
+      (res?.data || []).map(item => ({
+        ...item,
+        approverName:
+          item.approverName ||
+          item.approverRole ||
+          "-"
+      }));
+
+    setHistory(historyData);
+
+  } catch (err) {
+    console.error("Failed to fetch approval history", err);
+    toast.error("Failed to load approval history");
+  }
+};
 
   // const handleConfirmDelete = async () => {
   //   if (!selectedReq) return;

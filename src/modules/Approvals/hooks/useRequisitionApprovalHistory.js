@@ -38,5 +38,5 @@ export const useRequisitionApprovalHistory = () => {
         }
     };
 
-    return { history, loading, fetchHistory };
+    return { history, setHistory, loading, fetchHistory };
 };

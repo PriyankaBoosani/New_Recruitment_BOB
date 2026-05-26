@@ -36,6 +36,8 @@ const CreateRequisition = () => {
   const isCloneMode = mode === "clone";
   const isReinitializeMode = mode === "reinitialize";
   const isDraftView = location.state?.isDraftView;
+  const isDraftEdit = location.state?.isDraftEdit;
+  const draftId = location.state?.draftId;
 
   const handleCancel = () => {
     if (from === "approval") {
@@ -111,26 +113,52 @@ useEffect(() => {
     try {
       // 🔵 CLONE MODE (existing)
       if (isCloneMode) {
-        const positionIds = Array.from(selectedPositions);
+    const positionIds = Array.from(selectedPositions);
 
-        await requisitionApiService.editDraftRequisition(
-          editId,
-          positionIds
-        );
+    // EXISTING DRAFT UPDATE
+    if (isDraftEdit) {
 
-        const draftPayload = {
-          requisitionDescription: formData.description,
-          endDate: formData.endDate,
-          cutoffDate: formData.cutoffDate,
-        };
+      await requisitionApiService.editDraftRequisition(
+        draftId,
+        positionIds
+      );
 
-        await requisitionApiService.saveDraftDetails(
-          editId,
-          draftPayload
-        );
+      const draftPayload = {
+        requisitionDescription: formData.description,
+        endDate: formData.endDate,
+        cutoffDate: formData.cutoffDate,
+      };
 
-        toast.success("Draft created successfully");
-      }
+      await requisitionApiService.saveDraftDetails(
+        draftId,
+        draftPayload
+      );
+
+      toast.success("Draft updated successfully");
+    }
+
+    // NEW DRAFT CREATION
+    else {
+
+      await requisitionApiService.editDraftRequisition(
+        editId,
+        positionIds
+      );
+
+      const draftPayload = {
+        requisitionDescription: formData.description,
+        endDate: formData.endDate,
+        cutoffDate: formData.cutoffDate,
+      };
+
+      await requisitionApiService.saveDraftDetails(
+        editId,
+        draftPayload
+      );
+
+      toast.success("Draft created successfully");
+    }
+}
 
       // 🟢 REINITIALIZE MODE (NEW API)
       else if (isReinitializeMode) {
@@ -165,6 +193,14 @@ useEffect(() => {
       console.error("Save failed", err);
     }
   };
+
+  useEffect(() => {
+    if (!isDraftEdit || positions.length === 0) return;
+
+    setSelectedPositions(
+      new Set(positions.map(p => p.positionId))
+    );
+  }, [isDraftEdit, positions]);
 
   function getTomorrowISO() {
     const d = new Date();
