@@ -1,7 +1,7 @@
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import "../../../style/css/EducationModal.css";
-import { validateEducationModal } from "../validations/validateEducationModal";
+import { validateEducationModal,validateCertificationGroups } from "../validations/validateEducationModal";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
 import delete_icon from "../../../assets/delete_icon.png"
 import { useTranslation } from "react-i18next";
@@ -754,6 +754,13 @@ const isValidPercentage = (value) => {
                                         </Col>
                                     </Row>
                                 ))}
+                                {errors.certGroupErrors?.[cgIdx] && (
+                                    <div className="mt-2">
+                                        <ErrorMessage>
+                                            {t(errors.certGroupErrors[cgIdx])}
+                                        </ErrorMessage>
+                                    </div>
+                                )}
                                 <Button
                                     variant="none"
                                     size="sm"
@@ -795,12 +802,21 @@ const isValidPercentage = (value) => {
                             groups,
                             mode,
                         });
+                        const certValidationErrors =
+                            validateCertificationGroups(certGroups);
+                        // if (Object.keys(validationErrors).length > 0) {
+                        //     setErrors(validationErrors);
+                        //     return;
+                                                    // }
+                            const mergedErrors = {
+                                ...validationErrors,
+                                ...certValidationErrors
+                            };
 
-                        if (Object.keys(validationErrors).length > 0) {
-                            setErrors(validationErrors);
-                            return;
-                        }
-
+                            if (Object.keys(mergedErrors).length > 0) {
+                                setErrors(mergedErrors);
+                                return;
+                            }
                         const filledRows = groups.flatMap(g => g.educations).filter(
                             r => r.educationTypeId && r.educationQualificationsId
                         );

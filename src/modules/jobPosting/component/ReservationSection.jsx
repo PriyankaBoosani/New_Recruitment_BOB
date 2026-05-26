@@ -122,7 +122,12 @@ const ReservationSection = ({
             <Col xs={12} className="mt-4">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <div className="d-flex gap-5 align-items-center catfonts" style={{ width: '49%' }}>
-                        <div><h6 className="mb-0 catfont">{t("addPosition:category_wise_reservation")} <span className="text-danger">*</span></h6><small className="text-muted">{t("addPosition:enable_state_distribution_help")}</small></div>
+                        <div><h6 className="mb-0 catfont"> {formData.enableStateDistribution
+                                                    ? t("addPosition:state_wise_reservation")
+                                                    : t("addPosition:category_wise_reservation")}
+                            <span className="text-danger">*</span></h6><small className="text-muted">
+                                {t("addPosition:enable_state_distribution_help")}</small>
+                        </div>
                         <Form.Check
                             type="switch"
                             name="enableStateDistribution"

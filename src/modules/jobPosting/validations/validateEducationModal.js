@@ -119,3 +119,46 @@ export const validateEducationModal = ({ groups, mode }) => {
 
   return errors;
 };
+
+export const validateCertificationGroups = (certGroups) => {
+  const errors = {};
+  const groupKeys = new Set();
+
+  certGroups.forEach((group, gIdx) => {
+
+    const seenCertifications = new Set();
+
+    (group.certifications || []).forEach((certRow) => {
+
+      if (!certRow.certificationId) return;
+
+      // ❌ DUPLICATE INSIDE SAME GROUP
+      if (seenCertifications.has(certRow.certificationId)) {
+        errors.certGroupErrors = errors.certGroupErrors || {};
+
+        errors.certGroupErrors[gIdx] =
+          "validation:duplicate_certification";
+      } else {
+        seenCertifications.add(certRow.certificationId);
+      }
+    });
+
+    // ❌ DUPLICATE ENTIRE OR GROUP
+    const groupKey = [...seenCertifications]
+      .sort()
+      .join("|");
+
+    if (groupKey && groupKeys.has(groupKey)) {
+
+      errors.certGroupErrors = errors.certGroupErrors || {};
+
+      errors.certGroupErrors[gIdx] =
+        "validation:duplicate_cert_group";
+
+    } else if (groupKey) {
+      groupKeys.add(groupKey);
+    }
+  });
+
+  return errors;
+};

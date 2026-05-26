@@ -80,6 +80,8 @@
   "panel_required":"Please select panel",
   "end_time_greater_than_start":"End time must be greater than start time",
     "duplicate_education": "Same education already added in this group",
-  "duplicate_group": "Same education group already added"
-  
+  "duplicate_group": "Same education group already added",
+  "duplicate_certification":"Same certification already added in this group",
+
+  "duplicate_cert_group":"Same certification group already added"
 }
