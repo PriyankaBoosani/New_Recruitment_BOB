@@ -386,9 +386,10 @@ candidate-screening-tabs-header ul {
 }
 
 .info-icon {
-  width: 14px;
-  height: 14px;
-  cursor: pointer;
+	width: 14px;
+	height: 14px;
+	cursor: pointer;
+	background: none;
 }
 
 
