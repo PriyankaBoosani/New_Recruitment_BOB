@@ -236,15 +236,28 @@ const ApplicationForm = ({
   useEffect(() => {
 
     if (!isZonalHr) return;
+    if (zonalVerificationStatus) {
+      setZonalDecision(mapStatusToDecision(zonalVerificationStatus));
+    }
 
     const mappedDecision = mapStatusToDecision(zonalVerificationStatus);
-
+    if (zonalSubmitBeforeDate) {
+      setScreeningForm(prev => ({
+        ...prev,
+        zonalSubmitDate: zonalSubmitBeforeDate.split("T")[0] // safe for input[type=date]
+      }));
+    }
+    if (zonalHrComments) {
+      setScreeningRemarks(zonalHrComments);
+    }
     const isLptFailed = isLptRequired === "YES" && lptType === "FAIL";
+
+
 
     // FAIL -> clear YES only
     if (
       mappedDecision === "YES" &&
-      isLptFailed 
+      isLptFailed
     ) {
       setZonalDecision("");
       return;
@@ -257,6 +270,8 @@ const ApplicationForm = ({
 
   }, [
     zonalVerificationStatus,
+    zonalSubmitBeforeDate,
+    zonalHrComments,
     isZonalHr,
     isLptRequired,
     lptType
@@ -314,15 +329,15 @@ const ApplicationForm = ({
     // 2️⃣ All documents VERIFIED but decision = NO
     // -----------------------------------------
 
-    // if (zonalDecision === "NO" && allVerified) {
-    //   // toast.warning(
-    //   //   "All documents are verified. Please select other decision instead."
-    //   // );
-    //   toast.warning(
-    //     t("all_documents_verified_select_other")
-    //   );
-    //   return;
-    // }
+    if (zonalDecision === "NO" && allVerified) {
+      // toast.warning(
+      //   "All documents are verified. Please select other decision instead."
+      // );
+      toast.warning(
+        t("all_documents_verified_select_other")
+      );
+      return;
+    }
 
     // -----------------------------------------
     // 3️⃣ Decision = YES but any document REJECTED
@@ -662,9 +677,9 @@ const ApplicationForm = ({
         //       : item.docScreeningStatus || "PENDING";
 
 
-              const status = isCandidateWorkflow
-  ? item.docScreeningStatus || "PENDING"
-  : item.zonalHrDocStatus || "PENDING";
+        const status = isCandidateWorkflow
+          ? item.docScreeningStatus || "PENDING"
+          : item.zonalHrDocStatus || "PENDING";
 
 
         const comments = isZonal
@@ -991,15 +1006,15 @@ const ApplicationForm = ({
     screeningForm.isEducationCriteriaMet === "DISCREPANCY" ||
     hasAdditionalDocuments;
 
-    console.log("hasAnyDiscrepancy", hasAnyDiscrepancy)
+  console.log("hasAnyDiscrepancy", hasAnyDiscrepancy)
 
-console.log("hasAdditionalDocuments",hasAdditionalDocuments)
+  console.log("hasAdditionalDocuments", hasAdditionalDocuments)
 
-const hasYetToUpload = documentRows.some(
-  doc => !doc?.url
-);
-const shouldShowSubmitBefore =
-  hasAnyDiscrepancy || hasYetToUpload;
+  const hasYetToUpload = documentRows.some(
+    doc => !doc?.url
+  );
+  const shouldShowSubmitBefore =
+    hasAnyDiscrepancy || hasYetToUpload;
 
   const validateForm = () => {
     const newErrors = {};
@@ -2408,7 +2423,7 @@ const shouldShowSubmitBefore =
                         </td>
 
                         <td className="action-cell">
-                          {right && rightStatus !== "YET TO UPLOAD"&& (
+                          {right && rightStatus !== "YET TO UPLOAD" && (
                             <>
                               <img
                                 src={viewIcon}
@@ -2456,44 +2471,44 @@ const shouldShowSubmitBefore =
         {canCandidatePool && !disableDocAction &&
           !isFromInterview &&
           !isFromCompensationPool && (
-          <div className="card mt-3 border-0">
-            <div className="d-flex gap-3 align-items-center border-bottom p-3">
-              <label style={{ fontSize: '0.875rem', fontWeight: 500, color: '#162B75' }}>Additional Required Documents</label>
-              <button className="btn-submit-orange py-1 px-2" style={{ height: 'auto', fontSize: '0.75rem' }} onClick={handleAddDocumentRow}>+ Add Document</button>
-            </div>
+            <div className="card mt-3 border-0">
+              <div className="d-flex gap-3 align-items-center border-bottom p-3">
+                <label style={{ fontSize: '0.875rem', fontWeight: 500, color: '#162B75' }}>Additional Required Documents</label>
+                <button className="btn-submit-orange py-1 px-2" style={{ height: 'auto', fontSize: '0.75rem' }} onClick={handleAddDocumentRow}>+ Add Document</button>
+              </div>
 
-            {otherDocuments.map((row) => (
-              <div
-                key={row.id}
-                className="d-flex align-items-end gap-3 p-3"
-              >
-                <div style={{ flex: 1 }}>
-                  <label className="mb-1" style={{ color: '#162B75', fontSize: '0.75rem', fontWeight: 500 }}>
-                    Document Name
-                  </label>
+              {otherDocuments.map((row) => (
+                <div
+                  key={row.id}
+                  className="d-flex align-items-end gap-3 p-3"
+                >
+                  <div style={{ flex: 1 }}>
+                    <label className="mb-1" style={{ color: '#162B75', fontSize: '0.75rem', fontWeight: 500 }}>
+                      Document Name
+                    </label>
 
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={row.documentName}
-                    onChange={(e) =>
-                      handleOtherDocumentChange(
-                        row.id,
-                        "documentName",
-                        e.target.value
-                      )
-                    }
-                    style={{ minHeight: 'auto', padding: '0.4rem 0.8rem' }}
-                    placeholder="Enter document name"
-                  />
-                  {otherDocumentErrors[row.id] && (
-                    <small className="text-danger fs-12">
-                      {otherDocumentErrors[row.id]}
-                    </small>
-                  )}
-                </div>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={row.documentName}
+                      onChange={(e) =>
+                        handleOtherDocumentChange(
+                          row.id,
+                          "documentName",
+                          e.target.value
+                        )
+                      }
+                      style={{ minHeight: 'auto', padding: '0.4rem 0.8rem' }}
+                      placeholder="Enter document name"
+                    />
+                    {otherDocumentErrors[row.id] && (
+                      <small className="text-danger fs-12">
+                        {otherDocumentErrors[row.id]}
+                      </small>
+                    )}
+                  </div>
 
-                {/* <div style={{ width: "220px" }}>
+                  {/* <div style={{ width: "220px" }}>
                   <label className="mb-1" style={{ color: '#162B75', fontSize: '0.75rem', fontWeight: 500 }}>
                     Criteria
                   </label>
@@ -2517,23 +2532,23 @@ const shouldShowSubmitBefore =
                   </select>
                 </div> */}
 
-                <button
-                  type="button"
-                  className="btn btn-link p-0 mb-1"
-                  onClick={() => handleRemoveDocumentRow(row.id)}
-                >
-                  <FontAwesomeIcon
-                    icon={faTrash}
-                    style={{
-                      color: "#ccc",
-                      fontSize: "16px",
-                    }}
-                  />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+                  <button
+                    type="button"
+                    className="btn btn-link p-0 mb-1"
+                    onClick={() => handleRemoveDocumentRow(row.id)}
+                  >
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      style={{
+                        color: "#ccc",
+                        fontSize: "16px",
+                      }}
+                    />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
 
         {/* ================= CRITERIA SECTION ================= */}
         {canCandidatePool &&
@@ -2738,12 +2753,11 @@ const shouldShowSubmitBefore =
 
               {/* ================= SUBMIT ROW ================= */}
               <div
-  className={`criteria-submit-row ${
-    shouldShowSubmitBefore
-      ? "justify-content-between"
-      : "justify-content-end"
-  }`}
->
+                className={`criteria-submit-row ${shouldShowSubmitBefore
+                  ? "justify-content-between"
+                  : "justify-content-end"
+                  }`}
+              >
                 {!isZonalHr && shouldShowSubmitBefore && (
                   <div className="d-grid">
                     <label className="submit-label">{t("submit_before")}</label>
