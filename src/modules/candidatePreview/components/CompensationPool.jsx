@@ -45,7 +45,8 @@ const [selectedCandidate, setSelectedCandidate] = useState(null);
 const canEditManagerCompensation =
   selectedCandidate?.status !== "NEW" &&
   selectedCandidate?.status !== "APPROVED" &&
-  selectedCandidate?.status !== "RENEGOTIATE";//  ADD THIS
+  selectedCandidate?.status !== "RENEGOTIATE" &&
+  selectedCandidate?.status !== "REJECTED";//  ADD THIS
 
 const formatNumberWithCommas = (value) => {
   const numeric = value.replace(/[^0-9]/g, ""); // allow only digits
@@ -245,6 +246,12 @@ const handleManagerAction = async (actionType) => {
   try {
 
 setManagerSaveClicked(true);
+
+  if (!managerForm.panelComments?.trim()) {
+      toast.error("Comments are required");
+      return;
+    }
+
       const fixed =
       parseAmount(managerForm.fixedPay) ||
       selectedCandidate.fixedPay ||
@@ -732,8 +739,14 @@ const handleSaveCompensation = async () => {
 
 
     //  REQUIRED FIELD VALIDATION
-if (!formData.fixedPay) {
-  toast.error("Fixed Pay is required");
+// if (!formData.fixedPay) {
+//   toast.error("Fixed Pay is required");
+//   return;
+// }
+if (
+  !formData.fixedPay ||
+  !formData.recruiterComments?.trim()
+) {
   return;
 }
 
@@ -944,9 +957,7 @@ if (!formData.fixedPay) {
   <Person
   className="me-3 cursor-pointer"
  onClick={() => {
-  console.log(" FULL ROW DATA:", c);                 // see everything
-  console.log(" applicationId:", c.applicationId);   // MUST be application.id
-  console.log(" compensationId:", c.id);             // just for comparison
+
 
 navigate("/candidate-preview", {
   state: {
@@ -1005,6 +1016,18 @@ navigate("/candidate-preview", {
   className="cursor-pointer"
   style={{ width: "18px", height: "18px" }}
   onClick={() => {
+
+
+      setSaveClicked(false);
+
+  setFormData({
+    fixedPay: "",
+    variablePay: "",
+    joiningBonus: "",
+    recruiterComments: "",
+    panelComments: "",
+  });
+
   setSelectedCandidate(c);
 
   //  Prefill recruiter form
@@ -1103,7 +1126,10 @@ handleCompensationClick(c)
 
 <Modal
   show={showRecruiterModal}
-onHide={() => setShowRecruiterModal(false)}
+onHide={() => {
+  setShowRecruiterModal(false);
+  setSaveClicked(false);
+}}
   centered
    backdrop="static"
  dialogClassName="custom-modal compensation-modal"
@@ -1137,9 +1163,9 @@ onHide={() => setShowRecruiterModal(false)}
     })
   }
 />
-  {/* {!formData.fixedPay && (
+  {!formData.fixedPay && (
     <div className="invalid-feedback">Fixed Pay is required</div>
-  )} */}
+  )}
 </div>
 <div className="col-md-6">
   <label className="form-label fw-medium">
@@ -1178,17 +1204,32 @@ onHide={() => setShowRecruiterModal(false)}
 </div>
 
       <div className="col-md-12">
-        <label className="form-label fw-medium">Comments</label>
+        <label className="form-label fw-medium"> Comments <span className="text-danger">*</span> </label>
        <textarea
-  className="form-control"
+  className={`form-control ${
+    saveClicked &&
+    !formData.recruiterComments?.trim()
+      ? "is-invalid"
+      : ""
+  }`}
   rows={3}
   placeholder="Enter Comment"
-  value={formData.recruiterComments}   //  correct
-   disabled={!canEditCompensation }
+  value={formData.recruiterComments}
+  disabled={!canEditCompensation}
   onChange={(e) =>
-    setFormData({ ...formData, recruiterComments: e.target.value })
+    setFormData({
+      ...formData,
+      recruiterComments: e.target.value
+    })
   }
 />
+
+{saveClicked &&
+ !formData.recruiterComments?.trim() && (
+  <div className="invalid-feedback d-block">
+    Comments are required
+  </div>
+)}
       </div>
 
     </div>
@@ -1198,7 +1239,7 @@ onHide={() => setShowRecruiterModal(false)}
     <Button
       variant="light"
       className="px-4"
-      onClick={() => setShowRecruiterModal(false)}
+      onClick={() => {setShowRecruiterModal(false); setSaveClicked(false);}}
     >
       Cancel
     </Button>
@@ -1291,12 +1332,14 @@ dialogClassName="custom-modal compensation-modal"
 </div>
 
       <div className="col-md-12">
-        <label className="form-label">Comments</label>
+        <label className="form-label">Comments <span className="text-danger">*</span> </label>
        <textarea
   className="form-control"
   rows={3}
   value={managerForm.panelComments}   //  correct
-  disabled={!canEditManagerFields}
+ disabled={
+    !canEditManagerCompensation
+  }
   onChange={(e) =>
     setManagerForm({ ...managerForm, panelComments: e.target.value })
   }

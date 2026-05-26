@@ -1097,7 +1097,7 @@ useEffect(() => {
       map[cat.reservationCategoriesId] = cat.categoryName;
     });
     return map;
-  }, [masterData]);
+  }, [reservationCategories]);
 
   const stateMap = React.useMemo(() => {
     const map = {};
@@ -1189,7 +1189,6 @@ useEffect(() => {
       }
     });
   }, []);
-
   const formatCandidateData = (apiData) => {
     const formatStatus = (status = "") => status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
 
