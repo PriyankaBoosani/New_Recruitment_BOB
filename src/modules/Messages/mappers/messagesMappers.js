@@ -76,7 +76,7 @@ export const mapMessagesData = (
         switch (item?.status) {
           case "PENDING": return "Pending";
           case "L1_PENDING": return "L1 Pending";
-          case "L1_APPROVED": return "L1 Approved";
+       //   case "L2_PENDING": return "L2 Pending";
           case "L1_REJECTED": return "L1 Rejected";
           case "L2_PENDING": return "L2 Pending";
           case "L2_APPROVED": return "L2 Approved";

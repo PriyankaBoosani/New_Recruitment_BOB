@@ -239,14 +239,14 @@ const ExtensionsRequests = () => {
     L1: [
       { value: "ALL", label: "All" },
       { value: "L1_PENDING", label: "L1 Pending" },
-      { value: "L1_APPROVED", label: "L1 Approved" },
+      { value: "L2_PENDING", label: "L2 Pending" },
       { value: "L1_REJECTED", label: "L1 Rejected" },
       { value: "L2_REJECTED", label: "L2 Rejected" },
       { value: "APPROVED", label: "Approved" }
     ],
     L2: [
       { value: "ALL", label: "All" },
-      { value: "L1_APPROVED", label: "L1 Approved" },
+      { value: "L2_PENDING", label: "L2 Pending" },
       { value: "L2_REJECTED", label: "L2 Rejected" },
       { value: "APPROVED", label: "Approved" }
     ]
@@ -286,7 +286,7 @@ const ExtensionsRequests = () => {
       case "L1_PENDING":
         return "warning";
 
-      case "L1_APPROVED":
+      case "L2_PENDING":
         return "info";
 
       case "APPROVED":
@@ -316,7 +316,7 @@ const ExtensionsRequests = () => {
   const getApprovalStatus = (actionType) => {
     if (isL1) {
       return actionType === "approve"
-        ? "L1_APPROVED"
+        ? "L2_PENDING"
         : "L1_REJECTED";
     }
 
@@ -400,9 +400,9 @@ const ExtensionsRequests = () => {
       return status !== "L1_PENDING";
     }
 
-    // L2 users can act only on L1_APPROVED
+    // L2 users can act only on L2_PENDING
     if (isL2) {
-      return status !== "L1_APPROVED";
+      return status !== "L2_PENDING";
     }
 
     // default fallback

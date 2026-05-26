@@ -32,7 +32,7 @@ const MessageActions = ({ item, onSubmitApproval }) => {
   /* HIDE BUTTONS + COMMENT FIELD */
   const hideActions = [
     "REJECTED",
-    "L1_APPROVED",
+    "L2_PENDING",
     "L1_REJECTED",
     "APPROVED",
     "L2_REJECTED"

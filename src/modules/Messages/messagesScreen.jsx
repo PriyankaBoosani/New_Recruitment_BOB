@@ -116,7 +116,7 @@ const Messages = () => {
   // const ALL_STATUSES = [
   //   "PENDING",
   //   "L1_PENDING",
-  //   "L1_APPROVED",
+  //   "L2_PENDING",
   //   "L1_REJECTED",
   //   "L2_APPROVED",
   //   "L2_REJECTED",
@@ -683,7 +683,7 @@ const Messages = () => {
                     <option value="">All Status</option>
                     <option value="PENDING">Pending</option>
                     <option value="L1_PENDING">L1 Pending</option>
-                    <option value="L1_APPROVED">L1 Approved</option>
+                    <option value="L2_PENDING">L2 Pending</option>
                     <option value="L1_REJECTED">L1 Rejected</option>
                     <option value="APPROVED">Approved</option>
                     <option value="L2_REJECTED">L2 Rejected</option>
