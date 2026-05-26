@@ -214,7 +214,7 @@ export const useAssignPositions = (userId) => {
             return "warning";
           case "L1_PENDING":
             return "yellowwarning";
-          case "L1_APPROVED":
+          case "L2_PENDING":
             return "info";
           default:
             return "secondary";
@@ -225,7 +225,7 @@ export const useAssignPositions = (userId) => {
       const mapAssigned = (list) =>
         list.map(p => {
           const rawStatus = p.positionPanelStatus ?? "";
-          const isLocked = p.positionPanelStatus === "L1_APPROVED";
+          const isLocked = p.positionPanelStatus === "L2_PENDING";
           return {
             id: p.interviewPanel.interviewPanelId,
             positionPanelId: p.positionPanelId,

@@ -76,13 +76,13 @@ const CommitteeRequests = () => {
     const statusOptionsByApproval = {
         L1: [
             { value: "L1_PENDING", label: t("jobPostingsList:status_l1_pending") },
-            { value: "L1_APPROVED", label: t("jobPostingsList:status_l1_approved") },
+            { value: "L2_PENDING", label: t("jobPostingsList:status_l2_pending") },
             { value: "L1_REJECTED", label: t("jobPostingsList:status_l1_rejected") },
             { value: "L2_REJECTED", label: t("jobPostingsList:status_l2_rejected") },
             { value: "APPROVED", label: t("jobPostingsList:status_approved") }
         ],
         L2: [
-            { value: "L1_APPROVED", label: t("jobPostingsList:status_l1_approved") },
+            { value: "L2_PENDING", label: t("jobPostingsList:status_l2_pending") },
             { value: "L2_REJECTED", label: t("jobPostingsList:status_l2_rejected") },
             { value: "APPROVED", label: t("jobPostingsList:status_approved") }
         ]
@@ -91,7 +91,7 @@ const CommitteeRequests = () => {
         approvalLevel === "L1"
             ? "L1_PENDING"
             : approvalLevel === "L2"
-                ? "L1_APPROVED"
+                ? "L2_PENDING"
                 : null;
 
     const allowedStatuses = statusOptionsByApproval[approvalLevel] || [];
@@ -183,7 +183,7 @@ const CommitteeRequests = () => {
             case "L1_PENDING":
                 return "warning";
 
-            case "L1_APPROVED":
+            case "L2_PENDING":
                 return "info";
 
             case "APPROVED":

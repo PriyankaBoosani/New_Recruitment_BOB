@@ -226,10 +226,10 @@ const AssignPositionsPage = ({ refreshPanels }) => {
 
     console.log("committee.rawStatus =", committee.rawStatus);
   const shouldDisableFields =
-    committee.rawStatus === "L1_APPROVED";
+    committee.rawStatus === "L2_PENDING";
 
   const shouldDisableRemove =
-    committee.rawStatus === "L1_APPROVED" ||
+    committee.rawStatus === "L2_PENDING" ||
     committee.rawStatus === "APPROVED";
 
 
