@@ -57,6 +57,7 @@
     "status_l1_pending": "एल1 लंबित",
     "status_l1_rejected": "एल1 द्वारा अस्वीकृत",
     "status_l1_approved": "एल1 स्तर पर स्वीकृत",
+    "status_l2_pending": "एल2 लंबित",
     "status_l2_rejected": "एल2 स्तर पर अस्वीकृत",
     "years_fetch_failed": "वर्षों को प्राप्त करने में विफल।",
 

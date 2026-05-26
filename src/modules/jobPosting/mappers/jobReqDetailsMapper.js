@@ -47,7 +47,7 @@ const getStatusBadge = (status = "") => {
       return "warning";
     case "L1_PENDING":
       return "yellowwarning";
-    case "L1_APPROVED":
+    case "L2_PENDING":
       return "info";
     default:
       return "secondary";

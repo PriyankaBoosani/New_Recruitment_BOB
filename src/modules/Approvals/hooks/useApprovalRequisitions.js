@@ -113,7 +113,7 @@ export const useApprovalRequisitions = ({
         const response = await jobPositionApiService.approveRequisitions({
             ids,
             postingStatus:
-                approvalLevel === "L1" ? "L1_APPROVED" : "APPROVED",
+                approvalLevel === "L1" ? "L2_PENDING" : "APPROVED",
             comments: comment
         });
 

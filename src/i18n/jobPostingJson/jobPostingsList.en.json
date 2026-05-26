@@ -46,6 +46,7 @@
     "requisition_submit_success": "Requisition(s) submitted for approval successfully",
     "requisition_submit_failed": "Failed to submit for approval",
     "status_l1_approved": "L1 Approved",
+    "status_l2_pending": "L2 Pending",
     "status_rejected": "Rejected",
     "status_submitted": "Submitted",
     "add_position": "Add Position",

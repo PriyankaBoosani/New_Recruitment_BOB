@@ -194,9 +194,9 @@ const handleOpenHistory = async (req) => {
   };
   const statusOptions =
     approvalLevel === "L1"
-      ? ["L1_PENDING", "L1_APPROVED", "L1_REJECTED", "APPROVED", "L2_REJECTED"]
+      ? ["L1_PENDING", "L2_PENDING", "L1_REJECTED", "APPROVED", "L2_REJECTED"]
       : approvalLevel === "L2"
-        ? ["L1_APPROVED", "APPROVED", "L2_REJECTED"]
+        ? ["L2_PENDING", "APPROVED", "L2_REJECTED"]
         : [];
   useEffect(() => {
     setStatuses([]);
@@ -246,7 +246,7 @@ const handleOpenHistory = async (req) => {
     approvalLevel === "L1"
       ? "L1_PENDING"
       : approvalLevel === "L2"
-        ? "L1_APPROVED"
+        ? "L2_PENDING"
         : null;
 
   const selectableRequisitions = requisitions.filter(

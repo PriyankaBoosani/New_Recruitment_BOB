@@ -3,7 +3,7 @@ const getStatusBadge = (status = "") => {
     case "L1_PENDING":
       return "warning";
 
-    case "L1_APPROVED":
+    case "L2_PENDING":
       return "info";
 
     case "APPROVED":
