@@ -3,52 +3,36 @@ export const mapMessagesData = (
   selectedRequisitionId,
   selectedPositionId,
   selectedRequisitionName,
-  // selectedPositionName,
   positions = [],
   requestTypes = [],
   threadMessagesMap = {},
   interviewCentres = []
 ) => {
-
   const requestTypeMap = {};
   requestTypes.forEach(rt => {
     requestTypeMap[rt.requestTypeId] = rt.requestName;
   });
-
   const zonalMap = {};
-
   interviewCentres.forEach((z) => {
     zonalMap[z.interviewCentreId] =
       z.displayName;
   });
-
   return (apiMessages || []).map((item) => {
-
     const createdDate = item?.createdDate
       ? new Date(item.createdDate)
       : null;
-
     return {
       id: item?.conversationThreadId,
       applicationId: item?.applicationId || "",
-
-
       name: item?.candidateName || "",
       regNo: item?.applicationNo || "",
-
       requisitionId: selectedRequisitionId,
       requisitionName: selectedRequisitionName || "-",
-
-      // positionId: item?.positionId || selectedPositionId,
-      // positionName: selectedPositionName || "-",
       positionId: item?.positionId || "",
-
       positionName:
         positions.find(
           (p) => p.jobPositions?.positionId === item?.positionId
         )?.masterPositions?.positionName || "-",
-
-
       date: createdDate
         ? `${String(createdDate.getDate()).padStart(2, "0")}-${String(
           createdDate.getMonth() + 1
@@ -76,7 +60,7 @@ export const mapMessagesData = (
         switch (item?.status) {
           case "PENDING": return "Pending";
           case "L1_PENDING": return "L1 Pending";
-       //   case "L2_PENDING": return "L2 Pending";
+          //   case "L2_PENDING": return "L2 Pending";
           case "L1_REJECTED": return "L1 Rejected";
           case "L2_PENDING": return "L2 Pending";
           case "L2_APPROVED": return "L2 Approved";
@@ -85,40 +69,31 @@ export const mapMessagesData = (
           default: return item?.status || "-";
         }
       })(),
-
-      rawStatus: item?.status, // ✅ only once
+      rawStatus: item?.status,
       requestTypeId: item?.requestTypeId || "",
       type:
         item?.requestTypeName ||
         requestTypeMap[item?.requestTypeId] ||
         item?.requestTypeId ||
         "-",
-
       zonalId:
         zonalMap[item?.zonalId] ||
         item?.zonalId ||
         "-",
       history: (threadMessagesMap[item?.conversationThreadId] || []).map(msg => {
-
         const msgDate =
           msg?.actionDate
             ? new Date(msg.actionDate)
             : msg?.createdDate
               ? new Date(msg.createdDate)
               : null;
-
         return {
-
-          // ✅ CHANGE THIS
           type:
             msg?.status
               ? "approval"
               : msg.senderType === "CANDIDATE"
                 ? "candidate"
                 : "request",
-
-          // ✅ CHANGE TITLE
-          // ✅ SHOW APPROVER NAME INSTEAD OF STATUS
           title:
             msg?.approverName ||
             msg?.senderType ||
@@ -131,19 +106,14 @@ export const mapMessagesData = (
             msg?.remark ||
             msg?.message ||
             "-",
-
           attachmentPath: msg.attachmentPath || null,
-
           approverName:
             msg.approverName ||
             msg.approver ||
             msg.createdByName ||
             "-",
-
-
           approvalStatus:
             msg.status || "-",
-
           approvalDate: msgDate
             ? `${String(msgDate.getDate()).padStart(2, "0")}-${String(
               msgDate.getMonth() + 1
@@ -153,7 +123,6 @@ export const mapMessagesData = (
               hour12: true
             })}`
             : "-",
-
           time: msgDate
             ? msgDate.toLocaleTimeString([], {
               hour: "2-digit",
@@ -161,7 +130,6 @@ export const mapMessagesData = (
               hour12: true
             })
             : "-",
-
           file: false,
         };
       }),

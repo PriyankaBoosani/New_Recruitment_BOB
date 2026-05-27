@@ -1,62 +1,31 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Modal } from "react-bootstrap";
-
 const MessageActions = ({ item, onSubmitApproval }) => {
   const { t } = useTranslation(["messages", "common"]);
-
   const [comment, setComment] = useState("");
   const [error, setError] = useState("");
   const [showRejectModal, setShowRejectModal] = useState(false);
-
-  // FIXED STATUS FORMAT
-  const status = (item.status || "")
-    .toUpperCase()
-    .replace(/\s+/g, "_");
-
-  /* SHOW BUTTONS */
-  const showAccept =
-    status === "PENDING" ||
-    status === "L1_PENDING";
-
-  const showReject =
-    status === "PENDING" ||
-    status === "L1_PENDING";
-
-  /* ENABLE/DISABLE BUTTONS */
+  const status = (item.status || "").toUpperCase().replace(/\s+/g, "_");
+  const showAccept = status === "PENDING" || status === "L1_PENDING";
+  const showReject = status === "PENDING" || status === "L1_PENDING";
   const disableAccept = status === "L1_PENDING";
-
-  /* REJECT ALWAYS ENABLED */
   const disableReject = false;
-
-  /* HIDE BUTTONS + COMMENT FIELD */
-  const hideActions = [
-    "REJECTED",
-    "L2_PENDING",
-    "L1_REJECTED",
-    "APPROVED",
-    "L2_REJECTED"
-  ].includes(status);
-
-  // Reject handler
+  const hideActions = ["REJECTED", "L2_PENDING", "L1_REJECTED", "APPROVED", "L2_REJECTED"].includes(status);
   const handleRejectConfirm = async () => {
     await onSubmitApproval(
       item.id,
       "REJECTED",
       comment
     );
-
     setShowRejectModal(false);
     setComment("");
     setError("");
   };
-
   return (
     <>
       {!hideActions && (
         <div className="msg-actions d-flex align-items-start gap-2">
-
-          {/* COMMENT FIELD */}
           <div style={{ flex: 1 }}>
             <input
               type="text"
@@ -72,31 +41,26 @@ const MessageActions = ({ item, onSubmitApproval }) => {
                 }
               }}
             />
-
             {error && (
               <small className="text-danger d-block mt-1">
                 {error}
               </small>
             )}
           </div>
-
-          {/* ACCEPT BUTTON */}
           {showAccept && (
             <button
               className="btn msg-btn-accept"
               disabled={disableAccept}
               onClick={async () => {
                 if (!comment.trim()) {
-                  setError("This field is required");
+                  setError(t("messages:this_field_required"));
                   return;
                 }
-
                 await onSubmitApproval(
                   item.id,
                   "L1_PENDING",
                   comment
                 );
-
                 setComment("");
                 setError("");
               }}
@@ -104,29 +68,23 @@ const MessageActions = ({ item, onSubmitApproval }) => {
               {t("messages:accept")}
             </button>
           )}
-
-          {/* REJECT BUTTON */}
           {showReject && (
             <button
               className="btn btn-danger msg-btn-reject"
               disabled={disableReject}
               onClick={() => {
                 if (!comment.trim()) {
-                  setError("This field is required");
+                  setError(t("messages:this_field_required"));
                   return;
                 }
-
                 setShowRejectModal(true);
               }}
             >
               {t("messages:reject")}
             </button>
           )}
-
         </div>
       )}
-
-      {/* REJECT CONFIRMATION MODAL */}
       {!hideActions && (
         <Modal
           show={showRejectModal}
@@ -135,13 +93,10 @@ const MessageActions = ({ item, onSubmitApproval }) => {
           dialogClassName="del-modal"
         >
           <Modal.Body className="del-body">
-
-            {/* HEADER */}
             <div className="del-header">
               <div className="del-title">
-                Confirm Reject
+                {t("messages:confirm_reject")}
               </div>
-
               <button
                 className="del-close"
                 onClick={() => setShowRejectModal(false)}
@@ -149,33 +104,25 @@ const MessageActions = ({ item, onSubmitApproval }) => {
                 <i className="bi bi-x-lg"></i>
               </button>
             </div>
-
-            {/* MESSAGE */}
             <div className="del-message">
-              Are you sure you want to reject?
-
+              {t("messages:confirm_reject_message")}
               <div className="text-muted small mt-2">
-                Reason: {comment}
+                {t("messages:reason")}: {comment}
               </div>
             </div>
-
-            {/* FOOTER */}
             <div className="del-footer">
-
               <button
                 className="del-cancel"
                 onClick={() => setShowRejectModal(false)}
               >
                 {t("common:cancel")}
               </button>
-
               <button
                 className="del-delete"
                 onClick={handleRejectConfirm}
               >
                 {t("messages:reject")}
               </button>
-
             </div>
           </Modal.Body>
         </Modal>
@@ -183,5 +130,4 @@ const MessageActions = ({ item, onSubmitApproval }) => {
     </>
   );
 };
-
 export default MessageActions;

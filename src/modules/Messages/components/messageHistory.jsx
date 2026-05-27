@@ -5,66 +5,70 @@ import attachment from "../../../assets/attachment.png";
 import masterApiService from "../../master/services/masterApiService.js";
 import { Modal } from "react-bootstrap";
 import { FaExternalLinkAlt } from "react-icons/fa";
-
 const MessageHistory = ({ item }) => {
   const { t } = useTranslation(["messages", "common"]);
-
   const [previewUrl, setPreviewUrl] = React.useState(null);
   const [showPreview, setShowPreview] = React.useState(false);
-
   const handleClose = () => {
     setShowPreview(false);
     setPreviewUrl(null);
   };
-
   const handleViewFile = async (path) => {
     try {
       const encodedPath = encodeURIComponent(path);
-
       const res = await masterApiService.getMessagesAzureBlobSasUrl(encodedPath);
-
       const fileUrl = res;
-
       if (fileUrl) {
-        setPreviewUrl(fileUrl);     // ✅ set URL
-        setShowPreview(true);   // ✅ open modal
+        setPreviewUrl(fileUrl);
+        setShowPreview(true);
       }
     } catch (err) {
       console.error("File open error", err);
     }
   };
+  // const getColorByTitle = (title) => {
+  //   const text = title?.toLowerCase() || "";
+  //   if (text.includes("candidate")) {
+  //     return "#42579f";
+  //   }
+  //   if (text.includes("recruiter") || text.includes("approved") || text.includes("rejected")) {
+  //     return "#f26522";
+  //   }
+  //   return "#42579f";
+  // };
 
-  // 🎯 Detect role from title
   const getColorByTitle = (title) => {
     const text = title?.toLowerCase() || "";
-
     if (text.includes("candidate")) {
       return "#42579f";
     }
-    if (text.includes("recruiter") || text.includes("approved") || text.includes("rejected")) {
+    if (text.includes("recruiter")) {
       return "#f26522";
     }
-
-    return "#42579f";
+    if (
+      text.includes("approver") ||
+      text.includes("approval")
+    ) {
+      return "#28a745";
+    }
+    if (text.includes("approved")) {
+      return "#198754";
+    }
+    if (text.includes("rejected")) {
+      return "#dc3545";
+    }
+    return "#6c757d";
   };
-
   return (
     <div className="msg-history">
-
       <div className="msg-history-title">
         {t("messages:request_history")}
       </div>
-
       {item.history?.map((hist, index) => {
-        console.log("History item:", hist);
-
         const color = getColorByTitle(hist.title);
-
         return (
           <React.Fragment key={index}>
             <div className="msg-history-item">
-
-              {/* Avatar */}
               <div
                 className="msg-icon"
                 style={{
@@ -74,8 +78,6 @@ const MessageHistory = ({ item }) => {
               >
                 {hist.title?.charAt(0)?.toUpperCase() || "?"}
               </div>
-
-              {/* Content */}
               <div className="flex-grow-1">
                 <div
                   className="msg-history-head"
@@ -83,17 +85,13 @@ const MessageHistory = ({ item }) => {
                 >
                   {hist.title}
                 </div>
-
                 <div className="msg-history-text">
                   <b>{t("messages:comment")}:</b> {hist.comment}
                 </div>
-
                 <div className="msg-history-time">
-                   {hist.approvalDate || hist.time}
+                  {hist.approvalDate || hist.time}
                 </div>
               </div>
-
-              {/* Attachment */}
               {hist.attachmentPath && (
                 <img
                   src={attachment}
@@ -104,7 +102,6 @@ const MessageHistory = ({ item }) => {
                   onClick={() => handleViewFile(hist.attachmentPath)}
                 />)}
             </div>
-
             {index !== item.history.length - 1 && (
               <div className="msg-divider"></div>
             )}
@@ -122,12 +119,9 @@ const MessageHistory = ({ item }) => {
           <div className="w-100 d-flex justify-content-between align-items-center">
             <div>
               <h6 className="mb-0 fw-semibold">
-               File
+                {t("messages:file")}
               </h6>
-              {/* <small className="text-muted">Template Preview</small> */}
             </div>
-
-            {/* ACTION BUTTON */}
             <div className="d-flex gap-4 align-items-center" style={{ paddingRight: "15px" }}>
               {previewUrl && (
                 <a
@@ -142,8 +136,6 @@ const MessageHistory = ({ item }) => {
             </div>
           </div>
         </Modal.Header>
-
-        {/* BODY */}
         <Modal.Body
           style={{
             height: "85vh",
@@ -166,7 +158,7 @@ const MessageHistory = ({ item }) => {
             />
           ) : (
             <div className="d-flex justify-content-center align-items-center h-100 text-muted">
-              No preview available
+              {t("messages:no_preview_available")}
             </div>
           )}
         </Modal.Body>
@@ -174,5 +166,4 @@ const MessageHistory = ({ item }) => {
     </div>
   );
 };
-
 export default MessageHistory;

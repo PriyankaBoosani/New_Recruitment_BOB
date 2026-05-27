@@ -1,15 +1,10 @@
 import { useState } from "react";
-
 export const useMessages = () => {
   const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
   const [selectedPositionId, setSelectedPositionId] = useState("");
   const [date, setDate] = useState("");
   const [openRow, setOpenRow] = useState(null);
-
-  const toggleRow = (id) => {
-    setOpenRow((prev) => (prev === id ? null : id));
-  };
-
+  const toggleRow = (id) => { setOpenRow((prev) => (prev === id ? null : id)); };
   const getStatusClass = (status) => {
     switch (status) {
       case "L1 Approved":
@@ -23,12 +18,9 @@ export const useMessages = () => {
         return "msg-status-default";
     }
   };
-
-
   const getHistoryColor = (type) => {
     return type === "request" ? "#ff9800" : "#2196f3";
   };
-
   return {
     selectedRequisitionId,
     selectedPositionId,
@@ -38,8 +30,6 @@ export const useMessages = () => {
     setSelectedPositionId,
     setDate,
     toggleRow,
-
-
     getStatusClass,
     getHistoryColor
   };
