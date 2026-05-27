@@ -532,48 +532,48 @@ useEffect(() => {
 
 
 
-const fetchReservationCategories =
-  async () => {
+// const fetchReservationCategories =
+//   async () => {
 
-    try {
+//     try {
 
-      const res =
-        await masterApiService.getAllCategories();
+//       const res =
+//         await masterApiService.getAllCategories();
 
-      console.log(
-        "CATEGORY API FULL RESPONSE",
-        res
-      );
+//       console.log(
+//         "CATEGORY API FULL RESPONSE",
+//         res
+//       );
 
-      console.log(
-        "CATEGORY API DATA",
-        res?.data
-      );
+//       console.log(
+//         "CATEGORY API DATA",
+//         res?.data
+//       );
 
-      console.log(
-        "CATEGORY API ARRAY",
-        res?.data
-      );
+//       console.log(
+//         "CATEGORY API ARRAY",
+//         res?.data
+//       );
 
-      console.log(
-        "CATEGORY COUNT",
-        res?.data?.length
-      );
+//       console.log(
+//         "CATEGORY COUNT",
+//         res?.data?.length
+//       );
 
-      setReservationCategories(
-        res?.data || []
-      );
+//       setReservationCategories(
+//         res?.data || []
+//       );
 
-    } catch (err) {
+//     } catch (err) {
 
-      console.error(
-        "CATEGORY API ERROR",
-        err
-      );
+//       console.error(
+//         "CATEGORY API ERROR",
+//         err
+//       );
 
-    }
+//     }
 
-  };
+//   };
 
 
   useEffect(() => {
@@ -971,19 +971,36 @@ const fetchReservationCategories =
     }, 400);
   }, []);
 
+const loadMasters = async () => {
+
+  try {
+
+    const [
+      masterRes,
+      categoryRes
+    ] = await Promise.all([
+      masterApiService.getMasterDisplayAll(),
+      masterApiService.getAllCategories()
+    ]);
+
+    setMasterData(masterRes.data);
+
+    setReservationCategories(
+      categoryRes?.data || []
+    );
+
+  } catch (err) {
+
+    console.error(
+      "MASTER LOAD ERROR",
+      err
+    );
+
+  }
+
+};
+
 useEffect(() => {
-
-  const loadMasters = async () => {
-
-    const res =
-      await masterApiService
-        .getMasterDisplayAll();
-
-    setMasterData(res.data);
-
-    fetchReservationCategories();
-
-  };
 
   loadMasters();
 
@@ -1633,21 +1650,29 @@ useEffect(() => {
   //   fetchCandidates();
   // }, [selectedPositionId, page, pageSize, filters, masterData]);
 
-  useEffect(() => {
-    if (!selectedPositionId.length || activeTab !== "CANDIDATE_POOL") return;
+ useEffect(() => {
 
-    fetchCandidates();
-  }, [
-    selectedPositionId,
-    page,
-    pageSize,
-    filters.status,
-    filters.stateId,
-    filters.categoryId,
-    masterData,
-    activeTab,
+  if (
+    !selectedPositionId.length ||
+    activeTab !== "CANDIDATE_POOL" ||
+    !reservationCategories.length
+  ) {
+    return;
+  }
 
-  ]);
+  fetchCandidates();
+
+}, [
+  selectedPositionId,
+  page,
+  pageSize,
+  filters.status,
+  filters.stateId,
+  filters.categoryId,
+  masterData,
+  reservationCategories,
+  activeTab,
+]);
   useEffect(() => {
     if (!selectedPositionId.length || activeTab !== "CANDIDATE_POOL") return;
 
