@@ -82,33 +82,29 @@ export default function ExaminationCutoffTable({
             All Status
           </option>
 
-          <option value="L1_PENDING">
-            L1 Pending
-          </option>
+        <option value="PENDING">
+          Pending
+        </option>
 
-          <option value="L1_APPROVED">
-            L1 Approved
-          </option>
+        <option value="L1_PENDING">
+          L1 Pending
+        </option>
 
-          <option value="L1_REJECTED">
-            L1 Rejected
-          </option>
+        <option value="L1_REJECTED">
+          L1 Rejected
+        </option>
 
-          <option value="APPROVED">
-            Approved
-          </option>
+        <option value="L2_PENDING">
+          L2 Pending
+        </option>
 
-          <option value="L2_REJECTED">
-            L2 Rejected
-          </option>
+        <option value="L2_REJECTED">
+          L2 Rejected
+        </option>
 
-          <option value="REJECTED">
-            Rejected
-          </option>
-
-          <option value="FINALIZED">
-            Finalized
-          </option>
+        <option value="APPROVED">
+          Approved
+        </option>
 
     </select>
 
@@ -227,15 +223,36 @@ export default function ExaminationCutoffTable({
         <FaEye size={13} />
       </button>
 
-      <button
-        className="icon-btn"
-        onClick={() =>
-          onEdit &&
-          onEdit(item)
-        }
-      >
-        <FaPen size={13} />
-      </button>
+<button
+  className="icon-btn"
+  disabled={
+    item.status !== "PENDING"
+  }
+  style={{
+    opacity:
+      item.status !== "PENDING"
+        ? 0.5
+        : 1,
+    cursor:
+      item.status !== "PENDING"
+        ? "not-allowed"
+        : "pointer"
+  }}
+  onClick={() => {
+
+    if (
+      item.status !== "PENDING"
+    ) {
+      return;
+    }
+
+    onEdit &&
+      onEdit(item);
+
+  }}
+>
+  <FaPen size={13} />
+</button>
 
     </div>
 

@@ -211,7 +211,9 @@ console.log(
       ) {
 
         value =
-          category?.qualified || 0;
+         category?.qualifiedWithoutRelaxation ??
+category?.qualified ??
+0
 
       }
 
@@ -349,7 +351,9 @@ const ExaminationScoreModal = ({
 
 
 const hasQualifiedWithoutRelaxation =
-  Number(item?.totalQualifiedCount || 0) > 0;
+  Number(item?.totalQualifiedWithoutRelaxation ??
+item?.totalQualifiedCount ??
+0) > 0;
 
   const isFinalized =
   item?.isFinalized === true;
@@ -426,7 +430,7 @@ console.log(
 
      {/* EDIT BUTTON */}
 
-              {hasConfig && (
+              {hasConfig  && !isFinalized && (
 
   <button
     className="btn btn-sm"
@@ -569,7 +573,12 @@ console.log(
 
   item.states?.length > 0 ? (
 
-    item.states.map(
+    [...new Map(
+    item.states.map((state) => [
+        state.stateId || state.stateName,
+        state
+    ])
+    ).values()].map(
       (
         state,
         stateIndex
