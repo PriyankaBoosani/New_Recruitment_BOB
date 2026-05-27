@@ -424,13 +424,13 @@ const Header = () => {
                     {t("committee_requests")}
                   </NavDropdown.Item>
 
-                  {/* <NavDropdown.Item
+                  <NavDropdown.Item
                     as={NavLink}
                     to="/exam-requests"
                     onClick={closeMenu}
                   >
                     {t("exam_requests")}
-                  </NavDropdown.Item> */}
+                  </NavDropdown.Item>
 
                   {!canL2 && (
                     <NavDropdown.Item

@@ -1143,7 +1143,7 @@ const sectionsPayload =
     }
 
     if (isL2) {
-      return currentStatus === "L1_APPROVED";
+      return currentStatus === "L2_PENDING";
     }
 
     return false;

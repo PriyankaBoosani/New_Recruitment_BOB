@@ -45,7 +45,7 @@ import UnauthorizedPage from "./UnauthorizedPage"
 import PrivilegeRoute from "./PrivilegeRoute";
 import AuthCallback from "../modules/auth/pages/AuthCallback";
 import { getDefaultRoute } from "../shared/utils/user-validations";
-//import ExamRequest from "../modules/Approvals/pages/ExamRequest";
+import ExamRequest from "../modules/Approvals/pages/ExamRequest";
 // Lazy loaded components
 const Layout = React.lazy(() => import("../shared/components/Layout"));
 
@@ -347,14 +347,14 @@ const AppRoutes = () => {
                   </PrivilegeRoute>
                 }
               />
-              {/* <Route
+              <Route
                 path="/exam-requests"
                 element={
                   <PrivilegeRoute privilegesRequired={["L1 Approval", "L2 Approval"]}>
                     <ExamRequest />
                   </PrivilegeRoute>
                 }
-              /> */}
+              />
 
 
 
