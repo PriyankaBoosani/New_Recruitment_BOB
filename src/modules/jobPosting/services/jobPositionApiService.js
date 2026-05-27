@@ -39,7 +39,25 @@ const jobPositionApiService = {
   },
 
 
+    getExaminationSummary: (
+      positionIds = []
+    ) => {
 
+      return api.post(
+
+        "/recruiter/examination-marks/get-summary",
+
+        positionIds,
+
+        {
+          headers: {
+            "X-Client": "AzureAD"
+          }
+        }
+
+      );
+
+    },
 
 
   finalizeExamConfiguration: (payload) => {

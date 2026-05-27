@@ -100,38 +100,195 @@ export const useCandidateImport =
        DOWNLOAD TEMPLATE
     ========================== */
 
+// const downloadCandidateTemplate =
+//   async (positionIds = []) => {
+
+//     try {
+
+//       const res =
+//   await candidateWorkflowServices
+//     .downloadCandidateTemplate(
+//       positionIds
+//     );
+
+//     console.log(
+//   "DOWNLOAD TEMPLATE STATUS",
+//   res.status
+// );
+
+//       // ✅ HANDLE 422 RESPONSE
+//       if (res.status === 422) {
+
+//         const text =
+//           await res.data.text();
+
+//         const errorData =
+//           JSON.parse(text);
+
+//         return {
+
+//           success: false,
+
+//           error:
+//             errorData?.message ||
+//             "Validation failed",
+
+//           details:
+//             errorData?.data || []
+
+//         };
+
+//       }
+
+//       // ✅ SUCCESS FILE DOWNLOAD
+//       const blob = new Blob(
+//         [res.data],
+//         {
+//           type:
+//             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+//         }
+//       );
+
+//       const url =
+//         window.URL.createObjectURL(
+//           blob
+//         );
+
+//       const link =
+//         document.createElement("a");
+
+//       link.href = url;
+
+//       link.download =
+//         "candidate-template.xlsx";
+
+//       document.body.appendChild(
+//         link
+//       );
+
+//       link.click();
+
+//       link.remove();
+
+//       window.URL.revokeObjectURL(
+//         url
+//       );
+
+//       return {
+//         success: true
+//       };
+
+//     } catch (err) {
+
+//       console.error(
+//         "DOWNLOAD TEMPLATE ERROR",
+//         err
+//       );
+
+//       // ✅ HANDLE BLOB ERROR RESPONSE
+//       if (
+//         err?.response?.data instanceof Blob
+//       ) {
+
+//         try {
+
+//           const text =
+//             await err.response.data.text();
+
+//           const errorData =
+//             JSON.parse(text);
+
+//           return {
+
+//             success: false,
+
+//             error:
+//               errorData?.message ||
+//               "Download failed",
+
+//             details:
+//               errorData?.data || []
+
+//           };
+
+//         } catch (parseErr) {
+
+//           console.error(
+//             "BLOB PARSE ERROR",
+//             parseErr
+//           );
+
+//         }
+
+//       }
+
+//       return {
+
+//         success: false,
+
+//         error:
+//           err?.response?.data
+//             ?.message ||
+//           err?.message ||
+//           "Download failed",
+
+//         details:
+//           err?.response?.data
+//             ?.data || []
+
+//       };
+
+//     }
+
+//   };
+
+
 const downloadCandidateTemplate =
   async (positionIds = []) => {
 
     try {
 
       const res =
-  await candidateWorkflowServices
-    .downloadCandidateTemplate(
-      positionIds
-    );
+        await candidateWorkflowServices
+          .downloadCandidateTemplate(
+            positionIds
+          );
 
-    console.log(
-  "DOWNLOAD TEMPLATE STATUS",
-  res.status
-);
+      console.log(
+        "DOWNLOAD TEMPLATE STATUS",
+        res.status
+      );
 
-      // ✅ HANDLE 422 RESPONSE
-      if (res.status === 422) {
+      // HANDLE NON-200 RESPONSE
+      if (res.status !== 200) {
 
-        const text =
-          await res.data.text();
+        let errorData = {};
 
-        const errorData =
-          JSON.parse(text);
+        try {
+
+          const text =
+            await res.data.text();
+
+          errorData =
+            JSON.parse(text);
+
+        } catch (e) {
+
+          console.error(
+            "ERROR PARSE FAILED",
+            e
+          );
+
+        }
 
         return {
 
           success: false,
 
           error:
-            errorData?.message ||
-            "Validation failed",
+  errorData?.data ||
+  errorData?.message ||
+  "Download failed",
 
           details:
             errorData?.data || []
@@ -140,7 +297,7 @@ const downloadCandidateTemplate =
 
       }
 
-      // ✅ SUCCESS FILE DOWNLOAD
+      // SUCCESS FILE DOWNLOAD
       const blob = new Blob(
         [res.data],
         {
@@ -185,7 +342,7 @@ const downloadCandidateTemplate =
         err
       );
 
-      // ✅ HANDLE BLOB ERROR RESPONSE
+      // HANDLE BLOB ERROR RESPONSE
       if (
         err?.response?.data instanceof Blob
       ) {
@@ -202,9 +359,10 @@ const downloadCandidateTemplate =
 
             success: false,
 
-            error:
-              errorData?.message ||
-              "Download failed",
+           error:
+  errorData?.data ||
+  errorData?.message ||
+  "Download failed",
 
             details:
               errorData?.data || []
@@ -226,11 +384,13 @@ const downloadCandidateTemplate =
 
         success: false,
 
-        error:
-          err?.response?.data
-            ?.message ||
-          err?.message ||
-          "Download failed",
+      error:
+  err?.response?.data
+    ?.data ||
+  err?.response?.data
+    ?.message ||
+  err?.message ||
+  "Download failed",
 
         details:
           err?.response?.data

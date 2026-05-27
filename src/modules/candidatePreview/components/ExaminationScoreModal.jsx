@@ -26,42 +26,7 @@ const getTableHeaders = (
 
 };
 
-const tableRows = [
-  {
-    label: "Appeared",
-    values: [
-      120, 85, 200, 95,
-      450, 50, 15, 10,
-      5, 1030
-    ]
-  },
-  {
-    label: "Vacancy",
-    values: [
-      2, 1, 3, 2,
-      8, 1, 0, 0,
-      0, 17
-    ]
-  },
-  {
-    label:
-      "Qualified Without Relaxation",
-    values: [
-      45, 30, 85, 40,
-      180, 20, 8, 5,
-      2, 415
-    ]
-  },
-  {
-    label:
-      "Qualified With Relaxation",
-    values: [
-      25, 18, 45, 22,
-      95, 12, 4, 3,
-      1, 225
-    ]
-  }
-];
+
 
 
 
@@ -70,8 +35,25 @@ const tableRows = [
 
 
 const TableSection = ({
-  reservationCategories = []
+  reservationCategories = [],
+  summaryData = {},
+  totalAppearedCount = 0,
+  totalVacancyCount = 0,
+  totalQualifiedCount = 0
 }) => {
+
+
+    const categoryMap = {};
+
+summaryData?.categorySummaries
+  ?.forEach((cat) => {
+
+    categoryMap[
+      cat.categoryId
+    ] = cat;
+
+  });
+
 
 const tableHeaders =
   reservationCategories
@@ -82,14 +64,16 @@ const tableHeaders =
     )
     ?.map((item) => ({
       code: item.categoryCode,
-      type: item.reservationType
+      type: item.reservationType,
+      categoryId:
+        item.reservationCategoriesId
     }));
 
   const rows = [
     "Appeared",
     "Vacancy",
     "Qualified Without Relaxation",
-    "Qualified With Relaxation"
+    // "Qualified With Relaxation"
   ];
   
 
@@ -186,52 +170,98 @@ console.log(
 
         <tbody>
 
-          {rows.map((rowLabel) => (
+       {rows.map((rowLabel) => (
 
-            <tr key={rowLabel}>
+  <tr key={rowLabel}>
 
-              <td
-                style={{
-                  padding: "12px",
-                  border: "1px solid #E5E7EB",
-                  fontWeight: "600",
-                  fontSize: "13px"
-                }}
-              >
-                {rowLabel}
-              </td>
+    <td>
+      {rowLabel}
+    </td>
 
-{tableHeaders.map((head) => (
+    {tableHeaders.map((head) => {
 
-  <td
-    key={head.code}
-    style={{
-      textAlign: "center",
-      padding: "12px",
-      border: "1px solid #E5E7EB",
-      fontSize: "13px"
-    }}
-  >
-    0
-  </td>
+      const category =
+        categoryMap[
+          head.categoryId
+        ];
+
+      let value = 0;
+
+      if (
+        rowLabel === "Appeared"
+      ) {
+
+        value =
+          category?.appeared || 0;
+
+      }
+
+      else if (
+        rowLabel === "Vacancy"
+      ) {
+
+        value =
+          category?.vacancy || 0;
+
+      }
+
+      else if (
+        rowLabel ===
+        "Qualified Without Relaxation"
+      ) {
+
+        value =
+          category?.qualified || 0;
+
+      }
+
+      return (
+
+        <td
+          key={head.code}
+          style={{
+            textAlign: "center",
+            padding: "12px",
+            border:
+              "1px solid #E5E7EB",
+            fontSize: "13px"
+          }}
+        >
+          {value}
+        </td>
+
+      );
+
+    })}
+
+    <td
+      style={{
+        textAlign: "center",
+        padding: "12px",
+        border:
+          "1px solid #E5E7EB",
+        fontWeight: "700",
+        fontSize: "13px"
+      }}
+    >
+
+      {rowLabel === "Appeared"
+        ? totalAppearedCount
+
+        : rowLabel === "Vacancy"
+        ? totalVacancyCount
+
+        : rowLabel ===
+          "Qualified Without Relaxation"
+        ? totalQualifiedCount
+
+        : 0}
+
+    </td>
+
+  </tr>
 
 ))}
-
-              <td
-                style={{
-                  textAlign: "center",
-                  padding: "12px",
-                  border: "1px solid #E5E7EB",
-                  fontWeight: "700",
-                  fontSize: "13px"
-                }}
-              >
-                0
-              </td>
-
-            </tr>
-
-          ))}
 
         </tbody>
 
@@ -318,14 +348,11 @@ const ExaminationScoreModal = ({
   ];
 
 
-  const hasQualifiedWithoutRelaxation =
-  item?.tableData?.some(
-    (row) =>
+const hasQualifiedWithoutRelaxation =
+  Number(item?.totalQualifiedCount || 0) > 0;
 
-      Number(
-        row?.qualifiedWithoutRelaxation || 0
-      ) > 0
-  );    
+  const isFinalized =
+  item?.isFinalized === true;
 
       console.log(
   "CARD ITEM POSITION ID",
@@ -434,7 +461,7 @@ console.log(
 
                 {/* FINALIZE BUTTON */}
 
-          {hasConfig && hasQualifiedWithoutRelaxation && (
+          {hasConfig && hasQualifiedWithoutRelaxation && !isFinalized && (
 
   <button
     className="btn rank-finalize-btn"
@@ -444,10 +471,10 @@ console.log(
 
       try {
 
-       const payload = {
-  positionId:
+       const payload = [
+ 
     item.positionId || item.id
-};
+       ];
 
         const res =
           await jobPositionApiService.finalizeExamConfiguration(
@@ -536,181 +563,203 @@ console.log(
 
                   {/* STATE WISE */}
 
-{item.isLocationWise ? (
+{/* STATE WISE */}
 
-  item.states?.map(
-    (
-      state,
-      stateIndex
-    ) => {
+{(item.isStateWise || item.isLocationWise) ? (
 
-      const isExpanded =
-        state?.expanded ?? false;
+  item.states?.length > 0 ? (
 
-      return (
+    item.states.map(
+      (
+        state,
+        stateIndex
+      ) => {
 
-        <div
-          key={
-            state.stateId ||
-            stateIndex
-          }
-         className="rank-state-card"
-        >
+        const isExpanded =
+          state?.expanded ?? false;
 
-          {/* STATE HEADER */}
+        return (
 
           <div
-           className="rank-state-header"
-            onClick={() => {
-
-              setExaminationScoreData(
-                (prev) =>
-                  prev.map(
-                    (
-                      p,
-                      pIndex
-                    ) => {
-
-                      if (
-                        pIndex !==
-                        index
-                      ) {
-                        return p;
-                      }
-
-                      return {
-
-                        ...p,
-
-                    states:
-  p.states.map(
-    (
-      s,
-      sIndex
-    ) => ({
-
-      ...s,
-
-      expanded:
-        sIndex === stateIndex
-          ? !s.expanded
-          : false
-
-    })
-  )
-
-                      };
-
-                    }
-                  )
-              );
-
-            }}
-            style={{
-              padding:
-                "14px 16px",
-              background:
-                "#FFFFFF",
-              borderBottom:
-                isExpanded
-                  ? "1px solid #E5E7EB"
-                  : "none",
-              cursor:
-                "pointer"
-            }}
+            key={
+              state.stateId ||
+              stateIndex
+            }
+            className="rank-state-card"
           >
 
-            {/* LEFT */}
-
-<div className="d-flex align-items-center justify-content-between w-100">
-
-  {/* LEFT */}
-
-  <div className="d-flex align-items-center gap-3">
-
-    <div
-      className="rank-state-icon"
-      style={{
-        width: "30px",
-        height: "30px",
-        borderRadius: "50%",
-        border: "1px solid #F97316",
-        color: "#F97316"
-      }}
-    >
-
-      <i
-        className={`bi bi-chevron-${
-          isExpanded
-            ? "up"
-            : "down"
-        }`}
-      />
-
-    </div>
-
-    <h6
-      className="rank-state-title mb-0"
-      style={{
-        fontSize: "15px",
-        color: "#374151"
-      }}
-    >
-      {state?.stateName || "-"}
-    </h6>
-
-  </div>
-
-  {/* RIGHT */}
-
-  <div className="rank-state-subtitle">
-
-    Category Wise Reservation
-    (State-wise)
-
-  </div>
-
-</div>
-
-          </div>
-
-          {/* TABLE */}
-
-          {isExpanded && (
+            {/* STATE HEADER */}
 
             <div
-              style={{
-                padding:
-                  "14px"
+              className="rank-state-header"
+              onClick={() => {
+
+                setExaminationScoreData(
+                  (prev) =>
+                    prev.map(
+                      (
+                        p,
+                        pIndex
+                      ) => {
+
+                        if (
+                          pIndex !==
+                          index
+                        ) {
+                          return p;
+                        }
+
+                        return {
+
+                          ...p,
+
+                          states:
+                            p.states.map(
+                              (
+                                s,
+                                sIndex
+                              ) => ({
+
+                                ...s,
+
+                                expanded:
+                                  sIndex === stateIndex
+                                    ? !s.expanded
+                                    : false
+
+                              })
+                            )
+
+                        };
+
+                      }
+                    )
+                );
+
               }}
             >
 
-              <TableSection
-                reservationCategories={
-                  reservationCategories
-                }
-              />
+              <div className="d-flex align-items-center justify-content-between w-100">
+
+                <div className="d-flex align-items-center gap-3">
+
+                  <div
+                    className="rank-state-icon"
+                    style={{
+                      width: "30px",
+                      height: "30px",
+                      borderRadius: "50%",
+                      border: "1px solid #F97316",
+                      color: "#F97316"
+                    }}
+                  >
+
+                    <i
+                      className={`bi bi-chevron-${
+                        isExpanded
+                          ? "up"
+                          : "down"
+                      }`}
+                    />
+
+                  </div>
+
+                  <h6
+                    className="rank-state-title mb-0"
+                  >
+                    {state?.stateName || "-"}
+                  </h6>
+
+                </div>
+
+                <div className="rank-state-subtitle">
+
+                  Category Wise Reservation
+                  (State-wise)
+
+                </div>
+
+              </div>
 
             </div>
 
-          )}
+            {/* TABLE */}
 
-        </div>
+            {isExpanded && (
 
-      );
+              <div
+                style={{
+                  padding: "14px"
+                }}
+              >
 
-    }
+                <TableSection
+                  reservationCategories={
+                    reservationCategories
+                  }
+                  summaryData={
+                    state.summaryData
+                  }
+                  totalAppearedCount={
+                    state.totalAppearedCount
+                  }
+                  totalVacancyCount={
+                    state.totalVacancyCount
+                  }
+                  totalQualifiedCount={
+                    state.totalQualifiedCount
+                  }
+                />
+
+              </div>
+
+            )}
+
+          </div>
+
+        );
+
+      }
+    )
+
+  ) : (
+
+    <div
+      style={{
+        padding: "20px",
+        textAlign: "center",
+        color: "#6B7280",
+        fontSize: "14px",
+        fontWeight: "500"
+      }}
+    >
+      No state-wise summary found
+    </div>
+
   )
 
 ) : (
 
-                    /* NATIONAL WISE */
 
-                <TableSection
-        reservationCategories={
-            reservationCategories
-        }
-        />
+
+                    /* NATIONAL WISE */
+<TableSection
+  reservationCategories={
+    reservationCategories
+  }
+  summaryData={
+    item.overallMarksSummary?.[0]
+  }
+  totalAppearedCount={
+    item.totalAppearedCount
+  }
+  totalVacancyCount={
+    item.totalVacancyCount
+  }
+  totalQualifiedCount={
+    item.totalQualifiedCount
+  }
+/>
 
                   )}
 

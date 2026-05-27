@@ -199,11 +199,7 @@ export default function CandidateScreening({ selectedJob }) {
 
 
 
-  useEffect(() => {
-    if (role === "committee_member") {
-      setActiveTab("COMPENSATION_POOL");
-    }
-  }, [role, selectedRequisitionId]);
+
 
 
   const isCommitteeMember = role === "committee_member";
@@ -262,10 +258,9 @@ export default function CandidateScreening({ selectedJob }) {
   const [submittingApproval, setSubmittingApproval] = useState(false);
 
 
-  const [activeTab, setActiveTab] = useState(() => {
-    if (role === "committee_member") return "COMPENSATION_POOL";
-    return navActiveTab || "CANDIDATE_POOL";
-  });
+const [activeTab, setActiveTab] = useState(
+  navActiveTab || "CANDIDATE_POOL"
+);
 
 
   const [selectedCandidate, setSelectedCandidate] = useState(null);
@@ -591,13 +586,21 @@ useEffect(() => {
 }, [reservationCategories]);
 
 
-  useEffect(() => {
+useEffect(() => {
 
-    if (location.state?.activeTab) {
-      setActiveTab(location.state.activeTab);
-    }
+  // ONLY INITIAL LOAD
+  if (
+    location.state?.activeTab &&
+    activeTab === "CANDIDATE_POOL"
+  ) {
+    setActiveTab(location.state.activeTab);
+  }
 
-  }, [location.state?.activeTab]);
+}, []);
+
+useEffect(() => {
+  console.log("ACTIVE TAB CHANGED =>", activeTab);
+}, [activeTab]);
 
   // useEffect(() => {
 
@@ -1082,39 +1085,53 @@ useEffect(() => {
     return employmentType === "Contract";
   }, [positions, selectedPositionId, employmentTypeMap]);
 
-  const accessibleTabs = useMemo(() => {
+const accessibleTabs = useMemo(() => {
 
+  return tabs.filter((tab) => {
 
-    return tabs.filter((tab) => {
+    // Compensation only for contract positions
+   // show compensation based ONLY on privilege
+if (tab.key === "COMPENSATION_POOL") {
 
-      if (tab.key === "COMPENSATION_POOL") {
+  // Committee member -> always show if privilege exists
+  if (isCommitteeMember) {
+    return hasPrivilege("Compensation Pool");
+  }
 
-        if (role === "committee_member") {
-          return true; // ✅ force show
-        }
+  // Recruiter -> only for contract positions
+  if (isRecruiter) {
+    return (
+      hasPrivilege("Compensation Pool") &&
+      isContractPosition
+    );
+  }
 
-        if (!isContractPosition) {
-          return false;
-        }
-      }
+  return false;
+}
 
-      // if (tab.key === "COMPENSATION_POOL") {
-      //   return false;
-      // }
+    // Schedule Pool depends on Interview Pool privilege
+    if (
+      tab.key === "SCHEDULE_POOL"
+    ) {
+      return hasPrivilege("Interview Pool");
+    }
 
-      // Enable Schedule Pool if Interview Pool privilege is true
-      if (tab.key === "SCHEDULE_POOL" && hasPrivilege("Interview Pool")) {
-        return true;
-      }
+    // ALL OTHER TABS ONLY BY PRIVILEGES
+    return hasPrivilege(
+      TAB_PRIVILEGE_MAP[tab.key]
+    );
 
-      return hasPrivilege(TAB_PRIVILEGE_MAP[tab.key]);
+  });
 
-    });
+}, [
+  tabs,
+  privileges,
+  isContractPosition
+]);
 
-
-  }, [tabs, privileges, isContractPosition, role]); //  IMPORTANT
-
-
+useEffect(() => {
+  console.log("ACTIVE TAB:", activeTab);
+}, [activeTab]);
 
 
   const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
@@ -1709,9 +1726,7 @@ useEffect(() => {
     setSelectedRequisitionId(reqId);
     setSelectedPositionId([]);
     //  CORRECT LOGIC
-    if (role === "committee_member") {
-      setActiveTab("COMPENSATION_POOL");
-    }
+
     setCandidates([]);
     setSelectedCandidateIds([]);
     setSelectedInterviewCandidateIds([]);
@@ -2650,159 +2665,183 @@ useEffect(() => {
     }
   }, [activeTab]);
 
-  const handleOpenExaminationScore =
-    () => {
+const handleOpenExaminationScore =
+  async () => {
 
-      setExaminationScoreData([]);
+    try {
 
-      // VALIDATION
       if (
-        !selectedRequisitionId ||
         !selectedPositionId?.length
       ) {
 
         toast.error(
-          "Please select requisition and position"
+          "Please select positions"
         );
 
         return;
       }
 
-      // BUILD GRID DATA
-const mappedData =
+      // SUMMARY API
+      const res =
+        await jobPositionApiService
+          .getExaminationSummary(
+            selectedPositionId
+          );
+
+      console.log(
+        "SUMMARY API RESPONSE",
+        res
+      );
+
+      console.log(
+        "SUMMARY API DATA",
+        res?.data
+      );
+
+      const summaryData =
+        res?.data || [];
+
+      // MAP POSITION DATA
+const formattedData =
   positions
-    .filter((p) =>
+    ?.filter((p) =>
       selectedPositionId.includes(
         p?.jobPositions?.positionId
       )
     )
-    .map((p, index) => ({
+    ?.map((p) => {
 
-      id:
-        p?.jobPositions?.positionId,
+      const positionId =
+        p?.jobPositions?.positionId;
 
-      positionName:
-        p?.masterPositions
-          ?.positionName || "-",
+      const apiSummary =
+        summaryData.find(
+          (s) =>
+            s.positionId ===
+            positionId
+        );
 
-      isLocationWise:
-        p?.jobPositions
-          ?.isLocationWise || false,
+      return {
 
-    states:
+        id: positionId,
+
+        positionId,
+
+        positionName:
+          p?.masterPositions
+            ?.positionName || "-",
+
+       startDate:
+  normalizedRequisition
+    ?.registration_start_date || "-",
+
+endDate:
+  normalizedRequisition
+    ?.registration_end_date || "-",
+
+        isLocationWise:
+          p?.jobPositions
+            ?.isLocationWise ||
+          false,
+
+        expanded: false,
+
+        // IMPORTANT
+states:
   (
-    p?.jobPositions
-      ?.positionStateDistributions || []
-  ).map((stateObj) => {
+    apiSummary?.overallMarksSummary || []
+  ).map((stateSummary) => ({
 
-    const stateId =
-      typeof stateObj === "string"
-        ? stateObj
-        : stateObj?.stateId;
-
-    const foundState =
-      masterData?.states?.find(
-        (s) => s.stateId === stateId
-      );
-
-    return {
-
-      stateId,
+    stateId:
+      stateSummary.stateId,
 
     stateName:
-  foundState?.stateName ||
-  stateObj?.stateName ||
-  "Unknown State",
-       
-        expanded : false,
-        
-      tableData:
-        (
-          stateObj?.tableData || []
-        ).map((row) => {
+      masterData?.states?.find(
+        (s) =>
+          s.stateId ===
+          stateSummary.stateId
+      )?.stateName || "-",
 
-          const transformedRow = {
-            label: row.label
-          };
+    expanded: false,
 
-          Object.keys(row || {}).forEach(
-            (key) => {
+    // IMPORTANT
+    summaryData:
+      stateSummary,
 
-              if (key === "label") return;
+    totalAppearedCount:
+      stateSummary.categorySummaries?.reduce(
+        (sum, cat) =>
+          sum + (cat.appeared || 0),
+        0
+      ),
 
-              const categoryCode =
-                reservationCategoryMap[key];
+    totalVacancyCount:
+      stateSummary.categorySummaries?.reduce(
+        (sum, cat) =>
+          sum + (cat.vacancy || 0),
+        0
+      ),
 
-              if (categoryCode) {
+    totalQualifiedCount:
+      stateSummary.categorySummaries?.reduce(
+        (sum, cat) =>
+          sum + (cat.qualified || 0),
+        0
+      )
 
-                transformedRow[
-                  categoryCode
-                ] = row[key];
+  })),
 
-              }
+        // NATIONAL SUMMARY
+        overallMarksSummary:
+          apiSummary?.overallMarksSummary || [],
 
-            }
-          );
+        totalAppearedCount:
+          apiSummary?.totalAppearedCount || 0,
 
-          return transformedRow;
+        totalVacancyCount:
+          apiSummary?.totalVacancyCount || 0,
 
-        })
+        totalQualifiedCount:
+          apiSummary?.totalQualifiedCount || 0,
 
-    };
+        isFinalized:
+          apiSummary?.isFinalized || false
 
-  }),
+      };
 
-      startDate:
-        normalizedRequisition
-          ?.registration_start_date,
+    });
 
-      endDate:
-        normalizedRequisition
-          ?.registration_end_date,
-
-     tableData:
-  (
-    p?.tableData || []
-  ).map((row) => {
-
-    const transformedRow = {
-      label: row.label
-    };
-
-    Object.keys(row || {}).forEach(
-      (key) => {
-
-        if (key === "label") return;
-
-        const categoryCode =
-          reservationCategoryMap[key];
-
-        if (categoryCode) {
-
-          transformedRow[
-            categoryCode
-          ] = row[key];
-
-        }
-
-      }
-    );
-
-    return transformedRow;
-
-  }),
-
-expanded:
-  index === 0
-    }));
-
-      setExaminationScoreData(
-        mappedData
+      console.log(
+        "FORMATTED SUMMARY DATA",
+        formattedData
       );
 
-      setShowExaminationModal(true);
+      setExaminationScoreData(
+        formattedData
+      );
 
-    };
+      setShowExaminationModal(
+        true
+      );
+
+    } catch (err) {
+
+      console.error(
+        "SUMMARY API ERROR",
+        err
+      );
+
+      toast.error(
+        err?.response?.data
+          ?.message ||
+        "Failed to load summary"
+      );
+
+    }
+
+  };
+
+
 
 
   const handleEditExaminationScore =
@@ -3197,6 +3236,17 @@ navigate(
                     }`}
                   onClick={() => {
 
+
+                   
+            console.log("TAB CLICKED");
+            console.log("TAB KEY:", tab.key);
+            console.log("CURRENT ACTIVE TAB:", activeTab);
+
+            setActiveTab(tab.key);
+
+            
+
+
                     if (role === "committee_member") return;
 
                     const multiTabs = [
@@ -3236,7 +3286,7 @@ navigate(
                       status: [],          // clear old tab status
                       searchText: "",      // optional if you also want search reset
                     }));
-
+  console.log("CLICKED TAB:", tab.key);
                     setActiveTab(tab.key);
                   }}
                   type="button"
