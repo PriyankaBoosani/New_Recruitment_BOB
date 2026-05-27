@@ -36,24 +36,24 @@ const AddPosition = () => {
     const MAX_FILE_SIZE_MB = 2;
     const YEAR_OPTIONS = Array.from({ length: 31 }, (_, i) => i);
     const MONTH_OPTIONS = Array.from({ length: 11 }, (_, i) => i + 1);
-    
+
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const location = useLocation();
-    
+
     const { requisitionId } = useParams();
     const positionId = searchParams.get("positionId");
     const mode = location.state?.mode; // "view" | "edit" | undefined
-    
+
     const isInEditMode = location.state?.isInEditMode === false;
     const isViewMode = !!positionId && mode === "view";
     const isEditMode = !!positionId && mode !== "view";
     const isDraft = location.state?.isDraft === true;
     // const isControlledEdit = isEditMode && isInEditMode;
     const isControlledEdit =
-    isDraft &&
-    isEditMode &&
-    isInEditMode;
+        isDraft &&
+        isEditMode &&
+        isInEditMode;
     const isImportDisabled = isViewMode || isEditMode;
     const parentRequisitionId = location.state?.parentRequisitionId;
     const {
@@ -70,8 +70,8 @@ const AddPosition = () => {
     useEffect(() => {
         if (requisitionId) {
             fetchPositions(
-            isDraft ? parentRequisitionId : requisitionId,
-            isDraft
+                isDraft ? parentRequisitionId : requisitionId,
+                isDraft
             );
         }
     }, [requisitionId, isDraft, parentRequisitionId]);
@@ -233,7 +233,7 @@ const AddPosition = () => {
             responsibilities: existingPosition.rolesResponsibilities,
             medicalRequired: existingPosition.isMedicalRequired ? "yes" : "no",
             enableStateDistribution: existingPosition.isLocationWise,
-           // cutoffDate: existingPosition.cutoffDate || "",
+            // cutoffDate: existingPosition.cutoffDate || "",
             mandatoryExperience: {
                 years: Math.floor(existingPosition.mandatoryExperienceMonths / 12),
                 months: existingPosition.mandatoryExperienceMonths % 12,
@@ -689,33 +689,33 @@ const AddPosition = () => {
         const isExistingRow = !!currentState.positionStateDistributionId;
 
         if (isControlledEdit && isExistingRow) {
-        // 🚨 check categories
-        for (const key in currentState.categories || {}) {
-            const originalValue = Number(originalCategories?.[key] || 0);
-            const newValue = Number(currentState.categories[key] || 0);
+            // 🚨 check categories
+            for (const key in currentState.categories || {}) {
+                const originalValue = Number(originalCategories?.[key] || 0);
+                const newValue = Number(currentState.categories[key] || 0);
 
-            if (originalValue > 0 && newValue === 0) {
-            setErrors(prev => ({
-                ...prev,
-                stateDistribution: "Cannot reduce existing category to zero"
-            }));
-            return;
+                if (originalValue > 0 && newValue === 0) {
+                    setErrors(prev => ({
+                        ...prev,
+                        stateDistribution: "Cannot reduce existing category to zero"
+                    }));
+                    return;
+                }
             }
-        }
 
-        // 🚨 check disabilities
-        for (const key in currentState.disabilities || {}) {
-            const originalValue = Number(originalDisabilities?.[key] || 0);
-            const newValue = Number(currentState.disabilities[key] || 0);
+            // 🚨 check disabilities
+            for (const key in currentState.disabilities || {}) {
+                const originalValue = Number(originalDisabilities?.[key] || 0);
+                const newValue = Number(currentState.disabilities[key] || 0);
 
-            if (originalValue > 0 && newValue === 0) {
-            setErrors(prev => ({
-                ...prev,
-                stateDistribution: "Cannot reduce existing disability to zero"
-            }));
-            return;
+                if (originalValue > 0 && newValue === 0) {
+                    setErrors(prev => ({
+                        ...prev,
+                        stateDistribution: "Cannot reduce existing disability to zero"
+                    }));
+                    return;
+                }
             }
-        }
         }
 
         const newErrors = validateStateDistribution({
@@ -747,7 +747,13 @@ const AddPosition = () => {
                 language: "",
                 categories: {},
                 disabilities: {}
-            });
+            }); 
+            setErrors(prev => ({
+                ...prev,
+                state: "",
+                city: "",
+                stateDistribution: ""
+            }));
             setEditingIndex(null);
             return;
         }

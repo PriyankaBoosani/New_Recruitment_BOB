@@ -123,8 +123,8 @@ const ReservationSection = ({
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <div className="d-flex gap-5 align-items-center catfonts" style={{ width: '49%' }}>
                         <div><h6 className="mb-0 catfont"> {formData.enableStateDistribution
-                                                    ? t("addPosition:state_wise_reservation")
-                                                    : t("addPosition:category_wise_reservation")}
+                            ? t("addPosition:state_wise_reservation")
+                            : t("addPosition:category_wise_reservation")}
                             <span className="text-danger">*</span></h6><small className="text-muted">
                                 {t("addPosition:enable_state_distribution_help")}</small>
                         </div>
@@ -344,7 +344,8 @@ const ReservationSection = ({
 
                                         setErrors(prev => ({
                                             ...prev,
-                                            city: ""
+                                            city: "",
+                                            state: ""
                                         }));
                                     }}
                                     options={[
@@ -357,38 +358,38 @@ const ReservationSection = ({
                                 />
                             </Col>
                             <Col md={3}><Form.Label>{t("addPosition:vacancies")} <span className="text-danger">*</span></Form.Label>
-                            <Form.Control
-                                value={currentState.vacancies}
-                                onChange={e => {
-                                    let value = e.target.value;
+                                <Form.Control
+                                    value={currentState.vacancies}
+                                    onChange={e => {
+                                        let value = e.target.value;
 
-                                    // digits only
-                                    value = value.replace(/\D/g, "");
+                                        // digits only
+                                        value = value.replace(/\D/g, "");
 
-                                    const isExistingRow = !!currentState.positionStateDistributionId;
+                                        const isExistingRow = !!currentState.positionStateDistributionId;
 
-                                    // 🚨 CONTROLLED EDIT RULE
-                                    if (
-                                    isControlledEdit &&
-                                    isExistingRow &&
-                                    // originalVacancy > 0 &&
-                                    value === "0"
-                                    ) {
-                                    return; // ❌ block setting to 0
-                                    }
+                                        // 🚨 CONTROLLED EDIT RULE
+                                        if (
+                                            isControlledEdit &&
+                                            isExistingRow &&
+                                            // originalVacancy > 0 &&
+                                            value === "0"
+                                        ) {
+                                            return; // ❌ block setting to 0
+                                        }
 
-                                    setCurrentState(prev => ({
-                                    ...prev,
-                                    vacancies: value
-                                    }));
+                                        setCurrentState(prev => ({
+                                            ...prev,
+                                            vacancies: value
+                                        }));
 
-                                    setErrors(prev => ({
-                                    ...prev,
-                                    stateVacancies: "",
-                                    stateDistribution: ""
-                                    }));
-                                }}
-                            />
+                                        setErrors(prev => ({
+                                            ...prev,
+                                            stateVacancies: "",
+                                            stateDistribution: ""
+                                        }));
+                                    }}
+                                />
 
                                 <ErrorMessage>{renderError(errors.stateVacancies)}</ErrorMessage>
                             </Col>
@@ -439,39 +440,39 @@ const ReservationSection = ({
 
                                                         // 🚨 FIELD-LEVEL RULE
                                                         if (
-                                                        isControlledEdit &&
-                                                        isExistingRow &&
-                                                        originalValue > 0 &&
-                                                        value === "0"
+                                                            isControlledEdit &&
+                                                            isExistingRow &&
+                                                            originalValue > 0 &&
+                                                            value === "0"
                                                         ) {
-                                                        return;
+                                                            return;
                                                         }
 
                                                         setCurrentState(prev => ({
-                                                        ...prev,
-                                                        categories: {
-                                                            ...prev.categories,
-                                                            [cat.code]: Number(value || 0)
-                                                        }
+                                                            ...prev,
+                                                            categories: {
+                                                                ...prev.categories,
+                                                                [cat.code]: Number(value || 0)
+                                                            }
                                                         }));
 
                                                         setErrors(prev => ({
-                                                        ...prev,
-                                                        stateDistribution: ""
+                                                            ...prev,
+                                                            stateDistribution: ""
                                                         }));
                                                     }}
                                                     onKeyDown={e => {
                                                         if (
-                                                        !/[0-9]/.test(e.key) &&
-                                                        !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+                                                            !/[0-9]/.test(e.key) &&
+                                                            !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
                                                         ) {
-                                                        e.preventDefault();
+                                                            e.preventDefault();
                                                         }
                                                     }}
                                                     onPaste={e => {
                                                         const paste = e.clipboardData.getData("text");
                                                         if (!/^\d+$/.test(paste)) {
-                                                        e.preventDefault();
+                                                            e.preventDefault();
                                                         }
                                                     }}
                                                 />
@@ -497,7 +498,7 @@ const ReservationSection = ({
                                                         value = value.replace(/\D/g, "");
 
                                                         if (value.length > 1) {
-                                                        value = value.replace(/^0+/, "");
+                                                            value = value.replace(/^0+/, "");
                                                         }
 
                                                         const isExistingRow = !!currentState.positionStateDistributionId;
@@ -505,25 +506,25 @@ const ReservationSection = ({
 
                                                         // 🚨 FIELD-LEVEL RULE
                                                         if (
-                                                        isControlledEdit &&
-                                                        isExistingRow &&
-                                                        originalValue > 0 &&
-                                                        value === "0"
+                                                            isControlledEdit &&
+                                                            isExistingRow &&
+                                                            originalValue > 0 &&
+                                                            value === "0"
                                                         ) {
-                                                        return;
+                                                            return;
                                                         }
 
                                                         setCurrentState(prev => ({
-                                                        ...prev,
-                                                        disabilities: {
-                                                            ...prev.disabilities,
-                                                            [d.disabilityCode]: value === "" ? "0" : value
-                                                        }
+                                                            ...prev,
+                                                            disabilities: {
+                                                                ...prev.disabilities,
+                                                                [d.disabilityCode]: value === "" ? "0" : value
+                                                            }
                                                         }));
 
                                                         setErrors(prev => ({
-                                                        ...prev,
-                                                        stateDistribution: ""
+                                                            ...prev,
+                                                            stateDistribution: ""
                                                         }));
                                                     }}
                                                     onKeyDown={e => {
@@ -608,65 +609,67 @@ const ReservationSection = ({
                                                 <tr key={idx}>
                                                     <td>{idx + 1}</td><td>{states.find(s => s.id === row.state)?.name}</td><td>
                                                         {cities.find(c => String(c.id) === String(row.city))?.name || "-"}
-                                                </td><td>{row.vacancies}</td><td>{getLanguagesByState(row.state)}</td>
-                                                {reservationCategories.map(c => <td key={c.code}>{row.categories?.[c.code] ?? 0}</td>)}
-                                                <td>{Object.values(row.categories || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
-                                                {disabilityCategories.map(d => <td key={d.disabilityCode}>{row.disabilities?.[d.disabilityCode] ?? 0}</td>)}
-                                                <td>{Object.values(row.disabilities || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
-                                                <td className="text-center">
-                                                    <Button
-                                                        size="sm"
-                                                        variant="link"
-                                                        onClick={() => {
-                                                            setEditingIndex(idx);
-                                                            setCurrentState({ ...row });
-
-                                                            if (row.positionStateDistributionId) {
-                                                                // setOriginalVacancy(Number(row.vacancies || 0));
-                                                                setOriginalCategories({ ...row.categories });
-                                                                setOriginalDisabilities({ ...row.disabilities });
-                                                            } else {
-                                                                // setOriginalVacancy(null);
-                                                                setOriginalCategories({});
-                                                                setOriginalDisabilities({});
-                                                            }
-                                                        }}
-                                                    >
-                                                        <img src={edit_icon} alt="edit_icon" className="icon-16" />
-                                                    </Button>
-                                                    {canDelete && (
+                                                    </td><td>{row.vacancies}</td><td>{getLanguagesByState(row.state)}</td>
+                                                    {reservationCategories.map(c => <td key={c.code}>{row.categories?.[c.code] ?? 0}</td>)}
+                                                    <td>{Object.values(row.categories || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
+                                                    {disabilityCategories.map(d => <td key={d.disabilityCode}>{row.disabilities?.[d.disabilityCode] ?? 0}</td>)}
+                                                    <td>{Object.values(row.disabilities || {}).reduce((a, b) => a + Number(b || 0), 0)}</td>
+                                                    <td className="text-center">
                                                         <Button
                                                             size="sm"
                                                             variant="link"
-                                                            className="text-danger"
                                                             onClick={() => {
-                                                            setStateDistributions(prev =>
-                                                                prev.map((s, i) =>
-                                                                i === idx ? { ...s, __deleted: true } : s
-                                                                )
-                                                            );
+                                                                setEditingIndex(idx);
+                                                                setCurrentState({ ...row });
 
-                                                            if (editingIndex === idx) {
-                                                                setEditingIndex(null);
-                                                                setCurrentState({
-                                                                state: "",
-                                                                vacancies: "",
-                                                                language: "",
-                                                                categories: {},
-                                                                disabilities: {},
-                                                                isProficientInLocalLanguage: false
-                                                                });
-                                                                setOriginalCategories({});
-                                                                setOriginalDisabilities({});
-                                                            }
+                                                                if (row.positionStateDistributionId) {
+                                                                    // setOriginalVacancy(Number(row.vacancies || 0));
+                                                                    setOriginalCategories({ ...row.categories });
+                                                                    setOriginalDisabilities({ ...row.disabilities });
+                                                                } else {
+                                                                    // setOriginalVacancy(null);
+                                                                    setOriginalCategories({});
+                                                                    setOriginalDisabilities({});
+                                                                }
                                                             }}
                                                         >
-                                                            <img src={delete_icon} alt="delete_icon" className="icon-16" />
+                                                            <img src={edit_icon} alt="edit_icon" className="icon-16" />
                                                         </Button>
+                                                        {canDelete && (
+                                                            <Button
+                                                                size="sm"
+                                                                variant="link"
+                                                                className="text-danger"
+                                                                onClick={() => {
+                                                                    setStateDistributions(prev =>
+                                                                        prev.map((s, i) =>
+                                                                            i === idx ? { ...s, __deleted: true } : s
+                                                                        )
+                                                                    );
+                                                                   
+
+                                                                    if (editingIndex === idx) {
+                                                                        setEditingIndex(null);
+                                                                        setCurrentState({
+                                                                            state: "",
+                                                                            vacancies: "",
+                                                                            language: "",
+                                                                            categories: {},
+                                                                            disabilities: {},
+                                                                            isProficientInLocalLanguage: false
+                                                                        });
+                                                                        setOriginalCategories({});
+                                                                        setOriginalDisabilities({});
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <img src={delete_icon} alt="delete_icon" className="icon-16" />
+                                                            </Button>
                                                         )}
                                                     </td>
-                                            </tr>
-                                        )})}
+                                                </tr>
+                                            )
+                                        })}
                                 </tbody>
                             </table>
                         </div>
