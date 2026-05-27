@@ -571,7 +571,7 @@ const CommitteeRequests = () => {
                                             <Col md={1} className="data-col">
                                                 <div className="field-label">{t("approvalHistory:start_date")}</div>
                                                 <div className="field-value">
-                                                    {panelItem.startDate}
+                                                    {formatDateDDMMYYYY(panelItem.startDate)}
                                                 </div>
                                             </Col>
 
@@ -579,7 +579,7 @@ const CommitteeRequests = () => {
                                             <Col md={1} className="data-col">
                                                 <div className="field-label">{t("approvalHistory:end_date")}</div>
                                                 <div className="field-value">
-                                                    {panelItem.endDate}
+                                                    {formatDateDDMMYYYY(panelItem.endDate)}
                                                 </div>
                                             </Col>
 
