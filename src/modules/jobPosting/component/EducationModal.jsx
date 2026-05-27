@@ -196,17 +196,40 @@ export default function EducationModal({
         groups.slice(0, gIdx).reduce((acc, g) => acc + g.educations.length, 0) + rIdx;
 
     setErrors(prev => {
-        if (!prev.rows?.[flatIndex]?.[field]) return prev;
 
-        const updated = { ...prev };
-        updated.rows = [...(updated.rows || [])];
+    const updated = { ...prev };
+
+    // CLEAR ROW ERROR
+    if (updated.rows?.[flatIndex]) {
+
+        updated.rows = [...updated.rows];
+
         updated.rows[flatIndex] = {
             ...updated.rows[flatIndex],
             [field]: ""
         };
+    }
 
-        return updated;
-    });
+    // CLEAR GROUP ERROR
+    if (updated.groupErrors?.[gIdx]) {
+
+        updated.groupErrors = {
+            ...updated.groupErrors
+        };
+
+        delete updated.groupErrors[gIdx];
+
+        // REMOVE EMPTY OBJECT
+        if (
+            Object.keys(updated.groupErrors)
+                .length === 0
+        ) {
+            delete updated.groupErrors;
+        }
+    }
+
+    return updated;
+});
 };
     // const removeRow = (index) => {
     //     setRows(prev =>
@@ -260,16 +283,52 @@ export default function EducationModal({
         setCertGroups(copy);
     };
 
-    const updateCertRow = (cgIdx, crIdx, field, value) => {
-        const copy = [...certGroups];
-        // Initialize certifications if it doesn't exist
-        if (!copy[cgIdx].certifications) {
-            copy[cgIdx].certifications = [];
-        }
-        copy[cgIdx].certifications[crIdx][field] = value;
-        setCertGroups(copy);
-    };
+   const updateCertRow = (
+    cgIdx,
+    crIdx,
+    field,
+    value
+) => {
 
+    const copy = [...certGroups];
+
+    if (!copy[cgIdx].certifications) {
+        copy[cgIdx].certifications = [];
+    }
+
+    copy[cgIdx].certifications[crIdx][field] =
+        value;
+
+    setCertGroups(copy);
+
+    // ✅ CLEAR CERT GROUP ERRORS
+    setErrors(prev => {
+
+        const updated = { ...prev };
+
+        if (
+            updated.certGroupErrors?.[cgIdx]
+        ) {
+
+            updated.certGroupErrors = {
+                ...updated.certGroupErrors
+            };
+
+            delete updated.certGroupErrors[cgIdx];
+
+            // REMOVE EMPTY OBJECT
+            if (
+                Object.keys(
+                    updated.certGroupErrors
+                ).length === 0
+            ) {
+                delete updated.certGroupErrors;
+            }
+        }
+
+        return updated;
+    });
+};
     const removeCertRow = (cgIdx, crIdx) => {
         const copy = [...certGroups];
 

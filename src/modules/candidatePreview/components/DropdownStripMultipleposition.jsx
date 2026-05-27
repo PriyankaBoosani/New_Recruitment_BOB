@@ -3,7 +3,7 @@ import Select from "react-select";
 import { useTranslation } from "react-i18next";
 import { components } from "react-select";
 import "../../../style/css/CandidateScreening.css";
-
+import { toast } from "react-toastify";
 export default function DropdownStripMultipleposition({
   requisitions,
   positions,
@@ -185,9 +185,47 @@ const MultiValue = ({ index, getValue, ...props }) => {
   value={positionOptions.filter(opt =>
     selectedPositionId?.includes(opt.value)
   )}
-  onChange={(options) =>
-    onPositionChange(options ? options.map(o => o.value) : [])
+  // onChange={(options) =>
+  //   onPositionChange(options ? options.map(o => o.value) : [])
+  // }
+
+  onChange={(options) => {
+
+  const selectedIds =
+    options
+      ? options.map((o) => o.value)
+      : [];
+
+  // GET SELECTED POSITION OBJECTS
+  const selectedPositions =
+    positions.filter((p) =>
+      selectedIds.includes(
+        p.jobPositions?.positionId
+      )
+    );
+
+  // GET EMPLOYMENT TYPES
+  const employmentTypes =
+    selectedPositions.map(
+      (p) => p.jobPositions?.employmentType
+    );
+
+  // UNIQUE TYPES
+  const uniqueEmploymentTypes =
+    [...new Set(employmentTypes)];
+
+  // VALIDATION
+  if (uniqueEmploymentTypes.length > 1) {
+
+   toast.error(
+  "Please select positions with same employment type"
+);
+
+    return;
   }
+
+  onPositionChange(selectedIds);
+}}
 />
       </div>
     </>
