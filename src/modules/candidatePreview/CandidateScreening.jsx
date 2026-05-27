@@ -3678,7 +3678,7 @@ navigate(
 
                     {/* Accept Before Date */}
                     <div>
-                      <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:accept_before")}11</p>
+                      <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:accept_before")}</p>
                       <input
                         type="date"
                         className="form-control fs-13 py-1"
