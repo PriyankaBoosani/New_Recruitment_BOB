@@ -68,9 +68,12 @@ const SchedulePoolTable = ({
           <button
             className="btn btn-primary fs-14"
             onClick={onSubmitApproval}
-            disabled={rows.length === 0 || rows.some(
-              (row) => getApprovalStatus(row) === "L1_PENDING"
-            )}
+            // disabled={rows.length === 0 || rows.some(
+            //   (row) => getApprovalStatus(row) === "L1_PENDING"
+            // )}
+            disabled={rows.length === 0 || !rows.some(
+              (row) => getApprovalStatus(row) === "PENDING")
+            }
           >
             Submit for Approval
           </button>

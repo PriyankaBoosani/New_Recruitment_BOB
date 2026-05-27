@@ -271,7 +271,7 @@ const AppRoutes = () => {
  <Route
                 path="/ExaminationCutoffConfiguration"
                 element={
-                  <PrivilegeRoute privilegesRequired={["Candidate Pool", "Verification", "Interview", "Compensation Pool", "ExaminationCutoffConfiguration"]}>
+                  <PrivilegeRoute privilegesRequired={["ExaminationCutoffConfiguration"]}>
                     <ExaminationCutoffConfiguration />
                   </PrivilegeRoute>
                 }
@@ -297,9 +297,9 @@ const AppRoutes = () => {
               <Route
                 path="/messages"
                 element={
-                  // <PrivilegeRoute privilege="JobPostings">
-                  <Messages />
-                  // </PrivilegeRoute>
+                  <PrivilegeRoute privilege="Messages">
+                    <Messages />
+                  </PrivilegeRoute>
                 }
               />
 

@@ -105,6 +105,8 @@ const Header = () => {
     privileges?.["L1 Approval"] || privileges?.["L2 Approval"];
   const canL2 = privileges?.["L2 Approval"];
   const canViewPosition = privileges?.["View Position"];
+   const canMessages = privileges?.["Messages"];
+   const canExaminationCutoffConfiguration = privileges?.["ExaminationCutoffConfiguration"];
   // {
   // 	"preveileges": {
   // 		"Committee Management": true,
@@ -338,7 +340,7 @@ const Header = () => {
                 {t("ExaminationCutoffConfiguration")}
               </Nav.Link> */}
 
-              {canCandidateWorkflow && (
+              {canExaminationCutoffConfiguration && (
                 <Nav.Link as={NavLink} to="/ExaminationCutoffConfiguration" onClick={closeMenu}>
                   {t("ExaminationCutoffConfiguration")}
                 </Nav.Link>
@@ -374,10 +376,11 @@ const Header = () => {
                   {t("committee_management")}
                 </Nav.Link>
               )}
-
+            {canMessages && (
               <Nav.Link as={NavLink} to="/messages" onClick={closeMenu}>
                 {t("messages")}
               </Nav.Link>
+            )}
 
               {canApprovals && (
                 <NavDropdown

@@ -1110,11 +1110,11 @@ if (tab.key === "COMPENSATION_POOL") {
 }
 
     // Schedule Pool depends on Interview Pool privilege
-    if (
-      tab.key === "SCHEDULE_POOL"
-    ) {
-      return hasPrivilege("Interview Pool");
-    }
+    // if (
+    //   tab.key === "SCHEDULE_POOL"
+    // ) {
+    //   return hasPrivilege("Interview Pool");
+    // }
 
     // ALL OTHER TABS ONLY BY PRIVILEGES
     return hasPrivilege(
