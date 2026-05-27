@@ -1482,8 +1482,9 @@
 
 .ap-panel-popover-body {
   padding: 16px;
-  max-height: 380px;
+  max-height: 303px;
   overflow-y: auto;
+  height: auto;
 }
 
 /* --- Section groupings per Date --- */
