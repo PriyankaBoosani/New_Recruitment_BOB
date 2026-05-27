@@ -277,14 +277,25 @@ panelRanges
 
     onChange={(date) => {
 
-      if (!date) return;
+        if (!date) return;
 
-      const formatted =
-        date.toISOString().split("T")[0];
+        const year =
+          date.getFullYear();
 
-      updateRow(i, "date", formatted);
+        const month = String(
+          date.getMonth() + 1
+        ).padStart(2, "0");
 
-    }}
+        const day = String(
+          date.getDate()
+        ).padStart(2, "0");
+
+        const formatted =
+          `${year}-${month}-${day}`;
+
+        updateRow(i, "date", formatted);
+
+      }}
 
     filterDate={(date) =>
       isDateAllowed(date, panelRanges)
