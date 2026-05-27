@@ -1016,11 +1016,21 @@ useEffect(() => {
 
 
 
-  useEffect(() => {
-    if (selectedPositionId.length) {
-      fetchPanels(selectedPositionId);
-    }
-  }, [selectedPositionId]);
+useEffect(() => {
+
+  if (
+    !selectedPositionId.length ||
+    activeTab !== "INTERVIEW_POOL"
+  ) {
+    return;
+  }
+
+  fetchPanels(selectedPositionId);
+
+}, [
+  selectedPositionId.join(","),
+  activeTab
+]);
 
   const employmentTypeMap = React.useMemo(() => {
     const map = {};
