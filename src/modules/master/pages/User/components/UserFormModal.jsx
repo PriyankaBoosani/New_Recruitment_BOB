@@ -59,7 +59,12 @@ useEffect(() => {
 }, [show, mode, selectedUser]);
   /* ========================= INPUT HANDLER ========================= */
  const handleInputChange = (e) => {
-  const { name, value } = e.target;
+  let { name, value } = e.target;
+
+  if (name === "email") {
+    value = value.toLowerCase().trim();
+  }
+
 
   setErrors(prev => {
     const copy = { ...prev };

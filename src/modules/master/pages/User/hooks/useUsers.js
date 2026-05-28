@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import masterApiService from "../../../services/masterApiService";
-import { mapUsersFromApi} from "../mappers/userMapper";
+import { mapUsersFromApi } from "../mappers/userMapper";
 
 export const useUsers = () => {
   const { t } = useTranslation(["user"]);
@@ -29,36 +29,47 @@ export const useUsers = () => {
   };
 
   const fetchInteviewCentres = async () => {
-  setLoading(true);
-  try {
-    const res = await masterApiService.getAllInterviewCenters();
+    setLoading(true);
+    try {
+      const res = await masterApiService.getAllInterviewCenters();
+      if (res?.data) {
 
-    const centres = res?.data || [];  
+        const zonalOfficeCentres =
+          res.data.filter(
+            c => c.organizationType === "Zonal Office"
+          );
+
+        setInterviewCentres(zonalOfficeCentres);
+          console.log("test", zonalOfficeCentres)
+
+      }
     
-    setInterviewCentres(centres);
-  } catch (err) {
-    console.error("Interview centres fetch failed", err);
-    setInterviewCentres([]);
-  } finally {
-    setLoading(false);
-  }
-};
+      // const centres = res?.data || [];
 
-// const fetchRoles = async () => {
-//   setLoading(true);
-//   try {
-//     const res = await masterApiService.getRoles();
+      // setInterviewCentres(centres);
+    } catch (err) {
+      console.error("Interview centres fetch failed", err);
+      setInterviewCentres([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-//     const roles = res?.data || [];  
-    
-//     setRoles(roles);
-//   } catch (err) {
-//     console.error("Roles fetch failed", err);
-//     setRoles([]);
-//   } finally {
-//     setLoading(false);
-//   }
-// };
+  // const fetchRoles = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const res = await masterApiService.getRoles();
+
+  //     const roles = res?.data || [];  
+
+  //     setRoles(roles);
+  //   } catch (err) {
+  //     console.error("Roles fetch failed", err);
+  //     setRoles([]);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   useEffect(() => {
     fetchUsers();
     fetchInteviewCentres();
@@ -73,7 +84,7 @@ export const useUsers = () => {
       interviewCenterId: payload.interviewCenterId,
     };
 
-    
+
     try {
       await masterApiService.saveUser(
         payloadData
@@ -117,7 +128,7 @@ export const useUsers = () => {
   // ================= BULK UPLOAD =================
 
 
-    const bulkAddUsers = async (file) => {
+  const bulkAddUsers = async (file) => {
     setLoading(true);
     try {
       const res = await masterApiService.bulkAddUsers(file);
@@ -132,7 +143,7 @@ export const useUsers = () => {
       }
       // success
       toast.success(res.message || "File uploaded successfully");
-     fetchUsers();
+      fetchUsers();
 
       return {
         success: true
@@ -153,59 +164,59 @@ export const useUsers = () => {
       setLoading(false);
     }
   };
-// ================= DOWNLOAD TEMPLATE =================
-const downloadUserTemplate = async () => {
-  try {
-    const res = await masterApiService.downloadUserTemplate();
+  // ================= DOWNLOAD TEMPLATE =================
+  const downloadUserTemplate = async () => {
+    try {
+      const res = await masterApiService.downloadUserTemplate();
 
-    const blob = new Blob([res.data], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
+      const blob = new Blob([res.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
 
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "User_Template.xlsx";
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "User_Template.xlsx";
 
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
 
-    window.URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(url);
 
-  } catch (err) {
-    toast.error("Template download failed");
-  }
-};
+    } catch (err) {
+      toast.error("Template download failed");
+    }
+  };
 
-const updateUser = async (id, payload) => {
-  try {
-    const payloadData = {
-      role: payload.role,
-      name: payload.fullName,
-      email: payload.email,
-      interviewCenterId: payload.interviewCenterId,
-    };
-//console.log("payload",payloadData);return false;
-    await masterApiService.updateUser(id, payloadData);
+  const updateUser = async (id, payload) => {
+    try {
+      const payloadData = {
+        role: payload.role,
+        name: payload.fullName,
+        email: payload.email,
+        interviewCenterId: payload.interviewCenterId,
+      };
+      //console.log("payload",payloadData);return false;
+      await masterApiService.updateUser(id, payloadData);
 
-    toast.success(t("update_success"));
-    await fetchUsers();
+      toast.success(t("update_success"));
+      await fetchUsers();
 
-  } catch (err) {
-    toast.error("Failed to update user");
-    console.error("Update failed:", err);
-  }
-};
+    } catch (err) {
+      toast.error("Failed to update user");
+      console.error("Update failed:", err);
+    }
+  };
   return {
-  users,
-  loading,
-  fetchUsers,
-  addUser,
-   updateUser, 
-  deleteUser,
-  interviewCentres,
-  bulkAddUsers,
-  downloadUserTemplate
+    users,
+    loading,
+    fetchUsers,
+    addUser,
+    updateUser,
+    deleteUser,
+    interviewCentres,
+    bulkAddUsers,
+    downloadUserTemplate
   };
 };
