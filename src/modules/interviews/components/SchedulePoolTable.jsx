@@ -141,7 +141,7 @@ const SchedulePoolTable = ({
                 colSpan="8"
                 className="text-center py-4 text-muted fs-14"
               >
-                No candidates in Schedule Pool yet.
+                No candidates found.
               </td>
 
             </tr>
