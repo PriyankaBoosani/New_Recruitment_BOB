@@ -258,9 +258,9 @@ export default function CandidateScreening({ selectedJob }) {
   const [submittingApproval, setSubmittingApproval] = useState(false);
 
 
-const [activeTab, setActiveTab] = useState(
-  navActiveTab || "CANDIDATE_POOL"
-);
+const [activeTab, setActiveTab] = useState("");
+
+
 
 
   const [selectedCandidate, setSelectedCandidate] = useState(null);
@@ -1128,6 +1128,28 @@ if (tab.key === "COMPENSATION_POOL") {
   privileges,
   isContractPosition
 ]);
+
+
+useEffect(() => {
+
+  if (activeTab) return;
+
+  if (navActiveTab) {
+    setActiveTab(navActiveTab);
+    return;
+  }
+
+  if (accessibleTabs?.length) {
+    setActiveTab(accessibleTabs[0].key);
+  }
+
+}, [
+  activeTab,
+  accessibleTabs,
+  navActiveTab
+]);
+
+
 
 useEffect(() => {
   console.log("ACTIVE TAB:", activeTab);
