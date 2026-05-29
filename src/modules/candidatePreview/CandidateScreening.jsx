@@ -2682,21 +2682,32 @@ const handleOpenExaminationScore =
       }
 
       // SUMMARY API
-      const res =
-        await jobPositionApiService
-          .getExaminationSummary(
-            selectedPositionId
-          );
+     const res =
+  await jobPositionApiService
+    .getExaminationSummary(
+      selectedPositionId
+    );
 
-      console.log(
-        "SUMMARY API RESPONSE",
-        res
-      );
+    console.log(
+  "SUMMARY API DATA",
+  res?.data
+);
 
-      console.log(
-        "SUMMARY API DATA",
-        res?.data
-      );
+console.log(
+  "FIRST ITEM TOTAL QUALIFIED",
+  res?.data?.[0]
+    ?.totalQualifiedWithoutRelaxation
+);
+
+if (res?.success === false) {
+
+  toast.error(
+    res?.data ||
+    res?.message
+  );
+
+  return;
+}
 
       const summaryData =
         res?.data || [];
@@ -2782,12 +2793,13 @@ states:
         0
       ),
 
-    totalQualifiedCount:
-      stateSummary.categorySummaries?.reduce(
-        (sum, cat) =>
-          sum + (cat.qualified || 0),
-        0
-      )
+   totalQualifiedCount:
+  stateSummary.categorySummaries?.reduce(
+    (sum, cat) =>
+      sum +
+      (cat.qualifiedWithoutRelaxation || 0),
+    0
+  )
 
   })),
 
@@ -2801,8 +2813,8 @@ states:
         totalVacancyCount:
           apiSummary?.totalVacancyCount || 0,
 
-        totalQualifiedCount:
-          apiSummary?.totalQualifiedCount || 0,
+     totalQualifiedCount:
+  apiSummary?.totalQualifiedWithoutRelaxation || 0,
 
         isFinalized:
           apiSummary?.isFinalized || false
@@ -2824,20 +2836,18 @@ states:
         true
       );
 
-    } catch (err) {
+      } catch (err) {
 
-      console.error(
-        "SUMMARY API ERROR",
-        err
-      );
+    const errorResponse =
+      err?.response?.data;
 
-      toast.error(
-        err?.response?.data
-          ?.message ||
-        "Failed to load summary"
-      );
+    toast.error(
+      errorResponse?.data ||
+      errorResponse?.message ||
+      "Failed to load summary"
+    );
 
-    }
+  }
 
   };
 

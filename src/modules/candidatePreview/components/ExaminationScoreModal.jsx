@@ -42,6 +42,10 @@ const TableSection = ({
   totalQualifiedCount = 0
 }) => {
 
+  console.log(
+  "TABLE totalQualifiedCount",
+  totalQualifiedCount
+);
 
     const categoryMap = {};
 
@@ -343,6 +347,16 @@ const ExaminationScoreModal = ({
 
         {examinationScoreData.map(
   (item, index) => {
+
+    console.log(
+  "MODAL ITEM",
+  item
+);
+
+console.log(
+  "MODAL TOTAL QUALIFIED",
+  item?.totalQualifiedWithoutRelaxation
+);
 
    const hasConfig =
   examConfigMap?.[
@@ -715,9 +729,9 @@ console.log(
                   totalVacancyCount={
                     state.totalVacancyCount
                   }
-                  totalQualifiedCount={
-                    state.totalQualifiedCount
-                  }
+                   totalQualifiedCount={
+    item.totalQualifiedCount
+  }
                 />
 
               </div>
@@ -765,7 +779,7 @@ console.log(
   totalVacancyCount={
     item.totalVacancyCount
   }
-  totalQualifiedCount={
+ totalQualifiedCount={
     item.totalQualifiedCount
   }
 />
