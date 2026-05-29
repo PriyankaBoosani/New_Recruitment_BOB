@@ -82,6 +82,9 @@ import messagesHi from "../i18n/Messages/messages.hi.json";
 import stateLanguagesEn from "../i18n/json/stateLanguages.en.json";
 import stateLanguagesHi from "../i18n/json/stateLanguages.hi.json";
 
+import extensionsRequestsEn from "../i18n/ExtensionsRequests/extensionsRequests_en.json";
+import extensionsRequestsHi from "../i18n/ExtensionsRequests/extensionsRequests_hi.json";
+
 
 
 
@@ -118,6 +121,7 @@ i18n
         approvalHistory: ApprovalEn,
         messages: messagesEn,
         stateLanguages: stateLanguagesEn,
+        extensionsRequests: extensionsRequestsEn,
       },
       hi: {
         common: commonHi,
@@ -148,6 +152,7 @@ i18n
         approvalHistory: ApprovalHi,
         messages: messagesHi,
         stateLanguages: stateLanguagesHi,
+        extensionsRequests: extensionsRequestsHi,
       }
     },
     lng: "en",

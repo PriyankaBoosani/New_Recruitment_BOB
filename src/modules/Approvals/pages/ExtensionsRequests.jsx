@@ -36,7 +36,7 @@ import { FaLocationArrow } from "react-icons/fa";
 // import RequisitionPositionSelector from "../../candidatePreview/components/RequisitionPositionSelector";
 
 const ExtensionsRequests = () => {
-  const { t } = useTranslation(["jobPostingsList", "common"]);
+  const { t } = useTranslation(["jobPostingsList", "common", "extensionsRequests"]);
 
   const navigate = useNavigate();
   const [pageSize, setPageSize] = useState(10);
@@ -348,14 +348,14 @@ const ExtensionsRequests = () => {
       const res = await committeeManagementService.submitForL1L2Approval(payload);
 
       if (res?.success !== true) {
-        toast.error(res?.data || res?.message || "Failed to submit");
+        toast.error(res?.data || res?.message || t("extensionsRequests:failed_to_submit"));
         return;
       }
 
       toast.success(
         actionType === "approve"
-          ? "Submitted for approval successfully"
-          : "Submitted for rejection successfully"
+          ? t("extensionsRequests:submitted_for_approval_successfully")
+          : t("extensionsRequests:submitted_for_rejection_successfully")
       );
 
       setSelectedReqIds(new Set());
@@ -372,16 +372,18 @@ const ExtensionsRequests = () => {
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-        "Failed to submit"
+        t("extensionsRequests:failed_to_submit")
       );
     }
   };
 
   const handleOpenHistory = async (req) => {
     if (!req?.conversationThreadId) {
-      toast.error("Conversation thread id not found");
-      return;
-    }
+  toast.error(
+    t("extensionsRequests:conversation_thread_not_found")
+  );
+  return;
+}
 
     setSelectedHistoryReq(req);
     setShowHistoryModal(true);
@@ -447,9 +449,13 @@ const ExtensionsRequests = () => {
         {/* ================= HEADER ================= */}
         <Row className="mb-3 align-items-center">
           <Col>
-            <h5 className="page-title">{ isL1 ? "Extension/Zone Change Requests" : "Extension Requests"}</h5>
+            <h5 className="page-title">  {isL1
+              ? t("extensionsRequests:extension_zone_change_requests")
+              : t("extensionsRequests:extension_requests")}</h5>
             <p className="page-subtitle">
-             { isL1 ? " Review and approve or reject extension/zone change requests" : " Review and approve or reject extension requests"}
+              {isL1
+                ? t("extensionsRequests:review_extension_zone_change_requests")
+                : t("extensionsRequests:review_extension_requests")}
             </p>
           </Col>
 
@@ -464,10 +470,10 @@ const ExtensionsRequests = () => {
         <Row className="mb-3 align-items-end filters-row border rounded p-3 bulk-actions">
 
           <Col xs={12} md={4}>
-            <div className="field-label">Requisition</div>
+            <div className="field-label">  {t("extensionsRequests:requisition")}</div>
             <Select
 
-              placeholder="Select Requisition"
+              placeholder={t("extensionsRequests:select_requisition")}
               styles={selectStyles}
               classNamePrefix="react-select"
               menuPortalTarget={document.body}
@@ -484,11 +490,11 @@ const ExtensionsRequests = () => {
 
           {/* Position */}
           <Col xs={12} md={4}>
-            <div className="field-label">Position</div>
+            <div className="field-label"> {t("extensionsRequests:position")}</div>
             <Select
               styles={selectStyles}
               classNamePrefix="react-select"
-              placeholder="Select Position"
+              placeholder={t("extensionsRequests:select_position")}
               menuPortalTarget={document.body}
               options={positionOptions}
               isLoading={loadingPositions}
@@ -501,7 +507,7 @@ const ExtensionsRequests = () => {
             />
           </Col>
           <Col xs={12} md={2}>
-            <div className="field-label">Request Type</div>
+            <div className="field-label"> {t("extensionsRequests:request_type")}</div>
             <Form.Select
               className="status-select"
               value={selectedRequestType?.requestTypeId || "ALL"}
@@ -529,7 +535,7 @@ const ExtensionsRequests = () => {
             </Form.Select>
           </Col>
           <Col xs={12} md={2}>
-            <div className="field-label">Status</div>
+            <div className="field-label">{t("extensionsRequests:status")}</div>
             <Form.Select
               className="status-select"
               value={status}
@@ -570,7 +576,7 @@ const ExtensionsRequests = () => {
                 setShowCommentModal(true);
               }}
             >
-              Reject
+              {t("extensionsRequests:reject")}
             </Button>
 
             <Button
@@ -589,7 +595,7 @@ const ExtensionsRequests = () => {
                 setShowCommentModal(true);
               }}
             >
-              Approve
+              {t("extensionsRequests:approve")}
             </Button>
           </Col>
         </Row>
@@ -597,7 +603,9 @@ const ExtensionsRequests = () => {
         {/* ================= EXTENSION REQUEST CARDS ================= */}
         {paginatedData.length === 0 ? (
           <div className="text-center text-muted my-4">
-            {isL1 ? "No Extension/Zone Change requests found" : "No Extension requests found"}
+            {isL1
+              ? t("extensionsRequests:no_extension_zone_change_requests_found")
+              : t("extensionsRequests:no_extension_requests_found")}
           </div>
         ) : (
           <>
@@ -675,7 +683,7 @@ const ExtensionsRequests = () => {
 
                           <div className="user-meta">
                             <div className="reg-no">
-                              Application Number: {req.applicationNo || "-"}
+                              {t("extensionsRequests:application_number")}: {req.applicationNo || "-"}
                             </div>
 
                             <div className="date-row d-flex align-items-center gap-3">
@@ -696,7 +704,7 @@ const ExtensionsRequests = () => {
                               {/* Time */}
                               <div className="d-flex align-items-center gap-1">
                                 {/* <i className="bi bi-clock icon-14"></i> */}
-                                 <img
+                                <img
                                   src={end_icon}
                                   alt="end_icon"
                                   className="icon-14"
@@ -725,7 +733,7 @@ const ExtensionsRequests = () => {
 
                         <div>
                           <div className="field-label">
-                            Extension Date
+                            {t("extensionsRequests:extension_date")}
                           </div>
 
                           <div className="field-value">
@@ -751,7 +759,7 @@ const ExtensionsRequests = () => {
 
                         <div>
                           <div className="field-label">
-                            Request Type
+                            {t("extensionsRequests:request_type")}
                           </div>
 
                           <div className="field-value">
@@ -778,7 +786,7 @@ const ExtensionsRequests = () => {
 
                           <div>
                             <div className="field-label">
-                              Zone Change
+                              {t("extensionsRequests:zone_change")}
                             </div>
 
                             <div className="field-value">
@@ -832,7 +840,7 @@ const ExtensionsRequests = () => {
             <Col className="d-flex justify-content-end align-items-center gap-3">
               {/* Page size */}
               <div className="d-flex align-items-center gap-2">
-                <span className="fw-semibold pagesize">Page Size:</span>
+                <span className="fw-semibold pagesize">{t("extensionsRequests:page_size")}:</span>
                 <Form.Select
                   size="sm"
                   style={{ width: "90px" }}

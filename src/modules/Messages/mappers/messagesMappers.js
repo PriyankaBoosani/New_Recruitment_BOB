@@ -33,12 +33,18 @@ export const mapMessagesData = (
         positions.find(
           (p) => p.jobPositions?.positionId === item?.positionId
         )?.masterPositions?.positionName || "-",
+      // date: createdDate
+      //   ? `${String(createdDate.getDate()).padStart(2, "0")}-${String(
+      //     createdDate.getMonth() + 1
+      //   ).padStart(2, "0")}-${String(
+      //     createdDate.getFullYear()
+      //   ).slice(-2)}`
+      //   : "-",
+
       date: createdDate
         ? `${String(createdDate.getDate()).padStart(2, "0")}-${String(
           createdDate.getMonth() + 1
-        ).padStart(2, "0")}-${String(
-          createdDate.getFullYear()
-        ).slice(-2)}`
+        ).padStart(2, "0")}-${createdDate.getFullYear()}`
         : "-",
       time: createdDate
         ? createdDate.toLocaleTimeString([], {
@@ -47,14 +53,22 @@ export const mapMessagesData = (
           hour12: true
         })
         : "-",
+      // dateExtension: item?.dateExtension
+      //   ? `${String(
+      //     new Date(item.dateExtension).getDate()
+      //   ).padStart(2, "0")}-${String(
+      //     new Date(item.dateExtension).getMonth() + 1
+      //   ).padStart(2, "0")}-${String(
+      //     new Date(item.dateExtension).getFullYear()
+      //   ).slice(-2)}`
+      //   : "-",
+
       dateExtension: item?.dateExtension
         ? `${String(
           new Date(item.dateExtension).getDate()
         ).padStart(2, "0")}-${String(
           new Date(item.dateExtension).getMonth() + 1
-        ).padStart(2, "0")}-${String(
-          new Date(item.dateExtension).getFullYear()
-        ).slice(-2)}`
+        ).padStart(2, "0")}-${new Date(item.dateExtension).getFullYear()}`
         : "-",
       status: (() => {
         switch (item?.status) {
