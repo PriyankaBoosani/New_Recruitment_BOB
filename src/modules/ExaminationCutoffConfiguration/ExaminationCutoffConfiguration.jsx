@@ -274,6 +274,9 @@ return mappedData;
 
       setSelectedPositionId([]);
 
+      setConfigurations([]);
+  setHasExistingConfiguration(false);
+
       if (!reqId) {
         setPositions([]);
         return;

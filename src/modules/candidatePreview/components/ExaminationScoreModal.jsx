@@ -729,9 +729,9 @@ console.log(
                   totalVacancyCount={
                     state.totalVacancyCount
                   }
-                   totalQualifiedCount={
-    item.totalQualifiedCount
-  }
+              totalQualifiedCount={
+  state.totalQualifiedCount
+}
                 />
 
               </div>
