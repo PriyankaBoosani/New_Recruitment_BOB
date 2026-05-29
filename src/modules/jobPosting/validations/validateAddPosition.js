@@ -60,7 +60,7 @@ const validateDuplicate = ({ formData, existingPositions, isEditMode, positionId
   }
 };
 
-const validateNumbers = (formData, errors) => {
+const validateNumbers = (formData, errors, isContractEmployment) => {
   const numericChecks = [
     ["vacancies", "Vacancies"],
     ["minAge", "Min age"],
@@ -75,16 +75,21 @@ const validateNumbers = (formData, errors) => {
     if (err) errors[key] = err;
   });
 
-  const contractErr = validatePositiveInteger({
-    value: formData.contractualPeriod,
-    fieldName: "Contractual period",
-    required: false,
-    allowZero: true,
-  });
+  if (isContractEmployment) {
+    const contractErr = validatePositiveInteger({
+      value: formData.contractualPeriod,
+      fieldName: "Contractual period",
+      required: true,
+      allowZero: false,
+    });
 
-  if (contractErr) errors.contractualPeriod = contractErr;
+    if (contractErr) {
+      errors.contractualPeriod = contractErr;
+    }
+  } else {
+    delete errors.contractualPeriod;
+  }
 };
-
 const validateAge = (formData, errors) => {
   const minAge = Number(formData.minAge);
   const maxAge = Number(formData.maxAge);
@@ -262,7 +267,8 @@ export const validateAddPosition = (params) => {
     nationalDisabilities,
     stateDistributions,
     existingPositions,
-    positionId
+    positionId,
+    isContractEmployment
   } = params;
 
   const errors = {};
@@ -277,7 +283,7 @@ export const validateAddPosition = (params) => {
   validateBasicFields(formData, errors);
   validateDuplicate({ formData, existingPositions, isEditMode, positionId, errors });
 
-  validateNumbers(formData, errors);
+  validateNumbers(formData, errors, isContractEmployment);
   validateAge(formData, errors);
 
   validateEducation(educationData, errors);

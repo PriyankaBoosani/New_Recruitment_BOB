@@ -4136,7 +4136,7 @@ navigate(
 
                     applicationId: candidate.applicationId,
 
-                    positionId: selectedPositionId,
+                    positionId: candidate.positionId,
 
                     requisitionId: selectedRequisitionId,
 

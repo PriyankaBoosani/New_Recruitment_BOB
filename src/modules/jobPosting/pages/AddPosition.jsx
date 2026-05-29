@@ -177,8 +177,10 @@ const AddPosition = () => {
 
     }, [existingPosition]);
     useEffect(() => {
-        if (existingPosition && positionsByReq[requisitionId]) {
-            const match = positionsByReq[requisitionId].find(
+        const reqKey = `${isDraft ? parentRequisitionId : requisitionId}_${isDraft}`;
+
+        if (existingPosition && positionsByReq[reqKey]) {
+            const match = positionsByReq[reqKey].find(
                 p => p.indentName === existingPosition.indentName
             );
 
@@ -448,6 +450,7 @@ const AddPosition = () => {
         "contractualPeriod"
     ];
 
+
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
 
@@ -490,9 +493,12 @@ const AddPosition = () => {
             [name]: type === "checkbox" ? checked : finalValue
         }));
 
+
         //  SPECIAL CASE: department change clears position error
         if (name === "department") {
-            const matches = positionsByReq[requisitionId]?.filter(
+            const reqKey = `${isDraft ? parentRequisitionId : requisitionId}_${isDraft}`;
+
+            const matches = positionsByReq[reqKey]?.filter(
                 p => String(p.deptId) === String(value)
             ) || [];
 
@@ -501,6 +507,12 @@ const AddPosition = () => {
             );
 
             setIndentCandidates(uniqueMatches);
+
+            if (uniqueMatches.length > 0) {
+                setShowIndentModal(true);
+            }
+
+            console.log("dept", value, "matches", matches, "unique", uniqueMatches);
 
             // clear position when department changes
             setFormData(prev => ({
@@ -545,6 +557,21 @@ const AddPosition = () => {
         }
         if (name === "vacancies") {
             setErrors(prev => ({ ...prev, vacancies: "", nationalDistribution: "" }));
+        }
+        if (name === "employmentType") {
+            setFormData(prev => ({
+                ...prev,
+                employmentType: finalValue,
+                contractualPeriod: ""
+            }));
+
+            setErrors(prev => ({
+                ...prev,
+                employmentType: "",
+                contractualPeriod: ""
+            }));
+
+            return;
         }
     };
     const handleUseIndent = (pos) => {
@@ -747,7 +774,7 @@ const AddPosition = () => {
                 language: "",
                 categories: {},
                 disabilities: {}
-            }); 
+            });
             setErrors(prev => ({
                 ...prev,
                 state: "",
@@ -779,6 +806,11 @@ const AddPosition = () => {
         setEditingIndex(null);
 
     };
+    const isContractEmployment = employmentTypes.some(
+        t =>
+            String(t.id) === String(formData.employmentType) &&
+            t.label?.toLowerCase().includes("contract")
+    );
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -796,7 +828,9 @@ const AddPosition = () => {
             nationalDisabilities,
             stateDistributions,
             existingPositions: positionsByReq[requisitionId] || [],
-            positionId
+            positionId,
+            isContractEmployment
+
         });
 
         if (Object.keys(validationErrors).length > 0) {

@@ -518,11 +518,15 @@ const PositionForm = ({
             <ErrorMessage>{renderError(errors.employmentType)}</ErrorMessage>
           </Col>
 
-          <Col md={4}><Form.Label>{t("addPosition:contractual_period")}</Form.Label><Form.Control name="contractualPeriod" placeholder={
+          <Col md={4}><Form.Label>{t("addPosition:contractual_period")}{isContractEmployment && (<span className="text-danger">*</span>)}</Form.Label><Form.Control name="contractualPeriod" placeholder={
             isContractEmployment
               ? t("addPosition:enter_contractual_period")
               : ""
-          } type="text" inputMode="numeric" value={isContractEmployment ? formData.contractualPeriod : ""} onChange={handleInputChange} disabled={!isContractEmployment || isViewMode || isFieldDisabled("contractualPeriod")} /></Col>
+          } type="text" inputMode="numeric" value={isContractEmployment ? formData.contractualPeriod : ""} onChange={handleInputChange} disabled={!isContractEmployment || isViewMode || isFieldDisabled("contractualPeriod")} />
+            <ErrorMessage>
+              {renderError(errors.contractualPeriod)}
+            </ErrorMessage>
+          </Col>
           <Col md={4}>
             <Form.Label className="d-flex align-items-center gap-2">
               {t("addPosition:grade_scale")} <span className="text-danger">*</span>
@@ -757,7 +761,7 @@ const PositionForm = ({
                               });
                             }}
                           >
-                             {t("addPosition:add_education_level_experience")}
+                            {t("addPosition:add_education_level_experience")}
                           </Button>
                         )}
 
