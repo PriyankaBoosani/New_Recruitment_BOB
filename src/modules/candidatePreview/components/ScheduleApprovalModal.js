@@ -27,8 +27,7 @@ const ScheduleApprovalModal = ({
 
       <Modal.Body>
 
-        Please check the scheduled details
-        before approval.
+        Please review the scheduled details before submitting for approval.
 
       </Modal.Body>
 
@@ -48,7 +47,7 @@ const ScheduleApprovalModal = ({
         >
           {loading
             ? "Submitting..."
-            : "Approve"}
+            : "Submit"}
         </button>
 
       </Modal.Footer>
