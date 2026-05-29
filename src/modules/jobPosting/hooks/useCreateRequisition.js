@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import requisitionApiService from "../services/requisitionApiService";
 import { REQUISITION_CONFIG } from "../config/requisitionConfig";
 
-export const useCreateRequisition = (editId, mode, isDraftView = false) => {
+export const useCreateRequisition = (editId, mode, isDraftMode = false) => {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState(null);
@@ -29,7 +29,7 @@ useEffect(() => {
 
     try {
 
-      const res = isDraftView
+      const res = isDraftMode
         ? await requisitionApiService.getCurrentDraftRequisition(editId)
         : await requisitionApiService.getRequisitionById(editId);
 
@@ -76,7 +76,7 @@ useEffect(() => {
 
   loadData();
 
-}, [editId, mode, isDraftView]);
+}, [editId, mode, isDraftMode]);
 
 
   // Handle Input Changes

@@ -874,7 +874,8 @@ const JobPostingsList = () => {
                                                             state: {
                                                                 mode: "clone",
                                                                 isDraftEdit: true,
-                                                                draftId: req.id
+                                                                draftId: req.id,
+                                                                parentRequisitionId: req.parentRequisitionId
                                                             }
                                                         }
                                                     );

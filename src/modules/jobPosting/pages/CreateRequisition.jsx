@@ -37,7 +37,9 @@ const CreateRequisition = () => {
   const isReinitializeMode = mode === "reinitialize";
   const isDraftView = location.state?.isDraftView;
   const isDraftEdit = location.state?.isDraftEdit;
+  const isDraftMode = isDraftView || isDraftEdit;
   const draftId = location.state?.draftId;
+  const parentRequisitionId = location.state?.parentRequisitionId;
 
   const handleCancel = () => {
     if (from === "approval") {
@@ -56,7 +58,7 @@ const CreateRequisition = () => {
     fetching,
     error: apiError,
     requisitionData
-  } = useCreateRequisition(editId, mode, isDraftView);
+  } = useCreateRequisition(editId, mode, isDraftMode);
 
   const [errors, setErrors] = useState({});
   /* ===================== SAVE ===================== */
@@ -119,7 +121,7 @@ useEffect(() => {
     if (isDraftEdit) {
 
       await requisitionApiService.editDraftRequisition(
-        draftId,
+        parentRequisitionId,
         positionIds
       );
 
@@ -130,7 +132,7 @@ useEffect(() => {
       };
 
       await requisitionApiService.saveDraftDetails(
-        draftId,
+        parentRequisitionId,
         draftPayload
       );
 
