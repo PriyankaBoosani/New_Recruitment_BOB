@@ -1623,6 +1623,38 @@ const ApplicationForm = ({
 
 
   useEffect(() => {
+  const allVerified = areAllDocumentsVerified();
+
+  if (
+    zonalDecision === "YES" &&
+    !allVerified
+  ) {
+    setZonalDecision("");
+  }
+
+  if (
+    zonalDecision === "PROVISIONALLY_APPROVED" &&
+    allVerified
+  ) {
+    setZonalDecision("");
+
+    setScreeningForm(prev => ({
+      ...prev,
+      zonalSubmitDate: ""
+    }));
+
+    setScreeningRemarks("");
+
+    setErrors(prev => ({
+      ...prev,
+      zonalSubmitDate: undefined,
+      zonalComments: undefined
+    }));
+  }
+}, [docStatusMap]);
+
+
+  useEffect(() => {
     if (zonalInitRef.current) {
       zonalInitRef.current = false;
       return;
