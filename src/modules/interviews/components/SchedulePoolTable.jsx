@@ -102,23 +102,23 @@ const SchedulePoolTable = ({
             </th>
 
 
-            <th className="fs-14 fw-normal py-3 ps-4">
+            <th className="fs-14 fw-normal py-3">
               {t("common:date")}
             </th>
 
-            <th className="fs-14 fw-normal py-3 ps-4">
+            <th className="fs-14 fw-normal py-3">
               {t("common:time")}
             </th>
 
-            <th className="fs-14 fw-normal py-3 ps-4">
+            <th className="fs-14 fw-normal py-3">
               {t("candidateWorkflow:zone")}
             </th>
 
-            <th className="fs-14 fw-normal py-3 ps-4">
+            <th className="fs-14 fw-normal py-3">
               {t("candidateWorkflow:panel_details")}
             </th>
 
-            <th className="fs-14 fw-normal py-3 ps-4">
+            <th className="fs-14 fw-normal py-3   ">
               {t("candidateWorkflow:interview_status")}
 
             </th>
