@@ -226,28 +226,43 @@ export default function ExaminationCutoffTable({
 <button
   className="icon-btn"
   disabled={
-    item.status !== "PENDING"
+    ![
+      "PENDING",
+      "L1_REJECTED",
+      "L2_REJECTED"
+    ].includes(item.status)
   }
   style={{
     opacity:
-      item.status !== "PENDING"
+      ![
+        "PENDING",
+        "L1_REJECTED",
+        "L2_REJECTED"
+      ].includes(item.status)
         ? 0.5
         : 1,
     cursor:
-      item.status !== "PENDING"
+      ![
+        "PENDING",
+        "L1_REJECTED",
+        "L2_REJECTED"
+      ].includes(item.status)
         ? "not-allowed"
         : "pointer"
   }}
   onClick={() => {
 
     if (
-      item.status !== "PENDING"
+      ![
+        "PENDING",
+        "L1_REJECTED",
+        "L2_REJECTED"
+      ].includes(item.status)
     ) {
       return;
     }
 
-    onEdit &&
-      onEdit(item);
+    onEdit && onEdit(item);
 
   }}
 >

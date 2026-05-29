@@ -1156,20 +1156,25 @@ const sectionsPayload =
 
 const validateCutoffValue = (value) => {
 
-  // allow empty
   if (value === "") return "";
 
-  // remove special characters
-  let cleanedValue = value.replace(/[^0-9]/g, "");
+  let cleanedValue =
+    value.replace(/[^0-9]/g, "");
 
-  // convert to number
-  const numericValue = Number(cleanedValue);
+  const numericValue =
+    Number(cleanedValue);
 
-  // prevent negative and max > 100
-  if (numericValue < 0) return "";
+  if (numericValue < 0) {
+    return "";
+  }
 
   if (numericValue > 100) {
-    return "100";
+
+    toast.warning(
+      "Cutoff % cannot exceed 100"
+    );
+
+    return "";
   }
 
   return cleanedValue;
