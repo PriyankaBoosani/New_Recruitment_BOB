@@ -47,11 +47,14 @@ export const mapMessagesData = (
         ).padStart(2, "0")}-${createdDate.getFullYear()}`
         : "-",
       time: createdDate
-        ? createdDate.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true
-        })
+        ? createdDate
+          .toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+          })
+          .replace(/am/i, "AM")
+          .replace(/pm/i, "PM")
         : "-",
       // dateExtension: item?.dateExtension
       //   ? `${String(
@@ -131,18 +134,22 @@ export const mapMessagesData = (
           approvalDate: msgDate
             ? `${String(msgDate.getDate()).padStart(2, "0")}-${String(
               msgDate.getMonth() + 1
-            ).padStart(2, "0")}-${msgDate.getFullYear()} ${msgDate.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true
-            })}`
+            ).padStart(2, "0")}-${msgDate.getFullYear()} ${msgDate
+              .toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })
+              .toUpperCase()}`
             : "-",
           time: msgDate
-            ? msgDate.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true
-            })
+            ? msgDate
+              .toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })
+              .toUpperCase()
             : "-",
           file: false,
         };
