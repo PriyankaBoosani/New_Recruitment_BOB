@@ -11,13 +11,15 @@ const MessageActions = ({ item, onSubmitApproval }) => {
   const showReject = status === "PENDING" || status === "L1_PENDING";
   const disableAccept = status === "L1_PENDING";
   const disableReject = false;
-  const hideActions = ["REJECTED", "L2_PENDING", "L1_REJECTED", "APPROVED", "L2_REJECTED"].includes(status);
+  const hideActions = [
+    "REJECTED",
+    "L2_PENDING",
+    "L1_REJECTED",
+    "APPROVED",
+    "L2_REJECTED",
+  ].includes(status);
   const handleRejectConfirm = async () => {
-    await onSubmitApproval(
-      item.id,
-      "REJECTED",
-      comment
-    );
+    await onSubmitApproval(item.id, "REJECTED", comment);
     setShowRejectModal(false);
     setComment("");
     setError("");
@@ -30,8 +32,7 @@ const MessageActions = ({ item, onSubmitApproval }) => {
             <input
               type="text"
               placeholder={t("messages:send_message")}
-              className={`msg-input form-control ${error ? "is-invalid" : ""
-                }`}
+              className={`msg-input form-control ${error ? "is-invalid" : ""}`}
               value={comment}
               onChange={(e) => {
                 setComment(e.target.value);
@@ -42,9 +43,7 @@ const MessageActions = ({ item, onSubmitApproval }) => {
               }}
             />
             {error && (
-              <small className="text-danger d-block mt-1">
-                {error}
-              </small>
+              <small className="text-danger d-block mt-1">{error}</small>
             )}
           </div>
           {showAccept && (
@@ -56,11 +55,7 @@ const MessageActions = ({ item, onSubmitApproval }) => {
                   setError(t("messages:this_field_required"));
                   return;
                 }
-                await onSubmitApproval(
-                  item.id,
-                  "L1_PENDING",
-                  comment
-                );
+                await onSubmitApproval(item.id, "L1_PENDING", comment);
                 setComment("");
                 setError("");
               }}
@@ -94,9 +89,7 @@ const MessageActions = ({ item, onSubmitApproval }) => {
         >
           <Modal.Body className="del-body">
             <div className="del-header">
-              <div className="del-title">
-                {t("messages:confirm_reject")}
-              </div>
+              <div className="del-title">{t("messages:confirm_reject")}</div>
               <button
                 className="del-close"
                 onClick={() => setShowRejectModal(false)}
@@ -117,10 +110,7 @@ const MessageActions = ({ item, onSubmitApproval }) => {
               >
                 {t("common:cancel")}
               </button>
-              <button
-                className="del-delete"
-                onClick={handleRejectConfirm}
-              >
+              <button className="del-delete" onClick={handleRejectConfirm}>
                 {t("messages:reject")}
               </button>
             </div>

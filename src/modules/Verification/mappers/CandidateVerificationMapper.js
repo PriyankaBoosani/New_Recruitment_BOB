@@ -6,7 +6,7 @@ const STATUS_MAP = {
   REJECTED: "Rejected",
   PROVISIONALLY_APPROVED: "Provisionally Approved",
   ZONAL_ABSENT: "Zonal Absent",
-  ZONAL_REJECTED: "Zonal Rejected", 
+  ZONAL_REJECTED: "Zonal Rejected",
 };
 
 /* ================= TIME FORMAT ================= */
@@ -37,9 +37,6 @@ const formatTime = (s, e) => {
   return `${startStr} – ${endStr}`;
 };
 
-
-
-
 /* ================= REQUISITIONS DROPDOWN ================= */
 
 export const mapUniqueRequisitionsToDropdown = (list = []) => {
@@ -52,7 +49,7 @@ export const mapUniqueRequisitionsToDropdown = (list = []) => {
     if (!map.has(req.id)) {
       map.set(req.id, {
         value: req.id,
-       label: `${req.requisitionCode} - ${req.requisitionTitle}`,
+        label: `${req.requisitionCode} - ${req.requisitionTitle}`,
         raw: {
           requisition_id: req.id,
           requisition_title: req.requisitionTitle,
@@ -66,9 +63,6 @@ export const mapUniqueRequisitionsToDropdown = (list = []) => {
 
   return Array.from(map.values());
 };
-
-
-
 
 /* ================= POSITIONS DROPDOWN ================= */
 
@@ -100,10 +94,6 @@ export const mapUniquePositionsToDropdown = (list = [], requisitionId) => {
   return Array.from(map.values());
 };
 
-
-
-
-
 /* ================= TABLE ROW MAPPING ================= */
 
 export const mapCandidatesToTableRows = (list = []) => {
@@ -128,10 +118,7 @@ export const mapCandidatesToTableRows = (list = []) => {
       name: row.candidateFullName || cand.fullName || "-",
       regNo: app.applicationNo,
       category: cat.categoryCode || "-",
-      time: formatTime(
-        sched.interviewStartAt,
-        sched.interviewEndAt
-      ),
+      time: formatTime(sched.interviewStartAt, sched.interviewEndAt),
       zone: zone.displayName || "-",
 
       /* ===== STATE TRACKING ===== */
@@ -144,36 +131,35 @@ export const mapCandidatesToTableRows = (list = []) => {
 
       /* ===== RAW FLATTENED — USED BY UI ===== */
 
-    raw: {
-  interviewScheduleId: sched.interviewScheduleId,
-  interviewStartAt: sched.interviewStartAt,
-  interviewEndAt: sched.interviewEndAt,
-  zonalVerificationStatus: sched.zonalVerificationStatus,
-    zonalSubmitBeforeDate: sched.zonalSubmitBeforeDate,
+      raw: {
+        interviewScheduleId: sched.interviewScheduleId,
+        interviewStartAt: sched.interviewStartAt,
+        interviewEndAt: sched.interviewEndAt,
+        zonalVerificationStatus: sched.zonalVerificationStatus,
+        zonalSubmitBeforeDate: sched.zonalSubmitBeforeDate,
 
-  applicationId: sched.applicationId,
-  candidateId: sched.candidateId,
+        applicationId: sched.applicationId,
+        candidateId: sched.candidateId,
 
-  //  SAME ID SYSTEM AS DROPDOWN
-  positionId: app.positionId,
+        //  SAME ID SYSTEM AS DROPDOWN
+        positionId: app.positionId,
 
-   zonalHrComments: sched.zonalHrComments, 
-     // ✅ ADD THESE
-  lptRequired: sched.lptRequired,
-  lptStatus: sched.lptStatus,
+        zonalHrComments: sched.zonalHrComments,
+        // ✅ ADD THESE
+        lptRequired: sched.lptRequired,
+        lptStatus: sched.lptStatus,
 
-  requisitionId: req.id,
-  requisitionTitle: req.requisitionTitle,
-  requisitionCode: req.requisitionCode,
-  requisitionStartDate: req.startDate,
-  requisitionEndDate: req.endDate,
+        requisitionId: req.id,
+        requisitionTitle: req.requisitionTitle,
+        requisitionCode: req.requisitionCode,
+        requisitionStartDate: req.startDate,
+        requisitionEndDate: req.endDate,
 
-  positionTitle: pos.positionName,
-  zonalOfficeName: zone.interviewCentre,
-  categoryCode: cat.categoryCode,
-  resumeUrl: row.resumeUrl,
-}
-
+        positionTitle: pos.positionName,
+        zonalOfficeName: zone.interviewCentre,
+        categoryCode: cat.categoryCode,
+        resumeUrl: row.resumeUrl,
+      },
     };
   });
 };

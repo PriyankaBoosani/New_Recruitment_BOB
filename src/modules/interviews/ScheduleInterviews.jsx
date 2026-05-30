@@ -10,10 +10,8 @@ import InterviewPanelsConfig from "../interviews/components/InterviewPanelsConfi
 import InterviewScheduleTable from "../interviews/components/InterviewScheduleTable";
 import useInterviewSchedule from "../interviews/hooks/useInterviewSchedule";
 import ScheduleReadyBar from "../interviews/components/ScheduleReadyBar";
-import RequisitionStripformultiplepositions
-  from "../candidatePreview/components/RequisitionStripformultiplepositions";
-import DropdownStripMultipleposition
-  from "../candidatePreview/components/DropdownStripMultipleposition";
+import RequisitionStripformultiplepositions from "../candidatePreview/components/RequisitionStripformultiplepositions";
+import DropdownStripMultipleposition from "../candidatePreview/components/DropdownStripMultipleposition";
 import { toast } from "react-toastify";
 
 import "../../style/css/CandidateScreening.css";
@@ -24,7 +22,6 @@ const ScheduleInterviews = () => {
   const navigate = useNavigate();
 
   /* ================= STATE ================= */
-
 
   //const [startTime, setStartTime] = useState("");
   const [scheduledCount, setScheduledCount] = useState(0);
@@ -38,25 +35,20 @@ const ScheduleInterviews = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  const [showCentreConfirmModal, setShowCentreConfirmModal] =
-    useState(false);
-  const [pendingApplyData, setPendingApplyData] =
-    useState(null);
+  const [showCentreConfirmModal, setShowCentreConfirmModal] = useState(false);
+  const [pendingApplyData, setPendingApplyData] = useState(null);
 
   const [centreRows, setCentreRows] = useState([
     {
       allocatedCentreId: "",
-      replacedCentreId: ""
-    }
+      replacedCentreId: "",
+    },
   ]);
-
 
   const location = useLocation();
   const state = location.state || {};
-  const isEditMode =
-    location.state?.isEditMode;
-  const isReschedule =
-    location.state?.isReschedule;
+  const isEditMode = location.state?.isEditMode;
+  const isReschedule = location.state?.isReschedule;
   const {
     schedule,
     updateRow,
@@ -73,50 +65,40 @@ const ScheduleInterviews = () => {
     applySchedule,
     scheduleApiData,
     scheduleInterview,
-    allInterviewCentres
+    allInterviewCentres,
   } = useInterviewSchedule(isEditMode, isReschedule);
-  console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId)
+  console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId);
 
-  console.log("All interviews centres:", allInterviewCentres)
-  const selectedRequisition =
-    requisitions.find(r => r.id === selectedRequisitionId);
+  console.log("All interviews centres:", allInterviewCentres);
+  const selectedRequisition = requisitions.find(
+    (r) => r.id === selectedRequisitionId
+  );
 
   const normalizedRequisition = selectedRequisition
     ? {
-      requisition_id: selectedRequisition.id,
-      requisition_code: selectedRequisition.requisitionCode,
-      requisition_title: selectedRequisition.requisitionTitle,
-      registration_start_date: selectedRequisition.startDate,
-      registration_end_date: selectedRequisition.endDate,
-    }
+        requisition_id: selectedRequisition.id,
+        requisition_code: selectedRequisition.requisitionCode,
+        requisition_title: selectedRequisition.requisitionTitle,
+        registration_start_date: selectedRequisition.startDate,
+        registration_end_date: selectedRequisition.endDate,
+      }
     : null;
 
   // const selectedPosition =
   //   positions.find(p => p.jobPositions?.positionId === selectedPositionId);
 
-
-
   //from schedule pool
 
-  const schedulePoolData =
-    location.state?.schedulePoolData;
+  const schedulePoolData = location.state?.schedulePoolData;
 
-  console.log("schedulePoolData", schedulePoolData)
+  console.log("schedulePoolData", schedulePoolData);
 
+  const selectedPanelsFromEdit = location.state?.selectedPanels || [];
 
-  const selectedPanelsFromEdit =
-    location.state?.selectedPanels || [];
-
-  console.log('isEditMode', isEditMode)
-
-
+  console.log("isEditMode", isEditMode);
 
   useEffect(() => {
-
-    if (
-      !isEditMode ||
-      !schedulePoolData?.length
-    ) {
+    if (!isEditMode || !schedulePoolData?.length) {
       return;
     }
 
@@ -139,283 +121,177 @@ const ScheduleInterviews = () => {
 
     //   }));
 
-    const mappedRows =
-      schedulePoolData.map(item => ({
+    const mappedRows = schedulePoolData.map((item) => ({
+      id: item.id,
 
-        id: item.id,
+      // ✅ IMPORTANT FOR RESCHEDULE
+      applicationId: item.applicationId,
 
-        // ✅ IMPORTANT FOR RESCHEDULE
-        applicationId:
-          item.applicationId,
+      interviewCenterId: item.interviewCenterId,
 
-        interviewCenterId:
-          item.interviewCenterId,
+      panelId: item.panelId,
 
-        panelId:
-          item.panelId,
+      duration: item.duration,
 
-        duration:
-          item.duration,
+      perDay: item.perDay,
 
-        perDay:
-          item.perDay,
+      startTime: item.startTime,
 
-        startTime:
-          item.startTime,
+      endTime: item.endTime,
 
-        endTime:
-          item.endTime,
+      rawDate: item.rawDate,
 
-        rawDate:
-          item.rawDate,
+      // TABLE DATA
+      name: item.name,
 
-        // TABLE DATA
-        name:
-          item.name,
+      regNo: item.regNo,
 
-        regNo:
-          item.regNo,
+      date: item.date,
 
-        date:
-          item.date,
+      time: item.time,
 
-        time:
-          item.time,
+      zone: item.zone,
 
-        zone:
-          item.zone,
-
-        panel:
-            item.panel,
-            positionId: item.positionId
-
-      }));
+      panel: item.panel,
+      positionId: item.positionId,
+    }));
 
     setSchedule(mappedRows);
 
     setScheduledCount(mappedRows.length);
 
     //setShowReadyBar(true);
-
   }, [isEditMode, schedulePoolData]);
 
   //end
 
-  const selectedPosition = positions.filter(p =>
-    selectedPositionId?.includes(
-      p.jobPositions?.positionId
-    )
+  const selectedPosition = positions.filter((p) =>
+    selectedPositionId?.includes(p.jobPositions?.positionId)
   );
-  const isSelectionDone =
-    selectedRequisition &&
-    selectedPosition.length > 0;
+  const isSelectionDone = selectedRequisition && selectedPosition.length > 0;
   console.log("passedCandidates", passedCandidates);
-  const sourceCandidates = isEditMode
-    ? schedulePoolData
-    : passedCandidates;
+  const sourceCandidates = isEditMode ? schedulePoolData : passedCandidates;
   console.log("sourceCandidates", sourceCandidates);
   const uniqueAllocatedCentres = [
     ...new Map(
-      sourceCandidates.map(candidate => [
-
-        isEditMode
-          ? candidate.interviewCenterId
-          : candidate.interviewCenterId,
+      sourceCandidates.map((candidate) => [
+        isEditMode ? candidate.interviewCenterId : candidate.interviewCenterId,
 
         {
-          interviewCentreId:
-            isEditMode
-              ? candidate.interviewCenterId
-              : candidate.interviewCenterId,
+          interviewCentreId: isEditMode
+            ? candidate.interviewCenterId
+            : candidate.interviewCenterId,
 
-          interviewCentre:
-            isEditMode
-              ? candidate.zone
-              : candidate.interviewCenterName
-        }
-
+          interviewCentre: isEditMode
+            ? candidate.zone
+            : candidate.interviewCenterName,
+        },
       ])
-    ).values()
+    ).values(),
   ];
 
-const panelNameMap = {};
+  const panelNameMap = {};
 
-(schedulePoolData || []).forEach(item => {
+  (schedulePoolData || []).forEach((item) => {
+    if (item?.panelId && item?.panel) {
+      panelNameMap[item.panelId] = item.panel;
+    }
+  });
 
-  if (
-    item?.panelId &&
-    item?.panel
-  ) {
+  const rebuiltSelectedPanels = Object.values(
+    (schedulePoolData || []).reduce((acc, item) => {
+      const configurations = item.panelScheduleConfigurations || [];
 
-    panelNameMap[item.panelId] =
-      item.panel;
+      configurations.forEach((config) => {
+        const panelId = config?.panelId;
 
-  }
+        if (!panelId) return;
 
-});
+        const panelName = panelNameMap[panelId] || "";
 
-const rebuiltSelectedPanels = Object.values(
+        // ✅ create panel group
+        if (!acc[panelId]) {
+          acc[panelId] = {
+            id: panelId,
 
-  (schedulePoolData || []).reduce((acc, item) => {
+            name: panelName,
 
-    const configurations =
-      item.panelScheduleConfigurations || [];
-
-    configurations.forEach(config => {
-
-      const panelId =
-        config?.panelId;
-
-      if (!panelId) return;
-
-      const panelName =
-        panelNameMap[panelId] || "";
-
-      // ✅ create panel group
-      if (!acc[panelId]) {
-
-        acc[panelId] = {
-
-          id: panelId,
-
-          name: panelName,
-
-          slots: []
-
-        };
-
-      }
-
-      const slotDate =
-        config?.startDatetime
-          ?.split("T")[0];
-
-      if (!slotDate) return;
-
-      const startTime =
-        config?.startDatetime
-          ?.split("T")[1]
-          ?.slice(0, 5) || "";
-
-      const endTime =
-        config?.endDatetime
-          ?.split("T")[1]
-          ?.slice(0, 5) || "";
-
-      const duration =
-        String(
-          config?.durationMinutes || 15
-        );
-
-      // ✅ SAME PANEL + SAME DATE
-      const existingSlot =
-        acc[panelId].slots.find(
-          slot => slot.date === slotDate
-        );
-
-      // ================= MERGE =================
-
-      if (existingSlot) {
-
-        // earliest start
-        if (
-          startTime &&
-          startTime < existingSlot.startTime
-        ) {
-
-          existingSlot.startTime =
-            startTime;
-
+            slots: [],
+          };
         }
 
-        // latest end
-        if (
-          endTime &&
-          endTime > existingSlot.endTime
-        ) {
+        const slotDate = config?.startDatetime?.split("T")[0];
 
-          existingSlot.endTime =
-            endTime;
+        if (!slotDate) return;
 
+        const startTime =
+          config?.startDatetime?.split("T")[1]?.slice(0, 5) || "";
+
+        const endTime = config?.endDatetime?.split("T")[1]?.slice(0, 5) || "";
+
+        const duration = String(config?.durationMinutes || 15);
+
+        // ✅ SAME PANEL + SAME DATE
+        const existingSlot = acc[panelId].slots.find(
+          (slot) => slot.date === slotDate
+        );
+
+        // ================= MERGE =================
+
+        if (existingSlot) {
+          // earliest start
+          if (startTime && startTime < existingSlot.startTime) {
+            existingSlot.startTime = startTime;
+          }
+
+          // latest end
+          if (endTime && endTime > existingSlot.endTime) {
+            existingSlot.endTime = endTime;
+          }
+
+          // ✅ recalculate perDay
+          const start = new Date(`2000-01-01T${existingSlot.startTime}`);
+
+          const end = new Date(`2000-01-01T${existingSlot.endTime}`);
+
+          const diffMins = (end - start) / (1000 * 60);
+
+          existingSlot.perDay = String(
+            Math.floor(diffMins / Number(existingSlot.duration || 15))
+          );
         }
 
-        // ✅ recalculate perDay
-        const start =
-          new Date(
-            `2000-01-01T${existingSlot.startTime}`
-          );
+        // ================= NEW SLOT =================
+        else {
+          const start = new Date(`2000-01-01T${startTime}`);
 
-        const end =
-          new Date(
-            `2000-01-01T${existingSlot.endTime}`
-          );
+          const end = new Date(`2000-01-01T${endTime}`);
 
-        const diffMins =
-          (end - start) / (1000 * 60);
+          const diffMins = (end - start) / (1000 * 60);
 
-        existingSlot.perDay =
-          String(
-            Math.floor(
-              diffMins /
-              Number(existingSlot.duration || 15)
-            )
-          );
+          const perDay = String(Math.floor(diffMins / Number(duration || 15)));
 
-      }
+          acc[panelId].slots.push({
+            date: slotDate,
 
-      // ================= NEW SLOT =================
+            startTime,
 
-      else {
+            endTime,
 
-        const start =
-          new Date(
-            `2000-01-01T${startTime}`
-          );
+            duration,
 
-        const end =
-          new Date(
-            `2000-01-01T${endTime}`
-          );
+            perDay,
+          });
+        }
+      });
 
-        const diffMins =
-          (end - start) / (1000 * 60);
-
-        const perDay =
-          String(
-            Math.floor(
-              diffMins /
-              Number(duration || 15)
-            )
-          );
-
-        acc[panelId].slots.push({
-
-          date: slotDate,
-
-          startTime,
-
-          endTime,
-
-          duration,
-
-          perDay
-
-        });
-
-      }
-
-    });
-
-    return acc;
-
-  }, {})
-
-);
+      return acc;
+    }, {})
+  );
   /* ================= UI ================= */
   const sourceTab = state?.sourceTab || state?.activeTab || "CANDIDATE_POOL";
   return (
     <div className="container-fluid px-4 py-3 mb-5 pb-5">
-
       {/* ===== HEADER ===== */}
       {/* <HeaderWithBack
         title="Schedule Interviews"
@@ -428,12 +304,16 @@ const rebuiltSelectedPanels = Object.values(
         //subtitle={`Scheduling for ${state?.candidates?.length || 0} candidates`}
 
         subtitle={`Scheduling for ${
-  isEditMode
-    ? schedulePoolData?.length || 0
-    : passedCandidates?.length || 0
-} candidates`}
+          isEditMode
+            ? schedulePoolData?.length || 0
+            : passedCandidates?.length || 0
+        } candidates`}
         requisitionId={state.requisitionId}
-        positionId={Array.isArray(state.positionId) ? state.positionId[0] : state.positionId}
+        positionId={
+          Array.isArray(state.positionId)
+            ? state.positionId[0]
+            : state.positionId
+        }
         activeTab={sourceTab}
         onBack={() => {
           navigate("/candidate-workflow", {
@@ -448,7 +328,7 @@ const rebuiltSelectedPanels = Object.values(
               pageSize: state.pageSize,
               filters: state.filters,
               activeTab: sourceTab,
-            }
+            },
           });
         }}
       />
@@ -456,7 +336,6 @@ const rebuiltSelectedPanels = Object.values(
       <div className="card border-0 mt-3">
         <div className="card-body">
           <div className="row g-3">
-
             {/* <DropdownStrip
               requisitions={requisitions}
               positions={positions}
@@ -471,11 +350,6 @@ const rebuiltSelectedPanels = Object.values(
               disablePosition={true}
             /> */}
 
-
-
-
-
-
             <DropdownStripMultipleposition
               requisitions={requisitions}
               positions={positions}
@@ -485,7 +359,7 @@ const rebuiltSelectedPanels = Object.values(
               loadingPositions={loadingPositions}
               onRequisitionChange={handleRequisitionChange}
               onPositionChange={setSelectedPositionId}
-              onRequisitionSearch={() => { }}
+              onRequisitionSearch={() => {}}
               disableRequisition={true}
               disablePosition={true}
               isReadonly={true}
@@ -499,10 +373,9 @@ const rebuiltSelectedPanels = Object.values(
         <div className="mt-3">
           <RequisitionStripformultiplepositions
             requisition={normalizedRequisition}
-            position={selectedPosition.map(p => ({
+            position={selectedPosition.map((p) => ({
               positionId: p.jobPositions?.positionId,
-              positionName:
-                p.masterPositions?.positionName
+              positionName: p.masterPositions?.positionName,
             }))}
             isCardBg={false}
             isSaveEnabled={false}
@@ -528,65 +401,39 @@ const rebuiltSelectedPanels = Object.values(
         positionId={selectedPositionId}
         // startTime={startTime}
         // onStartTimeChange={setStartTime}
-        candidates={
-          isEditMode
-            ? schedulePoolData
-            : passedCandidates
-        }          // ✅ ADD
+        candidates={isEditMode ? schedulePoolData : passedCandidates} // ✅ ADD
         onScheduleReady={(rows) => {
           setSchedule(rows);
           setScheduledCount(rows.length);
           //   setShowReadyBar(true);   // ✅ trigger here
         }} // ✅ ADD
         onApplyAll={(data) => {
-
           // ✅ EDIT MODE
           if (isEditMode) {
-
             const editPayload = {
+              selectedPanels: data.selectedPanels,
 
-              selectedPanels:
-                data.selectedPanels,
+              positionId: Array.isArray(selectedPositionId)
+                ? selectedPositionId
+                : [selectedPositionId],
 
-              positionId:
-                Array.isArray(selectedPositionId)
-                  ? selectedPositionId
-                  : [selectedPositionId],
+              candidates: schedule.map((item) => ({
+                id: item.applicationId || item.id,
 
-              candidates:
-                schedule.map(item => ({
-
-                  id:
-                    item.applicationId || item.id,
-
-                  interviewCenterId:
-                    item.interviewCenterId
-
-                }))
-
+                interviewCenterId: item.interviewCenterId,
+              })),
             };
 
-            console.log(
-              "EDIT PAYLOAD",
-              editPayload
-            );
+            console.log("EDIT PAYLOAD", editPayload);
 
             setPendingApplyData(editPayload);
-
           } else {
-
             setPendingApplyData(data);
-
           }
 
           setShowCentreConfirmModal(true);
-
         }}
-        initialSelectedPanels={
-          isReschedule
-            ? []
-            : rebuiltSelectedPanels
-        }
+        initialSelectedPanels={isReschedule ? [] : rebuiltSelectedPanels}
       />
 
       {showReadyBar && (
@@ -595,37 +442,24 @@ const rebuiltSelectedPanels = Object.values(
             count={scheduledCount}
             onCancel={() => setShowReadyBar(false)}
             onSchedule={async () => {
-
               const res = await scheduleInterview();
 
               if (!res?.success) {
+                setErrorMessage(
+                  res?.message || "Failed to schedule interviews"
+                );
 
-  setErrorMessage(
+                setErrorCandidates(Array.isArray(res?.data) ? res.data : []);
 
-    res?.message ||
+                setShowErrorModal(true);
 
-    "Failed to schedule interviews"
-
-  );
-
-  setErrorCandidates(
-
-    Array.isArray(res?.data)
-      ? res.data
-      : []
-
-  );
-
-  setShowErrorModal(true);
-
-  return;
-}
+                return;
+              }
 
               toast.success("Interview scheduled successfully");
 
               navigate("/candidate-workflow", {
                 state: {
-
                   requisitionId: selectedRequisitionId,
 
                   positionIds: Array.isArray(selectedPositionId)
@@ -634,8 +468,8 @@ const rebuiltSelectedPanels = Object.values(
 
                   activeTab: "SCHEDULE_POOL",
 
-                  refreshSchedulePool: true
-                }
+                  refreshSchedulePool: true,
+                },
               });
             }}
           />
@@ -643,100 +477,82 @@ const rebuiltSelectedPanels = Object.values(
       )}
 
       {/* ===== INTERVIEW SCHEDULE TABLE ===== */}
-      <InterviewScheduleTable rows={schedule}
+      <InterviewScheduleTable
+        rows={schedule}
         positionId={selectedPositionId}
-        position={selectedPosition} />
+        position={selectedPosition}
+      />
 
+      {showCentreModal && (
+        <InterviewCentreAllocationModal
+          show={showCentreModal}
+          onClose={() => setShowCentreModal(false)}
+          uniqueAllocatedCentres={uniqueAllocatedCentres}
+          centreRows={centreRows}
+          setCentreRows={setCentreRows}
+          allInterviewCentres={allInterviewCentres}
+          onContinue={async () => {
+            setShowCentreModal(false);
 
-      {showCentreModal && <InterviewCentreAllocationModal
-        show={showCentreModal}
-        onClose={() => setShowCentreModal(false)}
-        uniqueAllocatedCentres={uniqueAllocatedCentres}
-        centreRows={centreRows}
-        setCentreRows={setCentreRows}
+            // 🔥 Build zonalChangeMap
+            const zonalChangeMap = {};
 
-        allInterviewCentres={allInterviewCentres}
-        onContinue={async () => {
+            // 🔥 first add all centres with empty
+            uniqueAllocatedCentres.forEach((centre) => {
+              zonalChangeMap[centre.interviewCentreId] = "";
+            });
 
-          setShowCentreModal(false);
+            // 🔥 overwrite changed centres
+            centreRows.forEach((row) => {
+              if (row.allocatedCentreId && row.replacedCentreId) {
+                zonalChangeMap[row.allocatedCentreId] = row.replacedCentreId;
+              }
+            });
 
-          // 🔥 Build zonalChangeMap
-          const zonalChangeMap = {};
+            console.log("zonalChangeMap", zonalChangeMap);
 
-          // 🔥 first add all centres with empty
-          uniqueAllocatedCentres.forEach((centre) => {
+            // 🔥 Call scheduling API
+            const res = await applySchedule({
+              ...pendingApplyData,
 
-            zonalChangeMap[
-              centre.interviewCentreId
-            ] = "";
+              zonalChangeMap,
+            });
 
-          });
+            if (!res.success) {
+              setErrorMessage(res.message);
 
-          // 🔥 overwrite changed centres
-          centreRows.forEach((row) => {
+              setErrorCandidates(res.data || []);
 
-            if (
-              row.allocatedCentreId &&
-              row.replacedCentreId
-            ) {
+              setShowErrorModal(true);
 
-              zonalChangeMap[
-                row.allocatedCentreId
-              ] = row.replacedCentreId;
-
+              return;
             }
 
-          });
+            setSchedule(res.rows);
 
-          console.log("zonalChangeMap", zonalChangeMap);
+            setScheduledCount(res.rows.length);
 
-          // 🔥 Call scheduling API
-          const res = await applySchedule({
-            ...pendingApplyData,
-
-            zonalChangeMap
-          });
-
-          if (!res.success) {
-            setErrorMessage(res.message);
-
-            setErrorCandidates(
-              res.data || []
-            );
-
-            setShowErrorModal(true);
-
-            return;
-          }
-
-          setSchedule(res.rows);
-
-          setScheduledCount(res.rows.length);
-
-          setShowReadyBar(true);
-
-        }}
-      />}
+            setShowReadyBar(true);
+          }}
+        />
+      )}
 
       <InterviewCentreConfirmModal
         show={showCentreConfirmModal}
         onClose={() => setShowCentreConfirmModal(false)}
         onReview={() => {
-
           setShowCentreConfirmModal(false);
 
           // ✅ ONLY ONE EMPTY ROW
           setCentreRows([
             {
               allocatedCentreId: "",
-              replacedCentreId: ""
-            }
+              replacedCentreId: "",
+            },
           ]);
 
           setShowCentreModal(true);
-
         }}
-
         onProceed={async () => {
           console.log("pendingApplyData", pendingApplyData);
           setShowCentreConfirmModal(false);
@@ -744,24 +560,18 @@ const rebuiltSelectedPanels = Object.values(
           const zonalChangeMap = {};
 
           uniqueAllocatedCentres.forEach((centre) => {
-
-            zonalChangeMap[
-              centre.interviewCentreId
-            ] = "";
-
+            zonalChangeMap[centre.interviewCentreId] = "";
           });
           console.log("zonalChangeMap", zonalChangeMap);
           const res = await applySchedule({
             ...pendingApplyData,
-            zonalChangeMap
+            zonalChangeMap,
           });
 
           if (!res.success) {
             setErrorMessage(res.message);
 
-            setErrorCandidates(
-              res.data || []
-            );
+            setErrorCandidates(res.data || []);
 
             setShowErrorModal(true);
 
@@ -774,15 +584,12 @@ const rebuiltSelectedPanels = Object.values(
           setScheduledCount(res.rows.length);
 
           setShowReadyBar(true);
-
         }}
       />
 
       <ScheduleErrorModal
         show={showErrorModal}
-        onClose={() =>
-          setShowErrorModal(false)
-        }
+        onClose={() => setShowErrorModal(false)}
         errorMessage={errorMessage}
         errorCandidates={errorCandidates}
       />
@@ -886,7 +693,6 @@ const rebuiltSelectedPanels = Object.values(
   </div>
 
 )} */}
-
     </div>
   );
 };

@@ -8,9 +8,9 @@ import { useUsers } from "../hooks/useUsers";
 const UserImportModal = ({
   onClose = () => {},
   onSuccess = () => {},
-   bulkAddUsers,
-    downloadUserTemplate,
-    loading
+  bulkAddUsers,
+  downloadUserTemplate,
+  loading,
 }) => {
   const { t } = useTranslation(["user"]);
 
@@ -30,10 +30,9 @@ const UserImportModal = ({
 
     const isExcel =
       file &&
-      (
-        file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-        file.type === "application/vnd.ms-excel"
-      );
+      (file.type ===
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        file.type === "application/vnd.ms-excel");
 
     if (!isExcel) {
       setError(t("user:invalid_file"));
@@ -78,19 +77,15 @@ const UserImportModal = ({
               alignItems: "center",
               justifyContent: "center",
               background: "#fff",
-              marginBottom: "1rem"
+              marginBottom: "1rem",
             }}
           >
             <UploadIcon size={32} />
           </div>
 
-          <h5 className="mb-2 uploadfile">
-            {t("user:upload_users")}
-          </h5>
+          <h5 className="mb-2 uploadfile">{t("user:upload_users")}</h5>
 
-          <p className="text-muted small">
-            {t("user:support_xlsx")}
-          </p>
+          <p className="text-muted small">{t("user:support_xlsx")}</p>
         </div>
 
         {error && (
@@ -102,7 +97,7 @@ const UserImportModal = ({
                 className="mt-2"
                 style={{
                   maxHeight: "150px",
-                  overflowY: "auto"
+                  overflowY: "auto",
                 }}
               >
                 <ul className="mb-0">
@@ -133,17 +128,13 @@ const UserImportModal = ({
               className="btnupload"
               disabled={loading}
             >
-              {selectedFile
-                ? t("user:reupload_xlsx")
-                : t("user:upload_xlsx")}
+              {selectedFile ? t("user:reupload_xlsx") : t("user:upload_xlsx")}
             </Button>
           </label>
 
           {selectedFile && (
             <div className="mt-2">
-              <small className="text-muted d-block">
-                {selectedFile.name}
-              </small>
+              <small className="text-muted d-block">{selectedFile.name}</small>
 
               <Button
                 variant="outline-danger"
@@ -171,7 +162,8 @@ const UserImportModal = ({
             style={{ cursor: "pointer" }}
             disabled={loading}
           >
-            {" "}XLSX
+            {" "}
+            XLSX
           </button>
         </div>
       </div>
@@ -185,14 +177,8 @@ const UserImportModal = ({
           {t("user:cancel")}
         </Button>
 
-        <Button
-          variant="primary"
-          onClick={handleUpload}
-          disabled={loading}
-        >
-          {loading
-            ? t("user:importing")
-            : t("user:import")}
+        <Button variant="primary" onClick={handleUpload} disabled={loading}>
+          {loading ? t("user:importing") : t("user:import")}
         </Button>
       </div>
     </div>

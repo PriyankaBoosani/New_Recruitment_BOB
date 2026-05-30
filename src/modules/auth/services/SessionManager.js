@@ -5,10 +5,10 @@ import { clearUser } from "../../../app/providers/userSlice";
 import { persistor } from "../../../store";
 import { Modal, Button } from "react-bootstrap";
 
-const IDLE_TIMEOUT = 15 * 60 * 1000;   // 2 minutes
-const WARNING_TIME = 14 * 60 * 1000;   // show modal at 1 minute
+const IDLE_TIMEOUT = 15 * 60 * 1000; // 2 minutes
+const WARNING_TIME = 14 * 60 * 1000; // show modal at 1 minute
 // const IDLE_TIMEOUT = 10 * 1000;   // 10 sec
-// const WARNING_TIME = 5 * 1000; 
+// const WARNING_TIME = 5 * 1000;
 const SessionManager = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -80,19 +80,17 @@ const SessionManager = ({ children }) => {
       "keydown",
       "scroll",
       "wheel",
-      "touchstart"
+      "touchstart",
     ];
 
-    events.forEach(e =>
+    events.forEach((e) =>
       window.addEventListener(e, resetTimer, { passive: true })
     );
 
     resetTimer();
 
     return () => {
-      events.forEach(e =>
-        window.removeEventListener(e, resetTimer)
-      );
+      events.forEach((e) => window.removeEventListener(e, resetTimer));
       clearTimeout(timerRef.current);
       clearTimeout(warningTimerRef.current);
       clearInterval(intervalRef.current); // ✅ FIX
@@ -110,8 +108,8 @@ const SessionManager = ({ children }) => {
 
         <Modal.Body>
           <p>
-            You will be logged out in{" "}
-            <strong>{countdown}</strong> seconds due to inactivity.
+            You will be logged out in <strong>{countdown}</strong> seconds due
+            to inactivity.
           </p>
         </Modal.Body>
 

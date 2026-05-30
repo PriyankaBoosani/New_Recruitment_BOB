@@ -7,7 +7,7 @@ import { useCertifications } from "./hooks/useCertifications";
 import CertificationTable from "./components/CertificationTable";
 import CertificationFormModal from "./components/CertificationFormModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
-import '../../../../style/css/user.css';
+import "../../../../style/css/user.css";
 
 const CertificationPage = () => {
   const { t } = useTranslation(["certification"]);
@@ -17,7 +17,7 @@ const CertificationPage = () => {
     fetchCertifications,
     addCertification,
     updateCertification,
-    deleteCertification
+    deleteCertification,
   } = useCertifications();
 
   const [showModal, setShowModal] = useState(false);
@@ -78,7 +78,6 @@ const CertificationPage = () => {
         </div>
       </div>
 
-
       <CertificationTable
         data={certifications}
         searchTerm={searchTerm}
@@ -98,7 +97,7 @@ const CertificationPage = () => {
         onHide={() => setShowModal(false)}
         isEditing={isEditing}
         isViewing={isViewing}
-        editingCertification={selectedCertification}   
+        editingCertification={selectedCertification}
         certifications={certifications}
         onSave={addCertification}
         onUpdate={updateCertification}

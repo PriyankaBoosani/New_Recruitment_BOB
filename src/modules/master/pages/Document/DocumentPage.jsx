@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { Container, Form, Button } from 'react-bootstrap';
-import { Search, Plus } from 'react-bootstrap-icons';
+import React, { useState } from "react";
+import { Container, Form, Button } from "react-bootstrap";
+import { Search, Plus } from "react-bootstrap-icons";
 import { useTranslation } from "react-i18next";
-import { useDocuments } from './hooks/useDocuments';
-import DocumentTable from './components/DocumentTable';
-import DocumentFormModal from './components/DocumentFormModal';
-import DeleteConfirmModal from './components/DeleteConfirmModal';
-import { validateDocumentForm } from '../../../../shared/utils/document-validations';
-import { mapDocumentToApi } from './mappers/documentMapper';
-import '../../../../style/css/user.css';
+import { useDocuments } from "./hooks/useDocuments";
+import DocumentTable from "./components/DocumentTable";
+import DocumentFormModal from "./components/DocumentFormModal";
+import DeleteConfirmModal from "./components/DeleteConfirmModal";
+import { validateDocumentForm } from "../../../../shared/utils/document-validations";
+import { mapDocumentToApi } from "./mappers/documentMapper";
+import "../../../../style/css/user.css";
 
 const DocumentPage = () => {
   const { t } = useTranslation(["documents", "validation"]);
@@ -18,11 +18,11 @@ const DocumentPage = () => {
     fetchDocuments,
     addDocument,
     updateDocument,
-    deleteDocument
+    deleteDocument,
   } = useDocuments();
 
   // UI states
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const [showAddModal, setShowAddModal] = useState(false);
@@ -32,9 +32,13 @@ const DocumentPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const [activeTab, setActiveTab] = useState('manual');
+  const [activeTab, setActiveTab] = useState("manual");
 
-  const [formData, setFormData] = useState({ name: '', description: '', isRequiredConfirmed: false });
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    isRequiredConfirmed: false,
+  });
   const [errors, setErrors] = useState({});
 
   const [isViewing, setIsViewing] = useState(false);
@@ -48,38 +52,37 @@ const DocumentPage = () => {
 
     setFormData({
       name: doc.name,
-      description: doc.description || '',
-      isRequiredConfirmed: doc.isRequiredConfirmed ?? false
+      description: doc.description || "",
+      isRequiredConfirmed: doc.isRequiredConfirmed ?? false,
     });
 
     setErrors({});
-    setActiveTab('manual');
+    setActiveTab("manual");
     setShowAddModal(true);
   };
-
 
   const openAddModal = () => {
     setIsViewing(false);
     setIsEditing(false);
     setEditingId(null);
-    setFormData({ name: '', description: '', isRequiredConfirmed: false });
+    setFormData({ name: "", description: "", isRequiredConfirmed: false });
     setErrors({});
-    setActiveTab('manual');
+    setActiveTab("manual");
     setShowAddModal(true);
   };
 
   const openEditModal = (doc) => {
-    setIsViewing(false);     //  RESET VIEW MODE
-    setIsEditing(true);      //  ENABLE EDIT MODE
+    setIsViewing(false); //  RESET VIEW MODE
+    setIsEditing(true); //  ENABLE EDIT MODE
     setEditingId(doc.id);
     setFormData({
       name: doc.name,
-      description: doc.description || '',
-      isRequiredConfirmed: doc.isRequiredConfirmed ?? false
+      description: doc.description || "",
+      isRequiredConfirmed: doc.isRequiredConfirmed ?? false,
     });
 
     setErrors({});
-    setActiveTab('manual');
+    setActiveTab("manual");
     setShowAddModal(true);
   };
   const handleSave = async (e) => {
@@ -90,12 +93,12 @@ const DocumentPage = () => {
       description: formData.description.trim(),
       isRequired: formData.isRequiredConfirmed,
       isEditable: true,
-      isActive: true
+      isActive: true,
     };
 
     const { valid, errors: vErrors } = validateDocumentForm(payload, {
       existing: documents,
-      currentId: isEditing ? editingId : null
+      currentId: isEditing ? editingId : null,
     });
 
     if (!valid) {
@@ -114,8 +117,6 @@ const DocumentPage = () => {
     setShowAddModal(false);
   };
 
-  
-
   return (
     <Container fluid className="user-container">
       <div className="user-header">
@@ -127,7 +128,10 @@ const DocumentPage = () => {
             <Form.Control
               placeholder={t("documents:search_placeholder")}
               value={searchTerm}
-              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
               className="search-input"
             />
           </div>
@@ -142,7 +146,10 @@ const DocumentPage = () => {
         searchTerm={searchTerm}
         onEdit={openEditModal}
         onView={openViewModal}
-        onDelete={(d) => { setDeleteTarget(d); setShowDeleteModal(true); }}
+        onDelete={(d) => {
+          setDeleteTarget(d);
+          setShowDeleteModal(true);
+        }}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         itemsPerPage={itemsPerPage}
@@ -162,7 +169,7 @@ const DocumentPage = () => {
         handleSave={handleSave}
         t={t}
         onSuccess={() => {
-          fetchDocuments();     // refresh list immediately
+          fetchDocuments(); // refresh list immediately
           setShowAddModal(false); // ensure modal closes
         }}
       />

@@ -5,7 +5,7 @@ import {
   validateEducationLevel,
   validateCourse,
   validateCourseCode,
-  validateSpecialization
+  validateSpecialization,
 } from "../../../../../shared/utils/educationValidations";
 import { useTranslation } from "react-i18next";
 
@@ -27,7 +27,7 @@ export const useExperience = () => {
       educationLevel: "",
       course: "",
       educationQualificationsId: "",
-      specializationOthers: []
+      specializationOthers: [],
       // specializationOthers: [{ name: "", id: "" }]
     },
   ]);
@@ -39,7 +39,6 @@ export const useExperience = () => {
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
-
 
   const fetchEducationOptions = async () => {
     try {
@@ -53,7 +52,7 @@ export const useExperience = () => {
       );
       setEducationOptions(filtered);
 
-      const ids = filtered.map(item => item.documentTypeId);
+      const ids = filtered.map((item) => item.documentTypeId);
 
       return { ids, filtered };
     } catch (err) {
@@ -63,7 +62,6 @@ export const useExperience = () => {
       setLoading(false);
     }
   };
-
 
   const fetchEducationByIds = async (ids, educationOptionsList) => {
     try {
@@ -84,7 +82,6 @@ export const useExperience = () => {
     }
   };
 
-
   useEffect(() => {
     loadData();
   }, []);
@@ -96,7 +93,6 @@ export const useExperience = () => {
       await fetchEducationByIds(ids, filtered);
     }
   };
-
 
   const handleFieldChange = (formIndex, field, value, specIndex = null) => {
     const regex = /^[A-Za-z\s.&,()\-_/]*$/;
@@ -110,8 +106,7 @@ export const useExperience = () => {
       updated[formIndex].specializationOthers[specIndex].name = value;
     } else if (field === "specializationCode") {
       updated[formIndex].specializationOthers[specIndex].code = value;
-    }
-    else {
+    } else {
       updated[formIndex][field] = value;
     }
 
@@ -131,14 +126,11 @@ export const useExperience = () => {
       fieldError = validateCourse(value);
     }
 
-   if (field === "courseCode") {
-  fieldError = value?.trim()
-    ? null
-    : t(
-        "education:course_code_required",
-        "Course code is required"
-      );
-}
+    if (field === "courseCode") {
+      fieldError = value?.trim()
+        ? null
+        : t("education:course_code_required", "Course code is required");
+    }
 
     if (field === "specialization") {
       fieldError = validateSpecialization(
@@ -163,15 +155,16 @@ export const useExperience = () => {
     updated[formIndex].specializationOthers.push({
       name: "",
       code: "",
-      id: null
+      id: null,
     });
     setFormData(updated);
   };
 
   const handleRemoveSpec = (formIndex, i) => {
     const updated = [...formData];
-    updated[formIndex].specializationOthers =
-      updated[formIndex].specializationOthers.filter((_, idx) => idx !== i);
+    updated[formIndex].specializationOthers = updated[
+      formIndex
+    ].specializationOthers.filter((_, idx) => idx !== i);
     setFormData(updated);
   };
 
@@ -181,7 +174,7 @@ export const useExperience = () => {
         educationLevel: "",
         course: "",
         courseCode: "",
-        specializationOthers: []
+        specializationOthers: [],
         // specializationOthers: [{ name: "", id: "" }]
       },
     ]);
@@ -199,12 +192,10 @@ export const useExperience = () => {
 
   const saveExperience = async () => {
     try {
-
-
       const { valid, errors: newErrors } = validateEducationForm(formData[0], {
         existing: experienceList,
         currentId: formData[0].educationQualificationsId,
-        editMode: isEditMode
+        editMode: isEditMode,
       });
       setErrors([newErrors]);
 
@@ -217,15 +208,17 @@ export const useExperience = () => {
           // qualificationCode: formData[0].course,
           qualificationCode: formData[0].courseCode || "",
           displayOrder: 0,
-          educationQualificationsId: formData[0].educationQualificationsId || null,
+          educationQualificationsId:
+            formData[0].educationQualificationsId || null,
         },
         specializations: formData[0].specializationOthers
-          .filter((s) => s?.name.trim()).map((s) => ({
+          .filter((s) => s?.name.trim())
+          .map((s) => ({
             specializationName: s.name.trim(),
             // specializationCode: s.name,
             specializationCode: s.code || "",
             specializationId: s.id || null,
-          }))
+          })),
       };
 
       const res = await masterApiService.saveEducation(payload);
@@ -246,16 +239,16 @@ export const useExperience = () => {
         }
       }
       if (res.success) {
-        const levelId = String(saved?.qualification?.levelId || "").toLowerCase();
-
+        const levelId = String(
+          saved?.qualification?.levelId || ""
+        ).toLowerCase();
 
         const docMap = new Map(
-          educationOptions.map(opt => [
+          educationOptions.map((opt) => [
             String(opt.documentTypeId).toLowerCase(),
-            opt.documentName
+            opt.documentName,
           ])
         );
-
 
         const documentName = docMap.get(levelId);
 
@@ -265,9 +258,10 @@ export const useExperience = () => {
           specialization:
             saved?.specializations?.map((s) => ({
               name: s.specializationName,
-              id: s.specializationId
+              id: s.specializationId,
             })) || [],
-          educationQualificationsId: saved?.qualification?.educationQualificationsId || "-",
+          educationQualificationsId:
+            saved?.qualification?.educationQualificationsId || "-",
         };
 
         await loadData();
@@ -275,7 +269,6 @@ export const useExperience = () => {
         setShowModal(false);
         setIsEditMode(false);
         setEditIndex(null);
-
       }
     } catch (err) {
       console.error(err);
@@ -305,10 +298,10 @@ export const useExperience = () => {
         specializationOthers:
           item.specialization?.length > 0
             ? item.specialization.map((s) => ({
-              name: s.name,
-              id: s.id,
-              code: s.code
-            }))
+                name: s.name,
+                id: s.id,
+                code: s.code,
+              }))
             : [],
       },
     ]);
@@ -323,16 +316,13 @@ export const useExperience = () => {
   const filteredList = experienceList.filter((item) => {
     const search = searchTerm.toLowerCase();
 
-    const educationMatch =
-      item.educationLevel?.toLowerCase().includes(search);
+    const educationMatch = item.educationLevel?.toLowerCase().includes(search);
 
-    const courseMatch =
-      item.course?.toLowerCase().includes(search);
+    const courseMatch = item.course?.toLowerCase().includes(search);
 
-    const specializationMatch =
-      item.specialization?.some((s) =>
-        s.name?.toLowerCase().includes(search)
-      );
+    const specializationMatch = item.specialization?.some((s) =>
+      s.name?.toLowerCase().includes(search)
+    );
 
     return educationMatch || courseMatch || specializationMatch;
   });

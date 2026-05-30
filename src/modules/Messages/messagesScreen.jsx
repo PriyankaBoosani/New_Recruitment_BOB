@@ -15,7 +15,16 @@ import { Search } from "react-bootstrap-icons";
 
 const Messages = () => {
   const { t } = useTranslation(["messages", "common"]);
-  const { selectedRequisitionId, selectedPositionId, date, openRow, setSelectedRequisitionId, setSelectedPositionId, setDate, toggleRow, } = useMessages();
+  const {
+    selectedRequisitionId,
+    selectedPositionId,
+    date,
+    openRow,
+    setSelectedRequisitionId,
+    setSelectedPositionId,
+    setDate,
+    toggleRow,
+  } = useMessages();
   const [selectedStatus, setSelectedStatus] = React.useState("");
   const [selectedRequestType, setSelectedRequestType] = React.useState("");
   const [isFilterOpen, setIsFilterOpen] = React.useState(false);
@@ -35,7 +44,9 @@ const Messages = () => {
   const [totalPages, setTotalPages] = React.useState(0);
   const filterRef = useRef(null);
   const [interviewCentres, setInterviewCentres] = React.useState([]);
-  const selectedRequisitionName = requisitions.find(r => r.id === selectedRequisitionId)?.requisitionTitle || "";
+  const selectedRequisitionName =
+    requisitions.find((r) => r.id === selectedRequisitionId)
+      ?.requisitionTitle || "";
   const selectedPositionName = "";
   const messagesData = mapMessagesData(
     apiMessages,
@@ -63,28 +74,28 @@ const Messages = () => {
       selectedPositionId?.length > 0 &&
       (!selectedRequisitionId ||
         item.requisitionId === selectedRequisitionId) &&
-      (!selectedPositionId ||
-        selectedPositionId.includes(item.positionId)) &&
-      (!selectedStatus ||
-        item.rawStatus === selectedStatus) &&
-      (!selectedRequestType ||
-        item.requestTypeId === selectedRequestType) &&
+      (!selectedPositionId || selectedPositionId.includes(item.positionId)) &&
+      (!selectedStatus || item.rawStatus === selectedStatus) &&
+      (!selectedRequestType || item.requestTypeId === selectedRequestType) &&
       (!searchText || matchesSearch)
     );
   });
-  const fetchMessages = async (payload, pageNo = page, pageSize = size, searchValue = "") => {
+  const fetchMessages = async (
+    payload,
+    pageNo = page,
+    pageSize = size,
+    searchValue = ""
+  ) => {
     try {
       setLoadingMessages(true);
       const finalPayload = {
         ...payload,
-        ...(searchValue?.trim()
-          ? { searchText: searchValue.trim() }
-          : {})
+        ...(searchValue?.trim() ? { searchText: searchValue.trim() } : {}),
       };
       const res = await candidateWorkflowServices.getMessageHistory(
         finalPayload,
         pageNo,
-        pageSize,
+        pageSize
       );
       const responseData = res?.data;
       setApiMessages(responseData?.content || []);
@@ -143,28 +154,19 @@ const Messages = () => {
       fetchMessages(
         {
           positionsIds: selectedPositionId || [],
-          requestTypeIds: selectedRequestType
-            ? [selectedRequestType]
-            : [],
-          statusList: selectedStatus
-            ? [selectedStatus]
-            : [],
-          searchText: searchText || ""
+          requestTypeIds: selectedRequestType ? [selectedRequestType] : [],
+          statusList: selectedStatus ? [selectedStatus] : [],
+          searchText: searchText || "",
         },
         page,
         size
       );
     }
-  }, [
-    selectedPositionId,
-    selectedStatus,
-    selectedRequestType,
-    page,
-    size
-  ]);
+  }, [selectedPositionId, selectedStatus, selectedRequestType, page, size]);
   const fetchThreadMessages = async (threadId) => {
     try {
-      const res = await candidateWorkflowServices.getMessagesByThreadId(threadId);
+      const res =
+        await candidateWorkflowServices.getMessagesByThreadId(threadId);
       return res?.data || [];
     } catch (err) {
       console.error("Thread messages error", err);
@@ -177,62 +179,37 @@ const Messages = () => {
       committeeManagementService.getApprovalHistoryByThreadId(id),
       masterApiService.getUser(),
     ]);
-    const approvalData =
-      approvalRes?.data?.data ||
-      approvalRes?.data ||
-      [];
-    const users =
-      usersRes?.data?.data ||
-      usersRes?.data ||
-      [];
+    const approvalData = approvalRes?.data?.data || approvalRes?.data || [];
+    const users = usersRes?.data?.data || usersRes?.data || [];
     const userMap = {};
     users.forEach((u) => {
       userMap[u.userId] = u.name;
     });
     const approvalMapped = approvalData.map((a) => ({
       senderType: "APPROVER",
-      approverName:
-        userMap[a.approverId] ||
-        a.approverRole ||
-        "Approver",
-      message:
-        a.comments ||
-        a.comment ||
-        a.remarks ||
-        a.remark ||
-        "-",
-      createdDate:
-        a.actionDate ||
-        a.createdDate,
+      approverName: userMap[a.approverId] || a.approverRole || "Approver",
+      message: a.comments || a.comment || a.remarks || a.remark || "-",
+      createdDate: a.actionDate || a.createdDate,
       status: a.status,
     }));
     const filteredMsgs = (msgs || []).filter((m) => {
       if (m.senderType !== "RECRUITER") {
         return true;
       }
-      const recruiterMessage = (
-        m.message ||
-        m.comments ||
-        ""
-      ).trim().toLowerCase();
+      const recruiterMessage = (m.message || m.comments || "")
+        .trim()
+        .toLowerCase();
       const isDuplicate = approvalMapped.some((a) => {
-        const approvalMessage = (
-          a.message ||
-          a.comments ||
-          ""
-        ).trim().toLowerCase();
+        const approvalMessage = (a.message || a.comments || "")
+          .trim()
+          .toLowerCase();
         return recruiterMessage === approvalMessage;
       });
       return !isDuplicate;
     });
-    const mergedHistory = [
-      ...filteredMsgs,
-      ...approvalMapped,
-    ];
+    const mergedHistory = [...filteredMsgs, ...approvalMapped];
     mergedHistory.sort(
-      (a, b) =>
-        new Date(a.createdDate) -
-        new Date(b.createdDate)
+      (a, b) => new Date(a.createdDate) - new Date(b.createdDate)
     );
     setThreadMessagesMap((prev) => ({
       ...prev,
@@ -242,12 +219,7 @@ const Messages = () => {
   };
   React.useEffect(() => {
     setPage(0);
-  }, [
-    selectedPositionId,
-    selectedStatus,
-    selectedRequestType,
-    searchText
-  ]);
+  }, [selectedPositionId, selectedStatus, selectedRequestType, searchText]);
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (filterRef.current && !filterRef.current.contains(event.target)) {
@@ -264,12 +236,10 @@ const Messages = () => {
       const payload = {
         conversationThreadId: [threadId],
         status,
-        comments: comment || ""
+        comments: comment || "",
       };
       const res =
-        await candidateWorkflowServices.submitForMessageApproval(
-          payload
-        );
+        await candidateWorkflowServices.submitForMessageApproval(payload);
       if (res?.success || res?.data?.success) {
         if (status === "L1_PENDING") {
           toast.success(t("messages:approved_successfully"));
@@ -278,31 +248,23 @@ const Messages = () => {
           toast.success(t("messages:rejected_successfully"));
         }
       }
-      const latestMessages =
-        await fetchThreadMessages(threadId);
+      const latestMessages = await fetchThreadMessages(threadId);
 
-      setThreadMessagesMap(prev => ({
+      setThreadMessagesMap((prev) => ({
         ...prev,
-        [threadId]: Array.isArray(latestMessages)
-          ? latestMessages
-          : []
+        [threadId]: Array.isArray(latestMessages) ? latestMessages : [],
       }));
-      setApiMessages(prev =>
-        prev.map(item =>
-          item.conversationThreadId === threadId
-            ? { ...item, status }
-            : item
+      setApiMessages((prev) =>
+        prev.map((item) =>
+          item.conversationThreadId === threadId ? { ...item, status } : item
         )
       );
     } catch (err) {
-      console.error(
-        "Submit approval error",
-        err
-      );
+      console.error("Submit approval error", err);
       toast.error(
         err?.response?.data?.message ||
-        err?.message ||
-        t("messages:something_went_wrong")
+          err?.message ||
+          t("messages:something_went_wrong")
       );
     }
   };
@@ -320,29 +282,42 @@ const Messages = () => {
   };
   const fetchInterviewCentres = async () => {
     try {
-      const res =
-        await masterApiService.getInterviewCentresByState(
-          [],
-          null
-        );
+      const res = await masterApiService.getInterviewCentresByState([], null);
       setInterviewCentres(res?.data || []);
     } catch (err) {
-      console.error(
-        "Interview centre error",
-        err
-      );
+      console.error("Interview centre error", err);
     }
   };
   return (
-    <div className="container-fluid py-3 px-3"
-      style={{ background: "#F5F7FA", minHeight: "100vh", marginBottom: "35px", }}>
-      <div className="card" style={{ borderRadius: "16px", overflow: "hidden", border: "1px solid #E0E0E0", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
-        <div className="card-body p-0 d-flex flex-column" style={{ height: "100%" }}>
+    <div
+      className="container-fluid py-3 px-3"
+      style={{
+        background: "#F5F7FA",
+        minHeight: "100vh",
+        marginBottom: "35px",
+      }}
+    >
+      <div
+        className="card"
+        style={{
+          borderRadius: "16px",
+          overflow: "hidden",
+          border: "1px solid #E0E0E0",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+        }}
+      >
+        <div
+          className="card-body p-0 d-flex flex-column"
+          style={{ height: "100%" }}
+        >
           {/* HEADER */}
           <div id="msg-card-1">
             <div className="d-flex justify-content-between align-items-center px-3 py-3 border-bottom">
               <div>
-                <h6 className="blue-color fw-semibold mb-0"> {t("messages:message_history")}</h6>
+                <h6 className="blue-color fw-semibold mb-0">
+                  {" "}
+                  {t("messages:message_history")}
+                </h6>
                 <small className="text-muted">
                   {t("messages:manage_communications")}
                 </small>
@@ -364,10 +339,8 @@ const Messages = () => {
                           requestTypeIds: selectedRequestType
                             ? [selectedRequestType]
                             : [],
-                          statusList: selectedStatus
-                            ? [selectedStatus]
-                            : [],
-                          searchText: value || ""
+                          statusList: selectedStatus ? [selectedStatus] : [],
+                          searchText: value || "",
                         },
                         0,
                         size,
@@ -407,16 +380,11 @@ const Messages = () => {
                   }}
                   onRequisitionSearch={(val) => fetchRequisitions(val)}
                 />
-                <div
-                  className="col-md-2 col-12"
-                  style={{ marginLeft: "auto" }}
-                >
+                <div className="col-md-2 col-12" style={{ marginLeft: "auto" }}>
                   <select
                     className="status-select form-select"
                     value={selectedStatus || ""}
-                    onChange={(e) =>
-                      setSelectedStatus(e.target.value)
-                    }
+                    onChange={(e) => setSelectedStatus(e.target.value)}
                   >
                     <option value="">{t("messages:all_status")}</option>
                     <option value="PENDING">Pending</option>
@@ -432,9 +400,7 @@ const Messages = () => {
                   <select
                     className="status-select form-select"
                     value={selectedRequestType || ""}
-                    onChange={(e) =>
-                      setSelectedRequestType(e.target.value)
-                    }
+                    onChange={(e) => setSelectedRequestType(e.target.value)}
                   >
                     <option value="">{t("messages:all_request_types")}</option>
 
@@ -443,9 +409,7 @@ const Messages = () => {
                         key={type.requestTypeId}
                         value={type.requestTypeId}
                       >
-                        {type.requestTypeName ||
-                          type.requestName ||
-                          type.name}
+                        {type.requestTypeName || type.requestName || type.name}
                       </option>
                     ))}
                   </select>
@@ -457,27 +421,21 @@ const Messages = () => {
           {selectedRequisitionId && selectedPositionId?.length > 0 && (
             <div className="mt-3">
               <RequisitionStripformultiplepositions
-                requisition={
-                  requisitions.find(
-                    (r) => r.id === selectedRequisitionId
-                  )
-                }
+                requisition={requisitions.find(
+                  (r) => r.id === selectedRequisitionId
+                )}
                 position={positions
                   .filter((p) =>
-                    selectedPositionId.includes(
-                      p.jobPositions?.positionId
-                    )
+                    selectedPositionId.includes(p.jobPositions?.positionId)
                   )
                   .map((p) => ({
                     positionId: p.jobPositions?.positionId,
-                    positionName:
-                      p.masterPositions?.positionName,
+                    positionName: p.masterPositions?.positionName,
                   }))}
                 onRemovePosition={(removedId) => {
-                  const updatedPositions =
-                    selectedPositionId.filter(
-                      (id) => id !== removedId
-                    );
+                  const updatedPositions = selectedPositionId.filter(
+                    (id) => id !== removedId
+                  );
                   setSelectedPositionId(updatedPositions);
                   fetchMessages(
                     {
@@ -485,10 +443,8 @@ const Messages = () => {
                       requestTypeIds: selectedRequestType
                         ? [selectedRequestType]
                         : [],
-                      statusList: selectedStatus
-                        ? [selectedStatus]
-                        : [],
-                      searchText: searchText || ""
+                      statusList: selectedStatus ? [selectedStatus] : [],
+                      searchText: searchText || "",
                     },
                     0,
                     size
@@ -503,7 +459,7 @@ const Messages = () => {
             style={{
               overflowY: "auto",
               minHeight: "300px",
-              paddingBottom: "90px"
+              paddingBottom: "90px",
             }}
           >
             {filteredMessages.length > 0 ? (
@@ -526,7 +482,7 @@ const Messages = () => {
                     className="bi bi-inbox"
                     style={{
                       fontSize: "28px",
-                      color: "#A0A0A0"
+                      color: "#A0A0A0",
                     }}
                   ></i>
                 </div>
@@ -545,12 +501,15 @@ const Messages = () => {
               background: "#fff",
               zIndex: 10,
               marginBottom: "10px",
-              paddingBottom: "16px"
+              paddingBottom: "16px",
             }}
           >
             {/* Page size */}
             <div className="d-flex align-items-center gap-2">
-              <span className="fw-semibold pagesize" style={{ color: "#162B75" }}>
+              <span
+                className="fw-semibold pagesize"
+                style={{ color: "#162B75" }}
+              >
                 {t("messages:page_size")}:
               </span>
               <select
@@ -562,8 +521,10 @@ const Messages = () => {
                   setPage(0);
                 }}
               >
-                {[5, 10, 15, 20, 25, 30].map(s => (
-                  <option key={s} value={s}>{s}</option>
+                {[5, 10, 15, 20, 25, 30].map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
                 ))}
               </select>
             </div>
@@ -585,7 +546,10 @@ const Messages = () => {
                   </li>
                 )}
                 {getVisiblePages().map((i) => (
-                  <li key={i} className={`page-item ${page === i ? "active" : ""}`}>
+                  <li
+                    key={i}
+                    className={`page-item ${page === i ? "active" : ""}`}
+                  >
                     <button className="page-link" onClick={() => setPage(i)}>
                       {i + 1}
                     </button>
@@ -596,11 +560,15 @@ const Messages = () => {
                     <span className="page-link">...</span>
                   </li>
                 )}
-                <li className={`page-item ${page >= totalPages - 1 ? "disabled" : ""}`}>
+                <li
+                  className={`page-item ${page >= totalPages - 1 ? "disabled" : ""}`}
+                >
                   <button
                     className="page-link"
                     disabled={page >= totalPages - 1}
-                    onClick={() => setPage((p) => Math.min(p + 1, totalPages - 1))}
+                    onClick={() =>
+                      setPage((p) => Math.min(p + 1, totalPages - 1))
+                    }
                   >
                     »
                   </button>

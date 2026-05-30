@@ -7,7 +7,7 @@ import NationalVacancyTable from "./NationalVacancyTable";
 import LocationWiseVacancyTable from "./LocationWiseVacancyTable";
 import "../../../style/css/RequisitionStrip.css";
 import candidateWorkflowServices from "../services/CandidateWorkflowServices";
-import masterApiService from "../../master/services/masterApiService";   // ADDED
+import masterApiService from "../../master/services/masterApiService"; // ADDED
 import { mapJobPositionToRequisitionStrip } from "../mappers/candidatePreviewMapper";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { format } from "date-fns";
@@ -22,35 +22,33 @@ const RequisitionStripformultiplepositions = ({
   isCardBg,
   isSaveEnabled,
   isSaveBtn,
-    showImportBtn,
+  showImportBtn,
   onImportClick,
   onRemovePosition,
-  isReadonly = false   
+  isReadonly = false,
 }) => {
-
   const [showPosition, setShowPosition] = useState(false);
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const [masterData, setMasterData] = useState(null);   //  INTERNAL
+  const [masterData, setMasterData] = useState(null); //  INTERNAL
 
-  const [selectedPositionIdForModal, setSelectedPositionIdForModal] = useState(null);
-
+  const [selectedPositionIdForModal, setSelectedPositionIdForModal] =
+    useState(null);
 
   const handlePositionClick = (id) => {
-  setSelectedPositionIdForModal(id);
-  setShowPosition(true);
-};
+    setSelectedPositionIdForModal(id);
+    setShowPosition(true);
+  };
 
-  const orderedPattern =
-    /^\s*(\(?\d+[\).\]]|\(?[ivxlcdm]+[\).\]])\s*/i;
+  const orderedPattern = /^\s*(\(?\d+[\).\]]|\(?[ivxlcdm]+[\).\]])\s*/i;
 
   const renderBullets = (text) => {
     if (!text) return <li>-</li>;
 
     const lines = text
       .split(/\r?\n/)
-      .map(line => line.trim())
+      .map((line) => line.trim())
       .filter(Boolean);
 
     return lines.map((line, idx) => {
@@ -70,11 +68,6 @@ const RequisitionStripformultiplepositions = ({
     });
   };
 
-
-
-
-
-
   const formatDMY = (dateStr) => {
     if (!dateStr) return "-";
     try {
@@ -83,7 +76,6 @@ const RequisitionStripformultiplepositions = ({
       return dateStr;
     }
   };
-
 
   /* ================= LOAD MASTER DATA ================= */
 
@@ -101,20 +93,15 @@ const RequisitionStripformultiplepositions = ({
   //   loadMasters();
   // }, []);
 
-
-
   useEffect(() => {
     const loadMasters = async () => {
       try {
         const [masterRes, zonalRes, centersRes] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
           // masterApiService.getZonalStates(),
-          
-
         ]);
 
         setMasterData(masterRes.data || {});
-
       } catch (err) {
         console.error("Failed to load master data", err);
         setMasterData({});
@@ -125,39 +112,33 @@ const RequisitionStripformultiplepositions = ({
   }, []);
 
   console.log("MASTER DATA FULL", masterData);
-  
-
 
   /* ================= FETCH JOB ================= */
 
-useEffect(() => {
-  if (!selectedPositionIdForModal || !masterData) return;
+  useEffect(() => {
+    if (!selectedPositionIdForModal || !masterData) return;
 
-  const fetchJob = async () => {
-    try {
-      setLoading(true);
+    const fetchJob = async () => {
+      try {
+        setLoading(true);
 
-      const res =
-        await candidateWorkflowServices.getJobPositionById(
+        const res = await candidateWorkflowServices.getJobPositionById(
           selectedPositionIdForModal
         );
 
-      const mapped =
-        mapJobPositionToRequisitionStrip(res.data, masterData);
+        const mapped = mapJobPositionToRequisitionStrip(res.data, masterData);
 
-      setJob(mapped);
+        setJob(mapped);
+      } catch (err) {
+        console.error("Failed to fetch job details", err);
+        toast.error(t("candidateWorkflow:failed_load_position_details"));
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    } catch (err) {
-      console.error("Failed to fetch job details", err);
-      toast.error(t("candidateWorkflow:failed_load_position_details"));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchJob();
-
-}, [selectedPositionIdForModal, masterData]);
+    fetchJob();
+  }, [selectedPositionIdForModal, masterData]);
 
   const handleViewPosition = () => {
     setShowPosition(true);
@@ -176,34 +157,20 @@ useEffect(() => {
     return `${years} ${t("candidateWorkflow:years")} ${months} ${t("candidateWorkflow:months")}`;
   };
 
+  const getEducationNameById = (id) => {
+    const docs = masterData?.educationLevels || []; // ✅ FIXED
 
+    const match = docs.find(
+      (doc) => doc.documentTypeId === id && doc.docType === "educationdocs"
+    );
 
+    return match?.documentName || "-";
+  };
 
+  const getEduWiseExperience = () => {
+    if (!job?.mandatoryExpMonthsEduWise) return [];
 
-
-
-
-
-
-const getEducationNameById = (id) => {
-  const docs = masterData?.educationLevels || []; // ✅ FIXED
-
-  const match = docs.find(
-    (doc) =>
-      doc.documentTypeId === id &&
-      doc.docType === "educationdocs"
-  );
-
-  return match?.documentName || "-";
-};
-
-
-
-const getEduWiseExperience = () => {
-  if (!job?.mandatoryExpMonthsEduWise) return [];
-
-  return Object.entries(job.mandatoryExpMonthsEduWise)
-    .map(([id, months]) => {
+    return Object.entries(job.mandatoryExpMonthsEduWise).map(([id, months]) => {
       const name = getEducationNameById(id);
 
       const years = Math.floor(months / 12);
@@ -215,14 +182,11 @@ const getEduWiseExperience = () => {
 
       return `${name}: ${exp || "0 mo"}`;
     });
-};
+  };
 
-
-const selectedModalPosition = Array.isArray(position)
-  ? position.find(
-      (p) => p.positionId === selectedPositionIdForModal
-    )
-  : position;
+  const selectedModalPosition = Array.isArray(position)
+    ? position.find((p) => p.positionId === selectedPositionIdForModal)
+    : position;
 
   return (
     <>
@@ -232,103 +196,103 @@ const selectedModalPosition = Array.isArray(position)
         style={{
           background: isCardBg ? "#ffffff" : "none",
           border: isCardBg ? "1px solid #e0e0e0" : "none",
-          borderRadius: "8px"
+          borderRadius: "8px",
         }}
       >
-
         {/* ===== LEFT CONTENT ===== */}
         <div className="w-100">
-
           <div className="d-flex flex-column flex-md-row flex-wrap align-items-center gap-2">
-
             <OverlayTrigger
               placement="bottom"
               overlay={
                 <Tooltip>
-                  {requisition?.requisitionCode || requisition?.requisition_code || ""} -{" "}
-                  {requisition?.requisitionTitle || requisition?.requisition_title || "-"}
+                  {requisition?.requisitionCode ||
+                    requisition?.requisition_code ||
+                    ""}{" "}
+                  -{" "}
+                  {requisition?.requisitionTitle ||
+                    requisition?.requisition_title ||
+                    "-"}
                 </Tooltip>
               }
             >
               <span className="req-code me-3 cursor-pointer">
-                {requisition?.requisitionCode || requisition?.requisition_code || ""} -{" "}
-                {requisition?.requisitionTitle || requisition?.requisition_title || "-"}
+                {requisition?.requisitionCode ||
+                  requisition?.requisition_code ||
+                  ""}{" "}
+                -{" "}
+                {requisition?.requisitionTitle ||
+                  requisition?.requisition_title ||
+                  "-"}
               </span>
             </OverlayTrigger>
 
-
-
             <span className="date-text">
               <i className="bi bi-calendar3 me-1"></i>
-              {t("candidateWorkflow:start")}: {formatDMY(
+              {t("candidateWorkflow:start")}:{" "}
+              {formatDMY(
                 requisition?.startDate || requisition?.registration_start_date
               )}
-
-
-
             </span>
 
             <span className="date-divider">|</span>
 
             <span className="date-text">
               <i className="bi bi-clock me-1"></i>
-              {t("candidateWorkflow:end")}: {formatDMY(
+              {t("candidateWorkflow:end")}:{" "}
+              {formatDMY(
                 requisition?.endDate || requisition?.registration_end_date
               )}
             </span>
-
           </div>
 
-   <div className="req-position-wrapper mt-2">
-  {Array.isArray(position) ? (
-    position.map((p) => (
-    <span className="req-position-chip-wrapper">
-  <div
-    key={p.positionId}
-    onClick={() => handlePositionClick(p.positionId)}
-    className="req-position-chip"
-  >
-        <span className="req-position-text">
-          {p.positionName}
-        </span>
+          <div className="req-position-wrapper mt-2">
+            {Array.isArray(position) ? (
+              position.map((p) => (
+                <span className="req-position-chip-wrapper">
+                  <div
+                    key={p.positionId}
+                    onClick={() => handlePositionClick(p.positionId)}
+                    className="req-position-chip"
+                  >
+                    <span className="req-position-text">{p.positionName}</span>
 
-     {!isReadonly && onRemovePosition && (
-  <span
-    className="req-position-close"
-    onClick={(e) => {
-      e.stopPropagation();
-      onRemovePosition(p.positionId);
-    }}
-  >
-    ×
-  </span>
-)}
-      </div>
-    </span>
-    ))
-  ) : (
-    <div className="req-position-chip">
-      <span className="req-position-text">
-        {position?.positionName ||
-          position?.masterPositions?.positionName ||
-          "—"}
-      </span>
+                    {!isReadonly && onRemovePosition && (
+                      <span
+                        className="req-position-close"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onRemovePosition(p.positionId);
+                        }}
+                      >
+                        ×
+                      </span>
+                    )}
+                  </div>
+                </span>
+              ))
+            ) : (
+              <div className="req-position-chip">
+                <span className="req-position-text">
+                  {position?.positionName ||
+                    position?.masterPositions?.positionName ||
+                    "—"}
+                </span>
 
-   {!isReadonly && onRemovePosition && (
-  <span
-    className="req-position-close"
-    onClick={(e) => {
-      e.stopPropagation();
-      onRemovePosition(position?.positionId);
-    }}
-  >
-    ×
-  </span>
-)}
-    </div>
-  )}
-</div>
-
+                {!isReadonly && onRemovePosition && (
+                  <span
+                    className="req-position-close"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRemovePosition(position?.positionId);
+                    }}
+                  >
+                    ×
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ===== BUTTONS ===== */}
@@ -353,11 +317,6 @@ const selectedModalPosition = Array.isArray(position)
           )}
 
         </div> */}
-
-
-
-
-
       </div>
 
       {/* ================= MODAL ================= */}
@@ -366,52 +325,51 @@ const selectedModalPosition = Array.isArray(position)
         onHide={() => setShowPosition(false)}
         centered
         size="lg"
-      // scrollable
+        // scrollable
       >
-
         <Modal.Header closeButton className="knowmore-header">
           <div className="w-100">
-
             <div className="modal-header-row">
               <span className="modal-req-title">
-                {requisition?.requisition_title || requisition?.requisitionTitle || "-"}
+                {requisition?.requisition_title ||
+                  requisition?.requisitionTitle ||
+                  "-"}
               </span>
 
               <span className="modal-date">
                 <i className="bi bi-calendar3 me-1"></i>
-                {t("candidateWorkflow:start")}: {formatDMY(requisition?.registration_start_date)}
+                {t("candidateWorkflow:start")}:{" "}
+                {formatDMY(requisition?.registration_start_date)}
               </span>
 
               <span className="modal-divider">|</span>
 
               <span className="modal-date">
                 <i className="bi bi-clock me-1"></i>
-                {t("candidateWorkflow:end")}: {formatDMY(requisition?.registration_end_date)}
+                {t("candidateWorkflow:end")}:{" "}
+                {formatDMY(requisition?.registration_end_date)}
               </span>
             </div>
 
-
-    <div
-  className="job-title mt-1 d-flex flex-wrap align-items-center gap-2"
-  style={{ color: "#162B75", fontWeight: 500 }}
->
-  <span
-    style={{
-      color: "#162B75",
-      textDecoration: "underline",
-    }}
-  >
-    {selectedModalPosition?.positionName ||
-      selectedModalPosition?.masterPositions?.positionName ||
-      "—"}
-  </span>
-</div>
-
+            <div
+              className="job-title mt-1 d-flex flex-wrap align-items-center gap-2"
+              style={{ color: "#162B75", fontWeight: 500 }}
+            >
+              <span
+                style={{
+                  color: "#162B75",
+                  textDecoration: "underline",
+                }}
+              >
+                {selectedModalPosition?.positionName ||
+                  selectedModalPosition?.masterPositions?.positionName ||
+                  "—"}
+              </span>
+            </div>
           </div>
         </Modal.Header>
 
         <Modal.Body>
-
           {loading ? (
             <div className="text-center py-5">
               {t("candidateWorkflow:loading_job_details")}
@@ -420,10 +378,11 @@ const selectedModalPosition = Array.isArray(position)
             <>
               <div className="stats-container mb-3">
                 <div className="row g-2 small">
-
                   {/* Employment */}
                   <div className="col-12 col-md-4">
-                    <span className="stat-label">{t("candidateWorkflow:employment_type")}:</span>{" "}
+                    <span className="stat-label">
+                      {t("candidateWorkflow:employment_type")}:
+                    </span>{" "}
                     <span className="stat-value">
                       {job?.employment_type || "-"}
                     </span>
@@ -432,13 +391,15 @@ const selectedModalPosition = Array.isArray(position)
                   {/* Contract — show only if employment type is Contract */}
                   {job?.employment_type?.toLowerCase() === "contract" && (
                     <div className="col-12 col-md-4">
-                      <span className="stat-label">{t("candidateWorkflow:contract_period")}:</span>{" "}
+                      <span className="stat-label">
+                        {t("candidateWorkflow:contract_period")}:
+                      </span>{" "}
                       <span className="stat-value">
-                        {job?.contract_years ?? 0} {t("candidateWorkflow:years")}
+                        {job?.contract_years ?? 0}{" "}
+                        {t("candidateWorkflow:years")}
                       </span>
                     </div>
                   )}
-
 
                   {/* Experience */}
                   {/* <div className="col-12 col-md-4">
@@ -455,88 +416,92 @@ const selectedModalPosition = Array.isArray(position)
 
                   {/* Eligibility */}
                   <div className="col-12 col-md-4">
-                    <span className="stat-label">{t("candidateWorkflow:eligibility_age")}:</span>{" "}
+                    <span className="stat-label">
+                      {t("candidateWorkflow:eligibility_age")}:
+                    </span>{" "}
                     <span className="stat-value">
-                      {job?.eligibility_age_min} - {job?.eligibility_age_max} {t("candidateWorkflow:years")}
+                      {job?.eligibility_age_min} - {job?.eligibility_age_max}{" "}
+                      {t("candidateWorkflow:years")}
                     </span>
                   </div>
 
-             
-
                   {/* Vacancies */}
                   <div className="col-12 col-md-4">
-                    <span className="stat-label">{t("candidateWorkflow:vacancies")}:</span>{" "}
+                    <span className="stat-label">
+                      {t("candidateWorkflow:vacancies")}:
+                    </span>{" "}
                     <span className="stat-value">
                       {job?.no_of_vacancies ?? 0}
                     </span>
                   </div>
 
-                       {/* Department */}
+                  {/* Department */}
                   <div className="col-12 col-md-4">
-                    <span className="stat-label">{t("candidateWorkflow:department")}:</span>{" "}
-                    <span className="stat-value">
-                      {job?.dept_name || "-"}
-                    </span>
+                    <span className="stat-label">
+                      {t("candidateWorkflow:department")}:
+                    </span>{" "}
+                    <span className="stat-value">{job?.dept_name || "-"}</span>
                   </div>
 
-
-                 <div className="col-12 col-md-4">
-  <span className="stat-label">
-    {t("candidateWorkflow:experience")}:
-  </span>{" "}
-  <span className="stat-value">
-    {job?.isMandatoryExpMonthsEduWise
-      ? getEduWiseExperience().join("/ ")
-      : formatExperience(
-          job?.mandatory_experience_years,
-          job?.mandatory_experience_months
-        )}
-  </span>
-</div>
-
+                  <div className="col-12 col-md-4">
+                    <span className="stat-label">
+                      {t("candidateWorkflow:experience")}:
+                    </span>{" "}
+                    <span className="stat-value">
+                      {job?.isMandatoryExpMonthsEduWise
+                        ? getEduWiseExperience().join("/ ")
+                        : formatExperience(
+                            job?.mandatory_experience_years,
+                            job?.mandatory_experience_months
+                          )}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-
               <div className="info-card">
-                <div className="section-title">{t("candidateWorkflow:mandatory_education")}:</div>
+                <div className="section-title">
+                  {t("candidateWorkflow:mandatory_education")}:
+                </div>
                 <ul className="section-list">
-                  <li style={{ whiteSpace: "pre-line" }}>{job?.mandatory_qualification || "-"}</li>
+                  <li style={{ whiteSpace: "pre-line" }}>
+                    {job?.mandatory_qualification || "-"}
+                  </li>
                 </ul>
 
-                <div className="section-title mt-2">{t("candidateWorkflow:preferred_education")}:</div>
+                <div className="section-title mt-2">
+                  {t("candidateWorkflow:preferred_education")}:
+                </div>
                 <ul className="section-list">
-                  <li style={{ whiteSpace: "pre-line" }}>{job?.preferred_qualification || "NA"}</li>
+                  <li style={{ whiteSpace: "pre-line" }}>
+                    {job?.preferred_qualification || "NA"}
+                  </li>
                 </ul>
               </div>
 
               <div className="info-card">
-
-                <div className="section-title">{t("candidateWorkflow:mandatory_experience")}:</div>
+                <div className="section-title">
+                  {t("candidateWorkflow:mandatory_experience")}:
+                </div>
                 <ul className="section-lists">
                   {renderBullets(job?.mandatory_experience)}
                 </ul>
 
-
-
-
-                <div className="section-title mt-2">{t("candidateWorkflow:preferred_experience")}:</div>
+                <div className="section-title mt-2">
+                  {t("candidateWorkflow:preferred_experience")}:
+                </div>
                 <ul className="section-lists">
                   {renderBullets(job?.preferred_experience || "NA")}
                 </ul>
-
-
-
               </div>
 
               <div className="info-card">
-                <div className="section-title">{t("candidateWorkflow:key_responsibilities")}:</div>
+                <div className="section-title">
+                  {t("candidateWorkflow:key_responsibilities")}:
+                </div>
                 <ul className="section-lists">
                   {renderBullets(job?.roles_responsibilities)}
                 </ul>
-
-
-
               </div>
 
               {job?.positionStateDistributions?.length > 0 && (
@@ -544,7 +509,9 @@ const selectedModalPosition = Array.isArray(position)
                   positionStateDistributions={job.positionStateDistributions}
                   states={masterData?.states || []}
                   cities={masterData?.cities || []}
-                  reservationCategories={masterData?.reservationCategories || []}
+                  reservationCategories={
+                    masterData?.reservationCategories || []
+                  }
                   disabilityCategories={masterData?.disabilityCategories || []}
                 />
               )}
@@ -552,25 +519,26 @@ const selectedModalPosition = Array.isArray(position)
               {job?.positionStateDistributions?.length === 0 &&
                 job?.nationalCategoryDistribution && (
                   <NationalVacancyTable
-                    nationalCategoryDistribution={job.nationalCategoryDistribution}
-                    reservationCategories={masterData?.reservationCategories || []}
-                    disabilityCategories={masterData?.disabilityCategories || []}
+                    nationalCategoryDistribution={
+                      job.nationalCategoryDistribution
+                    }
+                    reservationCategories={
+                      masterData?.reservationCategories || []
+                    }
+                    disabilityCategories={
+                      masterData?.disabilityCategories || []
+                    }
                   />
                 )}
             </>
           )}
-
         </Modal.Body>
 
         <Modal.Footer className="justify-content-center">
-          <button
-            className="ok-btn"
-            onClick={() => setShowPosition(false)}
-          >
+          <button className="ok-btn" onClick={() => setShowPosition(false)}>
             {t("common:ok")}
           </button>
         </Modal.Footer>
-
       </Modal>
     </>
   );

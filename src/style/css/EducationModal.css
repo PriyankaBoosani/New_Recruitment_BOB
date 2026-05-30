@@ -1,23 +1,23 @@
 .edu-modal-header {
-    padding-bottom: 0;
-    border-bottom: none;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 .edu-modal-footer {
-    padding-top: 0;
-    border-top: none;
+  padding-top: 0;
+  border-top: none;
 }
-.edu-btn{
-    background-color: #fff ;
-    border: 1px solid #F26522 ;
-    color: #F26522 ;
-    font-weight: 400;
-    font-size: 0.75em;
+.edu-btn {
+  background-color: #fff;
+  border: 1px solid #f26522;
+  color: #f26522;
+  font-weight: 400;
+  font-size: 0.75em;
 }
-.edu-modal .form-control, .edu-modal .form-select {
-	border-radius: 6px;
-	padding: 10px 12px;
-	font-size: 0.785em;
-
+.edu-modal .form-control,
+.edu-modal .form-select {
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.785em;
 }
 /* Fix long text overlapping select arrow */
 .edu-modal .form-select {
@@ -29,52 +29,50 @@
   padding-right: 2.5rem;
 }
 .result pre {
-  white-space: pre-wrap;      /* preserve line breaks but allow wrapping */
-  word-break: break-word;     /* break long words */
-  overflow-x: hidden;         /* kill horizontal scroll */
-  overflow-y: auto;           /* allow vertical scroll */
-  max-height: 200px;          /* adjust as needed */
+  white-space: pre-wrap; /* preserve line breaks but allow wrapping */
+  word-break: break-word; /* break long words */
+  overflow-x: hidden; /* kill horizontal scroll */
+  overflow-y: auto; /* allow vertical scroll */
+  max-height: 200px; /* adjust as needed */
 }
 
-
 .edu-btn:hover {
-	background: #fff;
-	border: 1px solid #F26522;
-	color: #f26522;
+  background: #fff;
+  border: 1px solid #f26522;
+  color: #f26522;
 }
 .edu-error-space {
   min-height: 18px; /* match ErrorMessage height */
 }
 
-.f14{
-    font-size: 0.875em;
+.f14 {
+  font-size: 0.875em;
 }
-.bluecol{
-    color: #162B75;
+.bluecol {
+  color: #162b75;
 }
-.f16{
-    font-size: 1em;
+.f16 {
+  font-size: 1em;
 }
-.f12{
-    font-size: 0.75em;
+.f12 {
+  font-size: 0.75em;
 }
 
-.result .f14{
-    color: #333333;
-    font-weight: 600;
+.result .f14 {
+  color: #333333;
+  font-weight: 600;
 }
 .edu-modal .react-select__single-value {
-    font-size: 13px;
+  font-size: 13px;
 }
 .edu-modal .react-select__option {
-    font-size: 13px;
+  font-size: 13px;
 }
 
 .modal-dialog-scrollable .modal-body {
   overflow-y: auto;
   max-height: 600px;
 }
-
 
 /* Education Modal Group Styling */
 .group-box {
@@ -95,9 +93,9 @@
   padding-bottom: 8px;
   border-bottom: 2px solid #007bff;
 }
-.edugrp-header{
-   margin-bottom: 0px !important;
-    border-bottom: none !important;
+.edugrp-header {
+  margin-bottom: 0px !important;
+  border-bottom: none !important;
 }
 .group-header strong {
   font-size: 0.75rem;
@@ -115,12 +113,11 @@
 }
 
 .group-header .btn:hover {
-  
   transform: translateY(-1px);
 }
 
 .or-divider:before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 0;
@@ -206,12 +203,11 @@
   }
 }
 
-.btn-header{
-border: 1px solid rgb(22, 43, 117) !important;
+.btn-header {
+  border: 1px solid rgb(22, 43, 117) !important;
   background: rgb(22, 43, 117) !important;
   color: #fff !important;
 }
-
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -219,28 +215,28 @@ border: 1px solid rgb(22, 43, 117) !important;
     padding: 12px;
     margin-bottom: 12px;
   }
-  
+
   .group-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .group-box .row {
     padding: 8px;
   }
-  
+
   .group-box .col-md-1,
   .group-box .col-md-2 {
     margin-bottom: 8px;
     padding-left: 4px;
     padding-right: 4px;
   }
-  
+
   .group-header .btn {
     align-self: flex-end;
   }
-  
+
   .or-divider {
     margin: 16px 0;
     font-size: 12px;
@@ -254,11 +250,11 @@ border: 1px solid rgb(22, 43, 117) !important;
   min-height: 18px;
 }
 .error-message {
-	margin-top: 4px !important;
+  margin-top: 4px !important;
 }
-.delbtn{
+.delbtn {
   margin-top: -15px !important;
 }
 .edu-modal .react-select__control {
- min-height: 41px;
+  min-height: 41px;
 }

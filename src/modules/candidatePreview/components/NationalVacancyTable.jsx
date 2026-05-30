@@ -2,7 +2,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const NationalVacancyTable = ({ nationalCategoryDistribution, reservationCategories = [], disabilityCategories = [] }) => {
+const NationalVacancyTable = ({
+  nationalCategoryDistribution,
+  reservationCategories = [],
+  disabilityCategories = [],
+}) => {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
 
   if (!nationalCategoryDistribution) return null;
@@ -28,14 +32,14 @@ const NationalVacancyTable = ({ nationalCategoryDistribution, reservationCategor
               </th>
             </tr>
             <tr>
-              {reservationCategories.map(cat => (
+              {reservationCategories.map((cat) => (
                 <th className="text-center" key={cat.reservationCategoriesId}>
                   {cat.categoryCode}
                 </th>
               ))}
               <th className="text-center">{t("common:total")}</th>
 
-              {disabilityCategories.map(d => (
+              {disabilityCategories.map((d) => (
                 <th className="text-center" key={d.disabilityCategoryId}>
                   {d.disabilityCode}
                 </th>
@@ -45,7 +49,7 @@ const NationalVacancyTable = ({ nationalCategoryDistribution, reservationCategor
 
           <tbody>
             <tr>
-              {reservationCategories.map(cat => (
+              {reservationCategories.map((cat) => (
                 <td key={cat.reservationCategoriesId}>
                   {categories?.[cat.reservationCategoriesId] ?? 0}
                 </td>
@@ -53,7 +57,7 @@ const NationalVacancyTable = ({ nationalCategoryDistribution, reservationCategor
 
               <td>{totalVacancies}</td>
 
-              {disabilityCategories.map(d => (
+              {disabilityCategories.map((d) => (
                 <td key={d.disabilityCategoryId}>
                   {disabilities?.[d.disabilityCategoryId] ?? 0}
                 </td>
@@ -63,7 +67,6 @@ const NationalVacancyTable = ({ nationalCategoryDistribution, reservationCategor
         </table>
       </div>
     </div>
-
   );
 };
 

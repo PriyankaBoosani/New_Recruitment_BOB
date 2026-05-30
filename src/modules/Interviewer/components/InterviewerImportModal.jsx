@@ -8,9 +8,9 @@ import InterviewerService from "../service/InterviewerService";
 const InterviewerImportModal = ({
   onClose = () => {},
   onSuccess = () => {},
-  
+
   positionId,
-  selectedDate
+  selectedDate,
 }) => {
   const { t } = useTranslation("interviewDay");
 
@@ -25,10 +25,9 @@ const InterviewerImportModal = ({
 
     const isExcel =
       file &&
-      (
-        file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-        file.type === "application/vnd.ms-excel"
-      );
+      (file.type ===
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        file.type === "application/vnd.ms-excel");
 
     if (isExcel) {
       setSelectedFile(file);
@@ -39,109 +38,109 @@ const InterviewerImportModal = ({
   };
 
   /* ================= UPLOAD ================= */
-const handleUpload = async () => {
-  if (!selectedFile) {
-    setError(t("no_file_selected"));
-    return;
-  }
-
-  try {
-    setLoading(true);
-
-    //  RESET OLD ERRORS (IMPORTANT)
-    setError("");
-    setErrorDetails([]);
-
-    console.log("Uploading file:", selectedFile);
-
-    const res = await InterviewerService.uploadInterviewFile(selectedFile);
-
-    // 🔍 DEBUG LOGS
-    console.log("FULL RESPONSE:", res);
-
-    //  NORMALIZE RESPONSE (handles both formats)
-    const success = res?.success ?? res?.data?.success;
-    const message = res?.message ?? res?.data?.message;
-    const details = res?.data ?? res?.data?.data ?? [];
-
-    console.log("SUCCESS:", success);
-    console.log("MESSAGE:", message);
-    console.log("DETAILS:", details);
-
-    //  SUCCESS FLOW
-    if (success) {
-      console.log("Upload success");
-
-      onSuccess();
-      onClose();
-    } 
-    //  FAILURE (VALIDATION / BUSINESS ERROR)
-    else {
-      console.log("Upload failed with backend validation");
-
-      setError(message || t("import_error"));
-
-      //  ENSURE ARRAY (VERY IMPORTANT)
-      setErrorDetails(Array.isArray(details) ? details : []);
-    }
-
-  } catch (err) {
-    console.log("API ERROR:", err);
-    console.log("ERROR DATA:", err?.response?.data);
-
-    const message =
-      err?.response?.data?.message || t("upload_failed");
-
-    const details =
-      err?.response?.data?.data || [];
-
-    setError(message);
-    setErrorDetails(Array.isArray(details) ? details : []);
-  } finally {
-    setLoading(false);
-  }
-};
-
-  /* ================= TEMPLATE DOWNLOAD ================= */
-const downloadTemplate = async () => {
-  try {
-    if (!positionId || !selectedDate) {
-      setError("Please select position and date");
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      setError(t("no_file_selected"));
       return;
     }
 
-     console.log("BTN CLICK");
+    try {
+      setLoading(true);
 
-    const formatDate = (d) => {
-      const date = new Date(d);
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-    };
+      //  RESET OLD ERRORS (IMPORTANT)
+      setError("");
+      setErrorDetails([]);
 
-    const res = await InterviewerService.downloadInterviewTemplate(
-      positionId,
-      formatDate(selectedDate)
-    );
+      console.log("Uploading file:", selectedFile);
 
-    // ✅ create download
-    const blob = new Blob([res.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-    const url = window.URL.createObjectURL(blob);
+      const res = await InterviewerService.uploadInterviewFile(selectedFile);
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "interview_template.xlsx";
-    a.click();
+      // 🔍 DEBUG LOGS
+      console.log("FULL RESPONSE:", res);
 
-    window.URL.revokeObjectURL(url);
+      //  NORMALIZE RESPONSE (handles both formats)
+      const success = res?.success ?? res?.data?.success;
+      const message = res?.message ?? res?.data?.message;
+      const details = res?.data ?? res?.data?.data ?? [];
 
-  } catch {
-    setError(t("template_download_failed") || "Template download failed");
-  }
-};
+      console.log("SUCCESS:", success);
+      console.log("MESSAGE:", message);
+      console.log("DETAILS:", details);
+
+      //  SUCCESS FLOW
+      if (success) {
+        console.log("Upload success");
+
+        onSuccess();
+        onClose();
+      }
+      //  FAILURE (VALIDATION / BUSINESS ERROR)
+      else {
+        console.log("Upload failed with backend validation");
+
+        setError(message || t("import_error"));
+
+        //  ENSURE ARRAY (VERY IMPORTANT)
+        setErrorDetails(Array.isArray(details) ? details : []);
+      }
+    } catch (err) {
+      console.log("API ERROR:", err);
+      console.log("ERROR DATA:", err?.response?.data);
+
+      const message = err?.response?.data?.message || t("upload_failed");
+
+      const details = err?.response?.data?.data || [];
+
+      setError(message);
+      setErrorDetails(Array.isArray(details) ? details : []);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ================= TEMPLATE DOWNLOAD ================= */
+  const downloadTemplate = async () => {
+    try {
+      if (!positionId || !selectedDate) {
+        setError("Please select position and date");
+        return;
+      }
+
+      console.log("BTN CLICK");
+
+      const formatDate = (d) => {
+        const date = new Date(d);
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      };
+
+      const res = await InterviewerService.downloadInterviewTemplate(
+        positionId,
+        formatDate(selectedDate)
+      );
+
+      // ✅ create download
+      const blob = new Blob([res.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "interview_template.xlsx";
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+    } catch {
+      setError(t("template_download_failed") || "Template download failed");
+    }
+  };
 
   return (
     <div>
-      <div className="import-area p-4 rounded" style={{ background: "#fceee9" }}>
-
+      <div
+        className="import-area p-4 rounded"
+        style={{ background: "#fceee9" }}
+      >
         {/* ICON + TITLE */}
         <div className="text-center mb-3">
           <div
@@ -153,38 +152,34 @@ const downloadTemplate = async () => {
               alignItems: "center",
               justifyContent: "center",
               background: "#fff",
-              marginBottom: "1rem"
+              marginBottom: "1rem",
             }}
           >
             <UploadIcon size={32} />
           </div>
 
-          <h5 className="mb-2 uploadfile">
-            {t("upload_interview_data")}
-          </h5>
+          <h5 className="mb-2 uploadfile">{t("upload_interview_data")}</h5>
 
-          <p className="text-muted small">
-            {t("support_xlsx")}
-          </p>
+          <p className="text-muted small">{t("support_xlsx")}</p>
         </div>
 
         {/* ERROR */}
         {/* ERROR */}
-{error && (
-  <Alert variant="danger" className="custom-error-box">
-    <div className="fw-semibold mb-2">{error}</div>
+        {error && (
+          <Alert variant="danger" className="custom-error-box">
+            <div className="fw-semibold mb-2">{error}</div>
 
-    {errorDetails.length > 0 && (
-      <div className="error-scroll">
-        <ul className="mb-0">
-          {errorDetails.map((msg, idx) => (
-            <li key={idx}>{msg}</li>
-          ))}
-        </ul>
-      </div>
-    )}
-  </Alert>
-)}
+            {errorDetails.length > 0 && (
+              <div className="error-scroll">
+                <ul className="mb-0">
+                  {errorDetails.map((msg, idx) => (
+                    <li key={idx}>{msg}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </Alert>
+        )}
 
         {/* FILE INPUT */}
         <input
@@ -205,9 +200,7 @@ const downloadTemplate = async () => {
               className="btnupload"
               disabled={loading}
             >
-              {selectedFile
-                ? t("reupload_xlsx")
-                : t("upload_xlsx")}
+              {selectedFile ? t("reupload_xlsx") : t("upload_xlsx")}
             </Button>
           </label>
 
@@ -244,7 +237,8 @@ const downloadTemplate = async () => {
             className="btn btn-link p-0 text-primary text-decoration-none btnfont"
             disabled={loading}
           >
-            {" "}XLSX
+            {" "}
+            XLSX
           </button>
         </div>
       </div>
@@ -272,43 +266,6 @@ const downloadTemplate = async () => {
 };
 
 export default InterviewerImportModal;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import React, { useState } from "react";
 // import { Button, Alert } from "react-bootstrap";

@@ -5,7 +5,6 @@ import masterApiService from "../../master/services/masterApiService";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
-
 const DocumentViewerModal = ({
   show,
   onHide,
@@ -13,8 +12,7 @@ const DocumentViewerModal = ({
   onVerify,
   onReject,
   isZonalAbsent,
-  isFromCompensationPool  
-
+  isFromCompensationPool,
 }) => {
   const { t } = useTranslation(["preview", "common", "validation"]);
 
@@ -30,28 +28,15 @@ const DocumentViewerModal = ({
   // const isZonalHr = role === "zonal_hr";
   // const isInterviewer = role === "interviewer";
 
-
-
-
-
-
-
-
   const privileges = useSelector((state) => state.user.privileges);
 
   const isZonalHr = privileges?.Verification;
   const isInterviewer = privileges?.Interview;
   const canCandidatePool = privileges?.["Candidate Pool"];
 
-
   const disableActions =
-   isFromCompensationPool || 
-    !canCandidatePool && (
-      isInterviewer || (isZonalHr && isZonalAbsent)
-    );;
-
-
-
+    isFromCompensationPool ||
+    (!canCandidatePool && (isInterviewer || (isZonalHr && isZonalAbsent)));
 
   /* ================= FETCH SAS URL ================= */
 
@@ -89,7 +74,6 @@ const DocumentViewerModal = ({
 
   useEffect(() => {
     if (show && document) {
-
       // ✅ If already VERIFIED → do not preload comment
       if (document.status === "VERIFIED") {
         setComment("");
@@ -104,7 +88,6 @@ const DocumentViewerModal = ({
       setSasUrl(null);
     }
   }, [show, document]);
-
 
   /* ================= FILE TYPE ================= */
 
@@ -150,7 +133,6 @@ const DocumentViewerModal = ({
       dialogClassName="doc-viewer-dialog"
     >
       <div className="doc-viewer-container">
-
         {/* ===== HEADER ===== */}
         <div className="doc-viewer-header">
           <span className="doc-viewer-title">{document.name}</span>
@@ -161,7 +143,6 @@ const DocumentViewerModal = ({
 
         {/* ===== CONTENT ===== */}
         <div className="doc-viewer-content">
-
           {loading && (
             <div className="text-center">{t("loading_document")}</div>
           )}
@@ -172,7 +153,11 @@ const DocumentViewerModal = ({
                 <img
                   src={sasUrl}
                   alt={document.name}
-                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                  }}
                 />
               )}
 
@@ -203,10 +188,8 @@ const DocumentViewerModal = ({
 
         {/* ===== FOOTER ===== */}
         <div className="doc-viewer-footer">
-
           {/* one-line row */}
           <div className="d-flex align-items-center gap-3 w-100">
-
             {/* comment box same height as buttons */}
             <div style={{ flex: 1 }}>
               <textarea
@@ -236,7 +219,7 @@ const DocumentViewerModal = ({
                 disabled={disableActions}
                 style={{
                   opacity: disableActions ? 0.5 : 1,
-                  cursor: disableActions ? "not-allowed" : "pointer"
+                  cursor: disableActions ? "not-allowed" : "pointer",
                 }}
               >
                 {t("REJECTED")}
@@ -248,16 +231,13 @@ const DocumentViewerModal = ({
                 disabled={disableActions}
                 style={{
                   opacity: disableActions ? 0.5 : 1,
-                  cursor: disableActions ? "not-allowed" : "pointer"
+                  cursor: disableActions ? "not-allowed" : "pointer",
                 }}
               >
                 {t("VERIFIED")}
               </button>
-
             </div>
-
           </div>
-
         </div>
       </div>
     </Modal>

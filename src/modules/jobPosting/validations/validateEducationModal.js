@@ -5,7 +5,6 @@ export const validateEducationModal = ({ groups, mode }) => {
   const groupKeys = new Set();
 
   groups.forEach((group, gIdx) => {
-
     // ✅ Track duplicates only inside SAME GROUP
     const seenEducations = new Set();
 
@@ -20,7 +19,7 @@ export const validateEducationModal = ({ groups, mode }) => {
       const educationKey = [
         row.educationTypeId,
         row.educationQualificationsId,
-        row.specializationId || ""
+        row.specializationId || "",
       ].join("_");
 
       // ✅ Duplicate inside SAME GROUP
@@ -58,8 +57,7 @@ export const validateEducationModal = ({ groups, mode }) => {
         }
 
         if (!hasDegree) {
-          rowErrors.educationQualificationsId =
-            "validation:required";
+          rowErrors.educationQualificationsId = "validation:required";
         }
       }
 
@@ -70,16 +68,14 @@ export const validateEducationModal = ({ groups, mode }) => {
         }
 
         if (!hasDegree) {
-          rowErrors.educationQualificationsId =
-            "validation:required";
+          rowErrors.educationQualificationsId = "validation:required";
         }
       }
 
       // ✅ Convert group index -> flat index
       const flatIndex =
-        groups
-          .slice(0, gIdx)
-          .reduce((acc, g) => acc + g.educations.length, 0) + rIdx;
+        groups.slice(0, gIdx).reduce((acc, g) => acc + g.educations.length, 0) +
+        rIdx;
 
       if (Object.keys(rowErrors).length > 0) {
         errors.rows[flatIndex] = rowErrors;
@@ -87,18 +83,13 @@ export const validateEducationModal = ({ groups, mode }) => {
     });
 
     // ✅ Duplicate ENTIRE GROUP Check
-    const groupKey = [...seenEducations]
-      .sort()
-      .join("|");
+    const groupKey = [...seenEducations].sort().join("|");
 
     if (groupKey && groupKeys.has(groupKey)) {
-
       // ✅ Group-level error
       errors.groupErrors = errors.groupErrors || {};
 
-      errors.groupErrors[gIdx] =
-        "validation:duplicate_group";
-
+      errors.groupErrors[gIdx] = "validation:duplicate_group";
     } else if (groupKey) {
       groupKeys.add(groupKey);
     }
@@ -106,12 +97,11 @@ export const validateEducationModal = ({ groups, mode }) => {
 
   // ✅ FINAL ERROR CHECK
   const hasRowErrors = errors.rows.some(
-    row => row && Object.keys(row).length > 0
+    (row) => row && Object.keys(row).length > 0
   );
 
   const hasGroupErrors =
-    errors.groupErrors &&
-    Object.keys(errors.groupErrors).length > 0;
+    errors.groupErrors && Object.keys(errors.groupErrors).length > 0;
 
   if (!hasRowErrors && !hasGroupErrors) {
     return {};
@@ -125,36 +115,28 @@ export const validateCertificationGroups = (certGroups) => {
   const groupKeys = new Set();
 
   certGroups.forEach((group, gIdx) => {
-
     const seenCertifications = new Set();
 
     (group.certifications || []).forEach((certRow) => {
-
       if (!certRow.certificationId) return;
 
       // ❌ DUPLICATE INSIDE SAME GROUP
       if (seenCertifications.has(certRow.certificationId)) {
         errors.certGroupErrors = errors.certGroupErrors || {};
 
-        errors.certGroupErrors[gIdx] =
-          "validation:duplicate_certification";
+        errors.certGroupErrors[gIdx] = "validation:duplicate_certification";
       } else {
         seenCertifications.add(certRow.certificationId);
       }
     });
 
     // ❌ DUPLICATE ENTIRE OR GROUP
-    const groupKey = [...seenCertifications]
-      .sort()
-      .join("|");
+    const groupKey = [...seenCertifications].sort().join("|");
 
     if (groupKey && groupKeys.has(groupKey)) {
-
       errors.certGroupErrors = errors.certGroupErrors || {};
 
-      errors.certGroupErrors[gIdx] =
-        "validation:duplicate_cert_group";
-
+      errors.certGroupErrors[gIdx] = "validation:duplicate_cert_group";
     } else if (groupKey) {
       groupKeys.add(groupKey);
     }

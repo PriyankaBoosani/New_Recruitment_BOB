@@ -4,8 +4,7 @@ export const mapJobRequisitionFromApi = (item = {}) => {
   const rawStatus = item.requisitionStatus ?? "";
 
   // ✅ DEFINE HERE (not outside)
-  const isRejected =
-    rawStatus === "L1_REJECTED" || rawStatus === "L2_REJECTED";
+  const isRejected = rawStatus === "L1_REJECTED" || rawStatus === "L2_REJECTED";
 
   const isInEditMode = item.is_in_edit_mode === true;
 
@@ -31,7 +30,7 @@ export const mapJobRequisitionFromApi = (item = {}) => {
 
     // ✅ now works
     isRejected,
-    isInEditMode
+    isInEditMode,
   };
 };
 const getStatusBadge = (status = "") => {

@@ -17,67 +17,57 @@ export const useCreateRequisition = (editId, mode, isDraftMode = false) => {
     description: "",
     startDate: "",
     endDate: "",
-    cutoffDate: ""
+    cutoffDate: "",
   });
 
   // Fetch data if in Edit Mode
-useEffect(() => {
-  if (!editId) return;
+  useEffect(() => {
+    if (!editId) return;
 
-  const loadData = async () => {
-    setFetching(true);
+    const loadData = async () => {
+      setFetching(true);
 
-    try {
+      try {
+        const res = isDraftMode
+          ? await requisitionApiService.getCurrentDraftRequisition(editId)
+          : await requisitionApiService.getRequisitionById(editId);
 
-      const res = isDraftMode
-        ? await requisitionApiService.getCurrentDraftRequisition(editId)
-        : await requisitionApiService.getRequisitionById(editId);
+        // 🔥 different response shapes
+        const data = res?.data || {};
 
-      // 🔥 different response shapes
-      const data = res?.data || {};
+        setRequisitionData(data);
 
-      setRequisitionData(data);
+        // ❗ skip prefill for reinitialize
+        if (mode === "reinitialize") {
+          setFormData({
+            title: "",
+            description: "",
+            startDate: "",
+            endDate: "",
+            cutoffDate: "",
+          });
 
-      // ❗ skip prefill for reinitialize
-      if (mode === "reinitialize") {
+          return;
+        }
+
         setFormData({
-          title: "",
-          description: "",
-          startDate: "",
-          endDate: "",
-          cutoffDate: ""
+          title: data.requisitionTitle || "",
+          description: data.requisitionDescription || "",
+          startDate: data.startDate ? data.startDate.split("T")[0] : "",
+          endDate: data.endDate ? data.endDate.split("T")[0] : "",
+          cutoffDate: data.cutoffDate ? data.cutoffDate.split("T")[0] : "",
         });
-
-        return;
+        console.log("Loaded requisition data:", data);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load requisition data.");
+      } finally {
+        setFetching(false);
       }
+    };
 
-      setFormData({
-        title: data.requisitionTitle || "",
-        description: data.requisitionDescription || "",
-        startDate: data.startDate
-          ? data.startDate.split("T")[0]
-          : "",
-        endDate: data.endDate
-          ? data.endDate.split("T")[0]
-          : "",
-        cutoffDate: data.cutoffDate
-          ? data.cutoffDate.split("T")[0]
-          : ""
-      });
-      console.log("Loaded requisition data:", data);
-
-    } catch (err) {
-      console.error(err);
-      setError("Failed to load requisition data.");
-    } finally {
-      setFetching(false);
-    }
-  };
-
-  loadData();
-
-}, [editId, mode, isDraftMode]);
-
+    loadData();
+  }, [editId, mode, isDraftMode]);
 
   // Handle Input Changes
   const handleInputChange = (e) => {

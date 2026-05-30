@@ -1,9 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Container, Row, Col, Form, Button, Card, Spinner } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Card,
+  Spinner,
+} from "react-bootstrap";
 import "../../../style/css/CreateRequisition.css";
 import ErrorMessage from "../../../shared/components/ErrorMessage";
-import { validateRequisitionForm, validateTitleOnType, normalizeTitle } from "../validations/requisition-validation";
+import {
+  validateRequisitionForm,
+  validateTitleOnType,
+  normalizeTitle,
+} from "../validations/requisition-validation";
 import { mapRequisitionToApi } from "../mappers/createRequisitionMapper";
 import { useCreateRequisition } from "../hooks/useCreateRequisition";
 import { REQUISITION_CONFIG } from "../config/requisitionConfig";
@@ -17,11 +29,8 @@ const CreateRequisition = () => {
   const { t } = useTranslation(["CreateRequisition", "common"]);
   const renderError = (err) => (err ? t(err) : "");
 
-  const {
-    positionsByReq,
-    fetchPositions,
-    loadingReqId
-  } = useJobPositionsByRequisition();
+  const { positionsByReq, fetchPositions, loadingReqId } =
+    useJobPositionsByRequisition();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -57,18 +66,17 @@ const CreateRequisition = () => {
     loading,
     fetching,
     error: apiError,
-    requisitionData
+    requisitionData,
   } = useCreateRequisition(editId, mode, isDraftMode);
 
   const [errors, setErrors] = useState({});
   /* ===================== SAVE ===================== */
 
-useEffect(() => {
-  if (!editId) return;
+  useEffect(() => {
+    if (!editId) return;
 
-  fetchPositions(editId, isDraftView);
-
-}, [editId, isDraftView]);
+    fetchPositions(editId, isDraftView);
+  }, [editId, isDraftView]);
 
   // const positions = positionsByReq[editId] || [];
   // const key = `${editId}_false`;
@@ -86,7 +94,7 @@ useEffect(() => {
 
       // 🔥 Convert to map for O(1) lookup
       const map = {};
-      list.forEach(p => {
+      list.forEach((p) => {
         map[p.masterPositionsId] = p.positionName;
       });
 
@@ -115,52 +123,44 @@ useEffect(() => {
     try {
       // 🔵 CLONE MODE (existing)
       if (isCloneMode) {
-    const positionIds = Array.from(selectedPositions);
+        const positionIds = Array.from(selectedPositions);
 
-    // EXISTING DRAFT UPDATE
-    if (isDraftEdit) {
+        // EXISTING DRAFT UPDATE
+        if (isDraftEdit) {
+          await requisitionApiService.editDraftRequisition(
+            parentRequisitionId,
+            positionIds
+          );
 
-      await requisitionApiService.editDraftRequisition(
-        parentRequisitionId,
-        positionIds
-      );
+          const draftPayload = {
+            requisitionDescription: formData.description,
+            endDate: formData.endDate,
+            cutoffDate: formData.cutoffDate,
+          };
 
-      const draftPayload = {
-        requisitionDescription: formData.description,
-        endDate: formData.endDate,
-        cutoffDate: formData.cutoffDate,
-      };
+          await requisitionApiService.saveDraftDetails(
+            parentRequisitionId,
+            draftPayload
+          );
 
-      await requisitionApiService.saveDraftDetails(
-        parentRequisitionId,
-        draftPayload
-      );
+          toast.success("Draft updated successfully");
+        }
 
-      toast.success("Draft updated successfully");
-    }
+        // NEW DRAFT CREATION
+        else {
+          await requisitionApiService.editDraftRequisition(editId, positionIds);
 
-    // NEW DRAFT CREATION
-    else {
+          const draftPayload = {
+            requisitionDescription: formData.description,
+            endDate: formData.endDate,
+            cutoffDate: formData.cutoffDate,
+          };
 
-      await requisitionApiService.editDraftRequisition(
-        editId,
-        positionIds
-      );
+          await requisitionApiService.saveDraftDetails(editId, draftPayload);
 
-      const draftPayload = {
-        requisitionDescription: formData.description,
-        endDate: formData.endDate,
-        cutoffDate: formData.cutoffDate,
-      };
-
-      await requisitionApiService.saveDraftDetails(
-        editId,
-        draftPayload
-      );
-
-      toast.success("Draft created successfully");
-    }
-}
+          toast.success("Draft created successfully");
+        }
+      }
 
       // 🟢 REINITIALIZE MODE (NEW API)
       else if (isReinitializeMode) {
@@ -184,13 +184,10 @@ useEffect(() => {
         const payload = mapRequisitionToApi(formData);
         await saveRequisition(payload);
 
-        toast.success(
-          editId ? t("update_success") : t("create_success")
-        );
+        toast.success(editId ? t("update_success") : t("create_success"));
       }
 
       navigate(REQUISITION_CONFIG.SUCCESS_REDIRECT);
-
     } catch (err) {
       console.error("Save failed", err);
     }
@@ -199,9 +196,7 @@ useEffect(() => {
   useEffect(() => {
     if (!isDraftEdit || positions.length === 0) return;
 
-    setSelectedPositions(
-      new Set(positions.map(p => p.positionId))
-    );
+    setSelectedPositions(new Set(positions.map((p) => p.positionId)));
   }, [isDraftEdit, positions]);
 
   function getTomorrowISO() {
@@ -222,7 +217,6 @@ useEffect(() => {
     date.setDate(date.getDate() + days);
     return date.toISOString().split("T")[0];
   }
-
 
   /* ===================== LOADER ===================== */
   if (fetching) {
@@ -255,12 +249,17 @@ useEffect(() => {
               {!isViewMode && isReinitializeMode && (
                 <>
                   {t("reinitialize_requisition")}{" "}
-                  {requisitionData?.requisitionCode && ` (${requisitionData?.requisitionCode}`}{" "}
-                  {requisitionData?.requisitionTitle && `- ${requisitionData?.requisitionTitle})`}
+                  {requisitionData?.requisitionCode &&
+                    ` (${requisitionData?.requisitionCode}`}{" "}
+                  {requisitionData?.requisitionTitle &&
+                    `- ${requisitionData?.requisitionTitle})`}
                 </>
               )}
 
-              {!isViewMode && !isReinitializeMode && editId && t("edit_requisition")}
+              {!isViewMode &&
+                !isReinitializeMode &&
+                editId &&
+                t("edit_requisition")}
 
               {!editId && t("create_requisition")}
             </h6>
@@ -271,22 +270,23 @@ useEffect(() => {
             <fieldset disabled={isViewMode}>
               <Form.Group className="mb-3 mt-3">
                 <Form.Label>
-                  {t("requisition_title")} <span className="text-danger">*</span>
+                  {t("requisition_title")}{" "}
+                  <span className="text-danger">*</span>
                 </Form.Label>
 
                 <Form.Control
                   name="title"
                   value={formData.title}
                   maxLength={200}
-                  disabled= {isCloneMode}
+                  disabled={isCloneMode}
                   placeholder={t("enter_requisition_title")}
                   onChange={(e) => {
                     const result = validateTitleOnType(e.target.value);
 
                     if (!result.valid) {
-                      setErrors(prev => ({
+                      setErrors((prev) => ({
                         ...prev,
-                        title: result.message
+                        title: result.message,
                       }));
                       return;
                     }
@@ -294,11 +294,11 @@ useEffect(() => {
                     handleInputChange({
                       target: {
                         name: "title",
-                        value: result.value
-                      }
+                        value: result.value,
+                      },
                     });
 
-                    setErrors(prev => {
+                    setErrors((prev) => {
                       const copy = { ...prev };
                       delete copy.title;
                       return copy;
@@ -308,16 +308,13 @@ useEffect(() => {
                     handleInputChange({
                       target: {
                         name: "title",
-                        value: normalizeTitle(e.target.value).trim()
-                      }
+                        value: normalizeTitle(e.target.value).trim(),
+                      },
                     })
                   }
-
                 />
 
-                <Form.Text className="text-muted">
-                  {t("title_help")}
-                </Form.Text>
+                <Form.Text className="text-muted">{t("title_help")}</Form.Text>
                 <ErrorMessage>{renderError(errors.title)}</ErrorMessage>
               </Form.Group>
 
@@ -343,13 +340,14 @@ useEffect(() => {
                         handleInputChange({
                           target: {
                             name: "description",
-                            value: e.target.value.trim()
-                          }
+                            value: e.target.value.trim(),
+                          },
                         })
                       }
-
                     />
-                    <ErrorMessage>{renderError(errors.description)}</ErrorMessage>
+                    <ErrorMessage>
+                      {renderError(errors.description)}
+                    </ErrorMessage>
                   </Form.Group>
 
                   {(isCloneMode || isReinitializeMode) && (
@@ -362,29 +360,30 @@ useEffect(() => {
                         <div className="text-muted">No positions available</div>
                       )}
 
-                      {!loadingReqId && positions.map((pos) => (
-                        <Form.Check
-                          key={pos.positionId}
-                          type="checkbox"
-                          className="mb-2"
-                          style={{ fontSize: '0.875rem' }}
-                          label={`${masterPositionsMap[pos.masterPositionId] || "Unknown"} - (${pos.vacancies} vacancies)`}
-                          checked={selectedPositions.has(pos.positionId)}
-                          onChange={(e) => {
-                            setSelectedPositions(prev => {
-                              const next = new Set(prev);
+                      {!loadingReqId &&
+                        positions.map((pos) => (
+                          <Form.Check
+                            key={pos.positionId}
+                            type="checkbox"
+                            className="mb-2"
+                            style={{ fontSize: "0.875rem" }}
+                            label={`${masterPositionsMap[pos.masterPositionId] || "Unknown"} - (${pos.vacancies} vacancies)`}
+                            checked={selectedPositions.has(pos.positionId)}
+                            onChange={(e) => {
+                              setSelectedPositions((prev) => {
+                                const next = new Set(prev);
 
-                              if (e.target.checked) {
-                                next.add(pos.positionId);
-                              } else {
-                                next.delete(pos.positionId);
-                              }
+                                if (e.target.checked) {
+                                  next.add(pos.positionId);
+                                } else {
+                                  next.delete(pos.positionId);
+                                }
 
-                              return next;
-                            });
-                          }}
-                        />
-                      ))}
+                                return next;
+                              });
+                            }}
+                          />
+                        ))}
                     </div>
                   )}
                 </Col>
@@ -394,26 +393,25 @@ useEffect(() => {
                     <Col md={12}>
                       <Form.Group className="mb-3">
                         <Form.Label>
-                          {t("start_date")} <span className="text-danger">*</span>
+                          {t("start_date")}{" "}
+                          <span className="text-danger">*</span>
                         </Form.Label>
 
                         <Form.Control
                           type="date"
                           name="startDate"
                           value={formData.startDate}
-                          disabled= {isCloneMode}
+                          disabled={isCloneMode}
                           min={getTomorrowISO()} // ✅ tomorrow onwards
                           onChange={(e) => {
                             const startDate = e.target.value;
 
-
                             handleInputChange({
                               target: {
                                 name: "startDate",
-                                value: startDate
-                              }
+                                value: startDate,
+                              },
                             });
-
 
                             // handleInputChange({
                             //   target: {
@@ -422,18 +420,19 @@ useEffect(() => {
                             //   }
                             // });
 
-
-                            setErrors(prev => ({
+                            setErrors((prev) => ({
                               ...prev,
                               startDate: "",
-                              endDate: ""
+                              endDate: "",
                             }));
                           }}
                         />
                         <Form.Text className="text-muted">
                           {t("start_date_help")}
                         </Form.Text>
-                        <ErrorMessage>{renderError(errors.startDate)}</ErrorMessage>
+                        <ErrorMessage>
+                          {renderError(errors.startDate)}
+                        </ErrorMessage>
                       </Form.Group>
                     </Col>
 
@@ -452,20 +451,21 @@ useEffect(() => {
                             setErrors((prev) => ({ ...prev, endDate: "" }));
                           }}
                           min={formData.startDate}
-
                         />
                         <Form.Text className="text-muted">
                           {t("end_date_help")}
-
                         </Form.Text>
-                        <ErrorMessage>{renderError(errors.endDate)}</ErrorMessage>
+                        <ErrorMessage>
+                          {renderError(errors.endDate)}
+                        </ErrorMessage>
                       </Form.Group>
                     </Col>
 
                     <Col md={12}>
                       <Form.Group>
                         <Form.Label>
-                          {t("cut_off_date")} <span className="text-danger">*</span>
+                          {t("cut_off_date")}{" "}
+                          <span className="text-danger">*</span>
                         </Form.Label>
 
                         <Form.Control
@@ -476,10 +476,11 @@ useEffect(() => {
                             handleInputChange(e);
                             setErrors((prev) => ({ ...prev, cutoffDate: "" }));
                           }}
-                        
                         />
-                       
-                        <ErrorMessage>{renderError(errors.cutoffDate)}</ErrorMessage>
+
+                        <ErrorMessage>
+                          {renderError(errors.cutoffDate)}
+                        </ErrorMessage>
                       </Form.Group>
                     </Col>
                   </Row>
@@ -497,7 +498,7 @@ useEffect(() => {
       </Card>
 
       <div className="footer-actions">
-        <Button variant="outline-secondary"  onClick={handleCancel}>
+        <Button variant="outline-secondary" onClick={handleCancel}>
           {t("common:cancel")}
         </Button>
 

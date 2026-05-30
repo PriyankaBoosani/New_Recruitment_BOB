@@ -20,8 +20,8 @@ const GenericOrAnnexuresPage = () => {
   const genericRef = useRef();
   const annexureRef = useRef();
 
-  const genericDoc = localItems.find(i => i.type === "Generic");
-  const annexureDoc = localItems.find(i => i.type === "Annexures");
+  const genericDoc = localItems.find((i) => i.type === "Generic");
+  const annexureDoc = localItems.find((i) => i.type === "Annexures");
 
   /* ================= UPLOAD ================= */
   const handleUpload = (type, file) => {
@@ -37,9 +37,9 @@ const GenericOrAnnexuresPage = () => {
 
     try {
       addItem({ type, file });
-      toast.success(t("upload_success"));   // ✅ SUCCESS
+      toast.success(t("upload_success")); // ✅ SUCCESS
     } catch (error) {
-      toast.error(t("upload_failed"));      // ❌ FAIL
+      toast.error(t("upload_failed")); // ❌ FAIL
     }
   };
 
@@ -63,21 +63,17 @@ const GenericOrAnnexuresPage = () => {
   /* ================= DELETE ================= */
   const handleLocalDelete = (type) => {
     try {
-      setLocalItems(prev => prev.filter(i => i.type !== type));
-      toast.success(t("delete_success"));   // ✅ SUCCESS
+      setLocalItems((prev) => prev.filter((i) => i.type !== type));
+      toast.success(t("delete_success")); // ✅ SUCCESS
     } catch (error) {
-      toast.error(t("delete_error"));       // ❌ FAIL
+      toast.error(t("delete_error")); // ❌ FAIL
     }
   };
 
   return (
-    <Container
-      className="mt-4"
-      style={{ minHeight: "calc(100vh - 120px)" }}
-    >
+    <Container className="mt-4" style={{ minHeight: "calc(100vh - 120px)" }}>
       <Card className="shadow-sm border-0 mb-4">
         <Card.Body>
-
           {/* Info Section */}
           <div className="d-flex align-items-start mb-4">
             <img
@@ -87,12 +83,10 @@ const GenericOrAnnexuresPage = () => {
                 width: "22px",
                 height: "22px",
                 marginRight: "8px",
-                marginTop: "2px"
+                marginTop: "2px",
               }}
             />
-            <p className="orange_text mb-0">
-              {t("upload_instruction")}
-            </p>
+            <p className="orange_text mb-0">{t("upload_instruction")}</p>
           </div>
 
           {/* Generic Upload */}
@@ -104,21 +98,15 @@ const GenericOrAnnexuresPage = () => {
                 genericDoc
                   ? {
                       name: genericDoc.fileName,
-                      url: genericDoc.fileUrl
+                      url: genericDoc.fileUrl,
                     }
                   : null
               }
               ref={genericRef}
               onBrowse={() => genericRef.current.click()}
-              onChange={(e) =>
-                handleUpload("Generic", e.target.files[0])
-              }
-              onView={() =>
-                handleView(genericDoc?.fileUrl)
-              }
-              onDelete={() =>
-                handleLocalDelete("Generic")
-              }
+              onChange={(e) => handleUpload("Generic", e.target.files[0])}
+              onView={() => handleView(genericDoc?.fileUrl)}
+              onDelete={() => handleLocalDelete("Generic")}
             />
           </div>
 
@@ -131,24 +119,17 @@ const GenericOrAnnexuresPage = () => {
                 annexureDoc
                   ? {
                       name: annexureDoc.fileName,
-                      url: annexureDoc.fileUrl
+                      url: annexureDoc.fileUrl,
                     }
                   : null
               }
               ref={annexureRef}
               onBrowse={() => annexureRef.current.click()}
-              onChange={(e) =>
-                handleUpload("Annexures", e.target.files[0])
-              }
-              onView={() =>
-                handleView(annexureDoc?.fileUrl)
-              }
-              onDelete={() =>
-                handleLocalDelete("Annexures")
-              }
+              onChange={(e) => handleUpload("Annexures", e.target.files[0])}
+              onView={() => handleView(annexureDoc?.fileUrl)}
+              onDelete={() => handleLocalDelete("Annexures")}
             />
           </div>
-
         </Card.Body>
       </Card>
     </Container>

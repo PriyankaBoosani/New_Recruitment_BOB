@@ -9,30 +9,26 @@ export const mapCompensationCandidates = (apiData = []) => {
       candidateId: comp.candidateId,
 
       //  UI fields
-    name: [
-  profile.firstName,
-  profile.middleName,
-  profile.lastName
-]
-  .filter(Boolean) // removes null/empty
-  .join(" "),
+      name: [profile.firstName, profile.middleName, profile.lastName]
+        .filter(Boolean) // removes null/empty
+        .join(" "),
       regNo: app.applicationNo,
       fileUrl: item.resumeUrl,
-       applicationId: app.id,
+      applicationId: app.id,
       currentCtc: comp.currentCtc,
       expectedCtc: comp.expectedCtc,
       agreedCtc: comp.agreedCtc,
       hike: comp.hike,
       // status: item.candidateCompensation?.compensationStatus,
       // statuss: selectedCandidate?.status,
-       status: comp.compensationStatus,
+      status: comp.compensationStatus,
       fixedPay: comp.fixedPay,
       variablePay: comp.variablePay,
       joiningBonus: comp.joiningBonus,
 
       comments: comp.recruiterComments || comp.panelComments || "-",
-recruiterComments: comp.recruiterComments,
-panelComments: comp.panelComments,
+      recruiterComments: comp.recruiterComments,
+      panelComments: comp.panelComments,
 
       negotiation: comp.compensationStatus,
 

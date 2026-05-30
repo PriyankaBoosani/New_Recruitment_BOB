@@ -10,7 +10,7 @@ const StatesLanguagesTable = ({
   pageSize,
   setPageSize,
   onEdit,
-  onView
+  onView,
 }) => {
   const { t } = useTranslation(["common", "stateLanguages"]);
   const indexOfLast = currentPage * pageSize;
@@ -47,8 +47,7 @@ const StatesLanguagesTable = ({
               <th>{t("stateLanguages:s_no")}</th>
               <th>{t("stateLanguages:state")}</th>
               <th>{t("stateLanguages:languages")}</th>
-              <th style={{ textAlign: "center" }}>{t("common:actions")}
-              </th>
+              <th style={{ textAlign: "center" }}>{t("common:actions")}</th>
             </tr>
           </thead>
           <tbody>
@@ -80,7 +79,6 @@ const StatesLanguagesTable = ({
                       </Button>
                     </div>
                   </td>
-
                 </tr>
               ))
             ) : (
@@ -116,7 +114,7 @@ const StatesLanguagesTable = ({
                 setCurrentPage(1);
               }}
             >
-              {[5, 10, 15, 20, 25, 30].map(n => (
+              {[5, 10, 15, 20, 25, 30].map((n) => (
                 <option key={n} value={n}>
                   {n}
                 </option>
@@ -135,11 +133,8 @@ const StatesLanguagesTable = ({
               </button>
             </li>
             {(() => {
-              const {
-                pages,
-                showStartEllipsis,
-                showEndEllipsis
-              } = getVisiblePages(currentPage, totalPages);
+              const { pages, showStartEllipsis, showEndEllipsis } =
+                getVisiblePages(currentPage, totalPages);
               return (
                 <>
                   {showStartEllipsis && (
@@ -147,7 +142,7 @@ const StatesLanguagesTable = ({
                       <span className="page-link">…</span>
                     </li>
                   )}
-                  {pages.map(number => (
+                  {pages.map((number) => (
                     <li
                       key={number}
                       className={`page-item ${currentPage === number ? "active" : ""}`}
@@ -168,7 +163,9 @@ const StatesLanguagesTable = ({
                 </>
               );
             })()}
-            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+            <li
+              className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+            >
               <button
                 className="page-link"
                 onClick={() => setCurrentPage(currentPage + 1)}

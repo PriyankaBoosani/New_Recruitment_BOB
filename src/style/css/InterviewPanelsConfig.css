@@ -1,6 +1,5 @@
 /*pagination*/
 .schedule-pagination {
-
   display: flex;
 
   justify-content: flex-end;
@@ -13,7 +12,6 @@
 }
 
 .schedule-page-size {
-
   width: 90px;
 
   height: 50px;
@@ -36,7 +34,6 @@
 }
 
 .schedule-page-btn {
-
   min-width: 70px;
 
   height: 44px;
@@ -59,19 +56,16 @@
 }
 
 .schedule-page-btn:hover:not(:disabled) {
-
   border-color: #4263eb;
 
   color: #4263eb;
 }
 
 .schedule-page-btn.active {
-
   border-color: #344054;
 }
 
 .schedule-page-btn:disabled {
-
   opacity: 0.5;
 
   cursor: not-allowed;
@@ -144,9 +138,8 @@
   min-width: 200px;
 
   z-index: 9999;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, .18);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
 }
-
 
 .ipc-chip-popover::before {
   content: "";
@@ -159,7 +152,6 @@
   background: #2f3e6f;
   transform: rotate(45deg);
 }
-
 
 .ipc-pop-head {
   display: flex;
@@ -184,7 +176,6 @@
   cursor: pointer;
 }
 
-
 /* ===== PANEL BOX ===== */
 .ipc-panel-box {
   background: white;
@@ -195,7 +186,6 @@
   display: flex;
   flex-wrap: wrap;
 }
-
 
 /* CHIP */
 
@@ -216,7 +206,6 @@
   color: #2f3e6f;
   font-weight: 500;
 }
-
 
 .ipc-chip-icon {
   cursor: pointer;
@@ -264,14 +253,13 @@
   justify-content: space-between;
   font-weight: 600;
   margin-bottom: 4px;
-  opacity: .8;
+  opacity: 0.8;
 }
 
 .ipc-tip-row {
   display: flex;
   justify-content: space-between;
 }
-
 
 /* ===== COUNT TEXT ===== */
 .ipc-count {
@@ -285,8 +273,6 @@
   font-size: 13px;
   height: 38px;
 }
-
-
 
 .schedule-ready-bar {
   background: white;
@@ -332,7 +318,6 @@
   color: white;
 }
 
-
 .schedule-card {
   background: white;
   border-radius: 12px;
@@ -356,8 +341,7 @@
 .schedule-table thead th {
   text-align: left;
   font-weight: 410;
-  color:
-    #494955;
+  color: #494955;
   padding: 12px 8px;
   border-bottom: 1px solid #e5e7eb;
 }
@@ -370,17 +354,14 @@
 
 .cand-name {
   font-weight: 420;
-  color:
-    #2d2d2d;
+  color: #2d2d2d;
 }
 
 .cand-reg {
   font-size: 12px;
-  color:
-    #7e7e7e;
+  color: #7e7e7e;
   margin-top: 4px;
 }
-
 
 .ap-modal .modal-content {
   border-radius: 16px;
@@ -449,7 +430,6 @@
   background: #e9ecef;
   color: #374151;
   /* border: 1px solid #f59e0b; */
-
 }
 
 .ap-inputs {
@@ -462,7 +442,6 @@
   width: 100%;
   font-size: 14px;
 }
-
 
 .ap-input:focus {
   background: #ffffff;
@@ -499,7 +478,6 @@
   position: relative;
 }
 
-
 .ap-plus {
   width: 46px;
   height: 44px;
@@ -535,7 +513,6 @@
   padding: 0 24px;
   border-radius: 12px;
   color: #6b7280;
-
 }
 
 .ap-save {
@@ -545,7 +522,6 @@
   padding: 0 28px;
   border-radius: 12px;
   color: white;
-
 }
 
 .ap-row {
@@ -594,7 +570,6 @@
     width: 100%;
   }
 }
-
 
 /* DATE PICKER */
 
@@ -673,7 +648,7 @@
   display: flex;
   gap: 24px;
   font-weight: 600;
-  opacity: .9;
+  opacity: 0.9;
   font-size: 12px;
 }
 
@@ -687,10 +662,8 @@
 .ipc-pop-head-actions i {
   cursor: pointer;
   font-size: 13px;
-  opacity: .95;
+  opacity: 0.95;
 }
-
-
 
 .del-modal .modal-content {
   border-radius: 14px;
@@ -728,9 +701,7 @@
 .del-message {
   font-size: 14px;
   font-weight: 400;
-  color:
-
-    #162b75;
+  color: #162b75;
   margin-bottom: 22px;
 }
 
@@ -743,8 +714,7 @@
 }
 
 .del-cancel {
-  background:
-    #f8f8f8;
+  background: #f8f8f8;
   border: 1px solid #e3e6ec;
   border-radius: 10px;
   height: 36px;
@@ -779,7 +749,7 @@
   gap: 4px;
   height: 30px;
   line-height: 1;
-  transition: all .15s ease;
+  transition: all 0.15s ease;
 }
 
 .ipc-apply-btn:hover {
@@ -790,7 +760,6 @@
 .ipc-apply-btn:active {
   transform: translateY(1px);
 }
-
 
 /* ===== APPLY SUCCESS MODAL ===== */
 
@@ -882,7 +851,6 @@
 }
 
 .schedule-error-box {
-
   background: #fff5f5;
 
   border: 1px solid #ffc9c9;
@@ -899,7 +867,6 @@
 }
 
 .schedule-error-row {
-
   display: flex;
 
   align-items: flex-start;
@@ -916,7 +883,6 @@
 }
 
 .ap-info-btn {
-
   position: absolute;
 
   right: 42px;
@@ -953,7 +919,6 @@
 }
 
 .ap-info-btn:hover {
-
   background: #1971c2;
 
   color: #fff;
@@ -962,12 +927,10 @@
 }
 
 .ap-no-arrow {
-
   padding-right: 70px !important;
 }
 
 .ap-panel-popover {
-
   position: absolute;
 
   top: calc(100% + 8px);
@@ -989,11 +952,9 @@
   max-height: 350px;
 
   overflow-y: auto;
-
 }
 
 .ap-panel-popover-header {
-
   display: flex;
 
   justify-content: space-between;
@@ -1005,11 +966,9 @@
   border-bottom: 1px solid #e9ecef;
 
   background: #f8f9fa;
-
 }
 
 .ap-panel-popover-title {
-
   font-size: 12px;
 
   font-weight: 600;
@@ -1017,11 +976,9 @@
   color: #212529;
 
   margin: 0;
-
 }
 
 .ap-panel-popover-close {
-
   background: none;
 
   border: none;
@@ -1047,37 +1004,27 @@
   border-radius: 4px;
 
   transition: all 0.2s ease;
-
 }
 
 .ap-panel-popover-close:hover {
-
   background: #e9ecef;
 
   color: #212529;
-
 }
 
 .ap-panel-popover-body {
-
   padding: 10px 12px;
-
 }
 
 .ap-day-block {
-
   margin-bottom: 12px;
-
 }
 
 .ap-day-block:last-child {
-
   margin-bottom: 0;
-
 }
 
 .ap-day-title {
-
   font-size: 11px;
 
   font-weight: 600;
@@ -1085,11 +1032,9 @@
   color: #495057;
 
   margin-bottom: 6px;
-
 }
 
 .ap-slot-card {
-
   display: flex;
 
   justify-content: space-between;
@@ -1103,23 +1048,17 @@
   color: #212529;
 
   margin-bottom: 4px;
-
 }
 
 .ap-slot-card:last-child {
-
   margin-bottom: 0;
-
 }
 
 .ap-slot-time {
-
   color: #868e96;
-
 }
 
 .ap-loading-spinner {
-
   display: flex;
 
   align-items: center;
@@ -1130,7 +1069,6 @@
 }
 
 .ap-loading-spinner i {
-
   font-size: 24px;
 
   color: #1971c2;
@@ -1278,7 +1216,6 @@
   color: #adb5bd;
   font-size: 13px;
 }
-
 
 .ap-modern-select {
   height: 48px !important;
@@ -1433,7 +1370,6 @@
   font-size: 0.875rem;
 }
 
-
 /* --- Popover Box Containers --- */
 .ap-panel-popover {
   position: absolute;
@@ -1445,7 +1381,9 @@
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
   margin-top: 6px;
   overflow: hidden;
 }
@@ -1607,17 +1545,11 @@
 }
 
 @keyframes spin {
-
   from {
-
     transform: rotate(0deg);
-
   }
 
   to {
-
     transform: rotate(360deg);
-
   }
-
 }

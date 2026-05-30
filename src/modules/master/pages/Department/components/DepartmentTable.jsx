@@ -1,15 +1,24 @@
-import React from 'react';
-import { Table, Button, Form } from 'react-bootstrap';
+import React from "react";
+import { Table, Button, Form } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import viewIcon from "../../../../../assets/view_icon.png";
 import editIcon from "../../../../../assets/edit_icon.png";
 import deleteIcon from "../../../../../assets/delete_icon.png";
 
-const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPage, setCurrentPage, pageSize,
-  setPageSize }) => {
+const DepartmentTable = ({
+  data,
+  searchTerm,
+  onEdit,
+  onView,
+  onDelete,
+  currentPage,
+  setCurrentPage,
+  pageSize,
+  setPageSize,
+}) => {
   const { t } = useTranslation(["department"]);
   // Filter logic
-  const filteredDepts = data.filter(dept => {
+  const filteredDepts = data.filter((dept) => {
     const term = searchTerm.toLowerCase().trim();
 
     if (!term) return true;
@@ -51,7 +60,7 @@ const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPa
     return {
       pages,
       showStartEllipsis: start > 1,
-      showEndEllipsis: end <= totalPages
+      showEndEllipsis: end <= totalPages,
     };
   };
 
@@ -76,14 +85,33 @@ const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPa
                   <td data-label="Description:">&nbsp;{dept.description}</td>
                   <td>
                     <div className="action-buttons">
-                      <Button variant="link" className="action-btn view-btn" title="View" onClick={() => onView(dept)}>
+                      <Button
+                        variant="link"
+                        className="action-btn view-btn"
+                        title="View"
+                        onClick={() => onView(dept)}
+                      >
                         <img src={viewIcon} alt="View" className="icon-16" />
                       </Button>
-                      <Button variant="link" className="action-btn edit-btn" title="Edit" onClick={() => onEdit(dept)}>
-                        <img src={editIcon} alt="Edit" className='icon-16' />
+                      <Button
+                        variant="link"
+                        className="action-btn edit-btn"
+                        title="Edit"
+                        onClick={() => onEdit(dept)}
+                      >
+                        <img src={editIcon} alt="Edit" className="icon-16" />
                       </Button>
-                      <Button variant="link" className="action-btn delete-btn" title="Delete" onClick={() => onDelete(dept)}>
-                        <img src={deleteIcon} alt="Delete" className='icon-16' />
+                      <Button
+                        variant="link"
+                        className="action-btn delete-btn"
+                        title="Delete"
+                        onClick={() => onDelete(dept)}
+                      >
+                        <img
+                          src={deleteIcon}
+                          alt="Delete"
+                          className="icon-16"
+                        />
                       </Button>
                     </div>
                   </td>
@@ -91,7 +119,9 @@ const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPa
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="text-center">{t("department:no_records")}</td>
+                <td colSpan="4" className="text-center">
+                  {t("department:no_records")}
+                </td>
               </tr>
             )}
           </tbody>
@@ -99,7 +129,6 @@ const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPa
       </div>
       {filteredDepts.length > 0 && (
         <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
-
           {/* Page size */}
           <div className="d-flex align-items-center gap-2 user-actions">
             <span
@@ -118,8 +147,10 @@ const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPa
                 setCurrentPage(1);
               }}
             >
-              {[5, 10, 15, 20, 25, 30].map(n => (
-                <option key={n} value={n}>{n}</option>
+              {[5, 10, 15, 20, 25, 30].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
               ))}
             </select>
           </div>
@@ -137,11 +168,8 @@ const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPa
             </li>
 
             {(() => {
-              const {
-                pages,
-                showStartEllipsis,
-                showEndEllipsis
-              } = getVisiblePages(currentPage, totalPages);
+              const { pages, showStartEllipsis, showEndEllipsis } =
+                getVisiblePages(currentPage, totalPages);
 
               return (
                 <>
@@ -153,7 +181,7 @@ const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPa
                   )}
 
                   {/* Page numbers */}
-                  {pages.map(number => (
+                  {pages.map((number) => (
                     <li
                       key={number}
                       className={`page-item ${currentPage === number ? "active" : ""}`}
@@ -177,7 +205,9 @@ const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPa
               );
             })()}
 
-            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+            <li
+              className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+            >
               <button
                 className="page-link"
                 onClick={() => paginate(currentPage + 1)}
@@ -187,10 +217,8 @@ const DepartmentTable = ({ data, searchTerm, onEdit, onView, onDelete, currentPa
               </button>
             </li>
           </ul>
-
         </div>
       )}
-
     </>
   );
 };

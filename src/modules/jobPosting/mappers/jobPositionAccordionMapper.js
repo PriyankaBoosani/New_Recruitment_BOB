@@ -6,6 +6,6 @@ export const mapJobPositionFromApi = (api = {}, positionMap = {}) => {
     maxAge: api.eligibilityAgeMax ?? null,
     mandatoryEducation: api.mandatoryEducation ?? "",
     preferredEducation: api.preferredEducation ?? "",
-    raw: api
+    raw: api,
   };
 };

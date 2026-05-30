@@ -20,13 +20,10 @@ export const useMasterData = () => {
     languages: [],
     stateLanguages: [],
     approvingAuthorities: [],
-    cities: []
-
+    cities: [],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-
 
   useEffect(() => {
     const fetchMaster = async () => {
@@ -38,17 +35,17 @@ export const useMasterData = () => {
           approvingRes,
           certRes,
           // zonalRes,
-         // languagesRes,
-           stateLanguagesRes,
-           documentTypesRes
+          // languagesRes,
+          stateLanguagesRes,
+          documentTypesRes,
         ] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
           masterApiService.getApprovingAuthorities(),
           masterApiService.getAllCertificates(),
           // masterApiService.getZonalStates(),
           //masterApiService.getAllLanguages(),
-           masterApiService.getStateLanguages(),
-           masterApiService.getAllDocumentTypes()
+          masterApiService.getStateLanguages(),
+          masterApiService.getAllDocumentTypes(),
         ]);
 
         const mapped = mapMasterResponse(
@@ -74,8 +71,7 @@ export const useMasterData = () => {
           languages: mapped.languages,
           cities: mapped.cities,
 
-
-          approvingAuthorities: (approvingRes.data || []).map(a => ({
+          approvingAuthorities: (approvingRes.data || []).map((a) => ({
             id: a.approvingAuthorityId,
             name: a.authorityName,
           })),
@@ -93,18 +89,17 @@ export const useMasterData = () => {
           // })),
 
           // // NEW STATE-LANGUAGE MAPPING
-          stateLanguages: (stateLanguagesRes.data || []).map(sl => ({
+          stateLanguages: (stateLanguagesRes.data || []).map((sl) => ({
             stateId: String(sl.stateId),
             languageId: String(sl.languageId),
             isPrimary: sl.isPrimary,
           })),
-          documentTypes: (documentTypesRes.data || []).map(dt => ({
+          documentTypes: (documentTypesRes.data || []).map((dt) => ({
             id: String(dt.documentTypeId),
             name: dt.documentName,
             docType: dt.docType,
           })),
         });
-
       } catch (err) {
         console.error(err);
         setError("Failed to load master data");

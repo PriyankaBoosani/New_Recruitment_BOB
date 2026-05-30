@@ -1,11 +1,8 @@
-
-  
-  .verification-date-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
- 
+.verification-date-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
 .date-nav {
   display: flex;
@@ -39,11 +36,10 @@
   border-right-color: #2f4ea2 !important;
 }
 
-
 .nav-arrow {
   cursor: pointer;
   font-size: 30px;
-  color: #6484ca; 
+  color: #6484ca;
   font-weight: 500;
   padding: 0 6px;
   user-select: none;
@@ -61,9 +57,6 @@
   font-weight: 500;
 }
 
-
-
-
 .date-nav-btn {
   width: 34px;
   height: 34px;
@@ -74,37 +67,35 @@
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
- 
+
   display: flex;
   align-items: center;
   justify-content: center;
 }
- 
+
 .date-nav-btn:hover {
   background-color: #e6e6e6;
 }
- 
 
- 
 .verification-date-pill {
   display: flex;
   align-items: center;
   gap: 10px;
- 
+
   height: 34px;
   padding: 0 14px;
   border-radius: 8px;
- 
+
   border: 1px solid #d9d9d9;
   background-color: #ffffff;
- 
+
   color: #f36f21;
   font-weight: 600;
   font-size: 15px;
   cursor: pointer;
   white-space: nowrap;
 }
- 
+
 .calendar-icon {
   margin-left: 2px;
   display: flex;
@@ -112,18 +103,15 @@
   font-size: 16px;
   color: #ff5a1f;
 }
- 
 
- 
 .verification-datepicker-wrapper {
   display: inline-flex;
   align-items: center;
 }
- 
+
 .react-datepicker-popper {
   margin-top: 6px !important;
 }
- 
 
 .react-datepicker-popper::before {
   content: "";
@@ -135,33 +123,31 @@
   border-bottom: 8px solid #ffffff;
   z-index: 2;
 }
- 
 
- 
 .react-datepicker {
   border-radius: 12px !important;
   border: 1px solid #e5e5e5 !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   padding: 12px;
 }
- 
+
 .react-datepicker__header {
   background-color: #ffffff !important;
   border-bottom: none !important;
 }
- 
+
 .react-datepicker__current-month {
   font-weight: 700;
   font-size: 16px;
 }
- 
+
 .react-datepicker__day-name {
   width: 36px;
   line-height: 36px;
   font-weight: 500;
   color: #6c757d;
 }
- 
+
 /* Date boxes */
 .react-datepicker__day {
   width: 36px !important;
@@ -172,7 +158,6 @@
   border: 1px solid #e6e6e6;
   font-weight: 500;
 }
- 
 
 /* selected date only */
 .react-datepicker__day--selected {
@@ -188,7 +173,6 @@
   border-color: #e6e6e6 !important;
 }
 
- 
 /* Disabled dates (future dates) */
 .react-datepicker__day--disabled {
   background-color: #f5f5f5 !important;
@@ -196,11 +180,9 @@
   cursor: not-allowed;
 }
 
-
-
 /* Hover — keep SAME style as normal day */
 .react-datepicker__day:hover {
-  background-color: #ffffff !important;   /* same as default */
+  background-color: #ffffff !important; /* same as default */
   border: 1px solid #e6e6e6 !important;
   color: inherit !important;
 }
@@ -218,64 +200,58 @@
   color: #c0c0c0 !important;
 }
 
-
- 
-
- 
 .stage-pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
- 
+
   padding: 6px 14px;
   border-radius: 20px;
- 
+
   background-color: #f1f3f5;
   color: #6c757d;
- 
+
   font-size: 14px;
   font-weight: 500;
- 
+
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
- 
+
 .stage-pill:hover {
   background-color: #e9ecef;
 }
- 
+
 /* Active pill */
 .stage-pill.active {
   background-color: #e9ecef;
   color: #212529;
 }
- 
+
 /* Count bubble */
 .stage-count {
   min-width: 20px;
   height: 20px;
- 
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
- 
+
   border-radius: 50%;
   background-color: #dee2e6;
   color: #495057;
- 
+
   font-size: 12px;
   font-weight: 600;
 }
- 
+
 /* Active count */
 .stage-pill.active .stage-count {
   background-color: #ced4da;
   color: #212529;
 }
- 
 
- 
 .status-pill {
   display: inline-block;
   padding: 4px 10px;
@@ -283,51 +259,42 @@
   font-size: 12px;
   font-weight: 600;
 }
- 
+
 /* Pending */
 .status-pill.pending {
   background-color: #fff3cd;
   color: #f59f00;
 }
- 
+
 /* Verified */
 .status-pill.verified {
   background-color: #d3f9d8;
   color: #2f9e44;
 }
- 
+
 /* Rejected */
 .status-pill.rejected {
   background-color: #ffe3e3;
   color: #e03131;
 }
 
-
-
 /* ================= STATUS BADGES ================= */
-
-
 
 .status-badge.zonal-rejected {
   background-color: #ffe3e3;
   color: #e03131;
- 
 }
 
- 
 /* Provisionally Approved */
 .status-pill.provisionallyapproved {
   background-color: #e7f5ff;
   color: #2f9e44;
 }
- 
 
- 
 .cursor-pointer {
   cursor: pointer;
 }
- 
- 
+
 .clear-all-btn {
   background: none;
   border: none;
@@ -337,22 +304,17 @@
   cursor: pointer;
   padding: 0;
 }
- 
+
 .clear-all-btn:hover {
   text-decoration: underline;
 }
 
- 
 .requisition-section {
-  background-color: #f6f8fc;      
- 
- 
-  padding: 12px 24px;            
-  margin: 0;                      
-}
- 
- 
+  background-color: #f6f8fc;
 
+  padding: 12px 24px;
+  margin: 0;
+}
 
 .category-reservation-card {
   background-color: #f6f8fb;
@@ -432,10 +394,8 @@
   border-radius: 2px;
 }
 
-
-
 .nav-arrow:hover {
-  color: #162B75;
+  color: #162b75;
 }
 
 /* Date pill remains same */
@@ -450,7 +410,6 @@
   color: #ff6a00;
   cursor: pointer;
 }
-
 
 /* Stage pills */
 .stage-chip {
@@ -509,11 +468,7 @@
   border-color: #b7dfbd;
 }
 
-
-
-
 /* REMOVE EXTRA CARD GAPS */
-
 
 /* TOP TOOLBAR */
 .verification-toolbar {
@@ -529,7 +484,7 @@
   display: flex;
   align-items: center;
   gap: 6px; /* latest */
-  
+
   background: #ffffff;
   border: 1px solid #e0e0e0;
 
@@ -544,8 +499,6 @@
   outline: none;
   font-size: 14px;
 }
-
-
 
 /* REQUISITION SELECTOR */
 .requisition-selector-row {
@@ -574,26 +527,21 @@
 }
 
 .clear-all {
-color: rgb(228, 116, 51);
+  color: rgb(228, 116, 51);
   cursor: pointer;
 }
 
-
 .candidate-verification-page {
- 
   max-width: 1800px;
   margin: 0 auto;
 
-  min-height: calc(100vh - 140px); 
-  }
-
-
+  min-height: calc(100vh - 140px);
+}
 
 .verification-table-wrapper {
   padding-top: 10px;
   background: #ffffff;
   margin-top: 0;
-
 }
 
 .verification-table {
@@ -607,12 +555,12 @@ color: rgb(228, 116, 51);
   font-weight: 500;
   font-size: 16px;
   color: #1f2937;
-  padding: 12px 14px; 
+  padding: 12px 14px;
 }
 
 .verification-table thead th {
-  border-top: none !important;   /* REMOVE extra top line */
-  padding-top: 0 !important;     /* REMOVE top space */
+  border-top: none !important; /* REMOVE extra top line */
+  padding-top: 0 !important; /* REMOVE top space */
 }
 
 /* remove divider from empty row */
@@ -620,13 +568,11 @@ color: rgb(228, 116, 51);
   border-bottom: none !important;
 }
 
-
 /* REQUISITION STRIP – SUBTLE SIDE LINES */
 .requisition-strip {
   background: #f3f3f3;
-  position: relative;   /* ADD THIS */
+  position: relative; /* ADD THIS */
 }
-
 
 /* LEFT & RIGHT LINES */
 .requisition-strip::before,
@@ -639,7 +585,6 @@ color: rgb(228, 116, 51);
   background: #d1d5db;
 }
 
-
 .requisition-strip::before {
   left: 0;
 }
@@ -647,10 +592,6 @@ color: rgb(228, 116, 51);
 .requisition-strip::after {
   right: 0;
 }
-
-
-
-
 
 /* Rows */
 .verification-table td {
@@ -663,8 +604,6 @@ color: rgb(228, 116, 51);
 .verification-table tbody tr:last-child td {
   border-bottom: none;
 }
-
-
 
 /* ===== SAVE BUTTON ===== */
 .save-btn {
@@ -683,7 +622,7 @@ color: rgb(228, 116, 51);
 
 /* ENABLED (Save) — FILLED FIRST */
 .save-btn.unsaved {
-  background-color: #f36c21;   /*  filled */
+  background-color: #f36c21; /*  filled */
   color: #ffffff;
   border: 1.5px solid #f36c21;
   cursor: pointer;
@@ -700,14 +639,13 @@ color: rgb(228, 116, 51);
   border: 1.5px solid #f36c21;
   color: #ffffff;
   cursor: not-allowed;
-  opacity: 0.75;   /*  slightly faded after save */
+  opacity: 0.75; /*  slightly faded after save */
 }
 
 /* REAL DISABLED STATE */
 .save-btn:disabled {
   pointer-events: none;
 }
-
 
 .verification-table-wrapper .table-footer {
   border-top: 1px solid #e5e7eb;
@@ -716,7 +654,6 @@ color: rgb(228, 116, 51);
 /* ================= MOBILE RESPONSIVE FIX ================= */
 
 @media (max-width: 576px) {
-
   .verification-toolbar,
   .stage-filter-row,
   .requisition-selector-row,
@@ -760,59 +697,51 @@ color: rgb(228, 116, 51);
     width: 100%;
   }
 
-
   .candidate-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 12px;
-}
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
 
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-  margin-bottom: 10px;
-}
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 10px;
+  }
 
-.card-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  font-size: 13px;
-}
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    font-size: 13px;
+  }
 
-.card-grid label {
-  color: #6b7280;
-  font-size: 12px;
-}
+  .card-grid label {
+    color: #6b7280;
+    font-size: 12px;
+  }
 
-.card-actions {
-  margin-top: 10px;
-  text-align: right;
-}
+  .card-actions {
+    margin-top: 10px;
+    text-align: right;
+  }
 
-  
+  .save-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background-color: #f36c21;
+    border-color: #f36c21;
+    color: #ffffff;
+  }
 
+  /* ===== PROVISIONALLY APPROVED — MATCH SCREENSHOT ===== */
 
-.save-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  background-color: #f36c21;
-  border-color: #f36c21;
-  color: #ffffff;
-}
-
-
-/* ===== PROVISIONALLY APPROVED — MATCH SCREENSHOT ===== */
-
-.status-badge.provisionally-approved {
-  background: #e7f6ea;
-  color: #2e7d32;
-  border: 1px solid #b7dfbd;
-}
-
-
-
+  .status-badge.provisionally-approved {
+    background: #e7f6ea;
+    color: #2e7d32;
+    border: 1px solid #b7dfbd;
+  }
 }

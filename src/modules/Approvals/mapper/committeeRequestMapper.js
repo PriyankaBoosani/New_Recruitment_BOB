@@ -22,7 +22,7 @@ export const mapCommitteeRequest = (data) => ({
   startDate: data.startDate,
   endDate: data.endDate,
   status: data.status,
-  statusType: getStatusVariant(data.status)
+  statusType: getStatusVariant(data.status),
 });
 
 // Helper function to map an array of committee requests

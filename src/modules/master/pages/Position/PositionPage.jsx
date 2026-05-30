@@ -9,7 +9,7 @@ import PositionFormModal from "./components/PositionFormModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 import { validatePositionForm } from "../../../../shared/utils/position-validations";
 import { mapPositionToApi } from "./mappers/positionMapper";
-import '../../../../style/css/user.css';
+import "../../../../style/css/user.css";
 import { useDepartments } from "../Department/hooks/useDepartments";
 import { useJobGrades } from "../JobGrade/hooks/useJobGrades";
 
@@ -20,14 +20,13 @@ const PositionPage = () => {
     addPosition,
     updatePosition,
     deletePosition,
-    fetchPositions
+    fetchPositions,
   } = usePositions();
 
   /* ---------------- UI STATE ---------------- */
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -39,20 +38,18 @@ const PositionPage = () => {
   const [activeTab, setActiveTab] = useState("manual");
   const [isViewing, setIsViewing] = useState(false);
 
-
   /* ---------------- FORM STATE ---------------- */
   const [formData, setFormData] = useState({
-     departmentId: "",  
+    departmentId: "",
     title: "",
     jobGradeId: "",
     mandatoryExperience: "",
     preferredExperience: "",
     rolesResponsibilities: "",
     eligibilityAgeMin: "",
-    eligibilityAgeMax: ""
+    eligibilityAgeMax: "",
   });
   const [errors, setErrors] = useState({});
-
 
   /* ---------------- HANDLERS ---------------- */
 
@@ -71,7 +68,7 @@ const PositionPage = () => {
       preferredExperience: p.preferredExperience || "",
       rolesResponsibilities: p.rolesResponsibilities || "",
       eligibilityAgeMin: p.eligibilityAgeMin ?? "",
-      eligibilityAgeMax: p.eligibilityAgeMax ?? ""
+      eligibilityAgeMax: p.eligibilityAgeMax ?? "",
     });
 
     setErrors({});
@@ -79,14 +76,13 @@ const PositionPage = () => {
     setShowAddModal(true);
   };
 
-
   const openAddModal = () => {
     setIsEditing(false);
     setIsViewing(false);
     setShowAddModal(true);
     setEditingId(null);
     setFormData({
-        departmentId: "",
+      departmentId: "",
       title: "",
       jobGradeId: "",
       mandatoryExperience: "",
@@ -94,7 +90,7 @@ const PositionPage = () => {
       rolesResponsibilities: "",
       code: "",
       eligibilityAgeMin: "",
-      eligibilityAgeMax: ""
+      eligibilityAgeMax: "",
     });
     setErrors({});
     setActiveTab("manual");
@@ -119,9 +115,8 @@ const PositionPage = () => {
       rolesResponsibilities: p.rolesResponsibilities || "",
       code: p.code || "",
       eligibilityAgeMin: p.eligibilityAgeMin ?? "",
-      eligibilityAgeMax: p.eligibilityAgeMax ?? ""
+      eligibilityAgeMax: p.eligibilityAgeMax ?? "",
     });
-
 
     setErrors({});
     setActiveTab("manual");
@@ -137,7 +132,7 @@ const PositionPage = () => {
       title: formData.title?.trim(),
       mandatoryExperience: formData.mandatoryExperience?.trim(),
       preferredExperience: formData.preferredExperience?.trim(),
-      rolesResponsibilities: formData.rolesResponsibilities?.trim()
+      rolesResponsibilities: formData.rolesResponsibilities?.trim(),
     };
 
     const { valid, errors: vErrors } = validatePositionForm(cleanedFormData, {
@@ -165,11 +160,6 @@ const PositionPage = () => {
     setShowAddModal(false);
   };
 
-
-
-  
-
-
   /* ---------------- RENDER ---------------- */
 
   return (
@@ -190,7 +180,6 @@ const PositionPage = () => {
                 setSearchTerm(value);
               }}
             />
-
           </div>
 
           <Button className="add-button" onClick={openAddModal}>
@@ -217,7 +206,6 @@ const PositionPage = () => {
 
       <PositionFormModal
         show={showAddModal}
-
         onHide={() => setShowAddModal(false)}
         isViewing={isViewing}
         isEditing={isEditing}
@@ -229,15 +217,15 @@ const PositionPage = () => {
         handleInputChange={(e) => {
           const { name, value } = e.target;
 
-          setFormData(prev => ({
+          setFormData((prev) => ({
             ...prev,
-            [name]: value
+            [name]: value,
           }));
 
           //  clear error for this field only
-          setErrors(prev => ({
+          setErrors((prev) => ({
             ...prev,
-            [name]: ''
+            [name]: "",
           }));
         }}
         handleSave={handleSave}
@@ -245,9 +233,7 @@ const PositionPage = () => {
         jobGrades={jobGrades}
         t={t}
         fetchPositions={fetchPositions}
-        
       />
-      
 
       <DeleteConfirmModal
         show={showDeleteModal}

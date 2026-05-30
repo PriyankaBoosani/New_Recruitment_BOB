@@ -14,7 +14,7 @@ const TooltipControl = (props) => {
       {...props}
       innerProps={{
         ...props.innerProps,
-        title: selected?.label || ""
+        title: selected?.label || "",
       }}
     />
   );
@@ -24,9 +24,7 @@ const TooltipControl = (props) => {
 
 const TooltipOption = (props) => (
   <components.Option {...props}>
-    <div title={props.data.label}>
-      {props.children}
-    </div>
+    <div title={props.data.label}>{props.children}</div>
   </components.Option>
 );
 
@@ -38,26 +36,25 @@ export default function InterviewerPositionSelector({
   selectedPosition,
   onRequisitionChange,
   onPositionChange,
-   closeCalendar,
-     showImportBtn,
-  onImportClick
+  closeCalendar,
+  showImportBtn,
+  onImportClick,
 }) {
-
   const selectStyles = {
     control: (b) => ({
       ...b,
       fontSize: "12px",
-      minHeight: "34px"
+      minHeight: "34px",
     }),
 
     valueContainer: (b) => ({
       ...b,
-      padding: "2px 8px"
+      padding: "2px 8px",
     }),
 
     input: (b) => ({
       ...b,
-      fontSize: "12px"
+      fontSize: "12px",
     }),
 
     /* selected value — single line */
@@ -67,7 +64,7 @@ export default function InterviewerPositionSelector({
       whiteSpace: "nowrap",
       overflow: "hidden",
       textOverflow: "ellipsis",
-      maxWidth: "100%"
+      maxWidth: "100%",
     }),
 
     /* dropdown options — allow wrap */
@@ -75,19 +72,19 @@ export default function InterviewerPositionSelector({
       ...b,
       fontSize: "14px",
       whiteSpace: "normal",
-      lineHeight: "18px"
+      lineHeight: "18px",
     }),
 
     placeholder: (b) => ({
       ...b,
       fontSize: "12px",
-      color: "#6c757d"
+      color: "#6c757d",
     }),
 
     menu: (b) => ({
       ...b,
-      fontSize: "12px"
-    })
+      fontSize: "12px",
+    }),
   };
 
   /* ================= REQUISITION OPTIONS ================= */
@@ -95,7 +92,7 @@ export default function InterviewerPositionSelector({
   const requisitionOptions = useMemo(() => {
     const map = new Map();
 
-    apiData.forEach(r => {
+    apiData.forEach((r) => {
       const req = r?.requisition;
       if (!req?.id) return;
 
@@ -103,7 +100,7 @@ export default function InterviewerPositionSelector({
         map.set(req.id, {
           value: req.id,
           label: `${req.requisitionCode} — ${req.requisitionTitle}`,
-          raw: r
+          raw: r,
         });
       }
     });
@@ -117,48 +114,48 @@ export default function InterviewerPositionSelector({
     if (!selectedRequisition) return [];
 
     return apiData
-      .filter(r => r.requisition.id === selectedRequisition.requisition.id)
-      .map(r => ({
+      .filter((r) => r.requisition.id === selectedRequisition.requisition.id)
+      .map((r) => ({
         value: r.position.positionId,
         label: r.masterPosition.positionName,
-        raw: r
+        raw: r,
       }));
   }, [apiData, selectedRequisition]);
-   const { t } = useTranslation(["candidateWorkflow", "common"]);
+  const { t } = useTranslation(["candidateWorkflow", "common"]);
 
   /* ================= UI ================= */
 
   return (
-<div className="row g-3 align-items-end">
+    <div className="row g-3 align-items-end">
       {/* ===== Requisition ===== */}
 
       <div className="col-md-4">
-        <label className="fs-14 blue-color">  {t("candidateWorkflow:requisition")}</label>
+        <label className="fs-14 blue-color">
+          {" "}
+          {t("candidateWorkflow:requisition")}
+        </label>
 
         <Select
           options={requisitionOptions}
           styles={selectStyles}
           placeholder={t("candidateWorkflow:select_requisition")}
-
           components={{
             Control: TooltipControl,
-            Option: TooltipOption
+            Option: TooltipOption,
           }}
-
           value={
             selectedRequisition && {
               value: selectedRequisition.requisition.id,
               label: `${selectedRequisition.requisition.requisitionCode} — ${selectedRequisition.requisition.requisitionTitle}`,
-              raw: selectedRequisition
+              raw: selectedRequisition,
             }
           }
-
           isClearable
           onChange={(opt) => {
             onRequisitionChange(opt?.raw || null);
             onPositionChange(null);
           }}
-          onMenuOpen={() => closeCalendar?.()} 
+          onMenuOpen={() => closeCalendar?.()}
         />
       </div>
 
@@ -171,31 +168,26 @@ export default function InterviewerPositionSelector({
           options={positionOptions}
           styles={selectStyles}
           placeholder={t("candidateWorkflow:select_position")}
-
           components={{
             Control: TooltipControl,
-            Option: TooltipOption
+            Option: TooltipOption,
           }}
-
           value={
             selectedPosition && {
               value: selectedPosition.position.positionId,
               label: selectedPosition.masterPosition.positionName,
-              raw: selectedPosition
+              raw: selectedPosition,
             }
           }
-
           isClearable
           isDisabled={!selectedRequisition}
           onChange={(opt) => onPositionChange(opt?.raw || null)}
-          onMenuOpen={() => closeCalendar?.()} 
+          onMenuOpen={() => closeCalendar?.()}
         />
       </div>
 
-
-
       {/* ===== IMPORT BUTTON ===== */}
-{/* <div className="col-md-4 d-flex justify-content-end align-items-end">
+      {/* <div className="col-md-4 d-flex justify-content-end align-items-end">
   {showImportBtn && (
     <Button
       onClick={onImportClick}
@@ -207,7 +199,6 @@ export default function InterviewerPositionSelector({
     </Button>
   )}
 </div> */}
-
     </div>
   );
 }

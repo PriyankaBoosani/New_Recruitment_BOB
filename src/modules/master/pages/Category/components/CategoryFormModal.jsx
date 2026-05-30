@@ -1,5 +1,8 @@
 // src/modules/master/pages/Category/components/CategoryFormModal.jsx
-import { handleValidatedInput, INPUT_PATTERNS } from "../../../../../shared/utils/inputHandlers";
+import {
+  handleValidatedInput,
+  INPUT_PATTERNS,
+} from "../../../../../shared/utils/inputHandlers";
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
@@ -26,7 +29,7 @@ const CategoryFormModal = ({
   const [formData, setFormData] = useState({
     code: "",
     name: "",
-    description: ""
+    description: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -36,7 +39,7 @@ const CategoryFormModal = ({
       setFormData({
         code: editingCategory.code || "",
         name: editingCategory.name || "",
-        description: editingCategory.description || ""
+        description: editingCategory.description || "",
       });
     } else {
       setFormData({ code: "", name: "", description: "" });
@@ -51,7 +54,7 @@ const CategoryFormModal = ({
     e.preventDefault();
     const { valid, errors: vErrors } = validateCategoryForm(formData, {
       existing: categories,
-      currentId: isEditing ? editingCategory?.id : null   //  THIS LINE FIXES IT
+      currentId: isEditing ? editingCategory?.id : null, //  THIS LINE FIXES IT
     });
 
     if (!valid) {
@@ -68,35 +71,33 @@ const CategoryFormModal = ({
     onHide();
   };
 
-const title = isViewing
-  ? t("view_category")
-  : isEditing
-  ? t("edit_category")
-  : t("add_category");
+  const title = isViewing
+    ? t("view_category")
+    : isEditing
+      ? t("edit_category")
+      : t("add_category");
 
-const isCreateMode = !isEditing && !isViewing;
-const handleFormSubmit = (e) => {
-  if (isViewing) {
-    e.preventDefault();
-    onHide();
-  } else {
-    handleSubmit(e);
-  }
-};
+  const isCreateMode = !isEditing && !isViewing;
+  const handleFormSubmit = (e) => {
+    if (isViewing) {
+      e.preventDefault();
+      onHide();
+    } else {
+      handleSubmit(e);
+    }
+  };
 
-const renderContent = () => {
-  if (activeTab === "manual") {
-    return (
-      <Form onSubmit={handleFormSubmit}>
-      <Row className="g-3">
+  const renderContent = () => {
+    if (activeTab === "manual") {
+      return (
+        <Form onSubmit={handleFormSubmit}>
+          <Row className="g-3">
             <Col md={6}>
               <Form.Label>
                 {t("code")} <span className="text-danger">*</span>
               </Form.Label>
               {isViewing ? (
-                <div className="form-control-view">
-                  {formData.code || "-"}
-                </div>
+                <div className="form-control-view">{formData.code || "-"}</div>
               ) : (
                 <Form.Control
                   name="code"
@@ -111,14 +112,12 @@ const renderContent = () => {
                       setFormData,
                       setErrors,
                       pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
-                      errorMessage: t("validation:no_special_charses")
+                      errorMessage: t("validation:no_special_charses"),
                     })
                   }
                 />
-
               )}
               {!isViewing && <ErrorMessage>{errors.code}</ErrorMessage>}
-
             </Col>
 
             <Col md={6}>
@@ -126,9 +125,7 @@ const renderContent = () => {
                 {t("name")} <span className="text-danger">*</span>
               </Form.Label>
               {isViewing ? (
-                <div className="form-control-view">
-                  {formData.name || "-"}
-                </div>
+                <div className="form-control-view">{formData.name || "-"}</div>
               ) : (
                 <Form.Control
                   name="name"
@@ -142,21 +139,19 @@ const renderContent = () => {
                       fieldName: "name",
                       setFormData,
                       setErrors,
-                      pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at,
-                      errorMessage: t("validation:no_special_charsess")
+                      pattern:
+                        INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at,
+                      errorMessage: t("validation:no_special_charsess"),
                     })
                   }
                 />
-
               )}
               {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
-
             </Col>
 
             <Col md={12}>
               <Form.Label>
-                {t("description")}{" "}
-                <span className="text-danger">*</span>
+                {t("description")} <span className="text-danger">*</span>
               </Form.Label>
               {isViewing ? (
                 <div
@@ -186,29 +181,29 @@ const renderContent = () => {
             </Col>
           </Row>
 
-        <Modal.Footer className="px-0 pt-4 modal-footer-custom">
-          <Button variant="outline-secondary" onClick={onHide}>
-            {isViewing ? t("close") : t("cancel")}
-          </Button>
-
-          {!isViewing && (
-            <Button variant="primary" type="submit">
-              {isEditing ? t("update") : t("save")}
+          <Modal.Footer className="px-0 pt-4 modal-footer-custom">
+            <Button variant="outline-secondary" onClick={onHide}>
+              {isViewing ? t("close") : t("cancel")}
             </Button>
-          )}
-        </Modal.Footer>
-      </Form>
-    );
-  }
 
-  return (
-    <CategoryImportModal
-      onImport={onImport}
-      onClose={onHide}
-      onSuccess={importProps.onSuccess}
-    />
-  );
-};
+            {!isViewing && (
+              <Button variant="primary" type="submit">
+                {isEditing ? t("update") : t("save")}
+              </Button>
+            )}
+          </Modal.Footer>
+        </Form>
+      );
+    }
+
+    return (
+      <CategoryImportModal
+        onImport={onImport}
+        onClose={onHide}
+        onSuccess={importProps.onSuccess}
+      />
+    );
+  };
   return (
     <Modal
       show={show}
@@ -220,13 +215,9 @@ const renderContent = () => {
       {/* ---------------- HEADER ---------------- */}
       <Modal.Header closeButton className="modal-header-custom">
         <div>
-          <Modal.Title>
-                {title}
-          </Modal.Title>
-          {isCreateMode  && (
-            <p className="mb-0 small text-muted">
-              {t("choose_add_method")}
-            </p>
+          <Modal.Title>{title}</Modal.Title>
+          {isCreateMode && (
+            <p className="mb-0 small text-muted">{t("choose_add_method")}</p>
           )}
         </div>
       </Modal.Header>
@@ -234,12 +225,11 @@ const renderContent = () => {
       {/* ---------------- BODY ---------------- */}
       <Modal.Body className="p-4">
         {/* -------- Tabs (Add Only) -------- */}
-        {isCreateMode  && (
+        {isCreateMode && (
           <div className="tab-buttons mb-4">
             <Button
               variant={activeTab === "manual" ? "light" : "outline-light"}
-              className={`tab-button ${activeTab === "manual" ? "active" : ""
-                }`}
+              className={`tab-button ${activeTab === "manual" ? "active" : ""}`}
               onClick={() => setActiveTab("manual")}
             >
               {t("manual_entry")}
@@ -247,8 +237,7 @@ const renderContent = () => {
 
             <Button
               variant={activeTab === "import" ? "light" : "outline-light"}
-              className={`tab-button ${activeTab === "import" ? "active" : ""
-                }`}
+              className={`tab-button ${activeTab === "import" ? "active" : ""}`}
               onClick={() => setActiveTab("import")}
             >
               {t("import_file")}

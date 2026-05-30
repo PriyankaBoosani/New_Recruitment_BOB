@@ -33,17 +33,14 @@ export const useUsers = () => {
     try {
       const res = await masterApiService.getAllInterviewCenters();
       if (res?.data) {
-
-        const zonalOfficeCentres =
-          res.data.filter(
-            c => c.organizationType === "Zonal Office"
-          );
+        const zonalOfficeCentres = res.data.filter(
+          (c) => c.organizationType === "Zonal Office"
+        );
 
         setInterviewCentres(zonalOfficeCentres);
-          console.log("test", zonalOfficeCentres)
-
+        console.log("test", zonalOfficeCentres);
       }
-    
+
       // const centres = res?.data || [];
 
       // setInterviewCentres(centres);
@@ -60,7 +57,7 @@ export const useUsers = () => {
   //   try {
   //     const res = await masterApiService.getRoles();
 
-  //     const roles = res?.data || [];  
+  //     const roles = res?.data || [];
 
   //     setRoles(roles);
   //   } catch (err) {
@@ -76,7 +73,6 @@ export const useUsers = () => {
   }, []);
 
   const addUser = async (payload) => {
-
     const payloadData = {
       role: payload.role,
       name: payload.fullName,
@@ -84,15 +80,11 @@ export const useUsers = () => {
       interviewCenterId: payload.interviewCenterId,
     };
 
-
     try {
-      await masterApiService.saveUser(
-        payloadData
-      );
+      await masterApiService.saveUser(payloadData);
 
       toast.success(t("add_success"));
       await fetchUsers();
-
     } catch (err) {
       // Axios ALWAYS puts response here
       const status = err.response?.status;
@@ -124,9 +116,7 @@ export const useUsers = () => {
     }
   };
 
-
   // ================= BULK UPLOAD =================
-
 
   const bulkAddUsers = async (file) => {
     setLoading(true);
@@ -138,7 +128,7 @@ export const useUsers = () => {
         return {
           success: false,
           error: res.message,
-          details: res.data || []
+          details: res.data || [],
         };
       }
       // success
@@ -146,9 +136,8 @@ export const useUsers = () => {
       fetchUsers();
 
       return {
-        success: true
+        success: true,
       };
-
     } catch (err) {
       //  network / server error
 
@@ -157,9 +146,8 @@ export const useUsers = () => {
 
       return {
         success: false,
-        error: message
+        error: message,
       };
-
     } finally {
       setLoading(false);
     }
@@ -183,7 +171,6 @@ export const useUsers = () => {
       link.remove();
 
       window.URL.revokeObjectURL(url);
-
     } catch (err) {
       toast.error("Template download failed");
     }
@@ -202,7 +189,6 @@ export const useUsers = () => {
 
       toast.success(t("update_success"));
       await fetchUsers();
-
     } catch (err) {
       toast.error("Failed to update user");
       console.error("Update failed:", err);
@@ -217,6 +203,6 @@ export const useUsers = () => {
     deleteUser,
     interviewCentres,
     bulkAddUsers,
-    downloadUserTemplate
+    downloadUserTemplate,
   };
 };

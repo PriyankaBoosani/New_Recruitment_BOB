@@ -1,5 +1,5 @@
-import React from 'react';
-import { Table, Button, Form } from 'react-bootstrap';
+import React from "react";
+import { Table, Button, Form } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
 import viewIcon from "../../../../../assets/view_icon.png";
@@ -15,13 +15,15 @@ const JobGradeTable = ({
   currentPage,
   setCurrentPage,
   pageSize,
-  setPageSize
+  setPageSize,
 }) => {
   const { t } = useTranslation(["jobGrade"]);
 
-  const filtered = data.filter(j =>
-    Object.values(j).some(v =>
-      String(v ?? '').toLowerCase().includes(searchTerm.toLowerCase())
+  const filtered = data.filter((j) =>
+    Object.values(j).some((v) =>
+      String(v ?? "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
     )
   );
 
@@ -45,7 +47,7 @@ const JobGradeTable = ({
   const indexOfFirst = indexOfLast - pageSize;
   const current = filtered.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filtered.length / pageSize);
-const getVisiblePages = (currentPage, totalPages) => {
+  const getVisiblePages = (currentPage, totalPages) => {
     const windowSize = 3;
 
     let start = currentPage - 1;
@@ -70,7 +72,7 @@ const getVisiblePages = (currentPage, totalPages) => {
     return {
       pages,
       showStartEllipsis: start > 1,
-      showEndEllipsis: end <= totalPages
+      showEndEllipsis: end <= totalPages,
     };
   };
 
@@ -103,7 +105,8 @@ const getVisiblePages = (currentPage, totalPages) => {
                   <td>{g.description}</td>
                   <td>
                     <div className="action-buttons">
-                      <Button variant="link"
+                      <Button
+                        variant="link"
                         className="action-btn view-btn"
                         onClick={() => onView(g)}
                       >
@@ -123,7 +126,11 @@ const getVisiblePages = (currentPage, totalPages) => {
                         className="action-btn delete-btn"
                         onClick={() => onDelete(g)}
                       >
-                        <img src={deleteIcon} alt="Delete" className="icon-16" />
+                        <img
+                          src={deleteIcon}
+                          alt="Delete"
+                          className="icon-16"
+                        />
                       </Button>
                     </div>
                   </td>
@@ -141,7 +148,6 @@ const getVisiblePages = (currentPage, totalPages) => {
       </div>
       {filtered.length > 0 && (
         <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
-
           {/* Page size */}
           <div className="d-flex align-items-center gap-2 user-actions">
             <span
@@ -160,15 +166,17 @@ const getVisiblePages = (currentPage, totalPages) => {
                 setCurrentPage(1);
               }}
             >
-              {[5, 10, 15, 20, 25, 30].map(n => (
-                <option key={n} value={n}>{n}</option>
+              {[5, 10, 15, 20, 25, 30].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
               ))}
             </Form.Select>
           </div>
 
           {/* Pagination */}
           <ul className="pagination mb-0">
-            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
               <button
                 className="page-link"
                 onClick={() => setCurrentPage(currentPage - 1)}
@@ -178,12 +186,9 @@ const getVisiblePages = (currentPage, totalPages) => {
               </button>
             </li>
 
-             {(() => {
-              const {
-                pages,
-                showStartEllipsis,
-                showEndEllipsis
-              } = getVisiblePages(currentPage, totalPages);
+            {(() => {
+              const { pages, showStartEllipsis, showEndEllipsis } =
+                getVisiblePages(currentPage, totalPages);
 
               return (
                 <>
@@ -195,7 +200,7 @@ const getVisiblePages = (currentPage, totalPages) => {
                   )}
 
                   {/* Page numbers */}
-                  {pages.map(number => (
+                  {pages.map((number) => (
                     <li
                       key={number}
                       className={`page-item ${currentPage === number ? "active" : ""}`}
@@ -219,7 +224,9 @@ const getVisiblePages = (currentPage, totalPages) => {
               );
             })()}
 
-            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+            <li
+              className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+            >
               <button
                 className="page-link"
                 onClick={() => setCurrentPage(currentPage + 1)}
@@ -229,10 +236,8 @@ const getVisiblePages = (currentPage, totalPages) => {
               </button>
             </li>
           </ul>
-
         </div>
       )}
-
     </>
   );
 };

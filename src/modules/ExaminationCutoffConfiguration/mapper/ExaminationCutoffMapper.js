@@ -1,157 +1,103 @@
 /* ================= MAP CONFIGURATION LIST ================= */
 
-export const mapExaminationCutoffConfigurations =
-  (apiData = []) => {
-    return apiData.map(item => ({
-      id:
-        item.id ||
-        item.configurationId ||
-        "",
+export const mapExaminationCutoffConfigurations = (apiData = []) => {
+  return apiData.map((item) => ({
+    id: item.id || item.configurationId || "",
 
-      requisitionId:
-        item.requisitionId || "",
+    requisitionId: item.requisitionId || "",
 
-      requisitionCode:
-        item.requisitionCode || "",
+    requisitionCode: item.requisitionCode || "",
 
-      requisitionTitle:
-        item.requisitionTitle || "",
+    requisitionTitle: item.requisitionTitle || "",
 
-      positionId:
-        item.positionId || "",
+    positionId: item.positionId || "",
 
-      positionName:
-        item.positionName || "",
+    positionName: item.positionName || "",
 
-      totalMarks:
-        item.totalMarks || "",
+    totalMarks: item.totalMarks || "",
 
-      numberOfSections:
-        item.numberOfSections || 0,
+    numberOfSections: item.numberOfSections || 0,
 
-      sections:
-        mapSections(item.sections || []),
+    sections: mapSections(item.sections || []),
 
-      scstCutoff:
-        item.scstCutoff || "",
+    scstCutoff: item.scstCutoff || "",
 
-      obcCutoff:
-        item.obcCutoff || "",
+    obcCutoff: item.obcCutoff || "",
 
-      urCutoff:
-        item.urCutoff || "",
+    urCutoff: item.urCutoff || "",
 
-      writtenExamWeightage:
-        item.writtenExamWeightage ||
-        "",
+    writtenExamWeightage: item.writtenExamWeightage || "",
 
-      selectedWeightageSections:
-        item.selectedWeightageSections ||
-        [],
+    selectedWeightageSections: item.selectedWeightageSections || [],
 
-      status:
-        item.status || "Pending",
+    status: item.status || "Pending",
 
-      createdAt:
-        item.createdAt || "",
+    createdAt: item.createdAt || "",
 
-      updatedAt:
-        item.updatedAt || "",
+    updatedAt: item.updatedAt || "",
 
-      raw: item
-    }));
-  };
+    raw: item,
+  }));
+};
 
 /* ================= MAP SINGLE CONFIGURATION ================= */
 
-export const mapSingleExaminationCutoffConfiguration =
-  item => {
-    if (!item) return null;
+export const mapSingleExaminationCutoffConfiguration = (item) => {
+  if (!item) return null;
 
-    return {
-      id:
-        item.id ||
-        item.configurationId ||
-        "",
+  return {
+    id: item.id || item.configurationId || "",
 
-      requisitionId:
-        item.requisitionId || "",
+    requisitionId: item.requisitionId || "",
 
-      requisitionCode:
-        item.requisitionCode || "",
+    requisitionCode: item.requisitionCode || "",
 
-      requisitionTitle:
-        item.requisitionTitle || "",
+    requisitionTitle: item.requisitionTitle || "",
 
-      positionId:
-        item.positionId || "",
+    positionId: item.positionId || "",
 
-      positionName:
-        item.positionName || "",
+    positionName: item.positionName || "",
 
-      totalMarks:
-        item.totalMarks || "",
+    totalMarks: item.totalMarks || "",
 
-      numberOfSections:
-        item.numberOfSections || 0,
+    numberOfSections: item.numberOfSections || 0,
 
-      sections:
-        mapSections(item.sections || []),
+    sections: mapSections(item.sections || []),
 
-      scstCutoff:
-        item.scstCutoff || "",
+    scstCutoff: item.scstCutoff || "",
 
-      obcCutoff:
-        item.obcCutoff || "",
+    obcCutoff: item.obcCutoff || "",
 
-      urCutoff:
-        item.urCutoff || "",
+    urCutoff: item.urCutoff || "",
 
-      writtenExamWeightage:
-        item.writtenExamWeightage ||
-        "",
+    writtenExamWeightage: item.writtenExamWeightage || "",
 
-      selectedWeightageSections:
-        item.selectedWeightageSections ||
-        [],
+    selectedWeightageSections: item.selectedWeightageSections || [],
 
-      status:
-        item.status || "Pending",
+    status: item.status || "Pending",
 
-      createdAt:
-        item.createdAt || "",
+    createdAt: item.createdAt || "",
 
-      updatedAt:
-        item.updatedAt || "",
+    updatedAt: item.updatedAt || "",
 
-      raw: item
-    };
+    raw: item,
   };
+};
 
 /* ================= MAP SECTIONS ================= */
 
-export const mapSections = (
-  sections = []
-) => {
-  return sections.map(
-    (section, index) => ({
-      id:
-        section.id ||
-        `${index + 1}`,
+export const mapSections = (sections = []) => {
+  return sections.map((section, index) => ({
+    id: section.id || `${index + 1}`,
 
-      sectionName:
-        section.sectionName || "",
+    sectionName: section.sectionName || "",
 
-      passMarks:
-        section.passMarks || "",
+    passMarks: section.passMarks || "",
 
-      sectionWeightage:
-        section.sectionWeightage ||
-        "",
+    sectionWeightage: section.sectionWeightage || "",
 
-      raw: section
-    })
-  );
+    raw: section,
+  }));
 };
 
 /* ================= MAP SAVE PAYLOAD ================= */
@@ -159,89 +105,57 @@ export const mapSections = (
 export const mapSavePayload = ({
   formData,
   selectedRequisition,
-  selectedPosition
+  selectedPosition,
 }) => {
   return {
-    requisitionId:
-      selectedRequisition?.requisition
-        ?.id || "",
+    requisitionId: selectedRequisition?.requisition?.id || "",
 
-    positionId:
-      selectedPosition?.position
-        ?.positionId || "",
+    positionId: selectedPosition?.position?.positionId || "",
 
-    totalMarks:
-      Number(formData.totalMarks),
+    totalMarks: Number(formData.totalMarks),
 
-    numberOfSections:
-      Number(
-        formData.numberOfSections
-      ),
+    numberOfSections: Number(formData.numberOfSections),
 
-    sections: formData.sections.map(
-      section => ({
-        sectionName:
-          section.sectionName,
+    sections: formData.sections.map((section) => ({
+      sectionName: section.sectionName,
 
-        passMarks: Number(
-          section.passMarks
-        )
-      })
-    ),
+      passMarks: Number(section.passMarks),
+    })),
 
-    scstCutoff: Number(
-      formData.categoryWiseCutoff
-        .scst
-    ),
+    scstCutoff: Number(formData.categoryWiseCutoff.scst),
 
-    obcCutoff: Number(
-      formData.categoryWiseCutoff.obc
-    ),
+    obcCutoff: Number(formData.categoryWiseCutoff.obc),
 
-    urCutoff: Number(
-      formData.categoryWiseCutoff.ur
-    ),
+    urCutoff: Number(formData.categoryWiseCutoff.ur),
 
-    writtenExamWeightage:
-      Number(
-        formData.writtenExamWeightage
-      ),
+    writtenExamWeightage: Number(formData.writtenExamWeightage),
 
-    selectedWeightageSections:
-      formData.selectedWeightageSections
+    selectedWeightageSections: formData.selectedWeightageSections,
   };
 };
 
 /* ================= MAP TABLE ROW ================= */
 
-export const mapTableRow = item => {
+export const mapTableRow = (item) => {
   return {
     id: item.id,
 
-    requisitionCode:
-      item.requisitionCode,
+    requisitionCode: item.requisitionCode,
 
-    requisitionTitle:
-      item.requisitionTitle,
+    requisitionTitle: item.requisitionTitle,
 
-    positionName:
-      item.positionName,
+    positionName: item.positionName,
 
-    totalMarks:
-      item.totalMarks,
+    totalMarks: item.totalMarks,
 
-    scstCutoff:
-      item.scstCutoff,
+    scstCutoff: item.scstCutoff,
 
-    obcCutoff:
-      item.obcCutoff,
+    obcCutoff: item.obcCutoff,
 
-    urCutoff:
-      item.urCutoff,
+    urCutoff: item.urCutoff,
 
-    writtenExamWeightage:
-      item.writtenExamWeightage,
+    writtenExamWeightage: item.writtenExamWeightage,
 
-    status: item.status
+    status: item.status,
   };
 };

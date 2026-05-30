@@ -5,7 +5,6 @@ const SECRET_KEY = "fdf4-832b-b4fd-ccfb9258a6b3";
 export const encryptPassword = (password) =>
   CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
 
-
 export const mapUserFromApi = (api) => ({
   userId: api.userId,
   role: api.role,
@@ -20,10 +19,10 @@ export const mapUsersFromApi = (apiData = []) => {
 };
 
 export const mapUserToApi = (ui) => ({
-   userId: ui.userId,
+  userId: ui.userId,
   role: ui.role,
   name: ui.fullName,
   email: ui.email,
   password: ui.password,
-  interviewCenterId: ui.interviewCenterId
+  interviewCenterId: ui.interviewCenterId,
 });

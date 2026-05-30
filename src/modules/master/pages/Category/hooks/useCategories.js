@@ -6,7 +6,7 @@ import masterApiService from "../../../services/masterApiService";
 import {
   mapCategoriesFromApi,
   mapCategoryFromApi,
-  mapCategoryToApi
+  mapCategoryToApi,
 } from "../mappers/categoryMapper";
 
 export const useCategories = () => {
@@ -18,16 +18,12 @@ export const useCategories = () => {
     try {
       const res = await masterApiService.getAllCategories();
 
-      const list = Array.isArray(res.data)
-        ? res.data
-        : res.data?.data || [];
+      const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
 
       const mapped = mapCategoriesFromApi(list);
 
       //  FORCE newest first ALWAYS (by ID)
-      const sorted = [...mapped].sort(
-        (a, b) => Number(b.id) - Number(a.id)
-      );
+      const sorted = [...mapped].sort((a, b) => Number(b.id) - Number(a.id));
 
       setCategories(sorted);
     } catch (error) {
@@ -43,19 +39,14 @@ export const useCategories = () => {
   /* ================= ADD ================= */
   const addCategory = async (payload) => {
     try {
-      const res = await masterApiService.addCategory(
-        mapCategoryToApi(payload)
-      );
+      const res = await masterApiService.addCategory(mapCategoryToApi(payload));
 
       toast.success(t("category:add_success"));
       const newItem = mapCategoryFromApi(res.data);
       //  add on top instantly
-      setCategories(prev => [newItem, ...prev]);
+      setCategories((prev) => [newItem, ...prev]);
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-        t("category:add_error")
-      );
+      toast.error(error?.response?.data?.message || t("category:add_error"));
     }
   };
 
@@ -71,19 +62,13 @@ export const useCategories = () => {
       toast.success(t("category:update_success"));
 
       //  update in same position
-      setCategories(prev =>
-        prev.map(c =>
-          String(c.id) === String(id)
-            ? { ...c, ...updatedItem }
-            : c
+      setCategories((prev) =>
+        prev.map((c) =>
+          String(c.id) === String(id) ? { ...c, ...updatedItem } : c
         )
       );
-
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-        t("category:update_error")
-      );
+      toast.error(error?.response?.data?.message || t("category:update_error"));
     }
   };
 
@@ -94,12 +79,9 @@ export const useCategories = () => {
 
       toast.success(t("category:delete_success"));
 
-      setCategories(prev => prev.filter(c => c.id !== id));
+      setCategories((prev) => prev.filter((c) => c.id !== id));
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-        t("category:delete_error")
-      );
+      toast.error(error?.response?.data?.message || t("category:delete_error"));
     }
   };
 
@@ -109,7 +91,7 @@ export const useCategories = () => {
       const res = await masterApiService.downloadCategoryTemplate();
 
       const blob = new Blob([res.data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
 
       const url = window.URL.createObjectURL(blob);
@@ -129,23 +111,21 @@ export const useCategories = () => {
     try {
       const res = await masterApiService.bulkAddCategories(file);
 
-
       //  business failure
       if (res.success === false) {
         // toast.error(res.message);
         return {
           success: false,
           error: res.message,
-          details: res.data || []
+          details: res.data || [],
         };
       }
       //  success
       toast.success(res.message || "File uploaded successfully");
 
       return {
-        success: true
+        success: true,
       };
-
     } catch (err) {
       //  network / server error
 
@@ -154,14 +134,12 @@ export const useCategories = () => {
 
       return {
         success: false,
-        error: message
+        error: message,
       };
-
     } finally {
       setLoading(false);
     }
   };
-
 
   return {
     categories,
@@ -171,7 +149,7 @@ export const useCategories = () => {
     deleteCategory,
     bulkAddCategories,
     downloadCategoryTemplate,
-    importCategories: () => { },
-    fetchCategories
+    importCategories: () => {},
+    fetchCategories,
   };
 };

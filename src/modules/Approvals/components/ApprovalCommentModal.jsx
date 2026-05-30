@@ -26,8 +26,6 @@ const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
     onConfirm(trimmedComment);
   };
 
-
-
   return (
     <Modal
       show={show}
@@ -40,14 +38,16 @@ const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
         <Modal.Title className="modal-title-custom">
           {actionType === "approve"
             ? t(`approvalHistory:approval_comments`)
-            : t(`approvalHistory:rejection_comments`)
-          }
+            : t(`approvalHistory:rejection_comments`)}
         </Modal.Title>
       </Modal.Header>
 
       <Modal.Body className="modal-body-custom">
         <Form.Group>
-          <Form.Label className="comment-label">{t(`approvalHistory:Comments`)}<span className="text-danger">*</span></Form.Label>
+          <Form.Label className="comment-label">
+            {t(`approvalHistory:Comments`)}
+            <span className="text-danger">*</span>
+          </Form.Label>
           <Form.Control
             as="textarea"
             rows={4}
@@ -69,9 +69,7 @@ const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
             isInvalid={!!error}
             className="comment-textarea"
           />
-          <Form.Control.Feedback type="invalid">
-            {error}
-          </Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
         </Form.Group>
       </Modal.Body>
 
@@ -80,13 +78,14 @@ const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
           {t(`approvalHistory:cancel`)}
         </Button>
 
-        <Button variant=""
-          className={
-            actionType === "approve" ? "btn-approve" : "btn-reject"
-          }
+        <Button
+          variant=""
+          className={actionType === "approve" ? "btn-approve" : "btn-reject"}
           onClick={handleConfirm}
         >
-          {actionType === "approve" ? t(`approvalHistory:approve`) : t(`approvalHistory:reject`)}
+          {actionType === "approve"
+            ? t(`approvalHistory:approve`)
+            : t(`approvalHistory:reject`)}
         </Button>
       </Modal.Footer>
     </Modal>

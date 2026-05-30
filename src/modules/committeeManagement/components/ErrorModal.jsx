@@ -10,7 +10,7 @@ const ErrorModal = ({ show, message, errors = [], onClose }) => {
     <Modal size="lg" show={show} onHide={onClose} centered>
       <Modal.Header closeButton>
         <Modal.Title className="text-danger">
-          {hasErrors ? (message || t("validation_failed")) : t("alert")}
+          {hasErrors ? message || t("validation_failed") : t("alert")}
         </Modal.Title>
       </Modal.Header>
 
@@ -26,9 +26,7 @@ const ErrorModal = ({ show, message, errors = [], onClose }) => {
           </ul>
         ) : (
           // Fallback single message display
-          <p className="mb-0">
-            {message || t("something_went_wrong")}
-          </p>
+          <p className="mb-0">{message || t("something_went_wrong")}</p>
         )}
       </Modal.Body>
 

@@ -16,8 +16,6 @@ import bulbIcon from "../../assets/bulb-icon.png";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import Loader from "../../shared/components/Loader";
 const InterviewPanelPage = () => {
-
-
   const {
     panels,
     loading,
@@ -38,7 +36,6 @@ const InterviewPanelPage = () => {
     handleEdit,
     clearError,
 
-
     page,
     setPage,
     totalPages,
@@ -58,11 +55,10 @@ const InterviewPanelPage = () => {
     errorMessage,
     bulkAddPanels,
     downloadPanelTemplate,
- savingPanel,
- showUpdateConfirmModal,
-setShowUpdateConfirmModal,
-continuePanelUpdate
-
+    savingPanel,
+    showUpdateConfirmModal,
+    setShowUpdateConfirmModal,
+    continuePanelUpdate,
   } = useInterviewPanel();
 
   // const {
@@ -89,11 +85,13 @@ continuePanelUpdate
         <div className="panel-header">
           <div>
             <h2>{t("interviewPanelCommittee:committee_management")}</h2>
-            <span className="page-subtitle"> {t("interviewPanelCommittee:committee_subtitle")}</span>
+            <span className="page-subtitle">
+              {" "}
+              {t("interviewPanelCommittee:committee_subtitle")}
+            </span>
           </div>
           <div className="tabs-container">
             <div className="tabs">
-
               {/* <Button
                 variant="outline-primary"
                 size="sm"
@@ -131,7 +129,6 @@ continuePanelUpdate
             </div>
           </div>
         </div>
-
 
         {/* <div className="guidelines-box mt-3">
           <div className="guidelines-header">
@@ -205,28 +202,31 @@ continuePanelUpdate
               <div className="panel-form-section">
                 <div className="panel-form-card">
                   <div className="d-flex justify-content-between align-items-center mb-3">
-                    <span className="card-title">{formData.id
-                      ? t("interviewPanelCommittee:update_panel_title")
-                      : t("interviewPanelCommittee:create_panel_title")}
-                      <p className="card-subtitle">{t("interviewPanelCommittee:subtitle")}</p>
+                    <span className="card-title">
+                      {formData.id
+                        ? t("interviewPanelCommittee:update_panel_title")
+                        : t("interviewPanelCommittee:create_panel_title")}
+                      <p className="card-subtitle">
+                        {t("interviewPanelCommittee:subtitle")}
+                      </p>
                     </span>
-                    {!formData.id && (    
-                    <Button
-                      variant="outline-primary"
-                      size="sm"
-                      onClick={() => setShowBulkImportModal(true)}
-                      className="d-flex align-items-center gap-2 bulk-import-btn"
-                    >
-                      <FiUpload />
-                      {t("interviewPanelCommittee:bulk_import")}
-                    </Button>
+                    {!formData.id && (
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={() => setShowBulkImportModal(true)}
+                        className="d-flex align-items-center gap-2 bulk-import-btn"
+                      >
+                        <FiUpload />
+                        {t("interviewPanelCommittee:bulk_import")}
+                      </Button>
                     )}
                   </div>
 
                   <InterviewPanelFormModal
                     communityOptions={communityOptions}
                     membersOptions={membersOptions}
-                      // centerOptions={centerOptions}
+                    // centerOptions={centerOptions}
                     formData={formData}
                     setFormData={setFormData}
                     onSave={handleSave}
@@ -268,7 +268,7 @@ continuePanelUpdate
 
           {activeTab === "ASSIGN" && (
             <div className="assign-positions-container">
-             <AssignPositionsPage refreshPanels={fetchPanels} />
+              <AssignPositionsPage refreshPanels={fetchPanels} />
             </div>
           )}
         </div>
@@ -296,63 +296,50 @@ continuePanelUpdate
           message={t("interviewPanelCommittee:delete_panel_message")}
           itemLabel={deletePanelName}
         />
-
-
       </div>
       {(loading || savingPanel) && <Loader />}
       <ErrorModal
         show={showErrorModal}
         message={errorMessage}
-        errors={[]}   // no list needed here
+        errors={[]} // no list needed here
         onClose={() => setShowErrorModal(false)}
       />
-<Modal
-  show={showUpdateConfirmModal}
-  onHide={() => setShowUpdateConfirmModal(false)}
-  centered
-  backdrop="static"
->
-
-  <Modal.Body className="update-confirm-modal-body">
-
-    <div className="update-confirm-icon">
-      <i className="bi bi-exclamation-triangle-fill" />
-    </div>
-
-    <h5 className="update-confirm-title">
-      Scheduled Interviews Found
-    </h5>
-
-    <p className="update-confirm-text">
-      Some interviews are already scheduled for this panel.
-
-      Continuing the update will notify newly added
-      panel members about the scheduled interviews.
-    </p>
-
-    <div className="update-confirm-actions">
-
-      <button
-        className="btn btn-light"
-        onClick={() =>
-          setShowUpdateConfirmModal(false)
-        }
+      <Modal
+        show={showUpdateConfirmModal}
+        onHide={() => setShowUpdateConfirmModal(false)}
+        centered
+        backdrop="static"
       >
-        Cancel
-      </button>
+        <Modal.Body className="update-confirm-modal-body">
+          <div className="update-confirm-icon">
+            <i className="bi bi-exclamation-triangle-fill" />
+          </div>
 
-      <button
-        className="btn btn-warning text-white"
-        onClick={continuePanelUpdate}
-      >
-        Continue Update
-      </button>
+          <h5 className="update-confirm-title">Scheduled Interviews Found</h5>
 
-    </div>
+          <p className="update-confirm-text">
+            Some interviews are already scheduled for this panel. Continuing the
+            update will notify newly added panel members about the scheduled
+            interviews.
+          </p>
 
-  </Modal.Body>
+          <div className="update-confirm-actions">
+            <button
+              className="btn btn-light"
+              onClick={() => setShowUpdateConfirmModal(false)}
+            >
+              Cancel
+            </button>
 
-</Modal>
+            <button
+              className="btn btn-warning text-white"
+              onClick={continuePanelUpdate}
+            >
+              Continue Update
+            </button>
+          </div>
+        </Modal.Body>
+      </Modal>
       <Modal
         show={showBulkImportModal}
         onHide={() => setShowBulkImportModal(false)}
@@ -360,7 +347,9 @@ continuePanelUpdate
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title className="header-title">{t("interviewPanelCommittee:bulk_import_panels")}</Modal.Title>
+          <Modal.Title className="header-title">
+            {t("interviewPanelCommittee:bulk_import_panels")}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <PanelImportModal
@@ -397,7 +386,6 @@ continuePanelUpdate
           />
         </Modal.Body>
       </Modal> */}
-
     </div>
   );
 };

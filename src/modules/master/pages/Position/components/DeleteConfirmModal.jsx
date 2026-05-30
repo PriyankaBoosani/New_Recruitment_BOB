@@ -6,7 +6,12 @@ const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
   const { t } = useTranslation(["position"]);
 
   return (
-    <Modal show={show} onHide={onHide} centered dialogClassName="delete-confirm-modal">
+    <Modal
+      show={show}
+      onHide={onHide}
+      centered
+      dialogClassName="delete-confirm-modal"
+    >
       <Modal.Header closeButton>
         <Modal.Title>{t("position:confirm_delete")}</Modal.Title>
       </Modal.Header>

@@ -14,12 +14,12 @@ export const useRequisitionDetails = (requisitionId) => {
 
     requisitionApiService
       .getRequisitionById(requisitionId)
-      .then(res => {
+      .then((res) => {
         if (active) {
           setRequisition(res.data);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         if (active) {
           console.error("Failed to fetch requisition", err);
           setError(err);

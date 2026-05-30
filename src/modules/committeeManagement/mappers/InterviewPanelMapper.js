@@ -7,40 +7,34 @@ export const mapInterviewPanelsApiToUI = (list = []) => {
 
     members:
       panel.panelMembers?.length > 0
-        ? panel.panelMembers
-          .map(m => m.panelMember?.name)
-          .join(", ")
+        ? panel.panelMembers.map((m) => m.panelMember?.name).join(", ")
         : "-",
 
-    memberIds:
-      panel.panelMembers?.map(m => m.panelMember?.userId) || []
+    memberIds: panel.panelMembers?.map((m) => m.panelMember?.userId) || [],
   }));
 };
-
 
 export const mapPanelToFormData = (panel) => {
   return {
     id: panel.interviewPanelId,
     name: panel.panelName || "",
     community: panel.committee?.interviewCommitteeId || "",
-   // interviewCenterId: panel.interviewCenter?.interviewCentreId || "",
-    members:
-      panel.panelMembers?.map(m => m.panelMember?.userId) || []
+    // interviewCenterId: panel.interviewCenter?.interviewCentreId || "",
+    members: panel.panelMembers?.map((m) => m.panelMember?.userId) || [],
   };
 };
-
 
 export const preparePanelPayload = (
   formData,
   communityOptions,
-  membersOptions,
- // centerOptions
+  membersOptions
+  // centerOptions
 ) => {
   const selectedCommittee = communityOptions.find(
-    c => c.id === formData.community
+    (c) => c.id === formData.community
   );
 
-  const selectedMembers = membersOptions.filter(m =>
+  const selectedMembers = membersOptions.filter((m) =>
     formData.members.includes(m.value)
   );
 
@@ -55,7 +49,7 @@ export const preparePanelPayload = (
     committee: {
       committeeName: selectedCommittee?.name || "",
       committeeDesc: "",
-      interviewCommitteeId: selectedCommittee?.id
+      interviewCommitteeId: selectedCommittee?.id,
     },
 
     // interviewCenter: {
@@ -67,21 +61,19 @@ export const preparePanelPayload = (
     //   interviewCentreId: selectedCenter?.value
     // },
 
-    panelMembers: selectedMembers.map(m => ({
+    panelMembers: selectedMembers.map((m) => ({
       panelMember: {
         userId: m.value,
         name: m.label,
         role: m.role || "",
-        email: m.email || ""
-      }
-    }))
+        email: m.email || "",
+      },
+    })),
   };
 };
 
-
 export const mapPanelsApi = (list = []) => {
-
-  return list.map(panel => ({
+  return list.map((panel) => ({
     /* ===== PANEL INFO ===== */
     id: panel.interviewPanelId,
     name: panel.panelName,
@@ -93,13 +85,14 @@ export const mapPanelsApi = (list = []) => {
     committeeDesc: panel.committee?.committeeDesc || "",
 
     /* ===== MEMBERS (FULL OBJECTS) ===== */
-    members: panel.panelMembers?.map(m => ({
-      panelId: panel.interviewPanelId,
-      interviewPanelMemberId: m.interviewPanelMemberId,
-      name: m.panelMember?.name,
-      role: m.panelMember?.role,
-      email: m.panelMember?.email,
-      userId: m.panelMember?.userId
-    })) || []
+    members:
+      panel.panelMembers?.map((m) => ({
+        panelId: panel.interviewPanelId,
+        interviewPanelMemberId: m.interviewPanelMemberId,
+        name: m.panelMember?.name,
+        role: m.panelMember?.role,
+        email: m.panelMember?.email,
+        userId: m.panelMember?.userId,
+      })) || [],
   }));
 };

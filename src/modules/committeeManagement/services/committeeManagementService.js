@@ -1,32 +1,18 @@
 import { nodeApi, api, apis } from "../../../core/service/apiService";
 
 const committeeManagementService = {
-  getAllusers: () =>
-    nodeApi.get(
-      `/getdetails/users/all`
-    ),
+  getAllusers: () => nodeApi.get(`/getdetails/users/all`),
 
-  getPanelMembers: () =>
-    apis.get(
-      `/interview-panels/get/panel-members`
-    ),
-
+  getPanelMembers: () => apis.get(`/interview-panels/get/panel-members`),
 
   // GET ALL REQUISITIONS
   getRequisitions: (name = "") =>
-    api.get(
-      "/recruiter/job-requisitions/get-requisitions",
-
-    ),
+    api.get("/recruiter/job-requisitions/get-requisitions"),
 
   getPositionsByRequisition: (requisitionId) =>
-    api.get(
-      "/recruiter/job-positions/get-positions",
-      {
-        params: { requisitionId }, // ✅ query param
-
-      }
-    ),
+    api.get("/recruiter/job-positions/get-positions", {
+      params: { requisitionId }, // ✅ query param
+    }),
   assignPanelToPosition: (jobPositionId, payload) =>
     api.post(
       `/recruiter/position-panel/save-or-update/${jobPositionId}`,
@@ -34,47 +20,51 @@ const committeeManagementService = {
     ),
 
   getPanelsByPosition(positionId) {
-    return api.get(
-      `recruiter/position-panel/get-by-position-id/${positionId}`
-    );
+    return api.get(`recruiter/position-panel/get-by-position-id/${positionId}`);
   },
 
   // Bulk import methods for panels
   bulkAddPanels: (file) => {
     const formData = new FormData();
-    formData.append('file', file);
-    return apis.post('/interview-panels/upload-excel', formData, {
+    formData.append("file", file);
+    return apis.post("/interview-panels/upload-excel", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
   },
 
-  downloadPanelTemplate: () => apis.get('/interview-panels/download-panel-template', { responseType: 'blob' }),
+  downloadPanelTemplate: () =>
+    apis.get("/interview-panels/download-panel-template", {
+      responseType: "blob",
+    }),
 
   // Bulk import methods for position assignments
   bulkImportPositionAssignments: (file) => {
     const formData = new FormData();
-    formData.append('file', file);
-    return api.post('/recruiter/position-panel/upload-excel', formData, {
+    formData.append("file", file);
+    return api.post("/recruiter/position-panel/upload-excel", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
   },
 
-  downloadPositionAssignmentTemplate: () => api.get('/recruiter/position-panel/download-assignment-template', { responseType: 'blob' }),
+  downloadPositionAssignmentTemplate: () =>
+    api.get("/recruiter/position-panel/download-assignment-template", {
+      responseType: "blob",
+    }),
 
   approvePanels: (ids, comments) =>
     api.post("/recruiter/position-panel/approve-committee", {
       positionPanelIds: ids,
-      comments: comments
+      comments: comments,
     }),
 
   rejectPanels: (ids, comments) =>
     api.post("/recruiter/position-panel/reject-committee", {
       positionPanelIds: ids,
-      comments: comments
+      comments: comments,
     }),
   getRequisitionApprovalHistory: (panelId) =>
     api.get(
@@ -83,10 +73,8 @@ const committeeManagementService = {
   getExtensionApprovals: (body, params = {}) =>
     api.post("recruiter/messages/get-approvals", body, {
       params,
-
     }),
-  getRequestTypes: () =>
-    apis.get("/master-dd-data/get/request-types"),
+  getRequestTypes: () => apis.get("/master-dd-data/get/request-types"),
 
   getMessagesByThreadId: (conversationThreadId) =>
     api.get(`/recruiter/messages/get-message/${conversationThreadId}`),
@@ -107,30 +95,17 @@ const committeeManagementService = {
     api.post("/recruiter/schedule-pool/submit-l1-approval", body),
 
   getExamConfigList: (requisitionId) =>
-    api.get(
-      "/recruiter/examination-config/get-all-list",
-      {
-        params: {
-          requisitionIds: [requisitionId],
-        },
-      }
-    ),
+    api.get("/recruiter/examination-config/get-all-list", {
+      params: {
+        requisitionIds: [requisitionId],
+      },
+    }),
   approveOrRejectExamConfig: (payload) =>
-    api.post(
-      "/recruiter/examination-config/approve-or-reject",
-      payload,
-      
-    ),
-    getWorkflowHistory: (examConfigId) =>
-  api.get(
-    `/recruiter/examination-config/workflow-history/${examConfigId}`
-  ),
-getApprovalHistory: (requisitionId) =>
-  api.post(
-    `/recruiter/schedule-pool/get-approval-history/${requisitionId}`,
-   
-  ),
+    api.post("/recruiter/examination-config/approve-or-reject", payload),
+  getWorkflowHistory: (examConfigId) =>
+    api.get(`/recruiter/examination-config/workflow-history/${examConfigId}`),
+  getApprovalHistory: (requisitionId) =>
+    api.post(`/recruiter/schedule-pool/get-approval-history/${requisitionId}`),
 };
-
 
 export default committeeManagementService;

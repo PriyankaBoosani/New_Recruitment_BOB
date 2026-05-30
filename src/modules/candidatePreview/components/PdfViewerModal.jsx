@@ -34,7 +34,9 @@ const PdfViewerModal = ({ show, onHide, fileUrl, loading, title }) => {
       keyboard={false}
     >
       <Modal.Header closeButton>
-        <Modal.Title className="blue-color" style={{ fontSize: '1rem' }}>{title}</Modal.Title>
+        <Modal.Title className="blue-color" style={{ fontSize: "1rem" }}>
+          {title}
+        </Modal.Title>
       </Modal.Header>
 
       <Modal.Body style={{ height: "80vh", padding: 0 }}>
@@ -52,7 +54,9 @@ const PdfViewerModal = ({ show, onHide, fileUrl, loading, title }) => {
           />
         ) : isDoc ? (
           <div className="d-flex flex-column justify-content-center align-items-center h-100 text-center px-4">
-            <h6 className="mb-2">{t("candidateWorkflow:preview_not_available")}</h6>
+            <h6 className="mb-2">
+              {t("candidateWorkflow:preview_not_available")}
+            </h6>
             <p className="text-muted fs-14 mb-0">
               {t("candidateWorkflow:doc_preview_line1")}
               <br />
@@ -67,6 +71,6 @@ const PdfViewerModal = ({ show, onHide, fileUrl, loading, title }) => {
       </Modal.Body>
     </Modal>
   );
-}
+};
 
 export default PdfViewerModal;

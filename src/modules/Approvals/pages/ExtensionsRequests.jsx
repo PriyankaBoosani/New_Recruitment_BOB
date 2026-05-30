@@ -1,17 +1,10 @@
 import React, { use, useEffect, useState, useMemo } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-  Badge
-} from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Badge } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import "../../../style/css/Extensions.css";
 import start_icon from "../../../assets/start_icon.png";
-import end_icon from "../../../assets/end_icon.png"
+import end_icon from "../../../assets/end_icon.png";
 import history_icon from "../../../assets/history_icon.png";
 import ApprovalCommentModal from "../components/ApprovalCommentModal";
 import ApprovalHistoryModal from "../components/ApprovalHistoryModal";
@@ -20,7 +13,11 @@ import Select from "react-select";
 
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarDays, faLayerGroup, faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendarDays,
+  faLayerGroup,
+  faLocationDot,
+} from "@fortawesome/free-solid-svg-icons";
 
 //  Utilities
 import { validateSelectedRequisitions } from "../validations/requisitionValidation";
@@ -36,7 +33,11 @@ import { FaLocationArrow } from "react-icons/fa";
 // import RequisitionPositionSelector from "../../candidatePreview/components/RequisitionPositionSelector";
 
 const ExtensionsRequests = () => {
-  const { t } = useTranslation(["jobPostingsList", "common", "extensionsRequests"]);
+  const { t } = useTranslation([
+    "jobPostingsList",
+    "common",
+    "extensionsRequests",
+  ]);
 
   const navigate = useNavigate();
   const [pageSize, setPageSize] = useState(10);
@@ -81,46 +82,44 @@ const ExtensionsRequests = () => {
     control: (base) => ({
       ...base,
       height: "38px",
-      minHeight: "38px",   // 🔥 override default 38px
-      fontSize: "14px"
+      minHeight: "38px", // 🔥 override default 38px
+      fontSize: "14px",
     }),
 
     valueContainer: (base) => ({
       ...base,
       height: "38px",
-      padding: "0 8px"     // 🔥 remove vertical padding
+      padding: "0 8px", // 🔥 remove vertical padding
     }),
 
     indicatorsContainer: (base) => ({
       ...base,
-      height: "34px"
+      height: "34px",
     }),
 
     input: (base) => ({
       ...base,
       margin: 0,
-      padding: 0
+      padding: 0,
     }),
 
     singleValue: (base) => ({
       ...base,
-      fontSize: "14px"
+      fontSize: "14px",
     }),
 
     placeholder: (base) => ({
       ...base,
-      fontSize: "14px"
+      fontSize: "14px",
     }),
 
     menuPortal: (base) => ({
       ...base,
-      zIndex: 9999
-    })
+      zIndex: 9999,
+    }),
   };
   const [selectedRequestType, setSelectedRequestType] = useState(null);
   const privileges = useSelector((state) => state.user.privileges);
-
-
 
   const [openThreadId, setOpenThreadId] = useState(null);
   const {
@@ -146,15 +145,13 @@ const ExtensionsRequests = () => {
     fetchApprovalHistory,
     interviewCenters,
     fetchInterviewCenters,
-    zonalDisplayMap
+    zonalDisplayMap,
   } = useExtensionRequests();
 
   useEffect(() => {
     fetchRequisitions();
     fetchInterviewCenters();
   }, [fetchRequisitions, fetchInterviewCenters]);
-
-
 
   const handleToggleThread = async (threadId) => {
     if (!threadId) return;
@@ -214,18 +211,18 @@ const ExtensionsRequests = () => {
   }, [fetchRequestTypes]);
   const selectedRequisitionOption = selectedRequisition
     ? {
-      label: `${selectedRequisition.requisitionCode}- ${selectedRequisition.requisitionTitle}`,
-      value: selectedRequisition.id,
-      raw: selectedRequisition,
-    }
+        label: `${selectedRequisition.requisitionCode}- ${selectedRequisition.requisitionTitle}`,
+        value: selectedRequisition.id,
+        raw: selectedRequisition,
+      }
     : null;
 
   const selectedPositionOption = selectedPosition
     ? {
-      label: selectedPosition.positionName,
-      value: selectedPosition.positionId,
-      raw: selectedPosition,
-    }
+        label: selectedPosition.positionName,
+        value: selectedPosition.positionId,
+        raw: selectedPosition,
+      }
     : null;
 
   const requestsData = useMemo(() => {
@@ -243,14 +240,14 @@ const ExtensionsRequests = () => {
       { value: "L2_PENDING", label: "L2 Pending" },
       { value: "L1_REJECTED", label: "L1 Rejected" },
       { value: "L2_REJECTED", label: "L2 Rejected" },
-      { value: "APPROVED", label: "Approved" }
+      { value: "APPROVED", label: "Approved" },
     ],
     L2: [
       { value: "ALL", label: "All" },
       { value: "L2_PENDING", label: "L2 Pending" },
       { value: "L2_REJECTED", label: "L2 Rejected" },
-      { value: "APPROVED", label: "Approved" }
-    ]
+      { value: "APPROVED", label: "Approved" },
+    ],
   };
   const requestTypeCol = isL2 ? 3 : 2;
   const statusCol = isL2 ? 2 : 1;
@@ -306,32 +303,23 @@ const ExtensionsRequests = () => {
     return status
       .replaceAll("_", " ")
       .toLowerCase()
-      .replace(/\b\w/g, char => char.toUpperCase());
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
   const paginatedData = extensionRequests;
   const totalPages = approvalPage?.totalPages || 0;
 
-
-
   const getApprovalStatus = (actionType) => {
     if (isL1) {
-      return actionType === "approve"
-        ? "L2_PENDING"
-        : "L1_REJECTED";
+      return actionType === "approve" ? "L2_PENDING" : "L1_REJECTED";
     }
 
     if (isL2) {
-      return actionType === "approve"
-        ? "APPROVED"
-        : "L2_REJECTED";
+      return actionType === "approve" ? "APPROVED" : "L2_REJECTED";
     }
 
-    return actionType === "approve"
-      ? "APPROVED"
-      : "REJECTED";
+    return actionType === "approve" ? "APPROVED" : "REJECTED";
   };
-
 
   const handleApprovalAction = async (comment) => {
     const threadIds = Array.from(selectedReqIds);
@@ -345,10 +333,13 @@ const ExtensionsRequests = () => {
         comments: comment,
       };
 
-      const res = await committeeManagementService.submitForL1L2Approval(payload);
+      const res =
+        await committeeManagementService.submitForL1L2Approval(payload);
 
       if (res?.success !== true) {
-        toast.error(res?.data || res?.message || t("extensionsRequests:failed_to_submit"));
+        toast.error(
+          res?.data || res?.message || t("extensionsRequests:failed_to_submit")
+        );
         return;
       }
 
@@ -368,22 +359,19 @@ const ExtensionsRequests = () => {
         page,
         size: pageSize,
       });
-
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-        t("extensionsRequests:failed_to_submit")
+          t("extensionsRequests:failed_to_submit")
       );
     }
   };
 
   const handleOpenHistory = async (req) => {
     if (!req?.conversationThreadId) {
-  toast.error(
-    t("extensionsRequests:conversation_thread_not_found")
-  );
-  return;
-}
+      toast.error(t("extensionsRequests:conversation_thread_not_found"));
+      return;
+    }
 
     setSelectedHistoryReq(req);
     setShowHistoryModal(true);
@@ -411,7 +399,6 @@ const ExtensionsRequests = () => {
     // default fallback
     return true;
   };
-
 
   const getVisiblePages = (currentPage, totalPages) => {
     const windowSize = 3;
@@ -441,38 +428,35 @@ const ExtensionsRequests = () => {
     };
   };
 
-
-
   return (
     <div className="extension_request">
       <Container fluid className="extensions-page">
         {/* ================= HEADER ================= */}
         <Row className="mb-3 align-items-center">
           <Col>
-            <h5 className="page-title">  {isL1
-              ? t("extensionsRequests:extension_zone_change_requests")
-              : t("extensionsRequests:extension_requests")}</h5>
+            <h5 className="page-title">
+              {" "}
+              {isL1
+                ? t("extensionsRequests:extension_zone_change_requests")
+                : t("extensionsRequests:extension_requests")}
+            </h5>
             <p className="page-subtitle">
               {isL1
                 ? t("extensionsRequests:review_extension_zone_change_requests")
                 : t("extensionsRequests:review_extension_requests")}
             </p>
           </Col>
-
         </Row>
-
-
-
 
         {/* Requisition */}
 
-
         <Row className="mb-3 align-items-end filters-row border rounded p-3 bulk-actions">
-
           <Col xs={12} md={4}>
-            <div className="field-label">  {t("extensionsRequests:requisition")}</div>
+            <div className="field-label">
+              {" "}
+              {t("extensionsRequests:requisition")}
+            </div>
             <Select
-
               placeholder={t("extensionsRequests:select_requisition")}
               styles={selectStyles}
               classNamePrefix="react-select"
@@ -490,7 +474,10 @@ const ExtensionsRequests = () => {
 
           {/* Position */}
           <Col xs={12} md={4}>
-            <div className="field-label"> {t("extensionsRequests:position")}</div>
+            <div className="field-label">
+              {" "}
+              {t("extensionsRequests:position")}
+            </div>
             <Select
               styles={selectStyles}
               classNamePrefix="react-select"
@@ -507,7 +494,10 @@ const ExtensionsRequests = () => {
             />
           </Col>
           <Col xs={12} md={2}>
-            <div className="field-label"> {t("extensionsRequests:request_type")}</div>
+            <div className="field-label">
+              {" "}
+              {t("extensionsRequests:request_type")}
+            </div>
             <Form.Select
               className="status-select"
               value={selectedRequestType?.requestTypeId || "ALL"}
@@ -526,7 +516,6 @@ const ExtensionsRequests = () => {
                 setPage(0);
               }}
             >
-
               {requestTypeDropdownOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -551,15 +540,10 @@ const ExtensionsRequests = () => {
               ))}
             </Form.Select>
           </Col>
-
         </Row>
-
-
 
         {/* ================= BULK ACTIONS ================= */}
         <Row className="align-items-center mt-4 mb-4">
-
-
           <Col xs={12} md={12} className="d-flex justify-content-end gap-2 ">
             <Button
               variant="outline-danger"
@@ -569,7 +553,7 @@ const ExtensionsRequests = () => {
                 const errors = validateSelectedRequisitions(selectedReqIds);
 
                 if (errors.length > 0) {
-                  errors.forEach(err => toast.error(err));
+                  errors.forEach((err) => toast.error(err));
                   return;
                 }
                 setActionType("reject");
@@ -587,7 +571,7 @@ const ExtensionsRequests = () => {
                 const errors = validateSelectedRequisitions(selectedReqIds);
 
                 if (errors.length > 0) {
-                  errors.forEach(err => toast.error(err));
+                  errors.forEach((err) => toast.error(err));
                   return;
                 }
 
@@ -612,19 +596,17 @@ const ExtensionsRequests = () => {
             {paginatedData.map((req) => {
               const isOpen = openThreadId === req.conversationThreadId;
 
-              const historyItems = (threadMessagesMap[req.conversationThreadId] || []).map(
-                (msg) => ({
-                  title: msg.senderType,
-                  comment: msg.comments || msg.message || msg.content || "-",
-                  // time: msg.createdDate
-                  //   ? new Date(msg.createdDate).toLocaleString()
-                  //   : "",
-                  time: `${formatDate(msg.createdDate)} ${formatTime(msg.createdDate)}`,
-                  attachmentPath: msg.attachmentPath || null,
-                })
-
-              );
-
+              const historyItems = (
+                threadMessagesMap[req.conversationThreadId] || []
+              ).map((msg) => ({
+                title: msg.senderType,
+                comment: msg.comments || msg.message || msg.content || "-",
+                // time: msg.createdDate
+                //   ? new Date(msg.createdDate).toLocaleString()
+                //   : "",
+                time: `${formatDate(msg.createdDate)} ${formatTime(msg.createdDate)}`,
+                attachmentPath: msg.attachmentPath || null,
+              }));
 
               return (
                 <div
@@ -657,21 +639,21 @@ const ExtensionsRequests = () => {
                       <div
                         className="d-flex align-items-center gap-3"
                         style={{ cursor: "pointer" }}
-
                       >
                         <div className="avatar-circle">
                           {req.candidateName
                             ?.split(" ")
                             .filter(Boolean)
-                            .map(word => word.charAt(0).toUpperCase())
+                            .map((word) => word.charAt(0).toUpperCase())
                             .slice(0, 2)
                             .join("")}
-
                         </div>
 
                         <div className="user-info">
                           <div className="user-name-row">
-                            <span className="user-name">{req.candidateName || "-"}</span>
+                            <span className="user-name">
+                              {req.candidateName || "-"}
+                            </span>
 
                             <img
                               src={history_icon}
@@ -683,11 +665,11 @@ const ExtensionsRequests = () => {
 
                           <div className="user-meta">
                             <div className="reg-no">
-                              {t("extensionsRequests:application_number")}: {req.applicationNo || "-"}
+                              {t("extensionsRequests:application_number")}:{" "}
+                              {req.applicationNo || "-"}
                             </div>
 
                             <div className="date-row d-flex align-items-center gap-3">
-
                               {/* Date */}
                               <div className="d-flex align-items-center gap-1">
                                 <img
@@ -696,9 +678,7 @@ const ExtensionsRequests = () => {
                                   className="icon-14"
                                 />
 
-                                <span>
-                                  {formatDate(req.createdDate)}
-                                </span>
+                                <span>{formatDate(req.createdDate)}</span>
                               </div>
 
                               {/* Time */}
@@ -710,11 +690,8 @@ const ExtensionsRequests = () => {
                                   className="icon-14"
                                 />
 
-                                <span>
-                                  {formatTime(req.createdDate)}
-                                </span>
+                                <span>{formatTime(req.createdDate)}</span>
                               </div>
-
                             </div>
                           </div>
                         </div>
@@ -722,9 +699,7 @@ const ExtensionsRequests = () => {
                     </Col>
 
                     <Col xs={12} md={2} className="data-col">
-
                       <div className="d-flex align-items-start gap-2">
-
                         <FontAwesomeIcon
                           icon={faCalendarDays}
                           className="text-muted mt-1"
@@ -742,15 +717,11 @@ const ExtensionsRequests = () => {
                               : "-"}
                           </div>
                         </div>
-
                       </div>
-
                     </Col>
 
                     <Col xs={12} md={requestTypeCol} className="data-col">
-
                       <div className="d-flex align-items-start gap-2">
-
                         <FontAwesomeIcon
                           icon={faLayerGroup}
                           className="text-muted mt-1"
@@ -768,16 +739,11 @@ const ExtensionsRequests = () => {
                             )?.label || "-"}
                           </div>
                         </div>
-
-
                       </div>
-
                     </Col>
                     {!isL2 && (
                       <Col xs={12} md={2} className="data-col">
-
                         <div className="d-flex align-items-start gap-2">
-
                           <FontAwesomeIcon
                             icon={faLocationDot}
                             className="text-muted mt-1"
@@ -793,14 +759,15 @@ const ExtensionsRequests = () => {
                               {zonalDisplayMap[req.zonalId] || "-"}
                             </div>
                           </div>
-
-
                         </div>
-
                       </Col>
                     )}
 
-                    <Col xs={12} md={statusCol} className="data-col d-flex align-items-center justify-content-between">
+                    <Col
+                      xs={12}
+                      md={statusCol}
+                      className="data-col d-flex align-items-center justify-content-between"
+                    >
                       <div>
                         <Badge bg={getStatusBadge(req.status)}>
                           {formatStatus(req.status)}
@@ -810,10 +777,14 @@ const ExtensionsRequests = () => {
                       <button
                         type="button"
                         className="btn btn-link p-0 ms-4"
-                        onClick={() => handleToggleThread(req.conversationThreadId)}
+                        onClick={() =>
+                          handleToggleThread(req.conversationThreadId)
+                        }
                         style={{ textDecoration: "none" }}
                       >
-                        <i className={`bi ${isOpen ? "bi-chevron-up" : "bi-chevron-down"}`}></i>
+                        <i
+                          className={`bi ${isOpen ? "bi-chevron-up" : "bi-chevron-down"}`}
+                        ></i>
                       </button>
                     </Col>
                   </Row>
@@ -822,7 +793,6 @@ const ExtensionsRequests = () => {
                     <Row className="mt-3 border-top pt-3">
                       <Col xs={12}>
                         <div className="p-3 border rounded bg-white">
-
                           <MessageHistory item={{ history: historyItems }} />
                         </div>
                       </Col>
@@ -840,15 +810,19 @@ const ExtensionsRequests = () => {
             <Col className="d-flex justify-content-end align-items-center gap-3">
               {/* Page size */}
               <div className="d-flex align-items-center gap-2">
-                <span className="fw-semibold pagesize">{t("extensionsRequests:page_size")}:</span>
+                <span className="fw-semibold pagesize">
+                  {t("extensionsRequests:page_size")}:
+                </span>
                 <Form.Select
                   size="sm"
                   style={{ width: "90px" }}
                   value={pageSize}
                   onChange={(e) => setPageSize(Number(e.target.value))}
                 >
-                  {[5, 10, 15, 20, 25, 30].map(n => (
-                    <option key={n} value={n}>{n}</option>
+                  {[5, 10, 15, 20, 25, 30].map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
                   ))}
                 </Form.Select>
               </div>
@@ -860,7 +834,7 @@ const ExtensionsRequests = () => {
                   <li className={`page-item ${page === 0 ? "disabled" : ""}`}>
                     <button
                       className="page-link"
-                      onClick={() => setPage(p => Math.max(p - 1, 0))}
+                      onClick={() => setPage((p) => Math.max(p - 1, 0))}
                       disabled={page === 0}
                     >
                       &laquo;
@@ -869,11 +843,8 @@ const ExtensionsRequests = () => {
 
                   {/* Pages */}
                   {(() => {
-                    const {
-                      pages,
-                      showStartEllipsis,
-                      showEndEllipsis,
-                    } = getVisiblePages(page, totalPages);
+                    const { pages, showStartEllipsis, showEndEllipsis } =
+                      getVisiblePages(page, totalPages);
 
                     return (
                       <>
@@ -883,7 +854,7 @@ const ExtensionsRequests = () => {
                           </li>
                         )}
 
-                        {pages.map(p => (
+                        {pages.map((p) => (
                           <li
                             key={p}
                             className={`page-item ${page === p ? "active" : ""}`}
@@ -907,10 +878,12 @@ const ExtensionsRequests = () => {
                   })()}
 
                   {/* Next */}
-                  <li className={`page-item ${page >= totalPages - 1 ? "disabled" : ""}`}>
+                  <li
+                    className={`page-item ${page >= totalPages - 1 ? "disabled" : ""}`}
+                  >
                     <button
                       className="page-link"
-                      onClick={() => setPage(p => p + 1)}
+                      onClick={() => setPage((p) => p + 1)}
                       disabled={page >= totalPages - 1}
                     >
                       &raquo;
@@ -936,7 +909,7 @@ const ExtensionsRequests = () => {
           loading={loadingHistory}
         />
       </Container>
-    </div >
+    </div>
   );
 };
 

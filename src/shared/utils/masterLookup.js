@@ -7,12 +7,7 @@
  * @param {String} idKey - ID field name in that master
  * @returns {Object|null}
  */
-export const getMasterById = (
-  masters,
-  masterKey,
-  id,
-  idKey = "id"
-) => {
+export const getMasterById = (masters, masterKey, id, idKey = "id") => {
   if (!masters || !masterKey || !id) {
     return null;
   }
@@ -22,6 +17,6 @@ export const getMasterById = (
     return null;
   }
 
-  const found = list.find(item => item[idKey] === id);
+  const found = list.find((item) => item[idKey] === id);
   return found || null;
 };

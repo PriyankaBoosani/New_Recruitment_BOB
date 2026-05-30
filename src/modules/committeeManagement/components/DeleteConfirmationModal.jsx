@@ -9,17 +9,30 @@ const DeleteConfirmationModal = ({
   title,
   message,
   itemLabel,
-  loading = false
+  loading = false,
 }) => {
   const { t } = useTranslation(["common"]);
   return (
-    <Modal show={show} onHide={onClose} centered backdrop="static" className="modalimport">
+    <Modal
+      show={show}
+      onHide={onClose}
+      centered
+      backdrop="static"
+      className="modalimport"
+    >
       <Modal.Header closeButton>
-        <Modal.Title className="f16 bluecol">{title || t("delete_title")}</Modal.Title>
+        <Modal.Title className="f16 bluecol">
+          {title || t("delete_title")}
+        </Modal.Title>
       </Modal.Header>
 
       <Modal.Body className="text-center f14">
-        <img src={pos_delete_icon} alt="delete" className="mb-3" style={{ width: 30 }} />
+        <img
+          src={pos_delete_icon}
+          alt="delete"
+          className="mb-3"
+          style={{ width: 30 }}
+        />
         <p className="mb-1"> {message || t("delete_message")}</p>
         {itemLabel && (
           <strong className="text-danger d-block wrap">{itemLabel}</strong>
@@ -28,11 +41,21 @@ const DeleteConfirmationModal = ({
       </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="outline-secondary" onClick={onClose} disabled={loading} className="f14" >
+        <Button
+          variant="outline-secondary"
+          onClick={onClose}
+          disabled={loading}
+          className="f14"
+        >
           {t("common:cancel")}
         </Button>
 
-        <Button variant="danger" onClick={onConfirm} disabled={loading} className="f14" >
+        <Button
+          variant="danger"
+          onClick={onConfirm}
+          disabled={loading}
+          className="f14"
+        >
           {loading ? t("deleting") : t("delete_button")}
         </Button>
       </Modal.Footer>

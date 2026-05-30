@@ -1,14 +1,14 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   user: null,
   authUser: null,
   candidateId: null,
-   privileges: {}, 
+  privileges: {},
 };
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     setUser(state, action) {
@@ -21,15 +21,16 @@ const userSlice = createSlice({
       state.candidateId = action.payload; // Step 2: Handle candidateId
     },
     setPrivileges(state, action) {
-        state.privileges = action.payload || {};
-      },
+      state.privileges = action.payload || {};
+    },
     clearUser(state) {
       state.user = null;
       state.authUser = null;
-        state.privileges = {};
+      state.privileges = {};
     },
   },
 });
 
-export const { setUser, setAuthUser, clearUser, setCandidate, setPrivileges } = userSlice.actions;
+export const { setUser, setAuthUser, clearUser, setCandidate, setPrivileges } =
+  userSlice.actions;
 export default userSlice.reducer;

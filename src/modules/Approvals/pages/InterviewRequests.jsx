@@ -98,7 +98,8 @@ const InterviewRequests = () => {
 
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [actionType, setActionType] = useState(null);
-  const [selectedPositionForAction, setSelectedPositionForAction] = useState(null);
+  const [selectedPositionForAction, setSelectedPositionForAction] =
+    useState(null);
 
   const [openHistoryId, setOpenHistoryId] = useState(null);
 
@@ -118,10 +119,10 @@ const InterviewRequests = () => {
 
   const selectedRequisitionOption = selectedRequisition
     ? {
-      label: `${selectedRequisition.requisitionCode} - ${selectedRequisition.requisitionTitle}`,
-      value: selectedRequisition.id,
-      raw: selectedRequisition,
-    }
+        label: `${selectedRequisition.requisitionCode} - ${selectedRequisition.requisitionTitle}`,
+        value: selectedRequisition.id,
+        raw: selectedRequisition,
+      }
     : null;
   const formatStatus = (status = "") => {
     return status
@@ -137,7 +138,6 @@ const InterviewRequests = () => {
       case "APPROVED":
         return "success";
       case "REJECTED":
-
         return "danger";
       default:
         return "secondary";
@@ -178,7 +178,8 @@ const InterviewRequests = () => {
     if (!selectedPositionForAction) return;
 
     const positionId =
-      selectedPositionForAction.positionId || selectedPositionForAction.jobPositionId;
+      selectedPositionForAction.positionId ||
+      selectedPositionForAction.jobPositionId;
 
     const status = actionType === "approve" ? "APPROVED" : "REJECTED";
 
@@ -299,7 +300,9 @@ const InterviewRequests = () => {
           <div className="mb-3">
             <div className="p-3 border rounded bg-white">
               {loadingPositionDetails ? (
-                <div className="text-muted p-3">Loading position details...</div>
+                <div className="text-muted p-3">
+                  Loading position details...
+                </div>
               ) : positionDetails.length > 0 ? (
                 positionDetails.map((pos) => {
                   const positionKey = pos.positionId || pos.jobPositionId;
@@ -310,7 +313,9 @@ const InterviewRequests = () => {
                       <div
                         className="department-header d-flex align-items-center gap-2 cursor-pointer"
                         onClick={() =>
-                          setOpenPositionId((prev) => (prev === positionKey ? null : positionKey))
+                          setOpenPositionId((prev) =>
+                            prev === positionKey ? null : positionKey
+                          )
                         }
                       >
                         {/* <span className="depname">{pos.positionName}</span> */}
@@ -328,7 +333,9 @@ const InterviewRequests = () => {
                           className="btn btn-none accordion-arrow-position ms-auto"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setOpenPositionId((prev) => (prev === positionKey ? null : positionKey));
+                            setOpenPositionId((prev) =>
+                              prev === positionKey ? null : positionKey
+                            );
                           }}
                         >
                           {isPositionOpen ? <ChevronUp /> : <ChevronDown />}
@@ -341,7 +348,9 @@ const InterviewRequests = () => {
                             <div className="col-md-3">
                               <div className="field-label">
                                 Department:{" "}
-                                <span className="field-value">{pos.departmentName}</span>
+                                <span className="field-value">
+                                  {pos.departmentName}
+                                </span>
                               </div>
                             </div>
 
@@ -357,7 +366,9 @@ const InterviewRequests = () => {
                             <div className="col-md-2">
                               <div className="field-label">
                                 Zone Count:{" "}
-                                <span className="field-value">{pos.totalZonalCount || 0}</span>
+                                <span className="field-value">
+                                  {pos.totalZonalCount || 0}
+                                </span>
                                 <OverlayTrigger
                                   placement="bottom"
                                   overlay={
@@ -371,7 +382,11 @@ const InterviewRequests = () => {
                                       src={I_icon}
                                       alt="View Details"
                                       className="ms-2"
-                                      style={{ width: 16, height: 16, cursor: "pointer" }}
+                                      style={{
+                                        width: 16,
+                                        height: 16,
+                                        cursor: "pointer",
+                                      }}
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         openDetails("zone", pos);
@@ -385,11 +400,15 @@ const InterviewRequests = () => {
                             <div className="col-md-2">
                               <div className="field-label">
                                 Panel Count:{" "}
-                                <span className="field-value">{pos.totalPanelCount || 0}</span>
+                                <span className="field-value">
+                                  {pos.totalPanelCount || 0}
+                                </span>
                                 <OverlayTrigger
                                   placement="bottom"
                                   overlay={
-                                    <Tooltip id={`tooltip-panel-${positionKey}`}>
+                                    <Tooltip
+                                      id={`tooltip-panel-${positionKey}`}
+                                    >
                                       View Panel Details
                                     </Tooltip>
                                   }
@@ -399,7 +418,11 @@ const InterviewRequests = () => {
                                       src={I_icon}
                                       alt="View Details"
                                       className="ms-2"
-                                      style={{ width: 16, height: 16, cursor: "pointer" }}
+                                      style={{
+                                        width: 16,
+                                        height: 16,
+                                        cursor: "pointer",
+                                      }}
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         openDetails("panel", pos);
@@ -448,10 +471,14 @@ const InterviewRequests = () => {
 
                               {pos.history?.length > 0 ? (
                                 pos.history.map((item) => {
-                                  const isHistoryOpen = openHistoryId === item.id;
+                                  const isHistoryOpen =
+                                    openHistoryId === item.id;
 
                                   return (
-                                    <div key={item.id} className="department-card mb-3 history-card">
+                                    <div
+                                      key={item.id}
+                                      className="department-card mb-3 history-card"
+                                    >
                                       <div
                                         className="history-summary-row"
                                         onClick={() =>
@@ -469,7 +496,9 @@ const InterviewRequests = () => {
                                               onClick={(e) => {
                                                 e.stopPropagation();
                                                 setOpenHistoryId((prev) =>
-                                                  prev === item.id ? null : item.id
+                                                  prev === item.id
+                                                    ? null
+                                                    : item.id
                                                 );
                                               }}
                                             >
@@ -515,8 +544,10 @@ const InterviewRequests = () => {
                                           </div>
 
                                           <div className="col-md-2">
-                                            <Badge bg={getStatusBadge(item.status)}>
-                                            {formatStatus(item.status)}
+                                            <Badge
+                                              bg={getStatusBadge(item.status)}
+                                            >
+                                              {formatStatus(item.status)}
                                             </Badge>
                                           </div>
                                         </div>
@@ -527,10 +558,15 @@ const InterviewRequests = () => {
                                           <div className="row g-3">
                                             <div className="col-md-6">
                                               <div className="field-label mb-2">
-                                                Zone Details ({item.zones?.length || 0})
+                                                Zone Details (
+                                                {item.zones?.length || 0})
                                               </div>
 
-                                              <Table bordered hover className="mb-0 align-middle">
+                                              <Table
+                                                bordered
+                                                hover
+                                                className="mb-0 align-middle"
+                                              >
                                                 <thead>
                                                   <tr>
                                                     <th>Zone Name</th>
@@ -541,8 +577,13 @@ const InterviewRequests = () => {
                                                   {item.zones?.length > 0 ? (
                                                     item.zones.map((z, idx) => (
                                                       <tr key={idx}>
-                                                        <td>{z.zoneName || "-"}</td>
-                                                        <td>{z.candidateCount ?? 0}</td>
+                                                        <td>
+                                                          {z.zoneName || "-"}
+                                                        </td>
+                                                        <td>
+                                                          {z.candidateCount ??
+                                                            0}
+                                                        </td>
                                                       </tr>
                                                     ))
                                                   ) : (
@@ -561,10 +602,15 @@ const InterviewRequests = () => {
 
                                             <div className="col-md-6">
                                               <div className="field-label mb-2">
-                                                Panel Details ({item.panels?.length || 0})
+                                                Panel Details (
+                                                {item.panels?.length || 0})
                                               </div>
 
-                                              <Table bordered hover className="mb-0 align-middle">
+                                              <Table
+                                                bordered
+                                                hover
+                                                className="mb-0 align-middle"
+                                              >
                                                 <thead>
                                                   <tr>
                                                     <th>Panel Name</th>
@@ -575,19 +621,38 @@ const InterviewRequests = () => {
                                                 </thead>
                                                 <tbody>
                                                   {item.panels?.length > 0 ? (
-                                                    item.panels.map((p, idx) => (
-                                                      <tr key={idx}>
-                                                        <td>{p.panelName || "-"}</td>
-                                                        <td>
-                                                          {Array.isArray(p.members) &&
+                                                    item.panels.map(
+                                                      (p, idx) => (
+                                                        <tr key={idx}>
+                                                          <td>
+                                                            {p.panelName || "-"}
+                                                          </td>
+                                                          <td>
+                                                            {Array.isArray(
+                                                              p.members
+                                                            ) &&
                                                             p.members.length > 0
-                                                            ? p.members.map((m) => m.name).join(", ")
-                                                            : "-"}
-                                                        </td>
-                                                        <td>{formatDateDDMMYYYY(p.startDate)}</td>
-                                                        <td>{formatDateDDMMYYYY(p.endDate)}</td>
-                                                      </tr>
-                                                    ))
+                                                              ? p.members
+                                                                  .map(
+                                                                    (m) =>
+                                                                      m.name
+                                                                  )
+                                                                  .join(", ")
+                                                              : "-"}
+                                                          </td>
+                                                          <td>
+                                                            {formatDateDDMMYYYY(
+                                                              p.startDate
+                                                            )}
+                                                          </td>
+                                                          <td>
+                                                            {formatDateDDMMYYYY(
+                                                              p.endDate
+                                                            )}
+                                                          </td>
+                                                        </tr>
+                                                      )
+                                                    )
                                                   ) : (
                                                     <tr>
                                                       <td
@@ -608,7 +673,9 @@ const InterviewRequests = () => {
                                   );
                                 })
                               ) : (
-                                <div className="text-muted">No history found</div>
+                                <div className="text-muted">
+                                  No history found
+                                </div>
                               )}
                             </div>
                           </div>
@@ -618,7 +685,9 @@ const InterviewRequests = () => {
                   );
                 })
               ) : (
-                <div className="text-center text-muted my-4">No position details found</div>
+                <div className="text-center text-muted my-4">
+                  No position details found
+                </div>
               )}
             </div>
           </div>
@@ -627,7 +696,14 @@ const InterviewRequests = () => {
         <Modal
           show={detailModal.show}
           className="interviewmodal"
-          onHide={() => setDetailModal({ show: false, type: null, positionName: "", data: [] })}
+          onHide={() =>
+            setDetailModal({
+              show: false,
+              type: null,
+              positionName: "",
+              data: [],
+            })
+          }
           centered
           size="lg"
         >
@@ -641,7 +717,12 @@ const InterviewRequests = () => {
             <Button
               variant="outline-secondary"
               onClick={() =>
-                setDetailModal({ show: false, type: null, positionName: "", data: [] })
+                setDetailModal({
+                  show: false,
+                  type: null,
+                  positionName: "",
+                  data: [],
+                })
               }
             >
               Close

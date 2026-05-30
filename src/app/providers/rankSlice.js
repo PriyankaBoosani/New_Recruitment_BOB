@@ -20,5 +20,6 @@ const rankSlice = createSlice({
   },
 });
 
-export const { setRankEnabled, setScoreEnabled, clearRankState } = rankSlice.actions;
+export const { setRankEnabled, setScoreEnabled, clearRankState } =
+  rankSlice.actions;
 export default rankSlice.reducer;

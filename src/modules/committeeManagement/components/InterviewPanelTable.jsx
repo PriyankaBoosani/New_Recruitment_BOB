@@ -2,7 +2,7 @@ import React from "react";
 import edit_icon from "../../../assets/edit_icon.png";
 import delete_icon from "../../../assets/delete_icon.png";
 import { FiFilter } from "react-icons/fi";
-import Loader from '../../../shared/components/Loader'
+import Loader from "../../../shared/components/Loader";
 import { useTranslation } from "react-i18next";
 const InterviewPanelTable = ({
   panels,
@@ -25,20 +25,14 @@ const InterviewPanelTable = ({
 }) => {
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   return (
-
-
     <>
       {/* ===== HEADER ===== */}
       <div className="table-header">
-
-        {loading && (
-          <Loader />
-        )}
-        <span className="table-title"> {t("interviewPanelCommittee:panels_history")}</span>
-
-
-
-
+        {loading && <Loader />}
+        <span className="table-title">
+          {" "}
+          {t("interviewPanelCommittee:panels_history")}
+        </span>
 
         <div className="table-search-row">
           <input
@@ -47,9 +41,9 @@ const InterviewPanelTable = ({
             className="table-search-input"
             value={search?.panelName || ""}
             onChange={(e) =>
-              setSearch(prev => ({
+              setSearch((prev) => ({
                 ...prev,
-                panelName: e.target.value
+                panelName: e.target.value,
               }))
             }
           />
@@ -64,25 +58,29 @@ const InterviewPanelTable = ({
               className="table-filter-select"
               value={search.committeeName || ""}
               onChange={(e) =>
-                setSearch(prev => ({
+                setSearch((prev) => ({
                   ...prev,
-                  committeeName: e.target.value
+                  committeeName: e.target.value,
                 }))
               }
             >
-              <option value=""> {t("interviewPanelCommittee:all_committees")}</option>
-              <option value="Interview">{t("interviewPanelCommittee:interview")}</option>
-              <option value="Screening">{t("interviewPanelCommittee:screening")}</option>
-              <option value="Compensation">{t("interviewPanelCommittee:compensation")}</option>
+              <option value="">
+                {" "}
+                {t("interviewPanelCommittee:all_committees")}
+              </option>
+              <option value="Interview">
+                {t("interviewPanelCommittee:interview")}
+              </option>
+              <option value="Screening">
+                {t("interviewPanelCommittee:screening")}
+              </option>
+              <option value="Compensation">
+                {t("interviewPanelCommittee:compensation")}
+              </option>
             </select>
           </div>
         </div>
-
-
-
       </div>
-
-
 
       {/* ===== TABLE ===== */}
       <table className="table panel-table">
@@ -123,7 +121,9 @@ const InterviewPanelTable = ({
                 {/* ✅ Correct serial number */}
                 <td>{page * size + index + 1}</td>
 
-                <td className="panel-name-cell" title={panel.panelName}>{panel.panelName}</td>
+                <td className="panel-name-cell" title={panel.panelName}>
+                  {panel.panelName}
+                </td>
                 <td>{panel.panelType}</td>
                 <td>{panel.members}</td>
                 {/* <td>{panel.centerName}</td> */}
@@ -197,7 +197,6 @@ const InterviewPanelTable = ({
           <span>{t("interviewPanelCommittee:entries")}</span>
         </div>
       </div>
-
     </>
   );
 };

@@ -25,7 +25,7 @@ const StatesLanguagesPage = () => {
     saveStateLanguage,
     handleEditClick,
     handleViewClick,
-    handleChange
+    handleChange,
   } = useStateLanguages();
   return (
     <div className="px-4 py-3 border rounded user-container">

@@ -4,7 +4,7 @@ export const mapGenericDocFromApi = (api) => ({
   type: api.type,
   fileName: api.fileName,
   fileUrl: api.fileUrl,
-  version: api.versionNo
+  version: api.versionNo,
 });
 
 export const mapGenericDocsFromApi = (list = []) => {

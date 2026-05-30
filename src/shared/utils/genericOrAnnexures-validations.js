@@ -25,10 +25,7 @@ export const validateAnnexureFile = (file) => {
 };
 
 /* ================= FORM ================= */
-export const validateGenericOrAnnexuresForm = (
-  formData = {},
-  options = {}
-) => {
+export const validateGenericOrAnnexuresForm = (formData = {}, options = {}) => {
   const errors = {};
   const { existing = [], currentId = null } = options;
 
@@ -43,7 +40,7 @@ export const validateGenericOrAnnexuresForm = (
     const typeNorm = normalize(formData.type);
     const fileNorm = normalize(formData.file?.name);
 
-    const duplicate = existing.find(item => {
+    const duplicate = existing.find((item) => {
       if (!item?.file?.name) return false;
       if (currentId != null && item.id === currentId) return false;
 
@@ -60,6 +57,6 @@ export const validateGenericOrAnnexuresForm = (
 
   return {
     valid: Object.keys(errors).length === 0,
-    errors
+    errors,
   };
 };

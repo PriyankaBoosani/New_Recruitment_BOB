@@ -6,10 +6,11 @@ import { usePositions } from "../hooks/usePositions";
 
 const PositionImportModal = ({
   t,
-  onClose = () => { },
-  onSuccess = () => { }
+  onClose = () => {},
+  onSuccess = () => {},
 }) => {
-  const { bulkAddPositions, downloadPositionTemplate, loading } = usePositions();
+  const { bulkAddPositions, downloadPositionTemplate, loading } =
+    usePositions();
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState("");
   const [errorDetails, setErrorDetails] = useState([]);
@@ -17,14 +18,15 @@ const PositionImportModal = ({
   /* ---------------- FILE VALIDATION ---------------- */
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    const isExcel = file && (
-      file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-      file.type === 'application/vnd.ms-excel'
-    );
+    const isExcel =
+      file &&
+      (file.type ===
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        file.type === "application/vnd.ms-excel");
 
     if (isExcel) {
       setSelectedFile(file);
-      setError('');
+      setError("");
     } else {
       setError(t("department:invalid_file"));
     }
@@ -48,15 +50,16 @@ const PositionImportModal = ({
     } else {
       setError(res?.message || t("position:import_error"));
       setErrorDetails(res?.data || res?.details || []);
-
-
     }
   };
 
   return (
     <div>
       {/* ===== Upload Card ===== */}
-      <div className="import-area p-4 rounded" style={{ background: "#fceee9" }}>
+      <div
+        className="import-area p-4 rounded"
+        style={{ background: "#fceee9" }}
+      >
         <div className="text-center mb-3">
           <div
             style={{
@@ -67,27 +70,21 @@ const PositionImportModal = ({
               alignItems: "center",
               justifyContent: "center",
               background: "#fff",
-              marginBottom: "1rem"
+              marginBottom: "1rem",
             }}
           >
             <UploadIcon size={32} />
           </div>
 
-          <h5 className="mb-2 uploadfile">
-            {t("position:upload_file")}
-          </h5>
+          <h5 className="mb-2 uploadfile">{t("position:upload_file")}</h5>
 
-          <p className="text-muted small">
-            {t("position:support_xlsx")}
-          </p>
+          <p className="text-muted small">{t("position:support_xlsx")}</p>
         </div>
 
         {error && (
           <Alert variant="danger">
             {/* Summary */}
-            <div className="fw-semibold">
-              {error}
-            </div>
+            <div className="fw-semibold">{error}</div>
 
             {/* Scrollable details */}
             {errorDetails.length > 0 && (
@@ -95,7 +92,7 @@ const PositionImportModal = ({
                 className="mt-2"
                 style={{
                   maxHeight: "150px",
-                  overflowY: "auto"
+                  overflowY: "auto",
                 }}
               >
                 <ul className="mb-0">
@@ -134,9 +131,7 @@ const PositionImportModal = ({
 
           {selectedFile && (
             <div className="mt-2">
-              <small className="text-muted d-block">
-                {selectedFile.name}
-              </small>
+              <small className="text-muted d-block">{selectedFile.name}</small>
               <Button
                 variant="outline-danger"
                 size="sm"
@@ -161,10 +156,11 @@ const PositionImportModal = ({
             type="button"
             onClick={downloadPositionTemplate}
             className="btn btn-link p-0 text-primary text-decoration-none btnfont"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             disabled={loading}
           >
-            {" "}XLSX
+            {" "}
+            XLSX
           </button>
         </div>
       </div>
@@ -179,14 +175,8 @@ const PositionImportModal = ({
           {t("position:cancel")}
         </Button>
 
-        <Button
-          variant="primary"
-          onClick={handleUpload}
-          disabled={loading}
-        >
-          {loading
-            ? t("position:importing")
-            : t("position:import")}
+        <Button variant="primary" onClick={handleUpload} disabled={loading}>
+          {loading ? t("position:importing") : t("position:import")}
         </Button>
       </div>
     </div>

@@ -5,7 +5,7 @@ export const mapDepartmentFromApi = (apiDept) => ({
   id: apiDept.departmentId,
   name: apiDept.departmentName,
   description: apiDept.departmentDesc,
-   createdDate: apiDept.createdDate
+  createdDate: apiDept.createdDate,
 });
 
 // LIST (API → UI)
@@ -17,5 +17,5 @@ export const mapDepartmentsFromApi = (apiData = []) => {
 // UI → API (Add / Update)
 export const mapDepartmentToApi = (uiDept) => ({
   departmentName: uiDept.name,
-  departmentDesc: uiDept.description
+  departmentDesc: uiDept.description,
 });

@@ -2,7 +2,12 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import history_icon from "../../../assets/history_icon.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarDays, faLayerGroup, faLocationDot, faBriefcase } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendarDays,
+  faLayerGroup,
+  faLocationDot,
+  faBriefcase,
+} from "@fortawesome/free-solid-svg-icons";
 import endIcon from "../../../../src/assets/end_icon.png";
 const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
   const { t } = useTranslation(["messages", "common"]);
@@ -15,7 +20,7 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
         alignItems: "flex-start",
         gap: "16px",
         width: "100%",
-        flexWrap: "wrap"
+        flexWrap: "wrap",
       }}
     >
       <div
@@ -24,7 +29,7 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
           flex: 1,
           gap: "16px",
           minWidth: 0,
-          flexWrap: "wrap"
+          flexWrap: "wrap",
         }}
       >
         {/* LEFT */}
@@ -35,21 +40,21 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
             gap: "12px",
             alignItems: "flex-start",
             flex: "1 1 50px",
-            minWidth: 0
+            minWidth: 0,
           }}
         >
           <div className="msg-avatar">
             {item.name
               ?.split(" ")
               .filter(Boolean)
-              .map(word => word.charAt(0).toUpperCase())
+              .map((word) => word.charAt(0).toUpperCase())
               .slice(0, 2)
               .join("")}
           </div>
           <div
             style={{
               flex: 1,
-              minWidth: 0
+              minWidth: 0,
             }}
           >
             <div
@@ -59,7 +64,7 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
                 alignItems: "flex-start",
                 gap: "8px",
                 width: "100%",
-                flexWrap: "wrap"
+                flexWrap: "wrap",
               }}
             >
               <h6
@@ -72,7 +77,7 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
                   overflowWrap: "break-word",
                   whiteSpace: "normal",
                   margin: 0,
-                  lineHeight: "20px"
+                  lineHeight: "20px",
                 }}
                 title={item.name}
               >
@@ -94,7 +99,7 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
             <div
               className="msg-sub"
               style={{
-                marginTop: "1px"
+                marginTop: "1px",
               }}
             >
               {t("messages:position")} : {item.positionName || "-"}
@@ -105,14 +110,14 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
                 display: "flex",
                 flexWrap: "wrap",
                 gap: "4px",
-                alignItems: "center"
+                alignItems: "center",
               }}
             >
               <i
                 className="bi bi-calendar-event"
                 style={{
                   color: "#6B7280",
-                  fontSize: "14px"
+                  fontSize: "14px",
                 }}
               ></i>
               <span>{item.date || "-"}</span>
@@ -126,20 +131,20 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
           className="msg-right"
           style={{
             display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(160px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
             gap: "16px",
             flex: "2 1 500px",
             minWidth: 0,
-            width: "100%"
+            width: "100%",
           }}
         >
-          <div className="msg-label"
+          <div
+            className="msg-label"
             style={{
               display: "flex",
               alignItems: "flex-start",
               gap: "10px",
-              minWidth: 0
+              minWidth: 0,
             }}
           >
             <FontAwesomeIcon
@@ -160,12 +165,13 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
               </div>
             </div>
           </div>
-          <div className="msg-label"
+          <div
+            className="msg-label"
             style={{
               display: "flex",
               alignItems: "flex-start",
               gap: "10px",
-              minWidth: 0
+              minWidth: 0,
             }}
           >
             <FontAwesomeIcon
@@ -173,15 +179,11 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
               style={{
                 fontSize: "16px",
                 marginTop: "3px",
-                flexShrink: 0
+                flexShrink: 0,
               }}
             />
             <div style={{ minWidth: 0 }}>
-              <div
-                className="msg-label"
-              >
-                {t("messages:request_type")}
-              </div>
+              <div className="msg-label">{t("messages:request_type")}</div>
               <div
                 className="msg-value"
                 style={{
@@ -193,12 +195,13 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
               </div>
             </div>
           </div>
-          <div className="msg-label"
+          <div
+            className="msg-label"
             style={{
               display: "flex",
               alignItems: "flex-start",
               gap: "10px",
-              minWidth: 0
+              minWidth: 0,
             }}
           >
             <FontAwesomeIcon
@@ -206,15 +209,11 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
               style={{
                 fontSize: "16px",
                 marginTop: "3px",
-                flexShrink: 0
+                flexShrink: 0,
               }}
             />
             <div style={{ minWidth: 0 }}>
-              <div
-                className="msg-label"
-              >
-                {t("messages:zone")}
-              </div>
+              <div className="msg-label">{t("messages:zone")}</div>
               <div
                 className="msg-value"
                 style={{
@@ -230,12 +229,10 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
             className="msg-status-wrap"
             style={{
               display: "flex",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
-            <span
-              className={`msg-status ${getStatusClass(item.status)}`}
-            >
+            <span className={`msg-status ${getStatusClass(item.status)}`}>
               {item.status || "-"}
             </span>
           </div>
@@ -247,7 +244,7 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          alignSelf: "center"
+          alignSelf: "center",
         }}
       >
         <button
@@ -261,7 +258,7 @@ const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {
           <i className="bi bi-chevron-down"></i>
         </button>
       </div>
-    </div >
+    </div>
   );
 };
 export default MessageHeader;

@@ -13,19 +13,18 @@ import InterviewScheduleSummaryModal from "./InterviewScheduleSummaryModal";
 const InterviewPanelsConfig = ({
   positionId,
   //startTime,
- // onStartTimeChange,
-   candidates,
+  // onStartTimeChange,
+  candidates,
   onScheduleReady,
   onApplyAll,
-    initialSelectedPanels = []
+  initialSelectedPanels = [],
 }) => {
-
-  console.log("InterviewPanelsConfig - positionId:", positionId)
+  console.log("InterviewPanelsConfig - positionId:", positionId);
   //console.log("START TIME FROM INPUT 👉", startTime);
 
   const {
-     availablePanels,
-  selectedPanels,
+    availablePanels,
+    selectedPanels,
     showAddModal,
     editPanel,
     openInfoIndex,
@@ -39,11 +38,8 @@ const InterviewPanelsConfig = ({
 
     savePanel,
     confirmDelete,
-    openEdit
-  } = useInterviewPanels(
-  positionId,
-  initialSelectedPanels
-);
+    openEdit,
+  } = useInterviewPanels(positionId, initialSelectedPanels);
 
   const activeCount = selectedPanels.length;
   const { t } = useTranslation(["interviewSchedule", "common"]);
@@ -52,92 +48,74 @@ const InterviewPanelsConfig = ({
   const [isApplying, setIsApplying] = React.useState(false);
   const [showCapacityModal, setShowCapacityModal] = React.useState(false);
 
-const [capacityMessage, setCapacityMessage] = React.useState("");
+  const [capacityMessage, setCapacityMessage] = React.useState("");
 
   const [showSummaryModal, setShowSummaryModal] = React.useState(false);
 
-  console.log("panels:", selectedPanels)
+  console.log("panels:", selectedPanels);
 
-const handleApplyAll = async () => {
+  const handleApplyAll = async () => {
+    // ✅ Validate Position
+    if (!positionId) {
+      toast.error("Position is missing");
+      return;
+    }
 
-  // ✅ Validate Position
-  if (!positionId) {
-    toast.error("Position is missing");
-    return;
-  }
+    // ✅ Validate Panels
+    if (!selectedPanels || selectedPanels.length === 0) {
+      toast.error("Please add at least one interview panel");
+      return;
+    }
 
-  // ✅ Validate Panels
-  if (!selectedPanels || selectedPanels.length === 0) {
-    toast.error("Please add at least one interview panel");
-    return;
-  }
-
-  // ✅ Calculate total interview capacity
-  const totalCapacity = selectedPanels.reduce(
-    (sum, panel) => {
-
-      const panelCapacity = (panel.slots || []).reduce(
-        (slotSum, slot) => {
-
-          return slotSum + Number(slot.perDay || 0);
-
-        },
-        0
-      );
+    // ✅ Calculate total interview capacity
+    const totalCapacity = selectedPanels.reduce((sum, panel) => {
+      const panelCapacity = (panel.slots || []).reduce((slotSum, slot) => {
+        return slotSum + Number(slot.perDay || 0);
+      }, 0);
 
       return sum + panelCapacity;
+    }, 0);
 
-    },
-    0
-  );
+    // ✅ Total candidates
+    const totalCandidates = candidates?.length || 0;
 
-  // ✅ Total candidates
-  const totalCandidates = candidates?.length || 0;
+    const remainingCandidates = totalCandidates - totalCapacity;
 
-  const remainingCandidates =
-    totalCandidates - totalCapacity;
-
-  // ✅ Validate capacity
-  if (totalCapacity < totalCandidates) {
-
-    setCapacityMessage(
-      `Unable to schedule all candidates.
+    // ✅ Validate capacity
+    if (totalCapacity < totalCandidates) {
+      setCapacityMessage(
+        `Unable to schedule all candidates.
 
 Only ${totalCapacity} interview slots are available. ${remainingCandidates} more candidates still need to be scheduled.
 
 Please add additional interview slots or create another panel to continue.`
-    );
+      );
 
-    setShowCapacityModal(true);
+      setShowCapacityModal(true);
 
-    return;
-  }
+      return;
+    }
 
-  // ✅ ONLY OPEN CONFIRMATION MODAL
-  onApplyAll({
-    selectedPanels,
-    positionId,
-    candidates
-  });
-
-};
+    // ✅ ONLY OPEN CONFIRMATION MODAL
+    onApplyAll({
+      selectedPanels,
+      positionId,
+      candidates,
+    });
+  };
   return (
     <>
       <div className="ipc-card mt-4">
-        {isApplying && (
-          <Loader />
-        )}
+        {isApplying && <Loader />}
 
         {/* HEADER */}
         <div className="d-flex justify-content-between align-items-center mb-3">
-
           <div className="ipc-title d-flex align-items-center gap-2">
             <i className="bi bi-calendar-event"></i>
             {t("panel_config_title")}
           </div>
 
           <div className="d-flex gap-2">
-            
             {/* VIEW SUMMARY BUTTON */}
             <button
               className="ipc-btn-outline"
@@ -162,7 +140,6 @@ Please add additional interview slots or create another panel to continue.`
               {t("add_panel")}
             </button>
           </div>
-
         </div>
 
         <hr />
@@ -180,17 +157,15 @@ Please add additional interview slots or create another panel to continue.`
 
         {/* PANEL CHIPS */}
         <div className="ipc-panel-box" ref={panelBoxRef}>
-
           {selectedPanels.map((p, i) => (
             <div key={i} className="ipc-panel-chip">
-
               <span className="ipc-panel-name">{p.name}</span>
 
               <i
                 className="bi bi-people ipc-chip-icon"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setOpenInfoIndex(prev => prev === i ? null : i);
+                  setOpenInfoIndex((prev) => (prev === i ? null : i));
                 }}
               />
 
@@ -220,28 +195,24 @@ Please add additional interview slots or create another panel to continue.`
                   <div className="ipc-pop-head">
                     <span>{t("date")}</span>
                     <span>{t("interviews")}</span>
-
                   </div>
 
                   {(p.slots || []).map((s, idx) => (
                     <div key={idx} className="ipc-pop-row">
+                      <span>{new Date(s.date).toLocaleDateString()}</span>
                       <span>
-                        {new Date(s.date).toLocaleDateString()}
+                        {s.perDay} {t("per_day")}
                       </span>
-                      <span>{s.perDay} {t("per_day")}</span>
                     </div>
                   ))}
                 </div>
               )}
-
             </div>
           ))}
-
         </div>
 
         {/* START TIME */}
         <div className="row mt-3 align-items-end">
-
           {/* <div className="col-md-3">
             <Form.Label className="ipc-label">
               {t("start_time")} <span className="text-danger">*</span>
@@ -256,14 +227,12 @@ Please add additional interview slots or create another panel to continue.`
           </div> */}
 
           <div className="col-md-3 ms-auto text-md-end mt-3 mt-md-0">
-           <button className="ipc-apply-btn" onClick={handleApplyAll}>
+            <button className="ipc-apply-btn" onClick={handleApplyAll}>
               <i className="bi bi-check2-circle me-2"></i>
               {t("apply_to_all")}
             </button>
           </div>
-
         </div>
-
       </div>
 
       {/* MODALS */}
@@ -274,23 +243,15 @@ Please add additional interview slots or create another panel to continue.`
         initialPanel={editPanel?.id}
         initialRows={editPanel?.slots}
         //panels={availablePanels}
-      panels={availablePanels.filter(panel => {
+        panels={availablePanels.filter((panel) => {
+          // show current editing panel
+          if (editPanel && panel.id === editPanel.id) {
+            return true;
+          }
 
-  // show current editing panel
-  if (
-    editPanel &&
-    panel.id === editPanel.id
-  ) {
-    return true;
-  }
-
-  // hide already selected panels
-  return !selectedPanels.some(
-    selected =>
-      selected.id === panel.id
-  );
-
-})}
+          // hide already selected panels
+          return !selectedPanels.some((selected) => selected.id === panel.id);
+        })}
         onClose={() => setShowAddModal(false)}
         onSave={savePanel}
         selectedPanels={selectedPanels}
@@ -309,7 +270,7 @@ Please add additional interview slots or create another panel to continue.`
         onOk={() => setShowApplySuccess(false)}
       />
 
-     <InterviewScheduleSummaryModal
+      <InterviewScheduleSummaryModal
         show={showSummaryModal}
         onClose={() => setShowSummaryModal(false)}
         candidates={candidates}
@@ -318,20 +279,14 @@ Please add additional interview slots or create another panel to continue.`
       />
       {showCapacityModal && (
         <div className="ipc-alert-overlay">
-
           <div className="ipc-alert-modal">
-
             <div className="ipc-alert-icon">
               <i className="bi bi-exclamation-triangle-fill"></i>
             </div>
 
-            <h4 className="ipc-alert-title">
-              Interview Capacity Insufficient
-            </h4>
+            <h4 className="ipc-alert-title">Interview Capacity Insufficient</h4>
 
-            <p className="ipc-alert-message">
-              {capacityMessage}
-            </p>
+            <p className="ipc-alert-message">{capacityMessage}</p>
 
             <div className="text-end mt-4">
               <button
@@ -341,13 +296,9 @@ Please add additional interview slots or create another panel to continue.`
                 OK
               </button>
             </div>
-
           </div>
-
         </div>
       )}
-
-
     </>
   );
 };

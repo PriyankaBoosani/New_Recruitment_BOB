@@ -6,8 +6,8 @@ import { useTranslation } from "react-i18next";
 import { useCertifications } from "../hooks/useCertifications";
 
 const CertificationImportModal = ({
-  onClose = () => { },
-  onSuccess = () => { }
+  onClose = () => {},
+  onSuccess = () => {},
 }) => {
   const { t } = useTranslation(["certification"]);
   const { bulkAddCertifications, downloadCertificationTemplate, loading } =
@@ -72,7 +72,7 @@ const CertificationImportModal = ({
               alignItems: "center",
               justifyContent: "center",
               background: "#fff",
-              marginBottom: "1rem"
+              marginBottom: "1rem",
             }}
           >
             <UploadIcon size={32} />
@@ -82,9 +82,7 @@ const CertificationImportModal = ({
             {t("certification:upload_certifications")}
           </h5>
 
-          <p className="text-muted small">
-            {t("certification:support_xlsx")}
-          </p>
+          <p className="text-muted small">{t("certification:support_xlsx")}</p>
         </div>
 
         {/* ---------- ERROR ---------- */}
@@ -133,9 +131,7 @@ const CertificationImportModal = ({
 
           {selectedFile && (
             <div className="mt-2">
-              <small className="text-muted d-block">
-                {selectedFile.name}
-              </small>
+              <small className="text-muted d-block">{selectedFile.name}</small>
 
               <Button
                 variant="outline-danger"
@@ -161,10 +157,11 @@ const CertificationImportModal = ({
             type="button"
             onClick={downloadCertificationTemplate}
             className="btn btn-link p-0 text-primary text-decoration-none btnfont"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             disabled={loading}
           >
-            {" "}XLSX
+            {" "}
+            XLSX
           </button>
         </div>
       </div>
@@ -179,14 +176,8 @@ const CertificationImportModal = ({
           {t("certification:cancel")}
         </Button>
 
-        <Button
-          variant="primary"
-          onClick={handleUpload}
-          disabled={loading}
-        >
-          {loading
-            ? t("certification:importing")
-            : t("certification:import")}
+        <Button variant="primary" onClick={handleUpload} disabled={loading}>
+          {loading ? t("certification:importing") : t("certification:import")}
         </Button>
       </div>
     </div>

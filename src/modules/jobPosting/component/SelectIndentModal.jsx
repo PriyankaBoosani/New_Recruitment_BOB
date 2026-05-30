@@ -8,7 +8,7 @@ const formatDate = (date) => {
   return d.toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "short",
-    year: "numeric"
+    year: "numeric",
   });
 };
 
@@ -17,7 +17,7 @@ const SelectIndentModal = ({
   onClose,
   data,
   onSelect,
-  selectedIndent
+  selectedIndent,
 }) => {
   const [selected, setSelected] = useState(null);
   const { t } = useTranslation("addPosition");
@@ -36,7 +36,6 @@ const SelectIndentModal = ({
       </Modal.Header>
 
       <Modal.Body>
-
         {/* 🔥 Upload New */}
         <div
           className={`p-1 ps-0 cursor-pointer ${
@@ -49,7 +48,9 @@ const SelectIndentModal = ({
             name="indent"
             checked={selected === "CUSTOM"}
             onChange={() => setSelected("CUSTOM")}
-            label={<span className="text-muted small">{t("upload_indent")}</span>}
+            label={
+              <span className="text-muted small">{t("upload_indent")}</span>
+            }
           />
         </div>
 
@@ -64,9 +65,7 @@ const SelectIndentModal = ({
               <div
                 key={item.positionId}
                 className={`p-1 ps-0 cursor-pointer ${
-                  selected?.positionId === item.positionId
-                    ? "rounded"
-                    : ""
+                  selected?.positionId === item.positionId ? "rounded" : ""
                 }`}
                 onClick={() => setSelected(item)}
               >
@@ -80,7 +79,6 @@ const SelectIndentModal = ({
                       <div className="text-muted small">
                         {item.indentName || `Indent ${index + 1}`}
                       </div>
-                     
                     </div>
                   }
                 />
@@ -90,9 +88,7 @@ const SelectIndentModal = ({
         )}
 
         {data?.length === 0 && (
-          <div className="text-muted mt-2">
-            {t("no_existing_indents")}
-          </div>
+          <div className="text-muted mt-2">{t("no_existing_indents")}</div>
         )}
       </Modal.Body>
 

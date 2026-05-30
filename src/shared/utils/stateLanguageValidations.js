@@ -13,19 +13,13 @@ export const validateLanguages = (list = []) => {
   const seen = new Set();
   for (let val of list) {
     if (seen.has(val)) {
-      return i18n.t(
-        "stateLanguages:duplicate_language",
-        "Duplicate language"
-      );
+      return i18n.t("stateLanguages:duplicate_language", "Duplicate language");
     }
     seen.add(val);
   }
   return null;
 };
-export const validateStateLanguageForm = (
-  formData = {},
-  options = {}
-) => {
+export const validateStateLanguageForm = (formData = {}, options = {}) => {
   const errors = {};
   const { existing = [], currentId = null } = options;
   const stateError = validateState(formData.state);
@@ -34,10 +28,8 @@ export const validateStateLanguageForm = (
   if (langError) errors.languages = langError;
   if (!stateError) {
     const isDuplicate = existing.some((item) => {
-      const sameState =
-        String(item.stateId) === String(formData.state);
-      const isCurrentRecord =
-        String(item.stateId) === String(currentId);
+      const sameState = String(item.stateId) === String(formData.state);
+      const isCurrentRecord = String(item.stateId) === String(currentId);
       return sameState && !isCurrentRecord;
     });
     if (isDuplicate) {

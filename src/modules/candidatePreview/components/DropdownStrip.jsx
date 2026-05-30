@@ -11,13 +11,13 @@ export default function DropdownStrip({
   loadingPositions,
   onRequisitionChange,
   onPositionChange,
-	onRequisitionSearch,
-   // ✅ DISABLE HERE
-  disableRequisition=false,
-  disablePosition=false
+  onRequisitionSearch,
+  // ✅ DISABLE HERE
+  disableRequisition = false,
+  disablePosition = false,
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
-	const requisitionOptions = useMemo(
+  const requisitionOptions = useMemo(
     () =>
       requisitions.map((req) => ({
         value: req.id,
@@ -38,36 +38,35 @@ export default function DropdownStrip({
   return (
     <>
       <div className="col-md-3 col-12">
-        <label className="fs-14 blue-color">{t("candidateWorkflow:requisition")}</label>
+        <label className="fs-14 blue-color">
+          {t("candidateWorkflow:requisition")}
+        </label>
         <Select
-					className="mt-1 fs-14"
-					classNamePrefix="react-select"
-					options={requisitionOptions}
-					isLoading={loadingRequisitions}
-					placeholder={t("candidateWorkflow:select_requisition")}
-          isDisabled={disableRequisition}  
-					value={requisitionOptions.find(
-						(opt) => opt.value === selectedRequisitionId
-					)}
-					// onInputChange={(inputValue, actionMeta) => {
-					// 	if (actionMeta.action === "input-change") {
-					// 		onRequisitionSearch(inputValue);
-					// 	}
-					// }}
+          className="mt-1 fs-14"
+          classNamePrefix="react-select"
+          options={requisitionOptions}
+          isLoading={loadingRequisitions}
+          placeholder={t("candidateWorkflow:select_requisition")}
+          isDisabled={disableRequisition}
+          value={requisitionOptions.find(
+            (opt) => opt.value === selectedRequisitionId
+          )}
+          // onInputChange={(inputValue, actionMeta) => {
+          // 	if (actionMeta.action === "input-change") {
+          // 		onRequisitionSearch(inputValue);
+          // 	}
+          // }}
 
-           // ✅ FIX
+          // ✅ FIX
           filterOption={(option, inputValue) =>
-            option.label
-              ?.toLowerCase()
-              .includes(inputValue.toLowerCase())
+            option.label?.toLowerCase().includes(inputValue.toLowerCase())
           }
-          
-					onChange={(option) =>
-						onRequisitionChange({
-							target: { value: option ? option.value : "" },
-						})
-					}
-				/>
+          onChange={(option) =>
+            onRequisitionChange({
+              target: { value: option ? option.value : "" },
+            })
+          }
+        />
       </div>
 
       <div className="col-md-3 col-12">
@@ -78,27 +77,19 @@ export default function DropdownStrip({
           options={positionOptions}
           isLoading={loadingPositions}
           isDisabled={!selectedRequisitionId || disablePosition}
-          
           placeholder={
-            loadingPositions ? t("candidateWorkflow:loading_positions") : t("candidateWorkflow:select_position")
+            loadingPositions
+              ? t("candidateWorkflow:loading_positions")
+              : t("candidateWorkflow:select_position")
           }
           value={
             selectedPositionId
-              ? positionOptions.find(opt => opt.value === selectedPositionId)
+              ? positionOptions.find((opt) => opt.value === selectedPositionId)
               : null
           }
-          onChange={(option) =>
-            onPositionChange(option ? option.value : "")
-          }
+          onChange={(option) => onPositionChange(option ? option.value : "")}
         />
       </div>
     </>
   );
 }
-
-
-
-
-
-
-

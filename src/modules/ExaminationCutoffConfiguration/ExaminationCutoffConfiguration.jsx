@@ -1,454 +1,286 @@
-import React, {
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import "../../style/css/ExaminationCutoffConfiguration.css";
 import "../../style/css/CandidateVerification.css";
 import "../../style/css/CandidateScreening.css";
 
-import {
-  useLocation,
-  useNavigate
-} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { Button } from "react-bootstrap";
 import { FiFilter } from "react-icons/fi";
 
-import DropdownStripMultipleposition from
-  "../candidatePreview/components/DropdownStripMultipleposition";
+import DropdownStripMultipleposition from "../candidatePreview/components/DropdownStripMultipleposition";
 
-import RequisitionStripformultiplepositions from
-  "../candidatePreview/components/RequisitionStripformultiplepositions";
+import RequisitionStripformultiplepositions from "../candidatePreview/components/RequisitionStripformultiplepositions";
 
-  import DropdownStrip from
-  "../candidatePreview/components/DropdownStrip";
+import DropdownStrip from "../candidatePreview/components/DropdownStrip";
 
-import RequisitionStrip from
-  "../candidatePreview/components/RequisitionStrip";
+import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 
-import ExaminationCutoffTable from
-  "./components/ExaminationCutoffTable";
+import ExaminationCutoffTable from "./components/ExaminationCutoffTable";
 
-import AddExaminationCutoffModal from
-  "./components/AddExaminationCutoffModal";
+import AddExaminationCutoffModal from "./components/AddExaminationCutoffModal";
 
-import ExaminationCutoffService from
-  "./service/ExaminationCutoffService";
+import ExaminationCutoffService from "./service/ExaminationCutoffService";
 
-import jobPositionApiService from
-  "../jobPosting/services/jobPositionApiService";
+import jobPositionApiService from "../jobPosting/services/jobPositionApiService";
 
 export default function ExaminationCutoffConfiguration() {
-
   /* ================= MODAL ================= */
 
-  const [showModal, setShowModal] =
-    useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-  const [editingData, setEditingData] =
-    useState(null);
+  const [editingData, setEditingData] = useState(null);
 
-      const [viewOnly, setViewOnly] =
-  useState(false);
+  const [viewOnly, setViewOnly] = useState(false);
 
   /* ================= DROPDOWN STATES ================= */
 
-  const [requisitions, setRequisitions] =
-    useState([]);
+  const [requisitions, setRequisitions] = useState([]);
 
-  const [positions, setPositions] =
-    useState([]);
+  const [positions, setPositions] = useState([]);
 
-  const [
-    selectedRequisitionId,
-    setSelectedRequisitionId
-  ] = useState("");
+  const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
 
-  const [
-    selectedPositionId,
-    setSelectedPositionId
-  ] = useState([]);
+  const [selectedPositionId, setSelectedPositionId] = useState([]);
 
-  const [
-    loadingRequisitions,
-    setLoadingRequisitions
-  ] = useState(false);
+  const [loadingRequisitions, setLoadingRequisitions] = useState(false);
 
+  const [hasExistingConfiguration, setHasExistingConfiguration] =
+    useState(false);
 
-  const [
-  hasExistingConfiguration,
-  setHasExistingConfiguration
-] = useState(false);
-
-  const [
-    loadingPositions,
-    setLoadingPositions
-  ] = useState(false);
+  const [loadingPositions, setLoadingPositions] = useState(false);
 
   /* ================= TABLE DATA ================= */
 
-  const [configurations, setConfigurations] =
-    useState([]);
+  const [configurations, setConfigurations] = useState([]);
 
+  /* ================= PAGINATION ================= */
 
+  const [page, setPage] = useState(0);
 
-    /* ================= PAGINATION ================= */
-
-const [page, setPage] =
-  useState(0);
-
-const [pageSize, setPageSize] =
-  useState(10);
+  const [pageSize, setPageSize] = useState(10);
 
   /* ================= INITIAL LOAD ================= */
 
   useEffect(() => {
     fetchRequisitions();
-  //  loadConfigurations();
+    //  loadConfigurations();
   }, []);
 
+  const [statusFilter, setStatusFilter] = useState([]);
 
-const [statusFilter, setStatusFilter] =
-  useState([]);
-
-
-
-  const STATUS_OPTIONS = [
-  "L1_PENDING",
-  "L2_PENDING",
-  "APPROVED",
-  "REJECTED"
-];
-  
+  const STATUS_OPTIONS = ["L1_PENDING", "L2_PENDING", "APPROVED", "REJECTED"];
 
   /* ================= FETCH REQUISITIONS ================= */
 
-  const fetchRequisitions = async (
-    searchText = ""
-  ) => {
+  const fetchRequisitions = async (searchText = "") => {
     try {
-
       setLoadingRequisitions(true);
 
-      const res =
-        await jobPositionApiService.getRequisitions(
-          searchText
-        );
+      const res = await jobPositionApiService.getRequisitions(searchText);
 
       setRequisitions(res?.data || []);
-
     } catch (err) {
-
-      console.error(
-        "Failed to load requisitions",
-        err
-      );
-
+      console.error("Failed to load requisitions", err);
     } finally {
-
       setLoadingRequisitions(false);
-
     }
   };
 
   /* ================= FETCH POSITIONS ================= */
 
-  const fetchPositions = async (
-    requisitionId
-  ) => {
+  const fetchPositions = async (requisitionId) => {
     try {
-
       setLoadingPositions(true);
 
-      const res =
-        await jobPositionApiService.getPositionsByReqId({
-          requisitionId
-        });
+      const res = await jobPositionApiService.getPositionsByReqId({
+        requisitionId,
+      });
 
       setPositions(res?.data || []);
-
     } catch (err) {
-
-      console.error(
-        "Failed to load positions",
-        err
-      );
-
+      console.error("Failed to load positions", err);
     } finally {
-
       setLoadingPositions(false);
-
     }
   };
-  
 
   /* ================= FETCH CONFIGS ================= */
 
-const loadConfigurations =
-  async (
+  const loadConfigurations = async (
     positionIds = [],
     positionsData = positions
   ) => {
-
     try {
+      if (!positionIds.length) {
+        setConfigurations([]);
 
-if (!positionIds.length) {
+        setHasExistingConfiguration(false);
 
-  setConfigurations([]);
+        return;
+      }
 
-  setHasExistingConfiguration(false);
+      const res = await jobPositionApiService.getExamConfigurationsByPositions(
+        positionIds.join(",")
+      );
 
-  return;
-}
+      const data = res?.data || [];
 
-      const res =
-        await jobPositionApiService.getExamConfigurationsByPositions(
-          positionIds.join(",")
+      /* MAP POSITION NAME */
+
+      const mappedData = data.map((item) => {
+        const matchedPosition = positionsData.find(
+          (pos) =>
+            String(pos.jobPositions?.positionId) === String(item.positionId)
         );
 
-   const data =
-  res?.data || [];
+        return {
+          ...item,
 
-/* MAP POSITION NAME */
+          positionName: matchedPosition?.masterPositions?.positionName || "",
+        };
+      });
 
-const mappedData =
-  data.map(item => {
+      setConfigurations(mappedData);
 
-   const matchedPosition =
-  positionsData.find(
-        pos =>
-          String(
-            pos.jobPositions?.positionId
-          ) ===
-          String(item.positionId)
-      );
+      /* CHECK CONFIG EXISTS */
 
-    return {
+      setHasExistingConfiguration(mappedData.length > 0);
 
-      ...item,
-
-      positionName:
-        matchedPosition
-          ?.masterPositions
-          ?.positionName || ""
-    };
-  });
-
-setConfigurations(mappedData);
-
-/* CHECK CONFIG EXISTS */
-
-setHasExistingConfiguration(
-  mappedData.length > 0
-);
-
-return mappedData;
-
+      return mappedData;
     } catch (err) {
-
-      console.error(
-        "Failed to load configurations",
-        err
-      );
-
+      console.error("Failed to load configurations", err);
     }
   };
 
   /* ================= SEARCH ================= */
 
-  const handleRequisitionSearch =
-    (inputValue) => {
-      fetchRequisitions(inputValue);
-    };
+  const handleRequisitionSearch = (inputValue) => {
+    fetchRequisitions(inputValue);
+  };
 
   /* ================= REQUISITION CHANGE ================= */
 
-  const handleRequisitionChange =
-    async (e) => {
+  const handleRequisitionChange = async (e) => {
+    const reqId = e.target.value;
 
-      const reqId = e.target.value;
+    setSelectedRequisitionId(reqId);
 
-      setSelectedRequisitionId(reqId);
+    setSelectedPositionId([]);
 
-      setSelectedPositionId([]);
+    setConfigurations([]);
+    setHasExistingConfiguration(false);
 
-      setConfigurations([]);
-  setHasExistingConfiguration(false);
+    if (!reqId) {
+      setPositions([]);
+      return;
+    }
 
-      if (!reqId) {
-        setPositions([]);
-        return;
-      }
-
-      fetchPositions(reqId);
-    };
+    fetchPositions(reqId);
+  };
 
   /* ================= POSITION CHANGE ================= */
 
-const handlePositionChange =
-  async (ids) => {
+  const handlePositionChange = async (ids) => {
+    const formattedIds = ids.map(String);
 
-    const formattedIds =
-      ids.map(String);
+    setSelectedPositionId(formattedIds);
 
-    setSelectedPositionId(
-      formattedIds
-    );
-
-   const configs =
-  await loadConfigurations(
-    formattedIds
-  );
-};
+    const configs = await loadConfigurations(formattedIds);
+  };
 
   /* ================= SELECTED REQUISITION ================= */
 
-  const selectedRequisition =
-    requisitions.find(
-      (r) =>
-        r.id ===
-        selectedRequisitionId
-    );
+  const selectedRequisition = requisitions.find(
+    (r) => r.id === selectedRequisitionId
+  );
 
   /* ================= NORMALIZED REQUISITION ================= */
 
-  const normalizedRequisition =
-    selectedRequisition
-      ? {
-          requisition_id:
-            selectedRequisition.id,
+  const normalizedRequisition = selectedRequisition
+    ? {
+        requisition_id: selectedRequisition.id,
 
-          requisition_code:
-            selectedRequisition.requisitionCode,
+        requisition_code: selectedRequisition.requisitionCode,
 
-          requisition_title:
-            selectedRequisition.requisitionTitle,
+        requisition_title: selectedRequisition.requisitionTitle,
 
-          registration_start_date:
-            selectedRequisition.startDate,
+        registration_start_date: selectedRequisition.startDate,
 
-          registration_end_date:
-            selectedRequisition.endDate
-        }
-      : null;
+        registration_end_date: selectedRequisition.endDate,
+      }
+    : null;
 
   /* ================= SELECTED POSITION ================= */
 
-const selectedPosition =
-  positions
+  const selectedPosition = positions
     .filter((p) =>
-      selectedPositionId.includes(
-        String(p.jobPositions?.positionId)
-      )
+      selectedPositionId.includes(String(p.jobPositions?.positionId))
     )
     .map((p) => ({
-      positionId: String(
-        p.jobPositions?.positionId
-      ),
+      positionId: String(p.jobPositions?.positionId),
 
-      positionName:
-        p?.masterPositions?.positionName
+      positionName: p?.masterPositions?.positionName,
     }));
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const fromCandidateScreening = location.state?.fromCandidateScreening;
 
-     const location = useLocation();
-     const navigate = useNavigate();
-const fromCandidateScreening =
-  location.state
-    ?.fromCandidateScreening;
+  useEffect(() => {
+    const state = location.state;
 
-   
+    if (!state?.openEditModal) {
+      return;
+    }
 
+    const initialize = async () => {
+      const reqId = state?.requisitionId;
 
-
-
-    useEffect(() => {
-
-  const state =
-    location.state;
-
-  if (
-    !state?.openEditModal
-  ) {
-    return;
-  }
-
-  const initialize =
-    async () => {
-
-      const reqId =
-        state?.requisitionId;
-
-      const positionIds =
-        state?.positionIds || [];
+      const positionIds = state?.positionIds || [];
 
       if (!reqId) return;
 
-      setSelectedRequisitionId(
-        reqId
-      );
+      setSelectedRequisitionId(reqId);
 
       /* FETCH POSITIONS */
 
-      const res =
-        await jobPositionApiService.getPositionsByReqId({
-          requisitionId: reqId
-        });
+      const res = await jobPositionApiService.getPositionsByReqId({
+        requisitionId: reqId,
+      });
 
-      const fetchedPositions =
-        res?.data || [];
+      const fetchedPositions = res?.data || [];
 
-      setPositions(
-        fetchedPositions
-      );
+      setPositions(fetchedPositions);
 
       /* SET SELECTED POSITION */
 
-      const formattedIds =
-        positionIds.map(String);
+      const formattedIds = positionIds.map(String);
 
-      setSelectedPositionId(
-        formattedIds
-      );
+      setSelectedPositionId(formattedIds);
 
       /* LOAD CONFIGS */
 
-    /* LOAD CONFIGS */
+      /* LOAD CONFIGS */
 
-const configs =
-  await loadConfigurations(
-    formattedIds,
-    fetchedPositions
-  ) || [];
+      const configs =
+        (await loadConfigurations(formattedIds, fetchedPositions)) || [];
 
-/* AUTO OPEN EDIT */
+      /* AUTO OPEN EDIT */
 
-setTimeout(() => {
-
- const matchedConfig =
-  configs.find(
-            item =>
-              formattedIds.includes(
-                String(
-                  item.positionId
-                )
-              )
-          );
+      setTimeout(() => {
+        const matchedConfig = configs.find((item) =>
+          formattedIds.includes(String(item.positionId))
+        );
 
         if (matchedConfig) {
-
-          setEditingData(
-            matchedConfig
-          );
+          setEditingData(matchedConfig);
 
           setViewOnly(false);
 
           setShowModal(true);
-
         } else {
-
           /* OPEN EMPTY ADD MODAL */
 
           setEditingData(null);
@@ -456,164 +288,108 @@ setTimeout(() => {
           setShowModal(true);
         }
 
-
-
-
-   window.history.replaceState(
-  {},
-  document.title
-);
-
-}, 500);
+        window.history.replaceState({}, document.title);
+      }, 500);
     };
 
-  initialize();
-
-}, [location.state]);
+    initialize();
+  }, [location.state]);
 
   /* ================= FILTER TABLE ================= */
 
-const filteredConfigurations =
-  useMemo(() => {
-
+  const filteredConfigurations = useMemo(() => {
     let data = [...configurations];
 
     /* POSITION FILTER */
 
     if (selectedPositionId.length) {
-
-      data = data.filter(
-        (item) =>
-          selectedPositionId.includes(
-            String(item.positionId)
-          )
+      data = data.filter((item) =>
+        selectedPositionId.includes(String(item.positionId))
       );
-
     }
 
     /* STATUS FILTER */
 
     if (statusFilter.length) {
-
-      data = data.filter(item =>
-        statusFilter.includes(
-          item.status
-        )
-      );
-
+      data = data.filter((item) => statusFilter.includes(item.status));
     }
 
     return data;
-
-  }, [
-    configurations,
-    selectedPositionId,
-    statusFilter
-  ]);
-
-
+  }, [configurations, selectedPositionId, statusFilter]);
 
   /* ================= PAGINATION DATA ================= */
 
-const totalElements =
-  filteredConfigurations.length;
+  const totalElements = filteredConfigurations.length;
 
-const totalPages =
-  Math.ceil(
-    totalElements / pageSize
-  );
+  const totalPages = Math.ceil(totalElements / pageSize);
 
-const startIndex =
-  page * pageSize;
+  const startIndex = page * pageSize;
 
-const endIndex =
-  startIndex + pageSize;
+  const endIndex = startIndex + pageSize;
 
-const paginatedConfigurations =
-  filteredConfigurations.slice(
+  const paginatedConfigurations = filteredConfigurations.slice(
     startIndex,
     endIndex
   );
 
   /* ================= EDIT ================= */
 
-const handleEdit = (
-  row
-) => {
+  const handleEdit = (row) => {
+    setViewOnly(false);
 
-  setViewOnly(false);
+    setEditingData(row);
 
-  setEditingData(row);
-
-  setShowModal(true);
-
-};
+    setShowModal(true);
+  };
 
   /* ================= VIEW ================= */
 
-const handleView = (
-  row
-) => {
+  const handleView = (row) => {
+    setViewOnly(true);
 
-  setViewOnly(true);
+    setEditingData(row);
 
-  setEditingData(row);
-
-  setShowModal(true);
-
-};
+    setShowModal(true);
+  };
 
   /* ================= SAVE SUCCESS ================= */
 
-const handleSuccess = async () => {
+  const handleSuccess = async () => {
+    setShowModal(false);
 
-  setShowModal(false);
+    setEditingData(null);
 
-  setEditingData(null);
+    setViewOnly(false);
 
-  setViewOnly(false);
-
-  await loadConfigurations(
-    selectedPositionId
-  );
-
-};
-
-
-
+    await loadConfigurations(selectedPositionId);
+  };
 
   /* ================= UI ================= */
 
   return (
-
     <div className="container-fluid px-4 py-4 exam-config-page">
-
       {/* ================= PAGE TITLE ================= */}
 
       <div className="mb-4">
-
         <h2 className="exam-page-title">
           Written Exam — Section & Cutoff Configuration
         </h2>
 
         <p className="exam-page-subtitle">
-          Define the structural breakdown of the examination
-          and establish rigorous passing criteria across
-          different candidate categories.
+          Define the structural breakdown of the examination and establish
+          rigorous passing criteria across different candidate categories.
         </p>
-
       </div>
 
       {/* ================= TOP CARD ================= */}
 
-   {/* ================= TOP CARD ================= */}
+      {/* ================= TOP CARD ================= */}
 
-<div className="card mb-4 border-0 exam-top-card">
-      <div className="card-body p-0">
-
-    {/* FILTERS */}
-    <div className="row g-2 align-items-end exam-filter-section">
-      {/* <DropdownStripMultipleposition
+      <div className="card mb-4 border-0 exam-top-card">
+        <div className="card-body p-0">
+          {/* FILTERS */}
+          <div className="row g-2 align-items-end exam-filter-section">
+            {/* <DropdownStripMultipleposition
         requisitions={requisitions}
         positions={positions}
         selectedRequisitionId={selectedRequisitionId}
@@ -625,179 +401,127 @@ const handleSuccess = async () => {
         onRequisitionSearch={handleRequisitionSearch}
       /> */}
 
+            <DropdownStrip
+              requisitions={requisitions}
+              positions={positions}
+              selectedRequisitionId={selectedRequisitionId}
+              selectedPositionId={selectedPositionId?.[0] || ""}
+              loadingRequisitions={loadingRequisitions}
+              loadingPositions={loadingPositions}
+              onRequisitionChange={handleRequisitionChange}
+              onPositionChange={(id) => handlePositionChange(id ? [id] : [])}
+              onRequisitionSearch={handleRequisitionSearch}
+            />
 
-      <DropdownStrip
-  requisitions={requisitions}
-  positions={positions}
-  selectedRequisitionId={selectedRequisitionId}
-  selectedPositionId={selectedPositionId?.[0] || ""}
-  loadingRequisitions={loadingRequisitions}
-  loadingPositions={loadingPositions}
-  onRequisitionChange={handleRequisitionChange}
-  onPositionChange={(id) =>
-    handlePositionChange(id ? [id] : [])
-  }
-  onRequisitionSearch={handleRequisitionSearch}
-/>
+            {/* BUTTONS */}
+            <div className="col-md-6 col-12 text-md-end">
+              <button
+                className={`btn fs-14 ${
+                  hasExistingConfiguration
+                    ? "btn-secondary"
+                    : "text-white orange-bg"
+                }`}
+                disabled={hasExistingConfiguration}
+                onClick={() => {
+                  /* REQUISITION VALIDATION */
 
-      {/* BUTTONS */}
-      <div className="col-md-6 col-12 text-md-end">
+                  if (!selectedRequisitionId) {
+                    alert("Please select Requisition first");
 
-        <button
- className={`btn fs-14 ${
-  hasExistingConfiguration
-    ? "btn-secondary"
-    : "text-white orange-bg"
-}`}
-  disabled={hasExistingConfiguration}
-    onClick={() => {
+                    return;
+                  }
 
-  /* REQUISITION VALIDATION */  
+                  /* POSITION VALIDATION */
 
-  if (!selectedRequisitionId) {
+                  if (!selectedPositionId.length) {
+                    alert("Please select Position first");
 
-    alert(
-      "Please select Requisition first"
-    );
+                    return;
+                  }
 
-    return;
-  }
+                  setViewOnly(false);
 
-  /* POSITION VALIDATION */
+                  setEditingData(null);
 
-  if (
-    !selectedPositionId.length
-  ) {
+                  setShowModal(true);
+                }}
+              >
+                + Add Configuration
+              </button>
+            </div>
+          </div>
 
-    alert(
-      "Please select Position first"
-    );
+          {/* STRIP */}
+          <div className="exam-strip-section">
+            {normalizedRequisition && selectedPosition?.length > 0 && (
+              // <RequisitionStripformultiplepositions
+              //   requisition={normalizedRequisition}
+              //   position={selectedPosition}
+              //   isCardBg={false}
+              //   isSaveEnabled={false}
+              //   isSaveBtn={false}
+              //   saveButton={false}
+              //   onRemovePosition={(positionId) => {
+              //     setSelectedPositionId((prev) =>
+              //       prev.filter((id) => id !== positionId)
+              //     );
+              //   }}
+              // />
 
-    return;
-  }
-
-  setViewOnly(false);
-
-  setEditingData(null);
-
-  setShowModal(true);
-
-}}
-        >
-          + Add Configuration
-        </button>
-
+              <RequisitionStrip
+                requisition={normalizedRequisition}
+                position={selectedPosition?.[0]}
+                isCardBg={false}
+                isSaveEnabled={false}
+                isSaveBtn={false}
+                saveButton={false}
+              />
+            )}
+          </div>
+        </div>
       </div>
-
-    </div>
-
-    {/* STRIP */}
-  <div className="exam-strip-section">
-
-      {normalizedRequisition &&
-        selectedPosition?.length > 0 && (
-
-        // <RequisitionStripformultiplepositions
-        //   requisition={normalizedRequisition}
-        //   position={selectedPosition}
-        //   isCardBg={false}
-        //   isSaveEnabled={false}
-        //   isSaveBtn={false}
-        //   saveButton={false}
-        //   onRemovePosition={(positionId) => {
-        //     setSelectedPositionId((prev) =>
-        //       prev.filter((id) => id !== positionId)
-        //     );
-        //   }}
-        // />
-
-        <RequisitionStrip
-  requisition={normalizedRequisition}
-  position={selectedPosition?.[0]}
-  isCardBg={false}
-  isSaveEnabled={false} 
-  isSaveBtn={false}
-  saveButton={false}
-/>
-
-      )}
-
-    </div>
-
-  </div>
-</div>
 
       {/* ================= TABLE CARD ================= */}
 
       <div className="card border-0 rounded-4 shadow-sm exam-table-card">
-
         {/* ================= HEADER ================= */}
-
-     
 
         {/* ================= TABLE ================= */}
 
-       <div className="exam-table-inner">
-
+        <div className="exam-table-inner">
           <ExaminationCutoffTable
-           rows={
-  paginatedConfigurations
-}
-
-            onView={
-              handleView
-            }
-
-            onEdit={
-              handleEdit
-            }
+            rows={paginatedConfigurations}
+            onView={handleView}
+            onEdit={handleEdit}
             page={page}
-
-setPage={setPage}
-
-pageSize={pageSize}
-
-setPageSize={setPageSize}
-
-totalPages={totalPages}
-
-totalElements={totalElements}
- statusFilter={statusFilter}
-  setStatusFilter={setStatusFilter}
-  s
+            setPage={setPage}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            totalPages={totalPages}
+            totalElements={totalElements}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            s
           />
-
         </div>
-
       </div>
 
       {/* ================= MODAL ================= */}
 
-                        <AddExaminationCutoffModal
-                             show={showModal}
-                             onHide={() => {
-                                 setShowModal(false);
-                                 setEditingData(null);
-                                 setViewOnly(false);
-                                 }}
-                             editData={
-                             editingData
-                             }
-                             onSuccess={
-                             handleSuccess
-                             }
-                             viewOnly={viewOnly}
-                             selectedRequisition={
-                             selectedRequisition
-                             }
-                           selectedPosition={
-                            selectedPosition
-                              }
-                            fromCandidateScreening={
-                            fromCandidateScreening
-                            }
-                        />
-
-            </div>
+      <AddExaminationCutoffModal
+        show={showModal}
+        onHide={() => {
+          setShowModal(false);
+          setEditingData(null);
+          setViewOnly(false);
+        }}
+        editData={editingData}
+        onSuccess={handleSuccess}
+        viewOnly={viewOnly}
+        selectedRequisition={selectedRequisition}
+        selectedPosition={selectedPosition}
+        fromCandidateScreening={fromCandidateScreening}
+      />
+    </div>
   );
 }

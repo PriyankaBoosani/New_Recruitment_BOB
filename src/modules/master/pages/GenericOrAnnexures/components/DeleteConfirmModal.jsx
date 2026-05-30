@@ -13,14 +13,14 @@ const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
     >
       {/* ===== HEADER ===== */}
       <Modal.Header closeButton>
-        <Modal.Title>
-          {t("confirm_delete", "Confirm Delete")}
-        </Modal.Title>
+        <Modal.Title>{t("confirm_delete", "Confirm Delete")}</Modal.Title>
       </Modal.Header>
 
       {/* ===== BODY ===== */}
       <Modal.Body>
-        <p>{t("delete_message", "Are you sure you want to delete this file?")}</p>
+        <p>
+          {t("delete_message", "Are you sure you want to delete this file?")}
+        </p>
 
         {/*  FILE NAME SHOWN */}
         {target?.name && (
@@ -32,17 +32,11 @@ const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
 
       {/* ===== FOOTER ===== */}
       <Modal.Footer>
-        <Button
-          variant="outline-secondary"
-          onClick={onHide}
-        >
+        <Button variant="outline-secondary" onClick={onHide}>
           {t("cancel", "Cancel")}
         </Button>
 
-        <Button
-          variant="danger"
-          onClick={onConfirm}
-        >
+        <Button variant="danger" onClick={onConfirm}>
           {t("delete", "Delete")}
         </Button>
       </Modal.Footer>

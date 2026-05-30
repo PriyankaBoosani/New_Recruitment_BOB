@@ -5,17 +5,25 @@ import { Table, Button, Form } from "react-bootstrap";
 import viewIcon from "../../../../../assets/view_icon.png";
 import editIcon from "../../../../../assets/edit_icon.png";
 import deleteIcon from "../../../../../assets/delete_icon.png";
-const LocationTable = ({ data, searchTerm, onView, onEdit, onDelete, currentPage, setCurrentPage, pageSize,
-  setPageSize }) => {
-
-  const filtered = data.filter(loc =>
-    [loc.name, loc.cityName].some(v =>
-      String(v || "").toLowerCase().includes(searchTerm.toLowerCase())
+const LocationTable = ({
+  data,
+  searchTerm,
+  onView,
+  onEdit,
+  onDelete,
+  currentPage,
+  setCurrentPage,
+  pageSize,
+  setPageSize,
+}) => {
+  const filtered = data.filter((loc) =>
+    [loc.name, loc.cityName].some((v) =>
+      String(v || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
     )
   );
   const { t } = useTranslation(["location", "validation"]);
-
-
 
   const indexOfLast = currentPage * pageSize;
   const indexOfFirst = indexOfLast - pageSize;
@@ -30,9 +38,7 @@ const LocationTable = ({ data, searchTerm, onView, onEdit, onDelete, currentPage
             <th>{t("sno")}</th>
             <th>{t("cityy")}</th>
             <th>{t("location_name")}</th>
-            <th style={{ textAlign: "center" }}>
-              {t("actions")}
-            </th>
+            <th style={{ textAlign: "center" }}>{t("actions")}</th>
           </tr>
         </thead>
 
@@ -45,7 +51,6 @@ const LocationTable = ({ data, searchTerm, onView, onEdit, onDelete, currentPage
                 <td>{loc.name}</td>
                 <td>
                   <div className="action-buttons">
-
                     <Button
                       variant="link"
                       className="action-btn view-btn"
@@ -73,18 +78,20 @@ const LocationTable = ({ data, searchTerm, onView, onEdit, onDelete, currentPage
                     </Button>
                   </div>
                 </td>
-
               </tr>
             ))
           ) : (
-            <tr><td colSpan="4" className="text-center">No records found</td></tr>
+            <tr>
+              <td colSpan="4" className="text-center">
+                No records found
+              </td>
+            </tr>
           )}
         </tbody>
       </Table>
 
       {filtered.length > 0 && (
         <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
-
           {/* Page size */}
           <div className="d-flex align-items-center gap-2 user-actions">
             <span
@@ -103,8 +110,10 @@ const LocationTable = ({ data, searchTerm, onView, onEdit, onDelete, currentPage
                 setCurrentPage(1);
               }}
             >
-              {[5, 10, 15, 20, 25, 30].map(n => (
-                <option key={n} value={n}>{n}</option>
+              {[5, 10, 15, 20, 25, 30].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
               ))}
             </select>
           </div>
@@ -121,21 +130,25 @@ const LocationTable = ({ data, searchTerm, onView, onEdit, onDelete, currentPage
               </button>
             </li>
 
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
-              <li
-                key={number}
-                className={`page-item ${currentPage === number ? "active" : ""}`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(number)}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+              (number) => (
+                <li
+                  key={number}
+                  className={`page-item ${currentPage === number ? "active" : ""}`}
                 >
-                  {number}
-                </button>
-              </li>
-            ))}
+                  <button
+                    className="page-link"
+                    onClick={() => setCurrentPage(number)}
+                  >
+                    {number}
+                  </button>
+                </li>
+              )
+            )}
 
-            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+            <li
+              className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+            >
               <button
                 className="page-link"
                 onClick={() => setCurrentPage(currentPage + 1)}
@@ -145,7 +158,6 @@ const LocationTable = ({ data, searchTerm, onView, onEdit, onDelete, currentPage
               </button>
             </li>
           </ul>
-
         </div>
       )}
     </>

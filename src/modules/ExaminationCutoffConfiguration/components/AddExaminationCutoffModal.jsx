@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  Modal,
-  Button,
-  Form,
-  Row,
-  Col
-} from "react-bootstrap";
+import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import masterApiService from "../../master/services/masterApiService";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
 import { toast } from "react-toastify";
-
 
 import ExaminationCutoffService from "../service/ExaminationCutoffService";
 import candidateWorkflowServices from "../../candidatePreview/services/CandidateWorkflowServices";
@@ -28,54 +21,42 @@ export default function AddExaminationCutoffModal({
   refreshExamConfigs,
   selectedRequisition,
   selectedPosition,
-  fromCandidateScreening
+  fromCandidateScreening,
 }) {
   /* ================= STATES ================= */
 
   const [loading, setLoading] = useState(false);
 
-
-  const privileges = useSelector(state => state.user.privileges);
+  const privileges = useSelector((state) => state.user.privileges);
 
   const isL1 = privileges?.["L1 Approval"];
   const isL2 = privileges?.["L2 Approval"];
 
-const [allCategories, setAllCategories] =
-  useState([]);
+  const [allCategories, setAllCategories] = useState([]);
 
-  const [masterData, setMasterData] =
-  useState({});
+  const [masterData, setMasterData] = useState({});
 
+  const [expandedSection, setExpandedSection] = useState(0);
 
-  const [expandedSection, setExpandedSection] =
-  useState(0);
+  const getStateName = (stateId) => {
+    const states = masterData?.states || [];
 
-    const getStateName = (stateId) => {
+    const matched = states.find(
+      (item) =>
+        String(item.stateId).toLowerCase() === String(stateId).toLowerCase()
+    );
 
-      const states =
-        masterData?.states || [];
-
-      const matched =
-        states.find(
-          item =>
-            String(item.stateId).toLowerCase() ===
-            String(stateId).toLowerCase()
-        );
-
-      return matched?.stateName || "-";
-
-      };
+    return matched?.stateName || "-";
+  };
   const [formData, setFormData] = useState({
     totalMarks: "",
     numberOfSections: "",
 
     sections: [],
 
-  
-
     writtenExamWeightage: "",
 
-    selectedWeightageSections: []
+    selectedWeightageSections: [],
   });
 
   const [decisionComments, setDecisionComments] = useState("");
@@ -90,26 +71,18 @@ const [allCategories, setAllCategories] =
     return true;
   };
 
+  const [positionDetails, setPositionDetails] = useState(null);
 
+  const [reservationCategories, setReservationCategories] = useState([]);
 
-  const [positionDetails, setPositionDetails] =
-  useState(null);
+  const [stateWiseDistributions, setStateWiseDistributions] = useState([]);
 
-const [reservationCategories, setReservationCategories] =
-  useState([]);
-
-const [stateWiseDistributions, setStateWiseDistributions] =
-  useState([]);
-
-const [isStateWisePosition, setIsStateWisePosition] =
-  useState(false);
+  const [isStateWisePosition, setIsStateWisePosition] = useState(false);
 
   const handleApprove = async () => {
-
     if (!validateComments()) return;
 
     try {
-
       setLoading(true);
 
       await committeeManagementService.approveOrRejectExamConfig({
@@ -123,26 +96,19 @@ const [isStateWisePosition, setIsStateWisePosition] =
       await refreshExamConfigs?.();
 
       onHide?.();
-
     } catch (error) {
-
       toast.error(
-        error?.response?.data?.message ||
-        "Failed to approve configuration"
+        error?.response?.data?.message || "Failed to approve configuration"
       );
-
     } finally {
-
       setLoading(false);
     }
   };
 
   const handleReject = async () => {
-
     if (!validateComments()) return;
 
     try {
-
       setLoading(true);
 
       await committeeManagementService.approveOrRejectExamConfig({
@@ -156,22 +122,16 @@ const [isStateWisePosition, setIsStateWisePosition] =
       await refreshExamConfigs?.();
 
       onHide?.();
-
     } catch (error) {
-
       toast.error(
-        error?.response?.data?.message ||
-        "Failed to reject configuration"
+        error?.response?.data?.message || "Failed to reject configuration"
       );
-
     } finally {
-
       setLoading(false);
     }
   };
 
   /* ================= EDIT MODE ================= */
-
 
   const navigate = useNavigate();
 
@@ -180,237 +140,149 @@ const [isStateWisePosition, setIsStateWisePosition] =
       setFormData({
         totalMarks: editData.totalMarks || "",
 
-        numberOfSections:
-          editData.sections?.length || "",
+        numberOfSections: editData.sections?.length || "",
 
         sections:
-          editData.sections?.map(
-            section => {
+          editData.sections?.map((section) => {
+            //   return {
 
-             
-              //   return {
+            //     ...section,
 
-              //     ...section,
+            //     passMarks: {
 
-              //     passMarks: {
+            //       scst:
+            //         scst?.passMark || "",
 
-              //       scst:
-              //         scst?.passMark || "",
+            //       obc:
+            //         obc?.passMark || "",
 
-              //       obc:
-              //         obc?.passMark || "",
+            //       ur:
+            //         ur?.passMark || ""
+            //     }
+            //   };
 
-              //       ur:
-              //         ur?.passMark || ""
-              //     }
-              //   };
+            return {
+              /* SAVE IDS IN FORM STATE */
 
+              examConfigId: section.examConfigId || "",
 
+              examSectionId: section.examSectionId || "",
 
+              categoryPassMarks: section.categoryPassMarks || [],
 
+              ...section,
 
-              return {
+              nationalCutoffs:
+                section.categoryPassMarks?.reduce((acc, item) => {
+                  acc[item.categoryId] = item.passMark;
 
-                /* SAVE IDS IN FORM STATE */
+                  return acc;
+                }, {}) || {},
 
-                examConfigId:
-                  section.examConfigId || "",
+              stateCutoffs:
+                section.categoryPassMarks?.reduce((acc, item) => {
+                  if (item.stateId) {
+                    if (!acc[item.stateId]) {
+                      acc[item.stateId] = {};
+                    }
 
-                examSectionId:
-                  section.examSectionId || "",
+                    acc[item.stateId][item.categoryId] = item.passMark;
+                  }
 
-                categoryPassMarks:
-                  section.categoryPassMarks || [],
+                  return acc;
+                }, {}) || {},
+            };
+          }) || [],
 
-                ...section,
-
-            nationalCutoffs:
-  section.categoryPassMarks?.reduce(
-    
-    (acc, item) => {
-
-      acc[item.categoryId] =
-        item.passMark;
-
-      return acc;
-
-    },
-    {}
-  ) || {},
-
-  stateCutoffs:
-  section.categoryPassMarks?.reduce(
-    (acc, item) => {
-
-      if (item.stateId) {
-
-        if (!acc[item.stateId]) {
-          acc[item.stateId] = {};
-        }
-
-        acc[item.stateId][
-          item.categoryId
-        ] = item.passMark;
-      }
-
-      return acc;
-
-    },
-    {}
-  ) || {},
-  
-              };
-            }
-          ) || [],
-
-     
-
-        writtenExamWeightage:
-          editData.writtenExamWeightage || "",
+        writtenExamWeightage: editData.writtenExamWeightage || "",
 
         selectedWeightageSections:
           editData.sections
-            ?.map(
-              (section, index) =>
-                section.isRankingEnabled
-                  ? index
-                  : null
-            )
-            .filter(
-              item => item !== null
-            ) || []
+            ?.map((section, index) => (section.isRankingEnabled ? index : null))
+            .filter((item) => item !== null) || [],
       });
     } else {
       resetForm();
     }
   }, [editData, show]);
 
-
-const fetchReservationCategories =
-  async () => {
-
+  const fetchReservationCategories = async () => {
     try {
+      const response = await masterApiService.getAllCategories();
 
-      const response =
-        await masterApiService.getAllCategories();
+      const categories = response?.data || [];
 
-      const categories =
-        response?.data || [];
+      const masterResponse = await masterApiService.getMasterDisplayAll();
 
-        const masterResponse =
-  await masterApiService.getMasterDisplayAll();
-
-setMasterData(
-  masterResponse?.data || {}
-);
+      setMasterData(masterResponse?.data || {});
 
       setAllCategories(categories);
 
       setReservationCategories(categories);
-
     } catch (error) {
-
-      console.error(
-        "Failed to fetch reservation categories",
-        error
-      );
-
+      console.error("Failed to fetch reservation categories", error);
     }
   };
-
-
-
-    useEffect(() => {
-
-  const fetchPositionDetails = async () => {
-
-    try {
-
-      if (!selectedPosition?.length) return;
-
-      const positionId =
-        selectedPosition?.[0]?.positionId;
-
-      const res =
-        await candidateWorkflowServices.getJobPositionById(
-          positionId
-        );
-
-      const data = res?.data;
-
-      setPositionDetails(data);
-
-      /* ================= CHECK STATE WISE ================= */
-
-    const distributions =
-  data?.positionStateDistributions || [];
-
-const nationalDistribution =
-  data?.positionCategoryNationalDistributions ||
-  data?.nationalCategoryDistribution ||
-  [];
-
-
-  const verticalCategories =
-  allCategories.filter(
-    item =>
-      item.reservationType === "VERTICAL"
-  );
-
-const horizontalCategories =
-  allCategories.filter(
-    item =>
-      item.reservationType === "HORIZONTAL"
-  );
-
-
-  setReservationCategories([
-  ...verticalCategories,
-  ...horizontalCategories
-]);
-       
-
-      setStateWiseDistributions(distributions);
-
-      setIsStateWisePosition(
-        distributions.length > 0
-      );
-
-      /* ================= RESERVATION CATEGORY IDS ================= */
-
-/* ================= RESERVATION CATEGORY IDS ================= */
-
-
-
-/* ================= STATE WISE ================= */
-
-
-
-      /* ================= DISABILITY CATEGORIES ================= */
-
-/* ================= DISABILITY CATEGORIES ================= */
-
-
-    } catch (err) {
-
-      console.error(
-        "Failed to fetch position details",
-        err
-      );
-
-    }
-
-  };
-
-  fetchPositionDetails();
-
-}, [selectedPosition, allCategories]);
-
 
   useEffect(() => {
+    const fetchPositionDetails = async () => {
+      try {
+        if (!selectedPosition?.length) return;
 
+        const positionId = selectedPosition?.[0]?.positionId;
+
+        const res =
+          await candidateWorkflowServices.getJobPositionById(positionId);
+
+        const data = res?.data;
+
+        setPositionDetails(data);
+
+        /* ================= CHECK STATE WISE ================= */
+
+        const distributions = data?.positionStateDistributions || [];
+
+        const nationalDistribution =
+          data?.positionCategoryNationalDistributions ||
+          data?.nationalCategoryDistribution ||
+          [];
+
+        const verticalCategories = allCategories.filter(
+          (item) => item.reservationType === "VERTICAL"
+        );
+
+        const horizontalCategories = allCategories.filter(
+          (item) => item.reservationType === "HORIZONTAL"
+        );
+
+        setReservationCategories([
+          ...verticalCategories,
+          ...horizontalCategories,
+        ]);
+
+        setStateWiseDistributions(distributions);
+
+        setIsStateWisePosition(distributions.length > 0);
+
+        /* ================= RESERVATION CATEGORY IDS ================= */
+
+        /* ================= RESERVATION CATEGORY IDS ================= */
+
+        /* ================= STATE WISE ================= */
+
+        /* ================= DISABILITY CATEGORIES ================= */
+
+        /* ================= DISABILITY CATEGORIES ================= */
+      } catch (err) {
+        console.error("Failed to fetch position details", err);
+      }
+    };
+
+    fetchPositionDetails();
+  }, [selectedPosition, allCategories]);
+
+  useEffect(() => {
     fetchReservationCategories();
-
   }, []);
 
   /* ================= RESET ================= */
@@ -422,60 +294,40 @@ const horizontalCategories =
 
       sections: [],
 
-
       writtenExamWeightage: "",
 
-      selectedWeightageSections: []
+      selectedWeightageSections: [],
     });
   };
 
   /* ================= INPUT CHANGE ================= */
 
   const handleChange = (field, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   /* ================= CATEGORY CHANGE ================= */
 
-
-
-
-
-
-
-
-
-
   const handleCloseAndBack = () => {
-
     //   resetForm();
 
     /* FROM CANDIDATE SCREENING */
 
     if (fromCandidateScreening) {
+      navigate("/candidate-workflow", {
+        replace: true,
 
-      navigate(
-        "/candidate-workflow",
-        {
-          replace: true,
+        state: {
+          requisitionId: selectedRequisition?.id,
 
-          state: {
+          positionIds: selectedPosition?.map((item) => item.positionId),
 
-            requisitionId:
-              selectedRequisition?.id,
-
-            positionIds:
-              selectedPosition?.map(
-                item => item.positionId
-              ),
-
-            openExaminationScore: true
-          }
-        }
-      );
+          openExaminationScore: true,
+        },
+      });
 
       return;
     }
@@ -483,43 +335,26 @@ const horizontalCategories =
     onHide();
   };
 
+  const handleSectionTotalMarksChange = (index, value) => {
+    const enteredValue = Number(value || 0);
 
-
-
-
-
-
-  const handleSectionTotalMarksChange = (
-    index,
-    value
-  ) => {
-
-    const enteredValue =
-      Number(value || 0);
-
-    const updatedSections = [
-      ...formData.sections
-    ];
+    const updatedSections = [...formData.sections];
 
     /* SINGLE SECTION SHOULD NOT
        EXCEED TOTAL MARKS */
 
-    if (
-      enteredValue >
-      Number(formData.totalMarks)
-    ) {
-
+    if (enteredValue > Number(formData.totalMarks)) {
       toast.warning(
-  `Section marks cannot exceed Total Marks (${formData.totalMarks})`
-);
+        `Section marks cannot exceed Total Marks (${formData.totalMarks})`
+      );
       updatedSections[index] = {
         ...updatedSections[index],
-        sectionTotalMarks: ""
+        sectionTotalMarks: "",
       };
 
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        sections: updatedSections
+        sections: updatedSections,
       }));
 
       return;
@@ -527,76 +362,56 @@ const horizontalCategories =
 
     updatedSections[index] = {
       ...updatedSections[index],
-      sectionTotalMarks: value
+      sectionTotalMarks: value,
     };
 
     /* TOTAL OF ALL SECTION MARKS */
 
-    const totalSectionMarks =
-      updatedSections.reduce(
-        (sum, item) =>
-          sum +
-          Number(
-            item.sectionTotalMarks || 0
-          ),
-        0
-      );
+    const totalSectionMarks = updatedSections.reduce(
+      (sum, item) => sum + Number(item.sectionTotalMarks || 0),
+      0
+    );
 
-    if (
-      totalSectionMarks >
-      Number(formData.totalMarks)
-    ) {
-
+    if (totalSectionMarks > Number(formData.totalMarks)) {
       toast.warning(
-  `Sum of all section marks cannot exceed Total Marks (${formData.totalMarks})`
-);
+        `Sum of all section marks cannot exceed Total Marks (${formData.totalMarks})`
+      );
 
       updatedSections[index] = {
         ...updatedSections[index],
-        sectionTotalMarks: ""
+        sectionTotalMarks: "",
       };
 
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        sections: updatedSections
+        sections: updatedSections,
       }));
 
       return;
     }
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      sections: updatedSections
+      sections: updatedSections,
     }));
   };
 
   /* ================= GENERATE SECTIONS ================= */
 
   const handleGenerateSections = () => {
+    const count = Number(formData.numberOfSections);
 
-    const count = Number(
-      formData.numberOfSections
-    );
+    if (!count || count <= 0) return;
 
-    if (!count || count <= 0)
-      return;
-
-    const existingSections =
-      [...formData.sections];
+    const existingSections = [...formData.sections];
 
     /* ADD NEW ROWS */
 
-    if (
-      existingSections.length < count
-    ) {
-
-      const additionalSections =
-        Array.from(
-          {
-            length:
-              count -
-              existingSections.length
-          },
+    if (existingSections.length < count) {
+      const additionalSections = Array.from(
+        {
+          length: count - existingSections.length,
+        },
         () => ({
           sectionName: "",
           sectionTotalMarks: "",
@@ -604,17 +419,14 @@ const horizontalCategories =
           stateCutoffs: {},
           categoryPassMarks: [],
           examSectionId: "",
-          examConfigId: ""
+          examConfigId: "",
         })
-        );
+      );
 
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
 
-        sections: [
-          ...existingSections,
-          ...additionalSections
-        ]
+        sections: [...existingSections, ...additionalSections],
       }));
 
       return;
@@ -622,94 +434,65 @@ const horizontalCategories =
 
     /* REMOVE EXTRA ROWS */
 
-    if (
-      existingSections.length > count
-    ) {
-
-      setFormData(prev => ({
+    if (existingSections.length > count) {
+      setFormData((prev) => ({
         ...prev,
 
-        sections:
-          existingSections.slice(
-            0,
-            count
-          )
+        sections: existingSections.slice(0, count),
       }));
 
       return;
     }
-
   };
 
   /* ================= SECTION CHANGE ================= */
 
-  const handleSectionChange = (
-    index,
-    field,
-    value
-  ) => {
-    const updatedSections = [
-      ...formData.sections
-    ];
+  const handleSectionChange = (index, field, value) => {
+    const updatedSections = [...formData.sections];
 
     updatedSections[index][field] = value;
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      sections: updatedSections
+      sections: updatedSections,
     }));
   };
 
   /* ================= WEIGHTAGE CHECKBOX ================= */
 
-  const handleWeightageCheckbox =
-    sectionIndex => {
+  const handleWeightageCheckbox = (sectionIndex) => {
+    const existing = formData.selectedWeightageSections;
 
-      const existing =
-        formData.selectedWeightageSections;
+    const alreadySelected = existing.includes(sectionIndex);
 
-      const alreadySelected =
-        existing.includes(sectionIndex);
+    let updated = [];
 
-      let updated = [];
+    /* REMOVE IF ALREADY SELECTED */
 
-      /* REMOVE IF ALREADY SELECTED */
+    if (alreadySelected) {
+      updated = existing.filter((item) => item !== sectionIndex);
+    } else {
+      /* ALLOW ONLY 2 SECTIONS */
 
-      if (alreadySelected) {
+      // if (existing.length >= 2) {
 
-        updated = existing.filter(
-          item => item !== sectionIndex
-        );
+      //   alert(
+      //     "Only 2 sections can be selected"
+      //   );
 
-      } else {
+      //   return;
+      // }
 
-        /* ALLOW ONLY 2 SECTIONS */
+      updated = [...existing, sectionIndex];
+    }
 
-        // if (existing.length >= 2) {
-
-        //   alert(
-        //     "Only 2 sections can be selected"
-        //   );
-
-        //   return;
-        // }
-
-        updated = [
-          ...existing,
-          sectionIndex
-        ];
-      }
-
-      setFormData(prev => ({
-        ...prev,
-        selectedWeightageSections: updated
-      }));
-    };
+    setFormData((prev) => ({
+      ...prev,
+      selectedWeightageSections: updated,
+    }));
+  };
 
   /* ================= SAVE ================= */
-
-
-
 
   const handleSave = async () => {
     try {
@@ -738,29 +521,20 @@ const horizontalCategories =
       /* ================= SECTION PAYLOAD ================= */
       /* ================= SECTION COUNT VALIDATION ================= */
 
-      if (
-        formData.sections.length !==
-        Number(formData.numberOfSections)
-      ) {
-
-       toast.error(
-  `You selected ${formData.numberOfSections} sections but only ${formData.sections.length} sections are added. Please click + Add again.`
-);
+      if (formData.sections.length !== Number(formData.numberOfSections)) {
+        toast.error(
+          `You selected ${formData.numberOfSections} sections but only ${formData.sections.length} sections are added. Please click + Add again.`
+        );
 
         return;
       }
-
-
 
       /* ================= REQUIRED VALIDATIONS ================= */
 
       /* TOTAL MARKS */
 
-      if (
-        !formData.totalMarks ||
-        Number(formData.totalMarks) <= 0
-      ) {
-       toast.error("Total Marks is required");
+      if (!formData.totalMarks || Number(formData.totalMarks) <= 0) {
+        toast.error("Total Marks is required");
 
         return;
       }
@@ -769,23 +543,16 @@ const horizontalCategories =
 
       if (
         !formData.numberOfSections ||
-        Number(
-          formData.numberOfSections
-        ) <= 0
+        Number(formData.numberOfSections) <= 0
       ) {
-
-       toast.error("Number of Sections is required");
+        toast.error("Number of Sections is required");
 
         return;
       }
 
       /* SECTION COUNT */
 
-      if (
-        formData.sections.length !==
-        Number(formData.numberOfSections)
-      ) {
-
+      if (formData.sections.length !== Number(formData.numberOfSections)) {
         alert(
           `You selected ${formData.numberOfSections} sections but only ${formData.sections.length} sections are added. Please click + Add again.`
         );
@@ -795,22 +562,13 @@ const horizontalCategories =
 
       /* SECTION VALIDATIONS */
 
-      for (
-        let i = 0;
-        i < formData.sections.length;
-        i++
-      ) {
-
-        const section =
-          formData.sections[i];
+      for (let i = 0; i < formData.sections.length; i++) {
+        const section = formData.sections[i];
 
         /* SECTION NAME */
 
         if (!section.sectionName) {
-
-         toast.error(
-  `Section ${i + 1} name is required`
-);
+          toast.error(`Section ${i + 1} name is required`);
 
           return;
         }
@@ -819,43 +577,28 @@ const horizontalCategories =
 
         if (
           !section.sectionTotalMarks ||
-          Number(
-            section.sectionTotalMarks
-          ) <= 0
+          Number(section.sectionTotalMarks) <= 0
         ) {
-
-          toast.error(
-  `Total Section Marks is required for Section ${i + 1}`
-);
+          toast.error(`Total Section Marks is required for Section ${i + 1}`);
 
           return;
         }
 
         /* SC/ST */
-
       }
 
       /* TOTAL SECTION MARKS
          SHOULD MATCH TOTAL MARKS */
 
-      const totalSectionMarks =
-        formData.sections.reduce(
-          (sum, section) =>
-            sum +
-            Number(
-              section.sectionTotalMarks || 0
-            ),
-          0
-        );
+      const totalSectionMarks = formData.sections.reduce(
+        (sum, section) => sum + Number(section.sectionTotalMarks || 0),
+        0
+      );
 
-      if (
-        totalSectionMarks !==
-        Number(formData.totalMarks)
-      ) {
-
+      if (totalSectionMarks !== Number(formData.totalMarks)) {
         toast.error(
-  `Sum of all Total Section Marks (${totalSectionMarks}) must equal Total Marks (${formData.totalMarks})`
-);
+          `Sum of all Total Section Marks (${totalSectionMarks}) must equal Total Marks (${formData.totalMarks})`
+        );
 
         return;
       }
@@ -864,196 +607,118 @@ const horizontalCategories =
 
       if (
         !formData.writtenExamWeightage ||
-        Number(
-          formData.writtenExamWeightage
-        ) <= 0
+        Number(formData.writtenExamWeightage) <= 0
       ) {
-
-     toast.error(
-  "Written Exam Weightage is required"
-);
+        toast.error("Written Exam Weightage is required");
 
         return;
       }
 
       /* ONLY 2 WEIGHTAGE SECTIONS */
 
-      if (
-        formData.selectedWeightageSections
-          .length === 0
-      ) {
-
-       toast.error(
-  "Please select at least one Weightage Configuration section"
-);
+      if (formData.selectedWeightageSections.length === 0) {
+        toast.error(
+          "Please select at least one Weightage Configuration section"
+        );
 
         return;
       }
 
+      const sectionsPayload = formData.sections.map((section, index) => ({
+        examConfigId: section.examConfigId || "",
 
+        sectionNumber: index + 1,
 
-const sectionsPayload =
-  formData.sections.map(
-    (section, index) => ({
+        sectionName: section.sectionName,
 
-      examConfigId:
-        section.examConfigId || "",
+        isRankingEnabled: formData.selectedWeightageSections.includes(index),
 
-      sectionNumber:
-        index + 1,
+        sectionTotalMarks: Number(section.sectionTotalMarks || 0),
 
-      sectionName:
-        section.sectionName,
+        isStatewise: isStateWisePosition,
 
-      isRankingEnabled:
-        formData.selectedWeightageSections.includes(
-          index
-        ),
+        categoryPassMarks: isStateWisePosition
+          ? stateWiseDistributions.flatMap((stateItem) =>
+              reservationCategories.map((cat) => ({
+                examSectionId: section.examSectionId || "",
 
-      sectionTotalMarks: Number(
-        section.sectionTotalMarks || 0
-      ),
+                categoryId: cat.reservationCategoriesId,
 
-      isStatewise:
-        isStateWisePosition,
+                passMark: Number(
+                  section?.stateCutoffs?.[stateItem.stateId]?.[
+                    cat.reservationCategoriesId
+                  ] || 0
+                ),
 
-      categoryPassMarks:
+                stateId: stateItem.stateId,
 
-        isStateWisePosition
-
-          ? stateWiseDistributions.flatMap(
-              stateItem =>
-
-                reservationCategories.map(cat => ({
-
-                  examSectionId:
-                    section.examSectionId || "",
-
-                  categoryId:
-                    cat.reservationCategoriesId,
-
-                  passMark: Number(
-                    section?.stateCutoffs?.[
-                      stateItem.stateId
-                    ]?.[
-                      cat.reservationCategoriesId
-                    ] || 0
-                  ),
-
-                  stateId:
-                    stateItem.stateId,
-
-                  examSectionCategoryId:
-                    section.categoryPassMarks?.find(
-                      item =>
-                        item.categoryId ===
-                          cat.reservationCategoriesId &&
-                        item.stateId ===
-                          stateItem.stateId
-                    )?.examSectionCategoryId || ""
-                }))
+                examSectionCategoryId:
+                  section.categoryPassMarks?.find(
+                    (item) =>
+                      item.categoryId === cat.reservationCategoriesId &&
+                      item.stateId === stateItem.stateId
+                  )?.examSectionCategoryId || "",
+              }))
             )
+          : reservationCategories.map((cat) => ({
+              examSectionId: section.examSectionId || "",
 
-          : reservationCategories.map(cat => ({
-
-              examSectionId:
-                section.examSectionId || "",
-
-              categoryId:
-                cat.reservationCategoriesId,
+              categoryId: cat.reservationCategoriesId,
 
               passMark: Number(
-                section?.nationalCutoffs?.[
-                  cat.reservationCategoriesId
-                ] || 0
+                section?.nationalCutoffs?.[cat.reservationCategoriesId] || 0
               ),
 
               stateId: null,
 
               examSectionCategoryId:
                 section.categoryPassMarks?.find(
-                  item =>
-                    item.categoryId ===
-                    cat.reservationCategoriesId
-                )?.examSectionCategoryId || ""
+                  (item) => item.categoryId === cat.reservationCategoriesId
+                )?.examSectionCategoryId || "",
             })),
 
-      examSectionId:
-        section.examSectionId || ""
-    })
-  );
+        examSectionId: section.examSectionId || "",
+      }));
 
       /* ================= PAYLOAD ================= */
 
       const payload = {
-        positionIds:
-          selectedPosition.map(
-            item => item.positionId
-          ),
+        positionIds: selectedPosition.map((item) => item.positionId),
 
         config: {
+          positionId: selectedPosition?.[0]?.positionId,
 
+          examName: "Written Examination",
 
-          positionId:
-            selectedPosition?.[0]
-              ?.positionId,
+          totalMarks: Number(formData.totalMarks),
 
-          examName:
-            "Written Examination",
+          numberOfSections: Number(formData.numberOfSections),
 
-          totalMarks: Number(
-            formData.totalMarks
-          ),
+          marksPerSection: Number(formData.marksPerSection || 0),
 
-          numberOfSections:
-            Number(
-              formData.numberOfSections
-            ),
+          writtenExamWeightage: Number(formData.writtenExamWeightage),
 
-         marksPerSection:
-  Number(formData.marksPerSection || 0),
-
-          writtenExamWeightage:
-            Number(
-              formData.writtenExamWeightage
-            ),
-
-          interviewWeightage:
-            100 -
-            Number(
-              formData.writtenExamWeightage
-            ),
+          interviewWeightage: 100 - Number(formData.writtenExamWeightage),
 
           status: "",
 
           comments: "",
 
-          sections: sectionsPayload
-        }
+          sections: sectionsPayload,
+        },
       };
 
-      console.log(
-        "SAVE PAYLOAD",
-        payload
-      );
+      console.log("SAVE PAYLOAD", payload);
 
-      const response =
-        await jobPositionApiService.saveConfiguration(
-          payload
-        );
+      const response = await jobPositionApiService.saveConfiguration(payload);
 
-      console.log(
-        "SAVE RESPONSE",
-        response
-      );
+      console.log("SAVE RESPONSE", response);
 
       /* SUCCESS */
 
       if (response?.success === true) {
-
         toast.success(
-          response?.message ||
-          "Configuration submitted successfully"
+          response?.message || "Configuration submitted successfully"
         );
 
         onSuccess?.();
@@ -1063,37 +728,23 @@ const sectionsPayload =
         /* FROM CANDIDATE SCREENING */
 
         if (fromCandidateScreening) {
+          navigate("/candidate-workflow", {
+            replace: true,
 
-          navigate(
-            "/candidate-workflow",
-            {
-              replace: true,
+            state: {
+              requisitionId: selectedRequisition?.id,
 
-              state: {
+              positionIds: selectedPosition?.map((item) => item.positionId),
 
-                requisitionId:
-                  selectedRequisition?.id,
-
-                positionIds:
-                  selectedPosition?.map(
-                    item => item.positionId
-                  ),
-
-                openExaminationScore: true,
-                  reopenKey: Date.now()
-              }
-            }
-          );
+              openExaminationScore: true,
+              reopenKey: Date.now(),
+            },
+          });
         }
-
       } else {
-
         /* API FAILURE */
 
-        toast.error(
-          response?.message ||
-          "Failed to submit configuration"
-        );
+        toast.error(response?.message || "Failed to submit configuration");
       }
       // navigate(
       //   "/candidate-workflow",
@@ -1111,13 +762,8 @@ const sectionsPayload =
       //     }
       //   }
       // );
-
     } catch (err) {
-
-      console.error(
-        "Failed to save configuration",
-        err
-      );
+      console.error("Failed to save configuration", err);
 
       const errorMessage =
         err?.response?.data?.message ||
@@ -1125,19 +771,15 @@ const sectionsPayload =
         err?.message ||
         "Something went wrong";
 
-   toast.error(errorMessage);
-
+      toast.error(errorMessage);
     } finally {
-
       setLoading(false);
-
     }
   };
 
   const currentStatus = (editData?.status || "").trim().toUpperCase();
 
   const canTakeAction = (() => {
-
     if (isL1) {
       return currentStatus === "L1_PENDING";
     }
@@ -1147,53 +789,41 @@ const sectionsPayload =
     }
 
     return false;
-
   })();
-
-
 
   /* ================= NUMBER VALIDATION ================= */
 
-const validateCutoffValue = (value) => {
+  const validateCutoffValue = (value) => {
+    if (value === "") return "";
 
-  if (value === "") return "";
+    let cleanedValue = value.replace(/[^0-9]/g, "");
 
-  let cleanedValue =
-    value.replace(/[^0-9]/g, "");
+    const numericValue = Number(cleanedValue);
 
-  const numericValue =
-    Number(cleanedValue);
+    if (numericValue < 0) {
+      return "";
+    }
 
-  if (numericValue < 0) {
-    return "";
-  }
+    if (numericValue > 100) {
+      toast.warning("Cutoff % cannot exceed 100");
 
-  if (numericValue > 100) {
+      return "";
+    }
 
-    toast.warning(
-      "Cutoff % cannot exceed 100"
-    );
+    return cleanedValue;
+  };
 
-    return "";
-  }
-
-  return cleanedValue;
-};
-
-
-
-const preventInvalidNumberInput = (e) => {
-
-  if (
-    e.key === "-" ||
-    e.key === "+" ||
-    e.key === "e" ||
-    e.key === "E" ||
-    e.key === "."
-  ) {
-    e.preventDefault();
-  }
-};
+  const preventInvalidNumberInput = (e) => {
+    if (
+      e.key === "-" ||
+      e.key === "+" ||
+      e.key === "e" ||
+      e.key === "E" ||
+      e.key === "."
+    ) {
+      e.preventDefault();
+    }
+  };
 
   /* ================= UI ================= */
 
@@ -1219,8 +849,7 @@ const preventInvalidNumberInput = (e) => {
           </h4>
 
           <p className="modal-subtitle">
-            Set and manage cut-off rules for
-            streamlined workflow execution
+            Set and manage cut-off rules for streamlined workflow execution
           </p>
         </div>
       </Modal.Header>
@@ -1235,9 +864,7 @@ const preventInvalidNumberInput = (e) => {
             <Form.Group>
               <Form.Label>
                 Total Marks
-                <span className="required-star">
-                  *
-                </span>
+                <span className="required-star">*</span>
               </Form.Label>
 
               <Form.Control
@@ -1247,18 +874,12 @@ const preventInvalidNumberInput = (e) => {
                 onKeyDown={preventInvalidNumberInput}
                 placeholder="Sum of all sections combined."
                 value={formData.totalMarks}
-                onChange={e => {
-
-                  const value =
-                    Number(e.target.value);
+                onChange={(e) => {
+                  const value = Number(e.target.value);
 
                   if (value < 0) return;
 
-                  handleChange(
-                    "totalMarks",
-                    e.target.value
-                  );
-
+                  handleChange("totalMarks", e.target.value);
                 }}
               />
             </Form.Group>
@@ -1268,9 +889,7 @@ const preventInvalidNumberInput = (e) => {
             <Form.Group>
               <Form.Label>
                 Number of Sections
-                <span className="required-star">
-                  *
-                </span>
+                <span className="required-star">*</span>
               </Form.Label>
 
               <Form.Control
@@ -1279,155 +898,109 @@ const preventInvalidNumberInput = (e) => {
                 disabled={viewOnly}
                 onKeyDown={preventInvalidNumberInput}
                 placeholder="e.g. 4"
-                value={
-                  formData.numberOfSections
-                }
-              onChange={e => {
+                value={formData.numberOfSections}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
 
-                const value =
-                  Number(e.target.value);
+                  if (value < 0) return;
 
-                if (value < 0) return;
+                  // LIMIT TO 5
+                  if (value > 5) {
+                    toast.warning("Maximum 5 sections allowed");
 
-                // LIMIT TO 5
-                if (value > 5) {
+                    return;
+                  }
 
-                  toast.warning(
-                    "Maximum 5 sections allowed"
-                  );
-
-                  return;
-                }
-
-                handleChange(
-                  "numberOfSections",
-                  e.target.value
-                );
-
-              }}
+                  handleChange("numberOfSections", e.target.value);
+                }}
               />
             </Form.Group>
           </Col>
           {!showApprovalActions && (
-            <Col
-              md={4}
-              className="d-flex align-items-end"
-            >
+            <Col md={4} className="d-flex align-items-end">
               <Button
                 className="generate-btn"
                 onClick={handleGenerateSections}
                 disabled={
-                  viewOnly ||
-                  !formData.totalMarks ||
-                  !formData.numberOfSections
+                  viewOnly || !formData.totalMarks || !formData.numberOfSections
                 }
               >
                 + Add
               </Button>
             </Col>
-             )}
+          )}
         </Row>
-           
+
         {/* ================= DYNAMIC SECTIONS ================= */}
 
-  <div className="cutoff-accordion-wrapper">
+        <div className="cutoff-accordion-wrapper">
+          {formData.sections.map((section, index) => {
+            const isExpanded = expandedSection === index;
 
-  {formData.sections.map((section, index) => {
+            return (
+              <div key={index} className="cutoff-section-card">
+                {/* HEADER */}
 
-    const isExpanded =
-      expandedSection === index;
+                <div
+                  className="cutoff-section-header"
+                  onClick={() => setExpandedSection(isExpanded ? null : index)}
+                >
+                  <div className="d-flex align-items-center gap-3">
+                    <div className="section-header-content">
+                      {/* SECTION NAME */}
 
-    return (
+                      <Form.Control
+                        className="section-name-header-input"
+                        placeholder={`Section ${index + 1}`}
+                        value={section.sectionName || ""}
+                        disabled={viewOnly}
+                        onChange={(e) =>
+                          handleSectionChange(
+                            index,
+                            "sectionName",
+                            e.target.value
+                          )
+                        }
+                        onClick={(e) => e.stopPropagation()}
+                      />
 
-      <div
-        key={index}
-        className="cutoff-section-card"
-      >
+                      {/* TOTAL MARKS */}
 
-        {/* HEADER */}
+                      <div className="section-marks-wrapper">
+                        <span className="marks-label">Total Section Marks</span>
 
-        <div
-          className="cutoff-section-header"
-          onClick={() =>
-            setExpandedSection(
-              isExpanded
-                ? null
-                : index
-            )
-          }
-        >
+                        <Form.Control
+                          type="number"
+                          className="section-marks-header-input"
+                          placeholder="0"
+                          disabled={viewOnly}
+                          onKeyDown={preventInvalidNumberInput}
+                          value={section.sectionTotalMarks || ""}
+                          onChange={(e) =>
+                            handleSectionTotalMarksChange(index, e.target.value)
+                          }
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </div>
 
-          <div className="d-flex align-items-center gap-3">
+                      {/* TITLE AT LAST */}
 
-         
+                      <div className="cutoff-title-wrapper">
+                        <span className="cutoff-header-title">
+                          {isStateWisePosition
+                            ? "State Wise Cutoff Configuration"
+                            : "National Wise Cutoff Configuration"}
+                        </span>
 
-<div className="section-header-content">
+                        <i
+                          className={`bi bi-chevron-${
+                            isExpanded ? "up" : "down"
+                          } section-arrow-icon`}
+                        />
+                      </div>
+                    </div>
 
-  {/* SECTION NAME */}
-
-  <Form.Control
-    className="section-name-header-input"
-    placeholder={`Section ${index + 1}`}
-    value={section.sectionName || ""}
-      disabled={viewOnly}
-    onChange={(e) =>
-      handleSectionChange(
-        index,
-        "sectionName",
-        e.target.value
-      )
-    }
-    onClick={(e) => e.stopPropagation()}
-  />
-
-  {/* TOTAL MARKS */}
-
-  <div className="section-marks-wrapper">
-
-    <span className="marks-label">
-      Total Section Marks
-    </span>
-
-    <Form.Control
-      type="number"
-      className="section-marks-header-input"
-      placeholder="0"
-       disabled={viewOnly}
-       onKeyDown={preventInvalidNumberInput}
-      value={section.sectionTotalMarks || ""}
-      onChange={(e) =>
-        handleSectionTotalMarksChange(
-          index,
-          e.target.value
-        )
-      }
-      onClick={(e) => e.stopPropagation()}
-    />
-
-  </div>
-
-  {/* TITLE AT LAST */}
-
-<div className="cutoff-title-wrapper">
-
- <span className="cutoff-header-title">
-
-  {isStateWisePosition
-    ? "State Wise Cutoff Configuration"
-    : "National Wise Cutoff Configuration"}
-
-</span>
-
-  <i
-    className={`bi bi-chevron-${
-      isExpanded ? "up" : "down"
-    } section-arrow-icon`}
-  />
-
-</div>
-</div>
-          
-            {/* <span
+                    {/* <span
               className={`ranking-badge ${
                 formData.selectedWeightageSections.includes(index)
                   ? "enabled"
@@ -1439,310 +1012,225 @@ const preventInvalidNumberInput = (e) => {
                 ? "Enabled"
                 : "Disabled"}
             </span> */}
+                  </div>
+                </div>
 
-          </div>
+                {/* BODY */}
 
-         
+                {isExpanded && (
+                  <div className="cutoff-section-body">
+                    <div className="section-table-only-layout">
+                      {/* LEFT PANEL */}
 
-        </div>
+                      {/* RIGHT PANEL */}
 
-        {/* BODY */}
+                      <div className="section-right-panel">
+                        <div className="cutoff-table-wrapper">
+                          {isStateWisePosition ? (
+                            /* ================= STATE WISE ================= */
 
-        {isExpanded && (
+                            <table className="cutoff-state-table-modern">
+                              <thead>
+                                <tr>
+                                  <th className="sticky-state-col">State</th>
 
-          <div className="cutoff-section-body">
+                                  {reservationCategories.map((cat) => (
+                                    <th key={cat.reservationCategoriesId}>
+                                      {cat.categoryCode} Cutoff %
+                                    </th>
+                                  ))}
+                                </tr>
+                              </thead>
 
-          <div className="section-table-only-layout">
-            {/* LEFT PANEL */}
+                              <tbody>
+                                {stateWiseDistributions.map(
+                                  (stateItem, stateIndex) => (
+                                    <tr key={stateIndex}>
+                                      <td className="sticky-state-col state-cell-modern">
+                                        {getStateName(stateItem.stateId)}
+                                      </td>
 
+                                      {/* RESERVATION */}
 
+                                      {reservationCategories.map((cat) => (
+                                        <td key={cat.reservationCategoriesId}>
+                                          <Form.Control
+                                            type="number"
+                                            min={0}
+                                            max={100}
+                                            disabled={viewOnly}
+                                            onKeyDown={
+                                              preventInvalidNumberInput
+                                            }
+                                            className="modern-cutoff-input"
+                                            placeholder="0"
+                                            value={
+                                              formData.sections[index]
+                                                ?.stateCutoffs?.[
+                                                stateItem.stateId
+                                              ]?.[
+                                                cat.reservationCategoriesId
+                                              ] ?? ""
+                                            }
+                                            onKeyDown={(e) => {
+                                              if (
+                                                e.key === "-" ||
+                                                e.key === "+" ||
+                                                e.key === "e" ||
+                                                e.key === "E" ||
+                                                e.key === "."
+                                              ) {
+                                                e.preventDefault();
+                                              }
+                                            }}
+                                            onChange={(e) => {
+                                              const value = validateCutoffValue(
+                                                e.target.value
+                                              );
 
-            {/* RIGHT PANEL */}
+                                              const updatedSections = [
+                                                ...formData.sections,
+                                              ];
 
-            <div className="section-right-panel">
+                                              if (
+                                                !updatedSections[index]
+                                                  .stateCutoffs
+                                              ) {
+                                                updatedSections[
+                                                  index
+                                                ].stateCutoffs = {};
+                                              }
 
-            
+                                              if (
+                                                !updatedSections[index]
+                                                  .stateCutoffs[
+                                                  stateItem.stateId
+                                                ]
+                                              ) {
+                                                updatedSections[
+                                                  index
+                                                ].stateCutoffs[
+                                                  stateItem.stateId
+                                                ] = {};
+                                              }
 
-                            <div className="cutoff-table-wrapper">
+                                              updatedSections[
+                                                index
+                                              ].stateCutoffs[stateItem.stateId][
+                                                cat.reservationCategoriesId
+                                              ] = value;
 
-                              {isStateWisePosition ? (
-
-                                /* ================= STATE WISE ================= */
-
-                                <table className="cutoff-state-table-modern">
-
-                                  <thead>
-
-                                    <tr>
-
-                                      <th className="sticky-state-col">
-                                        State
-                                      </th>
-
-                                      {reservationCategories.map(cat => (
-
-                                        <th
-                                          key={cat.reservationCategoriesId}
-                                        >
-                                          {cat.categoryCode} Cutoff %
-                                        </th>
-
+                                              setFormData((prev) => ({
+                                                ...prev,
+                                                sections: updatedSections,
+                                              }));
+                                            }}
+                                          />
+                                        </td>
                                       ))}
 
-                         </tr>
-
-                                  </thead>
-
-                                  <tbody>
-
-                                    {stateWiseDistributions.map(
-                                      (stateItem, stateIndex) => (
-
-                                        <tr key={stateIndex}>
-
-                                          <td className="sticky-state-col state-cell-modern">
-
-                                            {getStateName(
-                                              stateItem.stateId
-                                            )}
-
-                                          </td>
-
-                                          {/* RESERVATION */}
-
-                                          {reservationCategories.map(cat => (
-
-                                            <td
-                                              key={cat.reservationCategoriesId}
-                                            >
-
-  <Form.Control
-  type="number"
-  min={0}
-  max={100}
-   disabled={viewOnly}
-   onKeyDown={preventInvalidNumberInput}
-  className="modern-cutoff-input"
-  placeholder="0"
-  value={
-    formData.sections[index]
-      ?.stateCutoffs?.[
-        stateItem.stateId
-      ]?.[
-        cat.reservationCategoriesId
-      ] ?? ""
-  }
-  onKeyDown={(e) => {
-    if (
-      e.key === "-" ||
-      e.key === "+" ||
-      e.key === "e" ||
-      e.key === "E" ||
-      e.key === "."
-    ) {
-      e.preventDefault();
-    }
-  }}
-  onChange={(e) => {
-
-    const value =
-      validateCutoffValue(
-        e.target.value
-      );
-
-    const updatedSections =
-      [...formData.sections];
-
-    if (
-      !updatedSections[index]
-        .stateCutoffs
-    ) {
-
-      updatedSections[index]
-        .stateCutoffs = {};
-    }
-
-    if (
-      !updatedSections[index]
-        .stateCutoffs[
-          stateItem.stateId
-        ]
-    ) {
-
-      updatedSections[index]
-        .stateCutoffs[
-          stateItem.stateId
-        ] = {};
-    }
-
-    updatedSections[index]
-      .stateCutoffs[
-        stateItem.stateId
-      ][
-        cat.reservationCategoriesId
-      ] = value;
-
-    setFormData(prev => ({
-      ...prev,
-      sections: updatedSections
-    }));
-  }}
-/>
-
-                                            </td>
-
-                                          ))}
-
-                                          {/* DISABILITY */}
-
-                                        {/* DISABILITY */}
-
-
-                                        </tr>
-
-                                      )
-                                    )}
-
-                                  </tbody>
-
-                                </table>
-
-                              ) : (
-
-                                /* ================= NATIONAL ================= */
-
-/* ================= NATIONAL ================= */
-
-<table className="cutoff-state-table-modern national-cutoff-table">
-
-  <thead>
-
-
-
-    <tr>
-
-      {reservationCategories.map(cat => (
-
-        <th
-          key={cat.reservationCategoriesId}
-          className="text-center"
-        >
-         {cat.categoryCode} Cutoff %
-        </th>
-
-      ))}
-
-    
-
- 
-
-    </tr>
-
-  </thead>
-
-  <tbody>
-
-    <tr>
-
-      {/* CATEGORY */}
-
-      {reservationCategories.map(cat => (
-
-        <td
-          key={cat.reservationCategoriesId}
-        >
-
-        <Form.Control
-  type="number"
-  min={0}
-  max={100}
-  disabled={viewOnly}
-  className="modern-cutoff-input"
-  onKeyDown={preventInvalidNumberInput}
-          placeholder="0"
-
-                value={
-            formData.sections[index]
-              ?.nationalCutoffs?.[
-                cat.reservationCategoriesId
-              ] ?? ""
-          }
-         onChange={(e) => {
-
-  const value =
-    validateCutoffValue(e.target.value);
-
-  const updatedSections =
-    [...formData.sections];
-
-  if (
-    !updatedSections[index]
-      .nationalCutoffs
-  ) {
-
-    updatedSections[index]
-      .nationalCutoffs = {};
-
-  }
-
-  updatedSections[index]
-    .nationalCutoffs[
-      cat.reservationCategoriesId
-    ] = value;
-
-
-    console.log(
-  "NATIONAL CUTOFFS",
-  updatedSections[index].nationalCutoffs
-);
-
-  setFormData(prev => ({
-    ...prev,
-    sections: updatedSections
-  }));
-
-}}
-
-          />
-
-        </td>
-
-      ))}
-
-      {/* TOTAL */}
-
-   
-      {/* DISABILITY */}
-
-
-
-
-
-    </tr>
-
-  </tbody>
-
-</table>
-
-                              )}
-
-                            </div>
-
-                              </div>
-
-                            </div>
-
+                                      {/* DISABILITY */}
+
+                                      {/* DISABILITY */}
+                                    </tr>
+                                  )
+                                )}
+                              </tbody>
+                            </table>
+                          ) : (
+                            /* ================= NATIONAL ================= */
+
+                            /* ================= NATIONAL ================= */
+
+                            <table className="cutoff-state-table-modern national-cutoff-table">
+                              <thead>
+                                <tr>
+                                  {reservationCategories.map((cat) => (
+                                    <th
+                                      key={cat.reservationCategoriesId}
+                                      className="text-center"
+                                    >
+                                      {cat.categoryCode} Cutoff %
+                                    </th>
+                                  ))}
+                                </tr>
+                              </thead>
+
+                              <tbody>
+                                <tr>
+                                  {/* CATEGORY */}
+
+                                  {reservationCategories.map((cat) => (
+                                    <td key={cat.reservationCategoriesId}>
+                                      <Form.Control
+                                        type="number"
+                                        min={0}
+                                        max={100}
+                                        disabled={viewOnly}
+                                        className="modern-cutoff-input"
+                                        onKeyDown={preventInvalidNumberInput}
+                                        placeholder="0"
+                                        value={
+                                          formData.sections[index]
+                                            ?.nationalCutoffs?.[
+                                            cat.reservationCategoriesId
+                                          ] ?? ""
+                                        }
+                                        onChange={(e) => {
+                                          const value = validateCutoffValue(
+                                            e.target.value
+                                          );
+
+                                          const updatedSections = [
+                                            ...formData.sections,
+                                          ];
+
+                                          if (
+                                            !updatedSections[index]
+                                              .nationalCutoffs
+                                          ) {
+                                            updatedSections[
+                                              index
+                                            ].nationalCutoffs = {};
+                                          }
+
+                                          updatedSections[
+                                            index
+                                          ].nationalCutoffs[
+                                            cat.reservationCategoriesId
+                                          ] = value;
+
+                                          console.log(
+                                            "NATIONAL CUTOFFS",
+                                            updatedSections[index]
+                                              .nationalCutoffs
+                                          );
+
+                                          setFormData((prev) => ({
+                                            ...prev,
+                                            sections: updatedSections,
+                                          }));
+                                        }}
+                                      />
+                                    </td>
+                                  ))}
+
+                                  {/* TOTAL */}
+
+                                  {/* DISABILITY */}
+                                </tr>
+                              </tbody>
+                            </table>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-
                 )}
-
               </div>
-
             );
           })}
-
         </div>
-
 
         {/* ================= CATEGORY WISE CUTOFF ================= */}
 
@@ -1750,105 +1238,79 @@ const preventInvalidNumberInput = (e) => {
 
         {/* ================= WEIGHTAGE CONFIG ================= */}
 
-
         {formData.totalMarks &&
- formData.numberOfSections &&
- formData.sections.length > 0 && (
+          formData.numberOfSections &&
+          formData.sections.length > 0 && (
+            <div className="weightage-box mt-4">
+              <h5 className="section-title">
+                Section consideration for combined score:
+                {/* // Weightage Configuration */}
+              </h5>
 
-
-
-        <div className="weightage-box mt-4">
-          <h5 className="section-title">
-            Section consideration for combined score:
-            {/* // Weightage Configuration */}
-          </h5>
-
-          <div className="weightage-chip-wrapper">
-            {formData.sections.map(
-              (section, index) => (
-                <div
-                  key={index}
-                  className={`weightage-chip ${formData.selectedWeightageSections.includes(
-                    index
-                  )
-                    ? "active"
-                    : ""
+              <div className="weightage-chip-wrapper">
+                {formData.sections.map((section, index) => (
+                  <div
+                    key={index}
+                    className={`weightage-chip ${
+                      formData.selectedWeightageSections.includes(index)
+                        ? "active"
+                        : ""
                     }`}
-                  onClick={() => {
+                    onClick={() => {
+                      if (viewOnly) return;
 
-                    if (viewOnly) return;
+                      handleWeightageCheckbox(index);
+                    }}
+                  >
+                    <Form.Check
+                      disabled={viewOnly}
+                      type="checkbox"
+                      checked={formData.selectedWeightageSections.includes(
+                        index
+                      )}
+                      readOnly
+                    />
 
-                    handleWeightageCheckbox(
-                      index
-                    );
+                    <span>{section.sectionName || `Section ${index + 1}`}</span>
+                  </div>
+                ))}
+              </div>
 
-                  }}
-                >
-                  <Form.Check
+              <div className="weightage-input-wrapper">
+                <Form.Group>
+                  <Form.Label>
+                    Written Exam Weightage (%)
+                    <span className="required-star">*</span>
+                  </Form.Label>
+
+                  <Form.Control
+                    min={0}
+                    max={100}
+                    type="number"
                     disabled={viewOnly}
-                    type="checkbox"
-                    checked={formData.selectedWeightageSections.includes(
-                      index
-                    )}
-                    readOnly
+                    onKeyDown={preventInvalidNumberInput}
+                    placeholder="Enter %"
+                    min={0}
+                    max={100}
+                    value={formData.writtenExamWeightage}
+                    onChange={(e) => {
+                      const value = Number(e.target.value);
+
+                      if (value > 100) {
+                        toast.warning(
+                          "Written Exam Weightage cannot exceed 100%"
+                        );
+
+                        return;
+                      }
+
+                      handleChange("writtenExamWeightage", e.target.value);
+                    }}
                   />
-
-                  <span>
-                    {section.sectionName ||
-                      `Section ${index + 1
-                      }`}
-                  </span>
-                </div>
-              )
-            )}
-          </div>
-
-          <div className="weightage-input-wrapper">
-            <Form.Group>
-              <Form.Label>
-                Written Exam Weightage (%)
-                <span className="required-star">
-                  *
-                </span>
-              </Form.Label>
-
-              <Form.Control
-                min={0}
-                max={100}
-                type="number"
-                disabled={viewOnly}
-                onKeyDown={preventInvalidNumberInput}
-                placeholder="Enter %"
-                min={0}
-                max={100}
-                value={
-                  formData.writtenExamWeightage
-                }
-                onChange={e => {
-
-                  const value =
-                    Number(e.target.value);
-
-                  if (value > 100) {
-
-                   toast.warning(
-  "Written Exam Weightage cannot exceed 100%"
-);
-
-                    return;
-                  }
-
-                  handleChange(
-                    "writtenExamWeightage",
-                    e.target.value
-                  );
-
-                }}
-              />
-            </Form.Group>
-          </div>
-        </div>
- )}
+                </Form.Group>
+              </div>
+            </div>
+          )}
       </Modal.Body>
 
       {/* ================= FOOTER ================= */}
@@ -1866,7 +1328,6 @@ const preventInvalidNumberInput = (e) => {
               value={decisionComments}
               disabled={!canTakeAction}
               onChange={(e) => {
-
                 setDecisionComments(e.target.value);
 
                 if (commentError) {
@@ -1903,12 +1364,20 @@ const preventInvalidNumberInput = (e) => {
           </>
         ) : (
           <>
-            <Button variant="light" className="cancel-btn" onClick={handleCloseAndBack}>
+            <Button
+              variant="light"
+              className="cancel-btn"
+              onClick={handleCloseAndBack}
+            >
               Cancel
             </Button>
 
             {!viewOnly && (
-              <Button className="save-btn" onClick={handleSave} disabled={loading}>
+              <Button
+                className="save-btn"
+                onClick={handleSave}
+                disabled={loading}
+              >
                 {loading ? "Saving..." : "Save"}
               </Button>
             )}

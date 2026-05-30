@@ -4,7 +4,9 @@ export const useMessages = () => {
   const [selectedPositionId, setSelectedPositionId] = useState("");
   const [date, setDate] = useState("");
   const [openRow, setOpenRow] = useState(null);
-  const toggleRow = (id) => { setOpenRow((prev) => (prev === id ? null : id)); };
+  const toggleRow = (id) => {
+    setOpenRow((prev) => (prev === id ? null : id));
+  };
   const getStatusClass = (status) => {
     switch (status) {
       case "L1 Approved":
@@ -31,6 +33,6 @@ export const useMessages = () => {
     setDate,
     toggleRow,
     getStatusClass,
-    getHistoryColor
+    getHistoryColor,
   };
 };

@@ -13,10 +13,9 @@ const AddPanelModal = ({
   mode = "add",
   initialPanel = "",
   initialRows = [],
-  panels = [],  // ✅ NEW
-  selectedPanels = [] 
+  panels = [], // ✅ NEW
+  selectedPanels = [],
 }) => {
-
   const { t } = useTranslation(["interviewSchedule", "common"]);
 
   const {
@@ -31,55 +30,52 @@ const AddPanelModal = ({
     handleCancel,
     clearPanelError,
     showPanelInfo,
-setShowPanelInfo,
+    setShowPanelInfo,
 
-panelInfoLoading,
+    panelInfoLoading,
 
-panelAvailability,
+    panelAvailability,
 
-loadPanelAvailability,
-panelRanges
+    loadPanelAvailability,
+    panelRanges,
   } = useAddPanelModal({
     show,
     initialPanel,
     initialRows,
     onSave,
     onClose,
-    panels
+    panels,
   });
-  console.log("panels123", panels)
+  console.log("panels123", panels);
 
   const isDateAllowed = (date, ranges) => {
+    if (!date) return false;
 
-  if (!date) return false;
+    return ranges.some((range) => {
+      const selected = new Date(date);
 
-  return ranges.some(range => {
+      const start = new Date(range.startDate);
 
-    const selected =
-      new Date(date);
+      const end = new Date(range.endDate);
 
-    const start =
-      new Date(range.startDate);
+      // remove time issue
+      selected.setHours(0, 0, 0, 0);
+      start.setHours(0, 0, 0, 0);
+      end.setHours(0, 0, 0, 0);
 
-    const end =
-      new Date(range.endDate);
-
-    // remove time issue
-    selected.setHours(0,0,0,0);
-    start.setHours(0,0,0,0);
-    end.setHours(0,0,0,0);
-
-    return (
-      selected >= start &&
-      selected <= end
-    );
-  });
-};
+      return selected >= start && selected <= end;
+    });
+  };
 
   return (
-    <Modal show={show} onHide={handleCancel} size="xl" centered dialogClassName="ap-modal">
+    <Modal
+      show={show}
+      onHide={handleCancel}
+      size="xl"
+      centered
+      dialogClassName="ap-modal"
+    >
       <Modal.Body className="ap-body">
-
         {/* HEADER */}
         <div className="ap-header">
           <div>
@@ -105,115 +101,117 @@ panelRanges
           <div className="ap-select-wrap">
             <Form.Select
               className={`ap-input ap-modern-select ${
-                      errors?.panelId ? "ap-error" : ""
-                    }`}
+                errors?.panelId ? "ap-error" : ""
+              }`}
               disabled={mode === "edit"}
               value={panelId || ""}
-           onChange={(e) => {
+              onChange={(e) => {
                 setPanelId(e.target.value);
                 clearPanelError();
               }}
-              
             >
-              <option value="">
-                {t("select_panel_placeholder")}
-              </option>
+              <option value="">{t("select_panel_placeholder")}</option>
 
               {panels.map((panel) => {
-                const isSelected = selectedPanels?.some(p => p.id === panel.id);
+                const isSelected = selectedPanels?.some(
+                  (p) => p.id === panel.id
+                );
 
                 return (
-                  <option
-                    key={panel.id}
-                    value={panel.id}
-                  >
+                  <option key={panel.id} value={panel.id}>
                     {panel.name}
                   </option>
                 );
               })}
             </Form.Select>
-{panelId && (
+            {panelId && (
+              <button
+                type="button"
+                className="ap-info-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
 
-  <button
-    type="button"
-    className="ap-info-btn"
-    onClick={(e) => {
+                  loadPanelAvailability();
+                }}
+              >
+                <i className="bi bi-info-circle" />
+              </button>
+            )}
 
-      e.stopPropagation();
-
-      loadPanelAvailability();
-
-    }}
-  >
-    <i className="bi bi-info-circle" />
-  </button>
-
-)}
-
-{showPanelInfo && (
-  <div className="ap-panel-popover">
-    <div className="ap-panel-popover-header">
-      <h6 className="ap-panel-popover-title">
-        <i className="bi bi-calendar-check me-2 text-primary" /> Scheduled Interviews
-      </h6>
-      <button
-        type="button"
-        className="ap-panel-popover-close"
-        onClick={() => setShowPanelInfo(false)}
-      >
-        <i className="bi bi-x" />
-      </button>
-    </div>
-
-    <div className="ap-panel-popover-body">
-      {panelInfoLoading ? (
-        <div className="ap-loading-spinner py-4">
-          <div className="spinner-border text-primary spinner-border-sm" role="status"></div>
-          <span className="ms-2 text-muted">Loading availability...</span>
-        </div>
-      ) : panelAvailability.length > 0 ? (
-        panelAvailability.map((day, index) => (
-          <div key={index} className="ap-day-section">
-            {/* Elegant Header for Date */}
-            <div className="ap-day-badge-header">
-              <span className="ap-date-text">
-                <i className="bi bi-calendar-event me-1" />
-                {formatDateDDMMYYYY(day.panelDate)}
-              </span>
-              <span className="ap-count-badge">
-                {day.panelAvailableModels?.length || 0} Allocated
-              </span>
-            </div>
-
-            {/* List of Time Slots */}
-            <div className="ap-slots-list">
-              {day.panelAvailableModels.map((slot, idx) => (
-                <div key={idx} className="ap-slot-row-item">
-                  <div className="ap-slot-left">
-                    <span className="ap-time-pill">
-                      <i className="bi bi-clock me-1" />
-                      {slot.startTime.slice(0, 5)} - {slot.endTime.slice(0, 5)}
-                    </span>
-                  </div>
-                  <div className="ap-slot-right">
-                    <div className="ap-slot-position-title" title={slot.positionName}>
-                      {slot.positionName}
-                    </div>
-                  </div>
+            {showPanelInfo && (
+              <div className="ap-panel-popover">
+                <div className="ap-panel-popover-header">
+                  <h6 className="ap-panel-popover-title">
+                    <i className="bi bi-calendar-check me-2 text-primary" />{" "}
+                    Scheduled Interviews
+                  </h6>
+                  <button
+                    type="button"
+                    className="ap-panel-popover-close"
+                    onClick={() => setShowPanelInfo(false)}
+                  >
+                    <i className="bi bi-x" />
+                  </button>
                 </div>
-              ))}
-            </div>
-          </div>
-        ))
-      ) : (
-        <div className="text-center text-muted py-4">
-          <i className="bi bi-calendar-x d-block fs-4 mb-2 text-neutral" />
-          No scheduled interviews found
-        </div>
-      )}
-    </div>
-  </div>
-)}
+
+                <div className="ap-panel-popover-body">
+                  {panelInfoLoading ? (
+                    <div className="ap-loading-spinner py-4">
+                      <div
+                        className="spinner-border text-primary spinner-border-sm"
+                        role="status"
+                      ></div>
+                      <span className="ms-2 text-muted">
+                        Loading availability...
+                      </span>
+                    </div>
+                  ) : panelAvailability.length > 0 ? (
+                    panelAvailability.map((day, index) => (
+                      <div key={index} className="ap-day-section">
+                        {/* Elegant Header for Date */}
+                        <div className="ap-day-badge-header">
+                          <span className="ap-date-text">
+                            <i className="bi bi-calendar-event me-1" />
+                            {formatDateDDMMYYYY(day.panelDate)}
+                          </span>
+                          <span className="ap-count-badge">
+                            {day.panelAvailableModels?.length || 0} Allocated
+                          </span>
+                        </div>
+
+                        {/* List of Time Slots */}
+                        <div className="ap-slots-list">
+                          {day.panelAvailableModels.map((slot, idx) => (
+                            <div key={idx} className="ap-slot-row-item">
+                              <div className="ap-slot-left">
+                                <span className="ap-time-pill">
+                                  <i className="bi bi-clock me-1" />
+                                  {slot.startTime.slice(0, 5)} -{" "}
+                                  {slot.endTime.slice(0, 5)}
+                                </span>
+                              </div>
+                              <div className="ap-slot-right">
+                                <div
+                                  className="ap-slot-position-title"
+                                  title={slot.positionName}
+                                >
+                                  {slot.positionName}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center text-muted py-4">
+                      <i className="bi bi-calendar-x d-block fs-4 mb-2 text-neutral" />
+                      No scheduled interviews found
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
             <i className="bi bi-chevron-down ap-select-icon" />
           </div>
           <div className="field-error">
@@ -222,34 +220,18 @@ panelRanges
 
           {/* DATE RANGE TEXT BELOW DROPDOWN */}
           {panelRanges.length > 0 && (
-
             <div className="ap-date-range-text">
-
               Allowed ranges:
-
               {panelRanges.map((range, index) => (
+                <div key={index} className="ap-range-item">
+                  <div className="ap-range-position">{range.positionName}</div>
 
-  <div
-    key={index}
-    className="ap-range-item"
-  >
-
-    <div className="ap-range-position">
-      {range.positionName}
-    </div>
-
-    <div className="ap-range-dates">
-
-      {formatDateDDMMYYYY(range.startDate)}
-      {" "}to{" "}
-      {formatDateDDMMYYYY(range.endDate)}
-
-    </div>
-
-  </div>
-
-))}
-
+                  <div className="ap-range-dates">
+                    {formatDateDDMMYYYY(range.startDate)} to{" "}
+                    {formatDateDDMMYYYY(range.endDate)}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </Form.Group>
@@ -257,7 +239,6 @@ panelRanges
         {/* ROWS */}
         {rows.map((row, i) => (
           <div key={i} className="ap-panel-row">
-            
             {/* FIRST ROW: Date, Start Time, End Time */}
             <div className="ap-row-group">
               {/* DATE */}
@@ -267,59 +248,38 @@ panelRanges
                 </Form.Label>
 
                 <div className="ap-icon-input">
+                  <DatePicker
+                    selected={row.date ? new Date(row.date) : null}
+                    onChange={(date) => {
+                      if (!date) return;
 
-  <DatePicker
-    selected={
-      row.date
-        ? new Date(row.date)
-        : null
-    }
+                      const year = date.getFullYear();
 
-    onChange={(date) => {
+                      const month = String(date.getMonth() + 1).padStart(
+                        2,
+                        "0"
+                      );
 
-        if (!date) return;
+                      const day = String(date.getDate()).padStart(2, "0");
 
-        const year =
-          date.getFullYear();
+                      const formatted = `${year}-${month}-${day}`;
 
-        const month = String(
-          date.getMonth() + 1
-        ).padStart(2, "0");
+                      updateRow(i, "date", formatted);
+                    }}
+                    filterDate={(date) => isDateAllowed(date, panelRanges)}
+                    dateFormat="dd/MM/yyyy"
+                    placeholderText="Select Date"
+                    className={`ap-input ap-no-date ${
+                      errors?.rows?.[i]?.date ? "ap-error" : ""
+                    }`}
+                  />
 
-        const day = String(
-          date.getDate()
-        ).padStart(2, "0");
-
-        const formatted =
-          `${year}-${month}-${day}`;
-
-        updateRow(i, "date", formatted);
-
-      }}
-
-    filterDate={(date) =>
-      isDateAllowed(date, panelRanges)
-    }
-
-    dateFormat="dd/MM/yyyy"
-
-    placeholderText="Select Date"
-
-    className={`ap-input ap-no-date ${
-      errors?.rows?.[i]?.date
-        ? "ap-error"
-        : ""
-    }`}
-  />
-
-  <i className="bi bi-calendar3 ap-calendar" />
-
-</div>
+                  <i className="bi bi-calendar3 ap-calendar" />
+                </div>
 
                 <div className="field-error">
                   {errors?.rows?.[i]?.date ? t(errors.rows[i].date) : ""}
                 </div>
-                
               </div>
 
               {/* START TIME */}
@@ -334,9 +294,7 @@ panelRanges
                     errors?.rows?.[i]?.startTime ? "ap-error" : ""
                   }`}
                   value={row.startTime}
-                  onChange={(e) =>
-                    updateRow(i, "startTime", e.target.value)
-                  }
+                  onChange={(e) => updateRow(i, "startTime", e.target.value)}
                 />
 
                 <div className="field-error">
@@ -358,15 +316,11 @@ panelRanges
                     errors?.rows?.[i]?.endTime ? "ap-error" : ""
                   }`}
                   value={row.endTime}
-                  onChange={(e) =>
-                    updateRow(i, "endTime", e.target.value)
-                  }
+                  onChange={(e) => updateRow(i, "endTime", e.target.value)}
                 />
 
                 <div className="field-error">
-                  {errors?.rows?.[i]?.endTime
-                    ? t(errors.rows[i].endTime)
-                    : ""}
+                  {errors?.rows?.[i]?.endTime ? t(errors.rows[i].endTime) : ""}
                 </div>
               </div>
             </div>
@@ -379,7 +333,7 @@ panelRanges
                   Duration <span>*</span>
                 </Form.Label>
 
-                 <Form.Select
+                <Form.Select
                   className={`ap-input ap-modern-select ap-no-arrow ${
                     errors?.rows?.[i]?.duration ? "ap-error" : ""
                   }`}
@@ -432,9 +386,7 @@ panelRanges
 
               {/* ACTIONS */}
               <div className="ap-field ap-actions">
-                <Form.Label className="ap-label">
-                  &nbsp;
-                </Form.Label>
+                <Form.Label className="ap-label">&nbsp;</Form.Label>
                 {i === 0 ? (
                   <button type="button" className="ap-plus" onClick={addRow}>
                     <i className="bi bi-plus-lg" />
@@ -450,7 +402,6 @@ panelRanges
                 )}
               </div>
             </div>
-
           </div>
         ))}
 
@@ -463,7 +414,6 @@ panelRanges
             {t("common:save")}
           </button>
         </div>
-
       </Modal.Body>
     </Modal>
   );

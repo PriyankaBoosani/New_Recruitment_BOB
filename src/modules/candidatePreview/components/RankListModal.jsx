@@ -11,10 +11,10 @@ const RankListModal = ({
   showRankListModal,
   setShowRankListModal,
   onUploadSuccess,
-	selectedIds,
-	setSelectedIds,
+  selectedIds,
+  setSelectedIds,
 }) => {
-   const { t } = useTranslation(["candidateWorkflow","common"]);
+  const { t } = useTranslation(["candidateWorkflow", "common"]);
   const [loading, setLoading] = React.useState(false);
   const [file, setFile] = React.useState(null);
   const [validationErrors, setValidationErrors] = React.useState([]);
@@ -47,97 +47,92 @@ const RankListModal = ({
 
   /* ---------------- DOWNLOAD TEMPLATE ---------------- */
 
-	const handleDownloadTemplate = async () => {
-		if (!selectedIds?.length) {
-			toast.error(t("candidateWorkflow:please_select_at_least_one_candidate"));
-			return;
-		}
+  const handleDownloadTemplate = async () => {
+    if (!selectedIds?.length) {
+      toast.error(t("candidateWorkflow:please_select_at_least_one_candidate"));
+      return;
+    }
 
-		try {
-				setLoading(true);
-				const res = await jobPositionApiService.downloadRankListExcel(
-					selectedIds
-				);
+    try {
+      setLoading(true);
+      const res =
+        await jobPositionApiService.downloadRankListExcel(selectedIds);
 
-				const blob = new Blob([res.data], {
-				type:
-						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-				});
+      const blob = new Blob([res.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
 
-				const url = window.URL.createObjectURL(blob);
-				const link = document.createElement("a");
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
 
-				link.href = url;
-				link.download = "Rank_List.xlsx";
+      link.href = url;
+      link.download = "Rank_List.xlsx";
 
-				document.body.appendChild(link);
-				link.click();
-				link.remove();
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
 
-				window.URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(url);
 
-				toast.success(t("candidateWorkflow:rank_list_downloaded_successfully"));
-		} catch (err) {
-				console.error(err);
-				toast.error(t("candidateWorkflow:failed_to_download_rank_list"));
-		} finally {
-				setLoading(false);
-		}
-	};
+      toast.success(t("candidateWorkflow:rank_list_downloaded_successfully"));
+    } catch (err) {
+      console.error(err);
+      toast.error(t("candidateWorkflow:failed_to_download_rank_list"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   /* ---------------- BULK UPLOAD ---------------- */
 
-	const handleBulkUpload = async () => {
-		if (!file) {
-			toast.error(t("candidateWorkflow:please_upload_xlsx_file"));
-			return;
-		}
+  const handleBulkUpload = async () => {
+    if (!file) {
+      toast.error(t("candidateWorkflow:please_upload_xlsx_file"));
+      return;
+    }
 
-		try {
-			setLoading(true);
-			setValidationErrors([]);
+    try {
+      setLoading(true);
+      setValidationErrors([]);
 
-			const response = await jobPositionApiService.uploadRanksExcel(file);
-			const res = response;
+      const response = await jobPositionApiService.uploadRanksExcel(file);
+      const res = response;
 
-			if (res?.success === true) {
-				toast.success(res.message || t("candidateWorkflow:rank_list_uploaded_successfully"));
+      if (res?.success === true) {
+        toast.success(
+          res.message || t("candidateWorkflow:rank_list_uploaded_successfully")
+        );
 
-				if (typeof onUploadSuccess === "function") {
-					await onUploadSuccess();
-				}
+        if (typeof onUploadSuccess === "function") {
+          await onUploadSuccess();
+        }
 
-				closeModal();
-				setSelectedIds([]);
-			} else {
-				toast.error(t("common:validation_failed"));
+        closeModal();
+        setSelectedIds([]);
+      } else {
+        toast.error(t("common:validation_failed"));
 
-				const errors = Array.isArray(res?.data)
-					? res.data
-					: [];
-				setValidationErrors(errors);
-			}
+        const errors = Array.isArray(res?.data) ? res.data : [];
+        setValidationErrors(errors);
+      }
+    } catch (err) {
+      console.error(err);
 
-		} catch (err) {
-			console.error(err);
+      const apiResponse = err?.response;
 
-			const apiResponse = err?.response;
+      if (apiResponse?.success === false) {
+        toast.error(t("common:validation_failed"));
 
-			if (apiResponse?.success === false) {
-			 toast.error(t("common:validation_failed"));
+        const errors = Array.isArray(apiResponse?.data) ? apiResponse.data : [];
 
-				const errors = Array.isArray(apiResponse?.data)
-					? apiResponse.data
-					: [];
-
-				setValidationErrors(errors);
-			} else {
-				toast.error(t("candidateWorkflow:upload_failed"));
-			}
-		} finally {
-			setLoading(false);
-		}
-	};
+        setValidationErrors(errors);
+      } else {
+        toast.error(t("candidateWorkflow:upload_failed"));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   /* ---------------- CLOSE ---------------- */
 
@@ -156,7 +151,10 @@ const RankListModal = ({
     >
       <Modal.Header closeButton className="modalhead">
         <div className="d-grid">
-          <h5 className="mb-1 blue-color fs-15"> {t("candidateWorkflow:upload_rank_list")}</h5>
+          <h5 className="mb-1 blue-color fs-15">
+            {" "}
+            {t("candidateWorkflow:upload_rank_list")}
+          </h5>
           <p className="text-muted fs-14 mb-0">
             {t("candidateWorkflow:import_rank_list_for_selected_position")}
           </p>
@@ -169,7 +167,9 @@ const RankListModal = ({
           style={{ backgroundColor: "#FFF1E8" }}
         >
           <img src={fileIcon} width={60} className="mb-2" alt="file" />
-          <p className="mb-1 fw-600 fs-15">{t("candidateWorkflow:upload_file")}</p>
+          <p className="mb-1 fw-600 fs-15">
+            {t("candidateWorkflow:upload_file")}
+          </p>
           <small className="text-muted fs-13">
             {t("candidateWorkflow:support_xlsx_format")}
           </small>

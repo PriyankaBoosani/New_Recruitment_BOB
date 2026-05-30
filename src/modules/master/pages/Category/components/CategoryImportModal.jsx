@@ -1,29 +1,28 @@
-import React, { useState } from 'react';
-import { Button, Alert } from 'react-bootstrap';
-import { Upload as UploadIcon } from 'react-bootstrap-icons';
+import React, { useState } from "react";
+import { Button, Alert } from "react-bootstrap";
+import { Upload as UploadIcon } from "react-bootstrap-icons";
 import { useTranslation } from "react-i18next";
 
-import { useCategories } from '../hooks/useCategories';
+import { useCategories } from "../hooks/useCategories";
 
-const CategoryImportModal = ({
-  onClose = () => { },
-  onSuccess = () => { }
-}) => {
+const CategoryImportModal = ({ onClose = () => {}, onSuccess = () => {} }) => {
   const { t } = useTranslation(["category"]);
-  const { bulkAddCategories, downloadCategoryTemplate, loading } = useCategories();
+  const { bulkAddCategories, downloadCategoryTemplate, loading } =
+    useCategories();
   const [selectedFile, setSelectedFile] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [errorDetails, setErrorDetails] = useState([]);
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    const isExcel = file && (
-      file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-      file.type === 'application/vnd.ms-excel'
-    );
+    const isExcel =
+      file &&
+      (file.type ===
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        file.type === "application/vnd.ms-excel");
 
     if (isExcel) {
       setSelectedFile(file);
-      setError('');
+      setError("");
     } else {
       setError(t("category:invalid_file"));
     }
@@ -48,30 +47,35 @@ const CategoryImportModal = ({
 
   return (
     <div>
-      <div className="import-area p-4 rounded" style={{ background: '#fceee9' }}>
+      <div
+        className="import-area p-4 rounded"
+        style={{ background: "#fceee9" }}
+      >
         <div className="text-center mb-3">
           <div
             style={{
-              width: 72, height: 72, borderRadius: 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#fff', marginBottom: '1rem'
-            }} >
+              width: 72,
+              height: 72,
+              borderRadius: 12,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "#fff",
+              marginBottom: "1rem",
+            }}
+          >
             <UploadIcon size={32} />
           </div>
 
-          <h5 className="mb-2 uploadfile">
-            {t("category:upload_categories")}
-          </h5>
+          <h5 className="mb-2 uploadfile">{t("category:upload_categories")}</h5>
 
-          <p className="text-muted small">
-            {t("category:support_xlsx")}
-          </p>
+          <p className="text-muted small">{t("category:support_xlsx")}</p>
         </div>
 
         {error && (
           <Alert variant="danger">
             {/* Summary message */}
-            <div className="fw-semibold">
-              {error}
-            </div>
+            <div className="fw-semibold">{error}</div>
 
             {/* Scrollable error list */}
             {errorDetails.length > 0 && (
@@ -79,7 +83,7 @@ const CategoryImportModal = ({
                 className="mt-2"
                 style={{
                   maxHeight: "150px",
-                  overflowY: "auto"
+                  overflowY: "auto",
                 }}
               >
                 <ul className="mb-0">
@@ -116,16 +120,14 @@ const CategoryImportModal = ({
 
           {selectedFile && (
             <div className="mt-2">
-              <small className="text-muted d-block">
-                {selectedFile.name}
-              </small>
+              <small className="text-muted d-block">{selectedFile.name}</small>
               <Button
                 variant="outline-danger"
                 size="sm"
                 className="mt-2"
                 onClick={() => {
                   setSelectedFile(null);
-                  setError('');
+                  setError("");
                   setErrorDetails([]);
                 }}
                 disabled={loading}
@@ -142,16 +144,21 @@ const CategoryImportModal = ({
             type="button"
             onClick={downloadCategoryTemplate}
             className="btn btn-link p-0 text-primary text-decoration-none btnfont"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             disabled={loading}
           >
-            {" "}XLSX
+            {" "}
+            XLSX
           </button>
         </div>
       </div>
 
       <div className="d-flex justify-content-end gap-2 modal-footer-custom">
-        <Button variant="outline-secondary" onClick={onClose} disabled={loading}>
+        <Button
+          variant="outline-secondary"
+          onClick={onClose}
+          disabled={loading}
+        >
           {t("category:cancel")}
         </Button>
 

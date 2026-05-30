@@ -7,7 +7,6 @@ export const requiredField = (val) => {
   return null;
 };
 
-
 const normalize = (s = "") => String(s).trim().toLowerCase();
 
 /**
@@ -48,7 +47,7 @@ export const validateLocationForm = (formData = {}, options = {}) => {
     const nameNorm = normalize(name);
     const cityNorm = normalize(cityName || String(cityId));
 
-    const duplicate = existing.find(item => {
+    const duplicate = existing.find((item) => {
       if (!item || !item.name) return false;
       if (currentId && item.id === currentId) return false;
 
@@ -66,7 +65,7 @@ export const validateLocationForm = (formData = {}, options = {}) => {
 const locationValidations = {
   validateLocationForm,
   validateLocationName,
-  validateCity
+  validateCity,
 };
 
 export default locationValidations;

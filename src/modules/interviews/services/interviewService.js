@@ -3,7 +3,8 @@ import { nodeApi, api, apis } from "../../../core/service/apiService";
 const interviewService = {
   getPanelsByPosition(payload) {
     return api.post(
-      `recruiter/interview-scheduling/get-assigned-panels`,payload
+      `recruiter/interview-scheduling/get-assigned-panels`,
+      payload
     );
   },
   allocatePanels(payload) {
@@ -18,13 +19,9 @@ const interviewService = {
       payload
     );
   },
-  getScheduledSlots(payload){
-    return api.post(
-      `recruiter/interview-scheduling/scheduled-slots`,
-      payload
-    );
-  }
-  
+  getScheduledSlots(payload) {
+    return api.post(`recruiter/interview-scheduling/scheduled-slots`, payload);
+  },
 };
 
 export default interviewService;

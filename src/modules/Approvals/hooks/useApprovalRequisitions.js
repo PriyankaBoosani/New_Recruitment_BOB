@@ -5,139 +5,143 @@ import { mapApprovalRequisition } from "../mapper/mapApprovalRequisition";
 import { useSelector } from "react-redux";
 
 export const useApprovalRequisitions = ({
-    year,
-    search,
-    page,
-    size,
-    statuses
+  year,
+  search,
+  page,
+  size,
+  statuses,
 }) => {
-    const [requisitions, setRequisitions] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [pageInfo, setPageInfo] = useState(null);
+  const [requisitions, setRequisitions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [pageInfo, setPageInfo] = useState(null);
 
-    const privileges = useSelector((state) => state.user.privileges);
+  const privileges = useSelector((state) => state.user.privileges);
 
-    const isL1 = privileges?.["L1 Approval"];
-    const isL2 = privileges?.["L2 Approval"];
+  const isL1 = privileges?.["L1 Approval"];
+  const isL2 = privileges?.["L2 Approval"];
 
-    const approvalLevel = isL2 ? "L2" : isL1 ? "L1" : null;
+  const approvalLevel = isL2 ? "L2" : isL1 ? "L1" : null;
 
-    const fetchRequisitions = async () => {
-        try {
-            setLoading(true);
+  const fetchRequisitions = async () => {
+    try {
+      setLoading(true);
 
-            let response;
+      let response;
 
-            if (approvalLevel === "L1") {
-                response = await jobPositionApiService.getL1Requisitions({
-                    year, search, page, size, statuses
-                });
-            } else if (approvalLevel === "L2") {
-                response = await jobPositionApiService.getL2Requisitions({
-                    year, search, page, size, statuses
-                });
-            } else {
-                return;
-            }
+      if (approvalLevel === "L1") {
+        response = await jobPositionApiService.getL1Requisitions({
+          year,
+          search,
+          page,
+          size,
+          statuses,
+        });
+      } else if (approvalLevel === "L2") {
+        response = await jobPositionApiService.getL2Requisitions({
+          year,
+          search,
+          page,
+          size,
+          statuses,
+        });
+      } else {
+        return;
+      }
 
-            const data = response?.data;
-            const content = data?.content || [];
+      const data = response?.data;
+      const content = data?.content || [];
 
-            const flattened = content.flatMap(item => {
-                const result = [];
+      const flattened = content.flatMap((item) => {
+        const result = [];
 
-                // NORMAL REQUISITION
-                result.push({
-                    ...item,
-                    isDraft: false
-                });
+        // NORMAL REQUISITION
+        result.push({
+          ...item,
+          isDraft: false,
+        });
 
-                // DRAFT REQUISITION
-                if (item.draft) {
-                    const draftPositions = item.draft.positions || [];
+        // DRAFT REQUISITION
+        if (item.draft) {
+          const draftPositions = item.draft.positions || [];
 
-                    result.push({
-                        ...item.draft,
+          result.push({
+            ...item.draft,
 
-                        id: item.draft.draftId,
+            id: item.draft.draftId,
 
-                        requisitionCode: item.requisitionCode,
-                        requisitionTitle: item.draft.requisitionTitle,
+            requisitionCode: item.requisitionCode,
+            requisitionTitle: item.draft.requisitionTitle,
 
-                        requisitionStatus:
-                            item.draft.requisitionStatus || "DRAFT",
+            requisitionStatus: item.draft.requisitionStatus || "DRAFT",
 
-                        departmentCount: draftPositions.length
-                            ? new Set(draftPositions.map(p => p.deptId)).size
-                            : 0,
+            departmentCount: draftPositions.length
+              ? new Set(draftPositions.map((p) => p.deptId)).size
+              : 0,
 
-                        positionCount: draftPositions.length,
+            positionCount: draftPositions.length,
 
-                        vacancyCount: draftPositions.reduce(
-                            (sum, p) => sum + Number(p.totalVacancies || 0),
-                            0
-                        ),
+            vacancyCount: draftPositions.reduce(
+              (sum, p) => sum + Number(p.totalVacancies || 0),
+              0
+            ),
 
-                        isDraft: true,
+            isDraft: true,
 
-                        parentRequisitionId: item.id
-                    });
-                }
-
-                return result;
-            });
-
-            const mapped = flattened.map(mapApprovalRequisition);
-
-            setRequisitions(mapped);
-
-            // const data = response?.data;
-            // const mapped = (data?.content || []).map(mapApprovalRequisition);
-
-            // setRequisitions(mapped);
-            setPageInfo(data?.page || null);
-
-        } catch (error) {
-            console.error("Error fetching requisitions:", error);
-        } finally {
-            setLoading(false);
+            parentRequisitionId: item.id,
+          });
         }
-    };
 
-    useEffect(() => {
-        if (!approvalLevel) return;
-        fetchRequisitions();
-    }, [year, approvalLevel, search, page, size, statuses]);
+        return result;
+      });
 
-    const approve = async (ids, comment) => {
-        const response = await jobPositionApiService.approveRequisitions({
-            ids,
-            postingStatus:
-                approvalLevel === "L1" ? "L2_PENDING" : "APPROVED",
-            comments: comment
-        });
+      const mapped = flattened.map(mapApprovalRequisition);
 
-        await fetchRequisitions();
-        return response;
-    };
+      setRequisitions(mapped);
 
-    const reject = async (ids, comment) => {
-        const response = await jobPositionApiService.approveRequisitions({
-            ids,
-            postingStatus:
-                approvalLevel === "L1" ? "L1_REJECTED" : "L2_REJECTED",
-            comments: comment
-        });
+      // const data = response?.data;
+      // const mapped = (data?.content || []).map(mapApprovalRequisition);
 
-        await fetchRequisitions();
-        return response;
-    };
+      // setRequisitions(mapped);
+      setPageInfo(data?.page || null);
+    } catch (error) {
+      console.error("Error fetching requisitions:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return {
-        requisitions,
-        loading,
-        pageInfo,
-        approve,
-        reject
-    };
+  useEffect(() => {
+    if (!approvalLevel) return;
+    fetchRequisitions();
+  }, [year, approvalLevel, search, page, size, statuses]);
+
+  const approve = async (ids, comment) => {
+    const response = await jobPositionApiService.approveRequisitions({
+      ids,
+      postingStatus: approvalLevel === "L1" ? "L2_PENDING" : "APPROVED",
+      comments: comment,
+    });
+
+    await fetchRequisitions();
+    return response;
+  };
+
+  const reject = async (ids, comment) => {
+    const response = await jobPositionApiService.approveRequisitions({
+      ids,
+      postingStatus: approvalLevel === "L1" ? "L1_REJECTED" : "L2_REJECTED",
+      comments: comment,
+    });
+
+    await fetchRequisitions();
+    return response;
+  };
+
+  return {
+    requisitions,
+    loading,
+    pageInfo,
+    approve,
+    reject,
+  };
 };

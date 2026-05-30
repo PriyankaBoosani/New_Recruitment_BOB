@@ -6,7 +6,7 @@ import { mapInterviewMembersApi } from "../mappers/interviewMembersMapper";
 import {
   mapInterviewPanelsApiToUI,
   mapPanelToFormData,
-  preparePanelPayload
+  preparePanelPayload,
 } from "../mappers/InterviewPanelMapper";
 import { useTranslation } from "react-i18next";
 
@@ -21,7 +21,7 @@ export const useInterviewPanel = () => {
     name: "",
     community: "",
     members: [],
-   // interviewCenterId: ""
+    // interviewCenterId: ""
   });
 
   const [errors, setErrors] = useState({});
@@ -41,17 +41,16 @@ export const useInterviewPanel = () => {
   const [search, setSearch] = useState({
     panelName: "",
     committeeName: "",
-    panelMemberName: ""
+    panelMemberName: "",
   });
   const [showFilters, setShowFilters] = useState(true);
-const [savingPanel, setSavingPanel] = useState(false);
+  const [savingPanel, setSavingPanel] = useState(false);
 
-const [showUpdateConfirmModal, setShowUpdateConfirmModal] = useState(false);
-const [pendingPayload, setPendingPayload] = useState(null);
+  const [showUpdateConfirmModal, setShowUpdateConfirmModal] = useState(false);
+  const [pendingPayload, setPendingPayload] = useState(null);
   useEffect(() => {
     const panelNameValue = search.panelName?.trim();
     const committeeNameValue = search.committeeName?.trim();
-
 
     // 🔴 If both empty → load all data
     if (!panelNameValue && !committeeNameValue) {
@@ -61,7 +60,8 @@ const [pendingPayload, setPendingPayload] = useState(null);
     }
 
     // 🟡 If panelName has less than 2 chars and no committee selected → do nothing
-    if (panelNameValue && panelNameValue.length < 2 && !committeeNameValue) return;
+    if (panelNameValue && panelNameValue.length < 2 && !committeeNameValue)
+      return;
 
     const timer = setTimeout(() => {
       setPage(0);
@@ -71,12 +71,9 @@ const [pendingPayload, setPendingPayload] = useState(null);
     return () => clearTimeout(timer);
   }, [search.panelName, search.committeeName]);
 
-
   useEffect(() => {
     setPage(0);
   }, [size]);
-
-
 
   const fetchPanels = useCallback(async () => {
     try {
@@ -87,16 +84,13 @@ const [pendingPayload, setPendingPayload] = useState(null);
         page,
         size,
         panelName: search.panelName,
-        committeeName: search.committeeName
-
+        committeeName: search.committeeName,
       });
-
 
       const data = res?.data;
 
       setPanels(mapInterviewPanelsApiToUI(data?.content || []));
       setTotalPages(data?.totalPages || 0);
-
     } catch (err) {
       console.error("Fetch Panels Error:", err);
       toast.error(t("failed_load_panels"));
@@ -117,9 +111,9 @@ const [pendingPayload, setPendingPayload] = useState(null);
       try {
         commRes = await masterApiService.getMasterDropdownData();
         setCommunityOptions(
-          (commRes?.data || []).map(c => ({
+          (commRes?.data || []).map((c) => ({
             id: c.interviewCommitteeId,
-            name: c.committeeName
+            name: c.committeeName,
           }))
         );
       } catch (error) {
@@ -154,7 +148,6 @@ const [pendingPayload, setPendingPayload] = useState(null);
         toast.error(t("failed_load_centers"));
         // setCenterOptions([]);
       }
-
     } catch (error) {
       console.error("Init Data Error:", error);
       toast.error(t("failed_load_initial"));
@@ -163,8 +156,6 @@ const [pendingPayload, setPendingPayload] = useState(null);
     }
   }, [t]);
 
-
-
   /* ================= VALIDATION ================= */
 
   const validatePanelForm = () => {
@@ -172,8 +163,7 @@ const [pendingPayload, setPendingPayload] = useState(null);
 
     if (!formData.name?.trim()) {
       newErrors.name = "panel_name_required";
-    }
-    else if (formData.name.trim().length > 200) {
+    } else if (formData.name.trim().length > 200) {
       newErrors.name = "panel_name_max";
     }
 
@@ -195,62 +185,50 @@ const [pendingPayload, setPendingPayload] = useState(null);
 
   const clearError = (field) => {
     if (errors?.[field]) {
-      setErrors(prev => ({ ...prev, [field]: "" }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
   /* ================= SAVE ================= */
 
   const continuePanelUpdate = async () => {
+    if (!pendingPayload) return;
 
-  if (!pendingPayload) return;
+    try {
+      setSavingPanel(true);
 
-  try {
-
-    setSavingPanel(true);
-
-    const res =
-      await masterApiService.updateInterviewPanel(
+      const res = await masterApiService.updateInterviewPanel(
         formData.id,
         pendingPayload
       );
 
-    if (!res?.success) {
+      if (!res?.success) {
+        setErrorMessage(res?.data || "Failed to update the panel");
 
-      setErrorMessage(
-        res?.data || "Failed to update the panel"
-      );
+        setShowErrorModal(true);
+        return;
+      }
 
-      setShowErrorModal(true);
-      return;
+      toast.success(t("panel_updated"));
+
+      fetchPanels();
+
+      setFormData({
+        name: "",
+        community: "",
+        members: [],
+      });
+
+      setErrors({});
+
+      setShowUpdateConfirmModal(false);
+      setPendingPayload(null);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to update panel");
+    } finally {
+      setSavingPanel(false);
     }
-
-    toast.success(t("panel_updated"));
-
-    fetchPanels();
-
-    setFormData({
-      name: "",
-      community: "",
-      members: []
-    });
-
-    setErrors({});
-
-    setShowUpdateConfirmModal(false);
-    setPendingPayload(null);
-
-  } catch (error) {
-
-    toast.error(
-      error?.response?.data?.message ||
-      "Failed to update panel"
-    );
-
-  } finally {
-    setSavingPanel(false);
-  }
-};
+  };
 
   const handleSave = async () => {
     if (!validatePanelForm()) {
@@ -260,65 +238,56 @@ const [pendingPayload, setPendingPayload] = useState(null);
 
     const cleanedFormData = {
       ...formData,
-      name: formData.name?.trim()
+      name: formData.name?.trim(),
     };
 
     const payload = preparePanelPayload(
       cleanedFormData,
       communityOptions,
-      membersOptions,
-   //   centerOptions
+      membersOptions
+      //   centerOptions
     );
 
     try {
       if (formData.id) {
-
-
-        const isresScheduled =
-          await masterApiService.checkScheduledInterviews(
-            formData.id
-          );
+        const isresScheduled = await masterApiService.checkScheduledInterviews(
+          formData.id
+        );
 
         if (isresScheduled?.data) {
-         setPendingPayload(payload);
-setShowUpdateConfirmModal(true);
-return;
+          setPendingPayload(payload);
+          setShowUpdateConfirmModal(true);
+          return;
         }
 
         // ✅ UPDATE
-        try{ const res = await masterApiService.updateInterviewPanel(
-          formData.id,
-          payload
-        );
-
-
-        if (!res?.success) {
-
-          // toast.error(res?.message || "Panel name already exists for selected committee");
-          setErrorMessage(
-            res?.data || "Failed to update the panel"
+        try {
+          const res = await masterApiService.updateInterviewPanel(
+            formData.id,
+            payload
           );
-          setShowErrorModal(true);
-          return; // ⛔ VERY IMPORTANT
+
+          if (!res?.success) {
+            // toast.error(res?.message || "Panel name already exists for selected committee");
+            setErrorMessage(res?.data || "Failed to update the panel");
+            setShowErrorModal(true);
+            return; // ⛔ VERY IMPORTANT
+          }
+
+          toast.success(t("panel_updated"));
+        } catch (error) {
+          console.error("Error updating panel:", error);
+          toast.error("Failed to update panel");
+        } finally {
+          setSavingPanel(false);
         }
-
-
-        toast.success(t("panel_updated"));
-      } catch (error) {
-        console.error("Error updating panel:", error);
-        toast.error("Failed to update panel");
-      } finally {
-        setSavingPanel(false);
-      }
       } else {
         // ✅ CREATE
         const res = await masterApiService.addInterviewPanel(payload);
 
         if (!res?.success) {
           // toast.error(res?.message || "Failed to create panel");
-          setErrorMessage(
-            res?.data || "Failed to save the panel"
-          );
+          setErrorMessage(res?.data || "Failed to save the panel");
           setShowErrorModal(true);
           return; // ⛔ VERY IMPORTANT
         }
@@ -331,47 +300,40 @@ return;
       setFormData({
         name: "",
         community: "",
-        members: []
+        members: [],
       });
       setErrors({});
-
     } catch (err) {
       console.error("SAVE ERROR 👉", err);
-      toast.error(
-        err?.response?.data?.message ||
-        t("failed_save_panel")
-      );
+      toast.error(err?.response?.data?.message || t("failed_save_panel"));
     }
   };
 
-
   /* ================= DELETE ================= */
 
-  const handleDelete = useCallback(async (id) => {
-    try {
-      const res = await masterApiService.deleteInterviewPanel(id);
-      if (res?.success === false) {
-        // toast.error(
-        //   res?.message ||
-        //   "Panel is assigned to a position and cannot be deleted"
-        // );
-        setErrorMessage(
-          res?.data || t("panel_assigned_cannot_delete")
-        );
-        setShowErrorModal(true);
-        return;
-      }
+  const handleDelete = useCallback(
+    async (id) => {
+      try {
+        const res = await masterApiService.deleteInterviewPanel(id);
+        if (res?.success === false) {
+          // toast.error(
+          //   res?.message ||
+          //   "Panel is assigned to a position and cannot be deleted"
+          // );
+          setErrorMessage(res?.data || t("panel_assigned_cannot_delete"));
+          setShowErrorModal(true);
+          return;
+        }
 
-      toast.success(t("panel_deleted"));
-      fetchPanels();
-    } catch (err) {
-      console.error("DELETE ERROR 👉", err);
-      toast.error(
-        err?.response?.message ||
-        t("failed_delete_panel")
-      );
-    }
-  }, [fetchPanels, t]);
+        toast.success(t("panel_deleted"));
+        fetchPanels();
+      } catch (err) {
+        console.error("DELETE ERROR 👉", err);
+        toast.error(err?.response?.message || t("failed_delete_panel"));
+      }
+    },
+    [fetchPanels, t]
+  );
 
   /* ================= EDIT ================= */
 
@@ -400,23 +362,20 @@ return;
       setFormData({
         name: "",
         community: "",
-        members: []
+        members: [],
       });
       setErrors({});
-
 
       // 🔹 Reset filters
       setSearch({
         panelName: "",
         committeeName: "",
-        panelMemberName: ""
+        panelMemberName: "",
       });
 
       // 🔹 Reset pagination
       setPage(0);
     }
-
-
   }, [activeTab]);
 
   /* ================= BULK IMPORT ================= */
@@ -424,13 +383,13 @@ return;
     setLoading(true);
 
     try {
-      const res = await committeeManagementService.bulkAddPanels(file) || {};
+      const res = (await committeeManagementService.bulkAddPanels(file)) || {};
 
       if (!res.success) {
         return {
           success: false,
           error: res.message || "Validation failed",
-          details: res.data || []
+          details: res.data || [],
         };
       }
 
@@ -438,13 +397,12 @@ return;
       toast.success(res.message || "Panels imported successfully");
 
       return { success: true };
-
     } catch (err) {
       toast.error("Unexpected server error");
 
       return {
         success: false,
-        error: "Unexpected server error"
+        error: "Unexpected server error",
       };
     } finally {
       setLoading(false);
@@ -458,23 +416,25 @@ return;
       const res = await committeeManagementService.downloadPanelTemplate();
       const blob = res.data;
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = 'ImportPanels_template.xlsx';
+      link.download = "ImportPanels_template.xlsx";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      console.error('Download failed:', err);
-      toast.error(t("interviewPanelCommittee:download_error") || 'Failed to download template');
+      console.error("Download failed:", err);
+      toast.error(
+        t("interviewPanelCommittee:download_error") ||
+          "Failed to download template"
+      );
     }
   };
 
   // useEffect(() => {
   //   fetchPanels();
   // }, [fetchPanels]);
-
 
   /* ================= RETURN ================= */
 
@@ -484,7 +444,7 @@ return;
 
     communityOptions,
     membersOptions,
-   // centerOptions,
+    // centerOptions,
 
     formData,
     setFormData,
@@ -524,9 +484,7 @@ return;
     downloadPanelTemplate,
     savingPanel,
     showUpdateConfirmModal,
-setShowUpdateConfirmModal,
-continuePanelUpdate
-
-
+    setShowUpdateConfirmModal,
+    continuePanelUpdate,
   };
 };

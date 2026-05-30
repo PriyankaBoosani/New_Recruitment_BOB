@@ -19,9 +19,7 @@ const CommentsModal = ({ show, onClose, applicationId }) => {
       setLoading(true);
 
       const res =
-        await jobPositionApiService.getScreeningComments(
-          applicationId
-        );
+        await jobPositionApiService.getScreeningComments(applicationId);
 
       setComments(res?.data?.comments || []);
     } catch (err) {
@@ -32,37 +30,32 @@ const CommentsModal = ({ show, onClose, applicationId }) => {
     }
   };
 
-	const handleAddComment = async () => {
+  const handleAddComment = async () => {
     const trimmedComment = newComment.trim();
 
     // REQUIRED VALIDATION
     if (!trimmedComment) {
-        toast.error("Comment is required");
-        return;
+      toast.error("Comment is required");
+      return;
     }
 
     // MAX LENGTH VALIDATION
     if (trimmedComment.length > 2000) {
-        toast.error(
-        "Comment cannot exceed 2000 characters"
-        );
-        return;
+      toast.error("Comment cannot exceed 2000 characters");
+      return;
     }
 
     try {
-        await jobPositionApiService.postScreeningComment(
-        applicationId,
-        {
-					commentText: trimmedComment,
-        }
-        );
-        setNewComment("");
-        await fetchComments();
+      await jobPositionApiService.postScreeningComment(applicationId, {
+        commentText: trimmedComment,
+      });
+      setNewComment("");
+      await fetchComments();
     } catch (err) {
-        console.error("Failed to post comment", err);
-        toast.error("Failed to post comment");
+      console.error("Failed to post comment", err);
+      toast.error("Failed to post comment");
     }
-	};
+  };
 
   const formatRole = (role) => {
     if (!role) return "-";
@@ -70,7 +63,7 @@ const CommentsModal = ({ show, onClose, applicationId }) => {
     return role
       .replaceAll("_", " ")
       .toLowerCase()
-      .replace(/\b\w/g, c => c.toUpperCase());
+      .replace(/\b\w/g, (c) => c.toUpperCase());
   };
 
   return (
@@ -109,77 +102,76 @@ const CommentsModal = ({ show, onClose, applicationId }) => {
         ) : (
           <div className="d-flex flex-column gap-3 mb-3">
             {comments.map((c) => {
-                const isCandidate =
-                c.userRole?.toUpperCase() === "CANDIDATE";
+              const isCandidate = c.userRole?.toUpperCase() === "CANDIDATE";
 
-                return (
+              return (
                 <div
-                    key={c.id}
-                    className={`d-flex ${
+                  key={c.id}
+                  className={`d-flex ${
                     isCandidate
-                        ? "justify-content-start"
-                        : "justify-content-end"
-                    }`}
+                      ? "justify-content-start"
+                      : "justify-content-end"
+                  }`}
                 >
-                    <div
+                  <div
                     style={{
-                        maxWidth: "75%",
-                        padding: "10px 14px",
-                        borderRadius: "16px",
-                        background: isCandidate
-                        ? "#f1f1f1"
-                        : "#dbeafe",
-                        border: "1px solid #e5e7eb",
+                      maxWidth: "75%",
+                      padding: "10px 14px",
+                      borderRadius: "16px",
+                      background: isCandidate ? "#f1f1f1" : "#dbeafe",
+                      border: "1px solid #e5e7eb",
                     }}
-                    >
+                  >
                     {/* ROLE */}
                     <div
-                        style={{
+                      style={{
                         fontWeight: 600,
                         fontSize: "0.875rem",
                         color: "#2f3a8f",
                         marginBottom: "4px",
-                        }}
+                      }}
                     >
-                        {formatRole(c.userRole)}
+                      {formatRole(c.userRole)}
                     </div>
 
                     {/* MESSAGE */}
                     <div
-                        style={{
+                      style={{
                         fontSize: "0.92rem",
                         color: "#222",
                         whiteSpace: "pre-wrap",
                         wordBreak: "break-word",
-                        }}
+                      }}
                     >
-                        {c.commentText}
+                      {c.commentText}
                     </div>
 
                     {/* TIME */}
                     <div
-                        style={{
+                      style={{
                         fontSize: "0.72rem",
                         color: "#777",
                         marginTop: "6px",
                         textAlign: "right",
-                        }}
+                      }}
                     >
-                      {new Date(c.createdDate).toLocaleString("en-GB", {
-												day: "2-digit",
-												month: "2-digit",
-												year: "numeric",
-												hour: "2-digit",
-												minute: "2-digit",
-												second: "2-digit",
-												hour12: true,
-											}).replace(/\//g, "/")}
+                      {new Date(c.createdDate)
+                        .toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          hour12: true,
+                        })
+                        .replace(/\//g, "/")}
                     </div>
-                    </div>
+                  </div>
                 </div>
-                );
+              );
             })}
-            </div>
+          </div>
         )}
 
         <textarea
@@ -187,20 +179,18 @@ const CommentsModal = ({ show, onClose, applicationId }) => {
           rows={3}
           placeholder="Enter your comment..."
           value={newComment}
-          onChange={(e) =>
-            setNewComment(e.target.value)
-          }
+          onChange={(e) => setNewComment(e.target.value)}
         />
-				<div
-					style={{
-						textAlign: "right",
-						fontSize: "0.75rem",
-						color: "#777",
-						marginTop: "4px",
-					}}
-				>
-					{newComment.length}/2000
-				</div>
+        <div
+          style={{
+            textAlign: "right",
+            fontSize: "0.75rem",
+            color: "#777",
+            marginTop: "4px",
+          }}
+        >
+          {newComment.length}/2000
+        </div>
       </Modal.Body>
 
       <Modal.Footer>

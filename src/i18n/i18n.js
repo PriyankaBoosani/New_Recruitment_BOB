@@ -21,7 +21,6 @@ import specialCategoryHi from "../i18n/json/specialCategory.hi.json";
 import documentsEn from "../i18n/json/documents.en.json";
 import documentsHi from "../i18n/json/documents.hi.json";
 
-
 import interviewPanelEn from "../i18n/json/interviewPanel.en.json";
 import interviewPanelHi from "../i18n/json/interviewPanel.hi.json";
 
@@ -61,10 +60,8 @@ import interviewScheduleHi from "../i18n/interviewScheduleJson/interviewSchedule
 import committeeInterviewPanelEn from "../i18n/committeeManagementJson/committeeInterviewPanel.en.json";
 import committeeInterviewPanelHi from "../i18n/committeeManagementJson/committeeinterviewPanel.hi.json";
 
-
 import interviewDayEn from "../i18n/interviewDayJson/interviewDay.en.json";
 import interviewDayHi from "../i18n/interviewDayJson/interviewDay.hi.json";
-
 
 import candidateWorkflowEn from "../i18n/candidateWorkflowJson/candidateWorkflow.en.json";
 import candidateWorkflowHi from "../i18n/candidateWorkflowJson/candidateWorkflow.hi.json";
@@ -85,86 +82,81 @@ import stateLanguagesHi from "../i18n/json/stateLanguages.hi.json";
 import extensionsRequestsEn from "../i18n/ExtensionsRequests/extensionsRequests_en.json";
 import extensionsRequestsHi from "../i18n/ExtensionsRequests/extensionsRequests_hi.json";
 
-
-
-
-i18n
-  .use(initReactI18next)
-  .init({
-    resources: {
-      en: {
-        common: commonEn,
-        department: departmentEn,
-        user: userEn,
-        jobGrade: jobGradeEn,
-        specialCategory: specialCategoryEn,
-        documents: documentsEn,
-        interviewPanel: interviewPanelEn,
-        location: locationEn,
-        certification: certificationEn,
-        position: positionEn,
-        category: categoryEn,
-        relaxationType: relaxationtypeEn,
-        validation: validationEn,
-        genericOrAnnexures: genericOrAnnexuresEn,
-        CreateRequisition: createRequisitionEn,
-        addPosition: addPositionEn,
-        importModal: importModalEn,
-        jobPostingsList: jobPostingsListEn,
-        preview: previewEn,
-        interviewSchedule: interviewScheduleEn,
-        interviewPanelCommittee: committeeInterviewPanelEn,
-        interviewDay: interviewDayEn,
-        candidateWorkflow: candidateWorkflowEn,
-        verification: verificationEn,
-        education: educationEn,
-        approvalHistory: ApprovalEn,
-        messages: messagesEn,
-        stateLanguages: stateLanguagesEn,
-        extensionsRequests: extensionsRequestsEn,
-      },
-      hi: {
-        common: commonHi,
-        department: departmentHi,
-        user: userHi,
-        jobGrade: jobGradeHi,
-        specialCategory: specialCategoryHi,
-        documents: documentsHi,
-        interviewPanel: interviewPanelHi,
-        location: locationHi,
-        certification: certificationHi,
-        position: positionHi,
-        category: categoryHi,
-        relaxationType: relaxationtypeHi,
-        validation: validationHi,
-        genericOrAnnexures: genericOrAnnexuresHi,
-        CreateRequisition: createRequisitionHi,
-        addPosition: addPositionHi,
-        importModal: importModalHi,
-        jobPostingsList: jobPostingsListHi,
-        preview: previewHi,
-        interviewSchedule: interviewScheduleHi,
-        interviewPanelCommittee: committeeInterviewPanelHi,
-        interviewDay: interviewDayHi,
-        candidateWorkflow: candidateWorkflowHi,
-        verification: verificationHi,
-        education: educationHi,
-        approvalHistory: ApprovalHi,
-        messages: messagesHi,
-        stateLanguages: stateLanguagesHi,
-        extensionsRequests: extensionsRequestsHi,
-      }
+i18n.use(initReactI18next).init({
+  resources: {
+    en: {
+      common: commonEn,
+      department: departmentEn,
+      user: userEn,
+      jobGrade: jobGradeEn,
+      specialCategory: specialCategoryEn,
+      documents: documentsEn,
+      interviewPanel: interviewPanelEn,
+      location: locationEn,
+      certification: certificationEn,
+      position: positionEn,
+      category: categoryEn,
+      relaxationType: relaxationtypeEn,
+      validation: validationEn,
+      genericOrAnnexures: genericOrAnnexuresEn,
+      CreateRequisition: createRequisitionEn,
+      addPosition: addPositionEn,
+      importModal: importModalEn,
+      jobPostingsList: jobPostingsListEn,
+      preview: previewEn,
+      interviewSchedule: interviewScheduleEn,
+      interviewPanelCommittee: committeeInterviewPanelEn,
+      interviewDay: interviewDayEn,
+      candidateWorkflow: candidateWorkflowEn,
+      verification: verificationEn,
+      education: educationEn,
+      approvalHistory: ApprovalEn,
+      messages: messagesEn,
+      stateLanguages: stateLanguagesEn,
+      extensionsRequests: extensionsRequestsEn,
     },
-    lng: "en",
-    fallbackLng: "en",
-    defaultNS: "common",
-    interpolation: {
-      escapeValue: false,
-      defaultVariables: {
-        min: 2,
-        max: 100
-      }
-    }
-  });
+    hi: {
+      common: commonHi,
+      department: departmentHi,
+      user: userHi,
+      jobGrade: jobGradeHi,
+      specialCategory: specialCategoryHi,
+      documents: documentsHi,
+      interviewPanel: interviewPanelHi,
+      location: locationHi,
+      certification: certificationHi,
+      position: positionHi,
+      category: categoryHi,
+      relaxationType: relaxationtypeHi,
+      validation: validationHi,
+      genericOrAnnexures: genericOrAnnexuresHi,
+      CreateRequisition: createRequisitionHi,
+      addPosition: addPositionHi,
+      importModal: importModalHi,
+      jobPostingsList: jobPostingsListHi,
+      preview: previewHi,
+      interviewSchedule: interviewScheduleHi,
+      interviewPanelCommittee: committeeInterviewPanelHi,
+      interviewDay: interviewDayHi,
+      candidateWorkflow: candidateWorkflowHi,
+      verification: verificationHi,
+      education: educationHi,
+      approvalHistory: ApprovalHi,
+      messages: messagesHi,
+      stateLanguages: stateLanguagesHi,
+      extensionsRequests: extensionsRequestsHi,
+    },
+  },
+  lng: "en",
+  fallbackLng: "en",
+  defaultNS: "common",
+  interpolation: {
+    escapeValue: false,
+    defaultVariables: {
+      min: 2,
+      max: 100,
+    },
+  },
+});
 
 export default i18n;

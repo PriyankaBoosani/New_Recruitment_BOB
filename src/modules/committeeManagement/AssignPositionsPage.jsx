@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import "../../style/css/Committee.css";
-import CommitteeHistoryList from './components/CommitteeHistoryList';
+import CommitteeHistoryList from "./components/CommitteeHistoryList";
 import { useAssignPositions } from "./hooks/useAssignPositions";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import ErrorModal from "./components/ErrorModal";
@@ -15,7 +15,10 @@ import ApprovalHistoryModal from "../Approvals/components/ApprovalHistoryModal";
 import history_icon from "../../assets/history_icon.png";
 import useCommitteeRequests from "../Approvals/hooks/useCommitteeRequests"; // adjust path
 import masterApiService from "../master/services/masterApiService";
-import { mapPanelToFormData, preparePanelPayload } from "./mappers/InterviewPanelMapper";
+import {
+  mapPanelToFormData,
+  preparePanelPayload,
+} from "./mappers/InterviewPanelMapper";
 import InterviewPanelFormModal from "./components/InterviewPanelFormModal";
 import committeeManagementService from "../committeeManagement/services/committeeManagementService";
 import { mapInterviewMembersApi } from "../committeeManagement/mappers/interviewMembersMapper";
@@ -28,7 +31,6 @@ const AssignPositionsPage = ({ refreshPanels }) => {
   const [showScheduleWarning, setShowScheduleWarning] = useState(false);
   const [showUpdateWarning, setShowUpdateWarning] = useState(false);
   const [pendingPayload, setPendingPayload] = useState(null);
-
 
   const {
     requisitions,
@@ -62,8 +64,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     setIsManuallyDirty,
     bulkImportPositionAssignments,
     downloadPositionAssignmentTemplate,
-    loadPositionData
-
+    loadPositionData,
   } = useAssignPositions();
 
   const [showHistoryModal, setShowHistoryModal] = useState(false);
@@ -79,13 +80,13 @@ const AssignPositionsPage = ({ refreshPanels }) => {
       try {
         const [commRes, memRes] = await Promise.all([
           masterApiService.getMasterDropdownData(),
-          committeeManagementService.getPanelMembers()
+          committeeManagementService.getPanelMembers(),
         ]);
 
         setCommunityOptions(
-          (commRes?.data || []).map(c => ({
+          (commRes?.data || []).map((c) => ({
             id: c.interviewCommitteeId,
-            name: c.committeeName
+            name: c.committeeName,
           }))
         );
         setMembersOptions(mapInterviewMembersApi(memRes));
@@ -96,8 +97,6 @@ const AssignPositionsPage = ({ refreshPanels }) => {
 
     loadMetaData();
   }, []);
-
-
 
   const { fetchApprovalHistory } = useCommitteeRequests();
 
@@ -122,17 +121,17 @@ const AssignPositionsPage = ({ refreshPanels }) => {
 
       // ✅ PANEL TYPE
       const communityMatch = communityOptions.find(
-        c => c.value === data?.committee?.interviewCommitteeId
+        (c) => c.value === data?.committee?.interviewCommitteeId
       );
 
       // ✅ MEMBERS
-      const membersMapped = data?.panelMembers?.map(m => {
-        const user = m.panelMember;
+      const membersMapped = data?.panelMembers
+        ?.map((m) => {
+          const user = m.panelMember;
 
-        return membersOptions.find(
-          opt => opt.value === user?.userId
-        );
-      }).filter(Boolean);
+          return membersOptions.find((opt) => opt.value === user?.userId);
+        })
+        .filter(Boolean);
 
       const mapped = {
         id: data?.interviewPanelId,
@@ -140,14 +139,11 @@ const AssignPositionsPage = ({ refreshPanels }) => {
         community: data?.committee?.interviewCommitteeId || "",
 
         // ✅ FIX: array of IDs
-        members: data?.panelMembers?.map(
-          m => m.panelMember?.userId
-        ) || []
+        members: data?.panelMembers?.map((m) => m.panelMember?.userId) || [],
       };
 
       setEditFormData(mapped);
       setShowEditModal(true);
-
     } catch (err) {
       console.error(err);
     }
@@ -155,28 +151,24 @@ const AssignPositionsPage = ({ refreshPanels }) => {
   const today = new Date().toISOString().split("T")[0];
 
   const selectedPositionTitle =
-    positions.find(
-      p => p.jobPositions?.positionId === selectedPosition
-    )?.masterPositions?.positionName || "";
-
+    positions.find((p) => p.jobPositions?.positionId === selectedPosition)
+      ?.masterPositions?.positionName || "";
 
   const toggleCommittee = (type, committee) => {
-    setSelectedCommittees(prev => {
-      const isSelected = prev[type].some(c => c.id === committee.id);
+    setSelectedCommittees((prev) => {
+      const isSelected = prev[type].some((c) => c.id === committee.id);
 
       if (isSelected) {
         // REMOVE → move back to available
-        setAvailablePanels(ap => [...ap, committee]);
+        setAvailablePanels((ap) => [...ap, committee]);
         setIsManuallyDirty(true);
         return {
           ...prev,
-          [type]: prev[type].filter(c => c.id !== committee.id),
+          [type]: prev[type].filter((c) => c.id !== committee.id),
         };
       } else {
         // ADD → remove from available
-        setAvailablePanels(ap =>
-          ap.filter(c => c.id !== committee.id)
-        );
+        setAvailablePanels((ap) => ap.filter((c) => c.id !== committee.id));
 
         return {
           ...prev,
@@ -186,8 +178,8 @@ const AssignPositionsPage = ({ refreshPanels }) => {
               ...committee,
               startDate: committee.startDate || "",
               endDate: committee.endDate || "",
-              canEdit: true
-            }
+              canEdit: true,
+            },
           ],
         };
       }
@@ -197,10 +189,14 @@ const AssignPositionsPage = ({ refreshPanels }) => {
   const renderAvailableCommittee = (committee, type) => (
     <div className="committee-row" key={committee.id}>
       <div>
-        <div className="committee-title" style={{ width: "350px" }} >{committee.name}</div>
+        <div className="committee-title" style={{ width: "350px" }}>
+          {committee.name}
+        </div>
         <div className="committee-chips">
-          {committee.members.map(m => (
-            <span key={m} className="chip">{m.name}</span>
+          {committee.members.map((m) => (
+            <span key={m} className="chip">
+              {m.name}
+            </span>
           ))}
         </div>
       </div>
@@ -225,24 +221,27 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     //   committee.endDate && committee.endDate < today;
 
     console.log("committee.rawStatus =", committee.rawStatus);
-  const shouldDisableFields =
-    committee.rawStatus === "L2_PENDING";
+    const shouldDisableFields = committee.rawStatus === "L2_PENDING";
 
-  const shouldDisableRemove =
-    committee.rawStatus === "L2_PENDING" ||
-    committee.rawStatus === "APPROVED";
-
+    const shouldDisableRemove =
+      committee.rawStatus === "L2_PENDING" ||
+      committee.rawStatus === "APPROVED";
 
     return (
       <div className="committee-row selected" key={committee.id}>
         <div>
-          <div className="committee-title d-flex align-items-center gap-2" style={{ width: "350px" }}>
+          <div
+            className="committee-title d-flex align-items-center gap-2"
+            style={{ width: "350px" }}
+          >
             {committee.name}
 
             {/* ✅ SHOW ONLY IF SAVED PANEL */}
             {committee.positionPanelId && (
               <>
-                <span className={`status-text badge bg-${committee.statusType}`}>
+                <span
+                  className={`status-text badge bg-${committee.statusType}`}
+                >
                   {committee.positionPanelStatus || "-"}
                 </span>
 
@@ -265,8 +264,10 @@ const AssignPositionsPage = ({ refreshPanels }) => {
           </div>
 
           <div className="committee-chips">
-            {committee.members.map(m => (
-              <span key={m.name} className="chip">{m.name}</span>
+            {committee.members.map((m) => (
+              <span key={m.name} className="chip">
+                {m.name}
+              </span>
             ))}
           </div>
 
@@ -285,21 +286,16 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                 //     isCompleted             // scenario 3 override
                 //   ))
                 // }
-               onChange={(e) => {
-                const value = e.target.value;
+                onChange={(e) => {
+                  const value = e.target.value;
 
-                if (value < today) {
-                  toast.error("Past dates are not allowed");
-                  return;
-                }
+                  if (value < today) {
+                    toast.error("Past dates are not allowed");
+                    return;
+                  }
 
-                updateCommitteeDate(
-                  type,
-                  committee.id,
-                  "startDate",
-                  value
-                );
-              }}
+                  updateCommitteeDate(type, committee.id, "startDate", value);
+                }}
               />
               {errors.startDate && (
                 <div className="field-error">{t(errors.startDate)}</div>
@@ -312,29 +308,23 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                 type="date"
                 min={committee.startDate || today}
                 value={committee.endDate}
-               disabled={shouldDisableFields}
+                disabled={shouldDisableFields}
                 // disabled={
                 //   isL1Approved ||
                 //   (isApproved && !committee.canEdit)   // only scenario 2
                 // }
-               onChange={(e) => {
-                const value = e.target.value;
+                onChange={(e) => {
+                  const value = e.target.value;
 
-                const minEndDate =
-                  committee.startDate || today;
+                  const minEndDate = committee.startDate || today;
 
-                if (value < minEndDate) {
-                  toast.error("End date cannot be before start date");
-                  return;
-                }
+                  if (value < minEndDate) {
+                    toast.error("End date cannot be before start date");
+                    return;
+                  }
 
-                updateCommitteeDate(
-                  type,
-                  committee.id,
-                  "endDate",
-                  value
-                );
-              }}
+                  updateCommitteeDate(type, committee.id, "endDate", value);
+                }}
               />
               {errors.endDate && (
                 <div className="field-error">{t(errors.endDate)}</div>
@@ -355,14 +345,12 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     );
   };
 
-
   const filteredPanels = availablePanels.filter(
-    p =>
-      p.committeeName?.toUpperCase() === activeTab
+    (p) => p.committeeName?.toUpperCase() === activeTab
   );
 
   const selectedRequisitionObj = requisitions.find(
-    r => r.id === selectedRequisition
+    (r) => r.id === selectedRequisition
   );
 
   const normalizedRequisition = {
@@ -371,100 +359,96 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     registration_end_date: selectedRequisitionObj?.endDate,
   };
 
-
   const selectedPositionObj = positions.find(
-    p => p.jobPositions?.positionId === selectedPosition
+    (p) => p.jobPositions?.positionId === selectedPosition
   )?.jobPositions;
 
-
-
   const selectedPositionFull = positions.find(
-    p => p.jobPositions?.positionId === selectedPosition
+    (p) => p.jobPositions?.positionId === selectedPosition
   );
   const normalizedPosition = {
     ...selectedPositionObj,
-    positionName: selectedPositionFull?.masterPositions?.positionName
+    positionName: selectedPositionFull?.masterPositions?.positionName,
   };
-  const requisitionOptions = requisitions.map(req => ({
+  const requisitionOptions = requisitions.map((req) => ({
     value: req.id,
-    label: `${req.requisitionCode} - ${req.requisitionTitle}`
+    label: `${req.requisitionCode} - ${req.requisitionTitle}`,
   }));
 
-  const positionOptions = positions.map(pos => ({
+  const positionOptions = positions.map((pos) => ({
     value: pos.jobPositions?.positionId,
-    label: pos.masterPositions?.positionName
+    label: pos.masterPositions?.positionName,
   }));
   const hasAnySelectedPanels =
     selectedCommittees.SCREENING.length > 0 ||
     selectedCommittees.INTERVIEW.length > 0 ||
     selectedCommittees.COMPENSATION.length > 0;
 
-const updatePanel = async (payload) => {
-  try {
-    setUpdatingPanel(true);
+  const updatePanel = async (payload) => {
+    try {
+      setUpdatingPanel(true);
 
-    const res = await masterApiService.updateInterviewPanel(
-      editFormData.id,
-      payload
-    );
-
-    if (!res?.success) {
-      toast.error(
-        res?.data || res?.message || "Validation failed"
+      const res = await masterApiService.updateInterviewPanel(
+        editFormData.id,
+        payload
       );
-      return;
-    }
 
-    setSelectedCommittees(prev => {
-      const updated = { ...prev };
+      if (!res?.success) {
+        toast.error(res?.data || res?.message || "Validation failed");
+        return;
+      }
 
-      Object.keys(updated).forEach(type => {
-        updated[type] = updated[type].map(panel => {
-          if (panel.id === editFormData.id) {
-            return {
-              ...panel,
-              isDirty: true,
-              members: membersOptions
-                .filter(m => editFormData.members.includes(m.value))
-                .map(m => ({
-                  name: m.label,
-                  userId: m.value,
-                  email: m.email,
-                  role: m.role
-                }))
-            };
-          }
+      setSelectedCommittees((prev) => {
+        const updated = { ...prev };
 
-          return panel;
+        Object.keys(updated).forEach((type) => {
+          updated[type] = updated[type].map((panel) => {
+            if (panel.id === editFormData.id) {
+              return {
+                ...panel,
+                isDirty: true,
+                members: membersOptions
+                  .filter((m) => editFormData.members.includes(m.value))
+                  .map((m) => ({
+                    name: m.label,
+                    userId: m.value,
+                    email: m.email,
+                    role: m.role,
+                  })),
+              };
+            }
+
+            return panel;
+          });
         });
+
+        return updated;
       });
 
-      return updated;
-    });
+      setIsManuallyDirty(true);
 
-    setIsManuallyDirty(true);
+      await refreshPanels();
 
-    await refreshPanels();
+      toast.success("Panel updated successfully");
 
-    toast.success("Panel updated successfully");
-
-    setShowEditModal(false);
-
-  } finally {
-    setUpdatingPanel(false);
-  }
-};
+      setShowEditModal(false);
+    } finally {
+      setUpdatingPanel(false);
+    }
+  };
   return (
     <div className="assign-positions-page">
       {/* ===== PAGE HEADER ===== */}
 
-
-
       {/* ===== SELECTION CONTROLS ===== */}
       <div className="selection-section">
-        <div class="mb-3"><div class="assign-position-title">{t("select_position_title")}</div><div class="assign-position-muted">{t("choose_requisition_position_desc")}</div></div>
+        <div class="mb-3">
+          <div class="assign-position-title">{t("select_position_title")}</div>
+          <div class="assign-position-muted">
+            {t("choose_requisition_position_desc")}
+          </div>
+        </div>
         <div className="selection-grid">
-
           {/* Requisition */}
           <div className="form-group">
             <label className="form-label">{t("requisition_label")}</label>
@@ -473,19 +457,16 @@ const updatePanel = async (payload) => {
               placeholder={t("select_requisition_placeholder")}
               options={requisitionOptions}
               filterOption={(option, inputValue) =>
-                option.label
-                  .toLowerCase()
-                  .includes(inputValue.toLowerCase())
+                option.label.toLowerCase().includes(inputValue.toLowerCase())
               }
-
               value={
                 requisitionOptions.find(
-                  option => option.value === selectedRequisition
+                  (option) => option.value === selectedRequisition
                 ) || null
               }
               onChange={(selectedOption) =>
                 handleRequisitionChange({
-                  target: { value: selectedOption?.value || "" }
+                  target: { value: selectedOption?.value || "" },
                 })
               }
               classNamePrefix="custom-select"
@@ -501,7 +482,7 @@ const updatePanel = async (payload) => {
               options={positionOptions}
               value={
                 positionOptions.find(
-                  option => option.value === selectedPosition
+                  (option) => option.value === selectedPosition
                 ) || null
               }
               onChange={(selectedOption) =>
@@ -511,7 +492,6 @@ const updatePanel = async (payload) => {
               classNamePrefix="custom-select"
             />
           </div>
-
         </div>
 
         {/* ===== REQUISITION STRIP ===== */}
@@ -526,8 +506,6 @@ const updatePanel = async (payload) => {
           </div>
         )}
       </div>
-
-
 
       {/* ===== COMMITTEE CONFIGURATION ===== */}
       <div className="committee-config-section">
@@ -546,8 +524,6 @@ const updatePanel = async (payload) => {
               onClick={handleAssignCommittees}
               // disabled={!selectedPosition}
               disabled={!selectedPosition || !isDirty()}
-
-
             >
               {loading ? t("assigning") : t("assign_committees")}
             </button>
@@ -594,7 +570,9 @@ const updatePanel = async (payload) => {
             </div>
             <div className="panel-divider"></div>
             <div className="assignpanel-content">
-              {filteredPanels.map(c => renderAvailableCommittee(c, activeTab))}
+              {filteredPanels.map((c) =>
+                renderAvailableCommittee(c, activeTab)
+              )}
             </div>
           </div>
 
@@ -607,12 +585,16 @@ const updatePanel = async (payload) => {
           <div className="panel-box selected">
             <div className="panel-header">
               <h3 className="panel-title">{t("selected_panels")}</h3>
-              <span className="panel-count">{selectedCommittees[activeTab].length}</span>
+              <span className="panel-count">
+                {selectedCommittees[activeTab].length}
+              </span>
             </div>
             <div className="panel-divider"></div>
             <div className="assignpanel-content">
               {selectedCommittees[activeTab].length > 0 ? (
-                selectedCommittees[activeTab].map(c => renderSelectedCommittee(c, activeTab))
+                selectedCommittees[activeTab].map((c) =>
+                  renderSelectedCommittee(c, activeTab)
+                )
               ) : (
                 <div className="empty-state">
                   <div className="empty-icon">📋</div>
@@ -638,13 +620,17 @@ const updatePanel = async (payload) => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title className="header-title">{t("interviewPanelCommittee:bulk_import_position_assignments")}</Modal.Title>
+          <Modal.Title className="header-title">
+            {t("interviewPanelCommittee:bulk_import_position_assignments")}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <PositionAssignmentImportModal
             t={t}
             bulkImportPositionAssignments={bulkImportPositionAssignments}
-            downloadPositionAssignmentTemplate={downloadPositionAssignmentTemplate}
+            downloadPositionAssignmentTemplate={
+              downloadPositionAssignmentTemplate
+            }
             loading={loading}
             onClose={() => setShowBulkImportModal(false)}
             onSuccess={() => {
@@ -665,11 +651,11 @@ const updatePanel = async (payload) => {
       <Modal
         show={showEditModal}
         onHide={() => {
-              setShowEditModal(false);
+          setShowEditModal(false);
 
-              setShowUpdateWarning(false);
-              setPendingPayload(null);
-            }}
+          setShowUpdateWarning(false);
+          setPendingPayload(null);
+        }}
         size="lg"
         centered
         className="modaleditcustom"
@@ -679,73 +665,62 @@ const updatePanel = async (payload) => {
         </Modal.Header>
 
         <Modal.Body>
-
           {showUpdateWarning && (
-  <div className="panel-update-warning">
-    
-    <div className="panel-update-warning-icon">
-      <i className="bi bi-exclamation-triangle-fill" />
-    </div>
+            <div className="panel-update-warning">
+              <div className="panel-update-warning-icon">
+                <i className="bi bi-exclamation-triangle-fill" />
+              </div>
 
-    <div className="panel-update-warning-content">
-      
-      <div className="panel-update-warning-title">
-        Scheduled Interviews Found
-      </div>
+              <div className="panel-update-warning-content">
+                <div className="panel-update-warning-title">
+                  Scheduled Interviews Found
+                </div>
 
-      <div className="panel-update-warning-text">
-        Scheduled interviews already exist for this panel.
+                <div className="panel-update-warning-text">
+                  Scheduled interviews already exist for this panel. Continuing
+                  the update will notify newly added panel members about the
+                  scheduled interviews.
+                </div>
+              </div>
 
-        Continuing the update will notify newly added
-        panel members about the scheduled interviews.
-      </div>
+              <div className="panel-update-warning-actions">
+                <button
+                  className="btn btn-light"
+                  onClick={() => {
+                    setShowUpdateWarning(false);
+                    setPendingPayload(null);
+                  }}
+                >
+                  Cancel
+                </button>
 
-    </div>
+                <button
+                  className="btn btn-warning text-white"
+                  onClick={async () => {
+                    setShowUpdateWarning(false);
 
-    <div className="panel-update-warning-actions">
-
-      <button
-        className="btn btn-light"
-        onClick={() => {
-          setShowUpdateWarning(false);
-          setPendingPayload(null);
-        }}
-      >
-        Cancel
-      </button>
-
-      <button
-        className="btn btn-warning text-white"
-        onClick={async () => {
-
-          setShowUpdateWarning(false);
-
-          if (pendingPayload) {
-            await updatePanel(pendingPayload);
-            setPendingPayload(null);
-          }
-
-        }}
-      >
-        Continue Update
-      </button>
-
-    </div>
-
-  </div>
-)}
+                    if (pendingPayload) {
+                      await updatePanel(pendingPayload);
+                      setPendingPayload(null);
+                    }
+                  }}
+                >
+                  Continue Update
+                </button>
+              </div>
+            </div>
+          )}
           {editFormData && (
             <InterviewPanelFormModal
               formData={editFormData}
               setFormData={setEditFormData}
-              communityOptions={communityOptions}   // ✅ ADD THIS
+              communityOptions={communityOptions} // ✅ ADD THIS
               membersOptions={membersOptions}
               showUpdateWarning={showUpdateWarning}
               disableName={true}
-              disableType={true}     // ✅ ADD THIS
+              disableType={true} // ✅ ADD THIS
               onSave={async () => {
-
-                 // ✅ MEMBERS MANDATORY
+                // ✅ MEMBERS MANDATORY
                 if (
                   !editFormData?.members ||
                   editFormData.members.length === 0
@@ -761,25 +736,25 @@ const updatePanel = async (payload) => {
                     membersOptions
                   );
 
-                  const isresScheduled = await masterApiService.checkScheduledInterviews(
-                    editFormData.id
-                  );
+                  const isresScheduled =
+                    await masterApiService.checkScheduledInterviews(
+                      editFormData.id
+                    );
                   console.log("isresScheduled", isresScheduled);
                   if (isresScheduled?.data) {
-                      setPendingPayload(payload);
-                      setShowUpdateWarning(true);
-                      return;
-                    }
+                    setPendingPayload(payload);
+                    setShowUpdateWarning(true);
+                    return;
+                  }
 
-                  
                   await updatePanel(payload);
                 } catch (err) {
                   console.error("UPDATE PANEL ERROR", err);
 
                   toast.error(
                     err?.response?.data?.data ||
-                    err?.response?.data?.message ||
-                    "Failed to update panel"
+                      err?.response?.data?.message ||
+                      "Failed to update panel"
                   );
                 }
               }}
@@ -787,8 +762,6 @@ const updatePanel = async (payload) => {
           )}
         </Modal.Body>
       </Modal>
-
-
     </div>
   );
 };

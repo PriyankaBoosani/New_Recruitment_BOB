@@ -22,7 +22,7 @@ export const mapApprovalRequisition = (item = {}) => ({
   id: item.id ?? "",
   requisitionId: item.requisitionCode ?? "",
   code: item.requisitionTitle ?? "",
-  status:  item.status || item.requisitionStatus || "",
+  status: item.status || item.requisitionStatus || "",
   statusType: getStatusBadge(item.status || item.requisitionStatus),
   departments: item.departmentCount ?? 0,
   positions: item.positionCount ?? 0,
@@ -32,5 +32,5 @@ export const mapApprovalRequisition = (item = {}) => ({
   isDraft: item.isDraft === true,
   hasDraftPositions: item.hasDraftPositions === true,
   parentRequisitionId: item.parentRequisitionId ?? null,
-  editable: false // approvals should NOT be editable
+  editable: false, // approvals should NOT be editable
 });

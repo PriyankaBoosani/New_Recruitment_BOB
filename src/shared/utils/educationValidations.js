@@ -7,12 +7,9 @@ import i18n from "i18next";
 
 const normalize = (v = "") => String(v).trim().toLowerCase();
 
-const validText = (value) =>
-  /^[A-Za-z0-9\s.&,()\-_/]+$/.test(value);
+const validText = (value) => /^[A-Za-z0-9\s.&,()\-_/]+$/.test(value);
 
-
-const validTextForm = (value) =>
-  /^[A-Za-z0-9\s.,&()+/_\-–—]+$/.test(value);
+const validTextForm = (value) => /^[A-Za-z0-9\s.,&()+/_\-–—]+$/.test(value);
 
 /* =========================
    FIELD VALIDATIONS
@@ -33,30 +30,20 @@ export const validateCourse = (value) => {
   return null;
 };
 
-export const validateCourseCode = (
-  value,
-  existing = [],
-  currentId = null
-) => {
-
+export const validateCourseCode = (value, existing = [], currentId = null) => {
   // REQUIRED
   let error = requiredField(value);
   if (error) {
-    return i18n.t(
-      "education:course_code_required",
-      "Course code is required"
-    );
+    return i18n.t("education:course_code_required", "Course code is required");
   }
 
   // DUPLICATE CHECK
   const normalized = normalize(value);
 
   const isDuplicate = existing.some((item) => {
-    const sameCode =
-      normalize(item.qualificationCode) === normalized;
+    const sameCode = normalize(item.qualificationCode) === normalized;
 
-    const isSameId =
-      item.educationQualificationsId === currentId;
+    const isSameId = item.educationQualificationsId === currentId;
 
     return sameCode && !isSameId;
   });
@@ -77,12 +64,9 @@ export const validateSpecializationTest = (list = []) => {
   const seenCodes = new Set();
 
   for (let val of list) {
+    const value = typeof val === "string" ? val : val?.name;
 
-    const value =
-      typeof val === "string" ? val : val?.name;
-
-    const code =
-      typeof val === "object" ? val?.code : "";
+    const code = typeof val === "object" ? val?.code : "";
 
     // ✅ specialization required
     if (!value || !value.trim()) {
@@ -100,20 +84,14 @@ export const validateSpecializationTest = (list = []) => {
       );
     }
 
-
-
     const normalized = normalize(value);
     const normalizedCode = normalize(code);
 
     // skip empty values
     if (!normalized) continue;
 
-
     if (!validText(value)) {
-      return i18n.t(
-        "education:invalid_characters",
-        "Invalid characters"
-      );
+      return i18n.t("education:invalid_characters", "Invalid characters");
     }
     if (seenCodes.has(normalizedCode)) {
       return i18n.t(
@@ -121,7 +99,6 @@ export const validateSpecializationTest = (list = []) => {
         "Duplicate specialization code"
       );
     }
-
 
     if (seen.has(normalized)) {
       return i18n.t(
@@ -141,12 +118,9 @@ export const validateSpecialization = (list = []) => {
   const seen = new Set();
   const seenCodes = new Set();
   for (let val of list) {
+    const value = typeof val === "string" ? val : val?.name;
 
-    const value =
-      typeof val === "string" ? val : val?.name;
-
-    const code =
-      typeof val === "object" ? val?.code : "";
+    const code = typeof val === "object" ? val?.code : "";
 
     // ✅ specialization required
     if (!value || !value.trim()) {
@@ -164,17 +138,12 @@ export const validateSpecialization = (list = []) => {
       );
     }
 
-
-
     const normalized = normalize(value);
     const normalizedCode = normalize(code);
 
     // ✅ invalid character validation
     if (!validText(value)) {
-      return i18n.t(
-        "education:invalid_characters",
-        "Invalid characters"
-      );
+      return i18n.t("education:invalid_characters", "Invalid characters");
     }
 
     // ✅ duplicate validation
@@ -185,11 +154,11 @@ export const validateSpecialization = (list = []) => {
       );
     }
     if (seenCodes.has(normalizedCode)) {
-  return i18n.t(
-    "education:duplicate_specialization_code",
-    "Duplicate specialization code"
-  );
-}
+      return i18n.t(
+        "education:duplicate_specialization_code",
+        "Duplicate specialization code"
+      );
+    }
 
     seen.add(normalized);
     seenCodes.add(normalizedCode);
@@ -197,7 +166,6 @@ export const validateSpecialization = (list = []) => {
 
   return null;
 };
-
 
 export const validateEducationForm = (formData = {}, options = {}) => {
   const errors = {};
@@ -222,8 +190,7 @@ export const validateEducationForm = (formData = {}, options = {}) => {
         item.course?.trim().toLowerCase() ===
         formData.course?.trim().toLowerCase();
 
-      const isSameId =
-        item.educationQualificationsId === currentId;
+      const isSameId = item.educationQualificationsId === currentId;
 
       return sameCourse && !isSameId;
     });
@@ -255,7 +222,6 @@ export const validateEducationForm = (formData = {}, options = {}) => {
       formData.specializationOthers || []
     );
     if (specError) {
-
       if (
         specError ===
         i18n.t(
@@ -284,10 +250,7 @@ export const validateEducationForm = (formData = {}, options = {}) => {
       errors,
     };
   }
-
 };
-
-
 
 /* =========================
    DEFAULT EXPORT

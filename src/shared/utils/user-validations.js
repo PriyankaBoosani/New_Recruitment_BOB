@@ -3,7 +3,7 @@ import {
   requiredField,
   minLength,
   maxLength,
-  emailFormat
+  emailFormat,
 } from "./common-validations";
 
 /**
@@ -11,9 +11,7 @@ import {
  */
 const normalizeString = (str = "") => String(str).trim().toLowerCase();
 
-const onlyAlphabetsAndSpaces = (value) =>
-  /^[A-Za-z\s]+$/.test(value);
-
+const onlyAlphabetsAndSpaces = (value) => /^[A-Za-z\s]+$/.test(value);
 
 /* =========================
    FIELD VALIDATIONS
@@ -50,8 +48,6 @@ export const validateUserEmail = (email) => {
   return null;
 };
 
-
-
 export const validateUserPassword = (password, isRequired = true) => {
   if (!isRequired && !password) return null;
 
@@ -68,8 +64,7 @@ export const validatePasswordConfirmation = (confirmPassword, password) => {
   let error = requiredField(password, i18n.t("validation:password"));
   if (error) return error;
 
-  if (!confirmPassword)
-    return i18n.t("validation:confirm_password_required");
+  if (!confirmPassword) return i18n.t("validation:confirm_password_required");
 
   if (confirmPassword !== password)
     return i18n.t("validation:passwords_not_match");
@@ -83,10 +78,10 @@ export const validatePasswordConfirmation = (confirmPassword, password) => {
 
 export const validateUserForm = (formData = {}, options = {}) => {
   const {
-   // requirePassword = true,
+    // requirePassword = true,
     existing = [],
     currentId = null,
-    skipEmailCheck = false
+    skipEmailCheck = false,
   } = options;
 
   const errors = {};
@@ -104,25 +99,23 @@ export const validateUserForm = (formData = {}, options = {}) => {
 
   // Email
   if (!skipEmailCheck) {
-  const emailError = validateUserEmail(formData.email);
-  if (emailError) {
-    errors.email = emailError;
-  } else {
-    const emailNorm = normalizeString(formData.email);
-    const duplicateEmail = existing.find(
-      (user) =>
-        user.email &&
-        normalizeString(user.email) === emailNorm &&
-        user.userId !== currentId
-    );
+    const emailError = validateUserEmail(formData.email);
+    if (emailError) {
+      errors.email = emailError;
+    } else {
+      const emailNorm = normalizeString(formData.email);
+      const duplicateEmail = existing.find(
+        (user) =>
+          user.email &&
+          normalizeString(user.email) === emailNorm &&
+          user.userId !== currentId
+      );
 
-    if (duplicateEmail) {
-      errors.email = i18n.t("validation:email_exists");
+      if (duplicateEmail) {
+        errors.email = i18n.t("validation:email_exists");
+      }
     }
   }
-}
-
-
 
   // Password + confirm password
   // if (requirePassword || formData.password) {
@@ -157,16 +150,16 @@ export const validateUserForm = (formData = {}, options = {}) => {
 
   return {
     valid: Object.keys(errors).length === 0,
-    errors
+    errors,
   };
 };
-
 
 // utils/getDefaultRoute.js
 export const getDefaultRoute = (privileges = {}) => {
   if (privileges.Admin) return "/users";
   if (privileges.JobPostings) return "/job-posting";
-  if (privileges["Candidate Pool"] || privileges["Compensation Pool"]) return "/candidate-workflow";
+  if (privileges["Candidate Pool"] || privileges["Compensation Pool"])
+    return "/candidate-workflow";
   if (privileges.Verification) return "/candidate-verification";
   if (privileges.Interview) return "/candidate-interviewer";
   if (privileges["Committee Management"]) return "/interviewpanel";
@@ -175,7 +168,6 @@ export const getDefaultRoute = (privileges = {}) => {
   return "/unauthorized";
 };
 
-
 const userValidations = {
   validateUserRole,
   validateFullName,
@@ -183,6 +175,6 @@ const userValidations = {
   validateUserPassword,
   validatePasswordConfirmation,
   validateUserForm,
-  getDefaultRoute
+  getDefaultRoute,
 };
 export default userValidations;

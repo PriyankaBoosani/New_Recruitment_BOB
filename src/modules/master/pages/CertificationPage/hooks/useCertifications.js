@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import masterApiService from "../../../services/masterApiService";
-import { mapCertificationsFromApi, mapCertificationFromApi, mapCertificationToApi } from "../mappers/certificationMapper";
+import {
+  mapCertificationsFromApi,
+  mapCertificationFromApi,
+  mapCertificationToApi,
+} from "../mappers/certificationMapper";
 
 export const useCertifications = () => {
   const { t } = useTranslation(["certification"]);
@@ -15,9 +19,7 @@ export const useCertifications = () => {
   const fetchCertifications = async () => {
     try {
       const res = await masterApiService.getAllCertificates();
-      const list = Array.isArray(res.data)
-        ? res.data
-        : res.data?.data || [];
+      const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
 
       const mapped = mapCertificationsFromApi(list);
       setCertifications(mapped);
@@ -42,11 +44,9 @@ export const useCertifications = () => {
       toast.success(t("add_success"));
 
       //  add instantly on top
-      setCertifications(prev => [newItem, ...prev]);
+      setCertifications((prev) => [newItem, ...prev]);
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || t("add_error")
-      );
+      toast.error(error?.response?.data?.message || t("add_error"));
     }
   };
 
@@ -63,17 +63,13 @@ export const useCertifications = () => {
       toast.success(t("update_success"));
 
       //  update in place
-      setCertifications(prev =>
-        prev.map(c =>
-          String(c.id) === String(id)
-            ? { ...c, ...updatedItem }
-            : c
+      setCertifications((prev) =>
+        prev.map((c) =>
+          String(c.id) === String(id) ? { ...c, ...updatedItem } : c
         )
       );
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || t("update_error")
-      );
+      toast.error(error?.response?.data?.message || t("update_error"));
     }
   };
 
@@ -85,13 +81,11 @@ export const useCertifications = () => {
       toast.success(t("delete_success"));
 
       //  remove instantly
-      setCertifications(prev =>
-        prev.filter(c => String(c.id) !== String(id))
+      setCertifications((prev) =>
+        prev.filter((c) => String(c.id) !== String(id))
       );
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || t("delete_error")
-      );
+      toast.error(error?.response?.data?.message || t("delete_error"));
     }
   };
 
@@ -101,7 +95,7 @@ export const useCertifications = () => {
       const res = await masterApiService.downloadCertificatesTemplate();
 
       const blob = new Blob([res.data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
 
       const url = window.URL.createObjectURL(blob);
@@ -111,9 +105,7 @@ export const useCertifications = () => {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      toast.error(
-        t("download_error") || "Download failed"
-      );
+      toast.error(t("download_error") || "Download failed");
     }
   };
 
@@ -129,7 +121,7 @@ export const useCertifications = () => {
         return {
           success: false,
           error: res.message,
-          details: res.data || []
+          details: res.data || [],
         };
       }
 
@@ -138,13 +130,12 @@ export const useCertifications = () => {
 
       return { success: true };
     } catch (err) {
-
       const message = t("bulk_error") || "Something went wrong";
       toast.error(message);
 
       return {
         success: false,
-        error: message
+        error: message,
       };
     } finally {
       setLoading(false);
@@ -159,50 +150,9 @@ export const useCertifications = () => {
     updateCertification,
     deleteCertification,
     bulkAddCertifications,
-    downloadCertificationTemplate
+    downloadCertificationTemplate,
   };
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import { useEffect, useState } from "react";
 // import { toast } from "react-toastify";

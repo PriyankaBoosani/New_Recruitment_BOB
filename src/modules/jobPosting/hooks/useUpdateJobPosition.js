@@ -12,7 +12,7 @@ export const useUpdateJobPosition = () => {
       // 🔥 SAFETY: ensure formData always exists
       const safePayload = {
         ...payload,
-        formData: payload.formData || {}
+        formData: payload.formData || {},
       };
 
       if (!payload.educationData || !payload.educationData.mandatory) {
@@ -46,7 +46,7 @@ export const useUpdateJobPosition = () => {
           requisitionId: payload.parentRequisitionId,
           parentPositionId: payload.existingPosition.parentPositionId,
           dto,
-          indentFile: payload.indentFile   // 🔥 REQUIRED
+          indentFile: payload.indentFile, // 🔥 REQUIRED
         });
       }
 
@@ -56,7 +56,7 @@ export const useUpdateJobPosition = () => {
       else {
         res = await jobPositionApiService.updatePosition({
           dto,
-          indentFile: payload.indentFile
+          indentFile: payload.indentFile,
         });
       }
 
@@ -66,7 +66,6 @@ export const useUpdateJobPosition = () => {
       }
 
       return res.data;
-
     } catch (err) {
       console.error("Update position failed", err);
       throw err;

@@ -14,11 +14,11 @@ const CertificationTable = ({
   currentPage,
   setCurrentPage,
   itemsPerPage,
-  setItemsPerPage
+  setItemsPerPage,
 }) => {
   const { t } = useTranslation(["certification"]);
   /* ---------- FILTER ---------- */
-  const filteredCerts = data.filter(cert => {
+  const filteredCerts = data.filter((cert) => {
     const term = (searchTerm || "").toLowerCase().trim();
     if (!term) return true;
 
@@ -58,7 +58,7 @@ const CertificationTable = ({
     return {
       pages,
       showStartEllipsis: start > 1,
-      showEndEllipsis: end <= totalPages
+      showEndEllipsis: end <= totalPages,
     };
   };
   return (
@@ -80,13 +80,9 @@ const CertificationTable = ({
                 <tr key={cert.id}>
                   <td>{indexOfFirst + idx + 1}</td>
 
-                  <td data-label="Name:">
-                    &nbsp;{cert.name}
-                  </td>
+                  <td data-label="Name:">&nbsp;{cert.name}</td>
 
-                  <td data-label="Description:">
-                    &nbsp;{cert.description}
-                  </td>
+                  <td data-label="Description:">&nbsp;{cert.description}</td>
 
                   <td>
                     <div className="action-buttons">
@@ -114,7 +110,11 @@ const CertificationTable = ({
                         title="Delete"
                         onClick={() => onDelete(cert)}
                       >
-                        <img src={deleteIcon} alt="Delete" className="icon-16" />
+                        <img
+                          src={deleteIcon}
+                          alt="Delete"
+                          className="icon-16"
+                        />
                       </Button>
                     </div>
                   </td>
@@ -134,7 +134,6 @@ const CertificationTable = ({
       {/* DROPDOWN LEFT + PAGINATION RIGHT */}
       {filteredCerts.length > 0 && (
         <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
-
           {/* Page size */}
           <div className="d-flex align-items-center gap-2 user-actions">
             <span
@@ -153,8 +152,10 @@ const CertificationTable = ({
                 setCurrentPage(1);
               }}
             >
-              {[5, 10, 15, 20, 25, 30].map(n => (
-                <option key={n} value={n}>{n}</option>
+              {[5, 10, 15, 20, 25, 30].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
               ))}
             </select>
           </div>
@@ -172,11 +173,8 @@ const CertificationTable = ({
             </li>
 
             {(() => {
-              const {
-                pages,
-                showStartEllipsis,
-                showEndEllipsis
-              } = getVisiblePages(currentPage, totalPages);
+              const { pages, showStartEllipsis, showEndEllipsis } =
+                getVisiblePages(currentPage, totalPages);
 
               return (
                 <>
@@ -188,7 +186,7 @@ const CertificationTable = ({
                   )}
 
                   {/* Page numbers */}
-                  {pages.map(number => (
+                  {pages.map((number) => (
                     <li
                       key={number}
                       className={`page-item ${currentPage === number ? "active" : ""}`}
@@ -213,8 +211,9 @@ const CertificationTable = ({
             })()}
 
             <li
-              className={`page-item ${currentPage === totalPages ? "disabled" : ""
-                }`}
+              className={`page-item ${
+                currentPage === totalPages ? "disabled" : ""
+              }`}
             >
               <button
                 className="page-link"
@@ -225,10 +224,8 @@ const CertificationTable = ({
               </button>
             </li>
           </ul>
-
         </div>
       )}
-
     </>
   );
 };

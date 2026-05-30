@@ -42,10 +42,7 @@ export const validateCertificationForm = (formData = {}, options = {}) => {
     const duplicateName = existing.find((c) => {
       if (!c?.name) return false;
 
-      if (
-        currentId != null &&
-        String(c.id) === String(currentId)
-      ) {
+      if (currentId != null && String(c.id) === String(currentId)) {
         return false;
       }
 
@@ -59,7 +56,7 @@ export const validateCertificationForm = (formData = {}, options = {}) => {
 
   return {
     valid: Object.keys(errors).length === 0,
-    errors
+    errors,
   };
 };
 
@@ -69,7 +66,7 @@ export const validateCertificationForm = (formData = {}, options = {}) => {
 const certificationValidations = {
   validateCertificationForm,
   validateCertificationName,
-  validateCertificationDescription
+  validateCertificationDescription,
 };
 
 export default certificationValidations;

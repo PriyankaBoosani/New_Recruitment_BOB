@@ -1,4 +1,4 @@
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
   const { t } = useTranslation(["position"]);
@@ -26,11 +26,9 @@ const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
       <Modal.Footer>
         <Button variant="outline-secondary" onClick={onHide}>
           {t("documents:cancel")}
-
         </Button>
         <Button variant="danger" onClick={onConfirm}>
           {t("documents:delete")}
-
         </Button>
       </Modal.Footer>
     </Modal>

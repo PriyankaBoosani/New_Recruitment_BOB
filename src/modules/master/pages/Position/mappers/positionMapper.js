@@ -14,7 +14,7 @@ export const mapPositionFromApi = (api) => ({
   eligibilityAgeMin: api.eligibilityAgeMin || "",
   eligibilityAgeMax: api.eligibilityAgeMax || "",
   code: api.positionCode,
-  isActive: api.isActive
+  isActive: api.isActive,
 });
 
 /* =========================  LIST ========================= */
@@ -38,5 +38,5 @@ export const mapPositionToApi = (ui, isEditing = false) => ({
   preferredExperience: cleanData(ui.preferredExperience),
   rolesResponsibilities: cleanData(ui.rolesResponsibilities),
   eligibilityAgeMin: cleanData(ui.eligibilityAgeMin),
-  eligibilityAgeMax: cleanData(ui.eligibilityAgeMax)
+  eligibilityAgeMax: cleanData(ui.eligibilityAgeMax),
 });

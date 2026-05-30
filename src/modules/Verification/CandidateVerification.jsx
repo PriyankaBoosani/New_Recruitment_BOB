@@ -14,15 +14,9 @@ import CandidateVerificationService from "./services/CandidateVerification";
 // import { DUMMY_DATA } from "./components/mockData";
 import { mapCandidatesToTableRows } from "./mappers/CandidateVerificationMapper";
 import { useLocation } from "react-router-dom";
-import PdfViewerModal from "../candidatePreview/components/PdfViewerModal"
+import PdfViewerModal from "../candidatePreview/components/PdfViewerModal";
 import { useTranslation } from "react-i18next";
 import { FiCalendar } from "react-icons/fi";
-
-
-
-
-
-
 
 /* ================= STATUS MAP ================= */
 
@@ -34,7 +28,6 @@ const STAGE_STATUS_MAP = {
   ZONAL_ABSENT: "Zonal Absent",
   ZONAL_REJECTED: "Zonal Rejected",
 };
-
 
 /* ================= DATE PILL ================= */
 
@@ -59,11 +52,9 @@ export default function CandidateVerification() {
   const [allCandidatesRaw, setAllCandidatesRaw] = useState([]);
   const [originalAbsentMap, setOriginalAbsentMap] = useState({});
 
-
   const [usedNavData, setUsedNavData] = useState(false);
 
   const navInitRef = useRef(true);
-
 
   const location = useLocation();
   const isBackNavigationRef = useRef(
@@ -90,25 +81,18 @@ export default function CandidateVerification() {
       sessionStorage.removeItem("fromPreviewBack");
       isBackNavigationRef.current = false;
     }, 50);
-
   }, [location.state]);
 
-  const cameFromZonal =
-    sessionStorage.getItem("fromZonalSubmit") === "true";
+  const cameFromZonal = sessionStorage.getItem("fromZonalSubmit") === "true";
 
   const cameFromPreviewBack =
     sessionStorage.getItem("fromPreviewBack") === "true";
-
 
   const [pdfUrl, setPdfUrl] = useState(null);
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [loadingPdf, setLoadingPdf] = useState(false);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-
-
-
-
 
   const handleViewFile = async (candidateRaw) => {
     if (!candidateRaw?.resumeUrl) {
@@ -130,7 +114,6 @@ export default function CandidateVerification() {
 
       setPdfUrl(sasUrl);
       setShowPdfViewer(true);
-
     } catch (err) {
       console.error(err);
       toast.error(t("verification:failed_open_document"));
@@ -139,29 +122,20 @@ export default function CandidateVerification() {
     }
   };
 
-
   const navSelectedDate =
-    (cameFromZonal || cameFromPreviewBack) &&
-      location.state?.selectedDate
+    (cameFromZonal || cameFromPreviewBack) && location.state?.selectedDate
       ? new Date(location.state.selectedDate)
       : null;
 
+  const [selectedDate, setSelectedDate] = useState(
+    navSelectedDate || new Date()
+  );
 
-
-  const [selectedDate, setSelectedDate] =
-    useState(navSelectedDate || new Date());
-
-
-  useEffect(() => {
-  }, [selectedDate]);
-
-
-
+  useEffect(() => {}, [selectedDate]);
 
   // const navCandidates = location.state?.preloadedCandidates || [];
   const navRequisition = location.state?.requisition || null;
   const navPosition = location.state?.position || null;
-
 
   /* ================= LOAD MASTER ================= */
 
@@ -179,7 +153,6 @@ export default function CandidateVerification() {
   }, []);
 
   const isBackNavigation = isBackNavigationRef.current;
-
 
   // useEffect(() => {
   //   // When selection becomes empty → reset page
@@ -200,10 +173,9 @@ export default function CandidateVerification() {
 
   const loadCandidates = async (dateParam = selectedDate) => {
     try {
-      const res =
-        await CandidateVerificationService.getCandidatesByDate(
-          formatApiDate(dateParam)
-        );
+      const res = await CandidateVerificationService.getCandidatesByDate(
+        formatApiDate(dateParam)
+      );
 
       const apiList = res.data || [];
 
@@ -218,7 +190,7 @@ export default function CandidateVerification() {
       setAllCandidates(rows);
 
       const map = {};
-      rows.forEach(r => {
+      rows.forEach((r) => {
         map[r.id] = r.absent;
       });
       setOriginalAbsentMap(map);
@@ -231,7 +203,6 @@ export default function CandidateVerification() {
         !usedNavData &&
         location.state?.preloadedCandidates?.length
       ) {
-
         if (location.state?.requisition)
           setSelectedRequisition(location.state.requisition);
 
@@ -243,7 +214,6 @@ export default function CandidateVerification() {
         sessionStorage.removeItem("fromZonalSubmit");
         sessionStorage.removeItem("fromPreviewBack");
       }
-
     } catch (err) {
       setAllCandidatesRaw([]);
       setAllCandidates([]);
@@ -251,15 +221,10 @@ export default function CandidateVerification() {
     }
   };
 
-
-
-
-  useEffect(() => {
-  }, [allCandidatesRaw]);
+  useEffect(() => {}, [allCandidatesRaw]);
 
   const hasNavCandidates = !!location.state?.preloadedCandidates?.length;
   const navCandidates = location.state?.preloadedCandidates || [];
-
 
   useEffect(() => {
     // restore selection from nav
@@ -269,13 +234,12 @@ export default function CandidateVerification() {
       navCandidates.length &&
       navInitRef.current
     ) {
-
       setAllCandidatesRaw(navCandidates);
       const rows = mapCandidatesToTableRows(navCandidates);
       setAllCandidates(rows);
 
       const map = {};
-      rows.forEach(r => {
+      rows.forEach((r) => {
         map[r.id] = r.absent;
       });
       setOriginalAbsentMap(map);
@@ -291,18 +255,13 @@ export default function CandidateVerification() {
 
     //  ALWAYS call API
     loadCandidates(selectedDate);
-
   }, [selectedDate]);
 
-  useEffect(() => {
-  }, [selectedRequisition]);
+  useEffect(() => {}, [selectedRequisition]);
+
+  useEffect(() => {}, [selectedPosition]);
 
   useEffect(() => {
-  }, [selectedPosition]);
-
-
-  useEffect(() => {
-
     // First render after navigation → keep auto-populated selection
     if (navInitRef.current) {
       navInitRef.current = false;
@@ -313,15 +272,7 @@ export default function CandidateVerification() {
     setSelectedRequisition(null);
     setSelectedPosition(null);
     setActiveStage(null);
-
   }, [selectedDate]);
-
-
-
-
-
-
-
 
   /* ================= LOAD DUMMY → TABLE MAP ================= */
 
@@ -331,11 +282,7 @@ export default function CandidateVerification() {
 
   /* ================= FILTER ================= */
 
-
-
-
-  const baseFiltered = allCandidates.filter(c => {
-
+  const baseFiltered = allCandidates.filter((c) => {
     if (!selectedRequisition || !selectedPosition) return false;
 
     const selectedReqId =
@@ -350,11 +297,9 @@ export default function CandidateVerification() {
       selectedPosition?.value ||
       null;
 
-    const reqMatch =
-      c.raw.requisitionId === selectedReqId;
+    const reqMatch = c.raw.requisitionId === selectedReqId;
 
-    const posMatch =
-      c.raw.positionId === selectedPosId;
+    const posMatch = c.raw.positionId === selectedPosId;
 
     const searchMatch =
       c.name?.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -363,31 +308,9 @@ export default function CandidateVerification() {
     return reqMatch && posMatch && searchMatch;
   });
 
-
-
-
-
-
-
-
-
-  const filteredCandidates = baseFiltered.filter(c =>
-    activeStage
-      ? c.status === STAGE_STATUS_MAP[activeStage]
-      : true
+  const filteredCandidates = baseFiltered.filter((c) =>
+    activeStage ? c.status === STAGE_STATUS_MAP[activeStage] : true
   );
-
-
-
-
-
-
-
-
-
-
-
-
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -395,12 +318,8 @@ export default function CandidateVerification() {
 
   const totalPages = Math.ceil(totalElements / pageSize);
 
- 
-
   const shouldPreservePage =
-    cameFromZonal ||
-    cameFromPreviewBack ||
-    location.state?.page !== undefined;
+    cameFromZonal || cameFromPreviewBack || location.state?.page !== undefined;
 
   useEffect(() => {
     if (shouldPreservePage) return;
@@ -410,48 +329,33 @@ export default function CandidateVerification() {
     }
   }, [totalPages, page, shouldPreservePage]);
 
-
   const startIndex = page * pageSize;
   const endIndex = startIndex + pageSize;
 
-  const paginatedCandidates = filteredCandidates.slice(
-    startIndex,
-    endIndex
-  );
-
-
+  const paginatedCandidates = filteredCandidates.slice(startIndex, endIndex);
 
   /* ================= STAGE COUNTS ================= */
 
   const stageCounts = Object.keys(STAGE_STATUS_MAP).reduce((acc, key) => {
     acc[key] = baseFiltered.filter(
-      c => c.status === STAGE_STATUS_MAP[key]
+      (c) => c.status === STAGE_STATUS_MAP[key]
     ).length;
     return acc;
   }, {});
 
-
   /* ================= ABSENT TOGGLE ================= */
 
   const toggleAbsent = (id) => {
-    setAllCandidates(prev =>
-      prev.map(c =>
-        c.id === id ? { ...c, absent: !c.absent } : c
-      )
+    setAllCandidates((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, absent: !c.absent } : c))
     );
   };
 
   const anyAbsentChanged = baseFiltered.some(
-    c => originalAbsentMap[c.id] !== c.absent
+    (c) => originalAbsentMap[c.id] !== c.absent
   );
 
-
-
-
-
-  const isSelectionDone =
-    selectedRequisition && selectedPosition;
-
+  const isSelectionDone = selectedRequisition && selectedPosition;
 
   // const handleSaveAbsent = async () => {
   //   try {
@@ -476,16 +380,13 @@ export default function CandidateVerification() {
   //   }
   // };
 
-
-
   const handleSaveAbsent = async () => {
     try {
-
       const updates = filteredCandidates
-        .filter(c => originalAbsentMap[c.id] !== c.absent)
-        .map(c => ({
+        .filter((c) => originalAbsentMap[c.id] !== c.absent)
+        .map((c) => ({
           applicationId: c.raw.applicationId,
-          isAbsent: c.absent
+          isAbsent: c.absent,
         }));
 
       if (updates.length === 0) {
@@ -494,26 +395,19 @@ export default function CandidateVerification() {
       }
 
       const payload = {
-        absentStatusUpdates: updates
+        absentStatusUpdates: updates,
       };
-
 
       await CandidateVerificationService.updateAbsentStatusBatch(payload);
 
       await loadCandidates(selectedDate); // refresh table
 
       toast.success(t("verification:absent_status_updated"));
-
     } catch (err) {
       console.error("Absent batch update failed", err);
       toast.error(t("verification:save_failed"));
     }
   };
-
-
-
-
-
 
   useEffect(() => {
     const loadMasters = async () => {
@@ -529,8 +423,6 @@ export default function CandidateVerification() {
     loadMasters();
   }, []);
 
-
-
   const DatePill = React.forwardRef(({ value, onClick }, ref) => (
     <div className="date-pill" onClick={onClick} ref={ref}>
       {value}
@@ -540,24 +432,20 @@ export default function CandidateVerification() {
     </div>
   ));
 
-
-
   /* ================= UI ================= */
 
   return (
     <div className="container-fluid px-4 py-3 candidate-verification-page">
-
       {/* ================= DATE + SEARCH ================= */}
 
       <div className="verification-toolbar">
         <div className="date-nav">
-
           <span
             className="nav-arrow"
-            onClick={() =>
-              setSelectedDate(d => subDays(d, 1))
-            }
-          >‹</span>
+            onClick={() => setSelectedDate((d) => subDays(d, 1))}
+          >
+            ‹
+          </span>
 
           <DatePicker
             selected={selectedDate}
@@ -576,7 +464,6 @@ export default function CandidateVerification() {
             customInput={<DatePill />}
             // maxDate={new Date()}
 
-
             showMonthDropdown
             showYearDropdown
             dropdownMode="select"
@@ -584,16 +471,15 @@ export default function CandidateVerification() {
             scrollableYearDropdown
           />
 
-
-
           <span
             className="nav-arrow"
             onClick={() => {
               const next = addDays(selectedDate, 1);
               if (next <= new Date()) setSelectedDate(next);
             }}
-          >›</span>
-
+          >
+            ›
+          </span>
         </div>
 
         <div className="search-box">
@@ -609,7 +495,6 @@ export default function CandidateVerification() {
       {/* ================= STAGE FILTER ================= */}
 
       <div className="stage-filter-row d-flex align-items-center gap-3">
-
         <span className="fs-14 text-muted">
           {t("verification:filter_by_stage")}:
         </span>
@@ -626,23 +511,18 @@ export default function CandidateVerification() {
           <select
             className="form-select form-select-sm"
             value={activeStage || ""}
-            onChange={(e) =>
-              setActiveStage(e.target.value || null)
-            }
+            onChange={(e) => setActiveStage(e.target.value || null)}
           >
             <option value="">{t("verification:all_statuses")}</option>
 
-            {Object.keys(STAGE_STATUS_MAP).map(key => (
+            {Object.keys(STAGE_STATUS_MAP).map((key) => (
               <option key={key} value={key}>
                 {STAGE_STATUS_MAP[key]}
               </option>
             ))}
           </select>
         </div>
-
       </div>
-
-
 
       {/* ================= SELECTORS ================= */}
 
@@ -653,7 +533,7 @@ export default function CandidateVerification() {
           selectedPositionRaw={selectedPosition}
           onRequisitionChange={(req) => {
             setSelectedRequisition(req);
-            setSelectedPosition(null);   //  reset position when req changes
+            setSelectedPosition(null); //  reset position when req changes
             if (!isBackNavigationRef.current) {
               setPage(0);
             }
@@ -667,11 +547,6 @@ export default function CandidateVerification() {
           }}
           closeCalendar={() => setIsCalendarOpen(false)}
         />
-
-
-
-
-
       </div>
 
       {/* ================= STRIP ================= */}
@@ -686,7 +561,6 @@ export default function CandidateVerification() {
             onSave={handleSaveAbsent}
             isSaveBtn={true}
           />
-
         </div>
       )}
 
@@ -712,7 +586,6 @@ export default function CandidateVerification() {
         activeStage={activeStage}
       />
 
-
       <PdfViewerModal
         show={showPdfViewer}
         onHide={() => {
@@ -723,9 +596,6 @@ export default function CandidateVerification() {
         loading={loadingPdf}
         title={t("verification:candidate_resume")}
       />
-
-
     </div>
-
   );
 }

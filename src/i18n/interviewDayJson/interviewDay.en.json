@@ -24,7 +24,7 @@
   "saved_candidates": "Saved {{count}} candidate(s)",
   "save_failed": "Save failed",
   "candidate_resume": "Candidate Resume",
-   "upload_interview_data": "Upload Interview Data",
+  "upload_interview_data": "Upload Interview Data",
   "support_xlsx": "Supports XLSX file format",
   "upload_xlsx": "Upload XLSX",
   "reupload_xlsx": "Re-upload XLSX",

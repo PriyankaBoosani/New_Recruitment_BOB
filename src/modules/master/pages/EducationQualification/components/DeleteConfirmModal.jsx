@@ -2,14 +2,7 @@ import React from "react";
 import { Modal, Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
-const DeleteConfirmModal = ({
-  show,
-  onHide,
-  onConfirm,
-  target
-}) => {
-
-  
+const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
   const { t } = useTranslation(["education", "common"]);
 
   return (
@@ -21,21 +14,19 @@ const DeleteConfirmModal = ({
       keyboard={false}
       dialogClassName="delete-confirm-modal"
     >
-
       {/* HEADER */}
       <Modal.Header closeButton>
-        <Modal.Title>
-          {t("education:delete_title")}
-        </Modal.Title>
+        <Modal.Title>{t("education:delete_title")}</Modal.Title>
       </Modal.Header>
 
       {/* BODY */}
       <Modal.Body>
         <p>
           {target
-            ? t("education:delete_message_with_name", { name: target?.educationLevel })
-            : t("education:delete_message")
-          }
+            ? t("education:delete_message_with_name", {
+                name: target?.educationLevel,
+              })
+            : t("education:delete_message")}
         </p>
 
         {target && (
@@ -57,7 +48,6 @@ const DeleteConfirmModal = ({
           {t("common:delete")}
         </Button>
       </Modal.Footer>
-
     </Modal>
   );
 };

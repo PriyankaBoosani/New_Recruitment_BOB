@@ -10,20 +10,19 @@ export const usePositions = () => {
 
   const buildDeptMap = (departments = []) => {
     const map = {};
-    departments.forEach(d => {
-      map[d.departmentId] = d.departmentName;  // ✅ FIXED
+    departments.forEach((d) => {
+      map[d.departmentId] = d.departmentName; // ✅ FIXED
     });
     return map;
   };
 
   const buildJobGradeMap = (jobGrades = []) => {
     const map = {};
-    jobGrades.forEach(jg => {
+    jobGrades.forEach((jg) => {
       map[jg.jobGradeId] = jg.jobGradeCode; //  what you want to display
     });
     return map;
   };
-
 
   const fetchPositions = async () => {
     setLoading(true);
@@ -48,10 +47,10 @@ export const usePositions = () => {
       const deptMap = buildDeptMap(deptApiData);
 
       //  Enrich positions
-      const enrichedPositions = mappedPositions.map(p => ({
+      const enrichedPositions = mappedPositions.map((p) => ({
         ...p,
         department: deptMap[p.departmentId] || "—",
-        jobGrade: jobGradeMap[p.jobGradeId] || "—"
+        jobGrade: jobGradeMap[p.jobGradeId] || "—",
       }));
 
       setPositions(enrichedPositions);
@@ -112,7 +111,6 @@ export const usePositions = () => {
     try {
       const res = await masterApiService.bulkAddPositions(file);
 
-
       //  business failure
       if (res.success === false) {
         toast.error(res.message);
@@ -120,7 +118,7 @@ export const usePositions = () => {
         return {
           success: false,
           message: res.message, //   summary
-          data: res.data        //  row-wise errors
+          data: res.data, //  row-wise errors
         };
       }
 
@@ -129,9 +127,8 @@ export const usePositions = () => {
       toast.success(res.message || "File uploaded successfully");
 
       return {
-        success: true
+        success: true,
       };
-
     } catch (err) {
       //  network / server error
       const message = "Something went wrong";
@@ -139,9 +136,8 @@ export const usePositions = () => {
 
       return {
         success: false,
-        error: message
+        error: message,
       };
-
     } finally {
       setLoading(false);
     }

@@ -1,4 +1,4 @@
-import '../../../style/css/Login.css';
+import "../../../style/css/Login.css";
 import pana from "../../../assets/pana.png";
 import BobLogo from "../../../assets/bob-logo1.jpg";
 import { useMsal } from "@azure/msal-react";

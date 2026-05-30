@@ -25,7 +25,7 @@ export const useJobPositionById = (positionId, options = {}) => {
         const list = draftRes?.data || [];
 
         const match = list.find(
-          p => String(p.positionId || p.id) === String(positionId)
+          (p) => String(p.positionId || p.id) === String(positionId)
         );
 
         res = { data: match };

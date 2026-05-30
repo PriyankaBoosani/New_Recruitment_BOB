@@ -7,7 +7,6 @@ export const mapInterviewCandidates = (
     const schedule = item.interviewSchedules || {};
 
     return {
-
       candidateId: schedule.candidateId,
       applicationId: schedule.applicationId,
       positionId: item?.application?.positionId,
@@ -18,24 +17,23 @@ export const mapInterviewCandidates = (
 
       date: schedule.interviewStartAt
         ? (() => {
-          const d = new Date(schedule.interviewStartAt);
-          const day = String(d.getDate()).padStart(2, "0");
-          const month = String(d.getMonth() + 1).padStart(2, "0");
-          const year = d.getFullYear();
-          return `${day}-${month}-${year}`;
-        })()
+            const d = new Date(schedule.interviewStartAt);
+            const day = String(d.getDate()).padStart(2, "0");
+            const month = String(d.getMonth() + 1).padStart(2, "0");
+            const year = d.getFullYear();
+            return `${day}-${month}-${year}`;
+          })()
         : "-",
-
 
       time:
         schedule.interviewStartAt && schedule.interviewEndAt
           ? `${new Date(schedule.interviewStartAt)
-            .toLocaleTimeString("en-US", {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            })
-            .toUpperCase()} - ${new Date(schedule.interviewEndAt)
+              .toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })
+              .toUpperCase()} - ${new Date(schedule.interviewEndAt)
               .toLocaleTimeString("en-US", {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -44,12 +42,9 @@ export const mapInterviewCandidates = (
               .toUpperCase()}`
           : "-",
 
-      zone:
-        centreMap[schedule.zonalOfficeId] || "Unknown Centre",
+      zone: centreMap[schedule.zonalOfficeId] || "Unknown Centre",
 
-      panel:
-        panelMap[schedule.panelId] || "Unknown Panel",
-
+      panel: panelMap[schedule.panelId] || "Unknown Panel",
 
       status: schedule.interviewStatus || "SCHEDULED",
 
@@ -64,9 +59,6 @@ export const mapInterviewCandidates = (
       zonalOfficeId: schedule.zonalOfficeId,
       zonalVerificationStatus: schedule.zonalVerificationStatus,
       zonalSubmitBeforeDate: schedule.zonalSubmitBeforeDate,
-
-
-
     };
   });
 };

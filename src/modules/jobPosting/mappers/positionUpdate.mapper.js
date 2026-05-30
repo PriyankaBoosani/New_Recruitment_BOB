@@ -35,7 +35,6 @@
 //   ];
 // };
 
-
 const buildCategoryDistributionsForUpdate = (
   sd,
   reservationCategories,
@@ -44,38 +43,37 @@ const buildCategoryDistributionsForUpdate = (
   const result = [];
 
   // 1️ Existing backend categories → UPDATE
-  sd.categoryDistributions?.forEach(existing => {
+  sd.categoryDistributions?.forEach((existing) => {
     let newCount = 0;
 
     if (!existing.isDisability) {
       const cat = reservationCategories.find(
-        c => c.id === existing.reservationCategoryId
+        (c) => c.id === existing.reservationCategoryId
       );
       newCount = Number(sd.categories?.[cat?.code] || 0);
     } else {
       const dis = disabilityCategories.find(
-        d => d.id === existing.disabilityCategoryId
+        (d) => d.id === existing.disabilityCategoryId
       );
       newCount = Number(sd.disabilities?.[dis?.disabilityCode] || 0);
     }
 
     if (newCount > 0) {
       result.push({
-        positionCategoryDistributionId:
-          existing.positionCategoryDistributionId, // 🔑 KEEP ID
+        positionCategoryDistributionId: existing.positionCategoryDistributionId, // 🔑 KEEP ID
         reservationCategoryId: existing.reservationCategoryId,
         disabilityCategoryId: existing.disabilityCategoryId,
         vacancyCount: newCount,
-        isDisability: existing.isDisability
+        isDisability: existing.isDisability,
       });
     }
     // newCount === 0 → removed → don't send
   });
 
   // 2️ Newly added categories → CREATE
-  reservationCategories.forEach(cat => {
+  reservationCategories.forEach((cat) => {
     const alreadyExists = sd.categoryDistributions?.some(
-      x => x.reservationCategoryId === cat.id && !x.isDisability
+      (x) => x.reservationCategoryId === cat.id && !x.isDisability
     );
     if (!alreadyExists) {
       const count = Number(sd.categories?.[cat.code] || 0);
@@ -84,15 +82,15 @@ const buildCategoryDistributionsForUpdate = (
           positionCategoryDistributionId: null,
           reservationCategoryId: cat.id,
           vacancyCount: count,
-          isDisability: false
+          isDisability: false,
         });
       }
     }
   });
 
-  disabilityCategories.forEach(dis => {
+  disabilityCategories.forEach((dis) => {
     const alreadyExists = sd.categoryDistributions?.some(
-      x => x.disabilityCategoryId === dis.id && x.isDisability
+      (x) => x.disabilityCategoryId === dis.id && x.isDisability
     );
     if (!alreadyExists) {
       const count = Number(sd.disabilities?.[dis.disabilityCode] || 0);
@@ -101,7 +99,7 @@ const buildCategoryDistributionsForUpdate = (
           positionCategoryDistributionId: null,
           disabilityCategoryId: dis.id,
           vacancyCount: count,
-          isDisability: true
+          isDisability: true,
         });
       }
     }
@@ -113,31 +111,31 @@ const buildCategoryDistributionsForUpdate = (
 const buildEduRulesJson = (edu, mode) => {
   if (!edu) {
     return mode === "mandatory"
-      ? { 
+      ? {
           mandatoryEducations: { operator: "OR", groups: [] },
-          mandatoryCertifications: { operator: "OR", groups: [] }
+          mandatoryCertifications: { operator: "OR", groups: [] },
         }
-      : { 
+      : {
           preferredEducations: { operator: "OR", groups: [] },
-          preferredCertifications: { operator: "OR", groups: [] }
+          preferredCertifications: { operator: "OR", groups: [] },
         };
   }
 
   // Process education groups with OR/AND operators
   const educationGroups = [];
   if (edu.groups && Array.isArray(edu.groups)) {
-    edu.groups.forEach(group => {
+    edu.groups.forEach((group) => {
       const conditions = [];
-      
+
       if (group.educations && Array.isArray(group.educations)) {
-        group.educations.forEach(edu => {
+        group.educations.forEach((edu) => {
           if (edu.educationTypeId && edu.educationQualificationsId) {
             conditions.push({
               educationType: edu.educationTypeId,
               qualification: edu.educationQualificationsId,
               specialization: edu.specializationId || "",
               duration: edu.duration || "",
-              percentage: edu.percentage || ""
+              percentage: edu.percentage || "",
             });
           }
         });
@@ -146,7 +144,7 @@ const buildEduRulesJson = (edu, mode) => {
       if (conditions.length > 0) {
         educationGroups.push({
           operator: "AND",
-          conditions: conditions
+          conditions: conditions,
         });
       }
     });
@@ -155,11 +153,11 @@ const buildEduRulesJson = (edu, mode) => {
   // Process certification groups with OR/AND operators
   const certificationGroups = [];
   if (edu.certGroups && Array.isArray(edu.certGroups)) {
-    edu.certGroups.forEach(certGroup => {
+    edu.certGroups.forEach((certGroup) => {
       const conditions = [];
-      
+
       if (certGroup.certifications && Array.isArray(certGroup.certifications)) {
-        certGroup.certifications.forEach(cert => {
+        certGroup.certifications.forEach((cert) => {
           if (cert.certificationId) {
             conditions.push(cert.certificationId);
           }
@@ -169,7 +167,7 @@ const buildEduRulesJson = (edu, mode) => {
       if (conditions.length > 0) {
         certificationGroups.push({
           operator: "AND",
-          conditions: conditions
+          conditions: conditions,
         });
       }
     });
@@ -179,22 +177,22 @@ const buildEduRulesJson = (edu, mode) => {
     ? {
         mandatoryEducations: {
           operator: "OR",
-          groups: educationGroups
+          groups: educationGroups,
         },
         mandatoryCertifications: {
           operator: "OR",
-          groups: certificationGroups
-        }
+          groups: certificationGroups,
+        },
       }
     : {
         preferredEducations: {
           operator: "OR",
-          groups: educationGroups
+          groups: educationGroups,
         },
         preferredCertifications: {
           operator: "OR",
-          groups: certificationGroups
-        }
+          groups: certificationGroups,
+        },
       };
 };
 
@@ -215,9 +213,9 @@ export const mapAddPositionToUpdateDto = ({
   indentOthers,
   isProficientInLocalLanguage,
   existingPosition,
-    // ✅ ADD THESE
+  // ✅ ADD THESE
   isAgeRelRiotVictimFamily,
-  isAgeRelWdsWomen
+  isAgeRelWdsWomen,
 }) => {
   const dto = {
     // positionId,
@@ -240,33 +238,41 @@ export const mapAddPositionToUpdateDto = ({
     mandatoryEducation: educationData.mandatory.text,
     preferredEducation: educationData.preferred.text,
 
-    mandatoryExperienceMonths:
-      formData.useMandatoryEducationLevelExperience 
-        ? null 
-        : Number(formData.mandatoryExperience.years) * 12 + Number(formData.mandatoryExperience.months),
+    mandatoryExperienceMonths: formData.useMandatoryEducationLevelExperience
+      ? null
+      : Number(formData.mandatoryExperience.years) * 12 +
+        Number(formData.mandatoryExperience.months),
 
-    preferredExperienceMonths:
-      formData.usePreferredEducationLevelExperience 
-        ? null 
-        : Number(formData.preferredExperience.years) * 12 + Number(formData.preferredExperience.months),
+    preferredExperienceMonths: formData.usePreferredEducationLevelExperience
+      ? null
+      : Number(formData.preferredExperience.years) * 12 +
+        Number(formData.preferredExperience.months),
 
     mandatoryExperience: formData.mandatoryExperience.description,
     preferredExperience: formData.preferredExperience.description,
 
     // Education Level Experiences
-    mandatoryExpMonthsEduWise: formData.mandatoryExperience.educationLevelExperiences?.reduce((acc, exp) => {
-      if (exp.educationLevel && (exp.years > 0 || exp.months > 0)) {
-        acc[exp.educationLevel] = (exp.years * 12) + exp.months;
-      }
-      return acc;
-    }, {}),
+    mandatoryExpMonthsEduWise:
+      formData.mandatoryExperience.educationLevelExperiences?.reduce(
+        (acc, exp) => {
+          if (exp.educationLevel && (exp.years > 0 || exp.months > 0)) {
+            acc[exp.educationLevel] = exp.years * 12 + exp.months;
+          }
+          return acc;
+        },
+        {}
+      ),
 
-    preferredExpMonthsEduWise: formData.preferredExperience.educationLevelExperiences?.reduce((acc, exp) => {
-      if (exp.educationLevel && (exp.years > 0 || exp.months > 0)) {
-        acc[exp.educationLevel] = (exp.years * 12) + exp.months;
-      }
-      return acc;
-    }, {}),
+    preferredExpMonthsEduWise:
+      formData.preferredExperience.educationLevelExperiences?.reduce(
+        (acc, exp) => {
+          if (exp.educationLevel && (exp.years > 0 || exp.months > 0)) {
+            acc[exp.educationLevel] = exp.years * 12 + exp.months;
+          }
+          return acc;
+        },
+        {}
+      ),
 
     // Toggle States
     isMandatoryExpMonthsEduWise: formData.useMandatoryEducationLevelExperience,
@@ -276,9 +282,10 @@ export const mapAddPositionToUpdateDto = ({
     //cutoffDate: formData.cutoffDate || null,
 
     // Root level field
-    isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
+    isProficientInLocalLanguage:
+      isProficientInLocalLanguage === true ? true : false,
     isAgeRelRiotVictimFamily: !!isAgeRelRiotVictimFamily,
-isAgeRelWdsWomen: !!isAgeRelWdsWomen,
+    isAgeRelWdsWomen: !!isAgeRelWdsWomen,
 
     approvedBy,
     approvedOn,
@@ -296,42 +303,43 @@ isAgeRelWdsWomen: !!isAgeRelWdsWomen,
 
     // IMPORTANT
     positionCategoryNationalDistributions: [],
-    positionStateDistributions: []
+    positionStateDistributions: [],
   };
 
   // NATIONAL
   if (!formData.enableStateDistribution) {
-    reservationCategories.forEach(cat => {
+    reservationCategories.forEach((cat) => {
       dto.positionCategoryNationalDistributions.push({
         reservationCategoryId: cat.id,
         vacancyCount: Number(nationalCategories[cat.code] || 0),
-        isDisability: false
+        isDisability: false,
       });
     });
 
-    disabilityCategories.forEach(dis => {
+    disabilityCategories.forEach((dis) => {
       dto.positionCategoryNationalDistributions.push({
         disabilityCategoryId: dis.id,
         vacancyCount: Number(nationalDisabilities[dis.disabilityCode] || 0),
-        isDisability: true
+        isDisability: true,
       });
     });
   }
 
   // STATE
   if (formData.enableStateDistribution) {
-    dto.positionStateDistributions = stateDistributions.map(sd => ({
+    dto.positionStateDistributions = stateDistributions.map((sd) => ({
       positionStateDistributionId: sd.positionStateDistributionId, // 🔑 MISSING TODAY
       stateId: sd.state,
       cityId: sd.city,
       totalVacancies: Number(sd.vacancies),
       localLanguage: sd.language,
-      isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
+      isProficientInLocalLanguage:
+        isProficientInLocalLanguage === true ? true : false,
       positionCategoryDistributions: buildCategoryDistributionsForUpdate(
         sd,
         reservationCategories,
         disabilityCategories
-      )
+      ),
     }));
   }
 

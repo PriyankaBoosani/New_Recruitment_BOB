@@ -7,9 +7,7 @@ import "../../../style/css/modalimport.css";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
-}) => {
-
+const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => {} }) => {
   if (!requisitionId) {
     throw new Error("ImportModal requires requisitionId");
   }
@@ -23,10 +21,11 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
   const fileInputRef = useRef(null);
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    const isExcel = file && (
-      file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-      file.type === 'application/vnd.ms-excel'
-    );
+    const isExcel =
+      file &&
+      (file.type ===
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        file.type === "application/vnd.ms-excel");
 
     if (isExcel) {
       setSelectedFile(file);
@@ -36,13 +35,13 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
     }
   };
   const resetModalState = () => {
-  setSelectedFile(null);
-  setErrors([]);
+    setSelectedFile(null);
+    setErrors([]);
 
-  if (fileInputRef.current) {
-    fileInputRef.current.value = "";
-  }
-};
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
   const handleUpload = async () => {
     if (!selectedFile) {
       setErrors([t("importModal:no_file_selected")]);
@@ -59,13 +58,11 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
 
       //  REDIRECT TO JOB LISTING PAGE
       navigate("/job-posting");
-
     } else {
       const errorMsg =
         Array.isArray(result.details) && result.details.length > 0
           ? t("importModal:import_failed")
           : result.error || t("importModal:import_failed");
-
 
       toast.error(errorMsg);
 
@@ -78,17 +75,26 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
   };
 
   return (
-    <Modal show={show} onHide={() => {
-      resetModalState();
-      onHide();
-    }} centered className="modalimport">
+    <Modal
+      show={show}
+      onHide={() => {
+        resetModalState();
+        onHide();
+      }}
+      centered
+      className="modalimport"
+    >
       <Modal.Header closeButton>
-        <Modal.Title className="f16 bluecol">{t("importModal:import_positions")}</Modal.Title>
-
+        <Modal.Title className="f16 bluecol">
+          {t("importModal:import_positions")}
+        </Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
-        <div className="import-area p-4 rounded" style={{ background: "#fceee9" }}>
+        <div
+          className="import-area p-4 rounded"
+          style={{ background: "#fceee9" }}
+        >
           <div className="text-center mb-3">
             <div
               style={{
@@ -105,13 +111,9 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
               <UploadIcon size={32} />
             </div>
 
-            <h5 className="mb-2 uploadfile">
-              {t("importModal:upload_file")}
-            </h5>
+            <h5 className="mb-2 uploadfile">{t("importModal:upload_file")}</h5>
 
-            <p className="text-muted small">
-              {t("importModal:support_xlsx")}
-            </p>
+            <p className="text-muted small">{t("importModal:support_xlsx")}</p>
           </div>
 
           {errors.length > 0 && (
@@ -156,7 +158,7 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
                   variant="outline-danger"
                   size="sm"
                   className="mt-2"
-                 onClick={resetModalState}
+                  onClick={resetModalState}
                   disabled={loading}
                 >
                   {t("importModal:remove")}
@@ -167,15 +169,15 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
 
           <div className="text-center m-0 import-area small">
             {t("importModal:download_template")}{" "}
-
             <button
               type="button"
               onClick={downloadPositionTemplate}
               className="btn btn-link p-0 text-primary text-decoration-none btnfont"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
               disabled={loading}
             >
-              {" "}XLSX
+              {" "}
+              XLSX
             </button>
           </div>
         </div>
@@ -194,9 +196,7 @@ const ImportModal = ({ show, onHide, requisitionId, onSuccess = () => { }
         </Button>
 
         <Button variant="primary" onClick={handleUpload} disabled={loading}>
-          {loading
-            ? t("importModal:importing")
-            : t("importModal:import")}
+          {loading ? t("importModal:importing") : t("importModal:import")}
         </Button>
       </Modal.Footer>
     </Modal>

@@ -18,12 +18,12 @@
   "upload_file": "Upload File",
   "upload_csv": "Upload CSV",
   "close": "Close",
-   "page_size": "Page size :",
+  "page_size": "Page size :",
 
   "csv": "CSV",
   "xlsx": "XLSX",
   "upload_xlsx": "Upload XLSX",
-   "support_csv_xlsx": "Supports CSV and XLSX formats (CSV headers: code, name, description)",
+  "support_csv_xlsx": "Supports CSV and XLSX formats (CSV headers: code, name, description)",
   "download_template": "Download Template",
   "choose_add_method": "Choose to add manually or import from XLSX file.",
   "cancel": "Cancel",
@@ -48,8 +48,7 @@
 
   "reupload_xlsx": "Reupload XLSX",
   "remove": "Remove",
- 
+
   "importing": "Importing...",
   "import_error": "Failed to import categories"
-  
 }

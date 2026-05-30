@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import i18n from "i18next";
 import { toast } from "react-toastify";
 import masterApiService from "../../../services/masterApiService";
-import { mapLocationsFromApi, mapLocationToApi } from "../mappers/locationMapper";
+import {
+  mapLocationsFromApi,
+  mapLocationToApi,
+} from "../mappers/locationMapper";
 import { mapCitiesFromApi } from "../mappers/cityMapper";
 
 export const useLocations = () => {
@@ -13,9 +16,7 @@ export const useLocations = () => {
   // 🔹 Fetch cities
   const fetchCities = async () => {
     const res = await masterApiService.getallCities();
-    const apiList = Array.isArray(res.data)
-      ? res.data
-      : res.data?.data || [];
+    const apiList = Array.isArray(res.data) ? res.data : res.data?.data || [];
 
     setCities(mapCitiesFromApi(apiList));
   };
@@ -23,16 +24,12 @@ export const useLocations = () => {
   // 🔹 Fetch locations
   const fetchLocations = async () => {
     const res = await masterApiService.getAllLocations();
-    const apiList = Array.isArray(res.data)
-      ? res.data
-      : res.data?.data || [];
+    const apiList = Array.isArray(res.data) ? res.data : res.data?.data || [];
 
     const mapped = mapLocationsFromApi(apiList, cities);
 
     // newest first (same as Department)
-    mapped.sort(
-      (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
-    );
+    mapped.sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
 
     setLocations(mapped);
   };
@@ -91,8 +88,7 @@ export const useLocations = () => {
       window.URL.revokeObjectURL(url);
     } catch {
       toast.error(
-        i18n.t("download_error", { ns: "location" }) ||
-        "Download failed"
+        i18n.t("download_error", { ns: "location" }) || "Download failed"
       );
     }
   };
@@ -103,23 +99,20 @@ export const useLocations = () => {
     try {
       const res = await masterApiService.bulkAddLocations(file);
 
-
       //  business failure
       if (res.success === false) {
-
         return {
           success: false,
           message: res.message, // summary
-          data: res.data        // row-wise errors
+          data: res.data, // row-wise errors
         };
       }
       //  success
       toast.success(res.message || "File uploaded successfully");
 
       return {
-        success: true
+        success: true,
       };
-
     } catch (err) {
       //  network / server error
 
@@ -128,14 +121,12 @@ export const useLocations = () => {
 
       return {
         success: false,
-        error: message
+        error: message,
       };
-
     } finally {
       setLoading(false);
     }
   };
-
 
   return {
     locations,
@@ -146,6 +137,6 @@ export const useLocations = () => {
     deleteLocation,
     downloadLocationTemplate,
     bulkAddLocations,
-    fetchLocations
+    fetchLocations,
   };
 };

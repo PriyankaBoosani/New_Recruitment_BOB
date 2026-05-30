@@ -6,32 +6,24 @@ const InterviewScheduleSummaryModal = ({
   show,
   onClose,
   candidates = [],
-  selectedPanels=[],
-  availablePanels = []
+  selectedPanels = [],
+  availablePanels = [],
 }) => {
-
   // ZONE SUMMARY
   const zoneMap = {};
 
-  candidates.forEach(candidate => {
+  candidates.forEach((candidate) => {
+    const zone = candidate.zone || "N/A";
 
-   const zone =
-  candidate.zone || "N/A";
-
-    zoneMap[zone] =
-      (zoneMap[zone] || 0) + 1;
+    zoneMap[zone] = (zoneMap[zone] || 0) + 1;
   });
 
-  const zoneDetails =
-    Object.entries(zoneMap).map(
-      ([zone, count]) => ({
-        zone,
-        count
-      })
-    );
+  const zoneDetails = Object.entries(zoneMap).map(([zone, count]) => ({
+    zone,
+    count,
+  }));
 
   return (
-
     <Modal
       show={show}
       onHide={onClose}
@@ -39,13 +31,11 @@ const InterviewScheduleSummaryModal = ({
       size="lg"
       dialogClassName="iss-modal-dialog"
     >
-
       <Modal.Header closeButton>
         <Modal.Title>View Summary</Modal.Title>
       </Modal.Header>
 
       <Modal.Body className="iss-modal-body">
-
         {/* TOTAL CANDIDATES */}
         <div className="iss-total-row">
           <span className="iss-total-label">Total Candidates</span>
@@ -83,7 +73,7 @@ const InterviewScheduleSummaryModal = ({
                     <span>{panel.endDate}</span>
                   </div>
                   <div className="iss-panel-members">
-                    {(panel.members || []).map(m => m.name).join(", ")}
+                    {(panel.members || []).map((m) => m.name).join(", ")}
                   </div>
                 </div>
               ))
@@ -92,9 +82,7 @@ const InterviewScheduleSummaryModal = ({
             )}
           </div>
         </div>
-
       </Modal.Body>
-
     </Modal>
   );
 };

@@ -7,7 +7,7 @@ const PageHeaderWithBack = ({
   subtitle,
   positionId,
   requisitionId,
-  activeTab
+  activeTab,
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -54,66 +54,54 @@ const PageHeaderWithBack = ({
   //   });
   // };
 
-
-
-
-
-
-
-
   const handleBack = () => {
-  const state = location.state || {};
-  const from = state.from;
+    const state = location.state || {};
+    const from = state.from;
 
-  // fallback if from missing
-  const target = from || "/candidate-workflow";
+    // fallback if from missing
+    const target = from || "/candidate-workflow";
 
+    // 🔥 keep this (your interviewer depends on it)
+    sessionStorage.setItem("fromPreviewBack", "true");
 
-  // 🔥 keep this (your interviewer depends on it)
-  sessionStorage.setItem("fromPreviewBack", "true");
+    navigate(target, {
+      state: {
+        requisition: state.requisition,
+        position: state.position,
 
-  navigate(target, {
-    state: {
-      requisition: state.requisition,
-      position: state.position,
+        positionIds:
+          Array.isArray(state.positionIds) && state.positionIds.length > 0
+            ? state.positionIds
+            : Array.isArray(state.position)
+              ? state.position.map((p) => p.positionId)
+              : state.position?.positionId
+                ? [state.position.positionId]
+                : [],
 
-      positionIds:
-        Array.isArray(state.positionIds) &&
-        state.positionIds.length > 0
-          ? state.positionIds
-          : Array.isArray(state.position)
-            ? state.position.map(p => p.positionId)
-            : state.position?.positionId
-              ? [state.position.positionId]
-              : [],
+        preloadedCandidates:
+          state.preloadedCandidates || state.candidates || [],
 
-      preloadedCandidates:
-        state.preloadedCandidates || state.candidates || [],
+        selectedDate: state.selectedDate,
 
-      selectedDate: state.selectedDate,
+        // keep ids also (for workflow)
+        requisitionId,
+        positionId,
+        activeTab,
 
-      // keep ids also (for workflow)
-      requisitionId,
-      positionId,
-      activeTab,
+        page: state.page,
+        pageSize: state.pageSize,
 
-      page: state.page,
-      pageSize: state.pageSize,
+        // 🔥 ADD THESE
+        interviewPage: state.interviewPage,
+        interviewPageSize: state.interviewPageSize,
 
-      // 🔥 ADD THESE
-      interviewPage: state.interviewPage,
-      interviewPageSize: state.interviewPageSize,
-
-      filters: state.filters
-    }
-  });
-};
+        filters: state.filters,
+      },
+    });
+  };
 
   return (
-    <div
-      className="d-flex align-items-start"
-      style={{ marginBottom: "12px" }}
-    >
+    <div className="d-flex align-items-start" style={{ marginBottom: "12px" }}>
       {/* BACK BUTTON */}
       <div
         className="d-flex align-items-center gap-1"
@@ -122,7 +110,7 @@ const PageHeaderWithBack = ({
           color: "#6c757d",
           fontSize: "14px",
           marginRight: "25px",
-          marginTop: "2px"
+          marginTop: "2px",
         }}
         onClick={handleBack}
       >
@@ -137,7 +125,7 @@ const PageHeaderWithBack = ({
             fontSize: "18px",
             fontWeight: 600,
             color: "#162B75",
-            lineHeight: "1.2"
+            lineHeight: "1.2",
           }}
         >
           {title}
@@ -147,7 +135,7 @@ const PageHeaderWithBack = ({
           style={{
             fontSize: "13px",
             color: "#6c757d",
-            marginTop: "2px"
+            marginTop: "2px",
           }}
         >
           {subtitle}

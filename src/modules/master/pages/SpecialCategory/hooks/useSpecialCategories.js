@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import masterApiService from '../../../services/masterApiService';
-import { mapSpecialCategoriesFromApi, mapSpecialCategoryFromApi } from '../mappers/specialCategoryMapper';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import masterApiService from "../../../services/masterApiService";
+import {
+  mapSpecialCategoriesFromApi,
+  mapSpecialCategoryFromApi,
+} from "../mappers/specialCategoryMapper";
+import { useTranslation } from "react-i18next";
 
 export const useSpecialCategories = () => {
   const { t } = useTranslation(["specialCategory", "validation"]);
@@ -17,19 +20,14 @@ export const useSpecialCategories = () => {
 
       const res = await masterApiService.getAllSpecialCategories();
 
-      const apiList = Array.isArray(res.data)
-        ? res.data
-        : res.data?.data || [];
+      const apiList = Array.isArray(res.data) ? res.data : res.data?.data || [];
 
       const mapped = mapSpecialCategoriesFromApi(apiList);
 
       //  THIS LINE FIXES REFRESH ORDER
       setCategories(
-        mapped.sort(
-          (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
-        )
+        mapped.sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))
       );
-
     } catch (err) {
       console.error("SpecialCategory fetch failed", err);
       setCategories([]);
@@ -49,12 +47,10 @@ export const useSpecialCategories = () => {
   const addCategory = async (payload) => {
     const res = await masterApiService.addSpecialCategory(payload);
 
-    const newItem = mapSpecialCategoryFromApi(
-      res?.data?.data ?? res?.data
-    );
+    const newItem = mapSpecialCategoryFromApi(res?.data?.data ?? res?.data);
 
     //  ADD TO TOP (NO WAIT)
-    setCategories(prev => [newItem, ...prev]);
+    setCategories((prev) => [newItem, ...prev]);
 
     toast.success(
       t("specialCategory:add_success") || "Special category added successfully"
@@ -66,7 +62,8 @@ export const useSpecialCategories = () => {
     await masterApiService.updateSpecialCategory(id, payload);
     await fetchCategories();
     toast.success(
-      t("specialCategory:update_success") || "Special category updated successfully"
+      t("specialCategory:update_success") ||
+        "Special category updated successfully"
     );
   };
 
@@ -75,13 +72,13 @@ export const useSpecialCategories = () => {
     await masterApiService.deleteSpecialCategory(id);
 
     // instant UI update
-    setCategories(prev => prev.filter(c => c.id !== id));
+    setCategories((prev) => prev.filter((c) => c.id !== id));
 
     toast.success(
-      t("specialCategory:delete_success") || "Special category deleted successfully"
+      t("specialCategory:delete_success") ||
+        "Special category deleted successfully"
     );
   };
-
 
   /* ========================= DOWNLOAD TEMPLATE ========================= */
   const downloadSpecialCategoryTemplate = async () => {
@@ -99,9 +96,7 @@ export const useSpecialCategories = () => {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch {
-      toast.error(
-        t("specialCategory:download_error") || "Download failed"
-      );
+      toast.error(t("specialCategory:download_error") || "Download failed");
     }
   };
 
@@ -117,16 +112,15 @@ export const useSpecialCategories = () => {
         return {
           success: false,
           error: res.message,
-          details: res.data || []
+          details: res.data || [],
         };
       }
       //  success
       toast.success(res.message || "File uploaded successfully");
 
       return {
-        success: true
+        success: true,
       };
-
     } catch (err) {
       //  network / server error
 
@@ -135,9 +129,8 @@ export const useSpecialCategories = () => {
 
       return {
         success: false,
-        error: message
+        error: message,
       };
-
     } finally {
       setLoading(false);
     }
@@ -151,6 +144,6 @@ export const useSpecialCategories = () => {
     updateCategory,
     deleteCategory,
     bulkAddSpecialCategories,
-    downloadSpecialCategoryTemplate
+    downloadSpecialCategoryTemplate,
   };
 };

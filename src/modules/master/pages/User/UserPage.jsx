@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import { Search, Plus } from "react-bootstrap-icons";
 import { useTranslation } from "react-i18next";
-import '../../../../style/css/user.css';
+import "../../../../style/css/user.css";
 import { useUsers } from "./hooks/useUsers";
 import UserTable from "./components/UserTable";
 import UserFormModal from "./components/UserFormModal";
@@ -12,16 +12,15 @@ const UserPage = () => {
   const { t } = useTranslation(["user", "validation"]);
   const {
     users,
-  loading,
-  fetchUsers,
-  addUser,
-  updateUser,
-  deleteUser,
-  interviewCentres,
-  bulkAddUsers,
-  downloadUserTemplate
+    loading,
+    fetchUsers,
+    addUser,
+    updateUser,
+    deleteUser,
+    interviewCentres,
+    bulkAddUsers,
+    downloadUserTemplate,
   } = useUsers();
-
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,31 +30,25 @@ const UserPage = () => {
   //const [showDelete, setShowDelete] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-const [mode, setMode] = useState("add"); // add | edit | view
-const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [mode, setMode] = useState("add"); // add | edit | view
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   //const [searchError, setSearchError] = useState("");
 
-
-
   // const [isViewing, setIsViewing] = useState(false);
-  
-  
-    // const [formData, setFormData] = useState({
-    //   fullName: '',
-    //   role: '',
-    //   email: '',
-    //   interviewCentreId: '',
-    //   description: ''
-    // });
-  
-    // const [editingId, setEditingId] = useState(null);
-    // const [errors, setErrors] = useState({});
-    //const [activeTab, setActiveTab] = useState('manual');
-    
-  
-  
-   // const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  // const [formData, setFormData] = useState({
+  //   fullName: '',
+  //   role: '',
+  //   email: '',
+  //   interviewCentreId: '',
+  //   description: ''
+  // });
+
+  // const [editingId, setEditingId] = useState(null);
+  // const [errors, setErrors] = useState({});
+  //const [activeTab, setActiveTab] = useState('manual');
+
+  // const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // const openAdd = () => {
   //   setShowModal(true);
@@ -64,22 +57,22 @@ const [showDeleteModal, setShowDeleteModal] = useState(false);
   //const [showAddModal, setShowAddModal] = useState(false);
   //const [isEditing, setIsEditing] = useState(false);
   const openAdd = () => {
-  setSelectedUser(null);
-  setMode("add");
-  setShowModal(true);
-};
+    setSelectedUser(null);
+    setMode("add");
+    setShowModal(true);
+  };
 
-const openViewModal = (row) => {
-  setSelectedUser(row);
-  setMode("view");
-  setShowModal(true);
-};
+  const openViewModal = (row) => {
+    setSelectedUser(row);
+    setMode("view");
+    setShowModal(true);
+  };
 
-const openEditModal = (row) => {
-  setSelectedUser(row);
-  setMode("edit");
-  setShowModal(true);
-};
+  const openEditModal = (row) => {
+    setSelectedUser(row);
+    setMode("edit");
+    setShowModal(true);
+  };
 
   return (
     <Container fluid className="user-container">
@@ -112,23 +105,24 @@ const openEditModal = (row) => {
       <UserTable
         data={users}
         searchTerm={searchTerm}
-
-          onEdit={openEditModal}
+        onEdit={openEditModal}
         onView={openViewModal}
-        onDelete={(row) => { setDeleteTarget(row); setShowDeleteModal(true); }}
-
+        onDelete={(row) => {
+          setDeleteTarget(row);
+          setShowDeleteModal(true);
+        }}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         pageSize={pageSize}
         setPageSize={setPageSize}
-          interviewCentres={interviewCentres} 
+        interviewCentres={interviewCentres}
         // onDelete={(u) => {
         //   setDeleteTarget(u);
         //   setShowDelete(true);
         // }}
       />
       <UserFormModal
-         show={showModal}
+        show={showModal}
         onHide={() => setShowModal(false)}
         mode={mode}
         selectedUser={selectedUser}

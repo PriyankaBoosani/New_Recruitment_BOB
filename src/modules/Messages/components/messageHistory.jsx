@@ -16,7 +16,8 @@ const MessageHistory = ({ item }) => {
   const handleViewFile = async (path) => {
     try {
       const encodedPath = encodeURIComponent(path);
-      const res = await masterApiService.getMessagesAzureBlobSasUrl(encodedPath);
+      const res =
+        await masterApiService.getMessagesAzureBlobSasUrl(encodedPath);
       const fileUrl = res;
       if (fileUrl) {
         setPreviewUrl(fileUrl);
@@ -45,10 +46,7 @@ const MessageHistory = ({ item }) => {
     if (text.includes("recruiter")) {
       return "#f26522";
     }
-    if (
-      text.includes("approver") ||
-      text.includes("approval")
-    ) {
+    if (text.includes("approver") || text.includes("approval")) {
       return "#28a745";
     }
     if (text.includes("approved")) {
@@ -61,9 +59,7 @@ const MessageHistory = ({ item }) => {
   };
   return (
     <div className="msg-history">
-      <div className="msg-history-title">
-        {t("messages:request_history")}
-      </div>
+      <div className="msg-history-title">{t("messages:request_history")}</div>
       {item.history?.map((hist, index) => {
         const color = getColorByTitle(hist.title);
         return (
@@ -73,16 +69,13 @@ const MessageHistory = ({ item }) => {
                 className="msg-icon"
                 style={{
                   backgroundColor: color,
-                  color: "#fff"
+                  color: "#fff",
                 }}
               >
                 {hist.title?.charAt(0)?.toUpperCase() || "?"}
               </div>
               <div className="flex-grow-1">
-                <div
-                  className="msg-history-head"
-                  style={{ color }}
-                >
+                <div className="msg-history-head" style={{ color }}>
                   {hist.title}
                 </div>
                 <div className="msg-history-text">
@@ -100,7 +93,8 @@ const MessageHistory = ({ item }) => {
                   alt="attachment"
                   style={{ cursor: "pointer" }}
                   onClick={() => handleViewFile(hist.attachmentPath)}
-                />)}
+                />
+              )}
             </div>
             {index !== item.history.length - 1 && (
               <div className="msg-divider"></div>
@@ -108,21 +102,17 @@ const MessageHistory = ({ item }) => {
           </React.Fragment>
         );
       })}
-      <Modal
-        show={showPreview}
-        onHide={handleClose}
-        size="xl"
-        centered
-      >
+      <Modal show={showPreview} onHide={handleClose} size="xl" centered>
         {/* HEADER */}
         <Modal.Header closeButton className="border-0 pb-2">
           <div className="w-100 d-flex justify-content-between align-items-center">
             <div>
-              <h6 className="mb-0 fw-semibold">
-                {t("messages:file")}
-              </h6>
+              <h6 className="mb-0 fw-semibold">{t("messages:file")}</h6>
             </div>
-            <div className="d-flex gap-4 align-items-center" style={{ paddingRight: "15px" }}>
+            <div
+              className="d-flex gap-4 align-items-center"
+              style={{ paddingRight: "15px" }}
+            >
               {previewUrl && (
                 <a
                   href={previewUrl}

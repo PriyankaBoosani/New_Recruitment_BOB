@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
-import masterApiService from '../../../services/masterApiService';
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import masterApiService from "../../../services/masterApiService";
 import { mapDepartmentsFromApi } from "../mappers/departmentMapper";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 export const useDepartments = () => {
   const { t } = useTranslation(["department", "validation"]);
@@ -13,9 +13,7 @@ export const useDepartments = () => {
     try {
       const res = await masterApiService.getAllDepartments();
 
-      const apiList = Array.isArray(res.data)
-        ? res.data
-        : res.data?.data || [];
+      const apiList = Array.isArray(res.data) ? res.data : res.data?.data || [];
 
       const mapped = mapDepartmentsFromApi(apiList);
       setDepartments(mapped);
@@ -34,7 +32,7 @@ export const useDepartments = () => {
         return {
           success: false,
           error: res.message,
-          details: res.data || []   //  ADD THIS
+          details: res.data || [], //  ADD THIS
         };
       }
 
@@ -42,19 +40,16 @@ export const useDepartments = () => {
       toast.success(res.message || "File uploaded successfully");
 
       return {
-        success: true
+        success: true,
       };
-
     } catch (err) {
-
       const message = "Something went wrong";
       toast.error(message);
 
       return {
         success: false,
-        error: message
+        error: message,
       };
-
     } finally {
       setLoading(false);
     }
@@ -64,16 +59,18 @@ export const useDepartments = () => {
       const res = await masterApiService.downloadDepartmentTemplate();
       const blob = res.data;
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = 'DepartmentsDTO_template.xlsx';
+      link.download = "DepartmentsDTO_template.xlsx";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      console.error('Download failed:', err);
-      toast.error(t("department:download_error") || 'Failed to download template');
+      console.error("Download failed:", err);
+      toast.error(
+        t("department:download_error") || "Failed to download template"
+      );
     }
   };
   useEffect(() => {
@@ -106,6 +103,6 @@ export const useDepartments = () => {
     updateDepartment,
     deleteDepartment,
     bulkAddDepartments,
-    downloadDepartmentTemplate
+    downloadDepartmentTemplate,
   };
 };

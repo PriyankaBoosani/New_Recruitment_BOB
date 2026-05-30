@@ -3,9 +3,8 @@
 }
 
 .blue-color {
-  color: #162B75 !important;
+  color: #162b75 !important;
 }
-
 
 .orange-color {
   color: #f36f21 !important;
@@ -18,7 +17,7 @@
 
 .react-select__value-container {
   padding: 2px 8px;
-   pointer-events: auto !important;
+  pointer-events: auto !important;
 }
 
 .react-select__placeholder {
@@ -32,10 +31,6 @@
   font-size: 14px;
   pointer-events: auto !important;
 }
-
-
-
-
 
 .react-select__menu {
   font-size: 14px;
@@ -62,7 +57,7 @@
 .schedule-approval-modal .modal-title {
   font-size: 18px;
   font-weight: 600;
-  color: #162B75;
+  color: #162b75;
 }
 
 .schedule-approval-modal .modal-body {
@@ -140,7 +135,6 @@
 
 candidate-screening-tabs-header ul {
   padding-top: 1rem !important;
-
 }
 
 .candidate-screening-tabs-header ul li .nav-link:focus {
@@ -262,12 +256,12 @@ candidate-screening-tabs-header ul {
 
 /* ===== POPOVER CONTAINER ===== */
 .rank-popover {
-	width: 300px;
-	border-radius: 12px;
-	border: none;
-	overflow: visible;
-	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-	max-width: 300px;
+  width: 300px;
+  border-radius: 12px;
+  border: none;
+  overflow: visible;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  max-width: 300px;
 }
 
 /* ===== HEADER ===== */
@@ -284,7 +278,7 @@ candidate-screening-tabs-header ul {
 .rank-body {
   background: #fff;
   padding: 12px;
-   border-radius: 0 0 12px 12px;
+  border-radius: 0 0 12px 12px;
 }
 
 /* ===== FINAL SCORE ===== */
@@ -299,8 +293,8 @@ candidate-screening-tabs-header ul {
 }
 
 .score-label {
-	font-size: 0.875rem;
-	font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
 .score-label.green {
@@ -326,7 +320,6 @@ candidate-screening-tabs-header ul {
   margin-bottom: 6px;
   color: #333;
 }
-
 
 /* ===== OUTLINED DOTS (MATCH DESIGN) ===== */
 .dot {
@@ -354,17 +347,12 @@ candidate-screening-tabs-header ul {
 
 /* ===== TAG TEXT ===== */
 
-
-
-.greenfin{
-   color: #28a745;
-   font-weight: 600;
+.greenfin {
+  color: #28a745;
+  font-weight: 600;
 }
 
-
-
 /* ===== TAG (Low/High) ===== */
-
 
 .tag.green {
   color: #2e7d32;
@@ -386,19 +374,20 @@ candidate-screening-tabs-header ul {
 }
 
 .info-icon {
-	width: 14px;
-	height: 14px;
-	cursor: pointer;
-	background: none;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  background: none;
 }
 
-
-.bs-popover-auto[data-popper-placement^="right"] > .popover-arrow::after, .bs-popover-end > .popover-arrow::after {
-	border-right-color: #243a5e;
+.bs-popover-auto[data-popper-placement^="right"] > .popover-arrow::after,
+.bs-popover-end > .popover-arrow::after {
+  border-right-color: #243a5e;
 }
 
-.bs-popover-auto[data-popper-placement^="top"] > .popover-arrow::after, .bs-popover-top > .popover-arrow::after {
-	border-top-color: #243a5e;
+.bs-popover-auto[data-popper-placement^="top"] > .popover-arrow::after,
+.bs-popover-top > .popover-arrow::after {
+  border-top-color: #243a5e;
 }
 
 /* HEADER */
@@ -437,12 +426,9 @@ candidate-screening-tabs-header ul {
   color: #6b7280;
 }
 
-
-.interview-pool .bg-success{
-background-color: none !important;
+.interview-pool .bg-success {
+  background-color: none !important;
 }
-
-
 
 .position-tooltip-wrapper {
   position: relative;
@@ -510,9 +496,6 @@ background-color: none !important;
   visibility: visible;
 }
 
-
-
-
 .react-select__control {
   overflow: visible !important;
 }
@@ -529,14 +512,14 @@ background-color: none !important;
   overflow: visible !important;
 }
 .schddis :disabled {
-	color: rgba(33, 37, 41, 0.75);
-	background: #eee;
-	border: 1px solid #eee;
-	border-color: var(--bs-nav-tabs-link-hover-border-color);
+  color: rgba(33, 37, 41, 0.75);
+  background: #eee;
+  border: 1px solid #eee;
+  border-color: var(--bs-nav-tabs-link-hover-border-color);
 }
-.selected-count-chip{
-  background: #EEF3FF;
-  color: #162B75;
+.selected-count-chip {
+  background: #eef3ff;
+  color: #162b75;
   /* border: 1px solid #C9D7FF; */
   border-radius: 20px;
   padding: 6px 12px;

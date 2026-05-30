@@ -21,7 +21,7 @@ const InterviewDayTable = ({
   requisition,
   position,
   selectedDate,
-  allCandidatesRaw
+  allCandidatesRaw,
 }) => {
   const { t } = useTranslation("interviewDay");
 
@@ -29,14 +29,12 @@ const InterviewDayTable = ({
 
   /*  NAVIGATION */
   const goToPreview = (row) => {
-
     const posId =
       position?.raw?.positionId ||
       position?.position?.positionId ||
       position?.positionId ||
       position?.value ||
       null;
-
 
     navigate("/candidate-preview", {
       state: {
@@ -50,8 +48,8 @@ const InterviewDayTable = ({
         candidates: allCandidatesRaw,
         requisition,
         position,
-        page,        
-        pageSize
+        page,
+        pageSize,
       },
     });
   };
@@ -62,12 +60,10 @@ const InterviewDayTable = ({
 
   return (
     <div className="verification-table-wrapper">
-
       {/* DESKTOP */}
       <div className="d-none d-md-block">
         <table className="table align-middle mb-0 verification-table">
           <thead className="fs-14">
-
             <tr>
               <th className="fs-14">{t("candidate")}</th>
               <th className="fs-14">{t("category")}</th>
@@ -75,9 +71,10 @@ const InterviewDayTable = ({
               <th className="fs-14">{t("zone")}</th>
               <th className="fs-14 text-center">{t("absent")}</th>
               <th className="fs-14">{t("comment")}</th>
-              <th className="fs-14" style={{ width: 120 }}>{t("score")}</th>
+              <th className="fs-14" style={{ width: 120 }}>
+                {t("score")}
+              </th>
               <th className="fs-14 text-center">{t("actions")}</th>
-
             </tr>
           </thead>
 
@@ -88,10 +85,9 @@ const InterviewDayTable = ({
                   {t("no_candidates_found")}
                 </td>
               </tr>
-
             )}
 
-            {rows.map(row => (
+            {rows.map((row) => (
               <tr key={row.id}>
                 <td>
                   <div className="fw-semibold fs-14">{row.name}</div>
@@ -104,35 +100,27 @@ const InterviewDayTable = ({
                 <td className="fs-14">{row.time}</td>
                 <td className="fs-14">{row.zone}</td>
 
-
-           <td className="text-center">
-  <input
-    type="checkbox"
-    checked={row.absent}
-disabled={
-  
-  row.isZonalAbsent ||
-  (row.score !== "" &&
-   row.score !== null &&
-   row.score !== undefined)
-
-}
-
-    onChange={() => toggleAbsent(row.id)}
-  />
-</td>
-
+                <td className="text-center">
+                  <input
+                    type="checkbox"
+                    checked={row.absent}
+                    disabled={
+                      row.isZonalAbsent ||
+                      (row.score !== "" &&
+                        row.score !== null &&
+                        row.score !== undefined)
+                    }
+                    onChange={() => toggleAbsent(row.id)}
+                  />
+                </td>
 
                 <td>
-                 <input
-  className="form-control form-control-sm fs-14"
-  value={row.comment || ""}
-   disabled={ row.isZonalAbsent} 
-  onChange={(e) =>
-    updateComment(row.id, e.target.value)
-  }
-/>
-
+                  <input
+                    className="form-control form-control-sm fs-14"
+                    value={row.comment || ""}
+                    disabled={row.isZonalAbsent}
+                    onChange={(e) => updateComment(row.id, e.target.value)}
+                  />
                 </td>
 
                 <td>
@@ -166,95 +154,78 @@ disabled={
   }}
 /> */}
 
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    className="form-control form-control-sm fs-14"
+                    value={row.score ?? ""}
+                    disabled={row.absent || row.isZonalAbsent}
+                    maxLength={3}
+                    onChange={(e) => {
+                      let v = e.target.value;
 
+                      // Allow empty
+                      if (v === "") {
+                        updateScore(row.id, "");
+                        return;
+                      }
 
+                      // Keep digits only
+                      v = v.replace(/\D/g, "");
 
+                      if (v === "") {
+                        updateScore(row.id, "");
+                        return;
+                      }
 
+                      // const num = parseInt(v, 10);
 
-              
- 
-<input
-  type="text"
-  inputMode="numeric"
-  pattern="[0-9]*"
-  className="form-control form-control-sm fs-14"
-  value={row.score ?? ""}
-disabled={row.absent || row.isZonalAbsent}
-  maxLength={3}
-  onChange={(e) => {
-  let v = e.target.value;
- 
-  // Allow empty
-  if (v === "") {
-    updateScore(row.id, "");
-    return;
-  }
- 
-  // Keep digits only
-  v = v.replace(/\D/g, "");
- 
-  if (v === "") {
-    updateScore(row.id, "");
-    return;
-  }
- 
-  // const num = parseInt(v, 10);
- 
-  // if (isNaN(num)) {
-  //   updateScore(row.id, "");
-  //   return;
-  // }
- 
-  // updateScore(row.id, Math.min(100, Math.max(0, num)));
+                      // if (isNaN(num)) {
+                      //   updateScore(row.id, "");
+                      //   return;
+                      // }
 
+                      // updateScore(row.id, Math.min(100, Math.max(0, num)));
 
+                      const num = parseInt(v, 10);
 
-  const num = parseInt(v, 10);
+                      if (isNaN(num)) {
+                        updateScore(row.id, "");
+                        return;
+                      }
 
-if (isNaN(num)) {
-  updateScore(row.id, "");
-  return;
-}
+                      // 👉 ADD VALIDATION HERE
+                      if (num > 100) {
+                        toast.error("Score cannot be greater than 100"); // simple message
+                        return;
+                      }
 
-// 👉 ADD VALIDATION HERE
-if (num > 100) {
-  toast.error("Score cannot be greater than 100"); // simple message
-  return;
-}
-
-updateScore(row.id, num);
-}}
-  onPaste={(e) => {
-    const text = e.clipboardData.getData("text");
-    if (!/^\d+$/.test(text)) {
-      e.preventDefault();
-    }
-  }}
-/>
- 
- 
- 
+                      updateScore(row.id, num);
+                    }}
+                    onPaste={(e) => {
+                      const text = e.clipboardData.getData("text");
+                      if (!/^\d+$/.test(text)) {
+                        e.preventDefault();
+                      }
+                    }}
+                  />
                 </td>
- 
+
                 {/* ✅ ACTIONS */}
-              <td className="text-center">
-
-  <OverlayTrigger
-    placement="bottom"
-    overlay={<Tooltip>View Profile</Tooltip>}
-  >
-    <span>
-  <Person
-  className="me-3 cursor-pointer"
-  size={16}
-  onClick={() => goToPreview(row)}
-/>
-
-    </span>
-  </OverlayTrigger>
-
-
-
+                <td className="text-center">
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={<Tooltip>View Profile</Tooltip>}
+                  >
+                    <span>
+                      <Person
+                        className="me-3 cursor-pointer"
+                        size={16}
+                        onClick={() => goToPreview(row)}
+                      />
+                    </span>
+                  </OverlayTrigger>
 
                   <OverlayTrigger
                     placement="bottom"
@@ -268,9 +239,7 @@ updateScore(row.id, num);
                       />
                     </span>
                   </OverlayTrigger>
-
                 </td>
-
               </tr>
             ))}
           </tbody>
@@ -284,7 +253,7 @@ updateScore(row.id, num);
           {t("showing_entries", {
             start,
             end,
-            total: totalElements
+            total: totalElements,
           })}
         </span>
 
@@ -305,7 +274,7 @@ updateScore(row.id, num);
             disabled={page === 0}
             onClick={() => onPageChange(page - 1)}
           >
-           {t("prev")}
+            {t("prev")}
           </button>
 
           <button
@@ -317,7 +286,6 @@ updateScore(row.id, num);
           </button>
         </div>
       </div>
-
     </div>
   );
 };

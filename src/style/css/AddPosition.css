@@ -26,24 +26,24 @@
 }
 
 .back-btn {
-  color: #4A5565;
+  color: #4a5565;
   text-decoration: none;
   font-weight: 500;
-  border: 1px solid #E5E7EB;
+  border: 1px solid #e5e7eb;
   padding: 8px !important;
 }
 
 .imprcls {
-  color: #162B75;
+  color: #162b75;
   font-size: 0.875em;
-  border: 1px solid #162B75;
+  border: 1px solid #162b75;
   background-color: #fff;
 }
 
 .imprcls:hover {
   background-color: none !important;
-  border: 1px solid #162B75;
-  color: #162B75;
+  border: 1px solid #162b75;
+  color: #162b75;
 }
 
 .icon-14 {
@@ -57,12 +57,12 @@
 }
 
 .req-id {
-  background-color: #DBEAFE !important;
+  background-color: #dbeafe !important;
   padding: 4px 10px;
   border-radius: 4px;
   font-size: 0.625em;
   font-weight: 500;
-  color: #162B75 !important;
+  color: #162b75 !important;
 }
 
 .req-code {
@@ -114,7 +114,7 @@
 }
 
 .save-btn {
-  background-color: #F26522;
+  background-color: #f26522;
   border: none;
   padding: 8px 25px;
   font-weight: 500;
@@ -122,7 +122,7 @@
 }
 
 .save-btn:hover {
-  background-color: #F26522;
+  background-color: #f26522;
 }
 
 .cancelbtn {
@@ -138,26 +138,27 @@
 }
 
 /* Make form controls consistent */
-.form-control, .form-select {
-	border-radius: 6px;
-	padding: 6px 12px;
-	font-size: 0.875em;
-	border-width: 1px;
-	border-color: hsl(0, 0%, 80%);
-	border-style: solid;
-	min-height: 43px;
+.form-control,
+.form-select {
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.875em;
+  border-width: 1px;
+  border-color: hsl(0, 0%, 80%);
+  border-style: solid;
+  min-height: 43px;
 }
 
-.form-control, .form-selects {
-	border-radius: 6px;
-	padding: 6px 12px;
-	font-size: 0.875em;
-	border-width: 1px;
-	border-color: hsl(0, 0%, 80%);
-	border-style: solid;
-	min-height: 43px;
+.form-control,
+.form-selects {
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.875em;
+  border-width: 1px;
+  border-color: hsl(0, 0%, 80%);
+  border-style: solid;
+  min-height: 43px;
 }
-
 
 /* Style for required field indicators */
 .text-danger {
@@ -215,7 +216,7 @@
 }
 
 /* For the back button and title section */
-.req_top-bar>div:first-child {
+.req_top-bar > div:first-child {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -247,7 +248,7 @@
 
 .req_top-bar .req-code {
   font-size: 1rem;
-  color: #162B75 !important;
+  color: #162b75 !important;
   margin-top: 0.25rem;
 }
 
@@ -263,8 +264,8 @@
 }
 
 .back-btn:hover {
-  border: 1px solid #E5E7EB;
-  color: #4A5565;
+  border: 1px solid #e5e7eb;
+  color: #4a5565;
 }
 
 /* Responsive adjustments for very small screens */
@@ -331,7 +332,7 @@
 
 .section-title h6 {
   font-size: 1.125em;
-  color: #162B75;
+  color: #162b75;
 }
 
 .add-position-page .form-label {
@@ -345,15 +346,14 @@
   color: #404040 !important;
   font-size: 1em;
   font-weight: 400;
-
 }
 
 .upload-indent-box .textclick {
-  color: #162B75;
+  color: #162b75;
 }
 
 .upload-indent-box .support {
-  color: #6A7282;
+  color: #6a7282;
   font-weight: 400;
   font-size: 0.875em;
 }
@@ -364,7 +364,7 @@
   width: 40px;
   height: 20px;
 
-  background-color: #8B8B8B !important;
+  background-color: #8b8b8b !important;
   border: none !important;
 
   /* WHITE thumb */
@@ -376,8 +376,8 @@
 
 /* ON state */
 .add-position-page .form-check-input:checked {
-  background-color: #F26522 !important;
-  border-color: #F26522 !important;
+  background-color: #f26522 !important;
+  border-color: #f26522 !important;
 }
 
 /* Kill ALL focus visuals */
@@ -396,14 +396,12 @@
 
 .catfonts .text-muted {
   font-size: 0.75em;
-
 }
 
 .genfonts .text-primary {
-  color: #162B75 !important;
+  color: #162b75 !important;
   font-size: 0.875em;
   font-weight: 500;
-
 }
 
 .mandedu .btn-primary {
@@ -418,19 +416,19 @@
 }
 
 .genfonts .form-label {
-  color: #4A5565;
+  color: #4a5565;
   font-size: 0.875em;
   font-weight: 500 !important;
 }
 
 .addstatefont {
-  background-color: #162B75;
+  background-color: #162b75;
   font-weight: 600;
   font-size: 0.875em;
 }
 
 .addstatefont:hover {
-  background-color: #162B75 !important;
+  background-color: #162b75 !important;
   font-weight: 600;
   font-size: 0.875em;
 }
@@ -444,12 +442,12 @@
   font-size: 0.875em;
   font-weight: 600;
   color: #333333;
-  background: #E5E7EB;
-  border: 1px solid #D1D5DC;
+  background: #e5e7eb;
+  border: 1px solid #d1d5dc;
 }
 
 .bgcol {
-  background: #D1D5DC !important;
+  background: #d1d5dc !important;
 }
 
 .icon-18 {
@@ -495,7 +493,7 @@
 }
 
 /* Ensure left content stays aligned */
-.upload-indent-box>div {
+.upload-indent-box > div {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -606,21 +604,19 @@
   min-height: 42px;
 } */
 .modal-dialog-scrollable .modal-body {
-	overflow-y: inherit;
+  overflow-y: inherit;
 }
 .modal-dialog-scrollable .modal-content {
-	/* max-height: 100%; */
-	overflow: inherit;
+  /* max-height: 100%; */
+  overflow: inherit;
 }
 .selectindent .form-check-input:focus {
-	box-shadow: none;
-
+  box-shadow: none;
 }
 .selectindent .form-check-input {
-	padding: 0px !important;
-	margin-top: 6px;
+  padding: 0px !important;
+  margin-top: 6px;
 }
-.selectindent .bluecol{
-    color: #162B75 !important;
+.selectindent .bluecol {
+  color: #162b75 !important;
 }
-

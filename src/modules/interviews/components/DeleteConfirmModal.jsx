@@ -9,25 +9,16 @@ const DeleteConfirmModal = ({
   message,
   name,
   onCancel,
-  onConfirm
+  onConfirm,
 }) => {
-
   const { t } = useTranslation(["interviewSchedule", "common"]);
 
   return (
-    <Modal
-      show={show}
-      onHide={onCancel}
-      centered
-      dialogClassName="del-modal"
-    >
+    <Modal show={show} onHide={onCancel} centered dialogClassName="del-modal">
       <Modal.Body className="del-body">
-
         {/* HEADER */}
         <div className="del-header">
-          <div className="del-title">
-            {title || t("delete_title")}
-          </div>
+          <div className="del-title">{title || t("delete_title")}</div>
 
           <button className="del-close" onClick={onCancel}>
             <i className="bi bi-x-lg"></i>
@@ -41,7 +32,6 @@ const DeleteConfirmModal = ({
 
         {/* FOOTER */}
         <div className="del-footer">
-
           {/* ✅ from COMMON */}
           <button className="del-cancel" onClick={onCancel}>
             {t("common:cancel")}
@@ -51,9 +41,7 @@ const DeleteConfirmModal = ({
           <button className="del-delete" onClick={onConfirm}>
             {t("common:delete")}
           </button>
-
         </div>
-
       </Modal.Body>
     </Modal>
   );

@@ -1,14 +1,14 @@
 // src/modules/master/pages/JobGrade/hooks/useJobGrades.js
 
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
-import masterApiService from '../../../services/masterApiService';
-import { mapJobGradesFromApi } from '../mappers/jobGradeMapper';
+import masterApiService from "../../../services/masterApiService";
+import { mapJobGradesFromApi } from "../mappers/jobGradeMapper";
 
 export const useJobGrades = () => {
-  const { t } = useTranslation(['jobGrade']);
+  const { t } = useTranslation(["jobGrade"]);
   const [jobGrades, setJobGrades] = useState([]);
   const [loading, setLoading] = useState(false);
   const fetchJobGrades = async () => {
@@ -52,7 +52,6 @@ export const useJobGrades = () => {
     }
   };
 
-
   const deleteJobGrade = async (id) => {
     try {
       await masterApiService.deleteJobGrade(id);
@@ -62,7 +61,6 @@ export const useJobGrades = () => {
       toast.error(error?.response?.data?.message || t("delete_error"));
     }
   };
-
 
   const downloadJobGradeTemplate = async () => {
     try {
@@ -79,12 +77,9 @@ export const useJobGrades = () => {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch {
-      toast.error(
-        t("jobGrade:download_error") || "Download failed"
-      );
+      toast.error(t("jobGrade:download_error") || "Download failed");
     }
   };
-
 
   const bulkAddJobGrades = async (file) => {
     setLoading(true);
@@ -93,36 +88,33 @@ export const useJobGrades = () => {
 
       //  business failure
       if (res.success === false) {
-         toast.error(res.message);
+        toast.error(res.message);
         return {
           success: false,
           error: res.message,
-          details: res.data || []
+          details: res.data || [],
         };
       }
       // success
       toast.success(res.message || "File uploaded successfully");
 
       return {
-        success: true
+        success: true,
       };
-
     } catch (err) {
       //  network / server error
 
       const message = "Something went wrong";
-       toast.error(message);
+      toast.error(message);
 
       return {
         success: false,
-        error: message
+        error: message,
       };
-
     } finally {
       setLoading(false);
     }
   };
-
 
   return {
     jobGrades,
@@ -131,6 +123,6 @@ export const useJobGrades = () => {
     updateJobGrade,
     deleteJobGrade,
     bulkAddJobGrades,
-    downloadJobGradeTemplate
+    downloadJobGradeTemplate,
   };
 };

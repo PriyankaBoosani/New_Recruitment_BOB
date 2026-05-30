@@ -1,30 +1,30 @@
 // src/store/index.js
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import languageReducer from '../i18n/store/languageSlice';
-import userReducer from '../app/providers/userSlice';
-import rankReducer from '../app/providers/rankSlice'
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import languageReducer from "../i18n/store/languageSlice";
+import userReducer from "../app/providers/userSlice";
+import rankReducer from "../app/providers/rankSlice";
 // 1) Combine all reducers
 const rootReducer = combineReducers({
   user: userReducer,
   language: languageReducer,
-   rank: rankReducer,
+  rank: rankReducer,
 });
- 
+
 // 2) Persist config
 //    Option A: blacklist 'resume' so only user & job are persisted.
 const persistConfig = {
-  key: 'root',
+  key: "root",
   storage,
-  blacklist: ['resume'],
+  blacklist: ["resume"],
 };
- 
+
 // If you prefer whitelist instead, use:
 // const persistConfig = { key: 'root', storage, whitelist: ['user', 'job'] };
- 
+
 const persistedReducer = persistReducer(persistConfig, rootReducer);
- 
+
 // 3) Create store
 export const store = configureStore({
   reducer: persistedReducer,
@@ -33,9 +33,8 @@ export const store = configureStore({
       // resume slice keeps File objects (non-serializable) -> disable check
       serializableCheck: false,
     }),
-  devTools: process.env.NODE_ENV !== 'production',
+  devTools: process.env.NODE_ENV !== "production",
 });
- 
+
 // 4) Persistor
 export const persistor = persistStore(store);
- 

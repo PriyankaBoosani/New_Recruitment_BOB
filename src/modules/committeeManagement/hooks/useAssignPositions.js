@@ -14,9 +14,8 @@ export const useAssignPositions = (userId) => {
     requisitionId: "",
     positionId: "",
     panelType: "",
-    members: []
+    members: [],
   });
-
 
   const [requisitions, setRequisitions] = useState([]);
   const [positions, setPositions] = useState([]);
@@ -39,15 +38,15 @@ export const useAssignPositions = (userId) => {
   const [originalCommittees, setOriginalCommittees] = useState({
     SCREENING: [],
     INTERVIEW: [],
-    COMPENSATION: []
+    COMPENSATION: [],
   });
   const formatStatus = (status) => {
     if (!status) return "-";
 
     return status
-      .toLowerCase()              // l1_pending
-      .replace("_", " ")          // l1 pending
-      .replace(/\b\w/g, c => c.toUpperCase()); // L1 Pending
+      .toLowerCase() // l1_pending
+      .replace("_", " ") // l1 pending
+      .replace(/\b\w/g, (c) => c.toUpperCase()); // L1 Pending
   };
 
   const validatePanels = () => {
@@ -58,12 +57,11 @@ export const useAssignPositions = (userId) => {
     today.setHours(0, 0, 0, 0);
 
     Object.entries(selectedCommittees).forEach(([type, panels]) => {
-      panels.forEach(panel => {
+      panels.forEach((panel) => {
         const key = `${type}_${panel.id}`;
         errors[key] = {};
 
         const isNewPanel = !panel.positionPanelId;
-
 
         if (!panel.startDate) {
           errors[key].startDate = "start_date_required";
@@ -85,7 +83,6 @@ export const useAssignPositions = (userId) => {
         }
 
         if (isNewPanel) {
-
           if (panel.endDate && new Date(panel.endDate) <= today) {
             errors[key].endDate = "end_future_required";
             isValid = false;
@@ -111,20 +108,15 @@ export const useAssignPositions = (userId) => {
     setPanelErrors(errors);
 
     if (!isValid) {
-
       toast.error(t("fix_committee_errors"));
     }
 
     return isValid;
   };
 
-
-
   useEffect(() => {
     fetchRequisitions();
   }, []);
-
-
 
   const fetchRequisitions = async () => {
     try {
@@ -134,7 +126,6 @@ export const useAssignPositions = (userId) => {
     } catch (err) {
       console.error("Failed to load requisitions", err);
     }
-
   };
 
   const handleRequisitionChange = async (e) => {
@@ -147,7 +138,7 @@ export const useAssignPositions = (userId) => {
     setSelectedCommittees({
       SCREENING: [],
       INTERVIEW: [],
-      COMPENSATION: []
+      COMPENSATION: [],
     });
 
     setAvailablePanels(allPanels); // reset from source of truth
@@ -160,7 +151,8 @@ export const useAssignPositions = (userId) => {
     }
 
     try {
-      const res = await committeeManagementService.getPositionsByRequisition(reqId);
+      const res =
+        await committeeManagementService.getPositionsByRequisition(reqId);
       setPositions(res?.data || []);
     } catch (err) {
       console.error("Failed to load positions", err);
@@ -171,7 +163,7 @@ export const useAssignPositions = (userId) => {
       setSelectedCommittees({
         SCREENING: [],
         INTERVIEW: [],
-        COMPENSATION: []
+        COMPENSATION: [],
       });
       setAvailablePanels([]);
       setAllPanels([]); // ✅ add this
@@ -185,7 +177,7 @@ export const useAssignPositions = (userId) => {
       // 1️⃣ Load all panels first
       const panelsRes = await masterApiService.getInterviewPanelsSearch({
         page,
-        size
+        size,
       });
 
       const apiData = panelsRes?.data?.content || [];
@@ -221,24 +213,23 @@ export const useAssignPositions = (userId) => {
         }
       };
 
-
       const mapAssigned = (list) =>
-        list.map(p => {
+        list.map((p) => {
           const rawStatus = p.positionPanelStatus ?? "";
           const isLocked = p.positionPanelStatus === "L2_PENDING";
           return {
             id: p.interviewPanel.interviewPanelId,
             positionPanelId: p.positionPanelId,
             name: p.interviewPanel.panelName,
-            committeeName: p.interviewPanel.committee.committeeName.toUpperCase(),
+            committeeName:
+              p.interviewPanel.committee.committeeName.toUpperCase(),
             committeeId: p.interviewPanel.committee.interviewCommitteeId,
-            members: p.interviewPanel.panelMembers.map(m => ({
+            members: p.interviewPanel.panelMembers.map((m) => ({
               ...m.panelMember,
-              interviewPanelMemberId: m.interviewPanelMemberId
+              interviewPanelMemberId: m.interviewPanelMemberId,
             })),
             startDate: p.startDate || "",
             endDate: p.endDate || "",
-
 
             canEdit: !isLocked && p.canEdit !== false,
             //      canEdit:
@@ -254,35 +245,31 @@ export const useAssignPositions = (userId) => {
             positionPanelStatus: rawStatus
               .toLowerCase()
               .replace("_", " ")
-              .replace(/^l1/, "L1")
+              .replace(/^l1/, "L1"),
           };
         });
-
 
       const assigned = {
         SCREENING: mapAssigned(screeningPanelList),
         INTERVIEW: mapAssigned(interviewPanelList),
-        COMPENSATION: mapAssigned(compensationPanelList)
+        COMPENSATION: mapAssigned(compensationPanelList),
       };
 
       setSelectedCommittees({
         SCREENING: assigned?.SCREENING || [],
         INTERVIEW: assigned?.INTERVIEW || [],
-        COMPENSATION: assigned?.COMPENSATION || []
+        COMPENSATION: assigned?.COMPENSATION || [],
       });
       setOriginalCommittees(assigned);
 
       // 3️⃣ Calculate available panels properly
       const assignedIds = Object.values(assigned)
         .flat()
-        .map(p => p.id);
+        .map((p) => p.id);
 
-      const available = mappedPanels.filter(
-        p => !assignedIds.includes(p.id)
-      );
+      const available = mappedPanels.filter((p) => !assignedIds.includes(p.id));
 
       setAvailablePanels(available);
-
     } catch (err) {
       console.error("Load Position Data Error:", err);
       toast.error(t("failed_load_panels"));
@@ -292,10 +279,7 @@ export const useAssignPositions = (userId) => {
   };
 
   useEffect(() => {
-
-
     loadPositionData(selectedPosition);
-
   }, [selectedPosition]);
 
   // const isDirty = () => {
@@ -307,12 +291,10 @@ export const useAssignPositions = (userId) => {
   const isPanelChanged = (panel, originalPanel) => {
     if (!originalPanel) return true;
 
-    const currentMembers = (panel.members || [])
-      .map(m => m.userId)
-      .sort();
+    const currentMembers = (panel.members || []).map((m) => m.userId).sort();
 
     const originalMembers = (originalPanel.members || [])
-      .map(m => m.userId)
+      .map((m) => m.userId)
       .sort();
 
     return (
@@ -329,13 +311,12 @@ export const useAssignPositions = (userId) => {
       // length changed → add/remove happened
       if (panels.length !== originalPanels.length) return true;
 
-      return panels.some(panel => {
-        const originalPanel = originalPanels.find(p => p.id === panel.id);
+      return panels.some((panel) => {
+        const originalPanel = originalPanels.find((p) => p.id === panel.id);
         return isPanelChanged(panel, originalPanel);
       });
     });
   };
-
 
   // const fetchPanels = useCallback(async () => {
   //   try {
@@ -396,21 +377,21 @@ export const useAssignPositions = (userId) => {
   const [selectedCommittees, setSelectedCommittees] = useState({
     SCREENING: [],
     INTERVIEW: [],
-    COMPENSATION: []
+    COMPENSATION: [],
   });
   const [context, setContext] = useState({
     requisitionId: "1",
-    positionId: "1"
+    positionId: "1",
   });
 
   const updateCommitteeDate = (type, id, field, value) => {
-    setSelectedCommittees(prev => ({
+    setSelectedCommittees((prev) => ({
       ...prev,
-      [type]: prev[type].map(c =>
+      [type]: prev[type].map((c) =>
         c.id === id
           ? { ...c, [field]: value, isDirty: true } // ✅ KEY
           : c
-      )
+      ),
     }));
 
     setIsManuallyDirty(true);
@@ -418,18 +399,17 @@ export const useAssignPositions = (userId) => {
     // 2️⃣ CLEAR validation error for this field
     const errorKey = `${type}_${id}`;
 
-    setPanelErrors(prev => {
+    setPanelErrors((prev) => {
       if (!prev?.[errorKey]?.[field]) return prev;
 
       return {
         ...prev,
         [errorKey]: {
           ...prev[errorKey],
-          [field]: ""
-        }
+          [field]: "",
+        },
       };
     });
-
   };
   const showError = (message, errors = []) => {
     setErrorMessage(message);
@@ -452,84 +432,79 @@ export const useAssignPositions = (userId) => {
       const payload = {
         interviewPanelList: [],
         screeningPanelList: [],
-        compensationPanelList: []
+        compensationPanelList: [],
       };
 
-      Object.entries(selectedCommittees).forEach(
-        ([committeeType, panels]) => {
-          panels.forEach((panel, seqIndex) => {
+      Object.entries(selectedCommittees).forEach(([committeeType, panels]) => {
+        panels.forEach((panel, seqIndex) => {
+          const originalPanel = originalCommittees?.[committeeType]?.find(
+            (p) => p.id === panel.id
+          );
 
-            const originalPanel = originalCommittees?.[committeeType]
-              ?.find(p => p.id === panel.id);
+          const isChanged =
+            !originalPanel ||
+            panel.startDate !== originalPanel.startDate ||
+            panel.endDate !== originalPanel.endDate ||
+            JSON.stringify(panel.members.map((m) => m.userId).sort()) !==
+              JSON.stringify(originalPanel.members.map((m) => m.userId).sort());
 
-            const isChanged =
-              !originalPanel ||
-              panel.startDate !== originalPanel.startDate ||
-              panel.endDate !== originalPanel.endDate ||
-              JSON.stringify(panel.members.map(m => m.userId).sort()) !==
-              JSON.stringify(originalPanel.members.map(m => m.userId).sort());
+          let finalPanel = panel;
 
+          if (!finalPanel) return;
 
-            let finalPanel = panel;
+          // ✅ detect change properly
+          const actionEnum = !panel.positionPanelId
+            ? "ADD"
+            : isChanged
+              ? "MODIFY"
+              : null;
 
-            if (!finalPanel) return;
+          // ✅ reset status if changed
+          let positionPanelStatus = panel.rawStatus;
 
-            // ✅ detect change properly
-            const actionEnum = !panel.positionPanelId
-              ? "ADD"
-              : isChanged
-                ? "MODIFY"
-                : null;
+          if (!panel.positionPanelId || isChanged) {
+            positionPanelStatus = "L1_PENDING";
+          }
 
-            // ✅ reset status if changed
-            let positionPanelStatus = panel.rawStatus;
-
-            if (!panel.positionPanelId || isChanged) {
-              positionPanelStatus = "L1_PENDING";
-            }
-
-            const panelPayload = {
-              positionId: null,
-              actionEnum, // ✅ ADD THISif (!finalPanel) return;
-              positionPanelStatus,
-              interviewPanel: {
-                panelName: finalPanel.name,
-                description: finalPanel.description || "",
-                committee: {
-                  committeeName: finalPanel.committeeName,
-                  committeeDesc: finalPanel.committeeDesc || "",
-                  interviewCommitteeId: finalPanel.committeeId
-                },
-                panelMembers: finalPanel.members.map(m => ({
-                  panelId: finalPanel.id,
-                  panelMember: {
-                    name: m.name,
-                    role: m.role,
-                    email: m.email,
-                    userId: m.userId
-                  },
-                  interviewPanelMemberId: m.interviewPanelMemberId
-                })),
-                interviewPanelId: finalPanel.id
+          const panelPayload = {
+            positionId: null,
+            actionEnum, // ✅ ADD THISif (!finalPanel) return;
+            positionPanelStatus,
+            interviewPanel: {
+              panelName: finalPanel.name,
+              description: finalPanel.description || "",
+              committee: {
+                committeeName: finalPanel.committeeName,
+                committeeDesc: finalPanel.committeeDesc || "",
+                interviewCommitteeId: finalPanel.committeeId,
               },
-              startDate: finalPanel.startDate,
-              endDate: finalPanel.endDate,
-              sequenceNo: seqIndex,
-              positionPanelId: finalPanel.positionPanelId,
-
-            };
-            console.log("🔥 API PAYLOAD", panelPayload);
-            if (committeeType === "INTERVIEW") {
-              payload.interviewPanelList.push(panelPayload);
-            } else if (committeeType === "SCREENING") {
-              payload.screeningPanelList.push(panelPayload);
-            } else if (committeeType === "COMPENSATION") {
-              payload.compensationPanelList.push(panelPayload);
-            }
-          });
-        }
-      );
-
+              panelMembers: finalPanel.members.map((m) => ({
+                panelId: finalPanel.id,
+                panelMember: {
+                  name: m.name,
+                  role: m.role,
+                  email: m.email,
+                  userId: m.userId,
+                },
+                interviewPanelMemberId: m.interviewPanelMemberId,
+              })),
+              interviewPanelId: finalPanel.id,
+            },
+            startDate: finalPanel.startDate,
+            endDate: finalPanel.endDate,
+            sequenceNo: seqIndex,
+            positionPanelId: finalPanel.positionPanelId,
+          };
+          console.log("🔥 API PAYLOAD", panelPayload);
+          if (committeeType === "INTERVIEW") {
+            payload.interviewPanelList.push(panelPayload);
+          } else if (committeeType === "SCREENING") {
+            payload.screeningPanelList.push(panelPayload);
+          } else if (committeeType === "COMPENSATION") {
+            payload.compensationPanelList.push(panelPayload);
+          }
+        });
+      });
 
       const res = await committeeManagementService.assignPanelToPosition(
         selectedPosition,
@@ -545,14 +520,10 @@ export const useAssignPositions = (userId) => {
         // toast.error(res?.message || "Failed to assign committees");
         showError(res?.message || t("validation_failed"), res?.data || []);
       }
-
     } catch (err) {
       setLoading(false);
       console.error("ASSIGN ERROR 👉", err);
-      toast.error(
-        err?.response?.data?.message ||
-        t("assign_failed")
-      );
+      toast.error(err?.response?.data?.message || t("assign_failed"));
     } finally {
       setLoading(false);
     }
@@ -564,28 +535,32 @@ export const useAssignPositions = (userId) => {
     setLoading(true);
 
     try {
-      const res = await committeeManagementService.bulkImportPositionAssignments(file);
+      const res =
+        await committeeManagementService.bulkImportPositionAssignments(file);
 
       if (!res.success) {
         return {
           success: false,
           error: res.message || "Validation failed",
-          details: res.data || []
+          details: res.data || [],
         };
       }
-
 
       // Success case - refresh data
       if (selectedPosition) {
         await loadPositionData(selectedPosition);
         setIsManuallyDirty(false);
       }
-      toast.success(res?.message || "Position assignments imported successfully");
+      toast.success(
+        res?.message || "Position assignments imported successfully"
+      );
       return { success: true };
-
     } catch (err) {
       console.error("Bulk Import Error:", err);
-      const errorMessage = err?.response?.data?.message || err?.message || "Unexpected server error";
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Unexpected server error";
       toast.error(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -595,19 +570,23 @@ export const useAssignPositions = (userId) => {
 
   const downloadPositionAssignmentTemplate = async () => {
     try {
-      const res = await committeeManagementService.downloadPositionAssignmentTemplate();
+      const res =
+        await committeeManagementService.downloadPositionAssignmentTemplate();
       const blob = res.data;
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = 'PositionAssignments_template.xlsx';
+      link.download = "PositionAssignments_template.xlsx";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      console.error('Download failed:', err);
-      toast.error(t("interviewPanelCommittee:download_error") || 'Failed to download template');
+      console.error("Download failed:", err);
+      toast.error(
+        t("interviewPanelCommittee:download_error") ||
+          "Failed to download template"
+      );
     }
   };
 
@@ -650,6 +629,6 @@ export const useAssignPositions = (userId) => {
     setIsManuallyDirty,
     bulkImportPositionAssignments,
     downloadPositionAssignmentTemplate,
-    loadPositionData
+    loadPositionData,
   };
 };

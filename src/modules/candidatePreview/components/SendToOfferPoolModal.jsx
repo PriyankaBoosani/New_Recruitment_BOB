@@ -11,7 +11,7 @@ const SendToOfferPoolModal = ({
   offerCandidateIds,
   onBulkOfferSuccess,
 }) => {
-  const { t } = useTranslation(["candidateWorkflow","common"]);
+  const { t } = useTranslation(["candidateWorkflow", "common"]);
   const fileInputRef = React.useRef(null);
   const [file, setFile] = React.useState(null);
 
@@ -35,13 +35,13 @@ const SendToOfferPoolModal = ({
     }
 
     try {
-      const res = await jobPositionApiService.downloadOfferPoolTemplate(
-        offerCandidateIds
-      );
+      const res =
+        await jobPositionApiService.downloadOfferPoolTemplate(
+          offerCandidateIds
+        );
 
       const blob = new Blob([res.data], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
 
       const url = window.URL.createObjectURL(blob);
@@ -107,7 +107,7 @@ const SendToOfferPoolModal = ({
       <Modal.Header closeButton className="modalhead">
         <div className="d-grid">
           <h5 className="mb-1 blue-color fs-15">
-           {t("candidateWorkflow:send_to_offer_pool")}
+            {t("candidateWorkflow:send_to_offer_pool")}
           </h5>
           <p className="text-muted fs-14 mb-0">
             {t("candidateWorkflow:upload_offer_details_for_candidates")}
@@ -121,7 +121,9 @@ const SendToOfferPoolModal = ({
           style={{ backgroundColor: "#FFF1E8" }}
         >
           <img src={fileIcon} width={60} className="mb-2" />
-          <p className="mb-1 fw-600 fs-15">{t("candidateWorkflow:upload_file")}</p>
+          <p className="mb-1 fw-600 fs-15">
+            {t("candidateWorkflow:upload_file")}
+          </p>
           <small className="text-muted fs-13">
             {t("candidateWorkflow:support_xlsx_format")}
           </small>
@@ -181,7 +183,7 @@ const SendToOfferPoolModal = ({
           onClick={handleBulkUpload}
           disabled={!file}
         >
-         {t("candidateWorkflow:import")}
+          {t("candidateWorkflow:import")}
         </button>
       </Modal.Footer>
     </Modal>

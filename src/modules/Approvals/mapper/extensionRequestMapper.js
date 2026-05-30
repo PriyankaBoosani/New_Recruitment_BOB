@@ -24,7 +24,7 @@ export const mapExtensionRequest = (data) => ({
   positionName: data.position,
   requestType: data.requestType,
   status: data.status,
-  statusType: getStatusVariant(data.status)
+  statusType: getStatusVariant(data.status),
 });
 
 // Helper function to map an array of extension requests

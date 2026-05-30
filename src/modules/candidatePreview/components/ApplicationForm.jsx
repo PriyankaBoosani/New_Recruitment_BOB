@@ -13,7 +13,13 @@ import masterApiService from "../../master/services/masterApiService";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck, faCircleExclamation, faCircleXmark, faTrash, faUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleCheck,
+  faCircleExclamation,
+  faCircleXmark,
+  faTrash,
+  faUpRightFromSquare,
+} from "@fortawesome/free-solid-svg-icons";
 import CommentsModal from "./CommentsModal";
 
 // Utility functions for masking sensitive information
@@ -21,7 +27,10 @@ const maskEmail = (email) => {
   if (!email) return "-";
   const [localPart, domain] = email.split("@");
   if (!localPart || !domain) return "-";
-  const maskedLocal = localPart.charAt(0) + "***" + (localPart.length > 1 ? localPart.charAt(localPart.length - 1) : "");
+  const maskedLocal =
+    localPart.charAt(0) +
+    "***" +
+    (localPart.length > 1 ? localPart.charAt(localPart.length - 1) : "");
   return `${maskedLocal}@${domain}`;
 };
 
@@ -37,7 +46,6 @@ const maskAddress = (address) => {
   if (address.length <= 10) return "*".repeat(address.length);
   return "*".repeat(Math.min(50, address.length - 4)) + address.slice(-4);
 };
-
 
 const ApplicationForm = ({
   previewData,
@@ -64,7 +72,6 @@ const ApplicationForm = ({
   pageSize,
   isCandidateWorkflow,
 }) => {
-
   const { t } = useTranslation(["preview", "common", "validation"]);
 
   const navigate = useNavigate();
@@ -79,15 +86,14 @@ const ApplicationForm = ({
   const candidate = location.state?.candidate;
 
   const zonalInitRef = useRef(true);
-  const isZonalAbsent = String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
+  const isZonalAbsent =
+    String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
   const [isLptRequired, setIsLptRequired] = useState("");
   const [lptType, setLptType] = useState("");
-
 
   const isFirstLoad = useRef(true);
 
   useEffect(() => {
-
     if (!isZonalHr) return;
 
     // Skip initial page load
@@ -98,7 +104,6 @@ const ApplicationForm = ({
 
     // Clear radio selection whenever LPT changes
     setZonalDecision("");
-
   }, [lptType]);
   // const deriveShortlistStatus = () => {
   //   const values = [
@@ -124,7 +129,6 @@ const ApplicationForm = ({
   };
 
   useEffect(() => {
-
     if (!candidate) return;
 
     // LPT Required
@@ -143,7 +147,6 @@ const ApplicationForm = ({
     } else {
       setLptType("");
     }
-
   }, [candidate]);
 
   const [screeningForm, setScreeningForm] = useState({
@@ -169,10 +172,9 @@ const ApplicationForm = ({
   const [screeningDocuments, setScreeningDocuments] = useState([]);
 
   const formatLocation = (a, b) => {
-    const values = [a, b].filter(v => v && v !== "-");
+    const values = [a, b].filter((v) => v && v !== "-");
     return values.length ? values.join(", ") : "-";
   };
-
 
   const [screeningRemarks, setScreeningRemarks] = useState("");
 
@@ -180,7 +182,6 @@ const ApplicationForm = ({
   const role = user?.role?.toLowerCase();
   // const isZonalHr = role === "zonal_hr";
   // const isInterviewer = role === "interviewer";
-
 
   const privileges = useSelector((state) => state.user.privileges);
 
@@ -190,9 +191,10 @@ const ApplicationForm = ({
   const canCandidatePool = privileges?.["Candidate Pool"];
   const canInterviewPool = privileges?.["Interview Pool"];
 
-
   const mapDecisionToStatus = (val) => {
-    const v = String(val || "").toUpperCase().trim();
+    const v = String(val || "")
+      .toUpperCase()
+      .trim();
 
     if (v === "YES") return "VERIFIED";
     if (v === "NO") return "REJECTED";
@@ -203,7 +205,6 @@ const ApplicationForm = ({
   };
 
   const mapStatusToDecision = (status) => {
-
     const s = String(status || "")
       .toUpperCase()
       .trim();
@@ -214,10 +215,7 @@ const ApplicationForm = ({
     }
 
     // REJECTED / ZONAL_REJECTED -> NO
-    if (
-      s === "REJECTED" ||
-      s === "ZONAL_REJECTED"
-    ) {
+    if (s === "REJECTED" || s === "ZONAL_REJECTED") {
       return "NO";
     }
 
@@ -234,7 +232,6 @@ const ApplicationForm = ({
   };
 
   useEffect(() => {
-
     if (!isZonalHr) return;
     if (zonalVerificationStatus) {
       setZonalDecision(mapStatusToDecision(zonalVerificationStatus));
@@ -242,9 +239,9 @@ const ApplicationForm = ({
 
     const mappedDecision = mapStatusToDecision(zonalVerificationStatus);
     if (zonalSubmitBeforeDate) {
-      setScreeningForm(prev => ({
+      setScreeningForm((prev) => ({
         ...prev,
-        zonalSubmitDate: zonalSubmitBeforeDate.split("T")[0] // safe for input[type=date]
+        zonalSubmitDate: zonalSubmitBeforeDate.split("T")[0], // safe for input[type=date]
       }));
     }
     if (zonalHrComments) {
@@ -252,13 +249,8 @@ const ApplicationForm = ({
     }
     const isLptFailed = isLptRequired === "YES" && lptType === "FAIL";
 
-
-
     // FAIL -> clear YES only
-    if (
-      mappedDecision === "YES" &&
-      isLptFailed
-    ) {
+    if (mappedDecision === "YES" && isLptFailed) {
       setZonalDecision("");
       return;
     } else if (mappedDecision === "NO" && !isLptFailed) {
@@ -267,28 +259,25 @@ const ApplicationForm = ({
     }
 
     setZonalDecision(mappedDecision);
-
   }, [
     zonalVerificationStatus,
     zonalSubmitBeforeDate,
     zonalHrComments,
     isZonalHr,
     isLptRequired,
-    lptType
+    lptType,
   ]);
 
   const handleZonalSubmit = async () => {
-
     // -----------------------------------------
     // Helper Conditions
     // -----------------------------------------
-    const allVerified = areAllDocumentsVerified();   // returns true/false
-    const anyRejected = hasAnyRejectedDocument();    // returns true/false
-    const hasPendingDocument = documentRows.some(doc => {
+    const allVerified = areAllDocumentsVerified(); // returns true/false
+    const anyRejected = hasAnyRejectedDocument(); // returns true/false
+    const hasPendingDocument = documentRows.some((doc) => {
       const status = docStatusMap[doc.candidateDocumentId]?.status;
       return !status || status === "PENDING";
     });
-
 
     // -----------------------------------------
     // 1️⃣ Decision not selected
@@ -316,9 +305,9 @@ const ApplicationForm = ({
     // 🔴 Comments mandatory when decision = NO
     if (zonalDecision === "NO") {
       if (!screeningRemarks?.trim()) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          zonalComments: t("validation:required")
+          zonalComments: t("validation:required"),
           // zonalComments: "This field is required"
         }));
         return;
@@ -333,9 +322,7 @@ const ApplicationForm = ({
       // toast.warning(
       //   "All documents are verified. Please select other decision instead."
       // );
-      toast.warning(
-        t("all_documents_verified_select_other")
-      );
+      toast.warning(t("all_documents_verified_select_other"));
       return;
     }
 
@@ -346,15 +333,11 @@ const ApplicationForm = ({
       // toast.error(
       //   "Cannot approve. One or more documents are rejected."
       // );
-      toast.error(
-        t("cannot_approve_documents_rejected")
-      );
+      toast.error(t("cannot_approve_documents_rejected"));
       return;
     }
 
-    const isLptFailed =
-      isLptRequired === "YES" &&
-      lptType === "FAIL";
+    const isLptFailed = isLptRequired === "YES" && lptType === "FAIL";
 
     if (zonalDecision === "YES" && isLptFailed) {
       toast.error("Candidate failed LPT. Approval not allowed.");
@@ -379,23 +362,22 @@ const ApplicationForm = ({
     // 5️⃣ PROVISIONAL requires future date
     // -----------------------------------------
     if (zonalDecision === "PROVISIONALLY_APPROVED") {
-
       let hasError = false;
 
       // 🔴 Comments mandatory
       if (!screeningRemarks?.trim()) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          zonalComments: "This field is required"
+          zonalComments: "This field is required",
         }));
         hasError = true;
       }
 
       // 🔴 Date mandatory
       if (!screeningForm.zonalSubmitDate) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          zonalSubmitDate: "This field is required"
+          zonalSubmitDate: "This field is required",
         }));
         hasError = true;
       } else {
@@ -404,10 +386,10 @@ const ApplicationForm = ({
         today.setHours(0, 0, 0, 0);
 
         if (selected <= today) {
-          setErrors(prev => ({
+          setErrors((prev) => ({
             ...prev,
             // zonalSubmitDate: "Must be future date"
-            zonalSubmitDate: t("must_be_future_date")
+            zonalSubmitDate: t("must_be_future_date"),
           }));
           hasError = true;
         }
@@ -416,8 +398,6 @@ const ApplicationForm = ({
       if (hasError) return;
     }
 
-
-
     // -----------------------------------------
     // 6️⃣ Show Loading Toast
     // -----------------------------------------
@@ -425,7 +405,6 @@ const ApplicationForm = ({
     const toastId = toast.loading(t("submitting_zonal_verification"));
 
     try {
-
       const payload = {
         candidateId,
         applicationId,
@@ -433,13 +412,9 @@ const ApplicationForm = ({
         zonalVerificationStatus: mapDecisionToStatus(zonalDecision),
         zonalSubmitBeforeDate: screeningForm.zonalSubmitDate || null,
         zonalHrComments: screeningRemarks || "",
-        lptRequired:
-          isLptRequired === "YES",
+        lptRequired: isLptRequired === "YES",
 
-        lptStatus:
-          isLptRequired === "YES"
-            ? lptType
-            : null
+        lptStatus: isLptRequired === "YES" ? lptType : null,
       };
 
       await jobPositionApiService.submitOverallZonalVerification(payload);
@@ -465,12 +440,10 @@ const ApplicationForm = ({
           preloadedCandidates: location.state?.candidates || [],
           selectedDate,
           page: page,
-          pageSize: pageSize
-        }
+          pageSize: pageSize,
+        },
       });
-
     } catch (err) {
-
       // -----------------------------------------
       // 8️⃣ Error Toast
       // -----------------------------------------
@@ -486,46 +459,41 @@ const ApplicationForm = ({
     }
   };
 
-
-
-
-
-
-
-
-
   const data = previewData || {
     personalDetails: {},
     experienceSummary: {},
     documents: {},
     education: [],
-    experience: []
+    experience: [],
   };
   const CRITERIA_OPTIONS = ["YES", "NO", "DISCREPANCY"];
 
   const documentRows = [
-    ...(screeningDocuments.length > 0 ? screeningDocuments : data.documents?.allDocs || [])
-  ].map(doc => ({
+    ...(screeningDocuments.length > 0
+      ? screeningDocuments
+      : data.documents?.allDocs || []),
+  ].map((doc) => ({
     ...doc,
-    candidateDocumentId: doc.candidateDocumentId ?? doc.id
+    candidateDocumentId: doc.candidateDocumentId ?? doc.id,
   }));
 
-  const [photo, setPhoto] = useState()
-  const [signature, setSignature] = useState()
+  const [photo, setPhoto] = useState();
+  const [signature, setSignature] = useState();
 
-  const allDocs = screeningDocuments.length > 0 ? screeningDocuments : data.documents.allDocs;
+  const allDocs =
+    screeningDocuments.length > 0 ? screeningDocuments : data.documents.allDocs;
   // console.log(screeningDocuments)
   // console.log(data.documents.allDocs)
 
-  const photoDoc = allDocs.find(doc => doc.name === "Photo");
-  const signatureDoc = allDocs.find(doc => doc.name === "Signature");
-  const birthDoc = allDocs.find(doc => doc.name === "Birth Certificate");
-  const tenthDoc = allDocs.find(doc => doc.name === "10th Certificate");
+  const photoDoc = allDocs.find((doc) => doc.name === "Photo");
+  const signatureDoc = allDocs.find((doc) => doc.name === "Signature");
+  const birthDoc = allDocs.find((doc) => doc.name === "Birth Certificate");
+  const tenthDoc = allDocs.find((doc) => doc.name === "10th Certificate");
 
   const photoUrl = photoDoc?.url || "";
   const signatureUrl = signatureDoc?.url || "";
 
-  const normalizeCriteria = (val) => val === "DEFAULT" ? "" : val ?? "";
+  const normalizeCriteria = (val) => (val === "DEFAULT" ? "" : (val ?? ""));
 
   useEffect(() => {
     if (!photoUrl) return;
@@ -621,7 +589,7 @@ const ApplicationForm = ({
   const isCategorySatisfied = (category) => {
     const docs = groupedDocs[category] || [];
 
-    return docs.some(doc => {
+    return docs.some((doc) => {
       const status = docStatusMap[doc.candidateDocumentId]?.status;
       return status === "VERIFIED";
     });
@@ -640,14 +608,16 @@ const ApplicationForm = ({
       if (isZonalHr) {
         res = await jobPositionApiService.getZonalDocumentStatus(applicationId);
       } else {
-        res = await jobPositionApiService.getScreeningCommitteeStatus(applicationId);
+        res =
+          await jobPositionApiService.getScreeningCommitteeStatus(
+            applicationId
+          );
       }
 
       const map = {};
       const documents = [];
 
       (res.data || []).forEach((item) => {
-
         //   const isZonal = isZonalHr;
         //  const status =
         //   item.zonalHrDocStatus &&
@@ -665,7 +635,6 @@ const ApplicationForm = ({
         //       : item.docScreeningStatus || "PENDING")
         //     : item.docScreeningStatus || "PENDING";
 
-
         // const status = isZonalHr
         //   ? item.zonalHrDocStatus || "PENDING"
 
@@ -676,11 +645,9 @@ const ApplicationForm = ({
         //       ? (item.zonalHrDocStatus || "PENDING")   //  ONLY ZONAL
         //       : item.docScreeningStatus || "PENDING";
 
-
         const status = isCandidateWorkflow
           ? item.docScreeningStatus || "PENDING"
           : item.zonalHrDocStatus || "PENDING";
-
 
         const comments = isZonal
           ? item.zonalHrDocComments
@@ -700,22 +667,18 @@ const ApplicationForm = ({
           url: item.fileUrl,
           status: status?.toUpperCase() || "PENDING",
           isValidationPending: item.isValidationPending,
-          pendingChecks: item.pendingChecks || []
+          pendingChecks: item.pendingChecks || [],
         });
-
       });
 
       setDocStatusMap(map);
       setScreeningDocuments(documents);
-
     } catch (e) {
       console.error(t("failed_fetch_document_status"), e);
     } finally {
       setDocStatusLoading(false);
     }
   };
-
-
 
   // const refreshDocStatuses = async () => {
   //   try {
@@ -756,14 +719,16 @@ const ApplicationForm = ({
 
         if (!data) return; // no record → fresh form
 
-        setScreeningForm(prev => ({
+        setScreeningForm((prev) => ({
           ...prev,
           applicationId,
           candidateId,
 
           isWorkCriteriaMet: normalizeCriteria(data.isWorkCriteriaMet),
           isAgeCriteriaMet: normalizeCriteria(data.isAgeCriteriaMet),
-          isEducationCriteriaMet: normalizeCriteria(data.isEducationCriteriaMet),
+          isEducationCriteriaMet: normalizeCriteria(
+            data.isEducationCriteriaMet
+          ),
           isShortlisted: normalizeCriteria(data.isShortlisted),
 
           workCriteriaRemark: data.workCriteriaRemark ?? "",
@@ -790,13 +755,12 @@ const ApplicationForm = ({
   }, [applicationId]);
 
   useEffect(() => {
-    setScreeningForm(prev => ({
+    setScreeningForm((prev) => ({
       ...prev,
       applicationId,
       candidateId,
     }));
   }, [applicationId, candidateId]);
-
 
   //   useEffect(() => {
 
@@ -817,7 +781,6 @@ const ApplicationForm = ({
   //   }
 
   // }, [isLptRequired, lptType, docStatusMap]);
-
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -857,7 +820,7 @@ const ApplicationForm = ({
   // };
 
   const handleRadioChange = (field, value) => {
-    setScreeningForm(prev => {
+    setScreeningForm((prev) => {
       const updated = {
         ...prev,
         [field]: value,
@@ -866,12 +829,13 @@ const ApplicationForm = ({
       // Always clear respective remark when radio changes
       if (field === "isWorkCriteriaMet") updated.workCriteriaRemark = "";
       if (field === "isAgeCriteriaMet") updated.ageCriteriaRemark = "";
-      if (field === "isEducationCriteriaMet") updated.educationCriteriaRemark = "";
+      if (field === "isEducationCriteriaMet")
+        updated.educationCriteriaRemark = "";
 
       return updated;
     });
 
-    setErrors(prev => {
+    setErrors((prev) => {
       const updated = { ...prev };
 
       delete updated[field];
@@ -884,7 +848,7 @@ const ApplicationForm = ({
   };
 
   const handleInputChange = (field, value) => {
-    setScreeningForm(prev => {
+    setScreeningForm((prev) => {
       const updated = {
         ...prev,
         [field]: value,
@@ -898,14 +862,11 @@ const ApplicationForm = ({
     });
 
     // shortlist selected -> clear eligible
-    if (
-      field === "isShortlisted" &&
-      (value === "YES" || value === "NO")
-    ) {
+    if (field === "isShortlisted" && (value === "YES" || value === "NO")) {
       setIsEligible(false);
     }
 
-    setErrors(prev => {
+    setErrors((prev) => {
       const updated = { ...prev };
 
       delete updated[field];
@@ -922,20 +883,16 @@ const ApplicationForm = ({
     if (!selectedDoc) return;
 
     try {
-
       if (isZonalHr) {
-
         await jobPositionApiService.verifyZonalDocument({
           candidateDocumentId: selectedDoc.candidateDocumentId,
           candidateId,
           applicationId,
           zonalHrDocStatus: "VERIFIED",
           // zonalHrDocComments: comment || ""
-          zonalHrDocComments: ""
+          zonalHrDocComments: "",
         });
-
       } else {
-
         // 🔹 DO NOT TOUCH — existing flow
         await jobPositionApiService.saveScreeningDecision({
           candidateDocumentId: selectedDoc.candidateDocumentId,
@@ -945,36 +902,29 @@ const ApplicationForm = ({
           docScreeningComments: comment || "",
           verificationId: selectedDoc.verificationId,
         });
-
       }
 
       setShowViewer(false);
       setSelectedDoc(null);
       await refreshDocStatuses();
-
     } catch (err) {
       console.error(t("reject_failed"), err);
     }
   };
 
-
   const handleReject = async (comment) => {
     if (!selectedDoc) return;
 
     try {
-
       if (isZonalHr) {
-
         await jobPositionApiService.verifyZonalDocument({
           candidateDocumentId: selectedDoc.candidateDocumentId,
           candidateId,
           applicationId,
           zonalHrDocStatus: "REJECTED",
-          zonalHrDocComments: comment || ""
+          zonalHrDocComments: comment || "",
         });
-
       } else {
-
         // 🔹 existing screening API — untouched
         await jobPositionApiService.saveScreeningDecision({
           candidateDocumentId: selectedDoc.candidateDocumentId,
@@ -984,20 +934,18 @@ const ApplicationForm = ({
           docScreeningComments: comment || "",
           verificationId: selectedDoc.verificationId,
         });
-
       }
 
       setShowViewer(false);
       setSelectedDoc(null);
       await refreshDocStatuses();
-
     } catch (err) {
       console.error("Reject failed", err);
     }
   };
 
-  const hasAdditionalDocuments = otherDocuments.some(
-    doc => doc.documentName?.trim()
+  const hasAdditionalDocuments = otherDocuments.some((doc) =>
+    doc.documentName?.trim()
   );
 
   const hasAnyDiscrepancy =
@@ -1006,15 +954,12 @@ const ApplicationForm = ({
     screeningForm.isEducationCriteriaMet === "DISCREPANCY" ||
     hasAdditionalDocuments;
 
-  console.log("hasAnyDiscrepancy", hasAnyDiscrepancy)
+  console.log("hasAnyDiscrepancy", hasAnyDiscrepancy);
 
-  console.log("hasAdditionalDocuments", hasAdditionalDocuments)
+  console.log("hasAdditionalDocuments", hasAdditionalDocuments);
 
-  const hasYetToUpload = documentRows.some(
-    doc => !doc?.url
-  );
-  const shouldShowSubmitBefore =
-    hasAnyDiscrepancy || hasYetToUpload;
+  const hasYetToUpload = documentRows.some((doc) => !doc?.url);
+  const shouldShowSubmitBefore = hasAnyDiscrepancy || hasYetToUpload;
 
   const validateForm = () => {
     const newErrors = {};
@@ -1143,9 +1088,8 @@ const ApplicationForm = ({
   };
 
   const areAllDocumentsValidated = () => {
-    return documentRows.every(doc => {
-      const status =
-        docStatusMap[doc.candidateDocumentId]?.status;
+    return documentRows.every((doc) => {
+      const status = docStatusMap[doc.candidateDocumentId]?.status;
 
       return status === "VERIFIED" || status === "REJECTED";
     });
@@ -1153,16 +1097,13 @@ const ApplicationForm = ({
 
   const disableDocAction = isInterviewView || isFromInterview;
 
-  const allDocsVerified =
-    documentRows.length > 0 &&
-    areAllDocumentsValidated();
-
+  const allDocsVerified = documentRows.length > 0 && areAllDocumentsValidated();
 
   const areAllDocumentsVerified = () => {
     if (!documentRows.length) return false;
     if (docStatusLoading) return false;
 
-    return documentRows.every(doc => {
+    return documentRows.every((doc) => {
       const status = docStatusMap[doc.candidateDocumentId]?.status;
       return status === "VERIFIED";
     });
@@ -1180,9 +1121,7 @@ const ApplicationForm = ({
     screeningForm.isShortlisted === "YES" ||
     screeningForm.isShortlisted === "NO";
 
-  const hasMissingUploads = documentRows.some(
-    doc => !doc?.url
-  );
+  const hasMissingUploads = documentRows.some((doc) => !doc?.url);
 
   const disableEligibleCheckbox =
     !areAllCriteriaYes() ||
@@ -1191,7 +1130,7 @@ const ApplicationForm = ({
     hasMissingUploads;
 
   const hasAnyRejectedDocument = () => {
-    return documentRows.some(doc => {
+    return documentRows.some((doc) => {
       const status = docStatusMap[doc.candidateDocumentId]?.status;
       return status === "REJECTED";
     });
@@ -1202,7 +1141,7 @@ const ApplicationForm = ({
       screeningForm.isWorkCriteriaMet,
       screeningForm.isAgeCriteriaMet,
       screeningForm.isEducationCriteriaMet,
-    ].filter(v => v === "YES").length;
+    ].filter((v) => v === "YES").length;
   };
 
   const baseDerived = deriveShortlistStatus();
@@ -1267,10 +1206,9 @@ const ApplicationForm = ({
       isScreeningCompleted: true,
       isEligible,
       additionalDocumentNames: otherDocuments
-        .map(doc => doc.documentName?.trim())
+        .map((doc) => doc.documentName?.trim())
         .filter(Boolean),
     };
-
 
     try {
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
@@ -1278,14 +1216,14 @@ const ApplicationForm = ({
       toast.success(t("screening_submitted_success"));
       console.log("SENDING POSITION IDS:", {
         positionIds,
-        positionId
+        positionId,
       });
       navigate("/candidate-workflow", {
         state: {
           requisitionId,
 
           positionIds: Array.isArray(positionIds)
-            ? positionIds.map(item => item.positionId)
+            ? positionIds.map((item) => item.positionId)
             : positionId
               ? [positionId]
               : [],
@@ -1308,7 +1246,6 @@ const ApplicationForm = ({
   const minDate = getTomorrowDate();
   const minFutureDate = minDate;
 
-
   const handleDateChange = (e) => {
     let value = e.target.value;
 
@@ -1318,21 +1255,20 @@ const ApplicationForm = ({
     }
 
     // Always update state so typing doesn't feel broken
-    setScreeningForm(prev => ({
+    setScreeningForm((prev) => ({
       ...prev,
       submitBeforeDate: value,
     }));
 
     // Clear error while typing
-    setErrors(prev => ({ ...prev, submitBeforeDate: undefined }));
-
+    setErrors((prev) => ({ ...prev, submitBeforeDate: undefined }));
 
     if (value.length < 10) return;
 
     // Enforce exact YYYY-MM-DD
     const strictDateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!strictDateRegex.test(value)) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         submitBeforeDate: t("invalid_date"),
       }));
@@ -1343,9 +1279,8 @@ const ApplicationForm = ({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-
     if (selectedDate <= today) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         submitBeforeDate: t("date_after_today"),
       }));
@@ -1355,25 +1290,26 @@ const ApplicationForm = ({
   useEffect(() => {
     if (!disableShortlistedSection || hasAnyDiscrepancy) return;
     if (screeningForm.isScreeningCompleted) return;
-    setScreeningForm(prev => ({
+    setScreeningForm((prev) => ({
       ...prev,
       submitBeforeDate: "",
     }));
 
-    setErrors(prev => ({
+    setErrors((prev) => ({
       ...prev,
       submitBeforeDate: undefined,
     }));
-
-  }, [disableShortlistedSection, screeningForm.isScreeningCompleted, hasAnyDiscrepancy]);
+  }, [
+    disableShortlistedSection,
+    screeningForm.isScreeningCompleted,
+    hasAnyDiscrepancy,
+  ]);
 
   useEffect(() => {
     const derived = deriveShortlistStatus();
 
-
-
     if (derived === "DEFAULT") {
-      setScreeningForm(prev => {
+      setScreeningForm((prev) => {
         if (prev.isScreeningCompleted) return prev;
 
         return {
@@ -1383,18 +1319,17 @@ const ApplicationForm = ({
         };
       });
 
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         finalScreeningRemark: undefined,
         submitBeforeDate: undefined,
         isShortlisted: undefined,
       }));
     }
-
   }, [
     screeningForm.isWorkCriteriaMet,
     screeningForm.isAgeCriteriaMet,
-    screeningForm.isEducationCriteriaMet
+    screeningForm.isEducationCriteriaMet,
   ]);
 
   // useEffect(() => {
@@ -1411,23 +1346,19 @@ const ApplicationForm = ({
   useEffect(() => {
     if (!disableShortlistedSection) return;
 
-    if (
-      screeningForm.isShortlisted ||
-      screeningForm.finalScreeningRemark
-    ) {
-      setScreeningForm(prev => ({
+    if (screeningForm.isShortlisted || screeningForm.finalScreeningRemark) {
+      setScreeningForm((prev) => ({
         ...prev,
         isShortlisted: "",
         finalScreeningRemark: "",
       }));
 
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         isShortlisted: undefined,
         finalScreeningRemark: undefined,
       }));
     }
-
   }, [disableShortlistedSection]);
 
   useEffect(() => {
@@ -1439,23 +1370,19 @@ const ApplicationForm = ({
     }
 
     // clear shortlist
-    if (
-      screeningForm.isShortlisted ||
-      screeningForm.finalScreeningRemark
-    ) {
-      setScreeningForm(prev => ({
+    if (screeningForm.isShortlisted || screeningForm.finalScreeningRemark) {
+      setScreeningForm((prev) => ({
         ...prev,
         isShortlisted: "",
         finalScreeningRemark: "",
       }));
 
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         isShortlisted: undefined,
         finalScreeningRemark: undefined,
       }));
     }
-
   }, [hasMissingUploads]);
 
   const allDocsAreVerified = areAllDocumentsVerified();
@@ -1554,24 +1481,20 @@ const ApplicationForm = ({
     const workVerified = isCategorySatisfied("WORK");
     const educationVerified = isCategorySatisfied("EDUCATION");
 
-    setScreeningForm(prev => {
+    setScreeningForm((prev) => {
       let changed = false;
 
       const updated = { ...prev };
 
       // AGE
       const nextAge = ageVerified
-        ? (
-          prev.isAgeCriteriaMet === "NO" ||
-            prev.isAgeCriteriaMet === "DISCREPANCY"
-            ? prev.isAgeCriteriaMet
-            : "YES"
-        )
-        : (
-          prev.isAgeCriteriaMet === "YES"
-            ? ""
-            : prev.isAgeCriteriaMet
-        );
+        ? prev.isAgeCriteriaMet === "NO" ||
+          prev.isAgeCriteriaMet === "DISCREPANCY"
+          ? prev.isAgeCriteriaMet
+          : "YES"
+        : prev.isAgeCriteriaMet === "YES"
+          ? ""
+          : prev.isAgeCriteriaMet;
 
       if (nextAge !== prev.isAgeCriteriaMet) {
         updated.isAgeCriteriaMet = nextAge;
@@ -1580,17 +1503,13 @@ const ApplicationForm = ({
 
       // WORK
       const nextWork = workVerified
-        ? (
-          prev.isWorkCriteriaMet === "NO" ||
-            prev.isWorkCriteriaMet === "DISCREPANCY"
-            ? prev.isWorkCriteriaMet
-            : "YES"
-        )
-        : (
-          prev.isWorkCriteriaMet === "YES"
-            ? ""
-            : prev.isWorkCriteriaMet
-        );
+        ? prev.isWorkCriteriaMet === "NO" ||
+          prev.isWorkCriteriaMet === "DISCREPANCY"
+          ? prev.isWorkCriteriaMet
+          : "YES"
+        : prev.isWorkCriteriaMet === "YES"
+          ? ""
+          : prev.isWorkCriteriaMet;
 
       if (nextWork !== prev.isWorkCriteriaMet) {
         updated.isWorkCriteriaMet = nextWork;
@@ -1599,17 +1518,13 @@ const ApplicationForm = ({
 
       // EDUCATION
       const nextEducation = educationVerified
-        ? (
-          prev.isEducationCriteriaMet === "NO" ||
-            prev.isEducationCriteriaMet === "DISCREPANCY"
-            ? prev.isEducationCriteriaMet
-            : "YES"
-        )
-        : (
-          prev.isEducationCriteriaMet === "YES"
-            ? ""
-            : prev.isEducationCriteriaMet
-        );
+        ? prev.isEducationCriteriaMet === "NO" ||
+          prev.isEducationCriteriaMet === "DISCREPANCY"
+          ? prev.isEducationCriteriaMet
+          : "YES"
+        : prev.isEducationCriteriaMet === "YES"
+          ? ""
+          : prev.isEducationCriteriaMet;
 
       if (nextEducation !== prev.isEducationCriteriaMet) {
         updated.isEducationCriteriaMet = nextEducation;
@@ -1618,41 +1533,32 @@ const ApplicationForm = ({
 
       return changed ? updated : prev;
     });
-
   }, [docStatusMap]);
 
-
   useEffect(() => {
-  const allVerified = areAllDocumentsVerified();
+    const allVerified = areAllDocumentsVerified();
 
-  if (
-    zonalDecision === "YES" &&
-    !allVerified
-  ) {
-    setZonalDecision("");
-  }
+    if (zonalDecision === "YES" && !allVerified) {
+      setZonalDecision("");
+    }
 
-  if (
-    zonalDecision === "PROVISIONALLY_APPROVED" &&
-    allVerified
-  ) {
-    setZonalDecision("");
+    if (zonalDecision === "PROVISIONALLY_APPROVED" && allVerified) {
+      setZonalDecision("");
 
-    setScreeningForm(prev => ({
-      ...prev,
-      zonalSubmitDate: ""
-    }));
+      setScreeningForm((prev) => ({
+        ...prev,
+        zonalSubmitDate: "",
+      }));
 
-    setScreeningRemarks("");
+      setScreeningRemarks("");
 
-    setErrors(prev => ({
-      ...prev,
-      zonalSubmitDate: undefined,
-      zonalComments: undefined
-    }));
-  }
-}, [docStatusMap]);
-
+      setErrors((prev) => ({
+        ...prev,
+        zonalSubmitDate: undefined,
+        zonalComments: undefined,
+      }));
+    }
+  }, [docStatusMap]);
 
   useEffect(() => {
     if (zonalInitRef.current) {
@@ -1661,14 +1567,14 @@ const ApplicationForm = ({
     }
 
     if (zonalDecision !== "PROVISIONALLY_APPROVED") {
-      setScreeningForm(prev => ({
+      setScreeningForm((prev) => ({
         ...prev,
-        zonalSubmitDate: ""
+        zonalSubmitDate: "",
       }));
 
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        zonalSubmitDate: undefined
+        zonalSubmitDate: undefined,
       }));
     }
   }, [zonalDecision]);
@@ -1683,7 +1589,6 @@ const ApplicationForm = ({
   //   }
   // }, [isLptRequired, lptType]);
 
-
   // useEffect(() => {
   //   const isLptSelectionPending =
   //     !isLptRequired ||
@@ -1694,15 +1599,13 @@ const ApplicationForm = ({
   //   }
   // }, [isLptRequired, lptType]);
 
-
-
   const getPendingMessage = (doc) => {
     if (!doc?.pendingChecks?.length) {
       return t("validation_pending");
     }
 
     const formatted = doc.pendingChecks
-      .map(item => String(item).toUpperCase())
+      .map((item) => String(item).toUpperCase())
       .join(", ");
 
     // return `Please verify the correctness of ${formatted}`;
@@ -1718,13 +1621,13 @@ const ApplicationForm = ({
 
     // If eligible checked -> clear shortlist
     if (checked) {
-      setScreeningForm(prev => ({
+      setScreeningForm((prev) => ({
         ...prev,
         isShortlisted: "",
         finalScreeningRemark: "",
       }));
 
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         isShortlisted: undefined,
         finalScreeningRemark: undefined,
@@ -1733,7 +1636,7 @@ const ApplicationForm = ({
   };
 
   const handleAddDocumentRow = () => {
-    setOtherDocuments(prev => [
+    setOtherDocuments((prev) => [
       ...prev,
       {
         id: Date.now(),
@@ -1744,15 +1647,15 @@ const ApplicationForm = ({
   };
 
   const handleRemoveDocumentRow = (id) => {
-    setOtherDocuments(prev => {
-      const updated = prev.filter(row => row.id !== id);
+    setOtherDocuments((prev) => {
+      const updated = prev.filter((row) => row.id !== id);
 
       // Recalculate discrepancy after delete
-      const hasAge = updated.some(r => r.criteriaType === "Age");
-      const hasWork = updated.some(r => r.criteriaType === "Work");
-      const hasEducation = updated.some(r => r.criteriaType === "Education");
+      const hasAge = updated.some((r) => r.criteriaType === "Age");
+      const hasWork = updated.some((r) => r.criteriaType === "Work");
+      const hasEducation = updated.some((r) => r.criteriaType === "Education");
 
-      setScreeningForm(current => ({
+      setScreeningForm((current) => ({
         ...current,
 
         isAgeCriteriaMet:
@@ -1776,26 +1679,28 @@ const ApplicationForm = ({
   };
 
   const handleOtherDocumentChange = (id, field, value) => {
-    setOtherDocuments(prev => {
-      const updated = prev.map(row =>
+    setOtherDocuments((prev) => {
+      const updated = prev.map((row) =>
         row.id === id
           ? {
-            ...row,
-            [field]: value,
-          }
+              ...row,
+              [field]: value,
+            }
           : row
       );
 
       // Get latest selected values
-      const selectedRow = updated.find(r => r.id === id);
+      const selectedRow = updated.find((r) => r.id === id);
 
-      setScreeningForm(current => {
+      setScreeningForm((current) => {
         const next = { ...current };
 
         // Reset first
-        const hasAge = updated.some(r => r.criteriaType === "Age");
-        const hasWork = updated.some(r => r.criteriaType === "Work");
-        const hasEducation = updated.some(r => r.criteriaType === "Education");
+        const hasAge = updated.some((r) => r.criteriaType === "Age");
+        const hasWork = updated.some((r) => r.criteriaType === "Work");
+        const hasEducation = updated.some(
+          (r) => r.criteriaType === "Education"
+        );
 
         if (hasAge) {
           next.isAgeCriteriaMet = "DISCREPANCY";
@@ -1810,7 +1715,7 @@ const ApplicationForm = ({
         }
 
         if (field === "documentName" && value.trim()) {
-          setOtherDocumentErrors(prev => {
+          setOtherDocumentErrors((prev) => {
             const updated = { ...prev };
             delete updated[id];
             return updated;
@@ -1825,17 +1730,14 @@ const ApplicationForm = ({
   };
 
   useEffect(() => {
-    if (
-      disableYesOption &&
-      screeningForm.isShortlisted === "YES"
-    ) {
-      setScreeningForm(prev => ({
+    if (disableYesOption && screeningForm.isShortlisted === "YES") {
+      setScreeningForm((prev) => ({
         ...prev,
         isShortlisted: "",
         finalScreeningRemark: "",
       }));
 
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         isShortlisted: undefined,
         finalScreeningRemark: undefined,
@@ -1851,7 +1753,6 @@ const ApplicationForm = ({
         alwaysOpen
         className="bob-accordion"
       >
-
         {/* === PERSONAL DETAILS === */}
         <Accordion.Item eventKey="0">
           <Accordion.Header>{t("personal_details")}</Accordion.Header>
@@ -1860,7 +1761,9 @@ const ApplicationForm = ({
               <table className="table table-bordered bob-table w-100 mb-0">
                 <tbody>
                   <tr>
-                    <td className="fw-med" style={{ width: "20%" }}>{t("full_name")}</td>
+                    <td className="fw-med" style={{ width: "20%" }}>
+                      {t("full_name")}
+                    </td>
                     <td className="fw-reg" colSpan={4} style={{ width: "60%" }}>
                       {data.personalDetails.fullName}
                     </td>
@@ -1886,15 +1789,12 @@ const ApplicationForm = ({
                       </div>
                     </td> */}
 
-
-
                     <td
                       rowSpan="3"
                       className="bob-photo-cell align-top text-center"
                       style={{ width: "20%", verticalAlign: "top" }}
                     >
                       <div className="photo-signature-wrapper">
-
                         {/* PHOTO BOX */}
                         <div className="photo-box">
                           {photo ? (
@@ -1920,7 +1820,6 @@ const ApplicationForm = ({
                             <div className="no-image">{t("no_signature")}</div>
                           )}
                         </div>
-
                       </div>
                     </td>
                   </tr>
@@ -1928,47 +1827,67 @@ const ApplicationForm = ({
                   <tr>
                     <td className="fw-med">{t("address")}</td>
                     <td className="fw-reg" colSpan={4}>
-                      {role !== "recruiter" ? maskAddress(data.personalDetails.address) : data.personalDetails.address}
+                      {role !== "recruiter"
+                        ? maskAddress(data.personalDetails.address)
+                        : data.personalDetails.address}
                     </td>
                   </tr>
 
                   <tr>
                     <td className="fw-med">{t("permanent_address")}</td>
                     <td className="fw-reg" colSpan={4}>
-                      {role !== "recruiter" ? maskAddress(data.personalDetails.permanentAddress) : data.personalDetails.permanentAddress}
+                      {role !== "recruiter"
+                        ? maskAddress(data.personalDetails.permanentAddress)
+                        : data.personalDetails.permanentAddress}
                     </td>
                   </tr>
 
-                  <tr >
-                    <td className="fw-med" >{t("mobile")}</td>
+                  <tr>
+                    <td className="fw-med">{t("mobile")}</td>
                     <td className="fw-reg" colSpan={2}>
-                      {role !== "recruiter" ? maskPhoneNumber(data.personalDetails.mobile) : data.personalDetails.mobile}
+                      {role !== "recruiter"
+                        ? maskPhoneNumber(data.personalDetails.mobile)
+                        : data.personalDetails.mobile}
                     </td>
                     <td className="fw-med">{t("email")}</td>
                     <td className="fw-reg" colSpan={2}>
-                      {role !== "recruiter" ? maskEmail(data.personalDetails.email) : data.personalDetails.email}
+                      {role !== "recruiter"
+                        ? maskEmail(data.personalDetails.email)
+                        : data.personalDetails.email}
                     </td>
                   </tr>
 
-                  <tr >
+                  <tr>
                     <td className="fw-med">{t("mother_name")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.motherName || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.motherName || "-"}
+                    </td>
                     <td className="fw-med">{t("father_name")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.fatherName}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.fatherName}
+                    </td>
                   </tr>
 
                   <tr>
                     <td className="fw-med">{t("gender")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.gender_name || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.gender_name || "-"}
+                    </td>
                     <td className="fw-med">{t("religion")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.religion_name || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.religion_name || "-"}
+                    </td>
                   </tr>
 
                   <tr>
                     <td className="fw-med">{t("category")}</td>
-                    <td className="fw-reg" colSpan={2}  >{data.personalDetails.reservationCategory_name || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.reservationCategory_name || "-"}
+                    </td>
                     <td className="fw-med">{t("caste")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.caste || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.caste || "-"}
+                    </td>
                   </tr>
 
                   <tr>
@@ -2015,11 +1934,12 @@ const ApplicationForm = ({
                       )} */}
                     </td>
                     <td className="fw-med">{t("age_cutoff")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.age || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.age || "-"}
+                    </td>
 
                     {/* <td className="fw-med">Nationality</td>
                       <td className="fw-reg" colSpan={2}>{data.personalDetails.nationality_name}</td> */}
-
 
                     {/* <td className="fw-med">Age (as on cut-off date)</td>
                       <td className="fw-reg" colSpan={2}>{previewData.personalDetails.age || "-"}</td> */}
@@ -2027,9 +1947,13 @@ const ApplicationForm = ({
 
                   <tr>
                     <td className="fw-med">{t("ex_serviceman")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.exService || "N/A"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.exService || "N/A"}
+                    </td>
                     <td className="fw-med">{t("physical_disability")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.physicalDisability || "N"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.physicalDisability || "N"}
+                    </td>
                   </tr>
 
                   <tr>
@@ -2038,9 +1962,10 @@ const ApplicationForm = ({
                       {data.personalDetails.examCenter}
                     </td>
                     <td className="fw-med">{t("nationality")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.nationality_name}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.nationality_name}
+                    </td>
                   </tr>
-
 
                   {/* <tr>
                       <td className="fw-med">Age (as on cut-off date)</td>
@@ -2051,9 +1976,13 @@ const ApplicationForm = ({
 
                   <tr>
                     <td className="fw-med">{t("marital_status")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.maritalStatus_name}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.maritalStatus_name}
+                    </td>
                     <td className="fw-med">{t("spouse_name")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.spouseName || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.spouseName || "-"}
+                    </td>
                   </tr>
                   <tr>
                     {/* <td className="fw-med">{t("twin_sibling")}</td>
@@ -2076,11 +2005,15 @@ const ApplicationForm = ({
                         ? `${previewData.personalDetails.twinName} (${previewData.personalDetails.twinGender_name})`
                         : "-"}</td> */}
                     <td className="fw-med">{t("cibil_score")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.cibilScore}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.cibilScore}
+                    </td>
                   </tr>
                   <tr>
                     <td className="fw-med">{t("current_ctc")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.experienceSummary?.currentCtc || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.experienceSummary?.currentCtc || "-"}
+                    </td>
                     <td className="fw-med">{t("expected_ctc")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.expectedCtc}
@@ -2107,23 +2040,23 @@ const ApplicationForm = ({
                     </tr>*/}
                   <tr>
                     <td className="fw-med">{t("language_proficiency")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.languages || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.languages || "-"}
+                    </td>
 
                     <td className="fw-med">{t("social_media_links")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td>
-
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.socialMediaProfileLink}
+                    </td>
                   </tr>
 
                   <tr>
-
-
                     <td className="fw-med">{t("location_pref1")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
                         data.personalDetails.locationPreference1,
                         data.personalDetails.statePreference1
                       )}
-
                     </td>
                     <td className="fw-med">{t("location_pref2")}</td>
                     <td className="fw-reg" colSpan={2}>
@@ -2131,13 +2064,10 @@ const ApplicationForm = ({
                         data.personalDetails.locationPreference2,
                         data.personalDetails.statePreference2
                       )}
-
                     </td>
-
                   </tr>
 
                   <tr>
-
                     <td className="fw-med">{t("location_pref3")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
@@ -2149,35 +2079,47 @@ const ApplicationForm = ({
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.localLanguage || "-"}
                     </td>
-
                   </tr>
                   <tr>
                     <td className="fw-med">{t("is_local_language_studied")}</td>
                     <td className="fw-reg" colSpan={2}>
-                      {isLocationWise ? data.personalDetails.isLocalLanguageStudied : "-"}
+                      {isLocationWise
+                        ? data.personalDetails.isLocalLanguageStudied
+                        : "-"}
                     </td>
                   </tr>
 
-
                   <tr>
                     <td className="fw-med">{t("central_govt_employment")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.centralGovtEmployment || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.centralGovtEmployment || "No"}
+                    </td>
                     <td className="fw-med">{t("lower_post")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.servingLowerPost || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.servingLowerPost || "No"}
+                    </td>
                   </tr>
 
                   <tr>
                     <td className="fw-med">{t("riot_family_member")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.riotVictimFamily || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.riotVictimFamily || "No"}
+                    </td>
                     <td className="fw-med">{t("religious_minority")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.minority || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.minority || "No"}
+                    </td>
                   </tr>
 
                   <tr>
                     <td className="fw-med">{t("govt_service")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.servingInGovt || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.servingInGovt || "No"}
+                    </td>
                     <td className="fw-med">{t("disciplinary_action")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.disciplinaryAction || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.disciplinaryAction || "No"}
+                    </td>
                   </tr>
 
                   {/* {data.personalDetails.disciplinaryAction === "Yes" && (
@@ -2195,7 +2137,6 @@ const ApplicationForm = ({
                       {data.personalDetails.disciplinaryDetails}
                     </td>
                   </tr> */}
-
                 </tbody>
               </table>
             </div>
@@ -2216,16 +2157,18 @@ const ApplicationForm = ({
                     <th>{t("university_name")}</th>
                     <th>{t("board")}</th>
                     <th>{t("specialization")}</th>
-                    <th style={{ width: '10%' }}>{t("from_date")}</th>
-                    <th style={{ width: '10%' }}>{t("to_date")}</th>
-                    <th style={{ width: '9%' }}>{t("percentage_cgpa")}</th>
+                    <th style={{ width: "10%" }}>{t("from_date")}</th>
+                    <th style={{ width: "10%" }}>{t("to_date")}</th>
+                    <th style={{ width: "9%" }}>{t("percentage_cgpa")}</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {/* {(data.education || []).map((edu, index) => ( */}
                   {(data.education || [])
-                    .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+                    .sort(
+                      (a, b) => new Date(b.startDate) - new Date(a.startDate)
+                    )
                     .map((edu, index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>
@@ -2240,7 +2183,6 @@ const ApplicationForm = ({
                       </tr>
                     ))}
 
-
                   {(!data.education || data.education.length === 0) && (
                     <tr>
                       <td colSpan="8" className="text-center">
@@ -2249,18 +2191,14 @@ const ApplicationForm = ({
                     </tr>
                   )}
                 </tbody>
-
               </table>
             </div>
-
           </Accordion.Body>
         </Accordion.Item>
 
         {/* === EXPERIENCE DETAILS === */}
         <Accordion.Item eventKey="2" className="exp-accordion">
-          <Accordion.Header >
-            {t("experience_details")}
-          </Accordion.Header>
+          <Accordion.Header>{t("experience_details")}</Accordion.Header>
 
           <Accordion.Body>
             <table className="exp-table">
@@ -2299,7 +2237,6 @@ const ApplicationForm = ({
                   </tr>
                 )}
               </tbody>
-
             </table>
           </Accordion.Body>
         </Accordion.Item>
@@ -2308,9 +2245,7 @@ const ApplicationForm = ({
           <Accordion.Header>{t("documents_details")}</Accordion.Header>
 
           <Accordion.Body>
-
             <table className="bob-doc-table">
-
               {/* COLUMN WIDTH CONTROL */}
               <colgroup>
                 <col style={{ width: "16.66%" }} />
@@ -2324,33 +2259,41 @@ const ApplicationForm = ({
               <thead>
                 <tr>
                   <th style={{ width: "44%" }}>{t("file_type")}</th>
-                  <th className="px-3" style={{ width: "5%" }}>{t("status")}</th>
-                  <th className="text-center" style={{ width: "1%" }}>{t("action")}</th>
+                  <th className="px-3" style={{ width: "5%" }}>
+                    {t("status")}
+                  </th>
+                  <th className="text-center" style={{ width: "1%" }}>
+                    {t("action")}
+                  </th>
 
                   <th style={{ width: "44%" }}>{t("file_type")}</th>
-                  <th className="px-3" style={{ width: "5%" }}>{t("status")}</th>
-                  <th className="text-center" style={{ width: "1%" }}>{t("action")}</th>
+                  <th className="px-3" style={{ width: "5%" }}>
+                    {t("status")}
+                  </th>
+                  <th className="text-center" style={{ width: "1%" }}>
+                    {t("action")}
+                  </th>
                 </tr>
               </thead>
 
               <tbody>
                 {Array.from({ length: Math.ceil(documentRows.length / 2) }).map(
                   (_, rowIndex) => {
-
                     const left = documentRows[rowIndex * 2];
                     const right = documentRows[rowIndex * 2 + 1];
 
                     const leftStatus = !left?.url
                       ? "YET TO UPLOAD"
-                      : docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
+                      : docStatusMap[left?.candidateDocumentId]?.status ||
+                        "PENDING";
 
                     const rightStatus = !right?.url
                       ? "YET TO UPLOAD"
-                      : docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
+                      : docStatusMap[right?.candidateDocumentId]?.status ||
+                        "PENDING";
 
                     return (
                       <tr key={rowIndex}>
-
                         {/* LEFT SIDE */}
                         {/* <td>{left?.name}</td> */}
                         <td>
@@ -2360,14 +2303,16 @@ const ApplicationForm = ({
                             <OverlayTrigger
                               placement="bottom"
                               overlay={
-                                <Tooltip id={`tooltip-left-${left.candidateDocumentId}`}>
+                                <Tooltip
+                                  id={`tooltip-left-${left.candidateDocumentId}`}
+                                >
                                   {getPendingMessage(left)}
                                 </Tooltip>
                               }
                             >
                               <span>
                                 <FontAwesomeIcon
-                                  icon={faCircleExclamation}   // ⚠️ warning icon
+                                  icon={faCircleExclamation} // ⚠️ warning icon
                                   style={{ color: "#ffc107" }}
                                   className="ms-2"
                                 />
@@ -2391,24 +2336,30 @@ const ApplicationForm = ({
                                 src={viewIcon}
                                 alt={t("view")}
                                 style={{
-                                  cursor: disableDocAction ? "not-allowed" : "pointer",
+                                  cursor: disableDocAction
+                                    ? "not-allowed"
+                                    : "pointer",
                                   opacity: disableDocAction ? 0.4 : 1,
-                                  pointerEvents: disableDocAction ? "none" : "auto",
+                                  pointerEvents: disableDocAction
+                                    ? "none"
+                                    : "auto",
                                   // marginLeft: "12px",
-
                                 }}
                                 onClick={() => {
                                   if (disableDocAction) return;
 
                                   setSelectedDoc({
-                                    candidateDocumentId: left.candidateDocumentId,
+                                    candidateDocumentId:
+                                      left.candidateDocumentId,
                                     status: leftStatus,
                                     candidateId: previewData.candidateId,
                                     applicationId: previewData.applicationId,
                                     verificationId:
-                                      docStatusMap[left.candidateDocumentId]?.verificationId,
+                                      docStatusMap[left.candidateDocumentId]
+                                        ?.verificationId,
                                     docScreeningComments:
-                                      docStatusMap[left.candidateDocumentId]?.comments || "",
+                                      docStatusMap[left.candidateDocumentId]
+                                        ?.comments || "",
                                     name: left.name,
                                     fileUrl: left.url,
                                   });
@@ -2420,7 +2371,6 @@ const ApplicationForm = ({
                           )}
                         </td>
 
-
                         {/* RIGHT SIDE */}
                         {/* <td>{right?.name || "-"}</td> */}
                         <td>
@@ -2430,7 +2380,9 @@ const ApplicationForm = ({
                             <OverlayTrigger
                               placement="bottom"
                               overlay={
-                                <Tooltip id={`tooltip-right-${right.candidateDocumentId}`}>
+                                <Tooltip
+                                  id={`tooltip-right-${right.candidateDocumentId}`}
+                                >
                                   {getPendingMessage(right)}
                                 </Tooltip>
                               }
@@ -2461,23 +2413,29 @@ const ApplicationForm = ({
                                 src={viewIcon}
                                 alt={t("view")}
                                 style={{
-                                  cursor: disableDocAction ? "not-allowed" : "pointer",
+                                  cursor: disableDocAction
+                                    ? "not-allowed"
+                                    : "pointer",
                                   opacity: disableDocAction ? 0.4 : 1,
-                                  pointerEvents: disableDocAction ? "none" : "auto",
+                                  pointerEvents: disableDocAction
+                                    ? "none"
+                                    : "auto",
                                   // marginLeft: "12px",
-
                                 }}
                                 onClick={() => {
                                   if (disableDocAction) return;
 
                                   setSelectedDoc({
-                                    candidateDocumentId: right.candidateDocumentId,
+                                    candidateDocumentId:
+                                      right.candidateDocumentId,
                                     candidateId: previewData.candidateId,
                                     applicationId: previewData.applicationId,
                                     verificationId:
-                                      docStatusMap[right.candidateDocumentId]?.verificationId,
+                                      docStatusMap[right.candidateDocumentId]
+                                        ?.verificationId,
                                     docScreeningComments:
-                                      docStatusMap[right.candidateDocumentId]?.comments || "",
+                                      docStatusMap[right.candidateDocumentId]
+                                        ?.comments || "",
                                     name: right.name,
                                     fileUrl: right.url,
                                   });
@@ -2488,34 +2446,50 @@ const ApplicationForm = ({
                             </>
                           )}
                         </td>
-
                       </tr>
                     );
                   }
                 )}
               </tbody>
-
             </table>
-
           </Accordion.Body>
         </Accordion.Item>
 
-        {canCandidatePool && !disableDocAction &&
+        {canCandidatePool &&
+          !disableDocAction &&
           !isFromInterview &&
           !isFromCompensationPool && (
             <div className="card mt-3 border-0">
               <div className="d-flex gap-3 align-items-center border-bottom p-3">
-                <label style={{ fontSize: '0.875rem', fontWeight: 500, color: '#162B75' }}>Additional Required Documents</label>
-                <button className="btn-submit-orange py-1 px-2" style={{ height: 'auto', fontSize: '0.75rem' }} onClick={handleAddDocumentRow}>+ Add Document</button>
+                <label
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: 500,
+                    color: "#162B75",
+                  }}
+                >
+                  Additional Required Documents
+                </label>
+                <button
+                  className="btn-submit-orange py-1 px-2"
+                  style={{ height: "auto", fontSize: "0.75rem" }}
+                  onClick={handleAddDocumentRow}
+                >
+                  + Add Document
+                </button>
               </div>
 
               {otherDocuments.map((row) => (
-                <div
-                  key={row.id}
-                  className="d-flex align-items-end gap-3 p-3"
-                >
+                <div key={row.id} className="d-flex align-items-end gap-3 p-3">
                   <div style={{ flex: 1 }}>
-                    <label className="mb-1" style={{ color: '#162B75', fontSize: '0.75rem', fontWeight: 500 }}>
+                    <label
+                      className="mb-1"
+                      style={{
+                        color: "#162B75",
+                        fontSize: "0.75rem",
+                        fontWeight: 500,
+                      }}
+                    >
                       Document Name
                     </label>
 
@@ -2530,7 +2504,7 @@ const ApplicationForm = ({
                           e.target.value
                         )
                       }
-                      style={{ minHeight: 'auto', padding: '0.4rem 0.8rem' }}
+                      style={{ minHeight: "auto", padding: "0.4rem 0.8rem" }}
                       placeholder="Enter document name"
                     />
                     {otherDocumentErrors[row.id] && (
@@ -2588,16 +2562,17 @@ const ApplicationForm = ({
           !isFromInterview &&
           !isFromCompensationPool && (
             <Card className="criteria-main-card">
-
               <div className="criteria-wrapper">
-
                 {/* WORK CRITERIA */}
                 <div className="criteria-card">
                   <label className="criteria-title">{t("work_criteria")}</label>
 
                   <div className="criteria-radio mb-0">
-                    {CRITERIA_OPTIONS.map(option => (
-                      <label key={option} className={`radio-label ${isOptionDisabled(option, "WORK") ? "disabled" : ""}`}>
+                    {CRITERIA_OPTIONS.map((option) => (
+                      <label
+                        key={option}
+                        className={`radio-label ${isOptionDisabled(option, "WORK") ? "disabled" : ""}`}
+                      >
                         <input
                           type="radio"
                           name="workCriteria"
@@ -2628,7 +2603,7 @@ const ApplicationForm = ({
                     }
                     maxLength={2000}
                     rows={4}
-                  // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
+                    // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
                   />
                   {errors.workCriteriaRemark && (
                     <small className="text-danger fs-12">
@@ -2642,8 +2617,11 @@ const ApplicationForm = ({
                   <label className="criteria-title">{t("age_criteria")}</label>
 
                   <div className="criteria-radio mb-0">
-                    {CRITERIA_OPTIONS.map(option => (
-                      <label key={option} className={`radio-label ${isOptionDisabled(option, "AGE") ? "disabled" : ""}`}>
+                    {CRITERIA_OPTIONS.map((option) => (
+                      <label
+                        key={option}
+                        className={`radio-label ${isOptionDisabled(option, "AGE") ? "disabled" : ""}`}
+                      >
                         <input
                           type="radio"
                           name="ageCriteria"
@@ -2674,7 +2652,7 @@ const ApplicationForm = ({
                     }
                     maxLength={2000}
                     rows={4}
-                  // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
+                    // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
                   />
                   {errors.ageCriteriaRemark && (
                     <small className="text-danger fs-12">
@@ -2685,15 +2663,23 @@ const ApplicationForm = ({
 
                 {/* EDUCATION CRITERIA */}
                 <div className="criteria-card">
-                  <label className="criteria-title"> {t("education_criteria")}</label>
+                  <label className="criteria-title">
+                    {" "}
+                    {t("education_criteria")}
+                  </label>
 
                   <div className="criteria-radio mb-0">
-                    {CRITERIA_OPTIONS.map(option => (
-                      <label key={option} className={`radio-label ${isOptionDisabled(option, "EDUCATION") ? "disabled" : ""}`}>
+                    {CRITERIA_OPTIONS.map((option) => (
+                      <label
+                        key={option}
+                        className={`radio-label ${isOptionDisabled(option, "EDUCATION") ? "disabled" : ""}`}
+                      >
                         <input
                           type="radio"
                           name="educationCriteria"
-                          checked={screeningForm.isEducationCriteriaMet === option}
+                          checked={
+                            screeningForm.isEducationCriteriaMet === option
+                          }
                           onChange={() =>
                             handleRadioChange("isEducationCriteriaMet", option)
                           }
@@ -2716,11 +2702,14 @@ const ApplicationForm = ({
                     placeholder={t("education_remark")}
                     value={screeningForm.educationCriteriaRemark}
                     onChange={(e) =>
-                      handleInputChange("educationCriteriaRemark", e.target.value)
+                      handleInputChange(
+                        "educationCriteriaRemark",
+                        e.target.value
+                      )
                     }
                     maxLength={2000}
                     rows={4}
-                  // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
+                    // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
                   />
                   {errors.educationCriteriaRemark && (
                     <small className="text-danger fs-12">
@@ -2731,26 +2720,32 @@ const ApplicationForm = ({
 
                 {/* FINAL REMARK */}
                 <div
-                  className={`criteria-card ${disableShortlistedSection ? "criteria-disabled" : ""
-                    }`}
+                  className={`criteria-card ${
+                    disableShortlistedSection ? "criteria-disabled" : ""
+                  }`}
                 >
                   <label className="criteria-title">{t("shortlisted")}</label>
 
                   <div className="criteria-radio mb-0">
-                    {["YES", "NO"].map(option => {
+                    {["YES", "NO"].map((option) => {
                       const isDisabled =
                         (option === "YES" && disableYesOption) ||
                         (option === "NO" && disableNoOption);
 
                       return (
-                        <label key={option} className={`radio-label ${isDisabled ? "disabled" : ""}`}>
+                        <label
+                          key={option}
+                          className={`radio-label ${isDisabled ? "disabled" : ""}`}
+                        >
                           <input
                             type="radio"
                             name="shortlisted"
                             value={option}
                             checked={screeningForm.isShortlisted === option}
                             disabled={isDisabled}
-                            onChange={() => handleInputChange("isShortlisted", option)}
+                            onChange={() =>
+                              handleInputChange("isShortlisted", option)
+                            }
                           />
                           <span className="custom-radio"></span>
                           {option}
@@ -2785,10 +2780,11 @@ const ApplicationForm = ({
 
               {/* ================= SUBMIT ROW ================= */}
               <div
-                className={`criteria-submit-row ${shouldShowSubmitBefore
-                  ? "justify-content-between"
-                  : "justify-content-end"
-                  }`}
+                className={`criteria-submit-row ${
+                  shouldShowSubmitBefore
+                    ? "justify-content-between"
+                    : "justify-content-end"
+                }`}
               >
                 {!isZonalHr && shouldShowSubmitBefore && (
                   <div className="d-grid">
@@ -2824,7 +2820,9 @@ const ApplicationForm = ({
                           fontWeight: 500,
                           color: "#162B75",
                           marginBottom: 0,
-                          cursor: disableEligibleCheckbox ? "not-allowed" : "pointer",
+                          cursor: disableEligibleCheckbox
+                            ? "not-allowed"
+                            : "pointer",
                           opacity: disableEligibleCheckbox ? 0.6 : 1,
                         }}
                       >
@@ -2861,23 +2859,19 @@ const ApplicationForm = ({
             </Card>
           )}
         {isZonalHr && (
-
           <Card className="criteria-main-card p-3 mb-3">
-
             <label className="criteria-title mb-3">
               LPT (Language Proficiency Test)
             </label>
 
             <div className="d-flex align-items-start gap-3 flex-wrap">
-
               {/* LPT REQUIRED */}
               <div style={{ width: "220px" }}>
-
                 <label
                   className="submit-label mb-1"
                   style={{
                     whiteSpace: "nowrap",
-                    fontSize: "13px"
+                    fontSize: "13px",
                   }}
                 >
                   LPT Required
@@ -2888,7 +2882,6 @@ const ApplicationForm = ({
                   value={isLptRequired}
                   disabled={isZonalAbsent}
                   onChange={(e) => {
-
                     const value = e.target.value;
 
                     // clear ONLY during manual change
@@ -2898,14 +2891,11 @@ const ApplicationForm = ({
                     }
 
                     setIsLptRequired(value);
-
                   }}
                 >
-
                   <option value="">Select</option>
                   <option value="YES">YES</option>
                   <option value="NO">NO</option>
-
                 </select>
 
                 {/* <select
@@ -2936,7 +2926,6 @@ const ApplicationForm = ({
                   <option value="NO">NO</option>
 
                 </select> */}
-
               </div>
 
               {/* 10TH / 12TH */}
@@ -2983,14 +2972,12 @@ const ApplicationForm = ({
               )}
             </div> */}
               {isLptRequired === "YES" && (
-
                 <div style={{ width: "260px" }}>
-
                   <label
                     className="submit-label mb-1"
                     style={{
                       whiteSpace: "nowrap",
-                      fontSize: "13px"
+                      fontSize: "13px",
                     }}
                   >
                     LPT Status
@@ -3005,42 +2992,29 @@ const ApplicationForm = ({
                       setZonalDecision("");
                     }}
                   >
-
                     <option value="">Select</option>
 
-                    <option value="PASS">
-                      Pass
-                    </option>
+                    <option value="PASS">Pass</option>
 
-                    <option value="FAIL">
-                      Fail
-                    </option>
+                    <option value="FAIL">Fail</option>
 
-                    <option value="EXTENSION_GRANTED">
-                      Extension Granted
-                    </option>
-
+                    <option value="EXTENSION_GRANTED">Extension Granted</option>
                   </select>
-
                 </div>
               )}
             </div>
-
           </Card>
-
         )}
 
         {isZonalHr && !isInterviewView && (
           <Card
-            className={`criteria-main-card p-3 ${isZonalAbsent ? "criteria-disabled" : ""
-              }`}
+            className={`criteria-main-card p-3 ${
+              isZonalAbsent ? "criteria-disabled" : ""
+            }`}
           >
-
             <label className="criteria-title mb-2">
               {t("all_docs_verified_q")}
             </label>
-
-
 
             {/* RADIO OPTIONS — same pattern as Shortlisted */}
             <div className="criteria-radio mb-3">
@@ -3058,27 +3032,17 @@ const ApplicationForm = ({
                   disableProvisionallyApproved ||
                   disableYes; */}
               {["YES", "NO", "PROVISIONALLY_APPROVED"].map((opt) => {
-
                 const isLptSelectionPending =
-                  !isLptRequired ||
-                  (isLptRequired === "YES" && !lptType);
+                  !isLptRequired || (isLptRequired === "YES" && !lptType);
                 const isLptFailed =
-                  isLptRequired === "YES" &&
-                  lptType === "FAIL";
+                  isLptRequired === "YES" && lptType === "FAIL";
 
                 const disableYes =
-                  opt === "YES" &&
-                  (
-                    !areAllDocumentsVerified() ||
-                    isLptFailed
-                  );
-                const disableNo =
-                  opt === "NO" &&
-                  !isLptFailed;
+                  opt === "YES" && (!areAllDocumentsVerified() || isLptFailed);
+                const disableNo = opt === "NO" && !isLptFailed;
 
                 const disableProvisionallyApproved =
-                  opt === "PROVISIONALLY_APPROVED" &&
-                  areAllDocumentsVerified();
+                  opt === "PROVISIONALLY_APPROVED" && areAllDocumentsVerified();
 
                 const isDisabled =
                   isZonalAbsent ||
@@ -3087,8 +3051,6 @@ const ApplicationForm = ({
                   disableYes ||
                   disableNo ||
                   isLptSelectionPending;
-
-
 
                 return (
                   <label
@@ -3104,10 +3066,10 @@ const ApplicationForm = ({
                       onChange={(e) => {
                         const value = e.target.value;
                         setZonalDecision(value);
-                        setErrors(prev => ({
+                        setErrors((prev) => ({
                           ...prev,
                           zonalSubmitDate: undefined,
-                          zonalComments: undefined
+                          zonalComments: undefined,
                         }));
                         if (value === "YES") {
                           setScreeningRemarks("");
@@ -3119,11 +3081,7 @@ const ApplicationForm = ({
                   </label>
                 );
               })}
-
-
-
             </div>
-
 
             {/* DATE */}
 
@@ -3139,14 +3097,14 @@ const ApplicationForm = ({
                   value={screeningForm.zonalSubmitDate}
                   disabled={isZonalAbsent || !allDocsVerified}
                   onChange={(e) => {
-                    setScreeningForm(prev => ({
+                    setScreeningForm((prev) => ({
                       ...prev,
-                      zonalSubmitDate: e.target.value
+                      zonalSubmitDate: e.target.value,
                     }));
 
-                    setErrors(prev => ({
+                    setErrors((prev) => ({
                       ...prev,
-                      zonalSubmitDate: undefined
+                      zonalSubmitDate: undefined,
                     }));
                   }}
                 />
@@ -3159,28 +3117,22 @@ const ApplicationForm = ({
               </div>
             )}
 
-
-
-
             {/* REMARKS */}
 
             <div className="remarks-row">
-
               {/* LEFT SIDE */}
               <div className="remarks-left">
-
                 <textarea
                   className={`remarks-box ${errors.zonalComments ? "input-error" : ""}`}
                   placeholder={t("enter_comments")}
                   rows={5}
                   disabled={docStatusLoading || isZonalAbsent}
-
                   value={screeningRemarks}
                   onChange={(e) => {
                     setScreeningRemarks(e.target.value);
-                    setErrors(prev => ({
+                    setErrors((prev) => ({
                       ...prev,
-                      zonalComments: undefined
+                      zonalComments: undefined,
                     }));
                   }}
                 />
@@ -3193,7 +3145,6 @@ const ApplicationForm = ({
                     </small>
                   )}
                 </div>
-
               </div>
 
               {/* RIGHT SIDE */}
@@ -3206,20 +3157,9 @@ const ApplicationForm = ({
                   {t("submit")}
                 </button>
               </div>
-
             </div>
-
-
-
-
-
-
-
           </Card>
         )}
-
-
-
       </Accordion>
       <DocumentViewerModal
         show={showViewer}
@@ -3229,7 +3169,6 @@ const ApplicationForm = ({
         onReject={handleReject}
         isZonalAbsent={isZonalAbsent}
         isFromCompensationPool={isFromCompensationPool}
-
       />
 
       <CommentsModal

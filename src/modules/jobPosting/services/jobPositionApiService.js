@@ -7,14 +7,12 @@ const jobPositionApiService = {
     ),
 
   getDraftPositionsByRequisition: (requisitionId) =>
-  api.get(
-    `/recruiter/job-positions/get-draft-job-position-by-requisition/${requisitionId}`
-  ),
+    api.get(
+      `/recruiter/job-positions/get-draft-job-position-by-requisition/${requisitionId}`
+    ),
 
   getPositionById: (positionId) =>
-    api.get(
-      `/recruiter/job-positions/get-job-position-by-id/${positionId}`
-    ),
+    api.get(`/recruiter/job-positions/get-job-position-by-id/${positionId}`),
 
   /** ✅ multipart/form-data */
   createPosition: ({ dto, indentFile }) => {
@@ -29,55 +27,38 @@ const jobPositionApiService = {
       formData.append("indentFile", indentFile);
     }
 
+    return api.post("/recruiter/job-positions/create-job-position", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  getExaminationSummary: (positionIds = []) => {
     return api.post(
-      "/recruiter/job-positions/create-job-position",
-      formData,
+      "/recruiter/examination-marks/get-summary",
+
+      positionIds,
+
       {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "X-Client": "AzureAD",
+        },
       }
     );
   },
 
-
-    getExaminationSummary: (
-      positionIds = []
-    ) => {
-
-      return api.post(
-
-        "/recruiter/examination-marks/get-summary",
-
-        positionIds,
-
-        {
-          headers: {
-            "X-Client": "AzureAD"
-          }
-        }
-
-      );
-
-    },
-
-
   finalizeExamConfiguration: (payload) => {
+    return api.post(
+      "/recruiter/examination-config/submit-for-approval",
 
-  return api.post(
+      payload,
 
-    "/recruiter/examination-config/submit-for-approval",
-
-    payload,
-
-    {
-      headers: {
-        "X-Client": "AzureAD"
+      {
+        headers: {
+          "X-Client": "AzureAD",
+        },
       }
-    }
-
-  );
-
-},
-
+    );
+  },
 
   updatePosition: ({ dto, indentFile }) => {
     const formData = new FormData();
@@ -93,16 +74,12 @@ const jobPositionApiService = {
       formData.append("indentFile", indentFile);
     }
 
-    return api.post(
-      "/recruiter/job-positions/update-job-position",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "X-Client": "AzureAD",
-        },
-      }
-    );
+    return api.post("/recruiter/job-positions/update-job-position", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "X-Client": "AzureAD",
+      },
+    });
   },
 
   // updateDraftPosition: ({ requisitionId, parentPositionId, dto }) =>
@@ -111,7 +88,12 @@ const jobPositionApiService = {
   //     dto
   //   ),
 
-  updateDraftPosition: ({ requisitionId, parentPositionId, dto, indentFile }) => {
+  updateDraftPosition: ({
+    requisitionId,
+    parentPositionId,
+    dto,
+    indentFile,
+  }) => {
     const formData = new FormData();
 
     formData.append(
@@ -135,17 +117,17 @@ const jobPositionApiService = {
     );
   },
 
-
   deletePositionById: (positionId) =>
     api.delete(
       `/recruiter/job-positions/delete-job-position-by-id/${positionId}`
     ),
 
-
   getRequisitionById: (id) => api.get(`/recruiter/job-requisitions/${id}`),
 
-  downloadTemplate: () => api.get("/recruiter/job-positions/download-template", { responseType: 'blob' }),
-
+  downloadTemplate: () =>
+    api.get("/recruiter/job-positions/download-template", {
+      responseType: "blob",
+    }),
 
   bulkImport: (requisitionId, file) => {
     const formData = new FormData();
@@ -157,18 +139,17 @@ const jobPositionApiService = {
       {
         headers: {
           "Content-Type": "multipart/form-data",
-          "X-Client": "AzureAD"
-        }
+          "X-Client": "AzureAD",
+        },
       }
     );
   },
-
 
   // CANDIDATE SCREENING APIs
   getRequisitions: (name = "") =>
     api.get("/recruiter/job-requisitions/get-requisitions", {
       params: { name },
-      headers: { "X-Client": "AzureAD" }
+      headers: { "X-Client": "AzureAD" },
     }),
 
   getPositionsByReqId: ({ requisitionId, searchText = "" }) =>
@@ -178,13 +159,9 @@ const jobPositionApiService = {
     }),
 
   getCandidatesByPosition: (payload) =>
-    api.post(
-      "/recruiter/candidate-screening/get-candidate-details",
-      payload,
-      {
-        headers: { "X-Client": "AzureAD" },
-      }
-    ),
+    api.post("/recruiter/candidate-screening/get-candidate-details", payload, {
+      headers: { "X-Client": "AzureAD" },
+    }),
 
   getScreeningCommitteeStatus: (applicationId) =>
     api.get(
@@ -196,17 +173,12 @@ const jobPositionApiService = {
       }
     ),
 
-
   getZonalDocumentStatus: (applicationId) =>
-    api.get(
-      `/recruiter/zonal-verification/documents/${applicationId}`,
-      {
-        headers: {
-          "X-Client": "AzureAD",
-        },
-      }
-    ),
-
+    api.get(`/recruiter/zonal-verification/documents/${applicationId}`, {
+      headers: {
+        "X-Client": "AzureAD",
+      },
+    }),
 
   saveScreeningDecision: (payload) =>
     api.post(
@@ -229,16 +201,6 @@ const jobPositionApiService = {
     );
   },
 
-
-
-
-
-
-
-
-
-
-
   submitOverallZonalVerification(payload) {
     return api.post(
       "/recruiter/zonal-verification/submit-overall-verification",
@@ -246,20 +208,13 @@ const jobPositionApiService = {
     );
   },
 
-
-
   verifyZonalDocument(payload) {
-    return api.post(
-      "/recruiter/zonal-verification/verify-document",
-      payload,
-      {
-        headers: {
-          "X-Client": "AzureAD"
-        }
-      }
-    );
+    return api.post("/recruiter/zonal-verification/verify-document", payload, {
+      headers: {
+        "X-Client": "AzureAD",
+      },
+    });
   },
-
 
   updateZonalAbsent(applicationId, isAbsent) {
     return api.post(
@@ -268,8 +223,8 @@ const jobPositionApiService = {
       {
         params: { applicationId, isAbsent },
         headers: {
-          "X-Client": "AzureAD"
-        }
+          "X-Client": "AzureAD",
+        },
       }
     );
   },
@@ -287,15 +242,12 @@ const jobPositionApiService = {
   },
 
   downloadInterviewScheduleTemplate: (positionId) =>
-    api.get(
-      `/recruiter/interview-scheduling/download-template/${positionId}`,
-      {
-        responseType: "blob",
-        headers: {
-          "X-Client": "AzureAD",
-        },
-      }
-    ),
+    api.get(`/recruiter/interview-scheduling/download-template/${positionId}`, {
+      responseType: "blob",
+      headers: {
+        "X-Client": "AzureAD",
+      },
+    }),
 
   bulkScheduleInterviews: ({ file, applicationIds, positionId }) => {
     const formData = new FormData();
@@ -317,39 +269,31 @@ const jobPositionApiService = {
       )
     );
 
-    return api.post(
-      "/recruiter/interview-scheduling/bulk-schedule",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "X-Client": "AzureAD",
-        },
-      }
-    );
+    return api.post("/recruiter/interview-scheduling/bulk-schedule", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "X-Client": "AzureAD",
+      },
+    });
   },
 
   downloadCandidateDetails: (payload) =>
-    api.post(
-      "/recruiter/candidate-details/download",
-      payload,
-      {
-        responseType: "blob",
-        headers: {
-          "X-Client": "AzureAD",
-        },
-      }
-    ),
+    api.post("/recruiter/candidate-details/download", payload, {
+      responseType: "blob",
+      headers: {
+        "X-Client": "AzureAD",
+      },
+    }),
 
   getL1Requisitions: ({ year, search, page, size, statuses }) =>
     api.get("/recruiter/job-requisitions/l1-requisitions", {
       params: { year, search, page, size, statuses },
-      headers: { "X-Client": "AzureAD" }
+      headers: { "X-Client": "AzureAD" },
     }),
   getL2Requisitions: ({ year, search, page, size, statuses }) =>
     api.get("/recruiter/job-requisitions/l2-requisitions", {
       params: { year, search, page, size, statuses },
-      headers: { "X-Client": "AzureAD" }
+      headers: { "X-Client": "AzureAD" },
     }),
   // getRequisitionApprovalHistory: (requisitionId) =>
   //   api.get(
@@ -361,58 +305,48 @@ const jobPositionApiService = {
   //     }
   //   ),
   getRequisitionApprovalHistory: (requisitionId) =>
-  api.get(
-    `/recruiter/workflow-approval/get-requisition-approval-history-including-drafts/${requisitionId}`,
-    {
+    api.get(
+      `/recruiter/workflow-approval/get-requisition-approval-history-including-drafts/${requisitionId}`,
+      {
+        headers: {
+          "X-Client": "AzureAD",
+        },
+      }
+    ),
+
+  /* ================= EXAMINATION CUTOFF ================= */
+
+  /* ================= GET EXAM CONFIG ================= */
+
+  getExamConfigurationsByPositions: (positionIds) =>
+    api.get("/recruiter/examination-config/get-by-positions", {
+      params: {
+        positionIds,
+      },
+
       headers: {
         "X-Client": "AzureAD",
       },
-    }
-  ),
+    }),
 
-
-    /* ================= EXAMINATION CUTOFF ================= */
-
-    /* ================= GET EXAM CONFIG ================= */
-
-getExamConfigurationsByPositions: (
-  positionIds
-) =>
-  api.get(
-    "/recruiter/examination-config/get-by-positions",
-    {
-      params: {
-        positionIds
+  saveConfiguration: (payload) =>
+    api.post("/recruiter/examination-config/save-exam-config", payload, {
+      headers: {
+        "X-Client": "AzureAD",
       },
-
-      headers: {
-        "X-Client": "AzureAD"
-      }
-    }
-  ),
-
-saveConfiguration: (payload) =>
-  api.post(
-    "/recruiter/examination-config/save-exam-config",
-    payload,
-    {
-      headers: {
-        "X-Client": "AzureAD"
-      }
-    }
-  ),
+    }),
   approveRequisitions: ({ ids, postingStatus, comments }) =>
     api.post(
       "/recruiter/job-requisitions/approve-job-requisitions",
       {
         jobRequisitionIds: ids,
         postingStatus,
-        comments
+        comments,
       },
       {
         headers: {
-          "X-Client": "AzureAD"
-        }
+          "X-Client": "AzureAD",
+        },
       }
     ),
 
@@ -431,8 +365,8 @@ saveConfiguration: (payload) =>
   getOffersByPosition(positionId) {
     return api.get(`/recruiter/candidate-offer/get-offers/${positionId}`, {
       headers: {
-        "X-Client": "AzureAD"
-      }
+        "X-Client": "AzureAD",
+      },
     });
   },
 
@@ -469,28 +403,20 @@ saveConfiguration: (payload) =>
   },
 
   getScreeningComments(applicationId) {
-    return api.get(
-      `/recruiter/screening-comments/${applicationId}`,
-      {
-        headers: {
-          "X-Client": "AzureAD",
-        },
-      }
-    );
+    return api.get(`/recruiter/screening-comments/${applicationId}`, {
+      headers: {
+        "X-Client": "AzureAD",
+      },
+    });
   },
 
   postScreeningComment(applicationId, payload) {
-    return api.post(
-      `/recruiter/screening-comments/${applicationId}`,
-      payload,
-      {
-        headers: {
-          "X-Client": "AzureAD",
-        },
-      }
-    );
+    return api.post(`/recruiter/screening-comments/${applicationId}`, payload, {
+      headers: {
+        "X-Client": "AzureAD",
+      },
+    });
   },
-
 };
 
 export default jobPositionApiService;

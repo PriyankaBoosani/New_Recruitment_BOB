@@ -3,8 +3,7 @@
   /* border-radius: 10px; */
   /* padding: 15px 20px; */
   border: 1px solid #ddd;
-  color:#fff;
-  
+  color: #fff;
 }
 
 .interview_requests .interview-page {
@@ -16,35 +15,33 @@
 
 .interview_requests .page-title {
   font-weight: 600;
-  color: #162B75;
+  color: #162b75;
   font-size: 1em;
 }
-.interview_requests .req-code{
-  color: #162B75 !important;
+.interview_requests .req-code {
+  color: #162b75 !important;
 }
 
-
-.interview_requests .req-header{
+.interview_requests .req-header {
   margin-left: 0px;
 }
 
-
 .interview_requests .field-label {
-   font-size: 0.875em;
+  font-size: 0.875em;
   font-weight: 400;
-  color: #162B75 ;
+  color: #162b75;
   letter-spacing: 0.2px;
   margin-bottom: 2px;
   word-wrap: break-word;
 }
 
 .interview_requests .field-value {
-	font-size: 0.875em;
-	font-weight: 400;
-	color: #404040;
-	letter-spacing: 0.2px;
-	margin-bottom: 2px;
-	word-wrap: break-word;
+  font-size: 0.875em;
+  font-weight: 400;
+  color: #404040;
+  letter-spacing: 0.2px;
+  margin-bottom: 2px;
+  word-wrap: break-word;
 }
 /* History icon */
 
@@ -68,7 +65,6 @@
   letter-spacing: 0.2px;
   margin-bottom: 2px;
   display: flex;
-
 }
 
 .interview_requests .date-row {
@@ -76,7 +72,7 @@
   align-items: center;
   gap: 6px;
   font-size: 0.8125rem;
-  color: #60697B;
+  color: #60697b;
 }
 
 .interview_requests .divider {
@@ -95,7 +91,6 @@
 .interview_requests .page-subtitle {
   margin: 0 0 20px 0;
   color: var(--bs-secondary-color) !important;
-  ;
   font-size: 0.875rem;
   font-weight: 400;
 }
@@ -114,7 +109,6 @@
   margin-bottom: 6px;
 }
 
-
 .interview_requests .filter-select__control {
   height: 44px !important;
   min-height: 44px !important;
@@ -126,11 +120,11 @@
 }
 
 .interview_requests .filter-select__control:hover {
-  border-color: #162B75 !important;
+  border-color: #162b75 !important;
 }
 
 .interview_requests .filter-select__control--is-focused {
-  border-color: #162B75 !important;
+  border-color: #162b75 !important;
   box-shadow: 0 0 0 2px rgba(22, 43, 117, 0.1) !important;
 }
 
@@ -173,22 +167,22 @@
 }
 
 .interview_requests .filter-select__option--is-selected {
-  background-color: #162B75 !important;
+  background-color: #162b75 !important;
   color: #ffffff !important;
 }
 
 /* Checkbox base */
 .interview_requests .form-check-input {
-	border: 2px solid #2f4ea2 !important;
-	border-radius: 4px;
-	background-color: #ffffff !important;
-	cursor: pointer;
+  border: 2px solid #2f4ea2 !important;
+  border-radius: 4px;
+  background-color: #ffffff !important;
+  cursor: pointer;
 }
 
 /* Checked */
 .interview_requests .form-check-input:checked {
-  background-color: #42579F !important;
-  border-color: #42579F !important;
+  background-color: #42579f !important;
+  border-color: #42579f !important;
 }
 
 /* Remove focus glow */
@@ -198,14 +192,11 @@
 
 /*  Select All label color */
 .interview_requests .form-check-label {
-  color: #162B75;
+  color: #162b75;
   font-weight: 500;
   font-size: 0.875em;
   cursor: pointer;
 }
-
-
-
 
 .interview_requests .status-badge {
   display: inline-flex !important;
@@ -227,16 +218,16 @@
 
 /* Pending */
 .interview_requests .status-pending {
-  background-color: #FFDCA8 !important;
-  color: #F28A22 !important;
+  background-color: #ffdca8 !important;
+  color: #f28a22 !important;
   font-weight: 400;
   font-size: 0.75em;
 }
 
 /* Rejected */
 .interview_requests .status-rejected {
-  background-color: #D73C400D !important;
-  color: #D73C40 !important;
+  background-color: #d73c400d !important;
+  color: #d73c40 !important;
   font-weight: 400;
   font-size: 0.875em;
 }
@@ -291,7 +282,7 @@
 .interview_requests .assign-positions-page .form-select:focus {
   border-color: #86b7fe;
   outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
 /* ===== REQUISITION STRIP SECTION ===== */
@@ -327,12 +318,12 @@
 
 .interview_requests .assign-positions-page .config-subtitle {
   color: #717182;
-  font-size: .75rem;
+  font-size: 0.75rem;
   font-weight: 400;
 }
 
 .interview_requests .assign-positions-page .assign-button {
-  background: linear-gradient(135deg, #F26522 0%, #e55a1b 100%);
+  background: linear-gradient(135deg, #f26522 0%, #e55a1b 100%);
   color: #ffffff;
   border: none;
   padding: 12px 24px;
@@ -359,8 +350,7 @@
   font-weight: 400;
   border-radius: 8px;
   background-color: #fdf5f5;
-  color: #D73C40;
-
+  color: #d73c40;
 }
 
 .interview_requests .approve-btn {
@@ -373,7 +363,7 @@
 
 .interview_requests .status-select {
   appearance: none;
-  background-image: url('../../assets/Vector.png');
+  background-image: url("../../assets/Vector.png");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 14px;
@@ -392,7 +382,7 @@
   padding-left: 36px;
   font-size: 0.8125rem;
   border-radius: 8px;
-  color: #162B75;
+  color: #162b75;
   font-weight: 400;
 }
 
@@ -402,7 +392,7 @@
   border-radius: 8px;
   margin-left: 0px;
   margin-right: 0px;
-  border: 1px solid #ACBED4;
+  border: 1px solid #acbed4;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -412,57 +402,57 @@
   padding-bottom: 30px;
 }
 .interview_requests .form-check-input:disabled {
-	background-color: #AFBDEB4F !important;
-	cursor: not-allowed;
+  background-color: #afbdeb4f !important;
+  cursor: not-allowed;
 }
 
 .interview_requests .badge {
   font-size: 0.75em;
 }
 .interview_requests .bi.bi-clock.icon-14 {
-	margin-top: -3px;
+  margin-top: -3px;
 }
 
 .interview_requests .icon-16 {
-	width: 13px;
-	height: 13px;
+  width: 13px;
+  height: 13px;
 }
 .interview_requests .req-id {
-	background-color: #DBEAFE !important;
-	padding: 4px 10px;
-	border-radius: 4px;
-	font-size: 0.625em;
-	font-weight: 500;
-	color: #162B75 !important;
+  background-color: #dbeafe !important;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.625em;
+  font-weight: 500;
+  color: #162b75 !important;
 }
-.interview_requests .fs-14{
+.interview_requests .fs-14 {
   font-size: 0.875rem;
 }
-.interviewmodal .bluefont{
-font-size: 1.05em;
+.interviewmodal .bluefont {
+  font-size: 1.05em;
   font-weight: 500;
   color: #162b75;
   margin-bottom: 6px;
 }
-.interviewmodal th{
-  background-color: #42579F;
+.interviewmodal th {
+  background-color: #42579f;
   font-size: 0.875rem;
-  color: #FFFFFF;
+  color: #ffffff;
   font-weight: 500;
 }
-.interviewmodal td{
+.interviewmodal td {
   font-size: 0.875rem;
   color: #404040;
 }
-.interview_requests th{
-   background-color: #42579F;
+.interview_requests th {
+  background-color: #42579f;
   font-size: 0.875rem;
-  color: #FFFFFF;
+  color: #ffffff;
   font-weight: 500;
 }
 
-.interview_requests td{
-   font-size: 0.875rem;
+.interview_requests td {
+  font-size: 0.875rem;
   color: #404040;
 }
 
@@ -485,15 +475,15 @@ font-size: 1.05em;
 }
 
 .interview-page .historyposition-card-inner.mt-3 {
-	border: 1px solid #ACBED4;
-	border-radius: 12px;
-	padding: 16px 20px;
-	background: #F0F7FF;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-	/* margin: 15px 20px; */
-	margin-top: 15px;
+  border: 1px solid #acbed4;
+  border-radius: 12px;
+  padding: 16px 20px;
+  background: #f0f7ff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* margin: 15px 20px; */
+  margin-top: 15px;
 }
-.interview-page .hisname{
-  color: #162B75;
+.interview-page .hisname {
+  color: #162b75;
   font-weight: 500;
 }

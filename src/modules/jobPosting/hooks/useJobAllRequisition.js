@@ -6,7 +6,6 @@ import { mapJobRequisitionFromApi } from "../mappers/jobReqDetailsMapper";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
-
 export const useJobRequisitions = ({
   year,
   month,
@@ -14,14 +13,13 @@ export const useJobRequisitions = ({
   search,
   page = 0,
   size = 0,
-  departmentId
+  departmentId,
 }) => {
   const { t } = useTranslation("jobPostingsList");
   const [requisitions, setRequisitions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pageInfo, setPageInfo] = useState(null);
   const [yearOptions, setYearOptions] = useState([]);
-
 
   const fetchRequisitions = async () => {
     try {
@@ -34,7 +32,7 @@ export const useJobRequisitions = ({
         page,
         size,
         departmentId,
-        ...(month && { month: Number(month) })
+        ...(month && { month: Number(month) }),
       });
 
       // const content = res?.data?.content || [];
@@ -42,13 +40,13 @@ export const useJobRequisitions = ({
 
       const content = res?.data?.content || [];
 
-      const flattened = content.flatMap(item => {
+      const flattened = content.flatMap((item) => {
         const result = [];
 
         // ✅ Main requisition
         result.push({
           ...item,
-          isDraft: false
+          isDraft: false,
         });
 
         // ✅ Draft requisition (if exists)
@@ -73,13 +71,13 @@ export const useJobRequisitions = ({
 
             // 🔥 CORRECT VALUES
             departmentCount: draftPositions.length
-              ? new Set(draftPositions.map(p => p.deptId)).size
+              ? new Set(draftPositions.map((p) => p.deptId)).size
               : 0,
             positionCount: draftPositionCount,
             vacancyCount: draftVacancyCount,
 
             isDraft: true,
-            parentRequisitionId: item.id
+            parentRequisitionId: item.id,
           });
         }
 
@@ -113,7 +111,7 @@ export const useJobRequisitions = ({
 
       const res = await requisitionApiService.submitForApprovalFlow({
         jobRequisitionIds,
-        postingStatus
+        postingStatus,
       });
 
       if (res?.success === false) {
@@ -123,7 +121,6 @@ export const useJobRequisitions = ({
 
       toast.success(t("requisition_submit_success"));
       fetchRequisitions();
-
     } catch (err) {
       toast.error(t("requisition_submit_failed"));
     } finally {
@@ -151,7 +148,7 @@ export const useJobRequisitions = ({
   //     setLoading(false);
   //   }
   // };
-  
+
   const fetchAvailableYears = async () => {
     try {
       const res = await requisitionApiService.getAvailableYears();
@@ -164,8 +161,6 @@ export const useJobRequisitions = ({
     fetchAvailableYears();
   }, []);
 
-
-
   useEffect(() => {
     fetchRequisitions();
   }, [year, month, status, search, page, size, departmentId]);
@@ -177,6 +172,6 @@ export const useJobRequisitions = ({
     yearOptions,
     deleteRequisition,
     submitForApproval,
-    refetch: fetchRequisitions
+    refetch: fetchRequisitions,
   };
 };

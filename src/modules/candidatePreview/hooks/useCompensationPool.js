@@ -8,102 +8,72 @@ export default function useCompensationPool({
   page,
   pageSize,
   enabled,
-  refreshKey 
+  refreshKey,
 }) {
   const [data, setData] = useState([]);
   const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  const user = useSelector((state) => state.user.user);
 
-const user = useSelector(
-  (state) => state.user.user
-);
+  const role = user?.role?.toLowerCase();
 
-const role =
-  user?.role?.toLowerCase();
+  console.log("====================================");
+  console.log("COMPENSATION POOL ROLE CHECK");
+  console.log("====================================");
 
-console.log("====================================");
-console.log("COMPENSATION POOL ROLE CHECK");
-console.log("====================================");
+  console.log("LOGIN USER:", user);
 
-console.log("LOGIN USER:", user);
+  console.log("ROLE:", role);
 
-console.log("ROLE:", role);
+  const ALL_STATUSES =
+    role === "committee_member"
+      ? ["PENDING", "APPROVED", "REJECTED", "RENEGOTIATE"]
+      : ["NEW", "SUBMITTED", "PENDING", "APPROVED", "REJECTED", "RENEGOTIATE"];
 
-const ALL_STATUSES =
-  role === "committee_member"
-    ? [
-        "PENDING",
-        "APPROVED",
-        "REJECTED",
-        "RENEGOTIATE",
-      ]
-    : [
-        "NEW",
-        "SUBMITTED",
-        "PENDING",
-        "APPROVED",
-        "REJECTED",
-        "RENEGOTIATE",
-      ];
+  console.log("FINAL STATUS LIST:", ALL_STATUSES);
 
-console.log("FINAL STATUS LIST:", ALL_STATUSES);
+  console.log("====================================");
 
-console.log("====================================");
+  const fetchData = async () => {
+    if (!enabled) return;
 
-const fetchData = async () => {
-  if (!enabled) return;
+    setLoading(true);
+    try {
+      const res = await candidateWorkflowServices.getCompensationCandidates({
+        searchText: filters.searchText || "",
+        positionId,
+        statusList: filters.status.length ? filters.status : ALL_STATUSES,
+        page,
+        size: pageSize,
+      });
 
-  setLoading(true);
-  try {
-    const res = await candidateWorkflowServices.getCompensationCandidates({
-      searchText: filters.searchText || "",
-      positionId,
-     statusList: filters.status.length
-  ? filters.status
-  : ALL_STATUSES,
-      page,
-      size: pageSize
-    });
+      console.log(" FULL API RESPONSE:", res);
 
-    
+      const apiData = res?.data;
 
-     console.log(" FULL API RESPONSE:", res);
+      console.log(" API CONTENT:", apiData?.content);
 
-const apiData = res?.data;
+      //  APPLY MAPPING HERE
+      const mappedData = mapCompensationCandidates(apiData?.content || []);
 
-console.log(" API CONTENT:", apiData?.content);
+      console.log(" FINAL DATA SENT TO UI:", mappedData);
 
-//  APPLY MAPPING HERE
-const mappedData = mapCompensationCandidates(apiData?.content || []);
+      //  SET MAPPED DATA (IMPORTANT)
+      setData(mappedData);
 
-console.log(" FINAL DATA SENT TO UI:", mappedData);
+      setTotalElements(apiData?.page?.totalElements || 0);
 
+      //  FORCE NEW ARRAY (VERY IMPORTANT)
+      setData([...(apiData?.content || [])]);
 
-
-
-
-
-//  SET MAPPED DATA (IMPORTANT)
-setData(mappedData);
-
-setTotalElements(apiData?.page?.totalElements || 0);
-
-
-
-   
-
-    //  FORCE NEW ARRAY (VERY IMPORTANT)
-    setData([...(apiData?.content || [])]);
-
-    setTotalElements(apiData?.page?.totalElements || 0);
-
-  } catch (err) {
-    console.error("Compensation fetch failed", err);
-  } finally {
-    setLoading(false);
-  }
-};
+      setTotalElements(apiData?.page?.totalElements || 0);
+    } catch (err) {
+      console.error("Compensation fetch failed", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchData();
@@ -112,10 +82,7 @@ setTotalElements(apiData?.page?.totalElements || 0);
   return { data, totalElements, loading, refetch: fetchData };
 }
 
-
-
 export const mapCompensationCandidates = (apiData = []) => {
-
   console.log(" RAW DATA BEFORE MAPPING:", apiData);
 
   return apiData.map((item, index) => {
@@ -141,7 +108,7 @@ export const mapCompensationCandidates = (apiData = []) => {
       submitBeforeDate: comp.submitBeforeDate,
 
       status: comp.compensationStatus,
-negotiation: comp.compensationStatus, 
+      negotiation: comp.compensationStatus,
 
       currentCtc: comp.currentCtc,
       expectedCtc: comp.expectedCtc,

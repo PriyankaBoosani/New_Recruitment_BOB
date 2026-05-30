@@ -15,8 +15,6 @@ import HeaderWithBackss from "../../../src/shared/components/headerwithbackss";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
-
-
 const CandidatePreviewPage = ({ onHide }) => {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const location = useLocation();
@@ -26,52 +24,47 @@ const CandidatePreviewPage = ({ onHide }) => {
   const state = location.state || {};
   const activeTab = state?.activeTab;
 
+  const isCandidateWorkflow = activeTab === "CANDIDATE_POOL";
 
-  
-const isCandidateWorkflow =
-  activeTab === "CANDIDATE_POOL";
-
-const isZonalScreen =
-  activeTab === "INTERVIEW_POOL" ||
-  activeTab === "COMPENSATION_POOL";
+  const isZonalScreen =
+    activeTab === "INTERVIEW_POOL" || activeTab === "COMPENSATION_POOL";
 
   const user = useSelector((state) => state.user.user);
 
-  const role = user?.role ? user.role.toLowerCase() : "";  // const isZonalHr = role === "zonal_hr";
+  const role = user?.role ? user.role.toLowerCase() : ""; // const isZonalHr = role === "zonal_hr";
   // const isInterviewer = role === "interviewer";
   //   const isRecruiter = role === "recruiter";
 
-
-const isFromCompensationPool = state?.fromCompensationPool;
+  const isFromCompensationPool = state?.fromCompensationPool;
 
   const privileges = useSelector((state) => state.user.privileges);
   const candidatePositionId = state?.candidatePositionId;
-  console.log("Candidate Position ID in Preview:@@@@@@@@@@@@@@@@@@@@@", candidatePositionId);
-  
+  console.log(
+    "Candidate Position ID in Preview:@@@@@@@@@@@@@@@@@@@@@",
+    candidatePositionId
+  );
 
   const isInterviewer = privileges?.Interview;
   const isZonalHr = privileges?.Verification;
   // const isRecruiter = privileges?.JobPostings; // or whatever recruiter privilege is
-
 
   const isRecruiter = role === "recruiter";
   const iscommitteeMember = role === "committee_member";
 
   const selectedDate = state?.selectedDate;
 
-
-
-
-
-
   // const privileges = useSelector((state) => state.user.privileges);
   const canJobPost = privileges?.JobPostings;
-  const canCandidateWorkflow = privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"];
+  const canCandidateWorkflow =
+    privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"];
   const canCommittee = privileges?.["Committee Management"];
   const canVerification = privileges?.Verification;
   const canAdmin = privileges?.Admin;
   const canInterview = privileges?.["Interview"];
-  const canApprovals = privileges?.["Requisition Approval"] || privileges?.["Extension Approval"] || privileges?.["Committee Approval"];
+  const canApprovals =
+    privileges?.["Requisition Approval"] ||
+    privileges?.["Extension Approval"] ||
+    privileges?.["Committee Approval"];
   const canViewPosition = privileges?.["View Position"];
 
   //  Now safe to use state
@@ -82,52 +75,36 @@ const isFromCompensationPool = state?.fromCompensationPool;
   const requisitionTitle = requisition?.requisition_title;
   const positionName = state?.position?.positionName;
   const isLocationWise = state?.position?.isLocationWise;
-//  const position = Array.isArray(state?.position)
-//   ? state.position
-//   : state?.position
-//     ? [state.position]
-//     : [];
+  //  const position = Array.isArray(state?.position)
+  //   ? state.position
+  //   : state?.position
+  //     ? [state.position]
+  //     : [];
 
-// const position = Array.isArray(state?.position)
-//   ? state.position[0]
-//   : state?.position || null;
+  // const position = Array.isArray(state?.position)
+  //   ? state.position[0]
+  //   : state?.position || null;
 
+  // const position = Array.isArray(state?.position)
+  //   ? state.position.find(
+  //       (p) => p.positionId === candidatePositionId
+  //     )
+  //   : state?.position || null;
 
-
-
-
-
-
-// const position = Array.isArray(state?.position)
-//   ? state.position.find(
-//       (p) => p.positionId === candidatePositionId
-//     )
-//   : state?.position || null;
-
-
-const position = Array.isArray(state?.position)
-  ? state.position.find(
-      (p) => p.positionId === candidatePositionId
-    ) || state.position[0]
-  : state?.position || null;  
-
-
-
-
-
+  const position = Array.isArray(state?.position)
+    ? state.position.find((p) => p.positionId === candidatePositionId) ||
+      state.position[0]
+    : state?.position || null;
 
   const candidateId = candidate?.candidateId;
   const positionId = state?.positionId;
   const requisitionId = state?.requisitionId;
   const positionIds = state?.positionIds || [];
   const positionss = state.position;
-  
-  
 
-  const applicationId =
-    isZonalHr
-      ? state?.applicationId
-      : state?.applicationId ?? state?.candidate?.id;
+  const applicationId = isZonalHr
+    ? state?.applicationId
+    : (state?.applicationId ?? state?.candidate?.id);
 
   // const applicationId = candidate?.id;
 
@@ -155,9 +132,9 @@ const position = Array.isArray(state?.position)
         const masterRes = await masterApiService.getMasterDisplayAll();
         const fullMasters = masterRes?.data || {};
 
-        const InterviewCenters = await masterApiService.getAllInterviewCenters()
-        const ZonalStats = await masterApiService.getZonalStates()
-
+        const InterviewCenters =
+          await masterApiService.getAllInterviewCenters();
+        const ZonalStats = await masterApiService.getZonalStates();
 
         // const normalizedMasters = {
         //   genders: raw.genderMasters || [],
@@ -172,17 +149,17 @@ const position = Array.isArray(state?.position)
 
         setMasters(fullMasters);
         /* ---------- Load Candidate ---------- */
-      if (candidateId && (positionId || positionIds.length > 0)) {
+        if (candidateId && (positionId || positionIds.length > 0)) {
           const candidateRes =
-//           await candidateWorkflowServices.getCandidateAllDetails(
-//   candidateId,
-//   positionIds.length > 0 ? positionIds : [positionId]
-// );
+            //           await candidateWorkflowServices.getCandidateAllDetails(
+            //   candidateId,
+            //   positionIds.length > 0 ? positionIds : [positionId]
+            // );
 
-await candidateWorkflowServices.getCandidateAllDetails(
-  candidateId,
-  candidatePositionId || positionId
-);
+            await candidateWorkflowServices.getCandidateAllDetails(
+              candidateId,
+              candidatePositionId || positionId
+            );
 
           // const mapped = mapCandidateToPreview(
           //   candidateRes.data,
@@ -204,9 +181,8 @@ await candidateWorkflowServices.getCandidateAllDetails(
             pincodes: fullMasters.pincodes,
             interviewCenters: InterviewCenters.data || [],
             zonalStats: ZonalStats.data || [],
-            languages: fullMasters.languageMasters || []
+            languages: fullMasters.languageMasters || [],
           };
-          
 
           const mapped = mapCandidateToPreview(
             candidateRes.data,
@@ -240,7 +216,9 @@ await candidateWorkflowServices.getCandidateAllDetails(
       />
 
       {/* Header */}
-      {(isRecruiter || privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"]) ? (
+      {isRecruiter ||
+      privileges?.["Candidate Pool"] ||
+      privileges?.["Compensation Pool"] ? (
         // <HeaderWithBack
         //   title={t("candidateWorkflow:candidate_screening")}
         //   subtitle={t("candidateWorkflow:manage_schedule_interviews")}
@@ -261,35 +239,30 @@ await candidateWorkflowServices.getCandidateAllDetails(
         //   requisitionId={requisitionId}
         //   candidateScreening={true}
         //   activeTab={activeTab}
-          
+
         // />
 
-
-
-
         <HeaderWithBack
-  title={t("candidateWorkflow:candidate_screening")}
-  subtitle={t("candidateWorkflow:manage_schedule_interviews")}
-  onBack={() => {
-
-
-    navigate("/candidate-verification", {
-      state: {
-        requisition: state.requisition,
-        position: state.position,
-        preloadedCandidates: state.candidates,
-        selectedDate: state,
-        page: state.page,
-        pageSize: state.pageSize,
-        filters: state.filters
-      }
-    });
-  }}
-  positionId={positionId}
-  requisitionId={requisitionId}
-  candidateScreening={true}
-  activeTab={activeTab}
-/>
+          title={t("candidateWorkflow:candidate_screening")}
+          subtitle={t("candidateWorkflow:manage_schedule_interviews")}
+          onBack={() => {
+            navigate("/candidate-verification", {
+              state: {
+                requisition: state.requisition,
+                position: state.position,
+                preloadedCandidates: state.candidates,
+                selectedDate: state,
+                page: state.page,
+                pageSize: state.pageSize,
+                filters: state.filters,
+              },
+            });
+          }}
+          positionId={positionId}
+          requisitionId={requisitionId}
+          candidateScreening={true}
+          activeTab={activeTab}
+        />
       ) : isZonalHr ? (
         <HeaderWithBacks
           title={t("candidateWorkflow:candidate_profile")}
@@ -305,8 +278,8 @@ await candidateWorkflowServices.getCandidateAllDetails(
                 selectedDate,
                 page: state.page,
                 pageSize: state.pageSize,
-                filters: state.filters
-              }
+                filters: state.filters,
+              },
             });
           }}
         />
@@ -326,13 +299,12 @@ await candidateWorkflowServices.getCandidateAllDetails(
                 selectedDate,
                 page: state.page,
                 pageSize: state.pageSize,
-                filters: state.filters
-              }
+                filters: state.filters,
+              },
             });
           }}
         />
       ) : null}
-
 
       {/* Requisition Strip */}
       {isZonalHr && requisition && position && (
@@ -343,11 +315,9 @@ await candidateWorkflowServices.getCandidateAllDetails(
           isSaveEnabled={false}
           showSaveButton={true}
           isSaveBtn={false}
-        // masterData={masters}
+          // masterData={masters}
         />
       )}
-
-
 
       {!isZonalHr && requisition && position && (
         <RequisitionStrip
@@ -355,15 +325,17 @@ await candidateWorkflowServices.getCandidateAllDetails(
           position={position}
           isCardBg
           isSaveEnabled={false}
-        //  masterData={masters}
-        //  masterData={masters}
+          //  masterData={masters}
+          //  masterData={masters}
         />
       )}
 
       {/* Application Form */}
       <div className="my-4">
         {loading ? (
-          <div className="text-center py-4">{t("candidateWorkflow:loading_candidate_details")}</div>
+          <div className="text-center py-4">
+            {t("candidateWorkflow:loading_candidate_details")}
+          </div>
         ) : (
           previewData && (
             <ApplicationForm
@@ -371,7 +343,7 @@ await candidateWorkflowServices.getCandidateAllDetails(
               normalizedMasters={masters}
               candidateId={candidateId}
               positionId={positionId}
-               positionIds={positionss}
+              positionIds={positionss}
               applicationId={applicationId}
               requisitionId={requisitionId}
               interviewScheduleId={interviewScheduleId}
@@ -383,11 +355,11 @@ await candidateWorkflowServices.getCandidateAllDetails(
               zonalHrComments={candidate?.zonalHrComments}
               isLocationWise={isLocationWise}
               candidateStatus={candidate?.status}
-                isFromInterview={isFromInterview}
-                isFromCompensationPool={isFromCompensationPool}
-                page={state.page}
-                pageSize={state.pageSize}
-                isCandidateWorkflow={isCandidateWorkflow}
+              isFromInterview={isFromInterview}
+              isFromCompensationPool={isFromCompensationPool}
+              page={state.page}
+              pageSize={state.pageSize}
+              isCandidateWorkflow={isCandidateWorkflow}
             />
           )
         )}

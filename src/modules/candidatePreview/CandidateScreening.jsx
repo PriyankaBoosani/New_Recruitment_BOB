@@ -1,11 +1,17 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import masterApiService from "../master/services/masterApiService";
 import "../../style/css/CandidateScreening.css";
-import uploadIcon from "../../assets/upload-blue-icon.png"
-import rankIcon from "../../assets/rank-icon.png"
-import pdfIcon from "../../assets/pdf-icon.png"
-import excelIcon from "../../assets/export-excel-icon.png"
-import searchIcon from "../../assets/search-icon.png"
+import uploadIcon from "../../assets/upload-blue-icon.png";
+import rankIcon from "../../assets/rank-icon.png";
+import pdfIcon from "../../assets/pdf-icon.png";
+import excelIcon from "../../assets/export-excel-icon.png";
+import searchIcon from "../../assets/search-icon.png";
 import RequisitionStripformultiplepositions from "./components/RequisitionStripformultiplepositions";
 import CandidatePool from "./components/CandidatePool";
 import InterviewPool from "./components/InterviewPool";
@@ -27,24 +33,26 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import ExaminationScoreModal from "./components/ExaminationScoreModal";
 import ZonalRejectedCommentModal from "./components/ZonalRejectedCommentModal";
-import { FaUsers, FaUserTie, FaFileSignature, FaUserCheck, FaBars, FaListOl, FaExternalLinkAlt } from "react-icons/fa";
+import {
+  FaUsers,
+  FaUserTie,
+  FaFileSignature,
+  FaUserCheck,
+  FaBars,
+  FaListOl,
+  FaExternalLinkAlt,
+} from "react-icons/fa";
 import { faListOl } from "@fortawesome/free-solid-svg-icons";
-import CandidateImportModal
-  from "./components/CandidateImportModal";
+import CandidateImportModal from "./components/CandidateImportModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import DropdownStrip from "./components/DropdownStrip"
+import DropdownStrip from "./components/DropdownStrip";
 // import CandidatePreviewPage from "./candidatePreviewPage";
 import { useDispatch } from "react-redux";
 import { setRankEnabled, clearRankState } from "../../app/providers/rankSlice";
 
-import {
-  Modal,
-  Button
-} from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 
-import {
-  FiUpload
-} from "react-icons/fi";
+import { FiUpload } from "react-icons/fi";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import CompensationPool from "./components/CompensationPool";
 import useCompensationPool from "./hooks/useCompensationPool";
@@ -70,7 +78,6 @@ export default function CandidateScreening({ selectedJob }) {
 
   const user = useSelector((state) => state.user.user);
 
-
   const role = user?.role?.toLowerCase();
 
   const isRecruiter = role === "recruiter";
@@ -89,14 +96,11 @@ export default function CandidateScreening({ selectedJob }) {
   const [compRefreshKey, setCompRefreshKey] = useState(0);
   const { panelData, fetchPanels } = useCommitteeRequests();
 
-  const [showErrorModal, setShowErrorModal] =
-    useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
-  const [errorCandidates, setErrorCandidates] =
-    useState([]);
+  const [errorCandidates, setErrorCandidates] = useState([]);
 
-  const [errorMessage, setErrorMessage] =
-    useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   // const user = useSelector((state) => state.user.user);
 
@@ -105,20 +109,8 @@ export default function CandidateScreening({ selectedJob }) {
   // const isRecruiter = role === "recruiter";
   const COMPENSATION_POOL_STATUSES =
     role === "committee_member"
-      ? [
-        "PENDING",
-        "APPROVED",
-        "REJECTED",
-        "RENEGOTIATE",
-      ]
-      : [
-        "NEW",
-        "SUBMITTED",
-        "PENDING",
-        "APPROVED",
-        "REJECTED",
-        "RENEGOTIATE",
-      ];
+      ? ["PENDING", "APPROVED", "REJECTED", "RENEGOTIATE"]
+      : ["NEW", "SUBMITTED", "PENDING", "APPROVED", "REJECTED", "RENEGOTIATE"];
 
   const COMPENSATION_STATUS_LABEL_MAP = {
     NEW: "New",
@@ -129,9 +121,7 @@ export default function CandidateScreening({ selectedJob }) {
     RENEGOTIATE: "Renegotiate",
   };
 
-  const [pendingExamOpen, setPendingExamOpen] =
-  useState(false);
-
+  const [pendingExamOpen, setPendingExamOpen] = useState(false);
 
   // const handleRemovePosition = (removeId) => {
   //   const updatedIds = selectedPositionId.filter(
@@ -150,10 +140,7 @@ export default function CandidateScreening({ selectedJob }) {
   // };
 
   const handleRemovePosition = (removeId) => {
-
-    const updatedIds = selectedPositionId.filter(
-      (id) => id !== removeId
-    );
+    const updatedIds = selectedPositionId.filter((id) => id !== removeId);
 
     // MOVE TO FIRST PAGE
     setPage(0);
@@ -164,7 +151,6 @@ export default function CandidateScreening({ selectedJob }) {
 
     // CLEAR DATA WHEN NO POSITIONS LEFT
     if (updatedIds.length === 0) {
-
       setCandidates([]);
       setTotalElements(0);
 
@@ -176,35 +162,18 @@ export default function CandidateScreening({ selectedJob }) {
     }
   };
 
+  const [examinationScoreData, setExaminationScoreData] = useState([]);
 
-
-  const [
-    examinationScoreData,
-    setExaminationScoreData
-  ] = useState([]);
-
-
-  const [
-    showImportCandidatesModal,
-    setShowImportCandidatesModal
-  ] = useState(false);
+  const [showImportCandidatesModal, setShowImportCandidatesModal] =
+    useState(false);
 
   // const user = useSelector((state) => state.user.user);
-
 
   // const role = user?.role?.toLowerCase();
 
   // const isRecruiter = role === "recruiter";
 
-
-
-
-
-
-
   const isCommitteeMember = role === "committee_member";
-
-
 
   const INTERVIEW_STATUS_LABEL_MAP = {
     SCHEDULED: "Scheduled",
@@ -222,7 +191,7 @@ export default function CandidateScreening({ selectedJob }) {
     L2_PENDING: "L2 Pending",
     APPROVED: "Approved",
     REJECTED: "Rejected",
-    PENDING: "Pending"
+    PENDING: "Pending",
   };
   const OFFER_POOL_STATUSES = [
     "OFFER_AWAITED",
@@ -230,11 +199,7 @@ export default function CandidateScreening({ selectedJob }) {
     "OFFER_REJECTED",
     "OFFER_ACCEPTED",
   ];
-  const SCHEDULE_POOL_STATUSES = [
-    "L1_PENDING",
-    "PENDING",
-    "REJECTED"
-  ];
+  const SCHEDULE_POOL_STATUSES = ["L1_PENDING", "PENDING", "REJECTED"];
   const OFFER_STATUS_LABEL_MAP = {
     OFFER_AWAITED: "Offer Awaited",
     OFFER_SENT: "Offer Sent",
@@ -246,9 +211,7 @@ export default function CandidateScreening({ selectedJob }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-
   const navActiveTab = location.state?.activeTab;
-
 
   const [positions, setPositions] = useState([]);
   const [selectedPositionId, setSelectedPositionId] = useState([]);
@@ -257,15 +220,12 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [submittingApproval, setSubmittingApproval] = useState(false);
 
-
-const [activeTab, setActiveTab] = useState("");
-
-
-
+  const [activeTab, setActiveTab] = useState(navActiveTab || "CANDIDATE_POOL");
 
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
-  const [selectedInterviewCandidateIds, setSelectedInterviewCandidateIds] = useState([]);
+  const [selectedInterviewCandidateIds, setSelectedInterviewCandidateIds] =
+    useState([]);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   const [requisitions, setRequisitions] = useState([]);
@@ -286,15 +246,9 @@ const [activeTab, setActiveTab] = useState("");
 
   const [loadingCandidates, setLoadingCandidates] = useState(false);
   const [page, setPage] = useState(0);
-  const [
-    schedulePoolPage,
-    setSchedulePoolPage
-  ] = useState(0);
+  const [schedulePoolPage, setSchedulePoolPage] = useState(0);
 
-  const [
-    schedulePoolPageSize,
-    setSchedulePoolPageSize
-  ] = useState(10);
+  const [schedulePoolPageSize, setSchedulePoolPageSize] = useState(10);
   const [pageSize, setPageSize] = useState(10);
   const [totalElements, setTotalElements] = useState(0);
   const [masterData, setMasterData] = useState(null);
@@ -312,131 +266,66 @@ const [activeTab, setActiveTab] = useState("");
   const [zonalComment, setZonalComment] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
 
+  const [examConfigMap, setExamConfigMap] = useState({});
 
+  const fetchExamConfigByPositions = async (positionIds = []) => {
+    try {
+      console.log("FETCH EXAM CONFIG POSITION IDS", positionIds);
 
-  const [
-  examConfigMap,
-  setExamConfigMap
-] = useState({});
+      if (!positionIds?.length) {
+        console.log("NO POSITION IDS FOUND");
 
+        setExamConfigMap({});
+        return;
+      }
 
+      const query = positionIds.join(",");
 
+      console.log("EXAM CONFIG QUERY", query);
 
+      const res =
+        await jobPositionApiService.getExamConfigurationsByPositions(query);
 
-const fetchExamConfigByPositions = async (
-  positionIds = []
-) => {
+      console.log("EXAM CONFIG API RESPONSE", res);
 
-  try {
+      console.log("EXAM CONFIG API DATA", res?.data);
 
-    console.log(
-      "FETCH EXAM CONFIG POSITION IDS",
-      positionIds
-    );
+      const data = res?.data || [];
 
-    if (!positionIds?.length) {
+      const map = {};
 
-      console.log(
-        "NO POSITION IDS FOUND"
-      );
+      // ENABLE ONLY WHEN CONFIG EXISTS
+      data.forEach((item) => {
+        console.log("CONFIG ITEM", item);
+
+        map[item.positionId] = true;
+      });
+
+      console.log("FINAL EXAM CONFIG MAP", map);
+
+      setExamConfigMap(map);
+    } catch (err) {
+      console.error("FAILED TO FETCH EXAM CONFIG", err);
+
+      console.error("FAILED RESPONSE", err?.response);
+
+      console.error("FAILED RESPONSE DATA", err?.response?.data);
 
       setExamConfigMap({});
-      return;
     }
+  };
 
-    const query =
-      positionIds.join(",");
-
-    console.log(
-      "EXAM CONFIG QUERY",
-      query
-    );
-
-    const res =
-      await jobPositionApiService.getExamConfigurationsByPositions(
-        query
-      );
-
-    console.log(
-      "EXAM CONFIG API RESPONSE",
-      res
-    );
-
-    console.log(
-      "EXAM CONFIG API DATA",
-      res?.data
-    );
-
-    const data = res?.data || [];
-
-    const map = {};
-
-    // ENABLE ONLY WHEN CONFIG EXISTS
-    data.forEach((item) => {
-
-      console.log(
-        "CONFIG ITEM",
-        item
-      );
-
-      map[item.positionId] = true;
-
-    });
-
-    console.log(
-      "FINAL EXAM CONFIG MAP",
-      map
-    );
-
-    setExamConfigMap(map);
-
-  } catch (err) {
-
-    console.error(
-      "FAILED TO FETCH EXAM CONFIG",
-      err
-    );
-
-    console.error(
-      "FAILED RESPONSE",
-      err?.response
-    );
-
-    console.error(
-      "FAILED RESPONSE DATA",
-      err?.response?.data
-    );
-
-    setExamConfigMap({});
-
-  }
-
-};  
-
-const hasExamConfiguration =
-  selectedPositionId?.some(
+  const hasExamConfiguration = selectedPositionId?.some(
     (id) => examConfigMap[id]
   );
 
-
-useEffect(() => {
-
-  if (selectedPositionId?.length) {
-
-    fetchExamConfigByPositions(
-      selectedPositionId
-    );
-
-  } else {
-
-    setExamConfigMap({});
-
-  }
-
-}, [selectedPositionId]);
-
-
-
+  useEffect(() => {
+    if (selectedPositionId?.length) {
+      fetchExamConfigByPositions(selectedPositionId);
+    } else {
+      setExamConfigMap({});
+    }
+  }, [selectedPositionId]);
 
   const handleOpenZonalComments = (comment) => {
     setZonalComment(comment || "-");
@@ -446,161 +335,60 @@ useEffect(() => {
   //  const handleScheduleInterview = () => {
   //   if (!selectedCandidateIds.length) return;
 
+  const [reservationCategories, setReservationCategories] = useState([]);
 
-  const [
-  reservationCategories,
-  setReservationCategories
-] = useState([]);
-
-const reservationCategoryMap =
-  useMemo(() => {
-
+  const reservationCategoryMap = useMemo(() => {
     const map = {};
 
-    reservationCategories?.forEach(
-      (item) => {
-
-        map[
-          item.reservationCategoriesId
-        ] = item.categoryCode;
-
-      }
-    );
+    reservationCategories?.forEach((item) => {
+      map[item.reservationCategoriesId] = item.categoryCode;
+    });
 
     return map;
-
   }, [reservationCategories]);
 
-  
-
-useEffect(() => {
-
-  if (
-    location.state?.openExaminationScore
-  ) {
-
-    setPendingExamOpen(true);
-
-  }
-
-}, [location.state?.reopenKey]);
-
-
-useEffect(() => {
-
-  if (!pendingExamOpen) {
-    return;
-  }
-
-  if (
-    !selectedRequisitionId ||
-    !selectedPositionId.length ||
-    !reservationCategories.length ||
-    !masterData?.states?.length
-  ) {
-    return;
-  }
-
-  handleOpenExaminationScore();
-
-  setPendingExamOpen(false);
-
-  navigate(
-    location.pathname,
-    {
-      replace: true,
-      state: {}
+  useEffect(() => {
+    if (location.state?.openExaminationScore) {
+      setPendingExamOpen(true);
     }
-  );
-
-}, [
-  pendingExamOpen,
-  selectedRequisitionId,
-  selectedPositionId,
-  reservationCategories,
-  masterData
-]);
-
-
-
-
-
-
-
-// const fetchReservationCategories =
-//   async () => {
-
-//     try {
-
-//       const res =
-//         await masterApiService.getAllCategories();
-
-//       console.log(
-//         "CATEGORY API FULL RESPONSE",
-//         res
-//       );
-
-//       console.log(
-//         "CATEGORY API DATA",
-//         res?.data
-//       );
-
-//       console.log(
-//         "CATEGORY API ARRAY",
-//         res?.data
-//       );
-
-//       console.log(
-//         "CATEGORY COUNT",
-//         res?.data?.length
-//       );
-
-//       setReservationCategories(
-//         res?.data || []
-//       );
-
-//     } catch (err) {
-
-//       console.error(
-//         "CATEGORY API ERROR",
-//         err
-//       );
-
-//     }
-
-//   };
-
+  }, [location.state?.reopenKey]);
 
   useEffect(() => {
+    if (!pendingExamOpen) {
+      return;
+    }
 
-  console.log(
-    "reservationCategories STATE",
-    reservationCategories
-  );
+    if (
+      !selectedRequisitionId ||
+      !selectedPositionId.length ||
+      !reservationCategories.length ||
+      !masterData?.states?.length
+    ) {
+      return;
+    }
 
-  console.log(
-    "reservationCategories LENGTH",
-    reservationCategories?.length
-  );
+    handleOpenExaminationScore();
 
-}, [reservationCategories]);
+    setPendingExamOpen(false);
 
+    navigate(location.pathname, {
+      replace: true,
+      state: {},
+    });
+  }, [
+    pendingExamOpen,
+    selectedRequisitionId,
+    selectedPositionId,
+    reservationCategories,
+    masterData,
+  ]);
 
-useEffect(() => {
-
-  // ONLY INITIAL LOAD
-  if (
-    location.state?.activeTab &&
-    activeTab === "CANDIDATE_POOL"
-  ) {
-    setActiveTab(location.state.activeTab);
-  }
-
-}, []);
-
-useEffect(() => {
-  console.log("ACTIVE TAB CHANGED =>", activeTab);
-}, [activeTab]);
+  useEffect(() => {
+    // ONLY INITIAL LOAD
+    if (location.state?.activeTab && activeTab === "CANDIDATE_POOL") {
+      setActiveTab(location.state.activeTab);
+    }
+  }, []);
 
   // useEffect(() => {
 
@@ -631,39 +419,22 @@ useEffect(() => {
   // ]);
 
   const handleSubmitForApproval = async () => {
-
     try {
-
       setSubmittingApproval(true);
 
       const payload = {
-        positionIds: selectedPositionId
+        positionIds: selectedPositionId,
       };
 
-
-
       const res =
-        await candidateWorkflowServices
-          .submitForApproval(
-            selectedPositionId
-          );
-
-
+        await candidateWorkflowServices.submitForApproval(selectedPositionId);
 
       //  HANDLE BACKEND VALIDATION
       if (!res?.success) {
-
-        setErrorMessage(
-          res?.message ||
-          "Validation failed"
-        );
-        console.log("message", res.data[0].message)
+        setErrorMessage(res?.message || "Validation failed");
+        console.log("message", res.data[0].message);
         //  store backend data
-        setErrorCandidates(
-          Array.isArray(res?.data)
-            ? res.data
-            : []
-        );
+        setErrorCandidates(Array.isArray(res?.data) ? res.data : []);
 
         setShowApprovalModal(false);
 
@@ -672,18 +443,16 @@ useEffect(() => {
         return;
       }
 
-      toast.success(
-        "Submitted for approval successfully"
-      );
+      toast.success("Submitted for approval successfully");
 
       setShowApprovalModal(false);
 
       fetchSchedulePoolCandidates();
 
       // CLEAR SCHEDULE POOL FILTER
-      setFilters(prev => ({
+      setFilters((prev) => ({
         ...prev,
-        status: []
+        status: [],
       }));
 
       // MOVE TO INTERVIEW POOL
@@ -697,70 +466,42 @@ useEffect(() => {
       setTimeout(async () => {
         await refetchInterviewPool();
       }, 0);
-
     } catch (err) {
-
-      console.error(
-        "SUBMIT APPROVAL ERROR",
-        err
-      );
+      console.error("SUBMIT APPROVAL ERROR", err);
 
       // ✅ HANDLE 400
       if (err?.response?.data) {
-
-        setErrorMessage(
-
-          err.response.data.message ||
-
-          "Validation failed"
-
-        );
+        setErrorMessage(err.response.data.message || "Validation failed");
 
         setErrorCandidates(
-
-          Array.isArray(
-            err.response.data.data
-          )
-            ? err.response.data.data
-            : []
-
+          Array.isArray(err.response.data.data) ? err.response.data.data : []
         );
 
         setShowErrorModal(true);
 
         return;
-
       }
 
-      toast.error(
-        "Failed to submit for approval"
-      );
-
+      toast.error("Failed to submit for approval");
     } finally {
-
       setSubmittingApproval(false);
-
     }
-
   };
   const handleScheduleInterview = () => {
-
-
-
     if (!selectedCandidateIds.length) {
       toast.error("Please select candidates");
       return;
     }
 
     const selectedCandidatesData = allCandidatesForFilters
-      .filter(c => selectedCandidateIds.includes(c.id))
-      .map(c => ({
+      .filter((c) => selectedCandidateIds.includes(c.id))
+      .map((c) => ({
         id: c.id,
         name: c.name,
         regNo: c.applicationNo,
         positionId: c.positionId,
         interviewCenterId: c.interviewCenterId,
-        interviewCenterName: c.interviewCenterName
+        interviewCenterName: c.interviewCenterName,
       }));
 
     // const params = new URLSearchParams({
@@ -769,7 +510,6 @@ useEffect(() => {
     //   candidates: JSON.stringify(selectedCandidatesData)
     // });
 
-
     // navigate("/schedule-interviews", {
     //   state: {
     //     candidates: selectedCandidatesData,
@@ -777,10 +517,6 @@ useEffect(() => {
     //     positionId: selectedPositionId
     //   }
     // });
-
-
-
-
 
     navigate("/schedule-interviews", {
       state: {
@@ -800,7 +536,7 @@ useEffect(() => {
 
         activeTab: "CANDIDATE_POOL",
         sourceTab: "CANDIDATE_POOL",
-      }
+      },
     });
   };
 
@@ -809,21 +545,20 @@ useEffect(() => {
     interviewCandidates,
     totalElements: interviewTotalElements,
     loading: loadingInterview,
-    refetch: refetchInterviewPool
+    refetch: refetchInterviewPool,
   } = useInterviewPool({
     positionId: selectedPositionId,
     filters,
     page: interviewPage,
     pageSize: interviewPageSize,
-    enabled: selectedPositionId.length > 0
+    enabled: activeTab === "INTERVIEW_POOL" && selectedPositionId.length > 0,
   });
-
 
   const {
     data: compensationCandidates,
     totalElements: compensationTotal,
     loading: loadingCompensation,
-    refetch: refetchCompensation
+    refetch: refetchCompensation,
   } = useCompensationPool({
     positionId: selectedPositionId[0],
     filters,
@@ -832,7 +567,8 @@ useEffect(() => {
     enabled:
       activeTab === "COMPENSATION_POOL" &&
       selectedPositionId.length > 0 &&
-      (isCommitteeMember || selectedPositionId.length > 0), refreshKey: compRefreshKey
+      (isCommitteeMember || selectedPositionId.length > 0),
+    refreshKey: compRefreshKey,
   });
 
   const TAB_PRIVILEGE_MAP = {
@@ -851,28 +587,39 @@ useEffect(() => {
   // ];
 
   const tabs = [
-    { key: "CANDIDATE_POOL", label: t("candidateWorkflow:candidate_pool"), count: totalElements },
+    {
+      key: "CANDIDATE_POOL",
+      label: t("candidateWorkflow:candidate_pool"),
+      count: totalElements,
+    },
     {
       key: "SCHEDULE_POOL",
       label: t("candidateWorkflow:schedule_pool"),
-      count: 0
+      count: 0,
     },
-    { key: "INTERVIEW_POOL", label: t("candidateWorkflow:interview_pool"), count: interviewTotalElements },
+    {
+      key: "INTERVIEW_POOL",
+      label: t("candidateWorkflow:interview_pool"),
+      count: interviewTotalElements,
+    },
 
-    { key: "COMPENSATION_POOL", label: "Compensation Pool", count: compensationTotal },
+    {
+      key: "COMPENSATION_POOL",
+      label: "Compensation Pool",
+      count: compensationTotal,
+    },
     { key: "OFFER_POOL", label: t("candidateWorkflow:offer_pool"), count: 0 },
-    { key: "ONBOARDING_POOL", label: t("candidateWorkflow:onboarding_pool"), count: 0 },
+    {
+      key: "ONBOARDING_POOL",
+      label: t("candidateWorkflow:onboarding_pool"),
+      count: 0,
+    },
   ];
-  const privileges = useSelector(
-    (state) => state.user.privileges || {}
-  );
+  const privileges = useSelector((state) => state.user.privileges || {});
 
   const hasPrivilege = (key) => {
     return privileges?.[key] === true;
   };
-
-
-
 
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState([]);
@@ -890,12 +637,8 @@ useEffect(() => {
   const dispatch = useDispatch();
   const [templates, setTemplates] = useState([]);
 
-  const isRankEnabled = useSelector(
-    (state) => state.rank.isRankEnabled
-  );
-  const isScoreEnabled = useSelector(
-    (state) => state.rank.isScoreEnabled
-  );
+  const isRankEnabled = useSelector((state) => state.rank.isRankEnabled);
+  const isScoreEnabled = useSelector((state) => state.rank.isScoreEnabled);
 
   const todayString = () => {
     const today = new Date();
@@ -904,31 +647,18 @@ useEffect(() => {
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
-  const paginatedSchedulePool =
-    useMemo(() => {
+  const paginatedSchedulePool = useMemo(() => {
+    const start = schedulePoolPage * schedulePoolPageSize;
 
-      const start =
-        schedulePoolPage *
-        schedulePoolPageSize;
+    const end = start + schedulePoolPageSize;
 
-      const end =
-        start +
-        schedulePoolPageSize;
-
-      return schedulePoolCandidates.slice(
-        start,
-        end
-      );
-
-    }, [
-      schedulePoolCandidates,
-      schedulePoolPage,
-      schedulePoolPageSize
-    ]);
+    return schedulePoolCandidates.slice(start, end);
+  }, [schedulePoolCandidates, schedulePoolPage, schedulePoolPageSize]);
   const hasLocationData = useMemo(() => {
-    return positions.some((p) =>
-      selectedPositionId.includes(p.jobPositions?.positionId) &&
-      (p.jobPositions?.positionStateDistributions?.length || 0) > 0
+    return positions.some(
+      (p) =>
+        selectedPositionId.includes(p.jobPositions?.positionId) &&
+        (p.jobPositions?.positionStateDistributions?.length || 0) > 0
     );
   }, [positions, selectedPositionId]);
 
@@ -946,7 +676,9 @@ useEffect(() => {
     setPreviewUrl("");
   };
 
-  const isBackNavigation = location.state?.page !== undefined || location.state?.interviewPage !== undefined;
+  const isBackNavigation =
+    location.state?.page !== undefined ||
+    location.state?.interviewPage !== undefined;
 
   // 🔍 Requisition search (debounced)
   const requisitionSearchTimeout = useRef(null);
@@ -974,42 +706,24 @@ useEffect(() => {
     }, 400);
   }, []);
 
-const loadMasters = async () => {
+  const loadMasters = async () => {
+    try {
+      const [masterRes, categoryRes] = await Promise.all([
+        masterApiService.getMasterDisplayAll(),
+        masterApiService.getAllCategories(),
+      ]);
 
-  try {
+      setMasterData(masterRes.data);
 
-    const [
-      masterRes,
-      categoryRes
-    ] = await Promise.all([
-      masterApiService.getMasterDisplayAll(),
-      masterApiService.getAllCategories()
-    ]);
+      setReservationCategories(categoryRes?.data || []);
+    } catch (err) {
+      console.error("MASTER LOAD ERROR", err);
+    }
+  };
 
-    setMasterData(masterRes.data);
-
-    setReservationCategories(
-      categoryRes?.data || []
-    );
-
-  } catch (err) {
-
-    console.error(
-      "MASTER LOAD ERROR",
-      err
-    );
-
-  }
-
-};
-
-useEffect(() => {
-
-  loadMasters();
-
-}, []);
-
-
+  useEffect(() => {
+    loadMasters();
+  }, []);
 
   useEffect(() => {
     if (!selectedPositionId.length) {
@@ -1017,23 +731,13 @@ useEffect(() => {
     }
   }, [selectedPositionId]);
 
+  useEffect(() => {
+    if (!selectedPositionId.length || activeTab !== "INTERVIEW_POOL") {
+      return;
+    }
 
-
-useEffect(() => {
-
-  if (
-    !selectedPositionId.length ||
-    activeTab !== "INTERVIEW_POOL"
-  ) {
-    return;
-  }
-
-  fetchPanels(selectedPositionId);
-
-}, [
-  selectedPositionId.join(","),
-  activeTab
-]);
+    fetchPanels(selectedPositionId);
+  }, [selectedPositionId.join(","), activeTab]);
 
   const employmentTypeMap = React.useMemo(() => {
     const map = {};
@@ -1042,9 +746,6 @@ useEffect(() => {
     });
     return map;
   }, [masterData]);
-
-
-
 
   useEffect(() => {
     if (selectedPositionId.length === 0) {
@@ -1059,21 +760,16 @@ useEffect(() => {
     }
   }, [selectedPositionId]);
 
-
-
-
   useEffect(() => {
-
     setSelectedCandidateIds([]);
     setSelectedInterviewCandidateIds([]);
     setSelectedCompensationIds([]);
     setOfferSelectedIds([]);
-
   }, [activeTab]);
 
-
   const isContractPosition = useMemo(() => {
-    if (!positions.length || !selectedPositionId.length || !employmentTypeMap) return false;
+    if (!positions.length || !selectedPositionId.length || !employmentTypeMap)
+      return false;
 
     const selectedPositionObj = positions.find(
       (p) => p.jobPositions?.positionId === selectedPositionId[0]
@@ -1085,81 +781,40 @@ useEffect(() => {
     return employmentType === "Contract";
   }, [positions, selectedPositionId, employmentTypeMap]);
 
-const accessibleTabs = useMemo(() => {
+  const accessibleTabs = useMemo(() => {
+    return tabs.filter((tab) => {
+      // Compensation only for contract positions
+      // show compensation based ONLY on privilege
+      if (tab.key === "COMPENSATION_POOL") {
+        // Committee member -> always show if privilege exists
+        if (isCommitteeMember) {
+          return hasPrivilege("Compensation Pool");
+        }
 
-  return tabs.filter((tab) => {
+        // Recruiter -> only for contract positions
+        if (isRecruiter) {
+          return hasPrivilege("Compensation Pool") && isContractPosition;
+        }
 
-    // Compensation only for contract positions
-   // show compensation based ONLY on privilege
-if (tab.key === "COMPENSATION_POOL") {
+        return false;
+      }
 
-  // Committee member -> always show if privilege exists
-  if (isCommitteeMember) {
-    return hasPrivilege("Compensation Pool");
-  }
+      // Schedule Pool depends on Interview Pool privilege
+      // if (
+      //   tab.key === "SCHEDULE_POOL"
+      // ) {
+      //   return hasPrivilege("Interview Pool");
+      // }
 
-  // Recruiter -> only for contract positions
-  if (isRecruiter) {
-    return (
-      hasPrivilege("Compensation Pool") &&
-      isContractPosition
-    );
-  }
-
-  return false;
-}
-
-    // Schedule Pool depends on Interview Pool privilege
-    // if (
-    //   tab.key === "SCHEDULE_POOL"
-    // ) {
-    //   return hasPrivilege("Interview Pool");
-    // }
-
-    // ALL OTHER TABS ONLY BY PRIVILEGES
-    return hasPrivilege(
-      TAB_PRIVILEGE_MAP[tab.key]
-    );
-
-  });
-
-}, [
-  tabs,
-  privileges,
-  isContractPosition
-]);
-
-
-useEffect(() => {
-
-  if (activeTab) return;
-
-  if (navActiveTab) {
-    setActiveTab(navActiveTab);
-    return;
-  }
-
-  if (accessibleTabs?.length) {
-    setActiveTab(accessibleTabs[0].key);
-  }
-
-}, [
-  activeTab,
-  accessibleTabs,
-  navActiveTab
-]);
-
-
-
-useEffect(() => {
-  console.log("ACTIVE TAB:", activeTab);
-}, [activeTab]);
-
+      // ALL OTHER TABS ONLY BY PRIVILEGES
+      return hasPrivilege(TAB_PRIVILEGE_MAP[tab.key]);
+    });
+  }, [tabs, privileges, isContractPosition]);
 
   const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
   const categoryMap = React.useMemo(() => {
     const map = {};
-    (reservationCategories || []).forEach(cat => {
+    (reservationCategories || []).forEach((cat) => {
       map[cat.reservationCategoriesId] = cat.categoryName;
     });
     return map;
@@ -1193,7 +848,6 @@ useEffect(() => {
   }, []);
 
   useEffect(() => {
-
     if (activeTab !== "SCHEDULE_POOL") {
       return;
     }
@@ -1203,19 +857,16 @@ useEffect(() => {
     }
 
     fetchSchedulePoolCandidates();
-
   }, [
     activeTab,
     selectedPositionId?.join(","),
     filters.searchText,
-    filters.status
+    filters.status,
   ]);
 
   useEffect(() => {
-
     //  DON'T RESET DURING NAVIGATION RESTORE
     if (!selectedRequisitionId) {
-
       if (isNavModeRef.current) {
         return;
       }
@@ -1229,23 +880,19 @@ useEffect(() => {
       setLoadingPositions(true);
 
       try {
-        const res =
-          await jobPositionApiService.getPositionsByReqId({
-            requisitionId: selectedRequisitionId,
-          });
+        const res = await jobPositionApiService.getPositionsByReqId({
+          requisitionId: selectedRequisitionId,
+        });
 
         setPositions(res?.data || []);
-
       } catch (err) {
         console.error("Failed to load positions", err);
-
       } finally {
         setLoadingPositions(false);
       }
     };
 
     fetchPositions();
-
   }, [selectedRequisitionId]);
 
   useEffect(() => {
@@ -1256,21 +903,19 @@ useEffect(() => {
     });
   }, []);
   const formatCandidateData = (apiData) => {
-    const formatStatus = (status = "") => status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+    const formatStatus = (status = "") =>
+      status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
 
     return (apiData?.content || []).map((c) => ({
       id: c.candidateApplications.id, // REQUIRED for selection
       name: c.fullName,
       rank: c.rank,
 
-      educationScore:
-        c?.candidateRankingResults?.educationScore ?? "-",
+      educationScore: c?.candidateRankingResults?.educationScore ?? "-",
 
-      experienceScore:
-        c?.candidateRankingResults?.experienceScore ?? "-",
+      experienceScore: c?.candidateRankingResults?.experienceScore ?? "-",
 
-      finalScore:
-        c?.candidateRankingResults?.finalScore ?? "-",
+      finalScore: c?.candidateRankingResults?.finalScore ?? "-",
 
       educationSimilarity:
         c?.candidateRankingResults?.educationSimilarity ?? "-",
@@ -1289,42 +934,18 @@ useEffect(() => {
       positionId: c.candidateApplications.positionId,
 
       fileUrl: c.resumeUrl,
-      interviewCenterId: c.interviewCenter?.interviewCentreId,  // Add interview centre ID
-      interviewCenterName: c.interviewCenter?.interviewCentre,  // Add interview centre name
+      interviewCenterId: c.interviewCenter?.interviewCentreId, // Add interview centre ID
+      interviewCenterName: c.interviewCenter?.interviewCentre, // Add interview centre name
     }));
   };
 
-  // 🔍 Fetch all candidates WITHOUT location/category filters for dropdown options
-  // const fetchAllCandidatesForFilters = async () => {
-  //   try {
-  //     const normalizedStatus = filters.status.length === 0 ? availableStatuses : filters.status.map((s) => s.toUpperCase());
-  //     const res = await jobPositionApiService.getCandidatesByPosition({
-  //       searchText: filters.searchText,
-  //       page: 0,
-  //       size: 1000, // Large size to get all candidates
-  //       positionIds: selectedPositionId,
-  //       status: normalizedStatus,
-  //       stateId: "", // NO location filter
-  //       categoryId: "", // NO category filter
-  //     });
-
-  //     const apiData = res?.data;
-  //     const mappedCandidates = formatCandidateData(apiData);
-  //     setAllCandidatesForFilters(mappedCandidates);
-  //   } catch (err) {
-  //     console.error("Failed to load all candidates for filters", err);
-  //   }
-  // };
-
-
-  const [allInterviewCandidatesForFilters, setAllInterviewCandidatesForFilters] = useState([]);
+  const [
+    allInterviewCandidatesForFilters,
+    setAllInterviewCandidatesForFilters,
+  ] = useState([]);
 
   useEffect(() => {
-
-    if (
-      activeTab !== "INTERVIEW_POOL" ||
-      !selectedPositionId.length
-    ) {
+    if (activeTab !== "INTERVIEW_POOL" || !selectedPositionId.length) {
       setAllInterviewCandidatesForFilters([]);
       return;
     }
@@ -1335,72 +956,53 @@ useEffect(() => {
     }, 0);
 
     return () => clearTimeout(timer);
-
-  }, [
-    selectedPositionId,
-    filters.status,
-    filters.searchText,
-    activeTab
-  ]);
-
+  }, [selectedPositionId, filters.status, filters.searchText, activeTab]);
 
   const fetchAllInterviewCandidatesForFilters = async () => {
     try {
-
       const normalizedStatus =
         filters.status.length === 0
           ? availableStatuses
           : filters.status.map((s) => s.toUpperCase());
 
       // FIRST API
-      const firstRes =
-        await candidateWorkflowServices.getInterviewCandidates({
-          searchText: filters.searchText || "",
-          positionIds: selectedPositionId,
-          statusList: normalizedStatus,
-          page: 0,
-          size: pageSize,
-        });
+      const firstRes = await candidateWorkflowServices.getInterviewCandidates({
+        searchText: filters.searchText || "",
+        positionIds: selectedPositionId,
+        statusList: normalizedStatus,
+        page: 0,
+        size: pageSize,
+      });
 
       const firstApiData = firstRes?.data;
 
-      const totalElements =
-        firstApiData?.page?.totalElements || 0;
+      const totalElements = firstApiData?.page?.totalElements || 0;
 
       // SECOND API WITH TOTAL
-      const finalRes =
-        await candidateWorkflowServices.getInterviewCandidates({
-          searchText: filters.searchText || "",
-          positionIds: selectedPositionId,
-          statusList: normalizedStatus,
-          page: 0,
-          size: totalElements,
-        });
+      const finalRes = await candidateWorkflowServices.getInterviewCandidates({
+        searchText: filters.searchText || "",
+        positionIds: selectedPositionId,
+        statusList: normalizedStatus,
+        page: 0,
+        size: totalElements,
+      });
 
       const finalApiData = finalRes?.data;
 
-      const mappedCandidates =
-        (finalApiData?.content || []).map((c) => ({
-          ...c,
-          id: c?.interviewSchedules?.interviewScheduleId
-        }));
+      const mappedCandidates = (finalApiData?.content || []).map((c) => ({
+        ...c,
+        id: c?.interviewSchedules?.interviewScheduleId,
+      }));
 
       setAllInterviewCandidatesForFilters(mappedCandidates);
-
     } catch (err) {
-      console.error(
-        "Failed to load all interview candidates",
-        err
-      );
+      console.error("Failed to load all interview candidates", err);
     }
   };
 
   // const allInterviewCandidatesForFilters = useMemo(() => {
   //   return interviewCandidates;
   // }, [interviewCandidates]);
-
-
-
 
   const fetchAllCandidatesForFilters = async () => {
     try {
@@ -1410,57 +1012,53 @@ useEffect(() => {
           : filters.status.map((s) => s.toUpperCase());
 
       //  FIRST API CALL
-      const firstRes =
-        await jobPositionApiService.getCandidatesByPosition({
-          searchText: filters.searchText,
-          page: 0,
-          size: pageSize, // initial small fetch
-          positionIds: selectedPositionId,
-          status: normalizedStatus,
-          stateId: "",
-          categoryId: "",
-        });
+      const firstRes = await jobPositionApiService.getCandidatesByPosition({
+        searchText: filters.searchText,
+        page: 0,
+        size: pageSize, // initial small fetch
+        positionIds: selectedPositionId,
+        status: normalizedStatus,
+        stateId: "",
+        categoryId: "",
+      });
 
       const firstApiData = firstRes?.data;
 
-      const totalElements =
-        firstApiData?.page?.totalElements || 0;
+      const totalElements = firstApiData?.page?.totalElements || 0;
+
+      if (totalElements === 0) {
+        setAllCandidatesForFilters([]);
+        return;
+      }
 
       //  SECOND API CALL WITH TOTAL ELEMENTS
-      const finalRes =
-        await jobPositionApiService.getCandidatesByPosition({
-          searchText: filters.searchText,
-          page: 0,
-          size: totalElements,
-          positionIds: selectedPositionId,
-          status: normalizedStatus,
-          stateId: "",
-          categoryId: "",
-        });
+      const finalRes = await jobPositionApiService.getCandidatesByPosition({
+        searchText: filters.searchText,
+        page: 0,
+        size: totalElements,
+        positionIds: selectedPositionId,
+        status: normalizedStatus,
+        stateId: "",
+        categoryId: "",
+      });
 
       const finalApiData = finalRes?.data;
 
-
-      const mappedCandidates =
-        formatCandidateData(finalApiData);
+      const mappedCandidates = formatCandidateData(finalApiData);
 
       setAllCandidatesForFilters(mappedCandidates);
-
     } catch (err) {
-      console.error(
-        "Failed to load all candidates for filters",
-        err
-      );
+      console.error("Failed to load all candidates for filters", err);
     }
   };
-
-
 
   const fetchCandidates = async () => {
     setLoadingCandidates(true);
     try {
-      const normalizedStatus = filters.status.length === 0 ? availableStatuses : filters.status.map((s) => s.toUpperCase());
-
+      const normalizedStatus =
+        filters.status.length === 0
+          ? availableStatuses
+          : filters.status.map((s) => s.toUpperCase());
       const res = await jobPositionApiService.getCandidatesByPosition({
         searchText: filters.searchText,
         page,
@@ -1485,159 +1083,105 @@ useEffect(() => {
     }
   };
   const fetchSchedulePoolCandidates = async () => {
-
     if (!selectedPositionId.length) return;
 
     try {
-
       setLoadingSchedulePool(true);
 
       const payload = {
-
         searchText: filters.searchText || "",
 
         positionIds: selectedPositionId,
 
-        statusList:
-          filters.status.length
-            ? filters.status
-            : ["L1_PENDING", "REJECTED", "PENDING"],
+        statusList: filters.status.length
+          ? filters.status
+          : ["L1_PENDING", "REJECTED", "PENDING"],
 
         page: 0,
 
-        size: 0
-
+        size: 0,
       };
 
-
-
-
-      const res = await candidateWorkflowServices.getSchedulePoolCandidates(payload);
+      const res =
+        await candidateWorkflowServices.getSchedulePoolCandidates(payload);
 
       const apiData = res?.data;
       const content = Array.isArray(apiData) ? apiData : apiData?.content || [];
 
-
       const mappedRows = content.map((c) => {
+        const start = c?.interviewScheduleStaging?.interviewStartAt;
 
-        const start =
-          c?.interviewScheduleStaging
-            ?.interviewStartAt;
-
-        const end =
-          c?.interviewScheduleStaging
-            ?.interviewEndAt;
+        const end = c?.interviewScheduleStaging?.interviewEndAt;
 
         return {
-          panelScheduleConfigurations:
-            c?.panelScheduleConfigurations || [],
+          panelScheduleConfigurations: c?.panelScheduleConfigurations || [],
           // IMPORTANT FOR EDIT FLOW
-          applicationId:
-            c?.application?.id,
-          positionId:
-            c?.application?.positionId,
+          applicationId: c?.application?.id,
+          positionId: c?.application?.positionId,
 
-          interviewCenterId:
-            c?.interviewCentres
-              ?.interviewCentreId || "",
+          interviewCenterId: c?.interviewCentres?.interviewCentreId || "",
 
-          panelId:
-            c?.interviewPanels
-              ?.interviewPanelId,
+          panelId: c?.interviewPanels?.interviewPanelId,
 
-          duration:
-            c?.interviewScheduleStaging
-              ?.interviewDurationMinutes || 15,
+          duration: c?.interviewScheduleStaging?.interviewDurationMinutes || 15,
 
           perDay: "1",
 
           // TABLE DATA
-          id:
-            c?.application?.id,
+          id: c?.application?.id,
 
-          name:
-            c?.fullName || "-",
+          name: c?.fullName || "-",
 
-          regNo:
-            c?.application
-              ?.applicationNo || "-",
+          regNo: c?.application?.applicationNo || "-",
 
-          date:
-            start?.split("T")[0] || "-",
+          date: start?.split("T")[0] || "-",
 
-          rawDate:
-            start?.split("T")[0] || "",
+          rawDate: start?.split("T")[0] || "",
 
-          startTime:
-            start
-              ?.split("T")[1]
-              ?.slice(0, 5) || "",
+          startTime: start?.split("T")[1]?.slice(0, 5) || "",
 
-          endTime:
-            end
-              ?.split("T")[1]
-              ?.slice(0, 5) || "",
+          endTime: end?.split("T")[1]?.slice(0, 5) || "",
 
           time:
             start && end
-              ? `${start
-                .split("T")[1]
-                .slice(0, 5)} - ${end
+              ? `${start.split("T")[1].slice(0, 5)} - ${end
                   .split("T")[1]
                   .slice(0, 5)}`
               : "-",
 
-          zone:
-            c?.interviewCentres?.displayName || "-",
-          candidateId:
-            c?.application?.candidateId,
+          zone: c?.interviewCentres?.displayName || "-",
+          candidateId: c?.application?.candidateId,
 
-          fileUrl:
-            c?.resumeUrl,
+          fileUrl: c?.resumeUrl,
 
-          panel:
-            c?.interviewPanels
-              ?.panelName || "-",
-          interviewStatus: c?.interviewScheduleStaging.interviewSchedulingApprovalStatus || "-",
+          panel: c?.interviewPanels?.panelName || "-",
+          interviewStatus:
+            c?.interviewScheduleStaging.interviewSchedulingApprovalStatus ||
+            "-",
           remarks: c?.interviewScheduleStaging.remarks || " -",
-          positionId:
-            c?.application?.positionId,
-
+          positionId: c?.application?.positionId,
         };
-
       });
-
 
       setSchedulePoolCandidates(mappedRows);
 
-      setSchedulePoolTotal(
-        mappedRows.length
-      );
-
+      setSchedulePoolTotal(mappedRows.length);
     } catch (err) {
-
-      console.error(
-        "Failed to fetch schedule pool",
-        err
-      );
-
+      console.error("Failed to fetch schedule pool", err);
     } finally {
-
       setLoadingSchedulePool(false);
-
     }
-
   };
   const handleJoiningDateChange = (value) => {
     setJoiningDate(value);
 
     if (!value) {
-      setFormErrors(prev => ({ ...prev, joiningDate: "" }));
+      setFormErrors((prev) => ({ ...prev, joiningDate: "" }));
       return;
     }
 
     if (!acceptBeforeDate) {
-      setFormErrors(prev => ({
+      setFormErrors((prev) => ({
         ...prev,
         joiningDate: t("candidateWorkflow:select_accept_before_first"),
       }));
@@ -1645,12 +1189,12 @@ useEffect(() => {
     }
 
     if (value <= acceptBeforeDate) {
-      setFormErrors(prev => ({
+      setFormErrors((prev) => ({
         ...prev,
         joiningDate: t("candidateWorkflow:must_be_greater_than_accept_before"),
       }));
     } else {
-      setFormErrors(prev => ({ ...prev, joiningDate: "" }));
+      setFormErrors((prev) => ({ ...prev, joiningDate: "" }));
     }
   };
   const handleTemplateChange = (value) => {
@@ -1658,19 +1202,18 @@ useEffect(() => {
     setSelectedTemplate(value);
   };
 
-
   const [submitBeforeDate, setSubmitBeforeDate] = useState("");
-  const mappedCompensationCandidates = mapCompensationCandidates(compensationCandidates);
+  const mappedCompensationCandidates = mapCompensationCandidates(
+    compensationCandidates
+  );
 
-  const selectedCompensationCandidates = mappedCompensationCandidates.filter(c =>
-    selectedCompensationIds.includes(c.id)
+  const selectedCompensationCandidates = mappedCompensationCandidates.filter(
+    (c) => selectedCompensationIds.includes(c.id)
   );
 
   const canSendToOfferFromCompensation =
     selectedCompensationCandidates.length > 0 &&
-    selectedCompensationCandidates.every(
-      (c) => c.status === "APPROVED"
-    );
+    selectedCompensationCandidates.every((c) => c.status === "APPROVED");
 
   const formatDateTime = (value) => {
     if (!value) return "-";
@@ -1688,7 +1231,6 @@ useEffect(() => {
     return `${day}-${month}-${year} ${time}`;
   };
 
-
   // useEffect(() => {
   //   if (!selectedPositionId) {
   //     setCandidates([]);
@@ -1699,29 +1241,27 @@ useEffect(() => {
   //   fetchCandidates();
   // }, [selectedPositionId, page, pageSize, filters, masterData]);
 
- useEffect(() => {
+  useEffect(() => {
+    if (
+      !selectedPositionId.length ||
+      activeTab !== "CANDIDATE_POOL" ||
+      !reservationCategories.length
+    ) {
+      return;
+    }
 
-  if (
-    !selectedPositionId.length ||
-    activeTab !== "CANDIDATE_POOL" ||
-    !reservationCategories.length
-  ) {
-    return;
-  }
-
-  fetchCandidates();
-
-}, [
-  selectedPositionId,
-  page,
-  pageSize,
-  filters.status,
-  filters.stateId,
-  filters.categoryId,
-  masterData,
-  reservationCategories,
-  activeTab,
-]);
+    fetchCandidates();
+  }, [
+    selectedPositionId,
+    page,
+    pageSize,
+    filters.status,
+    filters.stateId,
+    filters.categoryId,
+    masterData,
+    reservationCategories,
+    activeTab,
+  ]);
   useEffect(() => {
     if (!selectedPositionId.length || activeTab !== "CANDIDATE_POOL") return;
 
@@ -1732,14 +1272,20 @@ useEffect(() => {
 
   // 🔍 Fetch all candidates for filter dropdowns when position/status changes
   useEffect(() => {
-    if (!selectedPositionId || activeTab !== "CANDIDATE_POOL") {
+    if (!selectedPositionId.length || activeTab !== "CANDIDATE_POOL") {
       setAllCandidatesForFilters([]);
       return;
     }
 
     fetchAllCandidatesForFilters();
-  }, [selectedPositionId, filters.status, filters.searchText, masterData, activeTab, isRankEnabled]);
-
+  }, [
+    selectedPositionId.join(","),
+    filters.status.join(","),
+    filters.searchText,
+    activeTab,
+    isRankEnabled,
+    masterData,
+  ]);
   const handleRequisitionChange = async (e) => {
     const reqId = e.target.value;
     dispatch(clearRankState());
@@ -1761,20 +1307,20 @@ useEffect(() => {
       return;
     }
 
-    try {
-      setLoadingPositions(true);
+    // try {
+    //   setLoadingPositions(true);
 
-      const res = await jobPositionApiService.getPositionsByReqId({
-        requisitionId: reqId,
-      });
+    //   const res = await jobPositionApiService.getPositionsByReqId({
+    //     requisitionId: reqId,
+    //   });
 
-      setPositions(res?.data || []);
-    } catch (err) {
-      console.error("Failed to load positions", err);
-      setPositions([]);
-    } finally {
-      setLoadingPositions(false);
-    }
+    //   setPositions(res?.data || []);
+    // } catch (err) {
+    //   console.error("Failed to load positions", err);
+    //   setPositions([]);
+    // } finally {
+    //   setLoadingPositions(false);
+    // }
   };
   // const handlePositionChange = (id) => {
   //   dispatch(clearRankState()); // RESET HERE
@@ -1808,7 +1354,6 @@ useEffect(() => {
 
     // CLEAR EVERYTHING WHEN NO POSITION SELECTED
     if (!ids || ids.length === 0) {
-
       setCandidates([]);
       setTotalElements(0);
 
@@ -1827,18 +1372,11 @@ useEffect(() => {
     }
   };
 
-
   useEffect(() => {
-
-    if (
-      activeTab === "SCHEDULE_POOL" &&
-      selectedPositionId.length === 0
-    ) {
-
+    if (activeTab === "SCHEDULE_POOL" && selectedPositionId.length === 0) {
       setSchedulePoolCandidates([]);
       setSchedulePoolTotal(0);
     }
-
   }, [selectedPositionId, activeTab]);
 
   const handleViewFile = async (candidate) => {
@@ -1850,12 +1388,11 @@ useEffect(() => {
     try {
       setLoadingPdf(true);
 
-
       const selectedRequisition = requisitions.find(
         (r) => r.id === selectedRequisitionId
       );
 
-      const rawRequisition = selectedRequisition
+      const rawRequisition = selectedRequisition;
       const res = await masterApiService.getAzureBlobSasUrl(
         candidate.fileUrl,
         "candidate"
@@ -1875,29 +1412,28 @@ useEffect(() => {
     }
   };
 
-  const selectedCandidates = candidates.filter(c =>
+  const selectedCandidates = candidates.filter((c) =>
     selectedCandidateIds.includes(c.id)
   );
 
   const canScheduleInterview =
     selectedCandidates.length > 0 &&
-    selectedCandidates.every(c => c.status === "Shortlisted");
+    selectedCandidates.every((c) => c.status === "Shortlisted");
 
   const canScheduleMultiPositionInterview =
-    canScheduleInterview &&
-    selectedPositionId?.length > 0;
+    canScheduleInterview && selectedPositionId?.length > 0;
 
   const selectedRequisition = requisitions.find(
     (r) => r.id === selectedRequisitionId
   );
   const normalizedRequisition = selectedRequisition
     ? {
-      requisition_id: selectedRequisition.id,
-      requisition_code: selectedRequisition.requisitionCode,
-      requisition_title: selectedRequisition.requisitionTitle,
-      registration_start_date: selectedRequisition.startDate,
-      registration_end_date: selectedRequisition.endDate,
-    }
+        requisition_id: selectedRequisition.id,
+        requisition_code: selectedRequisition.requisitionCode,
+        requisition_title: selectedRequisition.requisitionTitle,
+        registration_start_date: selectedRequisition.startDate,
+        registration_end_date: selectedRequisition.endDate,
+      }
     : null;
 
   const selectedPositionObj = positions.find(
@@ -1905,14 +1441,13 @@ useEffect(() => {
   );
 
   const selectedPosition = positions
-    .filter(p => selectedPositionId.includes(p.jobPositions?.positionId))
-    .map(p => ({
+    .filter((p) => selectedPositionId.includes(p.jobPositions?.positionId))
+    .map((p) => ({
       positionId: p.jobPositions?.positionId,
-      positionName: p?.masterPositions?.positionName
+      positionName: p?.masterPositions?.positionName,
     }));
 
   const navPositionIds = location.state?.positionIds || [];
-
 
   // const availableStatuses = CANDIDATE_POOL_STATUSES;
   const availableStatuses = React.useMemo(() => {
@@ -1927,14 +1462,12 @@ useEffect(() => {
       return COMPENSATION_POOL_STATUSES; //  ADD THIS
     }
 
-
     if (activeTab === "OFFER_POOL") {
       return OFFER_POOL_STATUSES;
     }
 
     return CANDIDATE_POOL_STATUSES;
   }, [activeTab]);
-
 
   const getStatusLabel = (status) => {
     if (activeTab === "INTERVIEW_POOL") {
@@ -1954,194 +1487,134 @@ useEffect(() => {
     return allInterviewCandidatesForFilters.filter((c) =>
       selectedInterviewCandidateIds.includes(String(c.id))
     );
-  }, [
-    allInterviewCandidatesForFilters,
-    selectedInterviewCandidateIds
-  ]);
-
+  }, [allInterviewCandidatesForFilters, selectedInterviewCandidateIds]);
 
   const canSendToOfferPool =
     selectedInterviewCandidates.length > 0 &&
     selectedInterviewCandidates.every(
-      (c) =>
-        c?.interviewSchedules?.interviewStatus === "QUALIFIED"
+      (c) => c?.interviewSchedules?.interviewStatus === "QUALIFIED"
     );
   const handleReschedule = () => {
-
-
-
     const mappedRows = selectedInterviewCandidates.map((c) => ({
-
       // REQUIRED FOR SAVE
-      applicationId:
-        c?.application?.id || "",
+      applicationId: c?.application?.id || "",
 
-      interviewCenterId:
-        c?.center?.interviewCentreId || "",
+      interviewCenterId: c?.center?.interviewCentreId || "",
       positionId: c?.application?.positionId || "",
 
-      panelId:
-        c?.panel?.interviewPanelId || "",
+      panelId: c?.panel?.interviewPanelId || "",
 
-      duration:
-        c?.interviewSchedules?.interviewDurationMinutes || 15,
+      duration: c?.interviewSchedules?.interviewDurationMinutes || 15,
 
       perDay: "1",
 
       // TABLE DATA
-      id:
-        c?.interviewSchedules?.interviewScheduleId || "",
+      id: c?.interviewSchedules?.interviewScheduleId || "",
 
-      name:
-        c?.fullName || "-",
+      name: c?.fullName || "-",
 
-      regNo:
-        c?.application?.applicationNo || "-",
+      regNo: c?.application?.applicationNo || "-",
 
       // DATE
-      date:
-        c?.interviewSchedules?.interviewStartAt
-          ?.split("T")[0] || "",
+      date: c?.interviewSchedules?.interviewStartAt?.split("T")[0] || "",
 
-      rawDate:
-        c?.interviewSchedules?.interviewStartAt
-          ?.split("T")[0] || "",
+      rawDate: c?.interviewSchedules?.interviewStartAt?.split("T")[0] || "",
 
       // TIME
       startTime:
-        c?.interviewSchedules?.interviewStartAt
-          ?.split("T")[1]
-          ?.slice(0, 5) || "",
+        c?.interviewSchedules?.interviewStartAt?.split("T")[1]?.slice(0, 5) ||
+        "",
 
       endTime:
-        c?.interviewSchedules?.interviewEndAt
-          ?.split("T")[1]
-          ?.slice(0, 5) || "",
+        c?.interviewSchedules?.interviewEndAt?.split("T")[1]?.slice(0, 5) || "",
 
       time:
         c?.interviewSchedules?.interviewStartAt &&
-          c?.interviewSchedules?.interviewEndAt
+        c?.interviewSchedules?.interviewEndAt
           ? `${c.interviewSchedules.interviewStartAt
-            .split("T")[1]
-            .slice(0, 5)} - ${c.interviewSchedules.interviewEndAt
+              .split("T")[1]
+              .slice(0, 5)} - ${c.interviewSchedules.interviewEndAt
               .split("T")[1]
               .slice(0, 5)}`
           : "-",
 
       // CENTER
-      zone:
-        c?.center?.displayName || "-",
+      zone: c?.center?.displayName || "-",
 
       // PANEL
-      panel:
-        c?.panel?.panelName || "-"
-
+      panel: c?.panel?.panelName || "-",
     }));
-
 
     // BUILD PANEL STRUCTURE
     const groupedPanels = Object.values(
-
       mappedRows.reduce((acc, item, index) => {
-
         if (!acc[item.panel]) {
-
           acc[item.panel] = {
+            id: item.panelId || index + 1,
 
-            id:
-              item.panelId || index + 1,
+            name: item.panel,
 
-            name:
-              item.panel,
-
-            slots: []
-
+            slots: [],
           };
-
         }
 
         acc[item.panel].slots.push({
+          date: item.rawDate || "",
 
-          date:
-            item.rawDate || "",
+          startTime: item.startTime || "",
 
-          startTime:
-            item.startTime || "",
+          endTime: item.endTime || "",
 
-          endTime:
-            item.endTime || "",
+          duration: item.duration || 15,
 
-          duration:
-            item.duration || 15,
-
-          perDay:
-            item.perDay || "1"
-
+          perDay: item.perDay || "1",
         });
 
         return acc;
-
       }, {})
-
     );
 
-
-
     navigate("/schedule-interviews", {
-
       state: {
-
         isEditMode: true,
         isReschedule: true,
 
-        requisitionId:
-          selectedRequisitionId,
+        requisitionId: selectedRequisitionId,
 
-        positionId:
-          selectedPositionId,
+        positionId: selectedPositionId,
 
         // TABLE DATA
-        schedulePoolData:
-          mappedRows,
+        schedulePoolData: mappedRows,
 
         // PANEL DATA
-        selectedPanels:
-          groupedPanels,
+        selectedPanels: groupedPanels,
 
-        requisition:
-          normalizedRequisition,
+        requisition: normalizedRequisition,
 
-        position:
-          selectedPosition,
+        position: selectedPosition,
 
         activeTab: "INTERVIEW_POOL",
-        sourceTab: "INTERVIEW_POOL"
-
-      }
-
+        sourceTab: "INTERVIEW_POOL",
+      },
     });
-
   };
   const canReschedule =
     selectedInterviewCandidates.length > 0 &&
     selectedInterviewCandidates.every(
       (c) =>
-        c?.interviewSchedules?.interviewStatus === "SCHEDULED" || c?.interviewSchedules?.interviewStatus === "RESCHEDULED"
+        c?.interviewSchedules?.interviewStatus === "SCHEDULED" ||
+        c?.interviewSchedules?.interviewStatus === "RESCHEDULED"
     );
   const qualifiedInterviewIds = selectedInterviewCandidates
-    .filter(
-      (c) =>
-        c?.interviewSchedules?.interviewStatus === "QUALIFIED"
-    )
+    .filter((c) => c?.interviewSchedules?.interviewStatus === "QUALIFIED")
     .map((c) => String(c.id));
 
   useEffect(() => {
-    if (isBackNavigation) return; //  ADD THIS LINE  
+    if (isBackNavigation) return; //  ADD THIS LINE
     if (activeTab === "INTERVIEW_POOL") {
       setInterviewPage(0);
     }
   }, [activeTab, filters.status]);
-
 
   const availableLocations = React.useMemo(() => {
     const map = new Map();
@@ -2223,7 +1696,6 @@ useEffect(() => {
     if (location.state.filters) {
       setFilters(location.state.filters);
     }
-
   }, []);
 
   const navRequisitionId = location.state?.requisitionId || null;
@@ -2233,7 +1705,6 @@ useEffect(() => {
   );
 
   const templateName = selectedTemplateData?.templateName || "";
-
 
   useEffect(() => {
     const navReqId = location.state?.requisitionId;
@@ -2245,15 +1716,12 @@ useEffect(() => {
 
     navInitRef.current = {
       requisitionId: navReqId,
-      positionIds: Array.isArray(navPosIds)
-        ? navPosIds
-        : [navPosIds],
+      positionIds: Array.isArray(navPosIds) ? navPosIds : [navPosIds],
       initialized: true,
     };
 
     //  IMPORTANT
     setSelectedRequisitionId(navReqId);
-
   }, [location.state]);
 
   // useEffect(() => {
@@ -2277,22 +1745,16 @@ useEffect(() => {
 
     const rawIds = navInitRef.current.positionIds;
 
-    const incomingIds = Array.isArray(rawIds)
-      ? rawIds
-      : [rawIds];
+    const incomingIds = Array.isArray(rawIds) ? rawIds : [rawIds];
 
     // normalize ids
     const normalizedIncoming = incomingIds.map(String);
 
     const validIds = positions
       .filter((p) =>
-        normalizedIncoming.includes(
-          String(p.jobPositions?.positionId)
-        )
+        normalizedIncoming.includes(String(p.jobPositions?.positionId))
       )
       .map((p) => p.jobPositions?.positionId);
-
-
 
     if (validIds.length > 0) {
       setSelectedPositionId(validIds);
@@ -2314,9 +1776,6 @@ useEffect(() => {
       ? filters.status.map((s) => s.toUpperCase())
       : availableStatuses;
   };
-
-
-
 
   const buildDownloadPayload = (documentType) => {
     const normalizedStatuses = getNormalizedStatuses();
@@ -2365,16 +1824,11 @@ useEffect(() => {
         screenName: "SchedulePool",
         //  interviewSchedulingApprovalStatuses: ["L1_PENDING", "PENDING", "REJECTED"],
         interviewSchedulingApprovalStatuses: normalizedStatuses,
-
       };
     }
 
     return basePayload;
   };
-
-
-
-
 
   const handleDownload = async (type) => {
     if (!selectedPositionId.length) {
@@ -2417,11 +1871,7 @@ useEffect(() => {
     }
   };
 
-
   const handleSendToCompensation = async () => {
-
-
-
     if (!submitBeforeDate) {
       toast.error("Please select Submit Before date");
       return;
@@ -2434,18 +1884,13 @@ useEffect(() => {
       return;
     }
 
-
     if (selectedInterviewCandidates.length === 0) {
       toast.error("Select at least one candidate");
       return;
     }
 
-
-
-
     const allQualified = selectedInterviewCandidates.every(
-      (c) =>
-        c?.interviewSchedules?.interviewStatus === "QUALIFIED"
+      (c) => c?.interviewSchedules?.interviewStatus === "QUALIFIED"
     );
 
     if (!allQualified) {
@@ -2459,30 +1904,22 @@ useEffect(() => {
           applicationId: c?.application?.id,
           candidateId: c?.application?.candidateId,
 
+          panelId: c?.interviewSchedules?.panelId ?? null,
 
-          panelId:
-            c?.interviewSchedules?.panelId ?? null,
+          interviewStartAt: c?.interviewSchedules?.interviewStartAt ?? null,
 
-          interviewStartAt:
-            c?.interviewSchedules?.interviewStartAt ?? null,
-
-          interviewEndAt:
-            c?.interviewSchedules?.interviewEndAt ?? null,
+          interviewEndAt: c?.interviewSchedules?.interviewEndAt ?? null,
 
           interviewDurationMinutes:
             c?.interviewSchedules?.interviewDurationMinutes ?? 0,
 
-          meetingLink:
-            c?.interviewSchedules?.meetingLink ?? "",
+          meetingLink: c?.interviewSchedules?.meetingLink ?? "",
 
-          zonalOfficeId:
-            c?.interviewSchedules?.zonalOfficeId ?? null,
+          zonalOfficeId: c?.interviewSchedules?.zonalOfficeId ?? null,
 
-          finalScore:
-            c?.interviewSchedules?.finalScore ?? 0,
+          finalScore: c?.interviewSchedules?.finalScore ?? 0,
 
-          interviewStatus:
-            c?.interviewSchedules?.interviewStatus,
+          interviewStatus: c?.interviewSchedules?.interviewStatus,
 
           zonalVerificationStatus:
             c?.interviewSchedules?.zonalVerificationStatus ?? "",
@@ -2490,14 +1927,12 @@ useEffect(() => {
           zonalSubmitBeforeDate:
             c?.interviewSchedules?.zonalSubmitBeforeDate ?? null,
 
-          zonalHrComments:
-            c?.interviewSchedules?.zonalHrComments ?? "",
+          zonalHrComments: c?.interviewSchedules?.zonalHrComments ?? "",
 
           interviewScheduleId: c.id,
         })),
         submitBeforeDate: submitBeforeDate,
       };
-
 
       await candidateWorkflowServices.sendToCompensationPool(payload);
 
@@ -2506,20 +1941,11 @@ useEffect(() => {
       setSelectedInterviewCandidateIds([]);
       setInterviewPage(0);
       await refetchInterviewPool();
-
     } catch (err) {
       console.error(err);
       toast.error("Failed to send to Compensation Pool");
     }
   };
-
-
-
-
-
-
-
-
 
   const mapInterviewFeedback = (candidateId) => {
     // STATIC for now — API later
@@ -2570,9 +1996,7 @@ useEffect(() => {
           return;
         }
 
-        payloadIds = approvedCandidates.map(
-          (c) => c.interviewScheduleId
-        );
+        payloadIds = approvedCandidates.map((c) => c.interviewScheduleId);
       }
 
       //  FINAL API CALL
@@ -2588,12 +2012,11 @@ useEffect(() => {
       setInterviewPage(0);
       await refetchInterviewPool();
       await refetchCompensation();
-
     } catch (err) {
       console.error(err);
       toast.error(
         err?.response?.data?.message ||
-        t("candidateWorkflow:failed_to_send_offer_pool")
+          t("candidateWorkflow:failed_to_send_offer_pool")
       );
     }
   };
@@ -2624,7 +2047,9 @@ useEffect(() => {
       const response = await jobPositionApiService.sendOffer(payload);
 
       if (response?.data?.success === false) {
-        toast.error(response?.data?.message || t("candidateWorkflow:failed_send_offer"));
+        toast.error(
+          response?.data?.message || t("candidateWorkflow:failed_send_offer")
+        );
         return;
       }
 
@@ -2638,7 +2063,6 @@ useEffect(() => {
 
       // Refresh Offer Pool
       setOfferRefreshKey((prev) => prev + 1);
-
     } catch (err) {
       console.error(err);
       toast.error(
@@ -2648,19 +2072,17 @@ useEffect(() => {
   };
 
   const selectedOfferObjects = useMemo(() => {
-    return offerData.filter(o => offerSelectedIds.includes(o.id));
+    return offerData.filter((o) => offerSelectedIds.includes(o.id));
   }, [offerData, offerSelectedIds]);
 
   const allAwaited =
     selectedOfferObjects.length > 0 &&
-    selectedOfferObjects.every(o => o.status === "OFFER_AWAITED");
+    selectedOfferObjects.every((o) => o.status === "OFFER_AWAITED");
 
   const allHaveSelectListValue =
     selectedOfferObjects.length > 0 &&
     selectedOfferObjects.every(
-      (o) =>
-        o.selectList &&
-        o.selectList.trim() !== ""
+      (o) => o.selectList && o.selectList.trim() !== ""
     );
 
   const isSendOfferEnabled =
@@ -2687,223 +2109,141 @@ useEffect(() => {
     }
   }, [activeTab]);
 
-const handleOpenExaminationScore =
-  async () => {
-
+  const handleOpenExaminationScore = async () => {
     try {
-
-      if (
-        !selectedPositionId?.length
-      ) {
-
-        toast.error(
-          "Please select positions"
-        );
+      if (!selectedPositionId?.length) {
+        toast.error("Please select positions");
 
         return;
       }
 
       // SUMMARY API
-     const res =
-  await jobPositionApiService
-    .getExaminationSummary(
-      selectedPositionId
-    );
+      const res =
+        await jobPositionApiService.getExaminationSummary(selectedPositionId);
 
-    console.log(
-  "SUMMARY API DATA",
-  res?.data
-);
-
-console.log(
-  "FIRST ITEM TOTAL QUALIFIED",
-  res?.data?.[0]
-    ?.totalQualifiedWithoutRelaxation
-);
-
-if (res?.success === false) {
-
-  toast.error(
-    res?.data ||
-    res?.message
-  );
-
-  return;
-}
-
-      const summaryData =
-        res?.data || [];
-
-      // MAP POSITION DATA
-const formattedData =
-  positions
-    ?.filter((p) =>
-      selectedPositionId.includes(
-        p?.jobPositions?.positionId
-      )
-    )
-    ?.map((p) => {
-
-      const positionId =
-        p?.jobPositions?.positionId;
-
-      const apiSummary =
-        summaryData.find(
-          (s) =>
-            s.positionId ===
-            positionId
-        );
-
-      return {
-
-        id: positionId,
-
-        positionId,
-
-        positionName:
-          p?.masterPositions
-            ?.positionName || "-",
-
-       startDate:
-  normalizedRequisition
-    ?.registration_start_date || "-",
-
-endDate:
-  normalizedRequisition
-    ?.registration_end_date || "-",
-
-        isLocationWise:
-          p?.jobPositions
-            ?.isLocationWise ||
-          false,
-
-        expanded: false,
-
-        // IMPORTANT
-states:
-  (
-    apiSummary?.overallMarksSummary || []
-  ).map((stateSummary) => ({
-
-    stateId:
-      stateSummary.stateId,
-
-    stateName:
-      masterData?.states?.find(
-        (s) =>
-          s.stateId ===
-          stateSummary.stateId
-      )?.stateName || "-",
-
-    expanded: false,
-
-    // IMPORTANT
-    summaryData:
-      stateSummary,
-
-    totalAppearedCount:
-      stateSummary.categorySummaries?.reduce(
-        (sum, cat) =>
-          sum + (cat.appeared || 0),
-        0
-      ),
-
-    totalVacancyCount:
-      stateSummary.categorySummaries?.reduce(
-        (sum, cat) =>
-          sum + (cat.vacancy || 0),
-        0
-      ),
-
-   totalQualifiedCount:
-  stateSummary.categorySummaries?.reduce(
-    (sum, cat) =>
-      sum +
-      (cat.qualifiedWithoutRelaxation || 0),
-    0
-  )
-
-  })),
-
-        // NATIONAL SUMMARY
-        overallMarksSummary:
-          apiSummary?.overallMarksSummary || [],
-
-        totalAppearedCount:
-          apiSummary?.totalAppearedCount || 0,
-
-        totalVacancyCount:
-          apiSummary?.totalVacancyCount || 0,
-
-     totalQualifiedCount:
-  apiSummary?.totalQualifiedWithoutRelaxation || 0,
-
-        isFinalized:
-          apiSummary?.isFinalized || false
-
-      };
-
-    });
+      console.log("SUMMARY API DATA", res?.data);
 
       console.log(
-        "FORMATTED SUMMARY DATA",
-        formattedData
+        "FIRST ITEM TOTAL QUALIFIED",
+        res?.data?.[0]?.totalQualifiedWithoutRelaxation
       );
 
-      setExaminationScoreData(
-        formattedData
+      if (res?.success === false) {
+        toast.error(res?.data || res?.message);
+
+        return;
+      }
+
+      const summaryData = res?.data || [];
+
+      // MAP POSITION DATA
+      const formattedData = positions
+        ?.filter((p) =>
+          selectedPositionId.includes(p?.jobPositions?.positionId)
+        )
+        ?.map((p) => {
+          const positionId = p?.jobPositions?.positionId;
+
+          const apiSummary = summaryData.find(
+            (s) => s.positionId === positionId
+          );
+
+          return {
+            id: positionId,
+
+            positionId,
+
+            positionName: p?.masterPositions?.positionName || "-",
+
+            startDate: normalizedRequisition?.registration_start_date || "-",
+
+            endDate: normalizedRequisition?.registration_end_date || "-",
+
+            isLocationWise: p?.jobPositions?.isLocationWise || false,
+
+            expanded: false,
+
+            // IMPORTANT
+            states: (apiSummary?.overallMarksSummary || []).map(
+              (stateSummary) => ({
+                stateId: stateSummary.stateId,
+
+                stateName:
+                  masterData?.states?.find(
+                    (s) => s.stateId === stateSummary.stateId
+                  )?.stateName || "-",
+
+                expanded: false,
+
+                // IMPORTANT
+                summaryData: stateSummary,
+
+                totalAppearedCount: stateSummary.categorySummaries?.reduce(
+                  (sum, cat) => sum + (cat.appeared || 0),
+                  0
+                ),
+
+                totalVacancyCount: stateSummary.categorySummaries?.reduce(
+                  (sum, cat) => sum + (cat.vacancy || 0),
+                  0
+                ),
+
+                totalQualifiedCount: stateSummary.categorySummaries?.reduce(
+                  (sum, cat) => sum + (cat.qualifiedWithoutRelaxation || 0),
+                  0
+                ),
+              })
+            ),
+
+            // NATIONAL SUMMARY
+            overallMarksSummary: apiSummary?.overallMarksSummary || [],
+
+            totalAppearedCount: apiSummary?.totalAppearedCount || 0,
+
+            totalVacancyCount: apiSummary?.totalVacancyCount || 0,
+
+            totalQualifiedCount:
+              apiSummary?.totalQualifiedWithoutRelaxation || 0,
+
+            isFinalized: apiSummary?.isFinalized || false,
+          };
+        });
+
+      console.log("FORMATTED SUMMARY DATA", formattedData);
+
+      setExaminationScoreData(formattedData);
+
+      setShowExaminationModal(true);
+    } catch (err) {
+      const errorResponse = err?.response?.data;
+
+      toast.error(
+        errorResponse?.data ||
+          errorResponse?.message ||
+          "Failed to load summary"
       );
-
-      setShowExaminationModal(
-        true
-      );
-
-      } catch (err) {
-
-    const errorResponse =
-      err?.response?.data;
-
-    toast.error(
-      errorResponse?.data ||
-      errorResponse?.message ||
-      "Failed to load summary"
-    );
-
-  }
-
+    }
   };
 
+  const handleEditExaminationScore = () => {
+    setShowExaminationModal(false);
 
+    setExaminationScoreData([]);
 
+    navigate("/ExaminationCutoffConfiguration", {
+      state: {
+        requisitionId: selectedRequisitionId,
 
-  const handleEditExaminationScore =
-    () => {
+        positionIds: selectedPositionId,
 
-     setShowExaminationModal(false);
+        openEditModal: true,
 
-setExaminationScoreData([]);
+        fromCandidateScreening: true,
 
-navigate(
-  "/ExaminationCutoffConfiguration",
-  {
-    state: {
-
-      requisitionId:
-        selectedRequisitionId,
-
-      positionIds:
-        selectedPositionId,
-
-      openEditModal: true,
-
-      fromCandidateScreening: true,
-
-      reopenKey: Date.now()
-    }
-  }
-);
-
-    };
+        reopenKey: Date.now(),
+      },
+    });
+  };
 
   const handlePreview = async () => {
     try {
@@ -2922,7 +2262,6 @@ navigate(
   };
 
   const handleSubmitBeforeDateChange = (value) => {
-
     const today = todayString();
 
     // EMPTY
@@ -2933,7 +2272,6 @@ navigate(
 
     // BLOCK TODAY + PAST
     if (value <= today) {
-
       toast.error("Today and past dates are not allowed");
 
       setSubmitBeforeDate("");
@@ -2948,122 +2286,91 @@ navigate(
     setAcceptBeforeDate(value);
 
     if (!value) {
-      setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
+      setFormErrors((prev) => ({ ...prev, acceptBeforeDate: "" }));
       return;
     }
 
     if (value <= todayString()) {
-      setFormErrors(prev => ({
+      setFormErrors((prev) => ({
         ...prev,
         acceptBeforeDate: t("candidateWorkflow:must_be_greater_than_today"),
       }));
     } else {
-      setFormErrors(prev => ({ ...prev, acceptBeforeDate: "" }));
+      setFormErrors((prev) => ({ ...prev, acceptBeforeDate: "" }));
     }
   };
 
-
   const [showExaminationModal, setShowExaminationModal] = useState(false);
-  const [expandedStates,setExpandedStates] = useState({});
+  const [expandedStates, setExpandedStates] = useState({});
   // const [selectedRelaxation, setSelectedRelaxation] = useState("SET_II");
   const handleStatusChange = (value) => {
     setPage(0);
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       status: value ? [value] : [],
     }));
   };
   const handleOfferStatusToggle = (status) => {
-    setFilters(prev => {
+    setFilters((prev) => {
       const alreadySelected = prev.status.includes(status);
 
       return {
         ...prev,
         status: alreadySelected
-          ? prev.status.filter(s => s !== status)
+          ? prev.status.filter((s) => s !== status)
           : [...prev.status, status],
       };
     });
   };
   const groupedPanels = Object.values(
-
     schedulePoolCandidates.reduce((acc, item) => {
-
-      const config =
-        item.panelScheduleConfigurations?.[0];
+      const config = item.panelScheduleConfigurations?.[0];
 
       if (!config) return acc;
 
       if (!acc[item.panelId]) {
-
         acc[item.panelId] = {
+          id: item.panelId,
 
-          id:
-            item.panelId,
+          name: item.panel,
+          startDate: item.rawDate,
 
-          name:
-            item.panel,
-          startDate:
-            item.rawDate,
+          endDate: item.rawDate,
 
-          endDate:
-            item.rawDate,
-
-          slots: []
-
+          slots: [],
         };
-
       }
 
       const slot = {
+        date: config?.startDatetime?.split("T")[0] || "",
 
-        date:
-          config?.startDatetime
-            ?.split("T")[0] || "",
+        startTime: config?.startDatetime?.split("T")[1]?.slice(0, 5) || "",
 
-        startTime:
-          config?.startDatetime
-            ?.split("T")[1]
-            ?.slice(0, 5) || "",
+        endTime: config?.endDatetime?.split("T")[1]?.slice(0, 5) || "",
 
-        endTime:
-          config?.endDatetime
-            ?.split("T")[1]
-            ?.slice(0, 5) || "",
+        duration: config?.durationMinutes || 15,
 
-        duration:
-          config?.durationMinutes || 15,
-
-        perDay:
-          String(
-            config?.interviewsPerDay || 1
-          )
-
+        perDay: String(config?.interviewsPerDay || 1),
       };
 
       // prevent duplicate slots
-      const exists =
-        acc[item.panelId].slots.some(
-          s =>
-            s.date === slot.date &&
-            s.startTime === slot.startTime &&
-            s.endTime === slot.endTime
-        );
+      const exists = acc[item.panelId].slots.some(
+        (s) =>
+          s.date === slot.date &&
+          s.startTime === slot.startTime &&
+          s.endTime === slot.endTime
+      );
 
       if (!exists) {
         acc[item.panelId].slots.push(slot);
       }
 
       return acc;
-
     }, {})
-
   );
   const handleEditSchedule = () => {
-
     navigate("/schedule-interviews", {
       state: {
-
         isEditMode: true,
         isReschedule: false,
 
@@ -3079,17 +2386,18 @@ navigate(
         position: selectedPosition,
 
         activeTab: "SCHEDULE_POOL",
-        selectedPanels: groupedPanels
-      }
+        selectedPanels: groupedPanels,
+      },
     });
-
   };
 
   return (
     <div className="container-fluid px-5 py-4">
       {/* Header */}
       <div className="mb-4">
-        <h5 className="mb-1 blue-color">{t("candidateWorkflow:candidate_screening")}</h5>
+        <h5 className="mb-1 blue-color">
+          {t("candidateWorkflow:candidate_screening")}
+        </h5>
         <small className="text-muted">
           {t("candidateWorkflow:manage_schedule_interviews")}
         </small>
@@ -3111,7 +2419,9 @@ navigate(
               onPositionChange={handlePositionChange}
               onRequisitionSearch={handleRequisitionSearch}
             /> */}
-            {activeTab === "CANDIDATE_POOL" || activeTab === "INTERVIEW_POOL" || activeTab === "SCHEDULE_POOL" ? (
+            {activeTab === "CANDIDATE_POOL" ||
+            activeTab === "INTERVIEW_POOL" ||
+            activeTab === "SCHEDULE_POOL" ? (
               <DropdownStripMultipleposition
                 requisitions={requisitions}
                 positions={positions}
@@ -3132,62 +2442,46 @@ navigate(
                 loadingRequisitions={loadingRequisitions}
                 loadingPositions={loadingPositions}
                 onRequisitionChange={handleRequisitionChange}
-
-                onPositionChange={(id) =>
-                  handlePositionChange(id ? [id] : [])
-                }
-
+                onPositionChange={(id) => handlePositionChange(id ? [id] : [])}
                 onRequisitionSearch={handleRequisitionSearch}
               />
             )}
 
             <div className="col-md-6 col-12">
-
               <div className="d-flex justify-content-md-end align-items-end gap-2 h-100">
-
                 {/* IMPORT BUTTON */}
-                     {hasExamConfiguration && (
-                          <Button
-                            variant="outline-primary"
-                            size="sm"
-                            onClick={() =>
-                              setShowImportCandidatesModal(true)
-                            }
-                            className="d-flex align-items-center gap-2 bulk-import-btn"
-                            style={{
-                              height: "38px"
-                            }}
-                          >
-
-                            <FiUpload />
-
-                            Update Canidates Score 
-
-                            {/* {t(
+                {hasExamConfiguration && (
+                  <Button
+                    variant="outline-primary"
+                    size="sm"
+                    onClick={() => setShowImportCandidatesModal(true)}
+                    className="d-flex align-items-center gap-2 bulk-import-btn"
+                    style={{
+                      height: "38px",
+                    }}
+                  >
+                    <FiUpload />
+                    Update Canidates Score
+                    {/* {t(
                               "candidateWorkflow:import_candidates"
                             )} */}
-
-                          </Button>
-                      )}
+                  </Button>
+                )}
 
                 {/* EXAMINATION SCORE */}
 
-            {hasExamConfiguration && (
-                <button
-                  className="btn blue-color blue-border fs-14"
-                  onClick={
-                    handleOpenExaminationScore
-                  }
-                  style={{
-                    height: "38px"
-                  }}
-                >
-                  Positions Summary
-                </button>
-              )}
-
+                {hasExamConfiguration && (
+                  <button
+                    className="btn blue-color blue-border fs-14"
+                    onClick={handleOpenExaminationScore}
+                    style={{
+                      height: "38px",
+                    }}
+                  >
+                    Positions Summary
+                  </button>
+                )}
               </div>
-
             </div>
           </div>
 
@@ -3209,14 +2503,9 @@ navigate(
             )}
           </div> */}
 
-
-
-
-
-
-
-          {activeTab === "CANDIDATE_POOL" || activeTab === "INTERVIEW_POOL" || activeTab === "SCHEDULE_POOL" ? (
-
+          {activeTab === "CANDIDATE_POOL" ||
+          activeTab === "INTERVIEW_POOL" ||
+          activeTab === "SCHEDULE_POOL" ? (
             <div className="mt-2 pt-1 pb-3">
               {normalizedRequisition && selectedPosition?.length > 0 && (
                 <RequisitionStripformultiplepositions
@@ -3227,17 +2516,15 @@ navigate(
                   isSaveBtn={false}
                   saveButton={false}
                   onRemovePosition={handleRemovePosition}
-                // onRemovePosition={(positionId) => {
-                //   setSelectedPositionId((prev) =>
-                //     prev.filter((id) => id !== positionId)
-                //   );
-                // }}
+                  // onRemovePosition={(positionId) => {
+                  //   setSelectedPositionId((prev) =>
+                  //     prev.filter((id) => id !== positionId)
+                  //   );
+                  // }}
                 />
               )}
             </div>
-
           ) : (
-
             <div className="mt-2 pt-1 pb-3">
               {normalizedRequisition && selectedPosition?.length > 0 && (
                 <RequisitionStrip
@@ -3250,9 +2537,7 @@ navigate(
                 />
               )}
             </div>
-
           )}
-
         </div>
       </div>
 
@@ -3264,38 +2549,30 @@ navigate(
             {accessibleTabs.map((tab) => (
               <li className="nav-item" key={tab.key}>
                 <button
-                  className={`nav-link fs-14 ${activeTab === tab.key ? "orange-color orange-bottom-border" : "text-muted"
-                    }`}
+                  className={`nav-link fs-14 ${
+                    activeTab === tab.key
+                      ? "orange-color orange-bottom-border"
+                      : "text-muted"
+                  }`}
                   onClick={() => {
+                    console.log("TAB CLICKED");
+                    console.log("TAB KEY:", tab.key);
+                    console.log("CURRENT ACTIVE TAB:", activeTab);
 
-
-                   
-            console.log("TAB CLICKED");
-            console.log("TAB KEY:", tab.key);
-            console.log("CURRENT ACTIVE TAB:", activeTab);
-
-            setActiveTab(tab.key);
-
-            
-
+                    setActiveTab(tab.key);
 
                     if (role === "committee_member") return;
 
                     const multiTabs = [
                       "CANDIDATE_POOL",
                       "INTERVIEW_POOL",
-                      "SCHEDULE_POOL"
+                      "SCHEDULE_POOL",
                     ];
 
-                    const goingToSingleSelect =
-                      !multiTabs.includes(tab.key);
+                    const goingToSingleSelect = !multiTabs.includes(tab.key);
 
                     // Clear ONLY when multiple positions exist
-                    if (
-                      goingToSingleSelect &&
-                      selectedPositionId.length > 1
-                    ) {
-
+                    if (goingToSingleSelect && selectedPositionId.length > 1) {
                       setSelectedRequisitionId("");
                       setSelectedPositionId([]);
                       setPositions([]);
@@ -3308,17 +2585,17 @@ navigate(
                       setSelectedCompensationIds([]);
 
                       setAllCandidatesForFilters([]);
-                      setPage(0);                // Candidate Pool page reset
-                      setInterviewPage(0);       // Interview Pool page reset
-                      setSchedulePoolPage(0);    // Schedule Pool page reset
+                      setPage(0); // Candidate Pool page reset
+                      setInterviewPage(0); // Interview Pool page reset
+                      setSchedulePoolPage(0); // Schedule Pool page reset
                     }
 
-                    setFilters(prev => ({
+                    setFilters((prev) => ({
                       ...prev,
-                      status: [],          // clear old tab status
-                      searchText: "",      // optional if you also want search reset
+                      status: [], // clear old tab status
+                      searchText: "", // optional if you also want search reset
                     }));
-  console.log("CLICKED TAB:", tab.key);
+                    console.log("CLICKED TAB:", tab.key);
                     setActiveTab(tab.key);
                   }}
                   type="button"
@@ -3339,12 +2616,23 @@ navigate(
                     </svg>
                   )}
                   {tab.key === "INTERVIEW_POOL" && (
-                    <svg class="w-[21px] h-[21px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-                      <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z" />
+                    <svg
+                      class="w-[21px] h-[21px] text-gray-800 dark:text-white"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-width="2"
+                        d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"
+                      />
                     </svg>
-
                   )}
-
                   {tab.key === "SCHEDULE_POOL" && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -3361,18 +2649,39 @@ navigate(
                     </svg>
                   )}
                   {tab.key === "OFFER_POOL" && (
-                    <svg class="w-[21px] h-[21px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5" />
+                    <svg
+                      class="w-[21px] h-[21px] text-gray-800 dark:text-white"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 11.917 9.724 16.5 19 7.5"
+                      />
                     </svg>
-
                   )}
                   {tab.key === "ONBOARDING_POOL" && (
-                    <svg class="w-[21px] h-[21px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                    <svg
+                      class="w-[21px] h-[21px] text-gray-800 dark:text-white"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
                       <path d="M6 2c-1.10457 0-2 .89543-2 2v4c0 .55228.44772 1 1 1s1-.44772 1-1V4h12v7h-2c-.5523 0-1 .4477-1 1v2h-1c-.5523 0-1 .4477-1 1s.4477 1 1 1h5c.5523 0 1-.4477 1-1V3.85714C20 2.98529 19.3667 2 18.268 2H6Z" />
                       <path d="M6 11.5C6 9.567 7.567 8 9.5 8S13 9.567 13 11.5 11.433 15 9.5 15 6 13.433 6 11.5ZM4 20c0-2.2091 1.79086-4 4-4h3c2.2091 0 4 1.7909 4 4 0 1.1046-.8954 2-2 2H6c-1.10457 0-2-.8954-2-2Z" />
                     </svg>
-
-                  )} {tab.label}
+                  )}{" "}
+                  {tab.label}
                   {/* <span className="ms-2 badge rounded-pill bg-light text-muted p-2" style={{ fontSize: '0.675rem', fontWeight: '500' }}>
                     {tab.count}
                   </span> */}
@@ -3385,7 +2694,10 @@ navigate(
           {activeTab !== "OFFER_POOL" && (
             <div className="row g-2 mt-1 px-2 py-1 align-items-center">
               <div className="col-md-2 col-6 d-flex align-items-center gap-2">
-                <p className="text-muted fs-14 mb-1"> {t("candidateWorkflow:filter_by")}:</p>
+                <p className="text-muted fs-14 mb-1">
+                  {" "}
+                  {t("candidateWorkflow:filter_by")}:
+                </p>
                 <button
                   className="btn fs-14 mb-1 error-text"
                   onClick={() =>
@@ -3406,7 +2718,9 @@ navigate(
                   value={filters?.status[0] || ""}
                   onChange={(e) => handleStatusChange(e.target.value)}
                 >
-                  <option value="">{t("candidateWorkflow:all_statuses")}</option>
+                  <option value="">
+                    {t("candidateWorkflow:all_statuses")}
+                  </option>
                   {/* {availableStatuses?.map((status) => (
                     <option key={status} value={status}>
                       {STATUS_LABEL_MAP[status] || status}
@@ -3418,7 +2732,6 @@ navigate(
                       {getStatusLabel(status)}
                     </option>
                   ))}
-
                 </select>
               </div>
 
@@ -3432,10 +2745,12 @@ navigate(
                       setFilters((prev) => ({
                         ...prev,
                         stateId: e.target.value,
-                      }))
+                      }));
                     }}
                   >
-                    <option value="">{t("candidateWorkflow:all_locations")}</option>
+                    <option value="">
+                      {t("candidateWorkflow:all_locations")}
+                    </option>
                     {availableLocations?.map((loc) => (
                       <option key={loc.id} value={loc.id}>
                         {loc.name}
@@ -3444,7 +2759,6 @@ navigate(
                   </select>
                 </div>
               )}
-
 
               {activeTab === "CANDIDATE_POOL" && (
                 <div className="col-md-2 col-6 mt-0">
@@ -3457,11 +2771,12 @@ navigate(
                       setFilters((prev) => ({
                         ...prev,
                         categoryId: e.target.value,
-                      }))
-                    }
-                    }
+                      }));
+                    }}
                   >
-                    <option value="">{t("candidateWorkflow:all_categories")}</option>
+                    <option value="">
+                      {t("candidateWorkflow:all_categories")}
+                    </option>
                     {availableCategories?.map((cat) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.name}
@@ -3472,32 +2787,33 @@ navigate(
               )}
 
               {/* 👇 spacer ONLY for Interview Pool */}
-              {(activeTab === "INTERVIEW_POOL" || activeTab === "COMPENSATION_POOL" || activeTab === "SCHEDULE_POOL") && (
+              {(activeTab === "INTERVIEW_POOL" ||
+                activeTab === "COMPENSATION_POOL" ||
+                activeTab === "SCHEDULE_POOL") && (
                 <div className="col-md-4 d-none d-md-block" />
               )}
 
               {selectedPositionId.length > 0 && selectedRequisitionId && (
                 <div
-                  className={`col-12 text-md-end mt-2 mt-md-0 ${activeTab === "CANDIDATE_POOL" && hasLocationData
-                    ? "col-md-4"
-                    : activeTab === "CANDIDATE_POOL"
-                      ? "col-md-6"
-                      : "col-md-4"
-                    }`}
+                  className={`col-12 text-md-end mt-2 mt-md-0 ${
+                    activeTab === "CANDIDATE_POOL" && hasLocationData
+                      ? "col-md-4"
+                      : activeTab === "CANDIDATE_POOL"
+                        ? "col-md-6"
+                        : "col-md-4"
+                  }`}
                 >
-
                   {activeTab === "CANDIDATE_POOL" && (
                     <button
                       className="rank-btn fs-14"
                       onClick={() => {
-
                         dispatch(setRankEnabled(true)); //  ONLY TRUE
-
 
                         setPage(0);
                       }}
                     >
-                      <FontAwesomeIcon icon={faListOl} className="rank-icon" /> Rank
+                      <FontAwesomeIcon icon={faListOl} className="rank-icon" />{" "}
+                      Rank
                     </button>
                   )}
 
@@ -3505,9 +2821,7 @@ navigate(
                     <OverlayTrigger
                       placement="bottom"
                       overlay={
-                        <Tooltip>
-                          {t("candidateWorkflow:download_pdf")}
-                        </Tooltip>
+                        <Tooltip>{t("candidateWorkflow:download_pdf")}</Tooltip>
                       }
                     >
                       <button
@@ -3534,7 +2848,6 @@ navigate(
                       </button>
                     </OverlayTrigger>
                   </>
-
                 </div>
               )}
             </div>
@@ -3543,7 +2856,9 @@ navigate(
           {activeTab === "OFFER_POOL" && (
             <div className="row g-2 mt-1 px-3 py-1 align-items-center border-bottom">
               <div className="col-md-2 col-6 d-flex align-items-center gap-2">
-                <p className="text-muted fs-14 mb-1">{t("candidateWorkflow:filter_by_stage")}:</p>
+                <p className="text-muted fs-14 mb-1">
+                  {t("candidateWorkflow:filter_by_stage")}:
+                </p>
                 <button
                   className="btn fs-14 mb-1 error-text"
                   onClick={() =>
@@ -3565,10 +2880,11 @@ navigate(
                     <span
                       key={status}
                       onClick={() => handleOfferStatusToggle(status)}
-                      className={`badge px-3 py-2 border-2 rounded fw-normal fs-12 ${isSelected
-                        ? "orange-color orange-border"
-                        : "bg-light text-muted border"
-                        }`}
+                      className={`badge px-3 py-2 border-2 rounded fw-normal fs-12 ${
+                        isSelected
+                          ? "orange-color orange-border"
+                          : "bg-light text-muted border"
+                      }`}
                       style={{ cursor: "pointer" }}
                     >
                       {OFFER_STATUS_LABEL_MAP[status]}
@@ -3581,7 +2897,6 @@ navigate(
 
           {activeTab === "OFFER_POOL" && (
             <div className="row g-2 mt-1 px-3 py-2 align-items-center">
-
               {/* LEFT SECTION */}
               <div className="col-md-8 col-12">
                 <div className="d-flex flex-wrap gap-4 justify-content-between align-items-end">
@@ -3590,7 +2905,10 @@ navigate(
 
                     <div>
                       {/* Label */}
-                      <div className="d-flex align-items-center justify-content-between" style={{ width: "180px" }}>
+                      <div
+                        className="d-flex align-items-center justify-content-between"
+                        style={{ width: "180px" }}
+                      >
                         <p className="mb-1 fw-normal fs-13 blue-color">
                           {t("candidateWorkflow:offer_template")}
                         </p>
@@ -3605,13 +2923,11 @@ navigate(
                           whiteSpace: "nowrap",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
-                          paddingRight: "30px"
-
+                          paddingRight: "30px",
                         }}
                         value={offerTemplateId}
                         onChange={(e) => handleTemplateChange(e.target.value)}
                       >
-
                         <option value="">
                           {t("candidateWorkflow:select_template")}
                         </option>
@@ -3647,7 +2963,9 @@ navigate(
                             Template Preview
                           </span>
                         ) : (
-                          <small className="d-block invisible">placeholder</small>
+                          <small className="d-block invisible">
+                            placeholder
+                          </small>
                         )}
                       </OverlayTrigger>
                     </div>
@@ -3710,18 +3028,25 @@ navigate(
 
                     {/* Accept Before Date */}
                     <div>
-                      <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:accept_before")}</p>
+                      <p className="mb-1 fw-normal fs-13 blue-color">
+                        {t("candidateWorkflow:accept_before")}
+                      </p>
                       <input
                         type="date"
                         className="form-control fs-13 py-1"
                         style={{ width: "160px" }}
                         value={acceptBeforeDate}
                         min={todayString()}
-                        onChange={(e) => handleAcceptBeforeDateChange(e.target.value)}
+                        onChange={(e) =>
+                          handleAcceptBeforeDateChange(e.target.value)
+                        }
                       />
                       <small
-                        className={`d-block mt-1 fs-12 ${formErrors.acceptBeforeDate ? "text-danger" : "invisible"
-                          }`}
+                        className={`d-block mt-1 fs-12 ${
+                          formErrors.acceptBeforeDate
+                            ? "text-danger"
+                            : "invisible"
+                        }`}
                       >
                         {formErrors.acceptBeforeDate || "placeholder"}
                       </small>
@@ -3729,19 +3054,23 @@ navigate(
 
                     {/* Joining Date */}
                     <div>
-                      <p className="mb-1 fw-normal fs-13 blue-color">{t("candidateWorkflow:joining_date_label")}</p>
+                      <p className="mb-1 fw-normal fs-13 blue-color">
+                        {t("candidateWorkflow:joining_date_label")}
+                      </p>
                       <input
                         type="date"
                         className="form-control fs-13 py-1"
                         style={{ width: "160px" }}
                         value={joiningDate}
                         min={acceptBeforeDate || todayString()}
-                        onChange={(e) => handleJoiningDateChange(e.target.value)}
-
+                        onChange={(e) =>
+                          handleJoiningDateChange(e.target.value)
+                        }
                       />
                       <small
-                        className={`d-block mt-1 fs-12 ${formErrors.joiningDate ? "text-danger" : "invisible"
-                          }`}
+                        className={`d-block mt-1 fs-12 ${
+                          formErrors.joiningDate ? "text-danger" : "invisible"
+                        }`}
                       >
                         {formErrors.joiningDate || "placeholder"}
                       </small>
@@ -3770,12 +3099,11 @@ navigate(
                       </small>
                     </div> */}
 
-
-
                     <div>
                       <button
-                        className={`form-select fs-13 px-3 py-1 orange-bg text-white ${isSendOfferEnabled ? "" : "disabled_button"
-                          }`}
+                        className={`form-select fs-13 px-3 py-1 orange-bg text-white ${
+                          isSendOfferEnabled ? "" : "disabled_button"
+                        }`}
                         onClick={handleSendOffer}
                         disabled={!isSendOfferEnabled}
                       >
@@ -3796,11 +3124,12 @@ navigate(
               <div className="col-md-4 col-12">
                 <div className="d-flex justify-content-end gap-2 align-items-center">
                   <button
-                    className={`btn fs-13 px-3 py-1 orange-border orange-color text-orange ${isSendOfferEnabled ? "" : "disabled_button"
-                      }`}
+                    className={`btn fs-13 px-3 py-1 orange-border orange-color text-orange ${
+                      isSendOfferEnabled ? "" : "disabled_button"
+                    }`}
                     style={{
                       minHeight: "39px",
-                      cursor: isSendOfferEnabled ? "pointer" : "not-allowed"
+                      cursor: isSendOfferEnabled ? "pointer" : "not-allowed",
                     }}
                     disabled={!isSendOfferEnabled}
                   >
@@ -3813,20 +3142,25 @@ navigate(
                     {t("candidateWorkflow:assign_locations")}
                   </button>
 
-
-
-                  <button className={`btn blue-border blue-color fs-13 px-3 py-1 ${offerSelectedIds.length !== 0 ? "" : "disabled_button"}`} onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}
-                    style={{ minHeight: "39px" }}>
-                    <img src={excelIcon} className="me-1" width={18} /> {t("candidateWorkflow:rank_list")}
+                  <button
+                    className={`btn blue-border blue-color fs-13 px-3 py-1 ${offerSelectedIds.length !== 0 ? "" : "disabled_button"}`}
+                    onClick={() => setShowRankListModal(true)}
+                    disabled={offerSelectedIds.length === 0}
+                    style={{ minHeight: "39px" }}
+                  >
+                    <img src={excelIcon} className="me-1" width={18} />{" "}
+                    {t("candidateWorkflow:rank_list")}
                   </button>
                 </div>
               </div>
-
             </div>
           )}
 
           {activeTab !== "OFFER_POOL" && (
-            <div className="row g-2 mt-1 align-items-center" style={{ backgroundColor: '#F9FAFB' }}>
+            <div
+              className="row g-2 mt-1 align-items-center"
+              style={{ backgroundColor: "#F9FAFB" }}
+            >
               <div className="col-md-5 col-12 px-3 mb-2 py-2">
                 <div className="input-group">
                   <span className="input-group-text bg-white border-end-0 py-1">
@@ -3847,55 +3181,45 @@ navigate(
                 </div>
               </div>
               <div className="col-md-7 col-12 px-2 mb-2">
-
                 <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
-
                   {/* LEFT SIDE COUNT */}
                   <div>
-
                     {activeTab === "CANDIDATE_POOL" && (
                       <div className="selected-count-chip">
-
                         {selectedCandidateIds.length}{" "}
-
                         {selectedCandidateIds.length === 1
                           ? "Candidate"
-                          : "Candidates"} Selected
+                          : "Candidates"}{" "}
+                        Selected
                       </div>
                     )}
 
                     {activeTab === "INTERVIEW_POOL" && (
                       <div className="selected-count-chip">
-
-
-
                         {selectedInterviewCandidateIds.length}{" "}
-
                         {selectedInterviewCandidateIds.length === 1
                           ? "Candidate"
-                          : "Candidates"} Selected
+                          : "Candidates"}{" "}
+                        Selected
                       </div>
                     )}
 
                     {activeTab === "COMPENSATION_POOL" && (
                       <div className="selected-count-chip">
-
                         {selectedCompensationIds.length}{" "}
-
                         {selectedCompensationIds.length === 1
                           ? "Candidate"
-                          : "Candidates"} Selected
+                          : "Candidates"}{" "}
+                        Selected
                       </div>
                     )}
-
                   </div>
 
                   {/* RIGHT SIDE BUTTONS */}
                   <div className="d-flex gap-2">
-
-                    {activeTab === "CANDIDATE_POOL"
-                      && hasPrivilege("Interview Pool")
-                      && canScheduleMultiPositionInterview && (
+                    {activeTab === "CANDIDATE_POOL" &&
+                      hasPrivilege("Interview Pool") &&
+                      canScheduleMultiPositionInterview && (
                         <button
                           className="btn blue-bg text-white fs-14"
                           onClick={handleScheduleInterview}
@@ -3903,26 +3227,29 @@ navigate(
                           {t("candidateWorkflow:schedule_interview")}
                         </button>
                       )}
-                    {activeTab === "INTERVIEW_POOL" && canSendToOfferPool && (
-                      isContractPosition ? (
+                    {activeTab === "INTERVIEW_POOL" &&
+                      canSendToOfferPool &&
+                      (isContractPosition ? (
                         <div className="d-flex align-items-center justify-content-end gap-4">
                           {/*  Submit Before Date */}
                           <div className="d-flex align-items-center gap-2">
                             <span className="fs-14">
-                              Submit Before <span className="text-danger">*</span>
+                              Submit Before{" "}
+                              <span className="text-danger">*</span>
                             </span>
                             <input
                               type="date"
                               className="form-control fs-14"
                               style={{ width: "155px" }}
                               value={submitBeforeDate}
-                              min={new Date(Date.now() + 86400000)
-                                .toISOString()
-                                .split("T")[0]}
+                              min={
+                                new Date(Date.now() + 86400000)
+                                  .toISOString()
+                                  .split("T")[0]
+                              }
                               onChange={(e) =>
                                 handleSubmitBeforeDateChange(e.target.value)
                               }
-
                             />
                           </div>
 
@@ -3930,7 +3257,7 @@ navigate(
                           <button
                             className="btn orange-bg text-white fs-14"
                             onClick={handleSendToCompensation}
-                          // disabled={!submitBeforeDate} // 🔥 important
+                            // disabled={!submitBeforeDate} // 🔥 important
                           >
                             {t("candidateWorkflow:Compensation_Request")}
                           </button>
@@ -3944,8 +3271,7 @@ navigate(
                             {t("candidateWorkflow:send_to_offer_pool")}
                           </button>
                         )
-                      )
-                    )}
+                      ))}
 
                     {/* {activeTab === "INTERVIEW_POOL"
                     && hasPrivilege("Offer Pool")
@@ -3958,9 +3284,9 @@ navigate(
                       </button>
                   )} */}
 
-                    {activeTab === "COMPENSATION_POOL"
-                      && hasPrivilege("Offer Pool")
-                      && canSendToOfferFromCompensation && (
+                    {activeTab === "COMPENSATION_POOL" &&
+                      hasPrivilege("Offer Pool") &&
+                      canSendToOfferFromCompensation && (
                         <button
                           className="btn blue-bg text-white fs-14"
                           onClick={handleSendToOfferPool}
@@ -3968,11 +3294,8 @@ navigate(
                           {t("candidateWorkflow:send_to_offer_pool")}
                         </button>
                       )}
-
                   </div>
-
                 </div>
-
               </div>
             </div>
           )}
@@ -3995,7 +3318,7 @@ navigate(
             requisition={normalizedRequisition}
             position={selectedPosition}
             isRankEnabled={isRankEnabled}
-            filters={filters}   //  ADD THIS
+            filters={filters} //  ADD THIS
             hasLocationData={hasLocationData}
             allCandidatesForFilters={allCandidatesForFilters}
           />
@@ -4009,7 +3332,7 @@ navigate(
             setSelectedIds={setSelectedInterviewCandidateIds}
             page={interviewPage}
             pageSize={interviewPageSize}
-            filters={filters}   //  ADD THIS
+            filters={filters} //  ADD THIS
             totalElements={interviewTotalElements}
             onPageChange={setInterviewPage}
             onPageSizeChange={setInterviewPageSize}
@@ -4027,13 +3350,14 @@ navigate(
                 setShowFeedbackModal(true);
                 setSelectedFeedback([]);
 
-                const res = await candidateWorkflowServices.getPanelScores(
-                  scheduledInterviewId
-                );
+                const res =
+                  await candidateWorkflowServices.getPanelScores(
+                    scheduledInterviewId
+                  );
 
                 const rawList = res?.data || [];
 
-                const mapped = rawList.map(item => {
+                const mapped = rawList.map((item) => {
                   const scoreObj = item.panelMembersScore;
                   const user = item.user;
 
@@ -4042,12 +3366,11 @@ navigate(
                     name: user?.name || "-",
                     comment: scoreObj.panelComments || "-",
                     time: formatDateTime(scoreObj.modifiedDate),
-                    score: scoreObj.panelScore ?? "-"
+                    score: scoreObj.panelScore ?? "-",
                   };
                 });
 
                 setSelectedFeedback(mapped);
-
               } catch (err) {
                 console.error(err);
                 toast.error(t("candidateWorkflow:failed_load_feedback"));
@@ -4055,13 +3378,8 @@ navigate(
               }
             }}
             onOpenZonalComments={handleOpenZonalComments}
-
-
-
-
           />
         )}
-
 
         {activeTab === "COMPENSATION_POOL" && selectedPositionId && (
           <CompensationPool
@@ -4074,7 +3392,6 @@ navigate(
             onPageSizeChange={setInterviewPageSize}
             selectedIds={selectedCompensationIds}
             setSelectedIds={setSelectedCompensationIds}
-
             //  ADD THESE
             onViewFile={handleViewFile}
             selectedRequisitionId={selectedRequisitionId}
@@ -4082,7 +3399,7 @@ navigate(
             requisition={normalizedRequisition}
             position={selectedPosition}
             refetch={refetchCompensation}
-            triggerRefresh={() => setCompRefreshKey(prev => prev + 1)}
+            triggerRefresh={() => setCompRefreshKey((prev) => prev + 1)}
             panelData={panelData}
             allCandidatesForFilters={allCandidatesForFilters}
             filters={filters}
@@ -4106,37 +3423,22 @@ navigate(
 
             <SchedulePoolTable
               rows={paginatedSchedulePool}
-
               onEdit={handleEditSchedule}
-
-              onSubmitApproval={() =>
-                setShowApprovalModal(true)
-              }
-
+              onSubmitApproval={() => setShowApprovalModal(true)}
               page={schedulePoolPage}
               position={selectedPosition}
-
-
               pageSize={schedulePoolPageSize}
-
               totalElements={schedulePoolCandidates.length}
-
-
               onPageChange={setSchedulePoolPage}
-
               onPageSizeChange={setSchedulePoolPageSize}
-
               onViewProfile={(candidate) => {
-
                 navigate("/candidate-preview", {
-
                   state: {
-
                     candidate: candidate,
 
                     applicationId: candidate.applicationId,
 
-                    positionId: candidate.positionId,
+                    positionId: selectedPositionId,
 
                     requisitionId: selectedRequisitionId,
 
@@ -4150,21 +3452,14 @@ navigate(
 
                     requisition: normalizedRequisition,
 
-                    position: selectedPosition
-
-                  }
-
+                    position: selectedPosition,
+                  },
                 });
-
               }}
-
               onViewResume={(candidate) => {
                 handleViewFile(candidate);
               }}
-
-              onOpenZonalComments={
-                handleOpenZonalComments
-              }
+              onOpenZonalComments={handleOpenZonalComments}
             />
           </div>
         )}
@@ -4189,7 +3484,9 @@ navigate(
           showScheduleModal={showScheduleModal}
           setShowScheduleModal={setShowScheduleModal}
           applicationIds={selectedCandidateIds}
-          positionId={navPositionIds?.length ? navPositionIds : selectedPositionId}
+          positionId={
+            navPositionIds?.length ? navPositionIds : selectedPositionId
+          }
           onBulkScheduleSuccess={refreshCandidatesAfterSchedule}
         />
       </div>
@@ -4221,7 +3518,7 @@ navigate(
         setShowRankListModal={setShowRankListModal}
         selectedIds={offerSelectedIds}
         setSelectedIds={setOfferSelectedIds}
-        onUploadSuccess={() => setOfferRefreshKey(prev => prev + 1)}
+        onUploadSuccess={() => setOfferRefreshKey((prev) => prev + 1)}
       />
       {/* <Modal show={showPreview}
         onHide={() => setShowPreview(false)} size="lg">
@@ -4241,48 +3538,42 @@ navigate(
       </Modal> */}
       <ScheduleErrorModal
         show={showErrorModal}
-        onClose={() =>
-          setShowErrorModal(false)
-        }
+        onClose={() => setShowErrorModal(false)}
         errorMessage={errorMessage}
         errorCandidates={errorCandidates}
       />
 
       <ScheduleApprovalModal
         show={showApprovalModal}
-        onClose={() =>
-          setShowApprovalModal(false)
-        }
+        onClose={() => setShowApprovalModal(false)}
         onApprove={handleSubmitForApproval}
         loading={submittingApproval}
       />
-      <Modal
-        show={showPreview}
-        onHide={handleClose}
-        size="xl"
-        centered
-      >
+      <Modal show={showPreview} onHide={handleClose} size="xl" centered>
         {/* HEADER */}
         <Modal.Header closeButton className="border-0 pb-2">
           <div className="w-100 d-flex justify-content-between align-items-center">
             <div>
-              <h6 className="mb-0 fw-semibold">
-                {templateName || "Preview"}
-              </h6>
+              <h6 className="mb-0 fw-semibold">{templateName || "Preview"}</h6>
               <small className="text-muted">Template Preview</small>
             </div>
 
             {/* ACTION BUTTONS */}
-            <div className="d-flex gap-4 align-items-center" style={{
-              paddingRight: "15px"
-            }}>
+            <div
+              className="d-flex gap-4 align-items-center"
+              style={{
+                paddingRight: "15px",
+              }}
+            >
               {previewUrl && (
                 <a
                   href={previewUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-sm btn-outline-primary"
-                > <FaExternalLinkAlt />
+                >
+                  {" "}
+                  <FaExternalLinkAlt />
                 </a>
               )}
             </div>
@@ -4316,92 +3607,46 @@ navigate(
             </div>
           )}
         </Modal.Body>
-
-
-
       </Modal>
 
       <Modal
-        show={
-          showImportCandidatesModal
-        }
-        onHide={() =>
-          setShowImportCandidatesModal(false)
-        }
+        show={showImportCandidatesModal}
+        onHide={() => setShowImportCandidatesModal(false)}
         size="lg"
         centered
       >
-
         <Modal.Header closeButton>
-
           <Modal.Title
             style={{
               fontSize: "18px",
-              fontWeight: "600"
+              fontWeight: "600",
             }}
           >
-
-          Upload Candidate Score
-
+            Upload Candidate Score
           </Modal.Title>
-
         </Modal.Header>
 
         <Modal.Body>
-
           <CandidateImportModal
             t={t}
-            positionIds={
-              selectedPositionId
-            }
-            onClose={() =>
-              setShowImportCandidatesModal(
-                false
-              )
-            }
+            positionIds={selectedPositionId}
+            onClose={() => setShowImportCandidatesModal(false)}
             onSuccess={() => {
-
-              console.log(
-                "IMPORT SUCCESS"
-              );
-
+              console.log("IMPORT SUCCESS");
             }}
           />
-
         </Modal.Body>
-
       </Modal>
 
-
-      
-
-<ExaminationScoreModal
-  show={showExaminationModal}
-  onHide={() =>
-    setShowExaminationModal(false)
-  }
-  examinationScoreData={
-    examinationScoreData
-  }
-  setExaminationScoreData={
-    setExaminationScoreData
-  }
-  handleEditExaminationScore={
-    handleEditExaminationScore
-  }
-  reservationCategories={
-    reservationCategories
-  }
-  examConfigMap={examConfigMap}
-/>
-
-
-
-
+      <ExaminationScoreModal
+        show={showExaminationModal}
+        onHide={() => setShowExaminationModal(false)}
+        examinationScoreData={examinationScoreData}
+        setExaminationScoreData={setExaminationScoreData}
+        handleEditExaminationScore={handleEditExaminationScore}
+        reservationCategories={reservationCategories}
+        examConfigMap={examConfigMap}
+      />
     </div>
-
   );
 }
-
-
-

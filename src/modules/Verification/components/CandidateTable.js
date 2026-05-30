@@ -4,9 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
-
-
-
 const CandidateTable = ({
   requisition,
   position,
@@ -24,15 +21,13 @@ const CandidateTable = ({
   setPageSize,
   filter,
   searchText,
-  activeStage
+  activeStage,
 }) => {
   const { t } = useTranslation(["verification", "common"]);
-
 
   const navigate = useNavigate();
 
   const goToPreview = (c) => {
-
     navigate("/candidate-preview", {
       state: {
         candidate: c.raw,
@@ -55,25 +50,17 @@ const CandidateTable = ({
         filter,
         searchText,
         activeStage,
-        fromCandidateList: true
-
+        fromCandidateList: true,
       },
     });
   };
 
-
-
-
-
-
   return (
     <div className="verification-table-wrapper">
-
       {/* ================= DESKTOP TABLE ================= */}
       <div className="d-none d-md-block">
         <table className="table align-middle mb-0 verification-table">
           <thead className="fs-14">
-
             <tr>
               <th className="fs-14">{t("verification:candidate")}</th>
               <th className="fs-14">{t("common:category")}</th>
@@ -82,28 +69,24 @@ const CandidateTable = ({
               <th className="fs-14 text-center">{t("verification:absent")}</th>
               <th className="fs-14">{t("verification:status")}</th>
               <th className="fs-14 text-center">{t("common:actions")}</th>
-
             </tr>
           </thead>
 
-         <tbody>
-  {/*  No selection OR No data after filter */}
-  {(!isSelectionDone || filteredCandidates.length === 0) && (
-    <tr className="no-candidates-row">
-      <td colSpan="7" className="text-center py-4 text-muted fs-15">
-        {t("verification:no_candidates_found")}
-      </td>
-    </tr>
-  )}
+          <tbody>
+            {/*  No selection OR No data after filter */}
+            {(!isSelectionDone || filteredCandidates.length === 0) && (
+              <tr className="no-candidates-row">
+                <td colSpan="7" className="text-center py-4 text-muted fs-15">
+                  {t("verification:no_candidates_found")}
+                </td>
+              </tr>
+            )}
 
-  {/*  Data available */}
-  {isSelectionDone &&
-    filteredCandidates.length > 0 &&
-    filteredCandidates.map((c) => {
-
-
+            {/*  Data available */}
+            {isSelectionDone &&
+              filteredCandidates.length > 0 &&
+              filteredCandidates.map((c) => {
                 return (
-
                   <tr key={c.id}>
                     <td>
                       <div className="fw-semibold fs-14">{c.name}</div>
@@ -121,15 +104,11 @@ const CandidateTable = ({
                         type="checkbox"
                         checked={c.absent}
                         disabled={
-                          c.status !== "Pending" &&
-                          c.status !== "Zonal Absent"
+                          c.status !== "Pending" && c.status !== "Zonal Absent"
                         }
-
                         onChange={() => toggleAbsent(c.id)}
                       />
                     </td>
-
-
 
                     <td>
                       <span
@@ -142,7 +121,6 @@ const CandidateTable = ({
                     </td>
 
                     <td className="text-center">
-
                       {/* View Profile */}
                       <OverlayTrigger
                         placement="bottom"
@@ -154,9 +132,7 @@ const CandidateTable = ({
                             className="me-3 cursor-pointer"
                             style={{ cursor: "pointer" }}
                             onClick={() => goToPreview(c)}
-
                           />
-
                         </span>
                       </OverlayTrigger>
 
@@ -173,33 +149,24 @@ const CandidateTable = ({
                           />
                         </span>
                       </OverlayTrigger>
-
                     </td>
-
                   </tr>
                 );
-              }
-              )}
+              })}
           </tbody>
         </table>
       </div>
 
       {/* ================= MOBILE CARDS ================= */}
       <div className="d-block d-md-none">
-
         {!isSelectionDone || filteredCandidates.length === 0 ? (
           <div className="text-center py-4 text-muted">
             {t("verification:no_candidates_found")}
           </div>
         ) : (
           filteredCandidates.map((c) => {
-
-           
-
             return (
-
               <div key={c.id} className="candidate-card">
-
                 <div className="card-top">
                   <div>
                     <div className="fw-semibold fs-14">{c.name}</div>
@@ -219,41 +186,39 @@ const CandidateTable = ({
 
                 <div className="card-grid">
                   <div>
-                    <label className="fs-12 text-muted">{t("common:category")}</label>
-
+                    <label className="fs-12 text-muted">
+                      {t("common:category")}
+                    </label>
 
                     <div className="fs-14">{c.category}</div>
                   </div>
 
                   <div>
-                    <label className="fs-12 text-muted">{t("common:time")}</label>
+                    <label className="fs-12 text-muted">
+                      {t("common:time")}
+                    </label>
                     <div className="fs-14">{c.time}</div>
-
-
                   </div>
 
                   <div>
-                    <label className="fs-12 text-muted">{t("verification:zone")}</label>
+                    <label className="fs-12 text-muted">
+                      {t("verification:zone")}
+                    </label>
                     <div className="fs-14">{c.zone}</div>
-
-
                   </div>
 
                   <div>
-                    <label className="fs-12 text-muted">{t("verification:absent")}</label>
+                    <label className="fs-12 text-muted">
+                      {t("verification:absent")}
+                    </label>
                     <input
                       type="checkbox"
                       checked={c.absent}
                       disabled={
-                        c.status !== "Pending" &&
-                        c.status !== "Zonal Absent"
+                        c.status !== "Pending" && c.status !== "Zonal Absent"
                       }
-
                       onChange={() => toggleAbsent(c.id)}
                     />
-
-
-
                   </div>
                 </div>
 
@@ -263,43 +228,34 @@ const CandidateTable = ({
                     className="me-3 cursor-pointer"
                     style={{ cursor: "pointer" }}
                     onClick={() => goToPreview(c)}
-
                   />
 
-
-
-                  <FileText size={16}
-
+                  <FileText
+                    size={16}
                     className="cursor-pointer"
                     onClick={() => onViewFile(c.raw)}
                   />
-
                 </div>
-
               </div>
             );
           })
-
         )}
-
       </div>
 
       {/* ================= FOOTER ================= */}
       <div className="d-flex justify-content-between align-items-center px-3 py-2 table-footer">
-
         {/* Showing text */}
         <span className="text-muted fs-13">
           {totalElements > 0
             ? `${t("verification:showing")} ${page * pageSize + 1}–${Math.min(
-              (page + 1) * pageSize,
-              totalElements
-            )} ${t("verification:of")} ${totalElements}`
+                (page + 1) * pageSize,
+                totalElements
+              )} ${t("verification:of")} ${totalElements}`
             : `${t("verification:showing")} 0`}
         </span>
 
         {/* Pagination controls */}
         <div className="d-flex gap-2 align-items-center">
-
           <select
             className="form-select form-select-sm"
             style={{ width: 80 }}
@@ -317,7 +273,7 @@ const CandidateTable = ({
           <button
             className="btn btn-sm btn-outline-secondary"
             disabled={page === 0}
-            onClick={() => setPage(prev => prev - 1)}
+            onClick={() => setPage((prev) => prev - 1)}
           >
             {t("verification:prev")}
           </button>
@@ -325,15 +281,12 @@ const CandidateTable = ({
           <button
             className="btn btn-sm btn-outline-secondary"
             disabled={page + 1 >= totalPages}
-            onClick={() => setPage(prev => prev + 1)}
+            onClick={() => setPage((prev) => prev + 1)}
           >
             {t("verification:next")}
           </button>
-
         </div>
       </div>
-
-
     </div>
   );
 };

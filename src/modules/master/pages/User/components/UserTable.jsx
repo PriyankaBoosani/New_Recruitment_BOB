@@ -1,17 +1,28 @@
 import React from "react";
-import { Table, Button, Form } from 'react-bootstrap';
+import { Table, Button, Form } from "react-bootstrap";
 
 import { useTranslation } from "react-i18next";
 import viewIcon from "../../../../../assets/view_icon.png";
 import editIcon from "../../../../../assets/edit_icon.png";
 import deleteIcon from "../../../../../assets/delete_icon.png";
 const UserTable = ({
-  data, searchTerm, currentPage, setCurrentPage, pageSize,setPageSize,onEdit,onView,onDelete,interviewCentres
+  data,
+  searchTerm,
+  currentPage,
+  setCurrentPage,
+  pageSize,
+  setPageSize,
+  onEdit,
+  onView,
+  onDelete,
+  interviewCentres,
 }) => {
   const { t } = useTranslation(["user"]);
-  const filtered = data.filter(u =>
-    Object.values(u).some(v =>
-      String(v ?? "").toLowerCase().includes(searchTerm.toLowerCase())
+  const filtered = data.filter((u) =>
+    Object.values(u).some((v) =>
+      String(v ?? "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
     )
   );
 
@@ -44,18 +55,17 @@ const UserTable = ({
     return {
       pages,
       showStartEllipsis: start > 1,
-      showEndEllipsis: end <= totalPages
+      showEndEllipsis: end <= totalPages,
     };
   };
-const formatRole = (role) => {
-  if (!role) return "-";
+  const formatRole = (role) => {
+    if (!role) return "-";
 
-  return role
-    .replace(/_/g, " ")
-    .toLowerCase()
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-};
-
+    return role
+      .replace(/_/g, " ")
+      .toLowerCase()
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+  };
 
   return (
     <>
@@ -68,8 +78,7 @@ const formatRole = (role) => {
               <th>{t("name")}</th>
               <th>{t("email")}</th>
               <th>{t("interviewCentre")}</th>
-               <th style={{ textAlign: "center" }}>{t("actions")}</th>
-
+              <th style={{ textAlign: "center" }}>{t("actions")}</th>
             </tr>
           </thead>
           <tbody>
@@ -82,12 +91,15 @@ const formatRole = (role) => {
                   <td>{u.email}</td>
                   <td>
                     {interviewCentres.find(
-                      c => String(c.interviewCentreId) === String(u.interviewCenterId)
+                      (c) =>
+                        String(c.interviewCentreId) ===
+                        String(u.interviewCenterId)
                     )?.interviewCentre || "-"}
                   </td>
                   <td>
                     <div className="action-buttons">
-                      <Button variant="link"
+                      <Button
+                        variant="link"
                         className="action-btn view-btn"
                         onClick={() => onView(u)}
                       >
@@ -107,11 +119,14 @@ const formatRole = (role) => {
                         className="action-btn delete-btn"
                         onClick={() => onDelete(u)}
                       >
-                        <img src={deleteIcon} alt="Delete" className="icon-16" />
+                        <img
+                          src={deleteIcon}
+                          alt="Delete"
+                          className="icon-16"
+                        />
                       </Button>
                     </div>
                   </td>
-
                 </tr>
               ))
             ) : (
@@ -125,11 +140,8 @@ const formatRole = (role) => {
         </Table>
       </div>
 
-
-
       {filtered.length > 0 && (
         <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
-
           {/* Page size */}
           <div className="d-flex align-items-center gap-2 user-actions">
             <span
@@ -148,8 +160,10 @@ const formatRole = (role) => {
                 setCurrentPage(1);
               }}
             >
-              {[5, 10, 15, 20, 25, 30].map(n => (
-                <option key={n} value={n}>{n}</option>
+              {[5, 10, 15, 20, 25, 30].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
               ))}
             </select>
           </div>
@@ -167,11 +181,8 @@ const formatRole = (role) => {
             </li>
 
             {(() => {
-              const {
-                pages,
-                showStartEllipsis,
-                showEndEllipsis
-              } = getVisiblePages(currentPage, totalPages);
+              const { pages, showStartEllipsis, showEndEllipsis } =
+                getVisiblePages(currentPage, totalPages);
 
               return (
                 <>
@@ -183,7 +194,7 @@ const formatRole = (role) => {
                   )}
 
                   {/* Page numbers */}
-                  {pages.map(number => (
+                  {pages.map((number) => (
                     <li
                       key={number}
                       className={`page-item ${currentPage === number ? "active" : ""}`}
@@ -207,8 +218,9 @@ const formatRole = (role) => {
               );
             })()}
 
-
-            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+            <li
+              className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+            >
               <button
                 className="page-link"
                 onClick={() => setCurrentPage(currentPage + 1)}
@@ -218,10 +230,8 @@ const formatRole = (role) => {
               </button>
             </li>
           </ul>
-
         </div>
       )}
-
     </>
   );
 };

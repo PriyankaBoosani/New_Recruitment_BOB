@@ -8,7 +8,6 @@ const formatDateTime = (iso) => {
 
   const d = new Date(iso);
 
-
   const day = String(d.getDate()).padStart(2, "0");
   const month = String(d.getMonth() + 1).padStart(2, "0");
   const year = d.getFullYear();
@@ -34,9 +33,7 @@ const ApprovalHistoryModal = ({
   historyData = [],
   loading = false,
 }) => {
-  const historyArray = Array.isArray(historyData)
-    ? historyData
-    : [];
+  const historyArray = Array.isArray(historyData) ? historyData : [];
   const { t } = useTranslation("approvalHistory");
 
   return (
@@ -68,24 +65,28 @@ const ApprovalHistoryModal = ({
             <Table className="approval-history-table">
               <thead>
                 <tr>
-
                   {/* <th className="text-white fs-14 fw-normal blue-bg">Requester</th>
                   <th className="text-white fs-14 fw-normal blue-bg">Request Date</th> */}
-                  <th className="text-white fs-14 fw-normal blue-bg">{t("approvalHistory:approver")}</th>
-                  <th className="text-white fs-14 fw-normal blue-bg">{t("approvalHistory:approval_date")}</th>
-                  <th className="text-white fs-14 fw-normal blue-bg">{t("approvalHistory:status")}</th>
-                  <th className="text-white fs-14 fw-normal blue-bg">{t("approvalHistory:comments")}</th>
+                  <th className="text-white fs-14 fw-normal blue-bg">
+                    {t("approvalHistory:approver")}
+                  </th>
+                  <th className="text-white fs-14 fw-normal blue-bg">
+                    {t("approvalHistory:approval_date")}
+                  </th>
+                  <th className="text-white fs-14 fw-normal blue-bg">
+                    {t("approvalHistory:status")}
+                  </th>
+                  <th className="text-white fs-14 fw-normal blue-bg">
+                    {t("approvalHistory:comments")}
+                  </th>
                 </tr>
-
               </thead>
 
               <tbody>
                 {historyArray.length > 0 ? (
                   [...historyArray]
                     .sort(
-                      (a, b) =>
-                        new Date(b.actionDate) -
-                        new Date(a.actionDate)
+                      (a, b) => new Date(b.actionDate) - new Date(a.actionDate)
                     )
                     .map((item) => (
                       <tr key={item.approvalId}>
@@ -108,8 +109,11 @@ const ApprovalHistoryModal = ({
                     ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="text-center py-4 text-muted fs-14">
-                     {t("approvalHistory:no_history_available")}
+                    <td
+                      colSpan="6"
+                      className="text-center py-4 text-muted fs-14"
+                    >
+                      {t("approvalHistory:no_history_available")}
                     </td>
                   </tr>
                 )}
