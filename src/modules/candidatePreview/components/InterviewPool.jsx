@@ -50,9 +50,7 @@ export default function InterviewPool({
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
-  // const allSelected =
-  //   candidates.length > 0 && selectedIds.length === candidates.length;
-
+  
   const allSelected =
     allCandidatesForFilters?.length > 0 &&
     allCandidatesForFilters.every((c) => selectedIds.includes(String(c.id)));

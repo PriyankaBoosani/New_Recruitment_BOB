@@ -22,8 +22,7 @@ import CertificationPage from "../modules/master/pages/CertificationPage/Certifi
 import EducationModal from "../modules/master/pages/EducationQualification/EducationQualificationPage";
 import StatesLanguagesPage from "../modules/master/pages/StatesLanguages/StatesLanguagesPage";
 import ExaminationCutoffConfiguration from "../modules/ExaminationCutoffConfiguration/ExaminationCutoffConfiguration";
-// import NonAdminRoute from "./NonAdminRoute";
-// import AdminRoute from "./AdminRoute";
+
 import AddPosition from "../modules/jobPosting/pages/AddPosition";
 // Auth & layout helpers
 import PrivateRoute from "../modules/auth/services/PrivateRoute";
