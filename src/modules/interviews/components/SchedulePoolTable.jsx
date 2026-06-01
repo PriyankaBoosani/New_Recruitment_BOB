@@ -147,7 +147,7 @@ const SchedulePoolTable = ({
                     <td className="fs-14 align-content-center">{row.panel}</td>
 
                     {/* Interview Status */}
-                    <td className="align-content-center ps-4">
+                    <td className="align-content-center">
                       {getApprovalStatus(row)
                         ?.toLowerCase()
                         ?.replaceAll("_", " ")
