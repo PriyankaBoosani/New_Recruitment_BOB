@@ -69,9 +69,10 @@ const Header = () => {
     i18n.changeLanguage("en");
     await persistor.purge();
 
-    // navigate('/login');
+    const activeAccount = instance.getActiveAccount() || instance.getAllAccounts()[0];
     await instance.logoutRedirect({
-      postLogoutRedirectUri: "/login",
+      account: activeAccount,
+      postLogoutRedirectUri: `${window.location.origin}/login`,
     });
   };
   const role = user?.role?.trim().toLowerCase();
