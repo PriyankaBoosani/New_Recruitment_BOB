@@ -220,7 +220,8 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [submittingApproval, setSubmittingApproval] = useState(false);
 
-  const [activeTab, setActiveTab] = useState(navActiveTab || "CANDIDATE_POOL");
+  // const [activeTab, setActiveTab] = useState(navActiveTab || "CANDIDATE_POOL");
+  const [activeTab, setActiveTab] = useState("");
 
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
@@ -810,6 +811,18 @@ export default function CandidateScreening({ selectedJob }) {
       return hasPrivilege(TAB_PRIVILEGE_MAP[tab.key]);
     });
   }, [tabs, privileges, isContractPosition]);
+
+  useEffect(() => {
+    if (!accessibleTabs.length) return;
+
+    const preferredTab = accessibleTabs.some(
+      (tab) => tab.key === "CANDIDATE_POOL"
+    )
+      ? "CANDIDATE_POOL"
+      : accessibleTabs[0].key;
+
+    setActiveTab(preferredTab);
+  }, [accessibleTabs]);
 
   const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
   const categoryMap = React.useMemo(() => {
