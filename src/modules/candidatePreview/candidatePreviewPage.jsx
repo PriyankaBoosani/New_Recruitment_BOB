@@ -39,10 +39,7 @@ const CandidatePreviewPage = ({ onHide }) => {
 
   const privileges = useSelector((state) => state.user.privileges);
   const candidatePositionId = state?.candidatePositionId;
-  console.log(
-    "Candidate Position ID in Preview:@@@@@@@@@@@@@@@@@@@@@",
-    candidatePositionId
-  );
+ 
 
   const isInterviewer = privileges?.Interview;
   const isZonalHr = privileges?.Verification;

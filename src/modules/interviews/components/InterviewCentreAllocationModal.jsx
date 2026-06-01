@@ -9,10 +9,6 @@ const InterviewCentreAllocationModal = ({
   allInterviewCentres,
   onContinue,
 }) => {
-  console.log("centreRows", centreRows);
-  console.log("allInterviewCentres", allInterviewCentres);
-  console.log("uniqueAllocatedCentres", uniqueAllocatedCentres);
-
   if (!show) return null;
 
   const selectedAllocatedCentres = centreRows

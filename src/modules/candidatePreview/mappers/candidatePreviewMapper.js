@@ -42,7 +42,6 @@ const getInterviewCentreName = (masters, id) =>
 export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
   const profile = apiData?.basicDetails?.candidateProfile || {};
   const languagesKnown = apiData?.basicDetails?.languagesKnown || [];
-  console.log("languagesKnown", languagesKnown);
   const address = apiData?.addressDetails || {};
   // const locationprefApiData = apiData?.locationPreference
   const locationprefApiData = apiData?.locationPreference || {};

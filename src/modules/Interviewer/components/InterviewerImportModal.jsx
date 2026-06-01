@@ -51,32 +51,26 @@ const InterviewerImportModal = ({
       setError("");
       setErrorDetails([]);
 
-      console.log("Uploading file:", selectedFile);
 
       const res = await InterviewerService.uploadInterviewFile(selectedFile);
 
-      // 🔍 DEBUG LOGS
-      console.log("FULL RESPONSE:", res);
 
       //  NORMALIZE RESPONSE (handles both formats)
       const success = res?.success ?? res?.data?.success;
       const message = res?.message ?? res?.data?.message;
       const details = res?.data ?? res?.data?.data ?? [];
 
-      console.log("SUCCESS:", success);
-      console.log("MESSAGE:", message);
-      console.log("DETAILS:", details);
 
       //  SUCCESS FLOW
       if (success) {
-        console.log("Upload success");
+        
 
         onSuccess();
         onClose();
       }
       //  FAILURE (VALIDATION / BUSINESS ERROR)
       else {
-        console.log("Upload failed with backend validation");
+        
 
         setError(message || t("import_error"));
 
@@ -84,8 +78,7 @@ const InterviewerImportModal = ({
         setErrorDetails(Array.isArray(details) ? details : []);
       }
     } catch (err) {
-      console.log("API ERROR:", err);
-      console.log("ERROR DATA:", err?.response?.data);
+      
 
       const message = err?.response?.data?.message || t("upload_failed");
 
@@ -106,7 +99,7 @@ const InterviewerImportModal = ({
         return;
       }
 
-      console.log("BTN CLICK");
+      
 
       const formatDate = (d) => {
         const date = new Date(d);

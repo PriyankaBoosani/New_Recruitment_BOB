@@ -69,7 +69,7 @@ export function mapEduRulesToModalData(
         eduRulesJson.mandatoryCertifications?.groups || []
       ),
     };
-    console.log("MAPPING RESULT - Mandatory:", JSON.stringify(result, null, 2));
+    
     return result;
   }
 
@@ -86,11 +86,10 @@ export function mapEduRulesToModalData(
         eduRulesJson.preferredCertificationIds?.groups || []
       ),
     };
-    console.log("MAPPING RESULT - Preferred:", JSON.stringify(result, null, 2));
+    
     return result;
   }
 
   const result = { groups: [], certGroups: [] };
-  console.log("mapEduRulesToModalData - Output:", result);
   return result;
 }

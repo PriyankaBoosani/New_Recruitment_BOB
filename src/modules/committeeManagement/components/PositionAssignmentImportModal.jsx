@@ -149,7 +149,6 @@ const PositionAssignmentImportModal = ({
           <button
             type="button"
             onClick={() => {
-              console.log("DOWNLOAD CLICKED");
               downloadPositionAssignmentTemplate();
             }}
             className="btn btn-link p-0 text-primary text-decoration-none btnfont"

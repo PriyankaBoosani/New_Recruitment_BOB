@@ -444,7 +444,7 @@ export default function CandidatePool({
                       <Person
                         className="me-3 cursor-pointer"
                         onClick={() => {
-                          console.log("FULL CANDIDATE::::@@@@#@#@@", c);
+                          
 
                           navigate("/candidate-preview", {
                             state: {

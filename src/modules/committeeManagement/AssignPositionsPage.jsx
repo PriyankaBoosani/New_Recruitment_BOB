@@ -214,13 +214,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     const errors = panelErrors?.[errorKey] || {};
     const today = new Date().toISOString().split("T")[0];
 
-    // const isApproved = committee.rawStatus === "APPROVED";
-    // const isL1Approved = committee.rawStatus === "L1_APPROVED";
-
-    // const isCompleted =
-    //   committee.endDate && committee.endDate < today;
-
-    console.log("committee.rawStatus =", committee.rawStatus);
+    
     const shouldDisableFields = committee.rawStatus === "L2_PENDING";
 
     const shouldDisableRemove =
@@ -740,7 +734,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                     await masterApiService.checkScheduledInterviews(
                       editFormData.id
                     );
-                  console.log("isresScheduled", isresScheduled);
+                  
                   if (isresScheduled?.data) {
                     setPendingPayload(payload);
                     setShowUpdateWarning(true);

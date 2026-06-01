@@ -18,7 +18,6 @@ const TableSection = ({
   totalVacancyCount = 0,
   totalQualifiedCount = 0,
 }) => {
-  console.log("TABLE totalQualifiedCount", totalQualifiedCount);
 
   const categoryMap = {};
 
@@ -40,15 +39,6 @@ const TableSection = ({
     "Qualified Without Relaxation",
     // "Qualified With Relaxation"
   ];
-
-  console.log("MODAL reservationCategories", reservationCategories);
-
-  console.log(
-    "MODAL reservationCategories LENGTH",
-    reservationCategories?.length
-  );
-
-  console.log("MODAL HEADERS", tableHeaders);
 
   return (
     <div className="rank-summary-table">
@@ -232,13 +222,7 @@ const ExaminationScoreModal = ({
         }}
       >
         {examinationScoreData.map((item, index) => {
-          console.log("MODAL ITEM", item);
-
-          console.log(
-            "MODAL TOTAL QUALIFIED",
-            item?.totalQualifiedWithoutRelaxation
-          );
-
+        
           const hasConfig = examConfigMap?.[item.positionId || item.id];
 
           const hasQualifiedWithoutRelaxation =
@@ -250,11 +234,7 @@ const ExaminationScoreModal = ({
 
           const isFinalized = item?.isFinalized === true;
 
-          console.log("CARD ITEM POSITION ID", item.positionId);
-
-          console.log("HAS CONFIG", examConfigMap?.[item.positionId]);
-
-          console.log("FULL ITEM", item);
+          
 
           return (
             <div key={index} className="mb-3 rank-position-card">

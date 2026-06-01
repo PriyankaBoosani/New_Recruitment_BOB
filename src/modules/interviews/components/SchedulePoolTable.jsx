@@ -33,7 +33,7 @@ const SchedulePoolTable = ({
   const getRemarks = (row) =>
     row?.interviewScheduleStaging?.remarks || row?.remarks || "";
 
-  console.log("SchedulePoolTable render", { rows, position });
+  
   const { t } = useTranslation([
     "candidateWorkflow",
     "common",
@@ -111,7 +111,6 @@ const SchedulePoolTable = ({
           ) : (
             rows.map(
               (row) => (
-                console.log("Rendering row", { row }),
                 (
                   <tr key={row.id}>
                     {/* Candidate */}

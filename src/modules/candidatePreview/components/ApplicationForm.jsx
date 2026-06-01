@@ -347,10 +347,7 @@ const ApplicationForm = ({
     // -----------------------------------------
     // 4️⃣ Decision = PROVISIONAL but all VERIFIED
     // -----------------------------------------
-    console.log("Zonal Decision:", zonalDecision);
-    console.log("Zonal allVerified:", allVerified);
-    console.log(zonalDecision === "PROVISIONALLY_APPROVED" && allVerified);
-
+   
     if (zonalDecision === "PROVISIONALLY_APPROVED" && allVerified) {
       toast.warning(
         "All documents are verified. Please select other decision instead."
@@ -482,9 +479,7 @@ const ApplicationForm = ({
 
   const allDocs =
     screeningDocuments.length > 0 ? screeningDocuments : data.documents.allDocs;
-  // console.log(screeningDocuments)
-  // console.log(data.documents.allDocs)
-
+ 
   const photoDoc = allDocs.find((doc) => doc.name === "Photo");
   const signatureDoc = allDocs.find((doc) => doc.name === "Signature");
   const birthDoc = allDocs.find((doc) => doc.name === "Birth Certificate");
@@ -954,9 +949,6 @@ const ApplicationForm = ({
     screeningForm.isEducationCriteriaMet === "DISCREPANCY" ||
     hasAdditionalDocuments;
 
-  console.log("hasAnyDiscrepancy", hasAnyDiscrepancy);
-
-  console.log("hasAdditionalDocuments", hasAdditionalDocuments);
 
   const hasYetToUpload = documentRows.some((doc) => !doc?.url);
   const shouldShowSubmitBefore = hasAnyDiscrepancy || hasYetToUpload;
@@ -1082,7 +1074,7 @@ const ApplicationForm = ({
     }
 
     setErrors(newErrors);
-    console.log("VALIDATION ERRORS", newErrors);
+    
     // valid if no errors
     return Object.keys(newErrors).length === 0;
   };
@@ -1214,10 +1206,7 @@ const ApplicationForm = ({
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
       // toast.success("Screening submitted successfully");
       toast.success(t("screening_submitted_success"));
-      console.log("SENDING POSITION IDS:", {
-        positionIds,
-        positionId,
-      });
+     
       navigate("/candidate-workflow", {
         state: {
           requisitionId,

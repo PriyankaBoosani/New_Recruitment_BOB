@@ -18,22 +18,13 @@ export default function useCompensationPool({
 
   const role = user?.role?.toLowerCase();
 
-  console.log("====================================");
-  console.log("COMPENSATION POOL ROLE CHECK");
-  console.log("====================================");
-
-  console.log("LOGIN USER:", user);
-
-  console.log("ROLE:", role);
 
   const ALL_STATUSES =
     role === "committee_member"
       ? ["PENDING", "APPROVED", "REJECTED", "RENEGOTIATE"]
       : ["NEW", "SUBMITTED", "PENDING", "APPROVED", "REJECTED", "RENEGOTIATE"];
 
-  console.log("FINAL STATUS LIST:", ALL_STATUSES);
-
-  console.log("====================================");
+  
 
   const fetchData = async () => {
     if (!enabled) return;
@@ -48,16 +39,10 @@ export default function useCompensationPool({
         size: pageSize,
       });
 
-      console.log(" FULL API RESPONSE:", res);
-
       const apiData = res?.data;
-
-      console.log(" API CONTENT:", apiData?.content);
 
       //  APPLY MAPPING HERE
       const mappedData = mapCompensationCandidates(apiData?.content || []);
-
-      console.log(" FINAL DATA SENT TO UI:", mappedData);
 
       //  SET MAPPED DATA (IMPORTANT)
       setData(mappedData);
@@ -83,20 +68,11 @@ export default function useCompensationPool({
 }
 
 export const mapCompensationCandidates = (apiData = []) => {
-  console.log(" RAW DATA BEFORE MAPPING:", apiData);
 
   return apiData.map((item, index) => {
     const comp = item.candidateCompensation || {};
     const profile = comp.candidateProfile || {};
     const app = comp.application || {};
-
-    console.log(` MAPPING ROW [${index}] --------------------`);
-
-    console.log(" FULL ITEM:", item);
-    console.log(" COMP OBJECT:", comp);
-
-    console.log(" HIKE FROM API:", comp.hike);
-    console.log(" TYPE OF HIKE:", typeof comp.hike);
 
     const mapped = {
       id: comp.candidateCompensationId,
@@ -123,8 +99,6 @@ export const mapCompensationCandidates = (apiData = []) => {
       recruiterComments: comp.recruiterComments,
       panelComments: comp.panelComments,
     };
-
-    console.log(" FINAL MAPPED OBJECT:", mapped);
 
     return mapped;
   });

@@ -67,9 +67,7 @@ const ScheduleInterviews = () => {
     scheduleInterview,
     allInterviewCentres,
   } = useInterviewSchedule(isEditMode, isReschedule);
-  console.log("ScheduleInterviews - selectedPositionId:", selectedPositionId);
-
-  console.log("All interviews centres:", allInterviewCentres);
+  
   const selectedRequisition = requisitions.find(
     (r) => r.id === selectedRequisitionId
   );
@@ -91,11 +89,8 @@ const ScheduleInterviews = () => {
 
   const schedulePoolData = location.state?.schedulePoolData;
 
-  console.log("schedulePoolData", schedulePoolData);
 
   const selectedPanelsFromEdit = location.state?.selectedPanels || [];
-
-  console.log("isEditMode", isEditMode);
 
   useEffect(() => {
     if (!isEditMode || !schedulePoolData?.length) {
@@ -169,9 +164,7 @@ const ScheduleInterviews = () => {
     selectedPositionId?.includes(p.jobPositions?.positionId)
   );
   const isSelectionDone = selectedRequisition && selectedPosition.length > 0;
-  console.log("passedCandidates", passedCandidates);
   const sourceCandidates = isEditMode ? schedulePoolData : passedCandidates;
-  console.log("sourceCandidates", sourceCandidates);
   const uniqueAllocatedCentres = [
     ...new Map(
       sourceCandidates.map((candidate) => [
@@ -424,8 +417,6 @@ const ScheduleInterviews = () => {
               })),
             };
 
-            console.log("EDIT PAYLOAD", editPayload);
-
             setPendingApplyData(editPayload);
           } else {
             setPendingApplyData(data);
@@ -509,7 +500,6 @@ const ScheduleInterviews = () => {
               }
             });
 
-            console.log("zonalChangeMap", zonalChangeMap);
 
             // 🔥 Call scheduling API
             const res = await applySchedule({
@@ -554,7 +544,7 @@ const ScheduleInterviews = () => {
           setShowCentreModal(true);
         }}
         onProceed={async () => {
-          console.log("pendingApplyData", pendingApplyData);
+          
           setShowCentreConfirmModal(false);
 
           const zonalChangeMap = {};
@@ -562,7 +552,6 @@ const ScheduleInterviews = () => {
           uniqueAllocatedCentres.forEach((centre) => {
             zonalChangeMap[centre.interviewCentreId] = "";
           });
-          console.log("zonalChangeMap", zonalChangeMap);
           const res = await applySchedule({
             ...pendingApplyData,
             zonalChangeMap,

@@ -72,7 +72,6 @@ export const useExperience = () => {
       const list = res.data || [];
 
       const mapped = mapEducationListFromApi(list, educationOptionsList);
-      console.log("Mapped education list:", mapped);
 
       setExperienceList(mapped);
     } catch (err) {

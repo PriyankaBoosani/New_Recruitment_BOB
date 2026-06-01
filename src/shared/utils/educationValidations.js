@@ -171,7 +171,6 @@ export const validateEducationForm = (formData = {}, options = {}) => {
   const errors = {};
   const { existing = [], currentId = null, editMode = false } = options;
 
-  console.log("editMode", editMode);
 
   // ✅ Education Level
   const eduError = validateEducationLevel(formData.educationLevel);

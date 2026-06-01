@@ -227,7 +227,7 @@ const CreateRequisition = () => {
       </Container>
     );
   }
-  console.log("Positions for cloning", positions);
+  
 
   /* ===================== UI ===================== */
   return (

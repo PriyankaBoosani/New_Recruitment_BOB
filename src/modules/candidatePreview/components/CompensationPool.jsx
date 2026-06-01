@@ -258,11 +258,11 @@ export default function CompensationPool({
         action: actionType,
       };
 
-      console.log(" Payload:", payload);
+      
       const res =
         await candidateWorkflowServices.addCompensationDetails(payload);
 
-      console.log(" FULL RES:", res);
+    
 
       //  Normalize response properly (simple + reliable)
       const responseData =
@@ -272,7 +272,7 @@ export default function CompensationPool({
             ? res
             : res?.data || res;
 
-      console.log(" NORMALIZED:", responseData);
+     
 
       //  Strict success check
       if (responseData?.success === true) {
@@ -305,172 +305,9 @@ export default function CompensationPool({
     }
   };
 
-  //   const handleSaveCompensation = async () => {
-  //   try {
-  //    const payload = {
-  //   compensation: {
-  //     candidateId: selectedCandidate.candidateId,
-  //     candidateProfile: selectedCandidate.candidateProfile,
-  //     application: selectedCandidate.application,
-  //     interviewScheduleId: selectedCandidate.interviewScheduleId,
-  //     submitBeforeDate: selectedCandidate.submitBeforeDate,
-
-  //     currentCtc: selectedCandidate.currentCtc ?? 0,
-  //     expectedCtc: selectedCandidate.expectedCtc ?? 0,
-
-  //     fixedPay: Number(formData.fixedPay) || 0,
-  //     variablePay: Number(formData.variablePay) || 0,
-  //     joiningBonus: Number(formData.joiningBonus) || 0,
-
-  //     agreedCtc:
-  //       (Number(formData.fixedPay) || 0) +
-  //       (Number(formData.variablePay) || 0),
-
-  //     hike:
-  //       selectedCandidate.currentCtc
-  //         ? ((Number(formData.fixedPay) - selectedCandidate.currentCtc) /
-  //             selectedCandidate.currentCtc) *
-  //           100
-  //         : 0,
-
-  //     recruiterComments: formData.recruiterComments || "",
-  // panelComments: formData.panelComments || "",
-
-  //     compensationStatus: selectedCandidate.status,
-  //     candidateCompensationId: selectedCandidate.id,
-  //   },
-  //   action: "SUBMIT",
-  // };
-
-  //     console.log("🔥 Compensation Save Payload:", payload);
-
-  //     await candidateWorkflowServices.addCompensationDetails(payload);
-
-  //     toast.success("Compensation saved successfully");
-
-  //     setShowRecruiterModal(false);
-  //     refetch();
-  //      triggerRefresh();
-
-  //   } catch (err) {
-  //     console.error(err);
-  //     toast.error("Failed to save compensation");
-  //   }
-  // };
-
-  // const handleCompensationClick = (c) => {
-  //   setSelectedCandidate(c);
-
-  //   //  Normalize user values
-  //   const userEmail = user?.email?.toLowerCase();
-  //   const userRole = user?.role?.toLowerCase();
-
-  //   const isRecruiter = userRole === "recruiter";
-  //   const isCommitteeMember = userRole === "committee_member";
-
-  //   //  SAFE + CORRECT PANEL CHECK (email + role)
-  //   const isUserInPanel =
-  //     Array.isArray(panelData?.compensationPanelList) &&
-  //     panelData.compensationPanelList.some(panel =>
-  //       Array.isArray(panel?.interviewPanel?.panelMembers) &&
-  //       panel.interviewPanel.panelMembers.some(member => {
-  //         const apiEmail = member?.panelMember?.email?.toLowerCase();
-  //         const apiRole = member?.panelMember?.role?.toLowerCase();
-
-  //         return apiEmail === userEmail && apiRole === userRole;
-  //       })
-  //     );
-
-  //   // ===== FINAL DECISION =====
-
-  //   //  Committee Member + match → Manager Modal
-  //   if (isCommitteeMember && isUserInPanel && canCompensationPool) {
-  //     setShowManagerModal(true);
-  //   }
-
-  //   //  Recruiter + match → Manager Modal
-  //   else if (isRecruiter && isUserInPanel) {
-  //     setShowManagerModal(true);
-  //   }
-
-  //   //  Recruiter + NOT match → Recruiter Modal
-  //   else if (isRecruiter && !isUserInPanel) {
-  //     setShowRecruiterModal(true);
-  //   }
-
-  //   //  Optional fallback
-  //   else {
-  //     console.warn("No matching condition for modal");
-  //   }
-  // };
-
-  // const handleCompensationClick = (c) => {
-  //   setSelectedCandidate(c);
-
-  //   const userEmail = user?.email?.toLowerCase();
-  //   const userRole = user?.role?.toLowerCase();
-
-  //   const isRecruiter = userRole === "recruiter";
-  //   const isCommitteeMember = userRole === "committee_member";
-
-  //   // ✅ Panel check
-  //   const matchedPanel = panelData?.compensationPanelList?.find(panel =>
-  //     panel?.interviewPanel?.panelMembers?.some(member => {
-  //       const apiEmail = member?.panelMember?.email?.toLowerCase();
-  //       const apiRole = member?.panelMember?.role?.toLowerCase();
-  //       return apiEmail === userEmail && apiRole === userRole;
-  //     })
-  //   );
-
-  //   const isUserInPanel = !!matchedPanel;
-
-  //   //  DATE CHECK
-  //   let isWithinDateRange = false;
-
-  //   if (matchedPanel?.startDate && matchedPanel?.endDate) {
-  //     const today = new Date();
-  //     const start = new Date(matchedPanel.startDate);
-  //     const end = new Date(matchedPanel.endDate);
-
-  //     // normalize time
-  //     start.setHours(0,0,0,0);
-  //     end.setHours(23,59,59,999);
-
-  //     isWithinDateRange = today >= start && today <= end;
-  //   }
-
-  //   // ===== FINAL DECISION =====
-
-  //   // Committee Member + match → Manager Modal
-  //   if (isCommitteeMember && isUserInPanel && canCompensationPool) {
-  //     setShowManagerModal(true);
-  //   }
-
-  //   //  Recruiter + match + DATE VALID → Manager Modal
-  //   else if (isRecruiter && isUserInPanel && isWithinDateRange) {
-  //     setShowManagerModal(true);
-  //   }
-
-  //   //  Recruiter + match BUT DATE INVALID → Recruiter Modal
-  //   else if (isRecruiter && isUserInPanel && !isWithinDateRange) {
-  //     setShowRecruiterModal(true);
-  //   }
-
-  //   //  Recruiter + NOT match → Recruiter Modal
-  //   else if (isRecruiter && !isUserInPanel) {
-  //     setShowRecruiterModal(true);
-  //   }
-
-  //   else {
-  //     console.warn("No matching condition for modal");
-  //   }
-  // };
 
   const handleCompensationClick = (c) => {
-    console.log("====================================");
-    console.log("COMPENSATION CLICKED");
-    console.log("====================================");
-
+    
     setSelectedCandidate(c);
 
     const userEmail = user?.email?.toLowerCase();
@@ -479,13 +316,6 @@ export default function CompensationPool({
     const isRecruiter = userRole === "recruiter";
     const isCommitteeMember = userRole === "committee_member";
 
-    console.log("LOGIN USER EMAIL:", userEmail);
-    console.log("LOGIN USER ROLE:", userRole);
-
-    console.log("isRecruiter:", isRecruiter);
-    console.log("isCommitteeMember:", isCommitteeMember);
-
-    console.log("canCompensationPool:", canCompensationPool);
 
     // PANEL CHECK
     const matchedPanel = panelData?.compensationPanelList?.find((panel) =>
@@ -494,13 +324,7 @@ export default function CompensationPool({
 
         const apiRole = member?.panelMember?.role?.toLowerCase();
 
-        console.log("----------- PANEL MEMBER -----------");
-        console.log("API EMAIL:", apiEmail);
-        console.log("API ROLE:", apiRole);
-
-        console.log("EMAIL MATCH:", apiEmail === userEmail);
-
-        console.log("ROLE MATCH:", apiRole === userRole);
+       
 
         return apiEmail === userEmail && apiRole === userRole;
       })
@@ -508,8 +332,6 @@ export default function CompensationPool({
 
     const isUserInPanel = !!matchedPanel;
 
-    console.log("MATCHED PANEL:", matchedPanel);
-    console.log("isUserInPanel:", isUserInPanel);
 
     // DATE CHECK
     let isWithinDateRange = false;
@@ -524,63 +346,34 @@ export default function CompensationPool({
 
       isWithinDateRange = today >= start && today <= end;
 
-      console.log("TODAY:", today);
-      console.log("START DATE:", start);
-      console.log("END DATE:", end);
+      
     } else {
       console.log("DATE CHECK FAILED -> startDate or endDate missing");
     }
 
-    console.log("isWithinDateRange:", isWithinDateRange);
+   
 
-    console.log("====================================");
-    console.log("CHECKING CONDITIONS");
-    console.log("====================================");
-
-    // CONDITION 1
-    console.log(
-      "Condition 1 -> Committee Member + Panel + Privilege:",
-      isCommitteeMember && isUserInPanel && canCompensationPool
-    );
-
-    // CONDITION 2
-    console.log(
-      "Condition 2 -> Recruiter + Panel + Valid Date:",
-      isRecruiter && isUserInPanel && isWithinDateRange
-    );
-
-    // CONDITION 3
-    console.log(
-      "Condition 3 -> Recruiter + Panel + Invalid Date:",
-      isRecruiter && isUserInPanel && !isWithinDateRange
-    );
-
-    // CONDITION 4
-    console.log(
-      "Condition 4 -> Recruiter + NOT In Panel:",
-      isRecruiter && !isUserInPanel
-    );
 
     // ===== FINAL DECISION =====
 
     if (isCommitteeMember && isUserInPanel && canCompensationPool) {
-      console.log("OPENING MANAGER MODAL -> Committee Member");
+      
 
       setShowManagerModal(true);
     } else if (isRecruiter && isUserInPanel && isWithinDateRange) {
-      console.log("OPENING MANAGER MODAL -> Recruiter + Valid Date");
+     
 
       setShowManagerModal(true);
     } else if (isRecruiter && isUserInPanel && !isWithinDateRange) {
-      console.log("OPENING RECRUITER MODAL -> Invalid Date");
+      
 
       setShowRecruiterModal(true);
     } else if (isRecruiter && !isUserInPanel) {
-      console.log("OPENING RECRUITER MODAL -> User Not In Panel");
+      
 
       setShowRecruiterModal(true);
     } else {
-      console.log("NO MODAL OPENED");
+      
 
       console.log({
         userEmail,
@@ -595,7 +388,6 @@ export default function CompensationPool({
       console.warn("No matching condition for modal");
     }
 
-    console.log("====================================");
   };
 
   const canEditManagerFields = isUserInCompensationPanel && isRecruiter;
@@ -652,12 +444,9 @@ export default function CompensationPool({
         action: "SUBMIT",
       };
 
-      console.log(" Payload:", payload);
-
       const res =
         await candidateWorkflowServices.addCompensationDetails(payload);
 
-      console.log(" FULL RES:", res);
 
       //  Normalize response (same as manager API)
       const responseData =
@@ -667,12 +456,7 @@ export default function CompensationPool({
             ? res
             : res?.data || res;
 
-      console.log(" NORMALIZED:", responseData);
-
-      //     if (!formData.fixedPay || !formData.variablePay || !formData.joiningBonus) {
-      //   toast.error("All compensation fields are required");
-      //   return;
-      // }
+      
 
       //  SUCCESS CASE
       if (responseData?.success === true) {

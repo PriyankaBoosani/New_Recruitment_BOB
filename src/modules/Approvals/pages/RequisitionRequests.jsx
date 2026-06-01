@@ -555,10 +555,10 @@ const RequisitionRequests = () => {
             req.isDraft ? req.parentRequisitionId : req.id
           }_${req.isDraft}`;
           const positions = positionsByReq[positionsKey] || [];
-          // console.log(positionsByReq)
+          
 
           const positionsGroupedByDept = groupPositionsByDept(positions);
-          //  console.log("Positions grouped by department:", requisitions);
+          
 
           return (
             <div

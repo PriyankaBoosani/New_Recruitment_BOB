@@ -271,10 +271,10 @@ export default function CandidateScreening({ selectedJob }) {
 
   const fetchExamConfigByPositions = async (positionIds = []) => {
     try {
-      console.log("FETCH EXAM CONFIG POSITION IDS", positionIds);
+    
 
       if (!positionIds?.length) {
-        console.log("NO POSITION IDS FOUND");
+        
 
         setExamConfigMap({});
         return;
@@ -282,14 +282,9 @@ export default function CandidateScreening({ selectedJob }) {
 
       const query = positionIds.join(",");
 
-      console.log("EXAM CONFIG QUERY", query);
+     
 
-      const res =
-        await jobPositionApiService.getExamConfigurationsByPositions(query);
-
-      console.log("EXAM CONFIG API RESPONSE", res);
-
-      console.log("EXAM CONFIG API DATA", res?.data);
+      const res = await jobPositionApiService.getExamConfigurationsByPositions(query);
 
       const data = res?.data || [];
 
@@ -297,20 +292,13 @@ export default function CandidateScreening({ selectedJob }) {
 
       // ENABLE ONLY WHEN CONFIG EXISTS
       data.forEach((item) => {
-        console.log("CONFIG ITEM", item);
-
         map[item.positionId] = true;
       });
 
-      console.log("FINAL EXAM CONFIG MAP", map);
-
+      
       setExamConfigMap(map);
     } catch (err) {
-      console.error("FAILED TO FETCH EXAM CONFIG", err);
-
-      console.error("FAILED RESPONSE", err?.response);
-
-      console.error("FAILED RESPONSE DATA", err?.response?.data);
+      
 
       setExamConfigMap({});
     }
@@ -433,7 +421,7 @@ export default function CandidateScreening({ selectedJob }) {
       //  HANDLE BACKEND VALIDATION
       if (!res?.success) {
         setErrorMessage(res?.message || "Validation failed");
-        console.log("message", res.data[0].message);
+       
         //  store backend data
         setErrorCandidates(Array.isArray(res?.data) ? res.data : []);
 
@@ -2131,15 +2119,9 @@ export default function CandidateScreening({ selectedJob }) {
       }
 
       // SUMMARY API
-      const res =
-        await jobPositionApiService.getExaminationSummary(selectedPositionId);
+      const res =  await jobPositionApiService.getExaminationSummary(selectedPositionId);
 
-      console.log("SUMMARY API DATA", res?.data);
-
-      console.log(
-        "FIRST ITEM TOTAL QUALIFIED",
-        res?.data?.[0]?.totalQualifiedWithoutRelaxation
-      );
+      
 
       if (res?.success === false) {
         toast.error(res?.data || res?.message);
@@ -2222,7 +2204,7 @@ export default function CandidateScreening({ selectedJob }) {
           };
         });
 
-      console.log("FORMATTED SUMMARY DATA", formattedData);
+      
 
       setExaminationScoreData(formattedData);
 
@@ -2568,10 +2550,7 @@ export default function CandidateScreening({ selectedJob }) {
                       : "text-muted"
                   }`}
                   onClick={() => {
-                    console.log("TAB CLICKED");
-                    console.log("TAB KEY:", tab.key);
-                    console.log("CURRENT ACTIVE TAB:", activeTab);
-
+                   
                     setActiveTab(tab.key);
 
                     if (role === "committee_member") return;
@@ -2608,7 +2587,7 @@ export default function CandidateScreening({ selectedJob }) {
                       status: [], // clear old tab status
                       searchText: "", // optional if you also want search reset
                     }));
-                    console.log("CLICKED TAB:", tab.key);
+                   
                     setActiveTab(tab.key);
                   }}
                   type="button"

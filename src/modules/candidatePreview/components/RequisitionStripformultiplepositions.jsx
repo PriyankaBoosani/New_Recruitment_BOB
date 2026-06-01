@@ -111,8 +111,6 @@ const RequisitionStripformultiplepositions = ({
     loadMasters();
   }, []);
 
-  console.log("MASTER DATA FULL", masterData);
-
   /* ================= FETCH JOB ================= */
 
   useEffect(() => {

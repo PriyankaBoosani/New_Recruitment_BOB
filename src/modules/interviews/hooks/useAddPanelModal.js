@@ -443,9 +443,6 @@ export const useAddPanelModal = ({
     onClose();
   };
 
-  console.log("initialPanel", initialPanel);
-  console.log("panelId", panelId);
-  console.log("selectedPanel", selectedPanel);
 
   /* ================= CANCEL ================= */
 
@@ -580,7 +577,7 @@ export const useAddPanelModal = ({
 
         panelEndDate: maxDate,
       });
-      console.log("resslots", res?.data);
+      
       // ✅ IMPORTANT FIX
       setPanelAvailability(res?.data || []);
     } catch (error) {

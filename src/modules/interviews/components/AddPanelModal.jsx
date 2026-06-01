@@ -46,7 +46,6 @@ const AddPanelModal = ({
     onClose,
     panels,
   });
-  console.log("panels123", panels);
 
   const isDateAllowed = (date, ranges) => {
     if (!date) return false;

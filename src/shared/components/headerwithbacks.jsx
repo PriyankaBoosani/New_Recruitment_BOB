@@ -21,12 +21,7 @@ const PageHeaderWithBacks = ({ title, subtitle }) => {
     const targetRoute = isZonalHr
       ? "/candidate-verification"
       : "/candidate-workflow";
-    console.log(
-      "HeaderWithBack - navigating to:",
-      targetRoute,
-      "with state:",
-      state
-    );
+   
     navigate(targetRoute, {
       state: {
         requisition: state.requisition,

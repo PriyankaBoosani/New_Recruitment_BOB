@@ -99,9 +99,6 @@ const RequisitionStrip = ({
 
     loadMasters();
   }, []);
-
-  console.log("MASTER DATA FULL", masterData);
-
   /* ================= FETCH JOB ================= */
 
   useEffect(() => {

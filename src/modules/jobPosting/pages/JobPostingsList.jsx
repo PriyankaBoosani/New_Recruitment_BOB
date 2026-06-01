@@ -84,7 +84,7 @@ const JobPostingsList = () => {
       // DRAFT REQUISITION
       const res =
         await requisitionApiService.getDraftRequisitionApprovalHistory(req.id);
-      console.log("Approval history response", res);
+      
 
       const historyData = (res?.data || []).map((item) => ({
         ...item,
@@ -629,7 +629,7 @@ const JobPostingsList = () => {
         // const positions = positionsByReq[req.id] || [];
         const key = `${req.isDraft ? req.parentRequisitionId : req.id}_${req.isDraft}`;
         const positions = positionsByReq[key] || [];
-        console.log(req);
+        
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -658,7 +658,7 @@ const JobPostingsList = () => {
           acc[pos.deptId].positions.push(pos);
           return acc;
         }, {});
-        console.log(req);
+        
         return (
           <div
             key={req.id}
@@ -691,7 +691,7 @@ const JobPostingsList = () => {
                         variant="btn-outline"
                         onClick={(e) => {
                           e.stopPropagation();
-                          // console.log("Approved action clicked", req.id);
+                          
                           navigate(
                             `/job-posting/create-requisition?id=${req.id}`,
                             {

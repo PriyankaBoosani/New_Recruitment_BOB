@@ -35,7 +35,6 @@ export default function useInterviewSchedule(isEditMode, isReschedule) {
     );
   };
 
-  console.log("passedcandidates", passedCandidates);
 
   //new functions
   const fetchRequisitions = async (searchText = "") => {
@@ -55,7 +54,7 @@ export default function useInterviewSchedule(isEditMode, isReschedule) {
 
     const fetchCentres = async () => {
       const centreRes = await masterApiService.getAllInterviewCenters();
-      console.log("centreRes", centreRes?.data);
+      
 
       if (centreRes?.data) {
         const zonalOfficeCentres = centreRes.data.filter(
@@ -235,11 +234,11 @@ export default function useInterviewSchedule(isEditMode, isReschedule) {
 
       setPanelExcelModelList(excelPanels);
 
-      console.log("FINAL PAYLOAD 👉", payload); //return false;
+     
 
       // ✅ Call API
       const res = await interviewService.allocatePanels(payload);
-      console.log("data12345", res.data);
+      
       if (!res?.success) {
         return {
           success: false,
@@ -298,8 +297,7 @@ export default function useInterviewSchedule(isEditMode, isReschedule) {
 
   const scheduleInterview = async () => {
     try {
-      //console.log("scheduleApiData", scheduleApiData);return false;
-
+     
       const updatedScheduleData = scheduleApiData.map((item) => ({
         ...item,
 
@@ -316,7 +314,6 @@ export default function useInterviewSchedule(isEditMode, isReschedule) {
 
         panelExcelModelList,
       };
-      console.log("FINAL SCHEDULE PAYLOAD", finalPayload); //return false;
       const res = await interviewService.scheduleInterview(finalPayload);
       //  const res = await interviewService.scheduleInterview(scheduleApiData);
 

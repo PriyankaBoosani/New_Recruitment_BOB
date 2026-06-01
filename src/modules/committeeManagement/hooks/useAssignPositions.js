@@ -495,7 +495,6 @@ export const useAssignPositions = (userId) => {
             sequenceNo: seqIndex,
             positionPanelId: finalPanel.positionPanelId,
           };
-          console.log("🔥 API PAYLOAD", panelPayload);
           if (committeeType === "INTERVIEW") {
             payload.interviewPanelList.push(panelPayload);
           } else if (committeeType === "SCREENING") {

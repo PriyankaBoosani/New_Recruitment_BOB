@@ -19,9 +19,7 @@ const InterviewPanelsConfig = ({
   onApplyAll,
   initialSelectedPanels = [],
 }) => {
-  console.log("InterviewPanelsConfig - positionId:", positionId);
-  //console.log("START TIME FROM INPUT 👉", startTime);
-
+  
   const {
     availablePanels,
     selectedPanels,
@@ -52,7 +50,6 @@ const InterviewPanelsConfig = ({
 
   const [showSummaryModal, setShowSummaryModal] = React.useState(false);
 
-  console.log("panels:", selectedPanels);
 
   const handleApplyAll = async () => {
     // ✅ Validate Position

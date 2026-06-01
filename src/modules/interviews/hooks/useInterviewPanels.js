@@ -85,12 +85,10 @@ export const useInterviewPanels = (positionId, initialSelectedPanels = []) => {
   const loadPanels = async (positionId) => {
     if (!positionId) return;
 
-    console.log("positionids", positionId);
 
     try {
       const response = await interviewService.getPanelsByPosition(positionId);
 
-      console.log("response1111", response);
 
       // ✅ FIXED PATH
       const apiList = response?.data || [];

@@ -553,8 +553,6 @@ const AddPosition = () => {
         setShowIndentModal(true);
       }
 
-      console.log("dept", value, "matches", matches, "unique", uniqueMatches);
-
       // clear position when department changes
       setFormData((prev) => ({
         ...prev,

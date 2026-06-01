@@ -57,7 +57,6 @@ export const useCreateRequisition = (editId, mode, isDraftMode = false) => {
           endDate: data.endDate ? data.endDate.split("T")[0] : "",
           cutoffDate: data.cutoffDate ? data.cutoffDate.split("T")[0] : "",
         });
-        console.log("Loaded requisition data:", data);
       } catch (err) {
         console.error(err);
         setError("Failed to load requisition data.");

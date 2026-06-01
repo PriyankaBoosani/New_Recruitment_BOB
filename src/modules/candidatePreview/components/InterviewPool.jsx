@@ -27,7 +27,7 @@ export default function InterviewPool({
   onReschedule,
   allCandidatesForFilters,
 }) {
-  console.log("InterviewPool render", position);
+ 
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const navigate = useNavigate();
   const STATUS_CLASS_MAP = {
@@ -56,15 +56,8 @@ export default function InterviewPool({
   const allSelected =
     allCandidatesForFilters?.length > 0 &&
     allCandidatesForFilters.every((c) => selectedIds.includes(String(c.id)));
-  console.log("selectedIds", selectedIds);
-  console.log(
-    "page ids",
-    candidates.map((c) => String(c.id))
-  );
-
-  // const toggleSelectAll = () => {
-  //   setSelectedIds(allSelected ? [] : candidates.map((c) => c.id));
-  // };
+  
+ 
 
   const toggleSelectAll = () => {
     if (!filters?.status?.length) {
