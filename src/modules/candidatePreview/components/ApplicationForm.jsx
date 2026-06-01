@@ -304,9 +304,7 @@ const ApplicationForm = ({
     // -----------------------------------------
 
     if (zonalDecision === "NO" && allVerified) {
-      // toast.warning(
-      //   "All documents are verified. Please select other decision instead."
-      // );
+    
       toast.warning(t("all_documents_verified_select_other"));
       return;
     }
