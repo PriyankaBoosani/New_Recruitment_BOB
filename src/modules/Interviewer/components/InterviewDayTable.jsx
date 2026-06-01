@@ -179,15 +179,6 @@ const InterviewDayTable = ({
                         return;
                       }
 
-                      // const num = parseInt(v, 10);
-
-                      // if (isNaN(num)) {
-                      //   updateScore(row.id, "");
-                      //   return;
-                      // }
-
-                      // updateScore(row.id, Math.min(100, Math.max(0, num)));
-
                       const num = parseInt(v, 10);
 
                       if (isNaN(num)) {

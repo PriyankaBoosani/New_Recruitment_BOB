@@ -26,9 +26,7 @@ const InterviewPanelPage = () => {
     setFormData,
     errors,
     setErrors,
-    // editAssignedMembers,
-    // setEditAssignedMembers,
-
+    
     initData,
     fetchPanels,
     handleSave,
@@ -43,9 +41,6 @@ const InterviewPanelPage = () => {
     setSearch,
     showFilters,
     setShowFilters,
-    // sortConfig,
-    // handleSort,
-    // sortedPanels,
     size,
     setSize,
     activeTab,
@@ -60,13 +55,6 @@ const InterviewPanelPage = () => {
     setShowUpdateConfirmModal,
     continuePanelUpdate,
   } = useInterviewPanel();
-
-  // const {
-  //   bulkImportPositionAssignments,
-  //   downloadPositionAssignmentTemplate,
-  //   loadPositionData,
-  //   selectedPosition,
-  // } = useAssignPositions()
 
   useEffect(() => {
     initData();
@@ -250,9 +238,6 @@ const InterviewPanelPage = () => {
                     setSearch={setSearch}
                     showFilters={showFilters}
                     setShowFilters={setShowFilters}
-                    // sortConfig={sortConfig}
-                    // handleSort={handleSort}
-                    // sortedPanels={sortedPanels}
                     size={size}
                     setSize={setSize}
                     onDelete={(id, panelName) => {

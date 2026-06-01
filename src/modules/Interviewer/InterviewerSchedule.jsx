@@ -140,52 +140,7 @@ export default function InterviewerSchedule() {
   const formatApiDate = (d) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
-  // useEffect(() => {
-
-  //   const posId = selectedPosition?.position?.positionId;
-
-  //   if (!posId) {
-  //     setRows([]);
-  //     setAllCandidatesRaw([]);
-  //     setPage(0);
-  //     return;
-  //   }
-
-  //   const load = async () => {
-  //     try {
-  //       const dateStr = formatApiDate(selectedDate || new Date());
-
-  //       const res =
-  //         await InterviewerService.getCandidatesByPositionAndDate(
-  //           posId,
-  //           dateStr
-  //         );
-
-  //       const apiList = res.data || [];
-
-  //       //  SHOW BACKEND MESSAGE WHEN EMPTY
-  //       if (apiList.length === 0 && res.message) {
-  //         toast.info(res.message);
-  //       }
-
-  //       setAllCandidatesRaw(apiList);
-
-  //       const mapped = mapInterviewerCandidates(apiList);
-  //       setRows(mapped);
-  //       setOriginalRows(mapped.map(r => ({ ...r })));
-
-  //     } catch (err) {
-  //       console.error("Load interviewer candidates failed", err);
-  //       toast.error(t("failed_load_candidates"));
-  //       setRows([]);
-  //       setAllCandidatesRaw([]);
-  //     }
-  //   };
-
-  //   load();
-
-  // }, [selectedPosition, selectedDate, usedRestoreData]);
-
+  
   useEffect(() => {
     //  ADD THIS BLOCK
     if (
@@ -362,90 +317,6 @@ export default function InterviewerSchedule() {
 
   /* ================= SAVE ================= */
 
-  // const handleSave = async () => {
-  //   try {
-
-  //     const changedRows = rows.filter(isRowChanged);
-
-  //     if (!changedRows.length) {
-  //       toast.info("No changes to save");
-  //       return;
-  //     }
-
-  //     const payloads = changedRows.map(r => {
-  //       const raw = r.raw;
-
-  //       return {
-  //         applicationId: raw.applicationId,
-  //         scheduledInterviewId: raw.interviewScheduleId,
-  //         candidateId: raw.candidateId,
-  //         panelId: raw.panelId,
-  //         panelScore: Number(r.score) || 0,
-  //         //  panelScore: r.score,
-  //         panelComments: r.comment || "",
-  //         interviewCenterId: raw.interviewCenterId,
-  //         isAbsent: !!r.absent
-  //       };
-  //     });
-
-  //     await Promise.all(
-  //       payloads.map(p =>
-  //         InterviewerService.setCandidateScore(p)
-  //       )
-  //     );
-
-  //     toast.success(`Saved ${payloads.length} candidate(s)`);
-
-  //     // refresh snapshot after save
-  // setOriginalRows(rows.map(r => ({ ...r })));
-
-  //   } catch (err) {
-  //     console.error(" SAVE SCORE ERROR:", err);
-  //     toast.error("Save failed");
-  //   }
-  // };
-
-  // const handleSave = async () => {
-  //   try {
-
-  //     const changedRows = rows.filter(isRowChanged);
-
-  //     if (!changedRows.length) {
-  //       toast.info("No changes to save");
-  //       return;
-  //     }
-
-  //     const payloads = changedRows.map(r => {
-  //       const raw = r.raw;
-
-  //       return {
-  //         applicationId: raw.applicationId,
-  //         scheduledInterviewId: raw.interviewScheduleId,
-  //         candidateId: raw.candidateId,
-  //         panelId: raw.panelId,
-  //         panelScore:
-  //           r.absent ? null : (r.score === "" ? null : Number(r.score)),
-  //         panelComments: r.comment || "",
-  //         interviewCenterId: raw.interviewCenterId,
-  //         isAbsent: !!r.absent
-  //       };
-  //     });
-
-  //     await InterviewerService.setCandidateScoreBatch(payloads);
-
-  //     toast.success(`Saved ${payloads.length} candidate(s)`);
-
-  //     // refresh snapshot after save
-  //     setOriginalRows(rows.map(r => ({ ...r })));
-
-  //   } catch (err) {
-  //     console.error(" SAVE SCORE ERROR:", err);
-  //     toast.error("Save failed");
-  //   }
-  // };
-
-  // score mandatory
-
   const handleSave = async () => {
     try {
       const changedRows = rows.filter(isRowChanged);
@@ -520,13 +391,6 @@ export default function InterviewerSchedule() {
             ‹
           </span>
 
-          {/* <DatePicker
-            selected={selectedDate}
-            onChange={setSelectedDate}
-            dateFormat="dd MMMM yyyy"
-            customInput={<DatePill />}
-           // maxDate={new Date()}
-          /> */}
 
           <DatePicker
             selected={selectedDate}

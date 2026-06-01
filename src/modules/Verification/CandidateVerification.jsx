@@ -11,7 +11,7 @@ import masterApiService from "../master/services/masterApiService";
 import RequisitionPositionSelector from "../candidatePreview/components/RequisitionPositionSelector";
 import CandidateTable from "./components/CandidateTable";
 import CandidateVerificationService from "./services/CandidateVerification";
-// import { DUMMY_DATA } from "./components/mockData";
+
 import { mapCandidatesToTableRows } from "./mappers/CandidateVerificationMapper";
 import { useLocation } from "react-router-dom";
 import PdfViewerModal from "../candidatePreview/components/PdfViewerModal";
@@ -61,15 +61,6 @@ export default function CandidateVerification() {
     sessionStorage.getItem("fromPreviewBack") === "true"
   );
 
-  // Check for back navigation on mount
-  // useEffect(() => {
-  //   isBackNavigationRef.current = sessionStorage.getItem("fromPreviewBack") === "true";
-
-  //   // Clean up sessionStorage after checking
-  //   if (isBackNavigationRef.current) {
-  //     sessionStorage.removeItem("fromPreviewBack");
-  //   }
-  // }, []);
   useEffect(() => {
     if (!location.state) return;
 
@@ -139,11 +130,6 @@ export default function CandidateVerification() {
 
   /* ================= LOAD MASTER ================= */
 
-  // useEffect(() => {
-  //   masterApiService.getAllMasters().then(res => {
-  //     setMasterData(res.data);
-  //   });
-  // }, []);
 
   useEffect(() => {
     if (navInitRef.current) {
@@ -154,12 +140,7 @@ export default function CandidateVerification() {
 
   const isBackNavigation = isBackNavigationRef.current;
 
-  // useEffect(() => {
-  //   // When selection becomes empty → reset page
-  //   if (!selectedRequisition || !selectedPosition) {
-  //     setPage(0);
-  //   }
-  // }, [selectedRequisition, selectedPosition]);
+
 
   const formatApiDate = (d) => {
     if (!d) return null;
@@ -274,12 +255,6 @@ export default function CandidateVerification() {
     setActiveStage(null);
   }, [selectedDate]);
 
-  /* ================= LOAD DUMMY → TABLE MAP ================= */
-
-  // useEffect(() => {
-  //   setAllCandidates(mapCandidatesToTableRows(DUMMY_DATA));
-  // }, []);
-
   /* ================= FILTER ================= */
 
   const baseFiltered = allCandidates.filter((c) => {
@@ -357,28 +332,6 @@ export default function CandidateVerification() {
 
   const isSelectionDone = selectedRequisition && selectedPosition;
 
-  // const handleSaveAbsent = async () => {
-  //   try {
-  //     if (!filteredCandidates.length) return;
-
-  //     for (const c of filteredCandidates) {
-  //       if (originalAbsentMap[c.id] !== c.absent) {
-  //         await CandidateVerificationService.updateAbsentStatus(
-  //           c.raw.applicationId,
-  //           c.absent
-  //         );
-  //       }
-  //     }
-
-  //     await loadCandidates(selectedDate);   //  refresh data
-
-  //     toast.success("Absent status updated");
-
-  //   } catch (err) {
-  //     console.error("Absent update failed", err);
-  //     toast.error("Save failed");
-  //   }
-  // };
 
   const handleSaveAbsent = async () => {
     try {

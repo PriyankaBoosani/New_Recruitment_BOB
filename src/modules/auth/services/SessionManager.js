@@ -7,8 +7,7 @@ import { Modal, Button } from "react-bootstrap";
 
 const IDLE_TIMEOUT = 15 * 60 * 1000; // 2 minutes
 const WARNING_TIME = 14 * 60 * 1000; // show modal at 1 minute
-// const IDLE_TIMEOUT = 10 * 1000;   // 10 sec
-// const WARNING_TIME = 5 * 1000;
+
 const SessionManager = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();

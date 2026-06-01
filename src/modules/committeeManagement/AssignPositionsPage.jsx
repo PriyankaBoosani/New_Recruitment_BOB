@@ -273,13 +273,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                 min={today}
                 value={committee.startDate}
                 disabled={shouldDisableRemove}
-                // disabled={
-                //   isL1Approved ||
-                //   (isApproved && (
-                //     !committee.canEdit ||   // scenario 2
-                //     isCompleted             // scenario 3 override
-                //   ))
-                // }
+                
                 onChange={(e) => {
                   const value = e.target.value;
 
@@ -303,10 +297,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                 min={committee.startDate || today}
                 value={committee.endDate}
                 disabled={shouldDisableFields}
-                // disabled={
-                //   isL1Approved ||
-                //   (isApproved && !committee.canEdit)   // only scenario 2
-                // }
+                
                 onChange={(e) => {
                   const value = e.target.value;
 

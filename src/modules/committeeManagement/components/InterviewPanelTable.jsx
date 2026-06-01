@@ -19,9 +19,6 @@ const InterviewPanelTable = ({
   setSearch,
   showFilters,
   setShowFilters,
-  // sortConfig,
-  // handleSort,
-  // sortedPanels
 }) => {
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   return (

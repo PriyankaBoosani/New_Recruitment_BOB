@@ -16,8 +16,6 @@ const EMPTY_FORM = {
   role: "",
   fullName: "",
   email: "",
-  // password: "",
-  // confirmPassword: "",
   interviewCenterId: "",
 };
 
@@ -43,13 +41,7 @@ const UserFormModal = ({
   const [activeTab, setActiveTab] = useState("manual");
 
   /* ========================= RESET FORM ON OPEN  ========================= */
-  // useEffect(() => {
-  //   if (show) {
-  //     setFormData(EMPTY_FORM);
-  //     setErrors({});
-  //     setActiveTab("manual"); // reset to manual
-  //   }
-  // }, [show]);
+
   useEffect(() => {
     if (!show) return;
 

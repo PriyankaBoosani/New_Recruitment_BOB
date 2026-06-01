@@ -88,8 +88,7 @@ const AppRoutes = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
 
-        {/* Root redirect: if authed go to users, else login */}
-        {/* <Route path="/" element={authUser ? <Navigate to="/auth/callback" /> : <Navigate to="/login" />} /> */}
+        
         <Route
           path="/"
           element={
@@ -297,14 +296,7 @@ const AppRoutes = () => {
                   </PrivilegeRoute>
                 }
               />
-              {/* <Route
-                path="/ExaminationCutoffConfiguration"
-                element={
-                  <PrivilegeRoute privilege="ExaminationCutoffConfiguration">
-                    <ExaminationCutoffConfiguration />
-                  </PrivilegeRoute>
-                }
-              /> */}
+              
 
               <Route
                 path="/interviewpanel"

@@ -102,11 +102,6 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  // const user = useSelector((state) => state.user.user);
-
-  // const role = user?.role?.toLowerCase();
-
-  // const isRecruiter = role === "recruiter";
   const COMPENSATION_POOL_STATUSES =
     role === "committee_member"
       ? ["PENDING", "APPROVED", "REJECTED", "RENEGOTIATE"]
@@ -123,21 +118,7 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [pendingExamOpen, setPendingExamOpen] = useState(false);
 
-  // const handleRemovePosition = (removeId) => {
-  //   const updatedIds = selectedPositionId.filter(
-  //     (id) => id !== removeId
-  //   );
-
-  //   setSelectedPositionId(updatedIds);
-
-  //   // CLEAR DATA WHEN NO POSITIONS LEFT
-  //   if (updatedIds.length === 0) {
-  //     setCandidates([]);
-  //     setTotalElements(0);
-  //     setSelectedCandidateIds([]);
-  //     setAllCandidatesForFilters([]);
-  //   }
-  // };
+  
 
   const handleRemovePosition = (removeId) => {
     const updatedIds = selectedPositionId.filter((id) => id !== removeId);
@@ -167,11 +148,7 @@ export default function CandidateScreening({ selectedJob }) {
   const [showImportCandidatesModal, setShowImportCandidatesModal] =
     useState(false);
 
-  // const user = useSelector((state) => state.user.user);
-
-  // const role = user?.role?.toLowerCase();
-
-  // const isRecruiter = role === "recruiter";
+  
 
   const isCommitteeMember = role === "committee_member";
 
@@ -231,8 +208,7 @@ export default function CandidateScreening({ selectedJob }) {
   const [requisitions, setRequisitions] = useState([]);
   const [loadingRequisitions, setLoadingRequisitions] = useState(false);
 
-  // const [positions, setPositions] = useState([]);
-  // const [selectedPositionId, setSelectedPositionId] = useState("");
+ 
   const [loadingPositions, setLoadingPositions] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("");
@@ -321,8 +297,7 @@ export default function CandidateScreening({ selectedJob }) {
   };
 
   //  const handleScheduleInterview = () => {
-  //   if (!selectedCandidateIds.length) return;
-
+  
   const [reservationCategories, setReservationCategories] = useState([]);
 
   const reservationCategoryMap = useMemo(() => {
@@ -378,34 +353,7 @@ export default function CandidateScreening({ selectedJob }) {
     }
   }, []);
 
-  // useEffect(() => {
-
-  //   if (
-  //     !location.state?.refreshSchedulePool
-  //   ) {
-  //     return;
-  //   }
-
-  //   if (
-  //     activeTab !== "SCHEDULE_POOL"
-  //   ) {
-  //     return;
-  //   }
-
-  //   if (
-  //     !selectedPositionId?.length
-  //   ) {
-  //     return;
-  //   }
-
-  //   fetchSchedulePoolCandidates();
-
-  // }, [
-  //   location.state?.refreshSchedulePool,
-  //   activeTab,
-  //   selectedPositionId?.join(",")
-  // ]);
-
+  
   const handleSubmitForApproval = async () => {
     try {
       setSubmittingApproval(true);
@@ -444,10 +392,7 @@ export default function CandidateScreening({ selectedJob }) {
       }));
 
       // MOVE TO INTERVIEW POOL
-      // setActiveTab("INTERVIEW_POOL");
-
-      // RESET PAGE
-      //setInterviewPage(0);
+     
       setSchedulePoolPage(0);
 
       // REFRESH
@@ -492,20 +437,7 @@ export default function CandidateScreening({ selectedJob }) {
         interviewCenterName: c.interviewCenterName,
       }));
 
-    // const params = new URLSearchParams({
-    //   requisitionId: selectedRequisitionId || "",
-    //   positionId: selectedPositionId || "",
-    //   candidates: JSON.stringify(selectedCandidatesData)
-    // });
-
-    // navigate("/schedule-interviews", {
-    //   state: {
-    //     candidates: selectedCandidatesData,
-    //     requisitionId: selectedRequisitionId,
-    //     positionId: selectedPositionId
-    //   }
-    // });
-
+   
     navigate("/schedule-interviews", {
       state: {
         candidates: selectedCandidatesData,
@@ -567,12 +499,7 @@ export default function CandidateScreening({ selectedJob }) {
     OFFER_POOL: "Offer Pool",
     // ONBOARDING_POOL: "Compensation Pool", // assuming onboarding is compensation
   };
-  // const tabs = [
-  //   { key: "CANDIDATE_POOL", label: "Candidate Pool", count: totalElements },
-  //   { key: "INTERVIEW_POOL", label: "Interview Pool", count: interviewTotalElements },
-  //   { key: "OFFER_POOL", label: "Offer Pool", count: 0 },
-  //   { key: "ONBOARDING_POOL", label: "Onboarding Pool", count: 0 },
-  // ];
+ 
 
   const tabs = [
     {
@@ -1000,10 +927,6 @@ export default function CandidateScreening({ selectedJob }) {
     }
   };
 
-  // const allInterviewCandidatesForFilters = useMemo(() => {
-  //   return interviewCandidates;
-  // }, [interviewCandidates]);
-
   const fetchAllCandidatesForFilters = async () => {
     try {
       const normalizedStatus =
@@ -1231,16 +1154,6 @@ export default function CandidateScreening({ selectedJob }) {
     return `${day}-${month}-${year} ${time}`;
   };
 
-  // useEffect(() => {
-  //   if (!selectedPositionId) {
-  //     setCandidates([]);
-  //     setTotalElements(0);
-  //     return;
-  //   }
-
-  //   fetchCandidates();
-  // }, [selectedPositionId, page, pageSize, filters, masterData]);
-
   useEffect(() => {
     if (
       !selectedPositionId.length ||
@@ -1307,45 +1220,8 @@ export default function CandidateScreening({ selectedJob }) {
       return;
     }
 
-    // try {
-    //   setLoadingPositions(true);
-
-    //   const res = await jobPositionApiService.getPositionsByReqId({
-    //     requisitionId: reqId,
-    //   });
-
-    //   setPositions(res?.data || []);
-    // } catch (err) {
-    //   console.error("Failed to load positions", err);
-    //   setPositions([]);
-    // } finally {
-    //   setLoadingPositions(false);
-    // }
   };
-  // const handlePositionChange = (id) => {
-  //   dispatch(clearRankState()); // RESET HERE
-  //   setSelectedPositionId(id);
-  // };
-
-  // const handlePositionChange = (ids) => {
-  //   dispatch(clearRankState());
-
-  //   setSelectedPositionId(ids);
-
-  //   // CLEAR EVERYTHING WHEN NO POSITION SELECTED
-  //   if (!ids || ids.length === 0) {
-  //     setCandidates([]);
-  //     setTotalElements(0);
-
-  //     setSelectedCandidateIds([]);
-  //     setSelectedInterviewCandidateIds([]);
-  //     setSelectedCompensationIds([]);
-
-  //     setAllCandidatesForFilters([]);
-
-  //     setPage(0);
-  //   }
-  // };
+  
 
   const handlePositionChange = (ids) => {
     dispatch(clearRankState());
@@ -1724,15 +1600,7 @@ export default function CandidateScreening({ selectedJob }) {
     setSelectedRequisitionId(navReqId);
   }, [location.state]);
 
-  // useEffect(() => {
-  //   if (
-  //     isNavModeRef.current &&
-  //     navInitRef.current.requisitionId &&
-  //     requisitions.length > 0
-  //   ) {
-  //     setSelectedRequisitionId(navInitRef.current.requisitionId);
-  //   }
-  // }, [requisitions]);
+  
 
   useEffect(() => {
     if (
@@ -2510,11 +2378,7 @@ export default function CandidateScreening({ selectedJob }) {
                   isSaveBtn={false}
                   saveButton={false}
                   onRemovePosition={handleRemovePosition}
-                  // onRemovePosition={(positionId) => {
-                  //   setSelectedPositionId((prev) =>
-                  //     prev.filter((id) => id !== positionId)
-                  //   );
-                  // }}
+                  
                 />
               )}
             </div>

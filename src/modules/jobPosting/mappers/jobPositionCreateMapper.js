@@ -113,22 +113,6 @@ export const mapAddPositionToCreateDto = ({
         };
   };
 
-  /* ================= NATIONAL TOTAL VALIDATION ================= */
-  // if (!formData.enableStateDistribution) {
-  //   const categoryTotal = Object.values(nationalCategories)
-  //     .reduce((a, b) => a + Number(b || 0), 0);
-
-  //   const disabilityTotal = Object.values(nationalDisabilities)
-  //     .reduce((a, b) => a + Number(b || 0), 0);
-
-  //   const total = categoryTotal + disabilityTotal;
-
-  //   if (total !== Number(formData.vacancies)) {
-  //     throw new Error(
-  //       `National distribution total (${total}) must equal total vacancies (${formData.vacancies})`
-  //     );
-  //   }
-  // }
 
   /* ================= FINAL DTO ================= */
   return {

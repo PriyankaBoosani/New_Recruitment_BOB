@@ -454,19 +454,7 @@ export default function ExaminationCutoffConfiguration() {
           {/* STRIP */}
           <div className="exam-strip-section">
             {normalizedRequisition && selectedPosition?.length > 0 && (
-              // <RequisitionStripformultiplepositions
-              //   requisition={normalizedRequisition}
-              //   position={selectedPosition}
-              //   isCardBg={false}
-              //   isSaveEnabled={false}
-              //   isSaveBtn={false}
-              //   saveButton={false}
-              //   onRemovePosition={(positionId) => {
-              //     setSelectedPositionId((prev) =>
-              //       prev.filter((id) => id !== positionId)
-              //     );
-              //   }}
-              // />
+              
 
               <RequisitionStrip
                 requisition={normalizedRequisition}

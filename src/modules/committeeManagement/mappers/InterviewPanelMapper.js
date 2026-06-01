@@ -52,14 +52,6 @@ export const preparePanelPayload = (
       interviewCommitteeId: selectedCommittee?.id,
     },
 
-    // interviewCenter: {
-    //   interviewCentre: selectedCenter?.label || "",
-    //   organizationType: "Zonal Office",
-    //   zone: selectedCenter?.label || "",
-    //   zonalStateId: "",
-    //   alpha: "",
-    //   interviewCentreId: selectedCenter?.value
-    // },
 
     panelMembers: selectedMembers.map((m) => ({
       panelMember: {

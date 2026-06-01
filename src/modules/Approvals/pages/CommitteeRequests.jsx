@@ -314,19 +314,6 @@ const CommitteeRequests = () => {
     }),
   };
 
-  // const getStatusBadgeVariant = (status) => {
-  //     switch (status.toLowerCase()) {
-  //         case "approved":
-  //             return "success";
-  //         case "pending":
-  //             return "warning";
-  //         case "rejected":
-  //             return "danger";
-  //         default:
-  //             return "secondary";
-  //     }
-  // };
-
   return (
     <div className="committee-requests-page">
       <Container fluid className="committee-page">

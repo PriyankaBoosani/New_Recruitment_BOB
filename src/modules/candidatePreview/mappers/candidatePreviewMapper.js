@@ -11,8 +11,6 @@ import {
 
 import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 
-// const findById = (arr, key, id) =>
-//   arr?.find(x => String(x[key]) === String(id));
 
 const findById = (arr = [], key, id) =>
   arr.find((x) => String(x[key]) === String(id));
@@ -53,14 +51,6 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
   const presentDistrict = getDistrictName(masters, address.districtId);
   const presentState = getStateName(masters, address.stateId);
   const presentPin = getPincode(masters, address.pincodeId);
-
-  // const statePreference1 = getZonalState(masters, locationprefApiData.statePreference1);
-  // const statePreference2 = getZonalState(masters, locationprefApiData.statePreference2);
-  // const statePreference3 = getZonalState(masters, locationprefApiData.statePreference3);
-
-  // const locationPreference1 = getInterviewCentreName(masters, locationprefApiData.locationPreference1);
-  // const locationPreference2 = getInterviewCentreName(masters, locationprefApiData.locationPreference2);
-  // const locationPreference3 = getInterviewCentreName(masters, locationprefApiData.locationPreference3);
 
   const statePreference1 = getStateName(
     masters,
@@ -161,14 +151,6 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
         };
       });
 
-  //       .map(d => ({
-  //   id: d.id,
-  //  name: d.displayName || d.fileName,
-  //  fileName: d.fileName,
-  //  url: d.fileUrl,
-
-  //   status: d.documentScreeningStatus || "Pending"
-  // }));
   const mapLanguageNames = (languages, masters) => {
     if (!languages?.length) return "-";
 
@@ -214,9 +196,6 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
       caste: profile.community || "-",
       reservationCategory_name: reservation?.categoryName || "-",
 
-      // address: `${address.addressLine1 || ""} ${address.addressLine2 || ""}`.trim() || "-",
-      // permanentAddress:
-      //   `${address.permanentAddressLine1 || ""} ${address.permanentAddressLine2 || ""}`.trim() || "-",
       address: presentAddressFull + " - " + address.pincode || "-",
       permanentAddress:
         permanentAddressFull + " - " + address.permanentPincode || "-",
@@ -274,13 +253,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
         universityName: edu.universityName || "-",
         startDate: formatDateDDMMYYYY(edu.startDate) || "-",
         endDate: formatDateDDMMYYYY(edu.endDate) || "-",
-        // percentage:
-        //   edu.percentage != null
-        //     ? Number(edu.percentage) < 10
-        //       ? `${edu.percentage} CGPA`
-        //       : `${edu.percentage}%`
-        //     : "-",
-        // percentage: edu.percentage ?? "-",
+       
 
         percentage:
           edu.percentage != null && !isNaN(Number(edu.percentage))
@@ -320,7 +293,6 @@ const safeCurrency = (value) =>
     ? `₹${Number(value).toLocaleString("en-IN")}`
     : "-";
 
-// src/modules/candidatePreview/mappers/candidatePreviewMapper.js
 
 export const mapJobPositionToRequisitionStrip = (
   apiData = {},
@@ -337,19 +309,6 @@ export const mapJobPositionToRequisitionStrip = (
   const departmentObj = masters?.departments?.find(
     (d) => d.departmentId === apiData.deptId
   );
-
-  /* ========= MASTER LOOKUPS ========= */
-  // const reservationMap =
-  //   masters?.reservationCategories?.reduce((acc, r) => {
-  //     acc[r.reservationCategoriesId] = r.categoryCode; // GEN / EWS / SC / ST / OBC
-  //     return acc;
-  //   }, {}) || {};
-
-  // const disabilityCodeMap =
-  //   masters?.disabilityCategories?.reduce((acc, d) => {
-  //     acc[d.disabilityCategoryId] = d.disabilityCode; // HI / VI / OC / ID
-  //     return acc;
-  //   }, {}) || {};
 
   /* ========= NATIONAL CATEGORY + DISABILITY (PIVOTED) ========= */
 

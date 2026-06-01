@@ -140,8 +140,7 @@ export default function CompensationPool({
   };
 
   const [showCompModal, setShowCompModal] = useState(false);
-  // const [selectedCandidate, setSelectedCandidate] = useState(null);
-
+  
   const [formData, setFormData] = useState({
     fixedPay: "",
     variablePay: "",
@@ -150,10 +149,6 @@ export default function CompensationPool({
     panelComments: "",
   });
 
-  //  const isRecruiterFormValid =
-  //   formData.fixedPay &&
-  //   formData.variablePay &&
-  //   formData.joiningBonus;
 
   const isManagerFormValid =
     managerForm.fixedPay && managerForm.variablePay && managerForm.joiningBonus;
@@ -216,10 +211,6 @@ export default function CompensationPool({
         return;
       }
 
-      // if (fixed + variable !== expected) {
-      //   toast.error("Fixed Pay + Variable Pay should be equal to Expected CTC");
-      //   return;
-      // }
       const payload = {
         compensation: {
           candidateId: selectedCandidate.candidateId,
@@ -396,11 +387,6 @@ export default function CompensationPool({
     try {
       setSaveClicked(true);
 
-      //  REQUIRED FIELD VALIDATION
-      // if (!formData.fixedPay) {
-      //   toast.error("Fixed Pay is required");
-      //   return;
-      // }
       if (!formData.fixedPay || !formData.recruiterComments?.trim()) {
         return;
       }
@@ -410,10 +396,6 @@ export default function CompensationPool({
       const variable = parseAmount(formData.variablePay) || 0;
       const expected = Number(selectedCandidate?.expectedCtc || 0);
 
-      // if (fixed + variable !== expected) {
-      //   toast.error("Fixed Pay + Variable Pay should be equal to Expected CTC");
-      //   return;
-      // }
       const payload = {
         compensation: {
           candidateId: selectedCandidate.candidateId,

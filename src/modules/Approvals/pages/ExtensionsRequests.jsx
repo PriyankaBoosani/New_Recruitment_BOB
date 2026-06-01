@@ -601,9 +601,7 @@ const ExtensionsRequests = () => {
               ).map((msg) => ({
                 title: msg.senderType,
                 comment: msg.comments || msg.message || msg.content || "-",
-                // time: msg.createdDate
-                //   ? new Date(msg.createdDate).toLocaleString()
-                //   : "",
+               
                 time: `${formatDate(msg.createdDate)} ${formatTime(msg.createdDate)}`,
                 attachmentPath: msg.attachmentPath || null,
               }));

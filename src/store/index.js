@@ -20,9 +20,6 @@ const persistConfig = {
   blacklist: ["resume"],
 };
 
-// If you prefer whitelist instead, use:
-// const persistConfig = { key: 'root', storage, whitelist: ['user', 'job'] };
-
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // 3) Create store

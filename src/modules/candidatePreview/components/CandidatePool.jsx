@@ -45,13 +45,6 @@ export default function CandidatePool({
     allCandidatesForFilters?.length > 0 &&
     allCandidatesForFilters.every((c) => selectedIds.includes(c.id));
 
-  // const toggleSelectAll = () => {
-  //   if (allSelected) {
-  //     setSelectedIds([]);
-  //   } else {
-  //     setSelectedIds(candidates.map((c) => c.id));
-  //   }
-  // };
 
   useEffect(() => {
     if (!filters?.status?.length) {
@@ -59,20 +52,6 @@ export default function CandidatePool({
     }
   }, [filters?.status]);
 
-  //   const toggleSelectAll = () => {
-
-  //   //  VALIDATION
-  //   if (!filters?.status?.length) {
-  //     toast.error("Please select the filter first");
-  //     return;
-  //   }
-
-  //   if (allSelected) {
-  //     setSelectedIds([]);
-  //   } else {
-  //     setSelectedIds(candidates.map((c) => c.id));
-  //   }
-  // };
 
   const formatStatus = (status = "") =>
     status

@@ -70,22 +70,6 @@ export default function EducationModal({
   const getLabel = (list, id, key = "label") =>
     list.find((i) => i.id === id)?.[key] || "";
 
-  // const degreeText = rows
-  //     .filter(r =>
-  //         r.educationTypeId &&
-  //         r.educationQualificationsId
-  //     )
-  //     .map((r, i) => {
-  //         const type = getLabel(educationTypes, r.educationTypeId);
-  //         const degree = getLabel(qualifications, r.educationQualificationsId, "name");
-  //         const spec = getLabel(specializations, r.specializationId);
-
-  //         if (!type || !degree) return null;
-
-  //         return `${i > 0 ? "OR " : ""}${type} ${degree}${spec ? ` in ${spec}` : ""}`;
-  //     })
-
-  //     .join(" ");
 
   const getSpecializationsForDegree = (degreeId) => {
     if (!degreeId) return [];
@@ -138,9 +122,7 @@ export default function EducationModal({
     .filter(Boolean)
     .join("\nOR\n");
 
-  // const addRow = () => {
-  //     setRows([...rows, createRow(false)]);
-  // };
+ 
   const addGroup = () => {
     setGroups([...groups, createGroup()]);
   };
@@ -151,37 +133,6 @@ export default function EducationModal({
     setGroups(copy);
   };
 
-  // const updateRow = (i, field, value) => {
-  //     const copy = [...rows];
-  //     copy[i][field] = value;
-
-  //     // if degree changes, wipe specialization
-  //     if (field === "educationQualificationsId") {
-  //         copy[i].specializationId = "";
-  //     }
-
-  //     setRows(copy);
-
-  //     // clear errors (unchanged)
-  //     setErrors(prev => {
-  //         if (!prev.rows?.[i]?.[field]) return prev;
-  //         const updated = { ...prev };
-  //         updated.rows = [...updated.rows];
-  //         updated.rows[i] = { ...updated.rows[i], [field]: "" };
-  //         return updated;
-  //     });
-  // };
-  // const updateRow = (gIdx, rIdx, field, value) => {
-  //     const copy = [...groups];
-
-  //     copy[gIdx].educations[rIdx][field] = value;
-
-  //     if (field === "educationQualificationsId") {
-  //         copy[gIdx].educations[rIdx].specializationId = "";
-  //     }
-
-  //     setGroups(copy);
-  // };
 
   const updateRow = (gIdx, rIdx, field, value) => {
     const copy = [...groups];
@@ -228,14 +179,7 @@ export default function EducationModal({
       return updated;
     });
   };
-  // const removeRow = (index) => {
-  //     setRows(prev =>
-  //         prev.length > 1
-  //             ? prev.filter((_, i) => i !== index)
-  //             : [createRow()]
-  //     );
-  // };
-
+ 
   const removeRow = (gIdx, rIdx) => {
     const copy = [...groups];
 
@@ -940,21 +884,14 @@ export default function EducationModal({
           variant="primary"
           onClick={() => {
             const allRows = groups.flatMap((g) => g.educations);
-            // const validationErrors = validateEducationModal({
-            //     rows: allRows,
-            //     mode,
-            // });
-
+           
             const validationErrors = validateEducationModal({
               groups,
               mode,
             });
             const certValidationErrors =
               validateCertificationGroups(certGroups);
-            // if (Object.keys(validationErrors).length > 0) {
-            //     setErrors(validationErrors);
-            //     return;
-            // }
+            
             const mergedErrors = {
               ...validationErrors,
               ...certValidationErrors,

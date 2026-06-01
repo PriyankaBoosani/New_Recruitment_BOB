@@ -30,10 +30,6 @@ export const validatePanelModal = ({ rows, panelId }) => {
       rowErrors.endTime = "validation:end_time_required";
     }
 
-    // End time should be greater than start time
-    // if (row.startTime && row.endTime && row.endTime <= row.startTime) {
-    //   rowErrors.endTime = "validation:end_time_greater_than_start";
-    // }
 
     if (!row.perDay) {
       rowErrors.perDay = "validation:required";

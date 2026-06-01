@@ -16,9 +16,6 @@ export const useUsers = () => {
       const res = await masterApiService.getRegister();
       const list = mapUsersFromApi(res.data || []);
 
-      // Newest first (highest id on top)
-      //list.sort((a, b) => Number(b.id) - Number(a.id));
-
       setUsers(list);
     } catch (err) {
       console.error("User fetch failed", err);
@@ -41,8 +38,6 @@ export const useUsers = () => {
         
       }
 
-      // const centres = res?.data || [];
-
       // setInterviewCentres(centres);
     } catch (err) {
       console.error("Interview centres fetch failed", err);
@@ -52,21 +47,6 @@ export const useUsers = () => {
     }
   };
 
-  // const fetchRoles = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const res = await masterApiService.getRoles();
-
-  //     const roles = res?.data || [];
-
-  //     setRoles(roles);
-  //   } catch (err) {
-  //     console.error("Roles fetch failed", err);
-  //     setRoles([]);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   useEffect(() => {
     fetchUsers();
     fetchInteviewCentres();
@@ -99,13 +79,6 @@ export const useUsers = () => {
       console.error("Add user failed:", err);
     }
   };
-
-  // const deleteUser = async (id) => {
-  //   await masterApiService.deleteUser(id);
-  //   await fetchUsers();
-  //   toast.success(t("delete_success"));
-  // };
-
   const deleteUser = async (id) => {
     try {
       await masterApiService.deleteUser(id);

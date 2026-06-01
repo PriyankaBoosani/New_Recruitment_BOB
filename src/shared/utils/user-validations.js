@@ -117,37 +117,6 @@ export const validateUserForm = (formData = {}, options = {}) => {
     }
   }
 
-  // Password + confirm password
-  // if (requirePassword || formData.password) {
-  //   const passwordError = validateUserPassword(
-  //     formData.password,
-  //     requirePassword
-  //   );
-
-  //   if (passwordError) {
-  //     errors.password = passwordError;
-  //   } else if (formData.password) {
-  //     const confirmError = validatePasswordConfirmation(
-  //       formData.confirmPassword,
-  //       formData.password
-  //     );
-  //     if (confirmError) {
-  //       errors.confirmPassword = confirmError;
-  //     }
-  //   }
-  // }
-
-  // // Password + confirm password
-  // if (requirePassword || formData.confirmPassword) {
-  //   const confirmError = validatePasswordConfirmation(
-  //     formData.confirmPassword,
-  //     formData.password
-  //   );
-  //   if (confirmError) {
-  //     errors.confirmPassword = confirmError;
-  //   }
-  // }
-
   return {
     valid: Object.keys(errors).length === 0,
     errors,

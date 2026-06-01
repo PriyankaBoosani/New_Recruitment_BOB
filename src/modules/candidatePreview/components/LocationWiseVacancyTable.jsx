@@ -12,10 +12,6 @@ const LocationWiseVacancyTable = ({
 
   if (!positionStateDistributions.length) return null;
 
-  // const stateMap = states.reduce((acc, s) => {
-  //   acc[s.stateId] = s.stateName;
-  //   return acc;
-  // }, {});
 
   const stateMap = states.reduce((acc, s) => {
     acc[String(s.stateId)] = s.stateName;

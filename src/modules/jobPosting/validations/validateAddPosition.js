@@ -347,10 +347,6 @@ export const validateStateDistribution = ({
     errors.stateVacancies = "validation:vacancies_must_be_greater_than_zero";
   }
 
-  // if (!currentState.language) {
-  //   errors.stateLanguage = "validation:required";
-  // }
-
   const catTotal = Object.values(currentState.categories || {}).reduce(
     (a, b) => a + Number(b || 0),
     0

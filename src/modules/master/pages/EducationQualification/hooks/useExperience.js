@@ -28,7 +28,6 @@ export const useExperience = () => {
       course: "",
       educationQualificationsId: "",
       specializationOthers: [],
-      // specializationOthers: [{ name: "", id: "" }]
     },
   ]);
 

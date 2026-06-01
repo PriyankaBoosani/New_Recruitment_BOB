@@ -413,13 +413,6 @@ const CreateRequisition = () => {
                               },
                             });
 
-                            // handleInputChange({
-                            //   target: {
-                            //     name: "endDate",
-                            //     value: addCalendarDays(startDate, 20)
-                            //   }
-                            // });
-
                             setErrors((prev) => ({
                               ...prev,
                               startDate: "",

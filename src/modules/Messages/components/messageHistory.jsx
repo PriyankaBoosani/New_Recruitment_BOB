@@ -27,16 +27,7 @@ const MessageHistory = ({ item }) => {
       console.error("File open error", err);
     }
   };
-  // const getColorByTitle = (title) => {
-  //   const text = title?.toLowerCase() || "";
-  //   if (text.includes("candidate")) {
-  //     return "#42579f";
-  //   }
-  //   if (text.includes("recruiter") || text.includes("approved") || text.includes("rejected")) {
-  //     return "#f26522";
-  //   }
-  //   return "#42579f";
-  // };
+ 
 
   const getColorByTitle = (title) => {
     const text = title?.toLowerCase() || "";

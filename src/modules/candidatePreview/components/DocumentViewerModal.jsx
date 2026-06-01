@@ -23,10 +23,6 @@ const DocumentViewerModal = ({
 
   /* ================= USER ROLE ================= */
 
-  // const user = useSelector((state) => state.user.user);
-  // const role = user?.role?.toLowerCase();
-  // const isZonalHr = role === "zonal_hr";
-  // const isInterviewer = role === "interviewer";
 
   const privileges = useSelector((state) => state.user.privileges);
 

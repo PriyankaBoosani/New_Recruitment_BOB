@@ -4,13 +4,6 @@
 
 import i18n from "i18next";
 
-// export const requiredField = (value) => {
-//   if (!value || value.trim() === '') {
-//     return i18n.t('validation:required');
-//   }
-//   return null;
-// };
-
 const emailRegex = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;
 
 const isValidEmail = (email) => {
@@ -48,14 +41,6 @@ export const maxLength = (value, max) => {
   return null;
 };
 
-// export const emailFormat = (email) => {
-//   //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//   const emailRegex = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;
-//   if (email && !emailRegex.test(email)) {
-//     return i18n.t('validation:invalidEmail');
-//   }
-//   return null;
-// };
 
 export const emailFormat = (email) => {
   if (typeof email !== "string" || email.length > 254) {

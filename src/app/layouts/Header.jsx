@@ -76,18 +76,13 @@ const Header = () => {
   };
   const role = user?.role?.trim().toLowerCase();
 
-  // const isAdmin = role === "admin";
-  // const isZonalHr = role === "zonal_hr";
-  // const isRecruiter = role === "recruiter";
-  // const isInterviewer = role === "interviewer";
+
 
   const isL1 = role === "l1";
   const isL2 = role === "l2";
 
   //Privileges
   const privileges = useSelector((state) => state.user.privileges);
-
-  // const privileges = useSelector((state) => state.user.privileges);
 
   const canJobPost = privileges?.JobPostings;
   const canCandidateWorkflow =
@@ -103,19 +98,7 @@ const Header = () => {
   const canMessages = privileges?.["Messages"];
   const canExaminationCutoffConfiguration =
     privileges?.["ExaminationCutoffConfiguration"];
-  // {
-  // 	"preveileges": {
-  // 		"Committee Management": true,
-  // 		"Interview Pool": true,
-  // 		"JobPostings": true,
-  // 		"Candidate Pool": true,
-  // 		"Verification": false,
-  // 		"Admin": false,
-  // 		"Offer Pool": true,
-  // 		"Compensation Pool": true,
-  // 		"Interview": false
-  // 	}
-  // }
+  
 
   /* ===================== OUTSIDE CLICK ===================== */
   useEffect(() => {
@@ -178,24 +161,8 @@ const Header = () => {
           </div>
 
           {/* Right Section */}
-          {/* <div className="d-flex align-items-center fonnav"> */}
           <div className="d-flex align-items-center fonnav gap-3">
-            {/* LANGUAGE */}
-            {/* <div className="d-flex align-items-center text-white me-3">
-              <span
-                className={`me-2 cursor-pointer ${i18n.language === 'en' ? 'fw-bold' : 'opacity-75'}`}
-                onClick={() => changeLang("en")}
-              >
-                English
-              </span>
-              <span className="me-2">|</span>
-              <span
-                className={`cursor-pointer ${i18n.language === 'hi' ? 'fw-bold' : 'opacity-75'}`}
-                onClick={() => changeLang("hi")}
-              >
-                हिंदी
-              </span>
-            </div> */}
+            
             {/* LANGUAGE PILL — CUSTOM */}
             <div
               className="lang-pill"
@@ -317,13 +284,7 @@ const Header = () => {
                   {t("job_postings")}
                 </Nav.Link>
               )}
-              {/* <Nav.Link
-                as={NavLink}
-                to="/candidate-preview"
-                onClick={closeMenu}
-              >
-                Candidate Preview
-              </Nav.Link> */}
+              
 
               {canCandidateWorkflow && (
                 <Nav.Link
@@ -335,9 +296,6 @@ const Header = () => {
                 </Nav.Link>
               )}
 
-              {/* <Nav.Link as={NavLink} to="/ExaminationCutoffConfiguration" onClick={closeMenu}>
-                {t("ExaminationCutoffConfiguration")}
-              </Nav.Link> */}
 
               {canExaminationCutoffConfiguration && (
                 <Nav.Link
@@ -447,26 +405,11 @@ const Header = () => {
                   )}
                 </NavDropdown>
               )}
-              {/* {isRecruiter && (
-                <Nav.Link
-                  as={NavLink}
-                  to="/schedule-interviews"
-                  onClick={closeMenu}
-                >
-                  {t("schedule_interviews")}
-                </Nav.Link>
-              )} */}
-
-              {/* <Nav.Link as={NavLink} to="/dashboard" onClick={closeMenu}>Dashboard</Nav.Link>
-              <Nav.Link href="#candidate-shortlist">Candidate Shortlist</Nav.Link>
-              <Nav.Link href="#interviews">Interviews</Nav.Link>
-              <Nav.Link href="#relaxation">Relaxation</Nav.Link>
-              <Nav.Link href="#bulk-upload">Bulk Upload</Nav.Link>
-              <Nav.Link href="/interviewpanel"> Interview Panel</Nav.Link> */}
+              
 
               {/* Admin Menu */}
               {canAdmin && (
-                // <NavDropdown title={t("admin")} id="admin-dropdown" className={isAdminRoute ? "active-admin" : ""}>
+                
                 <NavDropdown
                   id="admin-dropdown"
                   show={showAdminMenu}
@@ -492,9 +435,6 @@ const Header = () => {
                     {t("department")}
                   </NavDropdown.Item>
 
-                  {/* <NavDropdown.Item as={Link} to="/location" onClick={closeMenu}>
-                    {t("location")}
-                  </NavDropdown.Item> */}
 
                   <NavDropdown.Item
                     as={Link}
@@ -527,10 +467,6 @@ const Header = () => {
                   >
                     {t("certification")}
                   </NavDropdown.Item>
-
-                  {/* <NavDropdown.Item as={Link} to="/specialcategory" onClick={closeMenu}>
-                    {t("special_category")}
-                  </NavDropdown.Item> */}
 
                   <NavDropdown.Item
                     as={Link}

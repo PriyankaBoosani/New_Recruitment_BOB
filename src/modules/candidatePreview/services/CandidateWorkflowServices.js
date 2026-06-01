@@ -10,7 +10,6 @@ const candidateWorkflowServices = {
     ),
 
   getRegister: () => nodeApi.get("/getdetails/users/all"),
-  //registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data),
 
   getJobPositionById: (positionId) =>
     api.get(`/recruiter/job-positions/get-job-position-by-id/${positionId}`),
@@ -89,27 +88,6 @@ const candidateWorkflowServices = {
     );
   },
 
-  // getMessageHistory: (positionIds) =>
-  //   api.post(
-  //     "/recruiter/messages/get-history",
-  //     positionIds, // ✅ send array directly
-  //     {
-  //       headers: {
-  //         "X-Client": "AzureAD",
-  //       },
-  //     }
-  //   ),
-
-  // getMessageHistory: (positionIds, page, size) =>
-  // api.post(
-  //   "/recruiter/messages/get-history",
-  //   positionIds,
-
-  //   {
-  //     params: { page, size },   // ✅ ADD THIS
-
-  //   }
-  // ),
 
   getMessageHistory: (payload, page, size) =>
     api.post("/recruiter/messages/get-history", payload, {

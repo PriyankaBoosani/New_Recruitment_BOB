@@ -34,16 +34,12 @@ export const useMasterData = () => {
           masterRes,
           approvingRes,
           certRes,
-          // zonalRes,
-          // languagesRes,
           stateLanguagesRes,
           documentTypesRes,
         ] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
           masterApiService.getApprovingAuthorities(),
           masterApiService.getAllCertificates(),
-          // masterApiService.getZonalStates(),
-          //masterApiService.getAllLanguages(),
           masterApiService.getStateLanguages(),
           masterApiService.getAllDocumentTypes(),
         ]);
@@ -75,19 +71,7 @@ export const useMasterData = () => {
             id: a.approvingAuthorityId,
             name: a.authorityName,
           })),
-          // // NEW STATES
-          // states: (zonalRes.data || []).map(s => ({
-          //   id: String(s.zonalStateID),
-          //   name: s.stateName,
-          // })),
-
-          // // NEW LANGUAGES
-          // languages: (languagesRes.data || []).map(l => ({
-          //   id: String(l.languageId),
-          //   name: l.languageName,
-          //   stateId: l.stateId ? String(l.stateId) : null
-          // })),
-
+       
           // // NEW STATE-LANGUAGE MAPPING
           stateLanguages: (stateLanguagesRes.data || []).map((sl) => ({
             stateId: String(sl.stateId),

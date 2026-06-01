@@ -79,50 +79,6 @@ export const useAddPanelModal = ({
     setErrors(duplicateDates);
   }, [initialPanel, show]); // 🔥 ONLY show// 🔥 ONLY show — do NOT add initialRows
 
-  // useEffect(() => {
-
-  //   setRows(prev =>
-  //     prev.map(row => {
-
-  //       // required fields
-  //       if (
-  //         !row.startTime ||
-  //         !row.endTime ||
-  //         !row.duration
-  //       ) {
-  //         return {
-  //           ...row,
-  //           perDay: ""
-  //         };
-  //       }
-
-  //       const start = new Date(`2000-01-01T${row.startTime}`);
-  //       const end = new Date(`2000-01-01T${row.endTime}`);
-
-  //       const diffMins = (end - start) / (1000 * 60);
-
-  //       // invalid range
-  //       if (diffMins <= 0) {
-  //         return {
-  //           ...row,
-  //           perDay: ""
-  //         };
-  //       }
-
-  //       const interviews = Math.floor(
-  //         diffMins / Number(row.duration)
-  //       );
-
-  //       return {
-  //         ...row,
-  //         perDay: interviews.toString()
-  //       };
-
-  //     })
-  //   );
-
-  // }, [rows.map(r => `${r.startTime}-${r.endTime}-${r.duration}`).join()]);
-
   const selectedPanel = panels.find((p) => String(p.id) === String(panelId));
 
   const formatDate = (date) => {
@@ -131,8 +87,6 @@ export const useAddPanelModal = ({
     return new Date(date).toISOString().split("T")[0];
   };
 
-  // const minDate = formatDate(selectedPanel?.startDate);
-  // const maxDate = formatDate(selectedPanel?.endDate);
   const panelRanges = selectedPanel?.ranges || [];
 
   const isDateWithinRanges = (date) => {
@@ -464,112 +418,7 @@ export const useAddPanelModal = ({
 
       setPanelInfoLoading(true);
 
-      // ✅ STATIC RESPONSE
-      // const res = [
-      //   {
-      //     panelDate: "2026-05-16",
-
-      //     panelAvailableModels: [
-      //       {
-      //         positionName:
-      //           "Software Engineer",
-
-      //         startTime: "09:00:00",
-
-      //         endTime: "09:15:00"
-      //       },
-
-      //       {
-      //         positionName:
-      //           "Backend Developer",
-
-      //         startTime: "09:15:00",
-
-      //         endTime: "09:30:00"
-      //       },
-
-      //       {
-      //         positionName:
-      //           "Java Developer",
-
-      //         startTime: "09:30:00",
-
-      //         endTime: "09:45:00"
-      //       }
-      //     ]
-      //   },
-
-      //   {
-      //     panelDate: "2026-05-17",
-
-      //     panelAvailableModels: [
-      //       {
-      //         positionName:
-      //           "HR Executive",
-
-      //         startTime: "10:00:00",
-
-      //         endTime: "10:30:00"
-      //       },
-
-      //       {
-      //         positionName:
-      //           "Technical Lead",
-
-      //         startTime: "11:00:00",
-
-      //         endTime: "11:30:00"
-      //       }
-      //     ]
-      //   },
-
-      //   {
-      //     panelDate: "2026-05-18",
-
-      //     panelAvailableModels: [
-      //       {
-      //         positionName:
-      //           "HR Executive",
-
-      //         startTime: "10:00:00",
-
-      //         endTime: "10:30:00"
-      //       },
-
-      //       {
-      //         positionName:
-      //           "Technical Lead",
-
-      //         startTime: "11:00:00",
-
-      //         endTime: "11:30:00"
-      //       }
-      //     ]
-      //   },
-      //   {
-      //     panelDate: "2026-05-19",
-
-      //     panelAvailableModels: [
-      //       {
-      //         positionName:
-      //           "HR Executive",
-
-      //         startTime: "10:00:00",
-
-      //         endTime: "10:30:00"
-      //       },
-
-      //       {
-      //         positionName:
-      //           "Technical Lead",
-
-      //         startTime: "11:00:00",
-
-      //         endTime: "11:30:00"
-      //       }
-      //     ]
-      //   }
-      // ];
+      
       const res = await interviewService.getScheduledSlots({
         panelId,
 

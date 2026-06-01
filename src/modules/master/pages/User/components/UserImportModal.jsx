@@ -14,12 +14,7 @@ const UserImportModal = ({
 }) => {
   const { t } = useTranslation(["user"]);
 
-  // // SAME PATTERN AS JOB GRADE
-  // const {
-  //   bulkAddUsers,
-  //   downloadUserTemplate,
-  //   loading
-  // } = useUsers();
+
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState("");

@@ -49,7 +49,6 @@ const OfferPool = ({
 
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  // const [selectedIds, setSelectedIds] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
 
@@ -187,21 +186,12 @@ const OfferPool = ({
   }, [filteredOffers, page, pageSize]);
 
   /* ---------- Selection logic ---------- */
-  // const allSelected =
-  // 	paginatedOffers.length > 0 && selectedIds.length === offers.length;
-
+ 
   const allSelected =
     paginatedOffers.length > 0 &&
     filteredOffers.length > 0 &&
     selectedIds.length === filteredOffers.length;
 
-  // const toggleSelectAll = () => {
-  // 	if (allSelected) {
-  // 		setSelectedIds([]);
-  // 	} else {
-  // 		setSelectedIds(offers.map((o) => o.id));
-  // 	}
-  // };
 
   const toggleSelectAll = () => {
     if (allSelected) {
@@ -559,15 +549,6 @@ const OfferPool = ({
                             );
                           }
 
-                          // if (!acceptBeforeDate) {
-                          // 	toast.error(t("candidateWorkflow:BeforeDate"));
-                          // 	return;
-                          // }
-
-                          // if (!joiningDate) {
-                          // 	toast.error(t("candidateWorkflow:JoiningDate"));
-                          // 	return;
-                          // }
                         }}
                         style={{ backgroundColor: "#eff6ff" }}
                       >

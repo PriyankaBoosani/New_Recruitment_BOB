@@ -54,23 +54,7 @@ const ReservationSection = ({
   const sortedStates = [...states].sort((a, b) =>
     a.name.localeCompare(b.name, "en", { sensitivity: "base" })
   );
-  // const [cities, setCities] = useState([]);
-  // const [loadingCities, setLoadingCities] = useState(false);
-  // const fetchCitiesByState = async (stateId) => {
-  //     if (!stateId) return;
-  //     try {
-
-  //         const res = await masterApiService.getInterviewCentresByState(
-  //             ["Regional Office", "Zonal Office"],
-  //             stateId
-  //         );
-
-  //         setCities(Array.isArray(res.data) ? res.data : []);
-  //     } catch (err) {
-
-  //         console.error("ERROR RESPONSE", err?.response || err);
-  //     }
-  // };
+ 
   const filteredCities = cities.filter(
     (c) => String(c.stateId) === String(currentState.state)
   );

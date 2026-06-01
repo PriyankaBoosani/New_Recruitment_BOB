@@ -89,10 +89,6 @@ export const useAssignPositions = (userId) => {
           }
         }
 
-        // if (panel.startDate && new Date(panel.startDate) < today) {
-        //   errors[key].startDate = "Start date cannot be in the past";
-        //   isValid = false;
-        // }
 
         if (!panel.members || panel.members.length === 0) {
           errors[key].members = "member_required";
@@ -232,11 +228,7 @@ export const useAssignPositions = (userId) => {
             endDate: p.endDate || "",
 
             canEdit: !isLocked && p.canEdit !== false,
-            //      canEdit:
-            // committeeType === "INTERVIEW"
-            //   ? p.canEdit !== false
-            //   : false,
-
+           
             // ✅ SAME PATTERN AS REQUISITION
             rawStatus,
             statusType: getStatusBadge(rawStatus),
@@ -282,12 +274,6 @@ export const useAssignPositions = (userId) => {
     loadPositionData(selectedPosition);
   }, [selectedPosition]);
 
-  // const isDirty = () => {
-  //   return (
-  //     JSON.stringify(selectedCommittees) !== JSON.stringify(originalCommittees) ||
-  //     isManuallyDirty
-  //   );
-  // };
   const isPanelChanged = (panel, originalPanel) => {
     if (!originalPanel) return true;
 
@@ -317,59 +303,6 @@ export const useAssignPositions = (userId) => {
       });
     });
   };
-
-  // const fetchPanels = useCallback(async () => {
-  //   try {
-  //     setLoading(true);
-
-  //     const res = await masterApiService.getInterviewPanelsSearch({
-  //       page,
-  //       size
-  //     });
-
-  //     const apiData = res?.data?.content || [];
-  //     const mapped = mapPanelsApi(apiData);
-  //     setAllPanels(mapped);
-  //     setAvailablePanels(mapped); // reset source of truth
-
-  //   } catch (error) {
-  //     console.error("Fetch Panels Error:", error);
-  //     toast.error("Failed to load panels");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // });
-
-  // const handleEdit = (item) => {
-  //   // Set form data for editing
-  //   setFormData({
-  //     requisitionId: item.requisitionId || "",
-  //     positionId: item.positionId || "",
-  //     panelType: item.panelType || "",
-  //     members: item.members || []
-  //   });
-  // };
-
-  // const handleDelete = async (id) => {
-  //   if (!window.confirm('Are you sure you want to delete this assignment?')) {
-  //     return false;
-  //   }
-
-  //   try {
-  //     setLoading(true);
-  //     // Replace with actual API call
-  //     // await masterApiService.deleteCommitteeAssignment(id);
-
-  //     // Update local state
-  //     setHistory(prev => prev.filter(item => item.id !== id));
-  //     return true;
-  //   } catch (error) {
-  //     console.error('Error deleting assignment:', error);
-  //     return false;
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const [activeTab, setActiveTab] = useState("SCREENING");
   const [showHistory, setShowHistory] = useState(true);
@@ -594,9 +527,6 @@ export const useAssignPositions = (userId) => {
     loading,
     formData,
     setFormData,
-    // handleEdit,
-    // handleDelete,
-
     handleRequisitionChange,
     requisitions,
     positions,

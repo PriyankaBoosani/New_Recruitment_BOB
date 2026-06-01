@@ -82,11 +82,6 @@ const jobPositionApiService = {
     });
   },
 
-  // updateDraftPosition: ({ requisitionId, parentPositionId, dto }) =>
-  //   api.put(
-  //     `/recruiter/job-requisitions/${requisitionId}/edit-drafts/current/positions/${parentPositionId}`,
-  //     dto
-  //   ),
 
   updateDraftPosition: ({
     requisitionId,
@@ -295,15 +290,7 @@ const jobPositionApiService = {
       params: { year, search, page, size, statuses },
       headers: { "X-Client": "AzureAD" },
     }),
-  // getRequisitionApprovalHistory: (requisitionId) =>
-  //   api.get(
-  //     `/recruiter/workflow-approval/get-requisition-approval-history/${requisitionId}`,
-  //     {
-  //       headers: {
-  //         "X-Client": "AzureAD",
-  //       },
-  //     }
-  //   ),
+  
   getRequisitionApprovalHistory: (requisitionId) =>
     api.get(
       `/recruiter/workflow-approval/get-requisition-approval-history-including-drafts/${requisitionId}`,

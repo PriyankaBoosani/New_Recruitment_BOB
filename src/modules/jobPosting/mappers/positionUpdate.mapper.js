@@ -1,39 +1,3 @@
-// const buildEducationRulesForDto = (
-//   edu,
-//   qualifications,
-//   certifications
-// ) => {
-//   if (!edu?.educations?.length) return [];
-
-//   const degrees = edu.educations
-//     .map(e =>
-//       qualifications.find(q => q.id === e.educationQualificationsId)?.name
-//     )
-//     .filter(Boolean);
-
-//   const educations = edu.educations.map(e => ({
-//     educationTypeId: e.educationTypeId,
-//     educationQualificationId: e.educationQualificationsId,
-//     specializationId: e.specializationId
-//   }));
-
-//   const certNames = (edu.certificationIds || [])
-//     .map(id => certifications.find(c => c.id === id)?.name)
-//     .filter(Boolean);
-
-//   if (!degrees.length) {
-//     throw new Error("Education rules must contain at least one degree");
-//   }
-
-//   return [
-//     {
-//       operator: "OR",
-//       degrees,
-//       educations,
-//       ...(certNames.length ? { certifications: certNames } : {})
-//     }
-//   ];
-// };
 
 const buildCategoryDistributionsForUpdate = (
   sd,

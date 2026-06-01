@@ -36,11 +36,6 @@ export const useUpdateJobPosition = () => {
           throw new Error("Missing parentPositionId for draft update");
         }
 
-        // res = await jobPositionApiService.updateDraftPosition({
-        //   requisitionId: payload.parentRequisitionId,
-        //   parentPositionId: payload.existingPosition.parentPositionId,
-        //   dto
-        // });
 
         res = await jobPositionApiService.updateDraftPosition({
           requisitionId: payload.parentRequisitionId,

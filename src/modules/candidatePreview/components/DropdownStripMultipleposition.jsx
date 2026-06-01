@@ -180,10 +180,7 @@ export default function DropdownStripMultipleposition({
           value={positionOptions.filter((opt) =>
             selectedPositionId?.includes(opt.value)
           )}
-          // onChange={(options) =>
-          //   onPositionChange(options ? options.map(o => o.value) : [])
-          // }
-
+          
           onChange={(options) => {
             const selectedIds = options ? options.map((o) => o.value) : [];
 

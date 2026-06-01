@@ -82,9 +82,6 @@ const ScheduleInterviews = () => {
       }
     : null;
 
-  // const selectedPosition =
-  //   positions.find(p => p.jobPositions?.positionId === selectedPositionId);
-
   //from schedule pool
 
   const schedulePoolData = location.state?.schedulePoolData;
@@ -97,24 +94,6 @@ const ScheduleInterviews = () => {
       return;
     }
 
-    // const mappedRows =
-    //   schedulePoolData.map(item => ({
-
-    //     id: item.id,
-
-    //     name: item.name,
-
-    //     regNo: item.regNo,
-
-    //     date: item.date,
-
-    //     time: item.time,
-
-    //     zone: item.zone,
-
-    //     panel: item.panel
-
-    //   }));
 
     const mappedRows = schedulePoolData.map((item) => ({
       id: item.id,
@@ -294,8 +273,6 @@ const ScheduleInterviews = () => {
 
       <HeaderWithBack
         title="Schedule Interviews"
-        //subtitle={`Scheduling for ${state?.candidates?.length || 0} candidates`}
-
         subtitle={`Scheduling for ${
           isEditMode
             ? schedulePoolData?.length || 0
@@ -392,8 +369,6 @@ const ScheduleInterviews = () => {
       {/* ===== PANELS CONFIG ===== */}
       <InterviewPanelsConfig
         positionId={selectedPositionId}
-        // startTime={startTime}
-        // onStartTimeChange={setStartTime}
         candidates={isEditMode ? schedulePoolData : passedCandidates} // ✅ ADD
         onScheduleReady={(rows) => {
           setSchedule(rows);

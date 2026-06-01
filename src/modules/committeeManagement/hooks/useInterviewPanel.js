@@ -133,16 +133,7 @@ export const useInterviewPanel = () => {
 
       try {
         centerRes = await masterApiService.getAllInterviewCenters();
-        // setCenterOptions(
-        //   (centerRes?.data || [])
-        //     .sort((a, b) =>
-        //       a.interviewCentre.localeCompare(b.interviewCentre)
-        //     )
-        //     .map(c => ({
-        //       value: c.interviewCentreId,
-        //       label: c.interviewCentre
-        //     }))
-        // );
+       
       } catch (error) {
         console.error("Failed to load interview centers:", error);
         toast.error(t("failed_load_centers"));
@@ -174,10 +165,6 @@ export const useInterviewPanel = () => {
     if (!formData.members || formData.members.length === 0) {
       newErrors.members = "member_required";
     }
-
-    // if (!formData.interviewCenterId) {
-    //   newErrors.interviewCenterId = "interview_center_required";
-    // }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -316,10 +303,7 @@ export const useInterviewPanel = () => {
       try {
         const res = await masterApiService.deleteInterviewPanel(id);
         if (res?.success === false) {
-          // toast.error(
-          //   res?.message ||
-          //   "Panel is assigned to a position and cannot be deleted"
-          // );
+          
           setErrorMessage(res?.data || t("panel_assigned_cannot_delete"));
           setShowErrorModal(true);
           return;
@@ -393,7 +377,6 @@ export const useInterviewPanel = () => {
         };
       }
 
-      //await fetchPanels();
       toast.success(res.message || "Panels imported successfully");
 
       return { success: true };
@@ -408,8 +391,6 @@ export const useInterviewPanel = () => {
       setLoading(false);
     }
   };
-
-  //////////////
 
   const downloadPanelTemplate = async () => {
     try {
@@ -432,9 +413,6 @@ export const useInterviewPanel = () => {
     }
   };
 
-  // useEffect(() => {
-  //   fetchPanels();
-  // }, [fetchPanels]);
 
   /* ================= RETURN ================= */
 
@@ -472,9 +450,6 @@ export const useInterviewPanel = () => {
     setShowFilters,
     showFilters,
 
-    // sortConfig,
-    // handleSort,
-    // sortedPanels,
     activeTab,
     setActiveTab,
     showErrorModal,

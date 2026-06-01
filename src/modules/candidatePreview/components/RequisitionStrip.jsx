@@ -67,21 +67,6 @@ const RequisitionStrip = ({
     }
   };
 
-  /* ================= LOAD MASTER DATA ================= */
-
-  // useEffect(() => {
-  //   const loadMasters = async () => {
-  //     try {
-  //       const res = await masterApiService.getMasterDisplayAll();
-  //       setMasterData(res.data || {});
-  //     } catch (err) {
-  //       console.error("Failed to load master data", err);
-  //       setMasterData({});
-  //     }
-  //   };
-
-  //   loadMasters();
-  // }, []);
 
   useEffect(() => {
     const loadMasters = async () => {

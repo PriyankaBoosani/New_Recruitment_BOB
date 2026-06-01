@@ -93,14 +93,6 @@ export const useInterviewPanels = (positionId, initialSelectedPanels = []) => {
       // ✅ FIXED PATH
       const apiList = response?.data || [];
 
-      //     const uniquePanels = [
-      //   ...new Map(
-      //     apiList.map(item => [
-      //       item.interviewPanel?.interviewPanelId,
-      //       item
-      //     ])
-      //   ).values()
-      // ];
 
       const groupedPanels = {};
 

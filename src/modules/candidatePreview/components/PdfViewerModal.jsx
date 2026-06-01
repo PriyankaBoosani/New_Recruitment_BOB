@@ -1,6 +1,5 @@
 import React from "react";
 import { Modal, Spinner } from "react-bootstrap";
-// import "../../style/css/PdfViewerModal.css";
 import { useTranslation } from "react-i18next";
 
 const PdfViewerModal = ({ show, onHide, fileUrl, loading, title }) => {

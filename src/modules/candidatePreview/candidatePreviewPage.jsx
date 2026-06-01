@@ -32,9 +32,7 @@ const CandidatePreviewPage = ({ onHide }) => {
   const user = useSelector((state) => state.user.user);
 
   const role = user?.role ? user.role.toLowerCase() : ""; // const isZonalHr = role === "zonal_hr";
-  // const isInterviewer = role === "interviewer";
-  //   const isRecruiter = role === "recruiter";
-
+  
   const isFromCompensationPool = state?.fromCompensationPool;
 
   const privileges = useSelector((state) => state.user.privileges);
@@ -43,14 +41,12 @@ const CandidatePreviewPage = ({ onHide }) => {
 
   const isInterviewer = privileges?.Interview;
   const isZonalHr = privileges?.Verification;
-  // const isRecruiter = privileges?.JobPostings; // or whatever recruiter privilege is
-
+  
   const isRecruiter = role === "recruiter";
   const iscommitteeMember = role === "committee_member";
 
   const selectedDate = state?.selectedDate;
 
-  // const privileges = useSelector((state) => state.user.privileges);
   const canJobPost = privileges?.JobPostings;
   const canCandidateWorkflow =
     privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"];
@@ -72,21 +68,7 @@ const CandidatePreviewPage = ({ onHide }) => {
   const requisitionTitle = requisition?.requisition_title;
   const positionName = state?.position?.positionName;
   const isLocationWise = state?.position?.isLocationWise;
-  //  const position = Array.isArray(state?.position)
-  //   ? state.position
-  //   : state?.position
-  //     ? [state.position]
-  //     : [];
-
-  // const position = Array.isArray(state?.position)
-  //   ? state.position[0]
-  //   : state?.position || null;
-
-  // const position = Array.isArray(state?.position)
-  //   ? state.position.find(
-  //       (p) => p.positionId === candidatePositionId
-  //     )
-  //   : state?.position || null;
+  
 
   const position = Array.isArray(state?.position)
     ? state.position.find((p) => p.positionId === candidatePositionId) ||
@@ -103,7 +85,6 @@ const CandidatePreviewPage = ({ onHide }) => {
     ? state?.applicationId
     : (state?.applicationId ?? state?.candidate?.id);
 
-  // const applicationId = candidate?.id;
 
   /* =======================
      STATE
@@ -123,8 +104,7 @@ const CandidatePreviewPage = ({ onHide }) => {
         setLoading(true);
 
         /* ---------- Load Masters ---------- */
-        // const masterRes = await masterApiService.getMasterDisplayAll();
-        // const raw = masterRes?.data || {};
+        
 
         const masterRes = await masterApiService.getMasterDisplayAll();
         const fullMasters = masterRes?.data || {};
@@ -133,35 +113,17 @@ const CandidatePreviewPage = ({ onHide }) => {
           await masterApiService.getAllInterviewCenters();
         const ZonalStats = await masterApiService.getZonalStates();
 
-        // const normalizedMasters = {
-        //   genders: raw.genderMasters || [],
-        //   religions: raw.religionMaster || [],
-        //   marital_statuses: raw.maritalStatusMaster || [],
-        //   reservation_categories: raw.reservationCategories || [],
-        //   education_levels: raw.educationLevels || [],
-        //   mandatory_qualifications: raw.mandatoryQualification || [],
-        //   specializations: raw.specializationMaster || [],
-        //   countries: raw.countries || [],
-        // };
 
         setMasters(fullMasters);
         /* ---------- Load Candidate ---------- */
         if (candidateId && (positionId || positionIds.length > 0)) {
           const candidateRes =
-            //           await candidateWorkflowServices.getCandidateAllDetails(
-            //   candidateId,
-            //   positionIds.length > 0 ? positionIds : [positionId]
-            // );
+           
 
             await candidateWorkflowServices.getCandidateAllDetails(
               candidateId,
               candidatePositionId || positionId
             );
-
-          // const mapped = mapCandidateToPreview(
-          //   candidateRes.data,
-          //   normalizedMasters
-          // );
 
           const candidateMasters = {
             genders: fullMasters.genderMasters || [],
@@ -216,28 +178,7 @@ const CandidatePreviewPage = ({ onHide }) => {
       {isRecruiter ||
       privileges?.["Candidate Pool"] ||
       privileges?.["Compensation Pool"] ? (
-        // <HeaderWithBack
-        //   title={t("candidateWorkflow:candidate_screening")}
-        //   subtitle={t("candidateWorkflow:manage_schedule_interviews")}
-        //   onBack={() =>
-        //     navigate("/candidate-verification", {
-        //       state: {
-        //         requisition: state.requisition,
-        //         position: state.position,
-        //         preloadedCandidates: state.candidates,
-        //         selectedDate: state,
-        //         page: state.page,
-        //         pageSize: state.pageSize,
-        //         filters: state.filters
-        //       }
-        //     })
-        //   }
-        //   positionId={positionId}
-        //   requisitionId={requisitionId}
-        //   candidateScreening={true}
-        //   activeTab={activeTab}
-
-        // />
+        
 
         <HeaderWithBack
           title={t("candidateWorkflow:candidate_screening")}
@@ -312,7 +253,6 @@ const CandidatePreviewPage = ({ onHide }) => {
           isSaveEnabled={false}
           showSaveButton={true}
           isSaveBtn={false}
-          // masterData={masters}
         />
       )}
 
@@ -322,8 +262,6 @@ const CandidatePreviewPage = ({ onHide }) => {
           position={position}
           isCardBg
           isSaveEnabled={false}
-          //  masterData={masters}
-          //  masterData={masters}
         />
       )}
 

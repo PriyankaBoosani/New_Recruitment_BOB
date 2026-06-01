@@ -13,47 +13,6 @@ const PageHeaderWithBack = ({
   const location = useLocation();
   const { t } = useTranslation("common");
 
-  // const handleBack = () => {
-  //   const state = location.state || {};
-  //   const from = state.from;
-
-  //   // fallback if from missing
-  //   const target = from || "/candidate-workflow";
-
-  //   // 🔥 keep this (your interviewer depends on it)
-  //   sessionStorage.setItem("fromPreviewBack", "true");
-
-  //   navigate(target, {
-  //     state: {
-  //       requisition: state.requisition,
-  //       position: state.position,
-  //      positionIds:
-  // Array.isArray(state.positionIds) &&
-  // state.positionIds.length > 0
-  //   ? state.positionIds
-  //   : Array.isArray(state.position)
-  //     ? state.position.map(p => p.positionId)
-  //     : state.position?.positionId
-  //       ? [state.position.positionId]
-  //       : [],
-  //       preloadedCandidates:
-  //         state.preloadedCandidates || state.candidates || [],
-  //       selectedDate: state.selectedDate,
-
-  //       // keep ids also (for workflow)
-  //       requisitionId,
-  //       positionId,
-  //       activeTab,
-  //         page: state.page,
-  //       pageSize: state.pageSize,
-  //       // 🔥 ADD THESE
-  //       interviewPage: state.interviewPage,
-  //       interviewPageSize: state.interviewPageSize,
-  //       filters: state.filters
-  //     }
-  //   });
-  // };
-
   const handleBack = () => {
     const state = location.state || {};
     const from = state.from;

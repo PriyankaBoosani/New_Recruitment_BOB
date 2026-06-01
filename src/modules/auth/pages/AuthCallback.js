@@ -89,16 +89,6 @@ export default function AuthCallback() {
 
         const data = await loginApi.getAzureUserDetails(accessToken);
 
-        // if (!apiResponse.ok) {
-        //   let errorText = "No error details";
-        //   try {
-        //     errorText = await apiResponse.text();
-        //     console.error("❌ Backend API error text:", errorText);
-        //   } catch (e) {
-        //     console.error("❌ Could not parse error response");
-        //   }
-        //   throw new Error(`Backend API failed with status ${apiResponse.status}: ${errorText}`);
-        // }
 
         // Store user info
         dispatch(

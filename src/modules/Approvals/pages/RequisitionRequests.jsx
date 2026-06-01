@@ -42,8 +42,6 @@ import { useSelector } from "react-redux";
 import { useApprovalRequisitions } from "../hooks/useApprovalRequisitions";
 import requisitionApiService from "../../jobPosting/services/requisitionApiService";
 
-// import ApprovalCommentModal from "../components/ApprovalCommentModal";
-
 const RequisitionRequests = () => {
   const { t } = useTranslation(["jobPostingsList", "common"]);
 
@@ -125,25 +123,6 @@ const RequisitionRequests = () => {
     }
   };
 
-  // const handleConfirmDelete = async () => {
-  //   if (!selectedReq) return;
-
-  //   await deleteRequisition(selectedReq.id);
-  //   setShowDeleteModal(false);
-  //   setSelectedReq(null);
-  // };
-  // const handleConfirmDeletePosition = async () => {
-  //   if (!selectedPosition) return;
-
-  //   await deletePosition(
-  //     selectedPosition.requisitionId,
-  //     selectedPosition.positionId
-  //   );
-  //   fetchPositions(selectedPosition.requisitionId);
-  //   refetch();
-  //   setShowDeletePosModal(false);
-  //   setSelectedPosition(null);
-  // };
   // 🔹 Backend-driven filters
   const [year, setYear] = useState("2026");
   const [search, setSearch] = useState("");
@@ -549,8 +528,6 @@ const RequisitionRequests = () => {
         )}
 
         {requisitions.map((req) => {
-          // const positions = positionsByReq[req.id] || [];
-          // const positionsKey = `${req.id}_false`;
           const positionsKey = `${
             req.isDraft ? req.parentRequisitionId : req.id
           }_${req.isDraft}`;

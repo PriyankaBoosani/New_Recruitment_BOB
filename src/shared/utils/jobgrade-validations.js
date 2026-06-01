@@ -25,24 +25,6 @@ export const validateGradeCode = (gradeCode) => {
   return null;
 };
 
-// export const validateMinSalary = (minSalary) => {
-//   let error = requiredField(minSalary, 'Minimum salary');
-//   if (error) return error;
-
-//   const n = toNumberSafe(minSalary);
-//   if (Number.isNaN(n)) {
-//     return i18n.t('jobGrade:min_invalid_number');
-//   }
-//   if (n < 0) {
-//     return i18n.t('jobGrade:min_negative_not_allowed');
-//   }
-
-//   return null;
-// };
-// const exceedsMaxDigits = (value, maxDigits) => {
-//   const digitsOnly = String(value).replace(/\D/g, '');
-//   return digitsOnly.length > maxDigits;
-// };
 export const validateMinSalary = (minSalary) => {
   let error = requiredField(minSalary, "Minimum salary");
   if (error) return error;

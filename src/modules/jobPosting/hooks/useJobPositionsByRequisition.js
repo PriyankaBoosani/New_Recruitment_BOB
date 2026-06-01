@@ -26,9 +26,6 @@ export const useJobPositionsByRequisition = () => {
     try {
       setLoadingReqId(requisitionId);
 
-      // const res =
-      //   await jobPositionApiService.getPositionsByRequisition(requisitionId);
-
       const res = isDraft
         ? await jobPositionApiService.getDraftPositionsByRequisition(
             requisitionId

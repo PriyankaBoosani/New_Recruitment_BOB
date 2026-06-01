@@ -252,10 +252,7 @@ const AddPosition = () => {
       minAge: existingPosition.eligibilityAgeMin,
       maxAge: existingPosition.eligibilityAgeMax,
       employmentType: existingPosition.employmentType,
-      // contractualPeriod:
-      //     existingPosition.employmentType?.toLowerCase().includes("contract")
-      //         ? existingPosition.contractYears || ""
-      //         : "",
+     
       grade: existingPosition.gradeId,
       enableLocation: existingPosition.isLocationPreferenceEnabled,
       responsibilities: existingPosition.rolesResponsibilities,
@@ -567,13 +564,6 @@ const AddPosition = () => {
         usePreferredEducationLevelExperience: false,
       }));
 
-      // clear indent when department changes
-      // setSelectedIndent(null);
-      // setExistingIndentPath(null);
-      // setExistingIndentName(null);
-      // setIndentFile(null);
-      // setApprovedBy("");
-      // setApprovedOn("");
       setPendingPosition(null);
       setShowConfirmModal(false);
       setShowIndentModal(false);

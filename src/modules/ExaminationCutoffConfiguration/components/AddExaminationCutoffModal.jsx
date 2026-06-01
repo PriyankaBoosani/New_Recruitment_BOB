@@ -144,23 +144,7 @@ export default function AddExaminationCutoffModal({
 
         sections:
           editData.sections?.map((section) => {
-            //   return {
-
-            //     ...section,
-
-            //     passMarks: {
-
-            //       scst:
-            //         scst?.passMark || "",
-
-            //       obc:
-            //         obc?.passMark || "",
-
-            //       ur:
-            //         ur?.passMark || ""
-            //     }
-            //   };
-
+            
             return {
               /* SAVE IDS IN FORM STATE */
 
@@ -472,17 +456,7 @@ export default function AddExaminationCutoffModal({
     if (alreadySelected) {
       updated = existing.filter((item) => item !== sectionIndex);
     } else {
-      /* ALLOW ONLY 2 SECTIONS */
-
-      // if (existing.length >= 2) {
-
-      //   alert(
-      //     "Only 2 sections can be selected"
-      //   );
-
-      //   return;
-      // }
-
+     
       updated = [...existing, sectionIndex];
     }
 
@@ -499,27 +473,6 @@ export default function AddExaminationCutoffModal({
       setLoading(true);
 
       /* ================= CATEGORY IDS ================= */
-
-      // Replace with actual master category ids from API
-      // const CATEGORY_IDS = {
-      //   scst: "SC/ST",
-      //   obc: "OBC",
-      //   ur: "UR"
-      // };
-
-      //     const CATEGORY_IDS = {
-      //   scst:
-      //     "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-
-      //   obc:
-      //     "3fa85f64-5717-4562-b3fc-2c963f66afa7",
-
-      //   ur:
-      //     "3fa85f64-5717-4562-b3fc-2c963f66afa8"
-      // };
-
-      /* ================= SECTION PAYLOAD ================= */
-      /* ================= SECTION COUNT VALIDATION ================= */
 
       if (formData.sections.length !== Number(formData.numberOfSections)) {
         toast.error(
@@ -746,22 +699,7 @@ export default function AddExaminationCutoffModal({
 
         toast.error(response?.message || "Failed to submit configuration");
       }
-      // navigate(
-      //   "/candidate-workflow",
-      //   {
-      //     state: {
-      //       requisitionId:
-      //         selectedRequisition?.id,
-
-      //       positionIds:
-      //         selectedPosition?.map(
-      //           item => item.positionId
-      //         ),
-
-      //       openExaminationScore: true
-      //     }
-      //   }
-      // );
+      
     } catch (err) {
       console.error("Failed to save configuration", err);
 

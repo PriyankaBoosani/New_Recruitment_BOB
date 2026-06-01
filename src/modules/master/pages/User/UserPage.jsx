@@ -27,35 +27,11 @@ const UserPage = () => {
   const [pageSize, setPageSize] = useState(5);
 
   const [showModal, setShowModal] = useState(false);
-  //const [showDelete, setShowDelete] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [mode, setMode] = useState("add"); // add | edit | view
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  //const [searchError, setSearchError] = useState("");
-
-  // const [isViewing, setIsViewing] = useState(false);
-
-  // const [formData, setFormData] = useState({
-  //   fullName: '',
-  //   role: '',
-  //   email: '',
-  //   interviewCentreId: '',
-  //   description: ''
-  // });
-
-  // const [editingId, setEditingId] = useState(null);
-  // const [errors, setErrors] = useState({});
-  //const [activeTab, setActiveTab] = useState('manual');
-
-  // const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  // const openAdd = () => {
-  //   setShowModal(true);
-  // };
-
-  //const [showAddModal, setShowAddModal] = useState(false);
-  //const [isEditing, setIsEditing] = useState(false);
+  
   const openAdd = () => {
     setSelectedUser(null);
     setMode("add");
@@ -116,10 +92,7 @@ const UserPage = () => {
         pageSize={pageSize}
         setPageSize={setPageSize}
         interviewCentres={interviewCentres}
-        // onDelete={(u) => {
-        //   setDeleteTarget(u);
-        //   setShowDelete(true);
-        // }}
+    
       />
       <UserFormModal
         show={showModal}

@@ -35,9 +35,6 @@ export const useJobRequisitions = ({
         ...(month && { month: Number(month) }),
       });
 
-      // const content = res?.data?.content || [];
-      // setRequisitions(content.map(mapJobRequisitionFromApi));
-
       const content = res?.data?.content || [];
 
       const flattened = content.flatMap((item) => {
@@ -127,27 +124,6 @@ export const useJobRequisitions = ({
       setLoading(false);
     }
   };
-
-  // const submitForApproval = async (jobRequisitionIds) => {
-  //   if (!jobRequisitionIds?.length) return;
-
-  //   try {
-  //     setLoading(true);
-
-  //     await requisitionApiService.submitForApproval({
-  //       jobRequisitionIds,
-  //       postingStatus: "Approved" // confirm backend enum
-
-  //     });
-
-  //     toast.success(t("requisition_approve_success"));
-  //     fetchRequisitions(); // refresh list
-  //   } catch (err) {
-  //     toast.error(t("requisition_approve_failed"));
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const fetchAvailableYears = async () => {
     try {
