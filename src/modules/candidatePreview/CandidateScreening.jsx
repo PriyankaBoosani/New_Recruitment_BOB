@@ -714,29 +714,10 @@ export default function CandidateScreening({ selectedJob }) {
         return false;
       }
 
-      // Schedule Pool depends on Interview Pool privilege
-      // if (
-      //   tab.key === "SCHEDULE_POOL"
-      // ) {
-      //   return hasPrivilege("Interview Pool");
-      // }
-
       // ALL OTHER TABS ONLY BY PRIVILEGES
       return hasPrivilege(TAB_PRIVILEGE_MAP[tab.key]);
     });
   }, [tabs, privileges, isContractPosition]);
-
-  // useEffect(() => {
-  //   if (!accessibleTabs.length) return;
-
-  //   const preferredTab = accessibleTabs.some(
-  //     (tab) => tab.key === "CANDIDATE_POOL"
-  //   )
-  //     ? "CANDIDATE_POOL"
-  //     : accessibleTabs[0].key;
-
-  //   setActiveTab(preferredTab);
-  // }, [accessibleTabs]);
 
   const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
   const categoryMap = React.useMemo(() => {
@@ -1542,10 +1523,6 @@ export default function CandidateScreening({ selectedJob }) {
   useEffect(() => {
     if (isBackNavigation) return;
 
-    // setFilters((prev) => ({
-    //   ...prev,
-    //   status: [],
-    // }));
   }, [activeTab]);
 
   useEffect(() => {

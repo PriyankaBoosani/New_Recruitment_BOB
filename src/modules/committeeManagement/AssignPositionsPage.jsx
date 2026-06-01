@@ -322,7 +322,6 @@ const AssignPositionsPage = ({ refreshPanels }) => {
           className="action-pill remove"
           onClick={() => toggleCommittee(type, committee)}
           disabled={shouldDisableRemove}
-          // disabled={committee.rawStatus === "L1_APPROVED" || committee.rawStatus === "APPROVED"}
         >
           ← {t("remove_button")}
         </button>
@@ -507,7 +506,6 @@ const AssignPositionsPage = ({ refreshPanels }) => {
             <button
               className="assign-button"
               onClick={handleAssignCommittees}
-              // disabled={!selectedPosition}
               disabled={!selectedPosition || !isDirty()}
             >
               {loading ? t("assigning") : t("assign_committees")}

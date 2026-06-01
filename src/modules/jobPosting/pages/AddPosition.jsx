@@ -61,11 +61,6 @@ const AddPosition = () => {
   const parentRequisitionId = location.state?.parentRequisitionId;
   const { positionsByReq, fetchPositions } = useJobPositionsByRequisition();
 
-  // useEffect(() => {
-  //     if (requisitionId) {
-  //         fetchPositions(requisitionId);
-  //     }
-  // }, [requisitionId]);
 
   useEffect(() => {
     if (requisitionId) {
@@ -86,10 +81,6 @@ const AddPosition = () => {
     { isDraft, parentRequisitionId }
   );
 
-  // const { requisition, loading: requisitionLoading } = useRequisitionDetails(
-  //     requisitionId,
-  //     { isDraft, parentRequisitionId }
-  // );
   const { createPosition, loading } = useCreateJobPosition();
   const { updatePosition } = useUpdateJobPosition();
   const masterData = useMasterData();
@@ -503,12 +494,6 @@ const AddPosition = () => {
           ...prev[parent],
           [child]: value,
         };
-
-        // // 🔥 If one dropdown cleared, clear both
-        // if (value === "") {
-        //     updated.years = "";
-        //     updated.months = "";
-        // }
 
         return {
           ...prev,

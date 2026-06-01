@@ -9,9 +9,6 @@ export const useCreateRequisition = (editId, mode, isDraftMode = false) => {
   const [error, setError] = useState(null);
   const [requisitionData, setRequisitionData] = useState(null);
 
-  // const [indentFile, setIndentFile] = useState(null);
-  // const [existingIndentPath, setExistingIndentPath] = useState(null);
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",

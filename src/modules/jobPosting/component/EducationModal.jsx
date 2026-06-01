@@ -340,10 +340,6 @@ export default function EducationModal({
   const validateModalData = () => {
     const allRows = groups.flatMap((g) => g.educations);
 
-    //   const validationErrors = validateEducationModal({
-    //     rows: allRows,
-    //     mode,
-    //   });
     const validationErrors = validateEducationModal({
       groups,
       mode,

@@ -143,45 +143,7 @@ const InterviewPanelFormModal = ({
           <div className="field-error">{t(errors.members)}</div>
         )}
       </div>
-      {/* Interview Center (Zone) */}
-      {/* <div className="form-group">
-        <label>
-          Interview Center / Zone <span className="text-danger">*</span>
-        </label>
-
-        <Select
-          options={centerOptions}
-          placeholder={t("interviewPanelCommittee:select_interview_center")}
-          isMulti={false}   // explicitly single select (optional but clear)
-          value={
-            formData.interviewCenterId
-              ? centerOptions.find(opt => opt.value === formData.interviewCenterId)
-              : null
-          }
-          onChange={(selected) => {
-            setFormData({
-              ...formData,
-              interviewCenterId: selected ? selected.value : ""
-            });
-            clearError?.("interviewCenterId");
-          }}
-          styles={{
-            menuList: (provided) => ({
-              ...provided,
-              maxHeight: "270px",   // 👈 control height
-              overflowY: "auto",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
-            })
-          }}
-          classNamePrefix="react-select"
-        />
-
-        {errors?.interviewCenterId && (
-          <div className="field-error">{errors.interviewCenterId}</div>
-        )}
-      </div> */}
+      
 
       <div className="panel-form-actions">
         {!showUpdateWarning && (

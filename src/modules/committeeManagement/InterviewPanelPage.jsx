@@ -64,8 +64,7 @@ const InterviewPanelPage = () => {
   const [deletePanelName, setDeletePanelName] = useState("");
   const [showBulkImportModal, setShowBulkImportModal] = useState(false);
   const [showPositionImportModal, setShowPositionImportModal] = useState(false);
-  // const [showGuidelines, setShowGuidelines] = useState(false);
-
+ 
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   return (
     <div className="interview-panel-container">

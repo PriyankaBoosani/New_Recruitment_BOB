@@ -124,7 +124,6 @@ export default function CandidateVerification() {
 
   useEffect(() => {}, [selectedDate]);
 
-  // const navCandidates = location.state?.preloadedCandidates || [];
   const navRequisition = location.state?.requisition || null;
   const navPosition = location.state?.position || null;
 

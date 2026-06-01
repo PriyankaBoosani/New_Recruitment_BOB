@@ -38,10 +38,6 @@ export const preparePanelPayload = (
     formData.members.includes(m.value)
   );
 
-  // const selectedCenter = centerOptions.find(
-  //   c => c.value === formData.interviewCenterId
-  // );
-
   return {
     panelName: formData.name,
     description: formData.description || "",

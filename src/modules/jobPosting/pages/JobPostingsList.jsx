@@ -152,17 +152,7 @@ const JobPostingsList = () => {
   // 🔹 Accordion
   const [openReqId, setOpenReqId] = useState(null);
   const [openDept, setOpenDept] = useState({});
-  // const toggleAccordion = (reqId) => {
-  //     setOpenReqId((prev) => {
-  //         const next = prev === reqId ? null : reqId;
-
-  //         if (next) {
-  //             fetchPositions(reqId, req.isDraft);
-  //         }
-
-  //         return next;
-  //     });
-  // };
+  
 
   const toggleAccordion = (req) => {
     setOpenReqId((prev) => {
@@ -244,9 +234,7 @@ const JobPostingsList = () => {
       r.status !== "APPROVED" &&
       r.status !== "L1_PENDING" &&
       r.status !== "L2_PENDING" &&
-      //  r.status !== "L1_REJECTED" &&
-      //    r.status !== "L2_REJECTED" &&
-
+      
       !r.hasDraftPositions
   );
   useEffect(() => {
@@ -297,11 +285,6 @@ const JobPostingsList = () => {
       selectedReqIds,
     });
 
-    // if (errors.length > 0) {
-    //     errors.forEach(e => toast.error(e));
-    //     return;
-    // }
-
     if (errors.length > 0) {
       errors.forEach((e) => {
         if (typeof e === "string") {
@@ -315,7 +298,7 @@ const JobPostingsList = () => {
 
     const ids = selectedVisibleRequisitions
       .filter((r) => r.status !== "Approved")
-      // .map(r => r.id);
+     
       .map((r) => (r.isDraft ? r.parentRequisitionId : r.id));
 
     if (ids.length === 0) return;
@@ -742,14 +725,7 @@ const JobPostingsList = () => {
                       type="checkbox"
                       className="me-2 mt-2"
                       checked={selectedReqIds.has(req.id)}
-                      // disabled={
-                      //     req.status === "APPROVED" ||
-                      //     req.status === "L1_PENDING" ||
-                      //     req.status === "L2_PENDING" ||
-                      //     req.status === "L1_REJECTED" ||
-                      //     req.status === "L2_REJECTED" ||
-                      //     req.hasDraftPositions
-                      // }
+                      
                       disabled={!isCheckboxEnabled}
                       onClick={(e) => e.stopPropagation()}
                       onChange={(e) => {
@@ -960,10 +936,7 @@ const JobPostingsList = () => {
                     className="icon-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      // navigate(
-                      //     `/job-posting/create-requisition?id=${req.id}`,
-                      //     { state: { mode: "view" } }
-                      // );
+                      
                       if (!req.isDraft) {
                         navigate(
                           `/job-posting/create-requisition?id=${req.id}`,
@@ -1383,12 +1356,7 @@ const JobPostingsList = () => {
 
           handleSubmitForApproval("L1_PENDING");
         }}
-        // title="Direct Approval Confirmation"
-        // message="This action will directly approve the selected requisition(s). Are you sure you want to continue?"
-        // itemLabel={`${selectedReqIds.size} requisition(s)`}
-        // confirmText="Approve"
-        // confirmVariant="primary"
-
+        
         title={t("jobPostingsList:submit_confirm_title_approve")}
         message={t("jobPostingsList:submit_confirm_message_approve")}
         confirmText={t("jobPostingsList:approve")}

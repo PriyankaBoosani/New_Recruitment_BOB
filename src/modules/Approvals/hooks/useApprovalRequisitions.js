@@ -98,10 +98,6 @@ export const useApprovalRequisitions = ({
 
       setRequisitions(mapped);
 
-      // const data = response?.data;
-      // const mapped = (data?.content || []).map(mapApprovalRequisition);
-
-      // setRequisitions(mapped);
       setPageInfo(data?.page || null);
     } catch (error) {
       console.error("Error fetching requisitions:", error);
