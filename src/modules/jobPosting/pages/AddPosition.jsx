@@ -640,8 +640,8 @@ const AddPosition = () => {
     setFormData((prev) => ({
       ...prev,
       indentName: pos.indentName ?? prev.indentName,
-      minAge: pos.minAge ?? prev.minAge,
-      maxAge: pos.maxAge ?? prev.maxAge,
+      // minAge: pos.minAge ?? prev.minAge,
+      // maxAge: pos.maxAge ?? prev.maxAge,
       grade: pos.gradeId ?? prev.grade,
       responsibilities: pos.rolesResponsibilities ?? prev.responsibilities,
     }));
