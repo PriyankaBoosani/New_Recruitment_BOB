@@ -9,11 +9,6 @@ export const useUpdateJobPosition = () => {
     try {
       setLoading(true);
 
-      // 🔥 SAFETY: ensure formData always exists
-      const safePayload = {
-        ...payload,
-        formData: payload.formData || {},
-      };
 
       if (!payload.educationData || !payload.educationData.mandatory) {
         console.error("INVALID PAYLOAD", payload);

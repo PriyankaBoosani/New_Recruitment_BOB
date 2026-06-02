@@ -4,7 +4,6 @@ import edit_icon from "../../../assets/edit_icon.png";
 import delete_icon from "../../../assets/delete_icon.png";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
-import { useState } from "react";
 const ReservationSection = ({
   isViewMode,
   isControlledEdit = false,

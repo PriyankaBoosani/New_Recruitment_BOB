@@ -16,26 +16,14 @@ import InterviewerService from "./service/InterviewerService";
 import PdfViewerModal from "../candidatePreview/components/PdfViewerModal";
 
 import masterApiService from "../master/services/masterApiService";
-import CandidateVerificationService from "../Verification/services/CandidateVerification";
-
 import InterviewDayTable from "./components/InterviewDayTable";
 import { mapPanelPositions } from "./mapper/InterviewerScheduleMapper";
 import { mapInterviewerCandidates } from "./mapper/InterviewerScheduleMapper";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FiCalendar } from "react-icons/fi";
-import { Button, Modal } from "react-bootstrap";
+import {Modal } from "react-bootstrap";
 import InterviewerImportModal from "./components/InterviewerImportModal";
-import { FiUpload } from "react-icons/fi";
-
-/* ================= DATE PILL ================= */
-
-const DatePill = React.forwardRef(({ value, onClick }, ref) => (
-  <div className="date-pill" onClick={onClick} ref={ref}>
-    {value}
-    <span className="calendar-icon">📅</span>
-  </div>
-));
 
 /* ================= SCREEN ================= */
 
@@ -92,14 +80,6 @@ export default function InterviewerSchedule() {
     }
   }, [navState]);
 
-  const navReqId =
-    navState.requisition?.requisition?.id || navState.requisition?.id || null;
-
-  const navPosId =
-    navState.position?.position?.positionId ||
-    navState.position?.positionId ||
-    null;
-
   useEffect(() => {
     if (
       sessionStorage.getItem("fromPreviewBack") === "true" &&
@@ -113,9 +93,6 @@ export default function InterviewerSchedule() {
   }, []);
 
   /* ================= LOAD CANDIDATES ================= */
-
-  /* ================= LOAD PANEL POSITIONS ================= */
-
   useEffect(() => {
     InterviewerService.getPanelPositions()
       .then((res) => {

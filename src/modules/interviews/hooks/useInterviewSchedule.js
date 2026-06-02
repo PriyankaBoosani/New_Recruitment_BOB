@@ -2,12 +2,9 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
 import interviewService from "../services/interviewService";
-import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 import masterApiService from "../../master/services/masterApiService";
 
 export default function useInterviewSchedule(isEditMode, isReschedule) {
-  const navigate = useNavigate();
-
   const location = useLocation();
   // Parse URL parameters
 

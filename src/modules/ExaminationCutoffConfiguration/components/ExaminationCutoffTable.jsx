@@ -1,7 +1,5 @@
 import React from "react";
 import { FaEye, FaPen } from "react-icons/fa";
-import { FiFilter } from "react-icons/fi";
-
 export default function ExaminationCutoffTable({
   rows = [],
   onView,

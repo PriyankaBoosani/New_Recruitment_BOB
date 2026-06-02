@@ -32,7 +32,6 @@ const CommitteeRequests = () => {
   const isL2 = privileges?.["L2 Approval"];
 
   const approvalLevel = isL2 ? "L2" : isL1 ? "L1" : null;
-  const navigate = useNavigate();
   const {
     requisitionOptions,
     positionOptions,
@@ -55,7 +54,6 @@ const CommitteeRequests = () => {
   const [actionType, setActionType] = useState(null);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyData, setHistoryData] = useState([]);
-  const [selectedHistoryReq, setSelectedHistoryReq] = useState(null);
 
   // Filters
   const [status, setStatus] = useState("ALL");

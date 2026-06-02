@@ -12,18 +12,10 @@ import { mapJobPositionToRequisitionStrip } from "../mappers/candidatePreviewMap
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { FiUpload } from "react-icons/fi";
-
 const RequisitionStripformultiplepositions = ({
   requisition,
   position,
-  isSaved,
-  onSave,
   isCardBg,
-  isSaveEnabled,
-  isSaveBtn,
-  showImportBtn,
-  onImportClick,
   onRemovePosition,
   isReadonly = false,
 }) => {
@@ -83,9 +75,8 @@ const RequisitionStripformultiplepositions = ({
   useEffect(() => {
     const loadMasters = async () => {
       try {
-        const [masterRes, zonalRes, centersRes] = await Promise.all([
+        const [masterRes] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
-          // masterApiService.getZonalStates(),
         ]);
 
         setMasterData(masterRes.data || {});

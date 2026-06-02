@@ -57,39 +57,15 @@ export default function CompensationPool({
   });
 
   const user = useSelector((state) => state.user.user);
-
-  const role = user?.role?.toLowerCase();
-
   const privileges = useSelector((state) => state.user.privileges);
 
   const canCompensationPool = privileges?.["Compensation Pool"];
-  const canVerification = privileges?.Verification;
-
-  const [fixedPay, setFixedPay] = useState("");
-  const [variablePay, setVariablePay] = useState("");
-  const [expectedCTC, setExpectedCTC] = useState("");
 
   const userEmail = user?.email?.toLowerCase();
   const userRole = user?.role?.toLowerCase();
 
   const isRecruiter = userRole === "recruiter";
-  const isCommitteeMember = userRole === "committee_member";
-
-  const isCTCMatching =
-    Number(fixedPay || 0) + Number(variablePay || 0) === Number(expectedCTC);
-
-  const isTodayWithinRange = (startDate, endDate) => {
-    const today = new Date();
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    today.setHours(0, 0, 0, 0);
-    start.setHours(0, 0, 0, 0);
-    end.setHours(23, 59, 59, 999);
-
-    return today >= start && today <= end;
-  };
-
+  
   const isUserInCompensationPanel =
     Array.isArray(panelData?.compensationPanelList) &&
     panelData.compensationPanelList.some(
@@ -102,8 +78,6 @@ export default function CompensationPool({
           return apiEmail === userEmail && apiRole === userRole;
         })
     );
-
-  const isManager = !isRecruiter; // or use specific privilege if needed
 
   const getNegotiationClass = (status) => {
     switch (status) {
@@ -138,9 +112,6 @@ export default function CompensationPool({
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
-
-  const [showCompModal, setShowCompModal] = useState(false);
-  
   const [formData, setFormData] = useState({
     fixedPay: "",
     variablePay: "",
@@ -149,9 +120,6 @@ export default function CompensationPool({
     panelComments: "",
   });
 
-
-  const isManagerFormValid =
-    managerForm.fixedPay && managerForm.variablePay && managerForm.joiningBonus;
 
   const requestSort = (key) => {
     setSortConfig((prev) => {
@@ -196,15 +164,6 @@ export default function CompensationPool({
         return;
       }
 
-      const fixed =
-        parseAmount(managerForm.fixedPay) || selectedCandidate.fixedPay || 0;
-
-      const variable =
-        parseAmount(managerForm.variablePay) ||
-        selectedCandidate.variablePay ||
-        0;
-
-      const expected = Number(selectedCandidate?.expectedCtc || 0);
 
       if (!managerForm.fixedPay) {
         toast.error("Fixed Pay is required");
@@ -250,11 +209,7 @@ export default function CompensationPool({
       };
 
       
-      const res =
-        await candidateWorkflowServices.addCompensationDetails(payload);
-
-    
-
+      const res =  await candidateWorkflowServices.addCompensationDetails(payload);
       //  Normalize response properly (simple + reliable)
       const responseData =
         res?.data?.success !== undefined
@@ -262,9 +217,6 @@ export default function CompensationPool({
           : res?.success !== undefined
             ? res
             : res?.data || res;
-
-     
-
       //  Strict success check
       if (responseData?.success === true) {
         toast.success(responseData?.message || "Success");
@@ -392,10 +344,7 @@ export default function CompensationPool({
       }
 
       //  ADD THIS BLOCK (no changes to your logic)
-      const fixed = parseAmount(formData.fixedPay) || 0;
-      const variable = parseAmount(formData.variablePay) || 0;
-      const expected = Number(selectedCandidate?.expectedCtc || 0);
-
+     
       const payload = {
         compensation: {
           candidateId: selectedCandidate.candidateId,

@@ -19,7 +19,6 @@ const Header = () => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [langOpen, setLangOpen] = useState(false);
 
   const { instance } = useMsal();
@@ -56,11 +55,7 @@ const Header = () => {
           .replace(/\b\w/g, (c) => c.toUpperCase())
       : "");
 
-  /* ===================== LANGUAGE CHANGE ===================== */
-  const changeLang = (lng) => {
-    dispatch(setLanguage(lng));
-  };
-
+ 
   /* ===================== LOGOUT ===================== */
   const handleLogout = async () => {
     dispatch(clearUser());
@@ -78,10 +73,6 @@ const Header = () => {
   const role = user?.role?.trim().toLowerCase();
 
 
-
-  const isL1 = role === "l1";
-  const isL2 = role === "l2";
-
   //Privileges
   const privileges = useSelector((state) => state.user.privileges);
 
@@ -95,7 +86,6 @@ const Header = () => {
   const canApprovals =
     privileges?.["L1 Approval"] || privileges?.["L2 Approval"];
   const canL2 = privileges?.["L2 Approval"];
-  const canViewPosition = privileges?.["View Position"];
   const canMessages = privileges?.["Messages"];
   const canExaminationCutoffConfiguration =
     privileges?.["ExaminationCutoffConfiguration"];

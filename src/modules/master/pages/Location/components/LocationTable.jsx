@@ -1,7 +1,7 @@
 // components/LocationTable.jsx
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Table, Button, Form } from "react-bootstrap";
+import { Table, Button} from "react-bootstrap";
 import viewIcon from "../../../../../assets/view_icon.png";
 import editIcon from "../../../../../assets/edit_icon.png";
 import deleteIcon from "../../../../../assets/delete_icon.png";

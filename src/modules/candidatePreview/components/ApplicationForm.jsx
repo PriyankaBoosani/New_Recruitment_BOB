@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Accordion, Card, OverlayTrigger, Tooltip } from "react-bootstrap";
 import "../../../style/css/PreviewModal.css";
-import logo_Bob from "../../../assets/bob-logo.png";
-import sign from "../../../assets/downloadIcon.png";
 import viewIcon from "../../../assets/view_icon.png";
-import downloadIcon from "../../../assets/downloadIcon.png";
 import DocumentViewerModal from "../components/DocumentViewerModal";
 import { useLocation, useNavigate } from "react-router-dom";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
@@ -14,9 +11,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCircleCheck,
   faCircleExclamation,
-  faCircleXmark,
   faTrash,
   faUpRightFromSquare,
 } from "@fortawesome/free-solid-svg-icons";
@@ -49,23 +44,17 @@ const maskAddress = (address) => {
 
 const ApplicationForm = ({
   previewData,
-  selectedJob,
-  formErrors,
-  setFormErrors,
   candidateId,
   positionId,
   positionIds,
   applicationId,
   requisitionId,
   interviewScheduleId,
-  requisitionTitle,
-  positionName,
   isLocationWise,
   selectedDate,
   zonalVerificationStatus,
   zonalSubmitBeforeDate,
   zonalHrComments,
-  candidateStatus,
   isFromInterview,
   isFromCompensationPool,
   page,
@@ -76,7 +65,6 @@ const ApplicationForm = ({
 
   const navigate = useNavigate();
   const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
-  const [criteria, setCriteria] = useState({});
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [isEligible, setIsEligible] = useState(false);
   const [otherDocuments, setOtherDocuments] = useState([]);
@@ -173,11 +161,7 @@ const ApplicationForm = ({
   const privileges = useSelector((state) => state.user.privileges);
 
   const isZonalHr = privileges?.Verification;
-  const isInterviewer = privileges?.Interview;
-  const isRecruiter = privileges?.canCandidateWorkflow; // or whatever recruiter privilege is
   const canCandidatePool = privileges?.["Candidate Pool"];
-  const canInterviewPool = privileges?.["Interview Pool"];
-
   const mapDecisionToStatus = (val) => {
     const v = String(val || "")
       .toUpperCase()
@@ -504,7 +488,6 @@ const ApplicationForm = ({
   const [docStatusMap, setDocStatusMap] = useState({});
   const [docStatusLoading, setDocStatusLoading] = useState(true);
   const [errors, setErrors] = useState({});
-  const [docStatus, setDocStatus] = useState({});
   const [zonalDecision, setZonalDecision] = useState("");
 
   const getDocCategory = (name = "") => {
@@ -954,10 +937,6 @@ const ApplicationForm = ({
     );
   };
 
-  const hasShortlistSelection =
-    screeningForm.isShortlisted === "YES" ||
-    screeningForm.isShortlisted === "NO";
-
   const hasMissingUploads = documentRows.some((doc) => !doc?.url);
 
   const disableEligibleCheckbox =
@@ -973,15 +952,6 @@ const ApplicationForm = ({
     });
   };
 
-  const countYesCriteria = () => {
-    return [
-      screeningForm.isWorkCriteriaMet,
-      screeningForm.isAgeCriteriaMet,
-      screeningForm.isEducationCriteriaMet,
-    ].filter((v) => v === "YES").length;
-  };
-
-  const baseDerived = deriveShortlistStatus();
 
   const areAllCriteriaSelected =
     screeningForm.isWorkCriteriaMet &&
@@ -1615,44 +1585,7 @@ const ApplicationForm = ({
                     <td className="fw-med">{t("dob")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.dob}
-                      {/* {isPending ? (
-                        // ❌ PENDING
-                        <OverlayTrigger
-                          placement="top"
-                          overlay={
-                            <Tooltip id="dob-fail-tooltip">
-                              Manual verification pending
-                            </Tooltip>
-                          }
-                        >
-                          <span>
-                            <FontAwesomeIcon
-                              icon={faCircleXmark}
-                              style={{ color: "#dc3545" }}
-                              className="ms-1"
-                            />
-                          </span>
-                        </OverlayTrigger>
-
-                      ) : (
-                        // ✅ VERIFIED
-                        <OverlayTrigger
-                          placement="top"
-                          overlay={
-                            <Tooltip id="dob-success-tooltip">
-                              Verified
-                            </Tooltip>
-                          }
-                        >
-                          <span>
-                            <FontAwesomeIcon
-                              icon={faCircleCheck}
-                              style={{ color: "#28a745" }}
-                              className="ms-1"
-                            />
-                          </span>
-                        </OverlayTrigger>
-                      )} */}
+                      
                     </td>
                     <td className="fw-med">{t("age_cutoff")}</td>
                     <td className="fw-reg" colSpan={2}>

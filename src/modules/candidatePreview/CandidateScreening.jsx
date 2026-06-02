@@ -7,8 +7,7 @@ import React, {
 } from "react";
 import masterApiService from "../master/services/masterApiService";
 import "../../style/css/CandidateScreening.css";
-import uploadIcon from "../../assets/upload-blue-icon.png";
-import rankIcon from "../../assets/rank-icon.png";
+
 import pdfIcon from "../../assets/pdf-icon.png";
 import excelIcon from "../../assets/export-excel-icon.png";
 import searchIcon from "../../assets/search-icon.png";
@@ -34,12 +33,6 @@ import { useTranslation } from "react-i18next";
 import ExaminationScoreModal from "./components/ExaminationScoreModal";
 import ZonalRejectedCommentModal from "./components/ZonalRejectedCommentModal";
 import {
-  FaUsers,
-  FaUserTie,
-  FaFileSignature,
-  FaUserCheck,
-  FaBars,
-  FaListOl,
   FaExternalLinkAlt,
 } from "react-icons/fa";
 import { faListOl } from "@fortawesome/free-solid-svg-icons";
@@ -58,7 +51,6 @@ import CompensationPool from "./components/CompensationPool";
 import useCompensationPool from "./hooks/useCompensationPool";
 import { mapCompensationCandidates } from "./mappers/compositionMapper";
 import useCommitteeRequests from "../Approvals/hooks/useCommitteeRequests";
-import InterviewScheduleTable from ".././interviews/components/InterviewScheduleTable";
 import SchedulePoolTable from "../interviews/components/SchedulePoolTable";
 import ScheduleApprovalModal from "../candidatePreview/components/ScheduleApprovalModal";
 import ScheduleErrorModal from "../interviews/components/ScheduleErrorModal";
@@ -150,14 +142,8 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [examinationScoreData, setExaminationScoreData] = useState([]);
 
-  const [showImportCandidatesModal, setShowImportCandidatesModal] =
-    useState(false);
-
-  
-
+  const [showImportCandidatesModal, setShowImportCandidatesModal] = useState(false);
   const isCommitteeMember = role === "committee_member";
-
-const [rankListLoading, setRankListLoading] = useState(false);
 
   const INTERVIEW_STATUS_LABEL_MAP = {
     SCHEDULED: "Scheduled",
@@ -219,8 +205,6 @@ const [rankListLoading, setRankListLoading] = useState(false);
   const [loadingPositions, setLoadingPositions] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("");
-  const [loadingPreview, setLoadingPreview] = useState(false);
-
   const [candidates, setCandidates] = useState([]);
 
   const [schedulePoolCandidates, setSchedulePoolCandidates] = useState([]);
@@ -306,16 +290,6 @@ const [rankListLoading, setRankListLoading] = useState(false);
   //  const handleScheduleInterview = () => {
   
   const [reservationCategories, setReservationCategories] = useState([]);
-
-  const reservationCategoryMap = useMemo(() => {
-    const map = {};
-
-    reservationCategories?.forEach((item) => {
-      map[item.reservationCategoriesId] = item.categoryCode;
-    });
-
-    return map;
-  }, [reservationCategories]);
 
   useEffect(() => {
     if (location.state?.openExaminationScore) {
@@ -1564,9 +1538,6 @@ const [rankListLoading, setRankListLoading] = useState(false);
       setFilters(location.state.filters);
     }
   }, []);
-
-  const navRequisitionId = location.state?.requisitionId || null;
-
   const selectedTemplateData = templates.find(
     (t) => t.templateId === offerTemplateId
   );
@@ -1851,30 +1822,6 @@ const [rankListLoading, setRankListLoading] = useState(false);
       console.error(err);
       toast.error("Failed to send to Compensation Pool");
     }
-  };
-
-  const mapInterviewFeedback = (candidateId) => {
-    // STATIC for now — API later
-    return [
-      {
-        name: "Anand G",
-        comment: "Good to go",
-        time: "28-07-2025 02:00 PM",
-        score: 82,
-      },
-      {
-        name: "Manohar K",
-        comment: "Good to go",
-        time: "28-07-2025 02:00 PM",
-        score: 89,
-      },
-      {
-        name: "Ramesh M",
-        comment: "Good to go",
-        time: "28-07-2025 02:00 PM",
-        score: 78,
-      },
-    ];
   };
 
   const handleSendToOfferPool = async () => {
@@ -2241,8 +2188,6 @@ const handleGenerateRankList = async () => {
   };
 
   const [showExaminationModal, setShowExaminationModal] = useState(false);
-  const [expandedStates, setExpandedStates] = useState({});
-  // const [selectedRelaxation, setSelectedRelaxation] = useState("SET_II");
   const handleStatusChange = (value) => {
     setPage(0);
     setFilters((prev) => ({

@@ -1,18 +1,11 @@
-// ExamRequest.jsx
 
 import React, { useEffect, useMemo, useState } from "react";
-
 import { Container, Row, Col, Button } from "react-bootstrap";
-
 import Select from "react-select";
-
 import useExamRequest from "../hooks/useExamRequest";
-
 import "../../../style/css/ExamRequest.css";
-
 import AddExaminationCutoffModal from "../../ExaminationCutoffConfiguration/components/AddExaminationCutoffModal";
 import view_icon from "../../../assets/view_icon.png";
-import history_icon from "../../../assets/history_icon.png";
 import ApprovalHistoryModal from "../../Approvals/components/ApprovalHistoryModal";
 
 const ExamRequest = () => {

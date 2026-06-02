@@ -6,7 +6,6 @@ import {
   faCalendarDays,
   faLayerGroup,
   faLocationDot,
-  faBriefcase,
 } from "@fortawesome/free-solid-svg-icons";
 import endIcon from "../../../../src/assets/end_icon.png";
 const MessageHeader = ({ item, isOpen, onToggle, getStatusClass }) => {

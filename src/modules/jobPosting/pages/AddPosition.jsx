@@ -23,21 +23,9 @@ import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisit
 import { toast } from "react-toastify";
 import ReservationSection from "../component/ReservationSection";
 import { useTranslation } from "react-i18next";
-import masterApiService from "../../master/services/masterApiService";
 import SelectIndentModal from "../component/SelectIndentModal";
 const AddPosition = () => {
   const { t } = useTranslation(["addPosition", "common", "validation"]);
-  const renderError = (e) => {
-    if (!e) return "";
-    if (typeof e === "string") {
-      return t(e);
-    }
-    if (typeof e === "object" && e.key) {
-      return t(e.key, e.params);
-    }
-    return "";
-  };
-
   const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx"];
   const MAX_FILE_SIZE_MB = 2;
   const YEAR_OPTIONS = Array.from({ length: 31 }, (_, i) => i);
@@ -97,7 +85,6 @@ const AddPosition = () => {
     languages,
     stateLanguages,
     cities,
-    documentTypes,
   } = masterData;
 
   const [errors, setErrors] = useState({});
@@ -412,9 +399,6 @@ const AddPosition = () => {
           const cityObj = masterData.cities.find(
             (c) => String(c.id) === String(sd.cityId)
           );
-
-          const cityName = cityObj?.name || "";
-
           // category mapping (same as your code)
           const categories = {};
           const disabilities = {};

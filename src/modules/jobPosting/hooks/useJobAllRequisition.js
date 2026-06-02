@@ -73,8 +73,8 @@ export const useJobRequisitions = ({
             positionCount: draftPositionCount,
             vacancyCount: draftVacancyCount,
 
-            isDraft: true,
-            parentRequisitionId: item.id,
+            isDraft: true
+            
           });
         }
 

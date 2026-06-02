@@ -3,8 +3,6 @@ import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import ErrorMessage from "../../../../../shared/components/ErrorMessage";
 import { validateUserForm } from "../../../../../shared/utils/user-validations";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import UserImportModal from "./UserImportModal";
 
 import {
@@ -36,8 +34,6 @@ const UserFormModal = ({
 
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [activeTab, setActiveTab] = useState("manual");
 
   /* ========================= RESET FORM ON OPEN  ========================= */

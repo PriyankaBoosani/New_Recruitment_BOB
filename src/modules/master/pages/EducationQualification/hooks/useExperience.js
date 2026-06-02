@@ -4,7 +4,6 @@ import {
   validateEducationForm,
   validateEducationLevel,
   validateCourse,
-  validateCourseCode,
   validateSpecialization,
 } from "../../../../../shared/utils/educationValidations";
 import { useTranslation } from "react-i18next";

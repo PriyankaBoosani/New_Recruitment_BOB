@@ -6,13 +6,6 @@ import "../../style/css/CandidateScreening.css";
 
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { Button } from "react-bootstrap";
-import { FiFilter } from "react-icons/fi";
-
-import DropdownStripMultipleposition from "../candidatePreview/components/DropdownStripMultipleposition";
-
-import RequisitionStripformultiplepositions from "../candidatePreview/components/RequisitionStripformultiplepositions";
-
 import DropdownStrip from "../candidatePreview/components/DropdownStrip";
 
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
@@ -20,9 +13,6 @@ import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import ExaminationCutoffTable from "./components/ExaminationCutoffTable";
 
 import AddExaminationCutoffModal from "./components/AddExaminationCutoffModal";
-
-import ExaminationCutoffService from "./service/ExaminationCutoffService";
-
 import jobPositionApiService from "../jobPosting/services/jobPositionApiService";
 
 export default function ExaminationCutoffConfiguration() {
@@ -69,10 +59,6 @@ export default function ExaminationCutoffConfiguration() {
   }, []);
 
   const [statusFilter, setStatusFilter] = useState([]);
-
-  const STATUS_OPTIONS = ["L1_PENDING", "L2_PENDING", "APPROVED", "REJECTED"];
-
-  /* ================= FETCH REQUISITIONS ================= */
 
   const fetchRequisitions = async (searchText = "") => {
     try {

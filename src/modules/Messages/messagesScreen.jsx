@@ -18,11 +18,9 @@ const Messages = () => {
   const {
     selectedRequisitionId,
     selectedPositionId,
-    date,
     openRow,
     setSelectedRequisitionId,
     setSelectedPositionId,
-    setDate,
     toggleRow,
   } = useMessages();
   const [selectedStatus, setSelectedStatus] = React.useState("");
@@ -37,7 +35,6 @@ const Messages = () => {
   const [totalElements, setTotalElements] = React.useState(0);
   const [apiMessages, setApiMessages] = React.useState([]);
   const [loadingMessages, setLoadingMessages] = React.useState(false);
-  const [allMessages, setAllMessages] = React.useState([]);
   const [searchText, setSearchText] = React.useState("");
   const [page, setPage] = React.useState(0);
   const [size, setSize] = React.useState(10);
@@ -47,7 +44,6 @@ const Messages = () => {
   const selectedRequisitionName =
     requisitions.find((r) => r.id === selectedRequisitionId)
       ?.requisitionTitle || "";
-  const selectedPositionName = "";
   const messagesData = mapMessagesData(
     apiMessages,
     selectedRequisitionId,
@@ -58,10 +54,7 @@ const Messages = () => {
     threadMessagesMap,
     interviewCentres
   );
-  const statusCounts = (allMessages || []).reduce((acc, item) => {
-    acc[item.status] = (acc[item.status] || 0) + 1;
-    return acc;
-  }, {});
+ 
   const filteredMessages = messagesData.filter((item) => {
     const search = searchText.toLowerCase();
     const matchesSearch =

@@ -6,12 +6,6 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import masterApiService from "../../master/services/masterApiService";
 import { Modal, Button } from "react-bootstrap";
 import {
-  FaUsers,
-  FaUserTie,
-  FaFileSignature,
-  FaUserCheck,
-  FaBars,
-  FaListOl,
   FaExternalLinkAlt,
 } from "react-icons/fa";
 
@@ -187,22 +181,6 @@ const OfferPool = ({
 
   /* ---------- Selection logic ---------- */
  
-  const allSelected =
-    paginatedOffers.length > 0 &&
-    filteredOffers.length > 0 &&
-    selectedIds.length === filteredOffers.length;
-
-
-  const toggleSelectAll = () => {
-    if (allSelected) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(filteredOffers.map((o) => o.id));
-    }
-  };
-
-  const totalPages = Math.ceil(totalElements / pageSize);
-
   const InfoField = ({ label, value }) => (
     <div className="col-12 col-md-4 mb-3">
       <p className="fw-400 fs-13 mb-1" style={{ color: "#8e939f" }}>
@@ -244,12 +222,7 @@ const OfferPool = ({
                   paddingLeft: "1.5rem",
                 }}
               >
-                {/* <input
-								type="checkbox"
-								style={{ marginBottom: '0.75rem' }}
-								checked={allSelected}
-								onChange={toggleSelectAll}
-							/> */}
+               
               </th>
               <th
                 className="fs-14 fw-normal py-3 border-top sticky-col-1"

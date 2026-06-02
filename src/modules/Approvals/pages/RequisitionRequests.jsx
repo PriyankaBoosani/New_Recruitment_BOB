@@ -8,14 +8,9 @@ import {
   Badge,
   Spinner,
 } from "react-bootstrap";
-import { Plus, Search, ChevronDown, ChevronUp } from "react-bootstrap-icons";
+import {Search, ChevronDown, ChevronUp } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
-
-// CSS
-//  CSS (go up to src first)
 import "../../../style/css/ApprovalsRequsition.css";
-
-// Assets (go up to src first)
 import start_icon from "../../../assets/start_icon.png";
 import dept_icon from "../../../assets/dept_icon.jpg";
 import end_icon from "../../../assets/end_icon.png";
@@ -51,7 +46,6 @@ const RequisitionRequests = () => {
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [actionType, setActionType] = useState(null); // "approve" | "reject"
   const [showHistoryModal, setShowHistoryModal] = useState(false);
-  const [historyData, setHistoryData] = useState([]);
   const [selectedHistoryReq, setSelectedHistoryReq] = useState(null);
 
   const handleApprovalAction = async (comment) => {
@@ -257,41 +251,6 @@ const RequisitionRequests = () => {
       showStartEllipsis: start > 0,
       showEndEllipsis: end < totalPages,
     };
-  };
-
-  const renderPagination = () => {
-    const { pages, showStartEllipsis, showEndEllipsis } = getVisiblePages(
-      page,
-      pageInfo.totalPages
-    );
-
-    return (
-      <>
-        {showStartEllipsis && (
-          <li className="page-item disabled">
-            <span className="page-link">…</span>
-          </li>
-        )}
-
-        {pages.map((p) => (
-          <li key={p} className={`page-item ${page === p ? "active" : ""}`}>
-            <button
-              className="page-link"
-              onClick={() => setPage(p)}
-              disabled={loading}
-            >
-              {p + 1}
-            </button>
-          </li>
-        ))}
-
-        {showEndEllipsis && (
-          <li className="page-item disabled">
-            <span className="page-link">…</span>
-          </li>
-        )}
-      </>
-    );
   };
 
   const groupPositionsByDept = (positions) => {

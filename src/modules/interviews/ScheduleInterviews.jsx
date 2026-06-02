@@ -3,9 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 import HeaderWithBack from "../../shared/components/HeaderWithBack";
 
-import DropdownStrip from "../candidatePreview/components/DropdownStrip";
-import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
-
 import InterviewPanelsConfig from "../interviews/components/InterviewPanelsConfig";
 import InterviewScheduleTable from "../interviews/components/InterviewScheduleTable";
 import useInterviewSchedule from "../interviews/hooks/useInterviewSchedule";
@@ -77,9 +74,6 @@ const ScheduleInterviews = () => {
   //from schedule pool
 
   const schedulePoolData = location.state?.schedulePoolData;
-
-
-  const selectedPanelsFromEdit = location.state?.selectedPanels || [];
 
   useEffect(() => {
     if (!isEditMode || !schedulePoolData?.length) {
@@ -256,13 +250,7 @@ const ScheduleInterviews = () => {
   const sourceTab = state?.sourceTab || state?.activeTab || "CANDIDATE_POOL";
   return (
     <div className="container-fluid px-4 py-3 mb-5 pb-5">
-      {/* ===== HEADER ===== */}
-      {/* <HeaderWithBack
-        title="Schedule Interviews"
-        subtitle="Scheduling for 03 candidates"
-        onBack={() => navigate(-1)}
-      /> */}
-
+      
       <HeaderWithBack
         title="Schedule Interviews"
         subtitle={`Scheduling for ${
@@ -298,19 +286,7 @@ const ScheduleInterviews = () => {
       <div className="card border-0 mt-3">
         <div className="card-body">
           <div className="row g-3">
-            {/* <DropdownStrip
-              requisitions={requisitions}
-              positions={positions}
-              selectedRequisitionId={selectedRequisitionId}
-              selectedPositionId={selectedPositionId}
-              loadingRequisitions={!requisitions.length}
-              loadingPositions={!positions.length}
-              onRequisitionChange={handleRequisitionChange}
-              onRequisitionSearch={() => {}}
-              onPositionChange={setSelectedPositionId}
-              disableRequisition={true}
-              disablePosition={true}
-            /> */}
+            
 
             <DropdownStripMultipleposition
               requisitions={requisitions}
@@ -345,16 +321,7 @@ const ScheduleInterviews = () => {
             saveButton={false}
             isReadonly={true}
           />
-          {/* <RequisitionStrip
-            requisition={selectedRequisition}
-            position={{
-              positionId: selectedPositionId,
-              positionName:
-                selectedPosition?.masterPositions?.positionName
-            }}
-            isCardBg={false}
-            isSaveEnabled={false}
-          /> */}
+          
         </div>
       )}
 
@@ -549,106 +516,6 @@ const ScheduleInterviews = () => {
         errorMessage={errorMessage}
         errorCandidates={errorCandidates}
       />
-
-      {/* {showCentreConfirmModal && (
-
-  <div className="ipc-alert-overlay">
-
-    <div className="ipc-alert-modal">
-
-      <div className="ipc-alert-icon">
-        <i className="bi bi-building-check"></i>
-      </div>
-
-      <h4 className="ipc-alert-title">
-        Confirm Interview Centre Availability
-      </h4>
-
-      <p className="ipc-alert-message">
-        Please confirm that all allocated interview
-        centres are available for the scheduled
-        interview slots.
-      </p>
-
-      <p className="ipc-alert-message mt-3">
-        If any centre is unavailable, you can review
-        and update the interview centre allocation
-        before proceeding.
-      </p>
-
-      <div className="d-flex justify-content-end gap-2 mt-4">
-
-        
-        <button
-          className="btn btn-light"
-          onClick={() => {
-
-            setShowCentreConfirmModal(false);
-
-            // build mappings
-            const mappings = {};
-
-            scheduleApiData.forEach(item => {
-
-              const centre =
-                item.interviewCentres;
-
-              mappings[centre.interviewCentreId] =
-                centre.interviewCentreId;
-
-            });
-
-            setCentreMappings(mappings);
-
-            setShowCentreModal(true);
-
-          }}
-        >
-          Review Centres
-        </button>
-
-        
-        <button
-          className="btn btn-primary"
-          onClick={async () => {
-
-            const res =
-              await scheduleInterview();
-
-            if (!res.success) {
-              toast.error(res.message);
-              return;
-            }
-
-            toast.success(
-              "Interviews scheduled successfully"
-            );
-
-            setShowCentreConfirmModal(false);
-
-            setShowReadyBar(false);
-
-            navigate("/candidate-workflow", {
-              state: {
-                requisitionId:
-                  selectedRequisitionId,
-                positionId:
-                  selectedPositionId
-              }
-            });
-
-          }}
-        >
-          Proceed
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-
-)} */}
     </div>
   );
 };

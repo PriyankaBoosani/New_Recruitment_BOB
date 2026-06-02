@@ -1,7 +1,5 @@
-import React, { use, useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Container, Row, Col, Form, Button, Badge } from "react-bootstrap";
-import { Search } from "react-bootstrap-icons";
-import { useNavigate } from "react-router-dom";
 import "../../../style/css/Extensions.css";
 import start_icon from "../../../assets/start_icon.png";
 import end_icon from "../../../assets/end_icon.png";
@@ -18,8 +16,6 @@ import {
   faLayerGroup,
   faLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
-
-//  Utilities
 import { validateSelectedRequisitions } from "../validations/requisitionValidation";
 
 //  Mapper
@@ -27,10 +23,6 @@ import useExtensionRequests from "../hooks/useExtensionRequests";
 import MessageHistory from "../../Messages/components/messageHistory";
 import committeeManagementService from "../../committeeManagement/services/committeeManagementService";
 import { useSelector } from "react-redux";
-import { FaLocationArrow } from "react-icons/fa";
-
-//  Other module (go up to modules, then down)
-// import RequisitionPositionSelector from "../../candidatePreview/components/RequisitionPositionSelector";
 
 const ExtensionsRequests = () => {
   const { t } = useTranslation([
@@ -38,8 +30,6 @@ const ExtensionsRequests = () => {
     "common",
     "extensionsRequests",
   ]);
-
-  const navigate = useNavigate();
   const [pageSize, setPageSize] = useState(10);
 
   const [showCommentModal, setShowCommentModal] = useState(false);
@@ -130,8 +120,6 @@ const ExtensionsRequests = () => {
     setExtensionRequests,
     loadingRequisitions,
     loadingPositions,
-    loadingRequestTypes,
-    loadingExtensions,
     fetchRequisitions,
     fetchPositions,
     fetchRequestTypes,
@@ -143,7 +131,6 @@ const ExtensionsRequests = () => {
     historyData,
     loadingHistory,
     fetchApprovalHistory,
-    interviewCenters,
     fetchInterviewCenters,
     zonalDisplayMap,
   } = useExtensionRequests();

@@ -45,8 +45,6 @@ export default function EducationModal({
 }) {
   const { t } = useTranslation(["addPosition", "common", "validation"]);
   const [errors, setErrors] = useState({});
-  const [rows, setRows] = useState([createRow()]);
-  const [certIds, setCertIds] = useState([""]);
   const [groups, setGroups] = useState([createGroup()]);
   const [certGroups, setCertGroups] = useState([createCertGroup()]);
 
@@ -335,89 +333,6 @@ export default function EducationModal({
     setGroups([createGroup()]);
     setCertGroups([createCertGroup()]);
     onHide();
-  };
-
-  const validateModalData = () => {
-    const allRows = groups.flatMap((g) => g.educations);
-
-    const validationErrors = validateEducationModal({
-      groups,
-      mode,
-    });
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return false;
-    }
-
-    const filledRows = allRows.filter(
-      (r) => r.educationTypeId && r.educationQualificationsId
-    );
-
-    if (mode === "mandatory" && filledRows.length === 0) {
-      setErrors({
-        rows: { _error: "validation:degree_required" },
-      });
-      return false;
-    }
-
-    return true;
-  };
-  const buildEducations = (group) => {
-    const hasValid = group.educations.some(
-      (r) => r.educationTypeId && r.educationQualificationsId
-    );
-
-    if (!hasValid) return [createRow()];
-
-    return group.educations
-      .filter((r) => r.educationTypeId && r.educationQualificationsId)
-      .map((r) => {
-        const validSpecs = getSpecializationsForDegree(
-          r.educationQualificationsId
-        );
-
-        return {
-          educationTypeId: r.educationTypeId,
-          educationQualificationsId: r.educationQualificationsId,
-          specializationId: validSpecs.some((s) => s.id === r.specializationId)
-            ? r.specializationId
-            : null,
-          duration: r.duration,
-          percentage: r.percentage,
-        };
-      });
-  };
-  const buildCertifications = (group) => {
-    const hasValid = (group.certifications || []).some(
-      (c) => c.certificationId
-    );
-
-    if (!hasValid) return [createCertRow()];
-
-    return group.certifications
-      .filter((c) => c.certificationId)
-      .map((c) => ({
-        certificationId: c.certificationId,
-      }));
-  };
-  const buildFinalText = () => {
-    return [
-      degreeText ? `Education Requirements: ${degreeText}` : "",
-      certText ? `Certifications: ${certText}` : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
-  };
-  const buildEducationPayload = () => {
-    return {
-      groups: groups.map((group) => ({
-        educations: buildEducations(group),
-      })),
-      certGroups: certGroups.map((group) => ({
-        certifications: buildCertifications(group),
-      })),
-      text: buildFinalText(),
-    };
   };
 
   const isValidPercentage = (value) => {
@@ -879,8 +794,6 @@ export default function EducationModal({
         <Button
           variant="primary"
           onClick={() => {
-            const allRows = groups.flatMap((g) => g.educations);
-           
             const validationErrors = validateEducationModal({
               groups,
               mode,
