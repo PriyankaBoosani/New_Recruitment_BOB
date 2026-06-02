@@ -251,7 +251,6 @@ export const useInterviewPanel = () => {
           );
 
           if (!res?.success) {
-            // toast.error(res?.message || "Panel name already exists for selected committee");
             setErrorMessage(res?.data || "Failed to update the panel");
             setShowErrorModal(true);
             return; // ⛔ VERY IMPORTANT
@@ -269,7 +268,6 @@ export const useInterviewPanel = () => {
         const res = await masterApiService.addInterviewPanel(payload);
 
         if (!res?.success) {
-          // toast.error(res?.message || "Failed to create panel");
           setErrorMessage(res?.data || "Failed to save the panel");
           setShowErrorModal(true);
           return; // ⛔ VERY IMPORTANT

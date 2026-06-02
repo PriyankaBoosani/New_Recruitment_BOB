@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 import "../../style/css/Committee.css";
-import CommitteeHistoryList from "./components/CommitteeHistoryList";
 import { useAssignPositions } from "./hooks/useAssignPositions";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import ErrorModal from "./components/ErrorModal";
@@ -16,7 +15,6 @@ import history_icon from "../../assets/history_icon.png";
 import useCommitteeRequests from "../Approvals/hooks/useCommitteeRequests"; // adjust path
 import masterApiService from "../master/services/masterApiService";
 import {
-  mapPanelToFormData,
   preparePanelPayload,
 } from "./mappers/InterviewPanelMapper";
 import InterviewPanelFormModal from "./components/InterviewPanelFormModal";
@@ -28,7 +26,6 @@ import { toast } from "react-toastify";
 const AssignPositionsPage = ({ refreshPanels }) => {
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   const [showBulkImportModal, setShowBulkImportModal] = useState(false);
-  const [showScheduleWarning, setShowScheduleWarning] = useState(false);
   const [showUpdateWarning, setShowUpdateWarning] = useState(false);
   const [pendingPayload, setPendingPayload] = useState(null);
 
@@ -45,21 +42,14 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     updateCommitteeDate,
     activeTab,
     setActiveTab,
-    showHistory,
-    setShowHistory,
     selectedCommittees,
     setSelectedCommittees,
-    context,
-    setContext,
     handleAssignCommittees,
     panelErrors,
-    setPanelErrors,
     showErrorModal,
     setShowErrorModal,
     errorMessage,
-    setErrorMessage,
     errorList,
-    setErrorList,
     isDirty,
     setIsManuallyDirty,
     bulkImportPositionAssignments,
@@ -119,20 +109,6 @@ const AssignPositionsPage = ({ refreshPanels }) => {
       const res = await masterApiService.getInterviewPanelById(committee.id);
       const data = res?.data;
 
-      // ✅ PANEL TYPE
-      const communityMatch = communityOptions.find(
-        (c) => c.value === data?.committee?.interviewCommitteeId
-      );
-
-      // ✅ MEMBERS
-      const membersMapped = data?.panelMembers
-        ?.map((m) => {
-          const user = m.panelMember;
-
-          return membersOptions.find((opt) => opt.value === user?.userId);
-        })
-        .filter(Boolean);
-
       const mapped = {
         id: data?.interviewPanelId,
         name: data?.panelName,
@@ -148,8 +124,6 @@ const AssignPositionsPage = ({ refreshPanels }) => {
       console.error(err);
     }
   };
-  const today = new Date().toISOString().split("T")[0];
-
   const selectedPositionTitle =
     positions.find((p) => p.jobPositions?.positionId === selectedPosition)
       ?.masterPositions?.positionName || "";
@@ -362,11 +336,6 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     value: pos.jobPositions?.positionId,
     label: pos.masterPositions?.positionName,
   }));
-  const hasAnySelectedPanels =
-    selectedCommittees.SCREENING.length > 0 ||
-    selectedCommittees.INTERVIEW.length > 0 ||
-    selectedCommittees.COMPENSATION.length > 0;
-
   const updatePanel = async (payload) => {
     try {
       setUpdatingPanel(true);

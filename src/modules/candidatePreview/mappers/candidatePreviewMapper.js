@@ -27,9 +27,6 @@ const getCityName = (masters, id) =>
 const getPincode = (masters, id) =>
   findById(masters.pincodes, "pincodeId", id)?.pin || "-";
 
-const getZonalState = (masters, id) =>
-  findById(masters?.zonalStats || [], "zonalStateID", id)?.stateName || "-";
-
 const getInterviewCentreName = (masters, id) =>
   findById(masters?.interviewCenters || [], "interviewCentreId", id)
     ?.displayName || "-";
@@ -44,13 +41,8 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
   // const locationprefApiData = apiData?.locationPreference
   const locationprefApiData = apiData?.locationPreference || {};
   const expectedCtcFormatted = safeCurrency(locationprefApiData?.expectedCtc);
-
-  /* ================= ADDRESS NAME RESOLVE ================= */
-
-  const presentCity = getCityName(masters, address.cityId);
   const presentDistrict = getDistrictName(masters, address.districtId);
   const presentState = getStateName(masters, address.stateId);
-  const presentPin = getPincode(masters, address.pincodeId);
 
   const statePreference1 = getStateName(
     masters,
@@ -309,29 +301,6 @@ export const mapJobPositionToRequisitionStrip = (
   const departmentObj = masters?.departments?.find(
     (d) => d.departmentId === apiData.deptId
   );
-
-  /* ========= NATIONAL CATEGORY + DISABILITY (PIVOTED) ========= */
-
-  const formatExperience = (months) => {
-    if (months == null) return null;
-
-    const totalMonths = Number(months);
-
-    if (isNaN(totalMonths)) return null;
-
-    const years = Math.floor(totalMonths / 12);
-    const remainingMonths = totalMonths % 12;
-
-    if (years > 0 && remainingMonths > 0) {
-      return `${years} year${years > 1 ? "s" : ""} ${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
-    }
-
-    if (years > 0) {
-      return `${years} year${years > 1 ? "s" : ""}`;
-    }
-
-    return `${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
-  };
 
   const nationalCategoryCounts = {};
   const nationalDisabilityCounts = {};

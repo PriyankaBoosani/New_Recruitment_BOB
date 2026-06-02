@@ -394,12 +394,7 @@ const AddPosition = () => {
 
       const mappedStates = await Promise.all(
         existingPosition.positionStateDistributions.map(async (sd) => {
-          // 🔥 FETCH cities for this state
-
-          const cityObj = masterData.cities.find(
-            (c) => String(c.id) === String(sd.cityId)
-          );
-          // category mapping (same as your code)
+          
           const categories = {};
           const disabilities = {};
 
