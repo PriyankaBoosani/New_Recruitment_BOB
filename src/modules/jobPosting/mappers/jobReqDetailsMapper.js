@@ -4,8 +4,7 @@ export const mapJobRequisitionFromApi = (item = {}) => {
   const rawStatus = item.requisitionStatus ?? "";
 
   // ✅ DEFINE HERE (not outside)
-  const isRejected =
-    rawStatus === "L1_REJECTED" || rawStatus === "L2_REJECTED";
+  const isRejected = rawStatus === "L1_REJECTED" || rawStatus === "L2_REJECTED";
 
   return {
     id: item.id ?? "",
@@ -26,7 +25,7 @@ export const mapJobRequisitionFromApi = (item = {}) => {
     editable: isEditableStatus.includes(rawStatus),
 
     // ✅ now works
-    isRejected
+    isRejected,
   };
 };
 const getStatusBadge = (status = "") => {

@@ -1,4 +1,3 @@
-
 export const mapInterviewMembersApi = (apiResponse) => {
   const list = Array.isArray(apiResponse?.data)
     ? apiResponse.data
@@ -6,17 +5,14 @@ export const mapInterviewMembersApi = (apiResponse) => {
       ? apiResponse
       : [];
 
-       // ✅ Filter only required roles
-  const filtered = list.filter(user =>
-    ["Committee_Member", "Recruiter"].includes(user.role)
-  );
-    const formatRole = (role) =>
-    role.replace(/_/g, " ");
+  // ✅ Filter only required roles
+  const filtered = list.filter((user) => ["Committee_Member", "Recruiter"].includes(user.role));
+  const formatRole = (role) => role.replace(/_/g, " ");
 
-  return filtered.map(user => ({
-    value: user.userId,              // ✅ correct key
+  return filtered.map((user) => ({
+    value: user.userId, // ✅ correct key
     label: `${user.name} - ${formatRole(user.role)}`, // Show both name and role
     email: user.email,
-    role: user.role
+    role: user.role,
   }));
 };

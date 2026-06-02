@@ -8,7 +8,7 @@ export const getDepartment = (masters, deptId) =>
     masters,
     "departments",
     deptId,
-    "department_id"   // ✅ FIXED
+    "department_id" // ✅ FIXED
   );
 
 /* =========================
@@ -19,7 +19,7 @@ export const getCity = (masters, cityId) =>
     masters,
     "cities",
     cityId,
-    "city_id"         // ✅ FIXED
+    "city_id" // ✅ FIXED
   );
 
 /* =========================
@@ -30,7 +30,7 @@ export const getState = (masters, stateId) =>
     masters,
     "states",
     stateId,
-    "state_id"        // ✅ FIXED
+    "state_id" // ✅ FIXED
   );
 
 /* =========================
@@ -41,7 +41,7 @@ export const getLocation = (masters, locationId) =>
     masters,
     "locations",
     locationId,
-    "location_id"     // ✅ FIXED
+    "location_id" // ✅ FIXED
   );
 
 /* =========================
@@ -50,9 +50,9 @@ export const getLocation = (masters, locationId) =>
 export const getJobGrade = (masters, gradeId) =>
   getMasterById(
     masters,
-    "job_grades",     // ✅ FIXED (NOT jobGrade)
+    "job_grades", // ✅ FIXED (NOT jobGrade)
     gradeId,
-    "job_grade_id"    // ✅ FIXED
+    "job_grade_id" // ✅ FIXED
   );
 
 /* =========================
@@ -63,7 +63,7 @@ export const getSkill = (masters, skillId) =>
     masters,
     "skills",
     skillId,
-    "skill_id"        // ✅ FIXED
+    "skill_id" // ✅ FIXED
   );
 /* =========================
    EMPLOYMENT TYPE
@@ -71,75 +71,49 @@ export const getSkill = (masters, skillId) =>
 export const getEmploymentType = (masters, employmentTypeId) =>
   getMasterById(
     masters,
-    "employment_types",     // ✅ matches API key
+    "employment_types", // ✅ matches API key
     employmentTypeId,
-    "employment_type_id"     // ✅ matches ID field
+    "employment_type_id" // ✅ matches ID field
   );
 
-  /* =========================
+/* =========================
    COUNTRY (NATIONALITY)
 ========================= */
 export const getNationality = (masters, countryId) =>
-  getMasterById(
-    masters,
-    "countries",
-    countryId,
-    "countryId"
-  );
+  getMasterById(masters, "countries", countryId, "countryId");
 
 /* =========================
    GENDER
 ========================= */
 export const getGender = (masters, genderId) =>
-
-   getMasterById(
-    masters,
-    "genders",
-    genderId,
-    "genderId"
-  );
+  getMasterById(masters, "genders", genderId, "genderId");
 
 /* =========================
    MARITAL STATUS
 ========================= */
 export const getMaritalStatus = (masters, maritalStatusId) =>
-  getMasterById(
-    masters,
-    "marital_statuses",
-    maritalStatusId,
-    "maritalStatusId"
-  );
+  getMasterById(masters, "marital_statuses", maritalStatusId, "maritalStatusId");
 
 /* =========================
    RELIGION
 ========================= */
 export const getReligion = (masters, religionId) =>
-  getMasterById(
-    masters,
-    "religions",
-    religionId,
-    "religionId"
-  );
+  getMasterById(masters, "religions", religionId, "religionId");
 
 /* =========================
    RESERVATION
 ========================= */
 export const getReservation = (masters, reservationId) =>
-  getMasterById(
-    masters,
-    "reservation_categories",
-    reservationId,
-    "reservationCategoriesId"
-  );
+  getMasterById(masters, "reservation_categories", reservationId, "reservationCategoriesId");
 /* =========================
    EDUCATION LEVEL
 ========================= */
 export const getEducationLevel = (masters, educationLevelId) =>
   getMasterById(
     masters,
-    "education_levels",        // ✅ master key
+    "education_levels", // ✅ master key
     educationLevelId,
-    "documentTypeId"       // ✅ id field
+    "documentTypeId" // ✅ id field
   );
 
 /* =========================
@@ -148,9 +122,9 @@ export const getEducationLevel = (masters, educationLevelId) =>
 export const getSpecialization = (masters, specializationId) =>
   getMasterById(
     masters,
-    "specializations",         // ✅ master key
+    "specializations", // ✅ master key
     specializationId,
-    "specializationId"        // ✅ id field
+    "specializationId" // ✅ id field
   );
 
 /* =========================
@@ -161,5 +135,5 @@ export const getMandatoryQualification = (masters, qualificationId) =>
     masters,
     "mandatory_qualifications", // ✅ master key
     qualificationId,
-    "educationQualificationsId"          // ✅ id field
+    "educationQualificationsId" // ✅ id field
   );

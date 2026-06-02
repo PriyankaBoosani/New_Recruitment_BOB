@@ -4,7 +4,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.2);
+  background: rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -18,15 +18,10 @@
   border-radius: 10px;
 }
 
-
-
-
-
 /*  Title (blue like screenshot) */
 
-
 /*  Close icon styling */
-.custom-modal .btn-close {  
+.custom-modal .btn-close {
   font-size: 14px;
   opacity: 0.7;
 }
@@ -69,7 +64,6 @@
   border: none;
 }
 
-
 .custom-modal .modal-dialog {
   margin: 0 auto !important;
   max-width: 900px !important;
@@ -84,7 +78,6 @@
 .modal {
   padding: 0 !important;
 }
-
 
 .neg-green {
   background-color: #28a745 !important;
@@ -105,13 +98,9 @@
   font-weight: 500;
 }
 
-
 .orange-bg {
   background-color: #f36f21;
 }
-
-
-
 
 /* HEADER FIX */
 .custom-modal-header {
@@ -128,8 +117,8 @@
 /* CLOSE ICON PERFECT ALIGN */
 .custom-modal-header .btn-close {
   position: absolute;
-  top: 25px;     /* adjust vertically */
-  right: 18px;   /* align to edge */
+  top: 25px; /* adjust vertically */
+  right: 18px; /* align to edge */
   margin: 0;
   padding: 0;
   opacity: 0.7;
@@ -139,9 +128,6 @@
   opacity: 1;
 }
 
-
-
-
 /* MODAL CONTAINER */
 .custom-modal .modal-content {
   border-radius: 12px;
@@ -150,7 +136,7 @@
 
 /* HEADER */
 .custom-modal .modal-title {
-  color: #3f5fa8;   /* 🎯 exact screenshot color */
+  color: #3f5fa8; /* 🎯 exact screenshot color */
   font-size: 18px;
   font-weight: 600;
 }

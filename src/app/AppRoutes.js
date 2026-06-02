@@ -26,12 +26,12 @@ import StatesLanguagesPage from "../modules/master/pages/StatesLanguages/StatesL
 import AddPosition from "../modules/jobPosting/pages/AddPosition";
 // Auth & layout helpers
 import PrivateRoute from "../modules/auth/services/PrivateRoute";
-import DepartmentPage from "../modules/master/pages/Department/DepartmentPage"
+import DepartmentPage from "../modules/master/pages/Department/DepartmentPage";
 import InterviewPanel from "../modules/committeeManagement/InterviewPanelPage";
 import CandidatePreviewPage from "../modules/candidatePreview/candidatePreviewPage";
 import CandidateVerification from "../modules/Verification/CandidateVerification";
 import CandidateScreening from "../modules/candidatePreview/CandidateScreening";
-import InterviewerSchedule from "../modules/Interviewer/InterviewerSchedule"
+import InterviewerSchedule from "../modules/Interviewer/InterviewerSchedule";
 // import CandidateInterview from "../modules/Interview/CandidateInterview";
 import ScheduleInterviews from "../modules/interviews/ScheduleInterviews";
 // import Approvals from "../modules/Approvals/pages/RequisitionRequests";
@@ -40,7 +40,7 @@ import ScheduleInterviews from "../modules/interviews/ScheduleInterviews";
 // import InterviewRequests from "../modules/Approvals/pages/InterviewRequests";
 import Messages from "../modules/Messages/messagesScreen";
 
-import UnauthorizedPage from "./UnauthorizedPage"
+import UnauthorizedPage from "./UnauthorizedPage";
 import PrivilegeRoute from "./PrivilegeRoute";
 import AuthCallback from "../modules/auth/pages/AuthCallback";
 import { getDefaultRoute } from "../shared/utils/user-validations";
@@ -49,7 +49,7 @@ const Layout = React.lazy(() => import("../shared/components/Layout"));
 
 // Loading fallback
 const Loading = () => (
-  <div className="d-flex justify-content-center align-items-center" style={{ height: '60vh' }}>
+  <div className="d-flex justify-content-center align-items-center" style={{ height: "60vh" }}>
     <div className="spinner-border" role="status">
       <span className="visually-hidden">Loading...</span>
     </div>
@@ -59,7 +59,12 @@ const Loading = () => (
 const AppRoutes = () => {
   // Check if user is authenticated from Redux
   const authUser = useSelector((state) => state.user?.authUser);
-  const token = useSelector((state) => state.user?.authUser?.access_token || state.user?.authUser?.accessToken || state.user?.auth?.access_token);
+  const token = useSelector(
+    (state) =>
+      state.user?.authUser?.access_token ||
+      state.user?.authUser?.accessToken ||
+      state.user?.auth?.access_token
+  );
   const privileges = useSelector((state) => state.user?.privileges);
   const location = useLocation();
 
@@ -83,9 +88,11 @@ const AppRoutes = () => {
         <Route
           path="/"
           element={
-            authUser
-              ? <Navigate to={getDefaultRoute(privileges)} replace />
-              : <Navigate to="/login" replace />
+            authUser ? (
+              <Navigate to={getDefaultRoute(privileges)} replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
           }
         />
         {/* Protected routes */}
@@ -220,7 +227,14 @@ const AppRoutes = () => {
               <Route
                 path="/candidate-preview"
                 element={
-                  <PrivilegeRoute privilegesRequired={["Candidate Pool", "Verification", "Interview", "Compensation Pool"]}>
+                  <PrivilegeRoute
+                    privilegesRequired={[
+                      "Candidate Pool",
+                      "Verification",
+                      "Interview",
+                      "Compensation Pool",
+                    ]}
+                  >
                     <CandidatePreviewPage />
                   </PrivilegeRoute>
                 }
@@ -230,7 +244,6 @@ const AppRoutes = () => {
                 path="/candidate-workflow"
                 element={
                   <PrivilegeRoute privilegesRequired={["Candidate Pool", "Compensation Pool"]}>
-
                     <CandidateScreening />
                   </PrivilegeRoute>
                 }
@@ -271,7 +284,6 @@ const AppRoutes = () => {
                   // </PrivilegeRoute>
                 }
               /> */}
-
 
               <Route
                 path="/schedule-interviews"
@@ -316,20 +328,15 @@ const AppRoutes = () => {
                   </PrivilegeRoute>
                 }
               /> */}
-
-
-
             </Route>
           </Route>
         </Route>
 
         {/* Catch-all → login */}
         <Route path="*" element={<NotFound />} />
-
       </Routes>
     </Suspense>
   );
 };
 
 export default AppRoutes;
-

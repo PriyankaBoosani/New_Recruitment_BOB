@@ -6,11 +6,10 @@ export const mapSpecialCategoryFromApi = (api) => ({
   name: api.specialCategoryName,
   description: api.specialCategoryDesc,
   createdDate: api.createdDate,
-  isActive: api.isActive
+  isActive: api.isActive,
 });
 
-export const mapSpecialCategoriesFromApi = (list = []) =>
-  list.map(mapSpecialCategoryFromApi);
+export const mapSpecialCategoriesFromApi = (list = []) => list.map(mapSpecialCategoryFromApi);
 
 export const mapSpecialCategoryToApi = (ui, options = {}) => {
   const { id = null } = options;
@@ -20,6 +19,6 @@ export const mapSpecialCategoryToApi = (ui, options = {}) => {
     isActive: true,
     specialCategoryCode: cleanData(ui.code),
     specialCategoryName: cleanData(ui.name),
-    specialCategoryDesc: cleanData(ui.description)
+    specialCategoryDesc: cleanData(ui.description),
   };
 };

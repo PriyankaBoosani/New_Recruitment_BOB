@@ -1,9 +1,9 @@
 // src/modules/master/pages/SpecialCategory/components/SpecialCategoryFormModal.jsx
 import { handleValidatedInput, INPUT_PATTERNS } from "../../../../../shared/utils/inputHandlers";
-import React from 'react';
-import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
-import ErrorMessage from '../../../../../shared/components/ErrorMessage';
-import SpecialCategoryImportModal from './SpecialCategoryImportModal';
+import React from "react";
+import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import ErrorMessage from "../../../../../shared/components/ErrorMessage";
+import SpecialCategoryImportModal from "./SpecialCategoryImportModal";
 
 const SpecialCategoryFormModal = ({
   show,
@@ -20,65 +20,54 @@ const SpecialCategoryFormModal = ({
   t,
   ...importProps
 }) => {
- const getTitle = () => {
-  if (isViewing) return t("view");
-  if (isEditing) return t("edit");
-  return t("added");
-};
+  const getTitle = () => {
+    if (isViewing) return t("view");
+    if (isEditing) return t("edit");
+    return t("added");
+  };
 
-const title = getTitle();
+  const title = getTitle();
 
-const isCreateMode = !isEditing && !isViewing;
-const handleFormSubmit = (e) => {
-  if (isViewing) {
-    e.preventDefault();
-    onHide();
-  } else {
-    handleSave(e);
-  }
-};
-const renderField = (name, value, placeholder, pattern, errorMessage) => {
-  if (isViewing) {
-    return <div className="form-control-view">{value || "-"}</div>;
-  }
+  const isCreateMode = !isEditing && !isViewing;
+  const handleFormSubmit = (e) => {
+    if (isViewing) {
+      e.preventDefault();
+      onHide();
+    } else {
+      handleSave(e);
+    }
+  };
+  const renderField = (name, value, placeholder, pattern, errorMessage) => {
+    if (isViewing) {
+      return <div className="form-control-view">{value || "-"}</div>;
+    }
 
-  return (
-    <Form.Control
-      name={name}
-      value={value}
-      placeholder={placeholder}
-      className="form-control-custom"
-      onChange={(e) =>
-        handleValidatedInput({
-          e,
-          fieldName: name,
-          setFormData,
-          setErrors,
-          pattern,
-          errorMessage
-        })
-      }
-    />
-  );
-};
-
+    return (
+      <Form.Control
+        name={name}
+        value={value}
+        placeholder={placeholder}
+        className="form-control-custom"
+        onChange={(e) =>
+          handleValidatedInput({
+            e,
+            fieldName: name,
+            setFormData,
+            setErrors,
+            pattern,
+            errorMessage,
+          })
+        }
+      />
+    );
+  };
 
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
       <Modal.Header closeButton className="modal-header-custom">
         <div>
-          <Modal.Title>
-            {isViewing
-              ? t("view")
-              : isEditing
-                ? t("edit")
-                : t("added")}
-          </Modal.Title>
-           {isCreateMode && (
-              <p className="small text-muted para">
-                {t("choose_add_method")}
-              </p>
-            )}
+          <Modal.Title>{isViewing ? t("view") : isEditing ? t("edit") : t("added")}</Modal.Title>
+          {isCreateMode && <p className="small text-muted para">{t("choose_add_method")}</p>}
         </div>
       </Modal.Header>
 
@@ -86,26 +75,25 @@ const renderField = (name, value, placeholder, pattern, errorMessage) => {
         {isCreateMode && (
           <div className="tab-buttons mb-4">
             <Button
-              className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
-              variant={activeTab === 'manual' ? 'light' : 'outline-light'}
-              onClick={() => setActiveTab('manual')}
+              className={`tab-button ${activeTab === "manual" ? "active" : ""}`}
+              variant={activeTab === "manual" ? "light" : "outline-light"}
+              onClick={() => setActiveTab("manual")}
             >
               {t("manual_entry")}
             </Button>
 
             <Button
-              className={`tab-button ${activeTab === 'import' ? 'active' : ''}`}
-              variant={activeTab === 'import' ? 'light' : 'outline-light'}
-              onClick={() => setActiveTab('import')}
+              className={`tab-button ${activeTab === "import" ? "active" : ""}`}
+              variant={activeTab === "import" ? "light" : "outline-light"}
+              onClick={() => setActiveTab("import")}
             >
               {t("import_file")}
             </Button>
           </div>
         )}
 
-        {activeTab === 'manual' ? (
+        {activeTab === "manual" ? (
           <Form onSubmit={handleFormSubmit}>
-
             <Row className="g-3">
               <Col md={6}>
                 <Form.Group>
@@ -113,18 +101,17 @@ const renderField = (name, value, placeholder, pattern, errorMessage) => {
                     {t("code")} <span className="text-danger">*</span>
                   </Form.Label>
 
-                 {renderField(
-  "code",
-  formData.code,
-  t("enter_code"),
-  INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
-  t("validation:no_special_charses")
-)}
+                  {renderField(
+                    "code",
+                    formData.code,
+                    t("enter_code"),
+                    INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
+                    t("validation:no_special_charses")
+                  )}
 
                   {!isViewing && <ErrorMessage>{errors.code}</ErrorMessage>}
                 </Form.Group>
               </Col>
-
 
               <Col md={6}>
                 <Form.Group>
@@ -144,7 +131,6 @@ const renderField = (name, value, placeholder, pattern, errorMessage) => {
                 </Form.Group>
               </Col>
 
-
               <Col xs={12}>
                 <Form.Group>
                   <Form.Label>
@@ -156,7 +142,6 @@ const renderField = (name, value, placeholder, pattern, errorMessage) => {
                   {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
                 </Form.Group>
               </Col>
-
             </Row>
 
             <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
@@ -170,12 +155,10 @@ const renderField = (name, value, placeholder, pattern, errorMessage) => {
                 </Button>
               )}
             </Modal.Footer>
-
           </Form>
         ) : (
           <>
             <SpecialCategoryImportModal t={t} onClose={onHide} onSuccess={importProps.onSuccess} />
-           
           </>
         )}
       </Modal.Body>
@@ -183,4 +166,4 @@ const renderField = (name, value, placeholder, pattern, errorMessage) => {
   );
 };
 
-export default SpecialCategoryFormModal;  
+export default SpecialCategoryFormModal;

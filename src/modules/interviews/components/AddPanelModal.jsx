@@ -11,10 +11,9 @@ const AddPanelModal = ({
   mode = "add",
   initialPanel = "",
   initialRows = [],
-  panels = [],  // ✅ NEW
-  selectedPanels = [] 
+  panels = [], // ✅ NEW
+  selectedPanels = [],
 }) => {
-
   const { t } = useTranslation(["interviewSchedule", "common"]);
 
   const {
@@ -31,36 +30,31 @@ const AddPanelModal = ({
     maxDate,
     clearPanelError,
     showPanelInfo,
-setShowPanelInfo,
+    setShowPanelInfo,
 
-panelInfoLoading,
+    panelInfoLoading,
 
-panelAvailability,
+    panelAvailability,
 
-loadPanelAvailability
+    loadPanelAvailability,
   } = useAddPanelModal({
     show,
     initialPanel,
     initialRows,
     onSave,
     onClose,
-    panels
+    panels,
   });
-  console.log("panels123", panels)
+  console.log("panels123", panels);
 
   return (
     <Modal show={show} onHide={handleCancel} size="xl" centered dialogClassName="ap-modal">
       <Modal.Body className="ap-body">
-
         {/* HEADER */}
         <div className="ap-header">
           <div>
-            <div className="ap-title">
-              {mode === "edit" ? t("edit_title") : t("add_title")}
-            </div>
-            <div className="ap-sub">
-              {mode === "edit" ? t("edit_sub") : t("add_sub")}
-            </div>
+            <div className="ap-title">{mode === "edit" ? t("edit_title") : t("add_title")}</div>
+            <div className="ap-sub">{mode === "edit" ? t("edit_sub") : t("add_sub")}</div>
           </div>
 
           <button className="ap-close" onClick={handleCancel}>
@@ -76,142 +70,86 @@ loadPanelAvailability
 
           <div className="ap-select-wrap">
             <Form.Select
-              className={`ap-input ap-no-arrow ${
-                      errors?.panelId ? "ap-error" : ""
-                    }`}
+              className={`ap-input ap-no-arrow ${errors?.panelId ? "ap-error" : ""}`}
               disabled={mode === "edit"}
               value={panelId || ""}
-           onChange={(e) => {
+              onChange={(e) => {
                 setPanelId(e.target.value);
                 clearPanelError();
               }}
-              
             >
-              <option value="">
-                {t("select_panel_placeholder")}
-              </option>
+              <option value="">{t("select_panel_placeholder")}</option>
 
               {panels.map((panel) => {
-                const isSelected = selectedPanels?.some(p => p.id === panel.id);
+                const isSelected = selectedPanels?.some((p) => p.id === panel.id);
 
                 return (
-                  <option
-                    key={panel.id}
-                    value={panel.id}
-                  >
+                  <option key={panel.id} value={panel.id}>
                     {panel.name}
                   </option>
                 );
               })}
             </Form.Select>
-{panelId && (
+            {panelId && (
+              <button
+                type="button"
+                className="ap-info-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
 
-  <button
-    type="button"
-    className="ap-info-btn"
-    onClick={(e) => {
+                  loadPanelAvailability();
+                }}
+              >
+                <i className="bi bi-info-circle" />
+              </button>
+            )}
 
-      e.stopPropagation();
+            {showPanelInfo && (
+              <div className="ap-panel-popover">
+                <div className="ap-panel-popover-header">
+                  <h6 className="ap-panel-popover-title">scheduled interviews</h6>
 
-      loadPanelAvailability();
-
-    }}
-  >
-    <i className="bi bi-info-circle" />
-  </button>
-
-)}
-
-{showPanelInfo && (
-
-  <div className="ap-panel-popover">
-
-    <div className="ap-panel-popover-header">
-
-      <h6 className="ap-panel-popover-title">
-        scheduled interviews 
-      </h6>
-
-      <button
-        type="button"
-        className="ap-panel-popover-close"
-        onClick={() => setShowPanelInfo(false)}
-      >
-        <i className="bi bi-x" />
-      </button>
-
-    </div>
-
-    <div className="ap-panel-popover-body">
-
-      {panelInfoLoading ? (
-
-        <div className="ap-loading-spinner">
-          <i className="bi bi-arrow-clockwise" />
-        </div>
-
-      ) : panelAvailability.length > 0 ? (
-
-        panelAvailability.map(
-          (day, index) => (
-
-            <div
-              key={index}
-              className="ap-day-block"
-            >
-
-              <div className="ap-day-title">
-
-                {formatDateDDMMYYYY(day.panelDate)}
-
-              </div>
-
-              {day.panelAvailableModels.map(
-                (slot, idx) => (
-
-                  <div
-                    key={idx}
-                    className="ap-slot-card"
+                  <button
+                    type="button"
+                    className="ap-panel-popover-close"
+                    onClick={() => setShowPanelInfo(false)}
                   >
+                    <i className="bi bi-x" />
+                  </button>
+                </div>
 
-                    <div className="ap-slot-position">
-                      {slot.positionName}
+                <div className="ap-panel-popover-body">
+                  {panelInfoLoading ? (
+                    <div className="ap-loading-spinner">
+                      <i className="bi bi-arrow-clockwise" />
                     </div>
+                  ) : panelAvailability.length > 0 ? (
+                    panelAvailability.map((day, index) => (
+                      <div key={index} className="ap-day-block">
+                        <div className="ap-day-title">{formatDateDDMMYYYY(day.panelDate)}</div>
 
-                    <div className="ap-slot-time">
-                      {slot.startTime.slice(0,5)}
-                      {" - "}
-                      {slot.endTime.slice(0,5)}
-                    </div>
+                        {day.panelAvailableModels.map((slot, idx) => (
+                          <div key={idx} className="ap-slot-card">
+                            <div className="ap-slot-position">{slot.positionName}</div>
 
-                  </div>
-
-                )
-              )}
-
-            </div>
-
-          )
-        )
-
-      ) : (
-
-        <div className="text-center text-muted py-3">
-          No availability data found
-        </div>
-
-      )}
-
-    </div>
-
-  </div>
-
-)}
+                            <div className="ap-slot-time">
+                              {slot.startTime.slice(0, 5)}
+                              {" - "}
+                              {slot.endTime.slice(0, 5)}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center text-muted py-3">No availability data found</div>
+                  )}
+                </div>
+              </div>
+            )}
             <i className="bi bi-chevron-down ap-select-icon" />
           </div>
-          <div className="field-error">
-            {errors?.panelId ? t(errors.panelId) : ""}
-          </div>
+          <div className="field-error">{errors?.panelId ? t(errors.panelId) : ""}</div>
 
           {/* DATE RANGE TEXT BELOW DROPDOWN */}
           {minDate && maxDate && (
@@ -224,7 +162,6 @@ loadPanelAvailability
         {/* ROWS */}
         {rows.map((row, i) => (
           <div key={i} className="ap-panel-row">
-            
             {/* FIRST ROW: Date, Start Time, End Time */}
             <div className="ap-row-group">
               {/* DATE */}
@@ -236,9 +173,7 @@ loadPanelAvailability
                 <div className="ap-icon-input">
                   <input
                     type="date"
-                    className={`ap-input ap-no-date ${
-                      errors?.rows?.[i]?.date ? "ap-error" : ""
-                    }`}
+                    className={`ap-input ap-no-date ${errors?.rows?.[i]?.date ? "ap-error" : ""}`}
                     value={row.date}
                     min={minDate}
                     max={maxDate}
@@ -250,7 +185,6 @@ loadPanelAvailability
                 <div className="field-error">
                   {errors?.rows?.[i]?.date ? t(errors.rows[i].date) : ""}
                 </div>
-                
               </div>
 
               {/* START TIME */}
@@ -261,19 +195,13 @@ loadPanelAvailability
 
                 <input
                   type="time"
-                  className={`ap-input ${
-                    errors?.rows?.[i]?.startTime ? "ap-error" : ""
-                  }`}
+                  className={`ap-input ${errors?.rows?.[i]?.startTime ? "ap-error" : ""}`}
                   value={row.startTime}
-                  onChange={(e) =>
-                    updateRow(i, "startTime", e.target.value)
-                  }
+                  onChange={(e) => updateRow(i, "startTime", e.target.value)}
                 />
 
                 <div className="field-error">
-                  {errors?.rows?.[i]?.startTime
-                    ? t(errors.rows[i].startTime)
-                    : ""}
+                  {errors?.rows?.[i]?.startTime ? t(errors.rows[i].startTime) : ""}
                 </div>
               </div>
 
@@ -285,19 +213,13 @@ loadPanelAvailability
 
                 <input
                   type="time"
-                  className={`ap-input ${
-                    errors?.rows?.[i]?.endTime ? "ap-error" : ""
-                  }`}
+                  className={`ap-input ${errors?.rows?.[i]?.endTime ? "ap-error" : ""}`}
                   value={row.endTime}
-                  onChange={(e) =>
-                    updateRow(i, "endTime", e.target.value)
-                  }
+                  onChange={(e) => updateRow(i, "endTime", e.target.value)}
                 />
 
                 <div className="field-error">
-                  {errors?.rows?.[i]?.endTime
-                    ? t(errors.rows[i].endTime)
-                    : ""}
+                  {errors?.rows?.[i]?.endTime ? t(errors.rows[i].endTime) : ""}
                 </div>
               </div>
             </div>
@@ -311,9 +233,7 @@ loadPanelAvailability
                 </Form.Label>
 
                 <Form.Select
-                  className={`ap-input ${
-                    errors?.rows?.[i]?.duration ? "ap-error" : ""
-                  }`}
+                  className={`ap-input ${errors?.rows?.[i]?.duration ? "ap-error" : ""}`}
                   value={row.duration}
                   onChange={(e) => updateRow(i, "duration", e.target.value)}
                 >
@@ -325,9 +245,7 @@ loadPanelAvailability
                 </Form.Select>
 
                 <div className="field-error">
-                  {errors?.rows?.[i]?.duration
-                    ? t(errors.rows[i].duration)
-                    : ""}
+                  {errors?.rows?.[i]?.duration ? t(errors.rows[i].duration) : ""}
                 </div>
               </div>
 
@@ -343,9 +261,7 @@ loadPanelAvailability
                   pattern="[0-9]*"
                   maxLength={3}
                   placeholder={t("enter_interviews_per_day")}
-                  className={`ap-inputs ${
-                    errors?.rows?.[i]?.perDay ? "ap-error" : ""
-                  }`}
+                  className={`ap-inputs ${errors?.rows?.[i]?.perDay ? "ap-error" : ""}`}
                   value={row.perDay}
                   onChange={(e) => {
                     const onlyNums = e.target.value.replace(/\D/g, "");
@@ -361,25 +277,18 @@ loadPanelAvailability
 
               {/* ACTIONS */}
               <div className="ap-field ap-actions">
-                <Form.Label className="ap-label">
-                  &nbsp;
-                </Form.Label>
+                <Form.Label className="ap-label">&nbsp;</Form.Label>
                 {i === 0 ? (
                   <button type="button" className="ap-plus" onClick={addRow}>
                     <i className="bi bi-plus-lg" />
                   </button>
                 ) : (
-                  <button
-                    type="button"
-                    className="ap-trash"
-                    onClick={() => removeRow(i)}
-                  >
+                  <button type="button" className="ap-trash" onClick={() => removeRow(i)}>
                     <i className="bi bi-trash" />
                   </button>
                 )}
               </div>
             </div>
-
           </div>
         ))}
 
@@ -392,7 +301,6 @@ loadPanelAvailability
             {t("common:save")}
           </button>
         </div>
-
       </Modal.Body>
     </Modal>
   );

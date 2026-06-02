@@ -8,22 +8,22 @@
 .create-requisition-page .requisition-card {
   border-radius: 12px;
   border: none;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 /* Section title */
 .create-requisition-page .section-title {
-	display: flex;
-	align-items: center;
-	padding-bottom: 10px;
-	margin-bottom: 0px !important;
+  display: flex;
+  align-items: center;
+  padding-bottom: 10px;
+  margin-bottom: 0px !important;
 }
 
 .create-requisition-page .section-title h6 {
-	margin: 0;
-	color: #162B75;
-	font-weight: 500;
-	font-size: 1.125em;
+  margin: 0;
+  color: #162b75;
+  font-weight: 500;
+  font-size: 1.125em;
 }
 
 .create-requisition-page .indicator {
@@ -73,12 +73,12 @@
 
 /* Footer */
 .create-requisition-page .footer-actions {
-	background: #fff;
-	padding: 16px 24px;
-	display: flex;
-	justify-content: flex-end;
-	gap: 12px;
-	border-radius: 10px;
+  background: #fff;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-radius: 10px;
 }
 
 .create-requisition-page .primary-btn {
@@ -92,18 +92,19 @@
   background: #e85f10;
 }
 
-.create-requisition-page .form-control, .form-select {
-    border-radius: 6px;
-    font-size: 0.875em;
-    font-weight: 400;
+.create-requisition-page .form-control,
+.form-select {
+  border-radius: 6px;
+  font-size: 0.875em;
+  font-weight: 400;
 }
 .create-requisition-page .form-label {
-	font-weight: 500;
-	color: #333333;
-	margin-bottom: 0.5rem;
-	font-size: 0.875em;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 0.5rem;
+  font-size: 0.875em;
 }
 .create-requisition-page .form-text {
-	font-size: 0.785em;
-	color: #828282 !important;
+  font-size: 0.785em;
+  color: #828282 !important;
 }

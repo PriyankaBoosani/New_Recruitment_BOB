@@ -49,7 +49,6 @@ export const useCreateRequisition = (editId) => {
     loadData();
   }, [editId]);
 
-
   // Handle Input Changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -94,6 +93,6 @@ export const useCreateRequisition = (editId) => {
     loading,
     fetching,
     error,
-    requisitionData
+    requisitionData,
   };
 };

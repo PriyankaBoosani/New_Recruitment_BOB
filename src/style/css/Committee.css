@@ -5,7 +5,7 @@
 
 /* ===== PAGE HEADER ===== */
 .assign-positions-page .page-header {
-  background: linear-gradient(135deg, #42579F 0%, #2c3e6b 100%);
+  background: linear-gradient(135deg, #42579f 0%, #2c3e6b 100%);
   border-radius: 16px;
   padding: 32px;
   margin-bottom: 32px;
@@ -69,7 +69,7 @@
 .assign-positions-page .form-select:focus {
   border-color: #86b7fe;
   outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
 /* ===== REQUISITION STRIP SECTION ===== */
@@ -96,20 +96,20 @@
   flex: 1;
 }
 .assign-positions-page .config-title {
-	color: #0a0a0a;
-	font-size: 0.875rem;
-	font-weight: 400;
-	margin: 0 0 8px 0;
+  color: #0a0a0a;
+  font-size: 0.875rem;
+  font-weight: 400;
+  margin: 0 0 8px 0;
 }
 
 .assign-positions-page .config-subtitle {
-	color: #717182;
-	font-size: .75rem;
-	font-weight: 400;
+  color: #717182;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .assign-positions-page .assign-button {
-  background: linear-gradient(135deg, #F26522 0%, #e55a1b 100%);
+  background: linear-gradient(135deg, #f26522 0%, #e55a1b 100%);
   color: #ffffff;
   border: none;
   padding: 12px 24px;
@@ -158,9 +158,9 @@
 }
 
 .tab-item.active {
-  background: #42579F;
+  background: #42579f;
   color: #ffffff;
-  border-color: #42579F;
+  border-color: #42579f;
 }
 
 /* ===== PANELS CONTAINER ===== */
@@ -186,7 +186,7 @@
 }
 
 .panel-box.selected {
-  border-color: #F26522;
+  border-color: #f26522;
 }
 
 .panel-header {
@@ -282,11 +282,11 @@
   .selection-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .panels-container {
     flex-direction: column;
   }
-  
+
   .swap-divider {
     padding: 12px 0;
   }
@@ -296,38 +296,38 @@
   .assign-positions-page {
     padding: 16px;
   }
-  
+
   .page-header {
     padding: 24px;
   }
-  
+
   .page-title {
     font-size: 1.5rem;
   }
-  
+
   .committee-config-section {
     padding: 20px;
   }
-  
+
   .config-header {
     flex-direction: column;
     gap: 16px;
   }
-  
+
   .committee-tabs {
     flex-direction: column;
     background: transparent;
     padding: 0;
   }
-  
+
   .tab-item {
     background: #f3f4f6;
     margin-bottom: 8px;
     border-radius: 8px;
   }
-  
+
   .tab-item.active {
-    background: #42579F;
+    background: #42579f;
     color: #ffffff;
   }
 }
@@ -386,12 +386,12 @@
 }
 
 .action-pill.add {
-  background: #F26522;
+  background: #f26522;
   color: #ffffff;
 }
 
 .action-pill.add:hover {
-  background: #F26522;
+  background: #f26522;
 }
 
 .assign-positions-page .action-pill.remove {
@@ -428,7 +428,7 @@
 
 .assign-positions-page .date-row input:focus {
   outline: none;
-  border-color: #42579F;
+  border-color: #42579f;
   box-shadow: 0 0 0 2px rgba(66, 87, 159, 0.1);
 }
 
@@ -454,23 +454,22 @@
   font-size: 0.75rem;
 }
 .assign-position-title {
-	color: #42579f;
-	font-size: 1rem;
-	font-weight: 500;
+  color: #42579f;
+  font-size: 1rem;
+  font-weight: 500;
 }
 .assign-position-muted {
-	color: #717182;
-	font-size: .75rem;
-	font-weight: 400;
+  color: #717182;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
-
-.custom-select__control{
+.custom-select__control {
   max-width: 350px;
-  font-size: .875rem;
+  font-size: 0.875rem;
 }
 .custom-select__menu {
-border-color: hsl(0, 0%, 80%);
+  border-color: hsl(0, 0%, 80%);
   border-radius: 4px;
   border-style: solid;
   border-width: 1px;
@@ -487,7 +486,7 @@ border-color: hsl(0, 0%, 80%);
   white-space: pre-line;
 }
 .header-title {
-  color: #162B75;
+  color: #162b75;
   font-size: 1.25rem;
   font-weight: 500;
 }
@@ -523,64 +522,64 @@ border-color: hsl(0, 0%, 80%);
   opacity: 0.6;
 }
 .file-name {
-  word-break: break-all;     /* breaks long words */
-  overflow-wrap: anywhere;   /* modern support */
-  white-space: normal;       /* allow wrapping */
+  word-break: break-all; /* breaks long words */
+  overflow-wrap: anywhere; /* modern support */
+  white-space: normal; /* allow wrapping */
 }
 .bg-yellowwarning {
-	color: #856404;
-	border: 1px solid #ffc107;
-	background: #fff3cd;
-	font-weight: 500;
-	font-size: 0.625em;
-  text-transform: capitalize;
-}
-.committee-row .bg-success {
-  color: #fff;
-  border: 1px solid #0EB319 !important;
-  background: #F5FFF6;
+  color: #856404;
+  border: 1px solid #ffc107;
+  background: #fff3cd;
   font-weight: 500;
   font-size: 0.625em;
   text-transform: capitalize;
 }
-.bg-info{
+.committee-row .bg-success {
+  color: #fff;
+  border: 1px solid #0eb319 !important;
+  background: #f5fff6;
+  font-weight: 500;
+  font-size: 0.625em;
   text-transform: capitalize;
 }
-.bg-danger{
+.bg-info {
   text-transform: capitalize;
 }
-.edit-btn:disabled{
+.bg-danger {
+  text-transform: capitalize;
+}
+.edit-btn:disabled {
   cursor: not-allowed;
 }
-.edit-btn{
+.edit-btn {
   border: none;
   background: none;
 }
-.edit-icon{
+.edit-icon {
   width: 22px;
   height: 22px;
 }
 .modaleditcustom .modal-title {
-  color: #162B75;
+  color: #162b75;
   font-size: 1rem;
   font-weight: 500;
 }
 .modaleditcustom .modal-header {
-border-bottom: none;
-padding-bottom: 0px;
+  border-bottom: none;
+  padding-bottom: 0px;
 }
 .modaleditcustom .modal-body label {
-	font-size: 0.875rem;
-	font-weight: 400;
-	margin-bottom: 4px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  margin-bottom: 4px;
 }
-.panel-form-actions .btn{
+.panel-form-actions .btn {
   font-size: 0.875rem;
 }
 .panel-form-actions .btn-outline-secondary {
   margin-right: 10px;
 }
-.panel-form-actions{
+.panel-form-actions {
   display: flex;
   justify-content: flex-end;
 }

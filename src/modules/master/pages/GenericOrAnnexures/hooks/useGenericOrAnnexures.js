@@ -12,12 +12,11 @@ export const useGenericOrAnnexures = () => {
     try {
       const res = await masterApiService.getAllGenericDocuments();
 
-      const list =
-        Array.isArray(res?.data?.data)
-          ? res.data.data
-          : Array.isArray(res?.data)
-            ? res.data
-            : [];
+      const list = Array.isArray(res?.data?.data)
+        ? res.data.data
+        : Array.isArray(res?.data)
+          ? res.data
+          : [];
 
       setItems(mapGenericDocsFromApi(list));
     } catch (e) {
@@ -25,7 +24,6 @@ export const useGenericOrAnnexures = () => {
       toast.error("Failed to fetch documents");
     }
   };
-
 
   useEffect(() => {
     fetchItems();
@@ -37,8 +35,8 @@ export const useGenericOrAnnexures = () => {
       setLoading(true);
 
       await masterApiService.saveGenericDocument(
-        payload.type,   // Generic / Annexures
-        payload.file    // PDF
+        payload.type, // Generic / Annexures
+        payload.file // PDF
       );
 
       //  ALWAYS refresh list from API
@@ -57,7 +55,7 @@ export const useGenericOrAnnexures = () => {
   const deleteItem = async (id) => {
     try {
       await masterApiService.deleteGenericDocument(id);
-      setItems(prev => prev.filter(i => i.id !== id));
+      setItems((prev) => prev.filter((i) => i.id !== id));
     } catch {
       toast.error("Delete failed");
     }
@@ -67,6 +65,6 @@ export const useGenericOrAnnexures = () => {
     items,
     loading,
     addItem,
-    deleteItem
+    deleteItem,
   };
 };

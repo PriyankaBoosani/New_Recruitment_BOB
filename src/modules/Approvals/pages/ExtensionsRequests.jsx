@@ -1,12 +1,5 @@
 import React, { use, useEffect, useState, useMemo } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-  Badge
-} from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Badge } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import "../../../style/css/Extensions.css";
@@ -79,41 +72,41 @@ const ExtensionsRequests = () => {
     control: (base) => ({
       ...base,
       height: "38px",
-      minHeight: "38px",   // 🔥 override default 38px
-      fontSize: "14px"
+      minHeight: "38px", // 🔥 override default 38px
+      fontSize: "14px",
     }),
 
     valueContainer: (base) => ({
       ...base,
       height: "38px",
-      padding: "0 8px"     // 🔥 remove vertical padding
+      padding: "0 8px", // 🔥 remove vertical padding
     }),
 
     indicatorsContainer: (base) => ({
       ...base,
-      height: "34px"
+      height: "34px",
     }),
 
     input: (base) => ({
       ...base,
       margin: 0,
-      padding: 0
+      padding: 0,
     }),
 
     singleValue: (base) => ({
       ...base,
-      fontSize: "14px"
+      fontSize: "14px",
     }),
 
     placeholder: (base) => ({
       ...base,
-      fontSize: "14px"
+      fontSize: "14px",
     }),
 
     menuPortal: (base) => ({
       ...base,
-      zIndex: 9999
-    })
+      zIndex: 9999,
+    }),
   };
   const [selectedRequestType, setSelectedRequestType] = useState(null);
   const privileges = useSelector((state) => state.user.privileges);
@@ -139,7 +132,7 @@ const ExtensionsRequests = () => {
     fetchThreadMessages,
     historyData,
     loadingHistory,
-    fetchApprovalHistory
+    fetchApprovalHistory,
   } = useExtensionRequests();
 
   useEffect(() => {
@@ -204,18 +197,18 @@ const ExtensionsRequests = () => {
   }, [fetchRequestTypes]);
   const selectedRequisitionOption = selectedRequisition
     ? {
-      label: `${selectedRequisition.requisitionCode}- ${selectedRequisition.requisitionTitle}`,
-      value: selectedRequisition.id,
-      raw: selectedRequisition,
-    }
+        label: `${selectedRequisition.requisitionCode}- ${selectedRequisition.requisitionTitle}`,
+        value: selectedRequisition.id,
+        raw: selectedRequisition,
+      }
     : null;
 
   const selectedPositionOption = selectedPosition
     ? {
-      label: selectedPosition.positionName,
-      value: selectedPosition.positionId,
-      raw: selectedPosition,
-    }
+        label: selectedPosition.positionName,
+        value: selectedPosition.positionId,
+        raw: selectedPosition,
+      }
     : null;
 
   const requestsData = useMemo(() => {
@@ -233,14 +226,14 @@ const ExtensionsRequests = () => {
       { value: "L1_APPROVED", label: "L1 Approved" },
       { value: "L1_REJECTED", label: "L1 Rejected" },
       { value: "L2_REJECTED", label: "L2 Rejected" },
-      { value: "APPROVED", label: "Approved" }
+      { value: "APPROVED", label: "Approved" },
     ],
     L2: [
       { value: "ALL", label: "All" },
       { value: "L1_APPROVED", label: "L1 Approved" },
       { value: "L2_REJECTED", label: "L2 Rejected" },
-      { value: "APPROVED", label: "Approved" }
-    ]
+      { value: "APPROVED", label: "Approved" },
+    ],
   };
 
   const statusOptions = useMemo(() => {
@@ -282,32 +275,23 @@ const ExtensionsRequests = () => {
     return status
       .replaceAll("_", " ")
       .toLowerCase()
-      .replace(/\b\w/g, char => char.toUpperCase());
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
   const paginatedData = extensionRequests;
   const totalPages = approvalPage?.totalPages || 0;
 
-
-
   const getApprovalStatus = (actionType) => {
     if (isL1) {
-      return actionType === "approve"
-        ? "L1_APPROVED"
-        : "L1_REJECTED";
+      return actionType === "approve" ? "L1_APPROVED" : "L1_REJECTED";
     }
 
     if (isL2) {
-      return actionType === "approve"
-        ? "APPROVED"
-        : "L2_REJECTED";
+      return actionType === "approve" ? "APPROVED" : "L2_REJECTED";
     }
 
-    return actionType === "approve"
-      ? "APPROVED"
-      : "REJECTED";
+    return actionType === "approve" ? "APPROVED" : "REJECTED";
   };
-
 
   const handleApprovalAction = async (comment) => {
     const threadIds = Array.from(selectedReqIds);
@@ -321,8 +305,7 @@ const ExtensionsRequests = () => {
         comments: comment,
       };
 
-      const res =
-        await committeeManagementService.submitForL1L2Approval(payload);
+      const res = await committeeManagementService.submitForL1L2Approval(payload);
 
       const body = res?.data ?? res;
 
@@ -347,12 +330,8 @@ const ExtensionsRequests = () => {
         page,
         size: pageSize,
       });
-
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-        "Failed to submit"
-      );
+      toast.error(error?.response?.data?.message || "Failed to submit");
     }
   };
 
@@ -389,7 +368,6 @@ const ExtensionsRequests = () => {
     return true;
   };
 
-
   const getVisiblePages = (currentPage, totalPages) => {
     const windowSize = 3;
 
@@ -418,8 +396,6 @@ const ExtensionsRequests = () => {
     };
   };
 
-
-
   return (
     <div className="extension_request">
       <Container fluid className="extensions-page">
@@ -427,25 +403,16 @@ const ExtensionsRequests = () => {
         <Row className="mb-3 align-items-center">
           <Col>
             <h5 className="page-title">Extensions Requests</h5>
-            <p className="page-subtitle">
-              Review and approve or reject extensions requests
-            </p>
+            <p className="page-subtitle">Review and approve or reject extensions requests</p>
           </Col>
-
         </Row>
-
-
-
 
         {/* Requisition */}
 
-
         <Row className="mb-3 align-items-end filters-row border rounded p-3 bulk-actions">
-
           <Col xs={12} md={4}>
             <div className="field-label">Requisition</div>
             <Select
-
               placeholder="Select Requisition"
               styles={selectStyles}
               classNamePrefix="react-select"
@@ -490,9 +457,7 @@ const ExtensionsRequests = () => {
                 if (value === "ALL") {
                   setSelectedRequestType(null);
                 } else {
-                  const selected = requestTypeOptions.find(
-                    (item) => item.value === value
-                  );
+                  const selected = requestTypeOptions.find((item) => item.value === value);
                   setSelectedRequestType(selected?.raw || null);
                 }
 
@@ -525,15 +490,10 @@ const ExtensionsRequests = () => {
               ))}
             </Form.Select>
           </Col>
-
         </Row>
-
-
 
         {/* ================= BULK ACTIONS ================= */}
         <Row className="align-items-center mt-4 mb-4">
-
-
           <Col xs={12} md={12} className="d-flex justify-content-end gap-2 ">
             <Button
               variant="outline-danger"
@@ -543,7 +503,7 @@ const ExtensionsRequests = () => {
                 const errors = validateSelectedRequisitions(selectedReqIds);
 
                 if (errors.length > 0) {
-                  errors.forEach(err => toast.error(err));
+                  errors.forEach((err) => toast.error(err));
                   return;
                 }
                 setActionType("reject");
@@ -561,7 +521,7 @@ const ExtensionsRequests = () => {
                 const errors = validateSelectedRequisitions(selectedReqIds);
 
                 if (errors.length > 0) {
-                  errors.forEach(err => toast.error(err));
+                  errors.forEach((err) => toast.error(err));
                   return;
                 }
 
@@ -576,9 +536,7 @@ const ExtensionsRequests = () => {
 
         {/* ================= EXTENSION REQUEST CARDS ================= */}
         {paginatedData.length === 0 ? (
-          <div className="text-center text-muted my-4">
-            No Extensions requests found
-          </div>
+          <div className="text-center text-muted my-4">No Extensions requests found</div>
         ) : (
           <>
             {paginatedData.map((req) => {
@@ -588,9 +546,7 @@ const ExtensionsRequests = () => {
                 (msg) => ({
                   title: msg.senderType,
                   comment: msg.comments || msg.message || msg.content || "-",
-                  time: msg.createdDate
-                    ? new Date(msg.createdDate).toLocaleString()
-                    : "",
+                  time: msg.createdDate ? new Date(msg.createdDate).toLocaleString() : "",
                   file: msg.file || msg.attachmentUrl || null,
                 })
               );
@@ -626,16 +582,14 @@ const ExtensionsRequests = () => {
                       <div
                         className="d-flex align-items-center gap-3"
                         style={{ cursor: "pointer" }}
-
                       >
                         <div className="avatar-circle">
                           {req.candidateName
                             ?.split(" ")
                             .filter(Boolean)
-                            .map(word => word.charAt(0).toUpperCase())
+                            .map((word) => word.charAt(0).toUpperCase())
                             .slice(0, 2)
                             .join("")}
-
                         </div>
 
                         <div className="user-info">
@@ -651,34 +605,22 @@ const ExtensionsRequests = () => {
                           </div>
 
                           <div className="user-meta">
-                            <div className="reg-no">
-                              Application No: {req.applicationNo || "-"}
-                            </div>
+                            <div className="reg-no">Application No: {req.applicationNo || "-"}</div>
 
                             <div className="date-row d-flex align-items-center gap-3">
-
                               {/* Date */}
                               <div className="d-flex align-items-center gap-1">
-                                <img
-                                  src={start_icon}
-                                  alt="start_icon"
-                                  className="icon-14"
-                                />
+                                <img src={start_icon} alt="start_icon" className="icon-14" />
 
-                                <span>
-                                  {formatDate(req.createdDate)}
-                                </span>
+                                <span>{formatDate(req.createdDate)}</span>
                               </div>
 
                               {/* Time */}
                               <div className="d-flex align-items-center gap-1">
                                 <i className="bi bi-clock icon-14"></i>
 
-                                <span>
-                                  {formatTime(req.createdDate)}
-                                </span>
+                                <span>{formatTime(req.createdDate)}</span>
                               </div>
-
                             </div>
                           </div>
                         </div>
@@ -686,9 +628,7 @@ const ExtensionsRequests = () => {
                     </Col>
 
                     <Col xs={12} md={2} className="data-col">
-
                       <div className="d-flex align-items-start gap-2">
-
                         <FontAwesomeIcon
                           icon={faCalendarDays}
                           className="text-muted mt-1"
@@ -696,25 +636,17 @@ const ExtensionsRequests = () => {
                         />
 
                         <div>
-                          <div className="field-label">
-                            Extension Date
-                          </div>
+                          <div className="field-label">Extension Date</div>
 
                           <div className="field-value">
-                            {req.dateExtension
-                              ? formatDate(req.dateExtension)
-                              : "-"}
+                            {req.dateExtension ? formatDate(req.dateExtension) : "-"}
                           </div>
                         </div>
-
                       </div>
-
                     </Col>
 
                     <Col xs={12} md={3} className="data-col">
-
                       <div className="d-flex align-items-start gap-2">
-
                         <FontAwesomeIcon
                           icon={faLayerGroup}
                           className="text-muted mt-1"
@@ -722,26 +654,23 @@ const ExtensionsRequests = () => {
                         />
 
                         <div>
-                          <div className="field-label">
-                            Request Type
-                          </div>
+                          <div className="field-label">Request Type</div>
 
                           <div className="field-value">
-                            {requestTypeOptions.find(
-                              (type) => type.value === req.requestTypeId
-                            )?.label || "-"}
+                            {requestTypeOptions.find((type) => type.value === req.requestTypeId)
+                              ?.label || "-"}
                           </div>
                         </div>
-
                       </div>
-
                     </Col>
 
-                    <Col xs={12} md={2} className="data-col d-flex align-items-center justify-content-between">
+                    <Col
+                      xs={12}
+                      md={2}
+                      className="data-col d-flex align-items-center justify-content-between"
+                    >
                       <div>
-                        <Badge bg={getStatusBadge(req.status)}>
-                          {formatStatus(req.status)}
-                        </Badge>
+                        <Badge bg={getStatusBadge(req.status)}>{formatStatus(req.status)}</Badge>
                       </div>
 
                       <button
@@ -759,7 +688,6 @@ const ExtensionsRequests = () => {
                     <Row className="mt-3 border-top pt-3">
                       <Col xs={12}>
                         <div className="p-3 border rounded bg-white">
-
                           <MessageHistory item={{ history: historyItems }} />
                         </div>
                       </Col>
@@ -784,8 +712,10 @@ const ExtensionsRequests = () => {
                   value={pageSize}
                   onChange={(e) => setPageSize(Number(e.target.value))}
                 >
-                  {[5, 10, 15, 20, 25, 30].map(n => (
-                    <option key={n} value={n}>{n}</option>
+                  {[5, 10, 15, 20, 25, 30].map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
                   ))}
                 </Form.Select>
               </div>
@@ -797,7 +727,7 @@ const ExtensionsRequests = () => {
                   <li className={`page-item ${page === 0 ? "disabled" : ""}`}>
                     <button
                       className="page-link"
-                      onClick={() => setPage(p => Math.max(p - 1, 0))}
+                      onClick={() => setPage((p) => Math.max(p - 1, 0))}
                       disabled={page === 0}
                     >
                       &laquo;
@@ -806,11 +736,10 @@ const ExtensionsRequests = () => {
 
                   {/* Pages */}
                   {(() => {
-                    const {
-                      pages,
-                      showStartEllipsis,
-                      showEndEllipsis,
-                    } = getVisiblePages(page, totalPages);
+                    const { pages, showStartEllipsis, showEndEllipsis } = getVisiblePages(
+                      page,
+                      totalPages
+                    );
 
                     return (
                       <>
@@ -820,15 +749,9 @@ const ExtensionsRequests = () => {
                           </li>
                         )}
 
-                        {pages.map(p => (
-                          <li
-                            key={p}
-                            className={`page-item ${page === p ? "active" : ""}`}
-                          >
-                            <button
-                              className="page-link"
-                              onClick={() => setPage(p)}
-                            >
+                        {pages.map((p) => (
+                          <li key={p} className={`page-item ${page === p ? "active" : ""}`}>
+                            <button className="page-link" onClick={() => setPage(p)}>
                               {p + 1}
                             </button>
                           </li>
@@ -847,7 +770,7 @@ const ExtensionsRequests = () => {
                   <li className={`page-item ${page >= totalPages - 1 ? "disabled" : ""}`}>
                     <button
                       className="page-link"
-                      onClick={() => setPage(p => p + 1)}
+                      onClick={() => setPage((p) => p + 1)}
                       disabled={page >= totalPages - 1}
                     >
                       &raquo;
@@ -873,7 +796,7 @@ const ExtensionsRequests = () => {
           loading={loadingHistory}
         />
       </Container>
-    </div >
+    </div>
   );
 };
 

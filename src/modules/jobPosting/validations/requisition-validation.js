@@ -12,18 +12,17 @@ export const getTomorrowStart = () => {
   return d;
 };
 
-
 // ✔ normalize spaces (no leading, no multiple)
 export const normalizeTitle = (value = "") =>
   value
-    .replace(/\s+/g, " ")   // collapse multiple spaces
-    .replace(/^\s+/, "");  // remove leading spaces
+    .replace(/\s+/g, " ") // collapse multiple spaces
+    .replace(/^\s+/, ""); // remove leading spaces
 
 // ✔ typing-time validator (USED IN onChange)
 export const validateTitleOnType = (value) => {
   return {
     valid: true,
-    value: normalizeTitle(value)
+    value: normalizeTitle(value),
   };
 };
 
@@ -38,7 +37,7 @@ export const validateRequisitionForm = (formData = {}) => {
     errors.title = "validation:required";
 
     valid = false;
-  } 
+  }
 
   if (!formData.description?.trim()) {
     errors.description = "validation:required";
@@ -59,7 +58,6 @@ export const validateRequisitionForm = (formData = {}) => {
       valid = false;
     }
   }
-
 
   if (!formData.endDate) {
     errors.endDate = "validation:required";

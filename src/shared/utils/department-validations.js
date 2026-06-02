@@ -1,7 +1,7 @@
-import { requiredField} from './common-validations';
-import i18n from 'i18next';
+import { requiredField } from "./common-validations";
+import i18n from "i18next";
 
-const normalizeName = (s = '') => String(s).trim().toLowerCase();
+const normalizeName = (s = "") => String(s).trim().toLowerCase();
 
 export const validateDepartmentName = (name) => {
   let error = requiredField(name);
@@ -28,19 +28,19 @@ export const validateDepartmentForm = (formData = {}, options = {}) => {
   // uniqueness check
   if (!errors.name) {
     const nameNorm = normalizeName(formData.name);
-    const duplicate = existing.find(d => {
+    const duplicate = existing.find((d) => {
       if (!d?.name) return false;
       if (currentId != null && d.id === currentId) return false;
       return normalizeName(d.name) === nameNorm;
     });
 
     if (duplicate) {
-      errors.name = i18n.t('validation:duplicate');
+      errors.name = i18n.t("validation:duplicate");
     }
   }
 
   return {
     valid: Object.keys(errors).length === 0,
-    errors
+    errors,
   };
 };

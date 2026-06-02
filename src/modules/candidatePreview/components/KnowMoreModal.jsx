@@ -1,12 +1,10 @@
-
 import React from "react";
 import { Modal } from "react-bootstrap";
 import NationalVacancyTable from "./NationalVacancyTable";
 import { useTranslation } from "react-i18next";
 
-
 const KnowMoreModal = ({ show, onHide, selectedJob, masterData }) => {
-   const { t } = useTranslation(["candidateWorkflow", "common"]);
+  const { t } = useTranslation(["candidateWorkflow", "common"]);
   if (!selectedJob) return null;
 
   const reservationCategories = masterData?.reservation_categories || [];
@@ -21,17 +19,15 @@ const KnowMoreModal = ({ show, onHide, selectedJob, masterData }) => {
   ) {
     const summaryMap = {};
 
-    selectedJob.positionStateDistributions.forEach(state => {
-      reservationCategories.forEach(cat => {
+    selectedJob.positionStateDistributions.forEach((state) => {
+      reservationCategories.forEach((cat) => {
         summaryMap[cat.category_code] =
-          (summaryMap[cat.category_code] || 0) +
-          (state.categories?.[cat.category_id] || 0);
+          (summaryMap[cat.category_code] || 0) + (state.categories?.[cat.category_id] || 0);
       });
 
-      disabilities.forEach(dis => {
+      disabilities.forEach((dis) => {
         summaryMap[dis.disability_code] =
-          (summaryMap[dis.disability_code] || 0) +
-          (state.disability?.[dis.disability_id] || 0);
+          (summaryMap[dis.disability_code] || 0) + (state.disability?.[dis.disability_id] || 0);
       });
     });
 
@@ -43,36 +39,29 @@ const KnowMoreModal = ({ show, onHide, selectedJob, masterData }) => {
   return (
     <Modal show={show} onHide={onHide} centered size="lg" scrollable>
       {/* ===== HEADER ===== */}
-    <Modal.Header closeButton className="knowmore-header">
-  <div className="w-100">
+      <Modal.Header closeButton className="knowmore-header">
+        <div className="w-100">
+          {/* ===== TOP ROW ===== */}
+          <div className="d-flex align-items-center gap-3 header-top">
+            <span className="req-code">{selectedJob.requisition_code}</span>
 
-    {/* ===== TOP ROW ===== */}
-    <div className="d-flex align-items-center gap-3 header-top">
-      <span className="req-code">
-        {selectedJob.requisition_code}
-      </span>
+            <span className="date-text">
+              <i className="bi bi-calendar3 me-1"></i>
+              {t("candidateWorkflow:start")}: {selectedJob.registration_start_date}
+            </span>
 
-      <span className="date-text">
-        <i className="bi bi-calendar3 me-1"></i>
-        {t("candidateWorkflow:start")}: {selectedJob.registration_start_date}
-      </span>
+            <span className="date-divider">|</span>
 
-      <span className="date-divider">|</span>
+            <span className="date-text">
+              <i className="bi bi-calendar3 me-1"></i>
+              {t("candidateWorkflow:end")}: {selectedJob.registration_end_date}
+            </span>
+          </div>
 
-      <span className="date-text">
-        <i className="bi bi-calendar3 me-1"></i>
-        {t("candidateWorkflow:end")}: {selectedJob.registration_end_date}
-      </span>
-    </div>
-
-    {/* ===== JOB TITLE ===== */}
-    <div className="job-title mt-1">
-      {selectedJob.position_title}
-    </div>
-
-  </div>
-</Modal.Header>
-
+          {/* ===== JOB TITLE ===== */}
+          <div className="job-title mt-1">{selectedJob.position_title}</div>
+        </div>
+      </Modal.Header>
 
       {/* ===== BODY ===== */}
       <Modal.Body>
@@ -86,8 +75,8 @@ const KnowMoreModal = ({ show, onHide, selectedJob, masterData }) => {
             <div className="col-md-4">
               <span className="stat-label">{t("candidateWorkflow:eligibility_age")}:</span>{" "}
               <span className="stat-value">
-                {selectedJob.eligibility_age_min} -{" "}
-                {selectedJob.eligibility_age_max} {t("candidateWorkflow:years_short")}
+                {selectedJob.eligibility_age_min} - {selectedJob.eligibility_age_max}{" "}
+                {t("candidateWorkflow:years_short")}
               </span>
             </div>
             <div className="col-md-4">
@@ -124,12 +113,16 @@ const KnowMoreModal = ({ show, onHide, selectedJob, masterData }) => {
         <div className="info-card">
           <div className="section-title">{t("candidateWorkflow:mandatory_experience")}:</div>
           <ul className="section-list">
-            <li>{selectedJob.mandatory_experience} {t("candidateWorkflow:years_short")}</li>
+            <li>
+              {selectedJob.mandatory_experience} {t("candidateWorkflow:years_short")}
+            </li>
           </ul>
 
           <div className="section-title mt-2">{t("candidateWorkflow:preferred_experience")}:</div>
           <ul className="section-list">
-            <li>{selectedJob.preferred_experience} {t("candidateWorkflow:years_short")}</li>
+            <li>
+              {selectedJob.preferred_experience} {t("candidateWorkflow:years_short")}
+            </li>
           </ul>
         </div>
 
@@ -154,15 +147,13 @@ const KnowMoreModal = ({ show, onHide, selectedJob, masterData }) => {
       </Modal.Body>
 
       {/* ===== FOOTER ===== */}
-  <Modal.Footer className="justify-content-center">
-  <button className="ok-btn" onClick={onHide}>
-    {t("common:ok")}
-  </button>
-</Modal.Footer>
-
+      <Modal.Footer className="justify-content-center">
+        <button className="ok-btn" onClick={onHide}>
+          {t("common:ok")}
+        </button>
+      </Modal.Footer>
     </Modal>
   );
 };
 
 export default KnowMoreModal;
-

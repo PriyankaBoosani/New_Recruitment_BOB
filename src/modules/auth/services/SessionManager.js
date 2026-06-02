@@ -5,10 +5,10 @@ import { clearUser } from "../../../app/providers/userSlice";
 import { persistor } from "../../../store";
 import { Modal, Button } from "react-bootstrap";
 
-const IDLE_TIMEOUT = 15 * 60 * 1000;   // 2 minutes
-const WARNING_TIME = 14 * 60 * 1000;   // show modal at 1 minute
+const IDLE_TIMEOUT = 15 * 60 * 1000; // 2 minutes
+const WARNING_TIME = 14 * 60 * 1000; // show modal at 1 minute
 // const IDLE_TIMEOUT = 10 * 1000;   // 10 sec
-// const WARNING_TIME = 5 * 1000; 
+// const WARNING_TIME = 5 * 1000;
 const SessionManager = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -19,9 +19,7 @@ const SessionManager = ({ children }) => {
   const isLoggingOutRef = useRef(false); // ✅ FIX
 
   const [showModal, setShowModal] = useState(false);
-  const [countdown, setCountdown] = useState(
-    Math.floor((IDLE_TIMEOUT - WARNING_TIME) / 1000)
-  );
+  const [countdown, setCountdown] = useState(Math.floor((IDLE_TIMEOUT - WARNING_TIME) / 1000));
 
   const logout = async () => {
     if (isLoggingOutRef.current) return; // ✅ prevent multiple calls
@@ -74,25 +72,14 @@ const SessionManager = ({ children }) => {
   };
 
   useEffect(() => {
-    const events = [
-      "mousemove",
-      "mousedown",
-      "keydown",
-      "scroll",
-      "wheel",
-      "touchstart"
-    ];
+    const events = ["mousemove", "mousedown", "keydown", "scroll", "wheel", "touchstart"];
 
-    events.forEach(e =>
-      window.addEventListener(e, resetTimer, { passive: true })
-    );
+    events.forEach((e) => window.addEventListener(e, resetTimer, { passive: true }));
 
     resetTimer();
 
     return () => {
-      events.forEach(e =>
-        window.removeEventListener(e, resetTimer)
-      );
+      events.forEach((e) => window.removeEventListener(e, resetTimer));
       clearTimeout(timerRef.current);
       clearTimeout(warningTimerRef.current);
       clearInterval(intervalRef.current); // ✅ FIX
@@ -110,8 +97,7 @@ const SessionManager = ({ children }) => {
 
         <Modal.Body>
           <p>
-            You will be logged out in{" "}
-            <strong>{countdown}</strong> seconds due to inactivity.
+            You will be logged out in <strong>{countdown}</strong> seconds due to inactivity.
           </p>
         </Modal.Body>
 

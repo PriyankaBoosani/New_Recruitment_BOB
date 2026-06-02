@@ -25,16 +25,11 @@ const PdfViewerModal = ({ show, onHide, fileUrl, loading, title }) => {
   }, [show, isDoc, fileUrl]);
 
   return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      size="xl"
-      centered
-      backdrop="static"
-      keyboard={false}
-    >
+    <Modal show={show} onHide={onHide} size="xl" centered backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
-        <Modal.Title className="blue-color" style={{ fontSize: '1rem' }}>{title}</Modal.Title>
+        <Modal.Title className="blue-color" style={{ fontSize: "1rem" }}>
+          {title}
+        </Modal.Title>
       </Modal.Header>
 
       <Modal.Body style={{ height: "80vh", padding: 0 }}>
@@ -60,13 +55,11 @@ const PdfViewerModal = ({ show, onHide, fileUrl, loading, title }) => {
             </p>
           </div>
         ) : (
-          <div className="text-center mt-5">
-            {t("candidateWorkflow:unsupported_file_format")}
-          </div>
+          <div className="text-center mt-5">{t("candidateWorkflow:unsupported_file_format")}</div>
         )}
       </Modal.Body>
     </Modal>
   );
-}
+};
 
 export default PdfViewerModal;

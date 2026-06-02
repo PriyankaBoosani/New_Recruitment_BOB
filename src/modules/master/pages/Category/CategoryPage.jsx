@@ -1,17 +1,15 @@
 // CategoryPage.jsx
-import React, { useState } from 'react';
-import { Container, Form, Button } from 'react-bootstrap';
-import { Search, Plus } from 'react-bootstrap-icons';
+import React, { useState } from "react";
+import { Container, Form, Button } from "react-bootstrap";
+import { Search, Plus } from "react-bootstrap-icons";
 import { useTranslation } from "react-i18next";
 
-import { useCategories } from './hooks/useCategories';
-import CategoryTable from './components/CategoryTable';
-import CategoryFormModal from './components/CategoryFormModal';
-import DeleteConfirmModal from './components/DeleteConfirmModal';
+import { useCategories } from "./hooks/useCategories";
+import CategoryTable from "./components/CategoryTable";
+import CategoryFormModal from "./components/CategoryFormModal";
+import DeleteConfirmModal from "./components/DeleteConfirmModal";
 import { validateCategoryForm } from "../../../../shared/utils/category-validations";
-import '../../../../style/css/user.css';
-
-
+import "../../../../style/css/user.css";
 
 const CategoryPage = () => {
   const { t } = useTranslation(["category"]);
@@ -22,11 +20,11 @@ const CategoryPage = () => {
     updateCategory,
     deleteCategory,
     importCategories,
-    fetchCategories
+    fetchCategories,
   } = useCategories();
 
   // UI state
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const [showModal, setShowModal] = useState(false);
@@ -37,32 +35,28 @@ const CategoryPage = () => {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
-
   const openAddModal = () => {
-     setIsViewing(false);
+    setIsViewing(false);
     setIsEditing(false);
     setEditingCategory(null);
     setShowModal(true);
   };
 
   const openEditModal = (cat) => {
-      setIsViewing(false);
+    setIsViewing(false);
     setIsEditing(true);
     setEditingCategory(cat);
     setShowModal(true);
   };
 
   const openViewModal = (cat) => {
-  setIsViewing(true);
-  setIsEditing(false);
-  setEditingCategory(cat);
-  setShowModal(true);
-};
-
-
+    setIsViewing(true);
+    setIsEditing(false);
+    setEditingCategory(cat);
+    setShowModal(true);
+  };
 
   const [isViewing, setIsViewing] = useState(false);
-
 
   return (
     <Container fluid className="user-container">
@@ -114,12 +108,10 @@ const CategoryPage = () => {
         onUpdate={updateCategory}
         onImport={importCategories}
         categories={categories}
-
-           //  ADD THIS
+        //  ADD THIS
         onSuccess={() => {
-        
-          fetchCategories(); 
-              // refresh list immediately
+          fetchCategories();
+          // refresh list immediately
           setShowModal(false); // ensure modal closes
         }}
       />

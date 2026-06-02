@@ -24,7 +24,6 @@ export const useMessages = () => {
     }
   };
 
-
   const getHistoryColor = (type) => {
     return type === "request" ? "#ff9800" : "#2196f3";
   };
@@ -39,8 +38,7 @@ export const useMessages = () => {
     setDate,
     toggleRow,
 
-
     getStatusClass,
-    getHistoryColor
+    getHistoryColor,
   };
 };

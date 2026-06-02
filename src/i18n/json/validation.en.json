@@ -75,9 +75,8 @@
   "percentage_invalid": "Percentage must be a valid number",
   "qualification_required": "Please select qualification",
   "duration_required": "Please select duration",
-  "start_time_required":"Please Select Time",
-  "end_time_required":"Please Select End Time",
-  "panel_required":"Please select panel",
-  "end_time_greater_than_start":"End time must be greater than start time"
-  
+  "start_time_required": "Please Select Time",
+  "end_time_required": "Please Select End Time",
+  "panel_required": "Please select panel",
+  "end_time_greater_than_start": "End time must be greater than start time"
 }

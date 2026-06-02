@@ -48,5 +48,5 @@ export const validatePanelModal = ({ rows, panelId }) => {
     }
   });
 
-  return (errors.rows?.length || errors.panelId) ? errors : {};
+  return errors.rows?.length || errors.panelId ? errors : {};
 };

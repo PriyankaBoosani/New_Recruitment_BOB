@@ -10,10 +10,9 @@
   padding: 0;
 }
 
-
 .input-error {
   border: 1px solid #dc3545 !important;
-  box-shadow: 0 0 0 1px rgba(220, 53, 69, .15);
+  box-shadow: 0 0 0 1px rgba(220, 53, 69, 0.15);
 }
 
 .comment-block {
@@ -45,7 +44,7 @@
 /* === red error border === */
 .doc-comment-input.input-error {
   border: 1.5px solid #dc3545 !important;
-  box-shadow: 0 0 0 1px rgba(220, 53, 69, .15);
+  box-shadow: 0 0 0 1px rgba(220, 53, 69, 0.15);
 }
 
 /* === error text below field === */
@@ -54,7 +53,6 @@
   font-size: 12px;
   margin-top: 4px;
 }
-
 
 /* button height fixed */
 .btn-reject,
@@ -67,14 +65,11 @@
   border: none;
 }
 
-
 .submit-date-group {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
-
-
 
 /* === Header Box === */
 .bob-header,
@@ -90,7 +85,7 @@
 }
 
 .bob-header-title {
-  color: #162B75;
+  color: #162b75;
   font-size: 1rem;
   font-weight: 500;
 }
@@ -206,7 +201,6 @@
   background: #e66100 !important;
 }
 
-
 /* Accordion styling */
 .bob-accordion .accordion-item {
   border: 1px solid #ddd !important;
@@ -218,7 +212,7 @@
 .bob-accordion .accordion-header button {
   background: #f8f9fa !important;
   padding: 10px 14px;
-  color: #162B75;
+  color: #162b75;
   font-size: 0.9rem;
   font-weight: 500;
   border: none;
@@ -226,7 +220,7 @@
 }
 
 .bob-accordion .accordion-header button:not(.collapsed) {
-  color: #162B75;
+  color: #162b75;
   font-size: 0.9rem;
   font-weight: 500;
 }
@@ -245,7 +239,6 @@ select.form-control {
 
 /* === Responsive === */
 @media (max-width: 991px) {
-
   .bob-photo-box,
   .bob-sign-box {
     width: 100px;
@@ -270,22 +263,15 @@ select.form-control {
   .photo-label {
     font-size: 10px;
   }
-
-
-
-
 }
 
 .bob-header .title_pre {
-  color: #F26522;
+  color: #f26522;
   font-size: 1rem;
   font-weight: 600;
 }
 
-
 /* ================= DOCUMENT TABLE ================= */
-
-
 
 .bob-doc-table th,
 .bob-doc-table td {
@@ -328,14 +314,12 @@ select.form-control {
 /* ================= ACTION ICONS ================= */
 
 .action-cell {
- 
   gap: 10px;
 }
 
 .action-cell img {
   width: 20px;
   height: 20px;
-
 
   cursor: pointer;
 }
@@ -370,8 +354,6 @@ select.form-control {
   align-items: end;
   margin-top: 20px;
 }
-
-
 
 /* ===== MAIN CARD ===== */
 .criteria-main-card {
@@ -426,7 +408,7 @@ select.form-control {
 }
 
 /* ===== TICK INSIDE CIRCLE ===== */
-.radio-label input:checked+.custom-radio::after {
+.radio-label input:checked + .custom-radio::after {
   content: "✓";
   position: absolute;
   top: -3px;
@@ -435,11 +417,10 @@ select.form-control {
   color: white;
 }
 
-.radio-label input:checked+.custom-radio {
+.radio-label input:checked + .custom-radio {
   background: #2f3a8f;
   border-color: #2f3a8f;
 }
-
 
 /* ===== REMARK ===== */
 .criteria-remark {
@@ -496,7 +477,6 @@ select.form-control {
   filter: brightness(0) invert(1);
 }
 
-
 /* ================= EXPERIENCE TABLE ================= */
 .exp-table {
   width: 100%;
@@ -538,8 +518,8 @@ select.form-control {
 /* ===== TABLE ===== */
 .edu-table {
   width: 100%;
-  border-collapse: separate;   /* 🔥 change this */
-  border-spacing: 0;           /* 🔥 important */
+  border-collapse: separate; /* 🔥 change this */
+  border-spacing: 0; /* 🔥 important */
   table-layout: fixed;
   font-size: 13px;
   border: 1px solid #e3e6ef;
@@ -563,7 +543,6 @@ select.form-control {
 }
 
 /* BODY */
-
 
 .edu-table tbody td {
   padding: 12px 10px;
@@ -648,7 +627,7 @@ select.form-control {
 .doc-viewer-actions {
   display: flex;
   gap: 10px;
-    align-items: center;
+  align-items: center;
 }
 
 .btn-reject {
@@ -697,25 +676,21 @@ select.form-control {
   font-weight: 600;
 }
 
-
-
 /* ===== Modal Header Single Line Layout ===== */
 
 .modal-header-row {
   display: flex;
   align-items: center;
   gap: 18px;
-  
+
   max-width: auto;
 }
 
 .modal-req-title {
-  color: #f57c00;            /* BOB orange */
+  color: #f57c00; /* BOB orange */
   font-weight: 600;
   font-size: 15px;
   word-break: break-word;
- 
- 
 }
 
 .modal-date {
@@ -731,17 +706,15 @@ select.form-control {
   font-weight: 500;
 }
 
-.knowmore-header .btn-close{
- margin-top: -5%;
+.knowmore-header .btn-close {
+  margin-top: -5%;
 }
-
 
 .wraps .req-code {
   max-width: 65% !important;
-    float: left;
-    
-    overflow-wrap: break-word;
+  float: left;
 
+  overflow-wrap: break-word;
 }
 
 /* ===== TOP STATS ===== */
@@ -806,15 +779,15 @@ select.form-control {
 
 .section-lists {
   margin: 0;
-  padding-left: 20px;       
+  padding-left: 20px;
   font-size: 13px;
   color: #212529;
 }
 
 .section-lists li {
-  margin-bottom: 18px;   
-    padding-bottom: 8px;      
-  line-height: 1.6;         
+  margin-bottom: 18px;
+  padding-bottom: 8px;
+  line-height: 1.6;
   white-space: normal;
   overflow-wrap: break-word;
 }
@@ -835,25 +808,25 @@ select.form-control {
 }
 
 .req-code {
-  color: #F57C00;
+  color: #f57c00;
   font-weight: 600;
   font-size: 15px;
 }
 
 .date-text {
-  color: #162B75;
+  color: #162b75;
   font-size: 14px;
 }
 
 .job-title {
-  color: #162B75;
+  color: #162b75;
   font-size: 1rem;
   font-weight: 500;
 }
 
 /* ===== OK BUTTON ===== */
 .ok-btn {
-  background-color: #F57C00;
+  background-color: #f57c00;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -953,13 +926,12 @@ select.form-control {
   margin-top: 10px;
   display: flex;
   gap: 16px;
-  align-items: stretch;   /* 🔥 key fix */
- 
+  align-items: stretch; /* 🔥 key fix */
 }
 .remarks-button {
   display: flex;
-  align-items: flex-end;   /* 🔥 aligns button with textarea bottom */
-   padding-bottom: 22px;
+  align-items: flex-end; /* 🔥 aligns button with textarea bottom */
+  padding-bottom: 22px;
 }
 
 .remarks-left {
@@ -980,9 +952,8 @@ select.form-control {
   resize: none;
 }
 
-
 .remarks-error-space {
-  min-height: 20px;  
+  min-height: 20px;
   margin-top: 4px;
 }
 
@@ -1035,9 +1006,6 @@ select.form-control {
   pointer-events: none;
 }
 
-
-
-
 .photo-signature-wrapper {
   display: flex;
   flex-direction: column;
@@ -1079,6 +1047,6 @@ select.form-control {
 .signature-img {
   width: 100%;
   height: 100%;
-  object-fit: contain;  /* 🔥 IMPORTANT: prevents cutting */
+  object-fit: contain; /* 🔥 IMPORTANT: prevents cutting */
   display: block;
 }

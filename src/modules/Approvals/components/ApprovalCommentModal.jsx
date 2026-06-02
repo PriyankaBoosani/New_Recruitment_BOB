@@ -26,22 +26,13 @@ const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
     onConfirm(trimmedComment);
   };
 
-
-
   return (
-    <Modal
-      show={show}
-      onHide={onClose}
-      centered
-      size="lg"
-      dialogClassName="approval-modal"
-    >
+    <Modal show={show} onHide={onClose} centered size="lg" dialogClassName="approval-modal">
       <Modal.Header closeButton className="modal-header-custom">
         <Modal.Title className="modal-title-custom">
           {actionType === "approve"
             ? t(`approvalHistory:approval_comments`)
-            : t(`approvalHistory:rejection_comments`)
-          }
+            : t(`approvalHistory:rejection_comments`)}
         </Modal.Title>
       </Modal.Header>
 
@@ -69,9 +60,7 @@ const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
             isInvalid={!!error}
             className="comment-textarea"
           />
-          <Form.Control.Feedback type="invalid">
-            {error}
-          </Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
         </Form.Group>
       </Modal.Body>
 
@@ -80,10 +69,9 @@ const ApprovalCommentModal = ({ show, actionType, onClose, onConfirm }) => {
           {t(`approvalHistory:cancel`)}
         </Button>
 
-        <Button variant=""
-          className={
-            actionType === "approve" ? "btn-approve" : "btn-reject"
-          }
+        <Button
+          variant=""
+          className={actionType === "approve" ? "btn-approve" : "btn-reject"}
           onClick={handleConfirm}
         >
           {actionType === "approve" ? t(`approvalHistory:approve`) : t(`approvalHistory:reject`)}

@@ -1,20 +1,19 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
 import interviewService from "../services/interviewService";
 import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 import masterApiService from "../../master/services/masterApiService";
 
-export default function useInterviewSchedule(isEditMode,isReschedule) {
-
+export default function useInterviewSchedule(isEditMode, isReschedule) {
   const navigate = useNavigate();
 
-const location = useLocation();
+  const location = useLocation();
   // Parse URL parameters
 
-const passedCandidates = location.state?.candidates || [];
-const requisitionId = location.state?.requisitionId || "";
-const positionId = location.state?.positionId || "";
+  const passedCandidates = location.state?.candidates || [];
+  const requisitionId = location.state?.requisitionId || "";
+  const positionId = location.state?.positionId || "";
 
   //new
   const [requisitions, setRequisitions] = useState([]);
@@ -24,30 +23,20 @@ const positionId = location.state?.positionId || "";
   const [positions, setPositions] = useState([]);
   const [selectedPositionId, setSelectedPositionId] = useState("");
   const [loadingPositions, setLoadingPositions] = useState(false);
-const [schedule, setSchedule] = useState([]);
-const [scheduleApiData, setScheduleApiData] = useState([]);
-const [
-  panelExcelModelList,
-  setPanelExcelModelList
-] = useState([]);
+  const [schedule, setSchedule] = useState([]);
+  const [scheduleApiData, setScheduleApiData] = useState([]);
+  const [panelExcelModelList, setPanelExcelModelList] = useState([]);
 
-
-const [allInterviewCentres, setAllInterviewCentres] = useState([]);
+  const [allInterviewCentres, setAllInterviewCentres] = useState([]);
 
   const updateRow = (id, field, value) => {
-    setSchedule(prev =>
-      prev.map(r =>
-        r.id === id ? { ...r, [field]: value } : r
-      )
-    );
+    setSchedule((prev) => prev.map((r) => (r.id === id ? { ...r, [field]: value } : r)));
   };
 
-  console.log("passedcandidates",passedCandidates)
+  console.log("passedcandidates", passedCandidates);
 
-
-  
   //new functions
-    const fetchRequisitions = async (searchText = "") => {
+  const fetchRequisitions = async (searchText = "") => {
     setLoadingRequisitions(true);
     try {
       const res = await jobPositionApiService.getRequisitions(searchText);
@@ -59,28 +48,26 @@ const [allInterviewCentres, setAllInterviewCentres] = useState([]);
     }
   };
 
-    useEffect(() => {
-      fetchRequisitions("");
+  useEffect(() => {
+    fetchRequisitions("");
 
-      const fetchCentres = async () => {
-        const centreRes = await masterApiService.getAllInterviewCenters();
-        console.log("centreRes", centreRes?.data)
+    const fetchCentres = async () => {
+      const centreRes = await masterApiService.getAllInterviewCenters();
+      console.log("centreRes", centreRes?.data);
 
-         if (centreRes?.data) {
+      if (centreRes?.data) {
+        const zonalOfficeCentres = centreRes.data.filter(
+          (c) => c.organizationType === "Zonal Office"
+        );
 
-          const zonalOfficeCentres =
-            centreRes.data.filter(
-              c => c.organizationType === "Zonal Office"
-            );
+        setAllInterviewCentres(zonalOfficeCentres);
+      }
+    };
 
-          setAllInterviewCentres(zonalOfficeCentres);
-        }
-      };
-      
-      fetchCentres();
-    }, []);
-  
-   useEffect(() => {
+    fetchCentres();
+  }, []);
+
+  useEffect(() => {
     if (!selectedRequisitionId) {
       setPositions([]);
       setSelectedPositionId("");
@@ -111,20 +98,16 @@ const [allInterviewCentres, setAllInterviewCentres] = useState([]);
     }
   }, [requisitionId]);
 
-useEffect(() => {
-  if (positionId && positions.length > 0) {
-    setSelectedPositionId(positionId);
-  }
-  
-}, [positionId, positions]);
+  useEffect(() => {
+    if (positionId && positions.length > 0) {
+      setSelectedPositionId(positionId);
+    }
+  }, [positionId, positions]);
 
-
-
-   const handleRequisitionChange = async (e) => {
+  const handleRequisitionChange = async (e) => {
     const reqId = e.target.value;
 
     setSelectedRequisitionId(reqId);
-  
 
     if (!reqId) {
       setPositions([]);
@@ -147,319 +130,231 @@ useEffect(() => {
     }
   };
 
+  useEffect(() => {
+    if (passedCandidates.length > 0) {
+      const formatted = passedCandidates.map((c, index) => ({
+        id: c.id,
+        name: c.name,
+        regNo: c.regNo,
+        date: "",
+        time: "",
+        zone: "",
+        panel: "",
+        positionId: c.positionId,
+      }));
 
-useEffect(() => {
-  if (passedCandidates.length > 0) {
-    const formatted = passedCandidates.map((c, index) => ({
-      id: c.id,
-      name: c.name,
-      regNo: c.regNo,
-      date: "",
-      time: "",
-      zone: "",
-      panel: "",
-      positionId: c.positionId
-    }));
+      setSchedule(formatted);
+    }
+  }, [passedCandidates]);
 
-    setSchedule(formatted);
-  }
-}, [passedCandidates]);
+  const formatTime = (time) => {
+    if (!time) return "00:00:00";
+    return time.length === 5 ? `${time}:00` : time;
+  };
+  const formatTimeRange = (startStr, endStr) => {
+    if (!startStr) return "";
 
-const formatTime = (time) => {
-  
-  if (!time) return "00:00:00";
-  return time.length === 5 ? `${time}:00` : time;
-}
-const formatTimeRange = (startStr, endStr) => {
-  if (!startStr) return "";
+    const format = (time) => {
+      const d = new Date(time);
+      let hours = d.getHours();
+      const minutes = String(d.getMinutes()).padStart(2, "0");
+      const ampm = hours >= 12 ? "PM" : "AM";
 
-  const format = (time) => {
-    const d = new Date(time);
-    let hours = d.getHours();
-    const minutes = String(d.getMinutes()).padStart(2, "0");
-    const ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12 || 12;
 
-    hours = hours % 12 || 12;
+      return `${String(hours).padStart(2, "0")}:${minutes} ${ampm}`;
+    };
 
-    return `${String(hours).padStart(2, "0")}:${minutes} ${ampm}`;
+    const start = format(startStr);
+    const end = endStr ? format(endStr) : "";
+
+    return end ? `${start} - ${end}` : start;
   };
 
-  const start = format(startStr);
-  const end = endStr ? format(endStr) : "";
+  const applySchedule = async ({
+    selectedPanels,
+    positionId,
+    candidates = passedCandidates,
+    zonalChangeMap = {},
+  }) => {
+    try {
+      const updatedZonalChangeMap = {};
 
-  return end ? `${start} - ${end}` : start;
-};
+      // add all centres
+      candidates.forEach((candidate) => {
+        const centreId = candidate.interviewCenterId;
 
+        updatedZonalChangeMap[centreId] = zonalChangeMap[centreId] || centreId;
+      });
 
-const applySchedule = async ({ selectedPanels,positionId, candidates = passedCandidates, zonalChangeMap = {} }) => {
-  try {
-   
+      const payload = {
+        schedulingPanelModel: {
+          applicationIds: candidates.map((c) => c.id),
 
-    
-const updatedZonalChangeMap = {};
+          positionIds: positionId,
+        },
 
-// add all centres
-candidates.forEach((candidate) => {
+        panelScheduleModelList: selectedPanels
+          ? selectedPanels.flatMap((panel) =>
+              (panel.slots || []).map((slot) => ({
+                panelId: panel.id,
 
-  const centreId = candidate.interviewCenterId;
+                panelDate: slot.date,
 
-  updatedZonalChangeMap[centreId] =
-    zonalChangeMap[centreId] || centreId;
+                interviewPerDay: Number(slot.perDay),
 
-});
+                startTime: formatTime(slot.startTime),
 
-   const payload = {
+                endTime: formatTime(slot.endTime),
 
-  schedulingPanelModel: {
+                durationInMinutes: Number(slot.duration),
+              }))
+            )
+          : [],
 
-    applicationIds:
-      candidates.map(c => c.id),
+        zonalChangeMap: updatedZonalChangeMap,
+      };
 
-    positionIds: positionId,
-
-  },
-
-  panelScheduleModelList:
-
-  selectedPanels
-
-    ? selectedPanels.flatMap(panel =>
-
-        (panel.slots || []).map(slot => ({
-
+      const excelPanels = selectedPanels.flatMap((panel) =>
+        (panel.slots || []).map((slot) => ({
           panelId: panel.id,
 
           panelDate: slot.date,
 
-          interviewPerDay:
-            Number(slot.perDay),
+          interviewPerDay: Number(slot.perDay),
 
-          startTime:
-            formatTime(slot.startTime),
+          startTime: formatTime(slot.startTime),
 
-          endTime:
-            formatTime(slot.endTime),
+          endTime: formatTime(slot.endTime),
 
-          durationInMinutes:
-            Number(slot.duration)
-
+          durationInMinutes: Number(slot.duration),
         }))
+      );
 
-      )
+      setPanelExcelModelList(excelPanels);
 
-    : [],
+      console.log("FINAL PAYLOAD 👉", payload); //return false;
 
-  zonalChangeMap: updatedZonalChangeMap
-};
+      // ✅ Call API
+      const res = await interviewService.allocatePanels(payload);
+      console.log("data12345", res.data);
+      if (!res?.success) {
+        return {
+          success: false,
 
+          message: res?.message || "Scheduling failed",
 
-const excelPanels =
-  selectedPanels.flatMap(panel =>
-    (panel.slots || []).map(slot => ({
+          data: res?.data || [],
+        };
+      }
+      setScheduleApiData(res.data); // 🔥 IMPORTANT
 
-      panelId: panel.id,
+      // ✅ Convert response → table rows
+      const rows = res.data.map((item) => {
+        const start = item.interviewScheduleStaging?.interviewStartAt;
+        const end = item.interviewScheduleStaging?.interviewEndAt;
 
-      panelDate: slot.date,
+        return {
+          id: item.application?.id,
+          name: item.fullName,
+          regNo: item.application?.applicationNo,
+          date: start?.split("T")[0] || "-",
+          time: formatTimeRange(start, end),
+          zone: item.interviewCentres?.displayName,
+          panel: item.interviewPanels?.panelName,
+          positionId: item.application?.positionId,
+        };
+      });
 
-      interviewPerDay:
-        Number(slot.perDay),
+      // ✅ Update table
+      setSchedule(rows);
 
-      startTime:
-        formatTime(slot.startTime),
+      return { success: true, rows };
+    } catch (err) {
+      console.error("ALLOCATE ERROR", err);
 
-      endTime:
-        formatTime(slot.endTime),
+      // ✅ backend 400 response
+      if (err?.response?.data) {
+        return {
+          success: false,
 
-      durationInMinutes:
-        Number(slot.duration)
+          message: err.response.data.message || "Scheduling failed",
 
-    }))
-  );
-
-setPanelExcelModelList(excelPanels);
-
-
-    console.log("FINAL PAYLOAD 👉", payload);//return false;
-
-    // ✅ Call API
-   const res = await interviewService.allocatePanels(payload);
-   console.log("data12345",res.data);
-    if (!res?.success) {
-
-  return {
-
-    success: false,
-
-    message:
-      res?.message ||
-      "Scheduling failed",
-
-    data:
-      res?.data || []
-
-  };
-}
-    setScheduleApiData(res.data);   // 🔥 IMPORTANT
-
-    // ✅ Convert response → table rows
-    const rows = res.data.map(item => {
-      const start = item.interviewScheduleStaging?.interviewStartAt;
-       const end = item.interviewScheduleStaging?.interviewEndAt;
+          data: err.response.data.data || [],
+        };
+      }
 
       return {
-        id: item.application?.id,
-        name: item.fullName,
-        regNo: item.application?.applicationNo,
-        date: (start?.split("T")[0]) || "-",
-        time: formatTimeRange(start, end),
-        zone: item.interviewCentres?.displayName,
-        panel: item.interviewPanels?.panelName,
-        positionId: item.application?.positionId
+        success: false,
+
+        message: "Something went wrong",
+
+        data: [],
       };
-    });
-
-    // ✅ Update table
-    setSchedule(rows);
-
-    return { success: true, rows };
-
-  } catch (err) {
-
-  console.error("ALLOCATE ERROR", err);
-
-  // ✅ backend 400 response
-  if (err?.response?.data) {
-
-    return {
-
-      success: false,
-
-      message:
-        err.response.data.message ||
-        "Scheduling failed",
-
-      data:
-        err.response.data.data || []
-
-    };
-
-  }
-
-  return {
-
-    success: false,
-
-    message:
-      "Something went wrong",
-
-    data: []
-
-  };
-}
-};
-
-const scheduleInterview = async () => {
-  try {
-//console.log("scheduleApiData", scheduleApiData);return false;
-
-
-const updatedScheduleData = scheduleApiData.map(item => ({
-  ...item,
-
-  interviewScheduleStaging: {
-    ...item.interviewScheduleStaging,
-
-    // ✅ backend requirement
-    rescheduled: isReschedule
-  }
-}));
-
-
-const finalPayload = {
-
-  allocatedRequestModelList:
-    updatedScheduleData,
-
-  panelExcelModelList
-};
-console.log(
-  "FINAL SCHEDULE PAYLOAD",
-  finalPayload
-);//return false;
-const res =
-  await interviewService.scheduleInterview(
-    finalPayload
-  );
-  //  const res = await interviewService.scheduleInterview(scheduleApiData);
-
-   if (!res?.success) {
-
-  return {
-
-    success: false,
-
-    message:
-      res.message ||
-
-      "Failed to schedule interviews",
-
-    data:
-      res.data || []
-
-  };
-}
-
-    return { success: true };
-
-  } catch (err) {
-
-  console.error(
-    "SCHEDULE ERROR",
-    err
-  );
-
-  const backendError =
-    err?.response?.data;
-
-  // ✅ HANDLE BACKEND VALIDATION
-  if (backendError) {
-
-    return {
-
-      success: false,
-
-      message:
-
-        backendError?.message ||
-
-        "Failed to schedule interviews",
-
-      data:
-
-        Array.isArray(
-          backendError?.data
-        )
-          ? backendError.data
-          : []
-
-    };
-
-  }
-
-  // ✅ FALLBACK ERROR
-  return {
-
-    success: false,
-
-    message:
-      "Failed to schedule interviews",
-
-    data: []
-
+    }
   };
 
-}
-};
+  const scheduleInterview = async () => {
+    try {
+      //console.log("scheduleApiData", scheduleApiData);return false;
+
+      const updatedScheduleData = scheduleApiData.map((item) => ({
+        ...item,
+
+        interviewScheduleStaging: {
+          ...item.interviewScheduleStaging,
+
+          // ✅ backend requirement
+          rescheduled: isReschedule,
+        },
+      }));
+
+      const finalPayload = {
+        allocatedRequestModelList: updatedScheduleData,
+
+        panelExcelModelList,
+      };
+      console.log("FINAL SCHEDULE PAYLOAD", finalPayload); //return false;
+      const res = await interviewService.scheduleInterview(finalPayload);
+      //  const res = await interviewService.scheduleInterview(scheduleApiData);
+
+      if (!res?.success) {
+        return {
+          success: false,
+
+          message: res.message || "Failed to schedule interviews",
+
+          data: res.data || [],
+        };
+      }
+
+      return { success: true };
+    } catch (err) {
+      console.error("SCHEDULE ERROR", err);
+
+      const backendError = err?.response?.data;
+
+      // ✅ HANDLE BACKEND VALIDATION
+      if (backendError) {
+        return {
+          success: false,
+
+          message: backendError?.message || "Failed to schedule interviews",
+
+          data: Array.isArray(backendError?.data) ? backendError.data : [],
+        };
+      }
+
+      // ✅ FALLBACK ERROR
+      return {
+        success: false,
+
+        message: "Failed to schedule interviews",
+
+        data: [],
+      };
+    }
+  };
 
   return {
     schedule,
@@ -479,6 +374,6 @@ const res =
     applySchedule,
     scheduleApiData,
     scheduleInterview,
-    allInterviewCentres
+    allInterviewCentres,
   };
 }

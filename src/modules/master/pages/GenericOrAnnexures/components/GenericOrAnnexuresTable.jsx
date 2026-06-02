@@ -208,15 +208,7 @@
 
 // export default GenericOrAnnexuresTable;
 
-
-
-
-
-
 // import React, { useState } from "react";
-
-
-
 
 // import { Container, Button } from "react-bootstrap";
 // import { Plus } from "react-bootstrap-icons";
@@ -384,7 +376,6 @@
 //         setItemsPerPage={setItemsPerPage}
 //       />
 
-
 //       {/* ===== ADD / VIEW MODAL ===== */}
 //       <GenericOrAnnexuresFormModal
 //         show={showModal}
@@ -411,4 +402,3 @@
 // };
 
 // export default GenericOrAnnexuresPage;
-

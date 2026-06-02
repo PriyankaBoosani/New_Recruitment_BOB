@@ -1,22 +1,9 @@
 import React, { useMemo, useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Badge,
-  Modal,
-  Button,
-  Table,
-} from "react-bootstrap";
+import { Container, Row, Col, Form, Badge, Modal, Button, Table } from "react-bootstrap";
 import Select from "react-select";
 import { ChevronDown, ChevronUp } from "react-bootstrap-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faMapLocationDot,
-  faUsers,
-  faLayerGroup,
-} from "@fortawesome/free-solid-svg-icons";
+import { faMapLocationDot, faUsers, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import ApprovalCommentModal from "../components/ApprovalCommentModal";
 import "../../../style/css/InterviewRequest.css";
 const mockRequisitions = [
@@ -55,9 +42,7 @@ const mockRequisitions = [
         totalCandidateCount: 8,
         zoneCount: 1,
         panelCount: 2,
-        zones: [
-          { zoneId: 3, zoneName: "Zone C", center: "Nizamabad", candidates: 8 },
-        ],
+        zones: [{ zoneId: 3, zoneName: "Zone C", center: "Nizamabad", candidates: 8 }],
         panels: [
           { panelId: 4, panelName: "Panel 4", members: 3, status: "Active" },
           { panelId: 5, panelName: "Panel 5", members: 2, status: "Active" },
@@ -284,16 +269,13 @@ const InterviewRequests = () => {
                   <Badge bg="light" text="primary" className="req-id">
                     {selectedRequisition.requisitionCode}
                   </Badge>
-                 
                 </div>
 
                 <div className="d-flex justify-content-between align-items-start req-header">
                   <div className="d-flex align-items-start">
                     <div>
                       <div className="d-flex align-items-center gap-2 mb-2">
-                        <h6 className="req-code mb-0">
-                          {selectedRequisition.requisitionTitle}
-                        </h6>
+                        <h6 className="req-code mb-0">{selectedRequisition.requisitionTitle}</h6>
                       </div>
 
                       <div className="req-dates">
@@ -396,9 +378,10 @@ const InterviewRequests = () => {
                               </div>
 
                               <div className="col-md-2">
-                                <div className="field-label">Zone Count  <span>{pos.zoneCount}</span></div>
+                                <div className="field-label">
+                                  Zone Count <span>{pos.zoneCount}</span>
+                                </div>
 
-                               
                                 <Button
                                   variant="outline-primary"
                                   size="sm"
@@ -408,13 +391,14 @@ const InterviewRequests = () => {
                                     openDetails("zone", pos);
                                   }}
                                 >
-                                 
-                                View
+                                  View
                                 </Button>
                               </div>
 
                               <div className="col-md-2">
-                                <div className="field-label">Panel Count: <span>{pos.panelCount}</span></div>
+                                <div className="field-label">
+                                  Panel Count: <span>{pos.panelCount}</span>
+                                </div>
                                 <Button
                                   variant="outline-primary"
                                   size="sm"
@@ -424,32 +408,31 @@ const InterviewRequests = () => {
                                     openDetails("panel", pos);
                                   }}
                                 >
-                               View
-                                  
+                                  View
                                 </Button>
                               </div>
-                               <div className="col-md-2">
-                              <Button className="me-2"
-                                variant="success"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleActionClick("approve", pos);
-                                }}
-                              >
-                                Accept
-                              </Button>
-                              <Button
-                                variant="danger"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleActionClick("reject", pos);
-                                }}
-                              >
-                                Reject
-                              </Button>
+                              <div className="col-md-2">
+                                <Button
+                                  className="me-2"
+                                  variant="success"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleActionClick("approve", pos);
+                                  }}
+                                >
+                                  Accept
+                                </Button>
+                                <Button
+                                  variant="danger"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleActionClick("reject", pos);
+                                  }}
+                                >
+                                  Reject
+                                </Button>
+                              </div>
                             </div>
-                            </div>
-                           
                           </div>
                         )}
                       </div>
@@ -471,14 +454,17 @@ const InterviewRequests = () => {
         >
           <Modal.Header closeButton>
             <Modal.Title>
-              {detailModal.type === "zone" ? "Zone Details" : "Panel Details"} - {detailModal.positionName}
+              {detailModal.type === "zone" ? "Zone Details" : "Panel Details"} -{" "}
+              {detailModal.positionName}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>{renderDetailTable()}</Modal.Body>
           <Modal.Footer>
             <Button
               variant="secondary"
-              onClick={() => setDetailModal({ show: false, type: null, positionName: "", data: [] })}
+              onClick={() =>
+                setDetailModal({ show: false, type: null, positionName: "", data: [] })
+              }
             >
               Close
             </Button>

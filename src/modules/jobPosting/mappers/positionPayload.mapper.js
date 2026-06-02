@@ -8,7 +8,7 @@ export const mapStateDistribution = ({
 }) => {
   const distributions = [];
 
-  reservationCategories.forEach(cat => {
+  reservationCategories.forEach((cat) => {
     const count = Number(currentState.categories?.[cat.code] || 0);
     if (count > 0) {
       distributions.push({
@@ -20,7 +20,7 @@ export const mapStateDistribution = ({
     }
   });
 
-  disabilityCategories.forEach(dis => {
+  disabilityCategories.forEach((dis) => {
     const count = Number(currentState.disabilities?.[dis.disabilityCode] || 0);
     if (count > 0) {
       distributions.push({
@@ -52,7 +52,7 @@ export const mapNationalCategoryDistribution = ({
 }) => {
   const distributions = [];
 
-  reservationCategories.forEach(cat => {
+  reservationCategories.forEach((cat) => {
     const count = Number(nationalCategories[cat.code] || 0);
     if (count > 0) {
       distributions.push({
@@ -64,7 +64,7 @@ export const mapNationalCategoryDistribution = ({
     }
   });
 
-  disabilityCategories.forEach(dis => {
+  disabilityCategories.forEach((dis) => {
     const count = Number(nationalDisabilities[dis.disabilityCode] || 0);
     if (count > 0) {
       distributions.push({

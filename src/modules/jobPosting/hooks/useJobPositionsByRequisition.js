@@ -5,7 +5,6 @@ import jobPositionApiService from "../services/jobPositionApiService";
 import { useMasterData } from "../hooks/useMasterData";
 import { useTranslation } from "react-i18next";
 
-
 export const useJobPositionsByRequisition = () => {
   const { t } = useTranslation("jobPostingsList");
   const [positionsByReq, setPositionsByReq] = useState({});
@@ -14,7 +13,7 @@ export const useJobPositionsByRequisition = () => {
   const { positions: masterPositions, departments } = useMasterData();
 
   const positionMap = {};
-  masterPositions.forEach(p => {
+  masterPositions.forEach((p) => {
     positionMap[p.id] = p.name;
   });
 
@@ -24,17 +23,16 @@ export const useJobPositionsByRequisition = () => {
     try {
       setLoadingReqId(requisitionId);
 
-      const res =
-        await jobPositionApiService.getPositionsByRequisition(requisitionId);
+      const res = await jobPositionApiService.getPositionsByRequisition(requisitionId);
 
       const list = res?.data || [];
 
       const departmentMap = {};
-      departments.forEach(d => {
+      departments.forEach((d) => {
         departmentMap[d.id] = d.label;
       });
 
-      const enriched = list.map(api => ({
+      const enriched = list.map((api) => ({
         positionId: api.positionId || api.id,
         masterPositionId: api.masterPositionId,
         positionName: positionMap[api.masterPositionId] || "—",
@@ -51,9 +49,9 @@ export const useJobPositionsByRequisition = () => {
         preferredEducation: api.preferredEducation ?? "",
       }));
 
-      setPositionsByReq(prev => ({
+      setPositionsByReq((prev) => ({
         ...prev,
-        [requisitionId]: enriched
+        [requisitionId]: enriched,
       }));
     } catch {
       toast.error(t("positions_load_failed"));
@@ -67,11 +65,9 @@ export const useJobPositionsByRequisition = () => {
     try {
       await jobPositionApiService.deletePositionById(positionId);
 
-      setPositionsByReq(prev => ({
+      setPositionsByReq((prev) => ({
         ...prev,
-        [requisitionId]: prev[requisitionId].filter(
-          p => p.positionId !== positionId
-        )
+        [requisitionId]: prev[requisitionId].filter((p) => p.positionId !== positionId),
       }));
 
       toast.success(t("position_deleted_success"));
@@ -84,6 +80,6 @@ export const useJobPositionsByRequisition = () => {
     positionsByReq,
     loadingReqId,
     fetchPositions,
-    deletePosition
+    deletePosition,
   };
 };

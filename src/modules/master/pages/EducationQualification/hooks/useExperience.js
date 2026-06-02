@@ -4,7 +4,7 @@ import {
   validateEducationForm,
   validateEducationLevel,
   validateCourse,
-  validateSpecialization
+  validateSpecialization,
 } from "../../../../../shared/utils/educationValidations";
 import { useTranslation } from "react-i18next";
 
@@ -26,7 +26,7 @@ export const useExperience = () => {
       educationLevel: "",
       course: "",
       educationQualificationsId: "",
-      specializationOthers: []
+      specializationOthers: [],
       // specializationOthers: [{ name: "", id: "" }]
     },
   ]);
@@ -39,7 +39,6 @@ export const useExperience = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
 
-
   const fetchEducationOptions = async () => {
     try {
       setLoading(true);
@@ -47,12 +46,10 @@ export const useExperience = () => {
       const res = await masterApiService.getAllDocumentTypes();
 
       const list = res.data || [];
-      const filtered = list.filter(
-        (item) => item?.docType?.toLowerCase() === "educationdocs"
-      );
+      const filtered = list.filter((item) => item?.docType?.toLowerCase() === "educationdocs");
       setEducationOptions(filtered);
 
-      const ids = filtered.map(item => item.documentTypeId);
+      const ids = filtered.map((item) => item.documentTypeId);
 
       return { ids, filtered };
     } catch (err) {
@@ -62,7 +59,6 @@ export const useExperience = () => {
       setLoading(false);
     }
   };
-
 
   const fetchEducationByIds = async (ids, educationOptionsList) => {
     try {
@@ -82,7 +78,6 @@ export const useExperience = () => {
     }
   };
 
-
   useEffect(() => {
     loadData();
   }, []);
@@ -94,7 +89,6 @@ export const useExperience = () => {
       await fetchEducationByIds(ids, filtered);
     }
   };
-
 
   const handleFieldChange = (formIndex, field, value, specIndex = null) => {
     const regex = /^[A-Za-z\s.&,()\-_/]*$/;
@@ -128,9 +122,7 @@ export const useExperience = () => {
     }
 
     if (field === "specialization") {
-      fieldError = validateSpecialization(
-        updated[formIndex].specializationOthers
-      );
+      fieldError = validateSpecialization(updated[formIndex].specializationOthers);
     }
 
     const updatedErrors = [...errors];
@@ -149,15 +141,16 @@ export const useExperience = () => {
     const updated = [...formData];
     updated[formIndex].specializationOthers.push({
       name: "",
-      id: null
+      id: null,
     });
     setFormData(updated);
   };
 
   const handleRemoveSpec = (formIndex, i) => {
     const updated = [...formData];
-    updated[formIndex].specializationOthers =
-      updated[formIndex].specializationOthers.filter((_, idx) => idx !== i);
+    updated[formIndex].specializationOthers = updated[formIndex].specializationOthers.filter(
+      (_, idx) => idx !== i
+    );
     setFormData(updated);
   };
 
@@ -166,7 +159,7 @@ export const useExperience = () => {
       {
         educationLevel: "",
         course: "",
-        specializationOthers: []
+        specializationOthers: [],
         // specializationOthers: [{ name: "", id: "" }]
       },
     ]);
@@ -184,12 +177,10 @@ export const useExperience = () => {
 
   const saveExperience = async () => {
     try {
-
-
       const { valid, errors: newErrors } = validateEducationForm(formData[0], {
         existing: experienceList,
         currentId: formData[0].educationQualificationsId,
-        editMode: isEditMode
+        editMode: isEditMode,
       });
       setErrors([newErrors]);
 
@@ -205,12 +196,13 @@ export const useExperience = () => {
           educationQualificationsId: formData[0].educationQualificationsId || null,
         },
         specializations: formData[0].specializationOthers
-          .filter((s) => s?.name.trim()).map((s) => ({
+          .filter((s) => s?.name.trim())
+          .map((s) => ({
             specializationName: s.name.trim(),
             // specializationCode: s.name,
             specializationCode: "",
             specializationId: s.id || null,
-          }))
+          })),
       };
 
       const res = await masterApiService.saveEducation(payload);
@@ -233,14 +225,12 @@ export const useExperience = () => {
       if (res.success) {
         const levelId = String(saved?.qualification?.levelId || "").toLowerCase();
 
-
         const docMap = new Map(
-          educationOptions.map(opt => [
+          educationOptions.map((opt) => [
             String(opt.documentTypeId).toLowerCase(),
-            opt.documentName
+            opt.documentName,
           ])
         );
-
 
         const documentName = docMap.get(levelId);
 
@@ -250,7 +240,7 @@ export const useExperience = () => {
           specialization:
             saved?.specializations?.map((s) => ({
               name: s.specializationName,
-              id: s.specializationId
+              id: s.specializationId,
             })) || [],
           educationQualificationsId: saved?.qualification?.educationQualificationsId || "-",
         };
@@ -260,7 +250,6 @@ export const useExperience = () => {
         setShowModal(false);
         setIsEditMode(false);
         setEditIndex(null);
-
       }
     } catch (err) {
       console.error(err);
@@ -276,9 +265,7 @@ export const useExperience = () => {
   const handleEditClick = (item, index) => {
     // 🔥 Convert NAME → ID
     const selectedOption = educationOptions.find(
-      (opt) =>
-        opt.documentName.toLowerCase() ===
-        String(item.educationLevel).toLowerCase()
+      (opt) => opt.documentName.toLowerCase() === String(item.educationLevel).toLowerCase()
     );
 
     setFormData([
@@ -289,9 +276,9 @@ export const useExperience = () => {
         specializationOthers:
           item.specialization?.length > 0
             ? item.specialization.map((s) => ({
-              name: s.name,
-              id: s.id
-            }))
+                name: s.name,
+                id: s.id,
+              }))
             : [],
       },
     ]);
@@ -306,16 +293,13 @@ export const useExperience = () => {
   const filteredList = experienceList.filter((item) => {
     const search = searchTerm.toLowerCase();
 
-    const educationMatch =
-      item.educationLevel?.toLowerCase().includes(search);
+    const educationMatch = item.educationLevel?.toLowerCase().includes(search);
 
-    const courseMatch =
-      item.course?.toLowerCase().includes(search);
+    const courseMatch = item.course?.toLowerCase().includes(search);
 
-    const specializationMatch =
-      item.specialization?.some((s) =>
-        s.name?.toLowerCase().includes(search)
-      );
+    const specializationMatch = item.specialization?.some((s) =>
+      s.name?.toLowerCase().includes(search)
+    );
 
     return educationMatch || courseMatch || specializationMatch;
   });

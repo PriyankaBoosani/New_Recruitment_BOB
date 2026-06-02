@@ -15,9 +15,8 @@ const ExperienceModal = ({
   onRemoveSpec,
   isViewing,
   isEditing,
-  educationOptions
+  educationOptions,
 }) => {
-
   const { t } = useTranslation(["education", "common"]);
 
   const getDuplicateIndexes = (list = []) => {
@@ -40,28 +39,20 @@ const ExperienceModal = ({
 
   return (
     <Modal show={show} onHide={handleCloseModal} size="lg" centered>
-
       <Modal.Header closeButton className="modal-header-custom">
         <Modal.Title className="cerhead">
-          {isViewing
-            ? "View Education"
-            : isEditing
-              ? "Edit Education"
-              : t("education:title")}
+          {isViewing ? "View Education" : isEditing ? "Edit Education" : t("education:title")}
         </Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
-
         {formData.map((form, formIndex) => {
           const duplicateIndexes = getDuplicateIndexes(form.specializationOthers);
 
           return (
             <div key={formIndex} className="border rounded p-3 mb-3">
-
               {/* ✅ FIRST ROW */}
               <div className="row g-3">
-
                 {/* EDUCATION LEVEL */}
                 <div className="col-md-4">
                   <label className="form-label">
@@ -71,26 +62,19 @@ const ExperienceModal = ({
                   <select
                     className={`form-select ${errors[formIndex]?.educationLevel ? "is-invalid" : ""}`}
                     value={form.educationLevel}
-                    onChange={(e) =>
-                      onChange(formIndex, "educationLevel", e.target.value)
-                    }
+                    onChange={(e) => onChange(formIndex, "educationLevel", e.target.value)}
                     disabled={isViewing}
                   >
                     <option value="">Select</option>
                     {educationOptions?.map((item) => (
-                      <option
-                        key={item.documentTypeId}
-                        value={item.documentTypeId}
-                      >
+                      <option key={item.documentTypeId} value={item.documentTypeId}>
                         {item.documentName}
                       </option>
                     ))}
                   </select>
 
                   {!isViewing && (
-                    <small className="text-danger">
-                      {errors[formIndex]?.educationLevel}
-                    </small>
+                    <small className="text-danger">{errors[formIndex]?.educationLevel}</small>
                   )}
                 </div>
 
@@ -101,39 +85,27 @@ const ExperienceModal = ({
                   </label>
 
                   {isViewing ? (
-                    <div className="form-control-view">
-                      {form.course || "-"}
-                    </div>
+                    <div className="form-control-view">{form.course || "-"}</div>
                   ) : (
                     <input
                       type="text"
                       className={`form-control ${errors[formIndex]?.course ? "is-invalid" : ""}`}
                       value={form.course}
                       placeholder={t("education:course_placeholder")}
-                      onChange={(e) =>
-                        onChange(formIndex, "course", e.target.value)
-                      }
+                      onChange={(e) => onChange(formIndex, "course", e.target.value)}
                     />
                   )}
 
-                  {!isViewing && (
-                    <small className="text-danger">
-                      {errors[formIndex]?.course}
-                    </small>
-                  )}
+                  {!isViewing && <small className="text-danger">{errors[formIndex]?.course}</small>}
                 </div>
-
               </div>
 
               {/* ✅ SPECIALIZATION BELOW WITH SCROLL */}
 
               <div className="row mt-3">
                 <div className="col-md-12">
-
                   {/* TITLE ALWAYS TOP */}
-                  <label className="form-label">
-                    {t("education:specialization")}
-                  </label>
+                  <label className="form-label">{t("education:specialization")}</label>
 
                   {isViewing ? (
                     <div
@@ -141,39 +113,29 @@ const ExperienceModal = ({
                         maxHeight: "220px",
                         overflowY: "auto",
                         overflowX: "hidden",
-                        paddingRight: "5px"
+                        paddingRight: "5px",
                       }}
                     >
                       <div className="row">
                         {form.specializationOthers
                           ?.filter(
                             (s) =>
-                              (typeof s === "string" &&
-                                s.trim().length > 0) ||
+                              (typeof s === "string" && s.trim().length > 0) ||
                               (typeof s === "object" &&
                                 typeof s?.name === "string" &&
                                 s.name.trim().length > 0)
                           )
                           .map((s, i) => (
-                            <div
-                              key={i}
-                              className="col-md-6 mb-2"
-                            >
+                            <div key={i} className="col-md-6 mb-2">
                               <div className="row g-2 align-items-center">
-
                                 <div className="col">
                                   <input
                                     type="text"
                                     className="form-control"
-                                    value={
-                                      typeof s === "string"
-                                        ? s
-                                        : s.name
-                                    }
+                                    value={typeof s === "string" ? s : s.name}
                                     readOnly
                                   />
                                 </div>
-
                               </div>
                             </div>
                           ))}
@@ -188,34 +150,25 @@ const ExperienceModal = ({
                             maxHeight: "220px",
                             overflowY: "auto",
                             overflowX: "hidden",
-                            paddingRight: "5px"
+                            paddingRight: "5px",
                           }}
                         >
                           <div className="row">
                             {form.specializationOthers.map((val, i) => (
                               <div key={i} className="col-md-6 mb-2">
-
                                 <div className="row g-2 align-items-center">
-
                                   <div className="col">
                                     <input
                                       type="text"
-                                      className={`form-control ${duplicateIndexes.has(i)
-                                          ? "is-invalid"
-                                          : ""
-                                        }`}
+                                      className={`form-control ${
+                                        duplicateIndexes.has(i) ? "is-invalid" : ""
+                                      }`}
                                       value={val?.name || ""}
-                                      placeholder={t(
-                                        "education:specialization_placeholder",
-                                        { index: i + 1 }
-                                      )}
+                                      placeholder={t("education:specialization_placeholder", {
+                                        index: i + 1,
+                                      })}
                                       onChange={(e) =>
-                                        onChange(
-                                          formIndex,
-                                          "specialization",
-                                          e.target.value,
-                                          i
-                                        )
+                                        onChange(formIndex, "specialization", e.target.value, i)
                                       }
                                     />
                                   </div>
@@ -225,35 +178,23 @@ const ExperienceModal = ({
                                       type="button"
                                       variant="link"
                                       className="action-btn delete-btn"
-                                      onClick={() =>
-                                        onRemoveSpec(formIndex, i)
-                                      }
+                                      onClick={() => onRemoveSpec(formIndex, i)}
                                     >
-                                      <img
-                                        src={deleteIcon}
-                                        alt="Delete"
-                                        className="icon-16"
-                                      />
+                                      <img src={deleteIcon} alt="Delete" className="icon-16" />
                                     </Button>
                                   </div>
-
                                 </div>
 
                                 {duplicateIndexes.has(i) && (
                                   <small className="text-danger">
-                                    {t(
-                                      "education:duplicate_specialization"
-                                    )}
+                                    {t("education:duplicate_specialization")}
                                   </small>
                                 )}
-
                               </div>
                             ))}
                           </div>
 
-                          <small className="text-danger">
-                            {errors[formIndex]?.specialization}
-                          </small>
+                          <small className="text-danger">{errors[formIndex]?.specialization}</small>
                         </div>
                       )}
 
@@ -269,7 +210,6 @@ const ExperienceModal = ({
                       </div>
                     </>
                   )}
-
                 </div>
               </div>
 
@@ -439,11 +379,9 @@ const ExperienceModal = ({
 
                 </div>
               </div> */}
-
             </div>
           );
         })}
-
       </Modal.Body>
 
       <Modal.Footer className="modal-footer-custom">
@@ -457,7 +395,6 @@ const ExperienceModal = ({
           </Button>
         )}
       </Modal.Footer>
-
     </Modal>
   );
 };

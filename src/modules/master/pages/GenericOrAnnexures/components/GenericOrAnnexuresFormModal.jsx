@@ -13,38 +13,32 @@ const GenericOrAnnexuresFormModal = ({
   handleInputChange,
   errors,
   setErrors,
-  handleSave
+  handleSave,
 }) => {
   const { t } = useTranslation(["genericOrAnnexures"]);
   const isTypeSelected = !!formData?.type;
   const MAX_PDF_SIZE = 5 * 1024 * 1024; // 5 MB
-const title = isViewing
-  ? t("view", "View Generic / Annexures")
-  : isEditing
-  ? t("edit", "Edit Generic / Annexures")
-  : t("addgenAnn", "Add Generic / Annexures");
-const handleFormSubmit = (e) => {
-  if (isViewing) {
-    e.preventDefault();
-    onHide();
-  } else {
-    handleSave(e);
-  }
-};
+  const title = isViewing
+    ? t("view", "View Generic / Annexures")
+    : isEditing
+      ? t("edit", "Edit Generic / Annexures")
+      : t("addgenAnn", "Add Generic / Annexures");
+  const handleFormSubmit = (e) => {
+    if (isViewing) {
+      e.preventDefault();
+      onHide();
+    } else {
+      handleSave(e);
+    }
+  };
 
-const handleFileClick = () => {
-  if (isTypeSelected) {
-    document.getElementById("pdfUpload").click();
-  }
-};
+  const handleFileClick = () => {
+    if (isTypeSelected) {
+      document.getElementById("pdfUpload").click();
+    }
+  };
   return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      size="lg"
-      centered
-      className="user-modal"
-    >
+    <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
       {/* ===== HEADER ===== */}
       <Modal.Header closeButton className="modal-header-custom">
         <div>
@@ -72,14 +66,11 @@ const handleFileClick = () => {
             <Col xs={12}>
               <Form.Group className="form-group">
                 <Form.Label>
-                  {t("type", "Type")}{" "}
-                  {!isViewing && <span className="text-danger">*</span>}
+                  {t("type", "Type")} {!isViewing && <span className="text-danger">*</span>}
                 </Form.Label>
 
                 {isViewing ? (
-                  <div className="form-control-view">
-                    {formData?.type || "-"}
-                  </div>
+                  <div className="form-control-view">{formData?.type || "-"}</div>
                 ) : (
                   <Form.Select
                     name="type"
@@ -87,21 +78,13 @@ const handleFileClick = () => {
                     onChange={handleInputChange}
                     className="form-control-custom"
                   >
-                    <option value="">
-                      {t("select_type", "Select Type")}
-                    </option>
-                    <option value="Generic">
-                      {t("generic", "Generic")}
-                    </option>
-                    <option value="Annexures">
-                      {t("annexures", "Annexures")}
-                    </option>
+                    <option value="">{t("select_type", "Select Type")}</option>
+                    <option value="Generic">{t("generic", "Generic")}</option>
+                    <option value="Annexures">{t("annexures", "Annexures")}</option>
                   </Form.Select>
                 )}
 
-                {!isViewing && (
-                  <ErrorMessage>{errors?.type}</ErrorMessage>
-                )}
+                {!isViewing && <ErrorMessage>{errors?.type}</ErrorMessage>}
               </Form.Group>
             </Col>
 
@@ -114,9 +97,7 @@ const handleFileClick = () => {
                 </Form.Label>
 
                 {isViewing ? (
-                  <div className="form-control-view">
-                    {formData?.file?.name || "-"}
-                  </div>
+                  <div className="form-control-view">{formData?.file?.name || "-"}</div>
                 ) : (
                   <>
                     {/* hidden file input */}
@@ -133,20 +114,17 @@ const handleFileClick = () => {
 
                         //  file too large
                         if (file.size > MAX_PDF_SIZE) {
-                          setErrors(prev => ({
+                          setErrors((prev) => ({
                             ...prev,
-                            file: t(
-                              "pdf_size_5mb",
-                              "PDF size must be less than or equal to 5 MB"
-                            )
+                            file: t("pdf_size_5mb", "PDF size must be less than or equal to 5 MB"),
                           }));
 
                           // clear file from formData
                           handleInputChange({
                             target: {
                               name: "file",
-                              value: null
-                            }
+                              value: null,
+                            },
                           });
 
                           e.target.value = "";
@@ -157,12 +135,12 @@ const handleFileClick = () => {
                         handleInputChange({
                           target: {
                             name: "file",
-                            value: file
-                          }
+                            value: file,
+                          },
                         });
 
                         // clear file error
-                        setErrors(prev => {
+                        setErrors((prev) => {
                           const copy = { ...prev };
                           delete copy.file;
                           return copy;
@@ -172,27 +150,23 @@ const handleFileClick = () => {
 
                     {/* visible text-field style uploader */}
                     <div
-                      className={`form-control-custom d-flex align-items-center justify-content-between ${!isTypeSelected ? "disabled" : ""
-                        }`}
+                      className={`form-control-custom d-flex align-items-center justify-content-between ${
+                        !isTypeSelected ? "disabled" : ""
+                      }`}
                       style={{
-                        cursor: isTypeSelected
-                          ? "pointer"
-                          : "not-allowed"
+                        cursor: isTypeSelected ? "pointer" : "not-allowed",
                       }}
                       onClick={handleFileClick}
                     >
                       <span className="text-muted">
-                        {formData?.file?.name ||
-                          t("upload_pdf", "Upload PDF")}
+                        {formData?.file?.name || t("upload_pdf", "Upload PDF")}
                       </span>
                       <Upload size={18} />
                     </div>
                   </>
                 )}
 
-                {!isViewing && (
-                  <ErrorMessage>{errors?.file}</ErrorMessage>
-                )}
+                {!isViewing && <ErrorMessage>{errors?.file}</ErrorMessage>}
               </Form.Group>
             </Col>
           </Row>
@@ -200,16 +174,12 @@ const handleFileClick = () => {
           {/* ===== FOOTER ===== */}
           <Modal.Footer className="px-0 pt-3 pb-0 modal-footer-custom">
             <Button variant="outline-secondary" onClick={onHide}>
-              {isViewing
-                ? t("close", "Close")
-                : t("cancel", "Cancel")}
+              {isViewing ? t("close", "Close") : t("cancel", "Cancel")}
             </Button>
 
             {!isViewing && (
               <Button variant="primary" type="submit">
-                {isEditing
-                  ? t("update", "Update")
-                  : t("save", "Save")}
+                {isEditing ? t("update", "Update") : t("save", "Save")}
               </Button>
             )}
           </Modal.Footer>

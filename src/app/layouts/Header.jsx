@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Navbar, Nav, Container, NavDropdown, Image } from 'react-bootstrap';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
-import logo from '../../assets/logo.png';
-import { useDispatch, useSelector } from 'react-redux';
-import { clearUser } from '../providers/userSlice';
-import { setLanguage } from '../../i18n/store/languageSlice';
+import React, { useState, useEffect, useRef } from "react";
+import { Navbar, Nav, Container, NavDropdown, Image } from "react-bootstrap";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import logo from "../../assets/logo.png";
+import { useDispatch, useSelector } from "react-redux";
+import { clearUser } from "../providers/userSlice";
+import { setLanguage } from "../../i18n/store/languageSlice";
 import { useTranslation } from "react-i18next";
-import i18n from '../../i18n/i18n';
-import { persistor } from '../../store';
+import i18n from "../../i18n/i18n";
+import { persistor } from "../../store";
 import { NavLink } from "react-router-dom";
 import "../../style/css/header-pill.css";
-import { setRankEnabled } from '../providers/rankSlice';
-import { useMsal } from '@azure/msal-react';
+import { setRankEnabled } from "../providers/rankSlice";
+import { useMsal } from "@azure/msal-react";
 
 const Header = () => {
   const { t } = useTranslation();
@@ -50,9 +50,9 @@ const Header = () => {
     user?.name ||
     (user?.email
       ? user.email
-        .split("@")[0]
-        .replace(/[._]/g, " ")
-        .replace(/\b\w/g, c => c.toUpperCase())
+          .split("@")[0]
+          .replace(/[._]/g, " ")
+          .replace(/\b\w/g, (c) => c.toUpperCase())
       : "");
 
   /* ===================== LANGUAGE CHANGE ===================== */
@@ -83,14 +83,11 @@ const Header = () => {
   const isL1 = role === "l1";
   const isL2 = role === "l2";
 
-
-
   //Privileges  console.log("ROLE FROM BACKEND:", user?.role);
   //Privileges
   const privileges = useSelector((state) => state.user.privileges);
 
   // const privileges = useSelector((state) => state.user.privileges);
-
 
   const canJobPost = privileges?.JobPostings;
   const canCandidateWorkflow = privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"];
@@ -98,8 +95,7 @@ const Header = () => {
   const canVerification = privileges?.Verification;
   const canAdmin = privileges?.Admin;
   const canInterview = privileges?.["Interview"];
-  const canApprovals =
-    privileges?.["L1 Approval"] || privileges?.["L2 Approval"];
+  const canApprovals = privileges?.["L1 Approval"] || privileges?.["L2 Approval"];
   const canViewPosition = privileges?.["View Position"];
   // {
   // 	"preveileges": {
@@ -143,7 +139,6 @@ const Header = () => {
       .replace(/\b\w/g, (c) => c.toUpperCase());
   };
 
-
   const isAdminRoute =
     location.pathname.startsWith("/users") ||
     location.pathname.startsWith("/department") ||
@@ -157,25 +152,17 @@ const Header = () => {
 
   return (
     <header className="fixed-top">
-
       {/* ===================== TOP BAR ===================== */}
-      <div className="background-header py-2" style={{ position: 'sticky', top: 0, zIndex: 1030 }}>
+      <div className="background-header py-2" style={{ position: "sticky", top: 0, zIndex: 1030 }}>
         <Container fluid className="d-flex justify-content-between align-items-center">
-
           {/* Logo */}
           <div className="d-flex align-items-center">
-            <Image
-              src={logo}
-              alt="Bank of Baroda"
-              width={155}
-              className="me-2 imgbob"
-            />
+            <Image src={logo} alt="Bank of Baroda" width={155} className="me-2 imgbob" />
           </div>
 
           {/* Right Section */}
           {/* <div className="d-flex align-items-center fonnav"> */}
           <div className="d-flex align-items-center fonnav gap-3">
-
             {/* LANGUAGE */}
             {/* <div className="d-flex align-items-center text-white me-3">
               <span
@@ -197,15 +184,13 @@ const Header = () => {
               className="lang-pill"
               onClick={(e) => {
                 e.stopPropagation();
-                setLangOpen(v => !v);
+                setLangOpen((v) => !v);
               }}
             >
               <span className="lang-globe">🌐</span>
 
               <span className="lang-label">
-                {i18n.language === "hi"
-                  ? t("hindi")
-                  : t("english_us")}
+                {i18n.language === "hi" ? t("hindi") : t("english_us")}
               </span>
 
               <FontAwesomeIcon icon={faChevronDown} className="lang-caret" />
@@ -215,7 +200,7 @@ const Header = () => {
                   <div
                     className="lang-item"
                     onClick={(e) => {
-                      e.stopPropagation();          // ✅ important
+                      e.stopPropagation(); // ✅ important
                       dispatch(setLanguage("en"));
                       i18n.changeLanguage("en");
                       setLangOpen(false);
@@ -239,13 +224,12 @@ const Header = () => {
               )}
             </div>
 
-
             {/* ===================== USER DROPDOWN ===================== */}
             <div className="position-relative" ref={dropdownRef}>
               <div
                 className="d-flex align-items-center gap-2"
-                style={{ cursor: 'pointer' }}
-                onClick={() => setShowDropdown(prev => !prev)}
+                style={{ cursor: "pointer" }}
+                onClick={() => setShowDropdown((prev) => !prev)}
               >
                 <div
                   style={{
@@ -258,7 +242,7 @@ const Header = () => {
                     justifyContent: "center",
                     fontWeight: 600,
                     fontSize: "0.75rem",
-                    color: "#42579f"
+                    color: "#42579f",
                   }}
                 >
                   {getInitials(displayName)}
@@ -280,11 +264,7 @@ const Header = () => {
                 >
                   <p className="mb-1 fw-semibold">{displayName}</p>
                   <p className="mb-2 text-muted small">{formatRole(user?.role)}</p>
-                  <div
-                    style={{ cursor: "pointer" }}
-                    className="text-danger"
-                    onClick={handleLogout}
-                  >
+                  <div style={{ cursor: "pointer" }} className="text-danger" onClick={handleLogout}>
                     {t("logout")}
                   </div>
                 </div>
@@ -295,12 +275,7 @@ const Header = () => {
       </div>
 
       {/* ===================== NAVBAR ===================== */}
-      <Navbar
-        bg="white"
-        expand="lg"
-        className="border-bottom py-0"
-        expanded={expanded}
-      >
+      <Navbar bg="white" expand="lg" className="border-bottom py-0" expanded={expanded}>
         <Container fluid>
           <Navbar.Toggle
             aria-controls="main-navbar-nav"
@@ -322,37 +297,23 @@ const Header = () => {
                 Candidate Preview
               </Nav.Link> */}
 
-
               {canCandidateWorkflow && (
                 <Nav.Link as={NavLink} to="/candidate-workflow" onClick={closeMenu}>
                   {t("candidate_workflow")}
                 </Nav.Link>
               )}
 
-
               {canInterview && (
-                <Nav.Link
-                  as={NavLink}
-                  to="/candidate-interviewer"
-                  onClick={closeMenu}
-                >
+                <Nav.Link as={NavLink} to="/candidate-interviewer" onClick={closeMenu}>
                   {t("interview")}
                 </Nav.Link>
               )}
 
-
-
               {canVerification && (
-                <Nav.Link
-                  as={NavLink}
-                  to="/candidate-verification"
-                  onClick={closeMenu}
-                >
+                <Nav.Link as={NavLink} to="/candidate-verification" onClick={closeMenu}>
                   {t("verification")}
                 </Nav.Link>
               )}
-             
-
 
               {canCommittee && (
                 <Nav.Link as={NavLink} to="/interviewpanel" onClick={closeMenu}>
@@ -363,7 +324,7 @@ const Header = () => {
               {/* <Nav.Link as={NavLink} to="/messages" onClick={closeMenu}>
                 {t("messages")}
               </Nav.Link> */}
-               {/* {canApprovals && (
+              {/* {canApprovals && (
                 <NavDropdown
                   id="approvals-dropdown"
                   show={showApprovalsMenu}
@@ -426,8 +387,6 @@ const Header = () => {
                 </Nav.Link>
               )} */}
 
-
-
               {/* <Nav.Link as={NavLink} to="/dashboard" onClick={closeMenu}>Dashboard</Nav.Link>
               <Nav.Link href="#candidate-shortlist">Candidate Shortlist</Nav.Link>
               <Nav.Link href="#interviews">Interviews</Nav.Link>
@@ -446,8 +405,7 @@ const Header = () => {
                   className={isAdminRoute ? "active-admin" : ""}
                   title={
                     <>
-                      {t("admin")}{" "}
-                      <FontAwesomeIcon icon={faChevronDown} className="ms-1" />
+                      {t("admin")} <FontAwesomeIcon icon={faChevronDown} className="ms-1" />
                     </>
                   }
                 >
@@ -491,18 +449,15 @@ const Header = () => {
                     {t("generic_or_annexures")}
                   </NavDropdown.Item>
 
-
-                     <NavDropdown.Item as={Link} to="/education-qualification" onClick={closeMenu}>
+                  <NavDropdown.Item as={Link} to="/education-qualification" onClick={closeMenu}>
                     {t("education_qualification")}
                   </NavDropdown.Item>
-                  
-                     <NavDropdown.Item as={Link} to="/state-languages" onClick={closeMenu}>
+
+                  <NavDropdown.Item as={Link} to="/state-languages" onClick={closeMenu}>
                     {t("stateLanguages")}
                   </NavDropdown.Item>
                 </NavDropdown>
               )}
-
-
             </Nav>
           </Navbar.Collapse>
         </Container>

@@ -4,25 +4,23 @@ import jobPositionApiService from "../services/jobPositionApiService";
 export const useJobPositionById = (positionId) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
-//const res = await jobPositionApiService.getPositionById(positionId);
+  //const res = await jobPositionApiService.getPositionById(positionId);
   const fetchPosition = useCallback(async () => {
-  if (!positionId) return;
+    if (!positionId) return;
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
+    try {
+      const res = await jobPositionApiService.getPositionById(positionId);
 
-    const res = await jobPositionApiService.getPositionById(positionId);
-  
-    // ✅ CORRECT
-    setData(res.data);
-
-  } catch (e) {
-    console.error("Failed to fetch position", e);
-  } finally {
-    setLoading(false);
-  }
-}, [positionId]);
+      // ✅ CORRECT
+      setData(res.data);
+    } catch (e) {
+      console.error("Failed to fetch position", e);
+    } finally {
+      setLoading(false);
+    }
+  }, [positionId]);
 
   useEffect(() => {
     fetchPosition();

@@ -5,7 +5,7 @@ export const mapDocumentFromApi = (api) => ({
   name: api.documentName,
   description: api.documentDesc,
   isRequiredConfirmed: api.isRequired,
-  isActive: api.isActive
+  isActive: api.isActive,
 });
 
 // LIST
@@ -19,8 +19,5 @@ export const mapDocumentToApi = (formData) => ({
   documentDesc: cleanData(formData.description),
   isRequired: formData.isRequired,
   isEditable: true,
-  isActive: true
+  isActive: true,
 });
-
-
-

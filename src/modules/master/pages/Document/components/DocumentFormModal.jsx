@@ -1,9 +1,9 @@
 // src/modules/master/pages/Document/components/DocumentFormModal.jsx
 
-import React from 'react';
-import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
-import ErrorMessage from '../../../../../shared/components/ErrorMessage';
-import DocumentImportModal from './DocumentImportModal';
+import React from "react";
+import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import ErrorMessage from "../../../../../shared/components/ErrorMessage";
+import DocumentImportModal from "./DocumentImportModal";
 import { handleValidatedInput, INPUT_PATTERNS } from "../../../../../shared/utils/inputHandlers";
 
 const DocumentFormModal = ({
@@ -24,10 +24,7 @@ const DocumentFormModal = ({
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
       <Modal.Header closeButton className="modal-header-custom">
-        <Modal.Title>
-          {isViewing ? t("view") : isEditing ? t("edit") : t("added")}
-        </Modal.Title>
-
+        <Modal.Title>{isViewing ? t("view") : isEditing ? t("edit") : t("added")}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body className="p-4">
@@ -35,11 +32,13 @@ const DocumentFormModal = ({
         <Form
           onSubmit={
             isViewing
-              ? (e) => { e.preventDefault(); onHide(); }
+              ? (e) => {
+                  e.preventDefault();
+                  onHide();
+                }
               : handleSave
           }
         >
-
           <Row className="g-3">
             <Col xs={12}>
               <Form.Group>
@@ -48,9 +47,7 @@ const DocumentFormModal = ({
                 </Form.Label>
 
                 {isViewing ? (
-                  <div className="form-control-view">
-                    {formData.name || '-'}
-                  </div>
+                  <div className="form-control-view">{formData.name || "-"}</div>
                 ) : (
                   <Form.Control
                     name="name"
@@ -65,15 +62,13 @@ const DocumentFormModal = ({
                         setFormData,
                         setErrors,
                         pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE,
-                        errorMessage: t("validation:no_special_charsees")
+                        errorMessage: t("validation:no_special_charsees"),
                       })
                     }
                   />
-
                 )}
 
                 {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
-
               </Form.Group>
             </Col>
 
@@ -83,8 +78,8 @@ const DocumentFormModal = ({
                   {t("description")} <span className="text-danger">*</span>
                 </Form.Label>
                 {isViewing ? (
-                  <div className="form-control-view" style={{ whiteSpace: 'pre-line' }}>
-                    {formData.description || '-'}
+                  <div className="form-control-view" style={{ whiteSpace: "pre-line" }}>
+                    {formData.description || "-"}
                   </div>
                 ) : (
                   <Form.Control
@@ -98,28 +93,25 @@ const DocumentFormModal = ({
                     onChange={(e) => {
                       const { name, value } = e.target;
 
-                      setFormData(prev => ({
+                      setFormData((prev) => ({
                         ...prev,
-                        [name]: value
+                        [name]: value,
                       }));
 
                       // optional: clear only this field error
-                      setErrors(prev => {
+                      setErrors((prev) => {
                         const copy = { ...prev };
                         delete copy[name];
                         return copy;
                       });
                     }}
                   />
-
                 )}
 
                 {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
-
               </Form.Group>
             </Col>
             <Col xs={12}>
-
               <Form.Group>
                 <div className="d-flex align-items-center gap-2">
                   {/*  Checkbox */}
@@ -130,32 +122,26 @@ const DocumentFormModal = ({
                     onChange={(e) => {
                       if (isViewing) return;
 
-                      setFormData(prev => ({
+                      setFormData((prev) => ({
                         ...prev,
-                        isRequiredConfirmed: e.target.checked
+                        isRequiredConfirmed: e.target.checked,
                       }));
 
                       if (errors.isRequiredConfirmed) {
-                        setErrors(prev => ({
+                        setErrors((prev) => ({
                           ...prev,
-                          isRequiredConfirmed: null
+                          isRequiredConfirmed: null,
                         }));
                       }
                     }}
                   />
 
-
                   {/*  Label text (same style as other labels) */}
-                  <Form.Label className="mb-0">
-                    {t("documents:confirm_required")}
-                  </Form.Label>
+                  <Form.Label className="mb-0">{t("documents:confirm_required")}</Form.Label>
                 </div>
 
                 {/*  Error message */}
-                {!isViewing && (
-                  <ErrorMessage>{errors.isRequiredConfirmed}</ErrorMessage>
-                )}
-
+                {!isViewing && <ErrorMessage>{errors.isRequiredConfirmed}</ErrorMessage>}
               </Form.Group>
             </Col>
           </Row>
@@ -170,7 +156,6 @@ const DocumentFormModal = ({
               </Button>
             )}
           </Modal.Footer>
-
         </Form>
       </Modal.Body>
     </Modal>

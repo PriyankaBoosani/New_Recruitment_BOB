@@ -9,23 +9,17 @@ import { validateLocationForm } from "../../../../shared/utils/location-validati
 import LocationTable from "./components/LocationTable";
 import LocationFormModal from "./components/LocationFormModal";
 import DeleteConfirmModal from "../Location/components/DeleteConfirmModal";
-import '../../../../style/css/user.css';
+import "../../../../style/css/user.css";
 
 const LocationPage = () => {
   const { t } = useTranslation(["location", "validation"]);
-  const {
-    locations,
-    cities,
-    addLocation,
-    updateLocation,
-    deleteLocation,
-    fetchLocations
-  } = useLocations();
+  const { locations, cities, addLocation, updateLocation, deleteLocation, fetchLocations } =
+    useLocations();
 
   const [formData, setFormData] = useState({
-    name: '',
+    name: "",
     cityId: null,
-    cityName: ''
+    cityName: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -41,13 +35,13 @@ const LocationPage = () => {
   const [isViewing, setIsViewing] = useState(false);
   const openView = (loc) => {
     setIsEditing(false);
-    setIsViewing(true);        //  view mode ON
+    setIsViewing(true); //  view mode ON
     setEditingLocation(loc);
 
     setFormData({
-      name: loc.name ?? '',
+      name: loc.name ?? "",
       cityId: loc.cityId ?? null,
-      cityName: loc.cityName ?? ''
+      cityName: loc.cityName ?? "",
     });
 
     setErrors({});
@@ -58,20 +52,20 @@ const LocationPage = () => {
     setIsEditing(false);
     setIsViewing(false);
     setEditingLocation(null);
-    setFormData({ name: '', cityId: null, cityName: '' });
+    setFormData({ name: "", cityId: null, cityName: "" });
     setErrors({});
     setShowModal(true);
   };
 
   const openEdit = (loc) => {
     setIsEditing(true);
-    setIsViewing(false);       //  edit mode
+    setIsViewing(false); //  edit mode
     setEditingLocation(loc);
 
     setFormData({
-      name: loc.name ?? '',
+      name: loc.name ?? "",
       cityId: loc.cityId ?? null,
-      cityName: loc.cityName ?? ''
+      cityName: loc.cityName ?? "",
     });
 
     setErrors({});
@@ -81,11 +75,10 @@ const LocationPage = () => {
   const handleSave = async (e) => {
     e.preventDefault();
 
-    const { valid, errors: vErrors } =
-      validateLocationForm(formData, {
-        existing: locations,
-        currentId: isEditing ? editingLocation?.id : null
-      });
+    const { valid, errors: vErrors } = validateLocationForm(formData, {
+      existing: locations,
+      currentId: isEditing ? editingLocation?.id : null,
+    });
 
     if (!valid) {
       setErrors(vErrors);
@@ -123,7 +116,6 @@ const LocationPage = () => {
               }}
               className="search-input"
             />
-
           </div>
 
           <Button className="add-button" onClick={openAdd}>
@@ -151,7 +143,7 @@ const LocationPage = () => {
         show={showModal}
         onHide={() => setShowModal(false)}
         isEditing={isEditing}
-        isViewing={isViewing}    //  ONLY THIS
+        isViewing={isViewing} //  ONLY THIS
         formData={formData}
         setFormData={setFormData}
         errors={errors}

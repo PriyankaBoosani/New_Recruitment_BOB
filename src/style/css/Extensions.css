@@ -7,7 +7,7 @@
 
 .extensions-page .page-title {
   font-weight: 600;
-  color: #162B75;
+  color: #162b75;
   font-size: 1em;
 }
 
@@ -46,7 +46,7 @@
 }
 
 .extension_request .field-label {
-   font-size: 0.875em;
+  font-size: 0.875em;
   font-weight: 400;
   color: #404040;
   letter-spacing: 0.2px;
@@ -81,7 +81,6 @@
   letter-spacing: 0.2px;
   margin-bottom: 2px;
   display: flex;
-
 }
 
 .extensions-page .date-row {
@@ -89,7 +88,7 @@
   align-items: center;
   gap: 6px;
   font-size: 0.8125rem;
-  color: #60697B;
+  color: #60697b;
 }
 
 .extensions-page .divider {
@@ -108,7 +107,6 @@
 .extensions-page .page-subtitle {
   margin: 0 0 20px 0;
   color: var(--bs-secondary-color) !important;
-  ;
   font-size: 0.875rem;
   font-weight: 400;
 }
@@ -127,7 +125,6 @@
   margin-bottom: 6px;
 }
 
-
 .extensions-page .filter-select__control {
   height: 44px !important;
   min-height: 44px !important;
@@ -139,11 +136,11 @@
 }
 
 .extensions-page .filter-select__control:hover {
-  border-color: #162B75 !important;
+  border-color: #162b75 !important;
 }
 
 .extensions-page .filter-select__control--is-focused {
-  border-color: #162B75 !important;
+  border-color: #162b75 !important;
   box-shadow: 0 0 0 2px rgba(22, 43, 117, 0.1) !important;
 }
 
@@ -186,22 +183,22 @@
 }
 
 .extensions-page .filter-select__option--is-selected {
-  background-color: #162B75 !important;
+  background-color: #162b75 !important;
   color: #ffffff !important;
 }
 
 /* Checkbox base */
 .extensions-page .form-check-input {
-	border: 2px solid #2f4ea2 !important;
-	border-radius: 4px;
-	background-color: #ffffff !important;
-	cursor: pointer;
+  border: 2px solid #2f4ea2 !important;
+  border-radius: 4px;
+  background-color: #ffffff !important;
+  cursor: pointer;
 }
 
 /* Checked */
 .extensions-page .form-check-input:checked {
-  background-color: #42579F !important;
-  border-color: #42579F !important;
+  background-color: #42579f !important;
+  border-color: #42579f !important;
 }
 
 /* Remove focus glow */
@@ -211,14 +208,11 @@
 
 /*  Select All label color */
 .extensions-page .form-check-label {
-  color: #162B75;
+  color: #162b75;
   font-weight: 500;
   font-size: 0.875em;
   cursor: pointer;
 }
-
-
-
 
 .extensions-page .status-badge {
   display: inline-flex !important;
@@ -240,16 +234,16 @@
 
 /* Pending */
 .extensions-page .status-pending {
-  background-color: #FFDCA8 !important;
-  color: #F28A22 !important;
+  background-color: #ffdca8 !important;
+  color: #f28a22 !important;
   font-weight: 400;
   font-size: 0.75em;
 }
 
 /* Rejected */
 .extensions-page .status-rejected {
-  background-color: #D73C400D !important;
-  color: #D73C40 !important;
+  background-color: #d73c400d !important;
+  color: #d73c40 !important;
   font-weight: 400;
   font-size: 0.875em;
 }
@@ -304,7 +298,7 @@
 .extensions-page .assign-positions-page .form-select:focus {
   border-color: #86b7fe;
   outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
 /* ===== REQUISITION STRIP SECTION ===== */
@@ -340,12 +334,12 @@
 
 .extensions-page .assign-positions-page .config-subtitle {
   color: #717182;
-  font-size: .75rem;
+  font-size: 0.75rem;
   font-weight: 400;
 }
 
 .extensions-page .assign-positions-page .assign-button {
-  background: linear-gradient(135deg, #F26522 0%, #e55a1b 100%);
+  background: linear-gradient(135deg, #f26522 0%, #e55a1b 100%);
   color: #ffffff;
   border: none;
   padding: 12px 24px;
@@ -372,8 +366,7 @@
   font-weight: 400;
   border-radius: 8px;
   background-color: #fdf5f5;
-  color: #D73C40;
-
+  color: #d73c40;
 }
 
 .extensions-page .approve-btn {
@@ -386,7 +379,7 @@
 
 .extensions-page .status-select {
   appearance: none;
-  background-image: url('../../assets/Vector.png');
+  background-image: url("../../assets/Vector.png");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 14px;
@@ -405,7 +398,7 @@
   padding-left: 36px;
   font-size: 0.8125rem;
   border-radius: 8px;
-  color: #162B75;
+  color: #162b75;
   font-weight: 400;
 }
 
@@ -415,7 +408,7 @@
   border-radius: 8px;
   margin-left: 0px;
   margin-right: 0px;
-  border: 1px solid #ACBED4;
+  border: 1px solid #acbed4;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -425,13 +418,13 @@
   padding-bottom: 30px;
 }
 .extension_request .form-check-input:disabled {
-	background-color: #AFBDEB4F !important;
-	cursor: not-allowed;
+  background-color: #afbdeb4f !important;
+  cursor: not-allowed;
 }
 
 .extension_request .badge {
   font-size: 0.75em;
 }
 .extension_request .bi.bi-clock.icon-14 {
-	margin-top: -3px;
+  margin-top: -3px;
 }

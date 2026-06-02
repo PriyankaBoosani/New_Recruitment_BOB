@@ -14,7 +14,7 @@
   "showing_entries": "{{total}} में से {{start}}-{{end}} दिखा रहे हैं",
   "prev": "पिछला",
   "next": "अगला",
-   "search_placeholder": "उम्मीदवार खोजें...",
+  "search_placeholder": "उम्मीदवार खोजें...",
   "failed_load_panel_positions": "पैनल पद लोड करने में विफल",
   "failed_load_candidates": "उम्मीदवार लोड करने में विफल",
   "no_document_available": "कोई दस्तावेज़ उपलब्ध नहीं है",
@@ -26,7 +26,7 @@
   "candidate_resume": "उम्मीदवार का रिज़्यूमे",
   "upload_interview_data": "साक्षात्कार डेटा अपलोड करें",
   "support_xlsx": "XLSX फ़ाइल प्रारूप समर्थित है",
- "upload_xlsx": "XLSX अपलोड करें",
+  "upload_xlsx": "XLSX अपलोड करें",
   "reupload_xlsx": "XLSX पुनः अपलोड करें",
   "remove": "हटाएं",
   "download_template": "टेम्पलेट डाउनलोड करें",
@@ -39,5 +39,4 @@
   "import_data": "इम्पोर्ट",
   "cancel": "रद्द करें",
   "template_download_failed": "टेम्पलेट डाउनलोड करने में विफल"
-
 }

@@ -1,11 +1,8 @@
 export const mapEducationListFromApi = (list = [], educationOptions = []) => {
   const docMap = new Map(
-    educationOptions.map(opt => [
-      String(opt.documentTypeId).toLowerCase(),
-      opt.documentName
-    ])
+    educationOptions.map((opt) => [String(opt.documentTypeId).toLowerCase(), opt.documentName])
   );
-  return list.map(item => {
+  return list.map((item) => {
     const docId = String(item?.qualification?.levelId || "").toLowerCase();
 
     const documentName = docMap.get(docId);
@@ -14,10 +11,10 @@ export const mapEducationListFromApi = (list = [], educationOptions = []) => {
       educationLevel: documentName || "-", // 🔥 final output
       course: item?.qualification?.qualificationName || "-",
       specialization: Array.isArray(item?.specializations)
-        ? item.specializations.map(s => ({
-          name: s.specializationName,
-          id: s.specializationId
-        }))
+        ? item.specializations.map((s) => ({
+            name: s.specializationName,
+            id: s.specializationId,
+          }))
         : [],
       educationQualificationsId: item?.qualification?.educationQualificationsId || "-",
     };

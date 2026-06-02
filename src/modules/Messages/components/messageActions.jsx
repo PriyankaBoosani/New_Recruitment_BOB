@@ -27,7 +27,6 @@ const MessageActions = ({ item, onSubmitApproval }) => {
     status === "L1 APPROVED" ||
     status === "L2 APPROVED";
 
-  
   const handleRejectConfirm = async () => {
     await onSubmitApproval(item.id, "REJECTED", comment);
     setShowRejectModal(false);
@@ -38,7 +37,6 @@ const MessageActions = ({ item, onSubmitApproval }) => {
   return (
     <>
       <div className="msg-actions d-flex align-items-start gap-2">
-
         {/* INPUT */}
         <div style={{ flex: 1 }}>
           <input
@@ -53,11 +51,7 @@ const MessageActions = ({ item, onSubmitApproval }) => {
             disabled={isRejected}
           />
 
-          {error && (
-            <small className="text-danger d-block mt-1">
-              {error}
-            </small>
-          )}
+          {error && <small className="text-danger d-block mt-1">{error}</small>}
         </div>
 
         {/* ACCEPT */}
@@ -96,56 +90,40 @@ const MessageActions = ({ item, onSubmitApproval }) => {
       </div>
 
       {/* REJECT CONFIRMATION MODAL */}
-<Modal
-  show={showRejectModal}
-  onHide={() => setShowRejectModal(false)}
-  centered
-  dialogClassName="del-modal"
->
-  <Modal.Body className="del-body">
-
-    {/* HEADER */}
-    <div className="del-header">
-      <div className="del-title">
-        Confirm Reject
-      </div>
-
-      <button
-        className="del-close"
-        onClick={() => setShowRejectModal(false)}
+      <Modal
+        show={showRejectModal}
+        onHide={() => setShowRejectModal(false)}
+        centered
+        dialogClassName="del-modal"
       >
-        <i className="bi bi-x-lg"></i>
-      </button>
-    </div>
+        <Modal.Body className="del-body">
+          {/* HEADER */}
+          <div className="del-header">
+            <div className="del-title">Confirm Reject</div>
 
-    {/* MESSAGE */}
-    <div className="del-message">
-      Are you sure you want to reject?
-      <div className="text-muted small mt-2">
-        Reason: {comment}
-      </div>
-    </div>
+            <button className="del-close" onClick={() => setShowRejectModal(false)}>
+              <i className="bi bi-x-lg"></i>
+            </button>
+          </div>
 
-    {/* FOOTER */}
-    <div className="del-footer">
+          {/* MESSAGE */}
+          <div className="del-message">
+            Are you sure you want to reject?
+            <div className="text-muted small mt-2">Reason: {comment}</div>
+          </div>
 
-      <button
-        className="del-cancel"
-        onClick={() => setShowRejectModal(false)}
-      >
-        {t("common:cancel")}
-      </button>
+          {/* FOOTER */}
+          <div className="del-footer">
+            <button className="del-cancel" onClick={() => setShowRejectModal(false)}>
+              {t("common:cancel")}
+            </button>
 
-      <button
-        className="del-delete"
-        onClick={handleRejectConfirm}
-      >
-        {t("messages:reject")}
-      </button>
-
-    </div>
-  </Modal.Body>
-</Modal>
+            <button className="del-delete" onClick={handleRejectConfirm}>
+              {t("messages:reject")}
+            </button>
+          </div>
+        </Modal.Body>
+      </Modal>
     </>
   );
 };

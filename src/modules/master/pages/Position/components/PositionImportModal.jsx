@@ -4,11 +4,7 @@ import { Button, Alert } from "react-bootstrap";
 import { Upload as UploadIcon } from "react-bootstrap-icons";
 import { usePositions } from "../hooks/usePositions";
 
-const PositionImportModal = ({
-  t,
-  onClose = () => { },
-  onSuccess = () => { }
-}) => {
+const PositionImportModal = ({ t, onClose = () => {}, onSuccess = () => {} }) => {
   const { bulkAddPositions, downloadPositionTemplate, loading } = usePositions();
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState("");
@@ -17,14 +13,14 @@ const PositionImportModal = ({
   /* ---------------- FILE VALIDATION ---------------- */
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    const isExcel = file && (
-      file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-      file.type === 'application/vnd.ms-excel'
-    );
+    const isExcel =
+      file &&
+      (file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        file.type === "application/vnd.ms-excel");
 
     if (isExcel) {
       setSelectedFile(file);
-      setError('');
+      setError("");
     } else {
       setError(t("department:invalid_file"));
     }
@@ -48,8 +44,6 @@ const PositionImportModal = ({
     } else {
       setError(res?.message || t("position:import_error"));
       setErrorDetails(res?.data || res?.details || []);
-
-
     }
   };
 
@@ -67,27 +61,21 @@ const PositionImportModal = ({
               alignItems: "center",
               justifyContent: "center",
               background: "#fff",
-              marginBottom: "1rem"
+              marginBottom: "1rem",
             }}
           >
             <UploadIcon size={32} />
           </div>
 
-          <h5 className="mb-2 uploadfile">
-            {t("position:upload_file")}
-          </h5>
+          <h5 className="mb-2 uploadfile">{t("position:upload_file")}</h5>
 
-          <p className="text-muted small">
-            {t("position:support_xlsx")}
-          </p>
+          <p className="text-muted small">{t("position:support_xlsx")}</p>
         </div>
 
         {error && (
           <Alert variant="danger">
             {/* Summary */}
-            <div className="fw-semibold">
-              {error}
-            </div>
+            <div className="fw-semibold">{error}</div>
 
             {/* Scrollable details */}
             {errorDetails.length > 0 && (
@@ -95,7 +83,7 @@ const PositionImportModal = ({
                 className="mt-2"
                 style={{
                   maxHeight: "150px",
-                  overflowY: "auto"
+                  overflowY: "auto",
                 }}
               >
                 <ul className="mb-0">
@@ -120,23 +108,14 @@ const PositionImportModal = ({
 
         <div className="text-center mb-3">
           <label htmlFor="upload-xlsx-position">
-            <Button
-              variant="primary"
-              as="span"
-              className="btnupload"
-              disabled={loading}
-            >
-              {selectedFile
-                ? t("position:reupload_xlsx")
-                : t("position:upload_xlsx")}
+            <Button variant="primary" as="span" className="btnupload" disabled={loading}>
+              {selectedFile ? t("position:reupload_xlsx") : t("position:upload_xlsx")}
             </Button>
           </label>
 
           {selectedFile && (
             <div className="mt-2">
-              <small className="text-muted d-block">
-                {selectedFile.name}
-              </small>
+              <small className="text-muted d-block">{selectedFile.name}</small>
               <Button
                 variant="outline-danger"
                 size="sm"
@@ -161,32 +140,23 @@ const PositionImportModal = ({
             type="button"
             onClick={downloadPositionTemplate}
             className="btn btn-link p-0 text-primary text-decoration-none btnfont"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             disabled={loading}
           >
-            {" "}XLSX
+            {" "}
+            XLSX
           </button>
         </div>
       </div>
 
       {/* ===== Footer ===== */}
       <div className="d-flex justify-content-end gap-2 modal-footer-custom">
-        <Button
-          variant="outline-secondary"
-          onClick={onClose}
-          disabled={loading}
-        >
+        <Button variant="outline-secondary" onClick={onClose} disabled={loading}>
           {t("position:cancel")}
         </Button>
 
-        <Button
-          variant="primary"
-          onClick={handleUpload}
-          disabled={loading}
-        >
-          {loading
-            ? t("position:importing")
-            : t("position:import")}
+        <Button variant="primary" onClick={handleUpload} disabled={loading}>
+          {loading ? t("position:importing") : t("position:import")}
         </Button>
       </div>
     </div>

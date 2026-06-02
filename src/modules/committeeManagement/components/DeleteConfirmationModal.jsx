@@ -9,7 +9,7 @@ const DeleteConfirmationModal = ({
   title,
   message,
   itemLabel,
-  loading = false
+  loading = false,
 }) => {
   const { t } = useTranslation(["common"]);
   return (
@@ -21,18 +21,16 @@ const DeleteConfirmationModal = ({
       <Modal.Body className="text-center f14">
         <img src={pos_delete_icon} alt="delete" className="mb-3" style={{ width: 30 }} />
         <p className="mb-1"> {message || t("delete_message")}</p>
-        {itemLabel && (
-          <strong className="text-danger d-block wrap">{itemLabel}</strong>
-        )}
+        {itemLabel && <strong className="text-danger d-block wrap">{itemLabel}</strong>}
         {/* <p className="text-muted mt-2"> {t("importModal:delete_cannot_undo")}</p> */}
       </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="outline-secondary" onClick={onClose} disabled={loading} className="f14" >
+        <Button variant="outline-secondary" onClick={onClose} disabled={loading} className="f14">
           {t("common:cancel")}
         </Button>
 
-        <Button variant="danger" onClick={onConfirm} disabled={loading} className="f14" >
+        <Button variant="danger" onClick={onConfirm} disabled={loading} className="f14">
           {loading ? t("deleting") : t("delete_button")}
         </Button>
       </Modal.Footer>

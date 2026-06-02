@@ -6,7 +6,7 @@
 
 .page-title {
   font-weight: 600;
-  color: #162B75;
+  color: #162b75;
   font-size: 1em;
 }
 
@@ -24,14 +24,13 @@
   color: #333333 !important;
   font-weight: 500 !important;
   font-size: 0.875em;
-
 }
 
 .filters-row select,
 .search-boxpost input {
   height: 42px;
   font-size: 0.875em;
-  color: #162B75;
+  color: #162b75;
   font-weight: 400;
 }
 
@@ -46,7 +45,7 @@
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-image: url('../../assets/Vector.png');
+  background-image: url("../../assets/Vector.png");
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 16px;
@@ -74,22 +73,22 @@
 }
 
 .search-boxpost input::placeholder {
-  color: rgba(65, 65, 65, 0.5)
+  color: rgba(65, 65, 65, 0.5);
 }
 
 .bulk-actions {
-	background: #fff;
-	padding: 12px;
-	border-radius: 8px;
-	margin-left: 0px;
-	margin-right: 0px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-	border: 1px solid #ACBED4;
+  background: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  margin-left: 0px;
+  margin-right: 0px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #acbed4;
 }
 
 .selectall {
   font-size: 0.875em;
-  color: #162B75;
+  color: #162b75;
   font-weight: 500;
   gap: 1em;
 }
@@ -98,7 +97,6 @@
   margin-top: 5px;
   margin-left: -5px;
 }
-
 
 .selectall .form-check-input {
   font-size: 1rem;
@@ -112,11 +110,11 @@
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  border: 1px solid #ACBED4;
+  border: 1px solid #acbed4;
 }
 
 .subbtn {
-  background-color: #42579F !important;
+  background-color: #42579f !important;
   font-size: 0.875em;
   font-weight: 500;
   opacity: 1 !important;
@@ -127,13 +125,12 @@
 }
 
 .subbtn:hover {
-  background-color: #42579F !important;
+  background-color: #42579f !important;
 }
 
 .canbtn {
   font-size: 0.875em;
   font-weight: 500;
-
 }
 
 .job-postings-page .icon-16 {
@@ -149,38 +146,36 @@
 }
 
 .job-postings-page .bg-warning {
-  color: #42579F;
-  border: 1px solid #42579F;
-  background: #AFBDEB2E !important;
+  color: #42579f;
+  border: 1px solid #42579f;
+  background: #afbdeb2e !important;
   font-weight: 500;
   font-size: 0.625em;
 }
 
 .job-postings-page .bg-success {
-  color: #0EB319;
-  border: 1px solid #0EB319;
-  background: #F5FFF6 !important;
+  color: #0eb319;
+  border: 1px solid #0eb319;
+  background: #f5fff6 !important;
   font-weight: 500;
   font-size: 0.625em;
-
 }
 .job-postings-page .bg-secondary {
-  color: #6C757D;
-  border: 1px solid #6C757D;
-  background: #E9ECEF !important;
+  color: #6c757d;
+  border: 1px solid #6c757d;
+  background: #e9ecef !important;
   font-weight: 500;
   font-size: 0.625em;
 }
 
 .job-postings-page .bg-danger {
-  color: #DC3545;
+  color: #dc3545;
   /* Bootstrap danger red */
-  border: 1px solid #DC3545;
-  background: #FFF5F6 !important;
+  border: 1px solid #dc3545;
+  background: #fff5f6 !important;
   font-weight: 500;
   font-size: 0.625em;
 }
-
 
 .req-id {
   font-weight: 500;
@@ -205,18 +200,17 @@
 } */
 
 .job-postings-page .req-code {
-    font-weight: 500;
-    margin: 12px 0;
-    color: #162B75 !important;
-    font-size: 1em;
+  font-weight: 500;
+  margin: 12px 0;
+  color: #162b75 !important;
+  font-size: 1em;
 
-    display: block;          /* important */
-    max-width: 600px !important;         /* required for ellipsis */
-    white-space: nowrap;     /* must be nowrap */
-    overflow: hidden;        /* hide extra text */
-    text-overflow: ellipsis; /* show ... */
+  display: block; /* important */
+  max-width: 600px !important; /* required for ellipsis */
+  white-space: nowrap; /* must be nowrap */
+  overflow: hidden; /* hide extra text */
+  text-overflow: ellipsis; /* show ... */
 }
-
 
 .wrap {
   white-space: normal !important;
@@ -224,8 +218,8 @@
   text-overflow: ellipsis;
   word-wrap: anywhere;
 }
-.accordion-arrow-position{
-  color:#fff !important;
+.accordion-arrow-position {
+  color: #fff !important;
   margin-right: -10px;
 }
 .job-postings-page .depname {
@@ -237,7 +231,7 @@
 .deppos {
   color: #404040 !important;
   background: #fff !important;
-  border: 1px solid #E5E7EB;
+  border: 1px solid #e5e7eb;
   padding: 5px;
   border-radius: 10px;
   font-weight: 400;
@@ -257,7 +251,7 @@
 .actions .icon-btn {
   margin-left: 8px;
   background: #fff;
-  border: 1px solid #6679BC;
+  border: 1px solid #6679bc;
   border-radius: 20% !important;
 }
 
@@ -283,7 +277,6 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-
   .req-meta,
   .req-dates {
     flex-direction: column;
@@ -307,7 +300,7 @@
   /* background: #f9fbff; */
   /* border-radius: 8px; */
   padding: 20px 15px 0;
- border-top: 1px solid #ddd;
+  border-top: 1px solid #ddd;
 }
 
 .department-card {
@@ -315,15 +308,14 @@
   /* border-radius: 10px; */
   /* padding: 15px 20px; */
   border: 1px solid #ddd;
-  color:#fff;
-  
+  color: #fff;
 }
 
 .position-card-inner {
-  border: 1px solid #ACBED4;
+  border: 1px solid #acbed4;
   border-radius: 12px;
   padding: 16px 20px;
-  background: #F0F7FF;
+  background: #f0f7ff;
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
   margin: 15px 20px;
 }
@@ -339,9 +331,8 @@
 .position-title {
   font-size: 1em;
   flex: 1;
-  color: #162B75;
+  color: #162b75;
   font-weight: 500;
-
 }
 
 /* Vacancies + Age + Icons in ONE LINE */
@@ -371,7 +362,7 @@
   color: #404040;
   font-weight: normal;
 }
-.position-details span{
+.position-details span {
   font-weight: 500;
   color: #404040;
 }
@@ -382,8 +373,8 @@
 .position-card-inner .icon-btn {
   background: #fff;
   margin-right: -8px;
-  border: 1px solid #6679BC;
-  border-radius:20% !important;
+  border: 1px solid #6679bc;
+  border-radius: 20% !important;
 }
 
 @media (max-width: 768px) {
@@ -398,8 +389,8 @@
     margin-right: 0px;
   }
 }
-.position-meta-inline span b{
-  font-weight: 500;;
+.position-meta-inline span b {
+  font-weight: 500;
 }
 .requisition-card {
   margin-bottom: 1rem;
@@ -467,7 +458,7 @@
     justify-content: space-between;
   }
 
-  .requisition-card .d-flex>div:first-child {
+  .requisition-card .d-flex > div:first-child {
     font-weight: 500;
     color: #6c757d;
     margin-right: 1rem;
@@ -509,13 +500,13 @@
 }
 
 .page-item.active .page-link {
-  background-color: #162B75;
-  border-color: #162B75;
+  background-color: #162b75;
+  border-color: #162b75;
   color: white;
 }
 
 .page-link:hover {
-  background-color: #162B75;
+  background-color: #162b75;
   color: #fff;
 }
 
@@ -530,18 +521,16 @@
   background-color: none;
 }
 
-
-
 .job-postings-page .form-check-input {
   width: 1.1em;
   height: 1.1em;
-  border: 2px solid #42579F !important;
+  border: 2px solid #42579f !important;
   cursor: pointer;
 }
 
 .job-postings-page .form-check-input:checked {
-  background-color: #42579F !important;
-  border-color: #42579F !important;
+  background-color: #42579f !important;
+  border-color: #42579f !important;
 }
 
 .job-postings-page .form-check-input:focus {
@@ -554,22 +543,21 @@
 
 .job-postings-page .form-check-input:disabled {
   cursor: not-allowed;
-  background: #AFBDEB4F;
+  background: #afbdeb4f;
 }
 
 .job-postings-page .pagesize {
-  color: #162B75;
+  color: #162b75;
 }
 
 .subbtn:disabled {
-  background-color: #42579F !important;
+  background-color: #42579f !important;
   opacity: 0.6 !important;
   cursor: not-allowed;
 }
 
 /* ================= Pagination Responsive ================= */
 @media (max-width: 768px) {
-
   /* Stack page size + pagination */
   .job-postings-page .pagination,
   .job-postings-page .pagination.mb-0 {
@@ -614,26 +602,23 @@
 .filters-row {
   flex-wrap: wrap;
 }
-.job-postings-page .bg-yellowwarning{
+.job-postings-page .bg-yellowwarning {
   color: #856404;
   border: 1px solid #ffc107;
   background: #fff3cd !important;
   font-weight: 500;
   font-size: 0.625em;
-
-
 }
-.icon-16his{
+.icon-16his {
   width: 20px;
   height: 20px;
 }
 
 /* css wittern by Veeresh */
-.department-header{
+.department-header {
   /* border-bottom: 1px solid #ddd; */
-    /* padding-bottom: 10px; */
-    padding: 5px 20px;
-    background: #6679BC;
-    /* border-radius: 10px 10px 0 0; */
-   
+  /* padding-bottom: 10px; */
+  padding: 5px 20px;
+  background: #6679bc;
+  /* border-radius: 10px 10px 0 0; */
 }

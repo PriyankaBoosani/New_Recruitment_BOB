@@ -3,17 +3,17 @@
   padding: 20px;
   background: #fff;
   min-height: 100vh;
-border-radius: 20px !important;  
+  border-radius: 20px !important;
 }
 
 .committee-page .page-title {
   font-weight: 600;
-  color: #162B75;
+  color: #162b75;
   font-size: 1em;
 }
-.committee-page .filter-select__input-container{
-  padding-top:0px !important;
-  margin-top:0px !important;
+.committee-page .filter-select__input-container {
+  padding-top: 0px !important;
+  margin-top: 0px !important;
 }
 .committee-page .assign-positions-page .page-subtitle {
   color: rgba(255, 255, 255, 0.8);
@@ -56,22 +56,19 @@ border-radius: 20px !important;
   font-size: 0.875rem;
   background: #ffffff;
 }
- 
 
 .committee-page .assign-positions-page .form-select:disabled {
-  background-color: #AFBDEB4F;
+  background-color: #afbdeb4f;
   color: #6c757d;
   cursor: not-allowed;
   opacity: 1;
 }
 .form-check-input:disabled {
-	
-   background-color: #AFBDEB4F;
+  background-color: #afbdeb4f;
 }
-.icon-history{
+.icon-history {
   width: 16px;
   height: 16px;
-  
 }
 .committee-page .assign-positions-page .form-select:not(:focus) {
   border: 2px solid #e5e7eb;
@@ -80,7 +77,7 @@ border-radius: 20px !important;
 .committee-page .assign-positions-page .form-select:focus {
   border-color: #86b7fe;
   outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
 /* ===== REQUISITION STRIP SECTION ===== */
@@ -116,12 +113,12 @@ border-radius: 20px !important;
 
 .committee-page .assign-positions-page .config-subtitle {
   color: #717182;
-  font-size: .75rem;
+  font-size: 0.75rem;
   font-weight: 400;
 }
 
 .committee-page .assign-positions-page .assign-button {
-  background: linear-gradient(135deg, #F26522 0%, #e55a1b 100%);
+  background: linear-gradient(135deg, #f26522 0%, #e55a1b 100%);
   color: #ffffff;
   border: none;
   padding: 12px 24px;
@@ -129,7 +126,7 @@ border-radius: 20px !important;
   font-weight: 500;
   font-size: 0.875rem;
   cursor: pointer;
-  
+
   box-shadow: 0 4px 12px rgba(242, 101, 34, 0.3);
 }
 
@@ -171,9 +168,9 @@ border-radius: 20px !important;
 }
 
 .committee-page .tab-item.active {
-  background: #42579F;
+  background: #42579f;
   color: #ffffff;
-  border-color: #42579F;
+  border-color: #42579f;
 }
 
 /* ===== PANELS CONTAINER ===== */
@@ -199,7 +196,7 @@ border-radius: 20px !important;
 }
 
 .committee-page .panel-box.selected {
-  border-color: #F26522;
+  border-color: #f26522;
 }
 
 .committee-page .panel-header {
@@ -340,7 +337,7 @@ border-radius: 20px !important;
   }
 
   .committee-page .tab-item.active {
-    background: #42579F;
+    background: #42579f;
     color: #ffffff;
   }
 }
@@ -362,7 +359,6 @@ border-radius: 20px !important;
   display: flex;
   justify-content: space-between;
   align-items: center;
-
 }
 
 .committee-page .committee-row:hover {
@@ -407,12 +403,12 @@ border-radius: 20px !important;
 }
 
 .committee-page .action-pill.add {
-  background: #F26522;
+  background: #f26522;
   color: #ffffff;
 }
 
 .committee-page .action-pill.add:hover {
-  background: #F26522;
+  background: #f26522;
 }
 
 .committee-page .assign-positions-page .action-pill.remove {
@@ -454,7 +450,7 @@ border-radius: 20px !important;
   padding-left: 36px;
   font-size: 0.8125rem;
   border-radius: 8px;
-  color: #162B75;
+  color: #162b75;
   font-weight: 400;
 }
 
@@ -465,12 +461,11 @@ border-radius: 20px !important;
 }
 
 .committee-page .filter-label {
-	margin-bottom: 6px;
-	font-size: 0.875rem;
-	font-weight: 400;
-	color: #31315b;
+  margin-bottom: 6px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #31315b;
 }
-
 
 /* ================= FILTER DROPDOWN STYLE ================= */
 
@@ -485,11 +480,11 @@ border-radius: 20px !important;
 }
 
 .committee-page .filter-select__control:hover {
-  border-color: #162B75 !important;
+  border-color: #162b75 !important;
 }
 
 .committee-page .filter-select__control--is-focused {
-  border-color: #162B75 !important;
+  border-color: #162b75 !important;
   box-shadow: 0 0 0 2px rgba(22, 43, 117, 0.1) !important;
 }
 
@@ -532,14 +527,13 @@ border-radius: 20px !important;
 }
 
 .committee-page .filter-select__option--is-selected {
-  background-color: #162B75 !important;
+  background-color: #162b75 !important;
   color: #ffffff !important;
 }
 
-
 .committee-page .status-select {
   appearance: none;
-  background-image: url('../../assets/Vector.png');
+  background-image: url("../../assets/Vector.png");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 14px;
@@ -555,33 +549,31 @@ border-radius: 20px !important;
 
 /* ================= BULK ACTION BAR ================= */
 .committee-page .bulk-actions {
-	background: #fff;
-	padding: 12px;
-	border-radius: 8px;
-	margin-left: 0px;
-	margin-right: 0px;
-	
-	border: 1px solid #ACBED4;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  margin-left: 0px;
+  margin-right: 0px;
+
+  border: 1px solid #acbed4;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-
-
 
 .committee-page .selectall {
   font-size: 0.875em;
-  color: #162B75 !important;
+  color: #162b75 !important;
   font-weight: 500;
   gap: 1em;
 }
 
 .committee-page .selectall .form-check-label {
-  color: #162B75 !important;
+  color: #162b75 !important;
   margin-top: 5px;
   margin-left: -5px;
 }
 
 .committee-page .select-checkbox .form-check-label {
-  color: #162B75;
+  color: #162b75;
   font-weight: 500;
   font-size: 0.875em;
   cursor: pointer;
@@ -602,8 +594,7 @@ border-radius: 20px !important;
   font-weight: 400;
   border-radius: 8px;
   background-color: #fdf5f5;
-  color: #D73C40;
-
+  color: #d73c40;
 }
 
 .committee-page .approve-btn {
@@ -625,9 +616,6 @@ border-radius: 20px !important;
   gap: 2px;
 }
 
-
-
-
 .committee-page .field-label {
   font-size: 0.75em;
   font-weight: 500;
@@ -636,20 +624,15 @@ border-radius: 20px !important;
   margin-bottom: 2px;
 }
 
-
-
 .committee-page .field-value {
   font-size: 0.875rem;
   font-weight: 500;
   color: #1e293b;
 }
 
-
-
 .committee-page .requisition-text {
   word-break: break-word;
 }
-
 
 /* ================= PAGINATION ================= */
 .committee-page .pagination {
@@ -662,30 +645,29 @@ border-radius: 20px !important;
 }
 
 .committee-page .page-item.active .page-link {
-  background-color: #162B75;
-  border-color: #162B75;
+  background-color: #162b75;
+  border-color: #162b75;
   color: #ffffff;
 }
 
 .committee-page .pagesize {
   font-size: 0.875rem;
-  color: #162B75;
+  color: #162b75;
 }
 
 /* ================= STATUS BADGE ================= */
 
 .committee-page .status-badge {
-	display: inline-flex !important;
-	align-items: center;
-	justify-content: center;
-	padding: 3px 10px;
-	font-size: 0.75rem;
-	font-weight: 500;
-	border-radius: 6px;
-	white-space: nowrap;
-	color: #fff;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 6px;
+  white-space: nowrap;
+  color: #fff;
 }
-
 
 /* Approved */
 .committee-page .status-approved {
@@ -696,17 +678,16 @@ border-radius: 20px !important;
 
 /* Pending */
 .committee-page .status-pending {
-  background-color: #FFDCA8 !important;
-  color: #F28A22 !important;
+  background-color: #ffdca8 !important;
+  color: #f28a22 !important;
   font-weight: 400;
   font-size: 0.75em;
 }
- 
 
 /* Rejected */
 .committee-page .status-rejected {
-  background-color: #D73C400D !important;
-  color: #D73C40 !important;
+  background-color: #d73c400d !important;
+  color: #d73c40 !important;
   font-weight: 400;
   font-size: 0.875em;
 }
@@ -720,8 +701,8 @@ border-radius: 20px !important;
 }
 
 .committee-page .select-checkbox .form-check-input:checked {
-  background-color: #42579F !important;
-  border-color: #42579F !important;
+  background-color: #42579f !important;
+  border-color: #42579f !important;
 }
 
 .committee-page .select-checkbox .form-check-input:focus {
@@ -730,7 +711,7 @@ border-radius: 20px !important;
 
 .committee-page .assign-position-muted {
   color: #717182;
-  font-size: .75rem;
+  font-size: 0.75rem;
   font-weight: 400;
 }
 .committee-page .icon-history {
@@ -741,7 +722,7 @@ border-radius: 20px !important;
 
 /* Css wirutten b y Veeresh */
 .committee-requests-page {
-	background: none;
-	margin: 30px;
-	padding-bottom: 30px;
+  background: none;
+  margin: 30px;
+  padding-bottom: 30px;
 }

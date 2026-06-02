@@ -3,7 +3,6 @@ import i18n from "i18next";
 
 const normalize = (v = "") => String(v).trim().toLowerCase();
 
-
 export const validateCategoryCode = (code) => {
   let error = requiredField(code);
   if (error) return error;
@@ -47,10 +46,7 @@ export const validateCategoryForm = (formData = {}, options = {}) => {
 
     const duplicateCode = existing.find((c) => {
       if (!c?.code) return false;
-      if (
-        currentId != null &&
-        String(c.id) === String(currentId)
-      ) {
+      if (currentId != null && String(c.id) === String(currentId)) {
         return false;
       }
 
@@ -68,10 +64,7 @@ export const validateCategoryForm = (formData = {}, options = {}) => {
 
     const duplicateName = existing.find((c) => {
       if (!c?.name) return false;
-      if (
-        currentId != null &&
-        String(c.id) === String(currentId)
-      ) {
+      if (currentId != null && String(c.id) === String(currentId)) {
         return false;
       }
 
@@ -85,18 +78,18 @@ export const validateCategoryForm = (formData = {}, options = {}) => {
 
   return {
     valid: Object.keys(errors).length === 0,
-    errors
+    errors,
   };
 };
 
 /* =========================
    DEFAULT EXPORT
 ========================= */
-const  categoryValidations = {
+const categoryValidations = {
   validateCategoryForm,
   validateCategoryCode,
   validateCategoryName,
-  validateCategoryDescription
+  validateCategoryDescription,
 };
 
 export default categoryValidations;

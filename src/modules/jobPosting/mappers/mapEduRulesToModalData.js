@@ -1,5 +1,11 @@
 // utils/mapEduRulesToModalData.js
-export function mapEduRulesToModalData(eduRulesJson, educationTypes, qualifications, specializations, certifications) {
+export function mapEduRulesToModalData(
+  eduRulesJson,
+  educationTypes,
+  qualifications,
+  specializations,
+  certifications
+) {
   if (!eduRulesJson) {
     return { groups: [], certGroups: [] };
   }
@@ -7,26 +13,32 @@ export function mapEduRulesToModalData(eduRulesJson, educationTypes, qualificati
   // Helper to create groups from educations array
   const createGroupsFromEducations = (groups) => {
     if (!groups || groups.length === 0) {
-      return [{ educations: [{
-        educationTypeId: "",
-        educationQualificationsId: "",
-        specializationId: "",
-        duration: "",
-       
-        percentage: ""
-      }] }];
+      return [
+        {
+          educations: [
+            {
+              educationTypeId: "",
+              educationQualificationsId: "",
+              specializationId: "",
+              duration: "",
+
+              percentage: "",
+            },
+          ],
+        },
+      ];
     }
 
     // Each group represents an OR condition, so pass groups directly
-    return groups.map(group => ({
-      educations: (group.conditions || []).map(condition => ({
+    return groups.map((group) => ({
+      educations: (group.conditions || []).map((condition) => ({
         educationTypeId: condition.educationType || "",
         educationQualificationsId: condition.qualification || "",
         specializationId: condition.specialization || "",
         duration: condition.duration || "",
-       
-        percentage: condition.percentage || ""
-      }))
+
+        percentage: condition.percentage || "",
+      })),
     }));
   };
 
@@ -37,10 +49,10 @@ export function mapEduRulesToModalData(eduRulesJson, educationTypes, qualificati
     }
 
     // Map each group to a certification group (preserve AND/OR structure)
-    return groups.map(group => ({
-      certifications: (group.conditions || []).map(certId => ({
-        certificationId: certId
-      }))
+    return groups.map((group) => ({
+      certifications: (group.conditions || []).map((certId) => ({
+        certificationId: certId,
+      })),
     }));
   };
 
@@ -48,9 +60,9 @@ export function mapEduRulesToModalData(eduRulesJson, educationTypes, qualificati
   if (eduRulesJson.mandatoryEducations && eduRulesJson.mandatoryEducations.groups) {
     const result = {
       groups: createGroupsFromEducations(eduRulesJson.mandatoryEducations.groups),
-      certGroups: createCertGroupsFromIds(eduRulesJson.mandatoryCertifications?.groups || [])
+      certGroups: createCertGroupsFromIds(eduRulesJson.mandatoryCertifications?.groups || []),
     };
-    console.log('MAPPING RESULT - Mandatory:', JSON.stringify(result, null, 2));
+    console.log("MAPPING RESULT - Mandatory:", JSON.stringify(result, null, 2));
     return result;
   }
 
@@ -58,14 +70,13 @@ export function mapEduRulesToModalData(eduRulesJson, educationTypes, qualificati
   if (eduRulesJson.preferredEducations && eduRulesJson.preferredEducations.groups) {
     const result = {
       groups: createGroupsFromEducations(eduRulesJson.preferredEducations.groups),
-      certGroups: createCertGroupsFromIds(eduRulesJson.preferredCertificationIds?.groups || [])
+      certGroups: createCertGroupsFromIds(eduRulesJson.preferredCertificationIds?.groups || []),
     };
-    console.log('MAPPING RESULT - Preferred:', JSON.stringify(result, null, 2));
+    console.log("MAPPING RESULT - Preferred:", JSON.stringify(result, null, 2));
     return result;
   }
 
   const result = { groups: [], certGroups: [] };
-  console.log('mapEduRulesToModalData - Output:', result);
+  console.log("mapEduRulesToModalData - Output:", result);
   return result;
 }
-

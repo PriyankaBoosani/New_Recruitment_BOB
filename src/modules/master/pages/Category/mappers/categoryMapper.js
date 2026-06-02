@@ -11,7 +11,7 @@ export const mapCategoryFromApi = (api) => ({
   name: api.categoryName,
   description: api.categoryDesc,
   createdDate: api.createdDate,
-  isActive: api.isActive
+  isActive: api.isActive,
 });
 
 /* =========================
@@ -33,6 +33,6 @@ export const mapCategoryToApi = (ui, options = {}) => {
     isActive: true,
     categoryCode: cleanData(ui.code),
     categoryName: cleanData(ui.name),
-    categoryDesc: cleanData(ui.description)
+    categoryDesc: cleanData(ui.description),
   };
 };

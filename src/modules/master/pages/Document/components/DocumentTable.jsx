@@ -1,4 +1,4 @@
-import { Table, Button } from 'react-bootstrap';
+import { Table, Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
 import viewIcon from "../../../../../assets/view_icon.png";
@@ -14,14 +14,14 @@ const DocumentTable = ({
   currentPage,
   setCurrentPage,
   itemsPerPage,
-  setItemsPerPage
-
-
+  setItemsPerPage,
 }) => {
   const { t } = useTranslation(["documents"]);
-  const filtered = data.filter(d =>
-    [d.name, d.description].some(v =>
-      String(v || '').toLowerCase().includes(searchTerm.toLowerCase())
+  const filtered = data.filter((d) =>
+    [d.name, d.description].some((v) =>
+      String(v || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
     )
   );
 
@@ -54,7 +54,7 @@ const DocumentTable = ({
     return {
       pages,
       showStartEllipsis: start > 1,
-      showEndEllipsis: end <= totalPages
+      showEndEllipsis: end <= totalPages,
     };
   };
   return (
@@ -80,7 +80,6 @@ const DocumentTable = ({
                   <td>{d.description}</td>
                   <td>{d.isRequiredConfirmed ? "True" : "False"}</td>
 
-
                   <td>
                     <div className="action-buttons">
                       <Button
@@ -88,7 +87,6 @@ const DocumentTable = ({
                         className="action-btn view-btn"
                         onClick={() => onView(d)}
                       >
-
                         <img src={viewIcon} alt="view" className="icon-16" />
                       </Button>
 
@@ -122,18 +120,12 @@ const DocumentTable = ({
         </Table>
       </div>
 
-
-
       {/* DROPDOWN LEFT + PAGINATION RIGHT */}
       {filtered.length > 0 && (
         <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
-
           {/* Page size */}
           <div className="d-flex align-items-center gap-2 user-actions">
-            <span
-              className="fw-semibold"
-              style={{ color: "var(--bs-heading-color)" }}
-            >
+            <span className="fw-semibold" style={{ color: "var(--bs-heading-color)" }}>
               {t("page_size")}
             </span>
 
@@ -146,15 +138,17 @@ const DocumentTable = ({
                 setCurrentPage(1);
               }}
             >
-              {[5, 10, 15, 20, 25, 30].map(n => (
-                <option key={n} value={n}>{n}</option>
+              {[5, 10, 15, 20, 25, 30].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
               ))}
             </select>
           </div>
 
           {/* Pagination */}
           <ul className="pagination mb-0">
-            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
               <button
                 className="page-link"
                 onClick={() => setCurrentPage(currentPage - 1)}
@@ -164,12 +158,11 @@ const DocumentTable = ({
               </button>
             </li>
 
-           {(() => {
-              const {
-                pages,
-                showStartEllipsis,
-                showEndEllipsis
-              } = getVisiblePages(currentPage, totalPages);
+            {(() => {
+              const { pages, showStartEllipsis, showEndEllipsis } = getVisiblePages(
+                currentPage,
+                totalPages
+              );
 
               return (
                 <>
@@ -181,15 +174,12 @@ const DocumentTable = ({
                   )}
 
                   {/* Page numbers */}
-                  {pages.map(number => (
+                  {pages.map((number) => (
                     <li
                       key={number}
                       className={`page-item ${currentPage === number ? "active" : ""}`}
                     >
-                      <button
-                        className="page-link"
-                        onClick={() => setCurrentPage(number)}
-                      >
+                      <button className="page-link" onClick={() => setCurrentPage(number)}>
                         {number}
                       </button>
                     </li>
@@ -205,7 +195,7 @@ const DocumentTable = ({
               );
             })()}
 
-            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
               <button
                 className="page-link"
                 onClick={() => setCurrentPage(currentPage + 1)}
@@ -215,10 +205,8 @@ const DocumentTable = ({
               </button>
             </li>
           </ul>
-
         </div>
       )}
-
     </>
   );
 };

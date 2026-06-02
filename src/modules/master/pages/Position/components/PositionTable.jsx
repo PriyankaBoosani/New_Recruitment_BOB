@@ -14,22 +14,21 @@ const PositionTable = ({
   onEdit,
   onView,
   onDelete,
-  t
+  t,
 }) => {
-
   /*  FILTER (NO UUID FILTERING) */
   const term = searchTerm.toLowerCase().trim();
 
   const filtered = !term
     ? data
     : data.filter(
-      (p) =>
-        p.title?.toLowerCase().includes(term) ||
-        p.department?.toLowerCase().includes(term) ||
-        p.jobGrade?.toLowerCase().includes(term) ||
-        p.rolesResponsibilities?.toLowerCase().includes(term) ||
-        p.description?.toLowerCase().includes(term)
-    );
+        (p) =>
+          p.title?.toLowerCase().includes(term) ||
+          p.department?.toLowerCase().includes(term) ||
+          p.jobGrade?.toLowerCase().includes(term) ||
+          p.rolesResponsibilities?.toLowerCase().includes(term) ||
+          p.description?.toLowerCase().includes(term)
+      );
   const indexOfLast = currentPage * pageSize;
   const indexOfFirst = indexOfLast - pageSize;
   const current = filtered.slice(indexOfFirst, indexOfLast);
@@ -59,7 +58,7 @@ const PositionTable = ({
     return {
       pages,
       showStartEllipsis: start > 1,
-      showEndEllipsis: end <= totalPages
+      showEndEllipsis: end <= totalPages,
     };
   };
   return (
@@ -97,18 +96,13 @@ const PositionTable = ({
                         <img src={viewIcon} alt="view" className="icon-16" />
                       </Button>
 
-
                       <Button
                         variant="link"
                         className="action-btn"
                         title="Edit"
                         onClick={() => onEdit(p)}
                       >
-                        <img
-                          src={editIcon}
-                          alt="edit"
-                          className="icon-16"
-                        />
+                        <img src={editIcon} alt="edit" className="icon-16" />
                       </Button>
 
                       <Button
@@ -117,11 +111,7 @@ const PositionTable = ({
                         title="Delete"
                         onClick={() => onDelete(p)}
                       >
-                        <img
-                          src={deleteIcon}
-                          alt="delete"
-                          className="icon-16"
-                        />
+                        <img src={deleteIcon} alt="delete" className="icon-16" />
                       </Button>
                     </div>
                   </td>
@@ -140,13 +130,9 @@ const PositionTable = ({
 
       {filtered.length > 0 && (
         <div className="d-flex justify-content-end align-items-center gap-3 mt-2">
-
           {/* Page size */}
           <div className="d-flex align-items-center gap-2 user-actions">
-            <span
-              className="fw-semibold"
-              style={{ color: "var(--bs-heading-color)" }}
-            >
+            <span className="fw-semibold" style={{ color: "var(--bs-heading-color)" }}>
               {t("page_size")}
             </span>
 
@@ -159,8 +145,10 @@ const PositionTable = ({
                 setCurrentPage(1);
               }}
             >
-              {[5, 10, 15, 25, 30].map(n => (
-                <option key={n} value={n}>{n}</option>
+              {[5, 10, 15, 25, 30].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
               ))}
             </Form.Select>
           </div>
@@ -178,11 +166,10 @@ const PositionTable = ({
             </li>
 
             {(() => {
-              const {
-                pages,
-                showStartEllipsis,
-                showEndEllipsis
-              } = getVisiblePages(currentPage, totalPages);
+              const { pages, showStartEllipsis, showEndEllipsis } = getVisiblePages(
+                currentPage,
+                totalPages
+              );
 
               return (
                 <>
@@ -194,15 +181,12 @@ const PositionTable = ({
                   )}
 
                   {/* Page numbers */}
-                  {pages.map(number => (
+                  {pages.map((number) => (
                     <li
                       key={number}
                       className={`page-item ${currentPage === number ? "active" : ""}`}
                     >
-                      <button
-                        className="page-link"
-                        onClick={() => setCurrentPage(number)}
-                      >
+                      <button className="page-link" onClick={() => setCurrentPage(number)}>
                         {number}
                       </button>
                     </li>
@@ -218,10 +202,7 @@ const PositionTable = ({
               );
             })()}
 
-            <li
-              className={`page-item ${currentPage === totalPages ? "disabled" : ""
-                }`}
-            >
+            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
               <button
                 className="page-link"
                 onClick={() => setCurrentPage(currentPage + 1)}
@@ -231,10 +212,8 @@ const PositionTable = ({
               </button>
             </li>
           </ul>
-
         </div>
       )}
-
     </>
   );
 };

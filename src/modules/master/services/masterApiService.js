@@ -4,10 +4,10 @@ import { apis, nodeApi } from "../../../core/service/apiService"; // reuse axios
 const masterApiService = {
   /* Users (Node API) */
   // Note: auth header is injected by nodeApi interceptor; no need to pass token manually
-  getRegister: () => nodeApi.get('/getdetails/users/all'),
-  registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data),
+  getRegister: () => nodeApi.get("/getdetails/users/all"),
+  registerUser: (data) => nodeApi.post("/recruiter-auth/recruiter-register", data),
 
-  saveUser: (data) => apis.post('/user/add', data),
+  saveUser: (data) => apis.post("/user/add", data),
   updateUser: (id, data) => apis.put(`/user/update/${id}`, data),
 
   downloadUserTemplate: () =>
@@ -29,7 +29,7 @@ const masterApiService = {
   deleteUser: (id) => apis.delete(`/user/delete/${id}`),
 
   // city
-  getallCities: () => apis.get('/city/all'),
+  getallCities: () => apis.get("/city/all"),
   /* Locations */
   getAllLocations: () => apis.get("/location/all"),
   addLocation: (data) => apis.post("/location/add", data),
@@ -60,13 +60,14 @@ const masterApiService = {
   addDepartment: (data) => apis.post("/departments/add", data),
   updateDepartment: (id, data) => apis.put(`/departments/update/${id}`, data),
   deleteDepartment: (id) => apis.delete(`/departments/delete/${id}`),
-  downloadDepartmentTemplate: () => apis.get("/departments/download-template", { responseType: 'blob' }),
+  downloadDepartmentTemplate: () =>
+    apis.get("/departments/download-template", { responseType: "blob" }),
   bulkAddDepartments: (file) => {
     const formData = new FormData();
-    formData.append('file', file);
-    return apis.post('/departments/bulk-add', formData, {
+    formData.append("file", file);
+    return apis.post("/departments/bulk-add", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
   },
@@ -82,7 +83,8 @@ const masterApiService = {
   addCategory: (data) => apis.post("/reservation-categories/add", data),
   updateCategory: (id, data) => apis.put(`/reservation-categories/update/${id}`, data),
   deleteCategory: (id) => apis.delete(`/reservation-categories/delete/${id}`),
-  downloadCategoryTemplate: () => apis.get("/reservation-categories/download-template", { responseType: "blob", }),
+  downloadCategoryTemplate: () =>
+    apis.get("/reservation-categories/download-template", { responseType: "blob" }),
   bulkAddCategories: (file) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -110,14 +112,12 @@ const masterApiService = {
     const formData = new FormData();
     formData.append("file", file);
 
-
     return apis.post("/special-categories/bulk-add", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
   },
-
 
   /* Job Grades */
   getAllJobGrades: () => apis.get("/jobgrade/all"),
@@ -156,10 +156,10 @@ const masterApiService = {
 
   bulkAddCertificates: (file) => {
     const formData = new FormData();
-    formData.append('file', file);
-    return apis.post('/certificates-master/bulk-add', formData, {
+    formData.append("file", file);
+    return apis.post("/certificates-master/bulk-add", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
   },
@@ -169,15 +169,15 @@ const masterApiService = {
   addPosition: (data) => apis.post("/master-positions/add", data),
   updatePosition: (id, data) => apis.put(`/master-positions/update/${id}`, data),
   deletePosition: (id) => apis.delete(`/master-positions/delete/${id}`),
-  downloadPositionTemplate: () => apis.get("/master-positions/download-template", { responseType: 'blob' }),
-
+  downloadPositionTemplate: () =>
+    apis.get("/master-positions/download-template", { responseType: "blob" }),
 
   bulkAddPositions: (file) => {
     const formData = new FormData();
-    formData.append('file', file);
-    return apis.post('/master-positions/bulk-add', formData, {
+    formData.append("file", file);
+    return apis.post("/master-positions/bulk-add", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
   },
@@ -186,7 +186,8 @@ const masterApiService = {
   addDocumentType: (data) => apis.post("/document-types/add", data),
   updateDocumentType: (id, data) => apis.put(`/document-types/update/${id}`, data),
   deleteDocumentType: (id) => apis.delete(`/document-types/delete/${id}`),
-  downloadDocumentTemplate: () => apis.get("/document-types/download-template", { responseType: "blob", }),
+  downloadDocumentTemplate: () =>
+    apis.get("/document-types/download-template", { responseType: "blob" }),
   bulkAddDocuments: (file) => {
     const formData = new FormData();
 
@@ -215,140 +216,103 @@ const masterApiService = {
 
   getInterviewPanelsSearch: (params) => apis.get("interview-panels/search", { params }),
 
-
-
-
   /* Optional master all */
   getMasterAll: () => apis.get("/all"),
 
-  getMasterDropdownData: () => apis.get('/master-dd-data/get/committees'),
-
+  getMasterDropdownData: () => apis.get("/master-dd-data/get/committees"),
 
   // GET all
-  getAllGenericDocuments: () =>
-    apis.get("/rec-generic-documents/all"),
+  getAllGenericDocuments: () => apis.get("/rec-generic-documents/all"),
 
   // SAVE (UPLOAD)
   saveGenericDocument: (type, file) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    return apis.post(
-      `/rec-generic-documents/save-generic-document/${type}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    return apis.post(`/rec-generic-documents/save-generic-document/${type}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   },
 
-
   // DELETE
-  deleteGenericDocument: (id) =>
-    apis.delete(`/rec-generic-documents/delete/${id}`),
+  deleteGenericDocument: (id) => apis.delete(`/rec-generic-documents/delete/${id}`),
 
-
-  getMasterDisplayAll: () =>
-    apis.get("/display/all"),
+  getMasterDisplayAll: () => apis.get("/display/all"),
 
   getAzureBlobSasUrl(dir, client = "candidate") {
-    return apis.get(
-      "/azureblob/file/sas-url",
-      {
-        params: { dir },
-        headers: {
-          "X-Client": client,
-        },
-      }
-    );
+    return apis.get("/azureblob/file/sas-url", {
+      params: { dir },
+      headers: {
+        "X-Client": client,
+      },
+    });
   },
 
   getMessagesAzureBlobSasUrl(dir, client = "AzureAD") {
-    return apis.get(
-      `/azureblob/file/sas-url?dir=${dir}`,
-      {
-        headers: {
-          "X-Client": client,
-        },
-      }
-    );
+    return apis.get(`/azureblob/file/sas-url?dir=${dir}`, {
+      headers: {
+        "X-Client": client,
+      },
+    });
   },
 
-
   getAllMasters: () => apis.get("/display/all"),
-  getUser: () => apis.get('/user/all'),
+  getUser: () => apis.get("/user/all"),
   getZonalStates: () => apis.get("/zonal-states/all"),
 
+  getAllLanguages: () => apis.get("/master-dd-data/get/languages"),
 
-  getAllLanguages: () =>
-    apis.get("/master-dd-data/get/languages"),
-
-  getStateLanguages: () =>
-    apis.get("/master-dd-data/get/state-languages"),
+  getStateLanguages: () => apis.get("/master-dd-data/get/state-languages"),
 
   // CREATE / UPDATE
-saveStateLanguages: (payload) =>
-  apis.post(
-    "/state-language/create-or-update/state-languages",
-    payload
-  ),
-
+  saveStateLanguages: (payload) =>
+    apis.post("/state-language/create-or-update/state-languages", payload),
 
   //Interview Pool related master data interview-center
   getAllInterviewCenters: () => apis.get("/master-dd-data/get/interview-centres"),
 
   getApprovingAuthorities: () => apis.get("/approving-authority/all"),
   getInterviewCentresByState: (organizationTypes, zonalStateId) => {
-  return apis.post(
-    "/interview-centres/search",
-    {
-      organizationTypes,
-      zonalStateId,
-    },
-    {
-      headers: {
-        "X-Client": "recruiter",
+    return apis.post(
+      "/interview-centres/search",
+      {
+        organizationTypes,
+        zonalStateId,
       },
-    }
-  );
-},
+      {
+        headers: {
+          "X-Client": "recruiter",
+        },
+      }
+    );
+  },
 
-// Candidate Preview API
-candidatePreview: (templateId, applicationId) =>
-  apis.get(`/templates/candidate-preview`, {
-    params: {
-      templateId,
-      applicationId,
-    },
-    responseType: "blob",
-  }),
+  // Candidate Preview API
+  candidatePreview: (templateId, applicationId) =>
+    apis.get(`/templates/candidate-preview`, {
+      params: {
+        templateId,
+        applicationId,
+      },
+      responseType: "blob",
+    }),
 
-getAllEducation: (ids) =>
-  apis.post("/admin-education-master/all", ids),
+  getAllEducation: (ids) => apis.post("/admin-education-master/all", ids),
 
-saveEducation: (payload) =>
-  apis.post("/admin-education-master/save", payload),
+  saveEducation: (payload) => apis.post("/admin-education-master/save", payload),
 
-getAllTemplates: () => 
-  apis.get("/templates/all"),
-getStates: () => apis.get("/state/all"),
-// masterApiService
-previewTemplate: (templateId) =>
-  apis.get(`/templates/preview`, {
-    params: { templateId },
-    responseType: "blob", // 👈 IMPORTANT (for bytes/PDF)
-  }),
+  getAllTemplates: () => apis.get("/templates/all"),
+  getStates: () => apis.get("/state/all"),
+  // masterApiService
+  previewTemplate: (templateId) =>
+    apis.get(`/templates/preview`, {
+      params: { templateId },
+      responseType: "blob", // 👈 IMPORTANT (for bytes/PDF)
+    }),
 
-  getRequestTypes: () =>
-  apis.get("/master-dd-data/get/request-types"),
-
+  getRequestTypes: () => apis.get("/master-dd-data/get/request-types"),
 };
-
-
-
-
-
 
 export default masterApiService;

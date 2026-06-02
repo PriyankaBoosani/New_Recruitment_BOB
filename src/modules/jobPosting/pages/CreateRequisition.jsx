@@ -4,18 +4,20 @@ import { Container, Row, Col, Form, Button, Card, Spinner } from "react-bootstra
 import "../../../style/css/CreateRequisition.css";
 
 import ErrorMessage from "../../../shared/components/ErrorMessage";
-import { validateRequisitionForm, validateTitleOnType, normalizeTitle } from "../validations/requisition-validation";
+import {
+  validateRequisitionForm,
+  validateTitleOnType,
+  normalizeTitle,
+} from "../validations/requisition-validation";
 import { mapRequisitionToApi } from "../mappers/createRequisitionMapper";
 import { useCreateRequisition } from "../hooks/useCreateRequisition";
 import { REQUISITION_CONFIG } from "../config/requisitionConfig";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
-
 const CreateRequisition = () => {
   const { t } = useTranslation(["CreateRequisition", "common"]);
   const renderError = (err) => (err ? t(err) : "");
-
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,7 +45,7 @@ const CreateRequisition = () => {
     saveRequisition,
     loading,
     fetching,
-    error: apiError
+    error: apiError,
   } = useCreateRequisition(editId);
 
   const [errors, setErrors] = useState({});
@@ -51,10 +53,7 @@ const CreateRequisition = () => {
   const handleSave = async (e) => {
     e?.preventDefault?.();
 
-    const { valid, errors: valErrors } = validateRequisitionForm(
-      formData,
-      Boolean(editId)
-    );
+    const { valid, errors: valErrors } = validateRequisitionForm(formData, Boolean(editId));
 
     if (!valid) {
       setErrors(valErrors);
@@ -66,11 +65,7 @@ const CreateRequisition = () => {
     try {
       const payload = mapRequisitionToApi(formData);
       await saveRequisition(payload);
-      toast.success(
-        editId
-          ? t("update_success")
-          : t("create_success")
-      );
+      toast.success(editId ? t("update_success") : t("create_success"));
 
       navigate(REQUISITION_CONFIG.SUCCESS_REDIRECT);
     } catch (err) {
@@ -95,7 +90,6 @@ const CreateRequisition = () => {
     date.setDate(date.getDate() + days);
     return date.toISOString().split("T")[0];
   }
-
 
   /* ===================== LOADER ===================== */
   if (fetching) {
@@ -140,9 +134,9 @@ const CreateRequisition = () => {
                     const result = validateTitleOnType(e.target.value);
 
                     if (!result.valid) {
-                      setErrors(prev => ({
+                      setErrors((prev) => ({
                         ...prev,
-                        title: result.message
+                        title: result.message,
                       }));
                       return;
                     }
@@ -150,11 +144,11 @@ const CreateRequisition = () => {
                     handleInputChange({
                       target: {
                         name: "title",
-                        value: result.value
-                      }
+                        value: result.value,
+                      },
                     });
 
-                    setErrors(prev => {
+                    setErrors((prev) => {
                       const copy = { ...prev };
                       delete copy.title;
                       return copy;
@@ -164,16 +158,13 @@ const CreateRequisition = () => {
                     handleInputChange({
                       target: {
                         name: "title",
-                        value: normalizeTitle(e.target.value).trim()
-                      }
+                        value: normalizeTitle(e.target.value).trim(),
+                      },
                     })
                   }
-
                 />
 
-                <Form.Text className="text-muted">
-                  {t("title_help")}
-                </Form.Text>
+                <Form.Text className="text-muted">{t("title_help")}</Form.Text>
                 <ErrorMessage>{renderError(errors.title)}</ErrorMessage>
               </Form.Group>
 
@@ -199,15 +190,13 @@ const CreateRequisition = () => {
                         handleInputChange({
                           target: {
                             name: "description",
-                            value: e.target.value.trim()
-                          }
+                            value: e.target.value.trim(),
+                          },
                         })
                       }
-
                     />
 
                     <ErrorMessage>{renderError(errors.description)}</ErrorMessage>
-
                   </Form.Group>
                 </Col>
 
@@ -227,14 +216,12 @@ const CreateRequisition = () => {
                           onChange={(e) => {
                             const startDate = e.target.value;
 
-
                             handleInputChange({
                               target: {
                                 name: "startDate",
-                                value: startDate
-                              }
+                                value: startDate,
+                              },
                             });
-
 
                             // handleInputChange({
                             //   target: {
@@ -243,17 +230,14 @@ const CreateRequisition = () => {
                             //   }
                             // });
 
-
-                            setErrors(prev => ({
+                            setErrors((prev) => ({
                               ...prev,
                               startDate: "",
-                              endDate: ""
+                              endDate: "",
                             }));
                           }}
                         />
-                        <Form.Text className="text-muted">
-                          {t("start_date_help")}
-                        </Form.Text>
+                        <Form.Text className="text-muted">{t("start_date_help")}</Form.Text>
                         <ErrorMessage>{renderError(errors.startDate)}</ErrorMessage>
                       </Form.Group>
                     </Col>
@@ -273,12 +257,8 @@ const CreateRequisition = () => {
                             setErrors((prev) => ({ ...prev, endDate: "" }));
                           }}
                           min={formData.startDate}
-
                         />
-                        <Form.Text className="text-muted">
-                          {t("end_date_help")}
-
-                        </Form.Text>
+                        <Form.Text className="text-muted">{t("end_date_help")}</Form.Text>
                         <ErrorMessage>{renderError(errors.endDate)}</ErrorMessage>
                       </Form.Group>
                     </Col>
@@ -297,7 +277,7 @@ const CreateRequisition = () => {
       </Card>
 
       <div className="footer-actions">
-        <Button variant="outline-secondary"  onClick={handleCancel}>
+        <Button variant="outline-secondary" onClick={handleCancel}>
           {t("common:cancel")}
         </Button>
 

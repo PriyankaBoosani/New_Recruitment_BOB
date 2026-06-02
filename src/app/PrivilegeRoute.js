@@ -3,8 +3,8 @@ import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const PrivilegeRoute = ({ children, privilege, privilegesRequired }) => {
-   const privileges = useSelector((state) => state.user?.privileges);
-   const authUser = useSelector((state) => state.user?.authUser);
+  const privileges = useSelector((state) => state.user?.privileges);
+  const authUser = useSelector((state) => state.user?.authUser);
 
   // Wait until user is authenticated AND privileges are loaded
   if (!authUser || !privileges || Object.keys(privileges).length === 0) {
@@ -17,10 +17,7 @@ const PrivilegeRoute = ({ children, privilege, privilegesRequired }) => {
   }
 
   // Multiple privileges (OR condition)
-  if (
-    privilegesRequired &&
-    !privilegesRequired.some((key) => privileges[key])
-  ) {
+  if (privilegesRequired && !privilegesRequired.some((key) => privileges[key])) {
     return <Navigate to="/unauthorized" replace />;
   }
 

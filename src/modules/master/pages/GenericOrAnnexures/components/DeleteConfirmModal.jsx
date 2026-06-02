@@ -5,17 +5,10 @@ const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
   const { t } = useTranslation(["genericOrAnnexures"]);
 
   return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      centered
-      dialogClassName="delete-confirm-modal"
-    >
+    <Modal show={show} onHide={onHide} centered dialogClassName="delete-confirm-modal">
       {/* ===== HEADER ===== */}
       <Modal.Header closeButton>
-        <Modal.Title>
-          {t("confirm_delete", "Confirm Delete")}
-        </Modal.Title>
+        <Modal.Title>{t("confirm_delete", "Confirm Delete")}</Modal.Title>
       </Modal.Header>
 
       {/* ===== BODY ===== */}
@@ -32,17 +25,11 @@ const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
 
       {/* ===== FOOTER ===== */}
       <Modal.Footer>
-        <Button
-          variant="outline-secondary"
-          onClick={onHide}
-        >
+        <Button variant="outline-secondary" onClick={onHide}>
           {t("cancel", "Cancel")}
         </Button>
 
-        <Button
-          variant="danger"
-          onClick={onConfirm}
-        >
+        <Button variant="danger" onClick={onConfirm}>
           {t("delete", "Delete")}
         </Button>
       </Modal.Footer>

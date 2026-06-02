@@ -10,7 +10,7 @@ import { validateCertificationForm } from "../../../../../shared/utils/certifica
 
 const EMPTY_FORM = {
   name: "",
-  description: ""
+  description: "",
 };
 
 const CertificationFormModal = ({
@@ -23,7 +23,7 @@ const CertificationFormModal = ({
   onUpdate,
   onImport,
   certifications = [],
-  onSuccess
+  onSuccess,
 }) => {
   const { t } = useTranslation(["certification"]);
 
@@ -38,7 +38,7 @@ const CertificationFormModal = ({
     if (isEditing || isViewing) {
       setFormData({
         name: editingCertification?.name ?? "",
-        description: editingCertification?.description ?? ""
+        description: editingCertification?.description ?? "",
       });
     } else {
       //  ADD MODE → always reset
@@ -55,7 +55,7 @@ const CertificationFormModal = ({
 
     const { valid, errors: vErrors } = validateCertificationForm(formData, {
       existing: certifications,
-      currentId: isEditing ? editingCertification?.id : null
+      currentId: isEditing ? editingCertification?.id : null,
     });
 
     if (!valid) {
@@ -71,160 +71,129 @@ const CertificationFormModal = ({
 
     onHide();
   };
-const title = isViewing
-  ? t("view_certification")
-  : isEditing
-  ? t("edit_certification")
-  : t("add_certification");
-const handleFormSubmit = (e) => {
-  if (isViewing) {
-    e.preventDefault();
-    onHide();
-  } else {
-    handleSubmit(e);
-  }
-};
-const isCreateMode = !isEditing && !isViewing;
+  const title = isViewing
+    ? t("view_certification")
+    : isEditing
+      ? t("edit_certification")
+      : t("add_certification");
+  const handleFormSubmit = (e) => {
+    if (isViewing) {
+      e.preventDefault();
+      onHide();
+    } else {
+      handleSubmit(e);
+    }
+  };
+  const isCreateMode = !isEditing && !isViewing;
 
+  const renderContent = () => {
+    if (activeTab === "manual") {
+      return (
+        <Form onSubmit={handleFormSubmit}>
+          <Row className="g-3">
+            <Col md={12}>
+              <Form.Label>
+                {t("name")} <span className="text-danger">*</span>
+              </Form.Label>
 
-const renderContent = () => {
-  if (activeTab === "manual") {
-    return (
-      <Form onSubmit={handleFormSubmit}>
-        <Row className="g-3">
-              <Col md={12}>
-                <Form.Label>
-                  {t("name")} <span className="text-danger">*</span>
-                </Form.Label>
+              {isViewing ? (
+                <div className="form-control-view">{formData.name || "-"}</div>
+              ) : (
+                <Form.Control
+                  name="name"
+                  maxLength={200}
+                  value={formData.name}
+                  placeholder={t("enter_name")}
+                  className="form-control-custom"
+                  onChange={(e) =>
+                    handleValidatedInput({
+                      e,
+                      fieldName: "name",
+                      setFormData,
+                      setErrors,
+                      pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at,
+                      errorMessage: t("validation:no_special_charsess"),
+                    })
+                  }
+                />
+              )}
 
-                {isViewing ? (
-                  <div className="form-control-view">
-                    {formData.name || "-"}
-                  </div>
-                ) : (
-                  <Form.Control
-                    name="name"
-                    maxLength={200}
-                    value={formData.name}
-                    placeholder={t("enter_name")}
-                    className="form-control-custom"
-                    onChange={(e) =>
-                      handleValidatedInput({
-                        e,
-                        fieldName: "name",
-                        setFormData,
-                        setErrors,
-                        pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at,
-                        errorMessage: t("validation:no_special_charsess")
-                      })
-                    }
-                  />
-                )}
+              {!isViewing && <ErrorMessage>{errors.name}</ErrorMessage>}
+            </Col>
 
-                {!isViewing && (
-                  <ErrorMessage>{errors.name}</ErrorMessage>
-                )}
-              </Col>
+            <Col md={12}>
+              <Form.Label>
+                {t("description")} <span className="text-danger">*</span>
+              </Form.Label>
 
-              <Col md={12}>
-                <Form.Label>
-                  {t("description")} <span className="text-danger">*</span>
-                </Form.Label>
+              {isViewing ? (
+                <div className="form-control-view" style={{ whiteSpace: "pre-line" }}>
+                  {formData.description || "-"}
+                </div>
+              ) : (
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  maxLength={2000}
+                  name="description"
+                  value={formData.description}
+                  placeholder={t("enter_description")}
+                  className="form-control-custom"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setFormData((prev) => ({
+                      ...prev,
+                      description: value,
+                    }));
+                    setErrors((prev) => {
+                      const copy = { ...prev };
+                      delete copy.description;
+                      return copy;
+                    });
+                  }}
+                />
+              )}
 
-                {isViewing ? (
-                  <div
-                    className="form-control-view"
-                    style={{ whiteSpace: "pre-line" }}
-                  >
-                    {formData.description || "-"}
-                  </div>
-                ) : (
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    maxLength={2000}
-                    name="description"
-                    value={formData.description}
-                    placeholder={t("enter_description")}
-                    className="form-control-custom"
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setFormData(prev => ({
-                        ...prev,
-                        description: value
-                      }));
-                      setErrors(prev => {
-                        const copy = { ...prev };
-                        delete copy.description;
-                        return copy;
-                      });
-                    }}
-                  />
-                )}
+              {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}
+            </Col>
+          </Row>
 
-                {!isViewing && (
-                  <ErrorMessage>{errors.description}</ErrorMessage>
-                )}
-              </Col>
-
-            </Row>
-
-        <Modal.Footer className="px-0 pt-4 modal-footer-custom">
-          <Button variant="outline-secondary" onClick={onHide}>
-            {isViewing ? t("close") : t("cancel")}
-          </Button>
-
-          {!isViewing && (
-            <Button variant="primary" type="submit">
-              {isEditing ? t("update") : t("save")}
+          <Modal.Footer className="px-0 pt-4 modal-footer-custom">
+            <Button variant="outline-secondary" onClick={onHide}>
+              {isViewing ? t("close") : t("cancel")}
             </Button>
-          )}
-        </Modal.Footer>
-      </Form>
-    );
-  }
 
+            {!isViewing && (
+              <Button variant="primary" type="submit">
+                {isEditing ? t("update") : t("save")}
+              </Button>
+            )}
+          </Modal.Footer>
+        </Form>
+      );
+    }
+
+    return <CertificationImportModal onImport={onImport} onClose={onHide} onSuccess={onSuccess} />;
+  };
   return (
-    <CertificationImportModal
-      onImport={onImport}
-      onClose={onHide}
-      onSuccess={onSuccess}
-    />
-  );
-};
-  return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      size="lg"
-      centered
-      className="user-modal"
-    >
+    <Modal show={show} onHide={onHide} size="lg" centered className="user-modal">
       {/* ---------------- HEADER ---------------- */}
       <Modal.Header closeButton className="modal-header-custom">
         <div>
-          <Modal.Title>
-            {title}
-          </Modal.Title>
+          <Modal.Title>{title}</Modal.Title>
 
-          {isCreateMode && (
-            <p className="mb-0 small text-muted">
-              {t("choose_add_method")}
-            </p>
-          )}
+          {isCreateMode && <p className="mb-0 small text-muted">{t("choose_add_method")}</p>}
         </div>
       </Modal.Header>
 
       {/* ---------------- BODY ---------------- */}
       <Modal.Body className="p-4">
-
         {/* -------- Tabs (Add Only) -------- */}
         {isCreateMode && (
           <div className="tab-buttons mb-4">
             <Button
               variant={activeTab === "manual" ? "light" : "outline-light"}
-              className={`tab-button ${activeTab === "manual" ? "active" : ""
-                }`}
+              className={`tab-button ${activeTab === "manual" ? "active" : ""}`}
               onClick={() => setActiveTab("manual")}
             >
               {t("manual_entry")}
@@ -232,8 +201,7 @@ const renderContent = () => {
 
             <Button
               variant={activeTab === "import" ? "light" : "outline-light"}
-              className={`tab-button ${activeTab === "import" ? "active" : ""
-                }`}
+              className={`tab-button ${activeTab === "import" ? "active" : ""}`}
               onClick={() => setActiveTab("import")}
             >
               {t("import_file")}

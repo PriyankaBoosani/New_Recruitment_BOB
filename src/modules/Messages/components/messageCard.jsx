@@ -4,7 +4,7 @@ import "../../../style/css/MessageCard.css";
 import MessageHeader from "../../Messages/components/messageHeader.jsx";
 import MessageHistory from "../../Messages/components/messageHistory.jsx";
 import MessageActions from "../../Messages/components/messageActions.jsx";
-import { useMessages } from '../../Messages/hooks/useMessages.js';
+import { useMessages } from "../../Messages/hooks/useMessages.js";
 import { useTranslation } from "react-i18next";
 
 const MessageCard = ({ item, isOpen, onToggle, onSubmitApproval }) => {
@@ -13,7 +13,6 @@ const MessageCard = ({ item, isOpen, onToggle, onSubmitApproval }) => {
 
   return (
     <div className="msg-card" id="msg-card-1">
-
       <MessageHeader
         item={item}
         isOpen={isOpen}
@@ -23,17 +22,9 @@ const MessageCard = ({ item, isOpen, onToggle, onSubmitApproval }) => {
 
       {isOpen && (
         <div className="msg-expand">
+          <MessageHistory item={item} getHistoryColor={getHistoryColor} />
 
-          <MessageHistory
-            item={item}
-            getHistoryColor={getHistoryColor}
-          />
-
-          <MessageActions
-            item={item}
-            onSubmitApproval={onSubmitApproval}
-          />
-
+          <MessageActions item={item} onSubmitApproval={onSubmitApproval} />
         </div>
       )}
     </div>

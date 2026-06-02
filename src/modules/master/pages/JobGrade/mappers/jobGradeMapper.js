@@ -7,7 +7,7 @@ export const mapJobGradeFromApi = (api) => ({
   minSalary: api.minSalary,
   maxSalary: api.maxSalary,
   description: api.jobGradeDesc,
-  createdDate: api.createdDate
+  createdDate: api.createdDate,
 });
 
 export const mapJobGradesFromApi = (apiData = []) => {
@@ -15,14 +15,12 @@ export const mapJobGradesFromApi = (apiData = []) => {
   return apiData.map(mapJobGradeFromApi);
 };
 
-
 const parseNumber = (value) => {
   if (value === null || value === undefined) return 0;
-  return Number(String(value).replace(/,/g, ''));
+  return Number(String(value).replace(/,/g, ""));
 };
 
-const todayDate = () => new Date().toISOString().split('T')[0];
-
+const todayDate = () => new Date().toISOString().split("T")[0];
 
 export const mapJobGradeToApi = (ui, isEditing = false) => ({
   ...(isEditing && { jobGradeId: ui.id }),
@@ -33,5 +31,5 @@ export const mapJobGradeToApi = (ui, isEditing = false) => ({
   minSalary: cleanData(parseNumber(ui.minSalary)),
   maxSalary: cleanData(parseNumber(ui.maxSalary)),
   effectiveStateDate: todayDate(),
-  effectiveEndDate: todayDate()
+  effectiveEndDate: todayDate(),
 });

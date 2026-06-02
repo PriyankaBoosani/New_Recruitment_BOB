@@ -1,19 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-  Badge,
-  Spinner
-} from "react-bootstrap";
-import {
-  Plus,
-  Search,
-  ChevronDown,
-  ChevronUp
-} from "react-bootstrap-icons";
+import { Container, Row, Col, Form, Button, Badge, Spinner } from "react-bootstrap";
+import { Plus, Search, ChevronDown, ChevronUp } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 
 // CSS
@@ -22,7 +9,7 @@ import "../../../style/css/ApprovalsRequsition.css";
 
 // Assets (go up to src first)
 import start_icon from "../../../assets/start_icon.png";
-import dept_icon from "../../../assets/dept_icon.jpg"
+import dept_icon from "../../../assets/dept_icon.jpg";
 import end_icon from "../../../assets/end_icon.png";
 import mingcute_department_line from "../../../assets/mingcute_department-line.png";
 import vacancy_icon from "../../../assets/vacancy_icon.png";
@@ -46,7 +33,6 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useApprovalRequisitions } from "../hooks/useApprovalRequisitions";
 
-
 // import ApprovalCommentModal from "../components/ApprovalCommentModal";
 
 const RequisitionRequests = () => {
@@ -60,8 +46,6 @@ const RequisitionRequests = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyData, setHistoryData] = useState([]);
   const [selectedHistoryReq, setSelectedHistoryReq] = useState(null);
-
-
 
   const handleApprovalAction = async (comment) => {
     const ids = Array.from(selectedReqIds);
@@ -86,17 +70,12 @@ const RequisitionRequests = () => {
 
       setShowCommentModal(false);
       setSelectedReqIds(new Set());
-
     } catch (error) {
       console.error("Approval error:", error);
       toast.error(t("jobPostingsList:approved_failed"));
     }
   };
-  const {
-    history,
-    loading: historyLoading,
-    fetchHistory,
-  } = useRequisitionApprovalHistory();
+  const { history, loading: historyLoading, fetchHistory } = useRequisitionApprovalHistory();
 
   const handleOpenHistory = async (req) => {
     setSelectedHistoryReq(req);
@@ -129,14 +108,10 @@ const RequisitionRequests = () => {
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(0); // backend is 0-based
-  const {
-    positionsByReq,
-    loadingReqId,
-    fetchPositions,
-  } = useJobPositionsByRequisition();
+  const { positionsByReq, loadingReqId, fetchPositions } = useJobPositionsByRequisition();
   const [openDept, setOpenDept] = useState({});
   const [statuses, setStatuses] = useState([]);
-  const privileges = useSelector(state => state.user.privileges);
+  const privileges = useSelector((state) => state.user.privileges);
 
   const isL1 = privileges?.["L1 Approval"];
   const isL2 = privileges?.["L2 Approval"];
@@ -148,7 +123,7 @@ const RequisitionRequests = () => {
     return status
       .toLowerCase()
       .split("_")
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   };
   const statusOptions =
@@ -176,38 +151,30 @@ const RequisitionRequests = () => {
     });
   };
   const toggleDeptAccordion = (reqId, deptId) => {
-    setOpenDept(prev => ({
+    setOpenDept((prev) => ({
       ...prev,
-      [`${reqId}-${deptId}`]: !prev[`${reqId}-${deptId}`]
+      [`${reqId}-${deptId}`]: !prev[`${reqId}-${deptId}`],
     }));
   };
   // 🔹 API Hook
-  const { requisitions, loading, pageInfo, approve, reject } =
-    useApprovalRequisitions({
-      year,
-      
-      search,
-      page,
-      size: pageSize,
-      statuses
-    });
+  const { requisitions, loading, pageInfo, approve, reject } = useApprovalRequisitions({
+    year,
+
+    search,
+    page,
+    size: pageSize,
+    statuses,
+  });
 
   useEffect(() => {
     setPage(0);
   }, [pageSize]);
 
-
   const [selectedReqIds, setSelectedReqIds] = useState(new Set());
   const selectableStatus =
-    approvalLevel === "L1"
-      ? "L1_PENDING"
-      : approvalLevel === "L2"
-        ? "L1_APPROVED"
-        : null;
+    approvalLevel === "L1" ? "L1_PENDING" : approvalLevel === "L2" ? "L1_APPROVED" : null;
 
-  const selectableRequisitions = requisitions.filter(
-    r => r.status === selectableStatus
-  );
+  const selectableRequisitions = requisitions.filter((r) => r.status === selectableStatus);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -220,7 +187,7 @@ const RequisitionRequests = () => {
 
   const allSelected =
     selectableRequisitions.length > 0 &&
-    selectableRequisitions.every(r => selectedReqIds.has(r.id));
+    selectableRequisitions.every((r) => selectedReqIds.has(r.id));
 
   useEffect(() => {
     setSelectedReqIds(new Set());
@@ -262,144 +229,129 @@ const RequisitionRequests = () => {
   };
 
   const renderPagination = () => {
-  const {
-    pages,
-    showStartEllipsis,
-    showEndEllipsis,
-  } = getVisiblePages(page, pageInfo.totalPages);
+    const { pages, showStartEllipsis, showEndEllipsis } = getVisiblePages(
+      page,
+      pageInfo.totalPages
+    );
 
-  return (
-    <>
-      {showStartEllipsis && (
-        <li className="page-item disabled">
-          <span className="page-link">…</span>
-        </li>
-      )}
+    return (
+      <>
+        {showStartEllipsis && (
+          <li className="page-item disabled">
+            <span className="page-link">…</span>
+          </li>
+        )}
 
-      {pages.map(p => (
-        <li key={p} className={`page-item ${page === p ? "active" : ""}`}>
-          <button
-            className="page-link"
-            onClick={() => setPage(p)}
-            disabled={loading}
-          >
-            {p + 1}
-          </button>
-        </li>
-      ))}
+        {pages.map((p) => (
+          <li key={p} className={`page-item ${page === p ? "active" : ""}`}>
+            <button className="page-link" onClick={() => setPage(p)} disabled={loading}>
+              {p + 1}
+            </button>
+          </li>
+        ))}
 
-      {showEndEllipsis && (
-        <li className="page-item disabled">
-          <span className="page-link">…</span>
-        </li>
-      )}
-    </>
-  );
-};
+        {showEndEllipsis && (
+          <li className="page-item disabled">
+            <span className="page-link">…</span>
+          </li>
+        )}
+      </>
+    );
+  };
 
+  const groupPositionsByDept = (positions) => {
+    return positions.reduce((acc, pos) => {
+      if (!acc[pos.deptId]) {
+        acc[pos.deptId] = {
+          departmentName: pos.departmentName,
+          positions: [],
+        };
+      }
+      acc[pos.deptId].positions.push(pos);
+      return acc;
+    }, {});
+  };
 
-const groupPositionsByDept = (positions) => {
-  return positions.reduce((acc, pos) => {
-    if (!acc[pos.deptId]) {
-      acc[pos.deptId] = {
-        departmentName: pos.departmentName,
-        positions: []
-      };
-    }
-    acc[pos.deptId].positions.push(pos);
-    return acc;
-  }, {});
-};
+  const renderDepartment = ({ dept, req, openDept, toggleDeptAccordion, navigate, t }) => {
+    const isOpen = openDept[`${req.id}-${dept.departmentName}`];
 
-const renderDepartment = ({
-  dept,
-  req,
-  openDept,
-  toggleDeptAccordion,
-  navigate,
-  t
-}) => {
-  const isOpen = openDept[`${req.id}-${dept.departmentName}`];
-
-  return (
-    <div key={dept.departmentName} className="department-card mb-3">
-      <div
-        className="department-header d-flex align-items-center gap-2 cursor-pointer"
-        onClick={(e) => {
-          e.stopPropagation();
-          toggleDeptAccordion(req.id, dept.departmentName);
-        }}
-      >
-        <img src={dept_icon} className="icon-22" alt="dept_icon" />
-        <span className="depname">{dept.departmentName}</span>
-
-        <Badge bg="light" text="primary" className="deppos">
-          {dept.positions.length}{" "}
-          {dept.positions.length === 1
-            ? t("jobPostingsList:position")
-            : t("jobPostingsList:positions_plural")}
-        </Badge>
-
-        <Button
-          variant="none"
-          className="accordion-arrow-position ms-auto"
+    return (
+      <div key={dept.departmentName} className="department-card mb-3">
+        <div
+          className="department-header d-flex align-items-center gap-2 cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             toggleDeptAccordion(req.id, dept.departmentName);
           }}
         >
-          {isOpen ? <ChevronUp /> : <ChevronDown />}
-        </Button>
+          <img src={dept_icon} className="icon-22" alt="dept_icon" />
+          <span className="depname">{dept.departmentName}</span>
+
+          <Badge bg="light" text="primary" className="deppos">
+            {dept.positions.length}{" "}
+            {dept.positions.length === 1
+              ? t("jobPostingsList:position")
+              : t("jobPostingsList:positions_plural")}
+          </Badge>
+
+          <Button
+            variant="none"
+            className="accordion-arrow-position ms-auto"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleDeptAccordion(req.id, dept.departmentName);
+            }}
+          >
+            {isOpen ? <ChevronUp /> : <ChevronDown />}
+          </Button>
+        </div>
+
+        {isOpen &&
+          dept.positions.map((pos) => (
+            <div key={pos.positionId} className="position-card-inner">
+              <div className="position-header-row">
+                <div className="position-title">{pos.positionName}</div>
+
+                <div className="position-meta-inline">
+                  <span>
+                    <b>{t("jobPostingsList:vacancies")}:</b> {pos.vacancies}
+                  </span>
+
+                  <span>
+                    <b>{t("jobPostingsList:age")}:</b> {pos.minAge} - {pos.maxAge}{" "}
+                    {t("jobPostingsList:years")}
+                  </span>
+                </div>
+
+                <Button
+                  variant="light"
+                  className="icon-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/job-posting/${req.id}/add-position?positionId=${pos.positionId}`, {
+                      state: { mode: "view", from: "approval" },
+                    });
+                  }}
+                >
+                  <img src={view_jobpost} className="icon-19" alt="view" />
+                </Button>
+              </div>
+
+              <div className="position-details">
+                <div style={{ whiteSpace: "pre-line" }}>
+                  <span>{t("jobPostingsList:mandatory_education")}:</span> {pos.mandatoryEducation}
+                </div>
+
+                <div style={{ whiteSpace: "pre-line" }}>
+                  <span>{t("jobPostingsList:preferred_education")}:</span>{" "}
+                  {pos.preferredEducation?.trim() || "NA"}
+                </div>
+              </div>
+            </div>
+          ))}
       </div>
-
-      {isOpen &&
-        dept.positions.map((pos) => (
-          <div key={pos.positionId} className="position-card-inner">
-            <div className="position-header-row">
-              <div className="position-title">{pos.positionName}</div>
-
-              <div className="position-meta-inline">
-                <span>
-                  <b>{t("jobPostingsList:vacancies")}:</b> {pos.vacancies}
-                </span>
-
-                <span>
-                  <b>{t("jobPostingsList:age")}:</b> {pos.minAge} - {pos.maxAge}{" "}
-                  {t("jobPostingsList:years")}
-                </span>
-              </div>
-
-              <Button
-                variant="light"
-                className="icon-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(
-                    `/job-posting/${req.id}/add-position?positionId=${pos.positionId}`,
-                    { state: { mode: "view", from: "approval" } }
-                  );
-                }}
-              >
-                <img src={view_jobpost} className="icon-19" alt="view" />
-              </Button>
-            </div>
-
-            <div className="position-details">
-              <div style={{ whiteSpace: "pre-line" }}>
-                <span>{t("jobPostingsList:mandatory_education")}:</span>{" "}
-                {pos.mandatoryEducation}
-              </div>
-
-              <div style={{ whiteSpace: "pre-line" }}>
-                <span>{t("jobPostingsList:preferred_education")}:</span>{" "}
-                {pos.preferredEducation?.trim() || "NA"}
-              </div>
-            </div>
-          </div>
-        ))}
-    </div>
-  );
-};
+    );
+  };
   return (
     <div className="requisition-request">
       <Container fluid className="requisition-page">
@@ -421,7 +373,6 @@ const renderDepartment = ({
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
               />
-
             </div>
           </Col>
           <Col xs={12} md={2} className="filters-row">
@@ -439,17 +390,15 @@ const renderDepartment = ({
                 }
               }}
             >
-               <option value="">{t("jobPostingsList:status_all")}</option>
+              <option value="">{t("jobPostingsList:status_all")}</option>
 
               {statusOptions.map((status) => (
                 <option key={status} value={status}>
-                 {t(`jobPostingsList:status_${status.toLowerCase()}`)}
+                  {t(`jobPostingsList:status_${status.toLowerCase()}`)}
                 </option>
               ))}
             </Form.Select>
           </Col>
-
-
         </Row>
 
         {/* ================= BULK ACTIONS ================= */}
@@ -463,9 +412,7 @@ const renderDepartment = ({
               checked={allSelected}
               onChange={(e) => {
                 if (e.target.checked) {
-                  setSelectedReqIds(
-                    new Set(selectableRequisitions.map(r => r.id))
-                  );
+                  setSelectedReqIds(new Set(selectableRequisitions.map((r) => r.id)));
                 } else {
                   setSelectedReqIds(new Set());
                 }
@@ -481,7 +428,7 @@ const renderDepartment = ({
                 const errors = validateSelectedRequisitions(selectedReqIds);
 
                 if (errors.length > 0) {
-                  errors.forEach(err => toast.error(err));
+                  errors.forEach((err) => toast.error(err));
                   return;
                 }
 
@@ -500,7 +447,7 @@ const renderDepartment = ({
                 const errors = validateSelectedRequisitions(selectedReqIds);
 
                 if (errors.length > 0) {
-                  errors.forEach(err => toast.error(err));
+                  errors.forEach((err) => toast.error(err));
                   return;
                 }
 
@@ -510,7 +457,6 @@ const renderDepartment = ({
             >
               {t("approve")}
             </Button>
-
           </Col>
         </Row>
 
@@ -523,16 +469,13 @@ const renderDepartment = ({
 
         {/* ================= LIST ================= */}
         {!loading && requisitions.length === 0 && (
-          <div className="text-center text-muted my-4">
-            {t("jobPostingsList:no_requisitions")}
-          </div>
+          <div className="text-center text-muted my-4">{t("jobPostingsList:no_requisitions")}</div>
         )}
 
         {requisitions.map((req) => {
-
           const positions = positionsByReq[req.id] || [];
 
-         const positionsGroupedByDept = groupPositionsByDept(positions);
+          const positionsGroupedByDept = groupPositionsByDept(positions);
 
           return (
             <div key={req.id} className="requisition-card mb-3">
@@ -549,7 +492,6 @@ const renderDepartment = ({
                     <Badge bg={req.statusType} className="ms-2 capitalize-status">
                       {formatStatusLabel(req.status)}
                     </Badge>
-
                   </div>
 
                   <div className="d-flex justify-content-between align-items-start">
@@ -563,7 +505,7 @@ const renderDepartment = ({
                         onChange={(e) => {
                           if (req.status === "Approved") return;
 
-                          setSelectedReqIds(prev => {
+                          setSelectedReqIds((prev) => {
                             const next = new Set(prev);
                             if (e.target.checked) {
                               next.add(req.id);
@@ -591,9 +533,13 @@ const renderDepartment = ({
                         </div>
                         <div className="req-dates">
                           <div>
-                            <img src={start_icon} alt="start_icon" className="icon-12" />{" "}{t("jobPostingsList:start_date")}: {formatDateDDMMYYYY(req.startDate)}
+                            <img src={start_icon} alt="start_icon" className="icon-12" />{" "}
+                            {t("jobPostingsList:start_date")}: {formatDateDDMMYYYY(req.startDate)}
                           </div>
-                          <div><img src={end_icon} alt="end_icon" className="icon-12" /> {t("jobPostingsList:end_date")}: {formatDateDDMMYYYY(req.endDate)}</div>
+                          <div>
+                            <img src={end_icon} alt="end_icon" className="icon-12" />{" "}
+                            {t("jobPostingsList:end_date")}: {formatDateDDMMYYYY(req.endDate)}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -606,14 +552,14 @@ const renderDepartment = ({
                       {t("jobPostingsList:department")} - {req.departments}
                     </div>
                     <div>
-                      <img src={position_Icon} alt="position" className="icon-16" /> {t("jobPostingsList:positions")} - {req.positions}
+                      <img src={position_Icon} alt="position" className="icon-16" />{" "}
+                      {t("jobPostingsList:positions")} - {req.positions}
                     </div>
                     <div>
-                      <img src={vacancy_icon} alt="vacancy" className="icon-23" /> {t("jobPostingsList:vacancies")} -{" "}
-                      {req.vacancies}
+                      <img src={vacancy_icon} alt="vacancy" className="icon-23" />{" "}
+                      {t("jobPostingsList:vacancies")} - {req.vacancies}
                     </div>
                   </div>
-
                 </Col>
 
                 {/* -------- ACTIONS -------- */}
@@ -627,10 +573,9 @@ const renderDepartment = ({
                     className="icon-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(
-                        `/job-posting/create-requisition?id=${req.id}`,
-                        { state: { mode: "view", from: "approval" } }
-                      );
+                      navigate(`/job-posting/create-requisition?id=${req.id}`, {
+                        state: { mode: "view", from: "approval" },
+                      });
                     }}
                   >
                     <img src={view_jobpost} alt="view" className="icon-19" />
@@ -652,10 +597,7 @@ const renderDepartment = ({
               {/* -------- ACCORDION BODY (STATIC FOR NOW) -------- */}
               {openReqId === req.id && (
                 <div className="accordion-body mt-3">
-
-                  {loadingReqId === req.id && (
-                    <Spinner animation="border" size="sm" />
-                  )}
+                  {loadingReqId === req.id && <Spinner animation="border" size="sm" />}
 
                   {!loadingReqId && positions.length === 0 && (
                     <div className="text-muted">{t("jobPostingsList:no_positions")}</div>
@@ -668,12 +610,11 @@ const renderDepartment = ({
                       openDept,
                       toggleDeptAccordion,
                       navigate,
-                      t
+                      t,
                     })
                   )}
                 </div>
               )}
-
             </div>
           );
         })}
@@ -681,12 +622,9 @@ const renderDepartment = ({
         {pageInfo && pageInfo.totalPages > 1 && (
           <Row className="mt-4 mb-4">
             <Col className="d-flex justify-content-end align-items-center gap-3">
-
               {/* Page size */}
               <div className="d-flex align-items-center gap-2">
-                <span className="pagesize">
-                  {t("jobPostingsList:page_size")}:
-                </span>
+                <span className="pagesize">{t("jobPostingsList:page_size")}:</span>
                 <Form.Select
                   size="sm"
                   style={{ width: "90px" }}
@@ -696,8 +634,10 @@ const renderDepartment = ({
                     setPage(0);
                   }}
                 >
-                  {[5, 10, 15, 20, 25, 30].map(n => (
-                    <option key={n} value={n}>{n}</option>
+                  {[5, 10, 15, 20, 25, 30].map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
                   ))}
                 </Form.Select>
               </div>
@@ -705,12 +645,11 @@ const renderDepartment = ({
               {/* Pagination */}
               <nav aria-label="Page navigation">
                 <ul className="pagination mb-0 justify-content-center">
-
                   {/* Prev */}
                   <li className={`page-item ${page === 0 || loading ? "disabled" : ""}`}>
                     <button
                       className="page-link"
-                      onClick={() => setPage(p => Math.max(p - 1, 0))}
+                      onClick={() => setPage((p) => Math.max(p - 1, 0))}
                       disabled={page === 0 || loading}
                     >
                       &laquo;
@@ -719,11 +658,10 @@ const renderDepartment = ({
 
                   {/* Pages */}
                   {(() => {
-                    const {
-                      pages,
-                      showStartEllipsis,
-                      showEndEllipsis,
-                    } = getVisiblePages(page, pageInfo.totalPages);
+                    const { pages, showStartEllipsis, showEndEllipsis } = getVisiblePages(
+                      page,
+                      pageInfo.totalPages
+                    );
 
                     return (
                       <>
@@ -735,11 +673,8 @@ const renderDepartment = ({
                         )}
 
                         {/* Page numbers */}
-                        {pages.map(p => (
-                          <li
-                            key={p}
-                            className={`page-item ${page === p ? "active" : ""}`}
-                          >
+                        {pages.map((p) => (
+                          <li key={p} className={`page-item ${page === p ? "active" : ""}`}>
                             <button
                               className="page-link"
                               onClick={() => setPage(p)}
@@ -762,21 +697,20 @@ const renderDepartment = ({
 
                   {/* Next */}
                   <li
-                    className={`page-item ${page >= pageInfo.totalPages - 1 || loading ? "disabled" : ""
-                      }`}
+                    className={`page-item ${
+                      page >= pageInfo.totalPages - 1 || loading ? "disabled" : ""
+                    }`}
                   >
                     <button
                       className="page-link"
-                      onClick={() => setPage(p => p + 1)}
+                      onClick={() => setPage((p) => p + 1)}
                       disabled={page >= pageInfo.totalPages - 1 || loading}
                     >
                       &raquo;
                     </button>
                   </li>
-
                 </ul>
               </nav>
-
             </Col>
           </Row>
         )}
@@ -792,8 +726,7 @@ const renderDepartment = ({
           historyData={history}
           loading={historyLoading}
         />
-
-      </Container >
+      </Container>
     </div>
   );
 };

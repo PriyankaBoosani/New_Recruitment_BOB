@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import i18n from "./i18n";
 
 const LanguageSync = () => {
-  const lang = useSelector(state => state.language.lang);
+  const lang = useSelector((state) => state.language.lang);
 
   useEffect(() => {
     if (lang && i18n.language !== lang) {

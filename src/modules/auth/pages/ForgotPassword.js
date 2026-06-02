@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import '../../../style/css/Login.css';
+import "../../../style/css/Login.css";
 import pana from "../../../assets/pana.png";
 import boblogo from "../../../assets/bob-logo1.jpg";
 import { useNavigate } from "react-router-dom";
 import loginApi from "../services/loginService";
-
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -14,8 +13,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-   
-     await loginApi.forgotPassword(email);
+      await loginApi.forgotPassword(email);
       alert("Password reset link sent. Check your email.");
       navigate("/login");
     } catch (error) {
@@ -25,7 +23,7 @@ const ForgotPassword = () => {
   };
 
   return (
-        <div className="login-container">
+    <div className="login-container">
       <div className="left-panel">
         <img src={pana} alt="Illustration" />
         <h2>बैंक ऑफ़ बड़ौदा</h2>
@@ -33,16 +31,13 @@ const ForgotPassword = () => {
       </div>
 
       <div className="right-panel">
-        <div className="logo" style={{ marginBottom: '20px' }}>
+        <div className="logo" style={{ marginBottom: "20px" }}>
           <img src={boblogo} alt="Logo" />
           <h4>Forgot Password</h4>
         </div>
 
         <form className="login_form" onSubmit={handleSubmit}>
-          <button
-            className="back-button"
-            onClick={() => navigate("/login")}
-          >
+          <button className="back-button" onClick={() => navigate("/login")}>
             ← Login
           </button>
 

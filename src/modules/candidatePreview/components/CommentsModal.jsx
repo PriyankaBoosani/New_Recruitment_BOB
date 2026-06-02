@@ -32,7 +32,7 @@ const CommentsModal = ({ show, onClose }) => {
   return (
     <Modal show={show} onHide={onClose} centered size="lg">
       <Modal.Header closeButton>
-        <Modal.Title style={{ fontSize: '1rem', color: '#2f3a8f' }}>Comments</Modal.Title>
+        <Modal.Title style={{ fontSize: "1rem", color: "#2f3a8f" }}>Comments</Modal.Title>
       </Modal.Header>
 
       <Modal.Body style={{ maxHeight: "400px", overflowY: "auto" }}>
@@ -49,7 +49,7 @@ const CommentsModal = ({ show, onClose }) => {
                 background: "#f9f9f9",
               }}
             >
-              <div style={{ fontWeight: "500", color: '#2f3a8f', fontSize: '1rem' }}>{c.user}</div>
+              <div style={{ fontWeight: "500", color: "#2f3a8f", fontSize: "1rem" }}>{c.user}</div>
               <div style={{ fontSize: "0.875rem" }} className="mt-1">
                 {c.text}
               </div>
@@ -71,10 +71,18 @@ const CommentsModal = ({ show, onClose }) => {
       </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="btn" onClick={onClose} style={{ fontSize: '0.875rem', border: '1px solid #333', color: '#333' }}>
+        <Button
+          variant="btn"
+          onClick={onClose}
+          style={{ fontSize: "0.875rem", border: "1px solid #333", color: "#333" }}
+        >
           Close
         </Button>
-        <Button variant="btn primary" onClick={handleAddComment} style={{ fontSize: '0.875rem', backgroundColor: '#f47c2c', color: '#fff' }}>
+        <Button
+          variant="btn primary"
+          onClick={handleAddComment}
+          style={{ fontSize: "0.875rem", backgroundColor: "#f47c2c", color: "#fff" }}
+        >
           Send
         </Button>
       </Modal.Footer>

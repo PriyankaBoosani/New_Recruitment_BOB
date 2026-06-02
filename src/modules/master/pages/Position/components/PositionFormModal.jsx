@@ -19,11 +19,10 @@ const handleTwoDigitNumberInput = ({ e, fieldName, handleInputChange }) => {
   handleInputChange({
     target: {
       name: fieldName,
-      value
-    }
+      value,
+    },
   });
 };
-
 
 const PositionFormModal = ({
   show,
@@ -43,364 +42,331 @@ const PositionFormModal = ({
 
   jobGrades = [],
   fetchPositions,
-  t
+  t,
 }) => {
-const title = isViewing
-  ? t("view")
-  : isEditing
-  ? t("edit_position")
-  : t("add_position");
+  const title = isViewing ? t("view") : isEditing ? t("edit_position") : t("add_position");
 
-const isCreateMode = !isViewing && !isEditing;
+  const isCreateMode = !isViewing && !isEditing;
 
-const handleSubmit = (e) => {
-  if (isViewing) {
-    e.preventDefault();
-    onHide();
-  } else {
-    handleSave(e);
-  }
-};
+  const handleSubmit = (e) => {
+    if (isViewing) {
+      e.preventDefault();
+      onHide();
+    } else {
+      handleSave(e);
+    }
+  };
 
-const renderFooter = () => {
-  return (
-    <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
-      <Button variant="outline-secondary" onClick={onHide}>
-        {isViewing ? t("close") : t("cancel")}
-      </Button>
-
-      {!isViewing && (
-        <Button variant="primary" type="submit">
-          {isEditing ? t("update") : t("save")}
-        </Button>
-      )}
-    </Modal.Footer>
-  );
-};
-
-const renderContent = () => {
-  if (activeTab === "manual") {
+  const renderFooter = () => {
     return (
-      <Form onSubmit={handleSubmit}>
-        <Row className="g-3">
-              <Col xs={6}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("department")} <span className="text-danger">*</span>
-                  </Form.Label>
+      <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">
+        <Button variant="outline-secondary" onClick={onHide}>
+          {isViewing ? t("close") : t("cancel")}
+        </Button>
 
-                  {isViewing ? (
-                    <div className="form-control-view">
-                      {departments.find(d => d.id === formData.departmentId)?.name || "-"}
+        {!isViewing && (
+          <Button variant="primary" type="submit">
+            {isEditing ? t("update") : t("save")}
+          </Button>
+        )}
+      </Modal.Footer>
+    );
+  };
 
-                    </div>
-                  ) : (
-                    <Form.Select
-                      name="departmentId"
-                      value={formData.departmentId}
-                      onChange={handleInputChange}
-                      className="form-control-custom"
-                      // disabled={isEditing}
-                    >
-                      <option value="">{t("select_department")}</option>
+  const renderContent = () => {
+    if (activeTab === "manual") {
+      return (
+        <Form onSubmit={handleSubmit}>
+          <Row className="g-3">
+            <Col xs={6}>
+              <Form.Group className="form-group">
+                <Form.Label>
+                  {t("department")} <span className="text-danger">*</span>
+                </Form.Label>
 
-                      {departments.length > 0 &&
-                        departments.map(d => (
+                {isViewing ? (
+                  <div className="form-control-view">
+                    {departments.find((d) => d.id === formData.departmentId)?.name || "-"}
+                  </div>
+                ) : (
+                  <Form.Select
+                    name="departmentId"
+                    value={formData.departmentId}
+                    onChange={handleInputChange}
+                    className="form-control-custom"
+                    // disabled={isEditing}
+                  >
+                    <option value="">{t("select_department")}</option>
 
-                          <option
-                            key={d.id}
-                            value={d.id}
-                          >
-                            {d.name}
-                          </option>
-                        ))
-
-                      }
-
-                    </Form.Select>
-                  )}
-
-                  {!isViewing && <ErrorMessage>{errors.departmentId}</ErrorMessage>}
-                </Form.Group>
-              </Col>
-              <Col xs={6}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("position_title")} <span className="text-danger">*</span>
-                  </Form.Label>
-
-                  {isViewing ? (
-                    <div className="form-control-view">
-                      {formData.title || "-"}
-                    </div>
-                  ) : (
-                    <Form.Control
-                      name="title"
-                      maxLength={200}
-                      value={formData.title}
-                      placeholder={t("enter_position_title")}
-                      className="form-control-custom"
-                      onChange={(e) =>
-                        handleValidatedInput({
-                          e,
-                          fieldName: "title",
-                          setErrors,
-                          pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_DASH_AMP,
-                          errorMessage: t("validation:only_alpha_numeric"),
-                          onValidChange: (value) =>
-                            handleInputChange({
-                              target: { name: "title", value }
-                            })
-                        })
-                      }
-                    />
-                  )}
-
-                  {!isViewing && <ErrorMessage>{errors.title}</ErrorMessage>}
-                </Form.Group>
-              </Col>
-              <Col xs={4} md={6}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("job_grade")} <span className="text-danger">*</span>
-                  </Form.Label>
-
-                  {isViewing ? (
-                    <div className="form-control-view">
-                      {jobGrades.find(g => g.id === formData.jobGradeId)?.gradeCode || "-"}
-                    </div>
-                  ) : (
-                    <Form.Select
-                      name="jobGradeId"
-                      value={formData.jobGradeId}
-                      onChange={handleInputChange}
-                      className="form-control-custom"
-                    >
-                      <option value="">{t("select_job_grade")}</option>
-                      {jobGrades.map(g => (
-                        <option key={g.id} value={g.id}>
-                          {g.gradeCode}
+                    {departments.length > 0 &&
+                      departments.map((d) => (
+                        <option key={d.id} value={d.id}>
+                          {d.name}
                         </option>
                       ))}
-                    </Form.Select>
-                  )}
+                  </Form.Select>
+                )}
 
-                  {!isViewing && <ErrorMessage>{errors.jobGradeId}</ErrorMessage>}
-                </Form.Group>
+                {!isViewing && <ErrorMessage>{errors.departmentId}</ErrorMessage>}
+              </Form.Group>
+            </Col>
+            <Col xs={6}>
+              <Form.Group className="form-group">
+                <Form.Label>
+                  {t("position_title")} <span className="text-danger">*</span>
+                </Form.Label>
 
-              </Col>
+                {isViewing ? (
+                  <div className="form-control-view">{formData.title || "-"}</div>
+                ) : (
+                  <Form.Control
+                    name="title"
+                    maxLength={200}
+                    value={formData.title}
+                    placeholder={t("enter_position_title")}
+                    className="form-control-custom"
+                    onChange={(e) =>
+                      handleValidatedInput({
+                        e,
+                        fieldName: "title",
+                        setErrors,
+                        pattern: INPUT_PATTERNS.ALPHA_NUMERIC_SPACE_DASH_AMP,
+                        errorMessage: t("validation:only_alpha_numeric"),
+                        onValidChange: (value) =>
+                          handleInputChange({
+                            target: { name: "title", value },
+                          }),
+                      })
+                    }
+                  />
+                )}
 
-              {/* Min / Max Age */}
-              <Col xs={6} md={6}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("min_age")} <span className="text-danger">*</span>
-                  </Form.Label>
+                {!isViewing && <ErrorMessage>{errors.title}</ErrorMessage>}
+              </Form.Group>
+            </Col>
+            <Col xs={4} md={6}>
+              <Form.Group className="form-group">
+                <Form.Label>
+                  {t("job_grade")} <span className="text-danger">*</span>
+                </Form.Label>
 
-                  {isViewing ? (
-                    <div className="form-control-view">
-                      {formData.eligibilityAgeMin || "-"}
-                    </div>
-                  ) : (
-                    <Form.Control
-                      type="text"
-                      inputMode="numeric"
-                      name="eligibilityAgeMin"
-                      value={formData.eligibilityAgeMin ?? ""}
-                      placeholder={t("enter_min_age")}
-                      className="form-control-custom"
-                      onChange={(e) =>
-                        handleTwoDigitNumberInput({
-                          e,
-                          fieldName: "eligibilityAgeMin",
-                          handleInputChange
-                        })
-                      }
-                    />
+                {isViewing ? (
+                  <div className="form-control-view">
+                    {jobGrades.find((g) => g.id === formData.jobGradeId)?.gradeCode || "-"}
+                  </div>
+                ) : (
+                  <Form.Select
+                    name="jobGradeId"
+                    value={formData.jobGradeId}
+                    onChange={handleInputChange}
+                    className="form-control-custom"
+                  >
+                    <option value="">{t("select_job_grade")}</option>
+                    {jobGrades.map((g) => (
+                      <option key={g.id} value={g.id}>
+                        {g.gradeCode}
+                      </option>
+                    ))}
+                  </Form.Select>
+                )}
 
-                  )}
+                {!isViewing && <ErrorMessage>{errors.jobGradeId}</ErrorMessage>}
+              </Form.Group>
+            </Col>
 
-                  {!isViewing && <ErrorMessage>{errors.eligibilityAgeMin}</ErrorMessage>}
-                </Form.Group>
+            {/* Min / Max Age */}
+            <Col xs={6} md={6}>
+              <Form.Group className="form-group">
+                <Form.Label>
+                  {t("min_age")} <span className="text-danger">*</span>
+                </Form.Label>
 
-              </Col>
+                {isViewing ? (
+                  <div className="form-control-view">{formData.eligibilityAgeMin || "-"}</div>
+                ) : (
+                  <Form.Control
+                    type="text"
+                    inputMode="numeric"
+                    name="eligibilityAgeMin"
+                    value={formData.eligibilityAgeMin ?? ""}
+                    placeholder={t("enter_min_age")}
+                    className="form-control-custom"
+                    onChange={(e) =>
+                      handleTwoDigitNumberInput({
+                        e,
+                        fieldName: "eligibilityAgeMin",
+                        handleInputChange,
+                      })
+                    }
+                  />
+                )}
 
-              <Col xs={6} md={6}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("max_age")} <span className="text-danger">*</span>
-                  </Form.Label>
+                {!isViewing && <ErrorMessage>{errors.eligibilityAgeMin}</ErrorMessage>}
+              </Form.Group>
+            </Col>
 
-                  {isViewing ? (
-                    <div className="form-control-view">
-                      {formData.eligibilityAgeMax || "-"}
-                    </div>
-                  ) : (
-                    <Form.Control
-                      type="text"
-                      inputMode="numeric"
-                      name="eligibilityAgeMax"
-                      value={formData.eligibilityAgeMax ?? ""}
-                      placeholder={t("enter_max_age")}
-                      className="form-control-custom"
-                      onChange={(e) =>
-                        handleTwoDigitNumberInput({
-                          e,
-                          fieldName: "eligibilityAgeMax",
-                          handleInputChange
-                        })
-                      }
-                    />
+            <Col xs={6} md={6}>
+              <Form.Group className="form-group">
+                <Form.Label>
+                  {t("max_age")} <span className="text-danger">*</span>
+                </Form.Label>
 
-                  )}
+                {isViewing ? (
+                  <div className="form-control-view">{formData.eligibilityAgeMax || "-"}</div>
+                ) : (
+                  <Form.Control
+                    type="text"
+                    inputMode="numeric"
+                    name="eligibilityAgeMax"
+                    value={formData.eligibilityAgeMax ?? ""}
+                    placeholder={t("enter_max_age")}
+                    className="form-control-custom"
+                    onChange={(e) =>
+                      handleTwoDigitNumberInput({
+                        e,
+                        fieldName: "eligibilityAgeMax",
+                        handleInputChange,
+                      })
+                    }
+                  />
+                )}
 
-                  {!isViewing && <ErrorMessage>{errors.eligibilityAgeMax}</ErrorMessage>}
-                </Form.Group>
+                {!isViewing && <ErrorMessage>{errors.eligibilityAgeMax}</ErrorMessage>}
+              </Form.Group>
+            </Col>
 
-              </Col>
+            <Col xs={6} md={6}>
+              <Form.Group className="form-group">
+                <Form.Label>
+                  {t("mandatory_experience")} <span className="text-danger">*</span>
+                </Form.Label>
 
-              <Col xs={6} md={6}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("mandatory_experience")} <span className="text-danger">*</span>
-                  </Form.Label>
+                {isViewing ? (
+                  <div className="form-control-view manscroll" style={{ whiteSpace: "pre-line" }}>
+                    {formData.mandatoryExperience || "-"}
+                  </div>
+                ) : (
+                  <Form.Control
+                    as="textarea"
+                    maxLength={2000}
+                    rows={2}
+                    name="mandatoryExperience"
+                    value={formData.mandatoryExperience}
+                    placeholder={t("enter_mandatory_experience")}
+                    className="form-control-custom"
+                    onChange={(e) =>
+                      handleValidatedInput({
+                        e,
+                        fieldName: "mandatoryExperience",
+                        setErrors,
+                        pattern: INPUT_PATTERNS.TEXTAREA_BASIC,
+                        errorMessage: t("validation:invalid_mandatory_experience"),
+                        onValidChange: (value) =>
+                          handleInputChange({
+                            target: { name: "mandatoryExperience", value },
+                          }),
+                      })
+                    }
+                  />
+                )}
 
-                  {isViewing ? (
-                    <div className="form-control-view manscroll" style={{ whiteSpace: "pre-line" }}>
-                      {formData.mandatoryExperience || "-"}
-                    </div>
-                  ) : (
-                    <Form.Control
-                      as="textarea"
-                      maxLength={2000}
-                      rows={2}
-                      name="mandatoryExperience"
-                      value={formData.mandatoryExperience}
-                      placeholder={t("enter_mandatory_experience")}
-                      className="form-control-custom"
-                      onChange={(e) =>
-                        handleValidatedInput({
-                          e,
-                          fieldName: "mandatoryExperience",
-                          setErrors,
-                          pattern: INPUT_PATTERNS.TEXTAREA_BASIC,
-                          errorMessage: t("validation:invalid_mandatory_experience"),
-                          onValidChange: (value) =>
-                            handleInputChange({
-                              target: { name: "mandatoryExperience", value }
-                            })
-                        })
-                      }
-                    />
+                {!isViewing && <ErrorMessage>{errors.mandatoryExperience}</ErrorMessage>}
+              </Form.Group>
+            </Col>
 
-                  )}
+            <Col xs={12} md={6}>
+              <Form.Group className="form-group">
+                <Form.Label>{t("preferred_experience")}</Form.Label>
 
-                  {!isViewing && <ErrorMessage>{errors.mandatoryExperience}</ErrorMessage>}
-                </Form.Group>
+                {isViewing ? (
+                  <div className="form-control-view manscroll" style={{ whiteSpace: "pre-line" }}>
+                    {formData.preferredExperience || "NA"}
+                  </div>
+                ) : (
+                  <Form.Control
+                    as="textarea"
+                    maxLength={2000}
+                    rows={2}
+                    name="preferredExperience"
+                    value={formData.preferredExperience}
+                    placeholder={t("enter_preferred_experience")}
+                    className="form-control-custom"
+                    onChange={(e) =>
+                      handleValidatedInput({
+                        e,
+                        fieldName: "preferredExperience",
+                        setErrors,
+                        pattern: INPUT_PATTERNS.TEXTAREA_BASIC,
+                        errorMessage: t("validation:invalid_preferred_experience"),
+                        onValidChange: (value) =>
+                          handleInputChange({
+                            target: { name: "preferredExperience", value },
+                          }),
+                      })
+                    }
+                  />
+                )}
 
-              </Col>
+                {!isViewing && <ErrorMessage>{errors.preferredExperience}</ErrorMessage>}
+              </Form.Group>
+            </Col>
 
-              <Col xs={12} md={6}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("preferred_experience")} 
-                  </Form.Label>
+            <Col xs={6}>
+              <Form.Group className="form-group">
+                <Form.Label>
+                  {t("roles_responsibilities")} <span className="text-danger">*</span>
+                </Form.Label>
 
-                  {isViewing ? (
-                    <div className="form-control-view manscroll" style={{ whiteSpace: "pre-line" }}>
-                      {formData.preferredExperience || "NA"}
-                    </div>
-                  ) : (
-                    <Form.Control
-                      as="textarea"
-                      maxLength={2000}
-                      rows={2}
-                      name="preferredExperience"
-                      value={formData.preferredExperience}
-                      placeholder={t("enter_preferred_experience")}
-                      className="form-control-custom"
-                      onChange={(e) =>
-                        handleValidatedInput({
-                          e,
-                          fieldName: "preferredExperience",
-                          setErrors,
-                          pattern: INPUT_PATTERNS.TEXTAREA_BASIC,
-                          errorMessage: t("validation:invalid_preferred_experience"),
-                          onValidChange: (value) =>
-                            handleInputChange({
-                              target: { name: "preferredExperience", value }
-                            })
-                        })
-                      }
-                    />
+                {isViewing ? (
+                  <div className="form-control-view manscroll" style={{ whiteSpace: "pre-line" }}>
+                    {formData.rolesResponsibilities || "-"}
+                  </div>
+                ) : (
+                  <Form.Control
+                    as="textarea"
+                    rows={2}
+                    maxLength={2000}
+                    name="rolesResponsibilities"
+                    value={formData.rolesResponsibilities}
+                    placeholder={t("enter_roles_responsibilities")}
+                    className="form-control-custom"
+                    onChange={(e) =>
+                      handleValidatedInput({
+                        e,
+                        fieldName: "rolesResponsibilities",
+                        setErrors,
+                        pattern: INPUT_PATTERNS.TEXTAREA_BASIC,
+                        errorMessage: t("validation:invalid_roles_responsibilities"),
+                        onValidChange: (value) =>
+                          handleInputChange({
+                            target: { name: "rolesResponsibilities", value },
+                          }),
+                      })
+                    }
+                  />
+                )}
 
-                  )}
+                {!isViewing && <ErrorMessage>{errors.rolesResponsibilities}</ErrorMessage>}
+              </Form.Group>
+            </Col>
+          </Row>
 
-                  {!isViewing && <ErrorMessage>{errors.preferredExperience}</ErrorMessage>}
-                </Form.Group>
+          {renderFooter()}
+        </Form>
+      );
+    }
 
-              </Col>
-
-              <Col xs={6}>
-                <Form.Group className="form-group">
-                  <Form.Label>
-                    {t("roles_responsibilities")} <span className="text-danger">*</span>
-                  </Form.Label>
-
-                  {isViewing ? (
-                    <div className="form-control-view manscroll" style={{ whiteSpace: "pre-line" }}>
-                      {formData.rolesResponsibilities || "-"}
-                    </div>
-                  ) : (
-                    <Form.Control
-                      as="textarea"
-                      rows={2}
-                      maxLength={2000}
-                      name="rolesResponsibilities"
-                      value={formData.rolesResponsibilities}
-                      placeholder={t("enter_roles_responsibilities")}
-                      className="form-control-custom"
-                      onChange={(e) =>
-                        handleValidatedInput({
-                          e,
-                          fieldName: "rolesResponsibilities",
-                          setErrors,
-                          pattern: INPUT_PATTERNS.TEXTAREA_BASIC,
-                          errorMessage: t("validation:invalid_roles_responsibilities"),
-                          onValidChange: (value) =>
-                            handleInputChange({
-                              target: { name: "rolesResponsibilities", value }
-                            })
-                        })
-                      }
-                    />
-                  )}
-
-                  {!isViewing && (
-                    <ErrorMessage>{errors.rolesResponsibilities}</ErrorMessage>
-                  )}
-                </Form.Group>
-
-              </Col>
-
-            </Row>
-
-        {renderFooter()}
-      </Form>
+    return (
+      <PositionImportModal
+        t={t}
+        onClose={onHide}
+        onSuccess={async () => {
+          await fetchPositions();
+          setActiveTab("manual");
+        }}
+      />
     );
-  }
-
-  return (
-    <PositionImportModal
-      t={t}
-      onClose={onHide}
-      onSuccess={async () => {
-        await fetchPositions();
-        setActiveTab("manual");
-      }}
-    />
-  );
-};
+  };
   return (
     <Modal
       show={show}
@@ -413,16 +379,9 @@ const renderContent = () => {
     >
       <Modal.Header closeButton className="modal-header-custom">
         <div>
-          <Modal.Title>
-            {title}
-          </Modal.Title>
+          <Modal.Title>{title}</Modal.Title>
 
-          {isCreateMode && (
-            <p className="mb-0 small text-muted para">
-              {t("choose_add_method")}
-            </p>
-          )}
-
+          {isCreateMode && <p className="mb-0 small text-muted para">{t("choose_add_method")}</p>}
         </div>
       </Modal.Header>
 

@@ -10,7 +10,7 @@ const StatesLanguagesTable = ({
   pageSize,
   setPageSize,
   onEdit,
-  onView
+  onView,
 }) => {
   const { t } = useTranslation(["common", "stateLanguages"]);
   const indexOfLast = currentPage * pageSize;
@@ -47,8 +47,7 @@ const StatesLanguagesTable = ({
               <th>{t("stateLanguages:s_no")}</th>
               <th>{t("stateLanguages:state")}</th>
               <th>{t("stateLanguages:languages")}</th>
-              <th style={{ textAlign: "center" }}>{t("common:actions")}
-              </th>
+              <th style={{ textAlign: "center" }}>{t("common:actions")}</th>
             </tr>
           </thead>
           <tbody>
@@ -58,9 +57,7 @@ const StatesLanguagesTable = ({
                   <td>{indexOfFirst + idx + 1}</td>
                   <td className="text-nowrap">{item.stateName || "-"}</td>
                   <td className="text-nowrap">
-                    {item.languageNames?.length
-                      ? item.languageNames.join(", ")
-                      : "-"}
+                    {item.languageNames?.length ? item.languageNames.join(", ") : "-"}
                   </td>
                   <td style={{ textAlign: "center" }}>
                     <div className="action-buttons">
@@ -80,7 +77,6 @@ const StatesLanguagesTable = ({
                       </Button>
                     </div>
                   </td>
-
                 </tr>
               ))
             ) : (
@@ -101,10 +97,7 @@ const StatesLanguagesTable = ({
         >
           {/* PAGE SIZE */}
           <div className="d-flex align-items-center gap-2 user-actions">
-            <span
-              className="fw-semibold"
-              style={{ color: "var(--bs-heading-color)" }}
-            >
+            <span className="fw-semibold" style={{ color: "var(--bs-heading-color)" }}>
               {t("stateLanguages:page_size")} :
             </span>
             <select
@@ -116,7 +109,7 @@ const StatesLanguagesTable = ({
                 setCurrentPage(1);
               }}
             >
-              {[5, 10, 15, 20, 25, 30].map(n => (
+              {[5, 10, 15, 20, 25, 30].map((n) => (
                 <option key={n} value={n}>
                   {n}
                 </option>
@@ -135,11 +128,10 @@ const StatesLanguagesTable = ({
               </button>
             </li>
             {(() => {
-              const {
-                pages,
-                showStartEllipsis,
-                showEndEllipsis
-              } = getVisiblePages(currentPage, totalPages);
+              const { pages, showStartEllipsis, showEndEllipsis } = getVisiblePages(
+                currentPage,
+                totalPages
+              );
               return (
                 <>
                   {showStartEllipsis && (
@@ -147,15 +139,12 @@ const StatesLanguagesTable = ({
                       <span className="page-link">…</span>
                     </li>
                   )}
-                  {pages.map(number => (
+                  {pages.map((number) => (
                     <li
                       key={number}
                       className={`page-item ${currentPage === number ? "active" : ""}`}
                     >
-                      <button
-                        className="page-link"
-                        onClick={() => setCurrentPage(number)}
-                      >
+                      <button className="page-link" onClick={() => setCurrentPage(number)}>
                         {number}
                       </button>
                     </li>

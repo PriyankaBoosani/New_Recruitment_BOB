@@ -1,31 +1,31 @@
-import React, { useState } from 'react';
-import { Button, Alert } from 'react-bootstrap';
-import { Upload as UploadIcon } from 'react-bootstrap-icons';
-import { useAssignPositions } from '../hooks/useAssignPositions';
+import React, { useState } from "react";
+import { Button, Alert } from "react-bootstrap";
+import { Upload as UploadIcon } from "react-bootstrap-icons";
+import { useAssignPositions } from "../hooks/useAssignPositions";
 
 const PositionAssignmentImportModal = ({
   t,
-  onClose = () => { },
-  onSuccess = () => { },
+  onClose = () => {},
+  onSuccess = () => {},
   bulkImportPositionAssignments,
   downloadPositionAssignmentTemplate,
-  loading
+  loading,
 }) => {
   //const { bulkImportPositionAssignments, downloadPositionAssignmentTemplate, loading } = useAssignPositions();
   const [selectedFile, setSelectedFile] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [errorDetails, setErrorDetails] = useState([]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    const isExcel = file && (
-      file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-      file.type === 'application/vnd.ms-excel'
-    );
+    const isExcel =
+      file &&
+      (file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        file.type === "application/vnd.ms-excel");
 
     if (isExcel) {
       setSelectedFile(file);
-      setError('');
+      setError("");
     } else {
       setError(t("interviewPanelCommittee:invalid_file"));
     }
@@ -49,18 +49,18 @@ const PositionAssignmentImportModal = ({
 
   return (
     <div>
-      <div className="import-area p-4 rounded" style={{ background: '#fceee9' }}>
+      <div className="import-area p-4 rounded" style={{ background: "#fceee9" }}>
         <div className="text-center mb-3">
           <div
             style={{
               width: 72,
               height: 72,
               borderRadius: 12,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: '#fff',
-              marginBottom: '1rem'
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "#fff",
+              marginBottom: "1rem",
             }}
           >
             <UploadIcon size={32} />
@@ -70,9 +70,7 @@ const PositionAssignmentImportModal = ({
             {t("interviewPanelCommittee:upload_position_assignments")}
           </h5>
 
-          <p className="text-muted small">
-            {t("interviewPanelCommittee:support_xlsx")}
-          </p>
+          <p className="text-muted small">{t("interviewPanelCommittee:support_xlsx")}</p>
         </div>
 
         {error && (
@@ -80,13 +78,12 @@ const PositionAssignmentImportModal = ({
             <div>{error}</div>
 
             {errorDetails.length > 0 && (
-              <div
-                className="mt-2"
-                style={{ maxHeight: '150px', overflowY: 'auto' }}
-              >
+              <div className="mt-2" style={{ maxHeight: "150px", overflowY: "auto" }}>
                 <ul className="mb-0">
                   {errorDetails.map((msg, idx) => (
-                    <li key={idx} className="error-display">{msg}</li>
+                    <li key={idx} className="error-display">
+                      {msg}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -120,7 +117,7 @@ const PositionAssignmentImportModal = ({
                 className="mt-2"
                 onClick={() => {
                   setSelectedFile(null);
-                  setError('');
+                  setError("");
                   setErrorDetails([]);
                 }}
                 disabled={loading}
@@ -139,12 +136,12 @@ const PositionAssignmentImportModal = ({
               console.log("DOWNLOAD CLICKED");
               downloadPositionAssignmentTemplate();
             }}
-
             className="btn btn-link p-0 text-primary text-decoration-none btnfont"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             disabled={loading}
           >
-            {" "}XLSX
+            {" "}
+            XLSX
           </button>
         </div>
       </div>

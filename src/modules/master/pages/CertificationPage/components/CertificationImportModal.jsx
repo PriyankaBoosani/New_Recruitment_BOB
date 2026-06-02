@@ -5,13 +5,9 @@ import { useTranslation } from "react-i18next";
 
 import { useCertifications } from "../hooks/useCertifications";
 
-const CertificationImportModal = ({
-  onClose = () => { },
-  onSuccess = () => { }
-}) => {
+const CertificationImportModal = ({ onClose = () => {}, onSuccess = () => {} }) => {
   const { t } = useTranslation(["certification"]);
-  const { bulkAddCertifications, downloadCertificationTemplate, loading } =
-    useCertifications();
+  const { bulkAddCertifications, downloadCertificationTemplate, loading } = useCertifications();
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState("");
@@ -23,8 +19,7 @@ const CertificationImportModal = ({
 
     const isExcel =
       file &&
-      (file.type ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      (file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
         file.type === "application/vnd.ms-excel");
 
     if (isExcel) {
@@ -58,10 +53,7 @@ const CertificationImportModal = ({
   return (
     <div>
       {/* ---------- UPLOAD CARD ---------- */}
-      <div
-        className="import-area p-4 rounded"
-        style={{ background: "#fceee9" }}
-      >
+      <div className="import-area p-4 rounded" style={{ background: "#fceee9" }}>
         <div className="text-center mb-3">
           <div
             style={{
@@ -72,19 +64,15 @@ const CertificationImportModal = ({
               alignItems: "center",
               justifyContent: "center",
               background: "#fff",
-              marginBottom: "1rem"
+              marginBottom: "1rem",
             }}
           >
             <UploadIcon size={32} />
           </div>
 
-          <h5 className="mb-2 uploadfile">
-            {t("certification:upload_certifications")}
-          </h5>
+          <h5 className="mb-2 uploadfile">{t("certification:upload_certifications")}</h5>
 
-          <p className="text-muted small">
-            {t("certification:support_xlsx")}
-          </p>
+          <p className="text-muted small">{t("certification:support_xlsx")}</p>
         </div>
 
         {/* ---------- ERROR ---------- */}
@@ -93,10 +81,7 @@ const CertificationImportModal = ({
             <div className="fw-semibold">{error}</div>
 
             {errorDetails.length > 0 && (
-              <div
-                className="mt-2"
-                style={{ maxHeight: "150px", overflowY: "auto" }}
-              >
+              <div className="mt-2" style={{ maxHeight: "150px", overflowY: "auto" }}>
                 <ul className="mb-0">
                   {errorDetails.map((msg, idx) => (
                     <li key={idx}>{msg}</li>
@@ -119,23 +104,14 @@ const CertificationImportModal = ({
 
         <div className="text-center mb-3">
           <label htmlFor="upload-xlsx-cert">
-            <Button
-              variant="primary"
-              as="span"
-              className="btnupload"
-              disabled={loading}
-            >
-              {selectedFile
-                ? t("certification:reupload_xlsx")
-                : t("certification:upload_xlsx")}
+            <Button variant="primary" as="span" className="btnupload" disabled={loading}>
+              {selectedFile ? t("certification:reupload_xlsx") : t("certification:upload_xlsx")}
             </Button>
           </label>
 
           {selectedFile && (
             <div className="mt-2">
-              <small className="text-muted d-block">
-                {selectedFile.name}
-              </small>
+              <small className="text-muted d-block">{selectedFile.name}</small>
 
               <Button
                 variant="outline-danger"
@@ -161,32 +137,23 @@ const CertificationImportModal = ({
             type="button"
             onClick={downloadCertificationTemplate}
             className="btn btn-link p-0 text-primary text-decoration-none btnfont"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             disabled={loading}
           >
-            {" "}XLSX
+            {" "}
+            XLSX
           </button>
         </div>
       </div>
 
       {/* ---------- FOOTER ---------- */}
       <div className="d-flex justify-content-end gap-2 modal-footer-custom">
-        <Button
-          variant="outline-secondary"
-          onClick={onClose}
-          disabled={loading}
-        >
+        <Button variant="outline-secondary" onClick={onClose} disabled={loading}>
           {t("certification:cancel")}
         </Button>
 
-        <Button
-          variant="primary"
-          onClick={handleUpload}
-          disabled={loading}
-        >
-          {loading
-            ? t("certification:importing")
-            : t("certification:import")}
+        <Button variant="primary" onClick={handleUpload} disabled={loading}>
+          {loading ? t("certification:importing") : t("certification:import")}
         </Button>
       </div>
     </div>

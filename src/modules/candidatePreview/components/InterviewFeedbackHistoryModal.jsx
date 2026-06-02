@@ -6,19 +6,12 @@ export default function InterviewFeedbackHistoryModal({
   show,
   onHide,
   feedbackList = [],
-  loading
+  loading,
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
 
   return (
-    
-    <Modal
-      show={show}
-      onHide={onHide}
-      centered
-      size="lg"
-      backdrop="static"
-    >
+    <Modal show={show} onHide={onHide} centered size="lg" backdrop="static">
       <Modal.Header closeButton className="modalhead">
         <Modal.Title className="fs-15 fw-normal">
           {t("candidateWorkflow:interviewer_feedback_history")}
@@ -26,7 +19,6 @@ export default function InterviewFeedbackHistoryModal({
       </Modal.Header>
 
       <Modal.Body className="padding-20">
-        
         <table className="table mb-0">
           <thead>
             <tr>

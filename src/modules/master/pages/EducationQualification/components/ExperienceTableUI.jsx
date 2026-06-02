@@ -13,9 +13,8 @@ const EducationTable = ({
   setPageSize,
   onEdit,
   onDelete,
-  onView
+  onView,
 }) => {
-
   const { t } = useTranslation(["education", "common"]);
 
   const indexOfLast = currentPage * pageSize;
@@ -51,16 +50,13 @@ const EducationTable = ({
     <>
       <div className="table-responsive">
         <Table hover className="user-table">
-
           <thead>
             <tr>
               <th>{t("education:s_no")}</th>
               <th>{t("education:education_level")}</th>
               <th>{t("education:course")}</th>
               <th>{t("education:specialization")}</th>
-              <th style={{ textAlign: "center" }}>
-                {t("common:actions")}
-              </th>
+              <th style={{ textAlign: "center" }}>{t("common:actions")}</th>
             </tr>
           </thead>
 
@@ -68,20 +64,16 @@ const EducationTable = ({
             {current.length ? (
               current.map((item, idx) => (
                 <tr key={idx}>
-
                   <td>{indexOfFirst + idx + 1}</td>
 
                   <td>{item.educationLevel}</td>
 
                   <td>{item.course}</td>
 
-                  <td>
-                    {item.specialization.map((s) => s.name).join(", ")}
-                  </td>
+                  <td>{item.specialization.map((s) => s.name).join(", ")}</td>
 
                   <td>
                     <div className="action-buttons">
-
                       {/* VIEW */}
                       <Button
                         variant="link"
@@ -108,10 +100,8 @@ const EducationTable = ({
                       >
                         <img src={deleteIcon} alt="Delete" className="icon-16" />
                       </Button> */}
-
                     </div>
                   </td>
-
                 </tr>
               ))
             ) : (
@@ -122,7 +112,6 @@ const EducationTable = ({
               </tr>
             )}
           </tbody>
-
         </Table>
       </div>
 
@@ -130,15 +119,11 @@ const EducationTable = ({
       {data.length > 0 && (
         <div
           className="d-flex justify-content-end align-items-center gap-3 mt-2"
-          style={{ marginBottom: "60px" }}   // ✅ ADD THIS
+          style={{ marginBottom: "60px" }} // ✅ ADD THIS
         >
-
           {/* Page size */}
           <div className="d-flex align-items-center gap-2 user-actions">
-            <span
-              className="fw-semibold"
-              style={{ color: "var(--bs-heading-color)" }}
-            >
+            <span className="fw-semibold" style={{ color: "var(--bs-heading-color)" }}>
               {t("page_size")}
             </span>
 
@@ -151,8 +136,10 @@ const EducationTable = ({
                 setCurrentPage(1);
               }}
             >
-              {[5, 10, 15, 20, 25, 30].map(n => (
-                <option key={n} value={n}>{n}</option>
+              {[5, 10, 15, 20, 25, 30].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
               ))}
             </select>
           </div>
@@ -170,11 +157,10 @@ const EducationTable = ({
             </li>
 
             {(() => {
-              const {
-                pages,
-                showStartEllipsis,
-                showEndEllipsis
-              } = getVisiblePages(currentPage, totalPages);
+              const { pages, showStartEllipsis, showEndEllipsis } = getVisiblePages(
+                currentPage,
+                totalPages
+              );
 
               return (
                 <>
@@ -186,15 +172,12 @@ const EducationTable = ({
                   )}
 
                   {/* Page numbers */}
-                  {pages.map(number => (
+                  {pages.map((number) => (
                     <li
                       key={number}
                       className={`page-item ${currentPage === number ? "active" : ""}`}
                     >
-                      <button
-                        className="page-link"
-                        onClick={() => setCurrentPage(number)}
-                      >
+                      <button className="page-link" onClick={() => setCurrentPage(number)}>
                         {number}
                       </button>
                     </li>
@@ -210,7 +193,6 @@ const EducationTable = ({
               );
             })()}
 
-
             <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
               <button
                 className="page-link"
@@ -221,7 +203,6 @@ const EducationTable = ({
               </button>
             </li>
           </ul>
-
         </div>
       )}
     </>

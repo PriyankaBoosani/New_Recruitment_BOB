@@ -15,8 +15,6 @@ import PositionAssignmentImportModal from "./components/PositionAssignmentImport
 import bulbIcon from "../../assets/bulb-icon.png";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 const InterviewPanelPage = () => {
-
-
   const {
     panels,
     loading,
@@ -37,7 +35,6 @@ const InterviewPanelPage = () => {
     handleEdit,
     clearError,
 
-
     page,
     setPage,
     totalPages,
@@ -57,8 +54,6 @@ const InterviewPanelPage = () => {
     errorMessage,
     bulkAddPanels,
     downloadPanelTemplate,
-
-
   } = useInterviewPanel();
 
   const {
@@ -66,7 +61,7 @@ const InterviewPanelPage = () => {
     downloadPositionAssignmentTemplate,
     loadPositionData,
     selectedPosition,
-  } = useAssignPositions()
+  } = useAssignPositions();
 
   useEffect(() => {
     initData();
@@ -85,11 +80,13 @@ const InterviewPanelPage = () => {
         <div className="panel-header">
           <div>
             <h2>{t("interviewPanelCommittee:committee_management")}</h2>
-            <span className="page-subtitle"> {t("interviewPanelCommittee:committee_subtitle")}</span>
+            <span className="page-subtitle">
+              {" "}
+              {t("interviewPanelCommittee:committee_subtitle")}
+            </span>
           </div>
           <div className="tabs-container">
             <div className="tabs">
-
               <Button
                 variant="outline-primary"
                 size="sm"
@@ -99,7 +96,8 @@ const InterviewPanelPage = () => {
                 <FiUpload />
                 {t("interviewPanelCommittee:add_panels")}
               </Button>
-              <Button variant="outline-primary"
+              <Button
+                variant="outline-primary"
                 size="sm"
                 onClick={() => {
                   setShowPositionImportModal(true);
@@ -128,71 +126,91 @@ const InterviewPanelPage = () => {
           </div>
         </div>
 
-
         <div className="guidelines-box mt-3">
           <div className="guidelines-header">
-            <img
-              src={bulbIcon}
-              alt="Info"
-              className="bulb-icon"
-            />
+            <img src={bulbIcon} alt="Info" className="bulb-icon" />
             <h5 className="guidelines-title">{t("interviewPanelCommittee:guidelines")}</h5>
           </div>
 
-
-
           <div className="guideline-section">
-            <h6 className="sectiontitle">  {t("interviewPanelCommittee:add_panels_guideline_title")}</h6>
+            <h6 className="sectiontitle">
+              {" "}
+              {t("interviewPanelCommittee:add_panels_guideline_title")}
+            </h6>
 
             <ol className="main-list">
               <li>
                 {t("interviewPanelCommittee:add_panels_step_1")}{" "}
                 <b>{t("interviewPanelCommittee:add_panels_guideline_title")}</b>{" "}
                 {t("interviewPanelCommittee:create_new_panels")}
-              </li>    <li>
+              </li>{" "}
+              <li>
                 {t("interviewPanelCommittee:add_panels_step_2")}{" "}
                 <b>{t("interviewPanelCommittee:panel_sheet")}</b>
                 <ul>
-                  <li> {t("interviewPanelCommittee:add_panels_step_2_1")} <b>{t("interviewPanelCommittee:panel_number")}</b> {t("interviewPanelCommittee:and")} <b>{t("interviewPanelCommittee:panel_name")}</b>.</li>
                   <li>
-                    {t("interviewPanelCommittee:add_panels_step_2_2")} <b>{t("interviewPanelCommittee:committee_name")}</b> {t("interviewPanelCommittee:column_text")}
-                    {" "} {t("interviewPanelCommittee:screening_interview_compensation")}
+                    {" "}
+                    {t("interviewPanelCommittee:add_panels_step_2_1")}{" "}
+                    <b>{t("interviewPanelCommittee:panel_number")}</b>{" "}
+                    {t("interviewPanelCommittee:and")}{" "}
+                    <b>{t("interviewPanelCommittee:panel_name")}</b>.
+                  </li>
+                  <li>
+                    {t("interviewPanelCommittee:add_panels_step_2_2")}{" "}
+                    <b>{t("interviewPanelCommittee:committee_name")}</b>{" "}
+                    {t("interviewPanelCommittee:column_text")}{" "}
+                    {t("interviewPanelCommittee:screening_interview_compensation")}
                   </li>
                 </ul>
               </li>
-
               <li>
                 {t("interviewPanelCommittee:add_panels_step_3")}{" "}
                 <b>{t("interviewPanelCommittee:panel_member_sheet")}</b>
                 <ul>
-                  <li>{t("interviewPanelCommittee:add_panels_step_3_1")} <b>{t("interviewPanelCommittee:panel_number")}</b>{" "}{t("interviewPanelCommittee:as_defined_panel_sheet")}</li>
+                  <li>
+                    {t("interviewPanelCommittee:add_panels_step_3_1")}{" "}
+                    <b>{t("interviewPanelCommittee:panel_number")}</b>{" "}
+                    {t("interviewPanelCommittee:as_defined_panel_sheet")}
+                  </li>
                   <li>{t("interviewPanelCommittee:add_panels_step_3_2")}</li>
                   <li>{t("interviewPanelCommittee:add_panels_step_3_3")}</li>
                 </ul>
               </li>
-
               <li>{t("interviewPanelCommittee:add_panels_step_4")}</li>
             </ol>
           </div>
 
-
           <hr />
 
-
           <div className="guideline-section">
-            <h6 className="sectiontitle">{t("interviewPanelCommittee:add_position_assignments_guideline_title")}</h6>
+            <h6 className="sectiontitle">
+              {t("interviewPanelCommittee:add_position_assignments_guideline_title")}
+            </h6>
 
             <ol className="main-list">
               <li>
-                {t("interviewPanelCommittee:add_panels_step_1")}{" "}<b>{t("interviewPanelCommittee:add_position_assignments_guideline_title")}</b> {t("interviewPanelCommittee:map_panels_positions")}
+                {t("interviewPanelCommittee:add_panels_step_1")}{" "}
+                <b>{t("interviewPanelCommittee:add_position_assignments_guideline_title")}</b>{" "}
+                {t("interviewPanelCommittee:map_panels_positions")}
               </li>
-              <li> {t("interviewPanelCommittee:position_assignment_step_2")}{" "}<b>{t("interviewPanelCommittee:requisition_position")}</b>.</li>
-              <li> {t("interviewPanelCommittee:position_assignment_step_3")}{" "} <b>{t("interviewPanelCommittee:existing_created_panels")}</b>.</li>
-              <li>{t("interviewPanelCommittee:position_assignment_step_4")}{" "} <b>{t("interviewPanelCommittee:start_date")}{" "}</b>{t("interviewPanelCommittee:and")}{" "}<b>{t("interviewPanelCommittee:end_date")}</b>.</li>
+              <li>
+                {" "}
+                {t("interviewPanelCommittee:position_assignment_step_2")}{" "}
+                <b>{t("interviewPanelCommittee:requisition_position")}</b>.
+              </li>
+              <li>
+                {" "}
+                {t("interviewPanelCommittee:position_assignment_step_3")}{" "}
+                <b>{t("interviewPanelCommittee:existing_created_panels")}</b>.
+              </li>
+              <li>
+                {t("interviewPanelCommittee:position_assignment_step_4")}{" "}
+                <b>{t("interviewPanelCommittee:start_date")} </b>
+                {t("interviewPanelCommittee:and")} <b>{t("interviewPanelCommittee:end_date")}</b>.
+              </li>
               <li>{t("interviewPanelCommittee:position_assignment_step_5")}</li>
             </ol>
           </div>
-
         </div>
 
         {/* <div className="panel-content">
@@ -291,13 +309,11 @@ const InterviewPanelPage = () => {
           message={t("interviewPanelCommittee:delete_panel_message")}
           itemLabel={deletePanelName}
         />
-
-
       </div>
       <ErrorModal
         show={showErrorModal}
         message={errorMessage}
-        errors={[]}   // no list needed here
+        errors={[]} // no list needed here
         onClose={() => setShowErrorModal(false)}
       />
 
@@ -308,7 +324,9 @@ const InterviewPanelPage = () => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title className="header-title">{t("interviewPanelCommittee:bulk_import_panels")}</Modal.Title>
+          <Modal.Title className="header-title">
+            {t("interviewPanelCommittee:bulk_import_panels")}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <PanelImportModal
@@ -329,7 +347,9 @@ const InterviewPanelPage = () => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title className="header-title">{t("interviewPanelCommittee:bulk_import_position_assignments")}</Modal.Title>
+          <Modal.Title className="header-title">
+            {t("interviewPanelCommittee:bulk_import_position_assignments")}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <PositionAssignmentImportModal
@@ -345,7 +365,6 @@ const InterviewPanelPage = () => {
           />
         </Modal.Body>
       </Modal>
-
     </div>
   );
 };

@@ -1,17 +1,12 @@
-import React from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import React from "react";
+import { Modal, Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
 const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
   const { t } = useTranslation(["department"]);
 
   return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      centered
-      dialogClassName="delete-confirm-modal"
-    >
+    <Modal show={show} onHide={onHide} centered dialogClassName="delete-confirm-modal">
       <Modal.Header closeButton>
         <Modal.Title>{t("department:confirm_delete")}</Modal.Title>
       </Modal.Header>

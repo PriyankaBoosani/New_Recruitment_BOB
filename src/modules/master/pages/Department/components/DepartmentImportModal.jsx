@@ -1,28 +1,24 @@
-import React, { useState } from 'react';
-import { Button, Alert } from 'react-bootstrap';
-import { Upload as UploadIcon } from 'react-bootstrap-icons';
-import { useDepartments } from '../hooks/useDepartments';
+import React, { useState } from "react";
+import { Button, Alert } from "react-bootstrap";
+import { Upload as UploadIcon } from "react-bootstrap-icons";
+import { useDepartments } from "../hooks/useDepartments";
 
-const DepartmentImportView = ({
-  t,
-  onClose = () => { },
-  onSuccess = () => { }
-}) => {
+const DepartmentImportView = ({ t, onClose = () => {}, onSuccess = () => {} }) => {
   const { bulkAddDepartments, downloadDepartmentTemplate, loading } = useDepartments();
   const [selectedFile, setSelectedFile] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [errorDetails, setErrorDetails] = useState([]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    const isExcel = file && (
-      file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-      file.type === 'application/vnd.ms-excel'
-    );
+    const isExcel =
+      file &&
+      (file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        file.type === "application/vnd.ms-excel");
 
     if (isExcel) {
       setSelectedFile(file);
-      setError('');
+      setError("");
     } else {
       setError(t("department:invalid_file"));
     }
@@ -46,30 +42,26 @@ const DepartmentImportView = ({
 
   return (
     <div>
-      <div className="import-area p-4 rounded" style={{ background: '#fceee9' }}>
+      <div className="import-area p-4 rounded" style={{ background: "#fceee9" }}>
         <div className="text-center mb-3">
           <div
             style={{
               width: 72,
               height: 72,
               borderRadius: 12,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: '#fff',
-              marginBottom: '1rem'
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "#fff",
+              marginBottom: "1rem",
             }}
           >
             <UploadIcon size={32} />
           </div>
 
-          <h5 className="mb-2 uploadfile">
-            {t("department:upload_departments")}
-          </h5>
+          <h5 className="mb-2 uploadfile">{t("department:upload_departments")}</h5>
 
-          <p className="text-muted small">
-            {t("department:support_xlsx")}
-          </p>
+          <p className="text-muted small">{t("department:support_xlsx")}</p>
         </div>
 
         {error && (
@@ -77,10 +69,7 @@ const DepartmentImportView = ({
             <div>{error}</div>
 
             {errorDetails.length > 0 && (
-              <div
-                className="mt-2"
-                style={{ maxHeight: '150px', overflowY: 'auto' }}
-              >
+              <div className="mt-2" style={{ maxHeight: "150px", overflowY: "auto" }}>
                 <ul className="mb-0">
                   {errorDetails.map((msg, idx) => (
                     <li key={idx}>{msg}</li>
@@ -102,9 +91,7 @@ const DepartmentImportView = ({
         <div className="text-center mb-3">
           <label htmlFor="upload-xlsx">
             <Button variant="primary" as="span" className="btnupload" disabled={loading}>
-              {selectedFile
-                ? t("department:reupload_xlsx")
-                : t("department:upload_xlsx")}
+              {selectedFile ? t("department:reupload_xlsx") : t("department:upload_xlsx")}
             </Button>
           </label>
 
@@ -117,7 +104,7 @@ const DepartmentImportView = ({
                 className="mt-2"
                 onClick={() => {
                   setSelectedFile(null);
-                  setError('');
+                  setError("");
                   setErrorDetails([]);
                 }}
                 disabled={loading}
@@ -134,10 +121,11 @@ const DepartmentImportView = ({
             type="button"
             onClick={downloadDepartmentTemplate}
             className="btn btn-link p-0 text-primary text-decoration-none btnfont"
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
             disabled={loading}
           >
-            {" "}XLSX
+            {" "}
+            XLSX
           </button>
         </div>
       </div>

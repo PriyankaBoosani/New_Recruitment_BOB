@@ -2,9 +2,9 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
+    "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
@@ -97,7 +97,7 @@ body {
   .main-content {
     margin-top: 91px;
     /* Height of the header on mobile */
-  
+
     margin-bottom: 35px;
   }
 
@@ -123,16 +123,14 @@ body {
   border-radius: 4px;
 }
 
-
-
 /* Dropdown menu styling */
 .navbar .dropdown-menu {
-	margin-top: 0;
-	border: 1px solid rgba(0, 0, 0, .15);
-	border-radius: 0 0 4px 4px;
-	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
-	font-size: 14px;
-	font-weight: 400;
+  margin-top: 0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  font-size: 14px;
+  font-weight: 400;
 }
 
 /* Dropdown items */
@@ -141,8 +139,8 @@ body {
 }
 
 /* Add a subtle separator between main nav items */
-.navbar-nav>li:not(:last-child) .nav-link::after {
-  content: '';
+.navbar-nav > li:not(:last-child) .nav-link::after {
+  content: "";
   position: absolute;
   right: -2px;
   top: 25%;
@@ -158,7 +156,7 @@ body {
     border-bottom: 1px solid #f0f0f0;
   }
 
-  .navbar-nav>li:not(:last-child) .nav-link::after {
+  .navbar-nav > li:not(:last-child) .nav-link::after {
     display: none;
   }
 
@@ -237,7 +235,7 @@ body {
   background: #fff;
   z-index: 10;
   font-size: 0.875rem;
-  color: #7B91B0;
+  color: #7b91b0;
   box-shadow: 0 -4px 12px #00000014;
   width: 100%;
 }
@@ -265,15 +263,14 @@ main {
   cursor: not-allowed;
 }
 
-
 .navbar-nav .nav-link.active {
-   font-weight: 500;     /* from first */
-  color: #162B75;       /* latest applied */
-  position: relative;   /* from second */
+  font-weight: 500; /* from first */
+  color: #162b75; /* latest applied */
+  position: relative; /* from second */
 }
 
-.navbar-nav .nav-link.active::after  {
-	background-color: #42579f;
+.navbar-nav .nav-link.active::after {
+  background-color: #42579f;
   bottom: -1px;
   content: "";
   height: 3px;
@@ -289,17 +286,18 @@ main {
   left: 0;
   position: absolute;
   width: 100%;
-    color: #42579f !important;
+  color: #42579f !important;
 }
 .dropdown-toggle::after {
   border-top: 0;
 }
 
 /* Admin dropdown active state */
-.nav-link.active, .active-admin > .nav-link {
-	position: relative;
-	color: #42579f;
-	font-weight: 500;
+.nav-link.active,
+.active-admin > .nav-link {
+  position: relative;
+  color: #42579f;
+  font-weight: 500;
 }
 
 .nav-link.active::before,
@@ -319,14 +317,12 @@ main {
   position: relative;
 }
 
-
 /* kill underline everywhere */
 
-
-.dropdown-item.active, .dropdown-item:active {
-	background-color: #42579f;
+.dropdown-item.active,
+.dropdown-item:active {
+  background-color: #42579f;
 }
-
 
 .fw-500 {
   font-weight: 500;
@@ -356,7 +352,7 @@ main {
 
 .approvals-dropdown .dropdown-item {
   background-color: white;
-  font-size: 1em;   /* 13px */
+  font-size: 1em; /* 13px */
   color: #333333;
   font-weight: 400;
 }
@@ -364,12 +360,11 @@ main {
 /* Active item (orange background) */
 .approvals-dropdown .dropdown-item.active,
 .approvals-dropdown .dropdown-item:active {
-  background-color: #42579F !important;
+  background-color: #42579f !important;
   color: #fff !important;
   font-size: 14px;
   font-weight: 400;
 }
-
 
 .bob-doc-table {
   width: 100%;
@@ -389,8 +384,6 @@ main {
 .bob-doc-table td:first-child,
 .bob-doc-table td:nth-child(3) {
   width: 40%;
-
-
 }
 
 .custom_checkbox .form-check-input {
@@ -411,7 +404,7 @@ main {
 }
 
 .custom-disabled-bg1 {
-  background-color: #f36f21  !important;
+  background-color: #f36f21 !important;
   color: #ffffff; /* optional for contrast */
   opacity: 0.5 !important;
   cursor: not-allowed !important;

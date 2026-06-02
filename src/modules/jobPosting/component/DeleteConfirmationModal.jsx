@@ -9,10 +9,9 @@ const DeleteConfirmationModal = ({
   title,
   message,
   itemLabel,
-  loading = false
-}) => 
-  {
-    const { t } = useTranslation(["importModal", "common"]);
+  loading = false,
+}) => {
+  const { t } = useTranslation(["importModal", "common"]);
   return (
     <Modal show={show} onHide={onClose} centered backdrop="static" className="modalimport">
       <Modal.Header closeButton>
@@ -22,19 +21,17 @@ const DeleteConfirmationModal = ({
       <Modal.Body className="text-center f14">
         <img src={pos_delete_icon} alt="delete" className="mb-3" style={{ width: 30 }} />
         <p className="mb-1"> {message || t("importModal:delete_message")}</p>
-        {itemLabel && (
-          <strong className="text-danger d-block wrap">{itemLabel}</strong>
-        )}
+        {itemLabel && <strong className="text-danger d-block wrap">{itemLabel}</strong>}
         <p className="text-muted mt-2"> {t("importModal:delete_cannot_undo")}</p>
       </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="outline-secondary" onClick={onClose} disabled={loading} className="f14" >
-         {t("common:cancel")}
+        <Button variant="outline-secondary" onClick={onClose} disabled={loading} className="f14">
+          {t("common:cancel")}
         </Button>
 
-        <Button variant="danger" onClick={onConfirm} disabled={loading} className="f14" >
-          {loading  ? t("importModal:deleting") : t("importModal:delete_button")}
+        <Button variant="danger" onClick={onConfirm} disabled={loading} className="f14">
+          {loading ? t("importModal:deleting") : t("importModal:delete_button")}
         </Button>
       </Modal.Footer>
     </Modal>

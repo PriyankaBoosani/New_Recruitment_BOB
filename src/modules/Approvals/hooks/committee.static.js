@@ -7,7 +7,7 @@ export const CommitteeRequestsData = [
     panelMembers: ["Veeresh V", "Vijay V", "Naresh P"],
     startDate: "05-01-2026",
     endDate: "05-01-2026",
-    status: "Approved"
+    status: "Approved",
   },
   {
     id: 2,
@@ -17,7 +17,7 @@ export const CommitteeRequestsData = [
     panelMembers: ["Sathvik P", "Satish J", "Barat T"],
     startDate: "12-01-2026",
     endDate: "21-01-2026",
-    status: "Pending"
+    status: "Pending",
   },
   {
     id: 3,
@@ -27,7 +27,7 @@ export const CommitteeRequestsData = [
     panelMembers: ["Saibaba B", "Prabhakar K", "Vijay"],
     startDate: "15-01-2026",
     endDate: "27-01-2026",
-    status: "Pending"
+    status: "Pending",
   },
   {
     id: 4,
@@ -37,7 +37,7 @@ export const CommitteeRequestsData = [
     panelMembers: ["Ramesh K", "Suresh M", "Ganesh P"],
     startDate: "10-01-2026",
     endDate: "15-01-2026",
-    status: "Approved"
+    status: "Approved",
   },
   {
     id: 5,
@@ -47,6 +47,6 @@ export const CommitteeRequestsData = [
     panelMembers: ["Priya S", "Kavya R", "Divya M"],
     startDate: "18-01-2026",
     endDate: "25-01-2026",
-    status: "Rejected"
-  }
+    status: "Rejected",
+  },
 ];

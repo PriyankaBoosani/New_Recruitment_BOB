@@ -11,7 +11,7 @@ const SendToOfferPoolModal = ({
   offerCandidateIds,
   onBulkOfferSuccess,
 }) => {
-  const { t } = useTranslation(["candidateWorkflow","common"]);
+  const { t } = useTranslation(["candidateWorkflow", "common"]);
   const fileInputRef = React.useRef(null);
   const [file, setFile] = React.useState(null);
 
@@ -35,13 +35,10 @@ const SendToOfferPoolModal = ({
     }
 
     try {
-      const res = await jobPositionApiService.downloadOfferPoolTemplate(
-        offerCandidateIds
-      );
+      const res = await jobPositionApiService.downloadOfferPoolTemplate(offerCandidateIds);
 
       const blob = new Blob([res.data], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
 
       const url = window.URL.createObjectURL(blob);
@@ -106,9 +103,7 @@ const SendToOfferPoolModal = ({
     >
       <Modal.Header closeButton className="modalhead">
         <div className="d-grid">
-          <h5 className="mb-1 blue-color fs-15">
-           {t("candidateWorkflow:send_to_offer_pool")}
-          </h5>
+          <h5 className="mb-1 blue-color fs-15">{t("candidateWorkflow:send_to_offer_pool")}</h5>
           <p className="text-muted fs-14 mb-0">
             {t("candidateWorkflow:upload_offer_details_for_candidates")}
           </p>
@@ -116,15 +111,10 @@ const SendToOfferPoolModal = ({
       </Modal.Header>
 
       <Modal.Body>
-        <div
-          className="text-center px-3 pt-3 pb-2 rounded"
-          style={{ backgroundColor: "#FFF1E8" }}
-        >
+        <div className="text-center px-3 pt-3 pb-2 rounded" style={{ backgroundColor: "#FFF1E8" }}>
           <img src={fileIcon} width={60} className="mb-2" />
           <p className="mb-1 fw-600 fs-15">{t("candidateWorkflow:upload_file")}</p>
-          <small className="text-muted fs-13">
-            {t("candidateWorkflow:support_xlsx_format")}
-          </small>
+          <small className="text-muted fs-13">{t("candidateWorkflow:support_xlsx_format")}</small>
 
           <div className="d-grid justify-content-center gap-2 mt-3">
             <button
@@ -147,9 +137,7 @@ const SendToOfferPoolModal = ({
           </div>
 
           <div className="d-flex align-items-center gap-1 justify-content-center mt-4">
-            <small className="text-muted fs-12">
-              {t("candidateWorkflow:download_template")}:
-            </small>
+            <small className="text-muted fs-12">{t("candidateWorkflow:download_template")}:</small>
             <p
               className="blue-color cursor-pointer mb-0 fs-15 fw-500"
               onClick={handleDownloadTemplate}
@@ -181,7 +169,7 @@ const SendToOfferPoolModal = ({
           onClick={handleBulkUpload}
           disabled={!file}
         >
-         {t("candidateWorkflow:import")}
+          {t("candidateWorkflow:import")}
         </button>
       </Modal.Footer>
     </Modal>

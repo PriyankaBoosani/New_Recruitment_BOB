@@ -21,16 +21,16 @@ const MASTER_DROPDOWN_URL = process.env.REACT_APP_MASTER_DROPDOWN_URL;
 --------------------------- */
 let isRefreshing = false;
 let refreshSubscribers = [];
- 
+
 const subscribeTokenRefresh = (cb) => {
   refreshSubscribers.push(cb);
 };
- 
+
 const onRefreshed = () => {
   refreshSubscribers.forEach((cb) => cb());
   refreshSubscribers = [];
 };
- 
+
 /* ---------------------------
    Refresh API (no interceptors)
 --------------------------- */
@@ -62,7 +62,6 @@ async function getToken() {
     });
 
     return response.accessToken;
-
   } catch (error) {
     console.error("Token acquisition failed", error);
 
@@ -102,35 +101,35 @@ const redirectToLogin = () => {
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-  "Content-Type": "application/json",
-  //"ngrok-skip-browser-warning": "true"
-}
+    "Content-Type": "application/json",
+    //"ngrok-skip-browser-warning": "true"
+  },
 });
 
 const formDataApi = axios.create({
   baseURL: API_BASE_URL,
-  headers: { "Content-Type": "multipart/form-data" }
+  headers: { "Content-Type": "multipart/form-data" },
 });
 
 const apis = axios.create({
   baseURL: API_BASE_URLS,
-  headers: { "Content-Type": "application/json" }
+  headers: { "Content-Type": "application/json" },
 });
 
 const candidateApi = axios.create({
   baseURL: CANDIDATE_API_URL,
-  headers: { "Content-Type": "application/json" }
+  headers: { "Content-Type": "application/json" },
 });
 
 const nodeApi = axios.create({
   baseURL: NODE_API_URL,
   headers: { "Content-Type": "application/json" },
-  withCredentials: true
+  withCredentials: true,
 });
 
 const masterDropdownApi = axios.create({
   baseURL: MASTER_DROPDOWN_URL,
-  headers: { "Content-Type": "application/json" }
+  headers: { "Content-Type": "application/json" },
 });
 
 /* ---------------------------
@@ -176,8 +175,8 @@ const attachInterceptors = (instance) => {
       }
 
       if (error.response && error.response.status < 500) {
-       // return Promise.resolve(error.response.data);
-       return error.response.data;
+        // return Promise.resolve(error.response.data);
+        return error.response.data;
       }
 
       throw error;
@@ -197,20 +196,15 @@ attachInterceptors(nodeApi);
 masterDropdownApi.interceptors.request.use(addAuthHeader);
 masterDropdownApi.interceptors.response.use(
   (res) => res.data,
-  (err) => { throw err; }
+  (err) => {
+    throw err;
+  }
 );
 
 /* ---------------------------
    Exports
 --------------------------- */
-export {
-  api,
-  formDataApi,
-  apis,
-  candidateApi,
-  nodeApi,
-  masterDropdownApi
-};
+export { api, formDataApi, apis, candidateApi, nodeApi, masterDropdownApi };
 
 export default {
   api,
@@ -218,5 +212,5 @@ export default {
   apis,
   candidateApi,
   nodeApi,
-  masterDropdownApi
+  masterDropdownApi,
 };

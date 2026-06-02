@@ -1,30 +1,25 @@
-import React, { useState } from 'react';
-import { Container, Form, Button } from 'react-bootstrap';
-import { Search, Plus } from 'react-bootstrap-icons';
+import React, { useState } from "react";
+import { Container, Form, Button } from "react-bootstrap";
+import { Search, Plus } from "react-bootstrap-icons";
 import { useTranslation } from "react-i18next";
 
-import { useSpecialCategories } from './hooks/useSpecialCategories';
-import SpecialCategoryTable from './components/SpecialCategoryTable';
-import SpecialCategoryFormModal from './components/SpecialCategoryFormModal';
-import DeleteConfirmModal from './components/DeleteConfirmModal';
-import '../../../../style/css/user.css';
+import { useSpecialCategories } from "./hooks/useSpecialCategories";
+import SpecialCategoryTable from "./components/SpecialCategoryTable";
+import SpecialCategoryFormModal from "./components/SpecialCategoryFormModal";
+import DeleteConfirmModal from "./components/DeleteConfirmModal";
+import "../../../../style/css/user.css";
 
 import { validateSpecialCategoryForm } from "../../../../shared/utils/specialcategory-validations";
-import { mapSpecialCategoryToApi } from './mappers/specialCategoryMapper';
+import { mapSpecialCategoryToApi } from "./mappers/specialCategoryMapper";
 
 const SpecialCategoryPage = () => {
   const { t } = useTranslation(["specialCategory"]);
 
-  const {
-    categories,
-    fetchCategories,
-    addCategory,
-    updateCategory,
-    deleteCategory
-  } = useSpecialCategories();
+  const { categories, fetchCategories, addCategory, updateCategory, deleteCategory } =
+    useSpecialCategories();
 
   // UI states
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const [showModal, setShowModal] = useState(false);
@@ -32,19 +27,17 @@ const SpecialCategoryPage = () => {
   const [editingId, setEditingId] = useState(null);
   const [isViewing, setIsViewing] = useState(false);
 
-
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const [activeTab, setActiveTab] = useState('manual');
+  const [activeTab, setActiveTab] = useState("manual");
   const [formData, setFormData] = useState({
-    code: '',
-    name: '',
-    description: ''
+    code: "",
+    name: "",
+    description: "",
   });
   const [errors, setErrors] = useState({});
   const [itemsPerPage, setItemsPerPage] = useState(5);
-
 
   const openView = (row) => {
     setIsViewing(true);
@@ -52,13 +45,13 @@ const SpecialCategoryPage = () => {
     setEditingId(null);
 
     setFormData({
-      code: row.code || '',
-      name: row.name || '',
-      description: row.description || ''
+      code: row.code || "",
+      name: row.name || "",
+      description: row.description || "",
     });
 
     setErrors({});
-    setActiveTab('manual');
+    setActiveTab("manual");
     setShowModal(true);
   };
   /* ===================== ADD ====================== */
@@ -66,9 +59,9 @@ const SpecialCategoryPage = () => {
     setIsViewing(false);
     setIsEditing(false);
     setEditingId(null);
-    setFormData({ code: '', name: '', description: '' });
+    setFormData({ code: "", name: "", description: "" });
     setErrors({});
-    setActiveTab('manual');
+    setActiveTab("manual");
     setShowModal(true);
   };
 
@@ -79,13 +72,13 @@ const SpecialCategoryPage = () => {
     setEditingId(row.id);
 
     setFormData({
-      code: row.code || '',
-      name: row.name || '',
-      description: row.description || ''
+      code: row.code || "",
+      name: row.name || "",
+      description: row.description || "",
     });
 
     setErrors({});
-    setActiveTab('manual');
+    setActiveTab("manual");
     setShowModal(true);
   };
 
@@ -93,11 +86,10 @@ const SpecialCategoryPage = () => {
   const handleSave = (e) => {
     e.preventDefault();
 
-    const { valid, errors: vErrors } =
-      validateSpecialCategoryForm(formData, {
-        existing: categories,
-        currentId: isEditing ? editingId : null
-      });
+    const { valid, errors: vErrors } = validateSpecialCategoryForm(formData, {
+      existing: categories,
+      currentId: isEditing ? editingId : null,
+    });
 
     if (!valid) {
       setErrors(vErrors);
@@ -106,10 +98,7 @@ const SpecialCategoryPage = () => {
 
     setErrors({});
 
-    const payload = mapSpecialCategoryToApi(
-      formData,
-      { id: editingId }
-    );
+    const payload = mapSpecialCategoryToApi(formData, { id: editingId });
 
     if (isEditing) {
       //  EDIT → update existing row
@@ -122,7 +111,6 @@ const SpecialCategoryPage = () => {
     setShowModal(false);
   };
   /* ===================== IMPORT ====================== */
-  
 
   return (
     <Container fluid className="user-container">
@@ -179,7 +167,7 @@ const SpecialCategoryPage = () => {
         t={t}
         //  ADD THIS
         onSuccess={() => {
-          fetchCategories();     // refresh list immediately
+          fetchCategories(); // refresh list immediately
           setShowModal(false); // ensure modal closes
         }}
       />

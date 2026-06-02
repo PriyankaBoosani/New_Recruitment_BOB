@@ -35,18 +35,18 @@
   display: flex;
   gap: 18px;
   font-size: 12px;
-  color: #162B75;
+  color: #162b75;
 }
 
 .req-dates i {
-  color: #162B75;
+  color: #162b75;
   font-size: 12px;
 }
 
 .req-title {
   font-size: 14px;
   font-weight: 600;
-  color: #162B75;
+  color: #162b75;
 }
 
 /* RIGHT SIDE */
@@ -57,8 +57,8 @@
 
 .btn-view-position {
   background: #ffffff;
-  color: #162B75;
-  border: 1px solid #162B75;
+  color: #162b75;
+  border: 1px solid #162b75;
   border-radius: 6px;
   padding: 6px 14px;
   font-size: 13px;
@@ -67,11 +67,9 @@
 }
 
 .btn-view-position:hover {
-  background: #162B75;
+  background: #162b75;
   color: #ffffff;
 }
-
-
 
 .req-position-wrapper {
   display: flex;
@@ -131,7 +129,6 @@
   white-space: nowrap;
 }
 
-
 .req-position-readonly {
   pointer-events: none;
 }
@@ -139,4 +136,3 @@
 .req-position-readonly .req-position-close {
   display: none !important;
 }
-

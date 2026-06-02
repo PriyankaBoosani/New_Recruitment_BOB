@@ -15,7 +15,7 @@ export const useUpdateJobPosition = () => {
 
       const res = await jobPositionApiService.updatePosition({
         dto,
-        indentFile: payload.indentFile
+        indentFile: payload.indentFile,
       });
 
       //  MATCH ACTUAL RESPONSE SHAPE

@@ -13,8 +13,11 @@ import masterApiService from "../../master/services/masterApiService";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck, faCircleExclamation, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
-
+import {
+  faCircleCheck,
+  faCircleExclamation,
+  faCircleXmark,
+} from "@fortawesome/free-solid-svg-icons";
 
 const ApplicationForm = ({
   previewData,
@@ -38,9 +41,8 @@ const ApplicationForm = ({
   isFromInterview,
   isFromCompensationPool,
   page,
-  pageSize
+  pageSize,
 }) => {
-
   const { t } = useTranslation(["preview", "common", "validation"]);
 
   const navigate = useNavigate();
@@ -51,11 +53,7 @@ const ApplicationForm = ({
   const candidate = location.state?.candidate;
 
   const zonalInitRef = useRef(true);
-  const isZonalAbsent =
-    String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
-
-
-
+  const isZonalAbsent = String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
 
   const deriveShortlistStatus = () => {
     const values = [
@@ -64,14 +62,13 @@ const ApplicationForm = ({
       screeningForm.isEducationCriteriaMet,
     ];
 
-    if (values.includes("NO")) return "NO";                  // Highest priority
-    if (values.includes("DISCREPANCY")) return "DEFAULT";    // Second priority
-    if (values.every(v => v === "YES")) return "YES";        // All YES
+    if (values.includes("NO")) return "NO"; // Highest priority
+    if (values.includes("DISCREPANCY")) return "DEFAULT"; // Second priority
+    if (values.every((v) => v === "YES")) return "YES"; // All YES
     return "";
   };
 
-  useEffect(() => {
-  }, [candidate]);
+  useEffect(() => {}, [candidate]);
 
   const [screeningForm, setScreeningForm] = useState({
     applicationId,
@@ -95,10 +92,9 @@ const ApplicationForm = ({
   const [screeningDocuments, setScreeningDocuments] = useState([]);
 
   const formatLocation = (a, b) => {
-    const values = [a, b].filter(v => v && v !== "-");
+    const values = [a, b].filter((v) => v && v !== "-");
     return values.length ? values.join(", ") : "-";
   };
-
 
   const [screeningRemarks, setScreeningRemarks] = useState("");
 
@@ -106,7 +102,6 @@ const ApplicationForm = ({
   const role = user?.role?.toLowerCase();
   // const isZonalHr = role === "zonal_hr";
   // const isInterviewer = role === "interviewer";
-
 
   const privileges = useSelector((state) => state.user.privileges);
 
@@ -116,9 +111,10 @@ const ApplicationForm = ({
   const canCandidatePool = privileges?.["Candidate Pool"];
   const canInterviewPool = privileges?.["Interview Pool"];
 
-
   const mapDecisionToStatus = (val) => {
-    const v = String(val || "").toUpperCase().trim();
+    const v = String(val || "")
+      .toUpperCase()
+      .trim();
 
     if (v === "YES") return "VERIFIED";
     if (v === "NO") return "REJECTED";
@@ -129,7 +125,9 @@ const ApplicationForm = ({
   };
 
   const mapStatusToDecision = (status) => {
-    const s = String(status || "").toUpperCase().trim();
+    const s = String(status || "")
+      .toUpperCase()
+      .trim();
 
     if (s === "VERIFIED") return "YES";
     if (s === "REJECTED" || s === "ZONAL_REJECTED") return "NO";
@@ -145,36 +143,27 @@ const ApplicationForm = ({
     }
 
     if (zonalSubmitBeforeDate) {
-      setScreeningForm(prev => ({
+      setScreeningForm((prev) => ({
         ...prev,
-        zonalSubmitDate: zonalSubmitBeforeDate.split("T")[0] // safe for input[type=date]
+        zonalSubmitDate: zonalSubmitBeforeDate.split("T")[0], // safe for input[type=date]
       }));
     }
 
     if (zonalHrComments) {
       setScreeningRemarks(zonalHrComments);
     }
-
-  }, [
-    zonalVerificationStatus,
-    zonalSubmitBeforeDate,
-    zonalHrComments,
-    isZonalHr
-  ]);
-
+  }, [zonalVerificationStatus, zonalSubmitBeforeDate, zonalHrComments, isZonalHr]);
 
   const handleZonalSubmit = async () => {
-
     // -----------------------------------------
     // Helper Conditions
     // -----------------------------------------
-    const allVerified = areAllDocumentsVerified();   // returns true/false
-    const anyRejected = hasAnyRejectedDocument();    // returns true/false
-    const hasPendingDocument = documentRows.some(doc => {
+    const allVerified = areAllDocumentsVerified(); // returns true/false
+    const anyRejected = hasAnyRejectedDocument(); // returns true/false
+    const hasPendingDocument = documentRows.some((doc) => {
       const status = docStatusMap[doc.candidateDocumentId]?.status;
       return !status || status === "PENDING";
     });
-
 
     // -----------------------------------------
     // 1️⃣ Decision not selected
@@ -202,9 +191,9 @@ const ApplicationForm = ({
     // 🔴 Comments mandatory when decision = NO
     if (zonalDecision === "NO") {
       if (!screeningRemarks?.trim()) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          zonalComments: t("validation:required")
+          zonalComments: t("validation:required"),
           // zonalComments: "This field is required"
         }));
         return;
@@ -218,9 +207,7 @@ const ApplicationForm = ({
       // toast.warning(
       //   "All documents are verified. Please select other decision instead."
       // );
-      toast.warning(
-        t("all_documents_verified_select_other")
-      );
+      toast.warning(t("all_documents_verified_select_other"));
       return;
     }
 
@@ -231,9 +218,7 @@ const ApplicationForm = ({
       // toast.error(
       //   "Cannot approve. One or more documents are rejected."
       // );
-      toast.error(
-        t("cannot_approve_documents_rejected")
-      );
+      toast.error(t("cannot_approve_documents_rejected"));
       return;
     }
 
@@ -241,9 +226,7 @@ const ApplicationForm = ({
     // 4️⃣ Decision = PROVISIONAL but all VERIFIED
     // -----------------------------------------
     if (zonalDecision === "PROVISIONALLY_APPROVED" && allVerified) {
-      toast.warning(
-        "All documents are verified. Please select other decision instead."
-      );
+      toast.warning("All documents are verified. Please select other decision instead.");
       return;
     }
 
@@ -251,23 +234,22 @@ const ApplicationForm = ({
     // 5️⃣ PROVISIONAL requires future date
     // -----------------------------------------
     if (zonalDecision === "PROVISIONALLY_APPROVED") {
-
       let hasError = false;
 
       // 🔴 Comments mandatory
       if (!screeningRemarks?.trim()) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          zonalComments: "This field is required"
+          zonalComments: "This field is required",
         }));
         hasError = true;
       }
 
       // 🔴 Date mandatory
       if (!screeningForm.zonalSubmitDate) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          zonalSubmitDate: "This field is required"
+          zonalSubmitDate: "This field is required",
         }));
         hasError = true;
       } else {
@@ -276,10 +258,10 @@ const ApplicationForm = ({
         today.setHours(0, 0, 0, 0);
 
         if (selected <= today) {
-          setErrors(prev => ({
+          setErrors((prev) => ({
             ...prev,
             // zonalSubmitDate: "Must be future date"
-            zonalSubmitDate: t("must_be_future_date")
+            zonalSubmitDate: t("must_be_future_date"),
           }));
           hasError = true;
         }
@@ -288,8 +270,6 @@ const ApplicationForm = ({
       if (hasError) return;
     }
 
-
-
     // -----------------------------------------
     // 6️⃣ Show Loading Toast
     // -----------------------------------------
@@ -297,14 +277,13 @@ const ApplicationForm = ({
     const toastId = toast.loading(t("submitting_zonal_verification"));
 
     try {
-
       const payload = {
         candidateId,
         applicationId,
         interviewScheduleId,
         zonalVerificationStatus: mapDecisionToStatus(zonalDecision),
         zonalSubmitBeforeDate: screeningForm.zonalSubmitDate || null,
-        zonalHrComments: screeningRemarks || ""
+        zonalHrComments: screeningRemarks || "",
       };
 
       await jobPositionApiService.submitOverallZonalVerification(payload);
@@ -330,12 +309,10 @@ const ApplicationForm = ({
           preloadedCandidates: location.state?.candidates || [],
           selectedDate,
           page: page,
-          pageSize: pageSize
-        }
+          pageSize: pageSize,
+        },
       });
-     
     } catch (err) {
-
       // -----------------------------------------
       // 8️⃣ Error Toast
       // -----------------------------------------
@@ -351,56 +328,45 @@ const ApplicationForm = ({
     }
   };
 
-
-
-
-
-
-
-
-
   const data = previewData || {
     personalDetails: {},
     experienceSummary: {},
     documents: {},
     education: [],
-    experience: []
+    experience: [],
   };
   const CRITERIA_OPTIONS = ["YES", "NO", "DISCREPANCY"];
 
   const documentRows = [
-    ...(screeningDocuments.length > 0 ? screeningDocuments : data.documents?.allDocs || [])
-  ].map(doc => ({
+    ...(screeningDocuments.length > 0 ? screeningDocuments : data.documents?.allDocs || []),
+  ].map((doc) => ({
     ...doc,
-    candidateDocumentId: doc.candidateDocumentId ?? doc.id
+    candidateDocumentId: doc.candidateDocumentId ?? doc.id,
   }));
 
-  const [photo, setPhoto] = useState()
-  const [signature, setSignature] = useState()
+  const [photo, setPhoto] = useState();
+  const [signature, setSignature] = useState();
 
   const allDocs = screeningDocuments.length > 0 ? screeningDocuments : data.documents.allDocs;
-  console.log(screeningDocuments)
-  console.log(data.documents.allDocs)
+  console.log(screeningDocuments);
+  console.log(data.documents.allDocs);
 
-  const photoDoc = allDocs.find(doc => doc.name === "Photo");
-  const signatureDoc = allDocs.find(doc => doc.name === "Signature");
-  const birthDoc = allDocs.find(doc => doc.name === "Birth Certificate");
-  const tenthDoc = allDocs.find(doc => doc.name === "10th Certificate");
+  const photoDoc = allDocs.find((doc) => doc.name === "Photo");
+  const signatureDoc = allDocs.find((doc) => doc.name === "Signature");
+  const birthDoc = allDocs.find((doc) => doc.name === "Birth Certificate");
+  const tenthDoc = allDocs.find((doc) => doc.name === "10th Certificate");
 
   const photoUrl = photoDoc?.url || "";
   const signatureUrl = signatureDoc?.url || "";
 
-  const normalizeCriteria = (val) => val === "DEFAULT" ? "" : val ?? "";
+  const normalizeCriteria = (val) => (val === "DEFAULT" ? "" : (val ?? ""));
 
   useEffect(() => {
     if (!photoUrl) return;
 
     const fetchPhoto = async () => {
       try {
-        const res = await masterApiService.getAzureBlobSasUrl(
-          photoUrl,
-          "candidate"
-        );
+        const res = await masterApiService.getAzureBlobSasUrl(photoUrl, "candidate");
 
         const trimmedUrl = res.trim();
 
@@ -418,10 +384,7 @@ const ApplicationForm = ({
 
     const fetchPhoto = async () => {
       try {
-        const res = await masterApiService.getAzureBlobSasUrl(
-          signatureUrl,
-          "candidate"
-        );
+        const res = await masterApiService.getAzureBlobSasUrl(signatureUrl, "candidate");
 
         const trimmedUrl = res.trim();
 
@@ -446,12 +409,6 @@ const ApplicationForm = ({
   //   documentRows.length > 0 &&
   //   areAllDocumentsValidated();
 
-
-
-
-
-
-
   const refreshDocStatuses = async () => {
     try {
       setDocStatusLoading(true);
@@ -468,7 +425,6 @@ const ApplicationForm = ({
       const documents = [];
 
       (res.data || []).forEach((item) => {
-
         //   const isZonal = isZonalHr;
         //  const status =
         //   item.zonalHrDocStatus &&
@@ -486,21 +442,15 @@ const ApplicationForm = ({
         //       : item.docScreeningStatus || "PENDING")
         //     : item.docScreeningStatus || "PENDING";
 
-
         const status = isZonalHr
           ? item.zonalHrDocStatus || "PENDING"
-
-          : isFromCompensationPool   //  ADD THIS
+          : isFromCompensationPool //  ADD THIS
             ? item.zonalHrDocStatus || "PENDING"
-
-            : (isInterviewer || isInterviewView)
-              ? (item.zonalHrDocStatus || "PENDING")   //  ONLY ZONAL
+            : isInterviewer || isInterviewView
+              ? item.zonalHrDocStatus || "PENDING" //  ONLY ZONAL
               : item.docScreeningStatus || "PENDING";
 
-
-        const comments = isZonal
-          ? item.zonalHrDocComments
-          : item.docScreeningComments;
+        const comments = isZonal ? item.zonalHrDocComments : item.docScreeningComments;
 
         map[item.candidateDocumentId] = {
           status: status?.toUpperCase() || "PENDING",
@@ -516,22 +466,18 @@ const ApplicationForm = ({
           url: item.fileUrl,
           status: status?.toUpperCase() || "PENDING",
           isValidationPending: item.isValidationPending,
-          pendingChecks: item.pendingChecks || []
+          pendingChecks: item.pendingChecks || [],
         });
-
       });
 
       setDocStatusMap(map);
       setScreeningDocuments(documents);
-
     } catch (e) {
       console.error(t("failed_fetch_document_status"), e);
     } finally {
       setDocStatusLoading(false);
     }
   };
-
-
 
   // const refreshDocStatuses = async () => {
   //   try {
@@ -563,16 +509,13 @@ const ApplicationForm = ({
 
     const fetchDiscrepancyDetails = async () => {
       try {
-        const res =
-          await jobPositionApiService.getCandidateDiscrepancyDetails(
-            applicationId
-          );
+        const res = await jobPositionApiService.getCandidateDiscrepancyDetails(applicationId);
 
         const data = res?.data;
 
         if (!data) return; // no record → fresh form
 
-        setScreeningForm(prev => ({
+        setScreeningForm((prev) => ({
           ...prev,
           applicationId,
           candidateId,
@@ -604,7 +547,7 @@ const ApplicationForm = ({
   }, [applicationId]);
 
   useEffect(() => {
-    setScreeningForm(prev => ({
+    setScreeningForm((prev) => ({
       ...prev,
       applicationId,
       candidateId,
@@ -647,7 +590,7 @@ const ApplicationForm = ({
   // };
 
   const handleRadioChange = (field, value) => {
-    setScreeningForm(prev => {
+    setScreeningForm((prev) => {
       const updated = {
         ...prev,
         [field]: value,
@@ -661,7 +604,7 @@ const ApplicationForm = ({
       return updated;
     });
 
-    setErrors(prev => {
+    setErrors((prev) => {
       const updated = { ...prev };
 
       delete updated[field];
@@ -694,7 +637,7 @@ const ApplicationForm = ({
   // };
 
   const handleInputChange = (field, value) => {
-    setScreeningForm(prev => {
+    setScreeningForm((prev) => {
       const updated = {
         ...prev,
         [field]: value,
@@ -708,7 +651,7 @@ const ApplicationForm = ({
       return updated;
     });
 
-    setErrors(prev => {
+    setErrors((prev) => {
       const updated = { ...prev };
 
       delete updated[field];
@@ -725,20 +668,16 @@ const ApplicationForm = ({
     if (!selectedDoc) return;
 
     try {
-
       if (isZonalHr) {
-
         await jobPositionApiService.verifyZonalDocument({
           candidateDocumentId: selectedDoc.candidateDocumentId,
           candidateId,
           applicationId,
           zonalHrDocStatus: "VERIFIED",
           // zonalHrDocComments: comment || ""
-          zonalHrDocComments: ""
+          zonalHrDocComments: "",
         });
-
       } else {
-
         // 🔹 DO NOT TOUCH — existing flow
         await jobPositionApiService.saveScreeningDecision({
           candidateDocumentId: selectedDoc.candidateDocumentId,
@@ -748,36 +687,29 @@ const ApplicationForm = ({
           docScreeningComments: comment || "",
           verificationId: selectedDoc.verificationId,
         });
-
       }
 
       setShowViewer(false);
       setSelectedDoc(null);
       await refreshDocStatuses();
-
     } catch (err) {
       console.error(t("reject_failed"), err);
     }
   };
 
-
   const handleReject = async (comment) => {
     if (!selectedDoc) return;
 
     try {
-
       if (isZonalHr) {
-
         await jobPositionApiService.verifyZonalDocument({
           candidateDocumentId: selectedDoc.candidateDocumentId,
           candidateId,
           applicationId,
           zonalHrDocStatus: "REJECTED",
-          zonalHrDocComments: comment || ""
+          zonalHrDocComments: comment || "",
         });
-
       } else {
-
         // 🔹 existing screening API — untouched
         await jobPositionApiService.saveScreeningDecision({
           candidateDocumentId: selectedDoc.candidateDocumentId,
@@ -787,13 +719,11 @@ const ApplicationForm = ({
           docScreeningComments: comment || "",
           verificationId: selectedDoc.verificationId,
         });
-
       }
 
       setShowViewer(false);
       setSelectedDoc(null);
       await refreshDocStatuses();
-
     } catch (err) {
       console.error("Reject failed", err);
     }
@@ -803,8 +733,6 @@ const ApplicationForm = ({
     screeningForm.isWorkCriteriaMet === "DISCREPANCY" ||
     screeningForm.isAgeCriteriaMet === "DISCREPANCY" ||
     screeningForm.isEducationCriteriaMet === "DISCREPANCY";
-
-
 
   const validateForm = () => {
     const newErrors = {};
@@ -863,9 +791,7 @@ const ApplicationForm = ({
         screeningForm.isEducationCriteriaMet === "YES";
 
       if (allYes) {
-        toast.error(
-          "All criteria cannot be YES when any document is REJECTED"
-        );
+        toast.error("All criteria cannot be YES when any document is REJECTED");
         return false;
       }
     }
@@ -906,9 +832,8 @@ const ApplicationForm = ({
   };
 
   const areAllDocumentsValidated = () => {
-    return documentRows.every(doc => {
-      const status =
-        docStatusMap[doc.candidateDocumentId]?.status;
+    return documentRows.every((doc) => {
+      const status = docStatusMap[doc.candidateDocumentId]?.status;
 
       return status === "VERIFIED" || status === "REJECTED";
     });
@@ -916,16 +841,13 @@ const ApplicationForm = ({
 
   const disableDocAction = isInterviewView || isFromInterview;
 
-  const allDocsVerified =
-    documentRows.length > 0 &&
-    areAllDocumentsValidated();
-
+  const allDocsVerified = documentRows.length > 0 && areAllDocumentsValidated();
 
   const areAllDocumentsVerified = () => {
     if (!documentRows.length) return false;
     if (docStatusLoading) return false;
 
-    return documentRows.every(doc => {
+    return documentRows.every((doc) => {
       const status = docStatusMap[doc.candidateDocumentId]?.status;
       return status === "VERIFIED";
     });
@@ -940,7 +862,7 @@ const ApplicationForm = ({
   };
 
   const hasAnyRejectedDocument = () => {
-    return documentRows.some(doc => {
+    return documentRows.some((doc) => {
       const status = docStatusMap[doc.candidateDocumentId]?.status;
       return status === "REJECTED";
     });
@@ -951,7 +873,7 @@ const ApplicationForm = ({
       screeningForm.isWorkCriteriaMet,
       screeningForm.isAgeCriteriaMet,
       screeningForm.isEducationCriteriaMet,
-    ].filter(v => v === "YES").length;
+    ].filter((v) => v === "YES").length;
   };
 
   const baseDerived = deriveShortlistStatus();
@@ -962,8 +884,7 @@ const ApplicationForm = ({
     screeningForm.isAgeCriteriaMet &&
     screeningForm.isEducationCriteriaMet;
 
-  const disableShortlistedSection =
-    !areAllCriteriaSelected || baseDerived === "DEFAULT";
+  const disableShortlistedSection = !areAllCriteriaSelected || baseDerived === "DEFAULT";
 
   // const disableYesOption =
   //   disableShortlistedSection || derivedShortlist === "NO";
@@ -976,8 +897,6 @@ const ApplicationForm = ({
   const disableNoOption = disableShortlistedSection;
 
   const handleFinalSubmit = async () => {
-
-
     if (!areAllDocumentsValidated()) {
       // toast.error("Please validate all documents");
       toast.error(t("please_validate_all_documents"));
@@ -987,7 +906,6 @@ const ApplicationForm = ({
     const isValid = validateForm();
     if (!isValid) return;
 
-
     const derivedShortlist = deriveShortlistStatus();
 
     const payload = {
@@ -996,21 +914,20 @@ const ApplicationForm = ({
       isScreeningCompleted: true,
     };
 
-
     try {
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
       // toast.success("Screening submitted successfully");
       toast.success(t("screening_submitted_success"));
       console.log("SENDING POSITION IDS:", {
         positionIds,
-        positionId
+        positionId,
       });
       navigate("/candidate-workflow", {
         state: {
           requisitionId,
 
           positionIds: Array.isArray(positionIds)
-            ? positionIds.map(item => item.positionId)
+            ? positionIds.map((item) => item.positionId)
             : positionId
               ? [positionId]
               : [],
@@ -1033,7 +950,6 @@ const ApplicationForm = ({
   const minDate = getTomorrowDate();
   const minFutureDate = minDate;
 
-
   const handleDateChange = (e) => {
     let value = e.target.value;
 
@@ -1043,21 +959,20 @@ const ApplicationForm = ({
     }
 
     // Always update state so typing doesn't feel broken
-    setScreeningForm(prev => ({
+    setScreeningForm((prev) => ({
       ...prev,
       submitBeforeDate: value,
     }));
 
     // Clear error while typing
-    setErrors(prev => ({ ...prev, submitBeforeDate: undefined }));
-
+    setErrors((prev) => ({ ...prev, submitBeforeDate: undefined }));
 
     if (value.length < 10) return;
 
     // Enforce exact YYYY-MM-DD
     const strictDateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!strictDateRegex.test(value)) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         submitBeforeDate: t("invalid_date"),
       }));
@@ -1068,9 +983,8 @@ const ApplicationForm = ({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-
     if (selectedDate <= today) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         submitBeforeDate: t("date_after_today"),
       }));
@@ -1080,25 +994,22 @@ const ApplicationForm = ({
   useEffect(() => {
     if (!disableShortlistedSection || hasAnyDiscrepancy) return;
     if (screeningForm.isScreeningCompleted) return;
-    setScreeningForm(prev => ({
+    setScreeningForm((prev) => ({
       ...prev,
       submitBeforeDate: "",
     }));
 
-    setErrors(prev => ({
+    setErrors((prev) => ({
       ...prev,
       submitBeforeDate: undefined,
     }));
-
   }, [disableShortlistedSection, screeningForm.isScreeningCompleted, hasAnyDiscrepancy]);
 
   useEffect(() => {
     const derived = deriveShortlistStatus();
 
-
-
     if (derived === "DEFAULT") {
-      setScreeningForm(prev => {
+      setScreeningForm((prev) => {
         if (prev.isScreeningCompleted) return prev;
 
         return {
@@ -1108,30 +1019,31 @@ const ApplicationForm = ({
         };
       });
 
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         finalScreeningRemark: undefined,
         submitBeforeDate: undefined,
         isShortlisted: undefined,
       }));
     }
-
   }, [
     screeningForm.isWorkCriteriaMet,
     screeningForm.isAgeCriteriaMet,
-    screeningForm.isEducationCriteriaMet
+    screeningForm.isEducationCriteriaMet,
   ]);
 
   useEffect(() => {
     if (!areAllCriteriaYes() && screeningForm.isShortlisted === "YES") {
-      setScreeningForm(prev => ({
+      setScreeningForm((prev) => ({
         ...prev,
-        isShortlisted: ""
+        isShortlisted: "",
       }));
     }
-  }, [screeningForm.isWorkCriteriaMet,
-  screeningForm.isAgeCriteriaMet,
-  screeningForm.isEducationCriteriaMet]);
+  }, [
+    screeningForm.isWorkCriteriaMet,
+    screeningForm.isAgeCriteriaMet,
+    screeningForm.isEducationCriteriaMet,
+  ]);
 
   const allDocsAreVerified = areAllDocumentsVerified();
 
@@ -1143,19 +1055,14 @@ const ApplicationForm = ({
   useEffect(() => {
     if (!allDocsAreVerified) return;
 
-    setScreeningForm(prev => ({
+    setScreeningForm((prev) => ({
       ...prev,
-      isWorkCriteriaMet:
-        prev.isWorkCriteriaMet === "DISCREPANCY" ? "" : prev.isWorkCriteriaMet,
-      isAgeCriteriaMet:
-        prev.isAgeCriteriaMet === "DISCREPANCY" ? "" : prev.isAgeCriteriaMet,
+      isWorkCriteriaMet: prev.isWorkCriteriaMet === "DISCREPANCY" ? "" : prev.isWorkCriteriaMet,
+      isAgeCriteriaMet: prev.isAgeCriteriaMet === "DISCREPANCY" ? "" : prev.isAgeCriteriaMet,
       isEducationCriteriaMet:
         prev.isEducationCriteriaMet === "DISCREPANCY" ? "" : prev.isEducationCriteriaMet,
     }));
   }, [allDocsAreVerified]);
-
-
-
 
   useEffect(() => {
     if (zonalInitRef.current) {
@@ -1164,14 +1071,14 @@ const ApplicationForm = ({
     }
 
     if (zonalDecision !== "PROVISIONALLY_APPROVED") {
-      setScreeningForm(prev => ({
+      setScreeningForm((prev) => ({
         ...prev,
-        zonalSubmitDate: ""
+        zonalSubmitDate: "",
       }));
 
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        zonalSubmitDate: undefined
+        zonalSubmitDate: undefined,
       }));
     }
   }, [zonalDecision]);
@@ -1181,9 +1088,7 @@ const ApplicationForm = ({
       return t("validation_pending");
     }
 
-    const formatted = doc.pendingChecks
-      .map(item => String(item).toUpperCase())
-      .join(", ");
+    const formatted = doc.pendingChecks.map((item) => String(item).toUpperCase()).join(", ");
 
     // return `Please verify the correctness of ${formatted}`;
     return `${t("please_verify_correctness")} ${formatted}`;
@@ -1201,7 +1106,6 @@ const ApplicationForm = ({
         alwaysOpen
         className="bob-accordion"
       >
-
         {/* === PERSONAL DETAILS === */}
         <Accordion.Item eventKey="0">
           <Accordion.Header>{t("personal_details")}</Accordion.Header>
@@ -1210,7 +1114,9 @@ const ApplicationForm = ({
               <table className="table table-bordered bob-table w-100 mb-0">
                 <tbody>
                   <tr>
-                    <td className="fw-med" style={{ width: "20%" }}>{t("full_name")}</td>
+                    <td className="fw-med" style={{ width: "20%" }}>
+                      {t("full_name")}
+                    </td>
                     <td className="fw-reg" colSpan={4} style={{ width: "60%" }}>
                       {data.personalDetails.fullName}
                     </td>
@@ -1236,23 +1142,16 @@ const ApplicationForm = ({
                       </div>
                     </td> */}
 
-
-
                     <td
                       rowSpan="3"
                       className="bob-photo-cell align-top text-center"
                       style={{ width: "20%", verticalAlign: "top" }}
                     >
                       <div className="photo-signature-wrapper">
-
                         {/* PHOTO BOX */}
                         <div className="photo-box">
                           {photo ? (
-                            <img
-                              src={photo}
-                              alt="Applicant Photo"
-                              className="photo-img"
-                            />
+                            <img src={photo} alt="Applicant Photo" className="photo-img" />
                           ) : (
                             <div className="no-image">{t("no_photo")}</div>
                           )}
@@ -1261,56 +1160,71 @@ const ApplicationForm = ({
                         {/* SIGNATURE BOX */}
                         <div className="signature-box">
                           {signature ? (
-                            <img
-                              src={signature}
-                              alt="Signature"
-                              className="signature-img"
-                            />
+                            <img src={signature} alt="Signature" className="signature-img" />
                           ) : (
                             <div className="no-image">{t("no_signature")}</div>
                           )}
                         </div>
-
                       </div>
                     </td>
                   </tr>
 
                   <tr>
                     <td className="fw-med">{t("address")}</td>
-                    <td className="fw-reg" colSpan={4}>{data.personalDetails.address}</td>
+                    <td className="fw-reg" colSpan={4}>
+                      {data.personalDetails.address}
+                    </td>
                   </tr>
 
                   <tr>
                     <td className="fw-med">{t("permanent_address")}</td>
-                    <td className="fw-reg" colSpan={4}>{data.personalDetails.permanentAddress}</td>
+                    <td className="fw-reg" colSpan={4}>
+                      {data.personalDetails.permanentAddress}
+                    </td>
                   </tr>
 
-                  <tr >
-                    <td className="fw-med" >{t("mobile")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.mobile}</td>
+                  <tr>
+                    <td className="fw-med">{t("mobile")}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.mobile}
+                    </td>
                     <td className="fw-med">{t("email")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.email}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.email}
+                    </td>
                   </tr>
 
-                  <tr >
+                  <tr>
                     <td className="fw-med">{t("mother_name")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.motherName || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.motherName || "-"}
+                    </td>
                     <td className="fw-med">{t("father_name")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.fatherName}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.fatherName}
+                    </td>
                   </tr>
 
                   <tr>
                     <td className="fw-med">{t("gender")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.gender_name || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.gender_name || "-"}
+                    </td>
                     <td className="fw-med">{t("religion")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.religion_name || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.religion_name || "-"}
+                    </td>
                   </tr>
 
                   <tr>
                     <td className="fw-med">{t("category")}</td>
-                    <td className="fw-reg" colSpan={2}  >{data.personalDetails.reservationCategory_name || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.reservationCategory_name || "-"}
+                    </td>
                     <td className="fw-med">{t("caste")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.caste || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.caste || "-"}
+                    </td>
                   </tr>
 
                   <tr>
@@ -1357,11 +1271,12 @@ const ApplicationForm = ({
                       )} */}
                     </td>
                     <td className="fw-med">{t("age_cutoff")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.age || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.age || "-"}
+                    </td>
 
                     {/* <td className="fw-med">Nationality</td>
                       <td className="fw-reg" colSpan={2}>{data.personalDetails.nationality_name}</td> */}
-
 
                     {/* <td className="fw-med">Age (as on cut-off date)</td>
                       <td className="fw-reg" colSpan={2}>{previewData.personalDetails.age || "-"}</td> */}
@@ -1369,9 +1284,13 @@ const ApplicationForm = ({
 
                   <tr>
                     <td className="fw-med">{t("ex_serviceman")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.exService || "N/A"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.exService || "N/A"}
+                    </td>
                     <td className="fw-med">{t("physical_disability")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.physicalDisability || "N"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.physicalDisability || "N"}
+                    </td>
                   </tr>
 
                   <tr>
@@ -1380,9 +1299,10 @@ const ApplicationForm = ({
                       {data.personalDetails.examCenter}
                     </td>
                     <td className="fw-med">{t("nationality")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.nationality_name}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.nationality_name}
+                    </td>
                   </tr>
-
 
                   {/* <tr>
                       <td className="fw-med">Age (as on cut-off date)</td>
@@ -1393,9 +1313,13 @@ const ApplicationForm = ({
 
                   <tr>
                     <td className="fw-med">{t("marital_status")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.maritalStatus_name}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.maritalStatus_name}
+                    </td>
                     <td className="fw-med">{t("spouse_name")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.spouseName || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.spouseName || "-"}
+                    </td>
                   </tr>
                   <tr>
                     {/* <td className="fw-med">{t("twin_sibling")}</td>
@@ -1418,11 +1342,15 @@ const ApplicationForm = ({
                         ? `${previewData.personalDetails.twinName} (${previewData.personalDetails.twinGender_name})`
                         : "-"}</td> */}
                     <td className="fw-med">{t("cibil_score")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.cibilScore}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.cibilScore}
+                    </td>
                   </tr>
                   <tr>
                     <td className="fw-med">{t("current_ctc")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.experienceSummary?.currentCtc || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.experienceSummary?.currentCtc || "-"}
+                    </td>
                     <td className="fw-med">{t("expected_ctc")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.expectedCtc}
@@ -1449,23 +1377,23 @@ const ApplicationForm = ({
                     </tr>*/}
                   <tr>
                     <td className="fw-med">{t("language_proficiency")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.languages || "-"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.languages || "-"}
+                    </td>
 
                     <td className="fw-med">{t("social_media_links")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td>
-
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.socialMediaProfileLink}
+                    </td>
                   </tr>
 
                   <tr>
-
-
                     <td className="fw-med">{t("location_pref1")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
                         data.personalDetails.locationPreference1,
                         data.personalDetails.statePreference1
                       )}
-
                     </td>
                     <td className="fw-med">{t("location_pref2")}</td>
                     <td className="fw-reg" colSpan={2}>
@@ -1473,13 +1401,10 @@ const ApplicationForm = ({
                         data.personalDetails.locationPreference2,
                         data.personalDetails.statePreference2
                       )}
-
                     </td>
-
                   </tr>
 
                   <tr>
-
                     <td className="fw-med">{t("location_pref3")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {formatLocation(
@@ -1491,7 +1416,6 @@ const ApplicationForm = ({
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.localLanguage || "-"}
                     </td>
-
                   </tr>
                   <tr>
                     <td className="fw-med">{t("is_local_language_studied")}</td>
@@ -1500,26 +1424,37 @@ const ApplicationForm = ({
                     </td>
                   </tr>
 
-
                   <tr>
                     <td className="fw-med">{t("central_govt_employment")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.centralGovtEmployment || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.centralGovtEmployment || "No"}
+                    </td>
                     <td className="fw-med">{t("lower_post")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.servingLowerPost || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.servingLowerPost || "No"}
+                    </td>
                   </tr>
 
                   <tr>
                     <td className="fw-med">{t("riot_family_member")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.riotVictimFamily || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.riotVictimFamily || "No"}
+                    </td>
                     <td className="fw-med">{t("religious_minority")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.minority || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.minority || "No"}
+                    </td>
                   </tr>
 
                   <tr>
                     <td className="fw-med">{t("govt_service")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.servingInGovt || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.servingInGovt || "No"}
+                    </td>
                     <td className="fw-med">{t("disciplinary_action")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.disciplinaryAction || "No"}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.disciplinaryAction || "No"}
+                    </td>
                   </tr>
 
                   {/* {data.personalDetails.disciplinaryAction === "Yes" && (
@@ -1537,7 +1472,6 @@ const ApplicationForm = ({
                       {data.personalDetails.disciplinaryDetails}
                     </td>
                   </tr> */}
-
                 </tbody>
               </table>
             </div>
@@ -1558,9 +1492,9 @@ const ApplicationForm = ({
                     <th>{t("university_name")}</th>
                     <th>{t("board")}</th>
                     <th>{t("specialization")}</th>
-                    <th style={{ width: '10%' }}>{t("from_date")}</th>
-                    <th style={{ width: '10%' }}>{t("to_date")}</th>
-                    <th style={{ width: '9%' }}>{t("percentage_cgpa")}</th>
+                    <th style={{ width: "10%" }}>{t("from_date")}</th>
+                    <th style={{ width: "10%" }}>{t("to_date")}</th>
+                    <th style={{ width: "9%" }}>{t("percentage_cgpa")}</th>
                   </tr>
                 </thead>
 
@@ -1582,7 +1516,6 @@ const ApplicationForm = ({
                       </tr>
                     ))}
 
-
                   {(!data.education || data.education.length === 0) && (
                     <tr>
                       <td colSpan="8" className="text-center">
@@ -1591,18 +1524,14 @@ const ApplicationForm = ({
                     </tr>
                   )}
                 </tbody>
-
               </table>
             </div>
-
           </Accordion.Body>
         </Accordion.Item>
 
         {/* === EXPERIENCE DETAILS === */}
         <Accordion.Item eventKey="2" className="exp-accordion">
-          <Accordion.Header >
-            {t("experience_details")}
-          </Accordion.Header>
+          <Accordion.Header>{t("experience_details")}</Accordion.Header>
 
           <Accordion.Body>
             <table className="exp-table">
@@ -1641,7 +1570,6 @@ const ApplicationForm = ({
                   </tr>
                 )}
               </tbody>
-
             </table>
           </Accordion.Body>
         </Accordion.Item>
@@ -1650,9 +1578,7 @@ const ApplicationForm = ({
           <Accordion.Header>{t("documents_details")}</Accordion.Header>
 
           <Accordion.Body>
-
             <table className="bob-doc-table">
-
               {/* COLUMN WIDTH CONTROL */}
               <colgroup>
                 <col style={{ width: "16.66%" }} />
@@ -1666,452 +1592,396 @@ const ApplicationForm = ({
               <thead>
                 <tr>
                   <th style={{ width: "44%" }}>{t("file_type")}</th>
-                  <th className="px-3" style={{ width: "5%" }}>{t("status")}</th>
-                  <th className="text-center" style={{ width: "1%" }}>{t("action")}</th>
+                  <th className="px-3" style={{ width: "5%" }}>
+                    {t("status")}
+                  </th>
+                  <th className="text-center" style={{ width: "1%" }}>
+                    {t("action")}
+                  </th>
 
                   <th style={{ width: "44%" }}>{t("file_type")}</th>
-                  <th className="px-3" style={{ width: "5%" }}>{t("status")}</th>
-                  <th className="text-center" style={{ width: "1%" }}>{t("action")}</th>
+                  <th className="px-3" style={{ width: "5%" }}>
+                    {t("status")}
+                  </th>
+                  <th className="text-center" style={{ width: "1%" }}>
+                    {t("action")}
+                  </th>
                 </tr>
               </thead>
 
               <tbody>
-                {Array.from({ length: Math.ceil(documentRows.length / 2) }).map(
-                  (_, rowIndex) => {
+                {Array.from({ length: Math.ceil(documentRows.length / 2) }).map((_, rowIndex) => {
+                  const left = documentRows[rowIndex * 2];
+                  const right = documentRows[rowIndex * 2 + 1];
 
-                    const left = documentRows[rowIndex * 2];
-                    const right = documentRows[rowIndex * 2 + 1];
+                  const leftStatus = docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
 
-                    const leftStatus =
-                      docStatusMap[left?.candidateDocumentId]?.status || "PENDING";
+                  const rightStatus = docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
 
-                    const rightStatus =
-                      docStatusMap[right?.candidateDocumentId]?.status || "PENDING";
+                  return (
+                    <tr key={rowIndex}>
+                      {/* LEFT SIDE */}
+                      {/* <td>{left?.name}</td> */}
+                      <td>
+                        {left?.name}
 
-                    return (
-                      <tr key={rowIndex}>
-
-                        {/* LEFT SIDE */}
-                        {/* <td>{left?.name}</td> */}
-                        <td>
-                          {left?.name}
-
-                          {left?.isValidationPending && (
-                            <OverlayTrigger
-                              placement="bottom"
-                              overlay={
-                                <Tooltip id={`tooltip-left-${left.candidateDocumentId}`}>
-                                  {getPendingMessage(left)}
-                                </Tooltip>
-                              }
-                            >
-                              <span>
-                                <FontAwesomeIcon
-                                  icon={faCircleExclamation}   // ⚠️ warning icon
-                                  style={{ color: "#ffc107" }}
-                                  className="ms-2"
-                                />
-                              </span>
-                            </OverlayTrigger>
-                          )}
-                        </td>
-
-                        <td>
-                          {left && (
-                            <span className={getStatusClass(leftStatus)}>
-                              {t(leftStatus)}
-                            </span>
-                          )}
-                        </td>
-
-                        <td className="action-cell divider1">
-                          {left && (
-                            <>
-                              <img
-                                src={viewIcon}
-                                alt={t("view")}
-                                style={{
-                                  cursor: disableDocAction ? "not-allowed" : "pointer",
-                                  opacity: disableDocAction ? 0.4 : 1,
-                                  pointerEvents: disableDocAction ? "none" : "auto",
-                                  // marginLeft: "12px",
-
-                                }}
-                                onClick={() => {
-                                  if (disableDocAction) return;
-
-                                  setSelectedDoc({
-                                    candidateDocumentId: left.candidateDocumentId,
-                                    status: leftStatus,
-                                    candidateId: previewData.candidateId,
-                                    applicationId: previewData.applicationId,
-                                    verificationId:
-                                      docStatusMap[left.candidateDocumentId]?.verificationId,
-                                    docScreeningComments:
-                                      docStatusMap[left.candidateDocumentId]?.comments || "",
-                                    name: left.name,
-                                    fileUrl: left.url,
-                                  });
-
-                                  setShowViewer(true);
-                                }}
+                        {left?.isValidationPending && (
+                          <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                              <Tooltip id={`tooltip-left-${left.candidateDocumentId}`}>
+                                {getPendingMessage(left)}
+                              </Tooltip>
+                            }
+                          >
+                            <span>
+                              <FontAwesomeIcon
+                                icon={faCircleExclamation} // ⚠️ warning icon
+                                style={{ color: "#ffc107" }}
+                                className="ms-2"
                               />
-                            </>
-                          )}
-                        </td>
-
-
-                        {/* RIGHT SIDE */}
-                        {/* <td>{right?.name || "-"}</td> */}
-                        <td>
-                          {right?.name || "-"}
-
-                          {right?.isValidationPending && (
-                            <OverlayTrigger
-                              placement="bottom"
-                              overlay={
-                                <Tooltip id={`tooltip-right-${right.candidateDocumentId}`}>
-                                  {getPendingMessage(right)}
-                                </Tooltip>
-                              }
-                            >
-                              <span>
-                                <FontAwesomeIcon
-                                  icon={faCircleExclamation}
-                                  style={{ color: "#ffc107" }}
-                                  className="ms-2"
-                                />
-                              </span>
-                            </OverlayTrigger>
-                          )}
-                        </td>
-
-                        <td>
-                          {right ? (
-                            <span className={getStatusClass(rightStatus)}>
-                              {t(rightStatus)}
                             </span>
-                          ) : (
-                            "-"
-                          )}
-                        </td>
+                          </OverlayTrigger>
+                        )}
+                      </td>
 
-                        <td className="action-cell">
-                          {right ? (
-                            <>
-                              <img
-                                src={viewIcon}
-                                alt={t("view")}
-                                style={{
-                                  cursor: disableDocAction ? "not-allowed" : "pointer",
-                                  opacity: disableDocAction ? 0.4 : 1,
-                                  pointerEvents: disableDocAction ? "none" : "auto",
-                                  // marginLeft: "12px",
+                      <td>
+                        {left && (
+                          <span className={getStatusClass(leftStatus)}>{t(leftStatus)}</span>
+                        )}
+                      </td>
 
-                                }}
-                                onClick={() => {
-                                  if (disableDocAction) return;
+                      <td className="action-cell divider1">
+                        {left && (
+                          <>
+                            <img
+                              src={viewIcon}
+                              alt={t("view")}
+                              style={{
+                                cursor: disableDocAction ? "not-allowed" : "pointer",
+                                opacity: disableDocAction ? 0.4 : 1,
+                                pointerEvents: disableDocAction ? "none" : "auto",
+                                // marginLeft: "12px",
+                              }}
+                              onClick={() => {
+                                if (disableDocAction) return;
 
-                                  setSelectedDoc({
-                                    candidateDocumentId: right.candidateDocumentId,
-                                    candidateId: previewData.candidateId,
-                                    applicationId: previewData.applicationId,
-                                    verificationId:
-                                      docStatusMap[right.candidateDocumentId]?.verificationId,
-                                    docScreeningComments:
-                                      docStatusMap[right.candidateDocumentId]?.comments || "",
-                                    name: right.name,
-                                    fileUrl: right.url,
-                                  });
+                                setSelectedDoc({
+                                  candidateDocumentId: left.candidateDocumentId,
+                                  status: leftStatus,
+                                  candidateId: previewData.candidateId,
+                                  applicationId: previewData.applicationId,
+                                  verificationId:
+                                    docStatusMap[left.candidateDocumentId]?.verificationId,
+                                  docScreeningComments:
+                                    docStatusMap[left.candidateDocumentId]?.comments || "",
+                                  name: left.name,
+                                  fileUrl: left.url,
+                                });
 
-                                  setShowViewer(true);
-                                }}
+                                setShowViewer(true);
+                              }}
+                            />
+                          </>
+                        )}
+                      </td>
+
+                      {/* RIGHT SIDE */}
+                      {/* <td>{right?.name || "-"}</td> */}
+                      <td>
+                        {right?.name || "-"}
+
+                        {right?.isValidationPending && (
+                          <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                              <Tooltip id={`tooltip-right-${right.candidateDocumentId}`}>
+                                {getPendingMessage(right)}
+                              </Tooltip>
+                            }
+                          >
+                            <span>
+                              <FontAwesomeIcon
+                                icon={faCircleExclamation}
+                                style={{ color: "#ffc107" }}
+                                className="ms-2"
                               />
-                            </>
-                          ) : (
-                            "-"
-                          )}
-                        </td>
+                            </span>
+                          </OverlayTrigger>
+                        )}
+                      </td>
 
-                      </tr>
-                    );
-                  }
-                )}
+                      <td>
+                        {right ? (
+                          <span className={getStatusClass(rightStatus)}>{t(rightStatus)}</span>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+
+                      <td className="action-cell">
+                        {right ? (
+                          <>
+                            <img
+                              src={viewIcon}
+                              alt={t("view")}
+                              style={{
+                                cursor: disableDocAction ? "not-allowed" : "pointer",
+                                opacity: disableDocAction ? 0.4 : 1,
+                                pointerEvents: disableDocAction ? "none" : "auto",
+                                // marginLeft: "12px",
+                              }}
+                              onClick={() => {
+                                if (disableDocAction) return;
+
+                                setSelectedDoc({
+                                  candidateDocumentId: right.candidateDocumentId,
+                                  candidateId: previewData.candidateId,
+                                  applicationId: previewData.applicationId,
+                                  verificationId:
+                                    docStatusMap[right.candidateDocumentId]?.verificationId,
+                                  docScreeningComments:
+                                    docStatusMap[right.candidateDocumentId]?.comments || "",
+                                  name: right.name,
+                                  fileUrl: right.url,
+                                });
+
+                                setShowViewer(true);
+                              }}
+                            />
+                          </>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
-
             </table>
-
           </Accordion.Body>
         </Accordion.Item>
 
         {/* ================= CRITERIA SECTION ================= */}
-        {canCandidatePool &&
-          !disableDocAction &&
-          !isFromInterview &&
-          !isFromCompensationPool && (
-            <Card className="criteria-main-card">
+        {canCandidatePool && !disableDocAction && !isFromInterview && !isFromCompensationPool && (
+          <Card className="criteria-main-card">
+            <div className="criteria-wrapper">
+              {/* WORK CRITERIA */}
+              <div className="criteria-card">
+                <label className="criteria-title">{t("work_criteria")}</label>
 
-              <div className="criteria-wrapper">
+                <div className="criteria-radio mb-0">
+                  {CRITERIA_OPTIONS.map((option) => (
+                    <label
+                      key={option}
+                      className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}
+                    >
+                      <input
+                        type="radio"
+                        name="workCriteria"
+                        checked={screeningForm.isWorkCriteriaMet === option}
+                        onChange={() => handleRadioChange("isWorkCriteriaMet", option)}
+                        disabled={isOptionDisabled(option)}
+                      />
+                      <span className="custom-radio"></span>
+                      {t(option)}
+                    </label>
+                  ))}
+                </div>
+                {errors.isWorkCriteriaMet && (
+                  <small className="text-danger fs-12">{errors.isWorkCriteriaMet}</small>
+                )}
 
-                {/* WORK CRITERIA */}
-                <div className="criteria-card">
-                  <label className="criteria-title">{t("work_criteria")}</label>
-
-                  <div className="criteria-radio mb-0">
-                    {CRITERIA_OPTIONS.map(option => (
-                      <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
-                        <input
-                          type="radio"
-                          name="workCriteria"
-                          checked={screeningForm.isWorkCriteriaMet === option}
-                          onChange={() =>
-                            handleRadioChange("isWorkCriteriaMet", option)
-                          }
-                          disabled={isOptionDisabled(option)}
-                        />
-                        <span className="custom-radio"></span>
-                        {t(option)}
-                      </label>
-                    ))}
-                  </div>
-                  {errors.isWorkCriteriaMet && (
-                    <small className="text-danger fs-12">
-                      {errors.isWorkCriteriaMet}
-                    </small>
-                  )}
-
-                  <textarea
-                    // type="text"
-                    className="criteria-remark mt-2"
-                    placeholder={t("work_remark")}
-                    value={screeningForm.workCriteriaRemark}
-                    onChange={(e) =>
-                      handleInputChange("workCriteriaRemark", e.target.value)
-                    }
-                    maxLength={2000}
-                    rows={4}
+                <textarea
+                  // type="text"
+                  className="criteria-remark mt-2"
+                  placeholder={t("work_remark")}
+                  value={screeningForm.workCriteriaRemark}
+                  onChange={(e) => handleInputChange("workCriteriaRemark", e.target.value)}
+                  maxLength={2000}
+                  rows={4}
                   // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
-                  />
-                  {errors.workCriteriaRemark && (
-                    <small className="text-danger fs-12">
-                      {errors.workCriteriaRemark}
-                    </small>
-                  )}
+                />
+                {errors.workCriteriaRemark && (
+                  <small className="text-danger fs-12">{errors.workCriteriaRemark}</small>
+                )}
+              </div>
+
+              {/* AGE CRITERIA */}
+              <div className="criteria-card">
+                <label className="criteria-title">{t("age_criteria")}</label>
+
+                <div className="criteria-radio mb-0">
+                  {CRITERIA_OPTIONS.map((option) => (
+                    <label
+                      key={option}
+                      className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}
+                    >
+                      <input
+                        type="radio"
+                        name="ageCriteria"
+                        checked={screeningForm.isAgeCriteriaMet === option}
+                        onChange={() => handleRadioChange("isAgeCriteriaMet", option)}
+                        disabled={isOptionDisabled(option)}
+                      />
+                      <span className="custom-radio"></span>
+                      {t(option)}
+                    </label>
+                  ))}
                 </div>
+                {errors.isAgeCriteriaMet && (
+                  <small className="text-danger fs-12">{errors.isAgeCriteriaMet}</small>
+                )}
 
-                {/* AGE CRITERIA */}
-                <div className="criteria-card">
-                  <label className="criteria-title">{t("age_criteria")}</label>
-
-                  <div className="criteria-radio mb-0">
-                    {CRITERIA_OPTIONS.map(option => (
-                      <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
-                        <input
-                          type="radio"
-                          name="ageCriteria"
-                          checked={screeningForm.isAgeCriteriaMet === option}
-                          onChange={() =>
-                            handleRadioChange("isAgeCriteriaMet", option)
-                          }
-                          disabled={isOptionDisabled(option)}
-                        />
-                        <span className="custom-radio"></span>
-                        {t(option)}
-                      </label>
-                    ))}
-                  </div>
-                  {errors.isAgeCriteriaMet && (
-                    <small className="text-danger fs-12">
-                      {errors.isAgeCriteriaMet}
-                    </small>
-                  )}
-
-                  <textarea
-                    // type="text"
-                    className="criteria-remark mt-2"
-                    placeholder={t("age_remark")}
-                    value={screeningForm.ageCriteriaRemark}
-                    onChange={(e) =>
-                      handleInputChange("ageCriteriaRemark", e.target.value)
-                    }
-                    maxLength={2000}
-                    rows={4}
+                <textarea
+                  // type="text"
+                  className="criteria-remark mt-2"
+                  placeholder={t("age_remark")}
+                  value={screeningForm.ageCriteriaRemark}
+                  onChange={(e) => handleInputChange("ageCriteriaRemark", e.target.value)}
+                  maxLength={2000}
+                  rows={4}
                   // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
-                  />
-                  {errors.ageCriteriaRemark && (
-                    <small className="text-danger fs-12">
-                      {errors.ageCriteriaRemark}
-                    </small>
-                  )}
+                />
+                {errors.ageCriteriaRemark && (
+                  <small className="text-danger fs-12">{errors.ageCriteriaRemark}</small>
+                )}
+              </div>
+
+              {/* EDUCATION CRITERIA */}
+              <div className="criteria-card">
+                <label className="criteria-title"> {t("education_criteria")}</label>
+
+                <div className="criteria-radio mb-0">
+                  {CRITERIA_OPTIONS.map((option) => (
+                    <label
+                      key={option}
+                      className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}
+                    >
+                      <input
+                        type="radio"
+                        name="educationCriteria"
+                        checked={screeningForm.isEducationCriteriaMet === option}
+                        onChange={() => handleRadioChange("isEducationCriteriaMet", option)}
+                        disabled={isOptionDisabled(option)}
+                      />
+                      <span className="custom-radio"></span>
+                      {t(option)}
+                    </label>
+                  ))}
                 </div>
+                {errors.isEducationCriteriaMet && (
+                  <small className="text-danger fs-12">{errors.isEducationCriteriaMet}</small>
+                )}
 
-                {/* EDUCATION CRITERIA */}
-                <div className="criteria-card">
-                  <label className="criteria-title"> {t("education_criteria")}</label>
+                <textarea
+                  // type="text"
+                  className="criteria-remark mt-2"
+                  placeholder={t("education_remark")}
+                  value={screeningForm.educationCriteriaRemark}
+                  onChange={(e) => handleInputChange("educationCriteriaRemark", e.target.value)}
+                  maxLength={2000}
+                  rows={4}
+                  // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
+                />
+                {errors.educationCriteriaRemark && (
+                  <small className="text-danger fs-12">{errors.educationCriteriaRemark}</small>
+                )}
+              </div>
 
-                  <div className="criteria-radio mb-0">
-                    {CRITERIA_OPTIONS.map(option => (
-                      <label key={option} className={`radio-label ${isOptionDisabled(option) ? "disabled" : ""}`}>
+              {/* FINAL REMARK */}
+              <div
+                className={`criteria-card ${disableShortlistedSection ? "criteria-disabled" : ""}`}
+              >
+                <label className="criteria-title">{t("shortlisted")}</label>
+
+                <div className="criteria-radio mb-0">
+                  {["YES", "NO"].map((option) => {
+                    const isDisabled =
+                      (option === "YES" && disableYesOption) ||
+                      (option === "NO" && disableNoOption);
+
+                    return (
+                      <label key={option} className={`radio-label ${isDisabled ? "disabled" : ""}`}>
                         <input
                           type="radio"
-                          name="educationCriteria"
-                          checked={screeningForm.isEducationCriteriaMet === option}
-                          onChange={() =>
-                            handleRadioChange("isEducationCriteriaMet", option)
-                          }
-                          disabled={isOptionDisabled(option)}
+                          name="shortlisted"
+                          value={option}
+                          checked={screeningForm.isShortlisted === option}
+                          disabled={isDisabled}
+                          onChange={() => handleInputChange("isShortlisted", option)}
                         />
                         <span className="custom-radio"></span>
-                        {t(option)}
+                        {option}
                       </label>
-                    ))}
-                  </div>
-                  {errors.isEducationCriteriaMet && (
-                    <small className="text-danger fs-12">
-                      {errors.isEducationCriteriaMet}
-                    </small>
-                  )}
-
-                  <textarea
-                    // type="text"
-                    className="criteria-remark mt-2"
-                    placeholder={t("education_remark")}
-                    value={screeningForm.educationCriteriaRemark}
-                    onChange={(e) =>
-                      handleInputChange("educationCriteriaRemark", e.target.value)
-                    }
-                    maxLength={2000}
-                    rows={4}
-                  // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
-                  />
-                  {errors.educationCriteriaRemark && (
-                    <small className="text-danger fs-12">
-                      {errors.educationCriteriaRemark}
-                    </small>
-                  )}
+                    );
+                  })}
                 </div>
-
-                {/* FINAL REMARK */}
-                <div
-                  className={`criteria-card ${disableShortlistedSection ? "criteria-disabled" : ""
-                    }`}
-                >
-                  <label className="criteria-title">{t("shortlisted")}</label>
-
-                  <div className="criteria-radio mb-0">
-                    {["YES", "NO"].map(option => {
-                      const isDisabled =
-                        (option === "YES" && disableYesOption) ||
-                        (option === "NO" && disableNoOption);
-
-                      return (
-                        <label key={option} className={`radio-label ${isDisabled ? "disabled" : ""}`}>
-                          <input
-                            type="radio"
-                            name="shortlisted"
-                            value={option}
-                            checked={screeningForm.isShortlisted === option}
-                            disabled={isDisabled}
-                            onChange={() => handleInputChange("isShortlisted", option)}
-                          />
-                          <span className="custom-radio"></span>
-                          {option}
-                        </label>
-                      );
-                    })}
-                  </div>
-                  {!disableShortlistedSection && errors.isShortlisted && (
-                    <small className="text-danger fs-12">
-                      {errors.isShortlisted}
-                    </small>
-                  )}
-
-                  <textarea
-                    // type="text"
-                    className="criteria-remark mt-2"
-                    placeholder={t("final_remark")}
-                    value={screeningForm.finalScreeningRemark}
-                    onChange={(e) =>
-                      handleInputChange("finalScreeningRemark", e.target.value)
-                    }
-                    maxLength={2000}
-                    rows={4}
-                  />
-                  {errors.finalScreeningRemark && (
-                    <small className="text-danger fs-12">
-                      {errors.finalScreeningRemark}
-                    </small>
-                  )}
-                </div>
-              </div>
-
-              {/* ================= SUBMIT ROW ================= */}
-              <div className={`criteria-submit-row ${hasAnyDiscrepancy ? 'justify-content-between' : 'justify-content-end'}`}>
-                {!isZonalHr && hasAnyDiscrepancy && (
-                  <div className="d-grid">
-                    <label className="submit-label">{t("submit_before")}</label>
-                    <input
-                      type="date"
-                      className="criteria-date"
-                      min={minDate}
-                      value={screeningForm.submitBeforeDate}
-                      onChange={handleDateChange}
-                    />
-                    {errors.submitBeforeDate && (
-                      <small className="text-danger mt-1 fs-12">
-                        {errors.submitBeforeDate}
-                      </small>
-                    )}
-                  </div>
+                {!disableShortlistedSection && errors.isShortlisted && (
+                  <small className="text-danger fs-12">{errors.isShortlisted}</small>
                 )}
 
-                {!isFromCompensationPool && (
-                  <button
-                    className="btn-submit-orange"
-                    onClick={handleFinalSubmit}
-                  >
-                    {t("submit")}
-                  </button>
+                <textarea
+                  // type="text"
+                  className="criteria-remark mt-2"
+                  placeholder={t("final_remark")}
+                  value={screeningForm.finalScreeningRemark}
+                  onChange={(e) => handleInputChange("finalScreeningRemark", e.target.value)}
+                  maxLength={2000}
+                  rows={4}
+                />
+                {errors.finalScreeningRemark && (
+                  <small className="text-danger fs-12">{errors.finalScreeningRemark}</small>
                 )}
               </div>
-            </Card>
-          )}
+            </div>
+
+            {/* ================= SUBMIT ROW ================= */}
+            <div
+              className={`criteria-submit-row ${hasAnyDiscrepancy ? "justify-content-between" : "justify-content-end"}`}
+            >
+              {!isZonalHr && hasAnyDiscrepancy && (
+                <div className="d-grid">
+                  <label className="submit-label">{t("submit_before")}</label>
+                  <input
+                    type="date"
+                    className="criteria-date"
+                    min={minDate}
+                    value={screeningForm.submitBeforeDate}
+                    onChange={handleDateChange}
+                  />
+                  {errors.submitBeforeDate && (
+                    <small className="text-danger mt-1 fs-12">{errors.submitBeforeDate}</small>
+                  )}
+                </div>
+              )}
+
+              {!isFromCompensationPool && (
+                <button className="btn-submit-orange" onClick={handleFinalSubmit}>
+                  {t("submit")}
+                </button>
+              )}
+            </div>
+          </Card>
+        )}
 
         {isZonalHr && !isInterviewView && (
-          <Card
-            className={`criteria-main-card p-3 ${isZonalAbsent ? "criteria-disabled" : ""
-              }`}
-          >
-
-            <label className="criteria-title mb-2">
-              {t("all_docs_verified_q")}
-            </label>
-
-
+          <Card className={`criteria-main-card p-3 ${isZonalAbsent ? "criteria-disabled" : ""}`}>
+            <label className="criteria-title mb-2">{t("all_docs_verified_q")}</label>
 
             {/* RADIO OPTIONS — same pattern as Shortlisted */}
             <div className="criteria-radio mb-3">
               {["YES", "NO", "PROVISIONALLY_APPROVED"].map((opt) => {
-
-                const disableYes =
-                  opt === "YES" && !areAllDocumentsVerified();
+                const disableYes = opt === "YES" && !areAllDocumentsVerified();
 
                 const disableProvisionallyApproved =
                   opt === "PROVISIONALLY_APPROVED" && areAllDocumentsVerified();
 
                 const isDisabled =
-                  isZonalAbsent ||
-                  !allDocsVerified ||
-                  disableProvisionallyApproved ||
-                  disableYes;
-
-
+                  isZonalAbsent || !allDocsVerified || disableProvisionallyApproved || disableYes;
 
                 return (
-                  <label
-                    key={opt}
-                    className={`radio-label me-4 ${isDisabled ? "disabled" : ""}`}
-                  >
+                  <label key={opt} className={`radio-label me-4 ${isDisabled ? "disabled" : ""}`}>
                     <input
                       type="radio"
                       name="docVerified"
@@ -2121,10 +1991,10 @@ const ApplicationForm = ({
                       onChange={(e) => {
                         const value = e.target.value;
                         setZonalDecision(value);
-                        setErrors(prev => ({
+                        setErrors((prev) => ({
                           ...prev,
                           zonalSubmitDate: undefined,
-                          zonalComments: undefined
+                          zonalComments: undefined,
                         }));
                         if (value === "YES") {
                           setScreeningRemarks("");
@@ -2136,11 +2006,7 @@ const ApplicationForm = ({
                   </label>
                 );
               })}
-
-
-
             </div>
-
 
             {/* DATE */}
 
@@ -2156,48 +2022,40 @@ const ApplicationForm = ({
                   value={screeningForm.zonalSubmitDate}
                   disabled={isZonalAbsent || !allDocsVerified}
                   onChange={(e) => {
-                    setScreeningForm(prev => ({
+                    setScreeningForm((prev) => ({
                       ...prev,
-                      zonalSubmitDate: e.target.value
+                      zonalSubmitDate: e.target.value,
                     }));
 
-                    setErrors(prev => ({
+                    setErrors((prev) => ({
                       ...prev,
-                      zonalSubmitDate: undefined
+                      zonalSubmitDate: undefined,
                     }));
                   }}
                 />
 
                 {errors.zonalSubmitDate && (
-                  <small className="text-danger mt-1">
-                    {errors.zonalSubmitDate}
-                  </small>
+                  <small className="text-danger mt-1">{errors.zonalSubmitDate}</small>
                 )}
               </div>
             )}
 
-
-
-
             {/* REMARKS */}
 
             <div className="remarks-row">
-
               {/* LEFT SIDE */}
               <div className="remarks-left">
-
                 <textarea
                   className={`remarks-box ${errors.zonalComments ? "input-error" : ""}`}
                   placeholder={t("enter_comments")}
                   rows={5}
                   disabled={docStatusLoading || isZonalAbsent}
-
                   value={screeningRemarks}
                   onChange={(e) => {
                     setScreeningRemarks(e.target.value);
-                    setErrors(prev => ({
+                    setErrors((prev) => ({
                       ...prev,
-                      zonalComments: undefined
+                      zonalComments: undefined,
                     }));
                   }}
                 />
@@ -2205,12 +2063,9 @@ const ApplicationForm = ({
                 {/* Reserved error space */}
                 <div className="remarks-error-space">
                   {errors.zonalComments && (
-                    <small className="text-danger">
-                      {errors.zonalComments}
-                    </small>
+                    <small className="text-danger">{errors.zonalComments}</small>
                   )}
                 </div>
-
               </div>
 
               {/* RIGHT SIDE */}
@@ -2223,19 +2078,9 @@ const ApplicationForm = ({
                   {t("submit")}
                 </button>
               </div>
-
             </div>
-
-
-
-
-
-
-
           </Card>
         )}
-
-
       </Accordion>
       <DocumentViewerModal
         show={showViewer}
@@ -2245,7 +2090,6 @@ const ApplicationForm = ({
         onReject={handleReject}
         isZonalAbsent={isZonalAbsent}
         isFromCompensationPool={isFromCompensationPool}
-
       />
     </>
   );

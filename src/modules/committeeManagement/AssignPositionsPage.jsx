@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import "../../style/css/Committee.css";
-import CommitteeHistoryList from './components/CommitteeHistoryList';
+import CommitteeHistoryList from "./components/CommitteeHistoryList";
 import { useAssignPositions } from "./hooks/useAssignPositions";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import ErrorModal from "./components/ErrorModal";
@@ -58,8 +58,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     setIsManuallyDirty,
     bulkImportPositionAssignments,
     downloadPositionAssignmentTemplate,
-    loadPositionData
-
+    loadPositionData,
   } = useAssignPositions();
 
   const [showHistoryModal, setShowHistoryModal] = useState(false);
@@ -74,13 +73,13 @@ const AssignPositionsPage = ({ refreshPanels }) => {
       try {
         const [commRes, memRes] = await Promise.all([
           masterApiService.getMasterDropdownData(),
-          committeeManagementService.getPanelMembers()
+          committeeManagementService.getPanelMembers(),
         ]);
 
         setCommunityOptions(
-          (commRes?.data || []).map(c => ({
+          (commRes?.data || []).map((c) => ({
             id: c.interviewCommitteeId,
-            name: c.committeeName
+            name: c.committeeName,
           }))
         );
         setMembersOptions(mapInterviewMembersApi(memRes));
@@ -91,8 +90,6 @@ const AssignPositionsPage = ({ refreshPanels }) => {
 
     loadMetaData();
   }, []);
-
-
 
   const { fetchApprovalHistory } = useCommitteeRequests();
 
@@ -117,17 +114,17 @@ const AssignPositionsPage = ({ refreshPanels }) => {
 
       // ✅ PANEL TYPE
       const communityMatch = communityOptions.find(
-        c => c.value === data?.committee?.interviewCommitteeId
+        (c) => c.value === data?.committee?.interviewCommitteeId
       );
 
       // ✅ MEMBERS
-      const membersMapped = data?.panelMembers?.map(m => {
-        const user = m.panelMember;
+      const membersMapped = data?.panelMembers
+        ?.map((m) => {
+          const user = m.panelMember;
 
-        return membersOptions.find(
-          opt => opt.value === user?.userId
-        );
-      }).filter(Boolean);
+          return membersOptions.find((opt) => opt.value === user?.userId);
+        })
+        .filter(Boolean);
 
       const mapped = {
         id: data?.interviewPanelId,
@@ -135,14 +132,11 @@ const AssignPositionsPage = ({ refreshPanels }) => {
         community: data?.committee?.interviewCommitteeId || "",
 
         // ✅ FIX: array of IDs
-        members: data?.panelMembers?.map(
-          m => m.panelMember?.userId
-        ) || []
+        members: data?.panelMembers?.map((m) => m.panelMember?.userId) || [],
       };
 
       setEditFormData(mapped);
       setShowEditModal(true);
-
     } catch (err) {
       console.error(err);
     }
@@ -150,28 +144,24 @@ const AssignPositionsPage = ({ refreshPanels }) => {
   const today = new Date().toISOString().split("T")[0];
 
   const selectedPositionTitle =
-    positions.find(
-      p => p.jobPositions?.positionId === selectedPosition
-    )?.masterPositions?.positionName || "";
-
+    positions.find((p) => p.jobPositions?.positionId === selectedPosition)?.masterPositions
+      ?.positionName || "";
 
   const toggleCommittee = (type, committee) => {
-    setSelectedCommittees(prev => {
-      const isSelected = prev[type].some(c => c.id === committee.id);
+    setSelectedCommittees((prev) => {
+      const isSelected = prev[type].some((c) => c.id === committee.id);
 
       if (isSelected) {
         // REMOVE → move back to available
-        setAvailablePanels(ap => [...ap, committee]);
+        setAvailablePanels((ap) => [...ap, committee]);
         setIsManuallyDirty(true);
         return {
           ...prev,
-          [type]: prev[type].filter(c => c.id !== committee.id),
+          [type]: prev[type].filter((c) => c.id !== committee.id),
         };
       } else {
         // ADD → remove from available
-        setAvailablePanels(ap =>
-          ap.filter(c => c.id !== committee.id)
-        );
+        setAvailablePanels((ap) => ap.filter((c) => c.id !== committee.id));
 
         return {
           ...prev,
@@ -181,8 +171,8 @@ const AssignPositionsPage = ({ refreshPanels }) => {
               ...committee,
               startDate: committee.startDate || "",
               endDate: committee.endDate || "",
-              canEdit: true
-            }
+              canEdit: true,
+            },
           ],
         };
       }
@@ -192,18 +182,19 @@ const AssignPositionsPage = ({ refreshPanels }) => {
   const renderAvailableCommittee = (committee, type) => (
     <div className="committee-row" key={committee.id}>
       <div>
-        <div className="committee-title" style={{ width: "350px" }} >{committee.name}</div>
+        <div className="committee-title" style={{ width: "350px" }}>
+          {committee.name}
+        </div>
         <div className="committee-chips">
-          {committee.members.map(m => (
-            <span key={m} className="chip">{m.name}</span>
+          {committee.members.map((m) => (
+            <span key={m} className="chip">
+              {m.name}
+            </span>
           ))}
         </div>
       </div>
 
-      <button
-        className="action-pill add"
-        onClick={() => toggleCommittee(type, committee)}
-      >
+      <button className="action-pill add" onClick={() => toggleCommittee(type, committee)}>
         {t("add_button")} →
       </button>
     </div>
@@ -216,14 +207,15 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     const isApproved = committee.rawStatus === "APPROVED";
     const isL1Approved = committee.rawStatus === "L1_APPROVED";
 
-    const isCompleted =
-      committee.endDate && committee.endDate < today;
-
+    const isCompleted = committee.endDate && committee.endDate < today;
 
     return (
       <div className="committee-row selected" key={committee.id}>
         <div>
-          <div className="committee-title d-flex align-items-center gap-2" style={{ width: "350px" }}>
+          <div
+            className="committee-title d-flex align-items-center gap-2"
+            style={{ width: "350px" }}
+          >
             {committee.name}
 
             {/* ✅ SHOW ONLY IF SAVED PANEL */}
@@ -242,7 +234,9 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                 <button
                   className="edit-btn"
                   onClick={() => handleEditPanel(committee)}
-                  disabled={committee.rawStatus === "L1_APPROVED" || committee.rawStatus === "APPROVED"}
+                  disabled={
+                    committee.rawStatus === "L1_APPROVED" || committee.rawStatus === "APPROVED"
+                  }
                 >
                   <img src={pos_edit_icon} alt="Edit" className="edit-icon" />
                 </button>
@@ -251,8 +245,10 @@ const AssignPositionsPage = ({ refreshPanels }) => {
           </div>
 
           <div className="committee-chips">
-            {committee.members.map(m => (
-              <span key={m.name} className="chip">{m.name}</span>
+            {committee.members.map((m) => (
+              <span key={m.name} className="chip">
+                {m.name}
+              </span>
             ))}
           </div>
 
@@ -266,18 +262,15 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                 // disabled={committee.canEdit === false}
                 disabled={
                   isL1Approved ||
-                  (isApproved && (
-                    !committee.canEdit ||   // scenario 2
-                    isCompleted             // scenario 3 override
-                  ))
+                  (isApproved &&
+                    (!committee.canEdit || // scenario 2
+                      isCompleted)) // scenario 3 override
                 }
                 onChange={(e) =>
                   updateCommitteeDate(type, committee.id, "startDate", e.target.value)
                 }
               />
-              {errors.startDate && (
-                <div className="field-error">{t(errors.startDate)}</div>
-              )}
+              {errors.startDate && <div className="field-error">{t(errors.startDate)}</div>}
             </div>
 
             <div>
@@ -288,16 +281,11 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                 value={committee.endDate}
                 //  disabled={committee.canEdit === false}
                 disabled={
-                  isL1Approved ||
-                  (isApproved && !committee.canEdit)   // only scenario 2
+                  isL1Approved || (isApproved && !committee.canEdit) // only scenario 2
                 }
-                onChange={(e) =>
-                  updateCommitteeDate(type, committee.id, "endDate", e.target.value)
-                }
+                onChange={(e) => updateCommitteeDate(type, committee.id, "endDate", e.target.value)}
               />
-              {errors.endDate && (
-                <div className="field-error">{t(errors.endDate)}</div>
-              )}
+              {errors.endDate && <div className="field-error">{t(errors.endDate)}</div>}
             </div>
           </div>
         </div>
@@ -314,15 +302,11 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     );
   };
 
-
   const filteredPanels = availablePanels.filter(
-    p =>
-      p.committeeName?.toUpperCase() === activeTab
+    (p) => p.committeeName?.toUpperCase() === activeTab
   );
 
-  const selectedRequisitionObj = requisitions.find(
-    r => r.id === selectedRequisition
-  );
+  const selectedRequisitionObj = requisitions.find((r) => r.id === selectedRequisition);
 
   const normalizedRequisition = {
     ...selectedRequisitionObj,
@@ -330,46 +314,42 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     registration_end_date: selectedRequisitionObj?.endDate,
   };
 
-
   const selectedPositionObj = positions.find(
-    p => p.jobPositions?.positionId === selectedPosition
+    (p) => p.jobPositions?.positionId === selectedPosition
   )?.jobPositions;
 
-
-
   const selectedPositionFull = positions.find(
-    p => p.jobPositions?.positionId === selectedPosition
+    (p) => p.jobPositions?.positionId === selectedPosition
   );
   const normalizedPosition = {
     ...selectedPositionObj,
-    positionName: selectedPositionFull?.masterPositions?.positionName
+    positionName: selectedPositionFull?.masterPositions?.positionName,
   };
-  const requisitionOptions = requisitions.map(req => ({
+  const requisitionOptions = requisitions.map((req) => ({
     value: req.id,
-    label: `${req.requisitionCode} - ${req.requisitionTitle}`
+    label: `${req.requisitionCode} - ${req.requisitionTitle}`,
   }));
 
-  const positionOptions = positions.map(pos => ({
+  const positionOptions = positions.map((pos) => ({
     value: pos.jobPositions?.positionId,
-    label: pos.masterPositions?.positionName
+    label: pos.masterPositions?.positionName,
   }));
   const hasAnySelectedPanels =
     selectedCommittees.SCREENING.length > 0 ||
     selectedCommittees.INTERVIEW.length > 0 ||
     selectedCommittees.COMPENSATION.length > 0;
 
-
   return (
     <div className="assign-positions-page">
       {/* ===== PAGE HEADER ===== */}
 
-
-
       {/* ===== SELECTION CONTROLS ===== */}
       <div className="selection-section">
-        <div class="mb-3"><div class="assign-position-title">{t("select_position_title")}</div><div class="assign-position-muted">{t("choose_requisition_position_desc")}</div></div>
+        <div class="mb-3">
+          <div class="assign-position-title">{t("select_position_title")}</div>
+          <div class="assign-position-muted">{t("choose_requisition_position_desc")}</div>
+        </div>
         <div className="selection-grid">
-
           {/* Requisition */}
           <div className="form-group">
             <label className="form-label">{t("requisition_label")}</label>
@@ -378,19 +358,14 @@ const AssignPositionsPage = ({ refreshPanels }) => {
               placeholder={t("select_requisition_placeholder")}
               options={requisitionOptions}
               filterOption={(option, inputValue) =>
-                option.label
-                  .toLowerCase()
-                  .includes(inputValue.toLowerCase())
+                option.label.toLowerCase().includes(inputValue.toLowerCase())
               }
-
               value={
-                requisitionOptions.find(
-                  option => option.value === selectedRequisition
-                ) || null
+                requisitionOptions.find((option) => option.value === selectedRequisition) || null
               }
               onChange={(selectedOption) =>
                 handleRequisitionChange({
-                  target: { value: selectedOption?.value || "" }
+                  target: { value: selectedOption?.value || "" },
                 })
               }
               classNamePrefix="custom-select"
@@ -404,19 +379,12 @@ const AssignPositionsPage = ({ refreshPanels }) => {
               isSearchable
               placeholder={t("select_position_placeholder")}
               options={positionOptions}
-              value={
-                positionOptions.find(
-                  option => option.value === selectedPosition
-                ) || null
-              }
-              onChange={(selectedOption) =>
-                setSelectedPosition(selectedOption?.value || "")
-              }
+              value={positionOptions.find((option) => option.value === selectedPosition) || null}
+              onChange={(selectedOption) => setSelectedPosition(selectedOption?.value || "")}
               isDisabled={!selectedRequisition}
               classNamePrefix="custom-select"
             />
           </div>
-
         </div>
 
         {/* ===== REQUISITION STRIP ===== */}
@@ -431,8 +399,6 @@ const AssignPositionsPage = ({ refreshPanels }) => {
           </div>
         )}
       </div>
-
-
 
       {/* ===== COMMITTEE CONFIGURATION ===== */}
       <div className="committee-config-section">
@@ -451,8 +417,6 @@ const AssignPositionsPage = ({ refreshPanels }) => {
               onClick={handleAssignCommittees}
               // disabled={!selectedPosition}
               disabled={!selectedPosition || !isDirty()}
-
-
             >
               {loading ? t("assigning") : t("assign_committees")}
             </button>
@@ -499,7 +463,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
             </div>
             <div className="panel-divider"></div>
             <div className="assignpanel-content">
-              {filteredPanels.map(c => renderAvailableCommittee(c, activeTab))}
+              {filteredPanels.map((c) => renderAvailableCommittee(c, activeTab))}
             </div>
           </div>
 
@@ -517,7 +481,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
             <div className="panel-divider"></div>
             <div className="assignpanel-content">
               {selectedCommittees[activeTab].length > 0 ? (
-                selectedCommittees[activeTab].map(c => renderSelectedCommittee(c, activeTab))
+                selectedCommittees[activeTab].map((c) => renderSelectedCommittee(c, activeTab))
               ) : (
                 <div className="empty-state">
                   <div className="empty-icon">📋</div>
@@ -543,7 +507,9 @@ const AssignPositionsPage = ({ refreshPanels }) => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title className="header-title">{t("interviewPanelCommittee:bulk_import_position_assignments")}</Modal.Title>
+          <Modal.Title className="header-title">
+            {t("interviewPanelCommittee:bulk_import_position_assignments")}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <PositionAssignmentImportModal
@@ -583,10 +549,10 @@ const AssignPositionsPage = ({ refreshPanels }) => {
             <InterviewPanelFormModal
               formData={editFormData}
               setFormData={setEditFormData}
-              communityOptions={communityOptions}   // ✅ ADD THIS
+              communityOptions={communityOptions} // ✅ ADD THIS
               membersOptions={membersOptions}
               disableName={true}
-              disableType={true}     // ✅ ADD THIS
+              disableType={true} // ✅ ADD THIS
               onSave={async () => {
                 try {
                   const payload = preparePanelPayload(
@@ -595,36 +561,31 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                     membersOptions
                   );
 
-                  const res = await masterApiService.updateInterviewPanel(
-                    editFormData.id,
-                    payload
-                  );
+                  const res = await masterApiService.updateInterviewPanel(editFormData.id, payload);
 
                   // ✅ HANDLE VALIDATION RESPONSE
                   if (!res?.success) {
-                    toast.error(
-                      res?.data || res?.message || "Validation failed"
-                    );
+                    toast.error(res?.data || res?.message || "Validation failed");
                     return;
                   }
 
-                  setSelectedCommittees(prev => {
+                  setSelectedCommittees((prev) => {
                     const updated = { ...prev };
 
-                    Object.keys(updated).forEach(type => {
-                      updated[type] = updated[type].map(panel => {
+                    Object.keys(updated).forEach((type) => {
+                      updated[type] = updated[type].map((panel) => {
                         if (panel.id === editFormData.id) {
                           return {
                             ...panel,
                             isDirty: true,
                             members: membersOptions
-                              .filter(m => editFormData.members.includes(m.value))
-                              .map(m => ({
+                              .filter((m) => editFormData.members.includes(m.value))
+                              .map((m) => ({
                                 name: m.label,
                                 userId: m.value,
                                 email: m.email,
-                                role: m.role
-                              }))
+                                role: m.role,
+                              })),
                           };
                         }
 
@@ -642,14 +603,13 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                   toast.success("Panel updated successfully");
 
                   setShowEditModal(false);
-
                 } catch (err) {
                   console.error("UPDATE PANEL ERROR", err);
 
                   toast.error(
                     err?.response?.data?.data ||
-                    err?.response?.data?.message ||
-                    "Failed to update panel"
+                      err?.response?.data?.message ||
+                      "Failed to update panel"
                   );
                 }
               }}

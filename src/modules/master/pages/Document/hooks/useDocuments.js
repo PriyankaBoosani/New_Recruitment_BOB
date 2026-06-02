@@ -15,16 +15,12 @@ export const useDocuments = () => {
   const fetchDocuments = async () => {
     try {
       const res = await masterApiService.getAllDocumentTypes();
-      const list = Array.isArray(res.data)
-        ? res.data
-        : res.data?.data || [];
+      const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
 
       const mapped = mapDocumentsFromApi(list);
 
       //  newest first
-      const sorted = [...mapped].sort(
-        (a, b) => Number(b.id) - Number(a.id)
-      );
+      const sorted = [...mapped].sort((a, b) => Number(b.id) - Number(a.id));
 
       setDocuments(sorted);
     } catch (error) {
@@ -45,14 +41,11 @@ export const useDocuments = () => {
       const newItem = mapDocumentFromApi(res.data);
 
       //  add on top instantly (NO refetch)
-      setDocuments(prev => [newItem, ...prev]);
+      setDocuments((prev) => [newItem, ...prev]);
 
       toast.success(t("documents:document_added_successfully"));
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-        t("documents:add_error")
-      );
+      toast.error(error?.response?.data?.message || t("documents:add_error"));
     }
   };
 
@@ -65,18 +58,11 @@ export const useDocuments = () => {
       toast.success(t("documents:document_updated_successfully"));
 
       //  update in same position
-      setDocuments(prev =>
-        prev.map(d =>
-          String(d.id) === String(id)
-            ? { ...d, ...updatedItem }
-            : d
-        )
+      setDocuments((prev) =>
+        prev.map((d) => (String(d.id) === String(id) ? { ...d, ...updatedItem } : d))
       );
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-        t("documents:update_error")
-      );
+      toast.error(error?.response?.data?.message || t("documents:update_error"));
     }
   };
 
@@ -88,12 +74,9 @@ export const useDocuments = () => {
       toast.success(t("documents:document_deleted_successfully"));
 
       //  remove instantly
-      setDocuments(prev => prev.filter(d => d.id !== id));
+      setDocuments((prev) => prev.filter((d) => d.id !== id));
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-        t("documents:delete_error")
-      );
+      toast.error(error?.response?.data?.message || t("documents:delete_error"));
     }
   };
 
@@ -128,7 +111,7 @@ export const useDocuments = () => {
       const res = await masterApiService.downloadDocumentTemplate();
 
       const blob = new Blob([res.data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
 
       const url = window.URL.createObjectURL(blob);
@@ -150,6 +133,6 @@ export const useDocuments = () => {
     deleteDocument,
     bulkAddDocuments,
     downloadDocumentTemplate,
-    loading
+    loading,
   };
 };

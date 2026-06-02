@@ -1,16 +1,16 @@
 /**
  * Common validation functions that can be reused across the application
  */
- 
-import i18n from 'i18next';
- 
+
+import i18n from "i18next";
+
 // export const requiredField = (value) => {
 //   if (!value || value.trim() === '') {
 //     return i18n.t('validation:required');
 //   }
 //   return null;
 // };
- 
+
 const emailRegex = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;
 
 const isValidEmail = (email) => {
@@ -36,18 +36,18 @@ export const requiredField = (value) => {
 };
 export const minLength = (value, min) => {
   if (value && value.length < min) {
-    return i18n.t('validation:minLength', { min });
+    return i18n.t("validation:minLength", { min });
   }
   return null;
 };
- 
+
 export const maxLength = (value, max) => {
   if (value && value.length > max) {
-    return i18n.t('validation:maxLength', { max });
+    return i18n.t("validation:maxLength", { max });
   }
   return null;
 };
- 
+
 // export const emailFormat = (email) => {
 //   //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 //   const emailRegex = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;
@@ -57,24 +57,22 @@ export const maxLength = (value, max) => {
 //   return null;
 // };
 
-
 export const emailFormat = (email) => {
   if (typeof email !== "string" || email.length > 254) {
     return i18n.t("validation:invalidEmail");
   }
 
-
-if (email && !isValidEmail(email)) {
+  if (email && !isValidEmail(email)) {
     return i18n.t("validation:invalidEmail");
   }
 
   return null;
 };
- 
+
 export const phoneFormat = (phone) => {
   const phoneRegex = /^[0-9]{10}$/;
   if (phone && !phoneRegex.test(phone)) {
-    return i18n.t('validation:invalidPhone');
+    return i18n.t("validation:invalidPhone");
   }
   return null;
 };
@@ -84,4 +82,4 @@ export const cleanData = (value) => {
     return value.trim();
   }
   return value;
-}
+};

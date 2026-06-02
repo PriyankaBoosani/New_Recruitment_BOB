@@ -26,8 +26,8 @@ const MessageHistory = ({ item }) => {
       const fileUrl = res;
 
       if (fileUrl) {
-        setPreviewUrl(fileUrl);     // ✅ set URL
-        setShowPreview(true);   // ✅ open modal
+        setPreviewUrl(fileUrl); // ✅ set URL
+        setShowPreview(true); // ✅ open modal
       }
     } catch (err) {
       console.error("File open error", err);
@@ -50,10 +50,7 @@ const MessageHistory = ({ item }) => {
 
   return (
     <div className="msg-history">
-
-      <div className="msg-history-title">
-        {t("messages:request_history")}
-      </div>
+      <div className="msg-history-title">{t("messages:request_history")}</div>
 
       {item.history?.map((hist, index) => {
         console.log("History item:", hist);
@@ -63,13 +60,12 @@ const MessageHistory = ({ item }) => {
         return (
           <React.Fragment key={index}>
             <div className="msg-history-item">
-
               {/* Avatar */}
               <div
                 className="msg-icon"
                 style={{
                   backgroundColor: color,
-                  color: "#fff"
+                  color: "#fff",
                 }}
               >
                 {hist.title?.charAt(0)?.toUpperCase() || "?"}
@@ -77,10 +73,7 @@ const MessageHistory = ({ item }) => {
 
               {/* Content */}
               <div className="flex-grow-1">
-                <div
-                  className="msg-history-head"
-                  style={{ color }}
-                >
+                <div className="msg-history-head" style={{ color }}>
                   {hist.title}
                 </div>
 
@@ -88,9 +81,7 @@ const MessageHistory = ({ item }) => {
                   <b>{t("messages:comment")}:</b> {hist.comment}
                 </div>
 
-                <div className="msg-history-time">
-                  {hist.time}
-                </div>
+                <div className="msg-history-time">{hist.time}</div>
               </div>
 
               {/* Attachment */}
@@ -102,28 +93,20 @@ const MessageHistory = ({ item }) => {
                   alt="attachment"
                   style={{ cursor: "pointer" }}
                   onClick={() => handleViewFile(hist.attachmentPath)}
-                />)}
+                />
+              )}
             </div>
 
-            {index !== item.history.length - 1 && (
-              <div className="msg-divider"></div>
-            )}
+            {index !== item.history.length - 1 && <div className="msg-divider"></div>}
           </React.Fragment>
         );
       })}
-      <Modal
-        show={showPreview}
-        onHide={handleClose}
-        size="xl"
-        centered
-      >
+      <Modal show={showPreview} onHide={handleClose} size="xl" centered>
         {/* HEADER */}
         <Modal.Header closeButton className="border-0 pb-2">
           <div className="w-100 d-flex justify-content-between align-items-center">
             <div>
-              <h6 className="mb-0 fw-semibold">
-               File
-              </h6>
+              <h6 className="mb-0 fw-semibold">File</h6>
               {/* <small className="text-muted">Template Preview</small> */}
             </div>
 

@@ -11,21 +11,21 @@ export const validateEducationModal = ({ rows, mode }) => {
     // Always validate numeric fields if they have values, regardless of other fields
     // Validate GPA - must be numeric only
 
-// Percentage
-if (row.percentage !== "") {
-  const per = parseFloat(row.percentage);
-  if (isNaN(per) || per < 0 || per > 100) {
-    rowErrors.percentage = "validation:percentage_range";
-  }
-}
+    // Percentage
+    if (row.percentage !== "") {
+      const per = parseFloat(row.percentage);
+      if (isNaN(per) || per < 0 || per > 100) {
+        rowErrors.percentage = "validation:percentage_range";
+      }
+    }
 
-// Duration
-if (row.duration !== "") {
-  const dur = parseInt(row.duration);
-  if (isNaN(dur) || dur < 0) {
-    rowErrors.duration = "validation:duration_invalid";
-  }
-}
+    // Duration
+    if (row.duration !== "") {
+      const dur = parseInt(row.duration);
+      if (isNaN(dur) || dur < 0) {
+        rowErrors.duration = "validation:duration_invalid";
+      }
+    }
 
     // Mandatory mode -> always validate education fields
     if (mode === "mandatory") {
@@ -52,8 +52,8 @@ if (row.duration !== "") {
     }
   });
 
-if (errors.rows.every(row => !row || Object.keys(row).length === 0)) {
-  return {};
-}
+  if (errors.rows.every((row) => !row || Object.keys(row).length === 0)) {
+    return {};
+  }
   return errors;
 };

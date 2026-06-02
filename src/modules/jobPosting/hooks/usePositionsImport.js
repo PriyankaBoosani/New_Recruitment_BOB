@@ -13,10 +13,7 @@ export const usePositionsImport = () => {
 
     setLoading(true);
     try {
-      const res = await jobPositionApiService.bulkImport(
-        requisitionId,
-        file
-      );
+      const res = await jobPositionApiService.bulkImport(requisitionId, file);
 
       if (res?.success === false) {
         return {
@@ -30,9 +27,7 @@ export const usePositionsImport = () => {
     } catch (err) {
       return {
         success: false,
-        error:
-          err?.response?.data?.message ||
-          "Failed to import positions",
+        error: err?.response?.data?.message || "Failed to import positions",
       };
     } finally {
       setLoading(false);

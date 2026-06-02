@@ -1,423 +1,401 @@
-export const DUMMY_DATA =  [
+export const DUMMY_DATA = [
+  {
+    interviewScheduleId: "d4eb896f-cf74-4523-85c9-f46623b59e63",
 
-    {
+    interviewStartAt: "2026-02-04T10:30:00",
 
-      "interviewScheduleId": "d4eb896f-cf74-4523-85c9-f46623b59e63",
+    interviewEndAt: "2026-02-04T10:45:00",
 
-      "interviewStartAt": "2026-02-04T10:30:00",
+    zonalOfficeId: "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
 
-      "interviewEndAt": "2026-02-04T10:45:00",
+    zonalOfficeName: "Hyderabad - Madhapur",
 
-      "zonalOfficeId": "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
+    zonalVerificationStatus: "PENDING",
 
-      "zonalOfficeName": "Hyderabad - Madhapur",
+    candidateId: "38d045ab-8b1f-4086-b479-d0694a9f5a7d",
 
-      "zonalVerificationStatus": "PENDING",
+    candidateName: "third candidate",
 
-      "candidateId": "38d045ab-8b1f-4086-b479-d0694a9f5a7d",
+    applicationId: "d4762bb4-1281-4709-9860-5a204af11448",
 
-      "candidateName": "third candidate",
+    applicationNumber: "APP-2026-000020",
 
-      "applicationId": "d4762bb4-1281-4709-9860-5a204af11448",
+    categoryId: "0a02efbd-11fe-498b-b8db-9bb76cae18a1",
 
-      "applicationNumber": "APP-2026-000020",
+    categoryCode: "GEN",
 
-      "categoryId": "0a02efbd-11fe-498b-b8db-9bb76cae18a1",
+    isAbsent: false,
 
-      "categoryCode": "GEN",
+    positionId: "9ce9beff-7b73-4d17-9b7d-43f4561adec2",
 
-      "isAbsent": false,
+    positionTitle: "NaveenTestMasterPos1",
 
-      "positionId": "9ce9beff-7b73-4d17-9b7d-43f4561adec2",
+    requisitionId: "4d5b4b45-54d0-41b3-a1bb-7a603da989b2",
 
-      "positionTitle": "NaveenTestMasterPos1",
+    requisitionTitle: "Test-01/02/2026",
 
-      "requisitionId": "4d5b4b45-54d0-41b3-a1bb-7a603da989b2",
+    requisitionStartDate: "2026-02-05",
 
-      "requisitionTitle": "Test-01/02/2026",
+    requisitionEndDate: "2026-02-26",
+  },
 
-      "requisitionStartDate": "2026-02-05",
+  {
+    interviewScheduleId: "66af41b3-0b60-4421-a219-1fc43ad8c925",
 
-      "requisitionEndDate": "2026-02-26"
+    interviewStartAt: "2026-02-04T11:30:00",
 
-    },
+    interviewEndAt: "2026-02-04T11:45:00",
 
-    {
+    zonalOfficeId: "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
 
-      "interviewScheduleId": "66af41b3-0b60-4421-a219-1fc43ad8c925",
+    zonalOfficeName: "Hyderabad - Madhapur",
 
-      "interviewStartAt": "2026-02-04T11:30:00",
+    zonalVerificationStatus: "PENDING",
 
-      "interviewEndAt": "2026-02-04T11:45:00",
+    candidateId: "61e3d1c4-1539-4807-afcb-2f74cdd5a592",
 
-      "zonalOfficeId": "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
+    candidateName: "Ravali",
 
-      "zonalOfficeName": "Hyderabad - Madhapur",
+    applicationId: "50297464-553d-4913-a375-94fdffdbc2a9",
 
-      "zonalVerificationStatus": "PENDING",
+    applicationNumber: "APP-2026-000003",
 
-      "candidateId": "61e3d1c4-1539-4807-afcb-2f74cdd5a592",
+    categoryId: "8858359c-b3a7-4592-b212-bcc7a2ecd55e",
 
-      "candidateName": "Ravali",
+    categoryCode: null,
 
-      "applicationId": "50297464-553d-4913-a375-94fdffdbc2a9",
+    isAbsent: false,
 
-      "applicationNumber": "APP-2026-000003",
+    positionId: "6cb9f968-a72f-4165-815a-a8036ccc5a0f",
 
-      "categoryId": "8858359c-b3a7-4592-b212-bcc7a2ecd55e",
+    positionTitle: "NaveenTestMasterPos1",
 
-      "categoryCode": null,
+    requisitionId: "173e7c8e-e33b-4254-b83d-4776774ef1dc",
 
-      "isAbsent": false,
+    requisitionTitle: "Naveen First Test 1",
 
-      "positionId": "6cb9f968-a72f-4165-815a-a8036ccc5a0f",
+    requisitionStartDate: "2026-01-16",
 
-      "positionTitle": "NaveenTestMasterPos1",
+    requisitionEndDate: "2026-03-16",
+  },
 
-      "requisitionId": "173e7c8e-e33b-4254-b83d-4776774ef1dc",
+  {
+    interviewScheduleId: "052f644d-741d-40e0-85ca-988b75b32d76",
 
-      "requisitionTitle": "Naveen First Test 1",
+    interviewStartAt: "2026-02-04T10:30:00",
 
-      "requisitionStartDate": "2026-01-16",
+    interviewEndAt: "2026-02-04T10:45:00",
 
-      "requisitionEndDate": "2026-03-16"
+    zonalOfficeId: "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
 
-    },
+    zonalOfficeName: "Hyderabad - Madhapur",
 
-    {
+    zonalVerificationStatus: "PENDING",
 
-      "interviewScheduleId": "052f644d-741d-40e0-85ca-988b75b32d76",
+    candidateId: "54cae8bb-b886-4e52-a4c3-531ca2873b91",
 
-      "interviewStartAt": "2026-02-04T10:30:00",
+    candidateName: "Rajesh Kumar",
 
-      "interviewEndAt": "2026-02-04T10:45:00",
+    applicationId: "8d40ed48-a094-448d-ae37-1b00ba4537a8",
 
-      "zonalOfficeId": "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
+    applicationNumber: "APP-2024-001",
 
-      "zonalOfficeName": "Hyderabad - Madhapur",
+    categoryId: "673988f1-4cbf-493e-9466-4677bf2d65ec",
 
-      "zonalVerificationStatus": "PENDING",
+    categoryCode: "GEN",
 
-      "candidateId": "54cae8bb-b886-4e52-a4c3-531ca2873b91",
+    isAbsent: false,
 
-      "candidateName": "Rajesh Kumar",
+    positionId: "10fb0cf5-abce-4e14-adef-a738f33c52a5",
 
-      "applicationId": "8d40ed48-a094-448d-ae37-1b00ba4537a8",
+    positionTitle: "Assistant Manager",
 
-      "applicationNumber": "APP-2024-001",
+    requisitionId: "3e1a8947-6d9c-4666-aaa4-f7851395c7b2",
 
-      "categoryId": "673988f1-4cbf-493e-9466-4677bf2d65ec",
+    requisitionTitle: "AM Recruitment 2024",
 
-      "categoryCode": "GEN",
+    requisitionStartDate: "2024-01-01",
 
-      "isAbsent": false,
+    requisitionEndDate: "2024-12-31",
+  },
 
-      "positionId": "10fb0cf5-abce-4e14-adef-a738f33c52a5",
+  {
+    interviewScheduleId: "af638a31-6600-4050-9cf0-3f65ef67059d",
 
-      "positionTitle": "Assistant Manager",
+    interviewStartAt: "2026-02-04T10:30:00",
 
-      "requisitionId": "3e1a8947-6d9c-4666-aaa4-f7851395c7b2",
+    interviewEndAt: "2026-02-04T10:45:00",
 
-      "requisitionTitle": "AM Recruitment 2024",
+    zonalOfficeId: "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
 
-      "requisitionStartDate": "2024-01-01",
+    zonalOfficeName: "Hyderabad - Madhapur",
 
-      "requisitionEndDate": "2024-12-31"
+    zonalVerificationStatus: "VERIFIED",
 
-    },
+    candidateId: "432855e5-37e9-4331-b07d-540b7a1ee1f1",
 
-    {
+    candidateName: "Priya Sharma",
 
-      "interviewScheduleId": "af638a31-6600-4050-9cf0-3f65ef67059d",
+    applicationId: "898077d6-7ba1-4d96-8f4a-1db2c0f1ef01",
 
-      "interviewStartAt": "2026-02-04T10:30:00",
+    applicationNumber: "APP-2024-002",
 
-      "interviewEndAt": "2026-02-04T10:45:00",
+    categoryId: "e1cb8e94-89f8-420c-b3d7-ad2447e9f1d0",
 
-      "zonalOfficeId": "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
+    categoryCode: "OBC",
 
-      "zonalOfficeName": "Hyderabad - Madhapur",
+    isAbsent: false,
 
-      "zonalVerificationStatus": "VERIFIED",
+    positionId: "10fb0cf5-abce-4e14-adef-a738f33c52a5",
 
-      "candidateId": "432855e5-37e9-4331-b07d-540b7a1ee1f1",
+    positionTitle: "Assistant Manager",
 
-      "candidateName": "Priya Sharma",
+    requisitionId: "3e1a8947-6d9c-4666-aaa4-f7851395c7b2",
 
-      "applicationId": "898077d6-7ba1-4d96-8f4a-1db2c0f1ef01",
+    requisitionTitle: "AM Recruitment 2024",
 
-      "applicationNumber": "APP-2024-002",
+    requisitionStartDate: "2024-01-01",
 
-      "categoryId": "e1cb8e94-89f8-420c-b3d7-ad2447e9f1d0",
+    requisitionEndDate: "2024-12-31",
+  },
 
-      "categoryCode": "OBC",
+  {
+    interviewScheduleId: "3d4f933e-85b0-49e6-8e61-489b730f1fb6",
 
-      "isAbsent": false,
+    interviewStartAt: "2026-02-04T10:30:00",
 
-      "positionId": "10fb0cf5-abce-4e14-adef-a738f33c52a5",
+    interviewEndAt: "2026-02-04T10:45:00",
 
-      "positionTitle": "Assistant Manager",
+    zonalOfficeId: "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
 
-      "requisitionId": "3e1a8947-6d9c-4666-aaa4-f7851395c7b2",
+    zonalOfficeName: "Hyderabad - Madhapur",
 
-      "requisitionTitle": "AM Recruitment 2024",
+    zonalVerificationStatus: "PENDING",
 
-      "requisitionStartDate": "2024-01-01",
+    candidateId: "042c7921-477d-4d1c-ac7a-b0f3387783fe",
 
-      "requisitionEndDate": "2024-12-31"
+    candidateName: "Amit Patel",
 
-    },
+    applicationId: "2bec7f81-31a1-44c7-8ea0-851fe994012e",
 
-    {
+    applicationNumber: "APP-2024-003",
 
-      "interviewScheduleId": "3d4f933e-85b0-49e6-8e61-489b730f1fb6",
+    categoryId: "6d3b1577-fbcd-4384-b170-89dd7ac28174",
 
-      "interviewStartAt": "2026-02-04T10:30:00",
+    categoryCode: "SC",
 
-      "interviewEndAt": "2026-02-04T10:45:00",
+    isAbsent: false,
 
-      "zonalOfficeId": "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
+    positionId: "9ad9bf73-8ab7-4d29-8602-c182012c1242",
 
-      "zonalOfficeName": "Hyderabad - Madhapur",
+    positionTitle: "Senior Officer",
 
-      "zonalVerificationStatus": "PENDING",
+    requisitionId: "fc31baec-7b74-4473-abec-9a068dfaf315",
 
-      "candidateId": "042c7921-477d-4d1c-ac7a-b0f3387783fe",
+    requisitionTitle: "SO Recruitment 2024",
 
-      "candidateName": "Amit Patel",
+    requisitionStartDate: "2024-02-01",
 
-      "applicationId": "2bec7f81-31a1-44c7-8ea0-851fe994012e",
+    requisitionEndDate: "2025-01-31",
+  },
 
-      "applicationNumber": "APP-2024-003",
+  {
+    interviewScheduleId: "48ebf510-649c-4bdb-8d6a-75a9ea09ef8b",
 
-      "categoryId": "6d3b1577-fbcd-4384-b170-89dd7ac28174",
+    interviewStartAt: "2026-02-04T10:30:00",
 
-      "categoryCode": "SC",
+    interviewEndAt: "2026-02-04T10:45:00",
 
-      "isAbsent": false,
+    zonalOfficeId: "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
 
-      "positionId": "9ad9bf73-8ab7-4d29-8602-c182012c1242",
+    zonalOfficeName: "Hyderabad - Madhapur",
 
-      "positionTitle": "Senior Officer",
+    zonalVerificationStatus: "REJECTED",
 
-      "requisitionId": "fc31baec-7b74-4473-abec-9a068dfaf315",
+    candidateId: "2d7538bf-3f05-49ed-af0d-31dd5d430df5",
 
-      "requisitionTitle": "SO Recruitment 2024",
+    candidateName: "Sneha Reddy",
 
-      "requisitionStartDate": "2024-02-01",
+    applicationId: "aca8d286-ea68-4eca-a15f-aa023511cff5",
 
-      "requisitionEndDate": "2025-01-31"
+    applicationNumber: "APP-2024-004",
 
-    },
+    categoryId: "c55097fb-888f-438a-a6fe-0cd2409aab0e",
 
-    {
+    categoryCode: "ST",
 
-      "interviewScheduleId": "48ebf510-649c-4bdb-8d6a-75a9ea09ef8b",
+    isAbsent: true,
 
-      "interviewStartAt": "2026-02-04T10:30:00",
+    positionId: "9ad9bf73-8ab7-4d29-8602-c182012c1242",
 
-      "interviewEndAt": "2026-02-04T10:45:00",
+    positionTitle: "Senior Officer",
 
-      "zonalOfficeId": "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
+    requisitionId: "fc31baec-7b74-4473-abec-9a068dfaf315",
 
-      "zonalOfficeName": "Hyderabad - Madhapur",
+    requisitionTitle: "SO Recruitment 2024",
 
-      "zonalVerificationStatus": "REJECTED",
+    requisitionStartDate: "2024-02-01",
 
-      "candidateId": "2d7538bf-3f05-49ed-af0d-31dd5d430df5",
+    requisitionEndDate: "2025-01-31",
+  },
 
-      "candidateName": "Sneha Reddy",
+  {
+    interviewScheduleId: "a6610224-633e-4c8e-9c60-aae61e729d17",
 
-      "applicationId": "aca8d286-ea68-4eca-a15f-aa023511cff5",
+    interviewStartAt: "2026-02-04T10:30:00",
 
-      "applicationNumber": "APP-2024-004",
+    interviewEndAt: "2026-02-04T10:45:00",
 
-      "categoryId": "c55097fb-888f-438a-a6fe-0cd2409aab0e",
+    zonalOfficeId: "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
 
-      "categoryCode": "ST",
+    zonalOfficeName: "Hyderabad - Madhapur",
 
-      "isAbsent": true,
+    zonalVerificationStatus: "PENDING",
 
-      "positionId": "9ad9bf73-8ab7-4d29-8602-c182012c1242",
+    candidateId: "5068dd6e-3481-46ca-b51b-4a35e6b74daa",
 
-      "positionTitle": "Senior Officer",
+    candidateName: "Vikram Singh",
 
-      "requisitionId": "fc31baec-7b74-4473-abec-9a068dfaf315",
+    applicationId: "96827a6c-012a-47ec-8d6d-4b4d4ad9a383",
 
-      "requisitionTitle": "SO Recruitment 2024",
+    applicationNumber: "APP-2024-005",
 
-      "requisitionStartDate": "2024-02-01",
+    categoryId: "69661f57-035d-4a68-b2f0-c1e03a334b3b",
 
-      "requisitionEndDate": "2025-01-31"
+    categoryCode: "GEN",
 
-    },
+    isAbsent: false,
 
-    {
+    positionId: "4dc4a971-ebb5-48a8-9195-b70216f31df7",
 
-      "interviewScheduleId": "a6610224-633e-4c8e-9c60-aae61e729d17",
+    positionTitle: "Clerk",
 
-      "interviewStartAt": "2026-02-04T10:30:00",
+    requisitionId: "02233968-4d12-4502-951b-4df7e5c450fa",
 
-      "interviewEndAt": "2026-02-04T10:45:00",
+    requisitionTitle: "Clerk Recruitment 2024",
 
-      "zonalOfficeId": "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
+    requisitionStartDate: "2024-03-01",
 
-      "zonalOfficeName": "Hyderabad - Madhapur",
+    requisitionEndDate: "2024-11-30",
+  },
 
-      "zonalVerificationStatus": "PENDING",
+  {
+    interviewScheduleId: "a9ca7489-a4b4-4850-b4fb-5d2c4476be32",
 
-      "candidateId": "5068dd6e-3481-46ca-b51b-4a35e6b74daa",
+    interviewStartAt: "2026-02-04T10:30:00",
 
-      "candidateName": "Vikram Singh",
+    interviewEndAt: "2026-02-04T10:45:00",
 
-      "applicationId": "96827a6c-012a-47ec-8d6d-4b4d4ad9a383",
+    zonalOfficeId: "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
 
-      "applicationNumber": "APP-2024-005",
+    zonalOfficeName: "Hyderabad - Madhapur",
 
-      "categoryId": "69661f57-035d-4a68-b2f0-c1e03a334b3b",
+    zonalVerificationStatus: "PROVISIONALLY_APPROVED",
 
-      "categoryCode": "GEN",
+    candidateId: "95bd746e-5f63-45c9-987f-5f941eb7f4f2",
 
-      "isAbsent": false,
+    candidateName: "Anjali Gupta",
 
-      "positionId": "4dc4a971-ebb5-48a8-9195-b70216f31df7",
+    applicationId: "47aaad2f-d8a1-49a7-9268-fa487ceeb668",
 
-      "positionTitle": "Clerk",
+    applicationNumber: "APP-2024-006",
 
-      "requisitionId": "02233968-4d12-4502-951b-4df7e5c450fa",
+    categoryId: "bdf77d36-8a99-43ab-87e7-647c5852b18d",
 
-      "requisitionTitle": "Clerk Recruitment 2024",
+    categoryCode: "EWS",
 
-      "requisitionStartDate": "2024-03-01",
+    isAbsent: false,
 
-      "requisitionEndDate": "2024-11-30"
+    positionId: "4dc4a971-ebb5-48a8-9195-b70216f31df7",
 
-    },
+    positionTitle: "Clerk",
 
-    {
+    requisitionId: "02233968-4d12-4502-951b-4df7e5c450fa",
 
-      "interviewScheduleId": "a9ca7489-a4b4-4850-b4fb-5d2c4476be32",
+    requisitionTitle: "Clerk Recruitment 2024",
 
-      "interviewStartAt": "2026-02-04T10:30:00",
+    requisitionStartDate: "2024-03-01",
 
-      "interviewEndAt": "2026-02-04T10:45:00",
+    requisitionEndDate: "2024-11-30",
+  },
 
-      "zonalOfficeId": "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
+  {
+    interviewScheduleId: "db1a3487-9a7b-474c-b938-6211e6cbc9b3",
 
-      "zonalOfficeName": "Hyderabad - Madhapur",
+    interviewStartAt: "2026-02-04T10:30:00",
 
-      "zonalVerificationStatus": "PROVISIONALLY_APPROVED",
+    interviewEndAt: "2026-02-04T10:45:00",
 
-      "candidateId": "95bd746e-5f63-45c9-987f-5f941eb7f4f2",
+    zonalOfficeId: "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
 
-      "candidateName": "Anjali Gupta",
+    zonalOfficeName: "Hyderabad - Madhapur",
 
-      "applicationId": "47aaad2f-d8a1-49a7-9268-fa487ceeb668",
+    zonalVerificationStatus: "VERIFIED",
 
-      "applicationNumber": "APP-2024-006",
+    candidateId: "46ebd328-d48e-4d89-91cb-ee65ac4b3b1b",
 
-      "categoryId": "bdf77d36-8a99-43ab-87e7-647c5852b18d",
+    candidateName: "Karthik Menon",
 
-      "categoryCode": "EWS",
+    applicationId: "f6cec0f9-2e1d-4e5f-a781-8b7103682ce2",
 
-      "isAbsent": false,
+    applicationNumber: "APP-2024-007",
 
-      "positionId": "4dc4a971-ebb5-48a8-9195-b70216f31df7",
+    categoryId: "fa472be4-8f15-4f46-a47b-5601d8936f59",
 
-      "positionTitle": "Clerk",
+    categoryCode: "OBC",
 
-      "requisitionId": "02233968-4d12-4502-951b-4df7e5c450fa",
+    isAbsent: false,
 
-      "requisitionTitle": "Clerk Recruitment 2024",
+    positionId: "10fb0cf5-abce-4e14-adef-a738f33c52a5",
 
-      "requisitionStartDate": "2024-03-01",
+    positionTitle: "Assistant Manager",
 
-      "requisitionEndDate": "2024-11-30"
+    requisitionId: "3e1a8947-6d9c-4666-aaa4-f7851395c7b2",
 
-    },
+    requisitionTitle: "AM Recruitment 2024",
 
-    {
+    requisitionStartDate: "2024-01-01",
 
-      "interviewScheduleId": "db1a3487-9a7b-474c-b938-6211e6cbc9b3",
+    requisitionEndDate: "2024-12-31",
+  },
 
-      "interviewStartAt": "2026-02-04T10:30:00",
+  {
+    interviewScheduleId: "2eb2d692-1a58-4c8f-9258-5d1f5bb7a208",
 
-      "interviewEndAt": "2026-02-04T10:45:00",
+    interviewStartAt: "2026-02-04T10:30:00",
 
-      "zonalOfficeId": "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
+    interviewEndAt: "2026-02-04T10:45:00",
 
-      "zonalOfficeName": "Hyderabad - Madhapur",
+    zonalOfficeId: "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
 
-      "zonalVerificationStatus": "VERIFIED",
+    zonalOfficeName: "Hyderabad - Madhapur",
 
-      "candidateId": "46ebd328-d48e-4d89-91cb-ee65ac4b3b1b",
+    zonalVerificationStatus: "PENDING",
 
-      "candidateName": "Karthik Menon",
+    candidateId: "c833f881-1222-4002-9a80-6846de9180e6",
 
-      "applicationId": "f6cec0f9-2e1d-4e5f-a781-8b7103682ce2",
+    candidateName: "Deepika Rao",
 
-      "applicationNumber": "APP-2024-007",
+    applicationId: "c8d9a348-214e-4a13-aa7a-df5f20e284dd",
 
-      "categoryId": "fa472be4-8f15-4f46-a47b-5601d8936f59",
+    applicationNumber: "APP-2024-008",
 
-      "categoryCode": "OBC",
+    categoryId: "9cb1247e-d5dd-4b93-9518-84422af94ad9",
 
-      "isAbsent": false,
+    categoryCode: "GEN",
 
-      "positionId": "10fb0cf5-abce-4e14-adef-a738f33c52a5",
+    isAbsent: false,
 
-      "positionTitle": "Assistant Manager",
+    positionId: "9ad9bf73-8ab7-4d29-8602-c182012c1242",
 
-      "requisitionId": "3e1a8947-6d9c-4666-aaa4-f7851395c7b2",
+    positionTitle: "Senior Officer",
 
-      "requisitionTitle": "AM Recruitment 2024",
+    requisitionId: "fc31baec-7b74-4473-abec-9a068dfaf315",
 
-      "requisitionStartDate": "2024-01-01",
+    requisitionTitle: "SO Recruitment 2024",
 
-      "requisitionEndDate": "2024-12-31"
+    requisitionStartDate: "2024-02-01",
 
-    },
-
-    {
-
-      "interviewScheduleId": "2eb2d692-1a58-4c8f-9258-5d1f5bb7a208",
-
-      "interviewStartAt": "2026-02-04T10:30:00",
-
-      "interviewEndAt": "2026-02-04T10:45:00",
-
-      "zonalOfficeId": "24b63d8e-de8c-43c5-a4aa-e2fa0624470c",
-
-      "zonalOfficeName": "Hyderabad - Madhapur",
-
-      "zonalVerificationStatus": "PENDING",
-
-      "candidateId": "c833f881-1222-4002-9a80-6846de9180e6",
-
-      "candidateName": "Deepika Rao",
-
-      "applicationId": "c8d9a348-214e-4a13-aa7a-df5f20e284dd",
-
-      "applicationNumber": "APP-2024-008",
-
-      "categoryId": "9cb1247e-d5dd-4b93-9518-84422af94ad9",
-
-      "categoryCode": "GEN",
-
-      "isAbsent": false,
-
-      "positionId": "9ad9bf73-8ab7-4d29-8602-c182012c1242",
-
-      "positionTitle": "Senior Officer",
-
-      "requisitionId": "fc31baec-7b74-4473-abec-9a068dfaf315",
-
-      "requisitionTitle": "SO Recruitment 2024",
-
-      "requisitionStartDate": "2024-02-01",
-
-      "requisitionEndDate": "2025-01-31"
-
-    }
-
-  ]
+    requisitionEndDate: "2025-01-31",
+  },
+];

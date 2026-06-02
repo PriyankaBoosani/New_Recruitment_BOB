@@ -8,7 +8,7 @@ const PATTERNS = {
   ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at: /^[A-Za-z0-9 _\-&]*$/,
   NUMERIC_SPACE: /^[A-Za-z0-9\s]*$/,
 };
- 
+
 export const handleValidatedInput = ({
   e,
   fieldName,
@@ -17,46 +17,42 @@ export const handleValidatedInput = ({
   setErrors,
   pattern,
   errorMessage,
-  preventLeadingSpace = true
+  preventLeadingSpace = true,
 }) => {
   let value = e.target.value;
- 
+
   //  validation
   if (pattern && !pattern.test(value)) {
-    setErrors?.(prev => ({
+    setErrors?.((prev) => ({
       ...prev,
-      [fieldName]: errorMessage
+      [fieldName]: errorMessage,
     }));
     return;
   }
- 
+
   //  prevent leading spaces
   if (preventLeadingSpace) {
     value = value.replace(/^\s+/, "");
   }
- 
+
   //  UPDATE VALUE (SAFE FOR BOTH CASES)
   if (typeof onValidChange === "function") {
     onValidChange(value);
   } else if (typeof setFormData === "function") {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [fieldName]: value
+      [fieldName]: value,
     }));
   } else {
-    console.warn(
-      `[handleValidatedInput] No handler provided for "${fieldName}"`
-    );
+    console.warn(`[handleValidatedInput] No handler provided for "${fieldName}"`);
   }
- 
+
   //  clear error
-  setErrors?.(prev => {
+  setErrors?.((prev) => {
     const copy = { ...prev };
     delete copy[fieldName];
     return copy;
   });
 };
- 
- 
- 
+
 export const INPUT_PATTERNS = PATTERNS;

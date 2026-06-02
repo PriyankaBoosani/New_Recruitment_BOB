@@ -4,13 +4,7 @@ import candidateWorkflowServices from "../services/CandidateWorkflowServices";
 import masterApiService from "../../master/services/masterApiService";
 import { useTranslation } from "react-i18next";
 
-export default function useInterviewPool({
-  positionId,
-  filters,
-  page,
-  pageSize,
-  enabled
-}) {
+export default function useInterviewPool({ positionId, filters, page, pageSize, enabled }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const [data, setData] = useState([]);
   const [totalElements, setTotalElements] = useState(0);
@@ -66,8 +60,18 @@ export default function useInterviewPool({
 
     try {
       // Only fetch interview statuses: SCHEDULED, QUALIFIED, DISQUALIFIED, PROVISIONALLY_APPROVED, PENDING
-      const INTERVIEW_STATUSES = ["SCHEDULED", "QUALIFIED", "DISQUALIFIED", "PROVISIONALLY_APPROVED", "PENDING", "ZONAL_ABSENT", "INTERVIEW_ABSENT", "ZONAL_REJECTED", "RESCHEDULED"];
-      
+      const INTERVIEW_STATUSES = [
+        "SCHEDULED",
+        "QUALIFIED",
+        "DISQUALIFIED",
+        "PROVISIONALLY_APPROVED",
+        "PENDING",
+        "ZONAL_ABSENT",
+        "INTERVIEW_ABSENT",
+        "ZONAL_REJECTED",
+        "RESCHEDULED",
+      ];
+
       const res = await candidateWorkflowServices.getInterviewCandidates({
         searchText: filters.searchText || "",
         positionIds: positionId,
@@ -78,16 +82,9 @@ export default function useInterviewPool({
 
       const apiData = res?.data;
 
-      setData(
-        mapInterviewCandidates(
-          apiData?.content || [],
-          centreMap,
-          panelMap
-        )
-      );
+      setData(mapInterviewCandidates(apiData?.content || [], centreMap, panelMap));
 
       setTotalElements(apiData?.page?.totalElements || 0);
-
     } catch (err) {
       console.error(t("candidateWorkflow:failed_fetch_interview_candidates"), err);
     } finally {
@@ -101,9 +98,8 @@ export default function useInterviewPool({
     pageSize,
     enabled,
     centreMap,
-    panelMap
+    panelMap,
   ]);
-
 
   useEffect(() => {
     fetchInterviewCandidates();
@@ -113,6 +109,6 @@ export default function useInterviewPool({
     interviewCandidates: data,
     totalElements,
     loading,
-    refetch: fetchInterviewCandidates
+    refetch: fetchInterviewCandidates,
   };
 }

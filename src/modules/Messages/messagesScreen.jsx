@@ -22,7 +22,6 @@ const Messages = () => {
     toggleRow,
   } = useMessages();
 
-
   const [selectedStatus, setSelectedStatus] = React.useState("");
   const [isFilterOpen, setIsFilterOpen] = React.useState(false);
   const [requisitions, setRequisitions] = React.useState([]);
@@ -36,16 +35,15 @@ const Messages = () => {
   // const messagesData = mapMessagesData(rawData);
   const [apiMessages, setApiMessages] = React.useState([]);
   const [loadingMessages, setLoadingMessages] = React.useState(false);
-  const [allMessages, setAllMessages] = React.useState([]);  // ✅ ADD THIS
+  const [allMessages, setAllMessages] = React.useState([]); // ✅ ADD THIS
   const [searchText, setSearchText] = React.useState("");
   const [page, setPage] = React.useState(0);
   const [size, setSize] = React.useState(10);
   const [totalPages, setTotalPages] = React.useState(0);
   const filterRef = useRef(null);
 
-
-
-  const selectedRequisitionName = requisitions.find(r => r.id === selectedRequisitionId)?.requisitionTitle || "";
+  const selectedRequisitionName =
+    requisitions.find((r) => r.id === selectedRequisitionId)?.requisitionTitle || "";
 
   // const selectedPositionName =
   //   positions.find(
@@ -86,10 +84,8 @@ const Messages = () => {
 
     return (
       selectedPositionId?.length > 0 &&
-      (!selectedRequisitionId ||
-        item.requisitionId === selectedRequisitionId) &&
-      (!selectedPositionId ||
-        selectedPositionId.includes(item.positionId)) &&
+      (!selectedRequisitionId || item.requisitionId === selectedRequisitionId) &&
+      (!selectedPositionId || selectedPositionId.includes(item.positionId)) &&
       (!selectedStatus || item.rawStatus === selectedStatus) &&
       (!searchText || matchesSearch)
     );
@@ -104,26 +100,17 @@ const Messages = () => {
   //   "REJECTED"
   // ];
 
-
   const fetchMessages = async (payload, pageNo = page, pageSize = size) => {
     try {
       setLoadingMessages(true);
 
-      const res = await candidateWorkflowServices.getMessageHistory(
-        payload,
-        pageNo,
-        pageSize
-      );
-
+      const res = await candidateWorkflowServices.getMessageHistory(payload, pageNo, pageSize);
 
       const responseData = res?.data;
-
 
       setApiMessages(responseData?.content || []);
       setTotalPages(responseData?.page.totalPages || 0);
       setTotalElements(responseData?.page.totalElements || 0);
-
-
     } catch (err) {
       console.error("Messages API error", err);
     } finally {
@@ -139,10 +126,7 @@ const Messages = () => {
         search
       );
 
-
-
       setPositions(res?.data || []);
-
     } catch (err) {
       console.error("Positions API error", err);
     } finally {
@@ -160,11 +144,7 @@ const Messages = () => {
 
       const res = await candidateWorkflowServices.getRequisitions(search);
 
-
-
-
       setRequisitions(res?.data || []);
-
     } catch (err) {
       console.error("Requisition API error", err);
     } finally {
@@ -186,21 +166,23 @@ const Messages = () => {
 
   React.useEffect(() => {
     if (selectedPositionId?.length > 0) {
-
       toggleRow(null);
 
-      fetchMessages({
-        positionsIds: selectedPositionId || [],
-        requestTypeIds: [],
-        statusList: selectedStatus ? [selectedStatus] : []
-      }, 0, size);
+      fetchMessages(
+        {
+          positionsIds: selectedPositionId || [],
+          requestTypeIds: [],
+          statusList: selectedStatus ? [selectedStatus] : [],
+        },
+        0,
+        size
+      );
     }
   }, [selectedPositionId, selectedStatus]);
 
   const fetchThreadMessages = async (threadId) => {
     try {
       const res = await candidateWorkflowServices.getMessagesByThreadId(threadId);
-
 
       return res?.data || [];
     } catch (err) {
@@ -219,16 +201,18 @@ const Messages = () => {
   };
   React.useEffect(() => {
     if (selectedPositionId) {
-
-      fetchMessages({
-        positionsIds: selectedPositionId || [],
-        requestTypeIds: [], // optional (can pass selected later)
-        statusList: selectedStatus ? [selectedStatus] : []
-        // statusList: []
-      }, page, size);
+      fetchMessages(
+        {
+          positionsIds: selectedPositionId || [],
+          requestTypeIds: [], // optional (can pass selected later)
+          statusList: selectedStatus ? [selectedStatus] : [],
+          // statusList: []
+        },
+        page,
+        size
+      );
     }
   }, [page, size]);
-
 
   React.useEffect(() => {
     setPage(0);
@@ -248,14 +232,12 @@ const Messages = () => {
     };
   }, []);
 
-
-
   const handleSubmitApproval = async (threadId, status, comment) => {
     try {
       const payload = {
         conversationThreadId: [threadId],
         status,
-        comments: comment || ""
+        comments: comment || "",
       };
 
       await candidateWorkflowServices.submitForApproval(payload);
@@ -266,29 +248,20 @@ const Messages = () => {
         toast.success("Rejected successfully");
       }
 
-
       const latestMessages = await fetchThreadMessages(threadId);
 
-      setThreadMessagesMap(prev => ({
+      setThreadMessagesMap((prev) => ({
         ...prev,
-        [threadId]: latestMessages?.data || latestMessages || []
+        [threadId]: latestMessages?.data || latestMessages || [],
       }));
 
-
-      setApiMessages(prev =>
-        prev.map(item =>
-          item.conversationThreadId === threadId
-            ? { ...item, status }
-            : item
-        )
+      setApiMessages((prev) =>
+        prev.map((item) => (item.conversationThreadId === threadId ? { ...item, status } : item))
       );
-
     } catch (err) {
       console.error("Submit approval error", err);
 
-      toast.error(
-        err?.response?.data?.message || "Something went wrong"
-      );
+      toast.error(err?.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -298,7 +271,7 @@ const Messages = () => {
         {
           positionsIds: selectedPositionId || [],
           requestTypeIds: [],
-          statusList: []   // ✅ ALWAYS ALL
+          statusList: [], // ✅ ALWAYS ALL
         },
         0,
         1000
@@ -333,26 +306,27 @@ const Messages = () => {
     return [page - 1, page, page + 1];
   };
 
-
-
-
-
-
-
   return (
-    <div className="container-fluid py-3 px-3"
-      style={{ background: "#F5F7FA", minHeight: "100vh" }}>
-      <div className="card" style={{ borderRadius: "16px", overflow: "hidden", border: "1px solid #E0E0E0", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+    <div
+      className="container-fluid py-3 px-3"
+      style={{ background: "#F5F7FA", minHeight: "100vh" }}
+    >
+      <div
+        className="card"
+        style={{
+          borderRadius: "16px",
+          overflow: "hidden",
+          border: "1px solid #E0E0E0",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+        }}
+      >
         <div className="card-body p-0 d-flex flex-column" style={{ height: "100%" }}>
-
           {/* HEADER */}
           <div id="msg-card-1">
             <div className="d-flex justify-content-between align-items-center px-3 py-3 border-bottom">
               <div>
                 <h6 className="blue-color fw-semibold mb-0"> {t("messages:message_history")}</h6>
-                <small className="text-muted">
-                  {t("messages:manage_communications")}
-                </small>
+                <small className="text-muted">{t("messages:manage_communications")}</small>
               </div>
 
               <div className="msg-search-box">
@@ -371,10 +345,8 @@ const Messages = () => {
           {/* FILTERS */}
           <div className="px-3 pt-3" id="msg-card-1">
             <div className="d-flex align-items-end gap-3 w-100 flex-wrap">
-
               {/* LEFT */}
               <div className="d-flex flex-wrap gap-3 flex-grow-1 align-items-end">
-
                 <DropdownStripMultipleposition
                   requisitions={requisitions}
                   positions={positions}
@@ -401,7 +373,7 @@ const Messages = () => {
                       {
                         positionsIds: values || [],
                         requestTypeIds: [],
-                        statusList: selectedStatus ? [selectedStatus] : []
+                        statusList: selectedStatus ? [selectedStatus] : [],
                       },
                       0,
                       size
@@ -442,7 +414,7 @@ const Messages = () => {
                     marginLeft: "auto",
                     minWidth: "160px",
                     display: "flex",
-                    alignItems: "flex-end"
+                    alignItems: "flex-end",
                   }}
                 >
                   <div
@@ -462,12 +434,13 @@ const Messages = () => {
                     {selectedStatus === "REJECTED" && "Rejected"}
                     {!selectedStatus && t("messages:all_status")}
 
-                    <i className={`bi ms-2 ${isFilterOpen ? "bi-chevron-up" : "bi-chevron-down"}`}></i>
+                    <i
+                      className={`bi ms-2 ${isFilterOpen ? "bi-chevron-up" : "bi-chevron-down"}`}
+                    ></i>
                   </div>
 
                   {isFilterOpen && (
                     <div className="filter-dropdown">
-
                       {/* ALL */}
                       <div
                         className={`filter-item ${!selectedStatus ? "active" : ""}`}
@@ -528,7 +501,7 @@ const Messages = () => {
                         {/* <span>{statusCounts["L1_REJECTED"] || 0}</span> */}
                       </div>
 
-                        <div
+                      <div
                         className={`filter-item pending ${selectedStatus === "L2_PENDING" ? "active" : ""}`}
                         onClick={() => {
                           setSelectedStatus("L2_PENDING");
@@ -573,25 +546,17 @@ const Messages = () => {
                         Rejected
                         {/* <span>{statusCounts["REJECTED"] || 0}</span> */}
                       </div>
-
                     </div>
                   )}
                 </div>
-
               </div>
 
               {/* RIGHT: FILTER */}
-
-
             </div>
           </div>
 
-
           {/* LIST */}
-          <div
-            className="px-3 py-3 flex-grow-1"
-            style={{ overflowY: "auto", minHeight: "300px" }}
-          >
+          <div className="px-3 py-3 flex-grow-1" style={{ overflowY: "auto", minHeight: "300px" }}>
             {filteredMessages.length > 0 ? (
               filteredMessages.map((item) => (
                 <MessageCard
@@ -603,35 +568,31 @@ const Messages = () => {
                 />
               ))
             ) : (
-              <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "250px" }}>
-
+              <div
+                className="d-flex justify-content-center align-items-center"
+                style={{ minHeight: "250px" }}
+              >
                 <div
                   className="card text-center p-4"
                   style={{
                     width: "350px",
                     borderRadius: "12px",
                     border: "1px solid #E0E0E0",
-                    boxShadow: "0 2px 6px rgba(0,0,0,0.05)"
+                    boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
                   }}
                 >
                   <div className="mb-2">
                     <i className="bi bi-inbox" style={{ fontSize: "28px", color: "#A0A0A0" }}></i>
                   </div>
 
-                  <div className="fw-semibold text-muted">
-                    {t("messages:no_data")}
-                  </div>
+                  <div className="fw-semibold text-muted">{t("messages:no_data")}</div>
 
-                  <small className="text-muted">
-                    No messages available for selected filters
-                  </small>
+                  <small className="text-muted">No messages available for selected filters</small>
                 </div>
-
               </div>
             )}
           </div>
           <div className="d-flex justify-content-end align-items-center gap-3 col px-3 py-3 border-top">
-
             {/* Page size */}
             <div className="d-flex align-items-center gap-2">
               <span className="fw-semibold pagesize" style={{ color: "#162B75" }}>
@@ -647,8 +608,10 @@ const Messages = () => {
                   setPage(0);
                 }}
               >
-                {[5, 10, 15, 20, 25, 30].map(s => (
-                  <option key={s} value={s}>{s}</option>
+                {[5, 10, 15, 20, 25, 30].map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
                 ))}
               </select>
             </div>
@@ -656,7 +619,6 @@ const Messages = () => {
             {/* Pagination */}
             <nav aria-label="Page navigation">
               <ul className="pagination mb-0 justify-content-center">
-
                 {/* PREV */}
                 <li className={`page-item ${page === 0 ? "disabled" : ""}`}>
                   <button
@@ -701,11 +663,9 @@ const Messages = () => {
                     »
                   </button>
                 </li>
-
               </ul>
             </nav>
           </div>
-
         </div>
       </div>
     </div>

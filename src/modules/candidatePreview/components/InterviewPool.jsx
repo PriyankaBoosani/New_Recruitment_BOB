@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Person, FileText } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
-import I_icon from '../../../assets/I_icon.png';
+import I_icon from "../../../assets/I_icon.png";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -39,42 +39,34 @@ export default function InterviewPool({
     INTERVIEW_ABSENT: "bg-info",
     PENDING: "bg-warning",
     ZONAL_REJECTED: "bg-danger",
-    RESCHEDULED: "bg-warning"
+    RESCHEDULED: "bg-warning",
     // OFFER_AWAITED: "bg-dark"
-
   };
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
-  const formatStatus = (status = "") => status.toLowerCase().split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
-
-
-
-
-
-
+  const formatStatus = (status = "") =>
+    status
+      .toLowerCase()
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
 
   // const allSelected =
   //   candidates.length > 0 && selectedIds.length === candidates.length;
 
-
   const allSelected =
     allCandidatesForFilters?.length > 0 &&
-    allCandidatesForFilters.every((c) =>
-      selectedIds.includes(String(c.id))
-    );
+    allCandidatesForFilters.every((c) => selectedIds.includes(String(c.id)));
   console.log("selectedIds", selectedIds);
   console.log(
     "page ids",
-    candidates.map(c => String(c.id))
+    candidates.map((c) => String(c.id))
   );
 
   // const toggleSelectAll = () => {
   //   setSelectedIds(allSelected ? [] : candidates.map((c) => c.id));
   // };
 
-
-
   const toggleSelectAll = () => {
-
     if (!filters?.status?.length) {
       toast.error("Please select the status filter first");
       return;
@@ -82,18 +74,13 @@ export default function InterviewPool({
 
     const allIds = allCandidatesForFilters.map((c) => String(c.id));
     if (allSelected) {
-
       setSelectedIds([]);
 
       toast.info("Selection cleared");
-
     } else {
-
       setSelectedIds(allIds);
 
-      toast.success(
-        `${allIds.length} ${filters?.status?.[0]} candidates selected`
-      );
+      toast.success(`${allIds.length} ${filters?.status?.[0]} candidates selected`);
     }
   };
 
@@ -101,9 +88,7 @@ export default function InterviewPool({
     const normalizedId = String(id);
 
     setSelectedIds((prev) =>
-      prev.includes(normalizedId)
-        ? prev.filter((x) => x !== normalizedId)
-        : [...prev, normalizedId]
+      prev.includes(normalizedId) ? prev.filter((x) => x !== normalizedId) : [...prev, normalizedId]
     );
   };
   const requestSort = (key) => {
@@ -118,9 +103,6 @@ export default function InterviewPool({
     });
   };
 
-
-
-
   const sortedCandidates = useMemo(() => {
     if (!sortConfig.key) return candidates;
 
@@ -132,9 +114,7 @@ export default function InterviewPool({
       if (bVal == null) return -1;
 
       if (typeof aVal === "number" && typeof bVal === "number") {
-        return sortConfig.direction === "asc"
-          ? aVal - bVal
-          : bVal - aVal;
+        return sortConfig.direction === "asc" ? aVal - bVal : bVal - aVal;
       }
 
       return sortConfig.direction === "asc"
@@ -151,30 +131,19 @@ export default function InterviewPool({
   return (
     <div className="card-body p-0 interview-pool">
       {canReschedule && (
-
         <div className="d-flex justify-content-end px-3 pt-3">
-
-          <button
-            className="btn btn-primary fs-14"
-            onClick={onReschedule}
-          >
+          <button className="btn btn-primary fs-14" onClick={onReschedule}>
             Reschedule
           </button>
-
         </div>
-
       )}
       <table className="table table-hover mb-0">
         <thead className="bg-light">
           <tr>
-            <th className="fs-14 fw-normal py-3" style={{ paddingLeft: '1rem' }}>
-              <input
-                type="checkbox"
-                checked={allSelected}
-                onChange={toggleSelectAll}
-              />
+            <th className="fs-14 fw-normal py-3" style={{ paddingLeft: "1rem" }}>
+              <input type="checkbox" checked={allSelected} onChange={toggleSelectAll} />
             </th>
-            <th className="fs-14 fw-normal py-3" >{t("candidateWorkflow:candidate")}</th>
+            <th className="fs-14 fw-normal py-3">{t("candidateWorkflow:candidate")}</th>
             {/* <th className="fs-14 fw-normal py-3" >{t("candidateWorkflow:position")}</th> */}
             <th className="fs-14 fw-normal py-3">{t("common:date")}</th>
             <th className="fs-14 fw-normal py-3">{t("common:time")}</th>
@@ -195,9 +164,8 @@ export default function InterviewPool({
             </tr>
           ) : (
             sortedCandidates.map((c) => (
-
               <tr key={c.id}>
-                <td className="align-content-center" style={{ paddingLeft: '1rem' }}>
+                <td className="align-content-center" style={{ paddingLeft: "1rem" }}>
                   <input
                     type="checkbox"
                     checked={selectedIds.includes(String(c.id))}
@@ -207,8 +175,13 @@ export default function InterviewPool({
 
                 <td className="align-content-center">
                   <p className="fw-normal fs-14 mb-0">{c.name}</p>
-                  <p className="text-muted fs-12 mb-0">{t("candidateWorkflow:application_number")}: {c.regNo}</p>
-                  <p className="text-muted fs-12 mb-0">Position: {position?.find(p => p.positionId === c.positionId)?.positionName || "-"}</p>
+                  <p className="text-muted fs-12 mb-0">
+                    {t("candidateWorkflow:application_number")}: {c.regNo}
+                  </p>
+                  <p className="text-muted fs-12 mb-0">
+                    Position:{" "}
+                    {position?.find((p) => p.positionId === c.positionId)?.positionName || "-"}
+                  </p>
                 </td>
                 {/* <td className="fs-14 align-content-center">
                   {
@@ -222,10 +195,10 @@ export default function InterviewPool({
 
                 <td className="align-content-center">
                   <div className="d-flex align-items-center gap-2">
-
                     <span
-                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${STATUS_CLASS_MAP[c.status] || "bg-secondary"
-                        }`}
+                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${
+                        STATUS_CLASS_MAP[c.status] || "bg-secondary"
+                      }`}
                     >
                       {formatStatus(c.status)}
                     </span>
@@ -243,7 +216,6 @@ export default function InterviewPool({
                         />
                       </OverlayTrigger>
                     )}
-
                   </div>
                 </td>
 
@@ -267,8 +239,6 @@ export default function InterviewPool({
                   </div>
                 </td>
 
-
-
                 <td className="text-center align-content-center">
                   <OverlayTrigger
                     placement="bottom"
@@ -277,7 +247,6 @@ export default function InterviewPool({
                     <Person
                       className="me-3 cursor-pointer"
                       onClick={() =>
-
                         navigate("/candidate-preview", {
                           state: {
                             candidate: c,
@@ -295,21 +264,21 @@ export default function InterviewPool({
                             filters,
                             requisition: requisition
                               ? {
-                                requisition_code: requisition.requisition_code,
-                                requisition_title: requisition.requisition_title,
-                                registration_start_date: requisition.registration_start_date,
-                                registration_end_date: requisition.registration_end_date,
-                              }
+                                  requisition_code: requisition.requisition_code,
+                                  requisition_title: requisition.requisition_title,
+                                  registration_start_date: requisition.registration_start_date,
+                                  registration_end_date: requisition.registration_end_date,
+                                }
                               : null,
                             positionIds: selectedPositionId,
 
-                            position: position?.map?.(p => ({
-                              positionId: p.positionId,
-                              positionName: p.positionName,
-                              isLocationWise: p.isLocationWise,
-                            })) || [],
+                            position:
+                              position?.map?.((p) => ({
+                                positionId: p.positionId,
+                                positionName: p.positionName,
+                                isLocationWise: p.isLocationWise,
+                              })) || [],
                           },
-
                         })
                       }
                     />
@@ -325,13 +294,13 @@ export default function InterviewPool({
             ))
           )}
         </tbody>
-
       </table>
 
       <div className="d-flex justify-content-between align-items-center px-3 py-3 border-top">
         <div className="fs-14 text-muted">
           {t("candidateWorkflow:showing")} {page * pageSize + 1}–
-          {Math.min((page + 1) * pageSize, totalElements)} {t("candidateWorkflow:of")} {totalElements}
+          {Math.min((page + 1) * pageSize, totalElements)} {t("candidateWorkflow:of")}{" "}
+          {totalElements}
         </div>
 
         <div className="d-flex align-items-center gap-2">
@@ -345,7 +314,9 @@ export default function InterviewPool({
             }}
           >
             {[10, 20, 50].map((s) => (
-              <option key={s} value={s}>{s}</option>
+              <option key={s} value={s}>
+                {s}
+              </option>
             ))}
           </select>
 

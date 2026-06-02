@@ -30,5 +30,5 @@ export const mapApprovalRequisition = (item = {}) => ({
   startDate: item.startDate ?? "",
   endDate: item.endDate ?? "",
   hasDraftPositions: item.hasDraftPositions === true,
-  editable: false // approvals should NOT be editable
+  editable: false, // approvals should NOT be editable
 });
