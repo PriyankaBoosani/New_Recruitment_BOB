@@ -21,7 +21,6 @@
     "crypto-js": "^4.2.0",
     "i18next": "^22.5.1",
     "install": "^0.13.0",
-    "npm": "^11.8.0",
     "react": "^19.2.1",
     "react-bootstrap": "^2.10.10",
     "react-bootstrap-icons": "^1.11.6",
@@ -43,7 +42,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-     "format": "prettier --write src"
+    "format": "prettier --write src"
   },
   "eslintConfig": {
     "extends": [
@@ -65,5 +64,13 @@
   },
   "devDependencies": {
     "prettier": "^3.8.3"
-  }
+  },
+  "overrides": {
+  "nth-check": "^2.1.1",
+  "serialize-javascript": "^7.0.0",
+  "uuid": "^11.1.1",
+  "@tootallnate/once": "^2.0.1",
+  "underscore": "^1.13.7",
+   "postcss": "^8.5.15"
+}
 }
