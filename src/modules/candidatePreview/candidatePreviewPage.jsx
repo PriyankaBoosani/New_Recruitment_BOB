@@ -26,9 +26,6 @@ const CandidatePreviewPage = ({ onHide }) => {
 
   const isCandidateWorkflow = activeTab === "CANDIDATE_POOL";
 
-  const isZonalScreen =
-    activeTab === "INTERVIEW_POOL" || activeTab === "COMPENSATION_POOL";
-
   const user = useSelector((state) => state.user.user);
 
   const role = user?.role ? user.role.toLowerCase() : ""; // const isZonalHr = role === "zonal_hr";
@@ -43,22 +40,8 @@ const CandidatePreviewPage = ({ onHide }) => {
   const isZonalHr = privileges?.Verification;
   
   const isRecruiter = role === "recruiter";
-  const iscommitteeMember = role === "committee_member";
 
   const selectedDate = state?.selectedDate;
-
-  const canJobPost = privileges?.JobPostings;
-  const canCandidateWorkflow =
-    privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"];
-  const canCommittee = privileges?.["Committee Management"];
-  const canVerification = privileges?.Verification;
-  const canAdmin = privileges?.Admin;
-  const canInterview = privileges?.["Interview"];
-  const canApprovals =
-    privileges?.["Requisition Approval"] ||
-    privileges?.["Extension Approval"] ||
-    privileges?.["Committee Approval"];
-  const canViewPosition = privileges?.["View Position"];
 
   //  Now safe to use state
   const interviewScheduleId = state?.interviewScheduleId;
@@ -103,24 +86,15 @@ const CandidatePreviewPage = ({ onHide }) => {
       try {
         setLoading(true);
 
-        /* ---------- Load Masters ---------- */
-        
-
         const masterRes = await masterApiService.getMasterDisplayAll();
         const fullMasters = masterRes?.data || {};
 
-        const InterviewCenters =
-          await masterApiService.getAllInterviewCenters();
+        const InterviewCenters = await masterApiService.getAllInterviewCenters();
         const ZonalStats = await masterApiService.getZonalStates();
-
-
         setMasters(fullMasters);
         /* ---------- Load Candidate ---------- */
         if (candidateId && (positionId || positionIds.length > 0)) {
-          const candidateRes =
-           
-
-            await candidateWorkflowServices.getCandidateAllDetails(
+          const candidateRes = await candidateWorkflowServices.getCandidateAllDetails(
               candidateId,
               candidatePositionId || positionId
             );

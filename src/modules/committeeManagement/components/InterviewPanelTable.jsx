@@ -1,7 +1,6 @@
 import React from "react";
 import edit_icon from "../../../assets/edit_icon.png";
 import delete_icon from "../../../assets/delete_icon.png";
-import { FiFilter } from "react-icons/fi";
 import Loader from "../../../shared/components/Loader";
 import { useTranslation } from "react-i18next";
 const InterviewPanelTable = ({

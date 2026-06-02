@@ -65,7 +65,6 @@ export default function CandidateScreening({ selectedJob }) {
     PENDING: "Pending",
     INTERVIEW_SCHEDULED: "Interview Scheduled",
     ELIGIBLE: "Eligible",
-    // REJECTED: "Rejected",
   };
 
   const user = useSelector((state) => state.user.user);
@@ -237,8 +236,6 @@ export default function CandidateScreening({ selectedJob }) {
 
   const fetchExamConfigByPositions = async (positionIds = []) => {
     try {
-    
-
       if (!positionIds?.length) {
         
 
@@ -339,12 +336,7 @@ export default function CandidateScreening({ selectedJob }) {
     try {
       setSubmittingApproval(true);
 
-      const payload = {
-        positionIds: selectedPositionId,
-      };
-
-      const res =
-        await candidateWorkflowServices.submitForApproval(selectedPositionId);
+      const res = await candidateWorkflowServices.submitForApproval(selectedPositionId);
 
       //  HANDLE BACKEND VALIDATION
       if (!res?.success) {

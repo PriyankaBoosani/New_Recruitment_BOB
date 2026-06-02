@@ -29,15 +29,6 @@ const STAGE_STATUS_MAP = {
   ZONAL_REJECTED: "Zonal Rejected",
 };
 
-/* ================= DATE PILL ================= */
-
-const DatePill = React.forwardRef(({ value, onClick }, ref) => (
-  <div className="date-pill" onClick={onClick} ref={ref}>
-    {value}
-    <span className="calendar-icon">📅</span>
-  </div>
-));
-
 export default function CandidateVerification() {
   const { t } = useTranslation(["verification", "common"]);
 
@@ -136,11 +127,6 @@ export default function CandidateVerification() {
       return;
     }
   }, []);
-
-  const isBackNavigation = isBackNavigationRef.current;
-
-
-
   const formatApiDate = (d) => {
     if (!d) return null;
 
@@ -202,8 +188,6 @@ export default function CandidateVerification() {
   };
 
   useEffect(() => {}, [allCandidatesRaw]);
-
-  const hasNavCandidates = !!location.state?.preloadedCandidates?.length;
   const navCandidates = location.state?.preloadedCandidates || [];
 
   useEffect(() => {
@@ -308,16 +292,6 @@ export default function CandidateVerification() {
 
   const paginatedCandidates = filteredCandidates.slice(startIndex, endIndex);
 
-  /* ================= STAGE COUNTS ================= */
-
-  const stageCounts = Object.keys(STAGE_STATUS_MAP).reduce((acc, key) => {
-    acc[key] = baseFiltered.filter(
-      (c) => c.status === STAGE_STATUS_MAP[key]
-    ).length;
-    return acc;
-  }, {});
-
-  /* ================= ABSENT TOGGLE ================= */
 
   const toggleAbsent = (id) => {
     setAllCandidates((prev) =>

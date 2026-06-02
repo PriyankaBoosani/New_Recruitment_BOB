@@ -179,23 +179,15 @@ const ApplicationForm = ({
     const s = String(status || "")
       .toUpperCase()
       .trim();
-
-    // VERIFIED -> YES
     if (s === "VERIFIED") {
       return "YES";
     }
-
-    // REJECTED / ZONAL_REJECTED -> NO
     if (s === "REJECTED" || s === "ZONAL_REJECTED") {
       return "NO";
     }
-
-    // PROVISIONAL
     if (s === "PROVISIONALLY_APPROVED") {
       return "PROVISIONALLY_APPROVED";
     }
-
-    // PENDING -> EMPTY
     if (s === "PENDING") {
       return "";
     }
@@ -269,13 +261,11 @@ const ApplicationForm = ({
       toast.error(t("please_select_decision"));
       return;
     }
-    // 🔴 Comments mandatory when decision = NO
     if (zonalDecision === "NO") {
       if (!screeningRemarks?.trim()) {
         setErrors((prev) => ({
           ...prev,
           zonalComments: t("validation:required"),
-          // zonalComments: "This field is required"
         }));
         return;
       }
