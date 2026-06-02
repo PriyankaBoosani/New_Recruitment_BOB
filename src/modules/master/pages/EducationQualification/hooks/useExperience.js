@@ -247,20 +247,6 @@ export const useExperience = () => {
           ])
         );
 
-        const documentName = docMap.get(levelId);
-
-        const mapped = {
-          educationLevel: documentName || "-",
-          course: saved?.qualification?.qualificationName || "-",
-          specialization:
-            saved?.specializations?.map((s) => ({
-              name: s.specializationName,
-              id: s.specializationId,
-            })) || [],
-          educationQualificationsId:
-            saved?.qualification?.educationQualificationsId || "-",
-        };
-
         await loadData();
 
         setShowModal(false);
