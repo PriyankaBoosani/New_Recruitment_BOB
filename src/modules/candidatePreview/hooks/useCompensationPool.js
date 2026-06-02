@@ -14,7 +14,29 @@ export default function useCompensationPool({
   const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const user = useSelector((state) => state.user.user);
+
+const user = useSelector(
+  (state) => state.user.user
+);
+
+
+
+useEffect(() => {
+  if (!enabled || !positionId) {
+    setData([]);
+    setTotalElements(0);
+    return;
+  }
+
+  fetchData();
+}, [
+  positionId,
+  filters,
+  page,
+  pageSize,
+  enabled,
+  refreshKey
+]);
 
   const role = user?.role?.toLowerCase();
 

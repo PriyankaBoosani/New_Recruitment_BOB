@@ -116,7 +116,12 @@ export default function CandidateScreening({ selectedJob }) {
     RENEGOTIATE: "Renegotiate",
   };
 
-  const [pendingExamOpen, setPendingExamOpen] = useState(false);
+  const [pendingExamOpen, setPendingExamOpen] =
+  useState(false);
+
+
+
+  const [rankListGenerated, setRankListGenerated] = useState(false);
 
   
 
@@ -151,6 +156,8 @@ export default function CandidateScreening({ selectedJob }) {
   
 
   const isCommitteeMember = role === "committee_member";
+
+const [rankListLoading, setRankListLoading] = useState(false);
 
   const INTERVIEW_STATUS_LABEL_MAP = {
     SCHEDULED: "Scheduled",
@@ -1181,6 +1188,7 @@ export default function CandidateScreening({ selectedJob }) {
     masterData,
   ]);
   const handleRequisitionChange = async (e) => {
+     setRankListGenerated(false);
     const reqId = e.target.value;
     dispatch(clearRankState());
     isNavModeRef.current = false;
@@ -1188,6 +1196,12 @@ export default function CandidateScreening({ selectedJob }) {
     setSelectedRequisitionId(reqId);
     setSelectedPositionId([]);
     //  CORRECT LOGIC
+
+
+     setSelectedCompensationIds([]);
+
+  // Force Compensation Pool refresh
+  setCompRefreshKey(prev => prev + 1);
 
     setCandidates([]);
     setSelectedCandidateIds([]);
@@ -1206,7 +1220,7 @@ export default function CandidateScreening({ selectedJob }) {
 
   const handlePositionChange = (ids) => {
     dispatch(clearRankState());
-
+  setRankListGenerated(false);
     setSelectedPositionId(ids);
 
     // CLEAR EVERYTHING WHEN NO POSITION SELECTED
@@ -1716,6 +1730,53 @@ export default function CandidateScreening({ selectedJob }) {
     }
   };
 
+
+
+
+
+
+    const handleDownloadRankList = async (type) => {
+    if (!selectedPositionId.length) {
+      toast.error(t("candidateWorkflow:select_position_first"));
+      return;
+    }
+
+    // Normalize to extension format
+    const extension = type === "pdf" ? ".pdf" : ".xlsx";
+
+    try {
+      const payload = buildDownloadPayload(extension);
+
+      const res = await jobPositionApiService.downloadCandidateDetails(payload);
+
+      const blob = new Blob([res.data], {
+        type:
+          extension === ".pdf"
+            ? "application/pdf"
+            : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download =
+        extension === ".pdf"
+          ? "candidate-details.pdf"
+          : "candidate-details.xlsx";
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      toast.error(t("candidateWorkflow:download_failed"));
+    }
+  };
+
+
   const handleSendToCompensation = async () => {
     if (!submitBeforeDate) {
       toast.error("Please select Submit Before date");
@@ -1939,6 +2000,46 @@ export default function CandidateScreening({ selectedJob }) {
     allHaveSelectListValue &&
     !formErrors.acceptBeforeDate &&
     !formErrors.joiningDate;
+
+
+
+
+
+
+const handleGenerateRankList = async () => {
+  try {
+    const positionId = selectedPositionId?.[0];
+
+    if (!positionId) {
+      toast.error("Please select a position");
+      return;
+    }
+
+    const res =
+      await candidateWorkflowServices.generateRankList(
+        positionId
+      );
+
+    toast.success(
+      res?.message || "Rank List generated successfully"
+    );
+
+    setRankListGenerated(true); // Enable download button
+
+    setOfferRefreshKey(prev => prev + 1);
+    setOfferSelectedIds([]);
+
+  } catch (err) {
+    console.error(err);
+
+    toast.error(
+      err?.response?.data?.message ||
+      "Failed to generate rank list"
+    );
+
+    setRankListGenerated(false);
+  }
+};
 
   useEffect(() => {
     if (activeTab !== "OFFER_POOL") {
@@ -2963,7 +3064,8 @@ export default function CandidateScreening({ selectedJob }) {
                       minHeight: "39px",
                       cursor: isSendOfferEnabled ? "pointer" : "not-allowed",
                     }}
-                    disabled={!isSendOfferEnabled}
+                 onClick={() => setShowRankListModal(true)}
+                  //  disabled={!isSendOfferEnabled}
                   >
                     <img
                       className="me-2 orange-color"
@@ -2974,15 +3076,55 @@ export default function CandidateScreening({ selectedJob }) {
                     {t("candidateWorkflow:assign_locations")}
                   </button>
 
-                  <button
-                    className={`btn blue-border blue-color fs-13 px-3 py-1 ${offerSelectedIds.length !== 0 ? "" : "disabled_button"}`}
-                    onClick={() => setShowRankListModal(true)}
-                    disabled={offerSelectedIds.length === 0}
-                    style={{ minHeight: "39px" }}
-                  >
-                    <img src={excelIcon} className="me-1" width={18} />{" "}
-                    {t("candidateWorkflow:rank_list")}
-                  </button>
+
+
+                  {/* <button className={`btn blue-border blue-color fs-13 px-3 py-1 ${offerSelectedIds.length !== 0 ? "" : "disabled_button"}`} onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}
+                    style={{ minHeight: "39px" }}>
+                    <img src={excelIcon} className="me-1" width={18} /> {t("candidateWorkflow:rank_list")}
+                  </button> */}
+
+
+{/* 
+                                <button
+                className={`btn blue-border blue-color fs-13 px-3 py-1 ${
+                  offerSelectedIds.length !== 0 ? "" : "disabled_button"
+                }`}
+                disabled={offerSelectedIds.length === 0}
+                style={{ minHeight: "39px" }}
+                onClick={handleGenerateRankList}
+              >
+                <img src={excelIcon} className="me-1" width={18} />
+                {t("candidateWorkflow:rank_list")}
+              </button> */}
+
+
+
+
+                            <button
+                className="btn blue-border blue-color fs-13 px-3 py-1"
+                style={{ minHeight: "39px" }}
+                onClick={handleGenerateRankList}
+              >
+                <img src={excelIcon} className="me-1" width={18} />
+                {t("candidateWorkflow:rank_list")}
+              </button>
+
+
+
+                <button
+        className="btn blue-border fs-13 px-3 py-1"
+        style={{
+          minHeight: "39px",
+          opacity: rankListGenerated ? 1 : 0.5,
+          cursor: rankListGenerated ? "pointer" : "not-allowed",
+          color: rankListGenerated ? "#0d6efd" : "#999",
+          borderColor: rankListGenerated ? "#0d6efd" : "#ccc",
+        }}
+        onClick={handleDownloadRankList}
+        disabled={!rankListGenerated}
+      >
+        <i className="bi bi-download me-1"></i>
+      </button>
                 </div>
               </div>
             </div>
