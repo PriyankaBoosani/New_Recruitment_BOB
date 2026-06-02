@@ -140,6 +140,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
           isValidationPending: d.isValidationPending,
           pendingChecks: d.pendingChecks,
           documentNumber: d.documentNumber,
+          isDigilocker: d.isDigilocker,
         };
       });
 

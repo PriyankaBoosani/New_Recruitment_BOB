@@ -51,6 +51,13 @@ export const useApprovalRequisitions = ({
       const data = response?.data;
       const content = data?.content || [];
 
+      const hiddenDraftStatuses =
+        approvalLevel === "L1"
+          ? ["DRAFT"]
+          : approvalLevel === "L2"
+          ? ["DRAFT", "L1_REJECTED", "L1_PENDING"]
+          : [];
+
       const flattened = content.flatMap((item) => {
         const result = [];
 
@@ -61,7 +68,7 @@ export const useApprovalRequisitions = ({
         });
 
         // DRAFT REQUISITION
-        if (item.draft) {
+        if (item.draft && !hiddenDraftStatuses.includes(item.draft.requisitionStatus)) {
           const draftPositions = item.draft.positions || [];
 
           result.push({

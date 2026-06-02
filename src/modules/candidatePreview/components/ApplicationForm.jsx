@@ -16,6 +16,7 @@ import {
   faUpRightFromSquare,
 } from "@fortawesome/free-solid-svg-icons";
 import CommentsModal from "./CommentsModal";
+import digilockerVerified from "../../../assets/verified-icon.png";
 
 // Utility functions for masking sensitive information
 const maskEmail = (email) => {
@@ -575,6 +576,7 @@ const ApplicationForm = ({
           status: status?.toUpperCase() || "PENDING",
           isValidationPending: item.isValidationPending,
           pendingChecks: item.pendingChecks || [],
+          isDigilocker: item.isDigilocker,
         });
       });
 
@@ -1943,6 +1945,31 @@ const ApplicationForm = ({
                         <td>
                           {left?.name}
 
+                          {left?.isDigilocker === true && (
+                            <OverlayTrigger
+                              placement="bottom"
+                              overlay={
+                                <Tooltip
+                                  id={`tooltip-digilocker-${left.candidateDocumentId}`}
+                                >
+                                  Verified by Digilocker
+                                </Tooltip>
+                              }
+                            >
+                              <span className="mx-2">
+                                <img
+                                  src={digilockerVerified}
+                                  alt="DigiLocker"
+                                  style={{
+                                    width: "16px",
+                                    height: "16px",
+                                    marginTop: "-2px",
+                                  }}
+                                />
+                              </span>
+                            </OverlayTrigger>
+                          )}
+
                           {left?.isValidationPending && (
                             <OverlayTrigger
                               placement="bottom"
@@ -2019,6 +2046,31 @@ const ApplicationForm = ({
                         {/* <td>{right?.name || "-"}</td> */}
                         <td>
                           {right?.name || "-"}
+
+                          {right?.isDigilocker === true && (
+                            <OverlayTrigger
+                              placement="bottom"
+                              overlay={
+                                <Tooltip
+                                  // id={`tooltip-digilocker-${right.candidateDocumentId}`}
+                                >
+                                  Verified by Digilocker
+                                </Tooltip>
+                              }
+                            >
+                              <span className="mx-2">
+                                <img
+                                  src={digilockerVerified}
+                                  alt="DigiLocker"
+                                  style={{
+                                    width: "16px",
+                                    height: "16px",
+                                    marginTop: "-2px",
+                                  }}
+                                />
+                              </span>
+                            </OverlayTrigger>
+                          )}
 
                           {right?.isValidationPending && (
                             <OverlayTrigger
