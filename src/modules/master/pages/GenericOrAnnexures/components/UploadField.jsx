@@ -1,7 +1,6 @@
 import { forwardRef } from "react";
 import deleteIcon from "../../../../../assets/delete_icon.png";
 import viewIcon from "../../../../../assets/view_icon.png";
-import uploadIcon from "../../../../../assets/upload_Icon.png";
 import greenCheck from "../../../../../assets/green-check.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUpload } from "@fortawesome/free-solid-svg-icons";

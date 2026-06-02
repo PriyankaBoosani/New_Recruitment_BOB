@@ -1,7 +1,6 @@
 import React from "react";
 import { Table, Button } from "react-bootstrap";
 import editIcon from "../../../../../assets/edit_icon.png";
-import deleteIcon from "../../../../../assets/delete_icon.png";
 import viewIcon from "../../../../../assets/view_icon.png";
 import { useTranslation } from "react-i18next";
 
@@ -98,14 +97,6 @@ const EducationTable = ({
                         <img src={editIcon} alt="Edit" className="icon-16" />
                       </Button>
 
-                      {/* DELETE */}
-                      {/* <Button
-                        variant="link"
-                        className="action-btn delete-btn"
-                        onClick={() => onDelete(idx)}
-                      >
-                        <img src={deleteIcon} alt="Delete" className="icon-16" />
-                      </Button> */}
                     </div>
                   </td>
                 </tr>

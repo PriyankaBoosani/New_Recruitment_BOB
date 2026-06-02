@@ -150,7 +150,7 @@ const SpecialCategoryFormModal = ({
                     {t("description")} <span className="text-danger">*</span>
                   </Form.Label>
 
-                  {renderDescription()}
+                  {/* {renderDescription()} */}
 
                   {!isViewing && (
                     <ErrorMessage>{errors.description}</ErrorMessage>

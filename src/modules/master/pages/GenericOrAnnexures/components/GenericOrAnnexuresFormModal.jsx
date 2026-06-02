@@ -18,11 +18,6 @@ const GenericOrAnnexuresFormModal = ({
   const { t } = useTranslation(["genericOrAnnexures"]);
   const isTypeSelected = !!formData?.type;
   const MAX_PDF_SIZE = 5 * 1024 * 1024; // 5 MB
-  const title = isViewing
-    ? t("view", "View Generic / Annexures")
-    : isEditing
-      ? t("edit", "Edit Generic / Annexures")
-      : t("addgenAnn", "Add Generic / Annexures");
   const handleFormSubmit = (e) => {
     if (isViewing) {
       e.preventDefault();
