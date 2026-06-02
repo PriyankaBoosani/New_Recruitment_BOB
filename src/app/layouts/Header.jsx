@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Navbar, Nav, Container, NavDropdown, Image } from "react-bootstrap";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation} from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import logo from "../../assets/logo.png";
@@ -70,9 +70,6 @@ const Header = () => {
       postLogoutRedirectUri: `${window.location.origin}/login`,
     });
   };
-  const role = user?.role?.trim().toLowerCase();
-
-
   //Privileges
   const privileges = useSelector((state) => state.user.privileges);
 

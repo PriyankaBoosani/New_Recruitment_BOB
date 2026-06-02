@@ -212,11 +212,7 @@ const ExtensionsRequests = () => {
       }
     : null;
 
-  const requestsData = useMemo(() => {
-    if (Array.isArray(extensionRequests)) return extensionRequests;
-    return Object.values(extensionRequests || {});
-  }, [extensionRequests]);
-
+ 
   const isL1 = privileges?.["L1 Approval"];
   const isL2 = privileges?.["L2 Approval"];
 

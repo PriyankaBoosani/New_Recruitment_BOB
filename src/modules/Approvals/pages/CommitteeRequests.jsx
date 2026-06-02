@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Form, Button, Badge } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
-import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "../../../style/css/ApprovalCommitee.css";
 import history_icon from "../../../assets/history_icon.png";

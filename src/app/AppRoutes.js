@@ -63,12 +63,7 @@ const Loading = () => (
 const AppRoutes = () => {
   // Check if user is authenticated from Redux
   const authUser = useSelector((state) => state.user?.authUser);
-  const token = useSelector(
-    (state) =>
-      state.user?.authUser?.access_token ||
-      state.user?.authUser?.accessToken ||
-      state.user?.auth?.access_token
-  );
+ 
   const privileges = useSelector((state) => state.user?.privileges);
   const location = useLocation();
 

@@ -211,7 +211,6 @@ export default function ExaminationCutoffConfiguration() {
     }));
 
   const location = useLocation();
-  const navigate = useNavigate();
   const fromCandidateScreening = location.state?.fromCandidateScreening;
 
   useEffect(() => {

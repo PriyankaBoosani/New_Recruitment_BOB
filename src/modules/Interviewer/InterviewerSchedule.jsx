@@ -38,7 +38,6 @@ export default function InterviewerSchedule() {
   const [selectedRequisition, setSelectedRequisition] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [panelPositions, setPanelPositions] = useState([]);
-  const [usedRestoreData, setUsedRestoreData] = useState(false);
   const [originalRows, setOriginalRows] = useState([]);
 
   const { t } = useTranslation("interviewDay");

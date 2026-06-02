@@ -9,7 +9,6 @@ import { useTranslation } from "react-i18next";
 import committeeManagementService from "../../committeeManagement/services/committeeManagementService";
 import masterApiService from "../../master/services/masterApiService.js";
 const MessageCard = ({ item, isOpen, onToggle, onSubmitApproval }) => {
-  const { t } = useTranslation(["messages", "common"]);
   const { getStatusClass, getHistoryColor } = useMessages();
   const [showApprovalHistory, setShowApprovalHistory] = useState(false);
   const [selectedHistoryData, setSelectedHistoryData] = useState([]);
