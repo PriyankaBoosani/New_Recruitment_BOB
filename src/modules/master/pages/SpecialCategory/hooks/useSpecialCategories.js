@@ -105,10 +105,7 @@ export const useSpecialCategories = () => {
     setLoading(true);
     try {
       const res = await masterApiService.bulkAddSpecialCategories(file);
-
-      //  business failure
       if (res.success === false) {
-        // toast.error(res.message);
         return {
           success: false,
           error: res.message,

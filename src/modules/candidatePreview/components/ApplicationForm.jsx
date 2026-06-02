@@ -256,9 +256,7 @@ const ApplicationForm = ({
   ]);
 
   const handleZonalSubmit = async () => {
-    // -----------------------------------------
     // Helper Conditions
-    // -----------------------------------------
     const allVerified = areAllDocumentsVerified(); // returns true/false
     const anyRejected = hasAnyRejectedDocument(); // returns true/false
     const hasPendingDocument = documentRows.some((doc) => {
@@ -309,9 +307,7 @@ const ApplicationForm = ({
       return;
     }
 
-    // -----------------------------------------
     // 3️⃣ Decision = YES but any document REJECTED
-    // -----------------------------------------
     if (zonalDecision === "YES" && anyRejected) {
       
       toast.error(t("cannot_approve_documents_rejected"));
@@ -325,10 +321,7 @@ const ApplicationForm = ({
       return;
     }
 
-    // -----------------------------------------
     // 4️⃣ Decision = PROVISIONAL but all VERIFIED
-    // -----------------------------------------
-   
     if (zonalDecision === "PROVISIONALLY_APPROVED" && allVerified) {
       toast.warning(
         "All documents are verified. Please select other decision instead."
@@ -336,9 +329,7 @@ const ApplicationForm = ({
       return;
     }
 
-    // -----------------------------------------
     // 5️⃣ PROVISIONAL requires future date
-    // -----------------------------------------
     if (zonalDecision === "PROVISIONALLY_APPROVED") {
       let hasError = false;
 
@@ -375,11 +366,6 @@ const ApplicationForm = ({
 
       if (hasError) return;
     }
-
-    // -----------------------------------------
-    // 6️⃣ Show Loading Toast
-    // -----------------------------------------
-    // const toastId = toast.loading("Submitting zonal verification...");
     const toastId = toast.loading(t("submitting_zonal_verification"));
 
     try {
@@ -770,7 +756,6 @@ const ApplicationForm = ({
           candidateId,
           applicationId,
           zonalHrDocStatus: "VERIFIED",
-          // zonalHrDocComments: comment || ""
           zonalHrDocComments: "",
         });
       } else {
@@ -1013,8 +998,6 @@ const ApplicationForm = ({
     // disableShortlistBecauseEligible ||
     hasMissingUploads;
 
-  // Disable YES option if:
-  // 1. Shortlist section is disabled, OR
   // 2. NOT all criteria are marked as YES
   const disableYesOption = disableShortlistedSection || !areAllCriteriaYes();
 
@@ -1039,9 +1022,6 @@ const ApplicationForm = ({
     if (hasAnyDiscrepancy) {
       finalShortlist = "";
     }
-
-    // Otherwise, if required verified docs are missing,
-    // force shortlist to NO
     else if (!isAgeValid || !isWorkValid || !isEducationValid) {
       finalShortlist = "NO";
     }

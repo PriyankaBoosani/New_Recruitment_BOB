@@ -2,9 +2,6 @@
 
 // ✔ allowed characters
 export const TITLE_ALLOWED_PATTERN = /^.*$/;
-
-// date-utils.js or inside requisition-validation.js
-
 export const getTomorrowStart = () => {
   const d = new Date();
   d.setHours(0, 0, 0, 0);

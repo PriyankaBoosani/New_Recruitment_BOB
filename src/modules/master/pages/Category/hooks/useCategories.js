@@ -113,22 +113,18 @@ export const useCategories = () => {
 
       //  business failure
       if (res.success === false) {
-        // toast.error(res.message);
         return {
           success: false,
           error: res.message,
           details: res.data || [],
         };
       }
-      //  success
       toast.success(res.message || "File uploaded successfully");
 
       return {
         success: true,
       };
     } catch (err) {
-      //  network / server error
-
       const message = "Something went wrong";
       toast.error(message);
 

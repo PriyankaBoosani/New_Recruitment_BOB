@@ -21,20 +21,12 @@ import ScheduleErrorModal from "../interviews/components/ScheduleErrorModal";
 const ScheduleInterviews = () => {
   const navigate = useNavigate();
 
-  /* ================= STATE ================= */
-
-  //const [startTime, setStartTime] = useState("");
   const [scheduledCount, setScheduledCount] = useState(0);
   const [showReadyBar, setShowReadyBar] = useState(false);
-  //availability of centres
   const [showCentreModal, setShowCentreModal] = useState(false);
-
   const [showErrorModal, setShowErrorModal] = useState(false);
-
   const [errorCandidates, setErrorCandidates] = useState([]);
-
   const [errorMessage, setErrorMessage] = useState("");
-
   const [showCentreConfirmModal, setShowCentreConfirmModal] = useState(false);
   const [pendingApplyData, setPendingApplyData] = useState(null);
 

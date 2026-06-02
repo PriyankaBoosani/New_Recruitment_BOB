@@ -32,8 +32,6 @@ export const useInterviewPanel = () => {
   const [size, setSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [activeTab, setActiveTab] = useState("MANAGE");
-  // const [centerOptions, setCenterOptions] = useState([]);
-
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -137,7 +135,6 @@ export const useInterviewPanel = () => {
       } catch (error) {
         console.error("Failed to load interview centers:", error);
         toast.error(t("failed_load_centers"));
-        // setCenterOptions([]);
       }
     } catch (error) {
       console.error("Init Data Error:", error);
@@ -232,7 +229,6 @@ export const useInterviewPanel = () => {
       cleanedFormData,
       communityOptions,
       membersOptions
-      //   centerOptions
     );
 
     try {

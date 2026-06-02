@@ -146,8 +146,6 @@ const GenericOrAnnexuresFormModal = ({
                           e.target.value = "";
                           return;
                         }
-
-                        //  valid file
                         handleInputChange({
                           target: {
                             name: "file",

@@ -21,8 +21,6 @@ const persistConfig = {
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
-
-// 3) Create store
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefault) =>

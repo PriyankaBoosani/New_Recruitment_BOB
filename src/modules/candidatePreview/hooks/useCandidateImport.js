@@ -59,8 +59,6 @@ export const useCandidateImport = () => {
     try {
       const res =
         await candidateWorkflowServices.downloadCandidateTemplate(positionIds);
-
-
       // HANDLE NON-200 RESPONSE
       if (res.status !== 200) {
         let errorData = {};

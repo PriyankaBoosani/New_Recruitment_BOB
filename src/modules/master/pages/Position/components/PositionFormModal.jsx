@@ -102,7 +102,6 @@ const PositionFormModal = ({
                     value={formData.departmentId}
                     onChange={handleInputChange}
                     className="form-control-custom"
-                    // disabled={isEditing}
                   >
                     <option value="">{t("select_department")}</option>
 

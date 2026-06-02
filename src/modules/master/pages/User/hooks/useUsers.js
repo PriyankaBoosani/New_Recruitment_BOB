@@ -74,8 +74,6 @@ export const useUsers = () => {
       } else {
         toast.error("Failed to add user");
       }
-
-      // optional but good practice
       console.error("Add user failed:", err);
     }
   };
@@ -97,7 +95,6 @@ export const useUsers = () => {
       const res = await masterApiService.bulkAddUsers(file);
       //  business failure
       if (res.success === false) {
-        // toast.error(res.message);
         return {
           success: false,
           error: res.message,
@@ -112,8 +109,6 @@ export const useUsers = () => {
         success: true,
       };
     } catch (err) {
-      //  network / server error
-
       const message = "Something went wrong";
       toast.error(message);
 

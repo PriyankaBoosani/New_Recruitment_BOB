@@ -249,7 +249,6 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                   className="edit-btn"
                   onClick={() => handleEditPanel(committee)}
                   disabled={shouldDisableFields}
-                  // disabled={committee.rawStatus === "L1_APPROVED" || committee.rawStatus === "APPROVED"}
                 >
                   <img src={pos_edit_icon} alt="Edit" className="edit-icon" />
                 </button>

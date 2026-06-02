@@ -11,8 +11,8 @@ export const mapEducationListFromApi = (list = [], educationOptions = []) => {
     const documentName = docMap.get(docId);
 
     return {
-      educationLevel: documentName || "-", // 🔥 final output
-      qualificationCode: item?.qualification?.qualificationCode || "-", // 🔥 final output
+      educationLevel: documentName || "-", 
+      qualificationCode: item?.qualification?.qualificationCode || "-", 
       course: item?.qualification?.qualificationName || "-",
       specialization: Array.isArray(item?.specializations)
         ? item.specializations.map((s) => ({

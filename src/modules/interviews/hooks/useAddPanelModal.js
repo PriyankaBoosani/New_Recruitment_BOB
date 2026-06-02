@@ -305,8 +305,6 @@ export const useAddPanelModal = ({
       return copy;
     });
 
-    // ================= CLEAR FIELD ERRORS =================
-
     setErrors((prevErrors) => {
       const updated = { ...prevErrors };
 

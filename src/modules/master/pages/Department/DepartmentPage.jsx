@@ -161,7 +161,6 @@ const DepartmentPage = () => {
             [name]: value,
           }));
 
-          //  clear error for this field only
           setErrors((prev) => ({
             ...prev,
             [name]: "",

@@ -327,7 +327,7 @@ export const useExperience = () => {
 
   return {
     experienceList: filteredList,
-    educationOptions, // ✅ dropdown
+    educationOptions, 
     loading,
     showModal,
     searchTerm,

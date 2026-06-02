@@ -8,7 +8,7 @@ export const getDepartment = (masters, deptId) =>
     masters,
     "departments",
     deptId,
-    "department_id" // ✅ FIXED
+    "department_id" 
   );
 
 /* =========================
@@ -19,7 +19,7 @@ export const getCity = (masters, cityId) =>
     masters,
     "cities",
     cityId,
-    "city_id" // ✅ FIXED
+    "city_id" 
   );
 
 /* =========================
@@ -30,7 +30,7 @@ export const getState = (masters, stateId) =>
     masters,
     "states",
     stateId,
-    "state_id" // ✅ FIXED
+    "state_id" 
   );
 
 /* =========================
@@ -41,7 +41,7 @@ export const getLocation = (masters, locationId) =>
     masters,
     "locations",
     locationId,
-    "location_id" // ✅ FIXED
+    "location_id"
   );
 
 /* =========================
@@ -50,9 +50,9 @@ export const getLocation = (masters, locationId) =>
 export const getJobGrade = (masters, gradeId) =>
   getMasterById(
     masters,
-    "job_grades", // ✅ FIXED (NOT jobGrade)
+    "job_grades", 
     gradeId,
-    "job_grade_id" // ✅ FIXED
+    "job_grade_id"
   );
 
 /* =========================
@@ -63,7 +63,7 @@ export const getSkill = (masters, skillId) =>
     masters,
     "skills",
     skillId,
-    "skill_id" // ✅ FIXED
+    "skill_id" 
   );
 /* =========================
    EMPLOYMENT TYPE
@@ -71,9 +71,9 @@ export const getSkill = (masters, skillId) =>
 export const getEmploymentType = (masters, employmentTypeId) =>
   getMasterById(
     masters,
-    "employment_types", // ✅ matches API key
+    "employment_types",
     employmentTypeId,
-    "employment_type_id" // ✅ matches ID field
+    "employment_type_id" 
   );
 
 /* =========================
@@ -121,9 +121,9 @@ export const getReservation = (masters, reservationId) =>
 export const getEducationLevel = (masters, educationLevelId) =>
   getMasterById(
     masters,
-    "education_levels", // ✅ master key
+    "education_levels", 
     educationLevelId,
-    "documentTypeId" // ✅ id field
+    "documentTypeId" 
   );
 
 /* =========================
@@ -132,9 +132,9 @@ export const getEducationLevel = (masters, educationLevelId) =>
 export const getSpecialization = (masters, specializationId) =>
   getMasterById(
     masters,
-    "specializations", // ✅ master key
+    "specializations", 
     specializationId,
-    "specializationId" // ✅ id field
+    "specializationId" 
   );
 
 /* =========================
@@ -143,7 +143,7 @@ export const getSpecialization = (masters, specializationId) =>
 export const getMandatoryQualification = (masters, qualificationId) =>
   getMasterById(
     masters,
-    "mandatory_qualifications", // ✅ master key
+    "mandatory_qualifications",
     qualificationId,
-    "educationQualificationsId" // ✅ id field
+    "educationQualificationsId"
   );

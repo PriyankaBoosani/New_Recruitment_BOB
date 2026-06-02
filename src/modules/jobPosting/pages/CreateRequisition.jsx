@@ -78,8 +78,6 @@ const CreateRequisition = () => {
     fetchPositions(editId, isDraftView);
   }, [editId, isDraftView]);
 
-  // const positions = positionsByReq[editId] || [];
-  // const key = `${editId}_false`;
   const key = `${editId}_false`;
   const positions = positionsByReq[key] || [];
 

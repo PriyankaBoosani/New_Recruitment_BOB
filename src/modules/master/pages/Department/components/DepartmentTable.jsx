@@ -40,8 +40,6 @@ const DepartmentTable = ({
 
     let start = currentPage - 1;
     let end = currentPage + 2;
-
-    // Clamp to bounds
     if (start < 1) {
       start = 1;
       end = Math.min(totalPages + 1, start + windowSize);

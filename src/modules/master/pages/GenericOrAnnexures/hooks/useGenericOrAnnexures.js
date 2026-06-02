@@ -38,11 +38,7 @@ export const useGenericOrAnnexures = () => {
         payload.type, // Generic / Annexures
         payload.file // PDF
       );
-
-      //  ALWAYS refresh list from API
       await fetchItems();
-
-      // toast.success("File added successfully");
     } catch (e) {
       console.error(e);
       toast.error("Upload failed");

@@ -249,7 +249,6 @@ const AddPosition = () => {
       responsibilities: existingPosition.rolesResponsibilities,
       medicalRequired: existingPosition.isMedicalRequired ? "yes" : "no",
       enableStateDistribution: existingPosition.isLocationWise,
-      // cutoffDate: existingPosition.cutoffDate || "",
       mandatoryExperience: {
         years: Math.floor(existingPosition.mandatoryExperienceMonths / 12),
         months: existingPosition.mandatoryExperienceMonths % 12,
@@ -1044,7 +1043,6 @@ const AddPosition = () => {
               handleAddOrUpdateState={handleAddOrUpdateState}
               isProficientInLocalLanguage={isProficientInLocalLanguage}
               setIsProficientInLocalLanguage={setIsProficientInLocalLanguage}
-              // ✅ UPDATED VARIABLES
               isAgeRelRiotVictimFamily={isAgeRelRiotVictimFamily}
               setIsAgeRelRiotVictimFamily={setIsAgeRelRiotVictimFamily}
               isAgeRelWdsWomen={isAgeRelWdsWomen}
