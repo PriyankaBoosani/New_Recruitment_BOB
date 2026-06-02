@@ -2284,18 +2284,7 @@ const handleGenerateRankList = async () => {
       <div className="card mb-4 border-0">
         <div className="card-body p-0">
           <div className="row g-2 align-items-end border-bottom pb-4 px-3 py-3">
-            {/* <img src={uploadIcon} width={15} className="me-2" /> */}
-            {/* <DropdownStripMultipleposition
-              requisitions={requisitions}
-              positions={positions}
-              selectedRequisitionId={selectedRequisitionId}
-              selectedPositionId={selectedPositionId}
-              loadingRequisitions={loadingRequisitions}
-              loadingPositions={loadingPositions}
-              onRequisitionChange={handleRequisitionChange}
-              onPositionChange={handlePositionChange}
-              onRequisitionSearch={handleRequisitionSearch}
-            /> */}
+            
             {activeTab === "CANDIDATE_POOL" ||
             activeTab === "INTERVIEW_POOL" ||
             activeTab === "SCHEDULE_POOL" ? (
@@ -2362,23 +2351,7 @@ const handleGenerateRankList = async () => {
             </div>
           </div>
 
-          {/* <div className="mt-2 pt-1 pb-3">
-{normalizedRequisition && selectedPosition?.length > 0 && (          
-     <RequisitionStripformultiplepositions
-  requisition={normalizedRequisition}
-  position={selectedPosition}
-  isCardBg={false}
-  isSaveEnabled={false}
-  isSaveBtn={false}
-  saveButton={false}
-  onRemovePosition={(positionId) => {
-    setSelectedPositionId((prev) =>
-      prev.filter((id) => id !== positionId)
-    );
-  }}
-/>
-            )}
-          </div> */}
+         
 
           {activeTab === "CANDIDATE_POOL" ||
           activeTab === "INTERVIEW_POOL" ||
@@ -2698,7 +2671,7 @@ const handleGenerateRankList = async () => {
                         className="btn fs-14 me-3 blue-color blue-border"
                         onClick={() => handleDownload("pdf")}
                       >
-                        <img src={pdfIcon} width={20} />
+                        <img alt="pdf" src={pdfIcon} width={20} />
                       </button>
                     </OverlayTrigger>
 
@@ -2714,7 +2687,7 @@ const handleGenerateRankList = async () => {
                         className="btn fs-14 blue-color blue-border"
                         onClick={() => handleDownload("xlsx")}
                       >
-                        <img src={excelIcon} width={20} />
+                        <img alt="excel" src={excelIcon} width={20} />
                       </button>
                     </OverlayTrigger>
                   </>
@@ -2977,7 +2950,7 @@ const handleGenerateRankList = async () => {
                         onClick={handleSendOffer}
                         disabled={!isSendOfferEnabled}
                       >
-                        <img className="me-2" src={offerIcon} width={14} />
+                        <img alt="offer" className="me-2" src={offerIcon} width={14} />
                         {t("candidateWorkflow:send_offers")}
                       </button>
 
@@ -3004,7 +2977,7 @@ const handleGenerateRankList = async () => {
                  onClick={() => setShowRankListModal(true)}
                   //  disabled={!isSendOfferEnabled}
                   >
-                    <img
+                    <img alt="location"
                       className="me-2 orange-color"
                       src={locationIcon}
                       width={16}
@@ -3014,52 +2987,29 @@ const handleGenerateRankList = async () => {
                   </button>
 
 
-
-                  {/* <button className={`btn blue-border blue-color fs-13 px-3 py-1 ${offerSelectedIds.length !== 0 ? "" : "disabled_button"}`} onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}
-                    style={{ minHeight: "39px" }}>
-                    <img src={excelIcon} className="me-1" width={18} /> {t("candidateWorkflow:rank_list")}
-                  </button> */}
-
-
-{/* 
-                                <button
-                className={`btn blue-border blue-color fs-13 px-3 py-1 ${
-                  offerSelectedIds.length !== 0 ? "" : "disabled_button"
-                }`}
-                disabled={offerSelectedIds.length === 0}
-                style={{ minHeight: "39px" }}
-                onClick={handleGenerateRankList}
-              >
-                <img src={excelIcon} className="me-1" width={18} />
-                {t("candidateWorkflow:rank_list")}
-              </button> */}
-
-
-
-
-                            <button
+                <button
                 className="btn blue-border blue-color fs-13 px-3 py-1"
                 style={{ minHeight: "39px" }}
                 onClick={handleGenerateRankList}
               >
-                <img src={excelIcon} className="me-1" width={18} />
+                <img alt="excel" src={excelIcon} className="me-1" width={18} />
                 {t("candidateWorkflow:rank_list")}
               </button>
 
 
 
                 <button
-        className="btn blue-border fs-13 px-3 py-1"
-        style={{
-          minHeight: "39px",
-          opacity: rankListGenerated ? 1 : 0.5,
-          cursor: rankListGenerated ? "pointer" : "not-allowed",
-          color: rankListGenerated ? "#0d6efd" : "#999",
-          borderColor: rankListGenerated ? "#0d6efd" : "#ccc",
-        }}
-        onClick={handleDownloadRankList}
-        disabled={!rankListGenerated}
-      >
+              className="btn blue-border fs-13 px-3 py-1"
+              style={{
+                minHeight: "39px",
+                opacity: rankListGenerated ? 1 : 0.5,
+                cursor: rankListGenerated ? "pointer" : "not-allowed",
+                color: rankListGenerated ? "#0d6efd" : "#999",
+                borderColor: rankListGenerated ? "#0d6efd" : "#ccc",
+              }}
+              onClick={handleDownloadRankList}
+              disabled={!rankListGenerated}
+            >
         <i className="bi bi-download me-1"></i>
       </button>
                 </div>
@@ -3075,7 +3025,7 @@ const handleGenerateRankList = async () => {
               <div className="col-md-5 col-12 px-3 mb-2 py-2">
                 <div className="input-group">
                   <span className="input-group-text bg-white border-end-0 py-1">
-                    <img src={searchIcon} width={15} />
+                    <img alt="search" src={searchIcon} width={15} />
                   </span>
                   <input
                     type="text"

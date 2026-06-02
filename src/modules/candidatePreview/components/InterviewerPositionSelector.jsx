@@ -1,10 +1,6 @@
 import React, { useMemo } from "react";
 import Select, { components } from "react-select";
 import { useTranslation } from "react-i18next";
-import { Button } from "react-bootstrap";
-import { FiUpload } from "react-icons/fi";
-
-/* ================= CONTROL TOOLTIP ================= */
 
 const TooltipControl = (props) => {
   const selected = props.getValue()?.[0];

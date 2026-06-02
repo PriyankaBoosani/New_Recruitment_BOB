@@ -199,11 +199,6 @@ export default function InterviewPool({
                       ?.positionName || "-"}
                   </p>
                 </td>
-                {/* <td className="fs-14 align-content-center">
-                  {
-                    position?.find(p => p.positionId === c.positionId)?.positionName || "-"
-                  }
-                </td> */}
                 <td className="fs-14 align-content-center">{c.date}</td>
                 <td className="fs-14 align-content-center">{c.time}</td>
                 <td className="fs-14 align-content-center">{c.zone}</td>

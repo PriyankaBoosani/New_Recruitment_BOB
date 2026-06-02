@@ -1,7 +1,6 @@
 import React from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import fileIcon from "../../../assets/upload-filled-file.png";
-import uploadIcon from "../../../assets/upload-blue-icon.png";
 import deleteIcon from "../../../assets/delete_icon.png";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -16,7 +15,6 @@ const ScheduleInterviewModal = ({
   onBulkScheduleSuccess,
 }) => {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
-  const [activeTab, setActiveTab] = React.useState("import");
   const [loading, setLoading] = React.useState(false);
   const fileInputRef = React.useRef(null);
   const [file, setFile] = React.useState(null);
@@ -192,7 +190,7 @@ const ScheduleInterviewModal = ({
             className="text-center px-3 pt-3 pb-2 rounded"
             style={{ backgroundColor: "#FFF1E8" }}
           >
-            <img src={fileIcon} width={60} className="mb-2" />
+            <img alt="file" src={fileIcon} width={60} className="mb-2" />
             <p className="mb-1 fw-600 fs-15">
               {t("candidateWorkflow:upload_file")}
             </p>
