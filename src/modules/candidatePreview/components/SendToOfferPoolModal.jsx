@@ -120,7 +120,7 @@ const SendToOfferPoolModal = ({
           className="text-center px-3 pt-3 pb-2 rounded"
           style={{ backgroundColor: "#FFF1E8" }}
         >
-          <img src={fileIcon} width={60} className="mb-2" />
+          <img alt="file" src={fileIcon} width={60} className="mb-2" />
           <p className="mb-1 fw-600 fs-15">
             {t("candidateWorkflow:upload_file")}
           </p>

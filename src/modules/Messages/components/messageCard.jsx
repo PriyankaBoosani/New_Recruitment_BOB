@@ -5,7 +5,6 @@ import MessageHistory from "../../Messages/components/messageHistory.jsx";
 import MessageActions from "../../Messages/components/messageActions.jsx";
 import ApprovalHistoryModal from "../../Approvals/components/ApprovalHistoryModal.jsx";
 import { useMessages } from "../../Messages/hooks/useMessages.js";
-import { useTranslation } from "react-i18next";
 import committeeManagementService from "../../committeeManagement/services/committeeManagementService";
 import masterApiService from "../../master/services/masterApiService.js";
 const MessageCard = ({ item, isOpen, onToggle, onSubmitApproval }) => {

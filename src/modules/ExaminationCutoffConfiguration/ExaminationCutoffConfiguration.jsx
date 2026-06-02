@@ -4,7 +4,7 @@ import "../../style/css/ExaminationCutoffConfiguration.css";
 import "../../style/css/CandidateVerification.css";
 import "../../style/css/CandidateScreening.css";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation} from "react-router-dom";
 
 import DropdownStrip from "../candidatePreview/components/DropdownStrip";
 

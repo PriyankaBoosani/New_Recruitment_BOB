@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import masterApiService from "../../master/services/masterApiService";
-import { Modal, Button } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import {
   FaExternalLinkAlt,
 } from "react-icons/fa";
