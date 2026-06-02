@@ -3,8 +3,6 @@ import { Button, Alert } from "react-bootstrap";
 import { Upload as UploadIcon } from "react-bootstrap-icons";
 import { useTranslation } from "react-i18next";
 
-import { useUsers } from "../hooks/useUsers";
-
 const UserImportModal = ({
   onClose = () => {},
   onSuccess = () => {},

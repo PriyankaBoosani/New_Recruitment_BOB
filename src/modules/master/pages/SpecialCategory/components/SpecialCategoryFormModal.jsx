@@ -23,13 +23,6 @@ const SpecialCategoryFormModal = ({
   t,
   ...importProps
 }) => {
-  const getTitle = () => {
-    if (isViewing) return t("view");
-    if (isEditing) return t("edit");
-    return t("added");
-  };
-
-  const title = getTitle();
 
   const isCreateMode = !isEditing && !isViewing;
   const handleFormSubmit = (e) => {

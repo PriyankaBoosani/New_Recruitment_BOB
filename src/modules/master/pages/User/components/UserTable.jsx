@@ -1,6 +1,5 @@
 import React from "react";
-import { Table, Button, Form } from "react-bootstrap";
-
+import { Table, Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import viewIcon from "../../../../../assets/view_icon.png";
 import editIcon from "../../../../../assets/edit_icon.png";

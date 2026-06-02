@@ -3,7 +3,6 @@
 import React from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import ErrorMessage from "../../../../../shared/components/ErrorMessage";
-import DocumentImportModal from "./DocumentImportModal";
 import {
   handleValidatedInput,
   INPUT_PATTERNS,
