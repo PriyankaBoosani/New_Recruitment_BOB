@@ -165,30 +165,7 @@ const UserFormModal = ({
                 <ErrorMessage>{errors.role}</ErrorMessage>
               </Col>
 
-              {/* <Col md={6}>
-                <Form.Label>
-                   {t("role")} <span className="text-danger">*</span>
-                </Form.Label>
-
-                <Form.Select
-                  name="role"
-                   value={formData.role}
-                  onChange={handleInputChange}
-                >
-                  <option value="">Select Role</option>
-
-                  {roles.map((role) => (
-                    <option
-                      key={role.roleName}
-                      value={role.roleName}
-                    >
-                      {role.roleName}
-                    </option>
-                  ))}
-                </Form.Select>
-
-                <ErrorMessage>{errors.role}</ErrorMessage>
-              </Col> */}
+              
 
               <Col md={6}>
                 <Form.Label>

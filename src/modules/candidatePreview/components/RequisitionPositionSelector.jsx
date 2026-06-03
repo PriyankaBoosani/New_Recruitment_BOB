@@ -23,8 +23,6 @@ const TooltipControl = (props) => {
   );
 };
 
-/* ================= OPTION TOOLTIP ================= */
-
 const TooltipOption = (props) => (
   <components.Option {...props}>
     <div title={props.data.label}>{props.children}</div>

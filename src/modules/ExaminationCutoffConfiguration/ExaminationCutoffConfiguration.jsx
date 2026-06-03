@@ -374,18 +374,6 @@ export default function ExaminationCutoffConfiguration() {
         <div className="card-body p-0">
           {/* FILTERS */}
           <div className="row g-2 align-items-end exam-filter-section">
-            {/* <DropdownStripMultipleposition
-        requisitions={requisitions}
-        positions={positions}
-        selectedRequisitionId={selectedRequisitionId}
-        selectedPositionId={selectedPositionId}
-        loadingRequisitions={loadingRequisitions}
-        loadingPositions={loadingPositions}
-        onRequisitionChange={handleRequisitionChange}
-        onPositionChange={handlePositionChange}
-        onRequisitionSearch={handleRequisitionSearch}
-      /> */}
-
             <DropdownStrip
               requisitions={requisitions}
               positions={positions}

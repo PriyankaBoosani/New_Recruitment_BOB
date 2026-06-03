@@ -231,10 +231,7 @@ export default function CandidatePool({
               >
                 {t("candidateWorkflow:candidate")} {sortIcon("name")}
               </th>
-              {/* <th className="fs-14 fw-normal py-3" onClick={() => requestSort("name")} role="button">
-                {t("candidateWorkflow:position")} {sortIcon("name")}
-              </th> */}
-
+            
               <th className="fs-14 fw-normal py-3" role="button">
                 Rank
               </th>
@@ -364,10 +361,7 @@ export default function CandidatePool({
                       }`}
                     >
                       {c.status}
-                      {/* {t(
-                        `candidateWorkflow:status_${c.status?.toLowerCase()}`,
-                        { defaultValue: c.status }
-                      )} */}
+                      
                     </span>
                   </td>
 

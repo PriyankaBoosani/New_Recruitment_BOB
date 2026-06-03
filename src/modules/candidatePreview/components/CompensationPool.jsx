@@ -858,9 +858,6 @@ export default function CompensationPool({
                   })
                 }
               />
-              {/* {!managerForm.fixedPay && (
-    <div className="invalid-feedback">Fixed Pay is required</div>
-  )}   */}
             </div>
 
             <div className="col-md-6">

@@ -181,20 +181,6 @@ export default function InterviewerPositionSelector({
           onMenuOpen={() => closeCalendar?.()}
         />
       </div>
-
-      {/* ===== IMPORT BUTTON ===== */}
-      {/* <div className="col-md-4 d-flex justify-content-end align-items-end">
-  {showImportBtn && (
-    <Button
-      onClick={onImportClick}
-      className="add-panels-btn d-flex align-items-center gap-2"
-      
-    >
-      <FiUpload />
-      {t("interviewDay:import_data")}
-    </Button>
-  )}
-</div> */}
     </div>
   );
 }

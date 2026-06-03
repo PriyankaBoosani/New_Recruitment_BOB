@@ -6,8 +6,6 @@ import { mapGenericDocsFromApi } from "../mappers/genericOrAnnexuresMapper";
 export const useGenericOrAnnexures = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  /* ================= FETCH ================= */
   const fetchItems = async () => {
     try {
       const res = await masterApiService.getAllGenericDocuments();

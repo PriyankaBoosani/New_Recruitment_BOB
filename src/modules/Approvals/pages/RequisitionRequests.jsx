@@ -540,7 +540,6 @@ const RequisitionRequests = () => {
                         }}
                       />
                       <div>
-                        {/* <h6 className="req-code mb-2">{req.code}</h6> */}
                         <div className="d-flex align-items-center gap-2 mb-2">
                           <h6 className="req-code mb-0">{req.code}</h6>
 

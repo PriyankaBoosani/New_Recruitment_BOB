@@ -394,17 +394,7 @@ const JobPostingsList = () => {
       {/* ================= FILTERS ================= */}
       <Row className="filters-row g-2 mb-3">
         <Col xs={12} md={2}>
-          {/* <Form.Select
-                        className="yearfon"
-                        value={year}
-                        onChange={(e) => setYear(e.target.value)}
-                    >
-                        {yearOptions.map((yr) => (
-                            <option key={yr} value={yr}>
-                                {t("jobPostingsList:year_label")} - {yr}
-                            </option>
-                        ))}
-                    </Form.Select> */}
+         
           <Form.Select
             value={year}
             className="yearfon"

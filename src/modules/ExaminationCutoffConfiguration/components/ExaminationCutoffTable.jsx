@@ -15,8 +15,6 @@ export default function ExaminationCutoffTable({
   statusFilter,
   setStatusFilter,
 }) {
-  /* ================= DUMMY DATA ================= */
-
   const tableRows = rows || [];
 
   return (

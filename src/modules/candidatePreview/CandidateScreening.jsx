@@ -2494,12 +2494,7 @@ export default function CandidateScreening({ selectedJob }) {
                   <option value="">
                     {t("candidateWorkflow:all_statuses")}
                   </option>
-                  {/* {availableStatuses?.map((status) => (
-                    <option key={status} value={status}>
-                      {STATUS_LABEL_MAP[status] || status}
-                    </option>
-                  ))} */}
-
+                 
                   {availableStatuses.map((status) => (
                     <option key={status} value={status}>
                       {getStatusLabel(status)}
@@ -2793,29 +2788,6 @@ export default function CandidateScreening({ selectedJob }) {
                         {formErrors.joiningDate || "placeholder"}
                       </small>
                     </div>
-
-                    {/* <div>
-                      <p className="mb-1 fw-normal fs-13 blue-color">
-                        {t("candidateWorkflow:preview")}
-                      </p>
-
-                      <div
-                        className={`form-control fs-13 d-flex align-items-center justify-content-center 
-      ${selectedTemplate
-                            ? "cursor-pointer orange-bg text-white"
-                            : "disabled_button custom-disabled-bg1"
-                          }
-    `}
-                        style={{ width: "80px", height: "32px" }}
-                        onClick={() => selectedTemplate && setShowPreview(true)}
-                      >
-                        <i className="bi bi-eye" style={{ fontSize: "16px" }}></i>
-                      </div>
-
-                      <small className="d-block mt-1 fs-12 invisible">
-                        {"\u00A0"}
-                      </small>
-                    </div> */}
 
                     <div>
                       <button
@@ -3134,19 +3106,7 @@ export default function CandidateScreening({ selectedJob }) {
 
         {activeTab === "SCHEDULE_POOL" && (
           <div>
-            {/* 
-          <div className="d-flex justify-content-end mb-3">
-
-            <button
-              className="btn btn-primary"
-              onClick={handleEditSchedule}
-            >
-              <i className="bi bi-pencil-square me-2"></i>
-              Edit Schedule
-            </button>
-
-          </div> */}
-
+            
             <SchedulePoolTable
               rows={paginatedSchedulePool}
               onEdit={handleEditSchedule}

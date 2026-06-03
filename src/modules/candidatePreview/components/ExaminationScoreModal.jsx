@@ -280,9 +280,6 @@ const ExaminationScoreModal = ({
                       Edit
                     </button>
                   )}
-
-                  {/* FINALIZE BUTTON */}
-
                   {hasConfig &&
                     hasQualifiedWithoutRelaxation &&
                     !isFinalized && (
@@ -356,10 +353,7 @@ const ExaminationScoreModal = ({
                     background: "#FFFFFF",
                   }}
                 >
-                  {/* STATE WISE */}
-
-                  {/* STATE WISE */}
-
+                 
                   {item.isStateWise || item.isLocationWise ? (
                     item.states?.length > 0 ? (
                       [

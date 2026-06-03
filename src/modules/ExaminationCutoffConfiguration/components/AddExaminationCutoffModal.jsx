@@ -668,9 +668,6 @@ export default function AddExaminationCutoffModal({
         onSuccess?.();
 
         resetForm();
-
-        /* FROM CANDIDATE SCREENING */
-
         if (fromCandidateScreening) {
           navigate("/candidate-workflow", {
             replace: true,
@@ -718,9 +715,6 @@ export default function AddExaminationCutoffModal({
 
     return false;
   })();
-
-  /* ================= NUMBER VALIDATION ================= */
-
   const validateCutoffValue = (value) => {
     if (value === "") return "";
 
@@ -752,9 +746,6 @@ export default function AddExaminationCutoffModal({
       e.preventDefault();
     }
   };
-
-  /* ================= UI ================= */
-
   return (
     <Modal
       show={show}
@@ -764,8 +755,6 @@ export default function AddExaminationCutoffModal({
       backdrop="static"
       className="cutoff-config-modal"
     >
-      {/* ================= HEADER ================= */}
-
       <Modal.Header closeButton className="exammodal">
         <div>
           <h4 className="modal-main-title bluecol fs-15">
@@ -781,12 +770,7 @@ export default function AddExaminationCutoffModal({
           </p>
         </div>
       </Modal.Header>
-
-      {/* ================= BODY ================= */}
-
       <Modal.Body className="exammodalbody">
-        {/* ================= TOP ROW ================= */}
-
         <Row className="mb-4">
           <Col md={4}>
             <Form.Group>
@@ -858,9 +842,6 @@ export default function AddExaminationCutoffModal({
             </Col>
           )}
         </Row>
-
-        {/* ================= DYNAMIC SECTIONS ================= */}
-
         <div className="cutoff-accordion-wrapper">
           {formData.sections.map((section, index) => {
             const isExpanded = expandedSection === index;
@@ -1132,9 +1113,6 @@ export default function AddExaminationCutoffModal({
                                     </td>
                                   ))}
 
-                                  {/* TOTAL */}
-
-                                  {/* DISABILITY */}
                                 </tr>
                               </tbody>
                             </table>

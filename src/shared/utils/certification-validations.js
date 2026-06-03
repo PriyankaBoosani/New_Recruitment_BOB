@@ -19,10 +19,6 @@ export const validateCertificationDescription = (description) => {
   return null;
 };
 
-/* =========================
-   FORM VALIDATION
-========================= */
-
 export const validateCertificationForm = (formData = {}, options = {}) => {
   const errors = {};
   const { existing = [], currentId = null } = options;

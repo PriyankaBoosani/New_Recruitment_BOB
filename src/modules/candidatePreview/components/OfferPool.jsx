@@ -461,28 +461,7 @@ const OfferPool = ({
                       {c.joiningDate}
                     </p>
                   </td>
-                  {/* <td className='align-content-center sticky-col-action' style={{ paddingLeft: '1.5rem' }}>
-										<OverlayTrigger
-											placement="bottom"
-											overlay={
-												<Tooltip id={`tooltip-${c.id}`}>
-													{t("common:view_details")}
-												</Tooltip>
-											}
-										>
-											<button
-											className="btn btn-sm btn-outline-secondary border-0"
-											onClick={() => {
-												setSelectedOffer(c);
-												setShowModal(true);
-										}}
-										style={{ backgroundColor: '#eff6ff' }}
-									>
-										<i className="bi bi-eye" style={{ color: 'black' }}></i>
-									</button>
-											
-										</OverlayTrigger>
-									</td> */}
+                  
                   <td
                     className="align-content-center sticky-col-action"
                     style={{ paddingLeft: "1.5rem" }}

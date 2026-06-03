@@ -28,8 +28,6 @@ export const useAssignPositions = (userId) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [errorList, setErrorList] = useState([]);
 
-  /* ================= PAGINATION ================= */
-
   const [page, setPage] = useState(0);
   const [size] = useState(1000);
 

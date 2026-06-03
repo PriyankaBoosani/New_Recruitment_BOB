@@ -66,18 +66,13 @@ const CandidatePreviewPage = ({ onHide }) => {
     ? state?.applicationId
     : (state?.applicationId ?? state?.candidate?.id);
 
-  /* =======================
-     STATE
-  ======================= */
+ 
   const [masters, setMasters] = useState({});
   const [previewData, setPreviewData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const isFromInterview = state?.from === "/candidate-interviewer";
 
-  /* =======================
-     LOAD MASTERS + CANDIDATE
-  ======================= */
   useEffect(() => {
     const fetchData = async () => {
       try {

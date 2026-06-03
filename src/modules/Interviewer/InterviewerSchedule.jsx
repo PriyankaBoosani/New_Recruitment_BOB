@@ -418,9 +418,6 @@ export default function InterviewerSchedule() {
 )} */}
         </div>
       </div>
-
-      {/* ===== SELECTOR CARD — SAME AS VERIFICATION ===== */}
-
       <div className="requisition-selector-row">
         <InterviewerPositionSelector
           apiData={panelPositions}

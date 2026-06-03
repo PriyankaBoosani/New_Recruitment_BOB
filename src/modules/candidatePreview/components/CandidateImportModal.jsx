@@ -12,9 +12,7 @@ const CandidateImportModal = ({
   onSuccess = () => {},
   positionIds = [],
 }) => {
-  /* =========================
-     STATES
-  ========================== */
+  
 
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -33,10 +31,6 @@ const CandidateImportModal = ({
 
     loading,
   } = useCandidateImport();
-
-  /* =========================
-     FILE CHANGE
-  ========================== */
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -58,9 +52,7 @@ const CandidateImportModal = ({
     }
   };
 
-  /* =========================
-     HANDLE IMPORT
-  ========================== */
+  
 
   const handleUpload = async () => {
     if (!selectedFile) {
@@ -84,10 +76,7 @@ const CandidateImportModal = ({
 
   return (
     <div>
-      {/* =========================
-          IMPORT AREA
-      ========================== */}
-
+     
       <div
         className="p-4 rounded"
         style={{
@@ -135,10 +124,6 @@ const CandidateImportModal = ({
           </p>
         </div>
 
-        {/* =========================
-            ERROR
-        ========================== */}
-
         {error && (
           <Alert variant="danger">
             <div>{error}</div>
@@ -161,10 +146,7 @@ const CandidateImportModal = ({
           </Alert>
         )}
 
-        {/* =========================
-            FILE INPUT
-        ========================== */}
-
+        
         <input
           id="upload-candidates-xlsx"
           type="file"
@@ -173,10 +155,6 @@ const CandidateImportModal = ({
           onChange={handleFileChange}
           disabled={loading}
         />
-
-        {/* =========================
-            UPLOAD BUTTON
-        ========================== */}
 
         <div className="text-center mb-3">
           <label htmlFor="upload-candidates-xlsx">
@@ -222,10 +200,6 @@ const CandidateImportModal = ({
           )}
         </div>
 
-        {/* =========================
-            DOWNLOAD TEMPLATE
-        ========================== */}
-
         <div
           className="text-center"
           style={{
@@ -258,10 +232,6 @@ const CandidateImportModal = ({
           </button>
         </div>
       </div>
-
-      {/* =========================
-          FOOTER
-      ========================== */}
 
       <div className="d-flex justify-content-end gap-2 mt-3">
         <Button

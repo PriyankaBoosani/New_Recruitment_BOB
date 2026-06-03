@@ -14,9 +14,6 @@ export const mapCategoryFromApi = (api) => ({
   isActive: api.isActive,
 });
 
-/* =========================
-   API LIST → UI LIST
-========================= */
 export const mapCategoriesFromApi = (list = []) => {
   if (!Array.isArray(list)) return [];
   return list.map(mapCategoryFromApi);

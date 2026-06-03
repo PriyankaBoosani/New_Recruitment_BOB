@@ -175,9 +175,7 @@ const ScheduleInterviewModal = ({
             </small>
 
             <div className="d-grid justify-content-center gap-2 mt-3">
-              {/* <button className="btn btn-outline-secondary fs-14">
-							Upload CSV
-						</button> */}
+             
               <button
                 className="btn orange-bg text-white fs-13 rounded shadow px-3"
                 onClick={() => fileInputRef.current.click()}
