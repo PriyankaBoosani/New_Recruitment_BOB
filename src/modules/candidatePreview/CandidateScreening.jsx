@@ -1036,7 +1036,6 @@ export default function CandidateScreening({ selectedJob }) {
             c?.interviewScheduleStaging.interviewSchedulingApprovalStatus ||
             "-",
           remarks: c?.interviewScheduleStaging.remarks || " -",
-          positionId: c?.application?.positionId,
         };
       });
 
@@ -1272,10 +1271,6 @@ export default function CandidateScreening({ selectedJob }) {
         registration_end_date: selectedRequisition.endDate,
       }
     : null;
-
-  const selectedPositionObj = positions.find(
-    (p) => p.jobPositions?.positionId === selectedPositionId[0]
-  );
 
   const selectedPosition = positions
     .filter((p) => selectedPositionId.includes(p.jobPositions?.positionId))

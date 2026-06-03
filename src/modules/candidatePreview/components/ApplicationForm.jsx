@@ -1583,12 +1583,6 @@ const ApplicationForm = ({
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.age || "-"}
                     </td>
-
-                    {/* <td className="fw-med">Nationality</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.nationality_name}</td> */}
-
-                    {/* <td className="fw-med">Age (as on cut-off date)</td>
-                      <td className="fw-reg" colSpan={2}>{previewData.personalDetails.age || "-"}</td> */}
                   </tr>
 
                   <tr>

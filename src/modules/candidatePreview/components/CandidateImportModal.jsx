@@ -289,10 +289,6 @@ const CandidateImportModal = ({
             fontWeight: "600",
           }}
           disabled={loading}
-          style={{
-            background: "#F97316",
-            border: "none",
-          }}
         >
           {loading ? "Importing..." : "Import"}
         </Button>

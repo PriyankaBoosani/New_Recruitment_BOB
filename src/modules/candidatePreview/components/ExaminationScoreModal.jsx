@@ -4,13 +4,6 @@ import jobPositionApiService from "../../jobPosting/services/jobPositionApiServi
 
 import { toast } from "react-toastify";
 
-const getTableHeaders = (reservationCategories = []) => {
-  return reservationCategories
-    ?.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
-    ?.map((item) => item.categoryCode || item.categoryName)
-    ?.filter(Boolean);
-};
-
 const TableSection = ({
   reservationCategories = [],
   summaryData = {},
