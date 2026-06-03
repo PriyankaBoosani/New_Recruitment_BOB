@@ -490,6 +490,15 @@ export default function CandidateScreening({ selectedJob }) {
   ];
   const privileges = useSelector((state) => state.user.privileges || {});
 
+
+
+
+  console.log("Privileges", privileges);
+console.log("Candidate Pool", privileges["Candidate Pool"]);
+console.log("Compensation Pool", privileges["Compensation Pool"]);
+
+
+
   const hasPrivilege = (key) => {
     return privileges?.[key] === true;
   };
@@ -676,6 +685,16 @@ export default function CandidateScreening({ selectedJob }) {
       return hasPrivilege(TAB_PRIVILEGE_MAP[tab.key]);
     });
   }, [tabs, privileges, isContractPosition]);
+
+
+useEffect(() => {
+  if (
+    accessibleTabs.length > 0 &&
+    !accessibleTabs.some(tab => tab.key === activeTab)
+  ) {
+    setActiveTab(accessibleTabs[0].key);
+  }
+}, [accessibleTabs, activeTab]);
 
   const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
   const categoryMap = React.useMemo(() => {
@@ -3205,6 +3224,7 @@ export default function CandidateScreening({ selectedJob }) {
         selectedIds={offerSelectedIds}
         setSelectedIds={setOfferSelectedIds}
         onUploadSuccess={() => setOfferRefreshKey((prev) => prev + 1)}
+        positionId={selectedPositionId?.[0]}
       />
       {/* <Modal show={showPreview}
         onHide={() => setShowPreview(false)} size="lg">

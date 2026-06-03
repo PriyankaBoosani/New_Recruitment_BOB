@@ -363,25 +363,24 @@ const jobPositionApiService = {
     });
   },
 
-  downloadRankListExcel: (offerIds) => {
-    return api.post(
-      "/recruiter/candidate-offer/download-offers-excel",
-      offerIds,
-      {
-        headers: {
-          "X-Client": "AzureAD",
-        },
-        responseType: "blob", // VERY IMPORTANT
-      }
-    );
-  },
+downloadAssignLocationExcel: (positionId) => {
+  return api.get(
+    `/recruiter/candidate-offer/download-assign-locations-excel/${positionId}`,
+    {
+      headers: {
+        "X-Client": "AzureAD",
+      },
+      responseType: "blob",
+    }
+  );
+},
 
   uploadRanksExcel: (file) => {
     const formData = new FormData();
     formData.append("file", file);
 
     return formDataApi.post(
-      "/recruiter/candidate-offer/upload-ranks-excel",
+      "/recruiter/candidate-offer/upload-assign-locations-excel",
       formData,
       {
         headers: {

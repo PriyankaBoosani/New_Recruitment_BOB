@@ -13,6 +13,7 @@ const RankListModal = ({
   onUploadSuccess,
   selectedIds,
   setSelectedIds,
+  positionId,
 }) => {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const [loading, setLoading] = React.useState(false);
@@ -44,6 +45,170 @@ const RankListModal = ({
       fileInputRef.current.value = "";
     }
   };
+
+  /* ---------------- DOWNLOAD TEMPLATE ---------------- */
+
+  // const handleDownloadTemplate = async () => {
+  //   if (!selectedIds?.length) {
+  //     toast.error(t("candidateWorkflow:please_select_at_least_one_candidate"));
+  //     return;
+  //   }
+
+  //   try {
+  //     setLoading(true);
+  //     const res =
+  //       await jobPositionApiService.downloadRankListExcel(selectedIds);
+
+  //     const blob = new Blob([res.data], {
+  //       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  //     });
+
+  //     const url = window.URL.createObjectURL(blob);
+  //     const link = document.createElement("a");
+
+  //     link.href = url;
+  //     link.download = "Rank_List.xlsx";
+
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.remove();
+
+  //     window.URL.revokeObjectURL(url);
+
+  //     toast.success(t("candidateWorkflow:rank_list_downloaded_successfully"));
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error(t("candidateWorkflow:failed_to_download_rank_list"));
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // const handleDownloadTemplate = async () => {
+  //   try {
+  //     if (!positionId) {
+  //       toast.error("Please select a position");
+  //       return;
+  //     }
+
+  //     setLoading(true);
+
+  //     const response =
+  //       await jobPositionApiService.downloadAssignLocationExcel(positionId);
+
+  //     console.log("DOWNLOAD RESPONSE =>", response);
+  //     console.log("STATUS =>", response?.status);
+  //     console.log("CONTENT TYPE =>", response?.data?.type);
+
+  //     // Error response
+  //     if (
+  //       response?.data instanceof Blob &&
+  //       response.data.type === "application/json"
+  //     ) {
+  //       const text = await response.data.text();
+
+  //       console.log("JSON RESPONSE =>", text);
+
+  //       const json = JSON.parse(text);
+
+  //       toast.error(
+  //         json?.message || "Failed to download template"
+  //       );
+
+  //       return;
+  //     }
+
+  //     // Success response
+  //     const url = window.URL.createObjectURL(response.data);
+
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.download = "Assign_Locations.xlsx";
+
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.remove();
+
+  //     window.URL.revokeObjectURL(url);
+
+  //     toast.success("Downloaded successfully");
+  //   } catch (err) {
+  //     console.error("DOWNLOAD ERROR =>", err);
+  //     // Axios ALWAYS puts response here
+  //     const status = err.response?.status;
+  //     console.error("ERROR STATUS =>", status);
+
+  //     if (status === 400) {
+  //       toast.error("An unexpected error occurred. Please try again later.");
+  //     } else {
+  //       toast.error(
+  //         err?.response?.data?.message ||
+  //         err?.message ||
+  //         "Failed to download template"
+  //       );
+  //     }
+
+
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
+  const handleDownloadTemplate = async () => {
+    try {
+      if (!positionId) {
+        toast.error("Please select a position");
+        return;
+      }
+
+      setLoading(true);
+
+      const response =
+        await jobPositionApiService.downloadAssignLocationExcel(positionId);
+
+      console.log("DOWNLOAD RESPONSE =>", response);
+      console.log("TYPE =>", response?.type);
+
+      // Error response
+      if (response instanceof Blob && response.type === "application/json") {
+        const text = await response.text();
+
+        console.log("JSON RESPONSE =>", text);
+
+        const json = JSON.parse(text);
+
+        toast.error(
+          json?.message || "Failed to download template"
+        );
+
+        return;
+      }
+
+      // Success response
+      const url = window.URL.createObjectURL(response.data);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "Assign_Locations.xlsx";
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Downloaded successfully");
+    } catch (err) {
+      console.error("DOWNLOAD ERROR =>", err);
+
+      toast.error(
+        err?.message || "Failed to download template"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
   /* ---------------- BULK UPLOAD ---------------- */
 
   const handleBulkUpload = async () => {
@@ -56,12 +221,14 @@ const RankListModal = ({
       setLoading(true);
       setValidationErrors([]);
 
-      const response = await jobPositionApiService.uploadRanksExcel(file);
-      const res = response;
+      const res = await jobPositionApiService.uploadRanksExcel(file);
+
+      console.log("UPLOAD RESPONSE =>", res);
 
       if (res?.success === true) {
         toast.success(
-          res.message || t("candidateWorkflow:rank_list_uploaded_successfully")
+          res?.message ||
+          t("candidateWorkflow:rank_list_uploaded_successfully")
         );
 
         if (typeof onUploadSuccess === "function") {
@@ -71,25 +238,35 @@ const RankListModal = ({
         closeModal();
         setSelectedIds([]);
       } else {
-        toast.error(t("common:validation_failed"));
+        toast.error(
+          res?.message ||
+          t("common:validation_failed")
+        );
 
-        const errors = Array.isArray(res?.data) ? res.data : [];
+        const errors = Array.isArray(res?.data)
+          ? res.data
+          : [];
+
         setValidationErrors(errors);
       }
     } catch (err) {
-      console.error(err);
+      console.error("UPLOAD ERROR =>", err);
 
-      const apiResponse = err?.response;
+      const errorData = err?.response?.data;
 
-      if (apiResponse?.success === false) {
-        toast.error(t("common:validation_failed"));
+      console.log("ERROR RESPONSE =>", errorData);
 
-        const errors = Array.isArray(apiResponse?.data) ? apiResponse.data : [];
+      toast.error(
+        errorData?.message ||
+        err?.message ||
+        t("candidateWorkflow:upload_failed")
+      );
 
-        setValidationErrors(errors);
-      } else {
-        toast.error(t("candidateWorkflow:upload_failed"));
-      }
+      const errors = Array.isArray(errorData?.data)
+        ? errorData.data
+        : [];
+
+      setValidationErrors(errors);
     } finally {
       setLoading(false);
     }
@@ -176,7 +353,12 @@ const RankListModal = ({
             <small className="text-muted fs-12">
               {t("candidateWorkflow:download_template")}:
             </small>
-            <span className="blue-color fw-500 cursor-pointer fs-14">XLSX</span>
+            <span
+              className="blue-color fw-500 cursor-pointer fs-14"
+              onClick={handleDownloadTemplate}
+            >
+              XLSX
+            </span>
           </div>
         </div>
 
