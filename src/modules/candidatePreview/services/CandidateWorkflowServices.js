@@ -22,17 +22,14 @@ generateRankList: (positionId) => {
  
   );
 },
-    /* ================= REQUISITIONS ================= */
-
+   
   // GET ALL REQUISITIONS
   getRequisitions: (name = "") =>
     api.get("/recruiter/job-requisitions/get-requisitions", {
       params: { name }, // Swagger-supported
     }),
 
-  /* ================= POSITIONS ================= */
 
-  // GET POSITIONS BY REQUISITION ID
   getPositionsByRequisitionId: (requisitionId, name = "") =>
     api.get("/recruiter/job-positions/get-positions", {
       params: { requisitionId, name },

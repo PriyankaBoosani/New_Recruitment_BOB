@@ -85,19 +85,16 @@ const InterviewPanelTable = ({
             <th>{t("interviewPanelCommittee:s_no")}</th>
             <th>
               {t("interviewPanelCommittee:panel_name")}
-              {/* {sortConfig.key === "panelName" &&
-                (sortConfig.direction === "asc" ? " ▲" : " ▼")} */}
+              
             </th>
             <th>
               {t("interviewPanelCommittee:panel_type")}
-              {/* {sortConfig.key === "panelType" &&
-                (sortConfig.direction === "asc" ? " ▲" : " ▼")} */}
+              
             </th>
 
             <th>
               {t("interviewPanelCommittee:panel_members")}
-              {/* {sortConfig.key === "members" &&
-                (sortConfig.direction === "asc" ? " ▲" : " ▼")} */}
+              
             </th>
             {/* <th>Interview Center</th> */}
             <th>{t("common:actions")}</th>

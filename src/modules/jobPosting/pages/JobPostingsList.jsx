@@ -526,20 +526,7 @@ const JobPostingsList = () => {
           />
         </Col>
         <Col xs={12} md={6} className="text-md-end mt-2 mt-md-0">
-          {/* <Button
-                        variant="primary"
-                        className="subbtn me-2"
-                        disabled={!isReinitializeEnabled || loading}
-                        onClick={() => {
-                            const req = selectedRequisitions[0];
-
-                            navigate(`/job-posting/create-requisition?id=${req.id}`, {
-                                state: { mode: "reinitialize" }
-                            });
-                        }}
-                    >
-                        Reinitialize
-                    </Button> */}
+          
 
           <Button
             variant="primary"
@@ -628,9 +615,7 @@ const JobPostingsList = () => {
                   <Badge bg="light" text="primary" className="req-id">
                     {req.requisitionId}
                   </Badge>
-                  {/* <Badge bg={req.statusType} className="ms-2 capitalize-status">
-                                        {req.status}
-                                    </Badge> */}
+                  
                   <Badge bg={req.statusType} className="ms-2">
                     {formatStatusLabel(req.status)}
                   </Badge>
@@ -954,26 +939,7 @@ const JobPostingsList = () => {
                     key={dept.departmentName}
                     className="department-card mb-3"
                   >
-                    {/* 🔹 Department Header */}
-                    {/* <div className="department-header d-flex align-items-center gap-2 my-2"> */}
-                    {/* <div
-                                                className="department-header d-flex align-items-center gap-2 my-2 cursor-pointer"
-                                                onClick={() => toggleDeptAccordion(req.id, dept.departmentName)}
-                                            >
-                                                <img
-                                                    src={dept_icon}
-                                                    className="icon-22"
-                                                    alt="dept_icon"
-                                                />
-                                                <span className="depname">{dept.departmentName}</span>
-                                                <Badge bg="light" text="primary" className="deppos">
-                                                    {dept.positions.length}{" "}
-                                                    {dept.positions.length === 1
-                                                        ? t("jobPostingsList:position")
-                                                        : t("jobPostingsList:positions_plural")}
-                                                </Badge>
-
-                                            </div> */}
+                    
 
                     <div
                       className="department-header d-flex align-items-center gap-2 cursor-pointer"

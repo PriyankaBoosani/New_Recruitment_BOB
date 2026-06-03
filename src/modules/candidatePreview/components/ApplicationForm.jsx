@@ -1297,8 +1297,6 @@ const ApplicationForm = ({
 
   const isBirthPending = birthDoc?.isValidationPending === true;
   const isTenthPending = tenthDoc?.isValidationPending === true;
-  const isPending = isBirthPending || isTenthPending;
-
   const handleEligibleChange = (checked) => {
     setIsEligible(checked);
 
@@ -1371,10 +1369,6 @@ const ApplicationForm = ({
             }
           : row
       );
-
-      // Get latest selected values
-      const selectedRow = updated.find((r) => r.id === id);
-
       setScreeningForm((current) => {
         const next = { ...current };
 
@@ -1607,13 +1601,6 @@ const ApplicationForm = ({
                     </td>
                   </tr>
 
-                  {/* <tr>
-                      <td className="fw-med">Age (as on cut-off date)</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.age || "-"}</td>
-                      <td className="fw-med"></td>
-                      <td className="fw-reg" colSpan={2}></td>
-                    </tr> */}
-
                   <tr>
                     <td className="fw-med">{t("marital_status")}</td>
                     <td className="fw-reg" colSpan={2}>
@@ -1659,25 +1646,10 @@ const ApplicationForm = ({
                       {data.personalDetails.expectedCtc}
                     </td>
 
-                    {/* <td className="fw-med">Social Media Profile links</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td> */}
-                    {/* <td className="fw-med">Expected CTC</td>
-                      <td className="fw-reg" colSpan={2}>{preferences.ctc ? `₹${Number(preferences.ctc).toLocaleString()}` : "-"}</td> */}
+                    
                   </tr>
 
-                  {/* <tr>
-                      <td className="fw-med">Location Preference 1</td>
-                      <td className="fw-reg" colSpan={2}>{state1?.state_name || "-"}</td>
-                      <td className="fw-med">Location Preference 2</td>
-                      <td className="fw-reg" colSpan={2}>{state2?.state_name || "-"}</td>
-                    </tr> */}
-
-                  {/*<tr>
-                       <td className="fw-med">Location Preference 3</td>
-                      <td className="fw-reg" colSpan={2}>{state3?.state_name || "-"}</td> 
-                      <td className="fw-med">Social Media Profile links</td>
-                      <td className="fw-reg" colSpan={2}>{previewData.personalDetails.socialMediaProfileLink}</td>
-                    </tr>*/}
+                  
                   <tr>
                     <td className="fw-med">{t("language_proficiency")}</td>
                     <td className="fw-reg" colSpan={2}>
@@ -1762,21 +1734,6 @@ const ApplicationForm = ({
                     </td>
                   </tr>
 
-                  {/* {data.personalDetails.disciplinaryAction === "Yes" && (
-                      <tr>
-                        <td className="fw-med">Details of disciplinary proceedings, if Any</td>
-                        <td className="fw-reg" colSpan={5}>{data.personalDetails.disciplinaryDetails || "N/A"}</td>
-                      </tr>
-
-                      
-                    )} */}
-
-                  {/* <tr>
-                    <td className="fw-med">{t("disciplinary_details")}</td>
-                    <td className="fw-reg" colSpan={5}>
-                      {data.personalDetails.disciplinaryDetails}
-                    </td>
-                  </tr> */}
                 </tbody>
               </table>
             </div>

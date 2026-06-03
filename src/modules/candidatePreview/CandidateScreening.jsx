@@ -2509,9 +2509,6 @@ const handleGenerateRankList = async () => {
                     </svg>
                   )}{" "}
                   {tab.label}
-                  {/* <span className="ms-2 badge rounded-pill bg-light text-muted p-2" style={{ fontSize: '0.675rem', fontWeight: '500' }}>
-                    {tab.count}
-                  </span> */}
                 </button>
               </li>
             ))}
@@ -2548,12 +2545,7 @@ const handleGenerateRankList = async () => {
                   <option value="">
                     {t("candidateWorkflow:all_statuses")}
                   </option>
-                  {/* {availableStatuses?.map((status) => (
-                    <option key={status} value={status}>
-                      {STATUS_LABEL_MAP[status] || status}
-                    </option>
-                  ))} */}
-
+                  
                   {availableStatuses.map((status) => (
                     <option key={status} value={status}>
                       {getStatusLabel(status)}
@@ -2796,64 +2788,7 @@ const handleGenerateRankList = async () => {
                         )}
                       </OverlayTrigger>
                     </div>
-                    {/* <div>
-                      <div className="d-flex align-items-center justify-content-between" style={{ width: "180px" }}>
-                        <p className="mb-1 fw-normal fs-13 blue-color">
-                          {t("candidateWorkflow:offer_template")}
-                        </p>
-
-                      </div>
-
-                      <select
-                        className="form-select fs-13 py-1"
-                        style={{ width: "180px" }}
-                        value={offerTemplateId}
-                        onChange={(e) => {
-                          setOfferTemplateId(e.target.value);
-                          setSelectedTemplate(e.target.value);
-                        }}
-                      >
-                        <option value="">
-                          {t("candidateWorkflow:select_template")}
-                        </option>
-                        <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">
-                          Template 1
-                        </option>
-                      </select>
-
-                      <OverlayTrigger
-                        placement="bottom"
-                        overlay={
-                          <Tooltip id="preview-tooltip">
-                            {offerTemplateId === "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-                              ? "Template 1"
-                              : ""}
-                          </Tooltip>
-                        }
-                      >
-                        {selectedTemplate && offerTemplateId === "3fa85f64-5717-4562-b3fc-2c963f66afa6" ? (
-                          <span
-                            onClick={() => setShowPreview(true)}
-                            className="cursor-pointer text-orange orange-color"
-                            style={{
-                              fontSize: "14px",
-                              fontWeight: "600",
-                              fontFamily: "Segoe UI, sans-serif",
-                              letterSpacing: "0.5px",
-                              textDecoration: "underline",
-                            }}
-                          >
-                            Preview
-                          </span>
-                        ) : (
-                          <small className="d-block invisible">placeholder</small>
-                        )}
-                      </OverlayTrigger>
-
-
-                    </div> */}
-
-                    {/* Accept Before Date */}
+                    
                     <div>
                       <p className="mb-1 fw-normal fs-13 blue-color">
                         {t("candidateWorkflow:accept_before")}
@@ -2950,52 +2885,7 @@ const handleGenerateRankList = async () => {
               {/* RIGHT SECTION */}
               <div className="col-md-4 col-12">
                 <div className="d-flex justify-content-end gap-2 align-items-center">
-                  {/* <button
-                    className={`btn fs-13 px-3 py-1 orange-border orange-color text-orange ${
-                      isSendOfferEnabled ? "" : "disabled_button"
-                    }`}
-                    style={{
-                      minHeight: "39px",
-                      cursor: isSendOfferEnabled ? "pointer" : "not-allowed",
-                    }}
-                 onClick={() => setShowRankListModal(true)}
-                  //  disabled={!isSendOfferEnabled}
-                  >
-                    <img alt="location"
-                      className="me-2 orange-color"
-                      src={locationIcon}
-                      width={16}
-                      style={{ color: "#f36f21 !important" }}
-                    />
-                    {t("candidateWorkflow:assign_locations")}
-                  </button> */}
-
-
-
-
-
-                  {/* <button className={`btn blue-border blue-color fs-13 px-3 py-1 ${offerSelectedIds.length !== 0 ? "" : "disabled_button"}`} onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}
-                    style={{ minHeight: "39px" }}>
-                    <img src={excelIcon} className="me-1" width={18} /> {t("candidateWorkflow:rank_list")}
-                  </button> */}
-
-
-{/* 
-                                <button
-                className={`btn blue-border blue-color fs-13 px-3 py-1 ${
-                  offerSelectedIds.length !== 0 ? "" : "disabled_button"
-                }`}
-                disabled={offerSelectedIds.length === 0}
-                style={{ minHeight: "39px" }}
-                onClick={handleGenerateRankList}
-              >
-                <img src={excelIcon} className="me-1" width={18} />
-                {t("candidateWorkflow:rank_list")}
-              </button> */}
-
-           
-
-
+                  
 
                 <button
                 className="btn blue-border blue-color fs-13 px-3 py-1"
@@ -3007,30 +2897,30 @@ const handleGenerateRankList = async () => {
               </button>
 
 
-<button
-  className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? 'disabled_button' : ''}`}
-  style={{ minHeight: "39px" }}
-  onClick={() => setShowRankListModal(true)}
-  disabled={!rankListGenerated}
->
-  <img
-    className="me-2"
-    src={locationIcon}
-    alt="location"
-    width={16}
-    style={{ filter: "brightness(0) invert(1)" }}
-  />
-  {t("candidateWorkflow:assign_locations")}
-</button>
+                  <button
+                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? 'disabled_button' : ''}`}
+                    style={{ minHeight: "39px" }}
+                    onClick={() => setShowRankListModal(true)}
+                    disabled={!rankListGenerated}
+                  >
+                    <img
+                      className="me-2"
+                      src={locationIcon}
+                      alt="location"
+                      width={16}
+                      style={{ filter: "brightness(0) invert(1)" }}
+                    />
+                    {t("candidateWorkflow:assign_locations")}
+                  </button>
 
-<button
-  className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? 'disabled_button' : ''}`}
-  style={{ minHeight: "39px" }}
-  onClick={handleDownloadRankList}
-  disabled={!rankListGenerated}
->
-  <i className="bi bi-download me-1"></i>
-</button>
+                  <button
+                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? 'disabled_button' : ''}`}
+                    style={{ minHeight: "39px" }}
+                    onClick={handleDownloadRankList}
+                    disabled={!rankListGenerated}
+                  >
+                    <i className="bi bi-download me-1"></i>
+                  </button>
 
 
 
@@ -3157,16 +3047,6 @@ const handleGenerateRankList = async () => {
                         )
                       ))}
 
-                    {/* {activeTab === "INTERVIEW_POOL"
-                    && hasPrivilege("Offer Pool")
-                    && canSendToOfferPool && (
-                      <button
-                        className="btn blue-bg text-white fs-14"
-                        onClick={handleSendToOfferPool}
-                      >
-                        {t("candidateWorkflow:send_to_offer_pool")}
-                      </button>
-                  )} */}
 
                     {activeTab === "COMPENSATION_POOL" &&
                       hasPrivilege("Offer Pool") &&
@@ -3292,19 +3172,6 @@ const handleGenerateRankList = async () => {
 
         {activeTab === "SCHEDULE_POOL" && (
           <div>
-            {/* 
-          <div className="d-flex justify-content-end mb-3">
-
-            <button
-              className="btn btn-primary"
-              onClick={handleEditSchedule}
-            >
-              <i className="bi bi-pencil-square me-2"></i>
-              Edit Schedule
-            </button>
-
-          </div> */}
-
             <SchedulePoolTable
               rows={paginatedSchedulePool}
               onEdit={handleEditSchedule}
@@ -3404,22 +3271,7 @@ const handleGenerateRankList = async () => {
         setSelectedIds={setOfferSelectedIds}
         onUploadSuccess={() => setOfferRefreshKey((prev) => prev + 1)}
       />
-      {/* <Modal show={showPreview}
-        onHide={() => setShowPreview(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>{templateName || "Preview"}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ height: "80vh" }}>
-          {previewUrl && (
-            <iframe
-              src={previewUrl}
-              width="100%"
-              height="100%"
-              title="PDF Preview"
-            />
-          )}
-        </Modal.Body>
-      </Modal> */}
+     
       <ScheduleErrorModal
         show={showErrorModal}
         onClose={() => setShowErrorModal(false)}

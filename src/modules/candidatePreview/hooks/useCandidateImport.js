@@ -7,10 +7,7 @@ import candidateWorkflowServices from "../services/CandidateWorkflowServices";
 export const useCandidateImport = () => {
   const [loading, setLoading] = useState(false);
 
-  /* =========================
-       BULK IMPORT
-    ========================== */
-
+ 
   const bulkImportCandidates = async (file) => {
     setLoading(true);
 

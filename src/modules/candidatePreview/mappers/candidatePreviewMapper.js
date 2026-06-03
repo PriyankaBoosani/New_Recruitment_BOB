@@ -24,9 +24,6 @@ const getDistrictName = (masters, id) =>
 const getCityName = (masters, id) =>
   findById(masters.cities, "cityId", id)?.cityName || "-";
 
-const getPincode = (masters, id) =>
-  findById(masters.pincodes, "pincodeId", id)?.pin || "-";
-
 const getInterviewCentreName = (masters, id) =>
   findById(masters?.interviewCenters || [], "interviewCentreId", id)
     ?.displayName || "-";

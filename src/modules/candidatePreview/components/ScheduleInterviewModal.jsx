@@ -154,37 +154,11 @@ const ScheduleInterviewModal = ({
               {t("candidateWorkflow:schedule_interview_selected_candidates")}
             </p>
           </div>
-          {/* <div>
-					<button type="button" class="btn-close" aria-label="Close"></button>
-				</div> */}
+          
         </Modal.Header>
 
         <Modal.Body>
-          {/* Tabs */}
-          {/* <div className="d-flex justify-content-center mb-3">
-					<button className="btn btn-light me-2 px-4">Manual Entry</button>
-					<button className="btn btn-outline-primary px-4">Import File</button>
-				</div> */}
-          {/* <div className="tab-buttons mb-4">
-					<Button
-						variant={activeTab === "manual" ? "light" : "outline-light"}
-						className={`tab-button ${activeTab === "manual" ? "active" : ""
-						}`}
-						onClick={() => setActiveTab("manual")}
-					>
-						Manual Entry
-					</Button>
-
-					<Button
-						variant={activeTab === "import" ? "light" : "outline-light"}
-						className={`tab-button ${activeTab === "import" ? "active" : ""
-						}`}
-						onClick={() => setActiveTab("import")}
-					>
-						Import File
-					</Button>
-				</div> */}
-
+          
           {/* Upload box */}
           <div
             className="text-center px-3 pt-3 pb-2 rounded"
@@ -199,9 +173,7 @@ const ScheduleInterviewModal = ({
             </small>
 
             <div className="d-grid justify-content-center gap-2 mt-3">
-              {/* <button className="btn btn-outline-secondary fs-14">
-							Upload CSV
-						</button> */}
+             
               <button
                 className="btn orange-bg text-white fs-13 rounded shadow px-3"
                 onClick={() => fileInputRef.current.click()}
