@@ -280,6 +280,19 @@ const jobPositionApiService = {
       },
     }),
 
+generateRankListdownload: (positionId) => {
+  return api.get(
+    `/recruiter/candidate-offer/download-rank-list/${positionId}`,
+    {
+      responseType: "blob",
+      headers: {
+        "X-Client": "AzureAD",
+      },
+    }
+  );
+},
+
+
   getL1Requisitions: ({ year, search, page, size, statuses }) =>
     api.get("/recruiter/job-requisitions/l1-requisitions", {
       params: { year, search, page, size, statuses },

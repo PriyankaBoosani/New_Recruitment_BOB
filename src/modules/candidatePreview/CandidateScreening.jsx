@@ -1689,50 +1689,45 @@ export default function CandidateScreening({ selectedJob }) {
   };
 
 
+const handleDownloadRankList = async () => {
+  try {
+    const positionId = selectedPositionId?.[0];
 
-
-
-
-    const handleDownloadRankList = async (type) => {
-    if (!selectedPositionId.length) {
-      toast.error(t("candidateWorkflow:select_position_first"));
+    if (!positionId) {
+      toast.error("Please select a position");
       return;
     }
 
-    // Normalize to extension format
-    const extension = type === "pdf" ? ".pdf" : ".xlsx";
+    const res =
+      await jobPositionApiService.generateRankListdownload(positionId);
 
-    try {
-      const payload = buildDownloadPayload(extension);
+    const blob = new Blob([res.data], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
 
-      const res = await jobPositionApiService.downloadCandidateDetails(payload);
+    const url = window.URL.createObjectURL(blob);
 
-      const blob = new Blob([res.data], {
-        type:
-          extension === ".pdf"
-            ? "application/pdf"
-            : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "Rank_List.xlsx";
 
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
+    document.body.appendChild(link);
+    link.click();
 
-      link.href = url;
-      link.download =
-        extension === ".pdf"
-          ? "candidate-details.pdf"
-          : "candidate-details.xlsx";
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error(err);
 
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+    toast.error(
+      err?.response?.data?.message || "Failed to download rank list"
+    );
+  }
+};
 
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error(err);
-      toast.error(t("candidateWorkflow:download_failed"));
-    }
-  };
+
+
+
 
 
   const handleSendToCompensation = async () => {
@@ -2961,7 +2956,7 @@ const handleGenerateRankList = async () => {
               {/* RIGHT SECTION */}
               <div className="col-md-4 col-12">
                 <div className="d-flex justify-content-end gap-2 align-items-center">
-                  <button
+                  {/* <button
                     className={`btn fs-13 px-3 py-1 orange-border orange-color text-orange ${
                       isSendOfferEnabled ? "" : "disabled_button"
                     }`}
@@ -2979,7 +2974,33 @@ const handleGenerateRankList = async () => {
                       style={{ color: "#f36f21 !important" }}
                     />
                     {t("candidateWorkflow:assign_locations")}
-                  </button>
+                  </button> */}
+
+
+
+
+
+                  {/* <button className={`btn blue-border blue-color fs-13 px-3 py-1 ${offerSelectedIds.length !== 0 ? "" : "disabled_button"}`} onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}
+                    style={{ minHeight: "39px" }}>
+                    <img src={excelIcon} className="me-1" width={18} /> {t("candidateWorkflow:rank_list")}
+                  </button> */}
+
+
+{/* 
+                                <button
+                className={`btn blue-border blue-color fs-13 px-3 py-1 ${
+                  offerSelectedIds.length !== 0 ? "" : "disabled_button"
+                }`}
+                disabled={offerSelectedIds.length === 0}
+                style={{ minHeight: "39px" }}
+                onClick={handleGenerateRankList}
+              >
+                <img src={excelIcon} className="me-1" width={18} />
+                {t("candidateWorkflow:rank_list")}
+              </button> */}
+
+           
+
 
 
                 <button
@@ -2992,21 +3013,33 @@ const handleGenerateRankList = async () => {
               </button>
 
 
+<button
+  className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? 'disabled_button' : ''}`}
+  style={{ minHeight: "39px" }}
+  onClick={() => setShowRankListModal(true)}
+  disabled={!rankListGenerated}
+>
+  <img
+    className="me-2"
+    src={locationIcon}
+    width={16}
+    style={{ filter: "brightness(0) invert(1)" }}
+  />
+  {t("candidateWorkflow:assign_locations")}
+</button>
 
-                <button
-              className="btn blue-border fs-13 px-3 py-1"
-              style={{
-                minHeight: "39px",
-                opacity: rankListGenerated ? 1 : 0.5,
-                cursor: rankListGenerated ? "pointer" : "not-allowed",
-                color: rankListGenerated ? "#0d6efd" : "#999",
-                borderColor: rankListGenerated ? "#0d6efd" : "#ccc",
-              }}
-              onClick={handleDownloadRankList}
-              disabled={!rankListGenerated}
-            >
-        <i className="bi bi-download me-1"></i>
-      </button>
+<button
+  className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? 'disabled_button' : ''}`}
+  style={{ minHeight: "39px" }}
+  onClick={handleDownloadRankList}
+  disabled={!rankListGenerated}
+>
+  <i className="bi bi-download me-1"></i>
+</button>
+
+
+
+      
                 </div>
               </div>
             </div>

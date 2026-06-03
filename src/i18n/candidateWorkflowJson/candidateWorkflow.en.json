@@ -90,7 +90,10 @@
   "doc_preview_line2": "The file has been downloaded for you.",
   "unsupported_file_format": "Unsupported file format",
   "upload_rank_list": "Upload Rank List",
+  "upload_assigned_list": "Upload Assigned Location List",
   "import_rank_list_for_selected_position": "Import rank list for selected position",
+
+  "upload_assigned_list_for_selected_position": "Import Assigned Location List for selected position",
   "upload_file": "Upload File",
   "support_xlsx_format": "Support for XLSX format",
   "upload_xlsx": "Upload XLSX",

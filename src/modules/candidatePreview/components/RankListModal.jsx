@@ -153,10 +153,10 @@ const RankListModal = ({
         <div className="d-grid">
           <h5 className="mb-1 blue-color fs-15">
             {" "}
-            {t("candidateWorkflow:upload_rank_list")}
+            {t("candidateWorkflow:upload_assigned_list")}
           </h5>
           <p className="text-muted fs-14 mb-0">
-            {t("candidateWorkflow:import_rank_list_for_selected_position")}
+            {t("candidateWorkflow:upload_assigned_list_for_selected_position")}
           </p>
         </div>
       </Modal.Header>
@@ -217,7 +217,7 @@ const RankListModal = ({
             </small>
             <span
               className="blue-color fw-500 cursor-pointer fs-14"
-              onClick={handleDownloadTemplate}
+         //   onClick={handleDownloadTemplate}
             >
               XLSX
             </span>
