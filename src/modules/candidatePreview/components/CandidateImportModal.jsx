@@ -264,19 +264,18 @@ const CandidateImportModal = ({
       ========================== */}
 
       <div className="d-flex justify-content-end gap-2 mt-3">
-
-<Button
-  variant="outline-secondary"
-  onClick={onClose}
-  style={{
-    fontSize: "13px",
-    padding: "7px 16px",
-    borderRadius: "10px",
-    fontWeight: "600"
-  }}
->
-  Cancel
-</Button>
+        <Button
+          variant="outline-secondary"
+          onClick={onClose}
+          style={{
+            fontSize: "13px",
+            padding: "7px 16px",
+            borderRadius: "10px",
+            fontWeight: "600",
+          }}
+        >
+          Cancel
+        </Button>
 
         <Button
           onClick={handleUpload}

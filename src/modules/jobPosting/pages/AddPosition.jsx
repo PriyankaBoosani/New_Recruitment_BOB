@@ -49,7 +49,6 @@ const AddPosition = () => {
   const parentRequisitionId = location.state?.parentRequisitionId;
   const { positionsByReq, fetchPositions } = useJobPositionsByRequisition();
 
-
   useEffect(() => {
     if (requisitionId) {
       fetchPositions(isDraft ? parentRequisitionId : requisitionId, isDraft);
@@ -230,7 +229,7 @@ const AddPosition = () => {
       minAge: existingPosition.eligibilityAgeMin,
       maxAge: existingPosition.eligibilityAgeMax,
       employmentType: existingPosition.employmentType,
-     
+
       grade: existingPosition.gradeId,
       enableLocation: existingPosition.isLocationPreferenceEnabled,
       responsibilities: existingPosition.rolesResponsibilities,
@@ -394,7 +393,6 @@ const AddPosition = () => {
 
       const mappedStates = await Promise.all(
         existingPosition.positionStateDistributions.map(async (sd) => {
-          
           const categories = {};
           const disabilities = {};
 

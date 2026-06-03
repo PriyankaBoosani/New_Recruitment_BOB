@@ -94,7 +94,6 @@ const ApplicationForm = ({
     // Clear radio selection whenever LPT changes
     setZonalDecision("");
   }, [lptType]);
-  
 
   const deriveShortlistStatus = () => {
     const ageOk = isCategorySatisfied("AGE");
@@ -158,7 +157,7 @@ const ApplicationForm = ({
 
   const user = useSelector((state) => state.user.user);
   const role = user?.role?.toLowerCase();
-  
+
   const privileges = useSelector((state) => state.user.privileges);
 
   const isZonalHr = privileges?.Verification;
@@ -252,7 +251,6 @@ const ApplicationForm = ({
     }
 
     if (hasPendingDocument) {
-     
       toast.warning(t("all_documents_must_verified"));
       return;
     }
@@ -277,14 +275,12 @@ const ApplicationForm = ({
     // -----------------------------------------
 
     if (zonalDecision === "NO" && allVerified) {
-    
       toast.warning(t("all_documents_verified_select_other"));
       return;
     }
 
     // 3️⃣ Decision = YES but any document REJECTED
     if (zonalDecision === "YES" && anyRejected) {
-      
       toast.error(t("cannot_approve_documents_rejected"));
       return;
     }
@@ -421,7 +417,7 @@ const ApplicationForm = ({
 
   const allDocs =
     screeningDocuments.length > 0 ? screeningDocuments : data.documents.allDocs;
- 
+
   const photoDoc = allDocs.find((doc) => doc.name === "Photo");
   const signatureDoc = allDocs.find((doc) => doc.name === "Signature");
   const birthDoc = allDocs.find((doc) => doc.name === "Birth Certificate");
@@ -550,7 +546,6 @@ const ApplicationForm = ({
       const documents = [];
 
       (res.data || []).forEach((item) => {
-      
         const isZonal = isZonalHr;
 
         const status = isCandidateWorkflow
@@ -588,7 +583,6 @@ const ApplicationForm = ({
       setDocStatusLoading(false);
     }
   };
-
 
   useEffect(() => {
     if (!applicationId) return;
@@ -646,7 +640,6 @@ const ApplicationForm = ({
       candidateId,
     }));
   }, [applicationId, candidateId]);
-
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -795,7 +788,6 @@ const ApplicationForm = ({
     screeningForm.isEducationCriteriaMet === "DISCREPANCY" ||
     hasAdditionalDocuments;
 
-
   const hasYetToUpload = documentRows.some((doc) => !doc?.url);
   const shouldShowSubmitBefore = hasAnyDiscrepancy || hasYetToUpload;
 
@@ -894,7 +886,7 @@ const ApplicationForm = ({
     }
 
     setErrors(newErrors);
-    
+
     // valid if no errors
     return Object.keys(newErrors).length === 0;
   };
@@ -944,7 +936,6 @@ const ApplicationForm = ({
     });
   };
 
-
   const areAllCriteriaSelected =
     screeningForm.isWorkCriteriaMet &&
     screeningForm.isAgeCriteriaMet &&
@@ -976,15 +967,13 @@ const ApplicationForm = ({
     const isWorkValid = isCategorySatisfied("WORK");
     const isEducationValid = isCategorySatisfied("EDUCATION");
 
-
     let finalShortlist = screeningForm.isShortlisted;
 
     // If any criteria is DISCREPANCY,
     // shortlist must stay empty
     if (hasAnyDiscrepancy) {
       finalShortlist = "";
-    }
-    else if (!isAgeValid || !isWorkValid || !isEducationValid) {
+    } else if (!isAgeValid || !isWorkValid || !isEducationValid) {
       finalShortlist = "NO";
     }
 
@@ -1002,7 +991,7 @@ const ApplicationForm = ({
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
       // toast.success("Screening submitted successfully");
       toast.success(t("screening_submitted_success"));
-     
+
       navigate("/candidate-workflow", {
         state: {
           requisitionId,
@@ -1177,7 +1166,6 @@ const ApplicationForm = ({
     return false;
   };
 
-
   useEffect(() => {
     const ageVerified = isCategorySatisfied("AGE");
     const workVerified = isCategorySatisfied("WORK");
@@ -1280,7 +1268,6 @@ const ApplicationForm = ({
       }));
     }
   }, [zonalDecision]);
-
 
   const getPendingMessage = (doc) => {
     if (!doc?.pendingChecks?.length) {
@@ -1450,28 +1437,6 @@ const ApplicationForm = ({
                     <td className="fw-reg" colSpan={4} style={{ width: "60%" }}>
                       {data.personalDetails.fullName}
                     </td>
-
-                    {/* ✅ Make photo span the full height of the table */}
-                    {/* <td
-                      rowSpan="3"
-                      className="bob-photo-cell align-top text-center"
-                      style={{ width: "20%", verticalAlign: "top" }}
-                    >
-                      <div className="bob-photo-box">
-                        <img
-                          src={photo}
-                          alt="Applicant Photo"
-                          className="img-fluid img1"
-                        />
-
-                        <img
-                          src={signature}
-                          alt="Signature"
-                          className="img-fluid img2"
-                        />
-                      </div>
-                    </td> */}
-
                     <td
                       rowSpan="3"
                       className="bob-photo-cell align-top text-center"
@@ -1483,7 +1448,6 @@ const ApplicationForm = ({
                           {photo ? (
                             <img
                               src={photo}
-
                               alt="Applicant-photo"
                               className="photo-img"
                             />
@@ -1578,7 +1542,6 @@ const ApplicationForm = ({
                     <td className="fw-med">{t("dob")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.dob}
-                      
                     </td>
                     <td className="fw-med">{t("age_cutoff")}</td>
                     <td className="fw-reg" colSpan={2}>
@@ -2047,7 +2010,7 @@ const ApplicationForm = ({
                               placement="bottom"
                               overlay={
                                 <Tooltip
-                                  // id={`tooltip-digilocker-${right.candidateDocumentId}`}
+                                // id={`tooltip-digilocker-${right.candidateDocumentId}`}
                                 >
                                   Verified by Digilocker
                                 </Tooltip>
@@ -2588,11 +2551,8 @@ const ApplicationForm = ({
                   <option value="YES">YES</option>
                   <option value="NO">NO</option>
                 </select>
-
-              
               </div>
 
-              
               {isLptRequired === "YES" && (
                 <div style={{ width: "260px" }}>
                   <label

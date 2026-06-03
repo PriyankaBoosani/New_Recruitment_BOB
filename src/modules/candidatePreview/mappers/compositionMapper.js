@@ -19,7 +19,7 @@ export const mapCompensationCandidates = (apiData = []) => {
       expectedCtc: comp.expectedCtc,
       agreedCtc: comp.agreedCtc,
       hike: comp.hike,
-      
+
       status: comp.compensationStatus,
       fixedPay: comp.fixedPay,
       variablePay: comp.variablePay,

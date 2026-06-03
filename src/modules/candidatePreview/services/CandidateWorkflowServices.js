@@ -12,17 +12,12 @@ const candidateWorkflowServices = {
   getRegister: () => nodeApi.get("/getdetails/users/all"),
 
   getJobPositionById: (positionId) =>
-  api.get(
-    `/recruiter/job-positions/get-job-position-by-id/${positionId}`
-  ),
+    api.get(`/recruiter/job-positions/get-job-position-by-id/${positionId}`),
 
-generateRankList: (positionId) => {
-  return api.get(
-    `/recruiter/candidate-selection/merit-list/${positionId}`
- 
-  );
-},
-    /* ================= REQUISITIONS ================= */
+  generateRankList: (positionId) => {
+    return api.get(`/recruiter/candidate-selection/merit-list/${positionId}`);
+  },
+  /* ================= REQUISITIONS ================= */
 
   // GET ALL REQUISITIONS
   getRequisitions: (name = "") =>
@@ -95,7 +90,6 @@ generateRankList: (positionId) => {
       }
     );
   },
-
 
   getMessageHistory: (payload, page, size) =>
     api.post("/recruiter/messages/get-history", payload, {

@@ -9,7 +9,6 @@ export const useUpdateJobPosition = () => {
     try {
       setLoading(true);
 
-
       if (!payload.educationData || !payload.educationData.mandatory) {
         console.error("INVALID PAYLOAD", payload);
         throw new Error("Missing educationData.mandatory");
@@ -30,7 +29,6 @@ export const useUpdateJobPosition = () => {
         if (!payload.existingPosition?.parentPositionId) {
           throw new Error("Missing parentPositionId for draft update");
         }
-
 
         res = await jobPositionApiService.updateDraftPosition({
           requisitionId: payload.parentRequisitionId,

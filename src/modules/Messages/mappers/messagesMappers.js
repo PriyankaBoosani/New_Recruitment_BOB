@@ -29,7 +29,7 @@ export const mapMessagesData = (
       positionName:
         positions.find((p) => p.jobPositions?.positionId === item?.positionId)
           ?.masterPositions?.positionName || "-",
-      
+
       date: createdDate
         ? `${String(createdDate.getDate()).padStart(2, "0")}-${String(
             createdDate.getMonth() + 1
@@ -45,7 +45,7 @@ export const mapMessagesData = (
             .replace(/am/i, "AM")
             .replace(/pm/i, "PM")
         : "-",
-     
+
       dateExtension: item?.dateExtension
         ? `${String(new Date(item.dateExtension).getDate()).padStart(
             2,

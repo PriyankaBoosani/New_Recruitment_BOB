@@ -1,10 +1,5 @@
 import React, { Suspense } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Spinner,
-} from "react-bootstrap";
+import { Container, Row, Col, Spinner } from "react-bootstrap";
 import { Outlet } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 

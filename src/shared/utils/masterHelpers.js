@@ -4,67 +4,37 @@ import { getMasterById } from "./masterLookup";
    DEPARTMENT
 ========================= */
 export const getDepartment = (masters, deptId) =>
-  getMasterById(
-    masters,
-    "departments",
-    deptId,
-    "department_id" 
-  );
+  getMasterById(masters, "departments", deptId, "department_id");
 
 /* =========================
    CITY
 ========================= */
 export const getCity = (masters, cityId) =>
-  getMasterById(
-    masters,
-    "cities",
-    cityId,
-    "city_id" 
-  );
+  getMasterById(masters, "cities", cityId, "city_id");
 
 /* =========================
    STATE
 ========================= */
 export const getState = (masters, stateId) =>
-  getMasterById(
-    masters,
-    "states",
-    stateId,
-    "state_id" 
-  );
+  getMasterById(masters, "states", stateId, "state_id");
 
 /* =========================
    LOCATION
 ========================= */
 export const getLocation = (masters, locationId) =>
-  getMasterById(
-    masters,
-    "locations",
-    locationId,
-    "location_id"
-  );
+  getMasterById(masters, "locations", locationId, "location_id");
 
 /* =========================
    JOB GRADE
 ========================= */
 export const getJobGrade = (masters, gradeId) =>
-  getMasterById(
-    masters,
-    "job_grades", 
-    gradeId,
-    "job_grade_id"
-  );
+  getMasterById(masters, "job_grades", gradeId, "job_grade_id");
 
 /* =========================
    SKILL
 ========================= */
 export const getSkill = (masters, skillId) =>
-  getMasterById(
-    masters,
-    "skills",
-    skillId,
-    "skill_id" 
-  );
+  getMasterById(masters, "skills", skillId, "skill_id");
 /* =========================
    EMPLOYMENT TYPE
 ========================= */
@@ -73,7 +43,7 @@ export const getEmploymentType = (masters, employmentTypeId) =>
     masters,
     "employment_types",
     employmentTypeId,
-    "employment_type_id" 
+    "employment_type_id"
   );
 
 /* =========================
@@ -121,9 +91,9 @@ export const getReservation = (masters, reservationId) =>
 export const getEducationLevel = (masters, educationLevelId) =>
   getMasterById(
     masters,
-    "education_levels", 
+    "education_levels",
     educationLevelId,
-    "documentTypeId" 
+    "documentTypeId"
   );
 
 /* =========================
@@ -132,9 +102,9 @@ export const getEducationLevel = (masters, educationLevelId) =>
 export const getSpecialization = (masters, specializationId) =>
   getMasterById(
     masters,
-    "specializations", 
+    "specializations",
     specializationId,
-    "specializationId" 
+    "specializationId"
   );
 
 /* =========================

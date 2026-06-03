@@ -44,13 +44,11 @@ export default function CandidatePool({
     allCandidatesForFilters?.length > 0 &&
     allCandidatesForFilters.every((c) => selectedIds.includes(c.id));
 
-
   useEffect(() => {
     if (!filters?.status?.length) {
       setSelectedIds([]);
     }
   }, [filters?.status]);
-
 
   const formatStatus = (status = "") =>
     status
@@ -212,7 +210,6 @@ export default function CandidatePool({
     <>
       {/* Desktop Table */}
       <div className="card-body p-0 d-none d-md-block">
-       
         <table className="table table-hover mb-0">
           <thead className="bg-light">
             <tr>
@@ -396,8 +393,6 @@ export default function CandidatePool({
                       <Person
                         className="me-3 cursor-pointer"
                         onClick={() => {
-                          
-
                           navigate("/candidate-preview", {
                             state: {
                               from: "/candidate-workflow",

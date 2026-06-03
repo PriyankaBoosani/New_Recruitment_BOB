@@ -11,7 +11,6 @@ const TableSection = ({
   totalVacancyCount = 0,
   totalQualifiedCount = 0,
 }) => {
-
   const categoryMap = {};
 
   summaryData?.categorySummaries?.forEach((cat) => {
@@ -215,7 +214,6 @@ const ExaminationScoreModal = ({
         }}
       >
         {examinationScoreData.map((item, index) => {
-        
           const hasConfig = examConfigMap?.[item.positionId || item.id];
 
           const hasQualifiedWithoutRelaxation =
@@ -226,8 +224,6 @@ const ExaminationScoreModal = ({
             ) > 0;
 
           const isFinalized = item?.isFinalized === true;
-
-          
 
           return (
             <div key={index} className="mb-3 rank-position-card">

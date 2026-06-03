@@ -96,7 +96,6 @@ const EducationTable = ({
                       >
                         <img src={editIcon} alt="Edit" className="icon-16" />
                       </Button>
-
                     </div>
                   </td>
                 </tr>

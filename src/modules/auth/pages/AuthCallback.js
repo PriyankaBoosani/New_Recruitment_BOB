@@ -16,43 +16,36 @@ export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    
     const initAuth = async () => {
       try {
-        
         // Get active account directly from instance (may be loaded before accounts array)
         let account = instance.getActiveAccount();
-        
+
         // If no active account, try to use first available
         if (!account && accounts.length > 0) {
           account = accounts[0];
           instance.setActiveAccount(account);
-          
         }
 
         // If still no account, wait a moment for MSAL to finish loading
         if (!account && inProgress !== "none") {
-          
           await new Promise((resolve) => setTimeout(resolve, 500));
           account = instance.getActiveAccount();
-          
         }
 
         // If still no account after redirect, user needs to login again
         if (!account) {
-          
           // Check if there's auth code in URL (meaning we're coming from Azure login)
           const params = new URLSearchParams(window.location.search);
           const hasAuthCode = params.has("code");
 
           if (!hasAuthCode) {
-           
             navigate("/login", { replace: true });
             return;
           }
 
           // If we have auth code but no account, wait longer
-          
+
           await new Promise((resolve) => setTimeout(resolve, 2000));
 
           account = instance.getActiveAccount() || accounts[0];
@@ -69,7 +62,6 @@ export default function AuthCallback() {
             account,
           });
         } catch (tokenError) {
-          
           tokenResponse = await instance.acquireTokenPopup({
             scopes: [process.env.REACT_APP_MSAL_SCOPE],
             account,
@@ -77,7 +69,6 @@ export default function AuthCallback() {
         }
 
         const accessToken = tokenResponse.accessToken;
-        
 
         // Store auth in Redux
         dispatch(
@@ -88,7 +79,6 @@ export default function AuthCallback() {
         );
 
         const data = await loginApi.getAzureUserDetails(accessToken);
-
 
         // Store user info
         dispatch(
@@ -103,10 +93,10 @@ export default function AuthCallback() {
         // Store privileges
         const privileges = data.privileges || data.preveileges || {};
         dispatch(setPrivileges(privileges));
-      
+
         // Navigate to appropriate page
         const defaultRoute = getDefaultRoute(privileges);
-       
+
         navigate(defaultRoute, { replace: true });
       } catch (error) {
         // console.error("❌ Authentication error:", error.message);

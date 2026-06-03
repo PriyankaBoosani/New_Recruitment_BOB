@@ -53,7 +53,7 @@ const ReservationSection = ({
   const sortedStates = [...states].sort((a, b) =>
     a.name.localeCompare(b.name, "en", { sensitivity: "base" })
   );
- 
+
   const filteredCities = cities.filter(
     (c) => String(c.stateId) === String(currentState.state)
   );

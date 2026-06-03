@@ -5,9 +5,7 @@ import { useTranslation } from "react-i18next";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import masterApiService from "../../master/services/masterApiService";
 import { Modal } from "react-bootstrap";
-import {
-  FaExternalLinkAlt,
-} from "react-icons/fa";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 const OFFER_STATUS_CLASS_MAP = {
   OFFER_AWAITED: "bg-warning",
@@ -180,7 +178,7 @@ const OfferPool = ({
   }, [filteredOffers, page, pageSize]);
 
   /* ---------- Selection logic ---------- */
- 
+
   const InfoField = ({ label, value }) => (
     <div className="col-12 col-md-4 mb-3">
       <p className="fw-400 fs-13 mb-1" style={{ color: "#8e939f" }}>
@@ -221,9 +219,7 @@ const OfferPool = ({
                   minWidth: "50px",
                   paddingLeft: "1.5rem",
                 }}
-              >
-               
-              </th>
+              ></th>
               <th
                 className="fs-14 fw-normal py-3 border-top sticky-col-1"
                 scope="col"
@@ -521,7 +517,6 @@ const OfferPool = ({
                               c.applicationId // applicationId
                             );
                           }
-
                         }}
                         style={{ backgroundColor: "#eff6ff" }}
                       >

@@ -120,7 +120,6 @@ export default function CandidateVerification() {
 
   /* ================= LOAD MASTER ================= */
 
-
   useEffect(() => {
     if (navInitRef.current) {
       navInitRef.current = false;
@@ -292,7 +291,6 @@ export default function CandidateVerification() {
 
   const paginatedCandidates = filteredCandidates.slice(startIndex, endIndex);
 
-
   const toggleAbsent = (id) => {
     setAllCandidates((prev) =>
       prev.map((c) => (c.id === id ? { ...c, absent: !c.absent } : c))
@@ -304,7 +302,6 @@ export default function CandidateVerification() {
   );
 
   const isSelectionDone = selectedRequisition && selectedPosition;
-
 
   const handleSaveAbsent = async () => {
     try {

@@ -17,7 +17,6 @@ const InterviewPanelsConfig = ({
   onApplyAll,
   initialSelectedPanels = [],
 }) => {
-  
   const {
     availablePanels,
     selectedPanels,
@@ -47,7 +46,6 @@ const InterviewPanelsConfig = ({
   const [capacityMessage, setCapacityMessage] = React.useState("");
 
   const [showSummaryModal, setShowSummaryModal] = React.useState(false);
-
 
   const handleApplyAll = async () => {
     // ✅ Validate Position

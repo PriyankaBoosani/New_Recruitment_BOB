@@ -68,7 +68,6 @@ export default function EducationModal({
   const getLabel = (list, id, key = "label") =>
     list.find((i) => i.id === id)?.[key] || "";
 
-
   const getSpecializationsForDegree = (degreeId) => {
     if (!degreeId) return [];
 
@@ -120,7 +119,6 @@ export default function EducationModal({
     .filter(Boolean)
     .join("\nOR\n");
 
- 
   const addGroup = () => {
     setGroups([...groups, createGroup()]);
   };
@@ -130,7 +128,6 @@ export default function EducationModal({
     copy[groupIndex].educations.push(createRow());
     setGroups(copy);
   };
-
 
   const updateRow = (gIdx, rIdx, field, value) => {
     const copy = [...groups];
@@ -177,7 +174,7 @@ export default function EducationModal({
       return updated;
     });
   };
- 
+
   const removeRow = (gIdx, rIdx) => {
     const copy = [...groups];
 
@@ -800,7 +797,7 @@ export default function EducationModal({
             });
             const certValidationErrors =
               validateCertificationGroups(certGroups);
-            
+
             const mergedErrors = {
               ...validationErrors,
               ...certValidationErrors,

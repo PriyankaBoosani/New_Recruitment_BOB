@@ -63,7 +63,7 @@ const Loading = () => (
 const AppRoutes = () => {
   // Check if user is authenticated from Redux
   const authUser = useSelector((state) => state.user?.authUser);
- 
+
   const privileges = useSelector((state) => state.user?.privileges);
   const location = useLocation();
 
@@ -82,7 +82,6 @@ const AppRoutes = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
 
-        
         <Route
           path="/"
           element={
@@ -290,7 +289,6 @@ const AppRoutes = () => {
                   </PrivilegeRoute>
                 }
               />
-              
 
               <Route
                 path="/interviewpanel"

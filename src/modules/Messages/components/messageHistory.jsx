@@ -27,7 +27,6 @@ const MessageHistory = ({ item }) => {
       console.error("File open error", err);
     }
   };
- 
 
   const getColorByTitle = (title) => {
     const text = title?.toLowerCase() || "";

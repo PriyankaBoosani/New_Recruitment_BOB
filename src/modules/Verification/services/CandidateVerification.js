@@ -7,7 +7,6 @@ const CandidateVerificationService = {
       params: { date: dateStr },
     }),
 
-
   updateAbsentStatusBatch: (payload) =>
     api.post("/recruiter/zonal-verification/update-absent-statuses", payload),
 };

@@ -54,7 +54,7 @@ const Messages = () => {
     threadMessagesMap,
     interviewCentres
   );
- 
+
   const filteredMessages = messagesData.filter((item) => {
     const search = searchText.toLowerCase();
     const matchesSearch =

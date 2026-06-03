@@ -265,7 +265,6 @@ const RequisitionStripformultiplepositions = ({
             )}
           </div>
         </div>
-      
       </div>
 
       {/* ================= MODAL ================= */}

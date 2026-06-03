@@ -54,7 +54,7 @@ const ScheduleInterviews = () => {
     scheduleInterview,
     allInterviewCentres,
   } = useInterviewSchedule(isEditMode, isReschedule);
-  
+
   const selectedRequisition = requisitions.find(
     (r) => r.id === selectedRequisitionId
   );
@@ -77,7 +77,6 @@ const ScheduleInterviews = () => {
     if (!isEditMode || !schedulePoolData?.length) {
       return;
     }
-
 
     const mappedRows = schedulePoolData.map((item) => ({
       id: item.id,
@@ -248,7 +247,6 @@ const ScheduleInterviews = () => {
   const sourceTab = state?.sourceTab || state?.activeTab || "CANDIDATE_POOL";
   return (
     <div className="container-fluid px-4 py-3 mb-5 pb-5">
-      
       <HeaderWithBack
         title="Schedule Interviews"
         subtitle={`Scheduling for ${
@@ -284,8 +282,6 @@ const ScheduleInterviews = () => {
       <div className="card border-0 mt-3">
         <div className="card-body">
           <div className="row g-3">
-            
-
             <DropdownStripMultipleposition
               requisitions={requisitions}
               positions={positions}
@@ -319,7 +315,6 @@ const ScheduleInterviews = () => {
             saveButton={false}
             isReadonly={true}
           />
-          
         </div>
       )}
 
@@ -432,7 +427,6 @@ const ScheduleInterviews = () => {
               }
             });
 
-
             // 🔥 Call scheduling API
             const res = await applySchedule({
               ...pendingApplyData,
@@ -476,7 +470,6 @@ const ScheduleInterviews = () => {
           setShowCentreModal(true);
         }}
         onProceed={async () => {
-          
           setShowCentreConfirmModal(false);
 
           const zonalChangeMap = {};

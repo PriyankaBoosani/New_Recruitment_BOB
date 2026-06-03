@@ -4,7 +4,6 @@ import "../../../style/css/InterviewPanelsConfig.css";
 import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 
 const InterviewScheduleTable = ({ rows, position }) => {
-  
   const { t } = useTranslation("interviewSchedule");
   const [page, setPage] = useState(0);
 

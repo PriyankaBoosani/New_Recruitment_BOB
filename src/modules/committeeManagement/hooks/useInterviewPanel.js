@@ -131,7 +131,6 @@ export const useInterviewPanel = () => {
 
       try {
         centerRes = await masterApiService.getAllInterviewCenters();
-       
       } catch (error) {
         console.error("Failed to load interview centers:", error);
         toast.error(t("failed_load_centers"));
@@ -297,7 +296,6 @@ export const useInterviewPanel = () => {
       try {
         const res = await masterApiService.deleteInterviewPanel(id);
         if (res?.success === false) {
-          
           setErrorMessage(res?.data || t("panel_assigned_cannot_delete"));
           setShowErrorModal(true);
           return;
@@ -406,7 +404,6 @@ export const useInterviewPanel = () => {
       );
     }
   };
-
 
   /* ================= RETURN ================= */
 

@@ -82,7 +82,9 @@ const CreateRequisition = () => {
   const positions = positionsByReq[key] || [];
 
   const [selectedPositions, setSelectedPositions] = useState(new Set());
-  const [draftSelectedPositionIds, setDraftSelectedPositionIds] = useState(new Set());
+  const [draftSelectedPositionIds, setDraftSelectedPositionIds] = useState(
+    new Set()
+  );
   const [masterPositionsMap, setMasterPositionsMap] = useState({});
 
   useEffect(() => {
@@ -104,29 +106,27 @@ const CreateRequisition = () => {
   }, []);
 
   useEffect(() => {
-  const loadDraftSelections = async () => {
-    if (!isDraftEdit || !parentRequisitionId) return;
+    const loadDraftSelections = async () => {
+      if (!isDraftEdit || !parentRequisitionId) return;
 
-    try {
-      const res =
-        await jobPositionApiService.getDraftPositionsByRequisition(
-          parentRequisitionId
+      try {
+        const res =
+          await jobPositionApiService.getDraftPositionsByRequisition(
+            parentRequisitionId
+          );
+
+        const draftPositions = res?.data || [];
+
+        setDraftSelectedPositionIds(
+          new Set(draftPositions.map((p) => p.masterPositionId))
         );
+      } catch (err) {
+        console.error("Failed to load draft positions", err);
+      }
+    };
 
-      const draftPositions = res?.data || [];
-
-      setDraftSelectedPositionIds(
-        new Set(
-          draftPositions.map((p) => p.masterPositionId)
-        )
-      );
-    } catch (err) {
-      console.error("Failed to load draft positions", err);
-    }
-  };
-
-  loadDraftSelections();
-}, [isDraftEdit, parentRequisitionId]);
+    loadDraftSelections();
+  }, [isDraftEdit, parentRequisitionId]);
 
   const handleSave = async (e) => {
     e?.preventDefault?.();
@@ -217,29 +217,26 @@ const CreateRequisition = () => {
     }
   };
 
-useEffect(() => {
-  if (
-    !isDraftEdit ||
-    positions.length === 0 ||
-    draftSelectedPositionIds.size === 0
-  )
-    return;
-
-  const selected = positions
-    .filter((p) =>
-      draftSelectedPositionIds.has(p.masterPositionId)
+  useEffect(() => {
+    if (
+      !isDraftEdit ||
+      positions.length === 0 ||
+      draftSelectedPositionIds.size === 0
     )
-    .map((p) => p.positionId);
+      return;
 
-  setSelectedPositions(new Set(selected));
-}, [isDraftEdit, positions, draftSelectedPositionIds]);
+    const selected = positions
+      .filter((p) => draftSelectedPositionIds.has(p.masterPositionId))
+      .map((p) => p.positionId);
+
+    setSelectedPositions(new Set(selected));
+  }, [isDraftEdit, positions, draftSelectedPositionIds]);
 
   function getTomorrowISO() {
     const d = new Date();
     d.setDate(d.getDate() + 1);
     return d.toISOString().split("T")[0];
   }
-  
 
   /* ===================== LOADER ===================== */
   if (fetching) {
@@ -250,7 +247,6 @@ useEffect(() => {
       </Container>
     );
   }
-  
 
   /* ===================== UI ===================== */
   return (

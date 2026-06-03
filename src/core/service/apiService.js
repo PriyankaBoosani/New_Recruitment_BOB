@@ -205,4 +205,3 @@ masterDropdownApi.interceptors.response.use(
    Exports
 --------------------------- */
 export { api, formDataApi, apis, candidateApi, nodeApi, masterDropdownApi };
-

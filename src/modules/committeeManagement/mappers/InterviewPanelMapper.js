@@ -48,7 +48,6 @@ export const preparePanelPayload = (
       interviewCommitteeId: selectedCommittee?.id,
     },
 
-
     panelMembers: selectedMembers.map((m) => ({
       panelMember: {
         userId: m.value,

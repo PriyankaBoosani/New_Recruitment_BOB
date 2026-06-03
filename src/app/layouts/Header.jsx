@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Navbar, Nav, Container, NavDropdown, Image } from "react-bootstrap";
-import { Link, useLocation} from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import logo from "../../assets/logo.png";
@@ -55,7 +55,6 @@ const Header = () => {
           .replace(/\b\w/g, (c) => c.toUpperCase())
       : "");
 
- 
   /* ===================== LOGOUT ===================== */
   const handleLogout = async () => {
     dispatch(clearUser());
@@ -64,7 +63,8 @@ const Header = () => {
     i18n.changeLanguage("en");
     await persistor.purge();
 
-    const activeAccount = instance.getActiveAccount() || instance.getAllAccounts()[0];
+    const activeAccount =
+      instance.getActiveAccount() || instance.getAllAccounts()[0];
     await instance.logoutRedirect({
       account: activeAccount,
       postLogoutRedirectUri: `${window.location.origin}/login`,
@@ -86,7 +86,6 @@ const Header = () => {
   const canMessages = privileges?.["Messages"];
   const canExaminationCutoffConfiguration =
     privileges?.["ExaminationCutoffConfiguration"];
-  
 
   /* ===================== OUTSIDE CLICK ===================== */
   useEffect(() => {
@@ -150,7 +149,6 @@ const Header = () => {
 
           {/* Right Section */}
           <div className="d-flex align-items-center fonnav gap-3">
-            
             {/* LANGUAGE PILL — CUSTOM */}
             <div
               className="lang-pill"
@@ -272,7 +270,6 @@ const Header = () => {
                   {t("job_postings")}
                 </Nav.Link>
               )}
-              
 
               {canCandidateWorkflow && (
                 <Nav.Link
@@ -283,7 +280,6 @@ const Header = () => {
                   {t("candidate_workflow")}
                 </Nav.Link>
               )}
-
 
               {canExaminationCutoffConfiguration && (
                 <Nav.Link
@@ -393,11 +389,9 @@ const Header = () => {
                   )}
                 </NavDropdown>
               )}
-              
 
               {/* Admin Menu */}
               {canAdmin && (
-                
                 <NavDropdown
                   id="admin-dropdown"
                   show={showAdminMenu}
@@ -422,7 +416,6 @@ const Header = () => {
                   >
                     {t("department")}
                   </NavDropdown.Item>
-
 
                   <NavDropdown.Item
                     as={Link}

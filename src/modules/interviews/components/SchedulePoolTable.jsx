@@ -33,7 +33,6 @@ const SchedulePoolTable = ({
   const getRemarks = (row) =>
     row?.interviewScheduleStaging?.remarks || row?.remarks || "";
 
-  
   const { t } = useTranslation([
     "candidateWorkflow",
     "common",
@@ -50,7 +49,6 @@ const SchedulePoolTable = ({
           <button
             className="btn btn-primary fs-14"
             onClick={onSubmitApproval}
-            
             disabled={
               rows.length === 0 ||
               !rows.some((row) => getApprovalStatus(row) === "PENDING")
@@ -107,106 +105,102 @@ const SchedulePoolTable = ({
               </td>
             </tr>
           ) : (
-            rows.map(
-              (row) => (
-                (
-                  <tr key={row.id}>
-                    {/* Candidate */}
-                    <td className="align-content-center ps-4">
-                      <p className="fw-normal fs-14 mb-0">{row.name}</p>
+            rows.map((row) => (
+              <tr key={row.id}>
+                {/* Candidate */}
+                <td className="align-content-center ps-4">
+                  <p className="fw-normal fs-14 mb-0">{row.name}</p>
 
-                      <p className="text-muted fs-12 mb-0">
-                        Application Number: {row.regNo}
-                      </p>
-                      <p className="text-muted fs-12 mb-0">
-                        Position:{" "}
-                        {position?.find((p) => p.positionId === row.positionId)
-                          ?.positionName || "-"}
-                      </p>
-                    </td>
+                  <p className="text-muted fs-12 mb-0">
+                    Application Number: {row.regNo}
+                  </p>
+                  <p className="text-muted fs-12 mb-0">
+                    Position:{" "}
+                    {position?.find((p) => p.positionId === row.positionId)
+                      ?.positionName || "-"}
+                  </p>
+                </td>
 
-                    {/* <td className="fs-14 align-content-center">
+                {/* <td className="fs-14 align-content-center">
                   {position?.find((p) => p.positionId === row.positionId)?.positionName || "-"}
                 
                 </td> */}
 
-                    {/* Date */}
-                    <td className="fs-14 align-content-center">
-                      {formatDateDDMMYYYY(row.date)}
-                    </td>
+                {/* Date */}
+                <td className="fs-14 align-content-center">
+                  {formatDateDDMMYYYY(row.date)}
+                </td>
 
-                    {/* Time */}
-                    <td className="fs-14 align-content-center">{row.time}</td>
+                {/* Time */}
+                <td className="fs-14 align-content-center">{row.time}</td>
 
-                    {/* Zone */}
-                    <td className="fs-14 align-content-center">{row.zone}</td>
+                {/* Zone */}
+                <td className="fs-14 align-content-center">{row.zone}</td>
 
-                    {/* Panel */}
-                    <td className="fs-14 align-content-center">{row.panel}</td>
+                {/* Panel */}
+                <td className="fs-14 align-content-center">{row.panel}</td>
 
-                    {/* Interview Status */}
-                    <td className="align-content-center">
-                      {getApprovalStatus(row)
-                        ?.toLowerCase()
-                        ?.replaceAll("_", " ")
-                        ?.replace(/\b\w/g, (char) => char.toUpperCase())}
+                {/* Interview Status */}
+                <td className="align-content-center">
+                  {getApprovalStatus(row)
+                    ?.toLowerCase()
+                    ?.replaceAll("_", " ")
+                    ?.replace(/\b\w/g, (char) => char.toUpperCase())}
 
-                      {getApprovalStatus(row) === "REJECTED" && (
-                        <OverlayTrigger
-                          placement="bottom"
-                          overlay={
-                            <Tooltip id={`tooltip-remarks-${row.id}`}>
-                              View rejection remarks
-                            </Tooltip>
-                          }
-                        >
-                          <span>
-                            <img
-                              className="ms-2"
-                              src={I_icon}
-                              alt="View remarks"
-                              style={{
-                                width: "16px",
-                                height: "16px",
-                                cursor: "pointer",
-                              }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedRemarks(getRemarks(row));
-                                setShowCommentModal(true);
-                              }}
-                            />
-                          </span>
-                        </OverlayTrigger>
-                      )}
-                    </td>
-
-                    {/* Actions */}
-                    <td className="text-center align-content-center">
-                      <OverlayTrigger
-                        placement="bottom"
-                        overlay={<Tooltip>View Profile</Tooltip>}
-                      >
-                        <Person
-                          className="me-3 cursor-pointer"
-                          onClick={() => onViewProfile?.(row)}
+                  {getApprovalStatus(row) === "REJECTED" && (
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={
+                        <Tooltip id={`tooltip-remarks-${row.id}`}>
+                          View rejection remarks
+                        </Tooltip>
+                      }
+                    >
+                      <span>
+                        <img
+                          className="ms-2"
+                          src={I_icon}
+                          alt="View remarks"
+                          style={{
+                            width: "16px",
+                            height: "16px",
+                            cursor: "pointer",
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedRemarks(getRemarks(row));
+                            setShowCommentModal(true);
+                          }}
                         />
-                      </OverlayTrigger>
+                      </span>
+                    </OverlayTrigger>
+                  )}
+                </td>
 
-                      <OverlayTrigger
-                        placement="bottom"
-                        overlay={<Tooltip>View Resume</Tooltip>}
-                      >
-                        <FileText
-                          className="cursor-pointer"
-                          onClick={() => onViewResume?.(row)}
-                        />
-                      </OverlayTrigger>
-                    </td>
-                  </tr>
-                )
-              )
-            )
+                {/* Actions */}
+                <td className="text-center align-content-center">
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={<Tooltip>View Profile</Tooltip>}
+                  >
+                    <Person
+                      className="me-3 cursor-pointer"
+                      onClick={() => onViewProfile?.(row)}
+                    />
+                  </OverlayTrigger>
+
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={<Tooltip>View Resume</Tooltip>}
+                  >
+                    <FileText
+                      className="cursor-pointer"
+                      onClick={() => onViewResume?.(row)}
+                    />
+                  </OverlayTrigger>
+                </td>
+              </tr>
+            ))
           )}
         </tbody>
       </table>

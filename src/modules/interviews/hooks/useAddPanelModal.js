@@ -81,8 +81,6 @@ export const useAddPanelModal = ({
 
   const selectedPanel = panels.find((p) => String(p.id) === String(panelId));
 
-
-
   const panelRanges = selectedPanel?.ranges || [];
 
   const isDateWithinRanges = (date) => {
@@ -219,8 +217,6 @@ export const useAddPanelModal = ({
             return updated;
           });
         } else {
-        
-
           if (
             row.startTime &&
             row.endTime &&
@@ -388,7 +384,6 @@ export const useAddPanelModal = ({
     onClose();
   };
 
-
   /* ================= CANCEL ================= */
 
   const handleCancel = () => {
@@ -409,7 +404,6 @@ export const useAddPanelModal = ({
 
       setPanelInfoLoading(true);
 
-      
       const res = await interviewService.getScheduledSlots({
         panelId,
 
@@ -417,7 +411,7 @@ export const useAddPanelModal = ({
 
         panelEndDate: maxDate,
       });
-      
+
       // ✅ IMPORTANT FIX
       setPanelAvailability(res?.data || []);
     } catch (error) {

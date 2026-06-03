@@ -23,7 +23,6 @@ const DocumentViewerModal = ({
 
   /* ================= USER ROLE ================= */
 
-
   const privileges = useSelector((state) => state.user.privileges);
 
   const isZonalHr = privileges?.Verification;

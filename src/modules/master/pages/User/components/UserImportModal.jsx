@@ -12,8 +12,6 @@ const UserImportModal = ({
 }) => {
   const { t } = useTranslation(["user"]);
 
-
-
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState("");
   const [errorDetails, setErrorDetails] = useState([]);

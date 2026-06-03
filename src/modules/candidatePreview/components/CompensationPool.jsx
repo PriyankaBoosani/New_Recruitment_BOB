@@ -65,7 +65,7 @@ export default function CompensationPool({
   const userRole = user?.role?.toLowerCase();
 
   const isRecruiter = userRole === "recruiter";
-  
+
   const isUserInCompensationPanel =
     Array.isArray(panelData?.compensationPanelList) &&
     panelData.compensationPanelList.some(
@@ -120,7 +120,6 @@ export default function CompensationPool({
     panelComments: "",
   });
 
-
   const requestSort = (key) => {
     setSortConfig((prev) => {
       if (prev.key === key) {
@@ -163,7 +162,6 @@ export default function CompensationPool({
         toast.error("Comments are required");
         return;
       }
-
 
       if (!managerForm.fixedPay) {
         toast.error("Fixed Pay is required");
@@ -208,8 +206,8 @@ export default function CompensationPool({
         action: actionType,
       };
 
-      
-      const res =  await candidateWorkflowServices.addCompensationDetails(payload);
+      const res =
+        await candidateWorkflowServices.addCompensationDetails(payload);
       //  Normalize response properly (simple + reliable)
       const responseData =
         res?.data?.success !== undefined
@@ -248,9 +246,7 @@ export default function CompensationPool({
     }
   };
 
-
   const handleCompensationClick = (c) => {
-    
     setSelectedCandidate(c);
 
     const userEmail = user?.email?.toLowerCase();
@@ -259,7 +255,6 @@ export default function CompensationPool({
     const isRecruiter = userRole === "recruiter";
     const isCommitteeMember = userRole === "committee_member";
 
-
     // PANEL CHECK
     const matchedPanel = panelData?.compensationPanelList?.find((panel) =>
       panel?.interviewPanel?.panelMembers?.some((member) => {
@@ -267,14 +262,11 @@ export default function CompensationPool({
 
         const apiRole = member?.panelMember?.role?.toLowerCase();
 
-       
-
         return apiEmail === userEmail && apiRole === userRole;
       })
     );
 
     const isUserInPanel = !!matchedPanel;
-
 
     // DATE CHECK
     let isWithinDateRange = false;
@@ -288,36 +280,21 @@ export default function CompensationPool({
       end.setHours(23, 59, 59, 999);
 
       isWithinDateRange = today >= start && today <= end;
-
-      
     } else {
       console.log("DATE CHECK FAILED -> startDate or endDate missing");
     }
 
-   
-
-
     // ===== FINAL DECISION =====
 
     if (isCommitteeMember && isUserInPanel && canCompensationPool) {
-      
-
       setShowManagerModal(true);
     } else if (isRecruiter && isUserInPanel && isWithinDateRange) {
-     
-
       setShowManagerModal(true);
     } else if (isRecruiter && isUserInPanel && !isWithinDateRange) {
-      
-
       setShowRecruiterModal(true);
     } else if (isRecruiter && !isUserInPanel) {
-      
-
       setShowRecruiterModal(true);
     } else {
-      
-
       console.log({
         userEmail,
         userRole,
@@ -330,7 +307,6 @@ export default function CompensationPool({
 
       console.warn("No matching condition for modal");
     }
-
   };
 
   const canEditManagerFields = isUserInCompensationPanel && isRecruiter;
@@ -344,7 +320,7 @@ export default function CompensationPool({
       }
 
       //  ADD THIS BLOCK (no changes to your logic)
-     
+
       const payload = {
         compensation: {
           candidateId: selectedCandidate.candidateId,
@@ -378,7 +354,6 @@ export default function CompensationPool({
       const res =
         await candidateWorkflowServices.addCompensationDetails(payload);
 
-
       //  Normalize response (same as manager API)
       const responseData =
         res?.data?.success !== undefined
@@ -386,8 +361,6 @@ export default function CompensationPool({
           : res?.success !== undefined
             ? res
             : res?.data || res;
-
-      
 
       //  SUCCESS CASE
       if (responseData?.success === true) {

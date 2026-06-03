@@ -142,7 +142,6 @@ export default function AddExaminationCutoffModal({
 
         sections:
           editData.sections?.map((section) => {
-            
             return {
               /* SAVE IDS IN FORM STATE */
 
@@ -449,7 +448,6 @@ export default function AddExaminationCutoffModal({
     if (alreadySelected) {
       updated = existing.filter((item) => item !== sectionIndex);
     } else {
-     
       updated = [...existing, sectionIndex];
     }
 
@@ -692,7 +690,6 @@ export default function AddExaminationCutoffModal({
 
         toast.error(response?.message || "Failed to submit configuration");
       }
-      
     } catch (err) {
       console.error("Failed to save configuration", err);
 
@@ -1003,7 +1000,6 @@ export default function AddExaminationCutoffModal({
                                                 cat.reservationCategoriesId
                                               ] ?? ""
                                             }
-                                           
                                             onChange={(e) => {
                                               const value = validateCutoffValue(
                                                 e.target.value

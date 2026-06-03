@@ -13,7 +13,7 @@ export default function ExaminationCutoffTable({
   totalPages,
   totalElements,
   statusFilter,
-  setStatusFilter
+  setStatusFilter,
 }) {
   /* ================= DUMMY DATA ================= */
 

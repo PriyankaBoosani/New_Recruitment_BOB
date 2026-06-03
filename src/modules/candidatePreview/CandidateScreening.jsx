@@ -32,9 +32,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import ExaminationScoreModal from "./components/ExaminationScoreModal";
 import ZonalRejectedCommentModal from "./components/ZonalRejectedCommentModal";
-import {
-  FaExternalLinkAlt,
-} from "react-icons/fa";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import { faListOl } from "@fortawesome/free-solid-svg-icons";
 import CandidateImportModal from "./components/CandidateImportModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -107,14 +105,9 @@ export default function CandidateScreening({ selectedJob }) {
     RENEGOTIATE: "Renegotiate",
   };
 
-  const [pendingExamOpen, setPendingExamOpen] =
-  useState(false);
-
-
+  const [pendingExamOpen, setPendingExamOpen] = useState(false);
 
   const [rankListGenerated, setRankListGenerated] = useState(false);
-
-  
 
   const handleRemovePosition = (removeId) => {
     const updatedIds = selectedPositionId.filter((id) => id !== removeId);
@@ -141,7 +134,8 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [examinationScoreData, setExaminationScoreData] = useState([]);
 
-  const [showImportCandidatesModal, setShowImportCandidatesModal] = useState(false);
+  const [showImportCandidatesModal, setShowImportCandidatesModal] =
+    useState(false);
   const isCommitteeMember = role === "committee_member";
 
   const INTERVIEW_STATUS_LABEL_MAP = {
@@ -189,7 +183,7 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [submittingApproval, setSubmittingApproval] = useState(false);
 
-   const [activeTab, setActiveTab] = useState(navActiveTab || "CANDIDATE_POOL");
+  const [activeTab, setActiveTab] = useState(navActiveTab || "CANDIDATE_POOL");
 
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
@@ -200,7 +194,6 @@ export default function CandidateScreening({ selectedJob }) {
   const [requisitions, setRequisitions] = useState([]);
   const [loadingRequisitions, setLoadingRequisitions] = useState(false);
 
- 
   const [loadingPositions, setLoadingPositions] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("");
@@ -237,17 +230,14 @@ export default function CandidateScreening({ selectedJob }) {
   const fetchExamConfigByPositions = async (positionIds = []) => {
     try {
       if (!positionIds?.length) {
-        
-
         setExamConfigMap({});
         return;
       }
 
       const query = positionIds.join(",");
 
-     
-
-      const res = await jobPositionApiService.getExamConfigurationsByPositions(query);
+      const res =
+        await jobPositionApiService.getExamConfigurationsByPositions(query);
 
       const data = res?.data || [];
 
@@ -258,11 +248,8 @@ export default function CandidateScreening({ selectedJob }) {
         map[item.positionId] = true;
       });
 
-      
       setExamConfigMap(map);
     } catch (err) {
-      
-
       setExamConfigMap({});
     }
   };
@@ -285,7 +272,7 @@ export default function CandidateScreening({ selectedJob }) {
   };
 
   //  const handleScheduleInterview = () => {
-  
+
   const [reservationCategories, setReservationCategories] = useState([]);
 
   useEffect(() => {
@@ -331,17 +318,17 @@ export default function CandidateScreening({ selectedJob }) {
     }
   }, []);
 
-  
   const handleSubmitForApproval = async () => {
     try {
       setSubmittingApproval(true);
 
-      const res = await candidateWorkflowServices.submitForApproval(selectedPositionId);
+      const res =
+        await candidateWorkflowServices.submitForApproval(selectedPositionId);
 
       //  HANDLE BACKEND VALIDATION
       if (!res?.success) {
         setErrorMessage(res?.message || "Validation failed");
-       
+
         //  store backend data
         setErrorCandidates(Array.isArray(res?.data) ? res.data : []);
 
@@ -365,7 +352,7 @@ export default function CandidateScreening({ selectedJob }) {
       }));
 
       // MOVE TO INTERVIEW POOL
-     
+
       setSchedulePoolPage(0);
 
       // REFRESH
@@ -410,7 +397,6 @@ export default function CandidateScreening({ selectedJob }) {
         interviewCenterName: c.interviewCenterName,
       }));
 
-   
     navigate("/schedule-interviews", {
       state: {
         candidates: selectedCandidatesData,
@@ -472,7 +458,6 @@ export default function CandidateScreening({ selectedJob }) {
     OFFER_POOL: "Offer Pool",
     // ONBOARDING_POOL: "Compensation Pool", // assuming onboarding is compensation
   };
- 
 
   const tabs = [
     {
@@ -1153,7 +1138,7 @@ export default function CandidateScreening({ selectedJob }) {
     masterData,
   ]);
   const handleRequisitionChange = async (e) => {
-     setRankListGenerated(false);
+    setRankListGenerated(false);
     const reqId = e.target.value;
     dispatch(clearRankState());
     isNavModeRef.current = false;
@@ -1162,11 +1147,10 @@ export default function CandidateScreening({ selectedJob }) {
     setSelectedPositionId([]);
     //  CORRECT LOGIC
 
+    setSelectedCompensationIds([]);
 
-     setSelectedCompensationIds([]);
-
-  // Force Compensation Pool refresh
-  setCompRefreshKey(prev => prev + 1);
+    // Force Compensation Pool refresh
+    setCompRefreshKey((prev) => prev + 1);
 
     setCandidates([]);
     setSelectedCandidateIds([]);
@@ -1179,13 +1163,11 @@ export default function CandidateScreening({ selectedJob }) {
       setPositions([]);
       return;
     }
-
   };
-  
 
   const handlePositionChange = (ids) => {
     dispatch(clearRankState());
-  setRankListGenerated(false);
+    setRankListGenerated(false);
     setSelectedPositionId(ids);
 
     // CLEAR EVERYTHING WHEN NO POSITION SELECTED
@@ -1222,7 +1204,7 @@ export default function CandidateScreening({ selectedJob }) {
     }
 
     try {
-      setLoadingPdf(true);     
+      setLoadingPdf(true);
       const res = await masterApiService.getAzureBlobSasUrl(
         candidate.fileUrl,
         "candidate"
@@ -1491,7 +1473,6 @@ export default function CandidateScreening({ selectedJob }) {
 
   useEffect(() => {
     if (isBackNavigation) return;
-
   }, [activeTab]);
 
   useEffect(() => {
@@ -1542,8 +1523,6 @@ export default function CandidateScreening({ selectedJob }) {
     //  IMPORTANT
     setSelectedRequisitionId(navReqId);
   }, [location.state]);
-
-  
 
   useEffect(() => {
     if (
@@ -1682,47 +1661,41 @@ export default function CandidateScreening({ selectedJob }) {
     }
   };
 
+  const handleDownloadRankList = async () => {
+    try {
+      const positionId = selectedPositionId?.[0];
 
-const handleDownloadRankList = async () => {
-  try {
-    const positionId = selectedPositionId?.[0];
+      if (!positionId) {
+        toast.error("Please select a position");
+        return;
+      }
 
-    if (!positionId) {
-      toast.error("Please select a position");
-      return;
+      const res =
+        await jobPositionApiService.generateRankListdownload(positionId);
+
+      const blob = new Blob([res.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "Rank_List.xlsx";
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+
+      toast.error(
+        err?.response?.data?.message || "Failed to download rank list"
+      );
     }
-
-    const res =
-      await jobPositionApiService.generateRankListdownload(positionId);
-
-    const blob = new Blob([res.data], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-
-    const url = window.URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "Rank_List.xlsx";
-
-    document.body.appendChild(link);
-    link.click();
-
-    link.remove();
-    window.URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error(err);
-
-    toast.error(
-      err?.response?.data?.message || "Failed to download rank list"
-    );
-  }
-};
-
-
-
-
-
+  };
 
   const handleSendToCompensation = async () => {
     if (!submitBeforeDate) {
@@ -1924,45 +1897,33 @@ const handleDownloadRankList = async () => {
     !formErrors.acceptBeforeDate &&
     !formErrors.joiningDate;
 
+  const handleGenerateRankList = async () => {
+    try {
+      const positionId = selectedPositionId?.[0];
 
+      if (!positionId) {
+        toast.error("Please select a position");
+        return;
+      }
 
+      const res = await candidateWorkflowServices.generateRankList(positionId);
 
+      toast.success(res?.message || "Rank List generated successfully");
 
+      setRankListGenerated(true); // Enable download button
 
-const handleGenerateRankList = async () => {
-  try {
-    const positionId = selectedPositionId?.[0];
+      setOfferRefreshKey((prev) => prev + 1);
+      setOfferSelectedIds([]);
+    } catch (err) {
+      console.error(err);
 
-    if (!positionId) {
-      toast.error("Please select a position");
-      return;
-    }
-
-    const res =
-      await candidateWorkflowServices.generateRankList(
-        positionId
+      toast.error(
+        err?.response?.data?.message || "Failed to generate rank list"
       );
 
-    toast.success(
-      res?.message || "Rank List generated successfully"
-    );
-
-    setRankListGenerated(true); // Enable download button
-
-    setOfferRefreshKey(prev => prev + 1);
-    setOfferSelectedIds([]);
-
-  } catch (err) {
-    console.error(err);
-
-    toast.error(
-      err?.response?.data?.message ||
-      "Failed to generate rank list"
-    );
-
-    setRankListGenerated(false);
-  }
-};
+      setRankListGenerated(false);
+    }
+  };
 
   useEffect(() => {
     if (activeTab !== "OFFER_POOL") {
@@ -1987,9 +1948,8 @@ const handleGenerateRankList = async () => {
       }
 
       // SUMMARY API
-      const res =  await jobPositionApiService.getExaminationSummary(selectedPositionId);
-
-      
+      const res =
+        await jobPositionApiService.getExaminationSummary(selectedPositionId);
 
       if (res?.success === false) {
         toast.error(res?.data || res?.message);
@@ -2071,8 +2031,6 @@ const handleGenerateRankList = async () => {
             isFinalized: apiSummary?.isFinalized || false,
           };
         });
-
-      
 
       setExaminationScoreData(formattedData);
 
@@ -2268,7 +2226,6 @@ const handleGenerateRankList = async () => {
       <div className="card mb-4 border-0">
         <div className="card-body p-0">
           <div className="row g-2 align-items-end border-bottom pb-4 px-3 py-3">
-            
             {activeTab === "CANDIDATE_POOL" ||
             activeTab === "INTERVIEW_POOL" ||
             activeTab === "SCHEDULE_POOL" ? (
@@ -2335,8 +2292,6 @@ const handleGenerateRankList = async () => {
             </div>
           </div>
 
-         
-
           {activeTab === "CANDIDATE_POOL" ||
           activeTab === "INTERVIEW_POOL" ||
           activeTab === "SCHEDULE_POOL" ? (
@@ -2350,7 +2305,6 @@ const handleGenerateRankList = async () => {
                   isSaveBtn={false}
                   saveButton={false}
                   onRemovePosition={handleRemovePosition}
-                  
                 />
               )}
             </div>
@@ -2385,7 +2339,6 @@ const handleGenerateRankList = async () => {
                       : "text-muted"
                   }`}
                   onClick={() => {
-                   
                     setActiveTab(tab.key);
 
                     if (role === "committee_member") return;
@@ -2422,7 +2375,7 @@ const handleGenerateRankList = async () => {
                       status: [], // clear old tab status
                       searchText: "", // optional if you also want search reset
                     }));
-                   
+
                     setActiveTab(tab.key);
                   }}
                   type="button"
@@ -2934,7 +2887,12 @@ const handleGenerateRankList = async () => {
                         onClick={handleSendOffer}
                         disabled={!isSendOfferEnabled}
                       >
-                        <img alt="offer" className="me-2" src={offerIcon} width={14} />
+                        <img
+                          alt="offer"
+                          className="me-2"
+                          src={offerIcon}
+                          width={14}
+                        />
                         {t("candidateWorkflow:send_offers")}
                       </button>
 
@@ -2970,17 +2928,12 @@ const handleGenerateRankList = async () => {
                     {t("candidateWorkflow:assign_locations")}
                   </button> */}
 
-
-
-
-
                   {/* <button className={`btn blue-border blue-color fs-13 px-3 py-1 ${offerSelectedIds.length !== 0 ? "" : "disabled_button"}`} onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}
                     style={{ minHeight: "39px" }}>
                     <img src={excelIcon} className="me-1" width={18} /> {t("candidateWorkflow:rank_list")}
                   </button> */}
 
-
-{/* 
+                  {/* 
                                 <button
                 className={`btn blue-border blue-color fs-13 px-3 py-1 ${
                   offerSelectedIds.length !== 0 ? "" : "disabled_button"
@@ -2993,48 +2946,44 @@ const handleGenerateRankList = async () => {
                 {t("candidateWorkflow:rank_list")}
               </button> */}
 
-           
+                  <button
+                    className="btn blue-border blue-color fs-13 px-3 py-1"
+                    style={{ minHeight: "39px" }}
+                    onClick={handleGenerateRankList}
+                  >
+                    <img
+                      alt="excel"
+                      src={excelIcon}
+                      className="me-1"
+                      width={18}
+                    />
+                    {t("candidateWorkflow:rank_list")}
+                  </button>
 
+                  <button
+                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? "disabled_button" : ""}`}
+                    style={{ minHeight: "39px" }}
+                    onClick={() => setShowRankListModal(true)}
+                    disabled={!rankListGenerated}
+                  >
+                    <img
+                      className="me-2"
+                      src={locationIcon}
+                      alt="location"
+                      width={16}
+                      style={{ filter: "brightness(0) invert(1)" }}
+                    />
+                    {t("candidateWorkflow:assign_locations")}
+                  </button>
 
-
-                <button
-                className="btn blue-border blue-color fs-13 px-3 py-1"
-                style={{ minHeight: "39px" }}
-                onClick={handleGenerateRankList}
-              >
-                <img alt="excel" src={excelIcon} className="me-1" width={18} />
-                {t("candidateWorkflow:rank_list")}
-              </button>
-
-
-<button
-  className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? 'disabled_button' : ''}`}
-  style={{ minHeight: "39px" }}
-  onClick={() => setShowRankListModal(true)}
-  disabled={!rankListGenerated}
->
-  <img
-    className="me-2"
-    src={locationIcon}
-    alt="location"
-    width={16}
-    style={{ filter: "brightness(0) invert(1)" }}
-  />
-  {t("candidateWorkflow:assign_locations")}
-</button>
-
-<button
-  className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? 'disabled_button' : ''}`}
-  style={{ minHeight: "39px" }}
-  onClick={handleDownloadRankList}
-  disabled={!rankListGenerated}
->
-  <i className="bi bi-download me-1"></i>
-</button>
-
-
-
-      
+                  <button
+                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? "disabled_button" : ""}`}
+                    style={{ minHeight: "39px" }}
+                    onClick={handleDownloadRankList}
+                    disabled={!rankListGenerated}
+                  >
+                    <i className="bi bi-download me-1"></i>
+                  </button>
                 </div>
               </div>
             </div>

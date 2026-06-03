@@ -113,7 +113,6 @@ export const mapAddPositionToCreateDto = ({
         };
   };
 
-
   /* ================= FINAL DTO ================= */
   return {
     requisitionId,

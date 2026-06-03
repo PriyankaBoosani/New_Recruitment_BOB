@@ -182,7 +182,6 @@ const useInterviewSchedule = () => {
         };
 
         const res = await committeeManagementService.submitL1Approval(payload);
-       
 
         if (res?.success === false) {
           toast.error(res?.message || "Failed to submit approval");
@@ -192,7 +191,6 @@ const useInterviewSchedule = () => {
 
         return res;
       } catch (error) {
-        
         toast.error(
           error?.response?.data?.message ||
             error?.message ||

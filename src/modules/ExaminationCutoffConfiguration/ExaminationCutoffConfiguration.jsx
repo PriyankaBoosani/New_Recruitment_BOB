@@ -4,7 +4,7 @@ import "../../style/css/ExaminationCutoffConfiguration.css";
 import "../../style/css/CandidateVerification.css";
 import "../../style/css/CandidateScreening.css";
 
-import { useLocation} from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import DropdownStrip from "../candidatePreview/components/DropdownStrip";
 
@@ -439,8 +439,6 @@ export default function ExaminationCutoffConfiguration() {
           {/* STRIP */}
           <div className="exam-strip-section">
             {normalizedRequisition && selectedPosition?.length > 0 && (
-              
-
               <RequisitionStrip
                 requisition={normalizedRequisition}
                 position={selectedPosition?.[0]}

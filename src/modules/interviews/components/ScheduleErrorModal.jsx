@@ -45,7 +45,6 @@ const ScheduleErrorModal = ({
               ))}
             </div>
           )}
-
         </div>
 
         <div className="text-end mt-4">

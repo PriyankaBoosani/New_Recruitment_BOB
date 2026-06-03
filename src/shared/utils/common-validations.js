@@ -41,7 +41,6 @@ export const maxLength = (value, max) => {
   return null;
 };
 
-
 export const emailFormat = (email) => {
   if (typeof email !== "string" || email.length > 254) {
     return i18n.t("validation:invalidEmail");

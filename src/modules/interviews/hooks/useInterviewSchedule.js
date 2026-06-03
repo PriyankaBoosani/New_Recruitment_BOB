@@ -32,7 +32,6 @@ export default function useInterviewSchedule(isEditMode, isReschedule) {
     );
   };
 
-
   //new functions
   const fetchRequisitions = async (searchText = "") => {
     setLoadingRequisitions(true);
@@ -51,7 +50,6 @@ export default function useInterviewSchedule(isEditMode, isReschedule) {
 
     const fetchCentres = async () => {
       const centreRes = await masterApiService.getAllInterviewCenters();
-      
 
       if (centreRes?.data) {
         const zonalOfficeCentres = centreRes.data.filter(
@@ -231,11 +229,9 @@ export default function useInterviewSchedule(isEditMode, isReschedule) {
 
       setPanelExcelModelList(excelPanels);
 
-     
-
       // ✅ Call API
       const res = await interviewService.allocatePanels(payload);
-      
+
       if (!res?.success) {
         return {
           success: false,
@@ -294,7 +290,6 @@ export default function useInterviewSchedule(isEditMode, isReschedule) {
 
   const scheduleInterview = async () => {
     try {
-     
       const updatedScheduleData = scheduleApiData.map((item) => ({
         ...item,
 

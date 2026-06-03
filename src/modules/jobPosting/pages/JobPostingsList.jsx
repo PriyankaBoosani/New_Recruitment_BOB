@@ -10,7 +10,7 @@ import {
   Badge,
   Spinner,
 } from "react-bootstrap";
-import {  Search, ChevronDown, ChevronUp } from "react-bootstrap-icons";
+import { Search, ChevronDown, ChevronUp } from "react-bootstrap-icons";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
@@ -84,7 +84,6 @@ const JobPostingsList = () => {
       // DRAFT REQUISITION
       const res =
         await requisitionApiService.getDraftRequisitionApprovalHistory(req.id);
-      
 
       const historyData = (res?.data || []).map((item) => ({
         ...item,
@@ -152,7 +151,6 @@ const JobPostingsList = () => {
   // 🔹 Accordion
   const [openReqId, setOpenReqId] = useState(null);
   const [openDept, setOpenDept] = useState({});
-  
 
   const toggleAccordion = (req) => {
     setOpenReqId((prev) => {
@@ -234,7 +232,6 @@ const JobPostingsList = () => {
       r.status !== "APPROVED" &&
       r.status !== "L1_PENDING" &&
       r.status !== "L2_PENDING" &&
-      
       !r.hasDraftPositions
   );
   useEffect(() => {
@@ -298,7 +295,7 @@ const JobPostingsList = () => {
 
     const ids = selectedVisibleRequisitions
       .filter((r) => r.status !== "Approved")
-     
+
       .map((r) => (r.isDraft ? r.parentRequisitionId : r.id));
 
     if (ids.length === 0) return;
@@ -346,7 +343,6 @@ const JobPostingsList = () => {
     };
   };
 
-  
   const handlePublish = async (req) => {
     try {
       setIsPublishing(true);
@@ -375,7 +371,6 @@ const JobPostingsList = () => {
       (r) => r.status === "NEW" || r.status === "DRAFT"
     );
 
- 
   return (
     <Container fluid className="job-postings-page">
       {isPublishing && <Loader />}
@@ -582,7 +577,7 @@ const JobPostingsList = () => {
         // const positions = positionsByReq[req.id] || [];
         const key = `${req.isDraft ? req.parentRequisitionId : req.id}_${req.isDraft}`;
         const positions = positionsByReq[key] || [];
-        
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -611,7 +606,7 @@ const JobPostingsList = () => {
           acc[pos.deptId].positions.push(pos);
           return acc;
         }, {});
-        
+
         return (
           <div
             key={req.id}
@@ -644,7 +639,7 @@ const JobPostingsList = () => {
                         variant="btn-outline"
                         onClick={(e) => {
                           e.stopPropagation();
-                          
+
                           navigate(
                             `/job-posting/create-requisition?id=${req.id}`,
                             {
@@ -657,7 +652,6 @@ const JobPostingsList = () => {
                         Edit
                       </Button>
                     )}
-
 
                   {req.isDraft && req.status === "APPROVED" && (
                     <Button
@@ -681,7 +675,6 @@ const JobPostingsList = () => {
                       type="checkbox"
                       className="me-2 mt-2"
                       checked={selectedReqIds.has(req.id)}
-                      
                       disabled={!isCheckboxEnabled}
                       onClick={(e) => e.stopPropagation()}
                       onChange={(e) => {
@@ -892,7 +885,7 @@ const JobPostingsList = () => {
                     className="icon-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      
+
                       if (!req.isDraft) {
                         navigate(
                           `/job-posting/create-requisition?id=${req.id}`,
@@ -1312,7 +1305,6 @@ const JobPostingsList = () => {
 
           handleSubmitForApproval("L1_PENDING");
         }}
-        
         title={t("jobPostingsList:submit_confirm_title_approve")}
         message={t("jobPostingsList:submit_confirm_message_approve")}
         confirmText={t("jobPostingsList:approve")}

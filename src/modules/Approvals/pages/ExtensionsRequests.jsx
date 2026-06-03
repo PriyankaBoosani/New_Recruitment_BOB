@@ -212,7 +212,6 @@ const ExtensionsRequests = () => {
       }
     : null;
 
- 
   const isL1 = privileges?.["L1 Approval"];
   const isL2 = privileges?.["L2 Approval"];
 
@@ -584,7 +583,7 @@ const ExtensionsRequests = () => {
               ).map((msg) => ({
                 title: msg.senderType,
                 comment: msg.comments || msg.message || msg.content || "-",
-               
+
                 time: `${formatDate(msg.createdDate)} ${formatTime(msg.createdDate)}`,
                 attachmentPath: msg.attachmentPath || null,
               }));

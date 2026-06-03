@@ -22,7 +22,7 @@ import { mapInterviewerCandidates } from "./mapper/InterviewerScheduleMapper";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FiCalendar } from "react-icons/fi";
-import {Modal } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import InterviewerImportModal from "./components/InterviewerImportModal";
 
 /* ================= SCREEN ================= */
@@ -116,7 +116,6 @@ export default function InterviewerSchedule() {
   const formatApiDate = (d) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
-  
   useEffect(() => {
     //  ADD THIS BLOCK
     if (
@@ -366,7 +365,6 @@ export default function InterviewerSchedule() {
           >
             ‹
           </span>
-
 
           <DatePicker
             selected={selectedDate}

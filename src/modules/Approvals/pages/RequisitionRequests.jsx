@@ -8,7 +8,7 @@ import {
   Badge,
   Spinner,
 } from "react-bootstrap";
-import {Search, ChevronDown, ChevronUp } from "react-bootstrap-icons";
+import { Search, ChevronDown, ChevronUp } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import "../../../style/css/ApprovalsRequsition.css";
 import start_icon from "../../../assets/start_icon.png";
@@ -491,10 +491,8 @@ const RequisitionRequests = () => {
             req.isDraft ? req.parentRequisitionId : req.id
           }_${req.isDraft}`;
           const positions = positionsByReq[positionsKey] || [];
-          
 
           const positionsGroupedByDept = groupPositionsByDept(positions);
-          
 
           return (
             <div

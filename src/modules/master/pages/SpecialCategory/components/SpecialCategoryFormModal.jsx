@@ -23,7 +23,6 @@ const SpecialCategoryFormModal = ({
   t,
   ...importProps
 }) => {
-
   const isCreateMode = !isEditing && !isViewing;
   const handleFormSubmit = (e) => {
     if (isViewing) {

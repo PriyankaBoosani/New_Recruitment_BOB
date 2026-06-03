@@ -11,7 +11,6 @@ import {
 
 import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 
-
 const findById = (arr = [], key, id) =>
   arr.find((x) => String(x[key]) === String(id));
 
@@ -244,7 +243,6 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
         universityName: edu.universityName || "-",
         startDate: formatDateDDMMYYYY(edu.startDate) || "-",
         endDate: formatDateDDMMYYYY(edu.endDate) || "-",
-       
 
         percentage:
           edu.percentage != null && !isNaN(Number(edu.percentage))
@@ -283,7 +281,6 @@ const safeCurrency = (value) =>
   value && Number(value) > 0
     ? `₹${Number(value).toLocaleString("en-IN")}`
     : "-";
-
 
 export const mapJobPositionToRequisitionStrip = (
   apiData = {},

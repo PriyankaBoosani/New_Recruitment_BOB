@@ -176,11 +176,7 @@ const RankListModal = ({
             <small className="text-muted fs-12">
               {t("candidateWorkflow:download_template")}:
             </small>
-            <span
-              className="blue-color fw-500 cursor-pointer fs-14"
-            >
-              XLSX
-            </span>
+            <span className="blue-color fw-500 cursor-pointer fs-14">XLSX</span>
           </div>
         </div>
 

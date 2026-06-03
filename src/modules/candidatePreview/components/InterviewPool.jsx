@@ -27,7 +27,6 @@ export default function InterviewPool({
   onReschedule,
   allCandidatesForFilters,
 }) {
- 
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const navigate = useNavigate();
   const STATUS_CLASS_MAP = {
@@ -50,12 +49,9 @@ export default function InterviewPool({
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
-  
   const allSelected =
     allCandidatesForFilters?.length > 0 &&
     allCandidatesForFilters.every((c) => selectedIds.includes(String(c.id)));
-  
- 
 
   const toggleSelectAll = () => {
     if (!filters?.status?.length) {
@@ -87,7 +83,6 @@ export default function InterviewPool({
     );
   };
 
-
   const sortedCandidates = useMemo(() => {
     if (!sortConfig.key) return candidates;
 
@@ -107,8 +102,6 @@ export default function InterviewPool({
         : String(bVal).localeCompare(String(aVal));
     });
   }, [candidates, sortConfig]);
-
-
 
   return (
     <div className="card-body p-0 interview-pool">

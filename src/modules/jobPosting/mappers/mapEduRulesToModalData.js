@@ -69,7 +69,7 @@ export function mapEduRulesToModalData(
         eduRulesJson.mandatoryCertifications?.groups || []
       ),
     };
-    
+
     return result;
   }
 
@@ -86,7 +86,7 @@ export function mapEduRulesToModalData(
         eduRulesJson.preferredCertificationIds?.groups || []
       ),
     };
-    
+
     return result;
   }
 

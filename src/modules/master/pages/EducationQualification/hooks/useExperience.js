@@ -236,7 +236,6 @@ export const useExperience = () => {
         }
       }
       if (res.success) {
-        
         await loadData();
 
         setShowModal(false);
@@ -302,7 +301,7 @@ export const useExperience = () => {
 
   return {
     experienceList: filteredList,
-    educationOptions, 
+    educationOptions,
     loading,
     showModal,
     searchTerm,

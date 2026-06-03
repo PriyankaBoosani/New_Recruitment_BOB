@@ -14,9 +14,7 @@ import ApprovalHistoryModal from "../Approvals/components/ApprovalHistoryModal";
 import history_icon from "../../assets/history_icon.png";
 import useCommitteeRequests from "../Approvals/hooks/useCommitteeRequests"; // adjust path
 import masterApiService from "../master/services/masterApiService";
-import {
-  preparePanelPayload,
-} from "./mappers/InterviewPanelMapper";
+import { preparePanelPayload } from "./mappers/InterviewPanelMapper";
 import InterviewPanelFormModal from "./components/InterviewPanelFormModal";
 import committeeManagementService from "../committeeManagement/services/committeeManagementService";
 import { mapInterviewMembersApi } from "../committeeManagement/mappers/interviewMembersMapper";
@@ -188,7 +186,6 @@ const AssignPositionsPage = ({ refreshPanels }) => {
     const errors = panelErrors?.[errorKey] || {};
     const today = new Date().toISOString().split("T")[0];
 
-    
     const shouldDisableFields = committee.rawStatus === "L2_PENDING";
 
     const shouldDisableRemove =
@@ -246,7 +243,6 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                 min={today}
                 value={committee.startDate}
                 disabled={shouldDisableRemove}
-                
                 onChange={(e) => {
                   const value = e.target.value;
 
@@ -270,7 +266,6 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                 min={committee.startDate || today}
                 value={committee.endDate}
                 disabled={shouldDisableFields}
-                
                 onChange={(e) => {
                   const value = e.target.value;
 
@@ -691,7 +686,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
                     await masterApiService.checkScheduledInterviews(
                       editFormData.id
                     );
-                  
+
                   if (isresScheduled?.data) {
                     setPendingPayload(payload);
                     setShowUpdateWarning(true);

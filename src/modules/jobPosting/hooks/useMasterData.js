@@ -71,7 +71,7 @@ export const useMasterData = () => {
             id: a.approvingAuthorityId,
             name: a.authorityName,
           })),
-       
+
           // // NEW STATE-LANGUAGE MAPPING
           stateLanguages: (stateLanguagesRes.data || []).map((sl) => ({
             stateId: String(sl.stateId),

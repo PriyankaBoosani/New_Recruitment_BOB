@@ -29,16 +29,15 @@ const CandidatePreviewPage = ({ onHide }) => {
   const user = useSelector((state) => state.user.user);
 
   const role = user?.role ? user.role.toLowerCase() : ""; // const isZonalHr = role === "zonal_hr";
-  
+
   const isFromCompensationPool = state?.fromCompensationPool;
 
   const privileges = useSelector((state) => state.user.privileges);
   const candidatePositionId = state?.candidatePositionId;
- 
 
   const isInterviewer = privileges?.Interview;
   const isZonalHr = privileges?.Verification;
-  
+
   const isRecruiter = role === "recruiter";
 
   const selectedDate = state?.selectedDate;
@@ -51,7 +50,6 @@ const CandidatePreviewPage = ({ onHide }) => {
   const requisitionTitle = requisition?.requisition_title;
   const positionName = state?.position?.positionName;
   const isLocationWise = state?.position?.isLocationWise;
-  
 
   const position = Array.isArray(state?.position)
     ? state.position.find((p) => p.positionId === candidatePositionId) ||
@@ -67,7 +65,6 @@ const CandidatePreviewPage = ({ onHide }) => {
   const applicationId = isZonalHr
     ? state?.applicationId
     : (state?.applicationId ?? state?.candidate?.id);
-
 
   /* =======================
      STATE
@@ -89,12 +86,14 @@ const CandidatePreviewPage = ({ onHide }) => {
         const masterRes = await masterApiService.getMasterDisplayAll();
         const fullMasters = masterRes?.data || {};
 
-        const InterviewCenters = await masterApiService.getAllInterviewCenters();
+        const InterviewCenters =
+          await masterApiService.getAllInterviewCenters();
         const ZonalStats = await masterApiService.getZonalStates();
         setMasters(fullMasters);
         /* ---------- Load Candidate ---------- */
         if (candidateId && (positionId || positionIds.length > 0)) {
-          const candidateRes = await candidateWorkflowServices.getCandidateAllDetails(
+          const candidateRes =
+            await candidateWorkflowServices.getCandidateAllDetails(
               candidateId,
               candidatePositionId || positionId
             );
@@ -152,8 +151,6 @@ const CandidatePreviewPage = ({ onHide }) => {
       {isRecruiter ||
       privileges?.["Candidate Pool"] ||
       privileges?.["Compensation Pool"] ? (
-        
-
         <HeaderWithBack
           title={t("candidateWorkflow:candidate_screening")}
           subtitle={t("candidateWorkflow:manage_schedule_interviews")}

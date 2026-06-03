@@ -73,8 +73,7 @@ export const useJobRequisitions = ({
             positionCount: draftPositionCount,
             vacancyCount: draftVacancyCount,
 
-            isDraft: true
-            
+            isDraft: true,
           });
         }
 

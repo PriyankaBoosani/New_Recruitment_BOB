@@ -143,7 +143,6 @@ const InterviewPanelFormModal = ({
           <div className="field-error">{t(errors.members)}</div>
         )}
       </div>
-      
 
       <div className="panel-form-actions">
         {!showUpdateWarning && (

@@ -1,4 +1,4 @@
-import {api} from "../../../core/service/apiService";
+import { api } from "../../../core/service/apiService";
 
 const interviewService = {
   getPanelsByPosition(payload) {

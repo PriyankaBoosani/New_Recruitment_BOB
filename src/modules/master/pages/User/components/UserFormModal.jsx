@@ -89,7 +89,7 @@ const UserFormModal = ({
 
     const { valid, errors: vErrors } = validateUserForm(formData, {
       existing: existingUsers,
-      currentId: selectedUser?.userId, 
+      currentId: selectedUser?.userId,
       skipEmailCheck: mode === "edit",
     });
 

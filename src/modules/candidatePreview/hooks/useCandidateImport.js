@@ -54,7 +54,6 @@ export const useCandidateImport = () => {
     }
   };
 
-
   const downloadCandidateTemplate = async (positionIds = []) => {
     try {
       const res =

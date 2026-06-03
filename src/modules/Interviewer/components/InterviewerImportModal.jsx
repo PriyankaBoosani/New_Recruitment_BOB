@@ -51,35 +51,26 @@ const InterviewerImportModal = ({
       setError("");
       setErrorDetails([]);
 
-
       const res = await InterviewerService.uploadInterviewFile(selectedFile);
-
 
       //  NORMALIZE RESPONSE (handles both formats)
       const success = res?.success ?? res?.data?.success;
       const message = res?.message ?? res?.data?.message;
       const details = res?.data ?? res?.data?.data ?? [];
 
-
       //  SUCCESS FLOW
       if (success) {
-        
-
         onSuccess();
         onClose();
       }
       //  FAILURE (VALIDATION / BUSINESS ERROR)
       else {
-        
-
         setError(message || t("import_error"));
 
         //  ENSURE ARRAY (VERY IMPORTANT)
         setErrorDetails(Array.isArray(details) ? details : []);
       }
     } catch (err) {
-      
-
       const message = err?.response?.data?.message || t("upload_failed");
 
       const details = err?.response?.data?.data || [];
@@ -98,8 +89,6 @@ const InterviewerImportModal = ({
         setError("Please select position and date");
         return;
       }
-
-      
 
       const formatDate = (d) => {
         const date = new Date(d);
@@ -259,4 +248,3 @@ const InterviewerImportModal = ({
 };
 
 export default InterviewerImportModal;
-

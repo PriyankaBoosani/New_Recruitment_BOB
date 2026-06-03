@@ -35,7 +35,6 @@ export const useUsers = () => {
         );
 
         setInterviewCentres(zonalOfficeCentres);
-        
       }
 
       // setInterviewCentres(centres);
@@ -152,7 +151,7 @@ export const useUsers = () => {
         email: payload.email,
         interviewCenterId: payload.interviewCenterId,
       };
-      
+
       await masterApiService.updateUser(id, payloadData);
 
       toast.success(t("update_success"));

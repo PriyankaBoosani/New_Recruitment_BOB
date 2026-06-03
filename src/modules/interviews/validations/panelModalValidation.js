@@ -30,7 +30,6 @@ export const validatePanelModal = ({ rows, panelId }) => {
       rowErrors.endTime = "validation:end_time_required";
     }
 
-
     if (!row.perDay) {
       rowErrors.perDay = "validation:required";
     } else if (!/^\d+$/.test(row.perDay)) {

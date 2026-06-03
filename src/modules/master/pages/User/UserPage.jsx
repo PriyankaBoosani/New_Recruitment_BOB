@@ -31,7 +31,7 @@ const UserPage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [mode, setMode] = useState("add"); // add | edit | view
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  
+
   const openAdd = () => {
     setSelectedUser(null);
     setMode("add");
@@ -92,7 +92,6 @@ const UserPage = () => {
         pageSize={pageSize}
         setPageSize={setPageSize}
         interviewCentres={interviewCentres}
-    
       />
       <UserFormModal
         show={showModal}

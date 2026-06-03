@@ -51,7 +51,6 @@ export default function DropdownStrip({
           value={requisitionOptions.find(
             (opt) => opt.value === selectedRequisitionId
           )}
-          
           // ✅ FIX
           filterOption={(option, inputValue) =>
             option.label?.toLowerCase().includes(inputValue.toLowerCase())

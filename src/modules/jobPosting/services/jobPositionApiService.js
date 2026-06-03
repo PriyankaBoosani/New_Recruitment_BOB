@@ -82,7 +82,6 @@ const jobPositionApiService = {
     });
   },
 
-
   updateDraftPosition: ({
     requisitionId,
     parentPositionId,
@@ -280,18 +279,17 @@ const jobPositionApiService = {
       },
     }),
 
-generateRankListdownload: (positionId) => {
-  return api.get(
-    `/recruiter/candidate-offer/download-rank-list/${positionId}`,
-    {
-      responseType: "blob",
-      headers: {
-        "X-Client": "AzureAD",
-      },
-    }
-  );
-},
-
+  generateRankListdownload: (positionId) => {
+    return api.get(
+      `/recruiter/candidate-offer/download-rank-list/${positionId}`,
+      {
+        responseType: "blob",
+        headers: {
+          "X-Client": "AzureAD",
+        },
+      }
+    );
+  },
 
   getL1Requisitions: ({ year, search, page, size, statuses }) =>
     api.get("/recruiter/job-requisitions/l1-requisitions", {
@@ -303,7 +301,7 @@ generateRankListdownload: (positionId) => {
       params: { year, search, page, size, statuses },
       headers: { "X-Client": "AzureAD" },
     }),
-  
+
   getRequisitionApprovalHistory: (requisitionId) =>
     api.get(
       `/recruiter/workflow-approval/get-requisition-approval-history-including-drafts/${requisitionId}`,

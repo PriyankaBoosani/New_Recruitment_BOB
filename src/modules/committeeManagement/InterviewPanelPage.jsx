@@ -21,7 +21,7 @@ const InterviewPanelPage = () => {
     setFormData,
     errors,
     setErrors,
-    
+
     initData,
     fetchPanels,
     handleSave,
@@ -56,7 +56,7 @@ const InterviewPanelPage = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [deletePanelName, setDeletePanelName] = useState("");
   const [showBulkImportModal, setShowBulkImportModal] = useState(false);
- 
+
   const { t } = useTranslation(["interviewPanelCommittee", "common"]);
   return (
     <div className="interview-panel-container">
@@ -71,7 +71,6 @@ const InterviewPanelPage = () => {
           </div>
           <div className="tabs-container">
             <div className="tabs">
-              
               <button
                 className={`tab ${activeTab === "MANAGE" ? "active" : ""}`}
                 onClick={() => setActiveTab("MANAGE")}
@@ -89,7 +88,6 @@ const InterviewPanelPage = () => {
             </div>
           </div>
         </div>
-
 
         <div className="panel-content">
           {activeTab === "MANAGE" && (
@@ -253,7 +251,6 @@ const InterviewPanelPage = () => {
           />
         </Modal.Body>
       </Modal>
-
     </div>
   );
 };

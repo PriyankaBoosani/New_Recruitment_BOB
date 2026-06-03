@@ -81,7 +81,6 @@ export const useAssignPositions = (userId) => {
           }
         }
 
-
         if (!panel.members || panel.members.length === 0) {
           errors[key].members = "member_required";
           isValid = false;
@@ -220,7 +219,7 @@ export const useAssignPositions = (userId) => {
             endDate: p.endDate || "",
 
             canEdit: !isLocked && p.canEdit !== false,
-           
+
             // ✅ SAME PATTERN AS REQUISITION
             rawStatus,
             statusType: getStatusBadge(rawStatus),
