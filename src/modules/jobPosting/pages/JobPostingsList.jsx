@@ -843,7 +843,7 @@ const JobPostingsList = () => {
                       </Button>
                     </OverlayTrigger>
                   )}
-                  {(req.editable || req.isDraft) && (
+                  {(req.editable || (req.isDraft && isRejected)) && (
                     <OverlayTrigger
                       placement="bottom"
                       overlay={

@@ -24,6 +24,7 @@ import { useTranslation } from "react-i18next";
 import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisition";
 import masterApiService from "../../master/services/masterApiService";
 import requisitionApiService from "../services/requisitionApiService";
+import jobPositionApiService from "../services/jobPositionApiService";
 
 const CreateRequisition = () => {
   const { t } = useTranslation(["CreateRequisition", "common"]);
@@ -82,6 +83,7 @@ const CreateRequisition = () => {
   const positions = positionsByReq[key] || [];
 
   const [selectedPositions, setSelectedPositions] = useState(new Set());
+  const [draftSelectedPositionIds, setDraftSelectedPositionIds] = useState(new Set());
   const [masterPositionsMap, setMasterPositionsMap] = useState({});
 
   useEffect(() => {
@@ -101,6 +103,31 @@ const CreateRequisition = () => {
 
     fetchMasterPositions();
   }, []);
+
+  useEffect(() => {
+  const loadDraftSelections = async () => {
+    if (!isDraftEdit || !parentRequisitionId) return;
+
+    try {
+      const res =
+        await jobPositionApiService.getDraftPositionsByRequisition(
+          parentRequisitionId
+        );
+
+      const draftPositions = res?.data || [];
+
+      setDraftSelectedPositionIds(
+        new Set(
+          draftPositions.map((p) => p.masterPositionId)
+        )
+      );
+    } catch (err) {
+      console.error("Failed to load draft positions", err);
+    }
+  };
+
+  loadDraftSelections();
+}, [isDraftEdit, parentRequisitionId]);
 
   const handleSave = async (e) => {
     e?.preventDefault?.();
@@ -191,11 +218,22 @@ const CreateRequisition = () => {
     }
   };
 
-  useEffect(() => {
-    if (!isDraftEdit || positions.length === 0) return;
+useEffect(() => {
+  if (
+    !isDraftEdit ||
+    positions.length === 0 ||
+    draftSelectedPositionIds.size === 0
+  )
+    return;
 
-    setSelectedPositions(new Set(positions.map((p) => p.positionId)));
-  }, [isDraftEdit, positions]);
+  const selected = positions
+    .filter((p) =>
+      draftSelectedPositionIds.has(p.masterPositionId)
+    )
+    .map((p) => p.positionId);
+
+  setSelectedPositions(new Set(selected));
+}, [isDraftEdit, positions, draftSelectedPositionIds]);
 
   function getTomorrowISO() {
     const d = new Date();
