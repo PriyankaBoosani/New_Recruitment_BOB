@@ -1483,7 +1483,8 @@ const ApplicationForm = ({
                           {photo ? (
                             <img
                               src={photo}
-                              alt="Applicant Photo"
+
+                              alt="Applicant-photo"
                               className="photo-img"
                             />
                           ) : (

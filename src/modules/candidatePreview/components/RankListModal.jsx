@@ -44,45 +44,6 @@ const RankListModal = ({
       fileInputRef.current.value = "";
     }
   };
-
-  /* ---------------- DOWNLOAD TEMPLATE ---------------- */
-
-  const handleDownloadTemplate = async () => {
-    if (!selectedIds?.length) {
-      toast.error(t("candidateWorkflow:please_select_at_least_one_candidate"));
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const res =
-        await jobPositionApiService.downloadRankListExcel(selectedIds);
-
-      const blob = new Blob([res.data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-
-      link.href = url;
-      link.download = "Rank_List.xlsx";
-
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-
-      window.URL.revokeObjectURL(url);
-
-      toast.success(t("candidateWorkflow:rank_list_downloaded_successfully"));
-    } catch (err) {
-      console.error(err);
-      toast.error(t("candidateWorkflow:failed_to_download_rank_list"));
-    } finally {
-      setLoading(false);
-    }
-  };
-
   /* ---------------- BULK UPLOAD ---------------- */
 
   const handleBulkUpload = async () => {
@@ -217,7 +178,6 @@ const RankListModal = ({
             </small>
             <span
               className="blue-color fw-500 cursor-pointer fs-14"
-         //   onClick={handleDownloadTemplate}
             >
               XLSX
             </span>
