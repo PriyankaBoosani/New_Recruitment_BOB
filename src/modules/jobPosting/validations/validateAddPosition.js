@@ -370,36 +370,6 @@ export const validateStateDistribution = ({
       params: { disabilityTotal: disTotal, categoryTotal: catTotal },
     };
   }
-
-  const duplicate = stateDistributions.some((s, i) => {
-    if (s.__deleted || i === editingIndex) return false;
-
-    const sameState = String(s.state) === String(currentState.state);
-
-    if (!sameState) return false;
-
-    const existingCity = String(s.city || "").trim();
-    const currentCity = String(currentState.city || "").trim();
-
-    // EXACT SAME STATE + CITY
-    if (existingCity === currentCity) {
-      errors.state = "validation:state_city_already_added";
-      return true;
-    }
-
-    // EMPTY/NON-EMPTY CITY CONFLICT
-    if (!existingCity && currentCity) {
-      errors.state = "validation:state_city_conflict_empty_first";
-      return true;
-    }
-
-    if (existingCity && !currentCity) {
-      errors.state = "validation:state_city_conflict_city_first";
-      return true;
-    }
-    return false;
-  });
-
   return errors;
 };
 export const validateApprovedOn = (value) => {

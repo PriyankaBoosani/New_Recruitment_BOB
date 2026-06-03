@@ -4,8 +4,6 @@ import { useTranslation } from "react-i18next";
 import interviewService from "../services/interviewService";
 
 export const useInterviewPanels = (positionId, initialSelectedPanels = []) => {
-  const { t } = useTranslation("interviewSchedule");
-  const [panels, setPanels] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editPanel, setEditPanel] = useState(null);
   const [openInfoIndex, setOpenInfoIndex] = useState(null);

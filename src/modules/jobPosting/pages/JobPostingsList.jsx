@@ -10,7 +10,7 @@ import {
   Badge,
   Spinner,
 } from "react-bootstrap";
-import { Plus, Search, ChevronDown, ChevronUp } from "react-bootstrap-icons";
+import {  Search, ChevronDown, ChevronUp } from "react-bootstrap-icons";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
@@ -346,21 +346,7 @@ const JobPostingsList = () => {
     };
   };
 
-  const handleAutoApprove = async (req) => {
-    try {
-      await requisitionApiService.autoApproveDraftRequisition(
-        req.parentRequisitionId,
-        ""
-      );
-
-      toast.success("Approved successfully");
-      refetch();
-    } catch (err) {
-      console.error(err);
-      toast.error("Approval failed");
-    }
-  };
-
+  
   const handlePublish = async (req) => {
     try {
       setIsPublishing(true);
@@ -389,23 +375,7 @@ const JobPostingsList = () => {
       (r) => r.status === "NEW" || r.status === "DRAFT"
     );
 
-  const isReinitializeEnabled = (() => {
-    if (selectedRequisitions.length !== 1) return false;
-
-    const req = selectedRequisitions[0];
-
-    if (req.status !== "APPROVED") return false;
-    if (!req.endDate) return false;
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const endDate = new Date(req.endDate);
-    endDate.setHours(0, 0, 0, 0);
-
-    return endDate < today;
-  })();
-
+ 
   return (
     <Container fluid className="job-postings-page">
       {isPublishing && <Loader />}
@@ -688,20 +658,6 @@ const JobPostingsList = () => {
                       </Button>
                     )}
 
-                  {/* {req.isDraft && req.status === "DRAFT" && (
-                                        <Button
-                                            size="sm"
-                                            variant="success"
-                                            className="ms-2 py-0"
-                                            style={{ fontSize: "0.7rem" }}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleAutoApprove(req);
-                                            }}
-                                        >
-                                            Submit
-                                        </Button>
-                                    )} */}
 
                   {req.isDraft && req.status === "APPROVED" && (
                     <Button

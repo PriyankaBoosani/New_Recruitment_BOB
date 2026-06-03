@@ -48,7 +48,6 @@ const CreateRequisition = () => {
   const isDraftView = location.state?.isDraftView;
   const isDraftEdit = location.state?.isDraftEdit;
   const isDraftMode = isDraftView || isDraftEdit;
-  const draftId = location.state?.draftId;
   const parentRequisitionId = location.state?.parentRequisitionId;
 
   const handleCancel = () => {
@@ -240,19 +239,7 @@ useEffect(() => {
     d.setDate(d.getDate() + 1);
     return d.toISOString().split("T")[0];
   }
-  function addCalendarDays(startDate, days) {
-    if (!startDate) return "";
-
-    const date = new Date(startDate);
-
-    // 🔒 guard clause — NEVER do math on invalid dates
-    if (isNaN(date.getTime())) {
-      return "";
-    }
-
-    date.setDate(date.getDate() + days);
-    return date.toISOString().split("T")[0];
-  }
+  
 
   /* ===================== LOADER ===================== */
   if (fetching) {

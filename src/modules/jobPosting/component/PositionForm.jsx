@@ -189,14 +189,8 @@ const PositionForm = ({
       label: `${g.code} ${g.scale ? `- ${g.scale}` : ""}`,
     }))
   );
-  const educationDocuments =
-    documentTypes?.filter((doc) => doc.docType === "educationdocs") || [];
-  const qualificationOptions = withSelectOption(
-    educationDocuments.map((e) => ({
-      value: e.id,
-      label: e.name,
-    }))
-  );
+  const educationDocuments = documentTypes?.filter((doc) => doc.docType === "educationdocs") || [];
+ 
   return (
     <>
       <div className={`position-form ${isViewMode ? "view-mode" : ""}`}>
