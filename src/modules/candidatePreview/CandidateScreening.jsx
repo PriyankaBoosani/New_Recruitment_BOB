@@ -2269,14 +2269,9 @@ export default function CandidateScreening({ selectedJob }) {
                   >
                     <FiUpload />
                     Update Canidates Score
-                    {/* {t(
-                              "candidateWorkflow:import_candidates"
-                            )} */}
+                 
                   </Button>
                 )}
-
-                {/* EXAMINATION SCORE */}
-
                 {hasExamConfiguration && (
                   <button
                     className="btn blue-color blue-border fs-14"
@@ -2462,9 +2457,7 @@ export default function CandidateScreening({ selectedJob }) {
                     </svg>
                   )}{" "}
                   {tab.label}
-                  {/* <span className="ms-2 badge rounded-pill bg-light text-muted p-2" style={{ fontSize: '0.675rem', fontWeight: '500' }}>
-                    {tab.count}
-                  </span> */}
+                  
                 </button>
               </li>
             ))}
@@ -2749,62 +2742,7 @@ export default function CandidateScreening({ selectedJob }) {
                         )}
                       </OverlayTrigger>
                     </div>
-                    {/* <div>
-                      <div className="d-flex align-items-center justify-content-between" style={{ width: "180px" }}>
-                        <p className="mb-1 fw-normal fs-13 blue-color">
-                          {t("candidateWorkflow:offer_template")}
-                        </p>
-
-                      </div>
-
-                      <select
-                        className="form-select fs-13 py-1"
-                        style={{ width: "180px" }}
-                        value={offerTemplateId}
-                        onChange={(e) => {
-                          setOfferTemplateId(e.target.value);
-                          setSelectedTemplate(e.target.value);
-                        }}
-                      >
-                        <option value="">
-                          {t("candidateWorkflow:select_template")}
-                        </option>
-                        <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">
-                          Template 1
-                        </option>
-                      </select>
-
-                      <OverlayTrigger
-                        placement="bottom"
-                        overlay={
-                          <Tooltip id="preview-tooltip">
-                            {offerTemplateId === "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-                              ? "Template 1"
-                              : ""}
-                          </Tooltip>
-                        }
-                      >
-                        {selectedTemplate && offerTemplateId === "3fa85f64-5717-4562-b3fc-2c963f66afa6" ? (
-                          <span
-                            onClick={() => setShowPreview(true)}
-                            className="cursor-pointer text-orange orange-color"
-                            style={{
-                              fontSize: "14px",
-                              fontWeight: "600",
-                              fontFamily: "Segoe UI, sans-serif",
-                              letterSpacing: "0.5px",
-                              textDecoration: "underline",
-                            }}
-                          >
-                            Preview
-                          </span>
-                        ) : (
-                          <small className="d-block invisible">placeholder</small>
-                        )}
-                      </OverlayTrigger>
-
-
-                    </div> */}
+                    
 
                     {/* Accept Before Date */}
                     <div>
@@ -2908,43 +2846,7 @@ export default function CandidateScreening({ selectedJob }) {
               {/* RIGHT SECTION */}
               <div className="col-md-4 col-12">
                 <div className="d-flex justify-content-end gap-2 align-items-center">
-                  {/* <button
-                    className={`btn fs-13 px-3 py-1 orange-border orange-color text-orange ${
-                      isSendOfferEnabled ? "" : "disabled_button"
-                    }`}
-                    style={{
-                      minHeight: "39px",
-                      cursor: isSendOfferEnabled ? "pointer" : "not-allowed",
-                    }}
-                 onClick={() => setShowRankListModal(true)}
-                  //  disabled={!isSendOfferEnabled}
-                  >
-                    <img alt="location"
-                      className="me-2 orange-color"
-                      src={locationIcon}
-                      width={16}
-                      style={{ color: "#f36f21 !important" }}
-                    />
-                    {t("candidateWorkflow:assign_locations")}
-                  </button> */}
-
-                  {/* <button className={`btn blue-border blue-color fs-13 px-3 py-1 ${offerSelectedIds.length !== 0 ? "" : "disabled_button"}`} onClick={() => setShowRankListModal(true)} disabled={offerSelectedIds.length === 0}
-                    style={{ minHeight: "39px" }}>
-                    <img src={excelIcon} className="me-1" width={18} /> {t("candidateWorkflow:rank_list")}
-                  </button> */}
-
-                  {/* 
-                                <button
-                className={`btn blue-border blue-color fs-13 px-3 py-1 ${
-                  offerSelectedIds.length !== 0 ? "" : "disabled_button"
-                }`}
-                disabled={offerSelectedIds.length === 0}
-                style={{ minHeight: "39px" }}
-                onClick={handleGenerateRankList}
-              >
-                <img src={excelIcon} className="me-1" width={18} />
-                {t("candidateWorkflow:rank_list")}
-              </button> */}
+                  
 
                   <button
                     className="btn blue-border blue-color fs-13 px-3 py-1"
@@ -3106,16 +3008,7 @@ export default function CandidateScreening({ selectedJob }) {
                         )
                       ))}
 
-                    {/* {activeTab === "INTERVIEW_POOL"
-                    && hasPrivilege("Offer Pool")
-                    && canSendToOfferPool && (
-                      <button
-                        className="btn blue-bg text-white fs-14"
-                        onClick={handleSendToOfferPool}
-                      >
-                        {t("candidateWorkflow:send_to_offer_pool")}
-                      </button>
-                  )} */}
+                    
 
                     {activeTab === "COMPENSATION_POOL" &&
                       hasPrivilege("Offer Pool") &&

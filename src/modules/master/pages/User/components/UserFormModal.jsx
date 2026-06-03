@@ -257,65 +257,7 @@ const UserFormModal = ({
                 </Col>
               )}
 
-              {/* <Col md={6}>
-              <Form.Label>
-                {t("password")} <span className="text-danger">*</span>
-              </Form.Label>
-
-
-              <div className="position-relative">
-                <Form.Control
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="pe-5"
-                />
-                <span
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    right: "12px",
-                    transform: "translateY(-50%)",
-                    cursor: "pointer"
-                  }}
-                >
-                  {showPassword ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
-                </span>
-              </div>
-
-              <ErrorMessage>{errors.password}</ErrorMessage>
-            </Col>
-
-            <Col md={6}>
-              <Form.Label>
-                {t("confirmPassword")} <span className="text-danger">*</span>
-              </Form.Label>
-              <div className="position-relative">
-                <Form.Control
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  className="pe-5"
-                />
-                <span
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    right: "12px",
-                    transform: "translateY(-50%)",
-                    cursor: "pointer"
-                  }}
-                >
-                  {showConfirmPassword ? <FontAwesomeIcon icon={faEyeSlash} /> : <FontAwesomeIcon icon={faEye} />}
-                </span>
-              </div>
-
-              <ErrorMessage>{errors.confirmPassword}</ErrorMessage>
-            </Col> */}
+              
             </Row>
 
             <Modal.Footer className="modal-footer-custom px-0 pt-3 pb-0">

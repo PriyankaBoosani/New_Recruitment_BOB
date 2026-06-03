@@ -65,8 +65,7 @@ const ApprovalHistoryModal = ({
             <Table className="approval-history-table">
               <thead>
                 <tr>
-                  {/* <th className="text-white fs-14 fw-normal blue-bg">Requester</th>
-                  <th className="text-white fs-14 fw-normal blue-bg">Request Date</th> */}
+                  
                   <th className="text-white fs-14 fw-normal blue-bg">
                     {t("approvalHistory:approver")}
                   </th>

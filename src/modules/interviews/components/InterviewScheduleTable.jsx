@@ -45,11 +45,7 @@ const InterviewScheduleTable = ({ rows, position }) => {
                   )?.masterPositions?.positionName || "-"}
                 </p>
               </td>
-              {/* <td className="fs-14 align-content-center">
-                {position?.find(
-                  (p) => p.jobPositions?.positionId === row.positionId
-                )?.masterPositions?.positionName || "-"}
-              </td> */}
+              
               <td>{formatDateDDMMYYYY(row.date)}</td>
               <td>{row.time}</td>
               <td>{row.zone}</td>

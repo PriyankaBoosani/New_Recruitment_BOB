@@ -159,9 +159,6 @@ const PositionPage = () => {
 
     setShowAddModal(false);
   };
-
-  /* ---------------- RENDER ---------------- */
-
   return (
     <Container fluid className="user-container">
       <div className="user-header">

@@ -1589,25 +1589,13 @@ const ApplicationForm = ({
                     </td>
                   </tr>
                   <tr>
-                    {/* <td className="fw-med">{t("twin_sibling")}</td>
-                    <td className="fw-reg" colSpan={2}>
-                      {data.personalDetails.isTwin === "Yes"
-                        ? `Yes (${data.personalDetails.twinName})`
-                        : "No"}
-                    </td> */}
+                  
                     <td className="fw-med">{t("twin_sibling")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.isTwin === "Yes"
                         ? `Yes (${data.personalDetails.twinName})`
                         : "No"}
                     </td>
-
-                    {/* <td className="fw-med">{t("twin_sibling")}</td>
-                    <td className="fw-reg" colSpan={2}>{data.personalDetails.isTwin}</td> */}
-                    {/* <td className="fw-med">Details</td>
-                      <td className="fw-reg" colSpan={2}>{previewData.personalDetails.isTwin === "YES"
-                        ? `${previewData.personalDetails.twinName} (${previewData.personalDetails.twinGender_name})`
-                        : "-"}</td> */}
                     <td className="fw-med">{t("cibil_score")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.cibilScore}
@@ -1623,25 +1611,8 @@ const ApplicationForm = ({
                       {data.personalDetails.expectedCtc}
                     </td>
 
-                    {/* <td className="fw-med">Social Media Profile links</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.socialMediaProfileLink}</td> */}
-                    {/* <td className="fw-med">Expected CTC</td>
-                      <td className="fw-reg" colSpan={2}>{preferences.ctc ? `₹${Number(preferences.ctc).toLocaleString()}` : "-"}</td> */}
+                   
                   </tr>
-
-                  {/* <tr>
-                      <td className="fw-med">Location Preference 1</td>
-                      <td className="fw-reg" colSpan={2}>{state1?.state_name || "-"}</td>
-                      <td className="fw-med">Location Preference 2</td>
-                      <td className="fw-reg" colSpan={2}>{state2?.state_name || "-"}</td>
-                    </tr> */}
-
-                  {/*<tr>
-                       <td className="fw-med">Location Preference 3</td>
-                      <td className="fw-reg" colSpan={2}>{state3?.state_name || "-"}</td> 
-                      <td className="fw-med">Social Media Profile links</td>
-                      <td className="fw-reg" colSpan={2}>{previewData.personalDetails.socialMediaProfileLink}</td>
-                    </tr>*/}
                   <tr>
                     <td className="fw-med">{t("language_proficiency")}</td>
                     <td className="fw-reg" colSpan={2}>
@@ -2600,19 +2571,7 @@ const ApplicationForm = ({
 
             {/* RADIO OPTIONS — same pattern as Shortlisted */}
             <div className="criteria-radio mb-3">
-              {/* {["YES", "NO", "PROVISIONALLY_APPROVED"].map((opt) => {
-
-                const disableYes =
-                  opt === "YES" && !areAllDocumentsVerified();
-
-                const disableProvisionallyApproved =
-                  opt === "PROVISIONALLY_APPROVED" && areAllDocumentsVerified();
-
-                const isDisabled =
-                  isZonalAbsent ||
-                  !allDocsVerified ||
-                  disableProvisionallyApproved ||
-                  disableYes; */}
+              
               {["YES", "NO", "PROVISIONALLY_APPROVED"].map((opt) => {
                 const isLptSelectionPending =
                   !isLptRequired || (isLptRequired === "YES" && !lptType);

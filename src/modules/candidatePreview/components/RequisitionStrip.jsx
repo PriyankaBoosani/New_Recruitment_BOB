@@ -352,19 +352,6 @@ const RequisitionStrip = ({
                     </div>
                   )}
 
-                  {/* Experience */}
-                  {/* <div className="col-12 col-md-4">
-                    <span className="stat-label">{t("candidateWorkflow:experience")}:</span>{" "}
-                   <span className="stat-value">
-  {job?.isMandatoryExpMonthsEduWise
-    ? getEduWiseExperience()
-    : formatExperience(
-        job?.mandatory_experience_years,
-        job?.mandatory_experience_months
-      )}
-</span>
-                  </div> */}
-
                   {/* Eligibility */}
                   <div className="col-12 col-md-4">
                     <span className="stat-label">

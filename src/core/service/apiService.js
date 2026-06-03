@@ -7,18 +7,12 @@ import { msalInstance } from "../..";
 
 const REFRESH_PATH = "/recruiter-auth/recruiter-refresh-token";
 
-/* ---------------------------
-   Constants & ENV
---------------------------- */
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const API_BASE_URLS = process.env.REACT_APP_API_BASE_URLS;
 const NODE_API_URL = process.env.REACT_APP_NODE_API_URL;
 const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL;
 const MASTER_DROPDOWN_URL = process.env.REACT_APP_MASTER_DROPDOWN_URL;
 
-/* ---------------------------
-   Refresh Token Control
---------------------------- */
 let isRefreshing = false;
 let refreshSubscribers = [];
 
@@ -30,10 +24,6 @@ const onRefreshed = () => {
   refreshSubscribers.forEach((cb) => cb());
   refreshSubscribers = [];
 };
-
-/* ---------------------------
-   Refresh API (no interceptors)
---------------------------- */
 async function callRefreshEndpoint() {
   const url = `${NODE_API_URL}${REFRESH_PATH}`;
   return axios.post(url, null, { withCredentials: true });
@@ -71,10 +61,6 @@ async function getToken() {
     return null;
   }
 }
-
-/* ---------------------------
-   Auth Header Helper
---------------------------- */
 const addAuthHeader = async (config) => {
   const token = await getToken();
 
@@ -95,9 +81,6 @@ const redirectToLogin = () => {
   msalInstance.logoutRedirect();
 };
 
-/* ---------------------------
-   Axios Instances
---------------------------- */
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -183,10 +166,6 @@ const attachInterceptors = (instance) => {
     }
   );
 };
-
-/* ---------------------------
-   Attach Interceptors
---------------------------- */
 attachInterceptors(api);
 attachInterceptors(formDataApi);
 attachInterceptors(apis);
@@ -200,8 +179,4 @@ masterDropdownApi.interceptors.response.use(
     throw err;
   }
 );
-
-/* ---------------------------
-   Exports
---------------------------- */
 export { api, formDataApi, apis, candidateApi, nodeApi, masterDropdownApi };

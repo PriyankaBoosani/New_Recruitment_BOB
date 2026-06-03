@@ -113,9 +113,7 @@ const SessionManager = ({ children }) => {
         </Modal.Body>
 
         <Modal.Footer>
-          {/* <Button variant="secondary" onClick={logout}>
-            Logout
-          </Button> */}
+         
           <Button variant="primary" onClick={extendSession}>
             Stay Logged In
           </Button>
