@@ -19,7 +19,6 @@ import SessionManager from "./modules/auth/services/SessionManager";
 
 // Log redirect debugging
 
-
 // Create MSAL instance
 export const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -27,27 +26,16 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 (async () => {
   try {
-   
-
     // Initialize MSAL
     await msalInstance.initialize();
-    
 
     // ✅ CRITICAL: Handle redirect BEFORE rendering
     // This only processes if URL has auth code (?code=...)
     const response = await msalInstance.handleRedirectPromise();
-   
 
     if (response) {
-      
-      // Force URL change to /auth/callback so AuthCallback component renders
       window.history.replaceState({}, document.title, "/auth/callback");
-    } else {
-      const accounts = msalInstance.getAllAccounts();
-      const activeAccount = msalInstance.getActiveAccount();
-      
     }
-
     root.render(
       <MsalProvider instance={msalInstance}>
         <Provider store={store}>
