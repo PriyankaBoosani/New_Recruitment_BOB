@@ -40,14 +40,6 @@ export const useAssignPositions = (userId) => {
     INTERVIEW: [],
     COMPENSATION: [],
   });
-  const formatStatus = (status) => {
-    if (!status) return "-";
-
-    return status
-      .toLowerCase() // l1_pending
-      .replace("_", " ") // l1 pending
-      .replace(/\b\w/g, (c) => c.toUpperCase()); // L1 Pending
-  };
 
   const validatePanels = () => {
     const errors = {};

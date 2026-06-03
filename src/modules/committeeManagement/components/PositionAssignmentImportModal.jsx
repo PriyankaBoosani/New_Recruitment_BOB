@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button, Alert } from "react-bootstrap";
 import { Upload as UploadIcon } from "react-bootstrap-icons";
-import { useAssignPositions } from "../hooks/useAssignPositions";
 
 const PositionAssignmentImportModal = ({
   t,
@@ -11,7 +10,6 @@ const PositionAssignmentImportModal = ({
   downloadPositionAssignmentTemplate,
   loading,
 }) => {
-  //const { bulkImportPositionAssignments, downloadPositionAssignmentTemplate, loading } = useAssignPositions();
   const [selectedFile, setSelectedFile] = useState(null);
   const [error, setError] = useState("");
   const [errorDetails, setErrorDetails] = useState([]);

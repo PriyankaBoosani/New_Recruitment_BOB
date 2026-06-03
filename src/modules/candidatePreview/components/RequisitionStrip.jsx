@@ -1,5 +1,3 @@
-// src/modules/candidatePreview/components/RequisitionStrip.jsx
-
 import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
@@ -31,7 +29,7 @@ const RequisitionStrip = ({
 
   const [masterData, setMasterData] = useState(null); //  INTERNAL
 
-  const orderedPattern = /^\s*(\(?\d+[\).\]]|\(?[ivxlcdm]+[\).\]])\s*/i;
+  const orderedPattern = /^\s*(\(?\d+[.)\]]|\(?[ivxlcdm]+[.)\]])\s*/i;
 
   const renderBullets = (text) => {
     if (!text) return <li>-</li>;
@@ -66,7 +64,6 @@ const RequisitionStrip = ({
       return dateStr;
     }
   };
-
 
   useEffect(() => {
     const loadMasters = async () => {

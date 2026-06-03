@@ -86,17 +86,7 @@ export default function InterviewPool({
         : [...prev, normalizedId]
     );
   };
-  const requestSort = (key) => {
-    setSortConfig((prev) => {
-      if (prev.key === key) {
-        return {
-          key,
-          direction: prev.direction === "asc" ? "desc" : "asc",
-        };
-      }
-      return { key, direction: "asc" };
-    });
-  };
+
 
   const sortedCandidates = useMemo(() => {
     if (!sortConfig.key) return candidates;
@@ -118,10 +108,7 @@ export default function InterviewPool({
     });
   }, [candidates, sortConfig]);
 
-  const sortIcon = (key) => {
-    if (sortConfig.key !== key) return "↕";
-    return sortConfig.direction === "asc" ? "▲" : "▼";
-  };
+
 
   return (
     <div className="card-body p-0 interview-pool">

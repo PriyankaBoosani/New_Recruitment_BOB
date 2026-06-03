@@ -33,7 +33,7 @@ const RequisitionStripformultiplepositions = ({
     setShowPosition(true);
   };
 
-  const orderedPattern = /^\s*(\(?\d+[\).\]]|\(?[ivxlcdm]+[\).\]])\s*/i;
+  const orderedPattern = /^\s*(\(?\d+[.)\]]|\(?[ivxlcdm]+[.)\]])\s*/i;
 
   const renderBullets = (text) => {
     if (!text) return <li>-</li>;
@@ -70,7 +70,6 @@ const RequisitionStripformultiplepositions = ({
   };
 
   /* ================= LOAD MASTER DATA ================= */
-
 
   useEffect(() => {
     const loadMasters = async () => {
@@ -115,10 +114,6 @@ const RequisitionStripformultiplepositions = ({
 
     fetchJob();
   }, [selectedPositionIdForModal, masterData]);
-
-  const handleViewPosition = () => {
-    setShowPosition(true);
-  };
 
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const formatExperience = (years = 0, months = 0) => {
@@ -270,29 +265,7 @@ const RequisitionStripformultiplepositions = ({
             )}
           </div>
         </div>
-
-        {/* ===== BUTTONS ===== */}
-        {/* <div className="d-flex flex-row gap-2 mt-2 mt-md-0 ms-md-auto">
-
-          <button
-            className="btn btn-sm blue-border blue-color px-3"
-            onClick={handleViewPosition}
-            disabled={loading || !position}
-            style={{ backgroundColor: "rgba(66, 87, 159, 0.12)" }}
-          >
-            {t("candidateWorkflow:view_position")}
-          </button>
-          {isSaveBtn && (
-            <button
-              className={`save-btn ${isSaveEnabled ? "unsaved" : "saved"}`}
-              disabled={!isSaveEnabled}
-              onClick={onSave}
-            >
-              {t("common:save")}
-            </button>
-          )}
-
-        </div> */}
+      
       </div>
 
       {/* ================= MODAL ================= */}
@@ -376,19 +349,6 @@ const RequisitionStripformultiplepositions = ({
                       </span>
                     </div>
                   )}
-
-                  {/* Experience */}
-                  {/* <div className="col-12 col-md-4">
-                    <span className="stat-label">{t("candidateWorkflow:experience")}:</span>{" "}
-                   <span className="stat-value">
-  {job?.isMandatoryExpMonthsEduWise
-    ? getEduWiseExperience()
-    : formatExperience(
-        job?.mandatory_experience_years,
-        job?.mandatory_experience_months
-      )}
-</span>
-                  </div> */}
 
                   {/* Eligibility */}
                   <div className="col-12 col-md-4">

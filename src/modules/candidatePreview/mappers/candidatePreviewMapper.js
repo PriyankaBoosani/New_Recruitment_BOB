@@ -75,13 +75,11 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
     locationprefApiData.interviewCenter
   );
 
-  const permanentCity = getCityName(masters, address.permanentCityId);
   const permanentDistrict = getDistrictName(
     masters,
     address.permanentDistrictId
   );
   const permanentState = getStateName(masters, address.permanentStateId);
-  const permanentPin = getPincode(masters, address.permanentPincodeId);
 
   const presentAddressFull = [
     address.addressLine1,
