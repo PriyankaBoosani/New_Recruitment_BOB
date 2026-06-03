@@ -81,11 +81,7 @@ export const useAddPanelModal = ({
 
   const selectedPanel = panels.find((p) => String(p.id) === String(panelId));
 
-  const formatDate = (date) => {
-    if (!date) return "";
 
-    return new Date(date).toISOString().split("T")[0];
-  };
 
   const panelRanges = selectedPanel?.ranges || [];
 
@@ -223,10 +219,7 @@ export const useAddPanelModal = ({
             return updated;
           });
         } else {
-          // ✅ valid range → calculate interviews
-          const interviews = Math.floor(diffMins / Number(row.duration));
-
-          // row.perDay = interviews.toString();
+        
 
           if (
             row.startTime &&

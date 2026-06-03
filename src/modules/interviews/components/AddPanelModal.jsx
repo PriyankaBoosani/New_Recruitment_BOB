@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Modal, Form } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { useAddPanelModal } from "../../interviews/hooks/useAddPanelModal";

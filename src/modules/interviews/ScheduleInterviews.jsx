@@ -40,7 +40,6 @@ const ScheduleInterviews = () => {
   const isReschedule = location.state?.isReschedule;
   const {
     schedule,
-    updateRow,
     setSchedule,
     requisitions,
     selectedRequisitionId,
@@ -52,7 +51,6 @@ const ScheduleInterviews = () => {
     setSelectedPositionId,
     passedCandidates,
     applySchedule,
-    scheduleApiData,
     scheduleInterview,
     allInterviewCentres,
   } = useInterviewSchedule(isEditMode, isReschedule);

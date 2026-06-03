@@ -11,14 +11,6 @@ const InterviewCentreAllocationModal = ({
 }) => {
   if (!show) return null;
 
-  const selectedAllocatedCentres = centreRows
-    .map((r) => r.allocatedCentreId)
-    .filter(Boolean);
-
-  const candidateCentreIds = uniqueAllocatedCentres.map(
-    (c) => c.interviewCentreId
-  );
-
   return (
     <div className="ipc-alert-overlay">
       <div className="ipc-alert-modal centre-modal">

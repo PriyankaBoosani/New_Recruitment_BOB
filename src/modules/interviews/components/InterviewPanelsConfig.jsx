@@ -1,5 +1,4 @@
 import React from "react";
-import { Form } from "react-bootstrap";
 import "../../../style/css/InterviewPanelsConfig.css";
 import AddPanelModal from "../../interviews/components/AddPanelModal";
 import DeleteConfirmModal from "./DeleteConfirmModal";
@@ -7,7 +6,6 @@ import { useInterviewPanels } from "../../interviews/hooks/useInterviewPanels";
 import { useTranslation } from "react-i18next";
 import ApplySuccessModal from "../../interviews/components/ApplySuccessModal";
 import { toast } from "react-toastify";
-import interviewService from "../services/interviewService";
 import Loader from "../../../shared/components/Loader";
 import InterviewScheduleSummaryModal from "./InterviewScheduleSummaryModal";
 const InterviewPanelsConfig = ({
