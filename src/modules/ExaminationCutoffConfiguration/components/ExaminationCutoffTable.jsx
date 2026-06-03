@@ -12,8 +12,8 @@ export default function ExaminationCutoffTable({
 
   totalPages,
   totalElements,
-  statusFilter = { statusFilter },
-  setStatusFilter = { setStatusFilter },
+  statusFilter,
+  setStatusFilter
 }) {
   /* ================= DUMMY DATA ================= */
 

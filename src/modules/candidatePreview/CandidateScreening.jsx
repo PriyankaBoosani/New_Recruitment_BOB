@@ -1222,13 +1222,7 @@ export default function CandidateScreening({ selectedJob }) {
     }
 
     try {
-      setLoadingPdf(true);
-
-      const selectedRequisition = requisitions.find(
-        (r) => r.id === selectedRequisitionId
-      );
-
-      const rawRequisition = selectedRequisition;
+      setLoadingPdf(true);     
       const res = await masterApiService.getAzureBlobSasUrl(
         candidate.fileUrl,
         "candidate"
@@ -3022,6 +3016,7 @@ const handleGenerateRankList = async () => {
   <img
     className="me-2"
     src={locationIcon}
+    alt="location"
     width={16}
     style={{ filter: "brightness(0) invert(1)" }}
   />

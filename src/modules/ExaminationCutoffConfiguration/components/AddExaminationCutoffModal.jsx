@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 import masterApiService from "../../master/services/masterApiService";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
 import { toast } from "react-toastify";
-
-import ExaminationCutoffService from "../service/ExaminationCutoffService";
 import candidateWorkflowServices from "../../candidatePreview/services/CandidateWorkflowServices";
 import committeeManagementService from "../../committeeManagement/services/committeeManagementService";
 import "../../../style/css/ExaminationCutoffConfiguration.css";
@@ -225,11 +223,6 @@ export default function AddExaminationCutoffModal({
         /* ================= CHECK STATE WISE ================= */
 
         const distributions = data?.positionStateDistributions || [];
-
-        const nationalDistribution =
-          data?.positionCategoryNationalDistributions ||
-          data?.nationalCategoryDistribution ||
-          [];
 
         const verticalCategories = allCategories.filter(
           (item) => item.reservationType === "VERTICAL"
@@ -1010,17 +1003,7 @@ export default function AddExaminationCutoffModal({
                                                 cat.reservationCategoriesId
                                               ] ?? ""
                                             }
-                                            onKeyDown={(e) => {
-                                              if (
-                                                e.key === "-" ||
-                                                e.key === "+" ||
-                                                e.key === "e" ||
-                                                e.key === "E" ||
-                                                e.key === "."
-                                              ) {
-                                                e.preventDefault();
-                                              }
-                                            }}
+                                           
                                             onChange={(e) => {
                                               const value = validateCutoffValue(
                                                 e.target.value
