@@ -236,18 +236,7 @@ export const useExperience = () => {
         }
       }
       if (res.success) {
-        const levelId = String(
-          saved?.qualification?.levelId || ""
-        ).toLowerCase();
-
-        const docMap = new Map(
-          educationOptions.map((opt) => [
-            String(opt.documentTypeId).toLowerCase(),
-            opt.documentName,
-          ])
-        );
-
-
+        
         await loadData();
 
         setShowModal(false);

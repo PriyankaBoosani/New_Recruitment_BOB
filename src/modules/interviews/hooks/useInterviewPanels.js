@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
 import interviewService from "../services/interviewService";
 
 export const useInterviewPanels = (positionId, initialSelectedPanels = []) => {
