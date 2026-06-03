@@ -196,9 +196,6 @@ export default function InterviewerSchedule() {
       sessionStorage.removeItem("fromPreviewBack");
     }
   }, [rows]);
-
-  /* ================= FILTERING ================= */
-
   const filteredRows = useMemo(() => {
     const text = searchText.toLowerCase();
 
@@ -232,8 +229,6 @@ export default function InterviewerSchedule() {
     }
   }, [filteredRows.length]);
 
-  /* ================= ROW UPDATES ================= */
-
   const toggleAbsent = (id) =>
     setRows((prev) =>
       prev.map((r) => {
@@ -258,9 +253,6 @@ export default function InterviewerSchedule() {
     setRows((prev) =>
       prev.map((r) => (r.id === id ? { ...r, score: val } : r))
     );
-
-  /* ================= VIEW RESUME ================= */
-
   const handleViewFile = async (raw) => {
     if (!raw?.resumeUrl) return toast.error(t("no_document_available"));
 
@@ -300,9 +292,6 @@ export default function InterviewerSchedule() {
         toast.info(t("no_changes_to_save"));
         return;
       }
-
-      /* ================= BUILD PAYLOAD ================= */
-
       const payloads = changedRows.map((r) => {
         const raw = r.raw;
 

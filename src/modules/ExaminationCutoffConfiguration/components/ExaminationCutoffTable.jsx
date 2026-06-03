@@ -196,9 +196,6 @@ export default function ExaminationCutoffTable({
       </div>
 
       {/* PAGINATION */}
-
-      {/* ================= FOOTER ================= */}
-
       <div className="d-flex justify-content-between align-items-center px-3 py-2 table-footer">
         {/* Showing text */}
 

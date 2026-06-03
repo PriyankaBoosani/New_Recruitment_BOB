@@ -120,12 +120,6 @@ const SchedulePoolTable = ({
                       ?.positionName || "-"}
                   </p>
                 </td>
-
-                {/* <td className="fs-14 align-content-center">
-                  {position?.find((p) => p.positionId === row.positionId)?.positionName || "-"}
-                
-                </td> */}
-
                 {/* Date */}
                 <td className="fs-14 align-content-center">
                   {formatDateDDMMYYYY(row.date)}

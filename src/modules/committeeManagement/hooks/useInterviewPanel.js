@@ -26,8 +26,6 @@ export const useInterviewPanel = () => {
 
   const [errors, setErrors] = useState({});
 
-  /* ================= PAGINATION ================= */
-
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
@@ -35,7 +33,6 @@ export const useInterviewPanel = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  /* ================= search ================= */
   const [search, setSearch] = useState({
     panelName: "",
     committeeName: "",
@@ -97,8 +94,7 @@ export const useInterviewPanel = () => {
     }
   }, [page, size, search, t]);
 
-  /* ================= INIT DATA ================= */
-
+ 
   const initData = useCallback(async () => {
     try {
       setLoading(true);
@@ -143,8 +139,6 @@ export const useInterviewPanel = () => {
     }
   }, [t]);
 
-  /* ================= VALIDATION ================= */
-
   const validatePanelForm = () => {
     const newErrors = {};
 
@@ -171,9 +165,6 @@ export const useInterviewPanel = () => {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
-
-  /* ================= SAVE ================= */
-
   const continuePanelUpdate = async () => {
     if (!pendingPayload) return;
 
@@ -288,9 +279,6 @@ export const useInterviewPanel = () => {
       toast.error(err?.response?.data?.message || t("failed_save_panel"));
     }
   };
-
-  /* ================= DELETE ================= */
-
   const handleDelete = useCallback(
     async (id) => {
       try {
@@ -311,8 +299,6 @@ export const useInterviewPanel = () => {
     [fetchPanels, t]
   );
 
-  /* ================= EDIT ================= */
-
   const handleEdit = async (panelId) => {
     try {
       const res = await masterApiService.getInterviewPanelById(panelId);
@@ -322,9 +308,6 @@ export const useInterviewPanel = () => {
       toast.error(t("failed_load_panel_details"));
     }
   };
-
-  /* ================= EFFECT ================= */
-
   useEffect(() => {
     initData();
   }, [initData]);
@@ -353,8 +336,6 @@ export const useInterviewPanel = () => {
       setPage(0);
     }
   }, [activeTab]);
-
-  /* ================= BULK IMPORT ================= */
   const bulkAddPanels = async (file) => {
     setLoading(true);
 
@@ -404,9 +385,6 @@ export const useInterviewPanel = () => {
       );
     }
   };
-
-  /* ================= RETURN ================= */
-
   return {
     panels,
     loading,

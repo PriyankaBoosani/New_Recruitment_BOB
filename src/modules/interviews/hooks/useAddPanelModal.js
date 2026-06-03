@@ -114,8 +114,6 @@ export const useAddPanelModal = ({
   const removeRow = (i) => {
     setRows((prev) => prev.filter((_, idx) => idx !== i));
   };
-
-  /* ================= UPDATE ================= */
   const updateRow = (i, field, value) => {
     // ================= UPDATE ROW =================
 
@@ -383,8 +381,6 @@ export const useAddPanelModal = ({
 
     onClose();
   };
-
-  /* ================= CANCEL ================= */
 
   const handleCancel = () => {
     onClose();

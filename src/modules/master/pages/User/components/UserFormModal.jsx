@@ -36,8 +36,6 @@ const UserFormModal = ({
   const [errors, setErrors] = useState({});
   const [activeTab, setActiveTab] = useState("manual");
 
-  /* ========================= RESET FORM ON OPEN  ========================= */
-
   useEffect(() => {
     if (!show) return;
 
@@ -82,8 +80,6 @@ const UserFormModal = ({
       return updated;
     });
   };
-
-  /* ========================= SUBMIT ========================= */
   const handleSubmit = (e) => {
     e.preventDefault();
 

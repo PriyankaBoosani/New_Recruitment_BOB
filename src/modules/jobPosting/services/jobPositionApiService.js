@@ -311,11 +311,6 @@ const jobPositionApiService = {
         },
       }
     ),
-
-  /* ================= EXAMINATION CUTOFF ================= */
-
-  /* ================= GET EXAM CONFIG ================= */
-
   getExamConfigurationsByPositions: (positionIds) =>
     api.get("/recruiter/examination-config/get-by-positions", {
       params: {

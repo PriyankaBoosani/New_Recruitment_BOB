@@ -112,8 +112,6 @@ export const mapAddPositionToCreateDto = ({
           },
         };
   };
-
-  /* ================= FINAL DTO ================= */
   return {
     requisitionId,
     //  DO NOT SEND positionId ON CREATE
@@ -247,9 +245,6 @@ export const mapAddPositionToCreateDto = ({
       : [],
   };
 };
-
-/* ================= STATE DISTRIBUTION ================= */
-
 const mapStateDistribution = ({
   currentState,
   reservationCategories,
