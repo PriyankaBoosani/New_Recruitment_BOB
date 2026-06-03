@@ -27,8 +27,6 @@ const ExamRequest = () => {
     setWorkflowHistory,
   } = useExamRequest();
 
-  /* ================= STATES ================= */
-
   const [showCutoffModal, setShowCutoffModal] = useState(false);
   const [decisionComments, setDecisionComments] = useState("");
   const [commentError, setCommentError] = useState("");
@@ -66,8 +64,6 @@ const ExamRequest = () => {
 
   const [selectedRequisition, setSelectedRequisition] = useState(null);
 
-  /* ================= LOAD REQUISITIONS ================= */
-
   useEffect(() => {
     fetchRequisitions();
 
@@ -78,9 +74,6 @@ const ExamRequest = () => {
 
     await fetchExamConfigList(selectedRequisition.id);
   };
-
-  /* ================= REQUISITION CHANGE ================= */
-
   const handleHistoryClick = async (pos) => {
     const examConfigId = pos?.raw?.examConfigId;
     if (!examConfigId) return;
@@ -105,8 +98,6 @@ const ExamRequest = () => {
     await fetchExamConfigList(req.id);
   };
 
-  /* ================= POSITIONS FROM CONFIG LIST ================= */
-
   const requisitionPositions = useMemo(() => {
     return examConfigList.map((item) => ({
       label:
@@ -127,8 +118,6 @@ const ExamRequest = () => {
     }, {});
   }, [users]);
 
-  /* ================= VIEW CLICK ================= */
-
   const handleViewClick = (pos) => {
     setViewPosition(pos);
 
@@ -136,8 +125,6 @@ const ExamRequest = () => {
 
     setShowCutoffModal(true);
   };
-
-  /* ================= SELECT VALUE ================= */
 
   const selectedRequisitionOption = selectedRequisition
     ? {
@@ -148,8 +135,6 @@ const ExamRequest = () => {
         raw: selectedRequisition,
       }
     : null;
-
-  /* ================= SELECT STYLES ================= */
 
   const selectStyles = {
     control: (base) => ({
@@ -202,14 +187,9 @@ const ExamRequest = () => {
       zIndex: 9999,
     }),
   };
-
-  /* ================= UI ================= */
-
   return (
     <div className="exam-request">
       <Container fluid className="exam-page">
-        {/* ================= HEADER ================= */}
-
         <Row className="mb-3 align-items-center">
           <Col>
             <h5 className="page-title">
@@ -242,9 +222,6 @@ const ExamRequest = () => {
             />
           </Col>
         </Row>
-
-        {/* ================= POSITION LIST ================= */}
-
         {selectedRequisition && (
           <Row className="mt-4">
             <Col>
@@ -321,9 +298,6 @@ const ExamRequest = () => {
             </Col>
           </Row>
         )}
-
-        {/* ================= MODAL ================= */}
-
         <AddExaminationCutoffModal
           show={showCutoffModal}
           onHide={() => {
