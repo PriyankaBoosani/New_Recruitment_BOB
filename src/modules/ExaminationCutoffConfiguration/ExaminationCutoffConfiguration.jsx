@@ -16,8 +16,7 @@ import AddExaminationCutoffModal from "./components/AddExaminationCutoffModal";
 import jobPositionApiService from "../jobPosting/services/jobPositionApiService";
 
 export default function ExaminationCutoffConfiguration() {
-  /* ================= MODAL ================= */
-
+  
   const [showModal, setShowModal] = useState(false);
 
   const [editingData, setEditingData] = useState(null);
@@ -36,22 +35,12 @@ export default function ExaminationCutoffConfiguration() {
 
   const [loadingRequisitions, setLoadingRequisitions] = useState(false);
 
-  const [hasExistingConfiguration, setHasExistingConfiguration] =
-    useState(false);
+  const [hasExistingConfiguration, setHasExistingConfiguration] = useState(false);
 
   const [loadingPositions, setLoadingPositions] = useState(false);
-
-  /* ================= TABLE DATA ================= */
-
   const [configurations, setConfigurations] = useState([]);
-
-  /* ================= PAGINATION ================= */
-
   const [page, setPage] = useState(0);
-
   const [pageSize, setPageSize] = useState(10);
-
-  /* ================= INITIAL LOAD ================= */
 
   useEffect(() => {
     fetchRequisitions();
@@ -91,9 +80,6 @@ export default function ExaminationCutoffConfiguration() {
       setLoadingPositions(false);
     }
   };
-
-  /* ================= FETCH CONFIGS ================= */
-
   const loadConfigurations = async (
     positionIds = [],
     positionsData = positions
@@ -176,13 +162,10 @@ export default function ExaminationCutoffConfiguration() {
     const configs = await loadConfigurations(formattedIds);
   };
 
-  /* ================= SELECTED REQUISITION ================= */
-
   const selectedRequisition = requisitions.find(
     (r) => r.id === selectedRequisitionId
   );
 
-  /* ================= NORMALIZED REQUISITION ================= */
 
   const normalizedRequisition = selectedRequisition
     ? {
@@ -197,9 +180,6 @@ export default function ExaminationCutoffConfiguration() {
         registration_end_date: selectedRequisition.endDate,
       }
     : null;
-
-  /* ================= SELECTED POSITION ================= */
-
   const selectedPosition = positions
     .filter((p) =>
       selectedPositionId.includes(String(p.jobPositions?.positionId))
@@ -326,9 +306,6 @@ export default function ExaminationCutoffConfiguration() {
 
     setShowModal(true);
   };
-
-  /* ================= VIEW ================= */
-
   const handleView = (row) => {
     setViewOnly(true);
 
@@ -336,9 +313,6 @@ export default function ExaminationCutoffConfiguration() {
 
     setShowModal(true);
   };
-
-  /* ================= SAVE SUCCESS ================= */
-
   const handleSuccess = async () => {
     setShowModal(false);
 
@@ -365,11 +339,6 @@ export default function ExaminationCutoffConfiguration() {
           rigorous passing criteria across different candidate categories.
         </p>
       </div>
-
-      {/* ================= TOP CARD ================= */}
-
-      {/* ================= TOP CARD ================= */}
-
       <div className="card mb-4 border-0 exam-top-card">
         <div className="card-body p-0">
           {/* FILTERS */}

@@ -70,8 +70,6 @@ const CreateRequisition = () => {
   } = useCreateRequisition(editId, mode, isDraftMode);
 
   const [errors, setErrors] = useState({});
-  /* ===================== SAVE ===================== */
-
   useEffect(() => {
     if (!editId) return;
 
@@ -255,13 +253,7 @@ const CreateRequisition = () => {
         <Card.Body>
           <div className="section-title">
             <span className="indicator" />
-            {/* <h6>
-              {isViewMode
-                ? t("view_requisition")
-                : editId
-                  ? t("edit_requisition")
-                  : t("create_requisition")}
-            </h6> */}
+           
             <h6>
               {isViewMode && t("view_requisition")}
 

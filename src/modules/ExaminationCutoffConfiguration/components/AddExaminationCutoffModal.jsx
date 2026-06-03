@@ -240,15 +240,6 @@ export default function AddExaminationCutoffModal({
 
         setIsStateWisePosition(distributions.length > 0);
 
-        /* ================= RESERVATION CATEGORY IDS ================= */
-
-        /* ================= RESERVATION CATEGORY IDS ================= */
-
-        /* ================= STATE WISE ================= */
-
-        /* ================= DISABILITY CATEGORIES ================= */
-
-        /* ================= DISABILITY CATEGORIES ================= */
       } catch (err) {
         console.error("Failed to fetch position details", err);
       }
@@ -275,18 +266,12 @@ export default function AddExaminationCutoffModal({
       selectedWeightageSections: [],
     });
   };
-
-  /* ================= INPUT CHANGE ================= */
-
   const handleChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
-
-  /* ================= CATEGORY CHANGE ================= */
-
   const handleCloseAndBack = () => {
     //   resetForm();
 
@@ -456,9 +441,6 @@ export default function AddExaminationCutoffModal({
       selectedWeightageSections: updated,
     }));
   };
-
-  /* ================= SAVE ================= */
-
   const handleSave = async () => {
     try {
       setLoading(true);

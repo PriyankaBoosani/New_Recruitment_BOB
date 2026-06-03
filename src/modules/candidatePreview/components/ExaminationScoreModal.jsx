@@ -480,61 +480,7 @@ const ExaminationScoreModal = ({
         })}
       </Modal.Body>
 
-      {/* <Modal.Footer
-        className="border-0"
-        style={{
-          padding:
-            "0 24px 20px"
-        }}
-      >
-
-        <button
-          className="btn"
-          style={{
-            minWidth:
-              "110px",
-            height:
-              "40px",
-            border:
-              "1px solid #D1D5DB",
-            background:
-              "#FFFFFF",
-            color:
-              "#6B7280",
-            fontWeight:
-              "600",
-            fontSize:
-              "13px"
-          }}
-          onClick={onHide}
-        >
-          CANCEL
-        </button>
-
-        <button
-          className="btn text-white"
-          style={{
-            minWidth:
-              "110px",
-            height:
-              "40px",
-            background:
-              "#F97316",
-            border:
-              "none",
-            fontWeight:
-              "600",
-            fontSize:
-              "13px"
-          }}
-          onClick={() =>
-            handleEditExaminationScore()
-          }
-        >
-          SAVE
-        </button>
-
-      </Modal.Footer> */}
+      
     </Modal>
   );
 };
