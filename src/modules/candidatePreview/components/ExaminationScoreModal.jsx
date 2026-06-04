@@ -27,7 +27,7 @@ const TableSection = ({
 
   const rows = [
     "Appeared",
-    "Vacancy",
+    "Vacancies",
     "Qualified Without Relaxation",
     // "Qualified With Relaxation"
   ];
