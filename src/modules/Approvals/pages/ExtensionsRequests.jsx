@@ -523,8 +523,6 @@ const ExtensionsRequests = () => {
             </Form.Select>
           </Col>
         </Row>
-
-        {/* ================= BULK ACTIONS ================= */}
         <Row className="align-items-center mt-4 mb-4">
           <Col xs={12} md={12} className="d-flex justify-content-end gap-2 ">
             <Button
@@ -566,7 +564,6 @@ const ExtensionsRequests = () => {
           </Col>
         </Row>
 
-        {/* ================= EXTENSION REQUEST CARDS ================= */}
         {paginatedData.length === 0 ? (
           <div className="text-center text-muted my-4">
             {isL1
@@ -663,7 +660,6 @@ const ExtensionsRequests = () => {
 
                               {/* Time */}
                               <div className="d-flex align-items-center gap-1">
-                                {/* <i className="bi bi-clock icon-14"></i> */}
                                 <img
                                   src={end_icon}
                                   alt="end_icon"
@@ -784,7 +780,6 @@ const ExtensionsRequests = () => {
           </>
         )}
 
-        {/* ================= PAGINATION ================= */}
         {totalPages > 1 && (
           <Row className="mt-4 mb-4">
             <Col className="d-flex justify-content-end align-items-center gap-3">

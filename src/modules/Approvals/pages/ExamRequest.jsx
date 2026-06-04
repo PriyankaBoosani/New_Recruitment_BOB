@@ -203,8 +203,6 @@ const ExamRequest = () => {
           </Col>
         </Row>
 
-        {/* ================= FILTER ================= */}
-
         <Row className="mb-3 align-items-end filters-row border rounded p-3 bulk-actions">
           <Col xs={12} md={4}>
             <div className="field-label mb-2">Requisition</div>

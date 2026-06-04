@@ -23,11 +23,8 @@ const CandidatePreviewPage = ({ onHide }) => {
   //  DEFINE STATE FIRST
   const state = location.state || {};
   const activeTab = state?.activeTab;
-
   const isCandidateWorkflow = activeTab === "CANDIDATE_POOL";
-
   const user = useSelector((state) => state.user.user);
-
   const role = user?.role ? user.role.toLowerCase() : ""; // const isZonalHr = role === "zonal_hr";
 
   const isFromCompensationPool = state?.fromCompensationPool;
@@ -128,9 +125,6 @@ const CandidatePreviewPage = ({ onHide }) => {
     fetchData();
   }, [candidateId, positionId]);
 
-  /* =======================
-     RENDER
-  ======================= */
   return (
     <div className="bob-preview-page container-fluid p-4">
       {/* Close Button */}

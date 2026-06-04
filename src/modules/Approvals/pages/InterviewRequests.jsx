@@ -318,8 +318,6 @@ const InterviewRequests = () => {
                           )
                         }
                       >
-                        {/* <span className="depname">{pos.positionName}</span> */}
-
                         <div className="d-flex align-items-center gap-2">
                           <span className="depname">{pos.positionName}</span>
 

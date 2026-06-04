@@ -263,21 +263,32 @@ const AssignPositionsPage = ({ refreshPanels }) => {
               <label>{t("end_date_label")}</label>
               <input
                 type="date"
-                min={committee.startDate || today}
+                min={
+                committee.startDate
+                  ? (committee.startDate > today ? committee.startDate : today)
+                  : today
+                }
                 value={committee.endDate}
                 disabled={shouldDisableFields}
                 onChange={(e) => {
-                  const value = e.target.value;
+                    const value = e.target.value;
 
-                  const minEndDate = committee.startDate || today;
+                    const minEndDate =
+                      committee.startDate && committee.startDate > today
+                        ? committee.startDate
+                        : today;
 
-                  if (value < minEndDate) {
-                    toast.error("End date cannot be before start date");
-                    return;
-                  }
+                    if (value < minEndDate) {
+                      toast.error(
+                        committee.startDate > today
+                          ? "End date cannot be before start date"
+                          : "Past dates are not allowed"
+                      );
+                      return;
+                    }
 
-                  updateCommitteeDate(type, committee.id, "endDate", value);
-                }}
+                    updateCommitteeDate(type, committee.id, "endDate", value);
+                  }}
               />
               {errors.endDate && (
                 <div className="field-error">{t(errors.endDate)}</div>

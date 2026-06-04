@@ -378,10 +378,7 @@ const CommitteeRequests = () => {
               }}
             />
           </Col>
-
-          {/* Status (right aligned like screenshot) */}
           <Col xs={12} md={2} className="ms-auto">
-            {/* <div className="filter-label">Status</div> */}
             <Form.Select
               className="status-select"
               value={status}
