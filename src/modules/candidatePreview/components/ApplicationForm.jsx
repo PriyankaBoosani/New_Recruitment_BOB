@@ -54,6 +54,7 @@ const ApplicationForm = ({
   isLocationWise,
   selectedDate,
   zonalVerificationStatus,
+  examQualificationStatus,
   zonalSubmitBeforeDate,
   zonalHrComments,
   isFromInterview,
@@ -104,6 +105,11 @@ const ApplicationForm = ({
 
     return "YES";
   };
+
+
+
+  const isExamDisqualified =
+  examQualificationStatus === "DISQUALIFIED";
 
   useEffect(() => {
     if (!candidate) return;
@@ -2432,12 +2438,17 @@ const ApplicationForm = ({
                         className="ms-1"
                       />
                     </span>
-                    <button
-                      className="btn-submit-orange"
-                      onClick={handleFinalSubmit}
-                    >
-                      {t("submit")}
-                    </button>
+                              <button
+              className="btn-submit-orange"
+              onClick={handleFinalSubmit}
+              disabled={isExamDisqualified}
+              style={{
+                opacity: isExamDisqualified ? 0.5 : 1,
+                cursor: isExamDisqualified ? "not-allowed" : "pointer",
+              }}
+            >
+              {t("submit")}
+            </button>
                   </div>
                 )}
               </div>

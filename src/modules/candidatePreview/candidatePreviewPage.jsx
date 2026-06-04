@@ -250,6 +250,7 @@ const CandidatePreviewPage = ({ onHide }) => {
               zonalHrComments={candidate?.zonalHrComments}
               isLocationWise={isLocationWise}
               candidateStatus={candidate?.status}
+              examQualificationStatus={candidate?.examQualificationStatus}
               isFromInterview={isFromInterview}
               isFromCompensationPool={isFromCompensationPool}
               page={state.page}

@@ -258,6 +258,11 @@ export default function CandidateScreening({ selectedJob }) {
     (id) => examConfigMap[id]
   );
 
+  const canAccessExamActions =
+  isRecruiter ||
+  (role === "committee_member" &&
+    privileges?.["Candidate Pool"] === true);
+
   useEffect(() => {
     if (selectedPositionId?.length) {
       fetchExamConfigByPositions(selectedPositionId);
@@ -813,6 +818,7 @@ useEffect(() => {
       experienceMonths: c.totalMonths || 0,
       status: formatStatus(c.candidateApplications.applicationStatus),
       location: stateMap[c.stateId] || "-",
+       state: stateMap[c.stateId] || "-", // NEW
       stateId: c.stateId,
       categoryId: c.categoryId,
       categoryName: categoryMap[c.categoryId] || "-",
@@ -2300,32 +2306,32 @@ useEffect(() => {
             <div className="col-md-6 col-12">
               <div className="d-flex justify-content-md-end align-items-end gap-2 h-100">
                 {/* IMPORT BUTTON */}
-                {hasExamConfiguration && (
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    onClick={() => setShowImportCandidatesModal(true)}
-                    className="d-flex align-items-center gap-2 bulk-import-btn"
-                    style={{
-                      height: "38px",
-                    }}
-                  >
-                    <FiUpload />
-                    Update Canidates Score
-                 
-                  </Button>
-                )}
-                {hasExamConfiguration && (
-                  <button
-                    className="btn blue-color blue-border fs-14"
-                    onClick={handleOpenExaminationScore}
-                    style={{
-                      height: "38px",
-                    }}
-                  >
-                    Positions Summary
-                  </button>
-                )}
+        {canAccessExamActions && hasExamConfiguration && (
+  <Button
+    variant="outline-primary"
+    size="sm"
+    onClick={() => setShowImportCandidatesModal(true)}
+    className="d-flex align-items-center gap-2 bulk-import-btn"
+    style={{
+      height: "38px",
+    }}
+  >
+    <FiUpload />
+    Update Canidates Score
+  </Button>
+)}
+
+{canAccessExamActions && hasExamConfiguration && (
+  <button
+    className="btn blue-color blue-border fs-14"
+    onClick={handleOpenExaminationScore}
+    style={{
+      height: "38px",
+    }}
+  >
+    Positions Summary
+  </button>
+)}
               </div>
             </div>
           </div>
