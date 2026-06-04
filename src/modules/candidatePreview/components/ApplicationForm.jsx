@@ -393,7 +393,6 @@ const ApplicationForm = ({
       console.error(err);
     }
   };
-
   const data = previewData || {
     personalDetails: {},
     experienceSummary: {},
@@ -1415,6 +1414,13 @@ const ApplicationForm = ({
     }
   }, [disableYesOption]);
 
+    const parseDate = (dateStr) => {
+    if (!dateStr) return new Date(0);
+
+    const [day, month, year] = dateStr.split("-");
+    return new Date(year, month - 1, day);
+  };
+
   return (
     <>
       <Accordion
@@ -1571,13 +1577,6 @@ const ApplicationForm = ({
                     </td>
                   </tr>
 
-                  {/* <tr>
-                      <td className="fw-med">Age (as on cut-off date)</td>
-                      <td className="fw-reg" colSpan={2}>{data.personalDetails.age || "-"}</td>
-                      <td className="fw-med"></td>
-                      <td className="fw-reg" colSpan={2}></td>
-                    </tr> */}
-
                   <tr>
                     <td className="fw-med">{t("marital_status")}</td>
                     <td className="fw-reg" colSpan={2}>
@@ -1697,21 +1696,6 @@ const ApplicationForm = ({
                     </td>
                   </tr>
 
-                  {/* {data.personalDetails.disciplinaryAction === "Yes" && (
-                      <tr>
-                        <td className="fw-med">Details of disciplinary proceedings, if Any</td>
-                        <td className="fw-reg" colSpan={5}>{data.personalDetails.disciplinaryDetails || "N/A"}</td>
-                      </tr>
-
-                      
-                    )} */}
-
-                  {/* <tr>
-                    <td className="fw-med">{t("disciplinary_details")}</td>
-                    <td className="fw-reg" colSpan={5}>
-                      {data.personalDetails.disciplinaryDetails}
-                    </td>
-                  </tr> */}
                 </tbody>
               </table>
             </div>
@@ -1739,11 +1723,12 @@ const ApplicationForm = ({
                 </thead>
 
                 <tbody>
+                  
                   {/* {(data.education || []).map((edu, index) => ( */}
                   {(data.education || [])
                     .sort(
-                      (a, b) => new Date(b.startDate) - new Date(a.startDate)
-                    )
+                        (a, b) => parseDate(b.startDate) - parseDate(a.startDate)
+                      )
                     .map((edu, index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>

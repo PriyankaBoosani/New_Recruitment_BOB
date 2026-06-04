@@ -154,9 +154,7 @@ const ScheduleInterviewModal = ({
               {t("candidateWorkflow:schedule_interview_selected_candidates")}
             </p>
           </div>
-          {/* <div>
-					<button type="button" class="btn-close" aria-label="Close"></button>
-				</div> */}
+          
         </Modal.Header>
 
         <Modal.Body>
