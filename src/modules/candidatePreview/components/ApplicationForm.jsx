@@ -1100,7 +1100,6 @@ const ApplicationForm = ({
       }));
     }
   }, [
-    screeningForm.isWorkCriteriaMet,
     screeningForm.isAgeCriteriaMet,
     screeningForm.isEducationCriteriaMet,
   ]);
@@ -1727,7 +1726,7 @@ const ApplicationForm = ({
                   {/* {(data.education || []).map((edu, index) => ( */}
                   {(data.education || [])
                     .sort(
-                        (a, b) => parseDate(b.startDate) - parseDate(a.startDate)
+                        (a, b) => parseDate(b.endDate) - parseDate(a.endDate)
                       )
                     .map((edu, index) => (
                       <tr key={index}>
@@ -2124,30 +2123,6 @@ const ApplicationForm = ({
                     )}
                   </div>
 
-                  {/* <div style={{ width: "220px" }}>
-                  <label className="mb-1" style={{ color: '#162B75', fontSize: '0.75rem', fontWeight: 500 }}>
-                    Criteria
-                  </label>
-
-                  <select
-                    className="form-select"
-                    value={row.criteriaType}
-                    onChange={(e) =>
-                      handleOtherDocumentChange(
-                        row.id,
-                        "criteriaType",
-                        e.target.value
-                      )
-                    }
-                    style={{ minHeight: 'auto', padding: '0.4rem 0.8rem' }}
-                  >
-                    <option value="">Select</option>
-                    <option value="Age">Age</option>
-                    <option value="Work">Work</option>
-                    <option value="Education">Education</option>
-                  </select>
-                </div> */}
-
                   <button
                     type="button"
                     className="btn btn-link p-0 mb-1"
@@ -2181,7 +2156,7 @@ const ApplicationForm = ({
                     {CRITERIA_OPTIONS.map((option) => (
                       <label
                         key={option}
-                        className={`radio-label ${isOptionDisabled(option, "WORK") ? "disabled" : ""}`}
+                        className={`radio-label`}
                       >
                         <input
                           type="radio"
@@ -2190,7 +2165,7 @@ const ApplicationForm = ({
                           onChange={() =>
                             handleRadioChange("isWorkCriteriaMet", option)
                           }
-                          disabled={isOptionDisabled(option, "WORK")}
+                          // disabled={isOptionDisabled(option, "WORK")}
                         />
                         <span className="custom-radio"></span>
                         {t(option)}

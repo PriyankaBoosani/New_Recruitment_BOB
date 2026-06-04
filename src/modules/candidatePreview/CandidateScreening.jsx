@@ -490,15 +490,6 @@ export default function CandidateScreening({ selectedJob }) {
   ];
   const privileges = useSelector((state) => state.user.privileges || {});
 
-
-
-
-  console.log("Privileges", privileges);
-console.log("Candidate Pool", privileges["Candidate Pool"]);
-console.log("Compensation Pool", privileges["Compensation Pool"]);
-
-
-
   const hasPrivilege = (key) => {
     return privileges?.[key] === true;
   };

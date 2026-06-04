@@ -691,11 +691,7 @@ export default function AddExaminationCutoffModal({
         },
       };
 
-      console.log("SAVE PAYLOAD", payload);
-
       const response = await jobPositionApiService.saveConfiguration(payload);
-
-      console.log("SAVE RESPONSE", response);
 
       /* SUCCESS */
 

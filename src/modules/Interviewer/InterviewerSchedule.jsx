@@ -505,10 +505,6 @@ export default function InterviewerSchedule() {
         size="lg"
         centered
       >
-        {/* <Modal.Header closeButton>
-      <Modal.Title>{t("import_data")}</Modal.Title>
-    </Modal.Header> */}
-
         <Modal.Header closeButton>
           <Modal.Title className="header-title">{t("import_data")}</Modal.Title>
         </Modal.Header>

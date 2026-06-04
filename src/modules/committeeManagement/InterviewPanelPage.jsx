@@ -161,13 +161,6 @@ const InterviewPanelPage = () => {
             </div>
           )}
         </div>
-
-        {/* {activeTab === "ASSIGN" && (
-          <div className="assign-positions-container">
-            <AssignPositionsPage />
-          </div>
-        )} */}
-
         <DeleteConfirmationModal
           show={showDeleteModal}
           onClose={() => {

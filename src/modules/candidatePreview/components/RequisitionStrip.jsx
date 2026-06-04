@@ -219,30 +219,6 @@ const RequisitionStrip = ({
               "—"}
           </div>
         </div>
-
-        {/* ===== BUTTONS ===== */}
-        {/* <div className="d-flex flex-row gap-2 mt-2 mt-md-0 ms-md-auto">
-
-          <button
-            className="btn btn-sm blue-border blue-color px-3"
-            onClick={handleViewPosition}
-            disabled={loading || !position}
-            style={{ backgroundColor: "rgba(66, 87, 159, 0.12)" }}
-          >
-            {t("candidateWorkflow:view_position")}
-          </button>
-          {isSaveBtn && (
-            <button
-              className={`save-btn ${isSaveEnabled ? "unsaved" : "saved"}`}
-              disabled={!isSaveEnabled}
-              onClick={onSave}
-            >
-              {t("common:save")}
-            </button>
-          )}
-
-        </div> */}
-
         <div className="d-flex flex-row gap-2 mt-2 mt-md-0 ms-md-auto">
           {showImportBtn && (
             <button

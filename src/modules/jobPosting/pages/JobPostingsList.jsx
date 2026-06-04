@@ -126,14 +126,15 @@ const JobPostingsList = () => {
 
     await deletePosition(
       selectedPosition.requisitionId,
-      selectedPosition.positionId
+      selectedPosition.positionId,
+      selectedPosition.isDraft
     );
     // fetchPositions(selectedPosition.requisitionId);
     fetchPositions(
-      selectedReq.isDraft
-        ? selectedReq.parentRequisitionId
+      selectedPosition.isDraft
+        ? selectedPosition.parentRequisitionId
         : selectedPosition.requisitionId,
-      selectedReq.isDraft
+      selectedPosition.isDraft
     );
     refetch();
     setShowDeletePosModal(false);
@@ -566,6 +567,10 @@ const JobPostingsList = () => {
         // const positions = positionsByReq[req.id] || [];
         const key = `${req.isDraft ? req.parentRequisitionId : req.id}_${req.isDraft}`;
         const positions = positionsByReq[key] || [];
+        const hasMandatoryEducation =
+          positions &&
+          positions.length > 0 &&
+          positions.every((pos) => pos.mandatoryEducation?.trim());
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -581,10 +586,6 @@ const JobPostingsList = () => {
           req.status === "NEW" ||
           req.status === "DRAFT" ||
           isApprovedAndExpired;
-
-        const hasMandatoryEducation = positions.every((pos) =>
-          pos.mandatoryEducation?.trim()
-        );
 
         const isRejected =
           req.status === "L1_REJECTED" || req.status === "L2_REJECTED";
@@ -666,7 +667,10 @@ const JobPostingsList = () => {
                       type="checkbox"
                       className="me-2 mt-2"
                       checked={selectedReqIds.has(req.id)}
-                      disabled={!isCheckboxEnabled || !hasMandatoryEducation}
+                      disabled={
+                        !isCheckboxEnabled ||
+                        (positions && !hasMandatoryEducation)
+                      }
                       onClick={(e) => e.stopPropagation()}
                       onChange={(e) => {
                         if (!isCheckboxEnabled) return;
@@ -1061,6 +1065,9 @@ const JobPostingsList = () => {
                                           requisitionId: req.id,
                                           positionId: pos.positionId,
                                           positionName: pos.positionName,
+                                          isDraft: req.isDraft,
+                                          parentRequisitionId:
+                                            req.parentRequisitionId,
                                         });
                                         setShowDeletePosModal(true);
                                       }}
