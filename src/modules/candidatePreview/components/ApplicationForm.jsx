@@ -1727,7 +1727,7 @@ const ApplicationForm = ({
                   {/* {(data.education || []).map((edu, index) => ( */}
                   {(data.education || [])
                     .sort(
-                        (a, b) => parseDate(b.startDate) - parseDate(a.startDate)
+                        (a, b) => parseDate(b.endDate) - parseDate(a.endDate)
                       )
                     .map((edu, index) => (
                       <tr key={index}>
@@ -2123,30 +2123,6 @@ const ApplicationForm = ({
                       </small>
                     )}
                   </div>
-
-                  {/* <div style={{ width: "220px" }}>
-                  <label className="mb-1" style={{ color: '#162B75', fontSize: '0.75rem', fontWeight: 500 }}>
-                    Criteria
-                  </label>
-
-                  <select
-                    className="form-select"
-                    value={row.criteriaType}
-                    onChange={(e) =>
-                      handleOtherDocumentChange(
-                        row.id,
-                        "criteriaType",
-                        e.target.value
-                      )
-                    }
-                    style={{ minHeight: 'auto', padding: '0.4rem 0.8rem' }}
-                  >
-                    <option value="">Select</option>
-                    <option value="Age">Age</option>
-                    <option value="Work">Work</option>
-                    <option value="Education">Education</option>
-                  </select>
-                </div> */}
 
                   <button
                     type="button"

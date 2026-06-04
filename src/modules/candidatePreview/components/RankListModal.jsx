@@ -58,14 +58,9 @@ const RankListModal = ({
       const response =
         await jobPositionApiService.downloadAssignLocationExcel(positionId);
 
-      console.log("DOWNLOAD RESPONSE =>", response);
-      console.log("TYPE =>", response?.type);
-
       // Error response
       if (response instanceof Blob && response.type === "application/json") {
         const text = await response.text();
-
-        console.log("JSON RESPONSE =>", text);
 
         const json = JSON.parse(text);
 
@@ -114,8 +109,6 @@ const RankListModal = ({
 
       const res = await jobPositionApiService.uploadRanksExcel(file);
 
-      console.log("UPLOAD RESPONSE =>", res);
-
       if (res?.success === true) {
         toast.success(
           res?.message ||
@@ -144,8 +137,6 @@ const RankListModal = ({
       console.error("UPLOAD ERROR =>", err);
 
       const errorData = err?.response?.data;
-
-      console.log("ERROR RESPONSE =>", errorData);
 
       toast.error(
         errorData?.message ||

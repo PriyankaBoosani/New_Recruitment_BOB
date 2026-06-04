@@ -45,11 +45,7 @@ const InterviewPanelTable = ({
           />
 
           <div className="table-filters">
-            {/* <button className="filter-button">
-              <FiFilter className="filter-icon" />
-              <span>Filters</span>
-            </button> */}
-
+          
             <select
               className="table-filter-select"
               value={search.committeeName || ""}
