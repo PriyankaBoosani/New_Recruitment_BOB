@@ -19,7 +19,7 @@ export default function useInterviewPool({
   const [centreMap, setCentreMap] = useState({});
   const [panelMap, setPanelMap] = useState({});
 
-  // 🔹 Fetch interview centres only once
+  // 🔹 Fetch interview centres/panels when interview pool is active
   useEffect(() => {
     const fetchMasters = async () => {
       let centreRes, panelRes;
@@ -53,8 +53,11 @@ export default function useInterviewPool({
       }
     };
 
+    // Only fetch masters when the hook is enabled and there are position IDs
+    if (!enabled || !(positionId && positionId.length)) return;
+
     fetchMasters();
-  }, []);
+  }, [enabled, positionId]);
 
   const fetchInterviewCandidates = useCallback(async () => {
     if (!enabled || !positionId.length) {
