@@ -394,7 +394,6 @@ const JobPostingsList = () => {
       {/* ================= FILTERS ================= */}
       <Row className="filters-row g-2 mb-3">
         <Col xs={12} md={2}>
-         
           <Form.Select
             value={year}
             className="yearfon"
@@ -583,6 +582,10 @@ const JobPostingsList = () => {
           req.status === "DRAFT" ||
           isApprovedAndExpired;
 
+        const hasMandatoryEducation = positions.every((pos) =>
+          pos.mandatoryEducation?.trim()
+        );
+
         const isRejected =
           req.status === "L1_REJECTED" || req.status === "L2_REJECTED";
 
@@ -613,7 +616,7 @@ const JobPostingsList = () => {
                   <Badge bg="light" text="primary" className="req-id">
                     {req.requisitionId}
                   </Badge>
-                  
+
                   <Badge bg={req.statusType} className="ms-2">
                     {formatStatusLabel(req.status)}
                   </Badge>
@@ -663,7 +666,7 @@ const JobPostingsList = () => {
                       type="checkbox"
                       className="me-2 mt-2"
                       checked={selectedReqIds.has(req.id)}
-                      disabled={!isCheckboxEnabled}
+                      disabled={!isCheckboxEnabled || !hasMandatoryEducation}
                       onClick={(e) => e.stopPropagation()}
                       onChange={(e) => {
                         if (!isCheckboxEnabled) return;
