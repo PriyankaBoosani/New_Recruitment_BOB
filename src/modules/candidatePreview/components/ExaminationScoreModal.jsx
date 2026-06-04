@@ -258,7 +258,11 @@ const ExaminationScoreModal = ({
 
                   {/* EDIT BUTTON */}
 
-                  {hasConfig && !isFinalized && (
+                {hasConfig &&
+  !isFinalized &&
+  ["PENDING", "L1_REJECTED", "L2_REJECTED", "APPROVED"].includes(
+    item.status
+  ) && (
                     <button
                       className="btn btn-sm"
                       style={{
@@ -282,7 +286,8 @@ const ExaminationScoreModal = ({
                   )}
                   {hasConfig &&
                     hasQualifiedWithoutRelaxation &&
-                    !isFinalized && (
+                    !isFinalized && 
+                        item.status === "APPROVED" && (
                       <button
                         className="btn rank-finalize-btn"
                         onClick={async (e) => {

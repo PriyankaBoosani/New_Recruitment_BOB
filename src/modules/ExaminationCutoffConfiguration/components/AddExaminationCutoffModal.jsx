@@ -517,6 +517,59 @@ export default function AddExaminationCutoffModal({
         /* SC/ST */
       }
 
+
+
+
+            /* CATEGORY CUTOFF VALIDATIONS */
+
+      for (let i = 0; i < formData.sections.length; i++) {
+        const section = formData.sections[i];
+
+    if (isStateWisePosition) {
+  for (const stateItem of stateWiseDistributions) {
+    for (const cat of reservationCategories) {
+      const cutoff =
+        section?.stateCutoffs?.[stateItem.stateId]?.[
+          cat.reservationCategoriesId
+        ];
+
+      if (
+        cutoff === "" ||
+        cutoff === undefined ||
+        cutoff === null ||
+        Number(cutoff) <= 0
+      ) {
+        toast.error(
+          `${cat.categoryCode} Cutoff % must be greater than 0 for Section ${
+            i + 1
+          } (${getStateName(stateItem.stateId)})`
+        );
+        return;
+      }
+    }
+  }
+} else {
+  for (const cat of reservationCategories) {
+    const cutoff =
+      section?.nationalCutoffs?.[cat.reservationCategoriesId];
+
+    if (
+      cutoff === "" ||
+      cutoff === undefined ||
+      cutoff === null ||
+      Number(cutoff) <= 0
+    ) {
+      toast.error(
+        `${cat.categoryCode} Cutoff % must be greater than 0 for Section ${
+          i + 1
+        }`
+      );
+      return;
+    }
+  }
+}
+      }
+
       /* TOTAL SECTION MARKS
          SHOULD MATCH TOTAL MARKS */
 
@@ -647,6 +700,10 @@ export default function AddExaminationCutoffModal({
       /* SUCCESS */
 
       if (response?.success === true) {
+
+        await jobPositionApiService.finalizeExamConfiguration(
+  selectedPosition.map((item) => item.positionId)
+);
         toast.success(
           response?.message || "Configuration submitted successfully"
         );

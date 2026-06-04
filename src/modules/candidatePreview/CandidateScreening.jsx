@@ -796,6 +796,14 @@ useEffect(() => {
       name: c.fullName,
       rank: c.rank,
 
+
+
+        totalMarksObtained: c.totalMarksObtained ?? "-",
+
+  examQualificationStatus:
+    c.examQualificationStatus || "-",
+
+
       educationScore: c?.candidateRankingResults?.educationScore ?? "-",
 
       experienceScore: c?.candidateRankingResults?.experienceScore ?? "-",
@@ -1247,9 +1255,27 @@ useEffect(() => {
     selectedCandidateIds.includes(c.id)
   );
 
+  // const canScheduleInterview =
+  //   selectedCandidates.length > 0 &&
+  //   selectedCandidates.every((c) => c.status === "Shortlisted");
+
+
+
   const canScheduleInterview =
-    selectedCandidates.length > 0 &&
-    selectedCandidates.every((c) => c.status === "Shortlisted");
+  selectedCandidates.length > 0 &&
+  selectedCandidates.every((c) => {
+    if (!hasExamConfiguration) {
+      return c.status === "Shortlisted";
+    }
+
+    return (
+      c.status === "Shortlisted" &&
+      [
+        "QUALIFIED",
+        "QUALIFIED_UNDER_UR",
+      ].includes(c.examQualificationStatus)
+    );
+  });
 
   const canScheduleMultiPositionInterview =
     canScheduleInterview && selectedPositionId?.length > 0;
@@ -1966,6 +1992,8 @@ useEffect(() => {
         return;
       }
 
+    
+
       // SUMMARY API
       const res =
         await jobPositionApiService.getExaminationSummary(selectedPositionId);
@@ -1975,6 +2003,8 @@ useEffect(() => {
 
         return;
       }
+
+         await fetchCandidates();
 
       const summaryData = res?.data || [];
 
@@ -3340,6 +3370,7 @@ useEffect(() => {
             onSuccess={() => {
               console.log("IMPORT SUCCESS");
             }}
+               fetchCandidates={fetchCandidates}
           />
         </Modal.Body>
       </Modal>

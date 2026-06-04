@@ -11,6 +11,7 @@ const CandidateImportModal = ({
   onClose = () => {},
   onSuccess = () => {},
   positionIds = [],
+  fetchCandidates = () => {},
 }) => {
   
 
@@ -65,7 +66,7 @@ const CandidateImportModal = ({
 
     if (result.success) {
       onSuccess();
-
+await fetchCandidates();
       onClose();
     } else {
       setError(result.error);

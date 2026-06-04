@@ -263,6 +263,15 @@ export default function CandidatePool({
 
               <th className="fs-14 fw-normal py-3">{t("common:category")}</th>
 
+
+              <th className="fs-14 fw-normal py-3">
+  Total Exam Marks 
+</th>
+
+<th className="fs-14 fw-normal py-3">
+  Exam Qualification Status
+</th>
+
               <th className="text-center fs-14 fw-normal py-3">
                 {t("common:actions")}
               </th>
@@ -374,6 +383,19 @@ export default function CandidatePool({
                   <td className="align-content-center">
                     <p className="fw-normal fs-14 mb-0">{c.categoryName}</p>
                   </td>
+
+
+                          <td className="align-content-center">
+          <p className="fw-normal fs-14 mb-0">
+            {c.totalMarksObtained ?? "-"}
+          </p>
+        </td>
+
+        <td className="align-content-center">
+          <p className="fw-normal fs-14 mb-0">
+            {c.examQualificationStatus || "-"}
+          </p>
+        </td>
 
                   <td className="text-center align-content-center">
                     <OverlayTrigger
