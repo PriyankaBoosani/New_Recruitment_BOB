@@ -187,6 +187,11 @@ export default function AddExaminationCutoffModal({
     }
   }, [editData, show]);
 
+  useEffect(() => {
+    setDecisionComments("");
+    setCommentError("");
+  }, [editData?.examConfigId]);
+
   const fetchReservationCategories = async () => {
     try {
       const response = await masterApiService.getAllCategories();
@@ -239,7 +244,6 @@ export default function AddExaminationCutoffModal({
         setStateWiseDistributions(distributions);
 
         setIsStateWisePosition(distributions.length > 0);
-
       } catch (err) {
         console.error("Failed to fetch position details", err);
       }
@@ -1094,7 +1098,6 @@ export default function AddExaminationCutoffModal({
                                       />
                                     </td>
                                   ))}
-
                                 </tr>
                               </tbody>
                             </table>

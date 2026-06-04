@@ -69,6 +69,7 @@ const ExamRequest = () => {
 
     fetchUsers();
   }, [fetchRequisitions, fetchUsers]);
+
   const refreshExamConfigs = async () => {
     if (!selectedRequisition?.id) return;
 
@@ -316,7 +317,7 @@ const ExamRequest = () => {
           showApprovalActions={true}
           refreshExamConfigs={refreshExamConfigs}
           selectedRequisition={selectedRequisition}
-          selectedPosition={viewPosition ? [viewPosition] : []}
+          selectedPosition={viewPosition?.raw ? [viewPosition.raw] : []}
         />
 
         <ApprovalHistoryModal

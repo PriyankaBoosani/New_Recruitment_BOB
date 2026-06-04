@@ -21,6 +21,8 @@
   "failed_to_submit": "Failed to submit",
   "submitted_for_approval_successfully": "Submitted for approval successfully",
   "submitted_for_rejection_successfully": "Submitted for rejection successfully",
+    "approved_successfully": "Approved successfully",
+  "rejected_successfully": "Rejected successfully",
   "conversation_thread_not_found": "Conversation thread id not found",
   "l1_pending": "L1 Pending",
   "l2_pending": "L2 Pending",

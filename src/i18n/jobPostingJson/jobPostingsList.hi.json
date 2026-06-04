@@ -66,6 +66,7 @@
   "reject": "अस्वीकृत करें",
   "approved_successfully": "सफलतापूर्वक स्वीकृत",
   "failed_to_approve": "स्वीकृत करने में विफल",
+  "failed_to_reject": "अस्वीकृत करने में विफल",
   "rejected_successfully": "सफलतापूर्वक अस्वीकृत",
   "approved_failed": "स्वीकृत करने में विफल"
 }

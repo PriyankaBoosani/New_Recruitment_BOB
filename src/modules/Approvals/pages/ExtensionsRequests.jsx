@@ -327,8 +327,8 @@ const ExtensionsRequests = () => {
 
       toast.success(
         actionType === "approve"
-          ? t("extensionsRequests:submitted_for_approval_successfully")
-          : t("extensionsRequests:submitted_for_rejection_successfully")
+          ? t("extensionsRequests:approved_successfully")
+          : t("extensionsRequests:rejected_successfully")
       );
 
       setSelectedReqIds(new Set());

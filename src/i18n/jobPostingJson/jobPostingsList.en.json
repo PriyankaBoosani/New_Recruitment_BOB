@@ -67,6 +67,8 @@
   "reject": "Reject",
   "approved_successfully": "Approved successfully",
   "failed_to_approve": "Failed to approve",
+  "failed_to_reject": "Failed to reject",
   "rejected_successfully": "Rejected successfully",
   "approved_failed": "Approved failed"
+  
 }

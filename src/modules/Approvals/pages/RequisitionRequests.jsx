@@ -49,7 +49,6 @@ const RequisitionRequests = () => {
   const [selectedHistoryReq, setSelectedHistoryReq] = useState(null);
 
   const handleApprovalAction = async (comment) => {
-    // const ids = Array.from(selectedReqIds);
     const ids = [
       ...new Set(
         requisitions
@@ -57,30 +56,51 @@ const RequisitionRequests = () => {
           .map((req) => (req.isDraft ? req.parentRequisitionId : req.id))
       ),
     ];
+
     if (ids.length === 0) return;
+
+    const isApprove = actionType === "approve";
 
     try {
       let result;
 
-      if (actionType === "approve") {
+      if (isApprove) {
         result = await approve(ids, comment);
-      } else if (actionType === "reject") {
+      } else {
         result = await reject(ids, comment);
       }
 
-      // 🔥 THIS IS THE IMPORTANT CHECK
       if (!result || result.success !== true) {
-        toast.error(t("jobPostingsList:failed_to_approve"));
+        toast.error(
+          t(
+            isApprove
+              ? "jobPostingsList:failed_to_approve"
+              : "jobPostingsList:failed_to_reject"
+          )
+        );
         return;
       }
 
-      toast.success(t("jobPostingsList:approved_successfully"));
+      toast.success(
+        t(
+          isApprove
+            ? "jobPostingsList:approved_successfully"
+            : "jobPostingsList:rejected_successfully"
+        )
+      );
 
       setShowCommentModal(false);
       setSelectedReqIds(new Set());
     } catch (error) {
       console.error("Approval error:", error);
-      toast.error(t("jobPostingsList:approved_failed"));
+
+      toast.error(
+        t(
+          isApprove
+            ? "jobPostingsList:failed_to_approve"
+            : "jobPostingsList:failed_to_reject"
+        )
+      );
     }
   };
   const {
