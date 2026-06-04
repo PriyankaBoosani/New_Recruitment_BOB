@@ -25,58 +25,7 @@ export default function ExaminationCutoffTable({
           Position Wise Cutoff Configuration
         </h5>
 
-        <div className="d-flex align-items-center gap-2">
-          {/* STATUS FILTER */}
-
-          <button
-            className="btn btn-light border"
-            style={{
-              height: "38px",
-              minWidth: "100px",
-            }}
-            onClick={() => {
-              setStatusFilter([]);
-            }}
-          >
-            Clear All
-          </button>
-
-          <select
-            className="form-select"
-            style={{
-              width: "180px",
-              height: "38px",
-            }}
-            value={statusFilter[0] || ""}
-            onChange={(e) => {
-              const value = e.target.value;
-
-              if (!value) {
-                setStatusFilter([]);
-
-                return;
-              }
-
-              setStatusFilter([value]);
-            }}
-          >
-            <option value="">All Status</option>
-
-            <option value="PENDING">Pending</option>
-
-            <option value="L1_PENDING">L1 Pending</option>
-
-            <option value="L1_REJECTED">L1 Rejected</option>
-
-            <option value="L2_PENDING">L2 Pending</option>
-
-            <option value="L2_REJECTED">L2 Rejected</option>
-
-            <option value="APPROVED">Approved</option>
-          </select>
-
-          {/* CLEAR ALL */}
-        </div>
+      
       </div>
 
       {/* TABLE */}

@@ -798,7 +798,10 @@ useEffect(() => {
 
 
 
-        totalMarksObtained: c.totalMarksObtained ?? "-",
+      totalMarksObtained:
+  Number(c.totalMarksObtained) > 0
+    ? c.totalMarksObtained
+    : "-",
 
   examQualificationStatus:
     c.examQualificationStatus || "-",
