@@ -1100,7 +1100,6 @@ const ApplicationForm = ({
       }));
     }
   }, [
-    screeningForm.isWorkCriteriaMet,
     screeningForm.isAgeCriteriaMet,
     screeningForm.isEducationCriteriaMet,
   ]);
@@ -2157,7 +2156,7 @@ const ApplicationForm = ({
                     {CRITERIA_OPTIONS.map((option) => (
                       <label
                         key={option}
-                        className={`radio-label ${isOptionDisabled(option, "WORK") ? "disabled" : ""}`}
+                        className={`radio-label`}
                       >
                         <input
                           type="radio"
@@ -2166,7 +2165,7 @@ const ApplicationForm = ({
                           onChange={() =>
                             handleRadioChange("isWorkCriteriaMet", option)
                           }
-                          disabled={isOptionDisabled(option, "WORK")}
+                          // disabled={isOptionDisabled(option, "WORK")}
                         />
                         <span className="custom-radio"></span>
                         {t(option)}
