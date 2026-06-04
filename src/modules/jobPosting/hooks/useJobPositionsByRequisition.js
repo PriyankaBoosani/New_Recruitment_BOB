@@ -68,15 +68,15 @@ export const useJobPositionsByRequisition = () => {
   };
 
   // ✅ DELETE POSITION
-  const deletePosition = async (requisitionId, positionId) => {
+  const deletePosition = async (requisitionId, positionId, isDraft = false) => {
     try {
       await jobPositionApiService.deletePositionById(positionId);
 
+      const key = `${requisitionId}_${isDraft}`;
+
       setPositionsByReq((prev) => ({
         ...prev,
-        [requisitionId]: prev[requisitionId].filter(
-          (p) => p.positionId !== positionId
-        ),
+        [key]: (prev[key] || []).filter((p) => p.positionId !== positionId),
       }));
 
       toast.success(t("position_deleted_success"));
