@@ -262,9 +262,8 @@ export default function CandidateScreening({ selectedJob }) {
 
 
   const canAccessExamActions =
-  isRecruiter ||
-  (role === "committee_member" &&
-    privileges?.["Candidate Pool"] === true);
+  isRecruiter 
+ 
 
   useEffect(() => {
     if (selectedPositionId?.length) {
@@ -2308,31 +2307,31 @@ useEffect(() => {
             <div className="col-md-6 col-12">
               <div className="d-flex justify-content-md-end align-items-end gap-2 h-100">
                 {/* IMPORT BUTTON */}
-        {canAccessExamActions && hasExamConfiguration && (
-  <Button
-    variant="outline-primary"
-    size="sm"
-    onClick={() => setShowImportCandidatesModal(true)}
-    className="d-flex align-items-center gap-2 bulk-import-btn"
-    style={{
-      height: "38px",
-    }}
-  >
-    <FiUpload />
-    Update Canidates Score
-  </Button>
+      {activeTab === "CANDIDATE_POOL" &&
+  canAccessExamActions &&
+  hasExamConfiguration && (
+    <Button
+      variant="outline-primary"
+      size="sm"
+      onClick={() => setShowImportCandidatesModal(true)}
+      className="d-flex align-items-center gap-2 bulk-import-btn"
+      style={{ height: "38px" }}
+    >
+      <FiUpload />
+      Update Candidates Score
+    </Button>
 )}
 
-{canAccessExamActions && hasExamConfiguration && (
-  <button
-    className="btn blue-color blue-border fs-14"
-    onClick={handleOpenExaminationScore}
-    style={{
-      height: "38px",
-    }}
-  >
-    Positions Summary
-  </button>
+{activeTab === "CANDIDATE_POOL" &&
+  canAccessExamActions &&
+  hasExamConfiguration && (
+    <button
+      className="btn blue-color blue-border fs-14"
+      onClick={handleOpenExaminationScore}
+      style={{ height: "38px" }}
+    >
+      Positions Summary
+    </button>
 )}
               </div>
             </div>
