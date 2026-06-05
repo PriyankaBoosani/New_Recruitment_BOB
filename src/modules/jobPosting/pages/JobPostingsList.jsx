@@ -567,10 +567,6 @@ const JobPostingsList = () => {
         // const positions = positionsByReq[req.id] || [];
         const key = `${req.isDraft ? req.parentRequisitionId : req.id}_${req.isDraft}`;
         const positions = positionsByReq[key] || [];
-        const hasMandatoryEducation =
-          positions &&
-          positions.length > 0 &&
-          positions.every((pos) => pos.mandatoryEducation?.trim());
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -667,10 +663,7 @@ const JobPostingsList = () => {
                       type="checkbox"
                       className="me-2 mt-2"
                       checked={selectedReqIds.has(req.id)}
-                      disabled={
-                        !isCheckboxEnabled ||
-                        (positions && !hasMandatoryEducation)
-                      }
+                      disabled={!isCheckboxEnabled || req.hasDraftPositions}
                       onClick={(e) => e.stopPropagation()}
                       onChange={(e) => {
                         if (!isCheckboxEnabled) return;
