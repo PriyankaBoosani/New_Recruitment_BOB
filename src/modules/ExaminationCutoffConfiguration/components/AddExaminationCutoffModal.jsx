@@ -57,6 +57,14 @@ export default function AddExaminationCutoffModal({
     selectedWeightageSections: [],
   });
 
+
+  const disableSectionCount =
+  editData?.isFrozen === true &&
+  // ["PENDING", "L1_REJECTED", "L2_REJECTED", "APPROVED"].includes(|
+   [ "APPROVED"].includes(
+    editData?.status
+  );
+
   const [decisionComments, setDecisionComments] = useState("");
   const [commentError, setCommentError] = useState("");
 
@@ -419,6 +427,8 @@ if (existingSections.length > count) {
     editData?.numberOfSections || 0
   );
 
+  console.log("Original Section Count:", originalSectionCount);
+
   if (editData && count < originalSectionCount) {
     toast.warning(
       `Number of sections cannot be reduced below ${originalSectionCount}`
@@ -528,11 +538,11 @@ if (existingSections.length > count) {
 
         /* SECTION NAME */
 
-        if (!section.sectionName) {
-          toast.error(`Section ${i + 1} name is required`); 
-
-          return;
-        }
+      if (!section.sectionName?.trim()) {
+  toast.error(`Section ${i + 1} name is required`);
+  setLoading(false);
+  return;
+}
 
         /* SECTION TOTAL MARKS */
 
@@ -726,7 +736,7 @@ if (existingSections.length > count) {
 
       /* SUCCESS */
 
-      if (response?.success === true) {
+      if (response?.success === true && !fromCandidateScreening) {
 
         await jobPositionApiService.finalizeExamConfiguration(
   selectedPosition.map((item) => item.positionId)
@@ -874,28 +884,26 @@ if (existingSections.length > count) {
                 <span className="required-star">*</span>
               </Form.Label>
 
-              <Form.Control
-                type="number"
-                min={0}
-                disabled={viewOnly}
-                onKeyDown={preventInvalidNumberInput}
-                placeholder="e.g. 4"
-                value={formData.numberOfSections}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
+             <Form.Control
+  type="number"
+  min={0}
+  disabled={viewOnly || disableSectionCount}
+  onKeyDown={preventInvalidNumberInput}
+  placeholder="e.g. 4"
+  value={formData.numberOfSections}
+  onChange={(e) => {
+    const value = Number(e.target.value);
 
-                  if (value < 0) return;
+    if (value < 0) return;
 
-                  // LIMIT TO 5
-                  if (value > 5) {
-                    toast.warning("Maximum 5 sections allowed");
+    if (value > 5) {
+      toast.warning("Maximum 5 sections allowed");
+      return;
+    }
 
-                    return;
-                  }
-
-                  handleChange("numberOfSections", e.target.value);
-                }}
-              />
+    handleChange("numberOfSections", e.target.value);
+  }}
+/>
             </Form.Group>
           </Col>
           {!showApprovalActions && (

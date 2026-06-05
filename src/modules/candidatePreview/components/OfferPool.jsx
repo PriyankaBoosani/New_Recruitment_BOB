@@ -285,6 +285,13 @@ const OfferPool = ({
               >
                 {t("candidateWorkflow:wait_list")}
               </th>
+			  		  <th
+  className="fs-14 fw-normal py-3 border-top"
+  scope="col"
+  style={{ paddingLeft: "1.25rem" }}
+>
+  State
+</th>
               <th
                 className="fs-14 fw-normal py-3 border-top"
                 scope="col"
@@ -292,13 +299,7 @@ const OfferPool = ({
               >
                 {t("common:location")}
               </th>
-			  <th
-  className="fs-14 fw-normal py-3 border-top"
-  scope="col"
-  style={{ paddingLeft: "1.25rem" }}
->
-  State
-</th>
+	
               <th
                 className="fs-14 fw-normal py-3 border-top"
                 scope="col"
@@ -437,6 +438,14 @@ const OfferPool = ({
                       {c.waitList || "-"}
                     </p>
                   </td>
+				  		  <td
+  className="align-content-center"
+  style={{ paddingLeft: "1.25rem" }}
+>
+  <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+    {c.state || "-"}
+  </p>
+</td>
                   <td
                     className="align-content-center"
                     style={{ paddingLeft: "1.25rem" }}
@@ -445,14 +454,7 @@ const OfferPool = ({
                       {c.location || "-"}
                     </p>
                   </td>
-				  <td
-  className="align-content-center"
-  style={{ paddingLeft: "1.25rem" }}
->
-  <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-    {c.state || "-"}
-  </p>
-</td>
+		
                   <td
                     className="align-content-center"
                     style={{ paddingLeft: "1.25rem" }}

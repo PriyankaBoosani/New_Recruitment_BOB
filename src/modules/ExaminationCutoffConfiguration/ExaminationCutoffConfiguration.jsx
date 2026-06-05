@@ -14,6 +14,7 @@ import ExaminationCutoffTable from "./components/ExaminationCutoffTable";
 
 import AddExaminationCutoffModal from "./components/AddExaminationCutoffModal";
 import jobPositionApiService from "../jobPosting/services/jobPositionApiService";
+import { toast } from "react-toastify";
 
 export default function ExaminationCutoffConfiguration() {
   
@@ -27,6 +28,8 @@ export default function ExaminationCutoffConfiguration() {
 
   const [requisitions, setRequisitions] = useState([]);
 
+  const [canAddConfiguration, setCanAddConfiguration] = useState(true);
+
   const [positions, setPositions] = useState([]);
 
   const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
@@ -39,8 +42,8 @@ export default function ExaminationCutoffConfiguration() {
 
   const [loadingPositions, setLoadingPositions] = useState(false);
   const [configurations, setConfigurations] = useState([]);
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+
+
 
   useEffect(() => {
     fetchRequisitions();
@@ -152,15 +155,65 @@ export default function ExaminationCutoffConfiguration() {
     fetchPositions(reqId);
   };
 
+
+
+const validateExamConfiguration = async (
+  positionId,
+  hasConfiguration
+) => {
+  try {
+    const res =
+      await jobPositionApiService.validateExamConfiguration(positionId);
+
+    const isAllowed = res?.data === false;
+
+    setCanAddConfiguration(isAllowed);
+
+    // Show toast only when:
+    // 1. Interview process started (data === true)
+    // 2. No exam configuration exists
+
+    if (res?.data === true && !hasConfiguration) {
+      toast.warning(
+        "Interview process has already started for this position. Exam configuration cannot be added."
+      );
+    }
+  } catch (error) {
+    console.error("Validation API failed", error);
+    setCanAddConfiguration(false);
+  }
+};
+
   /* ================= POSITION CHANGE ================= */
 
-  const handlePositionChange = async (ids) => {
-    const formattedIds = ids.map(String);
+  // const handlePositionChange = async (ids) => {
+  //   const formattedIds = ids.map(String);
 
-    setSelectedPositionId(formattedIds);
+  //   setSelectedPositionId(formattedIds);
 
-    const configs = await loadConfigurations(formattedIds);
-  };
+  //   const configs = await loadConfigurations(formattedIds);
+  // };
+
+
+const handlePositionChange = async (ids) => {
+  const formattedIds = ids.map(String);
+
+  setSelectedPositionId(formattedIds);
+
+  const configs = await loadConfigurations(formattedIds);
+
+  const hasConfiguration =
+    configs && configs.length > 0;
+
+  if (formattedIds.length > 0) {
+    await validateExamConfiguration(
+      formattedIds[0],
+      hasConfiguration
+    );
+  } else {
+    setCanAddConfiguration(false);
+  }
+};
 
   const selectedRequisition = requisitions.find(
     (r) => r.id === selectedRequisitionId
@@ -284,18 +337,7 @@ export default function ExaminationCutoffConfiguration() {
 
   /* ================= PAGINATION DATA ================= */
 
-  const totalElements = filteredConfigurations.length;
 
-  const totalPages = Math.ceil(totalElements / pageSize);
-
-  const startIndex = page * pageSize;
-
-  const endIndex = startIndex + pageSize;
-
-  const paginatedConfigurations = filteredConfigurations.slice(
-    startIndex,
-    endIndex
-  );
 
   /* ================= EDIT ================= */
 
@@ -358,12 +400,12 @@ export default function ExaminationCutoffConfiguration() {
             {/* BUTTONS */}
             <div className="col-md-6 col-12 text-md-end">
               <button
-                className={`btn fs-14 ${
-                  hasExistingConfiguration
-                    ? "btn-secondary"
-                    : "text-white orange-bg"
-                }`}
-                disabled={hasExistingConfiguration}
+               className={`btn fs-14 ${
+  hasExistingConfiguration || !canAddConfiguration
+    ? "btn-secondary"
+    : "text-white orange-bg"
+}`}
+            disabled={hasExistingConfiguration || !canAddConfiguration}
                 onClick={() => {
                   /* REQUISITION VALIDATION */
 
@@ -417,20 +459,13 @@ export default function ExaminationCutoffConfiguration() {
         {/* ================= TABLE ================= */}
 
         <div className="exam-table-inner">
-          <ExaminationCutoffTable
-            rows={paginatedConfigurations}
-            onView={handleView}
-            onEdit={handleEdit}
-            page={page}
-            setPage={setPage}
-            pageSize={pageSize}
-            setPageSize={setPageSize}
-            totalPages={totalPages}
-            totalElements={totalElements}
-            statusFilter={statusFilter}
-            setStatusFilter={setStatusFilter}
-            s
-          />
+       <ExaminationCutoffTable
+  rows={filteredConfigurations}
+  onView={handleView}
+  onEdit={handleEdit}
+  statusFilter={statusFilter}
+  setStatusFilter={setStatusFilter}
+/>
         </div>
       </div>
 

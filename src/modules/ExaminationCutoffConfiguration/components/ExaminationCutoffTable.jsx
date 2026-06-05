@@ -147,55 +147,7 @@ export default function ExaminationCutoffTable({
       </div>
 
       {/* PAGINATION */}
-      <div className="d-flex justify-content-between align-items-center px-3 py-2 table-footer">
-        {/* Showing text */}
-
-        <span className="text-muted fs-13">
-          {totalElements > 0
-            ? `Showing ${page * pageSize + 1}–${Math.min(
-                (page + 1) * pageSize,
-                totalElements
-              )} of ${totalElements}`
-            : "Showing 0"}
-        </span>
-
-        {/* Pagination */}
-
-        <div className="d-flex gap-2 align-items-center">
-          <select
-            className="form-select form-select-sm"
-            style={{ width: 80 }}
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-
-              setPage(0);
-            }}
-          >
-            <option value={10}>10</option>
-
-            <option value={20}>20</option>
-
-            <option value={50}>50</option>
-          </select>
-
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            disabled={page === 0}
-            onClick={() => setPage((prev) => prev - 1)}
-          >
-            Prev
-          </button>
-
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            disabled={page + 1 >= totalPages}
-            onClick={() => setPage((prev) => prev + 1)}
-          >
-            Next
-          </button>
-        </div>
-      </div>
+  
     </div>
   );
 }

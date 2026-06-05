@@ -241,23 +241,41 @@ export default function CandidateScreening({ selectedJob }) {
 
       const data = res?.data || [];
 
-      const map = {};
+    const map = {};
 
-      // ENABLE ONLY WHEN CONFIG EXISTS
-      data.forEach((item) => {
-        map[item.positionId] = true;
-      });
+data.forEach((item) => {
+  map[item.positionId] = {
+    hasConfig: true,
+    isFrozen: item.isFrozen,
+  };
+});
 
-      setExamConfigMap(map);
+setExamConfigMap(map);
     } catch (err) {
       setExamConfigMap({});
     }
   };
 
-  const hasExamConfiguration = selectedPositionId?.some(
-    (id) => examConfigMap[id]
-  );
+  // const hasExamConfiguration = selectedPositionId?.some(
+  //   (id) => examConfigMap[id]
+  // );
 
+
+  const hasExamConfiguration = selectedPositionId?.some(
+  (id) => examConfigMap[id]?.hasConfig
+);
+
+const canShowExamActions = selectedPositionId?.some(
+  (id) =>
+    examConfigMap[id]?.hasConfig &&
+    examConfigMap[id]?.isFrozen === false
+);
+
+
+console.log("Selected Positions:", selectedPositionId);
+console.log("Exam Config Map:", examConfigMap);
+console.log("Has Exam Configuration:", hasExamConfiguration);
+console.log("Can Show Exam Actions:", canShowExamActions);
     const privileges = useSelector((state) => state.user.privileges || {});
 
 
@@ -2308,7 +2326,7 @@ useEffect(() => {
               <div className="d-flex justify-content-md-end align-items-end gap-2 h-100">
                 {/* IMPORT BUTTON */}
       {activeTab === "CANDIDATE_POOL" &&
-  canAccessExamActions &&
+  canAccessExamActions && canShowExamActions  &&
   hasExamConfiguration && (
     <Button
       variant="outline-primary"
@@ -2323,7 +2341,7 @@ useEffect(() => {
 )}
 
 {activeTab === "CANDIDATE_POOL" &&
-  canAccessExamActions &&
+  canAccessExamActions && canShowExamActions &&
   hasExamConfiguration && (
     <button
       className="btn blue-color blue-border fs-14"

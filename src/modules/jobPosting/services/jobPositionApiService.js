@@ -46,6 +46,15 @@ const jobPositionApiService = {
     );
   },
 
+
+
+  validateExamConfiguration(positionId) {
+  return api.get(
+    `recruiter/examination-config/validate-exam-configuration?positionId=${positionId}`
+  );
+},
+
+
   finalizeExamConfiguration: (payload) => {
     return api.post(
       "/recruiter/examination-config/submit-for-approval",
