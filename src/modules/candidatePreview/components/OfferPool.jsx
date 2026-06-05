@@ -736,7 +736,6 @@ const OfferPool = ({
           />
         </>
       )}
-      ,
       <Modal show={showPreview} onHide={handleClose} size="xl" centered>
         {/* HEADER */}
         <Modal.Header closeButton className="border-0 pb-2">
