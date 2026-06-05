@@ -17,6 +17,8 @@ const TableSection = ({
     categoryMap[cat.categoryId] = cat;
   });
 
+
+
   const tableHeaders = reservationCategories
     ?.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
     ?.map((item) => ({
@@ -109,9 +111,9 @@ const TableSection = ({
 
                 if (rowLabel === "Appeared") {
                   value = category?.appeared || 0;
-                } else if (rowLabel === "Vacancy") {
-                  value = category?.vacancy || 0;
-                } else if (rowLabel === "Qualified Without Relaxation") {
+                } else if (rowLabel === "Vacancies") {
+                      value = category?.vacancy || 0;
+                    }  else if (rowLabel === "Qualified Without Relaxation") {
                   value =
                     category?.qualifiedWithoutRelaxation ??
                     category?.qualified ??
@@ -144,7 +146,7 @@ const TableSection = ({
               >
                 {rowLabel === "Appeared"
                   ? totalAppearedCount
-                  : rowLabel === "Vacancy"
+                  : rowLabel === "Vacancies"
                     ? totalVacancyCount
                     : rowLabel === "Qualified Without Relaxation"
                       ? totalQualifiedCount
