@@ -258,6 +258,9 @@ export default function CandidateScreening({ selectedJob }) {
     (id) => examConfigMap[id]
   );
 
+    const privileges = useSelector((state) => state.user.privileges || {});
+
+
   const canAccessExamActions =
   isRecruiter ||
   (role === "committee_member" &&
@@ -493,7 +496,6 @@ export default function CandidateScreening({ selectedJob }) {
       count: 0,
     },
   ];
-  const privileges = useSelector((state) => state.user.privileges || {});
 
   const hasPrivilege = (key) => {
     return privileges?.[key] === true;
