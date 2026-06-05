@@ -268,7 +268,7 @@ setExamConfigMap(map);
 const canShowExamActions = selectedPositionId?.some(
   (id) =>
     examConfigMap[id]?.hasConfig &&
-    examConfigMap[id]?.isFrozen === false
+    examConfigMap[id]?.isFrozen === true
 );
 
 
