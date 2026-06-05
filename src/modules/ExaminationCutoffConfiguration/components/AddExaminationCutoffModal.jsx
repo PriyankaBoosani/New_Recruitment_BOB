@@ -498,7 +498,7 @@ export default function AddExaminationCutoffModal({
         /* SECTION NAME */
 
         if (!section.sectionName) {
-          toast.error(`Section ${i + 1} name is required`);
+          toast.error(`Section ${i + 1} name is required`); 
 
           return;
         }
@@ -1177,6 +1177,7 @@ export default function AddExaminationCutoffModal({
             <div className="weightage-box mt-4">
               <h5 className="section-title">
                 Section consideration for combined score:
+                   <span className="required-star">*</span>
                 {/* // Weightage Configuration */}
               </h5>
 

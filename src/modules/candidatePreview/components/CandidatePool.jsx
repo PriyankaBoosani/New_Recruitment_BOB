@@ -265,11 +265,11 @@ export default function CandidatePool({
 
 
               <th className="fs-14 fw-normal py-3">
-  Total Exam Marks 
+  Total Marks Obtained
 </th>
 
 <th className="fs-14 fw-normal py-3">
-  Exam Qualification Status
+  Exam  Status
 </th>
 
               <th className="text-center fs-14 fw-normal py-3">
