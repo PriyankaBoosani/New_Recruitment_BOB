@@ -1357,9 +1357,9 @@ const ApplicationForm = ({
       const updated = prev.map((row) =>
         row.id === id
           ? {
-              ...row,
-              [field]: value,
-            }
+            ...row,
+            [field]: value,
+          }
           : row
       );
 
@@ -1419,7 +1419,7 @@ const ApplicationForm = ({
     }
   }, [disableYesOption]);
 
-    const parseDate = (dateStr) => {
+  const parseDate = (dateStr) => {
     if (!dateStr) return new Date(0);
 
     const [day, month, year] = dateStr.split("-");
@@ -1593,7 +1593,7 @@ const ApplicationForm = ({
                     </td>
                   </tr>
                   <tr>
-                  
+
                     <td className="fw-med">{t("twin_sibling")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.isTwin === "Yes"
@@ -1615,7 +1615,7 @@ const ApplicationForm = ({
                       {data.personalDetails.expectedCtc}
                     </td>
 
-                   
+
                   </tr>
                   <tr>
                     <td className="fw-med">{t("language_proficiency")}</td>
@@ -1728,12 +1728,12 @@ const ApplicationForm = ({
                 </thead>
 
                 <tbody>
-                  
+
                   {/* {(data.education || []).map((edu, index) => ( */}
                   {(data.education || [])
                     .sort(
-                        (a, b) => parseDate(b.endDate) - parseDate(a.endDate)
-                      )
+                      (a, b) => parseDate(b.endDate) - parseDate(a.endDate)
+                    )
                     .map((edu, index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>
@@ -1850,12 +1850,12 @@ const ApplicationForm = ({
                     const leftStatus = !left?.url
                       ? "YET TO UPLOAD"
                       : docStatusMap[left?.candidateDocumentId]?.status ||
-                        "PENDING";
+                      "PENDING";
 
                     const rightStatus = !right?.url
                       ? "YET TO UPLOAD"
                       : docStatusMap[right?.candidateDocumentId]?.status ||
-                        "PENDING";
+                      "PENDING";
 
                     return (
                       <tr key={rowIndex}>
@@ -2171,7 +2171,7 @@ const ApplicationForm = ({
                           onChange={() =>
                             handleRadioChange("isWorkCriteriaMet", option)
                           }
-                          // disabled={isOptionDisabled(option, "WORK")}
+                        // disabled={isOptionDisabled(option, "WORK")}
                         />
                         <span className="custom-radio"></span>
                         {t(option)}
@@ -2194,7 +2194,7 @@ const ApplicationForm = ({
                     }
                     maxLength={2000}
                     rows={4}
-                    // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
+                  // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
                   />
                   {errors.workCriteriaRemark && (
                     <small className="text-danger fs-12">
@@ -2243,7 +2243,7 @@ const ApplicationForm = ({
                     }
                     maxLength={2000}
                     rows={4}
-                    // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
+                  // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
                   />
                   {errors.ageCriteriaRemark && (
                     <small className="text-danger fs-12">
@@ -2300,7 +2300,7 @@ const ApplicationForm = ({
                     }
                     maxLength={2000}
                     rows={4}
-                    // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
+                  // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
                   />
                   {errors.educationCriteriaRemark && (
                     <small className="text-danger fs-12">
@@ -2311,9 +2311,8 @@ const ApplicationForm = ({
 
                 {/* FINAL REMARK */}
                 <div
-                  className={`criteria-card ${
-                    disableShortlistedSection ? "criteria-disabled" : ""
-                  }`}
+                  className={`criteria-card ${disableShortlistedSection ? "criteria-disabled" : ""
+                    }`}
                 >
                   <label className="criteria-title">{t("shortlisted")}</label>
 
@@ -2371,11 +2370,10 @@ const ApplicationForm = ({
 
               {/* ================= SUBMIT ROW ================= */}
               <div
-                className={`criteria-submit-row ${
-                  shouldShowSubmitBefore
+                className={`criteria-submit-row ${shouldShowSubmitBefore
                     ? "justify-content-between"
                     : "justify-content-end"
-                }`}
+                  }`}
               >
                 {!isZonalHr && shouldShowSubmitBefore && (
                   <div className="d-grid">
@@ -2517,8 +2515,9 @@ const ApplicationForm = ({
                     }}
                   >
                     <option value="">Select</option>
+                    <option value="PASS">Studied in Class X/ Class XII</option>
 
-                    <option value="PASS">Pass</option>
+                    {/* <option value="PASS">Pass</option> */}
 
                     <option value="FAIL">Fail</option>
 
@@ -2532,9 +2531,8 @@ const ApplicationForm = ({
 
         {isZonalHr && !isInterviewView && (
           <Card
-            className={`criteria-main-card p-3 ${
-              isZonalAbsent ? "criteria-disabled" : ""
-            }`}
+            className={`criteria-main-card p-3 ${isZonalAbsent ? "criteria-disabled" : ""
+              }`}
           >
             <label className="criteria-title mb-2">
               {t("all_docs_verified_q")}
@@ -2542,7 +2540,7 @@ const ApplicationForm = ({
 
             {/* RADIO OPTIONS — same pattern as Shortlisted */}
             <div className="criteria-radio mb-3">
-              
+
               {["YES", "NO", "PROVISIONALLY_APPROVED"].map((opt) => {
                 const isLptSelectionPending =
                   !isLptRequired || (isLptRequired === "YES" && !lptType);
