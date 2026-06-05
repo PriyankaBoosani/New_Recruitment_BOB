@@ -138,6 +138,7 @@ const OfferPool = ({
           selectList: offer.selectList,
           waitList: offer.waitList,
           location: item.location,
+		  state: item.state,
           designation: item.designationName,
           offerReleaseDate: formatDate(offer.offerReleaseDate),
           acceptBeforeDate: formatDate(offer.acceptBeforeDate),

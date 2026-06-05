@@ -399,15 +399,46 @@ export default function AddExaminationCutoffModal({
 
     /* REMOVE EXTRA ROWS */
 
-    if (existingSections.length > count) {
-      setFormData((prev) => ({
-        ...prev,
+    // if (existingSections.length > count) {
+    //   setFormData((prev) => ({
+    //     ...prev,
 
-        sections: existingSections.slice(0, count),
-      }));
+    //     sections: existingSections.slice(0, count),
+    //   }));
 
-      return;
-    }
+    //   return;
+    // }
+
+
+    /* REMOVE EXTRA ROWS */
+
+/* REMOVE EXTRA ROWS */
+
+if (existingSections.length > count) {
+  const originalSectionCount = Number(
+    editData?.numberOfSections || 0
+  );
+
+  if (editData && count < originalSectionCount) {
+    toast.warning(
+      `Number of sections cannot be reduced below ${originalSectionCount}`
+    );
+
+    setFormData((prev) => ({
+      ...prev,
+      numberOfSections: originalSectionCount,
+    }));
+
+    return;
+  }
+
+  setFormData((prev) => ({
+    ...prev,
+    sections: existingSections.slice(0, count),
+  }));
+
+  return;
+}
   };
 
   /* ================= SECTION CHANGE ================= */
