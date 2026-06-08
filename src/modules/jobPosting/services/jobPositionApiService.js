@@ -47,6 +47,17 @@ const jobPositionApiService = {
   },
 
 
+  deleteExamSection(sectionId) {
+  return api.delete(
+    `/recruiter/examination-config/delete-section/${sectionId}`,
+    {
+      headers: {
+        "X-Client": "AzureAD",
+      },
+    }
+  );
+},
+
 
   validateExamConfiguration(positionId) {
   return api.get(

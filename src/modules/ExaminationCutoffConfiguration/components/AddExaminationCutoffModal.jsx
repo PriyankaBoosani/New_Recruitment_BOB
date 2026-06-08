@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import candidateWorkflowServices from "../../candidatePreview/services/CandidateWorkflowServices";
 import committeeManagementService from "../../committeeManagement/services/committeeManagementService";
 import "../../../style/css/ExaminationCutoffConfiguration.css";
+import { FaTrash } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
 export default function AddExaminationCutoffModal({
@@ -109,6 +110,65 @@ export default function AddExaminationCutoffModal({
       setLoading(false);
     }
   };
+
+
+
+const handleDeleteSection = async (indexToDelete) => {
+  const section = formData.sections[indexToDelete];
+
+  // const confirmed = window.confirm(
+  //   `Are you sure you want to delete ${
+  //     section.sectionName || `Section ${indexToDelete + 1}`
+  //   }?`
+  // );
+
+  // if (!confirmed) return;
+
+  try {
+    setLoading(true);
+
+    // EDIT MODE -> API CALL
+    if (editData && section?.examSectionId) {
+      const response =
+        await jobPositionApiService.deleteExamSection(
+          section.examSectionId
+        );
+
+      if (response?.success === false) {
+        toast.error(response?.message || "Failed to delete section");
+        return;
+      }
+    }
+
+    // REMOVE FROM UI
+    const updatedSections = formData.sections.filter(
+      (_, index) => index !== indexToDelete
+    );
+
+    const updatedWeightageSections =
+      formData.selectedWeightageSections
+        .filter((index) => index !== indexToDelete)
+        .map((index) =>
+          index > indexToDelete ? index - 1 : index
+        );
+
+    setFormData((prev) => ({
+      ...prev,
+      sections: updatedSections,
+      numberOfSections: updatedSections.length,
+      selectedWeightageSections: updatedWeightageSections,
+    }));
+
+    toast.success("Section deleted successfully");
+  } catch (error) {
+    toast.error(
+      error?.response?.data?.message ||
+      "Failed to delete section"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleReject = async () => {
     if (!validateComments()) return;
@@ -963,19 +1023,32 @@ export default function AddExaminationCutoffModal({
 
                       {/* TITLE AT LAST */}
 
-                      <div className="cutoff-title-wrapper">
-                        <span className="cutoff-header-title">
-                          {isStateWisePosition
-                            ? "State Wise Cutoff Configuration"
-                            : "National Wise Cutoff Configuration"}
-                        </span>
+                     <div className="cutoff-title-wrapper">
+  <span className="cutoff-header-title">
+    {isStateWisePosition
+      ? "State Wise Cutoff Configuration"
+      : "National Wise Cutoff Configuration"}
+  </span>
 
-                        <i
-                          className={`bi bi-chevron-${
-                            isExpanded ? "up" : "down"
-                          } section-arrow-icon`}
-                        />
-                      </div>
+  {!viewOnly && (
+    <button
+      type="button"
+      className="icon-btn ms-2"
+      onClick={(e) => {
+        e.stopPropagation();
+        handleDeleteSection(index);
+      }}
+    >
+      <FaTrash size={13} />
+    </button>
+  )}
+
+  <i
+    className={`bi bi-chevron-${
+      isExpanded ? "up" : "down"
+    } section-arrow-icon`}
+  />
+</div>
                     </div>
 
                     {/* <span

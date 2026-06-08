@@ -410,7 +410,7 @@ const handlePositionChange = async (ids) => {
                   /* REQUISITION VALIDATION */
 
                   if (!selectedRequisitionId) {
-                    alert("Please select Requisition first");
+    toast.warning("Please select Requisition first");
 
                     return;
                   }
@@ -418,7 +418,7 @@ const handlePositionChange = async (ids) => {
                   /* POSITION VALIDATION */
 
                   if (!selectedPositionId.length) {
-                    alert("Please select Position first");
+    toast.warning("Please select Position first");
 
                     return;
                   }
