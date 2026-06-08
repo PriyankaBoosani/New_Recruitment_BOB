@@ -158,11 +158,8 @@ export const mapAddPositionToCreateDto = ({
       ? (formData.mandatoryExperience?.educationLevelExperiences || []).reduce(
           (acc, exp) => {
             if (exp.educationLevel) {
-              const months =
+              acc[exp.educationLevel] =
                 Number(exp.years || 0) * 12 + Number(exp.months || 0);
-              if (months > 0) {
-                acc[exp.educationLevel] = months;
-              }
             }
             return acc;
           },
@@ -174,11 +171,8 @@ export const mapAddPositionToCreateDto = ({
       ? (formData.preferredExperience?.educationLevelExperiences || []).reduce(
           (acc, exp) => {
             if (exp.educationLevel) {
-              const months =
+              acc[exp.educationLevel] =
                 Number(exp.years || 0) * 12 + Number(exp.months || 0);
-              if (months > 0) {
-                acc[exp.educationLevel] = months;
-              }
             }
             return acc;
           },

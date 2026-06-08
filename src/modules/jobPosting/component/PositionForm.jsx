@@ -1048,16 +1048,24 @@ const PositionForm = ({
                                   classNamePrefix="react-select"
                                   menuPortalTarget={document.body}
                                   menuPosition="fixed"
+                                  placeholder={t("addPosition:select_months")}
                                   styles={{
                                     menuPortal: (base) => ({
                                       ...base,
                                       zIndex: 9999,
                                     }),
                                   }}
-                                  value={monthOptions.find(
-                                    (o) =>
-                                      String(o.value) === String(eduExp.months)
-                                  )}
+                                  value={
+                                    eduExp.months === "" ||
+                                    eduExp.months === null ||
+                                    eduExp.months === undefined
+                                      ? null
+                                      : monthOptions.find(
+                                          (o) =>
+                                            String(o.value) ===
+                                            String(eduExp.months)
+                                        )
+                                  }
                                   options={monthOptions}
                                   isDisabled={isViewMode}
                                   onChange={(s) => {
@@ -1234,7 +1242,6 @@ const PositionForm = ({
             />
             <ErrorMessage>{renderError(errors.medicalRequired)}</ErrorMessage>
           </Col>
-          
         </Row>
       </div>
     </>
