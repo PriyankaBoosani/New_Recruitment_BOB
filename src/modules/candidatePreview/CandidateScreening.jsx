@@ -2055,46 +2055,45 @@ useEffect(() => {
             expanded: false,
 
             // IMPORTANT
-            states: (apiSummary?.overallMarksSummary || []).map(
-              (stateSummary) => ({
-                stateId: stateSummary.stateId,
+         isStateWise: apiSummary?.isStateWise || false,
 
-                stateName:
-                  masterData?.states?.find(
-                    (s) => s.stateId === stateSummary.stateId
-                  )?.stateName || "-",
+states: (apiSummary?.overallMarksSummary || []).map(
+  (stateSummary) => ({
+    stateId: stateSummary.stateId,
 
-                expanded: false,
+    stateName:
+      masterData?.states?.find(
+        (s) => s.stateId === stateSummary.stateId
+      )?.stateName || "-",
 
-                // IMPORTANT
-                summaryData: stateSummary,
+    expanded: false,
 
-                totalAppearedCount: stateSummary.categorySummaries?.reduce(
-                  (sum, cat) => sum + (cat.appeared || 0),
-                  0
-                ),
+    summaryData: stateSummary,
 
-                totalVacancyCount: stateSummary.categorySummaries?.reduce(
-                  (sum, cat) => sum + (cat.vacancy || 0),
-                  0
-                ),
+    totalAppearedCount:
+      stateSummary?.totalAppearedCount || 0,
 
-                totalQualifiedCount: stateSummary.categorySummaries?.reduce(
-                  (sum, cat) => sum + (cat.qualifiedWithoutRelaxation || 0),
-                  0
-                ),
-              })
-            ),
+    totalVacancyCount:
+      stateSummary?.totalVacancyCount || 0,
 
-            // NATIONAL SUMMARY
-            overallMarksSummary: apiSummary?.overallMarksSummary || [],
+    totalQualifiedCount:
+      stateSummary?.totalQualifiedWithoutRelaxation || 0,
+  })
+),
 
-            totalAppearedCount: apiSummary?.totalAppearedCount || 0,
+overallMarksSummary: apiSummary?.overallMarksSummary || [],
 
-            totalVacancyCount: apiSummary?.totalVacancyCount || 0,
+totalAppearedCount:
+  apiSummary?.overallMarksSummary?.[0]
+    ?.totalAppearedCount || 0,
 
-            totalQualifiedCount:
-              apiSummary?.totalQualifiedWithoutRelaxation || 0,
+totalVacancyCount:
+  apiSummary?.overallMarksSummary?.[0]
+    ?.totalVacancyCount || 0,
+
+totalQualifiedCount:
+  apiSummary?.overallMarksSummary?.[0]
+    ?.totalQualifiedWithoutRelaxation || 0,
 
             isFinalized: apiSummary?.isFinalized || false,
           };

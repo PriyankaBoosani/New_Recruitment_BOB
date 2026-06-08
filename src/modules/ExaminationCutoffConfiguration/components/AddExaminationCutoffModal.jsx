@@ -730,36 +730,34 @@ export default function AddExaminationCutoffModal({
 
       /* SUCCESS */
 
-      if (response?.success === true && !fromCandidateScreening) {
-        await jobPositionApiService.finalizeExamConfiguration(
-          selectedPosition.map((item) => item.positionId)
-        );
-        toast.success(
-          response?.message || "Configuration submitted successfully"
-        );
+   if (response?.success === true) {
+  if (!fromCandidateScreening) {
+    await jobPositionApiService.finalizeExamConfiguration(
+      selectedPosition.map((item) => item.positionId)
+    );
+  }
 
-        onSuccess?.();
+  toast.success(
+    response?.message || "Configuration submitted successfully"
+  );
 
-        resetForm();
-        if (fromCandidateScreening) {
-          navigate("/candidate-workflow", {
-            replace: true,
+  onSuccess?.();
+  resetForm();
 
-            state: {
-              requisitionId: selectedRequisition?.id,
-
-              positionIds: selectedPosition?.map((item) => item.positionId),
-
-              openExaminationScore: true,
-              reopenKey: Date.now(),
-            },
-          });
-        }
-      } else {
-        /* API FAILURE */
-
-        toast.error(response?.message || "Failed to submit configuration");
-      }
+  if (fromCandidateScreening) {
+    navigate("/candidate-workflow", {
+      replace: true,
+      state: {
+        requisitionId: selectedRequisition?.id,
+        positionIds: selectedPosition?.map((item) => item.positionId),
+        openExaminationScore: true,
+        reopenKey: Date.now(),
+      },
+    });
+  }
+} else {
+  toast.error(response?.message || "Failed to submit configuration");
+}
     } catch (err) {
       console.error("Failed to save configuration", err);
 
