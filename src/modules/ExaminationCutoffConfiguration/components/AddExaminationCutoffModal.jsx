@@ -1030,7 +1030,7 @@ const handleDeleteSection = async (indexToDelete) => {
       : "National Wise Cutoff Configuration"}
   </span>
 
-  {!viewOnly && (
+  {/* {!viewOnly && (
     <button
       type="button"
       className="icon-btn ms-2"
@@ -1041,7 +1041,7 @@ const handleDeleteSection = async (indexToDelete) => {
     >
       <FaTrash size={13} />
     </button>
-  )}
+  )} */}
 
   <i
     className={`bi bi-chevron-${
