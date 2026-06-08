@@ -5,6 +5,7 @@ import I_icon from "../../../assets/I_icon.png";
 import { useTranslation } from "react-i18next";
 
 const InterviewPanelFormModal = ({
+  editcancelbutton = true,
   communityOptions = [],
   membersOptions = [],
   // centerOptions = [],
@@ -147,6 +148,7 @@ const InterviewPanelFormModal = ({
       <div className="panel-form-actions">
         {!showUpdateWarning && (
           <>
+           {editcancelbutton && (
             <button
               type="button"
               className="btn btn-outline-secondary"
@@ -162,6 +164,7 @@ const InterviewPanelFormModal = ({
             >
               {t("common:cancel")}
             </button>
+           )}
 
             <button type="button" className="btn btn-primary" onClick={onSave}>
               {formData.id

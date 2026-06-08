@@ -669,6 +669,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
           )}
           {editFormData && (
             <InterviewPanelFormModal
+            editcancelbutton={false}
               formData={editFormData}
               setFormData={setEditFormData}
               communityOptions={communityOptions} // ✅ ADD THIS
