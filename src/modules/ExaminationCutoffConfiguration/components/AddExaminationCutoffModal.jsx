@@ -429,6 +429,23 @@ const handleDeleteSection = async (indexToDelete) => {
     }));
   };
 
+
+  const isFrozen =
+  editData?.isFrozen === true ||
+  editData?.isFrozen === "true";
+
+
+
+useEffect(() => {
+  console.log("===== DELETE BUTTON CHECK =====");
+  console.log("editData:", editData);
+  console.log("isFrozen:", editData?.isFrozen);
+  console.log("typeof isFrozen:", typeof editData?.isFrozen);
+  console.log("Calculated isFrozen:", isFrozen);
+  console.log("===============================");
+}, [editData]); 
+
+
   /* ================= GENERATE SECTIONS ================= */
 
   const handleGenerateSections = () => {
@@ -1029,8 +1046,9 @@ const handleDeleteSection = async (indexToDelete) => {
       ? "State Wise Cutoff Configuration"
       : "National Wise Cutoff Configuration"}
   </span>
+  
 
-  {!viewOnly && (
+  {!viewOnly && !isFrozen && (
     <button
       type="button"
       className="icon-btn ms-2"
