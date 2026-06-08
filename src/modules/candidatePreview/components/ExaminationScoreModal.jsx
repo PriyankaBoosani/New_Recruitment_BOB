@@ -17,8 +17,6 @@ const TableSection = ({
     categoryMap[cat.categoryId] = cat;
   });
 
-
-
   const tableHeaders = reservationCategories
     ?.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
     ?.map((item) => ({
@@ -112,8 +110,8 @@ const TableSection = ({
                 if (rowLabel === "Appeared") {
                   value = category?.appeared || 0;
                 } else if (rowLabel === "Vacancies") {
-                      value = category?.vacancy || 0;
-                    }  else if (rowLabel === "Qualified Without Relaxation") {
+                  value = category?.vacancy || 0;
+                } else if (rowLabel === "Qualified Without Relaxation") {
                   value =
                     category?.qualifiedWithoutRelaxation ??
                     category?.qualified ??
@@ -225,6 +223,10 @@ const ExaminationScoreModal = ({
                 0
             ) > 0;
 
+          const config = examConfigMap?.[item.positionId || item.id];
+
+          const isRejected = config?.isRejected === true;
+
           const isFinalized = item?.isFinalized === true;
 
           return (
@@ -284,6 +286,7 @@ const ExaminationScoreModal = ({
                   )}
                   {hasConfig &&
                     hasQualifiedWithoutRelaxation &&
+                    !isRejected &&
                     !isFinalized && (
                       <button
                         className="btn rank-finalize-btn"
@@ -355,7 +358,6 @@ const ExaminationScoreModal = ({
                     background: "#FFFFFF",
                   }}
                 >
-                 
                   {item.isStateWise || item.isLocationWise ? (
                     item.states?.length > 0 ? (
                       [
@@ -481,8 +483,6 @@ const ExaminationScoreModal = ({
           );
         })}
       </Modal.Body>
-
-      
     </Modal>
   );
 };

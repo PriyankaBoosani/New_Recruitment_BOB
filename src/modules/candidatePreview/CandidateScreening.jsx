@@ -241,19 +241,18 @@ export default function CandidateScreening({ selectedJob }) {
 
       const data = res?.data || [];
 
-const map = {};
+      const map = {};
 
-data.forEach((item) => {
-  map[item.positionId] = {
-    hasConfig: true,
-    isFrozen: item.isFrozen,
-    status: item.status,
-  };
-});
+      data.forEach((item) => {
+        map[item.positionId] = {
+          hasConfig: true,
+          isFrozen: item.isFrozen,
+          status: item.status,
+          isRejected: ["L1_REJECTED", "L2_REJECTED"].includes(item.status),
+        };
+      });
 
-
-
-setExamConfigMap(map);
+      setExamConfigMap(map);
     } catch (err) {
       setExamConfigMap({});
     }
@@ -263,33 +262,29 @@ setExamConfigMap(map);
   //   (id) => examConfigMap[id]
   // );
 
-
   const hasExamConfiguration = selectedPositionId?.some(
-  (id) => examConfigMap[id]?.hasConfig
-);
+    (id) => examConfigMap[id]?.hasConfig
+  );
 
-const canShowExamActions = selectedPositionId?.some(
-  (id) =>
-    examConfigMap[id]?.hasConfig &&
-    examConfigMap[id]?.isFrozen === true
-);
+  const canShowExamActions = selectedPositionId?.some(
+    (id) => examConfigMap[id]?.hasConfig && examConfigMap[id]?.isFrozen === true
+  );
 
+  console.log("Selected Positions:", selectedPositionId);
+  console.log("Exam Config Map:", examConfigMap);
+  console.log("Has Exam Configuration:", hasExamConfiguration);
+  console.log("Can Show Exam Actions:", canShowExamActions);
+  const privileges = useSelector((state) => state.user.privileges || {});
 
-console.log("Selected Positions:", selectedPositionId);
-console.log("Exam Config Map:", examConfigMap);
-console.log("Has Exam Configuration:", hasExamConfiguration);
-console.log("Can Show Exam Actions:", canShowExamActions);
-    const privileges = useSelector((state) => state.user.privileges || {});
+  const canUpdateCandidateScore = selectedPositionId?.some(
+    (id) => examConfigMap[id]?.status !== "FINALIZED"
+  );
 
-const canUpdateCandidateScore = selectedPositionId?.some(
-  (id) => examConfigMap[id]?.status !== "FINALIZED"
-);
-
-
-console.log("Can Update Candidate Scoreeeeeeeeeeeeeeeeeeeeeeeeee:", canUpdateCandidateScore);
-  const canAccessExamActions =
-  isRecruiter 
- 
+  console.log(
+    "Can Update Candidate Scoreeeeeeeeeeeeeeeeeeeeeeeeee:",
+    canUpdateCandidateScore
+  );
+  const canAccessExamActions = isRecruiter;
 
   useEffect(() => {
     if (selectedPositionId?.length) {
@@ -709,15 +704,14 @@ console.log("Can Update Candidate Scoreeeeeeeeeeeeeeeeeeeeeeeeee:", canUpdateCan
     });
   }, [tabs, privileges, isContractPosition]);
 
-
-useEffect(() => {
-  if (
-    accessibleTabs.length > 0 &&
-    !accessibleTabs.some(tab => tab.key === activeTab)
-  ) {
-    setActiveTab(accessibleTabs[0].key);
-  }
-}, [accessibleTabs, activeTab]);
+  useEffect(() => {
+    if (
+      accessibleTabs.length > 0 &&
+      !accessibleTabs.some((tab) => tab.key === activeTab)
+    ) {
+      setActiveTab(accessibleTabs[0].key);
+    }
+  }, [accessibleTabs, activeTab]);
 
   const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
   const categoryMap = React.useMemo(() => {
@@ -819,16 +813,10 @@ useEffect(() => {
       name: c.fullName,
       rank: c.rank,
 
-
-
       totalMarksObtained:
-  Number(c.totalMarksObtained) > 0
-    ? c.totalMarksObtained
-    : "-",
+        Number(c.totalMarksObtained) > 0 ? c.totalMarksObtained : "-",
 
-  examQualificationStatus:
-    c.examQualificationStatus || "-",
-
+      examQualificationStatus: c.examQualificationStatus || "-",
 
       educationScore: c?.candidateRankingResults?.educationScore ?? "-",
 
@@ -845,7 +833,7 @@ useEffect(() => {
       experienceMonths: c.totalMonths || 0,
       status: formatStatus(c.candidateApplications.applicationStatus),
       location: stateMap[c.stateId] || "-",
-       state: stateMap[c.stateId] || "-", // NEW
+      state: stateMap[c.stateId] || "-", // NEW
       stateId: c.stateId,
       categoryId: c.categoryId,
       categoryName: categoryMap[c.categoryId] || "-",
@@ -1286,23 +1274,18 @@ useEffect(() => {
   //   selectedCandidates.length > 0 &&
   //   selectedCandidates.every((c) => c.status === "Shortlisted");
 
-
-
   const canScheduleInterview =
-  selectedCandidates.length > 0 &&
-  selectedCandidates.every((c) => {
-    if (!hasExamConfiguration) {
-      return c.status === "Shortlisted";
-    }
+    selectedCandidates.length > 0 &&
+    selectedCandidates.every((c) => {
+      if (!hasExamConfiguration) {
+        return c.status === "Shortlisted";
+      }
 
-    return (
-      c.status === "Shortlisted" &&
-      [
-        "QUALIFIED",
-        "QUALIFIED_UNDER_UR",
-      ].includes(c.examQualificationStatus)
-    );
-  });
+      return (
+        c.status === "Shortlisted" &&
+        ["QUALIFIED", "QUALIFIED_UNDER_UR"].includes(c.examQualificationStatus)
+      );
+    });
 
   const canScheduleMultiPositionInterview =
     canScheduleInterview && selectedPositionId?.length > 0;
@@ -2019,8 +2002,6 @@ useEffect(() => {
         return;
       }
 
-    
-
       // SUMMARY API
       const res =
         await jobPositionApiService.getExaminationSummary(selectedPositionId);
@@ -2031,7 +2012,7 @@ useEffect(() => {
         return;
       }
 
-         await fetchCandidates();
+      await fetchCandidates();
 
       const summaryData = res?.data || [];
 
@@ -2063,45 +2044,41 @@ useEffect(() => {
             expanded: false,
 
             // IMPORTANT
-         isStateWise: apiSummary?.isStateWise || false,
+            isStateWise: apiSummary?.isStateWise || false,
 
-states: (apiSummary?.overallMarksSummary || []).map(
-  (stateSummary) => ({
-    stateId: stateSummary.stateId,
+            states: (apiSummary?.overallMarksSummary || []).map(
+              (stateSummary) => ({
+                stateId: stateSummary.stateId,
 
-    stateName:
-      masterData?.states?.find(
-        (s) => s.stateId === stateSummary.stateId
-      )?.stateName || "-",
+                stateName:
+                  masterData?.states?.find(
+                    (s) => s.stateId === stateSummary.stateId
+                  )?.stateName || "-",
 
-    expanded: false,
+                expanded: false,
 
-    summaryData: stateSummary,
+                summaryData: stateSummary,
 
-    totalAppearedCount:
-      stateSummary?.totalAppearedCount || 0,
+                totalAppearedCount: stateSummary?.totalAppearedCount || 0,
 
-    totalVacancyCount:
-      stateSummary?.totalVacancyCount || 0,
+                totalVacancyCount: stateSummary?.totalVacancyCount || 0,
 
-    totalQualifiedCount:
-      stateSummary?.totalQualifiedWithoutRelaxation || 0,
-  })
-),
+                totalQualifiedCount:
+                  stateSummary?.totalQualifiedWithoutRelaxation || 0,
+              })
+            ),
 
-overallMarksSummary: apiSummary?.overallMarksSummary || [],
+            overallMarksSummary: apiSummary?.overallMarksSummary || [],
 
-totalAppearedCount:
-  apiSummary?.overallMarksSummary?.[0]
-    ?.totalAppearedCount || 0,
+            totalAppearedCount:
+              apiSummary?.overallMarksSummary?.[0]?.totalAppearedCount || 0,
 
-totalVacancyCount:
-  apiSummary?.overallMarksSummary?.[0]
-    ?.totalVacancyCount || 0,
+            totalVacancyCount:
+              apiSummary?.overallMarksSummary?.[0]?.totalVacancyCount || 0,
 
-totalQualifiedCount:
-  apiSummary?.overallMarksSummary?.[0]
-    ?.totalQualifiedWithoutRelaxation || 0,
+            totalQualifiedCount:
+              apiSummary?.overallMarksSummary?.[0]
+                ?.totalQualifiedWithoutRelaxation || 0,
 
             isFinalized: apiSummary?.isFinalized || false,
           };
@@ -2332,32 +2309,35 @@ totalQualifiedCount:
             <div className="col-md-6 col-12">
               <div className="d-flex justify-content-md-end align-items-end gap-2 h-100">
                 {/* IMPORT BUTTON */}
-      {activeTab === "CANDIDATE_POOL" &&
-  canAccessExamActions && canShowExamActions  && canUpdateCandidateScore &&
-  hasExamConfiguration && (
-    <Button
-      variant="outline-primary"
-      size="sm"
-      onClick={() => setShowImportCandidatesModal(true)}
-      className="d-flex align-items-center gap-2 bulk-import-btn"
-      style={{ height: "38px" }}
-    >
-      <FiUpload />
-      Update Candidates Score
-    </Button>
-)}
+                {activeTab === "CANDIDATE_POOL" &&
+                  canAccessExamActions &&
+                  canShowExamActions &&
+                  canUpdateCandidateScore &&
+                  hasExamConfiguration && (
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => setShowImportCandidatesModal(true)}
+                      className="d-flex align-items-center gap-2 bulk-import-btn"
+                      style={{ height: "38px" }}
+                    >
+                      <FiUpload />
+                      Update Candidates Score
+                    </Button>
+                  )}
 
-{activeTab === "CANDIDATE_POOL" &&
-  canAccessExamActions && canShowExamActions &&
-  hasExamConfiguration && (
-    <button
-      className="btn blue-color blue-border fs-14"
-      onClick={handleOpenExaminationScore}
-      style={{ height: "38px" }}
-    >
-      Positions Summary
-    </button>
-)}
+                {activeTab === "CANDIDATE_POOL" &&
+                  canAccessExamActions &&
+                  canShowExamActions &&
+                  hasExamConfiguration && (
+                    <button
+                      className="btn blue-color blue-border fs-14"
+                      onClick={handleOpenExaminationScore}
+                      style={{ height: "38px" }}
+                    >
+                      Positions Summary
+                    </button>
+                  )}
               </div>
             </div>
           </div>
@@ -2532,7 +2512,6 @@ totalQualifiedCount:
                     </svg>
                   )}{" "}
                   {tab.label}
-                  
                 </button>
               </li>
             ))}
@@ -2569,7 +2548,7 @@ totalQualifiedCount:
                   <option value="">
                     {t("candidateWorkflow:all_statuses")}
                   </option>
-                 
+
                   {availableStatuses.map((status) => (
                     <option key={status} value={status}>
                       {getStatusLabel(status)}
@@ -2812,7 +2791,6 @@ totalQualifiedCount:
                         )}
                       </OverlayTrigger>
                     </div>
-                    
 
                     {/* Accept Before Date */}
                     <div>
@@ -2893,8 +2871,6 @@ totalQualifiedCount:
               {/* RIGHT SECTION */}
               <div className="col-md-4 col-12">
                 <div className="d-flex justify-content-end gap-2 align-items-center">
-                  
-
                   <button
                     className="btn blue-border blue-color fs-13 px-3 py-1"
                     style={{ minHeight: "39px" }}
@@ -3055,8 +3031,6 @@ totalQualifiedCount:
                         )
                       ))}
 
-                    
-
                     {activeTab === "COMPENSATION_POOL" &&
                       hasPrivilege("Offer Pool") &&
                       canSendToOfferFromCompensation && (
@@ -3181,7 +3155,6 @@ totalQualifiedCount:
 
         {activeTab === "SCHEDULE_POOL" && (
           <div>
-            
             <SchedulePoolTable
               rows={paginatedSchedulePool}
               onEdit={handleEditSchedule}
@@ -3396,7 +3369,7 @@ totalQualifiedCount:
             onSuccess={() => {
               console.log("IMPORT SUCCESS");
             }}
-               fetchCandidates={fetchCandidates}
+            fetchCandidates={fetchCandidates}
           />
         </Modal.Body>
       </Modal>
