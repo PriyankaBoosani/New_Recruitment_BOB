@@ -241,14 +241,17 @@ export default function CandidateScreening({ selectedJob }) {
 
       const data = res?.data || [];
 
-    const map = {};
+const map = {};
 
 data.forEach((item) => {
   map[item.positionId] = {
     hasConfig: true,
     isFrozen: item.isFrozen,
+    status: item.status,
   };
 });
+
+
 
 setExamConfigMap(map);
     } catch (err) {
@@ -278,7 +281,12 @@ console.log("Has Exam Configuration:", hasExamConfiguration);
 console.log("Can Show Exam Actions:", canShowExamActions);
     const privileges = useSelector((state) => state.user.privileges || {});
 
+const canUpdateCandidateScore = selectedPositionId?.some(
+  (id) => examConfigMap[id]?.status !== "FINALIZED"
+);
 
+
+console.log("Can Update Candidate Scoreeeeeeeeeeeeeeeeeeeeeeeeee:", canUpdateCandidateScore);
   const canAccessExamActions =
   isRecruiter 
  
@@ -2325,7 +2333,7 @@ totalQualifiedCount:
               <div className="d-flex justify-content-md-end align-items-end gap-2 h-100">
                 {/* IMPORT BUTTON */}
       {activeTab === "CANDIDATE_POOL" &&
-  canAccessExamActions && canShowExamActions  &&
+  canAccessExamActions && canShowExamActions  && canUpdateCandidateScore &&
   hasExamConfiguration && (
     <Button
       variant="outline-primary"
