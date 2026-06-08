@@ -15,5 +15,6 @@
   "loading": "Loading Requisition...",
   "create_success": "Requisition created successfully",
   "update_success": "Requisition updated successfully",
-  "cut_off_date": "Cutoff Date"
+  "cut_off_date": "Cutoff Date",
+  "select_positions_to_edit": "Select Positions to Edit"
 }

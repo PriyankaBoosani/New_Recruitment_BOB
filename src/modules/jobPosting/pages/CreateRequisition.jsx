@@ -363,7 +363,7 @@ const CreateRequisition = () => {
 
                   {(isCloneMode || isReinitializeMode) && (
                     <div className="mt-4">
-                      <Form.Label>Select Positions to Edit</Form.Label>
+                      <Form.Label>{t("select_positions_to_edit")}</Form.Label>
 
                       {loadingReqId === editId && <Spinner size="sm" />}
 
