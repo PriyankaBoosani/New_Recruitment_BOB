@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import Select from "react-select";
 import useExamRequest from "../hooks/useExamRequest";
 import "../../../style/css/ExamRequest.css";
@@ -233,7 +233,7 @@ const ExamRequest = () => {
                   <div className="text-muted">Loading configurations...</div>
                 ) : requisitionPositions.length === 0 ? (
                   <div className="text-muted">
-                    No positions available for this requisition.
+                    No configuration available for this requisition.
                   </div>
                 ) : (
                   <div className="d-flex flex-column gap-3">
@@ -247,28 +247,36 @@ const ExamRequest = () => {
                         >
                           <div className="d-flex align-items-center gap-2">
                             <span>{pos.label}</span>
-
-                            <button
-                              type="button"
-                              className="history-btn"
-                              onClick={() => handleHistoryClick(pos)}
+                            <OverlayTrigger
+                              placement="bottom"
+                              overlay={
+                                <Tooltip id={`tooltip-history-${pos.value}`}>
+                                  View Approval History
+                                </Tooltip>
+                              }
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                              <button
+                                type="button"
+                                className="history-btn"
+                                onClick={() => handleHistoryClick(pos)}
                               >
-                                <path d="M3 12a9 9 0 1 0 3-6.7" />
-                                <path d="M3 3v6h6" />
-                                <path d="M12 7v5l4 2" />
-                              </svg>
-                            </button>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path d="M3 12a9 9 0 1 0 3-6.7" />
+                                  <path d="M3 3v6h6" />
+                                  <path d="M12 7v5l4 2" />
+                                </svg>
+                              </button>
+                            </OverlayTrigger>
 
                             <span
                               className={`status-badge status-${badgeVariant}`}

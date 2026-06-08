@@ -57,13 +57,10 @@ export default function AddExaminationCutoffModal({
     selectedWeightageSections: [],
   });
 
-
   const disableSectionCount =
-  editData?.isFrozen === true &&
-  // ["PENDING", "L1_REJECTED", "L2_REJECTED", "APPROVED"].includes(|
-   [ "APPROVED"].includes(
-    editData?.status
-  );
+    editData?.isFrozen === true &&
+    // ["PENDING", "L1_REJECTED", "L2_REJECTED", "APPROVED"].includes(|
+    ["APPROVED"].includes(editData?.status);
 
   const [decisionComments, setDecisionComments] = useState("");
   const [commentError, setCommentError] = useState("");
@@ -98,6 +95,8 @@ export default function AddExaminationCutoffModal({
       });
 
       toast.success("Configuration approved successfully");
+      setDecisionComments("");
+      setCommentError("");
 
       await refreshExamConfigs?.();
 
@@ -124,7 +123,8 @@ export default function AddExaminationCutoffModal({
       });
 
       toast.success("Configuration rejected successfully");
-
+      setDecisionComments("");
+      setCommentError("");
       await refreshExamConfigs?.();
 
       onHide?.();
@@ -417,38 +417,35 @@ export default function AddExaminationCutoffModal({
     //   return;
     // }
 
+    /* REMOVE EXTRA ROWS */
 
     /* REMOVE EXTRA ROWS */
 
-/* REMOVE EXTRA ROWS */
+    if (existingSections.length > count) {
+      const originalSectionCount = Number(editData?.numberOfSections || 0);
 
-if (existingSections.length > count) {
-  const originalSectionCount = Number(
-    editData?.numberOfSections || 0
-  );
+      console.log("Original Section Count:", originalSectionCount);
 
-  console.log("Original Section Count:", originalSectionCount);
+      if (editData && count < originalSectionCount) {
+        toast.warning(
+          `Number of sections cannot be reduced below ${originalSectionCount}`
+        );
 
-  if (editData && count < originalSectionCount) {
-    toast.warning(
-      `Number of sections cannot be reduced below ${originalSectionCount}`
-    );
+        setFormData((prev) => ({
+          ...prev,
+          numberOfSections: originalSectionCount,
+        }));
 
-    setFormData((prev) => ({
-      ...prev,
-      numberOfSections: originalSectionCount,
-    }));
+        return;
+      }
 
-    return;
-  }
+      setFormData((prev) => ({
+        ...prev,
+        sections: existingSections.slice(0, count),
+      }));
 
-  setFormData((prev) => ({
-    ...prev,
-    sections: existingSections.slice(0, count),
-  }));
-
-  return;
-}
+      return;
+    }
   };
 
   /* ================= SECTION CHANGE ================= */
@@ -538,11 +535,11 @@ if (existingSections.length > count) {
 
         /* SECTION NAME */
 
-      if (!section.sectionName?.trim()) {
-  toast.error(`Section ${i + 1} name is required`);
-  setLoading(false);
-  return;
-}
+        if (!section.sectionName?.trim()) {
+          toast.error(`Section ${i + 1} name is required`);
+          setLoading(false);
+          return;
+        }
 
         /* SECTION TOTAL MARKS */
 
@@ -558,57 +555,54 @@ if (existingSections.length > count) {
         /* SC/ST */
       }
 
-
-
-
-            /* CATEGORY CUTOFF VALIDATIONS */
+      /* CATEGORY CUTOFF VALIDATIONS */
 
       for (let i = 0; i < formData.sections.length; i++) {
         const section = formData.sections[i];
 
-    if (isStateWisePosition) {
-  for (const stateItem of stateWiseDistributions) {
-    for (const cat of reservationCategories) {
-      const cutoff =
-        section?.stateCutoffs?.[stateItem.stateId]?.[
-          cat.reservationCategoriesId
-        ];
+        if (isStateWisePosition) {
+          for (const stateItem of stateWiseDistributions) {
+            for (const cat of reservationCategories) {
+              const cutoff =
+                section?.stateCutoffs?.[stateItem.stateId]?.[
+                  cat.reservationCategoriesId
+                ];
 
-      if (
-        cutoff === "" ||
-        cutoff === undefined ||
-        cutoff === null ||
-        Number(cutoff) <= 0
-      ) {
-        toast.error(
-          `${cat.categoryCode} Cutoff % must be greater than 0 for Section ${
-            i + 1
-          } (${getStateName(stateItem.stateId)})`
-        );
-        return;
-      }
-    }
-  }
-} else {
-  for (const cat of reservationCategories) {
-    const cutoff =
-      section?.nationalCutoffs?.[cat.reservationCategoriesId];
+              if (
+                cutoff === "" ||
+                cutoff === undefined ||
+                cutoff === null ||
+                Number(cutoff) <= 0
+              ) {
+                toast.error(
+                  `${cat.categoryCode} Cutoff % must be greater than 0 for Section ${
+                    i + 1
+                  } (${getStateName(stateItem.stateId)})`
+                );
+                return;
+              }
+            }
+          }
+        } else {
+          for (const cat of reservationCategories) {
+            const cutoff =
+              section?.nationalCutoffs?.[cat.reservationCategoriesId];
 
-    if (
-      cutoff === "" ||
-      cutoff === undefined ||
-      cutoff === null ||
-      Number(cutoff) <= 0
-    ) {
-      toast.error(
-        `${cat.categoryCode} Cutoff % must be greater than 0 for Section ${
-          i + 1
-        }`
-      );
-      return;
-    }
-  }
-}
+            if (
+              cutoff === "" ||
+              cutoff === undefined ||
+              cutoff === null ||
+              Number(cutoff) <= 0
+            ) {
+              toast.error(
+                `${cat.categoryCode} Cutoff % must be greater than 0 for Section ${
+                  i + 1
+                }`
+              );
+              return;
+            }
+          }
+        }
       }
 
       /* TOTAL SECTION MARKS
@@ -737,10 +731,9 @@ if (existingSections.length > count) {
       /* SUCCESS */
 
       if (response?.success === true && !fromCandidateScreening) {
-
         await jobPositionApiService.finalizeExamConfiguration(
-  selectedPosition.map((item) => item.positionId)
-);
+          selectedPosition.map((item) => item.positionId)
+        );
         toast.success(
           response?.message || "Configuration submitted successfully"
         );
@@ -884,26 +877,26 @@ if (existingSections.length > count) {
                 <span className="required-star">*</span>
               </Form.Label>
 
-             <Form.Control
-  type="number"
-  min={0}
-  disabled={viewOnly || disableSectionCount}
-  onKeyDown={preventInvalidNumberInput}
-  placeholder="e.g. 4"
-  value={formData.numberOfSections}
-  onChange={(e) => {
-    const value = Number(e.target.value);
+              <Form.Control
+                type="number"
+                min={0}
+                disabled={viewOnly || disableSectionCount}
+                onKeyDown={preventInvalidNumberInput}
+                placeholder="e.g. 4"
+                value={formData.numberOfSections}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
 
-    if (value < 0) return;
+                  if (value < 0) return;
 
-    if (value > 5) {
-      toast.warning("Maximum 5 sections allowed");
-      return;
-    }
+                  if (value > 5) {
+                    toast.warning("Maximum 5 sections allowed");
+                    return;
+                  }
 
-    handleChange("numberOfSections", e.target.value);
-  }}
-/>
+                  handleChange("numberOfSections", e.target.value);
+                }}
+              />
             </Form.Group>
           </Col>
           {!showApprovalActions && (
@@ -1216,7 +1209,7 @@ if (existingSections.length > count) {
             <div className="weightage-box mt-4">
               <h5 className="section-title">
                 Section consideration for combined score:
-                   <span className="required-star">*</span>
+                <span className="required-star">*</span>
                 {/* // Weightage Configuration */}
               </h5>
 
