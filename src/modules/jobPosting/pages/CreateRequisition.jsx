@@ -8,6 +8,7 @@ import {
   validateRequisitionForm,
   validateTitleOnType,
   normalizeTitle,
+   validateDescriptionOnType,
 } from "../validations/requisition-validation";
 import { mapRequisitionToApi } from "../mappers/createRequisitionMapper";
 import { useCreateRequisition } from "../hooks/useCreateRequisition";
@@ -182,11 +183,31 @@ const CreateRequisition = () => {
                       name="description"
                       placeholder={t("enter_description")}
                       value={formData.description}
-                      onChange={(e) => {
-                        handleInputChange(e);
-                        setErrors((prev) => ({ ...prev, description: "" }));
-                      }}
-                      onBlur={(e) =>
+                     onChange={(e) => {
+                      const result = validateDescriptionOnType(e.target.value);
+
+                      if (!result.valid) {
+                        setErrors((prev) => ({
+                          ...prev,
+                          description: result.message,
+                        }));
+                        return;
+                      }
+
+                      handleInputChange({
+                        target: {
+                          name: "description",
+                          value: result.value,
+                        },
+                      });
+
+                      setErrors((prev) => {
+                        const copy = { ...prev };
+                        delete copy.description;
+                        return copy;
+                      });
+                    }}
+                     onBlur={(e) =>
                         handleInputChange({
                           target: {
                             name: "description",

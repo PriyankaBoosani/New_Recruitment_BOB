@@ -1,10 +1,11 @@
 // requisition-validation.js
 
 // ✔ allowed characters
-export const TITLE_ALLOWED_PATTERN = /^.*$/;
+export const TITLE_ALLOWED_PATTERN =
+  /^[A-Za-z0-9\s.,\-_/()&:;'"@#]*$/;
 
-// date-utils.js or inside requisition-validation.js
-
+export const DESCRIPTION_ALLOWED_PATTERN =
+  /^[A-Za-z0-9\s.,\-_/()&:;'"@#%+]*$/;
 export const getTomorrowStart = () => {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
@@ -20,14 +21,30 @@ export const normalizeTitle = (value = "") =>
 
 // ✔ typing-time validator (USED IN onChange)
 export const validateTitleOnType = (value) => {
+  const normalized = normalizeTitle(value);
+
+  if (!TITLE_ALLOWED_PATTERN.test(normalized)) {
+    return {
+      valid: false,
+      value: normalized,
+      message: "validation:invalid_requisition_title",
+    };
+  }
+
   return {
     valid: true,
-    value: normalizeTitle(value),
+    value: normalized,
   };
 };
 
 // ✔ submit-time validator (USED ON SAVE)
-export const validateRequisitionForm = (formData = {}) => {
+export const validateRequisitionForm = (
+  formData = {},
+  options = {},
+  selectedPositions = new Set()
+) => {
+  const { isCloneMode = false, isReinitializeMode = false } = options;
+
   const errors = {};
   let valid = true;
 
@@ -35,17 +52,28 @@ export const validateRequisitionForm = (formData = {}) => {
 
   if (!title) {
     errors.title = "validation:required";
-
     valid = false;
   }
+  else if (!TITLE_ALLOWED_PATTERN.test(title)) {
+  errors.title =
+    "validation:invalid_requisition_title";
+  valid = false;
+}
 
   if (!formData.description?.trim()) {
     errors.description = "validation:required";
-
     valid = false;
   }
+  else if (
+  !DESCRIPTION_ALLOWED_PATTERN.test(formData.description.trim())
+) {
+  errors.description =
+    "validation:invalid_requisition_description";
+  valid = false;
+}
 
   const tomorrow = getTomorrowStart();
+
   if (!formData.startDate) {
     errors.startDate = "validation:required";
     valid = false;
@@ -53,10 +81,14 @@ export const validateRequisitionForm = (formData = {}) => {
     const startDate = new Date(formData.startDate);
     startDate.setHours(0, 0, 0, 0);
 
-    if (startDate < tomorrow) {
+    if (!isCloneMode && !isReinitializeMode && startDate < tomorrow) {
       errors.startDate = "validation:requisition_date_future";
       valid = false;
     }
+  }
+  if (!formData.cutoffDate) {
+    errors.cutoffDate = "validation:required";
+    valid = false;
   }
 
   if (!formData.endDate) {
@@ -73,5 +105,29 @@ export const validateRequisitionForm = (formData = {}) => {
     valid = false;
   }
 
+  // 🔥 NEW: reinitialize validation
+  if (isReinitializeMode && selectedPositions.size === 0) {
+    errors.positions = "validation:select_position_required";
+    valid = false;
+  }
+
   return { valid, errors };
+};
+export const validateDescriptionOnType = (value) => {
+  const normalized = value
+    .replace(/\s+/g, " ")
+    .replace(/^\s+/, "");
+
+  if (!DESCRIPTION_ALLOWED_PATTERN.test(normalized)) {
+    return {
+      valid: false,
+      value: normalized,
+      message: "validation:invalid_requisition_description",
+    };
+  }
+
+  return {
+    valid: true,
+    value: normalized,
+  };
 };
