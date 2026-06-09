@@ -103,7 +103,17 @@ const DepartmentFormModal = (props) => {
                     name="description"
                     className="form-control-custom"
                     value={formData.description}
-                    onChange={handleInputChange}
+                   // onChange={handleInputChange}
+                   onChange={(e) =>
+                        handleValidatedInput({
+                          e,
+                          fieldName: "description",
+                          setFormData,
+                          setErrors,
+                          pattern: INPUT_PATTERNS.DESCRIPTION,
+                          errorMessage: t("validation:invalid_description"),
+                        })
+                      }
                     placeholder={t("department:enterDescription")}
                     readOnly={isViewing}
                   />

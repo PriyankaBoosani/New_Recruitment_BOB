@@ -170,11 +170,15 @@ const CategoryFormModal = ({
                   placeholder={t("enter_description")}
                   className="form-control-custom"
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      description: e.target.value,
-                    })
-                  }
+                      handleValidatedInput({
+                        e,
+                        fieldName: "description",
+                        setFormData,
+                        setErrors,
+                        pattern: INPUT_PATTERNS.DESCRIPTION,
+                        errorMessage: t("validation:invalid_description"),
+                      })
+                    }
                 />
               )}
               {!isViewing && <ErrorMessage>{errors.description}</ErrorMessage>}

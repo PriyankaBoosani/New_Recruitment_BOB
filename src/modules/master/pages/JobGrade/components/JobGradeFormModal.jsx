@@ -231,7 +231,17 @@ const JobGradeFormModal = ({
                     maxLength={2000}
                     name="description"
                     value={formData.description}
-                    onChange={handleInputChange}
+                    //onChange={handleInputChange}
+                    onChange={(e) =>
+                        handleValidatedInput({
+                          e,
+                          fieldName: "description",
+                          setFormData,
+                          setErrors,
+                          pattern: INPUT_PATTERNS.DESCRIPTION,
+                          errorMessage: t("validation:invalid_description"),
+                        })
+                      }
                     className="form-control-custom"
                     placeholder={t("jobGrade:enter_description")}
                   />

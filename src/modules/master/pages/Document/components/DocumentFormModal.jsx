@@ -105,21 +105,16 @@ const DocumentFormModal = ({
                     value={formData.description}
                     className="form-control-custom"
                     placeholder={t("enter_description")}
-                    onChange={(e) => {
-                      const { name, value } = e.target;
-
-                      setFormData((prev) => ({
-                        ...prev,
-                        [name]: value,
-                      }));
-
-                      // optional: clear only this field error
-                      setErrors((prev) => {
-                        const copy = { ...prev };
-                        delete copy[name];
-                        return copy;
-                      });
-                    }}
+                    onChange={(e) =>
+                      handleValidatedInput({
+                        e,
+                        fieldName: "description",
+                        setFormData,
+                        setErrors,
+                        pattern: INPUT_PATTERNS.DESCRIPTION,
+                        errorMessage: t("validation:invalid_description"),
+                      })
+                    }
                   />
                 )}
 
