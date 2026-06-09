@@ -1879,6 +1879,14 @@ export default function CandidateScreening({ selectedJob }) {
   };
 
   const handleSendOffer = async () => {
+
+
+      if (!allHaveLocationAndState) {
+    toast.error(
+      "Selected candidates must have both Location and State before sending offers"
+    );
+    return; 
+    }
     if (offerSelectedIds.length === 0) {
       toast.error(t("candidateWorkflow:select_at_least_one_candidate"));
       return;
@@ -1931,6 +1939,16 @@ export default function CandidateScreening({ selectedJob }) {
   const selectedOfferObjects = useMemo(() => {
     return offerData.filter((o) => offerSelectedIds.includes(o.id));
   }, [offerData, offerSelectedIds]);
+
+  const allHaveLocationAndState =
+  selectedOfferObjects.length > 0 &&
+  selectedOfferObjects.every(
+    (o) =>
+      o.location &&
+      o.location.trim() !== "" &&
+      o.state &&
+      o.state.trim() !== ""
+  );
 
   const allAwaited =
     selectedOfferObjects.length > 0 &&
