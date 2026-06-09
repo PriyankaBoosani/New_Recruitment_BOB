@@ -525,7 +525,9 @@ const ApplicationForm = ({
 
   const isCategorySatisfied = (category) => {
     const docs = groupedDocs[category] || [];
-
+ if (category === "WORK" && docs.length === 0) {
+    return true;
+  }
     return docs.some((doc) => {
       const status = docStatusMap[doc.candidateDocumentId]?.status;
       return status === "VERIFIED";
@@ -978,7 +980,7 @@ const ApplicationForm = ({
     // shortlist must stay empty
     if (hasAnyDiscrepancy) {
       finalShortlist = "";
-    } else if (!isAgeValid || !isWorkValid || !isEducationValid) {
+    } else if (!isAgeValid || !isEducationValid) {
       finalShortlist = "NO";
     }
 
@@ -1153,10 +1155,24 @@ const ApplicationForm = ({
   }, [hasMissingUploads]);
 
   const allDocsAreVerified = areAllDocumentsVerified();
+const hasWorkDiscrepancy = (groupedDocs["WORK"] || []).some((doc) => {
+  const status = docStatusMap[doc.candidateDocumentId]?.status;
 
+  return (
+    status === "REJECTED" ||
+    status === "PENDING" ||
+    status === "DISCREPANCY"
+  );
+});
   const isOptionDisabled = (option, category) => {
     const categorySatisfied = isCategorySatisfied(category);
-
+if (
+  category === "WORK" &&
+  option === "YES" &&
+  hasWorkDiscrepancy
+) {
+  return true;
+}
     // Disable YES if no VERIFIED doc exists
     if (option === "YES" && !categorySatisfied) {
       return true;
@@ -1166,6 +1182,8 @@ const ApplicationForm = ({
     if (option === "DISCREPANCY" && allDocsAreVerified) {
       return true;
     }
+
+    
 
     return false;
   };
@@ -2171,7 +2189,7 @@ const ApplicationForm = ({
                           onChange={() =>
                             handleRadioChange("isWorkCriteriaMet", option)
                           }
-                        // disabled={isOptionDisabled(option, "WORK")}
+                        disabled={isOptionDisabled(option, "WORK")}
                         />
                         <span className="custom-radio"></span>
                         {t(option)}
