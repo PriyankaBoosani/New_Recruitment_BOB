@@ -139,18 +139,16 @@ const CertificationFormModal = ({
                   value={formData.description}
                   placeholder={t("enter_description")}
                   className="form-control-custom"
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setFormData((prev) => ({
-                      ...prev,
-                      description: value,
-                    }));
-                    setErrors((prev) => {
-                      const copy = { ...prev };
-                      delete copy.description;
-                      return copy;
-                    });
-                  }}
+                onChange={(e) =>
+                      handleValidatedInput({
+                        e,
+                        fieldName: "description",
+                        setFormData,
+                        setErrors,
+                        pattern: INPUT_PATTERNS.DESCRIPTION,
+                        errorMessage: t("validation:invalid_description"),
+                      })
+                    }
                 />
               )}
 

@@ -7,6 +7,7 @@ const PATTERNS = {
   NUMBERS_ONLY: /^[0-9]*$/,
   ALPHA_NUMERIC_SPACE_ambersent_Dash_underscore_at: /^[A-Za-z0-9 _\-&]*$/,
   NUMERIC_SPACE: /^[A-Za-z0-9\s]*$/,
+   DESCRIPTION: /^[A-Za-z0-9\s.,\-_/()&:;'"@#]*$/,
 };
 
 export const handleValidatedInput = ({

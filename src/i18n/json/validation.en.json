@@ -78,5 +78,6 @@
   "start_time_required": "Please Select Time",
   "end_time_required": "Please Select End Time",
   "panel_required": "Please select panel",
-  "end_time_greater_than_start": "End time must be greater than start time"
+  "end_time_greater_than_start": "End time must be greater than start time",
+  "invalid_description": "Only letters, numbers and . , - _ / ( ) & : ; ' \" @ # are allowed"
 }

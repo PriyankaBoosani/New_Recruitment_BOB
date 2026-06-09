@@ -66,5 +66,6 @@
   "file_empty": "अपलोड की गई फ़ाइल खाली है",
   "file_too_large": "फ़ाइल आकार {{size}} MB से अधिक नहीं होना चाहिए",
   "degree_required": "कम से कम एक डिग्री आवश्यक है",
-  "vacancies_must_be_greater_than_zero": "रिक्तियों की संख्या शून्य से अधिक होनी चाहिए।"
+  "vacancies_must_be_greater_than_zero": "रिक्तियों की संख्या शून्य से अधिक होनी चाहिए।",
+   "invalid_description":"केवल अक्षर, अंक और . , - _ / ( ) & : ; ' \" @ # चिन्हों का उपयोग किया जा सकता है"
 }
