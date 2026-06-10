@@ -66,6 +66,7 @@ const CreateRequisition = () => {
     try {
       const payload = mapRequisitionToApi(formData);
       await saveRequisition(payload);
+      console.log("Save successful");
       toast.success(editId ? t("update_success") : t("create_success"));
 
       navigate(REQUISITION_CONFIG.SUCCESS_REDIRECT);

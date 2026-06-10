@@ -38,64 +38,44 @@ export const validateTitleOnType = (value) => {
 };
 
 // ✔ submit-time validator (USED ON SAVE)
-export const validateRequisitionForm = (
-  formData = {},
-  options = {},
-  selectedPositions = new Set()
-) => {
-  const { isCloneMode = false, isReinitializeMode = false } = options;
-
+export const validateRequisitionForm = (formData = {}) => {
   const errors = {};
   let valid = true;
-
+ 
   const title = normalizeTitle(formData.title || "");
-
+ 
   if (!title) {
     errors.title = "validation:required";
+ 
     valid = false;
   }
-  else if (!TITLE_ALLOWED_PATTERN.test(title)) {
-  errors.title =
-    "validation:invalid_requisition_title";
-  valid = false;
-}
-
+ 
   if (!formData.description?.trim()) {
     errors.description = "validation:required";
+ 
     valid = false;
   }
-  else if (
-  !DESCRIPTION_ALLOWED_PATTERN.test(formData.description.trim())
-) {
-  errors.description =
-    "validation:invalid_requisition_description";
-  valid = false;
-}
-
+ 
   const tomorrow = getTomorrowStart();
-
   if (!formData.startDate) {
     errors.startDate = "validation:required";
     valid = false;
   } else {
     const startDate = new Date(formData.startDate);
     startDate.setHours(0, 0, 0, 0);
-
-    if (!isCloneMode && !isReinitializeMode && startDate < tomorrow) {
+ 
+    if (startDate < tomorrow) {
       errors.startDate = "validation:requisition_date_future";
       valid = false;
     }
   }
-  if (!formData.cutoffDate) {
-    errors.cutoffDate = "validation:required";
-    valid = false;
-  }
-
+ 
+ 
   if (!formData.endDate) {
     errors.endDate = "validation:required";
     valid = false;
   }
-
+ 
   if (
     formData.startDate &&
     formData.endDate &&
@@ -104,13 +84,7 @@ export const validateRequisitionForm = (
     errors.endDate = "validation:end_before_start";
     valid = false;
   }
-
-  // 🔥 NEW: reinitialize validation
-  if (isReinitializeMode && selectedPositions.size === 0) {
-    errors.positions = "validation:select_position_required";
-    valid = false;
-  }
-
+ 
   return { valid, errors };
 };
 export const validateDescriptionOnType = (value) => {
