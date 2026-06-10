@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import { Modal, Button, Form, Row, Col, Spinner } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import ErrorMessage from "../../../../../shared/components/ErrorMessage";
 import { validateUserForm } from "../../../../../shared/utils/user-validations";
@@ -38,6 +38,7 @@ const UserFormModal = ({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [activeTab, setActiveTab] = useState("manual");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   /* ========================= RESET FORM ON OPEN  ========================= */
   // useEffect(() => {
@@ -89,8 +90,10 @@ const UserFormModal = ({
   };
 
   /* ========================= SUBMIT ========================= */
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isSubmitting) return;
 
     const { valid, errors: vErrors } = validateUserForm(formData, {
       existing: existingUsers,
@@ -103,7 +106,14 @@ const UserFormModal = ({
       return;
     }
 
-    onSave(formData);
+    setIsSubmitting(true);
+    try {
+      await onSave(formData);
+    } catch (err) {
+      // keep behavior same: let caller handle errors
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -320,8 +330,15 @@ const UserFormModal = ({
                     {t("cancel")}
                   </Button>
 
-                  <Button variant="primary" type="submit">
-                    {mode === "edit" ? t("update") : t("save")}
+                  <Button variant="primary" type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                        <span className="ms-2">{mode === "edit" ? t("update") : t("save")}</span>
+                      </>
+                    ) : (
+                      mode === "edit" ? t("update") : t("save")
+                    )}
                   </Button>
                 </>
               )}
