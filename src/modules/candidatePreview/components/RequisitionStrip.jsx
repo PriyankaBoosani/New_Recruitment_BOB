@@ -24,6 +24,7 @@ const RequisitionStrip = ({
   isSaveBtn,
   showImportBtn,
   onImportClick,
+  isSaving
 }) => {
   const [showPosition, setShowPosition] = useState(false);
   const [job, setJob] = useState(null);
@@ -262,10 +263,10 @@ const RequisitionStrip = ({
           {isSaveBtn && (
             <button
               className={`save-btn ${isSaveEnabled ? "unsaved" : "saved"}`}
-              disabled={!isSaveEnabled}
+              disabled={!isSaveEnabled || isSaving}
               onClick={onSave}
             >
-              {t("common:save")}
+              {isSaving ? t("common:saving") : t("common:save")}
             </button>
           )}
         </div>
@@ -327,19 +328,6 @@ const RequisitionStrip = ({
                       </span>
                     </div>
                   )}
-
-                  {/* Experience */}
-                  {/* <div className="col-12 col-md-4">
-                    <span className="stat-label">{t("candidateWorkflow:experience")}:</span>{" "}
-                   <span className="stat-value">
-  {job?.isMandatoryExpMonthsEduWise
-    ? getEduWiseExperience()
-    : formatExperience(
-        job?.mandatory_experience_years,
-        job?.mandatory_experience_months
-      )}
-</span>
-                  </div> */}
 
                   {/* Eligibility */}
                   <div className="col-12 col-md-4">

@@ -53,8 +53,12 @@ const ApplicationForm = ({
   const candidate = location.state?.candidate;
 
   const zonalInitRef = useRef(true);
+  const submitRef = useRef(false);
+  const zonalSubmitRef = useRef(false);
+  const docActionRef = useRef(false);
   const isZonalAbsent = String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
-
+const [submitting, setSubmitting] = useState(false);
+  const [zonalSubmitting, setZonalSubmitting] = useState(false);
   const deriveShortlistStatus = () => {
     const values = [
       screeningForm.isWorkCriteriaMet,
@@ -155,6 +159,7 @@ const ApplicationForm = ({
   }, [zonalVerificationStatus, zonalSubmitBeforeDate, zonalHrComments, isZonalHr]);
 
   const handleZonalSubmit = async () => {
+    if (zonalSubmitRef.current) return;
     // -----------------------------------------
     // Helper Conditions
     // -----------------------------------------
@@ -271,8 +276,11 @@ const ApplicationForm = ({
     }
 
     // -----------------------------------------
-    // 6️⃣ Show Loading Toast
+    // All validations passed — mark submitting and show loading
     // -----------------------------------------
+    zonalSubmitRef.current = true;
+    setZonalSubmitting(true);
+
     // const toastId = toast.loading("Submitting zonal verification...");
     const toastId = toast.loading(t("submitting_zonal_verification"));
 
@@ -325,6 +333,10 @@ const ApplicationForm = ({
       });
 
       console.error(err);
+    }
+    finally {
+      zonalSubmitRef.current = false;
+      setZonalSubmitting(false);
     }
   };
 
@@ -666,6 +678,8 @@ const ApplicationForm = ({
 
   const handleVerify = async (comment) => {
     if (!selectedDoc) return;
+    if (docActionRef.current) return;
+    docActionRef.current = true;
 
     try {
       if (isZonalHr) {
@@ -694,11 +708,15 @@ const ApplicationForm = ({
       await refreshDocStatuses();
     } catch (err) {
       console.error(t("reject_failed"), err);
+    } finally {
+      docActionRef.current = false;
     }
   };
 
   const handleReject = async (comment) => {
     if (!selectedDoc) return;
+    if (docActionRef.current) return;
+    docActionRef.current = true;
 
     try {
       if (isZonalHr) {
@@ -726,6 +744,8 @@ const ApplicationForm = ({
       await refreshDocStatuses();
     } catch (err) {
       console.error("Reject failed", err);
+    } finally {
+      docActionRef.current = false;
     }
   };
 
@@ -897,15 +917,24 @@ const ApplicationForm = ({
   const disableNoOption = disableShortlistedSection;
 
   const handleFinalSubmit = async () => {
+console.log("Final submit clicked");
+     if (submitRef.current) {
+    return;
+  }
+  submitRef.current = true;
+  setSubmitting(true);
+
     if (!areAllDocumentsValidated()) {
       // toast.error("Please validate all documents");
       toast.error(t("please_validate_all_documents"));
+      submitRef.current = false;
+      setSubmitting(false);
       return;
     }
 
     const isValid = validateForm();
     if (!isValid) return;
-
+  
     const derivedShortlist = deriveShortlistStatus();
 
     const payload = {
@@ -913,8 +942,9 @@ const ApplicationForm = ({
       // isShortlisted: derivedShortlist || "NO",
       isScreeningCompleted: true,
     };
-
+submitRef.current = true;
     try {
+     
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
       // toast.success("Screening submitted successfully");
       toast.success(t("screening_submitted_success"));
@@ -939,6 +969,10 @@ const ApplicationForm = ({
       console.error(t("screening_submit_failed"), err);
       toast.error(t("submission_failed"));
     }
+    finally {
+    submitRef.current = false;
+     setSubmitting(false);
+  }
   };
 
   const getTomorrowDate = () => {
@@ -1957,7 +1991,7 @@ const ApplicationForm = ({
               )}
 
               {!isFromCompensationPool && (
-                <button className="btn-submit-orange" onClick={handleFinalSubmit}>
+                <button className="btn-submit-orange" onClick={handleFinalSubmit}   disabled={submitting}>
                   {t("submit")}
                 </button>
               )}
@@ -2072,10 +2106,10 @@ const ApplicationForm = ({
               <div className="remarks-button">
                 <button
                   className="btn-submit-orange"
-                  disabled={docStatusLoading || isZonalAbsent}
+                  disabled={docStatusLoading || isZonalAbsent || zonalSubmitting}
                   onClick={handleZonalSubmit}
                 >
-                  {t("submit")}
+                  {zonalSubmitting ? t("submitting") : t("submit")}
                 </button>
               </div>
             </div>

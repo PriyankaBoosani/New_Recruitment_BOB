@@ -52,6 +52,9 @@ export default function CandidateVerification() {
   const [allCandidatesRaw, setAllCandidatesRaw] = useState([]);
   const [originalAbsentMap, setOriginalAbsentMap] = useState({});
 
+  const saveAbsentRef = useRef(false);
+  const [savingAbsent, setSavingAbsent] = useState(false);
+
   const [usedNavData, setUsedNavData] = useState(false);
 
   const navInitRef = useRef(true);
@@ -362,7 +365,12 @@ export default function CandidateVerification() {
   // };
 
   const handleSaveAbsent = async () => {
+    if (saveAbsentRef.current) return;
+
     try {
+      saveAbsentRef.current = true;
+      setSavingAbsent(true);
+
       const updates = filteredCandidates
         .filter((c) => originalAbsentMap[c.id] !== c.absent)
         .map((c) => ({
@@ -387,6 +395,9 @@ export default function CandidateVerification() {
     } catch (err) {
       console.error("Absent batch update failed", err);
       toast.error(t("verification:save_failed"));
+    } finally {
+      saveAbsentRef.current = false;
+      setSavingAbsent(false);
     }
   };
 
@@ -535,6 +546,7 @@ export default function CandidateVerification() {
             isCardBg={false}
             isSaveEnabled={anyAbsentChanged}
             onSave={handleSaveAbsent}
+            isSaving={savingAbsent}
             isSaveBtn={true}
           />
         </div>

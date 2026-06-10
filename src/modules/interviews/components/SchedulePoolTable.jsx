@@ -10,6 +10,7 @@ const SchedulePoolTable = ({
   rows,
   onEdit,
   onSubmitApproval,
+  submitting = false,
   page,
   pageSize,
   totalElements,
@@ -33,9 +34,9 @@ const SchedulePoolTable = ({
           <button
             className="btn btn-primary fs-14"
             onClick={onSubmitApproval}
-            disabled={rows.length === 0}
+            disabled={rows.length === 0 || submitting}
           >
-            Submit for Approval
+            {submitting ? "Submitting..." : "Submit for Approval"}
           </button>
 
           <button className="btn btn-primary fs-14" onClick={onEdit} disabled={rows.length === 0}>

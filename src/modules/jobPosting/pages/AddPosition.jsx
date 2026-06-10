@@ -67,7 +67,10 @@ const AddPosition = () => {
   const { data: existingPosition } = useJobPositionById(shouldFetchPosition ? positionId : null);
   const { requisition, loading: requisitionLoading } = useRequisitionDetails(requisitionId);
   const { createPosition, loading } = useCreateJobPosition();
-  const { updatePosition } = useUpdateJobPosition();
+  const {
+  updatePosition,
+  loading: updateLoading,
+} = useUpdateJobPosition();
   const masterData = useMasterData();
   const {
     positions,
@@ -180,6 +183,8 @@ const AddPosition = () => {
     preferred: { educations: [], certificationIds: [], text: "" },
   });
   const eduInitializedRef = useRef(false);
+  const submitRef = useRef(false);
+  const [submitting, setSubmitting] = useState(false);
 
   // Reset eduInitializedRef when mode changes to allow re-initialization
   useEffect(() => {
@@ -717,6 +722,9 @@ const AddPosition = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitRef.current) return;
+    submitRef.current = true;
+    setSubmitting(true);
 
     const validationErrors = validateAddPosition({
       isEditMode,
@@ -736,6 +744,8 @@ const AddPosition = () => {
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      submitRef.current = false;
+      setSubmitting(false);
       return;
     }
     if (!errors.vacancies && Number(formData.vacancies) <= 0) {
@@ -776,6 +786,9 @@ const AddPosition = () => {
       navigate(-1);
     } catch (err) {
       toast.error(err.message || t("operation_failed"));
+    } finally {
+      submitRef.current = false;
+      setSubmitting(false);
     }
   };
 
@@ -920,7 +933,7 @@ const AddPosition = () => {
                 {t("common:cancel")}
               </Button>
               {!isViewMode && (
-                <Button type="submit" className="ms-2 save-btn" disabled={loading}>
+                <Button type="submit" className="ms-2 save-btn" disabled={loading || updateLoading || submitting}>
                   {isEditMode ? t("common:update") : t("common:save")}
                 </Button>
               )}

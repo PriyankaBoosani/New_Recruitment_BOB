@@ -478,6 +478,8 @@ export default function CandidateScreening({ selectedJob }) {
     acceptBeforeDate: "",
     joiningDate: "",
   });
+  const sendOfferRef = useRef(false);
+  const [sendingOffer, setSendingOffer] = useState(false);
   const dispatch = useDispatch();
   const [templates, setTemplates] = useState([]);
 
@@ -1795,6 +1797,8 @@ export default function CandidateScreening({ selectedJob }) {
   };
 
   const handleSendOffer = async () => {
+    if (sendOfferRef.current) return;
+
     if (offerSelectedIds.length === 0) {
       toast.error(t("candidateWorkflow:select_at_least_one_candidate"));
       return;
@@ -1811,6 +1815,8 @@ export default function CandidateScreening({ selectedJob }) {
     }
 
     try {
+      sendOfferRef.current = true;
+      setSendingOffer(true);
       const payload = {
         offerTemplateId,
         joiningDate,
@@ -1837,6 +1843,10 @@ export default function CandidateScreening({ selectedJob }) {
     } catch (err) {
       console.error(err);
       toast.error(err?.response?.data?.message || t("candidateWorkflow:failed_send_offer"));
+    }
+    finally {
+      sendOfferRef.current = false;
+      setSendingOffer(false);
     }
   };
 
@@ -2634,10 +2644,10 @@ export default function CandidateScreening({ selectedJob }) {
                           isSendOfferEnabled ? "" : "disabled_button"
                         }`}
                         onClick={handleSendOffer}
-                        disabled={!isSendOfferEnabled}
+                        disabled={!isSendOfferEnabled || sendingOffer}
                       >
                         <img className="me-2" src={offerIcon} width={14} />
-                        {t("candidateWorkflow:send_offers")}
+                        {sendingOffer ? t("candidateWorkflow:sending") : t("candidateWorkflow:send_offers")}
                       </button>
 
                       {/* Reserve equal space like other fields */}
@@ -2889,6 +2899,7 @@ export default function CandidateScreening({ selectedJob }) {
               rows={paginatedSchedulePool}
               onEdit={handleEditSchedule}
               onSubmitApproval={() => setShowApprovalModal(true)}
+              submitting={submittingApproval}
               page={schedulePoolPage}
               position={selectedPosition}
               pageSize={schedulePoolPageSize}
