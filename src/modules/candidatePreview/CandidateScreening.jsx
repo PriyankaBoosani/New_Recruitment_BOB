@@ -2046,6 +2046,8 @@ export default function CandidateScreening({ selectedJob }) {
             (s) => s.positionId === positionId
           );
 
+          const config = examConfigMap[positionId];
+
           return {
             id: positionId,
 
@@ -2058,6 +2060,8 @@ export default function CandidateScreening({ selectedJob }) {
             endDate: normalizedRequisition?.registration_end_date || "-",
 
             isLocationWise: p?.jobPositions?.isLocationWise || false,
+
+            examStatus: config?.status || "-",
 
             expanded: false,
 
@@ -2894,12 +2898,12 @@ export default function CandidateScreening({ selectedJob }) {
                     style={{ minHeight: "39px" }}
                     onClick={handleGenerateRankList}
                   >
-                    <img
+                    {/* <img
                       alt="excel"
                       src={excelIcon}
                       className="me-1"
                       width={18}
-                    />
+                    /> */}
                     {t("candidateWorkflow:rank_list")}
                   </button>
 

@@ -1014,18 +1014,24 @@
   padding: 22px 28px 26px;
 }
 
-.cancel-btn {
-  min-width: 120px;
-  height: 46px;
-  border-radius: 10px !important;
-}
-
+.cancel-btn,
 .save-btn {
-  min-width: 180px;
-  height: 46px;
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
+
+  height: 46px !important;
+
+  padding: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
   border-radius: 10px !important;
-  background: #f97316 !important;
-  border: none !important;
+   font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
 }
 
 .cutoff-config-modal .form-check-input {
@@ -1135,7 +1141,7 @@
   border-radius: 8px !important;
   border: 1px solid #d0d5dd !important;
   text-align: center;
-  font-weight: 600 !important;
+  /* font-weight: 600 !important; */
   box-shadow: none !important;
 }
 
@@ -1151,6 +1157,40 @@
   display: flex;
   align-items: center;
   gap: 18px;
+}
+
+
+
+
+
+
+
+.rank-status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.rank-status-badge.approved {
+  background: #ecfdf3;
+  color: #027a48;
+}
+
+.rank-status-badge.finalized {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.rank-status-badge.rejected {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.rank-status-badge.pending {
+  background: #fff7ed;
+  color: #ea580c;
 }
 
 /* .cutoff-header-title {

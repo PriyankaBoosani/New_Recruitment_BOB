@@ -113,62 +113,65 @@ export default function AddExaminationCutoffModal({
 
 
 
-const handleDeleteSection = async (indexToDelete) => {
-  const section = formData.sections[indexToDelete];
+  const handleDeleteSection = async (indexToDelete) => {
+    const section = formData.sections[indexToDelete];
 
-  // const confirmed = window.confirm(
-  //   `Are you sure you want to delete ${
-  //     section.sectionName || `Section ${indexToDelete + 1}`
-  //   }?`
-  // );
+    // const confirmed = window.confirm(
+    //   `Are you sure you want to delete ${
+    //     section.sectionName || `Section ${indexToDelete + 1}`
+    //   }?`
+    // );
 
-  // if (!confirmed) return;
+    // if (!confirmed) return;
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    // EDIT MODE -> API CALL
-    if (editData && section?.examSectionId) {
-      const response =
-        await jobPositionApiService.deleteExamSection(
-          section.examSectionId
-        );
+      // EDIT MODE -> API CALL
+      if (editData && section?.examSectionId) {
+        const response =
+          await jobPositionApiService.deleteExamSection(
+            section.examSectionId
+          );
 
-      if (response?.success === false) {
-        toast.error(response?.message || "Failed to delete section");
-        return;
+        if (response?.success === false) {
+          toast.error(response?.message || "Failed to delete section");
+          return;
+        }
       }
+
+      // REMOVE FROM UI
+      const updatedSections = formData.sections.filter(
+        (_, index) => index !== indexToDelete
+      );
+
+      const updatedWeightageSections =
+        formData.selectedWeightageSections
+          .filter((index) => index !== indexToDelete)
+          .map((index) =>
+            index > indexToDelete ? index - 1 : index
+          );
+
+      setFormData((prev) => ({
+        ...prev,
+        sections: updatedSections,
+        numberOfSections:
+          updatedSections.length === 0
+            ? ""
+            : updatedSections.length,
+        selectedWeightageSections: updatedWeightageSections,
+      }));
+
+      toast.success("Section deleted successfully");
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+        "Failed to delete section"
+      );
+    } finally {
+      setLoading(false);
     }
-
-    // REMOVE FROM UI
-    const updatedSections = formData.sections.filter(
-      (_, index) => index !== indexToDelete
-    );
-
-    const updatedWeightageSections =
-      formData.selectedWeightageSections
-        .filter((index) => index !== indexToDelete)
-        .map((index) =>
-          index > indexToDelete ? index - 1 : index
-        );
-
-    setFormData((prev) => ({
-      ...prev,
-      sections: updatedSections,
-      numberOfSections: updatedSections.length,
-      selectedWeightageSections: updatedWeightageSections,
-    }));
-
-    toast.success("Section deleted successfully");
-  } catch (error) {
-    toast.error(
-      error?.response?.data?.message ||
-      "Failed to delete section"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleReject = async () => {
     if (!validateComments()) return;
@@ -371,15 +374,18 @@ const handleDeleteSection = async (indexToDelete) => {
   const handleSectionTotalMarksChange = (index, value) => {
     const enteredValue = Number(value || 0);
 
-    const updatedSections = [...formData.sections];
+    // Prevent negative values
+    if (enteredValue < 0) {
+      return;
+    }
 
-    /* SINGLE SECTION SHOULD NOT
-       EXCEED TOTAL MARKS */
+    const updatedSections = [...formData.sections];
 
     if (enteredValue > Number(formData.totalMarks)) {
       toast.warning(
         `Section marks cannot exceed Total Marks (${formData.totalMarks})`
       );
+
       updatedSections[index] = {
         ...updatedSections[index],
         sectionTotalMarks: "",
@@ -397,8 +403,6 @@ const handleDeleteSection = async (indexToDelete) => {
       ...updatedSections[index],
       sectionTotalMarks: value,
     };
-
-    /* TOTAL OF ALL SECTION MARKS */
 
     const totalSectionMarks = updatedSections.reduce(
       (sum, item) => sum + Number(item.sectionTotalMarks || 0),
@@ -431,19 +435,19 @@ const handleDeleteSection = async (indexToDelete) => {
 
 
   const isFrozen =
-  editData?.isFrozen === true ||
-  editData?.isFrozen === "true";
+    editData?.isFrozen === true ||
+    editData?.isFrozen === "true";
 
 
 
-useEffect(() => {
-  console.log("===== DELETE BUTTON CHECK =====");
-  console.log("editData:", editData);
-  console.log("isFrozen:", editData?.isFrozen);
-  console.log("typeof isFrozen:", typeof editData?.isFrozen);
-  console.log("Calculated isFrozen:", isFrozen);
-  console.log("===============================");
-}, [editData]); 
+  useEffect(() => {
+    console.log("===== DELETE BUTTON CHECK =====");
+    console.log("editData:", editData);
+    console.log("isFrozen:", editData?.isFrozen);
+    console.log("typeof isFrozen:", typeof editData?.isFrozen);
+    console.log("Calculated isFrozen:", isFrozen);
+    console.log("===============================");
+  }, [editData]);
 
 
   /* ================= GENERATE SECTIONS ================= */
@@ -642,7 +646,7 @@ useEffect(() => {
             for (const cat of reservationCategories) {
               const cutoff =
                 section?.stateCutoffs?.[stateItem.stateId]?.[
-                  cat.reservationCategoriesId
+                cat.reservationCategoriesId
                 ];
 
               if (
@@ -652,8 +656,7 @@ useEffect(() => {
                 Number(cutoff) <= 0
               ) {
                 toast.error(
-                  `${cat.categoryCode} Cutoff % must be greater than 0 for Section ${
-                    i + 1
+                  `${cat.categoryCode} Cutoff % must be greater than 0 for Section ${i + 1
                   } (${getStateName(stateItem.stateId)})`
                 );
                 return;
@@ -672,8 +675,7 @@ useEffect(() => {
               Number(cutoff) <= 0
             ) {
               toast.error(
-                `${cat.categoryCode} Cutoff % must be greater than 0 for Section ${
-                  i + 1
+                `${cat.categoryCode} Cutoff % must be greater than 0 for Section ${i + 1
                 }`
               );
               return;
@@ -734,43 +736,43 @@ useEffect(() => {
 
         categoryPassMarks: isStateWisePosition
           ? stateWiseDistributions.flatMap((stateItem) =>
-              reservationCategories.map((cat) => ({
-                examSectionId: section.examSectionId || "",
-
-                categoryId: cat.reservationCategoriesId,
-
-                passMark: Number(
-                  section?.stateCutoffs?.[stateItem.stateId]?.[
-                    cat.reservationCategoriesId
-                  ] || 0
-                ),
-
-                stateId: stateItem.stateId,
-
-                examSectionCategoryId:
-                  section.categoryPassMarks?.find(
-                    (item) =>
-                      item.categoryId === cat.reservationCategoriesId &&
-                      item.stateId === stateItem.stateId
-                  )?.examSectionCategoryId || "",
-              }))
-            )
-          : reservationCategories.map((cat) => ({
+            reservationCategories.map((cat) => ({
               examSectionId: section.examSectionId || "",
 
               categoryId: cat.reservationCategoriesId,
 
               passMark: Number(
-                section?.nationalCutoffs?.[cat.reservationCategoriesId] || 0
+                section?.stateCutoffs?.[stateItem.stateId]?.[
+                cat.reservationCategoriesId
+                ] || 0
               ),
 
-              stateId: null,
+              stateId: stateItem.stateId,
 
               examSectionCategoryId:
                 section.categoryPassMarks?.find(
-                  (item) => item.categoryId === cat.reservationCategoriesId
+                  (item) =>
+                    item.categoryId === cat.reservationCategoriesId &&
+                    item.stateId === stateItem.stateId
                 )?.examSectionCategoryId || "",
-            })),
+            }))
+          )
+          : reservationCategories.map((cat) => ({
+            examSectionId: section.examSectionId || "",
+
+            categoryId: cat.reservationCategoriesId,
+
+            passMark: Number(
+              section?.nationalCutoffs?.[cat.reservationCategoriesId] || 0
+            ),
+
+            stateId: null,
+
+            examSectionCategoryId:
+              section.categoryPassMarks?.find(
+                (item) => item.categoryId === cat.reservationCategoriesId
+              )?.examSectionCategoryId || "",
+          })),
 
         examSectionId: section.examSectionId || "",
       }));
@@ -807,34 +809,37 @@ useEffect(() => {
 
       /* SUCCESS */
 
-   if (response?.success === true) {
-  if (!fromCandidateScreening) {
-    await jobPositionApiService.finalizeExamConfiguration(
-      selectedPosition.map((item) => item.positionId)
-    );
-  }
+      if (response?.success === true) {
+        if (!fromCandidateScreening) {
+          await jobPositionApiService.finalizeExamConfiguration(
+            selectedPosition.map((item) => item.positionId)
+          );
+        }
 
-  toast.success(
-    response?.message || "Configuration submitted successfully"
-  );
+        toast.success(
+          response?.message ||
+          (editData
+            ? "Configuration updated successfully"
+            : "Configuration saved successfully")
+        );
 
-  onSuccess?.();
-  resetForm();
+        onSuccess?.();
+        resetForm();
 
-  if (fromCandidateScreening) {
-    navigate("/candidate-workflow", {
-      replace: true,
-      state: {
-        requisitionId: selectedRequisition?.id,
-        positionIds: selectedPosition?.map((item) => item.positionId),
-        openExaminationScore: true,
-        reopenKey: Date.now(),
-      },
-    });
-  }
-} else {
-  toast.error(response?.message || "Failed to submit configuration");
-}
+        if (fromCandidateScreening) {
+          navigate("/candidate-workflow", {
+            replace: true,
+            state: {
+              requisitionId: selectedRequisition?.id,
+              positionIds: selectedPosition?.map((item) => item.positionId),
+              openExaminationScore: true,
+              reopenKey: Date.now(),
+            },
+          });
+        }
+      } else {
+        toast.error(response?.message || "Failed to submit configuration");
+      }
     } catch (err) {
       console.error("Failed to save configuration", err);
 
@@ -914,7 +919,7 @@ useEffect(() => {
           </h4>
 
           <p className="modal-subtitle">
-            Set and manage cut-off rules for streamlined workflow execution
+            Configure sections, marks, and qualifying criteria for the examination.
           </p>
         </div>
       </Modal.Header>
@@ -1026,6 +1031,8 @@ useEffect(() => {
 
                         <Form.Control
                           type="number"
+                          min="0"
+                          step="1"
                           className="section-marks-header-input"
                           placeholder="0"
                           disabled={viewOnly}
@@ -1040,33 +1047,32 @@ useEffect(() => {
 
                       {/* TITLE AT LAST */}
 
-                     <div className="cutoff-title-wrapper">
-  <span className="cutoff-header-title">
-    {isStateWisePosition
-      ? "State Wise Cutoff Configuration"
-      : "National Wise Cutoff Configuration"}
-  </span>
-  
+                      <div className="cutoff-title-wrapper">
+                        <span className="cutoff-header-title">
+                          {isStateWisePosition
+                            ? "State Wise Cutoff Configuration"
+                            : "National Wise Cutoff Configuration"}
+                        </span>
 
-  {!viewOnly && !isFrozen && (
-    <button
-      type="button"
-      className="icon-btn ms-2"
-      onClick={(e) => {
-        e.stopPropagation();
-        handleDeleteSection(index);
-      }}
-    >
-      <FaTrash size={13} />
-    </button>
-  )}
 
-  <i
-    className={`bi bi-chevron-${
-      isExpanded ? "up" : "down"
-    } section-arrow-icon`}
-  />
-</div>
+                        {!viewOnly && !isFrozen && (
+                          <button
+                            type="button"
+                            className="icon-btn ms-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteSection(index);
+                            }}
+                          >
+                            <FaTrash size={13} />
+                          </button>
+                        )}
+
+                        <i
+                          className={`bi bi-chevron-${isExpanded ? "up" : "down"
+                            } section-arrow-icon`}
+                        />
+                      </div>
                     </div>
 
                     {/* <span
@@ -1136,9 +1142,9 @@ useEffect(() => {
                                             value={
                                               formData.sections[index]
                                                 ?.stateCutoffs?.[
-                                                stateItem.stateId
+                                              stateItem.stateId
                                               ]?.[
-                                                cat.reservationCategoriesId
+                                              cat.reservationCategoriesId
                                               ] ?? ""
                                             }
                                             onChange={(e) => {
@@ -1162,7 +1168,7 @@ useEffect(() => {
                                               if (
                                                 !updatedSections[index]
                                                   .stateCutoffs[
-                                                  stateItem.stateId
+                                                stateItem.stateId
                                                 ]
                                               ) {
                                                 updatedSections[
@@ -1231,7 +1237,7 @@ useEffect(() => {
                                         value={
                                           formData.sections[index]
                                             ?.nationalCutoffs?.[
-                                            cat.reservationCategoriesId
+                                          cat.reservationCategoriesId
                                           ] ?? ""
                                         }
                                         onChange={(e) => {
@@ -1297,7 +1303,7 @@ useEffect(() => {
           formData.sections.length > 0 && (
             <div className="weightage-box mt-4">
               <h5 className="section-title">
-                Section consideration for combined score:
+                Section consideration for combined score
                 <span className="required-star">*</span>
                 {/* // Weightage Configuration */}
               </h5>
@@ -1306,11 +1312,10 @@ useEffect(() => {
                 {formData.sections.map((section, index) => (
                   <div
                     key={index}
-                    className={`weightage-chip ${
-                      formData.selectedWeightageSections.includes(index)
-                        ? "active"
-                        : ""
-                    }`}
+                    className={`weightage-chip ${formData.selectedWeightageSections.includes(index)
+                      ? "active"
+                      : ""
+                      }`}
                     onClick={() => {
                       if (viewOnly) return;
 
@@ -1428,12 +1433,21 @@ useEffect(() => {
             </Button>
 
             {!viewOnly && (
+              // <Button
+              //   className="save-btn"
+              //   onClick={handleSave}
+              //   disabled={loading}
+              // >
+              //   {loading ? "Saving..." : "Save"}
+              // </Button>
               <Button
                 className="save-btn"
                 onClick={handleSave}
                 disabled={loading}
               >
-                {loading ? "Saving..." : "Save"}
+                {loading
+                  ? (editData ? "Updating..." : "Saving...")
+                  : (editData ? "Update" : "Save")}
               </Button>
             )}
           </>

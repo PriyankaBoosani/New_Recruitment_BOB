@@ -32,6 +32,9 @@ const TableSection = ({
     // "Qualified With Relaxation"
   ];
 
+
+
+
   return (
     <div className="rank-summary-table">
       <table
@@ -70,16 +73,6 @@ const TableSection = ({
                 }}
               >
                 <div>{head.code}</div>
-
-                <div
-                  style={{
-                    fontSize: "10px",
-                    fontWeight: "500",
-                    color: "#6B7280",
-                  }}
-                >
-                  {head.type}
-                </div>
               </th>
             ))}
 
@@ -219,8 +212,8 @@ const ExaminationScoreModal = ({
           const hasQualifiedWithoutRelaxation =
             Number(
               item?.totalQualifiedWithoutRelaxation ??
-                item?.totalQualifiedCount ??
-                0
+              item?.totalQualifiedCount ??
+              0
             ) > 0;
 
           const config = examConfigMap?.[item.positionId || item.id];
@@ -228,6 +221,73 @@ const ExaminationScoreModal = ({
           const isRejected = config?.isRejected === true;
 
           const isFinalized = item?.isFinalized === true;
+
+
+          const formatDate = (date) => {
+            if (!date) return "-";
+
+            const d = new Date(date);
+
+            const day = String(d.getDate()).padStart(2, "0");
+            const month = String(d.getMonth() + 1).padStart(2, "0");
+            const year = d.getFullYear();
+
+            return `${day}-${month}-${year}`;
+          };
+
+
+
+            const getStatusClass = (status) => {
+  switch (status) {
+    case "APPROVED":
+      return "approved";
+
+    case "FINALIZED":
+      return "finalized";
+
+    case "L1_REJECTED":
+    case "L2_REJECTED":
+      return "rejected";
+
+    case "PENDING":
+    case "L1_PENDING":
+    case "L2_PENDING":
+    default:
+      return "pending";
+  }
+};
+
+
+
+
+const getStatusLabel = (status) => {
+  switch (status) {
+    case "PENDING":
+      return "Pending";
+
+    case "L1_PENDING":
+      return "L1 Pending";
+
+    case "L2_PENDING":
+      return "L2 Pending";
+
+    case "L1_REJECTED":
+      return "L1 Rejected";
+
+    case "L2_REJECTED":
+      return "L2 Rejected";
+
+    case "APPROVED":
+      return "Approved";
+
+    case "FINALIZED":
+      return "Finalized";
+
+    default:
+      return status || "-";
+  }
+};
+
 
           return (
             <div key={index} className="mb-3 rank-position-card">
@@ -256,9 +316,18 @@ const ExaminationScoreModal = ({
                 {/* RIGHT */}
 
                 <div className="d-flex align-items-center gap-2">
-                  <div className="rank-date-badge">Start: {item.startDate}</div>
+                  <div className="rank-date-badge">
+                    Start: {formatDate(item.startDate)}
+                  </div>
 
-                  <div className="rank-date-badge">End: {item.endDate}</div>
+                  <div className="rank-date-badge">
+                    End: {formatDate(item.endDate)}
+                  </div>
+
+
+                 {/* <div className={`rank-status-badge ${getStatusClass(item.examStatus)}`}>
+  {getStatusLabel(item.examStatus)}
+</div> */}
 
                   {/* EDIT BUTTON */}
 
@@ -304,18 +373,18 @@ const ExaminationScoreModal = ({
                             if (res?.success) {
                               toast.success(
                                 res?.message ||
-                                  "Position finalized successfully"
+                                "Position finalized successfully"
                               );
 
                               // OPTIONAL UI UPDATE
                               setExaminationScoreData((prev) =>
                                 prev.map((p) =>
                                   (p.positionId || p.id) ===
-                                  (item.positionId || item.id)
+                                    (item.positionId || item.id)
                                     ? {
-                                        ...p,
-                                        isFinalized: true,
-                                      }
+                                      ...p,
+                                      isFinalized: true,
+                                    }
                                     : p
                                 )
                               );
@@ -327,7 +396,7 @@ const ExaminationScoreModal = ({
 
                             toast.error(
                               err?.response?.data?.message ||
-                                "Failed to finalize"
+                              "Failed to finalize"
                             );
                           }
                         }}
@@ -415,9 +484,8 @@ const ExaminationScoreModal = ({
                                     }}
                                   >
                                     <i
-                                      className={`bi bi-chevron-${
-                                        isExpanded ? "up" : "down"
-                                      }`}
+                                      className={`bi bi-chevron-${isExpanded ? "up" : "down"
+                                        }`}
                                     />
                                   </div>
 

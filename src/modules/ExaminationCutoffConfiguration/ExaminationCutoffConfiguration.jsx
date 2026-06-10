@@ -377,8 +377,7 @@ const handlePositionChange = async (ids) => {
         </h2>
 
         <p className="exam-page-subtitle">
-          Define the structural breakdown of the examination and establish
-          rigorous passing criteria across different candidate categories.
+       Configure written examination parameters and define category-wise cut-off marks for candidate shortlisting.
         </p>
       </div>
       <div className="card mb-4 border-0 exam-top-card">
