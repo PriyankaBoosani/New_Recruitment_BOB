@@ -385,7 +385,7 @@ export default function CandidateVerification() {
             onInputClick={() => setIsCalendarOpen(true)}
             dateFormat="dd MMMM yyyy"
             customInput={<DatePill />}
-            // maxDate={new Date()}
+             maxDate={new Date()}
 
             showMonthDropdown
             showYearDropdown
