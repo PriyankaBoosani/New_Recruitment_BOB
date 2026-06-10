@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import HeaderWithBack from "../../shared/components/HeaderWithBack";
@@ -37,6 +37,8 @@ const ScheduleInterviews = () => {
 
   const [showCentreConfirmModal, setShowCentreConfirmModal] = useState(false);
   const [pendingApplyData, setPendingApplyData] = useState(null);
+  const scheduleSubmitRef = useRef(false);
+  const [scheduling, setScheduling] = useState(false);
 
   const [centreRows, setCentreRows] = useState([
     {
@@ -422,34 +424,45 @@ const ScheduleInterviews = () => {
           <ScheduleReadyBar
             count={scheduledCount}
             onCancel={() => setShowReadyBar(false)}
+            isScheduling={scheduling}
             onSchedule={async () => {
-              const res = await scheduleInterview();
+              if (scheduleSubmitRef.current) return;
 
-              if (!res?.success) {
-                setErrorMessage(res?.message || "Failed to schedule interviews");
+              try {
+                scheduleSubmitRef.current = true;
+                setScheduling(true);
 
-                setErrorCandidates(Array.isArray(res?.data) ? res.data : []);
+                const res = await scheduleInterview();
 
-                setShowErrorModal(true);
+                if (!res?.success) {
+                  setErrorMessage(res?.message || "Failed to schedule interviews");
 
-                return;
+                  setErrorCandidates(Array.isArray(res?.data) ? res.data : []);
+
+                  setShowErrorModal(true);
+
+                  return;
+                }
+
+                toast.success("Interview scheduled successfully");
+
+                navigate("/candidate-workflow", {
+                  state: {
+                    requisitionId: selectedRequisitionId,
+
+                    positionIds: Array.isArray(selectedPositionId)
+                      ? selectedPositionId
+                      : [selectedPositionId],
+
+                    activeTab: "SCHEDULE_POOL",
+
+                    refreshSchedulePool: true,
+                  },
+                });
+              } finally {
+                scheduleSubmitRef.current = false;
+                setScheduling(false);
               }
-
-              toast.success("Interview scheduled successfully");
-
-              navigate("/candidate-workflow", {
-                state: {
-                  requisitionId: selectedRequisitionId,
-
-                  positionIds: Array.isArray(selectedPositionId)
-                    ? selectedPositionId
-                    : [selectedPositionId],
-
-                  activeTab: "SCHEDULE_POOL",
-
-                  refreshSchedulePool: true,
-                },
-              });
             }}
           />
         </div>

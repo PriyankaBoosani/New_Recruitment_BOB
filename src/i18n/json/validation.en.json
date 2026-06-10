@@ -80,5 +80,6 @@
   "panel_required": "Please select panel",
   "end_time_greater_than_start": "End time must be greater than start time",
   "invalid_description": "Only letters, numbers and . , - _ / ( ) & : ; ' \" @ # are allowed",
+  "invalid_requisition_title":"Only letters, numbers and . , - _ / ( ) & : ; ' \" @ # % + are allowed",
   "invalid_requisition_description":"Only letters, numbers and . , - _ / ( ) & : ; ' \" @ # % + are allowed"
 }
