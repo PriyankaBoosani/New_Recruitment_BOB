@@ -27,7 +27,6 @@ export const useExperience = () => {
       course: "",
       educationQualificationsId: "",
       specializationOthers: [],
-      // specializationOthers: [{ name: "", id: "" }]
     },
   ]);
 
@@ -46,7 +45,9 @@ export const useExperience = () => {
       const res = await masterApiService.getAllDocumentTypes();
 
       const list = res.data || [];
-      const filtered = list.filter((item) => item?.docType?.toLowerCase() === "educationdocs");
+      const filtered = list.filter(
+        (item) => item?.docType?.toLowerCase() === "educationdocs"
+      );
       setEducationOptions(filtered);
 
       const ids = filtered.map((item) => item.documentTypeId);
@@ -98,9 +99,10 @@ export const useExperience = () => {
     }
 
     const updated = [...formData];
-
     if (field === "specialization") {
       updated[formIndex].specializationOthers[specIndex].name = value;
+    } else if (field === "specializationCode") {
+      updated[formIndex].specializationOthers[specIndex].code = value;
     } else {
       updated[formIndex][field] = value;
     }
@@ -121,8 +123,16 @@ export const useExperience = () => {
       fieldError = validateCourse(value);
     }
 
+    if (field === "courseCode") {
+      fieldError = value?.trim()
+        ? null
+        : t("education:course_code_required", "Course code is required");
+    }
+
     if (field === "specialization") {
-      fieldError = validateSpecialization(updated[formIndex].specializationOthers);
+      fieldError = validateSpecialization(
+        updated[formIndex].specializationOthers
+      );
     }
 
     const updatedErrors = [...errors];
@@ -141,6 +151,7 @@ export const useExperience = () => {
     const updated = [...formData];
     updated[formIndex].specializationOthers.push({
       name: "",
+      code: "",
       id: null,
     });
     setFormData(updated);
@@ -148,9 +159,9 @@ export const useExperience = () => {
 
   const handleRemoveSpec = (formIndex, i) => {
     const updated = [...formData];
-    updated[formIndex].specializationOthers = updated[formIndex].specializationOthers.filter(
-      (_, idx) => idx !== i
-    );
+    updated[formIndex].specializationOthers = updated[
+      formIndex
+    ].specializationOthers.filter((_, idx) => idx !== i);
     setFormData(updated);
   };
 
@@ -159,6 +170,7 @@ export const useExperience = () => {
       {
         educationLevel: "",
         course: "",
+        courseCode: "",
         specializationOthers: [],
         // specializationOthers: [{ name: "", id: "" }]
       },
@@ -191,16 +203,17 @@ export const useExperience = () => {
           levelId: formData[0].educationLevel,
           qualificationName: formData[0].course,
           // qualificationCode: formData[0].course,
-          qualificationCode: "",
+          qualificationCode: formData[0].courseCode || "",
           displayOrder: 0,
-          educationQualificationsId: formData[0].educationQualificationsId || null,
+          educationQualificationsId:
+            formData[0].educationQualificationsId || null,
         },
         specializations: formData[0].specializationOthers
           .filter((s) => s?.name.trim())
           .map((s) => ({
             specializationName: s.name.trim(),
             // specializationCode: s.name,
-            specializationCode: "",
+            specializationCode: s.code || "",
             specializationId: s.id || null,
           })),
       };
@@ -223,28 +236,6 @@ export const useExperience = () => {
         }
       }
       if (res.success) {
-        const levelId = String(saved?.qualification?.levelId || "").toLowerCase();
-
-        const docMap = new Map(
-          educationOptions.map((opt) => [
-            String(opt.documentTypeId).toLowerCase(),
-            opt.documentName,
-          ])
-        );
-
-        const documentName = docMap.get(levelId);
-
-        const mapped = {
-          educationLevel: documentName || "-",
-          course: saved?.qualification?.qualificationName || "-",
-          specialization:
-            saved?.specializations?.map((s) => ({
-              name: s.specializationName,
-              id: s.specializationId,
-            })) || [],
-          educationQualificationsId: saved?.qualification?.educationQualificationsId || "-",
-        };
-
         await loadData();
 
         setShowModal(false);
@@ -265,19 +256,23 @@ export const useExperience = () => {
   const handleEditClick = (item, index) => {
     // 🔥 Convert NAME → ID
     const selectedOption = educationOptions.find(
-      (opt) => opt.documentName.toLowerCase() === String(item.educationLevel).toLowerCase()
+      (opt) =>
+        opt.documentName.toLowerCase() ===
+        String(item.educationLevel).toLowerCase()
     );
 
     setFormData([
       {
         educationLevel: selectedOption?.documentTypeId || "", // ✅ FIXED
         course: item.course,
+        courseCode: item.qualificationCode || "",
         educationQualificationsId: item.educationQualificationsId || null,
         specializationOthers:
           item.specialization?.length > 0
             ? item.specialization.map((s) => ({
                 name: s.name,
                 id: s.id,
+                code: s.code,
               }))
             : [],
       },
@@ -306,7 +301,7 @@ export const useExperience = () => {
 
   return {
     experienceList: filteredList,
-    educationOptions, // ✅ dropdown
+    educationOptions,
     loading,
     showModal,
     searchTerm,

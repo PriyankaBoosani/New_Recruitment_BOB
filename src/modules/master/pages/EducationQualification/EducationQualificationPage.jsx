@@ -68,7 +68,10 @@ const ExperienceDetails = () => {
 
             {/* ✅ TRANSLATED PLACEHOLDER */}
             <Form.Control
-              placeholder={t("education:search_placeholder", "Search Education")}
+              placeholder={t(
+                "education:search_placeholder",
+                "Search Education"
+              )}
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);

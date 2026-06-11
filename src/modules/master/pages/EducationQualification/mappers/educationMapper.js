@@ -1,6 +1,9 @@
 export const mapEducationListFromApi = (list = [], educationOptions = []) => {
   const docMap = new Map(
-    educationOptions.map((opt) => [String(opt.documentTypeId).toLowerCase(), opt.documentName])
+    educationOptions.map((opt) => [
+      String(opt.documentTypeId).toLowerCase(),
+      opt.documentName,
+    ])
   );
   return list.map((item) => {
     const docId = String(item?.qualification?.levelId || "").toLowerCase();
@@ -8,25 +11,18 @@ export const mapEducationListFromApi = (list = [], educationOptions = []) => {
     const documentName = docMap.get(docId);
 
     return {
-      educationLevel: documentName || "-", // 🔥 final output
+      educationLevel: documentName || "-",
+      qualificationCode: item?.qualification?.qualificationCode || "-",
       course: item?.qualification?.qualificationName || "-",
       specialization: Array.isArray(item?.specializations)
         ? item.specializations.map((s) => ({
             name: s.specializationName,
             id: s.specializationId,
+            code: s.specializationCode,
           }))
         : [],
-      educationQualificationsId: item?.qualification?.educationQualificationsId || "-",
+      educationQualificationsId:
+        item?.qualification?.educationQualificationsId || "-",
     };
   });
 };
-
-// export const mapEducationListFromApi = (list = []) => {
-//   return list.map(item => ({
-//     educationLevel: item?.qualification?.documentName || "-",
-//     course: item?.qualification?.qualificationName || "-",
-//     specialization: item?.specializations?.map(
-//       s => s.specializationName
-//     ) || [],
-//   }));
-// };

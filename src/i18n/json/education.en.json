@@ -1,7 +1,7 @@
 {
   "title": "Add Education",
   "education_level": "Education Level",
-  "course": "Course",
+  "course_code_placeholder": "Enter Course Code",
   "specialization": "Specialization",
   "add_specialization": "+ Add Specialization",
   "course_placeholder": "Enter course",
@@ -25,5 +25,9 @@
   "invalid_characters": "Invalid characters",
   "duplicate_specialization": "Duplicate specialization",
   "duplicate_course": "Course already exists",
-  "specialization_required": "Specialization is required"
+  "specialization_required": "Specialization is required",
+  "course": "Course",
+  "course_code": "Course Code",
+  "specialization_name": "Specialization Name",
+  "specialization_code": "Specialization Code"
 }

@@ -1,7 +1,6 @@
 import React from "react";
 import { Table, Button } from "react-bootstrap";
 import editIcon from "../../../../../assets/edit_icon.png";
-import deleteIcon from "../../../../../assets/delete_icon.png";
 import viewIcon from "../../../../../assets/view_icon.png";
 import { useTranslation } from "react-i18next";
 
@@ -68,9 +67,15 @@ const EducationTable = ({
 
                   <td>{item.educationLevel}</td>
 
-                  <td>{item.course}</td>
+                  <td>
+                    {item.course}({item.qualificationCode})
+                  </td>
 
-                  <td>{item.specialization.map((s) => s.name).join(", ")}</td>
+                  <td>
+                    {item.specialization
+                      .map((s) => `${s.name} (${s.code})`)
+                      .join(", ")}
+                  </td>
 
                   <td>
                     <div className="action-buttons">
@@ -91,15 +96,6 @@ const EducationTable = ({
                       >
                         <img src={editIcon} alt="Edit" className="icon-16" />
                       </Button>
-
-                      {/* DELETE */}
-                      {/* <Button
-                        variant="link"
-                        className="action-btn delete-btn"
-                        onClick={() => onDelete(idx)}
-                      >
-                        <img src={deleteIcon} alt="Delete" className="icon-16" />
-                      </Button> */}
                     </div>
                   </td>
                 </tr>
@@ -123,7 +119,10 @@ const EducationTable = ({
         >
           {/* Page size */}
           <div className="d-flex align-items-center gap-2 user-actions">
-            <span className="fw-semibold" style={{ color: "var(--bs-heading-color)" }}>
+            <span
+              className="fw-semibold"
+              style={{ color: "var(--bs-heading-color)" }}
+            >
               {t("page_size")}
             </span>
 
@@ -157,10 +156,8 @@ const EducationTable = ({
             </li>
 
             {(() => {
-              const { pages, showStartEllipsis, showEndEllipsis } = getVisiblePages(
-                currentPage,
-                totalPages
-              );
+              const { pages, showStartEllipsis, showEndEllipsis } =
+                getVisiblePages(currentPage, totalPages);
 
               return (
                 <>
@@ -177,7 +174,10 @@ const EducationTable = ({
                       key={number}
                       className={`page-item ${currentPage === number ? "active" : ""}`}
                     >
-                      <button className="page-link" onClick={() => setCurrentPage(number)}>
+                      <button
+                        className="page-link"
+                        onClick={() => setCurrentPage(number)}
+                      >
                         {number}
                       </button>
                     </li>
@@ -193,7 +193,9 @@ const EducationTable = ({
               );
             })()}
 
-            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+            <li
+              className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+            >
               <button
                 className="page-link"
                 onClick={() => setCurrentPage(currentPage + 1)}

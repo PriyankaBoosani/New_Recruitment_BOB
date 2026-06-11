@@ -23,7 +23,9 @@ const DeleteConfirmModal = ({ show, onHide, onConfirm, target }) => {
       <Modal.Body>
         <p>
           {target
-            ? t("education:delete_message_with_name", { name: target?.educationLevel })
+            ? t("education:delete_message_with_name", {
+                name: target?.educationLevel,
+              })
             : t("education:delete_message")}
         </p>
 
