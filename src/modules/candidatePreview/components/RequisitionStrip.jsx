@@ -32,7 +32,17 @@ const RequisitionStrip = ({
 
   const [masterData, setMasterData] = useState(null); //  INTERNAL
 
-  const orderedPattern = /^\s*(\(?\d+[\).\]]|\(?[ivxlcdm]+[\).\]])\s*/i;
+ // const orderedPattern = /^\s*(\(?\d+[\).\]]|\(?[ivxlcdm]+[\).\]])\s*/i;
+const orderedPattern = /^\s*(?:\(?\d+[).\]]|\(?[ivxlcdm]+[).\]])\s*/i;
+  const MAX_REGEX_INPUT = 500;
+
+const isOrderedListItem = (text) => {
+  if (!text || text.length > MAX_REGEX_INPUT) {
+    return false;
+  }
+
+  return orderedPattern.test(text);
+};
 
   const renderBullets = (text) => {
     if (!text) return <li>-</li>;
@@ -46,7 +56,7 @@ const RequisitionStrip = ({
       const cleaned = line.replace(/\.+$/, "");
 
       // ✅ If already numbered → DO NOT ADD BULLET
-      if (orderedPattern.test(cleaned)) {
+      if (isOrderedListItem(cleaned)) {
         return (
           <div key={idx} className="no-bullet-line">
             {cleaned}
