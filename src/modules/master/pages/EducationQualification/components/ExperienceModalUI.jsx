@@ -16,6 +16,7 @@ const ExperienceModal = ({
   isViewing,
   isEditing,
   educationOptions,
+  isSubmitting
 }) => {
   const { t } = useTranslation(["education", "common"]);
 
@@ -424,7 +425,7 @@ const ExperienceModal = ({
         </Button>
 
         {!isViewing && (
-          <Button variant="primary" onClick={saveExperience}>
+          <Button variant="primary" onClick={saveExperience} disabled={isSubmitting}>
             {isEditing ? "Update" : t("common:save")}
           </Button>
         )}

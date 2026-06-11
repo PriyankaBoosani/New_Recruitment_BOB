@@ -37,6 +37,7 @@ export const useExperience = () => {
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchEducationOptions = async () => {
     try {
@@ -188,7 +189,9 @@ export const useExperience = () => {
   };
 
   const saveExperience = async () => {
+     if (isSubmitting) return;
     try {
+       setIsSubmitting(true);
       const { valid, errors: newErrors } = validateEducationForm(formData[0], {
         existing: experienceList,
         currentId: formData[0].educationQualificationsId,
@@ -246,6 +249,9 @@ export const useExperience = () => {
       console.error(err);
       toast.error("Save failed");
     }
+    finally {
+    setIsSubmitting(false);
+  }
   };
 
   const handleDelete = (index) => {
@@ -324,5 +330,6 @@ export const useExperience = () => {
     handleFieldChange,
     handleAddSpec,
     handleRemoveSpec,
+    isSubmitting
   };
 };
