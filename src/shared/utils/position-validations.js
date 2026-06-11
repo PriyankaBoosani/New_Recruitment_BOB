@@ -4,7 +4,7 @@ import { requiredField } from "./common-validations";
 import i18n from "i18next";
 
 const normalizeTitle = (s = "") => String(s).trim().toLowerCase();
-const isEmpty = (v) => v === null || v === undefined || String(v).trim() === "";
+const isEmpty = (v) => v === null || v === undefined || String(v).trim() === ""; 
 
 /* ---------------- TITLE ---------------- */
 export const validatePositionTitle = (title, options = {}) => {
