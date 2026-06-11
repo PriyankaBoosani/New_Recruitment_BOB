@@ -2055,7 +2055,7 @@ export default function CandidateScreening({ selectedJob }) {
               />
             )}
 
-            <div className="col-md-6 col-12 text-md-end">
+            {/* <div className="col-md-6 col-12 text-md-end">
               <button className="btn blue-color blue-border me-2 fs-14">
                 <img src={uploadIcon} width={15} className="me-2" />
                 {t("candidateWorkflow:import_candidates")}
@@ -2063,7 +2063,7 @@ export default function CandidateScreening({ selectedJob }) {
               <button className="btn text-white orange-bg fs-14">
                 + {t("candidateWorkflow:add_candidate")}
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* <div className="mt-2 pt-1 pb-3">
