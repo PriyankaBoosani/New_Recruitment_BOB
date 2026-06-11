@@ -30,26 +30,38 @@ export const useGenericOrAnnexures = () => {
   }, []);
 
   /* ================= ADD ================= */
-  const addItem = async (payload) => {
-    try {
-      setLoading(true);
+ const addItem = async (payload) => {
+  try {
+    setLoading(true);
 
-      await masterApiService.saveGenericDocument(
-        payload.type, // Generic / Annexures
-        payload.file // PDF
-      );
+    const res = await masterApiService.saveGenericDocument(
+      payload.type,
+      payload.file
+    );
 
-      //  ALWAYS refresh list from API
-      await fetchItems();
-
-      // toast.success("File added successfully");
-    } catch (e) {
-      console.error(e);
-      toast.error("Upload failed");
-    } finally {
-      setLoading(false);
+    if (res?.success === false) {
+      toast.error(res.message);
+      return false;
     }
-  };
+
+    await fetchItems();
+
+    toast.success("File uploaded successfully");
+    return true;
+  } catch (e) {
+    console.error(e);
+
+    toast.error(
+      e?.response?.data?.message ||
+      e?.message ||
+      "Upload failed"
+    );
+
+    return false;
+  } finally {
+    setLoading(false);
+  }
+};
 
   /* ================= DELETE ================= */
   const deleteItem = async (id) => {

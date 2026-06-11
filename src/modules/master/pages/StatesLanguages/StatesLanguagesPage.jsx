@@ -26,6 +26,7 @@ const StatesLanguagesPage = () => {
     handleEditClick,
     handleViewClick,
     handleChange,
+    isSubmitting
   } = useStateLanguages();
   return (
     <div className="px-4 py-3 border rounded user-container">
@@ -54,6 +55,7 @@ const StatesLanguagesPage = () => {
         setPageSize={setPageSize}
         onEdit={handleEditClick}
         onView={handleViewClick}
+        isSubmitting={isSubmitting}
       />
       <StatesLanguagesModal
         show={showModal}

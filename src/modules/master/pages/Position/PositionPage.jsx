@@ -31,7 +31,7 @@ const PositionPage = () => {
 
   const [activeTab, setActiveTab] = useState("manual");
   const [isViewing, setIsViewing] = useState(false);
-
+const [isSubmitting, setIsSubmitting] = useState(false);
   /* ---------------- FORM STATE ---------------- */
   const [formData, setFormData] = useState({
     departmentId: "",
@@ -119,7 +119,7 @@ const PositionPage = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-
+ if (isSubmitting) return; // Prevent double click
     // TRIM TEXT FIELDS HERE (single source of truth)
     const cleanedFormData = {
       ...formData,
@@ -138,7 +138,8 @@ const PositionPage = () => {
       setErrors(vErrors);
       return;
     }
-
+    try {
+setIsSubmitting(true);
     const payload = mapPositionToApi({ ...cleanedFormData, id: editingId }, isEditing);
 
     if (isEditing) {
@@ -149,6 +150,11 @@ const PositionPage = () => {
     }
 
     setShowAddModal(false);
+  }catch (err) {
+    console.error("Save failed", err);
+  } finally {
+    setIsSubmitting(false);
+  }
   };
 
   /* ---------------- RENDER ---------------- */
@@ -205,6 +211,7 @@ const PositionPage = () => {
         formData={formData}
         errors={errors}
         setErrors={setErrors}
+        isSubmitting={isSubmitting}
         handleInputChange={(e) => {
           const { name, value } = e.target;
 

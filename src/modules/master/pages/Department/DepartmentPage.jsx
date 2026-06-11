@@ -29,7 +29,7 @@ const DepartmentPage = () => {
   const [editingDeptId, setEditingDeptId] = useState(null);
   const [errors, setErrors] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-
+const [isSubmitting, setIsSubmitting] = useState(false);
   const openAddModal = () => {
     setIsEditing(false);
     setIsViewing(false);
@@ -60,7 +60,7 @@ const DepartmentPage = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-
+ if (isSubmitting) return; // Prevent double click
     //  TRIM ALL STRING FIELDS (ltrim + rtrim)
     const trimmedFormData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [
@@ -80,6 +80,7 @@ const DepartmentPage = () => {
     }
 
     try {
+      setIsSubmitting(true);
       const payload = mapDepartmentToApi(trimmedFormData);
 
       if (isEditing) {
@@ -93,6 +94,9 @@ const DepartmentPage = () => {
     } catch (err) {
       console.error("Save failed", err);
     }
+    finally {
+    setIsSubmitting(false);
+  }
   };
 
   return (
@@ -136,6 +140,7 @@ const DepartmentPage = () => {
 
       <DepartmentFormModal
         show={showAddModal}
+        isSubmitting={isSubmitting}
         onHide={() => {
           setShowAddModal(false);
           setErrors({});

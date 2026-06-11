@@ -19,6 +19,7 @@ export const useStateLanguages = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   useEffect(() => {
     loadMasterData();
   }, []);
@@ -71,6 +72,7 @@ export const useStateLanguages = () => {
     setFormData({ state: "", languages: [] });
   };
   const saveStateLanguage = async () => {
+     if (isSubmitting) return;
     const { valid, errors: newErrors } = validateStateLanguageForm(formData, {
       existing: stateLangList,
       currentId: isEditMode ? formData.state : null,
@@ -78,6 +80,7 @@ export const useStateLanguages = () => {
     setErrors(newErrors);
     if (!valid) return;
     try {
+      setIsSubmitting(true);
       const payload = {
         stateId: formData.state,
         languageIds: formData.languages,
@@ -97,6 +100,9 @@ export const useStateLanguages = () => {
         error?.response?.data?.message || error?.message || t("stateLanguages:failed_save")
       );
     }
+    finally {
+    setIsSubmitting(false);
+  }
   };
   const handleEditClick = (item, index) => {
     setFormData({
@@ -144,5 +150,6 @@ export const useStateLanguages = () => {
     handleEditClick,
     handleViewClick,
     handleChange,
+    isSubmitting
   };
 };

@@ -43,6 +43,7 @@ const PositionFormModal = ({
   jobGrades = [],
   fetchPositions,
   t,
+   isSubmitting
 }) => {
   const title = isViewing ? t("view") : isEditing ? t("edit_position") : t("add_position");
 
@@ -65,7 +66,7 @@ const PositionFormModal = ({
         </Button>
 
         {!isViewing && (
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" disabled={isSubmitting}>
             {isEditing ? t("update") : t("save")}
           </Button>
         )}
