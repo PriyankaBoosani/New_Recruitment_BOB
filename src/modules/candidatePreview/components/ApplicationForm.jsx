@@ -76,8 +76,10 @@ const ApplicationForm = ({
   const candidate = location.state?.candidate;
 
   const zonalInitRef = useRef(true);
-  const isZonalAbsent =
-    String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
+  const submitRef = useRef(false);
+  const zonalSubmitRef = useRef(false);
+  const docActionRef = useRef(false);
+  const isZonalAbsent =String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
   const [isLptRequired, setIsLptRequired] = useState("");
   const [lptType, setLptType] = useState("");
 
@@ -95,7 +97,8 @@ const ApplicationForm = ({
     // Clear radio selection whenever LPT changes
     setZonalDecision("");
   }, [lptType]);
-
+const [submitting, setSubmitting] = useState(false);
+  const [zonalSubmitting, setZonalSubmitting] = useState(false);
   const deriveShortlistStatus = () => {
     const ageOk = isCategorySatisfied("AGE");
     const workOk = isCategorySatisfied("WORK");
@@ -238,6 +241,7 @@ const ApplicationForm = ({
   ]);
 
   const handleZonalSubmit = async () => {
+    if (zonalSubmitRef.current) return;
     // Helper Conditions
     const allVerified = areAllDocumentsVerified(); // returns true/false
     const anyRejected = hasAnyRejectedDocument(); // returns true/false
@@ -343,6 +347,8 @@ const ApplicationForm = ({
 
       if (hasError) return;
     }
+    zonalSubmitRef.current = true;
+    setZonalSubmitting(true);
     const toastId = toast.loading(t("submitting_zonal_verification"));
 
     try {
@@ -397,6 +403,10 @@ const ApplicationForm = ({
       });
 
       console.error(err);
+    }
+     finally {
+      zonalSubmitRef.current = false;
+      setZonalSubmitting(false);
     }
   };
   const data = previewData || {
@@ -723,6 +733,8 @@ const ApplicationForm = ({
 
   const handleVerify = async (comment) => {
     if (!selectedDoc) return;
+    if (docActionRef.current) return;
+    docActionRef.current = true;
 
     try {
       if (isZonalHr) {
@@ -750,11 +762,16 @@ const ApplicationForm = ({
       await refreshDocStatuses();
     } catch (err) {
       console.error(t("reject_failed"), err);
+    }finally {
+      docActionRef.current = false;
     }
   };
 
   const handleReject = async (comment) => {
-    if (!selectedDoc) return;
+   if (!selectedDoc) return;
+    if (docActionRef.current) return;
+    docActionRef.current = true;
+
 
     try {
       if (isZonalHr) {
@@ -782,6 +799,8 @@ const ApplicationForm = ({
       await refreshDocStatuses();
     } catch (err) {
       console.error("Reject failed", err);
+    } finally {
+      docActionRef.current = false;
     }
   };
 
@@ -965,6 +984,13 @@ const ApplicationForm = ({
   const disableNoOption = disableShortlistedSection;
 
   const handleFinalSubmit = async () => {
+    console.log("Final submit clicked");
+     if (submitRef.current) {
+    return;
+  }
+  submitRef.current = true;
+  setSubmitting(true);
+
     // ✅ Validation 1: Criteria must be selected
     const isValid = validateForm();
     if (!isValid) return;
@@ -993,7 +1019,7 @@ const ApplicationForm = ({
         .map((doc) => doc.documentName?.trim())
         .filter(Boolean),
     };
-
+submitRef.current = true;
     try {
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
       // toast.success("Screening submitted successfully");
@@ -2457,7 +2483,7 @@ if (
                               <button
               className="btn-submit-orange"
               onClick={handleFinalSubmit}
-              disabled={isExamDisqualified}
+              disabled={isExamDisqualified || submitting || zonalSubmitting}
               style={{
                 opacity: isExamDisqualified ? 0.5 : 1,
                 cursor: isExamDisqualified ? "not-allowed" : "pointer",
@@ -2679,7 +2705,7 @@ if (
               <div className="remarks-button">
                 <button
                   className="btn-submit-orange"
-                  disabled={docStatusLoading || isZonalAbsent}
+                  disabled={docStatusLoading || isZonalAbsent || zonalSubmitting}
                   onClick={handleZonalSubmit}
                 >
                   {t("submit")}

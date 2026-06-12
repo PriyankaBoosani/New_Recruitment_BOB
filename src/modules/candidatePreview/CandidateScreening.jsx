@@ -109,6 +109,9 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [rankListGenerated, setRankListGenerated] = useState(false);
 
+  const sendOfferRef = useRef(false);
+  const [sendingOffer, setSendingOffer] = useState(false);
+
   const handleRemovePosition = (removeId) => {
     const updatedIds = selectedPositionId.filter((id) => id !== removeId);
 
@@ -1880,7 +1883,7 @@ export default function CandidateScreening({ selectedJob }) {
 
   const handleSendOffer = async () => {
 
-
+  if (sendOfferRef.current) return;
       if (!allHaveLocationAndState) {
     toast.error(
       "Selected candidates must have both Location and State before sending offers"
@@ -1903,6 +1906,8 @@ export default function CandidateScreening({ selectedJob }) {
     }
 
     try {
+         sendOfferRef.current = true;
+      setSendingOffer(true);
       const payload = {
         offerTemplateId,
         joiningDate,
@@ -1933,6 +1938,10 @@ export default function CandidateScreening({ selectedJob }) {
       toast.error(
         err?.response?.data?.message || t("candidateWorkflow:failed_send_offer")
       );
+    }
+     finally {
+      sendOfferRef.current = false;
+      setSendingOffer(false);
     }
   };
 
@@ -2870,7 +2879,7 @@ export default function CandidateScreening({ selectedJob }) {
                           isSendOfferEnabled ? "" : "disabled_button"
                         }`}
                         onClick={handleSendOffer}
-                        disabled={!isSendOfferEnabled}
+                        disabled={!isSendOfferEnabled || sendingOffer}
                       >
                         <img
                           alt="offer"
@@ -3181,6 +3190,7 @@ export default function CandidateScreening({ selectedJob }) {
               rows={paginatedSchedulePool}
               onEdit={handleEditSchedule}
               onSubmitApproval={() => setShowApprovalModal(true)}
+              submitting={submittingApproval}
               page={schedulePoolPage}
               position={selectedPosition}
               pageSize={schedulePoolPageSize}

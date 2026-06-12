@@ -22,6 +22,7 @@ const RequisitionStrip = ({
   isSaveBtn,
   showImportBtn,
   onImportClick,
+   isSaving
 }) => {
   const [showPosition, setShowPosition] = useState(false);
   const [job, setJob] = useState(null);
@@ -254,7 +255,7 @@ const isOrderedListItem = (text) => {
           {isSaveBtn && (
             <button
               className={`save-btn ${isSaveEnabled ? "unsaved" : "saved"}`}
-              disabled={!isSaveEnabled}
+              disabled={!isSaveEnabled || isSaving}
               onClick={onSave}
             >
               {t("common:save")}

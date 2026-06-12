@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import "../../../style/css/InterviewPanelsConfig.css";
 
-const ScheduleReadyBar = ({ count = 0, onCancel, onSchedule }) => {
+const ScheduleReadyBar = ({ count = 0, onCancel, onSchedule, isScheduling = false }) => {
   const { t } = useTranslation(["interviewSchedule", "common"]);
 
   return (
@@ -23,7 +23,7 @@ const ScheduleReadyBar = ({ count = 0, onCancel, onSchedule }) => {
           {t("common:cancel")}
         </button>
 
-        <button className="sr-btn-primary" onClick={onSchedule}>
+        <button className="sr-btn-primary" onClick={onSchedule} disabled={isScheduling}>
           <i className="bi bi-check2-circle me-1"></i>
           {t("schedule_interviews")}
         </button>

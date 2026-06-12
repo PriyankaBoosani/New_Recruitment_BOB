@@ -35,7 +35,7 @@ const UserFormModal = ({
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const [activeTab, setActiveTab] = useState("manual");
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   useEffect(() => {
     if (!show) return;
 
@@ -80,8 +80,9 @@ const UserFormModal = ({
       return updated;
     });
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+     if (isSubmitting) return;
 
     const { valid, errors: vErrors } = validateUserForm(formData, {
       existing: existingUsers,
@@ -94,7 +95,14 @@ const UserFormModal = ({
       return;
     }
 
-    onSave(formData);
+    setIsSubmitting(true);
+    try {
+      await onSave(formData);
+    } catch (err) {
+      // keep behavior same: let caller handle errors
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -245,7 +253,7 @@ const UserFormModal = ({
                     {t("cancel")}
                   </Button>
 
-                  <Button variant="primary" type="submit">
+                  <Button variant="primary" type="submit" disabled={isSubmitting}>
                     {mode === "edit" ? t("update") : t("save")}
                   </Button>
                 </>

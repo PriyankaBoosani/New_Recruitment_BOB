@@ -58,7 +58,7 @@ const ScheduleInterviews = () => {
   const selectedRequisition = requisitions.find(
     (r) => r.id === selectedRequisitionId
   );
-
+const [isScheduling, setIsScheduling] = useState(false);
   const normalizedRequisition = selectedRequisition
     ? {
         requisition_id: selectedRequisition.id,
@@ -358,38 +358,44 @@ const ScheduleInterviews = () => {
         <div className="mt-3">
           <ScheduleReadyBar
             count={scheduledCount}
+             isScheduling={isScheduling}
             onCancel={() => setShowReadyBar(false)}
             onSchedule={async () => {
-              const res = await scheduleInterview();
+                if (isScheduling) return;
 
-              if (!res?.success) {
-                setErrorMessage(
-                  res?.message || "Failed to schedule interviews"
-                );
+                try {
+                  setIsScheduling(true);
 
-                setErrorCandidates(Array.isArray(res?.data) ? res.data : []);
+                  const res = await scheduleInterview();
 
-                setShowErrorModal(true);
+                  if (!res?.success) {
+                    setErrorMessage(
+                      res?.message || "Failed to schedule interviews"
+                    );
 
-                return;
-              }
+                    setErrorCandidates(Array.isArray(res?.data) ? res.data : []);
 
-              toast.success("Interview scheduled successfully");
+                    setShowErrorModal(true);
 
-              navigate("/candidate-workflow", {
-                state: {
-                  requisitionId: selectedRequisitionId,
+                    return;
+                  }
 
-                  positionIds: Array.isArray(selectedPositionId)
-                    ? selectedPositionId
-                    : [selectedPositionId],
+                  toast.success("Interview scheduled successfully");
 
-                  activeTab: "SCHEDULE_POOL",
-
-                  refreshSchedulePool: true,
-                },
-              });
-            }}
+                  navigate("/candidate-workflow", {
+                    state: {
+                      requisitionId: selectedRequisitionId,
+                      positionIds: Array.isArray(selectedPositionId)
+                        ? selectedPositionId
+                        : [selectedPositionId],
+                      activeTab: "SCHEDULE_POOL",
+                      refreshSchedulePool: true,
+                    },
+                  });
+                } finally {
+                  setIsScheduling(false);
+                }
+              }}
           />
         </div>
       )}

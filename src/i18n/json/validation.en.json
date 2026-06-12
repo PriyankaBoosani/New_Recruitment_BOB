@@ -85,5 +85,7 @@
   "duplicate_cert_group": "Same certification group already added",
   "state_city_conflict_city_first": "A city has already been added for this state. Please do not add a state-only entry for the same state.",
   "state_city_conflict_empty_first": "A state-only entry already exists for this state. Please do not add a city-wise entry for the same state.",
-  "invalid_description": "Only letters, numbers and . , - _ / ( ) & : ; ' \" @ # are allowed"
+  "invalid_description": "Only letters, numbers and . , - _ / ( ) & : ; ' \" @ # are allowed",
+  "invalid_requisition_title":"Only letters, numbers and . , - _ / ( ) & : ; ' \" @ # % + are allowed",
+  "invalid_requisition_description":"Only letters, numbers and . , - _ / ( ) & : ; ' \" @ # % + are allowed"
 }
