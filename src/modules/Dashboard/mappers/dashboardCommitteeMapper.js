@@ -10,21 +10,21 @@ export const mapCommitteeOverview = (data) => {
       data?.interviewPanels?.map((item) => ({
         panelName: item.panel_name,
         positionsAssigned: item.positions_assigned,
-        avgTurnaroundDays: item.avg_turnaround_days,
+        totalDaysUtilized: item.total_days_utilized,
       })) || [],
 
     screeningPanels:
       data?.screeningPanels?.map((item) => ({
         panelName: item.panel_name,
         positionsAssigned: item.positions_assigned,
-        avgScreeningDays: item.avg_screening_days,
+        totalDaysUtilized: item.total_days_utilized,
       })) || [],
 
     compensationPanels:
       data?.compensationPanels?.map((item) => ({
         panelName: item.panel_name,
         positionsAssigned: item.positions_assigned,
-        offersReviewed: item.offers_reviewed,
+        totalDaysUtilized: item.total_days_utilized,
       })) || [],
   };
 };
