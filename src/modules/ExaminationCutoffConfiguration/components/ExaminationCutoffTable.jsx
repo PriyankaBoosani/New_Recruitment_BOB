@@ -1,5 +1,7 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { FaEye, FaPen } from "react-icons/fa";
+
 export default function ExaminationCutoffTable({
   rows = [],
   onView,
@@ -16,16 +18,17 @@ export default function ExaminationCutoffTable({
   setStatusFilter,
 }) {
   const tableRows = rows || [];
+  const { t } = useTranslation("examconfiguration");
 
   return (
     <div className="cutoff-table-wrapper bg-white rounded-4">
       {/* HEADER */}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h5 className="table-main-heading m-0">
-          Position Wise Cutoff Configuration
+          {t("position_wise_cutoff_configuration")}
         </h5>
 
-      
+
       </div>
 
       {/* TABLE */}
@@ -34,17 +37,12 @@ export default function ExaminationCutoffTable({
         <table className="table align-middle cutoff-custom-table">
           <thead>
             <tr>
-              <th>Position</th>
-
-              <th>Total Marks</th>
-
-              <th>No. of Sections</th>
-
-              <th className="weightage-column">Weightage</th>
-
-              <th>Status</th>
-
-              <th>Actions</th>
+              <th>{t("position")}</th>
+              <th>{t("total_marks")}</th>
+              <th>{t("number_of_sections")}</th>
+              <th className="weightage-column">{t("weightage")}</th>
+              <th>{t("status")}</th>
+              <th>{t("actions")}</th>
             </tr>
           </thead>
 
@@ -66,18 +64,17 @@ export default function ExaminationCutoffTable({
 
                   <td>
                     <span
-                      className={`status-pill ${
-                        item.status === "APPROVED" ||
+                      className={`status-pill ${item.status === "APPROVED" ||
                         item.status === "L1_APPROVED"
-                          ? "approved"
-                          : item.status === "REJECTED" ||
-                              item.status === "L1_REJECTED" ||
-                              item.status === "L2_REJECTED"
-                            ? "rejected"
-                            : item.status === "FINALIZED"
-                              ? "finalized"
-                              : "pending"
-                      }`}
+                        ? "approved"
+                        : item.status === "REJECTED" ||
+                          item.status === "L1_REJECTED" ||
+                          item.status === "L2_REJECTED"
+                          ? "rejected"
+                          : item.status === "FINALIZED"
+                            ? "finalized"
+                            : "pending"
+                        }`}
                     >
                       {item.status?.replaceAll("_", " ")}
                     </span>
@@ -138,7 +135,7 @@ export default function ExaminationCutoffTable({
             ) : (
               <tr>
                 <td colSpan={6} className="text-center py-4">
-                  No configurations found
+                  {t("no_configurations_found")}
                 </td>
               </tr>
             )}
@@ -147,7 +144,7 @@ export default function ExaminationCutoffTable({
       </div>
 
       {/* PAGINATION */}
-  
+
     </div>
   );
 }

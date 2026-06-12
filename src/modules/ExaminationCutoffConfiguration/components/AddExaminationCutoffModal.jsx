@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import candidateWorkflowServices from "../../candidatePreview/services/CandidateWorkflowServices";
 import committeeManagementService from "../../committeeManagement/services/committeeManagementService";
 import "../../../style/css/ExaminationCutoffConfiguration.css";
+import { useTranslation } from "react-i18next";
 import { FaTrash } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
@@ -30,6 +31,8 @@ export default function AddExaminationCutoffModal({
 
   const isL1 = privileges?.["L1 Approval"];
   const isL2 = privileges?.["L2 Approval"];
+  
+  const { t } = useTranslation("examconfiguration");
 
   const [allCategories, setAllCategories] = useState([]);
 
@@ -912,14 +915,14 @@ export default function AddExaminationCutoffModal({
         <div>
           <h4 className="modal-main-title bluecol fs-15">
             {viewOnly
-              ? "View Cut-off Configuration"
+              ? t("view_cutoff_configuration")
               : editData
-                ? "Edit Cut-off Configuration"
-                : "Add Cut-off Configuration"}
+                ? t("edit_cutoff_configuration")
+                : t("add_cutoff_configuration")}
           </h4>
 
           <p className="modal-subtitle">
-            Configure sections, marks, and qualifying criteria for the examination.
+             {t("configure_sections_marks")}
           </p>
         </div>
       </Modal.Header>
@@ -928,7 +931,7 @@ export default function AddExaminationCutoffModal({
           <Col md={4}>
             <Form.Group>
               <Form.Label>
-                Total Marks
+              {t("total_marks")}
                 <span className="required-star">*</span>
               </Form.Label>
 
@@ -937,7 +940,7 @@ export default function AddExaminationCutoffModal({
                 min={0}
                 disabled={viewOnly}
                 onKeyDown={preventInvalidNumberInput}
-                placeholder="Sum of all sections combined."
+                placeholder={t("sum_of_all_sections")}
                 value={formData.totalMarks}
                 onChange={(e) => {
                   const value = Number(e.target.value);
@@ -953,7 +956,7 @@ export default function AddExaminationCutoffModal({
           <Col md={4}>
             <Form.Group>
               <Form.Label>
-                Number of Sections
+                {t("number_of_sections")}
                 <span className="required-star">*</span>
               </Form.Label>
 
@@ -962,7 +965,7 @@ export default function AddExaminationCutoffModal({
                 min={0}
                 disabled={viewOnly || disableSectionCount}
                 onKeyDown={preventInvalidNumberInput}
-                placeholder="e.g. 4"
+                placeholder={t("example_sections")}
                 value={formData.numberOfSections}
                 onChange={(e) => {
                   const value = Number(e.target.value);
@@ -988,7 +991,7 @@ export default function AddExaminationCutoffModal({
                   viewOnly || !formData.totalMarks || !formData.numberOfSections
                 }
               >
-                + Add
+              + {t("add")}
               </Button>
             </Col>
           )}
@@ -1027,7 +1030,7 @@ export default function AddExaminationCutoffModal({
                       {/* TOTAL MARKS */}
 
                       <div className="section-marks-wrapper">
-                        <span className="marks-label">Total Section Marks</span>
+                        <span className="marks-label"> {t("total_section_marks")}</span>
 
                         <Form.Control
                           type="number"
@@ -1050,8 +1053,8 @@ export default function AddExaminationCutoffModal({
                       <div className="cutoff-title-wrapper">
                         <span className="cutoff-header-title">
                           {isStateWisePosition
-                            ? "State Wise Cutoff Configuration"
-                            : "National Wise Cutoff Configuration"}
+                            ? t("state_wise_cutoff_configuration")
+                            : t("national_wise_cutoff_configuration")}
                         </span>
 
 
@@ -1303,7 +1306,7 @@ export default function AddExaminationCutoffModal({
           formData.sections.length > 0 && (
             <div className="weightage-box mt-4">
               <h5 className="section-title">
-                Section consideration for combined score
+                {t("section_consideration_for_combined_score")}
                 <span className="required-star">*</span>
                 {/* // Weightage Configuration */}
               </h5>
@@ -1339,7 +1342,7 @@ export default function AddExaminationCutoffModal({
               <div className="weightage-input-wrapper">
                 <Form.Group>
                   <Form.Label>
-                    Written Exam Weightage (%)
+                      {t("written_exam_weightage")}
                     <span className="required-star">*</span>
                   </Form.Label>
 
@@ -1349,7 +1352,7 @@ export default function AddExaminationCutoffModal({
                     type="number"
                     disabled={viewOnly}
                     onKeyDown={preventInvalidNumberInput}
-                    placeholder="Enter %"
+                    placeholder={t("enter_percentage")}
                     min={0}
                     max={100}
                     value={formData.writtenExamWeightage}
@@ -1378,13 +1381,13 @@ export default function AddExaminationCutoffModal({
         <div className="px-3 pb-3">
           <Form.Group>
             <Form.Label>
-              Comments <span className="text-danger">*</span>
+            t("comments") <span className="text-danger">*</span>
             </Form.Label>
 
             <Form.Control
               as="textarea"
               rows={3}
-              placeholder="Enter comments"
+              placeholder={t("enter_comments")}
               value={decisionComments}
               disabled={!canTakeAction}
               onChange={(e) => {
@@ -1411,7 +1414,7 @@ export default function AddExaminationCutoffModal({
               onClick={handleReject}
               disabled={loading || !canTakeAction}
             >
-              Reject
+              {t("reject")}
             </Button>
 
             <Button
@@ -1419,7 +1422,7 @@ export default function AddExaminationCutoffModal({
               onClick={handleApprove}
               disabled={loading || !canTakeAction}
             >
-              Accept
+               {t("accept")}
             </Button>
           </>
         ) : (
@@ -1429,7 +1432,7 @@ export default function AddExaminationCutoffModal({
               className="cancel-btn"
               onClick={handleCloseAndBack}
             >
-              Cancel
+            {t("cancel")}
             </Button>
 
             {!viewOnly && (
@@ -1446,8 +1449,8 @@ export default function AddExaminationCutoffModal({
                 disabled={loading}
               >
                 {loading
-                  ? (editData ? "Updating..." : "Saving...")
-                  : (editData ? "Update" : "Save")}
+                  ? (editData ? t("updating") : t("saving"))
+                  : (editData ? t("update") : t("save"))}
               </Button>
             )}
           </>

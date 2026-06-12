@@ -138,7 +138,7 @@ const OfferPool = ({
           selectList: offer.selectList,
           waitList: offer.waitList,
           location: item.location,
-		  state: item.state,
+          state: item.state,
           designation: item.designationName,
           offerReleaseDate: formatDate(offer.offerReleaseDate),
           acceptBeforeDate: formatDate(offer.acceptBeforeDate),
@@ -285,21 +285,21 @@ const OfferPool = ({
               >
                 {t("candidateWorkflow:wait_list")}
               </th>
-			  		  <th
-  className="fs-14 fw-normal py-3 border-top"
-  scope="col"
-  style={{ paddingLeft: "1.25rem" }}
->
-  State
-</th>
               <th
                 className="fs-14 fw-normal py-3 border-top"
                 scope="col"
                 style={{ paddingLeft: "1.25rem" }}
               >
-                {t("common:location")}
+                State
               </th>
-	
+              <th
+                className="fs-14 fw-normal py-3 border-top"
+                scope="col"
+                style={{ paddingLeft: "1.25rem" }}
+              >
+               City
+              </th>
+
               <th
                 className="fs-14 fw-normal py-3 border-top"
                 scope="col"
@@ -415,9 +415,8 @@ const OfferPool = ({
                     style={{ paddingLeft: "1.25rem", alignContent: "center" }}
                   >
                     <span
-                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${
-                        OFFER_STATUS_CLASS_MAP[c.status] || "bg-secondary"
-                      }`}
+                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${OFFER_STATUS_CLASS_MAP[c.status] || "bg-secondary"
+                        }`}
                     >
                       {OFFER_STATUS_LABEL_MAP[c.status] || c.status}
                     </span>
@@ -438,14 +437,14 @@ const OfferPool = ({
                       {c.waitList || "-"}
                     </p>
                   </td>
-				  		  <td
-  className="align-content-center"
-  style={{ paddingLeft: "1.25rem" }}
->
-  <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-    {c.state || "-"}
-  </p>
-</td>
+                  <td
+                    className="align-content-center"
+                    style={{ paddingLeft: "1.25rem" }}
+                  >
+                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                      {c.state || "-"}
+                    </p>
+                  </td>
                   <td
                     className="align-content-center"
                     style={{ paddingLeft: "1.25rem" }}
@@ -454,7 +453,7 @@ const OfferPool = ({
                       {c.location || "-"}
                     </p>
                   </td>
-		
+
                   <td
                     className="align-content-center"
                     style={{ paddingLeft: "1.25rem" }}
@@ -479,7 +478,7 @@ const OfferPool = ({
                       {c.joiningDate}
                     </p>
                   </td>
-                  
+
                   <td
                     className="align-content-center sticky-col-action"
                     style={{ paddingLeft: "1.5rem" }}
@@ -498,7 +497,8 @@ const OfferPool = ({
                         onClick={() => {
                           if (
                             c.status === "OFFER_SENT" ||
-                            c.status === "OFFER_ACCEPTED"
+                            c.status === "OFFER_ACCEPTED" ||
+                            c.status === "OFFER_REJECTED"
                           ) {
                             handleCandidateOfferPreview(
                               c.offerFileUrl // applicationId
@@ -719,7 +719,7 @@ const OfferPool = ({
                         value={selectedOffer.waitList}
                       />
                       <InfoField
-                        label={t("common:location")}
+                        label="City"
                         value={selectedOffer.location}
                       />
                     </div>
