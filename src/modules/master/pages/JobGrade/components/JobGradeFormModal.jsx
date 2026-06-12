@@ -1,6 +1,6 @@
 // src/modules/master/pages/JobGrade/components/JobGradeFormModal.jsx
 
-import React from "react";
+import React, { useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import ErrorMessage from "../../../../../shared/components/ErrorMessage";
 import JobGradeImportModal from "./JobGradeImportModal";
@@ -45,14 +45,23 @@ const JobGradeFormModal = ({
   const title = isViewing ? t("view") : isEditing ? t("edit") : t("added");
 
   const isCreateMode = !isViewing && !isEditing;
-  const handleSubmit = (e) => {
-    if (isViewing) {
-      e.preventDefault();
-      onHide();
-    } else {
-      handleSave(e);
-    }
-  };
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleSubmit = async (e) => {
+  if (isViewing) {
+    e.preventDefault();
+    onHide();
+    return;
+  }
+
+  if (isSubmitting) return;
+
+  try {
+    setIsSubmitting(true);
+    await handleSave(e);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const renderContent = () => {
     if (activeTab === "manual") {
@@ -278,7 +287,7 @@ const JobGradeFormModal = ({
           {t("cancel")}
         </Button>
 
-        <Button variant="primary" type="submit">
+        <Button variant="primary" type="submit" disabled={isSubmitting}>
           {t("save")}
         </Button>
       </Modal.Footer>

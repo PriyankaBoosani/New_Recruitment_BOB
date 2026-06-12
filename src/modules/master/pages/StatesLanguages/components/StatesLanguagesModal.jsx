@@ -13,6 +13,7 @@ const StatesLanguagesModal = ({
   errors = {},
   states = [],
   languages = [],
+   isSubmitting
 }) => {
   const { t } = useTranslation(["common", "stateLanguages"]);
   const [openDropdown, setOpenDropdown] = useState(false);
@@ -211,11 +212,14 @@ const StatesLanguagesModal = ({
         </Button>
         {!isViewing && (
           <Button
-            variant="primary"
-            onClick={() => {
-              setOpenDropdown(false);
-              saveData();
-            }}
+              variant="primary"
+              disabled={isSubmitting}
+              onClick={() => {
+                if (isSubmitting) return;
+
+                setOpenDropdown(false);
+                saveData();
+              }}
           >
             {isEditing ? t("common:update") : t("common:save")}
           </Button>

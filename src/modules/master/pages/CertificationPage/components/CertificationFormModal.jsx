@@ -33,7 +33,7 @@ const CertificationFormModal = ({
   const [activeTab, setActiveTab] = useState("manual");
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
-
+const [isSubmitting, setIsSubmitting] = useState(false);
   /* ---------------- LOAD / RESET FORM DATA ---------------- */
   useEffect(() => {
     if (!show) return;
@@ -55,7 +55,7 @@ const CertificationFormModal = ({
   /* ---------------- SUBMIT ---------------- */
   const handleSubmit = (e) => {
     e.preventDefault();
-
+if (isSubmitting) return;
     const { valid, errors: vErrors } = validateCertificationForm(formData, {
       existing: certifications,
       currentId: isEditing ? editingCertification?.id : null,
@@ -65,7 +65,7 @@ const CertificationFormModal = ({
       setErrors(vErrors);
       return;
     }
-
+try {      setIsSubmitting(true);
     if (isEditing) {
       onUpdate(editingCertification.id, formData);
     } else {
@@ -73,6 +73,11 @@ const CertificationFormModal = ({
     }
 
     onHide();
+    } catch (err) {
+    console.error(err);
+  } finally {
+    setIsSubmitting(false);
+  }
   };
   const title = isViewing
     ? t("view_certification")
@@ -169,7 +174,7 @@ const CertificationFormModal = ({
             </Button>
 
             {!isViewing && (
-              <Button variant="primary" type="submit">
+              <Button variant="primary" type="submit" disabled={isSubmitting}>
                 {isEditing ? t("update") : t("save")}
               </Button>
             )}

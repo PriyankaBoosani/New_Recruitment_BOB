@@ -24,24 +24,19 @@ const GenericOrAnnexuresPage = () => {
   const annexureDoc = localItems.find((i) => i.type === "Annexures");
 
   /* ================= UPLOAD ================= */
-  const handleUpload = (type, file) => {
-    if (!file) {
-      toast.error(t("no_file_selected"));
-      return;
-    }
+  const handleUpload = async (type, file) => {
+  if (!file) {
+    toast.error(t("no_file_selected"));
+    return;
+  }
 
-    if (file.type !== "application/pdf") {
-      toast.error(t("only_pdf_allowed"));
-      return;
-    }
+  if (file.type !== "application/pdf") {
+    toast.error(t("only_pdf_allowed"));
+    return;
+  }
 
-    try {
-      addItem({ type, file });
-      toast.success(t("upload_success")); // ✅ SUCCESS
-    } catch (error) {
-      toast.error(t("upload_failed")); // ❌ FAIL
-    }
-  };
+  await addItem({ type, file });
+};
 
   /* ================= VIEW ================= */
   const handleView = async (fileUrl) => {
@@ -64,7 +59,7 @@ const GenericOrAnnexuresPage = () => {
   const handleLocalDelete = (type) => {
     try {
       setLocalItems((prev) => prev.filter((i) => i.type !== type));
-      toast.success(t("delete_success")); // ✅ SUCCESS
+     // toast.success(t("delete_success")); // ✅ SUCCESS
     } catch (error) {
       toast.error(t("delete_error")); // ❌ FAIL
     }

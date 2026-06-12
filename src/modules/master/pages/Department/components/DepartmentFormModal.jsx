@@ -20,6 +20,7 @@ const DepartmentFormModal = (props) => {
     errors,
     setErrors,
     handleSave,
+    isSubmitting,
     t,
     ...importProps
   } = props;
@@ -131,7 +132,7 @@ const DepartmentFormModal = (props) => {
             </Button>
 
             {!isViewing && (
-              <Button variant="primary" type="submit">
+              <Button variant="primary" type="submit" disabled={isSubmitting}>
                 {isEditing ? t("updateDepartment") : t("save")}
               </Button>
             )}
