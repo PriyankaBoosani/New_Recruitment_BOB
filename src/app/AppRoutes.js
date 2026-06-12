@@ -39,6 +39,7 @@ import ExtensionsRequests from "../modules/Approvals/pages/ExtensionsRequests";
 import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";
 import InterviewRequests from "../modules/Approvals/pages/InterviewRequests";
 import Messages from "../modules/Messages/messagesScreen";
+import DashboardPage from "../modules/Dashboard/DashboardPage";
 
 import UnauthorizedPage from "./UnauthorizedPage";
 import PrivilegeRoute from "./PrivilegeRoute";
@@ -96,6 +97,8 @@ const AppRoutes = () => {
         <Route element={<Tokenexp />}>
           <Route element={<PrivateRoute />}>
             <Route element={<Layout />}>
+              <Route path="/dashboard" element={<DashboardPage />} />
+
               <Route
                 path="/users"
                 element={

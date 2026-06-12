@@ -1,5 +1,7 @@
 {
   "admin": "प्रशासन",
+  "dashboard": "डैशबोर्ड",
+  "dashboard_welcome_message": "डैशबोर्ड पेज में आपका स्वागत है।",
   "users": "उपयोगकर्ता",
   "department": "विभाग",
   "location": "स्थान",

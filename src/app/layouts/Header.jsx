@@ -86,6 +86,7 @@ const Header = () => {
   const canMessages = privileges?.["Messages"];
   const canExaminationCutoffConfiguration =
     privileges?.["ExaminationCutoffConfiguration"];
+  const isAuthenticated = Boolean(user);
 
   /* ===================== OUTSIDE CLICK ===================== */
   useEffect(() => {
@@ -265,6 +266,12 @@ const Header = () => {
 
           <Navbar.Collapse id="main-navbar-nav">
             <Nav className="me-auto">
+              {isAuthenticated && (
+                <Nav.Link as={NavLink} to="/dashboard" onClick={closeMenu}>
+                  {t("dashboard")}
+                </Nav.Link>
+              )}
+
               {canJobPost && (
                 <Nav.Link as={NavLink} to="/job-posting" onClick={closeMenu}>
                   {t("job_postings")}

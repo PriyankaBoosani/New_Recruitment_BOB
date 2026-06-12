@@ -1,5 +1,7 @@
 {
   "admin": "Admin",
+  "dashboard": "Dashboard",
+  "dashboard_welcome_message": "Welcome to the dashboard page.",
   "users": "Users",
   "department": "Department",
   "location": "Location",
