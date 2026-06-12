@@ -1,7 +1,8 @@
 // requisition-validation.js
 
 // ✔ allowed characters
-export const TITLE_ALLOWED_PATTERN = /^.*$/;
+export const TITLE_ALLOWED_PATTERN =  /^[A-Za-z0-9\s.,\-_/()&:;'"@#%+]*$/;
+export const DESCRIPTION_ALLOWED_PATTERN =/^[A-Za-z0-9\s.,\-_/()&:;'"@#%+!?]*$/;
 export const getTomorrowStart = () => {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
@@ -17,12 +18,33 @@ export const normalizeTitle = (value = "") =>
 
 // ✔ typing-time validator (USED IN onChange)
 export const validateTitleOnType = (value) => {
+  const normalized = normalizeTitle(value);
+
+  if (!TITLE_ALLOWED_PATTERN.test(normalized)) {
+    return {
+      valid: false,
+      message: "validation:invalid_requisition_title",
+    };
+  }
+
   return {
     valid: true,
-    value: normalizeTitle(value),
+    value: normalized,
   };
 };
+export const validateDescriptionOnType = (value) => {
+  if (!DESCRIPTION_ALLOWED_PATTERN.test(value)) {
+    return {
+      valid: false,
+      message: "validation:invalid_requisition_description",
+    };
+  }
 
+  return {
+    valid: true,
+    value,
+  };
+};
 // ✔ submit-time validator (USED ON SAVE)
 export const validateRequisitionForm = (
   formData = {},
