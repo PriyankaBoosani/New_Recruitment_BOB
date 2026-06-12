@@ -1,10 +1,3 @@
-import CryptoJS from "crypto-js";
-
-const SECRET_KEY = "fdf4-832b-b4fd-ccfb9258a6b3";
-
-export const encryptPassword = (password) =>
-  CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
-
 export const mapUserFromApi = (api) => ({
   userId: api.userId,
   role: api.role,
