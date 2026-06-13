@@ -4,6 +4,9 @@ import "../../style/css/ExaminationCutoffConfiguration.css";
 import "../../style/css/CandidateVerification.css";
 import "../../style/css/CandidateScreening.css";
 
+import { useTranslation } from "react-i18next";
+
+
 import { useLocation } from "react-router-dom";
 
 import DropdownStrip from "../candidatePreview/components/DropdownStrip";
@@ -43,7 +46,7 @@ export default function ExaminationCutoffConfiguration() {
   const [loadingPositions, setLoadingPositions] = useState(false);
   const [configurations, setConfigurations] = useState([]);
 
-
+const { t } = useTranslation("examconfiguration");
 
   useEffect(() => {
     fetchRequisitions();
@@ -174,9 +177,7 @@ const validateExamConfiguration = async (
     // 2. No exam configuration exists
 
     if (res?.data === true && !hasConfiguration) {
-      toast.warning(
-        "Interview process has already started for this position. Exam configuration cannot be added."
-      );
+     toast.warning(t("interview_process_started"));
     }
   } catch (error) {
     console.error("Validation API failed", error);
@@ -373,12 +374,12 @@ const handlePositionChange = async (ids) => {
 
       <div className="mb-4">
         <h2 className="exam-page-title">
-          Written Exam — Section & Cutoff Configuration
-        </h2>
+  {t("written_exam_section_cutoff_configuration")}
+</h2>
 
-        <p className="exam-page-subtitle">
-       Configure written examination parameters and define category-wise cut-off marks for candidate shortlisting.
-        </p>
+       <p className="exam-page-subtitle">
+  {t("configure_written_exam_parameters")}
+</p>
       </div>
       <div className="card mb-4 border-0 exam-top-card">
         <div className="card-body p-0">
@@ -409,7 +410,7 @@ const handlePositionChange = async (ids) => {
                   /* REQUISITION VALIDATION */
 
                   if (!selectedRequisitionId) {
-    toast.warning("Please select Requisition first");
+  toast.warning(t("please_select_requisition_first"));
 
                     return;
                   }
@@ -417,7 +418,7 @@ const handlePositionChange = async (ids) => {
                   /* POSITION VALIDATION */
 
                   if (!selectedPositionId.length) {
-    toast.warning("Please select Position first");
+    toast.warning(t("please_select_position_first"));
 
                     return;
                   }
@@ -429,7 +430,7 @@ const handlePositionChange = async (ids) => {
                   setShowModal(true);
                 }}
               >
-                + Add Configuration
+               + {t("add_configuration")}
               </button>
             </div>
           </div>

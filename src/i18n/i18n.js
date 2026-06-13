@@ -82,6 +82,11 @@ import stateLanguagesHi from "../i18n/json/stateLanguages.hi.json";
 import extensionsRequestsEn from "../i18n/ExtensionsRequests/extensionsRequests_en.json";
 import extensionsRequestsHi from "../i18n/ExtensionsRequests/extensionsRequests_hi.json";
 
+
+
+import examconfigurationEn from "../i18n/ExamconfigurationJson/examconfiguration.en.json";
+import examconfigurationHi from "../i18n/ExamconfigurationJson/examconfiguration.hi.json";
+
 i18n.use(initReactI18next).init({
   resources: {
     en: {
@@ -114,6 +119,7 @@ i18n.use(initReactI18next).init({
       messages: messagesEn,
       stateLanguages: stateLanguagesEn,
       extensionsRequests: extensionsRequestsEn,
+      examconfiguration: examconfigurationEn,
     },
     hi: {
       common: commonHi,
@@ -145,6 +151,7 @@ i18n.use(initReactI18next).init({
       messages: messagesHi,
       stateLanguages: stateLanguagesHi,
       extensionsRequests: extensionsRequestsHi,
+      examconfiguration: examconfigurationHi,
     },
   },
   lng: "en",
