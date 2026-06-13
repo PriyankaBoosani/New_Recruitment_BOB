@@ -97,7 +97,14 @@ const AppRoutes = () => {
         <Route element={<Tokenexp />}>
           <Route element={<PrivateRoute />}>
             <Route element={<Layout />}>
-              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <PrivilegeRoute privilege="JobPostings">
+                    <DashboardPage />
+                  </PrivilegeRoute>
+                }
+              />
 
               <Route
                 path="/users"

@@ -22,7 +22,7 @@
   font-size: 14px;
 }
 
-.table thead th {
+.metric-details-modal .table thead th {
   background: #f8f9ff;
   font-weight: 600;
 }
