@@ -36,6 +36,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useApprovalRequisitions } from "../hooks/useApprovalRequisitions";
 import requisitionApiService from "../../jobPosting/services/requisitionApiService";
+import masterApiService from "../../master/services/masterApiService";
 
 const RequisitionRequests = () => {
   const { t } = useTranslation(["jobPostingsList", "common"]);
@@ -111,23 +112,30 @@ const RequisitionRequests = () => {
   } = useRequisitionApprovalHistory();
 
   const handleOpenHistory = async (req) => {
-    setSelectedHistoryReq(req);
     setShowHistoryModal(true);
 
     try {
-      // NORMAL REQUISITION
       if (!req.isDraft) {
         await fetchHistory(req.id);
         return;
       }
 
-      // DRAFT REQUISITION
-      const res =
-        await requisitionApiService.getDraftRequisitionApprovalHistory(req.id);
+      const [historyRes, usersRes] = await Promise.all([
+        requisitionApiService.getDraftRequisitionApprovalHistory(req.id),
+        masterApiService.getUser(),
+      ]);
 
-      const historyData = (res?.data || []).map((item) => ({
+      const historyList = historyRes?.data || [];
+      const usersList = usersRes?.data || [];
+
+      const userMap = usersList.reduce((acc, user) => {
+        acc[user.userId] = user.name;
+        return acc;
+      }, {});
+
+      const historyData = historyList.map((item) => ({
         ...item,
-        approverName: item.approverName || item.approverRole || "-",
+        approverName: userMap[item.approverId] || item.approverRole || "-",
       }));
 
       setHistory(historyData);

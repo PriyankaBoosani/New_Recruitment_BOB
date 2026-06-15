@@ -75,21 +75,27 @@ const JobPostingsList = () => {
     setShowHistoryModal(true);
 
     try {
-      // NORMAL REQUISITION
       if (!req.isDraft) {
         await fetchHistory(req.id);
         return;
       }
 
-      // DRAFT REQUISITION
-      const res =
-        await requisitionApiService.getDraftRequisitionApprovalHistory(req.id);
+      const [historyRes, usersRes] = await Promise.all([
+        requisitionApiService.getDraftRequisitionApprovalHistory(req.id),
+        masterApiService.getUser(),
+      ]);
 
-      const historyData = (res?.data || []).map((item) => ({
+      const historyList = historyRes?.data || [];
+      const usersList = usersRes?.data || [];
+
+      const userMap = usersList.reduce((acc, user) => {
+        acc[user.userId] = user.name;
+        return acc;
+      }, {});
+
+      const historyData = historyList.map((item) => ({
         ...item,
-
-        // fallback because draft API lacks approverName
-        approverName: item.approverName || item.approverRole || "-",
+        approverName: userMap[item.approverId] || item.approverRole || "-",
       }));
 
       setHistory(historyData);
@@ -98,7 +104,6 @@ const JobPostingsList = () => {
       toast.error("Failed to load approval history");
     }
   };
-
   const handleConfirmDelete = async () => {
     if (!selectedReq) return;
 

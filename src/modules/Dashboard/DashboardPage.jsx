@@ -23,11 +23,11 @@ const DashboardPage = () => {
   const [selectedCandidateMetric, setSelectedCandidateMetric] = useState(null);
   const [selectedCommitteeMetric, setSelecteedCommitteeMetric] = useState(null);
   const { filters, loading } = useDashboardFilters();
-  const { dashboardData, loading: dashboardLoading } = useDashboardDetails();
+  const { dashboardData, refreshDashboard } = useDashboardDetails();
   return (
     <div className="dashboard-page p-4 bg-light min-vh-100">
       <DashboardHeader />
-      <DashboardFilters filters={filters} loading={loading} />
+      <DashboardFilters filters={filters} loading={loading} onApply={refreshDashboard} />
       <SummaryCards
         summary={dashboardData?.executiveSummary}
         onCardClick={setSelectedMetric}

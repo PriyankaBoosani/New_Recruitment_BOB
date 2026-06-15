@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FiFilter,
   FiSearch,
@@ -13,7 +13,7 @@ import { BsBag } from "react-icons/bs";
 
 import "../../../style/css/Dashboard/DashboardFilters.css";
 
-const DashboardFilters = ({ filters, loading }) => {
+const DashboardFilters = ({ filters, loading, onApply }) => {
   const [employmentType, setEmploymentType] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedPosition, setSelectedPosition] = useState("");
@@ -34,7 +34,43 @@ const DashboardFilters = ({ filters, loading }) => {
 
     return `${day}-${month}-${year}`;
   };
+  const handleApply = () => {
+    const payload = {
+      fromDate: fromDate || null,
+      toDate: toDate || null,
+      departmentId: selectedDepartment || null,
+      positionId: selectedPosition || null,
+      zone: selectedZone || null,
+      stateId: null,
+      cityId: null,
+      recruiterId: selectedRecruiter || null,
+      employmentTypeId: employmentType || null,
+      isReinitialized: initiationType === "" ? null : initiationType,
+    };
 
+    onApply(payload);
+  };
+  const handleReset = () => {
+    setSelectedDepartment("");
+    setSelectedPosition("");
+    setSelectedZone("");
+    setSelectedRecruiter("");
+
+    setFromDate("");
+    setToDate("");
+
+    setPeriodType("FINANCIAL_YEAR");
+    setFyValue("FY 2026-27");
+    setCyValue("2026");
+    setQuarterYear("2026");
+    setQuarterValue("Q1 (Apr-Jun)");
+
+    // Reset to default Employment (Regular)
+    setEmploymentType(filters?.employmentTypes?.[0]?.value || "");
+
+    // Reset to default Initiation
+    setInitiationType(filters?.reinitialized?.[0]?.value ?? "");
+  };
   const renderPeriodContent = () => {
     switch (periodType) {
       case "FINANCIAL_YEAR":
@@ -69,7 +105,7 @@ const DashboardFilters = ({ filters, loading }) => {
           </div>
         );
 
-      case "QUARTERLY":
+      case "QUARTER":
         return (
           <div className="period-content">
             <FiCalendar className="period-calendar" />
@@ -124,7 +160,24 @@ const DashboardFilters = ({ filters, loading }) => {
         return null;
     }
   };
+  const filteredPositions = selectedDepartment
+    ? filters?.positions?.filter(
+        (position) =>
+          String(position.departmentId) === String(selectedDepartment)
+      )
+    : filters?.positions || [];
 
+  useEffect(() => {
+    if (!employmentType && filters?.employmentTypes?.length) {
+      setEmploymentType(filters.employmentTypes[0].value);
+    }
+  }, [filters, employmentType]);
+
+  useEffect(() => {
+    if (initiationType === "" && filters?.reinitialized?.length) {
+      setInitiationType(filters.reinitialized[0].value);
+    }
+  }, [filters, initiationType]);
   return (
     <div className="dashboard-filters">
       {/* HEADER */}
@@ -136,14 +189,17 @@ const DashboardFilters = ({ filters, loading }) => {
 
         <div className="active-period">
           <span>Active period:</span>
+
           <span className="period-pill">
-            {periodType === "FY"
-              ? fyValue
-              : periodType === "CY"
-                ? cyValue
-                : periodType === "Quarter"
-                  ? `${quarterYear} - ${quarterValue}`
-                  : periodType === "Custom"
+            {periodType === "FINANCIAL_YEAR"
+              ? fyValue || "Select FY"
+              : periodType === "CALENDAR_YEAR"
+                ? cyValue || "Select CY"
+                : periodType === "QUARTER"
+                  ? quarterYear && quarterValue
+                    ? `${quarterYear} - ${quarterValue}`
+                    : "Select Quarter"
+                  : periodType === "CUSTOM"
                     ? fromDate && toDate
                       ? `${formatDate(fromDate)} → ${formatDate(toDate)}`
                       : "Select Date Range"
@@ -202,17 +258,24 @@ const DashboardFilters = ({ filters, loading }) => {
           {/* PERIOD CARD */}
           <div className="period-card">
             <div className="period-tabs">
-              <div className="period-tabs">
-                {filters?.dateRangePresets?.map((item) => (
-                  <button
-                    key={item.value}
-                    className={periodType === item.value ? "active" : ""}
-                    onClick={() => setPeriodType(item.value)}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
+              {filters?.dateRangePresets?.map((item) => (
+                <button
+                  key={item.value}
+                  className={periodType === item.value ? "active" : ""}
+                  onClick={() => {
+                    setPeriodType(item.value);
+
+                    setFyValue("");
+                    setCyValue("");
+                    setQuarterYear("");
+                    setQuarterValue("");
+                    setFromDate("");
+                    setToDate("");
+                  }}
+                >
+                  {item.label}
+                </button>
+              ))}
             </div>
 
             {renderPeriodContent()}
@@ -229,7 +292,10 @@ const DashboardFilters = ({ filters, loading }) => {
 
               <select
                 value={selectedDepartment}
-                onChange={(e) => setSelectedDepartment(e.target.value)}
+                onChange={(e) => {
+                  setSelectedDepartment(e.target.value);
+                  setSelectedPosition("");
+                }}
               >
                 <option value="">All Departments</option>
 
@@ -250,11 +316,13 @@ const DashboardFilters = ({ filters, loading }) => {
 
               <select
                 value={selectedPosition}
-                onChange={(e) => setSelectedPosition(e.target.value)}
+                onChange={(e) => {
+                  setSelectedPosition(e.target.value);
+                }}
               >
                 <option value="">All Positions</option>
 
-                {filters?.positions?.map((item) => (
+                {filteredPositions.map((item) => (
                   <option key={item.value} value={item.value}>
                     {item.label}
                   </option>
@@ -311,12 +379,12 @@ const DashboardFilters = ({ filters, loading }) => {
 
           {/* ACTIONS */}
           <div className="actions-section">
-            <button className="reset-btn">
+            <button className="reset-btn" onClick={handleReset}>
               <FiX />
               Reset
             </button>
 
-            <button className="apply-btn">
+            <button className="apply-btn" onClick={handleApply}>
               <FiSearch />
               Apply
             </button>

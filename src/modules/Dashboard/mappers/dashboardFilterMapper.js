@@ -48,7 +48,7 @@ export const mapDashboardFilters = (response) => {
   const dateRangePresets =
     data.dateRangePresets
       ?.filter((item) =>
-        ["FINANCIAL_YEAR", "CALENDAR_YEAR", "QUARTERLY", "CUSTOM"].includes(
+        ["FINANCIAL_YEAR", "CALENDAR_YEAR", "QUARTER", "CUSTOM"].includes(
           item.preset_code
         )
       )
