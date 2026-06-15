@@ -21,10 +21,10 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
   const [selectedRecruiter, setSelectedRecruiter] = useState("");
   const [initiationType, setInitiationType] = useState("");
   const [periodType, setPeriodType] = useState("FINANCIAL_YEAR");
-  const [fyValue, setFyValue] = useState("FY 2026-27");
-  const [cyValue, setCyValue] = useState("2026");
-  const [quarterYear, setQuarterYear] = useState("2026");
-  const [quarterValue, setQuarterValue] = useState("Q1 (Apr-Jun)");
+  const [fyValue, setFyValue] = useState("");
+  const [cyValue, setCyValue] = useState("");
+  const [quarterYear, setQuarterYear] = useState("");
+  const [quarterValue, setQuarterValue] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const formatDate = (date) => {
@@ -36,8 +36,28 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
   };
   const handleApply = () => {
     const payload = {
+      dateRangePreset: periodType,
+
+      fyYear:
+        periodType === "FINANCIAL_YEAR"
+          ? parseInt(fyValue.match(/\d{4}/)?.[0] || 0, 10)
+          : null,
+
+      cyYear:
+        periodType === "CALENDAR_YEAR"
+          ? parseInt(cyValue, 10)
+          : periodType === "QUARTER"
+            ? parseInt(quarterYear, 10)
+            : null,
+
+      quarter:
+        periodType === "QUARTER"
+          ? parseInt(quarterValue.match(/Q(\d)/)?.[1] || 1, 10)
+          : null,
+
       fromDate: fromDate || null,
       toDate: toDate || null,
+
       departmentId: selectedDepartment || null,
       positionId: selectedPosition || null,
       zone: selectedZone || null,
@@ -47,7 +67,6 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
       employmentTypeId: employmentType || null,
       isReinitialized: initiationType === "" ? null : initiationType,
     };
-
     onApply(payload);
   };
   const handleReset = () => {
@@ -82,6 +101,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
               value={fyValue}
               onChange={(e) => setFyValue(e.target.value)}
             >
+              <option>Select FY</option>
               <option>FY 2026-27</option>
               <option>FY 2025-26</option>
               <option>FY 2024-25</option>
@@ -98,6 +118,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
               value={cyValue}
               onChange={(e) => setCyValue(e.target.value)}
             >
+                <option>Select CY</option>
               <option>2026</option>
               <option>2025</option>
               <option>2024</option>
@@ -115,6 +136,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                 value={quarterYear}
                 onChange={(e) => setQuarterYear(e.target.value)}
               >
+                <option>Select CY</option>
                 <option>2026</option>
                 <option>2025</option>
                 <option>2024</option>
@@ -124,6 +146,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                 value={quarterValue}
                 onChange={(e) => setQuarterValue(e.target.value)}
               >
+                <option>Select Quater</option>
                 <option>Q1 (Apr-Jun)</option>
                 <option>Q2 (Jul-Sep)</option>
                 <option>Q3 (Oct-Dec)</option>
