@@ -1,8 +1,10 @@
 import { validatePositiveInteger } from "./JobpostingcommonValidators";
 
+
+
 export const normalizeTitle = (value = "") =>
   value
-    .replace(/[ \t]+/g, " ") // collapse only spaces & tabs
+    .replace(/[ \t]+/g, " ")   // collapse only spaces & tabs
     .replace(/^\s+/, "");
 
 export const TITLE_ALLOWED_PATTERN = /^[A-Za-z0-9 _.,\-():;'&/\n\r]*$/;
@@ -13,22 +15,20 @@ export const validateTitleOnType = (value) => {
   if (!TITLE_ALLOWED_PATTERN.test(normalized)) {
     return {
       valid: false,
-      message: "validation:title_invalid_chars_extended",
+      message: "validation:title_invalid_chars_extended"
+
     };
   }
 
   return {
     valid: true,
-    value: normalized,
+    value: normalized
   };
 };
 
-const validateFile = ({
-  indentFile,
-  isEditMode,
-  existingIndentPath,
-  errors,
-}) => {
+
+const validateFile = ({ indentFile, isEditMode, existingIndentPath, errors }) => {
+
   if (!indentFile && !existingIndentPath) {
     errors.indentFile = "validation:required";
   }
@@ -43,26 +43,13 @@ const validateBasicFields = (formData, errors) => {
   // if (!formData.cutoffDate) errors.cutoffDate = "validation:required";
 };
 
-const validateDuplicate = ({
-  formData,
-  existingPositions,
-  isEditMode,
-  positionId,
-  errors,
-}) => {
-  if (
-    !formData.position ||
-    !formData.department ||
-    !Array.isArray(existingPositions)
-  )
-    return;
+const validateDuplicate = ({ formData, existingPositions, isEditMode, positionId, errors }) => {
+  if (!formData.position || !formData.department || !Array.isArray(existingPositions)) return;
 
-  const duplicate = existingPositions.some((p) => {
+  const duplicate = existingPositions.some(p => {
     const sameDepartment = String(p.deptId) === String(formData.department);
-    const samePosition =
-      String(p.masterPositionId) === String(formData.position);
-    const notSameRecord =
-      !isEditMode || String(p.positionId) !== String(positionId);
+    const samePosition = String(p.masterPositionId) === String(formData.position);
+    const notSameRecord = !isEditMode || String(p.positionId) !== String(positionId);
 
     return sameDepartment && samePosition && notSameRecord;
   });
@@ -127,11 +114,11 @@ const validateEducation = (educationData, errors) => {
 };
 
 const hasValidDuration = (exp) =>
-  exp.years !== undefined && exp.years !== null && exp.years !== "";
+  exp.years !== undefined && exp.years !== null && exp.years !== '';
 
 const isEmptyExperienceRow = (exp) =>
   !exp.educationLevel &&
-  (exp.years === undefined || exp.years === null || exp.years === "");
+  (exp.years === undefined || exp.years === null || exp.years === '');
 
 const validateMandatorySimpleExperience = (exp, errors) => {
   const years = exp.years === "" ? null : Number(exp.years);
@@ -155,14 +142,13 @@ const validateMandatoryEducationExperience = (formData, errors) => {
     return;
   }
 
-  const isValid = eduExps.every((exp) => {
+  const isValid = eduExps.every(exp => {
     if (!exp.educationLevel) return false;
     return hasValidDuration(exp);
   });
 
   if (!isValid) {
-    errors.mandatoryExperience =
-      "validation:qualification_and_duration_required";
+    errors.mandatoryExperience = "validation:qualification_and_duration_required";
   }
 
   if (!formData.mandatoryExperience.description?.trim()) {
@@ -181,7 +167,7 @@ const validatePreferredExperience = (formData, errors) => {
   let hasQualificationError = false;
   let hasDurationError = false;
 
-  eduExps.forEach((exp) => {
+  eduExps.forEach(exp => {
     if (isEmptyExperienceRow(exp)) return;
 
     if (!exp.educationLevel) hasQualificationError = true;
@@ -189,8 +175,7 @@ const validatePreferredExperience = (formData, errors) => {
   });
 
   if (hasQualificationError && hasDurationError) {
-    errors.preferredExperience =
-      "validation:qualification_and_duration_required";
+    errors.preferredExperience = "validation:qualification_and_duration_required";
   } else if (hasQualificationError) {
     errors.preferredExperience = "validation:qualification_required";
   } else if (hasDurationError) {
@@ -220,10 +205,10 @@ const validateDistribution = ({
   stateDistributions,
   nationalCategories,
   nationalDisabilities,
-  errors,
+  errors
 }) => {
   if (formData.enableStateDistribution) {
-    const activeStates = stateDistributions.filter((s) => !s.__deleted);
+    const activeStates = stateDistributions.filter(s => !s.__deleted);
 
     if (activeStates.length === 0) {
       errors.nationalDistribution = "validation:required";
@@ -240,19 +225,15 @@ const validateDistribution = ({
     if (stateTotal !== vacancies) {
       errors.nationalDistribution = {
         key: "validation:state_total_mismatch",
-        params: { stateTotal, vacancies },
+        params: { stateTotal, vacancies }
       };
     }
   } else {
-    const categoryTotal = Object.values(nationalCategories || {}).reduce(
-      (sum, v) => sum + Number(v || 0),
-      0
-    );
+    const categoryTotal = Object.values(nationalCategories || {})
+      .reduce((sum, v) => sum + Number(v || 0), 0);
 
-    const disabilityTotal = Object.values(nationalDisabilities || {}).reduce(
-      (sum, v) => sum + Number(v || 0),
-      0
-    );
+    const disabilityTotal = Object.values(nationalDisabilities || {})
+      .reduce((sum, v) => sum + Number(v || 0), 0);
 
     const vacancies = Number(formData.vacancies || 0);
 
@@ -261,16 +242,17 @@ const validateDistribution = ({
     } else if (categoryTotal !== vacancies) {
       errors.nationalDistribution = {
         key: "validation:category_total_mismatch",
-        params: { categoryTotal, vacancies },
+        params: { categoryTotal, vacancies }
       };
     } else if (disabilityTotal > categoryTotal) {
       errors.nationalDistribution = {
         key: "validation:disability_exceeds_category",
-        params: { disabilityTotal, categoryTotal },
+        params: { disabilityTotal, categoryTotal }
       };
     }
   }
 };
+
 
 export const validateAddPosition = (params) => {
   const {
@@ -286,7 +268,7 @@ export const validateAddPosition = (params) => {
     stateDistributions,
     existingPositions,
     positionId,
-    isContractEmployment,
+    isContractEmployment
   } = params;
 
   const errors = {};
@@ -299,13 +281,7 @@ export const validateAddPosition = (params) => {
   if (approvedOnError) errors.approvedOn = approvedOnError;
 
   validateBasicFields(formData, errors);
-  validateDuplicate({
-    formData,
-    existingPositions,
-    isEditMode,
-    positionId,
-    errors,
-  });
+  validateDuplicate({ formData, existingPositions, isEditMode, positionId, errors });
 
   validateNumbers(formData, errors, isContractEmployment);
   validateAge(formData, errors);
@@ -324,7 +300,7 @@ export const validateAddPosition = (params) => {
     stateDistributions,
     nationalCategories,
     nationalDisabilities,
-    errors,
+    errors
   });
 
   return errors;
@@ -333,7 +309,7 @@ export const validateAddPosition = (params) => {
 export const validateStateDistribution = ({
   currentState,
   stateDistributions,
-  editingIndex,
+  editingIndex
 }) => {
   const errors = {};
 
@@ -347,33 +323,72 @@ export const validateStateDistribution = ({
     errors.stateVacancies = "validation:vacancies_must_be_greater_than_zero";
   }
 
-  const catTotal = Object.values(currentState.categories || {}).reduce(
-    (a, b) => a + Number(b || 0),
-    0
-  );
+  // if (!currentState.language) {
+  //   errors.stateLanguage = "validation:required";
+  // }
 
-  const disTotal = Object.values(currentState.disabilities || {}).reduce(
-    (a, b) => a + Number(b || 0),
-    0
-  );
+  const catTotal = Object.values(currentState.categories || {})
+    .reduce((a, b) => a + Number(b || 0), 0);
+
+  const disTotal = Object.values(currentState.disabilities || {})
+    .reduce((a, b) => a + Number(b || 0), 0);
 
   const vacancies = Number(currentState.vacancies || 0);
 
   if (catTotal !== vacancies) {
     errors.stateDistribution = {
       key: "validation:category_total_mismatch",
-      params: { categoryTotal: catTotal, vacancies },
+      params: { categoryTotal: catTotal, vacancies }
     };
-  } else if (disTotal > catTotal) {
+
+  }
+  else if (disTotal > catTotal) {
     errors.stateDistribution = {
       key: "validation:disability_exceeds_category",
-      params: { disabilityTotal: disTotal, categoryTotal: catTotal },
+      params: { disabilityTotal: disTotal, categoryTotal: catTotal }
     };
   }
+
+
+  const duplicate = stateDistributions.some((s, i) => {
+    if (s.__deleted || i === editingIndex) return false;
+
+    const sameState =
+      String(s.state) === String(currentState.state);
+
+    if (!sameState) return false;
+
+    const existingCity = String(s.city || "").trim();
+    const currentCity = String(currentState.city || "").trim();
+
+    // EXACT SAME STATE + CITY
+    if (existingCity === currentCity) {
+      errors.state = "validation:state_city_already_added";
+      return true;
+    }
+
+    // EMPTY/NON-EMPTY CITY CONFLICT
+    if (!existingCity && currentCity) {
+      errors.state =
+        "validation:state_city_conflict_empty_first";
+      return true;
+    }
+
+    if (existingCity && !currentCity) {
+      errors.state =
+        "validation:state_city_conflict_city_first";
+      return true;
+    }
+    return false;
+  });
+
+
+
+
   return errors;
 };
 export const validateApprovedOn = (value) => {
-  if (!value) return "validation:required";
+  if (!value) return "validation:required"
 
   const selected = new Date(value);
   const today = new Date();
