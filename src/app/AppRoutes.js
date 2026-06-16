@@ -333,7 +333,7 @@ const AppRoutes = () => {
         </Route>
 
         {/* Catch-all → login */}
-        <Route path="*" element={<NotFound />} />
+         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Suspense>
   );
