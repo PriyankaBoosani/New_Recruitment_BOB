@@ -24,7 +24,21 @@ const SchedulePoolTable = ({
 }) => {
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [selectedRemarks, setSelectedRemarks] = useState("");
+  const getStatusBadge = (status = "") => {
+    switch (status) {
+      case "REJECTED":
+        return "danger";
 
+      case "L1_PENDING":
+        return "yellowwarning";
+
+      case "PENDING":
+        return "yellowwarning";
+
+      default:
+        return "secondary";
+    }
+  };
   const getApprovalStatus = (row) =>
     row?.interviewScheduleStaging?.interviewSchedulingApprovalStatus ||
     row?.interviewSchedulingApprovalStatus ||
@@ -43,9 +57,7 @@ const SchedulePoolTable = ({
   return (
     <div className="card-body p-0 interview-pool">
       {/* HEADER */}
-      <div className="d-flex justify-content-between align-items-center px-3 py-3 border-bottom">
-        <h6 className="mb-0 blue-color">Schedule Pool</h6>
-
+      <div className="d-flex justify-content-end align-items-center px-3 py-3 border-bottom">
         <div className="d-flex gap-2 schddis">
           <button
             className="btn btn-primary fs-14"
@@ -136,11 +148,17 @@ const SchedulePoolTable = ({
                 <td className="fs-14 align-content-center">{row.panel}</td>
 
                 {/* Interview Status */}
-                <td className="align-content-center">
-                  {getApprovalStatus(row)
-                    ?.toLowerCase()
-                    ?.replaceAll("_", " ")
-                    ?.replace(/\b\w/g, (char) => char.toUpperCase())}
+                <td className="align-content-center schstatus">
+                  <span
+                    className={`status-badge ${getStatusBadge(
+                      getApprovalStatus(row)
+                    )}`}
+                  >
+                    {getApprovalStatus(row)
+                      ?.toLowerCase()
+                      ?.replaceAll("_", " ")
+                      ?.replace(/\b\w/g, (char) => char.toUpperCase())}
+                  </span>
 
                   {getApprovalStatus(row) === "REJECTED" && (
                     <OverlayTrigger

@@ -54,14 +54,14 @@
 }
 
 .metric-icon {
-	width: 2.4rem;
-	height: 2.4rem;
-	border-radius: 0.75rem;
-	font-size: 1rem;
-	margin-bottom: 0.75rem;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .metric-value {
@@ -77,11 +77,11 @@
   font-weight: 500;
 }
 .metric-details-hover {
-	font-size: 13px;
-	font-weight: 600;
-	opacity: 0;
-	transform: translateY(6px);
-	transition: all 0.25s ease;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: all 0.25s ease;
 }
 
 .metric-card:hover .metric-details-hover {
@@ -176,4 +176,20 @@
   .pipeline-grid {
     grid-template-columns: 1fr;
   }
+}
+.pipeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.pipeline-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pipeline-header-right {
+  margin-left: auto;
 }

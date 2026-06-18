@@ -12,11 +12,11 @@ import {
   FiThumbsUp,
   FiXCircle,
   FiUsers,
+  FiDownload,
 } from "react-icons/fi";
 
 import "../../../style/css/Dashboard/CandidatePipelineMetrics.css";
-
-
+import useDashboardDownload from "../hooks/useDashboardDownload";
 const metricConfig = [
   {
     key: "totalVacancies",
@@ -101,20 +101,210 @@ const colorMap = {
   cyan: "rgb(8, 145, 178)",
 };
 
-const CandidatePipelineMetrics = ({ candidatePipeline = {}, onCardClick }) => {
+const CandidatePipelineMetrics = ({
+  candidatePipeline = {},
+  onCardClick,
+  filters = {},
+}) => {
+  const { downloadReport } = useDashboardDownload();
+
   return (
     <div className="pipeline-wrapper mb-4">
-      <div className="pipeline-header">
+      {/* <div className="pipeline-header">
         <div className="pipeline-header-icon">
           <FiBriefcase />
         </div>
+        <div className="candidate-header-wrapper">
+          <div>
+            <h2>Candidate Pipeline Metrics</h2>
+            <p>Comprehensive candidate journey statistics</p>
+          </div>
+          <div className="d-flex align-items-center gap-3">
+            <div className="dropdown">
+              <button
+                className="btn btn-outline-secondary dropdown-toggle"
+                data-bs-toggle="dropdown"
+              >
+                <FiDownload className="me-2" />
+                Export
+              </button>
 
-        <div>
-          <h2>Candidate Pipeline Metrics</h2>
-          <p>Comprehensive candidate journey statistics</p>
+              <ul className="dropdown-menu dropdown-menu-end">
+                <li>
+                  <button
+                    className="dropdown-item d-flex align-items-center gap-2"
+                    onClick={() =>
+                      downloadReport({
+                        filters,
+                        extension: ".pdf",
+                        reportScreen: "TOTAL_CANDIDATES_JOINED_METRICS",
+                        fileName: "total-candidate-joined",
+                      })
+                    }
+                  >
+                    <FiDownload size={14} />
+                    Total Candidate Joined PDF Report
+                  </button>
+                </li>
+
+                <li>
+                  <button
+                    className="dropdown-item d-flex align-items-center gap-2"
+                    onClick={() =>
+                      downloadReport({
+                        filters,
+                        extension: ".xlsx",
+                        reportScreen: "TOTAL_CANDIDATES_JOINED_METRICS",
+                        fileName: "total-candidate-joined",
+                      })
+                    }
+                  >
+                    <FiDownload size={14} />
+                    Total Candidate Joined Excel Report
+                  </button>
+                </li>
+
+                <li>
+                  <hr className="dropdown-divider" />
+                </li>
+
+                <li>
+                  <button
+                    className="dropdown-item d-flex align-items-center gap-2"
+                    onClick={() =>
+                      downloadReport({
+                        filters,
+                        extension: ".pdf",
+                        reportScreen: "TOTAL_OFFER_METRICS",
+                        fileName: "total-offer",
+                      })
+                    }
+                  >
+                    <FiDownload size={14} />
+                    Total Offer PDF Report
+                  </button>
+                </li>
+
+                <li>
+                  <button
+                    className="dropdown-item d-flex align-items-center gap-2"
+                    onClick={() =>
+                      downloadReport({
+                        filters,
+                        extension: ".xlsx",
+                        reportScreen: "TOTAL_OFFER_METRICS",
+                        fileName: "total-offer",
+                      })
+                    }
+                  >
+                    <FiDownload size={14} />
+                    Total Offer Excel Report
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div> */}
+      <div className="pipeline-header">
+        <div className="pipeline-header-left">
+          <div className="pipeline-header-icon">
+            <FiBriefcase />
+          </div>
+
+          <div>
+            <h2>Candidate Pipeline Metrics</h2>
+            <p>Comprehensive candidate journey statistics</p>
+          </div>
+        </div>
+
+        <div className="pipeline-header-right">
+          <div className="dropdown">
+            <button
+              className="btn btn-outline-secondary dropdown-toggle"
+              data-bs-toggle="dropdown"
+            >
+              <FiDownload className="me-2" />
+              Export
+            </button>
+
+            {/* dropdown menu */}
+            <ul className="dropdown-menu dropdown-menu-end">
+              <li>
+                <button
+                  className="dropdown-item d-flex align-items-center gap-2"
+                  onClick={() =>
+                    downloadReport({
+                      filters,
+                      extension: ".pdf",
+                      reportScreen: "TOTAL_CANDIDATES_JOINED_METRICS",
+                      fileName: "total-candidate-joined",
+                    })
+                  }
+                >
+                  <FiDownload size={14} />
+                  Total Candidate Joined PDF Report
+                </button>
+              </li>
+
+              <li>
+                <button
+                  className="dropdown-item d-flex align-items-center gap-2"
+                  onClick={() =>
+                    downloadReport({
+                      filters,
+                      extension: ".xlsx",
+                      reportScreen: "TOTAL_CANDIDATES_JOINED_METRICS",
+                      fileName: "total-candidate-joined",
+                    })
+                  }
+                >
+                  <FiDownload size={14} />
+                  Total Candidate Joined Excel Report
+                </button>
+              </li>
+
+              <li>
+                <hr className="dropdown-divider" />
+              </li>
+
+              <li>
+                <button
+                  className="dropdown-item d-flex align-items-center gap-2"
+                  onClick={() =>
+                    downloadReport({
+                      filters,
+                      extension: ".pdf",
+                      reportScreen: "TOTAL_OFFER_METRICS",
+                      fileName: "total-offer",
+                    })
+                  }
+                >
+                  <FiDownload size={14} />
+                  Total Offer PDF Report
+                </button>
+              </li>
+
+              <li>
+                <button
+                  className="dropdown-item d-flex align-items-center gap-2"
+                  onClick={() =>
+                    downloadReport({
+                      filters,
+                      extension: ".xlsx",
+                      reportScreen: "TOTAL_OFFER_METRICS",
+                      fileName: "total-offer",
+                    })
+                  }
+                >
+                  <FiDownload size={14} />
+                  Total Offer Excel Report
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-
       <div className="pipeline-grid">
         {metricConfig.map((item, index) => (
           <div key={index} className={`metric-card ${item.color}`}>

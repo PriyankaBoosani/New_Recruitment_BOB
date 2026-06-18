@@ -51,7 +51,8 @@ const DashboardPage = () => {
         </div>
 
         <div className="col-lg-6 mb-4">
-          <Vacancies summary={dashboardData?.executiveSummary} />
+          <Vacancies summary={dashboardData?.executiveSummary}
+          filters={appliedFilters} />
         </div>
         <MetricDetailsModal
           show={!!selectedMetric}
@@ -70,6 +71,7 @@ const DashboardPage = () => {
       <CandidatePipelineMetrics
         candidatePipeline={dashboardData?.candidatePipeline}
         onCardClick={setSelectedCandidateMetric}
+        filters={appliedFilters}
       />
       <CandidateMetricDetailsModal
         show={!!selectedCandidateMetric}

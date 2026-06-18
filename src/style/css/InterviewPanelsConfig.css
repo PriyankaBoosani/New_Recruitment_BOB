@@ -1553,3 +1553,25 @@
     transform: rotate(360deg);
   }
 }
+.schstatus .status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.schstatus .status-badge.yellowwarning {
+  background: #fff7e6;
+  color: #d48806;
+}
+
+.schstatus .status-badge.danger {
+  background: #fff1f0;
+  color: #cf1322;
+}
+
+.schstatus .status-badge.secondary {
+  background: #f5f5f5;
+  color: #595959;
+}

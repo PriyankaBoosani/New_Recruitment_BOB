@@ -7,8 +7,20 @@
 	padding: 15px;
 	height: 100%;
 }
-.vacancy-header {
-  margin-bottom: 1.5rem;
+
+.vacancy-header-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+
+@media (max-width: 768px) {
+  .vacancy-header-wrapper {
+    flex-direction: column;
+    gap: 12px;
+  }
 }
 
 .vacancy-title {
