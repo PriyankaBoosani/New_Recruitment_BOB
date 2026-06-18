@@ -53,7 +53,7 @@ const useDashboardDetails = (filters = {}) => {
         recruiterPerformance,
       });
 
-      toast.success("Dashboard loaded successfully");
+     
     } catch (error) {
       console.error("Dashboard details API failed", error);
 

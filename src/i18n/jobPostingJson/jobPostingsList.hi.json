@@ -46,6 +46,7 @@
   "requisition_submit_success": "अनुरोध सफलतापूर्वक स्वीकृति के लिए भेजा गया",
   "requisition_submit_failed": "स्वीकृति के लिए भेजने में विफल",
   "status_rejected": "अस्वीकृत",
+  "status_closed": "समाप्त",
   "status_submitted": "जमा किया गया",
   "add_position": "पद जोड़ें",
   "edit_requisition": "अनुरोध संपादित करें",

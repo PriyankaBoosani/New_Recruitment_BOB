@@ -381,16 +381,15 @@ const JobPostingsList = () => {
 
     const req = selectedRequisitions[0];
 
-    if (req.status !== "APPROVED") return false;
-    if (!req.endDate) return false;
+    const endDate = req.endDate ? new Date(req.endDate) : null;
+    if (!endDate) return false;
+
+    endDate.setHours(0, 0, 0, 0);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const endDate = new Date(req.endDate);
-    endDate.setHours(0, 0, 0, 0);
-
-    return endDate < today;
+    return req.status === "CLOSED" && endDate <= today;
   })();
   return (
     <Container fluid className="job-postings-page">
@@ -506,6 +505,9 @@ const JobPostingsList = () => {
             <option value="APPROVED">
               {t("jobPostingsList:status_approved")}
             </option>
+            <option value="CLOSED">
+              {t("jobPostingsList:status_closed")}
+            </option>
           </Form.Select>
         </Col>
       </Row>
@@ -596,12 +598,16 @@ const JobPostingsList = () => {
 
         const isApprovedAndExpired =
           req.status === "APPROVED" && endDate && endDate < today;
+        const isClosedForReinitialize =
+          req.status === "CLOSED" &&
+          req.endDate &&
+          new Date(req.endDate) <= new Date();
 
         const isCheckboxEnabled =
-          // !req.isDraft &&
           req.status === "NEW" ||
           req.status === "DRAFT" ||
-          isApprovedAndExpired;
+          isApprovedAndExpired ||
+          isClosedForReinitialize;
 
         const isRejected =
           req.status === "L1_REJECTED" || req.status === "L2_REJECTED";
