@@ -1381,7 +1381,7 @@ export default function AddExaminationCutoffModal({
         <div className="px-3 pb-3">
           <Form.Group>
             <Form.Label>
-            t("comments") <span className="text-danger">*</span>
+            {t("comments")} <span className="text-danger">*</span>
             </Form.Label>
 
             <Form.Control
