@@ -1,3 +1,4 @@
+
 .vacancy-widget {
 	border: 1px solid #e5e7eb;
 	box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
@@ -83,11 +84,15 @@
 }
 
 .stat-value {
+  color: #212529;
+  font-size: 13px;
+}
+/* .stat-value {
   font-size: 1.6rem;
   font-weight: 700;
   line-height: 1;
   margin-bottom: 0.6rem;
-}
+} */
 
 .vacancy-total .stat-value {
   color: #0d47a1;
