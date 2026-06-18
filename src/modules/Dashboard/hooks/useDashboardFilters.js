@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import dashboardService from "../service/dashboardService";
 import { mapDashboardFilters } from "../mappers/dashboardFilterMapper";
+import { toast } from "react-toastify";
 
 const useDashboardFilters = () => {
   const [filters, setFilters] = useState({
@@ -19,7 +20,6 @@ const useDashboardFilters = () => {
 
       const response =
         await dashboardService.getDashboardFilters();
-        console.log("API Response", response);
 
       const mappedData =
         mapDashboardFilters(response.data);

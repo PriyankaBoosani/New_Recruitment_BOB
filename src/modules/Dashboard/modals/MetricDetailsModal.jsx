@@ -2,9 +2,28 @@ import React from "react";
 import { Modal } from "react-bootstrap";
 import { FiDownload, FiX } from "react-icons/fi";
 import "../../../style/css/Dashboard/MetricDetailsModal.css";
+import useDashboardDownload from "../hooks/useDashboardDownload";
+const MetricDetailsModal = ({
+  show,
+  onClose,
+  metric,
+  dashboardData,
+  filters = {},
+}) => {
+    const { downloadReport, downloading } = useDashboardDownload();
 
-const MetricDetailsModal = ({ show, onClose, metric, dashboardData }) => {
   if (!metric) return null;
+
+  const reportScreenMap = {
+    vacancies: "TOTAL_VACANCIES",
+    requisitions: "TOTAL_REQUISITIONS",
+    departments: "TOTAL_DEPARTMENTS",
+    positions: "TOTAL_POSITIONS",
+    ApprovedRequisitions: "APPROVED_REQUISITIONS",
+    PendingRequisitions: "PENDING_REQUISITIONS",
+    ActiveRequisitions: "ACTIVE_REQUISITIONS",
+    ClosedRequisitions: "CLOSED_REQUISITIONS",
+  };
 
   const modalConfig = {
     vacancies: {
@@ -135,9 +154,19 @@ const MetricDetailsModal = ({ show, onClose, metric, dashboardData }) => {
                 border: `1px solid ${config.color}20`,
                 color: config.color,
               }}
+              disabled={downloading}
+              onClick={() =>
+                downloadReport({
+                  filters,
+                  extension: ".pdf",
+                  reportScreen: reportScreenMap[metric],
+                })
+              }
             >
               <FiDownload />
-              <span className="ms-2">Export Pdf</span>
+              <span className="ms-2">
+                {downloading ? "Downloading..." : "Export Pdf"}
+              </span>
             </button>
 
             <button
@@ -147,9 +176,19 @@ const MetricDetailsModal = ({ show, onClose, metric, dashboardData }) => {
                 border: `1px solid ${config.color}20`,
                 color: config.color,
               }}
+              disabled={downloading}
+              onClick={() =>
+                downloadReport({
+                  filters,
+                  extension: ".xlsx",
+                  reportScreen: reportScreenMap[metric],
+                })
+              }
             >
               <FiDownload />
-              <span className="ms-2">Export Excel</span>
+              <span className="ms-2">
+                {downloading ? "Downloading..." : "Export Excel"}
+              </span>
             </button>
 
             <FiX size={24} style={{ cursor: "pointer" }} onClick={onClose} />

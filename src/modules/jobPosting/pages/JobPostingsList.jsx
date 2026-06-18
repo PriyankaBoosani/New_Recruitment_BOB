@@ -376,7 +376,22 @@ const JobPostingsList = () => {
     selectedRequisitions.every(
       (r) => r.status === "NEW" || r.status === "DRAFT"
     );
+  const isReinitializeEnabled = (() => {
+    if (selectedRequisitions.length !== 1) return false;
 
+    const req = selectedRequisitions[0];
+
+    if (req.status !== "APPROVED") return false;
+    if (!req.endDate) return false;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(req.endDate);
+    endDate.setHours(0, 0, 0, 0);
+
+    return endDate < today;
+  })();
   return (
     <Container fluid className="job-postings-page">
       {isPublishing && <Loader />}
@@ -516,20 +531,20 @@ const JobPostingsList = () => {
           />
         </Col>
         <Col xs={12} md={6} className="text-md-end mt-2 mt-md-0">
-          {/* <Button
-                        variant="primary"
-                        className="subbtn me-2"
-                        disabled={!isReinitializeEnabled || loading}
-                        onClick={() => {
-                            const req = selectedRequisitions[0];
+          <Button
+            variant="primary"
+            className="subbtn me-2"
+            disabled={!isReinitializeEnabled || loading}
+            onClick={() => {
+              const req = selectedRequisitions[0];
 
-                            navigate(`/job-posting/create-requisition?id=${req.id}`, {
-                                state: { mode: "reinitialize" }
-                            });
-                        }}
-                    >
-                        Reinitialize
-                    </Button> */}
+              navigate(`/job-posting/create-requisition?id=${req.id}`, {
+                state: { mode: "reinitialize" },
+              });
+            }}
+          >
+            Reinitialize
+          </Button>
 
           <Button
             variant="primary"

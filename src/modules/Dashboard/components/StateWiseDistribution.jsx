@@ -1,8 +1,16 @@
 import React from "react";
 import { FiDownload, FiGrid } from "react-icons/fi";
 import "./../../../style/css/Dashboard/StateWiseDistribution.css";
+import useDashboardDownload from "../hooks/useDashboardDownload";
 
-const StateWiseDistribution = ({ stateVacancyDistribution = [] }) => {
+const StateWiseDistribution = ({
+  stateVacancyDistribution = [],
+  filters = {},
+  onClose,
+}) => {
+  const { downloadReport, downloading } = useDashboardDownload();
+
+  const REPORT_SCREEN = "STATE_WISE_DISTRIBUTION";
   const totalVacancies = stateVacancyDistribution.reduce(
     (sum, row) => sum + row.total,
     0
@@ -34,10 +42,44 @@ const StateWiseDistribution = ({ stateVacancyDistribution = [] }) => {
           </div>
         </div>
 
-        <button className="export-btn">
-          <FiDownload />
-          Export
-        </button>
+        <div className="d-flex align-items-center gap-3">
+          <button
+            className="pdf-btn btn btn-primary"
+            disabled={downloading}
+            onClick={() =>
+              downloadReport({
+                filters,
+                extension: ".pdf",
+                reportScreen: REPORT_SCREEN,
+                fileName: "state-wise-distribution",
+              })
+            }
+          >
+            <FiDownload />
+            <span className="ms-2">
+              {downloading ? "Downloading..." : "Export Pdf"}
+            </span>
+          </button>
+
+          <button
+            className="excel-btn btn btn-primary"
+            disabled={downloading}
+            onClick={() =>
+              downloadReport({
+                filters,
+                extension: ".xlsx",
+                reportScreen: REPORT_SCREEN,
+                fileName: "state-wise-distribution",
+              })
+            }
+          >
+            <FiDownload />
+            <span className="ms-2">
+              {downloading ? "Downloading..." : "Export Excel"}
+            </span>
+          </button>
+
+        </div>
       </div>
 
       <div className="table-wrapper">

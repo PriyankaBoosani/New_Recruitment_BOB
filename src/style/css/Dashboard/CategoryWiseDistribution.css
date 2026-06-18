@@ -188,15 +188,15 @@
 	font-size: 0.75rem;
 	font-weight: 600;
 	color: #667085;
-	opacity: 0;
-	transform: translateY(6px);
-	transition: all 0.25s ease;
+	/* opacity: 0; */
+	/* transform: translateY(6px);
+	transition: all 0.25s ease; */
 }
 
-.category-stat-card:hover .category-details-hover {
+/* .category-stat-card:hover .category-details-hover {
   opacity: 1;
   transform: translateY(0);
-}
+} */
 
 @media (max-width: 1400px) {
   .category-grid {

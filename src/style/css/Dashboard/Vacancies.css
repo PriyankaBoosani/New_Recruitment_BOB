@@ -83,16 +83,16 @@
   color: #e11d48;
 }
 
-.stat-value {
+/* .stat-value {
   color: #212529;
   font-size: 13px;
-}
-/* .stat-value {
+} */
+.vacancy-widget .stat-value {
   font-size: 1.6rem;
   font-weight: 700;
   line-height: 1;
   margin-bottom: 0.6rem;
-} */
+}
 
 .vacancy-total .stat-value {
   color: #0d47a1;
@@ -106,7 +106,7 @@
   color: #e11d48;
 }
 
-.stat-label {
+.vacancy-cards .stat-label {
   font-size: 0.72rem;
   font-weight: 600;
   color: #334155;

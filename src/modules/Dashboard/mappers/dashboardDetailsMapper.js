@@ -23,14 +23,14 @@ export const mapDashboardDetails = (response) => {
         requisition: item.requisition_code,
         department: item.department_name,
         position: item.position_name,
-        vacancies: item.vacancies,
+        vacancies: Number(item.vacancies || 0).toLocaleString("en-IN"),
       })) || [],
     totalPositions:
       response?.totalPositions?.map((item) => ({
         requisition: item.requisition_code,
         department: item.department_name,
         position: item.position_name,
-        vacancies: item.vacancies,
+        vacancies: Number(item.vacancies || 0).toLocaleString("en-IN"),
         status: item.status,
       })) || [],
 
@@ -39,14 +39,16 @@ export const mapDashboardDetails = (response) => {
         requisition: item.requisition_code,
         department: item.department_name,
         numPositions: item.num_positions,
-        totalVacancies: item.total_vacancies,
+        totalVacancies: Number(item.total_vacancies || 0).toLocaleString(
+          "en-IN"
+        ),
       })) || [],
     totalDepartments:
       response?.totalDepartments?.map((item) => ({
         department: item.department_name,
         numPositions: item.num_positions,
       })) || [],
-      //Requsition Summary Mapper
+    //Requsition Summary Mapper
     requisitionStatus: {
       totalRequisitions: requisitionStatus.total_requisitions || 0,
 
@@ -58,30 +60,35 @@ export const mapDashboardDetails = (response) => {
 
       approvedRequisitions: requisitionStatus.approved_requisitions || 0,
     },
-     //Modal Requsition Summary Mapper
+    //Modal Requsition Summary Mapper
     approvedRequisitionDetails:
       response?.approvedRequisitionDetails?.map((item) => ({
         requisition: item.requisition_code,
         numPositions: item.num_positions,
-        totalVacancies: item.total_vacancies,
+        totalVacancies: Number(item.total_vacancies || 0).toLocaleString(
+          "en-IN"
+        ),
       })) || [],
     pendingRequisitionDetails:
       response?.pendingRequisitionDetails?.map((item) => ({
         requisition: item.requisition_code,
         numPositions: item.num_positions,
-        totalVacancies: item.total_vacancies,
+        totalVacancies: Number(item.total_vacancies || 0).toLocaleString(
+          "en-IN"
+        ),
       })) || [],
     activeRequisitionDetails:
       response?.activeRequisitionDetails?.map((item) => ({
         requisition: item.requisition_code,
         numPositions: item.num_positions,
-        totalVacancies: item.total_vacancies,
+        totalVacancies: Number(item.total_vacancies || 0).toLocaleString(
+          "en-IN"
+        ),
       })) || [],
     closedRequisitionDetails:
       response?.closedRequisitionDetails?.map((item) => ({
         requisition: item.requisition_code,
         numPositions: item.num_positions,
       })) || [],
-      
   };
 };

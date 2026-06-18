@@ -24,7 +24,7 @@ const Vacancies = ({ summary }) => {
             <FaLayerGroup />
           </div>
 
-          <div className="stat-value"> {summary?.totalVacancies ?? 0}</div>
+          <div className="stat-value"> {(summary?.totalVacancies ?? 0).toLocaleString('en-IN')}</div>
           <div className="stat-label">Total Vacancies</div>
         </div>
 
@@ -33,7 +33,7 @@ const Vacancies = ({ summary }) => {
             <FaCheckCircle />
           </div>
 
-          <div className="stat-value"> {summary?.filledVacancies ?? 0}</div>
+          <div className="stat-value"> {(summary?.filledVacancies ?? 0).toLocaleString('en-IN')}</div>
           <div className="stat-label">Filled Vacancies</div>
         </div>
 
@@ -42,7 +42,7 @@ const Vacancies = ({ summary }) => {
             <FaTimesCircle />
           </div>
 
-          <div className="stat-value">{summary?.unfilledVacancies ?? 0}</div>
+          <div className="stat-value">{(summary?.unfilledVacancies ?? 0).toLocaleString('en-IN')}</div>
           <div className="stat-label">Unfilled Vacancies</div>
         </div>
       </div>

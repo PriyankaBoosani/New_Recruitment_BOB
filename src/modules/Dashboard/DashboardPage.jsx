@@ -24,10 +24,20 @@ const DashboardPage = () => {
   const [selectedCommitteeMetric, setSelecteedCommitteeMetric] = useState(null);
   const { filters, loading } = useDashboardFilters();
   const { dashboardData, refreshDashboard } = useDashboardDetails();
+  const [appliedFilters, setAppliedFilters] = useState({});
+
+  const handleApplyFilters = (payload) => {
+    setAppliedFilters(payload);
+    refreshDashboard(payload);
+  };
   return (
     <div className="dashboard-page p-4 bg-light min-vh-100">
       <DashboardHeader />
-      <DashboardFilters filters={filters} loading={loading} onApply={refreshDashboard} />
+      <DashboardFilters
+        filters={filters}
+        loading={loading}
+        onApply={handleApplyFilters}
+      />
       <SummaryCards
         summary={dashboardData?.executiveSummary}
         onCardClick={setSelectedMetric}
@@ -47,6 +57,7 @@ const DashboardPage = () => {
           show={!!selectedMetric}
           metric={selectedMetric}
           dashboardData={dashboardData}
+          filters={appliedFilters}
           onClose={() => setSelectedMetric(null)}
         />
       </div>
@@ -66,6 +77,7 @@ const DashboardPage = () => {
         pipelineDetails={
           dashboardData?.candidatePipeline?.pipelineDetails || []
         }
+        filters={appliedFilters}
         onClose={() => setSelectedCandidateMetric(null)}
       />
       <ApplicationsByDepartment
@@ -81,7 +93,8 @@ const DashboardPage = () => {
       />
       <StateWiseDistribution
         stateVacancyDistribution={dashboardData?.stateVacancyDistribution || []}
-      />{" "}
+        filters={appliedFilters}
+      />
       <div className="row mt-4 align-items-stretch">
         <div className="col-lg-6 mb-4 d-flex">
           <Committee
@@ -101,10 +114,12 @@ const DashboardPage = () => {
         metric={selectedCommitteeMetric}
         onClose={() => setSelecteedCommitteeMetric(null)}
         committeeData={dashboardData?.committeeOverview}
+        filters={appliedFilters}
       />
       <RecruiterPerformanceTable
         recruiterPerformance={dashboardData?.recruiterPerformance || []}
-      />{" "}
+        filters={appliedFilters}
+      />
     </div>
   );
 };

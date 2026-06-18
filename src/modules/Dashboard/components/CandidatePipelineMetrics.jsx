@@ -16,6 +16,7 @@ import {
 
 import "../../../style/css/Dashboard/CandidatePipelineMetrics.css";
 
+
 const metricConfig = [
   {
     key: "totalVacancies",

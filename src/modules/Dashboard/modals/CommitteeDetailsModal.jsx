@@ -1,11 +1,24 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
 import { FiDownload, FiX } from "react-icons/fi";
-import "../../../style/css/Dashboard/MetricDetailsModal.css"
+import "../../../style/css/Dashboard/MetricDetailsModal.css";
+import useDashboardDownload from "../hooks/useDashboardDownload";
 
-const CommitteeDetailsModal = ({ show, onClose, metric, committeeData }) => {
+const CommitteeDetailsModal = ({
+  show,
+  onClose,
+  metric,
+  committeeData,
+  filters = {},
+}) => {
+  const { downloadReport, downloading } = useDashboardDownload();
+
   if (!metric) return null;
-
+  const reportScreenMap = {
+    interviewPanel: "COMMITTEE_INTERVIEW_PANEL",
+    screeningPanel: "COMMITTEE_SCREENING_PANEL",
+    compensationPanel: "COMMITTEE_COMPENSATION_PANEL",
+  };
   const modalConfig = {
     interviewPanel: {
       title: "Interview Panel",
@@ -75,9 +88,20 @@ const CommitteeDetailsModal = ({ show, onClose, metric, committeeData }) => {
                 border: `1px solid ${config.color}20`,
                 color: config.color,
               }}
+              disabled={downloading}
+              onClick={() =>
+                downloadReport({
+                  filters,
+                  extension: ".pdf",
+                  reportScreen: reportScreenMap[metric],
+                  fileName: metric,
+                })
+              }
             >
               <FiDownload />
-              <span className="ms-2">Export Pdf</span>
+              <span className="ms-2">
+                {downloading ? "Downloading..." : "Export Pdf"}
+              </span>
             </button>
 
             <button
@@ -87,9 +111,20 @@ const CommitteeDetailsModal = ({ show, onClose, metric, committeeData }) => {
                 border: `1px solid ${config.color}20`,
                 color: config.color,
               }}
+              disabled={downloading}
+              onClick={() =>
+                downloadReport({
+                  filters,
+                  extension: ".xlsx",
+                  reportScreen: reportScreenMap[metric],
+                  fileName: metric,
+                })
+              }
             >
               <FiDownload />
-              <span className="ms-2">Export Excel</span>
+              <span className="ms-2">
+                {downloading ? "Downloading..." : "Export Excel"}
+              </span>
             </button>
 
             <FiX size={24} style={{ cursor: "pointer" }} onClick={onClose} />

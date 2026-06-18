@@ -7,13 +7,18 @@ import {
   Pagination,
   Button,
 } from "react-bootstrap";
-import { FiSearch, FiFileText, FiFile, FiGrid } from "react-icons/fi";
+import { FiSearch, FiGrid , FiDownload,} from "react-icons/fi";
+
 
 import "../../../style/css/Dashboard/RecruiterPerformanceTable.css";
+import useDashboardDownload from "../hooks/useDashboardDownload";
 
 const ROWS_PER_PAGE = 10;
 
-const RecruiterPerformanceTable = ({ recruiterPerformance = [] }) => {
+const RecruiterPerformanceTable = ({ recruiterPerformance = [], filters= {} }) => {
+  const { downloadReport, downloading } = useDashboardDownload();
+
+  const REPORT_SCREEN = "RECRUITER_PERFORMANCE_TABLE";
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const getPageNumbers = () => {
@@ -91,15 +96,43 @@ const RecruiterPerformanceTable = ({ recruiterPerformance = [] }) => {
               />
             </div>
 
-            <Button className="excel-btn">
-              <FiFile />
-              Export Excel
-            </Button>
+            <div className="d-flex align-items-center gap-3">
+              <button
+                className="pdf-btn btn btn-primary"
+                disabled={downloading}
+                onClick={() =>
+                  downloadReport({
+                    filters,
+                    extension: ".pdf",
+                    reportScreen: REPORT_SCREEN,
+                    fileName: "recuirter-performance",
+                  })
+                }
+              >
+                <FiDownload />
+                <span className="ms-2">
+                  {downloading ? "Downloading..." : "Export Pdf"}
+                </span>
+              </button>
 
-            <Button className="pdf-btn">
-              <FiFileText />
-              Export PDF
-            </Button>
+              <button
+                className="excel-btn btn btn-primary"
+                disabled={downloading}
+                onClick={() =>
+                  downloadReport({
+                    filters,
+                    extension: ".xlsx",
+                    reportScreen: REPORT_SCREEN,
+                    fileName: "recuirter-performance",
+                  })
+                }
+              >
+                <FiDownload />
+                <span className="ms-2">
+                  {downloading ? "Downloading..." : "Export Excel"}
+                </span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -165,9 +198,7 @@ const RecruiterPerformanceTable = ({ recruiterPerformance = [] }) => {
                   <td className="waitlist">{row.waitlist}</td>
 
                   <td>
-                    <span
-                      className={`${getStatusClass(row.status)}`}
-                    >
+                    <span className={`${getStatusClass(row.status)}`}>
                       {row.status}
                     </span>
                   </td>

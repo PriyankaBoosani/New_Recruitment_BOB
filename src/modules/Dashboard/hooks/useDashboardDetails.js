@@ -11,6 +11,7 @@ import { mapCandidatePipeline } from "../mappers/dashboardCandidateMapper";
 import { mapZonalHeatmap } from "../mappers/dashboardZonalMapper";
 import { mapCommitteeOverview } from "../mappers/dashboardCommitteeMapper";
 import { mapRecruiterPerformance } from "../mappers/dashboardRecruiterMapper";
+import { toast } from "react-toastify";
 
 const useDashboardDetails = (filters = {}) => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -22,6 +23,16 @@ const useDashboardDetails = (filters = {}) => {
 
       const response = await dashboardService.getDashboardDetails(payload);
 
+      console.log("FULL RESPONSE", response);
+
+      if (!response?.success) {
+        toast.error(
+          response?.message || response?.data || "Failed to load dashboard"
+        );
+
+        return;
+      }
+
       const mappedData = mapDashboardDetails(response.data);
       const categoryData = mapDashboardCategory(response.data);
       const candidatePipeline = mapCandidatePipeline(response.data);
@@ -30,7 +41,7 @@ const useDashboardDetails = (filters = {}) => {
         response.data
       );
       const committeeOverview = mapCommitteeOverview(response.data);
-      const recruiterPerformance = mapRecruiterPerformance(response.data)
+      const recruiterPerformance = mapRecruiterPerformance(response.data);
 
       setDashboardData({
         ...mappedData,
@@ -39,10 +50,18 @@ const useDashboardDetails = (filters = {}) => {
         zonalHeatmap,
         stateVacancyDistribution,
         committeeOverview,
-        recruiterPerformance
+        recruiterPerformance,
       });
+
+      toast.success("Dashboard loaded successfully");
     } catch (error) {
       console.error("Dashboard details API failed", error);
+
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to load dashboard"
+      );
     } finally {
       setLoading(false);
     }

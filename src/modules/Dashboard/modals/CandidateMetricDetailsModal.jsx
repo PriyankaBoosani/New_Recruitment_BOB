@@ -2,13 +2,31 @@ import React from "react";
 import { Modal } from "react-bootstrap";
 import { FiDownload, FiX } from "react-icons/fi";
 import "../../../style/css/Dashboard/MetricDetailsModal.css";
+import useDashboardDownload from "../hooks/useDashboardDownload";
 const CandidateMetricDetailsModal = ({
   show,
   onClose,
   metric,
   pipelineDetails = [],
+  filters = {},
 }) => {
+  const { downloadReport, downloading } = useDashboardDownload();
+
   if (!metric) return null;
+  const reportScreenMap = {
+    totalVacancies: "CANDIDATE_PIPELINE_TOTAL_VACANCIES",
+    applicationsReceived: "CANDIDATE_PIPELINE_APPLICATIONS_RECEIVED",
+    shortlistedCandidates: "CANDIDATE_PIPELINE_SHORTLISTED_CANDIDATES",
+    rejectedCandidates: "CANDIDATE_PIPELINE_REJECTED_CANDIDATES",
+    pendingCandidates: "CANDIDATE_PIPELINE_PENDING_CANDIDATES",
+    interviewsScheduled: "CANDIDATE_PIPELINE_INTERVIEWS_SCHEDULED",
+    interviewsCompleted: "CANDIDATE_PIPELINE_INTERVIEWS_COMPLETED",
+    qualified: "CANDIDATE_PIPELINE_QUALIFIED_CANDIDATES",
+    offersSent: "CANDIDATE_PIPELINE_OFFERS_SENT",
+    offerAccepted: "CANDIDATE_PIPELINE_OFFER_ACCEPTED",
+    offerRejected: "CANDIDATE_PIPELINE_OFFER_REJECTED",
+    joined: "CANDIDATE_PIPELINE_JOINED",
+  };
 
   const modalConfig = {
     totalVacancies: {
@@ -169,22 +187,44 @@ const CandidateMetricDetailsModal = ({
               className="pdf-btn btn btn-primary"
               style={{
                 background: "#fff",
+                border: `1px solid ${config.color}20`,
                 color: config.color,
               }}
+              disabled={downloading}
+              onClick={() =>
+                downloadReport({
+                  filters,
+                  extension: ".pdf",
+                  reportScreen: reportScreenMap[metric],
+                })
+              }
             >
               <FiDownload />
-              <span className="ms-2">Export PDF</span>
+              <span className="ms-2">
+                {downloading ? "Downloading..." : "Export Pdf"}
+              </span>
             </button>
 
             <button
               className="excel-btn btn btn-primary"
               style={{
                 background: "#fff",
+                border: `1px solid ${config.color}20`,
                 color: config.color,
               }}
+              disabled={downloading}
+              onClick={() =>
+                downloadReport({
+                  filters,
+                  extension: ".xlsx",
+                  reportScreen: reportScreenMap[metric],
+                })
+              }
             >
               <FiDownload />
-              <span className="ms-2">Export Excel</span>
+              <span className="ms-2">
+                {downloading ? "Downloading..." : "Export Excel"}
+              </span>
             </button>
 
             <FiX size={22} onClick={onClose} style={{ cursor: "pointer" }} />
@@ -215,7 +255,7 @@ const CandidateMetricDetailsModal = ({
                     <td>{row.requisitionId}</td>
                     <td>{row.department}</td>
                     <td>{row.position}</td>
-                    <td>{row.count}</td>
+                    <td>{Number(row.count).toLocaleString("en-IN")}</td>
                   </tr>
                 ))
               ) : (
