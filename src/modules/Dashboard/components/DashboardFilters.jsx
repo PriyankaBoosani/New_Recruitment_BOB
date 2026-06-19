@@ -78,11 +78,11 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
     setFromDate("");
     setToDate("");
 
-    setPeriodType("FINANCIAL_YEAR");
-    setFyValue("FY 2026-27");
-    setCyValue("2026");
-    setQuarterYear("2026");
-    setQuarterValue("Q1 (Apr-Jun)");
+    setPeriodType("");
+    setFyValue("");
+    setCyValue("");
+    setQuarterYear("");
+    setQuarterValue("");
 
     // Reset to default Employment (Regular)
     setEmploymentType(filters?.employmentTypes?.[0]?.value || "");
