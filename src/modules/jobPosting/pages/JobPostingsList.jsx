@@ -1301,9 +1301,9 @@ const JobPostingsList = () => {
 
           handleSubmitForApproval("L1_PENDING");
         }}
-        title={t("jobPostingsList:submit_confirm_title_approve")}
+        title={t("jobPostingsList:send_for_approval")}
         message={t("jobPostingsList:submit_confirm_message_approve")}
-        confirmText={t("jobPostingsList:approve")}
+        confirmText={t("jobPostingsList:submit")}
         itemLabel={t("jobPostingsList:requisition_count", {
           count: selectedReqIds.size,
         })}
