@@ -634,12 +634,24 @@ export default function CandidateScreening({ selectedJob }) {
     }
   }, [selectedPositionId]);
 
-  useEffect(() => {
-    if (!selectedPositionId.length || activeTab !== "INTERVIEW_POOL") {
+  // useEffect(() => {
+  //   if (!selectedPositionId.length || activeTab !== "INTERVIEW_POOL") {
+  //     return;
+  //   }
+
+  //   fetchPanels(selectedPositionId);
+  // }, [selectedPositionId.join(","), activeTab]);
+
+
+
+    useEffect(() => {
+    if (!selectedPositionId.length) {
       return;
     }
-
-    fetchPanels(selectedPositionId);
+ 
+    if (activeTab === "INTERVIEW_POOL" || activeTab === "COMPENSATION_POOL") {
+      fetchPanels(selectedPositionId);
+    }
   }, [selectedPositionId.join(","), activeTab]);
 
   const employmentTypeMap = React.useMemo(() => {
