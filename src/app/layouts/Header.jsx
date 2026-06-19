@@ -87,7 +87,6 @@ const Header = () => {
   const canMessages = privileges?.["Messages"];
   const canExaminationCutoffConfiguration =
     privileges?.["ExaminationCutoffConfiguration"];
-  const isAuthenticated = Boolean(user);
 
   /* ===================== OUTSIDE CLICK ===================== */
   useEffect(() => {
@@ -341,7 +340,8 @@ const Header = () => {
                     location.pathname.startsWith("/extension-requests") ||
                     location.pathname.startsWith("/committee-requests") ||
                     location.pathname.startsWith("/interview-requests") ||
-                    location.pathname.startsWith("/exam-requests")
+                    location.pathname.startsWith("/exam-requests") ||
+                    location.pathname.startsWith("offerletter-requests")
                       ? "active-admin"
                       : ""
                   }`}
@@ -395,6 +395,13 @@ const Header = () => {
                       {t("interview_requests")}
                     </NavDropdown.Item>
                   )}
+                  <NavDropdown.Item
+                    as={NavLink}
+                    to="/offerletter-requests"
+                    onClick={closeMenu}
+                  >
+                   Offer Letter Request
+                  </NavDropdown.Item>
                 </NavDropdown>
               )}
 

@@ -152,7 +152,10 @@ const Vacancies = ({ summary, filters = {}, onClose }) => {
         </div>
 
         <div className="fill-progress">
-          <div className="fill-progress-bar" style={{ width: "58.4%" }} />
+          <div
+            className="fill-progress-bar"
+            style={{ width: `${fillRate}%` }}
+          />
         </div>
 
         <div className="fill-rate-footer">

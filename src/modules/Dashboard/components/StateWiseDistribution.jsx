@@ -78,7 +78,6 @@ const StateWiseDistribution = ({
               {downloading ? "Downloading..." : "Export Excel"}
             </span>
           </button>
-
         </div>
       </div>
 
@@ -96,37 +95,45 @@ const StateWiseDistribution = ({
           </thead>
 
           <tbody>
-            {stateVacancyDistribution.map((row) => (
-              <tr key={row.state}>
-                <td className="state-name">{row.state}</td>
-
-                <td className="city-name">{row.city}</td>
-
-                <td className="total">{row.total}</td>
-
-                <td className="filled">{row.filled}</td>
-
-                <td className="unfilled">{row.unfilled}</td>
-
-                <td>
-                  <div className="fill-rate">
-                    <div className="progress-track">
-                      <div
-                        className="progress-fill"
-                        style={{
-                          width: `${row.rate}%`,
-                          background: row.color,
-                        }}
-                      />
-                    </div>
-
-                    <span className="rate-value" style={{ color: "#0f3b96" }}>
-                      {row.rate}%
-                    </span>
-                  </div>
+            {stateVacancyDistribution.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="text-center py-4">
+                  No Records Found
                 </td>
               </tr>
-            ))}
+            ) : (
+              stateVacancyDistribution.map((row) => (
+                <tr key={row.state}>
+                  <td className="state-name">{row.state}</td>
+
+                  <td className="city-name">{row.city}</td>
+
+                  <td className="total">{row.total}</td>
+
+                  <td className="filled">{row.filled}</td>
+
+                  <td className="unfilled">{row.unfilled}</td>
+
+                  <td>
+                    <div className="fill-rate">
+                      <div className="progress-track">
+                        <div
+                          className="progress-fill"
+                          style={{
+                            width: `${row.rate}%`,
+                            background: row.color,
+                          }}
+                        />
+                      </div>
+
+                      <span className="rate-value" style={{ color: "#0f3b96" }}>
+                        {row.rate}%
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
         <div className="total-wrapper">

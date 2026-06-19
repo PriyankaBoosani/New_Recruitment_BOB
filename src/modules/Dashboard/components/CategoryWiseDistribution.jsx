@@ -19,31 +19,33 @@ const CategoryWiseDistribution = ({ categories = [] }) => {
       </div>
 
       <div className="category-grid">
-        {categories.map((item, index) => (
-          <div
-            key={item.code}
-            className={`category-stat-card ${
-              colorClasses[index % colorClasses.length]
-            }`}
-          >
-            <div className="category-card-top">
-              <span className="category-name">{item.code}</span>
-              <span className="category-dot"></span>
-            </div>
-
-            <div className="category-card-content">
-              <div className="category-count">{item.count}</div>
-
-              <div className="category-icon">
-                <FiUsers />
+        {categories.length === 0 ? (
+          <div className="no-data">No Data Available</div>
+        ) : (
+          categories.map((item, index) => (
+            <div
+              key={item.code}
+              className={`category-stat-card ${
+                colorClasses[index % colorClasses.length]
+              }`}
+            >
+              <div className="category-card-top">
+                <span className="category-name">{item.code}</span>
+                <span className="category-dot"></span>
               </div>
-            </div>
 
-            <div className="category-details-hover">
-             Vacancies
+              <div className="category-card-content">
+                <div className="category-count">{item.count}</div>
+
+                <div className="category-icon">
+                  <FiUsers />
+                </div>
+              </div>
+
+              <div className="category-details-hover">Vacancies</div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

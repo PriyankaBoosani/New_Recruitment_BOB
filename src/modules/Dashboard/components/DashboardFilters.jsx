@@ -8,6 +8,7 @@ import {
   FiUsers,
   FiCalendar,
   FiChevronDown,
+  FiGitBranch
 } from "react-icons/fi";
 import { BsBag } from "react-icons/bs";
 
@@ -118,7 +119,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
               value={cyValue}
               onChange={(e) => setCyValue(e.target.value)}
             >
-                <option>Select CY</option>
+              <option>Select CY</option>
               <option>2026</option>
               <option>2025</option>
               <option>2024</option>
@@ -236,7 +237,8 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
         {/* TOP ROW */}
         <div className="top-section">
           <div className="filter-group">
-            <label>Employment</label>
+            <label><FiBriefcase/> Employment
+            </label>
 
             <div className="segmented-control">
               {filters?.employmentTypes?.map((item) => (
@@ -254,7 +256,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
           <div className="section-divider" />
 
           <div className="filter-group">
-            <label>Initiation</label>
+            <label> <FiGitBranch className="text-danger" /> Initiation</label>
 
             <div className="segmented-control">
               {filters?.reinitialized?.map((item) => (
@@ -262,7 +264,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                   key={item.label}
                   className={
                     initiationType === item.value
-                      ? `active ${item.value === false ? "danger" : ""}`
+                      ? `active ${item.value === false ? "active" : ""}`
                       : ""
                   }
                   onClick={() => setInitiationType(item.value)}

@@ -60,43 +60,47 @@ const ZonalRecruitmentHeatmap = ({ zonalHeatmap = [] }) => {
         )}
 
         <div className="zone-grid">
-          {visibleZones.map((zone) => (
-            <div
-              key={zone.city}
-              className="zone-card"
-              style={{ borderTopColor: zone.color }}
-            >
+          {visibleZones.length === 0 ? (
+            <div className="no-data">No Data Found</div>
+          ) : (
+            visibleZones.map((zone) => (
               <div
-                className="zone-icon"
-                style={{
-                  background: `${zone.color}12`,
-                  color: zone.color,
-                }}
+                key={zone.city}
+                className="zone-card"
+                style={{ borderTopColor: zone.color }}
               >
-                <FiMapPin />
+                <div
+                  className="zone-icon"
+                  style={{
+                    background: `${zone.color}12`,
+                    color: zone.color,
+                  }}
+                >
+                  <FiMapPin />
+                </div>
+
+                <h4>{zone.city}</h4>
+                <span>{zone.state}</span>
+
+                <div className="zone-stats">
+                  <div>
+                    <span>Candidates</span>
+                    <strong>{zone.candidates}</strong>
+                  </div>
+
+                  <div>
+                    <span>Offered</span>
+                    <strong>{zone.offered}</strong>
+                  </div>
+
+                  <div>
+                    <span>Rejected</span>
+                    <strong>{zone.rejected}</strong>
+                  </div>
+                </div>
               </div>
-
-              <h4>{zone.city}</h4>
-              <span>{zone.state}</span>
-
-              <div className="zone-stats">
-                <div>
-                  <span>Candidates</span>
-                  <strong>{zone.candidates}</strong>
-                </div>
-
-                <div>
-                  <span>Offered</span>
-                  <strong>{zone.offered}</strong>
-                </div>
-
-                <div>
-                  <span>Rejected</span>
-                  <strong>{zone.rejected}</strong>
-                </div>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
         {showRightArrow && (

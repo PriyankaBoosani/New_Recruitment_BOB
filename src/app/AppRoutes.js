@@ -38,6 +38,7 @@ import Approvals from "../modules/Approvals/pages/RequisitionRequests";
 import ExtensionsRequests from "../modules/Approvals/pages/ExtensionsRequests";
 import CommitteeRequests from "../modules/Approvals/pages/CommitteeRequests";
 import InterviewRequests from "../modules/Approvals/pages/InterviewRequests";
+import OfferLetterRequestApproval from "../modules/Approvals/pages/OfferLetterRequestApproval";
 import Messages from "../modules/Messages/messagesScreen";
 import DashboardPage from "../modules/Dashboard/DashboardPage";
 
@@ -66,13 +67,13 @@ const AppRoutes = () => {
   const authUser = useSelector((state) => state.user?.authUser);
 
   const privileges = useSelector((state) => state.user?.privileges);
-  const location = useLocation();
+  // const location = useLocation();
 
   // Component to catch unmatched routes
-  const NotFound = () => {
-    console.error("🔴 Route not matched:", location.pathname, location.search);
-    return <Navigate to="/login" />;
-  };
+  // const NotFound = () => {
+  //   console.error("🔴 Route not matched:", location.pathname, location.search);
+  //   return <Navigate to="/login" />;
+  // };
 
   return (
     <Suspense fallback={<Loading />}>
@@ -380,6 +381,16 @@ const AppRoutes = () => {
                 }
               />
             </Route>
+            <Route
+              path="/offerletter-requests"
+              element={
+                <PrivilegeRoute
+                  privilegesRequired={["L1 Approval", "L2 Approval"]}
+                >
+                  <OfferLetterRequestApproval />
+                </PrivilegeRoute>
+              }
+            />
           </Route>
         </Route>
 

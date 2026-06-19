@@ -171,3 +171,12 @@
     grid-template-columns: 1fr;
   }
 }
+
+.no-data {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+  padding: 20px 0;
+  font-weight: 500;
+}

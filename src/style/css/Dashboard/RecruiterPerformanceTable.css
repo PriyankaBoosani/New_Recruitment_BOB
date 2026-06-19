@@ -83,10 +83,9 @@
   font-weight: 400;
 }
 .recruiter-card .search-input:hover {
-  background-color: transparent !important;
-  border: 1px solid #d5dce5 !important;
+	/* background-color: transparent !important; */
+	border: 1px solid #d5dce5 !important;
 }
-
 .recruiter-card .search-input:focus {
   border-color: #d5dce5;
   box-shadow: none;

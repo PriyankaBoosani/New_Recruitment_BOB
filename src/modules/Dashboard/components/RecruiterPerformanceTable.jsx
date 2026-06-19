@@ -7,15 +7,17 @@ import {
   Pagination,
   Button,
 } from "react-bootstrap";
-import { FiSearch, FiGrid , FiDownload,} from "react-icons/fi";
-
+import { FiSearch, FiGrid, FiDownload } from "react-icons/fi";
 
 import "../../../style/css/Dashboard/RecruiterPerformanceTable.css";
 import useDashboardDownload from "../hooks/useDashboardDownload";
 
 const ROWS_PER_PAGE = 10;
 
-const RecruiterPerformanceTable = ({ recruiterPerformance = [], filters= {} }) => {
+const RecruiterPerformanceTable = ({
+  recruiterPerformance = [],
+  filters = {},
+}) => {
   const { downloadReport, downloading } = useDashboardDownload();
 
   const REPORT_SCREEN = "RECRUITER_PERFORMANCE_TABLE";
@@ -57,11 +59,11 @@ const RecruiterPerformanceTable = ({ recruiterPerformance = [], filters= {} }) =
 
   const getStatusClass = (status) => {
     switch (status) {
-      case "Active":
+      case "APPROVED":
         return "status-active";
-      case "Pending":
+      case "L1 PENDING":
         return "status-pending";
-      case "Completed":
+      case "CLOSED":
         return "status-completed";
       default:
         return "";
@@ -159,51 +161,59 @@ const RecruiterPerformanceTable = ({ recruiterPerformance = [], filters= {} }) =
             </thead>
 
             <tbody>
-              {paginatedData.map((row, index) => (
-                <tr key={index}>
-                  <td className="req-cell">{row.requisition}</td>
-
-                  <td>{row.position}</td>
-                  <td>{row.vacancy}</td>
-
-                  <td>
-                    <div className="applied-cell">
-                      {row.applied}
-                      <div className="mini-progress">
-                        <div
-                          style={{
-                            width: `${Math.min(row.applied / 6, 100)}%`,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </td>
-
-                  <td>{row.shortlisted}</td>
-                  <td>{row.interview}</td>
-                  <td>{row.qualified}</td>
-
-                  <td className="offer-sent">{row.offerSent}</td>
-
-                  <td className="accepted">{row.offerAccepted}</td>
-
-                  <td className="joined">{row.joined}</td>
-
-                  <td className="extension">{row.extension}</td>
-
-                  <td className="cancelled">{row.cancelled}</td>
-
-                  <td className="rejected">{row.rejected}</td>
-
-                  <td className="waitlist">{row.waitlist}</td>
-
-                  <td>
-                    <span className={`${getStatusClass(row.status)}`}>
-                      {row.status}
-                    </span>
+              {paginatedData.length === 0 ? (
+                <tr>
+                  <td colSpan="15" className="text-center py-4">
+                    No Records Found
                   </td>
                 </tr>
-              ))}
+              ) : (
+                paginatedData.map((row, index) => (
+                  <tr key={index}>
+                    <td className="req-cell">{row.requisition}</td>
+
+                    <td>{row.position}</td>
+                    <td>{row.vacancy}</td>
+
+                    <td>
+                      <div className="applied-cell">
+                        {row.applied}
+                        <div className="mini-progress">
+                          <div
+                            style={{
+                              width: `${Math.min(row.applied / 6, 100)}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </td>
+
+                    <td>{row.shortlisted}</td>
+                    <td>{row.interview}</td>
+                    <td>{row.qualified}</td>
+
+                    <td className="offer-sent">{row.offerSent}</td>
+
+                    <td className="accepted">{row.offerAccepted}</td>
+
+                    <td className="joined">{row.joined}</td>
+
+                    <td className="extension">{row.extension}</td>
+
+                    <td className="cancelled">{row.cancelled}</td>
+
+                    <td className="rejected">{row.rejected}</td>
+
+                    <td className="waitlist">{row.waitlist}</td>
+
+                    <td>
+                      <span className={getStatusClass(row.status)}>
+                        {row.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </Table>
         </div>

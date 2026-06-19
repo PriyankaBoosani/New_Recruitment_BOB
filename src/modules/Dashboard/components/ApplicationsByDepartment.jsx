@@ -21,9 +21,7 @@ const CustomTooltip = ({ active, payload }) => {
       <div className="applications-tooltip">
         <div className="tooltip-title">{item.department}</div>
 
-        <div className="tooltip-value">
-          {item.value} applications
-        </div>
+        <div className="tooltip-value">{item.value} applications</div>
       </div>
     );
   }
@@ -31,9 +29,7 @@ const CustomTooltip = ({ active, payload }) => {
   return null;
 };
 
-const ApplicationsByDepartment = ({
-  applicationsByDepartment = [],
-}) => {
+const ApplicationsByDepartment = ({ applicationsByDepartment = [] }) => {
   return (
     <div className="applications-card mb-4">
       <div className="applications-header">
@@ -48,11 +44,17 @@ const ApplicationsByDepartment = ({
       </div>
 
       <div className="applications-chart">
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={applicationsByDepartment}>
-            <CartesianGrid strokeDasharray="4 4" vertical />
+        {applicationsByDepartment.length === 0 ? (
+          <div className="chart-no-data">
+            <FiBarChart2 className="no-data-icon" />
+            No Data Found
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={applicationsByDepartment}>
+              <CartesianGrid strokeDasharray="4 4" vertical />
 
-            {/* <XAxis
+              {/* <XAxis
               dataKey="department"
               tickLine={false}
               axisLine={false}
@@ -62,59 +64,24 @@ const ApplicationsByDepartment = ({
               height={120}
             /> */}
 
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-            />
+              <YAxis tickLine={false} axisLine={false} />
 
-            <Tooltip
-              cursor={{
-                fill: "rgba(0,0,0,0.08)",
-              }}
-              content={<CustomTooltip />}
-            />
+              <Tooltip
+                cursor={{
+                  fill: "rgba(0,0,0,0.08)",
+                }}
+                content={<CustomTooltip />}
+              />
 
-            <Bar
-              dataKey="value"
-              radius={[6, 6, 0, 0]}
-              barSize={10}
-            >
-              {applicationsByDepartment.map((entry, index) => (
-                <Cell
-                  key={index}
-                  fill={entry.color}
-                />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+              <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={10}>
+                {applicationsByDepartment.map((entry, index) => (
+                  <Cell key={index} fill={entry.color} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
-
-      <div className="applications-divider" />
-
-      {/* <div className="applications-legend">
-        {applicationsByDepartment.map((item) => (
-          <div
-            key={item.department}
-            className="legend-pill"
-          >
-            <span
-              className="legend-dot"
-              style={{
-                background: item.color,
-              }}
-            />
-
-            <span className="legend-text">
-              {item.department}:
-            </span>
-
-            <span className="legend-value">
-              {item.value}
-            </span>
-          </div>
-        ))}
-      </div> */}
     </div>
   );
 };
