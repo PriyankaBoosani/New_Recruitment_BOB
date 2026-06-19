@@ -78,7 +78,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
     setFromDate("");
     setToDate("");
 
-    setPeriodType("");
+    setPeriodType("FINANCIAL_YEAR");
     setFyValue("");
     setCyValue("");
     setQuarterYear("");
