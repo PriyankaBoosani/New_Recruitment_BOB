@@ -73,6 +73,7 @@ const Header = () => {
   //Privileges
   const privileges = useSelector((state) => state.user.privileges);
 
+  const canDashboard = privileges?.Dashboard;
   const canJobPost = privileges?.JobPostings;
   const canCandidateWorkflow =
     privileges?.["Candidate Pool"] || privileges?.["Compensation Pool"];
@@ -266,7 +267,7 @@ const Header = () => {
 
           <Navbar.Collapse id="main-navbar-nav">
             <Nav className="me-auto">
-              {canJobPost && (
+              {canDashboard && (
                 <Nav.Link as={NavLink} to="/dashboard" onClick={closeMenu}>
                   {t("dashboard")}
                 </Nav.Link>

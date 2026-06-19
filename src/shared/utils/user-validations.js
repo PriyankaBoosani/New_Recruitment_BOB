@@ -126,8 +126,8 @@ export const validateUserForm = (formData = {}, options = {}) => {
 // utils/getDefaultRoute.js
 export const getDefaultRoute = (privileges = {}) => {
   if (privileges.Admin) return "/users";
-  if (privileges.JobPostings) return "/dashboard";
- // if (privileges.JobPostings) return "/job-posting";
+ // if (privileges.JobPostings) return "/dashboard";
+  if (privileges.JobPostings) return "/job-posting";
 
   if (privileges["Candidate Pool"] || privileges["Compensation Pool"])
     return "/candidate-workflow";
