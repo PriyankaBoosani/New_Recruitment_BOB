@@ -66,6 +66,8 @@
   "qnq": "Q/NQ",
   "select_list": "Select List",
   "wait_list": "Wait List",
+  "state": "State",
+  "city": "City",
   "offer_release_date": "Offer Release Date",
   "accept_before_date": "Accept Before Date",
   "joining_date": "Joining Date",
@@ -134,6 +136,7 @@
   "candidate_resume": "Candidate Resume",
   "candidate_pool": "Candidate Pool",
   "interview_pool": "Interview Pool",
+  "Compensation_Pool" : "Compensation Pool",
   "schedule_pool": "Schedule Pool",
   "offer_pool": "Offer Pool",
   "onboarding_pool": "Onboarding Pool",
@@ -186,5 +189,8 @@
   "OfferTemplate": "Please select Offer Template",
   "BeforeDate": "Please select Accept Before Date",
   "JoiningDate": "Please select Joining Date",
-  "wentwrong": "Something went wrong"
+  "wentwrong": "Something went wrong",
+  "updateCandidateScore": "Update Candidates Score",
+  "positionSummary": "Positions Summary",
+   "rank": "Rank"
 }

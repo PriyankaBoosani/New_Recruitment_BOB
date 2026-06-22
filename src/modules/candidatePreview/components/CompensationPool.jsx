@@ -7,6 +7,8 @@ import { Modal, Button } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import candidateWorkflowServices from "../services/CandidateWorkflowServices";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+
 import "../../../style/css/Compensationpool.css";
 
 export default function CompensationPool({
@@ -34,6 +36,8 @@ export default function CompensationPool({
   const canEditCompensation =
     selectedCandidate?.status === "SUBMITTED" ||
     selectedCandidate?.status === "RENEGOTIATE";
+
+    const { t } = useTranslation("compensationPool");
 
   const canEditManagerCompensation =
     selectedCandidate?.status !== "NEW" &&
@@ -418,42 +422,42 @@ export default function CompensationPool({
                 className="fs-14 fw-normal py-3"
                 onClick={() => requestSort("name")}
               >
-                Candidate {sortIcon("name")}
+                {t("candidate")} {sortIcon("name")}
               </th>
 
               <th
                 className="fs-14 fw-normal py-3"
                 onClick={() => requestSort("currentCtc")}
               >
-                Current CTC {sortIcon("currentCtc")}
+                {t("currentCTC")} {sortIcon("currentCtc")}
               </th>
 
               <th
                 className="fs-14 fw-normal py-3"
                 onClick={() => requestSort("expectedCtc")}
               >
-                Expected CTC {sortIcon("expectedCtc")}
+                {t("expectedCTC")} {sortIcon("expectedCtc")}
               </th>
 
               <th
                 className="fs-14 fw-normal py-3"
                 onClick={() => requestSort("hike")}
               >
-                Expected Hike % {sortIcon("hike")}
+                {t("expectedHike")}
               </th>
 
               <th
                 className="fs-14 fw-normal py-3"
                 onClick={() => requestSort("agreedCtc")}
               >
-                Agreed CTC {sortIcon("agreedCtc")}
+                {t("agreedCTC")}
               </th>
 
-              <th className="fs-14 fw-normal py-3">Comments</th>
+              <th className="fs-14 fw-normal py-3">{t("comments")}</th>
 
-              <th className="fs-14 fw-normal py-3">Status</th>
+              <th className="fs-14 fw-normal py-3">{t("status")}</th>
 
-              <th className="text-center fs-14 fw-normal py-3">Actions</th>
+              <th className="text-center fs-14 fw-normal py-3">{t("actions")}</th>
             </tr>
           </thead>
 
@@ -462,7 +466,7 @@ export default function CompensationPool({
             {sortedCandidates.length === 0 ? (
               <tr>
                 <td colSpan="9" className="text-center py-4 text-muted fs-14">
-                  No candidates in compensation pool
+                  {t("noCandidates")}
                 </td>
               </tr>
             ) : (
@@ -524,7 +528,7 @@ export default function CompensationPool({
                     {/* Profile */}
                     <OverlayTrigger
                       placement="bottom"
-                      overlay={<Tooltip>View Profile</Tooltip>}
+                      overlay={<Tooltip>{t("viewProfile")}</Tooltip>}
                     >
                       <Person
                         className="me-3 cursor-pointer"
@@ -571,7 +575,7 @@ export default function CompensationPool({
                     {/* Document */}
                     <OverlayTrigger
                       placement="bottom"
-                      overlay={<Tooltip>View Resume</Tooltip>}
+                      overlay={<Tooltip>{t("viewResume")}</Tooltip>}
                     >
                       <FileText
                         className="me-3 cursor-pointer"
@@ -588,7 +592,7 @@ export default function CompensationPool({
                     {/*  Compensation (NEW ICON) */}
                     <OverlayTrigger
                       placement="bottom"
-                      overlay={<Tooltip>Compensation Details</Tooltip>}
+                      overlay={<Tooltip>{t("compensationDetails")}</Tooltip>}
                     >
                       <span>
                         <img
@@ -654,8 +658,11 @@ export default function CompensationPool({
         {/* ================= PAGINATION ================= */}
         <div className="d-flex justify-content-between align-items-center px-3 py-3 border-top">
           <div className="fs-14 text-muted">
-            Showing {page * pageSize + 1}–
-            {Math.min((page + 1) * pageSize, totalElements)} of {totalElements}
+          {t("showingRecords", {
+  start: page * pageSize + 1,
+  end: Math.min((page + 1) * pageSize, totalElements),
+  total: totalElements,
+})}
           </div>
 
           <div className="d-flex align-items-center gap-2">
@@ -708,7 +715,7 @@ export default function CompensationPool({
       >
         <Modal.Header closeButton className="custom-modal-header border-0">
           <Modal.Title className="fw-semibold fs-5">
-            Agreed Compensation
+           {t("agreedCompensation")}
           </Modal.Title>
         </Modal.Header>
 
@@ -716,7 +723,7 @@ export default function CompensationPool({
           <div className="row g-3">
             <div className="col-md-6">
               <label className="form-label fw-medium">
-                Fixed Pay <span className="text-danger">*</span>
+                {t("fixedPay")} <span className="text-danger">*</span>
               </label>
               <input
                 className={`form-control ${
@@ -737,7 +744,7 @@ export default function CompensationPool({
               )}
             </div>
             <div className="col-md-6">
-              <label className="form-label fw-medium">Variable Pay</label>
+              <label className="form-label fw-medium">{t("variablePay")}</label>
               <input
                 className="form-control"
                 placeholder="Enter Value"
@@ -753,7 +760,7 @@ export default function CompensationPool({
             </div>
 
             <div className="col-md-6">
-              <label className="form-label fw-medium">Joining Bonus</label>
+              <label className="form-label fw-medium">{t("joiningBonus")}</label>
               <input
                 className="form-control"
                 placeholder="Enter Value"
@@ -771,7 +778,7 @@ export default function CompensationPool({
             <div className="col-md-12">
               <label className="form-label fw-medium">
                 {" "}
-                Comments <span className="text-danger">*</span>{" "}
+                {t("comments")} <span className="text-danger">*</span>{" "}
               </label>
               <textarea
                 className={`form-control ${
@@ -809,7 +816,7 @@ export default function CompensationPool({
               setSaveClicked(false);
             }}
           >
-            Cancel
+            {t("cancel")}
           </Button>
 
           <Button
@@ -818,7 +825,7 @@ export default function CompensationPool({
             onClick={handleSaveCompensation}
             disabled={!canEditCompensation}
           >
-            Save
+           {t("save")}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -833,7 +840,7 @@ export default function CompensationPool({
       >
         <Modal.Header closeButton className="border-0 pb-0">
           <Modal.Title className="fw-semibold fs-5">
-            Approve / Reject / Re-negotiate Compensation
+          {t("approveRejectCompensation")}
           </Modal.Title>
         </Modal.Header>
 
@@ -861,7 +868,7 @@ export default function CompensationPool({
             </div>
 
             <div className="col-md-6">
-              <label className="form-label">Variable Pay</label>
+              <label className="form-label">{t("variablePay")}</label>
               <input
                 className="form-control"
                 value={managerForm.variablePay}
@@ -876,7 +883,7 @@ export default function CompensationPool({
             </div>
 
             <div className="col-md-6">
-              <label className="form-label">Joining Bonus</label>
+              <label className="form-label">{t("joiningBonus")}</label>
               <input
                 className="form-control"
                 value={managerForm.joiningBonus}
@@ -892,7 +899,7 @@ export default function CompensationPool({
 
             <div className="col-md-12">
               <label className="form-label">
-                Comments <span className="text-danger">*</span>{" "}
+                {t("comments")} <span className="text-danger">*</span>{" "}
               </label>
               <textarea
                 className="form-control"
@@ -917,7 +924,7 @@ export default function CompensationPool({
             onClick={() => handleManagerAction("APPROVE")}
             disabled={!canEditManagerCompensation}
           >
-            Approve
+           {t("approve")}
           </Button>
 
           {/*  REJECT */}
@@ -926,7 +933,7 @@ export default function CompensationPool({
             onClick={() => handleManagerAction("REJECT")}
             disabled={!canEditManagerCompensation}
           >
-            Reject
+            {t("reject")}
           </Button>
 
           {/*  RENEGOTIATE */}
@@ -935,7 +942,7 @@ export default function CompensationPool({
             onClick={() => handleManagerAction("RENEGOTIATE")}
             disabled={!canEditManagerCompensation}
           >
-            Re-negotiate
+          {t("renegotiate")}
           </Button>
         </Modal.Footer>
       </Modal>

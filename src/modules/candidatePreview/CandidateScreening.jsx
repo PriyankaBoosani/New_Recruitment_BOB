@@ -72,6 +72,8 @@ export default function CandidateScreening({ selectedJob }) {
   const isRecruiter = role === "recruiter";
 
   const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
+  
+  const [isMarksUploaded, setIsMarksUploaded] = useState(false);
 
   const CANDIDATE_POOL_STATUSES = [
     "APPLIED",
@@ -283,10 +285,7 @@ export default function CandidateScreening({ selectedJob }) {
     (id) => examConfigMap[id]?.status !== "FINALIZED"
   );
 
-  console.log(
-    "Can Update Candidate Scoreeeeeeeeeeeeeeeeeeeeeeeeee:",
-    canUpdateCandidateScore
-  );
+
   const canAccessExamActions = isRecruiter;
 
   useEffect(() => {
@@ -509,7 +508,8 @@ export default function CandidateScreening({ selectedJob }) {
 
     {
       key: "COMPENSATION_POOL",
-      label: "Compensation Pool",
+       label: t("candidateWorkflow:Compensation_Pool"),
+      //label: "Compensation Pool",
       count: compensationTotal,
     },
     { key: "OFFER_POOL", label: t("candidateWorkflow:offer_pool"), count: 0 },
@@ -831,7 +831,14 @@ export default function CandidateScreening({ selectedJob }) {
       totalMarksObtained:
         Number(c.totalMarksObtained) > 0 ? c.totalMarksObtained : "-",
 
-      examQualificationStatus: c.examQualificationStatus || "-",
+      // examQualificationStatus: c.examQualificationStatus || "-",
+
+      examQualificationStatus:
+  c.examQualificationStatus === "QUALIFIED_UNDER_UR"
+    ? "Qualified Under UR"
+    : c.examQualificationStatus === "NOT_MARKED"
+    ? "Not Marked"
+    : c.examQualificationStatus || "-",
 
       educationScore: c?.candidateRankingResults?.educationScore ?? "-",
 
@@ -994,6 +1001,13 @@ export default function CandidateScreening({ selectedJob }) {
       const mappedCandidates = formatCandidateData(apiData);
 
       setCandidates(mappedCandidates);
+
+      const hasExamResults = (apiData?.content || []).some(
+  (candidate) => candidate.examQualificationStatus !== null
+);
+
+setIsMarksUploaded(hasExamResults);
+
       setTotalElements(apiData?.page?.totalElements || 0);
     } catch (err) {
       console.error("Failed to load candidates", err);
@@ -2365,7 +2379,7 @@ export default function CandidateScreening({ selectedJob }) {
                       style={{ height: "38px" }}
                     >
                       <FiUpload />
-                      Update Candidates Score
+                  {t("updateCandidateScore")}
                     </Button>
                   )}
 
@@ -2378,7 +2392,7 @@ export default function CandidateScreening({ selectedJob }) {
                       onClick={handleOpenExaminationScore}
                       style={{ height: "38px" }}
                     >
-                      Positions Summary
+                    {t("positionSummary")}
                     </button>
                   )}
               </div>
@@ -2678,7 +2692,7 @@ export default function CandidateScreening({ selectedJob }) {
                       }}
                     >
                       <FontAwesomeIcon icon={faListOl} className="rank-icon" />{" "}
-                      Rank
+                     {t("candidateWorkflow:rank")}
                     </button>
                   )}
 
@@ -3111,6 +3125,7 @@ export default function CandidateScreening({ selectedJob }) {
             filters={filters} //  ADD THIS
             hasLocationData={hasLocationData}
             allCandidatesForFilters={allCandidatesForFilters}
+             isMarksUploaded={isMarksUploaded}
           />
         )}
 

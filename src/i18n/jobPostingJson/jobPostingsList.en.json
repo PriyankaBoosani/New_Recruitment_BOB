@@ -16,6 +16,7 @@
   "department": "Department",
   "positions": "Positions",
   "vacancies": "Vacancies",
+   "reinitialize": "Reinitialize",
   "position": "Position",
   "positions_plural": "Positions",
   "no_positions": "No positions added",

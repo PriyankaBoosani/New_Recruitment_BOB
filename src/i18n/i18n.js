@@ -66,6 +66,10 @@ import interviewDayHi from "../i18n/interviewDayJson/interviewDay.hi.json";
 import candidateWorkflowEn from "../i18n/candidateWorkflowJson/candidateWorkflow.en.json";
 import candidateWorkflowHi from "../i18n/candidateWorkflowJson/candidateWorkflow.hi.json";
 
+import compensationPoolEn from "./compensationpoolJson/compensationpoolJson.en.json";
+import compensationPoolHi from "./compensationpoolJson/compensationpoolJson.hi.json";
+
+
 import verificationEn from "../i18n/verificationJson/verification.en.json";
 import verificationHi from "../i18n/verificationJson/verification.hi.json";
 
@@ -120,6 +124,7 @@ i18n.use(initReactI18next).init({
       stateLanguages: stateLanguagesEn,
       extensionsRequests: extensionsRequestsEn,
       examconfiguration: examconfigurationEn,
+      compensationPool: compensationPoolEn,
     },
     hi: {
       common: commonHi,
@@ -152,6 +157,7 @@ i18n.use(initReactI18next).init({
       stateLanguages: stateLanguagesHi,
       extensionsRequests: extensionsRequestsHi,
       examconfiguration: examconfigurationHi,
+      compensationPool: compensationPoolHi,
     },
   },
   lng: "en",

@@ -26,6 +26,7 @@ export default function CandidatePool({
   isRankEnabled,
   hasLocationData,
   allCandidatesForFilters,
+  isMarksUploaded
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const STATUS_CLASS_MAP = {
@@ -233,7 +234,7 @@ export default function CandidatePool({
               </th>
             
               <th className="fs-14 fw-normal py-3" role="button">
-                Rank
+                {t("common:rank")}
               </th>
 
               <th
@@ -241,7 +242,7 @@ export default function CandidatePool({
                 onClick={() => requestSort("score")}
                 role="button"
               >
-                Score {sortIcon("score")}
+                {t("common:score")} {sortIcon("score")}
               </th>
 
               <th
@@ -264,13 +265,17 @@ export default function CandidatePool({
               <th className="fs-14 fw-normal py-3">{t("common:category")}</th>
 
 
-              <th className="fs-14 fw-normal py-3">
-  Total Marks Obtained
-</th>
+             {isMarksUploaded && (
+  <th className="fs-14 fw-normal py-3">
+     {t("common:total_marks_obtained")}
+  </th>
+)}
 
-<th className="fs-14 fw-normal py-3">
-  Exam  Status
-</th>
+{isMarksUploaded && (
+  <th className="fs-14 fw-normal py-3">
+     {t("common:exam_status")}
+  </th>
+)}
 
               <th className="text-center fs-14 fw-normal py-3">
                 {t("common:actions")}
@@ -385,17 +390,21 @@ export default function CandidatePool({
                   </td>
 
 
-                          <td className="align-content-center">
-          <p className="fw-normal fs-14 mb-0">
-            {c.totalMarksObtained ?? "-"}
-          </p>
-        </td>
+                          {isMarksUploaded && (
+  <td className="align-content-center">
+    <p className="fw-normal fs-14 mb-0">
+      {c.totalMarksObtained ?? "-"}
+    </p>
+  </td>
+)}
 
-        <td className="align-content-center">
-          <p className="fw-normal fs-14 mb-0">
-            {c.examQualificationStatus || "-"}
-          </p>
-        </td>
+{isMarksUploaded && (
+  <td className="align-content-center">
+    <p className="fw-normal fs-14 mb-0">
+      {c.examQualificationStatus || "-"}
+    </p>
+  </td>
+)}
 
                   <td className="text-center align-content-center">
                     <OverlayTrigger

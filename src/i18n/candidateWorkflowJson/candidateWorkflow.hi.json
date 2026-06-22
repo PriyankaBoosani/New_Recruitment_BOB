@@ -67,8 +67,10 @@
   "registration_number": "आवेदन संख्या",
   "caste": "जाति",
   "combined_score": "संयुक्त स्कोर",
-  "qnq": "Q/NQ",
+ "qnq": "यो/अयो",
   "select_list": "चयन सूची",
+  "state": "राज्य",
+  "city": "शहर",
   "wait_list": "प्रतीक्षा सूची",
   "offer_release_date": "ऑफर जारी करने की तिथि",
   "accept_before_date": "स्वीकृति की अंतिम तिथि",
@@ -135,6 +137,7 @@
   "candidate_resume": "उम्मीदवार रिज़्यूमे",
   "candidate_pool": "उम्मीदवार पूल",
   "interview_pool": "साक्षात्कार पूल",
+  "Compensation_Pool": "कंपेंसेशन पूल",
   "schedule_pool": "स्केड्यूल पूल",
   "offer_pool": "ऑफर पूल",
   "onboarding_pool": "ऑनबोर्डिंग पूल",
@@ -187,5 +190,8 @@
   "OfferTemplate": "कृपया ऑफर टेम्पलेट चुनें",
   "BeforeDate": "कृपया स्वीकार करने की अंतिम तिथि चुनें",
   "JoiningDate": "कृपया जॉइनिंग तिथि चुनें",
-  "wentwrong": "कुछ गलत हो गया"
+  "wentwrong": "कुछ गलत हो गया",
+   "updateCandidateScore": "अभ्यर्थियों के अंक अपडेट करें",
+  "positionSummary": "पदों का सारांश",
+  "rank": "रैंक"
 }

@@ -290,14 +290,14 @@ const OfferPool = ({
                 scope="col"
                 style={{ paddingLeft: "1.25rem" }}
               >
-                State
+                {t("candidateWorkflow:state")}
               </th>
               <th
                 className="fs-14 fw-normal py-3 border-top"
                 scope="col"
                 style={{ paddingLeft: "1.25rem" }}
               >
-               City
+               {t("candidateWorkflow:city")}
               </th>
 
               <th

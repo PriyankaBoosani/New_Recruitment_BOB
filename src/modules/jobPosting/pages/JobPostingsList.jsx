@@ -545,7 +545,7 @@ const JobPostingsList = () => {
               });
             }}
           >
-            Reinitialize
+            {t("jobPostingsList:reinitialize")}
           </Button>
 
           <Button
