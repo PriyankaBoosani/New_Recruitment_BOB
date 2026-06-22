@@ -2,9 +2,36 @@ import React, { useState } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import Select from "react-select";
 import "../../../style/css/OfferLetterRequestApproval.css";
+import ApprovalCommentModal from "../components/ApprovalCommentModal";
 
 const OfferLetterRequestApproval = () => {
   const [selectedIds, setSelectedIds] = useState(new Set());
+  const [showCommentModal, setShowCommentModal] = useState(false);
+  const [actionType, setActionType] = useState(null); // "approve" | "reject"
+  const [comment, setComment] = useState("");
+
+  const handleOpenCommentModal = (type) => {
+    if (selectedIds.size === 0) {
+      alert("Please select at least one candidate");
+      return;
+    }
+
+    setActionType(type);
+    setComment("");
+    setShowCommentModal(true);
+  };
+
+  const handleConfirmAction = () => {
+    const selectedCandidates = candidates.filter((c) => selectedIds.has(c.id));
+
+    console.log("Action:", actionType);
+    console.log("Comment:", comment);
+    console.log("Selected Candidates:", selectedCandidates);
+
+    // Call your approve/reject API here
+
+    setShowCommentModal(false);
+  };
 
   const requisitionOptions = [
     { value: 1, label: "REQ-001 - React Developer Hiring" },
@@ -134,17 +161,27 @@ const OfferLetterRequestApproval = () => {
           </Col>
 
           <Col md={6} className="d-flex justify-content-end gap-2">
-            <Button variant="outline-danger" className="offer-reject-btn">
+            <Button
+              variant="outline-danger"
+              className="offer-reject-btn"
+              disabled={selectedIds.size === 0}
+              onClick={() => handleOpenCommentModal("reject")}
+            >
               Reject
             </Button>
 
-            <Button variant="outline-success" className="offer-approve-btn">
+            <Button
+              variant="outline-success"
+              className="offer-approve-btn"
+              disabled={selectedIds.size === 0}
+              onClick={() => handleOpenCommentModal("approve")}
+            >
               Approve
             </Button>
           </Col>
         </Row>
         {/* Cards */}
-        
+
         <table responsive bordered hover className="offer-request-table mt-5">
           <thead>
             <tr>
@@ -204,7 +241,12 @@ const OfferLetterRequestApproval = () => {
             ))}
           </tbody>
         </table>
-        
+        <ApprovalCommentModal
+          show={showCommentModal}
+          actionType={actionType}
+          onClose={() => setShowCommentModal(false)}
+          onConfirm={handleConfirmAction}
+        />
       </Container>
     </div>
   );

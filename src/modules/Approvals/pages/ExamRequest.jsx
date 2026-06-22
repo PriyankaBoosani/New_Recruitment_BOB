@@ -1,5 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Container, Row, Col, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
 import Select from "react-select";
 import useExamRequest from "../hooks/useExamRequest";
 import "../../../style/css/ExamRequest.css";
@@ -45,6 +52,7 @@ const ExamRequest = () => {
         return "info";
 
       case "APPROVED":
+      case "FINALIZED":
         return "success";
 
       case "L1_REJECTED":
