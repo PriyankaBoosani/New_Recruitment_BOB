@@ -24,7 +24,8 @@ export const mapJobRequisitionFromApi = (item = {}) => {
     endDate: item.endDate ?? "-",
     hasDraftPositions: item.hasDraftPositions === true,
     parentRequisitionId: item.parentRequisitionId ?? null,
-
+    isHiringCompleted: item.isHiringCompleted,
+    isReinitialized: item.isReinitialized,
     isDraft: item.isDraft === true,
     editable: isEditableStatus.includes(rawStatus),
 

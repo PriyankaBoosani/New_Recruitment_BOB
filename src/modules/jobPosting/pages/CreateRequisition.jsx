@@ -26,6 +26,8 @@ import { useJobPositionsByRequisition } from "../hooks/useJobPositionsByRequisit
 import masterApiService from "../../master/services/masterApiService";
 import requisitionApiService from "../services/requisitionApiService";
 import jobPositionApiService from "../services/jobPositionApiService";
+import SinglePositionInfoModal from "../component/SinglePositionInfoModal";
+import { mapVacancyBreakdownByPosition } from "../../jobPosting/mappers/VacancyBreakdownBySinglePosition";
 
 const CreateRequisition = () => {
   const { t } = useTranslation(["CreateRequisition", "common"]);
@@ -50,6 +52,9 @@ const CreateRequisition = () => {
   const isDraftEdit = location.state?.isDraftEdit;
   const isDraftMode = isDraftView || isDraftEdit;
   const parentRequisitionId = location.state?.parentRequisitionId;
+  const [selectedReqForModal, setSelectedReqForModal] =
+    useState(null);
+
 
   const handleCancel = () => {
     if (from === "approval") {
@@ -81,14 +86,57 @@ const CreateRequisition = () => {
   const positions = positionsByReq[key] || [];
 
   const [selectedPositions, setSelectedPositions] = useState(new Set());
+  const [showPositionModal, setShowPositionModal] = useState(false);
+  const [selectedPositionInfo, setSelectedPositionInfo] = useState(null);
   const [draftSelectedPositionIds, setDraftSelectedPositionIds] = useState(
     new Set()
   );
   const [masterPositionsMap, setMasterPositionsMap] = useState({});
+  const [masterData, setMasterData] = useState({});
 
   useEffect(() => {
     const fetchMasterPositions = async () => {
       const res = await masterApiService.getMasterDisplayAll();
+      setMasterData({
+        reservationCategories: (
+          res.data?.reservationCategories || []
+        ).map((c) => ({
+          id: String(c.reservationCategoriesId),
+          code: c.categoryCode,
+        })),
+
+        disabilityCategories: (
+          res.data?.disabilityCategories || []
+        ).map((c) => ({
+          id: String(c.disabilityCategoryId),
+          code: c.disabilityCode,
+        })),
+
+        employmentTypes: (
+          res.data?.employementTypes || []
+        ).map((e) => ({
+          id: String(e.employementTypeId),
+          name: e.typeName,
+          code: e.typeCode,
+        })),
+
+        departments: (
+          res.data?.departments || []
+        ).map((d) => ({
+          id: String(d.departmentId),
+          name: d.departmentName,
+        })),
+
+        masterPositions: (
+          res.data?.masterPositions || []
+        ).map((p) => ({
+          id: String(p.masterPositionsId),
+          name: p.positionName,
+        })),
+
+        states: res.data?.states || [],
+        cities: res.data?.cities || [],
+      });
 
       const list = res?.data?.masterPositions || [];
 
@@ -254,7 +302,7 @@ const CreateRequisition = () => {
         <Card.Body>
           <div className="section-title">
             <span className="indicator" />
-           
+
             <h6>
               {isViewMode && t("view_requisition")}
 
@@ -345,28 +393,28 @@ const CreateRequisition = () => {
                       placeholder={t("enter_description")}
                       value={formData.description}
                       onChange={(e) => {
-                          const result = validateDescriptionOnType(e.target.value);
+                        const result = validateDescriptionOnType(e.target.value);
 
-                          if (!result.valid) {
-                            setErrors((prev) => ({
-                              ...prev,
-                              description: result.message,
-                            }));
-                            return;
-                          }
-
-                          handleInputChange({
-                            target: {
-                              name: "description",
-                              value: result.value,
-                            },
-                          });
-
+                        if (!result.valid) {
                           setErrors((prev) => ({
                             ...prev,
-                            description: "",
+                            description: result.message,
                           }));
-                        }}
+                          return;
+                        }
+
+                        handleInputChange({
+                          target: {
+                            name: "description",
+                            value: result.value,
+                          },
+                        });
+
+                        setErrors((prev) => ({
+                          ...prev,
+                          description: "",
+                        }));
+                      }}
                       onBlur={(e) =>
                         handleInputChange({
                           target: {
@@ -385,6 +433,7 @@ const CreateRequisition = () => {
                     <div className="mt-4">
                       <Form.Label>{t("select_positions_to_edit")}</Form.Label>
 
+
                       {loadingReqId === editId && <Spinner size="sm" />}
 
                       {!loadingReqId && positions.length === 0 && (
@@ -393,27 +442,104 @@ const CreateRequisition = () => {
 
                       {!loadingReqId &&
                         positions.map((pos) => (
-                          <Form.Check
+                          // <Form.Check
+                          //   key={pos.positionId}
+                          //   type="checkbox"
+                          //   className="mb-2"
+                          //   style={{ fontSize: "0.875rem" }}
+                          //   label={`${masterPositionsMap[pos.masterPositionId] || "Unknown"} - (${pos.vacancies} vacancies)`}
+                          //   checked={selectedPositions.has(pos.positionId)}
+                          //   onChange={(e) => {
+                          //     setSelectedPositions((prev) => {
+                          //       const next = new Set(prev);
+
+                          //       if (e.target.checked) {
+                          //         next.add(pos.positionId);
+                          //       } else {
+                          //         next.delete(pos.positionId);
+                          //       }
+
+                          //       return next;
+                          //     });
+                          //   }}
+                          // />
+                          <div
                             key={pos.positionId}
-                            type="checkbox"
-                            className="mb-2"
-                            style={{ fontSize: "0.875rem" }}
-                            label={`${masterPositionsMap[pos.masterPositionId] || "Unknown"} - (${pos.vacancies} vacancies)`}
-                            checked={selectedPositions.has(pos.positionId)}
-                            onChange={(e) => {
-                              setSelectedPositions((prev) => {
-                                const next = new Set(prev);
+                            className="d-flex align-items-center mb-2"
+                          >
+                            <Form.Check
+                              type="checkbox"
+                              checked={selectedPositions.has(pos.positionId)}
+                              onChange={(e) => {
+                                setSelectedPositions((prev) => {
+                                  const next = new Set(prev);
 
-                                if (e.target.checked) {
-                                  next.add(pos.positionId);
-                                } else {
-                                  next.delete(pos.positionId);
-                                }
+                                  if (e.target.checked) {
+                                    next.add(pos.positionId);
+                                  } else {
+                                    next.delete(pos.positionId);
+                                  }
 
-                                return next;
-                              });
-                            }}
-                          />
+                                  return next;
+                                });
+                              }}
+                              label={
+                                <span className="d-flex align-items-center">
+                                  {masterPositionsMap[pos.masterPositionId] || "Unknown"} - (
+                                  {pos.vacancies} vacancies)
+
+                                  <i
+                                    className="bi bi-info-circle-fill ms-2"
+                                    style={{
+                                      color: "#4F67C1",
+                                      cursor: "pointer",
+                                      fontSize: "16px",
+                                    }}
+                                    onClick={async (e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+
+                                      try {
+                                        const positionRes =
+                                          await jobPositionApiService.getVacancyBreakdownByPosition(
+                                            pos.positionId
+                                          );
+
+                                        const reqRes =
+                                          await requisitionApiService.getRequisitionById(
+                                            editId
+                                          );
+
+                                        const parentReqData = {
+                                          requisitionId:
+                                            reqRes?.data?.requisitionCode,
+                                          code:
+                                            reqRes?.data?.requisitionTitle,
+                                          startDate:
+                                            reqRes?.data?.startDate,
+                                          endDate:
+                                            reqRes?.data?.endDate,
+                                        };
+
+                                        const mappedData =
+                                          mapVacancyBreakdownByPosition(
+                                            positionRes.data,
+                                            masterData
+                                          );
+
+                                        setSelectedReqForModal(parentReqData);
+                                        setSelectedPositionInfo(mappedData);
+                                        setShowPositionModal(true);
+                                      } catch (error) {
+                                        console.error(error);
+                                      }
+                                    }}
+                                  />
+                                </span>
+                              }
+                            />
+                          </div>
+
                         ))}
                     </div>
                   )}
@@ -532,6 +658,17 @@ const CreateRequisition = () => {
           </Button>
         )}
       </div>
+
+      <SinglePositionInfoModal
+        show={showPositionModal}
+        onHide={() => {
+          setShowPositionModal(false);
+          setSelectedPositionInfo(null);
+          setSelectedReqForModal(null);
+        }}
+        requisition={selectedReqForModal}
+        position={selectedPositionInfo}
+      />
     </Container>
   );
 };

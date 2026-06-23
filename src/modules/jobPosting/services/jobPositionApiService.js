@@ -429,6 +429,28 @@ downloadAssignLocationExcel: (positionId) => {
       },
     });
   },
+
+  getVacancyBreakdownByRequisition: (requisitionId) =>
+  api.get(
+    `/recruiter/job-positions/vacancy-breakdown/by-requisition/${requisitionId}`,
+    {
+      headers: {
+        "X-Client": "AzureAD",
+      },
+    }
+  ),
+
+  
+  
+getVacancyBreakdownByPosition: (positionId) =>
+  api.get(
+    `/recruiter/job-positions/vacancy-breakdown/by-position/${positionId}`,
+    {
+      headers: {
+        "X-Client": "AzureAD",
+      },
+    }
+  ),
 };
 
 export default jobPositionApiService;

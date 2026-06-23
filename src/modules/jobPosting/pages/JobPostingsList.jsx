@@ -10,15 +10,19 @@ import {
   Badge,
   Spinner,
 } from "react-bootstrap";
-import { Search, ChevronDown, ChevronUp } from "react-bootstrap-icons";
+import { Search, ChevronDown, ChevronUp, InfoCircle, XCircleFill } from "react-bootstrap-icons";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-
+import { Modal } from "react-bootstrap";
 import "../../../style/css/JobPostingsList.css";
 import DeleteConfirmationModal from "../component/DeleteConfirmationModal";
 import ConfirmationModal from "../component/ConfirmationModal";
 import ApprovalHistoryModal from "../../Approvals/components/ApprovalHistoryModal";
 import { useRequisitionApprovalHistory } from "../../Approvals/hooks/useRequisitionApprovalHistory";
+import ApprovedInfoStrip from "../../jobPosting/component/ApprovedInfoStrip";
+import CloseRequisitionModal from "../../jobPosting/component/CloseRequisitionModal";
+import jobPositionApiService from "../services/jobPositionApiService";
+import { mapVacancyBreakdown } from "../../jobPosting/mappers/vacancyBreakdownMapper";
 
 import start_icon from "../../../assets/start_icon.png";
 import dept_icon from "../../../assets/dept_icon.jpg";
@@ -41,6 +45,8 @@ import CreatePlus_Icon from "../../../assets/CreatePlus_Icon.png";
 import { useTranslation } from "react-i18next";
 import requisitionApiService from "../services/requisitionApiService";
 import Loader from "../../../shared/components/Loader";
+import SinglePositionInfoModal from "../component/SinglePositionInfoModal";
+import { mapVacancyBreakdownByPosition } from "../mappers/VacancyBreakdownBySinglePosition";
 
 const JobPostingsList = () => {
   const { t } = useTranslation(["jobPostingsList", "common"]);
@@ -64,6 +70,15 @@ const JobPostingsList = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
 
+  const [showApprovedInfo, setShowApprovedInfo] = useState(false);
+  const [selectedReqInfo, setSelectedReqInfo] = useState(null);
+  const [showCloseModal, setShowCloseModal] = useState(false);
+  const [selectedCloseReq, setSelectedCloseReq] = useState(null);
+  const [masterData, setMasterData] = useState({});
+  const [showPositionModal, setShowPositionModal] = useState(false);
+  const [selectedPositionInfo, setSelectedPositionInfo] = useState(null);
+  const [selectedReqForModal, setSelectedReqForModal] = useState(null);
+  const [parentReqDetails, setParentReqDetails] = useState({});
   const {
     history,
     setHistory,
@@ -158,7 +173,25 @@ const JobPostingsList = () => {
   const [openReqId, setOpenReqId] = useState(null);
   const [openDept, setOpenDept] = useState({});
 
-  const toggleAccordion = (req) => {
+  const toggleAccordion = async (req) => {
+    if (req.parentRequisitionId &&
+      req.parentRequisitionId !== "") {
+      try {
+        const res = await jobPositionApiService.getRequisitionById(
+          req.parentRequisitionId
+        );
+
+        setParentReqDetails((prev) => ({
+          ...prev,
+          [req.id]: {
+            requisitionId: res?.data?.requisitionCode,
+            code: res?.data?.requisitionTitle,
+          },
+        }));
+      } catch (error) {
+        console.error(error);
+      }
+    }
     setOpenReqId((prev) => {
       const next = prev === req.id ? null : req.id;
 
@@ -205,6 +238,60 @@ const JobPostingsList = () => {
   useEffect(() => {
     setPage(0);
   }, [month]);
+
+
+
+  useEffect(() => {
+    const loadMasterData = async () => {
+      try {
+        const res = await masterApiService.getMasterDisplayAll();
+
+        setMasterData({
+          reservationCategories: (
+            res.data?.reservationCategories || []
+          ).map((c) => ({
+            id: String(c.reservationCategoriesId),
+            code: c.categoryCode,
+          })),
+
+          disabilityCategories: (
+            res.data?.disabilityCategories || []
+          ).map((c) => ({
+            id: String(c.disabilityCategoryId),
+            code: c.disabilityCode,
+          })),
+
+          employmentTypes: (
+            res.data?.employementTypes || []
+          ).map((e) => ({
+            id: String(e.employementTypeId),
+            name: e.typeName,
+            code: e.typeCode,
+          })),
+
+          departments: (
+            res.data?.departments || []
+          ).map((d) => ({
+            id: String(d.departmentId),
+            name: d.departmentName,
+          })),
+
+          masterPositions: (
+            res.data?.masterPositions || []
+          ).map((p) => ({
+            id: String(p.masterPositionsId),
+            name: p.positionName,
+          })),
+          states: res.data?.states || [],
+          cities: res.data?.cities || [],
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    loadMasterData();
+  }, []);
 
   useEffect(() => {
     setPage(0);
@@ -425,6 +512,7 @@ const JobPostingsList = () => {
               </option>
             ))}
           </Form.Select>
+
         </Col>
 
         <Col xs={12} md={2}>
@@ -586,6 +674,7 @@ const JobPostingsList = () => {
       )}
 
       {requisitions.map((req) => {
+        // console.log("req ---1", req);
         // const positions = positionsByReq[req.id] || [];
         const key = `${req.isDraft ? req.parentRequisitionId : req.id}_${req.isDraft}`;
         const positions = positionsByReq[key] || [];
@@ -623,6 +712,15 @@ const JobPostingsList = () => {
           return acc;
         }, {});
 
+        const displayStatus =
+          !req.isHiringCompleted &&
+            ["APPROVED", "CLOSED"].includes(req.status)
+            ? "OUTSTANDING"
+            : "";
+
+        const isReinitializedStatus =
+          req.isReinitialized === true ? "Reinitiated" : "";
+
         return (
           <div
             key={req.id}
@@ -640,9 +738,98 @@ const JobPostingsList = () => {
                     {req.requisitionId}
                   </Badge>
 
+                  {/* {displayStatus && (
+                    <Badge bg={req.statusType} className="ms-2">
+                      {formatStatusLabel(displayStatus)}
+                    </Badge>
+                  )} */}
+
+                  {displayStatus === "OUTSTANDING" && (
+                    <span
+                      style={{
+                        border: "1px solid #f26522",
+                        color: "#f26522",
+                        background: "#fff4ee",
+                        padding: "2px 8px",
+                        borderRadius: "4px",
+                        fontSize: "11px",
+                        fontWeight: "500",
+                        marginLeft: "10px",
+                        flexShrink: 0,
+                      }}
+                    >
+                      Outstanding
+                    </span>
+                  )}
                   <Badge bg={req.statusType} className="ms-2">
                     {formatStatusLabel(req.status)}
                   </Badge>
+
+                  {req.status !== "CLOSED" &&
+                    (req.isReinitialized || req.parentRequisitionId) && (
+                      <span
+                        className="ms-2"
+                        style={{
+                          color: "#f26522",
+                          cursor: "pointer",
+                          fontWeight: "400",
+                          fontSize: "12px"
+                        }}
+                        onClick={async (e) => {
+                          e.stopPropagation();
+
+                          const res =
+                            await jobPositionApiService.getVacancyBreakdownByRequisition(
+                              req.parentRequisitionId
+                            );
+                          let parentReqData = {};
+
+                          if (
+                            req.parentRequisitionId &&
+                            req.parentRequisitionId !== ""
+                          ) {
+                            const res1 = await jobPositionApiService.getRequisitionById(
+                              req.parentRequisitionId
+                            );
+
+                            parentReqData = {
+                              requisitionId: res1?.data?.requisitionCode,
+                              code: res1?.data?.requisitionTitle,
+                              startDate: res1?.data?.startDate,
+                              endDate: res1?.data?.endDate
+                            };
+                          }
+
+                          const mappedData = mapVacancyBreakdown(res.data, masterData);
+
+                          const positionNames = res.data?.data
+                            ?.map((item) => {
+                              const position = masterData?.masterPositions?.find(
+                                (p) => String(p.id) === String(item.masterPositionId)
+                              );
+                              return position?.name;
+                            })
+                            .filter(Boolean);
+
+                          setSelectedReqInfo({
+                            ...req,
+                            ...mappedData,
+                            ...parentReqData,
+                            positionNames,
+                          });
+
+                          setShowApprovedInfo(true);
+                        }}
+                      >
+                        Re-Initiated
+                      </span>
+                    )}
+                  {/* {req.status !== "CLOSED" &&
+                    (req.isReinitialized || req.parentRequisitionId) && (
+                      <Badge bg="warning" text="dark" className="ms-2">
+                        Re Initiated
+                      </Badge>
+                    )} */}
 
                   {req.status === "APPROVED" &&
                     !req.isInEditMode &&
@@ -928,6 +1115,128 @@ const JobPostingsList = () => {
                     <img src={view_jobpost} alt="view" className="icon-19" />
                   </Button>
                 </OverlayTrigger>
+                {/* 
+                {(req.status === "APPROVED" || req.status === "CLOSED") && (
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={
+                      <Tooltip id={`tooltip-approved-${req.id}`}>
+                        Approved View
+                      </Tooltip>
+                    }
+                  >
+                    <Button
+                      variant="light"
+                      className="icon-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedReqInfo(req);
+                        setShowApprovedInfo(true);
+                      }}
+                    >
+                      <InfoCircle size={20} color="#4F67C1" />
+                    </Button>
+                  </OverlayTrigger>
+                )} */}
+
+                {(req.status === "APPROVED" || req.status === "CLOSED") && (
+                  <>
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={
+                        <Tooltip id={`tooltip-approved-${req.id}`}>
+                          View Details
+                        </Tooltip>
+                      }
+                    >
+                      <Button
+                        variant="light"
+                        className="icon-btn"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+
+                          try {
+                            const res =
+                              await jobPositionApiService.getVacancyBreakdownByRequisition(
+                                req.id
+                              );
+                            let parentReqData = {};
+
+                            if (
+                              req.parentRequisitionId &&
+                              req.parentRequisitionId !== ""
+                            ) {
+                              const res1 = await jobPositionApiService.getRequisitionById(
+                                req.parentRequisitionId
+                              );
+
+                              parentReqData = {
+                                requisitionId: res1?.data?.requisitionCode,
+                                code: res1?.data?.requisitionTitle,
+                                startDate: res1?.data?.startDate,
+                                endDate: res1?.data?.endDate
+                              };
+                            }
+
+
+                            const mappedData = mapVacancyBreakdown(
+                              res.data,
+                              masterData
+                            );
+
+                            const positionNames = res.data?.data?.map((item) => {
+                              const position = masterData?.masterPositions?.find(
+                                (p) => String(p.id) === String(item.masterPositionId)
+                              );
+
+                              return position?.name;
+                            }).filter(Boolean);
+
+                            setSelectedReqInfo({
+                              ...req,
+                              ...mappedData,
+                              ...parentReqData,
+                              positionNames
+                            });
+
+
+                            setShowApprovedInfo(true);
+
+                          } catch (error) {
+                            console.error(error);
+                            toast.error("Failed to load vacancy details");
+                          }
+                        }}
+                      >
+                        <InfoCircle size={20} color="#4F67C1" />
+                      </Button>
+                    </OverlayTrigger>
+
+
+                    {req.status === "APPROVED" && (
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id={`tooltip-close-${req.id}`}>
+                            Close Requisition
+                          </Tooltip>
+                        }
+                      >
+                        <Button
+                          variant="light"
+                          className="icon-btn ms-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedCloseReq(req);
+                            setShowCloseModal(true);
+                          }}
+                        >
+                          <XCircleFill size={20} color="#dc3545" />
+                        </Button>
+                      </OverlayTrigger>
+                    )}
+                  </>
+                )}
                 {/* )} */}
 
                 <Button
@@ -983,6 +1292,7 @@ const JobPostingsList = () => {
                           : t("jobPostingsList:positions_plural")}
                       </Badge>
 
+
                       <Button
                         variant="none"
                         className="accordion-arrow-position ms-auto"
@@ -1008,11 +1318,77 @@ const JobPostingsList = () => {
                           className="position-card-inner"
                         >
                           <div className="position-header-row">
-                            <div className="position-title">
-                              {pos.positionName}
-                            </div>
+                            <div
+                              className="position-title"
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                                flexWrap: "wrap",
+                              }}
+                            >
+                              <span>{pos.positionName}</span>
 
+                              {(req.isReinitialized || pos.parentPositionId) && (
+                                <span
+                                  style={{
+                                    cursor: "pointer",
+                                    fontSize: "12px",
+                                    fontWeight: "400",
+                                    color: "#f26522",
+                                  }}
+                                  onClick={async (e) => {
+                                    e.stopPropagation();
+
+                                    try {
+                                      const res =
+                                        await jobPositionApiService.getVacancyBreakdownByPosition(
+                                          pos.parentPositionId
+                                        );
+
+                                      let parentReqData = {};
+
+                                      if (
+                                        req.parentRequisitionId &&
+                                        req.parentRequisitionId !== ""
+                                      ) {
+                                        const res1 = await jobPositionApiService.getRequisitionById(
+                                          req.parentRequisitionId
+                                        );
+
+                                        parentReqData = {
+                                          requisitionId: res1?.data?.requisitionCode,
+                                          code: res1?.data?.requisitionTitle,
+                                          startDate: res1?.data?.startDate,
+                                          endDate: res1?.data?.endDate
+                                        };
+                                      }
+                                      const mappedData = mapVacancyBreakdownByPosition(
+                                        res.data,
+                                        masterData
+                                      );
+                                      setSelectedReqForModal({
+                                        ...req,
+                                        ...parentReqData,
+                                      });
+
+                                      // setSelectedReqForModal(req);
+                                      setSelectedPositionInfo(mappedData);
+                                      setShowPositionModal(true);
+                                    } catch (error) {
+                                      console.error(error);
+                                      toast.error("Failed to load position details");
+                                    }
+                                  }}
+                                >
+                                  {parentReqDetails[req.id]
+                                    ? `${parentReqDetails[req.id].requisitionId} - ${parentReqDetails[req.id].code}`
+                                    : `${req.requisitionId} - ${req.code}`}                              </span>
+                              )}
+                            </div>
                             <div className="position-meta-inline">
+
+
                               <span>
                                 <b>{t("jobPostingsList:vacancies")}:</b>{" "}
                                 {pos.vacancies}
@@ -1023,6 +1399,9 @@ const JobPostingsList = () => {
                                 – {pos.maxAge} {t("jobPostingsList:years")}
                               </span>
                             </div>
+
+
+
 
                             <>
                               {/* EDIT POSITION */}
@@ -1147,15 +1526,50 @@ const JobPostingsList = () => {
                               </span>{" "}
                               {pos.mandatoryEducation}
                             </div>
-                            <div style={{ whiteSpace: "pre-line" }}>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                whiteSpace: "pre-line",
+                              }}
+                            >
+                              <div>
+                                <span>
+                                  {t("jobPostingsList:preferred_education")}:
+                                </span>{" "}
+                                {pos.preferredEducation &&
+                                  pos.preferredEducation.trim()
+                                  ? pos.preferredEducation
+                                  : "NA"}
+                              </div>
+
+                              {displayStatus === "OUTSTANDING" && (
+                                <span
+                                  style={{
+                                    border: "1px solid #f26522",
+                                    color: "#f26522",
+                                    padding: "2px 8px",
+                                    borderRadius: "4px",
+                                    fontSize: "11px",
+                                    fontWeight: "500",
+                                    marginLeft: "10px",
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  Not Fulfilled
+                                </span>
+                              )}
+                            </div>
+                            {/* <div style={{ whiteSpace: "pre-line" }}>
                               <span>
                                 {t("jobPostingsList:preferred_education")}:
                               </span>{" "}
                               {pos.preferredEducation &&
-                              pos.preferredEducation.trim()
+                                pos.preferredEducation.trim()
                                 ? pos.preferredEducation
                                 : "NA"}
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                       ))}
@@ -1250,9 +1664,8 @@ const JobPostingsList = () => {
 
                 {/* Next */}
                 <li
-                  className={`page-item ${
-                    page >= pageInfo.totalPages - 1 || loading ? "disabled" : ""
-                  }`}
+                  className={`page-item ${page >= pageInfo.totalPages - 1 || loading ? "disabled" : ""
+                    }`}
                 >
                   <button
                     className="page-link"
@@ -1315,6 +1728,34 @@ const JobPostingsList = () => {
         historyData={history}
         // setHistory={setHistory}
         loading={historyLoading}
+      />
+
+      <ApprovedInfoStrip
+        show={showApprovedInfo}
+        onHide={() => setShowApprovedInfo(false)}
+        requisition={selectedReqInfo}
+      />
+      <CloseRequisitionModal
+        show={showCloseModal}
+        onHide={() => {
+          setShowCloseModal(false);
+          setSelectedCloseReq(null);
+        }}
+        requisitionName={selectedReqForModal}
+        onConfirm={() => {
+          setShowCloseModal(false);
+          setSelectedCloseReq(null);
+        }}
+      />
+      <SinglePositionInfoModal
+        show={showPositionModal}
+        onHide={() => {
+          setShowPositionModal(false);
+          setSelectedReqForModal(null);
+          setSelectedPositionInfo(null);
+        }}
+        requisition={selectedReqForModal}
+        position={selectedPositionInfo}
       />
     </Container>
   );

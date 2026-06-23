@@ -28,8 +28,8 @@ export const useJobPositionsByRequisition = () => {
 
       const res = isDraft
         ? await jobPositionApiService.getDraftPositionsByRequisition(
-            requisitionId
-          )
+          requisitionId
+        )
         : await jobPositionApiService.getPositionsByRequisition(requisitionId);
 
       const list = res?.data || [];
@@ -54,6 +54,7 @@ export const useJobPositionsByRequisition = () => {
         approvedOn: api.approvedOn,
         mandatoryEducation: api.mandatoryEducation ?? "",
         preferredEducation: api.preferredEducation ?? "",
+        parentPositionId: api.parentPositionId,
       }));
 
       setPositionsByReq((prev) => ({
