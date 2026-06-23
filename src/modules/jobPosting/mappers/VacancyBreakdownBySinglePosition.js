@@ -182,7 +182,7 @@ export const mapVacancyBreakdownByPosition = (
         idd: 0,
 
         total: data.onboardedCount || 0,
-        
+
       };
 
       (data.nationalBreakdown || []).forEach((cat) => {
@@ -360,112 +360,175 @@ export const mapVacancyBreakdownByPosition = (
       }),
 
 
-      stateWiseOffersSent:
-    (data.stateBreakdown || []).map((state) => {
+    stateWiseOffersSent:
+      (data.stateBreakdown || []).map((state) => {
         const stateMaster = masterData?.states?.find(
-            (s) =>
-                String(s.stateId).trim() ===
-                String(state.stateId).trim()
+          (s) =>
+            String(s.stateId).trim() ===
+            String(state.stateId).trim()
         );
 
         const cityMaster = masterData?.cities?.find(
-            (c) =>
-                String(c.cityId).trim() ===
-                String(state.cityId).trim()
+          (c) =>
+            String(c.cityId).trim() ===
+            String(state.cityId).trim()
         );
 
         const row = {
-            stateId: state.stateId,
-            cityId: state.cityId,
+          stateId: state.stateId,
+          cityId: state.cityId,
 
-            state: stateMaster?.stateName || "-",
-            city: cityMaster?.cityName || "-",
+          state: stateMaster?.stateName || "-",
+          city: cityMaster?.cityName || "-",
 
-            sc: 0,
-            st: 0,
-            obc: 0,
-            ews: 0,
-            gen: 0,
+          sc: 0,
+          st: 0,
+          obc: 0,
+          ews: 0,
+          gen: 0,
 
-            hi: 0,
-            oc: 0,
-            vi: 0,
-            idd: 0,
+          hi: 0,
+          oc: 0,
+          vi: 0,
+          idd: 0,
 
-            total: state.offersSent || 0,
+          total: state.offersSent || 0,
         };
 
         (state.categories || []).forEach((cat) => {
-            if (!cat.isDisability) {
-                const code = reservationMap[cat.reservationCategoryId];
+          if (!cat.isDisability) {
+            const code = reservationMap[cat.reservationCategoryId];
 
-                switch (code) {
-                    case "SC": row.sc = cat.offersSent || 0; break;
-                    case "ST": row.st = cat.offersSent || 0; break;
-                    case "OBC": row.obc = cat.offersSent || 0; break;
-                    case "EWS": row.ews = cat.offersSent || 0; break;
-                    case "GEN": row.gen = cat.offersSent || 0; break;
-                    default: break;
-                }
+            switch (code) {
+              case "SC": row.sc = cat.offersSent || 0; break;
+              case "ST": row.st = cat.offersSent || 0; break;
+              case "OBC": row.obc = cat.offersSent || 0; break;
+              case "EWS": row.ews = cat.offersSent || 0; break;
+              case "GEN": row.gen = cat.offersSent || 0; break;
+              default: break;
             }
+          }
         });
 
         return row;
-    }),
+      }),
+    nationalOffersSent: (() => {
+      const row = {
+        sc: 0,
+        st: 0,
+        obc: 0,
+        ews: 0,
+        gen: 0,
+        hi: 0,
+        oc: 0,
+        vi: 0,
+        idd: 0,
+        total: data.offersSent || 0,
+      };
 
-stateWiseOffersAccepted:
-   (data.stateBreakdown || []).map((state) => {
+      (data.nationalBreakdown || []).forEach((cat) => {
+        if (!cat.isDisability) {
+          const code = reservationMap[cat.reservationCategoryId];
+
+          switch (code) {
+            case "SC": row.sc = cat.offersSent || 0; break;
+            case "ST": row.st = cat.offersSent || 0; break;
+            case "OBC": row.obc = cat.offersSent || 0; break;
+            case "EWS": row.ews = cat.offersSent || 0; break;
+            case "GEN": row.gen = cat.offersSent || 0; break;
+            default: break;
+          }
+        }
+      });
+
+      return row;
+    })(),
+
+    nationalOffersAccepted: (() => {
+      const row = {
+        sc: 0,
+        st: 0,
+        obc: 0,
+        ews: 0,
+        gen: 0,
+        hi: 0,
+        oc: 0,
+        vi: 0,
+        idd: 0,
+        total: data.offersAccepted || 0,
+      };
+
+      (data.nationalBreakdown || []).forEach((cat) => {
+        if (!cat.isDisability) {
+          const code = reservationMap[cat.reservationCategoryId];
+
+          switch (code) {
+            case "SC": row.sc = cat.offersAccepted || 0; break;
+            case "ST": row.st = cat.offersAccepted || 0; break;
+            case "OBC": row.obc = cat.offersAccepted || 0; break;
+            case "EWS": row.ews = cat.offersAccepted || 0; break;
+            case "GEN": row.gen = cat.offersAccepted || 0; break;
+            default: break;
+          }
+        }
+      });
+
+      return row;
+    })(),
+
+    stateWiseOffersAccepted:
+      (data.stateBreakdown || []).map((state) => {
 
         const stateMaster = masterData?.states?.find(
-            (s) =>
-                String(s.stateId).trim() ===
-                String(state.stateId).trim()
+          (s) =>
+            String(s.stateId).trim() ===
+            String(state.stateId).trim()
         );
 
         const cityMaster = masterData?.cities?.find(
-            (c) =>
-                String(c.cityId).trim() ===
-                String(state.cityId).trim()
+          (c) =>
+            String(c.cityId).trim() ===
+            String(state.cityId).trim()
         );
 
         const row = {
-            stateId: state.stateId,
-            cityId: state.cityId,
+          stateId: state.stateId,
+          cityId: state.cityId,
 
-            state: stateMaster?.stateName || "-",
-            city: cityMaster?.cityName || "-",
+          state: stateMaster?.stateName || "-",
+          city: cityMaster?.cityName || "-",
 
-            sc: 0,
-            st: 0,
-            obc: 0,
-            ews: 0,
-            gen: 0,
+          sc: 0,
+          st: 0,
+          obc: 0,
+          ews: 0,
+          gen: 0,
 
-            hi: 0,
-            oc: 0,
-            vi: 0,
-            idd: 0,
+          hi: 0,
+          oc: 0,
+          vi: 0,
+          idd: 0,
 
-            total: state.offersAccepted || 0,
+          total: state.offersAccepted || 0,
         };
 
         (state.categories || []).forEach((cat) => {
-            if (!cat.isDisability) {
-                const code = reservationMap[cat.reservationCategoryId];
+          if (!cat.isDisability) {
+            const code = reservationMap[cat.reservationCategoryId];
 
-                switch (code) {
-                    case "SC": row.sc = cat.offersAccepted || 0; break;
-                    case "ST": row.st = cat.offersAccepted || 0; break;
-                    case "OBC": row.obc = cat.offersAccepted || 0; break;
-                    case "EWS": row.ews = cat.offersAccepted || 0; break;
-                    case "GEN": row.gen = cat.offersAccepted || 0; break;
-                    default: break;
-                }
+            switch (code) {
+              case "SC": row.sc = cat.offersAccepted || 0; break;
+              case "ST": row.st = cat.offersAccepted || 0; break;
+              case "OBC": row.obc = cat.offersAccepted || 0; break;
+              case "EWS": row.ews = cat.offersAccepted || 0; break;
+              case "GEN": row.gen = cat.offersAccepted || 0; break;
+              default: break;
             }
+          }
         });
 
         return row;
-    }),
+      }),
     stateWiseRemaining:
       (data.stateBreakdown || []).map((state) => {
 
@@ -534,6 +597,6 @@ stateWiseOffersAccepted:
         return row;
       }),
 
-      
+
   };
 };

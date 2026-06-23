@@ -545,6 +545,95 @@ export const mapVacancyBreakdown = (
 
                     return row;
                 }),
+            stateWiseOffersSent:
+                (position.stateBreakdown || []).map((state) => {
+                    const stateMaster = masterData?.states?.find(
+                        (s) => String(s.stateId) === String(state.stateId)
+                    );
+
+                    const cityMaster = masterData?.cities?.find(
+                        (c) => String(c.cityId) === String(state.cityId)
+                    );
+
+                    const row = {
+                        state: stateMaster?.stateName || "-",
+                        city: cityMaster?.cityName || "-",
+                        sc: 0,
+                        st: 0,
+                        obc: 0,
+                        ews: 0,
+                        gen: 0,
+                        hi: 0,
+                        oc: 0,
+                        vi: 0,
+                        idd: 0,
+                        total: state.offersSent || 0,
+                    };
+
+                    (state.categories || []).forEach((cat) => {
+                        const value = cat.offersSent || 0;
+
+                        if (!cat.isDisability) {
+                            const code = reservationMap[cat.reservationCategoryId];
+
+                            switch (code) {
+                                case "SC": row.sc = value; break;
+                                case "ST": row.st = value; break;
+                                case "OBC": row.obc = value; break;
+                                case "EWS": row.ews = value; break;
+                                case "GEN": row.gen = value; break;
+                                default: break;
+                            }
+                        }
+                    });
+
+                    return row;
+                }),
+
+            stateWiseOffersAccepted:
+                (position.stateBreakdown || []).map((state) => {
+                    const stateMaster = masterData?.states?.find(
+                        (s) => String(s.stateId) === String(state.stateId)
+                    );
+
+                    const cityMaster = masterData?.cities?.find(
+                        (c) => String(c.cityId) === String(state.cityId)
+                    );
+
+                    const row = {
+                        state: stateMaster?.stateName || "-",
+                        city: cityMaster?.cityName || "-",
+                        sc: 0,
+                        st: 0,
+                        obc: 0,
+                        ews: 0,
+                        gen: 0,
+                        hi: 0,
+                        oc: 0,
+                        vi: 0,
+                        idd: 0,
+                        total: state.offersAccepted || 0,
+                    };
+
+                    (state.categories || []).forEach((cat) => {
+                        const value = cat.offersAccepted || 0;
+
+                        if (!cat.isDisability) {
+                            const code = reservationMap[cat.reservationCategoryId];
+
+                            switch (code) {
+                                case "SC": row.sc = value; break;
+                                case "ST": row.st = value; break;
+                                case "OBC": row.obc = value; break;
+                                case "EWS": row.ews = value; break;
+                                case "GEN": row.gen = value; break;
+                                default: break;
+                            }
+                        }
+                    });
+
+                    return row;
+                }),
         })),
     };
 };

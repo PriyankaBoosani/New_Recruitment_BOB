@@ -412,27 +412,47 @@ const ApprovedInfoStrip = ({
                                     {position?.reservationType === "STATE_WISE" ? (
                                         <div className="table-responsive">
                                             <table className="approved-onboarded-table">
-                                                {/* same STATE_WISE table header */}
-                                                <tbody>
-                                                    {position?.stateWiseOffersSent?.map((row, idx) => (
-                                                        <tr key={idx}>
-                                                            <td>{row.state}</td>
-                                                            <td>{row.city}</td>
+                                                <thead>
+                                                    <tr>
+                                                        <th rowSpan="2">State</th>
+                                                        <th rowSpan="2">City</th>
+                                                        <th colSpan="6">Category</th>
+                                                        <th colSpan="4">Disability</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>SC</th>
+                                                        <th>ST</th>
+                                                        <th>OBC</th>
+                                                        <th>EWS</th>
+                                                        <th>GEN</th>
+                                                        <th>Total</th>
+                                                        <th>HI</th>
+                                                        <th>OC</th>
+                                                        <th>VI</th>
+                                                        <th>ID</th>
+                                                    </tr>
+                                                </thead>
+                                               
+                                                    <tbody>
+                                                        {position?.stateWiseOffersSent?.map((row, idx) => (
+                                                            <tr key={idx}>
+                                                                <td>{row.state}</td>
+                                                                <td>{row.city}</td>
 
-                                                            <td>{row.sc}</td>
-                                                            <td>{row.st}</td>
-                                                            <td>{row.obc}</td>
-                                                            <td>{row.ews}</td>
-                                                            <td>{row.gen}</td>
-                                                            <td>{row.total}</td>
+                                                                <td>{row.sc}</td>
+                                                                <td>{row.st}</td>
+                                                                <td>{row.obc}</td>
+                                                                <td>{row.ews}</td>
+                                                                <td>{row.gen}</td>
+                                                                <td>{row.total}</td>
 
-                                                            <td>{row.hi}</td>
-                                                            <td>{row.oc}</td>
-                                                            <td>{row.vi}</td>
-                                                            <td>{row.idd}</td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
+                                                                <td>{row.hi}</td>
+                                                                <td>{row.oc}</td>
+                                                                <td>{row.vi}</td>
+                                                                <td>{row.idd}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
                                             </table>
                                         </div>
                                     ) : (
@@ -472,7 +492,26 @@ const ApprovedInfoStrip = ({
                                     {position?.reservationType === "STATE_WISE" ? (
                                         <div className="table-responsive">
                                             <table className="approved-onboarded-table">
-                                                {/* same STATE_WISE header */}
+                                                <thead>
+                                                    <tr>
+                                                        <th rowSpan="2">State</th>
+                                                        <th rowSpan="2">City</th>
+                                                        <th colSpan="6">Category</th>
+                                                        <th colSpan="4">Disability</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>SC</th>
+                                                        <th>ST</th>
+                                                        <th>OBC</th>
+                                                        <th>EWS</th>
+                                                        <th>GEN</th>
+                                                        <th>Total</th>
+                                                        <th>HI</th>
+                                                        <th>OC</th>
+                                                        <th>VI</th>
+                                                        <th>ID</th>
+                                                    </tr>
+                                                </thead>
                                                 <tbody>
                                                     {position?.stateWiseOffersAccepted?.map((row, idx) => (
                                                         <tr key={idx}>

@@ -9,7 +9,7 @@ const SinglePositionInfoModal = ({
     position,
 }) => {
     console.log("requisition", requisition, position);
-   
+
 
     const formatDate = (date) => {
         if (!date) return "-";
@@ -41,7 +41,7 @@ const SinglePositionInfoModal = ({
                 <div className="w-100">
                     <div className="approved-header-row">
                         <span className="approved-header-id">
-                             {requisition?.requisitionId} - {requisition?.code}
+                            {requisition?.requisitionId} - {requisition?.code}
                         </span>
 
                         <span className="approved-header-date">
@@ -444,6 +444,110 @@ const SinglePositionInfoModal = ({
                             </table>
                         </div>
                     )}
+                </div>
+
+                <div className="approved-onboarded-card">
+                    <div className="approved-onboarded-title mb-3">
+                        Offers Sent
+                    </div>
+
+                    <div className="table-responsive">
+                        <table className="approved-onboarded-table">
+                            <thead>
+                                <tr>
+                                    <th rowSpan="2">State</th>
+                                    <th rowSpan="2">City</th>
+                                    <th colSpan="6">Category</th>
+                                    <th colSpan="4">Disability</th>
+                                </tr>
+                                <tr>
+                                    <th>SC</th>
+                                    <th>ST</th>
+                                    <th>OBC</th>
+                                    <th>EWS</th>
+                                    <th>GEN</th>
+                                    <th>Total</th>
+                                    <th>HI</th>
+                                    <th>OC</th>
+                                    <th>VI</th>
+                                    <th>ID</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {position?.stateWiseOffersSent?.map((row, idx) => (
+                                    <tr key={idx}>
+                                        <td>{row.state}</td>
+                                        <td>{row.city}</td>
+
+                                        <td>{row.sc}</td>
+                                        <td>{row.st}</td>
+                                        <td>{row.obc}</td>
+                                        <td>{row.ews}</td>
+                                        <td>{row.gen}</td>
+                                        <td>{row.total}</td>
+
+                                        <td>{row.hi}</td>
+                                        <td>{row.oc}</td>
+                                        <td>{row.vi}</td>
+                                        <td>{row.idd}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div className="approved-onboarded-card">
+                    <div className="approved-onboarded-title mb-3">
+                        Offers Accepted
+                    </div>
+
+                    <div className="table-responsive">
+                        <table className="approved-onboarded-table">
+                            <thead>
+                                <tr>
+                                    <th rowSpan="2">State</th>
+                                    <th rowSpan="2">City</th>
+                                    <th colSpan="6">Category</th>
+                                    <th colSpan="4">Disability</th>
+                                </tr>
+                                <tr>
+                                    <th>SC</th>
+                                    <th>ST</th>
+                                    <th>OBC</th>
+                                    <th>EWS</th>
+                                    <th>GEN</th>
+                                    <th>Total</th>
+                                    <th>HI</th>
+                                    <th>OC</th>
+                                    <th>VI</th>
+                                    <th>ID</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {position?.stateWiseOffersAccepted?.map((row, idx) => (
+                                    <tr key={idx}>
+                                        <td>{row.state}</td>
+                                        <td>{row.city}</td>
+
+                                        <td>{row.sc}</td>
+                                        <td>{row.st}</td>
+                                        <td>{row.obc}</td>
+                                        <td>{row.ews}</td>
+                                        <td>{row.gen}</td>
+                                        <td>{row.total}</td>
+
+                                        <td>{row.hi}</td>
+                                        <td>{row.oc}</td>
+                                        <td>{row.vi}</td>
+                                        <td>{row.idd}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
             </Modal.Body>
