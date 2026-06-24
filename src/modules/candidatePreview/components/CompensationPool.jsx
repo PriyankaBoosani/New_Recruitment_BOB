@@ -317,7 +317,7 @@ export default function CompensationPool({
   // const canEditManagerFields = isUserInCompensationPanel && isRecruiter;
 
   const canEditManagerFields =
-  isUserInCompensationPanel && canEditManagerCompensation;
+    isUserInCompensationPanel && canEditManagerCompensation;
 
   const handleSaveCompensation = async () => {
     try {
@@ -424,7 +424,7 @@ export default function CompensationPool({
 
               <th
                 className="fs-14 fw-normal py-3"
-                style={{width: "192px", maxWidth: "192px"}}
+                style={{ width: "192px", maxWidth: "192px" }}
                 onClick={() => requestSort("name")}
               >
                 {t("candidate")} {sortIcon("name")}
@@ -500,10 +500,14 @@ export default function CompensationPool({
                   </td>
 
                   <td className="fs-14 align-content-center">
-                    {Number(c.currentCtc || "-").toLocaleString("en-IN")}
+                    {c.currentCtc != null
+                      ? Number(c.currentCtc).toLocaleString("en-IN")
+                      : "-"}
                   </td>
                   <td className="fs-14 align-content-center">
-                    {Number(c.expectedCtc || "-").toLocaleString("en-IN")}
+                    {c.expectedCtc != null
+                      ? Number(c.expectedCtc).toLocaleString("en-IN")
+                      : "-"}
                   </td>
 
                   <td className="fs-14 align-content-center">
@@ -512,33 +516,45 @@ export default function CompensationPool({
                       : "-"}
                   </td>
                   <td className="fs-14 align-content-center">
-                    {c.agreedCtc || "-"}
-                    <div className="compensation-box fs-12">
-                      <div className="comp-detail">
-                        <span>{t("fixed")}:</span>{" "}
-                        <span className="fixcomp">
-                          {Number(c.fixedPay || 0).toLocaleString("en-IN")}
-                        </span>
-                      </div>
+                    {c.agreedCtc !== null &&
+                    c.agreedCtc !== undefined &&
+                    c.agreedCtc !== ""
+                      ? Number(c.agreedCtc).toLocaleString("en-IN")
+                      : "-"}
 
-                      <div className="comp-detail">
-                        <span>{t("variable")}:</span>{" "}
-                        <span className="fixcomp">
-                          {Number(c.variablePay || 0).toLocaleString("en-IN")}
-                        </span>
-                      </div>
+                    {c.agreedCtc != null && c.agreedCtc !== "" && (
+                      <div className="compensation-box fs-12">
+                        <div className="comp-detail">
+                          <span>{t("fixed")}: </span>
+                          <span className="fixcomp">
+                            {Number(c.fixedPay || 0).toLocaleString("en-IN")}
+                          </span>
+                        </div>
 
-                      <div className="comp-detail">
-                        <span>{t("joining_bonus")}:</span>{" "}
-                        <span className="fixcomp">
-                          {Number(c.joiningBonus || 0).toLocaleString("en-IN")}
-                        </span>
+                        <div className="comp-detail">
+                          <span>{t("variable")}: </span>
+                          <span className="fixcomp">
+                            {Number(c.variablePay || 0).toLocaleString("en-IN")}
+                          </span>
+                        </div>
+
+                        <div className="comp-detail">
+                          <span>{t("joining_bonus")}: </span>
+                          <span className="fixcomp">
+                            {Number(c.joiningBonus || 0).toLocaleString(
+                              "en-IN"
+                            )}
+                          </span>
+                        </div>
+
+                        <div className="comp-detail">
+                          <span>{t("hike")} %: </span>
+                          <span className="fixcomp">
+                            {c.agreedHike ?? "-"}%
+                          </span>
+                        </div>
                       </div>
-                      <div className="comp-detail">
-                        <span>{t("hike")} %:</span>{" "}
-                        <span className="fixcomp">{c.agreedHike}% </span>
-                      </div>
-                    </div>
+                    )}
                   </td>
 
                   <td className="fs-14 align-content-center">
@@ -547,7 +563,6 @@ export default function CompensationPool({
                       : c.panelComments || "-"}
                   </td>
 
-                
                   {/*  SAME BADGE STYLE AS INTERVIEW */}
                   <td className="align-content-center">
                     <span
