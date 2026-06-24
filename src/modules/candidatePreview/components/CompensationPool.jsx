@@ -38,7 +38,7 @@ export default function CompensationPool({
     selectedCandidate?.status === "SUBMITTED" ||
     selectedCandidate?.status === "RENEGOTIATE";
 
-    const { t } = useTranslation("compensationPool");
+  const { t } = useTranslation("compensationPool");
 
   const canEditManagerCompensation =
     selectedCandidate?.status !== "NEW" &&
@@ -421,6 +421,7 @@ export default function CompensationPool({
 
               <th
                 className="fs-14 fw-normal py-3"
+                style={{width: "192px", maxWidth: "192px"}}
                 onClick={() => requestSort("name")}
               >
                 {t("candidate")} {sortIcon("name")}
@@ -458,7 +459,9 @@ export default function CompensationPool({
 
               <th className="fs-14 fw-normal py-3">{t("status")}</th>
 
-              <th className="text-center fs-14 fw-normal py-3">{t("actions")}</th>
+              <th className="text-center fs-14 fw-normal py-3">
+                {t("actions")}
+              </th>
             </tr>
           </thead>
 
@@ -494,10 +497,10 @@ export default function CompensationPool({
                   </td>
 
                   <td className="fs-14 align-content-center">
-                    {c.currentCtc || "-"}
+                    {Number(c.currentCtc || "-").toLocaleString("en-IN")}
                   </td>
                   <td className="fs-14 align-content-center">
-                    {c.expectedCtc || "-"}
+                    {Number(c.expectedCtc || "-").toLocaleString("en-IN")}
                   </td>
 
                   <td className="fs-14 align-content-center">
@@ -507,6 +510,32 @@ export default function CompensationPool({
                   </td>
                   <td className="fs-14 align-content-center">
                     {c.agreedCtc || "-"}
+                    <div className="compensation-box fs-12">
+                      <div className="comp-detail">
+                        <span>Fixed:</span>{" "}
+                        <span className="fixcomp">
+                          {Number(c.fixedPay || 0).toLocaleString("en-IN")}
+                        </span>
+                      </div>
+
+                      <div className="comp-detail">
+                        <span>Variable:</span>{" "}
+                        <span className="fixcomp">
+                          {Number(c.variablePay || 0).toLocaleString("en-IN")}
+                        </span>
+                      </div>
+
+                      <div className="comp-detail">
+                        <span>Bonus:</span>{" "}
+                        <span className="fixcomp">
+                          {Number(c.joiningBonus || 0).toLocaleString("en-IN")}
+                        </span>
+                      </div>
+                      <div className="comp-detail">
+                        <span>Hike %:</span>{" "}
+                        <span className="fixcomp">{c.agreedHike}% </span>
+                      </div>
+                    </div>
                   </td>
 
                   <td className="fs-14 align-content-center">
@@ -515,6 +544,7 @@ export default function CompensationPool({
                       : c.panelComments || "-"}
                   </td>
 
+                
                   {/*  SAME BADGE STYLE AS INTERVIEW */}
                   <td className="align-content-center">
                     <span
@@ -532,6 +562,7 @@ export default function CompensationPool({
                       overlay={<Tooltip>{t("viewProfile")}</Tooltip>}
                     >
                       <Person
+                        size={16}
                         className="me-3 cursor-pointer"
                         onClick={() => {
                           navigate("/candidate-preview", {
@@ -546,7 +577,7 @@ export default function CompensationPool({
 
                               fromCompensationPool: true,
                               activeTab: "COMPENSATION_POOL",
-                                // ADD THESE
+                              // ADD THESE
                               page,
                               pageSize,
                               interviewPage: page,
@@ -585,6 +616,7 @@ export default function CompensationPool({
                       overlay={<Tooltip>{t("viewResume")}</Tooltip>}
                     >
                       <FileText
+                        size={16}
                         className="me-3 cursor-pointer"
                         onClick={() => {
                           if (onViewFile) {
@@ -665,11 +697,11 @@ export default function CompensationPool({
         {/* ================= PAGINATION ================= */}
         <div className="d-flex justify-content-between align-items-center px-3 py-3 border-top">
           <div className="fs-14 text-muted">
-          {t("showingRecords", {
-  start: page * pageSize + 1,
-  end: Math.min((page + 1) * pageSize, totalElements),
-  total: totalElements,
-})}
+            {t("showingRecords", {
+              start: page * pageSize + 1,
+              end: Math.min((page + 1) * pageSize, totalElements),
+              total: totalElements,
+            })}
           </div>
 
           <div className="d-flex align-items-center gap-2">
@@ -722,7 +754,7 @@ export default function CompensationPool({
       >
         <Modal.Header closeButton className="custom-modal-header border-0">
           <Modal.Title className="fw-semibold fs-5">
-           {t("agreedCompensation")}
+            {t("agreedCompensation")}
           </Modal.Title>
         </Modal.Header>
 
@@ -767,7 +799,9 @@ export default function CompensationPool({
             </div>
 
             <div className="col-md-6">
-              <label className="form-label fw-medium">{t("joiningBonus")}</label>
+              <label className="form-label fw-medium">
+                {t("joiningBonus")}
+              </label>
               <input
                 className="form-control"
                 placeholder="Enter Value"
@@ -832,7 +866,7 @@ export default function CompensationPool({
             onClick={handleSaveCompensation}
             disabled={!canEditCompensation}
           >
-           {t("save")}
+            {t("save")}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -847,7 +881,7 @@ export default function CompensationPool({
       >
         <Modal.Header closeButton className="border-0 pb-0">
           <Modal.Title className="fw-semibold fs-5">
-          {t("approveRejectCompensation")}
+            {t("approveRejectCompensation")}
           </Modal.Title>
         </Modal.Header>
 
@@ -931,7 +965,7 @@ export default function CompensationPool({
             onClick={() => handleManagerAction("APPROVE")}
             disabled={!canEditManagerCompensation}
           >
-           {t("approve")}
+            {t("approve")}
           </Button>
 
           {/*  REJECT */}
@@ -949,7 +983,7 @@ export default function CompensationPool({
             onClick={() => handleManagerAction("RENEGOTIATE")}
             disabled={!canEditManagerCompensation}
           >
-          {t("renegotiate")}
+            {t("renegotiate")}
           </Button>
         </Modal.Footer>
       </Modal>

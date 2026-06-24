@@ -3,6 +3,13 @@ export const mapCompensationCandidates = (apiData = []) => {
     const comp = item.candidateCompensation || {};
     const profile = comp.candidateProfile || {};
     const app = comp.application || {};
+    const agreedHike =
+      comp.currentCtc && comp.agreedCtc
+        ? (
+            ((comp.agreedCtc - comp.currentCtc) / comp.currentCtc) *
+            100
+          ).toFixed(2)
+        : 0;
 
     return {
       id: comp.candidateCompensationId,
@@ -36,6 +43,7 @@ export const mapCompensationCandidates = (apiData = []) => {
       application: app,
       interviewScheduleId: comp.interviewScheduleId,
       submitBeforeDate: comp.submitBeforeDate,
+       agreedHike,
     };
   });
 };

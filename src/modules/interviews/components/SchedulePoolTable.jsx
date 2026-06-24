@@ -197,6 +197,7 @@ const SchedulePoolTable = ({
                     overlay={<Tooltip>View Profile</Tooltip>}
                   >
                     <Person
+                     size={16}
                       className="me-3 cursor-pointer"
                       onClick={() => onViewProfile?.(row)}
                     />
@@ -207,6 +208,7 @@ const SchedulePoolTable = ({
                     overlay={<Tooltip>View Resume</Tooltip>}
                   >
                     <FileText
+                     size={16}
                       className="cursor-pointer"
                       onClick={() => onViewResume?.(row)}
                     />

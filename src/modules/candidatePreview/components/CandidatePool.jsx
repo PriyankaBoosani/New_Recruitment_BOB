@@ -26,7 +26,7 @@ export default function CandidatePool({
   isRankEnabled,
   hasLocationData,
   allCandidatesForFilters,
-  isMarksUploaded
+  isMarksUploaded,
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const STATUS_CLASS_MAP = {
@@ -232,7 +232,7 @@ export default function CandidatePool({
               >
                 {t("candidateWorkflow:candidate")} {sortIcon("name")}
               </th>
-            
+
               <th className="fs-14 fw-normal py-3" role="button">
                 {t("common:rank")}
               </th>
@@ -264,18 +264,17 @@ export default function CandidatePool({
 
               <th className="fs-14 fw-normal py-3">{t("common:category")}</th>
 
+              {isMarksUploaded && (
+                <th className="fs-14 fw-normal py-3">
+                  {t("common:total_marks_obtained")}
+                </th>
+              )}
 
-             {isMarksUploaded && (
-  <th className="fs-14 fw-normal py-3">
-     {t("common:total_marks_obtained")}
-  </th>
-)}
-
-{isMarksUploaded && (
-  <th className="fs-14 fw-normal py-3">
-     {t("common:exam_status")}
-  </th>
-)}
+              {isMarksUploaded && (
+                <th className="fs-14 fw-normal py-3">
+                  {t("common:exam_status")}
+                </th>
+              )}
 
               <th className="text-center fs-14 fw-normal py-3">
                 {t("common:actions")}
@@ -375,7 +374,6 @@ export default function CandidatePool({
                       }`}
                     >
                       {c.status}
-                      
                     </span>
                   </td>
 
@@ -389,22 +387,21 @@ export default function CandidatePool({
                     <p className="fw-normal fs-14 mb-0">{c.categoryName}</p>
                   </td>
 
+                  {isMarksUploaded && (
+                    <td className="align-content-center">
+                      <p className="fw-normal fs-14 mb-0">
+                        {c.totalMarksObtained ?? "-"}
+                      </p>
+                    </td>
+                  )}
 
-                          {isMarksUploaded && (
-  <td className="align-content-center">
-    <p className="fw-normal fs-14 mb-0">
-      {c.totalMarksObtained ?? "-"}
-    </p>
-  </td>
-)}
-
-{isMarksUploaded && (
-  <td className="align-content-center">
-    <p className="fw-normal fs-14 mb-0">
-      {c.examQualificationStatus || "-"}
-    </p>
-  </td>
-)}
+                  {isMarksUploaded && (
+                    <td className="align-content-center">
+                      <p className="fw-normal fs-14 mb-0">
+                        {c.examQualificationStatus || "-"}
+                      </p>
+                    </td>
+                  )}
 
                   <td className="text-center align-content-center">
                     <OverlayTrigger
@@ -416,6 +413,7 @@ export default function CandidatePool({
                       }
                     >
                       <Person
+                        size={16}
                         className="me-3 cursor-pointer"
                         onClick={() => {
                           navigate("/candidate-preview", {
@@ -466,6 +464,7 @@ export default function CandidatePool({
                       }
                     >
                       <FileText
+                        size={16}
                         className="cursor-pointer"
                         onClick={() => onViewFile(c)}
                       />
@@ -559,6 +558,7 @@ export default function CandidatePool({
 
               <div className="d-flex gap-2">
                 <Person
+                  size={16}
                   className="me-3 cursor-pointer"
                   onClick={() =>
                     navigate("/candidate-preview", {

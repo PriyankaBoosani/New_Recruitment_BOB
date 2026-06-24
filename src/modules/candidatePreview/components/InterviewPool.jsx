@@ -258,6 +258,7 @@ export default function InterviewPool({
                     }
                   >
                     <Person
+                      size={16}
                       className="me-3 cursor-pointer"
                       onClick={() =>
                         navigate("/candidate-preview", {
@@ -309,6 +310,7 @@ export default function InterviewPool({
                     }
                   >
                     <FileText
+                      size={16}
                       className="cursor-pointer"
                       onClick={() => onViewFile(c)}
                     />
