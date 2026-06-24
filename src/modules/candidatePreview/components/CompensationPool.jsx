@@ -316,7 +316,8 @@ export default function CompensationPool({
 
   // const canEditManagerFields = isUserInCompensationPanel && isRecruiter;
 
-  const canEditManagerFields = isUserInCompensationPanel;
+  const canEditManagerFields =
+  isUserInCompensationPanel && canEditManagerCompensation;
 
   const handleSaveCompensation = async () => {
     try {
