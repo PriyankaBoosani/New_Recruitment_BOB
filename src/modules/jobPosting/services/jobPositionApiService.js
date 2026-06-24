@@ -414,6 +414,12 @@ downloadAssignLocationExcel: (positionId) => {
     return api.post("/recruiter/candidate-offer/send-offer", payload);
   },
 
+   sendOfferApproval(payload) {
+    return api.post("/recruiter/candidate-offer/send-offer-for-approval", payload);
+  },
+
+ 
+
   getScreeningComments(applicationId) {
     return api.get(`/recruiter/screening-comments/${applicationId}`, {
       headers: {
