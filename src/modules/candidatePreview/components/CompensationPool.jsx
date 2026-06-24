@@ -28,6 +28,7 @@ export default function CompensationPool({
   refetch = () => {},
   triggerRefresh = () => {},
   panelData,
+  filters,
 }) {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
@@ -545,6 +546,12 @@ export default function CompensationPool({
 
                               fromCompensationPool: true,
                               activeTab: "COMPENSATION_POOL",
+                                // ADD THESE
+                              page,
+                              pageSize,
+                              interviewPage: page,
+                              interviewPageSize: pageSize,
+                              filters,
                               candidatePositionId: c.positionId,
 
                               requisition: requisition

@@ -294,6 +294,14 @@ const masterApiService = {
     apis.get("/master-dd-data/get/interview-centres"),
 
   getApprovingAuthorities: () => apis.get("/approving-authority/all"),
+
+
+
+  getExclusions() {
+    return apis.get(
+      "/master-dd-data/get/exclusions"
+    );
+  },
   getInterviewCentresByState: (organizationTypes, zonalStateId) => {
     return apis.post(
       "/interview-centres/search",

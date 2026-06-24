@@ -719,14 +719,40 @@ export default function CandidateScreening({ selectedJob }) {
     });
   }, [tabs, privileges, isContractPosition]);
 
-  useEffect(() => {
-    if (
-      accessibleTabs.length > 0 &&
-      !accessibleTabs.some((tab) => tab.key === activeTab)
-    ) {
-      setActiveTab(accessibleTabs[0].key);
-    }
-  }, [accessibleTabs, activeTab]);
+  // useEffect(() => {
+  //   if (
+  //     accessibleTabs.length > 0 &&
+  //     !accessibleTabs.some((tab) => tab.key === activeTab)
+  //   ) {
+  //     setActiveTab(accessibleTabs[0].key);
+  //   }
+  // }, [accessibleTabs, activeTab]);
+
+useEffect(() => {
+  // Don't auto-switch while restoring Compensation Pool
+  if (
+    location.state?.activeTab === "COMPENSATION_POOL" &&
+    activeTab === "COMPENSATION_POOL" &&
+    !accessibleTabs.some((tab) => tab.key === "COMPENSATION_POOL")
+  ) {
+    return;
+  }
+
+  if (
+    accessibleTabs.length > 0 &&
+    !accessibleTabs.some((tab) => tab.key === activeTab)
+  ) {
+    setActiveTab(accessibleTabs[0].key);
+  }
+}, [accessibleTabs, activeTab, location.state?.activeTab]);
+
+
+
+
+
+
+
+
 
   const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
   const categoryMap = React.useMemo(() => {
@@ -3416,7 +3442,7 @@ setIsMarksUploaded(hasExamResults);
               fontWeight: "600",
             }}
           >
-            Upload Candidate Score
+            {t("uploadCandidateScore")}
           </Modal.Title>
         </Modal.Header>
 

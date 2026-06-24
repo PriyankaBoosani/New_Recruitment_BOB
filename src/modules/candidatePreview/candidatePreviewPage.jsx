@@ -153,6 +153,7 @@ const CandidatePreviewPage = ({ onHide }) => {
                 page: state.page,
                 pageSize: state.pageSize,
                 filters: state.filters,
+                   activeTab: state.activeTab,
               },
             });
           }}

@@ -42,6 +42,9 @@ const ReservationSection = ({
   originalDisabilities,
   setOriginalCategories,
   setOriginalDisabilities,
+  exclusions,
+  selectedExclusions,
+  setSelectedExclusions,
 }) => {
   const { t } = useTranslation(["addPosition", "common", "validation"]);
   const renderError = (e) => {
@@ -96,6 +99,35 @@ const ReservationSection = ({
             onChange={(e) => setIsAgeRelWdsWomen(e.target.checked)}
             className="custom_checkbox"
           />
+        </div>
+      </Col>
+
+
+      <Col xs={12} className="mt-3">
+        <Form.Label>Exclusions:</Form.Label>
+
+        <div className="ms-2">
+          {exclusions?.map((item) => (
+            <Form.Check
+              key={item.exclusionId}
+              type="checkbox"
+              label={item.exclusionValue}
+              checked={selectedExclusions.includes(item.exclusionId)}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setSelectedExclusions((prev) => [
+                    ...prev,
+                    item.exclusionId,
+                  ]);
+                } else {
+                  setSelectedExclusions((prev) =>
+                    prev.filter((id) => id !== item.exclusionId)
+                  );
+                }
+              }}
+              className="custom_checkbox mb-2"
+            />
+          ))}
         </div>
       </Col>
       {/* Reservation Section */}

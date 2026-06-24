@@ -19,6 +19,7 @@ export const mapAddPositionToCreateDto = ({
   certifications = [],
   isAgeRelRiotVictimFamily,
   isAgeRelWdsWomen,
+    jobPositionExclusions = [],
 }) => {
   /* ================= SAFE NORMALIZATION ================= */
 
@@ -213,6 +214,8 @@ export const mapAddPositionToCreateDto = ({
     cibilScore: 0,
 
     positionStatus: "Draft",
+
+      jobPositionExclusions,
 
     positionRequiredDocuments: [],
 

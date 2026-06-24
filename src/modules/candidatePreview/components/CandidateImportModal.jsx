@@ -112,7 +112,7 @@ await fetchCandidates();
               color: "#1F2937",
             }}
           >
-            Upload Candidates score
+           {t("uploadCandidateScoreTitle")}
           </h5>
 
           <p
@@ -121,7 +121,7 @@ await fetchCandidates();
               fontSize: "12px",
             }}
           >
-            Upload candidate scores using XLSX format
+           {t("uploadCandidateScoreDescription")}
           </p>
         </div>
 
@@ -172,7 +172,7 @@ await fetchCandidates();
                 borderRadius: "10px",
               }}
             >
-              {selectedFile ? "Reupload XLSX" : "Upload XLSX"}
+              {selectedFile ? t("reuploadXlsx") : t("uploadXlsx")}
             </Button>
           </label>
 
@@ -195,7 +195,7 @@ await fetchCandidates();
                 }}
                 disabled={loading}
               >
-                Remove
+                 {t("remove")}
               </Button>
             </div>
           )}
@@ -208,7 +208,7 @@ await fetchCandidates();
             marginTop: "18px",
           }}
         >
-          Download template:
+        {t("downloadTemplate")}:
           <button
             type="button"
             onClick={async () => {
@@ -245,7 +245,7 @@ await fetchCandidates();
             fontWeight: "600",
           }}
         >
-          Cancel
+          {t("cancel")}
         </Button>
 
         <Button
@@ -260,7 +260,7 @@ await fetchCandidates();
           }}
           disabled={loading}
         >
-          {loading ? "Importing..." : "Import"}
+        {loading ? t("importing") : t("import")}
         </Button>
       </div>
     </div>

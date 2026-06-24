@@ -179,6 +179,7 @@ export const mapAddPositionToUpdateDto = ({
   // ✅ ADD THESE
   isAgeRelRiotVictimFamily,
   isAgeRelWdsWomen,
+    jobPositionExclusions = [],
 }) => {
   const dto = {
     // positionId,
@@ -269,6 +270,7 @@ export const mapAddPositionToUpdateDto = ({
     // IMPORTANT
     positionCategoryNationalDistributions: [],
     positionStateDistributions: [],
+      jobPositionExclusions,
   };
 
   // NATIONAL
@@ -278,6 +280,7 @@ export const mapAddPositionToUpdateDto = ({
         reservationCategoryId: cat.id,
         vacancyCount: Number(nationalCategories[cat.code] || 0),
         isDisability: false,
+        
       });
     });
 

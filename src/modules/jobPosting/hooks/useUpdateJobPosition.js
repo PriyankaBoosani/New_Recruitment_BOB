@@ -16,6 +16,7 @@ export const useUpdateJobPosition = () => {
 
       const dto = mapAddPositionToUpdateDto(payload);
 
+      console.log("Update Position DTO:DDDDDDDDDDDDDDDDDDDD", dto);
       let res;
 
       // ================================

@@ -79,9 +79,18 @@ const isOrderedListItem = (text) => {
   useEffect(() => {
     const loadMasters = async () => {
       try {
-        const [masterRes] = await Promise.all([
-          masterApiService.getMasterDisplayAll(),
-        ]);
+      const [masterRes, exclusionsRes] = await Promise.all([
+  masterApiService.getMasterDisplayAll(),
+  masterApiService.getExclusions(),
+]);
+
+setMasterData({
+  ...(masterRes.data || {}),
+  exclusions: exclusionsRes?.data || [],
+});
+
+
+        
 
         setMasterData(masterRes.data || {});
       } catch (err) {
@@ -106,6 +115,9 @@ const isOrderedListItem = (text) => {
         );
 
         const mapped = mapJobPositionToRequisitionStrip(res.data, masterData);
+
+        mapped.jobPositionExclusions = res.data.jobPositionExclusions || [];
+
 
         setJob(mapped);
       } catch (err) {
@@ -428,6 +440,33 @@ const isOrderedListItem = (text) => {
                   {renderBullets(job?.roles_responsibilities)}
                 </ul>
               </div>
+
+
+              {/* {job?.jobPositionExclusions?.length > 0 && ( */}
+ <div className="info-card">
+  <div className="section-title">
+    Exclusions:
+  </div>
+
+  <ul className="section-lists">
+    {job?.jobPositionExclusions?.length > 0 ? (
+      job.jobPositionExclusions.map((item) => {
+        const exclusion = masterData?.exclusions?.find(
+          (x) => x.exclusionId === item.exclusionId
+        );
+
+        return (
+          <li key={item.id || item.exclusionId}>
+            {exclusion?.exclusionName || item.exclusionId}
+          </li>
+        );
+      })
+    ) : (
+      <li>NA</li>
+    )}
+  </ul>
+</div>
+{/* )} */}
 
               {job?.positionStateDistributions?.length > 0 && (
                 <LocationWiseVacancyTable

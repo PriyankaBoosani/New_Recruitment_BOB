@@ -4,6 +4,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import "../../../style/css/AddPosition.css";
 import import_Icon from "../../../assets/import_Icon.png";
 import ImportModal from "../component/ImportModal";
+import masterApiService from "../../master/services/masterApiService";
 import EducationModal from "../component/EducationModal";
 import {
   validateAddPosition,
@@ -24,6 +25,7 @@ import { toast } from "react-toastify";
 import ReservationSection from "../component/ReservationSection";
 import { useTranslation } from "react-i18next";
 import SelectIndentModal from "../component/SelectIndentModal";
+import jobPositionApiService from "../services/jobPositionApiService";
 const AddPosition = () => {
   const { t } = useTranslation(["addPosition", "common", "validation"]);
   const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx"];
@@ -40,6 +42,11 @@ const AddPosition = () => {
   const mode = location.state?.mode; // "view" | "edit" | undefined
 
   const isInEditMode = location.state?.isInEditMode === false;
+  const [exclusions, setExclusions] = useState([]);
+
+  console.log("Exclusions@@@@@@@@@@@@@@@@@@:", exclusions);
+  const [selectedExclusions, setSelectedExclusions] = useState([]);
+  
   const isViewMode = !!positionId && mode === "view";
   const isEditMode = !!positionId && mode !== "view";
   const isDraft = location.state?.isDraft === true;
@@ -69,7 +76,7 @@ const AddPosition = () => {
   );
 
   const { createPosition, loading } = useCreateJobPosition();
-  const { updatePosition,loading: updateLoading} = useUpdateJobPosition();
+  const { updatePosition, loading: updateLoading } = useUpdateJobPosition();
   const masterData = useMasterData();
   const {
     positions,
@@ -174,16 +181,49 @@ const AddPosition = () => {
 
     setIsAgeRelRiotVictimFamily(
       existingPosition?.isAgeRelRiotVictimFamily === true ||
-        existingPosition?.isAgeRelRiotVictimFamily === "true" ||
-        existingPosition?.isAgeRelRiotVictimFamily === 1
+      existingPosition?.isAgeRelRiotVictimFamily === "true" ||
+      existingPosition?.isAgeRelRiotVictimFamily === 1
     );
 
     setIsAgeRelWdsWomen(
       existingPosition?.isAgeRelWdsWomen === true ||
-        existingPosition?.isAgeRelWdsWomen === "true" ||
-        existingPosition?.isAgeRelWdsWomen === 1
+      existingPosition?.isAgeRelWdsWomen === "true" ||
+      existingPosition?.isAgeRelWdsWomen === 1
     );
   }, [existingPosition]);
+
+
+
+
+  useEffect(() => {
+  if (existingPosition?.jobPositionExclusions?.length) {
+    setSelectedExclusions(
+      existingPosition.jobPositionExclusions
+        .filter((e) => e.isExcluded)
+        .map((e) => e.exclusionId)
+    );
+  }
+}, [existingPosition]);
+
+  useEffect(() => {
+    const loadExclusions = async () => {
+      try {
+        const res = await masterApiService.getExclusions();
+
+        console.log("FULL RESPONSE", res);
+        console.log("RESPONSE DATA", res.data);
+
+        if (res?.success) {
+          setExclusions(res.data || []);
+        }
+      } catch (err) {
+        console.error("Failed to load exclusions", err);
+      }
+    };
+
+    loadExclusions();
+  }, []);
+
   useEffect(() => {
     const reqKey = `${isDraft ? parentRequisitionId : requisitionId}_${isDraft}`;
 
@@ -815,7 +855,7 @@ const AddPosition = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
- if (submitRef.current) return;
+    if (submitRef.current) return;
     submitRef.current = true;
     setSubmitting(true);
     const validationErrors = validateAddPosition({
@@ -836,7 +876,7 @@ const AddPosition = () => {
     });
 
     if (Object.keys(validationErrors).length > 0) {
-       setErrors(validationErrors);
+      setErrors(validationErrors);
       submitRef.current = false;
       setSubmitting(false);
       return;
@@ -845,6 +885,23 @@ const AddPosition = () => {
       errors.vacancies = "validation:vacancies_must_be_greater_than_zero";
     }
 
+    console.log("Selected Exclusions:", selectedExclusions);
+    console.log(
+  "existingPosition exclusions",
+  existingPosition?.jobPositionExclusions
+);
+
+
+
+
+
+console.log("positionId from URL =", positionId);
+console.log("existingPosition =", existingPosition);
+console.log("existingPosition.positionId =", existingPosition?.positionId);
+
+const currentPositionId =
+  existingPosition?.positionId || positionId || null;
+  
     const payload = {
       formData,
       educationData,
@@ -865,8 +922,24 @@ const AddPosition = () => {
       stateDistributions: stateDistributions.filter((s) => !s.__deleted),
       isAgeRelRiotVictimFamily,
       isAgeRelWdsWomen,
-    };
 
+
+jobPositionExclusions: exclusions.map((item) => {
+  const existingExclusion =
+    existingPosition?.jobPositionExclusions?.find(
+      (e) => e.exclusionId === item.exclusionId
+    );
+
+  return {
+    jobPositionId: currentPositionId,
+    exclusionId: item.exclusionId,
+    isExcluded: selectedExclusions.includes(item.exclusionId),
+    id: existingExclusion?.id || null,
+  };
+}),
+
+    };
+    console.log("Payload to be submitted:", payload);
     try {
       if (isEditMode) {
         // await updatePosition({ ...payload, positionId, existingPosition });
@@ -903,15 +976,15 @@ const AddPosition = () => {
   ).reduce((a, b) => a + Number(b || 0), 0);
   const filteredLanguages = currentState.state
     ? stateLanguages
-        .filter((sl) => String(sl.stateId) === String(currentState.state))
-        .map((sl) => {
-          const lang = languages.find(
-            (l) => String(l.id) === String(sl.languageId)
-          );
+      .filter((sl) => String(sl.stateId) === String(currentState.state))
+      .map((sl) => {
+        const lang = languages.find(
+          (l) => String(l.id) === String(sl.languageId)
+        );
 
-          return lang ? { id: lang.id, name: lang.name } : null;
-        })
-        .filter(Boolean)
+        return lang ? { id: lang.id, name: lang.name } : null;
+      })
+      .filter(Boolean)
     : [];
 
   return (
@@ -1040,6 +1113,9 @@ const AddPosition = () => {
               originalDisabilities={originalDisabilities}
               setOriginalCategories={setOriginalCategories}
               setOriginalDisabilities={setOriginalDisabilities}
+              exclusions={exclusions}
+              selectedExclusions={selectedExclusions}
+              setSelectedExclusions={setSelectedExclusions}
             />
 
             <div className="form-footer mt-4 mb-4">

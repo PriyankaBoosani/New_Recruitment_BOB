@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
 
 import { toast } from "react-toastify";
@@ -16,6 +17,8 @@ const TableSection = ({
   summaryData?.categorySummaries?.forEach((cat) => {
     categoryMap[cat.categoryId] = cat;
   });
+
+  const { t } = useTranslation("candidateWorkflow");
 
   const tableHeaders = reservationCategories
     ?.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
@@ -516,6 +519,7 @@ const getStatusLabel = (status) => {
                                   totalQualifiedCount={
                                     state.totalQualifiedCount
                                   }
+                                  
                                 />
                               </div>
                             )}

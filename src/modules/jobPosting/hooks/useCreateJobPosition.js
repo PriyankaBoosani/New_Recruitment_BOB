@@ -12,7 +12,7 @@ export const useCreateJobPosition = () => {
       setLoading(true);
 
       const dto = mapAddPositionToCreateDto(payload);
-
+console.log("Create Position DTO:", dto);
       const res = await jobPositionApiService.createPosition({
         dto,
         indentFile: payload.indentFile,
