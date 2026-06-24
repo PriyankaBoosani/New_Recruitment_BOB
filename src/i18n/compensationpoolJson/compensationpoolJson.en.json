@@ -21,5 +21,10 @@
   "viewResume": "View Resume",
   "approveRejectCompensation": "Approve / Reject / Re-negotiate Compensation",
   "noCandidates": "No candidates in compensation pool",
-    "showingRecords": "Showing {{start}}–{{end}} of {{total}}"
+  "showingRecords": "Showing {{start}}–{{end}} of {{total}}",
+  "fixed": "Fixed",
+  "variable": "Variable",
+  "joining_bonus": "Joining Bonus",
+  "hike": "Hike",
+  "reg_no": "Reg No"
 }

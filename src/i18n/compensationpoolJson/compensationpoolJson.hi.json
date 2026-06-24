@@ -21,5 +21,10 @@
   "viewResume": "बायोडाटा देखें",
   "approveRejectCompensation": "पारिश्रमिक स्वीकृत / अस्वीकृत / पुनः वार्ता",
   "noCandidates": "पारिश्रमिक पूल में कोई अभ्यर्थी उपलब्ध नहीं है",
-  "showingRecords": "दिखा रहे हैं {{start}}–{{end}} में से {{total}}"
+  "showingRecords": "दिखा रहे हैं {{start}}–{{end}} में से {{total}}",
+  "fixed": "निश्चित वेतन",
+  "variable": "परिवर्ती वेतन",
+  "joining_bonus": "जॉइनिंग बोनस",
+  "hike": "वेतन वृद्धि",
+  "reg_no": "रजिस्ट्रेशन नंबर"
 }

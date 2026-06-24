@@ -492,7 +492,7 @@ export default function CompensationPool({
                   <td className="align-content-center">
                     <p className="fw-normal fs-14 mb-0">{c.name}</p>
                     <p className="text-muted fs-12 mb-0">
-                      Reg No: {c.regNo || "-"}
+                      {t("reg_no")}: {c.regNo || "-"}
                     </p>
                   </td>
 
@@ -512,27 +512,27 @@ export default function CompensationPool({
                     {c.agreedCtc || "-"}
                     <div className="compensation-box fs-12">
                       <div className="comp-detail">
-                        <span>Fixed:</span>{" "}
+                        <span>{t("fixed")}:</span>{" "}
                         <span className="fixcomp">
                           {Number(c.fixedPay || 0).toLocaleString("en-IN")}
                         </span>
                       </div>
 
                       <div className="comp-detail">
-                        <span>Variable:</span>{" "}
+                        <span>{t("variable")}:</span>{" "}
                         <span className="fixcomp">
                           {Number(c.variablePay || 0).toLocaleString("en-IN")}
                         </span>
                       </div>
 
                       <div className="comp-detail">
-                        <span>Bonus:</span>{" "}
+                        <span>{t("joining_bonus")}:</span>{" "}
                         <span className="fixcomp">
                           {Number(c.joiningBonus || 0).toLocaleString("en-IN")}
                         </span>
                       </div>
                       <div className="comp-detail">
-                        <span>Hike %:</span>{" "}
+                        <span>{t("hike")} %:</span>{" "}
                         <span className="fixcomp">{c.agreedHike}% </span>
                       </div>
                     </div>
