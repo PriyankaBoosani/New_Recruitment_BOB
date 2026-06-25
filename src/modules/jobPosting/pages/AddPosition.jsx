@@ -195,10 +195,11 @@ const AddPosition = () => {
 
 
 
-  useEffect(() => {
-  if (existingPosition?.jobPositionExclusions?.length) {
+
+useEffect(() => {
+  if (existingPosition?.jobPositionExclusion?.length) {
     setSelectedExclusions(
-      existingPosition.jobPositionExclusions
+      existingPosition.jobPositionExclusion
         .filter((e) => e.isExcluded)
         .map((e) => e.exclusionId)
     );
@@ -924,7 +925,7 @@ const currentPositionId =
       isAgeRelWdsWomen,
 
 
-jobPositionExclusions: exclusions.map((item) => {
+jobPositionExclusion: exclusions.map((item) => {
   const existingExclusion =
     existingPosition?.jobPositionExclusions?.find(
       (e) => e.exclusionId === item.exclusionId

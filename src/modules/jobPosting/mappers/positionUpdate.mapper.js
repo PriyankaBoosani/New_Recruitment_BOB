@@ -179,7 +179,7 @@ export const mapAddPositionToUpdateDto = ({
   // ✅ ADD THESE
   isAgeRelRiotVictimFamily,
   isAgeRelWdsWomen,
-    jobPositionExclusions = [],
+    jobPositionExclusion = [],
 }) => {
   const dto = {
     // positionId,
@@ -270,7 +270,7 @@ export const mapAddPositionToUpdateDto = ({
     // IMPORTANT
     positionCategoryNationalDistributions: [],
     positionStateDistributions: [],
-      jobPositionExclusions,
+      jobPositionExclusion,
   };
 
   // NATIONAL
