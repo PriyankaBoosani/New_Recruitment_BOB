@@ -106,6 +106,16 @@ const committeeManagementService = {
     api.get(`/recruiter/examination-config/workflow-history/${examConfigId}`),
   getApprovalHistory: (requisitionId) =>
     api.post(`/recruiter/schedule-pool/get-approval-history/${requisitionId}`),
+  getOfferApprovalCandidates: (body) =>
+    api.post("/recruiter/offer-approval/candidates/search", body),
+  approveOrRejectOfferApproval(payload) {
+    return api.post("/recruiter/offer-approval/approve-or-reject", payload);
+  },
+  getOfferApprovalWorkflowHistory(historyId) {
+    return api.get(
+      `/recruiter/offer-approval/workflow-history/${historyId}`
+    );
+  },
 };
 
 export default committeeManagementService;

@@ -1,14 +1,37 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import React, { useEffect, useMemo, useState } from "react";
+import { Container, Row, Col, Form, Button, Modal } from "react-bootstrap";
 import Select from "react-select";
 import "../../../style/css/OfferLetterRequestApproval.css";
 import ApprovalCommentModal from "../components/ApprovalCommentModal";
+import useOfferApproval from "../hooks/useOfferApproval";
+import masterApiService from "../../master/services/masterApiService";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import ApprovalHistoryModal from "../components/ApprovalHistoryModal";
+import history_icon from "../../../assets/history_icon.png";
 
 const OfferLetterRequestApproval = () => {
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [actionType, setActionType] = useState(null); // "approve" | "reject"
   const [comment, setComment] = useState("");
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [historyData, setHistoryData] = useState([]);
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [showPreview, setShowPreview] = useState(false);
+  const privileges = useSelector((state) => state.user.privileges);
+
+  const isL1 = privileges?.["L1 Approval"];
+  const isL2 = privileges?.["L2 Approval"];
+
+  const approvalLevel = isL2 ? "L2" : isL1 ? "L1" : null;
+
+  const selectableStatus =
+    approvalLevel === "L1"
+      ? "L1_PENDING"
+      : approvalLevel === "L2"
+        ? "L2_PENDING"
+        : null;
 
   const handleOpenCommentModal = (type) => {
     if (selectedIds.size === 0) {
@@ -21,64 +44,84 @@ const OfferLetterRequestApproval = () => {
     setShowCommentModal(true);
   };
 
-  const handleConfirmAction = () => {
-    const selectedCandidates = candidates.filter((c) => selectedIds.has(c.id));
+  const handleConfirmAction = async (comment) => {
+    const payload = {
+      offerApprovalIds: Array.from(selectedIds),
+      action: actionType === "approve" ? "APPROVE" : "REJECT",
+      comments: comment,
+    };
 
-    console.log("Action:", actionType);
-    console.log("Comment:", comment);
-    console.log("Selected Candidates:", selectedCandidates);
+    const success = await approveOrRejectCandidates(payload, actionType);
 
-    // Call your approve/reject API here
+    if (success) {
+      setShowCommentModal(false);
+      setSelectedIds(new Set());
 
-    setShowCommentModal(false);
+      await fetchCandidates({
+        positionId: selectedPosition?.value,
+        page: 0,
+        size: 10,
+      });
+    }
+  };
+  const handleCandidateOfferPreview = async (offerFileUrl) => {
+    try {
+      const encodedPath = encodeURIComponent(offerFileUrl);
+
+      const fileUrl =
+        await masterApiService.getMessagesAzureBlobSasUrl(encodedPath);
+
+      if (fileUrl) {
+        setPreviewUrl(fileUrl);
+        setShowPreview(true);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to preview file");
+    }
   };
 
-  const requisitionOptions = [
-    { value: 1, label: "REQ-001 - React Developer Hiring" },
-    { value: 2, label: "REQ-002 - UI Developer Hiring" },
-  ];
+  const handleViewHistory = async (historyId) => {
+    const data = await getWorkflowHistory(historyId);
 
-  const positionOptions = [
-    { value: 1, label: "React Developer" },
-    { value: 2, label: "UI Developer" },
-  ];
+    setHistoryData(data);
+    setShowHistoryModal(true);
+  };
 
+  const {
+    requisitionOptions,
+    positionOptions,
+    candidates,
+    fetchRequisitions,
+    fetchPositions,
+    fetchCandidates,
+    approveOrRejectCandidates,
+    clearCandidates,
+    getWorkflowHistory,
+    users,
+    fetchUsers,
+  } = useOfferApproval();
+
+  const userMap = useMemo(() => {
+    return users.reduce((acc, user) => {
+      acc[user.userId] = user.name;
+      return acc;
+    }, {});
+  }, [users]);
+
+  useEffect(() => {
+    fetchRequisitions();
+    fetchUsers();
+  }, [fetchRequisitions, fetchUsers]);
   const [selectedRequisition, setSelectedRequisition] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
+  const selectableCandidates = candidates.filter(
+    (c) => c.status === selectableStatus
+  );
 
-  const candidates = [
-    {
-      id: 1,
-      name: "John Doe",
-      applicationNumber: "APP001",
-      caste: "OC",
-      score: 89,
-      qualification: "Q",
-      status: "Pending",
-      joiningDate: "15-07-2026",
-      state: "Telangana",
-      city: "Hyderabad",
-      offerReleaseDate: "01-07-2026",
-      acceptBefore: "10-07-2026",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      applicationNumber: "APP002",
-      caste: "BC",
-      score: 85,
-      qualification: "Q",
-      status: "Pending",
-      joiningDate: "20-07-2026",
-      state: "Karnataka",
-      city: "Bangalore",
-      offerReleaseDate: "02-07-2026",
-      acceptBefore: "12-07-2026",
-    },
-  ];
   const allSelected =
-    candidates.length > 0 &&
-    candidates.every((item) => selectedIds.has(item.id));
+    selectableCandidates.length > 0 &&
+    selectableCandidates.every((c) => selectedIds.has(c.id));
 
   const selectStyles = {
     control: (base) => ({
@@ -124,7 +167,16 @@ const OfferLetterRequestApproval = () => {
               styles={selectStyles}
               options={requisitionOptions}
               value={selectedRequisition}
-              onChange={setSelectedRequisition}
+              onChange={(option) => {
+                setSelectedRequisition(option);
+                setSelectedPosition(null);
+
+                setSelectedIds(new Set());
+
+                clearCandidates();
+
+                fetchPositions(option?.value);
+              }}
               placeholder="Select Requisition"
               menuPortalTarget={document.body}
             />
@@ -137,7 +189,16 @@ const OfferLetterRequestApproval = () => {
               styles={selectStyles}
               options={positionOptions}
               value={selectedPosition}
-              onChange={setSelectedPosition}
+              onChange={(option) => {
+                setSelectedPosition(option);
+
+                fetchCandidates({
+                  positionId: option?.value,
+                  statusList: ["L1_PENDING"],
+                  page: 0,
+                  size: 10,
+                });
+              }}
               placeholder="Select Position"
               menuPortalTarget={document.body}
             />
@@ -152,7 +213,9 @@ const OfferLetterRequestApproval = () => {
               checked={allSelected}
               onChange={(e) => {
                 if (e.target.checked) {
-                  setSelectedIds(new Set(candidates.map((item) => item.id)));
+                  setSelectedIds(
+                    new Set(selectableCandidates.map((c) => c.id))
+                  );
                 } else {
                   setSelectedIds(new Set());
                 }
@@ -189,58 +252,119 @@ const OfferLetterRequestApproval = () => {
               <th>Candidate Name</th>
               <th>Application Number</th>
               <th>Score</th>
-              <th>Q/NQ</th>
-              <th>Status</th>
               <th>Joining Date</th>
               <th>State</th>
               <th>City</th>
               <th>Offer Release Date</th>
               <th>Accept Before</th>
+              <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
 
           <tbody>
-            {candidates.map((candidate) => (
-              <tr key={candidate.id}>
-                <td>
-                  <Form.Check
-                    type="checkbox"
-                    checked={selectedIds.has(candidate.id)}
-                    onChange={(e) => {
-                      const updated = new Set(selectedIds);
-
-                      if (e.target.checked) {
-                        updated.add(candidate.id);
-                      } else {
-                        updated.delete(candidate.id);
-                      }
-
-                      setSelectedIds(updated);
-                    }}
-                  />
-                </td>
-
-                <td>{candidate.name}</td>
-                <td>{candidate.applicationNumber}</td>
-                <td>{candidate.score}</td>
-                <td>{candidate.qualification}</td>
-                <td>{candidate.status}</td>
-                <td>{candidate.joiningDate}</td>
-                <td>{candidate.state}</td>
-                <td>{candidate.city}</td>
-                <td>{candidate.offerReleaseDate}</td>
-                <td>{candidate.acceptBefore}</td>
-
-                <td>
-                  <Button size="sm" variant="outline-primary">
-                    View
-                  </Button>
+            {candidates.length === 0 ? (
+              <tr>
+                <td colSpan="11" className="text-center py-4 text-muted">
+                  No candidates found
                 </td>
               </tr>
-            ))}
+            ) : (
+              candidates.map((candidate) => (
+                <tr key={candidate.id}>
+                  <td>
+                    <Form.Check
+                      type="checkbox"
+                      checked={selectedIds.has(candidate.id)}
+                      disabled={candidate.status !== selectableStatus}
+                      onChange={(e) => {
+                        const updated = new Set(selectedIds);
+
+                        if (e.target.checked) {
+                          updated.add(candidate.id);
+                        } else {
+                          updated.delete(candidate.id);
+                        }
+
+                        setSelectedIds(updated);
+                      }}
+                    />
+                  </td>
+
+                  <td>
+                    {candidate.name}{" "}
+                    <button
+                      className="btn btn-sm btn-outline-secondary border-0 history-btn"
+                      
+                      onClick={() => handleViewHistory(candidate.historyId)}
+                    >
+                      <img
+                        src={history_icon}
+                        alt="History"
+                        width={14}
+                        height={14}
+                      />
+                    </button>
+                  </td>
+                  <td>{candidate.applicationNumber}</td>
+                  <td>{candidate.score}</td>
+
+                  <td>{candidate.joiningDate}</td>
+                  <td>{candidate.state}</td>
+                  <td>{candidate.city}</td>
+                  <td>{candidate.offerReleaseDate}</td>
+                  <td>{candidate.acceptBefore}</td>
+                  <td>
+                    <span className={`badge bg-${candidate.statusBadge}`}>
+                      {candidate.statusLabel}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="d-flex gap-2">
+                      <button
+                        className="btn btn-sm btn-outline-secondary border-0"
+                        style={{ backgroundColor: "#eff6ff" }}
+                        onClick={() =>
+                          handleCandidateOfferPreview(candidate.offerFileUrl)
+                        }
+                        disabled={!candidate.offerFileUrl}
+                      >
+                        <i
+                          className="bi bi-file-text"
+                          style={{ color: "black" }}
+                        />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
+        <Modal
+          show={showPreview}
+          onHide={() => setShowPreview(false)}
+          size="xl"
+          centered
+        >
+          <Modal.Header closeButton>
+            <h6 className="mb-0">Preview Offer</h6>
+          </Modal.Header>
+
+          <Modal.Body style={{ height: "85vh" }}>
+            {previewUrl ? (
+              <iframe
+                src={previewUrl}
+                width="100%"
+                height="100%"
+                title="PDF Preview"
+                style={{ border: "none" }}
+              />
+            ) : (
+              <div>No preview available</div>
+            )}
+          </Modal.Body>
+        </Modal>
         <ApprovalCommentModal
           show={showCommentModal}
           actionType={actionType}
@@ -248,6 +372,18 @@ const OfferLetterRequestApproval = () => {
           onConfirm={handleConfirmAction}
         />
       </Container>
+      <ApprovalHistoryModal
+        show={showHistoryModal}
+        onClose={() => setShowHistoryModal(false)}
+        historyData={historyData.map((item) => ({
+          ...item,
+          approverName:
+            userMap[item.approverId] ||
+            userMap[item.userId] ||
+            item.approverRole ||
+            "-",
+        }))}
+      />
     </div>
   );
 };

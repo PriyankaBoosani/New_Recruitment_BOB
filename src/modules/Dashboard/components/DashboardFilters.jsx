@@ -8,7 +8,7 @@ import {
   FiUsers,
   FiCalendar,
   FiChevronDown,
-  FiGitBranch
+  FiGitBranch,
 } from "react-icons/fi";
 import { BsBag } from "react-icons/bs";
 
@@ -148,10 +148,10 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                 onChange={(e) => setQuarterValue(e.target.value)}
               >
                 <option>Select Quater</option>
-                <option>Q1 (Apr-Jun)</option>
-                <option>Q2 (Jul-Sep)</option>
-                <option>Q3 (Oct-Dec)</option>
-                <option>Q4 (Jan-Mar)</option>
+                <option value="Q1">Q1 (Jan-Mar)</option>
+                <option value="Q2">Q2 (Apr-Jun)</option>
+                <option value="Q3">Q3 (Jul-Sep)</option>
+                <option value="Q4">Q4 (Oct-Dec)</option>
               </select>
             </div>
           </div>
@@ -237,7 +237,8 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
         {/* TOP ROW */}
         <div className="top-section">
           <div className="filter-group">
-            <label><FiBriefcase/> Employment
+            <label>
+              <FiBriefcase /> Employment
             </label>
 
             <div className="segmented-control">
@@ -256,7 +257,10 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
           <div className="section-divider" />
 
           <div className="filter-group">
-            <label> <FiGitBranch className="text-danger" /> Initiation</label>
+            <label>
+              {" "}
+              <FiGitBranch className="text-danger" /> Initiation
+            </label>
 
             <div className="segmented-control">
               {filters?.reinitialized?.map((item) => (

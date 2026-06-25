@@ -415,7 +415,7 @@ downloadAssignLocationExcel: (positionId) => {
   },
 
    sendOfferApproval(payload) {
-    return api.post("/recruiter/candidate-offer/send-offer-for-approval", payload);
+    return api.post("/recruiter/candidate-offer/send-offer/for-approval", payload);
   },
 
  

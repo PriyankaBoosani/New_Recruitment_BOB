@@ -818,3 +818,6 @@
   border-color: #42579f;
 }
 
+.offer-bulk-actions .form-check-label{
+  font-size: 0.875rem;
+}

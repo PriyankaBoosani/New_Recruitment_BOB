@@ -72,7 +72,7 @@ export default function CandidateScreening({ selectedJob }) {
   const isRecruiter = role === "recruiter";
 
   const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
-  
+
   const [isMarksUploaded, setIsMarksUploaded] = useState(false);
 
   const CANDIDATE_POOL_STATUSES = [
@@ -284,7 +284,6 @@ export default function CandidateScreening({ selectedJob }) {
   const canUpdateCandidateScore = selectedPositionId?.some(
     (id) => examConfigMap[id]?.status !== "FINALIZED"
   );
-
 
   const canAccessExamActions = isRecruiter;
 
@@ -508,7 +507,7 @@ export default function CandidateScreening({ selectedJob }) {
 
     {
       key: "COMPENSATION_POOL",
-       label: t("candidateWorkflow:Compensation_Pool"),
+      label: t("candidateWorkflow:Compensation_Pool"),
       //label: "Compensation Pool",
       count: compensationTotal,
     },
@@ -642,13 +641,11 @@ export default function CandidateScreening({ selectedJob }) {
   //   fetchPanels(selectedPositionId);
   // }, [selectedPositionId.join(","), activeTab]);
 
-
-
-    useEffect(() => {
+  useEffect(() => {
     if (!selectedPositionId.length) {
       return;
     }
- 
+
     if (activeTab === "INTERVIEW_POOL" || activeTab === "COMPENSATION_POOL") {
       fetchPanels(selectedPositionId);
     }
@@ -728,31 +725,23 @@ export default function CandidateScreening({ selectedJob }) {
   //   }
   // }, [accessibleTabs, activeTab]);
 
-useEffect(() => {
-  // Don't auto-switch while restoring Compensation Pool
-  if (
-    location.state?.activeTab === "COMPENSATION_POOL" &&
-    activeTab === "COMPENSATION_POOL" &&
-    !accessibleTabs.some((tab) => tab.key === "COMPENSATION_POOL")
-  ) {
-    return;
-  }
+  useEffect(() => {
+    // Don't auto-switch while restoring Compensation Pool
+    if (
+      location.state?.activeTab === "COMPENSATION_POOL" &&
+      activeTab === "COMPENSATION_POOL" &&
+      !accessibleTabs.some((tab) => tab.key === "COMPENSATION_POOL")
+    ) {
+      return;
+    }
 
-  if (
-    accessibleTabs.length > 0 &&
-    !accessibleTabs.some((tab) => tab.key === activeTab)
-  ) {
-    setActiveTab(accessibleTabs[0].key);
-  }
-}, [accessibleTabs, activeTab, location.state?.activeTab]);
-
-
-
-
-
-
-
-
+    if (
+      accessibleTabs.length > 0 &&
+      !accessibleTabs.some((tab) => tab.key === activeTab)
+    ) {
+      setActiveTab(accessibleTabs[0].key);
+    }
+  }, [accessibleTabs, activeTab, location.state?.activeTab]);
 
   const [selectedCompensationIds, setSelectedCompensationIds] = useState([]);
   const categoryMap = React.useMemo(() => {
@@ -860,11 +849,11 @@ useEffect(() => {
       // examQualificationStatus: c.examQualificationStatus || "-",
 
       examQualificationStatus:
-  c.examQualificationStatus === "QUALIFIED_UNDER_UR"
-    ? "Qualified Under UR"
-    : c.examQualificationStatus === "NOT_MARKED"
-    ? "Not Marked"
-    : c.examQualificationStatus || "-",
+        c.examQualificationStatus === "QUALIFIED_UNDER_UR"
+          ? "Qualified Under UR"
+          : c.examQualificationStatus === "NOT_MARKED"
+            ? "Not Marked"
+            : c.examQualificationStatus || "-",
 
       educationScore: c?.candidateRankingResults?.educationScore ?? "-",
 
@@ -1029,10 +1018,10 @@ useEffect(() => {
       setCandidates(mappedCandidates);
 
       const hasExamResults = (apiData?.content || []).some(
-  (candidate) => candidate.examQualificationStatus !== null
-);
+        (candidate) => candidate.examQualificationStatus !== null
+      );
 
-setIsMarksUploaded(hasExamResults);
+      setIsMarksUploaded(hasExamResults);
 
       setTotalElements(apiData?.page?.totalElements || 0);
     } catch (err) {
@@ -1934,13 +1923,12 @@ setIsMarksUploaded(hasExamResults);
   };
 
   const handleSendOffer = async () => {
-
-  if (sendOfferRef.current) return;
-      if (!allHaveLocationAndState) {
-    toast.error(
-      "Selected candidates must have both Location and State before sending offers"
-    );
-    return; 
+    if (sendOfferRef.current) return;
+    if (!allHaveLocationAndState) {
+      toast.error(
+        "Selected candidates must have both Location and State before sending offers"
+      );
+      return;
     }
     if (offerSelectedIds.length === 0) {
       toast.error(t("candidateWorkflow:select_at_least_one_candidate"));
@@ -1958,7 +1946,7 @@ setIsMarksUploaded(hasExamResults);
     }
 
     try {
-         sendOfferRef.current = true;
+      sendOfferRef.current = true;
       setSendingOffer(true);
       const payload = {
         offerTemplateId,
@@ -1966,7 +1954,7 @@ setIsMarksUploaded(hasExamResults);
         acceptBeforeDate,
         offerIds: offerSelectedIds,
       };
-      const response = await jobPositionApiService.sendOffer(payload);
+      const response = await jobPositionApiService.sendOfferApproval(payload);
 
       if (response?.data?.success === false) {
         toast.error(
@@ -1990,8 +1978,7 @@ setIsMarksUploaded(hasExamResults);
       toast.error(
         err?.response?.data?.message || t("candidateWorkflow:failed_send_offer")
       );
-    }
-     finally {
+    } finally {
       sendOfferRef.current = false;
       setSendingOffer(false);
     }
@@ -2002,18 +1989,23 @@ setIsMarksUploaded(hasExamResults);
   }, [offerData, offerSelectedIds]);
 
   const allHaveLocationAndState =
-  selectedOfferObjects.length > 0 &&
-  selectedOfferObjects.every(
-    (o) =>
-      o.location &&
-      o.location.trim() !== "" &&
-      o.state &&
-      o.state.trim() !== ""
-  );
+    selectedOfferObjects.length > 0 &&
+    selectedOfferObjects.every(
+      (o) =>
+        o.location &&
+        o.location.trim() !== "" &&
+        o.state &&
+        o.state.trim() !== ""
+    );
 
+  // const allAwaited =
+  //   selectedOfferObjects.length > 0 &&
+  //   selectedOfferObjects.every((o) => o.status === "OFFER_AWAITED", "APPROVAL_REJECTED");
   const allAwaited =
     selectedOfferObjects.length > 0 &&
-    selectedOfferObjects.every((o) => o.status === "OFFER_AWAITED");
+    selectedOfferObjects.every((o) =>
+      ["OFFER_AWAITED", "L1_REJECTED", "L2_REJECTED"].includes(o.status)
+    );
 
   const allHaveSelectListValue =
     selectedOfferObjects.length > 0 &&
@@ -2405,7 +2397,7 @@ setIsMarksUploaded(hasExamResults);
                       style={{ height: "38px" }}
                     >
                       <FiUpload />
-                  {t("updateCandidateScore")}
+                      {t("updateCandidateScore")}
                     </Button>
                   )}
 
@@ -2418,7 +2410,7 @@ setIsMarksUploaded(hasExamResults);
                       onClick={handleOpenExaminationScore}
                       style={{ height: "38px" }}
                     >
-                    {t("positionSummary")}
+                      {t("positionSummary")}
                     </button>
                   )}
               </div>
@@ -2718,7 +2710,7 @@ setIsMarksUploaded(hasExamResults);
                       }}
                     >
                       <FontAwesomeIcon icon={faListOl} className="rank-icon" />{" "}
-                     {t("candidateWorkflow:rank")}
+                      {t("candidateWorkflow:rank")}
                     </button>
                   )}
 
@@ -2926,21 +2918,26 @@ setIsMarksUploaded(hasExamResults);
                     </div>
 
                     <div>
-                      <button
+                       <button
                         className={`form-select fs-13 px-3 py-1 orange-bg text-white ${
                           isSendOfferEnabled ? "" : "disabled_button"
                         }`}
                         onClick={handleSendOffer}
                         disabled={!isSendOfferEnabled || sendingOffer}
                       >
-                        <img
-                          alt="offer"
-                          className="me-2"
-                          src={offerIcon}
-                          width={14}
-                        />
-                        {t("candidateWorkflow:send_offers")}
-                      </button>
+                        {sendingOffer ? (
+                          <>
+                            <span
+                              className="spinner-border spinner-border-sm me-2"
+                              role="status"
+                              aria-hidden="true"
+                            />
+                            Sending...
+                          </>
+                        ) : (
+                          t("candidateWorkflow:send_for_approval")
+                        )}
+                        </button>
 
                       {/* Reserve equal space like other fields */}
                       <small className="d-block mt-1 fs-12 invisible">
@@ -3151,7 +3148,7 @@ setIsMarksUploaded(hasExamResults);
             filters={filters} //  ADD THIS
             hasLocationData={hasLocationData}
             allCandidatesForFilters={allCandidatesForFilters}
-             isMarksUploaded={isMarksUploaded}
+            isMarksUploaded={isMarksUploaded}
           />
         )}
 

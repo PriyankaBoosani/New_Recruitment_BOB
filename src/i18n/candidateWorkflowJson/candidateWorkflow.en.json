@@ -151,6 +151,7 @@
   "select_template": "Select Template",
   "accept_before": "Accept Before",
   "send_offers": "Send Offers",
+  "send_for_approval": "Send for Approval",
   "assign_locations": "Assign Locations",
   "rank_list": "Merit List",
   "download_failed": "Download failed",

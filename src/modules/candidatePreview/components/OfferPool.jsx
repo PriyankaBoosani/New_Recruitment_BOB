@@ -6,12 +6,19 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import masterApiService from "../../master/services/masterApiService";
 import { Modal } from "react-bootstrap";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import ApprovalHistoryModal from "../../Approvals/components/ApprovalHistoryModal";
+import history_icon from "../../../assets/history_icon.png";
+import useOfferApproval from "../../Approvals/hooks/useOfferApproval";
 
 const OFFER_STATUS_CLASS_MAP = {
   OFFER_AWAITED: "bg-warning",
   OFFER_SENT: "bg-primary",
   OFFER_REJECTED: "bg-danger",
   OFFER_ACCEPTED: "bg-success",
+  L1_PENDING: "bg-info",
+  L2_PENDING: "bg-info",
+  L1_REJECTED: "bg-danger",
+  L2_REJECTED: "bg-danger",
 };
 
 const OFFER_STATUS_LABEL_MAP = {
@@ -19,6 +26,10 @@ const OFFER_STATUS_LABEL_MAP = {
   OFFER_SENT: "Offer Sent",
   OFFER_REJECTED: "Offer Rejected",
   OFFER_ACCEPTED: "Offer Accepted",
+  L1_PENDING: "L1 Pending",
+  L2_PENDING: "L2 Pending",
+  L1_REJECTED: "L1 Rejected",
+  L2_REJECTED: "L2 Rejected",
 };
 
 const OfferPool = ({
@@ -32,6 +43,7 @@ const OfferPool = ({
   offerTemplateId,
   acceptBeforeDate,
   joiningDate,
+  offerApprovalId,
 }) => {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const [offers, setOffers] = useState([]);
@@ -55,7 +67,13 @@ const OfferPool = ({
 
     return `${day}-${month}-${year}`;
   };
-
+  const { users, fetchUsers, getWorkflowHistory } = useOfferApproval();
+  const userMap = useMemo(() => {
+    return users.reduce((acc, user) => {
+      acc[user.userId] = user.name;
+      return acc;
+    }, {});
+  }, [users]);
   const handleClose = () => {
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
@@ -143,6 +161,7 @@ const OfferPool = ({
           offerReleaseDate: formatDate(offer.offerReleaseDate),
           acceptBeforeDate: formatDate(offer.acceptBeforeDate),
           joiningDate: formatDate(offer.joiningDate),
+          historyId: item.offerApprovalId, // add this
         };
       });
 
@@ -156,11 +175,21 @@ const OfferPool = ({
       setLoading(false);
     }
   };
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [historyData, setHistoryData] = useState([]);
+
+  const handleViewHistory = async (historyId) => {
+    const data = await getWorkflowHistory(historyId);
+
+    setHistoryData(data);
+    setShowHistoryModal(true);
+  };
 
   // FETCH OFFERS DIRECTLY HERE
   useEffect(() => {
     fetchOffers();
-  }, [selectedPositionId, refreshKey]);
+    fetchUsers();
+  }, [selectedPositionId, refreshKey, fetchUsers]);
 
   // APPLY STATUS FILTER LOCALLY
   const filteredOffers = useMemo(() => {
@@ -297,7 +326,7 @@ const OfferPool = ({
                 scope="col"
                 style={{ paddingLeft: "1.25rem" }}
               >
-               {t("candidateWorkflow:city")}
+                {t("candidateWorkflow:city")}
               </th>
 
               <th
@@ -359,7 +388,14 @@ const OfferPool = ({
                       style={{ marginTop: "0.75rem" }}
                       checked={selectedIds.includes(c.id)}
                       onChange={() => toggleRow(c.id)}
-                      disabled={c.status !== "OFFER_AWAITED"}
+                      //  disabled={c.status !== "OFFER_AWAITED"}
+                      disabled={
+                        ![
+                          "OFFER_AWAITED",
+                          "L1_REJECTED",
+                          "L2_REJECTED",
+                        ].includes(c.status)
+                      }
                     />
                   </td>
                   <td
@@ -370,9 +406,26 @@ const OfferPool = ({
                       minWidth: "200px",
                     }}
                   >
-                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-                      {c.name}
-                    </p>
+                    <div className="d-flex align-items-center gap-2 py-2">
+                      <p className="fw-normal fs-14 mb-0 text-muted">
+                        {c.name}
+                      </p>
+
+                      {c.status !== "OFFER_AWAITED" && (
+                        <button
+                          type="button"
+                          className="history-btn border-0 bg-transparent p-0"
+                          onClick={() => handleViewHistory(c.historyId)}
+                        >
+                          <img
+                            src={history_icon}
+                            alt="History"
+                            width={14}
+                            height={14}
+                          />
+                        </button>
+                      )}
+                    </div>
                   </td>
                   <td className="align-content-center">
                     <p
@@ -415,8 +468,9 @@ const OfferPool = ({
                     style={{ paddingLeft: "1.25rem", alignContent: "center" }}
                   >
                     <span
-                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${OFFER_STATUS_CLASS_MAP[c.status] || "bg-secondary"
-                        }`}
+                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${
+                        OFFER_STATUS_CLASS_MAP[c.status] || "bg-secondary"
+                      }`}
                     >
                       {OFFER_STATUS_LABEL_MAP[c.status] || c.status}
                     </span>
@@ -498,6 +552,10 @@ const OfferPool = ({
                           if (
                             c.status === "OFFER_SENT" ||
                             c.status === "OFFER_ACCEPTED" ||
+                            c.status === "L1_REJECTED" ||
+                            c.status === "L2_REJECTED" ||
+                            c.status === "L1_PENDING" ||
+                            c.status === "L2_PENDING" ||
                             c.status === "OFFER_REJECTED"
                           ) {
                             handleCandidateOfferPreview(
@@ -718,10 +776,7 @@ const OfferPool = ({
                         label={t("candidateWorkflow:wait_list")}
                         value={selectedOffer.waitList}
                       />
-                      <InfoField
-                        label="City"
-                        value={selectedOffer.location}
-                      />
+                      <InfoField label="City" value={selectedOffer.location} />
                     </div>
                   </div>
                 </div>
@@ -794,6 +849,18 @@ const OfferPool = ({
           )}
         </Modal.Body>
       </Modal>
+      <ApprovalHistoryModal
+        show={showHistoryModal}
+        onClose={() => setShowHistoryModal(false)}
+        historyData={historyData.map((item) => ({
+          ...item,
+          approverName:
+            userMap[item.approverId] ||
+            userMap[item.userId] ||
+            item.approverRole ||
+            "-",
+        }))}
+      />
     </div>
   );
 };
