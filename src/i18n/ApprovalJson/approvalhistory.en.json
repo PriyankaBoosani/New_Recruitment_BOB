@@ -29,5 +29,22 @@
   "start_date": "Start Date",
   "end_date": "End Date",
   "approval_comments": "Approval Comments",
-  "rejection_comments": "Rejection Comments"
+  "rejection_comments": "Rejection Comments",
+  "employment_type": "Employment Type",
+  "contract_period": "Contract Period",
+  "eligibility_age": "Eligibility Age",
+  "vacancies": "Vacancies",
+  "experience": "Experience",
+  "category_wise_reservation": "Category Wise Reservation",
+  "category_wise_reservation_state": "Category Wise Reservation (State-wise)",
+  "candidates_onboarded": "Candidates Onboarded",
+  "remaining_vacancies": "Remaining Vacancies",
+  "show_remaining_vacancies": "Show Remaining Vacancies",
+  "offers_sent": "Offers Sent",
+  "offers_accepted": "Offers Accepted",
+  "state": "State",
+  "city": "City",
+  "category": "Category",
+  "disability": "Disability",
+  "no_position_data": "No Position Data Available"
 }

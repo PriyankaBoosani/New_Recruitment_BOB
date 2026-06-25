@@ -29,5 +29,22 @@
   "start_date": "प्रारंभ तिथि",
   "end_date": "समाप्ति तिथि",
   "approval_comments": "स्वीकृति टिप्पणियाँ",
-  "rejection_comments": "अस्वीकृति टिप्पणियाँ"
+  "rejection_comments": "अस्वीकृति टिप्पणियाँ",
+  "employment_type": "रोजगार का प्रकार",
+  "contract_period": "अनुबंध अवधि",
+  "eligibility_age": "पात्रता आयु",
+  "vacancies": "रिक्तियां",
+  "experience": "अनुभव",
+  "category_wise_reservation": "श्रेणीवार आरक्षण",
+  "category_wise_reservation_state": "श्रेणीवार आरक्षण (राज्यवार)",
+  "candidates_onboarded": "कार्यभार ग्रहण करने वाले उम्मीदवार",
+  "remaining_vacancies": "शेष रिक्तियां",
+  "show_remaining_vacancies": "शेष रिक्तियां दिखाएं",
+  "offers_sent": "भेजे गए ऑफर",
+  "offers_accepted": "स्वीकृत ऑफर",
+  "state": "राज्य",
+  "city": "शहर",
+  "category": "श्रेणी",
+  "disability": "दिव्यांगता",
+  "no_position_data": "कोई पद डेटा उपलब्ध नहीं है"
 }

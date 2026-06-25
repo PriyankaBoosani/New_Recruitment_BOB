@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import "../../../style/css/ApprovedInfoModal.css";
+import { useTranslation } from "react-i18next";
 
 const SinglePositionInfoModal = ({
     show,
@@ -8,7 +9,7 @@ const SinglePositionInfoModal = ({
     requisition,
     position,
 }) => {
-    console.log("requisition", requisition, position);
+    const { t } = useTranslation(["common", "approvalHistory"]);
 
 
     const formatDate = (date) => {
@@ -46,14 +47,14 @@ const SinglePositionInfoModal = ({
 
                         <span className="approved-header-date">
                             <i className="bi bi-calendar3 me-1"></i>
-                            Start: {formatDate(requisition?.startDate)}
+                            {t("approvalHistory:start_date")}: {formatDate(requisition?.startDate)}
                         </span>
 
                         <span className="approved-header-divider">|</span>
 
                         <span className="approved-header-date">
                             <i className="bi bi-clock me-1"></i>
-                            End: {formatDate(requisition?.endDate)}
+                            {t("approvalHistory:end_date")}:{formatDate(requisition?.endDate)}
                         </span>
                     </div>
 
@@ -71,7 +72,7 @@ const SinglePositionInfoModal = ({
 
                         <div className="col-md-4">
                             <span className="approved-stat-label">
-                                Employment Type:
+                                {t("approvalHistory:employment_type")}:
                             </span>{" "}
                             <span className="approved-stat-value">
                                 {position?.employmentType || "-"}
@@ -80,7 +81,7 @@ const SinglePositionInfoModal = ({
 
                         <div className="col-md-4">
                             <span className="approved-stat-label">
-                                Contract Period:
+                                {t("approvalHistory:contract_period")}:
                             </span>{" "}
                             <span className="approved-stat-value">
                                 {position?.contractYears || "0"}
@@ -89,7 +90,7 @@ const SinglePositionInfoModal = ({
 
                         <div className="col-md-4">
                             <span className="approved-stat-label">
-                                Eligibility Age:
+                                {t("approvalHistory:eligibility_age")}:
                             </span>{" "}
                             <span className="approved-stat-value">
                                 {position?.eligibilityAge || "-"}
@@ -98,7 +99,7 @@ const SinglePositionInfoModal = ({
 
                         <div className="col-md-4">
                             <span className="approved-stat-label">
-                                Vacancies:
+                                {t("approvalHistory:vacancies")}:
                             </span>{" "}
                             <span className="approved-stat-value">
                                 {position?.vacancies || "-"}
@@ -107,7 +108,7 @@ const SinglePositionInfoModal = ({
 
                         <div className="col-md-4">
                             <span className="approved-stat-label">
-                                Department:
+                                {t("common:department")}:
                             </span>{" "}
                             <span className="approved-stat-value">
                                 {position?.departmentName || "-"}
@@ -116,7 +117,7 @@ const SinglePositionInfoModal = ({
 
                         <div className="col-md-4">
                             <span className="approved-stat-label">
-                                Experience:
+                                {t("approvalHistory:experience")}:
                             </span>{" "}
                             <span className="approved-stat-value">
                                 {position?.mandatoryExperienceMonths || "-"}
@@ -131,17 +132,17 @@ const SinglePositionInfoModal = ({
                 {position?.reservationType === "STATE_WISE" ? (
                     <div className="approved-reservation-card">
                         <div className="approved-reservation-title">
-                            Category Wise Reservation (State-wise)
+                            {t("approvalHistory:category_wise_reservation_state")}
                         </div>
 
                         <div className="table-responsive">
                             <table className="approved-reservation-table">
                                 <thead>
                                     <tr>
-                                        <th rowSpan="2">State</th>
-                                        <th rowSpan="2">City</th>
-                                        <th colSpan="6">Category</th>
-                                        <th colSpan="4">Disability</th>
+                                        <th rowSpan="2">{t("approvalHistory:state")}</th>
+                                        <th rowSpan="2">{t("approvalHistory:city")}</th>
+                                        <th colSpan="6">{t("approvalHistory:category")}</th>
+                                        <th colSpan="4">{t("approvalHistory:disability")}</th>
                                     </tr>
 
                                     <tr>
@@ -150,7 +151,7 @@ const SinglePositionInfoModal = ({
                                         <th>OBC</th>
                                         <th>EWS</th>
                                         <th>GEN</th>
-                                        <th>Total</th>
+                                        <th>{t("common:total")}</th>
                                         <th>HI</th>
                                         <th>OC</th>
                                         <th>VI</th>
@@ -184,7 +185,7 @@ const SinglePositionInfoModal = ({
                 ) : (
                     <div className="approved-reservation-card">
                         <div className="approved-reservation-title">
-                            Category Wise Reservation
+                            {t("approvalHistory:category_wise_reservation")}
                         </div>
 
                         <div className="table-responsive">
@@ -196,7 +197,7 @@ const SinglePositionInfoModal = ({
                                         <th>OBC</th>
                                         <th>EWS</th>
                                         <th>GEN</th>
-                                        <th>TOTAL</th>
+                                        <th>{t("common:total")}</th>
                                     </tr>
                                 </thead>
 
@@ -214,90 +215,7 @@ const SinglePositionInfoModal = ({
                         </div>
                     </div>
                 )}
-                {/* <div className="approved-reservation-card">
 
-                    <div className="approved-reservation-title">
-                        {position?.reservationType === "STATE_WISE"
-                            ? "Category Wise Reservation (State-wise)"
-                            : "Category Wise Reservation"}
-                    </div>
-
-                    <div className="table-responsive">
-                        <table className="approved-reservation-table">
-
-                            {position?.reservationType === "STATE_WISE" ? (
-                                <>
-                                    <thead>
-                                        <tr>
-                                            <th rowSpan="2">State</th>
-                                            <th rowSpan="2">City</th>
-                                            <th colSpan="6">Category</th>
-                                            <th colSpan="4">Disability</th>
-                                        </tr>
-
-                                        <tr>
-                                            <th>SC</th>
-                                            <th>ST</th>
-                                            <th>OBC</th>
-                                            <th>EWS</th>
-                                            <th>GEN</th>
-                                            <th>Total</th>
-                                            <th>HI</th>
-                                            <th>OC</th>
-                                            <th>VI</th>
-                                            <th>ID</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        {position?.stateWiseReservation?.map(
-                                            (row, idx) => (
-                                                <tr key={idx}>
-                                                    <td>{row.state}</td>
-                                                    <td>{row.city}</td>
-                                                    <td>{row.sc}</td>
-                                                    <td>{row.st}</td>
-                                                    <td>{row.obc}</td>
-                                                    <td>{row.ews}</td>
-                                                    <td>{row.gen}</td>
-                                                    <td>{row.total}</td>
-                                                    <td>{row.hi}</td>
-                                                    <td>{row.oc}</td>
-                                                    <td>{row.vi}</td>
-                                                    <td>{row.idd}</td>
-                                                </tr>
-                                            )
-                                        )}
-                                    </tbody>
-                                </>
-                            ) : (
-                                <>
-                                    <thead>
-                                        <tr>
-                                            <th>SC</th>
-                                            <th>ST</th>
-                                            <th>OBC</th>
-                                            <th>EWS</th>
-                                            <th>GEN</th>
-                                            <th>TOTAL</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        <tr>
-                                            <td>{position?.reservation?.sc ?? 0}</td>
-                                            <td>{position?.reservation?.st ?? 0}</td>
-                                            <td>{position?.reservation?.obc ?? 0}</td>
-                                            <td>{position?.reservation?.ews ?? 0}</td>
-                                            <td>{position?.reservation?.gen ?? 0}</td>
-                                            <td>{position?.reservation?.total ?? 0}</td>
-                                        </tr>
-                                    </tbody>
-                                </>
-                            )}
-                        </table>
-                    </div>
-                </div> */}
 
                 {/* Candidates Onboarded / Remaining */}
                 <div className="approved-onboarded-card">
@@ -305,8 +223,8 @@ const SinglePositionInfoModal = ({
                     <div className="d-flex justify-content-between align-items-center mb-3">
                         <div className="approved-onboarded-title mb-0">
                             {showRemaining
-                                ? "Remaining Vacancies"
-                                : "Candidates Onboarded"}
+                                ? t("approvalHistory:remaining_vacancies")
+                                : t("approvalHistory:candidates_onboarded")}
                         </div>
                         <div className="approved-info-toggle-switch form-check form-switch">
                             <input
@@ -326,7 +244,7 @@ const SinglePositionInfoModal = ({
                                 className="approved-info-toggle-label form-check-label"
                                 htmlFor="remaining-switch"                            >
                                 <span className="approved-info-toggle-text">
-                                    Show Remaining Vacancies
+                                    {t("approvalHistory:show_remaining_vacancies")}
                                 </span>
                             </label>
                         </div>
@@ -337,18 +255,19 @@ const SinglePositionInfoModal = ({
                             <table className="approved-onboarded-table">
                                 <thead>
                                     <tr>
-                                        <th rowSpan="2">State</th>
-                                        <th rowSpan="2">City</th>
-                                        <th colSpan="6">Category</th>
-                                        <th colSpan="4">Disability</th>
+                                        <th rowSpan="2">{t("approvalHistory:state")}</th>
+                                        <th rowSpan="2">{t("approvalHistory:city")}</th>
+                                        <th colSpan="6">{t("approvalHistory:category")}</th>
+                                        <th colSpan="4">{t("approvalHistory:disability")}</th>
                                     </tr>
+
                                     <tr>
                                         <th>SC</th>
                                         <th>ST</th>
                                         <th>OBC</th>
                                         <th>EWS</th>
                                         <th>GEN</th>
-                                        <th>Total</th>
+                                        <th>{t("common:total")}</th>
                                         <th>HI</th>
                                         <th>OC</th>
                                         <th>VI</th>
@@ -392,7 +311,7 @@ const SinglePositionInfoModal = ({
                                         <th>OBC</th>
                                         <th>EWS</th>
                                         <th>GEN</th>
-                                        <th>TOTAL</th>
+                                        <th>{t("common:total")}</th>
                                     </tr>
                                 </thead>
 
@@ -448,25 +367,26 @@ const SinglePositionInfoModal = ({
 
                 <div className="approved-onboarded-card">
                     <div className="approved-onboarded-title mb-3">
-                        Offers Sent
+                        {t("approvalHistory:offers_sent")}
                     </div>
 
                     <div className="table-responsive">
                         <table className="approved-onboarded-table">
                             <thead>
                                 <tr>
-                                    <th rowSpan="2">State</th>
-                                    <th rowSpan="2">City</th>
-                                    <th colSpan="6">Category</th>
-                                    <th colSpan="4">Disability</th>
+                                    <th rowSpan="2">{t("approvalHistory:state")}</th>
+                                    <th rowSpan="2">{t("approvalHistory:city")}</th>
+                                    <th colSpan="6">{t("approvalHistory:category")}</th>
+                                    <th colSpan="4">{t("approvalHistory:disability")}</th>
                                 </tr>
+
                                 <tr>
                                     <th>SC</th>
                                     <th>ST</th>
                                     <th>OBC</th>
                                     <th>EWS</th>
                                     <th>GEN</th>
-                                    <th>Total</th>
+                                    <th>{t("common:total")}</th>
                                     <th>HI</th>
                                     <th>OC</th>
                                     <th>VI</th>
@@ -500,25 +420,26 @@ const SinglePositionInfoModal = ({
 
                 <div className="approved-onboarded-card">
                     <div className="approved-onboarded-title mb-3">
-                        Offers Accepted
+                        {t("approvalHistory:offers_accepted")}
                     </div>
 
                     <div className="table-responsive">
                         <table className="approved-onboarded-table">
                             <thead>
                                 <tr>
-                                    <th rowSpan="2">State</th>
-                                    <th rowSpan="2">City</th>
-                                    <th colSpan="6">Category</th>
-                                    <th colSpan="4">Disability</th>
+                                    <th rowSpan="2">{t("approvalHistory:state")}</th>
+                                    <th rowSpan="2">{t("approvalHistory:city")}</th>
+                                    <th colSpan="6">{t("approvalHistory:category")}</th>
+                                    <th colSpan="4">{t("approvalHistory:disability")}</th>
                                 </tr>
+
                                 <tr>
                                     <th>SC</th>
                                     <th>ST</th>
                                     <th>OBC</th>
                                     <th>EWS</th>
                                     <th>GEN</th>
-                                    <th>Total</th>
+                                    <th>{t("common:total")}</th>
                                     <th>HI</th>
                                     <th>OC</th>
                                     <th>VI</th>
@@ -557,7 +478,7 @@ const SinglePositionInfoModal = ({
                     className="ok-btn"
                     onClick={onHide}
                 >
-                    OK
+                    {t("common:ok")}
                 </button>
             </Modal.Footer>
         </Modal>
