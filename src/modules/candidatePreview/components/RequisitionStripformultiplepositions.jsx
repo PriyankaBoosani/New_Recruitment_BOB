@@ -106,6 +106,7 @@ setMasterData({
 
   /* ================= FETCH JOB ================= */
 
+
 useEffect(() => {
   if (!selectedPositionIdForModal || !masterData) return;
 
@@ -117,29 +118,34 @@ useEffect(() => {
         selectedPositionIdForModal
       );
 
-     const mapped = mapJobPositionToRequisitionStrip(
-  res.data,
-  masterData
-);
+      const mapped = mapJobPositionToRequisitionStrip(
+        res.data,
+        masterData
+      );
 
-mapped.jobPositionExclusions =
-  (res.data?.jobPositionExclusions || [])
-    .filter((x) => x.isExcluded)
-    .map((x) => ({
-      ...x,
-      exclusionValue:
-        masterData?.exclusions?.find(
-          (e) => e.exclusionId === x.exclusionId
-        )?.exclusionValue || "",
-    }));
+      //  Correct property name from API
+      mapped.exclusionNames =
+        (res.data?.jobPositionExclusion || [])
+          .filter((item) => item.isExcluded)
+          .map((item) => {
+            const exclusion = masterData?.exclusions?.find(
+              (e) =>
+                String(e.exclusionId) === String(item.exclusionId)
+            );
 
-mapped.isAgeRelRiotVictimFamily =
-  res.data?.isAgeRelRiotVictimFamily || false;
+            return exclusion?.exclusionValue;
+          })
+          .filter(Boolean);
 
-mapped.isAgeRelWdsWomen =
-  res.data?.isAgeRelWdsWomen || false;
+      mapped.isAgeRelRiotVictimFamily =
+        res.data?.isAgeRelRiotVictimFamily || false;
 
-setJob(mapped); 
+      mapped.isAgeRelWdsWomen =
+        res.data?.isAgeRelWdsWomen || false;
+
+      console.log("Mapped Exclusions:", mapped.exclusionNames);
+
+      setJob(mapped);
     } catch (err) {
       console.error("Failed to fetch job details", err);
       toast.error(t("candidateWorkflow:failed_load_position_details"));
@@ -497,14 +503,16 @@ setJob(mapped);
      
 
 {/* EXCLUSIONS */}
-{job?.jobPositionExclusions?.length > 0 && (
+{/* EXCLUSIONS */}
+{job?.exclusionNames?.length > 0 && (
   <div className="info-card">
-    <div className="section-title">  {t("addPosition:Exclusions")}:</div>
+    <div className="section-title">
+      {t("addPosition:Exclusions")}:
+    </div>
+
     <ul className="section-lists">
-      {job.jobPositionExclusions.map((item, index) => (
-        <li key={index}>
-          {item.exclusionValue || item.exclusionName}
-        </li>
+      {job.exclusionNames.map((name, index) => (
+        <li key={index}>{name}</li>
       ))}
     </ul>
   </div>
