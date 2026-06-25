@@ -8,9 +8,9 @@
   "job_grade": "Job Grade",
   "position": "Position",
   "category": "Category",
-    "total_marks_obtained": "Total Marks Obtained",
-      "exam_status": "Exam Status",
-       "rank": "Rank",
+  "total_marks_obtained": "Total Marks Obtained",
+  "exam_status": "Exam Status",
+  "rank": "Rank",
   "score": "Score",
   "certification": "Certification",
   "special_category": "Special Category",
@@ -89,5 +89,6 @@
   "october": "October",
   "november": "November",
   "december": "December",
-  "view_file": "Preview Offer"
+  "view_file": "Preview Offer",
+  "offer_letter_request": "Offer Letter Request"
 }

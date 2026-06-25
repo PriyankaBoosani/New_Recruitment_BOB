@@ -400,7 +400,7 @@ const Header = () => {
                     to="/offerletter-requests"
                     onClick={closeMenu}
                   >
-                   Offer Letter Request
+                 {t("offer_letter_request")}
                   </NavDropdown.Item>
                 </NavDropdown>
               )}

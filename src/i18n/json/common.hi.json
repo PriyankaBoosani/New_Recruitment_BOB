@@ -23,9 +23,9 @@
   "select_dots": "चुनें...",
   "select_years": "वर्ष चुनें",
   "select_months": "महीने चुनें",
-   "total_marks_obtained": "प्राप्त कुल अंक",
+  "total_marks_obtained": "प्राप्त कुल अंक",
   "exam_status": "परीक्षा स्थिति",
-   "rank": "रैंक",
+  "rank": "रैंक",
   "score": "स्कोर",
   "yes": "हाँ",
   "no": "नहीं",
@@ -89,5 +89,6 @@
   "october": "अक्टूबर",
   "november": "नवंबर",
   "december": "दिसंबर",
-  "view_file": "ऑफर पूर्वावलोकन"
+  "view_file": "ऑफर पूर्वावलोकन",
+  "offer_letter_request": "ऑफ़र लेटर अनुरोध"
 }

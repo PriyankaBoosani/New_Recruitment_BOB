@@ -13,6 +13,7 @@ import "../../../style/css/ExamRequest.css";
 import AddExaminationCutoffModal from "../../ExaminationCutoffConfiguration/components/AddExaminationCutoffModal";
 import view_icon from "../../../assets/view_icon.png";
 import ApprovalHistoryModal from "../../Approvals/components/ApprovalHistoryModal";
+import { useTranslation } from "react-i18next";
 
 const ExamRequest = () => {
   const {
@@ -42,7 +43,7 @@ const ExamRequest = () => {
   const [cutoffEditData, setCutoffEditData] = useState(null);
 
   const [viewPosition, setViewPosition] = useState(null);
-
+const { t } = useTranslation(["examRequest", "approvalHistory", "common"]);
   const getStatusBadge = (status = "") => {
     switch (status) {
       case "L1_PENDING":
@@ -202,21 +203,21 @@ const ExamRequest = () => {
         <Row className="mb-3 align-items-center">
           <Col>
             <h5 className="page-title">
-              Written Exam — Section & Cutoff Configuration Requests
+              {t("examRequest:exam_requests_title")}
             </h5>
 
             <p className="page-subtitle">
-              Review and approve or reject Written Exam requests
+             {t("examRequest:review_exam_requests")}
             </p>
           </Col>
         </Row>
 
         <Row className="mb-3 align-items-end filters-row border rounded p-3 bulk-actions">
           <Col xs={12} md={4}>
-            <div className="field-label mb-2">Requisition</div>
+            <div className="field-label mb-2"> {t("approvalHistory:requisition")}</div>
 
             <Select
-              placeholder="Select Requisition"
+              placeholder={t("approvalHistory:select_requisition")}
               styles={selectStyles}
               classNamePrefix="react-select"
               menuPortalTarget={document.body}
@@ -234,14 +235,14 @@ const ExamRequest = () => {
             <Col>
               <div className="border rounded bg-white p-3">
                 <div className="section-header mb-3">
-                  Position Wise Cutoff Configuration
+                  {t("examRequest:position_wise_cutoff_configuration")}
                 </div>
 
                 {loadingExamConfigs ? (
-                  <div className="text-muted">Loading configurations...</div>
+                  <div className="text-muted"> {t("examRequest:loading_configurations")}</div>
                 ) : requisitionPositions.length === 0 ? (
                   <div className="text-muted">
-                    No configuration available for this requisition.
+                     {t("examRequest:no_configuration_available")}
                   </div>
                 ) : (
                   <div className="d-flex flex-column gap-3">
@@ -259,7 +260,7 @@ const ExamRequest = () => {
                               placement="bottom"
                               overlay={
                                 <Tooltip id={`tooltip-history-${pos.value}`}>
-                                  View Approval History
+                                 {t("examRequest:view_approval_history")}
                                 </Tooltip>
                               }
                             >

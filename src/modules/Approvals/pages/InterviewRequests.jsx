@@ -18,6 +18,8 @@ import start_icon from "../../../assets/start_icon.png";
 import I_icon from "../../../assets/I_icon.png";
 import useInterviewSchedule from "../hooks/useInterviewSchedule";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+
 
 const selectStyles = {
   control: (base) => ({
@@ -102,6 +104,11 @@ const InterviewRequests = () => {
     useState(null);
 
   const [openHistoryId, setOpenHistoryId] = useState(null);
+  const { t } = useTranslation([
+    "interviewRequest",
+    "approvalHistory",
+    "common",
+  ]);
 
   const {
     requisitionOptions,
@@ -119,10 +126,10 @@ const InterviewRequests = () => {
 
   const selectedRequisitionOption = selectedRequisition
     ? {
-        label: `${selectedRequisition.requisitionCode} - ${selectedRequisition.requisitionTitle}`,
-        value: selectedRequisition.id,
-        raw: selectedRequisition,
-      }
+      label: `${selectedRequisition.requisitionCode} - ${selectedRequisition.requisitionTitle}`,
+      value: selectedRequisition.id,
+      raw: selectedRequisition,
+    }
     : null;
   const formatStatus = (status = "") => {
     return status
@@ -208,8 +215,8 @@ const InterviewRequests = () => {
         <Table bordered hover className="mb-0 align-middle">
           <thead>
             <tr>
-              <th>Zone Name</th>
-              <th>Candidates</th>
+              <th>{t("interviewRequest:zone_name")}</th>
+              <th>{t("interviewRequest:candidates")}</th>
             </tr>
           </thead>
           <tbody>
@@ -223,7 +230,7 @@ const InterviewRequests = () => {
             ) : (
               <tr>
                 <td colSpan="2" className="text-center text-muted">
-                  No zone details found
+                  {t("interviewRequest:no_zone_details_found")}
                 </td>
               </tr>
             )}
@@ -236,10 +243,10 @@ const InterviewRequests = () => {
       <Table bordered hover className="mb-0 align-middle">
         <thead>
           <tr>
-            <th>Panel Name</th>
-            <th>Members</th>
-            <th>Start Date</th>
-            <th>End Date</th>
+            <th>{t("approvalHistory:panel_name")}</th>
+            <th>{t("approvalHistory:panel_members")}</th>
+            <th>{t("approvalHistory:start_date")}</th>
+            <th>{t("approvalHistory:end_date")}</th>
           </tr>
         </thead>
         <tbody>
@@ -259,7 +266,7 @@ const InterviewRequests = () => {
           ) : (
             <tr>
               <td colSpan="4" className="text-center text-muted">
-                No panel details found
+                {t("approvalHistory:no_panels_found")}
               </td>
             </tr>
           )}
@@ -273,18 +280,18 @@ const InterviewRequests = () => {
       <Container fluid className="interview-page">
         <Row className="mb-3 align-items-center">
           <Col>
-            <h5 className="page-title">Interview Schedule Request</h5>
+            <h5 className="page-title">{t("interviewRequest:interview_schedule_request")}</h5>
             <p className="page-subtitle">
-              Review and approve or reject interview schedule request.
+              {t("interviewRequest:review_interview_schedule_request")}
             </p>
           </Col>
         </Row>
 
         <Row className="mb-3 align-items-end filters-row border rounded p-3 bulk-actions">
           <Col xs={12} md={4}>
-            <div className="field-label">Requisition</div>
+            <div className="field-label">{t("approvalHistory:requisition")}</div>
             <Select
-              placeholder="Select Requisition"
+              placeholder={t("approvalHistory:select_requisition")}
               styles={selectStyles}
               classNamePrefix="react-select"
               menuPortalTarget={document.body}
@@ -301,7 +308,7 @@ const InterviewRequests = () => {
             <div className="p-3 border rounded bg-white">
               {loadingPositionDetails ? (
                 <div className="text-muted p-3">
-                  Loading position details...
+                  {t("interviewRequest:loading_position_details")}
                 </div>
               ) : positionDetails.length > 0 ? (
                 positionDetails.map((pos) => {
@@ -345,7 +352,7 @@ const InterviewRequests = () => {
                           <div className="row g-3">
                             <div className="col-md-3">
                               <div className="field-label">
-                                Department:{" "}
+                                {t("common:department")}:{" "}
                                 <span className="field-value">
                                   {pos.departmentName}
                                 </span>
@@ -354,7 +361,7 @@ const InterviewRequests = () => {
 
                             <div className="col-md-3">
                               <div className="field-label">
-                                Scheduled Candidates:{" "}
+                                {t("interviewRequest:scheduled_candidates")}:{" "}
                                 <span className="field-value">
                                   {pos.totalCandidateCount || 0}
                                 </span>
@@ -363,7 +370,7 @@ const InterviewRequests = () => {
 
                             <div className="col-md-2">
                               <div className="field-label">
-                                Zone Count:{" "}
+                                {t("interviewRequest:zone_count")}:{" "}
                                 <span className="field-value">
                                   {pos.totalZonalCount || 0}
                                 </span>
@@ -371,7 +378,7 @@ const InterviewRequests = () => {
                                   placement="bottom"
                                   overlay={
                                     <Tooltip id={`tooltip-zone-${positionKey}`}>
-                                      View Zone Details
+                                      {t("interviewRequest:view_zone_details")}
                                     </Tooltip>
                                   }
                                 >
@@ -397,7 +404,7 @@ const InterviewRequests = () => {
 
                             <div className="col-md-2">
                               <div className="field-label">
-                                Panel Count:{" "}
+                                {t("interviewRequest:panel_count")}:{" "}
                                 <span className="field-value">
                                   {pos.totalPanelCount || 0}
                                 </span>
@@ -407,7 +414,7 @@ const InterviewRequests = () => {
                                     <Tooltip
                                       id={`tooltip-panel-${positionKey}`}
                                     >
-                                      View Panel Details
+                                      {t("interviewRequest:view_panel_details")}
                                     </Tooltip>
                                   }
                                 >
@@ -441,7 +448,7 @@ const InterviewRequests = () => {
                                   handleActionClick("approve", pos);
                                 }}
                               >
-                                Approve
+                                {t("approvalHistory:approve")}
                               </Button>
 
                               <Button
@@ -453,7 +460,7 @@ const InterviewRequests = () => {
                                   handleActionClick("reject", pos);
                                 }}
                               >
-                                Reject
+                                {t("approvalHistory:reject")}
                               </Button>
                             </div>
 
@@ -464,7 +471,7 @@ const InterviewRequests = () => {
                                   alt="History"
                                   style={{ width: 18, height: 18 }}
                                 />
-                                <span className="hisname">History</span>
+                                <span className="hisname">{t("interviewRequest:history")}</span>
                               </div>
 
                               {pos.history?.length > 0 ? (
@@ -506,7 +513,7 @@ const InterviewRequests = () => {
                                                 <ChevronDown size={18} />
                                               )}
                                               <div className="field-label">
-                                                Date:{" "}
+                                                {t("interviewRequest:date")}:{" "}
                                                 <span className="field-value mb-0">
                                                   {formatDateTime(item.date)}
                                                 </span>
@@ -516,7 +523,7 @@ const InterviewRequests = () => {
 
                                           <div className="col-md-3">
                                             <div className="field-label">
-                                              Scheduled Candidates:{" "}
+                                              {t("interviewRequest:scheduled_candidates")}:{" "}
                                               <span className="field-value">
                                                 {item.totalCandidateCount || 0}
                                               </span>
@@ -525,7 +532,7 @@ const InterviewRequests = () => {
 
                                           <div className="col-md-2">
                                             <div className="field-label">
-                                              Zone Count:{" "}
+                                              {t("interviewRequest:zone_count")}:{" "}
                                               <span className="field-value">
                                                 {item.totalZonalCount || 0}
                                               </span>
@@ -534,7 +541,7 @@ const InterviewRequests = () => {
 
                                           <div className="col-md-2">
                                             <div className="field-label">
-                                              Panel Count:{" "}
+                                              {t("interviewRequest:panel_count")}:{" "}
                                               <span className="field-value ms-1">
                                                 {item.totalPanelCount || 0}
                                               </span>
@@ -556,7 +563,7 @@ const InterviewRequests = () => {
                                           <div className="row g-3">
                                             <div className="col-md-6">
                                               <div className="field-label mb-2">
-                                                Zone Details (
+                                                {t("interviewRequest:zone_details")} (
                                                 {item.zones?.length || 0})
                                               </div>
 
@@ -567,8 +574,8 @@ const InterviewRequests = () => {
                                               >
                                                 <thead>
                                                   <tr>
-                                                    <th>Zone Name</th>
-                                                    <th>Candidates</th>
+                                                    <th>{t("interviewRequest:zone_name")}</th>
+                                                    <th>{t("interviewRequest:candidates")}</th>
                                                   </tr>
                                                 </thead>
                                                 <tbody>
@@ -590,7 +597,7 @@ const InterviewRequests = () => {
                                                         colSpan="2"
                                                         className="text-center text-muted"
                                                       >
-                                                        No zone details found
+                                                        {t("interviewRequest:no_zone_details_found")}
                                                       </td>
                                                     </tr>
                                                   )}
@@ -611,10 +618,10 @@ const InterviewRequests = () => {
                                               >
                                                 <thead>
                                                   <tr>
-                                                    <th>Panel Name</th>
-                                                    <th>Members</th>
-                                                    <th>Start Date</th>
-                                                    <th>End Date</th>
+                                                    <th>{t("approvalHistory:panel_name")}</th>
+                                                    <th>{t("approvalHistory:panel_members")}</th>
+                                                    <th>{t("approvalHistory:start_date")}</th>
+                                                    <th>{t("approvalHistory:end_date")}</th>
                                                   </tr>
                                                 </thead>
                                                 <tbody>
@@ -629,13 +636,13 @@ const InterviewRequests = () => {
                                                             {Array.isArray(
                                                               p.members
                                                             ) &&
-                                                            p.members.length > 0
+                                                              p.members.length > 0
                                                               ? p.members
-                                                                  .map(
-                                                                    (m) =>
-                                                                      m.name
-                                                                  )
-                                                                  .join(", ")
+                                                                .map(
+                                                                  (m) =>
+                                                                    m.name
+                                                                )
+                                                                .join(", ")
                                                               : "-"}
                                                           </td>
                                                           <td>
@@ -657,7 +664,7 @@ const InterviewRequests = () => {
                                                         colSpan="4"
                                                         className="text-center text-muted"
                                                       >
-                                                        No panel details found
+                                                        {t("approvalHistory:no_panels_found")}
                                                       </td>
                                                     </tr>
                                                   )}
@@ -672,7 +679,7 @@ const InterviewRequests = () => {
                                 })
                               ) : (
                                 <div className="text-muted">
-                                  No history found
+                                  {t("interviewRequest:no_history_found")}
                                 </div>
                               )}
                             </div>
@@ -684,7 +691,7 @@ const InterviewRequests = () => {
                 })
               ) : (
                 <div className="text-center text-muted my-4">
-                  No position details found
+                  {t("interviewRequest:no_position_details_found")}
                 </div>
               )}
             </div>
@@ -707,7 +714,9 @@ const InterviewRequests = () => {
         >
           <Modal.Header closeButton className="border-0">
             <Modal.Title className="bluefont">
-              {detailModal.type === "zone" ? "Zone Details" : "Panel Details"}
+              {detailModal.type === "zone"
+                ? t("interviewRequest:zone_details")
+                : t("approvalHistory:panel_name")}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>{renderDetailTable()}</Modal.Body>
@@ -723,7 +732,7 @@ const InterviewRequests = () => {
                 })
               }
             >
-              Close
+              {t("common:close")}
             </Button>
           </Modal.Footer>
         </Modal>

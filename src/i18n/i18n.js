@@ -91,6 +91,12 @@ import extensionsRequestsHi from "../i18n/ExtensionsRequests/extensionsRequests_
 import examconfigurationEn from "../i18n/ExamconfigurationJson/examconfiguration.en.json";
 import examconfigurationHi from "../i18n/ExamconfigurationJson/examconfiguration.hi.json";
 
+import examRequestEn from "../i18n/ExamRequestJson/examRequest.en.json";
+import examRequestHi from "../i18n/ExamRequestJson/examRequest.hi.json";
+
+import interviewRequestEn from "../i18n/InterviewRequestJson/interviewRequest.en.json";
+import interviewRequestHi from "../i18n/InterviewRequestJson/interviewRequest.hi.json";
+
 i18n.use(initReactI18next).init({
   resources: {
     en: {
@@ -125,6 +131,8 @@ i18n.use(initReactI18next).init({
       extensionsRequests: extensionsRequestsEn,
       examconfiguration: examconfigurationEn,
       compensationPool: compensationPoolEn,
+      examRequest: examRequestEn,
+      interviewRequest: interviewRequestEn,
     },
     hi: {
       common: commonHi,
@@ -158,6 +166,8 @@ i18n.use(initReactI18next).init({
       extensionsRequests: extensionsRequestsHi,
       examconfiguration: examconfigurationHi,
       compensationPool: compensationPoolHi,
+      examRequest: examRequestHi,
+      interviewRequest: interviewRequestHi,
     },
   },
   lng: "en",
