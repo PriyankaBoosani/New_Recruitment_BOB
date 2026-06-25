@@ -214,7 +214,7 @@ const UserFormModal = ({
               {formData.role === "Zonal_HR" && (
                 <Col md={6}>
                   <Form.Label>
-                    Interview Centre <span className="text-danger">*</span>
+                    {t("interview_centre")} <span className="text-danger">*</span>
                   </Form.Label>
 
                   <Form.Select
@@ -222,8 +222,7 @@ const UserFormModal = ({
                     value={formData.interviewCenterId}
                     onChange={handleInputChange}
                   >
-                    <option value="">Select Interview Centre</option>
-
+                  <option value="">{t("select_interview_centre")}</option>
                     {interviewCentres.map((centre) => (
                       <option
                         key={centre.interviewCentreId}

@@ -29,5 +29,9 @@
   "course": "Course",
   "course_code": "Course Code",
   "specialization_name": "Specialization Name",
-  "specialization_code": "Specialization Code"
+  "specialization_code": "Specialization Code",
+  "view_education": "View Education",
+  "edit_education": "Edit Education",
+  "specialization_name_placeholder": "Specialization Name",
+  "specialization_code_placeholder": "Specialization Code"
 }

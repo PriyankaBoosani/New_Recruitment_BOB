@@ -50,8 +50,8 @@
   "update_error": "Failed to update User",
   "add_error": "Failed to add User",
   "delete_error": "Failed to delete User",
-
   "upload_users": "Upload File",
-
-  "support_xlsx": "Support for XLSX formats"
+  "support_xlsx": "Support for XLSX formats",
+  "interview_centre": "Interview Centre",
+  "select_interview_centre": "Select Interview Centre"
 }

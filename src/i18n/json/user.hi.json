@@ -51,5 +51,7 @@
   "add_error": "उपयोगकर्ता जोड़ने में विफल।",
   "delete_error": "उपयोगकर्ता को हटाने में विफल।",
   "upload_users": "फ़ाइल अपलोड करें",
-  "support_xlsx": "XLSX फ़ॉर्मैट का समर्थन"
+  "support_xlsx": "XLSX फ़ॉर्मैट का समर्थन",
+  "interview_centre": "साक्षात्कार केंद्र",
+  "select_interview_centre": "साक्षात्कार केंद्र चुनें"
 }

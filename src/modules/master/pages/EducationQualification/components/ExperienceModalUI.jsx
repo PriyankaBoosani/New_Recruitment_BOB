@@ -63,9 +63,9 @@ const ExperienceModal = ({
       <Modal.Header closeButton className="modal-header-custom">
         <Modal.Title className="cerhead">
           {isViewing
-            ? "View Education"
+            ? t("education:view_education")
             : isEditing
-              ? "Edit Education"
+              ? t("education:edit_education")
               : t("education:title")}
         </Modal.Title>
       </Modal.Header>
@@ -95,7 +95,7 @@ const ExperienceModal = ({
                     }
                     disabled={isViewing}
                   >
-                    <option value="">Select</option>
+                    <option value="">{t("common:select")}</option>
                     {educationOptions?.map((item) => (
                       <option
                         key={item.documentTypeId}
@@ -156,9 +156,8 @@ const ExperienceModal = ({
                   ) : (
                     <input
                       type="text"
-                      className={`form-control ${
-                        errors[formIndex]?.courseCode ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors[formIndex]?.courseCode ? "is-invalid" : ""
+                        }`}
                       value={form.courseCode}
                       placeholder={t("education:course_code_placeholder")}
                       onChange={(e) =>
@@ -270,7 +269,7 @@ const ExperienceModal = ({
                             paddingRight: "5px",
                           }}
                         >
-                          
+
                           <div className="row">
                             {form.specializationOthers.map((val, i) => (
                               <div key={i} className="col-md-12 mb-2">
@@ -279,13 +278,12 @@ const ExperienceModal = ({
                                   <div className="col-md-5">
                                     <input
                                       type="text"
-                                      className={`form-control ${
-                                        duplicateNames.has(i)
+                                      className={`form-control ${duplicateNames.has(i)
                                           ? "is-invalid"
                                           : ""
-                                      }`}
+                                        }`}
                                       value={val?.name || ""}
-                                      placeholder="Specialization Name"
+                                      placeholder={t("education:specialization_name")}
                                       onChange={(e) =>
                                         onChange(
                                           formIndex,
@@ -301,13 +299,12 @@ const ExperienceModal = ({
                                   <div className="col-md-5">
                                     <input
                                       type="text"
-                                      className={`form-control ${
-                                        duplicateCodes.has(i)
+                                      className={`form-control ${duplicateCodes.has(i)
                                           ? "is-invalid"
                                           : ""
-                                      }`}
+                                        }`}
                                       value={val?.code || ""}
-                                      placeholder="Specialization Code"
+                                     placeholder={t("education:specialization_code")}
                                       onChange={(e) =>
                                         onChange(
                                           formIndex,
@@ -323,21 +320,21 @@ const ExperienceModal = ({
                                   <div className="col-md-2 d-flex align-items-center">
                                     {(!isEditing ||
                                       (isEditing && !val?.id)) && (
-                                      <Button
-                                        type="button"
-                                        variant="link"
-                                        className="action-btn delete-btn"
-                                        onClick={() =>
-                                          onRemoveSpec(formIndex, i)
-                                        }
-                                      >
-                                        <img
-                                          src={deleteIcon}
-                                          alt="Delete"
-                                          className="icon-16"
-                                        />
-                                      </Button>
-                                    )}
+                                        <Button
+                                          type="button"
+                                          variant="link"
+                                          className="action-btn delete-btn"
+                                          onClick={() =>
+                                            onRemoveSpec(formIndex, i)
+                                          }
+                                        >
+                                          <img
+                                            src={deleteIcon}
+                                            alt="Delete"
+                                            className="icon-16"
+                                          />
+                                        </Button>
+                                      )}
                                   </div>
                                 </div>
                                 <div className="row mt-1">
@@ -412,7 +409,7 @@ const ExperienceModal = ({
                 </div>
               </div>
 
-              
+
             </div>
           );
         })}
@@ -420,12 +417,12 @@ const ExperienceModal = ({
 
       <Modal.Footer className="modal-footer-custom">
         <Button variant="outline-secondary" onClick={handleCloseModal}>
-          {isViewing ? "Close" : t("common:cancel")}
+        {isViewing ? t("common:close") : t("common:cancel")}
         </Button>
 
         {!isViewing && (
           <Button variant="primary" onClick={saveExperience}>
-            {isEditing ? "Update" : t("common:save")}
+            {isEditing ? t("common:update") : t("common:save")}
           </Button>
         )}
       </Modal.Footer>
