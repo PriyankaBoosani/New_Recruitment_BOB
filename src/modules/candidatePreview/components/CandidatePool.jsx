@@ -316,7 +316,7 @@ export default function CandidatePool({
                       {c.applicationNo}
                     </p>
                     <p className="text-muted fs-12 mb-0">
-                      Position:{" "}
+                        {t("candidateWorkflow:position")}:{" "}
                       {position?.find((p) => p.positionId === c.positionId)
                         ?.positionName || "-"}
                     </p>
