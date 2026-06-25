@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const InterviewCentreAllocationModal = ({
   show,
@@ -9,23 +10,24 @@ const InterviewCentreAllocationModal = ({
   allInterviewCentres,
   onContinue,
 }) => {
+  const { t } = useTranslation("interviewSchedule");
   if (!show) return null;
 
   return (
     <div className="ipc-alert-overlay">
       <div className="ipc-alert-modal centre-modal">
-        <h4 className="ipc-alert-title">Update Interview Centre Allocation</h4>
+        <h4 className="ipc-alert-title"> {t("update_interview_centre_allocation")}</h4>
 
         <p className="ipc-alert-message">
-          Replace unavailable interview centres before continuing.
+           {t("replace_unavailable_centres")}
         </p>
 
         <div className="table-responsive mt-4">
           <table className="table align-middle">
             <thead>
               <tr>
-                <th>Allocated Interview Centre</th>
-                <th>Replace With</th>
+                <th>{t("allocated_interview_centre")}</th>
+                <th>{t("replace_with")}</th>
               </tr>
             </thead>
 
@@ -45,7 +47,7 @@ const InterviewCentreAllocationModal = ({
                         setCentreRows(updated);
                       }}
                     >
-                      <option value="">Select Centre</option>
+                      <option value="">  {t("select_centre")}</option>
 
                       {uniqueAllocatedCentres
                         .filter((c) => {
@@ -86,7 +88,7 @@ const InterviewCentreAllocationModal = ({
                           setCentreRows(updated);
                         }}
                       >
-                        <option value="">Select Replacement</option>
+                        <option value="">  {t("select_replacement")}</option>
 
                         {allInterviewCentres
                           .filter(
@@ -151,11 +153,11 @@ const InterviewCentreAllocationModal = ({
         {/* FOOTER */}
         <div className="d-flex justify-content-end gap-2 mt-4">
           <button className="btn btn-light" onClick={onClose}>
-            Cancel
+             {t("common:cancel")}
           </button>
 
           <button className="btn btn-primary" onClick={onContinue}>
-            Continue Scheduling
+             {t("continue_scheduling")}
           </button>
         </div>
       </div>

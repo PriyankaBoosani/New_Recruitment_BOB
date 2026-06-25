@@ -13,6 +13,7 @@ const TableSection = ({
   totalQualifiedCount = 0,
 }) => {
   const categoryMap = {};
+  
 
   summaryData?.categorySummaries?.forEach((cat) => {
     categoryMap[cat.categoryId] = cat;
@@ -61,7 +62,7 @@ const TableSection = ({
                 fontWeight: "700",
               }}
             >
-              Metric
+             {t("metric")}
             </th>
 
             {tableHeaders.map((head) => (
@@ -88,7 +89,7 @@ const TableSection = ({
                 fontWeight: "700",
               }}
             >
-              Total
+             {t("total")}
             </th>
           </tr>
         </thead>
@@ -163,6 +164,8 @@ const ExaminationScoreModal = ({
   reservationCategories = [],
   examConfigMap = {},
 }) => {
+
+  const { t } = useTranslation("candidateWorkflow");
   return (
     <Modal
       show={show}
@@ -187,7 +190,7 @@ const ExaminationScoreModal = ({
               color: "#1F2937",
             }}
           >
-            Rank Positions Summary
+            {t("rankPositionsSummary")}
           </h2>
 
           <p
@@ -197,7 +200,7 @@ const ExaminationScoreModal = ({
               color: "#6B7280",
             }}
           >
-            View and manage position rankings
+            {t("viewAndManagePositionRankings")}
           </p>
         </div>
       </Modal.Header>
@@ -320,11 +323,11 @@ const getStatusLabel = (status) => {
 
                 <div className="d-flex align-items-center gap-2">
                   <div className="rank-date-badge">
-                    Start: {formatDate(item.startDate)}
+                    {t("start")}: {formatDate(item.startDate)}
                   </div>
 
                   <div className="rank-date-badge">
-                    End: {formatDate(item.endDate)}
+                  {t("end")}: {formatDate(item.endDate)}
                   </div>
 
 
@@ -353,7 +356,7 @@ const getStatusLabel = (status) => {
                       }}
                     >
                       <i className="bi bi-pencil-square me-1" />
-                      Edit
+                    {t("edit")}
                     </button>
                   )}
                   {hasConfig &&
@@ -404,7 +407,7 @@ const getStatusLabel = (status) => {
                           }
                         }}
                       >
-                        Finalize
+                       {t("finalize")}
                       </button>
                     )}
 

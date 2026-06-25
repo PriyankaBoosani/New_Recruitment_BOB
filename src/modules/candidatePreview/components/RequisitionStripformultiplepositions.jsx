@@ -86,11 +86,15 @@ const RequisitionStripformultiplepositions = ({
   useEffect(() => {
     const loadMasters = async () => {
       try {
-        const [masterRes] = await Promise.all([
-          masterApiService.getMasterDisplayAll(),
-        ]);
+     const [masterRes, exclusionsRes] = await Promise.all([
+  masterApiService.getMasterDisplayAll(),
+  masterApiService.getExclusions(),
+]);
 
-        setMasterData(masterRes.data || {});
+setMasterData({
+  ...masterRes.data,
+  exclusions: exclusionsRes.data || [],
+});
       } catch (err) {
         console.error("Failed to load master data", err);
         setMasterData({});
@@ -102,30 +106,50 @@ const RequisitionStripformultiplepositions = ({
 
   /* ================= FETCH JOB ================= */
 
-  useEffect(() => {
-    if (!selectedPositionIdForModal || !masterData) return;
+useEffect(() => {
+  if (!selectedPositionIdForModal || !masterData) return;
 
-    const fetchJob = async () => {
-      try {
-        setLoading(true);
+  const fetchJob = async () => {
+    try {
+      setLoading(true);
 
-        const res = await candidateWorkflowServices.getJobPositionById(
-          selectedPositionIdForModal
-        );
+      const res = await candidateWorkflowServices.getJobPositionById(
+        selectedPositionIdForModal
+      );
 
-        const mapped = mapJobPositionToRequisitionStrip(res.data, masterData);
+     const mapped = mapJobPositionToRequisitionStrip(
+  res.data,
+  masterData
+);
 
-        setJob(mapped);
-      } catch (err) {
-        console.error("Failed to fetch job details", err);
-        toast.error(t("candidateWorkflow:failed_load_position_details"));
-      } finally {
-        setLoading(false);
-      }
-    };
+mapped.jobPositionExclusions =
+  (res.data?.jobPositionExclusions || [])
+    .filter((x) => x.isExcluded)
+    .map((x) => ({
+      ...x,
+      exclusionValue:
+        masterData?.exclusions?.find(
+          (e) => e.exclusionId === x.exclusionId
+        )?.exclusionValue || "",
+    }));
 
-    fetchJob();
-  }, [selectedPositionIdForModal, masterData]);
+mapped.isAgeRelRiotVictimFamily =
+  res.data?.isAgeRelRiotVictimFamily || false;
+
+mapped.isAgeRelWdsWomen =
+  res.data?.isAgeRelWdsWomen || false;
+
+setJob(mapped); 
+    } catch (err) {
+      console.error("Failed to fetch job details", err);
+      toast.error(t("candidateWorkflow:failed_load_position_details"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchJob();
+}, [selectedPositionIdForModal, masterData]);
 
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const formatExperience = (years = 0, months = 0) => {
@@ -450,6 +474,43 @@ const RequisitionStripformultiplepositions = ({
                   {renderBullets(job?.roles_responsibilities)}
                 </ul>
               </div>
+
+
+{/* INCLUSIONS */}
+{(job?.isAgeRelRiotVictimFamily || job?.isAgeRelWdsWomen) && (
+  <div className="info-card">
+    <div className="section-title">    {t("addPosition:age_relaxation_for")}:</div>
+    <ul className="section-lists">
+      {job?.isAgeRelRiotVictimFamily && (
+     <li>{t("addPosition:persons_affected_by_1984_riots")}</li>
+      )}
+
+      {job?.isAgeRelWdsWomen && (
+        <li>
+         {t("addPosition:widowed_divorced_separated_women")}
+        </li>
+      )}
+    </ul>
+  </div>
+)}
+
+     
+
+{/* EXCLUSIONS */}
+{job?.jobPositionExclusions?.length > 0 && (
+  <div className="info-card">
+    <div className="section-title">  {t("addPosition:Exclusions")}:</div>
+    <ul className="section-lists">
+      {job.jobPositionExclusions.map((item, index) => (
+        <li key={index}>
+          {item.exclusionValue || item.exclusionName}
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
+
 
               {job?.positionStateDistributions?.length > 0 && (
                 <LocationWiseVacancyTable

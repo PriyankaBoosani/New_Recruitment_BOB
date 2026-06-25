@@ -67,7 +67,7 @@ const SchedulePoolTable = ({
               !rows.some((row) => getApprovalStatus(row) === "PENDING")
             }
           >
-            Submit for Approval
+            {t("candidateWorkflow:submit_for_approval")}
           </button>
 
           <button
@@ -75,7 +75,7 @@ const SchedulePoolTable = ({
             onClick={onEdit}
             disabled={rows.length === 0 || submitting}
           >
-            Edit Schedule
+            {t("candidateWorkflow:edit_schedule")}
           </button>
         </div>
       </div>
@@ -114,7 +114,7 @@ const SchedulePoolTable = ({
           {rows.length === 0 ? (
             <tr>
               <td colSpan="8" className="text-center py-4 text-muted fs-14">
-                No candidates found.
+               {t("candidateWorkflow:no_candidates_found_schedule")}
               </td>
             </tr>
           ) : (
@@ -125,10 +125,10 @@ const SchedulePoolTable = ({
                   <p className="fw-normal fs-14 mb-0">{row.name}</p>
 
                   <p className="text-muted fs-12 mb-0">
-                    Application Number: {row.regNo}
+                   {t("candidateWorkflow:application_number")}: {row.regNo}
                   </p>
                   <p className="text-muted fs-12 mb-0">
-                    Position:{" "}
+               {t("candidateWorkflow:position")}:{" "}
                     {position?.find((p) => p.positionId === row.positionId)
                       ?.positionName || "-"}
                   </p>
@@ -165,7 +165,7 @@ const SchedulePoolTable = ({
                       placement="bottom"
                       overlay={
                         <Tooltip id={`tooltip-remarks-${row.id}`}>
-                          View rejection remarks
+                          {t("candidateWorkflow:view_rejection_remarks")}
                         </Tooltip>
                       }
                     >
@@ -194,7 +194,7 @@ const SchedulePoolTable = ({
                 <td className="text-center align-content-center">
                   <OverlayTrigger
                     placement="bottom"
-                    overlay={<Tooltip>View Profile</Tooltip>}
+                    overlay={<Tooltip>{t("candidateWorkflow:view_profile")}</Tooltip>}
                   >
                     <Person
                      size={16}
@@ -205,7 +205,7 @@ const SchedulePoolTable = ({
 
                   <OverlayTrigger
                     placement="bottom"
-                    overlay={<Tooltip>View Resume</Tooltip>}
+                    overlay={<Tooltip>{t("candidateWorkflow:view_resume")}</Tooltip>}
                   >
                     <FileText
                      size={16}
@@ -223,8 +223,8 @@ const SchedulePoolTable = ({
       {/* FOOTER */}
       <div className="d-flex justify-content-between align-items-center px-3 py-3 border-top">
         <div className="fs-14 text-muted">
-          Showing {rows.length === 0 ? 0 : page * pageSize + 1}–
-          {Math.min((page + 1) * pageSize, totalElements)} of {totalElements}
+         {t("candidateWorkflow:showing")}{rows.length === 0 ? 0 : page * pageSize + 1}–
+          {Math.min((page + 1) * pageSize, totalElements)} {t("candidateWorkflow:of")}   {totalElements}
         </div>
 
         <div className="d-flex align-items-center gap-2">
@@ -250,7 +250,7 @@ const SchedulePoolTable = ({
             disabled={page === 0}
             onClick={() => onPageChange(page - 1)}
           >
-            Prev
+           {t("candidateWorkflow:prev")}
           </button>
 
           <button
@@ -258,7 +258,7 @@ const SchedulePoolTable = ({
             disabled={(page + 1) * pageSize >= totalElements}
             onClick={() => onPageChange(page + 1)}
           >
-            Next
+          {t("candidateWorkflow:next")}
           </button>
         </div>
       </div>
@@ -268,11 +268,11 @@ const SchedulePoolTable = ({
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>Rejection Remarks</Modal.Title>
+          <Modal.Title> {t("candidateWorkflow:rejection_remarks")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="mb-0">
-            {selectedRemarks || "No remarks available"}
+            {selectedRemarks || t("candidateWorkflow:no_remarks_available")}
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -280,7 +280,7 @@ const SchedulePoolTable = ({
             variant="secondary"
             onClick={() => setShowCommentModal(false)}
           >
-            Close
+          {t("candidateWorkflow:close")}
           </Button>
         </Modal.Footer>
       </Modal>

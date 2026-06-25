@@ -102,7 +102,7 @@ const ReservationSection = ({
         </div>
       </Col>
 
-{/* 
+
       <Col xs={12} className="mt-3">
         <Form.Label>Exclusions:</Form.Label>
 
@@ -129,7 +129,7 @@ const ReservationSection = ({
             />
           ))}
         </div>
-      </Col> */}
+      </Col>
       {/* Reservation Section */}
       <Col xs={12} className="mt-4">
         <div className="d-flex justify-content-between align-items-center mb-3">

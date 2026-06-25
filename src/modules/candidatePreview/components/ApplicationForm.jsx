@@ -298,14 +298,14 @@ const [submitting, setSubmitting] = useState(false);
     const isLptFailed = isLptRequired === "YES" && lptType === "FAIL";
 
     if (zonalDecision === "YES" && isLptFailed) {
-      toast.error("Candidate failed LPT. Approval not allowed.");
+      toast.error(t("candidate_failed_lpt"));
       return;
     }
 
     // 4️⃣ Decision = PROVISIONAL but all VERIFIED
     if (zonalDecision === "PROVISIONALLY_APPROVED" && allVerified) {
       toast.warning(
-        "All documents are verified. Please select other decision instead."
+        t("all_documents_verified_select_other")
       );
       return;
     }
@@ -798,7 +798,7 @@ const [submitting, setSubmitting] = useState(false);
       setSelectedDoc(null);
       await refreshDocStatuses();
     } catch (err) {
-      console.error("Reject failed", err);
+      console.error(t("reject_failed"), err);
     } finally {
       docActionRef.current = false;
     }
@@ -901,7 +901,7 @@ const [submitting, setSubmitting] = useState(false);
 
     otherDocuments.forEach((doc) => {
       if (!doc.documentName?.trim()) {
-        docErrors[doc.id] = "Document name is required";
+        docErrors[doc.id] = t("document_name_required");
       }
     });
 
@@ -1607,7 +1607,7 @@ if (
                   <tr>
                     <td className="fw-med">{t("ex_serviceman")}</td>
                     <td className="fw-reg" colSpan={2}>
-                      {data.personalDetails.exService || "N/A"}
+                      {data.personalDetails.exService || t("not_available")}
                     </td>
                     <td className="fw-med">{t("physical_disability")}</td>
                     <td className="fw-reg" colSpan={2}>
@@ -2127,14 +2127,15 @@ if (
                     color: "#162B75",
                   }}
                 >
-                  Additional Required Documents
+                   {t("additional_required_documents")}
+
                 </label>
                 <button
                   className="btn-submit-orange py-1 px-2"
                   style={{ height: "auto", fontSize: "0.75rem" }}
                   onClick={handleAddDocumentRow}
                 >
-                  + Add Document
+                  +  {t("add_document")}
                 </button>
               </div>
 
@@ -2149,7 +2150,7 @@ if (
                         fontWeight: 500,
                       }}
                     >
-                      Document Name
+                   {t("document_name")}
                     </label>
 
                     <input
@@ -2164,7 +2165,7 @@ if (
                         )
                       }
                       style={{ minHeight: "auto", padding: "0.4rem 0.8rem" }}
-                      placeholder="Enter document name"
+                       placeholder={t("enter_document_name")}
                     />
                     {otherDocumentErrors[row.id] && (
                       <small className="text-danger fs-12">
@@ -2459,7 +2460,7 @@ if (
                           opacity: disableEligibleCheckbox ? 0.6 : 1,
                         }}
                       >
-                        Eligible?
+                        {t("eligible")}?
                       </label>
                     </div>
                     <span
@@ -2473,7 +2474,7 @@ if (
                       className="me-4"
                       onClick={() => setShowCommentsModal(true)}
                     >
-                      View all comments
+                     {t("view_all_comments")}
                       <FontAwesomeIcon
                         icon={faUpRightFromSquare}
                         style={{ fontSize: "12px" }}
@@ -2499,7 +2500,7 @@ if (
         {isZonalHr && (
           <Card className="criteria-main-card p-3 mb-3">
             <label className="criteria-title mb-3">
-              LPT (Language Proficiency Test)
+             t("lpt_title")
             </label>
 
             <div className="d-flex align-items-start gap-3 flex-wrap">
@@ -2512,7 +2513,7 @@ if (
                     fontSize: "13px",
                   }}
                 >
-                  LPT Required
+                t("lpt_required")
                 </label>
 
                 <select
@@ -2531,9 +2532,9 @@ if (
                     setIsLptRequired(value);
                   }}
                 >
-                  <option value="">Select</option>
-                  <option value="YES">YES</option>
-                  <option value="NO">NO</option>
+                  <option value="">t("select")</option>
+                  <option value="YES">t("YES")</option>
+                  <option value="NO">t("NO")</option>
                 </select>
               </div>
 
@@ -2546,7 +2547,7 @@ if (
                       fontSize: "13px",
                     }}
                   >
-                    LPT Status
+                   t("lpt_status")
                   </label>
 
                   <select
@@ -2558,14 +2559,14 @@ if (
                       setZonalDecision("");
                     }}
                   >
-                    <option value="">Select</option>
-                    <option value="PASS">Studied in Class X/ Class XII</option>
+                    <option value="">t("select")</option>
+                    <option value="PASS">t("studied_in_class_x_xii")</option>
 
                     {/* <option value="PASS">Pass</option> */}
 
-                    <option value="FAIL">Fail</option>
+                    <option value="FAIL">t("fail")</option>
 
-                    <option value="EXTENSION_GRANTED">Extension Granted</option>
+                    <option value="EXTENSION_GRANTED">t("extension_granted")</option>
                   </select>
                 </div>
               )}

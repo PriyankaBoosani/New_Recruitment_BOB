@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const InterviewCentreConfirmModal = ({
   show,
@@ -6,8 +7,10 @@ const InterviewCentreConfirmModal = ({
   onReview,
   onClose,
 }) => {
-  if (!show) return null;
+   const { t } = useTranslation("interviewSchedule");
 
+  if (!show) return null;
+ 
   return (
     <div className="ipc-alert-overlay">
       <div className="ipc-alert-modal" style={{ position: "relative" }}>
@@ -21,26 +24,26 @@ const InterviewCentreConfirmModal = ({
         </div>
 
         <h4 className="ipc-alert-title">
-          Confirm Interview Centre Availability
+        <h4 className="ipc-alert-title">
+  {t("confirm_interview_centre_title")}
+</h4>
         </h4>
 
         <p className="ipc-alert-message">
-          Please confirm that all allocated interview centres are available for
-          the scheduled interview slots.
+          {t("confirm_interview_centre_message_1")}
         </p>
 
         <p className="ipc-alert-message mt-3">
-          If any centre is unavailable, you can review and update the interview
-          centre allocation before proceeding.
+           {t("confirm_interview_centre_message_2")}
         </p>
 
         <div className="d-flex justify-content-end gap-2 mt-4">
           <button className="btn btn-light" onClick={onReview}>
-            Review Centres
+            {t("review_centres")}
           </button>
 
           <button className="btn btn-primary" onClick={onProceed}>
-            Proceed
+            {t("proceed")}
           </button>
         </div>
       </div>

@@ -141,7 +141,7 @@ const AddPanelModal = ({
                 <div className="ap-panel-popover-header">
                   <h6 className="ap-panel-popover-title">
                     <i className="bi bi-calendar-check me-2 text-primary" />{" "}
-                    Scheduled Interviews
+                     {t("scheduled_interviews")}
                   </h6>
                   <button
                     type="button"
@@ -160,7 +160,7 @@ const AddPanelModal = ({
                         role="status"
                       ></div>
                       <span className="ms-2 text-muted">
-                        Loading availability...
+                        {t("loading_availability")}
                       </span>
                     </div>
                   ) : panelAvailability.length > 0 ? (
@@ -173,7 +173,7 @@ const AddPanelModal = ({
                             {formatDateDDMMYYYY(day.panelDate)}
                           </span>
                           <span className="ap-count-badge">
-                            {day.panelAvailableModels?.length || 0} Allocated
+                              {day.panelAvailableModels?.length || 0} {t("allocated")}
                           </span>
                         </div>
 
@@ -204,7 +204,7 @@ const AddPanelModal = ({
                   ) : (
                     <div className="text-center text-muted py-4">
                       <i className="bi bi-calendar-x d-block fs-4 mb-2 text-neutral" />
-                      No scheduled interviews found
+                      {t("no_scheduled_interviews")}
                     </div>
                   )}
                 </div>
@@ -219,14 +219,13 @@ const AddPanelModal = ({
           {/* DATE RANGE TEXT BELOW DROPDOWN */}
           {panelRanges.length > 0 && (
             <div className="ap-date-range-text">
-              Allowed ranges:
+               {t("allowed_ranges")}:
               {panelRanges.map((range, index) => (
                 <div key={index} className="ap-range-item">
                   <div className="ap-range-position">{range.positionName}</div>
 
                   <div className="ap-range-dates">
-                    {formatDateDDMMYYYY(range.startDate)} to{" "}
-                    {formatDateDDMMYYYY(range.endDate)}
+                   {formatDateDDMMYYYY(range.startDate)} {t("to")} {formatDateDDMMYYYY(range.endDate)}
                   </div>
                 </div>
               ))}
@@ -266,7 +265,7 @@ const AddPanelModal = ({
                     }}
                     filterDate={(date) => isDateAllowed(date, panelRanges)}
                     dateFormat="dd/MM/yyyy"
-                    placeholderText="Select Date"
+                   placeholderText={t("select_date")}
                     className={`ap-input ap-no-date ${
                       errors?.rows?.[i]?.date ? "ap-error" : ""
                     }`}
@@ -283,7 +282,7 @@ const AddPanelModal = ({
               {/* START TIME */}
               <div className="ap-field">
                 <Form.Label className="ap-label">
-                  Start Time <span>*</span>
+                   {t("start_time")} <span>*</span>
                 </Form.Label>
 
                 <input
@@ -305,7 +304,7 @@ const AddPanelModal = ({
               {/* END TIME */}
               <div className="ap-field">
                 <Form.Label className="ap-label">
-                  End Time <span>*</span>
+                  {t("end_time")} <span>*</span>
                 </Form.Label>
 
                 <input
@@ -328,7 +327,7 @@ const AddPanelModal = ({
               {/* DURATION */}
               <div className="ap-select-wrap">
                 <Form.Label className="ap-label">
-                  Duration <span>*</span>
+                   {t("duration")} <span>*</span>
                 </Form.Label>
 
                 <Form.Select
@@ -338,11 +337,11 @@ const AddPanelModal = ({
                   value={row.duration}
                   onChange={(e) => updateRow(i, "duration", e.target.value)}
                 >
-                  <option value="10">10 mins</option>
-                  <option value="15">15 mins</option>
-                  <option value="30">30 mins</option>
-                  <option value="45">45 mins</option>
-                  <option value="60">60 mins</option>
+                  <option value="10">10 {t("minutes")}</option>
+<option value="15">15 {t("minutes")}</option>
+<option value="30">30 {t("minutes")}</option>
+<option value="45">45 {t("minutes")}</option>
+<option value="60">60 {t("minutes")}</option>
                 </Form.Select>
 
                 <i className="bi bi-chevron-down ap-select-icon" />

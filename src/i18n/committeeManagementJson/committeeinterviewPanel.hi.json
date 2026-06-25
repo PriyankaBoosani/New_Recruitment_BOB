@@ -16,6 +16,7 @@
   "obc": "OBC",
   "member": "सदस्य",
   "save_panel": "पैनल सहेजें",
+   "upload_panels": "पैनल अपलोड करें",
   "update_panel_button": "पैनल अपडेट करें",
   "panels_history": "पैनल इतिहास",
   "search_panel_name": "पैनल नाम से खोजें...",
@@ -121,5 +122,15 @@
   "requisition_position": "आवश्यकता/पद",
   "position_assignment_step_3": "संबंधित चुनें",
   "existing_created_panels": "मौजूदा/निर्मित पैनल(स)",
-  "position_assignment_step_4": "दर्ज करें"
+  "position_assignment_step_4": "दर्ज करें",
+  "upload_xlsx": "XLSX अपलोड करें",
+  "reupload_xlsx": "XLSX पुनः अपलोड करें",
+  "support_xlsx": "केवल XLSX फ़ाइलें समर्थित हैं",
+  "remove_file": "हटाएँ",
+  "invalid_file": "कृपया एक मान्य Excel फ़ाइल अपलोड करें",
+  "no_file_selected": "कोई फ़ाइल चयनित नहीं है",
+  "importing": "आयात किया जा रहा है...",
+  "download_template": "टेम्पलेट डाउनलोड करें",
+  "download_error": "टेम्पलेट डाउनलोड करने में विफल",
+  "import": "आयात करें"
 }

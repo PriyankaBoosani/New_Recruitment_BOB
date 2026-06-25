@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Spinner } from "react-bootstrap";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 const CommentsModal = ({ show, onClose, applicationId }) => {
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation(["preview", "common", "validation"]);
 
   useEffect(() => {
     if (!show || !applicationId) return;
@@ -35,13 +37,14 @@ const CommentsModal = ({ show, onClose, applicationId }) => {
 
     // REQUIRED VALIDATION
     if (!trimmedComment) {
-      toast.error("Comment is required");
+     toast.error(t("comment_required"));
+
       return;
     }
 
     // MAX LENGTH VALIDATION
     if (trimmedComment.length > 2000) {
-      toast.error("Comment cannot exceed 2000 characters");
+toast.error(t("comment_max_length"));
       return;
     }
 
@@ -53,7 +56,7 @@ const CommentsModal = ({ show, onClose, applicationId }) => {
       await fetchComments();
     } catch (err) {
       console.error("Failed to post comment", err);
-      toast.error("Failed to post comment");
+toast.error(t("failed_post_comment"));
     }
   };
 
@@ -75,7 +78,7 @@ const CommentsModal = ({ show, onClose, applicationId }) => {
             color: "#2f3a8f",
           }}
         >
-          Comments
+          {t("comments")}
         </Modal.Title>
       </Modal.Header>
 
@@ -97,8 +100,7 @@ const CommentsModal = ({ show, onClose, applicationId }) => {
               fontSize: "0.875rem",
             }}
           >
-            No comments found
-          </div>
+{t("no_comments_found")}          </div>
         ) : (
           <div className="d-flex flex-column gap-3 mb-3">
             {comments.map((c) => {
@@ -177,7 +179,7 @@ const CommentsModal = ({ show, onClose, applicationId }) => {
         <textarea
           className="form-control"
           rows={3}
-          placeholder="Enter your comment..."
+  placeholder={t("enter_your_comment")}
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
         />
@@ -203,7 +205,7 @@ const CommentsModal = ({ show, onClose, applicationId }) => {
             color: "#333",
           }}
         >
-          Close
+            {t("close")}
         </Button>
 
         <Button
@@ -215,7 +217,7 @@ const CommentsModal = ({ show, onClose, applicationId }) => {
             color: "#fff",
           }}
         >
-          Send
+        {t("send")}
         </Button>
       </Modal.Footer>
     </Modal>

@@ -1,7 +1,9 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 const ScheduleApprovalModal = ({ show, onClose, onApprove, loading }) => {
+  const { t } = useTranslation(["interviewSchedule", "common"]);
   return (
     <Modal
       show={show}
@@ -10,16 +12,16 @@ const ScheduleApprovalModal = ({ show, onClose, onApprove, loading }) => {
       className="schedule-approval-modal"
     >
       <Modal.Header closeButton>
-        <Modal.Title>Submit For Approval</Modal.Title>
+       <Modal.Title>{t("submit_for_approval")}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
-        Please review the scheduled details before submitting for approval.
+         {t("review_before_submit")}
       </Modal.Body>
 
       <Modal.Footer>
         <button className="btn btn-light" onClick={onClose}>
-          Cancel
+         {t("common:cancel")}
         </button>
 
         <button
@@ -27,7 +29,7 @@ const ScheduleApprovalModal = ({ show, onClose, onApprove, loading }) => {
           disabled={loading}
           onClick={onApprove}
         >
-          {loading ? "Submitting..." : "Submit"}
+          {loading ? t("submitting") : t("submit")}
         </button>
       </Modal.Footer>
     </Modal>

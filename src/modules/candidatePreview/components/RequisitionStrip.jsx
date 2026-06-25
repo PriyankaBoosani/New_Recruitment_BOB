@@ -22,7 +22,7 @@ const RequisitionStrip = ({
   isSaveBtn,
   showImportBtn,
   onImportClick,
-   isSaving
+  isSaving
 }) => {
   const [showPosition, setShowPosition] = useState(false);
   const [job, setJob] = useState(null);
@@ -31,17 +31,17 @@ const RequisitionStrip = ({
   const [masterData, setMasterData] = useState(null); //  INTERNAL
 
   //const orderedPattern = /^\s*(\(?\d+[.)\]]|\(?[ivxlcdm]+[.)\]])\s*/i;
-const orderedPattern = /^\s*(?:\(?\d+[).\]]|\(?[ivxlcdm]+[).\]])\s*/i;
+  const orderedPattern = /^\s*(?:\(?\d+[).\]]|\(?[ivxlcdm]+[).\]])\s*/i;
 
-const MAX_REGEX_INPUT = 500;
+  const MAX_REGEX_INPUT = 500;
 
-const isOrderedListItem = (text) => {
-  if (!text || text.length > MAX_REGEX_INPUT) {
-    return false;
-  }
+  const isOrderedListItem = (text) => {
+    if (!text || text.length > MAX_REGEX_INPUT) {
+      return false;
+    }
 
-  return orderedPattern.test(text);
-};
+    return orderedPattern.test(text);
+  };
   const renderBullets = (text) => {
     if (!text) return <li>-</li>;
 
@@ -79,11 +79,18 @@ const isOrderedListItem = (text) => {
   useEffect(() => {
     const loadMasters = async () => {
       try {
-        const [masterRes] = await Promise.all([
+        const [masterRes, exclusionsRes] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
+          masterApiService.getExclusions(),
         ]);
 
-        setMasterData(masterRes.data || {});
+        setMasterData({
+          ...(masterRes.data || {}),
+          exclusions: exclusionsRes.data || [],
+        });
+
+
+
       } catch (err) {
         console.error("Failed to load master data", err);
         setMasterData({});
@@ -105,9 +112,30 @@ const isOrderedListItem = (text) => {
           position.positionId
         );
 
-        const mapped = mapJobPositionToRequisitionStrip(res.data, masterData);
+       const mapped = mapJobPositionToRequisitionStrip(res.data, masterData);
 
-        setJob(mapped);
+const exclusionNames =
+  res.data?.jobPositionExclusion
+    ?.filter((item) => item.isExcluded)
+    ?.map((item) => {
+      const exclusion = masterData?.exclusions?.find(
+        (e) => String(e.exclusionId) === String(item.exclusionId)
+      );
+
+      return exclusion?.exclusionValue;
+    })
+    .filter(Boolean) || [];
+
+mapped.exclusionNames = exclusionNames;
+
+// ✅ ADD THESE
+mapped.isAgeRelRiotVictimFamily =
+  res.data?.isAgeRelRiotVictimFamily || false;
+
+mapped.isAgeRelWdsWomen =
+  res.data?.isAgeRelWdsWomen || false;
+
+setJob(mapped);
       } catch (err) {
         console.error("Failed to fetch job details", err);
         toast.error(t("candidateWorkflow:failed_load_position_details"));
@@ -270,7 +298,7 @@ const isOrderedListItem = (text) => {
         onHide={() => setShowPosition(false)}
         centered
         size="lg"
-        // scrollable
+      // scrollable
       >
         <Modal.Header closeButton className="knowmore-header">
           <div className="w-100">
@@ -376,9 +404,9 @@ const isOrderedListItem = (text) => {
                       {job?.isMandatoryExpMonthsEduWise
                         ? getEduWiseExperience().join("/ ")
                         : formatExperience(
-                            job?.mandatory_experience_years,
-                            job?.mandatory_experience_months
-                          )}
+                          job?.mandatory_experience_years,
+                          job?.mandatory_experience_months
+                        )}
                     </span>
                   </div>
                 </div>
@@ -440,6 +468,45 @@ const isOrderedListItem = (text) => {
                   disabilityCategories={masterData?.disabilityCategories || []}
                 />
               )}
+
+                 {(job?.isAgeRelRiotVictimFamily || job?.isAgeRelWdsWomen) && (
+  <div className="info-card">
+    <div className="section-title">
+     {t("addPosition:age_relaxation_for")}:
+    </div>
+
+    <ul className="section-lists">
+      {job?.isAgeRelRiotVictimFamily && (
+        <li>{t("addPosition:persons_affected_by_1984_riots")}</li>
+      )}
+
+      {job?.isAgeRelWdsWomen && (
+        <li>
+        {t("addPosition:widowed_divorced_separated_women")}
+        </li>
+      )}
+    </ul>
+  </div>
+)}
+
+
+
+              {job?.exclusionNames?.length > 0 && (
+                <div className="info-card">
+                  <div className="section-title">
+                    {t("addPosition:Exclusions")}:
+                  </div>
+
+                  <ul className="section-lists">
+                    {job.exclusionNames.map((name, index) => (
+                      <li key={index}>{name}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+
+           
 
               {job?.positionStateDistributions?.length === 0 &&
                 job?.nationalCategoryDistribution && (

@@ -179,7 +179,7 @@ const InterviewDayTable = ({
                 <td className="text-center">
                   <OverlayTrigger
                     placement="bottom"
-                    overlay={<Tooltip>View Profile</Tooltip>}
+                    overlay={<Tooltip>{t("view_profile")}</Tooltip>}
                   >
                     <span>
                       <Person

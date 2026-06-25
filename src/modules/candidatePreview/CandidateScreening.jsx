@@ -168,12 +168,12 @@ export default function CandidateScreening({ selectedJob }) {
     "OFFER_ACCEPTED",
   ];
   const SCHEDULE_POOL_STATUSES = ["L1_PENDING", "PENDING", "REJECTED"];
-  const OFFER_STATUS_LABEL_MAP = {
-    OFFER_AWAITED: "Offer Awaited",
-    OFFER_SENT: "Offer Sent",
-    OFFER_REJECTED: "Offer Rejected",
-    OFFER_ACCEPTED: "Offer Accepted",
-  };
+ const OFFER_STATUS_LABEL_MAP = {
+  OFFER_AWAITED: t("candidateWorkflow:offer_awaited"),
+  OFFER_SENT: t("candidateWorkflow:offer_sent"),
+  OFFER_REJECTED: t("candidateWorkflow:offer_rejected"),
+  OFFER_ACCEPTED: t("candidateWorkflow:offer_accepted"),
+};
   const [interviewPage, setInterviewPage] = useState(0);
   const [interviewPageSize, setInterviewPageSize] = useState(10);
   const location = useLocation();
@@ -2865,7 +2865,7 @@ setIsMarksUploaded(hasExamResults);
                               textDecoration: "underline",
                             }}
                           >
-                            Template Preview
+                          {t("candidateWorkflow:template_preview")}
                           </span>
                         ) : (
                           <small className="d-block invisible">
@@ -3027,32 +3027,32 @@ setIsMarksUploaded(hasExamResults);
                   <div>
                     {activeTab === "CANDIDATE_POOL" && (
                       <div className="selected-count-chip">
-                        {selectedCandidateIds.length}{" "}
-                        {selectedCandidateIds.length === 1
-                          ? "Candidate"
-                          : "Candidates"}{" "}
-                        Selected
-                      </div>
+  {selectedCandidateIds.length}{" "}
+  {selectedCandidateIds.length === 1
+    ? t("candidateWorkflow:candidate")
+    : t("candidateWorkflow:candidates")}{" "}
+  {t("candidateWorkflow:selected")}
+</div>
                     )}
 
                     {activeTab === "INTERVIEW_POOL" && (
-                      <div className="selected-count-chip">
-                        {selectedInterviewCandidateIds.length}{" "}
-                        {selectedInterviewCandidateIds.length === 1
-                          ? "Candidate"
-                          : "Candidates"}{" "}
-                        Selected
-                      </div>
+                     <div className="selected-count-chip">
+  {selectedInterviewCandidateIds.length}{" "}
+  {selectedInterviewCandidateIds.length === 1
+    ? t("candidateWorkflow:candidate")
+    : t("candidateWorkflow:candidates")}{" "}
+  {t("candidateWorkflow:selected")}
+</div>
                     )}
 
                     {activeTab === "COMPENSATION_POOL" && (
-                      <div className="selected-count-chip">
-                        {selectedCompensationIds.length}{" "}
-                        {selectedCompensationIds.length === 1
-                          ? "Candidate"
-                          : "Candidates"}{" "}
-                        Selected
-                      </div>
+                     <div className="selected-count-chip">
+  {selectedCompensationIds.length}{" "}
+  {selectedCompensationIds.length === 1
+    ? t("candidateWorkflow:candidate")
+    : t("candidateWorkflow:candidates")}{" "}
+  {t("candidateWorkflow:selected")}
+</div>
                     )}
                   </div>
 
@@ -3075,7 +3075,7 @@ setIsMarksUploaded(hasExamResults);
                           {/*  Submit Before Date */}
                           <div className="d-flex align-items-center gap-2">
                             <span className="fs-14">
-                              Submit Before{" "}
+                          {t("submit_before")}{" "}
                               <span className="text-danger">*</span>
                             </span>
                             <input

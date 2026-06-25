@@ -36,5 +36,26 @@
   "edit_cutoff_configuration": "Edit Cutoff Configuration",
   "add_cutoff_configuration": "Add Cutoff Configuration",
   "sum_of_all_sections": "Sum of all sections",
-  "example_sections": "e.g. 4"
+  "example_sections": "e.g. 4",
+    "enter_percentage": "Enter Percentage",
+     "section_placeholder": "Section {{number}}",
+      "metric": "Metric",
+  "appeared": "Appeared",
+  "vacancies": "Vacancies",
+  "qualified_without_relaxation": "Qualified Without Relaxation",
+  "qualified_with_relaxation": "Qualified With Relaxation",
+
+  "total": "Total",
+
+  "start": "Start",
+  "end": "End",
+
+  "edit": "Edit",
+  "finalize": "Finalize",
+
+  "position_finalized_successfully": "Position finalized successfully",
+  "failed_to_finalize": "Failed to finalize",
+
+  "category_wise_reservation_state": "Category Wise Reservation (State-wise)",
+  "no_state_wise_summary_found": "No state-wise summary found"
 }

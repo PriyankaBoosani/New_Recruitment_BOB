@@ -50,13 +50,13 @@ const InterviewPanelsConfig = ({
   const handleApplyAll = async () => {
     // ✅ Validate Position
     if (!positionId) {
-      toast.error("Position is missing");
+     toast.error(t("position_missing"));
       return;
     }
 
     // ✅ Validate Panels
     if (!selectedPanels || selectedPanels.length === 0) {
-      toast.error("Please add at least one interview panel");
+      toast.error(t("please_add_panel"));
       return;
     }
 
@@ -76,13 +76,21 @@ const InterviewPanelsConfig = ({
 
     // ✅ Validate capacity
     if (totalCapacity < totalCandidates) {
-      setCapacityMessage(
-        `Unable to schedule all candidates.
+//       setCapacityMessage(
+//         `Unable to schedule all candidates.
 
-Only ${totalCapacity} interview slots are available. ${remainingCandidates} more candidates still need to be scheduled.
+// Only ${totalCapacity} interview slots are available. ${remainingCandidates} more candidates still need to be scheduled.
 
-Please add additional interview slots or create another panel to continue.`
-      );
+// Please add additional interview slots or create another panel to continue.`
+//       );
+
+
+setCapacityMessage(
+  t("capacity_insufficient_message", {
+    totalCapacity,
+    remainingCandidates,
+  })
+);
 
       setShowCapacityModal(true);
 
@@ -118,7 +126,7 @@ Please add additional interview slots or create another panel to continue.`
               }}
             >
               <i className="bi bi-eye me-2"></i>
-              View Summary
+            {t("view_summary")}
             </button>
 
             <button
@@ -277,7 +285,7 @@ Please add additional interview slots or create another panel to continue.`
               <i className="bi bi-exclamation-triangle-fill"></i>
             </div>
 
-            <h4 className="ipc-alert-title">Interview Capacity Insufficient</h4>
+            <h4 className="ipc-alert-title">  {t("capacity_insufficient_title")}</h4>
 
             <p className="ipc-alert-message">{capacityMessage}</p>
 
@@ -286,7 +294,7 @@ Please add additional interview slots or create another panel to continue.`
                 className="ipc-alert-btn"
                 onClick={() => setShowCapacityModal(false)}
               >
-                OK
+                {t("ok")}
               </button>
             </div>
           </div>

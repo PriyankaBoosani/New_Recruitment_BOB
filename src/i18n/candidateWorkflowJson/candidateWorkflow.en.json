@@ -180,6 +180,11 @@
   "offer_accepted": "Offer Accepted",
   "failed_to_send_offer": "Failed to send offer",
   "must_be_greater_than_today": "Must be greater than today",
+   "submit_before": "Submit Before",
+  "candidate": "Candidate",
+  "candidates": "Candidates",
+  "selected": "Selected",
+   "template_preview": "Template Preview",
   "select_accept_before_first": "Select Accept Before date first",
   "must_be_greater_than_accept_before": "Must be greater than Accept Before date",
   "view_zonal_comments": "View Zonal Comments",
@@ -228,5 +233,17 @@
   "failedToFinalize": "Failed to finalize",
 
   "positionSummary": "Positions Summary",
-   "rank": "Rank"
+   "rank": "Rank",
+     "submit_for_approval": "Submit for Approval",
+  "edit_schedule": "Edit Schedule",
+  "no_candidates_found_schedule": "No candidates found.",
+  "position": "Position",
+  "application_number": "Application Number",
+  "view_rejection_remarks": "View rejection remarks",
+  "rejection_remarks": "Rejection Remarks",
+  "no_remarks_available": "No remarks available",
+  "close": "Close",
+  "Submit Before" : "Submit Before",
+    "rankPositionsSummary": "Rank Positions Summary",
+  "viewAndManagePositionRankings": "View and manage position rankings"
 }

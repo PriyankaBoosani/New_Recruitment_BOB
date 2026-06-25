@@ -1,6 +1,7 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
 import "../../../style/css/InterviewPanelsConfig.css";
+import { useTranslation } from "react-i18next";
 
 const InterviewScheduleSummaryModal = ({
   show,
@@ -10,10 +11,13 @@ const InterviewScheduleSummaryModal = ({
   availablePanels = [],
 }) => {
   // ZONE SUMMARY
+  
+  const { t } = useTranslation("interviewSchedule");
+
   const zoneMap = {};
 
   candidates.forEach((candidate) => {
-    const zone = candidate.zone || "N/A";
+    const zone = candidate.zone || t("na");
 
     zoneMap[zone] = (zoneMap[zone] || 0) + 1;
   });
@@ -22,6 +26,7 @@ const InterviewScheduleSummaryModal = ({
     zone,
     count,
   }));
+
 
   return (
     <Modal
@@ -32,19 +37,19 @@ const InterviewScheduleSummaryModal = ({
       dialogClassName="iss-modal-dialog"
     >
       <Modal.Header closeButton>
-        <Modal.Title>View Summary</Modal.Title>
+        <Modal.Title>{t("view_summary")}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body className="iss-modal-body">
         {/* TOTAL CANDIDATES */}
         <div className="iss-total-row">
-          <span className="iss-total-label">Total Candidates</span>
+          <span className="iss-total-label"> {t("total_candidates")}  </span>
           <span className="iss-total-value">{candidates.length}</span>
         </div>
 
         {/* ZONE DETAILS */}
         <div className="iss-section">
-          <div className="iss-section-header">Zones</div>
+          <div className="iss-section-header">  {t("zones")}</div>
           <div className="iss-list">
             {zoneDetails.length > 0 ? (
               zoneDetails.map((item, index) => (
@@ -54,14 +59,14 @@ const InterviewScheduleSummaryModal = ({
                 </div>
               ))
             ) : (
-              <div className="iss-empty">No zone details available</div>
+              <div className="iss-empty"> {t("no_zone_details")}</div>
             )}
           </div>
         </div>
 
         {/* PANEL DETAILS */}
         <div className="iss-section">
-          <div className="iss-section-header">Panels Details</div>
+          <div className="iss-section-header">  {t("panel_details")}</div>
           <div className="iss-list">
             {availablePanels.length > 0 ? (
               availablePanels.map((panel, index) => (
@@ -78,7 +83,7 @@ const InterviewScheduleSummaryModal = ({
                 </div>
               ))
             ) : (
-              <div className="iss-empty">No panel details available</div>
+              <div className="iss-empty"> {t("no_panel_details")}</div>
             )}
           </div>
         </div>

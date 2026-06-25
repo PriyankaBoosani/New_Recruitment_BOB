@@ -1014,7 +1014,7 @@ export default function AddExaminationCutoffModal({
 
                       <Form.Control
                         className="section-name-header-input"
-                        placeholder={`Section ${index + 1}`}
+                       placeholder={t("section_placeholder", { number: index + 1 })}
                         value={section.sectionName || ""}
                         disabled={viewOnly}
                         onChange={(e) =>
@@ -1334,7 +1334,10 @@ export default function AddExaminationCutoffModal({
                       readOnly
                     />
 
-                    <span>{section.sectionName || `Section ${index + 1}`}</span>
+                    <span>
+  {section.sectionName ||
+    t("section_placeholder", { number: index + 1 })}
+</span>
                   </div>
                 ))}
               </div>
