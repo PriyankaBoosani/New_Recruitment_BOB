@@ -14,19 +14,19 @@ import "../../../style/css/Compensationpool.css";
 export default function CompensationPool({
   candidates = [],
   selectedIds = [],
-  setSelectedIds = () => {},
+  setSelectedIds = () => { },
   page = 0,
   pageSize = 10,
   totalElements = 0,
-  onPageChange = () => {},
-  onPageSizeChange = () => {},
+  onPageChange = () => { },
+  onPageSizeChange = () => { },
   onViewFile,
   selectedRequisitionId,
   selectedPositionId,
   requisition,
   position,
-  refetch = () => {},
-  triggerRefresh = () => {},
+  refetch = () => { },
+  triggerRefresh = () => { },
   panelData,
   filters,
 }) {
@@ -60,6 +60,19 @@ export default function CompensationPool({
     recruiterComments: "",
     panelComments: "",
   });
+
+
+
+  const [editingField, setEditingField] = useState(null);
+
+  const removeCommas = (value) => String(value || "").replace(/,/g, "");
+
+  const formatNumber = (value) => {
+    const numeric = removeCommas(value).replace(/\D/g, "");
+    return numeric ? Number(numeric).toLocaleString("en-IN") : "";
+  };
+
+
 
   const user = useSelector((state) => state.user.user);
   const privileges = useSelector((state) => state.user.privileges);
@@ -232,8 +245,8 @@ export default function CompensationPool({
           typeof responseData === "string"
             ? responseData
             : responseData?.data ||
-              responseData?.message ||
-              "Something went wrong";
+            responseData?.message ||
+            "Something went wrong";
 
         toast.error(errorMsg);
         setShowManagerModal(false);
@@ -517,8 +530,8 @@ export default function CompensationPool({
                   </td>
                   <td className="fs-14 align-content-center">
                     {c.agreedCtc !== null &&
-                    c.agreedCtc !== undefined &&
-                    c.agreedCtc !== ""
+                      c.agreedCtc !== undefined &&
+                      c.agreedCtc !== ""
                       ? Number(c.agreedCtc).toLocaleString("en-IN")
                       : "-"}
 
@@ -605,15 +618,15 @@ export default function CompensationPool({
 
                               requisition: requisition
                                 ? {
-                                    requisition_code:
-                                      requisition.requisition_code,
-                                    requisition_title:
-                                      requisition.requisition_title,
-                                    registration_start_date:
-                                      requisition.registration_start_date,
-                                    registration_end_date:
-                                      requisition.registration_end_date,
-                                  }
+                                  requisition_code:
+                                    requisition.requisition_code,
+                                  requisition_title:
+                                    requisition.requisition_title,
+                                  registration_start_date:
+                                    requisition.registration_start_date,
+                                  registration_end_date:
+                                    requisition.registration_end_date,
+                                }
                                 : null,
 
                               position:
@@ -768,7 +781,7 @@ export default function CompensationPool({
         backdrop="static"
         dialogClassName="custom-modal compensation-modal"
         size="lg"
-        //size="xl"
+      //size="xl"
       >
         <Modal.Header closeButton className="custom-modal-header border-0">
           <Modal.Title className="fw-semibold fs-5">
@@ -783,17 +796,28 @@ export default function CompensationPool({
                 {t("fixedPay")} <span className="text-danger">*</span>
               </label>
               <input
-                className={`form-control ${
-                  saveClicked && !formData.fixedPay ? "is-invalid" : ""
-                }`}
+                className={`form-control ${saveClicked && !formData.fixedPay ? "is-invalid" : ""
+                  }`}
                 placeholder="Enter Value"
-                value={formData.fixedPay}
+                value={
+                  editingField === "fixedPay"
+                    ? removeCommas(formData.fixedPay)
+                    : formatNumber(formData.fixedPay)
+                }
+                onFocus={() => setEditingField("fixedPay")}
+                onBlur={() => {
+                  setEditingField(null);
+                  setFormData((prev) => ({
+                    ...prev,
+                    fixedPay: formatNumber(prev.fixedPay),
+                  }));
+                }}
                 disabled={!canEditCompensation}
                 onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    fixedPay: formatNumberWithCommas(e.target.value),
-                  })
+                  setFormData((prev) => ({
+                    ...prev,
+                    fixedPay: removeCommas(e.target.value),
+                  }))
                 }
               />
               {!formData.fixedPay && (
@@ -805,13 +829,29 @@ export default function CompensationPool({
               <input
                 className="form-control"
                 placeholder="Enter Value"
-                value={formData.variablePay}
+
                 disabled={!canEditCompensation}
+                value={
+                  editingField === "variablePay"
+                    ? removeCommas(formData.variablePay)
+                    : formatNumber(formData.variablePay)
+                }
+
+                onFocus={() => setEditingField("variablePay")}
+
+                onBlur={() => {
+                  setEditingField(null);
+                  setFormData((prev) => ({
+                    ...prev,
+                    variablePay: formatNumber(prev.variablePay),
+                  }));
+                }}
+
                 onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    variablePay: formatNumberWithCommas(e.target.value),
-                  })
+                  setFormData((prev) => ({
+                    ...prev,
+                    variablePay: removeCommas(e.target.value),
+                  }))
                 }
               />
             </div>
@@ -823,13 +863,29 @@ export default function CompensationPool({
               <input
                 className="form-control"
                 placeholder="Enter Value"
-                value={formData.joiningBonus}
+
                 disabled={!canEditCompensation}
+                value={
+                  editingField === "joiningBonus"
+                    ? removeCommas(formData.joiningBonus)
+                    : formatNumber(formData.joiningBonus)
+                }
+
+                onFocus={() => setEditingField("joiningBonus")}
+
+                onBlur={() => {
+                  setEditingField(null);
+                  setFormData((prev) => ({
+                    ...prev,
+                    joiningBonus: formatNumber(prev.joiningBonus),
+                  }));
+                }}
+
                 onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    joiningBonus: formatNumberWithCommas(e.target.value),
-                  })
+                  setFormData((prev) => ({
+                    ...prev,
+                    joiningBonus: removeCommas(e.target.value),
+                  }))
                 }
               />
             </div>
@@ -840,11 +896,10 @@ export default function CompensationPool({
                 {t("comments")} <span className="text-danger">*</span>{" "}
               </label>
               <textarea
-                className={`form-control ${
-                  saveClicked && !formData.recruiterComments?.trim()
+                className={`form-control ${saveClicked && !formData.recruiterComments?.trim()
                     ? "is-invalid"
                     : ""
-                }`}
+                  }`}
                 rows={3}
                 placeholder="Enter Comment"
                 value={formData.recruiterComments}
@@ -907,21 +962,33 @@ export default function CompensationPool({
           <div className="row g-3">
             <div className="col-md-6">
               <label className="form-label">
-                Fixed Pay <span className="text-danger">*</span>
+                {t("fixedPay")} <span className="text-danger">*</span>
               </label>
               <input
-                className={`form-control ${
-                  managerSaveClicked && !managerForm.fixedPay
+                className={`form-control ${managerSaveClicked && !managerForm.fixedPay
                     ? "is-invalid"
                     : ""
-                }`}
-                value={managerForm.fixedPay}
+                  }`}
+
                 disabled={!canEditManagerFields}
+                value={
+                  editingField === "managerFixedPay"
+                    ? removeCommas(managerForm.fixedPay)
+                    : formatNumber(managerForm.fixedPay)
+                }
+                onFocus={() => setEditingField("managerFixedPay")}
+                onBlur={() => {
+                  setEditingField(null);
+                  setManagerForm((prev) => ({
+                    ...prev,
+                    fixedPay: formatNumber(prev.fixedPay),
+                  }));
+                }}
                 onChange={(e) =>
-                  setManagerForm({
-                    ...managerForm,
-                    fixedPay: formatNumberWithCommas(e.target.value),
-                  })
+                  setManagerForm((prev) => ({
+                    ...prev,
+                    fixedPay: removeCommas(e.target.value),
+                  }))
                 }
               />
             </div>
@@ -930,13 +997,26 @@ export default function CompensationPool({
               <label className="form-label">{t("variablePay")}</label>
               <input
                 className="form-control"
-                value={managerForm.variablePay}
+
                 disabled={!canEditManagerFields}
+                value={
+                  editingField === "managerVariablePay"
+                    ? removeCommas(managerForm.variablePay)
+                    : formatNumber(managerForm.variablePay)
+                }
+                onFocus={() => setEditingField("managerVariablePay")}
+                onBlur={() => {
+                  setEditingField(null);
+                  setManagerForm((prev) => ({
+                    ...prev,
+                    variablePay: formatNumber(prev.variablePay),
+                  }));
+                }}
                 onChange={(e) =>
-                  setManagerForm({
-                    ...managerForm,
-                    variablePay: formatNumberWithCommas(e.target.value),
-                  })
+                  setManagerForm((prev) => ({
+                    ...prev,
+                    variablePay: removeCommas(e.target.value),
+                  }))
                 }
               />
             </div>
@@ -945,13 +1025,26 @@ export default function CompensationPool({
               <label className="form-label">{t("joiningBonus")}</label>
               <input
                 className="form-control"
-                value={managerForm.joiningBonus}
+
                 disabled={!canEditManagerFields}
+                value={
+                  editingField === "managerJoiningBonus"
+                    ? removeCommas(managerForm.joiningBonus)
+                    : formatNumber(managerForm.joiningBonus)
+                }
+                onFocus={() => setEditingField("managerJoiningBonus")}
+                onBlur={() => {
+                  setEditingField(null);
+                  setManagerForm((prev) => ({
+                    ...prev,
+                    joiningBonus: formatNumber(prev.joiningBonus),
+                  }));
+                }}
                 onChange={(e) =>
-                  setManagerForm({
-                    ...managerForm,
-                    joiningBonus: formatNumberWithCommas(e.target.value),
-                  })
+                  setManagerForm((prev) => ({
+                    ...prev,
+                    joiningBonus: removeCommas(e.target.value),
+                  }))
                 }
               />
             </div>
