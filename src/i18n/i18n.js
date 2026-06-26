@@ -97,6 +97,9 @@ import examRequestHi from "../i18n/ExamRequestJson/examRequest.hi.json";
 import interviewRequestEn from "../i18n/InterviewRequestJson/interviewRequest.en.json";
 import interviewRequestHi from "../i18n/InterviewRequestJson/interviewRequest.hi.json";
 
+import offerLetterRequestEn from "../i18n/offerLetterRequest/offerLetterRequest.en.json";
+import offerLetterRequestHi from "../i18n/offerLetterRequest/offerLetterRequest.hi.json";
+
 i18n.use(initReactI18next).init({
   resources: {
     en: {
@@ -133,6 +136,7 @@ i18n.use(initReactI18next).init({
       compensationPool: compensationPoolEn,
       examRequest: examRequestEn,
       interviewRequest: interviewRequestEn,
+      offerLetterRequest: offerLetterRequestEn,
     },
     hi: {
       common: commonHi,
@@ -168,6 +172,7 @@ i18n.use(initReactI18next).init({
       compensationPool: compensationPoolHi,
       examRequest: examRequestHi,
       interviewRequest: interviewRequestHi,
+      offerLetterRequest: offerLetterRequestHi,
     },
   },
   lng: "en",

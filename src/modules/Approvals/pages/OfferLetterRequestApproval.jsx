@@ -9,8 +9,14 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import ApprovalHistoryModal from "../components/ApprovalHistoryModal";
 import history_icon from "../../../assets/history_icon.png";
+import { useTranslation } from "react-i18next";
 
 const OfferLetterRequestApproval = () => {
+  const { t } = useTranslation([
+    "offerLetterRequest",
+    "approvalHistory",
+    "common",
+  ]);
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [actionType, setActionType] = useState(null); // "approve" | "reject"
@@ -35,7 +41,7 @@ const OfferLetterRequestApproval = () => {
 
   const handleOpenCommentModal = (type) => {
     if (selectedIds.size === 0) {
-      alert("Please select at least one candidate");
+      alert(t("offerLetterRequest:select_at_least_one_candidate"));
       return;
     }
 
@@ -77,7 +83,7 @@ const OfferLetterRequestApproval = () => {
       }
     } catch (err) {
       console.error(err);
-      toast.error("Failed to preview file");
+      toast.error(t("offerLetterRequest:failed_to_preview_file"));
     }
   };
 
@@ -151,17 +157,19 @@ const OfferLetterRequestApproval = () => {
         {/* Header */}
         <Row className="mb-4">
           <Col>
-            <h5 className="offer-page-title">Offer Letter Requests</h5>
+            <h5 className="offer-page-title">
+              {t("offerLetterRequest:offer_letter_requests")}
+            </h5>
 
             <p className="offer-page-subtitle">
-              Review and approve offer letter requests
+              {t("offerLetterRequest:review_offer_letter_requests")}
             </p>
           </Col>
         </Row>
         {/* Filters */}
         <Row className="mb-4">
           <Col md={4}>
-            <div className="offer-filter-label">Requisition</div>
+            <div className="offer-filter-label">{t("approvalHistory:requisition")}</div>
 
             <Select
               styles={selectStyles}
@@ -177,13 +185,13 @@ const OfferLetterRequestApproval = () => {
 
                 fetchPositions(option?.value);
               }}
-              placeholder="Select Requisition"
+              placeholder={t("approvalHistory:select_requisition")}
               menuPortalTarget={document.body}
             />
           </Col>
 
           <Col md={4}>
-            <div className="offer-filter-label">Position</div>
+            <div className="offer-filter-label">{t("approvalHistory:position")}</div>
 
             <Select
               styles={selectStyles}
@@ -199,7 +207,7 @@ const OfferLetterRequestApproval = () => {
                   size: 10,
                 });
               }}
-              placeholder="Select Position"
+              placeholder={t("approvalHistory:select_position")}
               menuPortalTarget={document.body}
             />
           </Col>
@@ -209,7 +217,7 @@ const OfferLetterRequestApproval = () => {
           <Col md={6}>
             <Form.Check
               type="checkbox"
-              label="Select All"
+              label={t("approvalHistory:select_all")}
               checked={allSelected}
               onChange={(e) => {
                 if (e.target.checked) {
@@ -230,7 +238,7 @@ const OfferLetterRequestApproval = () => {
               disabled={selectedIds.size === 0}
               onClick={() => handleOpenCommentModal("reject")}
             >
-              Reject
+              {t("approvalHistory:reject")}
             </Button>
 
             <Button
@@ -239,7 +247,7 @@ const OfferLetterRequestApproval = () => {
               disabled={selectedIds.size === 0}
               onClick={() => handleOpenCommentModal("approve")}
             >
-              Approve
+              {t("approvalHistory:approve")}
             </Button>
           </Col>
         </Row>
@@ -249,16 +257,16 @@ const OfferLetterRequestApproval = () => {
           <thead>
             <tr>
               <th></th>
-              <th>Candidate Name</th>
-              <th>Application Number</th>
-              <th>Score</th>
-              <th>Joining Date</th>
-              <th>State</th>
-              <th>City</th>
-              <th>Offer Release Date</th>
-              <th>Accept Before</th>
-              <th>Status</th>
-              <th>Action</th>
+              <th>{t("offerLetterRequest:candidate_name")}</th>
+              <th>{t("offerLetterRequest:application_number")}</th>
+              <th>{t("common:score")}</th>
+              <th>{t("offerLetterRequest:joining_date")}</th>
+              <th>{t("approvalHistory:state")}</th>
+              <th>{t("approvalHistory:city")}</th>
+              <th>{t("offerLetterRequest:offer_release_date")}</th>
+              <th>{t("offerLetterRequest:accept_before")}</th>
+              <th>{t("approvalHistory:status")}</th>
+              <th>{t("common:action")}</th>
             </tr>
           </thead>
 
@@ -266,7 +274,7 @@ const OfferLetterRequestApproval = () => {
             {candidates.length === 0 ? (
               <tr>
                 <td colSpan="11" className="text-center py-4 text-muted">
-                  No candidates found
+                  {t("offerLetterRequest:no_candidates_found")}
                 </td>
               </tr>
             ) : (
@@ -295,7 +303,7 @@ const OfferLetterRequestApproval = () => {
                     {candidate.name}{" "}
                     <button
                       className="btn btn-sm btn-outline-secondary border-0 history-btn"
-                      
+
                       onClick={() => handleViewHistory(candidate.historyId)}
                     >
                       <img
@@ -348,7 +356,7 @@ const OfferLetterRequestApproval = () => {
           centered
         >
           <Modal.Header closeButton>
-            <h6 className="mb-0">Preview Offer</h6>
+            <h6 className="mb-0">{t("common:view_file")}</h6>
           </Modal.Header>
 
           <Modal.Body style={{ height: "85vh" }}>
@@ -357,11 +365,11 @@ const OfferLetterRequestApproval = () => {
                 src={previewUrl}
                 width="100%"
                 height="100%"
-                title="PDF Preview"
+                title={t("offerLetterRequest:pdf_preview")}
                 style={{ border: "none" }}
               />
             ) : (
-              <div>No preview available</div>
+              <div>{t("offerLetterRequest:no_preview_available")}</div>
             )}
           </Modal.Body>
         </Modal>
