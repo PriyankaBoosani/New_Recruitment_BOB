@@ -248,5 +248,9 @@
   "close": "Close",
   "Submit Before" : "Submit Before",
     "rankPositionsSummary": "Rank Positions Summary",
-  "viewAndManagePositionRankings": "View and manage position rankings"
+  "viewAndManagePositionRankings": "View and manage position rankings",
+  "l1_pending": "L1 Pending",
+  "l2_pending": "L2 Pending",
+  "l1_rejected": "L1 Rejected",
+  "l2_rejected": "L2 Rejected"
 }

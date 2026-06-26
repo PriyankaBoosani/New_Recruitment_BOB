@@ -248,5 +248,9 @@
   "close": "बंद करें",
   "Submit Before" : "अंतिम तिथि",
    "rankPositionsSummary": "रैंक पदों का सारांश",
-  "viewAndManagePositionRankings": "पदों की रैंकिंग देखें और प्रबंधित करें"
+  "viewAndManagePositionRankings": "पदों की रैंकिंग देखें और प्रबंधित करें",
+   "l1_pending": "L1 लंबित",
+  "l2_pending": "L2 लंबित",
+  "l1_rejected": "L1 अस्वीकृत",
+  "l2_rejected": "L2 अस्वीकृत"
 }
