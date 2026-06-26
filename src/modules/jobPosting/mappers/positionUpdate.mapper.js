@@ -228,7 +228,7 @@ export const mapAddPositionToUpdateDto = ({
 
     mandatoryEducation: educationData.mandatory.text,
     preferredEducation: educationData.preferred.text,
-
+    isIntermediateRequired: formData.isIntermediateRequired,
     mandatoryExperienceMonths: formData.useMandatoryEducationLevelExperience
       ? null
       : Number(formData.mandatoryExperience.years) * 12 +

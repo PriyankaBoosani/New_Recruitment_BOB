@@ -621,14 +621,37 @@ const PositionForm = ({
               <Form.Label className="mb-0">
                 {t("addPosition:mandatory_education")} <span className="text-danger">*</span>
               </Form.Label>
-              <Button
-                size="sm"
-                disabled={isViewMode}
-                onClick={() => onEducationClick("mandatory")}
-                style={{ borderRadius: "10px" }}
-              >
-                {t("addPosition:add")}
-              </Button>
+              <div className="d-flex align-items-center gap-3">
+                <Form.Check
+                  type="checkbox"
+                  className="mancheck"
+                  id="hide-school-degrees"
+                  label="Is Intermediate / ICSE(+2) / CBSE(+2) / Diploma Required"
+                  checked={formData.isIntermediateRequired || false}
+                  disabled={isViewMode}
+                  onChange={(e) => {
+                    console.log("Checkbox clicked:", e.target.checked);
+
+                    handleInputChange({
+                      target: {
+                        name: "isIntermediateRequired",
+                        value: e.target.checked,
+                      },
+                    });
+
+                    // This will still show the OLD value because state updates are asynchronous
+                    console.log("Current formData:", formData.isIntermediateRequired);
+                  }}
+                />
+                <Button
+                  size="sm"
+                  disabled={isViewMode}
+                  onClick={() => onEducationClick("mandatory")}
+                  style={{ borderRadius: "10px" }}
+                >
+                  {t("addPosition:add")}
+                </Button>
+              </div>
             </div>
             <Form.Control
               as="textarea"

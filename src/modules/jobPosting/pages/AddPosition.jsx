@@ -67,10 +67,7 @@ const AddPosition = () => {
   const { data: existingPosition } = useJobPositionById(shouldFetchPosition ? positionId : null);
   const { requisition, loading: requisitionLoading } = useRequisitionDetails(requisitionId);
   const { createPosition, loading } = useCreateJobPosition();
-  const {
-  updatePosition,
-  loading: updateLoading,
-} = useUpdateJobPosition();
+  const { updatePosition, loading: updateLoading } = useUpdateJobPosition();
   const masterData = useMasterData();
   const {
     positions,
@@ -132,6 +129,7 @@ const AddPosition = () => {
     cutoffDate: "",
     useMandatoryEducationLevelExperience: false,
     usePreferredEducationLevelExperience: false,
+    isIntermediateRequired: false,
   });
   const [isAgeRelRiotVictimFamily, setIsAgeRelRiotVictimFamily] = useState(false);
   const [isAgeRelWdsWomen, setIsAgeRelWdsWomen] = useState(false);
@@ -190,6 +188,10 @@ const AddPosition = () => {
   useEffect(() => {
     eduInitializedRef.current = false;
   }, [mode]);
+  
+  useEffect(() => {
+    console.log("Updated isIntermediateRequired:", formData.isIntermediateRequired);
+  }, [formData.isIntermediateRequired]);
 
   // --- EFFECTS ---
   useEffect(() => {
@@ -247,6 +249,7 @@ const AddPosition = () => {
       contractualPeriod: isContract ? String(existingPosition.contractYears ?? "") : "",
       useMandatoryEducationLevelExperience: existingPosition.isMandatoryExpMonthsEduWise || false,
       usePreferredEducationLevelExperience: existingPosition.isPreferredExpMonthsEduWise || false,
+      isIntermediateRequired: existingPosition.isIntermediateRequired,
     });
     setApprovedBy(existingPosition.approvedBy || "");
     setIndentOthers(existingPosition.indentOthers || "");
@@ -933,7 +936,11 @@ const AddPosition = () => {
                 {t("common:cancel")}
               </Button>
               {!isViewMode && (
-                <Button type="submit" className="ms-2 save-btn" disabled={loading || updateLoading || submitting}>
+                <Button
+                  type="submit"
+                  className="ms-2 save-btn"
+                  disabled={loading || updateLoading || submitting}
+                >
                   {isEditMode ? t("common:update") : t("common:save")}
                 </Button>
               )}
@@ -952,6 +959,7 @@ const AddPosition = () => {
         key={`${eduMode}-${showEduModal}`}
         show={showEduModal}
         mode={eduMode}
+        isIntermediateRequired={formData.isIntermediateRequired}
         initialData={educationData[eduMode]}
         educationTypes={educationTypes}
         qualifications={qualifications}

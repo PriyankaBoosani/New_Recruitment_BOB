@@ -151,6 +151,7 @@ export const mapAddPositionToCreateDto = ({
 
     mandatoryEducation: educationData.mandatory.text,
     preferredEducation: educationData.preferred.text,
+    isIntermediateRequired: formData.isIntermediateRequired,
 
     //  OBJECT — NOT STRING
     mandatoryEduRulesJson: buildEduRulesJson(educationData.mandatory, "mandatory"),
