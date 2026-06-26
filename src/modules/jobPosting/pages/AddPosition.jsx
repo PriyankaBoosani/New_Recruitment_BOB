@@ -129,7 +129,7 @@ const AddPosition = () => {
     cutoffDate: "",
     useMandatoryEducationLevelExperience: false,
     usePreferredEducationLevelExperience: false,
-    isIntermediateRequired: false,
+    isIntermediateRequired: true,
   });
   const [isAgeRelRiotVictimFamily, setIsAgeRelRiotVictimFamily] = useState(false);
   const [isAgeRelWdsWomen, setIsAgeRelWdsWomen] = useState(false);
