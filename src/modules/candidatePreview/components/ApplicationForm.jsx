@@ -2500,7 +2500,7 @@ if (
         {isZonalHr && (
           <Card className="criteria-main-card p-3 mb-3">
             <label className="criteria-title mb-3">
-             t("lpt_title")
+            { t("lpt_title")}
             </label>
 
             <div className="d-flex align-items-start gap-3 flex-wrap">
@@ -2513,7 +2513,7 @@ if (
                     fontSize: "13px",
                   }}
                 >
-                t("lpt_required")
+          {t("lpt_required")}
                 </label>
 
                 <select
@@ -2532,9 +2532,9 @@ if (
                     setIsLptRequired(value);
                   }}
                 >
-                  <option value="">t("select")</option>
-                  <option value="YES">t("YES")</option>
-                  <option value="NO">t("NO")</option>
+                  <option value="">select</option>
+                  <option value="YES">YES</option>
+                  <option value="NO">NO</option>
                 </select>
               </div>
 
@@ -2547,7 +2547,7 @@ if (
                       fontSize: "13px",
                     }}
                   >
-                   t("lpt_status")
+                  { t("lpt_status")}
                   </label>
 
                   <select
@@ -2559,14 +2559,14 @@ if (
                       setZonalDecision("");
                     }}
                   >
-                    <option value="">t("select")</option>
-                    <option value="PASS">t("studied_in_class_x_xii")</option>
+                    <option value="">Select</option>
+                    <option value="PASS">Studied in Class X/XII</option>
 
                     {/* <option value="PASS">Pass</option> */}
 
-                    <option value="FAIL">t("fail")</option>
+                    <option value="FAIL">Fail</option>
 
-                    <option value="EXTENSION_GRANTED">t("extension_granted")</option>
+                    <option value="EXTENSION_GRANTED">Extension Granted</option>
                   </select>
                 </div>
               )}
