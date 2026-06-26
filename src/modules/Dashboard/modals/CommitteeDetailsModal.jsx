@@ -15,10 +15,16 @@ const CommitteeDetailsModal = ({
 
   if (!metric) return null;
   const reportScreenMap = {
-    interviewPanel: "COMMITTEE_INTERVIEW_PANEL",
-    screeningPanel: "COMMITTEE_SCREENING_PANEL",
-    compensationPanel: "COMMITTEE_COMPENSATION_PANEL",
-  };
+  interviewPanel: "COMMITTEE_INTERVIEW_PANEL",
+  screeningPanel: "COMMITTEE_INTERVIEW_PANEL",
+  compensationPanel: "COMMITTEE_INTERVIEW_PANEL",
+};
+
+const committeeMap = {
+  interviewPanel: "Interview",
+  screeningPanel: "Screening",
+  compensationPanel: "Compensation",
+};
   const modalConfig = {
     interviewPanel: {
       title: "Interview Panel",
@@ -89,14 +95,15 @@ const CommitteeDetailsModal = ({
                 color: config.color,
               }}
               disabled={downloading}
-              onClick={() =>
-                downloadReport({
-                  filters,
-                  extension: ".pdf",
-                  reportScreen: reportScreenMap[metric],
-                  fileName: metric,
-                })
-              }
+             onClick={() =>
+  downloadReport({
+    filters,
+    extension: ".pdf",
+    reportScreen: reportScreenMap[metric],
+    committee: committeeMap[metric],
+    fileName: metric,
+  })
+}
             >
               <FiDownload />
               <span className="ms-2">
@@ -113,13 +120,14 @@ const CommitteeDetailsModal = ({
               }}
               disabled={downloading}
               onClick={() =>
-                downloadReport({
-                  filters,
-                  extension: ".xlsx",
-                  reportScreen: reportScreenMap[metric],
-                  fileName: metric,
-                })
-              }
+  downloadReport({
+    filters,
+    extension: ".xlsx",
+    reportScreen: reportScreenMap[metric],
+    committee: committeeMap[metric],
+    fileName: metric,
+  })
+}
             >
               <FiDownload />
               <span className="ms-2">

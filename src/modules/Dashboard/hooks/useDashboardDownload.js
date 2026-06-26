@@ -9,6 +9,7 @@ const useDashboardDownload = () => {
     filters = {},
     extension,
     reportScreen,
+     committee,
     fileName = "dashboard-report",
   }) => {
     try {
@@ -31,6 +32,7 @@ const useDashboardDownload = () => {
         isReinitialized: filters?.isReinitialized ?? null,
         extension,
         reportScreen,
+         committee,
       };
 
       const response = await dashboardService.getDashboardDownload(payload);
