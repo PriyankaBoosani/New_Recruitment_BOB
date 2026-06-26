@@ -1958,12 +1958,12 @@ export default function CandidateScreening({ selectedJob }) {
 
       if (response?.data?.success === false) {
         toast.error(
-          response?.data?.message || t("candidateWorkflow:failed_send_offer")
+          response?.data?.message || t("candidateWorkflow:failed_send_offer_approval")
         );
         return;
       }
 
-      toast.success(t("candidateWorkflow:offer_sent_successfully"));
+      toast.success(t("candidateWorkflow:offer_sent_for_approval"));
 
       // Clear selections + form
       setOfferSelectedIds([]);

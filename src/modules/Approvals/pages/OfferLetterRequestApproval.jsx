@@ -10,7 +10,12 @@ import { useSelector } from "react-redux";
 import ApprovalHistoryModal from "../components/ApprovalHistoryModal";
 import history_icon from "../../../assets/history_icon.png";
 import { useTranslation } from "react-i18next";
+const formatDateDDMMYYYY = (isoDate) => {
+  if (!isoDate) return "";
 
+  const [year, month, day] = isoDate.split("-");
+  return `${day}-${month}-${year}`;
+};
 const OfferLetterRequestApproval = () => {
   const { t } = useTranslation([
     "offerLetterRequest",
@@ -169,7 +174,9 @@ const OfferLetterRequestApproval = () => {
         {/* Filters */}
         <Row className="mb-4">
           <Col md={4}>
-            <div className="offer-filter-label">{t("approvalHistory:requisition")}</div>
+            <div className="offer-filter-label">
+              {t("approvalHistory:requisition")}
+            </div>
 
             <Select
               styles={selectStyles}
@@ -191,7 +198,9 @@ const OfferLetterRequestApproval = () => {
           </Col>
 
           <Col md={4}>
-            <div className="offer-filter-label">{t("approvalHistory:position")}</div>
+            <div className="offer-filter-label">
+              {t("approvalHistory:position")}
+            </div>
 
             <Select
               styles={selectStyles}
@@ -259,10 +268,10 @@ const OfferLetterRequestApproval = () => {
               <th></th>
               <th>{t("offerLetterRequest:candidate_name")}</th>
               <th>{t("offerLetterRequest:application_number")}</th>
-              <th>{t("common:score")}</th>
-              <th>{t("offerLetterRequest:joining_date")}</th>
               <th>{t("approvalHistory:state")}</th>
               <th>{t("approvalHistory:city")}</th>
+              <th>{t("common:score")}</th>
+              <th>{t("offerLetterRequest:joining_date")}</th>
               <th>{t("offerLetterRequest:offer_release_date")}</th>
               <th>{t("offerLetterRequest:accept_before")}</th>
               <th>{t("approvalHistory:status")}</th>
@@ -302,8 +311,7 @@ const OfferLetterRequestApproval = () => {
                   <td>
                     {candidate.name}{" "}
                     <button
-                      className="btn btn-sm btn-outline-secondary border-0 history-btn"
-
+                      className="btn btn-sm border-0 history-btn"
                       onClick={() => handleViewHistory(candidate.historyId)}
                     >
                       <img
@@ -315,13 +323,12 @@ const OfferLetterRequestApproval = () => {
                     </button>
                   </td>
                   <td>{candidate.applicationNumber}</td>
-                  <td>{candidate.score}</td>
-
-                  <td>{candidate.joiningDate}</td>
                   <td>{candidate.state}</td>
                   <td>{candidate.city}</td>
-                  <td>{candidate.offerReleaseDate}</td>
-                  <td>{candidate.acceptBefore}</td>
+                  <td>{candidate.score}</td>
+                  <td>{formatDateDDMMYYYY(candidate.joiningDate)}</td>
+                  <td>{formatDateDDMMYYYY(candidate.offerReleaseDate)}</td>
+                  <td>{formatDateDDMMYYYY(candidate.acceptBefore)}</td>
                   <td>
                     <span className={`badge bg-${candidate.statusBadge}`}>
                       {candidate.statusLabel}

@@ -134,8 +134,8 @@ const useOfferApproval = () => {
 
       toast.success(
         actionType === "approve"
-          ? "Candidates approved successfully"
-          : "Candidates rejected successfully"
+          ? "Approved successfully"
+          : "Rejected successfully"
       );
 
       return true;
