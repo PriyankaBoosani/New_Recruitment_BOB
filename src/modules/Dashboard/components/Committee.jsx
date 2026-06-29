@@ -71,7 +71,9 @@ const Committee = ({ committeeOverview, onCardClick }) => {
             <span>{item.label}</span>
             <div className="committee-footer">
               <span
-                style={{ color: item.color }}
+                style={{ color: item.color,
+                  cursor: "pointer",
+                 }}
                 onClick={() => onCardClick(item.key)}
               >
                 View Details
