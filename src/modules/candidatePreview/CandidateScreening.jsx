@@ -55,15 +55,15 @@ import ScheduleErrorModal from "../interviews/components/ScheduleErrorModal";
 export default function CandidateScreening({ selectedJob }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
 
-  const STATUS_LABEL_MAP = {
-    SHORTLISTED: "Shortlisted",
-    APPLIED: "Applied",
-    REJECTED: "Rejected",
-    DISCREPANCY: "Discrepancy",
-    PENDING: "Pending",
-    INTERVIEW_SCHEDULED: "Interview Scheduled",
-    ELIGIBLE: "Eligible",
-  };
+ const STATUS_LABEL_MAP = {
+  SHORTLISTED: t("candidateWorkflow:shortlisted"),
+  APPLIED: t("candidateWorkflow:applied"),
+  REJECTED: t("candidateWorkflow:rejected"),
+  DISCREPANCY: t("candidateWorkflow:discrepancy"),
+  PENDING: t("candidateWorkflow:pending"),
+  INTERVIEW_SCHEDULED: t("candidateWorkflow:interview_scheduled"),
+  ELIGIBLE: t("candidateWorkflow:eligible"),
+};
 
   const user = useSelector((state) => state.user.user);
 
@@ -98,14 +98,14 @@ export default function CandidateScreening({ selectedJob }) {
       ? ["PENDING", "APPROVED", "REJECTED", "RENEGOTIATE"]
       : ["NEW", "SUBMITTED", "PENDING", "APPROVED", "REJECTED", "RENEGOTIATE"];
 
-  const COMPENSATION_STATUS_LABEL_MAP = {
-    NEW: "New",
-    SUBMITTED: "Submitted",
-    PENDING: "Pending",
-    APPROVED: "Approved",
-    REJECTED: "Rejected",
-    RENEGOTIATE: "Renegotiate",
-  };
+ const COMPENSATION_STATUS_LABEL_MAP = {
+  NEW: t("candidateWorkflow:new"),
+  SUBMITTED: t("candidateWorkflow:submitted"),
+  PENDING: t("candidateWorkflow:pending"),
+  APPROVED: t("candidateWorkflow:approved"),
+  REJECTED: t("candidateWorkflow:rejected"),
+  RENEGOTIATE: t("candidateWorkflow:renegotiate"),
+};
 
   const [pendingExamOpen, setPendingExamOpen] = useState(false);
 
@@ -144,23 +144,24 @@ export default function CandidateScreening({ selectedJob }) {
   const isCommitteeMember = role === "committee_member";
 
   const INTERVIEW_STATUS_LABEL_MAP = {
-    SCHEDULED: "Scheduled",
-    QUALIFIED: "Qualified",
-    DISQUALIFIED: "Disqualified",
-    PROVISIONALLY_APPROVED: "Provisionally Approved",
-    PENDING: "Pending",
-    ZONAL_REJECTED: "Zonal Rejected",
-    ZONAL_ABSENT: "Zonal Absent",
-    INTERVIEW_ABSENT: "Interview Absent",
-    RESCHEDULED: "Rescheduled",
-  };
+  SCHEDULED: t("candidateWorkflow:scheduled"),
+  QUALIFIED: t("candidateWorkflow:qualified"),
+  DISQUALIFIED: t("candidateWorkflow:disqualified"),
+  PROVISIONALLY_APPROVED: t("candidateWorkflow:provisionally_approved"),
+  PENDING: t("candidateWorkflow:pending"),
+  ZONAL_REJECTED: t("candidateWorkflow:zonal_rejected"),
+  ZONAL_ABSENT: t("candidateWorkflow:zonal_absent"),
+  INTERVIEW_ABSENT: t("candidateWorkflow:interview_absent"),
+  RESCHEDULED: t("candidateWorkflow:rescheduled"),
+};
   const SCHEDULE_POOL_STATUS_LABEL_MAP = {
-    L1_PENDING: "L1 Pending",
-    L2_PENDING: "L2 Pending",
-    APPROVED: "Approved",
-    REJECTED: "Rejected",
-    PENDING: "Pending",
-  };
+  L1_PENDING: t("candidateWorkflow:l1_pending"),
+  L2_PENDING: t("candidateWorkflow:l2_pending"),
+  APPROVED: t("candidateWorkflow:approved"),
+  REJECTED: t("candidateWorkflow:rejected"),
+  PENDING: t("candidateWorkflow:pending"),
+};
+
   const OFFER_POOL_STATUSES = [
     "OFFER_AWAITED",
     "OFFER_SENT",

@@ -11,6 +11,7 @@ import {
   FiGitBranch,
 } from "react-icons/fi";
 import { BsBag } from "react-icons/bs";
+import { useTranslation } from "react-i18next";
 
 import "../../../style/css/Dashboard/DashboardFilters.css";
 
@@ -28,6 +29,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
   const [quarterValue, setQuarterValue] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const { t } = useTranslation("dashboard");
   const formatDate = (date) => {
     if (!date) return "";
 
@@ -102,7 +104,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
               value={fyValue}
               onChange={(e) => setFyValue(e.target.value)}
             >
-              <option>Select FY</option>
+             <option>{t("select_fy")}</option>
               <option>FY 2026-27</option>
               <option>FY 2025-26</option>
               <option>FY 2024-25</option>
@@ -119,7 +121,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
               value={cyValue}
               onChange={(e) => setCyValue(e.target.value)}
             >
-              <option>Select CY</option>
+              <option>{t("select_cy")}</option>
               <option>2026</option>
               <option>2025</option>
               <option>2024</option>
@@ -137,7 +139,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                 value={quarterYear}
                 onChange={(e) => setQuarterYear(e.target.value)}
               >
-                <option>Select CY</option>
+                <option>{t("select_cy")}</option>
                 <option>2026</option>
                 <option>2025</option>
                 <option>2024</option>
@@ -147,7 +149,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                 value={quarterValue}
                 onChange={(e) => setQuarterValue(e.target.value)}
               >
-                <option>Select Quater</option>
+                <option>{t("select_quarter")}</option>
                 <option value="Q1">Q1 (Jan-Mar)</option>
                 <option value="Q2">Q2 (Apr-Jun)</option>
                 <option value="Q3">Q3 (Jul-Sep)</option>
@@ -208,25 +210,25 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
       <div className="filters-header">
         <div className="header-title">
           <FiFilter />
-          <span>DASHBOARD FILTERS</span>
+          <span>{t("dashboard_filters")}</span>
         </div>
 
         <div className="active-period">
-          <span>Active period:</span>
+         <span>{t("active_period")}</span>
 
           <span className="period-pill">
             {periodType === "FINANCIAL_YEAR"
-              ? fyValue || "Select FY"
+              ? fyValue || t("select_fy")
               : periodType === "CALENDAR_YEAR"
-                ? cyValue || "Select CY"
+                ? cyValue || t("select_cy")
                 : periodType === "QUARTER"
                   ? quarterYear && quarterValue
                     ? `${quarterYear} - ${quarterValue}`
-                    : "Select Quarter"
+                    : t("select_quarter")
                   : periodType === "CUSTOM"
                     ? fromDate && toDate
                       ? `${formatDate(fromDate)} → ${formatDate(toDate)}`
-                      : "Select Date Range"
+                      : t("select_date_range")
                     : ""}
           </span>
         </div>
@@ -238,7 +240,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
         <div className="top-section">
           <div className="filter-group">
             <label>
-              <FiBriefcase /> Employment
+              <FiBriefcase /> {t("employment")}
             </label>
 
             <div className="segmented-control">
@@ -259,7 +261,8 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
           <div className="filter-group">
             <label>
               {" "}
-              <FiGitBranch className="text-danger" /> Initiation
+             <FiGitBranch className="text-danger" /> {t("initiation")}
+
             </label>
 
             <div className="segmented-control">
@@ -326,7 +329,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                   setSelectedPosition("");
                 }}
               >
-                <option value="">All Departments</option>
+               <option value="">{t("all_departments")}</option>
 
                 {filters?.departments?.map((item) => (
                   <option key={item.value} value={item.value}>
@@ -349,7 +352,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                   setSelectedPosition(e.target.value);
                 }}
               >
-                <option value="">All Positions</option>
+                <option value="">{t("all_positions")}</option>
 
                 {filteredPositions.map((item) => (
                   <option key={item.value} value={item.value}>
@@ -370,7 +373,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                 value={selectedZone}
                 onChange={(e) => setSelectedZone(e.target.value)}
               >
-                <option value="">All Zones</option>
+                <option value="">{t("all_zones")}</option>
 
                 {filters?.zones?.map((item) => (
                   <option key={item.value} value={item.value}>
@@ -391,7 +394,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                 value={selectedRecruiter}
                 onChange={(e) => setSelectedRecruiter(e.target.value)}
               >
-                <option value="">All Recruiters</option>
+                <option value="">{t("all_recruiters")}</option>
 
                 {filters?.recruiters?.map((item) => (
                   <option key={item.value} value={item.value}>
@@ -410,12 +413,12 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
           <div className="actions-section">
             <button className="reset-btn" onClick={handleReset}>
               <FiX />
-              Reset
+            {t("reset")}
             </button>
 
             <button className="apply-btn" onClick={handleApply}>
               <FiSearch />
-              Apply
+             {t("apply")}
             </button>
           </div>
         </div>
