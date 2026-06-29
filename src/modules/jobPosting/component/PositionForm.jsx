@@ -702,18 +702,16 @@ const PositionForm = ({
                   type="checkbox"
                   className="mancheck"
                   id="hide-school-degrees"
-                  label="Is Intermediate / ICSE(+2) / CBSE(+2) / Diploma Required"
+                  label={t("addPosition:is_intermediate_required")}
                   checked={formData.isIntermediateRequired || false}
                   disabled={isViewMode}
                   onChange={(e) => {
-                   
-
                     handleInputChange({
                       target: {
                         name: "isIntermediateRequired",
                         value: e.target.checked,
                       },
-                    });                    
+                    });
                   }}
                 />
                 <Button
