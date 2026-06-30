@@ -19,6 +19,7 @@ const OFFER_STATUS_CLASS_MAP = {
   L2_PENDING: "bg-info",
   L1_REJECTED: "bg-danger",
   L2_REJECTED: "bg-danger",
+  OFFER_GENERATED: "bg-secondary"
 };
 
 const OFFER_STATUS_LABEL_MAP = {
@@ -30,6 +31,7 @@ const OFFER_STATUS_LABEL_MAP = {
   L2_PENDING: "L2 Pending",
   L1_REJECTED: "L1 Rejected",
   L2_REJECTED: "L2 Rejected",
+  OFFER_GENERATED: "Offer Generated"
 };
 
 const OfferPool = ({
@@ -394,6 +396,7 @@ const OfferPool = ({
                           "OFFER_AWAITED",
                           "L1_REJECTED",
                           "L2_REJECTED",
+                          "OFFER_GENERATED"
                         ].includes(c.status)
                       }
                     />
@@ -549,18 +552,8 @@ const OfferPool = ({
                       <button
                         className="btn btn-sm btn-outline-secondary border-0 me-2"
                         onClick={() => {
-                          if (
-                            c.status === "OFFER_SENT" ||
-                            c.status === "OFFER_ACCEPTED" ||
-                            c.status === "L1_REJECTED" ||
-                            c.status === "L2_REJECTED" ||
-                            c.status === "L1_PENDING" ||
-                            c.status === "L2_PENDING" ||
-                            c.status === "OFFER_REJECTED"
-                          ) {
-                            handleCandidateOfferPreview(
-                              c.offerFileUrl // applicationId
-                            );
+                          if (c.offerFileUrl) {
+                            handleCandidateOfferPreview(c.offerFileUrl);
                           } else {
                             if (!offerTemplateId) {
                               toast.error(t("candidateWorkflow:OfferTemplate"));
@@ -569,7 +562,7 @@ const OfferPool = ({
 
                             handleCandidatePreview(
                               offerTemplateId,
-                              c.applicationId // applicationId
+                              c.applicationId
                             );
                           }
                         }}

@@ -52,18 +52,20 @@ import useCommitteeRequests from "../Approvals/hooks/useCommitteeRequests";
 import SchedulePoolTable from "../interviews/components/SchedulePoolTable";
 import ScheduleApprovalModal from "../candidatePreview/components/ScheduleApprovalModal";
 import ScheduleErrorModal from "../interviews/components/ScheduleErrorModal";
+import { BsFileEarmarkPlus } from "react-icons/bs";
+import DigitalSignatureModal from "./modal/DigitalSignatureModal";
 export default function CandidateScreening({ selectedJob }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
 
- const STATUS_LABEL_MAP = {
-  SHORTLISTED: t("candidateWorkflow:shortlisted"),
-  APPLIED: t("candidateWorkflow:applied"),
-  REJECTED: t("candidateWorkflow:rejected"),
-  DISCREPANCY: t("candidateWorkflow:discrepancy"),
-  PENDING: t("candidateWorkflow:pending"),
-  INTERVIEW_SCHEDULED: t("candidateWorkflow:interview_scheduled"),
-  ELIGIBLE: t("candidateWorkflow:eligible"),
-};
+  const STATUS_LABEL_MAP = {
+    SHORTLISTED: t("candidateWorkflow:shortlisted"),
+    APPLIED: t("candidateWorkflow:applied"),
+    REJECTED: t("candidateWorkflow:rejected"),
+    DISCREPANCY: t("candidateWorkflow:discrepancy"),
+    PENDING: t("candidateWorkflow:pending"),
+    INTERVIEW_SCHEDULED: t("candidateWorkflow:interview_scheduled"),
+    ELIGIBLE: t("candidateWorkflow:eligible"),
+  };
 
   const user = useSelector((state) => state.user.user);
 
@@ -98,14 +100,14 @@ export default function CandidateScreening({ selectedJob }) {
       ? ["PENDING", "APPROVED", "REJECTED", "RENEGOTIATE"]
       : ["NEW", "SUBMITTED", "PENDING", "APPROVED", "REJECTED", "RENEGOTIATE"];
 
- const COMPENSATION_STATUS_LABEL_MAP = {
-  NEW: t("candidateWorkflow:new"),
-  SUBMITTED: t("candidateWorkflow:submitted"),
-  PENDING: t("candidateWorkflow:pending"),
-  APPROVED: t("candidateWorkflow:approved"),
-  REJECTED: t("candidateWorkflow:rejected"),
-  RENEGOTIATE: t("candidateWorkflow:renegotiate"),
-};
+  const COMPENSATION_STATUS_LABEL_MAP = {
+    NEW: t("candidateWorkflow:new"),
+    SUBMITTED: t("candidateWorkflow:submitted"),
+    PENDING: t("candidateWorkflow:pending"),
+    APPROVED: t("candidateWorkflow:approved"),
+    REJECTED: t("candidateWorkflow:rejected"),
+    RENEGOTIATE: t("candidateWorkflow:renegotiate"),
+  };
 
   const [pendingExamOpen, setPendingExamOpen] = useState(false);
 
@@ -144,23 +146,23 @@ export default function CandidateScreening({ selectedJob }) {
   const isCommitteeMember = role === "committee_member";
 
   const INTERVIEW_STATUS_LABEL_MAP = {
-  SCHEDULED: t("candidateWorkflow:scheduled"),
-  QUALIFIED: t("candidateWorkflow:qualified"),
-  DISQUALIFIED: t("candidateWorkflow:disqualified"),
-  PROVISIONALLY_APPROVED: t("candidateWorkflow:provisionally_approved"),
-  PENDING: t("candidateWorkflow:pending"),
-  ZONAL_REJECTED: t("candidateWorkflow:zonal_rejected"),
-  ZONAL_ABSENT: t("candidateWorkflow:zonal_absent"),
-  INTERVIEW_ABSENT: t("candidateWorkflow:interview_absent"),
-  RESCHEDULED: t("candidateWorkflow:rescheduled"),
-};
+    SCHEDULED: t("candidateWorkflow:scheduled"),
+    QUALIFIED: t("candidateWorkflow:qualified"),
+    DISQUALIFIED: t("candidateWorkflow:disqualified"),
+    PROVISIONALLY_APPROVED: t("candidateWorkflow:provisionally_approved"),
+    PENDING: t("candidateWorkflow:pending"),
+    ZONAL_REJECTED: t("candidateWorkflow:zonal_rejected"),
+    ZONAL_ABSENT: t("candidateWorkflow:zonal_absent"),
+    INTERVIEW_ABSENT: t("candidateWorkflow:interview_absent"),
+    RESCHEDULED: t("candidateWorkflow:rescheduled"),
+  };
   const SCHEDULE_POOL_STATUS_LABEL_MAP = {
-  L1_PENDING: t("candidateWorkflow:l1_pending"),
-  L2_PENDING: t("candidateWorkflow:l2_pending"),
-  APPROVED: t("candidateWorkflow:approved"),
-  REJECTED: t("candidateWorkflow:rejected"),
-  PENDING: t("candidateWorkflow:pending"),
-};
+    L1_PENDING: t("candidateWorkflow:l1_pending"),
+    L2_PENDING: t("candidateWorkflow:l2_pending"),
+    APPROVED: t("candidateWorkflow:approved"),
+    REJECTED: t("candidateWorkflow:rejected"),
+    PENDING: t("candidateWorkflow:pending"),
+  };
 
   const OFFER_POOL_STATUSES = [
     "OFFER_AWAITED",
@@ -170,8 +172,8 @@ export default function CandidateScreening({ selectedJob }) {
     "L1_PENDING",
     "L2_PENDING",
     "L1_REJECTED",
-    "L2_REJECTED"
-
+    "L2_REJECTED",
+    "OFFER_GENERATED",
   ];
   const SCHEDULE_POOL_STATUSES = ["L1_PENDING", "PENDING", "REJECTED"];
   const OFFER_STATUS_LABEL_MAP = {
@@ -183,6 +185,7 @@ export default function CandidateScreening({ selectedJob }) {
     L1_REJECTED: t("candidateWorkflow:l1_rejected"),
     L2_PENDING: t("candidateWorkflow:l2_pending"),
     L2_REJECTED: t("candidateWorkflow:l2_rejected"),
+    OFFER_GENERATED: t("candidateWorkflow:offer_generated"),
   };
   const [interviewPage, setInterviewPage] = useState(0);
   const [interviewPageSize, setInterviewPageSize] = useState(10);
@@ -536,6 +539,8 @@ export default function CandidateScreening({ selectedJob }) {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState([]);
   const [showRankListModal, setShowRankListModal] = useState(false);
+  const [showDigitalSignatureModal, setShowDigitalSignatureModal] =
+    useState(false);
   const [offerSelectedIds, setOfferSelectedIds] = useState([]);
   const [offerRefreshKey, setOfferRefreshKey] = useState(0);
   const [offerTemplateId, setOfferTemplateId] = useState("");
@@ -546,6 +551,8 @@ export default function CandidateScreening({ selectedJob }) {
     acceptBeforeDate: "",
     joiningDate: "",
   });
+  const [signatory, setSignatory] = useState("");
+  const [signatoryDesignation, setSignatoryDesignation] = useState("");
   const dispatch = useDispatch();
   const [templates, setTemplates] = useState([]);
 
@@ -2222,6 +2229,66 @@ export default function CandidateScreening({ selectedJob }) {
       console.error("Preview failed", err);
     }
   };
+  const handleGenerateOffer = async () => {
+    if (offerSelectedIds.length === 0) {
+      toast.error("Please select at least one candidate");
+      return;
+    }
+
+    if (!offerTemplateId) {
+      toast.error("Please select an offer template");
+      return;
+    }
+
+    if (!joiningDate || !acceptBeforeDate) {
+      toast.error("Please select the dates");
+      return;
+    }
+
+    if (!signatory.trim()) {
+      toast.error("Please enter signatory");
+      return;
+    }
+
+    if (!signatoryDesignation.trim()) {
+      toast.error("Please enter designation");
+      return;
+    }
+    const selectedOffers = offerData.filter((offer) =>
+      offerSelectedIds.includes(offer.id)
+    );
+
+    const invalidLocationOffers = selectedOffers.filter(
+      (offer) => !offer.state || !offer.location
+    );
+
+    if (invalidLocationOffers.length > 0) {
+      toast.error("State and City are mandatory to generate the offer.");
+      return;
+    }
+
+    try {
+      const payload = {
+        offerTemplateId,
+        joiningDate,
+        acceptBeforeDate,
+        designationId: null, // Selected designation ID
+        offerIds: offerSelectedIds,
+        signatoryName: signatory,
+        signatoryDesignation: signatoryDesignation,
+      };
+
+      const res = await jobPositionApiService.generateOffers(payload);
+
+      toast.success("Offer generated successfully");
+      setOfferRefreshKey((prev) => prev + 1);
+
+      console.log(res);
+    } catch (err) {
+      console.error(err);
+      toast.error(err?.response?.data?.message || "Failed to generate offers");
+    }
+  };
 
   const handleSubmitBeforeDateChange = (value) => {
     const today = todayString();
@@ -2926,8 +2993,93 @@ export default function CandidateScreening({ selectedJob }) {
                         {formErrors.joiningDate || "placeholder"}
                       </small>
                     </div>
-
+                    {/* Signatory */}
                     <div>
+                      <p className="mb-1 fw-normal fs-13 blue-color">
+                        Signatory
+                      </p>
+
+                      <input
+                        type="text"
+                        className="form-control fs-13 py-1"
+                        style={{ width: "100px" }}
+                        placeholder="Signatory"
+                        value={signatory}
+                        onChange={(e) => setSignatory(e.target.value)}
+                      />
+                      <small className="d-block mt-1 fs-12 invisible">
+                        placeholder
+                      </small>
+                    </div>
+
+                    {/* Designation */}
+                    <div>
+                      <p className="mb-1 fw-normal fs-13 blue-color">
+                        Designation
+                      </p>
+
+                      <input
+                        type="text"
+                        className="form-control fs-13 py-1"
+                        style={{ width: "110px" }}
+                        placeholder="Designation"
+                        value={signatoryDesignation}
+                        onChange={(e) =>
+                          setSignatoryDesignation(e.target.value)
+                        }
+                      />
+
+                      <small className="d-block mt-1 fs-12 invisible">
+                        placeholder
+                      </small>
+                    </div>
+                    {/* Generate Offer */}
+                    <div>
+                      <p className="mb-1 fw-normal fs-13 blue-color invisible">
+                        Generate
+                      </p>
+
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={<Tooltip>Generate Offer</Tooltip>}
+                      >
+                        <button
+                          type="button"
+                          className="btn orange-bg text-white"
+                          onClick={handleGenerateOffer}
+                          disabled={offerSelectedIds.length === 0}
+                        >
+                          <i className="bi bi-file-earmark-plus"></i>
+                        </button>
+                      </OverlayTrigger>
+
+                      <small className="d-block mt-1 fs-12 invisible">
+                        {"\u00A0"}
+                      </small>
+                    </div>
+                    <div>
+                      <p className="mb-1 fw-normal fs-13 blue-color invisible">
+                        Digital Signature
+                      </p>
+
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={<Tooltip>Upload Digital Signature</Tooltip>}
+                      >
+                        <button
+                          type="button"
+                          className="btn orange-bg text-white"
+                          onClick={() => setShowDigitalSignatureModal(true)}
+                        >
+                          <i className="bi bi-pen"></i>
+                        </button>
+                      </OverlayTrigger>
+
+                      <small className="d-block mt-1 fs-12 invisible">
+                        {"\u00A0"}
+                      </small>
+                    </div>
+                    {/* <div>
                       <button
                         className={`form-select fs-13 px-3 py-1 orange-bg text-white ${
                           isSendOfferEnabled ? "" : "disabled_button"
@@ -2949,11 +3101,10 @@ export default function CandidateScreening({ selectedJob }) {
                         )}
                       </button>
 
-                      {/* Reserve equal space like other fields */}
                       <small className="d-block mt-1 fs-12 invisible">
                         {"\u00A0"}
                       </small>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
@@ -3346,6 +3497,14 @@ export default function CandidateScreening({ selectedJob }) {
         setSelectedIds={setOfferSelectedIds}
         onUploadSuccess={() => setOfferRefreshKey((prev) => prev + 1)}
         positionId={selectedPositionId?.[0]}
+      />
+      <DigitalSignatureModal
+        showDigitalSignatureModal={showDigitalSignatureModal}
+        setShowDigitalSignatureModal={setShowDigitalSignatureModal}
+        selectedIds={offerSelectedIds}
+        setSelectedIds={setOfferSelectedIds}
+        positionId={selectedPositionId}
+        offerData={offerData}
       />
       {/* <Modal show={showPreview}
         onHide={() => setShowPreview(false)} size="lg">

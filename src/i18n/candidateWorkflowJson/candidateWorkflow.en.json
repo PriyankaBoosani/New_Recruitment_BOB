@@ -284,5 +284,6 @@
   "l1_pending": "L1 Pending",
   "l2_pending": "L2 Pending",
   "l1_rejected": "L1 Rejected",
-  "l2_rejected": "L2 Rejected"
+  "l2_rejected": "L2 Rejected",
+  "offer_generated":"Offer Generated"
 }
