@@ -12,7 +12,7 @@ import {
 } from "react-icons/fi";
 import { BsBag } from "react-icons/bs";
 import { useTranslation } from "react-i18next";
-
+import Select from "react-select";
 import "../../../style/css/Dashboard/DashboardFilters.css";
 
 const DashboardFilters = ({ filters, loading, onApply }) => {
@@ -23,10 +23,6 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
   const [selectedRecruiter, setSelectedRecruiter] = useState("");
   const [initiationType, setInitiationType] = useState("");
   const [periodType, setPeriodType] = useState("FINANCIAL_YEAR");
-  const [fyValue, setFyValue] = useState("");
-  const [cyValue, setCyValue] = useState("");
-  const [quarterYear, setQuarterYear] = useState("");
-  const [quarterValue, setQuarterValue] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const { t } = useTranslation("dashboard");
@@ -37,6 +33,39 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
 
     return `${day}-${month}-${year}`;
   };
+  const currentYear = new Date().getFullYear();
+
+  const cyOptions = Array.from(
+    { length: 5 },
+    (_, index) => currentYear - index
+  );
+
+  const fyOptions = Array.from({ length: 5 }, (_, index) => {
+    const startYear = currentYear - index;
+    return `FY ${startYear}-${String(startYear + 1).slice(-2)}`;
+  });
+  const quarterOptions = [
+    { value: "Q1", label: "Q1 (Jan-Mar)" },
+    { value: "Q2", label: "Q2 (Apr-Jun)" },
+    { value: "Q3", label: "Q3 (Jul-Sep)" },
+    { value: "Q4", label: "Q4 (Oct-Dec)" },
+  ];
+
+  const currentMonth = new Date().getMonth() + 1;
+
+  const currentQuarter =
+    currentMonth <= 3
+      ? "Q1"
+      : currentMonth <= 6
+        ? "Q2"
+        : currentMonth <= 9
+          ? "Q3"
+          : "Q4";
+  const [fyValue, setFyValue] = useState(fyOptions[0]);
+  const [cyValue, setCyValue] = useState(String(cyOptions[0]));
+  const [quarterYear, setQuarterYear] = useState(String(cyOptions[0]));
+  const [quarterValue, setQuarterValue] = useState(currentQuarter);
+
   const handleApply = () => {
     const payload = {
       dateRangePreset: periodType,
@@ -99,15 +128,17 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
         return (
           <div className="period-content">
             <FiCalendar className="period-calendar" />
-
             <select
               value={fyValue}
               onChange={(e) => setFyValue(e.target.value)}
             >
-             <option>{t("select_fy")}</option>
-              <option>FY 2026-27</option>
-              <option>FY 2025-26</option>
-              <option>FY 2024-25</option>
+              <option value="">{t("select_fy")}</option>
+
+              {fyOptions.map((fy) => (
+                <option key={fy} value={fy}>
+                  {fy}
+                </option>
+              ))}
             </select>
           </div>
         );
@@ -121,10 +152,13 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
               value={cyValue}
               onChange={(e) => setCyValue(e.target.value)}
             >
-              <option>{t("select_cy")}</option>
-              <option>2026</option>
-              <option>2025</option>
-              <option>2024</option>
+              <option value="">{t("select_cy")}</option>
+
+              {cyOptions.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
             </select>
           </div>
         );
@@ -139,21 +173,24 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                 value={quarterYear}
                 onChange={(e) => setQuarterYear(e.target.value)}
               >
-                <option>{t("select_cy")}</option>
-                <option>2026</option>
-                <option>2025</option>
-                <option>2024</option>
+                <option value="">{t("select_cy")}</option>
+
+                {cyOptions.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
               </select>
 
               <select
                 value={quarterValue}
                 onChange={(e) => setQuarterValue(e.target.value)}
               >
-                <option>{t("select_quarter")}</option>
-                <option value="Q1">Q1 (Jan-Mar)</option>
-                <option value="Q2">Q2 (Apr-Jun)</option>
-                <option value="Q3">Q3 (Jul-Sep)</option>
-                <option value="Q4">Q4 (Oct-Dec)</option>
+                {quarterOptions.map((item) => (
+                  <option key={item.value} value={item.value}>
+                    {item.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -204,6 +241,32 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
       setInitiationType(filters.reinitialized[0].value);
     }
   }, [filters, initiationType]);
+
+  const departmentOptions = [
+    { value: "", label: t("all_departments") },
+    ...filters.departments,
+  ];
+  const positionOptions = [
+    {
+      value: "",
+      label: t("all_positions"),
+    },
+    ...filteredPositions,
+  ];
+  const zoneOptions = [
+    {
+      value: "",
+      label: t("all_zones"),
+    },
+    ...(filters?.zones || []),
+  ];
+  const recruiterOptions = [
+    {
+      value: "",
+      label: t("all_recruiters"),
+    },
+    ...(filters?.recruiters || []),
+  ];
   return (
     <div className="dashboard-filters">
       {/* HEADER */}
@@ -214,7 +277,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
         </div>
 
         <div className="active-period">
-         <span>{t("active_period")}</span>
+          <span>{t("active_period")}</span>
 
           <span className="period-pill">
             {periodType === "FINANCIAL_YEAR"
@@ -261,8 +324,7 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
           <div className="filter-group">
             <label>
               {" "}
-             <FiGitBranch className="text-danger" /> {t("initiation")}
-
+              <FiGitBranch className="text-danger" /> {t("initiation")}
             </label>
 
             <div className="segmented-control">
@@ -297,12 +359,29 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                   onClick={() => {
                     setPeriodType(item.value);
 
+                    // Clear everything first
                     setFyValue("");
                     setCyValue("");
                     setQuarterYear("");
                     setQuarterValue("");
                     setFromDate("");
                     setToDate("");
+
+                    // Set default values
+                    if (item.value === "FINANCIAL_YEAR") {
+                      setFyValue(fyOptions[0]);
+                    }
+
+                    if (item.value === "CALENDAR_YEAR") {
+                      setCyValue(String(cyOptions[0]));
+                    }
+
+                    if (item.value === "QUARTER") {
+                      setQuarterYear(String(cyOptions[0]));
+                      setQuarterValue(currentQuarter);
+                    }
+
+                    // CUSTOM remains empty
                   }}
                 >
                   {item.label}
@@ -322,46 +401,56 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                 <BsBag />
               </div>
 
-              <select
-                value={selectedDepartment}
-                onChange={(e) => {
-                  setSelectedDepartment(e.target.value);
+              <Select
+                classNamePrefix="dashboard-select"
+                options={departmentOptions}
+                menuPosition="fixed"
+                styles={{
+                  menu: (base) => ({
+                    ...base,
+                    width: "calc(100% + 75px)",
+                    marginLeft: "-32px",
+                  }),
+                }}
+                value={
+                  departmentOptions.find(
+                    (item) => item.value === selectedDepartment
+                  ) ?? departmentOptions[0]
+                }
+                onChange={(option) => {
+                  setSelectedDepartment(option?.value || "");
                   setSelectedPosition("");
                 }}
-              >
-               <option value="">{t("all_departments")}</option>
-
-                {filters?.departments?.map((item) => (
-                  <option key={item.value} value={item.value}>
-                    {item.label}
-                  </option>
-                ))}
-              </select>
-
-              <FiChevronDown className="dropdown-arrow" />
+                isSearchable={false}
+              />
             </div>
 
             <div className="filter-pill">
               <div className="pill-icon">
                 <FiBriefcase />
               </div>
-
-              <select
-                value={selectedPosition}
-                onChange={(e) => {
-                  setSelectedPosition(e.target.value);
+              <Select
+                className="dashboard-select"
+                classNamePrefix="dashboard-select"
+                styles={{
+                  menu: (base) => ({
+                    ...base,
+                    width: "calc(100% + 75px)",
+                    marginLeft: "-32px",
+                  }),
                 }}
-              >
-                <option value="">{t("all_positions")}</option>
-
-                {filteredPositions.map((item) => (
-                  <option key={item.value} value={item.value}>
-                    {item.label}
-                  </option>
-                ))}
-              </select>
-
-              <FiChevronDown className="dropdown-arrow" />
+                menuPosition="fixed"
+                options={positionOptions}
+                value={
+                  positionOptions.find(
+                    (item) => item.value === selectedPosition
+                  ) ?? positionOptions[0]
+                }
+                onChange={(option) => {
+                  setSelectedPosition(option?.value || "");
+                }}
+                isSearchable={false}
+              />
             </div>
 
             <div className="filter-pill">
@@ -369,20 +458,27 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                 <FiMapPin />
               </div>
 
-              <select
-                value={selectedZone}
-                onChange={(e) => setSelectedZone(e.target.value)}
-              >
-                <option value="">{t("all_zones")}</option>
-
-                {filters?.zones?.map((item) => (
-                  <option key={item.value} value={item.value}>
-                    {item.label}
-                  </option>
-                ))}
-              </select>
-
-              <FiChevronDown className="dropdown-arrow" />
+              <Select
+                className="dashboard-select"
+                classNamePrefix="dashboard-select"
+                menuPosition="fixed"
+                styles={{
+                  menu: (base) => ({
+                    ...base,
+                    width: "calc(100% + 75px)",
+                    marginLeft: "-32px",
+                  }),
+                }}
+                options={zoneOptions}
+                value={
+                  zoneOptions.find((item) => item.value === selectedZone) ??
+                  zoneOptions[0]
+                }
+                onChange={(option) => {
+                  setSelectedZone(option?.value || "");
+                }}
+                isSearchable={false}
+              />
             </div>
 
             <div className="filter-pill">
@@ -390,20 +486,28 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
                 <FiUsers />
               </div>
 
-              <select
-                value={selectedRecruiter}
-                onChange={(e) => setSelectedRecruiter(e.target.value)}
-              >
-                <option value="">{t("all_recruiters")}</option>
-
-                {filters?.recruiters?.map((item) => (
-                  <option key={item.value} value={item.value}>
-                    {item.label}
-                  </option>
-                ))}
-              </select>
-
-              <FiChevronDown className="dropdown-arrow" />
+              <Select
+                className="dashboard-select"
+                classNamePrefix="dashboard-select"
+                options={recruiterOptions}
+                menuPosition="fixed"
+                styles={{
+                  menu: (base) => ({
+                    ...base,
+                    width: "calc(100% + 75px)",
+                    marginLeft: "-32px",
+                  }),
+                }}
+                value={
+                  recruiterOptions.find(
+                    (item) => item.value === selectedRecruiter
+                  ) ?? recruiterOptions[0]
+                }
+                onChange={(option) => {
+                  setSelectedRecruiter(option?.value || "");
+                }}
+                isSearchable={false}
+              />
             </div>
           </div>
 
@@ -413,12 +517,12 @@ const DashboardFilters = ({ filters, loading, onApply }) => {
           <div className="actions-section">
             <button className="reset-btn" onClick={handleReset}>
               <FiX />
-            {t("reset")}
+              {t("reset")}
             </button>
 
             <button className="apply-btn" onClick={handleApply}>
               <FiSearch />
-             {t("apply")}
+              {t("apply")}
             </button>
           </div>
         </div>

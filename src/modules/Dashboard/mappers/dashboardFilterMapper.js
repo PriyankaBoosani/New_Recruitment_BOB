@@ -1,13 +1,19 @@
 export const mapDashboardFilters = (response) => {
   const data = response?.data || {};
 
-  const positions =
-    data.positions?.map((item) => ({
-      label: item.position_name,
-      value: item.position_id,
-      departmentId: item.dept_id,
-      employmentTypeId: item.employment_type_id,
-    })) || [];
+const positions = [
+  ...new Map(
+    (data.positions || []).map((item) => [
+      `${item.dept_id}-${item.position_name}`,
+      {
+        label: item.position_name,
+        value: item.position_id,
+        departmentId: item.dept_id,
+        employmentTypeId: item.employment_type_id,
+      },
+    ])
+  ).values(),
+];
 
   const departments = [
     ...new Map(
