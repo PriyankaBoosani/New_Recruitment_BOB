@@ -13,10 +13,7 @@ import { FiTrendingUp } from "react-icons/fi";
 import "../../../style/css/Dashboard/MonthlyRecruitmentTrends.css";
 
 const CustomTooltip = ({ active, payload, label }) => {
-
-
   const { t } = useTranslation("dashboard");
-
 
   if (!active || !payload || !payload.length) {
     return null;
@@ -36,9 +33,7 @@ const CustomTooltip = ({ active, payload, label }) => {
               }}
             />
 
-          <span className="tooltip-text">
-  {entry.name}:
-</span>
+            <span className="tooltip-text">{entry.name}:</span>
           </div>
 
           <span className="tooltip-value">{entry.value}</span>
@@ -49,7 +44,6 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const MonthlyRecruitmentTrends = ({ monthlyTrends = [] }) => {
-
   const { t } = useTranslation("dashboard");
   return (
     <div className="monthly-trends-card mb-4">
@@ -59,9 +53,9 @@ const MonthlyRecruitmentTrends = ({ monthlyTrends = [] }) => {
         </div>
 
         <div>
-         <h2>{t("monthly_recruitment_trends")}</h2>
+          <h2>{t("monthly_recruitment_trends")}</h2>
 
-<p>{t("monthly_performance_overview")}</p>
+          <p>{t("monthly_performance_overview")}</p>
         </div>
       </div>
       <div className="monthly-trends-legend">
@@ -105,7 +99,7 @@ const MonthlyRecruitmentTrends = ({ monthlyTrends = [] }) => {
             />
 
             <Line
-            name={t("candidate_registrations")}
+              name={t("candidate_registrations")}
               type="monotone"
               dataKey="registrations"
               stroke="#0D3B94"
@@ -125,7 +119,7 @@ const MonthlyRecruitmentTrends = ({ monthlyTrends = [] }) => {
             />
 
             <Line
-             name={t("interviews_completed")}
+              name={t("interviews_completed")}
               type="monotone"
               dataKey="interviews"
               stroke="#1482BE"
@@ -145,7 +139,7 @@ const MonthlyRecruitmentTrends = ({ monthlyTrends = [] }) => {
             />
 
             <Line
-             name={t("requisitions_created")}
+              name={t("requisitions_created")}
               type="monotone"
               dataKey="requisitions"
               stroke="#D90429"
@@ -165,7 +159,7 @@ const MonthlyRecruitmentTrends = ({ monthlyTrends = [] }) => {
             />
 
             <Line
-            name={t("offers_sent")}
+              name={t("offers_sent")}
               type="monotone"
               dataKey="offers"
               stroke="#0F9D58"

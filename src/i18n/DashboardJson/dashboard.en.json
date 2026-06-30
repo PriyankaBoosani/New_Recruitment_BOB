@@ -93,7 +93,7 @@
   "department": "Department",
   "position": "Position",
   "vacancies": "Vacancies",
-  "total_positions": "Total No Of Positions",
+   "total_positions_no": "Total No Of Positions",
   "positions_count": "Positions Count",
   "status": "Status",
     "category_wise_distribution": "Category Wise Distribution",
@@ -136,7 +136,7 @@
     "applications": "Applications",
   "current_recruitment_cycle": "Current recruitment cycle",
   "no_data_found": "No Data Found",
-    "monthly_performance_overview": "Jan - Dec 2024 performance overview",
+    "monthly_performance_overview": "Jan - Dec performance overview",
 
   "candidate_registrations": "Candidate Registrations",
   "requisitions_created": "Requisitions Created",
