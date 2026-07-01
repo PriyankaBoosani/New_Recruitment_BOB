@@ -25,6 +25,7 @@ import ReservationSection from "../component/ReservationSection";
 import { useTranslation } from "react-i18next";
 import masterApiService from "../../master/services/masterApiService";
 import SelectIndentModal from "../component/SelectIndentModal";
+import FormBuilderModal from "../component/DynamicForm/FormBuilderModal";
 const AddPosition = () => {
   const { t } = useTranslation(["addPosition", "common", "validation"]);
   const renderError = (e) => {
@@ -55,6 +56,9 @@ const AddPosition = () => {
   const isEditMode = !!positionId && mode !== "view";
   const isImportDisabled = isViewMode || isEditMode;
   const { positionsByReq, fetchPositions } = useJobPositionsByRequisition();
+  const [showFormBuilder, setShowFormBuilder] = useState(false);
+
+  const [additionalForm, setAdditionalForm] = useState(null);
 
   useEffect(() => {
     if (requisitionId) {
@@ -188,7 +192,7 @@ const AddPosition = () => {
   useEffect(() => {
     eduInitializedRef.current = false;
   }, [mode]);
-  
+
   useEffect(() => {
     console.log("Updated isIntermediateRequired:", formData.isIntermediateRequired);
   }, [formData.isIntermediateRequired]);
@@ -250,14 +254,20 @@ const AddPosition = () => {
       useMandatoryEducationLevelExperience: existingPosition.isMandatoryExpMonthsEduWise || false,
       usePreferredEducationLevelExperience: existingPosition.isPreferredExpMonthsEduWise || false,
       isIntermediateRequired: existingPosition.isIntermediateRequired,
+      dynamicFields: existingPosition.dynamicFields || {},
     });
+    if (existingPosition?.dynamicFields) {
+      setAdditionalForm(existingPosition.dynamicFields);
+    }
     setApprovedBy(existingPosition.approvedBy || "");
     setIndentOthers(existingPosition.indentOthers || "");
     setApprovedOn(existingPosition.approvedOn || "");
     if (existingPosition.indentPath) setExistingIndentPath(existingPosition.indentPath);
     setExistingIndentName(existingPosition.indentName);
   }, [existingPosition, employmentTypes]);
-
+  useEffect(() => {
+    console.log("existingPosition.dynamicFields", existingPosition?.dynamicFields);
+  }, [existingPosition]);
   useEffect(() => {
     if (!employmentTypes.length) return;
 
@@ -754,7 +764,7 @@ const AddPosition = () => {
     if (!errors.vacancies && Number(formData.vacancies) <= 0) {
       errors.vacancies = "validation:vacancies_must_be_greater_than_zero";
     }
-
+    console.log("additionalForm =", additionalForm);
     const payload = {
       formData,
       educationData,
@@ -775,6 +785,7 @@ const AddPosition = () => {
       stateDistributions: stateDistributions.filter((s) => !s.__deleted),
       isAgeRelRiotVictimFamily,
       isAgeRelWdsWomen,
+      dynamicFields: additionalForm,
     };
 
     try {
@@ -874,6 +885,7 @@ const AddPosition = () => {
               setIndentOthers={setIndentOthers}
               onPositionSelect={onPositionSelect}
               educationData={educationData}
+              onOpenDynamicForm={() => setShowFormBuilder(true)}
               onEducationClick={(m) => {
                 if (isViewMode) return;
 
@@ -987,6 +999,15 @@ const AddPosition = () => {
         data={indentCandidates}
         onSelect={handleUseIndent}
         selectedIndent={selectedIndent}
+      />
+
+      <FormBuilderModal
+        show={showFormBuilder}
+        onHide={() => setShowFormBuilder(false)}
+        value={additionalForm}
+        onSave={(schema) => {
+          setAdditionalForm(schema);
+        }}
       />
     </Container>
   );

@@ -72,6 +72,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
   const permanentDistrict = getDistrictName(masters, address.permanentDistrictId);
   const permanentState = getStateName(masters, address.permanentStateId);
   const permanentPin = getPincode(masters, address.permanentPincodeId);
+  const dynamicFormData = locationprefApiData?.dynamicFormData || {};
 
   const presentAddressFull = [
     address.addressLine1,
@@ -269,6 +270,9 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
     experienceSummary: {
       currentCtc: safeCurrency(experiences?.[0]?.workExperience?.currentCtc),
     },
+    additionalDetails: {
+      dynamicFormData: locationprefApiData?.dynamicFormData || {},
+    },
     /* ================= DOCUMENTS ================= */
     documents: {
       allDocs: groupDocs(() => true),
@@ -291,6 +295,9 @@ export const mapJobPositionToRequisitionStrip = (apiData = {}, masters = {}) => 
   );
 
   const departmentObj = masters?.departments?.find((d) => d.departmentId === apiData.deptId);
+
+  const dynamicFields = apiData?.dynamicFields || {};
+  
 
   /* ========= MASTER LOOKUPS ========= */
   // const reservationMap =
@@ -390,6 +397,7 @@ export const mapJobPositionToRequisitionStrip = (apiData = {}, masters = {}) => 
     roles_responsibilities: apiData.rolesResponsibilities || "-",
 
     isLocationWise: apiData.isLocationWise,
+    dynamicFields: dynamicFields,
 
     /* ========= NATIONAL (READY FOR UI) ========= */
     nationalCategoryDistribution: {

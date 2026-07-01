@@ -208,6 +208,7 @@ export const mapAddPositionToUpdateDto = ({
   // ✅ ADD THESE
   isAgeRelRiotVictimFamily,
   isAgeRelWdsWomen,
+   dynamicFields,
 }) => {
   const dto = {
     positionId,
@@ -269,7 +270,7 @@ export const mapAddPositionToUpdateDto = ({
 
     // Cut Off Date
     cutoffDate: formData.cutoffDate || null,
-
+    dynamicFields,
     // Root level field
     isProficientInLocalLanguage: isProficientInLocalLanguage === true ? true : false,
     isAgeRelRiotVictimFamily: !!isAgeRelRiotVictimFamily,

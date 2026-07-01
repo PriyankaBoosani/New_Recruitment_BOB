@@ -19,6 +19,7 @@ export const mapAddPositionToCreateDto = ({
   certifications = [],
   isAgeRelRiotVictimFamily,
   isAgeRelWdsWomen,
+  dynamicFields
 }) => {
   /* ================= SAFE NORMALIZATION ================= */
 
@@ -151,7 +152,7 @@ export const mapAddPositionToCreateDto = ({
 
     mandatoryEducation: educationData.mandatory.text,
     preferredEducation: educationData.preferred.text,
-    isIntermediateRequired: formData.isIntermediateRequired === "true",
+    isIntermediateRequired: formData.isIntermediateRequired,
 
     //  OBJECT — NOT STRING
     mandatoryEduRulesJson: buildEduRulesJson(educationData.mandatory, "mandatory"),
@@ -214,6 +215,7 @@ export const mapAddPositionToCreateDto = ({
     approvedBy,
     approvedOn,
     indentOthers: indentOthers?.trim() || null,
+    dynamicFields,
 
     // backend expects this
     cibilScore: 0,

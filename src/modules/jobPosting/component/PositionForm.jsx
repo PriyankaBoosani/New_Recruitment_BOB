@@ -51,6 +51,8 @@ const PositionForm = ({
   MONTH_OPTIONS,
   ALLOWED_EXTENSIONS,
   MAX_FILE_SIZE_MB,
+  onOpenDynamicForm,
+  dynamicFields
 }) => {
   const { t } = useTranslation(["addPosition", "common", "validation"]);
 
@@ -1119,6 +1121,9 @@ const PositionForm = ({
               ]}
             />
             <ErrorMessage>{renderError(errors.medicalRequired)}</ErrorMessage>
+            <Button variant="outline-primary" size="sm" onClick={onOpenDynamicForm}>
+              Configure Form
+            </Button>
           </Col>
           <Col md={3}>
             <Form.Label>

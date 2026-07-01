@@ -24,7 +24,8 @@ const RequisitionStrip = ({
   isSaveBtn,
   showImportBtn,
   onImportClick,
-  isSaving
+  isSaving,
+  setDynamicFields
 }) => {
   const [showPosition, setShowPosition] = useState(false);
   const [job, setJob] = useState(null);
@@ -123,8 +124,10 @@ const isOrderedListItem = (text) => {
         const res = await candidateWorkflowServices.getJobPositionById(position.positionId);
 
         const mapped = mapJobPositionToRequisitionStrip(res.data, masterData);
+        console.log("MAPPED JOB DETAILS", mapped);
 
         setJob(mapped);
+        setDynamicFields(mapped?.dynamicFields || []); // ✅ Pass dynamic fields to parent
       } catch (err) {
         console.error("Failed to fetch job details", err);
         toast.error(t("candidateWorkflow:failed_load_position_details"));

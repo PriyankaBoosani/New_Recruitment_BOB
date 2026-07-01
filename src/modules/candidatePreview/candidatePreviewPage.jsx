@@ -19,12 +19,14 @@ const CandidatePreviewPage = ({ onHide }) => {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const location = useLocation();
   const navigate = useNavigate();
+  
 
   //  DEFINE STATE FIRST
   const state = location.state || {};
   const activeTab = state?.activeTab;
 
   const user = useSelector((state) => state.user.user);
+  
 
   const role = user?.role ? user.role.toLowerCase() : ""; // const isZonalHr = role === "zonal_hr";
   // const isInterviewer = role === "interviewer";
@@ -34,7 +36,6 @@ const CandidatePreviewPage = ({ onHide }) => {
 
   const privileges = useSelector((state) => state.user.privileges);
   const candidatePositionId = state?.candidatePositionId;
-  console.log("Candidate Position ID in Preview:@@@@@@@@@@@@@@@@@@@@@", candidatePositionId);
 
   const isInterviewer = privileges?.Interview;
   const isZonalHr = privileges?.Verification;
@@ -104,6 +105,8 @@ const CandidatePreviewPage = ({ onHide }) => {
   const [masters, setMasters] = useState({});
   const [previewData, setPreviewData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [dynamicFormData, setDynamicFormData] = useState([]);
+  const [dynamicFields, setDynamicFields] = useState([]);
 
   const isFromInterview = state?.from === "/candidate-interviewer";
 
@@ -175,7 +178,10 @@ const CandidatePreviewPage = ({ onHide }) => {
 
           const mapped = mapCandidateToPreview(candidateRes.data, candidateMasters);
 
+
           setPreviewData(mapped);
+          setDynamicFormData(mapped?.additionalDetails?.dynamicFormData || []);
+          console.log("PreviewPage mapped ", mapped || []);
         }
       } catch (error) {
         console.error("Candidate preview load failed", error);
@@ -298,6 +304,7 @@ const CandidatePreviewPage = ({ onHide }) => {
           isSaveEnabled={false}
           showSaveButton={true}
           isSaveBtn={false}
+          setDynamicFields={setDynamicFields}
           // masterData={masters}
         />
       )}
@@ -308,6 +315,7 @@ const CandidatePreviewPage = ({ onHide }) => {
           position={position}
           isCardBg
           isSaveEnabled={false}
+          setDynamicFields={setDynamicFields}
           //  masterData={masters}
           //  masterData={masters}
         />
@@ -340,6 +348,8 @@ const CandidatePreviewPage = ({ onHide }) => {
               isFromCompensationPool={isFromCompensationPool}
               page={state.page}
               pageSize={state.pageSize}
+              dynamicFormData={dynamicFormData}
+              dynamicFields={dynamicFields || []}
             />
           )
         )}

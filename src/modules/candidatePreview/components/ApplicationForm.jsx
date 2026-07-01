@@ -42,7 +42,11 @@ const ApplicationForm = ({
   isFromCompensationPool,
   page,
   pageSize,
+  dynamicFormData,
+  dynamicFields,
 }) => {
+  console.log("test55 1", dynamicFormData, dynamicFields);
+
   const { t } = useTranslation(["preview", "common", "validation"]);
 
   const navigate = useNavigate();
@@ -57,8 +61,9 @@ const ApplicationForm = ({
   const zonalSubmitRef = useRef(false);
   const docActionRef = useRef(false);
   const isZonalAbsent = String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
-const [submitting, setSubmitting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [zonalSubmitting, setZonalSubmitting] = useState(false);
+
   const deriveShortlistStatus = () => {
     const values = [
       screeningForm.isWorkCriteriaMet,
@@ -333,8 +338,7 @@ const [submitting, setSubmitting] = useState(false);
       });
 
       console.error(err);
-    }
-    finally {
+    } finally {
       zonalSubmitRef.current = false;
       setZonalSubmitting(false);
     }
@@ -347,6 +351,7 @@ const [submitting, setSubmitting] = useState(false);
     education: [],
     experience: [],
   };
+
   const CRITERIA_OPTIONS = ["YES", "NO", "DISCREPANCY"];
 
   const documentRows = [
@@ -917,12 +922,12 @@ const [submitting, setSubmitting] = useState(false);
   const disableNoOption = disableShortlistedSection;
 
   const handleFinalSubmit = async () => {
-console.log("Final submit clicked");
-     if (submitRef.current) {
-    return;
-  }
-  submitRef.current = true;
-  setSubmitting(true);
+    console.log("Final submit clicked");
+    if (submitRef.current) {
+      return;
+    }
+    submitRef.current = true;
+    setSubmitting(true);
 
     if (!areAllDocumentsValidated()) {
       // toast.error("Please validate all documents");
@@ -934,7 +939,7 @@ console.log("Final submit clicked");
 
     const isValid = validateForm();
     if (!isValid) return;
-  
+
     const derivedShortlist = deriveShortlistStatus();
 
     const payload = {
@@ -942,9 +947,8 @@ console.log("Final submit clicked");
       // isShortlisted: derivedShortlist || "NO",
       isScreeningCompleted: true,
     };
-submitRef.current = true;
+    submitRef.current = true;
     try {
-     
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
       // toast.success("Screening submitted successfully");
       toast.success(t("screening_submitted_success"));
@@ -968,11 +972,10 @@ submitRef.current = true;
     } catch (err) {
       console.error(t("screening_submit_failed"), err);
       toast.error(t("submission_failed"));
+    } finally {
+      submitRef.current = false;
+      setSubmitting(false);
     }
-    finally {
-    submitRef.current = false;
-     setSubmitting(false);
-  }
   };
 
   const getTomorrowDate = () => {
@@ -1608,6 +1611,47 @@ submitRef.current = true;
           </Accordion.Body>
         </Accordion.Item>
 
+        {/* === ADDITIONAL DETAILS === */}
+        <Accordion.Item eventKey="4" className="additional-accordion">
+          <Accordion.Header>Additional Details</Accordion.Header>
+
+          <Accordion.Body>
+            <table className="table table-bordered bob-table">
+              {/* <tbody>
+                {Object.entries(data.additionalDetails?.dynamicFormData || {}).length > 0 ? (
+                  Object.entries(data.additionalDetails.dynamicFormData).map(([fieldId, value]) => (
+                    <tr key={fieldId}>
+                      <td style={{ width: "35%" }}>{fieldId}</td>
+                      <td>{value || "-"}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={2} className="text-center">
+                      No Additional Details
+                    </td>
+                  </tr>
+                )}
+              </tbody> */}
+              <tbody>
+  {dynamicFields?.fields?.length > 0 ? (
+    dynamicFields.fields.map((field) => (
+      <tr key={field.id}>
+        <td style={{ width: "35%" }}>{field.label}</td>
+        <td>{dynamicFormData?.[field.id] ?? "-"}</td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan={2} className="text-center">
+        No Additional Details
+      </td>
+    </tr>
+  )}
+</tbody>
+            </table>
+          </Accordion.Body>
+        </Accordion.Item>
         <Accordion.Item eventKey="3">
           <Accordion.Header>{t("documents_details")}</Accordion.Header>
 
@@ -1991,7 +2035,11 @@ submitRef.current = true;
               )}
 
               {!isFromCompensationPool && (
-                <button className="btn-submit-orange" onClick={handleFinalSubmit}   disabled={submitting}>
+                <button
+                  className="btn-submit-orange"
+                  onClick={handleFinalSubmit}
+                  disabled={submitting}
+                >
                   {t("submit")}
                 </button>
               )}
