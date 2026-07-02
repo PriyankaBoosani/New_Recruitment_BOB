@@ -46,6 +46,7 @@ const OfferPool = ({
   acceptBeforeDate,
   joiningDate,
   offerApprovalId,
+
 }) => {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const [offers, setOffers] = useState([]);
@@ -140,6 +141,7 @@ const OfferPool = ({
       setLoading(true);
       const res =
         await jobPositionApiService.getOffersByPosition(selectedPositionId);
+        console.log("Offer API Response:", res.data);
 
       const rawList = res?.data || [];
       const mapped = rawList.map((item) => {
@@ -189,6 +191,7 @@ const OfferPool = ({
 
   // FETCH OFFERS DIRECTLY HERE
   useEffect(() => {
+    console.log("OfferPool render, refreshKey =", refreshKey);
     fetchOffers();
     fetchUsers();
   }, [selectedPositionId, refreshKey, fetchUsers]);

@@ -543,6 +543,7 @@ export default function CandidateScreening({ selectedJob }) {
     useState(false);
   const [offerSelectedIds, setOfferSelectedIds] = useState([]);
   const [offerRefreshKey, setOfferRefreshKey] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [offerTemplateId, setOfferTemplateId] = useState("");
   const [joiningDate, setJoiningDate] = useState("");
   const [acceptBeforeDate, setAcceptBeforeDate] = useState("");
@@ -3057,28 +3058,7 @@ export default function CandidateScreening({ selectedJob }) {
                         {"\u00A0"}
                       </small>
                     </div>
-                    <div>
-                      <p className="mb-1 fw-normal fs-13 blue-color invisible">
-                        Digital Signature
-                      </p>
 
-                      <OverlayTrigger
-                        placement="bottom"
-                        overlay={<Tooltip>Upload Digital Signature</Tooltip>}
-                      >
-                        <button
-                          type="button"
-                          className="btn orange-bg text-white"
-                          onClick={() => setShowDigitalSignatureModal(true)}
-                        >
-                          <i className="bi bi-pen"></i>
-                        </button>
-                      </OverlayTrigger>
-
-                      <small className="d-block mt-1 fs-12 invisible">
-                        {"\u00A0"}
-                      </small>
-                    </div>
                     {/* <div>
                       <button
                         className={`form-select fs-13 px-3 py-1 orange-bg text-white ${
@@ -3111,23 +3091,41 @@ export default function CandidateScreening({ selectedJob }) {
 
               {/* RIGHT SECTION */}
               <div className="col-md-4 col-12">
-                <div className="d-flex justify-content-end gap-2 align-items-center">
+                <div className="d-flex justify-content-end align-items-end gap-3">
+                  {/* Digital Signature */}
+                  <div className="d-flex flex-column align-items-center">
+                    {/* <label className="fs-13 blue-color mb-1">
+                      Digital Signature
+                    </label> */}
+
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={<Tooltip>Upload Digital Signature</Tooltip>}
+                    >
+                      <button
+                        type="button"
+                        className="btn orange-bg text-white"
+                        onClick={() => setShowDigitalSignatureModal(true)}
+                      >
+                        <i className="bi bi-pen"></i>
+                      </button>
+                    </OverlayTrigger>
+                  </div>
+
+                  {/* Merit List */}
                   <button
                     className="btn blue-border blue-color fs-13 px-3 py-1"
                     style={{ minHeight: "39px" }}
                     onClick={handleGenerateRankList}
                   >
-                    {/* <img
-                      alt="excel"
-                      src={excelIcon}
-                      className="me-1"
-                      width={18}
-                    /> */}
                     {t("candidateWorkflow:rank_list")}
                   </button>
 
+                  {/* Assign Locations */}
                   <button
-                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? "disabled_button" : ""}`}
+                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${
+                      !rankListGenerated ? "disabled_button" : ""
+                    }`}
                     style={{ minHeight: "39px" }}
                     onClick={() => setShowRankListModal(true)}
                     disabled={!rankListGenerated}
@@ -3142,13 +3140,16 @@ export default function CandidateScreening({ selectedJob }) {
                     {t("candidateWorkflow:assign_locations")}
                   </button>
 
+                  {/* Download */}
                   <button
-                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? "disabled_button" : ""}`}
+                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${
+                      !rankListGenerated ? "disabled_button" : ""
+                    }`}
                     style={{ minHeight: "39px" }}
                     onClick={handleDownloadRankList}
                     disabled={!rankListGenerated}
                   >
-                    <i className="bi bi-download me-1"></i>
+                    <i className="bi bi-download"></i>
                   </button>
                 </div>
               </div>
@@ -3503,8 +3504,11 @@ export default function CandidateScreening({ selectedJob }) {
         setShowDigitalSignatureModal={setShowDigitalSignatureModal}
         selectedIds={offerSelectedIds}
         setSelectedIds={setOfferSelectedIds}
-        positionId={selectedPositionId}
         offerData={offerData}
+        onUploadSuccess={() => {
+           console.log("Incrementing refreshKey");
+          setOfferRefreshKey((prev) => prev + 1);
+        }}
       />
       {/* <Modal show={showPreview}
         onHide={() => setShowPreview(false)} size="lg">

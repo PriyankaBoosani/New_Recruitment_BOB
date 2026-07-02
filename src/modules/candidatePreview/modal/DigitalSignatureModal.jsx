@@ -113,6 +113,7 @@ const DigitalSignatureModal = ({
         toast.success(res?.message || "Signed offers uploaded successfully.");
 
         if (typeof onUploadSuccess === "function") {
+          console.log("Calling onUploadSuccess...");
           await onUploadSuccess();
         }
 
