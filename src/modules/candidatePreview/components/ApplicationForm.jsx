@@ -50,7 +50,7 @@ const ApplicationForm = ({
   const { t } = useTranslation(["preview", "common", "validation"]);
 
   const navigate = useNavigate();
-  const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
+  const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3", "4"]);
   const [criteria, setCriteria] = useState({});
   const location = useLocation();
   const isInterviewView = location.state?.fromInterviewPool;
@@ -63,6 +63,12 @@ const ApplicationForm = ({
   const isZonalAbsent = String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
   const [submitting, setSubmitting] = useState(false);
   const [zonalSubmitting, setZonalSubmitting] = useState(false);
+  const formatDate = (date) => {
+    if (!date) return "-";
+
+    const [year, month, day] = date.split("-");
+    return `${day}-${month}-${year}`;
+  };
 
   const deriveShortlistStatus = () => {
     const values = [
@@ -1612,37 +1618,35 @@ const ApplicationForm = ({
         </Accordion.Item>
 
         {/* === ADDITIONAL DETAILS === */}
-        <Accordion.Item eventKey="4" className="additional-accordion">
-          <Accordion.Header>Additional Details</Accordion.Header>
+        {dynamicFields?.fields?.length > 0 && (
+          <Accordion.Item eventKey="4" className="additional-accordion">
+            <Accordion.Header>Additional Details</Accordion.Header>
 
-          <Accordion.Body>
-            <table className="table table-bordered bob-table add-table">
-              <thead>
-                <tr className="exp-table-header">
-                  <th>Detail</th>
-                  <th>Provided Information</th>
-                 
-                </tr>
-              </thead>
-              <tbody>
-                {dynamicFields?.fields?.length > 0 ? (
-                  dynamicFields.fields.map((field) => (
+            <Accordion.Body>
+              <table className="table table-bordered bob-table add-table">
+                <thead>
+                  <tr className="exp-table-header">
+                    <th>Detail</th>
+                    <th>Provided Information</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {dynamicFields.fields.map((field) => (
                     <tr key={field.id}>
                       <td style={{ width: "35%" }}>{field.label}</td>
-                      <td>{dynamicFormData?.[field.id] ?? "-"}</td>
+                      <td>
+                        {field.type === "date"
+                          ? formatDate(dynamicFormData?.[field.id])
+                          : (dynamicFormData?.[field.id] ?? "-")}
+                      </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={2} className="text-center">
-                      No Additional Details
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </Accordion.Body>
-        </Accordion.Item>
+                  ))}
+                </tbody>
+              </table>
+            </Accordion.Body>
+          </Accordion.Item>
+        )}
         <Accordion.Item eventKey="3">
           <Accordion.Header>{t("documents_details")}</Accordion.Header>
 
