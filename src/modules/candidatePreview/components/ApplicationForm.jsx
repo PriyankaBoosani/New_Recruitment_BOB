@@ -1616,13 +1616,20 @@ const ApplicationForm = ({
           <Accordion.Header>Additional Details</Accordion.Header>
 
           <Accordion.Body>
-            <table className="table table-bordered bob-table">
-              {/* <tbody>
-                {Object.entries(data.additionalDetails?.dynamicFormData || {}).length > 0 ? (
-                  Object.entries(data.additionalDetails.dynamicFormData).map(([fieldId, value]) => (
-                    <tr key={fieldId}>
-                      <td style={{ width: "35%" }}>{fieldId}</td>
-                      <td>{value || "-"}</td>
+            <table className="table table-bordered bob-table add-table">
+              <thead>
+                <tr className="exp-table-header">
+                  <th>Detail</th>
+                  <th>Provided Information</th>
+                 
+                </tr>
+              </thead>
+              <tbody>
+                {dynamicFields?.fields?.length > 0 ? (
+                  dynamicFields.fields.map((field) => (
+                    <tr key={field.id}>
+                      <td style={{ width: "35%" }}>{field.label}</td>
+                      <td>{dynamicFormData?.[field.id] ?? "-"}</td>
                     </tr>
                   ))
                 ) : (
@@ -1632,23 +1639,7 @@ const ApplicationForm = ({
                     </td>
                   </tr>
                 )}
-              </tbody> */}
-              <tbody>
-  {dynamicFields?.fields?.length > 0 ? (
-    dynamicFields.fields.map((field) => (
-      <tr key={field.id}>
-        <td style={{ width: "35%" }}>{field.label}</td>
-        <td>{dynamicFormData?.[field.id] ?? "-"}</td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan={2} className="text-center">
-        No Additional Details
-      </td>
-    </tr>
-  )}
-</tbody>
+              </tbody>
             </table>
           </Accordion.Body>
         </Accordion.Item>

@@ -1008,6 +1008,7 @@ const AddPosition = () => {
         onSave={(schema) => {
           setAdditionalForm(schema);
         }}
+         isViewMode={isViewMode}
       />
     </Container>
   );

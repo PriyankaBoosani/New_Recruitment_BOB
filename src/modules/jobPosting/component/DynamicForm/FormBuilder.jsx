@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Form, Row, Col } from "react-bootstrap";
 import DynamicField from "./DynamicField";
+import "../../../../style/css/EducationModal.css";
 
 const FIELD_TYPES = [
   { label: "Textbox", value: "text" },
@@ -8,16 +9,10 @@ const FIELD_TYPES = [
   { label: "Date", value: "date" },
 ];
 
-const FormBuilder = ({ initialSchema, onSave }) => {
+const FormBuilder = ({ initialSchema, onSave, isViewMode = false, registerSave }) => {
   const [title, setTitle] = useState("");
   const [fields, setFields] = useState([]);
   const [generatedJson, setGeneratedJson] = useState(null);
-  useEffect(() => {
-    if (initialSchema) {
-      setTitle(initialSchema.title || "");
-      setFields(initialSchema.fields || []);
-    }
-  }, [initialSchema]);
 
   const addField = (type) => {
     const field = {
@@ -25,6 +20,7 @@ const FormBuilder = ({ initialSchema, onSave }) => {
       type,
       label: "",
       required: false,
+      error: "",
     };
 
     if (type === "text") {
@@ -41,17 +37,19 @@ const FormBuilder = ({ initialSchema, onSave }) => {
 
   const updateField = (id, key, value) => {
     setFields((prev) =>
-      prev.map((field) =>
-        field.id === id
-          ? {
-              ...field,
-              [key]: value,
-            }
-          : field
-      )
+      prev.map((field) => {
+        if (field.id !== id) return field;
+
+        return {
+          ...field,
+          [key]: value,
+          ...(key === "label" && {
+            error: value.trim() ? "" : "This field is required",
+          }),
+        };
+      })
     );
   };
-
   const removeField = (id) => {
     setFields((prev) => prev.filter((field) => field.id !== id));
   };
@@ -99,10 +97,31 @@ const FormBuilder = ({ initialSchema, onSave }) => {
   };
 
   const handleSave = () => {
+    let hasError = false;
+
+    const validatedFields = fields.map((field) => {
+      if (!field.label.trim()) {
+        hasError = true;
+        return {
+          ...field,
+          error: "This field is required",
+        };
+      }
+
+      return {
+        ...field,
+        error: "",
+      };
+    });
+
+    setFields(validatedFields);
+
+    if (hasError) return;
+
     const schema = {
       formId: crypto.randomUUID(),
       title,
-      fields,
+      fields: validatedFields,
     };
 
     console.log("Generated Form JSON:", schema);
@@ -110,16 +129,21 @@ const FormBuilder = ({ initialSchema, onSave }) => {
     onSave(schema);
   };
   useEffect(() => {
-  if (initialSchema) {
-    setTitle(initialSchema.title || "");
-    setFields(initialSchema.fields || []);
-  }
-}, [initialSchema]);
+    if (initialSchema) {
+      setTitle(initialSchema.title || "");
+      setFields(initialSchema.fields || []);
+    }
+  }, [initialSchema]);
+  useEffect(() => {
+    if (registerSave) {
+      registerSave(() => handleSave);
+    }
+  }, [fields, title]);
   return (
     <>
-      <div className="d-flex gap-2 mb-3">
+      <div className="d-flex gap-2 mb-3 mandedu">
         {FIELD_TYPES.map((field) => (
-          <Button key={field.value} onClick={() => addField(field.value)}>
+          <Button key={field.value} onClick={() => addField(field.value)} disabled={isViewMode}>
             + {field.label}
           </Button>
         ))}
@@ -134,13 +158,9 @@ const FormBuilder = ({ initialSchema, onSave }) => {
           addOption={addOption}
           updateOption={updateOption}
           removeOption={removeOption}
+          isViewMode={isViewMode}
         />
       ))}
-
-      <div className="text-end mt-4">
-        <Button onClick={handleSave}>Save Form</Button>
-      </div>
-      
     </>
   );
 };

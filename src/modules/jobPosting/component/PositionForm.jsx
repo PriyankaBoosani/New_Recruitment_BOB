@@ -52,7 +52,7 @@ const PositionForm = ({
   ALLOWED_EXTENSIONS,
   MAX_FILE_SIZE_MB,
   onOpenDynamicForm,
-  dynamicFields
+  dynamicFields,
 }) => {
   const { t } = useTranslation(["addPosition", "common", "validation"]);
 
@@ -1121,9 +1121,6 @@ const PositionForm = ({
               ]}
             />
             <ErrorMessage>{renderError(errors.medicalRequired)}</ErrorMessage>
-            <Button variant="outline-primary" size="sm" onClick={onOpenDynamicForm}>
-              Configure Form
-            </Button>
           </Col>
           <Col md={3}>
             <Form.Label>
@@ -1137,6 +1134,15 @@ const PositionForm = ({
               disabled={isViewMode}
             />
             <ErrorMessage>{renderError(errors.cutoffDate)}</ErrorMessage>
+          </Col>
+          <Col md={3}>
+            <div className="d-flex gap-3 align-items-center mb-2">
+              <Form.Label className="mb-0">{t("addPosition:additional_details")}:</Form.Label>
+
+              <Button variant="primary" size="sm" onClick={onOpenDynamicForm}>
+                {dynamicFields?.fields?.length ? t("common:edit") : t("addPosition:configure")}
+              </Button>
+            </div>
           </Col>
         </Row>
       </div>

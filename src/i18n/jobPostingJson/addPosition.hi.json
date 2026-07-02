@@ -107,5 +107,7 @@
   "select_cut_off_date": "कट ऑफ तिथि चुनें",
   "age_relaxation_for": "के लिए आयु में छूट भी लागू है",
   "persons_affected_by_1984_riots": "1984 के दंगों से प्रभावित व्यक्ति",
-  "widowed_divorced_separated_women": "विधवा, तलाकशुदा, या न्यायिक रूप से अलग महिलाएं (जो पुनर्विवाह नहीं करती हैं)"
+  "widowed_divorced_separated_women": "विधवा, तलाकशुदा, या न्यायिक रूप से अलग महिलाएं (जो पुनर्विवाह नहीं करती हैं)",
+  "additional_details": "अतिरिक्त विवरण",
+  "configure": "कॉन्फ़िगर करें"
 }
