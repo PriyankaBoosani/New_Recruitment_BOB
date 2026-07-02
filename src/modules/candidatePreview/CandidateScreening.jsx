@@ -2079,6 +2079,8 @@ export default function CandidateScreening({ selectedJob }) {
       setOfferTemplateId("");
       setAcceptBeforeDate("");
       setJoiningDate("");
+      setSignatory("");
+      setSignatoryDesignation("");
       setFormErrors({
         acceptBeforeDate: "",
         joiningDate: "",
@@ -3506,7 +3508,7 @@ export default function CandidateScreening({ selectedJob }) {
         setSelectedIds={setOfferSelectedIds}
         offerData={offerData}
         onUploadSuccess={() => {
-           console.log("Incrementing refreshKey");
+          console.log("Incrementing refreshKey");
           setOfferRefreshKey((prev) => prev + 1);
         }}
       />

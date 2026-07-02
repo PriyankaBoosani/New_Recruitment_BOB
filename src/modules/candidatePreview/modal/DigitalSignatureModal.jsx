@@ -110,10 +110,16 @@ const DigitalSignatureModal = ({
       const res = await jobPositionApiService.uploadSignedOffers(file);
 
       if (res?.success === true) {
+        const { successCount = 0, failureCount = 0 } = res.data || {};
+
+        if (failureCount > 0 && successCount === 0) {
+          toast.error("Failed to upload signed offers.");
+          return;
+        }
+
         toast.success(res?.message || "Signed offers uploaded successfully.");
 
         if (typeof onUploadSuccess === "function") {
-          console.log("Calling onUploadSuccess...");
           await onUploadSuccess();
         }
 
